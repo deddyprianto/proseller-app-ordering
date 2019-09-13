@@ -21,6 +21,8 @@ var poolData = {
   ClientId : awsConfig.awsClientId
 };
 
+import {fetchApi} from "../service/api";
+
 export const createNewUser = (payload) => {
   return async (dispatch) => {
     try {
@@ -70,55 +72,55 @@ export const createNewUser = (payload) => {
   }
 }
 
-export const loginUser = (payload) => {
-  return async (dispatch) => {
-    try {
-      dispatch({
-        type: "LOGIN_USER_LOADING"
-      });
-      var status = true;
+// export const loginUser = (payload) => {
+//   return async (dispatch) => {
+//     try {
+//       dispatch({
+//         type: "LOGIN_USER_LOADING"
+//       });
+//       var status = true;
 
-      var userPool = new CognitoUserPool(poolData);
-      var cognitoUser = new CognitoUser({Username: payload.email, Pool: userPool});
-      var authenticationDetails = new AuthenticationDetails({Username: payload.email, Password: payload.password});
-      cognitoUser.authenticateUser(authenticationDetails, {
-        onSuccess: function (result) {
-          var accessToken = result.getAccessToken().getJwtToken();
-          dispatch({
-            type: "LOGIN_USER_SUCCESS",
-            payload: payload
-          });
-          dispatch({
-            type: "AUTH_USER_SUCCESS",
-            token: accessToken,
-            payload: payload
-          });
-          dispatch({
-            type: "GET_USER_SUCCESS",
-            payload: payload
-          });
-        },
-        onFailure: function(err) {
-          dispatch({
-            type: "LOGIN_USER_FAIL"
-          });
-          if(status){
-            notifikasi('Login', err.message)
-            status = false
-          }
-          throw err;
-        },
-      });
-      return false;
-    } catch (error) {
-      dispatch({
-        type: "LOGIN_USER_FAIL",
-        payload: error.responseBody
-      });
-      return false;
-    }
-  }
-}
+//       var userPool = new CognitoUserPool(poolData);
+//       var cognitoUser = new CognitoUser({Username: payload.email, Pool: userPool});
+//       var authenticationDetails = new AuthenticationDetails({Username: payload.email, Password: payload.password});
+//       cognitoUser.authenticateUser(authenticationDetails, {
+//         onSuccess: function (result) {
+//           var accessToken = result.getAccessToken().getJwtToken();
+//           dispatch({
+//             type: "LOGIN_USER_SUCCESS",
+//             payload: payload
+//           });
+//           dispatch({
+//             type: "AUTH_USER_SUCCESS",
+//             token: accessToken,
+//             payload: payload
+//           });
+//           dispatch({
+//             type: "GET_USER_SUCCESS",
+//             payload: payload
+//           });
+//         },
+//         onFailure: function(err) {
+//           dispatch({
+//             type: "LOGIN_USER_FAIL"
+//           });
+//           if(status){
+//             notifikasi('Login', err.message)
+//             status = false
+//           }
+//           throw err;
+//         },
+//       });
+//       return false;
+//     } catch (error) {
+//       dispatch({
+//         type: "LOGIN_USER_FAIL",
+//         payload: error.responseBody
+//       });
+//       return false;
+//     }
+//   }
+// }
 
 export const confirmUser = (payload) => {
   return async (dispatch) => {
@@ -162,22 +164,22 @@ export const confirmUser = (payload) => {
   }
 }
 
-export const logoutUser = () => {
-  return async (dispatch, getState) => {
-    const state = getState();
-    try {
-      const {authReducer: {authData: {payload}}} = state;
-      var userPool = new CognitoUserPool(poolData);
-      var cognitoUser = new CognitoUser({Username: payload.email, Pool: userPool});
-      cognitoUser.signOut();
-      dispatch({
-          type: "USER_LOGGED_OUT_SUCCESS"
-      });
-    } catch (e) {
-      console.log(e);
-    }
-  }
-}
+// export const logoutUser = () => {
+//   return async (dispatch, getState) => {
+//     const state = getState();
+//     try {
+//       const {authReducer: {authData: {payload}}} = state;
+//       var userPool = new CognitoUserPool(poolData);
+//       var cognitoUser = new CognitoUser({Username: payload.email, Pool: userPool});
+//       cognitoUser.signOut();
+//       dispatch({
+//           type: "USER_LOGGED_OUT_SUCCESS"
+//       });
+//     } catch (e) {
+//       console.log(e);
+//     }
+//   }
+// }
 
 export const notifikasi = (type, status) => {
   Alert.alert(
@@ -191,4 +193,93 @@ export const notifikasi = (type, status) => {
       },
     ]
   );
+}
+
+export const loginUser = (payload) => {
+  return async (dispatch) => {
+
+      try {
+        dispatch({
+          type: "LOGIN_USER_LOADING"
+        });
+        const response = await fetchApi("/customer/login", "POST", payload, 200);
+
+        // console.log(response)
+
+        if(response.success) {
+          dispatch({
+              type: "LOGIN_USER_SUCCESS",
+          });
+          dispatch({
+              type: "AUTH_USER_SUCCESS",
+              token: response.responseBody.idToken.jwtToken
+          });
+          dispatch({
+              type: "GET_USER_SUCCESS",
+              payload: response.responseBody.idToken.payload
+          });
+          return response;
+        } else {
+          throw response;
+        }
+
+      } catch (error) {
+          dispatch({
+              type: "LOGIN_USER_FAIL",
+              payload: error.responseBody
+          });
+          return error;
+      }
+  }
+}
+
+export const logoutUser = () => {
+  return async (dispatch, getState) => {
+      const state = getState();
+      try {
+          const {authReducer: {authData: {token}}} = state;
+          // console.log(token);
+          // const response = await fetchApi("/user/logout", "DELETE", null, 200, token);
+          // console.log(response);
+          dispatch({
+              type: "USER_LOGGED_OUT_SUCCESS"
+          });
+      } catch (e) {
+          console.log(e);
+      }
+  }
+}
+
+export const getToken = () => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+        const {authReducer: {authData: {token}}} = state;
+        return token;
+    } catch (e) {
+        console.log(e);
+    }
+  }
+}
+
+export const getCampaign = () => {
+  return async (dispatch) => {
+    try {
+      const response = await fetchApi("/campaign", "GET", false, 200);
+      return response.responseBody;
+    } catch (error) {
+      return error;
+    }
+  }
+}
+
+export const getVouchers = (campaignid) => {
+  return async (dispatch) => {
+    try {
+      const response = await fetchApi("/campaign/"+campaignid+"/vouchers", "GET", false, 200);
+      return response.responseBody;
+    } catch (error) {
+      return error;
+    }
+  }
 }

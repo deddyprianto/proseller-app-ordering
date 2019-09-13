@@ -1,21 +1,24 @@
 import React, { Component } from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { createAppContainer } from 'react-navigation';
+import { createStackNavigator } from 'react-navigation-stack';
 import { createMaterialBottomTabNavigator } from 'react-navigation-material-bottom-tabs';
+import { Container } from 'native-base';
 
 import Store from './store';
 import History from './history';
 import Rewards from './rewards';
 import Inbox from './inbox';
 import Account from './account';
+import colorConfig from "../config/colorConfig";
 
-const PageTabNavigator = createMaterialBottomTabNavigator(
+const AppTabNavigator = createMaterialBottomTabNavigator(
   {
     Store: { 
       screen: Store,
       navigationOptions: {
         tabBarIcon: ({ tintColor, focused }) => (
-          <Icon size={28} name={ Platform.OS === 'ios' ? 'shoppingcart' : 'md-cart' } style={{ color: tintColor }} />
+          <Icon size={28} name={ Platform.OS === 'ios' ? 'ios-cart' : 'md-cart' } style={{ color: tintColor }} />
         )
       } 
     },
@@ -23,7 +26,7 @@ const PageTabNavigator = createMaterialBottomTabNavigator(
       screen: History,
       navigationOptions: {
         tabBarIcon: ({ tintColor, focused }) => (
-          <Icon size={28} name={ Platform.OS === 'ios' ? 'history' : 'md-time' } style={{ color: tintColor }} />
+          <Icon size={28} name={ Platform.OS === 'ios' ? 'ios-timer' : 'md-time' } style={{ color: tintColor }} />
         )
       }  
     },
@@ -31,7 +34,7 @@ const PageTabNavigator = createMaterialBottomTabNavigator(
       screen: Rewards,
       navigationOptions: {
         tabBarIcon: ({ tintColor, focused }) => (
-          <Icon size={28} name={ Platform.OS === 'ios' ? 'price-ribbon' : 'md-ribbon' } style={{ color: tintColor }} />
+          <Icon size={28} name={ Platform.OS === 'ios' ? 'ios-ribbon' : 'md-ribbon' } style={{ color: tintColor }} />
         )
       }  
     },
@@ -39,7 +42,7 @@ const PageTabNavigator = createMaterialBottomTabNavigator(
       screen: Inbox,
       navigationOptions: {
         tabBarIcon: ({ tintColor, focused }) => (
-          <Icon size={28} name={ Platform.OS === 'ios' ? 'message1' : 'md-mail' } style={{ color: tintColor }} />
+          <Icon size={28} name={ Platform.OS === 'ios' ? 'ios-mail' : 'md-mail' } style={{ color: tintColor }} />
         )
       }  
     },
@@ -47,26 +50,31 @@ const PageTabNavigator = createMaterialBottomTabNavigator(
       screen: Account,
       navigationOptions: {
         tabBarIcon: ({ tintColor, focused }) => (
-          <Icon size={28} name={ Platform.OS === 'ios' ? 'account-circle' : 'md-contact' } style={{ color: tintColor }} />
+          <Icon size={28} name={ Platform.OS === 'ios' ? 'ios-contact' : 'md-contact' } style={{ color: tintColor }} />
         )
       }  
     },
   },
   {
     initialRouteName: 'Store',
-    activeTintColor: '#FAA21C',
-    inactiveTintColor: 'grey', 
-    barStyle: { backgroundColor: '#FFFFFF' },
+    activeTintColor: colorConfig.pageIndex.activeTintColor,
+    inactiveTintColor: colorConfig.pageIndex.inactiveTintColor, 
+    barStyle: { backgroundColor: colorConfig.pageIndex.backgroundColor },
   }
 );
 
-const PageContainer = createAppContainer(PageTabNavigator);
+const AppStackNavigator = createStackNavigator ({
+  AppTabNavigator: AppTabNavigator
+})
+
+const AppStackContainer = createAppContainer(AppTabNavigator);
 
 export default class PageIndex extends Component {
   render() {
     return (
-      <PageContainer />
-      // <Text> Store </Text>
+      <Container>
+        <AppStackContainer/>
+      </Container>
     );
   }
 }

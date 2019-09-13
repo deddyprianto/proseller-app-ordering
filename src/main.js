@@ -14,6 +14,7 @@ import {connect} from "react-redux";
 
 import Routes from './config/router';
 import Splash from './pages/splash'
+import colorConfig from "./config/colorConfig";
 
 class Main extends Component {
   constructor(props) {
@@ -49,7 +50,7 @@ class Main extends Component {
 		return(
       <View style={styles.container}>
         <StatusBar
-           backgroundColor="#FAA21C"
+           backgroundColor="#83BC49"
            barStyle="light-content"
          />
         <Routes isLoggedIn={isLoggedIn} />

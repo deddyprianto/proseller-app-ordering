@@ -23,7 +23,7 @@ export default class Loader extends Component {
 
 const styles = StyleSheet.create({
   container : {
-    backgroundColor: "rgba(0, 0, 0, 0.4)",
+    backgroundColor: "rgba(0, 0, 0, 0.1)",
     position: "absolute",
     width: "100%",
     height: "100%",

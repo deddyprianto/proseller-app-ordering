@@ -1,7 +1,20 @@
-import React, { Component } from 'react';
-import { View, Text, ImageBackground, Keyboard, Animated, Platform, StyleSheet } from 'react-native';
+/**
+ * Chaerus Sulton
+ * chaerussulton@gmail.com
+ * PT Edgeworks
+ */
 
+import React, { Component } from 'react';
+import { 
+  View, 
+  ImageBackground, 
+  Keyboard, 
+  Animated, 
+  Platform, 
+  StyleSheet 
+} from 'react-native';
 import { Dimensions } from 'react-native';
+import appConfig from "../config/appConfig";
 
 const imageWidth = Dimensions.get('window').width / 2;
 
@@ -91,21 +104,29 @@ export default class Splash extends Component {
       styles.containerImage,
       { width: '100%', height: '100%' },
     ];
-    const imageStyle = [styles.logo, { width: this.imageWidth }];
+    const imageStyle = [styles.logo, { width: this.imageWidth , marginBottom: 100,}];
     return (
       <View style={styles.container}>
         <Animated.View style={containerImageStyle}>
-          <ImageBackground
-            source={require('../assets/img/splash.jpg')}
-            style={styles.backgroundImage}
-            resizeMode="stretch"
-          >
-            <Animated.Image
-              source={require('../assets/img/logo.png')}
-              style={imageStyle}
-              resizeMode="contain"
-            />
-          </ImageBackground>
+          {
+            (appConfig.appStatusBackgroundScreen == false)? 
+              <Animated.Image
+                source={appConfig.appLogo}
+                style={imageStyle}
+                resizeMode="contain"
+              /> :
+              <ImageBackground
+                source={appConfig.appBackground}
+                style={styles.backgroundImage}
+                resizeMode="stretch"
+              >
+                <Animated.Image
+                  source={appConfig.appLogo}
+                  style={imageStyle}
+                  resizeMode="contain"
+                />
+              </ImageBackground>
+          }
         </Animated.View>
       </View>
     );

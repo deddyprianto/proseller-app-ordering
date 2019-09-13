@@ -23,9 +23,9 @@ import InputText from "../components/inputText";
 import {createNewUser} from "../actions/auth.actions";
 import Loader from "../components/loader";
 import {ErrorUtils} from "../utils/auth.utils";
-
 import {Actions} from 'react-native-router-flux';
 import colorConfig from "../config/colorConfig";
+import appConfig from "../config/appConfig";
 
 const imageWidth = Dimensions.get('window').width / 2;
 
@@ -71,11 +71,11 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     marginVertical: 10,
     paddingVertical: 13,
-    shadowColor: colorConfig.signup.shadowColor,
-    shadowOffset: { width: 0, height: 1},
-    shadowOpacity: 0.23,
-    shadowRadius: 2.62,
-    elevation: 4,
+    // shadowColor: colorConfig.signup.shadowColor,
+    // shadowOffset: { width: 0, height: 1},
+    // shadowOpacity: 0.23,
+    // shadowRadius: 2.62,
+    // elevation: 4,
   },
   buttonText: {
     fontSize:16,
@@ -136,7 +136,7 @@ class Signup extends Component {
   }
 
   renderTextInput = (field) => {
-    const {meta: {touched, error}, label, secureTextEntry, maxLength, keyboardType, placeholder, input: {onChange, ...restInput}} = field;
+    const {meta: {touched, error}, label, icon, secureTextEntry, maxLength, keyboardType, placeholder, input: {onChange, ...restInput}} = field;
     return (
       <View>
         <InputText
@@ -146,6 +146,7 @@ class Signup extends Component {
           keyboardType={keyboardType}
           secureTextEntry={secureTextEntry}
           label={label}
+          icon={icon}
           {...restInput} />
       {(touched && error) && <Text style={styles.errorText}>{error}</Text>}
       </View>
@@ -157,7 +158,7 @@ class Signup extends Component {
     const imageStyle = [styles.logo, { width: this.imageWidth }];
 		return(
       <ImageBackground
-        source={require('../assets/img/splash.jpg')}
+        source={appConfig.appBackground}
         style={styles.backgroundImage}
         resizeMode="stretch"
       >
@@ -165,7 +166,7 @@ class Signup extends Component {
         <ScrollView>
           <View style={styles.container}>
             <Animated.Image
-              source={require('../assets/img/logo.png')}
+              source={appConfig.appLogo}
               style={imageStyle}
               resizeMode="contain"
             />
@@ -173,14 +174,17 @@ class Signup extends Component {
           <Field
             name="name"
             placeholder="Name"
+            icon='md-card'
             component={this.renderTextInput} />
           <Field
             name="email"
             placeholder="Email"
+            icon='md-contact'
             component={this.renderTextInput} />
           <Field
             name="password"
             placeholder="Password"
+            icon='md-lock'
             secureTextEntry={true}
             component={this.renderTextInput} />
           <TouchableOpacity style={styles.button} onPress={handleSubmit(this.onSubmit)}>

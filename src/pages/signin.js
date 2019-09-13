@@ -10,22 +10,24 @@ import {
   Text,
   View,
   TouchableOpacity,
-  Alert,
   Image,
   ScrollView,
   Animated,
   ImageBackground,
-  Dimensions
+  Dimensions,
+  Alert
 } from 'react-native';
 import {connect} from "react-redux";
 import {compose} from "redux";
 import { Field, reduxForm } from 'redux-form';
 
 import InputText from "../components/inputText";
+import SigninOther from "../components/signinOther"
 import {loginUser} from "../actions/auth.actions";
 import Loader from "../components/loader";
 import {Actions} from 'react-native-router-flux';
 import colorConfig from "../config/colorConfig";
+import appConfig from "../config/appConfig";
 
 const imageWidth = Dimensions.get('window').width / 2;
 
@@ -76,53 +78,17 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     marginVertical: 10,
     paddingVertical: 13,
-    shadowColor: colorConfig.signin.shadowColor,
-    shadowOffset: { width: 0, height: 1},
-    shadowOpacity: 0.23,
-    shadowRadius: 2.62,
-    elevation: 4,
+    // shadowColor: colorConfig.signin.shadowColor,
+    // shadowOffset: { width: 0, height: 1},
+    // shadowOpacity: 0.23,
+    // shadowRadius: 2.62,
+    // elevation: 4,
   },
   buttonText: {
     fontSize:16,
     fontWeight:'bold',
     color:colorConfig.signin.buttonText,
     textAlign:'center'
-  },
-  buttonLoginWith: {
-    width:50,
-    height:50,
-    backgroundColor:colorConfig.signin.buttonLoginWith,
-    borderRadius: 50,
-    marginHorizontal: 10,
-    paddingVertical: 5,
-    alignItems:'center',
-    shadowColor: colorConfig.signin.shadowColor,
-    shadowOffset: { width: 0, height: 5, },
-    shadowOpacity: 0.36,
-    shadowRadius: 6.68,
-    elevation: 11,
-  },
-  buttonTextLoginWith: {
-    fontSize:16,
-    fontWeight:'500',
-    color:colorConfig.signin.buttonTextLoginWith,
-    textAlign:'center'
-  },
-  logoLoginWith: {
-    width:40,
-    height:40,
-  },
-  textLoginWith: {
-    fontSize:14,
-    color:colorConfig.signin.textLoginWith,
-    textAlign:'center',
-    fontStyle: 'italic'
-  },
-  viewLoginWith: {
-    justifyContent :'space-between',
-    // paddingVertical:2,
-    flexDirection:'row',
-    marginBottom:30
   },
   errorText: {
     color: colorConfig.signin.errorText,
@@ -137,6 +103,12 @@ const styles = StyleSheet.create({
   },
   logo: {
     width: '$largeImageSize',
+  },
+  viewLoginWith: {
+    justifyContent :'space-between',
+    // paddingVertical:2,
+    flexDirection:'row',
+    marginBottom:30
   },
 });
 
@@ -158,23 +130,35 @@ class Signin extends Component {
 	}
 
   loginUser = async (values) => {
-    const response =  await this.props.dispatch(loginUser(values));
+    try {
+      const response =  await this.props.dispatch(loginUser(values));
+      console.log(response);
+      if (!response.success) {
+          throw response;
+      }
+    } catch (error) {
+      let errorText;
+      errorText = error.responseBody.message;
+      Alert.alert(
+        'Login Error!',
+        errorText,
+        [
+          {
+            text: 'Cancel',
+            onPress: () => console.log('Cancel Pressed'),
+            style: 'cancel',
+          },
+        ]
+      );
+    }
   }
 
   onSubmit = (values) => {
     this.loginUser(values);
   }
 
-  onSubmitGoogle = (values) => {
-    console.log('Google')
-  }
-
-  onSubmitFacebook = (values) => {
-    console.log('Facebook');
-  }
-
   renderTextInput = (field) => {
-    const {meta: {touched, error}, label, secureTextEntry, maxLength, keyboardType, placeholder, input: {onChange, ...restInput}} = field;
+    const {meta: {touched, error}, label, icon, secureTextEntry, maxLength, keyboardType, placeholder, input: {onChange, ...restInput}} = field;
     return (
       <View>
         <InputText
@@ -183,6 +167,7 @@ class Signin extends Component {
           placeholder={placeholder}
           keyboardType={keyboardType}
           secureTextEntry={secureTextEntry}
+          icon={icon}
           label={label}
           {...restInput} />
       {(touched && error) && <Text style={styles.errorText}>{error}</Text>}
@@ -196,7 +181,7 @@ class Signin extends Component {
     const imageStyle = [styles.logo, { width: this.imageWidth }];
 		return(
       <ImageBackground
-        source={require('../assets/img/splash.jpg')}
+        source={appConfig.appBackground}
         style={styles.backgroundImage}
         resizeMode="stretch"
       >
@@ -204,17 +189,19 @@ class Signin extends Component {
         <ScrollView>
           <View style={styles.container}>
             <Animated.Image
-              source={require('../assets/img/logo.png')}
+              source={appConfig.appLogo}
               style={imageStyle}
               resizeMode="contain"
             />
           </View>
           <Field
-            name="email"
+            name="username"
             placeholder="Email"
+            icon='md-contact'
             component={this.renderTextInput} />
           <Field
             name="password"
+            icon='md-lock'
             placeholder="Password"
             secureTextEntry={true}
             component={this.renderTextInput} />
@@ -225,17 +212,7 @@ class Signin extends Component {
             <TouchableOpacity onPress={this.signup}><Text style={styles.signupButton}>Create Account</Text></TouchableOpacity>
             <TouchableOpacity onPress={this.auth}><Text style={styles.verifyButton}>Verify Code</Text></TouchableOpacity>
           </View>
-          {/* <Text style={styles.textLoginWith}>-- OR --</Text>
-          <View style={styles.viewLoginWith}>
-            <TouchableOpacity style={styles.buttonLoginWith} onPress={this.onSubmitGoogle}>
-              <Image  style={styles.logoLoginWith}
-                source={require('../assets/img/icon-google.png')}/>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.buttonLoginWith} onPress={this.onSubmitFacebook}>
-              <Image  style={styles.logoLoginWith}
-                source={require('../assets/img/icon-facebook.png')}/>
-            </TouchableOpacity>
-          </View> */}
+          { (appConfig.appStatusLoginOther == false) ? null: <SigninOther/> }
         </ScrollView>
       </ImageBackground>
     )

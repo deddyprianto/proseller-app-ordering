@@ -3,15 +3,16 @@
  * chaerussulton@gmail.com
  * PT Edgeworks
  */
+import awsConfig from "../config/awsConfig";
 
-const BASE_URL = "http://192.168.2.30:3333";
+const BASE_URL = awsConfig.base_url;
 
 export const api = async (url, method, body = null, headers = {}) => {
 
     try {
       const endPoint = BASE_URL.concat(url);
       const reqBody = body ? JSON.stringify(body) : null;
-
+      
       const fetchParams = {method, headers};
 
       if((method === "POST" || method === "PUT") && !reqBody) {
@@ -22,8 +23,9 @@ export const api = async (url, method, body = null, headers = {}) => {
           fetchParams.headers["Content-type"] = "application/json";
           fetchParams.body = reqBody;
       }
-
+      
       const fetchPromise = fetch(endPoint, fetchParams);
+      
       const timeOutPromise = new Promise((resolve, reject) => {
           setTimeout(() => {
               reject("Request Timeout");
@@ -47,18 +49,16 @@ export const fetchApi = async (url, method, body, statusCode, token = null, load
             responseBody: null
         };
         if(token) {
-            headers["x-auth"] = token;
+            headers["Authorization"] = token;
         }
-
+        
         const response = await api(url, method, body, headers);
-
-        console.log(response);
 
         if(response.status === statusCode) {
             result.success = true;
 
-            if(response.headers.get("x-auth")) {
-                result.token = response.headers.get("x-auth");
+            if(response.headers.get("Authorization")) {
+                result.token = response.headers.get("Authorization");
             }
 
             let responseBody;

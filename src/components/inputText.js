@@ -9,8 +9,11 @@ import React, {Component} from "react";
 import {
   TextInput, 
   View, 
-  StyleSheet
+  StyleSheet,
+  TouchableOpacity,
+  Text
 } from "react-native";
+import Icon from 'react-native-vector-icons/Ionicons';
 
 const propTypes = {
   mapElement: PropTypes.func,
@@ -44,14 +47,20 @@ const styles = StyleSheet.create({
     paddingHorizontal:16,
     fontSize:16,
     color:'#ffffff',
-    marginVertical: 10
+    marginVertical: 10,
+    paddingLeft: 42
   }
 });
 
 class InputText extends Component {
 
-  state = {
-    value: ""
+  constructor(){
+    super()
+    this.state = {
+      value: "",
+      showPass: true,
+      press: false
+    }
   }
 
   componentDidMount() {
@@ -68,23 +77,47 @@ class InputText extends Component {
     })
   }
 
+  showPass = () =>{
+    if(this.state.press == false){
+      this.setState({ showPass: false, press: true })
+    } else {
+      this.setState({ showPass: true, press: false })
+    }
+  }
+
   render() {
-    const {placeholder, secureTextEntry, keyboardType, maxLength, onSubmitEditing} = this.props;
+    const {placeholder, keyboardType, maxLength, onSubmitEditing, icon} = this.props;
     return (
       <View>
+        <Icon 
+          style={{position: 'absolute', top: 18, left: 15}} 
+          name={icon} 
+          size={25} 
+          color={'rgba(255,255,255, 0.7)'}/>
         <TextInput
           style={styles.inputBox}
           underlineColorAndroid="rgba(0,0,0,0)"
           placeholder={placeholder}
           placeholderTextColor="rgba(255,255,255,0.8)"
           selectionColor="#999999"
-          secureTextEntry={secureTextEntry}
+          secureTextEntry={(placeholder != 'Password' && placeholder != 'Code Authentification') ? null : this.state.showPass}
           keyboardType={keyboardType}
           maxLength={maxLength}
           returnKeyType="next"
           value={this.state.value}
           onSubmitEditing={onSubmitEditing}
           onChangeText={this.onChangeText} />
+          {
+            (placeholder != 'Password' && placeholder != 'Code Authentification') ? null :
+            <TouchableOpacity
+              style={{position: 'absolute', top: 18, right: 15}} 
+              onPress={this.showPass}>
+              <Icon 
+                name={this.state.press == false ? 'md-eye': 'md-eye-off'} 
+                size={25} 
+                color={'rgba(255,255,255, 0.7)'}/>
+            </TouchableOpacity>
+          }
       </View>
     );
   }

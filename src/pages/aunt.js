@@ -11,7 +11,6 @@ import {
   View,
   TouchableOpacity,
   Alert,
-  Image,
   ScrollView,
   Animated,
   ImageBackground,
@@ -23,10 +22,10 @@ import { Field, reduxForm } from 'redux-form';
 
 import InputText from "../components/inputText";
 import {confirmUser} from "../actions/auth.actions";
-import Logo from '../components/logo';
 import Loader from "../components/loader";
 import {Actions} from 'react-native-router-flux';
 import colorConfig from "../config/colorConfig";
+import appConfig from "../config/appConfig";
 
 const imageWidth = Dimensions.get('window').width / 2;
 
@@ -72,11 +71,11 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     marginVertical: 10,
     paddingVertical: 13,
-    shadowColor: colorConfig.auth.shadowColor,
-    shadowOffset: { width: 0, height: 1},
-    shadowOpacity: 0.23,
-    shadowRadius: 2.62,
-    elevation: 4,
+    // shadowColor: colorConfig.auth.shadowColor,
+    // shadowOffset: { width: 0, height: 1},
+    // shadowOpacity: 0.23,
+    // shadowRadius: 2.62,
+    // elevation: 4,
   },
   buttonText: {
     fontSize:16,
@@ -105,7 +104,6 @@ const styles = StyleSheet.create({
     width: '$largeImageSize',
   },
 });
-
 
 class Aunt extends Component {
   constructor(props) {
@@ -152,7 +150,7 @@ class Aunt extends Component {
   }
 
   renderTextInput = (field) => {
-    const {meta: {touched, error}, label, secureTextEntry, maxLength, keyboardType, placeholder, input: {onChange, ...restInput}} = field;
+    const {meta: {touched, error}, label, icon, secureTextEntry, maxLength, keyboardType, placeholder, input: {onChange, ...restInput}} = field;
     return (
       <View>
         <InputText
@@ -162,6 +160,7 @@ class Aunt extends Component {
           keyboardType={keyboardType}
           secureTextEntry={secureTextEntry}
           label={label}
+          icon={icon}
           {...restInput} />
       {(touched && error) && <Text style={styles.errorText}>{error}</Text>}
       </View>
@@ -173,7 +172,7 @@ class Aunt extends Component {
     const imageStyle = [styles.logo, { width: this.imageWidth }];
 		return(
       <ImageBackground
-        source={require('../assets/img/splash.jpg')}
+        source={appConfig.appBackground}
         style={styles.backgroundImage}
         resizeMode="stretch"
       >
@@ -181,7 +180,7 @@ class Aunt extends Component {
         <ScrollView>
           <View style={styles.container}>
             <Animated.Image
-              source={require('../assets/img/logo.png')}
+              source={appConfig.appLogo}
               style={imageStyle}
               resizeMode="contain"
             />
@@ -189,10 +188,12 @@ class Aunt extends Component {
           <Field
             name="email"
             placeholder="Email"
+            icon='md-contact'
             component={this.renderTextInput} />
           <Field
             name="code_auth"
             placeholder="Code Authentification"
+            icon='md-key'
             component={this.renderTextInput} />
           <TouchableOpacity style={styles.button} onPress={handleSubmit(this.onSubmit)}>
             <Text style={styles.buttonText}>Confirm</Text>
@@ -203,26 +204,6 @@ class Aunt extends Component {
           </View>
         </ScrollView>
       </ImageBackground>
-			// <View style={styles.container}>
-      //   {(loginUser && loginUser.isLoading) && <Loader />}
-			// 	<Logo/>
-      //   <Field
-      //     name="email"
-      //     placeholder="Email"
-      //     component={this.renderTextInput} />
-      //   <Field
-      //     name="code_auth"
-      //     placeholder="Code Authentification"
-      //     component={this.renderTextInput} />
-      //   <TouchableOpacity style={styles.button} onPress={handleSubmit(this.onSubmit)}>
-      //     <Text style={styles.buttonText}>Confirm</Text>
-      //   </TouchableOpacity>
-        
-			// 	<View style={styles.signupTextCont}>
-			// 		<Text style={styles.signupText}>Already have an account?</Text>
-			// 		<TouchableOpacity onPress={this.signin}><Text style={styles.signupButton}> Sign In</Text></TouchableOpacity>
-			// 	</View>
-			// </View>
     )
 	}
 }
