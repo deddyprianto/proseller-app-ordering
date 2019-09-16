@@ -29,7 +29,7 @@ export default class Routes extends Component {
             <Scene key="auth" component={Aunt} title="Auntetikasi" />
           </Scene>
           <Scene key="app" hideNavBar={true} initial={this.props.isLoggedIn}>
-            <Scene key="pageIndex" component={Rewards} initial={true} />
+            <Scene key="pageIndex" component={PageIndex} initial={true} />
             <Scene key="pay" component={Pay} />
             <Scene key="rewards" component={Rewards} />
             <Scene key="qrcode" component={RewardsQRmenu} />

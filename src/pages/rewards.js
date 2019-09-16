@@ -12,7 +12,11 @@ import { createMaterialTopTabNavigator } from 'react-navigation-tabs';
 import * as _ from 'lodash';
 import {connect} from "react-redux";
 import {compose} from "redux";
-import {getCampaign, getDataRewards, notifikasi} from "../actions/auth.actions";
+import {
+  getCampaign, 
+  getDataPointByCampaignID, 
+  notifikasi
+} from "../actions/auth.actions";
 
 import RewardsPoint from '../components/rewardsPoint';
 import RewardsStamp from '../components/rewardsStamp';
@@ -77,7 +81,7 @@ class Rewards extends Component {
         var dataResponse = [];
         let totalPoint = 0;
         for (let i = 0; i < campaign.count; i++) {
-          const response =  await this.props.dispatch(getDataRewards(campaign.data[i].id));
+          const response =  await this.props.dispatch(getDataPointByCampaignID(campaign.data[i].id));
           if(response.count > 0){
             for (let j = 0; j < response.count; j++) {
               dataResponse.push(response.data[j])
@@ -93,7 +97,6 @@ class Rewards extends Component {
         }
         
         this.setState({
-          dataPoint: totalPoint,
           dataRecent: recentTampung
         });
 
@@ -102,36 +105,6 @@ class Rewards extends Component {
     } catch (error) {
       await this.props.dispatch(notifikasi('Get Data Rewards Error!', error.responseBody.message, console.log('Cancel Pressed')));
     }
-
-    fetch(awsConfig.getRewords)
-    .then((response) => response.json())
-    .then((responseJson) => {
-      if(responseJson.count > 0){
-        var pointTampung = [];
-        var stampTampung = [];
-        for (let i = 0; i < responseJson.count; i++) {
-          if(responseJson.data[i].campaignType == 'point'){
-            responseJson.data[i].detailPoint = [
-              {'storeName' : 'Bugis Village', 'paymentType': 'cash', 'point': 2 },
-              {'storeName' : 'Suntec', 'paymentType': 'cash', 'point': 3 },
-            ]
-            responseJson.data[i].totalPoint = _.sumBy( responseJson.data[i].detailPoint, 'point');
-            pointTampung.push(responseJson.data[i]);
-          } else {
-            stampTampung.push(responseJson.data[i])
-          }
-        }
-        this.setState({
-          dataStamp: stampTampung
-        });
-        
-      } else {
-        console.log('Data Rewords kosong')
-      }
-    })
-    .catch((error) =>{
-      console.error(error);
-    });
   }
 
   _setPoint = (data) => {
@@ -161,22 +134,18 @@ class Rewards extends Component {
         }>
         {/* <AppNavigationContainer/> */}
         <RewardsStamp/>
-        <RewardsPoint rewardPoint={this.state.dataPoint}/>
-        <RewardsMenu rewardPoint={this.state.dataPoint}/>
+        <RewardsPoint/>
+        <RewardsMenu/>
         <RewardsTransaction dataRecent={this.state.dataRecent}/>
       </ScrollView>
     );
   }
 }
 
-mapStateToProps = (state) => ({
-  getDataRewards: state.authReducer.getDataRewards
-})
-
 mapDispatchToProps = (dispatch) => ({
   dispatch
 });
 
 export default compose(
-  connect(mapStateToProps, mapDispatchToProps),
+  connect(null, mapDispatchToProps),
 )(Rewards);

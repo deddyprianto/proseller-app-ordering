@@ -299,7 +299,7 @@ export const getDataStores = () => {
   }
 }
 
-export const getDataRewards = (campaignid) => {
+export const getDataPointByCampaignID = (campaignid) => {
   return async (dispatch, getState) => {
     const state = getState();
     try {

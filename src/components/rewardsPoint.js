@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import { 
   View, 
   Text,
-  Dimensions 
+  Dimensions,
+  AsyncStorage
 } from 'react-native';
 import colorConfig from "../config/colorConfig";
 
@@ -12,7 +13,12 @@ export default class RewardsPoint extends Component {
     this.state = {
       screenWidth: Dimensions.get('window').width,
       screenHeight: Dimensions.get('window').height,
+      rewardPoint: 0
     };
+  }
+
+  componentDidMount = async() =>{
+    this.setState({rewardPoint: await AsyncStorage.getItem("@point")})
   }
 
   render() {
@@ -24,7 +30,7 @@ export default class RewardsPoint extends Component {
           paddingTop: 20, 
           fontSize: 30,
           fontWeight:'bold',
-        }}>{this.props.rewardPoint}</Text>
+        }}>{this.state.rewardPoint}</Text>
         <Text style={{
           color: colorConfig.pageIndex.backgroundColor, 
           textAlign: 'center'
