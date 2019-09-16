@@ -4,8 +4,11 @@ import {
   Text,
   StyleSheet,
   Dimensions,
-  TouchableOpacity
+  TouchableOpacity,
+  Image
 } from 'react-native';
+import logoCash from '../assets/img/cash.png';
+import logoVisa from '../assets/img/visa.png';
 import colorConfig from "../config/colorConfig";
 
 export default class RewardsTransaction extends Component {
@@ -20,12 +23,28 @@ export default class RewardsTransaction extends Component {
       <View style={styles.container}>
         <Text style={styles.title}>Recent Transactions</Text>
         <View style={styles.card}>
-          <TouchableOpacity style={styles.item}>
-            <Text> Point </Text>
-            <Text> > </Text>
-          </TouchableOpacity>
-
-          <View style={styles.line}></View>
+          {
+            this.props.dataRecent.map((item, key) =>
+            <View key={key}>
+              {
+                <View>
+                  <TouchableOpacity style={styles.item}>
+                  <View style={{
+                    flexDirection:'row', 
+                  }}>
+                    <Image resizeMode='stretch' style={styles.imageLogo} source={logoCash}/>
+                    <Text style={{
+                      marginLeft: 10
+                    }}>{item.storeName}</Text>
+                  </View>
+                  <Text>{item.pointValue} > </Text>
+                </TouchableOpacity>
+                <View style={styles.line}></View>
+              </View>
+              }
+            </View>
+            )
+          }
 
           <TouchableOpacity style={{
             alignItems: 'center',
@@ -61,6 +80,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
     borderColor: colorConfig.pageIndex.activeTintColor,
     borderWidth: 1,
+    marginBottom: 20
   },
   item: {
     margin: 10,
@@ -72,5 +92,11 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     marginLeft: 10,
     marginRight:10
-  }
+  },
+  imageLogo: {
+    width: 30,
+    height: 20,
+    paddingTop: 5,
+    marginBottom:5,
+  },
 });

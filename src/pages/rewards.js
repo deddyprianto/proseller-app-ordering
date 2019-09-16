@@ -160,7 +160,7 @@ class Rewards extends Component {
         <RewardsStamp/>
         <RewardsPoint rewardPoint={this.state.dataPoint}/>
         <RewardsMenu/>
-        <RewardsTransaction/>
+        <RewardsTransaction dataRecent={this.state.dataRecent}/>
       </ScrollView>
     );
   }
