@@ -12,6 +12,7 @@ import {
 import colorConfig from "../config/colorConfig";
 import appConfig from "../config/appConfig";
 import Icon from 'react-native-vector-icons/Ionicons';
+import {Actions} from 'react-native-router-flux';
 
 import {connect} from "react-redux";
 import {compose} from "redux";
@@ -37,6 +38,10 @@ class RewordsVouchers extends Component {
     return mount[value-1];
   }
 
+  pageDetailVoucher = (item) => {
+    Actions.voucher({dataVoucher: item})
+  }
+
   render() {
     return (
       <View style={styles.container}>
@@ -46,7 +51,8 @@ class RewordsVouchers extends Component {
             this.state.dataVoucher.map((item, keys)=>
               <View key={keys}>
               {
-                <TouchableOpacity style={styles.voucherItem}>
+                <TouchableOpacity style={styles.voucherItem}
+                onPress={() => this.pageDetailVoucher(item)}>
                   <View>
                     <Image style={styles.voucherImage} 
                       source={
@@ -71,7 +77,11 @@ class RewordsVouchers extends Component {
                         this.getDate(item['validity']['validDate']['endDate'])
                       }</Text>
                     </View>
-                    <Text style={styles.pointVoucher}>{'Need '+item['redeemValue']+' Point'}</Text>
+                    <View style={{flexDirection:'row', alignItems: 'center'}}>
+                      <Image style={{height: 10, width: 15, marginRight: 2}} 
+                        source={require('../assets/img/ticket.png')}/>
+                      <Text style={styles.pointVoucher}>{item['redeemValue']+' point'}</Text>
+                    </View>
                   </View>
                 </TouchableOpacity>
               }
@@ -96,8 +106,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold'
   },
   voucherItem: {
-    height: (Dimensions.get('window').width/4)+3, 
-    flexDirection:'row', 
     borderColor: colorConfig.store.defaultColor, 
     borderWidth:1, 
     marginBottom: 5,
@@ -106,16 +114,17 @@ const styles = StyleSheet.create({
   },
   voucherImage: {
     height: (Dimensions.get('window').width/4), 
-    width: (Dimensions.get('window').width/4), 
+    width: (Dimensions.get('window').width-22), 
     borderTopLeftRadius: 10,
-    borderBottomLeftRadius: 10,
+    borderTopRightRadius: 10,
   },
   voucherDetail: {
     paddingLeft: 10, 
     paddingTop: 5, 
     paddingRight: 5, 
-    borderLeftColor: colorConfig.store.defaultColor, 
-    borderLeftWidth: 1
+    borderTopColor: colorConfig.store.defaultColor, 
+    borderTopWidth: 1,
+    paddingBottom: 10
   },
   status: {
     backgroundColor: colorConfig.pageIndex.listBorder,

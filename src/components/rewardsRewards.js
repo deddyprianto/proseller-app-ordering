@@ -6,7 +6,9 @@ import {
   ScrollView,
   Dimensions,
   RefreshControl,
-  TouchableOpacity
+  TouchableOpacity,
+  Image,
+  AsyncStorage
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -26,6 +28,7 @@ class RewardsRewards extends Component {
     this.state = {
       dataVoucher: [],
       isLoading: true,
+      rewardPoint: 0,
       refreshing: false,
     };
   }
@@ -36,6 +39,7 @@ class RewardsRewards extends Component {
     } else {
       this.setState({ isLoading: false });
     }
+    this.setState({rewardPoint: await AsyncStorage.getItem("@point")})
     this.getDataVoucher();
   }
 
@@ -72,11 +76,18 @@ class RewardsRewards extends Component {
     return (
       <View style={styles.container}>
         <View>
-          <TouchableOpacity style={styles.btnBack}
-          onPress={this.goBack}>
-            <Icon size={28} name={ Platform.OS === 'ios' ? 'arrow-left' : 'md-arrow-round-back' } style={styles.btnBackIcon} />
-            <Text style={styles.btnBackText}> Back </Text>
-          </TouchableOpacity>
+          <View style={{flexDirection:'row', justifyContent: 'space-between'}}>
+            <TouchableOpacity style={styles.btnBack}
+            onPress={this.goBack}>
+              <Icon size={28} name={ Platform.OS === 'ios' ? 'ios-arrow-back' : 'md-arrow-round-back' } style={styles.btnBackIcon} />
+              <Text style={styles.btnBackText}> Back </Text>
+            </TouchableOpacity>
+            <View style={styles.point}>
+              <Image style={{height: 18, width: 25, marginRight: 5}} 
+                source={require('../assets/img/ticket.png')}/>
+              <Text style={{color: colorConfig.pageIndex.activeTintColor, fontWeight: 'bold'}}>{this.state.rewardPoint+' Point'}</Text>
+            </View>
+          </View>
           <View style={styles.line}/>
         </View>
         <ScrollView refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this._onRefresh}/>
@@ -91,7 +102,7 @@ class RewardsRewards extends Component {
             <RewardsStampDetail/>
             {
               (this.state.dataVoucher.length > 0) ? 
-              <RewordsVouchers dataVoucher={this.state.dataVoucher}/> : null
+              <RewordsVouchers dataVoucher={this.state.dataVoucher} rewardPoint={this.props.rewardPoint}/> : null
             }
           </View> 
         }
@@ -125,6 +136,16 @@ const styles = StyleSheet.create({
   loading: {
     height: Dimensions.get('window').height-50
   },
+  point: {
+    margin: 10, 
+    alignItems: 'center', 
+    flexDirection:'row', 
+    alignItems: 'center',
+    borderColor: colorConfig.pageIndex.activeTintColor,
+    borderWidth: 1,
+    borderRadius: 10,
+    padding: 5
+  }
 });
 
 mapStateToProps = (state) => ({

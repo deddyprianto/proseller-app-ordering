@@ -4,7 +4,8 @@ import {
   Text,
   Dimensions,
   ScrollView,
-  RefreshControl
+  RefreshControl,
+  AsyncStorage
 } from 'react-native';
 import { createAppContainer } from 'react-navigation';
 import { createMaterialTopTabNavigator } from 'react-navigation-tabs';
@@ -95,6 +96,8 @@ class Rewards extends Component {
           dataPoint: totalPoint,
           dataRecent: recentTampung
         });
+
+        await AsyncStorage.setItem("@point",  JSON.stringify(totalPoint));
       }      
     } catch (error) {
       await this.props.dispatch(notifikasi('Get Data Rewards Error!', error.responseBody.message, console.log('Cancel Pressed')));
@@ -159,7 +162,7 @@ class Rewards extends Component {
         {/* <AppNavigationContainer/> */}
         <RewardsStamp/>
         <RewardsPoint rewardPoint={this.state.dataPoint}/>
-        <RewardsMenu/>
+        <RewardsMenu rewardPoint={this.state.dataPoint}/>
         <RewardsTransaction dataRecent={this.state.dataRecent}/>
       </ScrollView>
     );

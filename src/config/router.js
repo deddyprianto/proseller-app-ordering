@@ -16,6 +16,7 @@ import Pay from "../components/rewardsPay";
 import Rewards from "../components/rewardsRewards";
 import RewardsQRmenu from "../components/rewardsQRmenu";
 import RewardsQRscan from "../components/rewardsQRscan";
+import VoucherDetail from "../components/voucherDetail";
 
 export default class Routes extends Component {
 	render() {
@@ -28,11 +29,12 @@ export default class Routes extends Component {
             <Scene key="auth" component={Aunt} title="Auntetikasi" />
           </Scene>
           <Scene key="app" hideNavBar={true} initial={this.props.isLoggedIn}>
-            <Scene key="pageIndex" component={PageIndex} initial={true} />
+            <Scene key="pageIndex" component={Rewards} initial={true} />
             <Scene key="pay" component={Pay} />
             <Scene key="rewards" component={Rewards} />
             <Scene key="qrcode" component={RewardsQRmenu} />
             <Scene key="scan" component={RewardsQRscan} />
+            <Scene key="voucher" component={VoucherDetail} />
           </Scene>
         </Scene>
       </Router>
