@@ -8,14 +8,18 @@ import {
   Dimensions,
   RefreshControl,
   TouchableOpacity,
-  Picker
+  Picker,
+  Alert
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
+import {connect} from "react-redux";
+import {compose} from "redux";
+import {sendPayment, getToken, notifikasi} from "../actions/auth.actions";
 
 import colorConfig from "../config/colorConfig";
 
-export default class RewardsPay extends Component {
+class RewardsPay extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -37,21 +41,25 @@ export default class RewardsPay extends Component {
     }
   }
 
-  handleBlur(){
+  handleBlur = (event) =>{
     this.setState({ isFocused: false})
     if(this.props.onBlur){
       this.props.onBlur(event);
     }
   }
 
-  sendPay = () => {
-    console.log('press btn pay')
-    var data = {
-      'payment': this.state.payment,
-      'storeName': this.state.storeName,
-      'paymentType': this.state.paymentType
+  sendPay = async() => {
+    try {
+      var data = {
+        'payment': this.state.payment,
+        'storeName': this.state.storeName,
+        'paymentType': this.state.paymentType
+      } 
+      const response =  await this.props.dispatch(sendPayment(data));
+      await this.props.dispatch(notifikasi('Pay success!', response.message+' point', Actions.pop()));
+    } catch (error) {
+      await this.props.dispatch(notifikasi('Pay Error!', error.responseBody.message, console.log('Cancel Pressed')));
     }
-    console.log(data)
   }
 
   render() {
@@ -92,9 +100,9 @@ export default class RewardsPay extends Component {
                   this.setState({paymentType: itemValue})
                 }>
                 <Picker.Item label='-- Choose --' value=""  />
-                <Picker.Item label='Cash' value="cash"  />
-                <Picker.Item label="Debit" value="debit" />
-                <Picker.Item label="Credit" value="credit" />
+                <Picker.Item label='Cash' value="Cash"  />
+                <Picker.Item label="Debit" value="Debit" />
+                <Picker.Item label="Credit" value="Credit" />
               </Picker>
             </View>
           </View>
@@ -160,3 +168,15 @@ const styles = StyleSheet.create({
     borderBottomWidth:2
   }
 });
+
+mapStateToProps = (state) => ({
+  getVouchers: state.authReducer.getVouchers
+})
+
+mapDispatchToProps = (dispatch) => ({
+  dispatch
+});
+
+export default compose(
+  connect(mapStateToProps, mapDispatchToProps),
+)(RewardsPay);

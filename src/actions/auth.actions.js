@@ -181,15 +181,15 @@ export const confirmUser = (payload) => {
 //   }
 // }
 
-export const notifikasi = (type, status) => {
+export const notifikasi = (type, status, action) => {
   Alert.alert(
-    type+' Error!',
+    type,
     status,
     [
       {
-        text: 'Cancel',
-        onPress: () => console.log('Cancel Pressed'),
-        style: 'cancel',
+        text: 'Ok',
+        onPress: () => action,
+        style: 'ok',
       },
     ]
   );
@@ -263,7 +263,8 @@ export const getToken = () => {
 }
 
 export const getCampaign = () => {
-  return async (dispatch) => {
+  return async (dispatch, getState) => {
+    const state = getState();
     try {
       const response = await fetchApi("/campaign", "GET", false, 200);
       return response.responseBody;
@@ -274,9 +275,49 @@ export const getCampaign = () => {
 }
 
 export const getVouchers = (campaignid) => {
-  return async (dispatch) => {
+  return async (dispatch, getState) => {
+    const state = getState();
     try {
       const response = await fetchApi("/campaign/"+campaignid+"/vouchers", "GET", false, 200);
+      return response.responseBody;
+    } catch (error) {
+      return error;
+    }
+  }
+}
+
+export const getDataStores = () => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {authReducer: {authData: {token}}} = state;
+      const response = await fetchApi("/store", "GET", false, 200, token);
+      return response.responseBody;
+    } catch (error) {
+      return error;
+    }
+  }
+}
+
+export const getDataRewards = (campaignid) => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {authReducer: {authData: {token}}} = state;
+      const response = await fetchApi("/campaign/"+campaignid+"/points", "GET", false, 200, token);
+      return response.responseBody;
+    } catch (error) {
+      return error;
+    }
+  }
+}
+
+export const sendPayment = (payload) => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {authReducer: {authData: {token}}} = state;
+      const response = await fetchApi("/accummulation/point", "POST", payload, 200, token);
       return response.responseBody;
     } catch (error) {
       return error;

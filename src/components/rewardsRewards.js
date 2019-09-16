@@ -86,12 +86,14 @@ class RewardsRewards extends Component {
           <View style={styles.loading}> 
             {(this.state.isLoading) && <Loader />}
           </View> :
-          (this.state.dataVoucher.length > 0) ? 
           <View>
             <RewardsStamp/>
             <RewardsStampDetail/>
-            <RewordsVouchers dataVoucher={this.state.dataVoucher}/>
-          </View> : null
+            {
+              (this.state.dataVoucher.length > 0) ? 
+              <RewordsVouchers dataVoucher={this.state.dataVoucher}/> : null
+            }
+          </View> 
         }
         </ScrollView>
       </View>

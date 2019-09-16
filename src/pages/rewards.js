@@ -9,6 +9,9 @@ import {
 import { createAppContainer } from 'react-navigation';
 import { createMaterialTopTabNavigator } from 'react-navigation-tabs';
 import * as _ from 'lodash';
+import {connect} from "react-redux";
+import {compose} from "redux";
+import {getCampaign, getDataRewards, notifikasi} from "../actions/auth.actions";
 
 import RewardsPoint from '../components/rewardsPoint';
 import RewardsStamp from '../components/rewardsStamp';
@@ -47,13 +50,14 @@ const AppNavigationContainer = createAppContainer(
   })
 );
 
-export default class Rewards extends Component {
+class Rewards extends Component {
   constructor(props) {
     super(props);
     this.state = {
       dataRewards: [],
       dataPoint: [],
       dataStamp: [],
+      dataRecent: [],
       screenWidth: Dimensions.get('window').width,
       screenHeight: Dimensions.get('window').height,
       refreshing: false,
@@ -64,8 +68,38 @@ export default class Rewards extends Component {
     this.getDataRewards();
   }
 
-  getDataRewards = () => {
-    var that = this;
+  getDataRewards = async() => {
+    try {
+      const campaign =  await this.props.dispatch(getCampaign());
+      
+      if(campaign.count > 0){
+        var dataResponse = [];
+        let totalPoint = 0;
+        for (let i = 0; i < campaign.count; i++) {
+          const response =  await this.props.dispatch(getDataRewards(campaign.data[i].id));
+          if(response.count > 0){
+            for (let j = 0; j < response.count; j++) {
+              dataResponse.push(response.data[j])
+              totalPoint = totalPoint + parseInt(response.data[j].payment)
+            }
+          }
+        }
+        var recentTampung = [];
+        if(_.orderBy(dataResponse, ['created'], ['desc']).length > 0){
+          for (let i = 0; i < 3; i++) {
+            recentTampung.push(_.orderBy(dataResponse, ['created'], ['desc'])[i])
+          }
+        }
+        
+        this.setState({
+          dataPoint: totalPoint,
+          dataRecent: recentTampung
+        });
+      }      
+    } catch (error) {
+      await this.props.dispatch(notifikasi('Get Data Rewards Error!', error.responseBody.message, console.log('Cancel Pressed')));
+    }
+
     fetch(awsConfig.getRewords)
     .then((response) => response.json())
     .then((responseJson) => {
@@ -84,8 +118,7 @@ export default class Rewards extends Component {
             stampTampung.push(responseJson.data[i])
           }
         }
-        that.setState({
-          dataPoint: pointTampung[0].totalPoint, 
+        this.setState({
           dataStamp: stampTampung
         });
         
@@ -132,3 +165,15 @@ export default class Rewards extends Component {
     );
   }
 }
+
+mapStateToProps = (state) => ({
+  getDataRewards: state.authReducer.getDataRewards
+})
+
+mapDispatchToProps = (dispatch) => ({
+  dispatch
+});
+
+export default compose(
+  connect(mapStateToProps, mapDispatchToProps),
+)(Rewards);
