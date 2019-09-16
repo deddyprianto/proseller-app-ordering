@@ -4,6 +4,7 @@ import {
   Text,
   StyleSheet,
   Dimensions,
+  TouchableOpacity
 } from 'react-native';
 import colorConfig from "../config/colorConfig";
 
@@ -19,22 +20,22 @@ export default class RewardsTransaction extends Component {
       <View style={styles.container}>
         <Text style={styles.title}>Recent Transactions</Text>
         <View style={styles.card}>
-          <View style={{
-            height: 50, 
-            flexDirection:'row',
-            // borderBottomColor: colorConfig.pageIndex.inactiveTintColor,
-            // borderBottomWidth: 1,
-          }}>
-            <View style={{margin: 5, paddingVertical: 8}}>
-              <Text>icon</Text>
-            </View>
-            <View style={{margin: 5, paddingVertical: 8}}>
-              <Text>detail</Text>
-            </View>
-            <View style={{margin: 5, paddingVertical: 8}}>
-              <Text>poin</Text>
-            </View>
-          </View>
+          <TouchableOpacity style={styles.item}>
+            <Text> Point </Text>
+            <Text> > </Text>
+          </TouchableOpacity>
+
+          <View style={styles.line}></View>
+
+          <TouchableOpacity style={{
+            alignItems: 'center',
+            margin:10
+          }} onPress={this.logout}>
+            <Text style={{
+              color: colorConfig.pageIndex.activeTintColor, 
+              fontWeight: 'bold'
+            }}> See More </Text>
+          </TouchableOpacity>
         </View>
       </View>
     );
@@ -50,27 +51,26 @@ const styles = StyleSheet.create({
     color: colorConfig.pageIndex.activeTintColor, 
     fontSize: 16,
     marginBottom:5,
+    marginLeft:10,
     fontWeight: 'bold'
   },
   card: {
-    borderColor: colorConfig.pageIndex.inactiveTintColor, 
-    borderWidth:1, 
-    borderRadius: 10,
-    backgroundColor: colorConfig.store.storesItem,
-    justifyContent :'space-between', 
-    flexDirection:'row',
+    backgroundColor: colorConfig.pageIndex.backgroundColor,
+    borderRadius: 15,
+    marginLeft: 10,
+    marginRight: 10,
+    borderColor: colorConfig.pageIndex.activeTintColor,
+    borderWidth: 1,
   },
   item: {
-    backgroundColor: '#CBCBCB',
-    width:40,
-    height:40,
-    borderRadius: 40,
-    marginHorizontal: 2,
-    paddingVertical: 10,
-    alignItems:'center',
+    margin: 10,
+    flexDirection:'row', 
+    justifyContent: 'space-between'
   },
-  detail: {
-    textAlign: 'center',
-    fontSize: 10
+  line: {
+    borderBottomColor: colorConfig.pageIndex.inactiveTintColor,
+    borderBottomWidth: 1,
+    marginLeft: 10,
+    marginRight:10
   }
 });

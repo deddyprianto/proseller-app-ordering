@@ -63,22 +63,24 @@ export default class RewardsMenu extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    height: (Dimensions.get('window').height/8), 
+    height: (Dimensions.get('window').height/8)-30, 
     alignContent: 'center'
   },
   item: {
-    height: Dimensions.get('window').height/5, 
-    width: Dimensions.get('window').width-50,
-    borderColor: colorConfig.pageIndex.inactiveTintColor, 
+    height: Dimensions.get('window').height/5-20, 
+    width: Dimensions.get('window').width-80,
+    borderColor: colorConfig.pageIndex.activeTintColor, 
     borderWidth:1, 
-    marginLeft: 25, 
-    marginRight: 25,
+    marginLeft: 40, 
+    marginRight: 40,
     borderRadius: 10,
     position: 'absolute', 
     top: -(Dimensions.get('window').height/5)/2,
     backgroundColor: colorConfig.store.storesItem,
     justifyContent :'space-between', 
     flexDirection:'row',
-    padding: 20,
+    paddingLeft: 30,
+    paddingRight: 30,
+    paddingTop: 10,
   }
 });
