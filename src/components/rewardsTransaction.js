@@ -32,7 +32,9 @@ export default class RewardsTransaction extends Component {
                   <View style={{
                     flexDirection:'row', 
                   }}>
-                    <Image resizeMode='stretch' style={styles.imageLogo} source={logoCash}/>
+                    <Image resizeMode='stretch' style={styles.imageLogo} source={
+                      (item.paymentType == 'Cash')? logoCash : logoVisa
+                    }/>
                     <Text style={{
                       marginLeft: 10
                     }}>{item.storeName}</Text>
@@ -83,7 +85,10 @@ const styles = StyleSheet.create({
     marginBottom: 20
   },
   item: {
-    margin: 10,
+    marginLeft: 10,
+    marginRight: 10,
+    marginTop: 10,
+    marginBottom: 5,
     flexDirection:'row', 
     justifyContent: 'space-between'
   },
