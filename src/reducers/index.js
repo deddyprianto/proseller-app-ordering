@@ -9,10 +9,12 @@ import { reducer as formReducer } from 'redux-form'
 
 import authReducer from "./auth.reducer";
 import userReducer from "./user.reducer";
+import rewardsReducer from "./rewards.reducer";
 
 const reducers = {
   authReducer,
   userReducer,
+  rewardsReducer,
   form: formReducer
 };
 

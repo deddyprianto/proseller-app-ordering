@@ -16,7 +16,7 @@ import {Actions} from 'react-native-router-flux';
 import {connect} from "react-redux";
 import {compose} from "redux";
 import {notifikasi} from "../actions/auth.actions";
-import {sendPayment} from "../actions/rewards.action";
+import {sendPayment, campaign, dataPoint} from "../actions/rewards.action";
 
 import colorConfig from "../config/colorConfig";
 
@@ -57,6 +57,8 @@ class RewardsPay extends Component {
         'paymentType': this.state.paymentType
       } 
       const response =  await this.props.dispatch(sendPayment(data));
+      await this.props.dispatch(campaign());
+      await this.props.dispatch(dataPoint());
       await this.props.dispatch(notifikasi('Pay success!', response.message+' point', Actions.pop()));
     } catch (error) {
       await this.props.dispatch(notifikasi('Pay Error!', error.responseBody.message, console.log('Cancel Pressed')));

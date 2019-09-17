@@ -14,10 +14,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
 import {connect} from "react-redux";
 import {compose} from "redux";
-import {
-  getCampaign, 
-  getVouchers
-} from "../actions/rewards.action";
+import {vouchers} from "../actions/rewards.action";
 
 import colorConfig from "../config/colorConfig";
 import RewardsStamp from '../components/rewardsStamp';
@@ -37,31 +34,17 @@ class RewardsRewards extends Component {
   }
 
   componentDidMount = async() =>{
-    if (this.state.dataVoucher.length === 0){
-      this.setState({ isLoading: true });
-    } else {
+    
+    // if (this.props.vouchers.length === 0){
+    //   this.setState({ isLoading: true });
+    // } else {
       this.setState({ isLoading: false });
-    }
-    this.setState({rewardPoint: await AsyncStorage.getItem("@point")})
-    this.getDataVoucher();
+    // }
+    // this.getDataVoucher();
   }
 
   getDataVoucher = async() =>{
-    const campaign =  await this.props.dispatch(getCampaign());
-    if(campaign.count > 0){
-      var dataVoucher = [];
-      for (let i = 0; i < campaign.count; i++) {
-        const voucher =  await this.props.dispatch(getVouchers(campaign.data[i].id));
-        if(voucher.count > 0){
-          for (let j = 0; j < voucher.count; j++) {
-            dataVoucher.push(voucher.data[j])
-          }
-        }
-      }
-      this.setState({
-        dataVoucher: dataVoucher
-      })
-    }
+    await this.props.dispatch(vouchers());
     this.setState({ isLoading: false });
   }
 
@@ -88,7 +71,7 @@ class RewardsRewards extends Component {
             <View style={styles.point}>
               <Image style={{height: 18, width: 25, marginRight: 5}} 
                 source={require('../assets/img/ticket.png')}/>
-              <Text style={{color: colorConfig.pageIndex.activeTintColor, fontWeight: 'bold'}}>{this.state.rewardPoint+' Point'}</Text>
+              <Text style={{color: colorConfig.pageIndex.activeTintColor, fontWeight: 'bold'}}>{this.props.totalPoint+' Point'}</Text>
             </View>
           </View>
           <View style={styles.line}/>
@@ -104,8 +87,8 @@ class RewardsRewards extends Component {
             <RewardsStamp/>
             <RewardsStampDetail/>
             {
-              (this.state.dataVoucher.length > 0) ? 
-              <RewordsVouchers dataVoucher={this.state.dataVoucher} rewardPoint={this.props.rewardPoint}/> : null
+              (this.props.vouchers.length > 0) ? 
+              <RewordsVouchers/> : null
             }
           </View> 
         }
@@ -152,7 +135,8 @@ const styles = StyleSheet.create({
 });
 
 mapStateToProps = (state) => ({
-  getVouchers: state.authReducer.getVouchers
+  vouchers: state.rewardsReducer.vouchers.dataVoucher,
+  totalPoint : state.rewardsReducer.dataPoint.totalPoint
 })
 
 mapDispatchToProps = (dispatch) => ({

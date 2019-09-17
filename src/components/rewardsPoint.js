@@ -5,9 +5,12 @@ import {
   Dimensions,
   AsyncStorage
 } from 'react-native';
+import {connect} from "react-redux";
+import {compose} from "redux";
+
 import colorConfig from "../config/colorConfig";
 
-export default class RewardsPoint extends Component {
+class RewardsPoint extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -15,10 +18,6 @@ export default class RewardsPoint extends Component {
       screenHeight: Dimensions.get('window').height,
       rewardPoint: 0
     };
-  }
-
-  componentDidMount = async() =>{
-    this.setState({rewardPoint: await AsyncStorage.getItem("@point")})
   }
 
   render() {
@@ -30,7 +29,7 @@ export default class RewardsPoint extends Component {
           paddingTop: 20, 
           fontSize: 30,
           fontWeight:'bold',
-        }}>{this.state.rewardPoint}</Text>
+        }}>{this.props.totalPoint}</Text>
         <Text style={{
           color: colorConfig.pageIndex.backgroundColor, 
           textAlign: 'center'
@@ -39,3 +38,15 @@ export default class RewardsPoint extends Component {
     );
   }
 }
+
+mapStateToProps = (state) => ({
+  totalPoint : state.rewardsReducer.dataPoint.totalPoint
+});
+
+mapDispatchToProps = (dispatch) => ({
+  dispatch
+});
+
+export default compose(
+  connect(mapStateToProps, mapDispatchToProps),
+)(RewardsPoint);

@@ -9,13 +9,13 @@ import {
   ScrollView,
   RefreshControl
 } from 'react-native';
+import {connect} from "react-redux";
+import {compose} from "redux";
+
 import colorConfig from "../config/colorConfig";
 import appConfig from "../config/appConfig";
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
-
-import {connect} from "react-redux";
-import {compose} from "redux";
 
 class RewordsVouchers extends Component {
   constructor(props) {
@@ -48,7 +48,8 @@ class RewordsVouchers extends Component {
         <Text style={styles.title}>Vouchers</Text>
         <View>
           {
-            this.state.dataVoucher.map((item, keys)=>
+            (this.props.vouchers == undefined) ? null :
+            this.props.vouchers.map((item, keys)=>
               <View key={keys}>
               {
                 <TouchableOpacity style={styles.voucherItem}
@@ -155,7 +156,7 @@ const styles = StyleSheet.create({
 });
 
 mapStateToProps = (state) => ({
-  getVouchers: state.authReducer.getVouchers
+  vouchers: state.rewardsReducer.vouchers.dataVoucher
 })
 
 mapDispatchToProps = (dispatch) => ({

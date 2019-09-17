@@ -9,13 +9,15 @@ import {
   Image,
   AsyncStorage
 } from 'react-native';
+import {connect} from "react-redux";
+import {compose} from "redux";
 
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
 import colorConfig from "../config/colorConfig";
 import appConfig from "../config/appConfig";
 
-export default class VoucherDetail extends Component {
+class VoucherDetail extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -62,7 +64,7 @@ export default class VoucherDetail extends Component {
             <View style={styles.point}>
               <Image style={{height: 18, width: 25, marginRight: 5}} 
                 source={require('../assets/img/ticket.png')}/>
-              <Text style={{color: colorConfig.pageIndex.activeTintColor, fontWeight: 'bold'}}>{this.state.rewardPoint+' Point'}</Text>
+              <Text style={{color: colorConfig.pageIndex.activeTintColor, fontWeight: 'bold'}}>{this.props.totalPoint+' Point'}</Text>
             </View>
           </View>
           <View style={styles.line}/>
@@ -204,3 +206,15 @@ const styles = StyleSheet.create({
     color: colorConfig.pageIndex.activeTintColor,
   },
 });
+
+mapStateToProps = (state) => ({
+  totalPoint : state.rewardsReducer.dataPoint.totalPoint
+});
+
+mapDispatchToProps = (dispatch) => ({
+  dispatch
+});
+
+export default compose(
+  connect(mapStateToProps, mapDispatchToProps),
+)(VoucherDetail);

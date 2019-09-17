@@ -14,8 +14,9 @@ import {connect} from "react-redux";
 import {compose} from "redux";
 import {notifikasi} from "../actions/auth.actions";
 import {
-  getCampaign, 
-  getDataPointByCampaignID,
+  campaign, 
+  dataPoint,
+  vouchers
 } from "../actions/rewards.action";
 
 import RewardsPoint from '../components/rewardsPoint';
@@ -69,39 +70,15 @@ class Rewards extends Component {
     };
   }
 
-  componentWillMount(){
-    this.getDataRewards();
+  componentDidMount = async() => {
+    await this.getDataRewards();
   }
 
   getDataRewards = async() => {
     try {
-      const campaign =  await this.props.dispatch(getCampaign());
-      
-      if(campaign.count > 0){
-        var dataResponse = [];
-        let totalPoint = 0;
-        for (let i = 0; i < campaign.count; i++) {
-          const response =  await this.props.dispatch(getDataPointByCampaignID(campaign.data[i].id));
-          if(response.count > 0){
-            for (let j = 0; j < response.count; j++) {
-              dataResponse.push(response.data[j])
-              totalPoint = totalPoint + parseInt(response.data[j].payment)
-            }
-          }
-        }
-        var recentTampung = [];
-        if(_.orderBy(dataResponse, ['created'], ['desc']).length > 0){
-          for (let i = 0; i < 3; i++) {
-            recentTampung.push(_.orderBy(dataResponse, ['created'], ['desc'])[i])
-          }
-        }
-        
-        this.setState({
-          dataRecent: recentTampung
-        });
-
-        await AsyncStorage.setItem("@point",  JSON.stringify(totalPoint));
-      }      
+      await this.props.dispatch(campaign());
+      await this.props.dispatch(dataPoint());
+      await this.props.dispatch(vouchers());
     } catch (error) {
       await this.props.dispatch(notifikasi('Get Data Rewards Error!', error.responseBody.message, console.log('Cancel Pressed')));
     }
@@ -126,7 +103,7 @@ class Rewards extends Component {
         <RewardsStamp/>
         <RewardsPoint/>
         <RewardsMenu/>
-        <RewardsTransaction dataRecent={this.state.dataRecent}/>
+        <RewardsTransaction/>
       </ScrollView>
     );
   }

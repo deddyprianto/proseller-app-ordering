@@ -7,11 +7,14 @@ import {
   TouchableOpacity,
   Image
 } from 'react-native';
+import {connect} from "react-redux";
+import {compose} from "redux";
+
 import logoCash from '../assets/img/cash.png';
 import logoVisa from '../assets/img/visa.png';
 import colorConfig from "../config/colorConfig";
 
-export default class RewardsTransaction extends Component {
+class RewardsTransaction extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -24,28 +27,29 @@ export default class RewardsTransaction extends Component {
         <Text style={styles.title}>Recent Transactions</Text>
         <View style={styles.card}>
           {
-            this.props.dataRecent.map((item, key) =>
-            <View key={key}>
-              {
-                <View>
-                  <TouchableOpacity style={styles.item}>
-                  <View style={{
-                    flexDirection:'row', 
-                  }}>
-                    <Image resizeMode='stretch' style={styles.imageLogo} source={
-                      (item.paymentType == 'Cash')? logoCash : logoVisa
-                    }/>
-                    <Text style={{
-                      marginLeft: 10
-                    }}>{item.storeName}</Text>
-                  </View>
-                  <Text>{item.pointValue} > </Text>
-                </TouchableOpacity>
-                <View style={styles.line}></View>
+            (this.props.recentTransaction != undefined)?
+            this.props.recentTransaction.map((item, key) =>
+              <View key={key}>
+                {
+                  <View>
+                    <TouchableOpacity style={styles.item}>
+                    <View style={{
+                      flexDirection:'row', 
+                    }}>
+                      <Image resizeMode='stretch' style={styles.imageLogo} source={
+                        (item.paymentType == 'Cash')? logoCash : logoVisa
+                      }/>
+                      <Text style={{
+                        marginLeft: 10
+                      }}>{item.storeName}</Text>
+                    </View>
+                    <Text>{item.pointDebit} > </Text>
+                  </TouchableOpacity>
+                  <View style={styles.line}></View>
+                </View>
+                }
               </View>
-              }
-            </View>
-            )
+              ) : null
           }
 
           <TouchableOpacity style={{
@@ -105,3 +109,15 @@ const styles = StyleSheet.create({
     marginBottom:5,
   },
 });
+
+mapStateToProps = (state) => ({
+  recentTransaction : state.rewardsReducer.dataPoint.recentTransaction
+});
+
+mapDispatchToProps = (dispatch) => ({
+  dispatch
+});
+
+export default compose(
+  connect(mapStateToProps, mapDispatchToProps),
+)(RewardsTransaction);
