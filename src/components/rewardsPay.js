@@ -57,9 +57,14 @@ class RewardsPay extends Component {
         'paymentType': this.state.paymentType
       } 
       const response =  await this.props.dispatch(sendPayment(data));
-      await this.props.dispatch(campaign());
-      await this.props.dispatch(dataPoint());
-      await this.props.dispatch(notifikasi('Pay success!', response.message+' point', Actions.pop()));
+      if(response.statusCode != 400) {
+        await this.props.dispatch(campaign());
+        await this.props.dispatch(dataPoint());
+        await this.props.dispatch(notifikasi('Pay success!', response.message+' point', Actions.pop()));
+      } else {
+        await this.props.dispatch(notifikasi('Pay error!', response.message, console.log('Cancel Pressed')));
+      }
+      
     } catch (error) {
       await this.props.dispatch(notifikasi('Pay Error!', error.responseBody.message, console.log('Cancel Pressed')));
     }
@@ -172,14 +177,10 @@ const styles = StyleSheet.create({
   }
 });
 
-mapStateToProps = (state) => ({
-  getVouchers: state.authReducer.getVouchers
-})
-
 mapDispatchToProps = (dispatch) => ({
   dispatch
 });
 
 export default compose(
-  connect(mapStateToProps, mapDispatchToProps),
+  connect(null, mapDispatchToProps),
 )(RewardsPay);

@@ -16,11 +16,13 @@ import {
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
 import QRCode from 'react-native-qrcode-svg';
+import {connect} from "react-redux";
+import {compose} from "redux";
 
 import colorConfig from "../config/colorConfig";
 import appConfig from '../config/appConfig';
 
-export default class RewardsQRmenu extends Component {
+class RewardsQRmenu extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -54,7 +56,10 @@ export default class RewardsQRmenu extends Component {
         <View style={styles.card}>
           <View>
             <QRCode
-              value="Just some string value"
+              value={
+              JSON.stringify({
+                'token': this.props.token,
+              })}
               logo={appConfig.appLogoQR}
               logoSize={this.state.screenWidth/6}
               size={this.state.screenWidth/2}
@@ -114,3 +119,16 @@ const styles = StyleSheet.create({
     fontWeight: 'bold'
   },
 });
+
+mapStateToProps = (state) => ({
+  token: state.authReducer.authData.token
+})
+
+mapDispatchToProps = (dispatch) => ({
+  dispatch
+});
+
+export default compose(
+  connect(mapStateToProps, mapDispatchToProps),
+)(RewardsQRmenu);
+

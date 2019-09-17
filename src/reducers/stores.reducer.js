@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux';
 
-const getDataStores = (state = {}, action) => {
+const dataStores = (state = {}, action) => {
   switch (action.type) {
 
     case "DATA_ALL_STORES":
@@ -14,5 +14,5 @@ const getDataStores = (state = {}, action) => {
 }
 
 export default combineReducers({
-  getDataStores
+  dataStores
 });

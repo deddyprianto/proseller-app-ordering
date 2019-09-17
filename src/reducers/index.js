@@ -10,11 +10,13 @@ import { reducer as formReducer } from 'redux-form'
 import authReducer from "./auth.reducer";
 import userReducer from "./user.reducer";
 import rewardsReducer from "./rewards.reducer";
+import storesReducer from "./stores.reducer";
 
 const reducers = {
   authReducer,
   userReducer,
   rewardsReducer,
+  storesReducer,
   form: formReducer
 };
 

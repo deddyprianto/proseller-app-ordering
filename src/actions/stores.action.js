@@ -1,6 +1,6 @@
 import {fetchApi} from "../service/api";
 
-export const getDataStores = () => {
+export const dataStores = () => {
   return async (dispatch, getState) => {
     const state = getState();
     try {

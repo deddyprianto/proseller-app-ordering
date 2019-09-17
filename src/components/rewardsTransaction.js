@@ -27,6 +27,9 @@ class RewardsTransaction extends Component {
         <Text style={styles.title}>Recent Transactions</Text>
         <View style={styles.card}>
           {
+            console.log(this.props.recentTransaction)
+          }
+          {
             (this.props.recentTransaction != undefined)?
             this.props.recentTransaction.map((item, key) =>
               <View key={key}>
@@ -59,7 +62,12 @@ class RewardsTransaction extends Component {
             <Text style={{
               color: colorConfig.pageIndex.activeTintColor, 
               fontWeight: 'bold'
-            }}> See More </Text>
+            }}> 
+              {
+                (this.props.recentTransaction != undefined) ?
+                  (this.props.recentTransaction.length == 0) ? 'Empty' : 'See More' : null
+              }
+            </Text>
           </TouchableOpacity>
         </View>
       </View>

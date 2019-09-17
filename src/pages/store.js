@@ -10,7 +10,7 @@ import {
 import {connect} from "react-redux";
 import {compose} from "redux";
 import {notifikasi} from "../actions/auth.actions";
-import {getDataStores} from "../actions/stores.action";
+import {dataStores} from "../actions/stores.action";
 
 import * as geolib from 'geolib';
 import * as _ from 'lodash';
@@ -69,14 +69,15 @@ class Store extends Component {
 
   getDataStores = async() => {
     try {
-      const response =  await this.props.dispatch(getDataStores());
+      await this.props.dispatch(dataStores());
+
       Geolocation.getCurrentPosition(
         (position) => {
-          this.setDataStore(response, true, position);
+          this.setDataStore(this.props.dataStores, true, position);
         },
         (error) => {
           alert(error.message)
-          this.setDataStore(response, false, null);
+          this.setDataStore(this.props.dataStores, false, null);
         },
         { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
       );
@@ -89,53 +90,48 @@ class Store extends Component {
     var dataStoresTampung = [];
     var storeGrupTampung = [];
     for(var i=0; i<response.count; i++){
-      storeGrupTampung.push(response.data[i].location.region);
-      dataStoresTampung.push({
-        'storeName': response.data[i].storeName,
-        'storeStatus': this._cekOpen(
-          this.state.currentDay.getDay(), 
-          this.state.currentClock, 
-          response.data[i].operationalHours[1].monday,
-          response.data[i].operationalHours[2].tuesday,
-          response.data[i].operationalHours[3].wednesday,
-          response.data[i].operationalHours[4].thursday,
-          response.data[i].operationalHours[5].friday,
-          response.data[i].operationalHours[6].saturday,
-          response.data[i].operationalHours[0].sunday,
-          true
-        ),
-        'storeJarak': (statusLocation) ?
-          (geolib.getDistance(position.coords, {
-            latitude: response.data[i].location.coordinate.lat,
-            longitude: response.data[i].location.coordinate.lng,
-          }) / 1000) : '-',
-        'image': response.data[i].image,
-        'region' : response.data[i].location.region
-      });
-    }
-
-    var tampung = [];
-    tampung = [...dataStoresTampung];
-    tampung.sort(this._getSorting)
-
-    var dataStoresNearTampung = [];
-    if(tampung.length > 0){
-      if(statusLocation){
-        for (let i = 0; i < 3; i++) {
-          dataStoresNearTampung.push(tampung[i]);
-        }
+      if(response.data[i].deleted == false){
+        storeGrupTampung.push(response.data[i].location.region);
+        dataStoresTampung.push({
+          'storeName': response.data[i].storeName,
+          'storeStatus': this._cekOpen(
+            this.state.currentDay.getDay(), 
+            this.state.currentClock, 
+            response.data[i].operationalHours[1].monday,
+            response.data[i].operationalHours[2].tuesday,
+            response.data[i].operationalHours[3].wednesday,
+            response.data[i].operationalHours[4].thursday,
+            response.data[i].operationalHours[5].friday,
+            response.data[i].operationalHours[6].saturday,
+            response.data[i].operationalHours[0].sunday,
+            true
+          ),
+          'storeJarak': (statusLocation) ?
+            (geolib.getDistance(position.coords, {
+              latitude: response.data[i].location.coordinate.lat,
+              longitude: response.data[i].location.coordinate.lng,
+            }) / 1000) : '-',
+          'image': response.data[i].image,
+          'region' : response.data[i].location.region
+        });
       }
-
-      var dataAllStore = [];
-      dataAllStore.push(_.groupBy(dataStoresTampung, 'region'));
-      this.setState({
-        isLoading: false,
-        dataStores: dataStoresTampung,
-        dataStoresNear: dataStoresNearTampung,
-        dataAllStore: _.groupBy(dataStoresTampung, 'region'),
-        dataStoreRegion: _.uniq(storeGrupTampung)
-      });
     }
+    
+    var dataStoresNearTampung = [];
+    if(statusLocation){
+      for (let i = 0; i < 3; i++) {
+        dataStoresNearTampung = [...dataStoresTampung];
+        dataStoresNearTampung.sort(this._getSorting).slice(0, 3);
+      }
+    }
+
+    this.setState({
+      isLoading: false,
+      dataStores: dataStoresTampung,
+      dataStoresNear: dataStoresNearTampung,
+      dataAllStore: _.groupBy(dataStoresTampung, 'region'),
+      dataStoreRegion: _.uniq(storeGrupTampung)
+    });
     this.setState({ isLoading: false });
   }
   
@@ -265,10 +261,14 @@ const styles = StyleSheet.create({
   },
 });
 
+mapStateToProps = (state) => ({
+  dataStores : state.storesReducer.dataStores.stores
+})
+
 mapDispatchToProps = (dispatch) => ({
   dispatch
 });
 
 export default compose(
-  connect(null, mapDispatchToProps),
+  connect(mapStateToProps, mapDispatchToProps),
 )(Store);
