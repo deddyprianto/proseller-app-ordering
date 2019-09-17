@@ -14,7 +14,10 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
 import {connect} from "react-redux";
 import {compose} from "redux";
-import {getCampaign, getVouchers} from "../actions/auth.actions";
+import {
+  getCampaign, 
+  getVouchers
+} from "../actions/rewards.action";
 
 import colorConfig from "../config/colorConfig";
 import RewardsStamp from '../components/rewardsStamp';

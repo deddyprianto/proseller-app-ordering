@@ -12,11 +12,11 @@ import { createMaterialTopTabNavigator } from 'react-navigation-tabs';
 import * as _ from 'lodash';
 import {connect} from "react-redux";
 import {compose} from "redux";
+import {notifikasi} from "../actions/auth.actions";
 import {
   getCampaign, 
-  getDataPointByCampaignID, 
-  notifikasi
-} from "../actions/auth.actions";
+  getDataPointByCampaignID,
+} from "../actions/rewards.action";
 
 import RewardsPoint from '../components/rewardsPoint';
 import RewardsStamp from '../components/rewardsStamp';
@@ -105,16 +105,6 @@ class Rewards extends Component {
     } catch (error) {
       await this.props.dispatch(notifikasi('Get Data Rewards Error!', error.responseBody.message, console.log('Cancel Pressed')));
     }
-  }
-
-  _setPoint = (data) => {
-    this.setState({
-      dataRewards: [{'point': 2.429}]
-    });
-  }
-
-  _setStamp = (data) => {
-    
   }
 
   _onRefresh = () => {

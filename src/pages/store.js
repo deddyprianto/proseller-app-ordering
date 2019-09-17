@@ -9,7 +9,8 @@ import {
 } from 'react-native';
 import {connect} from "react-redux";
 import {compose} from "redux";
-import {getDataStores, notifikasi} from "../actions/auth.actions";
+import {notifikasi} from "../actions/auth.actions";
+import {getDataStores} from "../actions/stores.action";
 
 import * as geolib from 'geolib';
 import * as _ from 'lodash';
@@ -264,14 +265,10 @@ const styles = StyleSheet.create({
   },
 });
 
-mapStateToProps = (state) => ({
-  getToken: state.authReducer.getToken
-})
-
 mapDispatchToProps = (dispatch) => ({
   dispatch
 });
 
 export default compose(
-  connect(mapStateToProps, mapDispatchToProps),
+  connect(null, mapDispatchToProps),
 )(Store);

@@ -15,7 +15,8 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
 import {connect} from "react-redux";
 import {compose} from "redux";
-import {sendPayment, getToken, notifikasi} from "../actions/auth.actions";
+import {notifikasi} from "../actions/auth.actions";
+import {sendPayment} from "../actions/rewards.action";
 
 import colorConfig from "../config/colorConfig";
 
