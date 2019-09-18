@@ -5,7 +5,9 @@ import {
   StyleSheet,
   Dimensions,
   TouchableOpacity,
-  Image
+  Image,
+  ScrollView,
+  RefreshControl,
 } from 'react-native';
 import {connect} from "react-redux";
 import {compose} from "redux";
@@ -21,6 +23,7 @@ class HistoryPayment extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      refreshing: false,
     };
   }
 
@@ -41,9 +44,26 @@ class HistoryPayment extends Component {
     Actions.historyDetailPayment({item});
   }
 
+  getDataHistory = async() => {
+    try {
+      await this.props.dispatch(campaign());
+      await this.props.dispatch(dataPoint());
+    } catch (error) {
+      await this.props.dispatch(notifikasi('Get Data History Error!', error.responseBody.message, console.log('Cancel Pressed')));
+    }
+  }
+
+  _onRefresh = () => {
+    this.setState({refreshing: true});
+    this.getDataHistory();
+    this.setState({refreshing: false});
+  }
+
   render() {
     return (
-      <View>
+      <ScrollView refreshControl={
+        <RefreshControl refreshing={this.state.refreshing} onRefresh={this._onRefresh}/>
+      }>
       {
         (this.props.pointTransaction == undefined) ? null :
         (this.props.pointTransaction.length == 0) ?
@@ -81,7 +101,7 @@ class HistoryPayment extends Component {
         }
         </View>
       }
-      </View>
+      </ScrollView>
     );
   }
 }
@@ -89,6 +109,7 @@ class HistoryPayment extends Component {
 const styles = StyleSheet.create({
   component: {
     marginTop: 10,
+    marginBottom: 10,
     alignItems: 'center'
   },
   empty: {

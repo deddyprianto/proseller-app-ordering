@@ -61,7 +61,6 @@ export const dataPoint = () => {
         campaign => campaign.deleted == false && campaign.priority == true && campaign.campaignType == 'point').map(
         async campaign => {
           let response =  await fetchApi("/campaign/"+campaign.id+"/points", "GET", false, 200, token);
-          console.log(response);
           if(response.success){
             response.responseBody.data.filter(point => point.deleted == false).map(
             async point => {

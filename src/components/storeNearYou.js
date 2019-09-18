@@ -26,7 +26,7 @@ export default class StoreNearYou extends Component {
 
   render() {
     return (
-      <View style={styles.stores}>{console.log(this.props.dataStoresNear.slice(0,3))}
+      <View style={styles.stores}>
         <Text style={styles.stores}>Stores Near You</Text>
         <View style={{ justifyContent :'space-between', flexDirection:'row' }}>
         {

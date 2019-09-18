@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   Image
 } from 'react-native';
+import { Container } from 'native-base';
 import {connect} from "react-redux";
 import {compose} from "redux";
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -32,9 +33,9 @@ const AppNavigationContainer = createAppContainer(
 		Payment: {
 			screen: HistoryPayment
     },
-    Redeem: {
-			screen: HistoryRedeem
-		}
+    // Redeem: {
+		// 	screen: HistoryRedeem
+		// }
 	},{
     initialRouteName: 'Payment',
     tabBarOptions: {
@@ -78,23 +79,11 @@ class History extends Component {
     }
   }
 
-  _onRefresh = () => {
-    this.setState({refreshing: true});
-    this.getDataHistory();
-    this.setState({refreshing: false});
-  }
-
   render() {
     return (
-      <ScrollView
-        refreshControl={
-          <RefreshControl
-            refreshing={this.state.refreshing}
-            onRefresh={this._onRefresh}
-          />
-        }>
-          <AppNavigationContainer/>
-      </ScrollView>
+      <Container>
+        <AppNavigationContainer/>
+      </Container>
     );
   }
 }

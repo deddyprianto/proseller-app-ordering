@@ -223,7 +223,7 @@ class Store extends Component {
 
   render() {
     return (
-      <View>
+      <View style={{marginBottom:40}}>
         <View style={{backgroundColor: colorConfig.pageIndex.backgroundColor}}>
           <TouchableOpacity style={{
             flexDirection:'row', 
