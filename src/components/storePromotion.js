@@ -24,6 +24,10 @@ export default class StorePromotion extends Component {
     Actions.seeMorePromotion();
   }
 
+  storeDetailPromotion = () => {
+    Actions.storeDetailPromotion();
+  }
+
   render() {
     return (
       <View style={{paddingBottom: 20}}>
@@ -37,18 +41,18 @@ export default class StorePromotion extends Component {
           dot={ <View style={styles.swiperDot} /> }
           activeDot={ <View style={styles.swiperActiveDot} /> }
           paginationStyle={styles.swiperPaginatiom} loop>
-          <View style={styles.slide}>
+          <TouchableOpacity style={styles.slide} onPress={this.storeDetailPromotion}>
             <Image resizeMode='stretch' style={styles.image} source={require('../assets/slide/slide1.jpg')} />
-          </View>
-          <View style={styles.slide}>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.slide} onPress={this.storeDetailPromotion}>
             <Image resizeMode='stretch' style={styles.image} source={require('../assets/slide/slide2.jpg')} />
-          </View>
-          <View style={styles.slide}>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.slide} onPress={this.storeDetailPromotion}>
             <Image resizeMode='stretch' style={styles.image} source={require('../assets/slide/slide3.jpg')} />
-          </View>
-          <View style={styles.slide}>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.slide} onPress={this.storeDetailPromotion}>
             <Image resizeMode='stretch' style={styles.image} source={require('../assets/slide/slide4.jpg')} />
-          </View>
+          </TouchableOpacity>
         </Swiper>
       </View>
     );

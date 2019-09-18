@@ -11,15 +11,14 @@ import {
   StyleSheet,
   Dimensions,
   TouchableOpacity,
-  Image,
-  ScrollView
+  Image
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
 
 import colorConfig from "../config/colorConfig";
 
-export default class StoreSeeMorePromotion extends Component {
+export default class StoreDetailPromotion extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -29,10 +28,6 @@ export default class StoreSeeMorePromotion extends Component {
 
   goBack(){
     Actions.pop()
-  }
-
-  storeDetailPromotion = () => {
-    Actions.storeDetailPromotion();
   }
 
 	render() {
@@ -46,22 +41,11 @@ export default class StoreSeeMorePromotion extends Component {
           </TouchableOpacity>
           <View style={styles.line}/>
         </View>
-        <ScrollView>
-          <View style={{paddingTop: 10, paddingBottom: 10}}>
-            <TouchableOpacity style={styles.card} onPress={this.storeDetailPromotion}>
-              <Image resizeMode='stretch' style={styles.image} source={require('../assets/slide/slide1.jpg')} />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.card} onPress={this.storeDetailPromotion}>
-              <Image resizeMode='stretch' style={styles.image} source={require('../assets/slide/slide2.jpg')} />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.card} onPress={this.storeDetailPromotion}>
-              <Image resizeMode='stretch' style={styles.image} source={require('../assets/slide/slide3.jpg')} />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.card} onPress={this.storeDetailPromotion}>
-              <Image resizeMode='stretch' style={styles.image} source={require('../assets/slide/slide4.jpg')} />
-            </TouchableOpacity>
+        <View style={styles.card}>
+          <View style={styles.item}>
+            <Text style={styles.title}>Promotion Detail</Text>
           </View>
-        </ScrollView>
+        </View>
       </View>
     )
 	}
@@ -88,18 +72,24 @@ const styles = StyleSheet.create({
     borderBottomWidth:2
   },
   card: {
-    marginLeft:10,
-    marginRight: 10,
-    marginBottom: 5,
+    margin:10,
     borderColor: colorConfig.pageIndex.activeTintColor,
     borderWidth: 1,
     borderRadius: 5,
     backgroundColor: colorConfig.pageIndex.backgroundColor
   },
-  image: {
-    width: Dimensions.get('window').width-22,
-    height: Dimensions.get('window').width/3,
-    borderRadius: 5
+  item: {
+    alignItems: 'center',
+    borderBottomColor: colorConfig.pageIndex.activeTintColor,
+    borderBottomWidth: 1,
+    margin:10,
+  },
+  title: {
+    color: colorConfig.pageIndex.activeTintColor,
+    fontSize: 14,
+    textAlign: 'center',
+    fontWeight: 'bold',
+    marginBottom: 10
   },
 });
 

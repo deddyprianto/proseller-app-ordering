@@ -20,6 +20,7 @@ import VoucherDetail from "../components/voucherDetail";
 import HistoryDetailPayment from "../components/historyDetailPayment";
 import StoreDetailStores from "../components/storeDetailStores";
 import StoreSeeMorePromotion from "../components/storeSeeMorePromotion";
+import StoreDetailPromotion from "../components/storeDetailPromotion";
 
 export default class Routes extends Component {
 	render() {
@@ -41,6 +42,7 @@ export default class Routes extends Component {
             <Scene key="historyDetailPayment" component={HistoryDetailPayment} />
             <Scene key="storeDetailStores" component={StoreDetailStores} />
             <Scene key="seeMorePromotion" component={StoreSeeMorePromotion} />
+            <Scene key="storeDetailPromotion" component={StoreDetailPromotion} />
           </Scene>
         </Scene>
       </Router>
