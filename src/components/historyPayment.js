@@ -15,6 +15,7 @@ import * as _ from 'lodash';
 import logoCash from '../assets/img/cash.png';
 import logoVisa from '../assets/img/visa.png';
 import colorConfig from "../config/colorConfig";
+import { Actions } from 'react-native-router-flux';
 
 class HistoryPayment extends Component {
   constructor(props) {
@@ -36,6 +37,10 @@ class HistoryPayment extends Component {
     return mount[value-1];
   }
 
+  historyDetailPayment = (item) => {
+    Actions.historyDetailPayment({item});
+  }
+
   render() {
     return (
       <View>
@@ -49,12 +54,12 @@ class HistoryPayment extends Component {
         {
           _.orderBy(this.props.pointTransaction, ['created'], ['desc']).map((item, key) =>
           <View key={key}>{
-            <TouchableOpacity style={styles.item}>
+            <TouchableOpacity style={styles.item} onPress={() => this.historyDetailPayment(item)}>
               <View style={styles.sejajarSpace}>
                 <View style={styles.detail}>
                   <View style={styles.sejajarSpace}>
                     <Text style={styles.storeName}>{item.storeName}</Text>
-                    <Text style={styles.itemType}>Payment</Text>
+                    <Text style={styles.itemType}>{item.pointDebit+' point'}</Text>
                   </View>
                   <View style={styles.sejajarSpace}>
                     <View style={{flexDirection: 'row'}}>
@@ -128,9 +133,8 @@ const styles = StyleSheet.create({
     color: colorConfig.pageIndex.activeTintColor,
   },
   itemType: {
-    color: colorConfig.pageIndex.inactiveTintColor,
+    color: colorConfig.pageIndex.activeTintColor,
     fontSize: 12,
-    fontStyle: 'italic'
   },
   btnDetail: {
     alignItems: 'center',

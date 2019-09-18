@@ -17,6 +17,9 @@ import Rewards from "../components/rewardsRewards";
 import RewardsQRmenu from "../components/rewardsQRmenu";
 import RewardsQRscan from "../components/rewardsQRscan";
 import VoucherDetail from "../components/voucherDetail";
+import HistoryDetailPayment from "../components/historyDetailPayment";
+import StoreDetailStores from "../components/storeDetailStores";
+import StoreSeeMorePromotion from "../components/storeSeeMorePromotion";
 
 export default class Routes extends Component {
 	render() {
@@ -35,6 +38,9 @@ export default class Routes extends Component {
             <Scene key="qrcode" component={RewardsQRmenu} />
             <Scene key="scan" component={RewardsQRscan} />
             <Scene key="voucher" component={VoucherDetail} />
+            <Scene key="historyDetailPayment" component={HistoryDetailPayment} />
+            <Scene key="storeDetailStores" component={StoreDetailStores} />
+            <Scene key="seeMorePromotion" component={StoreSeeMorePromotion} />
           </Scene>
         </Scene>
       </Router>

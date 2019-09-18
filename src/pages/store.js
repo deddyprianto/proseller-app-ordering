@@ -5,7 +5,9 @@ import {
   StyleSheet,
   ScrollView,
   Dimensions,
-  RefreshControl 
+  RefreshControl,
+  TouchableOpacity,
+  Image
 } from 'react-native';
 import {connect} from "react-redux";
 import {compose} from "redux";
@@ -22,6 +24,7 @@ import colorConfig from "../config/colorConfig";
 import StorePromotion from "../components/storePromotion";
 import StoreNearYou from "../components/storeNearYou";
 import StoreStores from "../components/storeStores";
+import appConfig from '../config/appConfig';
 
 class Store extends Component {
   constructor(props) {
@@ -112,7 +115,10 @@ class Store extends Component {
               longitude: response.data[i].location.coordinate.lng,
             }) / 1000) : '-',
           'image': response.data[i].image,
-          'region' : response.data[i].location.region
+          'region' : response.data[i].location.region,
+          'address': response.data[i].location.address,
+          'district': response.data[i].location.district,
+          'operationalHours': response.data[i].operationalHours
         });
       }
     }
@@ -217,33 +223,50 @@ class Store extends Component {
 
   render() {
     return (
-      <ScrollView style={styles.scrollView}
-        refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this._onRefresh}/>
-      }>
-        {
-          (this.state.isLoading === true) ? 
-          <View style={styles.loading}> 
-            {(this.state.isLoading) && <Loader />}
-          </View> :
-          <View style={styles.container}>
-            <StorePromotion/>
-            <View style={{borderBottomColor: colorConfig.store.defaultColor, borderBottomWidth:2, paddingTop:10}}/>
-            {
-              (this.state.dataStoresNear.length != 0) ?
-              <View>
-                <StoreNearYou dataStoresNear={this.state.dataStoresNear}/>
-                <View style={{borderBottomColor: colorConfig.store.defaultColor, borderBottomWidth:2, paddingTop:10}}/>
-              </View> : null
-            }
-            {
-              (this.state.dataAllStore.length != 0) ?
-              <View>
-                <StoreStores dataStoreRegion={this.state.dataStoreRegion} dataAllStore={this.state.dataAllStore}/>
-              </View> : null
-            }
-          </View>
-        }
-      </ScrollView>
+      <View>
+        <View style={{backgroundColor: colorConfig.pageIndex.backgroundColor}}>
+          <TouchableOpacity style={{
+            flexDirection:'row', 
+            alignItems:'center',
+            paddingLeft:10,
+            paddingBottom: 5,
+            paddingTop: 5
+          }}>
+            <Image resizeMode='stretch' style={styles.imageLogo} source={appConfig.appLogo}/>
+          </TouchableOpacity>
+          <View style={{
+            borderBottomColor: colorConfig.store.defaultColor, 
+            borderBottomWidth:2
+          }}/>
+        </View>
+        <ScrollView style={styles.scrollView}
+          refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this._onRefresh}/>
+        }>
+          {
+            (this.state.isLoading === true) ? 
+            <View style={styles.loading}> 
+              {(this.state.isLoading) && <Loader />}
+            </View> :
+            <View style={styles.container}>
+              <StorePromotion/>
+              <View style={{borderBottomColor: colorConfig.store.defaultColor, borderBottomWidth:2, paddingTop:10}}/>
+              {
+                (this.state.dataStoresNear.length != 0) ?
+                <View>
+                  <StoreNearYou dataStoresNear={this.state.dataStoresNear}/>
+                  <View style={{borderBottomColor: colorConfig.store.defaultColor, borderBottomWidth:2, paddingTop:10}}/>
+                </View> : null
+              }
+              {
+                (this.state.dataAllStore.length != 0) ?
+                <View>
+                  <StoreStores dataStoreRegion={this.state.dataStoreRegion} dataAllStore={this.state.dataAllStore}/>
+                </View> : null
+              }
+            </View>
+          }
+        </ScrollView>
+      </View>
     );
   }
 }
@@ -254,10 +277,16 @@ const styles = StyleSheet.create({
     padding:10,
   },
   scrollView: {
-    backgroundColor: colorConfig.store.scrollView,
+    // backgroundColor: colorConfig.pageIndex.backgroundColor,
   },
   loading: {
     height: Dimensions.get('window').height
+  },
+  imageLogo: {
+    width: 40,
+    height: 32,
+    paddingTop: 5,
+    marginBottom:5,
   },
 });
 

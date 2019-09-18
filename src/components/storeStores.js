@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 
 import colorConfig from "../config/colorConfig";
+import { Actions } from 'react-native-router-flux';
 
 export default class StoreStores extends Component {
   constructor(props) {
@@ -17,6 +18,10 @@ export default class StoreStores extends Component {
       dataStoreRegion: this.props.dataStoreRegion,
       dataAllStore: this.props.dataAllStore
     };
+  }
+
+  storeDetailStores = (item) => {
+    Actions.storeDetailStores({item});
   }
 
   render() {
@@ -30,7 +35,7 @@ export default class StoreStores extends Component {
                 <View key={keys}>
                 {
                   <TouchableOpacity 
-                    style={styles.storesItem}>
+                    style={styles.storesItem} onPress={() => this.storeDetailStores(item)}>
                     <View>
                       <Image 
                         style={styles.storesImage} 

@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 
 import colorConfig from "../config/colorConfig";
+import { Actions } from 'react-native-router-flux';
 
 export default class StoreNearYou extends Component {
   constructor(props) {
@@ -19,63 +20,36 @@ export default class StoreNearYou extends Component {
     };
   }
 
+  storeDetailStores = (item) => {
+    Actions.storeDetailStores({item});
+  }
+
   render() {
     return (
-      <View style={styles.stores}>
+      <View style={styles.stores}>{console.log(this.props.dataStoresNear.slice(0,3))}
         <Text style={styles.stores}>Stores Near You</Text>
         <View style={{ justifyContent :'space-between', flexDirection:'row' }}>
-            
-          <TouchableOpacity 
-            style={styles.storesNearItem}>
-            <View>
-              <Image 
-                style={styles.storesNearImage}
-                source={
-                  (this.state.dataStoresNear[0].image != '') ?
-                  {uri:this.state.dataStoresNear[0].image} : appConfig.appImageNull
-                }/>
-            </View>
-            <View
-              style={styles.storesNearDetail}>
-              <Text style={{ fontSize: 10 }}>{this.state.dataStoresNear[0].storeName}</Text>
-              <Text style={{ fontSize: 10, color: colorConfig.store.defaultColor }}>{this.state.dataStoresNear[0].storeJarak+' KM'}</Text>
-            </View>
-          </TouchableOpacity>
-
-          <TouchableOpacity 
-            style={styles.storesNearItem}>
-            <View>
-              <Image 
-                style={styles.storesNearImage}
-                source={
-                  (this.state.dataStoresNear[1].image != '') ?
-                  {uri:this.state.dataStoresNear[1].image} : appConfig.appImageNull
-                }/>
-            </View>
-            <View
-              style={styles.storesNearDetail}>
-              <Text style={{ fontSize: 10 }}>{this.state.dataStoresNear[1].storeName}</Text>
-              <Text style={{ fontSize: 10, color: colorConfig.store.defaultColor }}>{this.state.dataStoresNear[1].storeJarak+' KM'}</Text>
-            </View>
-          </TouchableOpacity>
-
-          <TouchableOpacity 
-            style={styles.storesNearItem}>
-            <View>
-              <Image 
-                style={styles.storesNearImage}
-                source={
-                  (this.state.dataStoresNear[2].image != '') ?
-                  {uri:this.state.dataStoresNear[2].image} : appConfig.appImageNull
-                }/>
-            </View>
-            <View
-              style={styles.storesNearDetail}>
-              <Text style={{ fontSize: 10 }}>{this.state.dataStoresNear[2].storeName}</Text>
-              <Text style={{ fontSize: 10, color: colorConfig.store.defaultColor }}>{this.state.dataStoresNear[2].storeJarak+' KM'}</Text>
-            </View>
-          </TouchableOpacity>
-
+        {
+          this.props.dataStoresNear.slice(0,3).map((item, key) =>
+          <View key={key}>{
+            <TouchableOpacity 
+              style={styles.storesNearItem} onPress={() => this.storeDetailStores(item)}>
+              <View>
+                <Image 
+                  style={styles.storesNearImage}
+                  source={
+                    (item.image != '') ?
+                    {uri:item.image} : appConfig.appImageNull
+                  }/>
+              </View>
+              <View
+                style={styles.storesNearDetail}>
+                <Text style={{ fontSize: 10 }}>{item.storeName}</Text>
+                <Text style={{ fontSize: 10, color: colorConfig.store.defaultColor }}>{item.storeJarak+' KM'}</Text>
+              </View>
+            </TouchableOpacity>
+          }</View>)
+        }
         </View>
       </View>
     );

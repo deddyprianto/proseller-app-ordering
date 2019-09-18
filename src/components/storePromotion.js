@@ -5,11 +5,13 @@ import {
   StyleSheet,
   Image,
   Dimensions,
+  TouchableOpacity,
 } from 'react-native';
 import Swiper from 'react-native-swiper';
 
 import colorConfig from "../config/colorConfig";
 import appConfig from "../config/appConfig";
+import { Actions } from 'react-native-router-flux';
 
 export default class StorePromotion extends Component {
   constructor(props) {
@@ -18,12 +20,16 @@ export default class StorePromotion extends Component {
     };
   }
 
+  seeMorePromotion = () => {
+    Actions.seeMorePromotion();
+  }
+
   render() {
     return (
       <View style={{paddingBottom: 20}}>
-        {/* <Text style={styles.stores}>Promotion</Text> */}
-        <Image resizeMode='stretch' style={styles.imageLogo} source={appConfig.appLogo}/>
-        {/* <View style={{borderBottomColor: colorConfig.store.defaultColor, borderBottomWidth:2, marginBottom:10}}/> */}
+        <TouchableOpacity style={styles.seeAll} onPress={this.seeMorePromotion}>
+          <Text style={styles.seeAllTitle}>See More</Text>
+        </TouchableOpacity>
         <Swiper style={styles.swiper}
           autoplay = {true}
           autoplayTimeout = {4}
@@ -57,12 +63,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold'
   },
-  imageLogo: {
-    width: 40,
-    height: 32,
-    paddingTop: 5,
-    marginBottom:5,
-  },
   swiper: {
     paddingBottom: 10,
     height: (Dimensions.get('window').width/3),
@@ -85,6 +85,16 @@ const styles = StyleSheet.create({
     bottom: -23, 
     // left: null, 
     // right: 10
+  },
+  seeAll: {
+    position: 'absolute',
+    top: (Dimensions.get('window').width/3)+5,
+    right: 10
+  },
+  seeAllTitle: {
+    color: colorConfig.pageIndex.activeTintColor,
+    fontSize: 14,
+    fontWeight: 'bold'
   },
   slide: {
     flex: 1,

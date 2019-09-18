@@ -15,6 +15,7 @@ import {
 } from 'react-native';
 import { Dimensions } from 'react-native';
 import appConfig from "../config/appConfig";
+import colorConfig from '../config/colorConfig';
 
 const imageWidth = Dimensions.get('window').width / 2;
 
@@ -28,6 +29,7 @@ const styles = StyleSheet.create({
 
   container: {
     alignItems: 'center',
+    backgroundColor: colorConfig.pageIndex.backgroundColor
   },
   containerImage: {
     alignItems: 'center',
