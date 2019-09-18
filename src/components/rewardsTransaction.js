@@ -27,9 +27,6 @@ class RewardsTransaction extends Component {
         <Text style={styles.title}>Recent Transactions</Text>
         <View style={styles.card}>
           {
-            console.log(this.props.recentTransaction)
-          }
-          {
             (this.props.recentTransaction != undefined)?
             this.props.recentTransaction.map((item, key) =>
               <View key={key}>
@@ -58,7 +55,7 @@ class RewardsTransaction extends Component {
           <TouchableOpacity style={{
             alignItems: 'center',
             margin:10
-          }} onPress={this.logout}>
+          }} onPress={() => this.props.screen.navigation.navigate('History')}>
             <Text style={{
               color: colorConfig.pageIndex.activeTintColor, 
               fontWeight: 'bold'

@@ -103,16 +103,20 @@ class Rewards extends Component {
         <RewardsStamp/>
         <RewardsPoint/>
         <RewardsMenu/>
-        <RewardsTransaction/>
+        <RewardsTransaction screen={this.props}/>
       </ScrollView>
     );
   }
 }
+
+mapStateToProps = (state) => ({
+  recentTransaction : state.rewardsReducer.dataPoint.recentTransaction
+});
 
 mapDispatchToProps = (dispatch) => ({
   dispatch
 });
 
 export default compose(
-  connect(null, mapDispatchToProps),
+  connect(mapStateToProps, mapDispatchToProps),
 )(Rewards);

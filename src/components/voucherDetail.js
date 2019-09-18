@@ -16,18 +16,15 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
 import colorConfig from "../config/colorConfig";
 import appConfig from "../config/appConfig";
+import {notifikasi} from "../actions/auth.actions";
+import {redeemVoucher, campaign, dataPoint} from "../actions/rewards.action";
 
 class VoucherDetail extends Component {
   constructor(props) {
     super(props);
     this.state = {
       screenWidth: Dimensions.get('window').width,
-      rewardPoint: 0,
     };
-  }
-
-  componentWillMount = async() => {
-    this.setState({rewardPoint: await AsyncStorage.getItem("@point")});
   }
 
   goBack(){
@@ -47,8 +44,20 @@ class VoucherDetail extends Component {
     return mount[value-1];
   }
 
-  btnRedeem = (dataVoucher) => {
-    console.log(dataVoucher)
+  btnRedeem = async(dataVoucher) => {
+    try {
+      let date = new Date();
+      let timeZone = date.getTimezoneOffset();
+      const data = {'voucher' : dataVoucher, 'timeZoneOffset':timeZone};
+      const response =  await this.props.dispatch(redeemVoucher(data));
+      console.log(response)
+      await this.props.dispatch(campaign());
+      await this.props.dispatch(dataPoint());
+      await this.props.dispatch(notifikasi('Redeem success!', response.message, Actions.pop()));
+    } catch (error) {
+      console.log(error)
+      await this.props.dispatch(notifikasi('Redeem error!', error.responseBody.message, console.log('Cancel Pressed')));
+    }
   }
   
   render() {

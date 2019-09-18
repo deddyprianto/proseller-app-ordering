@@ -56,7 +56,7 @@ const AppTabNavigator = createMaterialBottomTabNavigator(
     },
   },
   {
-    initialRouteName: 'Rewards',
+    initialRouteName: 'Account',
     activeTintColor: colorConfig.pageIndex.activeTintColor,
     inactiveTintColor: colorConfig.pageIndex.inactiveTintColor, 
     barStyle: { backgroundColor: colorConfig.pageIndex.backgroundColor },

@@ -14,7 +14,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
 import {connect} from "react-redux";
 import {compose} from "redux";
-import {vouchers} from "../actions/rewards.action";
+import {dataPoint, vouchers} from "../actions/rewards.action";
 
 import colorConfig from "../config/colorConfig";
 import RewardsStamp from '../components/rewardsStamp';
@@ -45,6 +45,7 @@ class RewardsRewards extends Component {
 
   getDataVoucher = async() =>{
     await this.props.dispatch(vouchers());
+    await this.props.dispatch(dataPoint());
     this.setState({ isLoading: false });
   }
 
