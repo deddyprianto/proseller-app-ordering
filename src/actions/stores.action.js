@@ -6,11 +6,16 @@ export const dataStores = () => {
     try {
       const {authReducer: {authData: {token}}} = state;
       const response = await fetchApi("/store", "GET", false, 200, token);
-      dispatch({
+      if(response.success){
+        dispatch({
           type: "DATA_ALL_STORES",
           data: response.responseBody
-      });
-      return response.responseBody;
+        });
+      } else {
+        dispatch({
+          type: "USER_LOGGED_OUT_SUCCESS"
+        });
+      }
     } catch (error) {
       return error;
     }

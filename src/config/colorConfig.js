@@ -43,6 +43,7 @@ const colorConfig = {
   pageIndex: {
     activeTintColor: '#83BC49',
     inactiveTintColor: '#CBCBCB',
+    grayColor: '#A2A2A2',
     backgroundColor: '#FFFFFF',
     listBorder: '#FCB03C',
   },

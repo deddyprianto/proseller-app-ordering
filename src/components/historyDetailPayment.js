@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   desc: {
-    color: colorConfig.pageIndex.inactiveTintColor,
+    color: colorConfig.pageIndex.grayColor,
     marginLeft: 8
   }
 });

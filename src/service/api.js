@@ -86,7 +86,7 @@ export const fetchApi = async (url, method, body, statusCode, token = null, load
 
         result.responseBody = errorBody;
 
-        console.log(result);
+        // console.log(result.success);
 
         throw result;
     } catch (error) {

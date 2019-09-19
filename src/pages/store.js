@@ -92,35 +92,40 @@ class Store extends Component {
   setDataStore = (response, statusLocation, position) => {
     var dataStoresTampung = [];
     var storeGrupTampung = [];
-    for(var i=0; i<response.count; i++){
-      if(response.data[i].deleted == false){
-        storeGrupTampung.push(response.data[i].location.region);
-        dataStoresTampung.push({
-          'storeName': response.data[i].storeName,
-          'storeStatus': this._cekOpen(
-            this.state.currentDay.getDay(), 
-            this.state.currentClock, 
-            response.data[i].operationalHours[1].monday,
-            response.data[i].operationalHours[2].tuesday,
-            response.data[i].operationalHours[3].wednesday,
-            response.data[i].operationalHours[4].thursday,
-            response.data[i].operationalHours[5].friday,
-            response.data[i].operationalHours[6].saturday,
-            response.data[i].operationalHours[0].sunday,
-            true
-          ),
-          'storeJarak': (statusLocation) ?
-            (geolib.getDistance(position.coords, {
-              latitude: response.data[i].location.coordinate.lat,
-              longitude: response.data[i].location.coordinate.lng,
-            }) / 1000) : '-',
-          'image': response.data[i].image,
-          'region' : response.data[i].location.region,
-          'address': response.data[i].location.address,
-          'district': response.data[i].location.district,
-          'operationalHours': response.data[i].operationalHours
-        });
+    try{
+      for(var i=0; i<response.count; i++){
+        if(response.data[i].deleted == false){
+          storeGrupTampung.push(response.data[i].location.region);
+          dataStoresTampung.push({
+            'storeName': response.data[i].storeName,
+            'storeStatus': this._cekOpen(
+              this.state.currentDay.getDay(), 
+              this.state.currentClock, 
+              response.data[i].operationalHours[1].monday,
+              response.data[i].operationalHours[2].tuesday,
+              response.data[i].operationalHours[3].wednesday,
+              response.data[i].operationalHours[4].thursday,
+              response.data[i].operationalHours[5].friday,
+              response.data[i].operationalHours[6].saturday,
+              response.data[i].operationalHours[0].sunday,
+              true
+            ),
+            'storeJarak': (statusLocation) ?
+              (geolib.getDistance(position.coords, {
+                latitude: response.data[i].location.coordinate.lat,
+                longitude: response.data[i].location.coordinate.lng,
+              }) / 1000) : '-',
+            'image': response.data[i].image,
+            'region' : response.data[i].location.region,
+            'address': response.data[i].location.address,
+            'district': response.data[i].location.district,
+            'operationalHours': response.data[i].operationalHours,
+            'coordinate': response.data[i].location.coordinate
+          });
+        }
       }
+    } catch (error) {
+      console.log(error)
     }
     
     var dataStoresNearTampung = [];
@@ -206,9 +211,9 @@ class Store extends Component {
   _getStatusOpen = (statusStore, statusOpen, openHour, closeHour) => {
     if(statusStore) {
       if(statusOpen){
-        return 'Open • Closing at '+closeHour[0]+':'+closeHour[1];
+        return 'Open • Closing at '+closeHour[0]+':'+closeHour[1]+' PM';
       } else {
-        return 'Closed • Opening at '+openHour[0]+':'+openHour[1];
+        return 'Closed • Opening at '+openHour[0]+':'+openHour[1]+' AM';
       }
     } else {
       return 'Closed • Closed today';

@@ -5,12 +5,17 @@ export const campaign = () => {
   return async (dispatch, getState) => {
     const state = getState();
     try {
-      const response = await fetchApi("/campaign", "GET", false, 200);      
-      dispatch({
-        type: "DATA_ALL_CAMPAIGN",
-        data: response.responseBody
-      });
-      return response.responseBody;
+      const response = await fetchApi("/campaign", "GET", false, 200); 
+      if(response.success){
+        dispatch({
+          type: "DATA_ALL_CAMPAIGN",
+          data: response.responseBody
+        });
+      } else {
+        dispatch({
+          type: "USER_LOGGED_OUT_SUCCESS"
+        });
+      }
     } catch (error) {
       return error;
     }
@@ -22,7 +27,7 @@ export const vouchers = () => {
     const state = getState();
     try {
       const {authReducer: {authData: {token}}} = state;
-      const {rewardsReducer: {campaign: {campaign: {count, data}}}} = state;
+      const {rewardsReducer: {campaign: {campaign: {data}}}} = state;
       var dataVoucher = [];
 
       await Promise.all(await data.filter(
@@ -53,7 +58,7 @@ export const dataPoint = () => {
     const state = getState();
     try {
       const {authReducer: {authData: {token}}} = state;
-      const {rewardsReducer: {campaign: {campaign: {count, data}}}} = state;
+      const {rewardsReducer: {campaign: {campaign: {data}}}} = state;
       var dataResponse = [];
       let totalPoint = 0;
       

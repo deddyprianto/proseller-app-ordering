@@ -11,10 +11,12 @@ import {
   StyleSheet,
   Dimensions,
   TouchableOpacity,
-  Image
+  Image,
+  ScrollView
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
+import createOpenLink from 'react-native-open-maps';
 
 import colorConfig from "../config/colorConfig";
 
@@ -30,6 +32,13 @@ export default class StoreDetailStores extends Component {
     Actions.pop()
   }
 
+  storeMap(coordinate, storeName){
+    // Actions.storeSeeMap({coordinate});
+    createOpenLink({ 
+      query: storeName
+    })
+  }
+
 	render() {
 		return(
 			<View style={styles.container}>
@@ -41,11 +50,108 @@ export default class StoreDetailStores extends Component {
           </TouchableOpacity>
           <View style={styles.line}/>
         </View>
-        <View style={styles.card}>
-          <View style={styles.item}>
-            <Text style={styles.title}>{this.props.item.storeName}</Text>
+        <ScrollView>
+          <View style={styles.card}>
+            <View style={styles.item}>
+              <Text style={styles.title}>{this.props.item.storeName}</Text>
+            </View>
+            <View style={styles.detail}>
+              <View style={styles.detailItem}>
+                <Text style={styles.desc}>Region</Text>
+                <Text style={styles.desc}>{this.props.item.region}</Text>
+              </View>
+              <View style={styles.detailItem}>
+                <Text style={styles.desc}>Address</Text>
+                <Text style={styles.descAddress}>{this.props.item.address}</Text>
+              </View>
+              <View style={styles.detailItem}>
+                <Text style={styles.desc}>Distance</Text>
+                <Text style={styles.desc}>{this.props.item.storeJarak+' KM'}</Text>
+              </View>
+              <View style={styles.detailItem}>
+                <Text style={styles.desc}>Status</Text>
+                <Text style={styles.desc}>{this.props.item.storeStatus}</Text>
+              </View>
+              <View style={{
+                alignItems: 'center'
+              }}>
+                <TouchableOpacity style={{
+                  borderColor: colorConfig.pageIndex.activeTintColor,
+                  borderWidth: 1,
+                  borderRadius: 10,
+                  paddingLeft: 10,
+                  paddingRight: 10,
+                  paddingTop: 5,
+                  paddingBottom: 5
+                }} onPress={() => this.storeMap(this.props.item.coordinate, this.props.item.storeName)}>
+                  <Text style={{
+                    color: colorConfig.pageIndex.activeTintColor,
+                    fontWeight: 'bold'
+                  }}>
+                    Open Map
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
           </View>
-        </View>
+
+          <View style={styles.card}>
+            <View style={styles.item}>
+              <Text style={styles.title}>Operating Hours</Text>
+            </View>
+            <View style={styles.detail}>
+              <View style={styles.detailItem}>
+                <Text style={styles.desc}>Monday</Text>
+                <Text style={styles.desc}>{
+                  this.props.item.operationalHours[1].monday.open+' AM to '+
+                  this.props.item.operationalHours[1].monday.close+' PM'
+                }</Text>
+              </View>
+              <View style={styles.detailItem}>
+                <Text style={styles.desc}>Tuesday</Text>
+                <Text style={styles.desc}>{
+                  this.props.item.operationalHours[2].tuesday.open+' AM to '+
+                  this.props.item.operationalHours[2].tuesday.close+' PM'
+                }</Text>
+              </View>
+              <View style={styles.detailItem}>
+                <Text style={styles.desc}>Wednesday</Text>
+                <Text style={styles.desc}>{
+                  this.props.item.operationalHours[3].wednesday.open+' AM to '+
+                  this.props.item.operationalHours[3].wednesday.close+' PM'
+                }</Text>
+              </View>
+              <View style={styles.detailItem}>
+                <Text style={styles.desc}>Thursday</Text>
+                <Text style={styles.desc}>{
+                  this.props.item.operationalHours[4].thursday.open+' AM to '+
+                  this.props.item.operationalHours[4].thursday.close+' PM'
+                }</Text>
+              </View>
+              <View style={styles.detailItem}>
+                <Text style={styles.desc}>Friday</Text>
+                <Text style={styles.desc}>{
+                  this.props.item.operationalHours[5].friday.open+' AM to '+
+                  this.props.item.operationalHours[5].friday.close+' PM'
+                }</Text>
+              </View>
+              <View style={styles.detailItem}>
+                <Text style={styles.desc}>Saturday</Text>
+                <Text style={styles.desc}>{
+                  this.props.item.operationalHours[6].saturday.open+' AM to '+
+                  this.props.item.operationalHours[6].saturday.close+' PM'
+                }</Text>
+              </View>
+              <View style={styles.detailItem}>
+                <Text style={styles.desc}>Sunday</Text>
+                <Text style={styles.desc}>{
+                  this.props.item.operationalHours[0].sunday.open+' AM to '+
+                  this.props.item.operationalHours[0].sunday.close+' PM'
+                }</Text>
+              </View>
+            </View>
+          </View>
+        </ScrollView>
       </View>
     )
 	}
@@ -91,5 +197,27 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 10
   },
+  detail: {
+    marginLeft: 30,
+    marginRight: 30,
+    marginBottom: 10,
+  },
+  detailItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    borderBottomColor: colorConfig.pageIndex.inactiveTintColor,
+    borderBottomWidth: 1,
+    paddingBottom: 5,
+    marginBottom: 10,
+  },
+  desc: {
+    color: colorConfig.pageIndex.grayColor,
+  },
+  descAddress: {
+    color: colorConfig.pageIndex.grayColor,
+    marginLeft: 8,
+    maxWidth: (Dimensions.get('window').width/2)+20,
+    textAlign: "right"
+  }
 });
 
