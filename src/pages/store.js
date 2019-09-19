@@ -73,7 +73,6 @@ class Store extends Component {
   getDataStores = async() => {
     try {
       await this.props.dispatch(dataStores());
-
       Geolocation.getCurrentPosition(
         (position) => {
           this.setDataStore(this.props.dataStores, true, position);

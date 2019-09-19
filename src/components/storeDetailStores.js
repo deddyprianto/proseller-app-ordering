@@ -103,50 +103,50 @@ export default class StoreDetailStores extends Component {
               <View style={styles.detailItem}>
                 <Text style={styles.desc}>Monday</Text>
                 <Text style={styles.desc}>{
-                  this.props.item.operationalHours[1].monday.open+' AM to '+
-                  this.props.item.operationalHours[1].monday.close+' PM'
+                  this.props.item.operationalHours[1].monday.open+' to '+
+                  this.props.item.operationalHours[1].monday.close
                 }</Text>
               </View>
               <View style={styles.detailItem}>
                 <Text style={styles.desc}>Tuesday</Text>
                 <Text style={styles.desc}>{
-                  this.props.item.operationalHours[2].tuesday.open+' AM to '+
-                  this.props.item.operationalHours[2].tuesday.close+' PM'
+                  this.props.item.operationalHours[2].tuesday.open+' to '+
+                  this.props.item.operationalHours[2].tuesday.close
                 }</Text>
               </View>
               <View style={styles.detailItem}>
                 <Text style={styles.desc}>Wednesday</Text>
                 <Text style={styles.desc}>{
-                  this.props.item.operationalHours[3].wednesday.open+' AM to '+
-                  this.props.item.operationalHours[3].wednesday.close+' PM'
+                  this.props.item.operationalHours[3].wednesday.open+' to '+
+                  this.props.item.operationalHours[3].wednesday.close
                 }</Text>
               </View>
               <View style={styles.detailItem}>
                 <Text style={styles.desc}>Thursday</Text>
                 <Text style={styles.desc}>{
-                  this.props.item.operationalHours[4].thursday.open+' AM to '+
-                  this.props.item.operationalHours[4].thursday.close+' PM'
+                  this.props.item.operationalHours[4].thursday.open+' to '+
+                  this.props.item.operationalHours[4].thursday.close
                 }</Text>
               </View>
               <View style={styles.detailItem}>
                 <Text style={styles.desc}>Friday</Text>
                 <Text style={styles.desc}>{
-                  this.props.item.operationalHours[5].friday.open+' AM to '+
-                  this.props.item.operationalHours[5].friday.close+' PM'
+                  this.props.item.operationalHours[5].friday.open+' to '+
+                  this.props.item.operationalHours[5].friday.close
                 }</Text>
               </View>
               <View style={styles.detailItem}>
                 <Text style={styles.desc}>Saturday</Text>
                 <Text style={styles.desc}>{
-                  this.props.item.operationalHours[6].saturday.open+' AM to '+
-                  this.props.item.operationalHours[6].saturday.close+' PM'
+                  this.props.item.operationalHours[6].saturday.open+' to '+
+                  this.props.item.operationalHours[6].saturday.close
                 }</Text>
               </View>
               <View style={styles.detailItem}>
                 <Text style={styles.desc}>Sunday</Text>
                 <Text style={styles.desc}>{
-                  this.props.item.operationalHours[0].sunday.open+' AM to '+
-                  this.props.item.operationalHours[0].sunday.close+' PM'
+                  this.props.item.operationalHours[0].sunday.open+' to '+
+                  this.props.item.operationalHours[0].sunday.close
                 }</Text>
               </View>
             </View>
