@@ -19,6 +19,7 @@
     "react": "16.8.6",
     "react-autosize-textarea": "^7.0.0",
     "react-native": "^0.60.5",
+    "react-native-android-location-enabler": "^1.2.0",
     "react-native-button": "^2.4.0",
     "react-native-camera": "^3.4.0",
     "react-native-elements": "^1.1.0",
