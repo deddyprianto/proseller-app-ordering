@@ -44,7 +44,7 @@ export default class StoreNearYou extends Component {
               </View>
               <View
                 style={styles.storesNearDetail}>
-                <Text style={{ fontSize: 10 }}>{item.storeName}</Text>
+                <Text style={{ fontSize: 10, color: colorConfig.pageIndex.grayColor }}>{item.storeName}</Text>
                 <Text style={{ fontSize: 10, color: colorConfig.store.defaultColor }}>{item.storeJarak+' KM'}</Text>
               </View>
             </TouchableOpacity>

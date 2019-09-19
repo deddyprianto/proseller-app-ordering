@@ -211,9 +211,9 @@ class Store extends Component {
   _getStatusOpen = (statusStore, statusOpen, openHour, closeHour) => {
     if(statusStore) {
       if(statusOpen){
-        return 'Open • Closing at '+closeHour[0]+':'+closeHour[1]+' PM';
+        return 'Open • Closing at '+closeHour[0]+':'+closeHour[1];
       } else {
-        return 'Closed • Opening at '+openHour[0]+':'+openHour[1]+' AM';
+        return 'Closed • Opening at '+openHour[0]+':'+openHour[1];
       }
     } else {
       return 'Closed • Closed today';

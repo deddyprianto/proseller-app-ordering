@@ -45,10 +45,10 @@ export default class StoreStores extends Component {
                         }/>
                     </View>
                     <View style={styles.storesDetail}>
-                      <Text style={{fontSize:14}}>{item.storeName}</Text>
+                      <Text style={{fontSize:14, color: colorConfig.pageIndex.activeTintColor, fontWeight: 'bold'}}>{item.storeName}</Text>
                       {
                         (item.storeJarak != '-') ? 
-                        <Text style={{fontSize:12, color: colorConfig.store.defaultColor}}>{item.storeJarak+' KM'}</Text>: null
+                        <Text style={{fontSize:12, color: colorConfig.pageIndex.grayColor}}>{item.storeJarak+' KM'}</Text>: null
                       }
                       <Text style={{fontSize:12, color: colorConfig.store.defaultColor}}>{item.storeStatus}</Text>
                     </View>
