@@ -56,6 +56,11 @@ class RewardsPay extends Component {
         'storeName': this.state.storeName,
         'paymentType': this.state.paymentType
       } 
+      // value={JSON.stringify({
+      //   'payment': 20,
+      //   'storeName': 'Qiji Test',
+      //   'paymentType': 'Cash'
+      // })}
       const response =  await this.props.dispatch(sendPayment(data));
       if(response.statusCode != 400) {
         await this.props.dispatch(campaign());

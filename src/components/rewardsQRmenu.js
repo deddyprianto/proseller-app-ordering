@@ -62,13 +62,13 @@ class RewardsQRmenu extends Component {
               })}
               logo={appConfig.appLogoQR}
               logoSize={this.state.screenWidth/6}
-              size={this.state.screenWidth/2}
+              size={this.state.screenWidth/2+50}
             />
-            <TouchableOpacity
+            {/* <TouchableOpacity
               style={styles.btnScan}
               onPress={this.pageScan}>
                 <Text style={styles.btnText}> Scan QR Code</Text>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
           </View>
         </View>
       </View>

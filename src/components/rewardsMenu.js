@@ -19,7 +19,8 @@ export default class RewardsMenu extends Component {
   }
 
   pagePay() {
-		Actions.pay()
+    // Actions.pay()
+    Actions.scan()
   }
 
   pageRewards() {
