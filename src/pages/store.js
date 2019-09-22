@@ -180,7 +180,7 @@ class Store extends Component {
     } else if(hariIni == 6) {
       var statusOpen = this._getStatusStore(jamSekarang, saturday.open.split(":"), saturday.close.split(":"));
       return this._getStatusOpen(statusStore, statusOpen, saturday.open.split(":"), saturday.close.split(":"));
-    } else if(hariIni == 7) {
+    } else if(hariIni == 0) {
       var statusOpen = this._getStatusStore(jamSekarang, sunday.open.split(":"), sunday.close.split(":"));
       return this._getStatusOpen(statusStore, statusOpen, sunday.open.split(":"), sunday.close.split(":"));
     }

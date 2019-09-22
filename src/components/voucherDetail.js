@@ -18,6 +18,7 @@ import colorConfig from "../config/colorConfig";
 import appConfig from "../config/appConfig";
 import {notifikasi} from "../actions/auth.actions";
 import {redeemVoucher, campaign, dataPoint} from "../actions/rewards.action";
+import {myVoucers} from "../actions/account.action";
 
 class VoucherDetail extends Component {
   constructor(props) {
@@ -53,7 +54,12 @@ class VoucherDetail extends Component {
       console.log(response)
       await this.props.dispatch(campaign());
       await this.props.dispatch(dataPoint());
-      await this.props.dispatch(notifikasi('Redeem success!', response.message, Actions.pop()));
+      await this.props.dispatch(myVoucers());
+      if(response.message == 'Succcessfull redeem Voucher'){
+        await this.props.dispatch(notifikasi('Redeem success!', response.message, Actions.pop()));
+      } else {
+        await this.props.dispatch(notifikasi('Oppss!', response.message, console.log('Cancel Pressed')));
+      }
     } catch (error) {
       console.log(error)
       await this.props.dispatch(notifikasi('Redeem error!', error.responseBody.message, console.log('Cancel Pressed')));

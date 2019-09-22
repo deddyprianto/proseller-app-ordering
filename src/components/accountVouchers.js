@@ -11,7 +11,8 @@ import {
   StyleSheet,
   Dimensions,
   TouchableOpacity,
-  Image
+  Image,
+  ScrollView
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -60,13 +61,13 @@ export default class AccountVouchers extends Component {
           </TouchableOpacity>
           <View style={styles.line}/>
         </View>
-        <View>
+        <ScrollView>
           {
             (myVoucers == undefined) ? null : 
             myVoucers.map((item, keys)=>
               <View key={keys}>
               {
-                <TouchableOpacity style={styles.voucherItem}
+                <View style={styles.voucherItem}
                 onPress={() => this.pageDetailVoucher(item)}>
                   <View>
                     <Image style={styles.voucherImage} 
@@ -98,12 +99,12 @@ export default class AccountVouchers extends Component {
                       <Text style={styles.pointVoucher}>{item['redeemValue']+' point'}</Text>
                     </View>
                   </View>
-                </TouchableOpacity>
+                </View>
               }
               </View>
             )
           }
-        </View>
+        </ScrollView>
       </View>
     )
 	}
