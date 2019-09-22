@@ -35,7 +35,7 @@ export default class StampDetail extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    height: (Dimensions.get('window').height/5)-30, 
+    height: (Dimensions.get('window').height/5)-10, 
     alignContent: 'center',
     backgroundColor: colorConfig.pageIndex.activeTintColor,
     paddingLeft:10,
@@ -53,6 +53,7 @@ const styles = StyleSheet.create({
   },
   description: {
     color: colorConfig.pageIndex.backgroundColor, 
+    textAlign: 'center',
     fontSize: 14
   },
   btn: {

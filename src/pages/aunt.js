@@ -124,7 +124,11 @@ class Aunt extends Component {
   confirmUser = async (values) => {
     try {
       const response =  await this.props.dispatch(confirmUser(values));
-      console.log(response == null? '1':'2');
+      if (!response.success) {
+        throw response;
+      } else {
+        Actions.signin()
+      }
     } catch (error) {
       let errorText;
       if (error.message) {
@@ -133,7 +137,7 @@ class Aunt extends Component {
       errorText = error.responseBody;
       Alert.alert(
         'Authentication Failed!',
-        errorText,
+        errorText.message,
         [
           {
             text: 'Cancel',
@@ -186,12 +190,12 @@ class Aunt extends Component {
             />
           </View>
           <Field
-            name="email"
-            placeholder="Email"
+            name="username"
+            placeholder="Username"
             icon='md-contact'
             component={this.renderTextInput} />
           <Field
-            name="code_auth"
+            name="confirmationCode"
             placeholder="Code Authentification"
             icon='md-key'
             component={this.renderTextInput} />

@@ -196,7 +196,7 @@ class Signin extends Component {
           </View>
           <Field
             name="username"
-            placeholder="Email"
+            placeholder="Username"
             icon='md-contact'
             component={this.renderTextInput} />
           <Field

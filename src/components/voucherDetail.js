@@ -80,10 +80,10 @@ class VoucherDetail extends Component {
         </View>
         <ScrollView>
           <View style={styles.voucherItem}>
-            <View>
-              <Image style={styles.voucherImage} 
+            <View style={{alignItems: 'center'}}>
+              <Image style={(this.props.dataVoucher['image'] != '' && this.props.dataVoucher['image'] != undefined) ? styles.voucherImage1 : styles.voucherImage2} 
                 source={
-                  (this.props.dataVoucher['image'] != '') ? {uri:this.props.dataVoucher['image']} : appConfig.appImageNull
+                  (this.props.dataVoucher['image'] != '' && this.props.dataVoucher['image'] != undefined) ? {uri:this.props.dataVoucher['image']} : appConfig.appImageNull
                 }/>
             </View>
             <View style={styles.voucherDetail}>
@@ -179,9 +179,15 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: colorConfig.store.storesItem,
   },
-  voucherImage: {
+  voucherImage1: {
     height: (Dimensions.get('window').width/4), 
     width: (Dimensions.get('window').width-22), 
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+  },
+  voucherImage2: {
+    height: (Dimensions.get('window').width/4), 
+    width: (Dimensions.get('window').width/4), 
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
   },
@@ -208,7 +214,7 @@ const styles = StyleSheet.create({
     paddingBottom: 0
   },
   pointVoucherText: {
-    fontSize:20, 
+    fontSize:15, 
     fontWeight: 'bold',
     textAlign: 'center',
     paddingTop: 0,

@@ -64,7 +64,7 @@ export default class RewardsStamp extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    height: (Dimensions.get('window').height/5)-18, 
+    height: (Dimensions.get('window').height/5)-15, 
     alignContent: 'center',
     backgroundColor: colorConfig.pageIndex.activeTintColor,
   },

@@ -20,6 +20,9 @@ import {
   dataPoint,
   vouchers
 } from "../actions/rewards.action";
+import {
+  myVoucers
+} from "../actions/account.action";
 
 class Account extends Component {
   constructor(props) {
@@ -38,6 +41,7 @@ class Account extends Component {
       await this.props.dispatch(campaign());
       await this.props.dispatch(dataPoint());
       await this.props.dispatch(vouchers());
+      await this.props.dispatch(myVoucers());
     } catch (error) {
       await this.props.dispatch(notifikasi('Get Data Rewards Error!', error.responseBody.message, console.log('Cancel Pressed')));
     }
@@ -71,7 +75,7 @@ class Account extends Component {
 
 mapStateToProps = (state) => ({
   userDetail: state.userReducer.getUser.userDetails,
-  totalPoint: state.rewardsReducer.dataPoint.totalPoint
+  totalPoint: state.rewardsReducer.dataPoint.totalPoint,
 })
 
 mapDispatchToProps = (dispatch) => ({

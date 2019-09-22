@@ -124,10 +124,14 @@ class Signup extends Component {
   createNewUser = async (values) => {
     try {
       const response =  await this.props.dispatch(createNewUser(values));
-      console.log(response)
+      if (!response.success) {
+          throw response;
+      } else {
+        Actions.auth()
+      }
     } catch (error) {
-      const newError = new ErrorUtils(error, "Signup Error");
-      newError.showAlert();
+        const newError = new ErrorUtils(error, "Signup Error");
+        newError.showAlert();
     }
   }
 
@@ -175,6 +179,11 @@ class Signup extends Component {
             name="name"
             placeholder="Name"
             icon='md-card'
+            component={this.renderTextInput} />
+          <Field
+            name="username"
+            placeholder="Username"
+            icon='md-contact'
             component={this.renderTextInput} />
           <Field
             name="email"

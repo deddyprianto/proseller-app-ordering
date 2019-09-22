@@ -1,3 +1,9 @@
+/**
+ * Chaerus Sulton
+ * chaerussulton@gmail.com
+ * PT Edgeworks
+ */
+
 import React, { Component } from 'react';
 import { 
   View, 
@@ -5,24 +11,23 @@ import {
   StyleSheet,
   Dimensions,
   TouchableOpacity,
-  Image,
-  ScrollView,
-  RefreshControl
+  Image
 } from 'react-native';
-import {connect} from "react-redux";
-import {compose} from "redux";
-
-import colorConfig from "../config/colorConfig";
-import appConfig from "../config/appConfig";
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
 
-class RewordsVouchers extends Component {
+import colorConfig from "../config/colorConfig";
+
+export default class AccountVouchers extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      dataVoucher: this.props.dataVoucher
+      screenWidth: Dimensions.get('window').width,
     };
+  }
+
+  goBack(){
+    Actions.pop()
   }
 
   getDate(date){
@@ -39,31 +44,40 @@ class RewordsVouchers extends Component {
   }
 
   pageDetailVoucher = (item) => {
-    Actions.voucher({dataVoucher: item})
+    console.log(item)
+    // Actions.voucher({dataVoucher: item})
   }
 
-  render() {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.title}>Vouchers</Text>
+	render() {
+    const myVoucers = this.props.data;
+		return(
+			<View style={styles.container}>
+        <View style={{backgroundColor: colorConfig.pageIndex.backgroundColor}}>
+          <TouchableOpacity style={styles.btnBack}
+          onPress={this.goBack}>
+            <Icon size={28} name={ Platform.OS === 'ios' ? 'ios-arrow-back' : 'md-arrow-round-back' } style={styles.btnBackIcon} />
+            <Text style={styles.btnBackText}> Back </Text>
+          </TouchableOpacity>
+          <View style={styles.line}/>
+        </View>
         <View>
           {
-            (this.props.vouchers == undefined) ? null :
-            this.props.vouchers.map((item, keys)=>
+            (myVoucers == undefined) ? null : 
+            myVoucers.map((item, keys)=>
               <View key={keys}>
               {
                 <TouchableOpacity style={styles.voucherItem}
                 onPress={() => this.pageDetailVoucher(item)}>
-                  <View style={{alignItems: 'center'}}>
-                    <Image style={(item['image'] != '' && item['image'] != undefined) ? styles.voucherImage1 : styles.voucherImage2} 
+                  <View>
+                    <Image style={styles.voucherImage} 
                       source={
-                        (item['image'] != '' && item['image'] != undefined) ? {uri:item['image']} : appConfig.appImageNull
+                        (item['image'] != '') ? {uri:item['image']} : appConfig.appImageNull
                       }/>
                   </View>
                   <View style={styles.voucherDetail}>
-                    {/* <View style={styles.status}> 
+                    <View style={styles.status}> 
                       <Text style={styles.statusTitle}>Awarded</Text> 
-                    </View> */}
+                    </View>
                     <Text style={styles.nameVoucher}>{item['voucherName']}</Text>
                     <View style={{flexDirection:'row'}}>
                       <Icon size={15} name={ Platform.OS === 'ios' ? 'ios-arrow-dropright' : 'md-arrow-dropright-circle' } 
@@ -91,37 +105,47 @@ class RewordsVouchers extends Component {
           }
         </View>
       </View>
-    );
-  }
+    )
+	}
 }
 
 const styles = StyleSheet.create({
   container: {
-    alignContent: 'center',
+    flex: 1,
+  },
+  btnBackIcon: {
+    color: colorConfig.pageIndex.activeTintColor, 
     margin:10
   },
-  title: {
+  btnBack: {
+    flexDirection:'row', 
+    alignItems:'center'
+  },
+  btnBackText: {
     color: colorConfig.pageIndex.activeTintColor, 
-    fontSize: 16,
-    marginBottom:5,
     fontWeight: 'bold'
+  },
+  line: {
+    borderBottomColor: colorConfig.store.defaultColor, 
+    borderBottomWidth:2
+  },
+  card: {
+    margin:10,
+    borderColor: colorConfig.pageIndex.activeTintColor,
+    borderWidth: 1,
+    borderRadius: 5,
+    backgroundColor: colorConfig.pageIndex.backgroundColor
   },
   voucherItem: {
     borderColor: colorConfig.store.defaultColor, 
     borderWidth:1, 
-    marginBottom: 5,
+    margin: 5,
     borderRadius: 10,
     backgroundColor: colorConfig.store.storesItem,
   },
-  voucherImage1: {
+  voucherImage: {
     height: (Dimensions.get('window').width/4), 
-    width: (Dimensions.get('window').width-22), 
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
-  },
-  voucherImage2: {
-    height: (Dimensions.get('window').width/4), 
-    width: (Dimensions.get('window').width/4), 
+    width: (Dimensions.get('window').width-12), 
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
   },
@@ -161,14 +185,3 @@ const styles = StyleSheet.create({
   },
 });
 
-mapStateToProps = (state) => ({
-  vouchers: state.rewardsReducer.vouchers.dataVoucher
-})
-
-mapDispatchToProps = (dispatch) => ({
-  dispatch
-});
-
-export default compose(
-  connect(mapStateToProps, mapDispatchToProps),
-)(RewordsVouchers);

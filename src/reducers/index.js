@@ -11,13 +11,15 @@ import authReducer from "./auth.reducer";
 import userReducer from "./user.reducer";
 import rewardsReducer from "./rewards.reducer";
 import storesReducer from "./stores.reducer";
+import accountsReducer from "./accounts.reducer";
 
 const reducers = {
   authReducer,
   userReducer,
   rewardsReducer,
   storesReducer,
-  form: formReducer
+  accountsReducer,
+  form: formReducer,
 };
 
 const appReducer = combineReducers(reducers);

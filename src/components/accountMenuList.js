@@ -12,10 +12,12 @@ import {
 import {connect} from "react-redux";
 import {compose} from "redux";
 import Icon from 'react-native-vector-icons/Ionicons';
+import * as _ from 'lodash';
 
 import {logoutUser} from "../actions/auth.actions";
 import colorConfig from "../config/colorConfig";
 import appConfig from "../config/appConfig";
+import { Actions } from 'react-native-router-flux';
 
 class AccountMenuList extends Component {
   constructor(props) {
@@ -28,11 +30,31 @@ class AccountMenuList extends Component {
     const response =  await this.props.dispatch(logoutUser());
   }
 
+  myVouchers = () => {
+    var grup = [];
+    grup = _.groupBy(this.props.myVoucers.data, 'id');
+    _.forEach(grup, function(value, key) {
+      value[0].totalRedeem = value.length;
+      console.log(value[0]);
+    });
+    Actions.accountVouchers(this.props.myVoucers);
+  }
+
   render() {
     return (
       <View style={styles.container}>
         <TouchableOpacity style={styles.item}>
           <Text style={styles.title}> {this.props.totalPoint+' Points'} </Text>
+          <Icon size={20} 
+            name={ Platform.OS === 'ios' ? 'ios-arrow-dropright-circle' : 'md-arrow-dropright-circle' } 
+            style={{ color: colorConfig.pageIndex.activeTintColor }} />
+        </TouchableOpacity>
+
+        <View style={styles.line}></View>
+
+        <TouchableOpacity style={styles.item}
+        onPress={this.myVouchers}>
+          <Text style={styles.title}> My Vouchers </Text>
           <Icon size={20} 
             name={ Platform.OS === 'ios' ? 'ios-arrow-dropright-circle' : 'md-arrow-dropright-circle' } 
             style={{ color: colorConfig.pageIndex.activeTintColor }} />
@@ -101,7 +123,8 @@ const styles = StyleSheet.create({
 mapStateToProps = (state) => ({
   logoutUser: state.authReducer.logoutUser,
   userDetail: state.userReducer.getUser.userDetails,
-  totalPoint: state.rewardsReducer.dataPoint.totalPoint
+  totalPoint: state.rewardsReducer.dataPoint.totalPoint,
+  myVoucers: state.accountsReducer.myVoucers.myVoucers,
 })
 
 mapDispatchToProps = (dispatch) => ({

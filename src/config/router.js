@@ -22,6 +22,7 @@ import StoreDetailStores from "../components/storeDetailStores";
 import StoreSeeMorePromotion from "../components/storeSeeMorePromotion";
 import StoreDetailPromotion from "../components/storeDetailPromotion";
 import StoresMap from "../components/storesMap";
+import AccountVouchers from "../components/accountVouchers";
 
 export default class Routes extends Component {
 	render() {
@@ -45,6 +46,7 @@ export default class Routes extends Component {
             <Scene key="seeMorePromotion" component={StoreSeeMorePromotion} />
             <Scene key="storeDetailPromotion" component={StoreDetailPromotion} />
             <Scene key="storeSeeMap" component={StoresMap} />
+            <Scene key="accountVouchers" component={AccountVouchers} />
           </Scene>
         </Scene>
       </Router>
