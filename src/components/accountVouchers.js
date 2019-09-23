@@ -18,6 +18,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
 
 import colorConfig from "../config/colorConfig";
+import appConfig from '../config/appConfig';
 
 export default class AccountVouchers extends Component {
   constructor(props) {
@@ -69,10 +70,10 @@ export default class AccountVouchers extends Component {
               {
                 <View style={styles.voucherItem}
                 onPress={() => this.pageDetailVoucher(item)}>
-                  <View>
-                    <Image style={styles.voucherImage} 
+                  <View style={{alignItems: 'center'}}>
+                  <Image style={(item['image'] != '' && item['image'] != undefined) ? styles.voucherImage1 : styles.voucherImage2} 
                       source={
-                        (item['image'] != '') ? {uri:item['image']} : appConfig.appImageNull
+                        (item['image'] != '' && item['image'] != undefined) ? {uri:item['image']} : appConfig.appImageNull
                       }/>
                   </View>
                   <View style={styles.voucherDetail}>
@@ -144,9 +145,15 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: colorConfig.store.storesItem,
   },
-  voucherImage: {
+  voucherImage1: {
     height: (Dimensions.get('window').width/4), 
-    width: (Dimensions.get('window').width-12), 
+    width: (Dimensions.get('window').width-15), 
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+  },
+  voucherImage2: {
+    height: (Dimensions.get('window').width/4), 
+    width: (Dimensions.get('window').width/4), 
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
   },

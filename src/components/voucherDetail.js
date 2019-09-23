@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import {connect} from "react-redux";
 import {compose} from "redux";
+import AwesomeAlert from 'react-native-awesome-alerts';
 
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -25,6 +26,9 @@ class VoucherDetail extends Component {
     super(props);
     this.state = {
       screenWidth: Dimensions.get('window').width,
+      showAlert: false,
+      pesanAlert: '',
+      titleAlert: '',
     };
   }
 
@@ -56,15 +60,33 @@ class VoucherDetail extends Component {
       await this.props.dispatch(dataPoint());
       await this.props.dispatch(myVoucers());
       if(response.message == 'Succcessfull redeem Voucher'){
-        await this.props.dispatch(notifikasi('Redeem success!', response.message, Actions.pop()));
+        this.setState({
+          showAlert: true,
+          pesanAlert: response.message,
+          titleAlert: 'Redeem Success!'
+        });
       } else {
-        await this.props.dispatch(notifikasi('Oppss!', response.message, console.log('Cancel Pressed')));
+        this.setState({
+          showAlert: true,
+          pesanAlert: response.message,
+          titleAlert: 'Oppss!'
+        });
       }
     } catch (error) {
       console.log(error)
-      await this.props.dispatch(notifikasi('Redeem error!', error.responseBody.message, console.log('Cancel Pressed')));
+      this.setState({
+        showAlert: true,
+        pesanAlert: error.responseBody.message,
+        titleAlert: 'Redeem error!'
+      });
     }
   }
+
+  hideAlert = () => {
+    this.setState({
+      showAlert: false
+    });
+  };
   
   render() {
     return (
@@ -142,6 +164,25 @@ class VoucherDetail extends Component {
             </TouchableOpacity>
           </View>
         </ScrollView>
+        <AwesomeAlert
+          show={this.state.showAlert}
+          showProgress={false}
+          title={this.state.titleAlert}
+          message={this.state.pesanAlert}
+          closeOnTouchOutside={true}
+          closeOnHardwareBackPress={false}
+          showCancelButton={(this.state.titleAlert == 'Redeem Success!') ? true : false}
+          showConfirmButton={true}
+          cancelText="Close"
+          confirmText={(this.state.titleAlert == 'Redeem Success!') ? 'Ok' : 'Close'}
+          confirmButtonColor={colorConfig.pageIndex.activeTintColor}
+          onCancelPressed={() => {
+            this.hideAlert();
+          }}
+          onConfirmPressed={() => {
+            (this.state.titleAlert == 'Redeem Success!') ? Actions.pop() : this.hideAlert();
+          }}
+        />
       </View>
     );
   }

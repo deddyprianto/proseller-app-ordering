@@ -89,7 +89,7 @@ class RewardsPay extends Component {
         <View style={{margin:10}}>
           <View style={{flexDirection:'row', justifyContent :'space-between'}}>
             <View style={{flexDirection:'row', alignItems: 'center'}}>
-            <Icon size={30} name={ Platform.OS === 'ios' ? 'ios-cash' : 'md-cash' } style={{color: colorConfig.pageIndex.inactiveTintColor}} />
+              <Icon size={30} name={ Platform.OS === 'ios' ? 'ios-cash' : 'md-cash' } style={{color: colorConfig.pageIndex.inactiveTintColor}} />
               <TextInput
                 placeholder='Payment'
                 selectionColor={colorConfig.pageIndex.activeTintColor}

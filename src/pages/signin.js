@@ -20,6 +20,7 @@ import {
 import {connect} from "react-redux";
 import {compose} from "redux";
 import { Field, reduxForm } from 'redux-form';
+import AwesomeAlert from 'react-native-awesome-alerts';
 
 import InputText from "../components/inputText";
 import SigninOther from "../components/signinOther"
@@ -33,7 +34,7 @@ const imageWidth = Dimensions.get('window').width / 2;
 
 const styles = StyleSheet.create({
   $largeContainerSize: imageWidth,
-  $largeImageSize: imageWidth-50,
+  $largeImageSize: imageWidth-80,
   $smallContainerSize: imageWidth / 2,
   $smallImageSize: imageWidth / 4,
 
@@ -117,8 +118,14 @@ class Signin extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      showAlert: false,
+      pesanError: ''
     };
     this.imageWidth = new Animated.Value(styles.$largeImageSize);
+  }
+
+  goBack() {
+    Actions.signin();
   }
 
 	signup() {
@@ -132,30 +139,26 @@ class Signin extends Component {
   loginUser = async (values) => {
     try {
       const response =  await this.props.dispatch(loginUser(values));
-      console.log(response);
-      if (!response.success) {
-          throw response;
+      if (response.success == false) {
+        throw response;
       }
     } catch (error) {
-      let errorText;
-      errorText = error.responseBody.message;
-      Alert.alert(
-        'Login Error!',
-        errorText,
-        [
-          {
-            text: 'Cancel',
-            onPress: () => console.log('Cancel Pressed'),
-            style: 'cancel',
-          },
-        ]
-      );
+      this.setState({
+        showAlert: true,
+        pesanError: error.responseBody.message
+      });
     }
   }
 
   onSubmit = (values) => {
     this.loginUser(values);
   }
+ 
+  hideAlert = () => {
+    this.setState({
+      showAlert: false
+    });
+  };
 
   renderTextInput = (field) => {
     const {meta: {touched, error}, label, icon, secureTextEntry, maxLength, keyboardType, placeholder, input: {onChange, ...restInput}} = field;
@@ -209,11 +212,30 @@ class Signin extends Component {
             <Text style={styles.buttonText}>Login</Text>
           </TouchableOpacity>
           <View style={styles.viewLoginWith}>
-            <TouchableOpacity onPress={this.signup}><Text style={styles.signupButton}>Create Account</Text></TouchableOpacity>
+            <TouchableOpacity onPress={this.signup}><Text style={styles.signupButton}>Register</Text></TouchableOpacity>
             <TouchableOpacity onPress={this.auth}><Text style={styles.verifyButton}>Verify Code</Text></TouchableOpacity>
           </View>
           { (appConfig.appStatusLoginOther == false) ? null: <SigninOther/> }
         </ScrollView>
+        <AwesomeAlert
+          show={this.state.showAlert}
+          showProgress={false}
+          title='Signin Error'
+          message={this.state.pesanError}
+          closeOnTouchOutside={true}
+          closeOnHardwareBackPress={false}
+          showCancelButton={false}
+          showConfirmButton={true}
+          cancelText="No, cancel"
+          confirmText="Close"
+          confirmButtonColor={colorConfig.pageIndex.activeTintColor}
+          onCancelPressed={() => {
+            this.hideAlert();
+          }}
+          onConfirmPressed={() => {
+            this.hideAlert();
+          }}
+        />
       </ImageBackground>
     )
 	}
@@ -221,9 +243,6 @@ class Signin extends Component {
 
 const validate = (values) => {
   const errors = {};
-  if(!values.name) {
-    errors.name = "Name is required"
-  }
   if(!values.email) {
     errors.email = "Email is required"
   }

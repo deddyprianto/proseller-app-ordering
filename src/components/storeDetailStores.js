@@ -35,7 +35,8 @@ export default class StoreDetailStores extends Component {
   storeMap(coordinate, storeName){
     // Actions.storeSeeMap({coordinate});
     createOpenLink({ 
-      query: storeName
+      query: storeName, 
+      // latitude: coordinate.lat, longitude: coordinate.lng
     })
   }
 

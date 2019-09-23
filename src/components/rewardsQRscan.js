@@ -12,6 +12,7 @@ import {Actions} from 'react-native-router-flux';
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import {connect} from "react-redux";
 import {compose} from "redux";
+import AwesomeAlert from 'react-native-awesome-alerts';
 
 import colorConfig from "../config/colorConfig";
 import appConfig from '../config/appConfig';
@@ -23,6 +24,9 @@ class RewardsQRscan extends Component {
     super(props);
     this.state = {
       screenWidth: Dimensions.get('window').width,
+      showAlert: false,
+      pesanAlert: '',
+      titleAlert: '',
     };
   }
 
@@ -46,11 +50,25 @@ class RewardsQRscan extends Component {
     if(response.statusCode != 400) {
       await this.props.dispatch(campaign());
       await this.props.dispatch(dataPoint());
-      await this.props.dispatch(notifikasi('Pay success!', response.message+' point', Actions.pop()));
+      this.setState({
+        showAlert: true,
+        pesanAlert: response.message+' point',
+        titleAlert: 'Payment Success!'
+      });
     } else {
-      await this.props.dispatch(notifikasi('Pay error!', response.message, console.log('Cancel Pressed')));
+      this.setState({
+        showAlert: true,
+        pesanAlert: response.message,
+        titleAlert: 'Payment Error!'
+      });
     }
   }
+
+  hideAlert = () => {
+    this.setState({
+      showAlert: false
+    });
+  };
 
   render() {
     return (
@@ -70,6 +88,25 @@ class RewardsQRscan extends Component {
             />
           </View>
         </View>
+        <AwesomeAlert
+          show={this.state.showAlert}
+          showProgress={false}
+          title={this.state.titleAlert}
+          message={this.state.pesanAlert}
+          closeOnTouchOutside={true}
+          closeOnHardwareBackPress={false}
+          showCancelButton={(this.state.titleAlert == 'Payment Success!') ? true : false}
+          showConfirmButton={true}
+          cancelText="Close"
+          confirmText={(this.state.titleAlert == 'Payment Success!') ? 'Ok' : 'Close'}
+          confirmButtonColor={colorConfig.pageIndex.activeTintColor}
+          onCancelPressed={() => {
+            this.hideAlert();
+          }}
+          onConfirmPressed={() => {
+            (this.state.titleAlert == 'Payment Success!') ? Actions.pop() : this.hideAlert();
+          }}
+        />
       </View>
     );
   }

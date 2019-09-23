@@ -42,12 +42,13 @@ const defaultProps = {
 const styles = StyleSheet.create({
   inputBox: {
     width:300,
+    height:40,
     backgroundColor:'rgba(255, 255,255,0.2)',
     borderRadius: 25,
     paddingHorizontal:16,
     fontSize:16,
     color:'#ffffff',
-    marginVertical: 10,
+    marginVertical: 5,
     paddingLeft: 42
   }
 });
@@ -86,21 +87,22 @@ class InputText extends Component {
   }
 
   render() {
-    const {placeholder, keyboardType, maxLength, onSubmitEditing, icon} = this.props;
+    const {placeholder, keyboardType, maxLength, onSubmitEditing, icon, onPress} = this.props;
     return (
       <View>
         <Icon 
-          style={{position: 'absolute', top: 18, left: 15}} 
+          style={{position: 'absolute', top: 10, left: 15}} 
           name={icon} 
           size={25} 
           color={'rgba(255,255,255, 0.7)'}/>
         <TextInput
+          onPress={onPress}
           style={styles.inputBox}
           underlineColorAndroid="rgba(0,0,0,0)"
           placeholder={placeholder}
           placeholderTextColor="rgba(255,255,255,0.8)"
           selectionColor="#999999"
-          secureTextEntry={(placeholder != 'Password' && placeholder != 'Code Authentification') ? null : this.state.showPass}
+          secureTextEntry={(placeholder != 'Password' && placeholder != 'Confirm Password' && placeholder != 'Code Authentification') ? null : this.state.showPass}
           keyboardType={keyboardType}
           maxLength={maxLength}
           returnKeyType="next"
@@ -108,12 +110,12 @@ class InputText extends Component {
           onSubmitEditing={onSubmitEditing}
           onChangeText={this.onChangeText} />
           {
-            (placeholder != 'Password' && placeholder != 'Code Authentification') ? null :
+            (placeholder != 'Password' && placeholder != 'Confirm Password' && placeholder != 'Code Authentification') ? null :
             <TouchableOpacity
-              style={{position: 'absolute', top: 18, right: 15}} 
+              style={{position: 'absolute', top: 12, right: 15}} 
               onPress={this.showPass}>
               <Icon 
-                name={this.state.press == false ? 'md-eye': 'md-eye-off'} 
+                name={this.state.press == true ? 'md-eye': 'md-eye-off'} 
                 size={25} 
                 color={'rgba(255,255,255, 0.7)'}/>
             </TouchableOpacity>

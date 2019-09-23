@@ -5,9 +5,12 @@
  */
 
 import {Alert} from 'react-native';
+import colorConfig from '../config/colorConfig';
+import AwesomeAlert from 'react-native-awesome-alerts';
 
 export class ErrorUtils {
   constructor(error, title = "") {
+    this.state = { showAlert: true };
     this.errorTitle = title;
     this.errorText = "Something went wrong";
     if (error.message) {
@@ -19,17 +22,31 @@ export class ErrorUtils {
     }
   }
 
+  hideAlert = () => {
+    this.setState({
+      showAlert: false
+    });
+  };
+
   showAlert() {
-    Alert.alert(
-      this.errorTitle,
-      this.errorText,
-      [
-        {
-          text: 'Cancel',
-          onPress: () => console.log('Cancel Pressed'),
-          style: 'cancel',
-        },
-      ]
-    );
+    return <AwesomeAlert
+      show={showAlert}
+      showProgress={false}
+      title={this.errorTitle}
+      message={this.errorText}
+      closeOnTouchOutside={true}
+      closeOnHardwareBackPress={false}
+      showCancelButton={true}
+      showConfirmButton={true}
+      cancelText="No, cancel"
+      confirmText="Yes, delete it"
+      confirmButtonColor={colorConfig.pageIndex.activeTintColor}
+      onCancelPressed={() => {
+        this.hideAlert();
+      }}
+      onConfirmPressed={() => {
+        this.hideAlert();
+      }}
+    />
   }
 }

@@ -203,33 +203,25 @@ export const createNewUser = (payload) => {
           type: "CREATE_USER_LOADING"
         });
         
-        var dataRegister = 
-        {
-          "email": payload.email,
-          "username": payload.username,
-          "password": payload.password,
-          "name": payload.name,
-          "phoneNumber": "+6281998948575",
-          "nickname": "Test",
-          "address": "Test",
-          "birthdate": "25/11/1996",
-          "gender": "male"
-        };
-        console.log(dataRegister)
+        // var dataRegister = 
+        // {
+        //   "email": payload.email,
+        //   "username": payload.username,
+        //   "password": payload.password,
+        //   "name": payload.name,
+        //   "phoneNumber": "+6281998948575",
+        //   "nickname": "Test",
+        //   "address": "Test",
+        //   "birthdate": "25/11/1996",
+        //   "gender": "male"
+        // };
+        // console.log(dataRegister)
 
-        const response = await fetchApi("/customer/register", "POST", dataRegister, 200);
+        const response = await fetchApi("/customer/register", "POST", payload, 200);
         console.log(response)
         if(response.success) {
           dispatch({
               type: "CREAT_USER_SUCCESS"
-          });
-          dispatch({
-              type: "AUTH_USER_SUCCESS",
-              token: response.token
-          });
-          dispatch({
-              type: "GET_USER_SUCCESS",
-              payload: response.responseBody
           });
 
           return response;

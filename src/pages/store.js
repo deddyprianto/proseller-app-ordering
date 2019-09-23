@@ -92,6 +92,7 @@ class Store extends Component {
   setDataStore = (response, statusLocation, position) => {
     var dataStoresTampung = [];
     var storeGrupTampung = [];
+    console.log(response)
     try{
       for(var i=0; i<response.count; i++){
         if(response.data[i].deleted == false){
@@ -112,10 +113,10 @@ class Store extends Component {
             ),
             'storeJarak': (statusLocation) ?
               (geolib.getDistance(position.coords, {
-                latitude: response.data[i].location.coordinate.lat,
-                longitude: response.data[i].location.coordinate.lng,
+                latitude: Number(response.data[i].location.coordinate.lat),
+                longitude: Number(response.data[i].location.coordinate.lng),
               }) / 1000) : '-',
-            'image': response.data[i].image,
+            'image': (response.data[i].image != undefined) ? response.data[i].image : '',
             'region' : response.data[i].location.region,
             'address': response.data[i].location.address,
             'district': response.data[i].location.district,

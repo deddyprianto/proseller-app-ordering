@@ -19,6 +19,9 @@ import {
 import {connect} from "react-redux";
 import {compose} from "redux";
 import { Field, reduxForm } from 'redux-form';
+import Icon from 'react-native-vector-icons/Ionicons';
+import { Form, TextValidator } from 'react-native-validator-form';
+import AwesomeAlert from 'react-native-awesome-alerts';
 
 import InputText from "../components/inputText";
 import {confirmUser} from "../actions/auth.actions";
@@ -39,6 +42,9 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems:'center',
     justifyContent :'center',
+    marginTop: 10,
+    marginBottom: 10,
+    left: -20
   },
   signupTextCont : {
   	flexGrow: 1,
@@ -66,16 +72,12 @@ const styles = StyleSheet.create({
     paddingRight: 10
   },
   button: {
-    width:300,
-    backgroundColor:colorConfig.auth.button,
+    height: 45,
+    backgroundColor:colorConfig.pageIndex.activeTintColor,
     borderRadius: 25,
     marginVertical: 10,
     paddingVertical: 13,
-    // shadowColor: colorConfig.auth.shadowColor,
-    // shadowOffset: { width: 0, height: 1},
-    // shadowOpacity: 0.23,
-    // shadowRadius: 2.62,
-    // elevation: 4,
+    marginTop: 20,
   },
   buttonText: {
     fontSize:16,
@@ -96,12 +98,15 @@ const styles = StyleSheet.create({
     marginBottom:30
   },
   backgroundImage: {        
-    alignItems: 'center',
     alignSelf: 'stretch',
     flex: 1,
   },
   logo: {
     width: '$largeImageSize',
+  },
+  line: {
+    borderBottomColor: colorConfig.store.defaultColor, 
+    borderBottomWidth:2
   },
 });
 
@@ -109,48 +114,67 @@ class Aunt extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      username: '',
+      confirmationCode: '',
+      press: false,
+      showPass: true,
+      showAlert: false,
+      pesanAlert: '',
+      titleAlert: '',
     };
     this.imageWidth = new Animated.Value(styles.$largeImageSize);
   }
 
 	signin() {
-    Actions.signin();
+    Actions.pop();
   }
 
   signup() {
 		Actions.signup()
   }
 
-  confirmUser = async (values) => {
+  handleSubmit = async () => {
     try {
-      const response =  await this.props.dispatch(confirmUser(values));
+      var dataVerify = {
+        "username": this.state.username,
+        "confirmationCode": this.state.confirmationCode,
+      };
+      // console.log(dataVerify)
+      const response =  await this.props.dispatch(confirmUser(dataVerify));
       if (!response.success) {
         throw response;
       } else {
-        Actions.signin()
+        this.setState({
+          showAlert: true,
+          pesanAlert: 'Your account success to verify!',
+          titleAlert: 'Verify Success!'
+        });
       }
     } catch (error) {
-      let errorText;
-      if (error.message) {
-        errorText = error.message
-      }
-      errorText = error.responseBody;
-      Alert.alert(
-        'Authentication Failed!',
-        errorText.message,
-        [
-          {
-            text: 'Cancel',
-            onPress: () => console.log('Cancel Pressed'),
-            style: 'cancel',
-          },
-        ]
-      );
+      this.setState({
+        showAlert: true,
+        pesanAlert: error.responseBody.message,
+        titleAlert: 'Verify Error!'
+      });
     }
   }
 
-  onSubmit = (values) => {
-    this.confirmUser(values);
+  hideAlert = () => {
+    this.setState({
+      showAlert: false
+    });
+  };
+
+  // handleSubmit = async() => {
+  //   await this.refs.form.submit();
+  // }
+
+  showPass = () =>{
+    if(this.state.press == false){
+      this.setState({ showPass: false, press: true })
+    } else {
+      this.setState({ showPass: true, press: false })
+    }
   }
 
   renderTextInput = (field) => {
@@ -175,39 +199,102 @@ class Aunt extends Component {
     const { handleSubmit, loginUser} = this.props;
     const imageStyle = [styles.logo, { width: this.imageWidth }];
 		return(
-      <ImageBackground
-        source={appConfig.appBackground}
-        style={styles.backgroundImage}
-        resizeMode="stretch"
-      >
+      <View style={styles.backgroundImage}>
         {(loginUser && loginUser.isLoading) && <Loader />}
         <ScrollView>
-          <View style={styles.container}>
-            <Animated.Image
-              source={appConfig.appLogo}
-              style={imageStyle}
-              resizeMode="contain"
-            />
+          <View style={{flexDirection: 'row', backgroundColor: colorConfig.pageIndex.backgroundColor}}>
+            <TouchableOpacity onPress={this.signin}>
+              <Icon size={28} name={ Platform.OS === 'ios' ? 'ios-arrow-back' : 'md-arrow-round-back' } style={{
+                color: colorConfig.pageIndex.activeTintColor, 
+                margin:10
+              }} />
+            </TouchableOpacity>
+            <View style={styles.container}>
+              <Text style={{
+                color: colorConfig.pageIndex.activeTintColor,
+                fontSize: 20,
+                fontWeight: 'bold'
+              }}>Verify Code</Text>
+            </View>
           </View>
-          <Field
-            name="username"
-            placeholder="Username"
-            icon='md-contact'
-            component={this.renderTextInput} />
-          <Field
-            name="confirmationCode"
-            placeholder="Code Authentification"
-            icon='md-key'
-            component={this.renderTextInput} />
-          <TouchableOpacity style={styles.button} onPress={handleSubmit(this.onSubmit)}>
-            <Text style={styles.buttonText}>Confirm</Text>
-          </TouchableOpacity>
-          <View style={styles.viewLoginWith}>
+          <View style={styles.line}/>
+          <View style={{margin: 10,backgroundColor: colorConfig.pageIndex.backgroundColor, borderRadius: 10, padding: 10, borderColor: colorConfig.pageIndex.activeTintColor, borderWidth: 1}}>
+            <Form ref="form" onSubmit={this.handleSubmit}>
+              <TextValidator
+                style={{marginBottom: -10,}}
+                name="username" label="username"
+                validators={['required']}
+                errorStyle={{ container: { top: 5, left: 5}, text: { color: 'red' }, underlineValidColor: colorConfig.pageIndex.activeTintColor, underlineInvalidColor: 'red'}}
+                errorMessages={['This field is required']}
+                placeholder="Your username"
+                type="text" under value={this.state.username}
+                onChangeText={(value) => this.setState({username: value})}
+              />
+
+              <View>
+                <TextValidator
+                  style={{marginBottom: -10,}}
+                  name="confirmationCode" label="confirmationCode"
+                  validators={['required']}
+                  errorStyle={{ container: { top: 5, left: 5}, text: { color: 'red' }, underlineValidColor: colorConfig.pageIndex.activeTintColor, underlineInvalidColor: 'red'}}
+                  errorMessages={['This field is required', 'Confirmation Code invalid']}
+                  placeholder="Your confirmation code"
+                  secureTextEntry={this.state.showPass}
+                  type="text" under value={this.state.confirmationCode}
+                  onChangeText={(value) => this.setState({confirmationCode: value})}
+                />
+                <TouchableOpacity
+                  style={{position: 'absolute', top: 8, right: 15}} 
+                  onPress={this.showPass}>
+                  <Icon 
+                    name={this.state.press == true ? 'md-eye': 'md-eye-off'} 
+                    size={23} 
+                    color={colorConfig.pageIndex.grayColor}/>
+                </TouchableOpacity>
+              </View>
+
+              <TouchableOpacity style={styles.button} onPress={this.handleSubmit}>
+                <Text style={styles.buttonText}>Confirm</Text>
+              </TouchableOpacity>
+            </Form>
+            
+            {/* <Field
+              name="username"
+              placeholder="Email"
+              icon='md-contact'
+              component={this.renderTextInput} />
+            <Field
+              name="confirmationCode"
+              placeholder="Code Authentification"
+              icon='md-key'
+              component={this.renderTextInput} /> */}
+            
+          </View>
+          {/* <View style={styles.viewLoginWith}>
             <TouchableOpacity onPress={this.signin}><Text style={styles.signupButton}>Login</Text></TouchableOpacity>
             <TouchableOpacity onPress={this.signup}><Text style={styles.verifyButton}>Create Account</Text></TouchableOpacity>
-          </View>
+          </View> */}
         </ScrollView>
-      </ImageBackground>
+        <AwesomeAlert
+          show={this.state.showAlert}
+          showProgress={false}
+          title={this.state.titleAlert}
+          message={this.state.pesanAlert}
+          closeOnTouchOutside={true}
+          closeOnHardwareBackPress={false}
+          showCancelButton={(this.state.titleAlert == 'Verify Success!') ? true : false}
+          showConfirmButton={true}
+          cancelText="Close"
+          confirmText={(this.state.titleAlert == 'Verify Success!') ? 'Login' : 'Close'}
+          confirmButtonColor={colorConfig.pageIndex.activeTintColor}
+          onCancelPressed={() => {
+            this.hideAlert();
+          }}
+          onConfirmPressed={() => {
+            (this.state.titleAlert == 'Verify Success!') ? Actions.signin() : this.hideAlert();
+          }}
+        />
+      </View>
     )
 	}
 }
