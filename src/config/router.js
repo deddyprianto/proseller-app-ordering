@@ -23,6 +23,7 @@ import StoreSeeMorePromotion from '../components/storeSeeMorePromotion';
 import StoreDetailPromotion from '../components/storeDetailPromotion';
 import StoresMap from '../components/storesMap';
 import AccountVouchers from '../components/accountVouchers';
+import AccountEditProfil from '../components/accountEditProfil';
 
 export default class Routes extends Component {
   render() {
@@ -53,6 +54,7 @@ export default class Routes extends Component {
             />
             <Scene key="storeSeeMap" component={StoresMap} />
             <Scene key="accountVouchers" component={AccountVouchers} />
+            <Scene key="accountEditProfil" component={AccountEditProfil} />
           </Scene>
         </Scene>
       </Router>

@@ -369,8 +369,7 @@ class Store extends Component {
                     }}
                   />
                 </View>
-              ) : null}
-              {this.state.dataAllStore.length != undefined ? null : (
+              ) : (
                 <View
                   style={{
                     alignItems: 'center',
