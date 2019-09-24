@@ -224,12 +224,12 @@ class Signup extends Component {
     try {
       var dataRegister = {
         "email": this.state.email,
-        "username": this.state.username,
+        // "username": this.state.username,
         "password": this.state.password,
         "name": this.state.name,
         "phoneNumber": this.phone.getValue(),
-        "nickname": this.state.nickname,
-        "address": this.state.address,
+        // "nickname": this.state.nickname,
+        // "address": this.state.address,
         "birthdate": this.state.birthdate,
         "gender": this.state.gender
       };
@@ -348,7 +348,7 @@ class Signup extends Component {
               onChangeText={(value) => this.setState({name: value})}
             />
 
-            <TextValidator
+            {/* <TextValidator
               style={{marginBottom: -10,}}
               name="nickname" label="nickname"
               validators={['required']}
@@ -357,9 +357,9 @@ class Signup extends Component {
               placeholder="Your nickname"
               type="text" under value={this.state.nickname}
               onChangeText={(value) => this.setState({nickname: value})}
-            />
+            /> */}
 
-            <TextValidator
+            {/* <TextValidator
               style={{marginBottom: -10,}}
               name="username" label="username"
               validators={['required']}
@@ -368,7 +368,7 @@ class Signup extends Component {
               placeholder="Your username"
               type="text" under value={this.state.username}
               onChangeText={(value) => this.setState({username: value})}
-            />
+            /> */}
 
             <TextValidator
               style={{marginBottom: -10,}}
@@ -412,7 +412,7 @@ class Signup extends Component {
               height: 1, marginLeft: 4, marginRight: 5, marginTop: 5
             }}/>
 
-            <TextValidator
+            {/* <TextValidator
               style={{marginBottom: -5,}}
               name="address" label="address"
               validators={['required']}
@@ -421,7 +421,7 @@ class Signup extends Component {
               placeholder="Your address"
               type="number" under value={this.state.address}
               onChangeText={(value) => this.setState({address: value})}
-            />
+            /> */}
 
             <View style={{flexDirection: 'row', justifyContent: 'space-between', marginBottom:-10}}>
               <TouchableOpacity style={styles.item1} onPress={this.showDateTimePicker}>
