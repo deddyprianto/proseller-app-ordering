@@ -1,9 +1,15 @@
 const awsConfig = {
+  // Dev
   awsUserPoolId: 'ap-southeast-1_06bLrZ4t8',
-  awsClientId: '7assk8plr257el191tk9rsouah',
-  identityPoolId: 'ap-southeast-1:346468483688:userpool/ap-southeast-1_06bLrZ4t8',
-  region: 'ap-southeast-1',
   awsUserPoolWebClientId: 'noba3tnv3li8m1um0bvb21d8g',
+
+  // Demo
+  // awsUserPoolId: 'ap-southeast-1_w525Hvp6g',
+  // awsUserPoolWebClientId: '2bt452vj3impp8iaq6cgdooq13',
+
+  identityPoolId: 'ap-southeast-1:346468483688:userpool/ap-southeast-1_06bLrZ4t8',
+  awsClientId: '7assk8plr257el191tk9rsouah',
+  region: 'ap-southeast-1',
   endpoint: 'https://xxxxxxxxxx.execute-api.ap-southeast-1.amazonaws.com/dev',
   base_url: 'https://api.proseller.io',
   register: 'https://api.proseller.io/customer/register',

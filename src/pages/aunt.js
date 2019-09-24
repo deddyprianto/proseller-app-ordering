@@ -24,7 +24,7 @@ import { Form, TextValidator } from 'react-native-validator-form';
 import AwesomeAlert from 'react-native-awesome-alerts';
 
 import InputText from "../components/inputText";
-import {confirmUser} from "../actions/auth.actions";
+import {confirmUser, loginUser} from "../actions/auth.actions";
 import Loader from "../components/loader";
 import {Actions} from 'react-native-router-flux';
 import colorConfig from "../config/colorConfig";
@@ -114,7 +114,7 @@ class Aunt extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      username: '',
+      username: this.props.dataRegister.username,
       confirmationCode: '',
       press: false,
       showPass: true,
@@ -165,9 +165,24 @@ class Aunt extends Component {
     });
   };
 
-  // handleSubmit = async() => {
-  //   await this.refs.form.submit();
-  // }
+  submitLogin = async() => {
+    try {
+      var dataLogin = {
+        'username': this.props.dataRegister.email,
+        'password': this.props.dataRegister.password
+      }
+      const response =  await this.props.dispatch(loginUser(dataLogin));
+      if (response.success == false) {
+        throw response;
+      }
+    } catch (error) {
+      this.setState({
+        showAlert: true,
+        titleAlert: 'Login Error!',
+        pesanError: error.responseBody.message
+      });
+    }
+  }
 
   showPass = () =>{
     if(this.state.press == false){
@@ -199,7 +214,7 @@ class Aunt extends Component {
     const { handleSubmit, loginUser} = this.props;
     const imageStyle = [styles.logo, { width: this.imageWidth }];
 		return(
-      <View style={styles.backgroundImage}>
+      <View style={styles.backgroundImage}>{console.log(this.props.dataRegister)}
         {(loginUser && loginUser.isLoading) && <Loader />}
         <ScrollView>
           <View style={{flexDirection: 'row', backgroundColor: colorConfig.pageIndex.backgroundColor}}>
@@ -282,7 +297,7 @@ class Aunt extends Component {
           message={this.state.pesanAlert}
           closeOnTouchOutside={true}
           closeOnHardwareBackPress={false}
-          showCancelButton={(this.state.titleAlert == 'Verify Success!') ? true : false}
+          showCancelButton={false}
           showConfirmButton={true}
           cancelText="Close"
           confirmText={(this.state.titleAlert == 'Verify Success!') ? 'Login' : 'Close'}
@@ -291,7 +306,7 @@ class Aunt extends Component {
             this.hideAlert();
           }}
           onConfirmPressed={() => {
-            (this.state.titleAlert == 'Verify Success!') ? Actions.signin() : this.hideAlert();
+            (this.state.titleAlert == 'Verify Success!') ? this.submitLogin() : this.hideAlert();
           }}
         />
       </View>
@@ -311,7 +326,7 @@ const validate = (values) => {
 };
 
 mapStateToProps = (state) => ({
-  confirmUser: state.authReducer.confirmUser
+  dataRegister: state.authReducer.createUser.dataRegister
 })
 
 mapDispatchToProps = (dispatch) => ({

@@ -9,6 +9,8 @@ import {
 } from 'react-native';
 import {connect} from "react-redux";
 import {compose} from "redux";
+import { Actions } from 'react-native-router-flux';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 import logoCash from '../assets/img/cash.png';
 import logoVisa from '../assets/img/visa.png';
@@ -19,6 +21,10 @@ class RewardsTransaction extends Component {
     super(props);
     this.state = {
     };
+  }
+
+  historyDetailPayment = (item) => {
+    Actions.historyDetailPayment({item});
   }
 
   render() {
@@ -32,7 +38,7 @@ class RewardsTransaction extends Component {
               <View key={key}>
                 {
                   <View>
-                    <TouchableOpacity style={styles.item}>
+                    <TouchableOpacity style={styles.item} onPress={() => this.historyDetailPayment(item)}>
                     <View style={{
                       flexDirection:'row', 
                     }}>
@@ -40,10 +46,20 @@ class RewardsTransaction extends Component {
                         (item.paymentType == 'Cash')? logoCash : logoVisa
                       }/>
                       <Text style={{
-                        marginLeft: 10
+                        marginLeft: 10,
+                        color: colorConfig.pageIndex.grayColor
                       }}>{item.storeName}</Text>
                     </View>
-                    <Text>{item.pointDebit} > </Text>
+                    <View style={{
+                      flexDirection:'row', 
+                      marginRight: 5,
+                      alignItems: 'center'
+                    }}>
+                      <Text style={{marginRight: 5, color: colorConfig.pageIndex.grayColor}}>{item.pointDebit}</Text>
+                      <Icon size={18} 
+                        name={ Platform.OS === 'ios' ? 'ios-arrow-dropright' : 'md-arrow-dropright' } 
+                        style={{ color: colorConfig.pageIndex.activeTintColor }} />
+                    </View>
                   </TouchableOpacity>
                   <View style={styles.line}></View>
                 </View>

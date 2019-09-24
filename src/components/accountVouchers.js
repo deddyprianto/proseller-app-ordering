@@ -42,7 +42,7 @@ export default class AccountVouchers extends Component {
       'January','February','March','April','May','June',
       'July','August','September','October','November','December'
     ];
-    return mount[value-1];
+    return mount[value];
   }
 
   pageDetailVoucher = (item) => {
@@ -71,10 +71,29 @@ export default class AccountVouchers extends Component {
                 <View style={styles.voucherItem}
                 onPress={() => this.pageDetailVoucher(item)}>
                   <View style={{alignItems: 'center'}}>
-                  <Image style={(item['image'] != '' && item['image'] != undefined) ? styles.voucherImage1 : styles.voucherImage2} 
+                    <Image style={(item['image'] != '' && item['image'] != undefined) ? styles.voucherImage1 : styles.voucherImage2} 
                       source={
                         (item['image'] != '' && item['image'] != undefined) ? {uri:item['image']} : appConfig.appImageNull
                       }/>
+                      <View style={{
+                        position: 'absolute',
+                        right: 0,
+                        top: 0,
+                        backgroundColor: 'rgba(128,128,128, 0.8)',
+                        height: 40,
+                        width: 40,
+                        borderTopRightRadius: 10,
+                        borderBottomLeftRadius: 10,
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}>
+                        <Text style={{
+                          color: colorConfig.pageIndex.backgroundColor,
+                          fontSize: 18,
+                          fontWeight: 'bold',
+                          textAlign: 'center'
+                        }}>{item['totalRedeem']}</Text>
+                      </View>
                   </View>
                   <View style={styles.voucherDetail}>
                     <View style={styles.status}> 
@@ -141,13 +160,16 @@ const styles = StyleSheet.create({
   voucherItem: {
     borderColor: colorConfig.store.defaultColor, 
     borderWidth:1, 
-    margin: 5,
+    marginTop: 5,
+    marginBottom: 5,
+    marginLeft: 10,
+    marginRight: 10,
     borderRadius: 10,
     backgroundColor: colorConfig.store.storesItem,
   },
   voucherImage1: {
     height: (Dimensions.get('window').width/4), 
-    width: (Dimensions.get('window').width-15), 
+    width: (Dimensions.get('window').width-22), 
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
   },

@@ -50,7 +50,8 @@ const createUser = (state = {}, action) => {
         isLoading: false,
         isError: false,
         isSuccess: true,
-        errors: null
+        errors: null,
+        dataRegister: action.dataRegister
       }
 
     case "CREAT_USER_FAIL":

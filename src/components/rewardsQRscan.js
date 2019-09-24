@@ -95,10 +95,10 @@ class RewardsQRscan extends Component {
           message={this.state.pesanAlert}
           closeOnTouchOutside={true}
           closeOnHardwareBackPress={false}
-          showCancelButton={(this.state.titleAlert == 'Payment Success!') ? true : false}
+          showCancelButton={false}
           showConfirmButton={true}
           cancelText="Close"
-          confirmText={(this.state.titleAlert == 'Payment Success!') ? 'Ok' : 'Close'}
+          confirmText={(this.state.titleAlert == 'Payment Success!') ? 'Oke' : 'Close'}
           confirmButtonColor={colorConfig.pageIndex.activeTintColor}
           onCancelPressed={() => {
             this.hideAlert();

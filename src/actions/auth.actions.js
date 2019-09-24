@@ -221,7 +221,8 @@ export const createNewUser = (payload) => {
         console.log(response)
         if(response.success) {
           dispatch({
-              type: "CREAT_USER_SUCCESS"
+              type: "CREAT_USER_SUCCESS",
+              dataRegister: payload
           });
 
           return response;

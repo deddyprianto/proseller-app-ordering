@@ -46,7 +46,7 @@ class VoucherDetail extends Component {
       'January','February','March','April','May','June',
       'July','August','September','October','November','December'
     ];
-    return mount[value-1];
+    return mount[value];
   }
 
   btnRedeem = async(dataVoucher) => {
@@ -171,10 +171,10 @@ class VoucherDetail extends Component {
           message={this.state.pesanAlert}
           closeOnTouchOutside={true}
           closeOnHardwareBackPress={false}
-          showCancelButton={(this.state.titleAlert == 'Redeem Success!') ? true : false}
+          showCancelButton={false}
           showConfirmButton={true}
           cancelText="Close"
-          confirmText={(this.state.titleAlert == 'Redeem Success!') ? 'Ok' : 'Close'}
+          confirmText={(this.state.titleAlert == 'Redeem Success!') ? 'Oke' : 'Close'}
           confirmButtonColor={colorConfig.pageIndex.activeTintColor}
           onCancelPressed={() => {
             this.hideAlert();

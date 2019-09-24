@@ -31,13 +31,13 @@ class AccountMenuList extends Component {
   }
 
   myVouchers = () => {
-    var grup = [];
-    grup = _.groupBy(this.props.myVoucers.data, 'id');
-    _.forEach(grup, function(value, key) {
+    var myVoucers = [];
+    _.forEach(_.groupBy(this.props.myVoucers.data, 'id'), function(value, key) {
       value[0].totalRedeem = value.length;
-      console.log(value[0]);
+      myVoucers.push(value[0])
     });
-    Actions.accountVouchers(this.props.myVoucers);
+    console.log(myVoucers);
+    Actions.accountVouchers(myVoucers);
   }
 
   render() {

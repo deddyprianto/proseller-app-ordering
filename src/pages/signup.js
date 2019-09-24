@@ -23,6 +23,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import DateTimePicker from "react-native-modal-datetime-picker";
 import { Form, TextValidator } from 'react-native-validator-form';
 import AwesomeAlert from 'react-native-awesome-alerts';
+import PhoneInput from "react-native-phone-input";
 
 import InputText from "../components/inputText";
 import {createNewUser} from "../actions/auth.actions";
@@ -158,7 +159,14 @@ const styles = StyleSheet.create({
   form1: {
     marginLeft: 5,
     width: Dimensions.get('window').width
-  }
+  },
+  info: {
+    // width: 200,
+    borderRadius: 5,
+    backgroundColor: "#f0f0f0",
+    padding: 10,
+    marginTop: 20
+  },
 });
 
 class Signup extends Component {
@@ -179,7 +187,7 @@ class Signup extends Component {
       password: '',
       repassword: '',
       name: '',
-      phoneNumber: '',
+      phoneNumber: '+65',
       nickname: '',
       address: '',
       birthdate: '',
@@ -219,7 +227,7 @@ class Signup extends Component {
         "username": this.state.username,
         "password": this.state.password,
         "name": this.state.name,
-        "phoneNumber": this.state.phoneNumber,
+        "phoneNumber": this.phone.getValue(),
         "nickname": this.state.nickname,
         "address": this.state.address,
         "birthdate": this.state.birthdate,
@@ -289,6 +297,12 @@ class Signup extends Component {
   componentWillUnmount() {
     Form.removeValidationRule('isEmailMatch');
     Form.removeValidationRule('isPasswordMatch');
+  }
+
+  updateInfo() {
+    this.setState({
+      phoneNumber: this.phone.getValue()
+    });
   }
 
 	render() {
@@ -378,7 +392,7 @@ class Signup extends Component {
               onChangeText={(value) => this.setState({reemail: value})}
             />
 
-            <TextValidator
+            {/* <TextValidator
               style={{marginBottom: -10,}}
               name="phoneNumber" label="phoneNumber"
               validators={['required', 'minStringLength:11', 'maxStringLength:15']}
@@ -387,7 +401,16 @@ class Signup extends Component {
               placeholder="Your Phone Number"
               type="number" under value={this.state.phoneNumber}
               onChangeText={(value) => this.setState({phoneNumber: value})}
-            />
+            /> */}
+
+            <PhoneInput ref={ref => { this.phone = ref;}} 
+              style={{marginTop: 15, paddingLeft: 5,}} 
+              value={this.state.phoneNumber}/>
+
+            <View style={{
+              backgroundColor: colorConfig.pageIndex.activeTintColor,
+              height: 1, marginLeft: 4, marginRight: 5, marginTop: 5
+            }}/>
 
             <TextValidator
               style={{marginBottom: -5,}}
@@ -427,10 +450,7 @@ class Signup extends Component {
 
             <View style={{
               backgroundColor: colorConfig.pageIndex.activeTintColor,
-              height: 1,
-              marginLeft: 4,
-              marginRight: 5,
-              marginTop: 5
+              height: 1, marginLeft: 4, marginRight: 5, marginTop: 5
             }}/>
 
             <View>
@@ -638,7 +658,7 @@ class Signup extends Component {
           message={this.state.pesanAlert}
           closeOnTouchOutside={true}
           closeOnHardwareBackPress={false}
-          showCancelButton={(this.state.titleAlert == 'Register Success!') ? true : false}
+          showCancelButton={false}
           showConfirmButton={true}
           cancelText="Close"
           confirmText={(this.state.titleAlert == 'Register Success!') ? 'Verify Code' : 'Close'}

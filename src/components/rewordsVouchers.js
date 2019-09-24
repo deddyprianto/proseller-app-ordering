@@ -35,7 +35,7 @@ class RewordsVouchers extends Component {
       'January','February','March','April','May','June',
       'July','August','September','October','November','December'
     ];
-    return mount[value-1];
+    return mount[value];
   }
 
   pageDetailVoucher = (item) => {
