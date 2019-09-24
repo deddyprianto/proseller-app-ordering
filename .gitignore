@@ -59,4 +59,4 @@ buck-out/
 /ios/Pods/
 
 #config
-awsConfig.js
+src/config/awsConfig.js
