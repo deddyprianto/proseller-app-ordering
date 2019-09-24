@@ -1,59 +1,58 @@
-import React, { Component } from 'react';
-import { 
-  View, 
+import React, {Component} from 'react';
+import {
+  View,
   Text,
   Dimensions,
   ScrollView,
   RefreshControl,
-  AsyncStorage
+  AsyncStorage,
 } from 'react-native';
-import { createAppContainer } from 'react-navigation';
-import { createMaterialTopTabNavigator } from 'react-navigation-tabs';
+import {createAppContainer} from 'react-navigation';
+import {createMaterialTopTabNavigator} from 'react-navigation-tabs';
 import * as _ from 'lodash';
-import {connect} from "react-redux";
-import {compose} from "redux";
-import {notifikasi} from "../actions/auth.actions";
-import {
-  campaign, 
-  dataPoint,
-  vouchers
-} from "../actions/rewards.action";
+import {connect} from 'react-redux';
+import {compose} from 'redux';
+import {notifikasi} from '../actions/auth.actions';
+import {campaign, dataPoint, vouchers} from '../actions/rewards.action';
 
 import RewardsPoint from '../components/rewardsPoint';
 import RewardsStamp from '../components/rewardsStamp';
 import RewardsMenu from '../components/rewardsMenu';
 import RewardsTransaction from '../components/rewardsTransaction';
-import colorConfig from "../config/colorConfig";
-import awsConfig from "../config/awsConfig";
+import colorConfig from '../config/colorConfig';
+import awsConfig from '../config/awsConfig';
 
 const AppNavigationContainer = createAppContainer(
-	createMaterialTopTabNavigator({
-		Stamp: {
-			screen: RewardsStamp
-		},
-		// Loyalty: {
-    //   screen: Stamp
-		// },
-		Point: {
-      screen: RewardsPoint,
-		}
-	},{
-    initialRouteName: 'Stamp',
-    tabBarOptions: {
-      labelStyle: {
-        fontSize: 12,
+  createMaterialTopTabNavigator(
+    {
+      Stamp: {
+        screen: RewardsStamp,
       },
-      tabStyle: {
-        height: 40,
+      // Loyalty: {
+      //   screen: Stamp
+      // },
+      Point: {
+        screen: RewardsPoint,
       },
-      style: {
-        backgroundColor: colorConfig.pageIndex.backgroundColor,
+    },
+    {
+      initialRouteName: 'Stamp',
+      tabBarOptions: {
+        labelStyle: {
+          fontSize: 12,
+        },
+        tabStyle: {
+          height: 40,
+        },
+        style: {
+          backgroundColor: colorConfig.pageIndex.backgroundColor,
+        },
+        activeTintColor: colorConfig.pageIndex.activeTintColor,
+        inactiveTintColor: colorConfig.pageIndex.inactiveTintColor,
+        upperCaseLabel: false,
       },
-      activeTintColor: colorConfig.pageIndex.activeTintColor,
-      inactiveTintColor: colorConfig.pageIndex.inactiveTintColor,
-      upperCaseLabel: false,
-    }
-  })
+    },
+  ),
 );
 
 class Rewards extends Component {
@@ -70,25 +69,31 @@ class Rewards extends Component {
     };
   }
 
-  componentDidMount = async() => {
+  componentDidMount = async () => {
     await this.getDataRewards();
-  }
+  };
 
-  getDataRewards = async() => {
+  getDataRewards = async () => {
     try {
       await this.props.dispatch(campaign());
       await this.props.dispatch(dataPoint());
       await this.props.dispatch(vouchers());
     } catch (error) {
-      await this.props.dispatch(notifikasi('Get Data Rewards Error!', error.responseBody.message, console.log('Cancel Pressed')));
+      await this.props.dispatch(
+        notifikasi(
+          'Get Data Rewards Error!',
+          error.responseBody.message,
+          console.log('Cancel Pressed'),
+        ),
+      );
     }
-  }
+  };
 
   _onRefresh = () => {
     this.setState({refreshing: true});
     this.getDataRewards();
     this.setState({refreshing: false});
-  }
+  };
 
   render() {
     return (
@@ -100,23 +105,26 @@ class Rewards extends Component {
           />
         }>
         {/* <AppNavigationContainer/> */}
-        <RewardsStamp/>
-        <RewardsPoint/>
-        <RewardsMenu/>
-        <RewardsTransaction screen={this.props}/>
+        <RewardsStamp />
+        <RewardsPoint />
+        <RewardsMenu />
+        <RewardsTransaction screen={this.props} />
       </ScrollView>
     );
   }
 }
 
-mapStateToProps = (state) => ({
-  recentTransaction : state.rewardsReducer.dataPoint.recentTransaction
+mapStateToProps = state => ({
+  recentTransaction: state.rewardsReducer.dataPoint.recentTransaction,
 });
 
-mapDispatchToProps = (dispatch) => ({
-  dispatch
+mapDispatchToProps = dispatch => ({
+  dispatch,
 });
 
 export default compose(
-  connect(mapStateToProps, mapDispatchToProps),
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  ),
 )(Rewards);

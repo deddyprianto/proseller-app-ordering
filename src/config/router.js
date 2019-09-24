@@ -4,30 +4,30 @@
  * PT Edgeworks
  */
 
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {Router, Scene} from 'react-native-router-flux';
 
 import Signin from '../pages/signin';
 import Signup from '../pages/signup';
 import Aunt from '../pages/aunt';
-import PageIndex from "../pages/pageIndex";
+import PageIndex from '../pages/pageIndex';
 
-import Pay from "../components/rewardsPay";
-import Rewards from "../components/rewardsRewards";
-import RewardsQRmenu from "../components/rewardsQRmenu";
-import RewardsQRscan from "../components/rewardsQRscan";
-import VoucherDetail from "../components/voucherDetail";
-import HistoryDetailPayment from "../components/historyDetailPayment";
-import StoreDetailStores from "../components/storeDetailStores";
-import StoreSeeMorePromotion from "../components/storeSeeMorePromotion";
-import StoreDetailPromotion from "../components/storeDetailPromotion";
-import StoresMap from "../components/storesMap";
-import AccountVouchers from "../components/accountVouchers";
+import Pay from '../components/rewardsPay';
+import Rewards from '../components/rewardsRewards';
+import RewardsQRmenu from '../components/rewardsQRmenu';
+import RewardsQRscan from '../components/rewardsQRscan';
+import VoucherDetail from '../components/voucherDetail';
+import HistoryDetailPayment from '../components/historyDetailPayment';
+import StoreDetailStores from '../components/storeDetailStores';
+import StoreSeeMorePromotion from '../components/storeSeeMorePromotion';
+import StoreDetailPromotion from '../components/storeDetailPromotion';
+import StoresMap from '../components/storesMap';
+import AccountVouchers from '../components/accountVouchers';
 
 export default class Routes extends Component {
-	render() {
-		return(
-			<Router>
+  render() {
+    return (
+      <Router>
         <Scene>
           <Scene key="root" hideNavBar={true} initial={!this.props.isLoggedIn}>
             <Scene key="signin" component={Signin} initial={true} />
@@ -41,15 +41,21 @@ export default class Routes extends Component {
             <Scene key="qrcode" component={RewardsQRmenu} />
             <Scene key="scan" component={RewardsQRscan} />
             <Scene key="voucher" component={VoucherDetail} />
-            <Scene key="historyDetailPayment" component={HistoryDetailPayment} />
+            <Scene
+              key="historyDetailPayment"
+              component={HistoryDetailPayment}
+            />
             <Scene key="storeDetailStores" component={StoreDetailStores} />
             <Scene key="seeMorePromotion" component={StoreSeeMorePromotion} />
-            <Scene key="storeDetailPromotion" component={StoreDetailPromotion} />
+            <Scene
+              key="storeDetailPromotion"
+              component={StoreDetailPromotion}
+            />
             <Scene key="storeSeeMap" component={StoresMap} />
             <Scene key="accountVouchers" component={AccountVouchers} />
           </Scene>
         </Scene>
       </Router>
-		)
-	}
+    );
+  }
 }

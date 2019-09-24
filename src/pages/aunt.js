@@ -114,7 +114,7 @@ class Aunt extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      username: this.props.dataRegister.username,
+      username: (this.props.dataRegister != undefined)? this.props.dataRegister.email : '',
       confirmationCode: '',
       press: false,
       showPass: true,

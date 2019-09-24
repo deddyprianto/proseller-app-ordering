@@ -4,7 +4,7 @@
  * PT Edgeworks
  */
 
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {
   StyleSheet,
   Text,
@@ -15,67 +15,67 @@ import {
   Animated,
   ImageBackground,
   Dimensions,
-  Alert
+  Alert,
 } from 'react-native';
-import {connect} from "react-redux";
-import {compose} from "redux";
-import { Field, reduxForm } from 'redux-form';
+import {connect} from 'react-redux';
+import {compose} from 'redux';
+import {Field, reduxForm} from 'redux-form';
 import AwesomeAlert from 'react-native-awesome-alerts';
 
-import InputText from "../components/inputText";
-import SigninOther from "../components/signinOther"
-import {loginUser} from "../actions/auth.actions";
-import Loader from "../components/loader";
+import InputText from '../components/inputText';
+import SigninOther from '../components/signinOther';
+import {loginUser} from '../actions/auth.actions';
+import Loader from '../components/loader';
 import {Actions} from 'react-native-router-flux';
-import colorConfig from "../config/colorConfig";
-import appConfig from "../config/appConfig";
+import colorConfig from '../config/colorConfig';
+import appConfig from '../config/appConfig';
 
 const imageWidth = Dimensions.get('window').width / 2;
 
 const styles = StyleSheet.create({
   $largeContainerSize: imageWidth,
-  $largeImageSize: imageWidth-80,
+  $largeImageSize: imageWidth - 80,
   $smallContainerSize: imageWidth / 2,
   $smallImageSize: imageWidth / 4,
 
-  container : {
+  container: {
     flex: 1,
-    alignItems:'center',
-    justifyContent :'center',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  signupTextCont : {
+  signupTextCont: {
     flexGrow: 1,
-    alignItems:'flex-end',
-    justifyContent :'center',
-    paddingVertical:16,
-    flexDirection:'row'
+    alignItems: 'flex-end',
+    justifyContent: 'center',
+    paddingVertical: 16,
+    flexDirection: 'row',
   },
-  signupTextAuth : {
-    justifyContent :'center',
-    marginBottom:20,
-    flexDirection:'row'
+  signupTextAuth: {
+    justifyContent: 'center',
+    marginBottom: 20,
+    flexDirection: 'row',
   },
   signupText: {
-  	color:colorConfig.signin.signupText,
-  	fontSize:14
+    color: colorConfig.signin.signupText,
+    fontSize: 14,
   },
   signupButton: {
-  	color:colorConfig.signin.signupButton,
-  	fontSize:14,
-    fontWeight:'bold',
+    color: colorConfig.signin.signupButton,
+    fontSize: 14,
+    fontWeight: 'bold',
     textAlign: 'left',
-    paddingLeft: 10
+    paddingLeft: 10,
   },
   verifyButton: {
-  	color:colorConfig.signin.signupButton,
-    fontSize:14,
-    fontWeight:'bold',
+    color: colorConfig.signin.signupButton,
+    fontSize: 14,
+    fontWeight: 'bold',
     textAlign: 'right',
-    paddingRight: 10
+    paddingRight: 10,
   },
   button: {
-    width:300,
-    backgroundColor:colorConfig.signin.button,
+    width: 300,
+    backgroundColor: colorConfig.signin.button,
     borderRadius: 25,
     marginVertical: 10,
     paddingVertical: 13,
@@ -86,18 +86,18 @@ const styles = StyleSheet.create({
     // elevation: 4,
   },
   buttonText: {
-    fontSize:16,
-    fontWeight:'bold',
-    color:colorConfig.signin.buttonText,
-    textAlign:'center'
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: colorConfig.signin.buttonText,
+    textAlign: 'center',
   },
   errorText: {
     color: colorConfig.signin.errorText,
-    fontSize:14,
-    paddingHorizontal:16,
-    paddingBottom: 8
+    fontSize: 14,
+    paddingHorizontal: 16,
+    paddingBottom: 8,
   },
-  backgroundImage: {        
+  backgroundImage: {
     alignItems: 'center',
     alignSelf: 'stretch',
     flex: 1,
@@ -106,20 +106,19 @@ const styles = StyleSheet.create({
     width: '$largeImageSize',
   },
   viewLoginWith: {
-    justifyContent :'space-between',
+    justifyContent: 'space-between',
     // paddingVertical:2,
-    flexDirection:'row',
-    marginBottom:30
+    flexDirection: 'row',
+    marginBottom: 30,
   },
 });
-
 
 class Signin extends Component {
   constructor(props) {
     super(props);
     this.state = {
       showAlert: false,
-      pesanError: ''
+      pesanError: '',
     };
     this.imageWidth = new Animated.Value(styles.$largeImageSize);
   }
@@ -128,40 +127,49 @@ class Signin extends Component {
     Actions.signin();
   }
 
-	signup() {
-		Actions.signup()
+  signup() {
+    Actions.signup();
   }
-  
-  auth() {
-		Actions.auth()
-	}
 
-  loginUser = async (values) => {
+  auth() {
+    Actions.auth();
+  }
+
+  loginUser = async values => {
     try {
-      const response =  await this.props.dispatch(loginUser(values));
+      const response = await this.props.dispatch(loginUser(values));
       if (response.success == false) {
         throw response;
       }
     } catch (error) {
       this.setState({
         showAlert: true,
-        pesanError: error.responseBody.message
+        pesanError: error.responseBody.message,
       });
     }
-  }
+  };
 
-  onSubmit = (values) => {
+  onSubmit = values => {
     this.loginUser(values);
-  }
- 
+  };
+
   hideAlert = () => {
     this.setState({
-      showAlert: false
+      showAlert: false,
     });
   };
 
-  renderTextInput = (field) => {
-    const {meta: {touched, error}, label, icon, secureTextEntry, maxLength, keyboardType, placeholder, input: {onChange, ...restInput}} = field;
+  renderTextInput = field => {
+    const {
+      meta: {touched, error},
+      label,
+      icon,
+      secureTextEntry,
+      maxLength,
+      keyboardType,
+      placeholder,
+      input: {onChange, ...restInput},
+    } = field;
     return (
       <View>
         <InputText
@@ -172,23 +180,23 @@ class Signin extends Component {
           secureTextEntry={secureTextEntry}
           icon={icon}
           label={label}
-          {...restInput} />
-      {(touched && error) && <Text style={styles.errorText}>{error}</Text>}
+          {...restInput}
+        />
+        {touched && error && <Text style={styles.errorText}>{error}</Text>}
       </View>
     );
-  }
+  };
 
-	render() {
-    const { handleSubmit, loginUser} = this.props;
+  render() {
+    const {handleSubmit, loginUser} = this.props;
 
-    const imageStyle = [styles.logo, { width: this.imageWidth }];
-		return(
+    const imageStyle = [styles.logo, {width: this.imageWidth}];
+    return (
       <ImageBackground
         source={appConfig.appBackground}
         style={styles.backgroundImage}
-        resizeMode="stretch"
-      >
-        {(loginUser && loginUser.isLoading) && <Loader />}
+        resizeMode="stretch">
+        {loginUser && loginUser.isLoading && <Loader />}
         <ScrollView>
           <View style={styles.container}>
             <Animated.Image
@@ -199,28 +207,36 @@ class Signin extends Component {
           </View>
           <Field
             name="username"
-            placeholder="Username"
-            icon='md-contact'
-            component={this.renderTextInput} />
+            placeholder="Email"
+            icon="md-contact"
+            component={this.renderTextInput}
+          />
           <Field
             name="password"
-            icon='md-lock'
+            icon="md-lock"
             placeholder="Password"
             secureTextEntry={true}
-            component={this.renderTextInput} />
-          <TouchableOpacity style={styles.button} onPress={handleSubmit(this.onSubmit)}>
+            component={this.renderTextInput}
+          />
+          <TouchableOpacity
+            style={styles.button}
+            onPress={handleSubmit(this.onSubmit)}>
             <Text style={styles.buttonText}>Login</Text>
           </TouchableOpacity>
           <View style={styles.viewLoginWith}>
-            <TouchableOpacity onPress={this.signup}><Text style={styles.signupButton}>Register</Text></TouchableOpacity>
-            <TouchableOpacity onPress={this.auth}><Text style={styles.verifyButton}>Verify Code</Text></TouchableOpacity>
+            <TouchableOpacity onPress={this.signup}>
+              <Text style={styles.signupButton}>Register</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={this.auth}>
+              <Text style={styles.verifyButton}>Verify Code</Text>
+            </TouchableOpacity>
           </View>
-          { (appConfig.appStatusLoginOther == false) ? null: <SigninOther/> }
+          {appConfig.appStatusLoginOther == false ? null : <SigninOther />}
         </ScrollView>
         <AwesomeAlert
           show={this.state.showAlert}
           showProgress={false}
-          title='Signin Error'
+          title="Signin Error"
           message={this.state.pesanError}
           closeOnTouchOutside={true}
           closeOnHardwareBackPress={false}
@@ -237,33 +253,36 @@ class Signin extends Component {
           }}
         />
       </ImageBackground>
-    )
-	}
+    );
+  }
 }
 
-const validate = (values) => {
+const validate = values => {
   const errors = {};
-  if(!values.email) {
-    errors.email = "Email is required"
+  if (!values.email) {
+    errors.email = 'Email is required';
   }
-  if(!values.password) {
-    errors.password = "Password is required"
+  if (!values.password) {
+    errors.password = 'Password is required';
   }
   return errors;
 };
 
-mapStateToProps = (state) => ({
-  loginUser: state.authReducer.loginUser
-})
+mapStateToProps = state => ({
+  loginUser: state.authReducer.loginUser,
+});
 
-mapDispatchToProps = (dispatch) => ({
-  dispatch
+mapDispatchToProps = dispatch => ({
+  dispatch,
 });
 
 export default compose(
-  connect(mapStateToProps, mapDispatchToProps),
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  ),
   reduxForm({
-    form: "login",
-    validate
-  })
+    form: 'login',
+    validate,
+  }),
 )(Signin);

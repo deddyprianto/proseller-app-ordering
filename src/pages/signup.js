@@ -4,7 +4,7 @@
  * PT Edgeworks
  */
 
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {
   StyleSheet,
   Text,
@@ -14,69 +14,69 @@ import {
   Animated,
   ImageBackground,
   Dimensions,
-  TextInput
+  TextInput,
 } from 'react-native';
-import { Field, reduxForm } from 'redux-form';
-import {connect} from "react-redux";
-import {compose} from "redux";
+import {Field, reduxForm} from 'redux-form';
+import {connect} from 'react-redux';
+import {compose} from 'redux';
 import Icon from 'react-native-vector-icons/Ionicons';
-import DateTimePicker from "react-native-modal-datetime-picker";
-import { Form, TextValidator } from 'react-native-validator-form';
+import DateTimePicker from 'react-native-modal-datetime-picker';
+import {Form, TextValidator} from 'react-native-validator-form';
 import AwesomeAlert from 'react-native-awesome-alerts';
-import PhoneInput from "react-native-phone-input";
+import PhoneInput from 'react-native-phone-input';
 
-import InputText from "../components/inputText";
-import {createNewUser} from "../actions/auth.actions";
-import Loader from "../components/loader";
-import {ErrorUtils} from "../utils/auth.utils";
+import InputText from '../components/inputText';
+import {createNewUser} from '../actions/auth.actions';
+import Loader from '../components/loader';
+import {ErrorUtils} from '../utils/auth.utils';
 import {Actions} from 'react-native-router-flux';
-import colorConfig from "../config/colorConfig";
-import appConfig from "../config/appConfig";
+import colorConfig from '../config/colorConfig';
+import appConfig from '../config/appConfig';
 
 const imageWidth = Dimensions.get('window').width / 2;
 
 const styles = StyleSheet.create({
   $largeContainerSize: imageWidth,
-  $largeImageSize: imageWidth/2,
+  $largeImageSize: imageWidth / 2,
   $smallContainerSize: imageWidth / 2,
   $smallImageSize: imageWidth / 4,
 
-  container : {
+  container: {
     flex: 1,
-    alignItems:'center',
-    justifyContent :'center',
+    alignItems: 'center',
+    justifyContent: 'center',
     marginTop: 10,
     marginBottom: 10,
-    left: -20
+    left: -20,
   },
   signupTextCont: {
-  	flexGrow: 1,
-    alignItems:'flex-end',
-    justifyContent :'center',
-    paddingVertical:16,
-    flexDirection:'row'
+    flexGrow: 1,
+    alignItems: 'flex-end',
+    justifyContent: 'center',
+    paddingVertical: 16,
+    flexDirection: 'row',
   },
   signupText: {
-  	color:colorConfig.signup.signupText,
-  	fontSize:16
+    color: colorConfig.signup.signupText,
+    fontSize: 16,
   },
   signupButton: {
-  	color:colorConfig.signin.signupButton,
-  	fontSize:14,
-    fontWeight:'bold',
+    color: colorConfig.signin.signupButton,
+    fontSize: 14,
+    fontWeight: 'bold',
     textAlign: 'left',
-    paddingLeft: 10
+    paddingLeft: 10,
   },
   verifyButton: {
-  	color:colorConfig.signin.signupButton,
-    fontSize:14,
-    fontWeight:'bold',
+    color: colorConfig.signin.signupButton,
+    fontSize: 14,
+    fontWeight: 'bold',
     textAlign: 'right',
-    paddingRight: 10
+    paddingRight: 10,
   },
   button: {
     height: 45,
-    backgroundColor:colorConfig.pageIndex.activeTintColor,
+    backgroundColor: colorConfig.pageIndex.activeTintColor,
     borderRadius: 25,
     marginVertical: 10,
     paddingVertical: 13,
@@ -87,32 +87,32 @@ const styles = StyleSheet.create({
     // elevation: 4,
   },
   buttonText: {
-    fontSize:16,
-    fontWeight:'bold',
-    color:colorConfig.signup.buttonText,
-    textAlign:'center'
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: colorConfig.signup.buttonText,
+    textAlign: 'center',
   },
   errorText: {
-      color:colorConfig.signup.errorText,
-      fontSize:14,
-      paddingHorizontal:16,
-      paddingBottom: 8
+    color: colorConfig.signup.errorText,
+    fontSize: 14,
+    paddingHorizontal: 16,
+    paddingBottom: 8,
   },
   viewLoginWith: {
-    justifyContent :'space-between',
+    justifyContent: 'space-between',
     // paddingVertical:2,
-    flexDirection:'row',
-    marginBottom:30
+    flexDirection: 'row',
+    marginBottom: 30,
   },
-  backgroundImage: {        
+  backgroundImage: {
     flex: 1,
   },
   logo: {
     width: '$largeImageSize',
   },
   line: {
-    borderBottomColor: colorConfig.store.defaultColor, 
-    borderBottomWidth:2
+    borderBottomColor: colorConfig.store.defaultColor,
+    borderBottomWidth: 2,
   },
   item: {
     backgroundColor: 'rgba(255, 255,255,0.8)',
@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingLeft: 15,
-    marginBottom: 5
+    marginBottom: 5,
   },
   item1: {
     // backgroundColor: 'rgba(255, 255,255,0.8)',
@@ -135,37 +135,37 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingLeft: 10,
     marginBottom: 5,
-    width: imageWidth-30,
-    marginRight: 10
+    width: imageWidth - 30,
+    marginRight: 10,
   },
   buttonContainer: {
     flexDirection: 'row',
   },
   circle: {
-      height: 20,
-      width: 20,
-      borderRadius: 10,
-      borderWidth: 1,
-      borderColor: '#ACACAC',
-      alignItems: 'center',
-      justifyContent: 'center',
+    height: 20,
+    width: 20,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#ACACAC',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   checkedCircle: {
-      width: 14,
-      height: 14,
-      borderRadius: 7,
-      backgroundColor: colorConfig.pageIndex.activeTintColor,
+    width: 14,
+    height: 14,
+    borderRadius: 7,
+    backgroundColor: colorConfig.pageIndex.activeTintColor,
   },
   form1: {
     marginLeft: 5,
-    width: Dimensions.get('window').width
+    width: Dimensions.get('window').width,
   },
   info: {
     // width: 200,
     borderRadius: 5,
-    backgroundColor: "#f0f0f0",
+    backgroundColor: '#f0f0f0',
     padding: 10,
-    marginTop: 20
+    marginTop: 20,
   },
 });
 
@@ -197,18 +197,25 @@ class Signup extends Component {
   }
 
   showDateTimePicker = () => {
-    this.setState({ isDateTimePickerVisible: true });
+    this.setState({isDateTimePickerVisible: true});
   };
- 
+
   hideDateTimePicker = () => {
-    this.setState({ isDateTimePickerVisible: false });
+    this.setState({isDateTimePickerVisible: false});
   };
 
   handleDatePicked = date => {
     var tanggal = new Date(date);
-    var birthdate = tanggal.getDate()+'/'+(tanggal.getMonth().toString().length == 1 ? '0'+tanggal.getMonth() : tanggal.getMonth())+'/'+tanggal.getFullYear();
+    var birthdate =
+      tanggal.getDate() +
+      '/' +
+      (tanggal.getMonth().toString().length == 1
+        ? '0' + tanggal.getMonth()
+        : tanggal.getMonth()) +
+      '/' +
+      tanggal.getFullYear();
     // console.log(tanggal.getMonth().toString().length);
-    this.setState({ birthdate: birthdate });
+    this.setState({birthdate: birthdate});
     this.hideDateTimePicker();
   };
 
@@ -217,41 +224,42 @@ class Signup extends Component {
   }
 
   auth() {
-		Actions.auth()
-	}
+    Actions.auth();
+  }
 
   handleSubmit = async () => {
     try {
       var dataRegister = {
-        "email": this.state.email,
-        // "username": this.state.username,
-        "password": this.state.password,
-        "name": this.state.name,
-        "phoneNumber": this.phone.getValue(),
+        email: this.state.email,
+        username: this.state.email,
+        password: this.state.password,
+        name: this.state.name,
+        phoneNumber: this.phone.getValue(),
         // "nickname": this.state.nickname,
         // "address": this.state.address,
-        "birthdate": this.state.birthdate,
-        "gender": this.state.gender
+        birthdate: this.state.birthdate,
+        gender: this.state.gender,
       };
-      // console.log(dataRegister)
-      const response =  await this.props.dispatch(createNewUser(dataRegister));
+      console.log(dataRegister);
+      const response = await this.props.dispatch(createNewUser(dataRegister));
       if (!response.success) {
-          throw response;
+        throw response;
       } else {
         this.setState({
           showAlert: true,
-          pesanAlert: "A verify code has been sent to your email. Select 'Verify Code' to verify your account!",
-          titleAlert: 'Register Success!'
+          pesanAlert:
+            "A verify code has been sent to your email. Select 'Verify Code' to verify your account!",
+          titleAlert: 'Register Success!',
         });
       }
     } catch (error) {
       this.setState({
         showAlert: true,
         pesanAlert: error.responseBody.message,
-        titleAlert: 'Register Error!'
+        titleAlert: 'Register Error!',
       });
     }
-  }
+  };
 
   // handleSubmit = () => {
   //   this.refs.form.submit();
@@ -259,34 +267,34 @@ class Signup extends Component {
 
   hideAlert = () => {
     this.setState({
-      showAlert: false
+      showAlert: false,
     });
   };
 
-  showPass1 = () =>{
-    if(this.state.press1 == false){
-      this.setState({ showPass1: false, press1: true })
+  showPass1 = () => {
+    if (this.state.press1 == false) {
+      this.setState({showPass1: false, press1: true});
     } else {
-      this.setState({ showPass1: true, press1: false })
+      this.setState({showPass1: true, press1: false});
     }
-  }
+  };
 
-  showPass2 = () =>{
-    if(this.state.press2 == false){
-      this.setState({ showPass2: false, press2: true })
+  showPass2 = () => {
+    if (this.state.press2 == false) {
+      this.setState({showPass2: false, press2: true});
     } else {
-      this.setState({ showPass2: true, press2: false })
+      this.setState({showPass2: true, press2: false});
     }
-  }
+  };
 
   componentWillMount() {
-    Form.addValidationRule('isEmailMatch', (value) => {
+    Form.addValidationRule('isEmailMatch', value => {
       if (value !== this.state.email) {
         return false;
       }
       return true;
     });
-    Form.addValidationRule('isPasswordMatch', (value) => {
+    Form.addValidationRule('isPasswordMatch', value => {
       if (value !== this.state.password) {
         return false;
       }
@@ -301,29 +309,42 @@ class Signup extends Component {
 
   updateInfo() {
     this.setState({
-      phoneNumber: this.phone.getValue()
+      phoneNumber: this.phone.getValue(),
     });
   }
 
-	render() {
-    const { handleSubmit, createUser} = this.props;
-    const imageStyle = [styles.logo, { width: this.imageWidth }];
-		return(
+  render() {
+    const {handleSubmit, createUser} = this.props;
+    const imageStyle = [styles.logo, {width: this.imageWidth}];
+    return (
       <View style={styles.backgroundImage}>
         {createUser.isLoading && <Loader />}
-        <View style={{flexDirection: 'row', backgroundColor: colorConfig.pageIndex.backgroundColor}}>
+        <View
+          style={{
+            flexDirection: 'row',
+            backgroundColor: colorConfig.pageIndex.backgroundColor,
+          }}>
           <TouchableOpacity onPress={this.goBack}>
-            <Icon size={28} name={ Platform.OS === 'ios' ? 'ios-arrow-back' : 'md-arrow-round-back' } style={{
-              color: colorConfig.pageIndex.activeTintColor, 
-              margin:10
-            }} />
+            <Icon
+              size={28}
+              name={
+                Platform.OS === 'ios' ? 'ios-arrow-back' : 'md-arrow-round-back'
+              }
+              style={{
+                color: colorConfig.pageIndex.activeTintColor,
+                margin: 10,
+              }}
+            />
           </TouchableOpacity>
           <View style={styles.container}>
-            <Text style={{
-              color: colorConfig.pageIndex.activeTintColor,
-              fontSize: 20,
-              fontWeight: 'bold'
-            }}>Form Register</Text>
+            <Text
+              style={{
+                color: colorConfig.pageIndex.activeTintColor,
+                fontSize: 20,
+                fontWeight: 'bold',
+              }}>
+              Form Register
+            </Text>
           </View>
         </View>
         <DateTimePicker
@@ -332,23 +353,38 @@ class Signup extends Component {
           is24Hour={true}
           onCancel={this.hideDateTimePicker}
         />
-        <View style={styles.line}/>
+        <View style={styles.line} />
         <ScrollView>
-          <View style={{margin: 10,backgroundColor: colorConfig.pageIndex.backgroundColor, borderRadius: 10, padding: 10, borderColor: colorConfig.pageIndex.activeTintColor, borderWidth: 1}}>
-            
-          <Form ref="form" onSubmit={this.handleSubmit}>
-            <TextValidator
-              style={{marginBottom: -10,}}
-              name="name" label="name"
-              validators={['required']}
-              errorStyle={{ container: { top: 5, left: 5}, text: { color: 'red' }, underlineValidColor: colorConfig.pageIndex.activeTintColor, underlineInvalidColor: 'red'}}
-              errorMessages={['This field is required']}
-              placeholder="Your name"
-              type="text" under value={this.state.name}
-              onChangeText={(value) => this.setState({name: value})}
-            />
+          <View
+            style={{
+              margin: 10,
+              backgroundColor: colorConfig.pageIndex.backgroundColor,
+              borderRadius: 10,
+              padding: 10,
+              borderColor: colorConfig.pageIndex.activeTintColor,
+              borderWidth: 1,
+            }}>
+            <Form ref="form" onSubmit={this.handleSubmit}>
+              <TextValidator
+                style={{marginBottom: -10}}
+                name="name"
+                label="name"
+                validators={['required']}
+                errorStyle={{
+                  container: {top: 5, left: 5},
+                  text: {color: 'red'},
+                  underlineValidColor: colorConfig.pageIndex.activeTintColor,
+                  underlineInvalidColor: 'red',
+                }}
+                errorMessages={['This field is required']}
+                placeholder="Your name"
+                type="text"
+                under
+                value={this.state.name}
+                onChangeText={value => this.setState({name: value})}
+              />
 
-            {/* <TextValidator
+              {/* <TextValidator
               style={{marginBottom: -10,}}
               name="nickname" label="nickname"
               validators={['required']}
@@ -359,7 +395,7 @@ class Signup extends Component {
               onChangeText={(value) => this.setState({nickname: value})}
             /> */}
 
-            {/* <TextValidator
+              {/* <TextValidator
               style={{marginBottom: -10,}}
               name="username" label="username"
               validators={['required']}
@@ -370,29 +406,45 @@ class Signup extends Component {
               onChangeText={(value) => this.setState({username: value})}
             /> */}
 
-            <TextValidator
-              style={{marginBottom: -10,}}
-              name="email" label="email"
-              validators={['required', 'isEmail']}
-              errorStyle={{ container: { top: 5, left: 5}, text: { color: 'red' }, underlineValidColor: colorConfig.pageIndex.activeTintColor, underlineInvalidColor: 'red'}}
-              errorMessages={['This field is required', 'Email invalid']}
-              placeholder="Your email"
-              type="text" under value={this.state.email}
-              onChangeText={(value) => this.setState({email: value})}
-            />
+              <TextValidator
+                style={{marginBottom: -10}}
+                name="email"
+                label="email"
+                validators={['required', 'isEmail']}
+                errorStyle={{
+                  container: {top: 5, left: 5},
+                  text: {color: 'red'},
+                  underlineValidColor: colorConfig.pageIndex.activeTintColor,
+                  underlineInvalidColor: 'red',
+                }}
+                errorMessages={['This field is required', 'Email invalid']}
+                placeholder="Your email"
+                type="text"
+                under
+                value={this.state.email}
+                onChangeText={value => this.setState({email: value})}
+              />
 
-            <TextValidator
-              style={{marginBottom: -10,}}
-              name="reemail" label="reemail"
-              validators={['required', 'isEmailMatch']}
-              errorStyle={{ container: { top: 5, left: 5}, text: { color: 'red' }, underlineValidColor: colorConfig.pageIndex.activeTintColor, underlineInvalidColor: 'red'}}
-              errorMessages={['This field is required', 'Email mismatch']}
-              placeholder="Your confirm email"
-              type="text" under value={this.state.reemail}
-              onChangeText={(value) => this.setState({reemail: value})}
-            />
+              <TextValidator
+                style={{marginBottom: -10}}
+                name="reemail"
+                label="reemail"
+                validators={['required', 'isEmailMatch']}
+                errorStyle={{
+                  container: {top: 5, left: 5},
+                  text: {color: 'red'},
+                  underlineValidColor: colorConfig.pageIndex.activeTintColor,
+                  underlineInvalidColor: 'red',
+                }}
+                errorMessages={['This field is required', 'Email mismatch']}
+                placeholder="Your confirm email"
+                type="text"
+                under
+                value={this.state.reemail}
+                onChangeText={value => this.setState({reemail: value})}
+              />
 
-            {/* <TextValidator
+              {/* <TextValidator
               style={{marginBottom: -10,}}
               name="phoneNumber" label="phoneNumber"
               validators={['required', 'minStringLength:11', 'maxStringLength:15']}
@@ -403,16 +455,25 @@ class Signup extends Component {
               onChangeText={(value) => this.setState({phoneNumber: value})}
             /> */}
 
-            <PhoneInput ref={ref => { this.phone = ref;}} 
-              style={{marginTop: 15, paddingLeft: 5,}} 
-              value={this.state.phoneNumber}/>
+              <PhoneInput
+                ref={ref => {
+                  this.phone = ref;
+                }}
+                style={{marginTop: 15, paddingLeft: 5}}
+                value={this.state.phoneNumber}
+              />
 
-            <View style={{
-              backgroundColor: colorConfig.pageIndex.activeTintColor,
-              height: 1, marginLeft: 4, marginRight: 5, marginTop: 5
-            }}/>
+              <View
+                style={{
+                  backgroundColor: colorConfig.pageIndex.activeTintColor,
+                  height: 1,
+                  marginLeft: 4,
+                  marginRight: 5,
+                  marginTop: 5,
+                }}
+              />
 
-            {/* <TextValidator
+              {/* <TextValidator
               style={{marginBottom: -5,}}
               name="address" label="address"
               validators={['required']}
@@ -423,83 +484,180 @@ class Signup extends Component {
               onChangeText={(value) => this.setState({address: value})}
             /> */}
 
-            <View style={{flexDirection: 'row', justifyContent: 'space-between', marginBottom:-10}}>
-              <TouchableOpacity style={styles.item1} onPress={this.showDateTimePicker}>
-                <Text style={{marginRight: 5, color: colorConfig.pageIndex.grayColor}}>
-                  {this.state.birthdate == '' ? 'Birth Date' : this.state.birthdate}
-                </Text>
-                <Icon size={23} name={ Platform.OS === 'ios' ? 'ios-calendar' : 'md-calendar' } style={{color: colorConfig.pageIndex.inactiveTintColor, position: 'absolute', right: 15}} />
-              </TouchableOpacity>
-              <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                <View style={{flexDirection: 'row', alignItems: 'center', paddingBottom: 5, marginRight: 10}}>
-                  <TouchableOpacity style={styles.circle}
-                    onPress={() => this.setState({ gender: 'male' })}>
-                    { this.state.gender === 'male' && (<View style={styles.checkedCircle} />) } 
-                  </TouchableOpacity>
-                  <Text style={{color: colorConfig.pageIndex.grayColor, fontSize: 12}}> Male</Text>
-                </View>
-                <View style={{flexDirection: 'row', alignItems: 'center', paddingBottom: 5, marginRight: 10}}>
-                  <TouchableOpacity style={styles.circle}
-                    onPress={() => this.setState({ gender: 'female' })}>
-                    { this.state.gender === 'female' && (<View style={styles.checkedCircle} />) } 
-                  </TouchableOpacity>
-                  <Text style={{color: colorConfig.pageIndex.grayColor, fontSize: 12}}> Female</Text>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  marginBottom: -10,
+                }}>
+                <TouchableOpacity
+                  style={styles.item1}
+                  onPress={this.showDateTimePicker}>
+                  <Text
+                    style={{
+                      marginRight: 5,
+                      color: colorConfig.pageIndex.grayColor,
+                    }}>
+                    {this.state.birthdate == ''
+                      ? 'Birth Date'
+                      : this.state.birthdate}
+                  </Text>
+                  <Icon
+                    size={23}
+                    name={
+                      Platform.OS === 'ios' ? 'ios-calendar' : 'md-calendar'
+                    }
+                    style={{
+                      color: colorConfig.pageIndex.inactiveTintColor,
+                      position: 'absolute',
+                      right: 15,
+                    }}
+                  />
+                </TouchableOpacity>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                  }}>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      paddingBottom: 5,
+                      marginRight: 10,
+                    }}>
+                    <TouchableOpacity
+                      style={styles.circle}
+                      onPress={() => this.setState({gender: 'male'})}>
+                      {this.state.gender === 'male' && (
+                        <View style={styles.checkedCircle} />
+                      )}
+                    </TouchableOpacity>
+                    <Text
+                      style={{
+                        color: colorConfig.pageIndex.grayColor,
+                        fontSize: 12,
+                      }}>
+                      {' '}
+                      Male
+                    </Text>
+                  </View>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      paddingBottom: 5,
+                      marginRight: 10,
+                    }}>
+                    <TouchableOpacity
+                      style={styles.circle}
+                      onPress={() => this.setState({gender: 'female'})}>
+                      {this.state.gender === 'female' && (
+                        <View style={styles.checkedCircle} />
+                      )}
+                    </TouchableOpacity>
+                    <Text
+                      style={{
+                        color: colorConfig.pageIndex.grayColor,
+                        fontSize: 12,
+                      }}>
+                      {' '}
+                      Female
+                    </Text>
+                  </View>
                 </View>
               </View>
-            </View>
 
-            <View style={{
-              backgroundColor: colorConfig.pageIndex.activeTintColor,
-              height: 1, marginLeft: 4, marginRight: 5, marginTop: 5
-            }}/>
-
-            <View>
-              <TextValidator
-                style={{marginBottom: -10,}}
-                name="password" label="password"
-                validators={['required', 'minStringLength:8', 'maxStringLength:12']}
-                errorStyle={{ container: { top: 5, left: 5}, text: { color: 'red' }, underlineValidColor: colorConfig.pageIndex.activeTintColor, underlineInvalidColor: 'red'}}
-                errorMessages={['This field is required', 'Password min 8 character', 'Password max 12 character']}
-                placeholder="Your password"
-                secureTextEntry={this.state.showPass1}
-                type="text" under value={this.state.password}
-                onChangeText={(value) => this.setState({password: value})}
+              <View
+                style={{
+                  backgroundColor: colorConfig.pageIndex.activeTintColor,
+                  height: 1,
+                  marginLeft: 4,
+                  marginRight: 5,
+                  marginTop: 5,
+                }}
               />
-              <TouchableOpacity
-                style={{position: 'absolute', top: 8, right: 15}} 
-                onPress={this.showPass1}>
-                <Icon 
-                  name={this.state.press1 == true ? 'md-eye': 'md-eye-off'} 
-                  size={23} 
-                  color={colorConfig.pageIndex.grayColor}/>
-              </TouchableOpacity>
-            </View>
-            
-            <View>
-              <TextValidator
-                style={{marginBottom: -10,}}
-                name="repassword" label="repassword"
-                validators={['required', 'isPasswordMatch']}
-                errorStyle={{ container: { top: 5, left: 5}, text: { color: 'red' }, underlineValidColor: colorConfig.pageIndex.activeTintColor, underlineInvalidColor: 'red'}}
-                errorMessages={['This field is required', 'Password mismatch']}
-                placeholder="Your confirm password"
-                secureTextEntry={this.state.showPass2}
-                type="text" under value={this.state.repassword}
-                onChangeText={(value) => this.setState({repassword: value})}
-              />
-              <TouchableOpacity
-                style={{position: 'absolute', top: 8, right: 15}} 
-                onPress={this.showPass2}>
-                <Icon 
-                  name={this.state.press2 == true ? 'md-eye': 'md-eye-off'} 
-                  size={23} 
-                  color={colorConfig.pageIndex.grayColor}/>
-              </TouchableOpacity>
-            </View>
-            
-            
 
-            {/* <View style={styles.item}>
+              <View>
+                <TextValidator
+                  style={{marginBottom: -10}}
+                  name="password"
+                  label="password"
+                  validators={[
+                    'required',
+                    'minStringLength:8',
+                    'matchRegexp:^(?=.*[0-9])',
+                    'matchRegexp:^(?=.*[A-Z])',
+                    'matchRegexp:^(?=.*[a-b])',
+                  ]}
+                  errorStyle={{
+                    container: {top: 5, left: 5},
+                    text: {color: 'red'},
+                    underlineValidColor: colorConfig.pageIndex.activeTintColor,
+                    underlineInvalidColor: 'red',
+                  }}
+                  errorMessages={[
+                    'This field is required',
+                    'Password min 8 character',
+                    'Password contain at least 1 number',
+                    'Password contain at least 1 uppercase character',
+                    'Password contain at least 1 lowercase character',
+                  ]}
+                  placeholder="Your password"
+                  secureTextEntry={this.state.showPass1}
+                  type="text"
+                  under
+                  value={this.state.password}
+                  onChangeText={value =>
+                    this.setState({password: value.replace(/\s/g, '')})
+                  }
+                />
+                <TouchableOpacity
+                  style={{position: 'absolute', top: 8, right: 15}}
+                  onPress={this.showPass1}>
+                  <Icon
+                    name={this.state.press1 == true ? 'md-eye' : 'md-eye-off'}
+                    size={23}
+                    color={colorConfig.pageIndex.grayColor}
+                  />
+                </TouchableOpacity>
+              </View>
+
+              <View>
+                <TextValidator
+                  style={{marginBottom: -10}}
+                  name="repassword"
+                  label="repassword"
+                  validators={['required', 'isPasswordMatch']}
+                  errorStyle={{
+                    container: {top: 5, left: 5},
+                    text: {color: 'red'},
+                    underlineValidColor: colorConfig.pageIndex.activeTintColor,
+                    underlineInvalidColor: 'red',
+                  }}
+                  errorMessages={[
+                    'This field is required',
+                    'Password mismatch',
+                  ]}
+                  placeholder="Your confirm password"
+                  secureTextEntry={this.state.showPass2}
+                  type="text"
+                  under
+                  value={this.state.repassword}
+                  onChangeText={value => this.setState({repassword: value})}
+                />
+                <TouchableOpacity
+                  style={{position: 'absolute', top: 8, right: 15}}
+                  onPress={this.showPass2}>
+                  <Icon
+                    name={this.state.press2 == true ? 'md-eye' : 'md-eye-off'}
+                    size={23}
+                    color={colorConfig.pageIndex.grayColor}
+                  />
+                </TouchableOpacity>
+              </View>
+
+              {/* <View style={styles.item}>
               <Icon size={23} name={ Platform.OS === 'ios' ? 'ios-card' : 'md-card' } style={{color: colorConfig.pageIndex.inactiveTintColor}} />
               <TextValidator
                 name="email" label="email"
@@ -644,11 +802,12 @@ class Signup extends Component {
               </TouchableOpacity>
             </View> */}
 
-            <TouchableOpacity style={styles.button} onPress={this.handleSubmit}>
-              <Text style={styles.buttonText}>Register</Text>
-            </TouchableOpacity>
-
-          </Form>
+              <TouchableOpacity
+                style={styles.button}
+                onPress={this.handleSubmit}>
+                <Text style={styles.buttonText}>Register</Text>
+              </TouchableOpacity>
+            </Form>
           </View>
         </ScrollView>
         <AwesomeAlert
@@ -661,46 +820,55 @@ class Signup extends Component {
           showCancelButton={false}
           showConfirmButton={true}
           cancelText="Close"
-          confirmText={(this.state.titleAlert == 'Register Success!') ? 'Verify Code' : 'Close'}
+          confirmText={
+            this.state.titleAlert == 'Register Success!'
+              ? 'Verify Code'
+              : 'Close'
+          }
           confirmButtonColor={colorConfig.pageIndex.activeTintColor}
           onCancelPressed={() => {
             this.hideAlert();
           }}
           onConfirmPressed={() => {
-            (this.state.titleAlert == 'Register Success!') ? Actions.auth() : this.hideAlert();
+            this.state.titleAlert == 'Register Success!'
+              ? Actions.auth()
+              : this.hideAlert();
           }}
         />
       </View>
-			)
-	}
+    );
+  }
 }
 
-const validate = (values) => {
+const validate = values => {
   const errors = {};
-  if(!values.name) {
-    errors.name = "Name is required"
+  if (!values.name) {
+    errors.name = 'Name is required';
   }
-  if(!values.email) {
-    errors.email = "Email is required"
+  if (!values.email) {
+    errors.email = 'Email is required';
   }
-  if(!values.password) {
-    errors.password = "Password is required"
+  if (!values.password) {
+    errors.password = 'Password is required';
   }
   return errors;
 };
 
-mapStateToProps = (state) => ({
-  createUser: state.authReducer.createUser
-})
+mapStateToProps = state => ({
+  createUser: state.authReducer.createUser,
+});
 
-mapDispatchToProps = (dispatch) => ({
-  dispatch
+mapDispatchToProps = dispatch => ({
+  dispatch,
 });
 
 export default compose(
-  connect(mapStateToProps, mapDispatchToProps),
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  ),
   reduxForm({
-    form: "register",
-    validate
-  })
+    form: 'register',
+    validate,
+  }),
 )(Signup);

@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
-import { 
-  View, 
+import React, {Component} from 'react';
+import {
+  View,
   Text,
   StyleSheet,
   Dimensions,
@@ -9,15 +9,15 @@ import {
   ScrollView,
   RefreshControl,
 } from 'react-native';
-import {connect} from "react-redux";
-import {compose} from "redux";
+import {connect} from 'react-redux';
+import {compose} from 'redux';
 import Icon from 'react-native-vector-icons/Ionicons';
 import * as _ from 'lodash';
 
 import logoCash from '../assets/img/cash.png';
 import logoVisa from '../assets/img/visa.png';
-import colorConfig from "../config/colorConfig";
-import { Actions } from 'react-native-router-flux';
+import colorConfig from '../config/colorConfig';
+import {Actions} from 'react-native-router-flux';
 
 class HistoryPayment extends Component {
   constructor(props) {
@@ -27,80 +27,141 @@ class HistoryPayment extends Component {
     };
   }
 
-  getDate(date){
-    var tanggal = new Date(date*1000);
-    return tanggal.getDate()+' '+this.getMonth(tanggal.getMonth())+' '+tanggal.getFullYear()+' • '+tanggal.getHours()+':'+tanggal.getMinutes();
+  getDate(date) {
+    var tanggal = new Date(date * 1000);
+    return (
+      tanggal.getDate() +
+      ' ' +
+      this.getMonth(tanggal.getMonth()) +
+      ' ' +
+      tanggal.getFullYear() +
+      ' • ' +
+      tanggal.getHours() +
+      ':' +
+      tanggal.getMinutes()
+    );
   }
 
-  getMonth(value){
+  getMonth(value) {
     var mount = [
-      'January','February','March','April','May','June',
-      'July','August','September','October','November','December'
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
     ];
     return mount[value];
   }
 
-  historyDetailPayment = (item) => {
+  historyDetailPayment = item => {
     Actions.historyDetailPayment({item});
-  }
+  };
 
-  getDataHistory = async() => {
+  getDataHistory = async () => {
     try {
       await this.props.dispatch(campaign());
       await this.props.dispatch(dataPoint());
     } catch (error) {
-      await this.props.dispatch(notifikasi('Get Data History Error!', error.responseBody.message, console.log('Cancel Pressed')));
+      await this.props.dispatch(
+        notifikasi(
+          'Get Data History Error!',
+          error.responseBody.message,
+          console.log('Cancel Pressed'),
+        ),
+      );
     }
-  }
+  };
 
   _onRefresh = () => {
     this.setState({refreshing: true});
     this.getDataHistory();
     this.setState({refreshing: false});
-  }
+  };
 
   render() {
     return (
-      <ScrollView refreshControl={
-        <RefreshControl refreshing={this.state.refreshing} onRefresh={this._onRefresh}/>
-      }>
-      {
-        (this.props.pointTransaction == undefined) ? null :
-        (this.props.pointTransaction.length == 0) ?
-        <View style={styles.component}>
-          <Text style={styles.empty}>Empty</Text>
-        </View> :
-        <View style={styles.component}>
-        {
-          _.orderBy(this.props.pointTransaction, ['created'], ['desc']).map((item, key) =>
-          <View key={key}>{
-            <TouchableOpacity style={styles.item} onPress={() => this.historyDetailPayment(item)}>
-              <View style={styles.sejajarSpace}>
-                <View style={styles.detail}>
-                  <View style={styles.sejajarSpace}>
-                    <Text style={styles.storeName}>{item.storeName}</Text>
-                    <Text style={styles.itemType}>{item.pointDebit+' point'}</Text>
-                  </View>
-                  <View style={styles.sejajarSpace}>
-                    <View style={{flexDirection: 'row'}}>
-                      <Image resizeMode='stretch' style={styles.paymentTypeLogo} source={
-                      (item.paymentType == 'Cash')? logoCash : logoVisa}/>
-                      <Text style={styles.paymentType}>{item.paymentType}</Text>
-                    </View>
-                    <Text style={styles.paymentTgl}>{this.getDate(item.created)}</Text>
-                  </View>
+      <ScrollView
+        refreshControl={
+          <RefreshControl
+            refreshing={this.state.refreshing}
+            onRefresh={this._onRefresh}
+          />
+        }>
+        {this.props.pointTransaction == undefined ? (
+          <View style={styles.component}>
+            <Text style={styles.empty}>History payment is empty</Text>
+          </View>
+        ) : this.props.pointTransaction.length == 0 ? (
+          <View style={styles.component}>
+            <Text style={styles.empty}>History payment is empty</Text>
+          </View>
+        ) : (
+          <View style={styles.component}>
+            {_.orderBy(this.props.pointTransaction, ['created'], ['desc']).map(
+              (item, key) => (
+                <View key={key}>
+                  {
+                    <TouchableOpacity
+                      style={styles.item}
+                      onPress={() => this.historyDetailPayment(item)}>
+                      <View style={styles.sejajarSpace}>
+                        <View style={styles.detail}>
+                          <View style={styles.sejajarSpace}>
+                            <Text style={styles.storeName}>
+                              {item.storeName}
+                            </Text>
+                            <Text style={styles.itemType}>
+                              {item.pointDebit + ' point'}
+                            </Text>
+                          </View>
+                          <View style={styles.sejajarSpace}>
+                            <View style={{flexDirection: 'row'}}>
+                              <Image
+                                resizeMode="stretch"
+                                style={styles.paymentTypeLogo}
+                                source={
+                                  item.paymentType == 'Cash'
+                                    ? logoCash
+                                    : logoVisa
+                                }
+                              />
+                              <Text style={styles.paymentType}>
+                                {item.paymentType}
+                              </Text>
+                            </View>
+                            <Text style={styles.paymentTgl}>
+                              {this.getDate(item.created)}
+                            </Text>
+                          </View>
+                        </View>
+                        <View style={styles.btnDetail}>
+                          <Icon
+                            size={20}
+                            name={
+                              Platform.OS === 'ios'
+                                ? 'ios-arrow-dropright-circle'
+                                : 'md-arrow-dropright-circle'
+                            }
+                            style={{
+                              color: colorConfig.pageIndex.activeTintColor,
+                            }}
+                          />
+                        </View>
+                      </View>
+                    </TouchableOpacity>
+                  }
                 </View>
-                <View style={styles.btnDetail}>
-                  <Icon size={20} 
-                  name={ Platform.OS === 'ios' ? 'ios-arrow-dropright-circle' : 'md-arrow-dropright-circle' } 
-                  style={{ color: colorConfig.pageIndex.activeTintColor }} />
-                </View>
-              </View>
-            </TouchableOpacity>
-          }</View>)
-        }
-        </View>
-      }
+              ),
+            )}
+          </View>
+        )}
       </ScrollView>
     );
   }
@@ -110,11 +171,11 @@ const styles = StyleSheet.create({
   component: {
     marginTop: 10,
     marginBottom: 10,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   empty: {
     color: colorConfig.pageIndex.inactiveTintColor,
-    textAlign: 'center'
+    textAlign: 'center',
   },
   item: {
     marginLeft: 5,
@@ -123,23 +184,23 @@ const styles = StyleSheet.create({
     borderColor: colorConfig.pageIndex.activeTintColor,
     borderWidth: 1,
     borderRadius: 5,
-    backgroundColor: colorConfig.pageIndex.backgroundColor
+    backgroundColor: colorConfig.pageIndex.backgroundColor,
   },
   sejajarSpace: {
-    flexDirection:'row', 
-    justifyContent: 'space-between'
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   detail: {
-    paddingLeft:10,
-    paddingTop:5,
+    paddingLeft: 10,
+    paddingTop: 5,
     paddingRight: 5,
-    paddingBottom:5,
-    width: Dimensions.get('window').width-60
+    paddingBottom: 5,
+    width: Dimensions.get('window').width - 60,
   },
   storeName: {
     color: colorConfig.pageIndex.activeTintColor,
     fontSize: 16,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   paymentTgl: {
     color: colorConfig.pageIndex.inactiveTintColor,
@@ -162,18 +223,21 @@ const styles = StyleSheet.create({
     borderLeftColor: colorConfig.pageIndex.activeTintColor,
     borderLeftWidth: 1,
     width: 40,
-    paddingTop: 15
-  }
+    paddingTop: 15,
+  },
 });
 
-mapStateToProps = (state) => ({
-  pointTransaction : state.rewardsReducer.dataPoint.pointTransaction
+mapStateToProps = state => ({
+  pointTransaction: state.rewardsReducer.dataPoint.pointTransaction,
 });
 
-mapDispatchToProps = (dispatch) => ({
-  dispatch
+mapDispatchToProps = dispatch => ({
+  dispatch,
 });
 
 export default compose(
-  connect(mapStateToProps, mapDispatchToProps),
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  ),
 )(HistoryPayment);

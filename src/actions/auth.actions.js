@@ -4,24 +4,22 @@
  * PT Edgeworks
  */
 
-import {
-  Alert,
-} from 'react-native';
+import {Alert} from 'react-native';
 import {Actions} from 'react-native-router-flux';
-import { 
-  CognitoUserPool, 
-  CognitoUserAttribute, 
-  CognitoUser, 
-  AuthenticationDetails 
+import {
+  CognitoUserPool,
+  CognitoUserAttribute,
+  CognitoUser,
+  AuthenticationDetails,
 } from 'amazon-cognito-identity-js';
-import awsConfig from "../config/awsConfig";
+import awsConfig from '../config/awsConfig';
 
 var poolData = {
-  UserPoolId : awsConfig.awsUserPoolId,
-  ClientId : awsConfig.awsClientId
+  UserPoolId: awsConfig.awsUserPoolId,
+  ClientId: awsConfig.awsClientId,
 };
 
-import {fetchApi} from "../service/api";
+import {fetchApi} from '../service/api';
 
 // export const createNewUser = (payload) => {
 //   return async (dispatch) => {
@@ -182,157 +180,165 @@ import {fetchApi} from "../service/api";
 // }
 
 export const notifikasi = (type, status, action) => {
-  Alert.alert(
-    type,
-    status,
-    [
-      {
-        text: 'Ok',
-        onPress: () => action,
-        style: 'ok',
-      },
-    ]
-  );
-}
+  Alert.alert(type, status, [
+    {
+      text: 'Ok',
+      onPress: () => action,
+      style: 'ok',
+    },
+  ]);
+};
 
-export const createNewUser = (payload) => {
-  return async (dispatch) => {
+export const createNewUser = payload => {
+  return async dispatch => {
+    try {
+      dispatch({
+        type: 'CREATE_USER_LOADING',
+      });
 
-      try {
+      // var dataRegister =
+      // {
+      //   "email": payload.email,
+      //   "username": payload.username,
+      //   "password": payload.password,
+      //   "name": payload.name,
+      //   "phoneNumber": "+6281998948575",
+      //   "nickname": "Test",
+      //   "address": "Test",
+      //   "birthdate": "25/11/1996",
+      //   "gender": "male"
+      // };
+      // console.log(dataRegister)
+
+      const response = await fetchApi(
+        '/customer/register',
+        'POST',
+        payload,
+        200,
+      );
+      console.log(response);
+      if (response.success) {
         dispatch({
-          type: "CREATE_USER_LOADING"
+          type: 'CREAT_USER_SUCCESS',
+          dataRegister: payload,
         });
-        
-        // var dataRegister = 
-        // {
-        //   "email": payload.email,
-        //   "username": payload.username,
-        //   "password": payload.password,
-        //   "name": payload.name,
-        //   "phoneNumber": "+6281998948575",
-        //   "nickname": "Test",
-        //   "address": "Test",
-        //   "birthdate": "25/11/1996",
-        //   "gender": "male"
-        // };
-        // console.log(dataRegister)
 
-        const response = await fetchApi("/customer/register", "POST", payload, 200);
-        console.log(response)
-        if(response.success) {
-          dispatch({
-              type: "CREAT_USER_SUCCESS",
-              dataRegister: payload
-          });
-
-          return response;
-        } else {
-          throw response;
-        }
-
-      } catch (error) {
-          dispatch({
-              type: "CREAT_USER_FAIL",
-              payload: error.responseBody
-          });
-          return error;
+        return response;
+      } else {
+        throw response;
       }
-  }
-}
+    } catch (error) {
+      dispatch({
+        type: 'CREAT_USER_FAIL',
+        payload: error.responseBody,
+      });
+      return error;
+    }
+  };
+};
 
-export const confirmUser = (payload) => {
-  return async (dispatch) => {
+export const confirmUser = payload => {
+  return async dispatch => {
+    try {
+      dispatch({
+        type: 'CONFIRM_USER_LOADING',
+      });
+      const response = await fetchApi(
+        '/customer/confirm',
+        'POST',
+        payload,
+        200,
+      );
 
-      try {
+      console.log(response);
+
+      if (response.success) {
         dispatch({
-          type: "CONFIRM_USER_LOADING"
+          type: 'CONFIRM_USER_SUCCESS',
         });
-        const response = await fetchApi("/customer/confirm", "POST", payload, 200);
-
-        console.log(response)
-
-        if(response.success) {
-          dispatch({
-              type: "CONFIRM_USER_SUCCESS",
-          });
-          return response;
-        } else {
-          throw response;
-        }
-
-      } catch (error) {
-          dispatch({
-              type: "LOGIN_USER_FAIL",
-              payload: error.responseBody
-          });
-          return error;
+        return response;
+      } else {
+        throw response;
       }
-  }
-}
+    } catch (error) {
+      dispatch({
+        type: 'LOGIN_USER_FAIL',
+        payload: error.responseBody,
+      });
+      return error;
+    }
+  };
+};
 
-export const loginUser = (payload) => {
-  return async (dispatch) => {
+export const loginUser = payload => {
+  return async dispatch => {
+    try {
+      dispatch({
+        type: 'LOGIN_USER_LOADING',
+      });
+      const response = await fetchApi('/customer/login', 'POST', payload, 200);
 
-      try {
+      // console.log(response);
+
+      if (response.success) {
         dispatch({
-          type: "LOGIN_USER_LOADING"
+          type: 'LOGIN_USER_SUCCESS',
         });
-        const response = await fetchApi("/customer/login", "POST", payload, 200);
-
-        // console.log(response)
-
-        if(response.success) {
-          dispatch({
-              type: "LOGIN_USER_SUCCESS",
-          });
-          dispatch({
-              type: "AUTH_USER_SUCCESS",
-              token: response.responseBody.idToken.jwtToken
-          });
-          dispatch({
-              type: "GET_USER_SUCCESS",
-              payload: response.responseBody.idToken.payload
-          });
-          return response;
-        } else {
-          throw response;
-        }
-
-      } catch (error) {
-          dispatch({
-              type: "LOGIN_USER_FAIL",
-              payload: error.responseBody
-          });
-          return error;
+        dispatch({
+          type: 'AUTH_USER_SUCCESS',
+          token: response.responseBody.idToken.jwtToken,
+        });
+        dispatch({
+          type: 'GET_USER_SUCCESS',
+          payload: response.responseBody.idToken.payload,
+        });
+        return response;
+      } else {
+        throw response;
       }
-  }
-}
+    } catch (error) {
+      dispatch({
+        type: 'LOGIN_USER_FAIL',
+        payload: error.responseBody,
+      });
+      return error;
+    }
+  };
+};
 
 export const logoutUser = () => {
   return async (dispatch, getState) => {
-      const state = getState();
-      try {
-          const {authReducer: {authData: {token}}} = state;
-          // console.log(token);
-          // const response = await fetchApi("/user/logout", "DELETE", null, 200, token);
-          // console.log(response);
-          dispatch({
-              type: "USER_LOGGED_OUT_SUCCESS"
-          });
-      } catch (e) {
-          console.log(e);
-      }
-  }
-}
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          authData: {token},
+        },
+      } = state;
+      // console.log(token);
+      // const response = await fetchApi("/user/logout", "DELETE", null, 200, token);
+      // console.log(response);
+      dispatch({
+        type: 'USER_LOGGED_OUT_SUCCESS',
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+};
 
 export const getToken = () => {
   return async (dispatch, getState) => {
     const state = getState();
     try {
-        const {authReducer: {authData: {token}}} = state;
-        return token;
+      const {
+        authReducer: {
+          authData: {token},
+        },
+      } = state;
+      return token;
     } catch (e) {
-        console.log(e);
+      console.log(e);
     }
-  }
-}
+  };
+};
