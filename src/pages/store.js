@@ -369,6 +369,14 @@ class Store extends Component {
                     }}
                   />
                 </View>
+              ) : null}
+              {this.state.dataAllStore.length != 0 ? (
+                <View>
+                  <StoreStores
+                    dataStoreRegion={this.state.dataStoreRegion}
+                    dataAllStore={this.state.dataAllStore}
+                  />
+                </View>
               ) : (
                 <View
                   style={{
@@ -384,14 +392,6 @@ class Store extends Component {
                   </Text>
                 </View>
               )}
-              {this.state.dataAllStore.length != 0 ? (
-                <View>
-                  <StoreStores
-                    dataStoreRegion={this.state.dataStoreRegion}
-                    dataAllStore={this.state.dataAllStore}
-                  />
-                </View>
-              ) : null}
             </View>
           )}
         </ScrollView>
