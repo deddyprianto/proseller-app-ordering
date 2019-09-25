@@ -1,17 +1,12 @@
 const awsConfig = {
   awsUserPoolId: '',
-  awsClientId: '',
-  identityPoolId: '',
-  region: '',
   awsUserPoolWebClientId: '',
-  endpoint: '',
   base_url: '',
-  register: '',
-  confirm: '',
-  login: '',
-  authorization: '',
-  getStores: '',
-  getRewords: '',
+
+  identityPoolId: '',
+  awsClientId: '',
+  region: '',
+  endpoint: '',
 };
 
 export default awsConfig;
