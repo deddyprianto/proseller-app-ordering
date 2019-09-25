@@ -228,7 +228,6 @@ class Aunt extends Component {
     const imageStyle = [styles.logo, {width: this.imageWidth}];
     return (
       <View style={styles.backgroundImage}>
-        {console.log(this.props.dataRegister)}
         {loginUser && loginUser.isLoading && <Loader />}
         <ScrollView>
           <View

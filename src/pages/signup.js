@@ -240,7 +240,7 @@ class Signup extends Component {
         birthdate: this.state.birthdate,
         gender: this.state.gender,
       };
-      console.log(dataRegister);
+      // console.log(dataRegister);
       const response = await this.props.dispatch(createNewUser(dataRegister));
       if (!response.success) {
         throw response;
