@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
-import { 
-  View, 
+import React, {Component} from 'react';
+import {
+  View,
   Text,
   TextInput,
   StyleSheet,
@@ -9,16 +9,16 @@ import {
   RefreshControl,
   TouchableOpacity,
   Picker,
-  Alert
+  Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
-import {connect} from "react-redux";
-import {compose} from "redux";
-import {notifikasi} from "../actions/auth.actions";
-import {sendPayment, campaign, dataPoint} from "../actions/rewards.action";
+import {connect} from 'react-redux';
+import {compose} from 'redux';
+import {notifikasi} from '../actions/auth.actions';
+import {sendPayment, campaign, dataPoint} from '../actions/rewards.action';
 
-import colorConfig from "../config/colorConfig";
+import colorConfig from '../config/colorConfig';
 
 class RewardsPay extends Component {
   constructor(props) {
@@ -27,101 +27,135 @@ class RewardsPay extends Component {
       payment: '',
       storeName: 'Suntec',
       paymentType: '',
-      isFocused: false
+      isFocused: false,
     };
   }
 
-  goBack(){
-    Actions.pop()
+  goBack() {
+    Actions.pop();
   }
 
-  handleFocus = (event) => {
-    this.setState({ isFocused: true})
-    if(this.props.onFocus){
+  handleFocus = event => {
+    this.setState({isFocused: true});
+    if (this.props.onFocus) {
       this.props.onFocus(event);
     }
-  }
+  };
 
-  handleBlur = (event) =>{
-    this.setState({ isFocused: false})
-    if(this.props.onBlur){
+  handleBlur = event => {
+    this.setState({isFocused: false});
+    if (this.props.onBlur) {
       this.props.onBlur(event);
     }
-  }
+  };
 
-  sendPay = async() => {
+  sendPay = async () => {
     try {
       var data = {
-        'payment': this.state.payment,
-        'storeName': this.state.storeName,
-        'paymentType': this.state.paymentType
-      } 
+        payment: this.state.payment,
+        storeName: this.state.storeName,
+        paymentType: this.state.paymentType,
+      };
       // value={JSON.stringify({
       //   'payment': 20,
       //   'storeName': 'Qiji Test',
-      //   'paymentType': 'Cash'
+      //   // 'paymentType': 'Cash'
+      //   'dataPay' : [
+      //     {'itemName': 'nasi', 'qty': 1, 'prace': 10},
+      //     {'itemName': 'buah', 'qty': 1, 'prace': 10}
+      //   ]
       // })}
-      const response =  await this.props.dispatch(sendPayment(data));
-      if(response.statusCode != 400) {
+      const response = await this.props.dispatch(sendPayment(data));
+      if (response.statusCode != 400) {
         await this.props.dispatch(campaign());
         await this.props.dispatch(dataPoint());
-        await this.props.dispatch(notifikasi('Pay success!', response.message+' point', Actions.pop()));
+        await this.props.dispatch(
+          notifikasi(
+            'Pay success!',
+            response.message + ' point',
+            Actions.pop(),
+          ),
+        );
       } else {
-        await this.props.dispatch(notifikasi('Pay error!', response.message, console.log('Cancel Pressed')));
+        await this.props.dispatch(
+          notifikasi(
+            'Pay error!',
+            response.message,
+            console.log('Cancel Pressed'),
+          ),
+        );
       }
-      
     } catch (error) {
-      await this.props.dispatch(notifikasi('Pay Error!', error.responseBody.message, console.log('Cancel Pressed')));
+      await this.props.dispatch(
+        notifikasi(
+          'Pay Error!',
+          error.responseBody.message,
+          console.log('Cancel Pressed'),
+        ),
+      );
     }
-  }
+  };
 
   render() {
     return (
       <View style={styles.container}>
         <View>
-          <TouchableOpacity style={styles.btnBack}
-          onPress={this.goBack}>
-            <Icon size={28} name={ Platform.OS === 'ios' ? 'ios-arrow-back' : 'md-arrow-round-back' } style={styles.btnBackIcon} />
+          <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
+            <Icon
+              size={28}
+              name={
+                Platform.OS === 'ios' ? 'ios-arrow-back' : 'md-arrow-round-back'
+              }
+              style={styles.btnBackIcon}
+            />
             <Text style={styles.btnBackText}> Back </Text>
           </TouchableOpacity>
-          <View style={styles.line}/>
+          <View style={styles.line} />
         </View>
-        <View style={{margin:10}}>
-          <View style={{flexDirection:'row', justifyContent :'space-between'}}>
-            <View style={{flexDirection:'row', alignItems: 'center'}}>
-              <Icon size={30} name={ Platform.OS === 'ios' ? 'ios-cash' : 'md-cash' } style={{color: colorConfig.pageIndex.inactiveTintColor}} />
+        <View style={{margin: 10}}>
+          <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Icon
+                size={30}
+                name={Platform.OS === 'ios' ? 'ios-cash' : 'md-cash'}
+                style={{color: colorConfig.pageIndex.inactiveTintColor}}
+              />
               <TextInput
-                placeholder='Payment'
+                placeholder="Payment"
                 selectionColor={colorConfig.pageIndex.activeTintColor}
                 underlineColorAndroid={
-                  this.state.isFocused ? colorConfig.pageIndex.activeTintColor: colorConfig.pageIndex.inactiveTintColor
+                  this.state.isFocused
+                    ? colorConfig.pageIndex.activeTintColor
+                    : colorConfig.pageIndex.inactiveTintColor
                 }
                 style={styles.inputPayment}
-                onChangeText={(payment) => this.setState({payment})}
+                onChangeText={payment => this.setState({payment})}
                 value={this.state.payment}
                 onFocus={this.handleFocus}
                 onBlur={this.handleBlur}
-                keyboardType = 'numeric'
+                keyboardType="numeric"
               />
             </View>
-            <View style={{flexDirection:'row', alignItems: 'center'}}>
-              <Icon size={25} name={ Platform.OS === 'ios' ? 'ios-card' : 'md-card' } style={{color: colorConfig.pageIndex.inactiveTintColor}} />
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Icon
+                size={25}
+                name={Platform.OS === 'ios' ? 'ios-card' : 'md-card'}
+                style={{color: colorConfig.pageIndex.inactiveTintColor}}
+              />
               <Picker
                 selectedValue={this.state.paymentType}
                 style={styles.inputPaymentType}
                 onValueChange={(itemValue, itemIndex) =>
                   this.setState({paymentType: itemValue})
                 }>
-                <Picker.Item label='-- Choose --' value=""  />
-                <Picker.Item label='Cash' value="Cash"  />
+                <Picker.Item label="-- Choose --" value="" />
+                <Picker.Item label="Cash" value="Cash" />
                 <Picker.Item label="Debit" value="Debit" />
                 <Picker.Item label="Credit" value="Credit" />
               </Picker>
             </View>
           </View>
-          <TouchableOpacity
-          style={styles.btnPay}
-          onPress={this.sendPay}>
+          <TouchableOpacity style={styles.btnPay} onPress={this.sendPay}>
             {/* <Icon size={25} name={ Platform.OS === 'ios' ? 'ios-cash' : 'md-cash' } style={styles.btnIcon} /> */}
             <Text style={styles.btnText}> Pay </Text>
           </TouchableOpacity>
@@ -134,17 +168,17 @@ class RewardsPay extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colorConfig.pageIndex.backgroundColor
+    backgroundColor: colorConfig.pageIndex.backgroundColor,
   },
   inputPayment: {
-    height: 50, 
+    height: 50,
     paddingLeft: 6,
     marginBottom: 10,
-    width: (Dimensions.get('window').width/2)-40,
+    width: Dimensions.get('window').width / 2 - 40,
   },
   inputPaymentType: {
-    height: 50, 
-    width: (Dimensions.get('window').width/2)-40,
+    height: 50,
+    width: Dimensions.get('window').width / 2 - 40,
   },
   btnPay: {
     width: '100%',
@@ -154,38 +188,41 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
     justifyContent: 'center',
     alignItems: 'center',
-    flexDirection:'row',
+    flexDirection: 'row',
   },
   btnIcon: {
-    color: colorConfig.pageIndex.backgroundColor, 
-    margin:10 
+    color: colorConfig.pageIndex.backgroundColor,
+    margin: 10,
   },
   btnText: {
-    color: colorConfig.pageIndex.backgroundColor, 
-    fontWeight: 'bold'
+    color: colorConfig.pageIndex.backgroundColor,
+    fontWeight: 'bold',
   },
   btnBackIcon: {
-    color: colorConfig.pageIndex.activeTintColor, 
-    margin:10
+    color: colorConfig.pageIndex.activeTintColor,
+    margin: 10,
   },
   btnBack: {
-    flexDirection:'row', 
-    alignItems:'center'
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   btnBackText: {
-    color: colorConfig.pageIndex.activeTintColor, 
-    fontWeight: 'bold'
+    color: colorConfig.pageIndex.activeTintColor,
+    fontWeight: 'bold',
   },
   line: {
-    borderBottomColor: colorConfig.store.defaultColor, 
-    borderBottomWidth:2
-  }
+    borderBottomColor: colorConfig.store.defaultColor,
+    borderBottomWidth: 2,
+  },
 });
 
-mapDispatchToProps = (dispatch) => ({
-  dispatch
+mapDispatchToProps = dispatch => ({
+  dispatch,
 });
 
 export default compose(
-  connect(null, mapDispatchToProps),
+  connect(
+    null,
+    mapDispatchToProps,
+  ),
 )(RewardsPay);

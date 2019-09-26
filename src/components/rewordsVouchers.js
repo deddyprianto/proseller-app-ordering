@@ -22,11 +22,12 @@ class RewordsVouchers extends Component {
     super(props);
     this.state = {
       dataVoucher: this.props.dataVoucher,
+      currentDay: new Date(),
     };
   }
 
   getDate(date) {
-    var tanggal = new Date(date * 1000);
+    var tanggal = new Date(date);
     return (
       tanggal.getDate() +
       ' ' +
@@ -63,60 +64,107 @@ class RewordsVouchers extends Component {
       <View style={styles.container}>
         <Text style={styles.title}>Vouchers</Text>
         <View>
-          {this.props.vouchers == undefined
-            ? null
-            : this.props.vouchers.map((item, keys) => (
-                <View key={keys}>
-                  {
-                    <TouchableOpacity
-                      style={styles.voucherItem}
-                      onPress={() => this.pageDetailVoucher(item)}>
-                      <View style={{alignItems: 'center'}}>
-                        <Image
-                          style={
-                            item['image'] != '' && item['image'] != undefined
-                              ? styles.voucherImage1
-                              : styles.voucherImage2
-                          }
-                          source={
-                            item['image'] != '' && item['image'] != undefined
-                              ? {uri: item['image']}
-                              : appConfig.appImageNull
-                          }
-                        />
-                      </View>
-                      <View style={styles.voucherDetail}>
-                        <Text style={styles.nameVoucher}>
-                          {item['voucherName']}
+          {this.props.vouchers == undefined ||
+          this.props.vouchers.length == 0 ? (
+            <View
+              style={{
+                alignItems: 'center',
+                margin: 20,
+              }}>
+              <Text
+                style={{
+                  textAlign: 'center',
+                  color: colorConfig.pageIndex.grayColor,
+                }}>
+                Vouchers is empty
+              </Text>
+            </View>
+          ) : (
+            this.props.vouchers.map((item, keys) => (
+              <View key={keys}>
+                {
+                  <TouchableOpacity
+                    style={styles.voucherItem}
+                    onPress={() => this.pageDetailVoucher(item)}>
+                    <View style={{alignItems: 'center'}}>
+                      <Image
+                        style={
+                          item['image'] != '' && item['image'] != undefined
+                            ? styles.voucherImage1
+                            : styles.voucherImage2
+                        }
+                        source={
+                          item['image'] != '' && item['image'] != undefined
+                            ? {uri: item['image']}
+                            : appConfig.appImageNull
+                        }
+                      />
+                      <View
+                        style={{
+                          position: 'absolute',
+                          right: 0,
+                          top: 0,
+                          backgroundColor: 'rgba(2, 168, 80, 0.8)',
+                          height: 30,
+                          // width: this.state.screenWidth / 2 - 11,
+                          borderTopRightRadius: 9,
+                          alignItems: 'flex-end',
+                          justifyContent: 'center',
+                          paddingLeft: 10,
+                          paddingRight: 10,
+                        }}>
+                        <Text
+                          style={{
+                            color: colorConfig.pageIndex.backgroundColor,
+                            fontSize: 16,
+                            fontWeight: 'bold',
+                            textAlign: 'right',
+                          }}>
+                          {item['redeemValue'] + ' Points'}
                         </Text>
-                        <View style={{flexDirection: 'row'}}>
-                          <Icon
-                            size={15}
-                            name={
-                              Platform.OS === 'ios'
-                                ? 'ios-arrow-dropright'
-                                : 'md-arrow-dropright-circle'
-                            }
-                            style={{
-                              color: colorConfig.pageIndex.inactiveTintColor,
-                              marginRight: 3,
-                            }}
-                          />
+                      </View>
+                    </View>
+                    <View style={styles.voucherDetail}>
+                      <Text style={styles.nameVoucher}>
+                        {item['voucherName']}
+                      </Text>
+                      <View style={{flexDirection: 'row'}}>
+                        <Icon
+                          size={15}
+                          name={
+                            Platform.OS === 'ios'
+                              ? 'ios-arrow-dropright'
+                              : 'md-arrow-dropright-circle'
+                          }
+                          style={{
+                            color: colorConfig.pageIndex.inactiveTintColor,
+                            marginRight: 3,
+                          }}
+                        />
+                        <Text style={styles.descVoucher}>
+                          {item['voucherDesc']}
+                        </Text>
+                      </View>
+                      <View style={{flexDirection: 'row'}}>
+                        <Icon
+                          size={15}
+                          name={Platform.OS === 'ios' ? 'ios-time' : 'md-time'}
+                          style={{
+                            color: colorConfig.pageIndex.inactiveTintColor,
+                            marginRight: 3,
+                          }}
+                        />
+                        {item['validity']['longTerm'] ? (
                           <Text style={styles.descVoucher}>
-                            {item['voucherDesc']}
+                            {item['validity']['activeWeekDays'][
+                              this.state.currentDay.getDay()
+                            ]['validHour']['from'] +
+                              ' - ' +
+                              item['validity']['activeWeekDays'][
+                                this.state.currentDay.getDay()
+                              ]['validHour']['to']}
                           </Text>
-                        </View>
-                        <View style={{flexDirection: 'row'}}>
-                          <Icon
-                            size={15}
-                            name={
-                              Platform.OS === 'ios' ? 'ios-time' : 'md-time'
-                            }
-                            style={{
-                              color: colorConfig.pageIndex.inactiveTintColor,
-                              marginRight: 3,
-                            }}
-                          />
+                        ) : (
                           <Text style={styles.descVoucher}>
                             {this.getDate(
                               item['validity']['validDate']['startDate'],
@@ -126,22 +174,14 @@ class RewordsVouchers extends Component {
                                 item['validity']['validDate']['endDate'],
                               )}
                           </Text>
-                        </View>
-                        <View
-                          style={{flexDirection: 'row', alignItems: 'center'}}>
-                          <Image
-                            style={{height: 10, width: 15, marginRight: 2}}
-                            source={require('../assets/img/ticket.png')}
-                          />
-                          <Text style={styles.pointVoucher}>
-                            {item['redeemValue'] + ' point'}
-                          </Text>
-                        </View>
+                        )}
                       </View>
-                    </TouchableOpacity>
-                  }
-                </View>
-              ))}
+                    </View>
+                  </TouchableOpacity>
+                }
+              </View>
+            ))
+          )}
         </View>
       </View>
     );
@@ -211,6 +251,13 @@ const styles = StyleSheet.create({
   pointVoucher: {
     fontSize: 12,
     color: colorConfig.pageIndex.activeTintColor,
+  },
+  pointVoucherText: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    paddingTop: 0,
+    color: colorConfig.pageIndex.backgroundColor,
   },
 });
 

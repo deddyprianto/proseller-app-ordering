@@ -18,6 +18,7 @@ import {logoutUser} from '../actions/auth.actions';
 import colorConfig from '../config/colorConfig';
 import appConfig from '../config/appConfig';
 import {Actions} from 'react-native-router-flux';
+import {vouchers} from '../actions/rewards.action';
 
 class AccountMenuList extends Component {
   constructor(props) {
@@ -31,12 +32,21 @@ class AccountMenuList extends Component {
 
   myVouchers = () => {
     var myVoucers = [];
-    _.forEach(_.groupBy(this.props.myVoucers.data, 'id'), function(value, key) {
-      value[0].totalRedeem = value.length;
-      myVoucers.push(value[0]);
-    });
+    if (this.props.myVoucers.data != undefined) {
+      _.forEach(
+        _.groupBy(
+          this.props.myVoucers.data.filter(voucher => voucher.deleted == false),
+          'id',
+        ),
+        function(value, key) {
+          value[0].totalRedeem = value.length;
+          myVoucers.push(value[0]);
+        },
+      );
+    }
+
     console.log(myVoucers);
-    Actions.accountVouchers(myVoucers);
+    Actions.accountVouchers({data: myVoucers});
   };
 
   render() {

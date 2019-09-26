@@ -29,6 +29,7 @@ class VoucherDetail extends Component {
       showAlert: false,
       pesanAlert: '',
       titleAlert: '',
+      currentDay: new Date(),
     };
   }
 
@@ -37,7 +38,7 @@ class VoucherDetail extends Component {
   }
 
   getDate(date) {
-    var tanggal = new Date(date * 1000);
+    var tanggal = new Date(date);
     return (
       tanggal.getDate() +
       ' ' +
@@ -156,6 +157,30 @@ class VoucherDetail extends Component {
                     : appConfig.appImageNull
                 }
               />
+              <View
+                style={{
+                  position: 'absolute',
+                  right: 0,
+                  top: 0,
+                  backgroundColor: 'rgba(2, 168, 80, 0.8)',
+                  height: 30,
+                  // width: this.state.screenWidth / 2 - 11,
+                  borderTopRightRadius: 9,
+                  alignItems: 'flex-end',
+                  justifyContent: 'center',
+                  paddingLeft: 10,
+                  paddingRight: 10,
+                }}>
+                <Text
+                  style={{
+                    color: colorConfig.pageIndex.backgroundColor,
+                    fontSize: 16,
+                    fontWeight: 'bold',
+                    textAlign: 'right',
+                  }}>
+                  {this.props.dataVoucher['redeemValue'] + ' Points'}
+                </Text>
+              </View>
             </View>
             <View style={styles.voucherDetail}>
               <View
@@ -194,33 +219,32 @@ class VoucherDetail extends Component {
                       marginRight: 3,
                     }}
                   />
-                  <Text style={styles.descVoucher}>
-                    {this.getDate(
-                      this.props.dataVoucher['validity']['validDate'][
-                        'startDate'
-                      ],
-                    ) +
-                      ' - ' +
-                      this.getDate(
+                  {this.props.dataVoucher['validity']['longTerm'] ? (
+                    <Text style={styles.descVoucher}>
+                      {this.props.dataVoucher['validity']['activeWeekDays'][
+                        this.state.currentDay.getDay()
+                      ]['validHour']['from'] +
+                        ' - ' +
+                        this.props.dataVoucher['validity']['activeWeekDays'][
+                          this.state.currentDay.getDay()
+                        ]['validHour']['to']}
+                    </Text>
+                  ) : (
+                    <Text style={styles.descVoucher}>
+                      {this.getDate(
                         this.props.dataVoucher['validity']['validDate'][
-                          'endDate'
+                          'startDate'
                         ],
-                      )}
-                  </Text>
+                      ) +
+                        ' - ' +
+                        this.getDate(
+                          this.props.dataVoucher['validity']['validDate'][
+                            'endDate'
+                          ],
+                        )}
+                    </Text>
+                  )}
                 </View>
-              </View>
-              <View
-                style={{
-                  alignItems: 'center',
-                  width: this.state.screenWidth / 5,
-                  borderLeftColor: colorConfig.pageIndex.activeTintColor,
-                  borderLeftWidth: 1,
-                  padding: 10,
-                }}>
-                <Text style={styles.pointVoucher}>
-                  {this.props.dataVoucher['redeemValue']}
-                </Text>
-                <Text style={styles.pointVoucherText}>point</Text>
               </View>
             </View>
             <TouchableOpacity
@@ -349,7 +373,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     paddingTop: 0,
-    color: colorConfig.pageIndex.activeTintColor,
+    color: colorConfig.pageIndex.backgroundColor,
   },
 });
 

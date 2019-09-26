@@ -2,6 +2,7 @@ const awsConfig = {
   awsUserPoolId: '',
   awsUserPoolWebClientId: '',
   base_url: '',
+  tenant: '',
 
   identityPoolId: '',
   awsClientId: '',

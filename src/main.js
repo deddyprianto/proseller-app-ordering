@@ -4,7 +4,7 @@
  * PT Edgeworks
  */
 
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {
   StyleSheet,
   Text,
@@ -15,133 +15,139 @@ import {
   Animated,
   ImageBackground,
   Dimensions,
-  StatusBar
+  StatusBar,
 } from 'react-native';
-import {connect} from "react-redux";
+import {connect} from 'react-redux';
 
 import Routes from './config/router';
 import Splash from './pages/splash';
 import Permition from './pages/permition';
 import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
 
-import {loginUser} from "./actions/auth.actions";
-import Loader from "./components/loader";
-import colorConfig from "./config/colorConfig";
-import appConfig from "./config/appConfig";
+import {loginUser} from './actions/auth.actions';
+import Loader from './components/loader';
+import colorConfig from './config/colorConfig';
+import appConfig from './config/appConfig';
 
 class Main extends Component {
   constructor(props) {
     super(props);
-    this.state = { 
+    this.state = {
       isLoading: true,
-      geolocation: false
-    }
+      geolocation: false,
+    };
   }
 
   async componentDidMount() {
     try {
       const data = await this.performTimeConsumingTask();
       if (data !== null) {
-        this.setState({ isLoading: false });
+        this.setState({isLoading: false});
       }
       this.turnOnLocation();
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
 
   turnOnLocation = () => {
-    RNAndroidLocationEnabler.promptForEnableLocationIfNeeded({interval: 10000, fastInterval: 5000})
-    .then(data => {
-      if(data == 'already-enabled' || data == 'enabled'){
-        this.setState({ geolocation: true });
-      }
-    }).catch(err => {
-      console.log(err)
-    });
-  }
+    RNAndroidLocationEnabler.promptForEnableLocationIfNeeded({
+      interval: 10000,
+      fastInterval: 5000,
+    })
+      .then(data => {
+        if (data == 'already-enabled' || data == 'enabled') {
+          this.setState({geolocation: true});
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
 
-  performTimeConsumingTask = async() => {
-    return new Promise((resolve) =>
-      setTimeout(
-        () => { resolve('result') },
-        3000
-      )
+  performTimeConsumingTask = async () => {
+    return new Promise(resolve =>
+      setTimeout(() => {
+        resolve('result');
+      }, 3000),
     );
-  }
+  };
 
-	render() {
-    const {authData:{isLoggedIn}} = this.props;
-    const imageStyle = [styles.logo, { width: this.imageWidth }];
+  render() {
+    const {
+      authData: {isLoggedIn},
+    } = this.props;
+    const imageStyle = [styles.logo, {width: this.imageWidth}];
 
     if (this.state.isLoading) {
       return <Splash />;
     }
 
-		return(
+    return (
       <View style={styles.container1}>
         <StatusBar
-           backgroundColor="#83BC49"
-           barStyle="light-content"
-         />
-          {
-            (this.state.geolocation) ? 
-            <Routes isLoggedIn={isLoggedIn} /> :
-            <ImageBackground
-              source={appConfig.appBackground}
-              style={styles.backgroundImage}
-              resizeMode="stretch"
-            >
-              {(loginUser && loginUser.isLoading) && <Loader />}
-              <ScrollView>
-                <View style={styles.container2}>
-                  <Animated.Image
-                    source={appConfig.appLogo}
-                    style={imageStyle}
-                    resizeMode="contain"
-                  />
+          backgroundColor={colorConfig.pageIndex.activeTintColor}
+          barStyle="light-content"
+        />
+        {this.state.geolocation ? (
+          <Routes isLoggedIn={isLoggedIn} />
+        ) : (
+          <ImageBackground
+            source={appConfig.appBackground}
+            style={styles.backgroundImage}
+            resizeMode="stretch">
+            {loginUser && loginUser.isLoading && <Loader />}
+            <ScrollView>
+              <View style={styles.container2}>
+                <Animated.Image
+                  source={appConfig.appLogo}
+                  style={imageStyle}
+                  resizeMode="contain"
+                />
+              </View>
+              <View style={styles.card}>
+                <View style={styles.item1}>
+                  <Text style={styles.title}>LOCATION NOT FOUND</Text>
                 </View>
-                <View style={styles.card}>
-                  <View style={styles.item1}>
-                    <Text style={styles.title}>LOCATION NOT FOUND</Text>
-                  </View>
-                  <View style={styles.item2}>
-                    <Text style={styles.detail}>
-                      Please turn on Location Services. For the best experience, 
-                      please set it to Hight Accuracy
-                    </Text>
-                  </View>
-                  <View style={{ alignItems: 'center', marginTop: 10}}>
-                    <TouchableOpacity style={styles.item3} onPress={this.turnOnLocation}>
-                      <Text style={styles.btnText}>TURN ON</Text>
-                    </TouchableOpacity>
-                  </View>
+                <View style={styles.item2}>
+                  <Text style={styles.detail}>
+                    Please turn on Location Services. For the best experience,
+                    please set it to Hight Accuracy
+                  </Text>
                 </View>
-              </ScrollView>
-            </ImageBackground>
-         }
+                <View style={{alignItems: 'center', marginTop: 10}}>
+                  <TouchableOpacity
+                    style={styles.item3}
+                    onPress={this.turnOnLocation}>
+                    <Text style={styles.btnText}>TURN ON</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </ScrollView>
+          </ImageBackground>
+        )}
       </View>
-    )
-	}
+    );
+  }
 }
 
 const imageWidth = Dimensions.get('window').width / 2;
 
 const styles = StyleSheet.create({
   $largeContainerSize: imageWidth,
-  $largeImageSize: imageWidth-50,
+  $largeImageSize: imageWidth - 50,
   $smallContainerSize: imageWidth / 2,
   $smallImageSize: imageWidth / 4,
-  
-  container1 : {
+
+  container1: {
     flex: 1,
   },
-  container2 : {
+  container2: {
     flex: 1,
-    alignItems:'center',
-    justifyContent :'center',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  backgroundImage: {        
+  backgroundImage: {
     alignItems: 'center',
     alignSelf: 'stretch',
     flex: 1,
@@ -152,20 +158,20 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: colorConfig.pageIndex.backgroundColor,
     height: 150,
-    width: Dimensions.get('window').width-40,
+    width: Dimensions.get('window').width - 40,
     borderColor: colorConfig.pageIndex.activeTintColor,
     borderWidth: 1,
-    borderRadius: 10
+    borderRadius: 10,
   },
   item1: {
     margin: 10,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   item2: {
     marginLeft: 20,
     marginRight: 20,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   item3: {
     alignItems: 'center',
@@ -176,28 +182,31 @@ const styles = StyleSheet.create({
     paddingRight: 10,
     paddingTop: 5,
     paddingBottom: 5,
-    width: 100
+    width: 100,
   },
   title: {
     color: colorConfig.pageIndex.activeTintColor,
     fontSize: 16,
     textAlign: 'center',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   detail: {
     color: colorConfig.pageIndex.grayColor,
-    textAlign: 'center'
+    textAlign: 'center',
   },
   btnText: {
     color: colorConfig.pageIndex.activeTintColor,
     fontWeight: 'bold',
     fontSize: 15,
-    textAlign: 'center'
-  }
+    textAlign: 'center',
+  },
 });
 
 mapStateToProps = state => ({
-  authData: state.authReducer.authData
-})
+  authData: state.authReducer.authData,
+});
 
-export default connect(mapStateToProps, null)(Main)
+export default connect(
+  mapStateToProps,
+  null,
+)(Main);

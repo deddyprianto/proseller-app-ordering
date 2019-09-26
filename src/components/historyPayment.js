@@ -94,6 +94,7 @@ class HistoryPayment extends Component {
             onRefresh={this._onRefresh}
           />
         }>
+        {console.log(this.props)}
         {this.props.pointTransaction == undefined ? (
           <View style={styles.component}>
             <Text style={styles.empty}>History payment is empty</Text>

@@ -24,6 +24,9 @@ import StoreDetailPromotion from '../components/storeDetailPromotion';
 import StoresMap from '../components/storesMap';
 import AccountVouchers from '../components/accountVouchers';
 import AccountEditProfil from '../components/accountEditProfil';
+import PaymentDetail from '../components/paymentDetail';
+import PaymentSuccess from '../components/paymentSuccess';
+import PaymentAddVoucers from '../components/paymentAddVoucers';
 
 export default class Routes extends Component {
   render() {
@@ -55,6 +58,9 @@ export default class Routes extends Component {
             <Scene key="storeSeeMap" component={StoresMap} />
             <Scene key="accountVouchers" component={AccountVouchers} />
             <Scene key="accountEditProfil" component={AccountEditProfil} />
+            <Scene key="paymentDetail" component={PaymentDetail} />
+            <Scene key="paymentSuccess" component={PaymentSuccess} />
+            <Scene key="paymentAddVoucers" component={PaymentAddVoucers} />
           </Scene>
         </Scene>
       </Router>

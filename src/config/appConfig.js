@@ -7,6 +7,7 @@ const appConfig = {
   appStatusBackgroundScreen: false,
   appImageNull: require('../assets/img/image_null.png'),
   appName: 'Qiji',
+  appMataUang: 'SGD',
 };
 
 export default appConfig;

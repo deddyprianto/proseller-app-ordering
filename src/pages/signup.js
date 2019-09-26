@@ -25,13 +25,11 @@ import {Form, TextValidator} from 'react-native-validator-form';
 import AwesomeAlert from 'react-native-awesome-alerts';
 import PhoneInput from 'react-native-phone-input';
 
-import InputText from '../components/inputText';
+import awsConfig from '../config/awsConfig';
 import {createNewUser} from '../actions/auth.actions';
 import Loader from '../components/loader';
-import {ErrorUtils} from '../utils/auth.utils';
 import {Actions} from 'react-native-router-flux';
 import colorConfig from '../config/colorConfig';
-import appConfig from '../config/appConfig';
 
 const imageWidth = Dimensions.get('window').width / 2;
 
@@ -207,7 +205,9 @@ class Signup extends Component {
   handleDatePicked = date => {
     var tanggal = new Date(date);
     var birthdate =
-      tanggal.getDate() +
+      (tanggal.getDate().toString().length == 1
+        ? '0' + tanggal.getDate()
+        : tanggal.getDate()) +
       '/' +
       (tanggal.getMonth().toString().length == 1
         ? '0' + tanggal.getMonth()
@@ -230,6 +230,7 @@ class Signup extends Component {
   handleSubmit = async () => {
     try {
       var dataRegister = {
+        tenant: awsConfig.tenant,
         email: this.state.email,
         username: this.state.email,
         password: this.state.password,
@@ -237,10 +238,10 @@ class Signup extends Component {
         phoneNumber: this.phone.getValue(),
         // "nickname": this.state.nickname,
         // "address": this.state.address,
-        birthdate: this.state.birthdate,
-        gender: this.state.gender,
+        // birthdate: this.state.birthdate,
+        // gender: this.state.gender,
       };
-      // console.log(dataRegister);
+      console.log(dataRegister);
       const response = await this.props.dispatch(createNewUser(dataRegister));
       if (!response.success) {
         throw response;
@@ -343,7 +344,7 @@ class Signup extends Component {
                 fontSize: 20,
                 fontWeight: 'bold',
               }}>
-              Form Register
+              Register
             </Text>
           </View>
         </View>
@@ -484,7 +485,7 @@ class Signup extends Component {
               onChangeText={(value) => this.setState({address: value})}
             /> */}
 
-              <View
+              {/* <View
                 style={{
                   flexDirection: 'row',
                   justifyContent: 'space-between',
@@ -538,7 +539,6 @@ class Signup extends Component {
                         color: colorConfig.pageIndex.grayColor,
                         fontSize: 12,
                       }}>
-                      {' '}
                       Male
                     </Text>
                   </View>
@@ -576,7 +576,7 @@ class Signup extends Component {
                   marginRight: 5,
                   marginTop: 5,
                 }}
-              />
+              /> */}
 
               <View>
                 <TextValidator

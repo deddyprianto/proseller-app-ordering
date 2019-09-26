@@ -100,7 +100,7 @@ class InputText extends Component {
     return (
       <View>
         <Icon
-          style={{position: 'absolute', top: 10, left: 15}}
+          style={{position: 'absolute', top: 12, left: 15}}
           name={icon}
           size={25}
           color={'rgba(255,255,255, 0.7)'}

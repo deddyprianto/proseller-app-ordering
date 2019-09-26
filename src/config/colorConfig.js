@@ -1,58 +1,58 @@
 const colorConfig = {
-  statusBar: "#83BC49",
-  home:{
-    container: '#83BC49',
-    textStyle: "#fff",
+  statusBar: '#02a850',
+  home: {
+    container: '#02a850',
+    textStyle: '#fff',
     button: '#1c313a',
     buttonText: '#ffffff',
   },
-  signin:{
-    container: '#83BC49',
+  signin: {
+    container: '#02a850',
     signupText: '#ffffff',
     signupButton: '#ffffff',
-    button: '#06A54B',
-    shadowColor: "#83BC49",
+    button: '#068944',
+    shadowColor: '#02a850',
     buttonText: '#ffffff',
     buttonLoginWith: '#ffffff',
     buttonTextLoginWith: '#1c313a',
     textLoginWith: '#1c313a',
-    errorText: "#ffffff",
+    errorText: '#ffffff',
   },
-  signup:{
-    container: '#83BC49',
-    signupText: '#83BC49',
+  signup: {
+    container: '#02a850',
+    signupText: '#02a850',
     signupButton: '#ffffff',
-    button: '#06A54B',
-    shadowColor: "#83BC49",
+    button: '#068944',
+    shadowColor: '#02a850',
     buttonText: '#ffffff',
-    errorText: "#ffffff",
+    errorText: '#ffffff',
   },
-  auth:{
-    container: '#83BC49',
-    signupText: '#83BC49',
+  auth: {
+    container: '#02a850',
+    signupText: '#02a850',
     signupButton: '#ffffff',
-    button: '#06A54B',
-    shadowColor: "#83BC49",
+    button: '#068944',
+    shadowColor: '#02a850',
     buttonText: '#ffffff',
-    errorText: "#ffffff",
+    errorText: '#ffffff',
   },
-  splash:{
+  splash: {
     container: '#FFF',
-    ViewStyle: "#fff",
+    ViewStyle: '#fff',
   },
   pageIndex: {
-    activeTintColor: '#83BC49',
+    activeTintColor: '#02a850',
     inactiveTintColor: '#CBCBCB',
     grayColor: '#A2A2A2',
     backgroundColor: '#FFFFFF',
     listBorder: '#FCB03C',
   },
   store: {
-    defaultColor: '#83BC49',
+    defaultColor: '#02a850',
     storesItem: '#FFFFFF',
     scrollView: '#FFFBF4',
-    storesTitle: '#83BC49',
-  }
+    storesTitle: '#02a850',
+  },
 };
 
 export default colorConfig;

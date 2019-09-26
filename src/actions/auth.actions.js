@@ -278,7 +278,7 @@ export const loginUser = payload => {
       });
       const response = await fetchApi('/customer/login', 'POST', payload, 200);
 
-      // console.log(response);
+      console.log(response);
 
       if (response.success) {
         dispatch({

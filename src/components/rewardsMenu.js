@@ -1,12 +1,12 @@
-import React, { Component } from 'react';
-import { 
-  View, 
+import React, {Component} from 'react';
+import {
+  View,
   Text,
   StyleSheet,
   Dimensions,
-  TouchableOpacity
+  TouchableOpacity,
 } from 'react-native';
-import colorConfig from "../config/colorConfig";
+import colorConfig from '../config/colorConfig';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
 
@@ -19,69 +19,90 @@ export default class RewardsMenu extends Component {
   }
 
   pagePay() {
+    var pembayaran = {
+      payment: 20,
+      storeName: 'Qiji Test',
+      // 'paymentType': 'Cash'
+      dataPay: [
+        {itemName: 'Nasi Goreng Pedas', qty: 1, prace: 10},
+        {itemName: 'Teh Jeruk Manis', qty: 1, prace: 5},
+        {itemName: 'Cendol Goreng', qty: 1, prace: 5},
+      ],
+    };
+    // console.log(pembayaran);
     // Actions.pay()
-    Actions.scan()
+    // Actions.scan();
+    Actions.paymentDetail({pembayaran: pembayaran});
   }
 
   pageRewards() {
-		Actions.rewards()
+    Actions.rewards();
   }
 
   pageQRCode() {
-    Actions.qrcode()
+    Actions.qrcode();
   }
 
   render() {
     return (
       <View style={styles.container}>
         <View style={styles.item}>
-          <TouchableOpacity
-          onPress={this.pagePay}>
+          <TouchableOpacity onPress={this.pagePay}>
             <View style={{alignItems: 'center'}}>
-              <Icon size={(this.state.screenHeight/5)/2-10} name={ Platform.OS === 'ios' ? 'wallet' : 'md-wallet' } style={{ color:  colorConfig.pageIndex.activeTintColor }} />
+              <Icon
+                size={this.state.screenHeight / 5 / 2 - 10}
+                name={Platform.OS === 'ios' ? 'wallet' : 'md-wallet'}
+                style={{color: colorConfig.pageIndex.activeTintColor}}
+              />
             </View>
-            <Text style={{textAlign:'center'}}>Pay</Text>
+            <Text style={{textAlign: 'center'}}>Pay</Text>
           </TouchableOpacity>
-          <TouchableOpacity
-          onPress={this.pageQRCode}>
+          <TouchableOpacity onPress={this.pageQRCode}>
             <View style={{alignItems: 'center'}}>
-              <Icon size={(this.state.screenHeight/5)/2-10} name={ Platform.OS === 'ios' ? 'barcode' : 'md-barcode' } style={{ color:  colorConfig.pageIndex.activeTintColor }} />
+              <Icon
+                size={this.state.screenHeight / 5 / 2 - 10}
+                name={Platform.OS === 'ios' ? 'barcode' : 'md-barcode'}
+                style={{color: colorConfig.pageIndex.activeTintColor}}
+              />
             </View>
-            <Text style={{textAlign:'center'}}>My QR Code</Text>
+            <Text style={{textAlign: 'center'}}>My QR Code</Text>
           </TouchableOpacity>
-          <TouchableOpacity
-          onPress={this.pageRewards}>
+          <TouchableOpacity onPress={this.pageRewards}>
             <View style={{alignItems: 'center'}}>
-              <Icon size={(this.state.screenHeight/5)/2-10} name={ Platform.OS === 'ios' ? 'price-ribbon' : 'md-ribbon' } style={{ color:  colorConfig.pageIndex.activeTintColor }} />
+              <Icon
+                size={this.state.screenHeight / 5 / 2 - 10}
+                name={Platform.OS === 'ios' ? 'price-ribbon' : 'md-ribbon'}
+                style={{color: colorConfig.pageIndex.activeTintColor}}
+              />
             </View>
-            <Text style={{textAlign:'center'}}>Rewards</Text>
+            <Text style={{textAlign: 'center'}}>Rewards</Text>
           </TouchableOpacity>
         </View>
-      </View>  
+      </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
   container: {
-    height: (Dimensions.get('window').height/8)-30, 
-    alignContent: 'center'
+    height: Dimensions.get('window').height / 8 - 30,
+    alignContent: 'center',
   },
   item: {
-    height: Dimensions.get('window').height/5-20, 
-    width: Dimensions.get('window').width-40,
-    borderColor: colorConfig.pageIndex.activeTintColor, 
-    borderWidth:1, 
-    marginLeft: 20, 
+    height: Dimensions.get('window').height / 5 - 20,
+    width: Dimensions.get('window').width - 40,
+    borderColor: colorConfig.pageIndex.activeTintColor,
+    borderWidth: 1,
+    marginLeft: 20,
     marginRight: 20,
     borderRadius: 10,
-    position: 'absolute', 
-    top: -(Dimensions.get('window').height/5)/2,
+    position: 'absolute',
+    top: -(Dimensions.get('window').height / 5) / 2,
     backgroundColor: colorConfig.store.storesItem,
-    justifyContent :'space-between', 
-    flexDirection:'row',
+    justifyContent: 'space-between',
+    flexDirection: 'row',
     paddingLeft: 30,
     paddingRight: 30,
     paddingTop: 10,
-  }
+  },
 });

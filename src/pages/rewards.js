@@ -14,6 +14,7 @@ import {connect} from 'react-redux';
 import {compose} from 'redux';
 import {notifikasi} from '../actions/auth.actions';
 import {campaign, dataPoint, vouchers} from '../actions/rewards.action';
+import {myVoucers} from '../actions/account.action';
 
 import RewardsPoint from '../components/rewardsPoint';
 import RewardsStamp from '../components/rewardsStamp';
@@ -78,6 +79,7 @@ class Rewards extends Component {
       await this.props.dispatch(campaign());
       await this.props.dispatch(dataPoint());
       await this.props.dispatch(vouchers());
+      await this.props.dispatch(myVoucers());
     } catch (error) {
       await this.props.dispatch(
         notifikasi(
@@ -107,7 +109,7 @@ class Rewards extends Component {
         {/* <AppNavigationContainer/> */}
         <RewardsStamp />
         <RewardsPoint />
-        <RewardsMenu />
+        <RewardsMenu myVoucers={this.props.myVoucers} />
         <RewardsTransaction screen={this.props} />
       </ScrollView>
     );
@@ -116,6 +118,7 @@ class Rewards extends Component {
 
 mapStateToProps = state => ({
   recentTransaction: state.rewardsReducer.dataPoint.recentTransaction,
+  myVoucers: state.accountsReducer.myVoucers.myVoucers,
 });
 
 mapDispatchToProps = dispatch => ({

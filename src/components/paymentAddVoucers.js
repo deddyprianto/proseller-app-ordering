@@ -20,7 +20,7 @@ import {Actions} from 'react-native-router-flux';
 import colorConfig from '../config/colorConfig';
 import appConfig from '../config/appConfig';
 
-export default class AccountVouchers extends Component {
+export default class PaymentAddVoucers extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -63,7 +63,10 @@ export default class AccountVouchers extends Component {
   }
 
   pageDetailVoucher = item => {
-    console.log(item);
+    Actions.paymentDetail({
+      pembayaran: this.props.pembayaran,
+      dataVoucer: item,
+    });
     // Actions.voucher({dataVoucher: item})
   };
 
@@ -103,7 +106,7 @@ export default class AccountVouchers extends Component {
             myVoucers.map((item, keys) => (
               <View key={keys}>
                 {
-                  <View
+                  <TouchableOpacity
                     style={styles.voucherItem}
                     onPress={() => this.pageDetailVoucher(item)}>
                     <View style={{alignItems: 'center'}}>
@@ -224,7 +227,7 @@ export default class AccountVouchers extends Component {
                         )}
                       </View>
                     </View>
-                  </View>
+                  </TouchableOpacity>
                 }
               </View>
             ))

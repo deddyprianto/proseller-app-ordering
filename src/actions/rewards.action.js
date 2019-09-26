@@ -5,7 +5,13 @@ export const campaign = () => {
   return async (dispatch, getState) => {
     const state = getState();
     try {
-      const response = await fetchApi('/campaign', 'GET', false, 200);
+      const {
+        authReducer: {
+          authData: {token},
+        },
+      } = state;
+      const response = await fetchApi('/campaign', 'GET', false, 200, token);
+      console.log(response);
       // if(response.success){
       dispatch({
         type: 'DATA_ALL_CAMPAIGN',
@@ -56,6 +62,7 @@ export const vouchers = () => {
               200,
               token,
             );
+            console.log(response);
             if (response.success) {
               response.responseBody.data
                 .filter(voucher => voucher.deleted == false)
