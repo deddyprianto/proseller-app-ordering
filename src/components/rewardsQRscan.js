@@ -39,12 +39,13 @@ class RewardsQRscan extends Component {
     var pembayaran = {
       payment: scan.payment,
       storeName: scan.storeName,
-      // paymentType: scan.paymentType,
       dataPay: scan.dataPay,
+      storeId: scan.storeId,
     };
     console.log(pembayaran);
     // this.sendPayment(pembayaran);
-    this.paymentDetail(pembayaran);
+    // this.paymentDetail(pembayaran);
+    Actions.paymentDetail({pembayaran: pembayaran});
   };
 
   sendPayment = async pembayaran => {

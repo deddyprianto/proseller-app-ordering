@@ -136,14 +136,15 @@ export const dataPoint = () => {
       });
       dispatch({
         type: 'DATA_POINT_TRANSACTION',
-        pointTransaction: dataResponse,
+        pointTransaction: _.orderBy(dataResponse, ['createdAt'], ['desc']),
       });
       dispatch({
         type: 'DATA_RECENT_TRANSACTION',
-        recentTransaction: _.orderBy(dataResponse, ['created'], ['desc']).slice(
-          0,
-          3,
-        ),
+        recentTransaction: _.orderBy(
+          dataResponse,
+          ['createdAt'],
+          ['desc'],
+        ).slice(0, 3),
       });
     } catch (error) {
       return error;

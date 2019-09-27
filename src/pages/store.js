@@ -111,13 +111,27 @@ class Store extends Component {
             storeStatus: this._cekOpen(
               this.state.currentDay.getDay(),
               this.state.currentClock,
-              response.data[i].operationalHours[1].Monday,
-              response.data[i].operationalHours[2].Tuesday,
-              response.data[i].operationalHours[3].Wednesday,
-              response.data[i].operationalHours[4].Thursday,
-              response.data[i].operationalHours[5].Friday,
-              response.data[i].operationalHours[6].Saturday,
-              response.data[i].operationalHours[0].Sunday,
+              response.data[i].operationalHours[1].Monday == undefined
+                ? response.data[i].operationalHours[1].monday
+                : response.data[i].operationalHours[1].Monday,
+              response.data[i].operationalHours[2].Tuesday == undefined
+                ? response.data[i].operationalHours[2].tuesday
+                : response.data[i].operationalHours[2].Tuesday,
+              response.data[i].operationalHours[3].Wednesday == undefined
+                ? response.data[i].operationalHours[3].wednesday
+                : response.data[i].operationalHours[3].Wednesday,
+              response.data[i].operationalHours[4].Thursday == undefined
+                ? response.data[i].operationalHours[4].thursday
+                : response.data[i].operationalHours[4].Thursday,
+              response.data[i].operationalHours[5].Friday == undefined
+                ? response.data[i].operationalHours[5].friday
+                : response.data[i].operationalHours[5].Friday,
+              response.data[i].operationalHours[6].Saturday == undefined
+                ? response.data[i].operationalHours[6].saturday
+                : response.data[i].operationalHours[6].Saturday,
+              response.data[i].operationalHours[0].Sunday == undefined
+                ? response.data[i].operationalHours[0].sunday
+                : response.data[i].operationalHours[0].Sunday,
               true,
             ),
             storeJarak: statusLocation

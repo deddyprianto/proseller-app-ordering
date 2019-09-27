@@ -28,7 +28,7 @@ class HistoryPayment extends Component {
   }
 
   getDate(date) {
-    var tanggal = new Date(date * 1000);
+    var tanggal = new Date(date);
     return (
       tanggal.getDate() +
       ' ' +
@@ -138,7 +138,7 @@ class HistoryPayment extends Component {
                               </Text>
                             </View>
                             <Text style={styles.paymentTgl}>
-                              {this.getDate(item.created)}
+                              {this.getDate(item.createdAt)}
                             </Text>
                           </View>
                         </View>
