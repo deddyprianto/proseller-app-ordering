@@ -21,8 +21,8 @@ export default class RewardsMenu extends Component {
   pagePay() {
     var pembayaran = {
       payment: 20,
-      storeName: 'Qiji Test',
-      // 'paymentType': 'Cash'
+      storeName: 'Bugis Village',
+      storeId: 'a176cb90-c64c-4bb5-bffa-df7be0f3e530',
       dataPay: [
         {itemName: 'Nasi Goreng Pedas', qty: 1, prace: 10},
         {itemName: 'Teh Jeruk Manis', qty: 1, prace: 5},

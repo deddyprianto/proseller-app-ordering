@@ -173,13 +173,7 @@ export const sendPayment = payload => {
           authData: {token},
         },
       } = state;
-      const response = await fetchApi(
-        '/accummulation/point',
-        'POST',
-        payload,
-        200,
-        token,
-      );
+      const response = await fetchApi('/payment', 'POST', payload, 200, token);
       return response.responseBody;
     } catch (error) {
       return error;

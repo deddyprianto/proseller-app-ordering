@@ -31,6 +31,39 @@ export default class PaymentSuccess extends Component {
     Actions.popTo('pageIndex');
   }
 
+  getDate(date) {
+    var tanggal = new Date(date);
+    return (
+      tanggal.getDate() +
+      ' ' +
+      this.getMonth(tanggal.getMonth()) +
+      ' ' +
+      tanggal.getFullYear() +
+      ' • ' +
+      tanggal.getHours() +
+      ':' +
+      tanggal.getMinutes()
+    );
+  }
+
+  getMonth(value) {
+    var mount = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
+    ];
+    return mount[value];
+  }
+
   render() {
     return (
       <View style={styles.container}>
@@ -89,7 +122,7 @@ export default class PaymentSuccess extends Component {
                   fontSize: 30,
                   fontWeight: 'bold',
                 }}>
-                20
+                {this.props.dataRespons.price}
               </Text>
             </View>
             <Text
@@ -97,7 +130,7 @@ export default class PaymentSuccess extends Component {
                 color: colorConfig.pageIndex.activeTintColor,
                 fontSize: 12,
               }}>
-              +20 Points
+              {'+' + this.props.dataRespons.point + ' Points'}
             </Text>
           </View>
           <View
@@ -130,14 +163,23 @@ export default class PaymentSuccess extends Component {
                 style={{color: colorConfig.pageIndex.activeTintColor}}
               />
             </View>
-            <Text
-              style={{
-                fontSize: 16,
-                fontWeight: 'bold',
-                color: colorConfig.pageIndex.activeTintColor,
-              }}>
-              Store
-            </Text>
+            <View>
+              <Text
+                style={{
+                  fontSize: 14,
+                  fontWeight: 'bold',
+                  color: colorConfig.pageIndex.activeTintColor,
+                }}>
+                {appConfig.appName}
+              </Text>
+              <Text
+                style={{
+                  fontSize: 14,
+                  color: colorConfig.pageIndex.grayColor,
+                }}>
+                {this.props.dataRespons.storeName}
+              </Text>
+            </View>
           </View>
           <View
             style={{
@@ -167,7 +209,7 @@ export default class PaymentSuccess extends Component {
                 style={{
                   color: colorConfig.pageIndex.grayColor,
                 }}>
-                7 Ags 2019 • 12:00
+                {this.getDate(this.props.dataRespons.createdAt)}
               </Text>
             </View>
             <View
@@ -185,10 +227,10 @@ export default class PaymentSuccess extends Component {
                 style={{
                   color: colorConfig.pageIndex.grayColor,
                 }}>
-                Cash
+                Pay
               </Text>
             </View>
-            <View
+            {/* <View
               style={{
                 flexDirection: 'row',
                 justifyContent: 'space-between',
@@ -205,7 +247,7 @@ export default class PaymentSuccess extends Component {
                 }}>
                 20
               </Text>
-            </View>
+            </View> */}
             <View
               style={{
                 backgroundColor: colorConfig.pageIndex.grayColor,
@@ -241,7 +283,7 @@ export default class PaymentSuccess extends Component {
                     fontSize: 16,
                     fontWeight: 'bold',
                   }}>
-                  Oke
+                  Ok
                 </Text>
               </TouchableOpacity>
             </View>

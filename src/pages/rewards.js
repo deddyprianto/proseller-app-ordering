@@ -107,7 +107,7 @@ class Rewards extends Component {
           />
         }>
         {/* <AppNavigationContainer/> */}
-        <RewardsStamp />
+        {/* <RewardsStamp /> */}
         <RewardsPoint />
         <RewardsMenu myVoucers={this.props.myVoucers} />
         <RewardsTransaction screen={this.props} />

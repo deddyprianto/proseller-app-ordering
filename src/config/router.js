@@ -27,6 +27,7 @@ import AccountEditProfil from '../components/accountEditProfil';
 import PaymentDetail from '../components/paymentDetail';
 import PaymentSuccess from '../components/paymentSuccess';
 import PaymentAddVoucers from '../components/paymentAddVoucers';
+import PaymentDetailItem from '../components/paymentDetailItem';
 
 export default class Routes extends Component {
   render() {
@@ -61,6 +62,7 @@ export default class Routes extends Component {
             <Scene key="paymentDetail" component={PaymentDetail} />
             <Scene key="paymentSuccess" component={PaymentSuccess} />
             <Scene key="paymentAddVoucers" component={PaymentAddVoucers} />
+            <Scene key="paymentDetailItem" component={PaymentDetailItem} />
           </Scene>
         </Scene>
       </Router>

@@ -19,21 +19,30 @@ import {Actions} from 'react-native-router-flux';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
 import * as _ from 'lodash';
+import {RNSlidingButton, SlideDirection} from 'rn-sliding-button';
+import AwesomeAlert from 'react-native-awesome-alerts';
 
 import colorConfig from '../config/colorConfig';
 import appConfig from '../config/appConfig';
+import {sendPayment, campaign, dataPoint} from '../actions/rewards.action';
 
 class PaymentDetail extends Component {
   constructor(props) {
     super(props);
     this.state = {
       screenWidth: Dimensions.get('window').width,
+      screenHeight: Dimensions.get('window').height,
+      showAlert: false,
+      pesanAlert: '',
+      titleAlert: '',
       totalBayar:
         this.props.dataVoucer == undefined
           ? this.props.pembayaran.payment
-          : this.props.dataVoucer.voucherType == 'discAmount'
+          : this.props.dataVoucer.voucherType != 'discAmount'
           ? this.props.pembayaran.payment -
-            this.props.dataVoucer.voucherValue / 100
+            (this.props.pembayaran.payment *
+              this.props.dataVoucer.voucherValue) /
+              100
           : this.props.pembayaran.payment - this.props.dataVoucer.voucherValue,
     };
   }
@@ -48,6 +57,7 @@ class PaymentDetail extends Component {
 
   myVouchers = () => {
     var myVoucers = [];
+    console.log(this.props.myVoucers);
     if (this.props.myVoucers.data != undefined) {
       _.forEach(
         _.groupBy(
@@ -68,186 +78,338 @@ class PaymentDetail extends Component {
     });
   };
 
+  onSlideRight = async () => {
+    // Actions.paymentSuccess();
+    var pembayaran;
+    if (this.props.dataVoucer != undefined) {
+      pembayaran = {
+        price: this.state.totalBayar,
+        storeName: this.props.pembayaran.storeName,
+        storeId: this.props.pembayaran.storeId,
+        paymentType: 'Cash',
+        voucherId: this.props.dataVoucer.id,
+        beforePrice: this.props.pembayaran.payment,
+        afterPrice: this.state.totalBayar,
+      };
+    } else {
+      pembayaran = {
+        price: this.state.totalBayar,
+        storeName: this.props.pembayaran.storeName,
+        storeId: this.props.pembayaran.storeId,
+        paymentType: 'Cash',
+      };
+    }
+    console.log(pembayaran);
+    const response = await this.props.dispatch(sendPayment(pembayaran));
+    console.log(response);
+    if (response.statusCode != 400) {
+      if (response.data.message != 'there`s no running campaign on this date') {
+        await this.props.dispatch(campaign());
+        await this.props.dispatch(dataPoint());
+        Actions.paymentSuccess({dataRespons: response.data});
+      } else {
+        this.setState({
+          showAlert: true,
+          pesanAlert: response.data.message,
+          titleAlert: 'Payment Error!',
+        });
+      }
+    } else {
+      this.setState({
+        showAlert: true,
+        pesanAlert: 'Request failed',
+        titleAlert: 'Payment Error!',
+      });
+    }
+  };
+
+  detailPayment = pembayaran => {
+    Actions.paymentDetailItem({pembayaran: pembayaran});
+  };
+
+  hideAlert = () => {
+    this.setState({
+      showAlert: false,
+    });
+  };
+
   render() {
     return (
       <View style={styles.container}>
-        {console.log(this.props)}
         <View style={{backgroundColor: colorConfig.pageIndex.backgroundColor}}>
-          <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
-            <Icon
-              size={28}
-              name={
-                Platform.OS === 'ios' ? 'ios-arrow-back' : 'md-arrow-round-back'
-              }
-              style={styles.btnBackIcon}
-            />
-            <Text style={styles.btnBackText}> Back </Text>
-          </TouchableOpacity>
-          <View style={styles.line} />
-        </View>
-        <ScrollView>
-          <View style={styles.card}>
-            <View style={styles.item}>
-              <Text style={styles.title}>Payment Detail</Text>
-            </View>
-            <View style={styles.detail}>
-              <View style={styles.detailItem}>
-                <Text style={styles.desc}>Store Name</Text>
-                <Text style={styles.desc}>
-                  {this.props.pembayaran.storeName}
-                </Text>
-              </View>
-              <View
+          <View
+            style={{
+              flexDirection: 'row',
+              backgroundColor: colorConfig.pageIndex.backgroundColor,
+              alignItems: 'center',
+            }}>
+            <TouchableOpacity onPress={this.goBack}>
+              <Icon
+                size={28}
+                name={
+                  Platform.OS === 'ios'
+                    ? 'ios-arrow-back'
+                    : 'md-arrow-round-back'
+                }
                 style={{
-                  paddingBottom: 5,
-                  marginBottom: 10,
-                }}>
-                <Text style={styles.desc}>Detail Item :</Text>
-                <View style={styles.itemDetail}>
-                  {this.props.pembayaran.dataPay.map((item, key) => (
-                    <View key={key}>
-                      {
-                        <View
-                          style={{
-                            borderBottomColor: colorConfig.pageIndex.grayColor,
-                            borderBottomWidth: 1,
-                            borderStyle: 'dotted',
-                          }}>
-                          <Text style={styles.descItem}>{item.itemName}</Text>
-                          <View style={styles.itemDesc}>
-                            <Text style={styles.descItem}>
-                              {item.qty + ' Pcs'}
-                            </Text>
-                            <Text style={styles.descItem}>{item.qty}</Text>
-                            <Text style={styles.descItem}>
-                              {item.qty * item.prace}
-                            </Text>
-                          </View>
-                        </View>
-                      }
-                    </View>
-                  ))}
-                  <View style={styles.lineSubtotal} />
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      justifyContent: 'space-between',
-                    }}>
-                    <Text style={styles.desc}>Subtotal</Text>
-                    <Text style={styles.desc}>
-                      {appConfig.appMataUang +
-                        ' ' +
-                        this.props.pembayaran.payment}
-                    </Text>
-                  </View>
-                </View>
-              </View>
-            </View>
-          </View>
-
-          <View style={styles.card}>
-            <View style={styles.item}>
-              <Text style={styles.title}>Payment Method</Text>
-            </View>
-            <View style={styles.detail}>
-              <View style={styles.detailItem}>
-                <View>
-                  <View style={{alignItems: 'center'}}>
-                    <Text style={styles.desc}>Points</Text>
-                  </View>
-                  <TouchableOpacity style={styles.btnMethod}>
-                    <Text style={styles.descMethod}>Add a Points</Text>
-                  </TouchableOpacity>
-                </View>
-                <View
-                  style={{
-                    backgroundColor: colorConfig.pageIndex.grayColor,
-                    width: 1,
-                    height: 50,
-                  }}
-                />
-                {this.props.dataVoucer != undefined ? (
-                  <View>
-                    <View style={{alignItems: 'center'}}>
-                      <Text style={styles.desc}>Voucher</Text>
-                    </View>
-                    <TouchableOpacity
-                      style={styles.btnMethod}
-                      onPress={this.myVouchers}>
-                      <Icon
-                        size={15}
-                        name={
-                          Platform.OS === 'ios'
-                            ? 'ios-information-circle'
-                            : 'md-information-circle'
-                        }
-                        style={{color: colorConfig.pageIndex.listBorder}}
-                      />
-                      <Text style={styles.descMethod}>
-                        {this.props.dataVoucer.voucherName.substr(0, 10)}
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
-                ) : (
-                  <View>
-                    <View style={{alignItems: 'center'}}>
-                      <Text style={styles.desc}>Voucher</Text>
-                    </View>
-                    <TouchableOpacity
-                      style={styles.btnMethod}
-                      onPress={this.myVouchers}>
-                      <Text style={styles.descMethod}>Add a Voucher</Text>
-                    </TouchableOpacity>
-                  </View>
-                )}
-              </View>
-            </View>
-          </View>
-        </ScrollView>
-        <View style={{backgroundColor: colorConfig.pageIndex.backgroundColor}}>
-          <View style={styles.line} />
-          <View>
+                  color: colorConfig.pageIndex.activeTintColor,
+                  margin: 10,
+                }}
+              />
+            </TouchableOpacity>
             <View
               style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                margin: 10,
+                flex: 1,
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginTop: 10,
+                marginBottom: 10,
+                left: -20,
               }}>
               <Text
                 style={{
-                  fontSize: 16,
-                }}>
-                TOTAL
-              </Text>
-              <Text
-                style={{
-                  fontSize: 16,
                   color: colorConfig.pageIndex.activeTintColor,
-                }}>
-                {appConfig.appMataUang + ' ' + this.state.totalBayar}
-              </Text>
-            </View>
-            <TouchableOpacity
-              style={{
-                backgroundColor: colorConfig.pageIndex.activeTintColor,
-                borderRadius: 10,
-                margin: 10,
-                height: 45,
-                justifyContent: 'center',
-              }}
-              onPress={this.btnPayment}>
-              <Text
-                style={{
-                  textAlign: 'center',
-                  color: colorConfig.pageIndex.backgroundColor,
-                  fontSize: 16,
+                  fontSize: 20,
                   fontWeight: 'bold',
                 }}>
-                Pay Cash
+                Confirm Payment
               </Text>
-            </TouchableOpacity>
+            </View>
           </View>
+          <View style={styles.line} />
         </View>
+        <ScrollView>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'center',
+              left: -10,
+              marginTop: 30,
+              marginBottom: 50,
+            }}>
+            <Text
+              style={{
+                color: colorConfig.pageIndex.grayColor,
+                fontSize: 16,
+                marginRight: 5,
+              }}>
+              {appConfig.appMataUang}
+            </Text>
+            <Text
+              style={{
+                color: colorConfig.pageIndex.grayColor,
+                fontSize: 70,
+                // fontWeight: 'bold',
+              }}>
+              {this.props.pembayaran.payment}
+            </Text>
+          </View>
+          <View
+            style={{
+              backgroundColor: colorConfig.pageIndex.backgroundColor,
+              paddingLeft: 20,
+              paddingRight: 20,
+              paddingBottom: 20,
+              height: this.state.screenHeight - 250,
+            }}>
+            <View
+              style={{
+                alignItems: 'center',
+              }}>
+              <View
+                style={{
+                  position: 'absolute',
+                  top: -30,
+                  height: 60,
+                  width: this.state.screenWidth - 40,
+                  backgroundColor: colorConfig.pageIndex.backgroundColor,
+                  borderColor: colorConfig.pageIndex.activeTintColor,
+                  borderWidth: 1,
+                  borderRadius: 10,
+                }}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                  }}>
+                  <View
+                    style={{
+                      margin: 10,
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                    }}>
+                    <View
+                      style={{
+                        height: 40,
+                        width: 40,
+                        borderRadius: 40,
+                        borderColor: colorConfig.pageIndex.activeTintColor,
+                        borderWidth: 1,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        marginRight: 10,
+                        paddingTop: 3,
+                      }}>
+                      <Icon
+                        size={20}
+                        name={Platform.OS === 'ios' ? 'ios-cart' : 'md-cart'}
+                        style={{color: colorConfig.pageIndex.activeTintColor}}
+                      />
+                    </View>
+                    <View>
+                      <Text
+                        style={{
+                          fontSize: 14,
+                          fontWeight: 'bold',
+                          color: colorConfig.pageIndex.activeTintColor,
+                        }}>
+                        {appConfig.appName}
+                      </Text>
+                      <Text
+                        style={{
+                          fontSize: 14,
+                          color: colorConfig.pageIndex.grayColor,
+                        }}>
+                        {this.props.pembayaran.storeName}
+                      </Text>
+                    </View>
+                  </View>
+                  <TouchableOpacity
+                    style={{
+                      flexDirection: 'row',
+                      marginRight: 10,
+                      alignItems: 'center',
+                    }}
+                    onPress={() => this.detailPayment(this.props.pembayaran)}>
+                    <Text
+                      style={{
+                        marginRight: 5,
+                        color: colorConfig.pageIndex.activeTintColor,
+                      }}>
+                      Detail
+                    </Text>
+                    <Icon
+                      size={18}
+                      name={
+                        Platform.OS === 'ios'
+                          ? 'ios-arrow-dropright-circle'
+                          : 'md-arrow-dropright-circle'
+                      }
+                      style={{
+                        color: colorConfig.pageIndex.activeTintColor,
+                      }}
+                    />
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+            <View
+              style={{
+                marginTop: 50,
+                marginBottom: 20,
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                flexDirection: 'row',
+              }}>
+              <Text>Vouchers</Text>
+              {this.props.dataVoucer != undefined ? (
+                <TouchableOpacity
+                  style={styles.btnMethod}
+                  onPress={this.myVouchers}>
+                  <Image
+                    style={{height: 15, width: 22, marginRight: 5}}
+                    source={require('../assets/img/ticket.png')}
+                  />
+                  <Text style={styles.descMethod}>
+                    {this.props.dataVoucer.voucherName.substr(0, 13)}
+                  </Text>
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity
+                  style={styles.btnMethod}
+                  onPress={this.myVouchers}>
+                  <Image
+                    style={{height: 15, width: 22, marginRight: 5}}
+                    source={require('../assets/img/ticket.png')}
+                  />
+                  <Text style={styles.descMethod}>Add a Voucher</Text>
+                </TouchableOpacity>
+              )}
+            </View>
+            <RNSlidingButton
+              style={{
+                backgroundColor: colorConfig.pageIndex.activeTintColor,
+                borderRadius: 50,
+              }}
+              height={50}
+              onSlidingSuccess={this.onSlideRight}
+              slideDirection={SlideDirection.RIGHT}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  marginLeft: 5,
+                }}>
+                <View
+                  style={{
+                    height: 40,
+                    width: 40,
+                    borderRadius: 40,
+                    backgroundColor: colorConfig.pageIndex.backgroundColor,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}>
+                  <Icon
+                    size={25}
+                    name={Platform.OS === 'ios' ? 'ios-log-in' : 'md-log-in'}
+                    style={{color: colorConfig.pageIndex.activeTintColor}}
+                  />
+                </View>
+                <View
+                  style={{
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}>
+                  <Text
+                    numberOfLines={1}
+                    style={{
+                      marginLeft: 10,
+                      fontSize: 16,
+                      fontWeight: 'bold',
+                      color: colorConfig.pageIndex.backgroundColor,
+                    }}>
+                    {'Pay ' +
+                      appConfig.appMataUang +
+                      ' ' +
+                      this.state.totalBayar}
+                  </Text>
+                </View>
+              </View>
+            </RNSlidingButton>
+          </View>
+        </ScrollView>
+        <AwesomeAlert
+          show={this.state.showAlert}
+          showProgress={false}
+          title={this.state.titleAlert}
+          message={this.state.pesanAlert}
+          closeOnTouchOutside={true}
+          closeOnHardwareBackPress={false}
+          showCancelButton={false}
+          showConfirmButton={true}
+          cancelText="Close"
+          confirmText={
+            this.state.titleAlert == 'Payment Success!' ? 'Oke' : 'Close'
+          }
+          confirmButtonColor={colorConfig.pageIndex.activeTintColor}
+          onCancelPressed={() => {
+            this.hideAlert();
+          }}
+          onConfirmPressed={() => {
+            this.state.titleAlert == 'Payment Success!'
+              ? Actions.pop()
+              : this.hideAlert();
+          }}
+        />
       </View>
     );
   }
@@ -338,13 +500,13 @@ const styles = StyleSheet.create({
     paddingTop: 5,
     paddingBottom: 5,
     alignItems: 'center',
-    width: Dimensions.get('window').width / 3,
+    width: Dimensions.get('window').width / 2 - 30,
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
   descMethod: {
     color: colorConfig.pageIndex.grayColor,
-    fontSize: 10,
+    fontSize: 12,
   },
 });
 
