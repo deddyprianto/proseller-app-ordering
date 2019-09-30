@@ -28,7 +28,7 @@ export default class StoreNearYou extends Component {
     return (
       <View style={styles.stores}>
         <Text style={styles.stores}>Stores Near You</Text>
-        <View style={{justifyContent: 'space-evenly', flexDirection: 'row'}}>
+        <View style={{justifyContent: 'space-between', flexDirection: 'row'}}>
           {this.props.dataStoresNear.slice(0, 3).map((item, key) => (
             <View key={key}>
               {
@@ -49,14 +49,16 @@ export default class StoreNearYou extends Component {
                     <Text
                       style={{
                         fontSize: 10,
-                        color: colorConfig.pageIndex.grayColor,
+                        color: colorConfig.pageIndex.activeTintColor,
+                        fontFamily: 'Lato-Medium',
                       }}>
                       {item.storeName}
                     </Text>
                     <Text
                       style={{
                         fontSize: 10,
-                        color: colorConfig.store.defaultColor,
+                        color: colorConfig.pageIndex.grayColor,
+                        fontFamily: 'Lato-Medium',
                       }}>
                       {item.storeJarak.toFixed(1) + ' KM'}
                     </Text>
@@ -77,18 +79,18 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     color: colorConfig.store.storesTitle,
     fontSize: 16,
-    fontWeight: 'bold',
+    fontFamily: 'Lato-Bold',
   },
   storesNearItem: {
     borderColor: colorConfig.store.defaultColor,
     borderWidth: 1,
     borderRadius: 10,
     backgroundColor: colorConfig.store.storesItem,
-    width: Dimensions.get('window').width / 3 - 10,
+    width: Dimensions.get('window').width / 3 - 15,
   },
   storesNearImage: {
-    height: Dimensions.get('window').width / 3 - 14,
-    width: Dimensions.get('window').width / 3 - 14,
+    height: Dimensions.get('window').width / 3 - 19,
+    width: Dimensions.get('window').width / 3 - 17,
     borderTopLeftRadius: 9,
     borderTopRightRadius: 9,
   },

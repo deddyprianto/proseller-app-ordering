@@ -27,17 +27,18 @@ class RewardsPoint extends Component {
             color: colorConfig.pageIndex.backgroundColor,
             textAlign: 'center',
             paddingTop: 20,
-            fontSize: 30,
-            fontWeight: 'bold',
+            fontFamily: 'Lato-Medium',
           }}>
-          {this.props.totalPoint == undefined ? 0 : this.props.totalPoint}
+          My Points
         </Text>
         <Text
           style={{
             color: colorConfig.pageIndex.backgroundColor,
             textAlign: 'center',
+            fontSize: 30,
+            fontFamily: 'Lato-Bold',
           }}>
-          Points
+          {this.props.totalPoint == undefined ? 0 : this.props.totalPoint}
         </Text>
       </View>
     );

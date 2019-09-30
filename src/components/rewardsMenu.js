@@ -55,7 +55,9 @@ export default class RewardsMenu extends Component {
                 style={{color: colorConfig.pageIndex.activeTintColor}}
               />
             </View>
-            <Text style={{textAlign: 'center'}}>Pay</Text>
+            <Text style={{textAlign: 'center', fontFamily: 'Lato-Medium'}}>
+              Pay
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={this.pageQRCode}>
             <View style={{alignItems: 'center'}}>
@@ -65,7 +67,9 @@ export default class RewardsMenu extends Component {
                 style={{color: colorConfig.pageIndex.activeTintColor}}
               />
             </View>
-            <Text style={{textAlign: 'center'}}>My QR Code</Text>
+            <Text style={{textAlign: 'center', fontFamily: 'Lato-Medium'}}>
+              My QR Code
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={this.pageRewards}>
             <View style={{alignItems: 'center'}}>
@@ -75,7 +79,9 @@ export default class RewardsMenu extends Component {
                 style={{color: colorConfig.pageIndex.activeTintColor}}
               />
             </View>
-            <Text style={{textAlign: 'center'}}>Rewards</Text>
+            <Text style={{textAlign: 'center', fontFamily: 'Lato-Medium'}}>
+              Rewards
+            </Text>
           </TouchableOpacity>
         </View>
       </View>

@@ -72,6 +72,23 @@ class PaymentDetail extends Component {
     }
 
     console.log(myVoucers);
+
+    if (this.props.dataVoucer != undefined) {
+      var jumlah = _.find(myVoucers, {id: this.props.dataVoucer.id})
+        .totalRedeem;
+
+      var index = _.findIndex(myVoucers, {
+        id: this.props.dataVoucer.id,
+      });
+
+      _.updateWith(
+        myVoucers,
+        '[' + index + "]['totalRedeem']",
+        _.constant(jumlah - 1),
+        Object,
+      );
+    }
+
     Actions.paymentAddVoucers({
       data: myVoucers,
       pembayaran: this.props.pembayaran,

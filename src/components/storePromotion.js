@@ -112,8 +112,8 @@ const styles = StyleSheet.create({
   },
   swiperPaginatiom: {
     bottom: -23,
-    // left: null,
-    // right: 10
+    left: 10,
+    right: null,
   },
   seeAll: {
     position: 'absolute',

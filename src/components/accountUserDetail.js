@@ -34,21 +34,15 @@ class AccountUserDetail extends Component {
     return (
       <View
         style={{
-          marginTop: 10,
-          height: 160,
-          alignItems: 'center',
+          padding: 10,
+          backgroundColor: colorConfig.pageIndex.backgroundColor,
+          width: this.state.screenWidth,
+          borderBottomColor: colorConfig.pageIndex.activeTintColor,
+          borderBottomWidth: 1,
         }}>
         <View
           style={{
-            height: 100,
-            width: this.state.screenWidth - 100,
-            backgroundColor: colorConfig.pageIndex.backgroundColor,
-            marginTop: 50,
-            position: 'absolute',
-            alignItems: 'center',
-            borderRadius: 10,
-            borderColor: colorConfig.pageIndex.activeTintColor,
-            borderWidth: 1,
+            flexDirection: 'row',
           }}>
           <View
             style={{
@@ -56,11 +50,10 @@ class AccountUserDetail extends Component {
               width: 75,
               borderRadius: 75,
               backgroundColor: colorConfig.pageIndex.backgroundColor,
-              position: 'absolute',
-              top: -40,
               alignItems: 'center',
               borderColor: colorConfig.pageIndex.activeTintColor,
               borderWidth: 1,
+              marginRight: 10,
             }}>
             <Image
               style={{
@@ -71,54 +64,46 @@ class AccountUserDetail extends Component {
               source={appConfig.appImageNull}
             />
           </View>
-          <View
-            style={{
-              marginTop: 40,
-              marginBottom: 5,
-            }}>
-            <Text
-              style={{
-                color: colorConfig.pageIndex.activeTintColor,
-                fontSize: 16,
-                fontWeight: 'bold',
-              }}>
-              {this.props.userDetail.name}
-            </Text>
-          </View>
           <View>
-            <TouchableOpacity
-              onPress={this.editProfil}
+            <View
               style={{
-                flexDirection: 'row',
-                borderColor: colorConfig.pageIndex.inactiveTintColor,
-                borderWidth: 1,
-                borderRadius: 10,
-                paddingLeft: 10,
-                paddingRight: 5,
-                paddingBottom: 2,
-                paddingTop: 2,
+                marginTop: 5,
               }}>
               <Text
                 style={{
-                  color: colorConfig.pageIndex.inactiveTintColor,
-                  fontSize: 12,
-                  fontWeight: 'bold',
+                  color: colorConfig.pageIndex.activeTintColor,
+                  fontSize: 14,
+                  fontFamily: 'Lato-Bold',
                 }}>
-                Edit Profile
+                {this.props.userDetail != undefined
+                  ? this.props.userDetail.name
+                  : ''}
               </Text>
-              <Icon
-                size={15}
-                name={
-                  Platform.OS === 'ios'
-                    ? 'ios-arrow-dropright'
-                    : 'md-arrow-dropright-circle'
-                }
+            </View>
+            <View>
+              <Text
                 style={{
-                  color: colorConfig.pageIndex.inactiveTintColor,
-                  marginLeft: 5,
-                }}
-              />
-            </TouchableOpacity>
+                  color: colorConfig.pageIndex.activeTintColor,
+                  fontSize: 14,
+                  fontFamily: 'Lato-Medium',
+                }}>
+                {this.props.userDetail != undefined
+                  ? this.props.userDetail.phone_number
+                  : ''}
+              </Text>
+            </View>
+            <View>
+              <Text
+                style={{
+                  color: colorConfig.pageIndex.activeTintColor,
+                  fontSize: 14,
+                  fontFamily: 'Lato-Italic',
+                }}>
+                {this.props.userDetail != undefined
+                  ? this.props.userDetail.email
+                  : ''}
+              </Text>
+            </View>
           </View>
         </View>
       </View>

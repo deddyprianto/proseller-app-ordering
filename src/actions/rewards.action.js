@@ -44,34 +44,51 @@ export const vouchers = () => {
           },
         },
       } = state;
+
+      // await Promise.all(
+      //   await data
+      //     .filter(
+      //       campaign =>
+      //         campaign.deleted == false &&
+      //         campaign.priority == true &&
+      //         campaign.campaignType == 'point',
+      //     )
+      //     .map(async campaign => {
+      //       let response = await fetchApi(
+      //         '/campaign/' + campaign.id + '/vouchers',
+      //         'GET',
+      //         false,
+      //         200,
+      //         token,
+      //       );
+      //       console.log(response);
+      //       if (response.success) {
+      //         response.responseBody.data
+      //           .filter(voucher => voucher.deleted == false)
+      //           .map(async voucher => {
+      //             await dataVoucher.push(voucher);
+      //           });
+      //       }
+      //     }),
+      // );
+
       var dataVoucher = [];
 
-      await Promise.all(
-        await data
-          .filter(
-            campaign =>
-              campaign.deleted == false &&
-              campaign.priority == true &&
-              campaign.campaignType == 'point',
-          )
-          .map(async campaign => {
-            let response = await fetchApi(
-              '/campaign/' + campaign.id + '/vouchers',
-              'GET',
-              false,
-              200,
-              token,
-            );
-            console.log(response);
-            if (response.success) {
-              response.responseBody.data
-                .filter(voucher => voucher.deleted == false)
-                .map(async voucher => {
-                  await dataVoucher.push(voucher);
-                });
-            }
-          }),
+      let response = await fetchApi(
+        '/campaign/vouchers',
+        'GET',
+        false,
+        200,
+        token,
       );
+      console.log(response);
+      if (response.success) {
+        response.responseBody.data
+          .filter(voucher => voucher.deleted == false)
+          .map(async voucher => {
+            await dataVoucher.push(voucher);
+          });
+      }
 
       dispatch({
         type: 'DATA_ALL_VOUCHER',
@@ -99,36 +116,57 @@ export const dataPoint = () => {
           },
         },
       } = state;
-      var dataResponse = [];
-      let totalPoint = 0;
 
-      await Promise.all(
-        await data
-          .filter(
-            campaign =>
-              campaign.deleted == false &&
-              campaign.priority == true &&
-              campaign.campaignType == 'point',
-          )
-          .map(async campaign => {
-            let response = await fetchApi(
-              '/campaign/' + campaign.id + '/points',
-              'GET',
-              false,
-              200,
-              token,
-            );
-            if (response.success) {
-              response.responseBody.data
-                .filter(point => point.deleted == false)
-                .map(async point => {
-                  await dataResponse.push(point);
-                  var sisa = point.pointDebit - point.pointKredit;
-                  totalPoint = totalPoint + sisa;
-                });
-            }
-          }),
+      // await Promise.all(
+      //   await data
+      //     .filter(
+      //       campaign =>
+      //         campaign.deleted == false &&
+      //         campaign.priority == true &&
+      //         campaign.campaignType == 'point',
+      //     )
+      //     .map(async campaign => {
+      //       let response = await fetchApi(
+      //         '/campaign/points',
+      //         'GET',
+      //         false,
+      //         200,
+      //         token,
+      //       );
+      //       if (response.success) {
+      //         response.responseBody.data
+      //           .filter(point => point.deleted == false)
+      //           .map(async point => {
+      //             await dataResponse.push(point);
+      //             var sisa = point.pointDebit - point.pointKredit;
+      //             totalPoint = totalPoint + sisa;
+      //           });
+      //       }
+      //     }),
+      // );
+
+      var dataResponse = [];
+
+      let response = await fetchApi(
+        '/campaign/points',
+        'GET',
+        false,
+        200,
+        token,
       );
+      if (response.success) {
+        response.responseBody.data
+          .filter(point => point.deleted == false)
+          .map(async point => {
+            await dataResponse.push(point);
+            var sisa = point.pointDebit - point.pointKredit;
+            totalPoint = totalPoint + sisa;
+          });
+      }
+
+      let totalPoint =
+        _.sumBy(dataResponse, 'pointDebit') -
+        _.sumBy(dataResponse, 'pointKredit');
 
       dispatch({
         type: 'DATA_TOTAL_POINT',
@@ -146,19 +184,6 @@ export const dataPoint = () => {
           ['desc'],
         ).slice(0, 3),
       });
-    } catch (error) {
-      return error;
-    }
-  };
-};
-
-export const refreshData = () => {
-  return async (dispatch, getState) => {
-    const state = getState();
-    try {
-      campaign();
-      vouchers();
-      dataPoint();
     } catch (error) {
       return error;
     }

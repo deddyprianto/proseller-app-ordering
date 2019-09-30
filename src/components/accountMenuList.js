@@ -23,7 +23,9 @@ import {vouchers} from '../actions/rewards.action';
 class AccountMenuList extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      screenWidth: Dimensions.get('window').width,
+    };
   }
 
   logout = async () => {
@@ -52,84 +54,96 @@ class AccountMenuList extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <TouchableOpacity style={styles.item}>
-          <Text style={styles.title}>
-            {this.props.totalPoint == undefined
-              ? 0 + ' Point'
-              : this.props.totalPoint + ' Points'}{' '}
-          </Text>
-          <Icon
-            size={20}
-            name={
-              Platform.OS === 'ios'
-                ? 'ios-arrow-dropright-circle'
-                : 'md-arrow-dropright-circle'
-            }
-            style={{color: colorConfig.pageIndex.activeTintColor}}
-          />
-        </TouchableOpacity>
+        <View style={{flexDirection: 'row'}}>
+          <View
+            style={{
+              justifyContent: 'center',
+              marginLeft: 10,
+              width: 25,
+            }}>
+            <Image
+              style={{height: 20, width: 25, marginRight: 5}}
+              source={require('../assets/img/voucher.png')}
+            />
+          </View>
+          <View>
+            <TouchableOpacity style={styles.item} onPress={this.myVouchers}>
+              <Text style={styles.title}> My Vouchers </Text>
+              <Icon
+                size={20}
+                name={
+                  Platform.OS === 'ios'
+                    ? 'ios-arrow-dropright-circle'
+                    : 'md-arrow-dropright-circle'
+                }
+                style={{color: colorConfig.pageIndex.activeTintColor}}
+              />
+            </TouchableOpacity>
 
-        <View style={styles.line}></View>
+            <View style={styles.line}></View>
+          </View>
+        </View>
 
-        <TouchableOpacity style={styles.item} onPress={this.myVouchers}>
-          <Text style={styles.title}> My Vouchers </Text>
-          <Icon
-            size={20}
-            name={
-              Platform.OS === 'ios'
-                ? 'ios-arrow-dropright-circle'
-                : 'md-arrow-dropright-circle'
-            }
-            style={{color: colorConfig.pageIndex.activeTintColor}}
-          />
-        </TouchableOpacity>
+        <View style={{flexDirection: 'row'}}>
+          <View
+            style={{
+              justifyContent: 'center',
+              marginLeft: 10,
+              width: 25,
+            }}>
+            <Icon
+              size={25}
+              name={Platform.OS === 'ios' ? 'ios-timer' : 'md-time'}
+              style={{color: colorConfig.pageIndex.activeTintColor}}
+            />
+          </View>
+          <View>
+            <TouchableOpacity
+              style={styles.item}
+              onPress={() => this.props.screen.navigation.navigate('History')}>
+              <Text style={styles.title}> History </Text>
+              <Icon
+                size={20}
+                name={
+                  Platform.OS === 'ios'
+                    ? 'ios-arrow-dropright-circle'
+                    : 'md-arrow-dropright-circle'
+                }
+                style={{color: colorConfig.pageIndex.activeTintColor}}
+              />
+            </TouchableOpacity>
 
-        <View style={styles.line}></View>
+            <View style={styles.line}></View>
+          </View>
+        </View>
 
-        <TouchableOpacity
-          style={styles.item}
-          onPress={() => this.props.screen.navigation.navigate('History')}>
-          <Text style={styles.title}> History </Text>
-          <Icon
-            size={20}
-            name={
-              Platform.OS === 'ios'
-                ? 'ios-arrow-dropright-circle'
-                : 'md-arrow-dropright-circle'
-            }
-            style={{color: colorConfig.pageIndex.activeTintColor}}
-          />
-        </TouchableOpacity>
-
-        <View style={styles.line}></View>
-
-        <TouchableOpacity style={styles.item}>
-          <Text style={styles.title}> Setting </Text>
-          <Icon
-            size={20}
-            name={
-              Platform.OS === 'ios'
-                ? 'ios-arrow-dropright-circle'
-                : 'md-arrow-dropright-circle'
-            }
-            style={{color: colorConfig.pageIndex.activeTintColor}}
-          />
-        </TouchableOpacity>
-
-        <View style={styles.line}></View>
-
-        <TouchableOpacity style={styles.item} onPress={this.logout}>
-          <Text style={styles.title}> Logout </Text>
-          <Icon
-            size={20}
-            name={
-              Platform.OS === 'ios'
-                ? 'ios-arrow-dropright-circle'
-                : 'md-arrow-dropright-circle'
-            }
-            style={{color: colorConfig.pageIndex.activeTintColor}}
-          />
-        </TouchableOpacity>
+        <View style={{flexDirection: 'row'}}>
+          <View
+            style={{
+              justifyContent: 'center',
+              marginLeft: 10,
+              width: 25,
+            }}>
+            <Image
+              style={{height: 20, width: 20, marginRight: 5}}
+              source={require('../assets/img/settings.png')}
+            />
+          </View>
+          <View>
+            <TouchableOpacity style={styles.item}>
+              <Text style={styles.title}> Setting </Text>
+              <Icon
+                size={20}
+                name={
+                  Platform.OS === 'ios'
+                    ? 'ios-arrow-dropright-circle'
+                    : 'md-arrow-dropright-circle'
+                }
+                style={{color: colorConfig.pageIndex.activeTintColor}}
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
       </View>
     );
   }
@@ -138,16 +152,16 @@ class AccountMenuList extends Component {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: colorConfig.pageIndex.backgroundColor,
-    borderRadius: 15,
-    marginLeft: 20,
-    marginRight: 20,
-    borderColor: colorConfig.pageIndex.activeTintColor,
-    borderWidth: 1,
+    borderBottomColor: colorConfig.pageIndex.activeTintColor,
+    borderBottomWidth: 1,
+    borderTopColor: colorConfig.pageIndex.activeTintColor,
+    borderTopWidth: 1,
   },
   item: {
     margin: 10,
     flexDirection: 'row',
     justifyContent: 'space-between',
+    width: Dimensions.get('window').width - 60,
   },
   line: {
     borderBottomColor: colorConfig.pageIndex.inactiveTintColor,
@@ -158,6 +172,7 @@ const styles = StyleSheet.create({
   title: {
     color: colorConfig.pageIndex.activeTintColor,
     fontSize: 14,
+    fontFamily: 'Lato-Medium',
   },
 });
 

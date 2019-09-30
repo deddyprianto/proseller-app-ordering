@@ -44,18 +44,18 @@ class HistoryPayment extends Component {
 
   getMonth(value) {
     var mount = [
-      'January',
-      'February',
-      'March',
-      'April',
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
       'May',
-      'June',
-      'July',
-      'August',
-      'September',
-      'October',
-      'November',
-      'December',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
     return mount[value];
   }
@@ -177,11 +177,12 @@ const styles = StyleSheet.create({
   empty: {
     color: colorConfig.pageIndex.inactiveTintColor,
     textAlign: 'center',
+    fontFamily: 'Lato-Medium',
   },
   item: {
     marginLeft: 5,
     marginRight: 5,
-    marginBottom: 2,
+    marginBottom: 10,
     borderColor: colorConfig.pageIndex.activeTintColor,
     borderWidth: 1,
     borderRadius: 5,
@@ -201,10 +202,11 @@ const styles = StyleSheet.create({
   storeName: {
     color: colorConfig.pageIndex.activeTintColor,
     fontSize: 16,
-    fontWeight: 'bold',
+    fontFamily: 'Lato-Bold',
   },
   paymentTgl: {
     color: colorConfig.pageIndex.inactiveTintColor,
+    fontFamily: 'Lato-Medium',
   },
   paymentTypeLogo: {
     width: 20,
@@ -214,10 +216,12 @@ const styles = StyleSheet.create({
   paymentType: {
     paddingLeft: 8,
     color: colorConfig.pageIndex.activeTintColor,
+    fontFamily: 'Lato-Medium',
   },
   itemType: {
     color: colorConfig.pageIndex.activeTintColor,
     fontSize: 12,
+    fontFamily: 'Lato-Medium',
   },
   btnDetail: {
     alignItems: 'center',

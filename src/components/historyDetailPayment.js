@@ -51,18 +51,18 @@ export default class HistoryDetailPayment extends Component {
 
   getMonth(value) {
     var mount = [
-      'January',
-      'February',
-      'March',
-      'April',
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
       'May',
-      'June',
-      'July',
-      'August',
-      'September',
-      'October',
-      'November',
-      'December',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
     return mount[value];
   }
@@ -127,16 +127,17 @@ export default class HistoryDetailPayment extends Component {
               <Text
                 style={{
                   color: colorConfig.pageIndex.activeTintColor,
-                  fontSize: 30,
+                  fontSize: 14,
+                  fontFamily: 'Lato-Medium',
                 }}>
-                {this.props.item.pointDebit}
+                You got point
               </Text>
               <Text
                 style={{
                   color: colorConfig.pageIndex.activeTintColor,
-                  fontSize: 14,
+                  fontSize: 30,
                 }}>
-                You get point
+                {this.props.item.pointDebit}
               </Text>
             </View>
           </View>
@@ -160,7 +161,7 @@ const styles = StyleSheet.create({
   },
   btnBackText: {
     color: colorConfig.pageIndex.activeTintColor,
-    fontWeight: 'bold',
+    fontFamily: 'Lato-Bold',
   },
   line: {
     borderBottomColor: colorConfig.store.defaultColor,
@@ -183,7 +184,7 @@ const styles = StyleSheet.create({
     color: colorConfig.pageIndex.activeTintColor,
     fontSize: 14,
     textAlign: 'center',
-    fontWeight: 'bold',
+    fontFamily: 'Lato-Bold',
     marginBottom: 10,
   },
   detail: {
@@ -202,5 +203,6 @@ const styles = StyleSheet.create({
   desc: {
     color: colorConfig.pageIndex.grayColor,
     marginLeft: 8,
+    fontFamily: 'Lato-Medium',
   },
 });

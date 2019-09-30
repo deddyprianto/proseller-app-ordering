@@ -13,6 +13,7 @@
     "amazon-cognito-identity-js": "^3.0.15",
     "aws-amplify": "^1.1.36",
     "aws-amplify-react-native": "^2.1.16",
+    "exit-on-double-back": "^1.0.1",
     "geolib": "^3.0.4",
     "json-loader": "^0.5.7",
     "lodash": "^4.17.15",
@@ -65,5 +66,10 @@
   },
   "jest": {
     "preset": "react-native"
+  },
+  "rnpm": {
+    "assets": [
+      "./src/assets/fonts/"
+    ]
   }
 }

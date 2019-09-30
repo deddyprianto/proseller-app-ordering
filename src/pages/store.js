@@ -25,6 +25,9 @@ import StorePromotion from '../components/storePromotion';
 import StoreNearYou from '../components/storeNearYou';
 import StoreStores from '../components/storeStores';
 import appConfig from '../config/appConfig';
+import {Actions} from 'react-native-router-flux';
+import {myVoucers} from '../actions/account.action';
+import {campaign, dataPoint, vouchers} from '../actions/rewards.action';
 
 class Store extends Component {
   constructor(props) {
@@ -44,6 +47,11 @@ class Store extends Component {
   }
 
   componentDidMount = async () => {
+    await this.props.dispatch(campaign());
+    await this.props.dispatch(dataPoint());
+    await this.props.dispatch(vouchers());
+    await this.props.dispatch(myVoucers());
+
     if (this.state.dataStores.length === 0) {
       this.setState({isLoading: true});
     } else {
@@ -325,24 +333,90 @@ class Store extends Component {
     this.setState({refreshing: false});
   };
 
+  myVouchers = () => {
+    var myVoucers = [];
+    if (this.props.myVoucers.data != undefined) {
+      _.forEach(
+        _.groupBy(
+          this.props.myVoucers.data.filter(voucher => voucher.deleted == false),
+          'id',
+        ),
+        function(value, key) {
+          value[0].totalRedeem = value.length;
+          myVoucers.push(value[0]);
+        },
+      );
+    }
+
+    console.log(myVoucers);
+    Actions.accountVouchers({data: myVoucers});
+  };
+
+  getHallo = () => {
+    var date = new Date();
+    console.log(date.getHours());
+    if (date.getHours() < 12) {
+      return 'Good morning';
+    } else if (date.getHours() < 18) {
+      return 'Good afternoon';
+    } else {
+      return 'Good night';
+    }
+  };
+
   render() {
     return (
       <View style={{marginBottom: 40}}>
-        <View style={{backgroundColor: colorConfig.pageIndex.backgroundColor}}>
-          <TouchableOpacity
+        <View
+          style={{
+            backgroundColor: colorConfig.pageIndex.backgroundColor,
+          }}>
+          <View
             style={{
               flexDirection: 'row',
-              alignItems: 'center',
-              paddingLeft: 10,
-              paddingBottom: 5,
-              paddingTop: 5,
+              justifyContent: 'space-between',
             }}>
-            <Image
-              resizeMode="stretch"
-              style={styles.imageLogo}
-              source={appConfig.appLogo}
-            />
-          </TouchableOpacity>
+            <TouchableOpacity
+              style={{
+                paddingLeft: 10,
+                paddingBottom: 5,
+                paddingTop: 5,
+              }}>
+              <Image
+                resizeMode="stretch"
+                style={styles.imageLogo}
+                source={appConfig.appLogo}
+              />
+            </TouchableOpacity>
+            <View
+              style={{
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginRight: 10,
+              }}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                }}>
+                <Text
+                  style={{
+                    color: colorConfig.pageIndex.activeTintColor,
+                    fontFamily: 'Lato-Medium',
+                  }}>
+                  {this.getHallo() + ', '}
+                </Text>
+                <Text
+                  style={{
+                    color: colorConfig.pageIndex.activeTintColor,
+                    fontFamily: 'Lato-Bold',
+                  }}>
+                  {this.props.userDetail != undefined
+                    ? this.props.userDetail.name.split(' ')[0]
+                    : ''}
+                </Text>
+              </View>
+            </View>
+          </View>
           <View
             style={{
               borderBottomColor: colorConfig.store.defaultColor,
@@ -367,21 +441,82 @@ class Store extends Component {
               <StorePromotion />
               <View
                 style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-evenly',
+                  // backgroundColor: colorConfig.pageIndex.backgroundColor,
+                  borderColor: colorConfig.pageIndex.activeTintColor,
+                  borderWidth: 1,
+                  height: 50,
+                  marginTop: 20,
+                  borderRadius: 10,
+                  alignItems: 'center',
+                }}>
+                <View style={styles.point}>
+                  <Image
+                    style={{height: 18, width: 25, marginRight: 5}}
+                    source={require('../assets/img/ticket.png')}
+                  />
+                  <Text
+                    style={{
+                      color: colorConfig.pageIndex.activeTintColor,
+                      fontSize: 14,
+                      fontFamily: 'Lato-Medium',
+                    }}>
+                    {'Point : '}
+                  </Text>
+                  <Text
+                    style={{
+                      color: colorConfig.pageIndex.activeTintColor,
+                      fontSize: 14,
+                      fontFamily: 'Lato-Bold',
+                    }}>
+                    {this.props.totalPoint == undefined
+                      ? 0
+                      : this.props.totalPoint}
+                  </Text>
+                </View>
+                <View
+                  style={{
+                    backgroundColor: colorConfig.pageIndex.grayColor,
+                    width: 1,
+                    height: 35,
+                  }}
+                />
+                <TouchableOpacity
+                  style={styles.point}
+                  onPress={this.myVouchers}>
+                  <Image
+                    resizeMode="stretch"
+                    style={{height: 18, width: 25, marginRight: 5}}
+                    source={require('../assets/img/voucher.png')}
+                  />
+                  <Text
+                    style={{
+                      color: colorConfig.pageIndex.activeTintColor,
+                      fontSize: 14,
+                      fontFamily: 'Lato-Bold',
+                    }}>
+                    My Vouchers
+                  </Text>
+                </TouchableOpacity>
+              </View>
+              {/* <View
+                style={{
                   borderBottomColor: colorConfig.store.defaultColor,
                   borderBottomWidth: 2,
                   paddingTop: 10,
                 }}
-              />
+              /> */}
               {this.state.dataStoresNear.length != 0 ? (
                 <View>
                   <StoreNearYou dataStoresNear={this.state.dataStoresNear} />
-                  <View
+                  {/* <View
                     style={{
                       borderBottomColor: colorConfig.store.defaultColor,
                       borderBottomWidth: 2,
                       paddingTop: 10,
                     }}
-                  />
+                  /> */}
                 </View>
               ) : null}
               {this.state.dataAllStore.length != 0 ? (
@@ -401,6 +536,7 @@ class Store extends Component {
                     style={{
                       textAlign: 'center',
                       color: colorConfig.pageIndex.grayColor,
+                      fontFamily: 'Lato-Medium',
                     }}>
                     Store is empty
                   </Text>
@@ -420,7 +556,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   scrollView: {
-    // backgroundColor: colorConfig.pageIndex.backgroundColor,
+    backgroundColor: colorConfig.pageIndex.backgroundColor,
   },
   loading: {
     height: Dimensions.get('window').height,
@@ -431,10 +567,25 @@ const styles = StyleSheet.create({
     paddingTop: 5,
     marginBottom: 5,
   },
+  point: {
+    margin: 10,
+    alignItems: 'center',
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 10,
+    paddingTop: 5,
+    paddingBottom: 5,
+    paddingLeft: 10,
+    paddingRight: 10,
+    // width: Dimensions.get('window').width / 2 - 30,
+  },
 });
 
 mapStateToProps = state => ({
   dataStores: state.storesReducer.dataStores.stores,
+  myVoucers: state.accountsReducer.myVoucers.myVoucers,
+  totalPoint: state.rewardsReducer.dataPoint.totalPoint,
+  userDetail: state.userReducer.getUser.userDetails,
 });
 
 mapDispatchToProps = dispatch => ({

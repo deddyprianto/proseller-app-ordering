@@ -54,6 +54,7 @@ class RewardsTransaction extends Component {
                             style={{
                               marginLeft: 10,
                               color: colorConfig.pageIndex.grayColor,
+                              fontFamily: 'Lato-Medium',
                             }}>
                             {item.storeName}
                           </Text>
@@ -68,6 +69,7 @@ class RewardsTransaction extends Component {
                             style={{
                               marginRight: 5,
                               color: colorConfig.pageIndex.grayColor,
+                              fontFamily: 'Lato-Medium',
                             }}>
                             {item.pointDebit}
                           </Text>
@@ -125,7 +127,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 5,
     marginLeft: 10,
-    fontWeight: 'bold',
+    fontFamily: 'Lato-Bold',
   },
   card: {
     backgroundColor: colorConfig.pageIndex.backgroundColor,

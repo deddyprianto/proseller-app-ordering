@@ -60,22 +60,21 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   signupButton: {
-    color: colorConfig.signin.signupButton,
+    color: colorConfig.pageIndex.activeTintColor,
     fontSize: 14,
-    fontWeight: 'bold',
     textAlign: 'left',
     paddingLeft: 10,
   },
   verifyButton: {
-    color: colorConfig.signin.signupButton,
+    color: colorConfig.pageIndex.activeTintColor,
     fontSize: 14,
-    fontWeight: 'bold',
     textAlign: 'right',
     paddingRight: 10,
+    fontFamily: 'sans-serif',
   },
   button: {
     width: 300,
-    backgroundColor: colorConfig.signin.button,
+    backgroundColor: colorConfig.pageIndex.activeTintColor,
     borderRadius: 25,
     marginVertical: 10,
     paddingVertical: 13,
@@ -100,6 +99,7 @@ const styles = StyleSheet.create({
   backgroundImage: {
     alignItems: 'center',
     alignSelf: 'stretch',
+    backgroundColor: colorConfig.pageIndex.backgroundColor,
     flex: 1,
   },
   logo: {
@@ -192,10 +192,7 @@ class Signin extends Component {
 
     const imageStyle = [styles.logo, {width: this.imageWidth}];
     return (
-      <ImageBackground
-        source={appConfig.appBackground}
-        style={styles.backgroundImage}
-        resizeMode="stretch">
+      <View style={styles.backgroundImage}>
         {loginUser && loginUser.isLoading && <Loader />}
         <ScrollView>
           <View style={styles.container}>
@@ -218,10 +215,21 @@ class Signin extends Component {
             secureTextEntry={true}
             component={this.renderTextInput}
           />
+          <View
+            style={{
+              justifyContent: 'flex-end',
+              // paddingVertical:2,
+              flexDirection: 'row',
+              marginBottom: 15,
+            }}>
+            <TouchableOpacity>
+              <Text style={styles.verifyButton}>Forgot Password ?</Text>
+            </TouchableOpacity>
+          </View>
           <TouchableOpacity
             style={styles.button}
             onPress={handleSubmit(this.onSubmit)}>
-            <Text style={styles.buttonText}>Login</Text>
+            <Text style={styles.buttonText}>LOGIN</Text>
           </TouchableOpacity>
           <View style={styles.viewLoginWith}>
             <TouchableOpacity onPress={this.signup}>
@@ -252,7 +260,7 @@ class Signin extends Component {
             this.hideAlert();
           }}
         />
-      </ImageBackground>
+      </View>
     );
   }
 }

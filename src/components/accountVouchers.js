@@ -46,18 +46,18 @@ export default class AccountVouchers extends Component {
 
   getMonth(value) {
     var mount = [
-      'January',
-      'February',
-      'March',
-      'April',
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
       'May',
-      'June',
-      'July',
-      'August',
-      'September',
-      'October',
-      'November',
-      'December',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
     return mount[value];
   }
@@ -100,134 +100,138 @@ export default class AccountVouchers extends Component {
               </Text>
             </View>
           ) : (
-            myVoucers.map((item, keys) => (
-              <View key={keys}>
-                {
-                  <View
-                    style={styles.voucherItem}
-                    onPress={() => this.pageDetailVoucher(item)}>
-                    <View style={{alignItems: 'center'}}>
-                      <Image
-                        style={
-                          item['image'] != '' && item['image'] != undefined
-                            ? styles.voucherImage1
-                            : styles.voucherImage2
-                        }
-                        source={
-                          item['image'] != '' && item['image'] != undefined
-                            ? {uri: item['image']}
-                            : appConfig.appImageNull
-                        }
-                      />
-                      <View
-                        style={{
-                          position: 'absolute',
-                          left: 0,
-                          top: 0,
-                          backgroundColor: 'rgba(128,128,128, 0.8)',
-                          height: 30,
-                          // width: this.state.screenWidth / 2 - 11,
-                          borderTopLeftRadius: 9,
-                          alignItems: 'flex-start',
-                          justifyContent: 'center',
-                          paddingLeft: 10,
-                          paddingRight: 10,
-                        }}>
-                        <Text
-                          style={{
-                            color: colorConfig.pageIndex.backgroundColor,
-                            fontSize: 16,
-                            fontWeight: 'bold',
-                            textAlign: 'left',
-                          }}>
-                          {item['totalRedeem'] + 'x'}
-                        </Text>
-                      </View>
-                      <View
-                        style={{
-                          position: 'absolute',
-                          right: 0,
-                          top: 0,
-                          backgroundColor: 'rgba(2, 168, 80, 0.8)',
-                          height: 30,
-                          // width: this.state.screenWidth / 2 - 11,
-                          borderTopRightRadius: 9,
-                          alignItems: 'flex-end',
-                          justifyContent: 'center',
-                          paddingLeft: 10,
-                          paddingRight: 10,
-                        }}>
-                        <Text
-                          style={{
-                            color: colorConfig.pageIndex.backgroundColor,
-                            fontSize: 16,
-                            fontWeight: 'bold',
-                            textAlign: 'right',
-                          }}>
-                          {item['redeemValue'] + ' Points'}
-                        </Text>
-                      </View>
-                    </View>
-                    <View style={styles.voucherDetail}>
-                      <View style={styles.status}>
-                        <Text style={styles.statusTitle}>Awarded</Text>
-                      </View>
-                      <Text style={styles.nameVoucher}>
-                        {item['voucherName']}
-                      </Text>
-                      <View style={{flexDirection: 'row'}}>
-                        <Icon
-                          size={15}
-                          name={
-                            Platform.OS === 'ios'
-                              ? 'ios-arrow-dropright'
-                              : 'md-arrow-dropright-circle'
+            myVoucers
+              .filter(voucher => voucher.totalRedeem > 0)
+              .map((item, keys) => (
+                <View key={keys}>
+                  {
+                    <View
+                      style={styles.voucherItem}
+                      onPress={() => this.pageDetailVoucher(item)}>
+                      <View style={{alignItems: 'center'}}>
+                        <Image
+                          style={
+                            item['image'] != '' && item['image'] != undefined
+                              ? styles.voucherImage1
+                              : styles.voucherImage2
                           }
-                          style={{
-                            color: colorConfig.pageIndex.inactiveTintColor,
-                            marginRight: 3,
-                          }}
+                          source={
+                            item['image'] != '' && item['image'] != undefined
+                              ? {uri: item['image']}
+                              : appConfig.appImageNull
+                          }
                         />
-                        <Text style={styles.descVoucher}>
-                          {item['voucherDesc']}
-                        </Text>
+                        <View
+                          style={{
+                            position: 'absolute',
+                            left: 0,
+                            top: 0,
+                            backgroundColor: 'rgba(128,128,128, 0.8)',
+                            height: 30,
+                            // width: this.state.screenWidth / 2 - 11,
+                            borderTopLeftRadius: 9,
+                            alignItems: 'flex-start',
+                            justifyContent: 'center',
+                            paddingLeft: 10,
+                            paddingRight: 10,
+                          }}>
+                          <Text
+                            style={{
+                              color: colorConfig.pageIndex.backgroundColor,
+                              fontSize: 16,
+                              fontWeight: 'bold',
+                              textAlign: 'left',
+                            }}>
+                            {item['totalRedeem'] + 'x'}
+                          </Text>
+                        </View>
+                        <View
+                          style={{
+                            position: 'absolute',
+                            right: 0,
+                            top: 0,
+                            backgroundColor: 'rgba(2, 168, 80, 0.8)',
+                            height: 30,
+                            // width: this.state.screenWidth / 2 - 11,
+                            borderTopRightRadius: 9,
+                            alignItems: 'flex-end',
+                            justifyContent: 'center',
+                            paddingLeft: 10,
+                            paddingRight: 10,
+                          }}>
+                          <Text
+                            style={{
+                              color: colorConfig.pageIndex.backgroundColor,
+                              fontSize: 16,
+                              fontWeight: 'bold',
+                              textAlign: 'right',
+                            }}>
+                            {item['redeemValue'] + ' Points'}
+                          </Text>
+                        </View>
                       </View>
-                      <View style={{flexDirection: 'row'}}>
-                        <Icon
-                          size={15}
-                          name={Platform.OS === 'ios' ? 'ios-time' : 'md-time'}
-                          style={{
-                            color: colorConfig.pageIndex.inactiveTintColor,
-                            marginRight: 3,
-                          }}
-                        />
-                        {item['validity']['longTerm'] ? (
+                      <View style={styles.voucherDetail}>
+                        <View style={styles.status}>
+                          <Text style={styles.statusTitle}>Awarded</Text>
+                        </View>
+                        <Text style={styles.nameVoucher}>
+                          {item['voucherName']}
+                        </Text>
+                        <View style={{flexDirection: 'row'}}>
+                          <Icon
+                            size={15}
+                            name={
+                              Platform.OS === 'ios'
+                                ? 'ios-arrow-dropright'
+                                : 'md-arrow-dropright-circle'
+                            }
+                            style={{
+                              color: colorConfig.pageIndex.inactiveTintColor,
+                              marginRight: 3,
+                            }}
+                          />
                           <Text style={styles.descVoucher}>
-                            {item['validity']['activeWeekDays'][
-                              this.state.currentDay.getDay()
-                            ]['validHour']['from'] +
-                              ' - ' +
-                              item['validity']['activeWeekDays'][
+                            {item['voucherDesc']}
+                          </Text>
+                        </View>
+                        <View style={{flexDirection: 'row'}}>
+                          <Icon
+                            size={15}
+                            name={
+                              Platform.OS === 'ios' ? 'ios-time' : 'md-time'
+                            }
+                            style={{
+                              color: colorConfig.pageIndex.inactiveTintColor,
+                              marginRight: 3,
+                            }}
+                          />
+                          {item['validity']['longTerm'] ? (
+                            <Text style={styles.descVoucher}>
+                              {item['validity']['activeWeekDays'][
                                 this.state.currentDay.getDay()
-                              ]['validHour']['to']}
-                          </Text>
-                        ) : (
-                          <Text style={styles.descVoucher}>
-                            {this.getDate(
-                              item['validity']['validDate']['startDate'],
-                            ) +
-                              ' - ' +
-                              this.getDate(
-                                item['validity']['validDate']['endDate'],
-                              )}
-                          </Text>
-                        )}
+                              ]['validHour']['from'] +
+                                ' - ' +
+                                item['validity']['activeWeekDays'][
+                                  this.state.currentDay.getDay()
+                                ]['validHour']['to']}
+                            </Text>
+                          ) : (
+                            <Text style={styles.descVoucher}>
+                              {this.getDate(
+                                item['validity']['validDate']['startDate'],
+                              ) +
+                                ' - ' +
+                                this.getDate(
+                                  item['validity']['validDate']['endDate'],
+                                )}
+                            </Text>
+                          )}
+                        </View>
                       </View>
                     </View>
-                  </View>
-                }
-              </View>
-            ))
+                  }
+                </View>
+              ))
           )}
         </ScrollView>
       </View>

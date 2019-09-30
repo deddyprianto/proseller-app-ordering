@@ -52,7 +52,7 @@ export default class StoreStores extends Component {
                           style={{
                             fontSize: 14,
                             color: colorConfig.pageIndex.activeTintColor,
-                            fontWeight: 'bold',
+                            fontFamily: 'Lato-Bold',
                           }}>
                           {item.storeName}
                         </Text>
@@ -61,6 +61,7 @@ export default class StoreStores extends Component {
                             style={{
                               fontSize: 12,
                               color: colorConfig.pageIndex.grayColor,
+                              fontFamily: 'Lato-Medium',
                             }}>
                             {item.storeJarak + ' KM'}
                           </Text>
@@ -69,6 +70,7 @@ export default class StoreStores extends Component {
                           style={{
                             fontSize: 12,
                             color: colorConfig.store.defaultColor,
+                            fontFamily: 'Lato-Medium',
                           }}>
                           {item.storeStatus}
                         </Text>
@@ -91,7 +93,7 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     color: colorConfig.store.storesTitle,
     fontSize: 16,
-    fontWeight: 'bold',
+    fontFamily: 'Lato-Bold',
   },
   storesItem: {
     height: Dimensions.get('window').width / 4 + 2,
