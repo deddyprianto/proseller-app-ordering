@@ -4,137 +4,136 @@
  * PT Edgeworks
  */
 
-import { combineReducers } from 'redux';
+import {combineReducers} from 'redux';
 
 const authData = (state = {}, action) => {
   switch (action.type) {
-    case "AUTH_USER_SUCCESS":
+    case 'AUTH_USER_SUCCESS':
       return {
         token: action.token,
+        refreshToken: action.refreshToken,
         payload: action.payload,
+        tokenExp: action.exp,
         isLoggedIn: true,
-        waiting: false
-      }
+        waiting: false,
+      };
 
-    case "AUTH_USER_FAIL":
+    case 'AUTH_USER_FAIL':
       return {
         token: null,
         isLoggedIn: false,
-        waiting: false
-      }
+        waiting: false,
+      };
 
-    case "WAITING_USER_CODE":
-        return {
-          token: null,
-          isLoggedIn: false,
-          waiting: true
-        }
+    case 'WAITING_USER_CODE':
+      return {
+        token: null,
+        isLoggedIn: false,
+        waiting: true,
+      };
     default:
       return state;
   }
-}
+};
 
 const createUser = (state = {}, action) => {
   switch (action.type) {
-
-    case "CREATE_USER_LOADING":
+    case 'CREATE_USER_LOADING':
       return {
         isLoading: true,
         isError: false,
         isSuccess: false,
         errors: null,
-      }
+      };
 
-    case "CREAT_USER_SUCCESS":
+    case 'CREAT_USER_SUCCESS':
       return {
         isLoading: false,
         isError: false,
         isSuccess: true,
         errors: null,
-        dataRegister: action.dataRegister
-      }
+        dataRegister: action.dataRegister,
+      };
 
-    case "CREAT_USER_FAIL":
+    case 'CREAT_USER_FAIL':
       return {
         isLoading: false,
         isError: true,
         isSuccess: false,
-        errors: action.payload
-      }
+        errors: action.payload,
+      };
 
     default:
       return state;
   }
-}
+};
 
 const loginUser = (state = {}, action) => {
   switch (action.type) {
-
-    case "LOGIN_USER_LOADING":
+    case 'LOGIN_USER_LOADING':
       return {
         isLoading: true,
         isError: false,
         isSuccess: false,
-        errors: null
-      }
+        errors: null,
+      };
 
-    case "LOGIN_USER_SUCCESS":
+    case 'LOGIN_USER_SUCCESS':
       return {
         isLoading: false,
         isError: false,
         isSuccess: true,
         errors: null,
-        payload: action.payload
-      }
+        payload: action.payload,
+      };
 
-    case "LOGIN_USER_FAIL":
+    case 'LOGIN_USER_FAIL':
       return {
         isLoading: false,
         isError: true,
         isSuccess: false,
-        errors: action.payload
-      }
+        errors: action.payload,
+      };
 
     default:
       return state;
   }
-}
+};
 
 const confirmUser = (state = {}, action) => {
   switch (action.type) {
-
-    case "CONFIRM_USER_LOADING":
+    case 'CONFIRM_USER_LOADING':
       return {
         isLoading: true,
         isError: false,
         isSuccess: false,
-        errors: null
-      }
+        errors: null,
+      };
 
-    case "CONFIRM_USER_SUCCESS":
+    case 'CONFIRM_USER_SUCCESS':
       return {
         isLoading: false,
         isError: false,
         isSuccess: true,
         errors: null,
-      }
+      };
 
-    case "CONFIRM_USER_FAIL":
+    case 'CONFIRM_USER_FAIL':
       return {
         isLoading: false,
         isError: true,
         isSuccess: false,
-        errors: action.errors
-      }
+        errors: action.errors,
+      };
 
     default:
       return state;
   }
-}
+};
 
 export default combineReducers({
   createUser,
   loginUser,
   authData,
-  confirmUser
+  confirmUser,
 });

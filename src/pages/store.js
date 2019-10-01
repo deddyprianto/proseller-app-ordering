@@ -354,7 +354,7 @@ class Store extends Component {
 
   getHallo = () => {
     var date = new Date();
-    console.log(date.getHours());
+    // console.log(date.getHours());
     if (date.getHours() < 12) {
       return 'Good morning';
     } else if (date.getHours() < 18) {

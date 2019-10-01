@@ -24,7 +24,7 @@ import Splash from './pages/splash';
 import Permition from './pages/permition';
 import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
 
-import {loginUser} from './actions/auth.actions';
+import {loginUser, refreshToken} from './actions/auth.actions';
 import Loader from './components/loader';
 import colorConfig from './config/colorConfig';
 import appConfig from './config/appConfig';
@@ -40,6 +40,14 @@ class Main extends Component {
 
   async componentDidMount() {
     try {
+      var dateTokenExp = new Date(this.props.authData.tokenExp);
+      var dateNow = new Date();
+      var sisaTokenExp = dateTokenExp.getTime() - dateNow.getTime();
+      if (sisaTokenExp < 0) {
+        await this.props.dispatch(refreshToken());
+      }
+      console.log('Token Expired: ' + dateTokenExp);
+      console.log('Token Now: ' + dateNow);
       const data = await this.performTimeConsumingTask();
       if (data !== null) {
         this.setState({isLoading: false});
@@ -86,7 +94,7 @@ class Main extends Component {
     return (
       <View style={styles.container1}>
         <StatusBar
-          backgroundColor={colorConfig.pageIndex.activeTintColor}
+          backgroundColor={colorConfig.pageIndex.grayColor}
           barStyle="light-content"
         />
         {this.state.geolocation ? (

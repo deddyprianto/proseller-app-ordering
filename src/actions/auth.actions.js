@@ -287,6 +287,8 @@ export const loginUser = payload => {
         dispatch({
           type: 'AUTH_USER_SUCCESS',
           token: response.responseBody.idToken.jwtToken,
+          exp: response.responseBody.idToken.payload.exp * 1000,
+          refreshToken: response.responseBody.refreshToken.token,
         });
         dispatch({
           type: 'GET_USER_SUCCESS',
@@ -339,6 +341,38 @@ export const getToken = () => {
       return token;
     } catch (e) {
       console.log(e);
+    }
+  };
+};
+
+export const refreshToken = () => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      var payload = {
+        refreshToken: state.authReducer.authData.refreshToken,
+      };
+      // console.log(state.authReducer.authData.tokenExp);
+      // console.log(state.authReducer.authData.token);
+      // console.log(payload);
+      const response = await fetchApi('/auth/refresh', 'POST', payload, 200);
+
+      // console.log(response.responseBody);
+
+      var date = new Date();
+      console.log(date);
+
+      var dateaa = new Date(date.getTime() + 3600000);
+      console.log(dateaa);
+
+      dispatch({
+        type: 'AUTH_USER_SUCCESS',
+        token: response.responseBody,
+        exp: date.getTime() + 3600000,
+        refreshToken: state.authReducer.authData.refreshToken,
+      });
+    } catch (error) {
+      console.log(error);
     }
   };
 };
