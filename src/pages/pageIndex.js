@@ -1,9 +1,11 @@
 import React, {Component} from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {createAppContainer} from 'react-navigation';
-import {createStackNavigator} from 'react-navigation-stack';
 import {createMaterialBottomTabNavigator} from 'react-navigation-material-bottom-tabs';
 import {Container} from 'native-base';
+import {View, Text, Dimensions} from 'react-native';
+import {connect} from 'react-redux';
+import {compose} from 'redux';
 
 import Store from './store';
 import History from './history';
@@ -86,18 +88,70 @@ const AppTabNavigator = createMaterialBottomTabNavigator(
   },
 );
 
-const AppStackNavigator = createStackNavigator({
-  AppTabNavigator: AppTabNavigator,
-});
-
 const AppStackContainer = createAppContainer(AppTabNavigator);
 
-export default class PageIndex extends Component {
+class PageIndex extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      screenWidth: Dimensions.get('window').width,
+    };
+  }
   render() {
     return (
       <Container>
         <AppStackContainer />
+        {this.props.dataInboxNoRead > 0 ? (
+          <View
+            style={{
+              position: 'absolute',
+              top: null,
+              left: null,
+              bottom: 30,
+              right: this.state.screenWidth / 4 - 5,
+              height: 18,
+              borderTopLeftRadius: 10,
+              borderTopRightRadius: 10,
+              borderBottomLeftRadius: 10,
+              borderBottomRightRadius: 10,
+              backgroundColor: 'red',
+              alignItems: 'center',
+              justifyContent: 'center',
+              paddingLeft: 5,
+              paddingRight: 5,
+              paddingTop: 5,
+              paddingBottom: 5,
+              borderColor: colorConfig.pageIndex.backgroundColor,
+              borderWidth: 2,
+            }}>
+            <Text
+              style={{
+                color: colorConfig.pageIndex.backgroundColor,
+                fontSize: 10,
+                width: '100%',
+                textAlign: 'center',
+                fontWeight: 'bold',
+              }}>
+              {this.props.dataInboxNoRead}
+            </Text>
+          </View>
+        ) : null}
       </Container>
     );
   }
 }
+
+mapStateToProps = state => ({
+  dataInboxNoRead: state.inboxReducer.dataInbox.broadcasNoRead,
+});
+
+mapDispatchToProps = dispatch => ({
+  dispatch,
+});
+
+export default compose(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  ),
+)(PageIndex);

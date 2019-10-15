@@ -98,6 +98,6 @@ const styles = StyleSheet.create({
     padding: 10,
     borderTopColor: colorConfig.store.defaultColor,
     borderTopWidth: 1,
-    height: Dimensions.get('window').width / 3 - 45,
+    height: Dimensions.get('window').width / 3 - 55,
   },
 });

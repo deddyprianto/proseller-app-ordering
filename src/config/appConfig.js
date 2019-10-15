@@ -3,7 +3,7 @@ const appConfig = {
   appLogo3D: require('../assets/img/logo_3D.png'),
   appLogoQR: require('../assets/img/logoQR.png'),
   appBackground: require('../assets/img/splash.jpg'),
-  appStatusLoginOther: false,
+  appStatusLoginOther: true,
   appStatusBackgroundScreen: false,
   appImageNull: require('../assets/img/image_null.png'),
   appName: 'Qiji',

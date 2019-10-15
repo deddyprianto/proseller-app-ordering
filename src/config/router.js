@@ -28,6 +28,7 @@ import PaymentDetail from '../components/paymentDetail';
 import PaymentSuccess from '../components/paymentSuccess';
 import PaymentAddVoucers from '../components/paymentAddVoucers';
 import PaymentDetailItem from '../components/paymentDetailItem';
+import InboxDetail from '../components/inboxDetail';
 
 export default class Routes extends Component {
   render() {
@@ -63,6 +64,7 @@ export default class Routes extends Component {
             <Scene key="paymentSuccess" component={PaymentSuccess} />
             <Scene key="paymentAddVoucers" component={PaymentAddVoucers} />
             <Scene key="paymentDetailItem" component={PaymentDetailItem} />
+            <Scene key="inboxDetail" component={InboxDetail} />
           </Scene>
         </Scene>
       </Router>

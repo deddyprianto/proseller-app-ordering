@@ -78,11 +78,6 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     marginVertical: 10,
     paddingVertical: 13,
-    // shadowColor: colorConfig.signin.shadowColor,
-    // shadowOffset: { width: 0, height: 1},
-    // shadowOpacity: 0.23,
-    // shadowRadius: 2.62,
-    // elevation: 4,
   },
   buttonText: {
     fontSize: 16,
@@ -109,7 +104,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     // paddingVertical:2,
     flexDirection: 'row',
-    marginBottom: 30,
+    marginBottom: 10,
   },
 });
 
@@ -196,9 +191,13 @@ class Signin extends Component {
         {loginUser && loginUser.isLoading && <Loader />}
         <ScrollView>
           <View style={styles.container}>
-            <Animated.Image
+            <Image
               source={appConfig.appLogo}
-              style={imageStyle}
+              style={{
+                margin: 20,
+                height: 80,
+                width: 100,
+              }}
               resizeMode="contain"
             />
           </View>
@@ -239,6 +238,7 @@ class Signin extends Component {
               <Text style={styles.verifyButton}>Verify Code</Text>
             </TouchableOpacity>
           </View>
+
           {appConfig.appStatusLoginOther == false ? null : <SigninOther />}
         </ScrollView>
         <AwesomeAlert
