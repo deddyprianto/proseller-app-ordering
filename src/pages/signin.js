@@ -21,10 +21,12 @@ import {connect} from 'react-redux';
 import {compose} from 'redux';
 import {Field, reduxForm} from 'redux-form';
 import AwesomeAlert from 'react-native-awesome-alerts';
+import {LoginManager, LoginButton, AccessToken} from 'react-native-fbsdk';
+import {Auth} from 'aws-amplify';
 
 import InputText from '../components/inputText';
 import SigninOther from '../components/signinOther';
-import {loginUser} from '../actions/auth.actions';
+import {loginUser, loginOther} from '../actions/auth.actions';
 import Loader from '../components/loader';
 import {Actions} from 'react-native-router-flux';
 import colorConfig from '../config/colorConfig';
@@ -100,11 +102,63 @@ const styles = StyleSheet.create({
   logo: {
     width: '$largeImageSize',
   },
-  viewLoginWith: {
+  viewLogin: {
     justifyContent: 'space-between',
     // paddingVertical:2,
     flexDirection: 'row',
     marginBottom: 10,
+  },
+  logoLoginWith: {
+    width: 35,
+    height: 35,
+    marginLeft: 5,
+    marginRight: 10,
+  },
+  textLoginWith: {
+    fontSize: 14,
+    color: colorConfig.pageIndex.grayColor,
+    textAlign: 'center',
+    fontWeight: 'bold',
+  },
+  viewLoginWith: {
+    justifyContent: 'space-between',
+    // paddingVertical:2,
+    flexDirection: 'row',
+    marginBottom: 30,
+  },
+  buttonFB: {
+    width: 300,
+    height: 45,
+    backgroundColor: colorConfig.pageIndex.backgroundColor,
+    borderRadius: 25,
+    marginVertical: 10,
+    borderColor: '#4267B2',
+    borderWidth: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  buttonTextFB: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#4267B2',
+    textAlign: 'center',
+  },
+  buttonGoogle: {
+    width: 300,
+    height: 45,
+    backgroundColor: colorConfig.pageIndex.backgroundColor,
+    borderRadius: 25,
+    marginVertical: 10,
+    borderColor: 'red',
+    borderWidth: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  buttonTextGoogle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: 'red',
+    textAlign: 'center',
   },
 });
 
@@ -114,6 +168,9 @@ class Signin extends Component {
     this.state = {
       showAlert: false,
       pesanError: '',
+      accessToken: '',
+      expires_at: '',
+      email: '',
     };
     this.imageWidth = new Animated.Value(styles.$largeImageSize);
   }
@@ -182,6 +239,57 @@ class Signin extends Component {
     );
   };
 
+  onSubmitGoogle = async () => {
+    console.log('Google');
+  };
+
+  onSubmitFacebook = async () => {
+    console.log('Facebook');
+    try {
+      await LoginManager.logInWithPermissions(['public_profile', 'email']).then(
+        result => {
+          if (result.isCancelled) {
+            console.log('Login was cancelled');
+          } else {
+            AccessToken.getCurrentAccessToken().then(data => {
+              const {accessToken, expirationTime} = data;
+              fetch(
+                'https://graph.facebook.com/v2.5/me?fields=email,name,friends&access_token=' +
+                  accessToken,
+              )
+                .then(response => response.json())
+                .then(async json => {
+                  const expires_at = expirationTime + new Date().getTime();
+                  this.setState({
+                    accessToken,
+                    expires_at,
+                    email: json.email,
+                  });
+                  var values = {
+                    accessToken,
+                    expires_at,
+                    email: json.email,
+                    name: json.name,
+                    model: 'facebook',
+                  };
+                  await this.props.dispatch(loginOther(values));
+                  console.log('Login FB');
+                })
+                .catch(() => {
+                  reject('ERROR GETTING DATA FROM FACEBOOK');
+                });
+            });
+          }
+        },
+        error => {
+          console.log(error);
+        },
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   render() {
     const {handleSubmit, loginUser} = this.props;
 
@@ -230,7 +338,7 @@ class Signin extends Component {
             onPress={handleSubmit(this.onSubmit)}>
             <Text style={styles.buttonText}>LOGIN</Text>
           </TouchableOpacity>
-          <View style={styles.viewLoginWith}>
+          <View style={styles.viewLogin}>
             <TouchableOpacity onPress={this.signup}>
               <Text style={styles.signupButton}>Register</Text>
             </TouchableOpacity>
@@ -239,7 +347,65 @@ class Signin extends Component {
             </TouchableOpacity>
           </View>
 
-          {appConfig.appStatusLoginOther == false ? null : <SigninOther />}
+          {appConfig.appStatusLoginOther == false ? null : (
+            <View>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                }}>
+                <View
+                  style={{
+                    backgroundColor: colorConfig.pageIndex.inactiveTintColor,
+                    height: 1,
+                    width: 120,
+                  }}
+                />
+                <Text style={styles.textLoginWith}>OR</Text>
+                <View
+                  style={{
+                    backgroundColor: colorConfig.pageIndex.inactiveTintColor,
+                    height: 1,
+                    width: 120,
+                  }}
+                />
+              </View>
+              {/* <LoginButton
+                publishPermissions={['publish_actions']}
+                readPermissions={['public_profile']}
+                onLoginFinished={(error, result) => {
+                  console.log('accessToken');
+                  if (error) {
+                    console.log('login has error: ', result.error);
+                  } else if (result.isCancelled) {
+                    console.log('login is cancelled.');
+                  } else {
+                    
+                  }
+                }}
+                onLogoutFinished={console.log('logout')}
+              /> */}
+              <TouchableOpacity
+                style={styles.buttonFB}
+                onPress={this.onSubmitFacebook}>
+                <Image
+                  style={styles.logoLoginWith}
+                  source={require('../assets/img/icon-facebook.png')}
+                />
+                <Text style={styles.buttonTextFB}>Login With Facebook</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.buttonGoogle}
+                onPress={this.onSubmitGoogle}>
+                <Image
+                  style={styles.logoLoginWith}
+                  source={require('../assets/img/icon-google.png')}
+                />
+                <Text style={styles.buttonTextGoogle}>Login With Google</Text>
+              </TouchableOpacity>
+            </View>
+          )}
         </ScrollView>
         <AwesomeAlert
           show={this.state.showAlert}

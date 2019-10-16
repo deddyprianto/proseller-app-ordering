@@ -13,6 +13,8 @@ import {
   AuthenticationDetails,
 } from 'amazon-cognito-identity-js';
 import awsConfig from '../config/awsConfig';
+import {Auth} from 'aws-amplify';
+import {LoginManager, LoginButton, AccessToken} from 'react-native-fbsdk';
 
 var poolData = {
   UserPoolId: awsConfig.awsUserPoolId,
@@ -317,6 +319,7 @@ export const logoutUser = () => {
           authData: {token},
         },
       } = state;
+      LoginManager.logOut();
       // console.log(token);
       // const response = await fetchApi("/user/logout", "DELETE", null, 200, token);
       // console.log(response);
@@ -373,6 +376,43 @@ export const refreshToken = () => {
       });
     } catch (error) {
       console.log(error);
+    }
+  };
+};
+
+export const loginOther = payload => {
+  return async dispatch => {
+    try {
+      dispatch({
+        type: 'LOGIN_USER_LOADING',
+      });
+      const {accessToken, email, expires_at, model} = payload;
+      const response = await Auth.federatedSignIn(
+        model,
+        {accessToken, expires_at},
+        email,
+      );
+      console.log(response);
+      dispatch({
+        type: 'LOGIN_USER_SUCCESS',
+      });
+      dispatch({
+        type: 'AUTH_USER_SUCCESS',
+        token: response.sessionToken,
+        exp: response.expireTime,
+        refreshToken: response.sessionToken,
+      });
+      dispatch({
+        type: 'GET_USER_SUCCESS',
+        payload: payload,
+      });
+      return response;
+    } catch (error) {
+      dispatch({
+        type: 'LOGIN_USER_FAIL',
+        payload: error.responseBody,
+      });
+      return error;
     }
   };
 };

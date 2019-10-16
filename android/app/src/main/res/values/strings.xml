@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Qiji</string>
+    <string name="facebook_app_id">340760273400416</string> <string name="fb_login_protocol_scheme">fb340760273400416</string>
 </resources>

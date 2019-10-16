@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
+
 import colorConfig from '../config/colorConfig';
 
 export default class SigninOther extends Component {
@@ -19,8 +20,31 @@ export default class SigninOther extends Component {
   render() {
     return (
       <View>
-        <Text style={styles.textLoginWith}>-- OR --</Text>
-        <TouchableOpacity style={styles.buttonFB} onPress={this.onSubmitGoogle}>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}>
+          <View
+            style={{
+              backgroundColor: colorConfig.pageIndex.inactiveTintColor,
+              height: 1,
+              width: 120,
+            }}
+          />
+          <Text style={styles.textLoginWith}>OR</Text>
+          <View
+            style={{
+              backgroundColor: colorConfig.pageIndex.inactiveTintColor,
+              height: 1,
+              width: 120,
+            }}
+          />
+        </View>
+        <TouchableOpacity
+          style={styles.buttonFB}
+          onPress={this.onSubmitFacebook}>
           <Image
             style={styles.logoLoginWith}
             source={require('../assets/img/icon-facebook.png')}
@@ -65,9 +89,9 @@ const styles = StyleSheet.create({
   },
   textLoginWith: {
     fontSize: 14,
-    color: colorConfig.signin.textLoginWith,
+    color: colorConfig.pageIndex.grayColor,
     textAlign: 'center',
-    fontStyle: 'italic',
+    fontWeight: 'bold',
   },
   viewLoginWith: {
     justifyContent: 'space-between',

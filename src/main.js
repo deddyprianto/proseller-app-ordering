@@ -23,11 +23,13 @@ import Routes from './config/router';
 import Splash from './pages/splash';
 import Permition from './pages/permition';
 import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
+import Amplify, {Auth} from 'aws-amplify';
 
 import {loginUser, refreshToken} from './actions/auth.actions';
 import Loader from './components/loader';
 import colorConfig from './config/colorConfig';
 import appConfig from './config/appConfig';
+import awsConfig from './config/awsConfig';
 
 class Main extends Component {
   constructor(props) {
@@ -40,6 +42,14 @@ class Main extends Component {
 
   async componentDidMount() {
     try {
+      Amplify.configure({
+        Auth: {
+          identityPoolId: awsConfig.identityPoolId,
+          region: awsConfig.region,
+          userPoolId: awsConfig.awsUserPoolId,
+          userPoolWebClientId: awsConfig.awsUserPoolWebClientId,
+        },
+      });
       var dateTokenExp = new Date(this.props.authData.tokenExp);
       var dateNow = new Date();
       var sisaTokenExp = dateTokenExp.getTime() - dateNow.getTime();
