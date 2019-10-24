@@ -22,7 +22,13 @@ import {compose} from 'redux';
 import {Field, reduxForm} from 'redux-form';
 import AwesomeAlert from 'react-native-awesome-alerts';
 import {LoginManager, LoginButton, AccessToken} from 'react-native-fbsdk';
+// import {
+//   GoogleSignin,
+//   GoogleSigninButton,
+//   statusCodes,
+// } from 'react-native-google-signin';
 import {Auth} from 'aws-amplify';
+import AWS from 'aws-sdk';
 
 import InputText from '../components/inputText';
 import SigninOther from '../components/signinOther';
@@ -31,6 +37,7 @@ import Loader from '../components/loader';
 import {Actions} from 'react-native-router-flux';
 import colorConfig from '../config/colorConfig';
 import appConfig from '../config/appConfig';
+import awsConfig from '../config/awsConfig';
 
 const imageWidth = Dimensions.get('window').width / 2;
 
@@ -175,6 +182,14 @@ class Signin extends Component {
     this.imageWidth = new Animated.Value(styles.$largeImageSize);
   }
 
+  componentDidMount() {
+    // GoogleSignin.configure({
+    //   scopes: ['https://www.googleapis.com/auth/drive.readonly'],
+    //   webClientId:
+    //     '583037359433-vhcuou7902ug2k8ctl37e1p8mon2qrvv.apps.googleusercontent.com',
+    // });
+  }
+
   goBack() {
     Actions.signin();
   }
@@ -270,10 +285,19 @@ class Signin extends Component {
                     expires_at,
                     email: json.email,
                     name: json.name,
+                    idFB: json.id,
                     model: 'facebook',
                   };
-                  await this.props.dispatch(loginOther(values));
-                  console.log('Login FB');
+                  const response = await this.props.dispatch(
+                    loginOther(values),
+                  );
+
+                  if (response.statusCustomer == false) {
+                    console.log('Minta password');
+                    Actions.signinWaitPassword({dataLogin: response});
+                  } else {
+                    console.log('Login FB');
+                  }
                 })
                 .catch(() => {
                   reject('ERROR GETTING DATA FROM FACEBOOK');
@@ -395,7 +419,7 @@ class Signin extends Component {
                 />
                 <Text style={styles.buttonTextFB}>Login With Facebook</Text>
               </TouchableOpacity>
-              <TouchableOpacity
+              {/* <TouchableOpacity
                 style={styles.buttonGoogle}
                 onPress={this.onSubmitGoogle}>
                 <Image
@@ -403,7 +427,14 @@ class Signin extends Component {
                   source={require('../assets/img/icon-google.png')}
                 />
                 <Text style={styles.buttonTextGoogle}>Login With Google</Text>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
+              {/* <GoogleSigninButton
+                style={{width: 192, height: 48}}
+                size={GoogleSigninButton.Size.Wide}
+                color={GoogleSigninButton.Color.Dark}
+                onPress={this._signIn}
+                disabled={this.state.isSigninInProgress}
+              /> */}
             </View>
           )}
         </ScrollView>

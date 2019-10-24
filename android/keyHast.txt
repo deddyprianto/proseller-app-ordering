@@ -2,6 +2,8 @@ keytool -exportcert -alias androiddebugkey -keystore C:\Users\CRS\.android\debug
 
 keytool -exportcert -alias androiddebugkey -keystore D:\Projects\CRM\App\Qiji\android\app\debug.keystore | openssl sha1 -binary | openssl base64
 
+keytool -list -v -alias androiddebugkey -keystore debug.keystore
+
 Variant: debugUnitTest
 Config: debug
 Store: D:\Projects\CRM\App\Qiji\android\app\debug.keystore
@@ -20,9 +22,14 @@ SHA1: 5E:8F:16:06:2E:A3:CD:2C:4A:0D:54:78:76:BA:A6:F3:8C:AB:F6:25
 SHA-256: FA:C6:17:45:DC:09:03:78:6F:B9:ED:E6:2A:96:2B:39:9F:73:48:F0:BB:6F:89:9B:83:32:66:75:91:03:3B:9C
 Valid until: Wednesday, May 1, 2052
 
+FB
 app id: 340760273400416
 secret: 4ab1bdc772944692c05addfe0f31dc0c
 hash: ad4gLsTxUZw5MnX3XEKc2jcLXJ4=
+
+Google
+Client id: 583037359433-vhcuou7902ug2k8ctl37e1p8mon2qrvv.apps.googleusercontent.com
+Secret: Cfz0eL43B6jw4iT4tKeL9MTa
 
 ----------
 Variant: debug

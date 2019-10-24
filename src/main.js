@@ -48,6 +48,7 @@ class Main extends Component {
           region: awsConfig.region,
           userPoolId: awsConfig.awsUserPoolId,
           userPoolWebClientId: awsConfig.awsUserPoolWebClientId,
+          mandatorySignIn: false,
         },
       });
       var dateTokenExp = new Date(this.props.authData.tokenExp);

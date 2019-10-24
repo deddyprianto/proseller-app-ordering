@@ -28,6 +28,7 @@ import appConfig from '../config/appConfig';
 import {Actions} from 'react-native-router-flux';
 import {myVoucers} from '../actions/account.action';
 import {campaign, dataPoint, vouchers} from '../actions/rewards.action';
+import {dataInbox} from '../actions/inbox.action';
 
 class Store extends Component {
   constructor(props) {
@@ -51,6 +52,7 @@ class Store extends Component {
     await this.props.dispatch(dataPoint());
     await this.props.dispatch(vouchers());
     await this.props.dispatch(myVoucers());
+    await this.props.dispatch(dataInbox());
 
     if (this.state.dataStores.length === 0) {
       this.setState({isLoading: true});

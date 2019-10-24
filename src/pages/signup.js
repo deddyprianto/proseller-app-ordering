@@ -230,7 +230,7 @@ class Signup extends Component {
   handleSubmit = async () => {
     try {
       var dataRegister = {
-        tenant: awsConfig.tenant,
+        tenantId: awsConfig.tenant,
         email: this.state.email,
         username: this.state.email,
         password: this.state.password,

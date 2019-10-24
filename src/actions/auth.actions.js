@@ -13,8 +13,9 @@ import {
   AuthenticationDetails,
 } from 'amazon-cognito-identity-js';
 import awsConfig from '../config/awsConfig';
-import {Auth} from 'aws-amplify';
+import {Auth, Cache} from 'aws-amplify';
 import {LoginManager, LoginButton, AccessToken} from 'react-native-fbsdk';
+import AWS from 'aws-sdk';
 
 var poolData = {
   UserPoolId: awsConfig.awsUserPoolId,
@@ -278,6 +279,7 @@ export const loginUser = payload => {
       dispatch({
         type: 'LOGIN_USER_LOADING',
       });
+      payload.type = 'userPool';
       const response = await fetchApi('/customer/login', 'POST', payload, 200);
 
       console.log(response);
@@ -288,8 +290,8 @@ export const loginUser = payload => {
         });
         dispatch({
           type: 'AUTH_USER_SUCCESS',
-          token: response.responseBody.idToken.jwtToken,
-          exp: response.responseBody.idToken.payload.exp * 1000,
+          token: response.responseBody.accessToken.jwtToken,
+          exp: response.responseBody.accessToken.payload.exp * 1000,
           refreshToken: response.responseBody.refreshToken.token,
         });
         dispatch({
@@ -370,12 +372,39 @@ export const refreshToken = () => {
 
       dispatch({
         type: 'AUTH_USER_SUCCESS',
-        token: response.responseBody,
+        token: state.authReducer.authData.token,
         exp: date.getTime() + 3600000,
         refreshToken: state.authReducer.authData.refreshToken,
       });
     } catch (error) {
       console.log(error);
+    }
+  };
+};
+
+export const createNewUserOther = payload => {
+  return async dispatch => {
+    try {
+      dispatch({
+        type: 'CREATE_USER_LOADING',
+      });
+
+      console.log(payload, 'createNewUserOther payload');
+      const response = await fetchApi(
+        '/customer/register',
+        'POST',
+        payload,
+        200,
+      );
+      console.log(response, 'createNewUserOther');
+      return true;
+    } catch (error) {
+      console.log(error);
+      dispatch({
+        type: 'CREAT_USER_FAIL',
+        payload: error.responseBody,
+      });
+      return error;
     }
   };
 };
@@ -386,27 +415,55 @@ export const loginOther = payload => {
       dispatch({
         type: 'LOGIN_USER_LOADING',
       });
-      const {accessToken, email, expires_at, model} = payload;
-      const response = await Auth.federatedSignIn(
-        model,
-        {accessToken, expires_at},
-        email,
-      );
-      console.log(response);
+
+      var response;
+
+      // const {accessToken, email, expires_at, model, idFB} = payload;
+      // const response = await Auth.federatedSignIn(
+      //   model,
+      //   {accessToken, expires_at},
+      //   email,
+      // );
+
+      payload.type = 'identityPool';
+      payload.username = payload.email;
+      payload.tenantId = awsConfig.tenantId;
+      response = await fetchApi('/customer/login', 'POST', payload, 200);
+      console.log(response, 'loginOther');
       dispatch({
         type: 'LOGIN_USER_SUCCESS',
       });
-      dispatch({
-        type: 'AUTH_USER_SUCCESS',
-        token: response.sessionToken,
-        exp: response.expireTime,
-        refreshToken: response.sessionToken,
-      });
-      dispatch({
-        type: 'GET_USER_SUCCESS',
-        payload: payload,
-      });
-      return response;
+
+      if (response.responseBody.statusCustomer) {
+        dispatch({
+          type: 'AUTH_USER_SUCCESS',
+          token: response.responseBody.accessToken.jwtToken,
+          exp: response.responseBody.idToken.payload.exp * 1000,
+          refreshToken: response.responseBody.refreshToken.token,
+        });
+        dispatch({
+          type: 'GET_USER_SUCCESS',
+          payload: response.responseBody.idToken.payload,
+        });
+        console.log('selesai');
+      }
+
+      if (response.responseBody.message == 'Internal server error') {
+        response = await fetchApi('/customer/login', 'POST', payload, 200);
+        dispatch({
+          type: 'AUTH_USER_SUCCESS',
+          token: response.responseBody.accessToken.jwtToken,
+          exp: response.responseBody.idToken.payload.exp * 1000,
+          refreshToken: response.responseBody.refreshToken.token,
+        });
+        dispatch({
+          type: 'GET_USER_SUCCESS',
+          payload: response.responseBody.idToken.payload,
+        });
+        console.log('selesai');
+      }
+      payload.statusCustomer = response.responseBody.statusCustomer;
+      return payload;
     } catch (error) {
       dispatch({
         type: 'LOGIN_USER_FAIL',

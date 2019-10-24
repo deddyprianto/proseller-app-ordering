@@ -8,7 +8,7 @@ import {
   AsyncStorage,
 } from 'react-native';
 import {createAppContainer} from 'react-navigation';
-import {createMaterialTopTabNavigator} from 'react-navigation-tabs';
+// import {createMaterialTopTabNavigator} from 'react-navigation-tabs';
 import * as _ from 'lodash';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
@@ -23,38 +23,38 @@ import RewardsTransaction from '../components/rewardsTransaction';
 import colorConfig from '../config/colorConfig';
 import awsConfig from '../config/awsConfig';
 
-const AppNavigationContainer = createAppContainer(
-  createMaterialTopTabNavigator(
-    {
-      Stamp: {
-        screen: RewardsStamp,
-      },
-      // Loyalty: {
-      //   screen: Stamp
-      // },
-      Point: {
-        screen: RewardsPoint,
-      },
-    },
-    {
-      initialRouteName: 'Stamp',
-      tabBarOptions: {
-        labelStyle: {
-          fontSize: 12,
-        },
-        tabStyle: {
-          height: 40,
-        },
-        style: {
-          backgroundColor: colorConfig.pageIndex.backgroundColor,
-        },
-        activeTintColor: colorConfig.pageIndex.activeTintColor,
-        inactiveTintColor: colorConfig.pageIndex.inactiveTintColor,
-        upperCaseLabel: false,
-      },
-    },
-  ),
-);
+// const AppNavigationContainer = createAppContainer(
+//   createMaterialTopTabNavigator(
+//     {
+//       Stamp: {
+//         screen: RewardsStamp,
+//       },
+//       // Loyalty: {
+//       //   screen: Stamp
+//       // },
+//       Point: {
+//         screen: RewardsPoint,
+//       },
+//     },
+//     {
+//       initialRouteName: 'Stamp',
+//       tabBarOptions: {
+//         labelStyle: {
+//           fontSize: 12,
+//         },
+//         tabStyle: {
+//           height: 40,
+//         },
+//         style: {
+//           backgroundColor: colorConfig.pageIndex.backgroundColor,
+//         },
+//         activeTintColor: colorConfig.pageIndex.activeTintColor,
+//         inactiveTintColor: colorConfig.pageIndex.inactiveTintColor,
+//         upperCaseLabel: false,
+//       },
+//     },
+//   ),
+// );
 
 class Rewards extends Component {
   constructor(props) {

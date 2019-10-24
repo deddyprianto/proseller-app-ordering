@@ -29,6 +29,7 @@ import PaymentSuccess from '../components/paymentSuccess';
 import PaymentAddVoucers from '../components/paymentAddVoucers';
 import PaymentDetailItem from '../components/paymentDetailItem';
 import InboxDetail from '../components/inboxDetail';
+import SigninWaitPassword from '../components/signinWaitPassword';
 
 export default class Routes extends Component {
   render() {
@@ -39,6 +40,7 @@ export default class Routes extends Component {
             <Scene key="signin" component={Signin} initial={true} />
             <Scene key="signup" component={Signup} title="Register" />
             <Scene key="auth" component={Aunt} title="Auntetikasi" />
+            <Scene key="signinWaitPassword" component={SigninWaitPassword} />
           </Scene>
           <Scene key="app" hideNavBar={true} initial={this.props.isLoggedIn}>
             <Scene key="pageIndex" component={PageIndex} initial={true} />

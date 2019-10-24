@@ -34,7 +34,7 @@ export default class InboxDetail extends Component {
   };
 
   goBack() {
-    Actions.pageIndex();
+    Actions.pop();
   }
 
   render() {
