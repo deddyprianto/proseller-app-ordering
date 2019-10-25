@@ -10,6 +10,7 @@ export const dataStores = () => {
         },
       } = state;
       const response = await fetchApi('/store', 'GET', false, 200, token);
+      console.log(response, 'response store');
       // if(response.success){
       dispatch({
         type: 'DATA_ALL_STORES',

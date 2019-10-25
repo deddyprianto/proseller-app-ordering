@@ -280,6 +280,9 @@ export const loginUser = payload => {
         type: 'LOGIN_USER_LOADING',
       });
       payload.type = 'userPool';
+      payload.email = payload.username;
+      payload.tenantId = awsConfig.tenantId;
+      console.log(payload, 'payload login');
       const response = await fetchApi('/customer/login', 'POST', payload, 200);
 
       console.log(response);
@@ -298,6 +301,7 @@ export const loginUser = payload => {
           type: 'GET_USER_SUCCESS',
           payload: response.responseBody.idToken.payload,
         });
+        console.log(response, 'response login user pool');
         return response;
       } else {
         throw response;

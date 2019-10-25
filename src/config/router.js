@@ -30,6 +30,7 @@ import PaymentAddVoucers from '../components/paymentAddVoucers';
 import PaymentDetailItem from '../components/paymentDetailItem';
 import InboxDetail from '../components/inboxDetail';
 import SigninWaitPassword from '../components/signinWaitPassword';
+import PaymentAddPoint from '../components/paymentAddPoint';
 
 export default class Routes extends Component {
   render() {
@@ -67,6 +68,7 @@ export default class Routes extends Component {
             <Scene key="paymentAddVoucers" component={PaymentAddVoucers} />
             <Scene key="paymentDetailItem" component={PaymentDetailItem} />
             <Scene key="inboxDetail" component={InboxDetail} />
+            <Scene key="paymentAddPoint" component={PaymentAddPoint} />
           </Scene>
         </Scene>
       </Router>

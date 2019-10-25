@@ -30,7 +30,7 @@ export const dataInbox = () => {
         listInbox: [...data],
         noRead: data.length - count,
       };
-      // console.log(kirim, 'action');
+      console.log(kirim, 'response inbox');
 
       await dispatch({
         type: 'DATA_ALL_BROADCAS',

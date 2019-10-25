@@ -16,7 +16,7 @@ export const myVoucers = () => {
         200,
         token,
       );
-      console.log(response);
+      console.log(response, 'response myVoucers');
       // if(response.success){
       dispatch({
         type: 'DATA_MY_VOUCHERS',

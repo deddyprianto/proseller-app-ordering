@@ -11,7 +11,7 @@ export const campaign = () => {
         },
       } = state;
       const response = await fetchApi('/campaign', 'GET', false, 200, token);
-      console.log(response);
+      console.log(response, 'response campign');
       // if(response.success){
       dispatch({
         type: 'DATA_ALL_CAMPAIGN',
@@ -81,7 +81,7 @@ export const vouchers = () => {
         200,
         token,
       );
-      console.log(response);
+      console.log(response, 'response voucher');
       if (response.success) {
         response.responseBody.data
           .filter(voucher => voucher.deleted == false)
@@ -154,6 +154,7 @@ export const dataPoint = () => {
         200,
         token,
       );
+      console.log(response, 'response data point');
       if (response.success) {
         response.responseBody.data
           .filter(point => point.deleted == false)
@@ -200,6 +201,7 @@ export const sendPayment = payload => {
         },
       } = state;
       const response = await fetchApi('/payment', 'POST', payload, 200, token);
+      console.log(response, 'response send payment');
       return response.responseBody;
     } catch (error) {
       return error;
@@ -223,6 +225,7 @@ export const redeemVoucher = payload => {
         200,
         token,
       );
+      console.log(response, 'response redeem Voucer');
       return response.responseBody;
     } catch (error) {
       throw error;

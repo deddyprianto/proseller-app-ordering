@@ -35,17 +35,23 @@ class PaymentDetail extends Component {
       showAlert: false,
       pesanAlert: '',
       titleAlert: '',
-      totalBayar:
-        this.props.dataVoucer == undefined
-          ? this.props.pembayaran.payment
-          : this.props.dataVoucer.voucherType != 'discAmount'
-          ? this.props.pembayaran.payment -
-            (this.props.pembayaran.payment *
-              this.props.dataVoucer.voucherValue) /
-              100
-          : this.props.pembayaran.payment - this.props.dataVoucer.voucherValue,
+      totalBayar: this.props.pembayaran.payment,
     };
   }
+
+  componentDidMount = async () => {
+    var redeemVoucer =
+      this.props.dataVoucer == undefined
+        ? 0
+        : this.props.dataVoucer.voucherType != 'discAmount'
+        ? (this.props.pembayaran.payment * this.props.dataVoucer.voucherValue) /
+          100
+        : this.props.dataVoucer.voucherValue;
+    var redeemPoint =
+      this.props.addPoint == undefined ? 0 : this.props.moneyPoint;
+    var totalBayar = this.state.totalBayar - (redeemVoucer + redeemPoint);
+    this.setState({totalBayar});
+  };
 
   goBack() {
     Actions.popTo('pageIndex');
@@ -95,18 +101,27 @@ class PaymentDetail extends Component {
     });
   };
 
+  myPoint = () => {
+    Actions.paymentAddPoint({
+      data: this.props.totalPoint,
+      pembayaran: this.props.pembayaran,
+      valueSet: this.props.moneyPoint == undefined ? 0 : this.props.moneyPoint,
+    });
+  };
+
   onSlideRight = async () => {
     // Actions.paymentSuccess();
     var pembayaran;
-    if (this.props.dataVoucer != undefined) {
+    if (
+      this.props.dataVoucer == undefined &&
+      this.props.addPoint == undefined
+    ) {
       pembayaran = {
         price: this.state.totalBayar,
         storeName: this.props.pembayaran.storeName,
         storeId: this.props.pembayaran.storeId,
         paymentType: 'Cash',
-        voucherId: this.props.dataVoucer.id,
-        beforePrice: this.props.pembayaran.payment,
-        afterPrice: this.state.totalBayar,
+        statusAdd: null,
       };
     } else {
       pembayaran = {
@@ -114,9 +129,20 @@ class PaymentDetail extends Component {
         storeName: this.props.pembayaran.storeName,
         storeId: this.props.pembayaran.storeId,
         paymentType: 'Cash',
+        beforePrice: this.props.pembayaran.payment,
+        afterPrice: this.state.totalBayar,
       };
+
+      if (this.props.dataVoucer != undefined) {
+        pembayaran.voucherId = this.props.dataVoucer.id;
+        pembayaran.statusAdd = 'addVoucer';
+      }
+      if (this.props.addPoint != undefined) {
+        pembayaran.redeemValue = this.props.addPoint;
+        pembayaran.statusAdd = 'addPoint';
+      }
     }
-    console.log(pembayaran);
+    console.log(pembayaran, 'pembayaran');
     const response = await this.props.dispatch(sendPayment(pembayaran));
     console.log(response);
     if (response.statusCode != 400) {
@@ -153,6 +179,8 @@ class PaymentDetail extends Component {
   render() {
     return (
       <View style={styles.container}>
+        {console.log(this.state.redeemPoint + ' | ' + this.state.redeemVoucer)}
+        {console.log(this.props.moneyPoint + ' | ' + this.props.dataVoucer)}
         <View style={{backgroundColor: colorConfig.pageIndex.backgroundColor}}>
           <View
             style={{
@@ -323,7 +351,7 @@ class PaymentDetail extends Component {
             <View
               style={{
                 marginTop: 50,
-                marginBottom: 20,
+                marginBottom: 10,
                 alignItems: 'center',
                 justifyContent: 'space-between',
                 flexDirection: 'row',
@@ -334,8 +362,8 @@ class PaymentDetail extends Component {
                   style={styles.btnMethod}
                   onPress={this.myVouchers}>
                   <Image
-                    style={{height: 15, width: 22, marginRight: 5}}
-                    source={require('../assets/img/ticket.png')}
+                    style={{height: 18, width: 23, marginRight: 5}}
+                    source={require('../assets/img/voucher.png')}
                   />
                   <Text style={styles.descMethod}>
                     {this.props.dataVoucer.voucherName.substr(0, 13)}
@@ -346,10 +374,42 @@ class PaymentDetail extends Component {
                   style={styles.btnMethod}
                   onPress={this.myVouchers}>
                   <Image
-                    style={{height: 15, width: 22, marginRight: 5}}
-                    source={require('../assets/img/ticket.png')}
+                    style={{height: 18, width: 23, marginRight: 5}}
+                    source={require('../assets/img/voucher.png')}
                   />
                   <Text style={styles.descMethod}>Add a Voucher</Text>
+                </TouchableOpacity>
+              )}
+            </View>
+            <View
+              style={{
+                marginBottom: 20,
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                flexDirection: 'row',
+              }}>
+              <Text>Point</Text>
+              {this.props.addPoint != undefined ? (
+                <TouchableOpacity
+                  style={styles.btnMethod}
+                  onPress={this.myPoint}>
+                  <Image
+                    style={{height: 18, width: 23, marginRight: 5}}
+                    source={require('../assets/img/ticket.png')}
+                  />
+                  <Text style={styles.descMethod}>
+                    {'- ' + this.props.addPoint + ' Point'}
+                  </Text>
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity
+                  style={styles.btnMethod}
+                  onPress={this.myPoint}>
+                  <Image
+                    style={{height: 18, width: 23, marginRight: 5}}
+                    source={require('../assets/img/ticket.png')}
+                  />
+                  <Text style={styles.descMethod}>Add a Point</Text>
                 </TouchableOpacity>
               )}
             </View>
@@ -529,6 +589,8 @@ const styles = StyleSheet.create({
 
 mapStateToProps = state => ({
   myVoucers: state.accountsReducer.myVoucers.myVoucers,
+  totalPoint: state.rewardsReducer.dataPoint.totalPoint,
+  recentTransaction: state.rewardsReducer.dataPoint.recentTransaction,
 });
 
 mapDispatchToProps = dispatch => ({
