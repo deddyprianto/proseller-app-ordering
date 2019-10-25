@@ -100,6 +100,60 @@ export const vouchers = () => {
   };
 };
 
+export const getStamps = () => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          authData: {token},
+        },
+      } = state;
+
+      let response = await fetchApi(
+        '/customer/stamps',
+        'GET',
+        false,
+        200,
+        token,
+      );
+      console.log(response, 'response getStamps');
+
+      dispatch({
+        type: 'DATA_STAMPS',
+        dataStamps: response.responseBody.data,
+      });
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const setStamps = payload => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          authData: {token},
+        },
+      } = state;
+
+      let response = await fetchApi(
+        '/customer/stamps',
+        'POST',
+        payload,
+        200,
+        token,
+      );
+      console.log(response.responseBody, 'response setStamps');
+      return response.responseBody;
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
 export const dataPoint = () => {
   return async (dispatch, getState) => {
     const state = getState();

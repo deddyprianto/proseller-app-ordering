@@ -13,7 +13,12 @@ import * as _ from 'lodash';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
 import {notifikasi} from '../actions/auth.actions';
-import {campaign, dataPoint, vouchers} from '../actions/rewards.action';
+import {
+  campaign,
+  dataPoint,
+  vouchers,
+  getStamps,
+} from '../actions/rewards.action';
 import {myVoucers} from '../actions/account.action';
 
 import RewardsPoint from '../components/rewardsPoint';
@@ -80,6 +85,7 @@ class Rewards extends Component {
       await this.props.dispatch(dataPoint());
       await this.props.dispatch(vouchers());
       await this.props.dispatch(myVoucers());
+      await this.props.dispatch(getStamps());
     } catch (error) {
       await this.props.dispatch(
         notifikasi(
@@ -107,7 +113,10 @@ class Rewards extends Component {
           />
         }>
         {/* <AppNavigationContainer/> */}
-        {/* <RewardsStamp /> */}
+        {this.props.dataStamps.dataStamps == undefined ? null : this.props
+            .dataStamps.dataStamps.length == 0 ? null : (
+          <RewardsStamp />
+        )}
         <RewardsPoint />
         <RewardsMenu myVoucers={this.props.myVoucers} />
         <RewardsTransaction screen={this.props} />
@@ -119,6 +128,7 @@ class Rewards extends Component {
 mapStateToProps = state => ({
   recentTransaction: state.rewardsReducer.dataPoint.recentTransaction,
   myVoucers: state.accountsReducer.myVoucers.myVoucers,
+  dataStamps: state.rewardsReducer.getStamps,
 });
 
 mapDispatchToProps = dispatch => ({

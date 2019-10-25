@@ -106,8 +106,8 @@ class RewardsRewards extends Component {
             </View>
           ) : (
             <View>
-              {/* <RewardsStamp />
-              <RewardsStampDetail /> */}
+              <RewardsStamp />
+              <RewardsStampDetail />
               {this.props.vouchers != undefined ? (
                 <RewordsVouchers />
               ) : (

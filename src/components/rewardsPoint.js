@@ -27,7 +27,8 @@ class RewardsPoint extends Component {
             color: colorConfig.pageIndex.backgroundColor,
             textAlign: 'center',
             paddingTop: 20,
-            fontFamily: 'Lato-Medium',
+            fontSize: 16,
+            fontWeight: 'bold',
           }}>
           My Points
         </Text>
