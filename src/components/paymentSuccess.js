@@ -15,6 +15,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
+import AwesomeAlert from 'react-native-awesome-alerts';
 
 import colorConfig from '../config/colorConfig';
 import appConfig from '../config/appConfig';
@@ -24,6 +25,12 @@ export default class PaymentSuccess extends Component {
     super(props);
     this.state = {
       screenWidth: Dimensions.get('window').width,
+      showAlert: this.props.dataRespons.stamps.type != 'empty' ? true : false,
+      pesanAlert:
+        this.props.dataRespons.stamps.type == 'empty'
+          ? ''
+          : this.props.dataRespons.stamps.message,
+      titleAlert: this.props.dataRespons.stamps.type == 'empty' ? '' : 'Good !',
     };
   }
 
@@ -63,6 +70,12 @@ export default class PaymentSuccess extends Component {
     ];
     return mount[value];
   }
+
+  hideAlert = () => {
+    this.setState({
+      showAlert: false,
+    });
+  };
 
   render() {
     return (
@@ -230,24 +243,6 @@ export default class PaymentSuccess extends Component {
                 Pay
               </Text>
             </View>
-            {/* <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-              }}>
-              <Text
-                style={{
-                  color: colorConfig.pageIndex.grayColor,
-                }}>
-                Balance
-              </Text>
-              <Text
-                style={{
-                  color: colorConfig.pageIndex.grayColor,
-                }}>
-                20
-              </Text>
-            </View> */}
             <View
               style={{
                 backgroundColor: colorConfig.pageIndex.grayColor,
@@ -289,6 +284,25 @@ export default class PaymentSuccess extends Component {
             </View>
           </View>
         </View>
+        <AwesomeAlert
+          show={this.state.showAlert}
+          showProgress={false}
+          title={this.state.titleAlert}
+          message={this.state.pesanAlert}
+          closeOnTouchOutside={true}
+          closeOnHardwareBackPress={false}
+          showCancelButton={false}
+          showConfirmButton={true}
+          cancelText="Close"
+          confirmText="Ok"
+          confirmButtonColor={colorConfig.pageIndex.activeTintColor}
+          onCancelPressed={() => {
+            this.hideAlert();
+          }}
+          onConfirmPressed={() => {
+            this.hideAlert();
+          }}
+        />
       </View>
     );
   }

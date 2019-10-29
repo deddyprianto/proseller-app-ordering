@@ -16,11 +16,14 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
+import {connect} from 'react-redux';
+import {compose} from 'redux';
 
 import colorConfig from '../config/colorConfig';
 import appConfig from '../config/appConfig';
+import {dataInbox} from '../actions/inbox.action';
 
-export default class InboxDetail extends Component {
+class InboxDetail extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -33,9 +36,10 @@ export default class InboxDetail extends Component {
     // await AsyncStorage.removeItem('@inbox' + this.props.dataItem.id);
   };
 
-  goBack() {
-    Actions.pageIndex();
-  }
+  goBack = async () => {
+    await this.props.dispatch(dataInbox());
+    Actions.pop();
+  };
 
   render() {
     return (
@@ -149,3 +153,14 @@ const styles = StyleSheet.create({
     backgroundColor: colorConfig.pageIndex.backgroundColor,
   },
 });
+
+mapDispatchToProps = dispatch => ({
+  dispatch,
+});
+
+export default compose(
+  connect(
+    null,
+    mapDispatchToProps,
+  ),
+)(InboxDetail);
