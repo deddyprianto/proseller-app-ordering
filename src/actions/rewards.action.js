@@ -254,6 +254,8 @@ export const sendPayment = payload => {
           authData: {token},
         },
       } = state;
+
+      console.log(payload, 'payload sendPayment');
       const response = await fetchApi('/payment', 'POST', payload, 200, token);
       console.log(response, 'response send payment');
       return response.responseBody;
@@ -272,6 +274,7 @@ export const redeemVoucher = payload => {
           authData: {token},
         },
       } = state;
+      console.log(payload, 'payload redeemVoucher');
       const response = await fetchApi(
         '/accummulation/point/redeem/voucher',
         'POST',

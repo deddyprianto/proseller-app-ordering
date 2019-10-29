@@ -24,7 +24,13 @@ import AwesomeAlert from 'react-native-awesome-alerts';
 
 import colorConfig from '../config/colorConfig';
 import appConfig from '../config/appConfig';
-import {sendPayment, campaign, dataPoint} from '../actions/rewards.action';
+import {
+  sendPayment,
+  campaign,
+  dataPoint,
+  getStamps,
+} from '../actions/rewards.action';
+import {myVoucers} from '../actions/account.action';
 
 class PaymentDetail extends Component {
   constructor(props) {
@@ -111,27 +117,26 @@ class PaymentDetail extends Component {
 
   onSlideRight = async () => {
     // Actions.paymentSuccess();
-    var pembayaran;
+    var pembayaran = {};
+
+    pembayaran.price = this.state.totalBayar;
+    pembayaran.storeName = this.props.pembayaran.storeName;
+    pembayaran.storeId = this.props.pembayaran.storeId;
+    pembayaran.paymentType = 'Cash';
+    pembayaran.dataPay = this.props.pembayaran.dataPay;
+    pembayaran.stamps =
+      this.props.dataStamps.dataStamps.length == 0
+        ? null
+        : this.props.dataStamps.dataStamps;
+
     if (
       this.props.dataVoucer == undefined &&
       this.props.addPoint == undefined
     ) {
-      pembayaran = {
-        price: this.state.totalBayar,
-        storeName: this.props.pembayaran.storeName,
-        storeId: this.props.pembayaran.storeId,
-        paymentType: 'Cash',
-        statusAdd: null,
-      };
+      pembayaran.statusAdd = null;
     } else {
-      pembayaran = {
-        price: this.state.totalBayar,
-        storeName: this.props.pembayaran.storeName,
-        storeId: this.props.pembayaran.storeId,
-        paymentType: 'Cash',
-        beforePrice: this.props.pembayaran.payment,
-        afterPrice: this.state.totalBayar,
-      };
+      pembayaran.beforePrice = this.props.pembayaran.payment;
+      pembayaran.afterPrice = this.state.totalBayar;
 
       if (this.props.dataVoucer != undefined) {
         pembayaran.voucherId = this.props.dataVoucer.id;
@@ -142,6 +147,7 @@ class PaymentDetail extends Component {
         pembayaran.statusAdd = 'addPoint';
       }
     }
+
     console.log(pembayaran, 'pembayaran');
     const response = await this.props.dispatch(sendPayment(pembayaran));
     console.log(response);
@@ -149,6 +155,8 @@ class PaymentDetail extends Component {
       if (response.data.message != 'there`s no running campaign on this date') {
         await this.props.dispatch(campaign());
         await this.props.dispatch(dataPoint());
+        await this.props.dispatch(getStamps());
+        await this.props.dispatch(myVoucers());
         Actions.paymentSuccess({dataRespons: response.data});
       } else {
         this.setState({
@@ -179,8 +187,7 @@ class PaymentDetail extends Component {
   render() {
     return (
       <View style={styles.container}>
-        {console.log(this.state.redeemPoint + ' | ' + this.state.redeemVoucer)}
-        {console.log(this.props.moneyPoint + ' | ' + this.props.dataVoucer)}
+        {console.log(this.props.dataStamps)}
         <View style={{backgroundColor: colorConfig.pageIndex.backgroundColor}}>
           <View
             style={{
@@ -591,6 +598,7 @@ mapStateToProps = state => ({
   myVoucers: state.accountsReducer.myVoucers.myVoucers,
   totalPoint: state.rewardsReducer.dataPoint.totalPoint,
   recentTransaction: state.rewardsReducer.dataPoint.recentTransaction,
+  dataStamps: state.rewardsReducer.getStamps,
 });
 
 mapDispatchToProps = dispatch => ({
