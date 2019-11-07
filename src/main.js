@@ -51,14 +51,9 @@ class Main extends Component {
           mandatorySignIn: false,
         },
       });
-      var dateTokenExp = new Date(this.props.authData.tokenExp);
-      var dateNow = new Date();
-      var sisaTokenExp = dateTokenExp.getTime() - dateNow.getTime();
-      if (sisaTokenExp < 0) {
-        await this.props.dispatch(refreshToken());
-      }
-      console.log('Token Expired: ' + dateTokenExp);
-      console.log('Token Now: ' + dateNow);
+
+      // await this.props.dispatch(refreshToken());
+
       const data = await this.performTimeConsumingTask();
       if (data !== null) {
         this.setState({isLoading: false});
@@ -104,10 +99,7 @@ class Main extends Component {
 
     return (
       <View style={styles.container1}>
-        <StatusBar
-          backgroundColor={colorConfig.pageIndex.grayColor}
-          barStyle="light-content"
-        />
+        <StatusBar backgroundColor="#F8AF31" barStyle="light-content" />
         {this.state.geolocation ? (
           <Routes isLoggedIn={isLoggedIn} />
         ) : (

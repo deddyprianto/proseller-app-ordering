@@ -13,6 +13,7 @@ import rewardsReducer from './rewards.reducer';
 import storesReducer from './stores.reducer';
 import accountsReducer from './accounts.reducer';
 import inboxReducer from './inbox.reducer';
+import promotionReducer from './promotion.reducer';
 
 const reducers = {
   authReducer,
@@ -21,6 +22,7 @@ const reducers = {
   storesReducer,
   accountsReducer,
   inboxReducer,
+  promotionReducer,
   form: formReducer,
 };
 

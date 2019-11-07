@@ -5,13 +5,11 @@ import {
   StyleSheet,
   Dimensions,
   TouchableOpacity,
-  ScrollView,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
 
 import colorConfig from '../config/colorConfig';
-import appConfig from '../config/appConfig';
 
 class StampDetail extends Component {
   constructor(props) {

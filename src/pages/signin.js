@@ -13,31 +13,23 @@ import {
   Image,
   ScrollView,
   Animated,
-  ImageBackground,
   Dimensions,
-  Alert,
+  ImageBackground,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
 import {Field, reduxForm} from 'redux-form';
 import AwesomeAlert from 'react-native-awesome-alerts';
-import {LoginManager, LoginButton, AccessToken} from 'react-native-fbsdk';
-// import {
-//   GoogleSignin,
-//   GoogleSigninButton,
-//   statusCodes,
-// } from 'react-native-google-signin';
-import {Auth} from 'aws-amplify';
-import AWS from 'aws-sdk';
+import {LoginManager, AccessToken} from 'react-native-fbsdk';
+import {Form, TextValidator} from 'react-native-validator-form';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 import InputText from '../components/inputText';
-import SigninOther from '../components/signinOther';
 import {loginUser, loginOther} from '../actions/auth.actions';
 import Loader from '../components/loader';
 import {Actions} from 'react-native-router-flux';
 import colorConfig from '../config/colorConfig';
 import appConfig from '../config/appConfig';
-import awsConfig from '../config/awsConfig';
 
 const imageWidth = Dimensions.get('window').width / 2;
 
@@ -51,6 +43,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    width: imageWidth * 2 - 40,
   },
   signupTextCont: {
     flexGrow: 1,
@@ -69,17 +62,19 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   signupButton: {
-    color: colorConfig.pageIndex.activeTintColor,
+    color: '#1b245c',
     fontSize: 14,
     textAlign: 'left',
     paddingLeft: 10,
+    fontWeight: 'bold',
   },
   verifyButton: {
-    color: colorConfig.pageIndex.activeTintColor,
+    color: '#1b245c',
     fontSize: 14,
     textAlign: 'right',
     paddingRight: 10,
     fontFamily: 'sans-serif',
+    fontWeight: 'bold',
   },
   button: {
     width: 300,
@@ -103,7 +98,6 @@ const styles = StyleSheet.create({
   backgroundImage: {
     alignItems: 'center',
     alignSelf: 'stretch',
-    backgroundColor: colorConfig.pageIndex.backgroundColor,
     flex: 1,
   },
   logo: {
@@ -111,9 +105,9 @@ const styles = StyleSheet.create({
   },
   viewLogin: {
     justifyContent: 'space-between',
-    // paddingVertical:2,
     flexDirection: 'row',
     marginBottom: 10,
+    marginTop: 10,
   },
   logoLoginWith: {
     width: 35,
@@ -135,14 +129,7 @@ const styles = StyleSheet.create({
   },
   buttonFB: {
     width: 300,
-    height: 45,
-    backgroundColor: colorConfig.pageIndex.backgroundColor,
-    borderRadius: 25,
-    marginVertical: 10,
-    borderColor: '#4267B2',
-    borderWidth: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
+    height: 70,
   },
   buttonTextFB: {
     fontSize: 16,
@@ -178,17 +165,16 @@ class Signin extends Component {
       accessToken: '',
       expires_at: '',
       email: '',
+      screenWidth: Dimensions.get('window').width,
+      showPass1: true,
+      press1: false,
+      username: '',
+      password: '',
     };
     this.imageWidth = new Animated.Value(styles.$largeImageSize);
   }
 
-  componentDidMount() {
-    // GoogleSignin.configure({
-    //   scopes: ['https://www.googleapis.com/auth/drive.readonly'],
-    //   webClientId:
-    //     '583037359433-vhcuou7902ug2k8ctl37e1p8mon2qrvv.apps.googleusercontent.com',
-    // });
-  }
+  componentDidMount() {}
 
   goBack() {
     Actions.signin();
@@ -204,7 +190,12 @@ class Signin extends Component {
 
   loginUser = async values => {
     try {
-      const response = await this.props.dispatch(loginUser(values));
+      var dataLogin = {
+        username: this.state.username,
+        password: this.state.password,
+        type: 'userPool',
+      };
+      const response = await this.props.dispatch(loginUser(dataLogin));
       if (response.success == false) {
         throw response;
       }
@@ -224,6 +215,14 @@ class Signin extends Component {
     this.setState({
       showAlert: false,
     });
+  };
+
+  showPass1 = () => {
+    if (this.state.press1 == false) {
+      this.setState({showPass1: false, press1: true});
+    } else {
+      this.setState({showPass1: true, press1: false});
+    }
   };
 
   renderTextInput = field => {
@@ -319,49 +318,139 @@ class Signin extends Component {
 
     const imageStyle = [styles.logo, {width: this.imageWidth}];
     return (
-      <View style={styles.backgroundImage}>
+      <ImageBackground
+        source={appConfig.appBackground}
+        style={styles.backgroundImage}
+        resizeMode="stretch">
         {loginUser && loginUser.isLoading && <Loader />}
         <ScrollView>
           <View style={styles.container}>
             <Image
               source={appConfig.appLogo}
               style={{
-                margin: 20,
-                height: 80,
-                width: 100,
+                marginTop: 10,
+                height: 100,
+                width: 120,
+              }}
+              resizeMode="contain"
+            />
+            <Image
+              source={appConfig.appTextWelcome}
+              style={{
+                marginTop: -40,
+                height: 180,
+                width: 220,
               }}
               resizeMode="contain"
             />
           </View>
-          <Field
-            name="username"
-            placeholder="Email"
-            icon="md-contact"
-            component={this.renderTextInput}
-          />
-          <Field
-            name="password"
-            icon="md-lock"
-            placeholder="Password"
-            secureTextEntry={true}
-            component={this.renderTextInput}
-          />
-          <View
-            style={{
-              justifyContent: 'flex-end',
-              // paddingVertical:2,
-              flexDirection: 'row',
-              marginBottom: 15,
-            }}>
-            <TouchableOpacity>
-              <Text style={styles.verifyButton}>Forgot Password ?</Text>
+          <Form ref="form" onSubmit={this.handleSubmit}>
+            <View
+              style={{
+                backgroundColor: colorConfig.pageIndex.backgroundColor,
+                borderRadius: 5,
+                paddingTop: 10,
+                paddingBottom: 20,
+                paddingLeft: 10,
+                paddingRight: 10,
+                marginTop: -20,
+              }}>
+              <TextValidator
+                name="email"
+                label="email"
+                validators={['required', 'isEmail']}
+                text={{color: '#1b245c'}}
+                errorStyle={{
+                  container: {top: 5, left: 5},
+                  text: {color: 'red'},
+                  underlineValidColor: '#1b245c',
+                  underlineInvalidColor: 'red',
+                }}
+                errorMessages={['This field is required', 'Email invalid']}
+                placeholder="Email"
+                type="text"
+                under
+                value={this.state.username}
+                onChangeText={value => this.setState({username: value})}
+              />
+              <View>
+                <TextValidator
+                  style={{marginBottom: -10}}
+                  name="password"
+                  label="password"
+                  text={{color: '#1b245c'}}
+                  validators={[
+                    'required',
+                    'minStringLength:8',
+                    'matchRegexp:^(?=.*[0-9])',
+                    'matchRegexp:^(?=.*[A-Z])',
+                    'matchRegexp:^(?=.*[a-b])',
+                  ]}
+                  errorStyle={{
+                    container: {top: 5, left: 5},
+                    text: {color: 'red'},
+                    underlineValidColor: '#1b245c',
+                    underlineInvalidColor: 'red',
+                  }}
+                  errorMessages={[
+                    'This field is required',
+                    'Password min 8 character',
+                    'Password contain at least 1 number',
+                    'Password contain at least 1 uppercase character',
+                    'Password contain at least 1 lowercase character',
+                  ]}
+                  placeholder="Password"
+                  secureTextEntry={this.state.showPass1}
+                  type="text"
+                  under
+                  value={this.state.password}
+                  onChangeText={value =>
+                    this.setState({password: value.replace(/\s/g, '')})
+                  }
+                />
+                <TouchableOpacity
+                  style={{position: 'absolute', top: 10, right: 15}}
+                  onPress={this.showPass1}>
+                  <Icon
+                    name={this.state.press1 == true ? 'md-eye' : 'md-eye-off'}
+                    size={23}
+                    color={colorConfig.pageIndex.grayColor}
+                  />
+                </TouchableOpacity>
+              </View>
+            </View>
+            <View
+              style={{
+                justifyContent: 'flex-end',
+                flexDirection: 'row',
+                marginBottom: 10,
+                marginTop: 10,
+              }}>
+              <TouchableOpacity>
+                <Text style={styles.verifyButton}>Forgot Password</Text>
+              </TouchableOpacity>
+            </View>
+            <TouchableOpacity
+              style={{
+                backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                height: 55,
+                borderRadius: 5,
+                borderColor: colorConfig.pageIndex.backgroundColor,
+                borderWidth: 2,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+              onPress={handleSubmit(this.onSubmit)}>
+              <Text
+                style={{
+                  color: colorConfig.pageIndex.backgroundColor,
+                  fontSize: 16,
+                  fontWeight: 'bold',
+                }}>
+                Sign In
+              </Text>
             </TouchableOpacity>
-          </View>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={handleSubmit(this.onSubmit)}>
-            <Text style={styles.buttonText}>LOGIN</Text>
-          </TouchableOpacity>
+          </Form>
           <View style={styles.viewLogin}>
             <TouchableOpacity onPress={this.signup}>
               <Text style={styles.signupButton}>Register</Text>
@@ -373,68 +462,35 @@ class Signin extends Component {
 
           {appConfig.appStatusLoginOther == false ? null : (
             <View>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                }}>
-                <View
-                  style={{
-                    backgroundColor: colorConfig.pageIndex.inactiveTintColor,
-                    height: 1,
-                    width: 120,
-                  }}
-                />
-                <Text style={styles.textLoginWith}>OR</Text>
-                <View
-                  style={{
-                    backgroundColor: colorConfig.pageIndex.inactiveTintColor,
-                    height: 1,
-                    width: 120,
-                  }}
-                />
-              </View>
-              {/* <LoginButton
-                publishPermissions={['publish_actions']}
-                readPermissions={['public_profile']}
-                onLoginFinished={(error, result) => {
-                  console.log('accessToken');
-                  if (error) {
-                    console.log('login has error: ', result.error);
-                  } else if (result.isCancelled) {
-                    console.log('login is cancelled.');
-                  } else {
-                    
-                  }
-                }}
-                onLogoutFinished={console.log('logout')}
-              /> */}
               <TouchableOpacity
-                style={styles.buttonFB}
+                style={{
+                  backgroundColor: colorConfig.pageIndex.backgroundColor,
+                  height: 55,
+                  borderRadius: 5,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginBottom: 10,
+                  marginTop: 10,
+                  flexDirection: 'row',
+                }}
                 onPress={this.onSubmitFacebook}>
                 <Image
-                  style={styles.logoLoginWith}
-                  source={require('../assets/img/icon-facebook.png')}
+                  source={appConfig.appLogoFB}
+                  style={{
+                    height: 25,
+                    width: 35,
+                  }}
+                  resizeMode="contain"
                 />
-                <Text style={styles.buttonTextFB}>Login With Facebook</Text>
+                <Text
+                  style={{
+                    color: '#1b245c',
+                    fontSize: 16,
+                    fontWeight: 'bold',
+                  }}>
+                  Sign up with Facebook
+                </Text>
               </TouchableOpacity>
-              {/* <TouchableOpacity
-                style={styles.buttonGoogle}
-                onPress={this.onSubmitGoogle}>
-                <Image
-                  style={styles.logoLoginWith}
-                  source={require('../assets/img/icon-google.png')}
-                />
-                <Text style={styles.buttonTextGoogle}>Login With Google</Text>
-              </TouchableOpacity> */}
-              {/* <GoogleSigninButton
-                style={{width: 192, height: 48}}
-                size={GoogleSigninButton.Size.Wide}
-                color={GoogleSigninButton.Color.Dark}
-                onPress={this._signIn}
-                disabled={this.state.isSigninInProgress}
-              /> */}
             </View>
           )}
         </ScrollView>
@@ -457,7 +513,7 @@ class Signin extends Component {
             this.hideAlert();
           }}
         />
-      </View>
+      </ImageBackground>
     );
   }
 }

@@ -8,23 +8,28 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import Swiper from 'react-native-swiper';
+import {connect} from 'react-redux';
+import {compose} from 'redux';
 
 import colorConfig from '../config/colorConfig';
-import appConfig from '../config/appConfig';
 import {Actions} from 'react-native-router-flux';
+import {dataPromotion} from '../actions/promotion.action';
 
-export default class StorePromotion extends Component {
+class StorePromotion extends Component {
   constructor(props) {
     super(props);
     this.state = {};
   }
 
+  componentDidMount = async () => {
+    await this.props.dispatch(dataPromotion());
+  };
   seeMorePromotion = () => {
     Actions.seeMorePromotion();
   };
 
-  storeDetailPromotion = () => {
-    Actions.storeDetailPromotion();
+  storeDetailPromotion = item => {
+    Actions.storeDetailPromotion({dataPromotion: item});
   };
 
   render() {
@@ -33,52 +38,33 @@ export default class StorePromotion extends Component {
         <TouchableOpacity style={styles.seeAll} onPress={this.seeMorePromotion}>
           <Text style={styles.seeAllTitle}>See More</Text>
         </TouchableOpacity>
-        <Swiper
-          style={styles.swiper}
-          autoplay={true}
-          autoplayTimeout={4}
-          animated={true}
-          dot={<View style={styles.swiperDot} />}
-          activeDot={<View style={styles.swiperActiveDot} />}
-          paginationStyle={styles.swiperPaginatiom}
-          loop>
-          <TouchableOpacity
-            style={styles.slide}
-            onPress={this.storeDetailPromotion}>
-            <Image
-              resizeMode="stretch"
-              style={styles.image}
-              source={require('../assets/slide/slide1.jpg')}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.slide}
-            onPress={this.storeDetailPromotion}>
-            <Image
-              resizeMode="stretch"
-              style={styles.image}
-              source={require('../assets/slide/slide2.jpg')}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.slide}
-            onPress={this.storeDetailPromotion}>
-            <Image
-              resizeMode="stretch"
-              style={styles.image}
-              source={require('../assets/slide/slide3.jpg')}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.slide}
-            onPress={this.storeDetailPromotion}>
-            <Image
-              resizeMode="stretch"
-              style={styles.image}
-              source={require('../assets/slide/slide4.jpg')}
-            />
-          </TouchableOpacity>
-        </Swiper>
+        {this.props.dataPromotion == undefined ? null : this.props.dataPromotion
+            .count < 0 ? null : (
+          <Swiper
+            style={styles.swiper}
+            autoplay={true}
+            autoplayTimeout={4}
+            animated={true}
+            dot={<View style={styles.swiperDot} />}
+            activeDot={<View style={styles.swiperActiveDot} />}
+            paginationStyle={styles.swiperPaginatiom}
+            loop>
+            {this.props.dataPromotion.data.map((item, key) => (
+              <TouchableOpacity
+                key={key}
+                style={styles.slide}
+                onPress={() => this.storeDetailPromotion(item)}>
+                <Image
+                  resizeMode="stretch"
+                  style={styles.image}
+                  source={{
+                    uri: item.image,
+                  }}
+                />
+              </TouchableOpacity>
+            ))}
+          </Swiper>
+        )}
       </View>
     );
   }
@@ -139,3 +125,18 @@ const styles = StyleSheet.create({
     color: colorConfig.pageIndex.activeTintColor,
   },
 });
+
+mapStateToProps = state => ({
+  dataPromotion: state.promotionReducer.dataPromotion.promotion,
+});
+
+mapDispatchToProps = dispatch => ({
+  dispatch,
+});
+
+export default compose(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  ),
+)(StorePromotion);

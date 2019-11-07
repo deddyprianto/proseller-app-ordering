@@ -6677,6 +6677,11 @@ rn-sliding-button@^1.1.5:
   resolved "https://registry.yarnpkg.com/rn-sliding-button/-/rn-sliding-button-1.1.5.tgz#4cf6764bbbfc5aae46e04fe9cd3f021f6b25250b"
   integrity sha1-TPZ2S7v8Wq5G4E/pzT8CH2slJQs=
 
+rn-swipe-button@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/rn-swipe-button/-/rn-swipe-button-1.2.0.tgz#05429f115dc7fb3e5d69317950ad30a66a2c7986"
+  integrity sha512-3sEEcIa4MYdyStjLCAb3R46Oib+lP1x7JP2Ci4hhECl/6HH2ph3nos2DhvBYbbUK1KmLi/rvYvQ6/oWxnVufyg==
+
 rsvp@^4.8.4:
   version "4.8.5"
   resolved "https://registry.yarnpkg.com/rsvp/-/rsvp-4.8.5.tgz#c8f155311d167f68f21e168df71ec5b083113734"

@@ -11,7 +11,6 @@ import {
   StyleSheet,
   Dimensions,
   TouchableOpacity,
-  Image,
   ScrollView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -73,12 +72,14 @@ export default class StoreDetailStores extends Component {
                   {this.props.item.address}
                 </Text>
               </View>
-              <View style={styles.detailItem}>
-                <Text style={styles.desc}>Distance</Text>
-                <Text style={styles.desc}>
-                  {this.props.item.storeJarak.toFixed(1) + ' KM'}
-                </Text>
-              </View>
+              {this.props.item.storeJarak == '-' ? null : (
+                <View style={styles.detailItem}>
+                  <Text style={styles.desc}>Distance</Text>
+                  <Text style={styles.desc}>
+                    {this.props.item.storeJarak.toFixed(1) + ' KM'}
+                  </Text>
+                </View>
+              )}
               <View style={styles.detailItem}>
                 <Text style={styles.desc}>Status</Text>
                 <Text style={styles.desc}>{this.props.item.storeStatus}</Text>

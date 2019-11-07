@@ -6,13 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React, {Component} from 'react';
-import {
-  TextInput,
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  Text,
-} from 'react-native';
+import {TextInput, View, StyleSheet, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import colorConfig from '../config/colorConfig';
 

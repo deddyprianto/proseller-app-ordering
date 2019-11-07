@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, Text, Dimensions, AsyncStorage} from 'react-native';
+import {View, Text, Dimensions} from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
 

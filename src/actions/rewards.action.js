@@ -1,10 +1,12 @@
 import {fetchApi} from '../service/api';
 import * as _ from 'lodash';
+import {refreshToken} from './auth.actions';
 
 export const campaign = () => {
   return async (dispatch, getState) => {
     const state = getState();
     try {
+      await dispatch(refreshToken());
       const {
         authReducer: {
           authData: {token},
@@ -12,16 +14,10 @@ export const campaign = () => {
       } = state;
       const response = await fetchApi('/campaign', 'GET', false, 200, token);
       console.log(response, 'response campign');
-      // if(response.success){
       dispatch({
         type: 'DATA_ALL_CAMPAIGN',
         data: response.responseBody,
       });
-      // } else {
-      //   dispatch({
-      //     type: "USER_LOGGED_OUT_SUCCESS"
-      //   });
-      // }
     } catch (error) {
       return error;
     }
@@ -44,33 +40,6 @@ export const vouchers = () => {
           },
         },
       } = state;
-
-      // await Promise.all(
-      //   await data
-      //     .filter(
-      //       campaign =>
-      //         campaign.deleted == false &&
-      //         campaign.priority == true &&
-      //         campaign.campaignType == 'point',
-      //     )
-      //     .map(async campaign => {
-      //       let response = await fetchApi(
-      //         '/campaign/' + campaign.id + '/vouchers',
-      //         'GET',
-      //         false,
-      //         200,
-      //         token,
-      //       );
-      //       console.log(response);
-      //       if (response.success) {
-      //         response.responseBody.data
-      //           .filter(voucher => voucher.deleted == false)
-      //           .map(async voucher => {
-      //             await dataVoucher.push(voucher);
-      //           });
-      //       }
-      //     }),
-      // );
 
       var dataVoucher = [];
 
@@ -171,34 +140,6 @@ export const dataPoint = () => {
         },
       } = state;
 
-      // await Promise.all(
-      //   await data
-      //     .filter(
-      //       campaign =>
-      //         campaign.deleted == false &&
-      //         campaign.priority == true &&
-      //         campaign.campaignType == 'point',
-      //     )
-      //     .map(async campaign => {
-      //       let response = await fetchApi(
-      //         '/campaign/points',
-      //         'GET',
-      //         false,
-      //         200,
-      //         token,
-      //       );
-      //       if (response.success) {
-      //         response.responseBody.data
-      //           .filter(point => point.deleted == false)
-      //           .map(async point => {
-      //             await dataResponse.push(point);
-      //             var sisa = point.pointDebit - point.pointKredit;
-      //             totalPoint = totalPoint + sisa;
-      //           });
-      //       }
-      //     }),
-      // );
-
       var dataResponse = [];
 
       let response = await fetchApi(
@@ -258,7 +199,11 @@ export const sendPayment = payload => {
       console.log(payload, 'payload sendPayment');
       const response = await fetchApi('/payment', 'POST', payload, 200, token);
       console.log(response, 'response send payment');
-      return response.responseBody;
+      var result = {
+        responseBody: response.responseBody,
+        success: response.success,
+      };
+      return result;
     } catch (error) {
       return error;
     }

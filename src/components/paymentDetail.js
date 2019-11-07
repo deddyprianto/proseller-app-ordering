@@ -19,7 +19,8 @@ import {Actions} from 'react-native-router-flux';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
 import * as _ from 'lodash';
-import {RNSlidingButton, SlideDirection} from 'rn-sliding-button';
+// import {RNSlidingButton, SlideDirection} from 'rn-sliding-button';
+import SwipeButton from 'rn-swipe-button';
 import AwesomeAlert from 'react-native-awesome-alerts';
 
 import colorConfig from '../config/colorConfig';
@@ -42,20 +43,33 @@ class PaymentDetail extends Component {
       pesanAlert: '',
       titleAlert: '',
       totalBayar: this.props.pembayaran.payment,
+      cancelVoucher: false,
+      cancelPoint: false,
     };
   }
 
   componentDidMount = async () => {
-    var redeemVoucer =
-      this.props.dataVoucer == undefined
-        ? 0
-        : this.props.dataVoucer.voucherType != 'discAmount'
-        ? (this.props.pembayaran.payment * this.props.dataVoucer.voucherValue) /
-          100
-        : this.props.dataVoucer.voucherValue;
-    var redeemPoint =
-      this.props.addPoint == undefined ? 0 : this.props.moneyPoint;
-    var totalBayar = this.state.totalBayar - (redeemVoucer + redeemPoint);
+    await this.setDataPayment(false);
+  };
+
+  setDataPayment = async cancel => {
+    console.log(this.props.dataVoucer, 'this.props.dataVoucer');
+    var totalBayar = 0;
+    if (!cancel) {
+      var redeemVoucer =
+        this.props.dataVoucer == undefined
+          ? 0
+          : this.props.dataVoucer.voucherType != 'discAmount'
+          ? (this.props.pembayaran.payment *
+              this.props.dataVoucer.voucherValue) /
+            100
+          : this.props.dataVoucer.voucherValue;
+      var redeemPoint =
+        this.props.addPoint == undefined ? 0 : this.props.moneyPoint;
+      totalBayar = this.state.totalBayar - (redeemVoucer + redeemPoint);
+    } else {
+      totalBayar = this.props.pembayaran.payment;
+    }
     this.setState({totalBayar});
   };
 
@@ -85,7 +99,10 @@ class PaymentDetail extends Component {
 
     console.log(myVoucers);
 
-    if (this.props.dataVoucer != undefined) {
+    if (
+      this.state.cancelVoucher == false &&
+      this.props.dataVoucer != undefined
+    ) {
       var jumlah = _.find(myVoucers, {id: this.props.dataVoucer.id})
         .totalRedeem;
 
@@ -150,25 +167,28 @@ class PaymentDetail extends Component {
 
     console.log(pembayaran, 'pembayaran');
     const response = await this.props.dispatch(sendPayment(pembayaran));
-    console.log(response);
-    if (response.statusCode != 400) {
-      if (response.data.message != 'there`s no running campaign on this date') {
+    console.log(response, 'response kkkk');
+    if (response.success) {
+      if (
+        response.responseBody.data.message !=
+        'there`s no running campaign on this date'
+      ) {
         await this.props.dispatch(campaign());
         await this.props.dispatch(dataPoint());
         await this.props.dispatch(getStamps());
         await this.props.dispatch(myVoucers());
-        Actions.paymentSuccess({dataRespons: response.data});
+        Actions.paymentSuccess({dataRespons: response.responseBody.data});
       } else {
         this.setState({
           showAlert: true,
-          pesanAlert: response.data.message,
+          pesanAlert: response.responseBody.data.message,
           titleAlert: 'Payment Error!',
         });
       }
     } else {
       this.setState({
         showAlert: true,
-        pesanAlert: 'Request failed',
+        pesanAlert: response.responseBody.message,
         titleAlert: 'Payment Error!',
       });
     }
@@ -184,7 +204,28 @@ class PaymentDetail extends Component {
     });
   };
 
+  cencelVoucher = async () => {
+    await delete this.props.dataVoucer;
+    await this.setDataPayment(true);
+    this.setState({cancelVoucher: true});
+  };
+
+  cencelPoint = async () => {
+    await delete this.props.addPoint;
+    await this.setDataPayment(true);
+    this.setState({cancelPoint: true});
+  };
+
+  showToastMessage = message => this.setState({message});
+
   render() {
+    const iconSlider = () => (
+      <Icon
+        size={25}
+        name={Platform.OS === 'ios' ? 'ios-log-in' : 'md-log-in'}
+        style={{color: colorConfig.pageIndex.activeTintColor}}
+      />
+    );
     return (
       <View style={styles.container}>
         {console.log(this.props.dataStamps)}
@@ -364,18 +405,39 @@ class PaymentDetail extends Component {
                 flexDirection: 'row',
               }}>
               <Text>Vouchers</Text>
-              {this.props.dataVoucer != undefined ? (
-                <TouchableOpacity
-                  style={styles.btnMethod}
-                  onPress={this.myVouchers}>
-                  <Image
-                    style={{height: 18, width: 23, marginRight: 5}}
-                    source={require('../assets/img/voucher.png')}
-                  />
-                  <Text style={styles.descMethod}>
-                    {this.props.dataVoucer.voucherName.substr(0, 13)}
-                  </Text>
-                </TouchableOpacity>
+              {this.state.cancelVoucher == false &&
+              this.props.dataVoucer != undefined ? (
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                  }}>
+                  <TouchableOpacity
+                    style={styles.btnMethodCencel}
+                    onPress={() => this.cencelVoucher()}>
+                    <Icon
+                      size={18}
+                      name={
+                        Platform.OS === 'ios'
+                          ? 'ios-close-circle-outline'
+                          : 'md-close-circle-outline'
+                      }
+                      style={{color: colorConfig.pageIndex.activeTintColor}}
+                    />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.btnMethod}
+                    onPress={this.myVouchers}>
+                    <Image
+                      style={{height: 18, width: 23, marginRight: 5}}
+                      source={require('../assets/img/voucher.png')}
+                    />
+                    <Text style={styles.descMethod}>
+                      {this.props.dataVoucer.voucherName.substr(0, 13)}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
               ) : (
                 <TouchableOpacity
                   style={styles.btnMethod}
@@ -396,18 +458,39 @@ class PaymentDetail extends Component {
                 flexDirection: 'row',
               }}>
               <Text>Point</Text>
-              {this.props.addPoint != undefined ? (
-                <TouchableOpacity
-                  style={styles.btnMethod}
-                  onPress={this.myPoint}>
-                  <Image
-                    style={{height: 18, width: 23, marginRight: 5}}
-                    source={require('../assets/img/ticket.png')}
-                  />
-                  <Text style={styles.descMethod}>
-                    {'- ' + this.props.addPoint + ' Point'}
-                  </Text>
-                </TouchableOpacity>
+              {this.state.cancelPoint == false &&
+              this.props.addPoint != undefined ? (
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                  }}>
+                  <TouchableOpacity
+                    style={styles.btnMethodCencel}
+                    onPress={() => this.cencelPoint()}>
+                    <Icon
+                      size={18}
+                      name={
+                        Platform.OS === 'ios'
+                          ? 'ios-close-circle-outline'
+                          : 'md-close-circle-outline'
+                      }
+                      style={{color: colorConfig.pageIndex.activeTintColor}}
+                    />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.btnMethod}
+                    onPress={this.myPoint}>
+                    <Image
+                      style={{height: 18, width: 23, marginRight: 5}}
+                      source={require('../assets/img/ticket.png')}
+                    />
+                    <Text style={styles.descMethod}>
+                      {'- ' + this.props.addPoint + ' Point'}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
               ) : (
                 <TouchableOpacity
                   style={styles.btnMethod}
@@ -420,7 +503,7 @@ class PaymentDetail extends Component {
                 </TouchableOpacity>
               )}
             </View>
-            <RNSlidingButton
+            {/* <RNSlidingButton
               style={{
                 backgroundColor: colorConfig.pageIndex.activeTintColor,
                 borderRadius: 50,
@@ -468,7 +551,25 @@ class PaymentDetail extends Component {
                   </Text>
                 </View>
               </View>
-            </RNSlidingButton>
+            </RNSlidingButton> */}
+            <SwipeButton
+              disabled={false}
+              disabledThumbIconBackgroundColor="#FFFFFF"
+              disabledThumbIconBorderColor={
+                colorConfig.pageIndex.activeTintColor
+              }
+              height={45}
+              thumbIconBackgroundColor="#FFFFFF"
+              railBorderColor="#FFFFFF"
+              thumbIconBorderColor={colorConfig.pageIndex.activeTintColor}
+              titleColor="#FFFFFF"
+              titleFontSize={16}
+              railBackgroundColor={colorConfig.pageIndex.activeTintColor}
+              title={
+                'Pay ' + appConfig.appMataUang + ' ' + this.state.totalBayar
+              }
+              onSwipeSuccess={this.onSlideRight}
+            />
           </View>
         </ScrollView>
         <AwesomeAlert
@@ -587,6 +688,14 @@ const styles = StyleSheet.create({
     width: Dimensions.get('window').width / 2 - 30,
     flexDirection: 'row',
     justifyContent: 'space-between',
+  },
+  btnMethodCencel: {
+    borderRadius: 30,
+    justifyContent: 'center',
+    padding: 3,
+    alignItems: 'center',
+    width: 30,
+    height: 30,
   },
   descMethod: {
     color: colorConfig.pageIndex.grayColor,

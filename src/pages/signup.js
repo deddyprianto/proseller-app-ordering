@@ -12,11 +12,9 @@ import {
   TouchableOpacity,
   ScrollView,
   Animated,
-  ImageBackground,
   Dimensions,
-  TextInput,
 } from 'react-native';
-import {Field, reduxForm} from 'redux-form';
+import {reduxForm} from 'redux-form';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -224,12 +222,13 @@ class Signup extends Component {
   handleSubmit = async () => {
     try {
       var dataRegister = {
-        tenantId: awsConfig.tenant,
+        tenantId: awsConfig.tenantId,
         email: this.state.email,
         username: this.state.email,
         password: this.state.password,
         name: this.state.name,
         phoneNumber: this.phone.getValue(),
+        type: 'userPool',
         // "nickname": this.state.nickname,
         // "address": this.state.address,
         // birthdate: this.state.birthdate,

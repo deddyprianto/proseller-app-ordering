@@ -16,9 +16,7 @@ import * as _ from 'lodash';
 
 import {logoutUser} from '../actions/auth.actions';
 import colorConfig from '../config/colorConfig';
-import appConfig from '../config/appConfig';
 import {Actions} from 'react-native-router-flux';
-import {vouchers} from '../actions/rewards.action';
 
 class AccountMenuList extends Component {
   constructor(props) {

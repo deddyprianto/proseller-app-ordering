@@ -1,17 +1,7 @@
 import React, {Component} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Dimensions,
-  RefreshControl,
-  TouchableOpacity,
-  Image,
-} from 'react-native';
+import {View, Text, Dimensions, Image} from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
-import Icon from 'react-native-vector-icons/Ionicons';
 
 import colorConfig from '../config/colorConfig';
 import appConfig from '../config/appConfig';

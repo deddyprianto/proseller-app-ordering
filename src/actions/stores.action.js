@@ -1,9 +1,11 @@
 import {fetchApi} from '../service/api';
+import {refreshToken} from './auth.actions';
 
 export const dataStores = () => {
   return async (dispatch, getState) => {
     const state = getState();
     try {
+      await dispatch(refreshToken());
       const {
         authReducer: {
           authData: {token},
@@ -11,16 +13,10 @@ export const dataStores = () => {
       } = state;
       const response = await fetchApi('/store', 'GET', false, 200, token);
       console.log(response, 'response store');
-      // if(response.success){
       dispatch({
         type: 'DATA_ALL_STORES',
         data: response.responseBody,
       });
-      // } else {
-      //   dispatch({
-      //     type: "USER_LOGGED_OUT_SUCCESS"
-      //   });
-      // }
     } catch (error) {
       return error;
     }

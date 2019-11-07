@@ -6,8 +6,6 @@ import {
   Dimensions,
   TouchableOpacity,
   Image,
-  ScrollView,
-  RefreshControl,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';

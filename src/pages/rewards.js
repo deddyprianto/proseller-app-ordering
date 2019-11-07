@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {
   View,
   Text,
+  StyleSheet,
   Dimensions,
   ScrollView,
   RefreshControl,
@@ -20,46 +21,13 @@ import {
   getStamps,
 } from '../actions/rewards.action';
 import {myVoucers} from '../actions/account.action';
+import {dataInbox} from '../actions/inbox.action';
 
 import RewardsPoint from '../components/rewardsPoint';
 import RewardsStamp from '../components/rewardsStamp';
 import RewardsMenu from '../components/rewardsMenu';
 import RewardsTransaction from '../components/rewardsTransaction';
-import colorConfig from '../config/colorConfig';
-import awsConfig from '../config/awsConfig';
-
-// const AppNavigationContainer = createAppContainer(
-//   createMaterialTopTabNavigator(
-//     {
-//       Stamp: {
-//         screen: RewardsStamp,
-//       },
-//       // Loyalty: {
-//       //   screen: Stamp
-//       // },
-//       Point: {
-//         screen: RewardsPoint,
-//       },
-//     },
-//     {
-//       initialRouteName: 'Stamp',
-//       tabBarOptions: {
-//         labelStyle: {
-//           fontSize: 12,
-//         },
-//         tabStyle: {
-//           height: 40,
-//         },
-//         style: {
-//           backgroundColor: colorConfig.pageIndex.backgroundColor,
-//         },
-//         activeTintColor: colorConfig.pageIndex.activeTintColor,
-//         inactiveTintColor: colorConfig.pageIndex.inactiveTintColor,
-//         upperCaseLabel: false,
-//       },
-//     },
-//   ),
-// );
+import Loader from '../components/loader';
 
 class Rewards extends Component {
   constructor(props) {
@@ -72,6 +40,7 @@ class Rewards extends Component {
       screenWidth: Dimensions.get('window').width,
       screenHeight: Dimensions.get('window').height,
       refreshing: false,
+      isLoading: true,
     };
   }
 
@@ -86,6 +55,8 @@ class Rewards extends Component {
       await this.props.dispatch(vouchers());
       await this.props.dispatch(myVoucers());
       await this.props.dispatch(getStamps());
+      await this.props.dispatch(dataInbox());
+      this.setState({isLoading: false});
     } catch (error) {
       await this.props.dispatch(
         notifikasi(
@@ -112,18 +83,31 @@ class Rewards extends Component {
             onRefresh={this._onRefresh}
           />
         }>
-        {/* <AppNavigationContainer/> */}
-        {this.props.dataStamps.dataStamps == undefined ? null : this.props
-            .dataStamps.dataStamps.length == 0 ? null : (
-          <RewardsStamp />
+        {this.state.isLoading ? (
+          <View style={styles.loading}>
+            {this.state.isLoading && <Loader />}
+          </View>
+        ) : (
+          <View>
+            {this.props.dataStamps.dataStamps == undefined ? null : this.props
+                .dataStamps.dataStamps.length == 0 ? null : (
+              <RewardsStamp />
+            )}
+            <RewardsPoint />
+            <RewardsMenu myVoucers={this.props.myVoucers} />
+            <RewardsTransaction screen={this.props} />
+          </View>
         )}
-        <RewardsPoint />
-        <RewardsMenu myVoucers={this.props.myVoucers} />
-        <RewardsTransaction screen={this.props} />
       </ScrollView>
     );
   }
 }
+
+const styles = StyleSheet.create({
+  loading: {
+    height: Dimensions.get('window').height,
+  },
+});
 
 mapStateToProps = state => ({
   recentTransaction: state.rewardsReducer.dataPoint.recentTransaction,

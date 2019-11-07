@@ -4,12 +4,9 @@ import {
   Text,
   TextInput,
   StyleSheet,
-  ScrollView,
   Dimensions,
-  RefreshControl,
   TouchableOpacity,
   Picker,
-  Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';

@@ -1,11 +1,13 @@
 import {fetchApi} from '../service/api';
 import * as _ from 'lodash';
 import {AsyncStorage} from 'react-native';
+import {refreshToken} from './auth.actions';
 
 export const dataInbox = () => {
   return async (dispatch, getState) => {
     const state = getState();
     try {
+      await dispatch(refreshToken());
       const {
         authReducer: {
           authData: {token},

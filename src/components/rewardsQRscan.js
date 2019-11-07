@@ -15,8 +15,6 @@ import {compose} from 'redux';
 import AwesomeAlert from 'react-native-awesome-alerts';
 
 import colorConfig from '../config/colorConfig';
-import appConfig from '../config/appConfig';
-import {notifikasi} from '../actions/auth.actions';
 import {sendPayment, campaign, dataPoint} from '../actions/rewards.action';
 
 class RewardsQRscan extends Component {

@@ -4,17 +4,17 @@
  * PT Edgeworks
  */
 
-import React, { Component } from 'react';
-import { 
-  View, 
-  ImageBackground, 
-  Keyboard, 
-  Animated, 
-  Platform, 
-  StyleSheet 
+import React, {Component} from 'react';
+import {
+  View,
+  ImageBackground,
+  Keyboard,
+  Animated,
+  Platform,
+  StyleSheet,
 } from 'react-native';
-import { Dimensions } from 'react-native';
-import appConfig from "../config/appConfig";
+import {Dimensions} from 'react-native';
+import appConfig from '../config/appConfig';
 import colorConfig from '../config/colorConfig';
 
 const imageWidth = Dimensions.get('window').width / 2;
@@ -23,13 +23,13 @@ const ANIMATION_DURATION = 100;
 
 const styles = StyleSheet.create({
   $largeContainerSize: imageWidth,
-  $largeImageSize: imageWidth-50,
+  $largeImageSize: imageWidth - 50,
   $smallContainerSize: imageWidth / 2,
   $smallImageSize: imageWidth / 4,
 
   container: {
     alignItems: 'center',
-    backgroundColor: colorConfig.pageIndex.backgroundColor
+    backgroundColor: colorConfig.pageIndex.backgroundColor,
   },
   containerImage: {
     alignItems: 'center',
@@ -37,8 +37,8 @@ const styles = StyleSheet.create({
     width: '$largeContainerSize',
     height: '$largeContainerSize',
   },
-  backgroundImage: {       
-    paddingTop: 100, 
+  backgroundImage: {
+    paddingTop: 100,
     alignItems: 'center',
     alignSelf: 'stretch',
     flex: 1,
@@ -53,8 +53,7 @@ export default class Splash extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-    };
+    this.state = {};
     this.containerImageWidth = new Animated.Value(styles.$largeContainerSize);
     this.imageWidth = new Animated.Value(styles.$largeImageSize);
   }
@@ -66,8 +65,14 @@ export default class Splash extends Component {
       showListener = 'keyboardDidShow';
       hideListener = 'keyboardDidHide';
     }
-    this.keyboardShowListener = Keyboard.addListener(showListener, this.keyboardShow);
-    this.keyboardHideListener = Keyboard.addListener(hideListener, this.keyboardHide);
+    this.keyboardShowListener = Keyboard.addListener(
+      showListener,
+      this.keyboardShow,
+    );
+    this.keyboardHideListener = Keyboard.addListener(
+      hideListener,
+      this.keyboardHide,
+    );
   }
 
   componentWillUnmount() {
@@ -104,31 +109,33 @@ export default class Splash extends Component {
   render() {
     const containerImageStyle = [
       styles.containerImage,
-      { width: '100%', height: '100%' },
+      {width: '100%', height: '100%'},
     ];
-    const imageStyle = [styles.logo, { width: this.imageWidth , marginBottom: 100,}];
+    const imageStyle = [
+      styles.logo,
+      {width: this.imageWidth, marginBottom: 100},
+    ];
     return (
       <View style={styles.container}>
         <Animated.View style={containerImageStyle}>
-          {
-            (appConfig.appStatusBackgroundScreen == false)? 
+          {appConfig.appStatusBackgroundScreen == false ? (
+            <Animated.Image
+              source={appConfig.appLogo}
+              style={imageStyle}
+              resizeMode="contain"
+            />
+          ) : (
+            <ImageBackground
+              source={appConfig.appBackground}
+              style={styles.backgroundImage}
+              resizeMode="stretch">
               <Animated.Image
                 source={appConfig.appLogo}
                 style={imageStyle}
                 resizeMode="contain"
-              /> :
-              <ImageBackground
-                source={appConfig.appBackground}
-                style={styles.backgroundImage}
-                resizeMode="stretch"
-              >
-                <Animated.Image
-                  source={appConfig.appLogo}
-                  style={imageStyle}
-                  resizeMode="contain"
-                />
-              </ImageBackground>
-          }
+              />
+            </ImageBackground>
+          )}
         </Animated.View>
       </View>
     );

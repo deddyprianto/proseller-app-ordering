@@ -31,8 +31,8 @@ export default class RewardsMenu extends Component {
     };
     // console.log(pembayaran);
     // Actions.pay()
-    // Actions.scan();
-    Actions.paymentDetail({pembayaran: pembayaran});
+    Actions.scan();
+    // Actions.paymentDetail({pembayaran: pembayaran});
   }
 
   pageRewards() {

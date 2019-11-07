@@ -3,7 +3,6 @@ import {
   View,
   Text,
   StyleSheet,
-  Image,
   TouchableOpacity,
   Dimensions,
 } from 'react-native';
@@ -35,7 +34,7 @@ export default class StoreNearYou extends Component {
                 <TouchableOpacity
                   style={styles.storesNearItem}
                   onPress={() => this.storeDetailStores(item)}>
-                  <View>
+                  {/* <View>
                     <Image
                       style={styles.storesNearImage}
                       source={
@@ -44,7 +43,7 @@ export default class StoreNearYou extends Component {
                           : appConfig.appImageNull
                       }
                     />
-                  </View>
+                  </View> */}
                   <View style={styles.storesNearDetail}>
                     <Text
                       style={{
@@ -96,8 +95,8 @@ const styles = StyleSheet.create({
   },
   storesNearDetail: {
     padding: 10,
-    borderTopColor: colorConfig.store.defaultColor,
-    borderTopWidth: 1,
+    // borderTopColor: colorConfig.store.defaultColor,
+    // borderTopWidth: 1,
     height: Dimensions.get('window').width / 3 - 55,
   },
 });

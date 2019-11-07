@@ -11,7 +11,6 @@ import {
   StyleSheet,
   Dimensions,
   TouchableOpacity,
-  Image,
   ScrollView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';

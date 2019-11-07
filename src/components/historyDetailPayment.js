@@ -11,15 +11,12 @@ import {
   StyleSheet,
   Dimensions,
   TouchableOpacity,
-  Image,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
 
 import colorConfig from '../config/colorConfig';
 import appConfig from '../config/appConfig';
-import logoCash from '../assets/img/cash.png';
-import logoVisa from '../assets/img/visa.png';
 
 export default class HistoryDetailPayment extends Component {
   constructor(props) {

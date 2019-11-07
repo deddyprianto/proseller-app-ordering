@@ -10,15 +10,13 @@ import {
   Text,
   View,
   TouchableOpacity,
-  Alert,
   ScrollView,
   Animated,
-  ImageBackground,
   Dimensions,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
-import {Field, reduxForm} from 'redux-form';
+import {reduxForm} from 'redux-form';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Form, TextValidator} from 'react-native-validator-form';
 import AwesomeAlert from 'react-native-awesome-alerts';
@@ -28,7 +26,6 @@ import {confirmUser, loginUser} from '../actions/auth.actions';
 import Loader from '../components/loader';
 import {Actions} from 'react-native-router-flux';
 import colorConfig from '../config/colorConfig';
-import appConfig from '../config/appConfig';
 
 const imageWidth = Dimensions.get('window').width / 2;
 

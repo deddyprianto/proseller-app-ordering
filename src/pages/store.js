@@ -18,7 +18,6 @@ import * as geolib from 'geolib';
 import * as _ from 'lodash';
 import Geolocation from 'react-native-geolocation-service';
 
-import awsConfig from '../config/awsConfig';
 import Loader from '../components/loader';
 import colorConfig from '../config/colorConfig';
 import StorePromotion from '../components/storePromotion';
@@ -97,11 +96,11 @@ class Store extends Component {
           this.setDataStore(this.props.dataStores, true, position);
         },
         async error => {
-          alert(error.message);
+          // alert(error.message);
           await this.props.dispatch(dataStores());
           this.setDataStore(this.props.dataStores, false, null);
         },
-        {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000},
+        {enableHighAccuracy: true, timeout: 3000, maximumAge: 1000},
       );
     } catch (error) {
       await this.props.dispatch(
