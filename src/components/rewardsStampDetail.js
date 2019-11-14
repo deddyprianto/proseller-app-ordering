@@ -32,9 +32,6 @@ class StampDetail extends Component {
         <Text style={styles.description}>
           {this.props.dataStamps.dataStamps.stamps.stampsDesc}
         </Text>
-        <TouchableOpacity>
-          <Text style={styles.btn}>Learn More</Text>
-        </TouchableOpacity>
       </View>
     );
   }
@@ -42,11 +39,11 @@ class StampDetail extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    height: Dimensions.get('window').height / 5 - 10,
     alignContent: 'center',
     backgroundColor: colorConfig.pageIndex.activeTintColor,
     paddingLeft: 10,
     paddingRight: 10,
+    paddingBottom: 10,
     alignItems: 'center',
   },
   title: {
@@ -79,9 +76,6 @@ mapDispatchToProps = dispatch => ({
   dispatch,
 });
 
-export default compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
-)(StampDetail);
+export default compose(connect(mapStateToProps, mapDispatchToProps))(
+  StampDetail,
+);

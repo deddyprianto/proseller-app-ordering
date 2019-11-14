@@ -33,6 +33,7 @@ import {
   getStamps,
 } from '../actions/rewards.action';
 import {dataInbox} from '../actions/inbox.action';
+import {dataPromotion} from '../actions/promotion.action';
 
 class Store extends Component {
   constructor(props) {
@@ -53,6 +54,7 @@ class Store extends Component {
 
   componentDidMount = async () => {
     await this.props.dispatch(campaign());
+    await this.props.dispatch(dataPromotion());
     await this.props.dispatch(dataPoint());
     await this.props.dispatch(vouchers());
     await this.props.dispatch(myVoucers());
@@ -445,7 +447,9 @@ class Store extends Component {
             </View>
           ) : (
             <View style={styles.container}>
-              <StorePromotion />
+              {this.props.dataPromotion == undefined ? null : (
+                <StorePromotion />
+              )}
               <View
                 style={{
                   flexDirection: 'row',
@@ -458,37 +462,44 @@ class Store extends Component {
                   borderRadius: 10,
                   alignItems: 'center',
                 }}>
-                <View style={styles.point}>
-                  <Image
-                    style={{height: 18, width: 25, marginRight: 5}}
-                    source={require('../assets/img/ticket.png')}
+                {this.props.totalPoint == undefined ||
+                this.props.totalPoint == 0 ? null : (
+                  <View style={styles.point}>
+                    <Image
+                      style={{height: 18, width: 25, marginRight: 5}}
+                      source={require('../assets/img/ticket.png')}
+                    />
+                    <Text
+                      style={{
+                        color: colorConfig.pageIndex.activeTintColor,
+                        fontSize: 14,
+                        fontFamily: 'Lato-Medium',
+                      }}>
+                      {'Point : '}
+                    </Text>
+                    <Text
+                      style={{
+                        color: colorConfig.pageIndex.activeTintColor,
+                        fontSize: 14,
+                        fontFamily: 'Lato-Bold',
+                      }}>
+                      {this.props.totalPoint == undefined
+                        ? 0
+                        : this.props.totalPoint}
+                    </Text>
+                  </View>
+                )}
+                {this.props.totalPoint == undefined ||
+                this.props.totalPoint == 0 ? null : (
+                  <View
+                    style={{
+                      backgroundColor: colorConfig.pageIndex.grayColor,
+                      width: 1,
+                      height: 35,
+                    }}
                   />
-                  <Text
-                    style={{
-                      color: colorConfig.pageIndex.activeTintColor,
-                      fontSize: 14,
-                      fontFamily: 'Lato-Medium',
-                    }}>
-                    {'Point : '}
-                  </Text>
-                  <Text
-                    style={{
-                      color: colorConfig.pageIndex.activeTintColor,
-                      fontSize: 14,
-                      fontFamily: 'Lato-Bold',
-                    }}>
-                    {this.props.totalPoint == undefined
-                      ? 0
-                      : this.props.totalPoint}
-                  </Text>
-                </View>
-                <View
-                  style={{
-                    backgroundColor: colorConfig.pageIndex.grayColor,
-                    width: 1,
-                    height: 35,
-                  }}
-                />
+                )}
+
                 <TouchableOpacity
                   style={styles.point}
                   onPress={this.myVouchers}>
@@ -593,15 +604,11 @@ mapStateToProps = state => ({
   myVoucers: state.accountsReducer.myVoucers.myVoucers,
   totalPoint: state.rewardsReducer.dataPoint.totalPoint,
   userDetail: state.userReducer.getUser.userDetails,
+  dataPromotion: state.promotionReducer.dataPromotion.promotion,
 });
 
 mapDispatchToProps = dispatch => ({
   dispatch,
 });
 
-export default compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
-)(Store);
+export default compose(connect(mapStateToProps, mapDispatchToProps))(Store);

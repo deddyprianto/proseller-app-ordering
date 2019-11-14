@@ -89,35 +89,43 @@ class Account extends Component {
               alignItems: 'center',
               marginBottom: 10,
             }}>
-            <View style={styles.point}>
-              <Image
-                style={{height: 18, width: 25, marginRight: 5}}
-                source={require('../assets/img/ticket.png')}
+            {this.props.totalPoint == undefined ||
+            this.props.totalPoint == 0 ? null : (
+              <View style={styles.point}>
+                <Image
+                  style={{height: 18, width: 25, marginRight: 5}}
+                  source={require('../assets/img/ticket.png')}
+                />
+                <Text
+                  style={{
+                    color: colorConfig.pageIndex.activeTintColor,
+                    fontSize: 14,
+                    fontFamily: 'Lato-Medium',
+                  }}>
+                  {'Point : '}
+                </Text>
+                <Text
+                  style={{
+                    color: colorConfig.pageIndex.activeTintColor,
+                    fontSize: 14,
+                    fontFamily: 'Lato-Bold',
+                  }}>
+                  {this.props.totalPoint == undefined
+                    ? 0
+                    : this.props.totalPoint}
+                </Text>
+              </View>
+            )}
+            {this.props.totalPoint == undefined ||
+            this.props.totalPoint == 0 ? null : (
+              <View
+                style={{
+                  backgroundColor: colorConfig.pageIndex.grayColor,
+                  width: 1,
+                  height: 35,
+                }}
               />
-              <Text
-                style={{
-                  color: colorConfig.pageIndex.activeTintColor,
-                  fontSize: 14,
-                  fontFamily: 'Lato-Medium',
-                }}>
-                {'Point : '}
-              </Text>
-              <Text
-                style={{
-                  color: colorConfig.pageIndex.activeTintColor,
-                  fontSize: 14,
-                  fontFamily: 'Lato-Bold',
-                }}>
-                {this.props.totalPoint == undefined ? 0 : this.props.totalPoint}
-              </Text>
-            </View>
-            <View
-              style={{
-                backgroundColor: colorConfig.pageIndex.grayColor,
-                width: 1,
-                height: 35,
-              }}
-            />
+            )}
             <TouchableOpacity style={styles.point} onPress={this.editProfil}>
               <Image
                 resizeMode="stretch"
@@ -186,9 +194,4 @@ mapDispatchToProps = dispatch => ({
   dispatch,
 });
 
-export default compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
-)(Account);
+export default compose(connect(mapStateToProps, mapDispatchToProps))(Account);

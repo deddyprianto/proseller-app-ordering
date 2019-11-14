@@ -34,7 +34,7 @@ export default class PaymentSuccess extends Component {
   }
 
   goBack() {
-    Actions.popTo('pageIndex');
+    Actions.pageIndex();
   }
 
   getDate(date) {

@@ -6,7 +6,7 @@ import {
   Dimensions,
   ScrollView,
   RefreshControl,
-  AsyncStorage,
+  TouchableOpacity,
 } from 'react-native';
 import {createAppContainer} from 'react-navigation';
 // import {createMaterialTopTabNavigator} from 'react-navigation-tabs';
@@ -28,6 +28,8 @@ import RewardsStamp from '../components/rewardsStamp';
 import RewardsMenu from '../components/rewardsMenu';
 import RewardsTransaction from '../components/rewardsTransaction';
 import Loader from '../components/loader';
+import colorConfig from '../config/colorConfig';
+import {Actions} from 'react-native-router-flux';
 
 class Rewards extends Component {
   constructor(props) {
@@ -74,6 +76,10 @@ class Rewards extends Component {
     this.setState({refreshing: false});
   };
 
+  detailStamps() {
+    Actions.detailStamps();
+  }
+
   render() {
     return (
       <ScrollView
@@ -91,9 +97,32 @@ class Rewards extends Component {
           <View>
             {this.props.dataStamps.dataStamps == undefined ? null : this.props
                 .dataStamps.dataStamps.length == 0 ? null : (
-              <RewardsStamp />
+              <View
+                style={{
+                  backgroundColor: colorConfig.pageIndex.activeTintColor,
+                  alignItems: 'center',
+                }}>
+                <RewardsStamp />
+                <TouchableOpacity
+                  onPress={this.detailStamps}
+                  style={{
+                    width: 100,
+                  }}>
+                  <Text style={styles.btn}>Learn More</Text>
+                </TouchableOpacity>
+              </View>
             )}
-            <RewardsPoint />
+            {this.props.totalPoint == undefined ||
+            this.props.totalPoint == 0 ? (
+              <View
+                style={{
+                  backgroundColor: colorConfig.pageIndex.activeTintColor,
+                  height: this.state.screenHeight / 5 - 35,
+                }}
+              />
+            ) : (
+              <RewardsPoint />
+            )}
             <RewardsMenu myVoucers={this.props.myVoucers} />
             <RewardsTransaction screen={this.props} />
           </View>
@@ -107,21 +136,24 @@ const styles = StyleSheet.create({
   loading: {
     height: Dimensions.get('window').height,
   },
+  btn: {
+    color: colorConfig.pageIndex.listBorder,
+    fontSize: 14,
+    paddingTop: 5,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
 });
 
 mapStateToProps = state => ({
   recentTransaction: state.rewardsReducer.dataPoint.recentTransaction,
   myVoucers: state.accountsReducer.myVoucers.myVoucers,
   dataStamps: state.rewardsReducer.getStamps,
+  totalPoint: state.rewardsReducer.dataPoint.totalPoint,
 });
 
 mapDispatchToProps = dispatch => ({
   dispatch,
 });
 
-export default compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
-)(Rewards);
+export default compose(connect(mapStateToProps, mapDispatchToProps))(Rewards);

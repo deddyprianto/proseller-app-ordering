@@ -105,8 +105,8 @@ class RewardsRewards extends Component {
             </View>
           ) : (
             <View>
-              <RewardsStamp />
-              <RewardsStampDetail />
+              {/* <RewardsStamp />
+              <RewardsStampDetail /> */}
               {this.props.vouchers != undefined ? (
                 <RewordsVouchers />
               ) : (
@@ -177,9 +177,6 @@ mapDispatchToProps = dispatch => ({
   dispatch,
 });
 
-export default compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
-)(RewardsRewards);
+export default compose(connect(mapStateToProps, mapDispatchToProps))(
+  RewardsRewards,
+);

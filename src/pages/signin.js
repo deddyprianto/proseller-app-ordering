@@ -371,7 +371,9 @@ class Signin extends Component {
                 type="text"
                 under
                 value={this.state.username}
-                onChangeText={value => this.setState({username: value})}
+                onChangeText={value =>
+                  this.setState({username: value.replace(/\s/g, '')})
+                }
               />
               <View>
                 <TextValidator
@@ -538,10 +540,7 @@ mapDispatchToProps = dispatch => ({
 });
 
 export default compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   reduxForm({
     form: 'login',
     validate,

@@ -19,52 +19,65 @@ class RewardsStamp extends Component {
     this.state = {
       screenWidth: Dimensions.get('window').width,
       screenHeight: Dimensions.get('window').height,
+      stampsItem: [],
     };
+  }
+
+  componentDidMount = () => {
+    this.getItemStamp();
+  };
+
+  getItemStamp() {
+    var stampsItem = [];
+    if (this.props.dataStamps.dataStamps != undefined) {
+      var tampung = this.props.dataStamps.dataStamps.stamps.stampsItem;
+      var isi = [];
+      for (let i = 1; i <= tampung.length; i++) {
+        isi.push(tampung[i - 1]);
+        if (i % 5 == 0) {
+          stampsItem.push(isi);
+          isi = [];
+        }
+        if (i == tampung.length) {
+          stampsItem.push(isi);
+        }
+      }
+    }
+    this.setState({stampsItem});
   }
 
   render() {
     return (
       <View style={styles.container}>
         <Text style={styles.title}>Stamp Card</Text>
-        {/* {console.log(this.props.dataStamps.dataStamps)} */}
         <View style={styles.card}>
-          {this.props.dataStamps.dataStamps == undefined ? null : (
-            <ScrollView
-              horizontal={true}
-              Style={{
-                flex: 1,
-                alignContent: 'space-between',
-                justifyContent: 'center',
-              }}
-              contentContainerStyle={{
-                flexGrow: 1,
-                justifyContent: 'center',
-              }}
-              showsHorizontalScrollIndicator={false}>
-              {this.props.dataStamps.dataStamps.length == 0
-                ? null
-                : this.props.dataStamps.dataStamps.stamps.stampsItem.map(
-                    (item, key) => (
-                      <TouchableOpacity
-                        key={key}
-                        style={
-                          item.stampsStatus == '-'
-                            ? styles.item
-                            : styles.itemFree
-                        }>
-                        <Text
-                          style={
-                            item.stampsStatus == '-'
-                              ? styles.detail
-                              : styles.detailFree
-                          }>
-                          {appConfig.appName}
-                        </Text>
-                      </TouchableOpacity>
-                    ),
-                  )}
-            </ScrollView>
-          )}
+          {this.state.stampsItem.map((items, keys) => (
+            <View
+              key={keys}
+              style={{
+                marginTop: 5,
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+              }}>
+              {items.map((item, key) => (
+                <TouchableOpacity
+                  key={key}
+                  style={
+                    item.stampsStatus == '-' ? styles.item : styles.itemFree
+                  }>
+                  <Text
+                    style={
+                      item.stampsStatus == '-'
+                        ? styles.detail
+                        : styles.detailFree
+                    }>
+                    {appConfig.appName}
+                    {console.log(item.stampsStatus)}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          ))}
         </View>
       </View>
     );
@@ -73,7 +86,6 @@ class RewardsStamp extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    height: Dimensions.get('window').height / 5 - 15,
     alignContent: 'center',
     backgroundColor: colorConfig.pageIndex.activeTintColor,
   },
@@ -92,10 +104,9 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     marginRight: 10,
     borderRadius: 10,
-    marginTop: 5,
     backgroundColor: colorConfig.pageIndex.activeTintColor,
-    justifyContent: 'space-between',
-    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
     padding: 10,
   },
   item: {
@@ -136,9 +147,6 @@ mapDispatchToProps = dispatch => ({
   dispatch,
 });
 
-export default compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
-)(RewardsStamp);
+export default compose(connect(mapStateToProps, mapDispatchToProps))(
+  RewardsStamp,
+);

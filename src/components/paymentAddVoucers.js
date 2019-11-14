@@ -148,7 +148,7 @@ export default class PaymentAddVoucers extends Component {
                             {item['totalRedeem'] + 'x'}
                           </Text>
                         </View>
-                        <View
+                        {/* <View
                           style={{
                             position: 'absolute',
                             right: 0,
@@ -171,7 +171,7 @@ export default class PaymentAddVoucers extends Component {
                             }}>
                             {item['redeemValue'] + ' Points'}
                           </Text>
-                        </View>
+                        </View> */}
                       </View>
                       <View style={styles.voucherDetail}>
                         <View style={styles.status}>
