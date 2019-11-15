@@ -46,8 +46,8 @@ class Main extends Component {
         Auth: {
           identityPoolId: awsConfig.identityPoolId,
           region: awsConfig.region,
-          userPoolId: awsConfig.awsUserPoolId,
-          userPoolWebClientId: awsConfig.awsUserPoolWebClientId,
+          userPoolId: awsConfig.cognitoPoolId,
+          userPoolWebClientId: awsConfig.appClientId,
           mandatorySignIn: false,
         },
       });

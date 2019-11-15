@@ -30,6 +30,7 @@ import Loader from '../components/loader';
 import {Actions} from 'react-native-router-flux';
 import colorConfig from '../config/colorConfig';
 import appConfig from '../config/appConfig';
+import awsConfig from '../config/awsConfig';
 
 const imageWidth = Dimensions.get('window').width / 2;
 
@@ -191,8 +192,10 @@ class Signin extends Component {
   loginUser = async values => {
     try {
       var dataLogin = {
-        username: this.state.username,
+        username: this.state.username.toLowerCase(),
         password: this.state.password,
+        appClientId: awsConfig.appClientId,
+        cognitoPoolId: awsConfig.cognitoPoolId,
         type: 'userPool',
       };
       const response = await this.props.dispatch(loginUser(dataLogin));
@@ -285,6 +288,8 @@ class Signin extends Component {
                     email: json.email,
                     name: json.name,
                     idFB: json.id,
+                    appClientId: awsConfig.appClientId,
+                    cognitoPoolId: awsConfig.cognitoPoolId,
                     model: 'facebook',
                   };
                   const response = await this.props.dispatch(
@@ -372,7 +377,7 @@ class Signin extends Component {
                 under
                 value={this.state.username}
                 onChangeText={value =>
-                  this.setState({username: value.replace(/\s/g, '')})
+                  this.setState({username: value.replace(/\s/g, '').toLowerCase()})
                 }
               />
               <View>

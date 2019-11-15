@@ -49,6 +49,8 @@ class SigninWaitPassword extends Component {
         newPassword: this.state.password,
         name: this.props.dataLogin.name,
         phoneNumber: this.phone.getValue(),
+        appClientId: awsConfig.appClientId,
+        cognitoPoolId: awsConfig.cognitoPoolId,
         type: 'identityPool',
       };
       console.log(dataLogin, 'signinWaitPassword');

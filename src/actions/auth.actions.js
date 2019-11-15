@@ -171,6 +171,8 @@ export const refreshToken = () => {
     try {
       var payload = {
         refreshToken: state.authReducer.authData.refreshToken,
+        appClientId: awsConfig.appClientId,
+        cognitoPoolId: awsConfig.cognitoPoolId,
       };
       // console.log(state.authReducer.authData.tokenExp);
       // console.log(state.authReducer.authData.token);

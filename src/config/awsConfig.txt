@@ -1,6 +1,6 @@
 const awsConfig = {
-  awsUserPoolId: '',
-  awsUserPoolWebClientId: '',
+  cognitoPoolId: '',
+  appClientId: '',
   base_url: '',
   tenant: '',
 

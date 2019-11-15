@@ -224,10 +224,12 @@ class Signup extends Component {
       var dataRegister = {
         tenantId: awsConfig.tenantId,
         email: this.state.email,
-        username: this.state.email,
+        username: this.state.email.toLowerCase(),
         password: this.state.password,
         name: this.state.name,
         phoneNumber: this.phone.getValue(),
+        appClientId: awsConfig.appClientId,
+        cognitoPoolId: awsConfig.cognitoPoolId,
         type: 'userPool',
         // "nickname": this.state.nickname,
         // "address": this.state.address,
@@ -394,7 +396,7 @@ class Signup extends Component {
                 type="text"
                 under
                 value={this.state.email}
-                onChangeText={value => this.setState({email: value})}
+                onChangeText={value => this.setState({email: value.replace(/\s/g, '').toLowerCase()})}
               />
 
               <TextValidator
@@ -413,7 +415,7 @@ class Signup extends Component {
                 type="text"
                 under
                 value={this.state.reemail}
-                onChangeText={value => this.setState({reemail: value})}
+                onChangeText={value => this.setState({reemail: value.replace(/\s/g, '').toLowerCase()})}
               />
 
               <PhoneInput

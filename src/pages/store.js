@@ -447,7 +447,7 @@ class Store extends Component {
             </View>
           ) : (
             <View style={styles.container}>
-              {this.props.dataPromotion == undefined ? null : (
+              {this.props.dataPromotion == undefined || this.props.dataPromotion.count == 0 ? null : (
                 <StorePromotion />
               )}
               <View
