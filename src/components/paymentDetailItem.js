@@ -82,7 +82,7 @@ export default class PaymentDetailItem extends Component {
                             </Text>
                             <Text style={styles.descItem}>{item.qty}</Text>
                             <Text style={styles.descItem}>
-                              {item.qty * item.prace}
+                              {item.qty * item.price}
                             </Text>
                           </View>
                         </View>

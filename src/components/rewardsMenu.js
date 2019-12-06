@@ -24,9 +24,9 @@ export default class RewardsMenu extends Component {
       storeName: 'Bugis Village',
       storeId: 'a176cb90-c64c-4bb5-bffa-df7be0f3e530',
       dataPay: [
-        {itemName: 'Nasi Goreng Pedas', qty: 1, prace: 10},
-        {itemName: 'Teh Jeruk Manis', qty: 1, prace: 5},
-        {itemName: 'Cendol Goreng', qty: 1, prace: 5},
+        {itemName: 'Nasi Goreng Pedas', qty: 1, price: 10},
+        {itemName: 'Teh Jeruk Manis', qty: 1, price: 5},
+        {itemName: 'Cendol Goreng', qty: 1, price: 5},
       ],
     };
     // console.log(pembayaran);

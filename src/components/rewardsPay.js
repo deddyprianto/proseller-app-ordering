@@ -58,8 +58,8 @@ class RewardsPay extends Component {
       //   'storeName': 'Qiji Test',
       //   // 'paymentType': 'Cash'
       //   'dataPay' : [
-      //     {'itemName': 'nasi', 'qty': 1, 'prace': 10},
-      //     {'itemName': 'buah', 'qty': 1, 'prace': 10}
+      //     {'itemName': 'nasi', 'qty': 1, 'price': 10},
+      //     {'itemName': 'buah', 'qty': 1, 'price': 10}
       //   ]
       // })}
       const response = await this.props.dispatch(sendPayment(data));
@@ -217,9 +217,4 @@ mapDispatchToProps = dispatch => ({
   dispatch,
 });
 
-export default compose(
-  connect(
-    null,
-    mapDispatchToProps,
-  ),
-)(RewardsPay);
+export default compose(connect(null, mapDispatchToProps))(RewardsPay);

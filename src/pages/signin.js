@@ -363,7 +363,7 @@ class Signin extends Component {
               <TextValidator
                 name="email"
                 label="email"
-                validators={['required', 'isEmail']}
+                validators={['required']}
                 text={{color: '#1b245c'}}
                 errorStyle={{
                   container: {top: 5, left: 5},
@@ -377,7 +377,9 @@ class Signin extends Component {
                 under
                 value={this.state.username}
                 onChangeText={value =>
-                  this.setState({username: value.replace(/\s/g, '').toLowerCase()})
+                  this.setState({
+                    username: value.replace(/\s/g, '').toLowerCase(),
+                  })
                 }
               />
               <View>
