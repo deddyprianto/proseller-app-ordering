@@ -26,6 +26,7 @@ import {confirmUser, loginUser} from '../actions/auth.actions';
 import Loader from '../components/loader';
 import {Actions} from 'react-native-router-flux';
 import colorConfig from '../config/colorConfig';
+import awsConfig from '../config/awsConfig';
 
 const imageWidth = Dimensions.get('window').width / 2;
 
@@ -113,7 +114,7 @@ class Aunt extends Component {
     this.state = {
       username:
         this.props.dataRegister != undefined
-          ? this.props.dataRegister.email
+          ? this.props.dataRegister.username
           : '',
       confirmationCode: '',
       press: false,
@@ -138,8 +139,10 @@ class Aunt extends Component {
       var dataVerify = {
         username: this.state.username,
         confirmationCode: this.state.confirmationCode,
+        appClientId: awsConfig.appClientId,
+        cognitoPoolId: awsConfig.cognitoPoolId,
       };
-      // console.log(dataVerify)
+      // console.log('dataVerify');
       const response = await this.props.dispatch(confirmUser(dataVerify));
       if (!response.success) {
         throw response;
@@ -168,8 +171,10 @@ class Aunt extends Component {
   submitLogin = async () => {
     try {
       var dataLogin = {
-        username: this.props.dataRegister.email,
+        username: this.state.username,
         password: this.props.dataRegister.password,
+        appClientId: awsConfig.appClientId,
+        cognitoPoolId: awsConfig.cognitoPoolId,
       };
       const response = await this.props.dispatch(loginUser(dataLogin));
       if (response.success == false) {
@@ -397,10 +402,7 @@ mapDispatchToProps = dispatch => ({
 });
 
 export default compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   reduxForm({
     form: 'confirm',
     validate,

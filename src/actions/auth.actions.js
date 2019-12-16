@@ -60,6 +60,7 @@ export const confirmUser = payload => {
       dispatch({
         type: 'CONFIRM_USER_LOADING',
       });
+      console.log(payload, 'payload confirm');
       const response = await fetchApi(
         '/customer/confirm',
         'POST',
@@ -67,7 +68,7 @@ export const confirmUser = payload => {
         200,
       );
 
-      console.log(response);
+      console.log(response, 'response confirm');
 
       if (response.success) {
         dispatch({
@@ -108,6 +109,7 @@ export const loginUser = payload => {
         dispatch({
           type: 'AUTH_USER_SUCCESS',
           token: response.responseBody.accessToken.jwtToken,
+          qrcode: response.responseBody.accessToken.qrcode,
           exp: response.responseBody.accessToken.payload.exp * 1000 - 2700000,
           refreshToken: response.responseBody.refreshToken.token,
         });
@@ -249,6 +251,7 @@ export const loginOther = payload => {
         dispatch({
           type: 'AUTH_USER_SUCCESS',
           token: response.responseBody.accessToken.jwtToken,
+          qrcode: response.responseBody.accessToken.qrcode,
           exp: response.responseBody.idToken.payload.exp * 1000 - 2700000,
           refreshToken: response.responseBody.refreshToken.token,
         });
@@ -264,6 +267,7 @@ export const loginOther = payload => {
         dispatch({
           type: 'AUTH_USER_SUCCESS',
           token: response.responseBody.accessToken.jwtToken,
+          qrcode: response.responseBody.accessToken.qrcode,
           exp: response.responseBody.idToken.payload.exp * 1000 - 2700000,
           refreshToken: response.responseBody.refreshToken.token,
         });

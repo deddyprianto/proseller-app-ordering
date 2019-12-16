@@ -372,7 +372,7 @@ class Signin extends Component {
                   underlineInvalidColor: 'red',
                 }}
                 errorMessages={['This field is required', 'Email invalid']}
-                placeholder="Email"
+                placeholder="Email / Phone Number"
                 type="text"
                 under
                 value={this.state.username}

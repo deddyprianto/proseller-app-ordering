@@ -225,6 +225,7 @@ class Signup extends Component {
         tenantId: awsConfig.tenantId,
         email: this.state.email,
         username: this.state.email.toLowerCase(),
+        // username: this.phone.getValue(),
         password: this.state.password,
         name: this.state.name,
         phoneNumber: this.phone.getValue(),
@@ -396,7 +397,9 @@ class Signup extends Component {
                 type="text"
                 under
                 value={this.state.email}
-                onChangeText={value => this.setState({email: value.replace(/\s/g, '').toLowerCase()})}
+                onChangeText={value =>
+                  this.setState({email: value.replace(/\s/g, '').toLowerCase()})
+                }
               />
 
               <TextValidator
@@ -415,7 +418,11 @@ class Signup extends Component {
                 type="text"
                 under
                 value={this.state.reemail}
-                onChangeText={value => this.setState({reemail: value.replace(/\s/g, '').toLowerCase()})}
+                onChangeText={value =>
+                  this.setState({
+                    reemail: value.replace(/\s/g, '').toLowerCase(),
+                  })
+                }
               />
 
               <PhoneInput
@@ -576,10 +583,7 @@ mapDispatchToProps = dispatch => ({
 });
 
 export default compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   reduxForm({
     form: 'register',
     validate,

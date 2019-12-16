@@ -46,6 +46,7 @@ class Inbox extends Component {
   inboxDetail = async item => {
     item.read = 'true';
     await AsyncStorage.setItem('@inbox' + item.id, 'true');
+    await this.props.dispatch(dataInbox());
     Actions.inboxDetail({dataItem: item});
   };
 
@@ -210,9 +211,4 @@ mapDispatchToProps = dispatch => ({
   dispatch,
 });
 
-export default compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
-)(Inbox);
+export default compose(connect(mapStateToProps, mapDispatchToProps))(Inbox);

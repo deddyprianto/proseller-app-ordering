@@ -151,13 +151,15 @@ class PaymentDetail extends Component {
       this.props.addPoint == undefined
     ) {
       pembayaran.statusAdd = null;
+      pembayaran.redeemValue = 0;
     } else {
       pembayaran.beforePrice = this.props.pembayaran.payment;
       pembayaran.afterPrice = this.state.totalBayar;
 
       if (this.props.dataVoucer != undefined) {
         pembayaran.voucherId = this.props.dataVoucer.id;
-        pembayaran.statusAdd = 'addVoucer';
+        pembayaran.voucherSerialNumber = this.props.dataVoucer.serialNumber;
+        pembayaran.statusAdd = 'addVoucher';
       }
       if (this.props.addPoint != undefined) {
         pembayaran.redeemValue = this.props.addPoint;
@@ -714,9 +716,6 @@ mapDispatchToProps = dispatch => ({
   dispatch,
 });
 
-export default compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
-)(PaymentDetail);
+export default compose(connect(mapStateToProps, mapDispatchToProps))(
+  PaymentDetail,
+);
