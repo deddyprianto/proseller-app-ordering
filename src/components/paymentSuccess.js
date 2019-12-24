@@ -142,7 +142,7 @@ export default class PaymentSuccess extends Component {
                 color: colorConfig.pageIndex.activeTintColor,
                 fontSize: 12,
               }}>
-              {'+' + this.props.dataRespons.point + ' Points'}
+              {'+' + this.props.dataRespons.earnedPoint + ' Points'}
             </Text>
           </View>
           <View

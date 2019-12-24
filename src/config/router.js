@@ -10,6 +10,7 @@ import {Router, Scene} from 'react-native-router-flux';
 import Signin from '../pages/signin';
 import Signup from '../pages/signup';
 import Aunt from '../pages/aunt';
+import ForgotPassword from '../pages/forgotPassword';
 import PageIndex from '../pages/pageIndex';
 
 import Pay from '../components/rewardsPay';
@@ -43,6 +44,11 @@ export default class Routes extends Component {
             <Scene key="signup" component={Signup} title="Register" />
             <Scene key="auth" component={Aunt} title="Auntetikasi" />
             <Scene key="signinWaitPassword" component={SigninWaitPassword} />
+            <Scene
+              key="forgotPassword"
+              component={ForgotPassword}
+              title="Forgot Password"
+            />
           </Scene>
           <Scene key="app" hideNavBar={true} initial={this.props.isLoggedIn}>
             <Scene key="pageIndex" component={PageIndex} initial={true} />

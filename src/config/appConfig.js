@@ -13,6 +13,7 @@ const appConfig = {
   appImageNull: require('../assets/img/image_null.png'),
   appName: 'Qiji',
   appMataUang: 'SGD',
+  appVersion: 'Version 1.3.3 (Qiji)',
 };
 
 export default appConfig;

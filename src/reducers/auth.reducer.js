@@ -133,9 +133,73 @@ const confirmUser = (state = {}, action) => {
   }
 };
 
+const sendCodeConfirmation = (state = {}, action) => {
+  switch (action.type) {
+    case 'SEND_CODE_LOADING':
+      return {
+        isLoading: true,
+        isError: false,
+        isSuccess: false,
+        errors: null,
+      };
+
+    case 'SEND_CODE_SUCCESS':
+      return {
+        isLoading: false,
+        isError: false,
+        isSuccess: true,
+        errors: null,
+      };
+
+    case 'SEND_CODE_FAIL':
+      return {
+        isLoading: false,
+        isError: true,
+        isSuccess: false,
+        errors: action.payload,
+      };
+
+    default:
+      return state;
+  }
+};
+
+const confirmForgotPassword = (state = {}, action) => {
+  switch (action.type) {
+    case 'SEND_CODE_LOADING':
+      return {
+        isLoading: true,
+        isError: false,
+        isSuccess: false,
+        errors: null,
+      };
+
+    case 'CONFIRM_CODE_SUCCESS':
+      return {
+        isLoading: false,
+        isError: false,
+        isSuccess: true,
+        errors: null,
+      };
+
+    case 'SEND_CODE_FAIL':
+      return {
+        isLoading: false,
+        isError: true,
+        isSuccess: false,
+        errors: action.payload,
+      };
+
+    default:
+      return state;
+  }
+};
+
 export default combineReducers({
   createUser,
   loginUser,
   authData,
   confirmUser,
+  sendCodeConfirmation,
+  confirmForgotPassword,
 });

@@ -189,6 +189,10 @@ class Signin extends Component {
     Actions.auth();
   }
 
+  forgotPassword = () => {
+    Actions.forgotPassword();
+  };
+
   loginUser = async values => {
     try {
       var dataLogin = {
@@ -393,7 +397,7 @@ class Signin extends Component {
                     'minStringLength:8',
                     'matchRegexp:^(?=.*[0-9])',
                     'matchRegexp:^(?=.*[A-Z])',
-                    'matchRegexp:^(?=.*[a-b])',
+                    'matchRegexp:^(?=.*[a-z])',
                   ]}
                   errorStyle={{
                     container: {top: 5, left: 5},
@@ -435,7 +439,7 @@ class Signin extends Component {
                 marginBottom: 10,
                 marginTop: 10,
               }}>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={this.forgotPassword}>
                 <Text style={styles.verifyButton}>Forgot Password</Text>
               </TouchableOpacity>
             </View>
@@ -502,6 +506,15 @@ class Signin extends Component {
               </TouchableOpacity>
             </View>
           )}
+          <Text
+            style={{
+              color: '#fff',
+              fontSize: 10,
+              textAlign: 'center',
+              marginBottom: 10,
+            }}>
+            {appConfig.appVersion}
+          </Text>
         </ScrollView>
         <AwesomeAlert
           show={this.state.showAlert}

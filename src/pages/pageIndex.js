@@ -3,7 +3,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import {createAppContainer} from 'react-navigation';
 import {createMaterialBottomTabNavigator} from 'react-navigation-material-bottom-tabs';
 import {Container} from 'native-base';
-import {View, Text, Dimensions} from 'react-native';
+import {View, Text, Dimensions, StyleSheet} from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
 
@@ -12,7 +12,10 @@ import History from './history';
 import Rewards from './rewards';
 import Inbox from './inbox';
 import Account from './account';
+import OfflineSign from '../components/offlineSign';
 import colorConfig from '../config/colorConfig';
+
+const isOnline = require('is-online');
 
 const AppTabNavigator = createMaterialBottomTabNavigator(
   {
@@ -95,12 +98,34 @@ class PageIndex extends Component {
     super(props);
     this.state = {
       screenWidth: Dimensions.get('window').width,
+      online: false,
     };
   }
+
+  componentDidMount = async () => {
+    await this.checkOnline();
+  };
+
+  checkOnline = async () => {
+    var online;
+    if (isOnline()) {
+      online = true;
+    } else {
+      online = false;
+    }
+    this.setState({online: online});
+    console.log(online, 'jj');
+  };
+
   render() {
+    // let that = this;
+    // setInterval(() => {
+    //   that.checkOnline();
+    // }, 3000);
     return (
       <Container>
         <AppStackContainer />
+        {this.state.online ? null : <OfflineSign />}
         {this.props.dataInboxNoRead > 0 ? (
           <View
             style={{
@@ -149,9 +174,4 @@ mapDispatchToProps = dispatch => ({
   dispatch,
 });
 
-export default compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
-)(PageIndex);
+export default compose(connect(mapStateToProps, mapDispatchToProps))(PageIndex);

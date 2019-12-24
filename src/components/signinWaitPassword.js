@@ -173,7 +173,7 @@ class SigninWaitPassword extends Component {
                   'minStringLength:8',
                   'matchRegexp:^(?=.*[0-9])',
                   'matchRegexp:^(?=.*[A-Z])',
-                  'matchRegexp:^(?=.*[a-b])',
+                  'matchRegexp:^(?=.*[a-z])',
                 ]}
                 errorStyle={{
                   container: {top: 5, left: 5},
@@ -304,9 +304,6 @@ mapDispatchToProps = dispatch => ({
   dispatch,
 });
 
-export default compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
-)(SigninWaitPassword);
+export default compose(connect(mapStateToProps, mapDispatchToProps))(
+  SigninWaitPassword,
+);

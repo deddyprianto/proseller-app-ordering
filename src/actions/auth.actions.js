@@ -242,7 +242,7 @@ export const loginOther = payload => {
       payload.username = payload.email;
       payload.tenantId = awsConfig.tenantId;
       response = await fetchApi('/customer/login', 'POST', payload, 200);
-      console.log(response, 'loginOther');
+      // console.log(response, 'loginOther');
       dispatch({
         type: 'LOGIN_USER_SUCCESS',
       });
@@ -282,6 +282,72 @@ export const loginOther = payload => {
     } catch (error) {
       dispatch({
         type: 'LOGIN_USER_FAIL',
+        payload: error.responseBody,
+      });
+      return error;
+    }
+  };
+};
+
+export const sendCodeConfirmation = payload => {
+  return async dispatch => {
+    try {
+      dispatch({
+        type: 'SEND_CODE_LOADING',
+      });
+
+      const response = await fetchApi(
+        '/customer/forgotPassword/sendCode',
+        'POST',
+        payload,
+        200,
+      );
+      console.log(response, 'sendCodeConfirmation');
+      if (response.success) {
+        dispatch({
+          type: 'SEND_CODE_SUCCESS',
+        });
+        return response;
+      } else {
+        throw response;
+      }
+    } catch (error) {
+      console.log(error);
+      dispatch({
+        type: 'SEND_CODE_FAIL',
+        payload: error.responseBody,
+      });
+      return error;
+    }
+  };
+};
+
+export const confirmForgotPassword = payload => {
+  return async dispatch => {
+    try {
+      dispatch({
+        type: 'SEND_CODE_LOADING',
+      });
+
+      const response = await fetchApi(
+        '/customer/forgotPassword/confirm',
+        'POST',
+        payload,
+        200,
+      );
+      console.log(response, 'confirmForgotPassword');
+      if (response.success) {
+        dispatch({
+          type: 'CONFIRM_CODE_SUCCESS',
+        });
+        return response;
+      } else {
+        throw response;
+      }
+    } catch (error) {
+      console.log(error);
+      dispatch({
+        type: 'SEND_CODE_FAIL',
         payload: error.responseBody,
       });
       return error;

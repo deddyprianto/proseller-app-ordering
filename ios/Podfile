@@ -46,6 +46,8 @@ target 'Qiji' do
 
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
 
+  pod 'RNPermissions', :path => '../node_modules/react-native-permissions'
+
   target 'QijiTests' do
     inherit! :search_paths
     # Pods for testing

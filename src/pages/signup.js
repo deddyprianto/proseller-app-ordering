@@ -315,6 +315,7 @@ class Signup extends Component {
     const imageStyle = [styles.logo, {width: this.imageWidth}];
     return (
       <View style={styles.backgroundImage}>
+        {console.log(createUser, 'createUser')}
         {createUser.isLoading && <Loader />}
         <View
           style={{
@@ -453,7 +454,7 @@ class Signup extends Component {
                     'minStringLength:8',
                     'matchRegexp:^(?=.*[0-9])',
                     'matchRegexp:^(?=.*[A-Z])',
-                    'matchRegexp:^(?=.*[a-b])',
+                    'matchRegexp:^(?=.*[a-z])',
                   ]}
                   errorStyle={{
                     container: {top: 5, left: 5},

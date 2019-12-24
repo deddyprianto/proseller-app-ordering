@@ -1,6 +1,6 @@
 {
   "name": "Qiji",
-  "version": "0.0.1",
+  "version": "1.1.1",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -16,6 +16,7 @@
     "aws-amplify": "^1.2.2",
     "aws-sdk": "^2.554.0",
     "geolib": "^3.0.4",
+    "is-online": "^8.2.1",
     "lodash": "^4.17.15",
     "native-base": "^2.13.8",
     "react": "16.9.0",
@@ -30,6 +31,7 @@
     "react-native-modal-datetime-picker": "^7.6.0",
     "react-native-open-maps": "^0.3.4",
     "react-native-paper": "^3.0.0",
+    "react-native-permissions": "^2.0.8",
     "react-native-phone-input": "^0.2.4",
     "react-native-qrcode-scanner": "^1.2.3",
     "react-native-qrcode-svg": "^5.2.0",

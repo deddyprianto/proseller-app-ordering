@@ -217,7 +217,4 @@ mapStateToProps = state => ({
   authData: state.authReducer.authData,
 });
 
-export default connect(
-  mapStateToProps,
-  null,
-)(Main);
+export default connect(mapStateToProps, null)(Main);

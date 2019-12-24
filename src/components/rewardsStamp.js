@@ -23,8 +23,8 @@ class RewardsStamp extends Component {
     };
   }
 
-  componentDidMount = () => {
-    this.getItemStamp();
+  componentDidMount = async () => {
+    await this.getItemStamp();
   };
 
   getItemStamp() {
@@ -47,6 +47,10 @@ class RewardsStamp extends Component {
   }
 
   render() {
+    let that = this;
+    setTimeout(() => {
+      that.getItemStamp();
+    }, 1000);
     return (
       <View style={styles.container}>
         <Text style={styles.title}>Stamp Card</Text>
@@ -72,7 +76,6 @@ class RewardsStamp extends Component {
                         : styles.detailFree
                     }>
                     {appConfig.appName}
-                    {console.log(item.stampsStatus)}
                   </Text>
                 </TouchableOpacity>
               ))}

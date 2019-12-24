@@ -19,20 +19,20 @@ export default class RewardsMenu extends Component {
   }
 
   pagePay() {
-    var pembayaran = {
-      payment: 20,
-      storeName: 'Bugis Village',
-      storeId: 'a176cb90-c64c-4bb5-bffa-df7be0f3e530',
-      dataPay: [
-        {itemName: 'Nasi Goreng Pedas', qty: 1, price: 10},
-        {itemName: 'Teh Jeruk Manis', qty: 1, price: 5},
-        {itemName: 'Cendol Goreng', qty: 1, price: 5},
-      ],
-    };
+    // var pembayaran = {
+    //   payment: 20,
+    //   storeName: 'Bugis Village',
+    //   storeId: 'a176cb90-c64c-4bb5-bffa-df7be0f3e530',
+    //   dataPay: [
+    //     {itemName: 'Nasi Goreng Pedas', qty: 1, price: 10},
+    //     {itemName: 'Teh Jeruk Manis', qty: 1, price: 5},
+    //     {itemName: 'Cendol Goreng', qty: 1, price: 5},
+    //   ],
+    // };
     // console.log(pembayaran);
     // Actions.pay()
-    // Actions.scan();
-    Actions.paymentDetail({pembayaran: pembayaran});
+    Actions.scan();
+    // Actions.paymentDetail({pembayaran: pembayaran});
   }
 
   pageRewards() {

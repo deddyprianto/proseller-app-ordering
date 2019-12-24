@@ -28,6 +28,7 @@ import RewardsStamp from '../components/rewardsStamp';
 import RewardsMenu from '../components/rewardsMenu';
 import RewardsTransaction from '../components/rewardsTransaction';
 import Loader from '../components/loader';
+import OfflineSign from '../components/offlineSign';
 import colorConfig from '../config/colorConfig';
 import {Actions} from 'react-native-router-flux';
 
@@ -74,6 +75,7 @@ class Rewards extends Component {
     this.setState({refreshing: true});
     this.getDataRewards();
     this.setState({refreshing: false});
+    // Actions.pageIndex();
   };
 
   detailStamps() {
@@ -102,7 +104,7 @@ class Rewards extends Component {
                   backgroundColor: colorConfig.pageIndex.activeTintColor,
                   alignItems: 'center',
                 }}>
-                <RewardsStamp />
+                <RewardsStamp dataStamps={this.props.dataStamps} />
                 <TouchableOpacity
                   onPress={this.detailStamps}
                   style={{

@@ -141,10 +141,7 @@ class PaymentDetail extends Component {
     pembayaran.storeId = this.props.pembayaran.storeId;
     pembayaran.paymentType = 'Cash';
     pembayaran.dataPay = this.props.pembayaran.dataPay;
-    pembayaran.stamps =
-      this.props.dataStamps.dataStamps.length == 0
-        ? null
-        : this.props.dataStamps.dataStamps;
+    pembayaran.void = false;
 
     if (
       this.props.dataVoucer == undefined &&
