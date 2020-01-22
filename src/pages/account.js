@@ -61,7 +61,7 @@ class Account extends Component {
 
   editProfil = () => {
     var dataDiri = {dataDiri: this.props.userDetail};
-    Actions.accountEditProfil(dataDiri);
+    Actions.editProfile(dataDiri);
   };
 
   render() {

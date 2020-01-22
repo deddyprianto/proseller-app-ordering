@@ -112,9 +112,9 @@ class Aunt extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      username:
+      phoneNumber:
         this.props.dataRegister != undefined
-          ? this.props.dataRegister.username
+          ? this.props.dataRegister.phoneNumber
           : '',
       confirmationCode: '',
       press: false,
@@ -137,10 +137,9 @@ class Aunt extends Component {
   handleSubmit = async () => {
     try {
       var dataVerify = {
-        username: this.state.username,
+        phoneNumber: this.state.phoneNumber,
         confirmationCode: this.state.confirmationCode,
         appClientId: awsConfig.appClientId,
-        cognitoPoolId: awsConfig.cognitoPoolId,
       };
       // console.log('dataVerify');
       const response = await this.props.dispatch(confirmUser(dataVerify));
@@ -171,7 +170,7 @@ class Aunt extends Component {
   submitLogin = async () => {
     try {
       var dataLogin = {
-        username: this.state.username,
+        phoneNumber: this.props.dataRegister.phoneNumber,
         password: this.props.dataRegister.password,
         appClientId: awsConfig.appClientId,
         cognitoPoolId: awsConfig.cognitoPoolId,
@@ -276,8 +275,8 @@ class Aunt extends Component {
             <Form ref="form" onSubmit={this.handleSubmit}>
               <TextValidator
                 style={{marginBottom: -10}}
-                name="username"
-                label="username"
+                name="phoneNumber"
+                label="phoneNumber"
                 validators={['required']}
                 errorStyle={{
                   container: {top: 5, left: 5},
@@ -286,12 +285,12 @@ class Aunt extends Component {
                   underlineInvalidColor: 'red',
                 }}
                 errorMessages={['This field is required']}
-                placeholder="Your username"
+                placeholder="Phone Number"
                 type="text"
                 under
-                value={this.state.username}
+                value={this.state.phoneNumber}
                 onChangeText={value =>
-                  this.setState({username: value.replace(/\s/g, '')})
+                  this.setState({phoneNumber: value})
                 }
               />
 
@@ -313,7 +312,7 @@ class Aunt extends Component {
                   ]}
                   placeholder="Your confirmation code"
                   secureTextEntry={this.state.showPass}
-                  type="text"
+                  keyboardType={'numeric'}
                   under
                   value={this.state.confirmationCode}
                   onChangeText={value =>

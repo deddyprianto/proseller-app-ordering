@@ -25,6 +25,8 @@ export const api = async (url, method, body = null, headers = {}) => {
 
     const fetchPromise = fetch(endPoint, fetchParams);
 
+    console.log(endPoint);
+
     const timeOutPromise = new Promise((resolve, reject) => {
       setTimeout(() => {
         reject('Request Timeout');

@@ -26,14 +26,15 @@ export const createNewUser = payload => {
       dispatch({
         type: 'CREATE_USER_LOADING',
       });
-
+      console.log('PAYLOAD CREATE');
+      console.log(payload);
       const response = await fetchApi(
         '/customer/register',
         'POST',
         payload,
         200,
       );
-      console.log(response);
+      console.log(JSON.stringify(response));
       if (response.success) {
         dispatch({
           type: 'CREAT_USER_SUCCESS',
@@ -60,7 +61,6 @@ export const confirmUser = payload => {
       dispatch({
         type: 'CONFIRM_USER_LOADING',
       });
-      console.log(payload, 'payload confirm');
       const response = await fetchApi(
         '/customer/confirm',
         'POST',
@@ -94,28 +94,29 @@ export const loginUser = payload => {
       dispatch({
         type: 'LOGIN_USER_LOADING',
       });
-      payload.type = 'userPool';
-      payload.email = payload.username;
-      payload.tenantId = awsConfig.tenantId;
-      // console.log(payload, 'payload login');
+      payload.companyId = awsConfig.companyId;
+      console.log('Payload login');
+      console.log(payload);
       const response = await fetchApi('/customer/login', 'POST', payload, 200);
 
       console.log(response);
 
       if (response.success) {
+        let data = response.responseBody.Data;
+
         dispatch({
           type: 'LOGIN_USER_SUCCESS',
         });
         dispatch({
           type: 'AUTH_USER_SUCCESS',
-          token: response.responseBody.accessToken.jwtToken,
-          qrcode: response.responseBody.accessToken.qrcode,
-          exp: response.responseBody.accessToken.payload.exp * 1000 - 2700000,
-          refreshToken: response.responseBody.refreshToken.token,
+          token: data.accessToken.jwtToken,
+          qrcode: data.accessToken.qrcode,
+          exp: data.accessToken.payload.exp * 1000 - 2700000,
+          refreshToken: data.refreshToken.token,
         });
         dispatch({
           type: 'GET_USER_SUCCESS',
-          payload: response.responseBody.idToken.payload,
+          payload: data.idToken.payload,
         });
         console.log(response, 'response login user pool');
         return response;

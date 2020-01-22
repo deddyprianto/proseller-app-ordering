@@ -14,6 +14,8 @@ import {
   ScrollView,
   Animated,
   Dimensions,
+  Button,
+  Alert,
   ImageBackground,
 } from 'react-native';
 import {connect} from 'react-redux';
@@ -196,11 +198,10 @@ class Signin extends Component {
   loginUser = async values => {
     try {
       var dataLogin = {
-        username: this.state.username.toLowerCase(),
+        phoneNumber: this.state.username.toLowerCase(),
         password: this.state.password,
         appClientId: awsConfig.appClientId,
         cognitoPoolId: awsConfig.cognitoPoolId,
-        type: 'userPool',
       };
       const response = await this.props.dispatch(loginUser(dataLogin));
       if (response.success == false) {
@@ -264,63 +265,63 @@ class Signin extends Component {
     console.log('Google');
   };
 
-  onSubmitFacebook = async () => {
-    console.log('Facebook');
-    try {
-      await LoginManager.logInWithPermissions(['public_profile', 'email']).then(
-        result => {
-          if (result.isCancelled) {
-            console.log('Login was cancelled');
-          } else {
-            AccessToken.getCurrentAccessToken().then(data => {
-              const {accessToken, expirationTime} = data;
-              fetch(
-                'https://graph.facebook.com/v2.5/me?fields=email,name,friends&access_token=' +
-                  accessToken,
-              )
-                .then(response => response.json())
-                .then(async json => {
-                  const expires_at = expirationTime + new Date().getTime();
-                  this.setState({
-                    accessToken,
-                    expires_at,
-                    email: json.email,
-                  });
-                  var values = {
-                    accessToken,
-                    expires_at,
-                    email: json.email,
-                    name: json.name,
-                    idFB: json.id,
-                    appClientId: awsConfig.appClientId,
-                    cognitoPoolId: awsConfig.cognitoPoolId,
-                    model: 'facebook',
-                  };
-                  const response = await this.props.dispatch(
-                    loginOther(values),
-                  );
+  // onSubmitFacebook = async () => {
+  //   console.log('Facebook');
+  //   try {
+  //     await LoginManager.logInWithPermissions(['public_profile', 'email']).then(
+  //       result => {
+  //         if (result.isCancelled) {
+  //           console.log('Login was cancelled');
+  //         } else {
+  //           AccessToken.getCurrentAccessToken().then(data => {
+  //             const {accessToken, expirationTime} = data;
+  //             fetch(
+  //               'https://graph.facebook.com/v2.5/me?fields=email,name,friends&access_token=' +
+  //                 accessToken,
+  //             )
+  //               .then(response => response.json())
+  //               .then(async json => {
+  //                 const expires_at = expirationTime + new Date().getTime();
+  //                 this.setState({
+  //                   accessToken,
+  //                   expires_at,
+  //                   email: json.email,
+  //                 });
+  //                 var values = {
+  //                   accessToken,
+  //                   expires_at,
+  //                   email: json.email,
+  //                   name: json.name,
+  //                   idFB: json.id,
+  //                   appClientId: awsConfig.appClientId,
+  //                   cognitoPoolId: awsConfig.cognitoPoolId,
+  //                   model: 'facebook',
+  //                 };
+  //                 const response = await this.props.dispatch(
+  //                   loginOther(values),
+  //                 );
 
-                  if (response.statusCustomer == false) {
-                    console.log('Minta password');
-                    Actions.signinWaitPassword({dataLogin: response});
-                  } else {
-                    console.log('Login FB');
-                  }
-                })
-                .catch(() => {
-                  reject('ERROR GETTING DATA FROM FACEBOOK');
-                });
-            });
-          }
-        },
-        error => {
-          console.log(error);
-        },
-      );
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  //                 if (response.statusCustomer == false) {
+  //                   console.log('Minta password');
+  //                   Actions.signinWaitPassword({dataLogin: response});
+  //                 } else {
+  //                   console.log('Login FB');
+  //                 }
+  //               })
+  //               .catch(() => {
+  //                 reject('ERROR GETTING DATA FROM FACEBOOK');
+  //               });
+  //           });
+  //         }
+  //       },
+  //       error => {
+  //         console.log(error);
+  //       },
+  //     );
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   render() {
     const {handleSubmit, loginUser} = this.props;
@@ -473,39 +474,39 @@ class Signin extends Component {
             </TouchableOpacity>
           </View>
 
-          {appConfig.appStatusLoginOther == false ? null : (
-            <View>
-              <TouchableOpacity
-                style={{
-                  backgroundColor: colorConfig.pageIndex.backgroundColor,
-                  height: 55,
-                  borderRadius: 5,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  marginBottom: 10,
-                  marginTop: 10,
-                  flexDirection: 'row',
-                }}
-                onPress={this.onSubmitFacebook}>
-                <Image
-                  source={appConfig.appLogoFB}
-                  style={{
-                    height: 25,
-                    width: 35,
-                  }}
-                  resizeMode="contain"
-                />
-                <Text
-                  style={{
-                    color: '#1b245c',
-                    fontSize: 16,
-                    fontWeight: 'bold',
-                  }}>
-                  Sign up with Facebook
-                </Text>
-              </TouchableOpacity>
-            </View>
-          )}
+          {/*{appConfig.appStatusLoginOther == false ? null : (*/}
+          {/*  <View>*/}
+          {/*    <TouchableOpacity*/}
+          {/*      style={{*/}
+          {/*        backgroundColor: colorConfig.pageIndex.backgroundColor,*/}
+          {/*        height: 55,*/}
+          {/*        borderRadius: 5,*/}
+          {/*        alignItems: 'center',*/}
+          {/*        justifyContent: 'center',*/}
+          {/*        marginBottom: 10,*/}
+          {/*        marginTop: 10,*/}
+          {/*        flexDirection: 'row',*/}
+          {/*      }}*/}
+          {/*      onPress={this.onSubmitFacebook}>*/}
+          {/*      <Image*/}
+          {/*        source={appConfig.appLogoFB}*/}
+          {/*        style={{*/}
+          {/*          height: 25,*/}
+          {/*          width: 35,*/}
+          {/*        }}*/}
+          {/*        resizeMode="contain"*/}
+          {/*      />*/}
+          {/*      <Text*/}
+          {/*        style={{*/}
+          {/*          color: '#1b245c',*/}
+          {/*          fontSize: 16,*/}
+          {/*          fontWeight: 'bold',*/}
+          {/*        }}>*/}
+          {/*        Sign up with Facebook*/}
+          {/*      </Text>*/}
+          {/*    </TouchableOpacity>*/}
+          {/*  </View>*/}
+          {/*)}*/}
           <Text
             style={{
               color: '#fff',
@@ -541,7 +542,7 @@ class Signin extends Component {
 }
 
 const validate = values => {
-  const errors = {};
+  let errors = {};
   if (!values.email) {
     errors.email = 'Email is required';
   }
@@ -560,7 +561,10 @@ mapDispatchToProps = dispatch => ({
 });
 
 export default compose(
-  connect(mapStateToProps, mapDispatchToProps),
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  ),
   reduxForm({
     form: 'login',
     validate,

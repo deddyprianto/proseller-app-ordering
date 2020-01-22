@@ -50,7 +50,6 @@ export default class AccountEditProfil extends Component {
           <View style={styles.card}>
             <View style={styles.item}>
               <Text style={styles.title}>Detail User</Text>
-              {console.log(this.props)}
             </View>
             <View style={styles.detail}>
               <View style={styles.detailItem}>

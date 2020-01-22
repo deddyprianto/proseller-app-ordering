@@ -220,24 +220,19 @@ class Signup extends Component {
   }
 
   handleSubmit = async () => {
+    console.log('masuk sini');
     try {
       var dataRegister = {
-        tenantId: awsConfig.tenantId,
-        email: this.state.email,
-        username: this.state.email.toLowerCase(),
-        // username: this.phone.getValue(),
+        companyId: awsConfig.companyId,
+        email: this.state.email.toLowerCase(),
         password: this.state.password,
         name: this.state.name,
         phoneNumber: this.phone.getValue(),
         appClientId: awsConfig.appClientId,
         cognitoPoolId: awsConfig.cognitoPoolId,
         type: 'userPool',
-        // "nickname": this.state.nickname,
-        // "address": this.state.address,
-        // birthdate: this.state.birthdate,
-        // gender: this.state.gender,
       };
-      console.log(dataRegister);
+
       const response = await this.props.dispatch(createNewUser(dataRegister));
       if (!response.success) {
         throw response;
@@ -584,7 +579,10 @@ mapDispatchToProps = dispatch => ({
 });
 
 export default compose(
-  connect(mapStateToProps, mapDispatchToProps),
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  ),
   reduxForm({
     form: 'register',
     validate,

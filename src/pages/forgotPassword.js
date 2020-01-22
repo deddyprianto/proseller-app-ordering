@@ -11,6 +11,7 @@ import {
   View,
   TouchableOpacity,
   ScrollView,
+  ActivityIndicator,
   Animated,
   Dimensions,
 } from 'react-native';
@@ -120,13 +121,22 @@ const styles = StyleSheet.create({
   },
 });
 
+const TextandSpinner = props => {
+  if (props.loading) {
+    return <ActivityIndicator animating={true} size="large" color="white" />;
+  } else {
+    return <Text style={styles.buttonText}>{props.text}</Text>;
+  }
+};
+
 class ForgotPassword extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      username: '',
+      phoneNumber: '',
       confirmationCode: '',
       password: '',
+      repassword: '',
       pres: false,
       press: false,
       showPas: true,
@@ -135,8 +145,25 @@ class ForgotPassword extends Component {
       pesanAlert: '',
       titleAlert: '',
       pressSend: false,
+      changePasswordForm: false,
+      //  loading spinner
+      loadingVerifyPhone: false,
+      loadingSavePassword: false,
     };
     this.imageWidth = new Animated.Value(styles.$largeImageSize);
+  }
+
+  componentWillMount() {
+    Form.addValidationRule('isPasswordMatch', value => {
+      if (value !== this.state.password) {
+        return false;
+      }
+      return true;
+    });
+  }
+
+  componentWillUnmount() {
+    Form.removeValidationRule('isPasswordMatch');
   }
 
   signin() {
@@ -149,39 +176,54 @@ class ForgotPassword extends Component {
 
   handleSendCode = async () => {
     try {
+      this.setState({loadingVerifyPhone: true});
       var dataRequest = {
-        username: this.state.username,
+        phoneNumber: this.state.phoneNumber,
         appClientId: awsConfig.appClientId,
         cognitoPoolId: awsConfig.cognitoPoolId,
+        companyId: awsConfig.companyId,
       };
-      console.log(dataRequest);
       const response = await this.props.dispatch(
         sendCodeConfirmation(dataRequest),
       );
-      console.log(response);
-      this.setState({pressSend: true});
+      if (response.responseBody.ResultCode == 200) {
+        this.setState({pressSend: true, loadingVerifyPhone: false});
+      } else {
+        this.setState({
+          loadingVerifyPhone: false,
+          showAlert: true,
+          pesanAlert: response.responseBody.Data.message,
+          titleAlert: 'Failed!',
+        });
+      }
     } catch (error) {}
   };
 
   handleConfirmation = async () => {
+    this.setState({loadingSavePassword: true});
     try {
       var dataRequest = {
-        username: this.state.username,
-        password: this.state.password,
+        phoneNumber: this.state.phoneNumber,
+        newPassword: this.state.password,
         confirmationCode: this.state.confirmationCode,
         appClientId: awsConfig.appClientId,
         cognitoPoolId: awsConfig.cognitoPoolId,
-        tenantId: awsConfig.tenantId,
+        companyId: awsConfig.companyId,
       };
       console.log(dataRequest);
       const response = await this.props.dispatch(
         confirmForgotPassword(dataRequest),
       );
-      console.log(response);
-      if (response.responseBody.message) {
-        throw response.responseBody.message;
+      if (response.responseBody.ResultCode != 200) {
+        this.setState({
+          loadingSavePassword: false,
+          showAlert: true,
+          pesanAlert: response.responseBody.Data.message,
+          titleAlert: 'Confirm Error!',
+        });
       } else {
         this.setState({
+          loadingSavePassword: false,
           showAlert: true,
           pesanAlert: 'Your password success to change!',
           titleAlert: 'Confirm Success!',
@@ -189,8 +231,9 @@ class ForgotPassword extends Component {
       }
     } catch (error) {
       this.setState({
+        loadingSavePassword: false,
         showAlert: true,
-        pesanAlert: error,
+        pesanAlert: 'Please try again',
         titleAlert: 'Confirm Error!',
       });
     }
@@ -209,11 +252,11 @@ class ForgotPassword extends Component {
   submitLogin = async () => {
     try {
       var dataLogin = {
-        username: this.state.username,
+        phoneNumber: this.state.phoneNumber,
         password: this.state.password,
         appClientId: awsConfig.appClientId,
         cognitoPoolId: awsConfig.cognitoPoolId,
-        tenantId: awsConfig.tenantId,
+        companyId: awsConfig.companyId,
       };
       const response = await this.props.dispatch(loginUser(dataLogin));
       if (response.success == false) {
@@ -275,6 +318,11 @@ class ForgotPassword extends Component {
   render() {
     const {handleSubmit, loginUser} = this.props;
     const imageStyle = [styles.logo, {width: this.imageWidth}];
+    let styleButton;
+    const validPhoneNumber =
+      this.state.phoneNumber == ''
+        ? [styles.button, {backgroundColor: 'gray'}]
+        : styles.button;
     return (
       <View style={styles.backgroundImage}>
         {console.log(this.props)}
@@ -324,8 +372,8 @@ class ForgotPassword extends Component {
               <Form ref="form" onSubmit={this.handleSendCode}>
                 <TextValidator
                   style={{marginBottom: -10}}
-                  name="username"
-                  label="username"
+                  name="phoneNumber"
+                  label="phoneNumber"
                   validators={['required']}
                   errorStyle={{
                     container: {top: 5, left: 5},
@@ -334,19 +382,21 @@ class ForgotPassword extends Component {
                     underlineInvalidColor: 'red',
                   }}
                   errorMessages={['This field is required']}
-                  placeholder="Your username"
+                  placeholder="Phone Number"
                   type="text"
                   under
-                  value={this.state.username}
-                  onChangeText={value =>
-                    this.setState({username: value.replace(/\s/g, '')})
-                  }
+                  value={this.state.phoneNumber}
+                  onChangeText={value => this.setState({phoneNumber: value})}
                 />
 
                 <TouchableOpacity
-                  style={styles.button}
+                  style={validPhoneNumber}
+                  disabled={this.state.phoneNumber == '' ? true : false}
                   onPress={this.handleSendCode}>
-                  <Text style={styles.buttonText}>Send Code Confirmation</Text>
+                  <TextandSpinner
+                    text="Verify Phone Number"
+                    loading={this.state.loadingVerifyPhone}
+                  />
                 </TouchableOpacity>
               </Form>
             ) : (
@@ -354,8 +404,8 @@ class ForgotPassword extends Component {
                 <View>
                   <TextValidator
                     style={{marginBottom: -10}}
-                    name="password"
-                    label="password"
+                    name="confirmationCode"
+                    label="confirmationCode"
                     validators={['required']}
                     errorStyle={{
                       container: {top: 5, left: 5},
@@ -368,7 +418,44 @@ class ForgotPassword extends Component {
                       'This field is required',
                       'Confirmation Code invalid',
                     ]}
-                    placeholder="Your new password"
+                    placeholder="Confirmation Code"
+                    keyboardType={'numeric'}
+                    under
+                    value={this.state.confirmationCode}
+                    onChangeText={value =>
+                      this.setState({
+                        confirmationCode: value.replace(/\s/g, ''),
+                      })
+                    }
+                  />
+                </View>
+                <View>
+                  <TextValidator
+                    style={{marginBottom: -10}}
+                    name="password"
+                    label="password"
+                    validators={[
+                      'required',
+                      'minStringLength:8',
+                      'matchRegexp:^(?=.*[0-9])',
+                      'matchRegexp:^(?=.*[A-Z])',
+                      'matchRegexp:^(?=.*[a-z])',
+                    ]}
+                    errorStyle={{
+                      container: {top: 5, left: 5},
+                      text: {color: 'red'},
+                      underlineValidColor:
+                        colorConfig.pageIndex.activeTintColor,
+                      underlineInvalidColor: 'red',
+                    }}
+                    errorMessages={[
+                      'This field is required',
+                      'Password min 8 character',
+                      'Password contain at least 1 number',
+                      'Password contain at least 1 uppercase character',
+                      'Password contain at least 1 lowercase character',
+                    ]}
+                    placeholder="New password"
                     secureTextEntry={this.state.showPas}
                     type="text"
                     under
@@ -393,9 +480,9 @@ class ForgotPassword extends Component {
                 <View>
                   <TextValidator
                     style={{marginBottom: -10}}
-                    name="confirmationCode"
-                    label="confirmationCode"
-                    validators={['required']}
+                    name="repassword"
+                    label="repassword"
+                    validators={['required', 'isPasswordMatch']}
                     errorStyle={{
                       container: {top: 5, left: 5},
                       text: {color: 'red'},
@@ -405,18 +492,14 @@ class ForgotPassword extends Component {
                     }}
                     errorMessages={[
                       'This field is required',
-                      'Confirmation Code invalid',
+                      'Password mismatch',
                     ]}
-                    placeholder="Your confirmation code"
+                    placeholder="Your confirm password"
                     secureTextEntry={this.state.showPass}
                     type="text"
                     under
-                    value={this.state.confirmationCode}
-                    onChangeText={value =>
-                      this.setState({
-                        confirmationCode: value.replace(/\s/g, ''),
-                      })
-                    }
+                    value={this.state.repassword}
+                    onChangeText={value => this.setState({repassword: value})}
                   />
                   <TouchableOpacity
                     style={{position: 'absolute', top: 8, right: 15}}
@@ -432,7 +515,10 @@ class ForgotPassword extends Component {
                 <TouchableOpacity
                   style={styles.button}
                   onPress={this.handleConfirmation}>
-                  <Text style={styles.buttonText}>Confirm</Text>
+                  <TextandSpinner
+                    text="Save Password"
+                    loading={this.state.loadingSavePassword}
+                  />
                 </TouchableOpacity>
 
                 <TouchableOpacity onPress={this.handleResend}>
@@ -441,7 +527,7 @@ class ForgotPassword extends Component {
                       textAlign: 'center',
                       color: colorConfig.pageIndex.activeTintColor,
                     }}>
-                    Resend
+                    Resend Confirmation Code
                   </Text>
                 </TouchableOpacity>
               </Form>
@@ -496,7 +582,10 @@ mapDispatchToProps = dispatch => ({
 });
 
 export default compose(
-  connect(mapStateToProps, mapDispatchToProps),
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  ),
   reduxForm({
     form: 'confirm',
     validate,
