@@ -6,17 +6,31 @@ export const campaign = () => {
   return async (dispatch, getState) => {
     const state = getState();
     try {
-      await dispatch(refreshToken());
+      // await dispatch(refreshToken());
       const {
         authReducer: {
-          authData: {token},
+          authData: {token, payload},
         },
       } = state;
-      const response = await fetchApi('/campaign', 'GET', false, 200, token);
-      console.log(response, 'response campign');
+
+      const {
+        userReducer: {
+          getUser: {userDetails},
+        },
+      } = state;
+
+      let companyId = userDetails.companyId;
+      const response = await fetchApi(
+        `/campaign/points?companyId=${companyId}`,
+        'GET',
+        false,
+        200,
+        token,
+      );
+      console.log(response, 'response campign point');
       dispatch({
         type: 'DATA_ALL_CAMPAIGN',
-        data: response.responseBody,
+        data: response.responseBody.Data[0],
       });
     } catch (error) {
       return error;
@@ -43,20 +57,12 @@ export const vouchers = () => {
 
       var dataVoucher = [];
 
-      let response = await fetchApi(
-        '/campaign/vouchers',
-        'GET',
-        false,
-        200,
-        token,
-      );
+      let response = await fetchApi('/voucher', 'GET', false, 200, token);
       console.log(response, 'response voucher');
       if (response.success) {
-        response.responseBody.data
-          .filter(voucher => voucher.deleted == false)
-          .map(async voucher => {
-            await dataVoucher.push(voucher);
-          });
+        dataVoucher = response.responseBody.Data.filter(
+          item => item.deleted == false,
+        );
       }
 
       dispatch({
@@ -90,7 +96,7 @@ export const getStamps = () => {
 
       dispatch({
         type: 'DATA_STAMPS',
-        dataStamps: response.responseBody.data,
+        dataStamps: response.responseBody.Data,
       });
     } catch (error) {
       return error;
@@ -141,69 +147,47 @@ export const dataPoint = () => {
       } = state;
 
       var dataResponse = [];
-
+      // console.log
       let response = await fetchApi(
-        '/campaign/points',
+        '/customer/point',
         'GET',
         false,
         200,
         token,
       );
       console.log(response, 'response data point');
-      if (response.success) {
-        response.responseBody.data
-          .filter(point => point.deleted == false)
-          .map(async point => {
-            await dataResponse.push(point);
-            var sisa = point.pointDebit - point.pointKredit;
-            totalPoint = totalPoint + sisa;
-          });
-      }
+      // if (response.success) {
+      //   response.responseBody.data
+      //     .filter(point => point.deleted == false)
+      //     .map(async point => {
+      //       await dataResponse.push(point);
+      //       var sisa = point.pointDebit - point.pointKredit;
+      //       totalPoint = totalPoint + sisa;
+      //     });
+      // }
 
-      let totalPoint =
-        _.sumBy(dataResponse, 'pointDebit') -
-        _.sumBy(dataResponse, 'pointKredit');
-
+      // let totalPoint =
+      //   _.sumBy(dataResponse, 'pointDebit') -
+      //   _.sumBy(dataResponse, 'pointKredit');
+      dataResponse = response.responseBody.Data.history;
+      let totalPoint = response.responseBody.Data.totalPoint;
       dispatch({
         type: 'DATA_TOTAL_POINT',
         totalPoint: totalPoint,
       });
-      dispatch({
-        type: 'DATA_POINT_TRANSACTION',
-        pointTransaction: _.orderBy(dataResponse, ['createdAt'], ['desc']),
-      });
-      dispatch({
-        type: 'DATA_RECENT_TRANSACTION',
-        recentTransaction: _.orderBy(
-          dataResponse,
-          ['createdAt'],
-          ['desc'],
-        ).slice(0, 3),
-      });
-    } catch (error) {
-      return error;
-    }
-  };
-};
-
-export const sendPayment = payload => {
-  return async (dispatch, getState) => {
-    const state = getState();
-    try {
-      const {
-        authReducer: {
-          authData: {token},
-        },
-      } = state;
-
-      console.log(payload, 'payload sendPayment');
-      const response = await fetchApi('/payment', 'POST', payload, 200, token);
-      console.log(response, 'response send payment');
-      var result = {
-        responseBody: response.responseBody,
-        success: response.success,
-      };
-      return result;
+      // move to sales.action
+      // dispatch({
+      //   type: 'DATA_POINT_TRANSACTION',
+      //   pointTransaction: _.orderBy(dataResponse, ['createdAt'], ['desc']),
+      // });
+      // dispatch({
+      //   type: 'DATA_RECENT_TRANSACTION',
+      //   recentTransaction: _.orderBy(
+      //     dataResponse,
+      //     ['createdAt'],
+      //     ['desc'],
+      //   ).slice(0, 3),
+      // });
     } catch (error) {
       return error;
     }

@@ -78,7 +78,7 @@ class AccountUserDetail extends Component {
                   fontFamily: 'Lato-Medium',
                 }}>
                 {this.props.userDetail != undefined
-                  ? this.props.userDetail.phone_number
+                  ? this.props.userDetail.phoneNumber
                   : ''}
               </Text>
             </View>

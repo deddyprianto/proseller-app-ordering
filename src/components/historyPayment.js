@@ -119,7 +119,7 @@ class HistoryPayment extends Component {
                               {item.storeName}
                             </Text>
                             <Text style={styles.itemType}>
-                              {item.pointDebit + ' point'}
+                              {item.point + ' point'}
                             </Text>
                           </View>
                           <View style={styles.sejajarSpace}>

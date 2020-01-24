@@ -38,7 +38,7 @@ class RewardsRewards extends Component {
     // } else {
     this.setState({isLoading: false});
     // }
-    // this.getDataVoucher();
+    this.getDataVoucher();
   };
 
   getDataVoucher = async () => {

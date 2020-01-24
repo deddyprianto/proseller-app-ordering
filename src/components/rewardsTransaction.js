@@ -56,7 +56,7 @@ class RewardsTransaction extends Component {
                               color: colorConfig.pageIndex.grayColor,
                               fontFamily: 'Lato-Medium',
                             }}>
-                            {item.storeName}
+                            {item.outletName}
                           </Text>
                         </View>
                         <View

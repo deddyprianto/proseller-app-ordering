@@ -92,7 +92,7 @@ class Store extends Component {
 
   getDataStores = async () => {
     try {
-      Geolocation.getCurrentPosition(
+      await Geolocation.getCurrentPosition(
         async position => {
           await this.props.dispatch(dataStores());
           this.setDataStore(this.props.dataStores, true, position);
@@ -116,15 +116,15 @@ class Store extends Component {
   };
 
   setDataStore = (response, statusLocation, position) => {
+    console.log(`data store`, response);
     var dataStoresTampung = [];
     var storeGrupTampung = [];
-    console.log(response);
     try {
       for (var i = 0; i < response.count; i++) {
         if (response.data[i].deleted == false) {
           storeGrupTampung.push(response.data[i].location.region);
           dataStoresTampung.push({
-            storeName: response.data[i].storeName,
+            storeName: response.data[i].name,
             storeStatus: this._cekOpen(
               this.state.currentDay.getDay(),
               this.state.currentClock,
@@ -344,10 +344,10 @@ class Store extends Component {
 
   myVouchers = () => {
     var myVoucers = [];
-    if (this.props.myVoucers.data != undefined) {
+    if (this.props.myVoucers != undefined) {
       _.forEach(
         _.groupBy(
-          this.props.myVoucers.data.filter(voucher => voucher.deleted == false),
+          this.props.myVoucers.filter(voucher => voucher.deleted == false),
           'id',
         ),
         function(value, key) {
@@ -447,8 +447,10 @@ class Store extends Component {
             </View>
           ) : (
             <View style={styles.container}>
-              {this.props.dataPromotion == undefined || this.props.dataPromotion.count == 0 ? null : (
+              {this.props.dataPromotion == undefined ||
+              this.props.dataPromotion.count == 0 ? null : (
                 <StorePromotion />
+                // <Text>Jamrub</Text>
               )}
               <View
                 style={{
@@ -611,4 +613,9 @@ mapDispatchToProps = dispatch => ({
   dispatch,
 });
 
-export default compose(connect(mapStateToProps, mapDispatchToProps))(Store);
+export default compose(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  ),
+)(Store);

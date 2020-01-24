@@ -72,7 +72,6 @@ class VoucherDetail extends Component {
       let timeZone = date.getTimezoneOffset();
       const data = {voucher: dataVoucher, timeZoneOffset: timeZone};
       const response = await this.props.dispatch(redeemVoucher(data));
-      console.log(response);
       await this.props.dispatch(campaign());
       await this.props.dispatch(dataPoint());
       await this.props.dispatch(myVoucers());
@@ -85,7 +84,7 @@ class VoucherDetail extends Component {
       } else {
         this.setState({
           showAlert: true,
-          pesanAlert: response.message,
+          pesanAlert: response.Data.message,
           titleAlert: 'Oppss!',
         });
       }

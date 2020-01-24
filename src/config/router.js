@@ -5,13 +5,18 @@
  */
 
 import React, {Component} from 'react';
-import {Router, Scene} from 'react-native-router-flux';
+import {
+  Router,
+  Scene,
+  CardStackStyleInterpolator,
+} from 'react-native-router-flux';
 
 import Signin from '../pages/signin';
 import Signup from '../pages/signup';
 import Aunt from '../pages/aunt';
 import ForgotPassword from '../pages/forgotPassword';
 import PageIndex from '../pages/pageIndex';
+import ChangePhoneNumber from '../pages/changePhoneNumber';
 
 import Pay from '../components/rewardsPay';
 import Rewards from '../components/rewardsRewards';
@@ -71,7 +76,7 @@ export default class Routes extends Component {
             <Scene key="storeSeeMap" component={StoresMap} />
             <Scene key="accountVouchers" component={AccountVouchers} />
             <Scene key="accountEditProfil" component={AccountEditProfil} />
-            <Scene key="editProfile" component={EditProfile} />
+            <Scene duration={0} key="editProfile" component={EditProfile} />
             <Scene key="paymentDetail" component={PaymentDetail} />
             <Scene key="paymentSuccess" component={PaymentSuccess} />
             <Scene key="paymentAddVoucers" component={PaymentAddVoucers} />
@@ -79,6 +84,7 @@ export default class Routes extends Component {
             <Scene key="inboxDetail" component={InboxDetail} />
             <Scene key="paymentAddPoint" component={PaymentAddPoint} />
             <Scene key="detailStamps" component={RewardsStamps} />
+            <Scene key="changePhoneNumber" component={ChangePhoneNumber} />
           </Scene>
         </Scene>
       </Router>

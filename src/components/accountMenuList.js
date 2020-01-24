@@ -32,10 +32,10 @@ class AccountMenuList extends Component {
 
   myVouchers = () => {
     var myVoucers = [];
-    if (this.props.myVoucers.data != undefined) {
+    if (this.props.myVoucers != undefined) {
       _.forEach(
         _.groupBy(
-          this.props.myVoucers.data.filter(voucher => voucher.deleted == false),
+          this.props.myVoucers.filter(voucher => voucher.deleted == false),
           'id',
         ),
         function(value, key) {
@@ -44,8 +44,6 @@ class AccountMenuList extends Component {
         },
       );
     }
-
-    console.log(myVoucers);
     Actions.accountVouchers({data: myVoucers});
   };
 

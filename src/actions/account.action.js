@@ -5,7 +5,7 @@ export const myVoucers = () => {
   return async (dispatch, getState) => {
     const state = getState();
     try {
-      await dispatch(refreshToken());
+      // await dispatch(refreshToken());
       const {
         authReducer: {
           authData: {token},
@@ -18,10 +18,11 @@ export const myVoucers = () => {
         200,
         token,
       );
-      console.log(response, 'response myVoucers');
+      console.log(response.responseBody.Data);
+      console.log('response myVoucers');
       dispatch({
         type: 'DATA_MY_VOUCHERS',
-        data: response.responseBody,
+        data: response.responseBody.Data,
       });
     } catch (error) {
       return error;

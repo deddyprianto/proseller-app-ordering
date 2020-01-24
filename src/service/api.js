@@ -4,7 +4,6 @@
  * PT Edgeworks
  */
 import awsConfig from '../config/awsConfig';
-
 const BASE_URL = awsConfig.base_url;
 
 export const api = async (url, method, body = null, headers = {}) => {
@@ -24,8 +23,6 @@ export const api = async (url, method, body = null, headers = {}) => {
     }
 
     const fetchPromise = fetch(endPoint, fetchParams);
-
-    console.log(endPoint);
 
     const timeOutPromise = new Promise((resolve, reject) => {
       setTimeout(() => {
@@ -57,11 +54,11 @@ export const fetchApi = async (
       responseBody: null,
     };
     if (token) {
-      headers['Authorization'] = token;
+      headers['Authorization'] = `bearer ${token}`;
     }
 
+    // const response = await fetchJson(method, path, data, token)
     const response = await api(url, method, body, headers);
-
     if (response.status === statusCode) {
       result.success = true;
 
@@ -79,6 +76,7 @@ export const fetchApi = async (
       }
 
       result.responseBody = responseBody;
+      console.log(result);
       return result;
     }
 
@@ -90,10 +88,7 @@ export const fetchApi = async (
     } catch (e) {
       errorBody = errorText;
     }
-
     result.responseBody = errorBody;
-
-    // console.log(result.success);
 
     throw result;
   } catch (error) {

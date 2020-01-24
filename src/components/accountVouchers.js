@@ -19,8 +19,11 @@ import {Actions} from 'react-native-router-flux';
 
 import colorConfig from '../config/colorConfig';
 import appConfig from '../config/appConfig';
+import {compose} from 'redux';
+import {connect} from 'react-redux';
+import accountsReducer from '../reducers/accounts.reducer';
 
-export default class AccountVouchers extends Component {
+export default  class AccountVouchers extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -69,6 +72,7 @@ export default class AccountVouchers extends Component {
 
   render() {
     const myVoucers = this.props.data;
+    console.log('props data', this.props.data);
     return (
       <View style={styles.container}>
         <View style={{backgroundColor: colorConfig.pageIndex.backgroundColor}}>
@@ -96,7 +100,7 @@ export default class AccountVouchers extends Component {
                   textAlign: 'center',
                   color: colorConfig.pageIndex.grayColor,
                 }}>
-                Vouchers is empty
+                Vouchers is emptya
               </Text>
             </View>
           ) : (

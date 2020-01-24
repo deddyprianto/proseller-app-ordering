@@ -11,19 +11,50 @@ import {
   StyleSheet,
   Dimensions,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   ScrollView,
   Picker,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import {Form, TextValidator} from 'react-native-validator-form';
 import colorConfig from '../config/colorConfig';
+import awsConfig from '../config/awsConfig';
+import {updateUser} from '../actions/user.action';
+import {compose} from 'redux';
+import {connect} from 'react-redux';
+import {reduxForm} from 'redux-form';
+import AwesomeAlert from 'react-native-awesome-alerts';
 
-export default class AccountEditProfil extends Component {
+class AccountEditProfil extends Component {
   constructor(props) {
     super(props);
+    var data;
+    try {
+      data = {
+        name: this.props.dataDiri.name,
+        birthDate: this.props.dataDiri.birthDate,
+        address: this.props.dataDiri.address,
+        gender: this.props.dataDiri.gender,
+      };
+    } catch (e) {
+      data = {
+        name: '',
+        birthDate: '',
+        address: '',
+        gender: '',
+      };
+    }
+
     this.state = {
       screenWidth: Dimensions.get('window').width,
+      name: data.name,
+      gender: data.gender,
+      birthDate: data.birthDate,
+      address: data.address,
+      isDatePickerVisible: false,
+      showAlert: false,
     };
   }
 
@@ -31,10 +62,85 @@ export default class AccountEditProfil extends Component {
     Actions.pop();
   }
 
+  submitEdit = async () => {
+    try {
+      let dataProfile = {
+        phoneNumber: this.props.dataDiri.phoneNumber,
+        appClientId: awsConfig.appClientId,
+        cognitoPoolId: awsConfig.cognitoPoolId,
+        companyId: awsConfig.companyId,
+        newName: this.state.name,
+        birthDate: this.state.birthDate,
+        address: this.state.address,
+        gender: this.state.gender,
+      };
+      const response = await this.props.dispatch(updateUser(dataProfile));
+      if (response) {
+        this.setState({
+          showAlert: true,
+          pesanAlert: 'Your profile updated',
+          titleAlert: 'Update Success!',
+        });
+      } else {
+        this.setState({
+          showAlert: true,
+          pesanAlert: 'Something went wrong, please try again!',
+          titleAlert: "We're Sorry!",
+        });
+      }
+    } catch (e) {
+      this.setState({
+        showAlert: true,
+        pesanAlert: 'Something went wrong, please try again!',
+        titleAlert: "We're Sorry!",
+      });
+    }
+  };
+
+  showDatePicker = () => {
+    this.setState({isDatePickerVisible: true});
+  };
+
+  hideDatePicker = () => {
+    this.setState({isDatePickerVisible: false});
+  };
+
+  hideAlert = () => {
+    this.setState({
+      showAlert: false,
+    });
+  };
+
+  toChangePhoneNumber = () => {
+    Actions.changePhoneNumber();
+  };
+
+  btnChangePhoneNumber = () => {
+    this.setState({
+      showAlert: true,
+      pesanAlert: '',
+      titleAlert: 'Confirmation code has been sent to phone!',
+    });
+  };
+
+  handleConfirm = date => {
+    let newDate = new Date(date);
+    let dateBirth = newDate.getDate();
+    let monthBirth = newDate.getMonth() + 1;
+    let birthYear = newDate.getFullYear();
+
+    this.setState({birthDate: `${dateBirth}/${monthBirth}/${birthYear}`});
+    this.hideDatePicker();
+  };
+
   render() {
     return (
       <View style={styles.container}>
-        <View style={{backgroundColor: colorConfig.pageIndex.backgroundColor}}>
+        <View
+          style={[
+            styles.header,
+            {backgroundColor: colorConfig.pageIndex.backgroundColor},
+          ]}>
           <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
             <Icon
               size={28}
@@ -43,15 +149,12 @@ export default class AccountEditProfil extends Component {
               }
               style={styles.btnBackIcon}
             />
-            <Text style={styles.btnBackText}> Back </Text>
+            <Text style={styles.btnBackText}> Edit Profile </Text>
           </TouchableOpacity>
-          <View style={styles.line} />
+          {/*<View style={styles.line} />*/}
         </View>
         <ScrollView>
           <View style={styles.card}>
-            <View style={styles.item}>
-              <Text style={styles.title}>Edit Profile</Text>
-            </View>
             <Form ref="form">
               <View style={styles.detail}>
                 <View style={styles.detailItem}>
@@ -72,30 +175,62 @@ export default class AccountEditProfil extends Component {
                     placeholder="Name"
                     type="text"
                     under
-                    value={this.props.dataDiri.name}
+                    value={this.state.name}
                     onChangeText={value => this.setState({name: value})}
                   />
                 </View>
                 <View style={styles.detailItem}>
-                  <Text style={styles.desc}>Email</Text>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                    }}>
+                    <Text style={styles.desc}>Email</Text>
+                    <TouchableOpacity style={[styles.btnChange]}>
+                      <Text style={[styles.textChange]}>Change</Text>
+                    </TouchableOpacity>
+                  </View>
                   <Text style={{paddingTop: 12}}>
                     {this.props.dataDiri.email}
                   </Text>
                 </View>
                 <View style={styles.detailItem}>
-                  <Text style={styles.desc}>Phone Number</Text>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                    }}>
+                    <Text style={styles.desc}>Phone Number</Text>
+                    <TouchableOpacity
+                      onPress={this.btnChangePhoneNumber}
+                      style={[styles.btnChange]}>
+                      <Text style={[styles.textChange]}>Change</Text>
+                    </TouchableOpacity>
+                  </View>
                   <Text style={{paddingTop: 12}}>
-                    {this.props.dataDiri.phone_number}
+                    {this.props.dataDiri.phoneNumber}
                   </Text>
                 </View>
                 <View style={styles.detailItem}>
-                  <Text style={[styles.desc, {marginLeft: 2}]}>Birth Date</Text>
-                  <Text style={styles.desc}>
-                    {this.props.dataDiri.birthdate}
+                  <Text style={[styles.desc, {marginLeft: 0}]}>Birth Date</Text>
+                  <Text
+                    style={{
+                      paddingTop: 12,
+                      borderBottomColor: colorConfig.store.defaultColor,
+                      borderBottomWidth: 1,
+                    }}
+                    onPress={this.showDatePicker}>
+                    {this.state.birthDate == ''
+                      ? 'Enter Birth Date'
+                      : this.state.birthDate}
                   </Text>
+                  <DateTimePickerModal
+                    isVisible={this.state.isDatePickerVisible}
+                    mode="date"
+                    onConfirm={this.handleConfirm}
+                    onCancel={this.hideDatePicker}
+                  />
                 </View>
                 <View style={styles.detailItem}>
-                  <Text style={[styles.desc, {marginLeft: 2}]}>Gender</Text>
+                  <Text style={[styles.desc, {marginLeft: 0}]}>Gender</Text>
                   <Picker
                     selectedValue={this.state.gender}
                     onValueChange={(itemValue, itemIndex) =>
@@ -131,64 +266,136 @@ export default class AccountEditProfil extends Component {
               </View>
             </Form>
           </View>
-          <View
-            style={{
-              alignItems: 'center',
-              marginTop: 15
-            }}>
-            <TouchableOpacity
-              style={{
-                borderColor: colorConfig.pageIndex.activeTintColor,
-                backgroundColor: colorConfig.pageIndex.activeTintColor,
-                borderRadius: 10,
-                padding: 12,
-                alignSelf: 'stretch',
-                marginLeft: 10,
-                marginRight: 10,
-              }}>
-              <Text
-                style={{
-                  color: 'white',
-                  fontWeight: 'bold',
-                  fontSize: 19,
-                  alignSelf: 'center',
-                }}>
-                Save
-              </Text>
-            </TouchableOpacity>
-          </View>
         </ScrollView>
+        <TouchableWithoutFeedback onPress={this.submitEdit}>
+          <View style={styles.primaryButton}>
+            <Text style={styles.buttonText}>Save</Text>
+          </View>
+        </TouchableWithoutFeedback>
+        <AwesomeAlert
+          show={this.state.showAlert}
+          showProgress={false}
+          title={this.state.titleAlert}
+          message={this.state.pesanAlert}
+          closeOnTouchOutside={true}
+          closeOnHardwareBackPress={false}
+          showCancelButton={false}
+          showConfirmButton={true}
+          cancelText="Close"
+          confirmText={
+            this.state.titleAlert != 'Update Success!' ? 'Confirm' : 'Clone'
+          }
+          confirmButtonColor={colorConfig.pageIndex.activeTintColor}
+          onCancelPressed={() => {
+            this.hideAlert();
+          }}
+          onConfirmPressed={() => {
+            if (this.state.titleAlert == 'Update Success!') {
+              this.hideAlert();
+              this.goBack();
+            }
+            if (this.state.titleAlert == "We're Sorry!") {
+              this.hideAlert();
+            }
+            if (
+              this.state.titleAlert ==
+              'Confirmation code has been sent to phone!'
+            ) {
+              this.hideAlert();
+              this.toChangePhoneNumber();
+            }
+          }}
+        />
       </View>
     );
   }
 }
+
+mapStateToProps = state => ({
+  updateUser: state.userReducer.updateUser,
+});
+
+mapDispatchToProps = dispatch => ({
+  dispatch,
+});
+
+export default compose(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  ),
+)(AccountEditProfil);
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
   btnBackIcon: {
-    color: colorConfig.pageIndex.activeTintColor,
+    marginLeft: 10,
+    color: colorConfig.store.defaultColor,
     margin: 10,
   },
+  header: {
+    height: 80,
+    marginBottom: 20,
+    justifyContent: 'center',
+    // backgroundColor: colorConfig.store.defaultColor,
+    shadowColor: '#00000021',
+    shadowOffset: {
+      width: 0,
+      height: 6,
+    },
+    shadowOpacity: 0.37,
+    shadowRadius: 7.49,
+    elevation: 12,
+  },
   btnBack: {
+    marginLeft: 10,
     flexDirection: 'row',
     alignItems: 'center',
+    width: 100,
+    height: 80,
   },
   btnBackText: {
-    color: colorConfig.pageIndex.activeTintColor,
+    color: colorConfig.store.defaultColor,
     fontWeight: 'bold',
+    fontSize: 19,
+  },
+  primaryButton: {
+    borderColor: colorConfig.pageIndex.activeTintColor,
+    backgroundColor: colorConfig.pageIndex.activeTintColor,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 40,
+    padding: 12,
+    alignSelf: 'stretch',
+    marginLeft: 10,
+    marginRight: 10,
+    shadowColor: '#00000021',
+    shadowOffset: {
+      width: 0,
+      height: 9,
+    },
+    shadowOpacity: 0.7,
+    shadowRadius: 7.49,
+    elevation: 12,
+    marginBottom: 30,
+  },
+  buttonText: {
+    color: '#FFFFFF',
+    fontSize: 20,
   },
   line: {
     borderBottomColor: colorConfig.store.defaultColor,
     borderBottomWidth: 2,
   },
   card: {
-    margin: 10,
-    borderColor: colorConfig.pageIndex.activeTintColor,
-    borderWidth: 1,
-    borderRadius: 5,
-    backgroundColor: colorConfig.pageIndex.backgroundColor,
+    // margin: 10,
+    // borderColor: colorConfig.pageIndex.activeTintColor,
+    // borderWidth: 1,
+    // borderRadius: 5,
+    // backgroundColor: colorConfig.pageIndex.backgroundColor,
   },
   item: {
     alignItems: 'center',
@@ -216,6 +423,16 @@ const styles = StyleSheet.create({
   },
   desc: {
     color: colorConfig.pageIndex.grayColor,
+    fontSize: 18,
+  },
+  textChange: {
+    color: colorConfig.store.defaultColor,
+    fontSize: 11,
+    fontWeight: 'bold',
+  },
+  btnChange: {
+    padding: 5,
+    marginLeft: 'auto',
   },
   descAddress: {
     color: colorConfig.pageIndex.grayColor,

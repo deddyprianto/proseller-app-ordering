@@ -26,12 +26,12 @@ import AwesomeAlert from 'react-native-awesome-alerts';
 import colorConfig from '../config/colorConfig';
 import appConfig from '../config/appConfig';
 import {
-  sendPayment,
   campaign,
   dataPoint,
   getStamps,
 } from '../actions/rewards.action';
 import {myVoucers} from '../actions/account.action';
+import {sendPayment} from '../actions/sales.action';
 
 class PaymentDetail extends Component {
   constructor(props) {
@@ -53,7 +53,7 @@ class PaymentDetail extends Component {
   };
 
   setDataPayment = async cancel => {
-    console.log(this.props.dataVoucer, 'this.props.dataVoucer');
+    console.log(this.props.myVoucers, 'this.props.dataVoucer');
     var totalBayar = 0;
     if (!cancel) {
       var redeemVoucer =
@@ -70,6 +70,7 @@ class PaymentDetail extends Component {
     } else {
       totalBayar = this.props.pembayaran.payment;
     }
+    console.log('total bayar ', totalBayar);
     this.setState({totalBayar});
   };
 
@@ -84,10 +85,10 @@ class PaymentDetail extends Component {
   myVouchers = () => {
     var myVoucers = [];
     console.log(this.props.myVoucers);
-    if (this.props.myVoucers.data != undefined) {
+    if (this.props.myVoucers != undefined) {
       _.forEach(
         _.groupBy(
-          this.props.myVoucers.data.filter(voucher => voucher.deleted == false),
+          this.props.myVoucers.filter(voucher => voucher.deleted == false),
           'id',
         ),
         function(value, key) {
@@ -97,7 +98,7 @@ class PaymentDetail extends Component {
       );
     }
 
-    console.log(myVoucers);
+    console.log('myVoucer ', myVoucers);
 
     if (
       this.state.cancelVoucher == false &&
@@ -137,8 +138,8 @@ class PaymentDetail extends Component {
     var pembayaran = {};
 
     pembayaran.price = this.state.totalBayar;
-    pembayaran.storeName = this.props.pembayaran.storeName;
-    pembayaran.storeId = this.props.pembayaran.storeId;
+    pembayaran.outletName = this.props.pembayaran.storeName;
+    pembayaran.outletId = this.props.pembayaran.storeId;
     pembayaran.paymentType = 'Cash';
     pembayaran.dataPay = this.props.pembayaran.dataPay;
     pembayaran.void = false;
@@ -163,31 +164,29 @@ class PaymentDetail extends Component {
         pembayaran.statusAdd = 'addPoint';
       }
     }
-
-    console.log(pembayaran, 'pembayaran');
     const response = await this.props.dispatch(sendPayment(pembayaran));
-    console.log(response, 'response kkkk');
+    console.log('reponse pembayaran ', response);
     if (response.success) {
       if (
-        response.responseBody.data.message !=
+        response.responseBody.Data.message !=
         'there`s no running campaign on this date'
       ) {
         await this.props.dispatch(campaign());
         await this.props.dispatch(dataPoint());
         await this.props.dispatch(getStamps());
         await this.props.dispatch(myVoucers());
-        Actions.paymentSuccess({dataRespons: response.responseBody.data});
+        Actions.paymentSuccess({dataRespons: response.responseBody.Data.data});
       } else {
         this.setState({
           showAlert: true,
-          pesanAlert: response.responseBody.data.message,
+          pesanAlert: response.responseBody.Data.message,
           titleAlert: 'Payment Error!',
         });
       }
     } else {
       this.setState({
         showAlert: true,
-        pesanAlert: response.responseBody.message,
+        pesanAlert: response.responseBody.Data.message,
         titleAlert: 'Payment Error!',
       });
     }
@@ -451,7 +450,7 @@ class PaymentDetail extends Component {
             </View>
             <View
               style={{
-                marginBottom: 20,
+                marginBottom: 50,
                 alignItems: 'center',
                 justifyContent: 'space-between',
                 flexDirection: 'row',
@@ -557,12 +556,12 @@ class PaymentDetail extends Component {
               disabledThumbIconBorderColor={
                 colorConfig.pageIndex.activeTintColor
               }
-              height={45}
+              height={60}
               thumbIconBackgroundColor="#FFFFFF"
               railBorderColor="#FFFFFF"
               thumbIconBorderColor={colorConfig.pageIndex.activeTintColor}
               titleColor="#FFFFFF"
-              titleFontSize={16}
+              titleFontSize={20}
               railBackgroundColor={colorConfig.pageIndex.activeTintColor}
               title={
                 'Pay ' + appConfig.appMataUang + ' ' + this.state.totalBayar
@@ -713,6 +712,9 @@ mapDispatchToProps = dispatch => ({
   dispatch,
 });
 
-export default compose(connect(mapStateToProps, mapDispatchToProps))(
-  PaymentDetail,
-);
+export default compose(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  ),
+)(PaymentDetail);

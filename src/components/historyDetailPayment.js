@@ -88,7 +88,7 @@ export default class HistoryDetailPayment extends Component {
           <View style={styles.detail}>
             <View style={styles.detailItem}>
               <Text style={styles.desc}>Store Name</Text>
-              <Text style={styles.desc}>{this.props.item.storeName}</Text>
+              <Text style={styles.desc}>{this.props.item.outletName}</Text>
             </View>
 
             <View style={styles.detailItem}>
@@ -110,12 +110,12 @@ export default class HistoryDetailPayment extends Component {
               </Text>
             </View>
 
-            <View style={styles.detailItem}>
-              <Text style={styles.desc}>Expiry</Text>
-              <Text style={styles.desc}>
-                {this.getDate(this.props.item.expiry)}
-              </Text>
-            </View>
+            {/*<View style={styles.detailItem}>*/}
+            {/*  <Text style={styles.desc}>Expiry</Text>*/}
+            {/*  <Text style={styles.desc}>*/}
+            {/*    {this.getDate(this.props.item.expiry)}*/}
+            {/*  </Text>*/}
+            {/*</View>*/}
 
             <View
               style={{
@@ -134,7 +134,7 @@ export default class HistoryDetailPayment extends Component {
                   color: colorConfig.pageIndex.activeTintColor,
                   fontSize: 30,
                 }}>
-                {this.props.item.pointDebit}
+                {this.props.item.point}
               </Text>
             </View>
           </View>

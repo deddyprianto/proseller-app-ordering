@@ -45,12 +45,15 @@ class paymentAddPoint extends Component {
     }, 1000);
     await this.props.dispatch(campaign());
     await this.props.dispatch(dataPoint());
-    var jumPointRatio = this.props.campign.data.filter(
-      item => item.campaignType == 'point',
-    )[0].points.pointsToRebateRatio0;
-    var jumMoneyRatio = this.props.campign.data.filter(
-      item => item.campaignType == 'point',
-    )[0].points.pointsToRebateRatio1;
+    var jumPointRatio = this.props.campign.points.pointsToRebateRatio0;
+    var jumMoneyRatio = this.props.campign.points.pointsToRebateRatio1;
+    //     this.props.campign.filter(
+    //   item => item.campaignType == 'point',
+    // )[0].points.pointsToRebateRatio0;
+    // var jumMoneyRatio = this.props.campign.filter(
+    //   item => item.campaignType == 'point',
+    // )[0].points.pointsToRebateRatio1;
+    console.log('jumPointRatio ', jumPointRatio);
     var setDefault = this.props.pembayaran.payment * jumPointRatio;
     this.setState({
       jumPointRatio: jumPointRatio,

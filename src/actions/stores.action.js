@@ -1,21 +1,27 @@
-import {fetchApi} from '../service/api';
+import {fetchApiMasterData} from '../service/apiMasterData';
 import {refreshToken} from './auth.actions';
 
 export const dataStores = () => {
   return async (dispatch, getState) => {
     const state = getState();
     try {
-      await dispatch(refreshToken());
+      // await dispatch(refreshToken());
       const {
         authReducer: {
           authData: {token},
         },
       } = state;
-      const response = await fetchApi('/store', 'GET', false, 200, token);
-      console.log(response, 'response store');
+      const response = await fetchApiMasterData(
+        '/outlets',
+        'POST',
+        false,
+        200,
+        token,
+      );
+      console.log(response.response.data, 'response outlets');
       dispatch({
         type: 'DATA_ALL_STORES',
-        data: response.responseBody,
+        data: response.response.data,
       });
     } catch (error) {
       return error;

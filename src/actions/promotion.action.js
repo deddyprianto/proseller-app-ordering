@@ -5,7 +5,7 @@ export const dataPromotion = () => {
   return async (dispatch, getState) => {
     const state = getState();
     try {
-      await dispatch(refreshToken());
+      // await dispatch(refreshToken());
       const {
         authReducer: {
           authData: {token},

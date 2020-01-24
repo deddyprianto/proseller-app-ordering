@@ -33,11 +33,13 @@ class StorePromotion extends Component {
   };
 
   render() {
+    // let dataPromotion = this.props.dataPromotion.data;
+    let dataPromotion = [];
     return (
       <View style={{paddingBottom: 20}}>
-        <TouchableOpacity style={styles.seeAll} onPress={this.seeMorePromotion}>
-          <Text style={styles.seeAllTitle}>See More</Text>
-        </TouchableOpacity>
+        {/*<TouchableOpacity style={styles.seeAll} onPress={this.seeMorePromotion}>*/}
+        {/*  <Text style={styles.seeAllTitle}>See More</Text>*/}
+        {/*</TouchableOpacity>*/}
         {this.props.dataPromotion == undefined ? null : this.props.dataPromotion
             .count < 0 ? null : (
           <Swiper
@@ -49,7 +51,7 @@ class StorePromotion extends Component {
             activeDot={<View style={styles.swiperActiveDot} />}
             paginationStyle={styles.swiperPaginatiom}
             loop>
-            {this.props.dataPromotion.data.map((item, key) => (
+            {dataPromotion.map((item, key) => (
               <TouchableOpacity
                 key={key}
                 style={styles.slide}

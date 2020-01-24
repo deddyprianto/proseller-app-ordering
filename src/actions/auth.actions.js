@@ -95,8 +95,6 @@ export const loginUser = payload => {
         type: 'LOGIN_USER_LOADING',
       });
       payload.companyId = awsConfig.companyId;
-      console.log('Payload login');
-      console.log(payload);
       const response = await fetchApi('/customer/login', 'POST', payload, 200);
 
       console.log(response);
@@ -175,23 +173,19 @@ export const refreshToken = () => {
       var payload = {
         refreshToken: state.authReducer.authData.refreshToken,
         appClientId: awsConfig.appClientId,
-        cognitoPoolId: awsConfig.cognitoPoolId,
       };
-      // console.log(state.authReducer.authData.tokenExp);
-      // console.log(state.authReducer.authData.token);
-      // console.log(payload);
 
       var dateTokenExp = new Date(state.authReducer.authData.tokenExp);
       var dateNow = new Date();
       var sisaTokenExp = dateTokenExp.getTime() - dateNow.getTime();
       if (sisaTokenExp < 0) {
-        await this.props.dispatch(refreshToken());
+        // await this.props.dispatch(refreshToken());
         const response = await fetchApi('/auth/refresh', 'POST', payload, 200);
         console.log(response, 'response refresh token');
         var date = new Date();
         dispatch({
           type: 'AUTH_USER_SUCCESS',
-          token: state.authReducer.authData.token,
+          token: response.responseBody.Data.accessToken.jwtToken,
           exp: date.getTime() + 900,
           refreshToken: state.authReducer.authData.refreshToken,
         });

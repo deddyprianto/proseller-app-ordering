@@ -267,9 +267,6 @@ mapDispatchToProps = dispatch => ({
   dispatch,
 });
 
-export default compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
-)(RewordsVouchers);
+export default compose(connect(mapStateToProps, mapDispatchToProps))(
+  RewordsVouchers,
+);

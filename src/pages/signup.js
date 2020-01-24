@@ -220,7 +220,6 @@ class Signup extends Component {
   }
 
   handleSubmit = async () => {
-    console.log('masuk sini');
     try {
       var dataRegister = {
         companyId: awsConfig.companyId,

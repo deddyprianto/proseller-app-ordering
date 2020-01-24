@@ -65,6 +65,7 @@ class Account extends Component {
   };
 
   render() {
+    console.log('USER DETAIL ', this.props.userDetail);
     return (
       <View style={{flex: 1}}>
         <ScrollView
@@ -194,4 +195,9 @@ mapDispatchToProps = dispatch => ({
   dispatch,
 });
 
-export default compose(connect(mapStateToProps, mapDispatchToProps))(Account);
+export default compose(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  ),
+)(Account);
