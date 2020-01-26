@@ -22,7 +22,11 @@ import {Form, TextValidator} from 'react-native-validator-form';
 import AwesomeAlert from 'react-native-awesome-alerts';
 
 import InputText from '../components/inputText';
-import {confirmUser, loginUser} from '../actions/auth.actions';
+import {
+  confirmUser,
+  loginUser,
+  sendCodeConfirmation,
+} from '../actions/auth.actions';
 import Loader from '../components/loader';
 import {Actions} from 'react-native-router-flux';
 import colorConfig from '../config/colorConfig';
@@ -188,6 +192,35 @@ class Aunt extends Component {
     }
   };
 
+  handleResend = async () => {
+    try {
+      this.setState({loadingVerifyPhone: true});
+      var dataRequest = {
+        phoneNumber: this.state.phoneNumber,
+        appClientId: awsConfig.appClientId,
+        cognitoPoolId: awsConfig.cognitoPoolId,
+        companyId: awsConfig.companyId,
+      };
+      const response = await this.props.dispatch(
+        sendCodeConfirmation(dataRequest),
+      );
+      if (response.responseBody.ResultCode == 200) {
+        this.setState({
+          showAlert: true,
+          pesanAlert: 'Confirmation code has been resent to your phone',
+          titleAlert: 'Confirmation!',
+        });
+      } else {
+        this.setState({
+          loadingVerifyPhone: false,
+          showAlert: true,
+          pesanAlert: response.responseBody.Data.message,
+          titleAlert: 'Failed!',
+        });
+      }
+    } catch (error) {}
+  };
+
   showPass = () => {
     if (this.state.press == false) {
       this.setState({showPass: false, press: true});
@@ -289,9 +322,7 @@ class Aunt extends Component {
                 type="text"
                 under
                 value={this.state.phoneNumber}
-                onChangeText={value =>
-                  this.setState({phoneNumber: value})
-                }
+                onChangeText={value => this.setState({phoneNumber: value})}
               />
 
               <View>
@@ -336,6 +367,16 @@ class Aunt extends Component {
                 <Text style={styles.buttonText}>Confirm</Text>
               </TouchableOpacity>
             </Form>
+
+            <TouchableOpacity onPress={this.handleResend}>
+              <Text
+                style={{
+                  textAlign: 'center',
+                  color: colorConfig.pageIndex.activeTintColor,
+                }}>
+                Resend Confirmation Code
+              </Text>
+            </TouchableOpacity>
 
             {/* <Field
               name="username"
@@ -401,7 +442,10 @@ mapDispatchToProps = dispatch => ({
 });
 
 export default compose(
-  connect(mapStateToProps, mapDispatchToProps),
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  ),
   reduxForm({
     form: 'confirm',
     validate,

@@ -52,7 +52,7 @@ class Main extends Component {
         },
       });
 
-      // await this.props.dispatch(refreshToken());
+      await this.props.dispatch(refreshToken());
 
       const data = await this.performTimeConsumingTask();
       if (data !== null) {

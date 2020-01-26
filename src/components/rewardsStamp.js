@@ -29,7 +29,7 @@ class RewardsStamp extends Component {
 
   getItemStamp() {
     var stampsItem = [];
-    console.log('item stampts ', this.props.dataStamps.dataStamps)
+    console.log('item stampts ', this.props.dataStamps.dataStamps);
     if (this.props.dataStamps.dataStamps != undefined) {
       var tampung = this.props.dataStamps.dataStamps.stamps.stampsItem;
       var isi = [];
@@ -151,6 +151,9 @@ mapDispatchToProps = dispatch => ({
   dispatch,
 });
 
-export default compose(connect(mapStateToProps, mapDispatchToProps))(
-  RewardsStamp,
-);
+export default compose(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  ),
+)(RewardsStamp);

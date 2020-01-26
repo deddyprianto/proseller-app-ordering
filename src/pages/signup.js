@@ -233,20 +233,21 @@ class Signup extends Component {
       };
 
       const response = await this.props.dispatch(createNewUser(dataRegister));
+      console.log(response, 'response register')
       if (!response.success) {
         throw response;
       } else {
         this.setState({
           showAlert: true,
           pesanAlert:
-            "A verify code has been sent to your email. Select 'Verify Code' to verify your account!",
+            "A verify code has been sent to your phone. Select 'Verify Code' to verify your account!",
           titleAlert: 'Register Success!',
         });
       }
     } catch (error) {
       this.setState({
         showAlert: true,
-        pesanAlert: error.responseBody.message,
+        pesanAlert: error.responseBody.Data.message,
         titleAlert: 'Register Error!',
       });
     }

@@ -175,23 +175,28 @@ export const refreshToken = () => {
         appClientId: awsConfig.appClientId,
       };
 
-      var dateTokenExp = new Date(state.authReducer.authData.tokenExp);
-      var dateNow = new Date();
-      var sisaTokenExp = dateTokenExp.getTime() - dateNow.getTime();
-      if (sisaTokenExp < 0) {
-        // await this.props.dispatch(refreshToken());
-        const response = await fetchApi('/auth/refresh', 'POST', payload, 200);
-        console.log(response, 'response refresh token');
-        var date = new Date();
-        dispatch({
-          type: 'AUTH_USER_SUCCESS',
-          token: response.responseBody.Data.accessToken.jwtToken,
-          exp: date.getTime() + 900,
-          refreshToken: state.authReducer.authData.refreshToken,
-        });
-        console.log('Token Expired: ' + dateTokenExp);
-        console.log('Token Now: ' + dateNow);
-      }
+      // var dateTokenExp = new Date(state.authReducer.authData.tokenExp);
+      // var dateNow = new Date();
+      // var sisaTokenExp = dateTokenExp.getTime() - dateNow.getTime();
+      // console.log('sisa token ', sisaTokenExp);
+      // if (sisaTokenExp < 0) {
+      // await this.props.dispatch(refreshToken());
+      const response = await fetchApi('/auth/refresh', 'POST', payload, 200);
+      console.log(response, 'response refresh token');
+      var date = new Date();
+      dispatch({
+        type: 'AUTH_USER_SUCCESS',
+        token: response.responseBody.Data.accessToken.jwtToken,
+        exp: date.getTime() + 900,
+        refreshToken: state.authReducer.authData.refreshToken,
+        qrcode: state.authReducer.authData.qrcode,
+        payload: state.authReducer.authData.payload,
+        isLoggedIn: true,
+        waiting: false,
+      });
+      // console.log('Token Expired: ' + dateTokenExp);
+      // console.log('Token Now: ' + dateNow);
+      // }
     } catch (error) {
       console.log(error);
     }

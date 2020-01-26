@@ -114,7 +114,6 @@ class PageIndex extends Component {
       online = false;
     }
     this.setState({online: online});
-    console.log(online, 'jj');
   };
 
   render() {

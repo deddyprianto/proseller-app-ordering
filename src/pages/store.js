@@ -116,12 +116,87 @@ class Store extends Component {
   };
 
   setDataStore = (response, statusLocation, position) => {
+    response.data = [
+      {
+        createdAt: '2019-09-28T14:23:15+00:00',
+        deleted: false,
+        id: '0ad2dc48-a0ea-46f9-8483-e1dc9e0efd82',
+        image:
+          'https://tenant-bucket-demo-5df2eb82-b50b-46c9-9e0d-4612018fa53e.s3.ap-southeast-1.amazonaws.com/images/store/Sun%20Plaza.jpg',
+        location: {
+          address: '30 Sembawang Drive, Sun Plaza #01-01, Singapore',
+          coordinate: {
+            lat: 1.4481739,
+            lng: 103.81959610000001,
+          },
+          district: 'Singapore',
+          postalCode: '757713',
+          region: 'North',
+        },
+        operationalHours: [
+          {
+            Sunday: {
+              active: true,
+              close: '22:00',
+              open: '08:00',
+            },
+          },
+          {
+            Monday: {
+              active: true,
+              close: '22:00',
+              open: '08:00',
+            },
+          },
+          {
+            Tuesday: {
+              active: true,
+              close: '22:00',
+              open: '08:00',
+            },
+          },
+          {
+            wednesday: {
+              active: true,
+              close: '22:00',
+              open: '08:00',
+            },
+          },
+          {
+            Thursday: {
+              active: true,
+              close: '22:00',
+              open: '08:00',
+            },
+          },
+          {
+            Friday: {
+              active: true,
+              close: '22:00',
+              open: '08:00',
+            },
+          },
+          {
+            Saturday: {
+              active: true,
+              close: '22:00',
+              open: '08:00',
+            },
+          },
+        ],
+        partitionKey: 'store-tenant::5df2eb82-b50b-46c9-9e0d-4612018fa53e',
+        sortKey: 'store::0ad2dc48-a0ea-46f9-8483-e1dc9e0efd82',
+        storeName: 'Sun Plaza',
+        updatedAt: '2019-09-28T14:23:15+00:00',
+      },
+    ];
     console.log(`data store`, response);
     var dataStoresTampung = [];
     var storeGrupTampung = [];
     try {
-      for (var i = 0; i < response.count; i++) {
+      for (var i = 0; i < response.data.length; i++) {
         if (response.data[i].deleted == false) {
+          console.log('masuk sini dongs');
           storeGrupTampung.push(response.data[i].location.region);
           dataStoresTampung.push({
             storeName: response.data[i].name,
@@ -179,6 +254,7 @@ class Store extends Component {
       }
     }
 
+    console.log('dataAllStore ', dataStoresTampung)
     this.setState({
       isLoading: false,
       dataStores: dataStoresTampung,
