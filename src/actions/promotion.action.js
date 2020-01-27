@@ -1,4 +1,4 @@
-import {fetchApi} from '../service/api';
+import {fetchApiMasterData} from '../service/apiMasterData';
 import {refreshToken} from './auth.actions';
 
 export const dataPromotion = () => {
@@ -11,12 +11,20 @@ export const dataPromotion = () => {
           authData: {token},
         },
       } = state;
-      const response = await fetchApi('/promotion', 'GET', false, 200, token);
+      const response = await fetchApiMasterData(
+        '/promobanners/load',
+        'POST',
+        false,
+        200,
+        token,
+      );
       console.log(response, 'response promotion');
-      dispatch({
-        type: 'DATA_ALL_PROMOTION',
-        data: response.responseBody,
-      });
+      if (response.success) {
+        dispatch({
+          type: 'DATA_ALL_PROMOTION',
+          data: response.response.data,
+        });
+      }
     } catch (error) {
       return error;
     }

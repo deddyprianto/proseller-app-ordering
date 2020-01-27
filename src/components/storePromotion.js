@@ -33,8 +33,8 @@ class StorePromotion extends Component {
   };
 
   render() {
-    // let dataPromotion = this.props.dataPromotion.data;
-    let dataPromotion = [];
+    let dataPromotion = this.props.dataPromotion;
+    // let dataPromotion = [];
     return (
       <View style={{paddingBottom: 20}}>
         {/*<TouchableOpacity style={styles.seeAll} onPress={this.seeMorePromotion}>*/}
@@ -60,7 +60,7 @@ class StorePromotion extends Component {
                   resizeMode="stretch"
                   style={styles.image}
                   source={{
-                    uri: item.image,
+                    uri: item.defaultImageURL,
                   }}
                 />
               </TouchableOpacity>

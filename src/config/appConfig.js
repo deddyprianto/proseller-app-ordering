@@ -6,6 +6,7 @@ const appConfig = {
   appTextWelcome: require('../assets/img/welcome.png'),
   appButtonSignin: require('../assets/img/button_sigin.png'),
   appButtonFB: require('../assets/img/button_fb.png'),
+  arrowRight: require('../assets/img/arrow-right.png'),
   appLogoFB: require('../assets/img/logo_fb.png'),
   appFormSignin: require('../assets/img/form_signin.png'),
   appStatusLoginOther: true,
@@ -13,7 +14,7 @@ const appConfig = {
   appImageNull: require('../assets/img/image_null.png'),
   appName: 'Qiji',
   appMataUang: 'SGD',
-  appVersion: 'Version 1.3.3 (Qiji)',
+  appVersion: 'Version 1.3.4 (Qiji)',
 };
 
 export default appConfig;

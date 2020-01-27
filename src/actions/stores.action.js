@@ -12,7 +12,7 @@ export const dataStores = () => {
         },
       } = state;
       const response = await fetchApiMasterData(
-        '/outlets',
+        '/outlets/load',
         'POST',
         false,
         200,

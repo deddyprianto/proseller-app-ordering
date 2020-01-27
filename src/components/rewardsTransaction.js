@@ -16,11 +16,18 @@ import logoCash from '../assets/img/cash.png';
 import logoVisa from '../assets/img/visa.png';
 import colorConfig from '../config/colorConfig';
 
+// action
+import {dataTransaction} from '../actions/sales.action';
+
 class RewardsTransaction extends Component {
   constructor(props) {
     super(props);
     this.state = {};
   }
+
+  // componentDidMount = async () => {
+  //   await this.props.dispatch(dataTransaction());
+  // };
 
   historyDetailPayment = item => {
     Actions.historyDetailPayment({item});
@@ -86,7 +93,7 @@ class RewardsTransaction extends Component {
                           />
                         </View>
                       </TouchableOpacity>
-                      <View style={styles.line}></View>
+                      <View style={styles.line} />
                     </View>
                   }
                 </View>

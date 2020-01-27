@@ -25,13 +25,11 @@ import AwesomeAlert from 'react-native-awesome-alerts';
 
 import colorConfig from '../config/colorConfig';
 import appConfig from '../config/appConfig';
-import {
-  campaign,
-  dataPoint,
-  getStamps,
-} from '../actions/rewards.action';
+import {campaign, dataPoint, getStamps} from '../actions/rewards.action';
 import {myVoucers} from '../actions/account.action';
 import {sendPayment} from '../actions/sales.action';
+import Loader from './loader';
+import {refreshToken} from '../actions/auth.actions';
 
 class PaymentDetail extends Component {
   constructor(props) {
@@ -45,6 +43,7 @@ class PaymentDetail extends Component {
       totalBayar: this.props.pembayaran.payment,
       cancelVoucher: false,
       cancelPoint: false,
+      loading: false,
     };
   }
 
@@ -84,45 +83,50 @@ class PaymentDetail extends Component {
 
   myVouchers = () => {
     var myVoucers = [];
-    console.log(this.props.myVoucers);
-    if (this.props.myVoucers != undefined) {
-      _.forEach(
-        _.groupBy(
-          this.props.myVoucers.filter(voucher => voucher.deleted == false),
-          'id',
-        ),
-        function(value, key) {
-          value[0].totalRedeem = value.length;
-          myVoucers.push(value[0]);
-        },
-      );
-    }
+    try {
+      if (this.props.myVoucers != undefined) {
+        _.forEach(
+          _.groupBy(
+            this.props.myVoucers.filter(voucher => voucher.deleted == false),
+            'id',
+          ),
+          function(value, key) {
+            value[0].totalRedeem = value.length;
+            myVoucers.push(value[0]);
+          },
+        );
+      }
 
-    console.log('myVoucer ', myVoucers);
+      if (
+        this.state.cancelVoucher == false &&
+        this.props.dataVoucer != undefined
+      ) {
+        var jumlah = _.find(myVoucers, {id: this.props.dataVoucer.id})
+          .totalRedeem;
 
-    if (
-      this.state.cancelVoucher == false &&
-      this.props.dataVoucer != undefined
-    ) {
-      var jumlah = _.find(myVoucers, {id: this.props.dataVoucer.id})
-        .totalRedeem;
+        var index = _.findIndex(myVoucers, {
+          id: this.props.dataVoucer.id,
+        });
 
-      var index = _.findIndex(myVoucers, {
-        id: this.props.dataVoucer.id,
+        _.updateWith(
+          myVoucers,
+          '[' + index + "]['totalRedeem']",
+          _.constant(jumlah - 1),
+          Object,
+        );
+      }
+
+      Actions.paymentAddVoucers({
+        data: myVoucers,
+        pembayaran: this.props.pembayaran,
       });
-
-      _.updateWith(
-        myVoucers,
-        '[' + index + "]['totalRedeem']",
-        _.constant(jumlah - 1),
-        Object,
-      );
+    } catch (e) {
+      this.setState({
+        showAlert: true,
+        pesanAlert: 'Something went wrong, please try again.',
+        titleAlert: 'Oopss!',
+      });
     }
-
-    Actions.paymentAddVoucers({
-      data: myVoucers,
-      pembayaran: this.props.pembayaran,
-    });
   };
 
   myPoint = () => {
@@ -136,46 +140,56 @@ class PaymentDetail extends Component {
   onSlideRight = async () => {
     // Actions.paymentSuccess();
     var pembayaran = {};
+    try {
+      this.setState({loading: true});
+      pembayaran.price = this.state.totalBayar;
+      pembayaran.outletName = this.props.pembayaran.storeName;
+      pembayaran.outletId = this.props.pembayaran.storeId;
+      pembayaran.paymentType = 'Cash';
+      pembayaran.dataPay = this.props.pembayaran.dataPay;
+      pembayaran.void = false;
 
-    pembayaran.price = this.state.totalBayar;
-    pembayaran.outletName = this.props.pembayaran.storeName;
-    pembayaran.outletId = this.props.pembayaran.storeId;
-    pembayaran.paymentType = 'Cash';
-    pembayaran.dataPay = this.props.pembayaran.dataPay;
-    pembayaran.void = false;
-
-    if (
-      this.props.dataVoucer == undefined &&
-      this.props.addPoint == undefined
-    ) {
-      pembayaran.statusAdd = null;
-      pembayaran.redeemValue = 0;
-    } else {
-      pembayaran.beforePrice = this.props.pembayaran.payment;
-      pembayaran.afterPrice = this.state.totalBayar;
-
-      if (this.props.dataVoucer != undefined) {
-        pembayaran.voucherId = this.props.dataVoucer.id;
-        pembayaran.voucherSerialNumber = this.props.dataVoucer.serialNumber;
-        pembayaran.statusAdd = 'addVoucher';
-      }
-      if (this.props.addPoint != undefined) {
-        pembayaran.redeemValue = this.props.addPoint;
-        pembayaran.statusAdd = 'addPoint';
-      }
-    }
-    const response = await this.props.dispatch(sendPayment(pembayaran));
-    console.log('reponse pembayaran ', response);
-    if (response.success) {
       if (
-        response.responseBody.Data.message !=
-        'there`s no running campaign on this date'
+        this.props.dataVoucer == undefined &&
+        this.props.addPoint == undefined
       ) {
-        await this.props.dispatch(campaign());
-        await this.props.dispatch(dataPoint());
-        await this.props.dispatch(getStamps());
-        await this.props.dispatch(myVoucers());
-        Actions.paymentSuccess({dataRespons: response.responseBody.Data.data});
+        pembayaran.statusAdd = null;
+        pembayaran.redeemValue = 0;
+      } else {
+        pembayaran.beforePrice = this.props.pembayaran.payment;
+        pembayaran.afterPrice = this.state.totalBayar;
+
+        if (this.props.dataVoucer != undefined) {
+          pembayaran.voucherId = this.props.dataVoucer.id;
+          pembayaran.voucherSerialNumber = this.props.dataVoucer.serialNumber;
+          pembayaran.statusAdd = 'addVoucher';
+        }
+        if (this.props.addPoint != undefined) {
+          pembayaran.redeemValue = this.props.addPoint;
+          pembayaran.statusAdd = 'addPoint';
+        }
+      }
+      const response = await this.props.dispatch(sendPayment(pembayaran));
+      console.log('reponse pembayaran ', response);
+      if (response.success) {
+        if (
+          response.responseBody.Data.message !=
+          'there`s no running campaign on this date'
+        ) {
+          await this.props.dispatch(campaign());
+          await this.props.dispatch(dataPoint());
+          await this.props.dispatch(getStamps());
+          await this.props.dispatch(myVoucers());
+          Actions.paymentSuccess({
+            dataRespons: response.responseBody.Data.data,
+          });
+        } else {
+          this.setState({
+            showAlert: true,
+            pesanAlert: response.responseBody.Data.message,
+            titleAlert: 'Payment Error!',
+          });
+        }
       } else {
         this.setState({
           showAlert: true,
@@ -183,12 +197,14 @@ class PaymentDetail extends Component {
           titleAlert: 'Payment Error!',
         });
       }
-    } else {
+      this.setState({loading: false});
+    } catch (e) {
       this.setState({
         showAlert: true,
-        pesanAlert: response.responseBody.Data.message,
-        titleAlert: 'Payment Error!',
+        pesanAlert: 'Something went wrong, please try again.',
+        titleAlert: 'Oopss!',
       });
+      this.setState({loading: false});
     }
   };
 
@@ -226,6 +242,7 @@ class PaymentDetail extends Component {
     );
     return (
       <View style={styles.container}>
+        {this.state.loading && <Loader />}
         {console.log(this.props.dataStamps)}
         <View style={{backgroundColor: colorConfig.pageIndex.backgroundColor}}>
           <View
@@ -556,9 +573,11 @@ class PaymentDetail extends Component {
               disabledThumbIconBorderColor={
                 colorConfig.pageIndex.activeTintColor
               }
+              thumbIconImageSource={appConfig.arrowRight}
               height={60}
               thumbIconBackgroundColor="#FFFFFF"
               railBorderColor="#FFFFFF"
+              railFillBackgroundColor={colorConfig.pageIndex.grayColor}
               thumbIconBorderColor={colorConfig.pageIndex.activeTintColor}
               titleColor="#FFFFFF"
               titleFontSize={20}

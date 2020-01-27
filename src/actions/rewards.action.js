@@ -212,7 +212,7 @@ export const redeemVoucher = payload => {
         token,
       );
       console.log(response, 'response redeem Voucer');
-      return response.responseBody;
+      return response;
     } catch (error) {
       throw error;
     }

@@ -97,7 +97,7 @@ class AccountMenuList extends Component {
             <TouchableOpacity
               style={styles.item}
               onPress={() => this.props.screen.navigation.navigate('History')}>
-              <Text style={styles.title}> History </Text>
+              <Text style={styles.title}> Transactions History </Text>
               <Icon
                 size={20}
                 name={
@@ -127,7 +127,7 @@ class AccountMenuList extends Component {
           </View>
           <View>
             <TouchableOpacity style={styles.item}>
-              <Text style={styles.title}> Setting </Text>
+              <Text style={styles.title}> Settings </Text>
               <Icon
                 size={20}
                 name={

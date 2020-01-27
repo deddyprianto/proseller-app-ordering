@@ -26,6 +26,8 @@ import {compose} from 'redux';
 import {connect} from 'react-redux';
 import {reduxForm} from 'redux-form';
 import AwesomeAlert from 'react-native-awesome-alerts';
+import Loader from './loader';
+import {refreshToken} from '../actions/auth.actions';
 
 class AccountEditProfil extends Component {
   constructor(props) {
@@ -55,6 +57,7 @@ class AccountEditProfil extends Component {
       address: data.address,
       isDatePickerVisible: false,
       showAlert: false,
+      loading: false,
     };
   }
 
@@ -62,8 +65,13 @@ class AccountEditProfil extends Component {
     Actions.pop();
   }
 
+  componentDidMount() {
+    this.props.dispatch(refreshToken);
+  }
+
   submitEdit = async () => {
     try {
+      this.setState({loading: true});
       let dataProfile = {
         phoneNumber: this.props.dataDiri.phoneNumber,
         appClientId: awsConfig.appClientId,
@@ -88,12 +96,14 @@ class AccountEditProfil extends Component {
           titleAlert: "We're Sorry!",
         });
       }
+      this.setState({loading: false});
     } catch (e) {
       this.setState({
         showAlert: true,
         pesanAlert: 'Something went wrong, please try again!',
         titleAlert: "We're Sorry!",
       });
+      this.setState({loading: false});
     }
   };
 
@@ -136,6 +146,7 @@ class AccountEditProfil extends Component {
   render() {
     return (
       <View style={styles.container}>
+        {this.state.loading && <Loader />}
         <View
           style={[
             styles.header,
@@ -200,7 +211,7 @@ class AccountEditProfil extends Component {
                     }}>
                     <Text style={styles.desc}>Phone Number</Text>
                     <TouchableOpacity
-                      onPress={this.btnChangePhoneNumber}
+                      // onPress={this.btnChangePhoneNumber}
                       style={[styles.btnChange]}>
                       <Text style={[styles.textChange]}>Change</Text>
                     </TouchableOpacity>
@@ -426,7 +437,8 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   textChange: {
-    color: colorConfig.store.defaultColor,
+    // color: colorConfig.store.defaultColor,
+    color: 'gray',
     fontSize: 11,
     fontWeight: 'bold',
   },

@@ -12,12 +12,14 @@ import {
   Dimensions,
   TouchableOpacity,
   ScrollView,
+  Image,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
 import createOpenLink from 'react-native-open-maps';
 
 import colorConfig from '../config/colorConfig';
+import appConfig from '../config/appConfig';
 
 export default class StoreDetailStores extends Component {
   constructor(props) {
@@ -41,6 +43,7 @@ export default class StoreDetailStores extends Component {
   }
 
   render() {
+    console.log('this.props.item ', this.props.item);
     return (
       <View style={styles.container}>
         <View style={{backgroundColor: colorConfig.pageIndex.backgroundColor}}>
@@ -58,31 +61,56 @@ export default class StoreDetailStores extends Component {
         </View>
         <ScrollView>
           <View style={styles.card}>
+            {this.props.item.defaultImageURL != undefined ? (
+              <Image
+                resizeMode="cover"
+                style={styles.image}
+                source={{
+                  uri: this.props.item.defaultImageURL,
+                }}
+              />
+            ) : (
+              <Image
+                resizeMode="stretch"
+                style={styles.image}
+                source={appConfig.appImageNull}
+              />
+            )}
+          </View>
+          <View style={styles.card}>
             <View style={styles.item}>
               <Text style={styles.title}>{this.props.item.storeName}</Text>
             </View>
             <View style={styles.detail}>
               <View style={styles.detailItem}>
-                <Text style={styles.desc}>Region</Text>
-                <Text style={styles.desc}>{this.props.item.region}</Text>
+                <Text style={[styles.desc, {fontWeight: 'bold'}]}>City</Text>
+                <Text style={styles.desc}>
+                  {this.props.item.region != undefined
+                    ? this.props.item.region
+                    : '-'}
+                </Text>
               </View>
               <View style={styles.detailItem}>
-                <Text style={styles.desc}>Address</Text>
+                <Text style={[styles.desc, {fontWeight: 'bold'}]}>Address</Text>
                 <Text style={styles.descAddress}>
                   {this.props.item.address}
                 </Text>
               </View>
               {this.props.item.storeJarak == '-' ? null : (
                 <View style={styles.detailItem}>
-                  <Text style={styles.desc}>Distance</Text>
+                  <Text style={[styles.desc, {fontWeight: 'bold'}]}>
+                    Distance
+                  </Text>
                   <Text style={styles.desc}>
                     {this.props.item.storeJarak.toFixed(1) + ' KM'}
                   </Text>
                 </View>
               )}
               <View style={styles.detailItem}>
-                <Text style={styles.desc}>Status</Text>
-                <Text style={styles.desc}>{this.props.item.storeStatus}</Text>
+                <Text style={[styles.desc, {fontWeight: 'bold'}]}>Status</Text>
+                <Text style={styles.desc}>
+                  {this.props.item.storeStatus ? 'Currently Open' : 'Closed'}
+                </Text>
               </View>
               <View
                 style={{
@@ -117,94 +145,22 @@ export default class StoreDetailStores extends Component {
           </View>
           <View style={styles.card}>
             <View style={styles.item}>
-              <Text style={styles.title}>Operating Hours</Text>
+              <Text style={styles.title}>Operational Hours</Text>
             </View>
-            <View style={styles.detail}>
-              <View style={styles.detailItem}>
-                <Text style={styles.desc}>Monday</Text>
-                <Text style={styles.desc}>
-                  {(this.props.item.operationalHours[1].Monday == undefined
-                    ? '08:00'
-                    : this.props.item.operationalHours[1].Monday.open) +
-                    ' to ' +
-                    (this.props.item.operationalHours[1].Monday == undefined
-                      ? '22:00'
-                      : this.props.item.operationalHours[1].Monday.close)}
-                </Text>
-              </View>
-              <View style={styles.detailItem}>
-                <Text style={styles.desc}>Tuesday</Text>
-                <Text style={styles.desc}>
-                  {(this.props.item.operationalHours[2].Tuesday == undefined
-                    ? '08:00'
-                    : this.props.item.operationalHours[2].Tuesday.open) +
-                    ' to ' +
-                    (this.props.item.operationalHours[2].Tuesday == undefined
-                      ? '22:00'
-                      : this.props.item.operationalHours[2].Tuesday.close)}
-                </Text>
-              </View>
-              <View style={styles.detailItem}>
-                <Text style={styles.desc}>Wednesday</Text>
-                <Text style={styles.desc}>
-                  {(this.props.item.operationalHours[3].Wednesday == undefined
-                    ? '08:00'
-                    : this.props.item.operationalHours[3].Wednesday.open) +
-                    ' to ' +
-                    (this.props.item.operationalHours[3].Wednesday == undefined
-                      ? '22:00'
-                      : this.props.item.operationalHours[3].Wednesday.close)}
-                </Text>
-              </View>
-              <View style={styles.detailItem}>
-                <Text style={styles.desc}>Thursday</Text>
-                <Text style={styles.desc}>
-                  {(this.props.item.operationalHours[4].Thursday == undefined
-                    ? '08:00'
-                    : this.props.item.operationalHours[4].Thursday.open) +
-                    ' to ' +
-                    (this.props.item.operationalHours[4].Thursday == undefined
-                      ? '22:00'
-                      : this.props.item.operationalHours[4].Thursday.close)}
-                </Text>
-              </View>
-              <View style={styles.detailItem}>
-                <Text style={styles.desc}>Friday</Text>
-                <Text style={styles.desc}>
-                  {(this.props.item.operationalHours[5].Triday == undefined
-                    ? '08:00'
-                    : this.props.item.operationalHours[5].Triday.open) +
-                    ' to ' +
-                    (this.props.item.operationalHours[5].Triday == undefined
-                      ? '22:00'
-                      : this.props.item.operationalHours[5].Triday.close)}
-                </Text>
-              </View>
-              <View style={styles.detailItem}>
-                <Text style={styles.desc}>Saturday</Text>
-                <Text style={styles.desc}>
-                  {(this.props.item.operationalHours[6].Saturday == undefined
-                    ? '08:00'
-                    : this.props.item.operationalHours[6].Saturday.open) +
-                    ' to ' +
-                    (this.props.item.operationalHours[6].Saturday == undefined
-                      ? '22:00'
-                      : this.props.item.operationalHours[6].Saturday.close)}
-                </Text>
-              </View>
-              <View style={styles.detailItem}>
-                <Text style={styles.desc}>Sunday</Text>
-                <Text style={styles.desc}>
-                  {(this.props.item.operationalHours[0].Sunday == undefined
-                    ? '08:00'
-                    : this.props.item.operationalHours[0].Sunday.open) +
-                    ' to ' +
-                    (this.props.item.operationalHours[0].Sunday == undefined
-                      ? '22:00'
-                      : this.props.item.operationalHours[0].Sunday.close)}
-                </Text>
-              </View>
-            </View>
+            {this.props.item.operationalHours
+              .filter(item => item.active == true)
+              .map((data, key) => (
+                <View key={key} style={styles.detail}>
+                  <View style={styles.detailItem}>
+                    <Text style={[styles.desc, {fontWeight: 'bold'}]}>
+                      {data.nameOfDay}
+                    </Text>
+                    <Text style={styles.desc}>
+                      {data.open} to {data.close}
+                    </Text>
+                  </View>
+                </View>
+              ))}
           </View>
         </ScrollView>
       </View>
@@ -247,7 +203,7 @@ const styles = StyleSheet.create({
   },
   title: {
     color: colorConfig.pageIndex.activeTintColor,
-    fontSize: 14,
+    fontSize: 15,
     textAlign: 'center',
     fontWeight: 'bold',
     marginBottom: 10,
@@ -256,6 +212,10 @@ const styles = StyleSheet.create({
     marginLeft: 30,
     marginRight: 30,
     marginBottom: 10,
+  },
+  image: {
+    height: 200,
+    resizeMode: 'stretch',
   },
   detailItem: {
     flexDirection: 'row',

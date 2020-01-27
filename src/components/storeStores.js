@@ -29,7 +29,7 @@ export default class StoreStores extends Component {
       <View>
         {this.state.dataStoreRegion.map((region, index) => (
           <View style={styles.stores} key={index}>
-            <Text style={styles.stores}>Stores - {region}</Text>
+            <Text style={styles.stores}>Stores {region != undefined ? `- ${region}` : null}</Text>
             {this.state.dataAllStore[this.state.dataStoreRegion[index]].map(
               (item, keys) => (
                 <View key={keys}>
@@ -72,7 +72,7 @@ export default class StoreStores extends Component {
                             color: colorConfig.store.defaultColor,
                             fontFamily: 'Lato-Medium',
                           }}>
-                          {item.storeStatus}
+                          {item.storeStatus ? "Open Now" : "Closed"}
                         </Text>
                       </View>
                       {item.storeJarak != '-' ? (

@@ -45,7 +45,7 @@ export default class Routes extends Component {
     return (
       <Router>
         <Scene>
-          <Scene key="root" hideNavBar={true} initial={!this.props.isLoggedIn}>
+          <Scene key="root" hideNavBar={true} swipeEnabled={false} animationEnabled={false} panHandlers={null} initial={!this.props.isLoggedIn}>
             <Scene key="signin" component={Signin} initial={true} />
             <Scene key="signup" component={Signup} title="Register" />
             <Scene key="auth" component={Aunt} title="Auntetikasi" />

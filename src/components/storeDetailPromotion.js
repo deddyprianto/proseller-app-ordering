@@ -11,6 +11,7 @@ import {
   StyleSheet,
   Dimensions,
   TouchableOpacity,
+  Image,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -48,11 +49,11 @@ export default class StoreDetailPromotion extends Component {
         </View>
         <View style={styles.card}>
           <View style={styles.item}>
-            <Text style={styles.title}>{this.props.dataPromotion.title}</Text>
+            <Text style={styles.title}>{this.props.dataPromotion.name}</Text>
           </View>
           <View style={styles.detail}>
             <View style={styles.detailItem}>
-              <Text style={styles.desc}>{this.props.dataPromotion.desc}</Text>
+              <Text style={styles.desc}>{this.props.dataPromotion.description}</Text>
             </View>
           </View>
         </View>
@@ -116,5 +117,9 @@ const styles = StyleSheet.create({
     color: colorConfig.pageIndex.grayColor,
     maxWidth: Dimensions.get('window').width,
     textAlign: 'right',
+  },
+  image: {
+    width: Dimensions.get('window').width - 40,
+    flex: 1,
   },
 });

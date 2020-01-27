@@ -55,11 +55,13 @@ class Store extends Component {
   componentDidMount = async () => {
     await this.props.dispatch(campaign());
     await this.props.dispatch(dataPromotion());
-    await this.props.dispatch(dataPoint());
-    await this.props.dispatch(vouchers());
-    await this.props.dispatch(myVoucers());
+    // await this.props.dispatch(dataPoint());
+    // await this.props.dispatch(vouchers());
+    // await this.props.dispatch(myVoucers());
     await this.props.dispatch(dataInbox());
-    await this.props.dispatch(getStamps());
+    // await this.props.dispatch(getStamps());
+
+    // if ()
 
     if (this.state.dataStores.length === 0) {
       this.setState({isLoading: true});
@@ -98,7 +100,6 @@ class Store extends Component {
           this.setDataStore(this.props.dataStores, true, position);
         },
         async error => {
-          // alert(error.message);
           await this.props.dispatch(dataStores());
           this.setDataStore(this.props.dataStores, false, null);
         },
@@ -116,137 +117,95 @@ class Store extends Component {
   };
 
   setDataStore = (response, statusLocation, position) => {
-    response.data = [
-      {
-        createdAt: '2019-09-28T14:23:15+00:00',
-        deleted: false,
-        id: '0ad2dc48-a0ea-46f9-8483-e1dc9e0efd82',
-        image:
-          'https://tenant-bucket-demo-5df2eb82-b50b-46c9-9e0d-4612018fa53e.s3.ap-southeast-1.amazonaws.com/images/store/Sun%20Plaza.jpg',
-        location: {
-          address: '30 Sembawang Drive, Sun Plaza #01-01, Singapore',
-          coordinate: {
-            lat: 1.4481739,
-            lng: 103.81959610000001,
-          },
-          district: 'Singapore',
-          postalCode: '757713',
-          region: 'North',
-        },
-        operationalHours: [
-          {
-            Sunday: {
-              active: true,
-              close: '22:00',
-              open: '08:00',
-            },
-          },
-          {
-            Monday: {
-              active: true,
-              close: '22:00',
-              open: '08:00',
-            },
-          },
-          {
-            Tuesday: {
-              active: true,
-              close: '22:00',
-              open: '08:00',
-            },
-          },
-          {
-            wednesday: {
-              active: true,
-              close: '22:00',
-              open: '08:00',
-            },
-          },
-          {
-            Thursday: {
-              active: true,
-              close: '22:00',
-              open: '08:00',
-            },
-          },
-          {
-            Friday: {
-              active: true,
-              close: '22:00',
-              open: '08:00',
-            },
-          },
-          {
-            Saturday: {
-              active: true,
-              close: '22:00',
-              open: '08:00',
-            },
-          },
-        ],
-        partitionKey: 'store-tenant::5df2eb82-b50b-46c9-9e0d-4612018fa53e',
-        sortKey: 'store::0ad2dc48-a0ea-46f9-8483-e1dc9e0efd82',
-        storeName: 'Sun Plaza',
-        updatedAt: '2019-09-28T14:23:15+00:00',
-      },
-    ];
-    console.log(`data store`, response);
+    console.log('statusLocation ', statusLocation);
+    response.data = response;
+    // response.data = [
+    //   {
+    //     id: '8f5860ea-a0fb-4409-88ad-f1fa97f84804',
+    //     name: 'Abon Sapi Buk Darmo',
+    //     phoneNo: '(03)982872',
+    //     address: 'Gg IV/C No. 1 Babatan, Wiyung',
+    //     latitude: 123456,
+    //     longitude: 123456,
+    //     defaultImageURL:
+    //       'https://cdn-bucket-file-manager.s3.ap-southeast-1.amazonaws.com/Upload/9888658a-368b-44f2-8c37-006e62b184eb/outlet/0c640dba-9e31-492f-910e-01e865897891.jpg',
+    //     city: 'Singapore',
+    //     countryCode: 'SG',
+    //     operationalHours: [
+    //       {
+    //         day: 0,
+    //         nameOfDay: 'Sunday',
+    //         active: true,
+    //         close: '22:00',
+    //         open: '08:00',
+    //       },
+    //       {
+    //         day: 1,
+    //         nameOfDay: 'Monday',
+    //         active: true,
+    //         close: '22:00',
+    //         open: '08:00',
+    //       },
+    //       {
+    //         day: 2,
+    //         nameOfDay: 'Tuesday',
+    //         active: true,
+    //         close: '22:00',
+    //         open: '08:00',
+    //       },
+    //     ],
+    //   },
+    // ];
     var dataStoresTampung = [];
     var storeGrupTampung = [];
-    try {
-      for (var i = 0; i < response.data.length; i++) {
-        if (response.data[i].deleted == false) {
-          console.log('masuk sini dongs');
-          storeGrupTampung.push(response.data[i].location.region);
-          dataStoresTampung.push({
-            storeName: response.data[i].name,
-            storeStatus: this._cekOpen(
-              this.state.currentDay.getDay(),
-              this.state.currentClock,
-              response.data[i].operationalHours[1].Monday == undefined
-                ? response.data[i].operationalHours[1].monday
-                : response.data[i].operationalHours[1].Monday,
-              response.data[i].operationalHours[2].Tuesday == undefined
-                ? response.data[i].operationalHours[2].tuesday
-                : response.data[i].operationalHours[2].Tuesday,
-              response.data[i].operationalHours[3].Wednesday == undefined
-                ? response.data[i].operationalHours[3].wednesday
-                : response.data[i].operationalHours[3].Wednesday,
-              response.data[i].operationalHours[4].Thursday == undefined
-                ? response.data[i].operationalHours[4].thursday
-                : response.data[i].operationalHours[4].Thursday,
-              response.data[i].operationalHours[5].Friday == undefined
-                ? response.data[i].operationalHours[5].friday
-                : response.data[i].operationalHours[5].Friday,
-              response.data[i].operationalHours[6].Saturday == undefined
-                ? response.data[i].operationalHours[6].saturday
-                : response.data[i].operationalHours[6].Saturday,
-              response.data[i].operationalHours[0].Sunday == undefined
-                ? response.data[i].operationalHours[0].sunday
-                : response.data[i].operationalHours[0].Sunday,
-              true,
-            ),
-            storeJarak: statusLocation
-              ? geolib.getDistance(position.coords, {
-                  latitude: Number(response.data[i].location.coordinate.lat),
-                  longitude: Number(response.data[i].location.coordinate.lng),
-                }) / 1000
-              : '-',
-            image:
-              response.data[i].image != undefined ? response.data[i].image : '',
-            region: response.data[i].location.region,
-            address: response.data[i].location.address,
-            district: response.data[i].location.district,
-            operationalHours: response.data[i].operationalHours,
-            coordinate: response.data[i].location.coordinate,
-          });
-        }
+    var coordinate = {};
+    var location = {};
+    // try {
+    for (var i = 0; i < response.data.length; i++) {
+      if (response.data[i].deleted == false) {
+        location = {};
+        coordinate = {};
+        location = {
+          region: response.data[i].city,
+          address: response.data[i].location,
+          coordinate: {
+            lat: response.data[i].latitude,
+            lng: response.data[i].longitude,
+          },
+        };
+
+        response.data[i].location = location;
+
+        storeGrupTampung.push(response.data[i].location.region);
+        dataStoresTampung.push({
+          storeName: response.data[i].name,
+          storeStatus: this._cekOpen(response.data[i].operationalHours),
+          storeJarak: statusLocation
+            ? geolib.getDistance(position.coords, {
+                latitude: Number(response.data[i].latitude),
+                longitude: Number(response.data[i].longitude),
+              }) / 1000
+            : '-',
+          image:
+            response.data[i].defaultImageURL != undefined
+              ? response.data[i].defaultImageURL
+              : '',
+          region: response.data[i].city,
+          address: response.data[i].location.address,
+          district: response.data[i].city,
+          operationalHours: response.data[i].operationalHours,
+          defaultImageURL: response.data[i].defaultImageURL,
+          coordinate: response.data[i].location.coordinate,
+        });
       }
-    } catch (error) {
-      console.log(error);
     }
+    // } catch (error) {
+    //   response.data = [];
+    //   console.log(error);
+    // }
 
     var dataStoresNearTampung = [];
+    console.log('dataStoresTampung ', dataStoresTampung);
     if (statusLocation) {
       for (let i = 0; i < 3; i++) {
         dataStoresNearTampung = [...dataStoresTampung];
@@ -254,14 +213,24 @@ class Store extends Component {
       }
     }
 
-    console.log('dataAllStore ', dataStoresTampung)
-    this.setState({
-      isLoading: false,
-      dataStores: dataStoresTampung,
-      dataStoresNear: dataStoresNearTampung,
-      dataAllStore: _.groupBy(dataStoresTampung, 'region'),
-      dataStoreRegion: _.uniq(storeGrupTampung),
-    });
+    console.log('dataAllStore ', dataStoresTampung);
+    try {
+      this.setState({
+        isLoading: false,
+        dataStores: dataStoresTampung,
+        dataStoresNear: dataStoresNearTampung,
+        dataAllStore: _.groupBy(dataStoresTampung, 'region'),
+        dataStoreRegion: _.uniq(storeGrupTampung),
+      });
+    } catch (e) {
+      this.setState({
+        isLoading: false,
+        dataStores: [],
+        dataStoresNear: [],
+        dataAllStore: [],
+        dataStoreRegion: [],
+      });
+    }
     this.setState({isLoading: false});
   };
 
@@ -278,104 +247,32 @@ class Store extends Component {
     return comparison;
   }
 
-  _cekOpen = (
-    hariIni,
-    jamSekarang,
-    monday,
-    tuesday,
-    wednesday,
-    thursday,
-    friday,
-    saturday,
-    sunday,
-    statusStore,
-  ) => {
-    var jamSekarang = jamSekarang.split(':');
+  _cekOpen = operationalHours => {
+    let date = new Date();
+    var dd = date.getDate();
+    var mm = date.getMonth() + 1;
+    var yyyy = date.getFullYear();
+    let currentDate = mm + '/' + dd + '/' + yyyy;
+    let day = date.getDay();
+    let time = date.getHours() + ':' + date.getMinutes();
 
-    if (hariIni == 1) {
-      var statusOpen = this._getStatusStore(
-        jamSekarang,
-        monday.open.split(':'),
-        monday.close.split(':'),
-      );
-      return this._getStatusOpen(
-        statusStore,
-        statusOpen,
-        monday.open.split(':'),
-        monday.close.split(':'),
-      );
-    } else if (hariIni == 2) {
-      var statusOpen = this._getStatusStore(
-        jamSekarang,
-        tuesday.open.split(':'),
-        tuesday.close.split(':'),
-      );
-      return this._getStatusOpen(
-        statusStore,
-        statusOpen,
-        tuesday.open.split(':'),
-        tuesday.close.split(':'),
-      );
-    } else if (hariIni == 3) {
-      var statusOpen = this._getStatusStore(
-        jamSekarang,
-        wednesday.open.split(':'),
-        wednesday.close.split(':'),
-      );
-      return this._getStatusOpen(
-        statusStore,
-        statusOpen,
-        wednesday.open.split(':'),
-        wednesday.close.split(':'),
-      );
-    } else if (hariIni == 4) {
-      var statusOpen = this._getStatusStore(
-        jamSekarang,
-        thursday.open.split(':'),
-        thursday.close.split(':'),
-      );
-      return this._getStatusOpen(
-        statusStore,
-        statusOpen,
-        thursday.open.split(':'),
-        thursday.close.split(':'),
-      );
-    } else if (hariIni == 5) {
-      var statusOpen = this._getStatusStore(
-        jamSekarang,
-        friday.open.split(':'),
-        friday.close.split(':'),
-      );
-      return this._getStatusOpen(
-        statusStore,
-        statusOpen,
-        friday.open.split(':'),
-        friday.close.split(':'),
-      );
-    } else if (hariIni == 6) {
-      var statusOpen = this._getStatusStore(
-        jamSekarang,
-        saturday.open.split(':'),
-        saturday.close.split(':'),
-      );
-      return this._getStatusOpen(
-        statusStore,
-        statusOpen,
-        saturday.open.split(':'),
-        saturday.close.split(':'),
-      );
-    } else if (hariIni == 0) {
-      var statusOpen = this._getStatusStore(
-        jamSekarang,
-        sunday.open.split(':'),
-        sunday.close.split(':'),
-      );
-      return this._getStatusOpen(
-        statusStore,
-        statusOpen,
-        sunday.open.split(':'),
-        sunday.close.split(':'),
-      );
+    let open;
+    operationalHours
+      .filter(item => item.day == day && item.active == true)
+      .map(day => {
+        if (
+          Date.parse(`${currentDate} ${time}`) >
+            Date.parse(`${currentDate} ${day.open}`) &&
+          Date.parse(`${currentDate} ${time}`) <
+            Date.parse(`${currentDate} ${day.close}`)
+        )
+          open = true;
+      });
+
+    if (open) return true;
+    else {
+      if (operationalHours.leading == 0) return true;
+      else return false;
     }
   };
 
@@ -450,6 +347,7 @@ class Store extends Component {
   };
 
   render() {
+    console.log('this.props.dataPromotion ', this.props.dataPromotion);
     return (
       <View style={{marginBottom: 40}}>
         <View
@@ -526,7 +424,6 @@ class Store extends Component {
               {this.props.dataPromotion == undefined ||
               this.props.dataPromotion.count == 0 ? null : (
                 <StorePromotion />
-                // <Text>Jamrub</Text>
               )}
               <View
                 style={{

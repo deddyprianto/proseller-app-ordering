@@ -126,6 +126,10 @@ class RewardsQRscan extends Component {
             this.state.titleAlert == 'Payment Success!'
               ? Actions.pop()
               : this.hideAlert();
+            if (this.state.titleAlert == 'Opps!') {
+              this.hideAlert();
+              this.goBack();
+            }
           }}
         />
       </View>

@@ -17,9 +17,10 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
 import colorConfig from '../config/colorConfig';
 import appConfig from '../config/appConfig';
-import {notifikasi} from '../actions/auth.actions';
+import {notifikasi, refreshToken} from '../actions/auth.actions';
 import {redeemVoucher, campaign, dataPoint} from '../actions/rewards.action';
 import {myVoucers} from '../actions/account.action';
+import Loader from './loader';
 
 class VoucherDetail extends Component {
   constructor(props) {
@@ -30,6 +31,7 @@ class VoucherDetail extends Component {
       pesanAlert: '',
       titleAlert: '',
       currentDay: new Date(),
+      loadRedeem: false,
     };
   }
 
@@ -68,6 +70,8 @@ class VoucherDetail extends Component {
 
   btnRedeem = async dataVoucher => {
     try {
+      this.setState({loadRedeem: true});
+      await this.props.dispatch(refreshToken);
       let date = new Date();
       let timeZone = date.getTimezoneOffset();
       const data = {voucher: dataVoucher, timeZoneOffset: timeZone};
@@ -75,19 +79,20 @@ class VoucherDetail extends Component {
       await this.props.dispatch(campaign());
       await this.props.dispatch(dataPoint());
       await this.props.dispatch(myVoucers());
-      if (response.message == 'Succcessfull redeem Voucher') {
+      if (response.success) {
         this.setState({
           showAlert: true,
-          pesanAlert: response.message,
+          pesanAlert: response.responseBody.Data.message,
           titleAlert: 'Redeem Success!',
         });
       } else {
         this.setState({
           showAlert: true,
-          pesanAlert: response.Data.message,
+          pesanAlert: response.responseBody.Data.message,
           titleAlert: 'Oppss!',
         });
       }
+      this.setState({loadRedeem: false});
     } catch (error) {
       console.log(error);
       this.setState({
@@ -95,6 +100,7 @@ class VoucherDetail extends Component {
         pesanAlert: error.responseBody.message,
         titleAlert: 'Redeem error!',
       });
+      this.setState({loadRedeem: false});
     }
   };
 
@@ -107,6 +113,7 @@ class VoucherDetail extends Component {
   render() {
     return (
       <View style={styles.container}>
+        {this.state.loadRedeem && <Loader />}
         <View>
           <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
             <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>

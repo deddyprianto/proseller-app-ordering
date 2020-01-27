@@ -18,6 +18,7 @@ import logoCash from '../assets/img/cash.png';
 import logoVisa from '../assets/img/visa.png';
 import colorConfig from '../config/colorConfig';
 import {Actions} from 'react-native-router-flux';
+import {dataTransaction} from '../actions/sales.action';
 
 class HistoryPayment extends Component {
   constructor(props) {
@@ -66,16 +67,15 @@ class HistoryPayment extends Component {
 
   getDataHistory = async () => {
     try {
-      await this.props.dispatch(campaign());
-      await this.props.dispatch(dataPoint());
+      await this.props.dispatch(dataTransaction);
     } catch (error) {
-      await this.props.dispatch(
-        notifikasi(
-          'Get Data History Error!',
-          error.responseBody.message,
-          console.log('Cancel Pressed'),
-        ),
-      );
+      // await this.props.dispatch(
+      //   notifikasi(
+      //     'Get Data History Error!',
+      //     error.responseBody.message,
+      //     console.log('Cancel Pressed'),
+      //   ),
+      // );
     }
   };
 
@@ -86,6 +86,7 @@ class HistoryPayment extends Component {
   };
 
   render() {
+    console.log('this.props.pointTransaction ', this.props.pointTransaction);
     return (
       <ScrollView
         refreshControl={
