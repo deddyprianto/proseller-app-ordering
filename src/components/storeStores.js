@@ -78,12 +78,12 @@ export default class StoreStores extends Component {
                       {item.storeJarak != '-' ? (
                         <View style={{margin: 10, alignItems: 'center'}}>
                           <Icon
-                            size={28}
+                            size={18}
                             name={Platform.OS === 'ios' ? 'ios-pin' : 'md-pin'}
                             style={{color: 'red'}}
                           />
                           <Text
-                            style={{color: colorConfig.pageIndex.grayColor}}>
+                            style={{color: colorConfig.pageIndex.grayColor, fontSize: 11}}>
                             {item.storeJarak + ' KM'}
                           </Text>
                         </View>

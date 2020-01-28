@@ -51,7 +51,7 @@ class RewardsStamp extends Component {
     let that = this;
     setTimeout(() => {
       that.getItemStamp();
-    }, 1000);
+    }, 10000);
     return (
       <View style={styles.container}>
         <Text style={styles.title}>Stamp Card</Text>

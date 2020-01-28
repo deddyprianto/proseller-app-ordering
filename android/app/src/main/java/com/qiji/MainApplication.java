@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
+import com.lugg.ReactNativeConfig.ReactNativeConfigPackage;
 import com.reactnativecommunity.rnpermissions.RNPermissionsPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
@@ -22,7 +23,10 @@ import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 import com.facebook.reactnative.androidsdk.FBSDKPackage;
 
-public class MainApplication extends Application implements ReactApplication {
+// Multidex
+import androidx.multidex.MultiDexApplication;
+
+public class MainApplication extends MultiDexApplication implements ReactApplication {
   private static CallbackManager mCallbackManager = CallbackManager.Factory.create();
 
   protected static CallbackManager getCallbackManager() {

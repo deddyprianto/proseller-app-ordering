@@ -138,13 +138,6 @@ export const dataPoint = () => {
           authData: {token},
         },
       } = state;
-      const {
-        rewardsReducer: {
-          campaign: {
-            campaign: {data},
-          },
-        },
-      } = state;
 
       var dataResponse = [];
       // console.log
@@ -169,7 +162,7 @@ export const dataPoint = () => {
       // let totalPoint =
       //   _.sumBy(dataResponse, 'pointDebit') -
       //   _.sumBy(dataResponse, 'pointKredit');
-      dataResponse = response.responseBody.Data.history;
+      // dataResponse = response.responseBody.Data.history;
       let totalPoint = response.responseBody.Data.totalPoint;
       dispatch({
         type: 'DATA_TOTAL_POINT',

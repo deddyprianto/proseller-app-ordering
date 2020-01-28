@@ -18,16 +18,28 @@ import colorConfig from '../config/colorConfig';
 
 // action
 import {dataTransaction} from '../actions/sales.action';
+import * as _ from 'lodash';
 
 class RewardsTransaction extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      recentTrx: [],
+    };
   }
 
-  // componentDidMount = async () => {
-  //   await this.props.dispatch(dataTransaction());
-  // };
+  componentDidMount = async () => {
+    let recentTrx = [];
+    if (this.props.pointTransaction.length != 0) {
+      recentTrx = await _.orderBy(
+        this.props.pointTransaction,
+        ['createdAt'],
+        ['desc'],
+      ).slice(0, 3);
+
+      this.setState({recentTrx});
+    }
+  };
 
   historyDetailPayment = item => {
     Actions.historyDetailPayment({item});
@@ -38,8 +50,8 @@ class RewardsTransaction extends Component {
       <View style={styles.container}>
         <Text style={styles.title}>Recent Transactions</Text>
         <View style={styles.card}>
-          {this.props.recentTransaction != undefined
-            ? this.props.recentTransaction.map((item, key) => (
+          {this.state.recentTrx != undefined
+            ? this.state.recentTrx.map((item, key) => (
                 <View key={key}>
                   {
                     <View>
@@ -111,8 +123,8 @@ class RewardsTransaction extends Component {
                 color: colorConfig.pageIndex.activeTintColor,
                 fontWeight: 'bold',
               }}>
-              {this.props.recentTransaction != undefined
-                ? this.props.recentTransaction.length == 0
+              {this.state.recentTrx != undefined
+                ? this.state.recentTrx.length == 0
                   ? 'Empty'
                   : 'See More'
                 : 'Empty'}
@@ -169,6 +181,7 @@ const styles = StyleSheet.create({
 
 mapStateToProps = state => ({
   recentTransaction: state.rewardsReducer.dataPoint.recentTransaction,
+  pointTransaction: state.rewardsReducer.dataPoint.pointTransaction,
 });
 
 mapDispatchToProps = dispatch => ({

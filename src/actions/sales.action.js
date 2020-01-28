@@ -11,14 +11,6 @@ export const dataTransaction = () => {
           authData: {token},
         },
       } = state;
-      const {
-        rewardsReducer: {
-          campaign: {
-            campaign: {data},
-          },
-        },
-      } = state;
-
       var dataResponse = [];
 
       let response = await fetchApi(
@@ -29,19 +21,21 @@ export const dataTransaction = () => {
         token,
       );
       console.log(response, 'response sales');
-      dataResponse = response.responseBody.Data;
-      dispatch({
-        type: 'DATA_POINT_TRANSACTION',
-        pointTransaction: _.orderBy(dataResponse, ['createdAt'], ['desc']),
-      });
-      dispatch({
-        type: 'DATA_RECENT_TRANSACTION',
-        recentTransaction: _.orderBy(
-          dataResponse,
-          ['createdAt'],
-          ['desc'],
-        ).slice(0, 3),
-      });
+      if (response.success) {
+        dataResponse = response.responseBody.Data;
+        dispatch({
+          type: 'DATA_POINT_TRANSACTION',
+          pointTransaction: _.orderBy(dataResponse, ['createdAt'], ['desc']),
+        });
+        // dispatch({
+        //   type: 'DATA_RECENT_TRANSACTION',
+        //   recentTransaction: _.orderBy(
+        //     dataResponse,
+        //     ['createdAt'],
+        //     ['desc'],
+        //   ).slice(0, 3),
+        // });
+      }
     } catch (error) {
       return error;
     }

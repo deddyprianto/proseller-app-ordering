@@ -9,6 +9,7 @@ import {
 
 import colorConfig from '../config/colorConfig';
 import {Actions} from 'react-native-router-flux';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 export default class StoreNearYou extends Component {
   constructor(props) {
@@ -47,7 +48,7 @@ export default class StoreNearYou extends Component {
                   <View style={styles.storesNearDetail}>
                     <Text
                       style={{
-                        fontSize: 10,
+                        fontSize: 12,
                         color: colorConfig.pageIndex.activeTintColor,
                         fontFamily: 'Lato-Medium',
                       }}>
@@ -55,10 +56,18 @@ export default class StoreNearYou extends Component {
                     </Text>
                     <Text
                       style={{
+                        position: 'absolute',
                         fontSize: 10,
+                        bottom: 0,
+                        padding: 7,
                         color: colorConfig.pageIndex.grayColor,
                         fontFamily: 'Lato-Medium',
                       }}>
+                      <Icon
+                        size={10}
+                        name={Platform.OS === 'ios' ? 'ios-pin' : 'md-pin'}
+                        style={{color: 'red', marginRight: 3}}
+                      />
                       {item.storeJarak.toFixed(1) + ' KM'}
                     </Text>
                   </View>

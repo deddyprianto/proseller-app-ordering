@@ -137,6 +137,8 @@ android {
         versionCode 1
         versionName "1.0"
         missingDimensionStrategy 'react-native-camera', 'general'
+        resValue "string", "build_config_package", "com.qiji"
+        multiDexEnabled true
     }
     splits {
         abi {
@@ -203,6 +205,7 @@ android {
 }
 
 dependencies {
+    implementation project(':react-native-config')
     implementation project(':react-native-permissions')
     implementation project(':react-native-vector-icons')
     implementation project(':@react-native-community_async-storage')
@@ -214,6 +217,9 @@ dependencies {
     implementation "com.facebook.react:react-native:+"  // From node_modules
     implementation 'com.facebook.android:facebook-android-sdk:[4,5)'
     implementation 'com.facebook.android:facebook-login:[5,6)'
+
+    def multidex_version = "2.0.1"
+    implementation 'androidx.multidex:multidex:$multidex_version'
 
     if (enableHermes) {
         def hermesPath = "../../node_modules/hermes-engine/android/";
@@ -232,3 +238,4 @@ task copyDownloadableDepsToLibs(type: Copy) {
 }
 
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
+apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
