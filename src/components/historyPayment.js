@@ -76,17 +76,17 @@ class HistoryPayment extends Component {
       //     console.log('Cancel Pressed'),
       //   ),
       // );
+      console.log(error);
     }
   };
 
-  _onRefresh = () => {
+  _onRefresh = async () => {
     this.setState({refreshing: true});
-    this.getDataHistory();
+    await this.getDataHistory();
     this.setState({refreshing: false});
   };
 
   render() {
-    console.log('this.props.pointTransaction ', this.props.pointTransaction);
     return (
       <ScrollView
         refreshControl={
@@ -125,14 +125,27 @@ class HistoryPayment extends Component {
                           </View>
                           <View style={styles.sejajarSpace}>
                             <View style={{flexDirection: 'row'}}>
-                              <Image
-                                resizeMode="stretch"
-                                style={styles.paymentTypeLogo}
-                                source={
+                              {/*<Image*/}
+                              {/*  resizeMode="stretch"*/}
+                              {/*  style={styles.paymentTypeLogo}*/}
+                              {/*  source={*/}
+                              {/*    item.paymentType == 'Cash'*/}
+                              {/*      ? logoCash*/}
+                              {/*      : logoVisa*/}
+                              {/*  }*/}
+                              {/*/>*/}
+                              <Icon
+                                size={18}
+                                name={
                                   item.paymentType == 'Cash'
-                                    ? logoCash
-                                    : logoVisa
+                                    ? Platform.OS === 'ios'
+                                      ? 'ios-cash'
+                                      : 'md-cash'
+                                    : Platform.OS === 'ios'
+                                    ? 'ios-card'
+                                    : 'md-card'
                                 }
+                                style={styles.paymentTypeLogo}
                               />
                               <Text style={styles.paymentType}>
                                 {item.paymentType}
@@ -183,11 +196,20 @@ const styles = StyleSheet.create({
   item: {
     marginLeft: 5,
     marginRight: 5,
+    padding: 5,
     marginBottom: 10,
     borderColor: colorConfig.pageIndex.activeTintColor,
     borderWidth: 1,
     borderRadius: 5,
     backgroundColor: colorConfig.pageIndex.backgroundColor,
+    shadowColor: '#00000021',
+    shadowOffset: {
+      width: 0,
+      height: 9,
+    },
+    shadowOpacity: 0.7,
+    shadowRadius: 7.49,
+    elevation: 12,
   },
   sejajarSpace: {
     flexDirection: 'row',
@@ -213,10 +235,12 @@ const styles = StyleSheet.create({
     width: 20,
     height: 15,
     marginTop: 2,
+    color: colorConfig.store.defaultColor,
   },
   paymentType: {
-    paddingLeft: 8,
-    color: colorConfig.pageIndex.activeTintColor,
+    paddingLeft: 10,
+    color: colorConfig.store.title,
+    fontWeight: 'bold',
     fontFamily: 'Lato-Medium',
   },
   itemType: {

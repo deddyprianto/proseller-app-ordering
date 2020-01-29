@@ -187,14 +187,14 @@ class PaymentDetail extends Component {
           this.setState({
             showAlert: true,
             pesanAlert: response.responseBody.Data.message,
-            titleAlert: 'Payment Error!',
+            titleAlert: 'Oopss!',
           });
         }
       } else {
         this.setState({
           showAlert: true,
           pesanAlert: response.responseBody.Data.message,
-          titleAlert: 'Payment Error!',
+          titleAlert: 'Oopss!',
         });
       }
       this.setState({loading: false});

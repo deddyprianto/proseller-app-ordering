@@ -7,37 +7,40 @@ export const dataInbox = () => {
   return async (dispatch, getState) => {
     const state = getState();
     try {
-      // await dispatch(refreshToken());
       const {
         authReducer: {
           authData: {token},
         },
       } = state;
-      const response = await fetchApi('/broadcas', 'GET', false, 200, token);
-      const data = [...response.responseBody.data];
-      var count = 0;
-      for (let index = 0; index < data.length; index++) {
-        var isi = await AsyncStorage.getItem(
-          '@inbox' + data[index].id,
-          (err, res) => {
-            if (res) {
-              data[index].read = true;
-              count = count + 1;
-            }
-          },
-        );
+      const response = await fetchApi('/broadcast', 'GET', false, 200, token);
+      console.log(response, 'response inbox');
+
+      if (response.success) {
+        // const data = [...response.responseBody.Data];
+        // var count = 0;
+        // for (let index = 0; index < data.length; index++) {
+        //   var isi = await AsyncStorage.getItem(
+        //     '@inbox' + data[index].id,
+        //     (err, res) => {
+        //       if (res) {
+        //         data[index].read = true;
+        //         count = count + 1;
+        //       }
+        //     },
+        //   );
+        // }
+        //
+        // var kirim = {
+        //   listInbox: [...data],
+        //   noRead: data.length - count,
+        // };
+        // console.log(kirim, 'response kirim inbox');
+        // await dispatch({
+        //   type: 'DATA_ALL_BROADCAS',
+        //   data: kirim,
+        // });
       }
-
-      var kirim = {
-        listInbox: [...data],
-        noRead: data.length - count,
-      };
-      console.log(kirim, 'response inbox');
-
-      await dispatch({
-        type: 'DATA_ALL_BROADCAS',
-        data: kirim,
-      });
+      return response;
     } catch (error) {
       return error;
     }

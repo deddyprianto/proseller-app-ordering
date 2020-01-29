@@ -16,7 +16,7 @@ import Signup from '../pages/signup';
 import Aunt from '../pages/aunt';
 import ForgotPassword from '../pages/forgotPassword';
 import PageIndex from '../pages/pageIndex';
-import ChangePhoneNumber from '../pages/changePhoneNumber';
+import ChangeCredentials from '../pages/changeCredentials';
 
 import Pay from '../components/rewardsPay';
 import Rewards from '../components/rewardsRewards';
@@ -45,7 +45,13 @@ export default class Routes extends Component {
     return (
       <Router>
         <Scene>
-          <Scene key="root" hideNavBar={true} swipeEnabled={false} animationEnabled={false} panHandlers={null} initial={!this.props.isLoggedIn}>
+          <Scene
+            key="root"
+            hideNavBar={true}
+            swipeEnabled={false}
+            animationEnabled={false}
+            panHandlers={null}
+            initial={!this.props.isLoggedIn}>
             <Scene key="signin" component={Signin} initial={true} />
             <Scene key="signup" component={Signup} title="Register" />
             <Scene key="auth" component={Aunt} title="Auntetikasi" />
@@ -56,35 +62,58 @@ export default class Routes extends Component {
               title="Forgot Password"
             />
           </Scene>
-          <Scene key="app" hideNavBar={true} initial={this.props.isLoggedIn}>
-            <Scene key="pageIndex" component={PageIndex} initial={true} />
-            <Scene key="pay" component={Pay} />
-            <Scene key="rewards" component={Rewards} />
-            <Scene key="qrcode" component={RewardsQRmenu} />
-            <Scene key="scan" component={RewardsQRscan} />
-            <Scene key="voucher" component={VoucherDetail} />
+          <Scene
+            duration={0}
+            key="app"
+            hideNavBar={true}
+            initial={this.props.isLoggedIn}>
             <Scene
+              duration={0}
+              key="pageIndex"
+              component={PageIndex}
+              initial={true}
+            />
+            <Scene duration={0} key="pay" component={Pay} />
+            <Scene duration={0} key="rewards" component={Rewards} />
+            <Scene key="qrcode" component={RewardsQRmenu} />
+            <Scene duration={0} key="scan" component={RewardsQRscan} />
+            <Scene duration={0} key="voucher" component={VoucherDetail} />
+            <Scene
+              duration={0}
               key="historyDetailPayment"
               component={HistoryDetailPayment}
             />
-            <Scene key="storeDetailStores" component={StoreDetailStores} />
-            <Scene key="seeMorePromotion" component={StoreSeeMorePromotion} />
+            <Scene duration={0} key="storeDetailStores" component={StoreDetailStores} />
+            <Scene duration={0} key="seeMorePromotion" component={StoreSeeMorePromotion} />
             <Scene
+                duration={0}
               key="storeDetailPromotion"
               component={StoreDetailPromotion}
             />
-            <Scene key="storeSeeMap" component={StoresMap} />
-            <Scene key="accountVouchers" component={AccountVouchers} />
-            <Scene key="accountEditProfil" component={AccountEditProfil} />
-            <Scene duration={0} key="editProfile" component={EditProfile} />
-            <Scene key="paymentDetail" component={PaymentDetail} />
+            <Scene duration={0} key="storeSeeMap" component={StoresMap} />
+            <Scene
+              duration={0}
+              key="accountVouchers"
+              component={AccountVouchers}
+            />
+            <Scene
+              duration={0}
+              key="accountEditProfil"
+              component={AccountEditProfil}
+            />
+            <Scene
+              duration={0}
+              key="editProfile"
+              component={EditProfile}
+            />
+            <Scene duration={0} key="paymentDetail" component={PaymentDetail} />
             <Scene key="paymentSuccess" component={PaymentSuccess} />
             <Scene key="paymentAddVoucers" component={PaymentAddVoucers} />
-            <Scene key="paymentDetailItem" component={PaymentDetailItem} />
+            <Scene duration={0} key="paymentDetailItem" component={PaymentDetailItem} />
             <Scene key="inboxDetail" component={InboxDetail} />
             <Scene key="paymentAddPoint" component={PaymentAddPoint} />
-            <Scene key="detailStamps" component={RewardsStamps} />
-            <Scene key="changePhoneNumber" component={ChangePhoneNumber} />
+            <Scene duration={0} key="detailStamps" component={RewardsStamps} />
+            <Scene duration={0} key="changeCredentials" component={ChangeCredentials} />
           </Scene>
         </Scene>
       </Router>

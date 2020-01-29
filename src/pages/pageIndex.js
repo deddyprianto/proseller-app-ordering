@@ -18,10 +18,8 @@ import History from './history';
 import Rewards from './rewards';
 import Inbox from './inbox';
 import Account from './account';
-import OfflineSign from '../components/offlineSign';
+import OfflineNotice from '../components/OfflineNotice';
 import colorConfig from '../config/colorConfig';
-
-const isOnline = require('is-online');
 
 const AppTabNavigator = createMaterialBottomTabNavigator(
   {
@@ -97,20 +95,19 @@ const AppTabNavigator = createMaterialBottomTabNavigator(
   },
 );
 
-const AppStackContainer = createAppContainer(AppTabNavigator);
+const AppStackContainer = createAppContainer(AppTabNavigator, {
+  transitionConfig: () => ({screenInterpolator: () => null}),
+});
 
 class PageIndex extends Component {
   constructor(props) {
     super(props);
     this.state = {
       screenWidth: Dimensions.get('window').width,
-      online: false,
     };
   }
 
   componentDidMount = async () => {
-    await this.checkOnline();
-
     if (Platform.OS !== 'android') Geolocation.requestAuthorization();
     else {
       try {
@@ -135,25 +132,11 @@ class PageIndex extends Component {
     }
   };
 
-  checkOnline = async () => {
-    var online;
-    if (isOnline()) {
-      online = true;
-    } else {
-      online = false;
-    }
-    this.setState({online: online});
-  };
-
   render() {
-    // let that = this;
-    // setInterval(() => {
-    //   that.checkOnline();
-    // }, 3000);
     return (
       <Container>
+        <OfflineNotice />
         <AppStackContainer />
-        {this.state.online ? null : <OfflineSign />}
         {this.props.dataInboxNoRead > 0 ? (
           <View
             style={{

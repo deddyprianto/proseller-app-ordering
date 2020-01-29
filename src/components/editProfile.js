@@ -58,6 +58,7 @@ class AccountEditProfil extends Component {
       isDatePickerVisible: false,
       showAlert: false,
       loading: false,
+      field: '',
     };
   }
 
@@ -121,15 +122,20 @@ class AccountEditProfil extends Component {
     });
   };
 
-  toChangePhoneNumber = () => {
-    Actions.changePhoneNumber();
+  toChangeCredentials = () => {
+    let fieldToChange = {
+      field: this.state.field,
+      dataDiri: this.props.dataDiri,
+    };
+    Actions.changeCredentials(fieldToChange);
   };
 
-  btnChangePhoneNumber = () => {
+  btnChangeCredentials = field => {
     this.setState({
+      field,
       showAlert: true,
       pesanAlert: '',
-      titleAlert: 'Confirmation code has been sent to phone!',
+      titleAlert: 'Confirmation code has been sent!',
     });
   };
 
@@ -139,8 +145,33 @@ class AccountEditProfil extends Component {
     let monthBirth = newDate.getMonth() + 1;
     let birthYear = newDate.getFullYear();
 
-    this.setState({birthDate: `${dateBirth}/${monthBirth}/${birthYear}`});
+    this.setState({birthDate: `${monthBirth}/${dateBirth}/${birthYear}`});
     this.hideDatePicker();
+  };
+
+  formatDate = current_datetime => {
+    current_datetime = new Date(current_datetime);
+    const months = [
+      'JAN',
+      'FEB',
+      'MAR',
+      'APR',
+      'MAY',
+      'JUN',
+      'JUL',
+      'AUG',
+      'SEP',
+      'OCT',
+      'NOV',
+      'DEC',
+    ];
+    return (
+      current_datetime.getDate() +
+      '-' +
+      months[current_datetime.getMonth()] +
+      '-' +
+      current_datetime.getFullYear()
+    );
   };
 
   render() {
@@ -196,7 +227,9 @@ class AccountEditProfil extends Component {
                       flexDirection: 'row',
                     }}>
                     <Text style={styles.desc}>Email</Text>
-                    <TouchableOpacity style={[styles.btnChange]}>
+                    <TouchableOpacity
+                      style={[styles.btnChange]}
+                      onPress={() => this.btnChangeCredentials('Email')}>
                       <Text style={[styles.textChange]}>Change</Text>
                     </TouchableOpacity>
                   </View>
@@ -211,7 +244,7 @@ class AccountEditProfil extends Component {
                     }}>
                     <Text style={styles.desc}>Phone Number</Text>
                     <TouchableOpacity
-                      // onPress={this.btnChangePhoneNumber}
+                      onPress={() => this.btnChangeCredentials('Phone Number')}
                       style={[styles.btnChange]}>
                       <Text style={[styles.textChange]}>Change</Text>
                     </TouchableOpacity>
@@ -231,7 +264,7 @@ class AccountEditProfil extends Component {
                     onPress={this.showDatePicker}>
                     {this.state.birthDate == ''
                       ? 'Enter Birth Date'
-                      : this.state.birthDate}
+                      : this.formatDate(this.state.birthDate)}
                   </Text>
                   <DateTimePickerModal
                     isVisible={this.state.isDatePickerVisible}
@@ -308,12 +341,9 @@ class AccountEditProfil extends Component {
             if (this.state.titleAlert == "We're Sorry!") {
               this.hideAlert();
             }
-            if (
-              this.state.titleAlert ==
-              'Confirmation code has been sent to phone!'
-            ) {
+            if (this.state.titleAlert == 'Confirmation code has been sent!') {
               this.hideAlert();
-              this.toChangePhoneNumber();
+              this.toChangeCredentials();
             }
           }}
         />
@@ -347,7 +377,7 @@ const styles = StyleSheet.create({
     margin: 10,
   },
   header: {
-    height: 80,
+    height: 65,
     marginBottom: 20,
     justifyContent: 'center',
     // backgroundColor: colorConfig.store.defaultColor,
@@ -437,8 +467,8 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   textChange: {
-    // color: colorConfig.store.defaultColor,
-    color: 'gray',
+    color: colorConfig.store.defaultColor,
+    // color: 'gray',
     fontSize: 11,
     fontWeight: 'bold',
   },

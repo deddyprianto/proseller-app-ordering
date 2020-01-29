@@ -20,7 +20,7 @@ import {
   vouchers,
   getStamps,
 } from '../actions/rewards.action';
-import {dataTransaction} from '../actions/sales.action'
+import {dataTransaction} from '../actions/sales.action';
 import {myVoucers} from '../actions/account.action';
 import {dataInbox} from '../actions/inbox.action';
 
@@ -29,7 +29,6 @@ import RewardsStamp from '../components/rewardsStamp';
 import RewardsMenu from '../components/rewardsMenu';
 import RewardsTransaction from '../components/rewardsTransaction';
 import Loader from '../components/loader';
-import OfflineSign from '../components/offlineSign';
 import colorConfig from '../config/colorConfig';
 import {Actions} from 'react-native-router-flux';
 
@@ -65,8 +64,8 @@ class Rewards extends Component {
     } catch (error) {
       await this.props.dispatch(
         notifikasi(
+          'Opps!',
           'Get Data Rewards Error!',
-          error.responseBody.message,
           console.log('Cancel Pressed'),
         ),
       );

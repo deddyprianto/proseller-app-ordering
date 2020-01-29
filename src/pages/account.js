@@ -19,6 +19,8 @@ import AccountMenuList from '../components/accountMenuList';
 import {campaign, dataPoint, vouchers} from '../actions/rewards.action';
 import {myVoucers} from '../actions/account.action';
 import colorConfig from '../config/colorConfig';
+import Icon from 'react-native-vector-icons/Ionicons';
+import * as _ from 'lodash';
 
 class Account extends Component {
   constructor(props) {
@@ -59,9 +61,21 @@ class Account extends Component {
     await this.props.dispatch(logoutUser());
   };
 
-  editProfil = () => {
-    var dataDiri = {dataDiri: this.props.userDetail};
-    Actions.editProfile(dataDiri);
+  myVouchers = () => {
+    var myVoucers = [];
+    if (this.props.myVoucers != undefined) {
+      _.forEach(
+        _.groupBy(
+          this.props.myVoucers.filter(voucher => voucher.deleted == false),
+          'id',
+        ),
+        function(value, key) {
+          value[0].totalRedeem = value.length;
+          myVoucers.push(value[0]);
+        },
+      );
+    }
+    Actions.accountVouchers({data: myVoucers});
   };
 
   render() {
@@ -93,9 +107,19 @@ class Account extends Component {
             {this.props.totalPoint == undefined ||
             this.props.totalPoint == 0 ? null : (
               <View style={styles.point}>
-                <Image
-                  style={{height: 18, width: 25, marginRight: 5}}
-                  source={require('../assets/img/ticket.png')}
+                {/*<Image*/}
+                {/*  style={{height: 18, width: 25, marginRight: 5}}*/}
+                {/*  source={require('../assets/img/ticket.png')}*/}
+                {/*/>*/}
+                <Icon
+                  size={23}
+                  name={
+                    Platform.OS === 'ios' ? 'ios-pricetags' : 'md-pricetags'
+                  }
+                  style={{
+                    color: colorConfig.store.defaultColor,
+                    marginRight: 8,
+                  }}
                 />
                 <Text
                   style={{
@@ -127,11 +151,15 @@ class Account extends Component {
                 }}
               />
             )}
-            <TouchableOpacity style={styles.point} onPress={this.editProfil}>
-              <Image
-                resizeMode="stretch"
-                style={{height: 18, width: 16, marginRight: 5}}
-                source={require('../assets/img/edit.png')}
+            <TouchableOpacity style={styles.point} onPress={this.myVouchers}>
+              {/*<Image*/}
+              {/*  style={{height: 20, width: 25, marginRight: 5}}*/}
+              {/*  source={require('../assets/img/voucher.png')}*/}
+              {/*/>*/}
+              <Icon
+                size={23}
+                name={Platform.OS === 'ios' ? 'ios-card' : 'md-card'}
+                style={{color: colorConfig.store.defaultColor, marginRight: 8}}
               />
               <Text
                 style={{
@@ -139,7 +167,7 @@ class Account extends Component {
                   fontSize: 14,
                   fontFamily: 'Lato-Medium',
                 }}>
-                Edit Profile
+                My Vouchers
               </Text>
             </TouchableOpacity>
           </View>
@@ -148,11 +176,9 @@ class Account extends Component {
         <TouchableOpacity
           style={{
             marginTop: 10,
-            backgroundColor: colorConfig.pageIndex.backgroundColor,
-            height: 40,
+            backgroundColor: colorConfig.store.colorError,
+            height: 50,
             justifyContent: 'center',
-            borderColor: colorConfig.pageIndex.activeTintColor,
-            borderWidth: 1,
             position: 'absolute',
             bottom: 0,
             width: '100%',
@@ -160,12 +186,13 @@ class Account extends Component {
           onPress={this.logout}>
           <Text
             style={{
-              color: 'red',
+              color: 'white',
               fontSize: 14,
+              fontWeight: 'bold',
               fontFamily: 'Lato-Bold',
               textAlign: 'center',
             }}>
-            LOGOUT
+            LOG OUT
           </Text>
         </TouchableOpacity>
       </View>
@@ -189,6 +216,7 @@ const styles = StyleSheet.create({
 mapStateToProps = state => ({
   userDetail: state.userReducer.getUser.userDetails,
   totalPoint: state.rewardsReducer.dataPoint.totalPoint,
+  myVoucers: state.accountsReducer.myVoucers.myVoucers,
 });
 
 mapDispatchToProps = dispatch => ({

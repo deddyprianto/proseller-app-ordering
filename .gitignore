@@ -60,3 +60,7 @@ buck-out/
 
 #config
 /src/config/awsConfig.js
+.env
+.env.demo
+.env.production
+.env.dev

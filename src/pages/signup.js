@@ -248,7 +248,7 @@ class Signup extends Component {
       this.setState({
         showAlert: true,
         pesanAlert: error.responseBody.Data.message,
-        titleAlert: 'Register Error!',
+        titleAlert: 'Oopss!',
       });
     }
   };

@@ -55,21 +55,17 @@ export default class RewardsMenu extends Component {
                 style={{color: colorConfig.pageIndex.activeTintColor}}
               />
             </View>
-            <Text style={{textAlign: 'center', fontFamily: 'Lato-Medium'}}>
-              Pay
-            </Text>
+            <Text style={styles.menuText}>Pay</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={this.pageQRCode}>
             <View style={{alignItems: 'center'}}>
               <Icon
                 size={this.state.screenHeight / 5 / 2 - 10}
-                name={Platform.OS === 'ios' ? 'barcode' : 'md-barcode'}
+                name={Platform.OS === 'ios' ? 'qr-scanner' : 'md-qr-scanner'}
                 style={{color: colorConfig.pageIndex.activeTintColor}}
               />
             </View>
-            <Text style={{textAlign: 'center', fontFamily: 'Lato-Medium'}}>
-              My QR Code
-            </Text>
+            <Text style={styles.menuText}>My QR Code</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={this.pageRewards}>
             <View style={{alignItems: 'center'}}>
@@ -79,9 +75,7 @@ export default class RewardsMenu extends Component {
                 style={{color: colorConfig.pageIndex.activeTintColor}}
               />
             </View>
-            <Text style={{textAlign: 'center', fontFamily: 'Lato-Medium'}}>
-              Rewards
-            </Text>
+            <Text style={styles.menuText}>Rewards</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -97,8 +91,8 @@ const styles = StyleSheet.create({
   item: {
     height: Dimensions.get('window').height / 5 - 20,
     width: Dimensions.get('window').width - 40,
-    borderColor: colorConfig.pageIndex.activeTintColor,
-    borderWidth: 1,
+    // borderColor: colorConfig.pageIndex.activeTintColor,
+    // borderWidth: 1,
     marginLeft: 20,
     marginRight: 20,
     borderRadius: 10,
@@ -110,5 +104,21 @@ const styles = StyleSheet.create({
     paddingLeft: 30,
     paddingRight: 30,
     paddingTop: 10,
+    shadowColor: '#00000021',
+    shadowOffset: {
+      width: 0,
+      height: 9,
+    },
+    shadowOpacity: 0.7,
+    shadowRadius: 7.49,
+    elevation: 12,
+  },
+  menuText: {
+    marginTop: 4,
+    fontWeight: 'bold',
+    fontSize: 15,
+    color: colorConfig.store.title,
+    textAlign: 'center',
+    fontFamily: 'Lato-Medium',
   },
 });

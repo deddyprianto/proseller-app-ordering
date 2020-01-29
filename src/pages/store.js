@@ -34,6 +34,7 @@ import {
 } from '../actions/rewards.action';
 import {dataInbox} from '../actions/inbox.action';
 import {dataPromotion} from '../actions/promotion.action';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 class Store extends Component {
   constructor(props) {
@@ -58,10 +59,8 @@ class Store extends Component {
     // await this.props.dispatch(dataPoint());
     // await this.props.dispatch(vouchers());
     // await this.props.dispatch(myVoucers());
-    await this.props.dispatch(dataInbox());
+    // await this.props.dispatch(dataInbox());
     // await this.props.dispatch(getStamps());
-
-    // if ()
 
     if (this.state.dataStores.length === 0) {
       this.setState({isLoading: true});
@@ -69,7 +68,6 @@ class Store extends Component {
       this.setState({isLoading: false});
     }
     this.getDataStores();
-    // this.interval = setInterval(() => this.getDataStores(), 1000);
 
     var hours = new Date().getHours();
     var min = new Date().getMinutes();
@@ -117,92 +115,54 @@ class Store extends Component {
   };
 
   setDataStore = (response, statusLocation, position) => {
-    console.log('statusLocation ', statusLocation);
     response.data = response;
-    // response.data = [
-    //   {
-    //     id: '8f5860ea-a0fb-4409-88ad-f1fa97f84804',
-    //     name: 'Abon Sapi Buk Darmo',
-    //     phoneNo: '(03)982872',
-    //     address: 'Gg IV/C No. 1 Babatan, Wiyung',
-    //     latitude: 123456,
-    //     longitude: 123456,
-    //     defaultImageURL:
-    //       'https://cdn-bucket-file-manager.s3.ap-southeast-1.amazonaws.com/Upload/9888658a-368b-44f2-8c37-006e62b184eb/outlet/0c640dba-9e31-492f-910e-01e865897891.jpg',
-    //     city: 'Singapore',
-    //     countryCode: 'SG',
-    //     operationalHours: [
-    //       {
-    //         day: 0,
-    //         nameOfDay: 'Sunday',
-    //         active: true,
-    //         close: '22:00',
-    //         open: '08:00',
-    //       },
-    //       {
-    //         day: 1,
-    //         nameOfDay: 'Monday',
-    //         active: true,
-    //         close: '22:00',
-    //         open: '08:00',
-    //       },
-    //       {
-    //         day: 2,
-    //         nameOfDay: 'Tuesday',
-    //         active: true,
-    //         close: '22:00',
-    //         open: '08:00',
-    //       },
-    //     ],
-    //   },
-    // ];
     var dataStoresTampung = [];
     var storeGrupTampung = [];
     var coordinate = {};
     var location = {};
-    // try {
-    for (var i = 0; i < response.data.length; i++) {
-      if (response.data[i].deleted == false) {
-        location = {};
-        coordinate = {};
-        location = {
-          region: response.data[i].city,
-          address: response.data[i].location,
-          coordinate: {
-            lat: response.data[i].latitude,
-            lng: response.data[i].longitude,
-          },
-        };
+    try {
+      for (var i = 0; i < response.data.length; i++) {
+        if (response.data[i].deleted == false) {
+          location = {};
+          coordinate = {};
+          location = {
+            region: response.data[i].region,
+            address: response.data[i].location,
+            coordinate: {
+              lat: response.data[i].latitude,
+              lng: response.data[i].longitude,
+            },
+          };
 
-        response.data[i].location = location;
+          response.data[i].location = location;
 
-        storeGrupTampung.push(response.data[i].location.region);
-        dataStoresTampung.push({
-          storeName: response.data[i].name,
-          storeStatus: this._cekOpen(response.data[i].operationalHours),
-          storeJarak: statusLocation
-            ? geolib.getDistance(position.coords, {
-                latitude: Number(response.data[i].latitude),
-                longitude: Number(response.data[i].longitude),
-              }) / 1000
-            : '-',
-          image:
-            response.data[i].defaultImageURL != undefined
-              ? response.data[i].defaultImageURL
-              : '',
-          region: response.data[i].city,
-          address: response.data[i].location.address,
-          district: response.data[i].city,
-          operationalHours: response.data[i].operationalHours,
-          defaultImageURL: response.data[i].defaultImageURL,
-          coordinate: response.data[i].location.coordinate,
-        });
+          storeGrupTampung.push(response.data[i].location.region);
+          dataStoresTampung.push({
+            storeName: response.data[i].name,
+            storeStatus: this._cekOpen(response.data[i].operationalHours),
+            storeJarak: statusLocation
+              ? geolib.getDistance(position.coords, {
+                  latitude: Number(response.data[i].latitude),
+                  longitude: Number(response.data[i].longitude),
+                }) / 1000
+              : '-',
+            image:
+              response.data[i].defaultImageURL != undefined
+                ? response.data[i].defaultImageURL
+                : '',
+            region: response.data[i].region,
+            address: response.data[i].location.address,
+            city: response.data[i].city,
+            operationalHours: response.data[i].operationalHours,
+            defaultImageURL: response.data[i].defaultImageURL,
+            coordinate: response.data[i].location.coordinate,
+          });
+        }
       }
+    } catch (error) {
+      response.data = [];
+      console.log(error);
     }
-    // } catch (error) {
-    //   response.data = [];
-    //   console.log(error);
-    // }
 
     var dataStoresNearTampung = [];
     console.log('dataStoresTampung ', dataStoresTampung);
@@ -273,27 +233,6 @@ class Store extends Component {
     else {
       if (operationalHours.leading == 0) return true;
       else return false;
-    }
-  };
-
-  _getStatusStore = (jamSekarang, openHour, closeHour) => {
-    var jamOpen = jamSekarang[0] - openHour[0];
-    var menitOpen = jamSekarang[1] - openHour[1];
-    var jamClose = jamSekarang[0] - closeHour[0];
-    var menitClose = jamSekarang[1] - closeHour[1];
-
-    // console.log(jamOpen+' '+openHour[0]+' | '+menitOpen+' '+openHour[1]+' | '+jamClose+' '+closeHour[0]+' | '+menitClose+' '+closeHour[1])
-
-    if (jamOpen >= 0 && menitOpen >= 0 && jamClose <= 0) {
-      if (jamClose == 0 && menitClose <= 0) {
-        return true;
-      } else if (jamClose < 0 && menitClose >= 0) {
-        return true;
-      } else {
-        return false;
-      }
-    } else {
-      return false;
     }
   };
 
@@ -383,7 +322,7 @@ class Store extends Component {
                 }}>
                 <Text
                   style={{
-                    color: colorConfig.pageIndex.activeTintColor,
+                    color: colorConfig.store.title,
                     fontFamily: 'Lato-Medium',
                   }}>
                   {this.getHallo() + ', '}
@@ -429,7 +368,7 @@ class Store extends Component {
                 style={{
                   flexDirection: 'row',
                   justifyContent: 'space-evenly',
-                  // backgroundColor: colorConfig.pageIndex.backgroundColor,
+                  backgroundColor: colorConfig.store.defaultColor,
                   borderColor: colorConfig.pageIndex.activeTintColor,
                   borderWidth: 1,
                   height: 50,
@@ -440,21 +379,28 @@ class Store extends Component {
                 {this.props.totalPoint == undefined ||
                 this.props.totalPoint == 0 ? null : (
                   <View style={styles.point}>
-                    <Image
-                      style={{height: 18, width: 25, marginRight: 5}}
-                      source={require('../assets/img/ticket.png')}
+                    {/*<Image*/}
+                    {/*  style={{height: 18, width: 25, marginRight: 5}}*/}
+                    {/*  source={require('../assets/img/ticket.png')}*/}
+                    {/*/>*/}
+                    <Icon
+                      size={23}
+                      name={Platform.OS === 'ios' ? 'ios-pricetags' : 'md-pricetags'}
+                      style={{color: 'white', marginRight: 8}}
                     />
                     <Text
                       style={{
-                        color: colorConfig.pageIndex.activeTintColor,
+                        color: colorConfig.splash.container,
                         fontSize: 14,
+                        fontWeight: 'bold',
                         fontFamily: 'Lato-Medium',
                       }}>
                       {'Point : '}
                     </Text>
                     <Text
                       style={{
-                        color: colorConfig.pageIndex.activeTintColor,
+                        color: colorConfig.splash.container,
+                        fontWeight: 'bold',
                         fontSize: 14,
                         fontFamily: 'Lato-Bold',
                       }}>
@@ -468,25 +414,25 @@ class Store extends Component {
                 this.props.totalPoint == 0 ? null : (
                   <View
                     style={{
-                      backgroundColor: colorConfig.pageIndex.grayColor,
-                      width: 1,
+                      backgroundColor: colorConfig.splash.container,
+                      width: 2,
                       height: 35,
                     }}
                   />
                 )}
-
                 <TouchableOpacity
                   style={styles.point}
                   onPress={this.myVouchers}>
-                  <Image
-                    resizeMode="stretch"
-                    style={{height: 18, width: 25, marginRight: 5}}
-                    source={require('../assets/img/voucher.png')}
+                  <Icon
+                    size={23}
+                    name={Platform.OS === 'ios' ? 'ios-card' : 'md-card'}
+                    style={{color: 'white', marginRight: 8}}
                   />
                   <Text
                     style={{
-                      color: colorConfig.pageIndex.activeTintColor,
+                      color: colorConfig.splash.container,
                       fontSize: 14,
+                      fontWeight: 'bold',
                       fontFamily: 'Lato-Bold',
                     }}>
                     My Vouchers
@@ -512,27 +458,33 @@ class Store extends Component {
                   /> */}
                 </View>
               ) : null}
-              {this.state.dataAllStore.length != 0 ? (
-                <View>
-                  <StoreStores
-                    dataStoreRegion={this.state.dataStoreRegion}
-                    dataAllStore={this.state.dataAllStore}
-                  />
-                </View>
-              ) : (
+              {Object.keys(this.state.dataAllStore).length === 0 &&
+              this.state.dataAllStore.constructor === Object ? (
                 <View
                   style={{
                     alignItems: 'center',
                     margin: 20,
+                    justifyContent: 'center',
+                    flexDirection: 'row',
                   }}>
                   <Text
                     style={{
                       textAlign: 'center',
                       color: colorConfig.pageIndex.grayColor,
                       fontFamily: 'Lato-Medium',
+                      fontSize: 20,
+                      fontWeight: 'bold',
+                      marginTop: 100,
                     }}>
-                    Store is empty
+                    Sorry, no store is available.
                   </Text>
+                </View>
+              ) : (
+                <View>
+                  <StoreStores
+                    dataStoreRegion={this.state.dataStoreRegion}
+                    dataAllStore={this.state.dataAllStore}
+                  />
                 </View>
               )}
             </View>

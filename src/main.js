@@ -36,7 +36,8 @@ class Main extends Component {
     super(props);
     this.state = {
       isLoading: true,
-      geolocation: false,
+      // geolocation: false,
+      geolocation: true,
     };
   }
 

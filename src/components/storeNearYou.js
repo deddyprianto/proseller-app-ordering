@@ -35,16 +35,6 @@ export default class StoreNearYou extends Component {
                 <TouchableOpacity
                   style={styles.storesNearItem}
                   onPress={() => this.storeDetailStores(item)}>
-                  {/* <View>
-                    <Image
-                      style={styles.storesNearImage}
-                      source={
-                        item.image != ''
-                          ? {uri: item.image}
-                          : appConfig.appImageNull
-                      }
-                    />
-                  </View> */}
                   <View style={styles.storesNearDetail}>
                     <Text
                       style={{
@@ -85,15 +75,24 @@ const styles = StyleSheet.create({
   stores: {
     paddingTop: 5,
     paddingBottom: 10,
-    color: colorConfig.store.storesTitle,
+    color: colorConfig.store.title,
     fontSize: 16,
     fontFamily: 'Lato-Bold',
   },
   storesNearItem: {
-    borderColor: colorConfig.store.defaultColor,
-    borderWidth: 1,
+    borderColor: colorConfig.store.border,
+    // borderWidth: 1,
     borderRadius: 10,
     backgroundColor: colorConfig.store.storesItem,
+    justifyContent: 'space-between',
+    shadowColor: '#00000021',
+    shadowOffset: {
+      width: 0,
+      height: 9,
+    },
+    shadowOpacity: 0.7,
+    shadowRadius: 7.49,
+    elevation: 12,
     width: Dimensions.get('window').width / 3 - 15,
   },
   storesNearImage: {

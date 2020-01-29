@@ -13,6 +13,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Image,
+  TouchableHighlight,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -60,7 +61,7 @@ export default class StoreDetailStores extends Component {
           <View style={styles.line} />
         </View>
         <ScrollView>
-          <View style={styles.card}>
+          <View style={styles.cardImage}>
             {this.props.item.defaultImageURL != undefined ? (
               <Image
                 resizeMode="cover"
@@ -84,6 +85,14 @@ export default class StoreDetailStores extends Component {
             <View style={styles.detail}>
               <View style={styles.detailItem}>
                 <Text style={[styles.desc, {fontWeight: 'bold'}]}>City</Text>
+                <Text style={styles.desc}>
+                  {this.props.item.city != undefined
+                    ? this.props.item.city
+                    : '-'}
+                </Text>
+              </View>
+              <View style={styles.detailItem}>
+                <Text style={[styles.desc, {fontWeight: 'bold'}]}>Region</Text>
                 <Text style={styles.desc}>
                   {this.props.item.region != undefined
                     ? this.props.item.region
@@ -109,37 +118,53 @@ export default class StoreDetailStores extends Component {
               <View style={styles.detailItem}>
                 <Text style={[styles.desc, {fontWeight: 'bold'}]}>Status</Text>
                 <Text style={styles.desc}>
-                  {this.props.item.storeStatus ? 'Currently Open' : 'Closed'}
+                  {this.props.item.storeStatus ? (
+                    <Text
+                      style={{
+                        color: colorConfig.store.colorSuccess,
+                        fontWeight: 'bold',
+                      }}>
+                      Open
+                    </Text>
+                  ) : (
+                    <Text
+                      style={{
+                        color: colorConfig.store.colorError,
+                        fontWeight: 'bold',
+                      }}>
+                      Closed
+                    </Text>
+                  )}
                 </Text>
               </View>
               <View
                 style={{
                   alignItems: 'center',
                 }}>
-                <TouchableOpacity
-                  style={{
-                    borderColor: colorConfig.pageIndex.activeTintColor,
-                    borderWidth: 1,
-                    borderRadius: 10,
-                    paddingLeft: 10,
-                    paddingRight: 10,
-                    paddingTop: 5,
-                    paddingBottom: 5,
-                  }}
-                  onPress={() =>
-                    this.storeMap(
-                      this.props.item.coordinate,
-                      this.props.item.storeName,
-                    )
-                  }>
-                  <Text
-                    style={{
-                      color: colorConfig.pageIndex.activeTintColor,
-                      fontWeight: 'bold',
-                    }}>
-                    Open Map
-                  </Text>
-                </TouchableOpacity>
+                {/*<TouchableOpacity*/}
+                {/*  style={{*/}
+                {/*    borderColor: colorConfig.pageIndex.activeTintColor,*/}
+                {/*    borderWidth: 1,*/}
+                {/*    borderRadius: 10,*/}
+                {/*    paddingLeft: 10,*/}
+                {/*    paddingRight: 10,*/}
+                {/*    paddingTop: 5,*/}
+                {/*    paddingBottom: 5,*/}
+                {/*  }}*/}
+                {/*  onPress={() =>*/}
+                {/*    this.storeMap(*/}
+                {/*      this.props.item.coordinate,*/}
+                {/*      this.props.item.storeName,*/}
+                {/*    )*/}
+                {/*  }>*/}
+                {/*  <Text*/}
+                {/*    style={{*/}
+                {/*      color: colorConfig.pageIndex.activeTintColor,*/}
+                {/*      fontWeight: 'bold',*/}
+                {/*    }}>*/}
+                {/*    Open Map*/}
+                {/*  </Text>*/}
+                {/*</TouchableOpacity>*/}
               </View>
             </View>
           </View>
@@ -163,6 +188,20 @@ export default class StoreDetailStores extends Component {
               ))}
           </View>
         </ScrollView>
+        <TouchableHighlight
+          style={styles.btnBottom}
+          onPress={() =>
+            this.storeMap(this.props.item.coordinate, this.props.item.storeName)
+          }>
+          <Text style={styles.textBtnBottom}>
+            <Icon
+              size={18}
+              name={Platform.OS === 'ios' ? 'ios-locate' : 'md-locate'}
+              style={{color: 'white', paddingRight: 10}}
+            />
+            <Text> Location</Text>
+          </Text>
+        </TouchableHighlight>
       </View>
     );
   }
@@ -171,6 +210,18 @@ export default class StoreDetailStores extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  btnBottom: {
+    backgroundColor: colorConfig.store.defaultColor,
+    height: 56,
+    justifyContent: 'center',
+  },
+  textBtnBottom: {
+    color: colorConfig.splash.container,
+    fontSize: 18,
+    textAlign: 'center',
+    alignItems: 'center',
+    fontWeight: 'bold',
   },
   btnBackIcon: {
     color: colorConfig.pageIndex.activeTintColor,
@@ -188,22 +239,42 @@ const styles = StyleSheet.create({
     borderBottomColor: colorConfig.store.defaultColor,
     borderBottomWidth: 2,
   },
+  cardImage: {
+    backgroundColor: colorConfig.pageIndex.backgroundColor,
+    shadowColor: '#00000021',
+    shadowOffset: {
+      width: 0,
+      height: 9,
+    },
+    shadowOpacity: 0.7,
+    shadowRadius: 7.49,
+    elevation: 12,
+  },
   card: {
-    margin: 10,
-    borderColor: colorConfig.pageIndex.activeTintColor,
-    borderWidth: 1,
+    marginHorizontal: 7,
+    marginVertical: 10,
+    // borderColor: colorConfig.pageIndex.activeTintColor,
+    // borderWidth: 1,
     borderRadius: 5,
     backgroundColor: colorConfig.pageIndex.backgroundColor,
+    shadowColor: '#00000021',
+    shadowOffset: {
+      width: 0,
+      height: 9,
+    },
+    shadowOpacity: 0.7,
+    shadowRadius: 7.49,
+    elevation: 12,
   },
   item: {
     alignItems: 'center',
-    borderBottomColor: colorConfig.pageIndex.activeTintColor,
+    borderBottomColor: colorConfig.pageIndex.grayColor,
     borderBottomWidth: 1,
     margin: 10,
   },
   title: {
-    color: colorConfig.pageIndex.activeTintColor,
-    fontSize: 15,
+    color: colorConfig.store.defaultColor,
+    fontSize: 20,
     textAlign: 'center',
     fontWeight: 'bold',
     marginBottom: 10,

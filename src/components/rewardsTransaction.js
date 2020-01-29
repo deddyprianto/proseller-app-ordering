@@ -29,16 +29,16 @@ class RewardsTransaction extends Component {
   }
 
   componentDidMount = async () => {
-    let recentTrx = [];
-    if (this.props.pointTransaction.length != 0) {
-      recentTrx = await _.orderBy(
-        this.props.pointTransaction,
-        ['createdAt'],
-        ['desc'],
-      ).slice(0, 3);
-
-      this.setState({recentTrx});
-    }
+    // let recentTrx = [];
+    // if (this.props.pointTransaction.length != 0) {
+    //   recentTrx = await _.orderBy(
+    //     this.props.pointTransaction,
+    //     ['createdAt'],
+    //     ['desc'],
+    //   ).slice(0, 3);
+    //
+    //   this.setState({recentTrx});
+    // }
   };
 
   historyDetailPayment = item => {
@@ -46,12 +46,20 @@ class RewardsTransaction extends Component {
   };
 
   render() {
+    let recentTrx = [];
+    if (this.props.pointTransaction != undefined) {
+      recentTrx = _.orderBy(
+        this.props.pointTransaction,
+        ['createdAt'],
+        ['desc'],
+      ).slice(0, 3);
+    }
     return (
       <View style={styles.container}>
         <Text style={styles.title}>Recent Transactions</Text>
         <View style={styles.card}>
-          {this.state.recentTrx != undefined
-            ? this.state.recentTrx.map((item, key) => (
+          {this.props.pointTransaction != undefined
+            ? recentTrx.map((item, key) => (
                 <View key={key}>
                   {
                     <View>
@@ -62,16 +70,30 @@ class RewardsTransaction extends Component {
                           style={{
                             flexDirection: 'row',
                           }}>
-                          <Image
-                            resizeMode="stretch"
-                            style={styles.imageLogo}
-                            source={
-                              item.paymentType == 'Cash' ? logoCash : logoVisa
+                          {/*<Image*/}
+                          {/*  resizeMode="stretch"*/}
+                          {/*  style={styles.imageLogo}*/}
+                          {/*  source={*/}
+                          {/*    item.paymentType == 'Cash' ? logoCash : logoVisa*/}
+                          {/*  }*/}
+                          {/*/>*/}
+                          <Icon
+                            size={23}
+                            name={
+                              item.paymentType == 'Cash'
+                                ? Platform.OS === 'ios'
+                                  ? 'ios-cash'
+                                  : 'md-cash'
+                                : Platform.OS === 'ios'
+                                ? 'ios-card'
+                                : 'md-card'
                             }
+                            style={styles.imageLogo}
                           />
                           <Text
                             style={{
-                              marginLeft: 10,
+                              marginLeft: 12,
+                              fontWeight: 'bold',
                               color: colorConfig.pageIndex.grayColor,
                               fontFamily: 'Lato-Medium',
                             }}>
@@ -123,8 +145,8 @@ class RewardsTransaction extends Component {
                 color: colorConfig.pageIndex.activeTintColor,
                 fontWeight: 'bold',
               }}>
-              {this.state.recentTrx != undefined
-                ? this.state.recentTrx.length == 0
+              {recentTrx != undefined
+                ? recentTrx.length == 0
                   ? 'Empty'
                   : 'See More'
                 : 'Empty'}
@@ -142,7 +164,7 @@ const styles = StyleSheet.create({
     margin: 10,
   },
   title: {
-    color: colorConfig.pageIndex.activeTintColor,
+    color: colorConfig.store.title,
     fontSize: 16,
     marginBottom: 5,
     marginLeft: 10,
@@ -153,11 +175,20 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     marginLeft: 10,
     marginRight: 10,
-    borderColor: colorConfig.pageIndex.activeTintColor,
-    borderWidth: 1,
+    borderColor: colorConfig.store.border,
+    // borderWidth: 1,
     marginBottom: 20,
+    shadowColor: '#00000021',
+    shadowOffset: {
+      width: 0,
+      height: 9,
+    },
+    shadowOpacity: 0.7,
+    shadowRadius: 7.49,
+    elevation: 12,
   },
   item: {
+    padding: 5,
     marginLeft: 10,
     marginRight: 10,
     marginTop: 10,
@@ -176,6 +207,7 @@ const styles = StyleSheet.create({
     height: 20,
     paddingTop: 5,
     marginBottom: 5,
+    color: colorConfig.store.defaultColor,
   },
 });
 

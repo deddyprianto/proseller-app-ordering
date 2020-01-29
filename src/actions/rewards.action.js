@@ -47,13 +47,13 @@ export const vouchers = () => {
           authData: {token},
         },
       } = state;
-      const {
-        rewardsReducer: {
-          campaign: {
-            campaign: {data},
-          },
-        },
-      } = state;
+      // const {
+      //   rewardsReducer: {
+      //     campaign: {
+      //       campaign: {data},
+      //     },
+      //   },
+      // } = state;
 
       var dataVoucher = [];
 

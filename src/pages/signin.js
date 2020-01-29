@@ -210,7 +210,7 @@ class Signin extends Component {
     } catch (error) {
       this.setState({
         showAlert: true,
-        pesanError: error.responseBody.message,
+        pesanError: error.responseBody.Data.message,
       });
     }
   };
@@ -520,7 +520,7 @@ class Signin extends Component {
         <AwesomeAlert
           show={this.state.showAlert}
           showProgress={false}
-          title="Signin Error"
+          title="Oopss!"
           message={this.state.pesanError}
           closeOnTouchOutside={true}
           closeOnHardwareBackPress={false}

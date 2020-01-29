@@ -29,7 +29,9 @@ export default class StoreStores extends Component {
       <View>
         {this.state.dataStoreRegion.map((region, index) => (
           <View style={styles.stores} key={index}>
-            <Text style={styles.stores}>Stores {region != undefined ? `- ${region}` : null}</Text>
+            <Text style={styles.stores}>
+              Stores - {region != undefined ? ` ${region}` : null}
+            </Text>
             {this.state.dataAllStore[this.state.dataStoreRegion[index]].map(
               (item, keys) => (
                 <View key={keys}>
@@ -37,16 +39,6 @@ export default class StoreStores extends Component {
                     <TouchableOpacity
                       style={styles.storesItem}
                       onPress={() => this.storeDetailStores(item)}>
-                      {/* <View>
-                        <Image
-                          style={styles.storesImage}
-                          source={
-                            item.image != ''
-                              ? {uri: item.image}
-                              : appConfig.appImageNull
-                          }
-                        />
-                      </View> */}
                       <View style={styles.storesDetail}>
                         <Text
                           style={{
@@ -56,24 +48,39 @@ export default class StoreStores extends Component {
                           }}>
                           {item.storeName}
                         </Text>
-                        {/* {item.storeJarak != '-' ? (
+                        {item.storeStatus ? (
                           <Text
                             style={{
                               fontSize: 12,
-                              color: colorConfig.pageIndex.grayColor,
+                              marginTop: 5,
+                              width: 70,
+                              padding: 5,
+                              textAlign: 'center',
+                              fontWeight: 'bold',
+                              backgroundColor: colorConfig.store.colorSuccess,
+                              borderRadius: 30,
+                              color: colorConfig.store.textWhite,
                               fontFamily: 'Lato-Medium',
                             }}>
-                            {item.storeJarak + ' KM'}
+                            Open Now
                           </Text>
-                        ) : null} */}
-                        <Text
-                          style={{
-                            fontSize: 12,
-                            color: colorConfig.store.defaultColor,
-                            fontFamily: 'Lato-Medium',
-                          }}>
-                          {item.storeStatus ? "Open Now" : "Closed"}
-                        </Text>
+                        ) : (
+                          <Text
+                            style={{
+                              fontSize: 12,
+                              marginTop: 5,
+                              width: 60,
+                              padding: 5,
+                              textAlign: 'center',
+                              fontWeight: 'bold',
+                              backgroundColor: colorConfig.store.colorError,
+                              borderRadius: 30,
+                              color: colorConfig.store.textWhite,
+                              fontFamily: 'Lato-Medium',
+                            }}>
+                            Closed
+                          </Text>
+                        )}
                       </View>
                       {item.storeJarak != '-' ? (
                         <View style={{margin: 10, alignItems: 'center'}}>
@@ -83,7 +90,10 @@ export default class StoreStores extends Component {
                             style={{color: 'red'}}
                           />
                           <Text
-                            style={{color: colorConfig.pageIndex.grayColor, fontSize: 11}}>
+                            style={{
+                              color: colorConfig.pageIndex.grayColor,
+                              fontSize: 11,
+                            }}>
                             {item.storeJarak + ' KM'}
                           </Text>
                         </View>
@@ -104,19 +114,27 @@ const styles = StyleSheet.create({
   stores: {
     paddingTop: 5,
     paddingBottom: 10,
-    color: colorConfig.store.storesTitle,
+    color: colorConfig.store.title,
     fontSize: 16,
     fontFamily: 'Lato-Bold',
   },
   storesItem: {
     height: Dimensions.get('window').width / 4 - 20,
     flexDirection: 'row',
-    borderColor: colorConfig.store.defaultColor,
-    borderWidth: 1,
-    marginBottom: 5,
+    borderColor: colorConfig.store.border,
+    // borderWidth: 1,
+    marginBottom: 9,
     borderRadius: 10,
     backgroundColor: colorConfig.store.storesItem,
     justifyContent: 'space-between',
+    shadowColor: '#00000021',
+    shadowOffset: {
+      width: 0,
+      height: 9,
+    },
+    shadowOpacity: 0.7,
+    shadowRadius: 7.49,
+    elevation: 12,
   },
   storesImage: {
     height: Dimensions.get('window').width / 4,

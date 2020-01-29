@@ -30,21 +30,9 @@ class AccountMenuList extends Component {
     const response = await this.props.dispatch(logoutUser());
   };
 
-  myVouchers = () => {
-    var myVoucers = [];
-    if (this.props.myVoucers != undefined) {
-      _.forEach(
-        _.groupBy(
-          this.props.myVoucers.filter(voucher => voucher.deleted == false),
-          'id',
-        ),
-        function(value, key) {
-          value[0].totalRedeem = value.length;
-          myVoucers.push(value[0]);
-        },
-      );
-    }
-    Actions.accountVouchers({data: myVoucers});
+  editProfil = () => {
+    var dataDiri = {dataDiri: this.props.userDetail};
+    Actions.editProfile(dataDiri);
   };
 
   render() {
@@ -52,41 +40,7 @@ class AccountMenuList extends Component {
       <View style={styles.container}>
         <View style={{flexDirection: 'row'}}>
           <View
-            style={{
-              justifyContent: 'center',
-              marginLeft: 10,
-              width: 25,
-            }}>
-            <Image
-              style={{height: 20, width: 25, marginRight: 5}}
-              source={require('../assets/img/voucher.png')}
-            />
-          </View>
-          <View>
-            <TouchableOpacity style={styles.item} onPress={this.myVouchers}>
-              <Text style={styles.title}> My Vouchers </Text>
-              <Icon
-                size={20}
-                name={
-                  Platform.OS === 'ios'
-                    ? 'ios-arrow-dropright-circle'
-                    : 'md-arrow-dropright-circle'
-                }
-                style={{color: colorConfig.pageIndex.activeTintColor}}
-              />
-            </TouchableOpacity>
-
-            <View style={styles.line}></View>
-          </View>
-        </View>
-
-        <View style={{flexDirection: 'row'}}>
-          <View
-            style={{
-              justifyContent: 'center',
-              marginLeft: 10,
-              width: 25,
-            }}>
+            style={styles.itemMenu}>
             <Icon
               size={25}
               name={Platform.OS === 'ios' ? 'ios-timer' : 'md-time'}
@@ -108,21 +62,49 @@ class AccountMenuList extends Component {
                 style={{color: colorConfig.pageIndex.activeTintColor}}
               />
             </TouchableOpacity>
-
-            <View style={styles.line}></View>
+            <View style={styles.line} />
           </View>
         </View>
 
         <View style={{flexDirection: 'row'}}>
           <View
-            style={{
-              justifyContent: 'center',
-              marginLeft: 10,
-              width: 25,
-            }}>
-            <Image
-              style={{height: 20, width: 20, marginRight: 5}}
-              source={require('../assets/img/settings.png')}
+            style={styles.itemMenu}>
+            {/*<Image*/}
+            {/*  resizeMode="stretch"*/}
+            {/*  style={{height: 18, width: 16, marginRight: 5}}*/}
+            {/*  source={require('../assets/img/edit.png')}*/}
+            {/*/>*/}
+            <Icon
+              size={20}
+              name={Platform.OS === 'ios' ? 'ios-contact' : 'md-contact'}
+              style={{color: colorConfig.pageIndex.activeTintColor}}
+            />
+          </View>
+          <View>
+            <TouchableOpacity style={styles.item} onPress={this.editProfil}>
+              <Text style={styles.title}> Edit Profile </Text>
+              <Icon
+                size={20}
+                name={
+                  Platform.OS === 'ios'
+                    ? 'ios-arrow-dropright-circle'
+                    : 'md-arrow-dropright-circle'
+                }
+                style={{color: colorConfig.pageIndex.activeTintColor}}
+              />
+            </TouchableOpacity>
+
+            <View style={styles.line} />
+          </View>
+        </View>
+
+        <View style={{flexDirection: 'row'}}>
+          <View
+            style={styles.itemMenu}>
+            <Icon
+              size={20}
+              name={Platform.OS === 'ios' ? 'ios-settings' : 'md-settings'}
+              style={{color: colorConfig.pageIndex.activeTintColor}}
             />
           </View>
           <View>
@@ -159,6 +141,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     width: Dimensions.get('window').width - 60,
   },
+  itemMenu: {
+    paddingVertical: 12,
+    justifyContent: 'center',
+    marginLeft: 10,
+    width: 25,
+  },
   line: {
     borderBottomColor: colorConfig.pageIndex.inactiveTintColor,
     borderBottomWidth: 1,
@@ -166,8 +154,9 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   title: {
-    color: colorConfig.pageIndex.activeTintColor,
-    fontSize: 14,
+    color: colorConfig.store.defaultColor,
+    fontSize: 15,
+    fontWeight: 'bold',
     fontFamily: 'Lato-Medium',
   },
 });
@@ -176,7 +165,6 @@ mapStateToProps = state => ({
   logoutUser: state.authReducer.logoutUser,
   userDetail: state.userReducer.getUser.userDetails,
   totalPoint: state.rewardsReducer.dataPoint.totalPoint,
-  myVoucers: state.accountsReducer.myVoucers.myVoucers,
 });
 
 mapDispatchToProps = dispatch => ({
