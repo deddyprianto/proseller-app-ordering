@@ -36,6 +36,7 @@ export const dataTransaction = () => {
         //   ).slice(0, 3),
         // });
       }
+      return "response.success";
     } catch (error) {
       return error;
     }

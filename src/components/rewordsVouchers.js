@@ -97,20 +97,7 @@ class RewordsVouchers extends Component {
                             : appConfig.appImageNull
                         }
                       />
-                      <View
-                        style={{
-                          position: 'absolute',
-                          right: 0,
-                          top: 0,
-                          backgroundColor: 'rgba(2, 168, 80, 0.8)',
-                          height: 30,
-                          // width: this.state.screenWidth / 2 - 11,
-                          borderTopRightRadius: 9,
-                          alignItems: 'flex-end',
-                          justifyContent: 'center',
-                          paddingLeft: 10,
-                          paddingRight: 10,
-                        }}>
+                      <View style={styles.vourcherPoint}>
                         <Text
                           style={{
                             color: colorConfig.pageIndex.backgroundColor,
@@ -197,12 +184,41 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     fontWeight: 'bold',
   },
+  vourcherPoint: {
+    position: 'absolute',
+    right: 0,
+    top: 0,
+    backgroundColor: colorConfig.store.transparentColor,
+    height: 30,
+    // width: this.state.screenWidth / 2 - 11,
+    borderTopRightRadius: 9,
+    alignItems: 'flex-end',
+    justifyContent: 'center',
+    paddingLeft: 10,
+    paddingRight: 10,
+    shadowColor: '#00000021',
+    shadowOffset: {
+      width: 0,
+      height: 9,
+    },
+    shadowOpacity: 0.7,
+    shadowRadius: 7.49,
+    elevation: 12,
+  },
   voucherItem: {
     borderColor: colorConfig.store.defaultColor,
     borderWidth: 1,
     marginBottom: 5,
     borderRadius: 10,
     backgroundColor: colorConfig.store.storesItem,
+    shadowColor: '#00000021',
+    shadowOffset: {
+      width: 0,
+      height: 9,
+    },
+    shadowOpacity: 0.7,
+    shadowRadius: 7.49,
+    elevation: 12,
   },
   voucherImage1: {
     height: Dimensions.get('window').width / 4,
@@ -267,6 +283,9 @@ mapDispatchToProps = dispatch => ({
   dispatch,
 });
 
-export default compose(connect(mapStateToProps, mapDispatchToProps))(
-  RewordsVouchers,
-);
+export default compose(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  ),
+)(RewordsVouchers);

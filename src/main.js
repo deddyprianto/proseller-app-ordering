@@ -84,7 +84,7 @@ class Main extends Component {
     return new Promise(resolve =>
       setTimeout(() => {
         resolve('result');
-      }, 3000),
+      }, 1000),
     );
   };
 
@@ -218,4 +218,7 @@ mapStateToProps = state => ({
   authData: state.authReducer.authData,
 });
 
-export default connect(mapStateToProps, null)(Main);
+export default connect(
+  mapStateToProps,
+  null,
+)(Main);

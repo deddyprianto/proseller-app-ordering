@@ -129,9 +129,13 @@ class VoucherDetail extends Component {
               <Text style={styles.btnBackText}> Back </Text>
             </TouchableOpacity>
             <View style={styles.point}>
-              <Image
-                style={{height: 18, width: 25, marginRight: 5}}
-                source={require('../assets/img/ticket.png')}
+              <Icon
+                size={23}
+                name={Platform.OS === 'ios' ? 'ios-pricetags' : 'md-pricetags'}
+                style={{
+                  color: colorConfig.store.defaultColor,
+                  marginRight: 8,
+                }}
               />
               <Text
                 style={{
@@ -150,6 +154,7 @@ class VoucherDetail extends Component {
           <View style={styles.voucherItem}>
             <View style={{alignItems: 'center'}}>
               <Image
+                resizeMode="cover"
                 style={
                   this.props.dataVoucher['image'] != '' &&
                   this.props.dataVoucher['image'] != undefined
@@ -168,14 +173,14 @@ class VoucherDetail extends Component {
                   position: 'absolute',
                   right: 0,
                   top: 0,
-                  backgroundColor: 'rgba(2, 168, 80, 0.8)',
+                  backgroundColor: colorConfig.store.transparentColor,
                   height: 30,
                   // width: this.state.screenWidth / 2 - 11,
-                  borderTopRightRadius: 9,
+                  // borderTopRightRadius: 9,
                   alignItems: 'flex-end',
                   justifyContent: 'center',
-                  paddingLeft: 10,
-                  paddingRight: 10,
+                  paddingLeft: 15,
+                  paddingRight: 15,
                 }}>
                 <Text
                   style={{
@@ -256,10 +261,10 @@ class VoucherDetail extends Component {
             <TouchableOpacity
               onPress={() => this.btnRedeem(this.props.dataVoucher)}
               style={{
-                height: 40,
+                height: 50,
                 backgroundColor: colorConfig.pageIndex.activeTintColor,
-                borderBottomLeftRadius: 8,
-                borderBottomRightRadius: 8,
+                // borderBottomLeftRadius: 8,
+                // borderBottomRightRadius: 8,
                 alignItems: 'center',
               }}>
               <Text
@@ -267,7 +272,7 @@ class VoucherDetail extends Component {
                   color: colorConfig.pageIndex.backgroundColor,
                   fontWeight: 'bold',
                   paddingTop: 10,
-                  fontSize: 16,
+                  fontSize: 19,
                 }}>
                 Redeem
               </Text>
@@ -327,28 +332,28 @@ const styles = StyleSheet.create({
     margin: 10,
     alignItems: 'center',
     flexDirection: 'row',
-    alignItems: 'center',
-    borderColor: colorConfig.pageIndex.activeTintColor,
+    borderColor: colorConfig.store.defaultColor,
     borderWidth: 1,
     borderRadius: 10,
     padding: 5,
   },
   voucherItem: {
-    borderColor: colorConfig.pageIndex.activeTintColor,
-    borderWidth: 1,
-    margin: 10,
-    borderRadius: 10,
+    // borderColor: colorConfig.pageIndex.activeTintColor,
+    // borderWidth: 1,
+    // margin: 10,
+    // marginTop: 10,
+    // borderRadius: 10,
     backgroundColor: colorConfig.store.storesItem,
   },
   voucherImage1: {
-    height: Dimensions.get('window').width / 4,
-    width: Dimensions.get('window').width - 22,
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
+    height: Dimensions.get('window').width / 2,
+    width: Dimensions.get('window').width,
+    // borderTopLeftRadius: 10,
+    // borderTopRightRadius: 10,
   },
   voucherImage2: {
-    height: Dimensions.get('window').width / 4,
-    width: Dimensions.get('window').width / 4,
+    height: Dimensions.get('window').width / 2,
+    width: Dimensions.get('window').width,
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
   },
@@ -359,12 +364,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   nameVoucher: {
-    fontSize: 14,
+    fontSize: 16,
     color: colorConfig.store.defaultColor,
     fontWeight: 'bold',
   },
   descVoucher: {
-    fontSize: 12,
+    fontSize: 15,
     color: colorConfig.pageIndex.inactiveTintColor,
   },
   pointVoucher: {

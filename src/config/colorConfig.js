@@ -57,6 +57,7 @@ const colorConfig = {
     colorError: '#c7420e',
     textWhite: 'white',
     title: '#333231',
+    transparentColor: 'rgba(3, 157, 252, 0.8)',
   },
 };
 

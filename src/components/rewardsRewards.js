@@ -61,7 +61,8 @@ class RewardsRewards extends Component {
     return (
       <View style={styles.container}>
         <View>
-          <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+          <View
+            style={{flexDirection: 'row', justifyContent: 'space-between'}}>
             <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
               <Icon
                 size={28}
@@ -75,9 +76,15 @@ class RewardsRewards extends Component {
               <Text style={styles.btnBackText}> Back </Text>
             </TouchableOpacity>
             <View style={styles.point}>
-              <Image
-                style={{height: 18, width: 25, marginRight: 5}}
-                source={require('../assets/img/ticket.png')}
+              <Icon
+                size={23}
+                name={
+                  Platform.OS === 'ios' ? 'ios-pricetags' : 'md-pricetags'
+                }
+                style={{
+                  color: colorConfig.store.defaultColor,
+                  marginRight: 8,
+                }}
               />
               <Text
                 style={{

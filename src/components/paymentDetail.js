@@ -313,6 +313,7 @@ class PaymentDetail extends Component {
             </Text>
           </View>
           <View
+            onPress={() => this.detailPayment(this.props.pembayaran)}
             style={{
               backgroundColor: colorConfig.pageIndex.backgroundColor,
               paddingLeft: 20,
@@ -383,15 +384,17 @@ class PaymentDetail extends Component {
                     </View>
                   </View>
                   <TouchableOpacity
+                    onPress={() => this.detailPayment(this.props.pembayaran)}
                     style={{
                       flexDirection: 'row',
                       marginRight: 10,
                       alignItems: 'center',
-                    }}
-                    onPress={() => this.detailPayment(this.props.pembayaran)}>
+                    }}>
                     <Text
                       style={{
                         marginRight: 5,
+                        fontWeight: 'bold',
+                        fontSize: 17,
                         color: colorConfig.pageIndex.activeTintColor,
                       }}>
                       Detail
@@ -419,7 +422,7 @@ class PaymentDetail extends Component {
                 justifyContent: 'space-between',
                 flexDirection: 'row',
               }}>
-              <Text>Vouchers</Text>
+              <Text>Use Vouchers</Text>
               {this.state.cancelVoucher == false &&
               this.props.dataVoucer != undefined ? (
                 <View
@@ -438,15 +441,19 @@ class PaymentDetail extends Component {
                           ? 'ios-close-circle-outline'
                           : 'md-close-circle-outline'
                       }
-                      style={{color: colorConfig.pageIndex.activeTintColor}}
+                      style={{color: colorConfig.store.colorError}}
                     />
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={styles.btnMethod}
                     onPress={this.myVouchers}>
-                    <Image
-                      style={{height: 18, width: 23, marginRight: 5}}
-                      source={require('../assets/img/voucher.png')}
+                    <Icon
+                      size={20}
+                      name={Platform.OS === 'ios' ? 'ios-card' : 'md-card'}
+                      style={{
+                        color: colorConfig.store.defaultColor,
+                        marginRight: 8,
+                      }}
                     />
                     <Text style={styles.descMethod}>
                       {this.props.dataVoucer.voucherName.substr(0, 13)}
@@ -457,11 +464,19 @@ class PaymentDetail extends Component {
                 <TouchableOpacity
                   style={styles.btnMethod}
                   onPress={this.myVouchers}>
-                  <Image
-                    style={{height: 18, width: 23, marginRight: 5}}
-                    source={require('../assets/img/voucher.png')}
+                  {/*<Image*/}
+                  {/*  style={{height: 18, width: 23, marginRight: 5}}*/}
+                  {/*  source={require('../assets/img/voucher.png')}*/}
+                  {/*/>*/}
+                  <Icon
+                    size={20}
+                    name={Platform.OS === 'ios' ? 'ios-card' : 'md-card'}
+                    style={{
+                      color: colorConfig.store.textWhite,
+                      marginRight: 8,
+                    }}
                   />
-                  <Text style={styles.descMethod}>Add a Voucher</Text>
+                  <Text style={styles.descMethod}>Select Vouchers</Text>
                 </TouchableOpacity>
               )}
             </View>
@@ -472,7 +487,7 @@ class PaymentDetail extends Component {
                 justifyContent: 'space-between',
                 flexDirection: 'row',
               }}>
-              <Text>Point</Text>
+              <Text>Use Point</Text>
               {this.state.cancelPoint == false &&
               this.props.addPoint != undefined ? (
                 <View
@@ -491,15 +506,25 @@ class PaymentDetail extends Component {
                           ? 'ios-close-circle-outline'
                           : 'md-close-circle-outline'
                       }
-                      style={{color: colorConfig.pageIndex.activeTintColor}}
+                      style={{color: colorConfig.store.colorError}}
                     />
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={styles.btnMethod}
                     onPress={this.myPoint}>
-                    <Image
-                      style={{height: 18, width: 23, marginRight: 5}}
-                      source={require('../assets/img/ticket.png')}
+                    {/*<Image*/}
+                    {/*  style={{height: 18, width: 23, marginRight: 5}}*/}
+                    {/*  source={require('../assets/img/ticket.png')}*/}
+                    {/*/>*/}
+                    <Icon
+                      size={20}
+                      name={
+                        Platform.OS === 'ios' ? 'ios-pricetags' : 'md-pricetags'
+                      }
+                      style={{
+                        color: colorConfig.store.textWhite,
+                        marginRight: 8,
+                      }}
                     />
                     <Text style={styles.descMethod}>
                       {'- ' + this.props.addPoint + ' Point'}
@@ -510,11 +535,17 @@ class PaymentDetail extends Component {
                 <TouchableOpacity
                   style={styles.btnMethod}
                   onPress={this.myPoint}>
-                  <Image
-                    style={{height: 18, width: 23, marginRight: 5}}
-                    source={require('../assets/img/ticket.png')}
+                  <Icon
+                    size={20}
+                    name={
+                      Platform.OS === 'ios' ? 'ios-pricetags' : 'md-pricetags'
+                    }
+                    style={{
+                      color: colorConfig.store.textWhite,
+                      marginRight: 8,
+                    }}
                   />
-                  <Text style={styles.descMethod}>Add a Point</Text>
+                  <Text style={styles.descMethod}>Pick Points</Text>
                 </TouchableOpacity>
               )}
             </View>
@@ -642,7 +673,7 @@ const styles = StyleSheet.create({
     borderColor: colorConfig.pageIndex.activeTintColor,
     borderWidth: 1,
     borderRadius: 5,
-    backgroundColor: colorConfig.pageIndex.backgroundColor,
+    // backgroundColor: colorConfig.pageIndex.backgroundColor,
   },
   item: {
     alignItems: 'center',
@@ -695,8 +726,8 @@ const styles = StyleSheet.create({
   btnMethod: {
     borderColor: colorConfig.pageIndex.activeTintColor,
     borderWidth: 1,
+    backgroundColor: colorConfig.store.defaultColor,
     borderRadius: 10,
-    justifyContent: 'center',
     paddingLeft: 10,
     paddingRight: 10,
     paddingTop: 5,
@@ -715,8 +746,8 @@ const styles = StyleSheet.create({
     height: 30,
   },
   descMethod: {
-    color: colorConfig.pageIndex.grayColor,
-    fontSize: 12,
+    color: colorConfig.store.textWhite,
+    fontSize: 13,
   },
 });
 
