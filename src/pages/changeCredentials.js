@@ -28,6 +28,7 @@ import Loader from '../components/loader';
 import {Actions} from 'react-native-router-flux';
 import colorConfig from '../config/colorConfig';
 import awsConfig from '../config/awsConfig';
+import {updateUser} from '../actions/user.action';
 
 const imageWidth = Dimensions.get('window').width / 2;
 
@@ -132,7 +133,7 @@ export default class ChangeCredentials extends Component {
     this.state = {
       credentials: '',
       confirmationCode: '',
-      phoneNumber: '+65',
+      phoneNumber: awsConfig.phoneNumberCode,
       pres: false,
       press: false,
       showPas: true,
@@ -144,6 +145,7 @@ export default class ChangeCredentials extends Component {
       changePasswordForm: false,
       //  loading spinner
       loadingVerifyPhone: false,
+      confirmSend: false,
     };
     this.imageWidth = new Animated.Value(styles.$largeImageSize);
   }
@@ -168,22 +170,18 @@ export default class ChangeCredentials extends Component {
   sendCredentialsToServer = async dataRequest => {
     try {
       console.log('dataRequest ', JSON.stringify(dataRequest));
-      const response = await this.props.dispatch(
-        sendCodeConfirmation(dataRequest),
-      );
-      if (response.responseBody.ResultCode == 200) {
+      const response = await this.props.dispatch(updateUser(dataRequest));
+      if (response) {
         this.setState({
-          loadingVerifyPhone: false,
           showAlert: true,
-          pesanAlert: response.responseBody.Data.message,
-          titleAlert: 'Success!',
+          pesanAlert: `Confirmation code has been sent to your new ${this.props.field}`,
+          titleAlert: `${this.props.field} Sent!`,
         });
       } else {
         this.setState({
-          loadingVerifyPhone: false,
           showAlert: true,
-          pesanAlert: response.responseBody.Data.message,
-          titleAlert: 'Failed!',
+          pesanAlert: 'Something went wrong, please try again!',
+          titleAlert: "We're Sorry!",
         });
       }
     } catch (e) {
@@ -196,12 +194,15 @@ export default class ChangeCredentials extends Component {
     }
   };
 
+  handleSaveCredentials = () => {};
+
   handleChangeCredentials = async () => {
     try {
       this.setState({loadingVerifyPhone: true});
       // check wether credentials to change is phone number or email
       if (this.props.field == 'Email') {
         var dataRequest = {
+          phoneNumber: this.props.dataDiri.email,
           email: this.props.dataDiri.email,
           newEmail: this.state.credentials,
         };
@@ -323,24 +324,29 @@ export default class ChangeCredentials extends Component {
               borderWidth: 1,
             }}>
             <Form ref="form" onSubmit={this.handleChangeCredentials}>
-              <TextValidator
-                style={{marginBottom: -10}}
-                name="confirmationCode"
-                label="confirmationCode"
-                validators={['required']}
-                errorStyle={{
-                  container: {top: 5, left: 5},
-                  text: {color: 'red'},
-                  underlineValidColor: colorConfig.pageIndex.activeTintColor,
-                  underlineInvalidColor: 'red',
-                }}
-                errorMessages={['This field is required']}
-                placeholder={`Confirmation Code`}
-                type="text"
-                under
-                value={this.state.confirmationCode}
-                onChangeText={value => this.setState({confirmationCode: value})}
-              />
+              {this.state.confirmSend ? (
+                <TextValidator
+                  style={{marginBottom: -10}}
+                  name="confirmationCode"
+                  label="confirmationCode"
+                  validators={['required']}
+                  errorStyle={{
+                    container: {top: 5, left: 5},
+                    text: {color: 'red'},
+                    underlineValidColor: colorConfig.pageIndex.activeTintColor,
+                    underlineInvalidColor: 'red',
+                  }}
+                  errorMessages={['This field is required']}
+                  placeholder={`Confirmation Code`}
+                  type="text"
+                  under
+                  value={this.state.confirmationCode}
+                  onChangeText={value =>
+                    this.setState({confirmationCode: value})
+                  }
+                />
+              ) : null}
+
               {this.props.field == 'Phone Number' ? (
                 <View>
                   <PhoneInput
@@ -381,24 +387,37 @@ export default class ChangeCredentials extends Component {
                   onChangeText={value => this.setState({credentials: value})}
                 />
               )}
-              <TouchableOpacity
-                style={validPhoneNumber}
-                onPress={this.handleChangeCredentials}>
-                <TextandSpinner
-                  text={`Verify ${this.props.field}`}
-                  loading={this.state.loadingVerifyPhone}
-                />
-              </TouchableOpacity>
+              {this.state.confirmSend ? (
+                <TouchableOpacity
+                  style={validPhoneNumber}
+                  onPress={this.handleChangeCredentials}>
+                  <TextandSpinner
+                    text={`Verify ${this.props.field}`}
+                    loading={this.state.loadingVerifyPhone}
+                  />
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity
+                  style={validPhoneNumber}
+                  onPress={this.handleSaveCredentials}>
+                  <TextandSpinner
+                    text={`Save ${this.props.field}`}
+                    loading={this.state.loadingVerifyPhone}
+                  />
+                </TouchableOpacity>
+              )}
             </Form>
-            <TouchableOpacity onPress={this.handleResend}>
-              <Text
-                style={{
-                  textAlign: 'center',
-                  color: colorConfig.pageIndex.activeTintColor,
-                }}>
-                Resend Confirmation Code
-              </Text>
-            </TouchableOpacity>
+            {this.state.confirmSend ? (
+              <TouchableOpacity onPress={this.handleResend}>
+                <Text
+                  style={{
+                    textAlign: 'center',
+                    color: colorConfig.pageIndex.activeTintColor,
+                  }}>
+                  Resend Confirmation Code
+                </Text>
+              </TouchableOpacity>
+            ) : null}
           </View>
         </ScrollView>
         <AwesomeAlert
@@ -412,7 +431,7 @@ export default class ChangeCredentials extends Component {
           showConfirmButton={true}
           cancelText="Close"
           confirmText={
-            this.state.titleAlert == 'Confirm Success!' ? 'Login' : 'Close'
+            this.state.titleAlert == 'Confirm Success!' ? 'Close' : 'Close'
           }
           confirmButtonColor={colorConfig.pageIndex.activeTintColor}
           onCancelPressed={() => {
@@ -422,6 +441,8 @@ export default class ChangeCredentials extends Component {
             if (this.state.titleAlert == 'Success!') {
               this.hideAlert();
               this.goBack();
+            } else {
+              this.hideAlert();
             }
           }}
         />

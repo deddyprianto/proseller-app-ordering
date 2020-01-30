@@ -24,7 +24,7 @@ import AwesomeAlert from 'react-native-awesome-alerts';
 import PhoneInput from 'react-native-phone-input';
 
 import awsConfig from '../config/awsConfig';
-import {createNewUser} from '../actions/auth.actions';
+import {createNewUser, notifikasi} from '../actions/auth.actions';
 import Loader from '../components/loader';
 import {Actions} from 'react-native-router-flux';
 import colorConfig from '../config/colorConfig';
@@ -177,7 +177,7 @@ class Signup extends Component {
       password: '',
       repassword: '',
       name: '',
-      phoneNumber: '+65',
+      phoneNumber: awsConfig.phoneNumberCode,
       nickname: '',
       address: '',
       birthdate: '',
@@ -233,9 +233,13 @@ class Signup extends Component {
       };
 
       const response = await this.props.dispatch(createNewUser(dataRegister));
-      console.log(response, 'response register')
+      console.log(response, 'response register');
       if (!response.success) {
-        throw response;
+        this.setState({
+          showAlert: true,
+          pesanAlert: response.responseBody.Data.message,
+          titleAlert: 'Oopss!',
+        });
       } else {
         this.setState({
           showAlert: true,
@@ -245,11 +249,13 @@ class Signup extends Component {
         });
       }
     } catch (error) {
-      this.setState({
-        showAlert: true,
-        pesanAlert: error.responseBody.Data.message,
-        titleAlert: 'Oopss!',
-      });
+      await this.props.dispatch(
+        notifikasi(
+          "We're Sorry...",
+          'Something went wrong, please try again.',
+          console.log('Cancel Pressed'),
+        ),
+      );
     }
   };
 

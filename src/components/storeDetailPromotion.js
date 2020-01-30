@@ -12,6 +12,7 @@ import {
   Dimensions,
   TouchableOpacity,
   Image,
+  BackHandler,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -26,9 +27,25 @@ export default class StoreDetailPromotion extends Component {
     };
   }
 
-  goBack() {
-    Actions.pop();
+  componentDidMount = async () => {
+    this.backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      this.handleBackPress,
+    );
+  };
+
+  componentWillUnmount() {
+    this.backHandler.remove();
   }
+
+  handleBackPress = () => {
+    this.goBack();
+    return true;
+  };
+
+  goBack = async () => {
+    Actions.pop();
+  };
 
   render() {
     return (
@@ -53,7 +70,9 @@ export default class StoreDetailPromotion extends Component {
           </View>
           <View style={styles.detail}>
             <View style={styles.detailItem}>
-              <Text style={styles.desc}>{this.props.dataPromotion.description}</Text>
+              <Text style={styles.desc}>
+                {this.props.dataPromotion.description}
+              </Text>
             </View>
           </View>
         </View>

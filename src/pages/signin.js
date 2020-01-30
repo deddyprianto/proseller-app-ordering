@@ -27,7 +27,7 @@ import {Form, TextValidator} from 'react-native-validator-form';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 import InputText from '../components/inputText';
-import {loginUser, loginOther} from '../actions/auth.actions';
+import {loginUser, loginOther, notifikasi} from '../actions/auth.actions';
 import Loader from '../components/loader';
 import {Actions} from 'react-native-router-flux';
 import colorConfig from '../config/colorConfig';
@@ -196,22 +196,38 @@ class Signin extends Component {
   };
 
   loginUser = async values => {
-    try {
-      var dataLogin = {
-        phoneNumber: this.state.username.toLowerCase(),
-        password: this.state.password,
-        appClientId: awsConfig.appClientId,
-        cognitoPoolId: awsConfig.cognitoPoolId,
-      };
-      const response = await this.props.dispatch(loginUser(dataLogin));
-      if (response.success == false) {
-        throw response;
+    if (this.state.username == '' || this.state.password == '') {
+      await this.props.dispatch(
+        notifikasi(
+          'Oppss...',
+          'Please fill the login form',
+          console.log('Cancel Pressed'),
+        ),
+      );
+    } else {
+      try {
+        var dataLogin = {
+          phoneNumber: this.state.username.toLowerCase(),
+          password: this.state.password,
+          appClientId: awsConfig.appClientId,
+          cognitoPoolId: awsConfig.cognitoPoolId,
+        };
+        const response = await this.props.dispatch(loginUser(dataLogin));
+        if (response.success == false) {
+          this.setState({
+            showAlert: true,
+            pesanError: response.responseBody.Data.message,
+          });
+        }
+      } catch (error) {
+        await this.props.dispatch(
+          notifikasi(
+            "We're Sorry...",
+            'Something went wrong, please try again',
+            console.log('Cancel Pressed'),
+          ),
+        );
       }
-    } catch (error) {
-      this.setState({
-        showAlert: true,
-        pesanError: error.responseBody.Data.message,
-      });
     }
   };
 
@@ -520,7 +536,7 @@ class Signin extends Component {
         <AwesomeAlert
           show={this.state.showAlert}
           showProgress={false}
-          title="Oopss!"
+          title="Oops!"
           message={this.state.pesanError}
           closeOnTouchOutside={true}
           closeOnHardwareBackPress={false}

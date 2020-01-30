@@ -22,6 +22,7 @@ export default class StoreStores extends Component {
 
   storeDetailStores = item => {
     Actions.storeDetailStores({item});
+    // Actions.order({item});
   };
 
   render() {
@@ -52,7 +53,7 @@ export default class StoreStores extends Component {
                           <Text
                             style={{
                               fontSize: 12,
-                              marginTop: 5,
+                              marginTop: 10,
                               width: 70,
                               padding: 5,
                               textAlign: 'center',
@@ -62,7 +63,7 @@ export default class StoreStores extends Component {
                               color: colorConfig.store.textWhite,
                               fontFamily: 'Lato-Medium',
                             }}>
-                            Open Now
+                            Open
                           </Text>
                         ) : (
                           <Text
@@ -119,7 +120,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Lato-Bold',
   },
   storesItem: {
-    height: Dimensions.get('window').width / 4 - 20,
+    height: Dimensions.get('window').width / 4 - 10,
     flexDirection: 'row',
     borderColor: colorConfig.store.border,
     // borderWidth: 1,

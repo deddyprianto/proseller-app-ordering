@@ -94,34 +94,34 @@ class AccountMenuList extends Component {
               />
             </TouchableOpacity>
 
-            <View style={styles.line} />
+            {/*<View style={styles.line} />*/}
           </View>
         </View>
 
-        <View style={{flexDirection: 'row'}}>
-          <View
-            style={styles.itemMenu}>
-            <Icon
-              size={20}
-              name={Platform.OS === 'ios' ? 'ios-settings' : 'md-settings'}
-              style={{color: colorConfig.pageIndex.activeTintColor}}
-            />
-          </View>
-          <View>
-            <TouchableOpacity style={styles.item}>
-              <Text style={styles.title}> Settings </Text>
-              <Icon
-                size={20}
-                name={
-                  Platform.OS === 'ios'
-                    ? 'ios-arrow-dropright-circle'
-                    : 'md-arrow-dropright-circle'
-                }
-                style={{color: colorConfig.pageIndex.activeTintColor}}
-              />
-            </TouchableOpacity>
-          </View>
-        </View>
+        {/*<View style={{flexDirection: 'row'}}>*/}
+        {/*  <View*/}
+        {/*    style={styles.itemMenu}>*/}
+        {/*    <Icon*/}
+        {/*      size={20}*/}
+        {/*      name={Platform.OS === 'ios' ? 'ios-settings' : 'md-settings'}*/}
+        {/*      style={{color: colorConfig.pageIndex.activeTintColor}}*/}
+        {/*    />*/}
+        {/*  </View>*/}
+        {/*  <View>*/}
+        {/*    <TouchableOpacity style={styles.item}>*/}
+        {/*      <Text style={styles.title}> Settings </Text>*/}
+        {/*      <Icon*/}
+        {/*        size={20}*/}
+        {/*        name={*/}
+        {/*          Platform.OS === 'ios'*/}
+        {/*            ? 'ios-arrow-dropright-circle'*/}
+        {/*            : 'md-arrow-dropright-circle'*/}
+        {/*        }*/}
+        {/*        style={{color: colorConfig.pageIndex.activeTintColor}}*/}
+        {/*      />*/}
+        {/*    </TouchableOpacity>*/}
+        {/*  </View>*/}
+        {/*</View>*/}
       </View>
     );
   }

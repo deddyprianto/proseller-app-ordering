@@ -58,6 +58,7 @@ class RewordsVouchers extends Component {
   };
 
   render() {
+    console.log('this.props.vouchers', this.props.vouchers);
     return (
       <View style={styles.container}>
         <Text style={styles.title}>Vouchers</Text>
@@ -110,57 +111,54 @@ class RewordsVouchers extends Component {
                       </View>
                     </View>
                     <View style={styles.voucherDetail}>
-                      <Text style={styles.nameVoucher}>
-                        {item['voucherName']}
-                      </Text>
+                      <Text style={styles.nameVoucher}>{item['name']}</Text>
                       <View style={{flexDirection: 'row'}}>
                         <Icon
                           size={15}
-                          name={
-                            Platform.OS === 'ios'
-                              ? 'ios-arrow-dropright'
-                              : 'md-arrow-dropright-circle'
-                          }
+                          name={Platform.OS === 'ios' ? 'ios-list' : 'md-list'}
                           style={{
                             color: colorConfig.pageIndex.inactiveTintColor,
                             marginRight: 3,
                           }}
                         />
                         <Text style={styles.descVoucher}>
-                          {item['voucherDesc']}
+                          {item['voucherDesc'] != null
+                            ? item['voucherDesc']
+                            : 'No description for this voucher'}
                         </Text>
                       </View>
-                      <View style={{flexDirection: 'row'}}>
-                        <Icon
-                          size={15}
-                          name={Platform.OS === 'ios' ? 'ios-time' : 'md-time'}
-                          style={{
-                            color: colorConfig.pageIndex.inactiveTintColor,
-                            marginRight: 3,
-                          }}
-                        />
-                        {item['validity']['longTerm'] ? (
-                          <Text style={styles.descVoucher}>
-                            {item['validity']['activeWeekDays'][
-                              this.state.currentDay.getDay()
-                            ]['validHour']['from'] +
-                              ' - ' +
-                              item['validity']['activeWeekDays'][
-                                this.state.currentDay.getDay()
-                              ]['validHour']['to']}
-                          </Text>
-                        ) : (
-                          <Text style={styles.descVoucher}>
-                            {this.getDate(
-                              item['validity']['validDate']['startDate'],
-                            ) +
-                              ' - ' +
-                              this.getDate(
-                                item['validity']['validDate']['endDate'],
-                              )}
-                          </Text>
-                        )}
-                      </View>
+                      {/*<View style={{flexDirection: 'row'}}>*/}
+                      {/*  <Icon*/}
+                      {/*    size={15}*/}
+                      {/*    name={Platform.OS === 'ios' ? 'ios-time' : 'md-time'}*/}
+                      {/*    style={{*/}
+                      {/*      color: colorConfig.pageIndex.inactiveTintColor,*/}
+                      {/*      marginRight: 3,*/}
+                      {/*    }}*/}
+                      {/*  />*/}
+                      {/*  {item['validity']['longTerm'] ? (*/}
+                      {/*    <Text style={styles.descVoucher}>*/}
+                      {/*      {item['validity']['activeWeekDays'][*/}
+                      {/*        this.state.currentDay.getDay()*/}
+                      {/*      ]['validHour']['from'] +*/}
+                      {/*        ' - ' +*/}
+                      {/*        item['validity']['activeWeekDays'][*/}
+                      {/*          this.state.currentDay.getDay()*/}
+                      {/*        ]['validHour']['to']}*/}
+                      {/*    </Text>*/}
+                      {/*  ) : (*/}
+                      {/*    <Text style={styles.descVoucher}>*/}
+                      {/*      /!*{this.getDate(*!/*/}
+                      {/*      /!*  item['validity']['validDate']['startDate'],*!/*/}
+                      {/*      /!*) +*!/*/}
+                      {/*      /!*  ' - ' +*!/*/}
+                      {/*      /!*  this.getDate(*!/*/}
+                      {/*      /!*    item['validity']['validDate']['endDate'],*!/*/}
+                      {/*      /!*  )}*!/*/}
+                      {/*      ini date nya*/}
+                      {/*    </Text>*/}
+                      {/*  )}*/}
+                      {/*</View>*/}
                     </View>
                   </TouchableOpacity>
                 }
@@ -208,7 +206,7 @@ const styles = StyleSheet.create({
   voucherItem: {
     borderColor: colorConfig.store.defaultColor,
     borderWidth: 1,
-    marginBottom: 5,
+    marginBottom: 10,
     borderRadius: 10,
     backgroundColor: colorConfig.store.storesItem,
     shadowColor: '#00000021',
@@ -235,6 +233,7 @@ const styles = StyleSheet.create({
   voucherDetail: {
     paddingLeft: 10,
     paddingTop: 5,
+    fontSize: 16,
     paddingRight: 5,
     borderTopColor: colorConfig.store.defaultColor,
     borderTopWidth: 1,
@@ -254,12 +253,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   nameVoucher: {
-    fontSize: 14,
+    fontSize: 18,
     color: colorConfig.store.defaultColor,
     fontWeight: 'bold',
   },
   descVoucher: {
-    fontSize: 12,
+    fontSize: 13,
     color: colorConfig.pageIndex.inactiveTintColor,
   },
   pointVoucher: {

@@ -11,6 +11,7 @@ import {
   StyleSheet,
   Dimensions,
   TouchableOpacity,
+  BackHandler,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -26,9 +27,25 @@ export default class HistoryDetailPayment extends Component {
     };
   }
 
-  goBack() {
-    Actions.pop();
+  componentDidMount = async () => {
+    this.backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      this.handleBackPress,
+    );
+  };
+
+  componentWillUnmount() {
+    this.backHandler.remove();
   }
+
+  handleBackPress = () => {
+    this.goBack();
+    return true;
+  };
+
+  goBack = async () => {
+    Actions.pop();
+  };
 
   getDate(date) {
     console.log(date);
@@ -92,7 +109,7 @@ export default class HistoryDetailPayment extends Component {
             </View>
 
             <View style={styles.detailItem}>
-              <Text style={styles.desc}>Payment</Text>
+              <Text style={styles.desc}>Amount</Text>
               <Text style={styles.desc}>
                 {appConfig.appMataUang + ' ' + this.props.item.price}
               </Text>
@@ -104,19 +121,11 @@ export default class HistoryDetailPayment extends Component {
             </View>
 
             <View style={styles.detailItem}>
-              <Text style={styles.desc}>Created</Text>
+              <Text style={styles.desc}>Date</Text>
               <Text style={styles.desc}>
                 {this.getDate(this.props.item.createdAt)}
               </Text>
             </View>
-
-            {/*<View style={styles.detailItem}>*/}
-            {/*  <Text style={styles.desc}>Expiry</Text>*/}
-            {/*  <Text style={styles.desc}>*/}
-            {/*    {this.getDate(this.props.item.expiry)}*/}
-            {/*  </Text>*/}
-            {/*</View>*/}
-
             <View
               style={{
                 alignItems: 'center',
@@ -137,6 +146,23 @@ export default class HistoryDetailPayment extends Component {
                 {this.props.item.point}
               </Text>
             </View>
+          </View>
+        </View>
+
+        <View style={styles.card}>
+          <View style={styles.item}>
+            <Text style={styles.title}>Detail Order</Text>
+          </View>
+          <View style={styles.detail}>
+            {this.props.item.dataPay.map(item => (
+              <View style={styles.detailItem}>
+                <Text style={[styles.desc, {width: 120,}]}>{item.itemName}</Text>
+                <Text style={styles.desc}>{item.qty}</Text>
+                <Text style={styles.desc}>
+                  {appConfig.appMataUang + ' ' + item.price}
+                </Text>
+              </View>
+            ))}
           </View>
         </View>
       </View>
@@ -166,20 +192,29 @@ const styles = StyleSheet.create({
   },
   card: {
     margin: 10,
-    borderColor: colorConfig.pageIndex.activeTintColor,
+    borderColor: colorConfig.pageIndex.inactiveTintColor,
     borderWidth: 1,
     borderRadius: 5,
     backgroundColor: colorConfig.pageIndex.backgroundColor,
+    shadowColor: '#00000021',
+    shadowOffset: {
+      width: 0,
+      height: 9,
+    },
+    shadowOpacity: 0.7,
+    shadowRadius: 7.49,
+    elevation: 12,
   },
   item: {
     alignItems: 'center',
-    borderBottomColor: colorConfig.pageIndex.activeTintColor,
+    borderBottomColor: colorConfig.pageIndex.inactiveTintColor,
     borderBottomWidth: 1,
     margin: 10,
+    paddingVertical: 15,
   },
   title: {
     color: colorConfig.pageIndex.activeTintColor,
-    fontSize: 14,
+    fontSize: 17,
     textAlign: 'center',
     fontFamily: 'Lato-Bold',
     marginBottom: 10,
@@ -188,6 +223,7 @@ const styles = StyleSheet.create({
     marginLeft: 30,
     marginRight: 30,
     marginBottom: 10,
+    paddingVertical: 10,
   },
   detailItem: {
     flexDirection: 'row',

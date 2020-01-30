@@ -422,7 +422,7 @@ class PaymentDetail extends Component {
                 justifyContent: 'space-between',
                 flexDirection: 'row',
               }}>
-              <Text>Use Vouchers</Text>
+              <Text>Redeem Vouchers</Text>
               {this.state.cancelVoucher == false &&
               this.props.dataVoucer != undefined ? (
                 <View
@@ -456,7 +456,7 @@ class PaymentDetail extends Component {
                       }}
                     />
                     <Text style={styles.descMethod}>
-                      {this.props.dataVoucer.voucherName.substr(0, 13)}
+                      {this.props.dataVoucer.name.substr(0, 13)}
                     </Text>
                   </TouchableOpacity>
                 </View>
@@ -487,7 +487,7 @@ class PaymentDetail extends Component {
                 justifyContent: 'space-between',
                 flexDirection: 'row',
               }}>
-              <Text>Use Point</Text>
+              <Text>Redeem Point</Text>
               {this.state.cancelPoint == false &&
               this.props.addPoint != undefined ? (
                 <View

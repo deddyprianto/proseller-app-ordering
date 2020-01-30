@@ -21,22 +21,20 @@ export const dataTransaction = () => {
         token,
       );
       console.log(response, 'response sales');
-      if (response.success) {
-        dataResponse = response.responseBody.Data;
-        dispatch({
-          type: 'DATA_POINT_TRANSACTION',
-          pointTransaction: _.orderBy(dataResponse, ['createdAt'], ['desc']),
-        });
-        // dispatch({
-        //   type: 'DATA_RECENT_TRANSACTION',
-        //   recentTransaction: _.orderBy(
-        //     dataResponse,
-        //     ['createdAt'],
-        //     ['desc'],
-        //   ).slice(0, 3),
-        // });
-      }
-      return "response.success";
+      dataResponse = response.responseBody.Data;
+      dispatch({
+        type: 'DATA_POINT_TRANSACTION',
+        pointTransaction: _.orderBy(dataResponse, ['createdAt'], ['desc']),
+        isSuccessGetTrx: response.success,
+      });
+      // dispatch({
+      //   type: 'DATA_RECENT_TRANSACTION',
+      //   recentTransaction: _.orderBy(
+      //     dataResponse,
+      //     ['createdAt'],
+      //     ['desc'],
+      //   ).slice(0, 3),
+      // });
     } catch (error) {
       return error;
     }

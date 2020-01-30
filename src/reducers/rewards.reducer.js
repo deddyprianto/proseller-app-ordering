@@ -18,6 +18,7 @@ const dataPoint = (state = {}, action) => {
       return {
         ...state,
         pointTransaction: action.pointTransaction,
+        isSuccessGetTrx: action.isSuccessGetTrx,
       };
     case 'DATA_RECENT_TRANSACTION':
       return {

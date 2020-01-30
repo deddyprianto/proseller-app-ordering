@@ -56,8 +56,10 @@ const colorConfig = {
     colorSuccess: '#44c769',
     colorError: '#c7420e',
     textWhite: 'white',
-    title: '#333231',
+    title: '#454545',
     transparentColor: 'rgba(3, 157, 252, 0.8)',
+    transparent: 'rgba(3, 157, 252, 0.1)',
+    containerColor: '#f2f2f2',
   },
 };
 
