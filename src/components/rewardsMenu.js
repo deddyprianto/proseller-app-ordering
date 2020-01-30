@@ -22,7 +22,8 @@ export default class RewardsMenu extends Component {
     // var pembayaran = {
     //   payment: 20,
     //   storeName: 'Bugis Village',
-    //   storeId: 'a176cb90-c64c-4bb5-bffa-df7be0f3e530',
+    //   referenceNo: `${new Date().valueOf()}`,
+    //   storeId: '486e2b85-6700-409d-afe4-5f1cdbacba53',
     //   dataPay: [
     //     {itemName: 'Nasi Goreng Pedas', qty: 1, price: 10},
     //     {itemName: 'Teh Jeruk Manis', qty: 1, price: 5},

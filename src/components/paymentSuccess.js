@@ -28,8 +28,8 @@ export default class PaymentSuccess extends Component {
       pesanAlert:
         this.props.dataRespons.stamps.type == 'empty'
           ? ''
-          : this.props.dataRespons.stamps.message,
-      titleAlert: this.props.dataRespons.stamps.type == 'empty' ? '' : 'Good !',
+          : this.props.dataRespons.message,
+      titleAlert: this.props.dataRespons.stamps.type == 'empty' ? '' : 'Thank You !',
     };
   }
 

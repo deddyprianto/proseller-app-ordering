@@ -87,72 +87,52 @@ class Inbox extends Component {
               onRefresh={this._onRefresh}
             />
           }>
-          {this.props.dataInbox !== undefined &&
-          this.props.dataInbox.length > 0 ? (
-            this.props.dataInbox.map((item, key) => (
-              <View key={key}>
-                <TouchableOpacity
-                  style={styles.item}
-                  onPress={() => this.inboxDetail(item)}>
-                  <View style={styles.sejajarSpace}>
-                    <View style={styles.imageDetail}>
-                      <Image
-                        style={{
-                          height: 40,
-                          width: 40,
-                          borderRadius: 40,
-                          borderColor: colorConfig.pageIndex.activeTintColor,
-                          borderWidth: 1,
-                        }}
-                        source={
-                          item.image == undefined
-                            ? appConfig.appImageNull
-                            : {uri: item.image}
-                        }
-                      />
-                      {item.read ? null : (
-                        <View
-                          style={{
-                            backgroundColor: 'red',
-                            height: 13,
-                            width: 13,
-                            position: 'absolute',
-                            left: null,
-                            borderRadius: 13,
-                            borderColor: colorConfig.pageIndex.backgroundColor,
-                            borderWidth: 2,
-                            right: 8,
-                            top: 7,
-                          }}
-                        />
-                      )}
-                    </View>
-                    <View style={styles.detail}>
-                      <Text style={styles.storeName}>{item.title}</Text>
-                      <Text style={styles.paymentType}>{item.name}</Text>
-                    </View>
-                    <View style={styles.btnDetail}>
-                      <Icon
-                        size={20}
-                        name={
-                          Platform.OS === 'ios'
-                            ? 'ios-arrow-dropright-circle'
-                            : 'md-arrow-dropright-circle'
-                        }
-                        style={{
-                          color: colorConfig.pageIndex.activeTintColor,
-                        }}
-                      />
-                    </View>
-                  </View>
-                </TouchableOpacity>
+          {/*{this.props.dataInbox !== undefined &&*/}
+          {/*this.props.dataInbox.length > 0 ? (*/}
+          {/*  this.props.dataInbox.map((item, key) => (*/}
+          <View key={'key'}>
+            <TouchableOpacity
+              style={styles.item}
+              onPress={() => this.inboxDetail('item')}>
+              <View style={styles.sejajarSpace}>
+                <View style={styles.imageDetail}>
+                  <Image
+                    style={{
+                      height: 40,
+                      width: 40,
+                      borderRadius: 40,
+                      borderColor: colorConfig.pageIndex.activeTintColor,
+                      borderWidth: 1,
+                    }}
+                    source={appConfig.appImageNull}
+                  />
+                </View>
+                <View style={styles.detail}>
+                  <Text style={styles.storeName}>Halo Bandung</Text>
+                  <Text style={styles.paymentType}>Cash</Text>
+                </View>
+                <View style={styles.btnDetail}>
+                  {/*<Icon*/}
+                  {/*  size={20}*/}
+                  {/*  name={*/}
+                  {/*    Platform.OS === 'ios'*/}
+                  {/*      ? 'ios-arrow-dropright-circle'*/}
+                  {/*      : 'md-arrow-dropright-circle'*/}
+                  {/*  }*/}
+                  {/*  style={{*/}
+                  {/*    color: colorConfig.pageIndex.activeTintColor,*/}
+                  {/*  }}*/}
+                  {/*/>*/}
+                </View>
               </View>
-            ))
-          ) : (
-            <View style={styles.emptyNotice}>
-              <Text style={styles.empty}>Oppss, Your inbox is empty</Text>
-            </View>
-          )}
+            </TouchableOpacity>
+          </View>
+          {/*))*/}
+          {/*) : (*/}
+          {/*  <View style={styles.emptyNotice}>*/}
+          {/*    <Text style={styles.empty}>Oppss, Your inbox is empty</Text>*/}
+          {/*  </View>*/}
+          {/*)}*/}
         </ScrollView>
       </View>
     );
@@ -186,10 +166,19 @@ const styles = StyleSheet.create({
     marginLeft: 5,
     marginRight: 5,
     marginBottom: 2,
-    borderColor: colorConfig.pageIndex.activeTintColor,
-    borderWidth: 1,
+    padding: 10,
+    // borderColor: colorConfig.pageIndex.activeTintColor,
+    // borderWidth: 1,
     borderRadius: 5,
     backgroundColor: colorConfig.pageIndex.backgroundColor,
+    shadowColor: '#00000021',
+    shadowOffset: {
+      width: 0,
+      height: 9,
+    },
+    shadowOpacity: 0.7,
+    shadowRadius: 7.49,
+    elevation: 12,
   },
   sejajarSpace: {
     flexDirection: 'row',

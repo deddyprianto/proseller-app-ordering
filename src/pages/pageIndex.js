@@ -137,41 +137,43 @@ class PageIndex extends Component {
       <Container>
         <OfflineNotice />
         <AppStackContainer />
-        {this.props.dataInboxNoRead > 0 ? (
-          <View
-            style={{
-              position: 'absolute',
-              top: null,
-              left: null,
-              bottom: 30,
-              right: this.state.screenWidth / 4 - 5,
-              height: 18,
-              borderTopLeftRadius: 10,
-              borderTopRightRadius: 10,
-              borderBottomLeftRadius: 10,
-              borderBottomRightRadius: 10,
-              backgroundColor: 'red',
-              alignItems: 'center',
-              justifyContent: 'center',
-              paddingLeft: 5,
-              paddingRight: 5,
-              paddingTop: 5,
-              paddingBottom: 5,
-              borderColor: colorConfig.pageIndex.backgroundColor,
-              borderWidth: 2,
-            }}>
-            <Text
-              style={{
-                color: colorConfig.pageIndex.backgroundColor,
-                fontSize: 10,
-                width: '100%',
-                textAlign: 'center',
-                fontWeight: 'bold',
-              }}>
-              {this.props.dataInboxNoRead}
-            </Text>
-          </View>
-        ) : null}
+        {/*/!*{this.props.dataInboxNoRead > 0 ? (*!/*/}
+        {/*{true ? (*/}
+        {/*  <View*/}
+        {/*    style={{*/}
+        {/*      position: 'absolute',*/}
+        {/*      top: null,*/}
+        {/*      left: null,*/}
+        {/*      bottom: 30,*/}
+        {/*      right: this.state.screenWidth / 4 - 5,*/}
+        {/*      height: 18,*/}
+        {/*      borderTopLeftRadius: 10,*/}
+        {/*      borderTopRightRadius: 10,*/}
+        {/*      borderBottomLeftRadius: 10,*/}
+        {/*      borderBottomRightRadius: 10,*/}
+        {/*      backgroundColor: 'red',*/}
+        {/*      alignItems: 'center',*/}
+        {/*      justifyContent: 'center',*/}
+        {/*      paddingLeft: 5,*/}
+        {/*      paddingRight: 5,*/}
+        {/*      paddingTop: 5,*/}
+        {/*      paddingBottom: 5,*/}
+        {/*      borderColor: colorConfig.pageIndex.backgroundColor,*/}
+        {/*      borderWidth: 2,*/}
+        {/*    }}>*/}
+        {/*    <Text*/}
+        {/*      style={{*/}
+        {/*        color: colorConfig.pageIndex.backgroundColor,*/}
+        {/*        fontSize: 10,*/}
+        {/*        width: '100%',*/}
+        {/*        textAlign: 'center',*/}
+        {/*        fontWeight: 'bold',*/}
+        {/*      }}>*/}
+        {/*      /!*{this.props.dataInboxNoRead}*!/*/}
+        {/*      5*/}
+        {/*    </Text>*/}
+        {/*  </View>*/}
+        {/*) : null}*/}
       </Container>
     );
   }

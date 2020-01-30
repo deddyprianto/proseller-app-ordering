@@ -83,7 +83,7 @@ class VoucherDetail extends Component {
         this.setState({
           showAlert: true,
           pesanAlert: response.responseBody.Data.message,
-          titleAlert: 'Redeem Success!',
+          titleAlert: 'Success!',
         });
       } else {
         this.setState({
@@ -98,7 +98,7 @@ class VoucherDetail extends Component {
       this.setState({
         showAlert: true,
         pesanAlert: error.responseBody.message,
-        titleAlert: 'Redeem error!',
+        titleAlert: 'Oppss...',
       });
       this.setState({loadRedeem: false});
     }
@@ -202,57 +202,53 @@ class VoucherDetail extends Component {
                   paddingBottom: 10,
                 }}>
                 <Text style={styles.nameVoucher}>
-                  {this.props.dataVoucher['voucherName']}
+                  {this.props.dataVoucher['name']}
                 </Text>
-                <View style={{flexDirection: 'row'}}>
+                <View style={{flexDirection: 'row', marginTop: 20}}>
                   <Icon
                     size={15}
                     name={
                       Platform.OS === 'ios'
-                        ? 'ios-arrow-dropright'
-                        : 'md-arrow-dropright-circle'
+                        ? 'ios-help-circle-outline'
+                        : 'md-help-circle-outline'
                     }
                     style={{
-                      color: colorConfig.pageIndex.inactiveTintColor,
-                      marginRight: 3,
+                      color: colorConfig.pageIndex.activeTintColor,
+                      marginRight: 10,
                     }}
                   />
                   <Text style={styles.descVoucher}>
-                    {this.props.dataVoucher['voucherDesc']}
+                    {this.props.dataVoucher['voucherDesc'] != null
+                      ? this.props.dataVoucher['voucherDesc']
+                      : 'No description for this voucher'}
                   </Text>
                 </View>
-                <View style={{flexDirection: 'row'}}>
+                <View style={{flexDirection: 'row', marginTop: 10}}>
                   <Icon
                     size={15}
                     name={Platform.OS === 'ios' ? 'ios-time' : 'md-time'}
                     style={{
-                      color: colorConfig.pageIndex.inactiveTintColor,
-                      marginRight: 3,
+                      color: colorConfig.pageIndex.activeTintColor,
+                      marginRight: 10,
                     }}
                   />
-                  {this.props.dataVoucher['validity']['longTerm'] ? (
+                  {this.props.dataVoucher['validity']['allDays'] ? (
                     <Text style={styles.descVoucher}>
-                      {this.props.dataVoucher['validity']['activeWeekDays'][
-                        this.state.currentDay.getDay()
-                      ]['validHour']['from'] +
-                        ' - ' +
-                        this.props.dataVoucher['validity']['activeWeekDays'][
-                          this.state.currentDay.getDay()
-                        ]['validHour']['to']}
+                      This voucher is valid in all days.
                     </Text>
                   ) : (
-                    <Text style={styles.descVoucher}>
-                      {this.getDate(
-                        this.props.dataVoucher['validity']['validDate'][
-                          'startDate'
-                        ],
-                      ) +
-                        ' - ' +
-                        this.getDate(
-                          this.props.dataVoucher['validity']['validDate'][
-                            'endDate'
-                          ],
-                        )}
+                    <Text style={styles.descVoucherTime}>
+                      This voucher is valid on
+                      {this.props.dataVoucher['validity']['activeWeekDays']
+                        .filter(item => item.active == true)
+                        .map(data => (
+                          <Text>
+                            {', '}{' '}
+                            <Text style={{fontWeight: 'bold'}}>
+                              {data.day.toLowerCase()}
+                            </Text>{' '}
+                          </Text>
+                        ))}
                     </Text>
                   )}
                 </View>
@@ -263,8 +259,9 @@ class VoucherDetail extends Component {
               style={{
                 height: 50,
                 backgroundColor: colorConfig.pageIndex.activeTintColor,
-                // borderBottomLeftRadius: 8,
-                // borderBottomRightRadius: 8,
+                borderRadius: 8,
+                marginTop: 30,
+                marginHorizontal: 15,
                 alignItems: 'center',
               }}>
               <Text
@@ -274,7 +271,7 @@ class VoucherDetail extends Component {
                   paddingTop: 10,
                   fontSize: 19,
                 }}>
-                Redeem
+                Buy
               </Text>
             </TouchableOpacity>
           </View>
@@ -289,15 +286,13 @@ class VoucherDetail extends Component {
           showCancelButton={false}
           showConfirmButton={true}
           cancelText="Close"
-          confirmText={
-            this.state.titleAlert == 'Redeem Success!' ? 'Oke' : 'Close'
-          }
+          confirmText={this.state.titleAlert == 'Success!' ? 'Close' : 'Close'}
           confirmButtonColor={colorConfig.pageIndex.activeTintColor}
           onCancelPressed={() => {
             this.hideAlert();
           }}
           onConfirmPressed={() => {
-            this.state.titleAlert == 'Redeem Success!'
+            this.state.titleAlert == 'Success!'
               ? Actions.pop()
               : this.hideAlert();
           }}
@@ -360,16 +355,21 @@ const styles = StyleSheet.create({
   voucherDetail: {
     borderTopColor: colorConfig.pageIndex.activeTintColor,
     borderTopWidth: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: 'column',
+    // padding: 10,
   },
   nameVoucher: {
-    fontSize: 16,
+    fontSize: 20,
+    textAlign: 'center',
     color: colorConfig.store.defaultColor,
     fontWeight: 'bold',
   },
   descVoucher: {
     fontSize: 15,
+    color: colorConfig.pageIndex.inactiveTintColor,
+  },
+  descVoucherTime: {
+    fontSize: 13,
     color: colorConfig.pageIndex.inactiveTintColor,
   },
   pointVoucher: {

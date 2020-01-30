@@ -19,6 +19,7 @@ import logoVisa from '../assets/img/visa.png';
 import colorConfig from '../config/colorConfig';
 import {Actions} from 'react-native-router-flux';
 import {dataTransaction} from '../actions/sales.action';
+import {notifikasi} from '../actions/auth.actions';
 
 class HistoryPayment extends Component {
   constructor(props) {
@@ -68,14 +69,26 @@ class HistoryPayment extends Component {
   getDataHistory = async () => {
     try {
       await this.props.dispatch(dataTransaction);
+      if (this.props.isSuccessGetTrx) {
+        this.setState({refreshing: false});
+      } else {
+        await this.props.dispatch(
+          notifikasi(
+            "We're Sorry...",
+            "We can't get history transaction, please try again",
+            console.log('Cancel Pressed'),
+          ),
+        );
+        this.setState({refreshing: false});
+      }
     } catch (error) {
-      // await this.props.dispatch(
-      //   notifikasi(
-      //     'Get Data History Error!',
-      //     error.responseBody.message,
-      //     console.log('Cancel Pressed'),
-      //   ),
-      // );
+      await this.props.dispatch(
+        notifikasi(
+          "We're Sorry...",
+          "We can't get history transaction, please try again",
+          console.log('Cancel Pressed'),
+        ),
+      );
       console.log(error);
     }
   };
@@ -83,7 +96,6 @@ class HistoryPayment extends Component {
   _onRefresh = async () => {
     this.setState({refreshing: true});
     await this.getDataHistory();
-    this.setState({refreshing: false});
   };
 
   render() {
@@ -259,6 +271,7 @@ const styles = StyleSheet.create({
 
 mapStateToProps = state => ({
   pointTransaction: state.rewardsReducer.dataPoint.pointTransaction,
+  isSuccessGetTrx: state.rewardsReducer.dataPoint.isSuccessGetTrx,
 });
 
 mapDispatchToProps = dispatch => ({

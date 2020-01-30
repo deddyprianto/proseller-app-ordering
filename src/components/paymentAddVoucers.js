@@ -72,7 +72,7 @@ export default class PaymentAddVoucers extends Component {
 
   render() {
     const myVoucers = this.props.data;
-    console.log('Vouchernya ', myVoucers)
+    console.log('Vouchernya ', myVoucers);
     return (
       <View style={styles.container}>
         <View style={{backgroundColor: colorConfig.pageIndex.backgroundColor}}>
@@ -185,13 +185,11 @@ export default class PaymentAddVoucers extends Component {
                           <Icon
                             size={15}
                             name={
-                              Platform.OS === 'ios'
-                                ? 'ios-arrow-dropright'
-                                : 'md-arrow-dropright-circle'
+                              Platform.OS === 'ios' ? 'ios-list' : 'md-list'
                             }
                             style={{
-                              color: colorConfig.pageIndex.inactiveTintColor,
-                              marginRight: 3,
+                              color: colorConfig.pageIndex.activeTintColor,
+                              marginRight: 8,
                             }}
                           />
                           <Text style={styles.descVoucher}>
@@ -205,29 +203,27 @@ export default class PaymentAddVoucers extends Component {
                               Platform.OS === 'ios' ? 'ios-time' : 'md-time'
                             }
                             style={{
-                              color: colorConfig.pageIndex.inactiveTintColor,
-                              marginRight: 3,
+                              color: colorConfig.pageIndex.activeTintColor,
+                              marginRight: 8,
                             }}
                           />
-                          {item['validity']['longTerm'] ? (
+                          {item['validity']['allDays'] ? (
                             <Text style={styles.descVoucher}>
-                              {item['validity']['activeWeekDays'][
-                                this.state.currentDay.getDay()
-                              ]['validHour']['from'] +
-                                ' - ' +
-                                item['validity']['activeWeekDays'][
-                                  this.state.currentDay.getDay()
-                                ]['validHour']['to']}
+                              This voucher is valid in all days.
                             </Text>
                           ) : (
-                            <Text style={styles.descVoucher}>
-                              {this.getDate(
-                                item['validity']['validDate']['startDate'],
-                              ) +
-                                ' - ' +
-                                this.getDate(
-                                  item['validity']['validDate']['endDate'],
-                                )}
+                            <Text style={styles.descVoucherTime}>
+                              This voucher is valid on
+                              {item['validity']['activeWeekDays']
+                                .filter(items => items.active == true)
+                                .map(data => (
+                                  <Text>
+                                    {', '}{' '}
+                                    <Text style={{fontWeight: 'bold'}}>
+                                      {data.day.toLowerCase()}
+                                    </Text>{' '}
+                                  </Text>
+                                ))}
                             </Text>
                           )}
                         </View>
@@ -322,8 +318,12 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: colorConfig.pageIndex.inactiveTintColor,
   },
+  descVoucherTime: {
+    fontSize: 11,
+    color: colorConfig.pageIndex.inactiveTintColor,
+  },
   pointVoucher: {
-    fontSize: 12,
+    fontSize: 13,
     color: colorConfig.pageIndex.activeTintColor,
   },
   pointVoucherText: {

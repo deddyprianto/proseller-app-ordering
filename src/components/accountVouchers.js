@@ -13,6 +13,7 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
+  BackHandler,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -23,7 +24,7 @@ import {compose} from 'redux';
 import {connect} from 'react-redux';
 import accountsReducer from '../reducers/accounts.reducer';
 
-export default  class AccountVouchers extends Component {
+export default class AccountVouchers extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -32,9 +33,25 @@ export default  class AccountVouchers extends Component {
     };
   }
 
-  goBack() {
-    Actions.pop();
+  componentDidMount = async () => {
+    this.backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      this.handleBackPress,
+    );
+  };
+
+  componentWillUnmount() {
+    this.backHandler.remove();
   }
+
+  handleBackPress = () => {
+    this.goBack();
+    return true;
+  };
+
+  goBack = async () => {
+    Actions.pop();
+  };
 
   getDate(date) {
     var tanggal = new Date(date);
@@ -178,24 +195,22 @@ export default  class AccountVouchers extends Component {
                         <View style={styles.status}>
                           <Text style={styles.statusTitle}>Awarded</Text>
                         </View>
-                        <Text style={styles.nameVoucher}>
-                          {item['voucherName']}
-                        </Text>
+                        <Text style={styles.nameVoucher}>{item['name']}</Text>
                         <View style={{flexDirection: 'row'}}>
                           <Icon
                             size={15}
                             name={
-                              Platform.OS === 'ios'
-                                ? 'ios-arrow-dropright'
-                                : 'md-arrow-dropright-circle'
+                              Platform.OS === 'ios' ? 'ios-list' : 'md-list'
                             }
                             style={{
-                              color: colorConfig.pageIndex.inactiveTintColor,
-                              marginRight: 3,
+                              color: colorConfig.pageIndex.activeTintColor,
+                              marginRight: 5,
                             }}
                           />
                           <Text style={styles.descVoucher}>
-                            {item['voucherDesc']}
+                            {item['voucherDesc'] != null
+                              ? item['voucherDesc']
+                              : 'No description for this voucher'}
                           </Text>
                         </View>
                         <View style={{flexDirection: 'row'}}>
@@ -205,29 +220,27 @@ export default  class AccountVouchers extends Component {
                               Platform.OS === 'ios' ? 'ios-time' : 'md-time'
                             }
                             style={{
-                              color: colorConfig.pageIndex.inactiveTintColor,
-                              marginRight: 3,
+                              color: colorConfig.pageIndex.activeTintColor,
+                              marginRight: 5,
                             }}
                           />
-                          {item['validity']['longTerm'] ? (
+                          {item['validity']['allDays'] ? (
                             <Text style={styles.descVoucher}>
-                              {item['validity']['activeWeekDays'][
-                                this.state.currentDay.getDay()
-                              ]['validHour']['from'] +
-                                ' - ' +
-                                item['validity']['activeWeekDays'][
-                                  this.state.currentDay.getDay()
-                                ]['validHour']['to']}
+                              This voucher is valid in all days.
                             </Text>
                           ) : (
-                            <Text style={styles.descVoucher}>
-                              {this.getDate(
-                                item['validity']['validDate']['startDate'],
-                              ) +
-                                ' - ' +
-                                this.getDate(
-                                  item['validity']['validDate']['endDate'],
-                                )}
+                            <Text style={styles.descVoucherTime}>
+                              This voucher is valid on
+                              {item['validity']['activeWeekDays']
+                                .filter(items => items.active == true)
+                                .map(data => (
+                                  <Text>
+                                    {', '}{' '}
+                                    <Text style={{fontWeight: 'bold'}}>
+                                      {data.day.toLowerCase()}
+                                    </Text>{' '}
+                                  </Text>
+                                ))}
                             </Text>
                           )}
                         </View>
@@ -314,11 +327,15 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   nameVoucher: {
-    fontSize: 14,
+    fontSize: 18,
     color: colorConfig.store.defaultColor,
     fontWeight: 'bold',
   },
   descVoucher: {
+    fontSize: 13,
+    color: colorConfig.pageIndex.inactiveTintColor,
+  },
+  descVoucherTime: {
     fontSize: 12,
     color: colorConfig.pageIndex.inactiveTintColor,
   },

@@ -14,6 +14,7 @@ import {
   ScrollView,
   Image,
   TouchableHighlight,
+  BackHandler,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -30,9 +31,25 @@ export default class StoreDetailStores extends Component {
     };
   }
 
-  goBack() {
-    Actions.pop();
+  componentDidMount = async () => {
+    this.backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      this.handleBackPress,
+    );
+  };
+
+  componentWillUnmount() {
+    this.backHandler.remove();
   }
+
+  handleBackPress = () => {
+    this.goBack();
+    return true;
+  };
+
+  goBack = async () => {
+    Actions.pop();
+  };
 
   storeMap(coordinate, storeName) {
     // Actions.storeSeeMap({coordinate});

@@ -31,6 +31,7 @@ import Loader from '../components/loader';
 import {Actions} from 'react-native-router-flux';
 import colorConfig from '../config/colorConfig';
 import awsConfig from '../config/awsConfig';
+import PhoneInput from 'react-native-phone-input';
 
 const imageWidth = Dimensions.get('window').width / 2;
 
@@ -119,7 +120,7 @@ class Aunt extends Component {
       phoneNumber:
         this.props.dataRegister != undefined
           ? this.props.dataRegister.phoneNumber
-          : '',
+          : awsConfig.phoneNumberCode,
       confirmationCode: '',
       press: false,
       showPass: true,
@@ -160,7 +161,7 @@ class Aunt extends Component {
       this.setState({
         showAlert: true,
         pesanAlert: error.responseBody.message,
-        titleAlert: 'Verify Error!',
+        titleAlert: 'Oopps..',
       });
     }
   };
@@ -196,7 +197,7 @@ class Aunt extends Component {
     try {
       this.setState({loadingVerifyPhone: true});
       var dataRequest = {
-        phoneNumber: this.state.phoneNumber,
+        phoneNumber: this.phone.value(),
         appClientId: awsConfig.appClientId,
         cognitoPoolId: awsConfig.cognitoPoolId,
         companyId: awsConfig.companyId,
@@ -306,23 +307,40 @@ class Aunt extends Component {
               borderWidth: 1,
             }}>
             <Form ref="form" onSubmit={this.handleSubmit}>
-              <TextValidator
-                style={{marginBottom: -10}}
-                name="phoneNumber"
-                label="phoneNumber"
-                validators={['required']}
-                errorStyle={{
-                  container: {top: 5, left: 5},
-                  text: {color: 'red'},
-                  underlineValidColor: colorConfig.pageIndex.activeTintColor,
-                  underlineInvalidColor: 'red',
+              {/*<TextValidator*/}
+              {/*  style={{marginBottom: -10}}*/}
+              {/*  name="phoneNumber"*/}
+              {/*  label="phoneNumber"*/}
+              {/*  validators={['required']}*/}
+              {/*  errorStyle={{*/}
+              {/*    container: {top: 5, left: 5},*/}
+              {/*    text: {color: 'red'},*/}
+              {/*    underlineValidColor: colorConfig.pageIndex.activeTintColor,*/}
+              {/*    underlineInvalidColor: 'red',*/}
+              {/*  }}*/}
+              {/*  errorMessages={['This field is required']}*/}
+              {/*  placeholder="Phone Number"*/}
+              {/*  type="text"*/}
+              {/*  under*/}
+              {/*  value={this.state.phoneNumber}*/}
+              {/*  onChangeText={value => this.setState({phoneNumber: value})}*/}
+              {/*/>*/}
+              <PhoneInput
+                ref={ref => {
+                  this.phone = ref;
                 }}
-                errorMessages={['This field is required']}
-                placeholder="Phone Number"
-                type="text"
-                under
+                style={{marginTop: 15, paddingLeft: 5}}
                 value={this.state.phoneNumber}
-                onChangeText={value => this.setState({phoneNumber: value})}
+              />
+
+              <View
+                style={{
+                  backgroundColor: colorConfig.pageIndex.activeTintColor,
+                  height: 1,
+                  marginLeft: 4,
+                  marginRight: 5,
+                  marginTop: 7,
+                }}
               />
 
               <View>

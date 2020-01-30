@@ -40,6 +40,9 @@ import SigninWaitPassword from '../components/signinWaitPassword';
 import PaymentAddPoint from '../components/paymentAddPoint';
 import RewardsStamps from '../components/rewardsStamps';
 
+// order
+import Order from '../pages/order';
+
 export default class Routes extends Component {
   render() {
     return (
@@ -83,10 +86,18 @@ export default class Routes extends Component {
               key="historyDetailPayment"
               component={HistoryDetailPayment}
             />
-            <Scene duration={0} key="storeDetailStores" component={StoreDetailStores} />
-            <Scene duration={0} key="seeMorePromotion" component={StoreSeeMorePromotion} />
             <Scene
-                duration={0}
+              duration={0}
+              key="storeDetailStores"
+              component={StoreDetailStores}
+            />
+            <Scene
+              duration={0}
+              key="seeMorePromotion"
+              component={StoreSeeMorePromotion}
+            />
+            <Scene
+              duration={0}
               key="storeDetailPromotion"
               component={StoreDetailPromotion}
             />
@@ -101,19 +112,24 @@ export default class Routes extends Component {
               key="accountEditProfil"
               component={AccountEditProfil}
             />
-            <Scene
-              duration={0}
-              key="editProfile"
-              component={EditProfile}
-            />
+            <Scene duration={0} key="editProfile" component={EditProfile} />
             <Scene duration={0} key="paymentDetail" component={PaymentDetail} />
             <Scene key="paymentSuccess" component={PaymentSuccess} />
             <Scene key="paymentAddVoucers" component={PaymentAddVoucers} />
-            <Scene duration={0} key="paymentDetailItem" component={PaymentDetailItem} />
+            <Scene
+              duration={0}
+              key="paymentDetailItem"
+              component={PaymentDetailItem}
+            />
             <Scene key="inboxDetail" component={InboxDetail} />
             <Scene key="paymentAddPoint" component={PaymentAddPoint} />
             <Scene duration={0} key="detailStamps" component={RewardsStamps} />
-            <Scene duration={0} key="changeCredentials" component={ChangeCredentials} />
+            <Scene
+              duration={0}
+              key="changeCredentials"
+              component={ChangeCredentials}
+            />
+            <Scene key="order" component={Order} />
           </Scene>
         </Scene>
       </Router>

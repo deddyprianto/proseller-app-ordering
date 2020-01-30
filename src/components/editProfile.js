@@ -14,6 +14,7 @@ import {
   TouchableWithoutFeedback,
   ScrollView,
   Picker,
+  BackHandler,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -62,13 +63,26 @@ class AccountEditProfil extends Component {
     };
   }
 
-  goBack() {
+  goBack = async () => {
     Actions.pop();
   }
 
   componentDidMount() {
     this.props.dispatch(refreshToken);
+    this.backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      this.handleBackPress,
+    );
   }
+
+  componentWillUnmount() {
+    this.backHandler.remove();
+  }
+
+  handleBackPress = () => {
+    this.goBack();
+    return true;
+  };
 
   submitEdit = async () => {
     try {
@@ -131,12 +145,14 @@ class AccountEditProfil extends Component {
   };
 
   btnChangeCredentials = field => {
-    this.setState({
-      field,
-      showAlert: true,
-      pesanAlert: '',
-      titleAlert: 'Confirmation code has been sent!',
-    });
+    // this.setState(
+    //   {
+    //     field,
+    //   },
+    //   () => {
+    //     this.toChangeCredentials();
+    //   },
+    // );
   };
 
   handleConfirm = date => {
@@ -341,10 +357,10 @@ class AccountEditProfil extends Component {
             if (this.state.titleAlert == "We're Sorry!") {
               this.hideAlert();
             }
-            if (this.state.titleAlert == 'Confirmation code has been sent!') {
-              this.hideAlert();
-              this.toChangeCredentials();
-            }
+            // if (this.state.titleAlert == 'Confirmation code has been sent!') {
+            //   this.hideAlert();
+            //   this.toChangeCredentials();
+            // }
           }}
         />
       </View>

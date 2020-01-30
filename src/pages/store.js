@@ -56,7 +56,7 @@ class Store extends Component {
   componentDidMount = async () => {
     await this.props.dispatch(campaign());
     await this.props.dispatch(dataPromotion());
-    // await this.props.dispatch(dataPoint());
+    await this.props.dispatch(dataPoint());
     // await this.props.dispatch(vouchers());
     // await this.props.dispatch(myVoucers());
     // await this.props.dispatch(dataInbox());
