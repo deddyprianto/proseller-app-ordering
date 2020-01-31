@@ -144,6 +144,7 @@ class PaymentDetail extends Component {
       this.setState({loading: true});
       pembayaran.price = this.state.totalBayar;
       pembayaran.outletName = this.props.pembayaran.storeName;
+      pembayaran.referenceNo = this.props.pembayaran.referenceNo;
       pembayaran.outletId = this.props.pembayaran.storeId;
       pembayaran.paymentType = 'Cash';
       pembayaran.dataPay = this.props.pembayaran.dataPay;
