@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
+import org.capslock.RNDeviceBrightness.RNDeviceBrightness;
 import com.lugg.ReactNativeConfig.ReactNativeConfigPackage;
 import com.reactnativecommunity.rnpermissions.RNPermissionsPackage;
 import com.oblador.vectoricons.VectorIconsPackage;

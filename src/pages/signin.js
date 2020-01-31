@@ -177,7 +177,8 @@ class Signin extends Component {
     this.imageWidth = new Animated.Value(styles.$largeImageSize);
   }
 
-  componentDidMount() {}
+  componentDidMount() {
+  }
 
   goBack() {
     Actions.signin();

@@ -21,13 +21,43 @@ import {compose} from 'redux';
 
 import colorConfig from '../config/colorConfig';
 import appConfig from '../config/appConfig';
+import DeviceBrightness from 'react-native-device-brightness';
 
 class RewardsQRmenu extends Component {
   constructor(props) {
     super(props);
     this.state = {
       screenWidth: Dimensions.get('window').width,
+      deviceBrightness: 0.5,
     };
+  }
+
+  componentDidMount(): void {
+    const self = this;
+    //  set device brightness to max, for scanning purpose
+    try {
+      DeviceBrightness.getSystemBrightnessLevel().then(function(luminous) {
+        // Get current brightness level
+        // 0 ~ 1
+        self.setState({deviceBrightness: luminous});
+        console.log(luminous);
+      });
+
+      DeviceBrightness.setBrightnessLevel(1);
+    } catch (e) {
+      console.log('unable to set device brightness', e);
+    }
+  }
+
+  componentWillUnmount(): void {
+    console.log('unmount dongs');
+    const self = this;
+    //  set device brightness to normal again
+    try {
+      DeviceBrightness.setBrightnessLevel(0.4);
+    } catch (e) {
+      console.log('unable to set device brightness', e);
+    }
   }
 
   goBack() {
@@ -133,6 +163,9 @@ mapDispatchToProps = dispatch => ({
   dispatch,
 });
 
-export default compose(connect(mapStateToProps, mapDispatchToProps))(
-  RewardsQRmenu,
-);
+export default compose(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  ),
+)(RewardsQRmenu);
