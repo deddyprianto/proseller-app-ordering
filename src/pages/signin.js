@@ -211,6 +211,7 @@ class Signin extends Component {
           password: this.state.password,
           appClientId: awsConfig.appClientId,
           cognitoPoolId: awsConfig.cognitoPoolId,
+          isUseApp: true,
         };
         const response = await this.props.dispatch(loginUser(dataLogin));
         if (response.success == false) {

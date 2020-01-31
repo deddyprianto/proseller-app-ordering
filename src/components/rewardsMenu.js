@@ -27,7 +27,7 @@ export default class RewardsMenu extends Component {
     //   dataPay: [
     //     {itemName: 'Nasi Goreng Pedas', qty: 1, price: 10},
     //     {itemName: 'Teh Jeruk Manis', qty: 1, price: 5},
-    //     {itemName: 'Cendol Goreng', qty: 1, price: 5},
+    //     {itemName: 'Nasi Lemak', qty: 1, price: 5},
     //   ],
     // };
     // console.log(pembayaran);

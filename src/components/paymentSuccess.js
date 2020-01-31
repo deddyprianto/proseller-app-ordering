@@ -24,12 +24,9 @@ export default class PaymentSuccess extends Component {
     super(props);
     this.state = {
       screenWidth: Dimensions.get('window').width,
-      showAlert: this.props.dataRespons.stamps.type != 'empty' ? true : false,
-      pesanAlert:
-        this.props.dataRespons.stamps.type == 'empty'
-          ? ''
-          : this.props.dataRespons.message,
-      titleAlert: this.props.dataRespons.stamps.type == 'empty' ? '' : 'Thank You !',
+      showAlert: true,
+      pesanAlert: this.props.dataRespons.message,
+      titleAlert: 'Thank You !',
     };
   }
 

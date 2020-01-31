@@ -9,6 +9,8 @@ import {
   TouchableHighlight,
   TouchableOpacity,
   View,
+  Button,
+  Modal,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -16,12 +18,14 @@ import createOpenLink from 'react-native-open-maps';
 
 import colorConfig from '../config/colorConfig';
 import appConfig from '../config/appConfig';
+// import Modal from 'react-native-modal';
 
 export default class StoreDetailStores extends Component {
   constructor(props) {
     super(props);
     this.state = {
       screenWidth: Dimensions.get('window').width,
+      isModalVisible: false,
     };
   }
 
@@ -45,10 +49,52 @@ export default class StoreDetailStores extends Component {
     Actions.pop();
   };
 
+  toggleModal = () => {
+    this.setState({isModalVisible: !this.state.isModalVisible});
+  };
+
   render() {
     console.log('this.props.item ', this.props.item);
     return (
       <View style={styles.container}>
+        <Modal
+          animationType="slide"
+          presentationStyle="pageSheet"
+          isVisible={true}
+          visible={this.state.isModalVisible}
+          transparent={false}>
+          <View style={{backgroundColor: 'white'}}>
+            <Image
+              resizeMode="cover"
+              style={styles.imageModal}
+              source={{
+                uri:
+                  'https://upload.wikimedia.org/wikipedia/commons/6/62/Nasi_Lemak%2C_Mamak%2C_Sydney.jpg',
+              }}
+            />
+            <View style={styles.detailItemModal}>
+              <Text style={[styles.productTitleModal]}>
+                Mie Pangsit Goreng Pedas Lemak
+              </Text>
+              <Text style={[styles.productDescModal]}>
+                Nasi + telur goreng ditambah dengan ayam goreng + es teh goreng
+              </Text>
+              <Text style={[styles.productPriceModal]}>SGD 10</Text>
+            </View>
+            <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+              <View style={styles.panelQty}>
+                <TouchableOpacity style={styles.buttonQty}>
+                  <Text>-</Text>
+                </TouchableOpacity>
+                <Text style={styles.descQty}>7</Text>
+                <TouchableOpacity style={styles.buttonQty}>
+                  <Text>-</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+            <Button title={'Add to Basket'} onPress={this.toggleModal} />
+          </View>
+        </Modal>
         <View style={styles.headerImage}>
           <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
             <Icon
@@ -154,7 +200,7 @@ export default class StoreDetailStores extends Component {
           </View>
           <View style={styles.card}>
             <Text style={styles.titleCategory}>Kategori Menu</Text>
-            <View style={styles.detail}>
+            <TouchableOpacity style={styles.detail} onPress={this.toggleModal}>
               <View style={styles.detailItem}>
                 <View style={{flexDirection: 'row'}}>
                   <Image
@@ -166,6 +212,13 @@ export default class StoreDetailStores extends Component {
                   />
                   <View>
                     <Text style={[styles.productTitle]}>
+                      <Text
+                        style={{
+                          color: colorConfig.store.defaultColor,
+                          fontWeight: 'bold',
+                        }}>
+                        x 3
+                      </Text>{' '}
                       Mie Pangsit Goreng Pedas Lemak
                     </Text>
                     <Text style={[styles.productDesc]}>
@@ -176,7 +229,7 @@ export default class StoreDetailStores extends Component {
                 </View>
                 <Text style={[styles.productPrice]}>SGD 10</Text>
               </View>
-            </View>
+            </TouchableOpacity>
 
             <View style={styles.detail}>
               <View style={styles.detailItem}>
@@ -451,9 +504,22 @@ const styles = StyleSheet.create({
     height: 180,
     resizeMode: 'cover',
   },
+  imageModal: {
+    height: Dimensions.get('window').height / 3,
+    resizeMode: 'cover',
+  },
   detailItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    borderBottomColor: colorConfig.pageIndex.inactiveTintColor,
+    borderBottomWidth: 1,
+    paddingBottom: 15,
+    marginBottom: 10,
+  },
+  detailItemModal: {
+    marginTop: 20,
+    // flexDirection: 'column',
+    // justifyContent: 'flex-start',
     borderBottomColor: colorConfig.pageIndex.inactiveTintColor,
     borderBottomWidth: 1,
     paddingBottom: 15,
@@ -463,11 +529,27 @@ const styles = StyleSheet.create({
     color: colorConfig.store.title,
     fontWeight: 'bold',
   },
+  productPriceModal: {
+    color: colorConfig.store.defaultColor,
+    fontWeight: 'bold',
+    marginTop: 27,
+    fontSize: 28,
+    textAlign: 'center',
+    fontFamily: 'Lato-Bold',
+  },
   productTitle: {
     color: colorConfig.store.title,
     marginLeft: 6,
     fontSize: 17,
     maxWidth: Dimensions.get('window').width / 2 + 2,
+  },
+  productTitleModal: {
+    color: colorConfig.store.title,
+    marginHorizontal: 6,
+    fontFamily: 'Lato-Bold',
+    fontSize: 23,
+    fontWeight: 'bold',
+    maxWidth: Dimensions.get('window').width,
   },
   productDesc: {
     color: colorConfig.pageIndex.grayColor,
@@ -475,10 +557,40 @@ const styles = StyleSheet.create({
     fontSize: 10,
     maxWidth: Dimensions.get('window').width / 2 + 2,
   },
+  productDescModal: {
+    color: colorConfig.pageIndex.grayColor,
+    marginHorizontal: 6,
+    fontFamily: 'Lato-Medium',
+    fontSize: 13,
+    marginTop: 5,
+    maxWidth: Dimensions.get('window').width,
+  },
   descAddress: {
     color: colorConfig.pageIndex.grayColor,
     marginLeft: 8,
     maxWidth: Dimensions.get('window').width / 2 + 20,
     textAlign: 'right',
   },
+  panelQty: {
+    width: Dimensions.get('window').width / 2,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    borderColor: colorConfig.store.defaultColor,
+    marginBottom: 100,
+  },
+  buttonQty: {
+    backgroundColor: colorConfig.store.defaultColor,
+    // borderRadius: 10,
+    // padding: 10,
+    padding: 16,
+    borderRadius: 10,
+    // width: 100,
+    borderColor: colorConfig.store.defaultColor,
+  },
+  descQty: {
+    alignContent: 'center',
+    padding: 10,
+    fontSize: 27,
+    color: colorConfig.pageIndex.grayColor,
+  }
 });

@@ -121,7 +121,7 @@ export default class HistoryDetailPayment extends Component {
             </View>
 
             <View style={styles.detailItem}>
-              <Text style={styles.desc}>Date</Text>
+              <Text style={styles.desc}>Date & Time</Text>
               <Text style={styles.desc}>
                 {this.getDate(this.props.item.createdAt)}
               </Text>
