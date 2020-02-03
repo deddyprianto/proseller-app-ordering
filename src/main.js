@@ -29,7 +29,6 @@ import {loginUser, refreshToken} from './actions/auth.actions';
 import Loader from './components/loader';
 import colorConfig from './config/colorConfig';
 import appConfig from './config/appConfig';
-import awsConfig from './config/awsConfig';
 
 class Main extends Component {
   constructor(props) {
