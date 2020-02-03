@@ -21,6 +21,7 @@ import {notifikasi, refreshToken} from '../actions/auth.actions';
 import {redeemVoucher, campaign, dataPoint} from '../actions/rewards.action';
 import {myVoucers} from '../actions/account.action';
 import Loader from './loader';
+import * as _ from 'lodash';
 
 class VoucherDetail extends Component {
   constructor(props) {
@@ -109,6 +110,29 @@ class VoucherDetail extends Component {
       showAlert: false,
     });
   };
+
+  accountVoucher = () => {
+    var myVoucers = [];
+    if (this.props.myVoucers != undefined) {
+      _.forEach(
+        _.groupBy(
+          this.props.myVoucers.filter(voucher => voucher.deleted == false),
+          'id',
+        ),
+        function(value, key) {
+          value[0].totalRedeem = value.length;
+          myVoucers.push(value[0]);
+        },
+      );
+    }
+    Actions.accountVouchers({data: myVoucers});
+  };
+
+  componentWillUnmount(): void {
+    this.setState({
+      showAlert: false,
+    });
+  }
 
   render() {
     return (
@@ -292,9 +316,10 @@ class VoucherDetail extends Component {
             this.hideAlert();
           }}
           onConfirmPressed={() => {
-            this.state.titleAlert == 'Success!'
-              ? Actions.pop()
-              : this.hideAlert();
+            if (this.state.titleAlert == 'Success!') {
+              this.accountVoucher();
+              this.hideAlert();
+            }
           }}
         />
       </View>
@@ -390,6 +415,7 @@ const styles = StyleSheet.create({
 
 mapStateToProps = state => ({
   totalPoint: state.rewardsReducer.dataPoint.totalPoint,
+  myVoucers: state.accountsReducer.myVoucers.myVoucers,
 });
 
 mapDispatchToProps = dispatch => ({

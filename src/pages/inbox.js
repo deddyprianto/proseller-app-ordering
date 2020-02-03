@@ -108,8 +108,8 @@ class Inbox extends Component {
                   />
                 </View>
                 <View style={styles.detail}>
-                  <Text style={styles.storeName}>Halo Bandung</Text>
-                  <Text style={styles.paymentType}>Cash</Text>
+                  <Text style={styles.storeName}>Title Inbox</Text>
+                  <Text style={styles.paymentType}>Desc Inbox</Text>
                 </View>
                 <View style={styles.btnDetail}>
                   {/*<Icon*/}

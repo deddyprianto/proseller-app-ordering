@@ -36,7 +36,7 @@ class RewardsPoint extends Component {
           style={{
             color: colorConfig.pageIndex.backgroundColor,
             textAlign: 'center',
-            fontSize: 30,
+            fontSize: 42,
             fontFamily: 'Lato-Bold',
           }}>
           {this.props.totalPoint == undefined ? 0 : this.props.totalPoint}

@@ -101,7 +101,7 @@ export default class AccountVouchers extends Component {
               }
               style={styles.btnBackIcon}
             />
-            <Text style={styles.btnBackText}> Back </Text>
+            <Text style={styles.btnBackText}> My Voucher </Text>
           </TouchableOpacity>
           <View style={styles.line} />
         </View>

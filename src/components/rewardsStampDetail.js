@@ -89,10 +89,12 @@ const styles = StyleSheet.create({
     color: colorConfig.pageIndex.backgroundColor,
     fontSize: 20,
     fontWeight: 'bold',
+    marginBottom: 5,
   },
   subTitle: {
     color: colorConfig.pageIndex.backgroundColor,
     fontSize: 12,
+    marginBottom: 5,
   },
   description: {
     color: colorConfig.pageIndex.backgroundColor,

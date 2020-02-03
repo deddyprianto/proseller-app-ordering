@@ -82,19 +82,19 @@ export default class PaymentSuccess extends Component {
               position: 'absolute',
               height: 60,
               width: 60,
-              borderColor: colorConfig.pageIndex.activeTintColor,
+              borderColor: colorConfig.store.colorSuccess,
               borderWidth: 1,
               borderRadius: 60,
               top: -30,
               left: this.state.screenWidth / 2 - 60,
-              backgroundColor: colorConfig.pageIndex.backgroundColor,
+              backgroundColor: colorConfig.store.colorSuccess,
               alignItems: 'center',
               justifyContent: 'center',
             }}>
             <Icon
               size={40}
               name={Platform.OS === 'ios' ? 'ios-checkmark' : 'md-checkmark'}
-              style={{color: colorConfig.pageIndex.activeTintColor}}
+              style={{color: colorConfig.pageIndex.backgroundColor}}
             />
           </View>
           <View
@@ -290,7 +290,13 @@ export default class PaymentSuccess extends Component {
           showCancelButton={false}
           showConfirmButton={true}
           cancelText="Close"
-          confirmText="Ok"
+          confirmText="Close"
+          titleStyle={{
+            fontSize: 25,
+            color: colorConfig.store.defaultColor,
+            fontWeight: 'bold',
+          }}
+          messageStyle={{fontSize: 16, textAlign: 'center'}}
           confirmButtonColor={colorConfig.pageIndex.activeTintColor}
           onCancelPressed={() => {
             this.hideAlert();

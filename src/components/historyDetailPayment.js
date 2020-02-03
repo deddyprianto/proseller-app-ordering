@@ -148,23 +148,27 @@ export default class HistoryDetailPayment extends Component {
             </View>
           </View>
         </View>
-
-        <View style={styles.card}>
-          <View style={styles.item}>
-            <Text style={styles.title}>Detail Order</Text>
+        {this.props.item.dataPay != undefined &&
+        this.props.item.dataPay != null ? (
+          <View style={styles.card}>
+            <View style={styles.item}>
+              <Text style={styles.title}>Detail Order</Text>
+            </View>
+            <View style={styles.detail}>
+              {this.props.item.dataPay.map(item => (
+                <View style={styles.detailItem}>
+                  <Text style={[styles.desc, {width: 120}]}>
+                    {item.itemName}
+                  </Text>
+                  <Text style={styles.desc}>{item.qty}</Text>
+                  <Text style={styles.desc}>
+                    {appConfig.appMataUang + ' ' + item.price}
+                  </Text>
+                </View>
+              ))}
+            </View>
           </View>
-          <View style={styles.detail}>
-            {this.props.item.dataPay.map(item => (
-              <View style={styles.detailItem}>
-                <Text style={[styles.desc, {width: 120,}]}>{item.itemName}</Text>
-                <Text style={styles.desc}>{item.qty}</Text>
-                <Text style={styles.desc}>
-                  {appConfig.appMataUang + ' ' + item.price}
-                </Text>
-              </View>
-            ))}
-          </View>
-        </View>
+        ) : null}
       </View>
     );
   }

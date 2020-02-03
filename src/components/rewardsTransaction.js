@@ -78,7 +78,7 @@ class RewardsTransaction extends Component {
                           {/*  }*/}
                           {/*/>*/}
                           <Icon
-                            size={22}
+                            size={18}
                             name={
                               item.paymentType == 'Cash'
                                 ? Platform.OS === 'ios'
