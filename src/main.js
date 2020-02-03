@@ -39,14 +39,15 @@ class Main extends Component {
       kOSSettingsKeyAutoPrompt: true,
     }); // set kOSSettingsKeyAutoPrompt to false prompting manually on iOS
 
-    OneSignal.addEventListener('received', this.onReceived);
-    OneSignal.addEventListener('opened', this.onOpened);
-    OneSignal.addEventListener('ids', this.onIds);
     this.state = {
       isLoading: true,
       // geolocation: false,
       geolocation: true,
     };
+
+    OneSignal.addEventListener('received', this.onReceived);
+    OneSignal.addEventListener('opened', this.onOpened);
+    OneSignal.addEventListener('ids', this.onIds);
   }
 
   async componentDidMount() {
