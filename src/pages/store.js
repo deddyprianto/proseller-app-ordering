@@ -36,6 +36,7 @@ import {dataInbox} from '../actions/inbox.action';
 import {dataPromotion} from '../actions/promotion.action';
 import Icon from 'react-native-vector-icons/Ionicons';
 
+
 class Store extends Component {
   constructor(props) {
     super(props);

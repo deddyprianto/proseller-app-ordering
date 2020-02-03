@@ -11,6 +11,7 @@ import {
   View,
   Button,
   Modal,
+  CheckBox,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -18,14 +19,16 @@ import createOpenLink from 'react-native-open-maps';
 
 import colorConfig from '../config/colorConfig';
 import appConfig from '../config/appConfig';
-// import Modal from 'react-native-modal';
+import ProgressiveImage from '../components/helper/ProgressiveImage';
 
 export default class StoreDetailStores extends Component {
   constructor(props) {
     super(props);
     this.state = {
       screenWidth: Dimensions.get('window').width,
+      screenHeight: Dimensions.get('window').height,
       isModalVisible: false,
+      qtyItem: 1,
     };
   }
 
@@ -53,46 +56,174 @@ export default class StoreDetailStores extends Component {
     this.setState({isModalVisible: !this.state.isModalVisible});
   };
 
+  backButtonClicked = () => {
+    this.setState({isModalVisible: false, qtyItem: 1});
+    console.log('Modal has been closed when back button is clicked');
+  };
+
+  modalShow = () => {
+    console.log('modal ditutup');
+    this.setState({qtyItem: 1});
+  };
+
+  addQty = () => {
+    this.setState({qtyItem: this.state.qtyItem + 1});
+  };
+
+  minQty = () => {
+    if (this.state.qtyItem > 0) {
+      this.setState({qtyItem: this.state.qtyItem - 1});
+    }
+  };
+
+  calculateSubTotalModal = () => {
+    let subTotal = 15;
+    subTotal = parseFloat(subTotal * this.state.qtyItem);
+    return subTotal;
+  };
+
   render() {
     console.log('this.props.item ', this.props.item);
     return (
       <View style={styles.container}>
         <Modal
           animationType="slide"
-          presentationStyle="pageSheet"
+          presentationStyle="fullScreen"
           isVisible={true}
           visible={this.state.isModalVisible}
-          transparent={false}>
-          <View style={{backgroundColor: 'white'}}>
-            <Image
-              resizeMode="cover"
-              style={styles.imageModal}
-              source={{
-                uri:
-                  'https://upload.wikimedia.org/wikipedia/commons/6/62/Nasi_Lemak%2C_Mamak%2C_Sydney.jpg',
-              }}
-            />
-            <View style={styles.detailItemModal}>
-              <Text style={[styles.productTitleModal]}>
-                Mie Pangsit Goreng Pedas Lemak
-              </Text>
-              <Text style={[styles.productDescModal]}>
-                Nasi + telur goreng ditambah dengan ayam goreng + es teh goreng
-              </Text>
-              <Text style={[styles.productPriceModal]}>SGD 10</Text>
-            </View>
-            <View style={{flexDirection: 'row', justifyContent: 'center'}}>
-              <View style={styles.panelQty}>
-                <TouchableOpacity style={styles.buttonQty}>
-                  <Text>-</Text>
-                </TouchableOpacity>
-                <Text style={styles.descQty}>7</Text>
-                <TouchableOpacity style={styles.buttonQty}>
-                  <Text>-</Text>
-                </TouchableOpacity>
+          transparent={false}
+          onShow={this.modalShow}
+          onRequestClose={this.backButtonClicked}>
+          <View
+            style={{
+              height: '100%',
+              backgroundColor: colorConfig.store.containerColor,
+            }}>
+            <ScrollView>
+              <View style={styles.cardModal}>
+                <ProgressiveImage
+                  resizeMode="cover"
+                  style={styles.imageModal}
+                  source={{
+                    uri:
+                      'https://upload.wikimedia.org/wikipedia/commons/6/62/Nasi_Lemak%2C_Mamak%2C_Sydney.jpg',
+                  }}
+                />
+                <View style={styles.detailItemModal}>
+                  <Text style={[styles.productTitleModal]}>
+                    Mie Pangsit Goreng Pedas Lemak
+                  </Text>
+                  <Text style={[styles.productDescModal]}>
+                    Nasi + telur goreng ditambah dengan ayam goreng + es teh
+                    goreng
+                  </Text>
+                </View>
               </View>
+              <View style={styles.cardModal}>
+                <Text style={styles.titleModifierModal}>
+                  Flavour, pick 1, max 3
+                </Text>
+                <View style={styles.detailOptionsModal}>
+                  <CheckBox
+                    value={this.state.checked}
+                    onValueChange={() =>
+                      this.setState({checked: !this.state.checked})
+                    }
+                  />
+                  <Text style={{marginTop: 5}}> Sayur</Text>
+                  <Text style={{marginTop: 5, position: 'absolute', right: 3}}>
+                    {' '}
+                    0
+                  </Text>
+                </View>
+                <View style={styles.detailOptionsModal}>
+                  <CheckBox
+                    value={this.state.checked}
+                    onValueChange={() =>
+                      this.setState({checked: !this.state.checked})
+                    }
+                  />
+                  <Text style={{marginTop: 5}}> Sayur</Text>
+                  <Text style={{marginTop: 5, position: 'absolute', right: 3}}>
+                    {' '}
+                    0
+                  </Text>
+                </View>
+              </View>
+
+              <View style={styles.cardModal}>
+                <Text style={styles.titleModifierModal}>Drink, pick 1</Text>
+                <View style={styles.detailOptionsModal}>
+                  <CheckBox
+                    value={this.state.checked}
+                    onValueChange={() =>
+                      this.setState({checked: !this.state.checked})
+                    }
+                  />
+                  <Text style={{marginTop: 5}}> Sayur</Text>
+                  <Text style={{marginTop: 5, position: 'absolute', right: 3}}>
+                    {' '}
+                    0
+                  </Text>
+                </View>
+                <View style={styles.detailOptionsModal}>
+                  <CheckBox
+                    value={this.state.checked}
+                    onValueChange={() =>
+                      this.setState({checked: !this.state.checked})
+                    }
+                  />
+                  <Text style={{marginTop: 5}}> Sayur</Text>
+                  <Text style={{marginTop: 5, position: 'absolute', right: 3}}>
+                    {' '}
+                    0
+                  </Text>
+                </View>
+              </View>
+
+              <View style={styles.cardModal}>
+                <Text style={styles.titleModifierModal}>Quantity</Text>
+                <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+                  <View style={styles.panelQty}>
+                    <TouchableOpacity
+                      onPress={this.minQty}
+                      style={styles.buttonQty}>
+                      <Text style={styles.btnIncreaseDecrease}>-</Text>
+                    </TouchableOpacity>
+                    <Text style={styles.descQty}>{this.state.qtyItem}</Text>
+                    <TouchableOpacity
+                      onPress={this.addQty}
+                      style={styles.buttonQty}>
+                      <Text style={styles.btnIncreaseDecrease}>+</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </View>
+              <View style={[styles.cardModal, {height: 60}]} />
+            </ScrollView>
+            <View style={styles.panelAddBasketModal}>
+              <TouchableOpacity
+                onPress={
+                  this.state.qtyItem != 0 ? this.toggleModal : this.toggleModal
+                }
+                style={[
+                  styles.btnAddBasketModal,
+                  this.state.qtyItem == 0
+                    ? {backgroundColor: colorConfig.store.colorError}
+                    : null,
+                ]}>
+                {this.state.qtyItem != 0 ? (
+                  <Text style={styles.textBtnBasketModal}>
+                    Add to Basket - {appConfig.appMataUang}{' '}
+                    {this.calculateSubTotalModal()}
+                  </Text>
+                ) : (
+                  <Text style={styles.textBtnBasketModal}>
+                    Remove from basket
+                  </Text>
+                )}
+              </TouchableOpacity>
             </View>
-            <Button title={'Add to Basket'} onPress={this.toggleModal} />
           </View>
         </Modal>
         <View style={styles.headerImage}>
@@ -113,7 +244,7 @@ export default class StoreDetailStores extends Component {
         <ScrollView>
           <View style={styles.cardImage}>
             {this.props.item.defaultImageURL != undefined ? (
-              <Image
+              <ProgressiveImage
                 resizeMode="cover"
                 style={styles.image}
                 source={{
@@ -121,7 +252,7 @@ export default class StoreDetailStores extends Component {
                 }}
               />
             ) : (
-              <Image
+              <ProgressiveImage
                 resizeMode="cover"
                 style={styles.image}
                 source={{
@@ -203,7 +334,7 @@ export default class StoreDetailStores extends Component {
             <TouchableOpacity style={styles.detail} onPress={this.toggleModal}>
               <View style={styles.detailItem}>
                 <View style={{flexDirection: 'row'}}>
-                  <Image
+                  <ProgressiveImage
                     style={styles.imageProduct}
                     source={{
                       uri:
@@ -230,105 +361,6 @@ export default class StoreDetailStores extends Component {
                 <Text style={[styles.productPrice]}>SGD 10</Text>
               </View>
             </TouchableOpacity>
-
-            <View style={styles.detail}>
-              <View style={styles.detailItem}>
-                <View style={{flexDirection: 'row'}}>
-                  <Image
-                    style={styles.imageProduct}
-                    source={{
-                      uri:
-                        'https://upload.wikimedia.org/wikipedia/commons/6/62/Nasi_Lemak%2C_Mamak%2C_Sydney.jpg',
-                    }}
-                  />
-                  <View>
-                    <Text style={[styles.productTitle]}>
-                      Mie Pangsit Goreng Pedas Lemak
-                    </Text>
-                    <Text style={[styles.productDesc]}>
-                      Nasi + telur goreng ditambah dengan ayam goreng + es teh
-                      goreng
-                    </Text>
-                  </View>
-                </View>
-                <Text style={[styles.productPrice]}>SGD 12</Text>
-              </View>
-            </View>
-
-            <View style={styles.detail}>
-              <View style={styles.detailItem}>
-                <View style={{flexDirection: 'row'}}>
-                  <Image
-                    style={styles.imageProduct}
-                    source={{
-                      uri:
-                        'https://upload.wikimedia.org/wikipedia/commons/6/62/Nasi_Lemak%2C_Mamak%2C_Sydney.jpg',
-                    }}
-                  />
-                  <View>
-                    <Text style={[styles.productTitle]}>
-                      Mie Pangsit Goreng Pedas Lemak
-                    </Text>
-                    <Text style={[styles.productDesc]}>
-                      Nasi + telur goreng ditambah dengan ayam goreng + es teh
-                      goreng
-                    </Text>
-                  </View>
-                </View>
-                <Text style={[styles.productPrice]}>SGD 12</Text>
-              </View>
-            </View>
-
-            <View style={styles.detail}>
-              <View style={styles.detailItem}>
-                <View style={{flexDirection: 'row'}}>
-                  <Image
-                    style={styles.imageProduct}
-                    source={{
-                      uri:
-                        'https://upload.wikimedia.org/wikipedia/commons/6/62/Nasi_Lemak%2C_Mamak%2C_Sydney.jpg',
-                    }}
-                  />
-                  <View>
-                    <Text style={[styles.productTitle]}>
-                      Mie Pangsit Goreng Pedas Lemak
-                    </Text>
-                    <Text style={[styles.productDesc]}>
-                      Nasi + telur goreng ditambah dengan ayam goreng + es teh
-                      goreng
-                    </Text>
-                  </View>
-                </View>
-                <Text style={[styles.productPrice]}>SGD 12</Text>
-              </View>
-            </View>
-          </View>
-
-          <View style={styles.card}>
-            <Text style={styles.titleCategory}>Kategori Menu</Text>
-            <View style={styles.detail}>
-              <View style={styles.detailItem}>
-                <View style={{flexDirection: 'row'}}>
-                  <Image
-                    style={styles.imageProduct}
-                    source={{
-                      uri:
-                        'https://upload.wikimedia.org/wikipedia/commons/6/62/Nasi_Lemak%2C_Mamak%2C_Sydney.jpg',
-                    }}
-                  />
-                  <View>
-                    <Text style={[styles.productTitle]}>
-                      Mie Pangsit Goreng Pedas Lemak
-                    </Text>
-                    <Text style={[styles.productDesc]}>
-                      Nasi + telur goreng ditambah dengan ayam goreng + es teh
-                      goreng
-                    </Text>
-                  </View>
-                </View>
-                <Text style={[styles.productPrice]}>SGD 12</Text>
-              </View>
-            </View>
 
             <View style={styles.detail}>
               <View style={styles.detailItem}>
@@ -477,6 +509,18 @@ const styles = StyleSheet.create({
     shadowRadius: 7.49,
     elevation: 12,
   },
+  cardModal: {
+    marginBottom: 10,
+    backgroundColor: colorConfig.pageIndex.backgroundColor,
+    shadowColor: '#00000021',
+    shadowOffset: {
+      width: 0,
+      height: 9,
+    },
+    shadowOpacity: 0.7,
+    shadowRadius: 7.49,
+    elevation: 12,
+  },
   item: {
     alignItems: 'center',
     margin: 10,
@@ -484,6 +528,13 @@ const styles = StyleSheet.create({
   titleCategory: {
     color: colorConfig.pageIndex.inactiveTintColor,
     fontSize: 18,
+    textAlign: 'left',
+    fontWeight: 'bold',
+    padding: 14,
+  },
+  titleModifierModal: {
+    color: colorConfig.pageIndex.inactiveTintColor,
+    fontSize: 15,
     textAlign: 'left',
     fontWeight: 'bold',
     padding: 14,
@@ -499,6 +550,14 @@ const styles = StyleSheet.create({
     marginLeft: 15,
     marginRight: 15,
     marginBottom: 10,
+  },
+  detailOptionsModal: {
+    marginLeft: 15,
+    marginRight: 15,
+    marginBottom: 10,
+    flexDirection: 'row',
+    borderBottomColor: colorConfig.pageIndex.inactiveTintColor,
+    borderBottomWidth: 1,
   },
   image: {
     height: 180,
@@ -518,10 +577,6 @@ const styles = StyleSheet.create({
   },
   detailItemModal: {
     marginTop: 20,
-    // flexDirection: 'column',
-    // justifyContent: 'flex-start',
-    borderBottomColor: colorConfig.pageIndex.inactiveTintColor,
-    borderBottomWidth: 1,
     paddingBottom: 15,
     marginBottom: 10,
   },
@@ -576,21 +631,59 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     borderColor: colorConfig.store.defaultColor,
-    marginBottom: 100,
+    marginBottom: 20,
   },
   buttonQty: {
+    justifyContent: 'center',
     backgroundColor: colorConfig.store.defaultColor,
-    // borderRadius: 10,
-    // padding: 10,
-    padding: 16,
+
+    width: 40,
+    height: 40,
     borderRadius: 10,
-    // width: 100,
     borderColor: colorConfig.store.defaultColor,
   },
   descQty: {
     alignContent: 'center',
-    padding: 10,
+    // padding: 10,
     fontSize: 27,
     color: colorConfig.pageIndex.grayColor,
-  }
+  },
+  btnIncreaseDecrease: {
+    textAlign: 'center',
+    fontSize: 24,
+    fontFamily: 'Lato-Bold',
+    fontWeight: 'bold',
+    color: 'white',
+  },
+  panelAddBasketModal: {
+    position: 'absolute',
+    bottom: -0,
+    height: 70,
+    flex: 1,
+    justifyContent: 'center',
+    width: Dimensions.get('window').width,
+    backgroundColor: colorConfig.pageIndex.backgroundColor,
+    shadowColor: '#00000021',
+    shadowOffset: {
+      width: 0,
+      height: 9,
+    },
+    shadowOpacity: 0.7,
+    shadowRadius: 7.49,
+    elevation: 12,
+  },
+  btnAddBasketModal: {
+    fontFamily: 'Lato-Bold',
+    borderRadius: 10,
+    padding: 13,
+    marginHorizontal: 45,
+    backgroundColor: colorConfig.store.defaultColor,
+  },
+  textBtnBasketModal: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontFamily: 'Lato-Bold',
+    fontSize: 17,
+    textAlign: 'center',
+  },
 });

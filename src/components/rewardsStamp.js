@@ -12,6 +12,7 @@ import {compose} from 'redux';
 
 import colorConfig from '../config/colorConfig';
 import appConfig from '../config/appConfig';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 class RewardsStamp extends Component {
   constructor(props) {
@@ -76,7 +77,12 @@ class RewardsStamp extends Component {
                         ? styles.detail
                         : styles.detailFree
                     }>
-                    {appConfig.appName}
+                    {/*{appConfig.appName}*/}
+                    <Icon
+                      size={22}
+                      name={Platform.OS === 'ios' ? 'ios-bookmark' : 'md-bookmark'}
+                      style={{color: colorConfig.store.defaultColor}}
+                    />
                   </Text>
                 </TouchableOpacity>
               ))}
