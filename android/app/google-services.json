@@ -1,42 +1,42 @@
 {
   "project_info": {
-    "project_number": "583037359433",
-    "firebase_url": "https://qiji-1571808858707.firebaseio.com",
-    "project_id": "qiji-1571808858707",
-    "storage_bucket": "qiji-1571808858707.appspot.com"
+    "project_number": "141278917540",
+    "firebase_url": "https://crmapp-5975b.firebaseio.com",
+    "project_id": "crmapp-5975b",
+    "storage_bucket": "crmapp-5975b.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:583037359433:android:5a86997ca785bc00183698",
+        "mobilesdk_app_id": "1:141278917540:android:53fb5561a3fd3923",
         "android_client_info": {
-          "package_name": "com.qiji"
+          "package_name": "com.example.crmapp"
         }
       },
       "oauth_client": [
         {
-          "client_id": "583037359433-dlkqc167o8vt9r6uogjdih34ubus2508.apps.googleusercontent.com",
+          "client_id": "141278917540-dep5ciu1s7u5h1rlge3at5t2ohi5dqjm.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.qiji",
-            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+            "package_name": "com.example.crmapp",
+            "certificate_hash": "a406681b0923d3b5de7ff51bc14a79bdbfd5a5d1"
           }
         },
         {
-          "client_id": "583037359433-mk03gmu4letradbadbkm42skhu4m4h3e.apps.googleusercontent.com",
+          "client_id": "141278917540-sbcqh0aokdd0gd75ovjc1mdmfm0baqun.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBhUc7-QY4I3WUqcPk2zsyVTUHPz83cSUA"
+          "current_key": "AIzaSyA1X2-nxlzq3E4JEB0hLDjoYj5XRLi6thI"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "583037359433-mk03gmu4letradbadbkm42skhu4m4h3e.apps.googleusercontent.com",
+              "client_id": "141278917540-sbcqh0aokdd0gd75ovjc1mdmfm0baqun.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
