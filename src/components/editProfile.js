@@ -65,7 +65,7 @@ class AccountEditProfil extends Component {
 
   goBack = async () => {
     Actions.pop();
-  }
+  };
 
   componentDidMount() {
     this.props.dispatch(refreshToken);
@@ -166,28 +166,33 @@ class AccountEditProfil extends Component {
   };
 
   formatDate = current_datetime => {
-    current_datetime = new Date(current_datetime);
-    const months = [
-      'JAN',
-      'FEB',
-      'MAR',
-      'APR',
-      'MAY',
-      'JUN',
-      'JUL',
-      'AUG',
-      'SEP',
-      'OCT',
-      'NOV',
-      'DEC',
-    ];
-    return (
-      current_datetime.getDate() +
-      '-' +
-      months[current_datetime.getMonth()] +
-      '-' +
-      current_datetime.getFullYear()
-    );
+    console.log(current_datetime, 'current_datetime');
+    if (current_datetime != undefined) {
+      current_datetime = new Date('');
+      const months = [
+        'JAN',
+        'FEB',
+        'MAR',
+        'APR',
+        'MAY',
+        'JUN',
+        'JUL',
+        'AUG',
+        'SEP',
+        'OCT',
+        'NOV',
+        'DEC',
+      ];
+      return (
+        current_datetime.getDate() +
+        '-' +
+        months[current_datetime.getMonth()] +
+        '-' +
+        current_datetime.getFullYear()
+      );
+    } else {
+      return '';
+    }
   };
 
   render() {
