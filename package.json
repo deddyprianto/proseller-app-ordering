@@ -34,6 +34,7 @@
     "react-native-gesture-handler": "^1.4.1",
     "react-native-modal": "^11.5.3",
     "react-native-modal-datetime-picker": "^7.6.0",
+    "react-native-onesignal": "^3.6.4",
     "react-native-open-maps": "^0.3.4",
     "react-native-paper": "^3.0.0",
     "react-native-permissions": "^2.0.8",
