@@ -65,4 +65,4 @@ buck-out/
 .env.production
 .env.dev
 
-java_pid16632.hprof
+android/java_pid16632.hprof
