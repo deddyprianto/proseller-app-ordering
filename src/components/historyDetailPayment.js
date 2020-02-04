@@ -12,6 +12,7 @@ import {
   Dimensions,
   TouchableOpacity,
   BackHandler,
+  ScrollView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -84,7 +85,6 @@ export default class HistoryDetailPayment extends Component {
   render() {
     return (
       <View style={styles.container}>
-        {console.log(this.props.item)}
         <View style={{backgroundColor: colorConfig.pageIndex.backgroundColor}}>
           <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
             <Icon
@@ -98,77 +98,79 @@ export default class HistoryDetailPayment extends Component {
           </TouchableOpacity>
           <View style={styles.line} />
         </View>
-        <View style={styles.card}>
-          <View style={styles.item}>
-            <Text style={styles.title}>Payment Detail</Text>
-          </View>
-          <View style={styles.detail}>
-            <View style={styles.detailItem}>
-              <Text style={styles.desc}>Store Name</Text>
-              <Text style={styles.desc}>{this.props.item.outletName}</Text>
-            </View>
-
-            <View style={styles.detailItem}>
-              <Text style={styles.desc}>Amount</Text>
-              <Text style={styles.desc}>
-                {appConfig.appMataUang + ' ' + this.props.item.price}
-              </Text>
-            </View>
-
-            <View style={styles.detailItem}>
-              <Text style={styles.desc}>Payment Type</Text>
-              <Text style={styles.desc}>{this.props.item.paymentType}</Text>
-            </View>
-
-            <View style={styles.detailItem}>
-              <Text style={styles.desc}>Date & Time</Text>
-              <Text style={styles.desc}>
-                {this.getDate(this.props.item.createdAt)}
-              </Text>
-            </View>
-            <View
-              style={{
-                alignItems: 'center',
-              }}>
-              <Text
-                style={{
-                  color: colorConfig.pageIndex.activeTintColor,
-                  fontSize: 14,
-                  fontFamily: 'Lato-Medium',
-                }}>
-                You got point
-              </Text>
-              <Text
-                style={{
-                  color: colorConfig.pageIndex.activeTintColor,
-                  fontSize: 30,
-                }}>
-                {this.props.item.point}
-              </Text>
-            </View>
-          </View>
-        </View>
-        {this.props.item.dataPay != undefined &&
-        this.props.item.dataPay != null ? (
+        <ScrollView style={{height: '100%', width: '100%'}}>
           <View style={styles.card}>
             <View style={styles.item}>
-              <Text style={styles.title}>Detail Order</Text>
+              <Text style={styles.title}>Payment Detail</Text>
             </View>
             <View style={styles.detail}>
-              {this.props.item.dataPay.map(item => (
-                <View style={styles.detailItem}>
-                  <Text style={[styles.desc, {width: 120}]}>
-                    {item.itemName}
-                  </Text>
-                  <Text style={styles.desc}>{item.qty}</Text>
-                  <Text style={styles.desc}>
-                    {appConfig.appMataUang + ' ' + item.price}
-                  </Text>
-                </View>
-              ))}
+              <View style={styles.detailItem}>
+                <Text style={styles.desc}>Store Name</Text>
+                <Text style={styles.desc}>{this.props.item.outletName}</Text>
+              </View>
+
+              <View style={styles.detailItem}>
+                <Text style={styles.desc}>Amount</Text>
+                <Text style={styles.desc}>
+                  {appConfig.appMataUang + ' ' + this.props.item.price}
+                </Text>
+              </View>
+
+              <View style={styles.detailItem}>
+                <Text style={styles.desc}>Payment Type</Text>
+                <Text style={styles.desc}>{this.props.item.paymentType}</Text>
+              </View>
+
+              <View style={styles.detailItem}>
+                <Text style={styles.desc}>Date & Time</Text>
+                <Text style={styles.desc}>
+                  {this.getDate(this.props.item.createdAt)}
+                </Text>
+              </View>
+              <View
+                style={{
+                  alignItems: 'center',
+                }}>
+                <Text
+                  style={{
+                    color: colorConfig.pageIndex.activeTintColor,
+                    fontSize: 14,
+                    fontFamily: 'Lato-Medium',
+                  }}>
+                  You got point
+                </Text>
+                <Text
+                  style={{
+                    color: colorConfig.pageIndex.activeTintColor,
+                    fontSize: 30,
+                  }}>
+                  {this.props.item.point}
+                </Text>
+              </View>
             </View>
           </View>
-        ) : null}
+          {this.props.item.dataPay != undefined &&
+          this.props.item.dataPay != null ? (
+            <View style={styles.card}>
+              <View style={styles.item}>
+                <Text style={styles.title}>Detail Order</Text>
+              </View>
+              <View style={styles.detail}>
+                {this.props.item.dataPay.map(item => (
+                  <View style={styles.detailItem}>
+                    <Text style={[styles.desc, {width: 120}]}>
+                      {item.itemName}
+                    </Text>
+                    <Text style={styles.desc}>{item.qty}</Text>
+                    <Text style={styles.desc}>
+                      {appConfig.appMataUang + ' ' + item.price}
+                    </Text>
+                  </View>
+                ))}
+              </View>
+            </View>
+          ) : null}
+        </ScrollView>
       </View>
     );
   }

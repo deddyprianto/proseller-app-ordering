@@ -28,38 +28,17 @@ class RewardsTransaction extends Component {
     };
   }
 
-  componentDidMount = async () => {
-    // let recentTrx = [];
-    // if (this.props.pointTransaction.length != 0) {
-    //   recentTrx = await _.orderBy(
-    //     this.props.pointTransaction,
-    //     ['createdAt'],
-    //     ['desc'],
-    //   ).slice(0, 3);
-    //
-    //   this.setState({recentTrx});
-    // }
-  };
-
   historyDetailPayment = item => {
     Actions.historyDetailPayment({item});
   };
 
   render() {
-    let recentTrx = [];
-    if (this.props.pointTransaction != undefined) {
-      recentTrx = _.orderBy(
-        this.props.pointTransaction,
-        ['createdAt'],
-        ['desc'],
-      ).slice(0, 3);
-    }
     return (
       <View style={styles.container}>
         <Text style={styles.title}>Recent Transactions</Text>
         <View style={styles.card}>
-          {this.props.pointTransaction != undefined
-            ? recentTrx.map((item, key) => (
+          {this.props.recentTransaction != undefined
+            ? this.props.recentTransaction.map((item, key) => (
                 <View key={key}>
                   {
                     <View>
@@ -70,13 +49,6 @@ class RewardsTransaction extends Component {
                           style={{
                             flexDirection: 'row',
                           }}>
-                          {/*<Image*/}
-                          {/*  resizeMode="stretch"*/}
-                          {/*  style={styles.imageLogo}*/}
-                          {/*  source={*/}
-                          {/*    item.paymentType == 'Cash' ? logoCash : logoVisa*/}
-                          {/*  }*/}
-                          {/*/>*/}
                           <Icon
                             size={18}
                             name={
@@ -145,8 +117,8 @@ class RewardsTransaction extends Component {
                 color: colorConfig.pageIndex.activeTintColor,
                 fontWeight: 'bold',
               }}>
-              {recentTrx != undefined
-                ? recentTrx.length == 0
+              {this.props.recentTransaction != undefined
+                ? this.props.recentTransaction.length == 0
                   ? 'Empty'
                   : 'See More'
                 : 'Empty'}
@@ -213,7 +185,6 @@ const styles = StyleSheet.create({
 
 mapStateToProps = state => ({
   recentTransaction: state.rewardsReducer.dataPoint.recentTransaction,
-  pointTransaction: state.rewardsReducer.dataPoint.pointTransaction,
 });
 
 mapDispatchToProps = dispatch => ({

@@ -20,7 +20,7 @@ import {
   vouchers,
   getStamps,
 } from '../actions/rewards.action';
-import {dataTransaction} from '../actions/sales.action';
+import {recentTransaction} from '../actions/sales.action';
 import {myVoucers} from '../actions/account.action';
 import {dataInbox} from '../actions/inbox.action';
 
@@ -59,7 +59,7 @@ class Rewards extends Component {
       await this.props.dispatch(myVoucers());
       await this.props.dispatch(getStamps());
       await this.props.dispatch(dataInbox());
-      await this.props.dispatch(dataTransaction());
+      await this.props.dispatch(recentTransaction());
       this.setState({isLoading: false});
     } catch (error) {
       await this.props.dispatch(

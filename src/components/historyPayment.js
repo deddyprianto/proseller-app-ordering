@@ -8,6 +8,8 @@ import {
   Image,
   ScrollView,
   RefreshControl,
+  FlatList,
+  ActivityIndicator,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
@@ -24,6 +26,7 @@ import {notifikasi} from '../actions/auth.actions';
 class HistoryPayment extends Component {
   constructor(props) {
     super(props);
+    this.onEndReachedCalledDuringMomentum = true;
     this.state = {
       refreshing: false,
     };
@@ -66,9 +69,14 @@ class HistoryPayment extends Component {
     Actions.historyDetailPayment({item});
   };
 
+  componentDidMount = async () => {
+    this.setState({refreshing: true});
+    this.getDataHistory();
+  };
+
   getDataHistory = async () => {
     try {
-      await this.props.dispatch(dataTransaction);
+      await this.props.dispatch(dataTransaction());
       if (this.props.isSuccessGetTrx) {
         this.setState({refreshing: false});
       } else {
@@ -98,16 +106,40 @@ class HistoryPayment extends Component {
     await this.getDataHistory();
   };
 
+  renderFooter = () => {
+    let dataLength = this.props.dataLength;
+    let trxLength = this.props.pointTransaction.length;
+
+    if (!this.state.refreshing && trxLength < dataLength) {
+      return <ActivityIndicator style={{color: '#000'}} />;
+    } else {
+      return null;
+    }
+  };
+
+  handleLoadMore = () => {
+    try {
+      let dataLength = this.props.dataLength;
+      let trxLength = this.props.pointTransaction.length;
+
+      if (!this.state.refreshing && trxLength < dataLength) {
+        this.getDataHistory();
+      }
+    } catch (e) {
+      console.log(e);
+    }
+    console.log('mau load more');
+  };
+
   render() {
     return (
-      <ScrollView
+      <View
         refreshControl={
           <RefreshControl
             refreshing={this.state.refreshing}
             onRefresh={this._onRefresh}
           />
         }>
-        {console.log(this.props)}
         {this.props.pointTransaction == undefined ? (
           <View style={styles.component}>
             <Text style={styles.empty}>History payment is empty</Text>
@@ -118,78 +150,75 @@ class HistoryPayment extends Component {
           </View>
         ) : (
           <View style={styles.component}>
-            {_.orderBy(this.props.pointTransaction, ['created'], ['desc']).map(
-              (item, key) => (
-                <View key={key}>
-                  {
-                    <TouchableOpacity
-                      style={styles.item}
-                      onPress={() => this.historyDetailPayment(item)}>
+            <FlatList
+              data={this.props.pointTransaction}
+              extraData={this.props}
+              refreshControl={
+                <RefreshControl
+                  refreshing={this.state.refreshing}
+                  onRefresh={this._onRefresh}
+                />
+              }
+              renderItem={({item}) => (
+                <TouchableOpacity
+                  style={styles.item}
+                  onPress={() => this.historyDetailPayment(item)}>
+                  <View style={styles.sejajarSpace}>
+                    <View style={styles.detail}>
                       <View style={styles.sejajarSpace}>
-                        <View style={styles.detail}>
-                          <View style={styles.sejajarSpace}>
-                            <Text style={styles.storeName}>
-                              {item.storeName}
-                            </Text>
-                            <Text style={styles.itemType}>
-                              {item.point + ' point'}
-                            </Text>
-                          </View>
-                          <View style={styles.sejajarSpace}>
-                            <View style={{flexDirection: 'row'}}>
-                              {/*<Image*/}
-                              {/*  resizeMode="stretch"*/}
-                              {/*  style={styles.paymentTypeLogo}*/}
-                              {/*  source={*/}
-                              {/*    item.paymentType == 'Cash'*/}
-                              {/*      ? logoCash*/}
-                              {/*      : logoVisa*/}
-                              {/*  }*/}
-                              {/*/>*/}
-                              <Icon
-                                size={18}
-                                name={
-                                  item.paymentType == 'Cash'
-                                    ? Platform.OS === 'ios'
-                                      ? 'ios-cash'
-                                      : 'md-cash'
-                                    : Platform.OS === 'ios'
-                                    ? 'ios-card'
-                                    : 'md-card'
-                                }
-                                style={styles.paymentTypeLogo}
-                              />
-                              <Text style={styles.paymentType}>
-                                {item.paymentType}
-                              </Text>
-                            </View>
-                            <Text style={styles.paymentTgl}>
-                              {this.getDate(item.createdAt)}
-                            </Text>
-                          </View>
-                        </View>
-                        <View style={styles.btnDetail}>
-                          <Icon
-                            size={20}
-                            name={
-                              Platform.OS === 'ios'
-                                ? 'ios-arrow-dropright-circle'
-                                : 'md-arrow-dropright-circle'
-                            }
-                            style={{
-                              color: colorConfig.pageIndex.activeTintColor,
-                            }}
-                          />
-                        </View>
+                        <Text style={styles.storeName}>{item.storeName}</Text>
+                        <Text style={styles.itemType}>
+                          {item.point + ' point'}
+                        </Text>
                       </View>
-                    </TouchableOpacity>
-                  }
-                </View>
-              ),
-            )}
+                      <View style={styles.sejajarSpace}>
+                        <View style={{flexDirection: 'row'}}>
+                          <Icon
+                            size={18}
+                            name={
+                              item.paymentType == 'Cash'
+                                ? Platform.OS === 'ios'
+                                  ? 'ios-cash'
+                                  : 'md-cash'
+                                : Platform.OS === 'ios'
+                                ? 'ios-card'
+                                : 'md-card'
+                            }
+                            style={styles.paymentTypeLogo}
+                          />
+                          <Text style={styles.paymentType}>
+                            {item.paymentType}
+                          </Text>
+                        </View>
+                        <Text style={styles.paymentTgl}>
+                          {this.getDate(item.createdAt)}
+                        </Text>
+                      </View>
+                    </View>
+                    <View style={styles.btnDetail}>
+                      <Icon
+                        size={20}
+                        name={
+                          Platform.OS === 'ios'
+                            ? 'ios-arrow-dropright-circle'
+                            : 'md-arrow-dropright-circle'
+                        }
+                        style={{
+                          color: colorConfig.pageIndex.activeTintColor,
+                        }}
+                      />
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              )}
+              keyExtractor={(item, index) => index.toString()}
+              ListFooterComponent={this.renderFooter}
+              onEndReachedThreshold={0.01}
+              onEndReached={this.handleLoadMore}
+            />
           </View>
         )}
-      </ScrollView>
+      </View>
     );
   }
 }
@@ -272,6 +301,9 @@ const styles = StyleSheet.create({
 mapStateToProps = state => ({
   pointTransaction: state.rewardsReducer.dataPoint.pointTransaction,
   isSuccessGetTrx: state.rewardsReducer.dataPoint.isSuccessGetTrx,
+  dataLength: state.rewardsReducer.dataPoint.dataLength,
+  page: state.rewardsReducer.dataPoint.page,
+  take: state.rewardsReducer.dataPoint.take,
 });
 
 mapDispatchToProps = dispatch => ({

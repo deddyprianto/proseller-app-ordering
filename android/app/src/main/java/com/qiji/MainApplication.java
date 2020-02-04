@@ -21,8 +21,7 @@ import java.util.List;
 // Facebook login
 import com.facebook.CallbackManager;
 import com.facebook.FacebookSdk;
-import com.facebook.appevents.AppEventsLogger;
-import com.facebook.reactnative.androidsdk.FBSDKPackage;
+import com.facebook.appevents.AppEventsLogger;
 
 // Multidex
 import androidx.multidex.MultiDexApplication;
