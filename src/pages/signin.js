@@ -177,8 +177,7 @@ class Signin extends Component {
     this.imageWidth = new Animated.Value(styles.$largeImageSize);
   }
 
-  componentDidMount() {
-  }
+  componentDidMount() {}
 
   goBack() {
     Actions.signin();
@@ -210,9 +209,8 @@ class Signin extends Component {
         var dataLogin = {
           phoneNumber: this.state.username.toLowerCase(),
           password: this.state.password,
-          appClientId: awsConfig.appClientId,
-          cognitoPoolId: awsConfig.cognitoPoolId,
           isUseApp: true,
+          player_ids: '5128880d-5972-48d6-80cb-fcdad572c30d',
         };
         const response = await this.props.dispatch(loginUser(dataLogin));
         if (response.success == false) {

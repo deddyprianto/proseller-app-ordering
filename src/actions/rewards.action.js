@@ -140,9 +140,9 @@ export const dataPoint = () => {
       } = state;
 
       var dataResponse = [];
-      // console.log
+      console.log('/customer/point?history=false');
       let response = await fetchApi(
-        '/customer/point',
+        '/customer/point?history=false',
         'GET',
         false,
         200,

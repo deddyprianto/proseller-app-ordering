@@ -20,7 +20,7 @@ export const updateUser = payload => {
         200,
         token,
       );
-      console.log("responsenya ", response)
+      console.log('responsenya ', response);
       if (response.success) {
         dispatch({
           type: 'GET_USER_SUCCESS',
@@ -29,6 +29,20 @@ export const updateUser = payload => {
       }
 
       return response.success;
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const deviceUserInfo = deviceID => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      dispatch({
+        type: 'SET_USER_SUCCESS',
+        deviceID: deviceID,
+      });
     } catch (error) {
       return error;
     }
