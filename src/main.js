@@ -16,6 +16,7 @@ import {
   ImageBackground,
   Dimensions,
   StatusBar,
+  AsyncStorage,
 } from 'react-native';
 import {connect} from 'react-redux';
 
@@ -41,6 +42,9 @@ class Main extends Component {
       kOSSettingsKeyAutoPrompt: true,
     }); // set kOSSettingsKeyAutoPrompt to false prompting manually on iOS
 
+    OneSignal.addEventListener('received', this.onReceived);
+    OneSignal.addEventListener('opened', this.onOpened);
+    OneSignal.addEventListener('ids', this.onIds);
     this.state = {
       isLoading: true,
       // geolocation: false,
@@ -116,10 +120,14 @@ class Main extends Component {
     console.log('openResult: ', openResult);
   }
 
-  onIds(device) {
+  onIds = async device => {
     console.log('Device info: ', device.userId);
-    this.props.dispatch(deviceUserInfo());
-  }
+    try {
+      await AsyncStorage.setItem('deviceID', device.userId);
+    } catch (error) {
+      console.log(error, 'error saving device ID');
+    }
+  };
 
   render() {
     const {

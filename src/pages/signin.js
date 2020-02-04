@@ -17,6 +17,7 @@ import {
   Button,
   Alert,
   ImageBackground,
+  AsyncStorage,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
@@ -28,6 +29,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 
 import InputText from '../components/inputText';
 import {loginUser, loginOther, notifikasi} from '../actions/auth.actions';
+import {deviceUserInfo} from '../actions/user.action';
 import Loader from '../components/loader';
 import {Actions} from 'react-native-router-flux';
 import colorConfig from '../config/colorConfig';
@@ -177,9 +179,18 @@ class Signin extends Component {
     this.imageWidth = new Animated.Value(styles.$largeImageSize);
   }
 
-  componentDidMount() {
-    console.log(this.props.deviceID, 'deviceID');
-  }
+  componentDidMount = async () => {
+    try {
+      const value = await AsyncStorage.getItem('deviceID');
+      if (value !== null) {
+        console.log(value, 'device ID nya bos');
+        await this.props.dispatch(deviceUserInfo(value));
+      }
+    } catch (error) {
+      // Error retrieving data
+      console.log(error, 'error retrieve data from async');
+    }
+  };
 
   goBack() {
     Actions.signin();
@@ -212,7 +223,7 @@ class Signin extends Component {
           phoneNumber: this.state.username.toLowerCase(),
           password: this.state.password,
           isUseApp: true,
-          player_ids: '5128880d-5972-48d6-80cb-fcdad572c30d',
+          player_ids: this.props.deviceID.deviceID,
         };
         const response = await this.props.dispatch(loginUser(dataLogin));
         if (response.success == false) {

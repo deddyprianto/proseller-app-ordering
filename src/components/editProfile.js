@@ -381,12 +381,9 @@ mapDispatchToProps = dispatch => ({
   dispatch,
 });
 
-export default compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
-)(AccountEditProfil);
+export default compose(connect(mapStateToProps, mapDispatchToProps))(
+  AccountEditProfil,
+);
 
 const styles = StyleSheet.create({
   container: {

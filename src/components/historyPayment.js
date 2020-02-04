@@ -310,9 +310,6 @@ mapDispatchToProps = dispatch => ({
   dispatch,
 });
 
-export default compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
-)(HistoryPayment);
+export default compose(connect(mapStateToProps, mapDispatchToProps))(
+  HistoryPayment,
+);
