@@ -166,7 +166,7 @@ class HistoryPayment extends Component {
                   <View style={styles.sejajarSpace}>
                     <View style={styles.detail}>
                       <View style={styles.sejajarSpace}>
-                        <Text style={styles.storeName}>{item.storeName}</Text>
+                        <Text style={styles.storeName}>{item.outletName}</Text>
                         <Text style={styles.itemType}>
                           {item.point + ' point'}
                         </Text>

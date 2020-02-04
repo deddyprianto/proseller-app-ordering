@@ -38,7 +38,7 @@ class Main extends Component {
   constructor(props) {
     super(props);
     // config for push notification
-    OneSignal.init('99fc4d7d-f836-425e-801c-1da1a06a7793', {
+    OneSignal.init(awsConfig.onesignalID, {
       kOSSettingsKeyAutoPrompt: true,
     }); // set kOSSettingsKeyAutoPrompt to false prompting manually on iOS
 

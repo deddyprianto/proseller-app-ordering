@@ -30,7 +30,7 @@ To run app debug on **production**, run :
 SET ENVFILE=.env.production && npx react-native run-android --variant=productionDebug --appIdSuffix=dev
 ```
 
-## Generate Release App.
+## Generate Release App (apk)
 Go to android directory then,
 
 To build app on **dev** environment, run :
@@ -48,6 +48,23 @@ To build app on **production** environment, run :
 ```
 SET ENVFILE=.env.production && gradlew assembleProductionRelease 
 ```
+## Generate Release App Bundle (aab)
+Go to android directory then,
 
+To build app on **dev** environment, run :
+
+```
+SET ENVFILE=.env.dev && gradlew bundleDevRelease
+```
+To build app on **demo** environment, run :
+
+```
+SET ENVFILE=.env.demo && gradlew bundleDemoRelease
+```
+To build app on **production** environment, run :
+
+```
+SET ENVFILE=.env.production && gradlew bundleProductionRelease
+```
 ## Change App Icon
 To change the app icon based on their environment, go to **android/app/src** and specify your app icon based on their environment.

@@ -142,7 +142,7 @@ class PaymentDetail extends Component {
     var pembayaran = {};
     try {
       this.setState({loading: true});
-      pembayaran.price = this.state.totalBayar;
+      pembayaran.price = Number(this.state.totalBayar.toFixed(3));
       pembayaran.outletName = this.props.pembayaran.storeName;
       pembayaran.referenceNo = this.props.pembayaran.referenceNo;
       pembayaran.outletId = this.props.pembayaran.storeId;
@@ -158,7 +158,8 @@ class PaymentDetail extends Component {
         pembayaran.redeemValue = 0;
       } else {
         pembayaran.beforePrice = this.props.pembayaran.payment;
-        pembayaran.afterPrice = this.state.totalBayar;
+        // pembayaran.afterPrice = this.state.totalBayar;
+        pembayaran.afterPrice = Number(this.state.totalBayar.toFixed(3));
 
         if (this.props.dataVoucer != undefined) {
           pembayaran.voucherId = this.props.dataVoucer.id;
@@ -615,7 +616,10 @@ class PaymentDetail extends Component {
               titleFontSize={20}
               railBackgroundColor={colorConfig.pageIndex.activeTintColor}
               title={
-                'Pay ' + appConfig.appMataUang + ' ' + this.state.totalBayar
+                'Pay ' +
+                appConfig.appMataUang +
+                ' ' +
+                Number(this.state.totalBayar.toFixed(3))
               }
               onSwipeSuccess={this.onSlideRight}
             />
