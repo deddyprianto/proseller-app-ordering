@@ -37,10 +37,9 @@ export const updateUser = payload => {
 
 export const deviceUserInfo = deviceID => {
   return async (dispatch, getState) => {
-    const state = getState();
     try {
       dispatch({
-        type: 'SET_USER_SUCCESS',
+        type: 'GET_USER_DEVICE',
         deviceID: deviceID,
       });
     } catch (error) {

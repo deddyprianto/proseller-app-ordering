@@ -177,7 +177,9 @@ class Signin extends Component {
     this.imageWidth = new Animated.Value(styles.$largeImageSize);
   }
 
-  componentDidMount() {}
+  componentDidMount() {
+    console.log(this.props.deviceID, 'deviceID')
+  }
 
   goBack() {
     Actions.signin();
@@ -570,6 +572,7 @@ const validate = values => {
 
 mapStateToProps = state => ({
   loginUser: state.authReducer.loginUser,
+  deviceID: state.userReducer.deviceUserInfo,
 });
 
 mapDispatchToProps = dispatch => ({
