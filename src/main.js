@@ -35,7 +35,9 @@ import OneSignal from 'react-native-onesignal';
 class Main extends Component {
   constructor(props) {
     super(props);
-    OneSignal.init('99fc4d7d-f836-425e-801c-1da1a06a7793', {
+    // config for push notification
+    console.log(awsConfig.companyId.slice(9), 'awsConfig.companyId.slice(9)');
+    OneSignal.init(awsConfig.companyId.slice(9), {
       kOSSettingsKeyAutoPrompt: true,
     }); // set kOSSettingsKeyAutoPrompt to false prompting manually on iOS
 
