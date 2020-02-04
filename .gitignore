@@ -64,3 +64,5 @@ buck-out/
 .env.demo
 .env.production
 .env.dev
+
+java_pid16632.hprof
