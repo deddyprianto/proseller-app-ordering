@@ -178,7 +178,7 @@ class Signin extends Component {
   }
 
   componentDidMount() {
-    console.log(this.props.deviceID, 'deviceID')
+    console.log(this.props.deviceID, 'deviceID');
   }
 
   goBack() {
