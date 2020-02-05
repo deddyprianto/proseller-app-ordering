@@ -130,13 +130,14 @@ class AccountMenuList extends Component {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: colorConfig.pageIndex.backgroundColor,
-    borderBottomColor: colorConfig.pageIndex.activeTintColor,
+    borderBottomColor: colorConfig.pageIndex.inactiveTintColor,
     borderBottomWidth: 1,
-    borderTopColor: colorConfig.pageIndex.activeTintColor,
+    borderTopColor: colorConfig.pageIndex.inactiveTintColor,
     borderTopWidth: 1,
   },
   item: {
     margin: 10,
+    paddingVertical: 8,
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: Dimensions.get('window').width - 60,

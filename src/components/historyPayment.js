@@ -167,10 +167,25 @@ class HistoryPayment extends Component {
                     <View style={styles.detail}>
                       <View style={styles.sejajarSpace}>
                         <Text style={styles.storeName}>{item.outletName}</Text>
-                        <Text style={styles.itemType}>
-                          {item.point + ' point'}
-                        </Text>
+                        {item.point > 0 ? (
+                          <Text style={styles.itemType}>
+                            <Text style={{color: colorConfig.store.title}}>
+                              x{' '}
+                            </Text>
+                            {item.point + ' points'}
+                          </Text>
+                        ) : null}
                       </View>
+                      {item.stamps.amount > 1 ? (
+                        <View style={styles.sejajarSpaceFlexEnd}>
+                          <Text style={styles.itemTypeStamps}>
+                            <Text style={{color: colorConfig.store.title}}>
+                              x{' '}
+                            </Text>
+                            {item.point + ' stamps'}
+                          </Text>
+                        </View>
+                      ) : null}
                       <View style={styles.sejajarSpace}>
                         <View style={{flexDirection: 'row'}}>
                           <Icon
@@ -235,11 +250,12 @@ const styles = StyleSheet.create({
     fontFamily: 'Lato-Medium',
   },
   item: {
+    paddingVertical: 10,
     marginLeft: 5,
     marginRight: 5,
     padding: 5,
     marginBottom: 10,
-    borderColor: colorConfig.pageIndex.activeTintColor,
+    borderColor: colorConfig.pageIndex.grayColor,
     borderWidth: 1,
     borderRadius: 5,
     backgroundColor: colorConfig.pageIndex.backgroundColor,
@@ -255,6 +271,10 @@ const styles = StyleSheet.create({
   sejajarSpace: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+  },
+  sejajarSpaceFlexEnd: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
   },
   detail: {
     paddingLeft: 10,
@@ -289,6 +309,12 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: 'Lato-Medium',
   },
+  itemTypeStamps: {
+    color: colorConfig.pageIndex.activeTintColor,
+    fontSize: 12,
+    fontFamily: 'Lato-Medium',
+    alignItems: 'flex-end',
+  },
   btnDetail: {
     alignItems: 'center',
     borderLeftColor: colorConfig.pageIndex.activeTintColor,
@@ -310,6 +336,9 @@ mapDispatchToProps = dispatch => ({
   dispatch,
 });
 
-export default compose(connect(mapStateToProps, mapDispatchToProps))(
-  HistoryPayment,
-);
+export default compose(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  ),
+)(HistoryPayment);

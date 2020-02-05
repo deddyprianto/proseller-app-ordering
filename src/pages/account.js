@@ -89,33 +89,79 @@ class Account extends Component {
               onRefresh={this._onRefresh}
             />
           }>
-          <AccountUserDetail screen={this.props} />
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-evenly',
-              backgroundColor: colorConfig.pageIndex.backgroundColor,
-              height: 50,
-              marginTop: 10,
-              borderBottomColor: colorConfig.pageIndex.activeTintColor,
-              borderBottomWidth: 1,
-              borderTopColor: colorConfig.pageIndex.activeTintColor,
-              borderTopWidth: 1,
-              alignItems: 'center',
-              marginBottom: 10,
-            }}>
-            {this.props.totalPoint == undefined ||
-            this.props.totalPoint == 0 ? null : (
-              <View style={styles.point}>
+          <View style={styles.card}>
+            <AccountUserDetail screen={this.props} />
+          </View>
+          <View style={styles.card}>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-evenly',
+                backgroundColor: colorConfig.pageIndex.backgroundColor,
+                height: 50,
+                marginTop: 10,
+                borderBottomColor: colorConfig.pageIndex.activeTintColor,
+                borderBottomWidth: 1,
+                borderTopColor: colorConfig.pageIndex.activeTintColor,
+                borderTopWidth: 1,
+                alignItems: 'center',
+                marginBottom: 10,
+              }}>
+              {this.props.totalPoint == undefined ||
+              this.props.totalPoint == 0 ? null : (
+                <View style={styles.point}>
+                  {/*<Image*/}
+                  {/*  style={{height: 18, width: 25, marginRight: 5}}*/}
+                  {/*  source={require('../assets/img/ticket.png')}*/}
+                  {/*/>*/}
+                  <Icon
+                    size={23}
+                    name={
+                      Platform.OS === 'ios' ? 'ios-pricetags' : 'md-pricetags'
+                    }
+                    style={{
+                      color: colorConfig.store.defaultColor,
+                      marginRight: 8,
+                    }}
+                  />
+                  <Text
+                    style={{
+                      color: colorConfig.pageIndex.activeTintColor,
+                      fontSize: 14,
+                      fontFamily: 'Lato-Medium',
+                    }}>
+                    {'Point : '}
+                  </Text>
+                  <Text
+                    style={{
+                      color: colorConfig.pageIndex.activeTintColor,
+                      fontSize: 14,
+                      fontFamily: 'Lato-Bold',
+                    }}>
+                    {this.props.totalPoint == undefined
+                      ? 0
+                      : this.props.totalPoint}
+                  </Text>
+                </View>
+              )}
+              {this.props.totalPoint == undefined ||
+              this.props.totalPoint == 0 ? null : (
+                <View
+                  style={{
+                    backgroundColor: colorConfig.pageIndex.grayColor,
+                    width: 1,
+                    height: 35,
+                  }}
+                />
+              )}
+              <TouchableOpacity style={styles.point} onPress={this.myVouchers}>
                 {/*<Image*/}
-                {/*  style={{height: 18, width: 25, marginRight: 5}}*/}
-                {/*  source={require('../assets/img/ticket.png')}*/}
+                {/*  style={{height: 20, width: 25, marginRight: 5}}*/}
+                {/*  source={require('../assets/img/voucher.png')}*/}
                 {/*/>*/}
                 <Icon
                   size={23}
-                  name={
-                    Platform.OS === 'ios' ? 'ios-pricetags' : 'md-pricetags'
-                  }
+                  name={Platform.OS === 'ios' ? 'ios-card' : 'md-card'}
                   style={{
                     color: colorConfig.store.defaultColor,
                     marginRight: 8,
@@ -127,51 +173,14 @@ class Account extends Component {
                     fontSize: 14,
                     fontFamily: 'Lato-Medium',
                   }}>
-                  {'Point : '}
+                  My Vouchers
                 </Text>
-                <Text
-                  style={{
-                    color: colorConfig.pageIndex.activeTintColor,
-                    fontSize: 14,
-                    fontFamily: 'Lato-Bold',
-                  }}>
-                  {this.props.totalPoint == undefined
-                    ? 0
-                    : this.props.totalPoint}
-                </Text>
-              </View>
-            )}
-            {this.props.totalPoint == undefined ||
-            this.props.totalPoint == 0 ? null : (
-              <View
-                style={{
-                  backgroundColor: colorConfig.pageIndex.grayColor,
-                  width: 1,
-                  height: 35,
-                }}
-              />
-            )}
-            <TouchableOpacity style={styles.point} onPress={this.myVouchers}>
-              {/*<Image*/}
-              {/*  style={{height: 20, width: 25, marginRight: 5}}*/}
-              {/*  source={require('../assets/img/voucher.png')}*/}
-              {/*/>*/}
-              <Icon
-                size={23}
-                name={Platform.OS === 'ios' ? 'ios-card' : 'md-card'}
-                style={{color: colorConfig.store.defaultColor, marginRight: 8}}
-              />
-              <Text
-                style={{
-                  color: colorConfig.pageIndex.activeTintColor,
-                  fontSize: 14,
-                  fontFamily: 'Lato-Medium',
-                }}>
-                My Vouchers
-              </Text>
-            </TouchableOpacity>
+              </TouchableOpacity>
+            </View>
           </View>
-          <AccountMenuList screen={this.props} />
+          <View style={styles.card}>
+            <AccountMenuList screen={this.props} />
+          </View>
         </ScrollView>
         <TouchableOpacity
           style={{
@@ -210,6 +219,18 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     paddingRight: 10,
     // width: Dimensions.get('window').width / 2 - 30,
+  },
+  card: {
+    marginVertical: 10,
+    backgroundColor: colorConfig.pageIndex.backgroundColor,
+    shadowColor: '#00000021',
+    shadowOffset: {
+      width: 0,
+      height: 9,
+    },
+    shadowOpacity: 0.7,
+    shadowRadius: 7.49,
+    elevation: 12,
   },
 });
 

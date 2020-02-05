@@ -134,13 +134,15 @@ export default class PaymentSuccess extends Component {
                 {this.props.dataRespons.price}
               </Text>
             </View>
-            <Text
-              style={{
-                color: colorConfig.pageIndex.activeTintColor,
-                fontSize: 12,
-              }}>
-              {'+' + this.props.dataRespons.earnedPoint + ' Points'}
-            </Text>
+            {this.props.dataRespons.earnedPoint > 0 ? (
+              <Text
+                style={{
+                  color: colorConfig.pageIndex.activeTintColor,
+                  fontSize: 12,
+                }}>
+                {'+' + this.props.dataRespons.earnedPoint + ' Points'}
+              </Text>
+            ) : null}
           </View>
           <View
             style={{

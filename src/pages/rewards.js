@@ -33,6 +33,7 @@ import colorConfig from '../config/colorConfig';
 import {Actions} from 'react-native-router-flux';
 
 class Rewards extends Component {
+  _isMounted = false;
   constructor(props) {
     super(props);
     this.state = {
@@ -48,8 +49,13 @@ class Rewards extends Component {
   }
 
   componentDidMount = async () => {
+    this._isMounted = true;
     await this.getDataRewards();
   };
+
+  componentWillUnmount(): void {
+    this._isMounted = false;
+  }
 
   getDataRewards = async () => {
     try {

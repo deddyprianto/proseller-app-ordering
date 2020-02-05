@@ -14,6 +14,7 @@ import {
   ActivityIndicator,
   Animated,
   Dimensions,
+  TextInput,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
@@ -370,24 +371,31 @@ class ForgotPassword extends Component {
             }}>
             {!this.state.pressSend ? (
               <Form ref="form" onSubmit={this.handleSendCode}>
-                <TextValidator
-                  style={{marginBottom: -10}}
-                  name="phoneNumber"
-                  label="phoneNumber"
-                  validators={['required']}
-                  errorStyle={{
-                    container: {top: 5, left: 5},
-                    text: {color: 'red'},
-                    underlineValidColor: colorConfig.pageIndex.activeTintColor,
-                    underlineInvalidColor: 'red',
-                  }}
-                  errorMessages={['This field is required']}
-                  placeholder="Phone Number"
-                  type="text"
-                  under
+                <TextInput
+                  placeholder={'Phone Number'}
+                  style={{paddingVertical: 10}}
                   value={this.state.phoneNumber}
                   onChangeText={value => this.setState({phoneNumber: value})}
                 />
+                <View style={{borderWidth: 0.5, borderColor: 'gray'}} />
+                {/*<TextValidator*/}
+                {/*  style={{marginBottom: -10}}*/}
+                {/*  name="phoneNumber"*/}
+                {/*  label="phoneNumber"*/}
+                {/*  validators={['required']}*/}
+                {/*  errorStyle={{*/}
+                {/*    container: {top: 5, left: 5},*/}
+                {/*    text: {color: 'red'},*/}
+                {/*    underlineValidColor: colorConfig.pageIndex.activeTintColor,*/}
+                {/*    underlineInvalidColor: 'red',*/}
+                {/*  }}*/}
+                {/*  errorMessages={['This field is required']}*/}
+                {/*  placeholder="Phone Number"*/}
+                {/*  type="text"*/}
+                {/*  under*/}
+                {/*  value={this.state.phoneNumber}*/}
+                {/*  onChangeText={value => this.setState({phoneNumber: value})}*/}
+                {/*/>*/}
 
                 <TouchableOpacity
                   style={validPhoneNumber}

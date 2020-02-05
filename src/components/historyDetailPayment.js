@@ -121,32 +121,118 @@ export default class HistoryDetailPayment extends Component {
                 <Text style={styles.desc}>{this.props.item.paymentType}</Text>
               </View>
 
-              <View style={styles.detailItem}>
+              <View style={[styles.detailItem, {marginBottom: 20}]}>
                 <Text style={styles.desc}>Date & Time</Text>
                 <Text style={styles.desc}>
                   {this.getDate(this.props.item.createdAt)}
                 </Text>
               </View>
-              <View
-                style={{
-                  alignItems: 'center',
-                }}>
-                <Text
-                  style={{
-                    color: colorConfig.pageIndex.activeTintColor,
-                    fontSize: 14,
-                    fontFamily: 'Lato-Medium',
-                  }}>
-                  You got point
-                </Text>
-                <Text
-                  style={{
-                    color: colorConfig.pageIndex.activeTintColor,
-                    fontSize: 30,
-                  }}>
-                  {this.props.item.point}
-                </Text>
-              </View>
+              {this.props.item.point > 0 ? (
+                <View style={[styles.detailItem, {borderBottomWidth: 0}]}>
+                  <Text
+                    style={[
+                      styles.desc,
+                      {
+                        color: colorConfig.store.defaultColor,
+                        fontWeight: 'bold',
+                        fontSize: 15,
+                      },
+                    ]}>
+                    You got points
+                  </Text>
+                  <Text
+                    style={[
+                      styles.desc,
+                      {
+                        color: colorConfig.store.defaultColor,
+                        fontWeight: 'bold',
+                        fontSize: 15,
+                      },
+                    ]}>
+                    {' '}
+                    {'x '}
+                    {this.props.item.point}
+                  </Text>
+                </View>
+              ) : null}
+              {this.props.item.stamps.amount > 1 ? (
+                <View style={[styles.detailItem, {borderBottomWidth: 0}]}>
+                  <Text
+                    style={[
+                      styles.desc,
+                      {
+                        color: colorConfig.store.defaultColor,
+                        fontWeight: 'bold',
+                        fontSize: 15,
+                      },
+                    ]}>
+                    You got stamps
+                  </Text>
+                  <Text
+                    style={[
+                      styles.desc,
+                      {
+                        color: colorConfig.store.defaultColor,
+                        fontWeight: 'bold',
+                        fontSize: 15,
+                      },
+                    ]}>
+                    {' '}
+                    {'x '}
+                    {this.props.item.point}
+                  </Text>
+                </View>
+              ) : null}
+
+              {/*<View*/}
+              {/*  style={{*/}
+              {/*    marginTop: 10,*/}
+              {/*    alignItems: 'center',*/}
+              {/*    flexDirection: 'row',*/}
+              {/*    justifyContent: 'space-between',*/}
+              {/*  }}>*/}
+              {/*  <View style={{alignItems: 'center'}}>*/}
+              {/*    <Text*/}
+              {/*      style={{*/}
+              {/*        color: colorConfig.pageIndex.activeTintColor,*/}
+              {/*        fontSize: 14,*/}
+              {/*        fontFamily: 'Lato-Medium',*/}
+              {/*      }}>*/}
+              {/*      You got points*/}
+              {/*    </Text>*/}
+              {/*    <Text*/}
+              {/*      style={{*/}
+              {/*        color: colorConfig.pageIndex.activeTintColor,*/}
+              {/*        fontSize: 30,*/}
+              {/*      }}>*/}
+              {/*      {this.props.item.point}*/}
+              {/*    </Text>*/}
+              {/*  </View>*/}
+              {/*  <View*/}
+              {/*    style={{*/}
+              {/*      borderColor: colorConfig.store.defaultColor,*/}
+              {/*      borderWidth: 1,*/}
+              {/*      height: 50,*/}
+              {/*    }}*/}
+              {/*  />*/}
+              {/*  <View style={{alignItems: 'center'}}>*/}
+              {/*    <Text*/}
+              {/*      style={{*/}
+              {/*        color: colorConfig.pageIndex.activeTintColor,*/}
+              {/*        fontSize: 14,*/}
+              {/*        fontFamily: 'Lato-Medium',*/}
+              {/*      }}>*/}
+              {/*      You got stamps*/}
+              {/*    </Text>*/}
+              {/*    <Text*/}
+              {/*      style={{*/}
+              {/*        color: colorConfig.pageIndex.activeTintColor,*/}
+              {/*        fontSize: 30,*/}
+              {/*      }}>*/}
+              {/*      {this.props.item.point}*/}
+              {/*    </Text>*/}
+              {/*  </View>*/}
+              {/*</View>*/}
             </View>
           </View>
           {this.props.item.dataPay != undefined &&

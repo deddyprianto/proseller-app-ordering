@@ -95,7 +95,7 @@ export default class StoreStores extends Component {
                               color: colorConfig.pageIndex.grayColor,
                               fontSize: 11,
                             }}>
-                            {item.storeJarak + ' KM'}
+                            {item.storeJarak.toFixed(1) + ' KM'}
                           </Text>
                         </View>
                       ) : null}
@@ -116,14 +116,14 @@ const styles = StyleSheet.create({
     paddingTop: 5,
     paddingBottom: 10,
     color: colorConfig.store.title,
-    fontSize: 16,
+    fontSize: 19,
     fontFamily: 'Lato-Bold',
   },
   storesItem: {
     height: Dimensions.get('window').width / 4 - 10,
     flexDirection: 'row',
-    borderColor: colorConfig.store.border,
-    // borderWidth: 1,
+    borderColor: colorConfig.pageIndex.inactiveTintColor,
+    borderWidth: 1,
     marginBottom: 9,
     borderRadius: 10,
     backgroundColor: colorConfig.store.storesItem,

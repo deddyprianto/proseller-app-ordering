@@ -13,6 +13,7 @@ import {
   ScrollView,
   Animated,
   Dimensions,
+  TextInput,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
@@ -344,29 +345,47 @@ class Aunt extends Component {
               />
 
               <View>
-                <TextValidator
-                  style={{marginBottom: -10}}
-                  name="confirmationCode"
-                  label="confirmationCode"
-                  validators={['required']}
-                  errorStyle={{
-                    container: {top: 5, left: 5},
-                    text: {color: 'red'},
-                    underlineValidColor: colorConfig.pageIndex.activeTintColor,
-                    underlineInvalidColor: 'red',
-                  }}
-                  errorMessages={[
-                    'This field is required',
-                    'Confirmation Code invalid',
-                  ]}
-                  placeholder="Your confirmation code"
+                {/*<TextValidator*/}
+                {/*  style={{marginBottom: -10}}*/}
+                {/*  name="confirmationCode"*/}
+                {/*  label="confirmationCode"*/}
+                {/*  validators={['required']}*/}
+                {/*  errorStyle={{*/}
+                {/*    container: {top: 5, left: 5},*/}
+                {/*    text: {color: 'red'},*/}
+                {/*    underlineValidColor: colorConfig.pageIndex.activeTintColor,*/}
+                {/*    underlineInvalidColor: 'red',*/}
+                {/*  }}*/}
+                {/*  errorMessages={[*/}
+                {/*    'This field is required',*/}
+                {/*    'Confirmation Code invalid',*/}
+                {/*  ]}*/}
+                {/*  placeholder="Your confirmation code"*/}
+                {/*  secureTextEntry={this.state.showPass}*/}
+                {/*  keyboardType={'numeric'}*/}
+                {/*  under*/}
+                {/*  value={this.state.confirmationCode}*/}
+                {/*  onChangeText={value =>*/}
+                {/*    this.setState({confirmationCode: value.replace(/\s/g, '')})*/}
+                {/*  }*/}
+                {/*/>*/}
+                <TextInput
+                  placeholder={'Your confirmation code'}
+                  style={{paddingVertical: 10, paddingLeft: 5,}}
                   secureTextEntry={this.state.showPass}
-                  keyboardType={'numeric'}
-                  under
                   value={this.state.confirmationCode}
                   onChangeText={value =>
                     this.setState({confirmationCode: value.replace(/\s/g, '')})
                   }
+                />
+                <View
+                  style={{
+                    backgroundColor: colorConfig.pageIndex.activeTintColor,
+                    height: 1,
+                    marginLeft: 4,
+                    marginRight: 5,
+                    marginTop: 7,
+                  }}
                 />
                 <TouchableOpacity
                   style={{position: 'absolute', top: 8, right: 15}}

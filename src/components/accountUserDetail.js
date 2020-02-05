@@ -24,11 +24,9 @@ class AccountUserDetail extends Component {
     return (
       <View
         style={{
-          padding: 10,
+          padding: 20,
           backgroundColor: colorConfig.pageIndex.backgroundColor,
           width: this.state.screenWidth,
-          borderBottomColor: colorConfig.pageIndex.activeTintColor,
-          borderBottomWidth: 1,
         }}>
         <View
           style={{
@@ -73,7 +71,7 @@ class AccountUserDetail extends Component {
             <View>
               <Text
                 style={{
-                  color: colorConfig.pageIndex.activeTintColor,
+                  color: colorConfig.pageIndex.grayColor,
                   fontSize: 14,
                   fontFamily: 'Lato-Medium',
                 }}>
@@ -85,7 +83,7 @@ class AccountUserDetail extends Component {
             <View>
               <Text
                 style={{
-                  color: colorConfig.pageIndex.activeTintColor,
+                  color: colorConfig.pageIndex.grayColor,
                   fontSize: 14,
                   fontFamily: 'Lato-Italic',
                 }}>

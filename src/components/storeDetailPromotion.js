@@ -18,6 +18,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
 
 import colorConfig from '../config/colorConfig';
+import ProgressiveImage from './helper/ProgressiveImage';
 
 export default class StoreDetailPromotion extends Component {
   constructor(props) {
@@ -65,6 +66,11 @@ export default class StoreDetailPromotion extends Component {
           <View style={styles.line} />
         </View>
         <View style={styles.card}>
+          <ProgressiveImage
+            resizeMode="stretch"
+            style={styles.imageStamp}
+            source={{uri: this.props.dataPromotion.defaultImageURL}}
+          />
           <View style={styles.item}>
             <Text style={styles.title}>{this.props.dataPromotion.name}</Text>
           </View>
@@ -102,21 +108,30 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
   },
   card: {
-    margin: 10,
-    borderColor: colorConfig.pageIndex.activeTintColor,
+    margin: 5,
+    borderColor: colorConfig.pageIndex.inactiveTintColor,
     borderWidth: 1,
     borderRadius: 5,
     backgroundColor: colorConfig.pageIndex.backgroundColor,
+    shadowColor: '#00000021',
+    shadowOffset: {
+      width: 0,
+      height: 9,
+    },
+    shadowOpacity: 0.7,
+    shadowRadius: 7.49,
+    elevation: 12,
   },
   item: {
     alignItems: 'center',
-    borderBottomColor: colorConfig.pageIndex.activeTintColor,
+    borderBottomColor: colorConfig.pageIndex.grayColor,
     borderBottomWidth: 1,
     margin: 10,
   },
   title: {
     color: colorConfig.pageIndex.activeTintColor,
-    fontSize: 14,
+    fontSize: 18,
+    padding: 5,
     textAlign: 'center',
     fontWeight: 'bold',
     marginBottom: 10,
@@ -136,9 +151,23 @@ const styles = StyleSheet.create({
     color: colorConfig.pageIndex.grayColor,
     maxWidth: Dimensions.get('window').width,
     textAlign: 'right',
+    alignItems: 'flex-start',
+    fontSize: 14,
   },
   image: {
     width: Dimensions.get('window').width - 40,
     flex: 1,
+  },
+  imageStamp: {
+    width: '100%',
+    height: 130,
+    shadowColor: '#00000021',
+    shadowOffset: {
+      width: 0,
+      height: 9,
+    },
+    shadowOpacity: 0.7,
+    shadowRadius: 7.49,
+    elevation: 12,
   },
 });

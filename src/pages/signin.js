@@ -17,6 +17,7 @@ import {
   Button,
   Alert,
   ImageBackground,
+  TextInput,
   AsyncStorage,
 } from 'react-native';
 import {connect} from 'react-redux';
@@ -394,21 +395,9 @@ class Signin extends Component {
                 paddingRight: 10,
                 marginTop: -20,
               }}>
-              <TextValidator
-                name="email"
-                label="email"
-                validators={['required']}
-                text={{color: '#1b245c'}}
-                errorStyle={{
-                  container: {top: 5, left: 5},
-                  text: {color: 'red'},
-                  underlineValidColor: '#1b245c',
-                  underlineInvalidColor: 'red',
-                }}
-                errorMessages={['This field is required', 'Email invalid']}
-                placeholder="Email / Phone Number"
-                type="text"
-                under
+              <TextInput
+                placeholder={'Email / Phone Number'}
+                style={{paddingVertical: 10}}
                 value={this.state.username}
                 onChangeText={value =>
                   this.setState({
@@ -416,41 +405,74 @@ class Signin extends Component {
                   })
                 }
               />
+              <View style={{borderWidth: 0.5, borderColor: 'gray'}} />
+              {/*<TextValidator*/}
+              {/*  name="email"*/}
+              {/*  label="email"*/}
+              {/*  validators={['required']}*/}
+              {/*  text={{color: '#1b245c'}}*/}
+              {/*  // errorStyle={{*/}
+              {/*  //   container: {top: 5, left: 5},*/}
+              {/*  //   text: {color: 'red'},*/}
+              {/*  //   underlineValidColor: '#1b245c',*/}
+              {/*  //   underlineInvalidColor: 'red',*/}
+              {/*  // }}*/}
+              {/*  // errorMessages={['This field is required', 'Email invalid']}*/}
+              {/*  placeholder="Email / Phone Number"*/}
+              {/*  type="text"*/}
+              {/*  under*/}
+              {/*  value={this.state.username}*/}
+              {/*  onChangeText={value =>*/}
+              {/*    this.setState({*/}
+              {/*      username: value.replace(/\s/g, '').toLowerCase(),*/}
+              {/*    })*/}
+              {/*  }*/}
+              {/*/>*/}
               <View>
-                <TextValidator
-                  style={{marginBottom: -10}}
-                  name="password"
-                  label="password"
-                  text={{color: '#1b245c'}}
-                  validators={[
-                    'required',
-                    'minStringLength:8',
-                    'matchRegexp:^(?=.*[0-9])',
-                    'matchRegexp:^(?=.*[A-Z])',
-                    'matchRegexp:^(?=.*[a-z])',
-                  ]}
-                  errorStyle={{
-                    container: {top: 5, left: 5},
-                    text: {color: 'red'},
-                    underlineValidColor: '#1b245c',
-                    underlineInvalidColor: 'red',
-                  }}
-                  errorMessages={[
-                    'This field is required',
-                    'Password min 8 character',
-                    'Password contain at least 1 number',
-                    'Password contain at least 1 uppercase character',
-                    'Password contain at least 1 lowercase character',
-                  ]}
-                  placeholder="Password"
-                  secureTextEntry={this.state.showPass1}
-                  type="text"
-                  under
+                <TextInput
+                  placeholder={'Password'}
+                  style={{paddingVertical: 10}}
                   value={this.state.password}
+                  secureTextEntry={this.state.showPass1}
                   onChangeText={value =>
                     this.setState({password: value.replace(/\s/g, '')})
                   }
                 />
+                <View style={{borderWidth: 0.5, borderColor: 'gray'}} />
+                {/*<TextValidator*/}
+                {/*  style={{marginBottom: -10}}*/}
+                {/*  name="password"*/}
+                {/*  label="password"*/}
+                {/*  text={{color: '#1b245c'}}*/}
+                {/*  // validators={[*/}
+                {/*  //   'required',*/}
+                {/*  //   'minStringLength:8',*/}
+                {/*  //   'matchRegexp:^(?=.*[0-9])',*/}
+                {/*  //   'matchRegexp:^(?=.*[A-Z])',*/}
+                {/*  //   'matchRegexp:^(?=.*[a-z])',*/}
+                {/*  // ]}*/}
+                {/*  // errorStyle={{*/}
+                {/*  //   container: {top: 5, left: 5},*/}
+                {/*  //   text: {color: 'red'},*/}
+                {/*  //   underlineValidColor: '#1b245c',*/}
+                {/*  //   underlineInvalidColor: 'red',*/}
+                {/*  // }}*/}
+                {/*  // errorMessages={[*/}
+                {/*  //   'This field is required',*/}
+                {/*  //   'Password min 8 character',*/}
+                {/*  //   'Password contain at least 1 number',*/}
+                {/*  //   'Password contain at least 1 uppercase character',*/}
+                {/*  //   'Password contain at least 1 lowercase character',*/}
+                {/*  // ]}*/}
+                {/*  placeholder="Password"*/}
+                {/*  secureTextEntry={this.state.showPass1}*/}
+                {/*  type="text"*/}
+                {/*  under*/}
+                {/*  value={this.state.password}*/}
+                {/*  onChangeText={value =>*/}
+                {/*    this.setState({password: value.replace(/\s/g, '')})*/}
+                {/*  }*/}
+                {/*/>*/}
                 <TouchableOpacity
                   style={{position: 'absolute', top: 10, right: 15}}
                   onPress={this.showPass1}>
@@ -495,9 +517,10 @@ class Signin extends Component {
             </TouchableOpacity>
           </Form>
           <View style={styles.viewLogin}>
-            <TouchableOpacity onPress={this.signup}>
+            {/*<TouchableOpacity onPress={this.signup}>*/}
+            <Text>
               <Text style={styles.signupButton}>Register</Text>
-            </TouchableOpacity>
+            </Text>
             <TouchableOpacity onPress={this.auth}>
               <Text style={styles.verifyButton}>Verify Code</Text>
             </TouchableOpacity>

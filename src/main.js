@@ -99,7 +99,7 @@ class Main extends Component {
     return new Promise(resolve =>
       setTimeout(() => {
         resolve('result');
-      }, 1000),
+      }, 500),
     );
   };
 

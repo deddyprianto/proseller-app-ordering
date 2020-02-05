@@ -36,7 +36,6 @@ import {dataInbox} from '../actions/inbox.action';
 import {dataPromotion} from '../actions/promotion.action';
 import Icon from 'react-native-vector-icons/Ionicons';
 
-
 class Store extends Component {
   constructor(props) {
     super(props);
@@ -365,98 +364,10 @@ class Store extends Component {
               this.props.dataPromotion.count == 0 ? null : (
                 <StorePromotion />
               )}
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-evenly',
-                  backgroundColor: colorConfig.store.defaultColor,
-                  borderColor: colorConfig.pageIndex.activeTintColor,
-                  borderWidth: 1,
-                  height: 50,
-                  marginTop: 20,
-                  borderRadius: 10,
-                  alignItems: 'center',
-                }}>
-                {this.props.totalPoint == undefined ||
-                this.props.totalPoint == 0 ? null : (
-                  <View style={styles.point}>
-                    {/*<Image*/}
-                    {/*  style={{height: 18, width: 25, marginRight: 5}}*/}
-                    {/*  source={require('../assets/img/ticket.png')}*/}
-                    {/*/>*/}
-                    <Icon
-                      size={23}
-                      name={Platform.OS === 'ios' ? 'ios-pricetags' : 'md-pricetags'}
-                      style={{color: 'white', marginRight: 8}}
-                    />
-                    <Text
-                      style={{
-                        color: colorConfig.splash.container,
-                        fontSize: 14,
-                        fontWeight: 'bold',
-                        fontFamily: 'Lato-Medium',
-                      }}>
-                      {'Point : '}
-                    </Text>
-                    <Text
-                      style={{
-                        color: colorConfig.splash.container,
-                        fontWeight: 'bold',
-                        fontSize: 14,
-                        fontFamily: 'Lato-Bold',
-                      }}>
-                      {this.props.totalPoint == undefined
-                        ? 0
-                        : this.props.totalPoint}
-                    </Text>
-                  </View>
-                )}
-                {this.props.totalPoint == undefined ||
-                this.props.totalPoint == 0 ? null : (
-                  <View
-                    style={{
-                      backgroundColor: colorConfig.splash.container,
-                      width: 2,
-                      height: 35,
-                    }}
-                  />
-                )}
-                <TouchableOpacity
-                  style={styles.point}
-                  onPress={this.myVouchers}>
-                  <Icon
-                    size={23}
-                    name={Platform.OS === 'ios' ? 'ios-card' : 'md-card'}
-                    style={{color: 'white', marginRight: 8}}
-                  />
-                  <Text
-                    style={{
-                      color: colorConfig.splash.container,
-                      fontSize: 14,
-                      fontWeight: 'bold',
-                      fontFamily: 'Lato-Bold',
-                    }}>
-                    My Vouchers
-                  </Text>
-                </TouchableOpacity>
-              </View>
-              {/* <View
-                style={{
-                  borderBottomColor: colorConfig.store.defaultColor,
-                  borderBottomWidth: 2,
-                  paddingTop: 10,
-                }}
-              /> */}
+
               {this.state.dataStoresNear.length != 0 ? (
                 <View>
                   <StoreNearYou dataStoresNear={this.state.dataStoresNear} />
-                  {/* <View
-                    style={{
-                      borderBottomColor: colorConfig.store.defaultColor,
-                      borderBottomWidth: 2,
-                      paddingTop: 10,
-                    }}
-                  /> */}
                 </View>
               ) : null}
               {Object.keys(this.state.dataAllStore).length === 0 &&

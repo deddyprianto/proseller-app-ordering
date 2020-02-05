@@ -57,7 +57,7 @@ export default class StoreNearYou extends Component {
                         size={10}
                         name={Platform.OS === 'ios' ? 'ios-pin' : 'md-pin'}
                         style={{color: 'red', marginRight: 3}}
-                      />
+                      />{' '}
                       {item.storeJarak.toFixed(1) + ' KM'}
                     </Text>
                   </View>
@@ -73,15 +73,15 @@ export default class StoreNearYou extends Component {
 
 const styles = StyleSheet.create({
   stores: {
-    paddingTop: 5,
+    paddingTop: 10,
     paddingBottom: 10,
     color: colorConfig.store.title,
-    fontSize: 16,
+    fontSize: 19,
     fontFamily: 'Lato-Bold',
   },
   storesNearItem: {
-    borderColor: colorConfig.store.border,
-    // borderWidth: 1,
+    borderColor: colorConfig.pageIndex.inactiveTintColor,
+    borderWidth: 1,
     borderRadius: 10,
     backgroundColor: colorConfig.store.storesItem,
     justifyContent: 'space-between',
