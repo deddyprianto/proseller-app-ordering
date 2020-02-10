@@ -59,12 +59,11 @@ class Rewards extends Component {
 
   getDataRewards = async () => {
     try {
-      await this.props.dispatch(campaign());
+      // await this.props.dispatch(campaign());
       await this.props.dispatch(dataPoint());
-      await this.props.dispatch(vouchers());
-      await this.props.dispatch(myVoucers());
+      // await this.props.dispatch(vouchers());
       await this.props.dispatch(getStamps());
-      await this.props.dispatch(dataInbox());
+      // await this.props.dispatch(dataInbox());
       await this.props.dispatch(recentTransaction());
       this.setState({isLoading: false});
     } catch (error) {

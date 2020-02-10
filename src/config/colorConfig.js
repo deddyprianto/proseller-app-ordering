@@ -58,8 +58,10 @@ const colorConfig = {
     textWhite: 'white',
     title: '#454545',
     transparentColor: 'rgba(3, 157, 252, 0.8)',
+    disableButton: 'rgba(3, 157, 252, 0.4)',
     transparent: 'rgba(3, 157, 252, 0.1)',
     containerColor: '#f2f2f2',
+    secondaryColor: '#FAA21C',
   },
 };
 

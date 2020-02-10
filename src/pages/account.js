@@ -61,22 +61,22 @@ class Account extends Component {
     await this.props.dispatch(logoutUser());
   };
 
-  myVouchers = () => {
-    var myVoucers = [];
-    if (this.props.myVoucers != undefined) {
-      _.forEach(
-        _.groupBy(
-          this.props.myVoucers.filter(voucher => voucher.deleted == false),
-          'id',
-        ),
-        function(value, key) {
-          value[0].totalRedeem = value.length;
-          myVoucers.push(value[0]);
-        },
-      );
-    }
-    Actions.accountVouchers({data: myVoucers});
-  };
+  // myVouchers = () => {
+  //   var myVoucers = [];
+  //   if (this.props.myVoucers != undefined) {
+  //     _.forEach(
+  //       _.groupBy(
+  //         this.props.myVoucers.filter(voucher => voucher.deleted == false),
+  //         'id',
+  //       ),
+  //       function(value, key) {
+  //         value[0].totalRedeem = value.length;
+  //         myVoucers.push(value[0]);
+  //       },
+  //     );
+  //   }
+  //   Actions.accountVouchers({data: myVoucers});
+  // };
 
   render() {
     console.log('USER DETAIL ', this.props.userDetail);
@@ -91,92 +91,6 @@ class Account extends Component {
           }>
           <View style={styles.card}>
             <AccountUserDetail screen={this.props} />
-          </View>
-          <View style={styles.card}>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-evenly',
-                backgroundColor: colorConfig.pageIndex.backgroundColor,
-                height: 50,
-                marginTop: 10,
-                borderBottomColor: colorConfig.pageIndex.activeTintColor,
-                borderBottomWidth: 1,
-                borderTopColor: colorConfig.pageIndex.activeTintColor,
-                borderTopWidth: 1,
-                alignItems: 'center',
-                marginBottom: 10,
-              }}>
-              {this.props.totalPoint == undefined ||
-              this.props.totalPoint == 0 ? null : (
-                <View style={styles.point}>
-                  {/*<Image*/}
-                  {/*  style={{height: 18, width: 25, marginRight: 5}}*/}
-                  {/*  source={require('../assets/img/ticket.png')}*/}
-                  {/*/>*/}
-                  <Icon
-                    size={23}
-                    name={
-                      Platform.OS === 'ios' ? 'ios-pricetags' : 'md-pricetags'
-                    }
-                    style={{
-                      color: colorConfig.store.defaultColor,
-                      marginRight: 8,
-                    }}
-                  />
-                  <Text
-                    style={{
-                      color: colorConfig.pageIndex.activeTintColor,
-                      fontSize: 14,
-                      fontFamily: 'Lato-Medium',
-                    }}>
-                    {'Point : '}
-                  </Text>
-                  <Text
-                    style={{
-                      color: colorConfig.pageIndex.activeTintColor,
-                      fontSize: 14,
-                      fontFamily: 'Lato-Bold',
-                    }}>
-                    {this.props.totalPoint == undefined
-                      ? 0
-                      : this.props.totalPoint}
-                  </Text>
-                </View>
-              )}
-              {this.props.totalPoint == undefined ||
-              this.props.totalPoint == 0 ? null : (
-                <View
-                  style={{
-                    backgroundColor: colorConfig.pageIndex.grayColor,
-                    width: 1,
-                    height: 35,
-                  }}
-                />
-              )}
-              <TouchableOpacity style={styles.point} onPress={this.myVouchers}>
-                {/*<Image*/}
-                {/*  style={{height: 20, width: 25, marginRight: 5}}*/}
-                {/*  source={require('../assets/img/voucher.png')}*/}
-                {/*/>*/}
-                <Icon
-                  size={23}
-                  name={Platform.OS === 'ios' ? 'ios-card' : 'md-card'}
-                  style={{
-                    color: colorConfig.store.defaultColor,
-                    marginRight: 8,
-                  }}
-                />
-                <Text
-                  style={{
-                    color: colorConfig.pageIndex.activeTintColor,
-                    fontSize: 14,
-                    fontFamily: 'Lato-Medium',
-                  }}>
-                  My Vouchers
-                </Text>
-              </TouchableOpacity>
-            </View>
           </View>
           <View style={styles.card}>
             <AccountMenuList screen={this.props} />

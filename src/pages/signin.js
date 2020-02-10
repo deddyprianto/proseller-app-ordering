@@ -202,7 +202,7 @@ class Signin extends Component {
   }
 
   auth() {
-    Actions.auth();
+    Actions.verifyCode();
   }
 
   forgotPassword = () => {
@@ -517,10 +517,10 @@ class Signin extends Component {
             </TouchableOpacity>
           </Form>
           <View style={styles.viewLogin}>
-            {/*<TouchableOpacity onPress={this.signup}>*/}
-            <Text>
+            <TouchableOpacity onPress={this.signup}>
+              {/*<Text>*/}
               <Text style={styles.signupButton}>Register</Text>
-            </Text>
+            </TouchableOpacity>
             <TouchableOpacity onPress={this.auth}>
               <Text style={styles.verifyButton}>Verify Code</Text>
             </TouchableOpacity>

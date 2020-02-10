@@ -11,11 +11,20 @@ import {
   CardStackStyleInterpolator,
 } from 'react-native-router-flux';
 
-import Signin from '../pages/signin';
+import InputPhoneNumber from '../pages/InputPhoneNumber';
+import InputEmail from '../pages/InputEmail';
 import Signup from '../pages/signup';
+import SignInPhoneNumber from '../pages/SignInPhoneNumber';
+import SignInEmail from '../pages/SignInEmail';
+import MobileRegister from '../pages/MobileRegister';
+import EmailRegister from '../pages/EmailRegister';
+import VerifyRegister from '../pages/VerifyRegister';
 import Aunt from '../pages/aunt';
+import VerifyCode from '../pages/verifyCode';
 import ForgotPassword from '../pages/forgotPassword';
 import PageIndex from '../pages/pageIndex';
+import VerifyOtpAfterRegister from '../pages/VerifyOtpAfterRegister';
+import VerifyOtpAfterRegisterEmail from '../pages/VerifyOtpAfterRegisterEmail';
 import ChangeCredentials from '../pages/changeCredentials';
 
 import Pay from '../components/rewardsPay';
@@ -28,7 +37,8 @@ import StoreDetailStores from '../components/storeDetailStores';
 import StoreSeeMorePromotion from '../components/storeSeeMorePromotion';
 import StoreDetailPromotion from '../components/storeDetailPromotion';
 import StoresMap from '../components/storesMap';
-import AccountVouchers from '../components/accountVouchers';
+import MyVouchers from '../components/vouchers/MyVouchers';
+import AllVouchers from '../components/vouchers/AllVouchers';
 import AccountEditProfil from '../components/accountEditProfil';
 import EditProfile from '../components/editProfile';
 import PaymentDetail from '../components/paymentDetail';
@@ -55,9 +65,22 @@ export default class Routes extends Component {
             animationEnabled={false}
             panHandlers={null}
             initial={!this.props.isLoggedIn}>
-            <Scene key="signin" component={Signin} initial={true} />
+            <Scene
+              key="inputPhoneNumber"
+              component={InputPhoneNumber}
+              initial={true}
+            />
+            <Scene key="signInPhoneNumber" component={SignInPhoneNumber} />
+            <Scene key="signInEmail" component={SignInEmail} />
+            <Scene key="inputEmail" component={InputEmail} />
+            <Scene key="verifyRegister" component={VerifyRegister} />
+            <Scene key="verifyOtpAfterRegister" component={VerifyOtpAfterRegister} />
+            <Scene key="verifyOtpAfterRegisterEmail" component={VerifyOtpAfterRegisterEmail} />
+            <Scene key="mobileRegister" component={MobileRegister} />
+            <Scene key="emailRegister" component={EmailRegister} />
             <Scene key="signup" component={Signup} title="Register" />
             <Scene key="auth" component={Aunt} title="Auntetikasi" />
+            <Scene key="verifyCode" component={VerifyCode} title="verifyCode" />
             <Scene key="signinWaitPassword" component={SigninWaitPassword} />
             <Scene
               key="forgotPassword"
@@ -104,8 +127,8 @@ export default class Routes extends Component {
             <Scene duration={0} key="storeSeeMap" component={StoresMap} />
             <Scene
               duration={0}
-              key="accountVouchers"
-              component={AccountVouchers}
+              key="myVouchers"
+              component={MyVouchers}
             />
             <Scene
               duration={0}

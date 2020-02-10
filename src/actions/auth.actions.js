@@ -34,16 +34,15 @@ export const createNewUser = payload => {
         payload,
         200,
       );
-      console.log(JSON.stringify(response));
+      console.log(response, 'response register');
       if (response.success) {
         dispatch({
           type: 'CREAT_USER_SUCCESS',
           dataRegister: payload,
         });
-
-        return response;
+        return true;
       } else {
-        throw response;
+        return response.responseBody.Data;
       }
     } catch (error) {
       dispatch({
@@ -94,14 +93,13 @@ export const loginUser = payload => {
       dispatch({
         type: 'LOGIN_USER_LOADING',
       });
-      payload.companyId = awsConfig.companyId;
+      console.log(payload, 'payload login');
       const response = await fetchApi('/customer/login', 'POST', payload, 200);
 
       console.log(response);
 
-      if (response.success) {
+      if (response.responseBody.Data.accessToken != undefined) {
         let data = response.responseBody.Data;
-
         dispatch({
           type: 'LOGIN_USER_SUCCESS',
         });
@@ -117,10 +115,9 @@ export const loginUser = payload => {
           payload: data.idToken.payload,
         });
         console.log(response, 'response login user pool');
-        return response;
-      } else {
-        throw response;
+        return response.responseBody.Data;
       }
+      return response.responseBody.Data;
     } catch (error) {
       dispatch({
         type: 'LOGIN_USER_FAIL',
@@ -284,6 +281,101 @@ export const loginOther = payload => {
         type: 'LOGIN_USER_FAIL',
         payload: error.responseBody,
       });
+      return error;
+    }
+  };
+};
+
+export const checkAccountExist = payload => {
+  return async dispatch => {
+    try {
+      const response = await fetchApi(
+        '/customer/login/check-account',
+        'POST',
+        payload,
+        200,
+      );
+      console.log(response, 'response check account exist');
+      if (response.success) {
+        dispatch({
+          type: 'DATA_ACCOUNT_EXIST',
+          status: response.responseBody.Data.status,
+        });
+        return response.responseBody.Data;
+      } else {
+        throw response;
+      }
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const sendOtpAttempts = attempt => {
+  return async dispatch => {
+    try {
+      console.log(attempt, 'attempt lama');
+      dispatch({
+        type: 'ATTEMPT_SEND_OTP',
+        attempt: attempt,
+      });
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const sendOTP = payload => {
+  return async dispatch => {
+    try {
+      const response = await fetchApi(
+        '/customer/login/send-otp',
+        'POST',
+        payload,
+        200,
+      );
+      console.log(response, 'response send otp');
+      if (response.success) {
+        return response.responseBody.Data.status;
+      } else {
+        throw response;
+      }
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const resendOTPCognito = payload => {
+  return async dispatch => {
+    try {
+      const response = await fetchApi(
+        '/customer/login/send-otp',
+        'POST',
+        payload,
+        200,
+      );
+      console.log(response, 'response send otp cognito');
+      return response.responseBody.ResultCode;
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const confirmCodeOTP = payload => {
+  return async dispatch => {
+    try {
+      console.log(payload, 'payload confirm otp cognito');
+      const response = await fetchApi(
+        '/customer/confirm',
+        'POST',
+        payload,
+        200,
+      );
+      console.log(response, 'response confirm otp cognito');
+      return response;
+    } catch (error) {
       return error;
     }
   };

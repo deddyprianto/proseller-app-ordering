@@ -13,6 +13,7 @@ import {
   ScrollView,
   Animated,
   Dimensions,
+  TextInput,
 } from 'react-native';
 import {reduxForm} from 'redux-form';
 import {connect} from 'react-redux';
@@ -28,6 +29,11 @@ import {createNewUser, notifikasi} from '../actions/auth.actions';
 import Loader from '../components/loader';
 import {Actions} from 'react-native-router-flux';
 import colorConfig from '../config/colorConfig';
+
+// import TextField from '../helper/textfield'
+// import validation from '../helper/validation'
+// import validate from '../helper/validate_wrapper'
+
 
 const imageWidth = Dimensions.get('window').width / 2;
 
@@ -72,6 +78,7 @@ const styles = StyleSheet.create({
   },
   button: {
     height: 45,
+    marginTop: 30,
     backgroundColor: colorConfig.pageIndex.activeTintColor,
     borderRadius: 25,
     marginVertical: 10,
@@ -364,61 +371,25 @@ class Signup extends Component {
               borderWidth: 1,
             }}>
             <Form ref="form" onSubmit={this.handleSubmit}>
-              <TextValidator
-                style={{marginBottom: -10}}
-                name="name"
-                label="name"
-                validators={['required']}
-                errorStyle={{
-                  container: {top: 5, left: 5},
-                  text: {color: 'red'},
-                  underlineValidColor: colorConfig.pageIndex.activeTintColor,
-                  underlineInvalidColor: 'red',
-                }}
-                errorMessages={['This field is required']}
-                placeholder="Your name"
-                type="text"
-                under
+              <TextInput
+                placeholder={'Full Name'}
+                style={{paddingVertical: 10}}
                 value={this.state.name}
                 onChangeText={value => this.setState({name: value})}
               />
-
-              <TextValidator
-                style={{marginBottom: -10}}
-                name="email"
-                label="email"
-                validators={['required', 'isEmail']}
-                errorStyle={{
-                  container: {top: 5, left: 5},
-                  text: {color: 'red'},
-                  underlineValidColor: colorConfig.pageIndex.activeTintColor,
-                  underlineInvalidColor: 'red',
-                }}
-                errorMessages={['This field is required', 'Email invalid']}
-                placeholder="Your email"
-                type="text"
-                under
+              <View style={{borderWidth: 0.5, borderColor: 'gray'}} />
+              <TextInput
+                placeholder={'Email'}
+                style={{paddingVertical: 10}}
                 value={this.state.email}
                 onChangeText={value =>
                   this.setState({email: value.replace(/\s/g, '').toLowerCase()})
                 }
               />
-
-              <TextValidator
-                style={{marginBottom: -10}}
-                name="reemail"
-                label="reemail"
-                validators={['required', 'isEmailMatch']}
-                errorStyle={{
-                  container: {top: 5, left: 5},
-                  text: {color: 'red'},
-                  underlineValidColor: colorConfig.pageIndex.activeTintColor,
-                  underlineInvalidColor: 'red',
-                }}
-                errorMessages={['This field is required', 'Email mismatch']}
-                placeholder="Your confirm email"
-                type="text"
-                under
+              <View style={{borderWidth: 0.5, borderColor: 'gray'}} />
+              <TextInput
+                placeholder={'Retype Email'}
+                style={{paddingVertical: 10}}
                 value={this.state.reemail}
                 onChangeText={value =>
                   this.setState({
@@ -426,59 +397,30 @@ class Signup extends Component {
                   })
                 }
               />
-
+              <View style={{borderWidth: 0.5, borderColor: 'gray'}} />
               <PhoneInput
                 ref={ref => {
                   this.phone = ref;
                 }}
-                style={{marginTop: 15, paddingLeft: 5}}
+                style={{
+                  marginTop: 5,
+                  paddingLeft: 5,
+                  paddingVertical: 13,
+                }}
                 value={this.state.phoneNumber}
               />
-
-              <View
-                style={{
-                  backgroundColor: colorConfig.pageIndex.activeTintColor,
-                  height: 1,
-                  marginLeft: 4,
-                  marginRight: 5,
-                  marginTop: 5,
-                }}
-              />
-
+              <View style={{borderWidth: 0.5, borderColor: 'gray'}} />
               <View>
-                <TextValidator
-                  style={{marginBottom: -10}}
-                  name="password"
-                  label="password"
-                  validators={[
-                    'required',
-                    'minStringLength:8',
-                    'matchRegexp:^(?=.*[0-9])',
-                    'matchRegexp:^(?=.*[A-Z])',
-                    'matchRegexp:^(?=.*[a-z])',
-                  ]}
-                  errorStyle={{
-                    container: {top: 5, left: 5},
-                    text: {color: 'red'},
-                    underlineValidColor: colorConfig.pageIndex.activeTintColor,
-                    underlineInvalidColor: 'red',
-                  }}
-                  errorMessages={[
-                    'This field is required',
-                    'Password min 8 character',
-                    'Password contain at least 1 number',
-                    'Password contain at least 1 uppercase character',
-                    'Password contain at least 1 lowercase character',
-                  ]}
-                  placeholder="Your password"
-                  secureTextEntry={this.state.showPass1}
-                  type="text"
-                  under
+                <TextInput
+                  placeholder={'Password'}
+                  style={{paddingVertical: 10}}
                   value={this.state.password}
+                  secureTextEntry={this.state.showPass1}
                   onChangeText={value =>
                     this.setState({password: value.replace(/\s/g, '')})
                   }
                 />
+                <View style={{borderWidth: 0.5, borderColor: 'gray'}} />
                 <TouchableOpacity
                   style={{position: 'absolute', top: 8, right: 15}}
                   onPress={this.showPass1}>
@@ -491,28 +433,15 @@ class Signup extends Component {
               </View>
 
               <View>
-                <TextValidator
-                  style={{marginBottom: -10}}
-                  name="repassword"
-                  label="repassword"
-                  validators={['required', 'isPasswordMatch']}
-                  errorStyle={{
-                    container: {top: 5, left: 5},
-                    text: {color: 'red'},
-                    underlineValidColor: colorConfig.pageIndex.activeTintColor,
-                    underlineInvalidColor: 'red',
-                  }}
-                  errorMessages={[
-                    'This field is required',
-                    'Password mismatch',
-                  ]}
-                  placeholder="Your confirm password"
+                <TextInput
+                  placeholder={'Retype Password'}
+                  style={{paddingVertical: 10}}
                   secureTextEntry={this.state.showPass2}
-                  type="text"
-                  under
                   value={this.state.repassword}
                   onChangeText={value => this.setState({repassword: value})}
                 />
+                <View style={{borderWidth: 0.5, borderColor: 'gray'}} />
+
                 <TouchableOpacity
                   style={{position: 'absolute', top: 8, right: 15}}
                   onPress={this.showPass2}>

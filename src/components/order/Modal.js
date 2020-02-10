@@ -17,19 +17,16 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
 import createOpenLink from 'react-native-open-maps';
 
-import colorConfig from '../config/colorConfig';
-import appConfig from '../config/appConfig';
-import ProgressiveImage from '../components/helper/ProgressiveImage';
-import ModalOrder from '../components/order/Modal';
+import colorConfig from '../../config/colorConfig';
+import appConfig from '../../config/appConfig';
+import ProgressiveImage from '../../components/helper/ProgressiveImage';
 
-export default class StoreDetailStores extends Component {
+export default class ModalOrder extends Component {
   constructor(props) {
     super(props);
     this.state = {
       screenWidth: Dimensions.get('window').width,
       screenHeight: Dimensions.get('window').height,
-      isModalVisible: false,
-      qtyItem: 1,
     };
   }
 
@@ -53,193 +50,168 @@ export default class StoreDetailStores extends Component {
     Actions.pop();
   };
 
-  toggleModal = () => {
-    this.setState({isModalVisible: !this.state.isModalVisible});
-  };
-
-  closeModal = () => {
-    this.setState({isModalVisible: false});
-  };
-
-  backButtonClicked = () => {
-    this.setState({isModalVisible: false, qtyItem: 1});
-    console.log('Modal has been closed when back button is clicked');
-  };
-
-  modalShow = () => {
-    console.log('modal ditutup');
-    this.setState({qtyItem: 1});
-  };
-
-  addQty = () => {
-    this.setState({qtyItem: this.state.qtyItem + 1});
-  };
-
-  minQty = () => {
-    if (this.state.qtyItem > 0) {
-      this.setState({qtyItem: this.state.qtyItem - 1});
-    }
-  };
-
-  calculateSubTotalModal = () => {
-    let subTotal = 15;
-    subTotal = parseFloat(subTotal * this.state.qtyItem);
-    return subTotal;
-  };
-
   render() {
-    console.log('this.props.item ', this.props.item);
     return (
-      <View style={styles.container}>
-        <ModalOrder
-          isModalVisible={this.state.isModalVisible}
-          qtyItem={this.state.qtyItem}
-          closeModal={this.closeModal}
-          backButtonClicked={this.backButtonClicked}
-          toggleModal={this.toggleModal}
-          addQty={this.addQty}
-          minQty={this.minQty}
-          modalShow={this.modalShow}
-          calculateSubTotalModal={this.calculateSubTotalModal}
-        />
-        <View style={styles.headerImage}>
-          <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
-            <Icon
-              size={28}
-              name={
-                Platform.OS === 'ios' ? 'ios-arrow-back' : 'md-arrow-round-back'
-              }
-              style={styles.btnBackIcon}
-            />
-            <Text style={styles.btnBackText}>
-              {' '}
-              {this.props.item.storeName}{' '}
-            </Text>
-          </TouchableOpacity>
-        </View>
-        <ScrollView>
-          <View style={styles.cardImage}>
-            {this.props.item.defaultImageURL != undefined ? (
+      <Modal
+        animationType="slide"
+        presentationStyle="fullScreen"
+        visible={this.props.isModalVisible}
+        transparent={false}
+        onShow={this.props.modalShow}
+        onRequestClose={this.props.backButtonClicked}>
+        <View
+          style={{
+            height: '100%',
+            backgroundColor: colorConfig.store.containerColor,
+          }}>
+          <ScrollView>
+            <View style={styles.cardModal}>
+              <TouchableOpacity
+                onPress={this.props.closeModal}
+                style={{
+                  top: 10,
+                  left: 10,
+                  position: 'absolute',
+                  zIndex: 2,
+                  width: 40,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  height: 40,
+                  backgroundColor: colorConfig.store.transparentColor,
+                  borderRadius: 50,
+                }}>
+                <Icon
+                  size={28}
+                  name={Platform.OS === 'ios' ? 'ios-close' : 'md-close'}
+                  style={{color: 'white'}}
+                />
+              </TouchableOpacity>
               <ProgressiveImage
                 resizeMode="cover"
-                style={styles.image}
-                source={{
-                  uri: this.props.item.defaultImageURL,
-                }}
-              />
-            ) : (
-              <ProgressiveImage
-                resizeMode="cover"
-                style={styles.image}
+                style={styles.imageModal}
                 source={{
                   uri:
-                    'https://cdnph.upi.com/svc/sv/upi_com/8961462650364/2016/1/a058b8e2364d66fea34084fd5af461a0/Walmart-to-bring-back-store-greeters-and-beef-up-security.jpg',
+                    'https://upload.wikimedia.org/wikipedia/commons/6/62/Nasi_Lemak%2C_Mamak%2C_Sydney.jpg',
                 }}
               />
-            )}
-          </View>
-          <View style={styles.storeDescription}>
-            <Text
-              style={{
-                fontWeight: 'bold',
-                fontSize: 20,
-                textAlign: 'center',
-                marginVertical: 17,
-              }}>
-              {this.props.item.storeName}
-            </Text>
-            <View
-              style={{
-                flex: 1,
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                marginHorizontal: 10,
-              }}>
-              <Text>
-                <Icon
-                  size={18}
-                  name={Platform.OS === 'ios' ? 'ios-time' : 'md-time'}
-                  style={{
-                    color: this.props.item.storeStatus
-                      ? colorConfig.store.colorSuccess
-                      : colorConfig.store.colorError,
-                    paddingRight: 10,
-                  }}
-                />
-                <Text
-                  style={{
-                    fontWeight: 'bold',
-                    fontSize: 15,
-                    color: this.props.item.storeStatus
-                      ? colorConfig.store.colorSuccess
-                      : colorConfig.store.colorError,
-                  }}>
-                  {' '}
-                  {this.props.item.storeStatus ? 'Open' : 'Closed'}
+              <View style={styles.detailItemModal}>
+                <Text style={[styles.productTitleModal]}>
+                  Mie Pangsit Goreng Pedas Lemak
                 </Text>
-              </Text>
-              <Text>
-                <Icon
-                  size={18}
-                  name={Platform.OS === 'ios' ? 'ios-pin' : 'md-pin'}
-                  style={{color: 'red', paddingRight: 10}}
-                />
-                <Text style={{fontSize: 13}}>
-                  {' '}
-                  {this.props.item.region} - {this.props.item.city}
+                <Text style={[styles.productDescModal]}>
+                  Nasi + telur goreng ditambah dengan ayam goreng + es teh
+                  goreng
                 </Text>
-              </Text>
-              <Text>
-                <Icon
-                  size={18}
-                  name={Platform.OS === 'ios' ? 'ios-map' : 'md-map'}
-                  style={{
-                    color: colorConfig.store.defaultColor,
-                    paddingRight: 10,
-                  }}
-                />
-                <Text style={{fontSize: 13}}>
-                  {' '}
-                  {this.props.item.storeJarak.toFixed(1) + ' KM'}
-                </Text>
-              </Text>
-            </View>
-          </View>
-          <View style={styles.card}>
-            <Text style={styles.titleCategory}>Kategori Menu</Text>
-            <TouchableOpacity style={styles.detail} onPress={this.toggleModal}>
-              <View style={styles.detailItem}>
-                <View style={{flexDirection: 'row'}}>
-                  <ProgressiveImage
-                    style={styles.imageProduct}
-                    source={{
-                      uri:
-                        'https://upload.wikimedia.org/wikipedia/commons/6/62/Nasi_Lemak%2C_Mamak%2C_Sydney.jpg',
-                    }}
-                  />
-                  <View>
-                    <Text style={[styles.productTitle]}>
-                      <Text
-                        style={{
-                          color: colorConfig.store.defaultColor,
-                          fontWeight: 'bold',
-                        }}>
-                        x 3
-                      </Text>{' '}
-                      Mie Pangsit Goreng Pedas Lemak
-                    </Text>
-                    <Text style={[styles.productDesc]}>
-                      Nasi + telur goreng ditambah dengan ayam goreng + es teh
-                      goreng
-                    </Text>
-                  </View>
-                </View>
-                <Text style={[styles.productPrice]}>SGD 10</Text>
               </View>
+            </View>
+            <View style={styles.cardModal}>
+              <Text style={styles.titleModifierModal}>
+                Flavour, pick 1, max 3
+              </Text>
+              <View style={styles.detailOptionsModal}>
+                <CheckBox
+                  value={this.state.checked}
+                  onValueChange={() =>
+                    this.setState({checked: !this.state.checked})
+                  }
+                />
+                <Text style={{marginTop: 5}}> Sayur</Text>
+                <Text style={{marginTop: 5, position: 'absolute', right: 3}}>
+                  {' '}
+                  0
+                </Text>
+              </View>
+              <View style={styles.detailOptionsModal}>
+                <CheckBox
+                  value={this.state.checked}
+                  onValueChange={() =>
+                    this.setState({checked: !this.state.checked})
+                  }
+                />
+                <Text style={{marginTop: 5}}> Sayur</Text>
+                <Text style={{marginTop: 5, position: 'absolute', right: 3}}>
+                  {' '}
+                  0
+                </Text>
+              </View>
+            </View>
+
+            <View style={styles.cardModal}>
+              <Text style={styles.titleModifierModal}>Drink, pick 1</Text>
+              <View style={styles.detailOptionsModal}>
+                <CheckBox
+                  value={this.state.checked}
+                  onValueChange={() =>
+                    this.setState({checked: !this.state.checked})
+                  }
+                />
+                <Text style={{marginTop: 5}}> Sayur</Text>
+                <Text style={{marginTop: 5, position: 'absolute', right: 3}}>
+                  {' '}
+                  0
+                </Text>
+              </View>
+              <View style={styles.detailOptionsModal}>
+                <CheckBox
+                  value={this.state.checked}
+                  onValueChange={() =>
+                    this.setState({checked: !this.state.checked})
+                  }
+                />
+                <Text style={{marginTop: 5}}> Sayur</Text>
+                <Text style={{marginTop: 5, position: 'absolute', right: 3}}>
+                  {' '}
+                  0
+                </Text>
+              </View>
+            </View>
+
+            <View style={styles.cardModal}>
+              <Text style={styles.titleModifierModal}>Quantity</Text>
+              <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+                <View style={styles.panelQty}>
+                  <TouchableOpacity
+                    onPress={this.props.minQty}
+                    style={styles.buttonQty}>
+                    <Text style={styles.btnIncreaseDecrease}>-</Text>
+                  </TouchableOpacity>
+                  <Text style={styles.descQty}>{this.state.qtyItem}</Text>
+                  <TouchableOpacity
+                    onPress={this.props.addQty}
+                    style={styles.buttonQty}>
+                    <Text style={styles.btnIncreaseDecrease}>+</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+            <View style={[styles.cardModal, {height: 60}]} />
+          </ScrollView>
+          <View style={styles.panelAddBasketModal}>
+            <TouchableOpacity
+              onPress={
+                this.state.qtyItem != 0 ? this.props.toggleModal : this.props.toggleModal
+              }
+              style={[
+                styles.btnAddBasketModal,
+                this.state.qtyItem == 0
+                  ? {backgroundColor: colorConfig.store.colorError}
+                  : null,
+              ]}>
+              {this.state.qtyItem != 0 ? (
+                <Text style={styles.textBtnBasketModal}>
+                  Add to Basket - {appConfig.appMataUang}{' '}
+                  {this.props.calculateSubTotalModal()}
+                </Text>
+              ) : (
+                <Text style={styles.textBtnBasketModal}>
+                  Remove from basket
+                </Text>
+              )}
             </TouchableOpacity>
           </View>
-        </ScrollView>
-      </View>
+        </View>
+      </Modal>
     );
   }
 }

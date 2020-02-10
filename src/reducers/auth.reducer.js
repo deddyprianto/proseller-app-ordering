@@ -133,6 +133,18 @@ const confirmUser = (state = {}, action) => {
   }
 };
 
+const attemptSendOTP = (state = {}, action) => {
+  switch (action.type) {
+    case 'ATTEMPT_SEND_OTP':
+      return {
+        attempt: action.attempt,
+      };
+
+    default:
+      return state;
+  }
+};
+
 const sendCodeConfirmation = (state = {}, action) => {
   switch (action.type) {
     case 'SEND_CODE_LOADING':
@@ -202,4 +214,5 @@ export default combineReducers({
   confirmUser,
   sendCodeConfirmation,
   confirmForgotPassword,
+  attemptSendOTP,
 });

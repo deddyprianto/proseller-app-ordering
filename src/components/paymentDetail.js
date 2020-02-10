@@ -424,7 +424,7 @@ class PaymentDetail extends Component {
                 justifyContent: 'space-between',
                 flexDirection: 'row',
               }}>
-              <Text>Redeem Vouchers</Text>
+              <Text>Use Vouchers</Text>
               {this.state.cancelVoucher == false &&
               this.props.dataVoucer != undefined ? (
                 <View
@@ -489,7 +489,7 @@ class PaymentDetail extends Component {
                 justifyContent: 'space-between',
                 flexDirection: 'row',
               }}>
-              <Text>Redeem Point</Text>
+              <Text>Use Point</Text>
               {this.state.cancelPoint == false &&
               this.props.addPoint != undefined ? (
                 <View

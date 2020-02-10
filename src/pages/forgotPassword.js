@@ -33,6 +33,7 @@ import Loader from '../components/loader';
 import {Actions} from 'react-native-router-flux';
 import colorConfig from '../config/colorConfig';
 import awsConfig from '../config/awsConfig';
+import PhoneInput from 'react-native-phone-input';
 
 const imageWidth = Dimensions.get('window').width / 2;
 
@@ -134,7 +135,7 @@ class ForgotPassword extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      phoneNumber: '',
+      phoneNumber: awsConfig.phoneNumberCode,
       confirmationCode: '',
       password: '',
       repassword: '',
@@ -179,7 +180,7 @@ class ForgotPassword extends Component {
     try {
       this.setState({loadingVerifyPhone: true});
       var dataRequest = {
-        phoneNumber: this.state.phoneNumber,
+        phoneNumber: this.phone.getValue(),
         appClientId: awsConfig.appClientId,
         cognitoPoolId: awsConfig.cognitoPoolId,
         companyId: awsConfig.companyId,
@@ -188,7 +189,11 @@ class ForgotPassword extends Component {
         sendCodeConfirmation(dataRequest),
       );
       if (response.responseBody.ResultCode == 200) {
-        this.setState({pressSend: true, loadingVerifyPhone: false});
+        this.setState({
+          pressSend: true,
+          loadingVerifyPhone: false,
+          phoneNumber: dataRequest.phoneNumber,
+        });
       } else {
         this.setState({
           loadingVerifyPhone: false,
@@ -235,7 +240,7 @@ class ForgotPassword extends Component {
         loadingSavePassword: false,
         showAlert: true,
         pesanAlert: 'Please try again',
-        titleAlert: 'Confirm Error!',
+        titleAlert: 'Opss...',
       });
     }
   };
@@ -286,6 +291,10 @@ class ForgotPassword extends Component {
     } else {
       this.setState({showPass: true, press: false});
     }
+  };
+
+  gotoLoginPage = () => {
+    Actions.signin();
   };
 
   renderTextInput = field => {
@@ -371,32 +380,26 @@ class ForgotPassword extends Component {
             }}>
             {!this.state.pressSend ? (
               <Form ref="form" onSubmit={this.handleSendCode}>
-                <TextInput
-                  placeholder={'Phone Number'}
-                  style={{paddingVertical: 10}}
+                {/*<TextInput*/}
+                {/*  placeholder={'Phone Number'}*/}
+                {/*  style={{paddingVertical: 10}}*/}
+                {/*  value={this.state.phoneNumber}*/}
+                {/*  onChangeText={value =>*/}
+                {/*    this.setState({phoneNumber: value})*/}
+                {/*  }*/}
+                {/*/>*/}
+                <PhoneInput
+                  ref={ref => {
+                    this.phone = ref;
+                  }}
+                  style={{
+                    marginTop: 15,
+                    paddingLeft: 5,
+                    paddingVertical: 10,
+                  }}
                   value={this.state.phoneNumber}
-                  onChangeText={value => this.setState({phoneNumber: value})}
                 />
                 <View style={{borderWidth: 0.5, borderColor: 'gray'}} />
-                {/*<TextValidator*/}
-                {/*  style={{marginBottom: -10}}*/}
-                {/*  name="phoneNumber"*/}
-                {/*  label="phoneNumber"*/}
-                {/*  validators={['required']}*/}
-                {/*  errorStyle={{*/}
-                {/*    container: {top: 5, left: 5},*/}
-                {/*    text: {color: 'red'},*/}
-                {/*    underlineValidColor: colorConfig.pageIndex.activeTintColor,*/}
-                {/*    underlineInvalidColor: 'red',*/}
-                {/*  }}*/}
-                {/*  errorMessages={['This field is required']}*/}
-                {/*  placeholder="Phone Number"*/}
-                {/*  type="text"*/}
-                {/*  under*/}
-                {/*  value={this.state.phoneNumber}*/}
-                {/*  onChangeText={value => this.setState({phoneNumber: value})}*/}
-                {/*/>*/}
-
                 <TouchableOpacity
                   style={validPhoneNumber}
                   disabled={this.state.phoneNumber == '' ? true : false}
@@ -410,25 +413,10 @@ class ForgotPassword extends Component {
             ) : (
               <Form ref="form" onSubmit={this.handleConfirmation}>
                 <View>
-                  <TextValidator
-                    style={{marginBottom: -10}}
-                    name="confirmationCode"
-                    label="confirmationCode"
-                    validators={['required']}
-                    errorStyle={{
-                      container: {top: 5, left: 5},
-                      text: {color: 'red'},
-                      underlineValidColor:
-                        colorConfig.pageIndex.activeTintColor,
-                      underlineInvalidColor: 'red',
-                    }}
-                    errorMessages={[
-                      'This field is required',
-                      'Confirmation Code invalid',
-                    ]}
-                    placeholder="Confirmation Code"
-                    keyboardType={'numeric'}
-                    under
+                  <TextInput
+                    placeholder={'Confirmation Code'}
+                    style={{paddingVertical: 10}}
+                    keyboardType='numeric'
                     value={this.state.confirmationCode}
                     onChangeText={value =>
                       this.setState({
@@ -436,37 +424,39 @@ class ForgotPassword extends Component {
                       })
                     }
                   />
+                  <View style={{borderWidth: 0.5, borderColor: 'gray'}} />
+                  {/*<TextValidator*/}
+                  {/*  style={{marginBottom: -10}}*/}
+                  {/*  name="confirmationCode"*/}
+                  {/*  label="confirmationCode"*/}
+                  {/*  validators={['required']}*/}
+                  {/*  errorStyle={{*/}
+                  {/*    container: {top: 5, left: 5},*/}
+                  {/*    text: {color: 'red'},*/}
+                  {/*    underlineValidColor:*/}
+                  {/*      colorConfig.pageIndex.activeTintColor,*/}
+                  {/*    underlineInvalidColor: 'red',*/}
+                  {/*  }}*/}
+                  {/*  errorMessages={[*/}
+                  {/*    'This field is required',*/}
+                  {/*    'Confirmation Code invalid',*/}
+                  {/*  ]}*/}
+                  {/*  placeholder="Confirmation Code"*/}
+                  {/*  keyboardType={'numeric'}*/}
+                  {/*  under*/}
+                  {/*  value={this.state.confirmationCode}*/}
+                  {/*  onChangeText={value =>*/}
+                  {/*    this.setState({*/}
+                  {/*      confirmationCode: value.replace(/\s/g, ''),*/}
+                  {/*    })*/}
+                  {/*  }*/}
+                  {/*/>*/}
                 </View>
                 <View>
-                  <TextValidator
-                    style={{marginBottom: -10}}
-                    name="password"
-                    label="password"
-                    validators={[
-                      'required',
-                      'minStringLength:8',
-                      'matchRegexp:^(?=.*[0-9])',
-                      'matchRegexp:^(?=.*[A-Z])',
-                      'matchRegexp:^(?=.*[a-z])',
-                    ]}
-                    errorStyle={{
-                      container: {top: 5, left: 5},
-                      text: {color: 'red'},
-                      underlineValidColor:
-                        colorConfig.pageIndex.activeTintColor,
-                      underlineInvalidColor: 'red',
-                    }}
-                    errorMessages={[
-                      'This field is required',
-                      'Password min 8 character',
-                      'Password contain at least 1 number',
-                      'Password contain at least 1 uppercase character',
-                      'Password contain at least 1 lowercase character',
-                    ]}
-                    placeholder="New password"
+                  <TextInput
+                    placeholder={'New Password'}
+                    style={{paddingVertical: 10}}
                     secureTextEntry={this.state.showPas}
-                    type="text"
-                    under
                     value={this.state.password}
                     onChangeText={value =>
                       this.setState({
@@ -474,6 +464,43 @@ class ForgotPassword extends Component {
                       })
                     }
                   />
+                  <View style={{borderWidth: 0.5, borderColor: 'gray'}} />
+                  {/*<TextValidator*/}
+                  {/*  style={{marginBottom: -10}}*/}
+                  {/*  name="password"*/}
+                  {/*  label="password"*/}
+                  {/*  validators={[*/}
+                  {/*    'required',*/}
+                  {/*    'minStringLength:8',*/}
+                  {/*    'matchRegexp:^(?=.*[0-9])',*/}
+                  {/*    'matchRegexp:^(?=.*[A-Z])',*/}
+                  {/*    'matchRegexp:^(?=.*[a-z])',*/}
+                  {/*  ]}*/}
+                  {/*  errorStyle={{*/}
+                  {/*    container: {top: 5, left: 5},*/}
+                  {/*    text: {color: 'red'},*/}
+                  {/*    underlineValidColor:*/}
+                  {/*      colorConfig.pageIndex.activeTintColor,*/}
+                  {/*    underlineInvalidColor: 'red',*/}
+                  {/*  }}*/}
+                  {/*  errorMessages={[*/}
+                  {/*    'This field is required',*/}
+                  {/*    'Password min 8 character',*/}
+                  {/*    'Password contain at least 1 number',*/}
+                  {/*    'Password contain at least 1 uppercase character',*/}
+                  {/*    'Password contain at least 1 lowercase character',*/}
+                  {/*  ]}*/}
+                  {/*  placeholder="New password"*/}
+                  {/*  secureTextEntry={this.state.showPas}*/}
+                  {/*  type="text"*/}
+                  {/*  under*/}
+                  {/*  value={this.state.password}*/}
+                  {/*  onChangeText={value =>*/}
+                  {/*    this.setState({*/}
+                  {/*      password: value.replace(/\s/g, ''),*/}
+                  {/*    })*/}
+                  {/*  }*/}
+                  {/*/>*/}
                   <TouchableOpacity
                     style={{position: 'absolute', top: 8, right: 15}}
                     onPress={this.showPas}>
@@ -486,29 +513,39 @@ class ForgotPassword extends Component {
                 </View>
 
                 <View>
-                  <TextValidator
-                    style={{marginBottom: -10}}
-                    name="repassword"
-                    label="repassword"
-                    validators={['required', 'isPasswordMatch']}
-                    errorStyle={{
-                      container: {top: 5, left: 5},
-                      text: {color: 'red'},
-                      underlineValidColor:
-                        colorConfig.pageIndex.activeTintColor,
-                      underlineInvalidColor: 'red',
-                    }}
-                    errorMessages={[
-                      'This field is required',
-                      'Password mismatch',
-                    ]}
-                    placeholder="Your confirm password"
+                  <TextInput
+                    placeholder={'Retype New Password'}
+                    style={{paddingVertical: 10}}
                     secureTextEntry={this.state.showPass}
                     type="text"
                     under
                     value={this.state.repassword}
                     onChangeText={value => this.setState({repassword: value})}
                   />
+                  <View style={{borderWidth: 0.5, borderColor: 'gray'}} />
+                  {/*<TextValidator*/}
+                  {/*  style={{marginBottom: -10}}*/}
+                  {/*  name="repassword"*/}
+                  {/*  label="repassword"*/}
+                  {/*  validators={['required', 'isPasswordMatch']}*/}
+                  {/*  errorStyle={{*/}
+                  {/*    container: {top: 5, left: 5},*/}
+                  {/*    text: {color: 'red'},*/}
+                  {/*    underlineValidColor:*/}
+                  {/*      colorConfig.pageIndex.activeTintColor,*/}
+                  {/*    underlineInvalidColor: 'red',*/}
+                  {/*  }}*/}
+                  {/*  errorMessages={[*/}
+                  {/*    'This field is required',*/}
+                  {/*    'Password mismatch',*/}
+                  {/*  ]}*/}
+                  {/*  placeholder="Your confirm password"*/}
+                  {/*  secureTextEntry={this.state.showPass}*/}
+                  {/*  type="text"*/}
+                  {/*  under*/}
+                  {/*  value={this.state.repassword}*/}
+                  {/*  onChangeText={value => this.setState({repassword: value})}*/}
+                  {/*/>*/}
                   <TouchableOpacity
                     style={{position: 'absolute', top: 8, right: 15}}
                     onPress={this.showPass}>
@@ -561,7 +598,7 @@ class ForgotPassword extends Component {
           }}
           onConfirmPressed={() => {
             this.state.titleAlert == 'Confirm Success!'
-              ? this.submitLogin()
+              ? this.gotoLoginPage()
               : this.hideAlert();
           }}
         />

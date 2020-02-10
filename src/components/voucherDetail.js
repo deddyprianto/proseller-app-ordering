@@ -337,7 +337,6 @@ class VoucherDetail extends Component {
           }}
           onConfirmPressed={() => {
             if (this.state.titleAlert == 'Success!') {
-              this.accountVoucher();
               this.hideAlert();
             } else if (this.state.titleAlert == 'Redeem Voucher ?') {
               this.btnRedeem(this.props.dataVoucher);

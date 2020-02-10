@@ -12,6 +12,19 @@ const myVoucers = (state = {}, action) => {
   }
 };
 
+const accountExist = (state = {}, action) => {
+  switch (action.type) {
+    case 'DATA_ACCOUNT_EXIST':
+      return {
+        status: action.status,
+      };
+
+    default:
+      return state;
+  }
+};
+
 export default combineReducers({
   myVoucers,
+  accountExist,
 });

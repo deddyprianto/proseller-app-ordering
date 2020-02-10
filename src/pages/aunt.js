@@ -128,6 +128,7 @@ class Aunt extends Component {
       showAlert: false,
       pesanAlert: '',
       titleAlert: '',
+      loading: false,
     };
     this.imageWidth = new Animated.Value(styles.$largeImageSize);
   }
@@ -141,28 +142,31 @@ class Aunt extends Component {
   }
 
   handleSubmit = async () => {
+    this.setState({loading: true});
     try {
       var dataVerify = {
         phoneNumber: this.state.phoneNumber,
         confirmationCode: this.state.confirmationCode,
         appClientId: awsConfig.appClientId,
       };
-      // console.log('dataVerify');
+      console.log(dataVerify, 'dataVerify');
       const response = await this.props.dispatch(confirmUser(dataVerify));
       if (!response.success) {
         throw response;
       } else {
         this.setState({
           showAlert: true,
-          pesanAlert: 'Your account success to verify!',
+          pesanAlert: 'Your account is success to verify!',
           titleAlert: 'Verify Success!',
+          loading: false,
         });
       }
     } catch (error) {
       this.setState({
         showAlert: true,
-        pesanAlert: error.responseBody.message,
+        pesanAlert: error.responseBody.Data.message,
         titleAlert: 'Oopps..',
+        loading: false,
       });
     }
   };
@@ -188,21 +192,20 @@ class Aunt extends Component {
     } catch (error) {
       this.setState({
         showAlert: true,
-        titleAlert: 'Login Error!',
-        pesanError: error.responseBody.message,
+        titleAlert: 'Oppss...',
+        pesanError: error.responseBody.Data.message,
       });
     }
   };
 
   handleResend = async () => {
+    this.setState({loading: true});
     try {
       this.setState({loadingVerifyPhone: true});
       var dataRequest = {
-        phoneNumber: this.phone.value(),
-        appClientId: awsConfig.appClientId,
-        cognitoPoolId: awsConfig.cognitoPoolId,
-        companyId: awsConfig.companyId,
+        phoneNumber: this.phone.getValue(),
       };
+      console.log(dataRequest, 'payload resend sms');
       const response = await this.props.dispatch(
         sendCodeConfirmation(dataRequest),
       );
@@ -211,16 +214,26 @@ class Aunt extends Component {
           showAlert: true,
           pesanAlert: 'Confirmation code has been resent to your phone',
           titleAlert: 'Confirmation!',
+          loading: false,
         });
       } else {
         this.setState({
           loadingVerifyPhone: false,
           showAlert: true,
           pesanAlert: response.responseBody.Data.message,
-          titleAlert: 'Failed!',
+          titleAlert: 'Opps..',
+          loading: false,
         });
       }
-    } catch (error) {}
+    } catch (error) {
+      this.setState({
+        loadingVerifyPhone: false,
+        showAlert: true,
+        pesanAlert: 'Something went wrong, please try again.',
+        titleAlert: 'Oppss...',
+        loading: false,
+      });
+    }
   };
 
   showPass = () => {
@@ -229,6 +242,10 @@ class Aunt extends Component {
     } else {
       this.setState({showPass: true, press: false});
     }
+  };
+
+  gotoLoginPage = () => {
+    Actions.signin();
   };
 
   renderTextInput = field => {
@@ -265,27 +282,27 @@ class Aunt extends Component {
     return (
       <View style={styles.backgroundImage}>
         {console.log(this.props)}
-        {loginUser && loginUser.isLoading && <Loader />}
+        {this.state.loading && <Loader />}
         <ScrollView>
           <View
             style={{
               flexDirection: 'row',
               backgroundColor: colorConfig.pageIndex.backgroundColor,
             }}>
-            <TouchableOpacity onPress={this.signin}>
-              <Icon
-                size={28}
-                name={
-                  Platform.OS === 'ios'
-                    ? 'ios-arrow-back'
-                    : 'md-arrow-round-back'
-                }
-                style={{
-                  color: colorConfig.pageIndex.activeTintColor,
-                  margin: 10,
-                }}
-              />
-            </TouchableOpacity>
+            {/*<TouchableOpacity onPress={this.signin}>*/}
+            {/*  <Icon*/}
+            {/*    size={28}*/}
+            {/*    name={*/}
+            {/*      Platform.OS === 'ios'*/}
+            {/*        ? 'ios-arrow-back'*/}
+            {/*        : 'md-arrow-round-back'*/}
+            {/*    }*/}
+            {/*    style={{*/}
+            {/*      color: colorConfig.pageIndex.activeTintColor,*/}
+            {/*      margin: 10,*/}
+            {/*    }}*/}
+            {/*  />*/}
+            {/*</TouchableOpacity>*/}
             <View style={styles.container}>
               <Text
                 style={{
@@ -333,7 +350,6 @@ class Aunt extends Component {
                 style={{marginTop: 15, paddingLeft: 5}}
                 value={this.state.phoneNumber}
               />
-
               <View
                 style={{
                   backgroundColor: colorConfig.pageIndex.activeTintColor,
@@ -371,9 +387,11 @@ class Aunt extends Component {
                 {/*/>*/}
                 <TextInput
                   placeholder={'Your confirmation code'}
-                  style={{paddingVertical: 10, paddingLeft: 5,}}
+                  style={{paddingVertical: 10, paddingLeft: 5}}
                   secureTextEntry={this.state.showPass}
                   value={this.state.confirmationCode}
+                  keyboardType="numeric"
+                  textContentType="oneTimeCode"
                   onChangeText={value =>
                     this.setState({confirmationCode: value.replace(/\s/g, '')})
                   }
@@ -441,6 +459,13 @@ class Aunt extends Component {
           showCancelButton={false}
           showConfirmButton={true}
           cancelText="Close"
+          confirmButtonStyle={{padding: 10}}
+          titleStyle={{
+            fontSize: 20,
+            color: colorConfig.store.defaultColor,
+            fontWeight: 'bold',
+          }}
+          messageStyle={{fontSize: 13, textAlign: 'center'}}
           confirmText={
             this.state.titleAlert == 'Verify Success!' ? 'Login' : 'Close'
           }
@@ -449,9 +474,15 @@ class Aunt extends Component {
             this.hideAlert();
           }}
           onConfirmPressed={() => {
-            this.state.titleAlert == 'Verify Success!'
-              ? this.submitLogin()
-              : this.hideAlert();
+            if (this.state.titleAlert == 'Verify Success!') {
+              if (this.props.dataRegister.phoneNumber != undefined) {
+                this.submitLogin();
+              } else {
+                this.gotoLoginPage();
+              }
+            } else {
+              this.hideAlert();
+            }
           }}
         />
       </View>
