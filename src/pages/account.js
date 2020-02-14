@@ -7,6 +7,7 @@ import {
   RefreshControl,
   TouchableOpacity,
   Image,
+  ActivityIndicator,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
@@ -19,14 +20,13 @@ import AccountMenuList from '../components/accountMenuList';
 import {campaign, dataPoint, vouchers} from '../actions/rewards.action';
 import {myVoucers} from '../actions/account.action';
 import colorConfig from '../config/colorConfig';
-import Icon from 'react-native-vector-icons/Ionicons';
-import * as _ from 'lodash';
 
 class Account extends Component {
   constructor(props) {
     super(props);
     this.state = {
       refreshing: false,
+      loadingLogout: false,
     };
   }
 
@@ -58,7 +58,9 @@ class Account extends Component {
   };
 
   logout = async () => {
+    this.setState({loadingLogout: true});
     await this.props.dispatch(logoutUser());
+    this.setState({loadingLogout: false});
   };
 
   // myVouchers = () => {
@@ -79,7 +81,6 @@ class Account extends Component {
   // };
 
   render() {
-    console.log('USER DETAIL ', this.props.userDetail);
     return (
       <View style={{flex: 1}}>
         <ScrollView
@@ -107,16 +108,20 @@ class Account extends Component {
             width: '100%',
           }}
           onPress={this.logout}>
-          <Text
-            style={{
-              color: 'white',
-              fontSize: 14,
-              fontWeight: 'bold',
-              fontFamily: 'Lato-Bold',
-              textAlign: 'center',
-            }}>
-            LOG OUT
-          </Text>
+          {this.state.loadingLogout ? (
+            <ActivityIndicator size={'large'} color={'white'} />
+          ) : (
+            <Text
+              style={{
+                color: 'white',
+                fontSize: 14,
+                fontWeight: 'bold',
+                fontFamily: 'Lato-Bold',
+                textAlign: 'center',
+              }}>
+              LOG OUT
+            </Text>
+          )}
         </TouchableOpacity>
       </View>
     );

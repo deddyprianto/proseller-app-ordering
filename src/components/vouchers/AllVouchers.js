@@ -155,38 +155,6 @@ class AllVouchers extends Component {
                                 : 'No description for this voucher'}
                             </Text>
                           </View>
-                          {/*<View style={{flexDirection: 'row'}}>*/}
-                          {/*  <Icon*/}
-                          {/*    size={15}*/}
-                          {/*    name={Platform.OS === 'ios' ? 'ios-time' : 'md-time'}*/}
-                          {/*    style={{*/}
-                          {/*      color: colorConfig.pageIndex.inactiveTintColor,*/}
-                          {/*      marginRight: 3,*/}
-                          {/*    }}*/}
-                          {/*  />*/}
-                          {/*  {item['validity']['longTerm'] ? (*/}
-                          {/*    <Text style={styles.descVoucher}>*/}
-                          {/*      {item['validity']['activeWeekDays'][*/}
-                          {/*        this.state.currentDay.getDay()*/}
-                          {/*      ]['validHour']['from'] +*/}
-                          {/*        ' - ' +*/}
-                          {/*        item['validity']['activeWeekDays'][*/}
-                          {/*          this.state.currentDay.getDay()*/}
-                          {/*        ]['validHour']['to']}*/}
-                          {/*    </Text>*/}
-                          {/*  ) : (*/}
-                          {/*    <Text style={styles.descVoucher}>*/}
-                          {/*      /!*{this.getDate(*!/*/}
-                          {/*      /!*  item['validity']['validDate']['startDate'],*!/*/}
-                          {/*      /!*) +*!/*/}
-                          {/*      /!*  ' - ' +*!/*/}
-                          {/*      /!*  this.getDate(*!/*/}
-                          {/*      /!*    item['validity']['validDate']['endDate'],*!/*/}
-                          {/*      /!*  )}*!/*/}
-                          {/*      ini date nya*/}
-                          {/*    </Text>*/}
-                          {/*  )}*/}
-                          {/*</View>*/}
                         </View>
                       </TouchableOpacity>
                     }
@@ -205,6 +173,7 @@ const styles = StyleSheet.create({
   container: {
     alignContent: 'center',
     margin: 10,
+    paddingBottom: 200,
   },
   title: {
     color: colorConfig.pageIndex.activeTintColor,

@@ -19,6 +19,16 @@ const authData = (state = {}, action) => {
         waiting: false,
       };
 
+    case 'REFRESH_TOKEN_USER':
+      return {
+        token: action.token,
+        qrcode: action.qrcode,
+        refreshToken: action.refreshToken,
+        payload: action.payload,
+        isLoggedIn: true,
+        waiting: false,
+      };
+
     case 'AUTH_USER_FAIL':
       return {
         token: null,

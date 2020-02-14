@@ -132,12 +132,35 @@ export const logoutUser = () => {
   return async (dispatch, getState) => {
     const state = getState();
     try {
+      // get user token
       const {
         authReducer: {
           authData: {token},
         },
       } = state;
-      LoginManager.logOut();
+      // get user details and phone ID
+      const {
+        userReducer: {
+          getUser: {userDetails},
+        },
+        userReducer: {
+          deviceUserInfo: {deviceID},
+        },
+      } = state;
+
+      let payload = {
+        phoneNumber: userDetails.phoneNumber,
+        player_ids: deviceID,
+      };
+      // LoginManager.logOut();payload
+      const response = await fetchApi(
+        '/customer/logout',
+        'POST',
+        payload,
+        200,
+        token,
+      );
+      console.log(response, 'response logout');
       dispatch({
         type: 'USER_LOGGED_OUT_SUCCESS',
       });
@@ -171,29 +194,18 @@ export const refreshToken = () => {
         refreshToken: state.authReducer.authData.refreshToken,
         appClientId: awsConfig.appClientId,
       };
-
-      // var dateTokenExp = new Date(state.authReducer.authData.tokenExp);
-      // var dateNow = new Date();
-      // var sisaTokenExp = dateTokenExp.getTime() - dateNow.getTime();
-      // console.log('sisa token ', sisaTokenExp);
-      // if (sisaTokenExp < 0) {
-      // await this.props.dispatch(refreshToken());
+      console.log('PAYLOAD REFRESH TOKEN ', payload);
       const response = await fetchApi('/auth/refresh', 'POST', payload, 200);
       console.log(response, 'response refresh token');
       var date = new Date();
       dispatch({
-        type: 'AUTH_USER_SUCCESS',
+        type: 'REFRESH_TOKEN_USER',
         token: response.responseBody.Data.accessToken.jwtToken,
-        exp: date.getTime() + 900,
-        refreshToken: state.authReducer.authData.refreshToken,
+        refreshToken: payload.refreshToken,
         qrcode: state.authReducer.authData.qrcode,
         payload: state.authReducer.authData.payload,
-        isLoggedIn: true,
-        waiting: false,
+        // isLoggedIn: true,
       });
-      // console.log('Token Expired: ' + dateTokenExp);
-      // console.log('Token Now: ' + dateNow);
-      // }
     } catch (error) {
       console.log(error);
     }

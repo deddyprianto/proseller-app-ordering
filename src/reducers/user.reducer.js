@@ -86,8 +86,21 @@ const deviceUserInfo = (state = {}, action) => {
   }
 };
 
+const userPosition = (state = {}, action) => {
+  switch (action.type) {
+    case 'GET_USER_POSITION':
+      return {
+        userPosition: action.userPosition,
+      };
+
+    default:
+      return state;
+  }
+};
+
 export default combineReducers({
   getUser,
   updateUser,
   deviceUserInfo,
+  userPosition,
 });

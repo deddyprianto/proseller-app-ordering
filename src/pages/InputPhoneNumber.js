@@ -18,6 +18,7 @@ import {
   TouchableHighlight,
   Alert,
   AsyncStorage,
+  PermissionsAndroid,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
@@ -30,7 +31,8 @@ import colorConfig from '../config/colorConfig';
 import awsConfig from '../config/awsConfig';
 import Header from '../components/atom/header';
 import CountryPicker from 'react-native-country-picker-modal';
-import {deviceUserInfo} from '../actions/user.action';
+import {deviceUserInfo, userPosition} from '../actions/user.action';
+import Geolocation from 'react-native-geolocation-service';
 
 const imageWidth = Dimensions.get('window').width / 2;
 
@@ -125,6 +127,7 @@ class InputPhoneNumber extends Component {
   }
 
   componentDidMount = async () => {
+    // get device ID for push notif
     try {
       const value = await AsyncStorage.getItem('deviceID');
       if (value !== null) {
@@ -132,6 +135,30 @@ class InputPhoneNumber extends Component {
       }
     } catch (error) {
       console.log(error, 'error retrieve data from async');
+    }
+
+    // permition to get user position
+    if (Platform.OS !== 'android') Geolocation.requestAuthorization();
+    else {
+      try {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+          {
+            title: 'we need GPS location service',
+            message: 'we need location service to provide your location',
+            // buttonNeutral: 'Ask Me Later',
+            buttonNegative: 'Cancel',
+            buttonPositive: 'OK',
+          },
+        );
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        } else {
+          Defaults.modal.current.renderModel(modalOptions);
+          return false;
+        }
+      } catch (err) {
+        console.warn(err);
+      }
     }
   };
 
@@ -176,8 +203,23 @@ class InputPhoneNumber extends Component {
     }
   };
 
+  getUserPosition = async () => {
+    try {
+      await Geolocation.getCurrentPosition(
+        async position => {
+          await this.props.dispatch(userPosition(position));
+        },
+        async error => {},
+        {enableHighAccuracy: true, timeout: 3000, maximumAge: 1000},
+      );
+    } catch (error) {
+      console.log(error, 'error get position');
+    }
+  };
+
   render() {
-    console.log(this.props.deviceID.deviceID, 'this.props.deviceID.deviceID');
+    this.getUserPosition();
+    // console.log(this.props.deviceID.deviceID, 'this.props.deviceID.deviceID');
     return (
       <View style={styles.backgroundImage}>
         {this.state.loading && <Loader />}
@@ -230,10 +272,7 @@ class InputPhoneNumber extends Component {
                 borderWidth: 2,
                 borderRadius: 13,
               }}>
-              <View
-                style={{
-                  width: this.state.phoneNumber.length < 4 ? '20%' : '25%',
-                }}>
+              <View>
                 <Text
                   style={{
                     fontSize: 20,
@@ -250,8 +289,6 @@ class InputPhoneNumber extends Component {
                 value={this.state.phone}
                 onChangeText={value => this.setState({phone: value})}
                 style={{
-                  alignSelf: 'flex-end',
-                  width: '75%',
                   fontSize: 20,
                   fontFamily: 'Lato-Medium',
                   padding: 15,

@@ -269,6 +269,7 @@ class MyVouchers extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingBottom: 200,
   },
   btnBackIcon: {
     color: colorConfig.pageIndex.activeTintColor,

@@ -47,3 +47,15 @@ export const deviceUserInfo = deviceID => {
     }
   };
 };
+export const userPosition = userPosition => {
+  return async dispatch => {
+    try {
+      dispatch({
+        type: 'GET_USER_POSITION',
+        userPosition: userPosition,
+      });
+    } catch (error) {
+      return error;
+    }
+  };
+};

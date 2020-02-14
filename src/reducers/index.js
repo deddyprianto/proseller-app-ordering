@@ -14,6 +14,7 @@ import storesReducer from './stores.reducer';
 import accountsReducer from './accounts.reducer';
 import inboxReducer from './inbox.reducer';
 import promotionReducer from './promotion.reducer';
+import orderReducer from './order.reducer';
 
 const reducers = {
   authReducer,
@@ -23,6 +24,7 @@ const reducers = {
   accountsReducer,
   inboxReducer,
   promotionReducer,
+  orderReducer,
   form: formReducer,
 };
 

@@ -8,10 +8,10 @@ import {
   RefreshControl,
   TouchableOpacity,
   Image,
+  Alert,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
-import {notifikasi} from '../actions/auth.actions';
 import {dataStores} from '../actions/stores.action';
 
 import * as geolib from 'geolib';
@@ -24,17 +24,10 @@ import StorePromotion from '../components/storePromotion';
 import StoreNearYou from '../components/storeNearYou';
 import StoreStores from '../components/storeStores';
 import appConfig from '../config/appConfig';
-import {Actions} from 'react-native-router-flux';
-import {myVoucers} from '../actions/account.action';
-import {
-  campaign,
-  dataPoint,
-  vouchers,
-  getStamps,
-} from '../actions/rewards.action';
-import {dataInbox} from '../actions/inbox.action';
 import {dataPromotion} from '../actions/promotion.action';
+import {getBasket} from '../actions/order.action';
 import Icon from 'react-native-vector-icons/Ionicons';
+import {Actions} from 'react-native-router-flux';
 
 class Store extends Component {
   constructor(props) {
@@ -54,13 +47,8 @@ class Store extends Component {
   }
 
   componentDidMount = async () => {
-    await this.props.dispatch(campaign());
     await this.props.dispatch(dataPromotion());
-    await this.props.dispatch(dataPoint());
-    // await this.props.dispatch(vouchers());
-    // await this.props.dispatch(myVoucers());
-    // await this.props.dispatch(dataInbox());
-    // await this.props.dispatch(getStamps());
+    // let response = await this.props.dispatch(getBasket());
 
     if (this.state.dataStores.length === 0) {
       this.setState({isLoading: true});
@@ -92,25 +80,16 @@ class Store extends Component {
 
   getDataStores = async () => {
     try {
-      await Geolocation.getCurrentPosition(
-        async position => {
-          await this.props.dispatch(dataStores());
-          this.setDataStore(this.props.dataStores, true, position);
-        },
-        async error => {
-          await this.props.dispatch(dataStores());
-          this.setDataStore(this.props.dataStores, false, null);
-        },
-        {enableHighAccuracy: true, timeout: 3000, maximumAge: 1000},
+      await this.props.dispatch(dataStores());
+      await this.props.dispatch(getBasket());
+      let statusLocaiton = this.props.userPosition != false ? true : false;
+      this.setDataStore(
+        this.props.dataStores,
+        statusLocaiton,
+        this.props.userPosition,
       );
-    } catch (error) {
-      await this.props.dispatch(
-        notifikasi(
-          'Get Data Stores Error!',
-          error.responseBody.message,
-          console.log('Cancel Pressed'),
-        ),
-      );
+    } catch (e) {
+      Alert.alert('Oppss...', 'Something went wrong, please try again.');
     }
   };
 
@@ -138,6 +117,7 @@ class Store extends Component {
 
           storeGrupTampung.push(response.data[i].location.region);
           dataStoresTampung.push({
+            storeId: response.data[i].id,
             storeName: response.data[i].name,
             storeStatus: this._cekOpen(response.data[i].operationalHours),
             storeJarak: statusLocation
@@ -165,7 +145,7 @@ class Store extends Component {
     }
 
     var dataStoresNearTampung = [];
-    console.log('dataStoresTampung ', dataStoresTampung);
+    // console.log('dataStoresTampung ', dataStoresTampung);
     if (statusLocation) {
       for (let i = 0; i < 3; i++) {
         dataStoresNearTampung = [...dataStoresTampung];
@@ -173,7 +153,7 @@ class Store extends Component {
       }
     }
 
-    console.log('dataAllStore ', dataStoresTampung);
+    // console.log('dataAllStore ', dataStoresTampung);
     try {
       this.setState({
         isLoading: false,
@@ -236,41 +216,10 @@ class Store extends Component {
     }
   };
 
-  _getStatusOpen = (statusStore, statusOpen, openHour, closeHour) => {
-    if (statusStore) {
-      if (statusOpen) {
-        return 'Open • Closing at ' + closeHour[0] + ':' + closeHour[1];
-      } else {
-        return 'Closed • Opening at ' + openHour[0] + ':' + openHour[1];
-      }
-    } else {
-      return 'Closed • Closed today';
-    }
-  };
-
   _onRefresh = () => {
     this.setState({refreshing: true});
     this.getDataStores();
     this.setState({refreshing: false});
-  };
-
-  myVouchers = () => {
-    var myVoucers = [];
-    if (this.props.myVoucers != undefined) {
-      _.forEach(
-        _.groupBy(
-          this.props.myVoucers.filter(voucher => voucher.deleted == false),
-          'id',
-        ),
-        function(value, key) {
-          value[0].totalRedeem = value.length;
-          myVoucers.push(value[0]);
-        },
-      );
-    }
-
-    console.log(myVoucers);
-    Actions.accountVouchers({data: myVoucers});
   };
 
   getHallo = () => {
@@ -286,7 +235,6 @@ class Store extends Component {
   };
 
   render() {
-    console.log('this.props.dataPromotion ', this.props.dataPromotion);
     return (
       <View style={{marginBottom: 40}}>
         <View
@@ -402,6 +350,56 @@ class Store extends Component {
             </View>
           )}
         </ScrollView>
+
+        <TouchableOpacity
+          onPress={() => Actions.basket()}
+          style={{
+            position: 'absolute',
+            bottom: '6%',
+            right: '5%',
+            height: 60,
+            borderRadius: 50,
+            justifyContent: 'center',
+            alignItems: 'center',
+            width: 60,
+            backgroundColor: 'white',
+            shadowColor: '#00000021',
+            shadowOffset: {
+              width: 0,
+              height: 9,
+            },
+            shadowOpacity: 0.7,
+            shadowRadius: 7.49,
+            elevation: 12,
+          }}>
+          <View>
+            <Icon
+              size={40}
+              name={Platform.OS === 'ios' ? 'ios-basket' : 'md-basket'}
+              style={{color: colorConfig.store.defaultColor}}
+            />
+          </View>
+          {/* check data length basket, if not undefined, then show length */}
+          {this.props.dataBasket != undefined &&
+          this.props.dataBasket.details != undefined ? (
+            <View
+              style={{
+                position: 'absolute',
+                top: -7,
+                left: 1,
+                width: 25,
+                height: 25,
+                backgroundColor: colorConfig.store.colorError,
+                borderRadius: 50,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <Text style={{color: 'white', padding: 3, fontSize: 11}}>
+                {this.props.dataBasket.details.length}
+              </Text>
+            </View>
+          ) : null}
+        </TouchableOpacity>
       </View>
     );
   }
@@ -428,7 +426,6 @@ const styles = StyleSheet.create({
     margin: 10,
     alignItems: 'center',
     flexDirection: 'row',
-    alignItems: 'center',
     borderRadius: 10,
     paddingTop: 5,
     paddingBottom: 5,
@@ -439,11 +436,11 @@ const styles = StyleSheet.create({
 });
 
 mapStateToProps = state => ({
+  dataBasket: state.orderReducer.dataBasket.product,
   dataStores: state.storesReducer.dataStores.stores,
-  myVoucers: state.accountsReducer.myVoucers.myVoucers,
-  totalPoint: state.rewardsReducer.dataPoint.totalPoint,
   userDetail: state.userReducer.getUser.userDetails,
   dataPromotion: state.promotionReducer.dataPromotion.promotion,
+  userPosition: state.userReducer.userPosition.userPosition,
 });
 
 mapDispatchToProps = dispatch => ({

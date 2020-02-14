@@ -17,16 +17,14 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
-import createOpenLink from 'react-native-open-maps';
-
-import colorConfig from '../config/colorConfig';
-import appConfig from '../config/appConfig';
-import ProgressiveImage from '../components/helper/ProgressiveImage';
-import ModalOrder from '../components/order/Modal';
-import {getProductByOutlet} from '../actions/order.action';
+import colorConfig from '../../config/colorConfig';
+import appConfig from '../../config/appConfig';
+import ProgressiveImage from '../../components/helper/ProgressiveImage';
+import ModalOrder from '../../components/order/Modal';
+import {getProductByOutlet} from '../../actions/order.action';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
-import Loader from '../components/loader';
+import Loader from '../../components/loader';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -85,7 +83,7 @@ const styles = StyleSheet.create({
     backgroundColor: colorConfig.splash.container,
   },
   card: {
-    marginVertical: 5,
+    marginVertical: 10,
     backgroundColor: colorConfig.pageIndex.backgroundColor,
     shadowColor: '#00000021',
     shadowOffset: {
@@ -113,14 +111,7 @@ const styles = StyleSheet.create({
     margin: 10,
   },
   titleCategory: {
-    color: colorConfig.pageIndex.grayColor,
-    fontSize: 18,
-    textAlign: 'left',
-    fontWeight: 'bold',
-    padding: 14,
-  },
-  subMenuCategory: {
-    color: colorConfig.store.title,
+    color: colorConfig.pageIndex.inactiveTintColor,
     fontSize: 18,
     textAlign: 'left',
     fontWeight: 'bold',
@@ -282,7 +273,7 @@ const styles = StyleSheet.create({
   },
 });
 
-class StoreDetailStores extends Component {
+class Products extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -355,19 +346,10 @@ class StoreDetailStores extends Component {
   };
 
   render() {
+    let products = this.props.products[0].items;
+    console.log('list 1 product ', products);
     return (
       <View style={styles.container}>
-        <ModalOrder
-          isModalVisible={this.state.isModalVisible}
-          qtyItem={this.state.qtyItem}
-          closeModal={this.closeModal}
-          backButtonClicked={this.backButtonClicked}
-          toggleModal={this.toggleModal}
-          addQty={this.addQty}
-          minQty={this.minQty}
-          modalShow={this.modalShow}
-          calculateSubTotalModal={this.calculateSubTotalModal}
-        />
         <View style={styles.headerImage}>
           <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
             <Icon
@@ -377,130 +359,52 @@ class StoreDetailStores extends Component {
               }
               style={styles.btnBackIcon}
             />
-            <Text style={styles.btnBackText}>
-              {' '}
-              {this.props.item.storeName}{' '}
-            </Text>
+            <Text style={styles.btnBackText}> Nama menu </Text>
           </TouchableOpacity>
         </View>
         <ScrollView>
-          <View style={styles.cardImage}>
-            {this.props.item.defaultImageURL != undefined ? (
-              <ProgressiveImage
-                resizeMode="cover"
-                style={styles.image}
-                source={{
-                  uri: this.props.item.defaultImageURL,
-                }}
-              />
-            ) : (
-              <ProgressiveImage
-                resizeMode="cover"
-                style={styles.image}
-                source={{
-                  uri:
-                    'https://cdnph.upi.com/svc/sv/upi_com/8961462650364/2016/1/a058b8e2364d66fea34084fd5af461a0/Walmart-to-bring-back-store-greeters-and-beef-up-security.jpg',
-                }}
-              />
-            )}
-          </View>
-          <View style={styles.storeDescription}>
-            <Text
-              style={{
-                fontWeight: 'bold',
-                fontSize: 20,
-                textAlign: 'center',
-                marginVertical: 17,
-              }}>
-              {this.props.item.storeName}
-            </Text>
-            <View
-              style={{
-                flex: 1,
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                marginHorizontal: 10,
-              }}>
-              <Text>
-                <Icon
-                  size={18}
-                  name={Platform.OS === 'ios' ? 'ios-time' : 'md-time'}
-                  style={{
-                    color: this.props.item.storeStatus
-                      ? colorConfig.store.colorSuccess
-                      : colorConfig.store.colorError,
-                    paddingRight: 10,
-                  }}
-                />
-                <Text
-                  style={{
-                    fontWeight: 'bold',
-                    fontSize: 15,
-                    color: this.props.item.storeStatus
-                      ? colorConfig.store.colorSuccess
-                      : colorConfig.store.colorError,
-                  }}>
-                  {' '}
-                  {this.props.item.storeStatus ? 'Open' : 'Closed'}
-                </Text>
-              </Text>
-              <Text>
-                <Icon
-                  size={18}
-                  name={Platform.OS === 'ios' ? 'ios-pin' : 'md-pin'}
-                  style={{color: 'red', paddingRight: 10}}
-                />
-                <Text style={{fontSize: 13}}>
-                  {' '}
-                  {this.props.item.region} - {this.props.item.city}
-                </Text>
-              </Text>
-              <Text>
-                <Icon
-                  size={18}
-                  name={Platform.OS === 'ios' ? 'ios-map' : 'md-map'}
-                  style={{
-                    color: colorConfig.store.defaultColor,
-                    paddingRight: 10,
-                  }}
-                />
-                <Text style={{fontSize: 13}}>
-                  {' '}
-                  {this.props.item.storeJarak.toFixed(1) + ' KM'}
-                </Text>
-              </Text>
-            </View>
-          </View>
-          <View>
-            <Text style={styles.subMenuCategory}>Category Products</Text>
-          </View>
           {this.props.products != undefined ? (
             this.props.products.length != 0 ? (
               <View style={styles.card}>
                 <FlatList
-                  data={this.props.products}
-                  extraData={this.props}
+                  data={products}
                   renderItem={({item}) => (
                     <TouchableOpacity
-                      onPress={() => Actions.products(item)}
-                      style={{
-                        borderBottomWidth: 1,
-                        borderColor: colorConfig.pageIndex.inactiveTintColor,
-                        justifyContent: 'center',
-                      }}>
-                      <Text style={styles.titleCategory}>{item.name}</Text>
-                      <Icon
-                        size={20}
-                        name={Platform.OS === 'ios' ? 'ios-open' : 'md-open'}
-                        style={{
-                          position: 'absolute',
-                          right: 20,
-                          color: colorConfig.pageIndex.grayColor,
-                        }}
-                      />
+                      style={styles.detail}
+                      onPress={this.toggleModal}>
+                      <View style={styles.detailItem}>
+                        <View style={{flexDirection: 'row'}}>
+                          <ProgressiveImage
+                            style={styles.imageProduct}
+                            source={{
+                              uri:
+                                'https://upload.wikimedia.org/wikipedia/commons/6/62/Nasi_Lemak%2C_Mamak%2C_Sydney.jpg',
+                            }}
+                          />
+                          <View>
+                            <Text style={[styles.productTitle]}>
+                              {/*<Text*/}
+                              {/*  style={{*/}
+                              {/*    color: colorConfig.store.defaultColor,*/}
+                              {/*    fontWeight: 'bold',*/}
+                              {/*  }}>*/}
+                              {/*  x 3*/}
+                              {/*</Text>{' '}*/}
+                              {item.product.name}
+                            </Text>
+                            {/*<Text style={[styles.productDesc]}>*/}
+                            {/*  Nasi + telur goreng ditambah dengan ayam*/}
+                            {/*  goreng + es teh goreng*/}
+                            {/*</Text>*/}
+                          </View>
+                        </View>
+                        <Text style={[styles.productPrice]}>
+                          SGD {item.product.retailPrice}
+                        </Text>
+                      </View>
                     </TouchableOpacity>
                   )}
-                  keyExtractor={(item, index) => index.toString()}
+                  keyExtractor={(product, index) => index.toString()}
                 />
               </View>
             ) : (
@@ -567,4 +471,4 @@ export default compose(
     mapStateToProps,
     mapDispatchToProps,
   ),
-)(StoreDetailStores);
+)(Products);

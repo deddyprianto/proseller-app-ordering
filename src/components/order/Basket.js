@@ -1,0 +1,446 @@
+import React, {Component} from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Dimensions,
+  TouchableOpacity,
+  BackHandler,
+  FlatList,
+  ScrollView,
+} from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';
+import {Actions} from 'react-native-router-flux';
+
+import colorConfig from '../../config/colorConfig';
+import {compose} from 'redux';
+import {connect} from 'react-redux';
+import {getBasket} from '../../actions/order.action';
+import Loader from '../../components/loader';
+import {formatter} from '../../helper/CurrencyFormat';
+import ModalOrder from '../../components/order/Modal';
+
+class Basket extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      screenWidth: Dimensions.get('window').width,
+      loading: true,
+      showBasketButton: true,
+      isModalVisible: false,
+      qtyItem: 1,
+      remark: '',
+      take: 1,
+      idx: 0,
+      selectedCategory: 'ALL PRODUCTS',
+      selectedProduct: {},
+    };
+  }
+
+  currency = value => {
+    let data = formatter(value);
+    console.log(data, 'NO NO');
+    return 'SGD ' + value;
+  };
+
+  componentDidMount = async () => {
+    await this.getBasket();
+    this.backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      this.handleBackPress,
+    );
+  };
+
+  getBasket = async () => {
+    this.setState({loading: true});
+    await this.props.dispatch(getBasket());
+    this.setState({loading: false});
+  };
+
+  componentWillUnmount() {
+    this.backHandler.remove();
+  }
+
+  handleBackPress = () => {
+    this.goBack();
+    return true;
+  };
+
+  goBack = async () => {
+    Actions.pop();
+  };
+
+  renderButtonConfirm = () => {
+    return (
+      <View
+        style={{
+          width: '100%',
+          // marginTop: 10,
+          position: 'absolute',
+          bottom: 30,
+          flexDirection: 'row',
+          justifyContent: 'center',
+          // alignItems: 'center',
+          // marginHorizontal: '5%',
+        }}>
+        <TouchableOpacity style={styles.btnCancelBasketModal}>
+          <Text style={styles.textBtnBasketModal}>Cancel</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.btnAddBasketModal}>
+          <Text style={styles.textBtnBasketModal}>Confirm</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
+  renderNullBasker = () => {
+    return (
+      <View
+        style={{
+          justifyContent: 'center',
+          alignItems: 'center',
+          flexDirection: 'row',
+          height: '90%',
+        }}>
+        <Text
+          style={{
+            fontSize: 25,
+            color: colorConfig.pageIndex.inactiveTintColor,
+            fontWeight: 'bold',
+            textAlign: 'center',
+          }}>
+          Sorry, your bucket is empty.
+        </Text>
+      </View>
+    );
+  };
+
+  openEditModal = (product) => {
+    this.openModal(product);
+  };
+
+  openModal = async product => {
+    // get current quantity from product
+    let existProduct = await this.checkIfItemExistInBasket(product);
+    product.quantity = 1;
+    product.remark = '';
+    // add initial status to modal order
+    product.mode = 'add';
+    // if quantity exist, then mode is update
+    if (existProduct != false) {
+      product.mode = 'update';
+      product.remark = existProduct.remark;
+      product.quantity = existProduct.quantity;
+    }
+    this.setState({
+      selectedProduct: product,
+      isModalVisible: !this.state.isModalVisible,
+    });
+  };
+
+  render() {
+    return (
+      <View style={styles.container}>
+        <ModalOrder
+          isModalVisible={this.state.isModalVisible}
+          qtyItem={this.state.qtyItem}
+          remark={this.state.remark}
+          closeModal={this.closeModal}
+          backButtonClicked={this.backButtonClicked}
+          toggleModal={this.toggleModal}
+          addQty={this.addQty}
+          minQty={this.minQty}
+          changeRemarkText={this.changeRemarkText}
+          modalShow={this.modalShow}
+          calculateSubTotalModal={this.calculateSubTotalModal}
+          product={this.state.selectedProduct}
+          addItemToBasket={this.addItemToBasket}
+        />
+        <View style={{backgroundColor: colorConfig.pageIndex.backgroundColor}}>
+          <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
+            <Icon
+              size={28}
+              name={
+                Platform.OS === 'ios' ? 'ios-arrow-back' : 'md-arrow-round-back'
+              }
+              style={styles.btnBackIcon}
+            />
+            <Text style={styles.btnBackText}> Detail Order </Text>
+          </TouchableOpacity>
+          <View style={styles.line} />
+        </View>
+        {this.state.loading == false ? (
+          this.props.dataBasket != undefined &&
+          this.props.dataBasket.outlet != undefined ? (
+            <View style={{height: '100%'}}>
+              <View style={styles.containerBody}>
+                <Text style={styles.title}>
+                  {this.props.dataBasket.outlet.name}
+                </Text>
+                <Text style={styles.subTitle}>Detail Order</Text>
+                <ScrollView style={{height: '45%'}}>
+                  <FlatList
+                    data={this.props.dataBasket.details}
+                    renderItem={({item}) => (
+                      <View style={styles.item}>
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            justifyContent: 'space-between',
+                            padding: 4,
+                            maxWidth: '100%',
+                          }}>
+                          <View style={{width: '80%'}}>
+                            <View>
+                              <Text style={[styles.desc]}>
+                                <Text
+                                  style={{
+                                    color: colorConfig.store.defaultColor,
+                                  }}>
+                                  {item.quantity}x
+                                </Text>{' '}
+                                {item.product.name}
+                              </Text>
+                              {item.remark != undefined && item.remark != '' ? (
+                                <Text
+                                  style={{
+                                    color:
+                                      colorConfig.pageIndex.inactiveTintColor,
+                                    fontSize: 12,
+                                    fontStyle: 'italic',
+                                  }}>
+                                  note: {item.remark}
+                                </Text>
+                              ) : null}
+                              <TouchableOpacity
+                                onPress={() => this.openEditModal(item)}
+                                style={{paddingVertical: 5}}>
+                                <Text
+                                  style={{
+                                    color: colorConfig.store.colorSuccess,
+                                    fontWeight: 'bold',
+                                    fontFamily: 'Lato-Bold',
+                                    fontSize: 14,
+                                  }}>
+                                  Edit
+                                </Text>
+                              </TouchableOpacity>
+                            </View>
+                          </View>
+                          <View>
+                            <Text style={styles.descPrice}>
+                              {'SGD '}
+                              {item.unitPrice}
+                            </Text>
+                          </View>
+                        </View>
+                      </View>
+                    )}
+                    keyExtractor={(product, index) => index.toString()}
+                  />
+                </ScrollView>
+                <View style={{marginTop: 20}} />
+                <View style={styles.itemSummary}>
+                  <Text style={styles.total}>Total Tax Amount</Text>
+                  <Text style={styles.total}>
+                    {this.currency(this.props.dataBasket.totalTaxAmount)}
+                  </Text>
+                </View>
+                <View style={styles.itemSummary}>
+                  <Text style={styles.total}>Total Nett Amount</Text>
+                  <Text style={styles.total}>
+                    {' '}
+                    {this.currency(this.props.dataBasket.totalNettAmount)}
+                  </Text>
+                </View>
+              </View>
+            </View>
+          ) : (
+            this.renderNullBasker()
+          )
+        ) : (
+          <Loader />
+        )}
+        {this.props.dataBasket != undefined &&
+        this.props.dataBasket.outlet != undefined
+          ? this.renderButtonConfirm()
+          : null}
+      </View>
+    );
+  }
+}
+
+mapStateToProps = state => ({
+  dataBasket: state.orderReducer.dataBasket.product,
+});
+
+mapDispatchToProps = dispatch => ({
+  dispatch,
+});
+
+export default compose(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  ),
+)(Basket);
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  containerBody: {
+    marginHorizontal: 5,
+  },
+  btnBackIcon: {
+    color: colorConfig.pageIndex.activeTintColor,
+    margin: 10,
+  },
+  btnBack: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  btnBackText: {
+    color: colorConfig.pageIndex.activeTintColor,
+    fontWeight: 'bold',
+  },
+  line: {
+    borderBottomColor: colorConfig.store.defaultColor,
+    borderBottomWidth: 2,
+  },
+  card: {
+    marginVertical: 10,
+    borderColor: colorConfig.pageIndex.inactiveTintColor,
+    borderWidth: 1,
+    borderRadius: 5,
+    backgroundColor: colorConfig.pageIndex.backgroundColor,
+    shadowColor: '#00000021',
+    shadowOffset: {
+      width: 0,
+      height: 9,
+    },
+    shadowOpacity: 0.7,
+    shadowRadius: 7.49,
+    elevation: 12,
+  },
+  item: {
+    borderBottomColor: colorConfig.pageIndex.inactiveTintColor,
+    borderBottomWidth: 1,
+    margin: 5,
+    padding: 5,
+    width: '100%',
+    maxWidth: '100%',
+  },
+  itemSummary: {
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    borderBottomColor: colorConfig.pageIndex.inactiveTintColor,
+    borderBottomWidth: 1,
+    // margin: 5,
+  },
+  title: {
+    color: colorConfig.pageIndex.activeTintColor,
+    fontSize: 18,
+    fontFamily: 'Lato-Bold',
+    padding: 5,
+    textAlign: 'center',
+    fontWeight: 'bold',
+  },
+  subTitle: {
+    fontFamily: 'Lato-Bold',
+    color: colorConfig.store.title,
+    fontSize: 16,
+    padding: 5,
+    fontWeight: 'bold',
+    marginBottom: 5,
+  },
+  total: {
+    marginVertical: 10,
+    fontFamily: 'Lato-Bold',
+    color: colorConfig.store.title,
+    fontSize: 16,
+    padding: 5,
+    fontWeight: 'bold',
+    marginBottom: 5,
+  },
+  detail: {
+    marginLeft: 30,
+    marginRight: 30,
+    marginBottom: 10,
+  },
+  detailItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingBottom: 5,
+    marginBottom: 10,
+  },
+  desc: {
+    color: colorConfig.pageIndex.grayColor,
+    maxWidth: Dimensions.get('window').width,
+    fontSize: 14,
+    fontFamily: 'Lato-Medium',
+  },
+  descPrice: {
+    color: colorConfig.pageIndex.grayColor,
+    maxWidth: Dimensions.get('window').width,
+    textAlign: 'right',
+    alignItems: 'flex-end',
+    fontSize: 14,
+    fontFamily: 'Lato-Medium',
+  },
+  image: {
+    width: Dimensions.get('window').width - 40,
+    flex: 1,
+  },
+  imageStamp: {
+    width: '100%',
+    height: 130,
+    shadowColor: '#00000021',
+    shadowOffset: {
+      width: 0,
+      height: 9,
+    },
+    shadowOpacity: 0.7,
+    shadowRadius: 7.49,
+    elevation: 12,
+  },
+  panelAddBasketModal: {
+    // position: 'absolute',
+    // bottom: 0,
+    height: 80,
+    justifyContent: 'center',
+    width: Dimensions.get('window').width,
+    backgroundColor: colorConfig.pageIndex.backgroundColor,
+    shadowColor: '#00000021',
+    shadowOffset: {
+      width: 0,
+      height: 9,
+    },
+    shadowOpacity: 0.7,
+    shadowRadius: 7.49,
+    elevation: 12,
+  },
+  btnAddBasketModal: {
+    fontFamily: 'Lato-Bold',
+    borderRadius: 10,
+    padding: 13,
+    marginLeft: 20,
+    width: '40%',
+    backgroundColor: colorConfig.store.colorSuccess,
+  },
+  btnCancelBasketModal: {
+    fontFamily: 'Lato-Bold',
+    borderRadius: 10,
+    padding: 13,
+    marginRight: 20,
+    width: '40%',
+    backgroundColor: colorConfig.store.colorError,
+  },
+  textBtnBasketModal: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontFamily: 'Lato-Bold',
+    fontSize: 17,
+    textAlign: 'center',
+  },
+});

@@ -9,21 +9,13 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {createAppContainer} from 'react-navigation';
-// import {createMaterialTopTabNavigator} from 'react-navigation-tabs';
 import * as _ from 'lodash';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
 import {notifikasi} from '../actions/auth.actions';
-import {
-  campaign,
-  dataPoint,
-  vouchers,
-  getStamps,
-} from '../actions/rewards.action';
+import {dataPoint, getStamps} from '../actions/rewards.action';
+import {refreshToken} from '../actions/auth.actions';
 import {recentTransaction} from '../actions/sales.action';
-import {myVoucers} from '../actions/account.action';
-import {dataInbox} from '../actions/inbox.action';
-
 import RewardsPoint from '../components/rewardsPoint';
 import RewardsStamp from '../components/rewardsStamp';
 import RewardsMenu from '../components/rewardsMenu';
@@ -31,6 +23,9 @@ import RewardsTransaction from '../components/rewardsTransaction';
 import Loader from '../components/loader';
 import colorConfig from '../config/colorConfig';
 import {Actions} from 'react-native-router-flux';
+import Geolocation from 'react-native-geolocation-service';
+import {userPosition} from '../actions/user.action';
+import {formatter} from '../helper/CurrencyFormat';
 
 class Rewards extends Component {
   _isMounted = false;
@@ -50,7 +45,9 @@ class Rewards extends Component {
 
   componentDidMount = async () => {
     this._isMounted = true;
+    // this.props.dispatch(refreshToken());
     await this.getDataRewards();
+    // await this.props.dispatch(refreshToken());
   };
 
   componentWillUnmount(): void {
@@ -59,12 +56,16 @@ class Rewards extends Component {
 
   getDataRewards = async () => {
     try {
+      // var date = 10000;
+      // console.log('askjas', formatter(date));
+      await this.getUserPosition();
       // await this.props.dispatch(campaign());
       await this.props.dispatch(dataPoint());
       // await this.props.dispatch(vouchers());
       await this.props.dispatch(getStamps());
       // await this.props.dispatch(dataInbox());
       await this.props.dispatch(recentTransaction());
+
       this.setState({isLoading: false});
     } catch (error) {
       await this.props.dispatch(
@@ -77,11 +78,24 @@ class Rewards extends Component {
     }
   };
 
+  getUserPosition = async () => {
+    try {
+      await Geolocation.getCurrentPosition(
+        async position => {
+          await this.props.dispatch(userPosition(position));
+        },
+        async error => {},
+        {enableHighAccuracy: true, timeout: 3000, maximumAge: 1000},
+      );
+    } catch (error) {
+      console.log(error, 'error get position');
+    }
+  };
+
   _onRefresh = () => {
     this.setState({refreshing: true});
     this.getDataRewards();
     this.setState({refreshing: false});
-    // Actions.pageIndex();
   };
 
   detailStamps() {

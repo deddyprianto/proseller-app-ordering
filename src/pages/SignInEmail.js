@@ -398,7 +398,7 @@ class SignInEmail extends Component {
                         fontWeight: 'bold',
                         fontFamily: 'Lato-Medium',
                       }}>
-                      Resend OTP
+                      Send OTP
                     </Text>
                   </TouchableHighlight>
                 </View>

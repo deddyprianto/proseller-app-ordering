@@ -260,10 +260,7 @@ class EmailRegister extends Component {
                 borderWidth: 2,
                 borderRadius: 13,
               }}>
-              <View
-                style={{
-                  width: this.state.phoneNumber.length < 4 ? '20%' : '25%',
-                }}>
+              <View>
                 <Text
                   style={{
                     fontSize: 16,
@@ -280,8 +277,6 @@ class EmailRegister extends Component {
                 value={this.state.phone}
                 onChangeText={value => this.setState({phone: value})}
                 style={{
-                  alignSelf: 'flex-end',
-                  width: '75%',
                   fontSize: 16,
                   fontFamily: 'Lato-Medium',
                   padding: 15,

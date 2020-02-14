@@ -75,7 +75,7 @@ class RewordsVouchers extends Component {
                     color: 'white',
                     fontFamily: 'Lato-Medium',
                   }}>
-                  Voucher
+                  Redeem Voucher
                 </Text>
               </View>
               {this.state.toggleAllVoucher ? (
