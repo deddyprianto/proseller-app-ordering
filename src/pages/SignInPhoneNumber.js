@@ -183,6 +183,7 @@ class SignInPhoneNumber extends Component {
       };
       console.log(dataRequest, 'payload send otp');
       const response = await this.props.dispatch(sendOTP(dataRequest));
+      console.log(response, 'respon send otp');
       if (response == true) {
         this.setState({
           loading: false,
@@ -311,6 +312,7 @@ class SignInPhoneNumber extends Component {
   };
 
   render() {
+    console.log('hahaha' , this.props);
     return (
       <View style={styles.backgroundImage}>
         {this.state.loading && <Loader />}

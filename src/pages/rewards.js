@@ -25,7 +25,6 @@ import colorConfig from '../config/colorConfig';
 import {Actions} from 'react-native-router-flux';
 import Geolocation from 'react-native-geolocation-service';
 import {userPosition} from '../actions/user.action';
-import {formatter} from '../helper/CurrencyFormat';
 
 class Rewards extends Component {
   _isMounted = false;
@@ -71,7 +70,7 @@ class Rewards extends Component {
       await this.props.dispatch(
         notifikasi(
           'Opps!',
-          'Get Data Rewards Error!',
+          'Cannot Get Data Rewards',
           console.log('Cancel Pressed'),
         ),
       );
@@ -130,7 +129,9 @@ class Rewards extends Component {
                   style={{
                     width: 100,
                   }}>
-                  <Text style={styles.btn}>Learn More</Text>
+                  <Text style={styles.btn}>
+                    Learn More
+                  </Text>
                 </TouchableOpacity>
               </View>
             )}

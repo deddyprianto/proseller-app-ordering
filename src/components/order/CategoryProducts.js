@@ -31,7 +31,7 @@ import {compose} from 'redux';
 import {connect} from 'react-redux';
 import Loader from '../../components/loader';
 import ButtonViewBasket from '../../components/order/ButtonViewBasket';
-// import {formatter} from '../../helper/CurrencyFormat';
+import CurrencyFormatter from '../../helper/CurrencyFormatter';
 
 class StoreDetailStores extends Component {
   constructor(props) {
@@ -104,11 +104,18 @@ class StoreDetailStores extends Component {
         skip: 0,
         take: 1000,
       };
-      await this.props.dispatch(
+      let response = await this.props.dispatch(
         getProductByOutlet(this.props.item.storeId, payload),
       );
-      if (this.props.products != undefined && this.props.products.length != 0) {
-        this.products.push(this.props.products[0]);
+      if (response.success) {
+        if (
+          this.props.products != undefined &&
+          this.props.products.length != 0
+        ) {
+          this.products.push(this.props.products[0]);
+        }
+      } else {
+        Alert.alert('Opss..', 'Something went wrong, please try again.');
       }
     } catch (e) {
       Alert.alert('Opss..', 'Something went wrong, please try again.');
@@ -250,7 +257,7 @@ class StoreDetailStores extends Component {
       // await this.props.dispatch(getBasket());
     } else if (mode == 'update') {
       await this.updateItem(product, qty, remark);
-      // await this.props.dispatch(getBasket());
+      await this.props.dispatch(getBasket());
     }
   };
 
@@ -260,7 +267,7 @@ class StoreDetailStores extends Component {
 
   backButtonClicked = () => {
     this.setState({isModalVisible: false, qtyItem: 1});
-    console.log('Modal has been closed when back button is clicked');
+    // console.log('Modal has been closed when back button is clicked');
   };
 
   modalShow = () => {
@@ -271,7 +278,6 @@ class StoreDetailStores extends Component {
     // if (this.state.selectedProduct.quantity != false) {
     //   qtyItem = this.state.selectedProduct.quantity;
     // }
-    console.log(remark, 'existProduct');
     this.setState({qtyItem, remark});
   };
 
@@ -374,7 +380,7 @@ class StoreDetailStores extends Component {
                 <Text style={[styles.productPrice]}>
                   {item.product.retailPrice != undefined &&
                   item.product.retailPrice != '-'
-                    ? 'SGD ' + item.product.retailPrice
+                    ? CurrencyFormatter(item.product.retailPrice)
                     : 0}
                 </Text>
               </View>
@@ -729,14 +735,103 @@ class StoreDetailStores extends Component {
               onEndReached={this.handleLoadMore}
             />
           ) : (
-            <Text
-              style={{
-                color: colorConfig.pageIndex.grayColor,
-                textAlign: 'center',
-                fontSize: 25,
-              }}>
-              Products is empty
-            </Text>
+            <View>
+              <View>
+                <View style={styles.cardImage}>
+                  {this.props.item.defaultImageURL != undefined ? (
+                    <ProgressiveImage
+                      resizeMode="cover"
+                      style={styles.image}
+                      source={{
+                        uri: this.props.item.defaultImageURL,
+                      }}
+                    />
+                  ) : (
+                    <ProgressiveImage
+                      resizeMode="cover"
+                      style={[styles.image, {width: '100%'}]}
+                      source={appConfig.appImageNull}
+                    />
+                  )}
+                </View>
+                <View style={styles.storeDescription}>
+                  <Text
+                    style={{
+                      fontWeight: 'bold',
+                      fontSize: 20,
+                      textAlign: 'center',
+                      marginVertical: 17,
+                    }}>
+                    {this.props.item.storeName}
+                  </Text>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                      marginHorizontal: 10,
+                    }}>
+                    <Text>
+                      <Icon
+                        size={18}
+                        name={Platform.OS === 'ios' ? 'ios-time' : 'md-time'}
+                        style={{
+                          color: this.props.item.storeStatus
+                            ? colorConfig.store.colorSuccess
+                            : colorConfig.store.colorError,
+                          paddingRight: 10,
+                        }}
+                      />
+                      <Text
+                        style={{
+                          fontWeight: 'bold',
+                          fontSize: 15,
+                          color: this.props.item.storeStatus
+                            ? colorConfig.store.colorSuccess
+                            : colorConfig.store.colorError,
+                        }}>
+                        {' '}
+                        {this.props.item.storeStatus ? 'Open' : 'Closed'}
+                      </Text>
+                    </Text>
+                    <Text>
+                      <Icon
+                        size={18}
+                        name={Platform.OS === 'ios' ? 'ios-pin' : 'md-pin'}
+                        style={{color: 'red', paddingRight: 10}}
+                      />
+                      <Text style={{fontSize: 13}}>
+                        {' '}
+                        {this.props.item.region} - {this.props.item.city}
+                      </Text>
+                    </Text>
+                    <Text>
+                      <Icon
+                        size={18}
+                        name={Platform.OS === 'ios' ? 'ios-map' : 'md-map'}
+                        style={{
+                          color: colorConfig.store.defaultColor,
+                          paddingRight: 10,
+                        }}
+                      />
+                      <Text style={{fontSize: 13}}>
+                        {' '}
+                        {this.props.item.storeJarak.toFixed(1) + ' KM'}
+                      </Text>
+                    </Text>
+                  </View>
+                </View>
+              </View>
+              <Text
+                style={{
+                  color: colorConfig.pageIndex.grayColor,
+                  textAlign: 'center',
+                  fontSize: 25,
+                  justifyContent: 'center',
+                  marginTop: 50,
+                }}>
+                Opps, this outlet doesn't have any products yet :(
+              </Text>
+            </View>
           )
         ) : (
           this.renderProgressiveLoadItem()
@@ -745,7 +840,7 @@ class StoreDetailStores extends Component {
         {this.state.showBasketButton ? (
           this.props.dataBasket != undefined &&
           this.props.dataBasket.outlet.id == this.props.item.storeId ? (
-            <ButtonViewBasket dataBasket={this.props.dataBasket} />
+            <ButtonViewBasket />
           ) : null
         ) : null}
       </View>
@@ -890,7 +985,7 @@ const styles = StyleSheet.create({
   },
   image: {
     height: 180,
-    resizeMode: 'cover',
+    resizeMode: 'stretch',
   },
   imageModal: {
     height: Dimensions.get('window').height / 3,

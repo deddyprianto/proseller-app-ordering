@@ -128,7 +128,16 @@ class InputEmail extends Component {
     this.imageWidth = new Animated.Value(styles.$largeImageSize);
   }
 
+  emailIsValid = email => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  };
+
   checkAccountExist = async () => {
+    // check validity email
+    if (!this.emailIsValid(this.state.email.toLowerCase())) {
+      Alert.alert('Oppss..', 'Please use a valid email.');
+      return;
+    }
     this.setState({loading: true});
     try {
       var dataRequest = {

@@ -8,6 +8,7 @@ import {
   BackHandler,
   FlatList,
   ScrollView,
+  Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -17,8 +18,8 @@ import {compose} from 'redux';
 import {connect} from 'react-redux';
 import {getBasket} from '../../actions/order.action';
 import Loader from '../../components/loader';
-import {formatter} from '../../helper/CurrencyFormat';
 import ModalOrder from '../../components/order/Modal';
+import CurrencyFormatter from '../../helper/CurrencyFormatter';
 
 class Basket extends Component {
   constructor(props) {
@@ -37,14 +38,12 @@ class Basket extends Component {
     };
   }
 
-  currency = value => {
-    let data = formatter(value);
-    console.log(data, 'NO NO');
-    return 'SGD ' + value;
-  };
-
   componentDidMount = async () => {
-    await this.getBasket();
+    try {
+      await this.getBasket();
+    } catch (e) {
+      Alert.alert('Opss..', "Can't get data basket, please try again.");
+    }
     this.backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
       this.handleBackPress,
@@ -54,7 +53,9 @@ class Basket extends Component {
   getBasket = async () => {
     this.setState({loading: true});
     await this.props.dispatch(getBasket());
-    this.setState({loading: false});
+    setTimeout(() => {
+      this.setState({loading: false});
+    }, 10);
   };
 
   componentWillUnmount() {
@@ -84,10 +85,20 @@ class Basket extends Component {
           // marginHorizontal: '5%',
         }}>
         <TouchableOpacity style={styles.btnCancelBasketModal}>
+          <Icon
+            size={23}
+            name={Platform.OS === 'ios' ? 'ios-trash' : 'md-trash'}
+            style={{color: 'white', marginRight: 5}}
+          />
           <Text style={styles.textBtnBasketModal}>Cancel</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.btnAddBasketModal}>
-          <Text style={styles.textBtnBasketModal}>Confirm</Text>
+          <Icon
+            size={23}
+            name={Platform.OS === 'ios' ? 'ios-qr-scanner' : 'md-qr-scanner'}
+            style={{color: 'white', marginRight: 5}}
+          />
+          <Text style={styles.textBtnBasketModal}>Scan QR Code</Text>
         </TouchableOpacity>
       </View>
     );
@@ -115,27 +126,58 @@ class Basket extends Component {
     );
   };
 
-  openEditModal = (product) => {
+  openEditModal = product => {
     this.openModal(product);
+  };
+
+  checkIfItemExistInBasket = item => {
+    try {
+      if (
+        this.props.dataBasket != undefined &&
+        this.props.dataBasket.details != undefined
+      ) {
+        let productFound = this.props.dataBasket.details.find(
+          data => data.productID == item.productID,
+        );
+        if (productFound != undefined) return productFound;
+        else return false;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      return false;
+    }
+  };
+
+  closeModal = () => {
+    this.setState({isModalVisible: false});
   };
 
   openModal = async product => {
     // get current quantity from product
     let existProduct = await this.checkIfItemExistInBasket(product);
-    product.quantity = 1;
-    product.remark = '';
-    // add initial status to modal order
-    product.mode = 'add';
-    // if quantity exist, then mode is update
+
     if (existProduct != false) {
-      product.mode = 'update';
-      product.remark = existProduct.remark;
-      product.quantity = existProduct.quantity;
+      product.product.mode = 'update';
+      product.product.remark = existProduct.remark;
+      product.product.quantity = existProduct.quantity;
     }
+
     this.setState({
-      selectedProduct: product,
+      selectedProduct: product.product,
       isModalVisible: !this.state.isModalVisible,
     });
+  };
+
+  modalShow = () => {
+    let qtyItem = 9;
+    let remark = '';
+    qtyItem = this.state.selectedProduct.quantity;
+    remark = this.state.selectedProduct.remark;
+    // if (this.state.selectedProduct.quantity != false) {
+    //   qtyItem = this.state.selectedProduct.quantity;
+    // }
+    this.setState({qtyItem, remark});
   };
 
   render() {
@@ -229,8 +271,7 @@ class Basket extends Component {
                           </View>
                           <View>
                             <Text style={styles.descPrice}>
-                              {'SGD '}
-                              {item.unitPrice}
+                              {CurrencyFormatter(item.unitPrice)}
                             </Text>
                           </View>
                         </View>
@@ -243,14 +284,14 @@ class Basket extends Component {
                 <View style={styles.itemSummary}>
                   <Text style={styles.total}>Total Tax Amount</Text>
                   <Text style={styles.total}>
-                    {this.currency(this.props.dataBasket.totalTaxAmount)}
+                    {CurrencyFormatter(this.props.dataBasket.totalTaxAmount)}
                   </Text>
                 </View>
                 <View style={styles.itemSummary}>
                   <Text style={styles.total}>Total Nett Amount</Text>
                   <Text style={styles.total}>
                     {' '}
-                    {this.currency(this.props.dataBasket.totalNettAmount)}
+                    {CurrencyFormatter(this.props.dataBasket.totalNettAmount)}
                   </Text>
                 </View>
               </View>
@@ -424,13 +465,19 @@ const styles = StyleSheet.create({
     fontFamily: 'Lato-Bold',
     borderRadius: 10,
     padding: 13,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
     marginLeft: 20,
     width: '40%',
-    backgroundColor: colorConfig.store.colorSuccess,
+    backgroundColor: colorConfig.store.defaultColor,
   },
   btnCancelBasketModal: {
     fontFamily: 'Lato-Bold',
     borderRadius: 10,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
     padding: 13,
     marginRight: 20,
     width: '40%',

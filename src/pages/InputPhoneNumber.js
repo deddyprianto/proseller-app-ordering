@@ -184,6 +184,7 @@ class InputPhoneNumber extends Component {
           phoneNumber.email = response.data.email;
           Actions.verifyOtpAfterRegister(phoneNumber);
         } else {
+          phoneNumber.email = response.data.email;
           Actions.signInPhoneNumber(phoneNumber);
         }
         this.setState({

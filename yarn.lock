@@ -3464,6 +3464,13 @@ get-stream@^5.1.0:
   dependencies:
     pump "^3.0.0"
 
+get-user-locale@^1.1.1:
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/get-user-locale/-/get-user-locale-1.3.0.tgz#21ea740e413541281ae7b2b42e70ee523b7725b2"
+  integrity sha512-c5N8P0upjxCF9unIC2vTA+B+8nN7kU/D/TeItMAVYhWIIksyoULM1aflKflXM3w+Ij6vF/JZys+QcwIoDuy3Ag==
+  dependencies:
+    lodash.once "^4.1.1"
+
 get-value@^2.0.3, get-value@^2.0.6:
   version "2.0.6"
   resolved "https://registry.yarnpkg.com/get-value/-/get-value-2.0.6.tgz#dc15ca1c672387ca76bd37ac0a395ba2042a2c28"
@@ -4843,6 +4850,11 @@ lodash-es@^4.17.15:
   resolved "https://registry.yarnpkg.com/lodash-es/-/lodash-es-4.17.15.tgz#21bd96839354412f23d7a10340e5eac6ee455d78"
   integrity sha512-rlrc3yU3+JNOpZ9zj5pQtxnx2THmvRykwL4Xlxoa8I9lHBlVbbyPhgyPMioxVZ4NqyxaVVtaJnzsyOidQIhyyQ==
 
+lodash.once@^4.1.1:
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/lodash.once/-/lodash.once-4.1.1.tgz#0dd3971213c7c56df880977d504c88fb471a97ac"
+  integrity sha1-DdOXEhPHxW34gJd9UEyI+0cal6w=
+
 lodash.sortby@^4.7.0:
   version "4.7.0"
   resolved "https://registry.yarnpkg.com/lodash.sortby/-/lodash.sortby-4.7.0.tgz#edd14c824e2cc9c1e0b0a1b42bb5210516a42438"
@@ -6171,6 +6183,13 @@ react-devtools-core@^3.6.3:
     shell-quote "^1.6.1"
     ws "^3.3.1"
 
+react-intl-number-format@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/react-intl-number-format/-/react-intl-number-format-1.1.1.tgz#5a3e0afc82829843a83a460296c6945c7b596e6f"
+  integrity sha512-V2C1SuMeZWzK9XOaMpKpb1klJ0+RJF2QwkGKME4iC5mj0v1EG/jV6De+rxwZpA6GdyRzpF/EbUtz/PjXAUtvIw==
+  dependencies:
+    get-user-locale "^1.1.1"
+
 react-intl@^3.12.0:
   version "3.12.0"
   resolved "https://registry.yarnpkg.com/react-intl/-/react-intl-3.12.0.tgz#98ef1c94434cc25a8c67448e1e283e6bfe11b2fc"
@@ -6243,6 +6262,13 @@ react-native-country-picker-modal@^1.10.0:
     node-emoji "1.10.0"
     prop-types "15.7.2"
     react-async-hook "3.6.1"
+
+react-native-currency-formatter@^1.0.1, react-native-currency-formatter@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/react-native-currency-formatter/-/react-native-currency-formatter-1.0.3.tgz#45047fd156a43500a5fe4bd498b478329981b3f5"
+  integrity sha512-IEaTMIPRMDYUF9TH8BH7EMx7MlIIt3F9T0pHNUBnGtDZMaDwg1PveaAfwHgCb2PQh9KiBm8/SDkjPBPkrtwGPA==
+  dependencies:
+    react-native-currency-formatter "^1.0.1"
 
 react-native-datepicker-modal@^1.3.0:
   version "1.3.0"

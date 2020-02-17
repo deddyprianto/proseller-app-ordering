@@ -237,7 +237,7 @@ export default class HistoryDetailPayment extends Component {
           </View>
           {this.props.item.dataPay != undefined &&
           this.props.item.dataPay != null ? (
-            <View style={styles.card}>
+            <View style={[styles.card, {marginBottom: 40}]}>
               <View style={styles.item}>
                 <Text style={styles.title}>Detail Order</Text>
               </View>

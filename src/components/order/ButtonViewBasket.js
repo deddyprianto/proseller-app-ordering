@@ -2,14 +2,17 @@ import React, {Component} from 'react';
 import {Text, TouchableOpacity, ActivityIndicator} from 'react-native';
 import {Actions} from 'react-native-router-flux';
 import colorConfig from '../../config/colorConfig';
-import {formatter} from '../../helper/CurrencyFormat';
+import CurrencyFormatter from '../../helper/CurrencyFormatter';
+import {compose} from 'redux';
+import {connect} from 'react-redux';
 
-export default class ButtonViewBasket extends Component {
+class ButtonViewBasket extends Component {
   constructor(props) {
     super(props);
   }
 
   render() {
+    // console.log(this.props.dataBasket, 'update this.props.dataBasket');
     return (
       <TouchableOpacity
         onPress={() => Actions.basket()}
@@ -40,10 +43,26 @@ export default class ButtonViewBasket extends Component {
             fontSize: 14,
             fontFamily: 'Lato-Bold',
           }}>
-          View Basket {'SGD - '}{this.props.dataBasket.totalNettAmount}{' '}
+          View Basket -{' '}
+          {CurrencyFormatter(this.props.dataBasket.totalNettAmount)}{' '}
         </Text>
         {/*<ActivityIndicator size={'small'} color={'white'} />*/}
       </TouchableOpacity>
     );
   }
 }
+
+mapStateToProps = state => ({
+  dataBasket: state.orderReducer.dataBasket.product,
+});
+
+mapDispatchToProps = dispatch => ({
+  dispatch,
+});
+
+export default compose(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  ),
+)(ButtonViewBasket);

@@ -21,9 +21,9 @@ export default class StoreStores extends Component {
   }
 
   storeDetailStores = item => {
-    // Actions.storeDetailStores({item});
+    Actions.storeDetailStores({item});
     // Actions.order({item});
-    Actions.categoryProducts({item});
+    // Actions.categoryProducts({item});
   };
 
   render() {

@@ -18,7 +18,7 @@ export const getProductByOutlet = (OutletId, payload) => {
         200,
         token,
       );
-      console.log(response, 'response data product by outlet');
+      // console.log(response, 'response data product by outlet');
       if (response.success == true) {
         dispatch({
           type: 'DATA_PRODUCTS_OUTLET',
@@ -26,6 +26,7 @@ export const getProductByOutlet = (OutletId, payload) => {
           dataLength: response.response.dataLength,
         });
       }
+      return response;
     } catch (error) {
       return error;
     }
@@ -112,7 +113,7 @@ export const updateProductToBasket = (payload, previousData) => {
           200,
           token,
         );
-        console.log(response, 'response update data basket');
+        // console.log(response, 'response update data basket');
       }
     } catch (error) {
       return error;
@@ -154,7 +155,7 @@ export const addProductToBasket = payload => {
         200,
         token,
       );
-      console.log(response, 'response post data basket');
+      // console.log(response, 'response post data basket');
       dispatch({
         type: 'DATA_BASKET',
         product: response.response.data,

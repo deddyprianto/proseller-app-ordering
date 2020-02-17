@@ -18,7 +18,7 @@ import {Actions} from 'react-native-router-flux';
 import colorConfig from '../../config/colorConfig';
 import appConfig from '../../config/appConfig';
 import ProgressiveImage from '../../components/helper/ProgressiveImage';
-// import {formatter} from '../../helper/CurrencyFormat';
+import CurrencyFormatter from '../../helper/CurrencyFormatter';
 
 export default class ModalOrder extends Component {
   constructor(props) {
@@ -51,8 +51,14 @@ export default class ModalOrder extends Component {
 
   getImageUrl = image => {
     try {
-      if (image != undefined && image != '-' && image != null) {
-        return {uri: image};
+      if (
+        image.product != undefined &&
+        image.product.defaultImageURL != undefined
+      ) {
+        image = image.product.defaultImageURL;
+        if (image != undefined && image != '-' && image != null) {
+          return {uri: image};
+        }
       }
     } catch (e) {
       console.log(e);
@@ -77,6 +83,7 @@ export default class ModalOrder extends Component {
   };
 
   render() {
+    console.log('ini lho', this.props.product);
     return (
       <Modal
         animationType="slide"
@@ -117,7 +124,7 @@ export default class ModalOrder extends Component {
               <ProgressiveImage
                 resizeMode="cover"
                 style={styles.imageModal}
-                source={this.getImageUrl(this.props.product.defaultImageURL)}
+                source={this.getImageUrl(this.props.product)}
               />
               <View style={styles.detailItemModal}>
                 <Text style={[styles.productTitleModal]}>
@@ -373,7 +380,7 @@ const styles = StyleSheet.create({
   },
   imageModal: {
     height: Dimensions.get('window').height / 3,
-    resizeMode: 'cover',
+    resizeMode: 'stretch',
     width: '100%',
   },
   detailItem: {
