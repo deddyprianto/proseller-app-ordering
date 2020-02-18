@@ -19,6 +19,7 @@ import {Actions} from 'react-native-router-flux';
 
 import colorConfig from '../config/colorConfig';
 import appConfig from '../config/appConfig';
+import CurrencyFormatter from '../helper/CurrencyFormatter';
 
 export default class HistoryDetailPayment extends Component {
   constructor(props) {
@@ -112,7 +113,7 @@ export default class HistoryDetailPayment extends Component {
               <View style={styles.detailItem}>
                 <Text style={styles.desc}>Amount</Text>
                 <Text style={styles.desc}>
-                  {appConfig.appMataUang + ' ' + this.props.item.price}
+                  {CurrencyFormatter(this.props.item.price)}
                 </Text>
               </View>
 
@@ -244,12 +245,18 @@ export default class HistoryDetailPayment extends Component {
               <View style={styles.detail}>
                 {this.props.item.dataPay.map(item => (
                   <View style={styles.detailItem}>
-                    <Text style={[styles.desc, {width: 120}]}>
+                    <Text style={[styles.desc, {width: '70%'}]}>
+                      <Text
+                        style={[
+                          styles.desc,
+                          {color: colorConfig.store.defaultColor},
+                        ]}>
+                        {item.qty} x{' '}
+                      </Text>
                       {item.itemName}
                     </Text>
-                    <Text style={styles.desc}>{item.qty}</Text>
                     <Text style={styles.desc}>
-                      {appConfig.appMataUang + ' ' + item.price}
+                      {CurrencyFormatter(item.price)}
                     </Text>
                   </View>
                 ))}
@@ -299,8 +306,8 @@ const styles = StyleSheet.create({
   },
   item: {
     alignItems: 'center',
-    borderBottomColor: colorConfig.pageIndex.inactiveTintColor,
-    borderBottomWidth: 1,
+    // borderBottomColor: colorConfig.pageIndex.inactiveTintColor,
+    // borderBottomWidth: 1,
     margin: 10,
     paddingVertical: 15,
   },

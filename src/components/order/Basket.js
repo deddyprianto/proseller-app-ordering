@@ -16,10 +16,15 @@ import {Actions} from 'react-native-router-flux';
 import colorConfig from '../../config/colorConfig';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
-import {getBasket} from '../../actions/order.action';
+import {
+  getBasket,
+  updateProductToBasket,
+  removeBasket,
+} from '../../actions/order.action';
 import Loader from '../../components/loader';
 import ModalOrder from '../../components/order/Modal';
 import CurrencyFormatter from '../../helper/CurrencyFormatter';
+import {Button, Dialog, Portal} from 'react-native-paper';
 
 class Basket extends Component {
   constructor(props) {
@@ -35,6 +40,7 @@ class Basket extends Component {
       idx: 0,
       selectedCategory: 'ALL PRODUCTS',
       selectedProduct: {},
+      visible: false,
     };
   }
 
@@ -84,13 +90,15 @@ class Basket extends Component {
           // alignItems: 'center',
           // marginHorizontal: '5%',
         }}>
-        <TouchableOpacity style={styles.btnCancelBasketModal}>
+        <TouchableOpacity
+          onPress={this.alertRemoveBasket}
+          style={styles.btnCancelBasketModal}>
           <Icon
             size={23}
             name={Platform.OS === 'ios' ? 'ios-trash' : 'md-trash'}
             style={{color: 'white', marginRight: 5}}
           />
-          <Text style={styles.textBtnBasketModal}>Cancel</Text>
+          <Text style={styles.textBtnBasketModal}>Clear</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.btnAddBasketModal}>
           <Icon
@@ -101,6 +109,27 @@ class Basket extends Component {
           <Text style={styles.textBtnBasketModal}>Scan QR Code</Text>
         </TouchableOpacity>
       </View>
+    );
+  };
+
+  removeBasket = async () => {
+    await this.props.dispatch(removeBasket());
+    await this.getBasket();
+  };
+
+  alertRemoveBasket = () => {
+    Alert.alert(
+      'Are you sure ?',
+      'Delete all product selected from this cart ?',
+      [
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
+        },
+        {text: 'Remove', onPress: () => this.removeBasket()},
+      ],
+      {cancelable: false},
     );
   };
 
@@ -128,6 +157,22 @@ class Basket extends Component {
 
   openEditModal = product => {
     this.openModal(product);
+  };
+
+  addQty = () => {
+    this.setState({qtyItem: this.state.qtyItem + 1});
+  };
+
+  minQty = () => {
+    if (this.state.qtyItem > 0) {
+      if (this.state.selectedProduct.mode == 'update') {
+        this.setState({qtyItem: this.state.qtyItem - 1});
+      }
+    }
+  };
+
+  changeRemarkText = value => {
+    this.setState({remark: value});
   };
 
   checkIfItemExistInBasket = item => {
@@ -158,13 +203,15 @@ class Basket extends Component {
     let existProduct = await this.checkIfItemExistInBasket(product);
 
     if (existProduct != false) {
-      product.product.mode = 'update';
-      product.product.remark = existProduct.remark;
-      product.product.quantity = existProduct.quantity;
+      product.mode = 'update';
+      product.remark = existProduct.remark;
+      product.quantity = existProduct.quantity;
+      product.name = existProduct.product.name;
+      product.description = existProduct.product.description;
     }
 
     this.setState({
-      selectedProduct: product.product,
+      selectedProduct: existProduct,
       isModalVisible: !this.state.isModalVisible,
     });
   };
@@ -178,6 +225,48 @@ class Basket extends Component {
     //   qtyItem = this.state.selectedProduct.quantity;
     // }
     this.setState({qtyItem, remark});
+  };
+
+  addItemToBasket = async (product, qty, remark, mode) => {
+    if (mode == 'update') {
+      await this.updateItem(product, qty, remark);
+      await this.getBasket();
+    }
+  };
+
+  updateItem = async (product, qty, remark) => {
+    try {
+      // make payload format to pass to action
+      let data = {};
+      data.details = [];
+      let dataproduct = {
+        productID: product.productID,
+        unitPrice: product.product.retailPrice,
+        quantity: qty,
+      };
+      // if remark is available, then push to array
+      if (remark != undefined && remark != '') dataproduct.remark = remark;
+      data.details.push(dataproduct);
+
+      // search detail ID on previous data
+      let previousData = this.props.dataBasket.details.find(
+        item => item.productID == product.productID,
+      );
+      // send data to action
+      let response = this.props.dispatch(
+        updateProductToBasket(data, previousData),
+      );
+
+      this.setState({
+        selectedProduct: {},
+        isModalVisible: false,
+      });
+      if (response.success == false) {
+        Alert.alert('Oppss..', 'Failed to update item to basket.');
+      }
+    } catch (e) {
+      Alert.alert('Oppss..', 'Please try again.');
+    }
   };
 
   render() {

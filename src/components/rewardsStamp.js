@@ -31,21 +31,23 @@ class RewardsStamp extends Component {
   getItemStamp() {
     var stampsItem = [];
     // console.log('item stampts ', this.props.dataStamps.dataStamps);
-    if (this.props.dataStamps.dataStamps != undefined) {
-      var tampung = this.props.dataStamps.dataStamps.stamps.stampsItem;
-      var isi = [];
-      for (let i = 1; i <= tampung.length; i++) {
-        isi.push(tampung[i - 1]);
-        if (i % 5 == 0) {
-          stampsItem.push(isi);
-          isi = [];
-        }
-        if (i == tampung.length) {
-          stampsItem.push(isi);
+    try {
+      if (this.props.dataStamps.dataStamps != undefined) {
+        var tampung = this.props.dataStamps.dataStamps.stamps.stampsItem;
+        var isi = [];
+        for (let i = 1; i <= tampung.length; i++) {
+          isi.push(tampung[i - 1]);
+          if (i % 5 == 0) {
+            stampsItem.push(isi);
+            isi = [];
+          }
+          if (i == tampung.length) {
+            stampsItem.push(isi);
+          }
         }
       }
-    }
-    this.setState({stampsItem});
+      this.setState({stampsItem});
+    } catch (e) {}
   }
 
   render() {
@@ -80,7 +82,9 @@ class RewardsStamp extends Component {
                     {/*{appConfig.appName}*/}
                     <Icon
                       size={22}
-                      name={Platform.OS === 'ios' ? 'ios-bookmark' : 'md-bookmark'}
+                      name={
+                        Platform.OS === 'ios' ? 'ios-bookmark' : 'md-bookmark'
+                      }
                       style={{color: colorConfig.store.defaultColor}}
                     />
                   </Text>

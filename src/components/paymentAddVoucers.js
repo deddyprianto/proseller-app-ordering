@@ -72,7 +72,6 @@ export default class PaymentAddVoucers extends Component {
 
   render() {
     const myVoucers = this.props.data;
-    console.log('Vouchernya ', myVoucers);
     return (
       <View style={styles.container}>
         <View style={{backgroundColor: colorConfig.pageIndex.backgroundColor}}>

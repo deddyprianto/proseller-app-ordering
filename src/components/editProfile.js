@@ -504,7 +504,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   textChange: {
-    color: colorConfig.store.defaultColor,
+    color: colorConfig.pageIndex.inactiveTintColor,
     // color: 'gray',
     fontSize: 11,
     fontWeight: 'bold',

@@ -33,14 +33,29 @@ export const getProductByOutlet = (OutletId, payload) => {
   };
 };
 
-export const removeProducts = () => {
-  return async dispatch => {
+export const removeBasket = () => {
+  return async (dispatch, getState) => {
     try {
+      const state = getState();
+      const {
+        authReducer: {
+          authData: {token},
+        },
+      } = state;
+      // add real data
+      let response = await fetchApiOrder(
+        `/cart/delete`,
+        'DELETE',
+        null,
+        200,
+        token,
+      );
+      console.log(response, 'response delete basket');
       dispatch({
-        type: 'DATA_PRODUCTS_OUTLET',
-        products: undefined,
-        dataLength: 0,
+        type: 'DATA_BASKET',
+        product: undefined,
       });
+      return response;
     } catch (error) {
       return error;
     }
@@ -145,6 +160,12 @@ export const addProductToBasket = payload => {
           type: 'DATA_BASKET',
           product: newProduct,
         });
+      } else {
+        let newProduct = payload;
+        dispatch({
+          type: 'DATA_BASKET',
+          product: newProduct,
+        });
       }
 
       // add real data
@@ -160,6 +181,7 @@ export const addProductToBasket = payload => {
         type: 'DATA_BASKET',
         product: response.response.data,
       });
+      return response;
     } catch (error) {
       return error;
     }

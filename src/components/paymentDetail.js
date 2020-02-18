@@ -13,6 +13,7 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
+  Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -30,6 +31,7 @@ import {myVoucers} from '../actions/account.action';
 import {sendPayment} from '../actions/sales.action';
 import Loader from './loader';
 import {refreshToken} from '../actions/auth.actions';
+import CurrencyFormatter from '../helper/CurrencyFormatter';
 
 class PaymentDetail extends Component {
   constructor(props) {
@@ -44,6 +46,7 @@ class PaymentDetail extends Component {
       cancelVoucher: false,
       cancelPoint: false,
       loading: false,
+      failedPay: false,
     };
   }
 
@@ -52,17 +55,43 @@ class PaymentDetail extends Component {
   };
 
   setDataPayment = async cancel => {
-    console.log(this.props.myVoucers, 'this.props.dataVoucer');
     var totalBayar = 0;
     if (!cancel) {
-      var redeemVoucer =
-        this.props.dataVoucer == undefined
-          ? 0
-          : this.props.dataVoucer.voucherType != 'discAmount'
-          ? (this.props.pembayaran.payment *
-              this.props.dataVoucer.voucherValue) /
-            100
-          : this.props.dataVoucer.voucherValue;
+      var redeemVoucer = 0;
+
+      try {
+        if (this.props.dataVoucer != undefined) {
+          if (this.props.dataVoucer.applyToSpecificProduct == true) {
+            //  search specific product
+            let result = this.props.pembayaran.dataPay.find(
+              item => item.id == this.props.dataVoucer.product.id,
+            );
+            // check if apply to specific product is found
+            if (result == undefined) {
+              this.cencelVoucher();
+              Alert.alert(
+                'Sorry',
+                `This voucher is only available on product ${
+                  this.props.dataVoucer.product.name
+                }`,
+              );
+            } else {
+              redeemVoucer =
+                (result.price * this.props.dataVoucer.voucherValue) / 100;
+            }
+          } else {
+            if (this.props.dataVoucer.voucherType == 'discPercentage') {
+              redeemVoucer =
+                (this.props.pembayaran.payment *
+                  this.props.dataVoucer.voucherValue) /
+                100;
+            } else if (this.props.dataVoucer.voucherType == 'discAmount') {
+              redeemVoucer = this.props.dataVoucer.voucherValue;
+            }
+          }
+        }
+      } catch (e) {}
+
       var redeemPoint =
         this.props.addPoint == undefined ? 0 : this.props.moneyPoint;
       totalBayar = this.state.totalBayar - (redeemVoucer + redeemPoint);
@@ -190,6 +219,7 @@ class PaymentDetail extends Component {
             showAlert: true,
             pesanAlert: response.responseBody.Data.message,
             titleAlert: 'Oopss!',
+            failedPay: true,
           });
         }
       } else {
@@ -197,6 +227,7 @@ class PaymentDetail extends Component {
           showAlert: true,
           pesanAlert: response.responseBody.Data.message,
           titleAlert: 'Oopss!',
+          failedPay: true,
         });
       }
       this.setState({loading: false});
@@ -205,6 +236,7 @@ class PaymentDetail extends Component {
         showAlert: true,
         pesanAlert: 'Something went wrong, please try again.',
         titleAlert: 'Oopss!',
+        failedPay: true,
       });
       this.setState({loading: false});
     }
@@ -233,6 +265,14 @@ class PaymentDetail extends Component {
   };
 
   showToastMessage = message => this.setState({message});
+
+  formatCurrency = value => {
+    try {
+      return CurrencyFormatter(value).match(/[a-z]+|[^a-z]+/gi)[1];
+    } catch (e) {
+      return value;
+    }
+  };
 
   render() {
     const iconSlider = () => (
@@ -311,7 +351,7 @@ class PaymentDetail extends Component {
                 fontSize: 70,
                 // fontWeight: 'bold',
               }}>
-              {this.props.pembayaran.payment}
+              {this.formatCurrency(this.props.pembayaran.payment)}
             </Text>
           </View>
           <View
@@ -614,12 +654,11 @@ class PaymentDetail extends Component {
               thumbIconBorderColor={colorConfig.pageIndex.activeTintColor}
               titleColor="#FFFFFF"
               titleFontSize={20}
+              shouldResetAfterSuccess={!this.state.failedPay}
               railBackgroundColor={colorConfig.pageIndex.activeTintColor}
               title={
-                'Pay ' +
-                appConfig.appMataUang +
-                ' ' +
-                Number(this.state.totalBayar.toFixed(3))
+                'Pay ' + CurrencyFormatter(this.state.totalBayar)
+                // Number(this.state.totalBayar.toFixed(3))
               }
               onSwipeSuccess={this.onSlideRight}
             />

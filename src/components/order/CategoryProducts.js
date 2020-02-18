@@ -22,7 +22,6 @@ import ProgressiveImage from '../../components/helper/ProgressiveImage';
 import ModalOrder from '../../components/order/Modal';
 import {
   getProductByOutlet,
-  removeProducts,
   addProductToBasket,
   updateProductToBasket,
   getBasket,
@@ -127,17 +126,14 @@ class StoreDetailStores extends Component {
 
   componentWillUnmount() {
     this.backHandler.remove();
-    this.props.dispatch(removeProducts());
   }
 
   handleBackPress = () => {
-    this.props.dispatch(removeProducts());
     this.goBack();
     return true;
   };
 
   goBack = async () => {
-    this.props.dispatch(removeProducts());
     Actions.pop();
   };
 
@@ -197,11 +193,17 @@ class StoreDetailStores extends Component {
         unitPrice: product.product.retailPrice,
         quantity: qty,
       };
+      let outlet = {
+        id: `${this.props.item.storeId}`,
+      };
       // if remark is available, then push to array
       if (remark != undefined && remark != '') dataproduct.remark = remark;
       data.outletID = `outlet::${this.props.item.storeId}`;
+      data.outlet = outlet;
+      data.id = this.props.item.storeId;
       data.details.push(dataproduct);
       let response = this.props.dispatch(addProductToBasket(data));
+      // console.log('response add ', response);
       this.setState({
         selectedProduct: {},
         isModalVisible: false,
@@ -244,7 +246,7 @@ class StoreDetailStores extends Component {
         isModalVisible: false,
       });
       if (response.success == false) {
-        Alert.alert('Oppss..', 'Failed to add item to basket.');
+        Alert.alert('Oppss..', 'Failed to update item to basket.');
       }
     } catch (e) {
       Alert.alert('Oppss..', 'Please try again.');
@@ -306,7 +308,7 @@ class StoreDetailStores extends Component {
         return {uri: image};
       }
     } catch (e) {
-      console.log(e);
+      return appConfig.appImageNull;
     }
     return appConfig.appImageNull;
   };
@@ -349,43 +351,45 @@ class StoreDetailStores extends Component {
         <Text style={styles.titleCategory}>{item.name}</Text>
         <FlatList
           data={item.items}
-          renderItem={({item}) => (
-            <TouchableOpacity
-              style={styles.detail}
-              onPress={() => this.toggleModal(item)}>
-              <View style={styles.detailItem}>
-                <View style={{flexDirection: 'row'}}>
-                  <ProgressiveImage
-                    style={styles.imageProduct}
-                    source={this.getImageUrl(item.product.defaultImageURL)}
-                  />
-                  <View>
-                    <Text style={[styles.productTitle]}>
-                      {this.checkIfItemExistInBasket(item) != false ? (
-                        <Text
-                          style={{
-                            color: colorConfig.store.defaultColor,
-                            fontWeight: 'bold',
-                          }}>
-                          x {this.checkIfItemExistInBasket(item).quantity}{' '}
-                        </Text>
-                      ) : null}
-                      {item.product.name}
-                    </Text>
-                    <Text style={[styles.productDesc]}>
-                      Product description here ...
-                    </Text>
+          renderItem={({item}) =>
+            item.product != null ? (
+              <TouchableOpacity
+                style={styles.detail}
+                onPress={() => this.toggleModal(item)}>
+                <View style={styles.detailItem}>
+                  <View style={{flexDirection: 'row'}}>
+                    <ProgressiveImage
+                      style={styles.imageProduct}
+                      source={this.getImageUrl(item.product.defaultImageURL)}
+                    />
+                    <View>
+                      <Text style={[styles.productTitle]}>
+                        {this.checkIfItemExistInBasket(item) != false ? (
+                          <Text
+                            style={{
+                              color: colorConfig.store.defaultColor,
+                              fontWeight: 'bold',
+                            }}>
+                            x {this.checkIfItemExistInBasket(item).quantity}{' '}
+                          </Text>
+                        ) : null}
+                        {item.product.name}
+                      </Text>
+                      <Text style={[styles.productDesc]}>
+                        Product description here ...
+                      </Text>
+                    </View>
                   </View>
+                  <Text style={[styles.productPrice]}>
+                    {item.product.retailPrice != undefined &&
+                    item.product.retailPrice != '-'
+                      ? CurrencyFormatter(item.product.retailPrice)
+                      : 0}
+                  </Text>
                 </View>
-                <Text style={[styles.productPrice]}>
-                  {item.product.retailPrice != undefined &&
-                  item.product.retailPrice != '-'
-                    ? CurrencyFormatter(item.product.retailPrice)
-                    : 0}
-                </Text>
-              </View>
-            </TouchableOpacity>
-          )}
+              </TouchableOpacity>
+            ) : null
+          }
           keyExtractor={(product, index) => index.toString()}
         />
       </View>
@@ -619,7 +623,7 @@ class StoreDetailStores extends Component {
 
   render() {
     let products = this.products;
-    // console.log('DATA BASKET ', this.props.dataBasket);
+    console.log('DATA BASKET ', this.props.dataBasket);
     return (
       <View style={styles.container}>
         <ModalOrder
@@ -839,6 +843,8 @@ class StoreDetailStores extends Component {
         {/* button basket */}
         {this.state.showBasketButton ? (
           this.props.dataBasket != undefined &&
+          this.props.dataBasket.outlet != undefined &&
+          this.props.dataBasket.outlet.id != undefined &&
           this.props.dataBasket.outlet.id == this.props.item.storeId ? (
             <ButtonViewBasket />
           ) : null
