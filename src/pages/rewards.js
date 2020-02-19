@@ -56,8 +56,6 @@ class Rewards extends Component {
 
   getDataRewards = async () => {
     try {
-      // var date = 10000;
-      // console.log('askjas', formatter(date));
       await this.getUserPosition();
       // await this.props.dispatch(campaign());
       await this.props.dispatch(dataPoint());
@@ -71,8 +69,8 @@ class Rewards extends Component {
     } catch (error) {
       await this.props.dispatch(
         notifikasi(
-          'Opps!',
-          'Cannot Get Data Rewards',
+          'Opps..',
+          'Cant Get Data Rewards',
           console.log('Cancel Pressed'),
         ),
       );
@@ -93,9 +91,9 @@ class Rewards extends Component {
     }
   };
 
-  _onRefresh = () => {
+  _onRefresh = async () => {
     this.setState({refreshing: true});
-    this.getDataRewards();
+    await this.getDataRewards();
     this.setState({refreshing: false});
   };
 

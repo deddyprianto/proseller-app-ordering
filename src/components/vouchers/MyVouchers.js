@@ -139,6 +139,21 @@ class MyVouchers extends Component {
                     <View
                       style={styles.voucherItem}
                       onPress={() => this.pageDetailVoucher(item)}>
+                      {/*<View*/}
+                      {/*  style={{*/}
+                      {/*    backgroundColor: 'transparent',*/}
+                      {/*    borderWidth: 1,*/}
+                      {/*    overflow: 'hidden',*/}
+                      {/*    borderColor: colorConfig.store.defaultColor,*/}
+                      {/*    width: 40,*/}
+                      {/*    borderTopStartRadius: 50,*/}
+                      {/*    height: 40,*/}
+                      {/*    position: 'absolute',*/}
+                      {/*    top: Dimensions.get('window').width / 4 - 20,*/}
+                      {/*    left: -20,*/}
+                      {/*    zIndex: 2,*/}
+                      {/*  }}*/}
+                      {/*/>*/}
                       <View style={{alignItems: 'center'}}>
                         <Image
                           style={

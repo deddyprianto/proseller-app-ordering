@@ -50,6 +50,14 @@ target 'Qiji' do
 
   pod 'react-native-config', :path => '../node_modules/react-native-config'
 
+
+
+  pod 'RNFirebase', :path => '../node_modules/react-native-firebase'
+
+  pod 'RNFBApp', :path => '../node_modules/@react-native-firebase/app'
+
+  pod 'RNFBCrashlytics', :path => '../node_modules/@react-native-firebase/crashlytics'
+
   target 'QijiTests' do
     inherit! :search_paths
     # Pods for testing

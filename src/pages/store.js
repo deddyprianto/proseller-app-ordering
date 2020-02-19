@@ -50,11 +50,11 @@ class Store extends Component {
     await this.props.dispatch(dataPromotion());
     // let response = await this.props.dispatch(getBasket());
 
-    if (this.state.dataStores.length === 0) {
-      this.setState({isLoading: true});
-    } else {
-      this.setState({isLoading: false});
-    }
+    // if (this.state.dataStores.length === 0) {
+    //   this.setState({isLoading: true});
+    // } else {
+    // this.setState({isLoading: false});
+    // }
     this.getDataStores();
 
     var hours = new Date().getHours();
@@ -216,9 +216,9 @@ class Store extends Component {
     }
   };
 
-  _onRefresh = () => {
+  _onRefresh = async () => {
     this.setState({refreshing: true});
-    this.getDataStores();
+    await this.getDataStores();
     this.setState({refreshing: false});
   };
 
@@ -319,24 +319,25 @@ class Store extends Component {
                 </View>
               ) : null}
               {Object.keys(this.state.dataAllStore).length === 0 &&
-              this.state.dataAllStore.constructor === Object ? (
+              this.state.dataAllStore != undefined ? (
                 <View
                   style={{
-                    alignItems: 'center',
                     margin: 20,
                     justifyContent: 'center',
-                    flexDirection: 'row',
+                    alignItems: 'center',
+                    flexDirection: 'column',
+                    // height: '70%',
                   }}>
                   <Text
                     style={{
                       textAlign: 'center',
                       color: colorConfig.pageIndex.grayColor,
                       fontFamily: 'Lato-Medium',
-                      fontSize: 20,
+                      fontSize: 24,
                       fontWeight: 'bold',
                       marginTop: 100,
                     }}>
-                    Sorry, no store is available.
+                    Sorry, no outlet is available.
                   </Text>
                 </View>
               ) : (
@@ -412,6 +413,7 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     backgroundColor: colorConfig.pageIndex.backgroundColor,
+    height: '100%',
   },
   loading: {
     height: Dimensions.get('window').height,

@@ -81,6 +81,7 @@ project.ext.react = [
 ]
 
 apply from: "../../node_modules/react-native/react.gradle"
+apply from: "../../node_modules/@sentry/react-native/sentry.gradle"
 
 /**
  * Set this to true to create two separate APKs instead of one:
@@ -215,6 +216,8 @@ android {
 }
 
 dependencies {
+    implementation project(':@react-native-firebase_crashlytics')
+    implementation project(':@react-native-firebase_app')
     implementation project(':react-native-sms-retriever')
     implementation project(':react-native-device-brightness')
     implementation project(':react-native-config')
@@ -231,6 +234,11 @@ dependencies {
     implementation 'com.facebook.android:facebook-login:[5,6)'
     implementation 'com.google.firebase:firebase-analytics:17.2.2'
     implementation 'com.facebook.android:facebook-android-sdk:5.15.3'
+    // Firebase dependencies
+    implementation "com.google.android.gms:play-services-base:16.1.0"
+    implementation "com.google.firebase:firebase-core:16.0.9"
+    // Add the Firebase SDK for Crashlytics.
+    implementation 'com.google.firebase:firebase-crashlytics:17.0.0-beta01'
 
     // def multidex_version = "2.0.1"
     // implementation 'androidx.multidex:multidex:$multidex_version'
@@ -257,3 +265,5 @@ apply from: file("../../node_modules/@react-native-community/cli-platform-androi
 apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
 apply plugin: 'com.android.application'
 apply plugin: 'com.onesignal.androidsdk.onesignal-gradle-plugin'
+apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.firebase.crashlytics'

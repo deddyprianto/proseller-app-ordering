@@ -312,7 +312,6 @@ class SignInPhoneNumber extends Component {
   };
 
   render() {
-    console.log('hahaha' , this.props);
     return (
       <View style={styles.backgroundImage}>
         {this.state.loading && <Loader />}
@@ -618,10 +617,7 @@ mapDispatchToProps = dispatch => ({
 });
 
 export default compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   reduxForm({
     form: 'confirm',
   }),

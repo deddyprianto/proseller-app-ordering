@@ -4,6 +4,8 @@ import android.app.Application;
 import android.content.Context;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
+import io.invertase.firebase.crashlytics.ReactNativeFirebaseCrashlyticsPackage;
+import io.invertase.firebase.app.ReactNativeFirebaseAppPackage;
 import me.furtado.smsretriever.RNSmsRetrieverPackage;
 import org.capslock.RNDeviceBrightness.RNDeviceBrightness;
 import com.lugg.ReactNativeConfig.ReactNativeConfigPackage;
@@ -22,7 +24,8 @@ import java.util.List;
 // Facebook login
 import com.facebook.CallbackManager;
 import com.facebook.FacebookSdk;
-import com.facebook.appevents.AppEventsLogger;
+import com.facebook.appevents.AppEventsLogger;
+
 
 // Multidex
 import androidx.multidex.MultiDexApplication;

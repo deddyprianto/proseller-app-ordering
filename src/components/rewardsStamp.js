@@ -6,6 +6,7 @@ import {
   Dimensions,
   TouchableOpacity,
   ScrollView,
+  Alert,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
@@ -47,7 +48,9 @@ class RewardsStamp extends Component {
         }
       }
       this.setState({stampsItem});
-    } catch (e) {}
+    } catch (e) {
+      Alert.alert('Sorry', 'Cant get data stamps, please try again');
+    }
   }
 
   render() {

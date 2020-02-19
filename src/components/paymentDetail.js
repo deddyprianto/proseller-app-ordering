@@ -64,7 +64,7 @@ class PaymentDetail extends Component {
           if (this.props.dataVoucer.applyToSpecificProduct == true) {
             //  search specific product
             let result = this.props.pembayaran.dataPay.find(
-              item => item.id == this.props.dataVoucer.product.id,
+              item => item.barcode == this.props.dataVoucer.product.barcode,
             );
             // check if apply to specific product is found
             if (result == undefined) {
@@ -98,7 +98,7 @@ class PaymentDetail extends Component {
     } else {
       totalBayar = this.props.pembayaran.payment;
     }
-    console.log('total bayar ', totalBayar);
+    // console.log('total bayar ', totalBayar);
     this.setState({totalBayar});
   };
 
@@ -215,6 +215,9 @@ class PaymentDetail extends Component {
             dataRespons: response.responseBody.Data.data,
           });
         } else {
+          //  cancel voucher and pont selected
+          this.cencelPoint();
+          this.cencelVoucher();
           this.setState({
             showAlert: true,
             pesanAlert: response.responseBody.Data.message,
@@ -223,6 +226,9 @@ class PaymentDetail extends Component {
           });
         }
       } else {
+        //  cancel voucher and pont selected
+        this.cencelPoint();
+        this.cencelVoucher();
         this.setState({
           showAlert: true,
           pesanAlert: response.responseBody.Data.message,
@@ -232,6 +238,9 @@ class PaymentDetail extends Component {
       }
       this.setState({loading: false});
     } catch (e) {
+      //  cancel voucher and pont selected
+      this.cencelPoint();
+      this.cencelVoucher();
       this.setState({
         showAlert: true,
         pesanAlert: 'Something went wrong, please try again.',
@@ -654,7 +663,7 @@ class PaymentDetail extends Component {
               thumbIconBorderColor={colorConfig.pageIndex.activeTintColor}
               titleColor="#FFFFFF"
               titleFontSize={20}
-              shouldResetAfterSuccess={!this.state.failedPay}
+              shouldResetAfterSuccess={this.state.failedPay}
               railBackgroundColor={colorConfig.pageIndex.activeTintColor}
               title={
                 'Pay ' + CurrencyFormatter(this.state.totalBayar)
