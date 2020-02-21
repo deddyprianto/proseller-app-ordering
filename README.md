@@ -22,12 +22,12 @@ SET ENVFILE=.env.dev && npx react-native run-android --variant=devDebug --appIdS
 To run app debug on **demo**, run :
 
 ```
-SET ENVFILE=.env.demo && npx react-native run-android --variant=demoDebug --appIdSuffix=dev
+SET ENVFILE=.env.demo && npx react-native run-android --variant=demoDebug --appIdSuffix=demo
 ```
 To run app debug on **production**, run :
 
 ```
-SET ENVFILE=.env.production && npx react-native run-android --variant=productionDebug --appIdSuffix=dev
+SET ENVFILE=.env.production && npx react-native run-android --variant=productionDebug --appIdSuffix=production
 ```
 
 ## Generate Release App (apk)
