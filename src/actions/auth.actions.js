@@ -189,10 +189,10 @@ export const getToken = () => {
 export const refreshToken = () => {
   return async (dispatch, getState) => {
     const state = getState();
+    console.log(state, 'state nya');
     try {
       var payload = {
         refreshToken: state.authReducer.authData.refreshToken,
-        appClientId: awsConfig.appClientId,
       };
       console.log('PAYLOAD REFRESH TOKEN ', payload);
       const response = await fetchApi('/auth/refresh', 'POST', payload, 200);

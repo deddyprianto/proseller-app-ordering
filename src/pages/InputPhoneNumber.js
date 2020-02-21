@@ -253,7 +253,7 @@ class InputPhoneNumber extends Component {
                   placeholder={`${this.state.country} (${
                     this.state.phoneNumber
                   })`}
-                  withFlag={false}
+                  withFlag={true}
                   onSelect={country => {
                     console.log(country);
                     this.setState({
