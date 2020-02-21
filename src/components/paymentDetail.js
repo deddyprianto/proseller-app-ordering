@@ -14,6 +14,7 @@ import {
   Image,
   ScrollView,
   Alert,
+  BackHandler,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -47,10 +48,39 @@ class PaymentDetail extends Component {
       cancelPoint: false,
       loading: false,
       failedPay: false,
+      dataVoucer: undefined,
+      moneyPoint: undefined,
+      addPoint: undefined,
     };
   }
 
   componentDidMount = async () => {
+    await this.setDataPayment(false);
+    this.backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      this.handleBackPress,
+    );
+  };
+
+  setDataVoucher = async dataVoucer => {
+    await this.setDataPayment(true);
+    await this.setState({
+      dataVoucer,
+      addPoint: undefined,
+      moneyPoint: undefined,
+      cancelVoucher: false,
+    });
+    await this.setDataPayment(false);
+  };
+
+  setDataPoint = async (addPoint, moneyPoint) => {
+    await this.setDataPayment(true);
+    await this.setState({
+      addPoint,
+      moneyPoint,
+      dataVoucer: undefined,
+      cancelPoint: false,
+    });
     await this.setDataPayment(false);
   };
 
@@ -60,51 +90,62 @@ class PaymentDetail extends Component {
       var redeemVoucer = 0;
 
       try {
-        if (this.props.dataVoucer != undefined) {
-          if (this.props.dataVoucer.applyToSpecificProduct == true) {
+        if (this.state.dataVoucer != undefined) {
+          if (this.state.dataVoucer.applyToSpecificProduct == true) {
             //  search specific product
             let result = this.props.pembayaran.dataPay.find(
-              item => item.barcode == this.props.dataVoucer.product.barcode,
+              item => item.barcode == this.state.dataVoucer.product.barcode,
             );
             // check if apply to specific product is found
             if (result == undefined) {
               this.cencelVoucher();
               Alert.alert(
                 'Sorry',
-                `This voucher is only available on product ${
-                  this.props.dataVoucer.product.name
-                }`,
+                `This voucher is only available on specific product`,
               );
             } else {
               redeemVoucer =
-                (result.price * this.props.dataVoucer.voucherValue) / 100;
+                (result.price * this.state.dataVoucer.voucherValue) / 100;
             }
           } else {
-            if (this.props.dataVoucer.voucherType == 'discPercentage') {
+            if (this.state.dataVoucer.voucherType == 'discPercentage') {
               redeemVoucer =
                 (this.props.pembayaran.payment *
-                  this.props.dataVoucer.voucherValue) /
+                  this.state.dataVoucer.voucherValue) /
                 100;
-            } else if (this.props.dataVoucer.voucherType == 'discAmount') {
-              redeemVoucer = this.props.dataVoucer.voucherValue;
+            } else if (this.state.dataVoucer.voucherType == 'discAmount') {
+              redeemVoucer = this.state.dataVoucer.voucherValue;
             }
           }
         }
       } catch (e) {}
 
       var redeemPoint =
-        this.props.addPoint == undefined ? 0 : this.props.moneyPoint;
+        this.state.addPoint == undefined ? 0 : this.state.moneyPoint;
       totalBayar = this.state.totalBayar - (redeemVoucer + redeemPoint);
     } else {
       totalBayar = this.props.pembayaran.payment;
+    }
+    // check whether the total pay <0 after deducting the discount vouchers and points
+    if (totalBayar < 0) {
+      totalBayar = 0;
     }
     // console.log('total bayar ', totalBayar);
     this.setState({totalBayar});
   };
 
-  goBack() {
-    Actions.popTo('pageIndex');
+  componentWillUnmount() {
+    this.backHandler.remove();
   }
+
+  handleBackPress = () => {
+    this.goBack(); // works best when the goBack is async
+    return true;
+  };
+
+  goBack = async () => {
+    Actions.popTo('pageIndex');
+  };
 
   btnPayment = () => {
     Actions.paymentSuccess();
@@ -128,13 +169,13 @@ class PaymentDetail extends Component {
 
       if (
         this.state.cancelVoucher == false &&
-        this.props.dataVoucer != undefined
+        this.state.dataVoucer != undefined
       ) {
-        var jumlah = _.find(myVoucers, {id: this.props.dataVoucer.id})
+        var jumlah = _.find(myVoucers, {id: this.state.dataVoucer.id})
           .totalRedeem;
 
         var index = _.findIndex(myVoucers, {
-          id: this.props.dataVoucer.id,
+          id: this.state.dataVoucer.id,
         });
 
         _.updateWith(
@@ -148,6 +189,7 @@ class PaymentDetail extends Component {
       Actions.paymentAddVoucers({
         data: myVoucers,
         pembayaran: this.props.pembayaran,
+        setDataVoucher: this.setDataVoucher,
       });
     } catch (e) {
       this.setState({
@@ -162,7 +204,8 @@ class PaymentDetail extends Component {
     Actions.paymentAddPoint({
       data: this.props.totalPoint,
       pembayaran: this.props.pembayaran,
-      valueSet: this.props.moneyPoint == undefined ? 0 : this.props.moneyPoint,
+      valueSet: this.state.moneyPoint == undefined ? 0 : this.state.moneyPoint,
+      setDataPoint: this.setDataPoint,
     });
   };
 
@@ -180,8 +223,8 @@ class PaymentDetail extends Component {
       pembayaran.void = false;
 
       if (
-        this.props.dataVoucer == undefined &&
-        this.props.addPoint == undefined
+        this.state.dataVoucer == undefined &&
+        this.state.addPoint == undefined
       ) {
         pembayaran.statusAdd = null;
         pembayaran.redeemValue = 0;
@@ -190,13 +233,13 @@ class PaymentDetail extends Component {
         // pembayaran.afterPrice = this.state.totalBayar;
         pembayaran.afterPrice = Number(this.state.totalBayar.toFixed(3));
 
-        if (this.props.dataVoucer != undefined) {
-          pembayaran.voucherId = this.props.dataVoucer.id;
-          pembayaran.voucherSerialNumber = this.props.dataVoucer.serialNumber;
+        if (this.state.dataVoucer != undefined) {
+          pembayaran.voucherId = this.state.dataVoucer.id;
+          pembayaran.voucherSerialNumber = this.state.dataVoucer.serialNumber;
           pembayaran.statusAdd = 'addVoucher';
         }
-        if (this.props.addPoint != undefined) {
-          pembayaran.redeemValue = this.props.addPoint;
+        if (this.state.addPoint != undefined) {
+          pembayaran.redeemValue = this.state.addPoint;
           pembayaran.statusAdd = 'addPoint';
         }
       }
@@ -262,13 +305,14 @@ class PaymentDetail extends Component {
   };
 
   cencelVoucher = async () => {
-    await delete this.props.dataVoucer;
+    // await delete this.state.dataVoucer;
+    await this.setState({dataVoucer: undefined});
     await this.setDataPayment(true);
     this.setState({cancelVoucher: true});
   };
 
   cencelPoint = async () => {
-    await delete this.props.addPoint;
+    await delete this.state.addPoint;
     await this.setDataPayment(true);
     this.setState({cancelPoint: true});
   };
@@ -284,6 +328,7 @@ class PaymentDetail extends Component {
   };
 
   render() {
+    console.log('DATA VOUCHER ', this.state.dataVoucer);
     const iconSlider = () => (
       <Icon
         size={25}
@@ -475,7 +520,7 @@ class PaymentDetail extends Component {
               }}>
               <Text>Use Vouchers</Text>
               {this.state.cancelVoucher == false &&
-              this.props.dataVoucer != undefined ? (
+              this.state.dataVoucer != undefined ? (
                 <View
                   style={{
                     flexDirection: 'row',
@@ -507,7 +552,7 @@ class PaymentDetail extends Component {
                       }}
                     />
                     <Text style={styles.descMethod}>
-                      {this.props.dataVoucer.name.substr(0, 13)}
+                      {this.state.dataVoucer.name.substr(0, 13)}
                     </Text>
                   </TouchableOpacity>
                 </View>
@@ -540,7 +585,7 @@ class PaymentDetail extends Component {
               }}>
               <Text>Use Point</Text>
               {this.state.cancelPoint == false &&
-              this.props.addPoint != undefined ? (
+              this.state.addPoint != undefined ? (
                 <View
                   style={{
                     flexDirection: 'row',
@@ -578,7 +623,7 @@ class PaymentDetail extends Component {
                       }}
                     />
                     <Text style={styles.descMethod}>
-                      {'- ' + this.props.addPoint + ' Point'}
+                      {'- ' + this.state.addPoint + ' Point'}
                     </Text>
                   </TouchableOpacity>
                 </View>

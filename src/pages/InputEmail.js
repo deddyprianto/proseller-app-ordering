@@ -28,11 +28,6 @@ import {Actions} from 'react-native-router-flux';
 import colorConfig from '../config/colorConfig';
 import awsConfig from '../config/awsConfig';
 import Header from '../components/atom/header';
-import CustomTextInput from '../components/atom/TextInput';
-import CountryPicker, {
-  getAllCountries,
-  getCallingCode,
-} from 'react-native-country-picker-modal';
 import appConfig from '../config/appConfig';
 import Icon from 'react-native-vector-icons/Ionicons';
 

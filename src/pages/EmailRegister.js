@@ -148,7 +148,7 @@ class EmailRegister extends Component {
       };
       console.log(dataRequest, 'payload register by email');
       const response = await this.props.dispatch(createNewUser(dataRequest));
-      if (response == true) {
+      if (response.ResultCode == 200) {
         this.setState({
           loading: false,
         });
@@ -163,7 +163,7 @@ class EmailRegister extends Component {
         this.setState({
           loading: false,
         });
-        Alert.alert('Oopss..', response.message);
+        Alert.alert('Oopss..', response.Data.message);
       }
     } catch (error) {
       Alert.alert('Opss..', 'Something went wrong, please try again.');

@@ -62,11 +62,17 @@ export default class PaymentAddVoucers extends Component {
     return mount[value];
   }
 
+  componentWillUnmount(): void {
+    // console.log('WOI WOI WI');
+  }
+
   pageDetailVoucher = item => {
-    Actions.paymentDetail({
-      pembayaran: this.props.pembayaran,
-      dataVoucer: item,
-    });
+    // Actions.paymentDetail({
+    //   pembayaran: this.props.pembayaran,
+    //   dataVoucer: item,
+    // });
+    this.props.setDataVoucher(item);
+    Actions.pop();
     // Actions.voucher({dataVoucher: item})
   };
 

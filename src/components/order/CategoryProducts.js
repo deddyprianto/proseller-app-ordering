@@ -25,6 +25,7 @@ import {
   addProductToBasket,
   updateProductToBasket,
   getBasket,
+  removeProducts,
 } from '../../actions/order.action';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
@@ -62,6 +63,8 @@ class StoreDetailStores extends Component {
       'hardwareBackPress',
       this.handleBackPress,
     );
+    // berfore get new products, delete old products first, so different outlet got different products
+    await this.props.dispatch(removeProducts());
     // get product outlet
     await this.getProductsByOutlet();
     // check if basket soutlet is not same as current outlet
@@ -106,6 +109,7 @@ class StoreDetailStores extends Component {
       let response = await this.props.dispatch(
         getProductByOutlet(this.props.item.storeId, payload),
       );
+      console.log('response get product ', response);
       if (response.success) {
         if (
           this.props.products != undefined &&
@@ -237,7 +241,7 @@ class StoreDetailStores extends Component {
         item => item.productID == product.productID,
       );
       // send data to action
-      let response = this.props.dispatch(
+      let response = await this.props.dispatch(
         updateProductToBasket(data, previousData),
       );
 
@@ -336,6 +340,7 @@ class StoreDetailStores extends Component {
       ) {
         this.setState({idx: this.state.idx + 1}, () => {
           if (this.productsLength <= dataLength) {
+            console.log('product sekarang ', this.products);
             this.products.push(this.props.products[this.state.idx]);
           }
         });
@@ -624,6 +629,7 @@ class StoreDetailStores extends Component {
   render() {
     let products = this.products;
     console.log('DATA BASKET ', this.props.dataBasket);
+    console.log('LOG DATA PRODUCTS ', this.products);
     return (
       <View style={styles.container}>
         <ModalOrder

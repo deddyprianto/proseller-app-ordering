@@ -33,6 +33,20 @@ export const getProductByOutlet = (OutletId, payload) => {
   };
 };
 
+export const removeProducts = () => {
+  return async dispatch => {
+    try {
+      dispatch({
+        type: 'DATA_PRODUCTS_OUTLET',
+        products: undefined,
+        dataLength: 0,
+      });
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
 export const removeBasket = () => {
   return async (dispatch, getState) => {
     try {

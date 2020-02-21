@@ -160,7 +160,7 @@ class MobileRegister extends Component {
         this.setState({
           loading: false,
         });
-        Alert.alert('Oopss..', response.message);
+        Alert.alert('Oopss..', response.Data.message);
       }
     } catch (error) {
       Alert.alert('Opss..', 'Something went wrong, please try again.');

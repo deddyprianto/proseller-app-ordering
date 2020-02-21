@@ -54,7 +54,13 @@ class paymentAddPoint extends Component {
     //   item => item.campaignType == 'point',
     // )[0].points.pointsToRebateRatio1;
     console.log('jumPointRatio ', jumPointRatio);
-    var setDefault = this.props.pembayaran.payment * jumPointRatio;
+    var setDefault = jumPointRatio;
+    if (this.props.pembayaran.payment < jumPointRatio) {
+      setDefault = jumPointRatio;
+    } else {
+      setDefault = this.props.pembayaran.payment * jumPointRatio;
+      setDefault = Math.ceil(setDefault);
+    }
     this.setState({
       jumPointRatio: jumPointRatio,
       jumMoneyRatio: jumMoneyRatio,
@@ -68,6 +74,9 @@ class paymentAddPoint extends Component {
     } else {
       this.setState({jumPoint: this.props.valueSet});
     }
+    console.log('jumPointRatio ', this.state.jumPointRatio);
+    console.log('jumMoneyRatio ', this.state.jumMoneyRatio);
+    console.log('jumPoint ', this.state.jumPoint);
   };
 
   goBack() {
@@ -75,13 +84,27 @@ class paymentAddPoint extends Component {
   }
 
   pageDetailPoint = () => {
-    Actions.paymentDetail({
-      pembayaran: this.props.pembayaran,
-      addPoint: this.state.jumPoint == 0 ? undefined : this.state.jumPoint,
-      moneyPoint:
-        (this.state.jumPoint / this.state.jumPointRatio) *
+    // Actions.paymentDetail({
+    //   pembayaran: this.props.pembayaran,
+    //   addPoint: this.state.jumPoint == 0 ? undefined : this.state.jumPoint,
+    //   moneyPoint:
+    //     (this.state.jumPoint / this.state.jumPointRatio) *
+    //     this.state.jumMoneyRatio,
+    // });
+    this.props.setDataPoint(
+      this.state.jumPoint == 0 ? undefined : this.state.jumPoint,
+      (this.state.jumPoint / this.state.jumPointRatio) *
         this.state.jumMoneyRatio,
-    });
+    );
+    Actions.pop();
+  };
+
+  getPointOrPrice = () => {
+    if (this.props.pembayaran.payment < this.state.jumPointRatio) {
+      return this.state.jumPointRatio;
+    } else {
+      return Math.ceil(this.props.pembayaran.payment);
+    }
   };
 
   render() {
@@ -171,27 +194,37 @@ class paymentAddPoint extends Component {
                   }}
                   thumbTintColor={colorConfig.pageIndex.activeTintColor}
                   value={this.state.jumPoint}
-                  onValueChange={value =>
-                    this.setState({
-                      jumPoint:
-                        value <
-                        this.props.pembayaran.payment * this.state.jumPointRatio
-                          ? Math.floor(value)
-                          : this.props.pembayaran.payment,
-                    })
-                  }
+                  onValueChange={value => {
+                    // get ratio
+                    let defaultPoint =
+                      this.props.pembayaran.payment * this.state.jumPointRatio;
+                    if (defaultPoint < this.state.jumPointRatio) {
+                      defaultPoint = this.state.jumPointRatio;
+                    }
+                    // get max pont
+                    let jumPoint = defaultPoint;
+                    if (value < defaultPoint) {
+                      jumPoint = Math.ceil(value);
+                    } else {
+                      if (
+                        this.props.pembayaran.payment < this.state.jumPointRatio
+                      ) {
+                        jumPoint = this.state.jumPointRatio;
+                      } else {
+                        jumPoint = Math.ceil(this.props.pembayaran.payment);
+                      }
+                    }
+                    this.setState({jumPoint});
+                  }}
                 />
                 {this.state.jumPoint == 0 ? null : this.state.jumPoint <
                   this.props.pembayaran.payment *
                     this.state.jumPointRatio ? null : (
                   <Text
                     style={{
-                      color: 'red',
+                      color: colorConfig.store.colorError,
                     }}>
-                    {'You only need ' +
-                      appConfig.appMataUang +
-                      ' ' +
-                      this.props.pembayaran.payment}
+                    {'You only need ' + this.getPointOrPrice() + ' Point'}
                   </Text>
                 )}
               </View>

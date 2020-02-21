@@ -20,7 +20,7 @@ export default class RewardsMenu extends Component {
 
   pagePay() {
     // var pembayaran = {
-    //   payment: 29.5,
+    //   payment: 9.01,
     //   storeName: 'Bugis Village',
     //   referenceNo: `${new Date().valueOf()}`,
     //   storeId: '486e2b85-6700-409d-afe4-5f1cdbacba53',

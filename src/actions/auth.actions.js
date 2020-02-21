@@ -42,7 +42,7 @@ export const createNewUser = payload => {
         });
         return true;
       } else {
-        return response.responseBody.Data;
+        return response.responseBody;
       }
     } catch (error) {
       dispatch({

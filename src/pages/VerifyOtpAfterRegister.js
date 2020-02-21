@@ -291,7 +291,7 @@ class VerifyOtpAfterRegister extends Component {
                   }}>
                   <TextInput
                     keyboardType={'numeric'}
-                    maxLength={6}
+                    maxLength={4}
                     secureTextEntry={true}
                     value={this.state.OTPCode}
                     onChangeText={value => this.setState({OTPCode: value})}

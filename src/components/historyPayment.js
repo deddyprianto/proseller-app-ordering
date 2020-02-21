@@ -10,6 +10,7 @@ import {
   RefreshControl,
   FlatList,
   ActivityIndicator,
+  SafeAreaView,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
@@ -133,21 +134,22 @@ class HistoryPayment extends Component {
 
   render() {
     return (
-      <View
-        refreshControl={
-          <RefreshControl
-            refreshing={this.state.refreshing}
-            onRefresh={this._onRefresh}
-          />
-        }>
-        {this.props.pointTransaction == undefined ? (
-          <View style={styles.component}>
-            <Text style={styles.empty}>History payment is empty</Text>
-          </View>
-        ) : this.props.pointTransaction.length == 0 ? (
-          <View style={styles.component}>
-            <Text style={styles.empty}>History payment is empty</Text>
-          </View>
+      <>
+        {this.props.pointTransaction == undefined ||
+        this.props.pointTransaction.length == 0 ? (
+          <ScrollView
+            refreshControl={
+              <RefreshControl
+                refreshing={this.state.refreshing}
+                onRefresh={this._onRefresh}
+              />
+            }>
+            <View style={styles.component}>
+              <Text style={styles.empty}>
+                Sorry, there is no transaction history :(
+              </Text>
+            </View>
+          </ScrollView>
         ) : (
           <View style={styles.component}>
             <FlatList
@@ -233,7 +235,7 @@ class HistoryPayment extends Component {
             />
           </View>
         )}
-      </View>
+      </>
     );
   }
 }
@@ -242,12 +244,17 @@ const styles = StyleSheet.create({
   component: {
     marginTop: 10,
     marginBottom: 10,
+    // flexDirection: 'row',
+    // height: '100%',
+    justifyContent: 'center',
     alignItems: 'center',
   },
   empty: {
     color: colorConfig.pageIndex.inactiveTintColor,
     textAlign: 'center',
     fontFamily: 'Lato-Medium',
+    fontSize: 20,
+    marginHorizontal: '5%',
   },
   item: {
     paddingVertical: 10,
