@@ -113,6 +113,7 @@ class Basket extends Component {
   };
 
   removeBasket = async () => {
+    this.setState({loading: true});
     await this.props.dispatch(removeBasket());
     await this.getBasket();
   };

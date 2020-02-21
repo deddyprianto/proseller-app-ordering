@@ -142,6 +142,7 @@ export const updateProductToBasket = (payload, previousData) => {
           200,
           token,
         );
+        return response.response;
         // console.log(response, 'response update data basket');
       }
     } catch (error) {

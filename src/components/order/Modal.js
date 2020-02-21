@@ -93,9 +93,10 @@ export default class ModalOrder extends Component {
         hardwareAccelerated={true}
         onShow={this.props.modalShow}
         onRequestClose={this.props.backButtonClicked}>
-        <View
+        <KeyboardAvoidingView
           style={{
             height: '100%',
+            // paddingBottom: 100,
             backgroundColor: colorConfig.store.containerColor,
           }}>
           <ScrollView>
@@ -186,7 +187,7 @@ export default class ModalOrder extends Component {
             {/*  </View>*/}
             {/*</View>*/}
 
-            <KeyboardAvoidingView style={styles.cardModal}>
+            <View style={styles.cardModal}>
               <Text style={styles.titleModifierModal}>Remark</Text>
               <View style={{flexDirection: 'column', paddingBottom: 20}}>
                 <TextInput
@@ -207,7 +208,7 @@ export default class ModalOrder extends Component {
                   multiline={true}
                 />
               </View>
-            </KeyboardAvoidingView>
+            </View>
 
             <View style={styles.cardModal}>
               <Text style={styles.titleModifierModal}>Quantity</Text>
@@ -257,7 +258,7 @@ export default class ModalOrder extends Component {
               )}
             </TouchableOpacity>
           </View>
-        </View>
+        </KeyboardAvoidingView>
       </Modal>
     );
   }

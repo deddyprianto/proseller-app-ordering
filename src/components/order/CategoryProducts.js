@@ -240,20 +240,23 @@ class StoreDetailStores extends Component {
       let previousData = this.props.dataBasket.details.find(
         item => item.productID == product.productID,
       );
+
+      // hide modal
+      this.setState({
+        selectedProduct: {},
+        isModalVisible: false,
+      });
+
       // send data to action
       let response = await this.props.dispatch(
         updateProductToBasket(data, previousData),
       );
 
-      this.setState({
-        selectedProduct: {},
-        isModalVisible: false,
-      });
-      if (response.success == false) {
+      if (response.resultCode != 200) {
         Alert.alert('Oppss..', 'Failed to update item to basket.');
       }
     } catch (e) {
-      Alert.alert('Oppss..', 'Please try again.');
+      Alert.alert('Sorry', 'Something went wrong, please try again.');
     }
   };
 

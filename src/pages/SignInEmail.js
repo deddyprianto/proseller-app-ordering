@@ -262,7 +262,7 @@ class SignInEmail extends Component {
     return (
       <View style={styles.backgroundImage}>
         {this.state.loading && <Loader />}
-        <ScrollView>
+        <ScrollView keyboardShouldPersistTaps="handled">
           <Header titleHeader={'Email Sign In'} backButton={true} />
           <View style={{margin: 20}}>
             <View>

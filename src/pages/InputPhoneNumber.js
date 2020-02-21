@@ -224,7 +224,7 @@ class InputPhoneNumber extends Component {
     return (
       <View style={styles.backgroundImage}>
         {this.state.loading && <Loader />}
-        <ScrollView>
+        <ScrollView keyboardShouldPersistTaps="handled">
           <Header
             titleHeader={'Mobile Sign In / Register'}
             backButton={false}
