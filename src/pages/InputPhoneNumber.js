@@ -255,7 +255,6 @@ class InputPhoneNumber extends Component {
                   })`}
                   withFlag={true}
                   onSelect={country => {
-                    console.log(country);
                     this.setState({
                       phoneNumber: `+${country.callingCode[0]}`,
                       country: country.name,
@@ -291,6 +290,7 @@ class InputPhoneNumber extends Component {
                 onChangeText={value => this.setState({phone: value})}
                 style={{
                   fontSize: 20,
+                  width: '100%',
                   fontFamily: 'Lato-Medium',
                   padding: 15,
                 }}

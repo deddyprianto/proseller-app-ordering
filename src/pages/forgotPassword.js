@@ -181,9 +181,9 @@ class ForgotPassword extends Component {
       this.setState({loadingVerifyPhone: true});
       var dataRequest = {
         phoneNumber: this.phone.getValue(),
-        appClientId: awsConfig.appClientId,
-        cognitoPoolId: awsConfig.cognitoPoolId,
-        companyId: awsConfig.companyId,
+        // appClientId: awsConfig.appClientId,
+        // cognitoPoolId: awsConfig.cognitoPoolId,
+        // companyId: awsConfig.companyId,
       };
       const response = await this.props.dispatch(
         sendCodeConfirmation(dataRequest),
@@ -212,9 +212,9 @@ class ForgotPassword extends Component {
         phoneNumber: this.state.phoneNumber,
         newPassword: this.state.password,
         confirmationCode: this.state.confirmationCode,
-        appClientId: awsConfig.appClientId,
-        cognitoPoolId: awsConfig.cognitoPoolId,
-        companyId: awsConfig.companyId,
+        // appClientId: awsConfig.appClientId,
+        // cognitoPoolId: awsConfig.cognitoPoolId,
+        // companyId: awsConfig.companyId,
       };
       console.log(dataRequest);
       const response = await this.props.dispatch(
@@ -260,9 +260,9 @@ class ForgotPassword extends Component {
       var dataLogin = {
         phoneNumber: this.state.phoneNumber,
         password: this.state.password,
-        appClientId: awsConfig.appClientId,
-        cognitoPoolId: awsConfig.cognitoPoolId,
-        companyId: awsConfig.companyId,
+        // appClientId: awsConfig.appClientId,
+        // cognitoPoolId: awsConfig.cognitoPoolId,
+        // companyId: awsConfig.companyId,
       };
       const response = await this.props.dispatch(loginUser(dataLogin));
       if (response.success == false) {
@@ -416,7 +416,7 @@ class ForgotPassword extends Component {
                   <TextInput
                     placeholder={'Confirmation Code'}
                     style={{paddingVertical: 10}}
-                    keyboardType='numeric'
+                    keyboardType="numeric"
                     value={this.state.confirmationCode}
                     onChangeText={value =>
                       this.setState({
@@ -627,10 +627,7 @@ mapDispatchToProps = dispatch => ({
 });
 
 export default compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   reduxForm({
     form: 'confirm',
     validate,

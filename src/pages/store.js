@@ -28,6 +28,8 @@ import {dataPromotion} from '../actions/promotion.action';
 import {getBasket} from '../actions/order.action';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
+import CryptoJS from 'react-native-crypto-js';
+import awsConfig from '../config/awsConfig';
 
 class Store extends Component {
   constructor(props) {
@@ -235,6 +237,19 @@ class Store extends Component {
   };
 
   render() {
+    let userDetail;
+    try {
+      // Decrypt data user
+      let bytes = CryptoJS.AES.decrypt(
+        this.props.userDetail,
+        awsConfig.PRIVATE_KEY_RSA,
+      );
+      userDetail = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+    } catch (e) {
+      userDetail = {};
+      userDetail.name = 'User User';
+    }
+
     return (
       <View style={{marginBottom: 40}}>
         <View
@@ -281,7 +296,7 @@ class Store extends Component {
                     fontFamily: 'Lato-Bold',
                   }}>
                   {this.props.userDetail != undefined
-                    ? this.props.userDetail.name.split(' ')[0]
+                    ? userDetail.name.split(' ')[0]
                     : ''}
                 </Text>
               </View>

@@ -17,6 +17,8 @@ import * as _ from 'lodash';
 import {logoutUser} from '../actions/auth.actions';
 import colorConfig from '../config/colorConfig';
 import {Actions} from 'react-native-router-flux';
+import awsConfig from '../config/awsConfig';
+import CryptoJS from 'react-native-crypto-js';
 
 class AccountMenuList extends Component {
   constructor(props) {
@@ -31,7 +33,19 @@ class AccountMenuList extends Component {
   };
 
   editProfil = () => {
-    var dataDiri = {dataDiri: this.props.userDetail};
+    let userDetail;
+    try {
+      // Decrypt data user
+      let bytes = CryptoJS.AES.decrypt(
+        this.props.userDetail,
+        awsConfig.PRIVATE_KEY_RSA,
+      );
+      userDetail = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+    } catch (e) {
+      userDetail = undefined;
+    }
+
+    var dataDiri = {dataDiri: userDetail};
     Actions.editProfile(dataDiri);
   };
 
@@ -39,8 +53,7 @@ class AccountMenuList extends Component {
     return (
       <View style={styles.container}>
         <View style={{flexDirection: 'row'}}>
-          <View
-            style={styles.itemMenu}>
+          <View style={styles.itemMenu}>
             <Icon
               size={25}
               name={Platform.OS === 'ios' ? 'ios-timer' : 'md-time'}
@@ -67,8 +80,7 @@ class AccountMenuList extends Component {
         </View>
 
         <View style={{flexDirection: 'row'}}>
-          <View
-            style={styles.itemMenu}>
+          <View style={styles.itemMenu}>
             {/*<Image*/}
             {/*  resizeMode="stretch"*/}
             {/*  style={{height: 18, width: 16, marginRight: 5}}*/}

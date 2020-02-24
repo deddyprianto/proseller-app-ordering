@@ -140,6 +140,9 @@ android {
         missingDimensionStrategy 'react-native-camera', 'general'
         resValue "string", "build_config_package", "com.qiji"
         multiDexEnabled true
+        // detox
+        testBuildType System.getProperty('testBuildType', 'debug')
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
     splits {
         abi {
@@ -175,6 +178,8 @@ android {
             signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            // Detox-specific additions to pro-guard
+            proguardFile "${rootProject.projectDir}/../node_modules/detox/android/detox/proguard-rules-app.pro"
         }
     }
     productFlavors {
@@ -216,6 +221,7 @@ android {
 }
 
 dependencies {
+    implementation project(':react-native-linear-gradient')
     implementation project(':@react-native-firebase_crashlytics')
     implementation project(':@react-native-firebase_app')
     implementation project(':react-native-sms-retriever')
@@ -244,6 +250,11 @@ dependencies {
     // implementation 'androidx.multidex:multidex:$multidex_version'
 
     implementation 'com.android.support:multidex:1.0.3'
+
+    // detox
+    androidTestImplementation('com.wix:detox:+') { transitive = true }
+    androidTestImplementation 'junit:junit:4.12'
+    implementation "androidx.annotation:annotation:1.1.0"
 
     if (enableHermes) {
         def hermesPath = "../../node_modules/hermes-engine/android/";

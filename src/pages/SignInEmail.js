@@ -180,7 +180,7 @@ class SignInEmail extends Component {
           loading: false,
           buttonOTPpressed: false,
         });
-        Alert.alert('Opss..', 'Incorect OTP Code');
+        Alert.alert('Opss..', 'Cant send OTP Code');
       }
     } catch (error) {
       Alert.alert('Opss..', 'Something went wrong, please try again.');

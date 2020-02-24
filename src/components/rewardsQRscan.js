@@ -16,6 +16,7 @@ import AwesomeAlert from 'react-native-awesome-alerts';
 
 import colorConfig from '../config/colorConfig';
 import {sendPayment, campaign, dataPoint} from '../actions/rewards.action';
+import {myVoucers} from '../actions/account.action';
 
 class RewardsQRscan extends Component {
   constructor(props) {
@@ -28,6 +29,10 @@ class RewardsQRscan extends Component {
     };
   }
 
+  componentDidMount = async () => {
+    await this.props.dispatch(myVoucers());
+  };
+
   goBack() {
     Actions.pop();
   }
@@ -35,7 +40,6 @@ class RewardsQRscan extends Component {
   onSuccess = e => {
     try {
       const scan = JSON.parse(e.data);
-      console.log('hasil scan ', scan);
       var pembayaran = {
         payment: scan.price,
         storeName: scan.outletName,
@@ -43,7 +47,7 @@ class RewardsQRscan extends Component {
         storeId: scan.outletId,
         referenceNo: scan.referenceNo,
       };
-      console.log('hasil pembayaran', pembayaran);
+      // console.log('hasil pembayaran', pembayaran);
       // this.sendPayment(pembayaran);
       // this.paymentDetail(pembayaran);
       Actions.paymentDetail({pembayaran: pembayaran});
@@ -103,7 +107,17 @@ class RewardsQRscan extends Component {
         </View>
         <View style={styles.card}>
           <View style={{marginTop: 60}}>
-            <QRCodeScanner onRead={this.onSuccess} />
+            <QRCodeScanner
+              markerStyle={{
+                borderColor: 'white',
+                borderRadius: 10,
+                borderStyle: 'dashed',
+                width: Dimensions.get('window').width - 50,
+                height: Dimensions.get('window').width - 50,
+              }}
+              showMarker={true}
+              onRead={this.onSuccess}
+            />
           </View>
         </View>
         <AwesomeAlert

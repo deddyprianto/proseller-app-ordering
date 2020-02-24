@@ -228,6 +228,7 @@ class SignInPhoneNumber extends Component {
       };
       console.log(dataRequest, 'payload send otp');
       const response = await this.props.dispatch(sendOTP(dataRequest));
+      console.log('response ', response);
       if (response) {
         this.setState({
           loading: false,
@@ -238,7 +239,7 @@ class SignInPhoneNumber extends Component {
           loading: false,
           buttonOTPpressed: false,
         });
-        Alert.alert('Opss..', 'Incorect OTP Code');
+        Alert.alert('Opss..', 'Cant send OTP Code');
       }
     } catch (error) {
       Alert.alert('Opss..', 'Something went wrong, please try again.');
@@ -280,27 +281,27 @@ class SignInPhoneNumber extends Component {
 
   submitLogin = async () => {
     this.setState({loading: true});
-    try {
-      var dataLogin = {
-        phoneNumber: this.props.phoneNumber,
-        codeOTP: this.state.OTPCode,
-        isUseApp: true,
-        player_ids: this.props.deviceID.deviceID,
-      };
-      const response = await this.props.dispatch(loginUser(dataLogin));
-      if (response.status == false) {
-        this.setState({loading: false});
-        Alert.alert('Opss..', response.message);
-      } else if (response.code == 'UserNotConfirmedException') {
-        this.setState({loading: false});
-        Alert.alert('Opss..', 'response.message');
-      }
-    } catch (error) {
+    // try {
+    var dataLogin = {
+      phoneNumber: this.props.phoneNumber,
+      codeOTP: this.state.OTPCode,
+      isUseApp: true,
+      player_ids: this.props.deviceID.deviceID,
+    };
+    const response = await this.props.dispatch(loginUser(dataLogin));
+    if (response.status == false) {
       this.setState({loading: false});
-      await this.props.dispatch(
-        notifikasi("We're Sorry...", 'Something went wrong, please try again'),
-      );
+      Alert.alert('Opss..', response.message);
+    } else if (response.code == 'UserNotConfirmedException') {
+      this.setState({loading: false});
+      Alert.alert('Opss..', 'response.message');
     }
+    // } catch (error) {
+    //   this.setState({loading: false});
+    //   await this.props.dispatch(
+    //     notifikasi("We're Sorry...", 'Something went wrong, please try again'),
+    //   );
+    // }
   };
 
   zeroPad = (num, places) => {
@@ -617,7 +618,10 @@ mapDispatchToProps = dispatch => ({
 });
 
 export default compose(
-  connect(mapStateToProps, mapDispatchToProps),
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  ),
   reduxForm({
     form: 'confirm',
   }),

@@ -13,7 +13,7 @@ import * as _ from 'lodash';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
 import {notifikasi} from '../actions/auth.actions';
-import {dataPoint, getStamps} from '../actions/rewards.action';
+import {dataPoint, getStamps, campaign} from '../actions/rewards.action';
 import {refreshToken} from '../actions/auth.actions';
 import {recentTransaction} from '../actions/sales.action';
 import RewardsPoint from '../components/rewardsPoint';
@@ -26,6 +26,9 @@ import {Actions} from 'react-native-router-flux';
 import Geolocation from 'react-native-geolocation-service';
 import {userPosition} from '../actions/user.action';
 import {myVoucers} from '../actions/account.action';
+import ShimmerPlaceHolder from 'react-native-shimmer-placeholder';
+import MyPointsPlaceHolder from '../components/placeHolderLoading/MyPointsPlaceHolder';
+import {isEmptyObject, isEmptyArray} from '../helper/CheckEmpty';
 
 class Rewards extends Component {
   _isMounted = false;
@@ -57,13 +60,12 @@ class Rewards extends Component {
   getDataRewards = async () => {
     try {
       await this.getUserPosition();
-      // await this.props.dispatch(campaign());
+      await this.props.dispatch(campaign());
       await this.props.dispatch(dataPoint());
       // await this.props.dispatch(vouchers());
       await this.props.dispatch(getStamps());
       // await this.props.dispatch(dataInbox());
       await this.props.dispatch(recentTransaction());
-      await this.props.dispatch(myVoucers());
 
       this.setState({isLoading: false});
     } catch (error) {
@@ -92,9 +94,9 @@ class Rewards extends Component {
   };
 
   _onRefresh = async () => {
-    this.setState({refreshing: true});
+    this.setState({refreshing: true, isLoading: true});
     await this.getDataRewards();
-    this.setState({refreshing: false});
+    this.setState({refreshing: false, isLoading: false});
   };
 
   detailStamps() {
@@ -110,20 +112,27 @@ class Rewards extends Component {
             onRefresh={this._onRefresh}
           />
         }>
-        {this.state.isLoading ? (
-          <View style={styles.loading}>
-            {this.state.isLoading && <Loader />}
-          </View>
-        ) : (
+        <View style={styles.container}>
+          {this.state.isLoading ? (
+            <View style={styles.loading}>{/*<Loader />*/}</View>
+          ) : null}
           <View>
-            {this.props.dataStamps.dataStamps == undefined ? null : this.props
-                .dataStamps.dataStamps.length == 0 ? null : (
+            {this.state.isLoading ? (
+              <RewardsStamp
+                isLoading={this.state.isLoading}
+                dataStamps={this.props.dataStamps}
+              />
+            ) : this.props.dataStamps.dataStamps == undefined ? null : this
+                .props.dataStamps.dataStamps.length == 0 ? null : (
               <View
                 style={{
                   backgroundColor: colorConfig.pageIndex.activeTintColor,
                   alignItems: 'center',
                 }}>
-                <RewardsStamp dataStamps={this.props.dataStamps} />
+                <RewardsStamp
+                  isLoading={this.state.isLoading}
+                  dataStamps={this.props.dataStamps}
+                />
                 <TouchableOpacity
                   onPress={this.detailStamps}
                   style={{
@@ -133,29 +142,45 @@ class Rewards extends Component {
                 </TouchableOpacity>
               </View>
             )}
-            {this.props.totalPoint == undefined ||
-            this.props.totalPoint == 0 ? (
+
+            {this.props.totalPoint == undefined ? (
               <View
                 style={{
                   backgroundColor: colorConfig.pageIndex.activeTintColor,
-                  height: this.state.screenHeight / 5 - 35,
-                }}
-              />
+                  height: this.state.screenHeight / 3 - 30,
+                }}>
+                {this.state.isLoading ? <MyPointsPlaceHolder /> : null}
+              </View>
             ) : (
-              <RewardsPoint />
+              <RewardsPoint isLoading={this.state.isLoading} />
             )}
             <RewardsMenu myVoucers={this.props.myVoucers} />
-            <RewardsTransaction screen={this.props} />
+            <RewardsTransaction
+              isLoading={this.state.isLoading}
+              screen={this.props}
+            />
           </View>
-        )}
+        </View>
       </ScrollView>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  loading: {
+  container: {
+    flex: 1,
     height: Dimensions.get('window').height,
+    // backgroundColor: colorConfig.pageIndex.backgroundColor,
+  },
+  loading: {
+    width: '100%',
+    backgroundColor: 'rgba(0, 0, 0, 0.1)',
+    // height: Dimensions.get('window').height,
+    // justifyContent: 'center',
+    top: 0,
+    bottom: 0,
+    zIndex: 99,
+    position: 'absolute',
   },
   btn: {
     color: colorConfig.pageIndex.listBorder,

@@ -48,15 +48,15 @@ class Main extends Component {
 
   async componentDidMount() {
     try {
-      Amplify.configure({
-        Auth: {
-          identityPoolId: awsConfig.identityPoolId,
-          region: awsConfig.region,
-          userPoolId: awsConfig.cognitoPoolId,
-          userPoolWebClientId: awsConfig.appClientId,
-          mandatorySignIn: false,
-        },
-      });
+      // Amplify.configure({
+      //   Auth: {
+      //     identityPoolId: awsConfig.identityPoolId,
+      //     region: awsConfig.region,
+      //     userPoolId: awsConfig.cognitoPoolId,
+      //     userPoolWebClientId: awsConfig.appClientId,
+      //     mandatorySignIn: false,
+      //   },
+      // });
 
       await this.props.dispatch(refreshToken());
 

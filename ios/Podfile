@@ -58,6 +58,9 @@ target 'Qiji' do
 
   pod 'RNFBCrashlytics', :path => '../node_modules/@react-native-firebase/crashlytics'
 
+
+  pod 'BVLinearGradient', :path => '../node_modules/react-native-linear-gradient'
+
   target 'QijiTests' do
     inherit! :search_paths
     # Pods for testing

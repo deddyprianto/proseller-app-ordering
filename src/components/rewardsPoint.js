@@ -2,8 +2,8 @@ import React, {Component} from 'react';
 import {View, Text, Dimensions} from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
-
 import colorConfig from '../config/colorConfig';
+import ShimmerPlaceHolder from 'react-native-shimmer-placeholder';
 
 class RewardsPoint extends Component {
   constructor(props) {

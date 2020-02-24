@@ -327,6 +327,69 @@ class PaymentDetail extends Component {
     }
   };
 
+  renderUsePoint = () => [
+    <View
+      style={{
+        marginBottom: 50,
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        flexDirection: 'row',
+      }}>
+      <Text>Use Point</Text>
+      {this.state.cancelPoint == false && this.state.addPoint != undefined ? (
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}>
+          <TouchableOpacity
+            style={styles.btnMethodCencel}
+            onPress={() => this.cencelPoint()}>
+            <Icon
+              size={18}
+              name={
+                Platform.OS === 'ios'
+                  ? 'ios-close-circle-outline'
+                  : 'md-close-circle-outline'
+              }
+              style={{color: colorConfig.store.colorError}}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.btnMethod} onPress={this.myPoint}>
+            {/*<Image*/}
+            {/*  style={{height: 18, width: 23, marginRight: 5}}*/}
+            {/*  source={require('../assets/img/ticket.png')}*/}
+            {/*/>*/}
+            <Icon
+              size={20}
+              name={Platform.OS === 'ios' ? 'ios-pricetags' : 'md-pricetags'}
+              style={{
+                color: colorConfig.store.textWhite,
+                marginRight: 8,
+              }}
+            />
+            <Text style={styles.descMethod}>
+              {'- ' + this.state.addPoint + ' Point'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      ) : (
+        <TouchableOpacity style={styles.btnMethod} onPress={this.myPoint}>
+          <Icon
+            size={20}
+            name={Platform.OS === 'ios' ? 'ios-pricetags' : 'md-pricetags'}
+            style={{
+              color: colorConfig.store.textWhite,
+              marginRight: 8,
+            }}
+          />
+          <Text style={styles.descMethod}>Pick Points</Text>
+        </TouchableOpacity>
+      )}
+    </View>,
+  ];
+
   render() {
     console.log('DATA VOUCHER ', this.state.dataVoucer);
     const iconSlider = () => (
@@ -576,124 +639,11 @@ class PaymentDetail extends Component {
                 </TouchableOpacity>
               )}
             </View>
-            <View
-              style={{
-                marginBottom: 50,
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                flexDirection: 'row',
-              }}>
-              <Text>Use Point</Text>
-              {this.state.cancelPoint == false &&
-              this.state.addPoint != undefined ? (
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                  }}>
-                  <TouchableOpacity
-                    style={styles.btnMethodCencel}
-                    onPress={() => this.cencelPoint()}>
-                    <Icon
-                      size={18}
-                      name={
-                        Platform.OS === 'ios'
-                          ? 'ios-close-circle-outline'
-                          : 'md-close-circle-outline'
-                      }
-                      style={{color: colorConfig.store.colorError}}
-                    />
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={styles.btnMethod}
-                    onPress={this.myPoint}>
-                    {/*<Image*/}
-                    {/*  style={{height: 18, width: 23, marginRight: 5}}*/}
-                    {/*  source={require('../assets/img/ticket.png')}*/}
-                    {/*/>*/}
-                    <Icon
-                      size={20}
-                      name={
-                        Platform.OS === 'ios' ? 'ios-pricetags' : 'md-pricetags'
-                      }
-                      style={{
-                        color: colorConfig.store.textWhite,
-                        marginRight: 8,
-                      }}
-                    />
-                    <Text style={styles.descMethod}>
-                      {'- ' + this.state.addPoint + ' Point'}
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              ) : (
-                <TouchableOpacity
-                  style={styles.btnMethod}
-                  onPress={this.myPoint}>
-                  <Icon
-                    size={20}
-                    name={
-                      Platform.OS === 'ios' ? 'ios-pricetags' : 'md-pricetags'
-                    }
-                    style={{
-                      color: colorConfig.store.textWhite,
-                      marginRight: 8,
-                    }}
-                  />
-                  <Text style={styles.descMethod}>Pick Points</Text>
-                </TouchableOpacity>
-              )}
-            </View>
-            {/* <RNSlidingButton
-              style={{
-                backgroundColor: colorConfig.pageIndex.activeTintColor,
-                borderRadius: 50,
-              }}
-              height={50}
-              onSlidingSuccess={this.onSlideRight}
-              slideDirection={SlideDirection.RIGHT}>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  marginLeft: 5,
-                }}>
-                <View
-                  style={{
-                    height: 40,
-                    width: 40,
-                    borderRadius: 40,
-                    backgroundColor: colorConfig.pageIndex.backgroundColor,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}>
-                  <Icon
-                    size={25}
-                    name={Platform.OS === 'ios' ? 'ios-log-in' : 'md-log-in'}
-                    style={{color: colorConfig.pageIndex.activeTintColor}}
-                  />
-                </View>
-                <View
-                  style={{
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}>
-                  <Text
-                    numberOfLines={1}
-                    style={{
-                      marginLeft: 10,
-                      fontSize: 16,
-                      fontWeight: 'bold',
-                      color: colorConfig.pageIndex.backgroundColor,
-                    }}>
-                    {'Pay ' +
-                      appConfig.appMataUang +
-                      ' ' +
-                      this.state.totalBayar}
-                  </Text>
-                </View>
-              </View>
-            </RNSlidingButton> */}
+            {this.props.totalPoint != undefined && this.props.totalPoint != 0
+              ? this.renderUsePoint()
+              : null}
+
+            <View style={{marginTop: 50}} />
             <SwipeButton
               disabled={false}
               disabledThumbIconBackgroundColor="#FFFFFF"

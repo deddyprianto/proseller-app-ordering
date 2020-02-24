@@ -1,5 +1,6 @@
 import awsConfig from '../config/awsConfig';
 const BASE_URL_ORDER = awsConfig.base_url_order;
+import CryptoJS from 'react-native-crypto-js';
 
 export const fetchApiOrder = async (
   url,
@@ -17,6 +18,9 @@ export const fetchApiOrder = async (
       responseBody: null,
     };
     if (token) {
+      // Decrypt token
+      let bytes = CryptoJS.AES.decrypt(token, awsConfig.PRIVATE_KEY_RSA);
+      token = bytes.toString(CryptoJS.enc.Utf8);
       headers['Authorization'] = `Bearer ${token}`;
     }
     // const response = await fetchJson(method, path, data, token)

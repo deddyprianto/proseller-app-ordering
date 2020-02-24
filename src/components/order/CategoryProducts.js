@@ -11,7 +11,6 @@ import {
   Alert,
   Picker,
   ActivityIndicator,
-  Animated,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -32,6 +31,7 @@ import {connect} from 'react-redux';
 import Loader from '../../components/loader';
 import ButtonViewBasket from '../../components/order/ButtonViewBasket';
 import CurrencyFormatter from '../../helper/CurrencyFormatter';
+import ShimmerPlaceHolder from 'react-native-shimmer-placeholder';
 
 class StoreDetailStores extends Component {
   constructor(props) {
@@ -565,25 +565,23 @@ class StoreDetailStores extends Component {
                 <ProgressiveImage style={styles.imageProduct} />
                 <View>
                   <View style={[styles.productDesc]}>
-                    <View
-                      style={{
-                        width: 100,
-                        height: 15,
-                        borderRadius: 5,
-                        backgroundColor: '#e1e4e8',
-                      }}
+                    <ShimmerPlaceHolder
+                      autoRun={true}
+                      duration={500}
+                      height={15}
+                      width={100}
+                      colorShimmer={['#e1e4e8', 'white', '#e1e4e8']}
                     />
                   </View>
                 </View>
               </View>
               <View style={[styles.productPrice]}>
-                <View
-                  style={{
-                    width: 30,
-                    height: 15,
-                    borderRadius: 5,
-                    backgroundColor: '#e1e4e8',
-                  }}
+                <ShimmerPlaceHolder
+                  autoRun={true}
+                  duration={500}
+                  height={15}
+                  width={100}
+                  colorShimmer={['#e1e4e8', 'white', '#e1e4e8']}
                 />
               </View>
             </View>
@@ -599,25 +597,23 @@ class StoreDetailStores extends Component {
                 <ProgressiveImage style={styles.imageProduct} />
                 <View>
                   <View style={[styles.productDesc]}>
-                    <View
-                      style={{
-                        width: 100,
-                        height: 15,
-                        borderRadius: 5,
-                        backgroundColor: '#e1e4e8',
-                      }}
+                    <ShimmerPlaceHolder
+                      autoRun={true}
+                      duration={500}
+                      height={15}
+                      width={100}
+                      colorShimmer={['#e1e4e8', 'white', '#e1e4e8']}
                     />
                   </View>
                 </View>
               </View>
               <View style={[styles.productPrice]}>
-                <View
-                  style={{
-                    width: 30,
-                    height: 15,
-                    borderRadius: 5,
-                    backgroundColor: '#e1e4e8',
-                  }}
+                <ShimmerPlaceHolder
+                  autoRun={true}
+                  duration={500}
+                  height={15}
+                  width={100}
+                  colorShimmer={['#e1e4e8', 'white', '#e1e4e8']}
                 />
               </View>
             </View>
@@ -631,8 +627,7 @@ class StoreDetailStores extends Component {
 
   render() {
     let products = this.products;
-    console.log('DATA BASKET ', this.props.dataBasket);
-    console.log('LOG DATA PRODUCTS ', this.products);
+    // console.log('DATA BASKET ', this.props.dataBasket);
     return (
       <View style={styles.container}>
         <ModalOrder

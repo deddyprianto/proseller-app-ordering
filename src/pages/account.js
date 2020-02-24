@@ -31,7 +31,7 @@ class Account extends Component {
   }
 
   componentDidMount = async () => {
-    await this.getDataRewards();
+    // await this.getDataRewards();
   };
 
   getDataRewards = async () => {

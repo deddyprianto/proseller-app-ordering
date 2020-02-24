@@ -11,6 +11,7 @@ import {
   StyleSheet,
   Dimensions,
   TouchableOpacity,
+  BackHandler,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -37,7 +38,21 @@ class paymentAddPoint extends Component {
     };
   }
 
+  componentWillUnmount() {
+    this.backHandler.remove();
+  }
+
+  handleBackPress = () => {
+    this.goBack(); // works best when the goBack is async
+    return true;
+  };
+
   componentDidMount = async () => {
+    this.backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      this.handleBackPress,
+    );
+
     setTimeout(() => {
       this.setState({
         isLoading: false,
@@ -79,9 +94,9 @@ class paymentAddPoint extends Component {
     console.log('jumPoint ', this.state.jumPoint);
   };
 
-  goBack() {
+  goBack = async () => {
     Actions.pop();
-  }
+  };
 
   pageDetailPoint = () => {
     // Actions.paymentDetail({
@@ -161,7 +176,7 @@ class paymentAddPoint extends Component {
                     fontWeight: 'bold',
                     color: colorConfig.pageIndex.activeTintColor,
                   }}>
-                  {this.state.jumPoint == NaN ? 0 : this.state.jumPoint}
+                  {isNaN(this.state.jumPoint) ? 0 : this.state.jumPoint}
                 </Text>
                 <Text
                   style={{
@@ -177,9 +192,10 @@ class paymentAddPoint extends Component {
                     fontWeight: 'bold',
                     color: colorConfig.pageIndex.activeTintColor,
                   }}>
-                  {(this.state.jumPoint / this.state.jumPointRatio) *
-                    this.state.jumMoneyRatio ==
-                  NaN
+                  {isNaN(
+                    (this.state.jumPoint / this.state.jumPointRatio) *
+                      this.state.jumMoneyRatio,
+                  )
                     ? 0
                     : (this.state.jumPoint / this.state.jumPointRatio) *
                       this.state.jumMoneyRatio}
@@ -187,6 +203,7 @@ class paymentAddPoint extends Component {
               </View>
               <View style={{alignItems: 'center', justifyContent: 'center'}}>
                 <Slider
+                  disabled={this.state.jumPointRatio == 0 ? true : false}
                   minimumValue={0}
                   maximumValue={this.state.myPoint}
                   trackStyle={{
@@ -229,8 +246,12 @@ class paymentAddPoint extends Component {
                 )}
               </View>
               <TouchableOpacity
+                disabled={this.state.jumPointRatio == 0 ? true : false}
                 style={{
-                  backgroundColor: colorConfig.pageIndex.activeTintColor,
+                  backgroundColor:
+                    this.state.jumPointRatio == 0
+                      ? colorConfig.store.disableButton
+                      : colorConfig.pageIndex.activeTintColor,
                   borderRadius: 25,
                   marginVertical: 10,
                   paddingVertical: 13,

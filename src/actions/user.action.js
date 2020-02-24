@@ -1,5 +1,7 @@
 import {fetchApi} from '../service/api';
 import {refreshToken} from './auth.actions';
+import awsConfig from '../config/awsConfig';
+import CryptoJS from 'react-native-crypto-js';
 
 export const updateUser = payload => {
   return async (dispatch, getState) => {
@@ -21,10 +23,17 @@ export const updateUser = payload => {
         token,
       );
       console.log('responsenya ', response);
+
+      // encrypt user data before save to asyncstorage
+      let dataUser = CryptoJS.AES.encrypt(
+        JSON.stringify(response.responseBody.Data),
+        awsConfig.PRIVATE_KEY_RSA,
+      ).toString();
+
       if (response.success) {
         dispatch({
           type: 'GET_USER_SUCCESS',
-          payload: response.responseBody.Data,
+          payload: dataUser,
         });
       }
 

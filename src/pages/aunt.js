@@ -147,7 +147,7 @@ class Aunt extends Component {
       var dataVerify = {
         phoneNumber: this.state.phoneNumber,
         confirmationCode: this.state.confirmationCode,
-        appClientId: awsConfig.appClientId,
+        // appClientId: awsConfig.appClientId,
       };
       console.log(dataVerify, 'dataVerify');
       const response = await this.props.dispatch(confirmUser(dataVerify));
@@ -182,8 +182,8 @@ class Aunt extends Component {
       var dataLogin = {
         phoneNumber: this.props.dataRegister.phoneNumber,
         password: this.props.dataRegister.password,
-        appClientId: awsConfig.appClientId,
-        cognitoPoolId: awsConfig.cognitoPoolId,
+        // appClientId: awsConfig.appClientId,
+        // cognitoPoolId: awsConfig.cognitoPoolId,
       };
       const response = await this.props.dispatch(loginUser(dataLogin));
       if (response.success == false) {
@@ -510,10 +510,7 @@ mapDispatchToProps = dispatch => ({
 });
 
 export default compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   reduxForm({
     form: 'confirm',
     validate,

@@ -6,6 +6,7 @@ import {
   Dimensions,
   TouchableOpacity,
   BackHandler,
+  Platform,
   FlatList,
   ScrollView,
   Alert,
@@ -24,7 +25,6 @@ import {
 import Loader from '../../components/loader';
 import ModalOrder from '../../components/order/Modal';
 import CurrencyFormatter from '../../helper/CurrencyFormatter';
-import {Button, Dialog, Portal} from 'react-native-paper';
 
 class Basket extends Component {
   constructor(props) {
@@ -77,6 +77,11 @@ class Basket extends Component {
     Actions.pop();
   };
 
+  goToScanTable = () => {
+    Actions.scanQRTable();
+    // Actions.confirmTable();
+  };
+
   renderButtonConfirm = () => {
     return (
       <View
@@ -100,7 +105,9 @@ class Basket extends Component {
           />
           <Text style={styles.textBtnBasketModal}>Clear</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.btnAddBasketModal}>
+        <TouchableOpacity
+          onPress={this.goToScanTable}
+          style={styles.btnAddBasketModal}>
           <Icon
             size={23}
             name={Platform.OS === 'ios' ? 'ios-qr-scanner' : 'md-qr-scanner'}

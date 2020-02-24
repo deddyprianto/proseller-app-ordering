@@ -6,6 +6,8 @@ import {compose} from 'redux';
 import colorConfig from '../config/colorConfig';
 import appConfig from '../config/appConfig';
 import {Actions} from 'react-native-router-flux';
+import CryptoJS from 'react-native-crypto-js';
+import awsConfig from '../config/awsConfig';
 
 class AccountUserDetail extends Component {
   constructor(props) {
@@ -21,6 +23,17 @@ class AccountUserDetail extends Component {
   };
 
   render() {
+    let userDetail;
+    try {
+      // Decrypt data user
+      let bytes = CryptoJS.AES.decrypt(
+        this.props.userDetail,
+        awsConfig.PRIVATE_KEY_RSA,
+      );
+      userDetail = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+    } catch (e) {
+      userDetail = undefined;
+    }
     return (
       <View
         style={{
@@ -63,9 +76,7 @@ class AccountUserDetail extends Component {
                   fontSize: 14,
                   fontFamily: 'Lato-Bold',
                 }}>
-                {this.props.userDetail != undefined
-                  ? this.props.userDetail.name
-                  : ''}
+                {userDetail != undefined ? userDetail.name : ''}
               </Text>
             </View>
             <View>
@@ -75,9 +86,7 @@ class AccountUserDetail extends Component {
                   fontSize: 14,
                   fontFamily: 'Lato-Medium',
                 }}>
-                {this.props.userDetail != undefined
-                  ? this.props.userDetail.phoneNumber
-                  : ''}
+                {userDetail != undefined ? userDetail.phoneNumber : ''}
               </Text>
             </View>
             <View>
@@ -87,9 +96,7 @@ class AccountUserDetail extends Component {
                   fontSize: 14,
                   fontFamily: 'Lato-Italic',
                 }}>
-                {this.props.userDetail != undefined
-                  ? this.props.userDetail.email
-                  : ''}
+                {userDetail != undefined ? userDetail.email : ''}
               </Text>
             </View>
           </View>

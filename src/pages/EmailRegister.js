@@ -242,7 +242,6 @@ class EmailRegister extends Component {
                   })`}
                   withFlag={true}
                   onSelect={country => {
-                    console.log(country);
                     this.setState({
                       phoneNumber: `+${country.callingCode[0]}`,
                       country: country.name,
@@ -278,6 +277,7 @@ class EmailRegister extends Component {
                 onChangeText={value => this.setState({phone: value})}
                 style={{
                   fontSize: 16,
+                  width: '100%',
                   fontFamily: 'Lato-Medium',
                   padding: 15,
                 }}

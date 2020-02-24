@@ -13,15 +13,15 @@ import {
 
 import InputPhoneNumber from '../pages/InputPhoneNumber';
 import InputEmail from '../pages/InputEmail';
-import Signup from '../pages/signup';
+// import Signup from '../pages/signup';
 import SignInPhoneNumber from '../pages/SignInPhoneNumber';
 import SignInEmail from '../pages/SignInEmail';
 import MobileRegister from '../pages/MobileRegister';
 import EmailRegister from '../pages/EmailRegister';
 import VerifyRegister from '../pages/VerifyRegister';
-import Aunt from '../pages/aunt';
-import VerifyCode from '../pages/verifyCode';
-import ForgotPassword from '../pages/forgotPassword';
+// import Aunt from '../pages/aunt';
+// import VerifyCode from '../pages/verifyCode';
+// import ForgotPassword from '../pages/forgotPassword';
 import PageIndex from '../pages/pageIndex';
 import VerifyOtpAfterRegister from '../pages/VerifyOtpAfterRegister';
 import VerifyOtpAfterRegisterEmail from '../pages/VerifyOtpAfterRegisterEmail';
@@ -46,7 +46,7 @@ import PaymentSuccess from '../components/paymentSuccess';
 import PaymentAddVoucers from '../components/paymentAddVoucers';
 import PaymentDetailItem from '../components/paymentDetailItem';
 import InboxDetail from '../components/inboxDetail';
-import SigninWaitPassword from '../components/signinWaitPassword';
+// import SigninWaitPassword from '../components/signinWaitPassword';
 import PaymentAddPoint from '../components/paymentAddPoint';
 import RewardsStamps from '../components/rewardsStamps';
 
@@ -55,6 +55,8 @@ import Order from '../pages/order';
 import CategoryProducts from '../components/order/CategoryProducts';
 import Products from '../components/order/Products';
 import Basket from '../components/order/Basket';
+import ScanQRTable from '../components/order/ScanQRTable';
+import ConfirmTable from '../components/order/ConfirmTable';
 
 export default class Routes extends Component {
   render() {
@@ -87,15 +89,6 @@ export default class Routes extends Component {
             />
             <Scene key="mobileRegister" component={MobileRegister} />
             <Scene key="emailRegister" component={EmailRegister} />
-            <Scene key="signup" component={Signup} title="Register" />
-            <Scene key="auth" component={Aunt} title="Auntetikasi" />
-            <Scene key="verifyCode" component={VerifyCode} title="verifyCode" />
-            <Scene key="signinWaitPassword" component={SigninWaitPassword} />
-            <Scene
-              key="forgotPassword"
-              component={ForgotPassword}
-              title="Forgot Password"
-            />
           </Scene>
           <Scene key="app" hideNavBar={true} initial={this.props.isLoggedIn}>
             <Scene key="pageIndex" component={PageIndex} initial={true} />
@@ -130,6 +123,8 @@ export default class Routes extends Component {
             <Scene key="categoryProducts" component={CategoryProducts} />
             <Scene key="products" component={Products} />
             <Scene key="basket" component={Basket} />
+            <Scene key="scanQRTable" component={ScanQRTable} />
+            <Scene key="confirmTable" component={ConfirmTable} />
           </Scene>
         </Scene>
       </Router>

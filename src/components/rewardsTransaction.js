@@ -11,14 +11,8 @@ import {connect} from 'react-redux';
 import {compose} from 'redux';
 import {Actions} from 'react-native-router-flux';
 import Icon from 'react-native-vector-icons/Ionicons';
-
-import logoCash from '../assets/img/cash.png';
-import logoVisa from '../assets/img/visa.png';
 import colorConfig from '../config/colorConfig';
-
-// action
-import {dataTransaction} from '../actions/sales.action';
-import * as _ from 'lodash';
+import RecentTransactionPlaceHolder from '../components/placeHolderLoading/RecentTransactionPlaceHolder';
 
 class RewardsTransaction extends Component {
   constructor(props) {
@@ -37,74 +31,76 @@ class RewardsTransaction extends Component {
       <View style={styles.container}>
         <Text style={styles.title}>Recent Transactions</Text>
         <View style={styles.card}>
-          {this.props.recentTransaction != undefined
-            ? this.props.recentTransaction.map((item, key) => (
-                <View key={key}>
-                  {
-                    <View>
-                      <TouchableOpacity
-                        style={styles.item}
-                        onPress={() => this.historyDetailPayment(item)}>
-                        <View
+          {this.props.isLoading ? (
+            <RecentTransactionPlaceHolder />
+          ) : this.props.recentTransaction != undefined ? (
+            this.props.recentTransaction.map((item, key) => (
+              <View key={key}>
+                {
+                  <View>
+                    <TouchableOpacity
+                      style={styles.item}
+                      onPress={() => this.historyDetailPayment(item)}>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                        }}>
+                        <Icon
+                          size={18}
+                          name={
+                            item.paymentType == 'Cash'
+                              ? Platform.OS === 'ios'
+                                ? 'ios-cash'
+                                : 'md-cash'
+                              : Platform.OS === 'ios'
+                              ? 'ios-card'
+                              : 'md-card'
+                          }
+                          style={styles.imageLogo}
+                        />
+                        <Text
                           style={{
-                            flexDirection: 'row',
+                            marginLeft: 12,
+                            fontWeight: 'bold',
+                            color: colorConfig.pageIndex.grayColor,
+                            fontFamily: 'Lato-Medium',
                           }}>
-                          <Icon
-                            size={18}
-                            name={
-                              item.paymentType == 'Cash'
-                                ? Platform.OS === 'ios'
-                                  ? 'ios-cash'
-                                  : 'md-cash'
-                                : Platform.OS === 'ios'
-                                ? 'ios-card'
-                                : 'md-card'
-                            }
-                            style={styles.imageLogo}
-                          />
-                          <Text
-                            style={{
-                              marginLeft: 12,
-                              fontWeight: 'bold',
-                              color: colorConfig.pageIndex.grayColor,
-                              fontFamily: 'Lato-Medium',
-                            }}>
-                            {item.outletName}
-                          </Text>
-                        </View>
-                        <View
+                          {item.outletName}
+                        </Text>
+                      </View>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          marginRight: 5,
+                          alignItems: 'center',
+                        }}>
+                        <Text
                           style={{
-                            flexDirection: 'row',
                             marginRight: 5,
-                            alignItems: 'center',
+                            color: colorConfig.pageIndex.grayColor,
+                            fontFamily: 'Lato-Medium',
                           }}>
-                          <Text
-                            style={{
-                              marginRight: 5,
-                              color: colorConfig.pageIndex.grayColor,
-                              fontFamily: 'Lato-Medium',
-                            }}>
-                            {item.pointDebit}
-                          </Text>
-                          <Icon
-                            size={18}
-                            name={
-                              Platform.OS === 'ios'
-                                ? 'ios-arrow-dropright'
-                                : 'md-arrow-dropright'
-                            }
-                            style={{
-                              color: colorConfig.pageIndex.activeTintColor,
-                            }}
-                          />
-                        </View>
-                      </TouchableOpacity>
-                      <View style={styles.line} />
-                    </View>
-                  }
-                </View>
-              ))
-            : null}
+                          {item.pointDebit}
+                        </Text>
+                        <Icon
+                          size={18}
+                          name={
+                            Platform.OS === 'ios'
+                              ? 'ios-arrow-dropright'
+                              : 'md-arrow-dropright'
+                          }
+                          style={{
+                            color: colorConfig.pageIndex.activeTintColor,
+                          }}
+                        />
+                      </View>
+                    </TouchableOpacity>
+                    <View style={styles.line} />
+                  </View>
+                }
+              </View>
+            ))
+          ) : null}
 
           <TouchableOpacity
             style={{

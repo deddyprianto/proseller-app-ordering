@@ -6,9 +6,8 @@
 
 import {Alert} from 'react-native';
 import awsConfig from '../config/awsConfig';
-import {LoginManager} from 'react-native-fbsdk';
-
 import {fetchApi} from '../service/api';
+import CryptoJS from 'react-native-crypto-js';
 
 export const notifikasi = (type, status, action) => {
   Alert.alert(type, status, [
@@ -100,19 +99,39 @@ export const loginUser = payload => {
 
       if (response.responseBody.Data.accessToken != undefined) {
         let data = response.responseBody.Data;
+        // encrypt data
+        let jwtToken = CryptoJS.AES.encrypt(
+          data.accessToken.jwtToken,
+          awsConfig.PRIVATE_KEY_RSA,
+        ).toString();
+        let qrcode = CryptoJS.AES.encrypt(
+          data.accessToken.qrcode,
+          awsConfig.PRIVATE_KEY_RSA,
+        ).toString();
+        let refreshToken = CryptoJS.AES.encrypt(
+          data.refreshToken.token,
+          awsConfig.PRIVATE_KEY_RSA,
+        ).toString();
         dispatch({
           type: 'LOGIN_USER_SUCCESS',
         });
         dispatch({
           type: 'AUTH_USER_SUCCESS',
-          token: data.accessToken.jwtToken,
-          qrcode: data.accessToken.qrcode,
+          token: jwtToken,
+          qrcode: qrcode,
           exp: data.accessToken.payload.exp * 1000 - 2700000,
-          refreshToken: data.refreshToken.token,
+          refreshToken: refreshToken,
         });
+
+        // encrypt user data before save to asyncstorage
+        let dataUser = CryptoJS.AES.encrypt(
+          JSON.stringify(data.idToken.payload),
+          awsConfig.PRIVATE_KEY_RSA,
+        ).toString();
+
         dispatch({
           type: 'GET_USER_SUCCESS',
-          payload: data.idToken.payload,
+          payload: dataUser,
         });
         console.log(response, 'response login user pool');
         return response.responseBody.Data;
@@ -139,7 +158,7 @@ export const logoutUser = () => {
         },
       } = state;
       // get user details and phone ID
-      const {
+      let {
         userReducer: {
           getUser: {userDetails},
         },
@@ -148,11 +167,16 @@ export const logoutUser = () => {
         },
       } = state;
 
+      // Decrypt data user
+      let bytes = CryptoJS.AES.decrypt(userDetails, awsConfig.PRIVATE_KEY_RSA);
+      userDetails = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+
       let payload = {
         phoneNumber: userDetails.phoneNumber,
         player_ids: deviceID,
       };
       // LoginManager.logOut();payload
+      console.log(payload, 'ini payload logout');
       const response = await fetchApi(
         '/customer/logout',
         'POST',
@@ -191,17 +215,29 @@ export const refreshToken = () => {
     const state = getState();
     console.log(state, 'state nya');
     try {
+      // Decrypt token
+      let bytes = CryptoJS.AES.decrypt(
+        state.authReducer.authData.refreshToken,
+        awsConfig.PRIVATE_KEY_RSA,
+      );
+      let refreshToken = bytes.toString(CryptoJS.enc.Utf8);
       var payload = {
-        refreshToken: state.authReducer.authData.refreshToken,
+        refreshToken: refreshToken,
       };
       console.log('PAYLOAD REFRESH TOKEN ', payload);
       const response = await fetchApi('/auth/refresh', 'POST', payload, 200);
       console.log(response, 'response refresh token');
-      var date = new Date();
+
+      // encrypt data
+      let jwtToken = CryptoJS.AES.encrypt(
+        response.responseBody.Data.accessToken.jwtToken,
+        awsConfig.PRIVATE_KEY_RSA,
+      ).toString();
+
       dispatch({
         type: 'REFRESH_TOKEN_USER',
-        token: response.responseBody.Data.accessToken.jwtToken,
-        refreshToken: payload.refreshToken,
+        token: jwtToken,
+        refreshToken: state.authReducer.authData.refreshToken,
         qrcode: state.authReducer.authData.qrcode,
         payload: state.authReducer.authData.payload,
         // isLoggedIn: true,
@@ -257,12 +293,16 @@ export const loginOther = payload => {
       });
 
       if (response.responseBody.statusCustomer) {
+        // encrypt data
+        let jwtToken = response.responseBody.accessToken.jwtToken;
+        let qrcode = response.responseBody.accessToken.qrcode;
+        let refreshToken = response.responseBody.refreshToken.token;
         dispatch({
           type: 'AUTH_USER_SUCCESS',
-          token: response.responseBody.accessToken.jwtToken,
-          qrcode: response.responseBody.accessToken.qrcode,
+          token: jwtToken,
+          qrcode: qrcode,
           exp: response.responseBody.idToken.payload.exp * 1000 - 2700000,
-          refreshToken: response.responseBody.refreshToken.token,
+          refreshToken: refreshToken,
         });
         dispatch({
           type: 'GET_USER_SUCCESS',

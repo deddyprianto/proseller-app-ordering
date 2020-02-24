@@ -145,7 +145,7 @@ class VerifyCode extends Component {
       var dataVerify = {
         phoneNumber: this.state.phoneNumber,
         confirmationCode: this.state.confirmationCode,
-        appClientId: awsConfig.appClientId,
+        // appClientId: awsConfig.appClientId,
       };
       console.log(dataVerify, 'dataVerify');
       const response = await this.props.dispatch(confirmUser(dataVerify));
@@ -453,10 +453,7 @@ mapDispatchToProps = dispatch => ({
 });
 
 export default compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   reduxForm({
     form: 'confirm',
     validate,

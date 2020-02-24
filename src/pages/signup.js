@@ -34,7 +34,6 @@ import colorConfig from '../config/colorConfig';
 // import validation from '../helper/validation'
 // import validate from '../helper/validate_wrapper'
 
-
 const imageWidth = Dimensions.get('window').width / 2;
 
 const styles = StyleSheet.create({
@@ -229,13 +228,13 @@ class Signup extends Component {
   handleSubmit = async () => {
     try {
       var dataRegister = {
-        companyId: awsConfig.companyId,
+        // companyId: awsConfig.companyId,
         email: this.state.email.toLowerCase(),
         password: this.state.password,
         name: this.state.name,
         phoneNumber: this.phone.getValue(),
-        appClientId: awsConfig.appClientId,
-        cognitoPoolId: awsConfig.cognitoPoolId,
+        // appClientId: awsConfig.appClientId,
+        // cognitoPoolId: awsConfig.cognitoPoolId,
         type: 'userPool',
       };
 
@@ -514,10 +513,7 @@ mapDispatchToProps = dispatch => ({
 });
 
 export default compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   reduxForm({
     form: 'register',
     validate,
