@@ -639,9 +639,7 @@ class PaymentDetail extends Component {
                 </TouchableOpacity>
               )}
             </View>
-            {this.props.totalPoint != undefined && this.props.totalPoint != 0
-              ? this.renderUsePoint()
-              : null}
+            {this.props.totalPoint != undefined ? this.renderUsePoint() : null}
 
             <View style={{marginTop: 50}} />
             <SwipeButton

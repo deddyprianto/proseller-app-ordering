@@ -236,6 +236,17 @@ class Store extends Component {
     }
   };
 
+  getSumOfQuantityBasket = () => {
+    try {
+      let sum = _.sumBy(this.props.dataBasket.details, function(qty) {
+        return qty.quantity;
+      });
+      return sum;
+    } catch (e) {
+      return null;
+    }
+  };
+
   render() {
     let userDetail;
     try {
@@ -411,7 +422,7 @@ class Store extends Component {
         {/*        alignItems: 'center',*/}
         {/*      }}>*/}
         {/*      <Text style={{color: 'white', padding: 3, fontSize: 11}}>*/}
-        {/*        {this.props.dataBasket.details.length}*/}
+        {/*        {this.getSumOfQuantityBasket()}*/}
         {/*      </Text>*/}
         {/*    </View>*/}
         {/*  ) : null}*/}

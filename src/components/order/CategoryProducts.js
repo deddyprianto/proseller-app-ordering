@@ -87,8 +87,8 @@ class StoreDetailStores extends Component {
 
   showAlertBasketNotEmpty = async product => {
     Alert.alert(
-      'Opps...',
-      "Looks like your previous basket wasn't empty",
+      'Change Restaurant ?',
+      'You will delete order in previous restaurant..',
       [
         {text: 'Cancel', onPress: () => Actions.pop()},
         {
