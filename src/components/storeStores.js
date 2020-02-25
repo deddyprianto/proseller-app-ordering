@@ -22,7 +22,7 @@ export default class StoreStores extends Component {
 
   storeDetailStores = item => {
     Actions.storeDetailStores({item});
-    // Actions.order({item});
+    // Actions.order({item});git merge
   };
 
   render() {
