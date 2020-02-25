@@ -15,6 +15,7 @@ import {
   ScrollView,
   Picker,
   BackHandler,
+  TextInput,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -88,10 +89,11 @@ class AccountEditProfil extends Component {
     try {
       this.setState({loading: true});
       let dataProfile = {
+        username: this.props.dataDiri.username,
         phoneNumber: this.props.dataDiri.phoneNumber,
-        appClientId: awsConfig.appClientId,
-        cognitoPoolId: awsConfig.cognitoPoolId,
-        companyId: awsConfig.companyId,
+        // appClientId: awsConfig.appClientId,
+        // cognitoPoolId: awsConfig.cognitoPoolId,
+        // companyId: awsConfig.companyId,
         newName: this.state.name,
         birthDate: this.state.birthDate,
         address: this.state.address,
@@ -168,7 +170,7 @@ class AccountEditProfil extends Component {
   formatDate = current_datetime => {
     console.log(current_datetime, 'current_datetime');
     if (current_datetime != undefined) {
-      current_datetime = new Date('');
+      current_datetime = new Date(current_datetime);
       const months = [
         'JAN',
         'FEB',
@@ -218,29 +220,36 @@ class AccountEditProfil extends Component {
         </View>
         <ScrollView>
           <View style={styles.card}>
-            <Form ref="form">
+            <Form ref="form" onSubmit={this.submitEdit}>
               <View style={styles.detail}>
                 <View style={styles.detailItem}>
                   <Text style={[styles.desc, {marginLeft: 2}]}>Name</Text>
-                  <TextValidator
-                    style={{marginBottom: -10}}
-                    name="password"
-                    label="password"
-                    validators={['required']}
-                    errorStyle={{
-                      container: {top: 5, left: 5},
-                      text: {color: 'red'},
-                      underlineValidColor:
-                        colorConfig.pageIndex.activeTintColor,
-                      underlineInvalidColor: 'red',
-                    }}
-                    errorMessages={['This field is required']}
+                  {/*<TextValidator*/}
+                  {/*  style={{marginBottom: -10}}*/}
+                  {/*  name="password"*/}
+                  {/*  label="password"*/}
+                  {/*  validators={['required']}*/}
+                  {/*  errorStyle={{*/}
+                  {/*    container: {top: 5, left: 5},*/}
+                  {/*    text: {color: 'red'},*/}
+                  {/*    underlineValidColor:*/}
+                  {/*      colorConfig.pageIndex.activeTintColor,*/}
+                  {/*    underlineInvalidColor: 'red',*/}
+                  {/*  }}*/}
+                  {/*  errorMessages={['This field is required']}*/}
+                  {/*  placeholder="Name"*/}
+                  {/*  type="text"*/}
+                  {/*  under*/}
+                  {/*  value={this.state.name}*/}
+                  {/*  onChangeText={value => this.setState({name: value})}*/}
+                  {/*/>*/}
+                  <TextInput
                     placeholder="Name"
-                    type="text"
-                    under
+                    style={{paddingVertical: 10}}
                     value={this.state.name}
                     onChangeText={value => this.setState({name: value})}
                   />
+                  <View style={{borderWidth: 0.5, borderColor: 'gray'}} />
                 </View>
                 <View style={styles.detailItem}>
                   <View
@@ -308,25 +317,32 @@ class AccountEditProfil extends Component {
                 </View>
                 <View style={styles.detailItem}>
                   <Text style={[styles.desc, {marginLeft: 2}]}>Address</Text>
-                  <TextValidator
-                    style={{marginTop: 10}}
-                    name="address"
-                    label="address"
-                    validators={['required']}
-                    errorStyle={{
-                      container: {top: 5, left: 5},
-                      text: {color: 'red'},
-                      underlineValidColor:
-                        colorConfig.pageIndex.activeTintColor,
-                      underlineInvalidColor: 'red',
-                    }}
-                    errorMessages={['This field is required']}
+                  {/*<TextValidator*/}
+                  {/*  style={{marginTop: 10}}*/}
+                  {/*  name="address"*/}
+                  {/*  label="address"*/}
+                  {/*  validators={['required']}*/}
+                  {/*  errorStyle={{*/}
+                  {/*    container: {top: 5, left: 5},*/}
+                  {/*    text: {color: 'red'},*/}
+                  {/*    underlineValidColor:*/}
+                  {/*      colorConfig.pageIndex.activeTintColor,*/}
+                  {/*    underlineInvalidColor: 'red',*/}
+                  {/*  }}*/}
+                  {/*  errorMessages={['This field is required']}*/}
+                  {/*  placeholder="Your address"*/}
+                  {/*  type="text"*/}
+                  {/*  under*/}
+                  {/*  value={this.state.address}*/}
+                  {/*  onChangeText={value => this.setState({address: value})}*/}
+                  {/*/>*/}
+                  <TextInput
                     placeholder="Your address"
-                    type="text"
-                    under
+                    style={{paddingVertical: 10}}
                     value={this.state.address}
                     onChangeText={value => this.setState({address: value})}
                   />
+                  <View style={{borderWidth: 0.5, borderColor: 'gray'}} />
                 </View>
               </View>
             </Form>
@@ -488,7 +504,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   textChange: {
-    color: colorConfig.store.defaultColor,
+    color: colorConfig.pageIndex.inactiveTintColor,
     // color: 'gray',
     fontSize: 11,
     fontWeight: 'bold',

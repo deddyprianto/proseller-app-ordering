@@ -5,6 +5,7 @@
  */
 import awsConfig from '../config/awsConfig';
 const BASE_URL = awsConfig.base_url;
+import CryptoJS from 'react-native-crypto-js';
 
 export const api = async (url, method, body = null, headers = {}) => {
   try {
@@ -54,6 +55,9 @@ export const fetchApi = async (
       responseBody: null,
     };
     if (token) {
+      // Decrypt token
+      let bytes = CryptoJS.AES.decrypt(token, awsConfig.PRIVATE_KEY_RSA);
+      token = bytes.toString(CryptoJS.enc.Utf8);
       headers['Authorization'] = `bearer ${token}`;
     }
 

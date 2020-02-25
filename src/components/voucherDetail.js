@@ -33,6 +33,7 @@ class VoucherDetail extends Component {
       titleAlert: '',
       currentDay: new Date(),
       loadRedeem: false,
+      cancelButton: false,
     };
   }
 
@@ -69,6 +70,17 @@ class VoucherDetail extends Component {
     return mount[value];
   }
 
+  prompRedeem = dataVoucher => {
+    this.setState({
+      showAlert: true,
+      cancelButton: true,
+      pesanAlert: `This will spend your points by ${
+        dataVoucher['redeemValue']
+      } point`,
+      titleAlert: 'Redeem Voucher ?',
+    });
+  };
+
   btnRedeem = async dataVoucher => {
     try {
       this.setState({loadRedeem: true});
@@ -84,13 +96,15 @@ class VoucherDetail extends Component {
         this.setState({
           showAlert: true,
           pesanAlert: response.responseBody.Data.message,
+          cancelButton: false,
           titleAlert: 'Success!',
         });
       } else {
         this.setState({
           showAlert: true,
+          cancelButton: false,
           pesanAlert: response.responseBody.Data.message,
-          titleAlert: 'Oppss!',
+          titleAlert: 'Oppss...',
         });
       }
       this.setState({loadRedeem: false});
@@ -98,6 +112,7 @@ class VoucherDetail extends Component {
       console.log(error);
       this.setState({
         showAlert: true,
+        cancelButton: false,
         pesanAlert: error.responseBody.message,
         titleAlert: 'Oppss...',
       });
@@ -279,7 +294,7 @@ class VoucherDetail extends Component {
               </View>
             </View>
             <TouchableOpacity
-              onPress={() => this.btnRedeem(this.props.dataVoucher)}
+              onPress={() => this.prompRedeem(this.props.dataVoucher)}
               style={{
                 height: 50,
                 backgroundColor: colorConfig.pageIndex.activeTintColor,
@@ -295,7 +310,7 @@ class VoucherDetail extends Component {
                   paddingTop: 10,
                   fontSize: 19,
                 }}>
-                Buy
+                Redeem Voucher
               </Text>
             </TouchableOpacity>
           </View>
@@ -307,17 +322,25 @@ class VoucherDetail extends Component {
           message={this.state.pesanAlert}
           closeOnTouchOutside={true}
           closeOnHardwareBackPress={false}
-          showCancelButton={false}
+          showCancelButton={this.state.cancelButton}
           showConfirmButton={true}
           cancelText="Close"
-          confirmText={this.state.titleAlert == 'Success!' ? 'Close' : 'Close'}
+          confirmText={
+            this.state.titleAlert == 'Success!' ||
+            this.state.titleAlert == 'Oppss...'
+              ? 'Close'
+              : 'Redeem'
+          }
           confirmButtonColor={colorConfig.pageIndex.activeTintColor}
           onCancelPressed={() => {
             this.hideAlert();
           }}
           onConfirmPressed={() => {
             if (this.state.titleAlert == 'Success!') {
-              this.accountVoucher();
+              this.hideAlert();
+            } else if (this.state.titleAlert == 'Redeem Voucher ?') {
+              this.btnRedeem(this.props.dataVoucher);
+            } else {
               this.hideAlert();
             }
           }}

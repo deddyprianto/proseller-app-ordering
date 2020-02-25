@@ -42,15 +42,15 @@ class SigninWaitPassword extends Component {
   handleSubmit = async () => {
     try {
       var dataLogin = {
-        tenantId: awsConfig.tenantId,
+        // tenantId: awsConfig.tenantId,
         email: this.props.dataLogin.email,
         username: this.props.dataLogin.email,
         password: this.state.password,
         newPassword: this.state.password,
         name: this.props.dataLogin.name,
         phoneNumber: this.phone.getValue(),
-        appClientId: awsConfig.appClientId,
-        cognitoPoolId: awsConfig.cognitoPoolId,
+        // appClientId: awsConfig.appClientId,
+        // cognitoPoolId: awsConfig.cognitoPoolId,
         type: 'identityPool',
       };
       console.log(dataLogin, 'signinWaitPassword');

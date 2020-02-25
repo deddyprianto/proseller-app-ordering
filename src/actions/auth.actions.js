@@ -6,9 +6,8 @@
 
 import {Alert} from 'react-native';
 import awsConfig from '../config/awsConfig';
-import {LoginManager} from 'react-native-fbsdk';
-
 import {fetchApi} from '../service/api';
+import CryptoJS from 'react-native-crypto-js';
 
 export const notifikasi = (type, status, action) => {
   Alert.alert(type, status, [
@@ -34,16 +33,15 @@ export const createNewUser = payload => {
         payload,
         200,
       );
-      console.log(JSON.stringify(response));
+      console.log(response, 'response register');
       if (response.success) {
         dispatch({
           type: 'CREAT_USER_SUCCESS',
           dataRegister: payload,
         });
-
-        return response;
+        return true;
       } else {
-        throw response;
+        return response.responseBody;
       }
     } catch (error) {
       dispatch({
@@ -94,33 +92,51 @@ export const loginUser = payload => {
       dispatch({
         type: 'LOGIN_USER_LOADING',
       });
-      payload.companyId = awsConfig.companyId;
+      console.log(payload, 'payload login');
       const response = await fetchApi('/customer/login', 'POST', payload, 200);
 
       console.log(response);
 
-      if (response.success) {
+      if (response.responseBody.Data.accessToken != undefined) {
         let data = response.responseBody.Data;
-
+        // encrypt data
+        let jwtToken = CryptoJS.AES.encrypt(
+          data.accessToken.jwtToken,
+          awsConfig.PRIVATE_KEY_RSA,
+        ).toString();
+        let qrcode = CryptoJS.AES.encrypt(
+          data.accessToken.qrcode,
+          awsConfig.PRIVATE_KEY_RSA,
+        ).toString();
+        let refreshToken = CryptoJS.AES.encrypt(
+          data.refreshToken.token,
+          awsConfig.PRIVATE_KEY_RSA,
+        ).toString();
         dispatch({
           type: 'LOGIN_USER_SUCCESS',
         });
         dispatch({
           type: 'AUTH_USER_SUCCESS',
-          token: data.accessToken.jwtToken,
-          qrcode: data.accessToken.qrcode,
+          token: jwtToken,
+          qrcode: qrcode,
           exp: data.accessToken.payload.exp * 1000 - 2700000,
-          refreshToken: data.refreshToken.token,
+          refreshToken: refreshToken,
         });
+
+        // encrypt user data before save to asyncstorage
+        let dataUser = CryptoJS.AES.encrypt(
+          JSON.stringify(data.idToken.payload),
+          awsConfig.PRIVATE_KEY_RSA,
+        ).toString();
+
         dispatch({
           type: 'GET_USER_SUCCESS',
-          payload: data.idToken.payload,
+          payload: dataUser,
         });
         console.log(response, 'response login user pool');
-        return response;
-      } else {
-        throw response;
+        return response.responseBody.Data;
       }
+      return response.responseBody.Data;
     } catch (error) {
       dispatch({
         type: 'LOGIN_USER_FAIL',
@@ -135,12 +151,40 @@ export const logoutUser = () => {
   return async (dispatch, getState) => {
     const state = getState();
     try {
+      // get user token
       const {
         authReducer: {
           authData: {token},
         },
       } = state;
-      LoginManager.logOut();
+      // get user details and phone ID
+      let {
+        userReducer: {
+          getUser: {userDetails},
+        },
+        userReducer: {
+          deviceUserInfo: {deviceID},
+        },
+      } = state;
+
+      // Decrypt data user
+      let bytes = CryptoJS.AES.decrypt(userDetails, awsConfig.PRIVATE_KEY_RSA);
+      userDetails = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+
+      let payload = {
+        phoneNumber: userDetails.phoneNumber,
+        player_ids: deviceID,
+      };
+      // LoginManager.logOut();payload
+      console.log(payload, 'ini payload logout');
+      const response = await fetchApi(
+        '/customer/logout',
+        'POST',
+        payload,
+        200,
+        token,
+      );
+      console.log(response, 'response logout');
       dispatch({
         type: 'USER_LOGGED_OUT_SUCCESS',
       });
@@ -169,34 +213,35 @@ export const getToken = () => {
 export const refreshToken = () => {
   return async (dispatch, getState) => {
     const state = getState();
+    console.log(state, 'state nya');
     try {
+      // Decrypt token
+      let bytes = CryptoJS.AES.decrypt(
+        state.authReducer.authData.refreshToken,
+        awsConfig.PRIVATE_KEY_RSA,
+      );
+      let refreshToken = bytes.toString(CryptoJS.enc.Utf8);
       var payload = {
-        refreshToken: state.authReducer.authData.refreshToken,
-        appClientId: awsConfig.appClientId,
+        refreshToken: refreshToken,
       };
-
-      // var dateTokenExp = new Date(state.authReducer.authData.tokenExp);
-      // var dateNow = new Date();
-      // var sisaTokenExp = dateTokenExp.getTime() - dateNow.getTime();
-      // console.log('sisa token ', sisaTokenExp);
-      // if (sisaTokenExp < 0) {
-      // await this.props.dispatch(refreshToken());
+      console.log('PAYLOAD REFRESH TOKEN ', payload);
       const response = await fetchApi('/auth/refresh', 'POST', payload, 200);
       console.log(response, 'response refresh token');
-      var date = new Date();
+
+      // encrypt data
+      let jwtToken = CryptoJS.AES.encrypt(
+        response.responseBody.Data.accessToken.jwtToken,
+        awsConfig.PRIVATE_KEY_RSA,
+      ).toString();
+
       dispatch({
-        type: 'AUTH_USER_SUCCESS',
-        token: response.responseBody.Data.accessToken.jwtToken,
-        exp: date.getTime() + 900,
+        type: 'REFRESH_TOKEN_USER',
+        token: jwtToken,
         refreshToken: state.authReducer.authData.refreshToken,
         qrcode: state.authReducer.authData.qrcode,
         payload: state.authReducer.authData.payload,
-        isLoggedIn: true,
-        waiting: false,
+        // isLoggedIn: true,
       });
-      // console.log('Token Expired: ' + dateTokenExp);
-      // console.log('Token Now: ' + dateNow);
-      // }
     } catch (error) {
       console.log(error);
     }
@@ -248,12 +293,16 @@ export const loginOther = payload => {
       });
 
       if (response.responseBody.statusCustomer) {
+        // encrypt data
+        let jwtToken = response.responseBody.accessToken.jwtToken;
+        let qrcode = response.responseBody.accessToken.qrcode;
+        let refreshToken = response.responseBody.refreshToken.token;
         dispatch({
           type: 'AUTH_USER_SUCCESS',
-          token: response.responseBody.accessToken.jwtToken,
-          qrcode: response.responseBody.accessToken.qrcode,
+          token: jwtToken,
+          qrcode: qrcode,
           exp: response.responseBody.idToken.payload.exp * 1000 - 2700000,
-          refreshToken: response.responseBody.refreshToken.token,
+          refreshToken: refreshToken,
         });
         dispatch({
           type: 'GET_USER_SUCCESS',
@@ -284,6 +333,101 @@ export const loginOther = payload => {
         type: 'LOGIN_USER_FAIL',
         payload: error.responseBody,
       });
+      return error;
+    }
+  };
+};
+
+export const checkAccountExist = payload => {
+  return async dispatch => {
+    try {
+      const response = await fetchApi(
+        '/customer/login/check-account',
+        'POST',
+        payload,
+        200,
+      );
+      console.log(response, 'response check account exist');
+      if (response.success) {
+        dispatch({
+          type: 'DATA_ACCOUNT_EXIST',
+          status: response.responseBody.Data.status,
+        });
+        return response.responseBody.Data;
+      } else {
+        throw response;
+      }
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const sendOtpAttempts = attempt => {
+  return async dispatch => {
+    try {
+      console.log(attempt, 'attempt lama');
+      dispatch({
+        type: 'ATTEMPT_SEND_OTP',
+        attempt: attempt,
+      });
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const sendOTP = payload => {
+  return async dispatch => {
+    try {
+      const response = await fetchApi(
+        '/customer/login/send-otp',
+        'POST',
+        payload,
+        200,
+      );
+      console.log(response, 'response send otp');
+      if (response.success) {
+        return response.responseBody.Data.status;
+      } else {
+        throw response;
+      }
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const resendOTPCognito = payload => {
+  return async dispatch => {
+    try {
+      const response = await fetchApi(
+        '/customer/login/send-otp',
+        'POST',
+        payload,
+        200,
+      );
+      console.log(response, 'response send otp cognito');
+      return response.responseBody.ResultCode;
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const confirmCodeOTP = payload => {
+  return async dispatch => {
+    try {
+      console.log(payload, 'payload confirm otp cognito');
+      const response = await fetchApi(
+        '/customer/confirm',
+        'POST',
+        payload,
+        200,
+      );
+      console.log(response, 'response confirm otp cognito');
+      return response;
+    } catch (error) {
       return error;
     }
   };

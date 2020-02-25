@@ -3,13 +3,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import {createAppContainer} from 'react-navigation';
 import {createMaterialBottomTabNavigator} from 'react-navigation-material-bottom-tabs';
 import {Container} from 'native-base';
-import {
-  View,
-  Text,
-  Dimensions,
-  StyleSheet,
-  PermissionsAndroid,
-} from 'react-native';
+import {Dimensions, PermissionsAndroid} from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
 
@@ -20,6 +14,7 @@ import Inbox from './inbox';
 import Account from './account';
 import OfflineNotice from '../components/OfflineNotice';
 import colorConfig from '../config/colorConfig';
+import {refreshToken} from '../actions/auth.actions';
 
 const AppTabNavigator = createMaterialBottomTabNavigator(
   {
@@ -107,30 +102,30 @@ class PageIndex extends Component {
     };
   }
 
-  componentDidMount = async () => {
-    if (Platform.OS !== 'android') Geolocation.requestAuthorization();
-    else {
-      try {
-        const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-          {
-            title: 'we need GPS location service',
-            message: 'we need location service to provide your location',
-            // buttonNeutral: 'Ask Me Later',
-            buttonNegative: 'Cancel',
-            buttonPositive: 'OK',
-          },
-        );
-        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        } else {
-          Defaults.modal.current.renderModel(modalOptions);
-          return false;
-        }
-      } catch (err) {
-        console.warn(err);
-      }
-    }
-  };
+  // componentDidMount = async () => {
+  //   if (Platform.OS !== 'android') Geolocation.requestAuthorization();
+  //   else {
+  //     try {
+  //       const granted = await PermissionsAndroid.request(
+  //         PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+  //         {
+  //           title: 'we need GPS location service',
+  //           message: 'we need location service to provide your location',
+  //           // buttonNeutral: 'Ask Me Later',
+  //           buttonNegative: 'Cancel',
+  //           buttonPositive: 'OK',
+  //         },
+  //       );
+  //       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+  //       } else {
+  //         Defaults.modal.current.renderModel(modalOptions);
+  //         return false;
+  //       }
+  //     } catch (err) {
+  //       console.warn(err);
+  //     }
+  //   }
+  // };
 
   render() {
     return (

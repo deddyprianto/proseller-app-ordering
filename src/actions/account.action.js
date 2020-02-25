@@ -1,5 +1,6 @@
 import {fetchApi} from '../service/api';
 import {refreshToken} from './auth.actions';
+import * as _ from 'lodash';
 
 export const myVoucers = () => {
   return async (dispatch, getState) => {
@@ -18,11 +19,12 @@ export const myVoucers = () => {
         200,
         token,
       );
-      console.log(response.responseBody.Data);
-      console.log('response myVoucers');
+      console.log(response.responseBody.Data, 'response myVoucers');
+      var dataVouchers = response.responseBody.Data;
+
       dispatch({
         type: 'DATA_MY_VOUCHERS',
-        data: response.responseBody.Data,
+        data: dataVouchers,
       });
     } catch (error) {
       return error;

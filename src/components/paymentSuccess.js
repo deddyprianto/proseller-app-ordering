@@ -10,6 +10,7 @@ import {
   Text,
   StyleSheet,
   Dimensions,
+  BackHandler,
   TouchableOpacity,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -18,6 +19,7 @@ import AwesomeAlert from 'react-native-awesome-alerts';
 
 import colorConfig from '../config/colorConfig';
 import appConfig from '../config/appConfig';
+import CurrencyFormatter from '../helper/CurrencyFormatter';
 
 export default class PaymentSuccess extends Component {
   constructor(props) {
@@ -30,9 +32,26 @@ export default class PaymentSuccess extends Component {
     };
   }
 
-  goBack() {
-    Actions.pageIndex();
+  componentDidMount() {
+    this.backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      this.handleBackPress,
+    );
   }
+
+  componentWillUnmount() {
+    this.backHandler.remove();
+  }
+
+  handleBackPress = () => {
+    this.goBack(); // works best when the goBack is async
+    return true;
+  };
+
+  goBack = async () => {
+    // Actions.pageIndex();
+    Actions.reset('pageIndex');
+  };
 
   getDate(date) {
     var tanggal = new Date(date);
@@ -71,6 +90,14 @@ export default class PaymentSuccess extends Component {
     this.setState({
       showAlert: false,
     });
+  };
+
+  formatCurrency = value => {
+    try {
+      return CurrencyFormatter(value).match(/[a-z]+|[^a-z]+/gi)[1];
+    } catch (e) {
+      return value;
+    }
   };
 
   render() {
@@ -131,16 +158,18 @@ export default class PaymentSuccess extends Component {
                   fontSize: 30,
                   fontWeight: 'bold',
                 }}>
-                {this.props.dataRespons.price}
+                {this.formatCurrency(this.props.dataRespons.price)}
               </Text>
             </View>
-            <Text
-              style={{
-                color: colorConfig.pageIndex.activeTintColor,
-                fontSize: 12,
-              }}>
-              {'+' + this.props.dataRespons.earnedPoint + ' Points'}
-            </Text>
+            {this.props.dataRespons.earnedPoint > 0 ? (
+              <Text
+                style={{
+                  color: colorConfig.pageIndex.activeTintColor,
+                  fontSize: 12,
+                }}>
+                {'+' + this.props.dataRespons.earnedPoint + ' Points'}
+              </Text>
+            ) : null}
           </View>
           <View
             style={{
@@ -254,8 +283,8 @@ export default class PaymentSuccess extends Component {
               }}>
               <TouchableOpacity
                 style={{
-                  height: 35,
-                  width: 100,
+                  height: 45,
+                  width: 150,
                   borderColor: colorConfig.pageIndex.activeTintColor,
                   borderWidth: 1,
                   paddingLeft: 10,

@@ -18,6 +18,7 @@ import {Actions} from 'react-native-router-flux';
 
 import colorConfig from '../config/colorConfig';
 import appConfig from '../config/appConfig';
+import CurrencyFormatter from '../helper/CurrencyFormatter';
 
 export default class PaymentDetailItem extends Component {
   constructor(props) {
@@ -74,6 +75,7 @@ export default class PaymentDetailItem extends Component {
                             borderBottomColor: colorConfig.pageIndex.grayColor,
                             borderBottomWidth: 1,
                             borderStyle: 'dotted',
+                            paddingVertical: 6,
                           }}>
                           <Text style={styles.descItem}>{item.itemName}</Text>
                           <View style={styles.itemDesc}>
@@ -82,7 +84,7 @@ export default class PaymentDetailItem extends Component {
                             </Text>
                             <Text style={styles.descItem}>{item.qty}</Text>
                             <Text style={styles.descItem}>
-                              {item.qty * item.price}
+                              {CurrencyFormatter(item.qty * item.price)}
                             </Text>
                           </View>
                         </View>
@@ -94,12 +96,11 @@ export default class PaymentDetailItem extends Component {
                     style={{
                       flexDirection: 'row',
                       justifyContent: 'space-between',
+                      paddingVertical: 10,
                     }}>
                     <Text style={styles.desc}>Subtotal</Text>
                     <Text style={styles.desc}>
-                      {appConfig.appMataUang +
-                        ' ' +
-                        this.props.pembayaran.payment}
+                      {CurrencyFormatter(this.props.pembayaran.payment)}
                     </Text>
                   </View>
                 </View>

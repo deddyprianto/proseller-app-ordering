@@ -1,6 +1,8 @@
 import {fetchApi} from '../service/api';
 import * as _ from 'lodash';
 import {refreshToken} from './auth.actions';
+import CryptoJS from 'react-native-crypto-js';
+import awsConfig from '../config/awsConfig';
 
 export const campaign = () => {
   return async (dispatch, getState) => {
@@ -13,11 +15,15 @@ export const campaign = () => {
         },
       } = state;
 
-      const {
+      let {
         userReducer: {
           getUser: {userDetails},
         },
       } = state;
+
+      // Decrypt data user
+      let bytes = CryptoJS.AES.decrypt(userDetails, awsConfig.PRIVATE_KEY_RSA);
+      userDetails = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
 
       let companyId = userDetails.companyId;
       const response = await fetchApi(
@@ -140,47 +146,20 @@ export const dataPoint = () => {
       } = state;
 
       var dataResponse = [];
-      // console.log
+      console.log('/customer/point?history=false');
       let response = await fetchApi(
-        '/customer/point',
+        '/customer/point?history=false',
         'GET',
         false,
         200,
         token,
       );
       console.log(response, 'response data point');
-      // if (response.success) {
-      //   response.responseBody.data
-      //     .filter(point => point.deleted == false)
-      //     .map(async point => {
-      //       await dataResponse.push(point);
-      //       var sisa = point.pointDebit - point.pointKredit;
-      //       totalPoint = totalPoint + sisa;
-      //     });
-      // }
-
-      // let totalPoint =
-      //   _.sumBy(dataResponse, 'pointDebit') -
-      //   _.sumBy(dataResponse, 'pointKredit');
-      // dataResponse = response.responseBody.Data.history;
       let totalPoint = response.responseBody.Data.totalPoint;
       dispatch({
         type: 'DATA_TOTAL_POINT',
         totalPoint: totalPoint,
       });
-      // move to sales.action
-      // dispatch({
-      //   type: 'DATA_POINT_TRANSACTION',
-      //   pointTransaction: _.orderBy(dataResponse, ['createdAt'], ['desc']),
-      // });
-      // dispatch({
-      //   type: 'DATA_RECENT_TRANSACTION',
-      //   recentTransaction: _.orderBy(
-      //     dataResponse,
-      //     ['createdAt'],
-      //     ['desc'],
-      //   ).slice(0, 3),
-      // });
     } catch (error) {
       return error;
     }

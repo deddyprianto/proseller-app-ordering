@@ -19,6 +19,16 @@ const authData = (state = {}, action) => {
         waiting: false,
       };
 
+    case 'REFRESH_TOKEN_USER':
+      return {
+        token: action.token,
+        qrcode: action.qrcode,
+        refreshToken: action.refreshToken,
+        payload: action.payload,
+        isLoggedIn: true,
+        waiting: false,
+      };
+
     case 'AUTH_USER_FAIL':
       return {
         token: null,
@@ -133,6 +143,18 @@ const confirmUser = (state = {}, action) => {
   }
 };
 
+const attemptSendOTP = (state = {}, action) => {
+  switch (action.type) {
+    case 'ATTEMPT_SEND_OTP':
+      return {
+        attempt: action.attempt,
+      };
+
+    default:
+      return state;
+  }
+};
+
 const sendCodeConfirmation = (state = {}, action) => {
   switch (action.type) {
     case 'SEND_CODE_LOADING':
@@ -202,4 +224,5 @@ export default combineReducers({
   confirmUser,
   sendCodeConfirmation,
   confirmForgotPassword,
+  attemptSendOTP,
 });

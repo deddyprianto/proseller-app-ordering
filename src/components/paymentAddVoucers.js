@@ -13,6 +13,7 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
+  BackHandler,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -29,9 +30,25 @@ export default class PaymentAddVoucers extends Component {
     };
   }
 
-  goBack() {
-    Actions.pop();
+  componentDidMount() {
+    this.backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      this.handleBackPress,
+    );
   }
+
+  componentWillUnmount() {
+    this.backHandler.remove();
+  }
+
+  handleBackPress = () => {
+    this.goBack(); // works best when the goBack is async
+    return true;
+  };
+
+  goBack = async () => {
+    Actions.pop();
+  };
 
   getDate(date) {
     var tanggal = new Date(date);
@@ -62,17 +79,22 @@ export default class PaymentAddVoucers extends Component {
     return mount[value];
   }
 
+  componentWillUnmount(): void {
+    // console.log('WOI WOI WI');
+  }
+
   pageDetailVoucher = item => {
-    Actions.paymentDetail({
-      pembayaran: this.props.pembayaran,
-      dataVoucer: item,
-    });
+    // Actions.paymentDetail({
+    //   pembayaran: this.props.pembayaran,
+    //   dataVoucer: item,
+    // });
+    this.props.setDataVoucher(item);
+    Actions.pop();
     // Actions.voucher({dataVoucher: item})
   };
 
   render() {
     const myVoucers = this.props.data;
-    console.log('Vouchernya ', myVoucers);
     return (
       <View style={styles.container}>
         <View style={{backgroundColor: colorConfig.pageIndex.backgroundColor}}>

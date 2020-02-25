@@ -11,14 +11,8 @@ import {connect} from 'react-redux';
 import {compose} from 'redux';
 import {Actions} from 'react-native-router-flux';
 import Icon from 'react-native-vector-icons/Ionicons';
-
-import logoCash from '../assets/img/cash.png';
-import logoVisa from '../assets/img/visa.png';
 import colorConfig from '../config/colorConfig';
-
-// action
-import {dataTransaction} from '../actions/sales.action';
-import * as _ from 'lodash';
+import RecentTransactionPlaceHolder from '../components/placeHolderLoading/RecentTransactionPlaceHolder';
 
 class RewardsTransaction extends Component {
   constructor(props) {
@@ -28,111 +22,85 @@ class RewardsTransaction extends Component {
     };
   }
 
-  componentDidMount = async () => {
-    // let recentTrx = [];
-    // if (this.props.pointTransaction.length != 0) {
-    //   recentTrx = await _.orderBy(
-    //     this.props.pointTransaction,
-    //     ['createdAt'],
-    //     ['desc'],
-    //   ).slice(0, 3);
-    //
-    //   this.setState({recentTrx});
-    // }
-  };
-
   historyDetailPayment = item => {
     Actions.historyDetailPayment({item});
   };
 
   render() {
-    let recentTrx = [];
-    if (this.props.pointTransaction != undefined) {
-      recentTrx = _.orderBy(
-        this.props.pointTransaction,
-        ['createdAt'],
-        ['desc'],
-      ).slice(0, 3);
-    }
     return (
       <View style={styles.container}>
         <Text style={styles.title}>Recent Transactions</Text>
         <View style={styles.card}>
-          {this.props.pointTransaction != undefined
-            ? recentTrx.map((item, key) => (
-                <View key={key}>
-                  {
-                    <View>
-                      <TouchableOpacity
-                        style={styles.item}
-                        onPress={() => this.historyDetailPayment(item)}>
-                        <View
+          {this.props.isLoading ? (
+            <RecentTransactionPlaceHolder />
+          ) : this.props.recentTransaction != undefined ? (
+            this.props.recentTransaction.map((item, key) => (
+              <View key={key}>
+                {
+                  <View>
+                    <TouchableOpacity
+                      style={styles.item}
+                      onPress={() => this.historyDetailPayment(item)}>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                        }}>
+                        <Icon
+                          size={18}
+                          name={
+                            item.paymentType == 'Cash'
+                              ? Platform.OS === 'ios'
+                                ? 'ios-cash'
+                                : 'md-cash'
+                              : Platform.OS === 'ios'
+                              ? 'ios-card'
+                              : 'md-card'
+                          }
+                          style={styles.imageLogo}
+                        />
+                        <Text
                           style={{
-                            flexDirection: 'row',
+                            marginLeft: 12,
+                            fontWeight: 'bold',
+                            color: colorConfig.pageIndex.grayColor,
+                            fontFamily: 'Lato-Medium',
                           }}>
-                          {/*<Image*/}
-                          {/*  resizeMode="stretch"*/}
-                          {/*  style={styles.imageLogo}*/}
-                          {/*  source={*/}
-                          {/*    item.paymentType == 'Cash' ? logoCash : logoVisa*/}
-                          {/*  }*/}
-                          {/*/>*/}
-                          <Icon
-                            size={18}
-                            name={
-                              item.paymentType == 'Cash'
-                                ? Platform.OS === 'ios'
-                                  ? 'ios-cash'
-                                  : 'md-cash'
-                                : Platform.OS === 'ios'
-                                ? 'ios-card'
-                                : 'md-card'
-                            }
-                            style={styles.imageLogo}
-                          />
-                          <Text
-                            style={{
-                              marginLeft: 12,
-                              fontWeight: 'bold',
-                              color: colorConfig.pageIndex.grayColor,
-                              fontFamily: 'Lato-Medium',
-                            }}>
-                            {item.outletName}
-                          </Text>
-                        </View>
-                        <View
+                          {item.outletName}
+                        </Text>
+                      </View>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          marginRight: 5,
+                          alignItems: 'center',
+                        }}>
+                        <Text
                           style={{
-                            flexDirection: 'row',
                             marginRight: 5,
-                            alignItems: 'center',
+                            color: colorConfig.pageIndex.grayColor,
+                            fontFamily: 'Lato-Medium',
                           }}>
-                          <Text
-                            style={{
-                              marginRight: 5,
-                              color: colorConfig.pageIndex.grayColor,
-                              fontFamily: 'Lato-Medium',
-                            }}>
-                            {item.pointDebit}
-                          </Text>
-                          <Icon
-                            size={18}
-                            name={
-                              Platform.OS === 'ios'
-                                ? 'ios-arrow-dropright'
-                                : 'md-arrow-dropright'
-                            }
-                            style={{
-                              color: colorConfig.pageIndex.activeTintColor,
-                            }}
-                          />
-                        </View>
-                      </TouchableOpacity>
-                      <View style={styles.line} />
-                    </View>
-                  }
-                </View>
-              ))
-            : null}
+                          {item.pointDebit}
+                        </Text>
+                        <Icon
+                          size={18}
+                          name={
+                            Platform.OS === 'ios'
+                              ? 'ios-arrow-dropright'
+                              : 'md-arrow-dropright'
+                          }
+                          style={{
+                            color: colorConfig.pageIndex.activeTintColor,
+                          }}
+                        />
+                      </View>
+                    </TouchableOpacity>
+                    <View style={styles.line} />
+                  </View>
+                }
+              </View>
+            ))
+          ) : null}
 
           <TouchableOpacity
             style={{
@@ -145,8 +113,8 @@ class RewardsTransaction extends Component {
                 color: colorConfig.pageIndex.activeTintColor,
                 fontWeight: 'bold',
               }}>
-              {recentTrx != undefined
-                ? recentTrx.length == 0
+              {this.props.recentTransaction != undefined
+                ? this.props.recentTransaction.length == 0
                   ? 'Empty'
                   : 'See More'
                 : 'Empty'}
@@ -213,7 +181,6 @@ const styles = StyleSheet.create({
 
 mapStateToProps = state => ({
   recentTransaction: state.rewardsReducer.dataPoint.recentTransaction,
-  pointTransaction: state.rewardsReducer.dataPoint.pointTransaction,
 });
 
 mapDispatchToProps = dispatch => ({

@@ -20,6 +20,7 @@ import RewardsStamp from '../components/rewardsStamp';
 import RewardsStampDetail from '../components/rewardsStampDetail';
 import RewordsVouchers from '../components/rewordsVouchers';
 import Loader from '../components/loader';
+import {myVoucers} from '../actions/account.action';
 
 class RewardsRewards extends Component {
   constructor(props) {
@@ -33,24 +34,15 @@ class RewardsRewards extends Component {
   }
 
   componentDidMount = async () => {
-    // if (this.props.vouchers.length === 0){
-    //   this.setState({ isLoading: true });
-    // } else {
-    this.setState({isLoading: false});
-    // }
     this.getDataVoucher();
   };
 
   getDataVoucher = async () => {
-    await this.props.dispatch(vouchers());
+    this.setState({isLoading: true});
     await this.props.dispatch(dataPoint());
+    await this.props.dispatch(vouchers());
+    await this.props.dispatch(myVoucers());
     this.setState({isLoading: false});
-  };
-
-  _onRefresh = () => {
-    this.setState({refreshing: true});
-    this.getDataVoucher();
-    this.setState({refreshing: false});
   };
 
   goBack() {
@@ -60,9 +52,9 @@ class RewardsRewards extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <View>
-          <View
-            style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+        {this.state.isLoading && <Loader />}
+        <View style={{backgroundColor: colorConfig.store.defaultColor}}>
+          <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
             <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
               <Icon
                 size={28}
@@ -73,22 +65,20 @@ class RewardsRewards extends Component {
                 }
                 style={styles.btnBackIcon}
               />
-              <Text style={styles.btnBackText}> Back </Text>
+              <Text style={styles.btnBackText}> Rewards </Text>
             </TouchableOpacity>
             <View style={styles.point}>
               <Icon
                 size={23}
-                name={
-                  Platform.OS === 'ios' ? 'ios-pricetags' : 'md-pricetags'
-                }
+                name={Platform.OS === 'ios' ? 'ios-pricetags' : 'md-pricetags'}
                 style={{
-                  color: colorConfig.store.defaultColor,
+                  color: colorConfig.pageIndex.backgroundColor,
                   marginRight: 8,
                 }}
               />
               <Text
                 style={{
-                  color: colorConfig.pageIndex.activeTintColor,
+                  color: colorConfig.pageIndex.backgroundColor,
                   fontWeight: 'bold',
                 }}>
                 {this.props.totalPoint == undefined
@@ -97,43 +87,9 @@ class RewardsRewards extends Component {
               </Text>
             </View>
           </View>
-          <View style={styles.line} />
+          {/*<View style={styles.line} />*/}
         </View>
-        <ScrollView
-          refreshControl={
-            <RefreshControl
-              refreshing={this.state.refreshing}
-              onRefresh={this._onRefresh}
-            />
-          }>
-          {this.state.isLoading === true ? (
-            <View style={styles.loading}>
-              {this.state.isLoading && <Loader />}
-            </View>
-          ) : (
-            <View>
-              {/* <RewardsStamp />
-              <RewardsStampDetail /> */}
-              {this.props.vouchers != undefined ? (
-                <RewordsVouchers />
-              ) : (
-                <View
-                  style={{
-                    alignItems: 'center',
-                    margin: 20,
-                  }}>
-                  <Text
-                    style={{
-                      textAlign: 'center',
-                      color: colorConfig.pageIndex.grayColor,
-                    }}>
-                    Vouchers is empty
-                  </Text>
-                </View>
-              )}
-            </View>
-          )}
-        </ScrollView>
+        <RewordsVouchers />
       </View>
     );
   }
@@ -145,16 +101,18 @@ const styles = StyleSheet.create({
     backgroundColor: colorConfig.pageIndex.backgroundColor,
   },
   btnBackIcon: {
-    color: colorConfig.pageIndex.activeTintColor,
+    color: colorConfig.pageIndex.backgroundColor,
     margin: 10,
   },
   btnBack: {
     flexDirection: 'row',
     alignItems: 'center',
+    color: colorConfig.pageIndex.backgroundColor,
   },
   btnBackText: {
-    color: colorConfig.pageIndex.activeTintColor,
+    color: colorConfig.pageIndex.backgroundColor,
     fontWeight: 'bold',
+    fontSize: 17,
   },
   line: {
     borderBottomColor: colorConfig.store.defaultColor,
@@ -168,7 +126,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
     alignItems: 'center',
-    borderColor: colorConfig.pageIndex.activeTintColor,
+    borderColor: colorConfig.pageIndex.backgroundColor,
     borderWidth: 1,
     borderRadius: 10,
     padding: 5,
@@ -184,6 +142,9 @@ mapDispatchToProps = dispatch => ({
   dispatch,
 });
 
-export default compose(connect(mapStateToProps, mapDispatchToProps))(
-  RewardsRewards,
-);
+export default compose(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  ),
+)(RewardsRewards);

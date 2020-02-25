@@ -8,10 +8,10 @@ import {
   RefreshControl,
   TouchableOpacity,
   Image,
+  Alert,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
-import {notifikasi} from '../actions/auth.actions';
 import {dataStores} from '../actions/stores.action';
 
 import * as geolib from 'geolib';
@@ -24,18 +24,12 @@ import StorePromotion from '../components/storePromotion';
 import StoreNearYou from '../components/storeNearYou';
 import StoreStores from '../components/storeStores';
 import appConfig from '../config/appConfig';
-import {Actions} from 'react-native-router-flux';
-import {myVoucers} from '../actions/account.action';
-import {
-  campaign,
-  dataPoint,
-  vouchers,
-  getStamps,
-} from '../actions/rewards.action';
-import {dataInbox} from '../actions/inbox.action';
 import {dataPromotion} from '../actions/promotion.action';
+import {getBasket} from '../actions/order.action';
 import Icon from 'react-native-vector-icons/Ionicons';
-
+import {Actions} from 'react-native-router-flux';
+import CryptoJS from 'react-native-crypto-js';
+import awsConfig from '../config/awsConfig';
 
 class Store extends Component {
   constructor(props) {
@@ -55,19 +49,14 @@ class Store extends Component {
   }
 
   componentDidMount = async () => {
-    await this.props.dispatch(campaign());
     await this.props.dispatch(dataPromotion());
-    await this.props.dispatch(dataPoint());
-    // await this.props.dispatch(vouchers());
-    // await this.props.dispatch(myVoucers());
-    // await this.props.dispatch(dataInbox());
-    // await this.props.dispatch(getStamps());
+    // let response = await this.props.dispatch(getBasket());
 
-    if (this.state.dataStores.length === 0) {
-      this.setState({isLoading: true});
-    } else {
-      this.setState({isLoading: false});
-    }
+    // if (this.state.dataStores.length === 0) {
+    //   this.setState({isLoading: true});
+    // } else {
+    // this.setState({isLoading: false});
+    // }
     this.getDataStores();
 
     var hours = new Date().getHours();
@@ -93,25 +82,16 @@ class Store extends Component {
 
   getDataStores = async () => {
     try {
-      await Geolocation.getCurrentPosition(
-        async position => {
-          await this.props.dispatch(dataStores());
-          this.setDataStore(this.props.dataStores, true, position);
-        },
-        async error => {
-          await this.props.dispatch(dataStores());
-          this.setDataStore(this.props.dataStores, false, null);
-        },
-        {enableHighAccuracy: true, timeout: 3000, maximumAge: 1000},
+      await this.props.dispatch(dataStores());
+      await this.props.dispatch(getBasket());
+      let statusLocaiton = this.props.userPosition != false ? true : false;
+      this.setDataStore(
+        this.props.dataStores,
+        statusLocaiton,
+        this.props.userPosition,
       );
-    } catch (error) {
-      await this.props.dispatch(
-        notifikasi(
-          'Get Data Stores Error!',
-          error.responseBody.message,
-          console.log('Cancel Pressed'),
-        ),
-      );
+    } catch (e) {
+      Alert.alert('Oppss...', 'Something went wrong, please try again.');
     }
   };
 
@@ -139,6 +119,7 @@ class Store extends Component {
 
           storeGrupTampung.push(response.data[i].location.region);
           dataStoresTampung.push({
+            storeId: response.data[i].id,
             storeName: response.data[i].name,
             storeStatus: this._cekOpen(response.data[i].operationalHours),
             storeJarak: statusLocation
@@ -166,7 +147,7 @@ class Store extends Component {
     }
 
     var dataStoresNearTampung = [];
-    console.log('dataStoresTampung ', dataStoresTampung);
+    // console.log('dataStoresTampung ', dataStoresTampung);
     if (statusLocation) {
       for (let i = 0; i < 3; i++) {
         dataStoresNearTampung = [...dataStoresTampung];
@@ -174,7 +155,7 @@ class Store extends Component {
       }
     }
 
-    console.log('dataAllStore ', dataStoresTampung);
+    // console.log('dataAllStore ', dataStoresTampung);
     try {
       this.setState({
         isLoading: false,
@@ -237,41 +218,10 @@ class Store extends Component {
     }
   };
 
-  _getStatusOpen = (statusStore, statusOpen, openHour, closeHour) => {
-    if (statusStore) {
-      if (statusOpen) {
-        return 'Open • Closing at ' + closeHour[0] + ':' + closeHour[1];
-      } else {
-        return 'Closed • Opening at ' + openHour[0] + ':' + openHour[1];
-      }
-    } else {
-      return 'Closed • Closed today';
-    }
-  };
-
-  _onRefresh = () => {
+  _onRefresh = async () => {
     this.setState({refreshing: true});
-    this.getDataStores();
+    await this.getDataStores();
     this.setState({refreshing: false});
-  };
-
-  myVouchers = () => {
-    var myVoucers = [];
-    if (this.props.myVoucers != undefined) {
-      _.forEach(
-        _.groupBy(
-          this.props.myVoucers.filter(voucher => voucher.deleted == false),
-          'id',
-        ),
-        function(value, key) {
-          value[0].totalRedeem = value.length;
-          myVoucers.push(value[0]);
-        },
-      );
-    }
-
-    console.log(myVoucers);
-    Actions.accountVouchers({data: myVoucers});
   };
 
   getHallo = () => {
@@ -286,8 +236,31 @@ class Store extends Component {
     }
   };
 
+  getSumOfQuantityBasket = () => {
+    try {
+      let sum = _.sumBy(this.props.dataBasket.details, function(qty) {
+        return qty.quantity;
+      });
+      return sum;
+    } catch (e) {
+      return null;
+    }
+  };
+
   render() {
-    console.log('this.props.dataPromotion ', this.props.dataPromotion);
+    let userDetail;
+    try {
+      // Decrypt data user
+      let bytes = CryptoJS.AES.decrypt(
+        this.props.userDetail,
+        awsConfig.PRIVATE_KEY_RSA,
+      );
+      userDetail = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+    } catch (e) {
+      userDetail = {};
+      userDetail.name = 'User User';
+    }
+
     return (
       <View style={{marginBottom: 40}}>
         <View
@@ -334,7 +307,7 @@ class Store extends Component {
                     fontFamily: 'Lato-Bold',
                   }}>
                   {this.props.userDetail != undefined
-                    ? this.props.userDetail.name.split(' ')[0]
+                    ? userDetail.name.split(' ')[0]
                     : ''}
                 </Text>
               </View>
@@ -365,119 +338,32 @@ class Store extends Component {
               this.props.dataPromotion.count == 0 ? null : (
                 <StorePromotion />
               )}
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-evenly',
-                  backgroundColor: colorConfig.store.defaultColor,
-                  borderColor: colorConfig.pageIndex.activeTintColor,
-                  borderWidth: 1,
-                  height: 50,
-                  marginTop: 20,
-                  borderRadius: 10,
-                  alignItems: 'center',
-                }}>
-                {this.props.totalPoint == undefined ||
-                this.props.totalPoint == 0 ? null : (
-                  <View style={styles.point}>
-                    {/*<Image*/}
-                    {/*  style={{height: 18, width: 25, marginRight: 5}}*/}
-                    {/*  source={require('../assets/img/ticket.png')}*/}
-                    {/*/>*/}
-                    <Icon
-                      size={23}
-                      name={Platform.OS === 'ios' ? 'ios-pricetags' : 'md-pricetags'}
-                      style={{color: 'white', marginRight: 8}}
-                    />
-                    <Text
-                      style={{
-                        color: colorConfig.splash.container,
-                        fontSize: 14,
-                        fontWeight: 'bold',
-                        fontFamily: 'Lato-Medium',
-                      }}>
-                      {'Point : '}
-                    </Text>
-                    <Text
-                      style={{
-                        color: colorConfig.splash.container,
-                        fontWeight: 'bold',
-                        fontSize: 14,
-                        fontFamily: 'Lato-Bold',
-                      }}>
-                      {this.props.totalPoint == undefined
-                        ? 0
-                        : this.props.totalPoint}
-                    </Text>
-                  </View>
-                )}
-                {this.props.totalPoint == undefined ||
-                this.props.totalPoint == 0 ? null : (
-                  <View
-                    style={{
-                      backgroundColor: colorConfig.splash.container,
-                      width: 2,
-                      height: 35,
-                    }}
-                  />
-                )}
-                <TouchableOpacity
-                  style={styles.point}
-                  onPress={this.myVouchers}>
-                  <Icon
-                    size={23}
-                    name={Platform.OS === 'ios' ? 'ios-card' : 'md-card'}
-                    style={{color: 'white', marginRight: 8}}
-                  />
-                  <Text
-                    style={{
-                      color: colorConfig.splash.container,
-                      fontSize: 14,
-                      fontWeight: 'bold',
-                      fontFamily: 'Lato-Bold',
-                    }}>
-                    My Vouchers
-                  </Text>
-                </TouchableOpacity>
-              </View>
-              {/* <View
-                style={{
-                  borderBottomColor: colorConfig.store.defaultColor,
-                  borderBottomWidth: 2,
-                  paddingTop: 10,
-                }}
-              /> */}
+
               {this.state.dataStoresNear.length != 0 ? (
                 <View>
                   <StoreNearYou dataStoresNear={this.state.dataStoresNear} />
-                  {/* <View
-                    style={{
-                      borderBottomColor: colorConfig.store.defaultColor,
-                      borderBottomWidth: 2,
-                      paddingTop: 10,
-                    }}
-                  /> */}
                 </View>
               ) : null}
               {Object.keys(this.state.dataAllStore).length === 0 &&
-              this.state.dataAllStore.constructor === Object ? (
+              this.state.dataAllStore != undefined ? (
                 <View
                   style={{
-                    alignItems: 'center',
                     margin: 20,
                     justifyContent: 'center',
-                    flexDirection: 'row',
+                    alignItems: 'center',
+                    flexDirection: 'column',
+                    // height: '70%',
                   }}>
                   <Text
                     style={{
                       textAlign: 'center',
                       color: colorConfig.pageIndex.grayColor,
                       fontFamily: 'Lato-Medium',
-                      fontSize: 20,
+                      fontSize: 24,
                       fontWeight: 'bold',
                       marginTop: 100,
                     }}>
-                    Sorry, no store is available.
+                    Sorry, no outlet is available.
                   </Text>
                 </View>
               ) : (
@@ -491,6 +377,56 @@ class Store extends Component {
             </View>
           )}
         </ScrollView>
+
+        {/*<TouchableOpacity*/}
+        {/*  onPress={() => Actions.basket()}*/}
+        {/*  style={{*/}
+        {/*    position: 'absolute',*/}
+        {/*    bottom: '6%',*/}
+        {/*    right: '5%',*/}
+        {/*    height: 60,*/}
+        {/*    borderRadius: 50,*/}
+        {/*    justifyContent: 'center',*/}
+        {/*    alignItems: 'center',*/}
+        {/*    width: 60,*/}
+        {/*    backgroundColor: 'white',*/}
+        {/*    shadowColor: '#00000021',*/}
+        {/*    shadowOffset: {*/}
+        {/*      width: 0,*/}
+        {/*      height: 9,*/}
+        {/*    },*/}
+        {/*    shadowOpacity: 0.7,*/}
+        {/*    shadowRadius: 7.49,*/}
+        {/*    elevation: 12,*/}
+        {/*  }}>*/}
+        {/*  <View>*/}
+        {/*    <Icon*/}
+        {/*      size={40}*/}
+        {/*      name={Platform.OS === 'ios' ? 'ios-basket' : 'md-basket'}*/}
+        {/*      style={{color: colorConfig.store.defaultColor}}*/}
+        {/*    />*/}
+        {/*  </View>*/}
+        {/*  /!* check data length basket, if not undefined, then show length *!/*/}
+        {/*  {this.props.dataBasket != undefined &&*/}
+        {/*  this.props.dataBasket.details != undefined ? (*/}
+        {/*    <View*/}
+        {/*      style={{*/}
+        {/*        position: 'absolute',*/}
+        {/*        top: -7,*/}
+        {/*        left: 1,*/}
+        {/*        width: 25,*/}
+        {/*        height: 25,*/}
+        {/*        backgroundColor: colorConfig.store.colorError,*/}
+        {/*        borderRadius: 50,*/}
+        {/*        justifyContent: 'center',*/}
+        {/*        alignItems: 'center',*/}
+        {/*      }}>*/}
+        {/*      <Text style={{color: 'white', padding: 3, fontSize: 11}}>*/}
+        {/*        {this.getSumOfQuantityBasket()}*/}
+        {/*      </Text>*/}
+        {/*    </View>*/}
+        {/*  ) : null}*/}
+        {/*</TouchableOpacity>*/}
       </View>
     );
   }
@@ -503,6 +439,7 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     backgroundColor: colorConfig.pageIndex.backgroundColor,
+    height: '100%',
   },
   loading: {
     height: Dimensions.get('window').height,
@@ -517,7 +454,6 @@ const styles = StyleSheet.create({
     margin: 10,
     alignItems: 'center',
     flexDirection: 'row',
-    alignItems: 'center',
     borderRadius: 10,
     paddingTop: 5,
     paddingBottom: 5,
@@ -528,11 +464,11 @@ const styles = StyleSheet.create({
 });
 
 mapStateToProps = state => ({
+  dataBasket: state.orderReducer.dataBasket.product,
   dataStores: state.storesReducer.dataStores.stores,
-  myVoucers: state.accountsReducer.myVoucers.myVoucers,
-  totalPoint: state.rewardsReducer.dataPoint.totalPoint,
   userDetail: state.userReducer.getUser.userDetails,
   dataPromotion: state.promotionReducer.dataPromotion.promotion,
+  userPosition: state.userReducer.userPosition.userPosition,
 });
 
 mapDispatchToProps = dispatch => ({

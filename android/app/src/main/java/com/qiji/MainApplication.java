@@ -4,6 +4,9 @@ import android.app.Application;
 import android.content.Context;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
+import com.BV.LinearGradient.LinearGradientPackage;
+import io.invertase.firebase.crashlytics.ReactNativeFirebaseCrashlyticsPackage;
+import io.invertase.firebase.app.ReactNativeFirebaseAppPackage;
 import org.capslock.RNDeviceBrightness.RNDeviceBrightness;
 import com.lugg.ReactNativeConfig.ReactNativeConfigPackage;
 import com.reactnativecommunity.rnpermissions.RNPermissionsPackage;
@@ -22,7 +25,7 @@ import java.util.List;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
-import com.facebook.reactnative.androidsdk.FBSDKPackage;
+
 
 // Multidex
 import androidx.multidex.MultiDexApplication;

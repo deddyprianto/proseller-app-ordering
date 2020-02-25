@@ -6,15 +6,28 @@ export const dataTransaction = () => {
   return async (dispatch, getState) => {
     const state = getState();
     try {
+      // get token from reducer
       const {
         authReducer: {
           authData: {token},
         },
       } = state;
+
+      // get take from reducer
+      let {
+        rewardsReducer: {
+          dataPoint: {take},
+        },
+      } = state;
+
+      take == undefined ? (take = 10) : take;
+
+      console.log(take, 'ini take');
+      console.log(`/customer/sales?take=${take}&page=1`);
       var dataResponse = [];
 
       let response = await fetchApi(
-        '/customer/sales',
+        `/customer/sales?take=${take}&page=1`,
         'GET',
         false,
         200,
@@ -22,19 +35,53 @@ export const dataTransaction = () => {
       );
       console.log(response, 'response sales');
       dataResponse = response.responseBody.Data;
-      dispatch({
-        type: 'DATA_POINT_TRANSACTION',
-        pointTransaction: _.orderBy(dataResponse, ['createdAt'], ['desc']),
-        isSuccessGetTrx: response.success,
-      });
-      // dispatch({
-      //   type: 'DATA_RECENT_TRANSACTION',
-      //   recentTransaction: _.orderBy(
-      //     dataResponse,
-      //     ['createdAt'],
-      //     ['desc'],
-      //   ).slice(0, 3),
-      // });
+
+      if (response.success) {
+        let nextTake = take + 10;
+        dispatch({
+          type: 'DATA_POINT_TRANSACTION',
+          pointTransaction: dataResponse,
+          isSuccessGetTrx: response.success,
+          dataLength: response.responseBody.DataLength,
+          take: nextTake,
+        });
+      }
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const recentTransaction = () => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      // get token from reducer
+      const {
+        authReducer: {
+          authData: {token},
+        },
+      } = state;
+
+      var dataResponse = [];
+
+      let response = await fetchApi(
+        `/customer/sales?take=3&page=1`,
+        'GET',
+        false,
+        200,
+        token,
+      );
+      console.log(response, 'response recent sales');
+      dataResponse = response.responseBody.Data;
+
+      if (response.success) {
+        dispatch({
+          type: 'DATA_RECENT_TRANSACTION',
+          recentTransaction: dataResponse,
+          isSuccessGetTrx: response.success,
+        });
+      }
     } catch (error) {
       return error;
     }

@@ -13,6 +13,8 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
+  Alert,
+  BackHandler,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -30,6 +32,7 @@ import {myVoucers} from '../actions/account.action';
 import {sendPayment} from '../actions/sales.action';
 import Loader from './loader';
 import {refreshToken} from '../actions/auth.actions';
+import CurrencyFormatter from '../helper/CurrencyFormatter';
 
 class PaymentDetail extends Component {
   constructor(props) {
@@ -44,38 +47,105 @@ class PaymentDetail extends Component {
       cancelVoucher: false,
       cancelPoint: false,
       loading: false,
+      failedPay: false,
+      dataVoucer: undefined,
+      moneyPoint: undefined,
+      addPoint: undefined,
     };
   }
 
   componentDidMount = async () => {
     await this.setDataPayment(false);
+    this.backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      this.handleBackPress,
+    );
+  };
+
+  setDataVoucher = async dataVoucer => {
+    await this.setDataPayment(true);
+    await this.setState({
+      dataVoucer,
+      addPoint: undefined,
+      moneyPoint: undefined,
+      cancelVoucher: false,
+    });
+    await this.setDataPayment(false);
+  };
+
+  setDataPoint = async (addPoint, moneyPoint) => {
+    await this.setDataPayment(true);
+    await this.setState({
+      addPoint,
+      moneyPoint,
+      dataVoucer: undefined,
+      cancelPoint: false,
+    });
+    await this.setDataPayment(false);
   };
 
   setDataPayment = async cancel => {
-    console.log(this.props.myVoucers, 'this.props.dataVoucer');
     var totalBayar = 0;
     if (!cancel) {
-      var redeemVoucer =
-        this.props.dataVoucer == undefined
-          ? 0
-          : this.props.dataVoucer.voucherType != 'discAmount'
-          ? (this.props.pembayaran.payment *
-              this.props.dataVoucer.voucherValue) /
-            100
-          : this.props.dataVoucer.voucherValue;
+      var redeemVoucer = 0;
+
+      try {
+        if (this.state.dataVoucer != undefined) {
+          if (this.state.dataVoucer.applyToSpecificProduct == true) {
+            //  search specific product
+            let result = this.props.pembayaran.dataPay.find(
+              item => item.barcode == this.state.dataVoucer.product.barcode,
+            );
+            // check if apply to specific product is found
+            if (result == undefined) {
+              this.cencelVoucher();
+              Alert.alert(
+                'Sorry',
+                `This voucher is only available on specific product`,
+              );
+            } else {
+              redeemVoucer =
+                (result.price * this.state.dataVoucer.voucherValue) / 100;
+            }
+          } else {
+            if (this.state.dataVoucer.voucherType == 'discPercentage') {
+              redeemVoucer =
+                (this.props.pembayaran.payment *
+                  this.state.dataVoucer.voucherValue) /
+                100;
+            } else if (this.state.dataVoucer.voucherType == 'discAmount') {
+              redeemVoucer = this.state.dataVoucer.voucherValue;
+            }
+          }
+        }
+      } catch (e) {}
+
       var redeemPoint =
-        this.props.addPoint == undefined ? 0 : this.props.moneyPoint;
+        this.state.addPoint == undefined ? 0 : this.state.moneyPoint;
       totalBayar = this.state.totalBayar - (redeemVoucer + redeemPoint);
     } else {
       totalBayar = this.props.pembayaran.payment;
     }
-    console.log('total bayar ', totalBayar);
+    // check whether the total pay <0 after deducting the discount vouchers and points
+    if (totalBayar < 0) {
+      totalBayar = 0;
+    }
+    // console.log('total bayar ', totalBayar);
     this.setState({totalBayar});
   };
 
-  goBack() {
-    Actions.popTo('pageIndex');
+  componentWillUnmount() {
+    this.backHandler.remove();
   }
+
+  handleBackPress = () => {
+    this.goBack(); // works best when the goBack is async
+    return true;
+  };
+
+  goBack = async () => {
+    Actions.popTo('pageIndex');
+  };
 
   btnPayment = () => {
     Actions.paymentSuccess();
@@ -99,13 +169,13 @@ class PaymentDetail extends Component {
 
       if (
         this.state.cancelVoucher == false &&
-        this.props.dataVoucer != undefined
+        this.state.dataVoucer != undefined
       ) {
-        var jumlah = _.find(myVoucers, {id: this.props.dataVoucer.id})
+        var jumlah = _.find(myVoucers, {id: this.state.dataVoucer.id})
           .totalRedeem;
 
         var index = _.findIndex(myVoucers, {
-          id: this.props.dataVoucer.id,
+          id: this.state.dataVoucer.id,
         });
 
         _.updateWith(
@@ -119,6 +189,7 @@ class PaymentDetail extends Component {
       Actions.paymentAddVoucers({
         data: myVoucers,
         pembayaran: this.props.pembayaran,
+        setDataVoucher: this.setDataVoucher,
       });
     } catch (e) {
       this.setState({
@@ -133,7 +204,8 @@ class PaymentDetail extends Component {
     Actions.paymentAddPoint({
       data: this.props.totalPoint,
       pembayaran: this.props.pembayaran,
-      valueSet: this.props.moneyPoint == undefined ? 0 : this.props.moneyPoint,
+      valueSet: this.state.moneyPoint == undefined ? 0 : this.state.moneyPoint,
+      setDataPoint: this.setDataPoint,
     });
   };
 
@@ -142,7 +214,7 @@ class PaymentDetail extends Component {
     var pembayaran = {};
     try {
       this.setState({loading: true});
-      pembayaran.price = this.state.totalBayar;
+      pembayaran.price = Number(this.state.totalBayar.toFixed(3));
       pembayaran.outletName = this.props.pembayaran.storeName;
       pembayaran.referenceNo = this.props.pembayaran.referenceNo;
       pembayaran.outletId = this.props.pembayaran.storeId;
@@ -151,22 +223,23 @@ class PaymentDetail extends Component {
       pembayaran.void = false;
 
       if (
-        this.props.dataVoucer == undefined &&
-        this.props.addPoint == undefined
+        this.state.dataVoucer == undefined &&
+        this.state.addPoint == undefined
       ) {
         pembayaran.statusAdd = null;
         pembayaran.redeemValue = 0;
       } else {
         pembayaran.beforePrice = this.props.pembayaran.payment;
-        pembayaran.afterPrice = this.state.totalBayar;
+        // pembayaran.afterPrice = this.state.totalBayar;
+        pembayaran.afterPrice = Number(this.state.totalBayar.toFixed(3));
 
-        if (this.props.dataVoucer != undefined) {
-          pembayaran.voucherId = this.props.dataVoucer.id;
-          pembayaran.voucherSerialNumber = this.props.dataVoucer.serialNumber;
+        if (this.state.dataVoucer != undefined) {
+          pembayaran.voucherId = this.state.dataVoucer.id;
+          pembayaran.voucherSerialNumber = this.state.dataVoucer.serialNumber;
           pembayaran.statusAdd = 'addVoucher';
         }
-        if (this.props.addPoint != undefined) {
-          pembayaran.redeemValue = this.props.addPoint;
+        if (this.state.addPoint != undefined) {
+          pembayaran.redeemValue = this.state.addPoint;
           pembayaran.statusAdd = 'addPoint';
         }
       }
@@ -185,25 +258,37 @@ class PaymentDetail extends Component {
             dataRespons: response.responseBody.Data.data,
           });
         } else {
+          //  cancel voucher and pont selected
+          this.cencelPoint();
+          this.cencelVoucher();
           this.setState({
             showAlert: true,
             pesanAlert: response.responseBody.Data.message,
             titleAlert: 'Oopss!',
+            failedPay: true,
           });
         }
       } else {
+        //  cancel voucher and pont selected
+        this.cencelPoint();
+        this.cencelVoucher();
         this.setState({
           showAlert: true,
           pesanAlert: response.responseBody.Data.message,
           titleAlert: 'Oopss!',
+          failedPay: true,
         });
       }
       this.setState({loading: false});
     } catch (e) {
+      //  cancel voucher and pont selected
+      this.cencelPoint();
+      this.cencelVoucher();
       this.setState({
         showAlert: true,
         pesanAlert: 'Something went wrong, please try again.',
         titleAlert: 'Oopss!',
+        failedPay: true,
       });
       this.setState({loading: false});
     }
@@ -220,20 +305,93 @@ class PaymentDetail extends Component {
   };
 
   cencelVoucher = async () => {
-    await delete this.props.dataVoucer;
+    // await delete this.state.dataVoucer;
+    await this.setState({dataVoucer: undefined});
     await this.setDataPayment(true);
     this.setState({cancelVoucher: true});
   };
 
   cencelPoint = async () => {
-    await delete this.props.addPoint;
+    await delete this.state.addPoint;
     await this.setDataPayment(true);
     this.setState({cancelPoint: true});
   };
 
   showToastMessage = message => this.setState({message});
 
+  formatCurrency = value => {
+    try {
+      return CurrencyFormatter(value).match(/[a-z]+|[^a-z]+/gi)[1];
+    } catch (e) {
+      return value;
+    }
+  };
+
+  renderUsePoint = () => [
+    <View
+      style={{
+        marginBottom: 50,
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        flexDirection: 'row',
+      }}>
+      <Text>Use Point</Text>
+      {this.state.cancelPoint == false && this.state.addPoint != undefined ? (
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}>
+          <TouchableOpacity
+            style={styles.btnMethodCencel}
+            onPress={() => this.cencelPoint()}>
+            <Icon
+              size={18}
+              name={
+                Platform.OS === 'ios'
+                  ? 'ios-close-circle-outline'
+                  : 'md-close-circle-outline'
+              }
+              style={{color: colorConfig.store.colorError}}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.btnMethod} onPress={this.myPoint}>
+            {/*<Image*/}
+            {/*  style={{height: 18, width: 23, marginRight: 5}}*/}
+            {/*  source={require('../assets/img/ticket.png')}*/}
+            {/*/>*/}
+            <Icon
+              size={20}
+              name={Platform.OS === 'ios' ? 'ios-pricetags' : 'md-pricetags'}
+              style={{
+                color: colorConfig.store.textWhite,
+                marginRight: 8,
+              }}
+            />
+            <Text style={styles.descMethod}>
+              {'- ' + this.state.addPoint + ' Point'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      ) : (
+        <TouchableOpacity style={styles.btnMethod} onPress={this.myPoint}>
+          <Icon
+            size={20}
+            name={Platform.OS === 'ios' ? 'ios-pricetags' : 'md-pricetags'}
+            style={{
+              color: colorConfig.store.textWhite,
+              marginRight: 8,
+            }}
+          />
+          <Text style={styles.descMethod}>Pick Points</Text>
+        </TouchableOpacity>
+      )}
+    </View>,
+  ];
+
   render() {
+    console.log('DATA VOUCHER ', this.state.dataVoucer);
     const iconSlider = () => (
       <Icon
         size={25}
@@ -310,7 +468,7 @@ class PaymentDetail extends Component {
                 fontSize: 70,
                 // fontWeight: 'bold',
               }}>
-              {this.props.pembayaran.payment}
+              {this.formatCurrency(this.props.pembayaran.payment)}
             </Text>
           </View>
           <View
@@ -423,9 +581,9 @@ class PaymentDetail extends Component {
                 justifyContent: 'space-between',
                 flexDirection: 'row',
               }}>
-              <Text>Redeem Vouchers</Text>
+              <Text>Use Vouchers</Text>
               {this.state.cancelVoucher == false &&
-              this.props.dataVoucer != undefined ? (
+              this.state.dataVoucer != undefined ? (
                 <View
                   style={{
                     flexDirection: 'row',
@@ -457,7 +615,7 @@ class PaymentDetail extends Component {
                       }}
                     />
                     <Text style={styles.descMethod}>
-                      {this.props.dataVoucer.name.substr(0, 13)}
+                      {this.state.dataVoucer.name.substr(0, 13)}
                     </Text>
                   </TouchableOpacity>
                 </View>
@@ -481,124 +639,9 @@ class PaymentDetail extends Component {
                 </TouchableOpacity>
               )}
             </View>
-            <View
-              style={{
-                marginBottom: 50,
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                flexDirection: 'row',
-              }}>
-              <Text>Redeem Point</Text>
-              {this.state.cancelPoint == false &&
-              this.props.addPoint != undefined ? (
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                  }}>
-                  <TouchableOpacity
-                    style={styles.btnMethodCencel}
-                    onPress={() => this.cencelPoint()}>
-                    <Icon
-                      size={18}
-                      name={
-                        Platform.OS === 'ios'
-                          ? 'ios-close-circle-outline'
-                          : 'md-close-circle-outline'
-                      }
-                      style={{color: colorConfig.store.colorError}}
-                    />
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={styles.btnMethod}
-                    onPress={this.myPoint}>
-                    {/*<Image*/}
-                    {/*  style={{height: 18, width: 23, marginRight: 5}}*/}
-                    {/*  source={require('../assets/img/ticket.png')}*/}
-                    {/*/>*/}
-                    <Icon
-                      size={20}
-                      name={
-                        Platform.OS === 'ios' ? 'ios-pricetags' : 'md-pricetags'
-                      }
-                      style={{
-                        color: colorConfig.store.textWhite,
-                        marginRight: 8,
-                      }}
-                    />
-                    <Text style={styles.descMethod}>
-                      {'- ' + this.props.addPoint + ' Point'}
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              ) : (
-                <TouchableOpacity
-                  style={styles.btnMethod}
-                  onPress={this.myPoint}>
-                  <Icon
-                    size={20}
-                    name={
-                      Platform.OS === 'ios' ? 'ios-pricetags' : 'md-pricetags'
-                    }
-                    style={{
-                      color: colorConfig.store.textWhite,
-                      marginRight: 8,
-                    }}
-                  />
-                  <Text style={styles.descMethod}>Pick Points</Text>
-                </TouchableOpacity>
-              )}
-            </View>
-            {/* <RNSlidingButton
-              style={{
-                backgroundColor: colorConfig.pageIndex.activeTintColor,
-                borderRadius: 50,
-              }}
-              height={50}
-              onSlidingSuccess={this.onSlideRight}
-              slideDirection={SlideDirection.RIGHT}>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  marginLeft: 5,
-                }}>
-                <View
-                  style={{
-                    height: 40,
-                    width: 40,
-                    borderRadius: 40,
-                    backgroundColor: colorConfig.pageIndex.backgroundColor,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}>
-                  <Icon
-                    size={25}
-                    name={Platform.OS === 'ios' ? 'ios-log-in' : 'md-log-in'}
-                    style={{color: colorConfig.pageIndex.activeTintColor}}
-                  />
-                </View>
-                <View
-                  style={{
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}>
-                  <Text
-                    numberOfLines={1}
-                    style={{
-                      marginLeft: 10,
-                      fontSize: 16,
-                      fontWeight: 'bold',
-                      color: colorConfig.pageIndex.backgroundColor,
-                    }}>
-                    {'Pay ' +
-                      appConfig.appMataUang +
-                      ' ' +
-                      this.state.totalBayar}
-                  </Text>
-                </View>
-              </View>
-            </RNSlidingButton> */}
+            {this.props.totalPoint != undefined ? this.renderUsePoint() : null}
+
+            <View style={{marginTop: 50}} />
             <SwipeButton
               disabled={false}
               disabledThumbIconBackgroundColor="#FFFFFF"
@@ -613,9 +656,11 @@ class PaymentDetail extends Component {
               thumbIconBorderColor={colorConfig.pageIndex.activeTintColor}
               titleColor="#FFFFFF"
               titleFontSize={20}
+              shouldResetAfterSuccess={this.state.failedPay}
               railBackgroundColor={colorConfig.pageIndex.activeTintColor}
               title={
-                'Pay ' + appConfig.appMataUang + ' ' + this.state.totalBayar
+                'Pay ' + CurrencyFormatter(this.state.totalBayar)
+                // Number(this.state.totalBayar.toFixed(3))
               }
               onSwipeSuccess={this.onSlideRight}
             />

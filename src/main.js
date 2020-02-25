@@ -7,50 +7,56 @@
 import React, {Component} from 'react';
 import {
   StyleSheet,
-  Text,
   View,
-  TouchableOpacity,
-  Image,
-  ScrollView,
-  Animated,
-  ImageBackground,
   Dimensions,
   StatusBar,
+  AsyncStorage,
 } from 'react-native';
 import {connect} from 'react-redux';
 
 import Routes from './config/router';
 import Splash from './pages/splash';
-import Permition from './pages/permition';
 import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
 import Amplify, {Auth} from 'aws-amplify';
 
-import {loginUser, refreshToken} from './actions/auth.actions';
-import Loader from './components/loader';
+import {refreshToken} from './actions/auth.actions';
 import colorConfig from './config/colorConfig';
-import appConfig from './config/appConfig';
+import awsConfig from './config/awsConfig';
+import OneSignal from 'react-native-onesignal';
 
 class Main extends Component {
   constructor(props) {
     super(props);
+    // config for push notification
+    OneSignal.init(awsConfig.onesignalID, {
+      kOSSettingsKeyAutoPrompt: true,
+    }); // set kOSSettingsKeyAutoPrompt to false prompting manually on iOS
+
+    OneSignal.addEventListener('received', this.onReceived);
+    OneSignal.addEventListener('opened', this.onOpened);
+    OneSignal.addEventListener('ids', this.onIds);
     this.state = {
       isLoading: true,
       // geolocation: false,
       geolocation: true,
     };
+
+    OneSignal.addEventListener('received', this.onReceived);
+    OneSignal.addEventListener('opened', this.onOpened);
+    OneSignal.addEventListener('ids', this.onIds);
   }
 
   async componentDidMount() {
     try {
-      Amplify.configure({
-        Auth: {
-          identityPoolId: awsConfig.identityPoolId,
-          region: awsConfig.region,
-          userPoolId: awsConfig.cognitoPoolId,
-          userPoolWebClientId: awsConfig.appClientId,
-          mandatorySignIn: false,
-        },
-      });
+      // Amplify.configure({
+      //   Auth: {
+      //     identityPoolId: awsConfig.identityPoolId,
+      //     region: awsConfig.region,
+      //     userPoolId: awsConfig.cognitoPoolId,
+      //     userPoolWebClientId: awsConfig.appClientId,
+      //     mandatorySignIn: false,
+      //   },
+      // });
 
       await this.props.dispatch(refreshToken());
 
@@ -83,15 +89,40 @@ class Main extends Component {
     return new Promise(resolve =>
       setTimeout(() => {
         resolve('result');
-      }, 1000),
+      }, 5),
     );
+  };
+
+  componentWillUnmount() {
+    OneSignal.removeEventListener('received', this.onReceived);
+    OneSignal.removeEventListener('opened', this.onOpened);
+    OneSignal.removeEventListener('ids', this.onIds);
+  }
+
+  onReceived(notification) {
+    console.log('Notification received: ', notification);
+  }
+
+  onOpened(openResult) {
+    console.log('Message: ', openResult.notification.payload.body);
+    console.log('Data: ', openResult.notification.payload.additionalData);
+    console.log('isActive: ', openResult.notification.isAppInFocus);
+    console.log('openResult: ', openResult);
+  }
+
+  onIds = async device => {
+    console.log('Device info: ', device.userId);
+    try {
+      await AsyncStorage.setItem('deviceID', device.userId);
+    } catch (error) {
+      console.log(error, 'error saving device ID');
+    }
   };
 
   render() {
     const {
       authData: {isLoggedIn},
     } = this.props;
-    const imageStyle = [styles.logo, {width: this.imageWidth}];
 
     if (this.state.isLoading) {
       return <Splash />;
@@ -99,44 +130,8 @@ class Main extends Component {
 
     return (
       <View style={styles.container1}>
-        <StatusBar backgroundColor="#F8AF31" barStyle="light-content" />
-        {this.state.geolocation ? (
-          <Routes isLoggedIn={isLoggedIn} />
-        ) : (
-          <ImageBackground
-            source={appConfig.appBackground}
-            style={styles.backgroundImage}
-            resizeMode="stretch">
-            {loginUser && loginUser.isLoading && <Loader />}
-            <ScrollView>
-              <View style={styles.container2}>
-                <Animated.Image
-                  source={appConfig.appLogo}
-                  style={imageStyle}
-                  resizeMode="contain"
-                />
-              </View>
-              <View style={styles.card}>
-                <View style={styles.item1}>
-                  <Text style={styles.title}>LOCATION NOT FOUND</Text>
-                </View>
-                <View style={styles.item2}>
-                  <Text style={styles.detail}>
-                    Please turn on Location Services. For the best experience,
-                    please set it to Hight Accuracy
-                  </Text>
-                </View>
-                <View style={{alignItems: 'center', marginTop: 10}}>
-                  <TouchableOpacity
-                    style={styles.item3}
-                    onPress={this.turnOnLocation}>
-                    <Text style={styles.btnText}>TURN ON</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </ScrollView>
-          </ImageBackground>
-        )}
+        <StatusBar backgroundColor="white" barStyle="dark-content" />
+        <Routes isLoggedIn={isLoggedIn} />
       </View>
     );
   }

@@ -19,11 +19,14 @@ const dataPoint = (state = {}, action) => {
         ...state,
         pointTransaction: action.pointTransaction,
         isSuccessGetTrx: action.isSuccessGetTrx,
+        dataLength: action.dataLength,
+        take: action.take,
       };
     case 'DATA_RECENT_TRANSACTION':
       return {
         ...state,
         recentTransaction: action.recentTransaction,
+        isSuccessGetTrx: action.isSuccessGetTrx,
       };
     case 'DATA_TOTAL_POINT':
       return {

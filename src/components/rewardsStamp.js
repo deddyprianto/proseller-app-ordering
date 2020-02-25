@@ -6,6 +6,7 @@ import {
   Dimensions,
   TouchableOpacity,
   ScrollView,
+  Alert,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
@@ -13,6 +14,7 @@ import {compose} from 'redux';
 import colorConfig from '../config/colorConfig';
 import appConfig from '../config/appConfig';
 import Icon from 'react-native-vector-icons/Ionicons';
+import StampsPlaceHolder from './placeHolderLoading/StampsPlaceHolder';
 
 class RewardsStamp extends Component {
   constructor(props) {
@@ -30,22 +32,26 @@ class RewardsStamp extends Component {
 
   getItemStamp() {
     var stampsItem = [];
-    console.log('item stampts ', this.props.dataStamps.dataStamps);
-    if (this.props.dataStamps.dataStamps != undefined) {
-      var tampung = this.props.dataStamps.dataStamps.stamps.stampsItem;
-      var isi = [];
-      for (let i = 1; i <= tampung.length; i++) {
-        isi.push(tampung[i - 1]);
-        if (i % 5 == 0) {
-          stampsItem.push(isi);
-          isi = [];
-        }
-        if (i == tampung.length) {
-          stampsItem.push(isi);
+    // console.log('item stampts ', this.props.dataStamps.dataStamps);
+    try {
+      if (this.props.dataStamps.dataStamps != undefined) {
+        var tampung = this.props.dataStamps.dataStamps.stamps.stampsItem;
+        var isi = [];
+        for (let i = 1; i <= tampung.length; i++) {
+          isi.push(tampung[i - 1]);
+          if (i % 5 == 0) {
+            stampsItem.push(isi);
+            isi = [];
+          }
+          if (i == tampung.length) {
+            stampsItem.push(isi);
+          }
         }
       }
+      this.setState({stampsItem});
+    } catch (e) {
+      Alert.alert('Sorry', 'Cant get data stamps, please try again');
     }
-    this.setState({stampsItem});
   }
 
   render() {
@@ -57,37 +63,43 @@ class RewardsStamp extends Component {
       <View style={styles.container}>
         <Text style={styles.title}>Stamp Card</Text>
         <View style={styles.card}>
-          {this.state.stampsItem.map((items, keys) => (
-            <View
-              key={keys}
-              style={{
-                marginTop: 5,
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-              }}>
-              {items.map((item, key) => (
-                <TouchableOpacity
-                  key={key}
-                  style={
-                    item.stampsStatus == '-' ? styles.item : styles.itemFree
-                  }>
-                  <Text
+          {this.props.isLoading ? (
+            <StampsPlaceHolder />
+          ) : (
+            this.state.stampsItem.map((items, keys) => (
+              <View
+                key={keys}
+                style={{
+                  marginTop: 5,
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                }}>
+                {items.map((item, key) => (
+                  <TouchableOpacity
+                    key={key}
                     style={
-                      item.stampsStatus == '-'
-                        ? styles.detail
-                        : styles.detailFree
+                      item.stampsStatus == '-' ? styles.item : styles.itemFree
                     }>
-                    {/*{appConfig.appName}*/}
-                    <Icon
-                      size={22}
-                      name={Platform.OS === 'ios' ? 'ios-bookmark' : 'md-bookmark'}
-                      style={{color: colorConfig.store.defaultColor}}
-                    />
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          ))}
+                    <Text
+                      style={
+                        item.stampsStatus == '-'
+                          ? styles.detail
+                          : styles.detailFree
+                      }>
+                      {/*{appConfig.appName}*/}
+                      <Icon
+                        size={22}
+                        name={
+                          Platform.OS === 'ios' ? 'ios-bookmark' : 'md-bookmark'
+                        }
+                        style={{color: colorConfig.store.defaultColor}}
+                      />
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            ))
+          )}
         </View>
       </View>
     );

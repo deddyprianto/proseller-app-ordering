@@ -11,6 +11,7 @@ import {
   StyleSheet,
   Dimensions,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -22,6 +23,8 @@ import {compose} from 'redux';
 import colorConfig from '../config/colorConfig';
 import appConfig from '../config/appConfig';
 import DeviceBrightness from 'react-native-device-brightness';
+import awsConfig from '../config/awsConfig';
+import CryptoJS from 'react-native-crypto-js';
 
 class RewardsQRmenu extends Component {
   constructor(props) {
@@ -73,6 +76,14 @@ class RewardsQRmenu extends Component {
   };
 
   render() {
+    let qrcode = this.props.qrcode;
+    try {
+      // Decrypt qrcode
+      let bytes = CryptoJS.AES.decrypt(qrcode, awsConfig.PRIVATE_KEY_RSA);
+      qrcode = bytes.toString(CryptoJS.enc.Utf8);
+    } catch (e) {
+      Alert.alert('Oppss..', 'Something went wrong, please try again');
+    }
     return (
       <View style={styles.container}>
         <View>
@@ -89,11 +100,10 @@ class RewardsQRmenu extends Component {
           <View style={styles.line} />
         </View>
         <View style={styles.card}>
-          {console.log(this.props.qrcode)}
           <View>
             <QRCode
               value={JSON.stringify({
-                token: this.props.qrcode,
+                token: qrcode,
               })}
               logo={appConfig.appLogoQR}
               logoSize={this.state.screenWidth / 6 - 20}
