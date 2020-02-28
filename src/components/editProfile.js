@@ -364,7 +364,7 @@ class AccountEditProfil extends Component {
           showConfirmButton={true}
           cancelText="Close"
           confirmText={
-            this.state.titleAlert != 'Update Success!' ? 'Confirm' : 'Clone'
+            this.state.titleAlert != 'Update Success!' ? 'Confirm' : 'Close'
           }
           confirmButtonColor={colorConfig.pageIndex.activeTintColor}
           onCancelPressed={() => {

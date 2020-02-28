@@ -5,9 +5,10 @@ import {
   StyleSheet,
   ScrollView,
   Dimensions,
-  RefreshControl,
+  Platform,
   TouchableOpacity,
   Image,
+  Alert,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
@@ -19,12 +20,14 @@ import colorConfig from '../config/colorConfig';
 import {Actions} from 'react-native-router-flux';
 import awsConfig from '../config/awsConfig';
 import CryptoJS from 'react-native-crypto-js';
+import {Dialog} from 'react-native-paper';
 
 class AccountMenuList extends Component {
   constructor(props) {
     super(props);
     this.state = {
       screenWidth: Dimensions.get('window').width,
+      dialogChangeLanguage: false,
     };
   }
 
@@ -49,7 +52,12 @@ class AccountMenuList extends Component {
     Actions.editProfile(dataDiri);
   };
 
+  updateLanguage = () => {
+    this.props.setLanguage();
+  };
+
   render() {
+    // const {intlData} = this.props;
     return (
       <View style={styles.container}>
         <View style={{flexDirection: 'row'}}>
@@ -64,7 +72,7 @@ class AccountMenuList extends Component {
             <TouchableOpacity
               style={styles.item}
               onPress={() => this.props.screen.navigation.navigate('History')}>
-              <Text style={styles.title}> Transactions History </Text>
+              <Text style={styles.title}>History Transactions</Text>
               <Icon
                 size={20}
                 name={
@@ -81,11 +89,6 @@ class AccountMenuList extends Component {
 
         <View style={{flexDirection: 'row'}}>
           <View style={styles.itemMenu}>
-            {/*<Image*/}
-            {/*  resizeMode="stretch"*/}
-            {/*  style={{height: 18, width: 16, marginRight: 5}}*/}
-            {/*  source={require('../assets/img/edit.png')}*/}
-            {/*/>*/}
             <Icon
               size={20}
               name={Platform.OS === 'ios' ? 'ios-contact' : 'md-contact'}
@@ -94,7 +97,7 @@ class AccountMenuList extends Component {
           </View>
           <View>
             <TouchableOpacity style={styles.item} onPress={this.editProfil}>
-              <Text style={styles.title}> Edit Profile </Text>
+              <Text style={styles.title}>Edit Profile</Text>
               <Icon
                 size={20}
                 name={
@@ -106,9 +109,35 @@ class AccountMenuList extends Component {
               />
             </TouchableOpacity>
 
-            {/*<View style={styles.line} />*/}
+            <View style={styles.line} />
           </View>
         </View>
+
+        {/*<View style={{flexDirection: 'row'}}>*/}
+        {/*  <View style={styles.itemMenu}>*/}
+        {/*    <Icon*/}
+        {/*      size={20}*/}
+        {/*      name={Platform.OS === 'ios' ? 'ios-globe' : 'md-globe'}*/}
+        {/*      style={{color: colorConfig.pageIndex.activeTintColor}}*/}
+        {/*    />*/}
+        {/*  </View>*/}
+        {/*  <View>*/}
+        {/*    <TouchableOpacity style={styles.item} onPress={this.updateLanguage}>*/}
+        {/*      <Text style={styles.title}> {intlData.messages.languages} </Text>*/}
+        {/*      <Icon*/}
+        {/*        size={20}*/}
+        {/*        name={*/}
+        {/*          Platform.OS === 'ios'*/}
+        {/*            ? 'ios-arrow-dropright-circle'*/}
+        {/*            : 'md-arrow-dropright-circle'*/}
+        {/*        }*/}
+        {/*        style={{color: colorConfig.pageIndex.activeTintColor}}*/}
+        {/*      />*/}
+        {/*    </TouchableOpacity>*/}
+
+        {/*    /!*<View style={styles.line} />*!/*/}
+        {/*  </View>*/}
+        {/*</View>*/}
 
         {/*<View style={{flexDirection: 'row'}}>*/}
         {/*  <View*/}
@@ -178,6 +207,7 @@ mapStateToProps = state => ({
   logoutUser: state.authReducer.logoutUser,
   userDetail: state.userReducer.getUser.userDetails,
   totalPoint: state.rewardsReducer.dataPoint.totalPoint,
+  intlData: state.intlData,
 });
 
 mapDispatchToProps = dispatch => ({

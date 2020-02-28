@@ -107,6 +107,7 @@ class Rewards extends Component {
   }
 
   render() {
+    const {intlData} = this.props;
     return (
       <ScrollView
         refreshControl={
@@ -157,7 +158,7 @@ class Rewards extends Component {
             ) : (
               <RewardsPoint isLoading={this.state.isLoading} />
             )}
-            <RewardsMenu myVoucers={this.props.myVoucers} />
+            <RewardsMenu intlData={intlData} myVoucers={this.props.myVoucers} />
             <RewardsTransaction
               isLoading={this.state.isLoading}
               screen={this.props}
@@ -199,6 +200,7 @@ mapStateToProps = state => ({
   myVoucers: state.accountsReducer.myVoucers.myVoucers,
   dataStamps: state.rewardsReducer.getStamps,
   totalPoint: state.rewardsReducer.dataPoint.totalPoint,
+  intlData: state.intlData,
 });
 
 mapDispatchToProps = dispatch => ({

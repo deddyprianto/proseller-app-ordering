@@ -15,6 +15,7 @@ import accountsReducer from './accounts.reducer';
 import inboxReducer from './inbox.reducer';
 import promotionReducer from './promotion.reducer';
 import orderReducer from './order.reducer';
+import intlData from './language.reducer';
 
 const reducers = {
   authReducer,
@@ -25,6 +26,7 @@ const reducers = {
   inboxReducer,
   promotionReducer,
   orderReducer,
+  intlData,
   form: formReducer,
 };
 

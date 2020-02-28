@@ -4,6 +4,7 @@ import {
   Text,
   StyleSheet,
   Dimensions,
+  Platform,
   TouchableOpacity,
 } from 'react-native';
 import colorConfig from '../config/colorConfig';
@@ -50,6 +51,7 @@ export default class RewardsMenu extends Component {
   }
 
   render() {
+    // const {intlData} = this.props;
     return (
       <View style={styles.container}>
         <View style={styles.item}>

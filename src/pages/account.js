@@ -8,18 +8,22 @@ import {
   TouchableOpacity,
   Image,
   ActivityIndicator,
+  Alert,
+  Picker,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
 import {Actions} from 'react-native-router-flux';
 
-import {logoutUser} from '../actions/auth.actions';
+import {logoutUser, notifikasi} from '../actions/auth.actions';
 import AccountUserDetail from '../components/accountUserDetail';
 import AccountMenuList from '../components/accountMenuList';
 
 import {campaign, dataPoint, vouchers} from '../actions/rewards.action';
 import {myVoucers} from '../actions/account.action';
 import colorConfig from '../config/colorConfig';
+import {Dialog} from 'react-native-paper';
+import {updateLanguage} from '../actions/language.action';
 
 class Account extends Component {
   constructor(props) {
@@ -27,6 +31,7 @@ class Account extends Component {
     this.state = {
       refreshing: false,
       loadingLogout: false,
+      dialogChangeLanguage: false,
     };
   }
 
@@ -80,6 +85,60 @@ class Account extends Component {
   //   Actions.accountVouchers({data: myVoucers});
   // };
 
+  _updateLanguage = async lang => {
+    // Alert.alert('x', lang);
+    await this.props.dispatch(updateLanguage(lang));
+    await this.setState({dialogChangeLanguage: false});
+  };
+
+  renderDialogQuantityModifier = () => {
+    const {intlData} = this.props;
+    const languages = [
+      {code: 'en', name: intlData.messages['languageEn']},
+      {code: 'id', name: intlData.messages['languageId']},
+    ];
+    const options = languages.map(language => {
+      return (
+        <Picker.Item
+          value={language.code}
+          key={language.code}
+          label={language.name}
+        />
+      );
+    });
+
+    return (
+      <Dialog
+        dismissable={true}
+        visible={this.state.dialogChangeLanguage}
+        onDismiss={() => this.setState({dialogChangeLanguage: false})}>
+        <Dialog.Content>
+          <Text
+            style={{
+              textAlign: 'center',
+              fontWeight: 'bold',
+            }}>
+            Select Language
+          </Text>
+          <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+            <View style={styles.panelQty}>
+              <Picker
+                style={{height: 60, width: 300}}
+                selectedValue={intlData.locale}
+                onValueChange={itemValue => this._updateLanguage(itemValue)}>
+                {options}
+              </Picker>
+            </View>
+          </View>
+        </Dialog.Content>
+      </Dialog>
+    );
+  };
+
+  setLanguage = () => {
+    this.setState({dialogChangeLanguage: true});
+  };
+
   render() {
     return (
       <View style={{flex: 1}}>
@@ -94,7 +153,11 @@ class Account extends Component {
             <AccountUserDetail screen={this.props} />
           </View>
           <View style={styles.card}>
-            <AccountMenuList screen={this.props} />
+            <AccountMenuList
+              setLanguage={this.setLanguage}
+              dialogChangeLanguage={this.state.dialogChangeLanguage}
+              screen={this.props}
+            />
           </View>
         </ScrollView>
         <TouchableOpacity
@@ -123,6 +186,7 @@ class Account extends Component {
             </Text>
           )}
         </TouchableOpacity>
+        {this.renderDialogQuantityModifier()}
       </View>
     );
   }
@@ -157,6 +221,7 @@ mapStateToProps = state => ({
   userDetail: state.userReducer.getUser.userDetails,
   totalPoint: state.rewardsReducer.dataPoint.totalPoint,
   myVoucers: state.accountsReducer.myVoucers.myVoucers,
+  intlData: state.intlData,
 });
 
 mapDispatchToProps = dispatch => ({
