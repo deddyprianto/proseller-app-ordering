@@ -215,9 +215,12 @@ export const refreshToken = () => {
     const state = getState();
     console.log(state, 'state nya');
     try {
+      let {
+        authReducer: {authData},
+      } = state;
       // Decrypt token
       let bytes = CryptoJS.AES.decrypt(
-        state.authReducer.authData.refreshToken,
+        authData.refreshToken,
         awsConfig.PRIVATE_KEY_RSA,
       );
       let refreshToken = bytes.toString(CryptoJS.enc.Utf8);
@@ -228,20 +231,22 @@ export const refreshToken = () => {
       const response = await fetchApi('/auth/refresh', 'POST', payload, 200);
       console.log(response, 'response refresh token');
 
-      // encrypt data
-      let jwtToken = CryptoJS.AES.encrypt(
-        response.responseBody.Data.accessToken.jwtToken,
-        awsConfig.PRIVATE_KEY_RSA,
-      ).toString();
+      if (response.success == true) {
+        // encrypt data
+        let jwtToken = CryptoJS.AES.encrypt(
+          response.responseBody.Data.accessToken.jwtToken,
+          awsConfig.PRIVATE_KEY_RSA,
+        ).toString();
 
-      dispatch({
-        type: 'REFRESH_TOKEN_USER',
-        token: jwtToken,
-        refreshToken: state.authReducer.authData.refreshToken,
-        qrcode: state.authReducer.authData.qrcode,
-        payload: state.authReducer.authData.payload,
-        // isLoggedIn: true,
-      });
+        dispatch({
+          type: 'REFRESH_TOKEN_USER',
+          token: jwtToken,
+          refreshToken: state.authReducer.authData.refreshToken,
+          qrcode: state.authReducer.authData.qrcode,
+          payload: state.authReducer.authData.payload,
+          // isLoggedIn: true,
+        });
+      }
     } catch (error) {
       console.log(error);
     }

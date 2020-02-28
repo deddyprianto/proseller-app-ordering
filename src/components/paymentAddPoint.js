@@ -246,10 +246,14 @@ class paymentAddPoint extends Component {
                 )}
               </View>
               <TouchableOpacity
-                disabled={this.state.jumPointRatio == 0 ? true : false}
+                disabled={
+                  this.state.jumPointRatio == 0 || this.state.myPoint == 0
+                    ? true
+                    : false
+                }
                 style={{
                   backgroundColor:
-                    this.state.jumPointRatio == 0
+                    this.state.jumPointRatio == 0 || this.state.myPoint == 0
                       ? colorConfig.store.disableButton
                       : colorConfig.pageIndex.activeTintColor,
                   borderRadius: 25,

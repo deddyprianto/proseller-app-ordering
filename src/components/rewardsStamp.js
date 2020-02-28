@@ -56,9 +56,9 @@ class RewardsStamp extends Component {
 
   render() {
     let that = this;
-    setTimeout(() => {
-      that.getItemStamp();
-    }, 10000);
+    // setTimeout(() => {
+    //   that.getItemStamp();
+    // }, 10000);
     return (
       <View style={styles.container}>
         <Text style={styles.title}>Stamp Card</Text>
@@ -75,7 +75,7 @@ class RewardsStamp extends Component {
                   justifyContent: 'space-between',
                 }}>
                 {items.map((item, key) => (
-                  <TouchableOpacity
+                  <View
                     key={key}
                     style={
                       item.stampsStatus == '-' ? styles.item : styles.itemFree
@@ -95,7 +95,7 @@ class RewardsStamp extends Component {
                         style={{color: colorConfig.store.defaultColor}}
                       />
                     </Text>
-                  </TouchableOpacity>
+                  </View>
                 ))}
               </View>
             ))

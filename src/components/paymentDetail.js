@@ -246,28 +246,19 @@ class PaymentDetail extends Component {
       const response = await this.props.dispatch(sendPayment(pembayaran));
       console.log('reponse pembayaran ', response);
       if (response.success) {
-        if (
-          response.responseBody.Data.message !=
-          'there`s no running campaign on this date'
-        ) {
-          await this.props.dispatch(campaign());
-          await this.props.dispatch(dataPoint());
-          await this.props.dispatch(getStamps());
-          await this.props.dispatch(myVoucers());
-          Actions.paymentSuccess({
-            dataRespons: response.responseBody.Data.data,
-          });
-        } else {
-          //  cancel voucher and pont selected
-          this.cencelPoint();
-          this.cencelVoucher();
-          this.setState({
-            showAlert: true,
-            pesanAlert: response.responseBody.Data.message,
-            titleAlert: 'Oopss!',
-            failedPay: true,
-          });
-        }
+        //  cancel voucher and pont selected
+        this.cencelPoint();
+        this.cencelVoucher();
+        this.setState({
+          showAlert: true,
+          pesanAlert: response.responseBody.Data.message,
+          titleAlert: 'Oopss!',
+          failedPay: true,
+        });
+        // return back to payment success
+        Actions.paymentSuccess({
+          dataRespons: response.responseBody.Data.data,
+        });
       } else {
         //  cancel voucher and pont selected
         this.cencelPoint();
@@ -391,7 +382,7 @@ class PaymentDetail extends Component {
   ];
 
   render() {
-    console.log('DATA VOUCHER ', this.state.dataVoucer);
+    console.log('DATA PEMBAYARAN ', this.props.pembayaran);
     const iconSlider = () => (
       <Icon
         size={25}
@@ -456,7 +447,7 @@ class PaymentDetail extends Component {
             }}>
             <Text
               style={{
-                color: colorConfig.pageIndex.grayColor,
+                color: colorConfig.store.title,
                 fontSize: 16,
                 marginRight: 5,
               }}>
@@ -464,12 +455,29 @@ class PaymentDetail extends Component {
             </Text>
             <Text
               style={{
-                color: colorConfig.pageIndex.grayColor,
-                fontSize: 70,
-                // fontWeight: 'bold',
+                color: colorConfig.store.title,
+                fontSize: 60,
+                top: 13,
               }}>
-              {this.formatCurrency(this.props.pembayaran.payment)}
+              {this.formatCurrency(this.state.totalBayar)}
             </Text>
+            {/* value discount */}
+            {this.state.totalBayar != this.props.pembayaran.payment ? (
+              <View style={{marginBottom: 30}}>
+                <Text
+                  style={{
+                    color: colorConfig.pageIndex.grayColor,
+                    fontSize: 20,
+                    textDecorationLine: 'line-through',
+                    position: 'absolute',
+                    right: -15,
+                    top: 75,
+                  }}>
+                  {this.formatCurrency(this.props.pembayaran.payment)}
+                </Text>
+              </View>
+            ) : null}
+            {/* value discount */}
           </View>
           <View
             onPress={() => this.detailPayment(this.props.pembayaran)}
@@ -478,6 +486,7 @@ class PaymentDetail extends Component {
               paddingLeft: 20,
               paddingRight: 20,
               paddingBottom: 20,
+              marginTop: 15,
               height: this.state.screenHeight - 250,
             }}>
             <View

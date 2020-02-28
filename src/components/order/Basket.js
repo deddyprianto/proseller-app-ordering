@@ -10,6 +10,7 @@ import {
   FlatList,
   ScrollView,
   Alert,
+  RefreshControl,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -21,6 +22,7 @@ import {
   getBasket,
   updateProductToBasket,
   removeBasket,
+  setOrderType,
 } from '../../actions/order.action';
 import Loader from '../../components/loader';
 import ModalOrder from '../../components/order/Modal';
@@ -29,6 +31,9 @@ import CurrencyFormatter from '../../helper/CurrencyFormatter';
 class Basket extends Component {
   constructor(props) {
     super(props);
+
+    this.request = null;
+
     this.state = {
       screenWidth: Dimensions.get('window').width,
       loading: true,
@@ -41,12 +46,23 @@ class Basket extends Component {
       selectedCategory: 'ALL PRODUCTS',
       selectedProduct: {},
       visible: false,
+      refreshing: false,
     };
   }
 
   componentDidMount = async () => {
     try {
+      // get data basket
       await this.getBasket();
+      // check if status basket is submitted, then request continoustly to get basket
+      if (
+        this.props.dataBasket != undefined &&
+        this.props.dataBasket.status == 'SUBMITTED'
+      ) {
+        this.interval = setInterval(() => {
+          this.props.dispatch(getBasket());
+        }, 2000);
+      }
     } catch (e) {
       Alert.alert('Opss..', "Can't get data basket, please try again.");
     }
@@ -54,6 +70,12 @@ class Basket extends Component {
       'hardwareBackPress',
       this.handleBackPress,
     );
+  };
+
+  _onRefresh = async () => {
+    await this.setState({refreshing: true});
+    await await this.props.dispatch(getBasket());
+    await this.setState({refreshing: false});
   };
 
   getBasket = async () => {
@@ -66,6 +88,7 @@ class Basket extends Component {
 
   componentWillUnmount() {
     this.backHandler.remove();
+    clearInterval(this.interval);
   }
 
   handleBackPress = () => {
@@ -80,6 +103,104 @@ class Basket extends Component {
   goToScanTable = () => {
     Actions.scanQRTable();
     // Actions.confirmTable();
+    this.interval = setInterval(() => {
+      this.props.dispatch(getBasket());
+    }, 2000);
+  };
+
+  renderSettleButton = () => {
+    return (
+      <View
+        style={{
+          width: '100%',
+          // marginTop: 10,
+          position: 'absolute',
+          bottom: 30,
+          flexDirection: 'row',
+          justifyContent: 'center',
+          // alignItems: 'center',
+          // marginHorizontal: '5%',
+        }}>
+        <TouchableOpacity
+          disabled={this.props.dataBasket.status == 'CONFIRMED' ? true : false}
+          onPress={this.alertRemoveBasket}
+          style={[
+            styles.btnCancelBasketModal,
+            {
+              backgroundColor:
+                this.props.dataBasket.status == 'CONFIRMED'
+                  ? colorConfig.store.disableButtonError
+                  : colorConfig.store.colorError,
+            },
+          ]}>
+          <Icon
+            size={23}
+            name={Platform.OS === 'ios' ? 'ios-trash' : 'md-trash'}
+            style={{color: 'white', marginRight: 5}}
+          />
+          <Text style={styles.textBtnBasketModal}>Clear</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={this.goToSettle}
+          disabled={this.props.dataBasket.status == 'CONFIRMED' ? false : true}
+          style={[
+            styles.btnAddBasketModal,
+            {
+              backgroundColor:
+                this.props.dataBasket.status == 'CONFIRMED'
+                  ? colorConfig.store.defaultColor
+                  : colorConfig.store.disableButton,
+            },
+          ]}>
+          <Icon
+            size={23}
+            name={
+              Platform.OS === 'ios'
+                ? 'ios-checkbox-outline'
+                : 'md-checkbox-outline'
+            }
+            style={{color: 'white', marginRight: 5}}
+          />
+          <Text style={styles.textBtnBasketModal}>Settle</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
+  goToSettle = () => {
+    try {
+      let dataPay = [];
+      // create dataPay item
+      let data = {};
+
+      this.props.dataBasket.details.map((item, index) => {
+        data.itemName = item.product.name;
+        data.qty = item.quantity;
+        data.price = item.unitPrice;
+        // index == 0 ? (data.barcode = 'COKE') : null;
+        //  add dataPay to object
+        dataPay.push(data);
+        // make data empty before push again
+        data = {};
+      });
+
+      const pembayaran = {
+        // paymentType: 'QIJI APP',
+        payment: this.props.dataBasket.totalNettAmount,
+        storeName: this.props.dataBasket.outlet.name,
+        dataPay: dataPay,
+        storeId: this.props.dataBasket.outlet.id,
+        referenceNo: 'scan.referenceNo',
+      };
+
+      Actions.settleOrder({pembayaran: pembayaran});
+    } catch (e) {
+      this.setState({
+        showAlert: true,
+        pesanAlert: 'Please try again',
+        titleAlert: 'Opps...',
+      });
+    }
   };
 
   renderButtonConfirm = () => {
@@ -110,10 +231,14 @@ class Basket extends Component {
           style={styles.btnAddBasketModal}>
           <Icon
             size={23}
-            name={Platform.OS === 'ios' ? 'ios-qr-scanner' : 'md-qr-scanner'}
+            name={
+              Platform.OS === 'ios'
+                ? 'ios-checkbox-outline'
+                : 'md-checkbox-outline'
+            }
             style={{color: 'white', marginRight: 5}}
           />
-          <Text style={styles.textBtnBasketModal}>Scan QR Code</Text>
+          <Text style={styles.textBtnBasketModal}>Submit</Text>
         </TouchableOpacity>
       </View>
     );
@@ -207,21 +332,28 @@ class Basket extends Component {
   };
 
   openModal = async product => {
-    // get current quantity from product
-    let existProduct = await this.checkIfItemExistInBasket(product);
+    try {
+      // get current quantity from product
+      let existProduct = await this.checkIfItemExistInBasket(product);
 
-    if (existProduct != false) {
-      product.mode = 'update';
-      product.remark = existProduct.remark;
-      product.quantity = existProduct.quantity;
-      product.name = existProduct.product.name;
-      product.description = existProduct.product.description;
+      if (existProduct != false) {
+        product.mode = 'update';
+        product.remark = existProduct.remark;
+        product.quantity = existProduct.quantity;
+        product.name = existProduct.product.name;
+        product.description = existProduct.product.description;
+      }
+
+      this.setState({
+        selectedProduct: existProduct,
+        isModalVisible: !this.state.isModalVisible,
+      });
+    } catch (e) {
+      Alert.alert('Opps..', 'Something went wrong, please try again');
+      this.setState({
+        isModalVisible: !this.state.isModalVisible,
+      });
     }
-
-    this.setState({
-      selectedProduct: existProduct,
-      isModalVisible: !this.state.isModalVisible,
-    });
   };
 
   modalShow = () => {
@@ -261,23 +393,89 @@ class Basket extends Component {
         item => item.productID == product.productID,
       );
       // send data to action
-      let response = this.props.dispatch(
+      let response = await this.props.dispatch(
         updateProductToBasket(data, previousData),
       );
+
+      console.log('RESPONSE UPDATE ', response);
 
       this.setState({
         selectedProduct: {},
         isModalVisible: false,
       });
-      if (response.success == false) {
-        Alert.alert('Oppss..', 'Failed to update item to basket.');
+      if (response.response.resultCode != 200) {
+        Alert.alert('Oppss..', response.response.data.message);
+        this.props.dispatch(getBasket());
       }
     } catch (e) {
       Alert.alert('Oppss..', 'Please try again.');
+      this.props.dispatch(getBasket());
     }
   };
 
+  setOrderType = async type => {
+    await this.props.dispatch(setOrderType(type));
+    // Alert.alert('')
+  };
+
+  changeOrderType = () => {
+    Alert.alert(
+      'Change Order Mode',
+      'Change your order mode...',
+      [
+        {
+          text: 'TAKE AWAY',
+          onPress: () => this.setOrderType('TAKEAWAY'),
+          style: 'confirm',
+        },
+        {
+          text: 'DINE IN',
+          onPress: () => this.setOrderType('DINEIN'),
+          style: 'confirm',
+        },
+      ],
+      {cancelable: false},
+    );
+  };
+
+  renderStatusOrder = () => {
+    let data;
+    if (this.props.dataBasket.status == 'PENDING') {
+      data = colorConfig.store.secondaryColor;
+    } else if (this.props.dataBasket.status == 'SUBMITTED') {
+      data = colorConfig.store.colorSuccess;
+    } else {
+      data = colorConfig.store.defaultColor;
+    }
+    return (
+      <Text
+        style={[
+          styles.total,
+          {
+            backgroundColor: data,
+            color: 'white',
+            borderRadius: 5,
+            padding: 5,
+          },
+        ]}>
+        {this.props.dataBasket.status}
+      </Text>
+    );
+  };
+
   render() {
+    // give message to user if order has been confirmed
+    try {
+      if (this.props.dataBasket != undefined) {
+        if (
+          this.props.dataBasket.status == 'CONFIRMED' &&
+          this.interval != undefined
+        ) {
+          Alert.alert('Congratulation', 'Your order has been CONFIRMED');
+          clearInterval(this.interval);
+        }
+      }
+    } catch (e) {}
     return (
       <View style={styles.container}>
         <ModalOrder
@@ -317,7 +515,14 @@ class Basket extends Component {
                   {this.props.dataBasket.outlet.name}
                 </Text>
                 <Text style={styles.subTitle}>Detail Order</Text>
-                <ScrollView style={{height: '45%'}}>
+                <ScrollView
+                  refreshControl={
+                    <RefreshControl
+                      refreshing={this.state.refreshing}
+                      onRefresh={this._onRefresh}
+                    />
+                  }
+                  style={{height: '35%'}}>
                   <FlatList
                     data={this.props.dataBasket.details}
                     renderItem={({item}) => (
@@ -326,7 +531,7 @@ class Basket extends Component {
                           style={{
                             flexDirection: 'row',
                             justifyContent: 'space-between',
-                            padding: 4,
+                            padding: 3,
                             maxWidth: '100%',
                           }}>
                           <View style={{width: '80%'}}>
@@ -351,19 +556,21 @@ class Basket extends Component {
                                   note: {item.remark}
                                 </Text>
                               ) : null}
-                              <TouchableOpacity
-                                onPress={() => this.openEditModal(item)}
-                                style={{paddingVertical: 5}}>
-                                <Text
-                                  style={{
-                                    color: colorConfig.store.colorSuccess,
-                                    fontWeight: 'bold',
-                                    fontFamily: 'Lato-Bold',
-                                    fontSize: 14,
-                                  }}>
-                                  Edit
-                                </Text>
-                              </TouchableOpacity>
+                              {this.props.dataBasket.status == 'PENDING' ? (
+                                <TouchableOpacity
+                                  onPress={() => this.openEditModal(item)}
+                                  style={{paddingVertical: 5}}>
+                                  <Text
+                                    style={{
+                                      color: colorConfig.store.colorSuccess,
+                                      fontWeight: 'bold',
+                                      fontFamily: 'Lato-Bold',
+                                      fontSize: 14,
+                                    }}>
+                                    Edit
+                                  </Text>
+                                </TouchableOpacity>
+                              ) : null}
                             </View>
                           </View>
                           <View>
@@ -378,6 +585,60 @@ class Basket extends Component {
                   />
                 </ScrollView>
                 <View style={{marginTop: 20}} />
+                {this.props.dataBasket.tableNo != undefined ? (
+                  <View style={styles.itemSummary}>
+                    <Text style={styles.total}>Table No.</Text>
+                    <Text style={styles.total}>
+                      {this.props.dataBasket.tableNo}
+                    </Text>
+                  </View>
+                ) : null}
+                <View style={styles.itemSummary}>
+                  <Text style={styles.total}>Status Order</Text>
+                  {this.renderStatusOrder()}
+                </View>
+                <TouchableOpacity
+                  onPress={
+                    this.props.dataBasket.status == 'PENDING'
+                      ? this.changeOrderType
+                      : null
+                  }
+                  style={styles.itemSummary}>
+                  <Text style={styles.total}>Order Mode</Text>
+                  {this.props.orderType == 'TAKEAWAY' ? (
+                    <Text
+                      style={[
+                        styles.total,
+                        {
+                          backgroundColor:
+                            this.props.dataBasket.status == 'PENDING'
+                              ? colorConfig.store.secondaryColor
+                              : null,
+                          color:
+                            this.props.dataBasket.status == 'PENDING'
+                              ? 'white'
+                              : colorConfig.store.title,
+                          borderRadius: 5,
+                          padding: 5,
+                        },
+                      ]}>
+                      {this.props.orderType}
+                    </Text>
+                  ) : (
+                    <Text
+                      style={[
+                        styles.total,
+                        {
+                          backgroundColor: colorConfig.store.colorSuccess,
+                          color: 'white',
+                          borderRadius: 5,
+                          padding: 5,
+                        },
+                      ]}>
+                      {this.props.orderType}
+                    </Text>
+                  )}
+                </TouchableOpacity>
                 <View style={styles.itemSummary}>
                   <Text style={styles.total}>Total Tax Amount</Text>
                   <Text style={styles.total}>
@@ -401,7 +662,9 @@ class Basket extends Component {
         )}
         {this.props.dataBasket != undefined &&
         this.props.dataBasket.outlet != undefined
-          ? this.renderButtonConfirm()
+          ? this.props.dataBasket.status == 'PENDING'
+            ? this.renderButtonConfirm()
+            : this.renderSettleButton()
           : null}
       </View>
     );
@@ -410,6 +673,8 @@ class Basket extends Component {
 
 mapStateToProps = state => ({
   dataBasket: state.orderReducer.dataBasket.product,
+  orderType: state.orderReducer.orderType.orderType,
+  tableType: state.orderReducer.tableType.tableType,
 });
 
 mapDispatchToProps = dispatch => ({
@@ -496,8 +761,8 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     fontFamily: 'Lato-Bold',
     color: colorConfig.store.title,
-    fontSize: 16,
-    padding: 5,
+    fontSize: 14,
+    padding: 3,
     fontWeight: 'bold',
     marginBottom: 5,
   },
@@ -567,7 +832,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginLeft: 20,
     width: '40%',
-    backgroundColor: colorConfig.store.defaultColor,
+    backgroundColor: colorConfig.store.colorSuccess,
   },
   btnCancelBasketModal: {
     fontFamily: 'Lato-Bold',

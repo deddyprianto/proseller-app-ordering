@@ -32,6 +32,8 @@ export const fetchApiOrder = async (
       return result;
     } else {
       result.success = false;
+      result.response = response;
+      // return result;
     }
 
     throw result;

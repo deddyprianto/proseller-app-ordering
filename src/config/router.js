@@ -57,6 +57,7 @@ import Products from '../components/order/Products';
 import Basket from '../components/order/Basket';
 import ScanQRTable from '../components/order/ScanQRTable';
 import ConfirmTable from '../components/order/ConfirmTable';
+import SettleOrder from '../components/order/SettleOrder';
 
 export default class Routes extends Component {
   render() {
@@ -125,6 +126,7 @@ export default class Routes extends Component {
             <Scene key="basket" component={Basket} />
             <Scene key="scanQRTable" component={ScanQRTable} />
             <Scene key="confirmTable" component={ConfirmTable} />
+            <Scene key="settleOrder" component={SettleOrder} />
           </Scene>
         </Scene>
       </Router>

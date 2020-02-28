@@ -123,6 +123,7 @@ class EmailRegister extends Component {
       loading: false,
       name: '',
       email: '',
+      openModalCountry: false,
     };
     this.imageWidth = new Animated.Value(styles.$largeImageSize);
   }
@@ -148,7 +149,7 @@ class EmailRegister extends Component {
       };
       console.log(dataRequest, 'payload register by email');
       const response = await this.props.dispatch(createNewUser(dataRequest));
-      if (response.ResultCode == 200) {
+      if (response == true) {
         this.setState({
           loading: false,
         });
@@ -177,7 +178,7 @@ class EmailRegister extends Component {
     return (
       <View style={styles.backgroundImage}>
         {this.state.loading && <Loader />}
-        <ScrollView>
+        <ScrollView keyboardShouldPersistTaps="handled">
           <Header titleHeader={'Email Register'} backButton={true} />
           <View style={{margin: 20}}>
             <View>
@@ -236,6 +237,8 @@ class EmailRegister extends Component {
                 <CountryPicker
                   translation="eng"
                   withCallingCode
+                  visible={this.state.openModalCountry}
+                  onClose={() => this.setState({openModalCountry: false})}
                   withFilter
                   placeholder={`${this.state.country} (${
                     this.state.phoneNumber
@@ -259,7 +262,8 @@ class EmailRegister extends Component {
                 borderWidth: 2,
                 borderRadius: 13,
               }}>
-              <View>
+              <TouchableOpacity
+                onPress={() => this.setState({openModalCountry: true})}>
                 <Text
                   style={{
                     fontSize: 16,
@@ -268,7 +272,7 @@ class EmailRegister extends Component {
                   }}>
                   {this.state.phoneNumber}
                 </Text>
-              </View>
+              </TouchableOpacity>
               <TextInput
                 keyboardType="phone-pad"
                 placeholder={'Phone Number'}

@@ -40,22 +40,35 @@ class RewardsQRscan extends Component {
   onSuccess = e => {
     try {
       const scan = JSON.parse(e.data);
-      var pembayaran = {
-        payment: scan.price,
-        storeName: scan.outletName,
-        dataPay: scan.dataPay,
-        storeId: scan.outletId,
-        referenceNo: scan.referenceNo,
-      };
-      // console.log('hasil pembayaran', pembayaran);
-      // this.sendPayment(pembayaran);
-      // this.paymentDetail(pembayaran);
-      Actions.paymentDetail({pembayaran: pembayaran});
+      console.log('scan ', scan);
+      if (
+        scan.price == undefined ||
+        scan.dataPay == undefined ||
+        scan.referenceNo == undefined
+      ) {
+        this.setState({
+          showAlert: true,
+          pesanAlert: 'Looks like you scan wrong Qr Code.',
+          titleAlert: 'Opps...',
+        });
+      } else {
+        var pembayaran = {
+          payment: scan.price,
+          storeName: scan.outletName,
+          dataPay: scan.dataPay,
+          storeId: scan.outletId,
+          referenceNo: scan.referenceNo,
+        };
+        // console.log('hasil pembayaran', pembayaran);
+        // this.sendPayment(pembayaran);
+        // this.paymentDetail(pembayaran);
+        Actions.paymentDetail({pembayaran: pembayaran});
+      }
     } catch (e) {
       this.setState({
         showAlert: true,
         pesanAlert: 'Please try again',
-        titleAlert: 'Opps!',
+        titleAlert: 'Opps...',
       });
     }
   };
@@ -141,7 +154,7 @@ class RewardsQRscan extends Component {
             this.state.titleAlert == 'Payment Success!'
               ? Actions.pop()
               : this.hideAlert();
-            if (this.state.titleAlert == 'Opps!') {
+            if (this.state.titleAlert == 'Opps...') {
               this.hideAlert();
               this.goBack();
             }

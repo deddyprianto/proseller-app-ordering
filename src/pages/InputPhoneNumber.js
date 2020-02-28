@@ -122,6 +122,7 @@ class InputPhoneNumber extends Component {
       loading: false,
       phone: '',
       country: awsConfig.COUNTRY,
+      openModalCountry: false,
     };
     this.imageWidth = new Animated.Value(styles.$largeImageSize);
   }
@@ -249,6 +250,8 @@ class InputPhoneNumber extends Component {
                 <CountryPicker
                   translation="eng"
                   withCallingCode
+                  visible={this.state.openModalCountry}
+                  onClose={() => this.setState({openModalCountry: false})}
                   withFilter
                   placeholder={`${this.state.country} (${
                     this.state.phoneNumber
@@ -272,7 +275,12 @@ class InputPhoneNumber extends Component {
                 borderWidth: 2,
                 borderRadius: 13,
               }}>
-              <View>
+              <TouchableOpacity
+                onPress={() =>
+                  this.setState({
+                    openModalCountry: true,
+                  })
+                }>
                 <Text
                   style={{
                     fontSize: 20,
@@ -281,7 +289,7 @@ class InputPhoneNumber extends Component {
                   }}>
                   {this.state.phoneNumber}
                 </Text>
-              </View>
+              </TouchableOpacity>
               <TextInput
                 keyboardType="phone-pad"
                 placeholder={'Phone Number'}

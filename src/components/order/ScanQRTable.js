@@ -6,6 +6,8 @@ import {
   Platform,
   Dimensions,
   TouchableOpacity,
+  ActivityIndicator,
+  Alert,
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -14,8 +16,8 @@ import QRCodeScanner from 'react-native-qrcode-scanner';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
 import AwesomeAlert from 'react-native-awesome-alerts';
-
 import colorConfig from '../../config/colorConfig';
+import {setTableType, submitOder} from '../../actions/order.action';
 
 class ScanQRTable extends Component {
   constructor(props) {
@@ -25,6 +27,8 @@ class ScanQRTable extends Component {
       showAlert: false,
       pesanAlert: '',
       titleAlert: '',
+      loadingPushData: false,
+      responseFailed: null,
     };
   }
 
@@ -34,12 +38,23 @@ class ScanQRTable extends Component {
 
   onSuccess = e => {
     try {
-      Actions.confirmTable();
+      const scan = JSON.parse(e.data);
+      if (!scan.tableNo || !scan.outletId || !scan.tableType) {
+        this.setState({
+          showAlert: true,
+          pesanAlert: 'Looks like you scan wrong Qr Code',
+          titleAlert: 'Opps...',
+        });
+      } else {
+        this.pushDataToServer(scan);
+      }
+      // Actions.confirmTable({scan: scan});
+      // Actions.pop();
     } catch (e) {
       this.setState({
         showAlert: true,
         pesanAlert: 'Please try again',
-        titleAlert: 'Opps!',
+        titleAlert: 'Opps...',
       });
     }
   };
@@ -48,6 +63,82 @@ class ScanQRTable extends Component {
     this.setState({
       showAlert: false,
     });
+  };
+
+  pushDataToServer = async data => {
+    try {
+      await this.setState({loadingPushData: true});
+      await this.props.dispatch(setTableType(data));
+      let payload = {
+        tableNo: data.tableNo,
+        // tableNo: '10',
+      };
+      let results = await this.props.dispatch(submitOder(payload));
+      console.log('result ', results);
+      if (results.resultCode == 200) {
+        // if cart has been submitted, then go back and give info
+        if (results.status == 'FAILED') {
+          Alert.alert('Info!', results.data.message);
+        }
+        Actions.pop();
+      } else {
+        this.setState({
+          loadingPushData: false,
+          responseFailed: results.data.message,
+        });
+      }
+    } catch (e) {
+      Alert.alert('Oppps..', 'Something went wrong, please try again.');
+      Actions.pop();
+    }
+  };
+
+  renderFailedToSubmit = () => {
+    if (
+      this.state.responseFailed != null &&
+      this.state.responseFailed != undefined
+    ) {
+      return (
+        <View
+          style={{
+            justifyContent: 'center',
+            alignItems: 'center',
+            flexDirection: 'column',
+          }}>
+          <Text
+            style={{
+              color: colorConfig.pageIndex.inactiveTintColor,
+              fontSize: 27,
+              marginTop: 10,
+              marginBottom: 0,
+              textAlign: 'center',
+              marginRight: 5,
+              fontWeight: 'bold',
+              fontFamily: 'Lato-Bold',
+            }}>
+            SORRY..
+          </Text>
+          <Text
+            style={{
+              color: colorConfig.pageIndex.inactiveTintColor,
+              fontSize: 25,
+              marginTop: 10,
+              textAlign: 'center',
+              marginRight: 5,
+              fontFamily: 'Lato-Bold',
+            }}>
+            {this.state.responseFailed.toUpperCase()}
+          </Text>
+
+          <TouchableOpacity
+            onPress={() => this.setState({responseFailed: null})}
+            style={styles.btnErrror}>
+            <Text style={styles.textButton}>Scan Another Table</Text>
+          </TouchableOpacity>
+        </View>
+      );
+    }
+    return null;
   };
 
   render() {
@@ -68,17 +159,59 @@ class ScanQRTable extends Component {
         </View>
         <View style={styles.card}>
           <View style={{marginTop: 60}}>
-            <QRCodeScanner
-              markerStyle={{
-                borderColor: 'white',
-                borderRadius: 10,
-                borderStyle: 'dashed',
-                width: Dimensions.get('window').width - 50,
-                height: Dimensions.get('window').width - 50,
-              }}
-              showMarker={true}
-              onRead={this.onSuccess}
-            />
+            {this.renderFailedToSubmit()}
+
+            {this.state.loadingPushData ? (
+              <View
+                style={{
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  flexDirection: 'column',
+                }}>
+                <ActivityIndicator
+                  size={'large'}
+                  color={colorConfig.store.defaultColor}
+                />
+                <Text
+                  style={{
+                    color: colorConfig.pageIndex.inactiveTintColor,
+                    fontSize: 27,
+                    marginTop: 10,
+                    marginBottom: 0,
+                    textAlign: 'center',
+                    marginRight: 5,
+                    fontWeight: 'bold',
+                    fontFamily: 'Lato-Bold',
+                  }}>
+                  Please wait
+                </Text>
+                <Text
+                  style={{
+                    color: colorConfig.pageIndex.inactiveTintColor,
+                    fontSize: 23,
+                    marginTop: 10,
+                    textAlign: 'center',
+                    marginRight: 5,
+                    fontWeight: 'bold',
+                    fontFamily: 'Lato-Bold',
+                  }}>
+                  We are submit your order.
+                </Text>
+              </View>
+            ) : this.state.responseFailed != undefined &&
+              this.state.responseFailed != null ? null : (
+              <QRCodeScanner
+                markerStyle={{
+                  borderColor: 'white',
+                  borderRadius: 10,
+                  borderStyle: 'dashed',
+                  width: Dimensions.get('window').width - 50,
+                  height: Dimensions.get('window').width - 50,
+                }}
+                showMarker={true}
+                onRead={this.onSuccess}
+              />
+            )}
           </View>
         </View>
         <AwesomeAlert
@@ -137,6 +270,30 @@ const styles = StyleSheet.create({
   card: {
     flex: 1,
     // backgroundColor: colorConfig.pageIndex.activeTintColor
+  },
+  btnErrror: {
+    backgroundColor: colorConfig.store.secondaryColor,
+    padding: 13,
+    marginTop: 30,
+    borderRadius: 10,
+    marginBottom: 20,
+    width: '50%',
+    justifyContent: 'center',
+    shadowColor: '#00000021',
+    shadowOffset: {
+      width: 0,
+      height: 9,
+    },
+    shadowOpacity: 0.7,
+    shadowRadius: 7.49,
+    elevation: 12,
+  },
+  textButton: {
+    fontSize: 16,
+    color: 'white',
+    fontWeight: 'bold',
+    fontFamily: 'Lato-Bold',
+    textAlign: 'center',
   },
 });
 

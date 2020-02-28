@@ -25,7 +25,33 @@ const dataBasket = (state = {}, action) => {
   }
 };
 
+const orderType = (state = {}, action) => {
+  switch (action.type) {
+    case 'ORDER_TYPE':
+      return {
+        orderType: action.orderType,
+      };
+
+    default:
+      return state;
+  }
+};
+
+const tableType = (state = {}, action) => {
+  switch (action.type) {
+    case 'TABLE_TYPE':
+      return {
+        tableType: action.tableType,
+      };
+
+    default:
+      return state;
+  }
+};
+
 export default combineReducers({
   productsOutlet,
   dataBasket,
+  orderType,
+  tableType,
 });

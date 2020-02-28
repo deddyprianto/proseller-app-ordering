@@ -1,5 +1,6 @@
 import {fetchApiProduct} from '../service/apiProduct';
 import {fetchApiOrder} from '../service/apiOrder';
+import {fetchApi} from '../service/api';
 
 export const getProductByOutlet = (OutletId, payload) => {
   return async (dispatch, getState) => {
@@ -47,6 +48,74 @@ export const removeProducts = () => {
   };
 };
 
+export const setOrderType = type => {
+  return async dispatch => {
+    try {
+      dispatch({
+        type: 'ORDER_TYPE',
+        orderType: type,
+      });
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const setTableType = type => {
+  return async dispatch => {
+    try {
+      dispatch({
+        type: 'TABLE_TYPE',
+        tableType: type,
+      });
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const submitOder = payload => {
+  return async (dispatch, getState) => {
+    try {
+      const state = getState();
+      const {
+        authReducer: {
+          authData: {token},
+        },
+      } = state;
+      // get table type
+      const {
+        orderReducer: {
+          orderType: {orderType},
+        },
+      } = state;
+
+      payload.orderingMode = orderType;
+
+      console.log('payload submit order ', payload);
+      let response = await fetchApiOrder(
+        `/cart/submit`,
+        'POST',
+        payload,
+        200,
+        token,
+      );
+
+      console.log(response, 'response submit order');
+      let results = response.response;
+      if (results.resultCode == 200 && results.status != 'FAILED') {
+        dispatch({
+          type: 'DATA_BASKET',
+          product: response.response.data,
+        });
+      }
+      return response.response;
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
 export const removeBasket = () => {
   return async (dispatch, getState) => {
     try {
@@ -65,9 +134,15 @@ export const removeBasket = () => {
         token,
       );
       console.log(response, 'response delete basket');
+      // remove basket
       dispatch({
         type: 'DATA_BASKET',
         product: undefined,
+      });
+      // remove table type
+      dispatch({
+        type: 'TABLE_TYPE',
+        tableType: undefined,
       });
       return response;
     } catch (error) {
@@ -100,7 +175,7 @@ export const updateProductToBasket = (payload, previousData) => {
           item => item.productID == payload.details[0].productID,
         );
 
-        // if quantity no 0, then update
+        // if quantity not 0, then update
         if (payload.details[0].quantity != 0 && index >= 0) {
           newProduct.details[index].quantity = payload.details[0].quantity;
           // check remark exist
@@ -142,8 +217,8 @@ export const updateProductToBasket = (payload, previousData) => {
           200,
           token,
         );
-        return response.response;
-        // console.log(response, 'response update data basket');
+        console.log(response, 'response update data basket');
+        return response;
       }
     } catch (error) {
       return error;
@@ -191,7 +266,7 @@ export const addProductToBasket = payload => {
         200,
         token,
       );
-      // console.log(response, 'response post data basket');
+      console.log(response, 'response post data basket');
       dispatch({
         type: 'DATA_BASKET',
         product: response.response.data,
@@ -230,9 +305,47 @@ export const getBasket = () => {
           type: 'DATA_BASKET',
           product: response.response.data,
         });
+        // check if ordering mode is exist (cart has submitted)
+        let order = response.response.data;
+        if (order.orderingMode != undefined && order.tableNo != undefined) {
+          dispatch({
+            type: 'ORDER_TYPE',
+            orderType: order.orderingMode,
+          });
+        }
       }
 
       return response;
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const settleOrder = payload => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          authData: {token},
+        },
+      } = state;
+
+      console.log(payload, 'payload settle order');
+      const response = await fetchApiOrder(
+        '/cart/settle',
+        'POST',
+        payload,
+        200,
+        token,
+      );
+      console.log(response, 'response settle order');
+      var result = {
+        responseBody: response.response,
+        success: response.success,
+      };
+      return result;
     } catch (error) {
       return error;
     }

@@ -26,6 +26,7 @@ import StoreStores from '../components/storeStores';
 import appConfig from '../config/appConfig';
 import {dataPromotion} from '../actions/promotion.action';
 import {getBasket} from '../actions/order.action';
+import {myVoucers} from '../actions/account.action';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
 import CryptoJS from 'react-native-crypto-js';
@@ -50,6 +51,7 @@ class Store extends Component {
 
   componentDidMount = async () => {
     await this.props.dispatch(dataPromotion());
+    await this.props.dispatch(myVoucers());
     // let response = await this.props.dispatch(getBasket());
 
     // if (this.state.dataStores.length === 0) {
@@ -402,7 +404,7 @@ class Store extends Component {
         {/*  <View>*/}
         {/*    <Icon*/}
         {/*      size={40}*/}
-        {/*      name={Platform.OS === 'ios' ? 'ios-basket' : 'md-basket'}*/}
+        {/*      name={Platform.OS === 'ios' ? 'ios-cart' : 'md-cart'}*/}
         {/*      style={{color: colorConfig.store.defaultColor}}*/}
         {/*    />*/}
         {/*  </View>*/}
@@ -413,7 +415,7 @@ class Store extends Component {
         {/*      style={{*/}
         {/*        position: 'absolute',*/}
         {/*        top: -7,*/}
-        {/*        left: 1,*/}
+        {/*        right: 1,*/}
         {/*        width: 25,*/}
         {/*        height: 25,*/}
         {/*        backgroundColor: colorConfig.store.colorError,*/}

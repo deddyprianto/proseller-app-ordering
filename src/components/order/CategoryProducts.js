@@ -25,6 +25,7 @@ import {
   updateProductToBasket,
   getBasket,
   removeProducts,
+  setOrderType,
 } from '../../actions/order.action';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
@@ -55,6 +56,8 @@ class StoreDetailStores extends Component {
       idx: 0,
       selectedCategory: 'ALL PRODUCTS',
       selectedProduct: {},
+      orderType: null,
+      loadingAddItem: false,
     };
   }
 
@@ -69,6 +72,38 @@ class StoreDetailStores extends Component {
     await this.getProductsByOutlet();
     // check if basket soutlet is not same as current outlet
     await this.checkBucketExist();
+
+    if (this.checkBucketExist() || this.props.dataBasket == undefined)
+      if (
+        this.props.dataBasket == undefined ||
+        this.props.dataBasket.status == 'PENDING'
+      )
+        this.askUserToSelectPaymentType();
+  };
+
+  setOrderType = type => {
+    this.props.dispatch(setOrderType(type));
+    // Alert.alert('')
+  };
+
+  askUserToSelectPaymentType = () => {
+    Alert.alert(
+      'Order Mode',
+      'Choose your order mode...',
+      [
+        {
+          text: 'TAKE AWAY',
+          onPress: () => this.setOrderType('TAKEAWAY'),
+          style: 'confirm',
+        },
+        {
+          text: 'DINE IN',
+          onPress: () => this.setOrderType('DINEIN'),
+          style: 'confirm',
+        },
+      ],
+      {cancelable: false},
+    );
   };
 
   checkBucketExist = product => {
@@ -161,6 +196,20 @@ class StoreDetailStores extends Component {
   };
 
   toggleModal = async product => {
+    try {
+      if (
+        this.props.dataBasket.status == 'SUBMITTED' ||
+        this.props.dataBasket.status == 'CONFIRMED'
+      ) {
+        Alert.alert(
+          'Sorry',
+          `Cant update cart now, your previous basket has been ${
+            this.props.dataBasket.status
+          }`,
+        );
+        return;
+      }
+    } catch (e) {}
     if (this.checkBucketExist(product)) {
       this.showAlertBasketNotEmpty(product);
     } else {
@@ -192,6 +241,16 @@ class StoreDetailStores extends Component {
     try {
       let data = {};
       data.details = [];
+
+      // check if retail price is not in number format
+      if (
+        isNaN(product.product.retailPrice) ||
+        product.product.retailPrice == '' ||
+        product.product.retailPrice == null
+      ) {
+        product.product.retailPrice = 0;
+      }
+
       let dataproduct = {
         productID: product.productID,
         unitPrice: product.product.retailPrice,
@@ -206,18 +265,36 @@ class StoreDetailStores extends Component {
       data.outlet = outlet;
       data.id = this.props.item.storeId;
       data.details.push(dataproduct);
-      let response = this.props.dispatch(addProductToBasket(data));
-      // console.log('response add ', response);
+
+      // if data basket is not empty, then hide modal and syncronously add to server
+      let outletId = `outlet::${this.props.item.storeId}`;
+      if (
+        this.props.dataBasket != undefined &&
+        this.props.dataBasket.outletID == outletId
+      ) {
+        this.setState({
+          selectedProduct: {},
+          isModalVisible: false,
+        });
+      }
+
+      // post data to server
+      let response = await this.props.dispatch(addProductToBasket(data));
+      console.log('response add ', response);
+
+      // if data basket is empty, then post data to server first, then hide modal
       this.setState({
         selectedProduct: {},
         isModalVisible: false,
       });
 
-      if (response.success == false) {
-        Alert.alert('Oppss..', 'Failed to add item to basket.');
+      if (response.response.resultCode != 200) {
+        Alert.alert('Oppss..', response.response.data.message);
+        this.props.dispatch(getBasket());
       }
     } catch (e) {
       Alert.alert('Oppss..', 'Please try again.');
+      this.props.dispatch(getBasket());
     }
   };
 
@@ -252,18 +329,32 @@ class StoreDetailStores extends Component {
         updateProductToBasket(data, previousData),
       );
 
-      if (response.resultCode != 200) {
-        Alert.alert('Oppss..', 'Failed to update item to basket.');
+      if (response.response.resultCode != 200) {
+        Alert.alert('Oppss..', response.response.data.message);
+        this.props.dispatch(getBasket());
       }
     } catch (e) {
       Alert.alert('Sorry', 'Something went wrong, please try again.');
+      this.props.dispatch(getBasket());
     }
   };
 
   addItemToBasket = async (product, qty, remark, mode) => {
     if (mode == 'add') {
+      // to show loading button at Modal, check status data basket is empty or not
+      let outletId = `outlet::${this.props.item.storeId}`;
+      if (this.props.dataBasket == undefined) {
+        await this.setState({loadingAddItem: true});
+      }
+      if (
+        this.props.dataBasket != undefined &&
+        this.props.dataBasket.outletID != outletId
+      ) {
+        await this.setState({loadingAddItem: true});
+      }
+
       await this.postItem(product, qty, remark);
-      // await this.props.dispatch(getBasket());
+      await this.setState({loadingAddItem: false});
     } else if (mode == 'update') {
       await this.updateItem(product, qty, remark);
       await this.props.dispatch(getBasket());
@@ -390,9 +481,10 @@ class StoreDetailStores extends Component {
                   </View>
                   <Text style={[styles.productPrice]}>
                     {item.product.retailPrice != undefined &&
-                    item.product.retailPrice != '-'
+                    item.product.retailPrice != '-' &&
+                    !isNaN(item.product.retailPrice)
                       ? CurrencyFormatter(item.product.retailPrice)
-                      : 0}
+                      : CurrencyFormatter(0)}
                   </Text>
                 </View>
               </TouchableOpacity>
@@ -627,7 +719,7 @@ class StoreDetailStores extends Component {
 
   render() {
     let products = this.products;
-    // console.log('DATA BASKET ', this.props.dataBasket);
+    console.log('DATA BASKET ', this.props.dataBasket);
     return (
       <View style={styles.container}>
         <ModalOrder
@@ -644,6 +736,7 @@ class StoreDetailStores extends Component {
           calculateSubTotalModal={this.calculateSubTotalModal}
           product={this.state.selectedProduct}
           addItemToBasket={this.addItemToBasket}
+          loadingAddItem={this.state.loadingAddItem}
         />
         <View
           style={styles.headerImage}

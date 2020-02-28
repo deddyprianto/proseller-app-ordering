@@ -29,6 +29,7 @@ import {myVoucers} from '../actions/account.action';
 import ShimmerPlaceHolder from 'react-native-shimmer-placeholder';
 import MyPointsPlaceHolder from '../components/placeHolderLoading/MyPointsPlaceHolder';
 import {isEmptyObject, isEmptyArray} from '../helper/CheckEmpty';
+import {getBasket} from '../actions/order.action';
 
 class Rewards extends Component {
   _isMounted = false;
@@ -60,6 +61,8 @@ class Rewards extends Component {
   getDataRewards = async () => {
     try {
       await this.getUserPosition();
+      // await this.props.dispatch(refreshToken());
+      await this.props.dispatch(getBasket());
       await this.props.dispatch(campaign());
       await this.props.dispatch(dataPoint());
       // await this.props.dispatch(vouchers());

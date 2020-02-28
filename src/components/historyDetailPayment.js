@@ -83,7 +83,20 @@ export default class HistoryDetailPayment extends Component {
     return mount[value];
   }
 
+  calculateCash = item => {
+    try {
+      if (item.discount != undefined) {
+        return item.price - item.discount;
+      } else {
+        return item.price;
+      }
+    } catch (e) {
+      return item.price;
+    }
+  };
+
   render() {
+    console.log('this.props.item', this.props.item);
     return (
       <View style={styles.container}>
         <View style={{backgroundColor: colorConfig.pageIndex.backgroundColor}}>
@@ -102,34 +115,71 @@ export default class HistoryDetailPayment extends Component {
         <ScrollView style={{height: '100%', width: '100%'}}>
           <View style={styles.card}>
             <View style={styles.item}>
-              <Text style={styles.title}>Payment Detail</Text>
+              <Text style={styles.title}>{this.props.item.outletName}</Text>
             </View>
             <View style={styles.detail}>
               <View style={styles.detailItem}>
-                <Text style={styles.desc}>Store Name</Text>
+                <Text style={styles.desc}>Outlet Name</Text>
                 <Text style={styles.desc}>{this.props.item.outletName}</Text>
               </View>
 
-              <View style={styles.detailItem}>
-                <Text style={styles.desc}>Amount</Text>
-                <Text style={styles.desc}>
-                  {CurrencyFormatter(this.props.item.price)}
-                </Text>
-              </View>
-
-              <View style={styles.detailItem}>
-                <Text style={styles.desc}>Payment Type</Text>
-                <Text style={styles.desc}>{this.props.item.paymentType}</Text>
-              </View>
-
-              <View style={[styles.detailItem, {marginBottom: 20}]}>
+              <View style={[styles.detailItem]}>
                 <Text style={styles.desc}>Date & Time</Text>
                 <Text style={styles.desc}>
                   {this.getDate(this.props.item.createdAt)}
                 </Text>
               </View>
+
+              {/*<View style={styles.detailItem}>*/}
+              {/*  <Text style={styles.desc}>Sub Total</Text>*/}
+              {/*  <Text style={styles.desc}>*/}
+              {/*    {CurrencyFormatter(this.props.item.price)}*/}
+              {/*  </Text>*/}
+              {/*</View>*/}
+
+              {/*{this.props.item.statusAdd == 'addVoucer' ? (*/}
+              {/*  <View style={styles.detailItem}>*/}
+              {/*    <Text style={styles.desc}>Discount</Text>*/}
+              {/*    <Text style={styles.desc}>*/}
+              {/*      {CurrencyFormatter(this.props.item.discount)}*/}
+              {/*    </Text>*/}
+              {/*  </View>*/}
+              {/*) : null}*/}
+
+              <View style={styles.detailItem}>
+                <Text style={styles.desc}>Total</Text>
+                <Text style={styles.desc}>
+                  {CurrencyFormatter(this.props.item.price)}
+                </Text>
+              </View>
+
+              <View style={[styles.detailItem, {borderBottomWidth: 0}]}>
+                <Text style={[styles.desc, {fontWeight: 'bold'}]}>
+                  Payment Type
+                </Text>
+              </View>
+
+              <View style={[styles.detailItem, {marginLeft: 10}]}>
+                <Text style={styles.desc}> • Cash</Text>
+                <Text style={styles.desc}>
+                  {/*{CurrencyFormatter(this.calculateCash(this.props.item))}*/}
+                  {CurrencyFormatter(this.props.item.price)}
+                </Text>
+              </View>
+
+              {this.props.item.statusAdd == 'addPoint' ? (
+                <View style={[styles.detailItem, {marginLeft: 10}]}>
+                  <Text style={styles.desc}> • Point</Text>
+                  <Text style={styles.desc}>{this.props.item.discount}</Text>
+                </View>
+              ) : null}
+
               {this.props.item.point > 0 ? (
-                <View style={[styles.detailItem, {borderBottomWidth: 0}]}>
+                <View
+                  style={[
+                    styles.detailItem,
+                    {marginTop: 15, borderBottomWidth: 0},
+                  ]}>
                   <Text
                     style={[
                       styles.desc,

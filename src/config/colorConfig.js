@@ -62,6 +62,7 @@ const colorConfig = {
     title: '#454545',
     transparentColor: `rgba(${PRIMARY_COLOR_RGB}, 0.8)`,
     disableButton: `rgba(${PRIMARY_COLOR_RGB}, 0.4)`,
+    disableButtonError: `rgba(199, 66, 14, 0.4)`,
     transparent: 'rgba(3, 157, 252, 0.1)',
     containerColor: '#f2f2f2',
     secondaryColor: `rgb(${SECONDARY_COLOR_RGB})`,

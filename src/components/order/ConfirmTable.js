@@ -107,7 +107,7 @@ class ConfirmTable extends Component {
                   fontSize: 160,
                   fontWeight: 'bold',
                 }}>
-                26
+                {this.props.scan.tableNo}
               </Text>
             </View>
 

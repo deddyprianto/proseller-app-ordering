@@ -12,6 +12,7 @@ import {
   Dimensions,
   TouchableOpacity,
   ScrollView,
+  BackHandler,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -27,10 +28,25 @@ export default class PaymentDetailItem extends Component {
       screenWidth: Dimensions.get('window').width,
     };
   }
+  componentDidMount = async () => {
+    this.backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      this.handleBackPress,
+    );
+  };
 
-  goBack() {
-    Actions.pop();
+  componentWillUnmount() {
+    this.backHandler.remove();
   }
+
+  handleBackPress = () => {
+    this.goBack(); // works best when the goBack is async
+    return true;
+  };
+
+  goBack = async () => {
+    Actions.pop();
+  };
 
   render() {
     return (
@@ -80,7 +96,8 @@ export default class PaymentDetailItem extends Component {
                           <Text style={styles.descItem}>{item.itemName}</Text>
                           <View style={styles.itemDesc}>
                             <Text style={styles.descItem}>
-                              {item.qty + ' Pcs'}
+                              {/*{item.qty + ' Pcs'}*/}
+                              {CurrencyFormatter(item.price)}
                             </Text>
                             <Text style={styles.descItem}>{item.qty}</Text>
                             <Text style={styles.descItem}>

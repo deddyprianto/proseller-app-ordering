@@ -101,6 +101,7 @@ export default class PaymentSuccess extends Component {
   };
 
   render() {
+    console.log(this.props.dataRespons, 'asajksbaksjbjk');
     return (
       <View style={styles.container}>
         <View style={styles.card}>
@@ -208,14 +209,14 @@ export default class PaymentSuccess extends Component {
                   fontWeight: 'bold',
                   color: colorConfig.pageIndex.activeTintColor,
                 }}>
-                {appConfig.appName}
+                {appConfig.appName.toUpperCase()}
               </Text>
               <Text
                 style={{
                   fontSize: 14,
                   color: colorConfig.pageIndex.grayColor,
                 }}>
-                {this.props.dataRespons.storeName}
+                {this.props.dataRespons.outletName}
               </Text>
             </View>
           </View>
@@ -259,13 +260,13 @@ export default class PaymentSuccess extends Component {
                 style={{
                   color: colorConfig.pageIndex.grayColor,
                 }}>
-                Paid by
+                Payment Type
               </Text>
               <Text
                 style={{
                   color: colorConfig.pageIndex.grayColor,
                 }}>
-                Pay
+                {this.props.dataRespons.paymentType}
               </Text>
             </View>
             <View

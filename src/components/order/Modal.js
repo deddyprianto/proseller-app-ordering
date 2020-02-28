@@ -10,8 +10,11 @@ import {
   View,
   Modal,
   CheckBox,
+  Platform,
   TextInput,
   KeyboardAvoidingView,
+  Alert,
+  ActivityIndicator,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -19,6 +22,7 @@ import colorConfig from '../../config/colorConfig';
 import appConfig from '../../config/appConfig';
 import ProgressiveImage from '../../components/helper/ProgressiveImage';
 import CurrencyFormatter from '../../helper/CurrencyFormatter';
+import {Dialog, Paragraph} from 'react-native-paper';
 
 export default class ModalOrder extends Component {
   constructor(props) {
@@ -26,6 +30,7 @@ export default class ModalOrder extends Component {
     this.state = {
       screenWidth: Dimensions.get('window').width,
       screenHeight: Dimensions.get('window').height,
+      modalQty: false,
     };
   }
 
@@ -82,8 +87,82 @@ export default class ModalOrder extends Component {
     }
   };
 
+  renderLoadingButtonHideModal = () => {
+    return (
+      <TouchableOpacity
+        disabled={true}
+        style={[
+          styles.btnAddBasketModal,
+          {backgroundColor: colorConfig.store.disableButton},
+        ]}>
+        <ActivityIndicator size={'small'} color={'white'} />
+      </TouchableOpacity>
+    );
+  };
+
+  renderButtonHideModal = () => {
+    return (
+      <TouchableOpacity
+        onPress={() => {
+          this.props.addItemToBasket(
+            this.props.product,
+            this.props.qtyItem,
+            this.props.remark,
+            this.props.product.mode,
+          );
+        }}
+        style={[
+          styles.btnAddBasketModal,
+          this.props.qtyItem == 0
+            ? {backgroundColor: colorConfig.store.colorError}
+            : null,
+        ]}>
+        {this.props.qtyItem != 0 ? (
+          <Text style={styles.textBtnBasketModal}>
+            {this.props.product.mode == 'add' ? 'Add to ' : 'Update '}
+            Basket - {this.calculateSubTotalModal()}
+          </Text>
+        ) : (
+          <Text style={styles.textBtnBasketModal}>Remove from basket</Text>
+        )}
+      </TouchableOpacity>
+    );
+  };
+
+  renderDialogQuantityModifier = () => {
+    return (
+      <Dialog
+        dismissable={false}
+        visible={this.state.modalQty}
+        onDismiss={() => this.setState({modalQty: false})}>
+        <Dialog.Content>
+          <Text
+            style={{
+              textAlign: 'center',
+            }}>
+            Quantity
+          </Text>
+          <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+            <View style={styles.panelQty}>
+              <TouchableOpacity
+                onPress={this.props.minQty}
+                style={styles.buttonQtyModifier}>
+                <Text style={styles.btnIncreaseDecrease}>-</Text>
+              </TouchableOpacity>
+              <Text style={styles.descQtyModifier}>{this.props.qtyItem}</Text>
+              <TouchableOpacity
+                onPress={this.props.addQty}
+                style={styles.buttonQtyModifier}>
+                <Text style={styles.btnIncreaseDecrease}>+</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Dialog.Content>
+      </Dialog>
+    );
+  };
+
   render() {
-    console.log('ini lho', this.props.product);
     return (
       <Modal
         animationType="slide"
@@ -136,37 +215,27 @@ export default class ModalOrder extends Component {
                 </Text>
               </View>
             </View>
-            {/*<View style={styles.cardModal}>*/}
-            {/*  <Text style={styles.titleModifierModal}>*/}
-            {/*    Flavour, pick 1, max 3*/}
-            {/*  </Text>*/}
-            {/*  <View style={styles.detailOptionsModal}>*/}
-            {/*    <CheckBox*/}
-            {/*      value={this.state.checked}*/}
-            {/*      onValueChange={() =>*/}
-            {/*        this.setState({checked: !this.state.checked})*/}
-            {/*      }*/}
-            {/*    />*/}
-            {/*    <Text style={{marginTop: 5}}> Sayur</Text>*/}
-            {/*    <Text style={{marginTop: 5, position: 'absolute', right: 3}}>*/}
-            {/*      {' '}*/}
-            {/*      0*/}
-            {/*    </Text>*/}
-            {/*  </View>*/}
-            {/*  <View style={styles.detailOptionsModal}>*/}
-            {/*    <CheckBox*/}
-            {/*      value={this.state.checked}*/}
-            {/*      onValueChange={() =>*/}
-            {/*        this.setState({checked: !this.state.checked})*/}
-            {/*      }*/}
-            {/*    />*/}
-            {/*    <Text style={{marginTop: 5}}> Sayur</Text>*/}
-            {/*    <Text style={{marginTop: 5, position: 'absolute', right: 3}}>*/}
-            {/*      {' '}*/}
-            {/*      0*/}
-            {/*    </Text>*/}
-            {/*  </View>*/}
-            {/*</View>*/}
+            <View style={styles.cardModal}>
+              <Text style={styles.titleModifierModal}>
+                Flavour, pick 1, max 3
+              </Text>
+              <View style={styles.detailOptionsModal}>
+                <CheckBox
+                  value={this.state.checked}
+                  onValueChange={() =>
+                    this.setState({
+                      checked: !this.state.checked,
+                      modalQty: true,
+                    })
+                  }
+                />
+                <Text style={{marginTop: 5}}> Sayur</Text>
+                <Text style={{marginTop: 5, position: 'absolute', right: 3}}>
+                  {' '}
+                  0
+                </Text>
+              </View>
+            </View>
 
             {/*<View style={styles.cardModal}>*/}
             {/*  <Text style={styles.titleModifierModal}>Drink, pick 1</Text>*/}
@@ -186,8 +255,33 @@ export default class ModalOrder extends Component {
             {/*    </Text>*/}
             {/*  </View>*/}
             {/*</View>*/}
-
             <View style={styles.cardModal}>
+              <Text style={styles.titleModifierModal}>Quantity</Text>
+              <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+                <View style={styles.panelQty}>
+                  <TouchableOpacity
+                    onPress={this.props.minQty}
+                    style={styles.buttonQty}>
+                    <Text style={styles.btnIncreaseDecrease}>-</Text>
+                  </TouchableOpacity>
+                  <Text style={styles.descQty}>{this.props.qtyItem}</Text>
+                  <TouchableOpacity
+                    onPress={this.props.addQty}
+                    style={styles.buttonQty}>
+                    <Text style={styles.btnIncreaseDecrease}>+</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+
+            <KeyboardAvoidingView
+              style={[styles.cardModal, {paddingBottom: 50}]}
+              behavior={Platform.OS === 'ios' ? 'padding' : null}
+              enabled
+              keyboardVerticalOffset={Platform.select({
+                ios: 80,
+                android: 500,
+              })}>
               <Text style={styles.titleModifierModal}>Remark</Text>
               <View style={{flexDirection: 'column', paddingBottom: 20}}>
                 <TextInput
@@ -208,57 +302,19 @@ export default class ModalOrder extends Component {
                   multiline={true}
                 />
               </View>
-            </View>
+            </KeyboardAvoidingView>
 
-            <View style={styles.cardModal}>
-              <Text style={styles.titleModifierModal}>Quantity</Text>
-              <View style={{flexDirection: 'row', justifyContent: 'center'}}>
-                <View style={styles.panelQty}>
-                  <TouchableOpacity
-                    onPress={this.props.minQty}
-                    style={styles.buttonQty}>
-                    <Text style={styles.btnIncreaseDecrease}>-</Text>
-                  </TouchableOpacity>
-                  <Text style={styles.descQty}>{this.props.qtyItem}</Text>
-                  <TouchableOpacity
-                    onPress={this.props.addQty}
-                    style={styles.buttonQty}>
-                    <Text style={styles.btnIncreaseDecrease}>+</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </View>
             {/*<View style={[styles.cardModal, {height: 60}]} />*/}
           </ScrollView>
           <View style={styles.panelAddBasketModal}>
-            <TouchableOpacity
-              onPress={() => {
-                this.props.addItemToBasket(
-                  this.props.product,
-                  this.props.qtyItem,
-                  this.props.remark,
-                  this.props.product.mode,
-                );
-              }}
-              style={[
-                styles.btnAddBasketModal,
-                this.props.qtyItem == 0
-                  ? {backgroundColor: colorConfig.store.colorError}
-                  : null,
-              ]}>
-              {this.props.qtyItem != 0 ? (
-                <Text style={styles.textBtnBasketModal}>
-                  {this.props.product.mode == 'add' ? 'Add to ' : 'Update '}
-                  Basket - {this.calculateSubTotalModal()}
-                </Text>
-              ) : (
-                <Text style={styles.textBtnBasketModal}>
-                  Remove from basket
-                </Text>
-              )}
-            </TouchableOpacity>
+            {/* conditional render to show loading button */}
+            {this.props.loadingAddItem
+              ? this.renderLoadingButtonHideModal()
+              : this.renderButtonHideModal()}
+            {/* conditional render to show loading button */}
           </View>
         </KeyboardAvoidingView>
+        {this.renderDialogQuantityModifier()}
       </Modal>
     );
   }
@@ -268,6 +324,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colorConfig.store.containerColor,
+  },
+  modal: {
+    backgroundColor: 'white',
+    margin: 0, // This is the important style you need to set
+    alignItems: undefined,
+    justifyContent: undefined,
   },
   headerImage: {
     backgroundColor: colorConfig.splash.container,
@@ -459,10 +521,24 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderColor: colorConfig.store.defaultColor,
   },
+  buttonQtyModifier: {
+    justifyContent: 'center',
+    backgroundColor: colorConfig.store.defaultColor,
+    width: 33,
+    height: 33,
+    borderRadius: 10,
+    borderColor: colorConfig.store.defaultColor,
+  },
   descQty: {
     alignContent: 'center',
     // padding: 10,
     fontSize: 27,
+    color: colorConfig.pageIndex.grayColor,
+  },
+  descQtyModifier: {
+    alignContent: 'center',
+    // padding: 10,
+    fontSize: 22,
     color: colorConfig.pageIndex.grayColor,
   },
   btnIncreaseDecrease: {
@@ -473,10 +549,10 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   panelAddBasketModal: {
-    position: 'absolute',
-    bottom: -0,
+    // position: 'absolute',
+    // bottom: -0,
     height: 70,
-    flex: 1,
+    // flex: 1,
     justifyContent: 'center',
     width: Dimensions.get('window').width,
     backgroundColor: colorConfig.pageIndex.backgroundColor,
