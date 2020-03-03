@@ -21,18 +21,20 @@ export default class StoreStores extends Component {
   }
 
   storeDetailStores = item => {
-    Actions.storeDetailStores({item});
+    // Actions.storeDetailStores({item});
     // Actions.order({item});
-    // Actions.categoryProducts({item});
+    Actions.categoryProducts({item});
   };
 
   render() {
+    const {intlData} = this.props;
     return (
       <View>
         {this.state.dataStoreRegion.map((region, index) => (
           <View style={styles.stores} key={index}>
             <Text style={styles.stores}>
-              Stores - {region != undefined ? ` ${region}` : null}
+              {intlData.messages.outlets} -{' '}
+              {region != undefined ? ` ${region}` : null}
             </Text>
             {this.state.dataAllStore[this.state.dataStoreRegion[index]].map(
               (item, keys) => (
@@ -64,7 +66,7 @@ export default class StoreStores extends Component {
                               color: colorConfig.store.textWhite,
                               fontFamily: 'Lato-Medium',
                             }}>
-                            Open
+                            {intlData.messages.open}
                           </Text>
                         ) : (
                           <Text
@@ -80,7 +82,7 @@ export default class StoreStores extends Component {
                               color: colorConfig.store.textWhite,
                               fontFamily: 'Lato-Medium',
                             }}>
-                            Closed
+                            {intlData.messages.closed}
                           </Text>
                         )}
                       </View>

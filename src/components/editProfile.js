@@ -198,6 +198,7 @@ class AccountEditProfil extends Component {
   };
 
   render() {
+    const {intlData} = this.props;
     return (
       <View style={styles.container}>
         {this.state.loading && <Loader />}
@@ -214,7 +215,10 @@ class AccountEditProfil extends Component {
               }
               style={styles.btnBackIcon}
             />
-            <Text style={styles.btnBackText}> Edit Profile </Text>
+            <Text style={styles.btnBackText}>
+              {' '}
+              {intlData.messages.editProfile}{' '}
+            </Text>
           </TouchableOpacity>
           {/*<View style={styles.line} />*/}
         </View>
@@ -223,26 +227,9 @@ class AccountEditProfil extends Component {
             <Form ref="form" onSubmit={this.submitEdit}>
               <View style={styles.detail}>
                 <View style={styles.detailItem}>
-                  <Text style={[styles.desc, {marginLeft: 2}]}>Name</Text>
-                  {/*<TextValidator*/}
-                  {/*  style={{marginBottom: -10}}*/}
-                  {/*  name="password"*/}
-                  {/*  label="password"*/}
-                  {/*  validators={['required']}*/}
-                  {/*  errorStyle={{*/}
-                  {/*    container: {top: 5, left: 5},*/}
-                  {/*    text: {color: 'red'},*/}
-                  {/*    underlineValidColor:*/}
-                  {/*      colorConfig.pageIndex.activeTintColor,*/}
-                  {/*    underlineInvalidColor: 'red',*/}
-                  {/*  }}*/}
-                  {/*  errorMessages={['This field is required']}*/}
-                  {/*  placeholder="Name"*/}
-                  {/*  type="text"*/}
-                  {/*  under*/}
-                  {/*  value={this.state.name}*/}
-                  {/*  onChangeText={value => this.setState({name: value})}*/}
-                  {/*/>*/}
+                  <Text style={[styles.desc, {marginLeft: 2}]}>
+                    {intlData.messages.name}
+                  </Text>
                   <TextInput
                     placeholder="Name"
                     style={{paddingVertical: 10}}
@@ -260,7 +247,9 @@ class AccountEditProfil extends Component {
                     <TouchableOpacity
                       style={[styles.btnChange]}
                       onPress={() => this.btnChangeCredentials('Email')}>
-                      <Text style={[styles.textChange]}>Change</Text>
+                      <Text style={[styles.textChange]}>
+                        {intlData.messages.change}
+                      </Text>
                     </TouchableOpacity>
                   </View>
                   <Text style={{paddingTop: 12}}>
@@ -272,11 +261,15 @@ class AccountEditProfil extends Component {
                     style={{
                       flexDirection: 'row',
                     }}>
-                    <Text style={styles.desc}>Phone Number</Text>
+                    <Text style={styles.desc}>
+                      {intlData.messages.phoneNumber}
+                    </Text>
                     <TouchableOpacity
                       onPress={() => this.btnChangeCredentials('Phone Number')}
                       style={[styles.btnChange]}>
-                      <Text style={[styles.textChange]}>Change</Text>
+                      <Text style={[styles.textChange]}>
+                        {intlData.messages.change}
+                      </Text>
                     </TouchableOpacity>
                   </View>
                   <Text style={{paddingTop: 12}}>
@@ -284,7 +277,9 @@ class AccountEditProfil extends Component {
                   </Text>
                 </View>
                 <View style={styles.detailItem}>
-                  <Text style={[styles.desc, {marginLeft: 0}]}>Birth Date</Text>
+                  <Text style={[styles.desc, {marginLeft: 0}]}>
+                    {intlData.messages.birthDate}
+                  </Text>
                   <Text
                     style={{
                       paddingTop: 12,
@@ -304,40 +299,26 @@ class AccountEditProfil extends Component {
                   />
                 </View>
                 <View style={styles.detailItem}>
-                  <Text style={[styles.desc, {marginLeft: 0}]}>Gender</Text>
+                  <Text style={[styles.desc, {marginLeft: 0}]}>
+                    {intlData.messages.gender}
+                  </Text>
                   <Picker
                     selectedValue={this.state.gender}
                     onValueChange={(itemValue, itemIndex) =>
                       this.setState({gender: itemValue})
                     }>
                     <Picker.Item label="Select one" value="" />
-                    <Picker.Item label="Male" value="male" />
-                    <Picker.Item label="Female" value="female" />
+                    <Picker.Item label={intlData.messages.male} value="male" />
+                    <Picker.Item
+                      label={intlData.messages.female}
+                      value="female"
+                    />
                   </Picker>
                 </View>
                 <View style={styles.detailItem}>
-                  <Text style={[styles.desc, {marginLeft: 2}]}>Address</Text>
-                  {/*<TextValidator*/}
-                  {/*  style={{marginTop: 10}}*/}
-                  {/*  name="address"*/}
-                  {/*  label="address"*/}
-                  {/*  validators={['required']}*/}
-                  {/*  errorStyle={{*/}
-                  {/*    container: {top: 5, left: 5},*/}
-                  {/*    text: {color: 'red'},*/}
-                  {/*    underlineValidColor:*/}
-                  {/*      colorConfig.pageIndex.activeTintColor,*/}
-                  {/*    underlineInvalidColor: 'red',*/}
-                  {/*  }}*/}
-                  {/*  errorMessages={['This field is required']}*/}
-                  {/*  placeholder="Your address"*/}
-                  {/*  type="text"*/}
-                  {/*  under*/}
-                  {/*  value={this.state.address}*/}
-                  {/*  onChangeText={value => this.setState({address: value})}*/}
-                  {/*/>*/}
+                  <Text style={[styles.desc, {marginLeft: 2}]}>{intlData.messages.address}</Text>
                   <TextInput
-                    placeholder="Your address"
+                    placeholder={intlData.messages.yourAddress}
                     style={{paddingVertical: 10}}
                     value={this.state.address}
                     onChangeText={value => this.setState({address: value})}
@@ -350,7 +331,7 @@ class AccountEditProfil extends Component {
         </ScrollView>
         <TouchableWithoutFeedback onPress={this.submitEdit}>
           <View style={styles.primaryButton}>
-            <Text style={styles.buttonText}>Save</Text>
+            <Text style={styles.buttonText}>{intlData.messages.save}</Text>
           </View>
         </TouchableWithoutFeedback>
         <AwesomeAlert
@@ -391,6 +372,7 @@ class AccountEditProfil extends Component {
 
 mapStateToProps = state => ({
   updateUser: state.userReducer.updateUser,
+  intlData: state.intlData,
 });
 
 mapDispatchToProps = dispatch => ({
@@ -437,7 +419,7 @@ const styles = StyleSheet.create({
   btnBackText: {
     color: colorConfig.store.defaultColor,
     fontWeight: 'bold',
-    fontSize: 19,
+    fontSize: 17,
   },
   primaryButton: {
     borderColor: colorConfig.pageIndex.activeTintColor,

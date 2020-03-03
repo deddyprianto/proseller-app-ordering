@@ -50,6 +50,7 @@ class RewardsRewards extends Component {
   }
 
   render() {
+    const {intlData} = this.props;
     return (
       <View style={styles.container}>
         {this.state.isLoading && <Loader />}
@@ -65,7 +66,10 @@ class RewardsRewards extends Component {
                 }
                 style={styles.btnBackIcon}
               />
-              <Text style={styles.btnBackText}> Rewards </Text>
+              <Text style={styles.btnBackText}>
+                {' '}
+                {intlData.messages.rewards}{' '}
+              </Text>
             </TouchableOpacity>
             <View style={styles.point}>
               <Icon
@@ -136,6 +140,7 @@ const styles = StyleSheet.create({
 mapStateToProps = state => ({
   vouchers: state.rewardsReducer.vouchers.dataVoucher,
   totalPoint: state.rewardsReducer.dataPoint.totalPoint,
+  intlData: state.intlData,
 });
 
 mapDispatchToProps = dispatch => ({

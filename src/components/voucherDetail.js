@@ -8,6 +8,7 @@ import {
   ScrollView,
   Image,
   AsyncStorage,
+  Platform,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
@@ -150,6 +151,7 @@ class VoucherDetail extends Component {
   }
 
   render() {
+    const {intlData} = this.props;
     return (
       <View style={styles.container}>
         {this.state.loadRedeem && <Loader />}
@@ -165,7 +167,7 @@ class VoucherDetail extends Component {
                 }
                 style={styles.btnBackIcon}
               />
-              <Text style={styles.btnBackText}> Back </Text>
+              <Text style={styles.btnBackText}> {intlData.messages.back} </Text>
             </TouchableOpacity>
             <View style={styles.point}>
               <Icon
@@ -182,8 +184,8 @@ class VoucherDetail extends Component {
                   fontWeight: 'bold',
                 }}>
                 {this.props.totalPoint == undefined
-                  ? 0 + ' Point'
-                  : this.props.totalPoint + ' Point'}
+                  ? 0 + intlData.messages.point
+                  : `${this.props.totalPoint} ${intlData.messages.point}`}
               </Text>
             </View>
           </View>
@@ -228,7 +230,9 @@ class VoucherDetail extends Component {
                     fontWeight: 'bold',
                     textAlign: 'right',
                   }}>
-                  {this.props.dataVoucher['redeemValue'] + ' Points'}
+                  {`${this.props.dataVoucher['redeemValue']} ${
+                    intlData.messages.point
+                  }`}
                 </Text>
               </View>
             </View>
@@ -273,11 +277,11 @@ class VoucherDetail extends Component {
                   />
                   {this.props.dataVoucher['validity']['allDays'] ? (
                     <Text style={styles.descVoucher}>
-                      This voucher is valid in all days.
+                      {intlData.messages.voucherValid}
                     </Text>
                   ) : (
                     <Text style={styles.descVoucherTime}>
-                      This voucher is valid on
+                      {intlData.messages.voucherValidOn}
                       {this.props.dataVoucher['validity']['activeWeekDays']
                         .filter(item => item.active == true)
                         .map(data => (
@@ -310,7 +314,7 @@ class VoucherDetail extends Component {
                   paddingTop: 10,
                   fontSize: 19,
                 }}>
-                Redeem Voucher
+                {intlData.messages.redeemVoucher}
               </Text>
             </TouchableOpacity>
           </View>

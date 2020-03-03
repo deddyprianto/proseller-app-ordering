@@ -33,6 +33,7 @@ import Loader from '../../components/loader';
 import ButtonViewBasket from '../../components/order/ButtonViewBasket';
 import CurrencyFormatter from '../../helper/CurrencyFormatter';
 import ShimmerPlaceHolder from 'react-native-shimmer-placeholder';
+import {isEmptyArray} from '../../helper/CheckEmpty';
 
 class StoreDetailStores extends Component {
   constructor(props) {
@@ -183,11 +184,44 @@ class StoreDetailStores extends Component {
     product.remark = '';
     // add initial status to modal order
     product.mode = 'add';
+
+    // remove quantity temp from props
+    product.product.productModifiers.map((group, i) => {
+      group.modifier.details.map((detail, j) => {
+        delete detail.quantity;
+      });
+    });
+
     // if quantity exist, then mode is update
     if (existProduct != false) {
       product.mode = 'update';
       product.remark = existProduct.remark;
       product.quantity = existProduct.quantity;
+
+      // process modifier
+      let find = this.props.dataBasket.details.find(
+        item => item.product.id == product.id,
+      );
+      if (find != undefined && !isEmptyArray(find.modifiers)) {
+        product.product.productModifiers.map((group, i) => {
+          group.modifier.details.map((detail, j) => {
+            find.modifiers.map(data => {
+              data.modifier.details.map(item => {
+                // make mark that item is in basket
+                if (data.modifierID == group.modifierID) {
+                  product.product.productModifiers[i].postToServer = true;
+                  // set quantity basket to product that openend
+                  if (item.id == detail.id) {
+                    product.product.productModifiers[i].modifier.details[
+                      j
+                    ].quantity = item.quantity;
+                  }
+                }
+              });
+            });
+          });
+        });
+      }
     }
     this.setState({
       selectedProduct: product,
@@ -256,6 +290,53 @@ class StoreDetailStores extends Component {
         unitPrice: product.product.retailPrice,
         quantity: qty,
       };
+
+      // if product have modifier
+      if (product.product.productModifiers.length > 0) {
+        let totalModifier = 0;
+        const productModifierClone = JSON.stringify(
+          product.product.productModifiers,
+        );
+        let productModifiers = JSON.parse(productModifierClone);
+        productModifiers = productModifiers.filter(
+          item => item.postToServer == true,
+        );
+        // add moodifier to data product
+        dataproduct.modifiers = productModifiers;
+
+        let tempDetails = [];
+        for (let i = 0; i < dataproduct.modifiers.length; i++) {
+          tempDetails = [];
+          let data = dataproduct.modifiers[i];
+          for (let j = 0; j < data.modifier.details.length; j++) {
+            if (
+              data.modifier.details[j].quantity != undefined &&
+              data.modifier.details[j].quantity > 0
+            ) {
+              tempDetails.push(data.modifier.details[j]);
+            }
+          }
+          // replace details
+          dataproduct.modifiers[i].modifier.details = tempDetails;
+        }
+
+        //  calculate total modifier
+        await dataproduct.modifiers.map(group => {
+          if (group.postToServer == true) {
+            group.modifier.details.map(detail => {
+              if (detail.quantity != undefined && detail.quantity > 0) {
+                totalModifier += parseFloat(
+                  detail.quantity * detail.productPrice,
+                );
+              }
+            });
+          }
+        });
+
+        //  add total item modifier to subtotal product
+        dataproduct.unitPrice += totalModifier;
+      }
+
       let outlet = {
         id: `${this.props.item.storeId}`,
       };
@@ -267,16 +348,16 @@ class StoreDetailStores extends Component {
       data.details.push(dataproduct);
 
       // if data basket is not empty, then hide modal and syncronously add to server
-      let outletId = `outlet::${this.props.item.storeId}`;
-      if (
-        this.props.dataBasket != undefined &&
-        this.props.dataBasket.outletID == outletId
-      ) {
-        this.setState({
-          selectedProduct: {},
-          isModalVisible: false,
-        });
-      }
+      // let outletId = `outlet::${this.props.item.storeId}`;
+      // if (
+      //   this.props.dataBasket != undefined &&
+      //   this.props.dataBasket.outletID == outletId
+      // ) {
+      //   this.setState({
+      //     selectedProduct: {},
+      //     isModalVisible: false,
+      //   });
+      // }
 
       // post data to server
       let response = await this.props.dispatch(addProductToBasket(data));
@@ -343,16 +424,17 @@ class StoreDetailStores extends Component {
     if (mode == 'add') {
       // to show loading button at Modal, check status data basket is empty or not
       let outletId = `outlet::${this.props.item.storeId}`;
-      if (this.props.dataBasket == undefined) {
-        await this.setState({loadingAddItem: true});
-      }
-      if (
-        this.props.dataBasket != undefined &&
-        this.props.dataBasket.outletID != outletId
-      ) {
-        await this.setState({loadingAddItem: true});
-      }
-
+      // conditional loading if basket is null
+      // if (this.props.dataBasket == undefined) {
+      //   await this.setState({loadingAddItem: true});
+      // }
+      // if (
+      //   this.props.dataBasket != undefined &&
+      //   this.props.dataBasket.outletID != outletId
+      // ) {
+      //   await this.setState({loadingAddItem: true});
+      // }
+      await this.setState({loadingAddItem: true});
       await this.postItem(product, qty, remark);
       await this.setState({loadingAddItem: false});
     } else if (mode == 'update') {
@@ -375,9 +457,7 @@ class StoreDetailStores extends Component {
     let remark = '';
     qtyItem = this.state.selectedProduct.quantity;
     remark = this.state.selectedProduct.remark;
-    // if (this.state.selectedProduct.quantity != false) {
-    //   qtyItem = this.state.selectedProduct.quantity;
-    // }
+
     this.setState({qtyItem, remark});
   };
 
@@ -434,7 +514,6 @@ class StoreDetailStores extends Component {
       ) {
         this.setState({idx: this.state.idx + 1}, () => {
           if (this.productsLength <= dataLength) {
-            console.log('product sekarang ', this.products);
             this.products.push(this.props.products[this.state.idx]);
           }
         });
@@ -737,6 +816,7 @@ class StoreDetailStores extends Component {
           product={this.state.selectedProduct}
           addItemToBasket={this.addItemToBasket}
           loadingAddItem={this.state.loadingAddItem}
+          dataBasket={this.props.dataBasket}
         />
         <View
           style={styles.headerImage}

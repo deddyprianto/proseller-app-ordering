@@ -6,6 +6,7 @@ import {
   Dimensions,
   TouchableOpacity,
   TouchableHighlight,
+  Platform,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
@@ -26,6 +27,8 @@ class RewordsVouchers extends Component {
   }
 
   render() {
+    const {intlData} = this.props;
+    //    grouping voucher by id
     try {
       var myVoucers = [];
       if (this.props.myVoucers != undefined) {
@@ -75,7 +78,7 @@ class RewordsVouchers extends Component {
                     color: 'white',
                     fontFamily: 'Lato-Medium',
                   }}>
-                  Redeem Voucher
+                  {intlData.messages.redeemVoucher}
                 </Text>
               </View>
               {this.state.toggleAllVoucher ? (
@@ -104,7 +107,7 @@ class RewordsVouchers extends Component {
                     color: 'white',
                     fontFamily: 'Lato-Medium',
                   }}>
-                  My Voucher
+                  {intlData.messages.myVoucher}
                 </Text>
               </View>
               {this.state.toggleMyVoucher ? (
@@ -116,7 +119,9 @@ class RewordsVouchers extends Component {
         {/*Tabs*/}
 
         {this.state.toggleAllVoucher ? <AllVouchers /> : null}
-        {this.state.toggleMyVoucher ? <MyVouchers data={myVoucers} /> : null}
+        {this.state.toggleMyVoucher ? (
+          <MyVouchers intlData={intlData} data={myVoucers} />
+        ) : null}
       </View>
     );
   }
@@ -142,6 +147,7 @@ const styles = StyleSheet.create({
 mapStateToProps = state => ({
   vouchers: state.rewardsReducer.vouchers.dataVoucher,
   myVoucers: state.accountsReducer.myVoucers.myVoucers,
+  intlData: state.intlData,
 });
 
 mapDispatchToProps = dispatch => ({

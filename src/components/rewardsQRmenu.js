@@ -22,7 +22,7 @@ import {compose} from 'redux';
 
 import colorConfig from '../config/colorConfig';
 import appConfig from '../config/appConfig';
-import DeviceBrightness from 'react-native-device-brightness';
+// import DeviceBrightness from 'react-native-device-brightness';
 import awsConfig from '../config/awsConfig';
 import CryptoJS from 'react-native-crypto-js';
 
@@ -35,33 +35,33 @@ class RewardsQRmenu extends Component {
     };
   }
 
-  componentDidMount(): void {
-    const self = this;
-    //  set device brightness to max, for scanning purpose
-    try {
-      DeviceBrightness.getSystemBrightnessLevel().then(function(luminous) {
-        // Get current brightness level
-        // 0 ~ 1
-        self.setState({deviceBrightness: luminous});
-        console.log(luminous);
-      });
+  // componentDidMount(): void {
+  //   const self = this;
+  //   //  set device brightness to max, for scanning purpose
+  //   try {
+  //     DeviceBrightness.getSystemBrightnessLevel().then(function(luminous) {
+  //       // Get current brightness level
+  //       // 0 ~ 1
+  //       self.setState({deviceBrightness: luminous});
+  //       console.log(luminous);
+  //     });
+  //
+  //     DeviceBrightness.setBrightnessLevel(1);
+  //   } catch (e) {
+  //     console.log('unable to set device brightness', e);
+  //   }
+  // }
 
-      DeviceBrightness.setBrightnessLevel(1);
-    } catch (e) {
-      console.log('unable to set device brightness', e);
-    }
-  }
-
-  componentWillUnmount(): void {
-    console.log('unmount dongs');
-    const self = this;
-    //  set device brightness to normal again
-    try {
-      DeviceBrightness.setBrightnessLevel(0.4);
-    } catch (e) {
-      console.log('unable to set device brightness', e);
-    }
-  }
+  // componentWillUnmount(): void {
+  //   console.log('unmount dongs');
+  //   const self = this;
+  //   //  set device brightness to normal again
+  //   try {
+  //     DeviceBrightness.setBrightnessLevel(0.4);
+  //   } catch (e) {
+  //     console.log('unable to set device brightness', e);
+  //   }
+  // }
 
   goBack() {
     Actions.pop();
@@ -76,6 +76,7 @@ class RewardsQRmenu extends Component {
   };
 
   render() {
+    const {intlData} = this.props;
     let qrcode = this.props.qrcode;
     try {
       // Decrypt qrcode
@@ -95,7 +96,7 @@ class RewardsQRmenu extends Component {
               }
               style={styles.btnBackIcon}
             />
-            <Text style={styles.btnBackText}> Back </Text>
+            <Text style={styles.btnBackText}> {intlData.messages.back} </Text>
           </TouchableOpacity>
           <View style={styles.line} />
         </View>
@@ -167,6 +168,7 @@ const styles = StyleSheet.create({
 
 mapStateToProps = state => ({
   qrcode: state.authReducer.authData.qrcode,
+  intlData: state.intlData,
 });
 
 mapDispatchToProps = dispatch => ({

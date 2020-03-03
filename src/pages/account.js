@@ -86,7 +86,6 @@ class Account extends Component {
   // };
 
   _updateLanguage = async lang => {
-    // Alert.alert('x', lang);
     await this.props.dispatch(updateLanguage(lang));
     await this.setState({dialogChangeLanguage: false});
   };
@@ -118,7 +117,7 @@ class Account extends Component {
               textAlign: 'center',
               fontWeight: 'bold',
             }}>
-            Select Language
+            {intlData.messages.selectLanguage}
           </Text>
           <View style={{flexDirection: 'row', justifyContent: 'center'}}>
             <View style={styles.panelQty}>
@@ -140,6 +139,7 @@ class Account extends Component {
   };
 
   render() {
+    const {intlData} = this.props;
     return (
       <View style={{flex: 1}}>
         <ScrollView
@@ -182,7 +182,7 @@ class Account extends Component {
                 fontFamily: 'Lato-Bold',
                 textAlign: 'center',
               }}>
-              LOG OUT
+              {intlData.messages.logout}
             </Text>
           )}
         </TouchableOpacity>

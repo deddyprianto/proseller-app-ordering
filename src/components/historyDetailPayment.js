@@ -12,6 +12,7 @@ import {
   Dimensions,
   TouchableOpacity,
   BackHandler,
+  Platform,
   ScrollView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -20,8 +21,10 @@ import {Actions} from 'react-native-router-flux';
 import colorConfig from '../config/colorConfig';
 import appConfig from '../config/appConfig';
 import CurrencyFormatter from '../helper/CurrencyFormatter';
+import {compose} from 'redux';
+import {connect} from 'react-redux';
 
-export default class HistoryDetailPayment extends Component {
+class HistoryDetailPayment extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -96,7 +99,7 @@ export default class HistoryDetailPayment extends Component {
   };
 
   render() {
-    console.log('this.props.item', this.props.item);
+    const {intlData} = this.props;
     return (
       <View style={styles.container}>
         <View style={{backgroundColor: colorConfig.pageIndex.backgroundColor}}>
@@ -108,7 +111,7 @@ export default class HistoryDetailPayment extends Component {
               }
               style={styles.btnBackIcon}
             />
-            <Text style={styles.btnBackText}> Back </Text>
+            <Text style={styles.btnBackText}> {intlData.messages.back} </Text>
           </TouchableOpacity>
           <View style={styles.line} />
         </View>
@@ -119,12 +122,12 @@ export default class HistoryDetailPayment extends Component {
             </View>
             <View style={styles.detail}>
               <View style={styles.detailItem}>
-                <Text style={styles.desc}>Outlet Name</Text>
+                <Text style={styles.desc}>{intlData.messages.outletName}</Text>
                 <Text style={styles.desc}>{this.props.item.outletName}</Text>
               </View>
 
               <View style={[styles.detailItem]}>
-                <Text style={styles.desc}>Date & Time</Text>
+                <Text style={styles.desc}>{intlData.messages.dateAndTime}</Text>
                 <Text style={styles.desc}>
                   {this.getDate(this.props.item.createdAt)}
                 </Text>
@@ -155,7 +158,7 @@ export default class HistoryDetailPayment extends Component {
 
               <View style={[styles.detailItem, {borderBottomWidth: 0}]}>
                 <Text style={[styles.desc, {fontWeight: 'bold'}]}>
-                  Payment Type
+                  {intlData.messages.paymentType}
                 </Text>
               </View>
 
@@ -189,7 +192,7 @@ export default class HistoryDetailPayment extends Component {
                         fontSize: 15,
                       },
                     ]}>
-                    You got points
+                    {intlData.messages.youGotPoints}
                   </Text>
                   <Text
                     style={[
@@ -217,7 +220,7 @@ export default class HistoryDetailPayment extends Component {
                         fontSize: 15,
                       },
                     ]}>
-                    You got stamps
+                    {intlData.messages.youGotStamps}
                   </Text>
                   <Text
                     style={[
@@ -290,7 +293,9 @@ export default class HistoryDetailPayment extends Component {
           this.props.item.dataPay != null ? (
             <View style={[styles.card, {marginBottom: 40}]}>
               <View style={styles.item}>
-                <Text style={styles.title}>Detail Order</Text>
+                <Text style={styles.title}>
+                  {intlData.messages.detailOrder}
+                </Text>
               </View>
               <View style={styles.detail}>
                 {this.props.item.dataPay.map(item => (
@@ -318,6 +323,21 @@ export default class HistoryDetailPayment extends Component {
     );
   }
 }
+
+mapStateToProps = state => ({
+  intlData: state.intlData,
+});
+
+mapDispatchToProps = dispatch => ({
+  dispatch,
+});
+
+export default compose(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  ),
+)(HistoryDetailPayment);
 
 const styles = StyleSheet.create({
   container: {

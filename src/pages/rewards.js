@@ -35,6 +35,9 @@ class Rewards extends Component {
   _isMounted = false;
   constructor(props) {
     super(props);
+
+    this.interval = null;
+
     this.state = {
       dataRewards: [],
       dataPoint: [],
@@ -47,16 +50,48 @@ class Rewards extends Component {
     };
   }
 
+  setValueInterval = () => {
+    this.interval = setInterval(() => {
+      this.refreshStampsAndPoints();
+    }, 2000);
+  };
+
+  clearValueInterval = () => {
+    clearInterval(this.interval);
+  };
+
   componentDidMount = async () => {
     this._isMounted = true;
-    // this.props.dispatch(refreshToken());
     await this.getDataRewards();
-    // await this.props.dispatch(refreshToken());
+
+    // make event to detect page focus or not
+    const {navigation} = this.props;
+    this.focusListener = navigation.addListener('willFocus', async () => {
+      //  set interval to refresh data stamps and point
+      // this.setValueInterval();
+    });
+
+    this.blurListener = navigation.addListener('didBlur', () => {
+      console.log('BLUR');
+    });
   };
 
   componentWillUnmount(): void {
     this._isMounted = false;
+    try {
+      // this.focusListener.remove();
+      // this.blurListener.remove();
+      clearInterval(this.interval);
+    } catch (e) {}
   }
+
+  refreshStampsAndPoints = async () => {
+    try {
+      console.log('lalalalalal');
+      // await this.props.dispatch(dataPoint());
+      // await this.props.dispatch(getStamps());
+    } catch (e) {}
+  };
 
   getDataRewards = async () => {
     try {
@@ -142,7 +177,7 @@ class Rewards extends Component {
                   style={{
                     width: 100,
                   }}>
-                  <Text style={styles.btn}>Learn More</Text>
+                  <Text style={styles.btn}>{intlData.messages.learnMore}</Text>
                 </TouchableOpacity>
               </View>
             )}

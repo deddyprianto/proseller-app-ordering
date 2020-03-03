@@ -9,12 +9,12 @@ import {
   TouchableOpacity,
   View,
   Modal,
-  CheckBox,
   Platform,
   TextInput,
   KeyboardAvoidingView,
   Alert,
   ActivityIndicator,
+  FlatList,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -22,15 +22,29 @@ import colorConfig from '../../config/colorConfig';
 import appConfig from '../../config/appConfig';
 import ProgressiveImage from '../../components/helper/ProgressiveImage';
 import CurrencyFormatter from '../../helper/CurrencyFormatter';
-import {Dialog, Paragraph} from 'react-native-paper';
+import {Dialog, Checkbox, RadioButton} from 'react-native-paper';
+import {isEmptyArray, isEmptyObject} from '../../helper/CheckEmpty';
 
 export default class ModalOrder extends Component {
   constructor(props) {
     super(props);
+
+    // check if product have modifiers
+    let productModifiers = [];
+    let product = this.props.product;
+    if (!isEmptyObject(product.product)) {
+      if (!isEmptyArray(product.product.productModifiers)) {
+        productModifiers = product.product.productModifiers;
+      }
+    }
+
     this.state = {
       screenWidth: Dimensions.get('window').width,
       screenHeight: Dimensions.get('window').height,
       modalQty: false,
+      selectedCategoryModifier: 0,
+      productsModifier: productModifiers,
+      selectedModifier: {},
     };
   }
 
@@ -73,15 +87,36 @@ export default class ModalOrder extends Component {
 
   calculateSubTotalModal = () => {
     try {
+      let productModifiers = this.props.product.product.productModifiers;
       let subTotal = 0;
+      let totalModifier = 0;
       if (
         this.props.product.product.retailPrice != undefined &&
         this.props.product.product.retailPrice != '-'
       ) {
         subTotal = this.props.product.product.retailPrice;
       }
-      subTotal = parseFloat(subTotal * this.props.qtyItem).toFixed(2);
-      return subTotal;
+
+      subTotal = parseFloat(subTotal);
+
+      // if product have modifier, calculate modifier price
+      productModifiers.map(group => {
+        if (group.postToServer == true) {
+          group.modifier.details.map(detail => {
+            if (detail.quantity != undefined && detail.quantity > 0) {
+              totalModifier += parseFloat(
+                detail.quantity * detail.productPrice,
+              );
+            }
+          });
+        }
+      });
+      // add total item + total modifier price
+      subTotal += totalModifier;
+      // calculate subtotal with quantity item
+      subTotal = subTotal * this.props.qtyItem;
+
+      return subTotal.toFixed(2);
     } catch (e) {
       return 0;
     }
@@ -129,40 +164,225 @@ export default class ModalOrder extends Component {
     );
   };
 
+  addQty = () => {
+    let selectedModifier = this.state.selectedModifier;
+    if (selectedModifier.quantity == undefined) selectedModifier.quantity = 1;
+    selectedModifier.quantity += 1;
+    this.setState({selectedModifier});
+  };
+
+  minQty = () => {
+    let selectedModifier = this.state.selectedModifier;
+    if (
+      selectedModifier.quantity > 0 &&
+      selectedModifier.quantity != undefined
+    ) {
+      selectedModifier.quantity -= 1;
+      this.setState({selectedModifier});
+    }
+  };
+
   renderDialogQuantityModifier = () => {
     return (
       <Dialog
-        dismissable={false}
+        dismissable={true}
         visible={this.state.modalQty}
-        onDismiss={() => this.setState({modalQty: false})}>
+        onDismiss={() => {
+          let selectedModifier = this.state.selectedModifier;
+          selectedModifier.quantity = selectedModifier.quantityTemp;
+          this.setState({modalQty: false, selectedModifier});
+        }}>
         <Dialog.Content>
           <Text
             style={{
               textAlign: 'center',
+              fontWeight: 'bold',
+              fontSize: 16,
+              color: colorConfig.pageIndex.grayColor,
+              marginBottom: 35,
+              fontFamily: 'Lato-Bold',
             }}>
-            Quantity
+            {this.state.selectedModifier.name == undefined
+              ? 1
+              : this.state.selectedModifier.name}
           </Text>
           <View style={{flexDirection: 'row', justifyContent: 'center'}}>
             <View style={styles.panelQty}>
               <TouchableOpacity
-                onPress={this.props.minQty}
+                onPress={this.minQty}
                 style={styles.buttonQtyModifier}>
                 <Text style={styles.btnIncreaseDecrease}>-</Text>
               </TouchableOpacity>
-              <Text style={styles.descQtyModifier}>{this.props.qtyItem}</Text>
+              <Text style={styles.descQtyModifier}>
+                {this.state.selectedModifier.quantity == undefined
+                  ? 1
+                  : this.state.selectedModifier.quantity}
+              </Text>
               <TouchableOpacity
-                onPress={this.props.addQty}
+                onPress={this.addQty}
                 style={styles.buttonQtyModifier}>
                 <Text style={styles.btnIncreaseDecrease}>+</Text>
               </TouchableOpacity>
             </View>
           </View>
+          <TouchableOpacity
+            onPress={this.addModifier}
+            style={styles.btnAddModifier}>
+            <Text style={styles.textBtnAddModifier}>Add</Text>
+          </TouchableOpacity>
         </Dialog.Content>
       </Dialog>
     );
   };
 
+  updateSelectedCategory = (item, idx) => {
+    this.setState({selectedCategoryModifier: idx});
+  };
+
+  renderCategoryModifier = (item, idx) => {
+    return (
+      <TouchableOpacity
+        onPress={() => this.updateSelectedCategory(item, idx)}
+        style={{padding: 10, flexDirection: 'row'}}>
+        <View
+          style={[
+            this.state.selectedCategoryModifier == idx
+              ? styles.categoryActive
+              : styles.categoryNonActive,
+          ]}>
+          <Text style={{padding: 5, fontFamily: 'Lato-Medium', color: 'white'}}>
+            {item.modifierName}
+          </Text>
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
+  openModalModifierQty = (item, indexDetails) => {
+    item.quantityTemp = item.quantity;
+    this.setState({modalQty: true, selectedModifier: item});
+  };
+
+  addModifier = async () => {
+    let selectedModifier = JSON.stringify(this.state.selectedModifier);
+    selectedModifier = JSON.parse(selectedModifier);
+    let productModifiers = this.props.product.product.productModifiers;
+    // find index group modifier
+    let indexModifier = productModifiers.findIndex(
+      item => item.modifierID == selectedModifier.modifierID,
+    );
+    // find index modifier item
+    let indexDetails = productModifiers[
+      indexModifier
+    ].modifier.details.findIndex(item => item.id == selectedModifier.id);
+
+    // mark modifier group that has been selected
+    this.props.product.product.productModifiers[
+      indexModifier
+    ].postToServer = true;
+
+    // remove quantity ( IF OPTION IS RADIO BUTTON )
+    // await this.props.product.product.productModifiers[
+    //   indexModifier
+    // ].modifier.details.map(item => {
+    //   delete item.quantity;
+    // });
+
+    // add quantity to details selected props
+    this.props.product.product.productModifiers[indexModifier].modifier.details[
+      indexDetails
+    ].quantity =
+      selectedModifier.quantity == undefined ? 1 : selectedModifier.quantity;
+
+    this.setState({modalQty: false});
+  };
+
+  findExistModifier = item => {
+    try {
+      // FIND PRODUCT ON LOCAL PROPS
+      let indexModifier = this.state.selectedCategoryModifier;
+      let data = this.props.product.product.productModifiers[indexModifier];
+      let find = data.modifier.details.find(
+        data => data.productID == item.productID && data.quantity > 0,
+      );
+
+      // if product exist
+      if (find != undefined) return true;
+      else return false;
+    } catch (e) {
+      return false;
+    }
+  };
+
+  renderItemModifier = (item, idx, modifier) => {
+    return (
+      <TouchableOpacity
+        onPress={() => this.openModalModifierQty(item, idx)}
+        style={styles.detailOptionsModal}>
+        {modifier.max == 1 && modifier.min == 1 ? (
+          <RadioButton
+            value={item}
+            status={this.findExistModifier(item) ? 'checked' : 'unchecked'}
+            onPress={() => {
+              this.openModalModifierQty(item, idx);
+            }}
+          />
+        ) : (
+          <Checkbox
+            status={this.findExistModifier(item) ? 'checked' : 'unchecked'}
+            onPress={() => {
+              this.openModalModifierQty(item, idx);
+            }}
+            color={colorConfig.store.defaultColor}
+          />
+        )}
+        <Text style={{marginTop: 5, color: colorConfig.store.title}}>
+          <Text
+            style={{color: colorConfig.store.defaultColor, fontWeight: 'bold'}}>
+            {item.quantity != undefined && item.quantity > 0
+              ? `${item.quantity}x `
+              : null}
+          </Text>
+          {item.name}
+        </Text>
+        <Text
+          style={{
+            marginTop: 5,
+            position: 'absolute',
+            right: 3,
+            color: colorConfig.store.title,
+          }}>
+          {' '}
+          {CurrencyFormatter(item.productPrice)}{' '}
+        </Text>
+      </TouchableOpacity>
+    );
+  };
+
+  renderTitleModifier = item => {
+    try {
+      if (item.modifier.max != 0 && item.modifier.min != 0) {
+        return `${item.modifierName}, Pick ${item.modifier.min}, max ${
+          item.modifier.max
+        }`;
+      }
+    } catch (e) {
+      return `${item.modifierName}`;
+    }
+    return `${item.modifierName}`;
+  };
+
   render() {
+    // index category active
+    let {selectedCategoryModifier} = this.state;
+    let productModifiers = [];
+    let product = this.props.product;
+    if (!isEmptyObject(product.product)) {
+      if (!isEmptyArray(product.product.productModifiers)) {
+        productModifiers = product.product.productModifiers;
+      }
+    }
+    console.log(productModifiers, 'productModifiers');
     return (
       <Modal
         animationType="slide"
@@ -215,46 +435,44 @@ export default class ModalOrder extends Component {
                 </Text>
               </View>
             </View>
-            <View style={styles.cardModal}>
-              <Text style={styles.titleModifierModal}>
-                Flavour, pick 1, max 3
-              </Text>
-              <View style={styles.detailOptionsModal}>
-                <CheckBox
-                  value={this.state.checked}
-                  onValueChange={() =>
-                    this.setState({
-                      checked: !this.state.checked,
-                      modalQty: true,
-                    })
-                  }
-                />
-                <Text style={{marginTop: 5}}> Sayur</Text>
-                <Text style={{marginTop: 5, position: 'absolute', right: 3}}>
-                  {' '}
-                  0
-                </Text>
-              </View>
+            {/* tab category modifier */}
+            <View style={styles.cardCategoryModifier}>
+              <FlatList
+                horizontal={true}
+                data={productModifiers}
+                extraData={this.props}
+                renderItem={({item, index}) => {
+                  return this.renderCategoryModifier(item, index);
+                }}
+                keyExtractor={(item, index) => index.toString()}
+              />
             </View>
+            {/* tab category modifier */}
 
-            {/*<View style={styles.cardModal}>*/}
-            {/*  <Text style={styles.titleModifierModal}>Drink, pick 1</Text>*/}
-            {/*  <View style={styles.detailOptionsModal} />*/}
-            {/*  <View style={styles.detailOptionsModal}>*/}
-            {/*    <RadioButton*/}
-            {/*      value="first"*/}
-            {/*      status={'checked'}*/}
-            {/*      onPress={() => {*/}
-            {/*        // this.setState({checked: 'first'});*/}
-            {/*      }}*/}
-            {/*    />*/}
-            {/*    <Text style={{marginTop: 5}}> Sayur</Text>*/}
-            {/*    <Text style={{marginTop: 5, position: 'absolute', right: 3}}>*/}
-            {/*      {' '}*/}
-            {/*      0*/}
-            {/*    </Text>*/}
-            {/*  </View>*/}
-            {/*</View>*/}
+            {!isEmptyObject(productModifiers) ? (
+              <View style={styles.cardModal}>
+                <Text style={styles.titleModifierModal}>
+                  {this.renderTitleModifier(
+                    productModifiers[selectedCategoryModifier],
+                  )}
+                </Text>
+                <FlatList
+                  data={
+                    productModifiers[selectedCategoryModifier].modifier.details
+                  }
+                  extraData={this.props}
+                  renderItem={({item, index}) => {
+                    return this.renderItemModifier(
+                      item,
+                      index,
+                      productModifiers[selectedCategoryModifier],
+                    );
+                  }}
+                  keyExtractor={(item, index) => index.toString()}
+                />
+              </View>
+            ) : null}
+
             <View style={styles.cardModal}>
               <Text style={styles.titleModifierModal}>Quantity</Text>
               <View style={{flexDirection: 'row', justifyContent: 'center'}}>
@@ -399,6 +617,12 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     backgroundColor: colorConfig.pageIndex.backgroundColor,
   },
+  cardCategoryModifier: {
+    backgroundColor: colorConfig.pageIndex.backgroundColor,
+    flexDirection: 'row',
+    width: Dimensions.get('window').width,
+    marginBottom: 5,
+  },
   item: {
     alignItems: 'center',
     margin: 10,
@@ -442,7 +666,7 @@ const styles = StyleSheet.create({
     resizeMode: 'cover',
   },
   imageModal: {
-    height: Dimensions.get('window').height / 3,
+    height: Dimensions.get('window').height / 3 - 20,
     resizeMode: 'stretch',
     width: '100%',
   },
@@ -456,7 +680,7 @@ const styles = StyleSheet.create({
   },
   detailItemModal: {
     marginTop: 20,
-    paddingBottom: 15,
+    paddingBottom: 10,
     marginBottom: 10,
   },
   productPrice: {
@@ -524,8 +748,8 @@ const styles = StyleSheet.create({
   buttonQtyModifier: {
     justifyContent: 'center',
     backgroundColor: colorConfig.store.defaultColor,
-    width: 33,
-    height: 33,
+    width: 37,
+    height: 37,
     borderRadius: 10,
     borderColor: colorConfig.store.defaultColor,
   },
@@ -565,6 +789,21 @@ const styles = StyleSheet.create({
     shadowRadius: 7.49,
     elevation: 12,
   },
+  btnAddModifier: {
+    fontFamily: 'Lato-Bold',
+    borderRadius: 10,
+    padding: 13,
+    marginHorizontal: 55,
+    marginTop: 20,
+    backgroundColor: colorConfig.store.defaultColor,
+  },
+  textBtnAddModifier: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontFamily: 'Lato-Bold',
+    fontSize: 15,
+    textAlign: 'center',
+  },
   btnAddBasketModal: {
     fontFamily: 'Lato-Bold',
     borderRadius: 10,
@@ -578,5 +817,17 @@ const styles = StyleSheet.create({
     fontFamily: 'Lato-Bold',
     fontSize: 17,
     textAlign: 'center',
+  },
+  categoryActive: {
+    justifyContent: 'center',
+    backgroundColor: colorConfig.store.defaultColor,
+    padding: 2,
+    borderRadius: 20,
+  },
+  categoryNonActive: {
+    justifyContent: 'center',
+    backgroundColor: colorConfig.pageIndex.inactiveTintColor,
+    padding: 2,
+    borderRadius: 20,
   },
 });

@@ -21,13 +21,15 @@ export default class StoreNearYou extends Component {
   }
 
   storeDetailStores = item => {
-    Actions.storeDetailStores({item});
+    const {intlData} = this.props;
+    Actions.storeDetailStores({item, intlData});
   };
 
   render() {
+    const {intlData} = this.props;
     return (
       <View style={styles.stores}>
-        <Text style={styles.stores}>Stores Near You</Text>
+        <Text style={styles.stores}>{intlData.messages.outletsNearYou}</Text>
         <View style={{justifyContent: 'space-between', flexDirection: 'row'}}>
           {this.props.dataStoresNear.slice(0, 3).map((item, key) => (
             <View key={key}>

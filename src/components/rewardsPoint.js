@@ -16,6 +16,7 @@ class RewardsPoint extends Component {
   }
 
   render() {
+    const {intlData} = this.props;
     return (
       <View
         style={{
@@ -30,7 +31,7 @@ class RewardsPoint extends Component {
             fontSize: 16,
             fontWeight: 'bold',
           }}>
-          My Points
+          {intlData.messages.myPoints}
         </Text>
         <Text
           style={{
@@ -48,6 +49,7 @@ class RewardsPoint extends Component {
 
 mapStateToProps = state => ({
   totalPoint: state.rewardsReducer.dataPoint.totalPoint,
+  intlData: state.intlData,
 });
 
 mapDispatchToProps = dispatch => ({

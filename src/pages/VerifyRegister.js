@@ -160,6 +160,7 @@ class VerifyRegister extends Component {
   };
 
   render() {
+    const {intlData} = this.props;
     return (
       <View style={styles.backgroundImage}>
         {this.state.loading && <Loader />}
@@ -181,13 +182,13 @@ class VerifyRegister extends Component {
                 width: '80%',
                 fontFamily: 'Lato-Medium',
               }}>
-              You will receive 4-digit verification code via
+              {intlData.messages.willReceive}
               {this.props.fromMethod == 'mobile' ? (
                 <Text> SMS </Text>
               ) : (
                 <Text> Email </Text>
               )}
-              at :
+              {intlData.messages.at} :
             </Text>
             {this.props.fromMethod == 'mobile' ? (
               <Text
@@ -233,7 +234,7 @@ class VerifyRegister extends Component {
                       fontWeight: 'bold',
                       fontFamily: 'Lato-Medium',
                     }}>
-                    Continue
+                    {intlData.messages.continue}
                   </Text>
                 </TouchableHighlight>
               ) : (
@@ -252,7 +253,7 @@ class VerifyRegister extends Component {
                       fontWeight: 'bold',
                       fontFamily: 'Lato-Medium',
                     }}>
-                    Continue
+                    {intlData.messages.continue}
                   </Text>
                 </TouchableHighlight>
               )}
@@ -265,6 +266,7 @@ class VerifyRegister extends Component {
 }
 mapStateToProps = state => ({
   status: state.accountsReducer.accountExist.status,
+  intlData: state.intlData,
 });
 
 mapDispatchToProps = dispatch => ({

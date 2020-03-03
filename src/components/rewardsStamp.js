@@ -59,9 +59,12 @@ class RewardsStamp extends Component {
     // setTimeout(() => {
     //   that.getItemStamp();
     // }, 10000);
+
+    const {intlData} = this.props;
+
     return (
       <View style={styles.container}>
-        <Text style={styles.title}>Stamp Card</Text>
+        <Text style={styles.title}>{intlData.messages.stampsCard}</Text>
         <View style={styles.card}>
           {this.props.isLoading ? (
             <StampsPlaceHolder />
@@ -163,6 +166,7 @@ const styles = StyleSheet.create({
 
 mapStateToProps = state => ({
   dataStamps: state.rewardsReducer.getStamps,
+  intlData: state.intlData,
 });
 
 mapDispatchToProps = dispatch => ({

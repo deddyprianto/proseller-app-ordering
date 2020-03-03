@@ -259,6 +259,7 @@ class SignInEmail extends Component {
   };
 
   render() {
+    const {intlData} = this.props;
     return (
       <View style={styles.backgroundImage}>
         {this.state.loading && <Loader />}
@@ -273,7 +274,7 @@ class SignInEmail extends Component {
                   fontWeight: 'bold',
                   fontFamily: 'Lato-Medium',
                 }}>
-                Sign In to {this.props.email}
+                {intlData.messages.signIn} {intlData.messages.to} {this.props.email}
               </Text>
             </View>
             {/*Tab OTP and Password*/}
@@ -310,7 +311,7 @@ class SignInEmail extends Component {
                     fontWeight: 'bold',
                     fontFamily: 'Lato-Medium',
                   }}>
-                  Use Email OTP
+                  {intlData.messages.use} Email OTP
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
@@ -337,7 +338,7 @@ class SignInEmail extends Component {
                     fontWeight: 'bold',
                     fontFamily: 'Lato-Medium',
                   }}>
-                  Use Password
+                  {intlData.messages.use} {intlData.messages.password}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -350,7 +351,7 @@ class SignInEmail extends Component {
                     marginVertical: 10,
                     color: colorConfig.pageIndex.grayColor,
                   }}>
-                  Enter 4-digit OTP
+                  {intlData.messages.enter} 4-digit OTP
                 </Text>
                 <View
                   style={{
@@ -398,7 +399,7 @@ class SignInEmail extends Component {
                         fontWeight: 'bold',
                         fontFamily: 'Lato-Medium',
                       }}>
-                      Send OTP
+                      {intlData.messages.send} OTP
                     </Text>
                   </TouchableHighlight>
                 </View>
@@ -413,7 +414,7 @@ class SignInEmail extends Component {
                         color: colorConfig.pageIndex.grayColor,
                         fontSize: 16,
                       }}>
-                      Resend after 00:
+                      {intlData.messages.resendAfter} 00:
                       {this.zeroPad(this.state.timer, 2)}
                     </Text>
                   </View>
@@ -427,7 +428,7 @@ class SignInEmail extends Component {
                     marginVertical: 10,
                     color: colorConfig.pageIndex.grayColor,
                   }}>
-                  Enter Password
+                  {intlData.messages.enter} {intlData.messages.password}
                 </Text>
                 <View
                   style={{
@@ -499,7 +500,7 @@ class SignInEmail extends Component {
                       fontWeight: 'bold',
                       fontFamily: 'Lato-Medium',
                     }}>
-                    Submit
+                    {intlData.messages.submit}
                   </Text>
                 </TouchableHighlight>
               ) : null}
@@ -530,7 +531,7 @@ class SignInEmail extends Component {
                       fontWeight: 'bold',
                       fontFamily: 'Lato-Medium',
                     }}>
-                    Submit
+                    {intlData.messages.submit}
                   </Text>
                 </TouchableHighlight>
               ) : null}
@@ -546,6 +547,7 @@ mapStateToProps = state => ({
   status: state.accountsReducer.accountExist.status,
   deviceID: state.userReducer.deviceUserInfo,
   attempt: state.authReducer.attemptSendOTP.attempt,
+  intlData: state.intlData,
 });
 
 mapDispatchToProps = dispatch => ({

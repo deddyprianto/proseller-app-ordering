@@ -11,6 +11,7 @@ import {
   StyleSheet,
   Dimensions,
   TouchableOpacity,
+  Platform,
   Image,
   ScrollView,
   BackHandler,
@@ -106,6 +107,7 @@ class MyVouchers extends Component {
   };
 
   render() {
+    const {intlData} = this.props;
     const myVoucers = this.props.data;
     return (
       <ScrollView
@@ -127,7 +129,7 @@ class MyVouchers extends Component {
                   textAlign: 'center',
                   color: colorConfig.pageIndex.grayColor,
                 }}>
-                Your vouchers is empty
+                {intlData.messages.emptyVoucher}
               </Text>
             </View>
           ) : (
@@ -139,21 +141,6 @@ class MyVouchers extends Component {
                     <View
                       style={styles.voucherItem}
                       onPress={() => this.pageDetailVoucher(item)}>
-                      {/*<View*/}
-                      {/*  style={{*/}
-                      {/*    backgroundColor: 'transparent',*/}
-                      {/*    borderWidth: 1,*/}
-                      {/*    overflow: 'hidden',*/}
-                      {/*    borderColor: colorConfig.store.defaultColor,*/}
-                      {/*    width: 40,*/}
-                      {/*    borderTopStartRadius: 50,*/}
-                      {/*    height: 40,*/}
-                      {/*    position: 'absolute',*/}
-                      {/*    top: Dimensions.get('window').width / 4 - 20,*/}
-                      {/*    left: -20,*/}
-                      {/*    zIndex: 2,*/}
-                      {/*  }}*/}
-                      {/*/>*/}
                       <View style={{alignItems: 'center'}}>
                         <Image
                           style={
@@ -191,30 +178,6 @@ class MyVouchers extends Component {
                             {item['totalRedeem'] + 'x'}
                           </Text>
                         </View>
-                        {/* <View
-                          style={{
-                            position: 'absolute',
-                            right: 0,
-                            top: 0,
-                            backgroundColor: 'rgba(2, 168, 80, 0.8)',
-                            height: 30,
-                            // width: this.state.screenWidth / 2 - 11,
-                            borderTopRightRadius: 9,
-                            alignItems: 'flex-end',
-                            justifyContent: 'center',
-                            paddingLeft: 10,
-                            paddingRight: 10,
-                          }}>
-                          <Text
-                            style={{
-                              color: colorConfig.pageIndex.backgroundColor,
-                              fontSize: 16,
-                              fontWeight: 'bold',
-                              textAlign: 'right',
-                            }}>
-                            {item['redeemValue'] + ' Points'}
-                          </Text>
-                        </View> */}
                       </View>
                       <View style={styles.voucherDetail}>
                         <View style={styles.status}>
@@ -251,11 +214,11 @@ class MyVouchers extends Component {
                           />
                           {item['validity']['allDays'] ? (
                             <Text style={styles.descVoucher}>
-                              This voucher is valid in all days.
+                              {intlData.messages.voucherValid}
                             </Text>
                           ) : (
                             <Text style={styles.descVoucherTime}>
-                              This voucher is valid on
+                              {intlData.messages.voucherValidOn}
                               {item['validity']['activeWeekDays']
                                 .filter(items => items.active == true)
                                 .map(data => (
@@ -378,8 +341,11 @@ const styles = StyleSheet.create({
   },
 });
 
+mapStateToProps = state => ({
+  intlData: state.intlData,
+});
+
 mapDispatchToProps = dispatch => ({
   dispatch,
 });
-
 export default compose(connect(mapDispatchToProps))(MyVouchers);

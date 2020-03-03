@@ -6,7 +6,7 @@ import {Container} from 'native-base';
 import {Dimensions, PermissionsAndroid} from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
-
+import {Platform} from 'react-native';
 import Store from './store';
 import History from './history';
 import Rewards from './rewards';
@@ -21,6 +21,7 @@ const AppTabNavigator = createMaterialBottomTabNavigator(
     Store: {
       screen: Store,
       navigationOptions: {
+        title: 'Outlet',
         tabBarIcon: ({tintColor, focused}) => (
           <Icon
             size={28}
@@ -33,6 +34,7 @@ const AppTabNavigator = createMaterialBottomTabNavigator(
     History: {
       screen: History,
       navigationOptions: {
+        title: 'History',
         tabBarIcon: ({tintColor, focused}) => (
           <Icon
             size={28}
@@ -45,6 +47,7 @@ const AppTabNavigator = createMaterialBottomTabNavigator(
     Rewards: {
       screen: Rewards,
       navigationOptions: {
+        title: 'Rewards',
         tabBarIcon: ({tintColor, focused}) => (
           <Icon
             size={28}
@@ -57,6 +60,7 @@ const AppTabNavigator = createMaterialBottomTabNavigator(
     Inbox: {
       screen: Inbox,
       navigationOptions: {
+        title: 'Inbox',
         tabBarIcon: ({tintColor, focused}) => (
           <Icon
             size={28}
@@ -69,6 +73,7 @@ const AppTabNavigator = createMaterialBottomTabNavigator(
     Account: {
       screen: Account,
       navigationOptions: {
+        title: 'Profile',
         tabBarIcon: ({tintColor, focused}) => (
           <Icon
             size={28}
@@ -176,6 +181,7 @@ class PageIndex extends Component {
 
 mapStateToProps = state => ({
   dataInboxNoRead: state.inboxReducer.dataInbox.broadcasNoRead,
+  intlData: state.intlData,
 });
 
 mapDispatchToProps = dispatch => ({

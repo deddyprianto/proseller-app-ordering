@@ -12,6 +12,7 @@ import {
   Dimensions,
   TouchableOpacity,
   Image,
+  Platform,
   ScrollView,
   Alert,
   BackHandler,
@@ -152,7 +153,9 @@ class PaymentDetail extends Component {
   };
 
   myVouchers = () => {
+    const {intlData} = this.props;
     var myVoucers = [];
+
     try {
       if (this.props.myVoucers != undefined) {
         _.forEach(
@@ -187,6 +190,7 @@ class PaymentDetail extends Component {
       }
 
       Actions.paymentAddVoucers({
+        intlData,
         data: myVoucers,
         pembayaran: this.props.pembayaran,
         setDataVoucher: this.setDataVoucher,
@@ -201,7 +205,9 @@ class PaymentDetail extends Component {
   };
 
   myPoint = () => {
+    const {intlData} = this.props;
     Actions.paymentAddPoint({
+      intlData,
       data: this.props.totalPoint,
       pembayaran: this.props.pembayaran,
       valueSet: this.state.moneyPoint == undefined ? 0 : this.state.moneyPoint,
@@ -218,7 +224,7 @@ class PaymentDetail extends Component {
       pembayaran.outletName = this.props.pembayaran.storeName;
       pembayaran.referenceNo = this.props.pembayaran.referenceNo;
       pembayaran.outletId = this.props.pembayaran.storeId;
-      pembayaran.paymentType = 'Cash';
+      pembayaran.paymentType = 'CASH';
       pembayaran.dataPay = this.props.pembayaran.dataPay;
       pembayaran.void = false;
 
@@ -318,40 +324,57 @@ class PaymentDetail extends Component {
     }
   };
 
-  renderUsePoint = () => [
-    <View
-      style={{
-        marginBottom: 50,
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        flexDirection: 'row',
-      }}>
-      <Text>Use Point</Text>
-      {this.state.cancelPoint == false && this.state.addPoint != undefined ? (
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}>
-          <TouchableOpacity
-            style={styles.btnMethodCencel}
-            onPress={() => this.cencelPoint()}>
-            <Icon
-              size={18}
-              name={
-                Platform.OS === 'ios'
-                  ? 'ios-close-circle-outline'
-                  : 'md-close-circle-outline'
-              }
-              style={{color: colorConfig.store.colorError}}
-            />
-          </TouchableOpacity>
+  renderUsePoint = () => {
+    const {intlData} = this.props;
+    return (
+      <View
+        style={{
+          marginBottom: 50,
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexDirection: 'row',
+        }}>
+        <Text>{intlData.messages.usePoints}</Text>
+        {this.state.cancelPoint == false && this.state.addPoint != undefined ? (
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}>
+            <TouchableOpacity
+              style={styles.btnMethodCencel}
+              onPress={() => this.cencelPoint()}>
+              <Icon
+                size={18}
+                name={
+                  Platform.OS === 'ios'
+                    ? 'ios-close-circle-outline'
+                    : 'md-close-circle-outline'
+                }
+                style={{color: colorConfig.store.colorError}}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.btnMethod} onPress={this.myPoint}>
+              {/*<Image*/}
+              {/*  style={{height: 18, width: 23, marginRight: 5}}*/}
+              {/*  source={require('../assets/img/ticket.png')}*/}
+              {/*/>*/}
+              <Icon
+                size={20}
+                name={Platform.OS === 'ios' ? 'ios-pricetags' : 'md-pricetags'}
+                style={{
+                  color: colorConfig.store.textWhite,
+                  marginRight: 8,
+                }}
+              />
+              <Text style={styles.descMethod}>
+                {'- ' + this.state.addPoint + ' Point'}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
           <TouchableOpacity style={styles.btnMethod} onPress={this.myPoint}>
-            {/*<Image*/}
-            {/*  style={{height: 18, width: 23, marginRight: 5}}*/}
-            {/*  source={require('../assets/img/ticket.png')}*/}
-            {/*/>*/}
             <Icon
               size={20}
               name={Platform.OS === 'ios' ? 'ios-pricetags' : 'md-pricetags'}
@@ -361,28 +384,16 @@ class PaymentDetail extends Component {
               }}
             />
             <Text style={styles.descMethod}>
-              {'- ' + this.state.addPoint + ' Point'}
+              {intlData.messages.pickPoints}
             </Text>
           </TouchableOpacity>
-        </View>
-      ) : (
-        <TouchableOpacity style={styles.btnMethod} onPress={this.myPoint}>
-          <Icon
-            size={20}
-            name={Platform.OS === 'ios' ? 'ios-pricetags' : 'md-pricetags'}
-            style={{
-              color: colorConfig.store.textWhite,
-              marginRight: 8,
-            }}
-          />
-          <Text style={styles.descMethod}>Pick Points</Text>
-        </TouchableOpacity>
-      )}
-    </View>,
-  ];
+        )}
+      </View>
+    );
+  };
 
   render() {
-    console.log('DATA PEMBAYARAN ', this.props.pembayaran);
+    const {intlData} = this.props;
     const iconSlider = () => (
       <Icon
         size={25}
@@ -430,7 +441,7 @@ class PaymentDetail extends Component {
                   fontSize: 20,
                   fontWeight: 'bold',
                 }}>
-                Confirm Payment
+                {intlData.messages.confirmPayment}
               </Text>
             </View>
           </View>
@@ -565,7 +576,7 @@ class PaymentDetail extends Component {
                         fontSize: 17,
                         color: colorConfig.pageIndex.activeTintColor,
                       }}>
-                      Detail
+                      {intlData.messages.detail}
                     </Text>
                     <Icon
                       size={18}
@@ -590,7 +601,7 @@ class PaymentDetail extends Component {
                 justifyContent: 'space-between',
                 flexDirection: 'row',
               }}>
-              <Text>Use Vouchers</Text>
+              <Text>{intlData.messages.useVoucher}</Text>
               {this.state.cancelVoucher == false &&
               this.state.dataVoucer != undefined ? (
                 <View
@@ -644,7 +655,9 @@ class PaymentDetail extends Component {
                       marginRight: 8,
                     }}
                   />
-                  <Text style={styles.descMethod}>Select Vouchers</Text>
+                  <Text style={styles.descMethod}>
+                    {intlData.messages.selectVouchers}
+                  </Text>
                 </TouchableOpacity>
               )}
             </View>
@@ -667,10 +680,7 @@ class PaymentDetail extends Component {
               titleFontSize={20}
               shouldResetAfterSuccess={this.state.failedPay}
               railBackgroundColor={colorConfig.pageIndex.activeTintColor}
-              title={
-                'Pay ' + CurrencyFormatter(this.state.totalBayar)
-                // Number(this.state.totalBayar.toFixed(3))
-              }
+              title={`${intlData.messages.pay} ${CurrencyFormatter(this.state.totalBayar)}`}
               onSwipeSuccess={this.onSlideRight}
             />
           </View>
@@ -811,6 +821,7 @@ mapStateToProps = state => ({
   totalPoint: state.rewardsReducer.dataPoint.totalPoint,
   recentTransaction: state.rewardsReducer.dataPoint.recentTransaction,
   dataStamps: state.rewardsReducer.getStamps,
+  intlData: state.intlData,
 });
 
 mapDispatchToProps = dispatch => ({

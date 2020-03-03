@@ -249,7 +249,7 @@ class VerifyOtpAfterRegisterEmail extends Component {
   };
 
   render() {
-    console.log(this.props.password, 'this.props.password');
+    const {intlData} = this.props;
     return (
       <View style={styles.backgroundImage}>
         {this.state.loading && <Loader />}
@@ -264,7 +264,7 @@ class VerifyOtpAfterRegisterEmail extends Component {
                   fontWeight: 'bold',
                   fontFamily: 'Lato-Medium',
                 }}>
-                Sign In to {this.props.email}
+                {intlData.messages.signIn} {intlData.messages.to} {this.props.email}
               </Text>
             </View>
 
@@ -276,7 +276,7 @@ class VerifyOtpAfterRegisterEmail extends Component {
                     marginVertical: 10,
                     color: colorConfig.pageIndex.grayColor,
                   }}>
-                  Enter 4-digit OTP
+                  {intlData.messages.enter} 4-digit OTP
                 </Text>
                 <View
                   style={{
@@ -320,7 +320,7 @@ class VerifyOtpAfterRegisterEmail extends Component {
                         fontWeight: 'bold',
                         fontFamily: 'Lato-Medium',
                       }}>
-                      Resend OTP
+                      {intlData.messages.resend} OTP
                     </Text>
                   </TouchableHighlight>
                 </View>
@@ -332,7 +332,7 @@ class VerifyOtpAfterRegisterEmail extends Component {
                         color: colorConfig.pageIndex.grayColor,
                         fontSize: 16,
                       }}>
-                      Resend after 00:{this.zeroPad(this.state.timer, 2)}
+                      {intlData.messages.resendAfter} 00:{this.zeroPad(this.state.timer, 2)}
                     </Text>
                   </View>
                 ) : null}
@@ -364,7 +364,7 @@ class VerifyOtpAfterRegisterEmail extends Component {
                     fontWeight: 'bold',
                     fontFamily: 'Lato-Medium',
                   }}>
-                  Submit
+                  {intlData.messages.submit}
                 </Text>
               </TouchableHighlight>
             </View>
@@ -378,6 +378,7 @@ mapStateToProps = state => ({
   status: state.accountsReducer.accountExist.status,
   deviceID: state.userReducer.deviceUserInfo,
   attempt: state.authReducer.attemptSendOTP.attempt,
+  intlData: state.intlData,
 });
 
 mapDispatchToProps = dispatch => ({

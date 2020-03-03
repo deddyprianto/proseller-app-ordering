@@ -6,6 +6,7 @@ import {
   Dimensions,
   TouchableOpacity,
   Image,
+  Platform,
   ScrollView,
   RefreshControl,
   FlatList,
@@ -133,6 +134,7 @@ class HistoryPayment extends Component {
   };
 
   render() {
+    const {intlData} = this.props;
     return (
       <>
         {this.props.pointTransaction == undefined ||
@@ -146,7 +148,7 @@ class HistoryPayment extends Component {
             }>
             <View style={styles.component}>
               <Text style={styles.empty}>
-                Sorry, there is no transaction history :(
+                {intlData.messages.noTransaction} :(
               </Text>
             </View>
           </ScrollView>
@@ -174,7 +176,7 @@ class HistoryPayment extends Component {
                             <Text style={{color: colorConfig.store.title}}>
                               x{' '}
                             </Text>
-                            {item.point + ' points'}
+                            {item.point + intlData.messages.point}
                           </Text>
                         ) : null}
                       </View>
@@ -184,7 +186,7 @@ class HistoryPayment extends Component {
                             <Text style={{color: colorConfig.store.title}}>
                               x{' '}
                             </Text>
-                            {item.point + ' stamps'}
+                            {item.point + intlData.messages.stamp}
                           </Text>
                         </View>
                       ) : null}
@@ -337,6 +339,7 @@ mapStateToProps = state => ({
   dataLength: state.rewardsReducer.dataPoint.dataLength,
   page: state.rewardsReducer.dataPoint.page,
   take: state.rewardsReducer.dataPoint.take,
+  intlData: state.intlData,
 });
 
 mapDispatchToProps = dispatch => ({

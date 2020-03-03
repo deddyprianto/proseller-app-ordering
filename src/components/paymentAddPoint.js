@@ -123,6 +123,7 @@ class paymentAddPoint extends Component {
   };
 
   render() {
+    const {intlData} = this.props;
     return (
       <View style={styles.container}>
         <View style={{backgroundColor: colorConfig.pageIndex.backgroundColor}}>
@@ -134,7 +135,7 @@ class paymentAddPoint extends Component {
               }
               style={styles.btnBackIcon}
             />
-            <Text style={styles.btnBackText}> Back </Text>
+            <Text style={styles.btnBackText}> {intlData.messages.back} </Text>
           </TouchableOpacity>
           <View style={styles.line} />
         </View>
@@ -154,12 +155,7 @@ class paymentAddPoint extends Component {
                 style={{
                   color: colorConfig.pageIndex.backgroundColor,
                 }}>
-                {'Redeem ' +
-                  this.state.jumPointRatio +
-                  ' point to ' +
-                  appConfig.appMataUang +
-                  ' ' +
-                  this.state.jumMoneyRatio}
+                {`${intlData.messages.redeem} ${this.state.jumPointRatio} point ${intlData.messages.to} ${appConfig.appMataUang} ${this.state.jumMoneyRatio}`}
               </Text>
             </View>
             <View style={styles.card}>

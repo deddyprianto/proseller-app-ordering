@@ -313,6 +313,7 @@ class SignInPhoneNumber extends Component {
   };
 
   render() {
+    const {intlData} = this.props;
     return (
       <View style={styles.backgroundImage}>
         {this.state.loading && <Loader />}
@@ -327,7 +328,8 @@ class SignInPhoneNumber extends Component {
                   fontWeight: 'bold',
                   fontFamily: 'Lato-Medium',
                 }}>
-                Sign In to {this.props.phoneNumber}
+                {intlData.messages.signIn} {intlData.messages.to}{' '}
+                {this.props.phoneNumber}
               </Text>
             </View>
             {/*Tab OTP and Password*/}
@@ -361,7 +363,7 @@ class SignInPhoneNumber extends Component {
                     fontWeight: 'bold',
                     fontFamily: 'Lato-Medium',
                   }}>
-                  Use SMS OTP
+                  {intlData.messages.use} SMS OTP
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
@@ -385,7 +387,7 @@ class SignInPhoneNumber extends Component {
                     fontWeight: 'bold',
                     fontFamily: 'Lato-Medium',
                   }}>
-                  Use Password
+                  {intlData.messages.use} {intlData.messages.password}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -398,7 +400,7 @@ class SignInPhoneNumber extends Component {
                     marginVertical: 10,
                     color: colorConfig.pageIndex.grayColor,
                   }}>
-                  Enter 4-digit OTP
+                  {intlData.messages.enter} 4-digit OTP
                 </Text>
                 <View
                   style={{
@@ -432,7 +434,7 @@ class SignInPhoneNumber extends Component {
                       disabled={this.state.timer === 30 ? false : true}
                       onPress={this.sendOTP}
                       style={{
-                        padding: 15,
+                        padding: 10,
                         width: '50%',
                         borderRadius: 10,
                         backgroundColor:
@@ -448,7 +450,7 @@ class SignInPhoneNumber extends Component {
                           fontWeight: 'bold',
                           fontFamily: 'Lato-Medium',
                         }}>
-                        Get OTP via SMS
+                        {intlData.messages.get} OTP via SMS
                       </Text>
                     </TouchableHighlight>
                   ) : (
@@ -479,13 +481,17 @@ class SignInPhoneNumber extends Component {
                 </View>
                 {this.state.buttonOTPpressed ? (
                   <View
-                    style={{flexDirection: 'row', justifyContent: 'flex-end'}}>
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'flex-end',
+                    }}>
                     <Text
                       style={{
                         color: colorConfig.pageIndex.grayColor,
                         fontSize: 16,
                       }}>
-                      Resend after 00:{this.zeroPad(this.state.timer, 2)}
+                      {intlData.messages.resendAfter} 00:
+                      {this.zeroPad(this.state.timer, 2)}
                     </Text>
                   </View>
                 ) : null}
@@ -498,7 +504,7 @@ class SignInPhoneNumber extends Component {
                     marginVertical: 10,
                     color: colorConfig.pageIndex.grayColor,
                   }}>
-                  Enter Password
+                  {intlData.messages.enter} {intlData.messages.password}
                 </Text>
                 <View
                   style={{
@@ -564,7 +570,7 @@ class SignInPhoneNumber extends Component {
                       fontWeight: 'bold',
                       fontFamily: 'Lato-Medium',
                     }}>
-                    Submit
+                    {intlData.messages.submit}
                   </Text>
                 </TouchableHighlight>
               ) : null}
@@ -595,7 +601,7 @@ class SignInPhoneNumber extends Component {
                       fontWeight: 'bold',
                       fontFamily: 'Lato-Medium',
                     }}>
-                    Submit
+                    {intlData.messages.submit}
                   </Text>
                 </TouchableHighlight>
               ) : null}
@@ -611,6 +617,7 @@ mapStateToProps = state => ({
   status: state.accountsReducer.accountExist.status,
   deviceID: state.userReducer.deviceUserInfo,
   attempt: state.authReducer.attemptSendOTP.attempt,
+  intlData: state.intlData,
 });
 
 mapDispatchToProps = dispatch => ({

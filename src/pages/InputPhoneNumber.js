@@ -33,6 +33,8 @@ import Header from '../components/atom/header';
 import CountryPicker from 'react-native-country-picker-modal';
 import {deviceUserInfo, userPosition} from '../actions/user.action';
 import Geolocation from 'react-native-geolocation-service';
+import {Dialog} from 'react-native-paper';
+import {updateLanguage} from '../actions/language.action';
 
 const imageWidth = Dimensions.get('window').width / 2;
 
@@ -123,6 +125,7 @@ class InputPhoneNumber extends Component {
       phone: '',
       country: awsConfig.COUNTRY,
       openModalCountry: false,
+      dialogChangeLanguage: false,
     };
     this.imageWidth = new Animated.Value(styles.$largeImageSize);
   }
@@ -219,7 +222,61 @@ class InputPhoneNumber extends Component {
     }
   };
 
+  _updateLanguage = async lang => {
+    await this.props.dispatch(updateLanguage(lang));
+    await this.setState({dialogChangeLanguage: false});
+  };
+
+  renderDialogQuantityModifier = () => {
+    const {intlData} = this.props;
+    const languages = [
+      {code: 'en', name: intlData.messages['languageEn']},
+      {code: 'id', name: intlData.messages['languageId']},
+    ];
+    const options = languages.map(language => {
+      return (
+        <Picker.Item
+          value={language.code}
+          key={language.code}
+          label={language.name}
+        />
+      );
+    });
+
+    return (
+      <Dialog
+        dismissable={true}
+        visible={this.state.dialogChangeLanguage}
+        onDismiss={() => this.setState({dialogChangeLanguage: false})}>
+        <Dialog.Content>
+          <Text
+            style={{
+              textAlign: 'center',
+              fontWeight: 'bold',
+            }}>
+            {intlData.messages.selectLanguage}
+          </Text>
+          <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+            <View style={styles.panelQty}>
+              <Picker
+                style={{height: 60, width: 300}}
+                selectedValue={intlData.locale}
+                onValueChange={itemValue => this._updateLanguage(itemValue)}>
+                {options}
+              </Picker>
+            </View>
+          </View>
+        </Dialog.Content>
+      </Dialog>
+    );
+  };
+
+  openDialogLanguage = () => {
+    this.setState({dialogChangeLanguage: true});
+  };
+
   render() {
+    const {intlData} = this.props;
     this.getUserPosition();
     // console.log(this.props.deviceID.deviceID, 'this.props.deviceID.deviceID');
     return (
@@ -237,7 +294,7 @@ class InputPhoneNumber extends Component {
                 fontSize: 16,
                 fontFamily: 'Lato-Medium',
               }}>
-              Enter your Mobile Number
+              {intlData.messages.enterMobileNumber}
             </Text>
             <View style={{marginVertical: 15}}>
               <View
@@ -292,7 +349,7 @@ class InputPhoneNumber extends Component {
               </TouchableOpacity>
               <TextInput
                 keyboardType="phone-pad"
-                placeholder={'Phone Number'}
+                placeholder={intlData.messages.phoneNumber}
                 maxLength={20}
                 value={this.state.phone}
                 onChangeText={value => this.setState({phone: value})}
@@ -324,7 +381,7 @@ class InputPhoneNumber extends Component {
                     fontWeight: 'bold',
                     fontFamily: 'Lato-Medium',
                   }}>
-                  Next
+                  {intlData.messages.next}
                 </Text>
               </TouchableHighlight>
             </View>
@@ -338,12 +395,41 @@ class InputPhoneNumber extends Component {
                     color: colorConfig.store.secondaryColor,
                     fontSize: 17,
                   }}>
-                  Use Email Address to Sign In / Register
+                  {intlData.messages.useEmail}
                 </Text>
               </TouchableOpacity>
             </View>
           </View>
         </ScrollView>
+        <TouchableOpacity
+          style={{
+            position: 'absolute',
+            alignSelf: 'center',
+            bottom: 40,
+          }}
+          onPress={this.openDialogLanguage}>
+          <Text
+            style={{
+              textDecorationLine: 'underline',
+              color: colorConfig.store.defaultColor,
+              fontWeight: 'bold',
+              fontFamily: 'Lato-Bold',
+              fontSize: 16,
+            }}>
+            {intlData.messages.languageName}
+          </Text>
+        </TouchableOpacity>
+        <Text
+          style={{
+            position: 'absolute',
+            alignSelf: 'center',
+            bottom: 10,
+            color: colorConfig.pageIndex.grayColor,
+            fontSize: 14,
+          }}>
+          Version: 1.2.0
+        </Text>
+        {this.renderDialogQuantityModifier()}
       </View>
     );
   }
@@ -351,6 +437,7 @@ class InputPhoneNumber extends Component {
 mapStateToProps = state => ({
   status: state.accountsReducer.accountExist.status,
   deviceID: state.userReducer.deviceUserInfo,
+  intlData: state.intlData,
 });
 
 mapDispatchToProps = dispatch => ({

@@ -171,6 +171,7 @@ class MobileRegister extends Component {
   };
 
   render() {
+    const {intlData} = this.props;
     return (
       <View style={styles.backgroundImage}>
         {this.state.loading && <Loader />}
@@ -185,7 +186,8 @@ class MobileRegister extends Component {
                   fontWeight: 'bold',
                   fontFamily: 'Lato-Medium',
                 }}>
-                Register for {this.props.phoneNumber}
+                {intlData.messages.register} {intlData.messages.for}{' '}
+                {this.props.phoneNumber}
               </Text>
             </View>
           </View>
@@ -197,10 +199,10 @@ class MobileRegister extends Component {
                   paddingVertical: 10,
                   fontSize: 17,
                 }}>
-                Name
+                {intlData.messages.name}
               </Text>
               <TextInput
-                placeholder={'Full Name'}
+                placeholder={intlData.messages.fullName}
                 value={this.state.name}
                 onChangeText={value => this.setState({name: value})}
                 style={{
@@ -256,7 +258,7 @@ class MobileRegister extends Component {
                     fontWeight: 'bold',
                     fontFamily: 'Lato-Medium',
                   }}>
-                  Create Account
+                  {intlData.messages.createAccount}
                 </Text>
               </TouchableHighlight>
             </View>
@@ -268,7 +270,7 @@ class MobileRegister extends Component {
                   color: colorConfig.pageIndex.grayColor,
                   fontFamily: 'Lato-Medium',
                 }}>
-                I hereby give consent to{' '}
+                {intlData.messages.string1}{' '}
                 <Text
                   style={{
                     fontSize: 15,
@@ -278,11 +280,7 @@ class MobileRegister extends Component {
                   {' '}
                   {this.state.companyName}
                 </Text>{' '}
-                to collect, use and disclose my personal data, as provided in
-                this application, or (if applicable) obtained by the
-                organization for reasonable purposes. I acknowledge and
-                understand that marketing messages may be sent by Company Name
-                and can be unsubscribed. I agree to the Terms and Conditions of
+                {intlData.messages.string2}
                 <Text
                   style={{
                     fontSize: 15,
@@ -292,8 +290,7 @@ class MobileRegister extends Component {
                   {' '}
                   {this.state.companyName}
                 </Text>{' '}
-                upon completed this Account Creation. For more information,
-                refer to
+                {intlData.messages.string3}
                 <Text
                   onPress={() => Linking.openURL(this.state.companyPolicyURL)}
                   style={{
@@ -313,6 +310,7 @@ class MobileRegister extends Component {
 }
 mapStateToProps = state => ({
   status: state.accountsReducer.accountExist.status,
+  intlData: state.intlData,
 });
 
 mapDispatchToProps = dispatch => ({

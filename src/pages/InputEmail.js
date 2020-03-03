@@ -174,6 +174,7 @@ class InputEmail extends Component {
   };
 
   render() {
+    const {intlData} = this.props;
     return (
       <View style={styles.backgroundImage}>
         {this.state.loading && <Loader />}
@@ -186,7 +187,7 @@ class InputEmail extends Component {
                 fontSize: 16,
                 fontFamily: 'Lato-Medium',
               }}>
-              Enter your Email Address
+              {intlData.messages.enterEmail}
             </Text>
             <View
               style={{
@@ -194,7 +195,7 @@ class InputEmail extends Component {
               }}>
               <TextInput
                 keyboardType="email-address"
-                placeholder={'Email Address'}
+                placeholder={intlData.messages.emailAddress}
                 value={this.state.email}
                 onChangeText={value => this.setState({email: value})}
                 style={{
@@ -228,12 +229,12 @@ class InputEmail extends Component {
                     fontWeight: 'bold',
                     fontFamily: 'Lato-Medium',
                   }}>
-                  Next
+                  {intlData.messages.next}
                 </Text>
               </TouchableHighlight>
             </View>
             <View style={{marginTop: 30}}>
-              <TouchableOpacity onPress={() => Actions.inputPhoneNumber()}>
+              <TouchableOpacity onPress={() => Actions.pop()}>
                 <Text
                   style={{
                     textDecorationLine: 'underline',
@@ -242,7 +243,7 @@ class InputEmail extends Component {
                     color: colorConfig.store.secondaryColor,
                     fontSize: 17,
                   }}>
-                  Use Mobile Number to Sign In / Register
+                  {intlData.messages.useMobile}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -254,6 +255,7 @@ class InputEmail extends Component {
 }
 mapStateToProps = state => ({
   status: state.accountsReducer.accountExist.status,
+  intlData: state.intlData,
 });
 
 mapDispatchToProps = dispatch => ({

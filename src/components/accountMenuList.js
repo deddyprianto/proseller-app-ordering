@@ -57,7 +57,7 @@ class AccountMenuList extends Component {
   };
 
   render() {
-    // const {intlData} = this.props;
+    const {intlData} = this.props;
     return (
       <View style={styles.container}>
         <View style={{flexDirection: 'row'}}>
@@ -72,7 +72,7 @@ class AccountMenuList extends Component {
             <TouchableOpacity
               style={styles.item}
               onPress={() => this.props.screen.navigation.navigate('History')}>
-              <Text style={styles.title}>History Transactions</Text>
+              <Text style={styles.title}>{intlData.messages.transactionsHistory}</Text>
               <Icon
                 size={20}
                 name={
@@ -97,7 +97,7 @@ class AccountMenuList extends Component {
           </View>
           <View>
             <TouchableOpacity style={styles.item} onPress={this.editProfil}>
-              <Text style={styles.title}>Edit Profile</Text>
+              <Text style={styles.title}>{intlData.messages.editProfile}</Text>
               <Icon
                 size={20}
                 name={
@@ -113,31 +113,31 @@ class AccountMenuList extends Component {
           </View>
         </View>
 
-        {/*<View style={{flexDirection: 'row'}}>*/}
-        {/*  <View style={styles.itemMenu}>*/}
-        {/*    <Icon*/}
-        {/*      size={20}*/}
-        {/*      name={Platform.OS === 'ios' ? 'ios-globe' : 'md-globe'}*/}
-        {/*      style={{color: colorConfig.pageIndex.activeTintColor}}*/}
-        {/*    />*/}
-        {/*  </View>*/}
-        {/*  <View>*/}
-        {/*    <TouchableOpacity style={styles.item} onPress={this.updateLanguage}>*/}
-        {/*      <Text style={styles.title}> {intlData.messages.languages} </Text>*/}
-        {/*      <Icon*/}
-        {/*        size={20}*/}
-        {/*        name={*/}
-        {/*          Platform.OS === 'ios'*/}
-        {/*            ? 'ios-arrow-dropright-circle'*/}
-        {/*            : 'md-arrow-dropright-circle'*/}
-        {/*        }*/}
-        {/*        style={{color: colorConfig.pageIndex.activeTintColor}}*/}
-        {/*      />*/}
-        {/*    </TouchableOpacity>*/}
+        <View style={{flexDirection: 'row'}}>
+          <View style={styles.itemMenu}>
+            <Icon
+              size={20}
+              name={Platform.OS === 'ios' ? 'ios-globe' : 'md-globe'}
+              style={{color: colorConfig.pageIndex.activeTintColor}}
+            />
+          </View>
+          <View>
+            <TouchableOpacity style={styles.item} onPress={this.updateLanguage}>
+              <Text style={styles.title}> {intlData.messages.languages} </Text>
+              <Icon
+                size={20}
+                name={
+                  Platform.OS === 'ios'
+                    ? 'ios-arrow-dropright-circle'
+                    : 'md-arrow-dropright-circle'
+                }
+                style={{color: colorConfig.pageIndex.activeTintColor}}
+              />
+            </TouchableOpacity>
 
-        {/*    /!*<View style={styles.line} />*!/*/}
-        {/*  </View>*/}
-        {/*</View>*/}
+            {/*<View style={styles.line} />*/}
+          </View>
+        </View>
 
         {/*<View style={{flexDirection: 'row'}}>*/}
         {/*  <View*/}

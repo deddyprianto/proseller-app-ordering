@@ -27,6 +27,7 @@ import {
 import Loader from '../../components/loader';
 import ModalOrder from '../../components/order/Modal';
 import CurrencyFormatter from '../../helper/CurrencyFormatter';
+import {isEmptyArray} from '../../helper/CheckEmpty';
 
 class Basket extends Component {
   constructor(props) {
@@ -342,6 +343,33 @@ class Basket extends Component {
         product.quantity = existProduct.quantity;
         product.name = existProduct.product.name;
         product.description = existProduct.product.description;
+
+        // process modifier
+        let find = this.props.dataBasket.details.find(
+          item => item.product.id == existProduct.id,
+        );
+        if (find != undefined && !isEmptyArray(find.modifiers)) {
+          existProduct.product.productModifiers.map((group, i) => {
+            group.modifier.details.map((detail, j) => {
+              find.modifiers.map(data => {
+                data.modifier.details.map(item => {
+                  // make mark that item is in basket
+                  if (data.modifierID == group.modifierID) {
+                    existProduct.product.productModifiers[
+                      i
+                    ].postToServer = true;
+                    // set quantity basket to product that openend
+                    if (item.id == detail.id) {
+                      existProduct.product.productModifiers[i].modifier.details[
+                        j
+                      ].quantity = item.quantity;
+                    }
+                  }
+                });
+              });
+            });
+          });
+        }
       }
 
       this.setState({
@@ -463,6 +491,28 @@ class Basket extends Component {
     );
   };
 
+  renderItemModifier = (item) => {
+    return (
+      <FlatList
+        data={item.modifiers}
+        renderItem={({item}) =>
+          item.modifier.details.map(mod => (
+            <Text style={[styles.descModifier]}>
+              •{' '}
+              <Text
+                style={{
+                  color: colorConfig.store.defaultColor,
+                }}>
+                {mod.quantity}x
+              </Text>{' '}
+              {mod.name} ( {CurrencyFormatter(mod.productPrice)} )
+            </Text>
+          ))
+        }
+      />
+    );
+  };
+
   render() {
     // give message to user if order has been confirmed
     try {
@@ -556,6 +606,21 @@ class Basket extends Component {
                                   note: {item.remark}
                                 </Text>
                               ) : null}
+                              {/* loop item modifier */}
+                              {!isEmptyArray(item.modifiers) ? (
+                                <Text
+                                  style={{
+                                    color:
+                                      colorConfig.pageIndex.inactiveTintColor,
+                                    fontSize: 10,
+                                    marginLeft: 10,
+                                    fontStyle: 'italic',
+                                  }}>
+                                  Add On:
+                                </Text>
+                              ) : null}
+                              {this.renderItemModifier(item)}
+                              {/* loop item modifier */}
                               {this.props.dataBasket.status == 'PENDING' ? (
                                 <TouchableOpacity
                                   onPress={() => this.openEditModal(item)}
@@ -783,12 +848,28 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: 'Lato-Medium',
   },
+  descModifier: {
+    color: colorConfig.pageIndex.grayColor,
+    maxWidth: Dimensions.get('window').width,
+    fontSize: 11,
+    fontStyle: 'italic',
+    marginLeft: 10,
+    fontFamily: 'Lato-Medium',
+  },
   descPrice: {
     color: colorConfig.pageIndex.grayColor,
     maxWidth: Dimensions.get('window').width,
     textAlign: 'right',
     alignItems: 'flex-end',
     fontSize: 14,
+    fontFamily: 'Lato-Medium',
+  },
+  descPriceModifier: {
+    color: colorConfig.pageIndex.grayColor,
+    maxWidth: Dimensions.get('window').width,
+    textAlign: 'right',
+    alignItems: 'flex-end',
+    fontSize: 10,
     fontFamily: 'Lato-Medium',
   },
   image: {

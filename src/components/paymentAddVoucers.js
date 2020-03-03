@@ -131,6 +131,7 @@ export default class PaymentAddVoucers extends Component {
   };
 
   render() {
+    const {intlData} = this.props;
     const myVoucers = this.props.data;
     return (
       <View style={styles.container}>
@@ -159,7 +160,7 @@ export default class PaymentAddVoucers extends Component {
                   textAlign: 'center',
                   color: colorConfig.pageIndex.grayColor,
                 }}>
-                Vouchers is empty
+                {intlData.messages.emptyVoucher}
               </Text>
             </View>
           ) : (
@@ -266,11 +267,11 @@ export default class PaymentAddVoucers extends Component {
                           />
                           {item['validity']['allDays'] ? (
                             <Text style={styles.descVoucher}>
-                              This voucher is valid in all days.
+                              {intlData.messages.voucherValid}
                             </Text>
                           ) : (
                             <Text style={styles.descVoucherTime}>
-                              This voucher is valid on
+                              {intlData.messages.voucherValidOn}
                               {item['validity']['activeWeekDays']
                                 .filter(items => items.active == true)
                                 .map(data => (

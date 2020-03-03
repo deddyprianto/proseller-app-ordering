@@ -27,9 +27,11 @@ class RewardsTransaction extends Component {
   };
 
   render() {
+    const {intlData} = this.props;
+    console.log('intlData', intlData);
     return (
       <View style={styles.container}>
-        <Text style={styles.title}>Recent Transactions</Text>
+        <Text style={styles.title}>{intlData.messages.recentTransactions}</Text>
         <View style={styles.card}>
           {this.props.isLoading ? (
             <RecentTransactionPlaceHolder />
@@ -115,9 +117,9 @@ class RewardsTransaction extends Component {
               }}>
               {this.props.recentTransaction != undefined
                 ? this.props.recentTransaction.length == 0
-                  ? 'Empty'
-                  : 'See More'
-                : 'Empty'}
+                  ? intlData.messages.empty
+                  : intlData.messages.seeMore
+                : intlData.messages.empty}
             </Text>
           </TouchableOpacity>
         </View>
@@ -181,6 +183,7 @@ const styles = StyleSheet.create({
 
 mapStateToProps = state => ({
   recentTransaction: state.rewardsReducer.dataPoint.recentTransaction,
+  intlData: state.intlData,
 });
 
 mapDispatchToProps = dispatch => ({

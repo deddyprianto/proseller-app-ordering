@@ -51,7 +51,7 @@ export default class RewardsMenu extends Component {
   }
 
   render() {
-    // const {intlData} = this.props;
+    const {intlData} = this.props;
     return (
       <View style={styles.container}>
         <View style={styles.item}>
@@ -63,7 +63,7 @@ export default class RewardsMenu extends Component {
                 style={{color: colorConfig.pageIndex.activeTintColor}}
               />
             </View>
-            <Text style={styles.menuText}>Pay</Text>
+            <Text style={styles.menuText}>{intlData.messages.pay}</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={this.pageQRCode}>
             <View style={{alignItems: 'center'}}>
@@ -73,7 +73,7 @@ export default class RewardsMenu extends Component {
                 style={{color: colorConfig.pageIndex.activeTintColor}}
               />
             </View>
-            <Text style={styles.menuText}>My QR Code</Text>
+            <Text style={styles.menuText}>{intlData.messages.myQrCode}</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={this.pageRewards}>
             <View style={{alignItems: 'center'}}>
@@ -83,7 +83,7 @@ export default class RewardsMenu extends Component {
                 style={{color: colorConfig.pageIndex.activeTintColor}}
               />
             </View>
-            <Text style={styles.menuText}>Rewards</Text>
+            <Text style={styles.menuText}>{intlData.messages.rewards}</Text>
           </TouchableOpacity>
         </View>
       </View>

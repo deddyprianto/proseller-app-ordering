@@ -10,6 +10,7 @@ import {
   Text,
   StyleSheet,
   Dimensions,
+  Platform,
   TouchableOpacity,
   ScrollView,
   Image,
@@ -61,7 +62,7 @@ export default class StoreDetailStores extends Component {
   }
 
   render() {
-    console.log('this.props.item ', this.props.item);
+    const {intlData} = this.props;
     return (
       <View style={styles.container}>
         <View style={{backgroundColor: colorConfig.pageIndex.backgroundColor}}>
@@ -73,7 +74,7 @@ export default class StoreDetailStores extends Component {
               }
               style={styles.btnBackIcon}
             />
-            <Text style={styles.btnBackText}> Back </Text>
+            <Text style={styles.btnBackText}> {intlData.messages.back} </Text>
           </TouchableOpacity>
           <View style={styles.line} />
         </View>
@@ -101,7 +102,7 @@ export default class StoreDetailStores extends Component {
             </View>
             <View style={styles.detail}>
               <View style={styles.detailItem}>
-                <Text style={[styles.desc, {fontWeight: 'bold'}]}>City</Text>
+                <Text style={[styles.desc, {fontWeight: 'bold'}]}>{intlData.messages.city}</Text>
                 <Text style={styles.desc}>
                   {this.props.item.city != undefined
                     ? this.props.item.city
@@ -109,7 +110,7 @@ export default class StoreDetailStores extends Component {
                 </Text>
               </View>
               <View style={styles.detailItem}>
-                <Text style={[styles.desc, {fontWeight: 'bold'}]}>Region</Text>
+                <Text style={[styles.desc, {fontWeight: 'bold'}]}>{intlData.messages.region}</Text>
                 <Text style={styles.desc}>
                   {this.props.item.region != undefined
                     ? this.props.item.region
@@ -117,7 +118,7 @@ export default class StoreDetailStores extends Component {
                 </Text>
               </View>
               <View style={styles.detailItem}>
-                <Text style={[styles.desc, {fontWeight: 'bold'}]}>Address</Text>
+                <Text style={[styles.desc, {fontWeight: 'bold'}]}>{intlData.messages.address}</Text>
                 <Text style={styles.descAddress}>
                   {this.props.item.address}
                 </Text>
@@ -141,7 +142,7 @@ export default class StoreDetailStores extends Component {
                         color: colorConfig.store.colorSuccess,
                         fontWeight: 'bold',
                       }}>
-                      Open
+                      {intlData.messages.open}
                     </Text>
                   ) : (
                     <Text
@@ -149,7 +150,7 @@ export default class StoreDetailStores extends Component {
                         color: colorConfig.store.colorError,
                         fontWeight: 'bold',
                       }}>
-                      Closed
+                      {intlData.messages.closed}
                     </Text>
                   )}
                 </Text>
@@ -187,7 +188,7 @@ export default class StoreDetailStores extends Component {
           </View>
           <View style={styles.card}>
             <View style={styles.item}>
-              <Text style={styles.title}>Operational Hours</Text>
+              <Text style={styles.title}>{intlData.messages.operationalHours}</Text>
             </View>
             {this.props.item.operationalHours
               .filter(item => item.active == true)
@@ -216,7 +217,7 @@ export default class StoreDetailStores extends Component {
               name={Platform.OS === 'ios' ? 'ios-locate' : 'md-locate'}
               style={{color: 'white', paddingRight: 10}}
             />
-            <Text> Location</Text>
+            <Text> {intlData.messages.location} </Text>
           </Text>
         </TouchableHighlight>
       </View>

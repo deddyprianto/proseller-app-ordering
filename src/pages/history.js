@@ -16,14 +16,10 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import * as _ from 'lodash';
 import {createAppContainer} from 'react-navigation';
 import {createMaterialTopTabNavigator} from 'react-navigation-tabs';
-
-import logoCash from '../assets/img/cash.png';
-import logoVisa from '../assets/img/visa.png';
 import colorConfig from '../config/colorConfig';
 import {campaign, dataPoint} from '../actions/rewards.action';
 
 import HistoryPayment from '../components/historyPayment';
-import HistoryRedeem from '../components/historyRedeem';
 
 const AppNavigationContainer = createAppContainer(
   createMaterialTopTabNavigator(

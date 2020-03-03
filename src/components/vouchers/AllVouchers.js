@@ -60,7 +60,8 @@ class AllVouchers extends Component {
   }
 
   pageDetailVoucher = item => {
-    Actions.voucher({dataVoucher: item});
+    const {intlData} = this.props;
+    Actions.voucher({dataVoucher: item, intlData});
   };
 
   getDataVoucher = async () => {
@@ -78,6 +79,7 @@ class AllVouchers extends Component {
   };
 
   render() {
+    const {intlData} = this.props;
     return (
       <View>
         <ScrollView
@@ -101,7 +103,7 @@ class AllVouchers extends Component {
                       textAlign: 'center',
                       color: colorConfig.pageIndex.grayColor,
                     }}>
-                    Vouchers is empty
+                    {intlData.messages.emptyVoucher}
                   </Text>
                 </View>
               ) : (
@@ -132,7 +134,7 @@ class AllVouchers extends Component {
                                 fontWeight: 'bold',
                                 textAlign: 'right',
                               }}>
-                              {item['redeemValue'] + ' Points'}
+                              {item['redeemValue']} {intlData.messages.point}
                             </Text>
                           </View>
                         </View>
@@ -275,6 +277,7 @@ const styles = StyleSheet.create({
 
 mapStateToProps = state => ({
   vouchers: state.rewardsReducer.vouchers.dataVoucher,
+  intlData: state.intlData,
 });
 
 mapDispatchToProps = dispatch => ({

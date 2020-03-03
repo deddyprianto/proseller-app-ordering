@@ -227,14 +227,16 @@ class Store extends Component {
   };
 
   getHallo = () => {
+    const {intlData} = this.props;
+
     var date = new Date();
     // console.log(date.getHours());
     if (date.getHours() < 12) {
-      return 'Good morning';
+      return `${intlData.messages.good} ${intlData.messages.morning}`;
     } else if (date.getHours() < 18) {
-      return 'Good afternoon';
+      return `${intlData.messages.good} ${intlData.messages.afternoon}`;
     } else {
-      return 'Good night';
+      return `${intlData.messages.good} ${intlData.messages.night}`;
     }
   };
 
@@ -262,6 +264,8 @@ class Store extends Component {
       userDetail = {};
       userDetail.name = 'User User';
     }
+
+    const {intlData} = this.props;
 
     return (
       <View style={{marginBottom: 40}}>
@@ -343,7 +347,10 @@ class Store extends Component {
 
               {this.state.dataStoresNear.length != 0 ? (
                 <View>
-                  <StoreNearYou dataStoresNear={this.state.dataStoresNear} />
+                  <StoreNearYou
+                    intlData={intlData}
+                    dataStoresNear={this.state.dataStoresNear}
+                  />
                 </View>
               ) : null}
               {Object.keys(this.state.dataAllStore).length === 0 &&
@@ -365,12 +372,13 @@ class Store extends Component {
                       fontWeight: 'bold',
                       marginTop: 100,
                     }}>
-                    Sorry, no outlet is available.
+                    {intlData.messages.noOutlet}
                   </Text>
                 </View>
               ) : (
                 <View>
                   <StoreStores
+                    intlData={intlData}
                     dataStoreRegion={this.state.dataStoreRegion}
                     dataAllStore={this.state.dataAllStore}
                   />
@@ -471,6 +479,7 @@ mapStateToProps = state => ({
   userDetail: state.userReducer.getUser.userDetails,
   dataPromotion: state.promotionReducer.dataPromotion.promotion,
   userPosition: state.userReducer.userPosition.userPosition,
+  intlData: state.intlData,
 });
 
 mapDispatchToProps = dispatch => ({
