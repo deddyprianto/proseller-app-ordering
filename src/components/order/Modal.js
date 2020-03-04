@@ -42,7 +42,6 @@ export default class ModalOrder extends Component {
       screenWidth: Dimensions.get('window').width,
       screenHeight: Dimensions.get('window').height,
       modalQty: false,
-      selectedCategoryModifier: 0,
       productsModifier: productModifiers,
       selectedModifier: {},
     };
@@ -135,9 +134,30 @@ export default class ModalOrder extends Component {
     );
   };
 
+  ruleModifierNotPassed = () => {
+    try {
+      let data = this.props.product.product.productModifiers;
+      for (let i = 0; i < data.length; i++) {
+        let lengthDetail = data[i].modifier.details.length;
+        // check min modifier
+        if (lengthDetail < data[i].modifier.min && data[i].modifier.min != 0) {
+          return true;
+        }
+        // check max modifier
+        if (lengthDetail > data[i].modifier.max && data[i].modifier.max != 0) {
+          return true;
+        }
+      }
+      return false;
+    } catch (e) {
+      return false;
+    }
+  };
+
   renderButtonHideModal = () => {
     return (
       <TouchableOpacity
+        disabled={this.ruleModifierNotPassed() ? true : false}
         onPress={() => {
           this.props.addItemToBasket(
             this.props.product,
@@ -148,6 +168,9 @@ export default class ModalOrder extends Component {
         }}
         style={[
           styles.btnAddBasketModal,
+          this.ruleModifierNotPassed()
+            ? {backgroundColor: colorConfig.store.disableButton}
+            : null,
           this.props.qtyItem == 0
             ? {backgroundColor: colorConfig.store.colorError}
             : null,
@@ -227,8 +250,15 @@ export default class ModalOrder extends Component {
           </View>
           <TouchableOpacity
             onPress={this.addModifier}
-            style={styles.btnAddModifier}>
-            <Text style={styles.textBtnAddModifier}>Add</Text>
+            style={[
+              styles.btnAddModifier,
+              this.state.selectedModifier.quantity == 0
+                ? {backgroundColor: colorConfig.store.colorError}
+                : null,
+            ]}>
+            <Text style={styles.textBtnAddModifier}>
+              {this.state.selectedModifier.quantity != 0 ? 'Add' : 'Remove'}
+            </Text>
           </TouchableOpacity>
         </Dialog.Content>
       </Dialog>
@@ -236,7 +266,7 @@ export default class ModalOrder extends Component {
   };
 
   updateSelectedCategory = (item, idx) => {
-    this.setState({selectedCategoryModifier: idx});
+    this.props.updateSelectedCategory(idx);
   };
 
   renderCategoryModifier = (item, idx) => {
@@ -246,7 +276,7 @@ export default class ModalOrder extends Component {
         style={{padding: 10, flexDirection: 'row'}}>
         <View
           style={[
-            this.state.selectedCategoryModifier == idx
+            this.props.selectedCategoryModifier == idx
               ? styles.categoryActive
               : styles.categoryNonActive,
           ]}>
@@ -264,43 +294,81 @@ export default class ModalOrder extends Component {
   };
 
   addModifier = async () => {
-    let selectedModifier = JSON.stringify(this.state.selectedModifier);
-    selectedModifier = JSON.parse(selectedModifier);
-    let productModifiers = this.props.product.product.productModifiers;
-    // find index group modifier
-    let indexModifier = productModifiers.findIndex(
-      item => item.modifierID == selectedModifier.modifierID,
-    );
-    // find index modifier item
-    let indexDetails = productModifiers[
-      indexModifier
-    ].modifier.details.findIndex(item => item.id == selectedModifier.id);
+    try {
+      let selectedModifier = JSON.stringify(this.state.selectedModifier);
+      selectedModifier = JSON.parse(selectedModifier);
+      let productModifiers = this.props.product.product.productModifiers;
+      // find index group modifier
+      let indexModifier = productModifiers.findIndex(
+        item => item.modifierID == selectedModifier.modifierID,
+      );
 
-    // mark modifier group that has been selected
-    this.props.product.product.productModifiers[
-      indexModifier
-    ].postToServer = true;
+      // get length details modifier
+      let lengthDetailsModifier = productModifiers[
+        indexModifier
+      ].modifier.details.filter(item => item.quantity > 0).length;
 
-    // remove quantity ( IF OPTION IS RADIO BUTTON )
-    // await this.props.product.product.productModifiers[
-    //   indexModifier
-    // ].modifier.details.map(item => {
-    //   delete item.quantity;
-    // });
+      // check max and min modifier
+      if (
+        lengthDetailsModifier > productModifiers[indexModifier].modifier.max &&
+        productModifiers[indexModifier].modifier.max != 0
+      ) {
+        this.setState({modalQty: false});
+        Alert.alert(
+          'Sorry',
+          `Cannot add more modifier, max is ${
+            productModifiers[indexModifier].modifier.max
+          }`,
+        );
+        return;
+      }
 
-    // add quantity to details selected props
-    this.props.product.product.productModifiers[indexModifier].modifier.details[
-      indexDetails
-    ].quantity =
-      selectedModifier.quantity == undefined ? 1 : selectedModifier.quantity;
+      // find index modifier item
+      let indexDetails = productModifiers[
+        indexModifier
+      ].modifier.details.findIndex(item => item.id == selectedModifier.id);
 
-    this.setState({modalQty: false});
+      // remove quantity ( IF OPTION IS RADIO BUTTON )
+      if (productModifiers[indexModifier].modifier.max == 1) {
+        await this.props.product.product.productModifiers[
+          indexModifier
+        ].modifier.details.map(item => {
+          delete item.quantity;
+        });
+      }
+
+      // add quantity to details selected props
+      if (selectedModifier.quantity == undefined) {
+        this.props.product.product.productModifiers[
+          indexModifier
+        ].modifier.details[indexDetails].quantity = 1;
+
+        // mark modifier group that has been selected
+        this.props.product.product.productModifiers[
+          indexModifier
+        ].postToServer = true;
+      } else if (selectedModifier.quantity > 0) {
+        this.props.product.product.productModifiers[
+          indexModifier
+        ].modifier.details[indexDetails].quantity = selectedModifier.quantity;
+
+        // mark modifier group that has been selected
+        this.props.product.product.productModifiers[
+          indexModifier
+        ].postToServer = true;
+      }
+
+      this.setState({modalQty: false});
+    } catch (e) {
+      this.setState({modalQty: false});
+      Alert.alert('Sorry', 'Cant add modifier, please try again');
+    }
   };
 
   findExistModifier = item => {
     try {
       // FIND PRODUCT ON LOCAL PROPS
-      let indexModifier = this.state.selectedCategoryModifier;
+      let indexModifier = this.props.selectedCategoryModifier;
       let data = this.props.product.product.productModifiers[indexModifier];
       let find = data.modifier.details.find(
         data => data.productID == item.productID && data.quantity > 0,
@@ -373,8 +441,10 @@ export default class ModalOrder extends Component {
   };
 
   render() {
+    // loading indicator
+    let {loadModifierTime} = this.props;
     // index category active
-    let {selectedCategoryModifier} = this.state;
+    let {selectedCategoryModifier} = this.props;
     let productModifiers = [];
     let product = this.props.product;
     if (!isEmptyObject(product.product)) {
@@ -382,7 +452,7 @@ export default class ModalOrder extends Component {
         productModifiers = product.product.productModifiers;
       }
     }
-    console.log(productModifiers, 'productModifiers');
+
     return (
       <Modal
         animationType="slide"
@@ -456,20 +526,25 @@ export default class ModalOrder extends Component {
                     productModifiers[selectedCategoryModifier],
                   )}
                 </Text>
-                <FlatList
-                  data={
-                    productModifiers[selectedCategoryModifier].modifier.details
-                  }
-                  extraData={this.props}
-                  renderItem={({item, index}) => {
-                    return this.renderItemModifier(
-                      item,
-                      index,
-                      productModifiers[selectedCategoryModifier],
-                    );
-                  }}
-                  keyExtractor={(item, index) => index.toString()}
-                />
+                {!loadModifierTime ? (
+                  <ActivityIndicator size={'large'} />
+                ) : (
+                  <FlatList
+                    data={
+                      productModifiers[selectedCategoryModifier].modifier
+                        .details
+                    }
+                    extraData={this.props}
+                    renderItem={({item, index}) => {
+                      return this.renderItemModifier(
+                        item,
+                        index,
+                        productModifiers[selectedCategoryModifier],
+                      );
+                    }}
+                    keyExtractor={(item, index) => index.toString()}
+                  />
+                )}
               </View>
             ) : null}
 

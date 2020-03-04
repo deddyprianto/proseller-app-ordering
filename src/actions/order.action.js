@@ -160,7 +160,7 @@ export const updateProductToBasket = (payload, previousData) => {
           authData: {token},
         },
       } = state;
-      // get data basket previou
+      // get data basket previous
       const {
         orderReducer: {
           dataBasket: {product},
@@ -191,17 +191,20 @@ export const updateProductToBasket = (payload, previousData) => {
         }
         // if product is basket has empty, then make basket undefined
         if (newProduct.details.length == 0) newProduct = undefined;
-        dispatch({
-          type: 'DATA_BASKET',
-          product: newProduct,
-        });
+        // dispatch({
+        //   type: 'DATA_BASKET',
+        //   product: newProduct,
+        // });
 
         //  after data in reducer has been updated by fake data, then request update to server with real data
         let updatedProduct = [];
         let data = {
           id: previousData.id,
+          unitPrice: payload.details[0].unitPrice,
           quantity: payload.details[0].quantity,
+          modifiers: payload.details[0].modifiers,
         };
+
         // if remark is available, then add
         if (
           payload.details[0].remark != undefined &&
@@ -210,6 +213,7 @@ export const updateProductToBasket = (payload, previousData) => {
           data.remark = payload.details[0].remark;
         }
         updatedProduct.push(data);
+        console.log('payload update product ', updatedProduct);
         let response = await fetchApiOrder(
           `/cart/updateitem`,
           'POST',

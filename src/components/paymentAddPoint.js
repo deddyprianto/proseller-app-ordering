@@ -266,7 +266,7 @@ class paymentAddPoint extends Component {
                     color: colorConfig.auth.buttonText,
                     textAlign: 'center',
                   }}>
-                  Set Point
+                  {intlData.messages.setPoint}
                 </Text>
               </TouchableOpacity>
             </View>

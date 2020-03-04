@@ -11,6 +11,7 @@ import {
   Alert,
   Picker,
   ActivityIndicator,
+  Platform,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -34,11 +35,14 @@ import ButtonViewBasket from '../../components/order/ButtonViewBasket';
 import CurrencyFormatter from '../../helper/CurrencyFormatter';
 import ShimmerPlaceHolder from 'react-native-shimmer-placeholder';
 import {isEmptyArray} from '../../helper/CheckEmpty';
+import * as _ from 'lodash';
+import RBSheet from 'react-native-raw-bottom-sheet';
 
 class StoreDetailStores extends Component {
   constructor(props) {
     super(props);
 
+    this.RBSheet = null;
     this.productsLength = 0;
     this.products = [];
     this.heightHeader = 0;
@@ -59,6 +63,7 @@ class StoreDetailStores extends Component {
       selectedProduct: {},
       orderType: null,
       loadingAddItem: false,
+      selectedCategoryModifier: 0,
     };
   }
 
@@ -79,31 +84,105 @@ class StoreDetailStores extends Component {
         this.props.dataBasket == undefined ||
         this.props.dataBasket.status == 'PENDING'
       )
-        this.askUserToSelectPaymentType();
+        this.RBSheet.open();
+  };
+
+  updateSelectedCategory = idx => {
+    this.setState({selectedCategoryModifier: idx});
   };
 
   setOrderType = type => {
     this.props.dispatch(setOrderType(type));
-    // Alert.alert('')
+    this.RBSheet.close();
   };
 
   askUserToSelectPaymentType = () => {
-    Alert.alert(
-      'Order Mode',
-      'Choose your order mode...',
-      [
-        {
-          text: 'TAKE AWAY',
-          onPress: () => this.setOrderType('TAKEAWAY'),
-          style: 'confirm',
-        },
-        {
-          text: 'DINE IN',
-          onPress: () => this.setOrderType('DINEIN'),
-          style: 'confirm',
-        },
-      ],
-      {cancelable: false},
+    return (
+      <RBSheet
+        ref={ref => {
+          this.RBSheet = ref;
+        }}
+        animationType={'slide'}
+        height={250}
+        duration={10}
+        closeOnDragDown={false}
+        closeOnPressMask={false}
+        closeOnPressBack={false}
+        customStyles={{
+          container: {
+            backgroundColor: colorConfig.store.darkColor,
+            justifyContent: 'center',
+            alignItems: 'center',
+          },
+        }}>
+        <Text
+          style={{
+            color: colorConfig.pageIndex.inactiveTintColor,
+            fontSize: 25,
+            paddingBottom: 5,
+            fontWeight: 'bold',
+            fontFamily: 'Lato-Bold',
+          }}>
+          Order Mode
+        </Text>
+        <TouchableOpacity
+          onPress={() => this.setOrderType('DINEIN')}
+          style={{
+            padding: 15,
+            backgroundColor: colorConfig.store.colorSuccess,
+            borderRadius: 15,
+            width: '60%',
+            marginBottom: 20,
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <Icon
+            size={30}
+            name={Platform.OS === 'ios' ? 'ios-restaurant' : 'md-restaurant'}
+            style={{color: 'white'}}
+          />
+          <Text
+            style={{
+              marginLeft: 10,
+              color: 'white',
+              fontWeight: 'bold',
+              fontFamily: 'Lato-Bold',
+              fontSize: 18,
+              textAlign: 'center',
+            }}>
+            DINE IN
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => this.setOrderType('TAKEAWAY')}
+          style={{
+            padding: 15,
+            backgroundColor: colorConfig.store.secondaryColor,
+            borderRadius: 15,
+            width: '60%',
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <Icon
+            size={30}
+            name={Platform.OS === 'ios' ? 'ios-basket' : 'md-basket'}
+            style={{color: 'white'}}
+          />
+          <Text
+            style={{
+              marginLeft: 10,
+              color: 'white',
+              fontWeight: 'bold',
+              fontFamily: 'Lato-Bold',
+              fontSize: 18,
+              textAlign: 'center',
+            }}>
+            TAKE AWAY
+          </Text>
+        </TouchableOpacity>
+      </RBSheet>
     );
   };
 
@@ -224,6 +303,7 @@ class StoreDetailStores extends Component {
       }
     }
     this.setState({
+      selectedCategoryModifier: 0,
       selectedProduct: product,
       isModalVisible: !this.state.isModalVisible,
     });
@@ -293,7 +373,7 @@ class StoreDetailStores extends Component {
 
       // if product have modifier
       if (product.product.productModifiers.length > 0) {
-        let totalModifier = 0;
+        // copy object
         const productModifierClone = JSON.stringify(
           product.product.productModifiers,
         );
@@ -320,7 +400,13 @@ class StoreDetailStores extends Component {
           dataproduct.modifiers[i].modifier.details = tempDetails;
         }
 
+        // check if item modifier was deleted, if yes, then remove array modifier
+        dataproduct.modifiers = await _.remove(dataproduct.modifiers, group => {
+          return group.modifier.details.length > 0;
+        });
+
         //  calculate total modifier
+        let totalModifier = 0;
         await dataproduct.modifiers.map(group => {
           if (group.postToServer == true) {
             group.modifier.details.map(detail => {
@@ -389,15 +475,69 @@ class StoreDetailStores extends Component {
         unitPrice: product.product.retailPrice,
         quantity: qty,
       };
-      // if remark is available, then push to array
-      if (remark != undefined && remark != '') dataproduct.remark = remark;
-      data.outletID = `outlet::${this.props.item.storeId}`;
-      data.details.push(dataproduct);
 
       // search detail ID on previous data
       let previousData = this.props.dataBasket.details.find(
         item => item.productID == product.productID,
       );
+
+      // if product have modifier
+      if (product.product.productModifiers.length > 0) {
+        let totalModifier = 0;
+        const productModifierClone = JSON.stringify(
+          product.product.productModifiers,
+        );
+        let productModifiers = JSON.parse(productModifierClone);
+        productModifiers = productModifiers.filter(
+          item => item.postToServer == true,
+        );
+        // add moodifier to data product
+        dataproduct.modifiers = productModifiers;
+
+        let tempDetails = [];
+        for (let i = 0; i < dataproduct.modifiers.length; i++) {
+          tempDetails = [];
+          let data = dataproduct.modifiers[i];
+
+          for (let j = 0; j < data.modifier.details.length; j++) {
+            if (
+              data.modifier.details[j].quantity != undefined &&
+              data.modifier.details[j].quantity > 0
+            ) {
+              tempDetails.push(data.modifier.details[j]);
+            }
+          }
+
+          // if not null, then replace details
+          dataproduct.modifiers[i].modifier.details = tempDetails;
+        }
+
+        //  calculate total modifier
+        await dataproduct.modifiers.map((group, i) => {
+          if (group.postToServer == true) {
+            group.modifier.details.map(detail => {
+              if (detail.quantity != undefined && detail.quantity > 0) {
+                totalModifier += parseFloat(
+                  detail.quantity * detail.productPrice,
+                );
+              }
+            });
+          }
+        });
+
+        // check if item modifier was deleted, if yes, then remove array modifier
+        dataproduct.modifiers = await _.remove(dataproduct.modifiers, group => {
+          return group.modifier.details.length > 0;
+        });
+
+        //  add total item modifier to subtotal product
+        dataproduct.unitPrice += totalModifier;
+      }
+
+      // if remark is available, then push to array
+      if (remark != undefined && remark != '') dataproduct.remark = remark;
+      data.outletID = `outlet::${this.props.item.storeId}`;
+      data.details.push(dataproduct);
 
       // hide modal
       this.setState({
@@ -458,7 +598,12 @@ class StoreDetailStores extends Component {
     qtyItem = this.state.selectedProduct.quantity;
     remark = this.state.selectedProduct.remark;
 
-    this.setState({qtyItem, remark});
+    this.setState({
+      selectedCategoryModifier: 0,
+      loadModifierTime: true,
+      qtyItem,
+      remark,
+    });
   };
 
   addQty = () => {
@@ -817,7 +962,11 @@ class StoreDetailStores extends Component {
           addItemToBasket={this.addItemToBasket}
           loadingAddItem={this.state.loadingAddItem}
           dataBasket={this.props.dataBasket}
+          updateSelectedCategory={this.updateSelectedCategory}
+          selectedCategoryModifier={this.state.selectedCategoryModifier}
+          loadModifierTime={this.state.loadModifierTime}
         />
+        {this.askUserToSelectPaymentType()}
         <View
           style={styles.headerImage}
           onLayout={event => {

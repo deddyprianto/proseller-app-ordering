@@ -35,6 +35,7 @@ import {deviceUserInfo, userPosition} from '../actions/user.action';
 import Geolocation from 'react-native-geolocation-service';
 import {Dialog} from 'react-native-paper';
 import {updateLanguage} from '../actions/language.action';
+import Languages from '../service/i18n/languages';
 
 const imageWidth = Dimensions.get('window').width / 2;
 
@@ -229,11 +230,7 @@ class InputPhoneNumber extends Component {
 
   renderDialogQuantityModifier = () => {
     const {intlData} = this.props;
-    const languages = [
-      {code: 'en', name: intlData.messages['languageEn']},
-      {code: 'id', name: intlData.messages['languageId']},
-    ];
-    const options = languages.map(language => {
+    const options = Languages.map(language => {
       return (
         <Picker.Item
           value={language.code}

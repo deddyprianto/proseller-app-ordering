@@ -74,7 +74,7 @@ class ScanQRTable extends Component {
         // tableNo: '10',
       };
       let results = await this.props.dispatch(submitOder(payload));
-      console.log('result ', results);
+      // console.log('result ', results);
       if (results.resultCode == 200) {
         // if cart has been submitted, then go back and give info
         if (results.status == 'FAILED') {

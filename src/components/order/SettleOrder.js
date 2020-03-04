@@ -12,6 +12,7 @@ import {
   Dimensions,
   TouchableOpacity,
   Image,
+  Platform,
   ScrollView,
   Alert,
   BackHandler,
@@ -152,6 +153,7 @@ class SettleOrder extends Component {
   };
 
   myVouchers = () => {
+    const {intlData} = this.props;
     var myVoucers = [];
     try {
       if (this.props.myVoucers != undefined) {
@@ -187,6 +189,7 @@ class SettleOrder extends Component {
       }
 
       Actions.paymentAddVoucers({
+        intlData,
         data: myVoucers,
         pembayaran: this.props.pembayaran,
         setDataVoucher: this.setDataVoucher,
@@ -201,7 +204,9 @@ class SettleOrder extends Component {
   };
 
   myPoint = () => {
+    const {intlData} = this.props;
     Actions.paymentAddPoint({
+      intlData,
       data: this.props.totalPoint,
       pembayaran: this.props.pembayaran,
       valueSet: this.state.moneyPoint == undefined ? 0 : this.state.moneyPoint,
@@ -379,7 +384,7 @@ class SettleOrder extends Component {
   ];
 
   render() {
-    console.log('DATA VOUCHER ', this.state.dataVoucer);
+    const {intlData} = this.props;
     const iconSlider = () => (
       <Icon
         size={25}
@@ -808,6 +813,7 @@ mapStateToProps = state => ({
   totalPoint: state.rewardsReducer.dataPoint.totalPoint,
   recentTransaction: state.rewardsReducer.dataPoint.recentTransaction,
   dataStamps: state.rewardsReducer.getStamps,
+  intlData: state.intlData,
 });
 
 mapDispatchToProps = dispatch => ({

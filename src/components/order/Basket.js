@@ -28,12 +28,14 @@ import Loader from '../../components/loader';
 import ModalOrder from '../../components/order/Modal';
 import CurrencyFormatter from '../../helper/CurrencyFormatter';
 import {isEmptyArray} from '../../helper/CheckEmpty';
+import RBSheet from 'react-native-raw-bottom-sheet';
 
 class Basket extends Component {
   constructor(props) {
     super(props);
 
     this.request = null;
+    this.RBSheet = null;
 
     this.state = {
       screenWidth: Dimensions.get('window').width,
@@ -60,6 +62,7 @@ class Basket extends Component {
         this.props.dataBasket != undefined &&
         this.props.dataBasket.status == 'SUBMITTED'
       ) {
+        clearInterval(this.interval);
         this.interval = setInterval(() => {
           this.props.dispatch(getBasket());
         }, 2000);
@@ -70,6 +73,96 @@ class Basket extends Component {
     this.backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
       this.handleBackPress,
+    );
+  };
+
+  askUserToSelectPaymentType = () => {
+    return (
+      <RBSheet
+        ref={ref => {
+          this.RBSheet = ref;
+        }}
+        animationType={'fade'}
+        height={250}
+        duration={10}
+        closeOnDragDown={true}
+        closeOnPressMask={true}
+        closeOnPressBack={true}
+        customStyles={{
+          container: {
+            backgroundColor: colorConfig.store.darkColor,
+            justifyContent: 'center',
+            alignItems: 'center',
+          },
+        }}>
+        <Text
+          style={{
+            color: colorConfig.pageIndex.inactiveTintColor,
+            fontSize: 25,
+            paddingBottom: 5,
+            fontWeight: 'bold',
+            fontFamily: 'Lato-Bold',
+          }}>
+          Change Order Mode
+        </Text>
+        <TouchableOpacity
+          onPress={() => this.setOrderType('DINEIN')}
+          style={{
+            padding: 15,
+            backgroundColor: colorConfig.store.colorSuccess,
+            borderRadius: 15,
+            width: '60%',
+            marginBottom: 20,
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <Icon
+            size={30}
+            name={Platform.OS === 'ios' ? 'ios-restaurant' : 'md-restaurant'}
+            style={{color: 'white'}}
+          />
+          <Text
+            style={{
+              marginLeft: 10,
+              color: 'white',
+              fontWeight: 'bold',
+              fontFamily: 'Lato-Bold',
+              fontSize: 18,
+              textAlign: 'center',
+            }}>
+            DINE IN
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => this.setOrderType('TAKEAWAY')}
+          style={{
+            padding: 15,
+            backgroundColor: colorConfig.store.secondaryColor,
+            borderRadius: 15,
+            width: '60%',
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <Icon
+            size={30}
+            name={Platform.OS === 'ios' ? 'ios-basket' : 'md-basket'}
+            style={{color: 'white'}}
+          />
+          <Text
+            style={{
+              marginLeft: 10,
+              color: 'white',
+              fontWeight: 'bold',
+              fontFamily: 'Lato-Bold',
+              fontSize: 18,
+              textAlign: 'center',
+            }}>
+            TAKE AWAY
+          </Text>
+        </TouchableOpacity>
+      </RBSheet>
     );
   };
 
@@ -103,7 +196,7 @@ class Basket extends Component {
 
   goToScanTable = () => {
     Actions.scanQRTable();
-    // Actions.confirmTable();
+    clearInterval(this.interval);
     this.interval = setInterval(() => {
       this.props.dispatch(getBasket());
     }, 2000);
@@ -246,6 +339,7 @@ class Basket extends Component {
   };
 
   removeBasket = async () => {
+    clearInterval(this.interval);
     this.setState({loading: true});
     await this.props.dispatch(removeBasket());
     await this.getBasket();
@@ -389,9 +483,7 @@ class Basket extends Component {
     let remark = '';
     qtyItem = this.state.selectedProduct.quantity;
     remark = this.state.selectedProduct.remark;
-    // if (this.state.selectedProduct.quantity != false) {
-    //   qtyItem = this.state.selectedProduct.quantity;
-    // }
+
     this.setState({qtyItem, remark});
   };
 
@@ -443,27 +535,7 @@ class Basket extends Component {
 
   setOrderType = async type => {
     await this.props.dispatch(setOrderType(type));
-    // Alert.alert('')
-  };
-
-  changeOrderType = () => {
-    Alert.alert(
-      'Change Order Mode',
-      'Change your order mode...',
-      [
-        {
-          text: 'TAKE AWAY',
-          onPress: () => this.setOrderType('TAKEAWAY'),
-          style: 'confirm',
-        },
-        {
-          text: 'DINE IN',
-          onPress: () => this.setOrderType('DINEIN'),
-          style: 'confirm',
-        },
-      ],
-      {cancelable: false},
-    );
+    this.RBSheet.close();
   };
 
   renderStatusOrder = () => {
@@ -491,7 +563,7 @@ class Basket extends Component {
     );
   };
 
-  renderItemModifier = (item) => {
+  renderItemModifier = item => {
     return (
       <FlatList
         data={item.modifiers}
@@ -526,6 +598,7 @@ class Basket extends Component {
         }
       }
     } catch (e) {}
+
     return (
       <View style={styles.container}>
         <ModalOrder
@@ -543,6 +616,9 @@ class Basket extends Component {
           product={this.state.selectedProduct}
           addItemToBasket={this.addItemToBasket}
         />
+
+        {this.askUserToSelectPaymentType()}
+
         <View style={{backgroundColor: colorConfig.pageIndex.backgroundColor}}>
           <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
             <Icon
@@ -663,9 +739,9 @@ class Basket extends Component {
                   {this.renderStatusOrder()}
                 </View>
                 <TouchableOpacity
-                  onPress={
+                  onPress={() =>
                     this.props.dataBasket.status == 'PENDING'
-                      ? this.changeOrderType
+                      ? this.RBSheet.open()
                       : null
                   }
                   style={styles.itemSummary}>

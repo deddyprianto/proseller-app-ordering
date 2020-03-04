@@ -25,7 +25,7 @@ export const fetchApiMasterData = async (
     }
     // const response = await fetchJson(method, path, data, token)
     const response = await apiMasterData(url, method, body, headers);
-    console.log('response master ', response);
+    // console.log('response master ', response);
     if (response.resultCode === statusCode) {
       result.success = true;
       result.response = response;

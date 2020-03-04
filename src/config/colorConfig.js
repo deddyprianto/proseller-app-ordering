@@ -64,6 +64,7 @@ const colorConfig = {
     disableButton: `rgba(${PRIMARY_COLOR_RGB}, 0.4)`,
     disableButtonError: `rgba(199, 66, 14, 0.4)`,
     transparent: 'rgba(3, 157, 252, 0.1)',
+    darkColor: '#2c3e50',
     containerColor: '#f2f2f2',
     secondaryColor: `rgb(${SECONDARY_COLOR_RGB})`,
   },

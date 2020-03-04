@@ -24,6 +24,7 @@ import {myVoucers} from '../actions/account.action';
 import colorConfig from '../config/colorConfig';
 import {Dialog} from 'react-native-paper';
 import {updateLanguage} from '../actions/language.action';
+import Languages from '../service/i18n/languages';
 
 class Account extends Component {
   constructor(props) {
@@ -90,13 +91,10 @@ class Account extends Component {
     await this.setState({dialogChangeLanguage: false});
   };
 
-  renderDialogQuantityModifier = () => {
+  renderDialogChangeLanguage = () => {
     const {intlData} = this.props;
-    const languages = [
-      {code: 'en', name: intlData.messages['languageEn']},
-      {code: 'id', name: intlData.messages['languageId']},
-    ];
-    const options = languages.map(language => {
+
+    const options = Languages.map(language => {
       return (
         <Picker.Item
           value={language.code}
@@ -186,7 +184,7 @@ class Account extends Component {
             </Text>
           )}
         </TouchableOpacity>
-        {this.renderDialogQuantityModifier()}
+        {this.renderDialogChangeLanguage()}
       </View>
     );
   }
