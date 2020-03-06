@@ -155,7 +155,11 @@ class paymentAddPoint extends Component {
                 style={{
                   color: colorConfig.pageIndex.backgroundColor,
                 }}>
-                {`${intlData.messages.redeem} ${this.state.jumPointRatio} point ${intlData.messages.to} ${appConfig.appMataUang} ${this.state.jumMoneyRatio}`}
+                {`${intlData.messages.redeem} ${
+                  this.state.jumPointRatio
+                } point ${intlData.messages.to} ${appConfig.appMataUang} ${
+                  this.state.jumMoneyRatio
+                }`}
               </Text>
             </View>
             <View style={styles.card}>
@@ -180,7 +184,13 @@ class paymentAddPoint extends Component {
                     fontWeight: 'bold',
                     color: colorConfig.pageIndex.grayColor,
                   }}>
-                  {' Point to ' + appConfig.appMataUang + ' '}
+                  {' ' +
+                    intlData.messages.point +
+                    ' ' +
+                    intlData.messages.to +
+                    ' ' +
+                    appConfig.appMataUang +
+                    ' '}
                 </Text>
                 <Text
                   style={{

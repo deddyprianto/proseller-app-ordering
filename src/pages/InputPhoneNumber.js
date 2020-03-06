@@ -36,6 +36,7 @@ import Geolocation from 'react-native-geolocation-service';
 import {Dialog} from 'react-native-paper';
 import {updateLanguage} from '../actions/language.action';
 import Languages from '../service/i18n/languages';
+import packageJson from '../../package';
 
 const imageWidth = Dimensions.get('window').width / 2;
 
@@ -120,6 +121,7 @@ const styles = StyleSheet.create({
 class InputPhoneNumber extends Component {
   constructor(props) {
     super(props);
+    this.intlData = this.props.intlData;
     this.state = {
       phoneNumber: awsConfig.phoneNumberCode,
       loading: false,
@@ -143,28 +145,28 @@ class InputPhoneNumber extends Component {
     }
 
     // permition to get user position
-    if (Platform.OS !== 'android') Geolocation.requestAuthorization();
-    else {
-      try {
-        const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-          {
-            title: 'we need GPS location service',
-            message: 'we need location service to provide your location',
-            // buttonNeutral: 'Ask Me Later',
-            buttonNegative: 'Cancel',
-            buttonPositive: 'OK',
-          },
-        );
-        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        } else {
-          Defaults.modal.current.renderModel(modalOptions);
-          return false;
-        }
-      } catch (err) {
-        console.warn(err);
-      }
-    }
+    // if (Platform.OS !== 'android') Geolocation.requestAuthorization();
+    // else {
+    //   try {
+    //     const granted = await PermissionsAndroid.request(
+    //       PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+    //       {
+    //         title: 'we need GPS location service',
+    //         message: 'we need location service to provide your location',
+    //         // buttonNeutral: 'Ask Me Later',
+    //         buttonNegative: 'Cancel',
+    //         buttonPositive: 'OK',
+    //       },
+    //     );
+    //     if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+    //     } else {
+    //       Defaults.modal.current.renderModel(modalOptions);
+    //       return false;
+    //     }
+    //   } catch (err) {
+    //     console.warn(err);
+    //   }
+    // }
   };
 
   checkAccountExist = async () => {
@@ -182,10 +184,7 @@ class InputPhoneNumber extends Component {
       );
       if (response.status == true) {
         if (response.data.confirmation == false) {
-          Alert.alert(
-            'Opss..',
-            "Looks like your account hasn't been confirmed, please confirm now.",
-          );
+          Alert.alert('Opss..', this.intlData.messages.accountNotConfirmed);
           phoneNumber.email = response.data.email;
           Actions.verifyOtpAfterRegister(phoneNumber);
         } else {
@@ -202,7 +201,7 @@ class InputPhoneNumber extends Component {
         Actions.mobileRegister(phoneNumber);
       }
     } catch (error) {
-      Alert.alert('Opss..', 'Something went wrong, please try again.');
+      Alert.alert('Opss..', this.intlData.messages.somethingWentWrong);
       this.setState({
         loading: false,
       });
@@ -424,7 +423,7 @@ class InputPhoneNumber extends Component {
             color: colorConfig.pageIndex.grayColor,
             fontSize: 14,
           }}>
-          Version: 1.2.0
+          Version: {packageJson.version}
         </Text>
         {this.renderDialogQuantityModifier()}
       </View>

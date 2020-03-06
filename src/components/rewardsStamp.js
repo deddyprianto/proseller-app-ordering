@@ -6,6 +6,7 @@ import {
   Dimensions,
   TouchableOpacity,
   ScrollView,
+  Platform,
   Alert,
 } from 'react-native';
 import {connect} from 'react-redux';
@@ -15,6 +16,7 @@ import colorConfig from '../config/colorConfig';
 import appConfig from '../config/appConfig';
 import Icon from 'react-native-vector-icons/Ionicons';
 import StampsPlaceHolder from './placeHolderLoading/StampsPlaceHolder';
+import {isEmptyObject} from '../helper/CheckEmpty';
 
 class RewardsStamp extends Component {
   constructor(props) {
@@ -50,15 +52,19 @@ class RewardsStamp extends Component {
       }
       this.setState({stampsItem});
     } catch (e) {
-      Alert.alert('Sorry', 'Cant get data stamps, please try again');
+      if (isEmptyObject(this.props.dataStamps.dataStamps)) {
+        Alert.alert('Sorry', 'Stamps is empty.');
+      } else {
+        Alert.alert('Sorry', 'Cant get data stampts');
+      }
     }
   }
 
   render() {
     let that = this;
-    // setTimeout(() => {
-    //   that.getItemStamp();
-    // }, 10000);
+    setTimeout(() => {
+      that.getItemStamp();
+    }, 10000);
 
     const {intlData} = this.props;
 

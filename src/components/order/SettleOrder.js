@@ -290,7 +290,14 @@ class SettleOrder extends Component {
   };
 
   detailPayment = pembayaran => {
-    Actions.paymentDetailItem({pembayaran: pembayaran});
+    const {intlData} = this.props;
+    Actions.paymentDetailItem({
+      intlData,
+      point: this.state.addPoint,
+      voucher: this.state.dataVoucer,
+      totalBayar: this.state.totalBayar,
+      pembayaran: pembayaran,
+    });
   };
 
   hideAlert = () => {

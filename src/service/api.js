@@ -28,7 +28,7 @@ export const api = async (url, method, body = null, headers = {}) => {
     const timeOutPromise = new Promise((resolve, reject) => {
       setTimeout(() => {
         reject('Request Timeout');
-      }, 15000);
+      }, 40000);
     });
 
     const response = await Promise.race([fetchPromise, timeOutPromise]);
@@ -63,7 +63,7 @@ export const fetchApi = async (
 
     // const response = await fetchJson(method, path, data, token)
     const response = await api(url, method, body, headers);
-    console.log('RESPONSE MASTER API', response);
+    // console.log('RESPONSE MASTER API', response)
     if (response.status === statusCode) {
       result.success = true;
 
@@ -81,7 +81,6 @@ export const fetchApi = async (
       }
 
       result.responseBody = responseBody;
-      console.log(result);
       return result;
     }
 

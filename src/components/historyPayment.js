@@ -176,7 +176,7 @@ class HistoryPayment extends Component {
                             <Text style={{color: colorConfig.store.title}}>
                               x{' '}
                             </Text>
-                            {item.point + intlData.messages.point}
+                            {item.point + ' ' + intlData.messages.point}
                           </Text>
                         ) : null}
                       </View>

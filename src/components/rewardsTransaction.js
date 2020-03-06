@@ -23,6 +23,7 @@ class RewardsTransaction extends Component {
   }
 
   historyDetailPayment = item => {
+    this.props.updateStatusGetData();
     Actions.historyDetailPayment({item});
   };
 

@@ -23,12 +23,14 @@ import {
   updateProductToBasket,
   removeBasket,
   setOrderType,
+  getProductByOutlet,
 } from '../../actions/order.action';
 import Loader from '../../components/loader';
 import ModalOrder from '../../components/order/Modal';
 import CurrencyFormatter from '../../helper/CurrencyFormatter';
 import {isEmptyArray} from '../../helper/CheckEmpty';
 import RBSheet from 'react-native-raw-bottom-sheet';
+import * as _ from 'lodash';
 
 class Basket extends Component {
   constructor(props) {
@@ -50,11 +52,16 @@ class Basket extends Component {
       selectedProduct: {},
       visible: false,
       refreshing: false,
+      loadModifierTime: false,
+      selectedCategoryModifier: 0,
     };
   }
 
   componentDidMount = async () => {
     try {
+      // await this.props.dispatch(
+      //   getProductByOutlet('03882de0-d31e-457c-8bc0-4258290f43be'),
+      // );
       // get data basket
       await this.getBasket();
       // check if status basket is submitted, then request continoustly to get basket
@@ -74,6 +81,10 @@ class Basket extends Component {
       'hardwareBackPress',
       this.handleBackPress,
     );
+  };
+
+  updateSelectedCategory = idx => {
+    this.setState({selectedCategoryModifier: idx});
   };
 
   askUserToSelectPaymentType = () => {
@@ -271,8 +282,12 @@ class Basket extends Component {
         data.itemName = item.product.name;
         data.qty = item.quantity;
         data.price = item.unitPrice;
-        // index == 0 ? (data.barcode = 'COKE') : null;
-        //  add dataPay to object
+
+        // if data have modifiers, then add
+        if (!isEmptyArray(item.modifiers)) {
+          data.modifiers = item.modifiers;
+        }
+
         dataPay.push(data);
         // make data empty before push again
         data = {};
@@ -432,15 +447,33 @@ class Basket extends Component {
       let existProduct = await this.checkIfItemExistInBasket(product);
 
       if (existProduct != false) {
+        // FIND CATEGORY EXIST PRODUCT
+        const categoryProduct = this.props.products.find(
+          item => `category::${item.id}` == existProduct.product.categoryID,
+        );
+        // FIND PRODUCT BY CATEGORY ABOVE
+        const originalProduct = categoryProduct.items.find(
+          item => item.id == existProduct.product.id,
+        );
+
         product.mode = 'update';
         product.remark = existProduct.remark;
         product.quantity = existProduct.quantity;
         product.name = existProduct.product.name;
         product.description = existProduct.product.description;
+        product.product.productModifiers =
+          originalProduct.product.productModifiers;
+
+        // remove quantity temp from props
+        product.product.productModifiers.map((group, i) => {
+          group.modifier.details.map((detail, j) => {
+            delete detail.quantity;
+          });
+        });
 
         // process modifier
-        let find = this.props.dataBasket.details.find(
-          item => item.product.id == existProduct.id,
+        let find = await this.props.dataBasket.details.find(
+          item => item.product.id == product.product.id,
         );
         if (find != undefined && !isEmptyArray(find.modifiers)) {
           existProduct.product.productModifiers.map((group, i) => {
@@ -464,17 +497,18 @@ class Basket extends Component {
             });
           });
         }
-      }
 
-      this.setState({
-        selectedProduct: existProduct,
-        isModalVisible: !this.state.isModalVisible,
-      });
+        // open modal
+        this.setState({
+          selectedCategoryModifier: 0,
+          selectedProduct: existProduct,
+          isModalVisible: !this.state.isModalVisible,
+        });
+      } else {
+        Alert.alert('Sorry', 'Cant find selected product.');
+      }
     } catch (e) {
       Alert.alert('Opps..', 'Something went wrong, please try again');
-      this.setState({
-        isModalVisible: !this.state.isModalVisible,
-      });
     }
   };
 
@@ -484,7 +518,12 @@ class Basket extends Component {
     qtyItem = this.state.selectedProduct.quantity;
     remark = this.state.selectedProduct.remark;
 
-    this.setState({qtyItem, remark});
+    this.setState({
+      qtyItem,
+      remark,
+      selectedCategoryModifier: 0,
+      loadModifierTime: true,
+    });
   };
 
   addItemToBasket = async (product, qty, remark, mode) => {
@@ -504,14 +543,68 @@ class Basket extends Component {
         unitPrice: product.product.retailPrice,
         quantity: qty,
       };
-      // if remark is available, then push to array
-      if (remark != undefined && remark != '') dataproduct.remark = remark;
-      data.details.push(dataproduct);
-
       // search detail ID on previous data
       let previousData = this.props.dataBasket.details.find(
         item => item.productID == product.productID,
       );
+
+      // if product have modifier
+      if (product.product.productModifiers.length > 0) {
+        let totalModifier = 0;
+        const productModifierClone = JSON.stringify(
+          product.product.productModifiers,
+        );
+        let productModifiers = JSON.parse(productModifierClone);
+        productModifiers = productModifiers.filter(
+          item => item.postToServer == true,
+        );
+        // add moodifier to data product
+        dataproduct.modifiers = productModifiers;
+
+        let tempDetails = [];
+        for (let i = 0; i < dataproduct.modifiers.length; i++) {
+          tempDetails = [];
+          let data = dataproduct.modifiers[i];
+
+          for (let j = 0; j < data.modifier.details.length; j++) {
+            if (
+              data.modifier.details[j].quantity != undefined &&
+              data.modifier.details[j].quantity > 0
+            ) {
+              tempDetails.push(data.modifier.details[j]);
+            }
+          }
+
+          // if not null, then replace details
+          dataproduct.modifiers[i].modifier.details = tempDetails;
+        }
+
+        // if remark is available, then push to array
+        if (remark != undefined && remark != '') dataproduct.remark = remark;
+        data.details.push(dataproduct);
+
+        //  calculate total modifier
+        await dataproduct.modifiers.map((group, i) => {
+          if (group.postToServer == true) {
+            group.modifier.details.map(detail => {
+              if (detail.quantity != undefined && detail.quantity > 0) {
+                totalModifier += parseFloat(
+                  detail.quantity * detail.productPrice,
+                );
+              }
+            });
+          }
+        });
+
+        // check if item modifier was deleted, if yes, then remove array modifier
+        dataproduct.modifiers = await _.remove(dataproduct.modifiers, group => {
+          return group.modifier.details.length > 0;
+        });
+
+        //  add total item modifier to subtotal product
+        dataproduct.unitPrice += totalModifier;
+      }
+
       // send data to action
       let response = await this.props.dispatch(
         updateProductToBasket(data, previousData),
@@ -615,6 +708,11 @@ class Basket extends Component {
           calculateSubTotalModal={this.calculateSubTotalModal}
           product={this.state.selectedProduct}
           addItemToBasket={this.addItemToBasket}
+          loadingAddItem={this.state.loadingAddItem}
+          dataBasket={this.props.dataBasket}
+          updateSelectedCategory={this.updateSelectedCategory}
+          selectedCategoryModifier={this.state.selectedCategoryModifier}
+          loadModifierTime={this.state.loadModifierTime}
         />
 
         {this.askUserToSelectPaymentType()}
@@ -669,7 +767,8 @@ class Basket extends Component {
                                   }}>
                                   {item.quantity}x
                                 </Text>{' '}
-                                {item.product.name}
+                                {item.product.name} ({' '}
+                                {CurrencyFormatter(item.unitPrice)} )
                               </Text>
                               {item.remark != undefined && item.remark != '' ? (
                                 <Text
@@ -716,7 +815,7 @@ class Basket extends Component {
                           </View>
                           <View>
                             <Text style={styles.descPrice}>
-                              {CurrencyFormatter(item.unitPrice)}
+                              {CurrencyFormatter(item.grossAmount)}
                             </Text>
                           </View>
                         </View>
@@ -816,6 +915,7 @@ mapStateToProps = state => ({
   dataBasket: state.orderReducer.dataBasket.product,
   orderType: state.orderReducer.orderType.orderType,
   tableType: state.orderReducer.tableType.tableType,
+  products: state.orderReducer.productsOutlet.products,
 });
 
 mapDispatchToProps = dispatch => ({
@@ -919,9 +1019,9 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   desc: {
-    color: colorConfig.pageIndex.grayColor,
+    color: colorConfig.store.title,
     maxWidth: Dimensions.get('window').width,
-    fontSize: 14,
+    fontSize: 13,
     fontFamily: 'Lato-Medium',
   },
   descModifier: {
@@ -933,11 +1033,11 @@ const styles = StyleSheet.create({
     fontFamily: 'Lato-Medium',
   },
   descPrice: {
-    color: colorConfig.pageIndex.grayColor,
+    color: colorConfig.store.title,
     maxWidth: Dimensions.get('window').width,
     textAlign: 'right',
     alignItems: 'flex-end',
-    fontSize: 14,
+    fontSize: 13,
     fontFamily: 'Lato-Medium',
   },
   descPriceModifier: {

@@ -216,7 +216,8 @@ class PaymentDetail extends Component {
   };
 
   onSlideRight = async () => {
-    // Actions.paymentSuccess();
+    const {intlData} = this.props;
+
     var pembayaran = {};
     try {
       this.setState({loading: true});
@@ -224,7 +225,7 @@ class PaymentDetail extends Component {
       pembayaran.outletName = this.props.pembayaran.storeName;
       pembayaran.referenceNo = this.props.pembayaran.referenceNo;
       pembayaran.outletId = this.props.pembayaran.storeId;
-      pembayaran.paymentType = 'CASH';
+      pembayaran.paymentType = this.props.pembayaran.paymentType;
       pembayaran.dataPay = this.props.pembayaran.dataPay;
       pembayaran.void = false;
 
@@ -263,6 +264,7 @@ class PaymentDetail extends Component {
         });
         // return back to payment success
         Actions.paymentSuccess({
+          intlData,
           dataRespons: response.responseBody.Data.data,
         });
       } else {
@@ -292,7 +294,14 @@ class PaymentDetail extends Component {
   };
 
   detailPayment = pembayaran => {
-    Actions.paymentDetailItem({pembayaran: pembayaran});
+    const {intlData} = this.props;
+    Actions.paymentDetailItem({
+      intlData,
+      point: this.state.addPoint,
+      voucher: this.state.dataVoucer,
+      totalBayar: this.state.totalBayar,
+      pembayaran: pembayaran,
+    });
   };
 
   hideAlert = () => {
@@ -680,7 +689,9 @@ class PaymentDetail extends Component {
               titleFontSize={20}
               shouldResetAfterSuccess={this.state.failedPay}
               railBackgroundColor={colorConfig.pageIndex.activeTintColor}
-              title={`${intlData.messages.pay} ${CurrencyFormatter(this.state.totalBayar)}`}
+              title={`${intlData.messages.pay} ${CurrencyFormatter(
+                this.state.totalBayar,
+              )}`}
               onSwipeSuccess={this.onSlideRight}
             />
           </View>

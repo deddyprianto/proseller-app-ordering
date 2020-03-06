@@ -27,6 +27,7 @@ import * as _ from 'lodash';
 class VoucherDetail extends Component {
   constructor(props) {
     super(props);
+    this.intlData = this.props.intlData;
     this.state = {
       screenWidth: Dimensions.get('window').width,
       showAlert: false,
@@ -75,10 +76,10 @@ class VoucherDetail extends Component {
     this.setState({
       showAlert: true,
       cancelButton: true,
-      pesanAlert: `This will spend your points by ${
+      pesanAlert: `${this.intlData.messages.spendPoint} ${
         dataVoucher['redeemValue']
       } point`,
-      titleAlert: 'Redeem Voucher ?',
+      titleAlert: `${this.intlData.messages.redeemVoucher} ?`,
     });
   };
 
@@ -342,7 +343,7 @@ class VoucherDetail extends Component {
           onConfirmPressed={() => {
             if (this.state.titleAlert == 'Success!') {
               this.hideAlert();
-            } else if (this.state.titleAlert == 'Redeem Voucher ?') {
+            } else if (this.state.titleAlert == `${this.intlData.messages.redeemVoucher} ?`) {
               this.btnRedeem(this.props.dataVoucher);
             } else {
               this.hideAlert();

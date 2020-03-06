@@ -440,6 +440,24 @@ export default class ModalOrder extends Component {
     return `${item.modifierName}`;
   };
 
+  itemModifier = (productModifiers, selectedCategoryModifier) => {
+    let data = (
+      <FlatList
+        data={productModifiers[selectedCategoryModifier].modifier.details}
+        extraData={this.props}
+        renderItem={({item, index}) => {
+          return this.renderItemModifier(
+            item,
+            index,
+            productModifiers[selectedCategoryModifier],
+          );
+        }}
+        keyExtractor={(item, index) => index.toString()}
+      />
+    );
+    return data;
+  };
+
   render() {
     // loading indicator
     let {loadModifierTime} = this.props;
@@ -452,6 +470,7 @@ export default class ModalOrder extends Component {
         productModifiers = product.product.productModifiers;
       }
     }
+    console.log('productModifiers', productModifiers);
 
     return (
       <Modal
@@ -529,21 +548,7 @@ export default class ModalOrder extends Component {
                 {!loadModifierTime ? (
                   <ActivityIndicator size={'large'} />
                 ) : (
-                  <FlatList
-                    data={
-                      productModifiers[selectedCategoryModifier].modifier
-                        .details
-                    }
-                    extraData={this.props}
-                    renderItem={({item, index}) => {
-                      return this.renderItemModifier(
-                        item,
-                        index,
-                        productModifiers[selectedCategoryModifier],
-                      );
-                    }}
-                    keyExtractor={(item, index) => index.toString()}
-                  />
+                  this.itemModifier(productModifiers, selectedCategoryModifier)
                 )}
               </View>
             ) : null}

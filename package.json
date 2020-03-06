@@ -1,6 +1,6 @@
 {
   "name": "Qiji",
-  "version": "1.1.1",
+  "version": "1.0",
   "private": true,
   "scripts": {
     "android-dev": "SET ENVFILE=.env.dev && react-native run-android --variant=devDebug --appIdSuffix=dev",

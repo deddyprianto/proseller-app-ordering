@@ -111,5 +111,19 @@
   "send": "Send",
   "sent": "Sent",
   "otpSent": "OTP Code has been sent to",
-  "resend": "Resend"
+  "resend": "Resend",
+  "until": "to",
+  "otpCodeSent": "OTP Code Sent !",
+  "emailHasBeenSentTo": "Email has been sent to",
+  "incorectOTPCode": "Incorect OTP Code",
+  "cantSendOTPCode": "Cant send OTP Code",
+  "wereSorry...": "We're Sorry...",
+  "voucherApplied": "Voucher Applied",
+  "pointApplied": "Point Applied",
+  "discount": "Discount",
+  "ok": "Ok",
+  "thankYou": "Thank You",
+  "accountNotConfirmed": "Looks like your account hasn't been confirmed, please confirm now.",
+  "spendPoint": "This will spend your points by",
+  "redeem": "Redeem"
 }

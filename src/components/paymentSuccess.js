@@ -28,7 +28,7 @@ export default class PaymentSuccess extends Component {
       screenWidth: Dimensions.get('window').width,
       showAlert: true,
       pesanAlert: this.props.dataRespons.message,
-      titleAlert: 'Thank You !',
+      titleAlert: `${this.props.intlData.messages.thankYou} !`,
     };
   }
 
@@ -101,7 +101,7 @@ export default class PaymentSuccess extends Component {
   };
 
   render() {
-    console.log(this.props.dataRespons, 'asajksbaksjbjk');
+    const {intlData} = this.props;
     return (
       <View style={styles.container}>
         <View style={styles.card}>
@@ -137,7 +137,7 @@ export default class PaymentSuccess extends Component {
                 fontSize: 14,
                 fontWeight: 'bold',
               }}>
-              You've Paid
+              {intlData.messages.youPaid}
             </Text>
             <View
               style={{
@@ -168,7 +168,9 @@ export default class PaymentSuccess extends Component {
                   color: colorConfig.pageIndex.activeTintColor,
                   fontSize: 12,
                 }}>
-                {'+' + this.props.dataRespons.earnedPoint + ' Points'}
+                {'+' +
+                  this.props.dataRespons.earnedPoint +
+                  ` ${intlData.messages.point}`}
               </Text>
             ) : null}
           </View>
@@ -242,7 +244,7 @@ export default class PaymentSuccess extends Component {
                 style={{
                   color: colorConfig.pageIndex.grayColor,
                 }}>
-                Date & Time
+                {intlData.messages.dateAndTime}
               </Text>
               <Text
                 style={{
@@ -260,7 +262,7 @@ export default class PaymentSuccess extends Component {
                 style={{
                   color: colorConfig.pageIndex.grayColor,
                 }}>
-                Payment Type
+                {intlData.messages.paymentType}
               </Text>
               <Text
                 style={{
@@ -304,7 +306,7 @@ export default class PaymentSuccess extends Component {
                     fontSize: 16,
                     fontWeight: 'bold',
                   }}>
-                  Ok
+                  {intlData.messages.ok}
                 </Text>
               </TouchableOpacity>
             </View>

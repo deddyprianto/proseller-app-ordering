@@ -3,6 +3,7 @@ import {
   BackHandler,
   Dimensions,
   Image,
+  Platform,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -11,7 +12,6 @@ import {
   Alert,
   Picker,
   ActivityIndicator,
-  Platform,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -50,6 +50,8 @@ class StoreDetailStores extends Component {
     this.heightCategoryPicker = 0;
 
     this.state = {
+      products: undefined,
+      dataLength: undefined,
       screenWidth: Dimensions.get('window').width,
       screenHeight: Dimensions.get('window').height,
       indexRender: false,
@@ -79,12 +81,16 @@ class StoreDetailStores extends Component {
     // check if basket soutlet is not same as current outlet
     await this.checkBucketExist();
 
+    // check bucket exist or not
+    // only status order PENDING is allowed to order
+    // check whether outlet is open and allowed to order, then ask user to select ordering status
     if (this.checkBucketExist() || this.props.dataBasket == undefined)
       if (
         this.props.dataBasket == undefined ||
         this.props.dataBasket.status == 'PENDING'
-      )
-        this.RBSheet.open();
+      ) {
+        if (this.outletAvailableToOrder()) this.RBSheet.open();
+      }
   };
 
   updateSelectedCategory = idx => {
@@ -217,24 +223,27 @@ class StoreDetailStores extends Component {
 
   getProductsByOutlet = async () => {
     try {
-      let payload = {
-        skip: 0,
-        take: 1000,
-      };
-      let response = await this.props.dispatch(
-        getProductByOutlet(this.props.item.storeId, payload),
-      );
+      const outletID = this.props.item.storeId;
+      let response = await this.props.dispatch(getProductByOutlet(outletID));
       console.log('response get product ', response);
       if (response.success) {
         if (
           this.props.products != undefined &&
           this.props.products.length != 0
         ) {
-          this.products.push(this.props.products[0]);
+          let data = await this.props.products.find(
+            item => item.id == outletID,
+          );
+          await this.setState({
+            products: data.products,
+            dataLength: data.dataLength,
+          });
+          this.products.push(data.products[0]);
         }
       } else {
         Alert.alert('Opss..', 'Something went wrong, please try again.');
       }
+      // this.products.push(this.state.products[0]);
     } catch (e) {
       Alert.alert('Opss..', 'Something went wrong, please try again.');
       this.setState({
@@ -588,8 +597,7 @@ class StoreDetailStores extends Component {
   };
 
   backButtonClicked = () => {
-    this.setState({isModalVisible: false, qtyItem: 1});
-    // console.log('Modal has been closed when back button is clicked');
+    this.setState({isModalVisible: false, qtyItem: 1, selectedProduct: {}});
   };
 
   modalShow = () => {
@@ -600,10 +608,14 @@ class StoreDetailStores extends Component {
 
     this.setState({
       selectedCategoryModifier: 0,
-      loadModifierTime: true,
+      loadModifierTime: false,
       qtyItem,
       remark,
     });
+
+    setTimeout(() => {
+      this.setState({loadModifierTime: true});
+    }, 1000);
   };
 
   addQty = () => {
@@ -637,7 +649,7 @@ class StoreDetailStores extends Component {
   };
 
   renderFooter = () => {
-    let dataLength = this.props.dataLength;
+    let dataLength = this.state.dataLength;
     let productsLength = this.products.length;
     if (
       productsLength < dataLength &&
@@ -651,7 +663,7 @@ class StoreDetailStores extends Component {
 
   handleLoadMore = () => {
     try {
-      let dataLength = this.props.dataLength;
+      let dataLength = this.state.dataLength;
       let productsLength = this.products.length;
       if (
         productsLength < dataLength &&
@@ -659,13 +671,48 @@ class StoreDetailStores extends Component {
       ) {
         this.setState({idx: this.state.idx + 1}, () => {
           if (this.productsLength <= dataLength) {
-            this.products.push(this.props.products[this.state.idx]);
+            this.products.push(this.state.products[this.state.idx]);
           }
         });
       }
     } catch (e) {
       console.log(e);
     }
+  };
+
+  outletAvailableToOrder = () => {
+    // check ordering status outlet
+    if (
+      this.props.item.orderingStatus == undefined ||
+      this.props.item.orderingStatus == 'AVAILABLE'
+    ) {
+      // check open / close
+      if (this.props.item.storeStatus == true) {
+        // check ordering status product
+        return true;
+      }
+    }
+    return false;
+  };
+
+  availableToOrder = item => {
+    // check ordering status outlet
+    if (
+      this.props.item.orderingStatus == undefined ||
+      this.props.item.orderingStatus == 'AVAILABLE'
+    ) {
+      // check open / close
+      if (this.props.item.storeStatus == true) {
+        // check ordering status product
+        if (
+          item.product.orderingStatus == undefined ||
+          item.product.orderingStatus == 'AVAILABLE'
+        ) {
+          return true;
+        }
+      }
+    }
+    return false;
   };
 
   renderCategoryWithProducts = item => {
@@ -677,8 +724,22 @@ class StoreDetailStores extends Component {
           renderItem={({item}) =>
             item.product != null ? (
               <TouchableOpacity
+                disabled={this.availableToOrder(item) ? false : true}
                 style={styles.detail}
-                onPress={() => this.toggleModal(item)}>
+                onPress={() =>
+                  this.availableToOrder(item) ? this.toggleModal(item) : false
+                }>
+                {!this.availableToOrder(item) ? (
+                  <View
+                    style={{
+                      backgroundColor: 'rgba(52, 73, 94, 0.2)',
+                      width: '100%',
+                      height: 95,
+                      position: 'absolute',
+                      zIndex: 2,
+                    }}
+                  />
+                ) : null}
                 <View style={styles.detailItem}>
                   <View style={{flexDirection: 'row'}}>
                     <ProgressiveImage
@@ -750,15 +811,42 @@ class StoreDetailStores extends Component {
             )}
           </View>
           <View style={styles.storeDescription}>
-            <Text
+            <View
               style={{
-                fontWeight: 'bold',
-                fontSize: 20,
-                textAlign: 'center',
+                flex: 1,
+                flexDirection: 'row',
+                justifyContent: 'center',
                 marginVertical: 17,
               }}>
-              {this.props.item.storeName}
-            </Text>
+              <Text
+                style={{
+                  fontWeight: 'bold',
+                  fontSize: 20,
+                  textAlign: 'center',
+                  marginRight: 10,
+                }}>
+                {this.props.item.storeName}
+              </Text>
+              <TouchableOpacity
+                onPress={() =>
+                  Actions.storeDetailStores({item: this.props.item})
+                }>
+                <Icon
+                  size={26}
+                  name={
+                    Platform.OS === 'ios' ? 'ios-information' : 'md-information'
+                  }
+                  style={{
+                    color: 'white',
+                    textAlign: 'center',
+                    width: 25,
+                    borderRadius: 50,
+                    height: 25,
+                    backgroundColor: colorConfig.pageIndex.inactiveTintColor,
+                  }}
+                />
+              </TouchableOpacity>
+            </View>
             <View
               style={{
                 flex: 1,
@@ -843,10 +931,10 @@ class StoreDetailStores extends Component {
                 if (itemIndex > 0) {
                   this.products = [];
                   this.setState({idx: 0});
-                  this.products.push(this.props.products[itemIndex - 1]);
+                  this.products.push(this.state.products[itemIndex - 1]);
                 } else {
                   this.products = [];
-                  this.products.push(this.props.products[0]);
+                  this.products.push(this.state.products[0]);
                 }
 
                 this.setState({selectedCategory: itemValue});
@@ -855,8 +943,8 @@ class StoreDetailStores extends Component {
               }
             }}>
             <Picker.Item label="ALL PRODUCTS" value="ALL PRODUCTS" />
-            {this.props.products != undefined
-              ? this.props.products.map((cat, idx) => (
+            {this.state.products != undefined
+              ? this.state.products.map((cat, idx) => (
                   <Picker.Item key={idx} label={cat.name} value={cat.name} />
                 ))
               : null}
@@ -943,7 +1031,7 @@ class StoreDetailStores extends Component {
 
   render() {
     let products = this.products;
-    console.log('DATA BASKET ', this.props.dataBasket);
+    console.log('DATA PRODUCTS ', products);
     return (
       <View style={styles.container}>
         <ModalOrder
@@ -1016,10 +1104,10 @@ class StoreDetailStores extends Component {
                   if (itemIndex > 0) {
                     this.products = [];
                     this.setState({idx: 0});
-                    this.products.push(this.props.products[itemIndex - 1]);
+                    this.products.push(this.state.products[itemIndex - 1]);
                   } else {
                     this.products = [];
-                    this.products.push(this.props.products[0]);
+                    this.products.push(this.state.products[0]);
                   }
 
                   this.setState({selectedCategory: itemValue});
@@ -1028,21 +1116,21 @@ class StoreDetailStores extends Component {
                 }
               }}>
               <Picker.Item label="ALL PRODUCTS" value="ALL PRODUCTS" />
-              {this.props.products != undefined
-                ? this.props.products.map((cat, idx) => (
+              {this.state.products != undefined
+                ? this.state.products.map((cat, idx) => (
                     <Picker.Item key={idx} label={cat.name} value={cat.name} />
                   ))
                 : null}
             </Picker>
           </View>
         ) : null}
-        {this.props.products != undefined ? (
-          this.props.products.length != 0 ? (
+        {this.state.products != undefined ? (
+          this.state.products.length != 0 ? (
             <FlatList
-              onMomentumScrollEnd={() =>
-                this.setState({showBasketButton: true})
-              }
-              onScrollBeginDrag={() => this.setState({showBasketButton: false})}
+              // onMomentumScrollEnd={() =>
+              //   this.setState({showBasketButton: true})
+              // }
+              // onScrollBeginDrag={() => this.setState({showBasketButton: false})}
               onScroll={e => {
                 let offset = e.nativeEvent.contentOffset.y;
                 let index = parseInt(offset / this.heightHeader);
@@ -1305,7 +1393,7 @@ const styles = StyleSheet.create({
   detail: {
     marginLeft: 15,
     marginRight: 15,
-    marginBottom: 10,
+    // marginBottom: 5,
   },
   detailOptionsModal: {
     marginLeft: 15,
@@ -1329,7 +1417,7 @@ const styles = StyleSheet.create({
     borderBottomColor: colorConfig.pageIndex.inactiveTintColor,
     borderBottomWidth: 1,
     paddingBottom: 15,
-    marginBottom: 10,
+    marginBottom: 5,
   },
   detailItemModal: {
     marginTop: 20,

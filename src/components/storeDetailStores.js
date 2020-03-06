@@ -83,7 +83,7 @@ export default class StoreDetailStores extends Component {
             {this.props.item.defaultImageURL != undefined ? (
               <Image
                 resizeMode="cover"
-                style={styles.image}
+                style={styles.imageNotNull}
                 source={{
                   uri: this.props.item.defaultImageURL,
                 }}
@@ -102,7 +102,9 @@ export default class StoreDetailStores extends Component {
             </View>
             <View style={styles.detail}>
               <View style={styles.detailItem}>
-                <Text style={[styles.desc, {fontWeight: 'bold'}]}>{intlData.messages.city}</Text>
+                <Text style={[styles.desc, {fontWeight: 'bold'}]}>
+                  {intlData.messages.city}
+                </Text>
                 <Text style={styles.desc}>
                   {this.props.item.city != undefined
                     ? this.props.item.city
@@ -110,7 +112,9 @@ export default class StoreDetailStores extends Component {
                 </Text>
               </View>
               <View style={styles.detailItem}>
-                <Text style={[styles.desc, {fontWeight: 'bold'}]}>{intlData.messages.region}</Text>
+                <Text style={[styles.desc, {fontWeight: 'bold'}]}>
+                  {intlData.messages.region}
+                </Text>
                 <Text style={styles.desc}>
                   {this.props.item.region != undefined
                     ? this.props.item.region
@@ -118,7 +122,9 @@ export default class StoreDetailStores extends Component {
                 </Text>
               </View>
               <View style={styles.detailItem}>
-                <Text style={[styles.desc, {fontWeight: 'bold'}]}>{intlData.messages.address}</Text>
+                <Text style={[styles.desc, {fontWeight: 'bold'}]}>
+                  {intlData.messages.address}
+                </Text>
                 <Text style={styles.descAddress}>
                   {this.props.item.address}
                 </Text>
@@ -126,7 +132,7 @@ export default class StoreDetailStores extends Component {
               {this.props.item.storeJarak == '-' ? null : (
                 <View style={styles.detailItem}>
                   <Text style={[styles.desc, {fontWeight: 'bold'}]}>
-                    Distance
+                    {intlData.messages.distance}
                   </Text>
                   <Text style={styles.desc}>
                     {this.props.item.storeJarak.toFixed(1) + ' KM'}
@@ -188,22 +194,54 @@ export default class StoreDetailStores extends Component {
           </View>
           <View style={styles.card}>
             <View style={styles.item}>
-              <Text style={styles.title}>{intlData.messages.operationalHours}</Text>
+              <Text style={styles.title}>
+                {intlData.messages.operationalHours}
+              </Text>
             </View>
-            {this.props.item.operationalHours
-              .filter(item => item.active == true)
-              .map((data, key) => (
-                <View key={key} style={styles.detail}>
-                  <View style={styles.detailItem}>
-                    <Text style={[styles.desc, {fontWeight: 'bold'}]}>
-                      {data.nameOfDay}
-                    </Text>
-                    <Text style={styles.desc}>
-                      {data.open} to {data.close}
-                    </Text>
+            {this.props.item.operationalHours != undefined ? (
+              this.props.item.operationalHours
+                .filter(item => item.active == true)
+                .map((data, key) => (
+                  <View key={key} style={styles.detail}>
+                    <View style={styles.detailItem}>
+                      <Text style={[styles.desc, {fontWeight: 'bold'}]}>
+                        {data.nameOfDay}
+                      </Text>
+                      <Text style={styles.desc}>
+                        {data.open} {intlData.messages.until} {data.close}
+                      </Text>
+                    </View>
                   </View>
-                </View>
-              ))}
+                ))
+            ) : this.props.item.openAllDays ? (
+              <View style={styles.detail}>
+                <Text
+                  style={[
+                    styles.title,
+                    {
+                      color: colorConfig.pageIndex.grayColor,
+                      marginTop: 20,
+                      marginBottom: 30,
+                    },
+                  ]}>
+                  This outlet is open all days
+                </Text>
+              </View>
+            ) : (
+              <View style={styles.detail}>
+                <Text
+                  style={[
+                    styles.title,
+                    {
+                      color: colorConfig.pageIndex.grayColor,
+                      marginTop: 20,
+                      marginBottom: 30,
+                    },
+                  ]}>
+                  No description for operational hours
+                </Text>
+              </View>
+            )}
           </View>
         </ScrollView>
         <TouchableHighlight
@@ -217,7 +255,7 @@ export default class StoreDetailStores extends Component {
               name={Platform.OS === 'ios' ? 'ios-locate' : 'md-locate'}
               style={{color: 'white', paddingRight: 10}}
             />
-            <Text> {intlData.messages.location} </Text>
+            <Text> {intlData.messages.location}</Text>
           </Text>
         </TouchableHighlight>
       </View>
@@ -302,9 +340,14 @@ const styles = StyleSheet.create({
     marginRight: 30,
     marginBottom: 10,
   },
+  imageNotNull: {
+    height: 200,
+    resizeMode: 'stretch',
+  },
   image: {
     height: 200,
     resizeMode: 'stretch',
+    width: '100%',
   },
   detailItem: {
     flexDirection: 'row',

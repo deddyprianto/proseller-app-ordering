@@ -111,18 +111,20 @@ class SignInPhoneNumber extends Component {
   constructor(props) {
     super(props);
     this.seconds = null;
+    this.intlData = this.props.intlData;
     this.state = {
       toggleSMSOTP: true,
       togglePassword: false,
       OTPCode: '',
       showPass: false,
       loading: false,
-      timer: 30,
-      seconds: null,
+      initialTimer: 1,
       buttonOTPpressed: false,
       firstLoad: true,
       password: '',
       attemptTry: 0,
+      minutes: 1,
+      seconds: 0,
     };
     this.imageWidth = new Animated.Value(styles.$largeImageSize);
   }
@@ -132,10 +134,25 @@ class SignInPhoneNumber extends Component {
   }
 
   beginTimer() {
-    this.interval = setInterval(
-      () => this.setState(prevState => ({timer: prevState.timer - 1})),
-      1000,
-    );
+    this.interval = setInterval(() => {
+      const {seconds, minutes} = this.state;
+
+      if (seconds > 0) {
+        this.setState(({seconds}) => ({
+          seconds: seconds - 1,
+        }));
+      }
+      if (seconds === 0) {
+        if (minutes === 0) {
+          clearInterval(this.interval);
+        } else {
+          this.setState(({minutes}) => ({
+            minutes: minutes - 1,
+            seconds: 59,
+          }));
+        }
+      }
+    }, 1000);
   }
 
   componentWillUnmount() {
@@ -143,9 +160,12 @@ class SignInPhoneNumber extends Component {
   }
 
   componentDidUpdate() {
-    if (this.state.timer === 0) {
+    if (this.state.seconds === 0 && this.state.minutes == 0) {
       clearInterval(this.interval);
-      this.setState({timer: 30, buttonOTPpressed: false});
+      this.setState({
+        minutes: this.state.initialTimer,
+        buttonOTPpressed: false,
+      });
     }
   }
 
@@ -175,6 +195,7 @@ class SignInPhoneNumber extends Component {
   };
 
   sendOTPEmail = async () => {
+    this.setState({initialTimer: 5, minutes: 5});
     this.setState({loading: true, firstLoad: false});
     this.beginTimer();
     try {
@@ -191,30 +212,22 @@ class SignInPhoneNumber extends Component {
           buttonOTPpressed: true,
         });
         let email = await this.hashEmail(this.props.email);
-        Alert.alert('OTP Code Sent !', `Email has been sent to ${email}`);
+        Alert.alert(
+          `${this.intlData.messages.otpCodeSent}`,
+          `${this.intlData.messages.otpSent} ${email}`,
+        );
       } else {
         this.setState({
           loading: false,
           buttonOTPpressed: false,
         });
-        Alert.alert('Opss..', 'Incorect OTP Code');
+        Alert.alert('Opss..', `${this.intlData.messages.cantSendOTPCode}`);
       }
     } catch (error) {
       Alert.alert('Opss..', 'Something went wrong, please try again.');
       this.setState({
         loading: false,
         buttonOTPpressed: false,
-      });
-    }
-  };
-
-  _onSmsListenerPressed = async () => {
-    // try {
-    const registered = await SmsRetriever.startSmsRetriever();
-    if (registered) {
-      SmsRetriever.addSmsListener(event => {
-        console.log('OTP nya ', event.message);
-        // SmsRetriever.removeSmsListener();
       });
     }
   };
@@ -239,7 +252,7 @@ class SignInPhoneNumber extends Component {
           loading: false,
           buttonOTPpressed: false,
         });
-        Alert.alert('Opss..', 'Cant send OTP Code');
+        Alert.alert('Opss..', `${this.intlData.messages.cantSendOTPCode}`);
       }
     } catch (error) {
       Alert.alert('Opss..', 'Something went wrong, please try again.');
@@ -294,7 +307,7 @@ class SignInPhoneNumber extends Component {
       Alert.alert('Opss..', response.message);
     } else if (response.code == 'UserNotConfirmedException') {
       this.setState({loading: false});
-      Alert.alert('Opss..', 'response.message');
+      Alert.alert('Opss..', response.message);
     }
     // } catch (error) {
     //   this.setState({loading: false});
@@ -304,16 +317,9 @@ class SignInPhoneNumber extends Component {
     // }
   };
 
-  zeroPad = (num, places) => {
-    try {
-      return String(num).padStart(places, '0');
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
   render() {
     const {intlData} = this.props;
+    let {minutes, seconds} = this.state;
     return (
       <View style={styles.backgroundImage}>
         {this.state.loading && <Loader />}
@@ -431,14 +437,18 @@ class SignInPhoneNumber extends Component {
                   />
                   {this.state.attemptTry <= 1 ? (
                     <TouchableHighlight
-                      disabled={this.state.timer === 30 ? false : true}
+                      disabled={
+                        this.state.minutes === this.state.initialTimer
+                          ? false
+                          : true
+                      }
                       onPress={this.sendOTP}
                       style={{
                         padding: 10,
                         width: '50%',
                         borderRadius: 10,
                         backgroundColor:
-                          this.state.timer === 30
+                          this.state.minutes === this.state.initialTimer
                             ? colorConfig.store.defaultColor
                             : colorConfig.store.disableButton,
                       }}>
@@ -455,14 +465,18 @@ class SignInPhoneNumber extends Component {
                     </TouchableHighlight>
                   ) : (
                     <TouchableHighlight
-                      disabled={this.state.timer === 30 ? false : true}
+                      disabled={
+                        this.state.minutes === this.state.initialTimer
+                          ? false
+                          : true
+                      }
                       onPress={this.sendOTPEmail}
                       style={{
                         padding: 15,
                         width: '50%',
                         borderRadius: 10,
                         backgroundColor:
-                          this.state.timer === 30
+                          this.state.minutes === this.state.initialTimer
                             ? colorConfig.store.defaultColor
                             : colorConfig.store.disableButton,
                       }}>
@@ -490,8 +504,8 @@ class SignInPhoneNumber extends Component {
                         color: colorConfig.pageIndex.grayColor,
                         fontSize: 16,
                       }}>
-                      {intlData.messages.resendAfter} 00:
-                      {this.zeroPad(this.state.timer, 2)}
+                      {intlData.messages.resendAfter} {minutes}:
+                      {seconds < 10 ? `0${seconds}` : seconds}
                     </Text>
                   </View>
                 ) : null}

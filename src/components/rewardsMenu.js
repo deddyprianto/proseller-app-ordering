@@ -65,7 +65,7 @@ export default class RewardsMenu extends Component {
             </View>
             <Text style={styles.menuText}>{intlData.messages.pay}</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={this.pageQRCode}>
+          <TouchableOpacity onPress={() => this.pageQRCode(this.props)}>
             <View style={{alignItems: 'center'}}>
               <Icon
                 size={this.state.screenHeight / 5 / 2 - 10}

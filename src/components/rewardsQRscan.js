@@ -58,6 +58,7 @@ class RewardsQRscan extends Component {
           dataPay: scan.dataPay,
           storeId: scan.outletId,
           referenceNo: scan.referenceNo,
+          paymentType: scan.paymentType,
         };
         // console.log('hasil pembayaran', pembayaran);
         // this.sendPayment(pembayaran);

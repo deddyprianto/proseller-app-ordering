@@ -118,18 +118,20 @@ class SignInEmail extends Component {
   constructor(props) {
     super(props);
     this.seconds = null;
+    this.intlData = this.props.intlData;
     this.state = {
       toggleSMSOTP: true,
       togglePassword: false,
       OTPCode: '',
       showPass: false,
       loading: false,
-      timer: 60,
-      seconds: null,
+      initialTimer: 5,
       buttonOTPpressed: false,
       firstLoad: true,
       password: '',
       attemptTry: 0,
+      minutes: 5,
+      seconds: 0,
     };
     this.imageWidth = new Animated.Value(styles.$largeImageSize);
   }
@@ -139,10 +141,25 @@ class SignInEmail extends Component {
   }
 
   beginTimer() {
-    this.interval = setInterval(
-      () => this.setState(prevState => ({timer: prevState.timer - 1})),
-      1000,
-    );
+    this.interval = setInterval(() => {
+      const {seconds, minutes} = this.state;
+
+      if (seconds > 0) {
+        this.setState(({seconds}) => ({
+          seconds: seconds - 1,
+        }));
+      }
+      if (seconds === 0) {
+        if (minutes === 0) {
+          clearInterval(this.interval);
+        } else {
+          this.setState(({minutes}) => ({
+            minutes: minutes - 1,
+            seconds: 59,
+          }));
+        }
+      }
+    }, 1000);
   }
 
   componentWillUnmount() {
@@ -150,13 +167,17 @@ class SignInEmail extends Component {
   }
 
   componentDidUpdate() {
-    if (this.state.timer === 0) {
+    if (this.state.seconds === 0 && this.state.minutes == 0) {
       clearInterval(this.interval);
-      this.setState({timer: 60, buttonOTPpressed: false});
+      this.setState({
+        minutes: this.state.initialTimer,
+        buttonOTPpressed: false,
+      });
     }
   }
 
   sendOTPEmail = async () => {
+    this.setState({initialTimer: 5, minutes: 5});
     this.setState({loading: true, firstLoad: false});
     try {
       this.beginTimer();
@@ -167,8 +188,8 @@ class SignInEmail extends Component {
       const response = await this.props.dispatch(sendOTP(dataRequest));
       if (response == true) {
         Alert.alert(
-          'OTP Sent !',
-          `OTP Code has been sent to ${dataRequest.email}`,
+          `${this.intlData.messages.otpCodeSent}`,
+          `${this.intlData.messages.otpSent} ${dataRequest.email}`,
         );
         this.setState({
           loading: false,
@@ -180,7 +201,7 @@ class SignInEmail extends Component {
           loading: false,
           buttonOTPpressed: false,
         });
-        Alert.alert('Opss..', 'Cant send OTP Code');
+        Alert.alert('Opss..', `${this.intlData.messages.cantSendOTPCode}`);
       }
     } catch (error) {
       Alert.alert('Opss..', 'Something went wrong, please try again.');
@@ -250,16 +271,9 @@ class SignInEmail extends Component {
     }
   };
 
-  zeroPad = (num, places) => {
-    try {
-      return String(num).padStart(places, '0');
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
   render() {
     const {intlData} = this.props;
+    let {minutes, seconds} = this.state;
     return (
       <View style={styles.backgroundImage}>
         {this.state.loading && <Loader />}
@@ -274,7 +288,8 @@ class SignInEmail extends Component {
                   fontWeight: 'bold',
                   fontFamily: 'Lato-Medium',
                 }}>
-                {intlData.messages.signIn} {intlData.messages.to} {this.props.email}
+                {intlData.messages.signIn} {intlData.messages.to}{' '}
+                {this.props.email}
               </Text>
             </View>
             {/*Tab OTP and Password*/}
@@ -380,14 +395,18 @@ class SignInEmail extends Component {
                     }}
                   />
                   <TouchableHighlight
-                    disabled={this.state.timer === 60 ? false : true}
+                    disabled={
+                      this.state.minutes === this.state.initialTimer
+                        ? false
+                        : true
+                    }
                     onPress={this.sendOTPEmail}
                     style={{
                       padding: 15,
                       width: '50%',
                       borderRadius: 10,
                       backgroundColor:
-                        this.state.timer === 60
+                        this.state.minutes === this.state.initialTimer
                           ? colorConfig.store.defaultColor
                           : colorConfig.store.disableButton,
                     }}>
@@ -414,8 +433,8 @@ class SignInEmail extends Component {
                         color: colorConfig.pageIndex.grayColor,
                         fontSize: 16,
                       }}>
-                      {intlData.messages.resendAfter} 00:
-                      {this.zeroPad(this.state.timer, 2)}
+                      {intlData.messages.resendAfter} {minutes}:
+                      {seconds < 10 ? `0${seconds}` : seconds}
                     </Text>
                   </View>
                 ) : null}

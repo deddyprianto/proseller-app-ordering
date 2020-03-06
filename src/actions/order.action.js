@@ -2,7 +2,7 @@ import {fetchApiProduct} from '../service/apiProduct';
 import {fetchApiOrder} from '../service/apiOrder';
 import {fetchApi} from '../service/api';
 
-export const getProductByOutlet = (OutletId, payload) => {
+export const getProductByOutlet = OutletId => {
   return async (dispatch, getState) => {
     const state = getState();
     try {
@@ -15,16 +15,23 @@ export const getProductByOutlet = (OutletId, payload) => {
       let response = await fetchApiProduct(
         `/productpreset/load/CRM/${OutletId}`,
         'POST',
-        payload,
+        null,
         200,
         token,
       );
       // console.log(response, 'response data product by outlet');
       if (response.success == true) {
-        dispatch({
-          type: 'DATA_PRODUCTS_OUTLET',
+        let outletProduct = [];
+        let product = {
+          id: OutletId,
           products: response.response.data,
           dataLength: response.response.dataLength,
+        };
+        outletProduct.push(product);
+        dispatch({
+          type: 'DATA_PRODUCTS_OUTLET',
+          products: outletProduct,
+          // dataLength: response.response.dataLength,
         });
       }
       return response;
@@ -262,6 +269,7 @@ export const addProductToBasket = payload => {
         });
       }
 
+      console.log('payload add products ', payload);
       // add real data
       let response = await fetchApiOrder(
         `/cart/additem`,

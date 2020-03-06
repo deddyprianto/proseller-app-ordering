@@ -31,6 +31,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
 import CryptoJS from 'react-native-crypto-js';
 import awsConfig from '../config/awsConfig';
+import {isEmptyArray} from '../helper/CheckEmpty';
 
 class Store extends Component {
   constructor(props) {
@@ -86,7 +87,16 @@ class Store extends Component {
     try {
       await this.props.dispatch(dataStores());
       await this.props.dispatch(getBasket());
-      let statusLocaiton = this.props.userPosition != false ? true : false;
+      // check if user enabled their position permission
+      let statusLocaiton;
+      if (
+        this.props.userPosition == undefined ||
+        this.props.userPosition == false
+      ) {
+        statusLocaiton = false;
+      } else {
+        statusLocaiton = true;
+      }
       this.setDataStore(
         this.props.dataStores,
         statusLocaiton,
@@ -123,7 +133,7 @@ class Store extends Component {
           dataStoresTampung.push({
             storeId: response.data[i].id,
             storeName: response.data[i].name,
-            storeStatus: this._cekOpen(response.data[i].operationalHours),
+            storeStatus: this._cekOpen(response.data[i]),
             storeJarak: statusLocation
               ? geolib.getDistance(position.coords, {
                   latitude: Number(response.data[i].latitude),
@@ -138,8 +148,10 @@ class Store extends Component {
             address: response.data[i].location.address,
             city: response.data[i].city,
             operationalHours: response.data[i].operationalHours,
+            openAllDays: response.data[i].openAllDays,
             defaultImageURL: response.data[i].defaultImageURL,
             coordinate: response.data[i].location.coordinate,
+            orderingStatus: response.data[i].orderingStatus,
           });
         }
       }
@@ -191,7 +203,21 @@ class Store extends Component {
     return comparison;
   }
 
-  _cekOpen = operationalHours => {
+  _cekOpen = data => {
+    let operationalHours = [];
+
+    if (
+      data.operationalHours == undefined ||
+      isEmptyArray(data.operationalHours)
+    ) {
+      if (data.openAllDays == true) {
+        return true;
+      }
+      return false;
+    }
+
+    operationalHours = data.operationalHours;
+
     let date = new Date();
     var dd = date.getDate();
     var mm = date.getMonth() + 1;

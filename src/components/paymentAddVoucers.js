@@ -144,7 +144,7 @@ export default class PaymentAddVoucers extends Component {
               }
               style={styles.btnBackIcon}
             />
-            <Text style={styles.btnBackText}> Back </Text>
+            <Text style={styles.btnBackText}> {intlData.messages.back} </Text>
           </TouchableOpacity>
           <View style={styles.line} />
         </View>

@@ -8,6 +8,7 @@ import {
   RefreshControl,
   TouchableOpacity,
   Image,
+  Platform,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -57,6 +58,7 @@ class RewardsStamps extends Component {
   }
 
   render() {
+    const {intlData} = this.props;
     return (
       <View style={styles.container}>
         <View>
@@ -71,7 +73,7 @@ class RewardsStamps extends Component {
                 }
                 style={styles.btnBackIcon}
               />
-              <Text style={styles.btnBackText}> Back </Text>
+              <Text style={styles.btnBackText}> {intlData.messages.back} </Text>
             </TouchableOpacity>
           </View>
           <View style={styles.line} />
@@ -125,7 +127,6 @@ const styles = StyleSheet.create({
   },
   point: {
     margin: 10,
-    alignItems: 'center',
     flexDirection: 'row',
     alignItems: 'center',
     borderColor: colorConfig.pageIndex.activeTintColor,
@@ -138,12 +139,16 @@ const styles = StyleSheet.create({
 mapStateToProps = state => ({
   vouchers: state.rewardsReducer.vouchers.dataVoucher,
   totalPoint: state.rewardsReducer.dataPoint.totalPoint,
+  intlData: state.intlData,
 });
 
 mapDispatchToProps = dispatch => ({
   dispatch,
 });
 
-export default compose(connect(mapStateToProps, mapDispatchToProps))(
-  RewardsStamps,
-);
+export default compose(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  ),
+)(RewardsStamps);

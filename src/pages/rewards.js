@@ -47,32 +47,34 @@ class Rewards extends Component {
       screenHeight: Dimensions.get('window').height,
       refreshing: false,
       isLoading: true,
+      statusGetData: true,
     };
   }
 
   setValueInterval = () => {
+    clearInterval(this.interval);
     this.interval = setInterval(() => {
       this.refreshStampsAndPoints();
-    }, 2000);
-  };
-
-  clearValueInterval = () => {
-    clearInterval(this.interval);
+      if (this.state.statusGetData == false) {
+        clearInterval(this.interval);
+      }
+    }, 3500);
   };
 
   componentDidMount = async () => {
+    console.log('yayayayayayay');
     this._isMounted = true;
     await this.getDataRewards();
 
     // make event to detect page focus or not
     const {navigation} = this.props;
     this.focusListener = navigation.addListener('willFocus', async () => {
-      //  set interval to refresh data stamps and point
-      // this.setValueInterval();
+      this.setState({statusGetData: true});
     });
 
     this.blurListener = navigation.addListener('didBlur', () => {
-      console.log('BLUR');
+      console.log('BLUSSSSS');
+      this.setState({statusGetData: false});
     });
   };
 
@@ -81,6 +83,7 @@ class Rewards extends Component {
     try {
       // this.focusListener.remove();
       // this.blurListener.remove();
+      // this.setState({statusGetData: false});
       clearInterval(this.interval);
     } catch (e) {}
   }
@@ -121,9 +124,12 @@ class Rewards extends Component {
     try {
       await Geolocation.getCurrentPosition(
         async position => {
+          console.log(position, 'position');
           await this.props.dispatch(userPosition(position));
         },
-        async error => {},
+        async error => {
+          console.log(error, 'position');
+        },
         {enableHighAccuracy: true, timeout: 3000, maximumAge: 1000},
       );
     } catch (error) {
@@ -142,6 +148,12 @@ class Rewards extends Component {
   }
 
   render() {
+    const {statusGetData} = this.state;
+    // check if status get data is true, then refresh stamps & point
+    if (statusGetData) {
+      this.setValueInterval();
+    }
+
     const {intlData} = this.props;
     return (
       <ScrollView
