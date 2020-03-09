@@ -68,3 +68,16 @@ export const userPosition = userPosition => {
     }
   };
 };
+
+export const movePageIndex = status => {
+  return async (dispatch, getState) => {
+    try {
+      dispatch({
+        type: 'MOVE_PAGE_INDEX',
+        status: status,
+      });
+    } catch (error) {
+      return error;
+    }
+  };
+};

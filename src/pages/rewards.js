@@ -7,6 +7,7 @@ import {
   ScrollView,
   RefreshControl,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 import {createAppContainer} from 'react-navigation';
 import * as _ from 'lodash';
@@ -24,7 +25,7 @@ import Loader from '../components/loader';
 import colorConfig from '../config/colorConfig';
 import {Actions} from 'react-native-router-flux';
 import Geolocation from 'react-native-geolocation-service';
-import {userPosition} from '../actions/user.action';
+import {movePageIndex, userPosition} from '../actions/user.action';
 import {myVoucers} from '../actions/account.action';
 import ShimmerPlaceHolder from 'react-native-shimmer-placeholder';
 import MyPointsPlaceHolder from '../components/placeHolderLoading/MyPointsPlaceHolder';
@@ -51,29 +52,37 @@ class Rewards extends Component {
     };
   }
 
+  disableStatusGetData = () => {
+    this.setState({statusGetData: false});
+  };
+
+  enableStatusGetData = () => {
+    this.setState({statusGetData: true});
+  };
+
   setValueInterval = () => {
+    const {statusGetData} = this.state;
     clearInterval(this.interval);
     this.interval = setInterval(() => {
       this.refreshStampsAndPoints();
-      if (this.state.statusGetData == false) {
-        clearInterval(this.interval);
-      }
+      console.log(this.state.statusGetData, 'statusGetData');
+      if (!this.state.statusGetData) clearInterval(this.interval);
     }, 3500);
   };
 
   componentDidMount = async () => {
-    console.log('yayayayayayay');
     this._isMounted = true;
     await this.getDataRewards();
 
     // make event to detect page focus or not
     const {navigation} = this.props;
     this.focusListener = navigation.addListener('willFocus', async () => {
+      await this.props.dispatch(movePageIndex(true));
       this.setState({statusGetData: true});
     });
 
-    this.blurListener = navigation.addListener('didBlur', () => {
-      console.log('BLUSSSSS');
+    this.blurListener = navigation.addListener('didBlur', async () => {
+      await this.props.dispatch(movePageIndex(false));
       this.setState({statusGetData: false});
     });
   };
@@ -148,11 +157,12 @@ class Rewards extends Component {
   }
 
   render() {
-    const {statusGetData} = this.state;
-    // check if status get data is true, then refresh stamps & point
-    if (statusGetData) {
-      this.setValueInterval();
-    }
+    // console.log('statusss', this.state.statusGetData);
+    //
+    // // check if status get data is true, then refresh stamps & point
+    // if (this.state.statusGetData) {
+    //   this.setValueInterval();
+    // }
 
     const {intlData} = this.props;
     return (
@@ -205,7 +215,12 @@ class Rewards extends Component {
             ) : (
               <RewardsPoint isLoading={this.state.isLoading} />
             )}
-            <RewardsMenu intlData={intlData} myVoucers={this.props.myVoucers} />
+            <RewardsMenu
+              disableStatusGetData={this.disableStatusGetData}
+              enableStatusGetData={this.enableStatusGetData}
+              intlData={intlData}
+              myVoucers={this.props.myVoucers}
+            />
             <RewardsTransaction
               isLoading={this.state.isLoading}
               screen={this.props}
@@ -247,6 +262,7 @@ mapStateToProps = state => ({
   myVoucers: state.accountsReducer.myVoucers.myVoucers,
   dataStamps: state.rewardsReducer.getStamps,
   totalPoint: state.rewardsReducer.dataPoint.totalPoint,
+  status: state.userReducer.statusPageIndex.status,
   intlData: state.intlData,
 });
 

@@ -10,6 +10,7 @@ import {
 import colorConfig from '../config/colorConfig';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
+import {movePageIndex} from '../actions/user.action';
 
 export default class RewardsMenu extends Component {
   constructor(props) {
@@ -19,7 +20,8 @@ export default class RewardsMenu extends Component {
     };
   }
 
-  pagePay() {
+  pagePay = () => {
+    this.props.disableStatusGetData();
     // var pembayaran = {
     //   payment: 9.01,
     //   storeName: 'Bugis Village',
@@ -38,17 +40,22 @@ export default class RewardsMenu extends Component {
     // };
     // console.log(pembayaran);
     // Actions.pay()
-    Actions.scan();
+    Actions.scan({
+      enableStatusGetData: this.props.enableStatusGetData,
+    });
     // Actions.paymentDetail({pembayaran: pembayaran});
-  }
+  };
 
-  pageRewards() {
-    Actions.rewards();
-  }
+  pageRewards = () => {
+    this.props.disableStatusGetData();
+    Actions.rewards({
+      enableStatusGetData: this.props.enableStatusGetData,
+    });
+  };
 
-  pageQRCode() {
+  pageQRCode = () => {
     Actions.qrcode();
-  }
+  };
 
   render() {
     const {intlData} = this.props;

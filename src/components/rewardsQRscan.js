@@ -5,6 +5,7 @@ import {
   StyleSheet,
   Dimensions,
   TouchableOpacity,
+  BackHandler,
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -31,11 +32,25 @@ class RewardsQRscan extends Component {
 
   componentDidMount = async () => {
     await this.props.dispatch(myVoucers());
+    this.backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      this.handleBackPress,
+    );
   };
 
-  goBack() {
-    Actions.pop();
+  componentWillUnmount() {
+    this.backHandler.remove();
   }
+
+  handleBackPress = () => {
+    this.goBack();
+    return true;
+  };
+
+  goBack = () => {
+    this.props.enableStatusGetData();
+    Actions.pop();
+  };
 
   onSuccess = e => {
     try {

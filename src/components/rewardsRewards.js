@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   Image,
   Platform,
+  BackHandler,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -36,6 +37,19 @@ class RewardsRewards extends Component {
 
   componentDidMount = async () => {
     this.getDataVoucher();
+    this.backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      this.handleBackPress,
+    );
+  };
+
+  componentWillUnmount() {
+    this.backHandler.remove();
+  }
+
+  handleBackPress = () => {
+    this.goBack();
+    return true;
   };
 
   getDataVoucher = async () => {
@@ -46,9 +60,10 @@ class RewardsRewards extends Component {
     this.setState({isLoading: false});
   };
 
-  goBack() {
+  goBack = () => {
+    this.props.enableStatusGetData();
     Actions.pop();
-  }
+  };
 
   render() {
     const {intlData} = this.props;

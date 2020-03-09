@@ -98,9 +98,22 @@ const userPosition = (state = {}, action) => {
   }
 };
 
+const statusPageIndex = (state = {}, action) => {
+  switch (action.type) {
+    case 'MOVE_PAGE_INDEX':
+      return {
+        status: action.status,
+      };
+
+    default:
+      return state;
+  }
+};
+
 export default combineReducers({
   getUser,
   updateUser,
   deviceUserInfo,
   userPosition,
+  statusPageIndex,
 });

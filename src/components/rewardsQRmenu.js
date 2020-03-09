@@ -63,9 +63,9 @@ class RewardsQRmenu extends Component {
   //   }
   // }
 
-  goBack() {
+  goBack = () => {
     Actions.pop();
-  }
+  };
 
   pageScan() {
     Actions.scan();

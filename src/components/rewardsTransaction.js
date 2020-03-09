@@ -13,6 +13,7 @@ import {Actions} from 'react-native-router-flux';
 import Icon from 'react-native-vector-icons/Ionicons';
 import colorConfig from '../config/colorConfig';
 import RecentTransactionPlaceHolder from '../components/placeHolderLoading/RecentTransactionPlaceHolder';
+import {movePageIndex} from '../actions/user.action';
 
 class RewardsTransaction extends Component {
   constructor(props) {
@@ -23,7 +24,8 @@ class RewardsTransaction extends Component {
   }
 
   historyDetailPayment = item => {
-    this.props.updateStatusGetData();
+    // to disable refresh timeout on page index
+    this.props.dispatch(movePageIndex(false));
     Actions.historyDetailPayment({item});
   };
 
