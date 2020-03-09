@@ -265,11 +265,17 @@ class Basket extends Component {
   };
 
   goToScanTable = () => {
-    Actions.scanQRTable();
-    clearInterval(this.interval);
-    this.interval = setInterval(() => {
-      this.props.dispatch(getBasket());
-    }, 2000);
+    if (this.props.orderType == undefined) {
+      Alert.alert('Sorry', 'Please select your ordering mode first.');
+    }
+
+    if (this.props.orderType != undefined) {
+      Actions.scanQRTable();
+      clearInterval(this.interval);
+      this.interval = setInterval(() => {
+        this.props.dispatch(getBasket());
+      }, 2000);
+    }
   };
 
   renderSettleButton = () => {

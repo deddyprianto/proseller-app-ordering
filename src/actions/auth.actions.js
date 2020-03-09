@@ -259,6 +259,9 @@ export const refreshToken = () => {
       }
     } catch (error) {
       console.log(error);
+      dispatch({
+        type: 'USER_LOGGED_OUT_SUCCESS',
+      });
     }
   };
 };
