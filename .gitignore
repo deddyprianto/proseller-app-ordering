@@ -59,7 +59,6 @@ buck-out/
 /ios/Pods/
 
 #config
-/src/config/awsConfig.js
 .env
 .env.demo
 .env.production
