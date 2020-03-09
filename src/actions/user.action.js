@@ -11,7 +11,7 @@ export const updateUser = payload => {
       // await dispatch(refreshToken());
       const {
         authReducer: {
-          authData: {token},
+          tokenUser: {token},
         },
       } = state;
       console.log(token);

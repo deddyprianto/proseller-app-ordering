@@ -8,7 +8,7 @@ export const getProductByOutlet = OutletId => {
     try {
       const {
         authReducer: {
-          authData: {token},
+          tokenUser: {token},
         },
       } = state;
 
@@ -87,7 +87,7 @@ export const submitOder = payload => {
       const state = getState();
       const {
         authReducer: {
-          authData: {token},
+          tokenUser: {token},
         },
       } = state;
       // get table type
@@ -129,7 +129,7 @@ export const removeBasket = () => {
       const state = getState();
       const {
         authReducer: {
-          authData: {token},
+          tokenUser: {token},
         },
       } = state;
       // add real data
@@ -164,7 +164,7 @@ export const updateProductToBasket = (payload, previousData) => {
       const state = getState();
       const {
         authReducer: {
-          authData: {token},
+          tokenUser: {token},
         },
       } = state;
       // get data basket previous
@@ -243,7 +243,7 @@ export const addProductToBasket = payload => {
       const state = getState();
       const {
         authReducer: {
-          authData: {token},
+          tokenUser: {token},
         },
       } = state;
       // get data basket previou
@@ -296,7 +296,7 @@ export const getBasket = () => {
     try {
       const {
         authReducer: {
-          authData: {token},
+          tokenUser: {token},
         },
       } = state;
       let response = await fetchApiOrder(
@@ -340,7 +340,7 @@ export const settleOrder = payload => {
     try {
       const {
         authReducer: {
-          authData: {token},
+          tokenUser: {token},
         },
       } = state;
 

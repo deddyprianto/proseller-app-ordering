@@ -61,13 +61,11 @@ class Rewards extends Component {
   };
 
   setValueInterval = () => {
-    const {statusGetData} = this.state;
     clearInterval(this.interval);
     this.interval = setInterval(() => {
       this.refreshStampsAndPoints();
-      console.log(this.state.statusGetData, 'statusGetData');
       if (!this.state.statusGetData) clearInterval(this.interval);
-    }, 3500);
+    }, 5000);
   };
 
   componentDidMount = async () => {
@@ -92,23 +90,21 @@ class Rewards extends Component {
     try {
       // this.focusListener.remove();
       // this.blurListener.remove();
-      // this.setState({statusGetData: false});
       clearInterval(this.interval);
     } catch (e) {}
   }
 
   refreshStampsAndPoints = async () => {
     try {
-      console.log('lalalalalal');
-      // await this.props.dispatch(dataPoint());
-      // await this.props.dispatch(getStamps());
+      await this.props.dispatch(dataPoint());
+      await this.props.dispatch(getStamps());
     } catch (e) {}
   };
 
   getDataRewards = async () => {
     try {
       await this.getUserPosition();
-      // await this.props.dispatch(refreshToken());
+      await this.props.dispatch(refreshToken());
       await this.props.dispatch(getBasket());
       await this.props.dispatch(campaign());
       await this.props.dispatch(dataPoint());
@@ -157,12 +153,10 @@ class Rewards extends Component {
   }
 
   render() {
-    // console.log('statusss', this.state.statusGetData);
-    //
-    // // check if status get data is true, then refresh stamps & point
-    // if (this.state.statusGetData) {
-    //   this.setValueInterval();
-    // }
+    // check if status get data is true, then refresh stamps & point
+    if (this.state.statusGetData) {
+      this.setValueInterval();
+    }
 
     const {intlData} = this.props;
     return (

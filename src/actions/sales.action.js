@@ -9,7 +9,7 @@ export const dataTransaction = () => {
       // get token from reducer
       const {
         authReducer: {
-          authData: {token},
+          tokenUser: {token},
         },
       } = state;
 
@@ -59,7 +59,7 @@ export const recentTransaction = () => {
       // get token from reducer
       const {
         authReducer: {
-          authData: {token},
+          tokenUser: {token},
         },
       } = state;
 
@@ -94,7 +94,7 @@ export const sendPayment = payload => {
     try {
       const {
         authReducer: {
-          authData: {token},
+          tokenUser: {token},
         },
       } = state;
 

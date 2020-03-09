@@ -32,6 +32,7 @@ import {Actions} from 'react-native-router-flux';
 import CryptoJS from 'react-native-crypto-js';
 import awsConfig from '../config/awsConfig';
 import {isEmptyArray} from '../helper/CheckEmpty';
+import {refreshToken} from '../actions/auth.actions';
 
 class Store extends Component {
   constructor(props) {
@@ -51,6 +52,7 @@ class Store extends Component {
   }
 
   componentDidMount = async () => {
+    await this.props.dispatch(refreshToken());
     await this.props.dispatch(dataPromotion());
     await this.props.dispatch(myVoucers());
     // let response = await this.props.dispatch(getBasket());
@@ -85,6 +87,7 @@ class Store extends Component {
 
   getDataStores = async () => {
     try {
+      await this.props.dispatch(refreshToken());
       await this.props.dispatch(dataStores());
       await this.props.dispatch(getBasket());
       // check if user enabled their position permission

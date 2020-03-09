@@ -9,7 +9,7 @@ export const myVoucers = () => {
       // await dispatch(refreshToken());
       const {
         authReducer: {
-          authData: {token},
+          tokenUser: {token},
         },
       } = state;
       const response = await fetchApi(

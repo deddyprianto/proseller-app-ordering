@@ -8,7 +8,7 @@ export const dataPromotion = () => {
       // await dispatch(refreshToken());
       const {
         authReducer: {
-          authData: {token},
+          tokenUser: {token},
         },
       } = state;
       const response = await fetchApiMasterData(

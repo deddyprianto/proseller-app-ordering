@@ -112,14 +112,19 @@ export const loginUser = payload => {
           data.refreshToken.token,
           awsConfig.PRIVATE_KEY_RSA,
         ).toString();
+        // save data to reducer
         dispatch({
           type: 'LOGIN_USER_SUCCESS',
         });
         dispatch({
           type: 'AUTH_USER_SUCCESS',
-          token: jwtToken,
           qrcode: qrcode,
           exp: data.accessToken.payload.exp * 1000 - 2700000,
+        });
+        // Save Token User
+        dispatch({
+          type: 'TOKEN_USER',
+          token: jwtToken,
           refreshToken: refreshToken,
         });
 
@@ -154,7 +159,7 @@ export const logoutUser = () => {
       // get user token
       const {
         authReducer: {
-          authData: {token},
+          tokenUser: {token},
         },
       } = state;
       // get user details and phone ID
@@ -200,7 +205,7 @@ export const getToken = () => {
     try {
       const {
         authReducer: {
-          authData: {token},
+          tokenUser: {token},
         },
       } = state;
       return token;
@@ -216,11 +221,11 @@ export const refreshToken = () => {
     console.log(state, 'state nya');
     try {
       let {
-        authReducer: {authData},
+        authReducer: {tokenUser},
       } = state;
       // Decrypt token
       let bytes = CryptoJS.AES.decrypt(
-        authData.refreshToken,
+        tokenUser.refreshToken,
         awsConfig.PRIVATE_KEY_RSA,
       );
       let refreshToken = bytes.toString(CryptoJS.enc.Utf8);
@@ -231,6 +236,14 @@ export const refreshToken = () => {
       const response = await fetchApi('/auth/refresh', 'POST', payload, 200);
       console.log(response, 'response refresh token');
 
+      // check if not authorized
+      if (response.responseBody.ResultCode == 401) {
+        dispatch({
+          type: 'USER_LOGGED_OUT_SUCCESS',
+        });
+      }
+
+      // if success, then save data
       if (response.success == true) {
         // encrypt data
         let jwtToken = CryptoJS.AES.encrypt(
@@ -239,12 +252,9 @@ export const refreshToken = () => {
         ).toString();
 
         dispatch({
-          type: 'REFRESH_TOKEN_USER',
+          type: 'TOKEN_USER',
           token: jwtToken,
-          refreshToken: state.authReducer.authData.refreshToken,
-          qrcode: state.authReducer.authData.qrcode,
-          payload: state.authReducer.authData.payload,
-          // isLoggedIn: true,
+          refreshToken: state.authReducer.tokenUser.refreshToken,
         });
       }
     } catch (error) {

@@ -11,7 +11,7 @@ export const campaign = () => {
       // await dispatch(refreshToken());
       const {
         authReducer: {
-          authData: {token, payload},
+          tokenUser: {token},
         },
       } = state;
 
@@ -50,7 +50,7 @@ export const vouchers = () => {
     try {
       const {
         authReducer: {
-          authData: {token},
+          tokenUser: {token},
         },
       } = state;
       // const {
@@ -87,7 +87,7 @@ export const getStamps = () => {
     try {
       const {
         authReducer: {
-          authData: {token},
+          tokenUser: {token},
         },
       } = state;
 
@@ -116,7 +116,7 @@ export const setStamps = payload => {
     try {
       const {
         authReducer: {
-          authData: {token},
+          tokenUser: {token},
         },
       } = state;
 
@@ -141,7 +141,7 @@ export const dataPoint = () => {
     try {
       const {
         authReducer: {
-          authData: {token},
+          tokenUser: {token},
         },
       } = state;
 
@@ -172,7 +172,7 @@ export const redeemVoucher = payload => {
     try {
       const {
         authReducer: {
-          authData: {token},
+          tokenUser: {token},
         },
       } = state;
       console.log(payload, 'payload redeemVoucher');

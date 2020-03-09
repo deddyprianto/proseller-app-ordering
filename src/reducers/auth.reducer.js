@@ -217,6 +217,19 @@ const confirmForgotPassword = (state = {}, action) => {
   }
 };
 
+const tokenUser = (state = {}, action) => {
+  switch (action.type) {
+    case 'TOKEN_USER':
+      return {
+        token: action.token,
+        refreshToken: action.refreshToken,
+      };
+
+    default:
+      return state;
+  }
+};
+
 export default combineReducers({
   createUser,
   loginUser,
@@ -225,4 +238,5 @@ export default combineReducers({
   sendCodeConfirmation,
   confirmForgotPassword,
   attemptSendOTP,
+  tokenUser,
 });
