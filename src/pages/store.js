@@ -9,6 +9,8 @@ import {
   TouchableOpacity,
   Image,
   Alert,
+  Platform,
+  PermissionsAndroid,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
@@ -55,20 +57,45 @@ class Store extends Component {
     await this.props.dispatch(refreshToken());
     await this.props.dispatch(dataPromotion());
     await this.props.dispatch(myVoucers());
-    // let response = await this.props.dispatch(getBasket());
 
-    // if (this.state.dataStores.length === 0) {
-    //   this.setState({isLoading: true});
-    // } else {
-    // this.setState({isLoading: false});
-    // }
     this.getDataStores();
+
+    this.getUserLocation();
 
     var hours = new Date().getHours();
     var min = new Date().getMinutes();
     this.setState({
       currentClock: hours + ':' + this.getMenit(min),
     });
+  };
+
+  getUserLocation = async () => {
+    if (Platform.OS !== 'android') Geolocation.requestAuthorization();
+    else {
+      try {
+        let granted = await this.askToAccessLocation();
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        } else {
+          this.getUserLocation();
+        }
+      } catch (err) {
+        console.warn(err);
+      }
+    }
+  };
+
+  askToAccessLocation = async () => {
+    const granted = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+      {
+        title: 'we need GPS location service',
+        message: 'we need location service to provide your location',
+        // buttonNeutral: 'Ask Me Later',
+        buttonNegative: 'Cancel',
+        buttonPositive: 'OK',
+      },
+    );
+    return granted;
   };
 
   componentWillUnmount = () => {

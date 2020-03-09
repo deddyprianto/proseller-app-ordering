@@ -143,7 +143,6 @@ const styles = StyleSheet.create({
   },
   point: {
     margin: 10,
-    alignItems: 'center',
     flexDirection: 'row',
     alignItems: 'center',
     borderColor: colorConfig.pageIndex.backgroundColor,

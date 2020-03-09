@@ -10,7 +10,6 @@ import {
   Alert,
 } from 'react-native';
 import {createAppContainer} from 'react-navigation';
-import * as _ from 'lodash';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
 import {notifikasi} from '../actions/auth.actions';
@@ -33,7 +32,6 @@ import {isEmptyObject, isEmptyArray} from '../helper/CheckEmpty';
 import {getBasket} from '../actions/order.action';
 
 class Rewards extends Component {
-  _isMounted = false;
   constructor(props) {
     super(props);
 
@@ -65,11 +63,10 @@ class Rewards extends Component {
     this.interval = setInterval(() => {
       this.refreshStampsAndPoints();
       if (!this.state.statusGetData) clearInterval(this.interval);
-    }, 5000);
+    }, 11000);
   };
 
   componentDidMount = async () => {
-    this._isMounted = true;
     await this.getDataRewards();
 
     // make event to detect page focus or not
@@ -86,7 +83,6 @@ class Rewards extends Component {
   };
 
   componentWillUnmount(): void {
-    this._isMounted = false;
     try {
       // this.focusListener.remove();
       // this.blurListener.remove();
@@ -173,10 +169,7 @@ class Rewards extends Component {
           ) : null}
           <View>
             {this.state.isLoading ? (
-              <RewardsStamp
-                isLoading={this.state.isLoading}
-                dataStamps={this.props.dataStamps}
-              />
+              <RewardsStamp isLoading={this.state.isLoading} />
             ) : this.props.dataStamps.dataStamps == undefined ? null : this
                 .props.dataStamps.dataStamps.length == 0 ? null : (
               <View
@@ -184,10 +177,7 @@ class Rewards extends Component {
                   backgroundColor: colorConfig.pageIndex.activeTintColor,
                   alignItems: 'center',
                 }}>
-                <RewardsStamp
-                  isLoading={this.state.isLoading}
-                  dataStamps={this.props.dataStamps}
-                />
+                <RewardsStamp isLoading={this.state.isLoading} />
                 <TouchableOpacity
                   onPress={this.detailStamps}
                   style={{

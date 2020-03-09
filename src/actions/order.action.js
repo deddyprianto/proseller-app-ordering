@@ -12,6 +12,13 @@ export const getProductByOutlet = OutletId => {
         },
       } = state;
 
+      // get previous data products outlet
+      const {
+        orderReducer: {
+          productsOutlet: {products},
+        },
+      } = state;
+
       let response = await fetchApiProduct(
         `/productpreset/load/CRM/${OutletId}`,
         'POST',
@@ -21,7 +28,14 @@ export const getProductByOutlet = OutletId => {
       );
       // console.log(response, 'response data product by outlet');
       if (response.success == true) {
-        let outletProduct = [];
+        // get previous data products and concat it
+        let outletProduct;
+        if (products != undefined) {
+          outletProduct = products;
+        } else {
+          outletProduct = [];
+        }
+
         let product = {
           id: OutletId,
           products: response.response.data,
@@ -31,7 +45,6 @@ export const getProductByOutlet = OutletId => {
         dispatch({
           type: 'DATA_PRODUCTS_OUTLET',
           products: outletProduct,
-          // dataLength: response.response.dataLength,
         });
       }
       return response;
@@ -167,70 +180,33 @@ export const updateProductToBasket = (payload, previousData) => {
           tokenUser: {token},
         },
       } = state;
-      // get data basket previous
-      const {
-        orderReducer: {
-          dataBasket: {product},
-        },
-      } = state;
 
-      // add temporary data if product is exist
-      if (product != undefined) {
-        // manipulate data in reducer so customer dont need to wait request until success when update data
-        let newProduct = product;
-        let index = product.details.findIndex(
-          item => item.productID == payload.details[0].productID,
-        );
+      let updatedProduct = [];
+      let data = {
+        id: previousData.id,
+        unitPrice: payload.details[0].unitPrice,
+        quantity: payload.details[0].quantity,
+        modifiers: payload.details[0].modifiers,
+      };
 
-        // if quantity not 0, then update
-        if (payload.details[0].quantity != 0 && index >= 0) {
-          newProduct.details[index].quantity = payload.details[0].quantity;
-          // check remark exist
-          if (
-            newProduct.details[index].remark != undefined &&
-            newProduct.details[index].remark != ''
-          ) {
-            newProduct.details[index].remark = payload.details[0].remark;
-          }
-        } else {
-          // if quantity is 0, then delete by index
-          newProduct.details.splice(index, 1);
-        }
-        // if product is basket has empty, then make basket undefined
-        if (newProduct.details.length == 0) newProduct = undefined;
-        // dispatch({
-        //   type: 'DATA_BASKET',
-        //   product: newProduct,
-        // });
-
-        //  after data in reducer has been updated by fake data, then request update to server with real data
-        let updatedProduct = [];
-        let data = {
-          id: previousData.id,
-          unitPrice: payload.details[0].unitPrice,
-          quantity: payload.details[0].quantity,
-          modifiers: payload.details[0].modifiers,
-        };
-
-        // if remark is available, then add
-        if (
-          payload.details[0].remark != undefined &&
-          payload.details[0].remark != ''
-        ) {
-          data.remark = payload.details[0].remark;
-        }
-        updatedProduct.push(data);
-        console.log('payload update product ', updatedProduct);
-        let response = await fetchApiOrder(
-          `/cart/updateitem`,
-          'POST',
-          updatedProduct,
-          200,
-          token,
-        );
-        console.log(response, 'response update data basket');
-        return response;
+      // if remark is available, then add
+      if (
+        payload.details[0].remark != undefined &&
+        payload.details[0].remark != ''
+      ) {
+        data.remark = payload.details[0].remark;
       }
+      updatedProduct.push(data);
+      console.log('payload update product ', updatedProduct);
+      let response = await fetchApiOrder(
+        `/cart/updateitem`,
+        'POST',
+        updatedProduct,
+        200,
+        token,
+      );
+      console.log(response, 'response update data basket');
+      return response;
     } catch (error) {
       return error;
     }

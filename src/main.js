@@ -17,7 +17,6 @@ import {connect} from 'react-redux';
 import Routes from './config/router';
 import Splash from './pages/splash';
 import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
-import Amplify, {Auth} from 'aws-amplify';
 
 import {refreshToken} from './actions/auth.actions';
 import colorConfig from './config/colorConfig';
@@ -48,16 +47,6 @@ class Main extends Component {
 
   async componentDidMount() {
     try {
-      // Amplify.configure({
-      //   Auth: {
-      //     identityPoolId: awsConfig.identityPoolId,
-      //     region: awsConfig.region,
-      //     userPoolId: awsConfig.cognitoPoolId,
-      //     userPoolWebClientId: awsConfig.appClientId,
-      //     mandatorySignIn: false,
-      //   },
-      // });
-
       await this.props.dispatch(refreshToken());
 
       const data = await this.performTimeConsumingTask();

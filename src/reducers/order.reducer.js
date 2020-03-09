@@ -5,7 +5,6 @@ const productsOutlet = (state = {}, action) => {
     case 'DATA_PRODUCTS_OUTLET':
       return {
         products: action.products,
-        dataLength: action.dataLength,
       };
 
     default:

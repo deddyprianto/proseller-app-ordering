@@ -28,7 +28,7 @@ import {
 import Loader from '../../components/loader';
 import ModalOrder from '../../components/order/Modal';
 import CurrencyFormatter from '../../helper/CurrencyFormatter';
-import {isEmptyArray} from '../../helper/CheckEmpty';
+import {isEmptyArray, isEmptyObject} from '../../helper/CheckEmpty';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import * as _ from 'lodash';
 
@@ -40,6 +40,7 @@ class Basket extends Component {
     this.RBSheet = null;
 
     this.state = {
+      products: [],
       screenWidth: Dimensions.get('window').width,
       loading: true,
       showBasketButton: true,
@@ -57,13 +58,71 @@ class Basket extends Component {
     };
   }
 
+  pushDataProductsToState = async outletID => {
+    try {
+      let data = await this.props.products.find(item => item.id == outletID);
+      // if data is found
+      if (data != undefined && !isEmptyObject(data)) {
+        await this.setState({
+          products: data.products,
+          dataLength: data.dataLength,
+        });
+      } else {
+        Alert.alert('Sorry', 'Cant get data products, please try again');
+        this.setState({
+          loading: false,
+        });
+      }
+    } catch (e) {
+      Alert.alert('Opss..', 'Something went wrong, please try again.');
+      this.setState({
+        loading: false,
+      });
+    }
+  };
+
+  getProductsByOutlet = async outletID => {
+    try {
+      if (this.props.products != undefined) {
+        // check data products on local storage
+        let data = await this.props.products.find(item => item.id == outletID);
+        if (data != undefined && !isEmptyObject(data)) {
+          await this.setState({
+            products: data.products,
+            dataLength: data.dataLength,
+          });
+        } else {
+          // get data from server
+          let response = await this.props.dispatch(
+            getProductByOutlet(outletID),
+          );
+          if (response.success) {
+            this.pushDataProductsToState(outletID);
+          }
+        }
+      } else {
+        // get data from server
+        let response = await this.props.dispatch(getProductByOutlet(outletID));
+        if (response.success) {
+          this.pushDataProductsToState(outletID);
+        }
+      }
+    } catch (e) {
+      Alert.alert('Opss..', 'Something went wrong, please try again.');
+      this.setState({
+        loading: false,
+      });
+    }
+  };
+
   componentDidMount = async () => {
     try {
-      // await this.props.dispatch(
-      //   getProductByOutlet('03882de0-d31e-457c-8bc0-4258290f43be'),
-      // );
       // get data basket
       await this.getBasket();
+      // get previous data products from this outlet, for modifier detail purpose
+      let outletID = this.props.dataBasket.outlet.id;
+      this.getProductsByOutlet(outletID);
+
       // check if status basket is submitted, then request continoustly to get basket
       if (
         this.props.dataBasket != undefined &&
@@ -448,7 +507,7 @@ class Basket extends Component {
 
       if (existProduct != false) {
         // FIND CATEGORY EXIST PRODUCT
-        const categoryProduct = this.props.products.find(
+        const categoryProduct = this.state.products.find(
           item => `category::${item.id}` == existProduct.product.categoryID,
         );
         // FIND PRODUCT BY CATEGORY ABOVE
@@ -579,10 +638,6 @@ class Basket extends Component {
           dataproduct.modifiers[i].modifier.details = tempDetails;
         }
 
-        // if remark is available, then push to array
-        if (remark != undefined && remark != '') dataproduct.remark = remark;
-        data.details.push(dataproduct);
-
         //  calculate total modifier
         await dataproduct.modifiers.map((group, i) => {
           if (group.postToServer == true) {
@@ -604,6 +659,10 @@ class Basket extends Component {
         //  add total item modifier to subtotal product
         dataproduct.unitPrice += totalModifier;
       }
+
+      // if remark is available, then push to array
+      if (remark != undefined && remark != '') dataproduct.remark = remark;
+      data.details.push(dataproduct);
 
       // send data to action
       let response = await this.props.dispatch(

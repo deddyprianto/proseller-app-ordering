@@ -16,11 +16,14 @@ import colorConfig from '../config/colorConfig';
 import appConfig from '../config/appConfig';
 import Icon from 'react-native-vector-icons/Ionicons';
 import StampsPlaceHolder from './placeHolderLoading/StampsPlaceHolder';
-import {isEmptyObject} from '../helper/CheckEmpty';
+import {isEmptyArray, isEmptyObject} from '../helper/CheckEmpty';
 
 class RewardsStamp extends Component {
   constructor(props) {
     super(props);
+
+    this.stampsItem = [];
+
     this.state = {
       screenWidth: Dimensions.get('window').width,
       screenHeight: Dimensions.get('window').height,
@@ -34,9 +37,11 @@ class RewardsStamp extends Component {
 
   getItemStamp() {
     var stampsItem = [];
-    // console.log('item stampts ', this.props.dataStamps.dataStamps);
     try {
-      if (this.props.dataStamps.dataStamps != undefined) {
+      if (
+        this.props.dataStamps.dataStamps != undefined &&
+        this.props.dataStamps.dataStamps.stamps != undefined
+      ) {
         var tampung = this.props.dataStamps.dataStamps.stamps.stampsItem;
         var isi = [];
         for (let i = 1; i <= tampung.length; i++) {
@@ -50,65 +55,49 @@ class RewardsStamp extends Component {
           }
         }
       }
-      this.setState({stampsItem});
+      // this.setState({stampsItem});
     } catch (e) {
-      if (isEmptyObject(this.props.dataStamps.dataStamps)) {
-        Alert.alert('Sorry', 'Stamps is empty.');
-      } else {
-        Alert.alert('Sorry', 'Cant get data stampts');
-      }
+      Alert.alert('Sorry', 'Cant get data stampts');
     }
+    // return data
+    if (!isEmptyArray(stampsItem))
+      return stampsItem.map((items, keys) => (
+        <View
+          key={keys}
+          style={{
+            marginTop: 5,
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+          }}>
+          {items.map((item, key) => (
+            <View
+              key={key}
+              style={item.stampsStatus == '-' ? styles.item : styles.itemFree}>
+              <Text
+                style={
+                  item.stampsStatus == '-' ? styles.detail : styles.detailFree
+                }>
+                <Icon
+                  size={22}
+                  name={Platform.OS === 'ios' ? 'ios-bookmark' : 'md-bookmark'}
+                  style={{color: colorConfig.store.defaultColor}}
+                />
+              </Text>
+            </View>
+          ))}
+        </View>
+      ));
+    else return null;
   }
 
   render() {
-    let that = this;
-    setTimeout(() => {
-      that.getItemStamp();
-    }, 10000);
-
     const {intlData} = this.props;
 
     return (
       <View style={styles.container}>
         <Text style={styles.title}>{intlData.messages.stampsCard}</Text>
         <View style={styles.card}>
-          {this.props.isLoading ? (
-            <StampsPlaceHolder />
-          ) : (
-            this.state.stampsItem.map((items, keys) => (
-              <View
-                key={keys}
-                style={{
-                  marginTop: 5,
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                }}>
-                {items.map((item, key) => (
-                  <View
-                    key={key}
-                    style={
-                      item.stampsStatus == '-' ? styles.item : styles.itemFree
-                    }>
-                    <Text
-                      style={
-                        item.stampsStatus == '-'
-                          ? styles.detail
-                          : styles.detailFree
-                      }>
-                      {/*{appConfig.appName}*/}
-                      <Icon
-                        size={22}
-                        name={
-                          Platform.OS === 'ios' ? 'ios-bookmark' : 'md-bookmark'
-                        }
-                        style={{color: colorConfig.store.defaultColor}}
-                      />
-                    </Text>
-                  </View>
-                ))}
-              </View>
-            ))
-          )}
+          {this.props.isLoading ? <StampsPlaceHolder /> : this.getItemStamp()}
         </View>
       </View>
     );

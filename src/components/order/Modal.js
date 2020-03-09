@@ -383,10 +383,17 @@ export default class ModalOrder extends Component {
   };
 
   renderItemModifier = (item, idx, modifier) => {
+    let available = true;
+    item.orderingStatus != 'AVAILABLE' ? (available = false) : true;
     return (
       <TouchableOpacity
-        onPress={() => this.openModalModifierQty(item, idx)}
-        style={styles.detailOptionsModal}>
+        onPress={() =>
+          available ? this.openModalModifierQty(item, idx) : false
+        }
+        style={[
+          styles.detailOptionsModal,
+          !available ? {backgroundColor: 'rgba(52, 73, 94, 0.2)'} : null,
+        ]}>
         {modifier.max == 1 && modifier.min == 1 ? (
           <RadioButton
             value={item}
@@ -546,7 +553,10 @@ export default class ModalOrder extends Component {
                   )}
                 </Text>
                 {!loadModifierTime ? (
-                  <ActivityIndicator size={'large'} />
+                  <ActivityIndicator
+                    size={'large'}
+                    color={colorConfig.store.defaultColor}
+                  />
                 ) : (
                   this.itemModifier(productModifiers, selectedCategoryModifier)
                 )}

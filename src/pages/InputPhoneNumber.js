@@ -14,6 +14,7 @@ import {
   Animated,
   Dimensions,
   TextInput,
+  Platform,
   Picker,
   TouchableHighlight,
   Alert,
@@ -145,28 +146,36 @@ class InputPhoneNumber extends Component {
     }
 
     // permition to get user position
-    // if (Platform.OS !== 'android') Geolocation.requestAuthorization();
-    // else {
-    //   try {
-    //     const granted = await PermissionsAndroid.request(
-    //       PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-    //       {
-    //         title: 'we need GPS location service',
-    //         message: 'we need location service to provide your location',
-    //         // buttonNeutral: 'Ask Me Later',
-    //         buttonNegative: 'Cancel',
-    //         buttonPositive: 'OK',
-    //       },
-    //     );
-    //     if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-    //     } else {
-    //       Defaults.modal.current.renderModel(modalOptions);
-    //       return false;
-    //     }
-    //   } catch (err) {
-    //     console.warn(err);
-    //   }
-    // }
+    this.getUserLocation();
+  };
+
+  getUserLocation = async () => {
+    if (Platform.OS !== 'android') Geolocation.requestAuthorization();
+    else {
+      try {
+        let granted = await this.askToAccessLocation();
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        } else {
+          this.getUserLocation();
+        }
+      } catch (err) {
+        console.warn(err);
+      }
+    }
+  };
+
+  askToAccessLocation = async () => {
+    const granted = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+      {
+        title: 'we need GPS location service',
+        message: 'we need location service to provide your location',
+        // buttonNeutral: 'Ask Me Later',
+        buttonNegative: 'Cancel',
+        buttonPositive: 'OK',
+      },
+    );
+    return granted;
   };
 
   checkAccountExist = async () => {
@@ -210,13 +219,19 @@ class InputPhoneNumber extends Component {
 
   getUserPosition = async () => {
     try {
-      await Geolocation.getCurrentPosition(
-        async position => {
-          await this.props.dispatch(userPosition(position));
-        },
-        async error => {},
-        {enableHighAccuracy: true, timeout: 3000, maximumAge: 1000},
+      const granted = await PermissionsAndroid.check(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
       );
+      console.log('datatatata', granted);
+      // await Geolocation.getCurrentPosition(
+      //   async position => {
+      //     await this.props.dispatch(userPosition(position));
+      //   },
+      //   async error => {
+      //     console.log('errrrrrr', error);
+      //   },
+      //   {enableHighAccuracy: true, timeout: 3000, maximumAge: 1000},
+      // );
     } catch (error) {
       console.log(error, 'error get position');
     }

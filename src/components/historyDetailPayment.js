@@ -298,8 +298,8 @@ class HistoryDetailPayment extends Component {
                 </Text>
               </View>
               <View style={styles.detail}>
-                {this.props.item.dataPay.map(item => (
-                  <View style={styles.detailItem}>
+                {this.props.item.dataPay.map((item, key) => (
+                  <View style={styles.detailItem} key={key}>
                     <Text style={[styles.desc, {width: '70%'}]}>
                       <Text
                         style={[

@@ -15,6 +15,7 @@ import {
   ScrollView,
   Picker,
   BackHandler,
+  Platform,
   TextInput,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -316,7 +317,9 @@ class AccountEditProfil extends Component {
                   </Picker>
                 </View>
                 <View style={styles.detailItem}>
-                  <Text style={[styles.desc, {marginLeft: 2}]}>{intlData.messages.address}</Text>
+                  <Text style={[styles.desc, {marginLeft: 2}]}>
+                    {intlData.messages.address}
+                  </Text>
                   <TextInput
                     placeholder={intlData.messages.yourAddress}
                     style={{paddingVertical: 10}}

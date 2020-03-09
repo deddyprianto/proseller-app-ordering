@@ -216,6 +216,7 @@ class SettleOrder extends Component {
 
   onSlideRight = async () => {
     var pembayaran = {};
+    const {intlData} = this.props;
     try {
       this.setState({loading: true});
       pembayaran.price = Number(this.state.totalBayar.toFixed(3));
@@ -261,6 +262,7 @@ class SettleOrder extends Component {
         });
         // go to payment success
         Actions.paymentSuccess({
+          intlData,
           dataRespons: response.responseBody.data,
         });
       } else {

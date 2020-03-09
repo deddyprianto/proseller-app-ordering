@@ -26,7 +26,6 @@ import {
   addProductToBasket,
   updateProductToBasket,
   getBasket,
-  removeProducts,
   setOrderType,
 } from '../../actions/order.action';
 import {compose} from 'redux';
@@ -62,11 +61,12 @@ class Products extends Component {
       remark: '',
       take: 1,
       idx: 0,
-      selectedCategory: 'ALL PRODUCTS',
+      selectedCategory: 0,
       selectedProduct: {},
       orderType: null,
       loadingAddItem: false,
       selectedCategoryModifier: 0,
+      loadProducts: true,
     };
   }
 
@@ -76,12 +76,14 @@ class Products extends Component {
       this.handleBackPress,
     );
     // berfore get new products, delete old products first, so different outlet got different products
-    await this.props.dispatch(removeProducts());
+    // await this.props.dispatch(removeProducts());
     // get product outlet
     await this.getProductsByOutlet();
     // check if basket soutlet is not same as current outlet
     await this.checkBucketExist();
+  };
 
+  openOrderingMode = () => {
     // check bucket exist or not
     // only status order PENDING is allowed to order
     // check whether outlet is open and allowed to order, then ask user to select ordering status
@@ -222,33 +224,70 @@ class Products extends Component {
     );
   };
 
+  pushDataProductsToState = async () => {
+    try {
+      const outletID = this.props.item.storeId;
+      let data = await this.props.products.find(item => item.id == outletID);
+      // if data is found
+      if (data != undefined && !isEmptyObject(data)) {
+        // check if products is exist, then ask user to select ordering mode
+        if (!isEmptyObject(data.products[0])) this.openOrderingMode();
+
+        this.products.push(data.products[0]);
+        // push data with index 0, (first category products)
+        await this.setState({
+          products: data.products,
+          dataLength: data.dataLength,
+        });
+      } else {
+        Alert.alert('Sorry', 'Cant get data products, please try again');
+        this.setState({
+          loading: false,
+        });
+      }
+    } catch (e) {
+      Alert.alert('Opss..', 'Something went wrong, please try again.');
+      this.setState({
+        loading: false,
+      });
+    }
+  };
+
   getProductsByOutlet = async () => {
     try {
       const outletID = this.props.item.storeId;
-      let response = await this.props.dispatch(getProductByOutlet(outletID));
-      console.log('response get product ', response);
-      if (response.success) {
-        if (
-          this.props.products != undefined &&
-          this.props.products.length != 0
-        ) {
-          let data = await this.props.products.find(
-            item => item.id == outletID,
-          );
-
-          // if data is found
-          if (data != undefined && !isEmptyObject(data)) {
+      console.log(this.props.products, 'this.props.products');
+      if (this.props.products != undefined) {
+        // check data products on local storage
+        let data = await this.props.products.find(item => item.id == outletID);
+        if (data != undefined && !isEmptyObject(data)) {
+          // check if products is exist, then ask user to select ordering mode
+          if (!isEmptyObject(data.products[0])) this.openOrderingMode();
+          // delay push data 1 second because Flatlist too slow to process large data
+          setTimeout(async () => {
+            // push data with index 0, (first category products)
             this.products.push(data.products[0]);
+            await this.setState({
+              products: data.products,
+              dataLength: data.dataLength,
+            });
+          }, 1000);
+        } else {
+          // get data from server
+          let response = await this.props.dispatch(
+            getProductByOutlet(outletID),
+          );
+          if (response.success) {
+            this.pushDataProductsToState();
           }
-          await this.setState({
-            products: data.products,
-            dataLength: data.dataLength,
-          });
         }
       } else {
-        Alert.alert('Opss..', 'Something went wrong, please try again.');
+        // get data from server
+        let response = await this.props.dispatch(getProductByOutlet(outletID));
+        if (response.success) {
+          this.pushDataProductsToState();
+        }
       }
-      // this.products.push(this.state.products[0]);
     } catch (e) {
       Alert.alert('Opss..', 'Something went wrong, please try again.');
       this.setState({
@@ -271,6 +310,11 @@ class Products extends Component {
   };
 
   openModal = async product => {
+    // make modal empty first
+    await this.setState({
+      selectedProduct: {},
+      loadModifierTime: false,
+    });
     // get current quantity from product
     let existProduct = await this.checkIfItemExistInBasket(product);
     product.quantity = 1;
@@ -316,7 +360,7 @@ class Products extends Component {
         });
       }
     }
-    this.setState({
+    await this.setState({
       selectedCategoryModifier: 0,
       selectedProduct: product,
       isModalVisible: !this.state.isModalVisible,
@@ -579,15 +623,6 @@ class Products extends Component {
       // to show loading button at Modal, check status data basket is empty or not
       let outletId = `outlet::${this.props.item.storeId}`;
       // conditional loading if basket is null
-      // if (this.props.dataBasket == undefined) {
-      //   await this.setState({loadingAddItem: true});
-      // }
-      // if (
-      //   this.props.dataBasket != undefined &&
-      //   this.props.dataBasket.outletID != outletId
-      // ) {
-      //   await this.setState({loadingAddItem: true});
-      // }
       await this.setState({loadingAddItem: true});
       await this.postItem(product, qty, remark);
       await this.setState({loadingAddItem: false});
@@ -620,7 +655,7 @@ class Products extends Component {
 
     setTimeout(() => {
       this.setState({loadModifierTime: true});
-    }, 1000);
+    }, 700);
   };
 
   addQty = () => {
@@ -759,7 +794,46 @@ class Products extends Component {
     this.heightHeader = height;
   };
 
+  updateCategory = async (item, itemIndex) => {
+    try {
+      await this.setState({loadProducts: false});
+      this.setState({selectedCategory: itemIndex});
+      this.setState({idx: itemIndex});
+      this.products = [];
+      this.products.push(this.state.products[itemIndex]);
+      await setTimeout(async () => {
+        await this.setState({loadProducts: true});
+      }, 500);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  renderCategoryProducts = (item, idx) => {
+    return (
+      <TouchableOpacity
+        onPress={() => this.updateCategory(item, idx)}
+        style={{
+          padding: 10,
+          flexDirection: 'row',
+        }}>
+        <View
+          style={[
+            this.state.selectedCategory == idx
+              ? styles.categoryActive
+              : styles.categoryNonActive,
+          ]}>
+          <Text
+            style={{padding: 10, fontFamily: 'Lato-Medium', color: 'white'}}>
+            {item.name}
+          </Text>
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
   renderHeaderOutlet = () => {
+    const {intlData} = this.props;
     return (
       <View
         onLayout={event => {
@@ -802,7 +876,7 @@ class Products extends Component {
               </Text>
               <TouchableOpacity
                 onPress={() =>
-                  Actions.storeDetailStores({item: this.props.item})
+                  Actions.storeDetailStores({item: this.props.item, intlData})
                 }>
                 <Icon
                   size={26}
@@ -847,7 +921,9 @@ class Products extends Component {
                       : colorConfig.store.colorError,
                   }}>
                   {' '}
-                  {this.props.item.storeStatus ? 'Open' : 'Closed'}
+                  {this.props.item.storeStatus
+                    ? intlData.messages.open
+                    : intlData.messages.closed}
                 </Text>
               </Text>
               <Text>
@@ -887,43 +963,16 @@ class Products extends Component {
           }}
           style={{
             backgroundColor: '#e1e4e8',
-            paddingBottom: 10,
-            marginBottom: 10,
           }}>
-          <Picker
-            selectedValue={this.state.selectedCategory}
-            style={{
-              height: 40,
-              padding: 5,
-              marginHorizontal: 10,
-              marginTop: 10,
-              textAlign: 'center',
-              fontFamily: 'Lato-Bold',
-              backgroundColor: colorConfig.pageIndex.backgroundColor,
+          <FlatList
+            horizontal={true}
+            data={this.state.products}
+            extraData={this.props}
+            renderItem={({item, index}) => {
+              return this.renderCategoryProducts(item, index);
             }}
-            onValueChange={(itemValue, itemIndex) => {
-              try {
-                if (itemIndex > 0) {
-                  this.products = [];
-                  this.setState({idx: 0});
-                  this.products.push(this.state.products[itemIndex - 1]);
-                } else {
-                  this.products = [];
-                  this.products.push(this.state.products[0]);
-                }
-
-                this.setState({selectedCategory: itemValue});
-              } catch (e) {
-                console.log(e);
-              }
-            }}>
-            <Picker.Item label="ALL PRODUCTS" value="ALL PRODUCTS" />
-            {this.state.products != undefined
-              ? this.state.products.map((cat, idx) => (
-                  <Picker.Item key={idx} label={cat.name} value={cat.name} />
-                ))
-              : null}
-          </Picker>
+            keyExtractor={(item, index) => index.toString()}
+          />
         </View>
       </View>
     );
@@ -1004,10 +1053,10 @@ class Products extends Component {
   };
 
   render() {
+    const {intlData} = this.props;
+    let {loadProducts} = this.state;
+
     let products = this.products;
-    if (!isEmptyArray(products)) {
-      console.log('DATA PRODUCTS ', products);
-    }
     return (
       <View style={styles.container}>
         <ModalOrder
@@ -1031,28 +1080,25 @@ class Products extends Component {
           loadModifierTime={this.state.loadModifierTime}
         />
         {this.askUserToSelectPaymentType()}
-        {/*<View*/}
-        {/*  style={styles.headerImage}*/}
-        {/*  onLayout={event => {*/}
-        {/*    let {height} = event.nativeEvent.layout;*/}
-        {/*    this.heightNavBar = height;*/}
-        {/*  }}>*/}
-        {/*  <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>*/}
-        {/*    <Icon*/}
-        {/*      size={28}*/}
-        {/*      name={*/}
-        {/*        Platform.OS === 'ios' ? 'ios-arrow-back' : 'md-arrow-round-back'*/}
-        {/*      }*/}
-        {/*      style={styles.btnBackIcon}*/}
-        {/*    />*/}
-        {/*    <Text style={styles.btnBackText}>*/}
-        {/*      {' '}*/}
-        {/*      {this.props.item.storeName}{' '}*/}
-        {/*    </Text>*/}
-        {/*  </TouchableOpacity>*/}
-        {/*</View>*/}
         <ScrollView>
           {this.renderHeaderOutlet()}
+          {/* Button Close */}
+          <View
+            style={{
+              position: 'absolute',
+              backgroundColor: 'transparent',
+              zIndex: 2,
+              top: 0,
+            }}>
+            <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
+              <Icon
+                size={25}
+                name={Platform.OS === 'ios' ? 'ios-close' : 'md-close'}
+                style={styles.btnBackIcon}
+              />
+            </TouchableOpacity>
+          </View>
+          {/* Button Close */}
           {this.state.indexRender ? (
             <View
               style={[
@@ -1108,103 +1154,22 @@ class Products extends Component {
           ) : null}
           {this.state.products != undefined ? (
             !isEmptyArray(products) ? (
-              this.renderCategoryWithProducts(products)
+              loadProducts ? (
+                this.renderCategoryWithProducts(products)
+              ) : (
+                this.renderProgressiveLoadItem()
+              )
             ) : (
-              <View>
-                <View>
-                  <View style={styles.cardImage}>
-                    {this.props.item.defaultImageURL != undefined ? (
-                      <ProgressiveImage
-                        resizeMode="cover"
-                        style={styles.image}
-                        source={{
-                          uri: this.props.item.defaultImageURL,
-                        }}
-                      />
-                    ) : (
-                      <ProgressiveImage
-                        resizeMode="cover"
-                        style={[styles.image, {width: '100%'}]}
-                        source={appConfig.appImageNull}
-                      />
-                    )}
-                  </View>
-                  <View style={styles.storeDescription}>
-                    <Text
-                      style={{
-                        fontWeight: 'bold',
-                        fontSize: 20,
-                        textAlign: 'center',
-                        marginVertical: 17,
-                      }}>
-                      {this.props.item.storeName}
-                    </Text>
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        marginHorizontal: 10,
-                      }}>
-                      <Text>
-                        <Icon
-                          size={18}
-                          name={Platform.OS === 'ios' ? 'ios-time' : 'md-time'}
-                          style={{
-                            color: this.props.item.storeStatus
-                              ? colorConfig.store.colorSuccess
-                              : colorConfig.store.colorError,
-                            paddingRight: 10,
-                          }}
-                        />
-                        <Text
-                          style={{
-                            fontWeight: 'bold',
-                            fontSize: 15,
-                            color: this.props.item.storeStatus
-                              ? colorConfig.store.colorSuccess
-                              : colorConfig.store.colorError,
-                          }}>
-                          {' '}
-                          {this.props.item.storeStatus ? 'Open' : 'Closed'}
-                        </Text>
-                      </Text>
-                      <Text>
-                        <Icon
-                          size={18}
-                          name={Platform.OS === 'ios' ? 'ios-pin' : 'md-pin'}
-                          style={{color: 'red', paddingRight: 10}}
-                        />
-                        <Text style={{fontSize: 13}}>
-                          {' '}
-                          {this.props.item.region} - {this.props.item.city}
-                        </Text>
-                      </Text>
-                      <Text>
-                        <Icon
-                          size={18}
-                          name={Platform.OS === 'ios' ? 'ios-map' : 'md-map'}
-                          style={{
-                            color: colorConfig.store.defaultColor,
-                            paddingRight: 10,
-                          }}
-                        />
-                        <Text style={{fontSize: 13}}>
-                          {' '}
-                          {this.props.item.storeJarak.toFixed(1) + ' KM'}
-                        </Text>
-                      </Text>
-                    </View>
-                  </View>
-                </View>
+              <View style={{height: Dimensions.get('window').height}}>
                 <Text
                   style={{
-                    color: colorConfig.pageIndex.grayColor,
-                    textAlign: 'center',
-                    fontSize: 25,
-                    justifyContent: 'center',
                     marginTop: 50,
+                    textAlign: 'center',
+                    justifyContent: 'center',
+                    fontSize: 27,
+                    color: colorConfig.pageIndex.grayColor,
                   }}>
-                  Opps, this outlet doesn't have any products yet :(
+                  Sorry, products is empty :(
                 </Text>
               </View>
             )
@@ -1229,6 +1194,7 @@ mapStateToProps = state => ({
   products: state.orderReducer.productsOutlet.products,
   dataBasket: state.orderReducer.dataBasket.product,
   dataLength: state.orderReducer.productsOutlet.dataLength,
+  intlData: state.intlData,
 });
 
 mapDispatchToProps = dispatch => ({
@@ -1272,12 +1238,19 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   btnBackIcon: {
-    color: colorConfig.store.defaultColor,
+    color: 'white',
     margin: 10,
   },
   btnBack: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
+    width: 35,
+    marginTop: 5,
+    marginLeft: 5,
+    backgroundColor: colorConfig.store.transparent,
+    height: 35,
+    borderRadius: 50,
   },
   imageProduct: {
     width: 80,
@@ -1489,5 +1462,17 @@ const styles = StyleSheet.create({
     fontFamily: 'Lato-Bold',
     fontSize: 17,
     textAlign: 'center',
+  },
+  categoryActive: {
+    justifyContent: 'center',
+    backgroundColor: colorConfig.store.defaultColor,
+    padding: 2,
+    borderRadius: 20,
+  },
+  categoryNonActive: {
+    justifyContent: 'center',
+    backgroundColor: colorConfig.pageIndex.inactiveTintColor,
+    padding: 2,
+    borderRadius: 20,
   },
 });
