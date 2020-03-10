@@ -5,27 +5,17 @@
  */
 
 import React, {Component} from 'react';
-import {
-  Router,
-  Scene,
-  CardStackStyleInterpolator,
-} from 'react-native-router-flux';
+import {Router, Scene} from 'react-native-router-flux';
 
 import InputPhoneNumber from '../pages/InputPhoneNumber';
 import InputEmail from '../pages/InputEmail';
-// import Signup from '../pages/signup';
 import SignInPhoneNumber from '../pages/SignInPhoneNumber';
 import SignInEmail from '../pages/SignInEmail';
 import MobileRegister from '../pages/MobileRegister';
 import EmailRegister from '../pages/EmailRegister';
-import VerifyRegister from '../pages/VerifyRegister';
-// import Aunt from '../pages/aunt';
-// import VerifyCode from '../pages/verifyCode';
-// import ForgotPassword from '../pages/forgotPassword';
 import PageIndex from '../pages/pageIndex';
 import VerifyOtpAfterRegister from '../pages/VerifyOtpAfterRegister';
 import VerifyOtpAfterRegisterEmail from '../pages/VerifyOtpAfterRegisterEmail';
-import ChangeCredentials from '../pages/changeCredentials';
 
 import Pay from '../components/rewardsPay';
 import Rewards from '../components/rewardsRewards';
@@ -46,7 +36,6 @@ import PaymentSuccess from '../components/paymentSuccess';
 import PaymentAddVoucers from '../components/paymentAddVoucers';
 import PaymentDetailItem from '../components/paymentDetailItem';
 import InboxDetail from '../components/inboxDetail';
-// import SigninWaitPassword from '../components/signinWaitPassword';
 import PaymentAddPoint from '../components/paymentAddPoint';
 import RewardsStamps from '../components/rewardsStamps';
 
@@ -79,7 +68,6 @@ export default class Routes extends Component {
             <Scene key="signInPhoneNumber" component={SignInPhoneNumber} />
             <Scene key="signInEmail" component={SignInEmail} />
             <Scene key="inputEmail" component={InputEmail} />
-            <Scene key="verifyRegister" component={VerifyRegister} />
             <Scene
               key="verifyOtpAfterRegister"
               component={VerifyOtpAfterRegister}
@@ -119,7 +107,6 @@ export default class Routes extends Component {
             <Scene key="inboxDetail" component={InboxDetail} />
             <Scene key="paymentAddPoint" component={PaymentAddPoint} />
             <Scene key="detailStamps" component={RewardsStamps} />
-            <Scene key="changeCredentials" component={ChangeCredentials} />
             <Scene key="order" component={Order} />
             <Scene key="categoryProducts" component={CategoryProducts} />
             <Scene key="products" component={Products} />

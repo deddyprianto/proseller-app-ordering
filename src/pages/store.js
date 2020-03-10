@@ -444,55 +444,55 @@ class Store extends Component {
           )}
         </ScrollView>
 
-        {/*<TouchableOpacity*/}
-        {/*  onPress={() => Actions.basket()}*/}
-        {/*  style={{*/}
-        {/*    position: 'absolute',*/}
-        {/*    bottom: '6%',*/}
-        {/*    right: '5%',*/}
-        {/*    height: 60,*/}
-        {/*    borderRadius: 50,*/}
-        {/*    justifyContent: 'center',*/}
-        {/*    alignItems: 'center',*/}
-        {/*    width: 60,*/}
-        {/*    backgroundColor: 'white',*/}
-        {/*    shadowColor: '#00000021',*/}
-        {/*    shadowOffset: {*/}
-        {/*      width: 0,*/}
-        {/*      height: 9,*/}
-        {/*    },*/}
-        {/*    shadowOpacity: 0.7,*/}
-        {/*    shadowRadius: 7.49,*/}
-        {/*    elevation: 12,*/}
-        {/*  }}>*/}
-        {/*  <View>*/}
-        {/*    <Icon*/}
-        {/*      size={40}*/}
-        {/*      name={Platform.OS === 'ios' ? 'ios-cart' : 'md-cart'}*/}
-        {/*      style={{color: colorConfig.store.defaultColor}}*/}
-        {/*    />*/}
-        {/*  </View>*/}
-        {/*  /!* check data length basket, if not undefined, then show length *!/*/}
-        {/*  {this.props.dataBasket != undefined &&*/}
-        {/*  this.props.dataBasket.details != undefined ? (*/}
-        {/*    <View*/}
-        {/*      style={{*/}
-        {/*        position: 'absolute',*/}
-        {/*        top: -7,*/}
-        {/*        right: 1,*/}
-        {/*        width: 25,*/}
-        {/*        height: 25,*/}
-        {/*        backgroundColor: colorConfig.store.colorError,*/}
-        {/*        borderRadius: 50,*/}
-        {/*        justifyContent: 'center',*/}
-        {/*        alignItems: 'center',*/}
-        {/*      }}>*/}
-        {/*      <Text style={{color: 'white', padding: 3, fontSize: 11}}>*/}
-        {/*        {this.getSumOfQuantityBasket()}*/}
-        {/*      </Text>*/}
-        {/*    </View>*/}
-        {/*  ) : null}*/}
-        {/*</TouchableOpacity>*/}
+        <TouchableOpacity
+          onPress={() => Actions.basket()}
+          style={{
+            position: 'absolute',
+            bottom: '6%',
+            right: '5%',
+            height: 60,
+            borderRadius: 50,
+            justifyContent: 'center',
+            alignItems: 'center',
+            width: 60,
+            backgroundColor: 'white',
+            shadowColor: '#00000021',
+            shadowOffset: {
+              width: 0,
+              height: 9,
+            },
+            shadowOpacity: 0.7,
+            shadowRadius: 7.49,
+            elevation: 12,
+          }}>
+          <View>
+            <Icon
+              size={40}
+              name={Platform.OS === 'ios' ? 'ios-cart' : 'md-cart'}
+              style={{color: colorConfig.store.defaultColor}}
+            />
+          </View>
+          {/* check data length basket, if not undefined, then show length */}
+          {this.props.dataBasket != undefined &&
+          this.props.dataBasket.details != undefined ? (
+            <View
+              style={{
+                position: 'absolute',
+                top: -7,
+                right: 1,
+                width: 25,
+                height: 25,
+                backgroundColor: colorConfig.store.colorError,
+                borderRadius: 50,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <Text style={{color: 'white', padding: 3, fontSize: 11}}>
+                {this.getSumOfQuantityBasket()}
+              </Text>
+            </View>
+          ) : null}
+        </TouchableOpacity>
       </View>
     );
   }

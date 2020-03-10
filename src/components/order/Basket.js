@@ -31,6 +31,7 @@ import CurrencyFormatter from '../../helper/CurrencyFormatter';
 import {isEmptyArray, isEmptyObject} from '../../helper/CheckEmpty';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import * as _ from 'lodash';
+import intlData from '../../reducers/language.reducer';
 
 class Basket extends Component {
   constructor(props) {
@@ -120,8 +121,10 @@ class Basket extends Component {
       // get data basket
       await this.getBasket();
       // get previous data products from this outlet, for modifier detail purpose
-      let outletID = this.props.dataBasket.outlet.id;
-      this.getProductsByOutlet(outletID);
+      if (this.props.dataBasket != undefined) {
+        let outletID = this.props.dataBasket.outlet.id;
+        this.getProductsByOutlet(outletID);
+      }
 
       // check if status basket is submitted, then request continoustly to get basket
       if (
@@ -136,6 +139,7 @@ class Basket extends Component {
     } catch (e) {
       Alert.alert('Opss..', "Can't get data basket, please try again.");
     }
+
     this.backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
       this.handleBackPress,
@@ -147,6 +151,7 @@ class Basket extends Component {
   };
 
   askUserToSelectPaymentType = () => {
+    const {intlData} = this.props;
     return (
       <RBSheet
         ref={ref => {
@@ -201,7 +206,7 @@ class Basket extends Component {
               fontSize: 18,
               textAlign: 'center',
             }}>
-            DINE IN
+            {intlData.messages.dineIn}
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -229,7 +234,7 @@ class Basket extends Component {
               fontSize: 18,
               textAlign: 'center',
             }}>
-            TAKE AWAY
+            {intlData.messages.takeAway}
           </Text>
         </TouchableOpacity>
       </RBSheet>
@@ -309,7 +314,9 @@ class Basket extends Component {
             name={Platform.OS === 'ios' ? 'ios-trash' : 'md-trash'}
             style={{color: 'white', marginRight: 5}}
           />
-          <Text style={styles.textBtnBasketModal}>Clear</Text>
+          <Text style={styles.textBtnBasketModal}>
+            {intlData.messages.clear}
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity
           onPress={this.goToSettle}
@@ -379,6 +386,7 @@ class Basket extends Component {
   };
 
   renderButtonConfirm = () => {
+    const {intlData} = this.props;
     return (
       <View
         style={{
@@ -399,7 +407,9 @@ class Basket extends Component {
             name={Platform.OS === 'ios' ? 'ios-trash' : 'md-trash'}
             style={{color: 'white', marginRight: 5}}
           />
-          <Text style={styles.textBtnBasketModal}>Clear</Text>
+          <Text style={styles.textBtnBasketModal}>
+            {intlData.messages.clear}
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity
           onPress={this.goToScanTable}
@@ -413,7 +423,9 @@ class Basket extends Component {
             }
             style={{color: 'white', marginRight: 5}}
           />
-          <Text style={styles.textBtnBasketModal}>Submit</Text>
+          <Text style={styles.textBtnBasketModal}>
+            {intlData.messages.submit}
+          </Text>
         </TouchableOpacity>
       </View>
     );
@@ -443,6 +455,7 @@ class Basket extends Component {
   };
 
   renderNullBasker = () => {
+    const {intlData} = this.props;
     return (
       <View
         style={{
@@ -458,7 +471,7 @@ class Basket extends Component {
             fontWeight: 'bold',
             textAlign: 'center',
           }}>
-          Sorry, your bucket is empty.
+          {intlData.messages.bucketEmpty}.
         </Text>
       </View>
     );
@@ -745,6 +758,7 @@ class Basket extends Component {
   };
 
   render() {
+    const {intlData} = this.props;
     // give message to user if order has been confirmed
     try {
       if (this.props.dataBasket != undefined) {
@@ -792,7 +806,10 @@ class Basket extends Component {
               }
               style={styles.btnBackIcon}
             />
-            <Text style={styles.btnBackText}> Detail Order </Text>
+            <Text style={styles.btnBackText}>
+              {' '}
+              {intlData.messages.detailOrder}{' '}
+            </Text>
           </TouchableOpacity>
           <View style={styles.line} />
         </View>
@@ -804,7 +821,9 @@ class Basket extends Component {
                 <Text style={styles.title}>
                   {this.props.dataBasket.outlet.name}
                 </Text>
-                <Text style={styles.subTitle}>Detail Order</Text>
+                <Text style={styles.subTitle}>
+                  {intlData.messages.detailOrder}
+                </Text>
                 <ScrollView
                   refreshControl={
                     <RefreshControl
@@ -900,7 +919,9 @@ class Basket extends Component {
                   </View>
                 ) : null}
                 <View style={styles.itemSummary}>
-                  <Text style={styles.total}>Status Order</Text>
+                  <Text style={styles.total}>
+                    {intlData.messages.statusOrder}
+                  </Text>
                   {this.renderStatusOrder()}
                 </View>
                 <TouchableOpacity
@@ -910,7 +931,9 @@ class Basket extends Component {
                       : null
                   }
                   style={styles.itemSummary}>
-                  <Text style={styles.total}>Order Mode</Text>
+                  <Text style={styles.total}>
+                    {intlData.messages.orderMode}
+                  </Text>
                   {this.props.orderType == 'TAKEAWAY' ? (
                     <Text
                       style={[
@@ -946,13 +969,15 @@ class Basket extends Component {
                   )}
                 </TouchableOpacity>
                 <View style={styles.itemSummary}>
-                  <Text style={styles.total}>Total Tax Amount</Text>
+                  <Text style={styles.total}>
+                    {intlData.messages.totalTaxAmmount}
+                  </Text>
                   <Text style={styles.total}>
                     {CurrencyFormatter(this.props.dataBasket.totalTaxAmount)}
                   </Text>
                 </View>
                 <View style={styles.itemSummary}>
-                  <Text style={styles.total}>Total Nett Amount</Text>
+                  <Text style={styles.total}>Total</Text>
                   <Text style={styles.total}>
                     {' '}
                     {CurrencyFormatter(this.props.dataBasket.totalNettAmount)}
@@ -982,6 +1007,7 @@ mapStateToProps = state => ({
   orderType: state.orderReducer.orderType.orderType,
   tableType: state.orderReducer.tableType.tableType,
   products: state.orderReducer.productsOutlet.products,
+  intlData: state.intlData,
 });
 
 mapDispatchToProps = dispatch => ({

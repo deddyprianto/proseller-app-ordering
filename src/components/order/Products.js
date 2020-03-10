@@ -106,6 +106,7 @@ class Products extends Component {
   };
 
   askUserToSelectPaymentType = () => {
+    const {intlData} = this.props;
     return (
       <RBSheet
         ref={ref => {
@@ -160,7 +161,7 @@ class Products extends Component {
               fontSize: 18,
               textAlign: 'center',
             }}>
-            DINE IN
+            {intlData.messages.dineIn}
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -188,7 +189,7 @@ class Products extends Component {
               fontSize: 18,
               textAlign: 'center',
             }}>
-            TAKE AWAY
+            {intlData.messages.takeAway}
           </Text>
         </TouchableOpacity>
       </RBSheet>
@@ -737,6 +738,9 @@ class Products extends Component {
         <Text style={styles.titleCategory}>{item[0].name}</Text>
         <FlatList
           data={item[0].items}
+          getItemLayout={(data, index) => {
+            return {length: 95, offset: 95 * index, index};
+          }}
           renderItem={({item}) =>
             item.product != null ? (
               <TouchableOpacity
@@ -973,6 +977,9 @@ class Products extends Component {
           }}>
           <FlatList
             horizontal={true}
+            getItemLayout={(data, index) => {
+              return {length: 8, offset: 8 * index, index};
+            }}
             data={this.state.products}
             extraData={this.props}
             renderItem={({item, index}) => {
@@ -1068,6 +1075,7 @@ class Products extends Component {
     return (
       <View style={styles.container}>
         <ModalOrder
+          intlData={intlData}
           isModalVisible={this.state.isModalVisible}
           qtyItem={this.state.qtyItem}
           remark={this.state.remark}

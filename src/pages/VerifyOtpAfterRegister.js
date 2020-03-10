@@ -137,10 +137,11 @@ class VerifyOtpAfterRegister extends Component {
   }
 
   componentDidMount(): void {
-    // this.sendOTP();
+    this.beginTimer();
+    this.setState({firstLoad: false, buttonOTPpressed: true});
   }
 
-  beginTimer() {
+  beginTimer = () => {
     this.interval = setInterval(() => {
       const {seconds, minutes} = this.state;
 

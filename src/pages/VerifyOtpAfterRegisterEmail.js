@@ -136,10 +136,11 @@ class VerifyOtpAfterRegisterEmail extends Component {
   }
 
   componentDidMount(): void {
-    // this.sendOTP();
+    this.beginTimer();
+    this.setState({firstLoad: false, buttonOTPpressed: true});
   }
 
-  beginTimer() {
+  beginTimer = () => {
     this.interval = setInterval(() => {
       const {seconds, minutes} = this.state;
 
@@ -159,7 +160,7 @@ class VerifyOtpAfterRegisterEmail extends Component {
         }
       }
     }, 1000);
-  }
+  };
 
   componentWillUnmount() {
     clearInterval(this.interval);
