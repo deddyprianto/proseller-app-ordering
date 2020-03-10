@@ -23,10 +23,10 @@ export default class StoreStores extends Component {
   storeDetailStores = item => {
     const {intlData} = this.props;
 
-    // Actions.storeDetailStores({item, intlData});
+    Actions.storeDetailStores({item, intlData});
     // Actions.order({item});
     // Actions.categoryProducts({item});
-    Actions.products({item});
+    // Actions.products({item});
   };
 
   render() {
