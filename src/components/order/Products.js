@@ -229,7 +229,11 @@ class Products extends Component {
       const outletID = this.props.item.storeId;
       let data = await this.props.products.find(item => item.id == outletID);
       // if data is found
-      if (data != undefined && !isEmptyObject(data)) {
+      if (
+        data != undefined &&
+        !isEmptyObject(data) &&
+        !isEmptyArray(data.products)
+      ) {
         // check if products is exist, then ask user to select ordering mode
         if (!isEmptyObject(data.products[0])) this.openOrderingMode();
 
@@ -240,8 +244,9 @@ class Products extends Component {
           dataLength: data.dataLength,
         });
       } else {
-        Alert.alert('Sorry', 'Cant get data products, please try again');
+        this.products = [];
         this.setState({
+          products: [],
           loading: false,
         });
       }
@@ -256,11 +261,14 @@ class Products extends Component {
   getProductsByOutlet = async () => {
     try {
       const outletID = this.props.item.storeId;
-      console.log(this.props.products, 'this.props.products');
       if (this.props.products != undefined) {
         // check data products on local storage
         let data = await this.props.products.find(item => item.id == outletID);
-        if (data != undefined && !isEmptyObject(data)) {
+        if (
+          data != undefined &&
+          !isEmptyObject(data) &&
+          !isEmptyArray(data.products)
+        ) {
           // check if products is exist, then ask user to select ordering mode
           if (!isEmptyObject(data.products[0])) this.openOrderingMode();
           // delay push data 1 second because Flatlist too slow to process large data
@@ -814,7 +822,7 @@ class Products extends Component {
       <TouchableOpacity
         onPress={() => this.updateCategory(item, idx)}
         style={{
-          padding: 10,
+          padding: 8,
           flexDirection: 'row',
         }}>
         <View
@@ -823,8 +831,7 @@ class Products extends Component {
               ? styles.categoryActive
               : styles.categoryNonActive,
           ]}>
-          <Text
-            style={{padding: 10, fontFamily: 'Lato-Medium', color: 'white'}}>
+          <Text style={{padding: 8, fontFamily: 'Lato-Medium', color: 'white'}}>
             {item.name}
           </Text>
         </View>
@@ -1057,6 +1064,7 @@ class Products extends Component {
     let {loadProducts} = this.state;
 
     let products = this.products;
+
     return (
       <View style={styles.container}>
         <ModalOrder

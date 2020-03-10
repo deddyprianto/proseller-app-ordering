@@ -20,6 +20,7 @@ import {
   Alert,
   AsyncStorage,
   PermissionsAndroid,
+  Keyboard,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
@@ -130,11 +131,22 @@ class InputPhoneNumber extends Component {
       country: awsConfig.COUNTRY,
       openModalCountry: false,
       dialogChangeLanguage: false,
+      showFooter: true,
     };
     this.imageWidth = new Animated.Value(styles.$largeImageSize);
   }
 
   componentDidMount = async () => {
+    // detect keyboard up / down
+    this.keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      this._keyboardDidShow,
+    );
+    this.keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      this._keyboardDidHide,
+    );
+
     // get device ID for push notif
     try {
       const value = await AsyncStorage.getItem('deviceID');
@@ -177,6 +189,19 @@ class InputPhoneNumber extends Component {
     );
     return granted;
   };
+
+  _keyboardDidShow = () => {
+    this.setState({showFooter: false});
+  };
+
+  _keyboardDidHide = () => {
+    this.setState({showFooter: true});
+  };
+
+  componentWillUnmount() {
+    this.keyboardDidShowListener.remove();
+    this.keyboardDidHideListener.remove();
+  }
 
   checkAccountExist = async () => {
     this.setState({loading: true});
@@ -291,7 +316,7 @@ class InputPhoneNumber extends Component {
     this.getUserPosition();
     // console.log(this.props.deviceID.deviceID, 'this.props.deviceID.deviceID');
     return (
-      <View style={styles.backgroundImage}>
+      <>
         {this.state.loading && <Loader />}
         <ScrollView keyboardShouldPersistTaps="handled">
           <Header
@@ -412,36 +437,40 @@ class InputPhoneNumber extends Component {
             </View>
           </View>
         </ScrollView>
-        <TouchableOpacity
-          style={{
-            position: 'absolute',
-            alignSelf: 'center',
-            bottom: 40,
-          }}
-          onPress={this.openDialogLanguage}>
-          <Text
-            style={{
-              textDecorationLine: 'underline',
-              color: colorConfig.store.defaultColor,
-              fontWeight: 'bold',
-              fontFamily: 'Lato-Bold',
-              fontSize: 16,
-            }}>
-            {intlData.messages.languageName}
-          </Text>
-        </TouchableOpacity>
-        <Text
-          style={{
-            position: 'absolute',
-            alignSelf: 'center',
-            bottom: 10,
-            color: colorConfig.pageIndex.grayColor,
-            fontSize: 14,
-          }}>
-          Version: {packageJson.version}
-        </Text>
+        {this.state.showFooter ? (
+          <View>
+            <TouchableOpacity
+              style={{
+                position: 'absolute',
+                alignSelf: 'center',
+                bottom: 40,
+              }}
+              onPress={this.openDialogLanguage}>
+              <Text
+                style={{
+                  textDecorationLine: 'underline',
+                  color: colorConfig.store.defaultColor,
+                  fontWeight: 'bold',
+                  fontFamily: 'Lato-Bold',
+                  fontSize: 16,
+                }}>
+                {intlData.messages.languageName}
+              </Text>
+            </TouchableOpacity>
+            <Text
+              style={{
+                position: 'absolute',
+                alignSelf: 'center',
+                bottom: 10,
+                color: colorConfig.pageIndex.grayColor,
+                fontSize: 14,
+              }}>
+              Version: {packageJson.version}
+            </Text>
+          </View>
+        ) : null}
         {this.renderDialogQuantityModifier()}
-      </View>
+      </>
     );
   }
 }

@@ -218,7 +218,6 @@ export const getToken = () => {
 export const refreshToken = () => {
   return async (dispatch, getState) => {
     const state = getState();
-    console.log(state, 'state nya');
     try {
       let {
         authReducer: {tokenUser},
@@ -259,9 +258,9 @@ export const refreshToken = () => {
       }
     } catch (error) {
       console.log(error);
-      dispatch({
-        type: 'USER_LOGGED_OUT_SUCCESS',
-      });
+      // dispatch({
+      //   type: 'USER_LOGGED_OUT_SUCCESS',
+      // });
     }
   };
 };

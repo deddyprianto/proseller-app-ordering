@@ -107,31 +107,6 @@ class PageIndex extends Component {
     };
   }
 
-  // componentDidMount = async () => {
-  //   if (Platform.OS !== 'android') Geolocation.requestAuthorization();
-  //   else {
-  //     try {
-  //       const granted = await PermissionsAndroid.request(
-  //         PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-  //         {
-  //           title: 'we need GPS location service',
-  //           message: 'we need location service to provide your location',
-  //           // buttonNeutral: 'Ask Me Later',
-  //           buttonNegative: 'Cancel',
-  //           buttonPositive: 'OK',
-  //         },
-  //       );
-  //       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-  //       } else {
-  //         Defaults.modal.current.renderModel(modalOptions);
-  //         return false;
-  //       }
-  //     } catch (err) {
-  //       console.warn(err);
-  //     }
-  //   }
-  // };
-
   render() {
     return (
       <Container>

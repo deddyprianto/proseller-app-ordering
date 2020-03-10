@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, Text, StyleSheet, Dimensions} from 'react-native';
+import {View, Text, StyleSheet, Dimensions, StatusBar} from 'react-native';
 
 import NetInfo from '@react-native-community/netinfo';
 
@@ -32,6 +32,7 @@ export default class OfflineNotice extends Component {
     if (!this.state.connectionInfo) {
       return (
         <View style={styles.offlineContainer}>
+          <StatusBar backgroundColor="#b52424" barStyle="dark-content" />
           <Text style={styles.offlineText}>No Internet Connection</Text>
         </View>
       );

@@ -266,6 +266,7 @@ class Basket extends Component {
 
   goToScanTable = () => {
     if (this.props.orderType == undefined) {
+      this.RBSheet.open();
       Alert.alert('Sorry', 'Please select your ordering mode first.');
     }
 
@@ -811,7 +812,7 @@ class Basket extends Component {
                       onRefresh={this._onRefresh}
                     />
                   }
-                  style={{height: '35%'}}>
+                  style={{height: '36%'}}>
                   <FlatList
                     data={this.props.dataBasket.details}
                     renderItem={({item}) => (

@@ -135,6 +135,7 @@ class HistoryPayment extends Component {
 
   render() {
     const {intlData} = this.props;
+    console.log('this.props.pointTransaction', this.props.pointTransaction);
     return (
       <>
         {this.props.pointTransaction == undefined ||
