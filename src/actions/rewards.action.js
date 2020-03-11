@@ -26,8 +26,13 @@ export const campaign = () => {
       userDetails = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
 
       let companyId = userDetails.companyId;
+      let customerGroupId = userDetails.customerGroupId;
+      let payload = {
+        companyId,
+        customerGroupId,
+      };
       const response = await fetchApi(
-        `/campaign/points?companyId=${companyId}`,
+        `/campaign/points?companyId=${companyId}&customerGroupId=${customerGroupId}`,
         'GET',
         false,
         200,

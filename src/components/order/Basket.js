@@ -276,7 +276,9 @@ class Basket extends Component {
     }
 
     if (this.props.orderType != undefined) {
-      Actions.scanQRTable();
+      Actions.scanQRTable({
+        basket: this.props.dataBasket,
+      });
       clearInterval(this.interval);
       this.interval = setInterval(() => {
         this.props.dispatch(getBasket());
@@ -285,6 +287,7 @@ class Basket extends Component {
   };
 
   renderSettleButton = () => {
+    const {intlData} = this.props;
     return (
       <View
         style={{

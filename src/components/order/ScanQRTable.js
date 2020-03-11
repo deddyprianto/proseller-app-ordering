@@ -29,6 +29,7 @@ class ScanQRTable extends Component {
       titleAlert: '',
       loadingPushData: false,
       responseFailed: null,
+      wrongOutlet: false,
     };
   }
 
@@ -39,6 +40,15 @@ class ScanQRTable extends Component {
   onSuccess = e => {
     try {
       const scan = JSON.parse(e.data);
+      const outletIdBasket = this.props.basket.outletID;
+      console.log(this.props.basket, 'basket props');
+      console.log(scan.outletId, 'scan.outletId');
+
+      if (outletIdBasket != scan.outletId) {
+        this.setState({wrongOutlet: true});
+        return;
+      }
+
       if (!scan.tableNo || !scan.outletId || !scan.tableType) {
         this.setState({
           showAlert: true,
@@ -141,6 +151,61 @@ class ScanQRTable extends Component {
     return null;
   };
 
+  renderScanWrongOutlet = () => {
+    if (this.state.wrongOutlet) {
+      return (
+        <View
+          style={{
+            justifyContent: 'center',
+            alignItems: 'center',
+            flexDirection: 'column',
+          }}>
+          <Text
+            style={{
+              color: colorConfig.pageIndex.inactiveTintColor,
+              fontSize: 27,
+              marginTop: 10,
+              marginBottom: 0,
+              textAlign: 'center',
+              marginRight: 5,
+              fontWeight: 'bold',
+              fontFamily: 'Lato-Bold',
+            }}>
+            Oppss...
+          </Text>
+          <Text
+            style={{
+              color: colorConfig.pageIndex.inactiveTintColor,
+              fontSize: 25,
+              marginTop: 10,
+              textAlign: 'center',
+              marginBottom: 20,
+              marginHorizontal: 7,
+              fontFamily: 'Lato-Bold',
+            }}>
+            Looks like you scan QR Code from different outlet.
+          </Text>
+
+          <View style={{flexDirection: 'row'}}>
+            <TouchableOpacity
+              onPress={() =>
+                this.setState({responseFailed: null, wrongOutlet: false})
+              }
+              style={styles.btnRetry}>
+              <Text style={styles.textButton}>Try Again</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => Actions.pop()}
+              style={styles.btnErrror}>
+              <Text style={styles.textButton}>Cancel</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      );
+    }
+    return null;
+  };
+
   render() {
     return (
       <View style={styles.container}>
@@ -160,6 +225,7 @@ class ScanQRTable extends Component {
         <View style={styles.card}>
           <View style={{marginTop: 60}}>
             {this.renderFailedToSubmit()}
+            {this.renderScanWrongOutlet()}
 
             {this.state.loadingPushData ? (
               <View
@@ -198,8 +264,9 @@ class ScanQRTable extends Component {
                   We are submit your order.
                 </Text>
               </View>
-            ) : this.state.responseFailed != undefined &&
-              this.state.responseFailed != null ? null : (
+            ) : (this.state.responseFailed != undefined &&
+                this.state.responseFailed != null) ||
+              this.state.wrongOutlet == true ? null : (
               <QRCodeScanner
                 markerStyle={{
                   borderColor: 'white',
@@ -277,7 +344,25 @@ const styles = StyleSheet.create({
     marginTop: 30,
     borderRadius: 10,
     marginBottom: 20,
-    width: '50%',
+    width: '35%',
+    justifyContent: 'center',
+    shadowColor: '#00000021',
+    shadowOffset: {
+      width: 0,
+      height: 9,
+    },
+    shadowOpacity: 0.7,
+    shadowRadius: 7.49,
+    elevation: 12,
+  },
+  btnRetry: {
+    backgroundColor: colorConfig.store.defaultColor,
+    padding: 13,
+    marginTop: 30,
+    borderRadius: 10,
+    marginBottom: 20,
+    marginHorizontal: 20,
+    width: '35%',
     justifyContent: 'center',
     shadowColor: '#00000021',
     shadowOffset: {
