@@ -187,14 +187,14 @@ android {
             dev {
                 minSdkVersion rootProject.ext.minSdkVersion
                 applicationId 'com.qiji.dev'
-                versionName "1.1-dev"
+                versionName "1.0-dev"
                 targetSdkVersion rootProject.ext.targetSdkVersion
                 resValue "string", "build_config_package", "com.qiji"
             }
             demo {
                 minSdkVersion rootProject.ext.minSdkVersion
                 applicationId 'com.qiji.demo'
-                versionName "1.1-demo"
+                versionName "1.0-demo"
                 targetSdkVersion rootProject.ext.targetSdkVersion
                 resValue "string", "build_config_package", "com.qiji"
             }

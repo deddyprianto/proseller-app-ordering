@@ -233,46 +233,61 @@ class Store extends Component {
     return comparison;
   }
 
-  _cekOpen = data => {
-    let operationalHours = [];
+  getOperationalHours = data => {
+    try {
+      let operationalHours = data.operationalHours;
 
-    if (
-      data.operationalHours == undefined ||
-      isEmptyArray(data.operationalHours)
-    ) {
-      if (data.openAllDays == true) {
-        return true;
+      let date = new Date();
+      var dd = date.getDate();
+      var mm = date.getMonth() + 1;
+      var yyyy = date.getFullYear();
+      let currentDate = mm + '/' + dd + '/' + yyyy;
+      let day = date.getDay();
+      let time = date.getHours() + ':' + date.getMinutes();
+
+      let open;
+      operationalHours
+        .filter(item => item.day == day && item.active == true)
+        .map(day => {
+          if (
+            Date.parse(`${currentDate} ${time}`) >
+              Date.parse(`${currentDate} ${day.open}`) &&
+            Date.parse(`${currentDate} ${time}`) <
+              Date.parse(`${currentDate} ${day.close}`)
+          )
+            open = true;
+        });
+
+      if (open) return true;
+      else {
+        if (operationalHours.leading == 0) return true;
+        else return false;
       }
+    } catch (e) {
       return false;
     }
+  };
 
-    operationalHours = data.operationalHours;
-
-    let date = new Date();
-    var dd = date.getDate();
-    var mm = date.getMonth() + 1;
-    var yyyy = date.getFullYear();
-    let currentDate = mm + '/' + dd + '/' + yyyy;
-    let day = date.getDay();
-    let time = date.getHours() + ':' + date.getMinutes();
-
-    let open;
-    operationalHours
-      .filter(item => item.day == day && item.active == true)
-      .map(day => {
-        if (
-          Date.parse(`${currentDate} ${time}`) >
-            Date.parse(`${currentDate} ${day.open}`) &&
-          Date.parse(`${currentDate} ${time}`) <
-            Date.parse(`${currentDate} ${day.close}`)
-        )
-          open = true;
-      });
-
-    if (open) return true;
-    else {
-      if (operationalHours.leading == 0) return true;
-      else return false;
+  _cekOpen = data => {
+    if (
+      !data.operationalHours == undefined &&
+      !isEmptyArray(data.operationalHours)
+    ) {
+      if (this.getOperationalHours(data)) {
+        return true;
+      } else {
+        if (data.openAllDays == true) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+    } else {
+      if (data.openAllDays == true) {
+        return true;
+      } else {
+        return false;
+      }
     }
   };
 
