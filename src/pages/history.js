@@ -20,6 +20,8 @@ import colorConfig from '../config/colorConfig';
 import {campaign, dataPoint} from '../actions/rewards.action';
 
 import HistoryPayment from '../components/historyPayment';
+import {notifikasi} from '../actions/auth.actions';
+import {dataTransaction} from '../actions/sales.action';
 
 const AppNavigationContainer = createAppContainer(
   createMaterialTopTabNavigator(
@@ -63,21 +65,18 @@ class History extends Component {
   }
 
   componentDidMount = async () => {
-    await this.getDataHistory();
+    // await this.getDataHistory();
+    const {navigation} = this.props;
+    this.focusListener = navigation.addListener('willFocus', async () => {
+      this.getDataHistory();
+    });
   };
 
   getDataHistory = async () => {
     try {
-      await this.props.dispatch(campaign());
-      await this.props.dispatch(dataPoint());
+      // this.props.dispatch(dataTransaction());
     } catch (error) {
-      await this.props.dispatch(
-        notifikasi(
-          'Get Data History Error!',
-          error.responseBody.message,
-          console.log('Cancel Pressed'),
-        ),
-      );
+      console.log(error);
     }
   };
 

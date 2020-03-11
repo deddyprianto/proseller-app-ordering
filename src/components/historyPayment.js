@@ -24,6 +24,7 @@ import colorConfig from '../config/colorConfig';
 import {Actions} from 'react-native-router-flux';
 import {dataTransaction} from '../actions/sales.action';
 import {notifikasi} from '../actions/auth.actions';
+import {movePageIndex} from '../actions/user.action';
 
 class HistoryPayment extends Component {
   constructor(props) {
@@ -78,6 +79,7 @@ class HistoryPayment extends Component {
 
   getDataHistory = async () => {
     try {
+      await this.setState({refreshing: true});
       await this.props.dispatch(dataTransaction());
       if (this.props.isSuccessGetTrx) {
         this.setState({refreshing: false});
@@ -147,11 +149,9 @@ class HistoryPayment extends Component {
                 onRefresh={this._onRefresh}
               />
             }>
-            <View style={styles.component}>
-              <Text style={styles.empty}>
-                {intlData.messages.noTransaction} :(
-              </Text>
-            </View>
+            <Text style={styles.empty}>
+              {intlData.messages.noTransaction} :(
+            </Text>
           </ScrollView>
         ) : (
           <View style={styles.component}>
@@ -258,6 +258,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Lato-Medium',
     fontSize: 20,
     marginHorizontal: '5%',
+    marginTop: 50
   },
   item: {
     paddingVertical: 10,

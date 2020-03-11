@@ -1,6 +1,4 @@
 import {fetchApi} from '../service/api';
-import * as _ from 'lodash';
-import {refreshToken} from './auth.actions';
 
 export const dataTransaction = () => {
   return async (dispatch, getState) => {
