@@ -19,7 +19,6 @@ export const dataTransaction = () => {
       } = state;
 
       take == undefined ? (take = 10) : take;
-
       console.log(take, 'ini take');
       console.log(`/customer/sales?take=${take}&page=1`);
       var dataResponse = [];
