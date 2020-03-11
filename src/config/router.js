@@ -5,7 +5,7 @@
  */
 
 import React, {Component} from 'react';
-import {Router, Scene} from 'react-native-router-flux';
+import {Router, Scene, Actions} from 'react-native-router-flux';
 
 import InputPhoneNumber from '../pages/InputPhoneNumber';
 import InputEmail from '../pages/InputEmail';
@@ -47,8 +47,41 @@ import Basket from '../components/order/Basket';
 import ScanQRTable from '../components/order/ScanQRTable';
 import ConfirmTable from '../components/order/ConfirmTable';
 import SettleOrder from '../components/order/SettleOrder';
+import {BackHandler, ToastAndroid} from 'react-native';
+
+let backPressed = 0;
 
 export default class Routes extends Component {
+  componentDidMount() {
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
+  }
+
+  constructor() {
+    super();
+    this.state = {
+      backPressed: 1,
+    };
+  }
+
+  handleBackButton = () => {
+    if (
+      Actions.currentScene === 'inputPhoneNumber' ||
+      Actions.currentScene === 'pageIndex'
+    ) {
+      if (backPressed > 0) {
+        BackHandler.exitApp();
+        backPressed = 0;
+      } else {
+        backPressed++;
+        ToastAndroid.show('Press Again To Exit', ToastAndroid.SHORT);
+        setTimeout(() => {
+          backPressed = 0;
+        }, 2000);
+        return true;
+      }
+    }
+  };
+
   render() {
     return (
       <Router>
