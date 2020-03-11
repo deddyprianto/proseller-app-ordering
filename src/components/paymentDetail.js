@@ -254,14 +254,14 @@ class PaymentDetail extends Component {
       console.log('reponse pembayaran ', response);
       if (response.success) {
         //  cancel voucher and pont selected
-        this.cencelPoint();
-        this.cencelVoucher();
-        this.setState({
-          showAlert: true,
-          pesanAlert: response.responseBody.Data.message,
-          titleAlert: 'Oopss!',
-          failedPay: true,
-        });
+        // this.cencelPoint();
+        // this.cencelVoucher();
+        // this.setState({
+        //   showAlert: true,
+        //   pesanAlert: response.responseBody.Data.message,
+        //   titleAlert: 'Oopss!',
+        //   failedPay: true,
+        // });
         // return back to payment success
         Actions.paymentSuccess({
           intlData,
