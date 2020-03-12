@@ -251,15 +251,6 @@ class SettleOrder extends Component {
       const response = await this.props.dispatch(settleOrder(pembayaran));
       console.log('reponse pembayaran settle order ', response);
       if (response.success) {
-        //  cancel voucher and pont selected
-        this.cencelPoint();
-        this.cencelVoucher();
-        this.setState({
-          showAlert: true,
-          pesanAlert: response.responseBody.data.message,
-          titleAlert: 'Oopss!',
-          failedPay: true,
-        });
         // go to payment success
         Actions.paymentSuccess({
           intlData,

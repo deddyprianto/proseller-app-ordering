@@ -109,10 +109,10 @@ export default class PaymentSuccess extends Component {
         <View
           style={{
             position: 'absolute',
-            height: 60,
-            width: 60,
-            borderColor: colorConfig.store.colorSuccess,
-            borderWidth: 1,
+            height: 70,
+            width: 70,
+            borderColor: 'white',
+            borderWidth: 5,
             borderRadius: 60,
             top: -30,
             left: this.state.screenWidth / 2 - 60,
@@ -123,7 +123,9 @@ export default class PaymentSuccess extends Component {
           <Icon
             size={40}
             name={Platform.OS === 'ios' ? 'ios-checkmark' : 'md-checkmark'}
-            style={{color: colorConfig.pageIndex.backgroundColor}}
+            style={{
+              color: colorConfig.pageIndex.backgroundColor,
+            }}
           />
         </View>
         <View
@@ -359,7 +361,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    // alignItems: 'center',
+    backgroundColor: colorConfig.store.darkColor,
   },
   btnBackIcon: {
     color: colorConfig.pageIndex.activeTintColor,
@@ -381,8 +383,8 @@ const styles = StyleSheet.create({
     marginLeft: 30,
     marginRight: 30,
     marginBottom: 10,
-    borderColor: colorConfig.pageIndex.activeTintColor,
-    borderWidth: 1,
+    borderColor: 'white',
+    borderWidth: 5,
     borderRadius: 5,
     backgroundColor: colorConfig.pageIndex.backgroundColor,
   },
