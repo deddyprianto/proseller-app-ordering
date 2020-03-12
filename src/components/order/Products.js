@@ -252,7 +252,7 @@ class Products extends Component {
         });
       }
     } catch (e) {
-      Alert.alert('Opss..', 'Something went wrong, please try again.');
+      // Alert.alert('Opss..', 'Something went wrong, please try again.');
       this.setState({
         loading: false,
       });
