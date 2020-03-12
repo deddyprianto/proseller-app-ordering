@@ -23,25 +23,29 @@ class RewardsPoint extends Component {
           backgroundColor: colorConfig.pageIndex.activeTintColor,
           height: this.state.screenHeight / 3 - 30,
         }}>
-        <Text
-          style={{
-            color: colorConfig.pageIndex.backgroundColor,
-            textAlign: 'center',
-            paddingTop: 20,
-            fontSize: 16,
-            fontWeight: 'bold',
-          }}>
-          {intlData.messages.myPoints}
-        </Text>
-        <Text
-          style={{
-            color: colorConfig.pageIndex.backgroundColor,
-            textAlign: 'center',
-            fontSize: 42,
-            fontFamily: 'Lato-Bold',
-          }}>
-          {this.props.totalPoint == undefined ? 0 : this.props.totalPoint}
-        </Text>
+        {this.props.totalPoint != undefined ? (
+          <View>
+            <Text
+              style={{
+                color: colorConfig.pageIndex.backgroundColor,
+                textAlign: 'center',
+                paddingTop: 20,
+                fontSize: 16,
+                fontWeight: 'bold',
+              }}>
+              {intlData.messages.myPoints}
+            </Text>
+            <Text
+              style={{
+                color: colorConfig.pageIndex.backgroundColor,
+                textAlign: 'center',
+                fontSize: 42,
+                fontFamily: 'Lato-Bold',
+              }}>
+              {this.props.totalPoint}
+            </Text>
+          </View>
+        ) : null}
       </View>
     );
   }

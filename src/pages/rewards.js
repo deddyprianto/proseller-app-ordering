@@ -30,6 +30,8 @@ import ShimmerPlaceHolder from 'react-native-shimmer-placeholder';
 import MyPointsPlaceHolder from '../components/placeHolderLoading/MyPointsPlaceHolder';
 import {isEmptyObject, isEmptyArray} from '../helper/CheckEmpty';
 import {getBasket} from '../actions/order.action';
+import CryptoJS from 'react-native-crypto-js';
+import awsConfig from '../config/awsConfig';
 
 class Rewards extends Component {
   constructor(props) {
@@ -148,6 +150,40 @@ class Rewards extends Component {
     Actions.detailStamps();
   }
 
+  greetWelcomeUser = () => {
+    let userDetail = {};
+    let status;
+    const {intlData} = this.props;
+    try {
+      // get greeting
+      var date = new Date();
+      // console.log(date.getHours());
+      if (date.getHours() < 12) {
+        status = `${intlData.messages.good} ${intlData.messages.morning}`;
+      } else if (date.getHours() < 18) {
+        status = `${intlData.messages.good} ${intlData.messages.afternoon}`;
+      } else {
+        status = `${intlData.messages.good} ${intlData.messages.night}`;
+      }
+
+      // Decrypt data user
+      let bytes = CryptoJS.AES.decrypt(
+        this.props.userDetail,
+        awsConfig.PRIVATE_KEY_RSA,
+      );
+      userDetail = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+    } catch (e) {
+      userDetail.name = 'Users';
+    }
+
+    return (
+      <View style={{backgroundColor: colorConfig.store.defaultColor}}>
+        <Text style={styles.textWelcome}>{status},</Text>
+        <Text style={styles.textName}>{userDetail.name.toUpperCase()}</Text>
+      </View>
+    );
+  };
+
   render() {
     // check if status get data is true, then refresh stamps & point
     if (this.state.statusGetData) {
@@ -170,8 +206,9 @@ class Rewards extends Component {
           <View>
             {this.state.isLoading ? (
               <RewardsStamp isLoading={this.state.isLoading} />
-            ) : this.props.dataStamps.dataStamps == undefined ? null : this
-                .props.dataStamps.dataStamps.length == 0 ? null : (
+            ) : this.props.dataStamps.dataStamps == undefined ? (
+              this.greetWelcomeUser()
+            ) : this.props.dataStamps.dataStamps.length == 0 ? null : (
               <View
                 style={{
                   backgroundColor: colorConfig.pageIndex.activeTintColor,
@@ -239,6 +276,22 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
   },
+  textWelcome: {
+    fontSize: 18,
+    color: colorConfig.store.secondaryColor,
+    fontWeight: 'bold',
+    fontFamily: 'Lato-Medium',
+    textAlign: 'center',
+    marginTop: 40,
+  },
+  textName: {
+    fontSize: 26,
+    color: 'white',
+    fontWeight: 'bold',
+    fontFamily: 'Lato-Bold',
+    textAlign: 'center',
+    padding: 10,
+  },
 });
 
 mapStateToProps = state => ({
@@ -247,6 +300,7 @@ mapStateToProps = state => ({
   dataStamps: state.rewardsReducer.getStamps,
   totalPoint: state.rewardsReducer.dataPoint.totalPoint,
   status: state.userReducer.statusPageIndex.status,
+  userDetail: state.userReducer.getUser.userDetails,
   intlData: state.intlData,
 });
 
