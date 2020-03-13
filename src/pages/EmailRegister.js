@@ -176,6 +176,7 @@ class EmailRegister extends Component {
 
   render() {
     const {intlData} = this.props;
+    const {name, phone} = this.state;
     return (
       <View style={styles.backgroundImage}>
         {this.state.loading && <Loader />}
@@ -291,11 +292,15 @@ class EmailRegister extends Component {
             </View>
             <View style={{marginVertical: 30}}>
               <TouchableHighlight
+                disabled={name && phone ? false : true}
                 onPress={this.submitRegister}
                 style={{
                   padding: 15,
                   borderRadius: 10,
-                  backgroundColor: colorConfig.store.defaultColor,
+                  backgroundColor:
+                    name && phone
+                      ? colorConfig.store.defaultColor
+                      : colorConfig.store.disableButton,
                 }}>
                 <Text
                   style={{
