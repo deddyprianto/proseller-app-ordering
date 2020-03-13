@@ -39,6 +39,7 @@ import {Dialog} from 'react-native-paper';
 import {updateLanguage} from '../actions/language.action';
 import Languages from '../service/i18n/languages';
 import packageJson from '../../package';
+import PhoneInput from 'react-native-phone-input';
 
 const imageWidth = Dimensions.get('window').width / 2;
 
@@ -207,7 +208,7 @@ class InputPhoneNumber extends Component {
     this.setState({loading: true});
     try {
       var dataRequest = {
-        phoneNumber: this.state.phoneNumber + this.state.phone,
+        phoneNumber: this.state.phone,
       };
       let phoneNumber = {
         phoneNumber: dataRequest.phoneNumber,
@@ -247,16 +248,13 @@ class InputPhoneNumber extends Component {
       const granted = await PermissionsAndroid.check(
         PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
       );
-      console.log('datatatata', granted);
-      // await Geolocation.getCurrentPosition(
-      //   async position => {
-      //     await this.props.dispatch(userPosition(position));
-      //   },
-      //   async error => {
-      //     console.log('errrrrrr', error);
-      //   },
-      //   {enableHighAccuracy: true, timeout: 3000, maximumAge: 1000},
-      // );
+      await Geolocation.getCurrentPosition(
+        async position => {
+          await this.props.dispatch(userPosition(position));
+        },
+        async error => {},
+        {enableHighAccuracy: true, timeout: 3000, maximumAge: 1000},
+      );
     } catch (error) {
       console.log(error, 'error get position');
     }
@@ -314,7 +312,6 @@ class InputPhoneNumber extends Component {
   render() {
     const {intlData} = this.props;
     this.getUserPosition();
-    // console.log(this.props.deviceID.deviceID, 'this.props.deviceID.deviceID');
     return (
       <>
         {this.state.loading && <Loader />}
@@ -323,6 +320,23 @@ class InputPhoneNumber extends Component {
             titleHeader={'Mobile Sign In / Register'}
             backButton={false}
           />
+          <View style={{width: 0, height: 0}}>
+            <CountryPicker
+              translation="eng"
+              withCallingCode
+              visible={this.state.openModalCountry}
+              onClose={() => this.setState({openModalCountry: false})}
+              withFilter
+              placeholder={`x`}
+              withFlag={true}
+              onSelect={country => {
+                this.setState({
+                  phoneNumber: `+${country.callingCode[0]}`,
+                  country: country.name,
+                });
+              }}
+            />
+          </View>
           <View style={{margin: 20}}>
             <Text
               style={{
@@ -332,69 +346,34 @@ class InputPhoneNumber extends Component {
               }}>
               {intlData.messages.enterMobileNumber}
             </Text>
-            <View style={{marginVertical: 15}}>
-              <View
-                style={{
-                  padding: 10,
-                  color: colorConfig.store.title,
-                  borderColor: colorConfig.pageIndex.inactiveTintColor,
-                  borderWidth: 1.5,
-                }}>
-                <CountryPicker
-                  translation="eng"
-                  withCallingCode
-                  visible={this.state.openModalCountry}
-                  onClose={() => this.setState({openModalCountry: false})}
-                  withFilter
-                  placeholder={`${this.state.country} (${
-                    this.state.phoneNumber
-                  })`}
-                  withFlag={true}
-                  onSelect={country => {
-                    console.log('country', country);
-                    this.setState({
-                      phoneNumber: `+${country.callingCode[0]}`,
-                      country: country.name,
-                    });
-                  }}
-                />
-              </View>
-            </View>
             <View
               style={{
                 marginVertical: 15,
                 flexDirection: 'row',
                 color: colorConfig.store.title,
                 borderColor: colorConfig.pageIndex.inactiveTintColor,
-                borderWidth: 2,
-                borderRadius: 13,
+                borderWidth: 1,
+                borderRadius: 10,
               }}>
-              <TouchableOpacity
-                onPress={() =>
+              <PhoneInput
+                flagStyle={{width: 35, height: 25}}
+                textStyle={{fontSize: 18, fontFamily: 'Lato-Medium'}}
+                style={{
+                  fontSize: 18,
+                  width: '100%',
+                  padding: 15,
+                }}
+                ref={ref => {
+                  this.phone = ref;
+                }}
+                onChangePhoneNumber={() => {
+                  this.setState({phone: this.phone.getValue()});
+                }}
+                value={this.state.phoneNumber}
+                onPressFlag={() => {
                   this.setState({
                     openModalCountry: true,
-                  })
-                }>
-                <Text
-                  style={{
-                    fontSize: 20,
-                    fontFamily: 'Lato-Medium',
-                    padding: 15,
-                  }}>
-                  {this.state.phoneNumber}
-                </Text>
-              </TouchableOpacity>
-              <TextInput
-                keyboardType="phone-pad"
-                placeholder={intlData.messages.phoneNumber}
-                maxLength={20}
-                value={this.state.phone}
-                onChangeText={value => this.setState({phone: value})}
-                style={{
-                  fontSize: 20,
-                  width: '100%',
-                  fontFamily: 'Lato-Medium',
-                  padding: 15,
+                  });
                 }}
               />
             </View>

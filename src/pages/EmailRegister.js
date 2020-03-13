@@ -30,6 +30,7 @@ import awsConfig from '../config/awsConfig';
 import Header from '../components/atom/header';
 import generate from 'password-generation';
 import CountryPicker from 'react-native-country-picker-modal';
+import PhoneInput from 'react-native-phone-input';
 
 const imageWidth = Dimensions.get('window').width / 2;
 
@@ -141,7 +142,7 @@ class EmailRegister extends Component {
     try {
       var dataRequest = {
         username: this.props.email,
-        phoneNumber: this.state.phoneNumber + this.state.phone,
+        phoneNumber: this.state.phone,
         email: this.props.email,
         name: this.state.name,
         type: 'userPool',
@@ -149,6 +150,7 @@ class EmailRegister extends Component {
       };
       console.log(dataRequest, 'payload register by email');
       const response = await this.props.dispatch(createNewUser(dataRequest));
+      console.log(response, 'responsenya');
       if (response == true) {
         this.setState({
           loading: false,
@@ -182,6 +184,23 @@ class EmailRegister extends Component {
         {this.state.loading && <Loader />}
         <ScrollView keyboardShouldPersistTaps="handled">
           <Header titleHeader={'Email Register'} backButton={true} />
+          <View style={{width: 0, height: 0}}>
+            <CountryPicker
+              translation="eng"
+              withCallingCode
+              visible={this.state.openModalCountry}
+              onClose={() => this.setState({openModalCountry: false})}
+              withFilter
+              placeholder={`x`}
+              withFlag={true}
+              onSelect={country => {
+                this.setState({
+                  phoneNumber: `+${country.callingCode[0]}`,
+                  country: country.name,
+                });
+              }}
+            />
+          </View>
           <View style={{margin: 20}}>
             <View>
               <Text
@@ -216,7 +235,7 @@ class EmailRegister extends Component {
                   padding: 15,
                   color: colorConfig.store.title,
                   borderColor: colorConfig.pageIndex.inactiveTintColor,
-                  borderWidth: 2,
+                  borderWidth: 1,
                   borderRadius: 13,
                 }}
               />
@@ -230,63 +249,35 @@ class EmailRegister extends Component {
                 }}>
                 {intlData.messages.phoneNumber}
               </Text>
-              <View
-                style={{
-                  padding: 10,
-                  color: colorConfig.store.title,
-                  borderColor: colorConfig.pageIndex.inactiveTintColor,
-                  borderWidth: 1.5,
-                }}>
-                <CountryPicker
-                  translation="eng"
-                  withCallingCode
-                  visible={this.state.openModalCountry}
-                  onClose={() => this.setState({openModalCountry: false})}
-                  withFilter
-                  placeholder={`${this.state.country} (${
-                    this.state.phoneNumber
-                  })`}
-                  withFlag={true}
-                  onSelect={country => {
-                    this.setState({
-                      phoneNumber: `+${country.callingCode[0]}`,
-                      country: country.name,
-                    });
-                  }}
-                />
-              </View>
             </View>
             <View
               style={{
-                marginVertical: 15,
+                // marginVertical: 15,
                 flexDirection: 'row',
                 color: colorConfig.store.title,
                 borderColor: colorConfig.pageIndex.inactiveTintColor,
-                borderWidth: 2,
-                borderRadius: 13,
+                borderWidth: 1,
+                borderRadius: 10,
               }}>
-              {/*<TouchableOpacity*/}
-              {/*  onPress={() => this.setState({openModalCountry: true})}>*/}
-              {/*  <Text*/}
-              {/*    style={{*/}
-              {/*      fontSize: 16,*/}
-              {/*      fontFamily: 'Lato-Medium',*/}
-              {/*      padding: 15,*/}
-              {/*    }}>*/}
-              {/*    {this.state.phoneNumber}*/}
-              {/*  </Text>*/}
-              {/*</TouchableOpacity>*/}
-              <TextInput
-                keyboardType="phone-pad"
-                placeholder={intlData.messages.phoneNumber}
-                maxLength={20}
-                value={this.state.phone}
-                onChangeText={value => this.setState({phone: value})}
+              <PhoneInput
+                flagStyle={{width: 35, height: 25}}
+                textStyle={{fontSize: 18, fontFamily: 'Lato-Medium'}}
                 style={{
-                  fontSize: 16,
+                  fontSize: 18,
                   width: '100%',
-                  fontFamily: 'Lato-Medium',
                   padding: 15,
+                }}
+                ref={ref => {
+                  this.phone = ref;
+                }}
+                onChangePhoneNumber={() => {
+                  this.setState({phone: this.phone.getValue()});
+                }}
+                value={this.state.phoneNumber}
+                onPressFlag={() => {
+                  this.setState({
+                    openModalCountry: true,
+                  });
                 }}
               />
             </View>

@@ -16,6 +16,7 @@ import EmailRegister from '../pages/EmailRegister';
 import PageIndex from '../pages/pageIndex';
 import VerifyOtpAfterRegister from '../pages/VerifyOtpAfterRegister';
 import VerifyOtpAfterRegisterEmail from '../pages/VerifyOtpAfterRegisterEmail';
+import VerifyRegister from '../pages/VerifyRegister';
 
 import Pay from '../components/rewardsPay';
 import Rewards from '../components/rewardsRewards';
@@ -110,6 +111,7 @@ export default class Routes extends Component {
               component={VerifyOtpAfterRegisterEmail}
             />
             <Scene key="mobileRegister" component={MobileRegister} />
+            <Scene key="verifyRegister" component={VerifyRegister} />
             <Scene key="emailRegister" component={EmailRegister} />
           </Scene>
           <Scene key="app" hideNavBar={true} initial={this.props.isLoggedIn}>
