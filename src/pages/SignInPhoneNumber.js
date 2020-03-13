@@ -25,7 +25,6 @@ import Loader from '../components/loader';
 import colorConfig from '../config/colorConfig';
 import Header from '../components/atom/header';
 import Icon from 'react-native-vector-icons/Ionicons';
-import SmsRetriever from 'react-native-sms-retriever';
 
 const imageWidth = Dimensions.get('window').width / 2;
 
@@ -279,6 +278,12 @@ class SignInPhoneNumber extends Component {
       } else if (response.code == 'UserNotConfirmedException') {
         this.setState({loading: false});
         Alert.alert('Opss..', response.message);
+      } else {
+        this.setState({loading: false});
+        Alert.alert(
+          'Sorry',
+          'An error occurred on the server, please try again.',
+        );
       }
     } catch (error) {
       this.setState({loading: false});
@@ -294,27 +299,33 @@ class SignInPhoneNumber extends Component {
 
   submitLogin = async () => {
     this.setState({loading: true});
-    // try {
-    var dataLogin = {
-      phoneNumber: this.props.phoneNumber,
-      codeOTP: this.state.OTPCode,
-      isUseApp: true,
-      player_ids: this.props.deviceID.deviceID,
-    };
-    const response = await this.props.dispatch(loginUser(dataLogin));
-    if (response.status == false) {
+    try {
+      var dataLogin = {
+        phoneNumber: this.props.phoneNumber,
+        codeOTP: this.state.OTPCode,
+        isUseApp: true,
+        player_ids: this.props.deviceID.deviceID,
+      };
+      const response = await this.props.dispatch(loginUser(dataLogin));
+      if (response.status == false) {
+        this.setState({loading: false});
+        Alert.alert('Opss..', response.message);
+      } else if (response.code == 'UserNotConfirmedException') {
+        this.setState({loading: false});
+        Alert.alert('Opss..', response.message);
+      } else {
+        this.setState({loading: false});
+        Alert.alert(
+          'Sorry',
+          'An error occurred on the server, please try again.',
+        );
+      }
+    } catch (error) {
       this.setState({loading: false});
-      Alert.alert('Opss..', response.message);
-    } else if (response.code == 'UserNotConfirmedException') {
-      this.setState({loading: false});
-      Alert.alert('Opss..', response.message);
+      await this.props.dispatch(
+        notifikasi("We're Sorry...", 'Something went wrong, please try again'),
+      );
     }
-    // } catch (error) {
-    //   this.setState({loading: false});
-    //   await this.props.dispatch(
-    //     notifikasi("We're Sorry...", 'Something went wrong, please try again'),
-    //   );
-    // }
   };
 
   render() {

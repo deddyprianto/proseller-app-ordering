@@ -25,7 +25,6 @@ import {
   notifikasi,
   sendOTP,
   loginUser,
-  sendOtpAttempts,
 } from '../actions/auth.actions';
 import Loader from '../components/loader';
 import {Actions} from 'react-native-router-flux';
@@ -228,6 +227,12 @@ class SignInEmail extends Component {
       } else if (response.code == 'UserNotConfirmedException') {
         this.setState({loading: false});
         Alert.alert('Opss..', response.message);
+      } else {
+        this.setState({loading: false});
+        Alert.alert(
+          'Sorry',
+          'An error occurred on the server, please try again.',
+        );
       }
     } catch (error) {
       this.setState({loading: false});
@@ -258,6 +263,12 @@ class SignInEmail extends Component {
       } else if (response.code == 'UserNotConfirmedException') {
         this.setState({loading: false});
         Alert.alert('Opss..', response.message);
+      } else {
+        this.setState({loading: false});
+        Alert.alert(
+          'Sorry',
+          'An error occurred on the server, please try again.',
+        );
       }
     } catch (error) {
       this.setState({loading: false});

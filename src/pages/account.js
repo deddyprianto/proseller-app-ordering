@@ -130,7 +130,6 @@ class Account extends Component {
     const {intlData} = this.props;
     return (
       <View style={{flex: 1, backgroundColor: 'white'}}>
-        <StatusBar backgroundColor={colorConfig.store.defaultColor} />
         <ScrollView
           refreshControl={
             <RefreshControl
