@@ -212,7 +212,7 @@ class InputPhoneNumber extends Component {
       let phoneNumber = {
         phoneNumber: dataRequest.phoneNumber,
       };
-      console.log(dataRequest, 'payload check account');
+      // console.log(dataRequest, 'payload check account');
       const response = await this.props.dispatch(
         checkAccountExist(dataRequest),
       );
@@ -351,6 +351,7 @@ class InputPhoneNumber extends Component {
                   })`}
                   withFlag={true}
                   onSelect={country => {
+                    console.log('country', country);
                     this.setState({
                       phoneNumber: `+${country.callingCode[0]}`,
                       country: country.name,

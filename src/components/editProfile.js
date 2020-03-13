@@ -91,10 +91,7 @@ class AccountEditProfil extends Component {
       this.setState({loading: true});
       let dataProfile = {
         username: this.props.dataDiri.username,
-        phoneNumber: this.props.dataDiri.phoneNumber,
-        // appClientId: awsConfig.appClientId,
-        // cognitoPoolId: awsConfig.cognitoPoolId,
-        // companyId: awsConfig.companyId,
+        // phoneNumber: this.props.dataDiri.phoneNumber,
         newName: this.state.name,
         birthDate: this.state.birthDate,
         address: this.state.address,

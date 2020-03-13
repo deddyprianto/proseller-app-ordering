@@ -7,14 +7,12 @@ export const updateUser = payload => {
   return async (dispatch, getState) => {
     const state = getState();
     try {
-      console.log(JSON.stringify(payload));
-      // await dispatch(refreshToken());
       const {
         authReducer: {
           tokenUser: {token},
         },
       } = state;
-      console.log(token);
+      console.log(payload, 'PAYLOAD EDIT');
       const response = await fetchApi(
         '/customer/updateProfile',
         'PUT',

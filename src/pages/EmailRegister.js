@@ -265,17 +265,17 @@ class EmailRegister extends Component {
                 borderWidth: 2,
                 borderRadius: 13,
               }}>
-              <TouchableOpacity
-                onPress={() => this.setState({openModalCountry: true})}>
-                <Text
-                  style={{
-                    fontSize: 16,
-                    fontFamily: 'Lato-Medium',
-                    padding: 15,
-                  }}>
-                  {this.state.phoneNumber}
-                </Text>
-              </TouchableOpacity>
+              {/*<TouchableOpacity*/}
+              {/*  onPress={() => this.setState({openModalCountry: true})}>*/}
+              {/*  <Text*/}
+              {/*    style={{*/}
+              {/*      fontSize: 16,*/}
+              {/*      fontFamily: 'Lato-Medium',*/}
+              {/*      padding: 15,*/}
+              {/*    }}>*/}
+              {/*    {this.state.phoneNumber}*/}
+              {/*  </Text>*/}
+              {/*</TouchableOpacity>*/}
               <TextInput
                 keyboardType="phone-pad"
                 placeholder={intlData.messages.phoneNumber}
