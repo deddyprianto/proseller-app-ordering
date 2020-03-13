@@ -21,17 +21,14 @@ import {
 import {connect} from 'react-redux';
 import {compose} from 'redux';
 import {reduxForm} from 'redux-form';
-import {
-  notifikasi,
-  sendOTP,
-  loginUser,
-} from '../actions/auth.actions';
+import {notifikasi, sendOTP, loginUser} from '../actions/auth.actions';
 import Loader from '../components/loader';
 import {Actions} from 'react-native-router-flux';
 import colorConfig from '../config/colorConfig';
 import awsConfig from '../config/awsConfig';
 import Header from '../components/atom/header';
 import Icon from 'react-native-vector-icons/Ionicons';
+import {isEmptyObject} from '../helper/CheckEmpty';
 
 const imageWidth = Dimensions.get('window').width / 2;
 
@@ -227,7 +224,10 @@ class SignInEmail extends Component {
       } else if (response.code == 'UserNotConfirmedException') {
         this.setState({loading: false});
         Alert.alert('Opss..', response.message);
-      } else {
+      } else if (
+        response.status == undefined &&
+        isEmptyObject(response.accessToken)
+      ) {
         this.setState({loading: false});
         Alert.alert(
           'Sorry',
@@ -263,7 +263,10 @@ class SignInEmail extends Component {
       } else if (response.code == 'UserNotConfirmedException') {
         this.setState({loading: false});
         Alert.alert('Opss..', response.message);
-      } else {
+      } else if (
+        response.status == undefined &&
+        isEmptyObject(response.accessToken)
+      ) {
         this.setState({loading: false});
         Alert.alert(
           'Sorry',

@@ -104,7 +104,9 @@ class AccountUserDetail extends Component {
                     userDetail.customerGroupName,
                   ),
                 }}>
-                {userDetail != undefined ? userDetail.customerGroupName : ''}
+                {userDetail != undefined
+                  ? userDetail.customerGroupName.toUpperCase()
+                  : ''}
               </Text>
             </View>
             <View>

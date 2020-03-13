@@ -25,6 +25,7 @@ import Loader from '../components/loader';
 import colorConfig from '../config/colorConfig';
 import Header from '../components/atom/header';
 import Icon from 'react-native-vector-icons/Ionicons';
+import {isEmptyObject} from '../helper/CheckEmpty';
 
 const imageWidth = Dimensions.get('window').width / 2;
 
@@ -278,7 +279,10 @@ class SignInPhoneNumber extends Component {
       } else if (response.code == 'UserNotConfirmedException') {
         this.setState({loading: false});
         Alert.alert('Opss..', response.message);
-      } else {
+      } else if (
+        response.status == undefined &&
+        isEmptyObject(response.accessToken)
+      ) {
         this.setState({loading: false});
         Alert.alert(
           'Sorry',
@@ -313,7 +317,10 @@ class SignInPhoneNumber extends Component {
       } else if (response.code == 'UserNotConfirmedException') {
         this.setState({loading: false});
         Alert.alert('Opss..', response.message);
-      } else {
+      } else if (
+        response.status == undefined &&
+        isEmptyObject(response.accessToken)
+      ) {
         this.setState({loading: false});
         Alert.alert(
           'Sorry',
