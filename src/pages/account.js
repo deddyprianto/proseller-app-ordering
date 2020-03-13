@@ -10,6 +10,7 @@ import {
   ActivityIndicator,
   Alert,
   Picker,
+  StatusBar,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
@@ -25,6 +26,7 @@ import colorConfig from '../config/colorConfig';
 import {Dialog} from 'react-native-paper';
 import {updateLanguage} from '../actions/language.action';
 import Languages from '../service/i18n/languages';
+import {getUserProfile, movePageIndex} from '../actions/user.action';
 
 class Account extends Component {
   constructor(props) {
@@ -37,29 +39,17 @@ class Account extends Component {
   }
 
   componentDidMount = async () => {
-    // await this.getDataRewards();
+    // make event to detect page focus or not
+    const {navigation} = this.props;
+    this.focusListener = navigation.addListener('willFocus', async () => {
+      await this.props.dispatch(getUserProfile());
+      this.setState({statusGetData: true});
+    });
   };
 
-  getDataRewards = async () => {
-    try {
-      await this.props.dispatch(campaign());
-      await this.props.dispatch(dataPoint());
-      await this.props.dispatch(vouchers());
-      await this.props.dispatch(myVoucers());
-    } catch (error) {
-      await this.props.dispatch(
-        notifikasi(
-          'Get Data Rewards Error!',
-          error.responseBody.message,
-          console.log('Cancel Pressed'),
-        ),
-      );
-    }
-  };
-
-  _onRefresh = () => {
+  _onRefresh = async () => {
     this.setState({refreshing: true});
-    this.getDataRewards();
+    await this.props.dispatch(getUserProfile());
     this.setState({refreshing: false});
   };
 
@@ -140,6 +130,7 @@ class Account extends Component {
     const {intlData} = this.props;
     return (
       <View style={{flex: 1, backgroundColor: 'white'}}>
+        <StatusBar backgroundColor={colorConfig.store.defaultColor} />
         <ScrollView
           refreshControl={
             <RefreshControl
@@ -147,7 +138,7 @@ class Account extends Component {
               onRefresh={this._onRefresh}
             />
           }>
-          <View style={styles.card}>
+          <View style={[styles.card, {marginTop: 0}]}>
             <AccountUserDetail screen={this.props} />
           </View>
           <View style={styles.card}>

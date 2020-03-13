@@ -44,6 +44,45 @@ export const updateUser = payload => {
   };
 };
 
+export const getUserProfile = () => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      // await dispatch(refreshToken());
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      const response = await fetchApi(
+        '/customer/getProfile',
+        'GET',
+        null,
+        200,
+        token,
+      );
+
+      // encrypt user data before save to asyncstorage
+      let dataUser = CryptoJS.AES.encrypt(
+        JSON.stringify(response.responseBody.Data[0]),
+        awsConfig.PRIVATE_KEY_RSA,
+      ).toString();
+
+      if (response.success) {
+        dispatch({
+          type: 'GET_USER_SUCCESS',
+          payload: dataUser,
+        });
+      }
+
+      return response.success;
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
 export const deviceUserInfo = deviceID => {
   return async (dispatch, getState) => {
     try {
