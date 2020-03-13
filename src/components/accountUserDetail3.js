@@ -9,7 +9,7 @@ import {Actions} from 'react-native-router-flux';
 import CryptoJS from 'react-native-crypto-js';
 import awsConfig from '../config/awsConfig';
 
-class AccountUserDetail extends Component {
+class AccountUserDetail3 extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -20,18 +20,6 @@ class AccountUserDetail extends Component {
   editProfil = () => {
     var dataDiri = {dataDiri: this.props.userDetail};
     Actions.accountEditProfil(dataDiri);
-  };
-
-  renderCustomerGroupBG = cg => {
-    try {
-      let bg;
-      if (cg == 'Standard') bg = '#414141';
-      else if (cg == 'Gold') bg = '#e6b31e';
-      else bg = '#bbbbbb';
-      return bg;
-    } catch (e) {
-      return '#414141';
-    }
   };
 
   render() {
@@ -49,69 +37,52 @@ class AccountUserDetail extends Component {
     return (
       <View
         style={{
-          flexDirection: 'column',
-          alignItems: 'center',
-          backgroundColor: colorConfig.store.defaultColor,
-          shadowColor: '#00000021',
-          shadowOffset: {
-            width: 0,
-            height: 9,
-          },
-          shadowOpacity: 0.7,
-          shadowRadius: 7.49,
-          elevation: 12,
+          padding: 20,
+          backgroundColor: colorConfig.pageIndex.backgroundColor,
+          width: this.state.screenWidth,
         }}>
-        <View style={{padding: 20}}>
-          <View>
+        <View
+          style={{
+            flexDirection: 'row',
+          }}>
+          <View
+            style={{
+              height: 75,
+              width: 75,
+              borderRadius: 75,
+              backgroundColor: colorConfig.pageIndex.backgroundColor,
+              alignItems: 'center',
+              borderColor: colorConfig.pageIndex.activeTintColor,
+              borderWidth: 1,
+              marginRight: 10,
+            }}>
             <Image
               style={{
-                height: 85,
-                width: 85,
-                marginBottom: 20,
-                borderRadius: 10,
-                alignSelf: 'center',
+                height: 73,
+                width: 73,
+                borderRadius: 73,
               }}
               source={appConfig.appImageNull}
             />
+          </View>
+          <View>
             <View
               style={{
-                marginBottom: 10,
-                flexDirection: 'row',
-                justifyContent: 'center',
+                marginTop: 5,
               }}>
               <Text
                 style={{
-                  color: 'white',
-                  textAlign: 'center',
-                  fontSize: 20,
-                  fontWeight: 'bold',
+                  color: colorConfig.pageIndex.activeTintColor,
+                  fontSize: 14,
                   fontFamily: 'Lato-Bold',
                 }}>
                 {userDetail != undefined ? userDetail.name : ''}
               </Text>
             </View>
-            <View style={{marginBottom: 7}}>
-              <Text
-                style={{
-                  marginLeft: 5,
-                  fontSize: 12,
-                  fontWeight: 'bold',
-                  color: 'white',
-                  padding: 3,
-                  borderRadius: 5,
-                  alignSelf: 'center',
-                  backgroundColor: this.renderCustomerGroupBG(
-                    userDetail.customerGroupName,
-                  ),
-                }}>
-                {userDetail != undefined ? userDetail.customerGroupName : ''}
-              </Text>
-            </View>
             <View>
               <Text
                 style={{
-                  color: colorConfig.store.darkColor,
-                  textAlign: 'center',
+                  color: colorConfig.pageIndex.grayColor,
                   fontSize: 14,
                   fontFamily: 'Lato-Medium',
                 }}>
@@ -121,8 +92,7 @@ class AccountUserDetail extends Component {
             <View>
               <Text
                 style={{
-                  color: colorConfig.store.darkColor,
-                  textAlign: 'center',
+                  color: colorConfig.pageIndex.grayColor,
                   fontSize: 14,
                   fontFamily: 'Lato-Italic',
                 }}>
@@ -150,4 +120,4 @@ export default compose(
     mapStateToProps,
     mapDispatchToProps,
   ),
-)(AccountUserDetail);
+)(AccountUserDetail3);

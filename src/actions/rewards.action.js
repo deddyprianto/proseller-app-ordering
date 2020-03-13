@@ -161,9 +161,12 @@ export const dataPoint = () => {
       );
       console.log(response, 'response data point');
       let totalPoint = response.responseBody.Data.totalPoint;
+      let campaignActive = response.responseBody.Data.campaignActive;
+
       dispatch({
         type: 'DATA_TOTAL_POINT',
         totalPoint: totalPoint,
+        campaignActive,
       });
     } catch (error) {
       return error;

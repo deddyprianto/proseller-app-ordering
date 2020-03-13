@@ -173,10 +173,6 @@ class AccountMenuList extends Component {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: colorConfig.pageIndex.backgroundColor,
-    borderBottomColor: colorConfig.pageIndex.inactiveTintColor,
-    borderBottomWidth: 1,
-    borderTopColor: colorConfig.pageIndex.inactiveTintColor,
-    borderTopWidth: 1,
   },
   item: {
     margin: 10,

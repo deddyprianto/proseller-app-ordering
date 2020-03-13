@@ -172,6 +172,7 @@ class MobileRegister extends Component {
 
   render() {
     const {intlData} = this.props;
+    const {name, email} = this.state;
     return (
       <View style={styles.backgroundImage}>
         {this.state.loading && <Loader />}
@@ -245,10 +246,14 @@ class MobileRegister extends Component {
             <View style={{marginVertical: 40}}>
               <TouchableHighlight
                 onPress={this.submitRegister}
+                disabled={name && email ? false : true}
                 style={{
                   padding: 15,
                   borderRadius: 10,
-                  backgroundColor: colorConfig.store.defaultColor,
+                  backgroundColor:
+                    name && email
+                      ? colorConfig.store.defaultColor
+                      : colorConfig.store.disableButton,
                 }}>
                 <Text
                   style={{

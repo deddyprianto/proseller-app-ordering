@@ -139,7 +139,7 @@ class Account extends Component {
   render() {
     const {intlData} = this.props;
     return (
-      <View style={{flex: 1}}>
+      <View style={{flex: 1, backgroundColor: 'white'}}>
         <ScrollView
           refreshControl={
             <RefreshControl

@@ -16,14 +16,15 @@ class RewardsPoint extends Component {
   }
 
   render() {
-    const {intlData} = this.props;
+    const {intlData, campaignActive, totalPoint} = this.props;
+    const HEIGHT = campaignActive ? 3 : 5;
     return (
       <View
         style={{
           backgroundColor: colorConfig.pageIndex.activeTintColor,
-          height: this.state.screenHeight / 3 - 30,
+          height: this.state.screenHeight / HEIGHT - 30,
         }}>
-        {this.props.totalPoint != undefined ? (
+        {totalPoint != undefined && campaignActive ? (
           <View>
             <Text
               style={{
@@ -42,7 +43,7 @@ class RewardsPoint extends Component {
                 fontSize: 42,
                 fontFamily: 'Lato-Bold',
               }}>
-              {this.props.totalPoint}
+              {totalPoint}
             </Text>
           </View>
         ) : null}

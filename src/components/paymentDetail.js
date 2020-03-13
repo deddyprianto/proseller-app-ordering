@@ -661,7 +661,7 @@ class PaymentDetail extends Component {
                 </TouchableOpacity>
               )}
             </View>
-            {this.props.totalPoint != undefined ? this.renderUsePoint() : null}
+            {this.props.campaignActive ? this.renderUsePoint() : null}
 
             <View style={{marginTop: 50}} />
             <SwipeButton
@@ -697,17 +697,14 @@ class PaymentDetail extends Component {
           showCancelButton={false}
           showConfirmButton={true}
           cancelText="Close"
-          confirmText={
-            this.state.titleAlert == 'Payment Success!' ? 'Oke' : 'Close'
-          }
+          confirmText={'Close'}
           confirmButtonColor={colorConfig.pageIndex.activeTintColor}
           onCancelPressed={() => {
             this.hideAlert();
           }}
           onConfirmPressed={() => {
-            this.state.titleAlert == 'Payment Success!'
-              ? Actions.pop()
-              : this.hideAlert();
+            this.setState({failedPay: true});
+            this.hideAlert();
           }}
         />
       </View>
@@ -822,6 +819,7 @@ mapStateToProps = state => ({
   myVoucers: state.accountsReducer.myVoucers.myVoucers,
   totalPoint: state.rewardsReducer.dataPoint.totalPoint,
   recentTransaction: state.rewardsReducer.dataPoint.recentTransaction,
+  campaignActive: state.rewardsReducer.dataPoint.campaignActive,
   dataStamps: state.rewardsReducer.getStamps,
   intlData: state.intlData,
 });

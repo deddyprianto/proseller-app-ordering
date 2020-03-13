@@ -66,7 +66,7 @@ class RewardsRewards extends Component {
   };
 
   render() {
-    const {intlData} = this.props;
+    const {intlData, campaignActive} = this.props;
     return (
       <View style={styles.container}>
         {this.state.isLoading && <Loader />}
@@ -87,27 +87,30 @@ class RewardsRewards extends Component {
                 {intlData.messages.rewards}{' '}
               </Text>
             </TouchableOpacity>
-            <View style={styles.point}>
-              <Icon
-                size={23}
-                name={Platform.OS === 'ios' ? 'ios-pricetags' : 'md-pricetags'}
-                style={{
-                  color: colorConfig.pageIndex.backgroundColor,
-                  marginRight: 8,
-                }}
-              />
-              <Text
-                style={{
-                  color: colorConfig.pageIndex.backgroundColor,
-                  fontWeight: 'bold',
-                }}>
-                {this.props.totalPoint == undefined
-                  ? 0 + ' Point'
-                  : this.props.totalPoint + ' Point'}
-              </Text>
-            </View>
+            {campaignActive ? (
+              <View style={styles.point}>
+                <Icon
+                  size={23}
+                  name={
+                    Platform.OS === 'ios' ? 'ios-pricetags' : 'md-pricetags'
+                  }
+                  style={{
+                    color: colorConfig.pageIndex.backgroundColor,
+                    marginRight: 8,
+                  }}
+                />
+                <Text
+                  style={{
+                    color: colorConfig.pageIndex.backgroundColor,
+                    fontWeight: 'bold',
+                  }}>
+                  {this.props.totalPoint == undefined
+                    ? 0 + ' Point'
+                    : this.props.totalPoint + ' Point'}
+                </Text>
+              </View>
+            ) : null}
           </View>
-          {/*<View style={styles.line} />*/}
         </View>
         <RewordsVouchers />
       </View>
@@ -155,6 +158,7 @@ const styles = StyleSheet.create({
 mapStateToProps = state => ({
   vouchers: state.rewardsReducer.vouchers.dataVoucher,
   totalPoint: state.rewardsReducer.dataPoint.totalPoint,
+  campaignActive: state.rewardsReducer.dataPoint.campaignActive,
   intlData: state.intlData,
 });
 

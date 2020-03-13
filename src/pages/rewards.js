@@ -189,6 +189,7 @@ class Rewards extends Component {
     if (this.state.statusGetData) {
       this.setValueInterval();
     }
+    const {campaignActive} = this.props;
 
     const {intlData} = this.props;
     return (
@@ -206,7 +207,8 @@ class Rewards extends Component {
           <View>
             {this.state.isLoading ? (
               <RewardsStamp isLoading={this.state.isLoading} />
-            ) : this.props.dataStamps.dataStamps == undefined ? (
+            ) : this.props.dataStamps.dataStamps == undefined ||
+              isEmptyObject(this.props.dataStamps.dataStamps) ? (
               this.greetWelcomeUser()
             ) : this.props.dataStamps.dataStamps.length == 0 ? null : (
               <View
@@ -234,7 +236,10 @@ class Rewards extends Component {
                 {this.state.isLoading ? <MyPointsPlaceHolder /> : null}
               </View>
             ) : (
-              <RewardsPoint isLoading={this.state.isLoading} />
+              <RewardsPoint
+                campaignActive={campaignActive}
+                isLoading={this.state.isLoading}
+              />
             )}
             <RewardsMenu
               disableStatusGetData={this.disableStatusGetData}
@@ -299,6 +304,7 @@ mapStateToProps = state => ({
   myVoucers: state.accountsReducer.myVoucers.myVoucers,
   dataStamps: state.rewardsReducer.getStamps,
   totalPoint: state.rewardsReducer.dataPoint.totalPoint,
+  campaignActive: state.rewardsReducer.dataPoint.campaignActive,
   status: state.userReducer.statusPageIndex.status,
   userDetail: state.userReducer.getUser.userDetails,
   intlData: state.intlData,
