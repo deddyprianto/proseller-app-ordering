@@ -10,6 +10,7 @@ import {
   Text,
   StyleSheet,
   Dimensions,
+  Platform,
   TouchableOpacity,
   Alert,
 } from 'react-native';

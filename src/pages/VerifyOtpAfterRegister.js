@@ -137,8 +137,8 @@ class VerifyOtpAfterRegister extends Component {
   }
 
   componentDidMount(): void {
-    this.beginTimer();
-    this.setState({firstLoad: false, buttonOTPpressed: true});
+    // this.beginTimer();
+    // this.setState({firstLoad: false, buttonOTPpressed: true});
   }
 
   beginTimer = () => {

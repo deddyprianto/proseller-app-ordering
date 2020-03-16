@@ -6,7 +6,8 @@ import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
 import com.BV.LinearGradient.LinearGradientPackage;
 import io.invertase.firebase.crashlytics.ReactNativeFirebaseCrashlyticsPackage;
-import io.invertase.firebase.app.ReactNativeFirebaseAppPackage;
+import io.invertase.firebase.app.ReactNativeFirebaseAppPackage;
+
 import org.capslock.RNDeviceBrightness.RNDeviceBrightness;
 import com.lugg.ReactNativeConfig.ReactNativeConfigPackage;
 import com.reactnativecommunity.rnpermissions.RNPermissionsPackage;
@@ -29,6 +30,7 @@ import com.facebook.appevents.AppEventsLogger;
 
 // Multidex
 import androidx.multidex.MultiDexApplication;
+
 
 public class MainApplication extends MultiDexApplication implements ReactApplication {
   private static CallbackManager mCallbackManager = CallbackManager.Factory.create();

@@ -1898,6 +1898,39 @@ anymatch@^3.0.3, anymatch@~3.1.1:
     normalize-path "^3.0.0"
     picomatch "^2.0.4"
 
+appcenter-analytics@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/appcenter-analytics/-/appcenter-analytics-3.0.0.tgz#ae4e223adf384a1dbb9cb6f61837390652198e34"
+  integrity sha512-hpbdxqz2D5m5x3ykyXGex8cRISaOC74uUbOJhcZkGEkObps70Fh8SYakKBXUlexOCLzhkvn2Wq4Y5Gp9Fg/jog==
+  dependencies:
+    appcenter "3.0.0"
+
+appcenter-crashes@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/appcenter-crashes/-/appcenter-crashes-3.0.0.tgz#14c6de7f2037cdcb942649c77c45c914e6eb3f4c"
+  integrity sha512-8bAI4ic2nGICHWiX5rdsGATcg+kkP0bQKOdGrqztMeb2we0BvirxwLMF88ndP0HgPYBpOy0MU9L8FkevFz8oog==
+  dependencies:
+    appcenter "3.0.0"
+
+appcenter-link-scripts@3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/appcenter-link-scripts/-/appcenter-link-scripts-3.0.0.tgz#f358768ccb28857f2d8b284cbe8a494d93c4ebf3"
+  integrity sha512-4rKD9k4cNJctndw6TdQUUBJ5fy0/Gc+rw2HZ2vLMT3r6v0fa42ZhN0ZkDOZzWeYL44ctCZt7nCKI6DpXqSDKVA==
+  dependencies:
+    debug "4.1.1"
+    glob "5.0.15"
+    mkdirp "0.5.1"
+    plist "3.0.1"
+    which "1.2.11"
+    xcode "2.0.0"
+
+appcenter@3.0.0, appcenter@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/appcenter/-/appcenter-3.0.0.tgz#9b6a451426f9c8fa2c1c02c6ebeeb1a2fda598a2"
+  integrity sha512-6kUbIM0z92uyOUlWqU0EnntdP7d2OhSWpg/Ajx2JGbOZ6R9Qet50ez4FnT4j0+lJH9nLh37P9tQvcOoHTJColw==
+  dependencies:
+    appcenter-link-scripts "3.0.0"
+
 argparse@^1.0.7:
   version "1.0.10"
   resolved "https://registry.yarnpkg.com/argparse/-/argparse-1.0.10.tgz#bcd6791ea5ae09725e17e5ad988134cd40b3d911"
@@ -3160,7 +3193,7 @@ debug@3.2.6:
   dependencies:
     ms "^2.1.1"
 
-debug@4, debug@^4.0.1, debug@^4.1.0, debug@^4.1.1:
+debug@4, debug@4.1.1, debug@^4.0.1, debug@^4.1.0, debug@^4.1.1:
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/debug/-/debug-4.1.1.tgz#3b72260255109c6b589cee050f1d516139664791"
   integrity sha512-pYAIzeRo8J6KPEaJ0VWOh5Pzkbw/RetuzehGM7QRRX5he4fPHx2rdKMB256ehJCkX+XRQm16eZLqLNS8RSZXZw==
@@ -4274,6 +4307,17 @@ glob-parent@^5.0.0, glob-parent@~5.1.0:
   dependencies:
     is-glob "^4.0.1"
 
+glob@5.0.15:
+  version "5.0.15"
+  resolved "https://registry.yarnpkg.com/glob/-/glob-5.0.15.tgz#1bc936b9e02f4a603fcc222ecf7633d30b8b93b1"
+  integrity sha1-G8k2ueAvSmA/zCIuz3Yz0wuLk7E=
+  dependencies:
+    inflight "^1.0.4"
+    inherits "2"
+    minimatch "2 || 3"
+    once "^1.3.0"
+    path-is-absolute "^1.0.0"
+
 glob@7.1.3:
   version "7.1.3"
   resolved "https://registry.yarnpkg.com/glob/-/glob-7.1.3.tgz#3960832d3f1574108342dafd3a67b332c0969df1"
@@ -5025,6 +5069,11 @@ isarray@^2.0.1:
   version "2.0.5"
   resolved "https://registry.yarnpkg.com/isarray/-/isarray-2.0.5.tgz#8af1e4c1221244cc62459faf38940d4e644a5723"
   integrity sha512-xHjhDr3cNBK0BzdUJSPXZntQUx/mwMS5Rw4A7lPJ90XGAO6ISP/ePDNuo0vhqOZU+UD5JoodwCAAoZQd3FeAKw==
+
+isexe@^1.1.1:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/isexe/-/isexe-1.1.2.tgz#36f3e22e60750920f5e7241a476a8c6a42275ad0"
+  integrity sha1-NvPiLmB1CSD15yQaR2qMakInWtA=
 
 isexe@^2.0.0:
   version "2.0.0"
@@ -7165,7 +7214,7 @@ pkg-dir@^4.2.0:
   dependencies:
     find-up "^4.0.0"
 
-plist@^3.0.0, plist@^3.0.1:
+plist@3.0.1, plist@^3.0.0, plist@^3.0.1:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/plist/-/plist-3.0.1.tgz#a9b931d17c304e8912ef0ba3bdd6182baf2e1f8c"
   integrity sha512-GpgvHHocGRyQm74b6FWEZZVRroHKE1I0/BTjAmySaohK+cUn+hZpbqXkc3KWgW3gQYkqcQej35FohcT0FRlkRQ==
@@ -9590,6 +9639,13 @@ which-module@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/which-module/-/which-module-2.0.0.tgz#d9ef07dce77b9902b8a3a8fa4b31c3e3f7e6e87a"
   integrity sha1-2e8H3Od7mQK4o6j6SzHD4/fm6Ho=
+
+which@1.2.11:
+  version "1.2.11"
+  resolved "https://registry.yarnpkg.com/which/-/which-1.2.11.tgz#c8b2eeea6b8c1659fa7c1dd4fdaabe9533dc5e8b"
+  integrity sha1-yLLu6muMFln6fB3U/aq+lTPcXos=
+  dependencies:
+    isexe "^1.1.1"
 
 which@1.3.1, which@^1.2.9, which@^1.3.0, which@^1.3.1:
   version "1.3.1"

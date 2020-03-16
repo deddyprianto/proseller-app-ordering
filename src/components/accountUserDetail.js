@@ -8,6 +8,7 @@ import appConfig from '../config/appConfig';
 import {Actions} from 'react-native-router-flux';
 import CryptoJS from 'react-native-crypto-js';
 import awsConfig from '../config/awsConfig';
+import ShimmerPlaceHolder from 'react-native-shimmer-placeholder';
 
 class AccountUserDetail extends Component {
   constructor(props) {
@@ -90,7 +91,11 @@ class AccountUserDetail extends Component {
                 {userDetail != undefined ? userDetail.name : ''}
               </Text>
             </View>
-            <View style={{marginBottom: 7}}>
+            <View
+              style={{
+                marginBottom: 7,
+                marginHorizontal: 5,
+              }}>
               <Text
                 style={{
                   marginLeft: 5,
@@ -100,14 +105,28 @@ class AccountUserDetail extends Component {
                   padding: 3,
                   borderRadius: 5,
                   alignSelf: 'center',
-                  backgroundColor: this.renderCustomerGroupBG(
-                    userDetail.customerGroupName,
-                  ),
+                  position: 'absolute',
+                  zIndex: 2,
                 }}>
                 {userDetail != undefined
                   ? userDetail.customerGroupName.toUpperCase()
                   : ''}
               </Text>
+              <ShimmerPlaceHolder
+                autoRun={true}
+                duration={1700}
+                style={{
+                  alignSelf: 'center',
+                  height: 22,
+                  width: 110,
+                  borderRadius: 5,
+                }}
+                colorShimmer={[
+                  this.renderCustomerGroupBG(userDetail.customerGroupName),
+                  'white',
+                  this.renderCustomerGroupBG(userDetail.customerGroupName),
+                ]}
+              />
             </View>
             <View>
               <Text
