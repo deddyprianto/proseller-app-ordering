@@ -272,7 +272,7 @@ class Basket extends Component {
   goToScanTable = () => {
     if (this.props.orderType == undefined) {
       this.RBSheet.open();
-      Alert.alert('Sorry', 'Please select your ordering mode first.');
+      // Alert.alert('Sorry', 'Please select your ordering mode first.');
     }
 
     if (this.props.orderType != undefined) {
@@ -292,58 +292,83 @@ class Basket extends Component {
       <View
         style={{
           width: '100%',
-          // marginTop: 10,
+          height: '17%',
+          backgroundColor: 'white',
+          shadowColor: '#00000021',
+          shadowOffset: {
+            width: 0,
+            height: 9,
+          },
+          shadowOpacity: 0.9,
+          shadowRadius: 16,
+          elevation: 10,
+          // padding: 10,
           position: 'absolute',
-          bottom: 30,
-          flexDirection: 'row',
-          justifyContent: 'center',
-          // alignItems: 'center',
-          // marginHorizontal: '5%',
+          bottom: 0,
+          flexDirection: 'column',
         }}>
-        <TouchableOpacity
-          disabled={this.props.dataBasket.status == 'CONFIRMED' ? true : false}
-          onPress={this.alertRemoveBasket}
-          style={[
-            styles.btnCancelBasketModal,
-            {
-              backgroundColor:
-                this.props.dataBasket.status == 'CONFIRMED'
-                  ? colorConfig.store.disableButtonError
-                  : colorConfig.store.colorError,
-            },
-          ]}>
-          <Icon
-            size={23}
-            name={Platform.OS === 'ios' ? 'ios-trash' : 'md-trash'}
-            style={{color: 'white', marginRight: 5}}
-          />
-          <Text style={styles.textBtnBasketModal}>
-            {intlData.messages.clear}
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={this.goToSettle}
-          disabled={this.props.dataBasket.status == 'CONFIRMED' ? false : true}
-          style={[
-            styles.btnAddBasketModal,
-            {
-              backgroundColor:
-                this.props.dataBasket.status == 'CONFIRMED'
-                  ? colorConfig.store.defaultColor
-                  : colorConfig.store.disableButton,
-            },
-          ]}>
-          <Icon
-            size={23}
-            name={
-              Platform.OS === 'ios'
-                ? 'ios-checkbox-outline'
-                : 'md-checkbox-outline'
+        <Text
+          style={{
+            color: colorConfig.store.title,
+            textAlign: 'right',
+            fontWeight: 'bold',
+            fontFamily: 'Lato-Bold',
+            paddingVertical: 8,
+            fontSize: 15,
+            marginRight: 20,
+          }}>
+          TOTAL : {CurrencyFormatter(this.props.dataBasket.totalNettAmount)}
+        </Text>
+        <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+          <TouchableOpacity
+            disabled={
+              this.props.dataBasket.status == 'CONFIRMED' ? true : false
             }
-            style={{color: 'white', marginRight: 5}}
-          />
-          <Text style={styles.textBtnBasketModal}>Settle</Text>
-        </TouchableOpacity>
+            onPress={this.alertRemoveBasket}
+            style={[
+              styles.btnCancelBasketModal,
+              {
+                backgroundColor:
+                  this.props.dataBasket.status == 'CONFIRMED'
+                    ? colorConfig.store.disableButtonError
+                    : colorConfig.store.colorError,
+              },
+            ]}>
+            <Icon
+              size={23}
+              name={Platform.OS === 'ios' ? 'ios-trash' : 'md-trash'}
+              style={{color: 'white', marginRight: 5}}
+            />
+            <Text style={styles.textBtnBasketModal}>
+              {intlData.messages.clear}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={this.goToSettle}
+            disabled={
+              this.props.dataBasket.status == 'CONFIRMED' ? false : true
+            }
+            style={[
+              styles.btnAddBasketModal,
+              {
+                backgroundColor:
+                  this.props.dataBasket.status == 'CONFIRMED'
+                    ? colorConfig.store.defaultColor
+                    : colorConfig.store.disableButton,
+              },
+            ]}>
+            <Icon
+              size={23}
+              name={
+                Platform.OS === 'ios'
+                  ? 'ios-checkbox-outline'
+                  : 'md-checkbox-outline'
+              }
+              style={{color: 'white', marginRight: 5}}
+            />
+            <Text style={styles.textBtnBasketModal}>Settle</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     );
   };
@@ -394,42 +419,63 @@ class Basket extends Component {
       <View
         style={{
           width: '100%',
-          // marginTop: 10,
+          height: '17%',
+          backgroundColor: 'white',
+          shadowColor: '#00000021',
+          shadowOffset: {
+            width: 0,
+            height: 9,
+          },
+          shadowOpacity: 0.9,
+          shadowRadius: 16,
+          elevation: 10,
+          // padding: 10,
           position: 'absolute',
-          bottom: 30,
-          flexDirection: 'row',
-          justifyContent: 'center',
-          // alignItems: 'center',
-          // marginHorizontal: '5%',
+          bottom: 0,
+          flexDirection: 'column',
         }}>
-        <TouchableOpacity
-          onPress={this.alertRemoveBasket}
-          style={styles.btnCancelBasketModal}>
-          <Icon
-            size={23}
-            name={Platform.OS === 'ios' ? 'ios-trash' : 'md-trash'}
-            style={{color: 'white', marginRight: 5}}
-          />
-          <Text style={styles.textBtnBasketModal}>
-            {intlData.messages.clear}
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={this.goToScanTable}
-          style={styles.btnAddBasketModal}>
-          <Icon
-            size={23}
-            name={
-              Platform.OS === 'ios'
-                ? 'ios-checkbox-outline'
-                : 'md-checkbox-outline'
-            }
-            style={{color: 'white', marginRight: 5}}
-          />
-          <Text style={styles.textBtnBasketModal}>
-            {intlData.messages.submit}
-          </Text>
-        </TouchableOpacity>
+        <Text
+          style={{
+            color: colorConfig.store.title,
+            textAlign: 'right',
+            fontWeight: 'bold',
+            fontFamily: 'Lato-Bold',
+            paddingVertical: 8,
+            fontSize: 15,
+            marginRight: 20,
+          }}>
+          TOTAL : {CurrencyFormatter(this.props.dataBasket.totalNettAmount)}
+        </Text>
+        <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+          <TouchableOpacity
+            onPress={this.alertRemoveBasket}
+            style={styles.btnCancelBasketModal}>
+            <Icon
+              size={23}
+              name={Platform.OS === 'ios' ? 'ios-trash' : 'md-trash'}
+              style={{color: 'white', marginRight: 5}}
+            />
+            <Text style={styles.textBtnBasketModal}>
+              {intlData.messages.clear}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={this.goToScanTable}
+            style={styles.btnAddBasketModal}>
+            <Icon
+              size={23}
+              name={
+                Platform.OS === 'ios'
+                  ? 'ios-checkbox-outline'
+                  : 'md-checkbox-outline'
+              }
+              style={{color: 'white', marginRight: 5}}
+            />
+            <Text style={styles.textBtnBasketModal}>
+              {intlData.messages.submit}
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
     );
   };
@@ -819,7 +865,14 @@ class Basket extends Component {
         {this.state.loading == false ? (
           this.props.dataBasket != undefined &&
           this.props.dataBasket.outlet != undefined ? (
-            <View style={{height: '100%'}}>
+            <ScrollView
+              style={{marginBottom: '30%'}}
+              refreshControl={
+                <RefreshControl
+                  refreshing={this.state.refreshing}
+                  onRefresh={this._onRefresh}
+                />
+              }>
               <View style={styles.containerBody}>
                 <Text style={styles.title}>
                   {this.props.dataBasket.outlet.name}
@@ -827,14 +880,7 @@ class Basket extends Component {
                 <Text style={styles.subTitle}>
                   {intlData.messages.detailOrder}
                 </Text>
-                <ScrollView
-                  refreshControl={
-                    <RefreshControl
-                      refreshing={this.state.refreshing}
-                      onRefresh={this._onRefresh}
-                    />
-                  }
-                  style={{height: '36%'}}>
+                <View>
                   <FlatList
                     data={this.props.dataBasket.details}
                     renderItem={({item}) => (
@@ -844,9 +890,8 @@ class Basket extends Component {
                             flexDirection: 'row',
                             justifyContent: 'space-between',
                             padding: 3,
-                            maxWidth: '100%',
                           }}>
-                          <View style={{width: '80%'}}>
+                          <View>
                             <View>
                               <Text style={[styles.desc]}>
                                 <Text
@@ -911,7 +956,7 @@ class Basket extends Component {
                     )}
                     keyExtractor={(product, index) => index.toString()}
                   />
-                </ScrollView>
+                </View>
                 <View style={{marginTop: 20}} />
                 {this.props.dataBasket.tableNo != undefined ? (
                   <View style={styles.itemSummary}>
@@ -979,15 +1024,15 @@ class Basket extends Component {
                     {CurrencyFormatter(this.props.dataBasket.totalTaxAmount)}
                   </Text>
                 </View>
-                <View style={styles.itemSummary}>
-                  <Text style={styles.total}>Total</Text>
-                  <Text style={styles.total}>
-                    {' '}
-                    {CurrencyFormatter(this.props.dataBasket.totalNettAmount)}
-                  </Text>
-                </View>
+                {/*<View style={styles.itemSummary}>*/}
+                {/*  <Text style={styles.total}>Total</Text>*/}
+                {/*  <Text style={styles.total}>*/}
+                {/*    {' '}*/}
+                {/*    {CurrencyFormatter(this.props.dataBasket.totalNettAmount)}*/}
+                {/*  </Text>*/}
+                {/*</View>*/}
               </View>
-            </View>
+            </ScrollView>
           ) : (
             this.renderNullBasker()
           )
