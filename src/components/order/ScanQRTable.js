@@ -222,10 +222,24 @@ class ScanQRTable extends Component {
           </TouchableOpacity>
           <View style={styles.line} />
         </View>
+
         <View style={styles.card}>
-          <View style={{marginTop: 60}}>
+          <View style={{marginTop: 30}}>
             {this.renderFailedToSubmit()}
             {this.renderScanWrongOutlet()}
+
+            <Text
+              style={{
+                color: colorConfig.store.defaultColor,
+                fontSize: 23,
+                textAlign: 'center',
+                marginRight: 5,
+                fontWeight: 'bold',
+                fontFamily: 'Lato-Bold',
+                marginBottom: 20,
+              }}>
+              Please scan table QR Code.
+            </Text>
 
             {this.state.loadingPushData ? (
               <View
@@ -267,17 +281,19 @@ class ScanQRTable extends Component {
             ) : (this.state.responseFailed != undefined &&
                 this.state.responseFailed != null) ||
               this.state.wrongOutlet == true ? null : (
-              <QRCodeScanner
-                markerStyle={{
-                  borderColor: 'white',
-                  borderRadius: 10,
-                  borderStyle: 'dashed',
-                  width: Dimensions.get('window').width - 50,
-                  height: Dimensions.get('window').width - 50,
-                }}
-                showMarker={true}
-                onRead={this.onSuccess}
-              />
+              <View>
+                <QRCodeScanner
+                  markerStyle={{
+                    borderColor: 'white',
+                    borderRadius: 10,
+                    borderStyle: 'dashed',
+                    width: Dimensions.get('window').width - 50,
+                    height: Dimensions.get('window').width - 50,
+                  }}
+                  showMarker={true}
+                  onRead={this.onSuccess}
+                />
+              </View>
             )}
           </View>
         </View>
