@@ -223,23 +223,26 @@ class ScanQRTable extends Component {
           <View style={styles.line} />
         </View>
 
+        {this.state.responseFailed != undefined &&
+        this.state.responseFailed != null ? null : this.state.wrongOutlet != true ? (
+          <Text
+            style={{
+              color: colorConfig.store.defaultColor,
+              fontSize: 23,
+              textAlign: 'center',
+              marginRight: 5,
+              fontWeight: 'bold',
+              fontFamily: 'Lato-Bold',
+              marginVertical: 20,
+            }}>
+            Please scan table QR Code.
+          </Text>
+        ) : null}
+
         <View style={styles.card}>
-          <View style={{marginTop: 30}}>
+          <View style={{marginTop: 60}}>
             {this.renderFailedToSubmit()}
             {this.renderScanWrongOutlet()}
-
-            <Text
-              style={{
-                color: colorConfig.store.defaultColor,
-                fontSize: 23,
-                textAlign: 'center',
-                marginRight: 5,
-                fontWeight: 'bold',
-                fontFamily: 'Lato-Bold',
-                marginBottom: 20,
-              }}>
-              Please scan table QR Code.
-            </Text>
 
             {this.state.loadingPushData ? (
               <View
@@ -281,19 +284,17 @@ class ScanQRTable extends Component {
             ) : (this.state.responseFailed != undefined &&
                 this.state.responseFailed != null) ||
               this.state.wrongOutlet == true ? null : (
-              <View>
-                <QRCodeScanner
-                  markerStyle={{
-                    borderColor: 'white',
-                    borderRadius: 10,
-                    borderStyle: 'dashed',
-                    width: Dimensions.get('window').width - 50,
-                    height: Dimensions.get('window').width - 50,
-                  }}
-                  showMarker={true}
-                  onRead={this.onSuccess}
-                />
-              </View>
+              <QRCodeScanner
+                markerStyle={{
+                  borderColor: 'white',
+                  borderRadius: 10,
+                  borderStyle: 'dashed',
+                  width: Dimensions.get('window').width - 50,
+                  height: Dimensions.get('window').width - 50,
+                }}
+                showMarker={true}
+                onRead={this.onSuccess}
+              />
             )}
           </View>
         </View>

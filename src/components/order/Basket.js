@@ -297,7 +297,7 @@ class Basket extends Component {
       <View
         style={{
           width: '100%',
-          height: '17%',
+          paddingBottom: 20,
           backgroundColor: 'white',
           shadowColor: '#00000021',
           shadowOffset: {
@@ -424,7 +424,7 @@ class Basket extends Component {
       <View
         style={{
           width: '100%',
-          height: '17%',
+          paddingBottom: 20,
           backgroundColor: 'white',
           shadowColor: '#00000021',
           shadowOffset: {
@@ -999,7 +999,7 @@ class Basket extends Component {
                           color:
                             this.props.dataBasket.status == 'PENDING'
                               ? 'white'
-                              : colorConfig.store.title,
+                              : colorConfig.pageIndex.grayColor,
                           borderRadius: 5,
                           padding: 5,
                         },
