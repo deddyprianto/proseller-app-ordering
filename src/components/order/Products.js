@@ -67,6 +67,7 @@ class Products extends Component {
       loadingAddItem: false,
       selectedCategoryModifier: 0,
       loadProducts: true,
+      productTemp: {},
     };
   }
 
@@ -101,8 +102,10 @@ class Products extends Component {
   };
 
   setOrderType = type => {
+    const {productTemp} = this.state;
     this.props.dispatch(setOrderType(type));
     this.RBSheet.close();
+    if (!isEmptyObject(productTemp)) this.openModal(productTemp);
   };
 
   askUserToSelectPaymentType = () => {
@@ -218,11 +221,17 @@ class Products extends Component {
         {text: 'Cancel', onPress: () => Actions.pop()},
         {
           text: 'Process',
-          onPress: () => this.openModal(product),
+          onPress: () => this.selectOrderModeAndOpenModal(product),
         },
       ],
       {cancelable: false},
     );
+  };
+
+  selectOrderModeAndOpenModal = async product => {
+    // save product selected to temporary state
+    await this.setState({productTemp: product});
+    this.RBSheet.open();
   };
 
   pushDataProductsToState = async () => {
@@ -703,9 +712,15 @@ class Products extends Component {
       this.props.item.orderingStatus == undefined ||
       this.props.item.orderingStatus == 'AVAILABLE'
     ) {
-      // check open / close
-      if (this.props.item.storeStatus == true) {
-        // check ordering status product
+      // check basket is empty then open modal mode order
+      if (this.props.dataBasket == undefined) return true;
+      // check open / close & outlet ID
+      const currentOutletId = this.props.item.storeId;
+      const outletIDSelected = this.props.dataBasket.outlet.id;
+      if (
+        this.props.item.storeStatus == true &&
+        currentOutletId == outletIDSelected
+      ) {
         return true;
       }
     }
@@ -1209,6 +1224,7 @@ class Products extends Component {
 mapStateToProps = state => ({
   products: state.orderReducer.productsOutlet.products,
   dataBasket: state.orderReducer.dataBasket.product,
+  orderType: state.orderReducer.orderType.orderType,
   dataLength: state.orderReducer.productsOutlet.dataLength,
   intlData: state.intlData,
 });
