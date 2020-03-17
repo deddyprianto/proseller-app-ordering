@@ -138,14 +138,32 @@ export default class ModalOrder extends Component {
     try {
       let data = this.props.product.product.productModifiers;
       for (let i = 0; i < data.length; i++) {
-        let lengthDetail = data[i].modifier.details.length;
-        // check min modifier
-        if (lengthDetail < data[i].modifier.min && data[i].modifier.min != 0) {
-          return true;
-        }
-        // check max modifier
-        if (lengthDetail > data[i].modifier.max && data[i].modifier.max != 0) {
-          return true;
+        let lengthDetail = data[i].modifier.details.filter(
+          item => item.quantity > 0 && item.quantity != undefined,
+        );
+        // check rule min max
+        if (data[i].modifier.min != 0 || data[i].modifier.max != 0) {
+          // check min modifier
+          if (
+            lengthDetail.length < data[i].modifier.min &&
+            lengthDetail != undefined &&
+            data[i].modifier.min != 0 &&
+            data[i].modifier.min != undefined
+          ) {
+            return true;
+          }
+
+          // check max modifier
+          if (
+            lengthDetail.length > data[i].modifier.max &&
+            lengthDetail != undefined &&
+            data[i].modifier.max != 0 &&
+            data[i].modifier.max != undefined
+          ) {
+            return true;
+          }
+        } else {
+          return false;
         }
       }
       return false;
@@ -157,8 +175,30 @@ export default class ModalOrder extends Component {
   renderButtonHideModal = () => {
     return (
       <TouchableOpacity
-        disabled={this.ruleModifierNotPassed() ? true : false}
+        // disabled={this.ruleModifierNotPassed() ? true : false}
         onPress={() => {
+          if (this.ruleModifierNotPassed()) {
+            let name = 'Item';
+            let qty = 1;
+
+            try {
+              let productModifiers = this.props.product.product
+                .productModifiers;
+              for (let i = 0; i < productModifiers.length; i++) {
+                let lengthDetail = productModifiers[i].modifier.details.filter(
+                  item => item.quantity > 0 && item.quantity != undefined,
+                );
+                if (productModifiers[i].modifier.min > lengthDetail.length) {
+                  name = productModifiers[i].modifierName;
+                  qty = productModifiers[i].modifier.min;
+                  break;
+                }
+              }
+            } catch (e) {}
+
+            Alert.alert('Opps', `Please pick minimum ${qty} ${name}`);
+            return;
+          }
           this.props.addItemToBasket(
             this.props.product,
             this.props.qtyItem,
@@ -297,31 +337,12 @@ export default class ModalOrder extends Component {
     try {
       let selectedModifier = JSON.stringify(this.state.selectedModifier);
       selectedModifier = JSON.parse(selectedModifier);
+
       let productModifiers = this.props.product.product.productModifiers;
       // find index group modifier
       let indexModifier = productModifiers.findIndex(
         item => item.modifierID == selectedModifier.modifierID,
       );
-
-      // get length details modifier
-      let lengthDetailsModifier = productModifiers[
-        indexModifier
-      ].modifier.details.filter(item => item.quantity > 0).length;
-
-      // check max and min modifier
-      if (
-        lengthDetailsModifier > productModifiers[indexModifier].modifier.max &&
-        productModifiers[indexModifier].modifier.max != 0
-      ) {
-        this.setState({modalQty: false});
-        Alert.alert(
-          'Sorry',
-          `Cannot add more modifier, max is ${
-            productModifiers[indexModifier].modifier.max
-          }`,
-        );
-        return;
-      }
 
       // find index modifier item
       let indexDetails = productModifiers[
@@ -356,6 +377,38 @@ export default class ModalOrder extends Component {
         this.props.product.product.productModifiers[
           indexModifier
         ].postToServer = true;
+      }
+
+      // check max and min modifier
+      // get length details modifier
+      let lengthDetailsModifier = productModifiers[
+        indexModifier
+      ].modifier.details.filter(item => item.quantity > 0);
+
+      // check max and min modifier
+      if (
+        lengthDetailsModifier.length >
+          productModifiers[indexModifier].modifier.max &&
+        productModifiers[indexModifier].modifier.max != 0 &&
+        productModifiers[indexModifier].modifier.max != undefined &&
+        lengthDetailsModifier != undefined
+      ) {
+        // recover quantity
+        let selectedModifier = this.state.selectedModifier;
+        selectedModifier.quantity = selectedModifier.quantityTemp;
+        // make quantity empty again
+        this.props.product.product.productModifiers[
+          indexModifier
+        ].modifier.details[indexDetails].quantity = 0;
+        // hide modal
+        this.setState({modalQty: false, selectedModifier});
+        Alert.alert(
+          'Sorry',
+          `Cannot add more modifier, max is ${
+            productModifiers[indexModifier].modifier.max
+          }`,
+        );
+        return;
       }
 
       this.setState({modalQty: false});
@@ -438,7 +491,7 @@ export default class ModalOrder extends Component {
     try {
       if (item.modifier.max != 0 && item.modifier.min != 0) {
         return `${item.modifierName}, Pick ${item.modifier.min}, max ${
-          item.modifier.max
+          item.modifier.max != undefined ? item.modifier.max : '-'
         }`;
       }
     } catch (e) {
