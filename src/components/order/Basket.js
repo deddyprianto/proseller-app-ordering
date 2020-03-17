@@ -124,6 +124,11 @@ class Basket extends Component {
       if (this.props.dataBasket != undefined) {
         let outletID = this.props.dataBasket.outlet.id;
         this.getProductsByOutlet(outletID);
+
+        // check if user not yet select order mode, then open modal
+        if (this.props.orderType == undefined) {
+          this.RBSheet.open();
+        }
       }
 
       // check if status basket is submitted, then request continoustly to get basket
@@ -1141,7 +1146,7 @@ const styles = StyleSheet.create({
   total: {
     marginVertical: 10,
     fontFamily: 'Lato-Bold',
-    color: colorConfig.store.title,
+    color: colorConfig.pageIndex.grayColor,
     fontSize: 14,
     padding: 3,
     fontWeight: 'bold',
