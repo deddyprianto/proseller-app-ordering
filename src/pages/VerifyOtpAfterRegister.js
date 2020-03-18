@@ -137,8 +137,8 @@ class VerifyOtpAfterRegister extends Component {
   }
 
   componentDidMount(): void {
-    // this.beginTimer();
-    // this.setState({firstLoad: false, buttonOTPpressed: true});
+    this.beginTimer();
+    this.setState({firstLoad: false, buttonOTPpressed: true});
   }
 
   beginTimer = () => {
@@ -251,9 +251,6 @@ class VerifyOtpAfterRegister extends Component {
       const response = await this.props.dispatch(loginUser(dataLogin));
       console.log(response, 'response login');
       if (response.status == false) {
-        this.setState({loading: false});
-        Alert.alert('Opss..', response.message);
-      } else {
         this.setState({loading: false});
         Alert.alert('Opss..', response.message);
       }

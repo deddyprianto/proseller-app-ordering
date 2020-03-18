@@ -136,8 +136,8 @@ class VerifyOtpAfterRegisterEmail extends Component {
   }
 
   componentDidMount(): void {
-    // this.beginTimer();
-    // this.setState({firstLoad: false, buttonOTPpressed: true});
+    this.beginTimer();
+    this.setState({firstLoad: false, buttonOTPpressed: true});
   }
 
   beginTimer = () => {
@@ -242,9 +242,6 @@ class VerifyOtpAfterRegisterEmail extends Component {
       };
       const response = await this.props.dispatch(loginUser(dataLogin));
       if (response.status == false) {
-        this.setState({loading: false});
-        Alert.alert('Opss..', response.message);
-      } else if (response.code == 'UserNotConfirmedException') {
         this.setState({loading: false});
         Alert.alert('Opss..', response.message);
       }

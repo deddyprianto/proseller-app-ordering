@@ -22,7 +22,7 @@ import {connect} from 'react-redux';
 import {compose} from 'redux';
 import {reduxForm} from 'redux-form';
 import AwesomeAlert from 'react-native-awesome-alerts';
-import {createNewUser} from '../actions/auth.actions';
+import {createNewUser, resendOTPCognito} from '../actions/auth.actions';
 import Loader from '../components/loader';
 import {Actions} from 'react-native-router-flux';
 import colorConfig from '../config/colorConfig';
@@ -146,7 +146,8 @@ class MobileRegister extends Component {
       console.log(dataRequest, 'payload register');
       const response = await this.props.dispatch(createNewUser(dataRequest));
       if (response == true) {
-        this.setState({
+        // await this.sendOTP(dataRequest.phoneNumber);
+        await this.setState({
           loading: false,
         });
         let phoneNumber = {
@@ -168,6 +169,17 @@ class MobileRegister extends Component {
         loading: false,
       });
     }
+  };
+
+  sendOTP = async phoneNumber => {
+    try {
+      var dataRequest = {
+        phoneNumber: phoneNumber,
+      };
+      console.log(dataRequest, 'payload send otp');
+      const response = await this.props.dispatch(resendOTPCognito(dataRequest));
+      console.log('send otp pada saat register ', response);
+    } catch (error) {}
   };
 
   render() {
