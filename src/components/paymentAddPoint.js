@@ -12,6 +12,7 @@ import {
   Dimensions,
   TouchableOpacity,
   BackHandler,
+  Platform,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -58,8 +59,8 @@ class paymentAddPoint extends Component {
         isLoading: false,
       });
     }, 1000);
-    await this.props.dispatch(campaign());
-    await this.props.dispatch(dataPoint());
+    // await this.props.dispatch(campaign());
+    // await this.props.dispatch(dataPoint());
     var jumPointRatio = this.props.campign.points.pointsToRebateRatio0;
     var jumMoneyRatio = this.props.campign.points.pointsToRebateRatio1;
     //     this.props.campign.filter(
@@ -71,7 +72,7 @@ class paymentAddPoint extends Component {
     console.log('jumPointRatio ', jumPointRatio);
     var setDefault = jumPointRatio;
     if (this.props.pembayaran.payment < jumPointRatio) {
-      setDefault = jumPointRatio;
+      setDefault = Math.ceil(jumPointRatio);
     } else {
       setDefault = this.props.pembayaran.payment * jumPointRatio;
       setDefault = Math.ceil(setDefault);
@@ -80,6 +81,7 @@ class paymentAddPoint extends Component {
       jumPointRatio: jumPointRatio,
       jumMoneyRatio: jumMoneyRatio,
     });
+    console.log(this.props.valueSet, 'this.props.valueSet');
     if (this.props.valueSet == 0) {
       if (setDefault >= this.props.totalPoint) {
         this.setState({jumPoint: this.props.totalPoint});
@@ -89,9 +91,9 @@ class paymentAddPoint extends Component {
     } else {
       this.setState({jumPoint: this.props.valueSet});
     }
-    console.log('jumPointRatio ', this.state.jumPointRatio);
-    console.log('jumMoneyRatio ', this.state.jumMoneyRatio);
-    console.log('jumPoint ', this.state.jumPoint);
+    // console.log('jumPointRatio ', this.state.jumPointRatio);
+    // console.log('jumMoneyRatio ', this.state.jumMoneyRatio);
+    // console.log('jumPoint ', this.state.jumPoint);
   };
 
   goBack = async () => {
@@ -108,8 +110,10 @@ class paymentAddPoint extends Component {
     // });
     this.props.setDataPoint(
       this.state.jumPoint == 0 ? undefined : this.state.jumPoint,
-      (this.state.jumPoint / this.state.jumPointRatio) *
-        this.state.jumMoneyRatio,
+      Math.floor(
+        (this.state.jumPoint / this.state.jumPointRatio) *
+          this.state.jumMoneyRatio,
+      ),
     );
     Actions.pop();
   };
@@ -203,8 +207,10 @@ class paymentAddPoint extends Component {
                       this.state.jumMoneyRatio,
                   )
                     ? 0
-                    : (this.state.jumPoint / this.state.jumPointRatio) *
-                      this.state.jumMoneyRatio}
+                    : Math.floor(
+                        (this.state.jumPoint / this.state.jumPointRatio) *
+                          this.state.jumMoneyRatio,
+                      )}
                 </Text>
               </View>
               <View style={{alignItems: 'center', justifyContent: 'center'}}>
@@ -225,7 +231,7 @@ class paymentAddPoint extends Component {
                       defaultPoint = this.state.jumPointRatio;
                     }
                     // get max pont
-                    let jumPoint = defaultPoint;
+                    let jumPoint = Math.ceil(defaultPoint);
                     if (value < defaultPoint) {
                       jumPoint = Math.ceil(value);
                     } else {

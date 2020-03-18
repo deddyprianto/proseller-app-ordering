@@ -210,7 +210,8 @@ class PaymentDetail extends Component {
       intlData,
       data: this.props.totalPoint,
       pembayaran: this.props.pembayaran,
-      valueSet: this.state.moneyPoint == undefined ? 0 : this.state.moneyPoint,
+      // valueSet: this.state.moneyPoint == undefined ? 0 : this.state.moneyPoint,
+      valueSet: this.state.addPoint == undefined ? 0 : this.state.addPoint,
       setDataPoint: this.setDataPoint,
     });
   };
@@ -253,6 +254,15 @@ class PaymentDetail extends Component {
       const response = await this.props.dispatch(sendPayment(pembayaran));
       console.log('reponse pembayaran ', response);
       if (response.success) {
+        //  cancel voucher and pont selected
+        // this.cencelPoint();
+        // this.cencelVoucher();
+        // this.setState({
+        //   showAlert: true,
+        //   pesanAlert: response.responseBody.Data.message,
+        //   titleAlert: 'Oopss!',
+        //   failedPay: true,
+        // });
         // return back to payment success
         Actions.paymentSuccess({
           intlData,
@@ -661,7 +671,7 @@ class PaymentDetail extends Component {
                 </TouchableOpacity>
               )}
             </View>
-            {this.props.campaignActive ? this.renderUsePoint() : null}
+            {this.props.totalPoint != undefined ? this.renderUsePoint() : null}
 
             <View style={{marginTop: 50}} />
             <SwipeButton
@@ -697,14 +707,17 @@ class PaymentDetail extends Component {
           showCancelButton={false}
           showConfirmButton={true}
           cancelText="Close"
-          confirmText={'Close'}
+          confirmText={
+            this.state.titleAlert == 'Payment Success!' ? 'Oke' : 'Close'
+          }
           confirmButtonColor={colorConfig.pageIndex.activeTintColor}
           onCancelPressed={() => {
             this.hideAlert();
           }}
           onConfirmPressed={() => {
-            this.setState({failedPay: true});
-            this.hideAlert();
+            this.state.titleAlert == 'Payment Success!'
+              ? Actions.pop()
+              : this.hideAlert();
           }}
         />
       </View>
@@ -819,7 +832,6 @@ mapStateToProps = state => ({
   myVoucers: state.accountsReducer.myVoucers.myVoucers,
   totalPoint: state.rewardsReducer.dataPoint.totalPoint,
   recentTransaction: state.rewardsReducer.dataPoint.recentTransaction,
-  campaignActive: state.rewardsReducer.dataPoint.campaignActive,
   dataStamps: state.rewardsReducer.getStamps,
   intlData: state.intlData,
 });
