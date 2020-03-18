@@ -178,9 +178,11 @@ export default class ModalOrder extends Component {
         // disabled={this.ruleModifierNotPassed() ? true : false}
         onPress={() => {
           if (this.ruleModifierNotPassed()) {
+            // dummy variable created, so even the ccode below is error, then alert still showing
             let name = 'Item';
             let qty = 1;
 
+            // check name and quantity modifier that hasnt been success passed min & max
             try {
               let productModifiers = this.props.product.product
                 .productModifiers;
@@ -447,7 +449,7 @@ export default class ModalOrder extends Component {
           styles.detailOptionsModal,
           !available ? {backgroundColor: 'rgba(52, 73, 94, 0.2)'} : null,
         ]}>
-        {modifier.max == 1 && modifier.min == 1 ? (
+        {modifier.modifier.max == 1 && modifier.modifier.min == 1 ? (
           <RadioButton
             value={item}
             status={this.findExistModifier(item) ? 'checked' : 'unchecked'}
@@ -530,7 +532,6 @@ export default class ModalOrder extends Component {
         productModifiers = product.product.productModifiers;
       }
     }
-    console.log('productModifiers', productModifiers);
 
     return (
       <Modal

@@ -31,7 +31,6 @@ import CurrencyFormatter from '../../helper/CurrencyFormatter';
 import {isEmptyArray, isEmptyObject} from '../../helper/CheckEmpty';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import * as _ from 'lodash';
-import intlData from '../../reducers/language.reducer';
 
 class Basket extends Component {
   constructor(props) {
@@ -123,7 +122,8 @@ class Basket extends Component {
       // get previous data products from this outlet, for modifier detail purpose
       if (this.props.dataBasket != undefined) {
         let outletID = this.props.dataBasket.outlet.id;
-        this.getProductsByOutlet(outletID);
+        await this.getProductsByOutlet(outletID);
+        await this.setState({loading: false});
 
         // check if user not yet select order mode, then open modal
         if (this.props.orderType == undefined) {
@@ -255,9 +255,9 @@ class Basket extends Component {
   getBasket = async () => {
     this.setState({loading: true});
     await this.props.dispatch(getBasket());
-    setTimeout(() => {
-      this.setState({loading: false});
-    }, 10);
+    // setTimeout(() => {
+    //   this.setState({loading: false});
+    // }, 10);
   };
 
   componentWillUnmount() {
@@ -742,8 +742,6 @@ class Basket extends Component {
       let response = await this.props.dispatch(
         updateProductToBasket(data, previousData),
       );
-
-      console.log('RESPONSE UPDATE ', response);
 
       this.setState({
         selectedProduct: {},
