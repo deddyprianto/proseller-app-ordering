@@ -253,6 +253,7 @@ class Rewards extends Component {
             />
           </View>
         </View>
+        <View style={{paddingBottom: '15%'}} />
       </ScrollView>
     );
   }
