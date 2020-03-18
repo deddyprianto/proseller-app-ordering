@@ -253,7 +253,6 @@ class Rewards extends Component {
             />
           </View>
         </View>
-        <View style={{paddingBottom: '15%'}} />
       </ScrollView>
     );
   }
@@ -262,7 +261,7 @@ class Rewards extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    height: Dimensions.get('window').height,
+    // height: Dimensions.get('window').height,
     // backgroundColor: colorConfig.pageIndex.backgroundColor,
   },
   loading: {
