@@ -110,10 +110,7 @@ class paymentAddPoint extends Component {
     // });
     this.props.setDataPoint(
       this.state.jumPoint == 0 ? undefined : this.state.jumPoint,
-      Math.floor(
-        (this.state.jumPoint / this.state.jumPointRatio) *
-          this.state.jumMoneyRatio,
-      ),
+      this.calculateMoneyPoint(),
     );
     Actions.pop();
   };
@@ -123,6 +120,16 @@ class paymentAddPoint extends Component {
       return this.state.jumPointRatio;
     } else {
       return Math.ceil(this.props.pembayaran.payment);
+    }
+  };
+
+  calculateMoneyPoint = () => {
+    try {
+      let ratio = this.state.jumPoint / this.state.jumPointRatio;
+      ratio = Math.floor(ratio);
+      return ratio * this.state.jumMoneyRatio;
+    } catch (e) {
+      return 0;
     }
   };
 
@@ -207,10 +214,7 @@ class paymentAddPoint extends Component {
                       this.state.jumMoneyRatio,
                   )
                     ? 0
-                    : Math.floor(
-                        (this.state.jumPoint / this.state.jumPointRatio) *
-                          this.state.jumMoneyRatio,
-                      )}
+                    : this.calculateMoneyPoint()}
                 </Text>
               </View>
               <View style={{alignItems: 'center', justifyContent: 'center'}}>
