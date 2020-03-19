@@ -317,7 +317,7 @@ class InputPhoneNumber extends Component {
         {this.state.loading && <Loader />}
         <ScrollView keyboardShouldPersistTaps="handled">
           <Header
-            titleHeader={'Mobile Sign In / Register'}
+            titleHeader={'Tempe Goreng / Register'}
             backButton={false}
           />
           <View style={{width: 0, height: 0}}>

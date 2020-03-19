@@ -17,6 +17,7 @@ import config from './src/config/awsConfig';
 import '@react-native-firebase/crashlytics';
 // sentry crashlytic
 import * as Sentry from '@sentry/react-native';
+import codePush from 'react-native-code-push';
 
 Sentry.init({
   dsn: `${config.DSN}`,
@@ -24,7 +25,13 @@ Sentry.init({
 
 const persistStore = persist();
 
-export default class App extends Component {
+let codePushOptions = {
+  updateDialog: true,
+  checkFrequency: codePush.CheckFrequency.ON_APP_START,
+  installMode: codePush.InstallMode.IMMEDIATE,
+};
+
+class App extends Component {
   render() {
     return (
       <Provider store={persistStore.store}>
@@ -35,3 +42,5 @@ export default class App extends Component {
     );
   }
 }
+
+export default codePush(codePushOptions)(App);
