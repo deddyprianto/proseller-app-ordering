@@ -22,7 +22,7 @@ import {connect} from 'react-redux';
 import {compose} from 'redux';
 import {reduxForm} from 'redux-form';
 import AwesomeAlert from 'react-native-awesome-alerts';
-import {createNewUser} from '../actions/auth.actions';
+import {createNewUser, resendOTPCognito} from '../actions/auth.actions';
 import Loader from '../components/loader';
 import {Actions} from 'react-native-router-flux';
 import colorConfig from '../config/colorConfig';
@@ -152,7 +152,8 @@ class EmailRegister extends Component {
       const response = await this.props.dispatch(createNewUser(dataRequest));
       console.log(response, 'responsenya');
       if (response == true) {
-        this.setState({
+        await this.sendOTP(dataRequest.email);
+        await this.setState({
           loading: false,
         });
         let phoneNumber = {
@@ -174,6 +175,17 @@ class EmailRegister extends Component {
         loading: false,
       });
     }
+  };
+
+  sendOTP = async email => {
+    try {
+      var dataRequest = {
+        email: email,
+      };
+      console.log(dataRequest, 'payload send otp');
+      const response = await this.props.dispatch(resendOTPCognito(dataRequest));
+      console.log('send otp pada saat register ', response);
+    } catch (error) {}
   };
 
   render() {
