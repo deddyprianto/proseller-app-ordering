@@ -31,6 +31,8 @@ import com.facebook.appevents.AppEventsLogger;
 // Multidex
 import androidx.multidex.MultiDexApplication;
 
+import com.microsoft.codepush.react.CodePush;
+
 
 public class MainApplication extends MultiDexApplication implements ReactApplication {
   private static CallbackManager mCallbackManager = CallbackManager.Factory.create();
@@ -43,6 +45,11 @@ public class MainApplication extends MultiDexApplication implements ReactApplica
     @Override
     public boolean getUseDeveloperSupport() {
       return BuildConfig.DEBUG;
+    }
+
+    @Override
+    protected String getJSBundleFile() {
+        return CodePush.getJSBundleFile();
     }
 
     @Override
