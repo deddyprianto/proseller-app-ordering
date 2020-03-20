@@ -79,7 +79,7 @@ class AllVouchers extends Component {
   };
 
   render() {
-    const {intlData} = this.props;
+    const {intlData, totalPoint} = this.props;
     return (
       <View>
         <ScrollView
@@ -107,61 +107,68 @@ class AllVouchers extends Component {
                   </Text>
                 </View>
               ) : (
-                this.props.vouchers.map((item, keys) => (
-                  <View key={keys}>
-                    {
-                      <TouchableOpacity
-                        style={styles.voucherItem}
-                        onPress={() => this.pageDetailVoucher(item)}>
-                        <View style={{alignItems: 'center'}}>
-                          <Image
-                            style={
-                              item['image'] != '' && item['image'] != undefined
-                                ? styles.voucherImage1
-                                : styles.voucherImage2
-                            }
-                            source={
-                              item['image'] != '' && item['image'] != undefined
-                                ? {uri: item['image']}
-                                : appConfig.appImageNull
-                            }
-                          />
-                          <View style={styles.vourcherPoint}>
-                            <Text
-                              style={{
-                                color: colorConfig.pageIndex.backgroundColor,
-                                fontSize: 16,
-                                fontWeight: 'bold',
-                                textAlign: 'right',
-                              }}>
-                              {item['redeemValue']} {intlData.messages.point}
-                            </Text>
-                          </View>
-                        </View>
-                        <View style={styles.voucherDetail}>
-                          <Text style={styles.nameVoucher}>{item['name']}</Text>
-                          <View style={{flexDirection: 'row'}}>
-                            <Icon
-                              size={15}
-                              name={
-                                Platform.OS === 'ios' ? 'ios-list' : 'md-list'
+                this.props.vouchers
+                  .filter(data => data.redeemValue <= totalPoint)
+                  .map((item, keys) => (
+                    <View key={keys}>
+                      {
+                        <TouchableOpacity
+                          style={styles.voucherItem}
+                          onPress={() => this.pageDetailVoucher(item)}>
+                          <View style={{alignItems: 'center'}}>
+                            <Image
+                              style={
+                                item['image'] != '' &&
+                                item['image'] != undefined
+                                  ? styles.voucherImage1
+                                  : styles.voucherImage2
                               }
-                              style={{
-                                color: colorConfig.pageIndex.inactiveTintColor,
-                                marginRight: 3,
-                              }}
+                              source={
+                                item['image'] != '' &&
+                                item['image'] != undefined
+                                  ? {uri: item['image']}
+                                  : appConfig.appImageNull
+                              }
                             />
-                            <Text style={styles.descVoucher}>
-                              {item['voucherDesc'] != null
-                                ? item['voucherDesc']
-                                : 'No description for this voucher'}
-                            </Text>
+                            <View style={styles.vourcherPoint}>
+                              <Text
+                                style={{
+                                  color: colorConfig.pageIndex.backgroundColor,
+                                  fontSize: 16,
+                                  fontWeight: 'bold',
+                                  textAlign: 'right',
+                                }}>
+                                {item['redeemValue']} {intlData.messages.point}
+                              </Text>
+                            </View>
                           </View>
-                        </View>
-                      </TouchableOpacity>
-                    }
-                  </View>
-                ))
+                          <View style={styles.voucherDetail}>
+                            <Text style={styles.nameVoucher}>
+                              {item['name']}
+                            </Text>
+                            <View style={{flexDirection: 'row'}}>
+                              <Icon
+                                size={15}
+                                name={
+                                  Platform.OS === 'ios' ? 'ios-list' : 'md-list'
+                                }
+                                style={{
+                                  color:
+                                    colorConfig.pageIndex.inactiveTintColor,
+                                  marginRight: 3,
+                                }}
+                              />
+                              <Text style={styles.descVoucher}>
+                                {item['voucherDesc'] != null
+                                  ? item['voucherDesc']
+                                  : 'No description for this voucher'}
+                              </Text>
+                            </View>
+                          </View>
+                        </TouchableOpacity>
+                      }
+                    </View>
+                  ))
               )}
             </View>
           </View>
@@ -277,6 +284,7 @@ const styles = StyleSheet.create({
 
 mapStateToProps = state => ({
   vouchers: state.rewardsReducer.vouchers.dataVoucher,
+  totalPoint: state.rewardsReducer.dataPoint.totalPoint,
   intlData: state.intlData,
 });
 
