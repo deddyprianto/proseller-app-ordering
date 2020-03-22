@@ -22,6 +22,7 @@ import {refreshToken} from './actions/auth.actions';
 import colorConfig from './config/colorConfig';
 import awsConfig from './config/awsConfig';
 import OneSignal from 'react-native-onesignal';
+import {deviceUserInfo} from './actions/user.action';
 
 class Main extends Component {
   constructor(props) {
@@ -103,6 +104,7 @@ class Main extends Component {
     console.log('Device info: ', device.userId);
     try {
       await AsyncStorage.setItem('deviceID', device.userId);
+      await this.props.dispatch(deviceUserInfo(device.userId));
     } catch (error) {
       console.log(error, 'error saving device ID');
     }

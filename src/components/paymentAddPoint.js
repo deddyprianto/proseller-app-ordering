@@ -13,6 +13,7 @@ import {
   TouchableOpacity,
   BackHandler,
   Platform,
+  Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -34,6 +35,7 @@ class paymentAddPoint extends Component {
       jumPointRatio: 0,
       jumMoneyRatio: 0,
       jumPoint: 0,
+      ratio: 1,
       myPoint: this.props.totalPoint == undefined ? 0 : this.props.totalPoint,
       isLoading: true,
     };
@@ -49,6 +51,8 @@ class paymentAddPoint extends Component {
   };
 
   componentDidMount = async () => {
+    const {campign} = this.props;
+
     this.backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
       this.handleBackPress,
@@ -59,41 +63,44 @@ class paymentAddPoint extends Component {
         isLoading: false,
       });
     }, 1000);
-    // await this.props.dispatch(campaign());
-    // await this.props.dispatch(dataPoint());
-    var jumPointRatio = this.props.campign.points.pointsToRebateRatio0;
-    var jumMoneyRatio = this.props.campign.points.pointsToRebateRatio1;
-    //     this.props.campign.filter(
-    //   item => item.campaignType == 'point',
-    // )[0].points.pointsToRebateRatio0;
-    // var jumMoneyRatio = this.props.campign.filter(
-    //   item => item.campaignType == 'point',
-    // )[0].points.pointsToRebateRatio1;
-    console.log('jumPointRatio ', jumPointRatio);
-    var setDefault = jumPointRatio;
-    if (this.props.pembayaran.payment < jumPointRatio) {
-      setDefault = Math.ceil(jumPointRatio);
-    } else {
-      setDefault = this.props.pembayaran.payment * jumPointRatio;
-      setDefault = Math.ceil(setDefault);
-    }
-    this.setState({
-      jumPointRatio: jumPointRatio,
-      jumMoneyRatio: jumMoneyRatio,
-    });
-    console.log(this.props.valueSet, 'this.props.valueSet');
-    if (this.props.valueSet == 0) {
-      if (setDefault >= this.props.totalPoint) {
-        this.setState({jumPoint: this.props.totalPoint});
-      } else {
-        this.setState({jumPoint: setDefault});
+
+    try {
+      var jumPointRatio = this.props.campign.points.pointsToRebateRatio0;
+      var jumMoneyRatio = this.props.campign.points.pointsToRebateRatio1;
+
+      let ratio = jumPointRatio / jumMoneyRatio;
+
+      // create default point to set based on the ratio of point to rebate
+      let setDefault = parseFloat(
+        (this.props.pembayaran.payment * ratio).toFixed(2),
+      );
+
+      // if settings from admin is not set to decimal, then round
+      if (
+        campign.points.roundingOptions == undefined ||
+        campign.points.roundingOptions != 'DECIMAL'
+      ) {
+        setDefault = Math.ceil(setDefault);
       }
-    } else {
-      this.setState({jumPoint: this.props.valueSet});
+
+      this.setState({
+        jumPointRatio: jumPointRatio,
+        jumMoneyRatio: jumMoneyRatio,
+        ratio: ratio,
+      });
+
+      if (this.props.valueSet == 0) {
+        if (setDefault >= this.props.totalPoint) {
+          this.setState({jumPoint: this.props.totalPoint});
+        } else {
+          this.setState({jumPoint: setDefault});
+        }
+      } else {
+        this.setState({jumPoint: this.props.valueSet});
+      }
+    } catch (e) {
+      Alert.alert('Sorry', 'Something went wrong, please try again');
     }
-    // console.log('jumPointRatio ', this.state.jumPointRatio);
-    // console.log('jumMoneyRatio ', this.state.jumMoneyRatio);
-    // console.log('jumPoint ', this.state.jumPoint);
   };
 
   goBack = async () => {
@@ -115,26 +122,64 @@ class paymentAddPoint extends Component {
     Actions.pop();
   };
 
-  getPointOrPrice = () => {
-    if (this.props.pembayaran.payment < this.state.jumPointRatio) {
-      return this.state.jumPointRatio;
-    } else {
-      return Math.ceil(this.props.pembayaran.payment);
+  calculateMoneyPoint = () => {
+    const {campign} = this.props;
+    try {
+      let ratio = this.state.jumPoint / this.state.jumPointRatio;
+      if (
+        campign.points.roundingOptions != undefined &&
+        campign.points.roundingOptions == 'DECIMAL'
+      ) {
+        return parseFloat((ratio * this.state.jumMoneyRatio).toFixed(2));
+      } else {
+        ratio = Math.floor(ratio);
+        return ratio * this.state.jumMoneyRatio;
+      }
+    } catch (e) {
+      return 0;
     }
   };
 
-  calculateMoneyPoint = () => {
+  calculateJumPoint = jumPoint => {
+    const {campign} = this.props;
     try {
-      let ratio = this.state.jumPoint / this.state.jumPointRatio;
-      ratio = Math.floor(ratio);
-      return ratio * this.state.jumMoneyRatio;
+      if (
+        campign.points.roundingOptions != undefined &&
+        campign.points.roundingOptions == 'DECIMAL'
+      )
+        return parseFloat(jumPoint.toFixed(2));
+      else return Math.ceil(jumPoint);
+    } catch (e) {
+      return Math.ceil(jumPoint);
+    }
+  };
+
+  getMaximumPoint = () => {
+    const {campign} = this.props;
+    const {ratio, myPoint} = this.state;
+    try {
+      const maxPayment = this.props.pembayaran.payment * ratio;
+      let maxPoint;
+      if (myPoint <= maxPayment) {
+        maxPoint = myPoint;
+      } else {
+        maxPoint = maxPayment;
+      }
+      if (
+        campign.points.roundingOptions != undefined &&
+        campign.points.roundingOptions == 'DECIMAL'
+      ) {
+        return parseFloat(maxPoint.toFixed(2));
+      } else {
+        return Math.ceil(maxPoint);
+      }
     } catch (e) {
       return 0;
     }
   };
 
   render() {
-    const {intlData} = this.props;
+    const {intlData, campign} = this.props;
     return (
       <View style={styles.container}>
         <View style={{backgroundColor: colorConfig.pageIndex.backgroundColor}}>
@@ -221,43 +266,34 @@ class paymentAddPoint extends Component {
                 <Slider
                   disabled={this.state.jumPointRatio == 0 ? true : false}
                   minimumValue={0}
-                  maximumValue={this.state.myPoint}
+                  maximumValue={this.getMaximumPoint()}
                   trackStyle={{
-                    width: 200,
+                    width: 280,
                   }}
                   thumbTintColor={colorConfig.pageIndex.activeTintColor}
                   value={this.state.jumPoint}
                   onValueChange={value => {
                     // get ratio
                     let defaultPoint =
-                      this.props.pembayaran.payment * this.state.jumPointRatio;
-                    if (defaultPoint < this.state.jumPointRatio) {
-                      defaultPoint = this.state.jumPointRatio;
-                    }
+                      this.props.pembayaran.payment * this.state.ratio;
+                    // if (defaultPoint < this.state.jumPointRatio) {
+                    //   defaultPoint = this.state.jumPointRatio;
+                    // }
                     // get max pont
-                    let jumPoint = Math.ceil(defaultPoint);
-                    if (value < defaultPoint) {
-                      jumPoint = Math.ceil(value);
-                    } else {
-                      if (
-                        this.props.pembayaran.payment < this.state.jumPointRatio
-                      ) {
-                        jumPoint = this.state.jumPointRatio;
-                      } else {
-                        jumPoint = Math.ceil(this.props.pembayaran.payment);
-                      }
+                    let jumPoint;
+                    if (value <= defaultPoint) {
+                      jumPoint = this.calculateJumPoint(value);
+                      this.setState({jumPoint});
                     }
-                    this.setState({jumPoint});
                   }}
                 />
                 {this.state.jumPoint == 0 ? null : this.state.jumPoint <
-                  this.props.pembayaran.payment *
-                    this.state.jumPointRatio ? null : (
+                  this.props.pembayaran.payment * this.state.ratio ? null : (
                   <Text
                     style={{
                       color: colorConfig.store.colorError,
                     }}>
-                    {'You only need ' + this.getPointOrPrice() + ' Point'}
+                    {'You only need ' + this.getMaximumPoint() + ' Point'}
                   </Text>
                 )}
               </View>

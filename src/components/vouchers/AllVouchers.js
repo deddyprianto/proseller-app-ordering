@@ -79,7 +79,16 @@ class AllVouchers extends Component {
   };
 
   render() {
-    const {intlData, totalPoint} = this.props;
+    const {intlData, totalPoint, vouchers} = this.props;
+    // check if voucher available but customer point not enough to see em
+    let voucherNotShowing = false;
+    if (vouchers != undefined && vouchers.length > 0) {
+      const data = this.props.vouchers.filter(
+        data => data.redeemValue <= totalPoint,
+      );
+      if (data == undefined || data.length == 0) voucherNotShowing = true;
+    }
+    console.log(voucherNotShowing, 'voucherNotShowing');
     return (
       <View>
         <ScrollView
@@ -170,6 +179,41 @@ class AllVouchers extends Component {
                     </View>
                   ))
               )}
+              {voucherNotShowing ? (
+                <View>
+                  <Text
+                    style={{
+                      marginTop: '50%',
+                      fontSize: 20,
+                      textAlign: 'center',
+                      color: colorConfig.pageIndex.inactiveTintColor,
+                      fontWeight: 'bold',
+                      fontFamily: 'Lato-Bold',
+                    }}>
+                    Opps, you don't have enough points to see active vouchers.
+                  </Text>
+                  <TouchableHighlight
+                    onPress={() => Actions.pop()}
+                    style={{
+                      marginTop: 20,
+                      marginHorizontal: '15%',
+                      borderRadius: 10,
+                      backgroundColor: colorConfig.store.colorSuccess,
+                    }}>
+                    <Text
+                      style={{
+                        fontSize: 20,
+                        textAlign: 'center',
+                        color: 'white',
+                        fontWeight: 'bold',
+                        fontFamily: 'Lato-Bold',
+                        padding: 8,
+                      }}>
+                      Start shopping now !
+                    </Text>
+                  </TouchableHighlight>
+                </View>
+              ) : null}
             </View>
           </View>
         </ScrollView>
