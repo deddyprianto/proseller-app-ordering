@@ -50,6 +50,11 @@ import ConfirmTable from '../components/order/ConfirmTable';
 import SettleOrder from '../components/order/SettleOrder';
 import {BackHandler, ToastAndroid} from 'react-native';
 
+// card
+import ListCard from '../components/card/ListCard';
+import AddCard from '../components/card/AddCard';
+import HostedPayment from '../components/card/HostedPayment';
+
 let backPressed = 0;
 
 export default class Routes extends Component {
@@ -149,6 +154,10 @@ export default class Routes extends Component {
             <Scene key="scanQRTable" component={ScanQRTable} />
             <Scene key="confirmTable" component={ConfirmTable} />
             <Scene key="settleOrder" component={SettleOrder} />
+
+            <Scene key="listCard" component={ListCard} />
+            <Scene key="addCard" component={AddCard} />
+            <Scene key="hostedPayment" component={HostedPayment} />
           </Scene>
         </Scene>
       </Router>

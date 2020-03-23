@@ -68,6 +68,9 @@ const colorConfig = {
     containerColor: '#f2f2f2',
     secondaryColor: `rgb(${SECONDARY_COLOR_RGB})`,
   },
+  card: {
+    cardColor: '#ff4757',
+  },
 };
 
 export default colorConfig;

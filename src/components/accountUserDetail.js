@@ -50,6 +50,7 @@ class AccountUserDetail extends Component {
     return (
       <View
         style={{
+          marginBottom: 10,
           flexDirection: 'column',
           alignItems: 'center',
           backgroundColor: colorConfig.store.defaultColor,
@@ -66,8 +67,8 @@ class AccountUserDetail extends Component {
           <View>
             <Image
               style={{
-                height: 85,
-                width: 85,
+                height: 75,
+                width: 75,
                 marginBottom: 20,
                 borderRadius: 10,
                 alignSelf: 'center',
@@ -84,7 +85,7 @@ class AccountUserDetail extends Component {
                 style={{
                   color: 'white',
                   textAlign: 'center',
-                  fontSize: 20,
+                  fontSize: 18,
                   fontWeight: 'bold',
                   fontFamily: 'Lato-Bold',
                 }}>

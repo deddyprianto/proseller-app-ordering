@@ -15,6 +15,8 @@ const awsConfig = {
   base_url_product: `${Config.API_HOST}product/api`,
   // BASE URL ORDER
   base_url_order: `${Config.API_HOST}ordering/api`,
+  // BASE URL PAYMENT
+  base_url_payment: `https://payment.proseller.io/api/`,
 
   phoneNumberCode: Config.PHONE_NUMBER_CODE,
   COUNTRY: Config.COUNTRY,

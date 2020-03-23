@@ -32,6 +32,8 @@ import {isEmptyObject, isEmptyArray} from '../helper/CheckEmpty';
 import {getBasket} from '../actions/order.action';
 import CryptoJS from 'react-native-crypto-js';
 import awsConfig from '../config/awsConfig';
+import {getCompanyInfo} from '../actions/stores.action';
+import {getAccountPayment} from '../actions/payment.actions';
 
 class Rewards extends Component {
   constructor(props) {
@@ -70,6 +72,9 @@ class Rewards extends Component {
 
   componentDidMount = async () => {
     await this.getDataRewards();
+
+    await this.props.dispatch(getCompanyInfo());
+    await this.props.dispatch(getAccountPayment());
 
     // make event to detect page focus or not
     const {navigation} = this.props;

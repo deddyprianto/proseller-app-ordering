@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   Image,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
@@ -28,11 +29,14 @@ class AccountMenuList extends Component {
     this.state = {
       screenWidth: Dimensions.get('window').width,
       dialogChangeLanguage: false,
+      loadingLogout: false,
     };
   }
 
   logout = async () => {
-    const response = await this.props.dispatch(logoutUser());
+    this.setState({loadingLogout: true});
+    await this.props.dispatch(logoutUser());
+    this.setState({loadingLogout: false});
   };
 
   editProfil = () => {
@@ -57,114 +61,108 @@ class AccountMenuList extends Component {
   };
 
   render() {
-    const {intlData} = this.props;
+    const {intlData, myCardAccount} = this.props;
     return (
       <View style={styles.container}>
-        <View style={{flexDirection: 'row'}}>
+        <Text style={styles.headingMenu}>My Payment Options</Text>
+
+        <TouchableOpacity
+          onPress={() => Actions.listCard({intlData})}
+          style={styles.cardMenu}>
           <View style={styles.itemMenu}>
             <Icon
-              size={25}
-              name={Platform.OS === 'ios' ? 'ios-timer' : 'md-time'}
-              style={{color: colorConfig.pageIndex.activeTintColor}}
+              size={20}
+              name={Platform.OS === 'ios' ? 'ios-card' : 'md-card'}
+              style={{color: 'white'}}
             />
           </View>
           <View>
-            <TouchableOpacity
-              style={styles.item}
-              onPress={() => this.props.screen.navigation.navigate('History')}>
-              <Text style={styles.title}>
-                {intlData.messages.transactionsHistory}
-              </Text>
-              <Icon
-                size={20}
-                name={
-                  Platform.OS === 'ios'
-                    ? 'ios-arrow-dropright-circle'
-                    : 'md-arrow-dropright-circle'
-                }
-                style={{color: colorConfig.pageIndex.activeTintColor}}
-              />
-            </TouchableOpacity>
-            <View style={styles.line} />
+            <View style={styles.item}>
+              {myCardAccount != undefined && myCardAccount.length > 0 ? (
+                <Text style={styles.title}>
+                  My Card ({myCardAccount.length})
+                </Text>
+              ) : (
+                <Text style={styles.title}>Add Credit Card</Text>
+              )}
+            </View>
           </View>
-        </View>
+        </TouchableOpacity>
 
-        <View style={{flexDirection: 'row'}}>
+        <TouchableOpacity
+          onPress={() => this.props.screen.navigation.navigate('History')}
+          style={styles.cardMenu}>
+          <View style={styles.itemMenu}>
+            <Icon
+              size={20}
+              name={Platform.OS === 'ios' ? 'ios-wallet' : 'md-wallet'}
+              style={{color: 'white'}}
+            />
+          </View>
+          <View>
+            <View style={styles.item}>
+              <Text style={styles.title}>DBS Paylah</Text>
+            </View>
+          </View>
+        </TouchableOpacity>
+
+        <Text style={styles.headingMenu}>Settings</Text>
+
+        <TouchableOpacity onPress={this.editProfil} style={styles.cardMenu}>
           <View style={styles.itemMenu}>
             <Icon
               size={20}
               name={Platform.OS === 'ios' ? 'ios-contact' : 'md-contact'}
-              style={{color: colorConfig.pageIndex.activeTintColor}}
+              style={{color: 'white'}}
             />
           </View>
           <View>
-            <TouchableOpacity style={styles.item} onPress={this.editProfil}>
+            <View style={styles.item}>
               <Text style={styles.title}>{intlData.messages.editProfile}</Text>
-              <Icon
-                size={20}
-                name={
-                  Platform.OS === 'ios'
-                    ? 'ios-arrow-dropright-circle'
-                    : 'md-arrow-dropright-circle'
-                }
-                style={{color: colorConfig.pageIndex.activeTintColor}}
-              />
-            </TouchableOpacity>
-
-            <View style={styles.line} />
+            </View>
           </View>
-        </View>
+        </TouchableOpacity>
 
-        <View style={{flexDirection: 'row'}}>
+        <TouchableOpacity onPress={this.updateLanguage} style={styles.cardMenu}>
           <View style={styles.itemMenu}>
             <Icon
               size={20}
               name={Platform.OS === 'ios' ? 'ios-globe' : 'md-globe'}
-              style={{color: colorConfig.pageIndex.activeTintColor}}
+              style={{color: 'white'}}
             />
           </View>
           <View>
-            <TouchableOpacity style={styles.item} onPress={this.updateLanguage}>
-              <Text style={styles.title}> {intlData.messages.languages} </Text>
-              <Icon
-                size={20}
-                name={
-                  Platform.OS === 'ios'
-                    ? 'ios-arrow-dropright-circle'
-                    : 'md-arrow-dropright-circle'
-                }
-                style={{color: colorConfig.pageIndex.activeTintColor}}
-              />
-            </TouchableOpacity>
-
-            {/*<View style={styles.line} />*/}
+            <View style={styles.item}>
+              <Text style={styles.title}>{intlData.messages.languages}</Text>
+            </View>
           </View>
-        </View>
+        </TouchableOpacity>
 
-        {/*<View style={{flexDirection: 'row'}}>*/}
-        {/*  <View*/}
-        {/*    style={styles.itemMenu}>*/}
-        {/*    <Icon*/}
-        {/*      size={20}*/}
-        {/*      name={Platform.OS === 'ios' ? 'ios-settings' : 'md-settings'}*/}
-        {/*      style={{color: colorConfig.pageIndex.activeTintColor}}*/}
-        {/*    />*/}
-        {/*  </View>*/}
-        {/*  <View>*/}
-        {/*    <TouchableOpacity style={styles.item}>*/}
-        {/*      <Text style={styles.title}> Settings </Text>*/}
-        {/*      <Icon*/}
-        {/*        size={20}*/}
-        {/*        name={*/}
-        {/*          Platform.OS === 'ios'*/}
-        {/*            ? 'ios-arrow-dropright-circle'*/}
-        {/*            : 'md-arrow-dropright-circle'*/}
-        {/*        }*/}
-        {/*        style={{color: colorConfig.pageIndex.activeTintColor}}*/}
-        {/*      />*/}
-        {/*    </TouchableOpacity>*/}
-        {/*  </View>*/}
-        {/*</View>*/}
+        <TouchableOpacity onPress={this.logout} style={styles.cardMenu}>
+          <View
+            style={[
+              styles.itemMenu,
+              {backgroundColor: colorConfig.store.colorError},
+            ]}>
+            <Icon
+              size={20}
+              name={Platform.OS === 'ios' ? 'ios-exit' : 'md-exit'}
+              style={{color: 'white'}}
+            />
+          </View>
+          <View>
+            <View style={styles.item}>
+              {this.state.loadingLogout ? (
+                <ActivityIndicator size={'large'} color={'white'} />
+              ) : (
+                <Text
+                  style={[styles.title, {color: colorConfig.store.colorError}]}>
+                  {intlData.messages.logout}
+                </Text>
+              )}
+            </View>
+          </View>
+        </TouchableOpacity>
       </View>
     );
   }
@@ -172,7 +170,7 @@ class AccountMenuList extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: colorConfig.pageIndex.backgroundColor,
+    margin: 10,
   },
   item: {
     margin: 10,
@@ -185,7 +183,12 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     justifyContent: 'center',
     marginLeft: 10,
-    width: 25,
+    width: 30,
+    height: 30,
+    borderRadius: 50,
+    alignItems: 'center',
+    alignSelf: 'center',
+    backgroundColor: colorConfig.store.defaultColor,
   },
   line: {
     borderBottomColor: colorConfig.pageIndex.inactiveTintColor,
@@ -194,16 +197,40 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   title: {
-    color: colorConfig.store.defaultColor,
-    fontSize: 15,
+    color: colorConfig.store.title,
+    letterSpacing: 1,
+    fontSize: 16,
     fontWeight: 'bold',
-    fontFamily: 'Lato-Medium',
+    fontFamily: 'Lato-Bold',
+  },
+  headingMenu: {
+    color: colorConfig.pageIndex.grayColor,
+    fontSize: 18,
+    fontWeight: 'bold',
+    fontFamily: 'Lato-Bold',
+    marginBottom: 13,
+  },
+  cardMenu: {
+    flexDirection: 'row',
+    backgroundColor: 'white',
+    borderRadius: 5,
+    paddingVertical: 5,
+    marginBottom: 12,
+    shadowColor: '#00000021',
+    shadowOffset: {
+      width: 0,
+      height: 9,
+    },
+    shadowOpacity: 0.7,
+    shadowRadius: 7.49,
+    elevation: 12,
   },
 });
 
 mapStateToProps = state => ({
   logoutUser: state.authReducer.logoutUser,
   userDetail: state.userReducer.getUser.userDetails,
+  myCardAccount: state.cardReducer.myCardAccount.card,
   totalPoint: state.rewardsReducer.dataPoint.totalPoint,
   intlData: state.intlData,
 });

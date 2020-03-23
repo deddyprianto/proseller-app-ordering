@@ -27,6 +27,7 @@ import {Dialog} from 'react-native-paper';
 import {updateLanguage} from '../actions/language.action';
 import Languages from '../service/i18n/languages';
 import {getUserProfile, movePageIndex} from '../actions/user.action';
+import {getAccountPayment} from '../actions/payment.actions';
 
 class Account extends Component {
   constructor(props) {
@@ -50,13 +51,8 @@ class Account extends Component {
   _onRefresh = async () => {
     this.setState({refreshing: true});
     await this.props.dispatch(getUserProfile());
+    await this.props.dispatch(getAccountPayment());
     this.setState({refreshing: false});
-  };
-
-  logout = async () => {
-    this.setState({loadingLogout: true});
-    await this.props.dispatch(logoutUser());
-    this.setState({loadingLogout: false});
   };
 
   // myVouchers = () => {
@@ -129,7 +125,8 @@ class Account extends Component {
   render() {
     const {intlData} = this.props;
     return (
-      <View style={{flex: 1, backgroundColor: 'white'}}>
+      <View
+        style={{flex: 1, backgroundColor: colorConfig.store.containerColor}}>
         <ScrollView
           refreshControl={
             <RefreshControl
@@ -137,43 +134,15 @@ class Account extends Component {
               onRefresh={this._onRefresh}
             />
           }>
-          <View style={[styles.card, {marginTop: 0}]}>
-            <AccountUserDetail screen={this.props} />
-          </View>
-          <View style={styles.card}>
-            <AccountMenuList
-              setLanguage={this.setLanguage}
-              dialogChangeLanguage={this.state.dialogChangeLanguage}
-              screen={this.props}
-            />
-          </View>
+          <AccountUserDetail screen={this.props} />
+
+          <AccountMenuList
+            setLanguage={this.setLanguage}
+            dialogChangeLanguage={this.state.dialogChangeLanguage}
+            screen={this.props}
+          />
         </ScrollView>
-        <TouchableOpacity
-          style={{
-            marginTop: 10,
-            backgroundColor: colorConfig.store.colorError,
-            height: 50,
-            justifyContent: 'center',
-            position: 'absolute',
-            bottom: 0,
-            width: '100%',
-          }}
-          onPress={this.logout}>
-          {this.state.loadingLogout ? (
-            <ActivityIndicator size={'large'} color={'white'} />
-          ) : (
-            <Text
-              style={{
-                color: 'white',
-                fontSize: 14,
-                fontWeight: 'bold',
-                fontFamily: 'Lato-Bold',
-                textAlign: 'center',
-              }}>
-              {intlData.messages.logout}
-            </Text>
-          )}
-        </TouchableOpacity>
+
         {this.renderDialogChangeLanguage()}
       </View>
     );
