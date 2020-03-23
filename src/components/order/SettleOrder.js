@@ -209,7 +209,7 @@ class SettleOrder extends Component {
       intlData,
       data: this.props.totalPoint,
       pembayaran: this.props.pembayaran,
-      valueSet: this.state.moneyPoint == undefined ? 0 : this.state.moneyPoint,
+      valueSet: this.state.addPoint == undefined ? 0 : this.state.addPoint,
       setDataPoint: this.setDataPoint,
     });
   };

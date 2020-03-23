@@ -130,7 +130,7 @@ class Basket extends Component {
           this.RBSheet.open();
         }
       }
-
+      await this.setState({loading: false});
       // check if status basket is submitted, then request continoustly to get basket
       if (
         this.props.dataBasket != undefined &&
@@ -487,9 +487,10 @@ class Basket extends Component {
 
   removeBasket = async () => {
     clearInterval(this.interval);
-    this.setState({loading: true});
+    await this.setState({loading: true});
     await this.props.dispatch(removeBasket());
     await this.getBasket();
+    await this.setState({loading: false});
   };
 
   alertRemoveBasket = () => {
