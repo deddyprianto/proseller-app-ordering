@@ -255,6 +255,7 @@ class Basket extends Component {
   getBasket = async () => {
     this.setState({loading: true});
     await this.props.dispatch(getBasket());
+    // await this.setState({loading: false});
     // setTimeout(() => {
     //   this.setState({loading: false});
     // }, 10);
@@ -664,6 +665,7 @@ class Basket extends Component {
     if (mode == 'update') {
       await this.updateItem(product, qty, remark);
       await this.getBasket();
+      await this.setState({loading: false});
     }
   };
 

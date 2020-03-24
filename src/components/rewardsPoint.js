@@ -54,6 +54,7 @@ class RewardsPoint extends Component {
 
 mapStateToProps = state => ({
   totalPoint: state.rewardsReducer.dataPoint.totalPoint,
+  campaignActive: state.rewardsReducer.dataPoint.campaignActive,
   intlData: state.intlData,
 });
 

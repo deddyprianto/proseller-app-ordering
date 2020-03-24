@@ -33,7 +33,7 @@ import CurrencyFormatter from '../../helper/CurrencyFormatter';
 import {getAccountPayment} from '../../actions/payment.actions';
 import {movePageIndex} from '../../actions/user.action';
 
-class ListCard extends Component {
+class PaymentAddCard extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -210,7 +210,7 @@ export default compose(
     mapStateToProps,
     mapDispatchToProps,
   ),
-)(ListCard);
+)(PaymentAddCard);
 
 const styles = StyleSheet.create({
   container: {

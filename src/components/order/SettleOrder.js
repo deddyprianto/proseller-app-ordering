@@ -249,14 +249,7 @@ class SettleOrder extends Component {
         }
       }
       const response = await this.props.dispatch(settleOrder(pembayaran));
-      // const response = {
-      //   success: false,
-      //   responseBody: {
-      //     data: {
-      //       message: 'lalalala',
-      //     },
-      //   },
-      // };
+
       console.log('reponse pembayaran settle order ', response);
       if (response.success) {
         // go to payment success
@@ -331,12 +324,18 @@ class SettleOrder extends Component {
   renderUsePoint = () => [
     <View
       style={{
-        marginBottom: 50,
         alignItems: 'center',
         justifyContent: 'space-between',
         flexDirection: 'row',
       }}>
-      <Text>Use Point</Text>
+      <Text
+        style={{
+          fontSize: 17,
+          fontFamily: 'Lato-Bold',
+          color: colorConfig.pageIndex.grayColor,
+        }}>
+        Point
+      </Text>
       {this.state.cancelPoint == false && this.state.addPoint != undefined ? (
         <View
           style={{
@@ -600,7 +599,14 @@ class SettleOrder extends Component {
                 justifyContent: 'space-between',
                 flexDirection: 'row',
               }}>
-              <Text>Use Vouchers</Text>
+              <Text
+                style={{
+                  fontSize: 17,
+                  fontFamily: 'Lato-Bold',
+                  color: colorConfig.pageIndex.grayColor,
+                }}>
+                Vouchers
+              </Text>
               {this.state.cancelVoucher == false &&
               this.state.dataVoucer != undefined ? (
                 <View
@@ -660,9 +666,79 @@ class SettleOrder extends Component {
             </View>
             {this.props.campaignActive ? this.renderUsePoint() : null}
 
+            {/*<View*/}
+            {/*  style={{*/}
+            {/*    marginTop: 12,*/}
+            {/*    marginBottom: 10,*/}
+            {/*    alignItems: 'center',*/}
+            {/*    justifyContent: 'space-between',*/}
+            {/*    flexDirection: 'row',*/}
+            {/*  }}>*/}
+            {/*  <Text*/}
+            {/*    style={{*/}
+            {/*      fontSize: 17,*/}
+            {/*      fontFamily: 'Lato-Bold',*/}
+            {/*      color: colorConfig.pageIndex.grayColor,*/}
+            {/*    }}>*/}
+            {/*    Payment Method*/}
+            {/*  </Text>*/}
+            {/*  {this.state.cancelVoucher == false &&*/}
+            {/*  this.state.dataVoucer != undefined ? (*/}
+            {/*    <View*/}
+            {/*      style={{*/}
+            {/*        flexDirection: 'row',*/}
+            {/*        justifyContent: 'space-between',*/}
+            {/*        alignItems: 'center',*/}
+            {/*      }}>*/}
+            {/*      <TouchableOpacity*/}
+            {/*        style={styles.btnMethodCencel}*/}
+            {/*        onPress={() => this.cencelVoucher()}>*/}
+            {/*        <Icon*/}
+            {/*          size={18}*/}
+            {/*          name={*/}
+            {/*            Platform.OS === 'ios'*/}
+            {/*              ? 'ios-close-circle-outline'*/}
+            {/*              : 'md-close-circle-outline'*/}
+            {/*          }*/}
+            {/*          style={{color: colorConfig.store.colorError}}*/}
+            {/*        />*/}
+            {/*      </TouchableOpacity>*/}
+            {/*      <TouchableOpacity*/}
+            {/*        style={styles.btnMethod}*/}
+            {/*        onPress={this.myVouchers}>*/}
+            {/*        <Icon*/}
+            {/*          size={20}*/}
+            {/*          name={Platform.OS === 'ios' ? 'ios-card' : 'md-card'}*/}
+            {/*          style={{*/}
+            {/*            color: colorConfig.store.defaultColor,*/}
+            {/*            marginRight: 8,*/}
+            {/*          }}*/}
+            {/*        />*/}
+            {/*        <Text style={styles.descMethod}>*/}
+            {/*          {this.state.dataVoucer.name.substr(0, 13)}*/}
+            {/*        </Text>*/}
+            {/*      </TouchableOpacity>*/}
+            {/*    </View>*/}
+            {/*  ) : (*/}
+            {/*    <TouchableOpacity*/}
+            {/*      style={styles.btnMethod}*/}
+            {/*      onPress={() => Actions.paymentMethods()}>*/}
+            {/*      <Icon*/}
+            {/*        size={20}*/}
+            {/*        name={Platform.OS === 'ios' ? 'ios-cash' : 'md-cash'}*/}
+            {/*        style={{*/}
+            {/*          color: colorConfig.store.textWhite,*/}
+            {/*          marginRight: 8,*/}
+            {/*        }}*/}
+            {/*      />*/}
+            {/*      <Text style={styles.descMethod}>Select Methods</Text>*/}
+            {/*    </TouchableOpacity>*/}
+            {/*  )}*/}
+            {/*</View>*/}
+
             <View style={{marginTop: 50}} />
             <SwipeButton
-              disabled={false}
+              disabled={true}
               disabledThumbIconBackgroundColor="#FFFFFF"
               disabledThumbIconBorderColor={
                 colorConfig.pageIndex.activeTintColor
@@ -792,10 +868,10 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingLeft: 10,
     paddingRight: 10,
-    paddingTop: 5,
-    paddingBottom: 5,
+    paddingTop: 8,
+    paddingBottom: 8,
     alignItems: 'center',
-    width: Dimensions.get('window').width / 2 - 30,
+    width: Dimensions.get('window').width / 2 - 10,
     flexDirection: 'row',
     justifyContent: 'space-between',
   },

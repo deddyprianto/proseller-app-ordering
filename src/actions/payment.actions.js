@@ -19,7 +19,7 @@ export const getAccountPayment = payload => {
         200,
         token,
       );
-      // console.log('responsenya payment account', response);
+      console.log('responsenya payment account', response);
 
       dispatch({
         type: 'MY_CARD_ACCOUNT',

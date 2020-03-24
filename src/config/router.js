@@ -54,6 +54,9 @@ import {BackHandler, ToastAndroid} from 'react-native';
 import ListCard from '../components/card/ListCard';
 import AddCard from '../components/card/AddCard';
 import HostedPayment from '../components/card/HostedPayment';
+import DetailCard from '../components/card/DetailCard';
+import PaymentMethods from '../components/card/PaymentMethods';
+import PaymentAddCard from '../components/card/PaymentAddCard';
 
 let backPressed = 0;
 
@@ -158,6 +161,9 @@ export default class Routes extends Component {
             <Scene key="listCard" component={ListCard} />
             <Scene key="addCard" component={AddCard} />
             <Scene key="hostedPayment" component={HostedPayment} />
+            <Scene key="detailCard" component={DetailCard} />
+            <Scene key="paymentMethods" component={PaymentMethods} />
+            <Scene key="paymentAddCard" component={PaymentAddCard} />
           </Scene>
         </Scene>
       </Router>

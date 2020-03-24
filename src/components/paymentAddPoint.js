@@ -75,23 +75,25 @@ class paymentAddPoint extends Component {
         (this.props.pembayaran.payment * ratio).toFixed(2),
       );
 
-      // if settings from admin is not set to decimal, then round
-      if (
-        campign.points.roundingOptions == undefined ||
-        campign.points.roundingOptions != 'DECIMAL'
-      ) {
-        setDefault = Math.ceil(setDefault);
-      }
-
       this.setState({
         jumPointRatio: jumPointRatio,
         jumMoneyRatio: jumMoneyRatio,
         ratio: ratio,
       });
 
+      // if settings from admin is not set to decimal, then round
+      let pointToSet = this.state.myPoint;
+      if (
+        campign.points.roundingOptions != undefined &&
+        campign.points.roundingOptions == 'INTEGER'
+      ) {
+        setDefault = Math.ceil(setDefault);
+        pointToSet = Math.floor(this.props.totalPoint);
+      }
+
       if (this.props.valueSet == 0) {
         if (setDefault >= this.props.totalPoint) {
-          this.setState({jumPoint: this.props.totalPoint});
+          this.setState({jumPoint: pointToSet});
         } else {
           this.setState({jumPoint: setDefault});
         }
@@ -159,6 +161,7 @@ class paymentAddPoint extends Component {
     const {ratio, myPoint} = this.state;
     try {
       const maxPayment = this.props.pembayaran.payment * ratio;
+
       let maxPoint;
       if (myPoint <= maxPayment) {
         maxPoint = myPoint;
@@ -171,7 +174,7 @@ class paymentAddPoint extends Component {
       ) {
         return parseFloat(maxPoint.toFixed(2));
       } else {
-        return Math.ceil(maxPoint);
+        return Math.floor(maxPoint);
       }
     } catch (e) {
       return 0;
@@ -372,7 +375,7 @@ const styles = StyleSheet.create({
 
 mapStateToProps = state => ({
   campign: state.rewardsReducer.campaign.campaign,
-  totalPoint: state.rewardsReducer.dataPoint.totalPoint,
+  totalPoint: 32.78,
 });
 
 mapDispatchToProps = dispatch => ({

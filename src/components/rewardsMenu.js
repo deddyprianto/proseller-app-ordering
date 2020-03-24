@@ -43,7 +43,7 @@ export default class RewardsMenu extends Component {
     Actions.scan({
       enableStatusGetData: this.props.enableStatusGetData,
     });
-    // Actions.paymentDetail({pembayaran: pembayaran});
+    // Actions.settleOrder({pembayaran: pembayaran});
   };
 
   pageRewards = () => {

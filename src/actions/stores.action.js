@@ -20,20 +20,14 @@ export const getCompanyInfo = payload => {
       );
       console.log('responsenya company info', response);
 
-      // // encrypt user data before save to asyncstorage
-      // let dataUser = CryptoJS.AES.encrypt(
-      //   JSON.stringify(response.responseBody.Data),
-      //   awsConfig.PRIVATE_KEY_RSA,
-      // ).toString();
-      //
-      // if (response.success) {
-      //   dispatch({
-      //     type: 'GET_USER_SUCCESS',
-      //     payload: dataUser,
-      //   });
-      // }
-      //
-      // return response.success;
+      if (response.success) {
+        dispatch({
+          type: 'GET_COMPANY_INFO',
+          companyInfo: response.response.data,
+        });
+      }
+
+      return response;
     } catch (error) {
       return error;
     }

@@ -438,7 +438,10 @@ class SignInPhoneNumber extends Component {
                     maxLength={4}
                     secureTextEntry={true}
                     value={this.state.OTPCode}
-                    onChangeText={value => this.setState({OTPCode: value})}
+                    onChangeText={async value => {
+                      await this.setState({OTPCode: value});
+                      if (value.length == 4) this.submitLogin();
+                    }}
                     style={{
                       fontSize: 20,
                       width: '45%',

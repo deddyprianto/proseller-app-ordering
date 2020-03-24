@@ -110,10 +110,23 @@ const statusPageIndex = (state = {}, action) => {
   }
 };
 
+const getCompanyInfo = (state = {}, action) => {
+  switch (action.type) {
+    case 'GET_COMPANY_INFO':
+      return {
+        companyInfo: action.companyInfo,
+      };
+
+    default:
+      return state;
+  }
+};
+
 export default combineReducers({
   getUser,
   updateUser,
   deviceUserInfo,
   userPosition,
   statusPageIndex,
+  getCompanyInfo,
 });

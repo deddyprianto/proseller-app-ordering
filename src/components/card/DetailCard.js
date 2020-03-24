@@ -28,12 +28,9 @@ import {compose} from 'redux';
 import {connect} from 'react-redux';
 import {reduxForm} from 'redux-form';
 import Loader from './../loader';
-import ProgressiveImage from '../helper/ProgressiveImage';
-import CurrencyFormatter from '../../helper/CurrencyFormatter';
 import {getAccountPayment} from '../../actions/payment.actions';
-import {movePageIndex} from '../../actions/user.action';
 
-class ListCard extends Component {
+class DetailCard extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -47,12 +44,6 @@ class ListCard extends Component {
   };
 
   componentDidMount() {
-    // make event to detect page focus or not
-    const {navigation} = this.props;
-    this.focusListener = navigation.addListener('willFocus', async () => {
-      await this.getDataCard();
-    });
-
     this.backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
       this.handleBackPress,
@@ -68,61 +59,6 @@ class ListCard extends Component {
     return true;
   };
 
-  renderCard = () => {
-    const {myCardAccount, item} = this.props;
-    const paymentID = item.paymentID;
-    return (
-      <FlatList
-        data={myCardAccount}
-        renderItem={({item}) =>
-          item.paymentID == paymentID ? (
-            <TouchableOpacity
-              onPress={() => Actions.detailCard({item})}
-              style={[
-                styles.card,
-                {
-                  backgroundColor:
-                    item.details.cardType == 'visa'
-                      ? colorConfig.card.otherCardColor
-                      : colorConfig.card.cardColor,
-                },
-              ]}>
-              <View style={styles.headingCard}>
-                <Text style={styles.cardText}>
-                  {item.details.cardType.toUpperCase()}
-                </Text>
-                {/*<Text style={styles.cardText}>My First Card</Text>*/}
-                <Icon
-                  size={32}
-                  name={Platform.OS === 'ios' ? 'ios-card' : 'md-card'}
-                  style={{color: 'white'}}
-                />
-              </View>
-              <View style={styles.cardNumber}>
-                <Text style={styles.cardNumberText}>
-                  {item.details.maskedAccountNumber}
-                </Text>
-              </View>
-              <View style={styles.cardName}>
-                <Text style={styles.cardNameText}>
-                  {item.details.firstName} {item.details.lastName}
-                </Text>
-                <View>
-                  <Text style={styles.cardValid}>
-                    {' '}
-                    VALID THRU {item.details.cardExpiryMonth} /{' '}
-                    {item.details.cardExpiryYear}
-                  </Text>
-                </View>
-              </View>
-            </TouchableOpacity>
-          ) : null
-        }
-        keyExtractor={(product, index) => index.toString()}
-      />
-    );
-  };
-
   getDataCard = async () => {
     await this.props.dispatch(getAccountPayment());
     await this.setState({refreshing: false});
@@ -133,24 +69,8 @@ class ListCard extends Component {
     await this.getDataCard();
   };
 
-  renderEmptyCard = () => {
-    return (
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'center',
-          alignItems: 'center',
-          marginTop: 30,
-        }}>
-        <Text style={{fontSize: 20, color: colorConfig.pageIndex.grayColor}}>
-          You haven't added a credit card yet.
-        </Text>
-      </View>
-    );
-  };
-
   render() {
-    const {intlData, myCardAccount, item} = this.props;
+    const {intlData, item} = this.props;
     return (
       <View style={styles.container}>
         {this.state.loading && <Loader />}
@@ -167,7 +87,7 @@ class ListCard extends Component {
               }
               style={styles.btnBackIcon}
             />
-            <Text style={styles.btnBackText}>My {item.paymentName}</Text>
+            <Text style={styles.btnBackText}>Detail</Text>
           </TouchableOpacity>
         </View>
         <ScrollView
@@ -177,19 +97,56 @@ class ListCard extends Component {
               onRefresh={this._onRefresh}
             />
           }>
-          {myCardAccount != undefined && myCardAccount.length > 0
-            ? this.renderCard()
-            : this.renderEmptyCard()}
+          <TouchableOpacity
+            onPress={() => Actions.detailCard({item})}
+            style={[
+              styles.card,
+              {
+                backgroundColor:
+                  item.details.cardType == 'visa'
+                    ? colorConfig.card.otherCardColor
+                    : colorConfig.card.cardColor,
+              },
+            ]}>
+            <View style={styles.headingCard}>
+              <Text style={styles.cardText}>
+                {item.details.cardType.toUpperCase()}
+              </Text>
+              {/*<Text style={styles.cardText}>My First Card</Text>*/}
+              <Icon
+                size={32}
+                name={Platform.OS === 'ios' ? 'ios-card' : 'md-card'}
+                style={{color: 'white'}}
+              />
+            </View>
+            <View style={styles.cardNumber}>
+              <Text style={styles.cardNumberText}>
+                {item.details.maskedAccountNumber}
+              </Text>
+            </View>
+            <View style={styles.cardName}>
+              <Text style={styles.cardNameText}>
+                {item.details.firstName} {item.details.lastName}
+              </Text>
+              <View>
+                <Text style={styles.cardValid}>
+                  {' '}
+                  VALID THRU {item.details.cardExpiryMonth} /{' '}
+                  {item.details.cardExpiryYear}
+                </Text>
+              </View>
+            </View>
+          </TouchableOpacity>
         </ScrollView>
         <TouchableOpacity
           onPress={() => Actions.addCard()}
           style={styles.buttonBottomFixed}>
           <Icon
             size={25}
-            name={Platform.OS === 'ios' ? 'ios-add' : 'md-add'}
+            name={Platform.OS === 'ios' ? 'ios-trash' : 'md-trash'}
             style={{color: 'white', marginRight: 10}}
           />
-          <Text style={styles.textAddCard}>ADD {item.paymentName}</Text>
+          <Text style={styles.textAddCard}>Delete Card</Text>
         </TouchableOpacity>
       </View>
     );
@@ -210,7 +167,7 @@ export default compose(
     mapStateToProps,
     mapDispatchToProps,
   ),
-)(ListCard);
+)(DetailCard);
 
 const styles = StyleSheet.create({
   container: {
@@ -240,7 +197,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     flexDirection: 'row',
     alignItems: 'center',
-    // width: 90,
+    width: 90,
     paddingVertical: 5,
   },
   btnBackText: {
@@ -345,7 +302,7 @@ const styles = StyleSheet.create({
     // letterSpacing: 2,
   },
   buttonBottomFixed: {
-    backgroundColor: colorConfig.store.defaultColor,
+    backgroundColor: colorConfig.store.colorError,
     padding: 15,
     flexDirection: 'row',
     justifyContent: 'center',

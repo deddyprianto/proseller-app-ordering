@@ -10,18 +10,18 @@ import {
   Image,
   Alert,
   ActivityIndicator,
+  FlatList,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
 import Icon from 'react-native-vector-icons/Ionicons';
-import * as _ from 'lodash';
 
 import {logoutUser} from '../actions/auth.actions';
 import colorConfig from '../config/colorConfig';
 import {Actions} from 'react-native-router-flux';
 import awsConfig from '../config/awsConfig';
 import CryptoJS from 'react-native-crypto-js';
-import {Dialog} from 'react-native-paper';
+import {isEmptyArray} from '../helper/CheckEmpty';
 
 class AccountMenuList extends Component {
   constructor(props) {
@@ -60,51 +60,67 @@ class AccountMenuList extends Component {
     this.props.setLanguage();
   };
 
+  renderPaymentMethodOptions = () => {
+    const {intlData, myCardAccount, companyInfo} = this.props;
+    const paymentTypes = companyInfo.paymentTypes;
+    if (!isEmptyArray(paymentTypes))
+      return (
+        <FlatList
+          data={paymentTypes}
+          renderItem={({item}) => (
+            <TouchableOpacity
+              onPress={() => Actions.listCard({intlData, item})}
+              style={styles.cardMenu}>
+              <View style={styles.itemMenu}>
+                <Icon
+                  size={20}
+                  name={Platform.OS === 'ios' ? 'ios-card' : 'md-card'}
+                  style={{color: 'white'}}
+                />
+              </View>
+              <View>
+                <View style={styles.item}>
+                  {myCardAccount != undefined && myCardAccount.length > 0 ? (
+                    <Text style={styles.title}>
+                      {item.paymentName} ({myCardAccount.length})
+                    </Text>
+                  ) : (
+                    <Text style={styles.title}>ADD {item.paymentName}</Text>
+                  )}
+                </View>
+              </View>
+            </TouchableOpacity>
+          )}
+          keyExtractor={(product, index) => index.toString()}
+        />
+      );
+  };
+
   render() {
-    const {intlData, myCardAccount} = this.props;
+    const {intlData, myCardAccount, companyInfo} = this.props;
+    const paymentTypes = companyInfo.paymentTypes;
     return (
       <View style={styles.container}>
         <Text style={styles.headingMenu}>My Payment Options</Text>
 
-        <TouchableOpacity
-          onPress={() => Actions.listCard({intlData})}
-          style={styles.cardMenu}>
-          <View style={styles.itemMenu}>
-            <Icon
-              size={20}
-              name={Platform.OS === 'ios' ? 'ios-card' : 'md-card'}
-              style={{color: 'white'}}
-            />
-          </View>
-          <View>
-            <View style={styles.item}>
-              {myCardAccount != undefined && myCardAccount.length > 0 ? (
-                <Text style={styles.title}>
-                  My Card ({myCardAccount.length})
-                </Text>
-              ) : (
-                <Text style={styles.title}>Add Credit Card</Text>
-              )}
-            </View>
-          </View>
-        </TouchableOpacity>
+        {this.renderPaymentMethodOptions()}
 
-        <TouchableOpacity
-          onPress={() => this.props.screen.navigation.navigate('History')}
-          style={styles.cardMenu}>
-          <View style={styles.itemMenu}>
-            <Icon
-              size={20}
-              name={Platform.OS === 'ios' ? 'ios-wallet' : 'md-wallet'}
-              style={{color: 'white'}}
-            />
-          </View>
-          <View>
-            <View style={styles.item}>
-              <Text style={styles.title}>DBS Paylah</Text>
-            </View>
-          </View>
-        </TouchableOpacity>
+        {/*<TouchableOpacity*/}
+        {/*  onPress={() => this.props.screen.navigation.navigate('History')}*/}
+        {/*  style={styles.cardMenu}>*/}
+        {/*  <View style={styles.itemMenu}>*/}
+        {/*    <Icon*/}
+        {/*      size={20}*/}
+        {/*      name={Platform.OS === 'ios' ? 'ios-wallet' : 'md-wallet'}*/}
+        {/*      style={{color: 'white'}}*/}
+        {/*    />*/}
+        {/*  </View>*/}
+        {/*  <View>*/}
+        {/*    <View style={styles.item}>*/}
+        {/*      <Text style={styles.title}>DBS Paylah</Text>*/}
+        {/*    </View>*/}
+        {/*  </View>*/}
+        {/*</TouchableOpacity>*/}
 
         <Text style={styles.headingMenu}>Settings</Text>
 
@@ -153,7 +169,10 @@ class AccountMenuList extends Component {
           <View>
             <View style={styles.item}>
               {this.state.loadingLogout ? (
-                <ActivityIndicator size={'large'} color={'white'} />
+                <ActivityIndicator
+                  size={'large'}
+                  color={colorConfig.store.colorError}
+                />
               ) : (
                 <Text
                   style={[styles.title, {color: colorConfig.store.colorError}]}>
@@ -200,7 +219,7 @@ const styles = StyleSheet.create({
     color: colorConfig.store.title,
     letterSpacing: 1,
     fontSize: 16,
-    fontWeight: 'bold',
+    // fontWeight: 'bold',
     fontFamily: 'Lato-Bold',
   },
   headingMenu: {
@@ -232,6 +251,7 @@ mapStateToProps = state => ({
   userDetail: state.userReducer.getUser.userDetails,
   myCardAccount: state.cardReducer.myCardAccount.card,
   totalPoint: state.rewardsReducer.dataPoint.totalPoint,
+  companyInfo: state.userReducer.getCompanyInfo.companyInfo,
   intlData: state.intlData,
 });
 

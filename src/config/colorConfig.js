@@ -69,7 +69,8 @@ const colorConfig = {
     secondaryColor: `rgb(${SECONDARY_COLOR_RGB})`,
   },
   card: {
-    cardColor: '#ff4757',
+    cardColor: '#1e272e',
+    otherCardColor: '#0fbcf9',
   },
 };
 
