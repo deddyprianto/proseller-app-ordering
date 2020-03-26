@@ -182,6 +182,7 @@ class Store extends Component {
             defaultImageURL: response.data[i].defaultImageURL,
             coordinate: response.data[i].location.coordinate,
             orderingStatus: response.data[i].orderingStatus,
+            outletType: response.data[i].outletType,
           });
         }
       }
@@ -319,6 +320,19 @@ class Store extends Component {
       return sum;
     } catch (e) {
       return null;
+    }
+  };
+
+  openBasket = () => {
+    const {dataBasket} = this.props;
+
+    if (
+      dataBasket.status == 'AWAITING_COLLECTION' ||
+      dataBasket.status == 'READY_FOR_COLLECTION'
+    ) {
+      Actions.waitingFood();
+    } else {
+      Actions.basket();
     }
   };
 
@@ -460,7 +474,7 @@ class Store extends Component {
         </ScrollView>
 
         <TouchableOpacity
-          onPress={() => Actions.basket()}
+          onPress={this.openBasket}
           style={{
             position: 'absolute',
             bottom: '6%',

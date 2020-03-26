@@ -22,28 +22,28 @@ export default class RewardsMenu extends Component {
 
   pagePay = () => {
     this.props.disableStatusGetData();
-    // var pembayaran = {
-    //   payment: 9.01,
-    //   storeName: 'Bugis Village',
-    //   referenceNo: `${new Date().valueOf()}`,
-    //   storeId: '486e2b85-6700-409d-afe4-5f1cdbacba53',
-    //   dataPay: [
-    //     {id: '123', itemName: 'Nasi Goreng Pedas', qty: 1, price: 10},
-    //     {
-    //       id: '06d65cc5-a234-43e6-b9e3-7f49a737ce0c',
-    //       itemName: 'Coke',
-    //       qty: 1,
-    //       price: 5,
-    //     },
-    //     {id: '123', itemName: 'Nasi Lemak', qty: 1, price: 5},
-    //   ],
-    // };
+    var pembayaran = {
+      payment: 9.01,
+      storeName: 'Bugis Village',
+      referenceNo: `${new Date().valueOf()}`,
+      storeId: '486e2b85-6700-409d-afe4-5f1cdbacba53',
+      dataPay: [
+        {id: '123', itemName: 'Nasi Goreng Pedas', qty: 1, price: 10},
+        {
+          id: '06d65cc5-a234-43e6-b9e3-7f49a737ce0c',
+          itemName: 'Coke',
+          qty: 1,
+          price: 5,
+        },
+        {id: '123', itemName: 'Nasi Lemak', qty: 1, price: 5},
+      ],
+    };
     // console.log(pembayaran);
     // Actions.pay()
-    Actions.scan({
-      enableStatusGetData: this.props.enableStatusGetData,
-    });
-    // Actions.settleOrder({pembayaran: pembayaran});
+    // Actions.scan({
+    //   enableStatusGetData: this.props.enableStatusGetData,
+    // });
+    Actions.paymentDetail({pembayaran: pembayaran});
   };
 
   pageRewards = () => {

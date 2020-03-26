@@ -12,6 +12,19 @@ const myCardAccount = (state = {}, action) => {
   }
 };
 
+const selectedAccount = (state = {}, action) => {
+  switch (action.type) {
+    case 'SELECTED_ACCOUNT':
+      return {
+        selectedAccount: action.selectedAccount,
+      };
+
+    default:
+      return state;
+  }
+};
+
 export default combineReducers({
   myCardAccount,
+  selectedAccount,
 });

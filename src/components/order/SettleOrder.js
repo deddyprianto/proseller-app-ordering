@@ -16,6 +16,7 @@ import {
   ScrollView,
   Alert,
   BackHandler,
+  FlatList,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -34,6 +35,8 @@ import {settleOrder} from '../../actions/order.action';
 import Loader from './../loader';
 // import {refreshToken} from '../actions/auth.actions';
 import CurrencyFormatter from '../../helper/CurrencyFormatter';
+import {clearAccount, selectedAccount} from '../../actions/payment.actions';
+import {isEmptyArray} from '../../helper/CheckEmpty';
 
 class SettleOrder extends Component {
   constructor(props) {
@@ -145,6 +148,7 @@ class SettleOrder extends Component {
   };
 
   goBack = async () => {
+    await this.props.dispatch(clearAccount());
     Actions.pop();
   };
 
@@ -248,7 +252,9 @@ class SettleOrder extends Component {
           pembayaran.statusAdd = 'addPoint';
         }
       }
-      const response = await this.props.dispatch(settleOrder(pembayaran));
+      // get url
+      const {url} = this.props;
+      const response = await this.props.dispatch(settleOrder(pembayaran, url));
 
       console.log('reponse pembayaran settle order ', response);
       if (response.success) {
@@ -356,7 +362,9 @@ class SettleOrder extends Component {
               style={{color: colorConfig.store.colorError}}
             />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.btnMethod} onPress={this.myPoint}>
+          <TouchableOpacity
+            style={styles.btnMethodSelected}
+            onPress={this.myPoint}>
             {/*<Image*/}
             {/*  style={{height: 18, width: 23, marginRight: 5}}*/}
             {/*  source={require('../assets/img/ticket.png')}*/}
@@ -369,36 +377,47 @@ class SettleOrder extends Component {
                 marginRight: 8,
               }}
             />
-            <Text style={styles.descMethod}>
+            <Text style={styles.descMethodSelected}>
               {'- ' + this.state.addPoint + ' Point'}
             </Text>
           </TouchableOpacity>
         </View>
       ) : (
-        <TouchableOpacity style={styles.btnMethod} onPress={this.myPoint}>
+        <TouchableOpacity
+          style={styles.btnMethodUnselected}
+          onPress={this.myPoint}>
           <Icon
             size={20}
             name={Platform.OS === 'ios' ? 'ios-pricetags' : 'md-pricetags'}
             style={{
-              color: colorConfig.store.textWhite,
+              color: colorConfig.store.defaultColor,
               marginRight: 8,
             }}
           />
-          <Text style={styles.descMethod}>Pick Points</Text>
+          <Text style={styles.descMethodUnselected}>Pick Points</Text>
         </TouchableOpacity>
       )}
     </View>,
   ];
 
+  selectedPaymentMethod = selectedAccount => {
+    const {intlData, companyInfo} = this.props;
+    const paymentTypes = companyInfo.paymentTypes;
+    try {
+      if (!isEmptyArray(paymentTypes)) {
+        let paymentMethod = paymentTypes.find(
+          item => item.paymentID == selectedAccount.paymentID,
+        );
+        if (paymentMethod != undefined) return paymentMethod.paymentName;
+        else return null;
+      }
+    } catch (e) {
+      return null;
+    }
+  };
+
   render() {
-    const {intlData} = this.props;
-    const iconSlider = () => (
-      <Icon
-        size={25}
-        name={Platform.OS === 'ios' ? 'ios-log-in' : 'md-log-in'}
-        style={{color: colorConfig.pageIndex.activeTintColor}}
-      />
-    );
+    const {intlData, selectedAccount} = this.props;
     return (
       <View style={styles.container}>
         {this.state.loading && <Loader />}
@@ -629,24 +648,24 @@ class SettleOrder extends Component {
                     />
                   </TouchableOpacity>
                   <TouchableOpacity
-                    style={styles.btnMethod}
+                    style={styles.btnMethodSelected}
                     onPress={this.myVouchers}>
                     <Icon
                       size={20}
                       name={Platform.OS === 'ios' ? 'ios-card' : 'md-card'}
                       style={{
-                        color: colorConfig.store.defaultColor,
+                        color: colorConfig.store.textWhite,
                         marginRight: 8,
                       }}
                     />
-                    <Text style={styles.descMethod}>
+                    <Text style={styles.descMethodSelected}>
                       {this.state.dataVoucer.name.substr(0, 13)}
                     </Text>
                   </TouchableOpacity>
                 </View>
               ) : (
                 <TouchableOpacity
-                  style={styles.btnMethod}
+                  style={styles.btnMethodUnselected}
                   onPress={this.myVouchers}>
                   {/*<Image*/}
                   {/*  style={{height: 18, width: 23, marginRight: 5}}*/}
@@ -656,89 +675,68 @@ class SettleOrder extends Component {
                     size={20}
                     name={Platform.OS === 'ios' ? 'ios-card' : 'md-card'}
                     style={{
-                      color: colorConfig.store.textWhite,
+                      color: colorConfig.store.defaultColor,
                       marginRight: 8,
                     }}
                   />
-                  <Text style={styles.descMethod}>Select Vouchers</Text>
+                  <Text style={styles.descMethodUnselected}>
+                    Select Vouchers
+                  </Text>
                 </TouchableOpacity>
               )}
             </View>
             {this.props.campaignActive ? this.renderUsePoint() : null}
 
-            {/*<View*/}
-            {/*  style={{*/}
-            {/*    marginTop: 12,*/}
-            {/*    marginBottom: 10,*/}
-            {/*    alignItems: 'center',*/}
-            {/*    justifyContent: 'space-between',*/}
-            {/*    flexDirection: 'row',*/}
-            {/*  }}>*/}
-            {/*  <Text*/}
-            {/*    style={{*/}
-            {/*      fontSize: 17,*/}
-            {/*      fontFamily: 'Lato-Bold',*/}
-            {/*      color: colorConfig.pageIndex.grayColor,*/}
-            {/*    }}>*/}
-            {/*    Payment Method*/}
-            {/*  </Text>*/}
-            {/*  {this.state.cancelVoucher == false &&*/}
-            {/*  this.state.dataVoucer != undefined ? (*/}
-            {/*    <View*/}
-            {/*      style={{*/}
-            {/*        flexDirection: 'row',*/}
-            {/*        justifyContent: 'space-between',*/}
-            {/*        alignItems: 'center',*/}
-            {/*      }}>*/}
-            {/*      <TouchableOpacity*/}
-            {/*        style={styles.btnMethodCencel}*/}
-            {/*        onPress={() => this.cencelVoucher()}>*/}
-            {/*        <Icon*/}
-            {/*          size={18}*/}
-            {/*          name={*/}
-            {/*            Platform.OS === 'ios'*/}
-            {/*              ? 'ios-close-circle-outline'*/}
-            {/*              : 'md-close-circle-outline'*/}
-            {/*          }*/}
-            {/*          style={{color: colorConfig.store.colorError}}*/}
-            {/*        />*/}
-            {/*      </TouchableOpacity>*/}
-            {/*      <TouchableOpacity*/}
-            {/*        style={styles.btnMethod}*/}
-            {/*        onPress={this.myVouchers}>*/}
-            {/*        <Icon*/}
-            {/*          size={20}*/}
-            {/*          name={Platform.OS === 'ios' ? 'ios-card' : 'md-card'}*/}
-            {/*          style={{*/}
-            {/*            color: colorConfig.store.defaultColor,*/}
-            {/*            marginRight: 8,*/}
-            {/*          }}*/}
-            {/*        />*/}
-            {/*        <Text style={styles.descMethod}>*/}
-            {/*          {this.state.dataVoucer.name.substr(0, 13)}*/}
-            {/*        </Text>*/}
-            {/*      </TouchableOpacity>*/}
-            {/*    </View>*/}
-            {/*  ) : (*/}
-            {/*    <TouchableOpacity*/}
-            {/*      style={styles.btnMethod}*/}
-            {/*      onPress={() => Actions.paymentMethods()}>*/}
-            {/*      <Icon*/}
-            {/*        size={20}*/}
-            {/*        name={Platform.OS === 'ios' ? 'ios-cash' : 'md-cash'}*/}
-            {/*        style={{*/}
-            {/*          color: colorConfig.store.textWhite,*/}
-            {/*          marginRight: 8,*/}
-            {/*        }}*/}
-            {/*      />*/}
-            {/*      <Text style={styles.descMethod}>Select Methods</Text>*/}
-            {/*    </TouchableOpacity>*/}
-            {/*  )}*/}
-            {/*</View>*/}
+            <View
+              style={{
+                marginTop: 12,
+                marginBottom: 10,
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                flexDirection: 'row',
+              }}>
+              <Text
+                style={{
+                  fontSize: 17,
+                  fontFamily: 'Lato-Bold',
+                  color: colorConfig.pageIndex.grayColor,
+                }}>
+                Payment Method
+              </Text>
+              <TouchableOpacity
+                style={
+                  selectedAccount != undefined
+                    ? styles.btnMethodSelected
+                    : styles.btnMethodUnselected
+                }
+                onPress={() => Actions.paymentMethods()}>
+                <Icon
+                  size={20}
+                  name={Platform.OS === 'ios' ? 'ios-cash' : 'md-cash'}
+                  style={{
+                    color:
+                      selectedAccount != undefined
+                        ? colorConfig.store.textWhite
+                        : colorConfig.store.defaultColor,
+                    marginRight: 8,
+                  }}
+                />
+                <Text
+                  style={
+                    selectedAccount != undefined
+                      ? styles.descMethodSelected
+                      : styles.descMethodUnselected
+                  }>
+                  {selectedAccount != undefined
+                    ? this.selectedPaymentMethod(selectedAccount)
+                    : 'Select Methods'}
+                </Text>
+              </TouchableOpacity>
+            </View>
 
             <View style={{marginTop: 50}} />
             <SwipeButton
-              disabled={true}
+              disabled={selectedAccount == undefined ? true : false}
               disabledThumbIconBackgroundColor="#FFFFFF"
               disabledThumbIconBorderColor={
                 colorConfig.pageIndex.activeTintColor
@@ -861,7 +859,21 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
     top: -2,
   },
-  btnMethod: {
+  btnMethodUnselected: {
+    borderColor: colorConfig.pageIndex.activeTintColor,
+    borderWidth: 1,
+    backgroundColor: 'white',
+    borderRadius: 10,
+    paddingLeft: 10,
+    paddingRight: 10,
+    paddingTop: 8,
+    paddingBottom: 8,
+    alignItems: 'center',
+    width: Dimensions.get('window').width / 2 - 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  btnMethodSelected: {
     borderColor: colorConfig.pageIndex.activeTintColor,
     borderWidth: 1,
     backgroundColor: colorConfig.store.defaultColor,
@@ -883,7 +895,11 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
   },
-  descMethod: {
+  descMethodUnselected: {
+    color: colorConfig.store.defaultColor,
+    fontSize: 13,
+  },
+  descMethodSelected: {
     color: colorConfig.store.textWhite,
     fontSize: 13,
   },
@@ -894,6 +910,8 @@ mapStateToProps = state => ({
   totalPoint: state.rewardsReducer.dataPoint.totalPoint,
   recentTransaction: state.rewardsReducer.dataPoint.recentTransaction,
   campaignActive: state.rewardsReducer.dataPoint.campaignActive,
+  selectedAccount: state.cardReducer.selectedAccount.selectedAccount,
+  companyInfo: state.userReducer.getCompanyInfo.companyInfo,
   dataStamps: state.rewardsReducer.getStamps,
   intlData: state.intlData,
 });

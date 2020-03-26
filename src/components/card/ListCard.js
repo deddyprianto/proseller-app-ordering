@@ -134,6 +134,7 @@ class ListCard extends Component {
   };
 
   renderEmptyCard = () => {
+    const {intlData, item} = this.props;
     return (
       <View
         style={{
@@ -143,7 +144,7 @@ class ListCard extends Component {
           marginTop: 30,
         }}>
         <Text style={{fontSize: 20, color: colorConfig.pageIndex.grayColor}}>
-          You haven't added a credit card yet.
+          You haven't added a {item.paymentName} yet.
         </Text>
       </View>
     );

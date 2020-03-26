@@ -70,6 +70,20 @@ class PaymentMethods extends Component {
     await this.getDataCard();
   };
 
+  paymentMethodSelected = item => {
+    const {selectedAccount} = this.props;
+    try {
+      if (
+        selectedAccount != undefined &&
+        selectedAccount.paymentID == item.paymentID
+      )
+        return true;
+      return false;
+    } catch (e) {
+      return false;
+    }
+  };
+
   renderPaymentMethodOptions = () => {
     const {intlData, myCardAccount, companyInfo} = this.props;
     const paymentTypes = companyInfo.paymentTypes;
@@ -83,13 +97,15 @@ class PaymentMethods extends Component {
               style={[styles.card]}>
               <View style={styles.headingCard}>
                 <Text style={styles.cardText}>{item.paymentName}</Text>
-                <Icon
-                  size={22}
-                  name={
-                    Platform.OS === 'ios' ? 'ios-checkmark' : 'md-checkmark'
-                  }
-                  style={{color: colorConfig.store.colorSuccess}}
-                />
+                {this.paymentMethodSelected(item) ? (
+                  <Icon
+                    size={22}
+                    name={
+                      Platform.OS === 'ios' ? 'ios-checkmark' : 'md-checkmark'
+                    }
+                    style={{color: colorConfig.store.colorSuccess}}
+                  />
+                ) : null}
               </View>
             </TouchableOpacity>
           )}
@@ -139,6 +155,7 @@ mapStateToProps = state => ({
   intlData: state.intlData,
   companyInfo: state.userReducer.getCompanyInfo.companyInfo,
   myCardAccount: state.cardReducer.myCardAccount.card,
+  selectedAccount: state.cardReducer.selectedAccount.selectedAccount,
 });
 
 mapDispatchToProps = dispatch => ({

@@ -31,8 +31,9 @@ import CurrencyFormatter from '../../helper/CurrencyFormatter';
 import {isEmptyArray, isEmptyObject} from '../../helper/CheckEmpty';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import * as _ from 'lodash';
+import LottieView from 'lottie-react-native';
 
-class Basket extends Component {
+class WaitingFood extends Component {
   constructor(props) {
     super(props);
 
@@ -119,34 +120,12 @@ class Basket extends Component {
     try {
       // get data basket
       await this.getBasket();
-      // get previous data products from this outlet, for modifier detail purpose
-      if (this.props.dataBasket != undefined) {
-        let outletID = this.props.dataBasket.outlet.id;
-        await this.getProductsByOutlet(outletID);
-        await this.setState({loading: false});
-
-        // check if user not yet select order mode, then open modal
-        if (this.props.orderType == undefined) {
-          this.RBSheet.open();
-        }
-      }
       await this.setState({loading: false});
-
-      // check if status basket is submitted, then request continoustly to get basket
-      if (
-        this.props.dataBasket != undefined &&
-        this.props.dataBasket.status == 'SUBMITTED'
-      ) {
-        clearInterval(this.interval);
-        this.interval = setInterval(() => {
-          this.props.dispatch(getBasket());
-        }, 2000);
-      }
 
       // check if status basket for TAKE AWAY IS CONFIRMED, then request continoustly to get basket
       if (
         this.props.dataBasket != undefined &&
-        this.props.dataBasket.status == 'CONFIRMED' &&
+        this.props.dataBasket.status == 'AWAITING_COLLECTION' &&
         this.props.dataBasket.outlet.outletType == 'QUICKSERVICE'
       ) {
         clearInterval(this.interval);
@@ -307,7 +286,7 @@ class Basket extends Component {
   };
 
   renderSettleButton = () => {
-    const {intlData, dataBasket} = this.props;
+    const {intlData} = this.props;
     return (
       <View
         style={{
@@ -342,10 +321,8 @@ class Basket extends Component {
         <View style={{flexDirection: 'row', justifyContent: 'center'}}>
           <TouchableOpacity
             disabled={
-              (dataBasket.status == 'CONFIRMED' &&
-                dataBasket.outlet.outletType == 'QUICKSERVICE') ||
-              dataBasket.status == 'AWAITING_COLLECTION' ||
-              dataBasket.status == 'READY_FOR_COLLECTION'
+              this.props.dataBasket.status == 'CONFIRMED' ||
+              this.props.tableType != undefined
                 ? true
                 : false
             }
@@ -354,10 +331,8 @@ class Basket extends Component {
               styles.btnCancelBasketModal,
               {
                 backgroundColor:
-                  (dataBasket.status == 'CONFIRMED' &&
-                    dataBasket.outlet.outletType == 'QUICKSERVICE') ||
-                  dataBasket.status == 'AWAITING_COLLECTION' ||
-                  dataBasket.status == 'READY_FOR_COLLECTION'
+                  this.props.dataBasket.status == 'CONFIRMED' ||
+                  this.props.tableType != undefined
                     ? colorConfig.store.disableButtonError
                     : colorConfig.store.colorError,
               },
@@ -374,23 +349,19 @@ class Basket extends Component {
           <TouchableOpacity
             onPress={this.goToSettle}
             disabled={
-              (dataBasket.status == 'CONFIRMED' &&
-                dataBasket.outlet.outletType == 'QUICKSERVICE') ||
-              dataBasket.status == 'AWAITING_COLLECTION' ||
-              dataBasket.status == 'READY_FOR_COLLECTION'
-                ? true
-                : false
+              this.props.dataBasket.status == 'CONFIRMED' ||
+              this.props.tableType != undefined
+                ? false
+                : true
             }
             style={[
               styles.btnAddBasketModal,
               {
                 backgroundColor:
-                  (dataBasket.status == 'CONFIRMED' &&
-                    dataBasket.outlet.outletType == 'QUICKSERVICE') ||
-                  dataBasket.status == 'AWAITING_COLLECTION' ||
-                  dataBasket.status == 'READY_FOR_COLLECTION'
-                    ? colorConfig.store.disableButton
-                    : colorConfig.store.defaultColor,
+                  this.props.dataBasket.status == 'CONFIRMED' ||
+                  this.props.tableType != undefined
+                    ? colorConfig.store.defaultColor
+                    : colorConfig.store.disableButton,
               },
             ]}>
             <Icon
@@ -458,8 +429,8 @@ class Basket extends Component {
     }
   };
 
-  renderButtonConfirm = () => {
-    const {intlData} = this.props;
+  renderBottomButton = () => {
+    const {intlData, dataBasket} = this.props;
     return (
       <View
         style={{
@@ -479,46 +450,42 @@ class Basket extends Component {
           bottom: 0,
           flexDirection: 'column',
         }}>
-        <Text
+        <View
           style={{
-            color: colorConfig.store.title,
-            textAlign: 'right',
-            fontWeight: 'bold',
-            fontFamily: 'Lato-Bold',
-            paddingVertical: 8,
-            fontSize: 15,
-            marginRight: 20,
+            flexDirection: 'row',
+            justifyContent: 'center',
+            paddingTop: 20,
           }}>
-          TOTAL : {CurrencyFormatter(this.props.dataBasket.totalNettAmount)}
-        </Text>
-        <View style={{flexDirection: 'row', justifyContent: 'center'}}>
           <TouchableOpacity
-            onPress={this.alertRemoveBasket}
+            onPress={() => Actions.basket()}
             style={styles.btnCancelBasketModal}>
             <Icon
-              size={23}
-              name={Platform.OS === 'ios' ? 'ios-trash' : 'md-trash'}
+              size={21}
+              name={Platform.OS === 'ios' ? 'ios-cart' : 'md-cart'}
               style={{color: 'white', marginRight: 5}}
             />
-            <Text style={styles.textBtnBasketModal}>
-              {intlData.messages.clear}
-            </Text>
+            <Text style={styles.textBtnBasketModal}>View Cart</Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={this.goToScanTable}
-            style={styles.btnAddBasketModal}>
+            disabled={
+              dataBasket.status == 'READY_FOR_COLLECTION' ? false : true
+            }
+            style={[
+              styles.btnAddBasketModal,
+              {
+                backgroundColor:
+                  dataBasket.status == 'READY_FOR_COLLECTION'
+                    ? colorConfig.store.defaultColor
+                    : colorConfig.store.disableButton,
+              },
+            ]}>
             <Icon
-              size={23}
-              name={
-                Platform.OS === 'ios'
-                  ? 'ios-checkbox-outline'
-                  : 'md-checkbox-outline'
-              }
+              size={21}
+              name={Platform.OS === 'ios' ? 'ios-qr-scanner' : 'md-qr-scanner'}
               style={{color: 'white', marginRight: 5}}
             />
-            <Text style={styles.textBtnBasketModal}>
-              {intlData.messages.submit}
-            </Text>
+            <Text style={styles.textBtnBasketModal}>Show QR Code</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -549,25 +516,42 @@ class Basket extends Component {
     );
   };
 
-  renderNullBasker = () => {
-    const {intlData} = this.props;
+  renderTextWaiting = () => {
+    const {intlData, dataBasket} = this.props;
     return (
       <View
         style={{
           justifyContent: 'center',
           alignItems: 'center',
-          flexDirection: 'row',
-          height: '90%',
+          marginHorizontal: 15,
+          marginVertical: 30,
         }}>
-        <Text
-          style={{
-            fontSize: 25,
-            color: colorConfig.pageIndex.inactiveTintColor,
-            fontWeight: 'bold',
-            textAlign: 'center',
-          }}>
-          {intlData.messages.bucketEmpty}.
-        </Text>
+        {dataBasket.status == 'READY_FOR_COLLECTION' ? (
+          <Text
+            style={{
+              fontSize: 23,
+              color: colorConfig.store.defaultColor,
+              fontWeight: 'bold',
+              fontFamily: 'Lato-Bold',
+              textAlign: 'center',
+            }}>
+            Yeay, your order is ready. {'\n'} {'\n'}
+            <Text style={{color: colorConfig.pageIndex.grayColor}}>
+              Please come to the cashier and tap the QR Code button below.
+            </Text>
+          </Text>
+        ) : (
+          <Text
+            style={{
+              fontSize: 25,
+              color: colorConfig.pageIndex.inactiveTintColor,
+              fontWeight: 'bold',
+              textAlign: 'center',
+              fontFamily: 'Lato-Bold',
+            }}>
+            Please wait, We are preparing your food in the kitchen.
+          </Text>
+        )}
       </View>
     );
   };
@@ -871,58 +855,19 @@ class Basket extends Component {
 
   render() {
     const {intlData, dataBasket} = this.props;
-    // give message to user if order has been confirmed
     try {
-      if (dataBasket != undefined) {
-        //  for outlet type restaurant
-        if (
-          dataBasket.status == 'CONFIRMED' &&
-          this.interval != undefined &&
-          dataBasket.outlet.outletType != 'QUICKSERVICE'
-        ) {
-          Alert.alert('Congratulation', 'Your order has been CONFIRMED');
-          clearInterval(this.interval);
-          this.interval = undefined;
-        }
-
-        //  for outlet type quick service
-        if (
-          dataBasket.status == 'AWAITING_COLLECTION' &&
-          this.interval != undefined &&
-          dataBasket.outlet.outletType == 'QUICKSERVICE'
-        ) {
-          clearInterval(this.interval);
-          this.interval = undefined;
-          Actions.waitingFood();
-        }
+      if (
+        dataBasket.status == 'READY_FOR_COLLECTION' &&
+        this.interval != undefined &&
+        dataBasket.outlet.outletType == 'QUICKSERVICE'
+      ) {
+        clearInterval(this.interval);
+        this.interval = undefined;
       }
     } catch (e) {}
 
     return (
       <View style={styles.container}>
-        <ModalOrder
-          isModalVisible={this.state.isModalVisible}
-          qtyItem={this.state.qtyItem}
-          remark={this.state.remark}
-          closeModal={this.closeModal}
-          backButtonClicked={this.backButtonClicked}
-          toggleModal={this.toggleModal}
-          addQty={this.addQty}
-          minQty={this.minQty}
-          changeRemarkText={this.changeRemarkText}
-          modalShow={this.modalShow}
-          calculateSubTotalModal={this.calculateSubTotalModal}
-          product={this.state.selectedProduct}
-          addItemToBasket={this.addItemToBasket}
-          loadingAddItem={this.state.loadingAddItem}
-          dataBasket={this.props.dataBasket}
-          updateSelectedCategory={this.updateSelectedCategory}
-          selectedCategoryModifier={this.state.selectedCategoryModifier}
-          loadModifierTime={this.state.loadModifierTime}
-        />
-
-        {this.askUserToSelectPaymentType()}
-
         <View style={{backgroundColor: colorConfig.pageIndex.backgroundColor}}>
           <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
             <Icon
@@ -932,197 +877,26 @@ class Basket extends Component {
               }
               style={styles.btnBackIcon}
             />
-            <Text style={styles.btnBackText}>
-              {' '}
-              {intlData.messages.detailOrder}{' '}
-            </Text>
+            <Text style={styles.btnBackText}>Waiting Order</Text>
           </TouchableOpacity>
           <View style={styles.line} />
         </View>
-        {this.state.loading == false ? (
-          this.props.dataBasket != undefined &&
-          this.props.dataBasket.outlet != undefined ? (
-            <ScrollView
-              style={{marginBottom: '30%'}}
-              refreshControl={
-                <RefreshControl
-                  refreshing={this.state.refreshing}
-                  onRefresh={this._onRefresh}
-                />
-              }>
-              <View style={styles.containerBody}>
-                <Text style={styles.title}>
-                  {this.props.dataBasket.outlet.name}
-                </Text>
-                <Text style={styles.subTitle}>
-                  {intlData.messages.detailOrder}
-                </Text>
-                <View>
-                  <FlatList
-                    data={this.props.dataBasket.details}
-                    renderItem={({item}) => (
-                      <View style={styles.item}>
-                        <View
-                          style={{
-                            flexDirection: 'row',
-                            justifyContent: 'space-between',
-                            padding: 3,
-                          }}>
-                          <View>
-                            <View>
-                              <Text style={[styles.desc]}>
-                                <Text
-                                  style={{
-                                    color: colorConfig.store.defaultColor,
-                                  }}>
-                                  {item.quantity}x
-                                </Text>{' '}
-                                {item.product.name} ({' '}
-                                {CurrencyFormatter(item.unitPrice)} )
-                              </Text>
-                              {item.remark != undefined && item.remark != '' ? (
-                                <Text
-                                  style={{
-                                    color:
-                                      colorConfig.pageIndex.inactiveTintColor,
-                                    fontSize: 12,
-                                    fontStyle: 'italic',
-                                  }}>
-                                  note: {item.remark}
-                                </Text>
-                              ) : null}
-                              {/* loop item modifier */}
-                              {!isEmptyArray(item.modifiers) ? (
-                                <Text
-                                  style={{
-                                    color:
-                                      colorConfig.pageIndex.inactiveTintColor,
-                                    fontSize: 10,
-                                    marginLeft: 10,
-                                    fontStyle: 'italic',
-                                  }}>
-                                  Add On:
-                                </Text>
-                              ) : null}
-                              {this.renderItemModifier(item)}
-                              {/* loop item modifier */}
-                              {this.props.dataBasket.status == 'PENDING' &&
-                              this.props.tableType == undefined ? (
-                                <TouchableOpacity
-                                  onPress={() => this.openEditModal(item)}
-                                  style={{paddingVertical: 5}}>
-                                  <Text
-                                    style={{
-                                      color: colorConfig.store.colorSuccess,
-                                      fontWeight: 'bold',
-                                      fontFamily: 'Lato-Bold',
-                                      fontSize: 14,
-                                    }}>
-                                    Edit
-                                  </Text>
-                                </TouchableOpacity>
-                              ) : null}
-                            </View>
-                          </View>
-                          <View>
-                            <Text style={styles.descPrice}>
-                              {CurrencyFormatter(item.grossAmount)}
-                            </Text>
-                          </View>
-                        </View>
-                      </View>
-                    )}
-                    keyExtractor={(product, index) => index.toString()}
-                  />
-                </View>
-                <View style={{marginTop: 20}} />
-                {this.getTableNo() != undefined ? (
-                  <View style={styles.itemSummary}>
-                    <Text style={styles.total}>Table No.</Text>
-                    <Text style={styles.total}>{this.getTableNo()}</Text>
-                  </View>
-                ) : null}
-                <View style={styles.itemSummary}>
-                  <Text style={styles.total}>
-                    {intlData.messages.statusOrder}
-                  </Text>
-                  {this.renderStatusOrder()}
-                </View>
-                <TouchableOpacity
-                  onPress={() =>
-                    this.props.dataBasket.status == 'PENDING' &&
-                    this.props.tableType == undefined
-                      ? this.RBSheet.open()
-                      : null
-                  }
-                  style={styles.itemSummary}>
-                  <Text style={styles.total}>
-                    {intlData.messages.orderMode}
-                  </Text>
-                  {this.props.orderType == 'TAKEAWAY' ? (
-                    <Text
-                      style={[
-                        styles.total,
-                        {
-                          backgroundColor:
-                            this.props.dataBasket.status == 'PENDING'
-                              ? colorConfig.store.secondaryColor
-                              : null,
-                          color:
-                            this.props.dataBasket.status == 'PENDING'
-                              ? 'white'
-                              : colorConfig.pageIndex.grayColor,
-                          borderRadius: 5,
-                          padding: 5,
-                        },
-                      ]}>
-                      {this.props.orderType}
-                    </Text>
-                  ) : (
-                    <Text
-                      style={[
-                        styles.total,
-                        {
-                          backgroundColor: colorConfig.store.colorSuccess,
-                          color: 'white',
-                          borderRadius: 5,
-                          padding: 5,
-                        },
-                      ]}>
-                      {this.props.orderType}
-                    </Text>
-                  )}
-                </TouchableOpacity>
-                <View style={styles.itemSummary}>
-                  <Text style={styles.total}>
-                    {intlData.messages.totalTaxAmmount}
-                  </Text>
-                  <Text style={styles.total}>
-                    {CurrencyFormatter(this.props.dataBasket.totalTaxAmount)}
-                  </Text>
-                </View>
-                {/*<View style={styles.itemSummary}>*/}
-                {/*  <Text style={styles.total}>Total</Text>*/}
-                {/*  <Text style={styles.total}>*/}
-                {/*    {' '}*/}
-                {/*    {CurrencyFormatter(this.props.dataBasket.totalNettAmount)}*/}
-                {/*  </Text>*/}
-                {/*</View>*/}
-              </View>
-            </ScrollView>
-          ) : (
-            this.renderNullBasker()
-          )
-        ) : (
-          <Loader />
-        )}
-        {this.props.dataBasket != undefined &&
-        this.props.dataBasket.outlet != undefined
-          ? this.props.dataBasket.status == 'PENDING' &&
-            this.props.tableType == undefined
-            ? this.renderButtonConfirm()
-            : this.renderSettleButton()
-          : null}
+        <View style={{height: '40%'}}>
+          <LottieView
+            speed={1}
+            source={
+              dataBasket.status == 'READY_FOR_COLLECTION'
+                ? require('../../assets/animate/food-ready')
+                : require('../../assets/animate/cooking')
+            }
+            autoPlay
+            loop={true}
+          />
+        </View>
+
+        {this.renderTextWaiting()}
+
+        {this.renderBottomButton()}
       </View>
     );
   }
@@ -1145,7 +919,7 @@ export default compose(
     mapStateToProps,
     mapDispatchToProps,
   ),
-)(Basket);
+)(WaitingFood);
 
 const styles = StyleSheet.create({
   container: {
@@ -1307,7 +1081,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginLeft: 20,
     width: '40%',
-    backgroundColor: colorConfig.store.colorSuccess,
+    backgroundColor: colorConfig.store.defaultColor,
   },
   btnCancelBasketModal: {
     fontFamily: 'Lato-Bold',
@@ -1318,13 +1092,13 @@ const styles = StyleSheet.create({
     padding: 13,
     marginRight: 20,
     width: '40%',
-    backgroundColor: colorConfig.store.colorError,
+    backgroundColor: colorConfig.store.colorSuccess,
   },
   textBtnBasketModal: {
     color: 'white',
     fontWeight: 'bold',
     fontFamily: 'Lato-Bold',
-    fontSize: 17,
+    fontSize: 15,
     textAlign: 'center',
   },
 });

@@ -71,3 +71,29 @@ export const registerCard = payload => {
     }
   };
 };
+
+export const selectedAccount = payload => {
+  return async dispatch => {
+    try {
+      dispatch({
+        type: 'SELECTED_ACCOUNT',
+        selectedAccount: payload,
+      });
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const clearAccount = () => {
+  return async dispatch => {
+    try {
+      dispatch({
+        type: 'SELECTED_ACCOUNT',
+        selectedAccount: undefined,
+      });
+    } catch (error) {
+      return error;
+    }
+  };
+};

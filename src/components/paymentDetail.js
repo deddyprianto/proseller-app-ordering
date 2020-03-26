@@ -34,6 +34,8 @@ import {sendPayment} from '../actions/sales.action';
 import Loader from './loader';
 import {refreshToken} from '../actions/auth.actions';
 import CurrencyFormatter from '../helper/CurrencyFormatter';
+import {isEmptyArray} from '../helper/CheckEmpty';
+import {clearAccount} from '../actions/payment.actions';
 
 class PaymentDetail extends Component {
   constructor(props) {
@@ -145,6 +147,8 @@ class PaymentDetail extends Component {
   };
 
   goBack = async () => {
+    const {from} = this.props;
+    await this.props.dispatch(clearAccount());
     Actions.popTo('pageIndex');
   };
 
@@ -334,57 +338,48 @@ class PaymentDetail extends Component {
     }
   };
 
-  renderUsePoint = () => {
-    const {intlData} = this.props;
-    return (
-      <View
+  renderUsePoint = () => [
+    <View
+      style={{
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        flexDirection: 'row',
+      }}>
+      <Text
         style={{
-          marginBottom: 50,
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          flexDirection: 'row',
+          fontSize: 17,
+          fontFamily: 'Lato-Bold',
+          color: colorConfig.pageIndex.grayColor,
         }}>
-        <Text>{intlData.messages.usePoints}</Text>
-        {this.state.cancelPoint == false && this.state.addPoint != undefined ? (
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}>
-            <TouchableOpacity
-              style={styles.btnMethodCencel}
-              onPress={() => this.cencelPoint()}>
-              <Icon
-                size={18}
-                name={
-                  Platform.OS === 'ios'
-                    ? 'ios-close-circle-outline'
-                    : 'md-close-circle-outline'
-                }
-                style={{color: colorConfig.store.colorError}}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.btnMethod} onPress={this.myPoint}>
-              {/*<Image*/}
-              {/*  style={{height: 18, width: 23, marginRight: 5}}*/}
-              {/*  source={require('../assets/img/ticket.png')}*/}
-              {/*/>*/}
-              <Icon
-                size={20}
-                name={Platform.OS === 'ios' ? 'ios-pricetags' : 'md-pricetags'}
-                style={{
-                  color: colorConfig.store.textWhite,
-                  marginRight: 8,
-                }}
-              />
-              <Text style={styles.descMethod}>
-                {'- ' + this.state.addPoint + ' Point'}
-              </Text>
-            </TouchableOpacity>
-          </View>
-        ) : (
-          <TouchableOpacity style={styles.btnMethod} onPress={this.myPoint}>
+        Point
+      </Text>
+      {this.state.cancelPoint == false && this.state.addPoint != undefined ? (
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}>
+          <TouchableOpacity
+            style={styles.btnMethodCencel}
+            onPress={() => this.cencelPoint()}>
+            <Icon
+              size={18}
+              name={
+                Platform.OS === 'ios'
+                  ? 'ios-close-circle-outline'
+                  : 'md-close-circle-outline'
+              }
+              style={{color: colorConfig.store.colorError}}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.btnMethodSelected}
+            onPress={this.myPoint}>
+            {/*<Image*/}
+            {/*  style={{height: 18, width: 23, marginRight: 5}}*/}
+            {/*  source={require('../assets/img/ticket.png')}*/}
+            {/*/>*/}
             <Icon
               size={20}
               name={Platform.OS === 'ios' ? 'ios-pricetags' : 'md-pricetags'}
@@ -393,24 +388,47 @@ class PaymentDetail extends Component {
                 marginRight: 8,
               }}
             />
-            <Text style={styles.descMethod}>
-              {intlData.messages.pickPoints}
+            <Text style={styles.descMethodSelected}>
+              {'- ' + this.state.addPoint + ' Point'}
             </Text>
           </TouchableOpacity>
-        )}
-      </View>
-    );
+        </View>
+      ) : (
+        <TouchableOpacity
+          style={styles.btnMethodUnselected}
+          onPress={this.myPoint}>
+          <Icon
+            size={20}
+            name={Platform.OS === 'ios' ? 'ios-pricetags' : 'md-pricetags'}
+            style={{
+              color: colorConfig.store.defaultColor,
+              marginRight: 8,
+            }}
+          />
+          <Text style={styles.descMethodUnselected}>Pick Points</Text>
+        </TouchableOpacity>
+      )}
+    </View>,
+  ];
+
+  selectedPaymentMethod = selectedAccount => {
+    const {intlData, companyInfo} = this.props;
+    const paymentTypes = companyInfo.paymentTypes;
+    try {
+      if (!isEmptyArray(paymentTypes)) {
+        let paymentMethod = paymentTypes.find(
+          item => item.paymentID == selectedAccount.paymentID,
+        );
+        if (paymentMethod != undefined) return paymentMethod.paymentName;
+        else return null;
+      }
+    } catch (e) {
+      return null;
+    }
   };
 
   render() {
-    const {intlData} = this.props;
-    const iconSlider = () => (
-      <Icon
-        size={25}
-        name={Platform.OS === 'ios' ? 'ios-log-in' : 'md-log-in'}
-        style={{color: colorConfig.pageIndex.activeTintColor}}
-      />
-    );
+    const {intlData, selectedAccount} = this.props;
     return (
       <View style={styles.container}>
         {this.state.loading && <Loader />}
@@ -451,7 +469,7 @@ class PaymentDetail extends Component {
                   fontSize: 20,
                   fontWeight: 'bold',
                 }}>
-                {intlData.messages.confirmPayment}
+                Confirm Payment
               </Text>
             </View>
           </View>
@@ -586,7 +604,7 @@ class PaymentDetail extends Component {
                         fontSize: 17,
                         color: colorConfig.pageIndex.activeTintColor,
                       }}>
-                      {intlData.messages.detail}
+                      Detail
                     </Text>
                     <Icon
                       size={18}
@@ -611,7 +629,14 @@ class PaymentDetail extends Component {
                 justifyContent: 'space-between',
                 flexDirection: 'row',
               }}>
-              <Text>{intlData.messages.useVoucher}</Text>
+              <Text
+                style={{
+                  fontSize: 17,
+                  fontFamily: 'Lato-Bold',
+                  color: colorConfig.pageIndex.grayColor,
+                }}>
+                Vouchers
+              </Text>
               {this.state.cancelVoucher == false &&
               this.state.dataVoucer != undefined ? (
                 <View
@@ -634,24 +659,24 @@ class PaymentDetail extends Component {
                     />
                   </TouchableOpacity>
                   <TouchableOpacity
-                    style={styles.btnMethod}
+                    style={styles.btnMethodSelected}
                     onPress={this.myVouchers}>
                     <Icon
                       size={20}
                       name={Platform.OS === 'ios' ? 'ios-card' : 'md-card'}
                       style={{
-                        color: colorConfig.store.defaultColor,
+                        color: colorConfig.store.textWhite,
                         marginRight: 8,
                       }}
                     />
-                    <Text style={styles.descMethod}>
+                    <Text style={styles.descMethodSelected}>
                       {this.state.dataVoucer.name.substr(0, 13)}
                     </Text>
                   </TouchableOpacity>
                 </View>
               ) : (
                 <TouchableOpacity
-                  style={styles.btnMethod}
+                  style={styles.btnMethodUnselected}
                   onPress={this.myVouchers}>
                   {/*<Image*/}
                   {/*  style={{height: 18, width: 23, marginRight: 5}}*/}
@@ -661,21 +686,68 @@ class PaymentDetail extends Component {
                     size={20}
                     name={Platform.OS === 'ios' ? 'ios-card' : 'md-card'}
                     style={{
-                      color: colorConfig.store.textWhite,
+                      color: colorConfig.store.defaultColor,
                       marginRight: 8,
                     }}
                   />
-                  <Text style={styles.descMethod}>
-                    {intlData.messages.selectVouchers}
+                  <Text style={styles.descMethodUnselected}>
+                    Select Vouchers
                   </Text>
                 </TouchableOpacity>
               )}
             </View>
-            {this.props.totalPoint != undefined ? this.renderUsePoint() : null}
+            {this.props.campaignActive ? this.renderUsePoint() : null}
+
+            <View
+              style={{
+                marginTop: 12,
+                marginBottom: 10,
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                flexDirection: 'row',
+              }}>
+              <Text
+                style={{
+                  fontSize: 17,
+                  fontFamily: 'Lato-Bold',
+                  color: colorConfig.pageIndex.grayColor,
+                }}>
+                Payment Method
+              </Text>
+              <TouchableOpacity
+                style={
+                  selectedAccount != undefined
+                    ? styles.btnMethodSelected
+                    : styles.btnMethodUnselected
+                }
+                onPress={() => Actions.paymentMethods()}>
+                <Icon
+                  size={20}
+                  name={Platform.OS === 'ios' ? 'ios-cash' : 'md-cash'}
+                  style={{
+                    color:
+                      selectedAccount != undefined
+                        ? colorConfig.store.textWhite
+                        : colorConfig.store.defaultColor,
+                    marginRight: 8,
+                  }}
+                />
+                <Text
+                  style={
+                    selectedAccount != undefined
+                      ? styles.descMethodSelected
+                      : styles.descMethodUnselected
+                  }>
+                  {selectedAccount != undefined
+                    ? this.selectedPaymentMethod(selectedAccount)
+                    : 'Select Methods'}
+                </Text>
+              </TouchableOpacity>
+            </View>
 
             <View style={{marginTop: 50}} />
             <SwipeButton
-              disabled={false}
+              disabled={selectedAccount == undefined ? true : false}
               disabledThumbIconBackgroundColor="#FFFFFF"
               disabledThumbIconBorderColor={
                 colorConfig.pageIndex.activeTintColor
@@ -690,9 +762,10 @@ class PaymentDetail extends Component {
               titleFontSize={20}
               shouldResetAfterSuccess={this.state.failedPay}
               railBackgroundColor={colorConfig.pageIndex.activeTintColor}
-              title={`${intlData.messages.pay} ${CurrencyFormatter(
-                this.state.totalBayar,
-              )}`}
+              title={
+                'Pay ' + CurrencyFormatter(this.state.totalBayar)
+                // Number(this.state.totalBayar.toFixed(3))
+              }
               onSwipeSuccess={this.onSlideRight}
             />
           </View>
@@ -707,17 +780,14 @@ class PaymentDetail extends Component {
           showCancelButton={false}
           showConfirmButton={true}
           cancelText="Close"
-          confirmText={
-            this.state.titleAlert == 'Payment Success!' ? 'Oke' : 'Close'
-          }
+          confirmText={'Close'}
           confirmButtonColor={colorConfig.pageIndex.activeTintColor}
           onCancelPressed={() => {
             this.hideAlert();
           }}
           onConfirmPressed={() => {
-            this.state.titleAlert == 'Payment Success!'
-              ? Actions.pop()
-              : this.hideAlert();
+            this.setState({failedPay: true});
+            this.hideAlert();
           }}
         />
       </View>
@@ -800,17 +870,31 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
     top: -2,
   },
-  btnMethod: {
+  btnMethodUnselected: {
+    borderColor: colorConfig.pageIndex.activeTintColor,
+    borderWidth: 1,
+    backgroundColor: 'white',
+    borderRadius: 10,
+    paddingLeft: 10,
+    paddingRight: 10,
+    paddingTop: 8,
+    paddingBottom: 8,
+    alignItems: 'center',
+    width: Dimensions.get('window').width / 2 - 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  btnMethodSelected: {
     borderColor: colorConfig.pageIndex.activeTintColor,
     borderWidth: 1,
     backgroundColor: colorConfig.store.defaultColor,
     borderRadius: 10,
     paddingLeft: 10,
     paddingRight: 10,
-    paddingTop: 5,
-    paddingBottom: 5,
+    paddingTop: 8,
+    paddingBottom: 8,
     alignItems: 'center',
-    width: Dimensions.get('window').width / 2 - 30,
+    width: Dimensions.get('window').width / 2 - 10,
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
@@ -822,7 +906,11 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
   },
-  descMethod: {
+  descMethodUnselected: {
+    color: colorConfig.store.defaultColor,
+    fontSize: 13,
+  },
+  descMethodSelected: {
     color: colorConfig.store.textWhite,
     fontSize: 13,
   },
@@ -832,6 +920,9 @@ mapStateToProps = state => ({
   myVoucers: state.accountsReducer.myVoucers.myVoucers,
   totalPoint: state.rewardsReducer.dataPoint.totalPoint,
   recentTransaction: state.rewardsReducer.dataPoint.recentTransaction,
+  campaignActive: state.rewardsReducer.dataPoint.campaignActive,
+  selectedAccount: state.cardReducer.selectedAccount.selectedAccount,
+  companyInfo: state.userReducer.getCompanyInfo.companyInfo,
   dataStamps: state.rewardsReducer.getStamps,
   intlData: state.intlData,
 });

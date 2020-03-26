@@ -310,7 +310,7 @@ export const getBasket = () => {
   };
 };
 
-export const settleOrder = payload => {
+export const settleOrder = (payload, url) => {
   return async (dispatch, getState) => {
     const state = getState();
     try {
@@ -321,14 +321,18 @@ export const settleOrder = payload => {
       } = state;
 
       console.log(payload, 'payload settle order');
-      const response = await fetchApiOrder(
-        '/cart/settle',
-        'POST',
-        payload,
-        200,
-        token,
-      );
+      console.log(url, 'URL SETTLE ORDER');
+      const response = await fetchApiOrder(url, 'POST', payload, 200, token);
       console.log(response, 'response settle order');
+      // remove table type
+      dispatch({
+        type: 'TABLE_TYPE',
+        tableType: undefined,
+      });
+      dispatch({
+        type: 'SELECTED_ACCOUNT',
+        selectedAccount: undefined,
+      });
       var result = {
         responseBody: response.response,
         success: response.success,

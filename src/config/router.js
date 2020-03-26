@@ -48,6 +48,7 @@ import Basket from '../components/order/Basket';
 import ScanQRTable from '../components/order/ScanQRTable';
 import ConfirmTable from '../components/order/ConfirmTable';
 import SettleOrder from '../components/order/SettleOrder';
+import WaitingFood from '../components/order/WaitingFood';
 import {BackHandler, ToastAndroid} from 'react-native';
 
 // card
@@ -164,6 +165,7 @@ export default class Routes extends Component {
             <Scene key="detailCard" component={DetailCard} />
             <Scene key="paymentMethods" component={PaymentMethods} />
             <Scene key="paymentAddCard" component={PaymentAddCard} />
+            <Scene key="waitingFood" component={WaitingFood} />
           </Scene>
         </Scene>
       </Router>

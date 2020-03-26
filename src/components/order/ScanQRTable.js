@@ -41,8 +41,6 @@ class ScanQRTable extends Component {
     try {
       const scan = JSON.parse(e.data);
       const outletIdBasket = this.props.basket.outletID;
-      console.log(this.props.basket, 'basket props');
-      console.log(scan.outletId, 'scan.outletId');
 
       if (outletIdBasket != scan.outletId) {
         this.setState({wrongOutlet: true});
@@ -56,7 +54,12 @@ class ScanQRTable extends Component {
           titleAlert: 'Opps...',
         });
       } else {
-        this.pushDataToServer(scan);
+        if (this.props.orderType == 'TAKEAWAY') {
+          this.props.dispatch(setTableType(scan));
+          Actions.pop();
+        } else {
+          this.pushDataToServer(scan);
+        }
       }
       // Actions.confirmTable({scan: scan});
       // Actions.pop();
@@ -78,9 +81,10 @@ class ScanQRTable extends Component {
   pushDataToServer = async data => {
     try {
       await this.setState({loadingPushData: true});
-      await this.props.dispatch(setTableType(data));
+      // await this.props.dispatch(setTableType(data));
       let payload = {
         tableNo: data.tableNo,
+        orderType: this.props.orderType,
         // tableNo: '10',
       };
       let results = await this.props.dispatch(submitOder(payload));
@@ -224,7 +228,8 @@ class ScanQRTable extends Component {
         </View>
 
         {this.state.responseFailed != undefined &&
-        this.state.responseFailed != null ? null : this.state.wrongOutlet != true ? (
+        this.state.responseFailed != null ? null : this.state.wrongOutlet !=
+          true ? (
           <Text
             style={{
               color: colorConfig.store.defaultColor,

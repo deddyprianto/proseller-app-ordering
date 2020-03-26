@@ -375,7 +375,7 @@ const styles = StyleSheet.create({
 
 mapStateToProps = state => ({
   campign: state.rewardsReducer.campaign.campaign,
-  totalPoint: 32.78,
+  totalPoint: state.rewardsReducer.dataPoint.totalPoint,
 });
 
 mapDispatchToProps = dispatch => ({

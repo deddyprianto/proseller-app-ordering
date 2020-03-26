@@ -82,6 +82,11 @@ class Products extends Component {
     await this.getProductsByOutlet();
     // check if basket soutlet is not same as current outlet
     await this.checkBucketExist();
+
+    //  if outlet type is Quick Service, then ignore popup select ordering mode, force set to TAKEAWAY
+    if (this.props.item.outletType == 'QUICKSERVICE') {
+      this.props.dispatch(setOrderType('TAKEAWAY'));
+    }
   };
 
   openOrderingMode = () => {
@@ -103,8 +108,14 @@ class Products extends Component {
 
   setOrderType = type => {
     const {productTemp} = this.state;
-    this.props.dispatch(setOrderType(type));
-    this.RBSheet.close();
+    // check outlet type
+    if (this.props.item.outletType == 'QUICKSERVICE') {
+      this.props.dispatch(setOrderType('TAKEAWAY'));
+      this.RBSheet.close();
+    } else {
+      this.props.dispatch(setOrderType(type));
+      this.RBSheet.close();
+    }
     if (!isEmptyObject(productTemp)) this.openModal(productTemp);
   };
 

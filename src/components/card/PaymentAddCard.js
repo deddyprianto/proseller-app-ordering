@@ -19,6 +19,7 @@ import {
   TextInput,
   FlatList,
   RefreshControl,
+  Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -30,7 +31,10 @@ import {reduxForm} from 'redux-form';
 import Loader from './../loader';
 import ProgressiveImage from '../helper/ProgressiveImage';
 import CurrencyFormatter from '../../helper/CurrencyFormatter';
-import {getAccountPayment} from '../../actions/payment.actions';
+import {
+  getAccountPayment,
+  selectedAccount,
+} from '../../actions/payment.actions';
 import {movePageIndex} from '../../actions/user.action';
 
 class PaymentAddCard extends Component {
@@ -68,6 +72,27 @@ class PaymentAddCard extends Component {
     return true;
   };
 
+  selectAccount = async item => {
+    try {
+      await this.props.dispatch(selectedAccount(item));
+      Actions.popTo('settleOrder');
+    } catch (e) {}
+  };
+
+  checkSelectedAccount = item => {
+    const {selectedAccount} = this.props;
+    try {
+      if (
+        selectedAccount != undefined &&
+        selectedAccount.accountID == item.accountID
+      )
+        return true;
+      else return false;
+    } catch (e) {
+      return false;
+    }
+  };
+
   renderCard = () => {
     const {myCardAccount, item} = this.props;
     const paymentID = item.paymentID;
@@ -77,9 +102,10 @@ class PaymentAddCard extends Component {
         renderItem={({item}) =>
           item.paymentID == paymentID ? (
             <TouchableOpacity
-              onPress={() => Actions.detailCard({item})}
+              onPress={() => this.selectAccount(item)}
               style={[
                 styles.card,
+                this.checkSelectedAccount(item) ? styles.cardSelected : null,
                 {
                   backgroundColor:
                     item.details.cardType == 'visa'
@@ -134,6 +160,7 @@ class PaymentAddCard extends Component {
   };
 
   renderEmptyCard = () => {
+    const {intlData, item} = this.props;
     return (
       <View
         style={{
@@ -143,7 +170,7 @@ class PaymentAddCard extends Component {
           marginTop: 30,
         }}>
         <Text style={{fontSize: 20, color: colorConfig.pageIndex.grayColor}}>
-          You haven't added a credit card yet.
+          You haven't added a {item.paymentName} yet.
         </Text>
       </View>
     );
@@ -181,16 +208,16 @@ class PaymentAddCard extends Component {
             ? this.renderCard()
             : this.renderEmptyCard()}
         </ScrollView>
-        <TouchableOpacity
-          onPress={() => Actions.addCard()}
-          style={styles.buttonBottomFixed}>
-          <Icon
-            size={25}
-            name={Platform.OS === 'ios' ? 'ios-add' : 'md-add'}
-            style={{color: 'white', marginRight: 10}}
-          />
-          <Text style={styles.textAddCard}>ADD {item.paymentName}</Text>
-        </TouchableOpacity>
+        {/*<TouchableOpacity*/}
+        {/*  onPress={() => Actions.addCard()}*/}
+        {/*  style={styles.buttonBottomFixed}>*/}
+        {/*  <Icon*/}
+        {/*    size={25}*/}
+        {/*    name={Platform.OS === 'ios' ? 'ios-add' : 'md-add'}*/}
+        {/*    style={{color: 'white', marginRight: 10}}*/}
+        {/*  />*/}
+        {/*  <Text style={styles.textAddCard}>ADD {item.paymentName}</Text>*/}
+        {/*</TouchableOpacity>*/}
       </View>
     );
   }
@@ -199,6 +226,7 @@ class PaymentAddCard extends Component {
 mapStateToProps = state => ({
   intlData: state.intlData,
   myCardAccount: state.cardReducer.myCardAccount.card,
+  selectedAccount: state.cardReducer.selectedAccount.selectedAccount,
 });
 
 mapDispatchToProps = dispatch => ({
@@ -375,5 +403,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: 'bold',
     marginBottom: 5,
+  },
+  cardSelected: {
+    borderWidth: 5,
+    borderColor: '#f1c40f',
   },
 });
