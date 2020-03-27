@@ -51,8 +51,13 @@ export default class PaymentSuccess extends Component {
   };
 
   goBack = async () => {
-    // Actions.pageIndex();
-    Actions.reset('pageIndex');
+    //  If this scene originates from ordering customers who are taking away, then point it back to basketball
+    const {url} = this.props;
+    if (url != undefined && url == '/cart/submitTakeAway') {
+      Actions.popTo('basket');
+    } else {
+      Actions.reset('pageIndex');
+    }
   };
 
   getDate(date) {

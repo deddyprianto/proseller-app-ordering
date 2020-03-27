@@ -32,6 +32,7 @@ import ProgressiveImage from '../helper/ProgressiveImage';
 import CurrencyFormatter from '../../helper/CurrencyFormatter';
 import {getAccountPayment} from '../../actions/payment.actions';
 import {movePageIndex} from '../../actions/user.action';
+import {isEmptyArray} from '../../helper/CheckEmpty';
 
 class ListCard extends Component {
   constructor(props) {
@@ -182,16 +183,30 @@ class ListCard extends Component {
             ? this.renderCard()
             : this.renderEmptyCard()}
         </ScrollView>
-        <TouchableOpacity
-          onPress={() => Actions.addCard()}
-          style={styles.buttonBottomFixed}>
-          <Icon
-            size={25}
-            name={Platform.OS === 'ios' ? 'ios-add' : 'md-add'}
-            style={{color: 'white', marginRight: 10}}
-          />
-          <Text style={styles.textAddCard}>ADD {item.paymentName}</Text>
-        </TouchableOpacity>
+        {item.allowMultipleAccount != undefined &&
+        item.allowMultipleAccount == true ? (
+          <TouchableOpacity
+            onPress={() => Actions.addCard()}
+            style={styles.buttonBottomFixed}>
+            <Icon
+              size={25}
+              name={Platform.OS === 'ios' ? 'ios-add' : 'md-add'}
+              style={{color: 'white', marginRight: 10}}
+            />
+            <Text style={styles.textAddCard}>ADD {item.paymentName}</Text>
+          </TouchableOpacity>
+        ) : myCardAccount != undefined && myCardAccount.length == 0 ? (
+          <TouchableOpacity
+            onPress={() => Actions.addCard()}
+            style={styles.buttonBottomFixed}>
+            <Icon
+              size={25}
+              name={Platform.OS === 'ios' ? 'ios-add' : 'md-add'}
+              style={{color: 'white', marginRight: 10}}
+            />
+            <Text style={styles.textAddCard}>ADD {item.paymentName}</Text>
+          </TouchableOpacity>
+        ) : null}
       </View>
     );
   }

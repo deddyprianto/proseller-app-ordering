@@ -101,7 +101,7 @@ class Main extends Component {
   }
 
   onIds = async device => {
-    console.log('Device info: ', device.userId);
+    console.log('Device info: ', device);
     try {
       await AsyncStorage.setItem('deviceID', device.userId);
       await this.props.dispatch(deviceUserInfo(device.userId));

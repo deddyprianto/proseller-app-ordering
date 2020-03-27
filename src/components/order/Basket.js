@@ -306,7 +306,27 @@ class Basket extends Component {
     }
   };
 
-  renderSettleButton = () => {
+  checkActivateButton = dataBasket => {
+    if (dataBasket.outlet.outletType == 'QUICKSERVICE') {
+      if (
+        dataBasket.status == 'AWAITING_COLLECTION' ||
+        dataBasket.status == 'READY_FOR_COLLECTION'
+      ) {
+        return false;
+      } else {
+        if (dataBasket.status == 'PENDING') return true;
+        else return false;
+      }
+    } else {
+      if (dataBasket.status == 'CONFIRMED') {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  };
+
+  renderSettleButtonQuickService = () => {
     const {intlData, dataBasket} = this.props;
     return (
       <View
@@ -341,25 +361,14 @@ class Basket extends Component {
         </Text>
         <View style={{flexDirection: 'row', justifyContent: 'center'}}>
           <TouchableOpacity
-            disabled={
-              (dataBasket.status == 'CONFIRMED' &&
-                dataBasket.outlet.outletType == 'QUICKSERVICE') ||
-              dataBasket.status == 'AWAITING_COLLECTION' ||
-              dataBasket.status == 'READY_FOR_COLLECTION'
-                ? true
-                : false
-            }
+            disabled={this.checkActivateButton(dataBasket) ? false : true}
             onPress={this.alertRemoveBasket}
             style={[
               styles.btnCancelBasketModal,
               {
-                backgroundColor:
-                  (dataBasket.status == 'CONFIRMED' &&
-                    dataBasket.outlet.outletType == 'QUICKSERVICE') ||
-                  dataBasket.status == 'AWAITING_COLLECTION' ||
-                  dataBasket.status == 'READY_FOR_COLLECTION'
-                    ? colorConfig.store.disableButtonError
-                    : colorConfig.store.colorError,
+                backgroundColor: this.checkActivateButton(dataBasket)
+                  ? colorConfig.store.colorError
+                  : colorConfig.store.disableButtonError,
               },
             ]}>
             <Icon
@@ -373,24 +382,94 @@ class Basket extends Component {
           </TouchableOpacity>
           <TouchableOpacity
             onPress={this.goToSettle}
-            disabled={
-              (dataBasket.status == 'CONFIRMED' &&
-                dataBasket.outlet.outletType == 'QUICKSERVICE') ||
-              dataBasket.status == 'AWAITING_COLLECTION' ||
-              dataBasket.status == 'READY_FOR_COLLECTION'
-                ? true
-                : false
-            }
+            disabled={this.checkActivateButton(dataBasket) ? false : true}
             style={[
               styles.btnAddBasketModal,
               {
-                backgroundColor:
-                  (dataBasket.status == 'CONFIRMED' &&
-                    dataBasket.outlet.outletType == 'QUICKSERVICE') ||
-                  dataBasket.status == 'AWAITING_COLLECTION' ||
-                  dataBasket.status == 'READY_FOR_COLLECTION'
-                    ? colorConfig.store.disableButton
-                    : colorConfig.store.defaultColor,
+                backgroundColor: this.checkActivateButton(dataBasket)
+                  ? colorConfig.store.defaultColor
+                  : colorConfig.store.disableButton,
+              },
+            ]}>
+            <Icon
+              size={23}
+              name={
+                Platform.OS === 'ios'
+                  ? 'ios-checkbox-outline'
+                  : 'md-checkbox-outline'
+              }
+              style={{color: 'white', marginRight: 5}}
+            />
+            <Text style={styles.textBtnBasketModal}>Settle</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  };
+
+  renderSettleButtonRestaurant = () => {
+    const {intlData, dataBasket} = this.props;
+    return (
+      <View
+        style={{
+          width: '100%',
+          paddingBottom: 20,
+          backgroundColor: 'white',
+          shadowColor: '#00000021',
+          shadowOffset: {
+            width: 0,
+            height: 9,
+          },
+          shadowOpacity: 0.9,
+          shadowRadius: 16,
+          elevation: 10,
+          // padding: 10,
+          position: 'absolute',
+          bottom: 0,
+          flexDirection: 'column',
+        }}>
+        <Text
+          style={{
+            color: colorConfig.store.title,
+            textAlign: 'right',
+            fontWeight: 'bold',
+            fontFamily: 'Lato-Bold',
+            paddingVertical: 8,
+            fontSize: 15,
+            marginRight: 20,
+          }}>
+          TOTAL : {CurrencyFormatter(this.props.dataBasket.totalNettAmount)}
+        </Text>
+        <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+          <TouchableOpacity
+            disabled={this.checkActivateButton(dataBasket) ? true : false}
+            onPress={this.alertRemoveBasket}
+            style={[
+              styles.btnCancelBasketModal,
+              {
+                backgroundColor: this.checkActivateButton(dataBasket)
+                  ? colorConfig.store.disableButtonError
+                  : colorConfig.store.colorError,
+              },
+            ]}>
+            <Icon
+              size={23}
+              name={Platform.OS === 'ios' ? 'ios-trash' : 'md-trash'}
+              style={{color: 'white', marginRight: 5}}
+            />
+            <Text style={styles.textBtnBasketModal}>
+              {intlData.messages.clear}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={this.goToSettle}
+            disabled={this.checkActivateButton(dataBasket) ? false : true}
+            style={[
+              styles.btnAddBasketModal,
+              {
+                backgroundColor: this.checkActivateButton(dataBasket)
+                  ? colorConfig.store.defaultColor
+                  : colorConfig.store.disableButton,
               },
             ]}>
             <Icon
@@ -893,8 +972,13 @@ class Basket extends Component {
         ) {
           clearInterval(this.interval);
           this.interval = undefined;
-          Actions.waitingFood();
+          Actions.replace('waitingFood');
         }
+      }
+
+      // clear table type if basket is cancelled by admin
+      if (dataBasket == undefined) {
+        this.props.dispatch(clearTableType());
       }
     } catch (e) {}
 
@@ -1121,7 +1205,9 @@ class Basket extends Component {
           ? this.props.dataBasket.status == 'PENDING' &&
             this.props.tableType == undefined
             ? this.renderButtonConfirm()
-            : this.renderSettleButton()
+            : this.props.dataBasket.outlet.outletType == 'QUICKSERVICE'
+            ? this.renderSettleButtonQuickService()
+            : this.renderSettleButtonRestaurant()
           : null}
       </View>
     );

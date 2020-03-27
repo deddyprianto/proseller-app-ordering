@@ -11,11 +11,28 @@ class ButtonViewBasket extends Component {
     super(props);
   }
 
+  openBasket = () => {
+    const {dataBasket} = this.props;
+
+    if (dataBasket != undefined) {
+      if (
+        dataBasket.status == 'AWAITING_COLLECTION' ||
+        dataBasket.status == 'READY_FOR_COLLECTION'
+      ) {
+        Actions.waitingFood();
+      } else {
+        Actions.basket();
+      }
+    } else {
+      Actions.basket();
+    }
+  };
+
   render() {
     // console.log(this.props.dataBasket, 'update this.props.dataBasket');
     return (
       <TouchableOpacity
-        onPress={() => Actions.basket()}
+        onPress={this.openBasket}
         style={{
           position: 'absolute',
           zIndex: 2,

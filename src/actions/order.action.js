@@ -94,6 +94,19 @@ export const setTableType = type => {
   };
 };
 
+export const clearTableType = type => {
+  return async dispatch => {
+    try {
+      dispatch({
+        type: 'TABLE_TYPE',
+        tableType: undefined,
+      });
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
 export const submitOder = payload => {
   return async (dispatch, getState) => {
     try {

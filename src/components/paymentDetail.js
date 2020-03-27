@@ -747,7 +747,7 @@ class PaymentDetail extends Component {
 
             <View style={{marginTop: 50}} />
             <SwipeButton
-              disabled={selectedAccount == undefined ? true : false}
+              // disabled={selectedAccount == undefined ? true : false}
               disabledThumbIconBackgroundColor="#FFFFFF"
               disabledThumbIconBorderColor={
                 colorConfig.pageIndex.activeTintColor

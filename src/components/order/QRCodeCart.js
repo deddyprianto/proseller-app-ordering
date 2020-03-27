@@ -16,12 +16,16 @@ import colorConfig from '../../config/colorConfig';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
 import {getBasket} from '../../actions/order.action';
-import LottieView from 'lottie-react-native';
+import appConfig from '../../config/appConfig';
+import QRCode from 'react-native-qrcode-svg';
 
 class WaitingFood extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      screenWidth: Dimensions.get('window').width,
+      dataBasket: this.props.dataBasket
+    };
   }
 
   componentDidMount = async () => {
@@ -31,11 +35,7 @@ class WaitingFood extends Component {
       await this.setState({loading: false});
 
       // check if status basket for TAKE AWAY IS CONFIRMED, then request continoustly to get basket
-      if (
-        this.props.dataBasket != undefined &&
-        this.props.dataBasket.status == 'AWAITING_COLLECTION' &&
-        this.props.dataBasket.outlet.outletType == 'QUICKSERVICE'
-      ) {
+      if (this.props.dataBasket != undefined) {
         clearInterval(this.interval);
         this.interval = setInterval(() => {
           this.props.dispatch(getBasket());
@@ -80,79 +80,8 @@ class WaitingFood extends Component {
     Actions.pop();
   };
 
-  renderBottomButton = () => {
-    const {intlData, dataBasket} = this.props;
-    // if basket is canceled by admin, then give template status
-    if (dataBasket == undefined) {
-      dataBasket.status == 'READY_FOR_COLLECTION';
-    }
-    return (
-      <View
-        style={{
-          width: '100%',
-          paddingBottom: 20,
-          backgroundColor: 'white',
-          shadowColor: '#00000021',
-          shadowOffset: {
-            width: 0,
-            height: 9,
-          },
-          shadowOpacity: 0.9,
-          shadowRadius: 16,
-          elevation: 10,
-          // padding: 10,
-          position: 'absolute',
-          bottom: 0,
-          flexDirection: 'column',
-        }}>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'center',
-            paddingTop: 20,
-          }}>
-          <TouchableOpacity
-            onPress={() => Actions.basket()}
-            style={styles.btnCancelBasketModal}>
-            <Icon
-              size={21}
-              name={Platform.OS === 'ios' ? 'ios-cart' : 'md-cart'}
-              style={{color: 'white', marginRight: 5}}
-            />
-            <Text style={styles.textBtnBasketModal}>View Cart</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => Actions.replace('QRCodeCart')}
-            disabled={
-              dataBasket.status == 'READY_FOR_COLLECTION' ? false : true
-            }
-            style={[
-              styles.btnAddBasketModal,
-              {
-                backgroundColor:
-                  dataBasket.status == 'READY_FOR_COLLECTION'
-                    ? colorConfig.store.defaultColor
-                    : colorConfig.store.disableButton,
-              },
-            ]}>
-            <Icon
-              size={21}
-              name={Platform.OS === 'ios' ? 'ios-qr-scanner' : 'md-qr-scanner'}
-              style={{color: 'white', marginRight: 5}}
-            />
-            <Text style={styles.textBtnBasketModal}>Show QR Code</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    );
-  };
-
   renderTextWaiting = () => {
-    const {intlData, dataBasket} = this.props;
-    // if basket is canceled by admin, then give template status
-    if (dataBasket == undefined) {
-      dataBasket.status == 'READY_FOR_COLLECTION';
-    }
+    const {intlData} = this.props;
     return (
       <View
         style={{
@@ -161,57 +90,29 @@ class WaitingFood extends Component {
           marginHorizontal: 15,
           marginVertical: 30,
         }}>
-        {dataBasket.status == 'READY_FOR_COLLECTION' ? (
-          <Text
-            style={{
-              fontSize: 23,
-              color: colorConfig.store.defaultColor,
-              fontWeight: 'bold',
-              fontFamily: 'Lato-Bold',
-              textAlign: 'center',
-            }}>
-            Yeay, your order is ready. {'\n'} {'\n'}
-            <Text style={{color: colorConfig.pageIndex.grayColor}}>
-              Please come to the cashier and tap the QR Code button below.
-            </Text>
-          </Text>
-        ) : (
-          <Text
-            style={{
-              fontSize: 25,
-              color: colorConfig.pageIndex.inactiveTintColor,
-              fontWeight: 'bold',
-              textAlign: 'center',
-              fontFamily: 'Lato-Bold',
-            }}>
-            Please wait, We are preparing your food in the kitchen.
-          </Text>
-        )}
+        <Text
+          style={{
+            fontSize: 23,
+            color: colorConfig.store.defaultColor,
+            fontWeight: 'bold',
+            fontFamily: 'Lato-Bold',
+            textAlign: 'center',
+          }}>
+          Show QRCode to the cashier.
+        </Text>
       </View>
     );
   };
 
   render() {
     const {intlData, dataBasket} = this.props;
-    console.log('KODISI BASKET ', dataBasket);
     try {
-      if (
-        dataBasket.status == 'READY_FOR_COLLECTION' &&
-        this.interval != undefined &&
-        dataBasket.outlet.outletType == 'QUICKSERVICE'
-      ) {
+      if (dataBasket == undefined) {
         clearInterval(this.interval);
         this.interval = undefined;
+        Actions.reset('pageIndex');
       }
-    } catch (e) {
-      clearInterval(this.interval);
-      this.interval = undefined;
-    }
-
-    // if basket is canceled by admin, then push back to basket page
-    if (dataBasket == undefined) {
-      Actions.replace('basket');
-    }
+    } catch (e) {}
 
     return (
       <View style={styles.container}>
@@ -224,27 +125,21 @@ class WaitingFood extends Component {
               }
               style={styles.btnBackIcon}
             />
-            <Text style={styles.btnBackText}>Waiting Order</Text>
+            <Text style={styles.btnBackText}>Cart QRCode</Text>
           </TouchableOpacity>
           <View style={styles.line} />
         </View>
-        <View style={{height: '40%'}}>
-          {dataBasket != undefined ? (
-            <LottieView
-              speed={1}
-              source={
-                dataBasket.status == 'READY_FOR_COLLECTION'
-                  ? require('../../assets/animate/food-ready')
-                  : require('../../assets/animate/cooking')
-              }
-              autoPlay
-              loop={true}
-            />
-          ) : null}
+        {this.renderTextWaiting()}
+        <View style={styles.card}>
+          <QRCode
+            value={JSON.stringify({
+              cardID: this.state.dataBasket.id,
+            })}
+            logo={appConfig.appLogoQR}
+            logoSize={this.state.screenWidth / 6 - 20}
+            size={this.state.screenWidth - 60}
+          />
         </View>
-        {dataBasket != undefined ? this.renderTextWaiting() : null}
-
-        {dataBasket != undefined ? this.renderBottomButton() : null}
       </View>
     );
   }
@@ -293,19 +188,10 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
   },
   card: {
-    marginVertical: 10,
-    borderColor: colorConfig.pageIndex.inactiveTintColor,
-    borderWidth: 1,
-    borderRadius: 5,
-    backgroundColor: colorConfig.pageIndex.backgroundColor,
-    shadowColor: '#00000021',
-    shadowOffset: {
-      width: 0,
-      height: 9,
-    },
-    shadowOpacity: 0.7,
-    shadowRadius: 7.49,
-    elevation: 12,
+    marginLeft: 50,
+    marginRight: 50,
+    marginTop: 50,
+    alignItems: 'center',
   },
   item: {
     borderBottomColor: colorConfig.pageIndex.inactiveTintColor,

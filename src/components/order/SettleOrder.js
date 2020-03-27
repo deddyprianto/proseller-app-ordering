@@ -259,8 +259,10 @@ class SettleOrder extends Component {
       console.log('reponse pembayaran settle order ', response);
       if (response.success) {
         // go to payment success
+        const {url} = this.props;
         Actions.paymentSuccess({
           intlData,
+          url,
           dataRespons: response.responseBody.data,
         });
       } else {
@@ -736,7 +738,7 @@ class SettleOrder extends Component {
 
             <View style={{marginTop: 50}} />
             <SwipeButton
-              disabled={selectedAccount == undefined ? true : false}
+              // disabled={selectedAccount == undefined ? true : false}
               disabledThumbIconBackgroundColor="#FFFFFF"
               disabledThumbIconBorderColor={
                 colorConfig.pageIndex.activeTintColor

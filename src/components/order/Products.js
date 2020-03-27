@@ -1141,59 +1141,7 @@ class Products extends Component {
             </TouchableOpacity>
           </View>
           {/* Button Close */}
-          {this.state.indexRender ? (
-            <View
-              style={[
-                {
-                  backgroundColor: '#e1e4e8',
-                  paddingBottom: 10,
-                  marginBottom: 10,
-                  position: 'absolute',
-                  zIndex: 2,
-                  top: this.heightNavBar,
-                  width: '100%',
-                },
-              ]}>
-              <Picker
-                selectedValue={this.state.selectedCategory}
-                style={{
-                  height: 40,
-                  padding: 5,
-                  marginHorizontal: 10,
-                  marginTop: 10,
-                  textAlign: 'center',
-                  fontFamily: 'Lato-Bold',
-                  backgroundColor: colorConfig.pageIndex.backgroundColor,
-                }}
-                onValueChange={(itemValue, itemIndex) => {
-                  try {
-                    if (itemIndex > 0) {
-                      this.products = [];
-                      this.setState({idx: 0});
-                      this.products.push(this.state.products[itemIndex - 1]);
-                    } else {
-                      this.products = [];
-                      this.products.push(this.state.products[0]);
-                    }
 
-                    this.setState({selectedCategory: itemValue});
-                  } catch (e) {
-                    console.log(e);
-                  }
-                }}>
-                <Picker.Item label="ALL PRODUCTS" value="ALL PRODUCTS" />
-                {this.state.products != undefined
-                  ? this.state.products.map((cat, idx) => (
-                      <Picker.Item
-                        key={idx}
-                        label={cat.name}
-                        value={cat.name}
-                      />
-                    ))
-                  : null}
-              </Picker>
-            </View>
-          ) : null}
           {this.state.products != undefined ? (
             !isEmptyArray(products) ? (
               loadProducts ? (

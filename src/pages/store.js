@@ -326,11 +326,15 @@ class Store extends Component {
   openBasket = () => {
     const {dataBasket} = this.props;
 
-    if (
-      dataBasket.status == 'AWAITING_COLLECTION' ||
-      dataBasket.status == 'READY_FOR_COLLECTION'
-    ) {
-      Actions.waitingFood();
+    if (dataBasket != undefined) {
+      if (
+        dataBasket.status == 'AWAITING_COLLECTION' ||
+        dataBasket.status == 'READY_FOR_COLLECTION'
+      ) {
+        Actions.waitingFood();
+      } else {
+        Actions.basket();
+      }
     } else {
       Actions.basket();
     }

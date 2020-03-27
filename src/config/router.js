@@ -58,6 +58,7 @@ import HostedPayment from '../components/card/HostedPayment';
 import DetailCard from '../components/card/DetailCard';
 import PaymentMethods from '../components/card/PaymentMethods';
 import PaymentAddCard from '../components/card/PaymentAddCard';
+import QRCodeCart from '../components/order/QRCodeCart';
 
 let backPressed = 0;
 
@@ -158,6 +159,8 @@ export default class Routes extends Component {
             <Scene key="scanQRTable" component={ScanQRTable} />
             <Scene key="confirmTable" component={ConfirmTable} />
             <Scene key="settleOrder" component={SettleOrder} />
+            <Scene key="waitingFood" component={WaitingFood} />
+            <Scene key="QRCodeCart" component={QRCodeCart} />
 
             <Scene key="listCard" component={ListCard} />
             <Scene key="addCard" component={AddCard} />
@@ -165,7 +168,6 @@ export default class Routes extends Component {
             <Scene key="detailCard" component={DetailCard} />
             <Scene key="paymentMethods" component={PaymentMethods} />
             <Scene key="paymentAddCard" component={PaymentAddCard} />
-            <Scene key="waitingFood" component={WaitingFood} />
           </Scene>
         </Scene>
       </Router>
