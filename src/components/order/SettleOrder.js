@@ -411,7 +411,9 @@ class SettleOrder extends Component {
 
   selectedPaymentMethod = selectedAccount => {
     const {intlData, companyInfo} = this.props;
-    const paymentTypes = companyInfo.paymentTypes;
+    let paymentTypes = [];
+    if (companyInfo.paymentTypes != undefined)
+      paymentTypes = companyInfo.paymentTypes;
     try {
       if (!isEmptyArray(paymentTypes)) {
         let paymentMethod = paymentTypes.find(

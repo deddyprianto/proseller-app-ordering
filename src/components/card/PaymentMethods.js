@@ -86,7 +86,9 @@ class PaymentMethods extends Component {
 
   renderPaymentMethodOptions = () => {
     const {intlData, myCardAccount, companyInfo} = this.props;
-    const paymentTypes = companyInfo.paymentTypes;
+    let paymentTypes = [];
+    if (companyInfo.paymentTypes != undefined)
+      paymentTypes = companyInfo.paymentTypes;
     if (!isEmptyArray(paymentTypes))
       return (
         <FlatList
@@ -116,7 +118,6 @@ class PaymentMethods extends Component {
 
   render() {
     const {intlData, companyInfo} = this.props;
-    const paymentTypes = companyInfo.paymentTypes;
     return (
       <View style={styles.container}>
         {this.state.loading && <Loader />}
