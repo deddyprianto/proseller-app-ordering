@@ -148,7 +148,8 @@ class Basket extends Component {
       if (
         this.props.dataBasket != undefined &&
         this.props.dataBasket.status == 'CONFIRMED' &&
-        this.props.dataBasket.outlet.outletType == 'QUICKSERVICE'
+        (this.props.dataBasket.outlet.outletType == 'QUICKSERVICE' ||
+          this.props.dataBasket.orderingMode == 'TAKEAWAY')
       ) {
         clearInterval(this.interval);
         this.interval = setInterval(() => {
@@ -525,8 +526,10 @@ class Basket extends Component {
 
       // set url to pay
       let url;
-      const {orderType} = this.props;
+      const {orderType, tableType} = this.props;
       if (orderType == 'TAKEAWAY') {
+        pembayaran.tableNo = tableType.tableNo;
+        pembayaran.orderingMode = 'TAKEAWAY';
         url = '/cart/submitTakeAway';
       } else {
         url = '/cart/settle';
@@ -963,7 +966,7 @@ class Basket extends Component {
           dataBasket.status == 'CONFIRMED' &&
           this.interval != undefined &&
           dataBasket.outlet.outletType != 'QUICKSERVICE' &&
-          orderType != 'TAKEAWAY'
+          dataBasket.orderingMode != 'TAKEAWAY'
         ) {
           Alert.alert('Congratulation', 'Your order has been CONFIRMED');
           clearInterval(this.interval);
@@ -975,7 +978,7 @@ class Basket extends Component {
           dataBasket.status == 'AWAITING_COLLECTION' &&
           this.interval != undefined &&
           (dataBasket.outlet.outletType == 'QUICKSERVICE' ||
-            orderType == 'TAKEAWAY')
+            dataBasket.orderingMode == 'TAKEAWAY')
         ) {
           clearInterval(this.interval);
           this.interval = undefined;
@@ -1167,7 +1170,9 @@ class Basket extends Component {
                           padding: 5,
                         },
                       ]}>
-                      {this.props.orderType}
+                      {this.props.dataBasket.orderingMode != undefined
+                        ? this.props.dataBasket.orderingMode
+                        : this.props.orderType}
                     </Text>
                   ) : (
                     <Text
@@ -1180,7 +1185,9 @@ class Basket extends Component {
                           padding: 5,
                         },
                       ]}>
-                      {this.props.orderType}
+                      {this.props.dataBasket.orderingMode != undefined
+                        ? this.props.dataBasket.orderingMode
+                        : this.props.orderType}
                     </Text>
                   )}
                 </TouchableOpacity>

@@ -84,7 +84,7 @@ class ScanQRTable extends Component {
       // await this.props.dispatch(setTableType(data));
       let payload = {
         tableNo: data.tableNo,
-        orderType: this.props.orderType,
+        orderingMode: this.props.orderType,
         // tableNo: '10',
       };
       let results = await this.props.dispatch(submitOder(payload));

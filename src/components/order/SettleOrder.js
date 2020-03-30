@@ -252,6 +252,13 @@ class SettleOrder extends Component {
           pembayaran.statusAdd = 'addPoint';
         }
       }
+
+      // if ordering mode is exist
+      if (this.props.pembayaran.orderingMode != undefined) {
+        pembayaran.orderingMode = this.props.pembayaran.orderingMode;
+        pembayaran.tableNo = this.props.pembayaran.tableNo;
+      }
+
       // get url
       const {url} = this.props;
       const response = await this.props.dispatch(settleOrder(pembayaran, url));

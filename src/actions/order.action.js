@@ -334,7 +334,6 @@ export const settleOrder = (payload, url) => {
       } = state;
 
       console.log(payload, 'payload settle order');
-      console.log(url, 'URL SETTLE ORDER');
       const response = await fetchApiOrder(url, 'POST', payload, 200, token);
       console.log(response, 'response settle order');
       // remove table type
