@@ -689,52 +689,52 @@ class SettleOrder extends Component {
             </View>
             {this.props.campaignActive ? this.renderUsePoint() : null}
 
-            <View
-              style={{
-                marginTop: 12,
-                marginBottom: 10,
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                flexDirection: 'row',
-              }}>
-              <Text
-                style={{
-                  fontSize: 17,
-                  fontFamily: 'Lato-Bold',
-                  color: colorConfig.pageIndex.grayColor,
-                }}>
-                Payment Method
-              </Text>
-              <TouchableOpacity
-                style={
-                  selectedAccount != undefined
-                    ? styles.btnMethodSelected
-                    : styles.btnMethodUnselected
-                }
-                onPress={() => Actions.paymentMethods()}>
-                <Icon
-                  size={20}
-                  name={Platform.OS === 'ios' ? 'ios-cash' : 'md-cash'}
-                  style={{
-                    color:
-                      selectedAccount != undefined
-                        ? colorConfig.store.textWhite
-                        : colorConfig.store.defaultColor,
-                    marginRight: 8,
-                  }}
-                />
-                <Text
-                  style={
-                    selectedAccount != undefined
-                      ? styles.descMethodSelected
-                      : styles.descMethodUnselected
-                  }>
-                  {selectedAccount != undefined
-                    ? this.selectedPaymentMethod(selectedAccount)
-                    : 'Select Methods'}
-                </Text>
-              </TouchableOpacity>
-            </View>
+            {/*<View*/}
+            {/*  style={{*/}
+            {/*    marginTop: 12,*/}
+            {/*    marginBottom: 10,*/}
+            {/*    alignItems: 'center',*/}
+            {/*    justifyContent: 'space-between',*/}
+            {/*    flexDirection: 'row',*/}
+            {/*  }}>*/}
+            {/*  <Text*/}
+            {/*    style={{*/}
+            {/*      fontSize: 17,*/}
+            {/*      fontFamily: 'Lato-Bold',*/}
+            {/*      color: colorConfig.pageIndex.grayColor,*/}
+            {/*    }}>*/}
+            {/*    Payment Method*/}
+            {/*  </Text>*/}
+            {/*  <TouchableOpacity*/}
+            {/*    style={*/}
+            {/*      selectedAccount != undefined*/}
+            {/*        ? styles.btnMethodSelected*/}
+            {/*        : styles.btnMethodUnselected*/}
+            {/*    }*/}
+            {/*    onPress={() => Actions.paymentMethods()}>*/}
+            {/*    <Icon*/}
+            {/*      size={20}*/}
+            {/*      name={Platform.OS === 'ios' ? 'ios-cash' : 'md-cash'}*/}
+            {/*      style={{*/}
+            {/*        color:*/}
+            {/*          selectedAccount != undefined*/}
+            {/*            ? colorConfig.store.textWhite*/}
+            {/*            : colorConfig.store.defaultColor,*/}
+            {/*        marginRight: 8,*/}
+            {/*      }}*/}
+            {/*    />*/}
+            {/*    <Text*/}
+            {/*      style={*/}
+            {/*        selectedAccount != undefined*/}
+            {/*          ? styles.descMethodSelected*/}
+            {/*          : styles.descMethodUnselected*/}
+            {/*      }>*/}
+            {/*      {selectedAccount != undefined*/}
+            {/*        ? this.selectedPaymentMethod(selectedAccount)*/}
+            {/*        : 'Select Methods'}*/}
+            {/*    </Text>*/}
+            {/*  </TouchableOpacity>*/}
+            {/*</View>*/}
 
             <View style={{marginTop: 50}} />
             <SwipeButton

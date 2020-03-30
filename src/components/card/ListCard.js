@@ -89,9 +89,7 @@ class ListCard extends Component {
                 },
               ]}>
               <View style={styles.headingCard}>
-                <Text style={styles.cardText}>
-                  {item.details.cardType.toUpperCase()}
-                </Text>
+                <Text style={styles.cardText}>{item.details.cardType}</Text>
                 {/*<Text style={styles.cardText}>My First Card</Text>*/}
                 <Icon
                   size={32}

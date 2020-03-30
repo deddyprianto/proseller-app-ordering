@@ -24,6 +24,7 @@ import {
   removeBasket,
   setOrderType,
   getProductByOutlet,
+  clearTableType,
 } from '../../actions/order.action';
 import Loader from '../../components/loader';
 import ModalOrder from '../../components/order/Modal';
@@ -307,7 +308,11 @@ class Basket extends Component {
   };
 
   checkActivateButton = dataBasket => {
-    if (dataBasket.outlet.outletType == 'QUICKSERVICE') {
+    const {orderType} = this.props;
+    if (
+      dataBasket.outlet.outletType == 'QUICKSERVICE' ||
+      orderType == 'TAKEAWAY'
+    ) {
       if (
         dataBasket.status == 'AWAITING_COLLECTION' ||
         dataBasket.status == 'READY_FOR_COLLECTION'
@@ -949,7 +954,7 @@ class Basket extends Component {
   };
 
   render() {
-    const {intlData, dataBasket} = this.props;
+    const {intlData, dataBasket, orderType} = this.props;
     // give message to user if order has been confirmed
     try {
       if (dataBasket != undefined) {
@@ -957,7 +962,8 @@ class Basket extends Component {
         if (
           dataBasket.status == 'CONFIRMED' &&
           this.interval != undefined &&
-          dataBasket.outlet.outletType != 'QUICKSERVICE'
+          dataBasket.outlet.outletType != 'QUICKSERVICE' &&
+          orderType != 'TAKEAWAY'
         ) {
           Alert.alert('Congratulation', 'Your order has been CONFIRMED');
           clearInterval(this.interval);
@@ -968,7 +974,8 @@ class Basket extends Component {
         if (
           dataBasket.status == 'AWAITING_COLLECTION' &&
           this.interval != undefined &&
-          dataBasket.outlet.outletType == 'QUICKSERVICE'
+          (dataBasket.outlet.outletType == 'QUICKSERVICE' ||
+            orderType == 'TAKEAWAY')
         ) {
           clearInterval(this.interval);
           this.interval = undefined;
@@ -1205,7 +1212,8 @@ class Basket extends Component {
           ? this.props.dataBasket.status == 'PENDING' &&
             this.props.tableType == undefined
             ? this.renderButtonConfirm()
-            : this.props.dataBasket.outlet.outletType == 'QUICKSERVICE'
+            : this.props.dataBasket.outlet.outletType == 'QUICKSERVICE' ||
+              this.props.orderType == 'TAKEAWAY'
             ? this.renderSettleButtonQuickService()
             : this.renderSettleButtonRestaurant()
           : null}
