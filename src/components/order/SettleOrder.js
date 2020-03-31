@@ -274,26 +274,26 @@ class SettleOrder extends Component {
         });
       } else {
         //  cancel voucher and pont selected
+        this.setState({loading: false});
         this.cencelPoint();
         this.cencelVoucher();
-        this.setState({
-          showAlert: true,
-          pesanAlert: response.responseBody.data.message,
-          titleAlert: 'Oopss!',
-          failedPay: true,
-        });
+        if (
+          response.responseBody.data != undefined &&
+          response.responseBody.data.message != undefined
+        ) {
+          Alert.alert('Sorry', response.responseBody.data.message);
+        } else {
+          Alert.alert(
+            'Sorry',
+            'Something went wrong with server, please try again',
+          );
+        }
       }
-      this.setState({loading: false});
     } catch (e) {
       //  cancel voucher and pont selected
       this.cencelPoint();
       this.cencelVoucher();
-      this.setState({
-        showAlert: true,
-        pesanAlert: 'Something went wrong, please try again.',
-        titleAlert: 'Oopss!',
-        failedPay: true,
-      });
+      Alert.alert('Oppss', 'Something went wrong, please try again');
       this.setState({loading: false});
     }
   };

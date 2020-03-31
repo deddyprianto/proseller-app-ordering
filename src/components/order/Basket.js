@@ -136,7 +136,8 @@ class Basket extends Component {
       // check if status basket is submitted, then request continoustly to get basket
       if (
         this.props.dataBasket != undefined &&
-        this.props.dataBasket.status == 'SUBMITTED'
+        this.props.dataBasket.status == 'SUBMITTED' &&
+        this.props.dataBasket.orderingMode == 'DINEIN'
       ) {
         clearInterval(this.interval);
         this.interval = setInterval(() => {
@@ -144,10 +145,11 @@ class Basket extends Component {
         }, 2000);
       }
 
-      // check if status basket for TAKE AWAY IS CONFIRMED, then request continoustly to get basket
+      // check if status basket for TAKE AWAY IS CONFIRMED or SUBMITTED, then request continoustly to get basket
       if (
         this.props.dataBasket != undefined &&
-        this.props.dataBasket.status == 'CONFIRMED' &&
+        (this.props.dataBasket.status == 'CONFIRMED' ||
+          this.props.dataBasket.status == 'SUBMITTED') &&
         (this.props.dataBasket.outlet.outletType == 'QUICKSERVICE' ||
           this.props.dataBasket.orderingMode == 'TAKEAWAY')
       ) {
