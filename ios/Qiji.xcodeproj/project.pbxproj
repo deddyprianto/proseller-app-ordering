@@ -56,7 +56,6 @@
 		F0AD2693D06D45A9A2BC236F /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 03D612D6E6AE46A49C9EF182 /* Octicons.ttf */; };
 		7380820ED43D4A6C88BD10D7 /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7774919F44DB41218B6811A4 /* SimpleLineIcons.ttf */; };
 		83FEC3D1D7DB484DA4762AD0 /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 33426DB5F23B4F3886B2230F /* Zocial.ttf */; };
-		6DFE1789FF8E4BBEB9AAB88D /* libRNDeviceBrightness.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A5CAF1D03389434395BCB878 /* libRNDeviceBrightness.a */; };
 		B6FA351076D44777B6129C53 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B8783AC08D84065AC0B2230 /* libz.tbd */; };
 /* End PBXBuildFile section */
 
@@ -134,8 +133,6 @@
 		03D612D6E6AE46A49C9EF182 /* Octicons.ttf */ = {isa = PBXFileReference; name = "Octicons.ttf"; path = "../node_modules/react-native-vector-icons/Fonts/Octicons.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		7774919F44DB41218B6811A4 /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; name = "SimpleLineIcons.ttf"; path = "../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		33426DB5F23B4F3886B2230F /* Zocial.ttf */ = {isa = PBXFileReference; name = "Zocial.ttf"; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		CEB8721AC2004A0F8DF5D40A /* RNDeviceBrightness.xcodeproj */ = {isa = PBXFileReference; name = "RNDeviceBrightness.xcodeproj"; path = "../node_modules/react-native-device-brightness/RNDeviceBrightness.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
-		A5CAF1D03389434395BCB878 /* libRNDeviceBrightness.a */ = {isa = PBXFileReference; name = "libRNDeviceBrightness.a"; path = "libRNDeviceBrightness.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 		4B8783AC08D84065AC0B2230 /* libz.tbd */ = {isa = PBXFileReference; name = "libz.tbd"; path = "usr/lib/libz.tbd"; sourceTree = SDKROOT; fileEncoding = undefined; lastKnownFileType = sourcecode.text-based-dylib-definition; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
@@ -151,7 +148,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6DFE1789FF8E4BBEB9AAB88D /* libRNDeviceBrightness.a in Frameworks */,
 				B6FA351076D44777B6129C53 /* libz.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -212,14 +208,6 @@
 				4B8783AC08D84065AC0B2230 /* libz.tbd */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
-			isa = PBXGroup;
-			children = (
-				CEB8721AC2004A0F8DF5D40A /* RNDeviceBrightness.xcodeproj */,
-			);
-			name = Libraries;
 			sourceTree = "<group>";
 		};
 		83CBB9F61A601CBA00E9B192 = {
@@ -672,10 +660,6 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(SRCROOT)/..\node_modules\react-native-device-brightness\RNDeviceBrightness",
-				);
 			};
 			name = Debug;
 		};
@@ -699,10 +683,6 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(SRCROOT)/..\node_modules\react-native-device-brightness\RNDeviceBrightness",
-				);
 			};
 			name = Release;
 		};
@@ -722,10 +702,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = Qiji;
 				VERSIONING_SYSTEM = "apple-generic";
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(SRCROOT)/..\node_modules\react-native-device-brightness\RNDeviceBrightness",
-				);
 			};
 			name = Debug;
 		};
@@ -744,10 +720,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = Qiji;
 				VERSIONING_SYSTEM = "apple-generic";
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(SRCROOT)/..\node_modules\react-native-device-brightness\RNDeviceBrightness",
-				);
 			};
 			name = Release;
 		};
@@ -778,10 +750,6 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-				);
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(SRCROOT)/..\node_modules\react-native-device-brightness\RNDeviceBrightness",
 				);
 			};
 			name = Debug;
@@ -814,10 +782,6 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(SRCROOT)/..\node_modules\react-native-device-brightness\RNDeviceBrightness",
-				);
 			};
 			name = Release;
 		};
@@ -848,10 +812,6 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(SRCROOT)/..\node_modules\react-native-device-brightness\RNDeviceBrightness",
-				);
 			};
 			name = Debug;
 		};
@@ -881,10 +841,6 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-				);
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(SRCROOT)/..\node_modules\react-native-device-brightness\RNDeviceBrightness",
 				);
 			};
 			name = Release;
