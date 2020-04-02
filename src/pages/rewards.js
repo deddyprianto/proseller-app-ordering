@@ -34,6 +34,7 @@ import CryptoJS from 'react-native-crypto-js';
 import awsConfig from '../config/awsConfig';
 import {getCompanyInfo} from '../actions/stores.action';
 import {getAccountPayment} from '../actions/payment.actions';
+import OneSignal from 'react-native-onesignal';
 
 class Rewards extends Component {
   constructor(props) {
@@ -52,6 +53,23 @@ class Rewards extends Component {
       isLoading: true,
       statusGetData: true,
     };
+
+    OneSignal.addEventListener('received', this.onReceived);
+    OneSignal.addEventListener('opened', this.onOpened);
+  }
+
+  onReceived(notification) {
+    console.log('ADA NOTIF NICH ', notification);
+  }
+
+  onOpened(openResult) {
+    console.log('PESAN NOTIF: ', openResult.notification.payload.body);
+    console.log(
+      'Data PESAN NOTIF: ',
+      openResult.notification.payload.additionalData,
+    );
+    console.log('isActive PESAN NOTIF: ', openResult.notification.isAppInFocus);
+    console.log('openResult PESAN NOTIF: ', openResult);
   }
 
   disableStatusGetData = () => {
@@ -62,31 +80,11 @@ class Rewards extends Component {
     this.setState({statusGetData: true});
   };
 
-  setValueInterval = () => {
-    clearInterval(this.interval);
-    this.interval = setInterval(() => {
-      this.refreshStampsAndPoints();
-      if (!this.state.statusGetData) clearInterval(this.interval);
-    }, 11000);
-  };
-
   componentDidMount = async () => {
     await this.getDataRewards();
 
     await this.props.dispatch(getCompanyInfo());
     await this.props.dispatch(getAccountPayment());
-
-    // make event to detect page focus or not
-    const {navigation} = this.props;
-    this.focusListener = navigation.addListener('willFocus', async () => {
-      await this.props.dispatch(movePageIndex(true));
-      this.setState({statusGetData: true});
-    });
-
-    this.blurListener = navigation.addListener('didBlur', async () => {
-      await this.props.dispatch(movePageIndex(false));
-      this.setState({statusGetData: false});
-    });
   };
 
   componentWillUnmount(): void {
@@ -190,10 +188,6 @@ class Rewards extends Component {
   };
 
   render() {
-    // check if status get data is true, then refresh stamps & point
-    if (this.state.statusGetData) {
-      this.setValueInterval();
-    }
     const {campaignActive} = this.props;
 
     const {intlData} = this.props;
