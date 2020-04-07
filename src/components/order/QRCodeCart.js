@@ -133,7 +133,7 @@ class WaitingFood extends Component {
         <View style={styles.card}>
           <QRCode
             value={JSON.stringify({
-              cardID: this.state.dataBasket.id,
+              cartID: this.state.dataBasket.id,
             })}
             logo={appConfig.appLogoQR}
             logoSize={this.state.screenWidth / 6 - 20}
