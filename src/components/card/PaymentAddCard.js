@@ -74,8 +74,13 @@ class PaymentAddCard extends Component {
 
   selectAccount = async item => {
     try {
+      const {page} = this.props;
       await this.props.dispatch(selectedAccount(item));
-      Actions.popTo('settleOrder');
+      if (page == 'paymentDetail') {
+        Actions.popTo('paymentDetail');
+      } else {
+        Actions.popTo('settleOrder');
+      }
     } catch (e) {}
   };
 
@@ -115,7 +120,7 @@ class PaymentAddCard extends Component {
               ]}>
               <View style={styles.headingCard}>
                 <Text style={styles.cardText}>
-                  {item.details.cardType.toUpperCase()}
+                  {item.details.cardIssuer.toUpperCase()}
                 </Text>
                 {/*<Text style={styles.cardText}>My First Card</Text>*/}
                 <Icon

@@ -25,6 +25,7 @@ import {Actions} from 'react-native-router-flux';
 import {dataTransaction} from '../actions/sales.action';
 import {notifikasi} from '../actions/auth.actions';
 import {movePageIndex} from '../actions/user.action';
+import {isEmptyArray} from '../helper/CheckEmpty';
 
 class HistoryPayment extends Component {
   constructor(props) {
@@ -137,7 +138,7 @@ class HistoryPayment extends Component {
 
   render() {
     const {intlData} = this.props;
-    console.log('this.props.pointTransaction', this.props.pointTransaction);
+      console.log('this.props.pointTransaction', this.props.pointTransaction);
     return (
       <>
         {this.props.pointTransaction == undefined ||
@@ -181,13 +182,13 @@ class HistoryPayment extends Component {
                           </Text>
                         ) : null}
                       </View>
-                      {item.stamps.amount > 1 ? (
+                      {!isEmptyArray(item.stamps) && item.stamps.length > 1 ? (
                         <View style={styles.sejajarSpaceFlexEnd}>
                           <Text style={styles.itemTypeStamps}>
                             <Text style={{color: colorConfig.store.title}}>
                               x{' '}
                             </Text>
-                            {item.point + intlData.messages.stamp}
+                            {item.stamps.length + ' ' + intlData.messages.stamp}
                           </Text>
                         </View>
                       ) : null}

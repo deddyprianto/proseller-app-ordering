@@ -86,6 +86,18 @@ const deviceUserInfo = (state = {}, action) => {
   }
 };
 
+const defaultPaymentAccount = (state = {}, action) => {
+  switch (action.type) {
+    case 'GET_USER_DEFAULT_ACCOUNT':
+      return {
+        defaultAccount: action.defaultAccount,
+      };
+
+    default:
+      return state;
+  }
+};
+
 const userPosition = (state = {}, action) => {
   switch (action.type) {
     case 'GET_USER_POSITION':
@@ -129,4 +141,5 @@ export default combineReducers({
   userPosition,
   statusPageIndex,
   getCompanyInfo,
+  defaultPaymentAccount,
 });

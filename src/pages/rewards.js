@@ -55,22 +55,12 @@ class Rewards extends Component {
     };
 
     OneSignal.addEventListener('received', this.onReceived);
-    OneSignal.addEventListener('opened', this.onOpened);
   }
 
-  onReceived(notification) {
-    console.log('ADA NOTIF NICH ', notification);
-  }
-
-  onOpened(openResult) {
-    console.log('PESAN NOTIF: ', openResult.notification.payload.body);
-    console.log(
-      'Data PESAN NOTIF: ',
-      openResult.notification.payload.additionalData,
-    );
-    console.log('isActive PESAN NOTIF: ', openResult.notification.isAppInFocus);
-    console.log('openResult PESAN NOTIF: ', openResult);
-  }
+  onReceived = notification => {
+    console.log('Notification received: ', notification);
+    this._onRefresh();
+  };
 
   disableStatusGetData = () => {
     this.setState({statusGetData: false});
@@ -86,14 +76,6 @@ class Rewards extends Component {
     await this.props.dispatch(getCompanyInfo());
     await this.props.dispatch(getAccountPayment());
   };
-
-  componentWillUnmount(): void {
-    try {
-      // this.focusListener.remove();
-      // this.blurListener.remove();
-      clearInterval(this.interval);
-    } catch (e) {}
-  }
 
   refreshStampsAndPoints = async () => {
     try {

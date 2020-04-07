@@ -15,7 +15,6 @@ export default class StoreNearYou extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      dataStoresNear: this.props.dataStoresNear,
       screenWidth: Dimensions.get('window').width,
     };
   }
@@ -26,12 +25,12 @@ export default class StoreNearYou extends Component {
   };
 
   render() {
-    const {intlData} = this.props;
+    const {intlData, dataStoresNear} = this.props;
     return (
       <View style={styles.stores}>
         <Text style={styles.stores}>{intlData.messages.outletsNearYou}</Text>
         <View style={{justifyContent: 'space-between', flexDirection: 'row'}}>
-          {this.props.dataStoresNear.slice(0, 3).map((item, key) => (
+          {dataStoresNear.slice(0, 3).map((item, key) => (
             <View key={key}>
               {
                 <TouchableOpacity

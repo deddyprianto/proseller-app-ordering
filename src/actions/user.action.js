@@ -93,6 +93,20 @@ export const deviceUserInfo = deviceID => {
     }
   };
 };
+
+export const defaultPaymentAccount = defaultAccount => {
+  return async dispatch => {
+    try {
+      dispatch({
+        type: 'GET_USER_DEFAULT_ACCOUNT',
+        defaultAccount: defaultAccount,
+      });
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
 export const userPosition = userPosition => {
   return async dispatch => {
     try {

@@ -14,10 +14,6 @@ import {Actions} from 'react-native-router-flux';
 export default class StoreStores extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      dataStoreRegion: this.props.dataStoreRegion,
-      dataAllStore: this.props.dataAllStore,
-    };
   }
 
   storeDetailStores = item => {
@@ -30,86 +26,84 @@ export default class StoreStores extends Component {
   };
 
   render() {
-    const {intlData} = this.props;
+    const {intlData, dataAllStore, dataStoreRegion} = this.props;
     return (
       <View>
-        {this.state.dataStoreRegion.map((region, index) => (
+        {dataStoreRegion.map((region, index) => (
           <View style={styles.stores} key={index}>
             <Text style={styles.stores}>
               {intlData.messages.outlets} -{' '}
               {region != undefined ? ` ${region}` : null}
             </Text>
-            {this.state.dataAllStore[this.state.dataStoreRegion[index]].map(
-              (item, keys) => (
-                <View key={keys}>
-                  {
-                    <TouchableOpacity
-                      style={styles.storesItem}
-                      onPress={() => this.storeDetailStores(item)}>
-                      <View style={styles.storesDetail}>
+            {dataAllStore[dataStoreRegion[index]].map((item, keys) => (
+              <View key={keys}>
+                {
+                  <TouchableOpacity
+                    style={styles.storesItem}
+                    onPress={() => this.storeDetailStores(item)}>
+                    <View style={styles.storesDetail}>
+                      <Text
+                        style={{
+                          fontSize: 14,
+                          color: colorConfig.pageIndex.activeTintColor,
+                          fontFamily: 'Lato-Bold',
+                        }}>
+                        {item.storeName}
+                      </Text>
+                      {item.storeStatus ? (
                         <Text
                           style={{
-                            fontSize: 14,
-                            color: colorConfig.pageIndex.activeTintColor,
-                            fontFamily: 'Lato-Bold',
+                            fontSize: 12,
+                            marginTop: 10,
+                            width: 70,
+                            padding: 5,
+                            textAlign: 'center',
+                            fontWeight: 'bold',
+                            backgroundColor: colorConfig.store.colorSuccess,
+                            borderRadius: 30,
+                            color: colorConfig.store.textWhite,
+                            fontFamily: 'Lato-Medium',
                           }}>
-                          {item.storeName}
+                          {intlData.messages.open}
                         </Text>
-                        {item.storeStatus ? (
-                          <Text
-                            style={{
-                              fontSize: 12,
-                              marginTop: 10,
-                              width: 70,
-                              padding: 5,
-                              textAlign: 'center',
-                              fontWeight: 'bold',
-                              backgroundColor: colorConfig.store.colorSuccess,
-                              borderRadius: 30,
-                              color: colorConfig.store.textWhite,
-                              fontFamily: 'Lato-Medium',
-                            }}>
-                            {intlData.messages.open}
-                          </Text>
-                        ) : (
-                          <Text
-                            style={{
-                              fontSize: 12,
-                              marginTop: 5,
-                              width: 60,
-                              padding: 5,
-                              textAlign: 'center',
-                              fontWeight: 'bold',
-                              backgroundColor: colorConfig.store.colorError,
-                              borderRadius: 30,
-                              color: colorConfig.store.textWhite,
-                              fontFamily: 'Lato-Medium',
-                            }}>
-                            {intlData.messages.closed}
-                          </Text>
-                        )}
+                      ) : (
+                        <Text
+                          style={{
+                            fontSize: 12,
+                            marginTop: 5,
+                            width: 60,
+                            padding: 5,
+                            textAlign: 'center',
+                            fontWeight: 'bold',
+                            backgroundColor: colorConfig.store.colorError,
+                            borderRadius: 30,
+                            color: colorConfig.store.textWhite,
+                            fontFamily: 'Lato-Medium',
+                          }}>
+                          {intlData.messages.closed}
+                        </Text>
+                      )}
+                    </View>
+                    {item.storeJarak != '-' ? (
+                      <View style={{margin: 10, alignItems: 'center'}}>
+                        <Icon
+                          size={18}
+                          name={Platform.OS === 'ios' ? 'ios-pin' : 'md-pin'}
+                          style={{color: 'red'}}
+                        />
+                        <Text
+                          style={{
+                            color: colorConfig.pageIndex.grayColor,
+                            fontSize: 11,
+                          }}>
+                          {item.storeJarak.toFixed(1) + ' KM'}
+                        </Text>
                       </View>
-                      {item.storeJarak != '-' ? (
-                        <View style={{margin: 10, alignItems: 'center'}}>
-                          <Icon
-                            size={18}
-                            name={Platform.OS === 'ios' ? 'ios-pin' : 'md-pin'}
-                            style={{color: 'red'}}
-                          />
-                          <Text
-                            style={{
-                              color: colorConfig.pageIndex.grayColor,
-                              fontSize: 11,
-                            }}>
-                            {item.storeJarak.toFixed(1) + ' KM'}
-                          </Text>
-                        </View>
-                      ) : null}
-                    </TouchableOpacity>
-                  }
-                </View>
-              ),
-            )}
+                    ) : null}
+                  </TouchableOpacity>
+                }
+              </View>
+            ))}
           </View>
         ))}
       </View>

@@ -187,6 +187,7 @@ export default class PaymentSuccess extends Component {
               fontSize: 13,
               fontWeight: 'bold',
               fontFamily: 'Lato-Bold',
+              textAlign: 'center',
               marginVertical: 10,
               color: colorConfig.pageIndex.activeTintColor,
             }}>

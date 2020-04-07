@@ -36,7 +36,7 @@ import Loader from './../loader';
 // import {refreshToken} from '../actions/auth.actions';
 import CurrencyFormatter from '../../helper/CurrencyFormatter';
 import {clearAccount, selectedAccount} from '../../actions/payment.actions';
-import {isEmptyArray} from '../../helper/CheckEmpty';
+import {isEmptyArray, isEmptyObject} from '../../helper/CheckEmpty';
 
 class SettleOrder extends Component {
   constructor(props) {
@@ -56,6 +56,11 @@ class SettleOrder extends Component {
       moneyPoint: undefined,
       addPoint: undefined,
     };
+
+    // check if default accout has been set, then add selected account
+    if (!isEmptyObject(this.props.defaultAccount)) {
+      this.props.dispatch(selectedAccount(this.props.defaultAccount));
+    }
   }
 
   componentDidMount = async () => {
@@ -410,17 +415,13 @@ class SettleOrder extends Component {
   ];
 
   selectedPaymentMethod = selectedAccount => {
-    const {intlData, companyInfo} = this.props;
-    let paymentTypes = [];
-    if (companyInfo.paymentTypes != undefined)
-      paymentTypes = companyInfo.paymentTypes;
     try {
-      if (!isEmptyArray(paymentTypes)) {
-        let paymentMethod = paymentTypes.find(
-          item => item.paymentID == selectedAccount.paymentID,
-        );
-        if (paymentMethod != undefined) return paymentMethod.paymentName;
-        else return null;
+      if (!isEmptyObject(selectedAccount)) {
+        return `${selectedAccount.details.cardIssuer.toUpperCase()} ${
+          selectedAccount.details.maskedAccountNumber
+        }`.substr(0, 15);
+      } else {
+        return null;
       }
     } catch (e) {
       return null;
@@ -698,56 +699,56 @@ class SettleOrder extends Component {
             </View>
             {this.props.campaignActive ? this.renderUsePoint() : null}
 
-            {/*<View*/}
-            {/*  style={{*/}
-            {/*    marginTop: 12,*/}
-            {/*    marginBottom: 10,*/}
-            {/*    alignItems: 'center',*/}
-            {/*    justifyContent: 'space-between',*/}
-            {/*    flexDirection: 'row',*/}
-            {/*  }}>*/}
-            {/*  <Text*/}
-            {/*    style={{*/}
-            {/*      fontSize: 17,*/}
-            {/*      fontFamily: 'Lato-Bold',*/}
-            {/*      color: colorConfig.pageIndex.grayColor,*/}
-            {/*    }}>*/}
-            {/*    Payment Method*/}
-            {/*  </Text>*/}
-            {/*  <TouchableOpacity*/}
-            {/*    style={*/}
-            {/*      selectedAccount != undefined*/}
-            {/*        ? styles.btnMethodSelected*/}
-            {/*        : styles.btnMethodUnselected*/}
-            {/*    }*/}
-            {/*    onPress={() => Actions.paymentMethods()}>*/}
-            {/*    <Icon*/}
-            {/*      size={20}*/}
-            {/*      name={Platform.OS === 'ios' ? 'ios-cash' : 'md-cash'}*/}
-            {/*      style={{*/}
-            {/*        color:*/}
-            {/*          selectedAccount != undefined*/}
-            {/*            ? colorConfig.store.textWhite*/}
-            {/*            : colorConfig.store.defaultColor,*/}
-            {/*        marginRight: 8,*/}
-            {/*      }}*/}
-            {/*    />*/}
-            {/*    <Text*/}
-            {/*      style={*/}
-            {/*        selectedAccount != undefined*/}
-            {/*          ? styles.descMethodSelected*/}
-            {/*          : styles.descMethodUnselected*/}
-            {/*      }>*/}
-            {/*      {selectedAccount != undefined*/}
-            {/*        ? this.selectedPaymentMethod(selectedAccount)*/}
-            {/*        : 'Select Methods'}*/}
-            {/*    </Text>*/}
-            {/*  </TouchableOpacity>*/}
-            {/*</View>*/}
+            <View
+              style={{
+                marginTop: 12,
+                marginBottom: 10,
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                flexDirection: 'row',
+              }}>
+              <Text
+                style={{
+                  fontSize: 17,
+                  fontFamily: 'Lato-Bold',
+                  color: colorConfig.pageIndex.grayColor,
+                }}>
+                Payment Method
+              </Text>
+              <TouchableOpacity
+                style={
+                  selectedAccount != undefined
+                    ? styles.btnMethodSelected
+                    : styles.btnMethodUnselected
+                }
+                onPress={() => Actions.paymentMethods()}>
+                <Icon
+                  size={20}
+                  name={Platform.OS === 'ios' ? 'ios-cash' : 'md-cash'}
+                  style={{
+                    color:
+                      selectedAccount != undefined
+                        ? colorConfig.store.textWhite
+                        : colorConfig.store.defaultColor,
+                    marginRight: 8,
+                  }}
+                />
+                <Text
+                  style={
+                    selectedAccount != undefined
+                      ? styles.descMethodSelected
+                      : styles.descMethodUnselected
+                  }>
+                  {selectedAccount != undefined
+                    ? this.selectedPaymentMethod(selectedAccount)
+                    : 'Select Methods'}
+                </Text>
+              </TouchableOpacity>
+            </View>
 
             <View style={{marginTop: 50}} />
             <SwipeButton
-              // disabled={selectedAccount == undefined ? true : false}
+              disabled={selectedAccount == undefined ? true : false}
               disabledThumbIconBackgroundColor="#FFFFFF"
               disabledThumbIconBorderColor={
                 colorConfig.pageIndex.activeTintColor
@@ -922,6 +923,7 @@ mapStateToProps = state => ({
   recentTransaction: state.rewardsReducer.dataPoint.recentTransaction,
   campaignActive: state.rewardsReducer.dataPoint.campaignActive,
   selectedAccount: state.cardReducer.selectedAccount.selectedAccount,
+  defaultAccount: state.userReducer.defaultPaymentAccount.defaultAccount,
   companyInfo: state.userReducer.getCompanyInfo.companyInfo,
   dataStamps: state.rewardsReducer.getStamps,
   intlData: state.intlData,

@@ -28,6 +28,7 @@ export default class HostedPayment extends Component {
           style={{marginTop: 10}}
           onNavigationStateChange={navState => {
             let url = navState.title;
+            console.log(url, 'URL NYA INI BOS');
             let staticURL =
               'https://payment.proseller.io/wirecard/api/payment/status/';
             if (url.includes(staticURL)) {

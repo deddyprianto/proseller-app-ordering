@@ -970,9 +970,9 @@ class Basket extends Component {
           dataBasket.outlet.outletType != 'QUICKSERVICE' &&
           dataBasket.orderingMode != 'TAKEAWAY'
         ) {
-          Alert.alert('Congratulation', 'Your order has been CONFIRMED');
-          clearInterval(this.interval);
-          this.interval = undefined;
+          // Alert.alert('Congratulation', 'Your order has been CONFIRMED');
+          // clearInterval(this.interval);
+          // this.interval = undefined;
         }
 
         //  for outlet type quick service
@@ -991,6 +991,8 @@ class Basket extends Component {
       // clear table type if basket is cancelled by admin
       if (dataBasket == undefined) {
         this.props.dispatch(clearTableType());
+        clearInterval(this.interval);
+        this.interval = undefined;
       }
     } catch (e) {}
 

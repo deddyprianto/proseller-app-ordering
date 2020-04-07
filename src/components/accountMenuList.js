@@ -21,7 +21,7 @@ import colorConfig from '../config/colorConfig';
 import {Actions} from 'react-native-router-flux';
 import awsConfig from '../config/awsConfig';
 import CryptoJS from 'react-native-crypto-js';
-import {isEmptyArray} from '../helper/CheckEmpty';
+import {isEmptyArray, isEmptyObject} from '../helper/CheckEmpty';
 
 class AccountMenuList extends Component {
   constructor(props) {
@@ -99,9 +99,44 @@ class AccountMenuList extends Component {
   };
 
   render() {
-    const {intlData, myCardAccount, companyInfo} = this.props;
+    const {intlData, myCardAccount, companyInfo, defaultAccount} = this.props;
+    console.log(defaultAccount, 'defaultAccount');
     return (
       <View style={styles.container}>
+        <Text style={styles.headingMenu}>Default Payment Account</Text>
+
+        <TouchableOpacity disabled={true} style={styles.cardMenu}>
+          {!isEmptyObject(defaultAccount) ? (
+            <View style={styles.itemMenu}>
+              <Icon
+                size={20}
+                name={Platform.OS === 'ios' ? 'ios-checkmark' : 'md-checkmark'}
+                style={{color: 'white'}}
+              />
+            </View>
+          ) : null}
+          <View>
+            <View style={styles.item}>
+              <Text style={styles.title}>
+                {!isEmptyObject(defaultAccount) ? (
+                  <>
+                    <Text>
+                      {defaultAccount.details.cardIssuer != undefined
+                        ? defaultAccount.details.cardIssuer.toUpperCase()
+                        : null}
+                    </Text>{' '}
+                    <Text>{defaultAccount.details.maskedAccountNumber}</Text>
+                  </>
+                ) : (
+                  <Text style={{color: colorConfig.store.colorError}}>
+                    NOT YET ADDED
+                  </Text>
+                )}
+              </Text>
+            </View>
+          </View>
+        </TouchableOpacity>
+
         <Text style={styles.headingMenu}>My Payment Options</Text>
 
         {this.renderPaymentMethodOptions()}
@@ -253,6 +288,7 @@ mapStateToProps = state => ({
   myCardAccount: state.cardReducer.myCardAccount.card,
   totalPoint: state.rewardsReducer.dataPoint.totalPoint,
   companyInfo: state.userReducer.getCompanyInfo.companyInfo,
+  defaultAccount: state.userReducer.defaultPaymentAccount.defaultAccount,
   intlData: state.intlData,
 });
 

@@ -193,6 +193,12 @@ export const logoutUser = () => {
       dispatch({
         type: 'USER_LOGGED_OUT_SUCCESS',
       });
+
+      // remove default account
+      dispatch({
+        type: 'GET_USER_DEFAULT_ACCOUNT',
+        defaultAccount: {},
+      });
     } catch (e) {
       console.log(e);
     }

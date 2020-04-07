@@ -19,6 +19,7 @@ import {
   TextInput,
   FlatList,
   RefreshControl,
+  Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -31,8 +32,9 @@ import Loader from './../loader';
 import ProgressiveImage from '../helper/ProgressiveImage';
 import CurrencyFormatter from '../../helper/CurrencyFormatter';
 import {getAccountPayment} from '../../actions/payment.actions';
-import {movePageIndex} from '../../actions/user.action';
+import {defaultPaymentAccount, movePageIndex} from '../../actions/user.action';
 import {isEmptyArray} from '../../helper/CheckEmpty';
+import RBSheet from 'react-native-raw-bottom-sheet';
 
 class ListCard extends Component {
   constructor(props) {
@@ -40,6 +42,7 @@ class ListCard extends Component {
     this.state = {
       screenWidth: Dimensions.get('window').width,
       refreshing: false,
+      selectedAccount: {},
     };
   }
 
@@ -69,6 +72,119 @@ class ListCard extends Component {
     return true;
   };
 
+  setDefaultAccount = async () => {
+    const {selectedAccount} = this.state;
+    await this.props.dispatch(defaultPaymentAccount(selectedAccount));
+    this.RBSheet.close();
+  };
+
+  askUserToSelectPaymentType = () => {
+    const {intlData} = this.props;
+    return (
+      <RBSheet
+        ref={ref => {
+          this.RBSheet = ref;
+        }}
+        animationType={'fade'}
+        height={210}
+        duration={10}
+        closeOnDragDown={true}
+        closeOnPressMask={true}
+        closeOnPressBack={true}
+        customStyles={{
+          container: {
+            backgroundColor: colorConfig.store.textWhite,
+            justifyContent: 'center',
+            alignItems: 'center',
+          },
+        }}>
+        <TouchableOpacity
+          onPress={() => this.setDefaultAccount()}
+          style={{
+            padding: 15,
+            backgroundColor: colorConfig.store.defaultColor,
+            borderRadius: 15,
+            width: '60%',
+            marginBottom: 20,
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <Icon
+            size={30}
+            name={Platform.OS === 'ios' ? 'ios-save' : 'md-save'}
+            style={{color: 'white'}}
+          />
+          <Text
+            style={{
+              marginLeft: 10,
+              color: 'white',
+              fontWeight: 'bold',
+              fontFamily: 'Lato-Bold',
+              fontSize: 18,
+              textAlign: 'center',
+            }}>
+            {/*{intlData.messages.dineIn}*/}
+            Set as Default
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            Alert.alert(
+              'Remove account',
+              'Are you sure to remove this account from list ?',
+              [
+                {
+                  text: 'Cancel',
+                  onPress: () => console.log('Cancel Pressed'),
+                  style: 'cancel',
+                },
+                {text: 'Remove', onPress: () => console.log('OK Pressed')},
+              ],
+              {cancelable: true},
+            );
+          }}
+          style={{
+            padding: 15,
+            backgroundColor: colorConfig.store.colorError,
+            borderRadius: 15,
+            width: '60%',
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <Icon
+            size={30}
+            name={Platform.OS === 'ios' ? 'ios-trash' : 'md-trash'}
+            style={{color: 'white'}}
+          />
+          <Text
+            style={{
+              marginLeft: 10,
+              color: 'white',
+              fontWeight: 'bold',
+              fontFamily: 'Lato-Bold',
+              fontSize: 18,
+              textAlign: 'center',
+            }}>
+            {/*{intlData.messages.takeAway}*/}
+            Remove
+          </Text>
+        </TouchableOpacity>
+      </RBSheet>
+    );
+  };
+
+  checkDefaultAccount = item => {
+    const {defaultAccount} = this.props;
+    try {
+      if (defaultAccount.accountID == item.accountID) return true;
+      else return false;
+    } catch (e) {
+      return false;
+    }
+  };
+
   renderCard = () => {
     const {myCardAccount, item} = this.props;
     const paymentID = item.paymentID;
@@ -78,7 +194,10 @@ class ListCard extends Component {
         renderItem={({item}) =>
           item.paymentID == paymentID ? (
             <TouchableOpacity
-              onPress={() => Actions.detailCard({item})}
+              onPress={() => {
+                this.setState({selectedAccount: item});
+                this.RBSheet.open();
+              }}
               style={[
                 styles.card,
                 {
@@ -91,11 +210,13 @@ class ListCard extends Component {
               <View style={styles.headingCard}>
                 <Text style={styles.cardText}>{item.details.cardType}</Text>
                 {/*<Text style={styles.cardText}>My First Card</Text>*/}
-                <Icon
-                  size={32}
-                  name={Platform.OS === 'ios' ? 'ios-card' : 'md-card'}
-                  style={{color: 'white'}}
-                />
+                {!this.checkDefaultAccount(item) ? (
+                  <Icon
+                    size={32}
+                    name={Platform.OS === 'ios' ? 'ios-card' : 'md-card'}
+                    style={{color: 'white'}}
+                  />
+                ) : null}
               </View>
               <View style={styles.cardNumber}>
                 <Text style={styles.cardNumberText}>
@@ -114,6 +235,32 @@ class ListCard extends Component {
                   </Text>
                 </View>
               </View>
+              {this.checkDefaultAccount(item) ? (
+                <View
+                  style={{
+                    borderTopLeftRadius: 5,
+                    borderTopRightRadius: 5,
+                    borderBottomLeftRadius: 5,
+                    backgroundColor: colorConfig.store.transparentColor,
+                    height: 40,
+                    width: '35%',
+                    position: 'absolute',
+                    top: 0,
+                    right: 0,
+                    zIndex: 2,
+                    justifyContent: 'center',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                  }}>
+                  <Text
+                    style={[
+                      styles.cardNameText,
+                      {textAlign: 'center', fontSize: 12},
+                    ]}>
+                    DEFAULT
+                  </Text>
+                </View>
+              ) : null}
             </TouchableOpacity>
           ) : null
         }
@@ -170,6 +317,9 @@ class ListCard extends Component {
             <Text style={styles.btnBackText}>My {item.paymentName}</Text>
           </TouchableOpacity>
         </View>
+
+        {this.askUserToSelectPaymentType()}
+
         <ScrollView
           refreshControl={
             <RefreshControl
@@ -213,6 +363,7 @@ class ListCard extends Component {
 mapStateToProps = state => ({
   intlData: state.intlData,
   myCardAccount: state.cardReducer.myCardAccount.card,
+  defaultAccount: state.userReducer.defaultPaymentAccount.defaultAccount,
 });
 
 mapDispatchToProps = dispatch => ({

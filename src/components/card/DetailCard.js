@@ -19,6 +19,7 @@ import {
   TextInput,
   FlatList,
   RefreshControl,
+  Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -109,9 +110,7 @@ class DetailCard extends Component {
               },
             ]}>
             <View style={styles.headingCard}>
-              <Text style={styles.cardText}>
-                {item.details.cardType.toUpperCase()}
-              </Text>
+              <Text style={styles.cardText}>{item.details.cardType}</Text>
               {/*<Text style={styles.cardText}>My First Card</Text>*/}
               <Icon
                 size={32}
@@ -138,16 +137,29 @@ class DetailCard extends Component {
             </View>
           </TouchableOpacity>
         </ScrollView>
-        <TouchableOpacity
-          onPress={() => Actions.addCard()}
-          style={styles.buttonBottomFixed}>
-          <Icon
-            size={25}
-            name={Platform.OS === 'ios' ? 'ios-trash' : 'md-trash'}
-            style={{color: 'white', marginRight: 10}}
-          />
-          <Text style={styles.textAddCard}>Delete Card</Text>
-        </TouchableOpacity>
+        <View>
+          <TouchableOpacity
+            onPress={() => Actions.addCard()}
+            onLongPress={() => Alert.alert('x', 'x')}
+            style={styles.buttonBottomFixed}>
+            <Icon
+              size={25}
+              name={Platform.OS === 'ios' ? 'ios-save' : 'md-save'}
+              style={{color: 'white', marginRight: 10}}
+            />
+            <Text style={styles.textAddCard}>Set as Default</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => Actions.addCard()}
+            style={styles.buttonBottomFixed}>
+            <Icon
+              size={25}
+              name={Platform.OS === 'ios' ? 'ios-trash' : 'md-trash'}
+              style={{color: 'white', marginRight: 10}}
+            />
+            <Text style={styles.textAddCard}>Delete Card</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     );
   }

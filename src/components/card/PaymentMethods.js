@@ -85,7 +85,7 @@ class PaymentMethods extends Component {
   };
 
   renderPaymentMethodOptions = () => {
-    const {intlData, myCardAccount, companyInfo} = this.props;
+    const {intlData, myCardAccount, companyInfo, page} = this.props;
     let paymentTypes = [];
     if (companyInfo.paymentTypes != undefined)
       paymentTypes = companyInfo.paymentTypes;
@@ -95,7 +95,7 @@ class PaymentMethods extends Component {
           data={paymentTypes}
           renderItem={({item}) => (
             <TouchableOpacity
-              onPress={() => Actions.paymentAddCard({intlData, item})}
+              onPress={() => Actions.paymentAddCard({intlData, item, page})}
               style={[styles.card]}>
               <View style={styles.headingCard}>
                 <Text style={styles.cardText}>{item.paymentName}</Text>

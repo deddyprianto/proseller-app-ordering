@@ -127,7 +127,7 @@ class Store extends Component {
       } else {
         statusLocaiton = true;
       }
-      this.setDataStore(
+      await this.setDataStore(
         this.props.dataStores,
         statusLocaiton,
         this.props.userPosition,
@@ -137,7 +137,7 @@ class Store extends Component {
     }
   };
 
-  setDataStore = (response, statusLocation, position) => {
+  setDataStore = async (response, statusLocation, position) => {
     response.data = response;
     var dataStoresTampung = [];
     var storeGrupTampung = [];
@@ -202,15 +202,16 @@ class Store extends Component {
 
     // console.log('dataAllStore ', dataStoresTampung);
     try {
-      this.setState({
+      await this.setState({
         isLoading: false,
         dataStores: dataStoresTampung,
         dataStoresNear: dataStoresNearTampung,
         dataAllStore: _.groupBy(dataStoresTampung, 'region'),
         dataStoreRegion: _.uniq(storeGrupTampung),
       });
+      console.log('MASUK SINI BOY', this.state.dataAllStore);
     } catch (e) {
-      this.setState({
+      await this.setState({
         isLoading: false,
         dataStores: [],
         dataStoresNear: [],
@@ -218,7 +219,7 @@ class Store extends Component {
         dataStoreRegion: [],
       });
     }
-    this.setState({isLoading: false});
+    await this.setState({isLoading: false});
   };
 
   _getSorting(a, b) {
@@ -293,9 +294,9 @@ class Store extends Component {
   };
 
   _onRefresh = async () => {
-    this.setState({refreshing: true});
+    await this.setState({refreshing: true});
     await this.getDataStores();
-    this.setState({refreshing: false});
+    await this.setState({refreshing: false});
   };
 
   getHallo = () => {

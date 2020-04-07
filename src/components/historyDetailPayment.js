@@ -23,6 +23,7 @@ import appConfig from '../config/appConfig';
 import CurrencyFormatter from '../helper/CurrencyFormatter';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
+import {isEmptyArray} from '../helper/CheckEmpty';
 
 class HistoryDetailPayment extends Component {
   constructor(props) {
@@ -209,7 +210,8 @@ class HistoryDetailPayment extends Component {
                   </Text>
                 </View>
               ) : null}
-              {this.props.item.stamps.amount > 1 ? (
+              {!isEmptyArray(this.props.item.stamps) &&
+              this.props.item.stamps.length > 1 ? (
                 <View style={[styles.detailItem, {borderBottomWidth: 0}]}>
                   <Text
                     style={[
@@ -233,7 +235,7 @@ class HistoryDetailPayment extends Component {
                     ]}>
                     {' '}
                     {'x '}
-                    {this.props.item.point}
+                    {this.props.item.stamps.length}
                   </Text>
                 </View>
               ) : null}
