@@ -317,7 +317,7 @@ class Basket extends Component {
       orderType == 'TAKEAWAY'
     ) {
       if (
-        dataBasket.status == 'AWAITING_COLLECTION' ||
+        dataBasket.status == 'PROCESSING' ||
         dataBasket.status == 'READY_FOR_COLLECTION'
       ) {
         return false;
@@ -977,7 +977,7 @@ class Basket extends Component {
 
         //  for outlet type quick service
         if (
-          dataBasket.status == 'AWAITING_COLLECTION' &&
+          dataBasket.status == 'PROCESSING' &&
           this.interval != undefined &&
           (dataBasket.outlet.outletType == 'QUICKSERVICE' ||
             dataBasket.orderingMode == 'TAKEAWAY')

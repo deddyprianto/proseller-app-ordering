@@ -329,7 +329,7 @@ class Store extends Component {
 
     if (dataBasket != undefined) {
       if (
-        dataBasket.status == 'AWAITING_COLLECTION' ||
+        dataBasket.status == 'PROCESSING' ||
         dataBasket.status == 'READY_FOR_COLLECTION'
       ) {
         Actions.waitingFood();

@@ -153,6 +153,17 @@ class InputEmail extends Component {
           );
           email.phoneNumber = response.data.phoneNumber;
           Actions.verifyOtpAfterRegisterEmail(email);
+        } else if (
+          response.data.status != 'ACTIVE' &&
+          response.data.status != undefined &&
+          response.data.status != null
+        ) {
+          Alert.alert(
+            'Sorry',
+            `Your account has been ${
+              response.data.status
+            }. Please contact administrator.`,
+          );
         } else {
           Actions.signInEmail(email);
         }

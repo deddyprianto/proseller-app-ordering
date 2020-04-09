@@ -33,7 +33,7 @@ class WaitingFood extends Component {
       // check if status basket for TAKE AWAY IS CONFIRMED, then request continoustly to get basket
       if (
         this.props.dataBasket != undefined &&
-        this.props.dataBasket.status == 'AWAITING_COLLECTION'
+        this.props.dataBasket.status == 'PROCESSING'
       ) {
         clearInterval(this.interval);
         this.interval = setInterval(() => {

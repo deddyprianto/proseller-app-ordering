@@ -222,6 +222,17 @@ class InputPhoneNumber extends Component {
           Alert.alert('Opss..', this.intlData.messages.accountNotConfirmed);
           phoneNumber.email = response.data.email;
           Actions.verifyOtpAfterRegister(phoneNumber);
+        } else if (
+          response.data.status != 'ACTIVE' &&
+          response.data.status != undefined &&
+          response.data.status != null
+        ) {
+          Alert.alert(
+            'Sorry',
+            `Your account has been ${
+              response.data.status
+            }. Please contact administrator.`,
+          );
         } else {
           phoneNumber.email = response.data.email;
           Actions.signInPhoneNumber(phoneNumber);
