@@ -59,7 +59,6 @@ class AddCard extends Component {
   registerCard = async () => {
     try {
       const payload = {
-        name: this.state.name,
         referenceNo: 'xxx-xxx-xx',
         paymentID: 'DBS_Wirecard',
       };

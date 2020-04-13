@@ -35,7 +35,12 @@ import Loader from './loader';
 import {refreshToken} from '../actions/auth.actions';
 import CurrencyFormatter from '../helper/CurrencyFormatter';
 import {isEmptyArray, isEmptyObject} from '../helper/CheckEmpty';
-import {clearAccount, selectedAccount} from '../actions/payment.actions';
+import {
+  clearAccount,
+  getAccountPayment,
+  registerCard,
+  selectedAccount,
+} from '../actions/payment.actions';
 
 class PaymentDetail extends Component {
   constructor(props) {
@@ -56,11 +61,59 @@ class PaymentDetail extends Component {
       addPoint: undefined,
     };
 
-    // check if default accout has been set, then add selected account
+    // check if users payment methods is empty
+    const {myCardAccount} = this.props;
+    if (isEmptyArray(myCardAccount)) {
+      this.askUserToAddAccount();
+    }
+
+    // check if default account has been set, then add selected account
     if (!isEmptyObject(this.props.defaultAccount)) {
       this.props.dispatch(selectedAccount(this.props.defaultAccount));
     }
   }
+
+  askUserToAddAccount = async () => {
+    Alert.alert(
+      'Credit Card Not Registered',
+      'You have not registered an account for payment, please register now.',
+      [{text: 'OK', onPress: () => this.registerCard()}],
+      {cancelable: false},
+    );
+  };
+
+  registerCard = async () => {
+    await this.setState({loading: true});
+    try {
+      const payload = {
+        referenceNo: 'xxx-xxx-xx',
+        paymentID: 'DBS_Wirecard',
+      };
+
+      const response = await this.props.dispatch(registerCard(payload));
+
+      await this.setState({loading: false});
+
+      if (response.success == true) {
+        Actions.hostedPayment({
+          url: response.response.data.url,
+          page: 'paymentDetail',
+        });
+      } else {
+        Alert.alert('Sorry', 'Cant add credit card, please try again');
+      }
+
+      // after create an account, set account as selected account
+      await this.props.dispatch(getAccountPayment());
+      const {myCardAccount} = this.props;
+      if (!isEmptyArray(myCardAccount)) {
+        await this.props.dispatch(selectedAccount(myCardAccount[0]));
+      }
+    } catch (e) {
+      await this.setState({loading: false});
+      Alert.alert('Oppss..', 'Something went wrong, please try again.');
+    }
+  };
 
   componentDidMount = async () => {
     await this.setDataPayment(false);
@@ -263,6 +316,8 @@ class PaymentDetail extends Component {
       const response = await this.props.dispatch(sendPayment(pembayaran));
       console.log('reponse pembayaran ', response);
       if (response.success) {
+        //  remove selected account
+        this.props.dispatch(clearAccount());
         // return back to payment success
         Actions.paymentSuccess({
           intlData,
@@ -704,15 +759,26 @@ class PaymentDetail extends Component {
                 style={{
                   fontSize: 17,
                   fontFamily: 'Lato-Bold',
-                  color: colorConfig.pageIndex.grayColor,
+                  color:
+                    selectedAccount == undefined
+                      ? colorConfig.store.colorError
+                      : colorConfig.pageIndex.grayColor,
                 }}>
-                Payment Method
+                Payment Method <Text style={{lineHeight: 30}}>*</Text>
               </Text>
               <TouchableOpacity
                 style={
                   selectedAccount != undefined
                     ? styles.btnMethodSelected
-                    : styles.btnMethodUnselected
+                    : [
+                        styles.btnMethodUnselected,
+                        selectedAccount == undefined
+                          ? {
+                              borderColor: colorConfig.store.colorError,
+                              borderWidth: 1.5,
+                            }
+                          : null,
+                      ]
                 }
                 onPress={() => Actions.paymentMethods({page: 'paymentDetail'})}>
                 <Icon
@@ -741,7 +807,11 @@ class PaymentDetail extends Component {
 
             <View style={{marginTop: 50}} />
             <SwipeButton
-              disabled={selectedAccount == undefined ? true : false}
+              disabled={
+                selectedAccount != undefined || this.state.totalBayar == 0
+                  ? false
+                  : true
+              }
               disabledThumbIconBackgroundColor="#FFFFFF"
               disabledThumbIconBorderColor={
                 colorConfig.pageIndex.activeTintColor
@@ -907,7 +977,7 @@ const styles = StyleSheet.create({
   descMethodSelected: {
     color: colorConfig.store.textWhite,
     fontSize: 13,
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
 });
 
@@ -918,6 +988,7 @@ mapStateToProps = state => ({
   campaignActive: state.rewardsReducer.dataPoint.campaignActive,
   selectedAccount: state.cardReducer.selectedAccount.selectedAccount,
   defaultAccount: state.userReducer.defaultPaymentAccount.defaultAccount,
+  myCardAccount: state.cardReducer.myCardAccount.card,
   companyInfo: state.userReducer.getCompanyInfo.companyInfo,
   dataStamps: state.rewardsReducer.getStamps,
   intlData: state.intlData,

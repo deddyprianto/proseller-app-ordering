@@ -81,6 +81,7 @@ class PaymentAddCard extends Component {
       } else {
         Actions.popTo('settleOrder');
       }
+      console.log('asakjbs');
     } catch (e) {}
   };
 

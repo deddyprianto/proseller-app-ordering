@@ -219,8 +219,8 @@ class InputPhoneNumber extends Component {
       );
       if (response.status == true) {
         if (response.data.confirmation == false) {
-          Alert.alert('Opss..', this.intlData.messages.accountNotConfirmed);
           phoneNumber.email = response.data.email;
+          phoneNumber.confirmed = false;
           Actions.verifyOtpAfterRegister(phoneNumber);
         } else if (
           response.data.status != 'ACTIVE' &&

@@ -137,8 +137,11 @@ class VerifyOtpAfterRegister extends Component {
   }
 
   componentDidMount(): void {
-    this.beginTimer();
-    this.setState({firstLoad: false, buttonOTPpressed: true});
+    const {confirmed} = this.props;
+    if (confirmed == undefined) {
+      this.beginTimer();
+      this.setState({firstLoad: false, buttonOTPpressed: true});
+    }
   }
 
   beginTimer = () => {
@@ -161,7 +164,7 @@ class VerifyOtpAfterRegister extends Component {
         }
       }
     }, 1000);
-  }
+  };
 
   componentWillUnmount() {
     clearInterval(this.interval);

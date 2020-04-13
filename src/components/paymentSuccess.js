@@ -21,6 +21,7 @@ import LottieView from 'lottie-react-native';
 import colorConfig from '../config/colorConfig';
 import appConfig from '../config/appConfig';
 import CurrencyFormatter from '../helper/CurrencyFormatter';
+import {clearAccount} from '../actions/payment.actions';
 
 export default class PaymentSuccess extends Component {
   constructor(props) {

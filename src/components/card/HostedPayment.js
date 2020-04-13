@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {WebView} from 'react-native-webview';
 import {
   ActivityIndicator,
+  Alert,
   Dimensions,
   StyleSheet,
   Text,
@@ -11,6 +12,13 @@ import {
 import {Actions} from 'react-native-router-flux';
 import colorConfig from '../../config/colorConfig';
 
+const SUCCESS_URL =
+  'https://payment.proseller.io/api/account/registration/success';
+const FAILED_URL =
+  'https://payment.proseller.io/api/account/registration/failed';
+
+let openOne = true;
+
 export default class HostedPayment extends Component {
   constructor(props) {
     super(props);
@@ -19,8 +27,7 @@ export default class HostedPayment extends Component {
     };
   }
   render() {
-    const {url} = this.props;
-    const {showButton} = this.state;
+    const {url, page} = this.props;
     return (
       <>
         <WebView
@@ -28,21 +35,20 @@ export default class HostedPayment extends Component {
           style={{marginTop: 10}}
           onNavigationStateChange={navState => {
             let url = navState.title;
-            console.log(url, 'URL NYA INI BOS');
-            let staticURL =
-              'https://payment.proseller.io/wirecard/api/payment/status/';
-            if (url.includes(staticURL)) {
-              this.setState({showButton: true});
+            if (url == SUCCESS_URL && openOne) {
+              Actions.popTo(page);
+              Alert.alert(
+                'Congratulations',
+                'Your account has been registered.',
+              );
+              openOne = false;
+            } else if (url == FAILED_URL && openOne) {
+              Actions.popTo(page);
+              Alert.alert('Sorry', 'Cant register your account.');
+              openOne = false;
             }
           }}
         />
-        {showButton ? (
-          <TouchableOpacity
-            onPress={() => Actions.popTo('listCard')}
-            style={styles.buttonBottomFixed}>
-            <Text style={styles.textAddCard}>Close</Text>
-          </TouchableOpacity>
-        ) : null}
       </>
     );
   }

@@ -270,6 +270,8 @@ class SettleOrder extends Component {
 
       console.log('reponse pembayaran settle order ', response);
       if (response.success) {
+        //  remove selected account
+        this.props.dispatch(clearAccount());
         // go to payment success
         const {url} = this.props;
         Actions.paymentSuccess({
@@ -711,17 +713,28 @@ class SettleOrder extends Component {
                 style={{
                   fontSize: 17,
                   fontFamily: 'Lato-Bold',
-                  color: colorConfig.pageIndex.grayColor,
+                  color:
+                    selectedAccount == undefined
+                      ? colorConfig.store.colorError
+                      : colorConfig.pageIndex.grayColor,
                 }}>
-                Payment Method
+                Payment Method <Text style={{lineHeight: 30}}>*</Text>
               </Text>
               <TouchableOpacity
                 style={
                   selectedAccount != undefined
                     ? styles.btnMethodSelected
-                    : styles.btnMethodUnselected
+                    : [
+                        styles.btnMethodUnselected,
+                        selectedAccount == undefined
+                          ? {
+                              borderColor: colorConfig.store.colorError,
+                              borderWidth: 1.5,
+                            }
+                          : null,
+                      ]
                 }
-                onPress={() => Actions.paymentMethods()}>
+                onPress={() => Actions.paymentMethods({page: 'settleOrder'})}>
                 <Icon
                   size={20}
                   name={Platform.OS === 'ios' ? 'ios-cash' : 'md-cash'}
@@ -748,7 +761,11 @@ class SettleOrder extends Component {
 
             <View style={{marginTop: 50}} />
             <SwipeButton
-              disabled={selectedAccount == undefined ? true : false}
+              disabled={
+                selectedAccount != undefined || this.state.totalBayar == 0
+                  ? false
+                  : true
+              }
               disabledThumbIconBackgroundColor="#FFFFFF"
               disabledThumbIconBorderColor={
                 colorConfig.pageIndex.activeTintColor

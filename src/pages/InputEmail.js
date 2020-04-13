@@ -147,10 +147,7 @@ class InputEmail extends Component {
       );
       if (response.status == true) {
         if (response.data.confirmation == false) {
-          Alert.alert(
-            'Opss..',
-            "Looks like your account hasn't been confirmed, please confirm now.",
-          );
+          email.confirmed = false;
           email.phoneNumber = response.data.phoneNumber;
           Actions.verifyOtpAfterRegisterEmail(email);
         } else if (

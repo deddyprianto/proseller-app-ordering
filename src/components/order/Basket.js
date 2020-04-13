@@ -949,7 +949,7 @@ class Basket extends Component {
     const {tableType, dataBasket, orderType} = this.props;
     try {
       if (orderType == 'TAKEAWAY' && tableType != undefined) {
-        return tableType.tableNo;
+        return dataBasket.tableNo;
       } else {
         return dataBasket.tableNo;
       }
@@ -1134,10 +1134,15 @@ class Basket extends Component {
                   />
                 </View>
                 <View style={{marginTop: 20}} />
-                {this.getTableNo() != undefined ? (
+                {dataBasket.orderingMode == 'DINEIN' ? (
                   <View style={styles.itemSummary}>
                     <Text style={styles.total}>Table No.</Text>
                     <Text style={styles.total}>{this.getTableNo()}</Text>
+                  </View>
+                ) : dataBasket.referenceNo != undefined ? (
+                  <View style={styles.itemSummary}>
+                    <Text style={styles.total}>Ref No.</Text>
+                    <Text style={styles.total}>{dataBasket.referenceNo}</Text>
                   </View>
                 ) : null}
                 <View style={styles.itemSummary}>

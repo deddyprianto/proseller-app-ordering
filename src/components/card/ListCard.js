@@ -31,7 +31,7 @@ import {reduxForm} from 'redux-form';
 import Loader from './../loader';
 import ProgressiveImage from '../helper/ProgressiveImage';
 import CurrencyFormatter from '../../helper/CurrencyFormatter';
-import {getAccountPayment} from '../../actions/payment.actions';
+import {getAccountPayment, registerCard} from '../../actions/payment.actions';
 import {defaultPaymentAccount, movePageIndex} from '../../actions/user.action';
 import {isEmptyArray} from '../../helper/CheckEmpty';
 import RBSheet from 'react-native-raw-bottom-sheet';
@@ -42,6 +42,7 @@ class ListCard extends Component {
     this.state = {
       screenWidth: Dimensions.get('window').width,
       refreshing: false,
+      loading: false,
       selectedAccount: {},
     };
   }
@@ -296,6 +297,32 @@ class ListCard extends Component {
     );
   };
 
+  registerCard = async () => {
+    await this.setState({loading: true});
+    try {
+      const payload = {
+        referenceNo: 'xxx-xxx-xx',
+        paymentID: 'DBS_Wirecard',
+      };
+
+      const response = await this.props.dispatch(registerCard(payload));
+
+      await this.setState({loading: false});
+
+      if (response.success == true) {
+        Actions.hostedPayment({
+          url: response.response.data.url,
+          page: 'listCard',
+        });
+      } else {
+        Alert.alert('Sorry', 'Cant add credit card, please try again');
+      }
+    } catch (e) {
+      await this.setState({loading: false});
+      Alert.alert('Oppss..', 'Something went wrong, please try again.');
+    }
+  };
+
   render() {
     const {intlData, myCardAccount, item} = this.props;
     return (
@@ -334,7 +361,7 @@ class ListCard extends Component {
         {item.allowMultipleAccount != undefined &&
         item.allowMultipleAccount == true ? (
           <TouchableOpacity
-            onPress={() => Actions.addCard()}
+            onPress={this.registerCard}
             style={styles.buttonBottomFixed}>
             <Icon
               size={25}
@@ -345,7 +372,7 @@ class ListCard extends Component {
           </TouchableOpacity>
         ) : myCardAccount != undefined && myCardAccount.length == 0 ? (
           <TouchableOpacity
-            onPress={() => Actions.addCard()}
+            onPress={this.registerCard}
             style={styles.buttonBottomFixed}>
             <Icon
               size={25}
