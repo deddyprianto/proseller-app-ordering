@@ -72,6 +72,34 @@ export const registerCard = payload => {
   };
 };
 
+export const removeCard = payload => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      const accountID = payload.accountID;
+
+      const response = await fetchApiPayment(
+        `/account/delete/${accountID}`,
+        'DELETE',
+        null,
+        200,
+        token,
+      );
+      console.log('response delete account', JSON.stringify(response));
+
+      return response;
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
 export const selectedAccount = payload => {
   return async dispatch => {
     try {

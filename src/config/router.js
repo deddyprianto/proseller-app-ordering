@@ -53,7 +53,6 @@ import {BackHandler, ToastAndroid} from 'react-native';
 
 // card
 import ListCard from '../components/card/ListCard';
-import AddCard from '../components/card/AddCard';
 import HostedPayment from '../components/card/HostedPayment';
 import DetailCard from '../components/card/DetailCard';
 import PaymentMethods from '../components/card/PaymentMethods';
@@ -163,7 +162,6 @@ export default class Routes extends Component {
             <Scene key="QRCodeCart" component={QRCodeCart} />
 
             <Scene key="listCard" component={ListCard} />
-            <Scene key="addCard" component={AddCard} />
             <Scene key="hostedPayment" component={HostedPayment} />
             <Scene key="detailCard" component={DetailCard} />
             <Scene key="paymentMethods" component={PaymentMethods} />

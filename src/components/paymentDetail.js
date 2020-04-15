@@ -16,6 +16,7 @@ import {
   ScrollView,
   Alert,
   BackHandler,
+  TextInput,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -41,6 +42,7 @@ import {
   registerCard,
   selectedAccount,
 } from '../actions/payment.actions';
+import RBSheet from 'react-native-raw-bottom-sheet';
 
 class PaymentDetail extends Component {
   constructor(props) {
@@ -59,6 +61,8 @@ class PaymentDetail extends Component {
       dataVoucer: undefined,
       moneyPoint: undefined,
       addPoint: undefined,
+      cvv: '',
+      selectedItem: {},
     };
 
     // check if users payment methods is empty
@@ -98,6 +102,7 @@ class PaymentDetail extends Component {
         Actions.hostedPayment({
           url: response.response.data.url,
           page: 'paymentDetail',
+          checkCVV: this.checkCVV,
         });
       } else {
         Alert.alert('Sorry', 'Cant add credit card, please try again');
@@ -115,8 +120,37 @@ class PaymentDetail extends Component {
     }
   };
 
+  checkCVV = card => {
+    this.setState({selectedItem: card});
+    if (this.isCVVPassed(card)) {
+      this.props.dispatch(selectedAccount(card));
+    } else {
+      this.RBSheet.open();
+    }
+  };
+
   componentDidMount = async () => {
+    const {defaultAccount} = this.props;
+    await this.setState({loading: true});
     await this.setDataPayment(false);
+    try {
+      // if there are only 1 account, then set
+      await this.props.dispatch(getAccountPayment());
+      const {myCardAccount} = this.props;
+      if (
+        !isEmptyArray(myCardAccount) &&
+        myCardAccount.length == 1 &&
+        isEmptyObject(defaultAccount)
+      ) {
+        let card = myCardAccount[0];
+        // check if CVV is required
+        this.checkCVV(card);
+      }
+      await this.setState({loading: false});
+    } catch (e) {
+      await this.setState({loading: false});
+    }
+
     this.backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
       this.handleBackPress,
@@ -278,8 +312,138 @@ class PaymentDetail extends Component {
     });
   };
 
-  onSlideRight = async () => {
+  saveCVV = () => {
+    try {
+      let {selectedItem} = this.state;
+      selectedItem.details.CVV = this.state.cvv;
+      this.props.dispatch(selectedAccount(selectedItem));
+      this.RBSheet.close();
+    } catch (e) {
+      this.RBSheet.close();
+      Alert.alert('Sorry', 'Can`t set CVV, please try again');
+      console.log(e);
+    }
+  };
+
+  askUserToEnterCVV = () => {
     const {intlData} = this.props;
+    return (
+      <RBSheet
+        ref={ref => {
+          this.RBSheet = ref;
+        }}
+        animationType={'fade'}
+        height={210}
+        duration={10}
+        closeOnDragDown={true}
+        closeOnPressMask={true}
+        closeOnPressBack={true}
+        customStyles={{
+          container: {
+            backgroundColor: colorConfig.store.textWhite,
+            justifyContent: 'center',
+            alignItems: 'center',
+          },
+        }}>
+        <Text
+          style={{
+            color: colorConfig.pageIndex.inactiveTintColor,
+            fontSize: 20,
+            paddingBottom: 5,
+            fontWeight: 'bold',
+            fontFamily: 'Lato-Bold',
+          }}>
+          Please Enter Your Card CVV
+        </Text>
+
+        <TextInput
+          onChangeText={value => {
+            this.setState({cvv: value});
+          }}
+          keyboardType={'numeric'}
+          secureTextEntry={true}
+          maxLength={3}
+          style={{
+            padding: 10,
+            fontSize: 22,
+            textAlign: 'center',
+            fontWeight: 'bold',
+            fontFamily: 'Lato-Bold',
+            color: colorConfig.pageIndex.grayColor,
+            borderColor: colorConfig.pageIndex.grayColor,
+            borderRadius: 10,
+            borderWidth: 1.5,
+            letterSpacing: 20,
+            width: '35%',
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        />
+
+        <TouchableOpacity
+          disabled={this.state.cvv.length != 3 ? true : false}
+          onPress={this.saveCVV}
+          style={{
+            marginTop: 20,
+            padding: 12,
+            backgroundColor:
+              this.state.cvv.length != 3
+                ? colorConfig.store.disableButton
+                : colorConfig.store.defaultColor,
+            borderRadius: 15,
+            width: '35%',
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <Text
+            style={{
+              color: 'white',
+              fontWeight: 'bold',
+              fontFamily: 'Lato-Bold',
+              fontSize: 15,
+              textAlign: 'center',
+            }}>
+            SAVE
+          </Text>
+        </TouchableOpacity>
+      </RBSheet>
+    );
+  };
+
+  isCVVPassed = item => {
+    try {
+      let requiredCVV = item.details.userInput.find(
+        data => data.name == 'cardCVV',
+      );
+
+      if (requiredCVV == undefined) return true;
+
+      if (requiredCVV.required == true && item.details.CVV != undefined) {
+        return true;
+      } else if (requiredCVV.required == false) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {}
+  };
+
+  onSlideRight = async () => {
+    const {intlData, selectedAccount, companyInfo} = this.props;
+
+    // double check selectedAccount
+    if (selectedAccount == undefined) {
+      Alert.alert('Oppss', 'Please select payment method');
+      return;
+    }
+
+    // check if CVV is required and has been filled
+    if (!this.isCVVPassed(selectedAccount)) {
+      Alert.alert('Oppss', 'Please fill CVV in Credit Card');
+      return;
+    }
 
     var pembayaran = {};
     try {
@@ -288,9 +452,20 @@ class PaymentDetail extends Component {
       pembayaran.outletName = this.props.pembayaran.storeName;
       pembayaran.referenceNo = this.props.pembayaran.referenceNo;
       pembayaran.outletId = this.props.pembayaran.storeId;
-      pembayaran.paymentType = this.props.pembayaran.paymentType;
       pembayaran.dataPay = this.props.pembayaran.dataPay;
       pembayaran.void = false;
+
+      // Payment Type Detail
+      pembayaran.paymentType = 'CREDITCARD';
+      const creditCardPayload = {
+        accountId: selectedAccount.accountID,
+        cardCVV: selectedAccount.details.CVV,
+        companyID: companyInfo.companyId,
+        referenceNo: '123-123-123',
+        remark: 'test',
+      };
+
+      pembayaran.creditCardPayload = creditCardPayload;
 
       if (
         this.state.dataVoucer == undefined &&
@@ -313,8 +488,9 @@ class PaymentDetail extends Component {
           pembayaran.statusAdd = 'addPoint';
         }
       }
+      console.log('Payload payment', pembayaran);
       const response = await this.props.dispatch(sendPayment(pembayaran));
-      console.log('reponse pembayaran ', response);
+      console.log('reponse payment ', response);
       if (response.success) {
         //  remove selected account
         this.props.dispatch(clearAccount());
@@ -481,7 +657,7 @@ class PaymentDetail extends Component {
     return (
       <View style={styles.container}>
         {this.state.loading && <Loader />}
-        {console.log(this.props.dataStamps)}
+        {this.askUserToEnterCVV()}
         <View style={{backgroundColor: colorConfig.pageIndex.backgroundColor}}>
           <View
             style={{

@@ -145,6 +145,19 @@ class Basket extends Component {
         }, 2000);
       }
 
+      // check if status basket is pending and its take away, then request continoustly to get basket
+      const {orderType} = this.props;
+      if (
+        this.props.dataBasket != undefined &&
+        this.props.dataBasket.status == 'PENDING' &&
+        orderType == 'TAKEAWAY'
+      ) {
+        clearInterval(this.interval);
+        this.interval = setInterval(() => {
+          this.props.dispatch(getBasket());
+        }, 2000);
+      }
+
       // check if status basket for TAKE AWAY IS CONFIRMED or SUBMITTED, then request continoustly to get basket
       if (
         this.props.dataBasket != undefined &&

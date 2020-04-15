@@ -26,6 +26,7 @@ import colorConfig from '../config/colorConfig';
 import RewardsPoint from '../components/rewardsPoint';
 import appConfig from '../config/appConfig';
 import Loader from '../components/loader';
+import {parse} from 'react-native-svg';
 
 class paymentAddPoint extends Component {
   constructor(props) {
@@ -124,6 +125,20 @@ class paymentAddPoint extends Component {
     Actions.pop();
   };
 
+  to2PointDecimal = data => {
+    try {
+      if (data != 0) {
+        let money = data.toString().split('.');
+        money = `${money[0]}.${money[1].substr(0, 2)}`;
+        return parseFloat(money);
+      } else {
+        return parseFloat(0);
+      }
+    } catch (e) {
+      return parseFloat(0);
+    }
+  };
+
   calculateMoneyPoint = () => {
     const {campign} = this.props;
     try {
@@ -132,7 +147,9 @@ class paymentAddPoint extends Component {
         campign.points.roundingOptions != undefined &&
         campign.points.roundingOptions == 'DECIMAL'
       ) {
-        return parseFloat((ratio * this.state.jumMoneyRatio).toFixed(2));
+        let money = parseFloat(ratio * this.state.jumMoneyRatio);
+        return this.to2PointDecimal(money);
+        // return money.toFixed(2);
       } else {
         ratio = Math.floor(ratio);
         return ratio * this.state.jumMoneyRatio;

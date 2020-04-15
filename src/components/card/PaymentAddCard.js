@@ -36,6 +36,7 @@ import {
   selectedAccount,
 } from '../../actions/payment.actions';
 import {movePageIndex} from '../../actions/user.action';
+import RBSheet from 'react-native-raw-bottom-sheet';
 
 class PaymentAddCard extends Component {
   constructor(props) {
@@ -43,6 +44,8 @@ class PaymentAddCard extends Component {
     this.state = {
       screenWidth: Dimensions.get('window').width,
       refreshing: false,
+      cvv: '',
+      selectedItem: {},
     };
   }
 
@@ -72,6 +75,119 @@ class PaymentAddCard extends Component {
     return true;
   };
 
+  saveCVV = () => {
+    try {
+      let {selectedItem} = this.state;
+      selectedItem.details.CVV = this.state.cvv;
+      this.selectAccount(selectedItem);
+      this.RBSheet.close();
+    } catch (e) {
+      this.RBSheet.close();
+      Alert.alert('Sorry', 'Can`t set CVV, please try again');
+      console.log(e);
+    }
+  };
+
+  askUserToEnterCVV = () => {
+    const {intlData} = this.props;
+    return (
+      <RBSheet
+        ref={ref => {
+          this.RBSheet = ref;
+        }}
+        animationType={'fade'}
+        height={210}
+        duration={10}
+        closeOnDragDown={true}
+        closeOnPressMask={true}
+        closeOnPressBack={true}
+        customStyles={{
+          container: {
+            backgroundColor: colorConfig.store.textWhite,
+            justifyContent: 'center',
+            alignItems: 'center',
+          },
+        }}>
+        <Text
+          style={{
+            color: colorConfig.pageIndex.inactiveTintColor,
+            fontSize: 22,
+            paddingBottom: 5,
+            fontWeight: 'bold',
+            fontFamily: 'Lato-Bold',
+          }}>
+          Please Enter CVV
+        </Text>
+
+        <TextInput
+          onChangeText={value => {
+            this.setState({cvv: value});
+          }}
+          keyboardType={'numeric'}
+          secureTextEntry={true}
+          maxLength={3}
+          style={{
+            padding: 10,
+            fontSize: 22,
+            textAlign: 'center',
+            fontWeight: 'bold',
+            fontFamily: 'Lato-Bold',
+            color: colorConfig.pageIndex.grayColor,
+            borderColor: colorConfig.pageIndex.grayColor,
+            borderRadius: 10,
+            borderWidth: 1.5,
+            letterSpacing: 20,
+            width: '35%',
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        />
+
+        <TouchableOpacity
+          disabled={this.state.cvv.length != 3 ? true : false}
+          onPress={this.saveCVV}
+          style={{
+            marginTop: 20,
+            padding: 12,
+            backgroundColor:
+              this.state.cvv.length != 3
+                ? colorConfig.store.disableButton
+                : colorConfig.store.defaultColor,
+            borderRadius: 15,
+            width: '35%',
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <Text
+            style={{
+              color: 'white',
+              fontWeight: 'bold',
+              fontFamily: 'Lato-Bold',
+              fontSize: 15,
+              textAlign: 'center',
+            }}>
+            SAVE
+          </Text>
+        </TouchableOpacity>
+      </RBSheet>
+    );
+  };
+
+  isCVVRequired = item => {
+    let requiredCVV = item.details.userInput.find(
+      data => data.name == 'cardCVV',
+    );
+
+    if (requiredCVV != undefined && requiredCVV.required == true) {
+      this.RBSheet.open();
+      this.setState({selectedItem: item});
+    } else {
+      this.selectedAccount(item);
+    }
+  };
+
   selectAccount = async item => {
     try {
       const {page} = this.props;
@@ -81,7 +197,6 @@ class PaymentAddCard extends Component {
       } else {
         Actions.popTo('settleOrder');
       }
-      console.log('asakjbs');
     } catch (e) {}
   };
 
@@ -108,7 +223,7 @@ class PaymentAddCard extends Component {
         renderItem={({item}) =>
           item.paymentID == paymentID ? (
             <TouchableOpacity
-              onPress={() => this.selectAccount(item)}
+              onPress={() => this.isCVVRequired(item)}
               style={[
                 styles.card,
                 this.checkSelectedAccount(item) ? styles.cardSelected : null,
@@ -187,6 +302,9 @@ class PaymentAddCard extends Component {
     return (
       <View style={styles.container}>
         {this.state.loading && <Loader />}
+
+        {this.askUserToEnterCVV()}
+
         <View
           style={[
             styles.header,

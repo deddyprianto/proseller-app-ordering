@@ -100,7 +100,6 @@ class AccountMenuList extends Component {
 
   render() {
     const {intlData, myCardAccount, companyInfo, defaultAccount} = this.props;
-    console.log(defaultAccount, 'defaultAccount');
     return (
       <View style={styles.container}>
         <Text style={styles.headingMenu}>Default Payment Account</Text>

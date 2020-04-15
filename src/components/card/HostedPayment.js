@@ -11,6 +11,13 @@ import {
 } from 'react-native';
 import {Actions} from 'react-native-router-flux';
 import colorConfig from '../../config/colorConfig';
+import {
+  getAccountPayment,
+  selectedAccount,
+} from '../../actions/payment.actions';
+import {isEmptyArray} from '../../helper/CheckEmpty';
+import {compose} from 'redux';
+import {connect} from 'react-redux';
 
 const SUCCESS_URL =
   'https://payment.proseller.io/api/account/registration/success';
@@ -19,13 +26,26 @@ const FAILED_URL =
 
 let openOne = true;
 
-export default class HostedPayment extends Component {
+class HostedPayment extends Component {
   constructor(props) {
     super(props);
     this.state = {
       showButton: false,
     };
   }
+
+  setSelectedAccount = async () => {
+    try {
+      // if there are only 1 account, then set
+      await this.props.dispatch(getAccountPayment());
+      const {myCardAccount} = this.props;
+      if (!isEmptyArray(myCardAccount) && myCardAccount.length == 1) {
+        // this.props.dispatch(selectedAccount(myCardAccount[0]));
+        this.props.checkCVV(myCardAccount[0]);
+      }
+    } catch (e) {}
+  };
+
   render() {
     const {url, page} = this.props;
     return (
@@ -33,19 +53,19 @@ export default class HostedPayment extends Component {
         <WebView
           source={{uri: url}}
           style={{marginTop: 10}}
-          onNavigationStateChange={navState => {
+          onNavigationStateChange={async navState => {
             let url = navState.title;
             if (url == SUCCESS_URL && openOne) {
+              // if page come from payment, then return back with selected account that has been created
+              if (page == 'paymentDetail' || page == 'settleOrder') {
+                await this.setSelectedAccount();
+              }
               Actions.popTo(page);
-              Alert.alert(
-                'Congratulations',
-                'Your account has been registered.',
-              );
-              openOne = false;
+              // openOne = false;
             } else if (url == FAILED_URL && openOne) {
               Actions.popTo(page);
               Alert.alert('Sorry', 'Cant register your account.');
-              openOne = false;
+              // openOne = false;
             }
           }}
         />
@@ -68,3 +88,18 @@ const styles = StyleSheet.create({
     fontFamily: 'Lato-Bold',
   },
 });
+
+mapStateToProps = state => ({
+  myCardAccount: state.cardReducer.myCardAccount.card,
+});
+
+mapDispatchToProps = dispatch => ({
+  dispatch,
+});
+
+export default compose(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  ),
+)(HostedPayment);

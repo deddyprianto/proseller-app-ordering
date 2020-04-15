@@ -17,6 +17,7 @@ import {
   Alert,
   BackHandler,
   FlatList,
+  TextInput,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -35,8 +36,15 @@ import {settleOrder} from '../../actions/order.action';
 import Loader from './../loader';
 // import {refreshToken} from '../actions/auth.actions';
 import CurrencyFormatter from '../../helper/CurrencyFormatter';
-import {clearAccount, selectedAccount} from '../../actions/payment.actions';
+import {
+  clearAccount,
+  getAccountPayment,
+  registerCard,
+  selectedAccount,
+} from '../../actions/payment.actions';
 import {isEmptyArray, isEmptyObject} from '../../helper/CheckEmpty';
+import {getUserProfile} from '../../actions/user.action';
+import RBSheet from 'react-native-raw-bottom-sheet';
 
 class SettleOrder extends Component {
   constructor(props) {
@@ -55,7 +63,15 @@ class SettleOrder extends Component {
       dataVoucer: undefined,
       moneyPoint: undefined,
       addPoint: undefined,
+      cvv: '',
+      selectedItem: {},
     };
+
+    // check if users payment methods is empty
+    const {myCardAccount} = this.props;
+    if (isEmptyArray(myCardAccount)) {
+      this.askUserToAddAccount();
+    }
 
     // check if default accout has been set, then add selected account
     if (!isEmptyObject(this.props.defaultAccount)) {
@@ -63,8 +79,73 @@ class SettleOrder extends Component {
     }
   }
 
+  askUserToAddAccount = async () => {
+    Alert.alert(
+      'Credit Card Not Registered',
+      'You have not registered an account for payment, please register now.',
+      [{text: 'OK', onPress: () => this.registerCard()}],
+      {cancelable: false},
+    );
+  };
+
+  registerCard = async () => {
+    await this.setState({loading: true});
+    try {
+      const payload = {
+        referenceNo: 'xxx-xxx-xx',
+        paymentID: 'DBS_Wirecard',
+      };
+
+      const response = await this.props.dispatch(registerCard(payload));
+
+      if (response.success == true) {
+        Actions.hostedPayment({
+          url: response.response.data.url,
+          page: 'settleOrder',
+          checkCVV: this.checkCVV,
+        });
+      } else {
+        Alert.alert('Sorry', 'Cant add credit card, please try again');
+      }
+
+      await this.setState({loading: false});
+    } catch (e) {
+      await this.setState({loading: false});
+      Alert.alert('Oppss..', 'Something went wrong, please try again.');
+    }
+  };
+
+  checkCVV = card => {
+    this.setState({selectedItem: card});
+    if (this.isCVVPassed(card)) {
+      this.props.dispatch(selectedAccount(card));
+    } else {
+      this.RBSheet.open();
+    }
+  };
+
   componentDidMount = async () => {
+    const {defaultAccount} = this.props;
+    await this.setState({loading: true});
     await this.setDataPayment(false);
+    try {
+      // if there are only 1 account, then set
+      await this.props.dispatch(getAccountPayment());
+      const {myCardAccount} = this.props;
+      if (
+        !isEmptyArray(myCardAccount) &&
+        myCardAccount.length == 1 &&
+        isEmptyObject(defaultAccount)
+      ) {
+        let card = myCardAccount[0];
+        // check if CVV is required
+        this.checkCVV(card);
+      }
+      await this.setState({loading: false});
+    } catch (e) {
+      await this.setState({loading: false});
+    }
+
     this.backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
       this.handleBackPress,
@@ -223,18 +304,160 @@ class SettleOrder extends Component {
     });
   };
 
-  onSlideRight = async () => {
-    var pembayaran = {};
+  saveCVV = () => {
+    try {
+      let {selectedItem} = this.state;
+      selectedItem.details.CVV = this.state.cvv;
+      this.props.dispatch(selectedAccount(selectedItem));
+      this.RBSheet.close();
+    } catch (e) {
+      this.RBSheet.close();
+      Alert.alert('Sorry', 'Can`t set CVV, please try again');
+      console.log(e);
+    }
+  };
+
+  askUserToEnterCVV = () => {
     const {intlData} = this.props;
+    return (
+      <RBSheet
+        ref={ref => {
+          this.RBSheet = ref;
+        }}
+        animationType={'fade'}
+        height={210}
+        duration={10}
+        closeOnDragDown={true}
+        closeOnPressMask={true}
+        closeOnPressBack={true}
+        customStyles={{
+          container: {
+            backgroundColor: colorConfig.store.textWhite,
+            justifyContent: 'center',
+            alignItems: 'center',
+          },
+        }}>
+        <Text
+          style={{
+            color: colorConfig.pageIndex.inactiveTintColor,
+            fontSize: 20,
+            paddingBottom: 5,
+            fontWeight: 'bold',
+            fontFamily: 'Lato-Bold',
+          }}>
+          Please Enter Your Card CVV
+        </Text>
+
+        <TextInput
+          onChangeText={value => {
+            this.setState({cvv: value});
+          }}
+          keyboardType={'numeric'}
+          secureTextEntry={true}
+          maxLength={3}
+          style={{
+            padding: 10,
+            fontSize: 22,
+            textAlign: 'center',
+            fontWeight: 'bold',
+            fontFamily: 'Lato-Bold',
+            color: colorConfig.pageIndex.grayColor,
+            borderColor: colorConfig.pageIndex.grayColor,
+            borderRadius: 10,
+            borderWidth: 1.5,
+            letterSpacing: 20,
+            width: '35%',
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        />
+
+        <TouchableOpacity
+          disabled={this.state.cvv.length != 3 ? true : false}
+          onPress={this.saveCVV}
+          style={{
+            marginTop: 20,
+            padding: 12,
+            backgroundColor:
+              this.state.cvv.length != 3
+                ? colorConfig.store.disableButton
+                : colorConfig.store.defaultColor,
+            borderRadius: 15,
+            width: '35%',
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <Text
+            style={{
+              color: 'white',
+              fontWeight: 'bold',
+              fontFamily: 'Lato-Bold',
+              fontSize: 15,
+              textAlign: 'center',
+            }}>
+            SAVE
+          </Text>
+        </TouchableOpacity>
+      </RBSheet>
+    );
+  };
+
+  isCVVPassed = item => {
+    try {
+      let requiredCVV = item.details.userInput.find(
+        data => data.name == 'cardCVV',
+      );
+
+      if (requiredCVV == undefined) return true;
+
+      if (requiredCVV.required == true && item.details.CVV != undefined) {
+        return true;
+      } else if (requiredCVV.required == false) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {}
+  };
+
+  onSlideRight = async () => {
+    const {intlData, selectedAccount, companyInfo} = this.props;
+
+    // double check selectedAccount
+    if (selectedAccount == undefined) {
+      Alert.alert('Oppss', 'Please select payment method');
+      return;
+    }
+
+    // check if CVV is required and has been filled
+    if (!this.isCVVPassed(selectedAccount)) {
+      Alert.alert('Oppss', 'Please fill CVV in Credit Card');
+      return;
+    }
+
+    var pembayaran = {};
     try {
       this.setState({loading: true});
       pembayaran.price = Number(this.state.totalBayar.toFixed(3));
       pembayaran.outletName = this.props.pembayaran.storeName;
       // pembayaran.referenceNo = this.props.pembayaran.referenceNo;
       // pembayaran.outletId = this.props.pembayaran.storeId;
-      pembayaran.paymentType = 'CASH';
       // pembayaran.dataPay = this.props.pembayaran.dataPay;
       pembayaran.void = false;
+
+      // Payment Type Detail
+      pembayaran.paymentType = 'CREDITCARD';
+      const creditCardPayload = {
+        accountId: selectedAccount.accountID,
+        cardCVV: selectedAccount.details.CVV,
+        companyID: companyInfo.companyId,
+        referenceNo: '123-123-123',
+        remark: 'test',
+      };
+
+      pembayaran.creditCardPayload = creditCardPayload;
 
       if (
         this.state.dataVoucer == undefined &&
@@ -435,7 +658,7 @@ class SettleOrder extends Component {
     return (
       <View style={styles.container}>
         {this.state.loading && <Loader />}
-        {console.log(this.props.dataStamps)}
+        {this.askUserToEnterCVV()}
         <View style={{backgroundColor: colorConfig.pageIndex.backgroundColor}}>
           <View
             style={{
@@ -940,6 +1163,7 @@ mapStateToProps = state => ({
   recentTransaction: state.rewardsReducer.dataPoint.recentTransaction,
   campaignActive: state.rewardsReducer.dataPoint.campaignActive,
   selectedAccount: state.cardReducer.selectedAccount.selectedAccount,
+  myCardAccount: state.cardReducer.myCardAccount.card,
   defaultAccount: state.userReducer.defaultPaymentAccount.defaultAccount,
   companyInfo: state.userReducer.getCompanyInfo.companyInfo,
   dataStamps: state.rewardsReducer.getStamps,
