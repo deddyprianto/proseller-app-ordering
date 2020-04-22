@@ -146,12 +146,27 @@ class WaitingFood extends Component {
     );
   };
 
+  getInfoCart = () => {
+    const {intlData, dataBasket} = this.props;
+
+    if (dataBasket.orderingMode == 'TAKEAWAY') {
+      return `Queue No: ${dataBasket.queueNo}`;
+    } else {
+      if (
+        dataBasket.outlet.enableTableScan != undefined &&
+        (dataBasket.outlet.enableTableScan == false ||
+          dataBasket.outlet.enableTableScan == '-')
+      ) {
+        return `Queue No: ${dataBasket.queueNo}`;
+      } else {
+        return `Table No: ${dataBasket.tableNo}`;
+      }
+    }
+  };
+
   renderTextWaiting = () => {
     const {intlData, dataBasket} = this.props;
     // if basket is canceled by admin, then give template status
-    if (dataBasket == undefined) {
-      dataBasket.status == 'READY_FOR_COLLECTION';
-    }
     return (
       <View
         style={{
@@ -161,30 +176,56 @@ class WaitingFood extends Component {
           marginVertical: 30,
         }}>
         {dataBasket.status == 'READY_FOR_COLLECTION' ? (
-          <Text
-            style={{
-              fontSize: 23,
-              color: colorConfig.store.defaultColor,
-              fontWeight: 'bold',
-              fontFamily: 'Lato-Bold',
-              textAlign: 'center',
-            }}>
-            Yeay, your order is ready. {'\n'} {'\n'}
-            <Text style={{color: colorConfig.pageIndex.grayColor}}>
-              Please come to the cashier and tap the QR Code button below.
+          <View>
+            <Text
+              style={{
+                fontSize: 23,
+                color: colorConfig.store.defaultColor,
+                fontWeight: 'bold',
+                fontFamily: 'Lato-Bold',
+                textAlign: 'center',
+              }}>
+              Yeay, your order is ready. {'\n'} {'\n'}
+              <Text style={{color: colorConfig.pageIndex.grayColor}}>
+                Please come to the cashier and tap the QR Code button below.
+              </Text>
             </Text>
-          </Text>
+            <Text
+              style={{
+                fontSize: 27,
+                marginTop: 25,
+                color: colorConfig.store.colorSuccess,
+                fontWeight: 'bold',
+                textAlign: 'center',
+                fontFamily: 'Lato-Bold',
+              }}>
+              {this.getInfoCart()}
+            </Text>
+          </View>
         ) : (
-          <Text
-            style={{
-              fontSize: 25,
-              color: colorConfig.pageIndex.inactiveTintColor,
-              fontWeight: 'bold',
-              textAlign: 'center',
-              fontFamily: 'Lato-Bold',
-            }}>
-            Please wait, We are preparing your food in the kitchen.
-          </Text>
+          <View>
+            <Text
+              style={{
+                fontSize: 25,
+                color: colorConfig.pageIndex.inactiveTintColor,
+                fontWeight: 'bold',
+                textAlign: 'center',
+                fontFamily: 'Lato-Bold',
+              }}>
+              Please wait, We are preparing your food in the kitchen.
+            </Text>
+            <Text
+              style={{
+                fontSize: 27,
+                marginTop: 25,
+                color: colorConfig.store.colorSuccess,
+                fontWeight: 'bold',
+                textAlign: 'center',
+                fontFamily: 'Lato-Bold',
+              }}>
+              {this.getInfoCart()}
+            </Text>
+          </View>
         )}
       </View>
     );

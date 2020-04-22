@@ -355,7 +355,7 @@ export default class PaymentSuccess extends Component {
     const {showDetail} = this.state;
     setTimeout(() => {
       this.setState({showDetail: true});
-    }, 2800);
+    }, 2500);
     return (
       <View style={styles.container}>
         {showDetail ? this.renderPaymentDetails() : this.renderAnimateSuccess()}

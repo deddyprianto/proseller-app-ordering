@@ -223,7 +223,7 @@ class PaymentAddCard extends Component {
         renderItem={({item}) =>
           item.paymentID == paymentID ? (
             <TouchableOpacity
-              onPress={() => this.isCVVRequired(item)}
+              onPress={() => this.selectAccount(item)}
               style={[
                 styles.card,
                 this.checkSelectedAccount(item) ? styles.cardSelected : null,

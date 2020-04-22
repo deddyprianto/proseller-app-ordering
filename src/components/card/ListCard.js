@@ -76,8 +76,9 @@ class ListCard extends Component {
     return true;
   };
 
-  setDefaultAccount = async item => {
-    await this.props.dispatch(defaultPaymentAccount(item));
+  setDefaultAccount = async () => {
+    const {selectedAccount} = this.state;
+    await this.props.dispatch(defaultPaymentAccount(selectedAccount));
     this.RBSheet.close();
   };
 
@@ -121,7 +122,7 @@ class ListCard extends Component {
           },
         }}>
         <TouchableOpacity
-          onPress={() => this.isCVVRequired()}
+          onPress={() => this.setDefaultAccount()}
           style={{
             padding: 15,
             backgroundColor: colorConfig.store.defaultColor,

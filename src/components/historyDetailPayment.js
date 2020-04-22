@@ -101,6 +101,13 @@ class HistoryDetailPayment extends Component {
 
   render() {
     const {intlData} = this.props;
+    let discount = 0;
+    if (
+      this.props.item.redeemValue != 0 &&
+      this.props.item.redeemValue != undefined
+    ) {
+      discount = this.props.item.redeemValue;
+    }
     return (
       <View style={styles.container}>
         <View style={{backgroundColor: colorConfig.pageIndex.backgroundColor}}>
@@ -163,18 +170,24 @@ class HistoryDetailPayment extends Component {
                 </Text>
               </View>
 
-              <View style={[styles.detailItem, {marginLeft: 10}]}>
-                <Text style={styles.desc}> • Cash</Text>
-                <Text style={styles.desc}>
-                  {/*{CurrencyFormatter(this.calculateCash(this.props.item))}*/}
-                  {CurrencyFormatter(this.props.item.price)}
-                </Text>
-              </View>
+              {this.props.item.paymentType != undefined &&
+              this.props.item.price != 0 ? (
+                <View style={[styles.detailItem, {marginLeft: 10}]}>
+                  <Text style={styles.desc}>
+                    {' '}
+                    • {this.props.item.paymentType}
+                  </Text>
+                  <Text style={styles.desc}>
+                    {/*{CurrencyFormatter(this.calculateCash(this.props.item))}*/}
+                    {CurrencyFormatter(this.props.item.price - discount)}
+                  </Text>
+                </View>
+              ) : null}
 
               {this.props.item.statusAdd == 'addPoint' ? (
                 <View style={[styles.detailItem, {marginLeft: 10}]}>
-                  <Text style={styles.desc}> • Point</Text>
-                  <Text style={styles.desc}>{this.props.item.discount}</Text>
+                  <Text style={styles.desc}> • POINT</Text>
+                  <Text style={styles.desc}>{this.props.item.redeemValue}</Text>
                 </View>
               ) : null}
 

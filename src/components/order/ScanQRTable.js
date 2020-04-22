@@ -41,6 +41,7 @@ class ScanQRTable extends Component {
     try {
       const scan = JSON.parse(e.data);
       const outletIdBasket = this.props.basket.outletID;
+      const {basket} = this.props;
 
       if (outletIdBasket != scan.outletId) {
         this.setState({wrongOutlet: true});
@@ -54,7 +55,10 @@ class ScanQRTable extends Component {
           titleAlert: 'Opps...',
         });
       } else {
-        if (this.props.orderType == 'TAKEAWAY') {
+        if (
+          this.props.orderType == 'TAKEAWAY' ||
+          basket.outlet.outletType == 'QUICKSERVICE'
+        ) {
           this.props.dispatch(setTableType(scan));
           Actions.pop();
         } else {
@@ -64,6 +68,7 @@ class ScanQRTable extends Component {
       // Actions.confirmTable({scan: scan});
       // Actions.pop();
     } catch (e) {
+      console.log(e);
       this.setState({
         showAlert: true,
         pesanAlert: 'Please try again',
@@ -94,6 +99,19 @@ class ScanQRTable extends Component {
         if (results.status == 'FAILED') {
           Alert.alert('Info!', results.data.message);
         }
+
+        // give info to customer if their order has been submitted
+        // if (results.data.status == 'SUBMITTED') {
+        //   Alert.alert(
+        //     'Thank You!',
+        //     'Please wait until your order is confirmed by Admin',
+        //   );
+        // }
+        Alert.alert(
+          'Congratulation!',
+          `Your order has been ${results.data.status}`,
+        );
+
         Actions.pop();
       } else {
         this.setState({

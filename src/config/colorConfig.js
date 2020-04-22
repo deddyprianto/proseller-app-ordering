@@ -56,7 +56,8 @@ const colorConfig = {
     scrollView: '#FFFBF4',
     storesTitle: '#f39c12',
     border: '#31393d',
-    colorSuccess: '#44c769',
+    colorSuccess: 'rgb(68, 199, 105)',
+    colorSuccessDisabled: 'rgba(68, 199, 105, 0.3)',
     colorError: '#c7420e',
     textWhite: 'white',
     title: '#454545',
@@ -67,6 +68,7 @@ const colorConfig = {
     darkColor: '#2c3e50',
     containerColor: '#f2f2f2',
     secondaryColor: `rgb(${SECONDARY_COLOR_RGB})`,
+    secondaryColorDisabled: `rgba(${SECONDARY_COLOR_RGB}, 0.3)`,
   },
   card: {
     cardColor: '#1e272e',

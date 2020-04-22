@@ -77,14 +77,12 @@ import com.android.build.OutputFile
 
 project.ext.react = [
     entryFile: "index.js",
-    // enableHermes: false,  // clean and rebuild if changing
     enableHermes: false,  // clean and rebuild if changing
+    // enableHermes: true,  // clean and rebuild if changing
 ]
 
 apply from: "../../node_modules/react-native/react.gradle"
 apply from: "../../node_modules/@sentry/react-native/sentry.gradle"
-
-apply from: "../../node_modules/react-native-code-push/android/codepush.gradle"
 
 /**
  * Set this to true to create two separate APKs instead of one:
@@ -135,13 +133,13 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.qiji"
+        applicationId "com.edgeworks"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 4
-        versionName "1.1"
+        versionCode 6
+        versionName "1.0.3"
         missingDimensionStrategy 'react-native-camera', 'general'
-        resValue "string", "build_config_package", "com.qiji"
+        resValue "string", "build_config_package", "com.edgeworks"
         multiDexEnabled true
         // detox
         testBuildType System.getProperty('testBuildType', 'debug')
@@ -178,7 +176,7 @@ android {
         release {
             // Caution! In production, you need to generate your own keystore file.
             // see https://facebook.github.io/react-native/docs/signed-apk-android.
-            // FOR APP CENTER BUILD PURPOSE
+            // For App Center Purpose
             signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
@@ -189,24 +187,23 @@ android {
     productFlavors {
             dev {
                 minSdkVersion rootProject.ext.minSdkVersion
-                applicationId 'com.qiji.dev'
-                versionName "1.1"
+                applicationId 'com.edgeworks.dev'
+                versionName "1.0-dev"
                 targetSdkVersion rootProject.ext.targetSdkVersion
-                resValue "string", "build_config_package", "com.qiji"
+                resValue "string", "build_config_package", "com.edgeworks"
             }
             demo {
                 minSdkVersion rootProject.ext.minSdkVersion
-                applicationId 'com.qiji.demo'
-                versionName "1.1"
+                applicationId 'com.edgeworks.demo'
+                versionName "1.0.3-demo"
                 targetSdkVersion rootProject.ext.targetSdkVersion
-                resValue "string", "build_config_package", "com.qiji"
+                resValue "string", "build_config_package", "com.edgeworks"
             }
             production {
                 minSdkVersion rootProject.ext.minSdkVersion
-                applicationId 'com.qiji.production'
-                versionName "1.1"
+                applicationId 'com.edgeworks.production'
                 targetSdkVersion rootProject.ext.targetSdkVersion
-                resValue "string", "build_config_package", "com.qiji"
+                resValue "string", "build_config_package", "com.edgeworks"
             }
         }
     // applicationVariants are e.g. debug, release
@@ -283,3 +280,4 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.onesignal.androidsdk.onesignal-gradle-plugin'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
+

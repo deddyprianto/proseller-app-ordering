@@ -142,7 +142,7 @@ class Basket extends Component {
         clearInterval(this.interval);
         this.interval = setInterval(() => {
           this.props.dispatch(getBasket());
-        }, 2000);
+        }, 4000);
       }
 
       // check if status basket is pending and its take away, then request continoustly to get basket
@@ -155,7 +155,7 @@ class Basket extends Component {
         clearInterval(this.interval);
         this.interval = setInterval(() => {
           this.props.dispatch(getBasket());
-        }, 2000);
+        }, 4000);
       }
 
       // check if status basket for TAKE AWAY IS CONFIRMED or SUBMITTED, then request continoustly to get basket
@@ -169,7 +169,7 @@ class Basket extends Component {
         clearInterval(this.interval);
         this.interval = setInterval(() => {
           this.props.dispatch(getBasket());
-        }, 2000);
+        }, 4000);
       }
     } catch (e) {
       Alert.alert('Opss..', "Can't get data basket, please try again.");
@@ -185,8 +185,12 @@ class Basket extends Component {
     this.setState({selectedCategoryModifier: idx});
   };
 
-  askUserToSelectPaymentType = () => {
-    const {intlData} = this.props;
+  askUserToSelectOrderType = () => {
+    const {intlData, dataBasket} = this.props;
+    let item = {};
+    if (dataBasket != undefined) {
+      item = dataBasket.outlet;
+    }
     return (
       <RBSheet
         ref={ref => {
@@ -216,17 +220,13 @@ class Basket extends Component {
           Change Order Mode
         </Text>
         <TouchableOpacity
+          disabled={item.enableDineIn == false ? true : false}
           onPress={() => this.setOrderType('DINEIN')}
-          style={{
-            padding: 15,
-            backgroundColor: colorConfig.store.colorSuccess,
-            borderRadius: 15,
-            width: '60%',
-            marginBottom: 20,
-            flexDirection: 'row',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
+          style={
+            item.enableDineIn == false
+              ? styles.deactiveDINEINButton
+              : styles.activeDINEINButton
+          }>
           <Icon
             size={30}
             name={Platform.OS === 'ios' ? 'ios-restaurant' : 'md-restaurant'}
@@ -245,16 +245,13 @@ class Basket extends Component {
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
+          disabled={item.enableTakeAway == false ? true : false}
           onPress={() => this.setOrderType('TAKEAWAY')}
-          style={{
-            padding: 15,
-            backgroundColor: colorConfig.store.secondaryColor,
-            borderRadius: 15,
-            width: '60%',
-            flexDirection: 'row',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
+          style={
+            item.enableTakeAway == false
+              ? styles.deactiveTAKEAWAYButton
+              : styles.activeTAKEAWAYButton
+          }>
           <Icon
             size={30}
             name={Platform.OS === 'ios' ? 'ios-basket' : 'md-basket'}
@@ -292,8 +289,10 @@ class Basket extends Component {
   };
 
   componentWillUnmount() {
-    this.backHandler.remove();
-    clearInterval(this.interval);
+    try {
+      this.backHandler.remove();
+      clearInterval(this.interval);
+    } catch (e) {}
   }
 
   handleBackPress = () => {
@@ -319,7 +318,17 @@ class Basket extends Component {
       clearInterval(this.interval);
       this.interval = setInterval(() => {
         this.props.dispatch(getBasket());
-      }, 2000);
+      }, 4000);
+    }
+  };
+
+  checkActivateButtonClearRestaurant = dataBasket => {
+    const {orderType} = this.props;
+
+    if (dataBasket.status == 'PENDING') {
+      return false;
+    } else {
+      return true;
     }
   };
 
@@ -327,7 +336,8 @@ class Basket extends Component {
     const {orderType} = this.props;
     if (
       dataBasket.outlet.outletType == 'QUICKSERVICE' ||
-      orderType == 'TAKEAWAY'
+      orderType == 'TAKEAWAY' ||
+      dataBasket.orderingMode == 'TAKEAWAY'
     ) {
       if (
         dataBasket.status == 'PROCESSING' ||
@@ -463,12 +473,16 @@ class Basket extends Component {
         </Text>
         <View style={{flexDirection: 'row', justifyContent: 'center'}}>
           <TouchableOpacity
-            disabled={this.checkActivateButton(dataBasket) ? true : false}
+            disabled={
+              this.checkActivateButtonClearRestaurant(dataBasket) ? true : false
+            }
             onPress={this.alertRemoveBasket}
             style={[
               styles.btnCancelBasketModal,
               {
-                backgroundColor: this.checkActivateButton(dataBasket)
+                backgroundColor: this.checkActivateButtonClearRestaurant(
+                  dataBasket,
+                )
                   ? colorConfig.store.disableButtonError
                   : colorConfig.store.colorError,
               },
@@ -511,6 +525,12 @@ class Basket extends Component {
 
   goToSettle = () => {
     try {
+      //  refresh cart
+      clearInterval(this.interval);
+      this.interval = setInterval(() => {
+        this.props.dispatch(getBasket());
+      }, 3000);
+
       let dataPay = [];
       // create dataPay item
       let data = {};
@@ -531,9 +551,9 @@ class Basket extends Component {
       });
 
       const pembayaran = {
-        // paymentType: 'QIJI APP',
         payment: this.props.dataBasket.totalNettAmount,
-        storeName: this.props.dataBasket.outlet.name,
+        totalGrossAmount: this.props.dataBasket.totalGrossAmount,
+        // storeName: this.props.dataBasket.outlet.name,
         dataPay: dataPay,
         storeId: this.props.dataBasket.outlet.id,
         // referenceNo: 'scan.referenceNo',
@@ -541,10 +561,17 @@ class Basket extends Component {
 
       // set url to pay
       let url;
-      const {orderType, tableType} = this.props;
-      if (orderType == 'TAKEAWAY') {
-        pembayaran.tableNo = tableType.tableNo;
-        pembayaran.orderingMode = 'TAKEAWAY';
+      const {orderType, tableType, dataBasket} = this.props;
+      if (
+        orderType == 'TAKEAWAY' ||
+        dataBasket.outlet.outletType == 'QUICKSERVICE'
+      ) {
+        if (tableType != undefined) {
+          pembayaran.tableNo = tableType.tableNo;
+        } else {
+          pembayaran.tableNo = '-';
+        }
+        pembayaran.orderingMode = orderType;
         url = '/cart/submitTakeAway';
       } else {
         url = '/cart/settle';
@@ -560,7 +587,7 @@ class Basket extends Component {
     }
   };
 
-  renderButtonConfirm = () => {
+  renderButtonScanQRCode = () => {
     const {intlData} = this.props;
     return (
       <View
@@ -902,12 +929,13 @@ class Basket extends Component {
   };
 
   setOrderType = async type => {
-    const {dataBasket} = this.props;
-    if (dataBasket.outlet.outletType == 'QUICKSERVICE') {
-      this.props.dispatch(setOrderType('TAKEAWAY'));
-    } else {
-      this.props.dispatch(setOrderType(type));
-    }
+    // const {dataBasket} = this.props;
+    // if (dataBasket.outlet.outletType == 'QUICKSERVICE') {
+    //   this.props.dispatch(setOrderType('TAKEAWAY'));
+    // } else {
+    //   this.props.dispatch(setOrderType(type));
+    // }
+    this.props.dispatch(setOrderType(type));
     this.RBSheet.close();
   };
 
@@ -971,8 +999,69 @@ class Basket extends Component {
     }
   };
 
+  getInfoOrder = () => {
+    const {dataBasket, tableType} = this.props;
+    if (dataBasket.outlet.outletType == 'QUICKSERVICE') {
+      if (dataBasket.orderingMode == 'TAKEAWAY') {
+        return dataBasket.queueNo;
+      } else {
+        if (
+          dataBasket.outlet.enableTableScan != undefined &&
+          (dataBasket.outlet.enableTableScan == false ||
+            dataBasket.outlet.enableTableScan == '-')
+        ) {
+          return dataBasket.queueNo;
+        } else {
+          let table = '';
+          if (dataBasket.tableNo == undefined) {
+            table = tableType.tableNo;
+          } else {
+            table = dataBasket.tableNo;
+          }
+          return table;
+        }
+      }
+    } else {
+      if (dataBasket.orderingMode == 'TAKEAWAY') {
+        return dataBasket.queueNo;
+      } else {
+        let table = '';
+        if (dataBasket.tableNo == undefined) {
+          table = tableType.tableNo;
+        } else {
+          table = dataBasket.tableNo;
+        }
+        return table;
+      }
+    }
+  };
+
+  getInfoTextOrder = () => {
+    const {dataBasket} = this.props;
+    if (dataBasket.outlet.outletType == 'QUICKSERVICE') {
+      if (dataBasket.orderingMode == 'TAKEAWAY') {
+        return 'Queue No.';
+      } else {
+        if (
+          dataBasket.outlet.enableTableScan != undefined &&
+          dataBasket.outlet.enableTableScan == false
+        ) {
+          return 'Queue No.';
+        } else {
+          return 'Table No';
+        }
+      }
+    } else {
+      if (dataBasket.orderingMode == 'TAKEAWAY') {
+        return 'Queue No.';
+      } else {
+        return 'Table No';
+      }
+    }
+  };
+
   render() {
-    const {intlData, dataBasket, orderType} = this.props;
+    const {intlData, dataBasket, orderType, tableType} = this.props;
     // give message to user if order has been confirmed
     try {
       if (dataBasket != undefined) {
@@ -1032,7 +1121,7 @@ class Basket extends Component {
           loadModifierTime={this.state.loadModifierTime}
         />
 
-        {this.askUserToSelectPaymentType()}
+        {this.askUserToSelectOrderType()}
 
         <View style={{backgroundColor: colorConfig.pageIndex.backgroundColor}}>
           <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
@@ -1147,16 +1236,15 @@ class Basket extends Component {
                   />
                 </View>
                 <View style={{marginTop: 20}} />
-                {dataBasket.orderingMode == 'DINEIN' ? (
-                  <View style={styles.itemSummary}>
-                    <Text style={styles.total}>Table No.</Text>
-                    <Text style={styles.total}>{this.getTableNo()}</Text>
-                  </View>
-                ) : dataBasket.referenceNo != undefined ? (
-                  <View style={styles.itemSummary}>
-                    <Text style={styles.total}>Ref No.</Text>
-                    <Text style={styles.total}>{dataBasket.referenceNo}</Text>
-                  </View>
+                {dataBasket != undefined ? (
+                  dataBasket.status != 'PENDING' || tableType != undefined ? (
+                    <View style={styles.itemSummary}>
+                      <Text style={styles.total}>
+                        {this.getInfoTextOrder()}
+                      </Text>
+                      <Text style={styles.total}>{this.getInfoOrder()}</Text>
+                    </View>
+                  ) : null
                 ) : null}
                 <View style={styles.itemSummary}>
                   <Text style={styles.total}>
@@ -1236,16 +1324,34 @@ class Basket extends Component {
         ) : (
           <Loader />
         )}
-        {this.props.dataBasket != undefined &&
-        this.props.dataBasket.outlet != undefined
-          ? this.props.dataBasket.status == 'PENDING' &&
-            this.props.tableType == undefined
-            ? this.renderButtonConfirm()
-            : this.props.dataBasket.outlet.outletType == 'QUICKSERVICE' ||
-              this.props.orderType == 'TAKEAWAY'
+        {dataBasket != undefined
+          ? // check type outlet
+            dataBasket.outlet.outletType == 'RESTO'
+            ? orderType == 'TAKEAWAY' || dataBasket.orderingMode == 'TAKEAWAY'
+              ? this.renderSettleButtonRestaurant()
+              : dataBasket.status == 'PENDING'
+              ? this.renderButtonScanQRCode()
+              : this.renderSettleButtonRestaurant()
+            : orderType == 'TAKEAWAY' || dataBasket.orderingMode == 'TAKEAWAY'
             ? this.renderSettleButtonQuickService()
-            : this.renderSettleButtonRestaurant()
+            : dataBasket.outlet.enableTableScan != undefined &&
+              (dataBasket.outlet.enableTableScan == false ||
+                dataBasket.outlet.enableTableScan == '-')
+            ? this.renderSettleButtonQuickService()
+            : dataBasket.status == 'PENDING' && tableType == undefined
+            ? this.renderButtonScanQRCode()
+            : this.renderSettleButtonQuickService()
           : null}
+        {/*{this.props.dataBasket != undefined &&*/}
+        {/*this.props.dataBasket.outlet != undefined*/}
+        {/*  ? this.props.dataBasket.status == 'PENDING' &&*/}
+        {/*    this.props.tableType == undefined*/}
+        {/*    ? this.renderButtonScanQRCode()*/}
+        {/*    : this.props.dataBasket.outlet.outletType == 'QUICKSERVICE' ||*/}
+        {/*      this.props.orderType == 'TAKEAWAY'*/}
+        {/*    ? this.renderSettleButtonQuickService()*/}
+        {/*    : this.renderSettleButtonRestaurant()*/}
+        {/*  : null}*/}
       </View>
     );
   }
@@ -1449,5 +1555,43 @@ const styles = StyleSheet.create({
     fontFamily: 'Lato-Bold',
     fontSize: 17,
     textAlign: 'center',
+  },
+  activeDINEINButton: {
+    padding: 15,
+    backgroundColor: colorConfig.store.colorSuccess,
+    borderRadius: 15,
+    width: '60%',
+    marginBottom: 20,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  deactiveDINEINButton: {
+    padding: 15,
+    backgroundColor: colorConfig.store.colorSuccessDisabled,
+    borderRadius: 15,
+    width: '60%',
+    marginBottom: 20,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  activeTAKEAWAYButton: {
+    padding: 15,
+    backgroundColor: colorConfig.store.secondaryColor,
+    borderRadius: 15,
+    width: '60%',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  deactiveTAKEAWAYButton: {
+    padding: 15,
+    backgroundColor: colorConfig.store.secondaryColorDisabled,
+    borderRadius: 15,
+    width: '60%',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

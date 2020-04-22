@@ -8,6 +8,64 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:1076366072433:android:b8a3b38609fe3b3c0419d0",
+        "android_client_info": {
+          "package_name": "com.bowen.dev"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1076366072433-pv2fhepv5r25md2tp3tdicst1d834cm2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDZ8m-o9LJyYm1AlPOiYUekpf-3Jl7LZyY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1076366072433-pv2fhepv5r25md2tp3tdicst1d834cm2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1076366072433:android:1d9d56f934dad0650419d0",
+        "android_client_info": {
+          "package_name": "com.edgeworks.demo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1076366072433-pv2fhepv5r25md2tp3tdicst1d834cm2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDZ8m-o9LJyYm1AlPOiYUekpf-3Jl7LZyY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1076366072433-pv2fhepv5r25md2tp3tdicst1d834cm2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:1076366072433:android:e1f09cee4358eba20419d0",
         "android_client_info": {
           "package_name": "com.qiji"

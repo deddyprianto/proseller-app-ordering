@@ -19,10 +19,11 @@ import {isEmptyArray} from '../../helper/CheckEmpty';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
 
-const SUCCESS_URL =
-  'https://payment.proseller.io/api/account/registration/success';
-const FAILED_URL =
-  'https://payment.proseller.io/api/account/registration/failed';
+const DEV = `https://payment.proseller.io`;
+const DEMO = `https://payment-demo.proseller.io`;
+
+const SUCCESS_URL = `${DEMO}/api/account/registration/success`;
+const FAILED_URL = `${DEMO}/api/account/registration/failed`;
 
 let openOne = true;
 
@@ -40,8 +41,7 @@ class HostedPayment extends Component {
       await this.props.dispatch(getAccountPayment());
       const {myCardAccount} = this.props;
       if (!isEmptyArray(myCardAccount) && myCardAccount.length == 1) {
-        // this.props.dispatch(selectedAccount(myCardAccount[0]));
-        this.props.checkCVV(myCardAccount[0]);
+        this.props.dispatch(selectedAccount(myCardAccount[0]));
       }
     } catch (e) {}
   };

@@ -26,7 +26,7 @@ export const getProductByOutlet = OutletId => {
         200,
         token,
       );
-      // console.log(response, 'response data product by outlet');
+      console.log(response, 'response data product by outlet');
       if (response.success == true) {
         // get previous data products and concat it
         let outletProduct;

@@ -63,7 +63,7 @@ export const registerCard = payload => {
         200,
         token,
       );
-      // console.log('response register account', JSON.stringify(response));
+      console.log('response register account', JSON.stringify(response));
 
       return response;
     } catch (error) {
