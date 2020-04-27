@@ -21,7 +21,8 @@ export default class StoreNearYou extends Component {
 
   storeDetailStores = item => {
     const {intlData} = this.props;
-    Actions.storeDetailStores({item, intlData});
+    // Actions.storeDetailStores({item, intlData});
+    Actions.products({item});
   };
 
   render() {

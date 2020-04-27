@@ -258,7 +258,7 @@ export const addProductToBasket = payload => {
         });
       }
 
-      console.log('payload add products ', payload);
+      console.log('payload add products ', JSON.stringify(payload));
       // add real data
       let response = await fetchApiOrder(
         `/cart/additem`,

@@ -129,7 +129,9 @@ class paymentAddPoint extends Component {
     try {
       if (data != 0) {
         let money = data.toString().split('.');
-        money = `${money[0]}.${money[1].substr(0, 2)}`;
+        if (money[1] != undefined) {
+          money = `${money[0]}.${money[1].substr(0, 2)}`;
+        }
         return parseFloat(money);
       } else {
         return parseFloat(0);
@@ -191,7 +193,7 @@ class paymentAddPoint extends Component {
       ) {
         return parseFloat(maxPoint.toFixed(2));
       } else {
-        return Math.floor(maxPoint);
+        return Math.ceil(maxPoint);
       }
     } catch (e) {
       return 0;

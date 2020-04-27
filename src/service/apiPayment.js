@@ -1,5 +1,5 @@
 import awsConfig from '../config/awsConfig';
-const BASE_URL_PAYMENT = awsConfig.base_url_payment;
+const BASE_URL_PAYMENT = awsConfig.base_url_payment_demo;
 import CryptoJS from 'react-native-crypto-js';
 
 export const fetchApiPayment = async (

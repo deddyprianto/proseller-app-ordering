@@ -57,6 +57,8 @@ target 'Qiji' do
 
   pod 'BVLinearGradient', :path => '../node_modules/react-native-linear-gradient'
 
+  pod 'react-native-uuid-generator', :path => '../node_modules/react-native-uuid-generator'
+
   target 'QijiTests' do
     inherit! :search_paths
     # Pods for testing

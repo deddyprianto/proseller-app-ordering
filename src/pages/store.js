@@ -183,6 +183,21 @@ class Store extends Component {
             coordinate: response.data[i].location.coordinate,
             orderingStatus: response.data[i].orderingStatus,
             outletType: response.data[i].outletType,
+            enableDineIn:
+              response.data[i].enableDineIn == false ||
+              response.data[i].enableDineIn == '-'
+                ? false
+                : true,
+            enableTakeAway:
+              response.data[i].enableTakeAway == false ||
+              response.data[i].enableTakeAway == '-'
+                ? false
+                : true,
+            enableTableScan:
+              response.data[i].enableTableScan == false ||
+              response.data[i].enableTableScan == '-'
+                ? false
+                : true,
           });
         }
       }

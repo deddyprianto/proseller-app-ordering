@@ -24,7 +24,7 @@ class WaitingFood extends Component {
     super(props);
     this.state = {
       screenWidth: Dimensions.get('window').width,
-      dataBasket: this.props.dataBasket
+      dataBasket: this.props.dataBasket,
     };
   }
 
@@ -80,25 +80,53 @@ class WaitingFood extends Component {
     Actions.pop();
   };
 
+  getInfoCart = () => {
+    const {dataBasket} = this.state;
+
+    if (dataBasket.orderingMode == 'TAKEAWAY') {
+      return `Queue No: ${dataBasket.queueNo}`;
+    } else {
+      if (
+        dataBasket.outlet.enableTableScan != undefined &&
+        (dataBasket.outlet.enableTableScan == false ||
+          dataBasket.outlet.enableTableScan == '-')
+      ) {
+        return `Queue No: ${dataBasket.queueNo}`;
+      } else {
+        return `Table No: ${dataBasket.tableNo}`;
+      }
+    }
+  };
+
   renderTextWaiting = () => {
-    const {intlData} = this.props;
+    const {intlData, dataBasket} = this.props;
     return (
       <View
         style={{
           justifyContent: 'center',
           alignItems: 'center',
           marginHorizontal: 15,
-          marginVertical: 30,
+          marginVertical: 27,
         }}>
         <Text
           style={{
             fontSize: 23,
-            color: colorConfig.store.defaultColor,
+            color: colorConfig.store.title,
             fontWeight: 'bold',
             fontFamily: 'Lato-Bold',
             textAlign: 'center',
           }}>
           Show QRCode to the cashier.
+        </Text>
+        <Text
+          style={{
+            fontSize: 20,
+            color: colorConfig.store.defaultColor,
+            fontWeight: 'bold',
+            fontFamily: 'Lato-Bold',
+            textAlign: 'center',
+          }}>
+          {this.getInfoCart()}
         </Text>
       </View>
     );
