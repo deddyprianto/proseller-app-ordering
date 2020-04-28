@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Image,
+  SafeAreaView,
   AsyncStorage,
   Platform,
 } from 'react-native';
@@ -154,7 +155,7 @@ class VoucherDetail extends Component {
   render() {
     const {intlData} = this.props;
     return (
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
         {this.state.loadRedeem && <Loader />}
         <View>
           <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
@@ -350,7 +351,7 @@ class VoucherDetail extends Component {
             }
           }}
         />
-      </View>
+      </SafeAreaView>
     );
   }
 }

@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
+import com.reactnativecommunity.geolocation.GeolocationPackage;
 import io.github.traviskn.rnuuidgenerator.RNUUIDGeneratorPackage;
 import com.BV.LinearGradient.LinearGradientPackage;
 import io.invertase.firebase.crashlytics.ReactNativeFirebaseCrashlyticsPackage;

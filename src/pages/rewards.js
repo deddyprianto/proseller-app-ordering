@@ -8,6 +8,7 @@ import {
   RefreshControl,
   TouchableOpacity,
   Alert,
+  SafeAreaView
 } from 'react-native';
 import {createAppContainer} from 'react-navigation';
 import {connect} from 'react-redux';
@@ -174,6 +175,7 @@ class Rewards extends Component {
 
     const {intlData} = this.props;
     return (
+      <SafeAreaView>
       <ScrollView
         refreshControl={
           <RefreshControl
@@ -235,6 +237,7 @@ class Rewards extends Component {
           </View>
         </View>
       </ScrollView>
+      </SafeAreaView>
     );
   }
 }

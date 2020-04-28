@@ -14,6 +14,7 @@ import {
   BackHandler,
   Platform,
   ScrollView,
+  SafeAreaView
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -109,7 +110,7 @@ class HistoryDetailPayment extends Component {
       discount = this.props.item.redeemValue;
     }
     return (
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
         <View style={{backgroundColor: colorConfig.pageIndex.backgroundColor}}>
           <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
             <Icon
@@ -334,7 +335,7 @@ class HistoryDetailPayment extends Component {
             </View>
           ) : null}
         </ScrollView>
-      </View>
+      </SafeAreaView>
     );
   }
 }

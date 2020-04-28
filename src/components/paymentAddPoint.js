@@ -14,6 +14,7 @@ import {
   BackHandler,
   Platform,
   Alert,
+  SafeAreaView
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -203,7 +204,7 @@ class paymentAddPoint extends Component {
   render() {
     const {intlData, campign} = this.props;
     return (
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
         <View style={{backgroundColor: colorConfig.pageIndex.backgroundColor}}>
           <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
             <Icon
@@ -350,7 +351,7 @@ class paymentAddPoint extends Component {
             </View>
           </View>
         )}
-      </View>
+      </SafeAreaView>
     );
   }
 }

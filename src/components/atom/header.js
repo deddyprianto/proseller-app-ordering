@@ -9,6 +9,7 @@ import {
   StyleSheet,
   Text,
   View,
+  Platform,
   TouchableOpacity,
   Animated,
   Dimensions,
@@ -125,21 +126,23 @@ export default class Header extends Component {
   render() {
     return (
       <View>
-        <StatusBar backgroundColor={colorConfig.store.defaultColor} barStyle="light-content" />
+        <StatusBar
+          backgroundColor={colorConfig.store.defaultColor}
+          barStyle="light-content"
+        />
         <OfflineNotice />
         <View
           style={{
             flexDirection: 'row',
             backgroundColor: colorConfig.store.defaultColor,
+            paddingVertical: !this.props.backButton ? 5 : 0,
           }}>
           {this.props.backButton ? (
-            <TouchableOpacity onPress={this.gotoBack}>
+            <TouchableOpacity style={{padding: 5}} onPress={this.gotoBack}>
               <Icon
                 size={28}
                 name={
-                  Platform.OS === 'ios'
-                    ? 'ios-arrow-back'
-                    : 'md-arrow-round-back'
+                  Platform.OS === 'ios' ? 'ios-arrow-back' : 'md-arrow-back'
                 }
                 style={{
                   color: colorConfig.pageIndex.backgroundColor,

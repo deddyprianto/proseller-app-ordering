@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Alert,
+  SafeAreaView
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -230,7 +231,7 @@ class ScanQRTable extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
         <View>
           <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
             <Icon
@@ -348,7 +349,7 @@ class ScanQRTable extends Component {
             }
           }}
         />
-      </View>
+      </SafeAreaView>
     );
   }
 }

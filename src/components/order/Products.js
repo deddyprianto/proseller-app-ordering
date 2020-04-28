@@ -14,6 +14,7 @@ import {
   ActivityIndicator,
   ScrollView,
   RefreshControl,
+  SafeAreaView
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -1141,7 +1142,7 @@ class Products extends Component {
     let products = this.products;
 
     return (
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
         <ModalOrder
           intlData={intlData}
           isModalVisible={this.state.isModalVisible}
@@ -1224,7 +1225,7 @@ class Products extends Component {
             <ButtonViewBasket />
           ) : null
         ) : null}
-      </View>
+      </SafeAreaView>
     );
   }
 }

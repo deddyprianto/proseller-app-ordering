@@ -7,10 +7,11 @@ import {
   RefreshControl,
   TouchableOpacity,
   Image,
+  Platform,
   ActivityIndicator,
   Alert,
   Picker,
-  StatusBar,
+  SafeAreaView,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
@@ -26,8 +27,6 @@ import colorConfig from '../config/colorConfig';
 import {Dialog} from 'react-native-paper';
 import {updateLanguage} from '../actions/language.action';
 import Languages from '../service/i18n/languages';
-import {getUserProfile, movePageIndex} from '../actions/user.action';
-import {getAccountPayment} from '../actions/payment.actions';
 
 class Account extends Component {
   constructor(props) {
@@ -40,19 +39,36 @@ class Account extends Component {
   }
 
   componentDidMount = async () => {
-    // make event to detect page focus or not
-    const {navigation} = this.props;
-    this.focusListener = navigation.addListener('willFocus', async () => {
-      await this.props.dispatch(getUserProfile());
-      this.setState({statusGetData: true});
-    });
+    // await this.getDataRewards();
   };
 
-  _onRefresh = async () => {
+  getDataRewards = async () => {
+    try {
+      await this.props.dispatch(campaign());
+      await this.props.dispatch(dataPoint());
+      await this.props.dispatch(vouchers());
+      await this.props.dispatch(myVoucers());
+    } catch (error) {
+      await this.props.dispatch(
+        notifikasi(
+          'Get Data Rewards Error!',
+          error.responseBody.message,
+          console.log('Cancel Pressed'),
+        ),
+      );
+    }
+  };
+
+  _onRefresh = () => {
     this.setState({refreshing: true});
-    await this.props.dispatch(getUserProfile());
-    await this.props.dispatch(getAccountPayment());
+    this.getDataRewards();
     this.setState({refreshing: false});
+  };
+
+  logout = async () => {
+    this.setState({loadingLogout: true});
+    await this.props.dispatch(logoutUser());
+    this.setState({loadingLogout: false});
   };
 
   // myVouchers = () => {
@@ -125,8 +141,7 @@ class Account extends Component {
   render() {
     const {intlData} = this.props;
     return (
-      <View
-        style={{flex: 1, backgroundColor: colorConfig.store.containerColor}}>
+      <SafeAreaView style={{flex: 1}}>
         <ScrollView
           refreshControl={
             <RefreshControl
@@ -134,17 +149,45 @@ class Account extends Component {
               onRefresh={this._onRefresh}
             />
           }>
-          <AccountUserDetail screen={this.props} />
-
-          <AccountMenuList
-            setLanguage={this.setLanguage}
-            dialogChangeLanguage={this.state.dialogChangeLanguage}
-            screen={this.props}
-          />
+          <View style={styles.card}>
+            <AccountUserDetail screen={this.props} />
+          </View>
+          <View style={styles.card}>
+            <AccountMenuList
+              setLanguage={this.setLanguage}
+              dialogChangeLanguage={this.state.dialogChangeLanguage}
+              screen={this.props}
+            />
+          </View>
         </ScrollView>
-
+        <TouchableOpacity
+          style={{
+            marginTop: 10,
+            backgroundColor: colorConfig.store.colorError,
+            height: 50,
+            justifyContent: 'center',
+            position: 'absolute',
+            bottom: 0,
+            width: '100%',
+          }}
+          onPress={this.logout}>
+          {this.state.loadingLogout ? (
+            <ActivityIndicator size={'large'} color={'white'} />
+          ) : (
+            <Text
+              style={{
+                color: 'white',
+                fontSize: 14,
+                fontWeight: 'bold',
+                fontFamily: 'Lato-Bold',
+                textAlign: 'center',
+              }}>
+              {intlData.messages.logout}
+            </Text>
+          )}
+        </TouchableOpacity>
         {this.renderDialogChangeLanguage()}
-      </View>
+      </SafeAreaView>
     );
   }
 }

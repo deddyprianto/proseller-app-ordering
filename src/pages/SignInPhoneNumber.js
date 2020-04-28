@@ -16,6 +16,7 @@ import {
   TextInput,
   TouchableHighlight,
   Alert,
+  SafeAreaView
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
@@ -339,7 +340,7 @@ class SignInPhoneNumber extends Component {
     const {intlData} = this.props;
     let {minutes, seconds} = this.state;
     return (
-      <View style={styles.backgroundImage}>
+      <SafeAreaView style={styles.backgroundImage}>
         {this.state.loading && <Loader />}
         <ScrollView keyboardShouldPersistTaps="handled">
           <Header titleHeader={'Mobile Sign In'} backButton={true} />
@@ -644,7 +645,7 @@ class SignInPhoneNumber extends Component {
             </View>
           </View>
         </ScrollView>
-      </View>
+      </SafeAreaView>
     );
   }
 }

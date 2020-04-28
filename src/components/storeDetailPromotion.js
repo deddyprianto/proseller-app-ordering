@@ -10,9 +10,11 @@ import {
   Text,
   StyleSheet,
   Dimensions,
+  Platform,
   TouchableOpacity,
   Image,
   BackHandler,
+  SafeAreaView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -50,7 +52,7 @@ export default class StoreDetailPromotion extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
         {console.log(this.props.dataPromotion)}
         <View style={{backgroundColor: colorConfig.pageIndex.backgroundColor}}>
           <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
@@ -82,7 +84,7 @@ export default class StoreDetailPromotion extends Component {
             </View>
           </View>
         </View>
-      </View>
+      </SafeAreaView>
     );
   }
 }

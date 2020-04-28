@@ -11,6 +11,7 @@ import {
   Alert,
   Platform,
   PermissionsAndroid,
+  SafeAreaView
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
@@ -373,7 +374,7 @@ class Store extends Component {
     const {intlData} = this.props;
 
     return (
-      <View style={{marginBottom: 40}}>
+      <SafeAreaView style={{marginBottom: 40}}>
         <View
           style={{
             backgroundColor: colorConfig.pageIndex.backgroundColor,
@@ -542,7 +543,7 @@ class Store extends Component {
             </View>
           ) : null}
         </TouchableOpacity>
-      </View>
+      </SafeAreaView>
     );
   }
 }

@@ -11,6 +11,7 @@ import {
   ScrollView,
   Alert,
   RefreshControl,
+  SafeAreaView
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -1111,7 +1112,7 @@ class Basket extends Component {
     } catch (e) {}
 
     return (
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
         <ModalOrder
           isModalVisible={this.state.isModalVisible}
           qtyItem={this.state.qtyItem}
@@ -1364,7 +1365,7 @@ class Basket extends Component {
         {/*    ? this.renderSettleButtonQuickService()*/}
         {/*    : this.renderSettleButtonRestaurant()*/}
         {/*  : null}*/}
-      </View>
+      </SafeAreaView>
     );
   }
 }

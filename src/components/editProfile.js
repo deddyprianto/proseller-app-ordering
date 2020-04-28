@@ -16,7 +16,7 @@ import {
   Picker,
   BackHandler,
   Platform,
-  TextInput,
+  TextInput, SafeAreaView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -198,7 +198,7 @@ class AccountEditProfil extends Component {
   render() {
     const {intlData} = this.props;
     return (
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
         {this.state.loading && <Loader />}
         <View
           style={[
@@ -365,7 +365,7 @@ class AccountEditProfil extends Component {
             // }
           }}
         />
-      </View>
+      </SafeAreaView>
     );
   }
 }

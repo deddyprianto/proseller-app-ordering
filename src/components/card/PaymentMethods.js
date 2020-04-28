@@ -19,6 +19,7 @@ import {
   TextInput,
   FlatList,
   RefreshControl,
+  SafeAreaView
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -119,7 +120,7 @@ class PaymentMethods extends Component {
   render() {
     const {intlData, companyInfo} = this.props;
     return (
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
         {this.state.loading && <Loader />}
         <View
           style={[
@@ -147,7 +148,7 @@ class PaymentMethods extends Component {
           <Text style={styles.headingMenu}>Available Payment Methods</Text>
           {this.renderPaymentMethodOptions()}
         </ScrollView>
-      </View>
+      </SafeAreaView>
     );
   }
 }
@@ -279,7 +280,7 @@ const styles = StyleSheet.create({
     opacity: 0.6,
     color: 'white',
     // fontWeight: 'bold',
-    fontFamily: 'monospace',
+    // fontFamily: 'monospace',
     textAlign: 'center',
     letterSpacing: 2,
   },
@@ -298,7 +299,7 @@ const styles = StyleSheet.create({
     opacity: 0.6,
     color: 'white',
     // fontWeight: 'bold',
-    fontFamily: 'monospace',
+    // fontFamily: 'monospace',
     textAlign: 'center',
     // letterSpacing: 2,
   },

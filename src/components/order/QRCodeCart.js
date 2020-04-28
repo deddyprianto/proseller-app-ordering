@@ -8,6 +8,7 @@ import {
   BackHandler,
   Platform,
   Alert,
+  SafeAreaView
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -143,7 +144,7 @@ class WaitingFood extends Component {
     } catch (e) {}
 
     return (
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
         <View style={{backgroundColor: colorConfig.pageIndex.backgroundColor}}>
           <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
             <Icon
@@ -168,7 +169,7 @@ class WaitingFood extends Component {
             size={this.state.screenWidth - 60}
           />
         </View>
-      </View>
+      </SafeAreaView>
     );
   }
 }

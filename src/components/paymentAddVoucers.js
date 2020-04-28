@@ -16,6 +16,7 @@ import {
   BackHandler,
   Alert,
   Platform,
+  SafeAreaView
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -134,7 +135,7 @@ export default class PaymentAddVoucers extends Component {
     const {intlData} = this.props;
     const myVoucers = this.props.data;
     return (
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
         <View style={{backgroundColor: colorConfig.pageIndex.backgroundColor}}>
           <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
             <Icon
@@ -292,7 +293,7 @@ export default class PaymentAddVoucers extends Component {
               ))
           )}
         </ScrollView>
-      </View>
+      </SafeAreaView>
     );
   }
 }

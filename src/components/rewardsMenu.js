@@ -66,7 +66,7 @@ export default class RewardsMenu extends Component {
             <View style={{alignItems: 'center'}}>
               <Icon
                 size={this.state.screenHeight / 5 / 2 - 10}
-                name={Platform.OS === 'ios' ? 'wallet' : 'md-wallet'}
+                name={Platform.OS === 'ios' ? 'ios-wallet' : 'md-wallet'}
                 style={{color: colorConfig.pageIndex.activeTintColor}}
               />
             </View>
@@ -76,7 +76,9 @@ export default class RewardsMenu extends Component {
             <View style={{alignItems: 'center'}}>
               <Icon
                 size={this.state.screenHeight / 5 / 2 - 10}
-                name={Platform.OS === 'ios' ? 'qr-scanner' : 'md-qr-scanner'}
+                name={
+                  Platform.OS === 'ios' ? 'ios-qr-scanner' : 'md-qr-scanner'
+                }
                 style={{color: colorConfig.pageIndex.activeTintColor}}
               />
             </View>
@@ -86,7 +88,7 @@ export default class RewardsMenu extends Component {
             <View style={{alignItems: 'center'}}>
               <Icon
                 size={this.state.screenHeight / 5 / 2 - 10}
-                name={Platform.OS === 'ios' ? 'price-ribbon' : 'md-ribbon'}
+                name={Platform.OS === 'ios' ? 'ios-ribbon' : 'md-ribbon'}
                 style={{color: colorConfig.pageIndex.activeTintColor}}
               />
             </View>

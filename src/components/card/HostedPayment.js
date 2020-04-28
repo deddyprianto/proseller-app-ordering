@@ -8,6 +8,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  
 } from 'react-native';
 import {Actions} from 'react-native-router-flux';
 import colorConfig from '../../config/colorConfig';
@@ -54,7 +55,7 @@ class HostedPayment extends Component {
           source={{uri: url}}
           style={{marginTop: 10}}
           onNavigationStateChange={async navState => {
-            let url = navState.title;
+            let url = navState.url;
             if (url == SUCCESS_URL && openOne) {
               // if page come from payment, then return back with selected account that has been created
               if (page == 'paymentDetail' || page == 'settleOrder') {

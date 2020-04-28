@@ -16,7 +16,7 @@ import {
   TextInput,
   Picker,
   TouchableHighlight,
-  Alert,
+  Alert, SafeAreaView,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
@@ -184,7 +184,7 @@ class InputEmail extends Component {
   render() {
     const {intlData} = this.props;
     return (
-      <View style={styles.backgroundImage}>
+      <SafeAreaView style={styles.backgroundImage}>
         {this.state.loading && <Loader />}
         <ScrollView keyboardShouldPersistTaps="handled">
           <Header titleHeader={'Email Sign In / Register'} backButton={true} />
@@ -257,7 +257,7 @@ class InputEmail extends Component {
             </View>
           </View>
         </ScrollView>
-      </View>
+      </SafeAreaView>
     );
   }
 }

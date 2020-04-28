@@ -15,6 +15,7 @@ import {
   Dimensions,
   TouchableHighlight,
   Alert,
+  SafeAreaView
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
@@ -161,7 +162,7 @@ class VerifyRegister extends Component {
 
   render() {
     return (
-      <View style={styles.backgroundImage}>
+      <SafeAreaView style={styles.backgroundImage}>
         {this.state.loading && <Loader />}
         <ScrollView>
           <Header
@@ -259,7 +260,7 @@ class VerifyRegister extends Component {
             </View>
           </View>
         </ScrollView>
-      </View>
+      </SafeAreaView>
     );
   }
 }

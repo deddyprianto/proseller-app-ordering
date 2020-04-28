@@ -6,6 +6,7 @@ import {
   Dimensions,
   TouchableOpacity,
   Image,
+  SafeAreaView,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
@@ -44,7 +45,7 @@ class StampDetail extends Component {
 
   render() {
     return (
-      <View>
+      <SafeAreaView>
         <View style={styles.container}>
           <Text style={styles.title}>
             {this.props.dataStamps.dataStamps.stamps.stampsTitle}
@@ -70,7 +71,7 @@ class StampDetail extends Component {
             source={this.getImageUrl()}
           />
         </View>
-      </View>
+      </SafeAreaView>
     );
   }
 }
