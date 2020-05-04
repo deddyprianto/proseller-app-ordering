@@ -8,7 +8,7 @@ import {
   BackHandler,
   Platform,
   Alert,
-  SafeAreaView
+  SafeAreaView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -293,7 +293,7 @@ class WaitingFood extends Component {
 
 mapStateToProps = state => ({
   dataBasket: state.orderReducer.dataBasket.product,
-  orderType: state.orderReducer.orderType.orderType,
+  orderType: state.userReducer.orderType.orderType,
   tableType: state.orderReducer.tableType.tableType,
   products: state.orderReducer.productsOutlet.products,
   intlData: state.intlData,

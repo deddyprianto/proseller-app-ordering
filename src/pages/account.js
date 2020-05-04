@@ -160,32 +160,6 @@ class Account extends Component {
             />
           </View>
         </ScrollView>
-        <TouchableOpacity
-          style={{
-            marginTop: 10,
-            backgroundColor: colorConfig.store.colorError,
-            height: 50,
-            justifyContent: 'center',
-            position: 'absolute',
-            bottom: 0,
-            width: '100%',
-          }}
-          onPress={this.logout}>
-          {this.state.loadingLogout ? (
-            <ActivityIndicator size={'large'} color={'white'} />
-          ) : (
-            <Text
-              style={{
-                color: 'white',
-                fontSize: 14,
-                fontWeight: 'bold',
-                fontFamily: 'Lato-Bold',
-                textAlign: 'center',
-              }}>
-              {intlData.messages.logout}
-            </Text>
-          )}
-        </TouchableOpacity>
         {this.renderDialogChangeLanguage()}
       </SafeAreaView>
     );
@@ -204,7 +178,7 @@ const styles = StyleSheet.create({
     // width: Dimensions.get('window').width / 2 - 30,
   },
   card: {
-    marginVertical: 10,
+    // marginVertical: 10,
     backgroundColor: colorConfig.pageIndex.backgroundColor,
     shadowColor: '#00000021',
     shadowOffset: {

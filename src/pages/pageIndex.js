@@ -110,7 +110,7 @@ class PageIndex extends Component {
   render() {
     return (
       <Container>
-        <OfflineNotice />
+        {/*<OfflineNotice />*/}
         <AppStackContainer />
         {/*/!*{this.props.dataInboxNoRead > 0 ? (*!/*/}
         {/*{true ? (*/}

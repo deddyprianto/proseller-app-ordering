@@ -14,7 +14,6 @@ import {
   ActivityIndicator,
   ScrollView,
   RefreshControl,
-  SafeAreaView
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -74,6 +73,8 @@ class Products extends Component {
       productTemp: {},
       orderType: this.props.orderType,
       refresh: false,
+      productsWithMofidier: [],
+      selectedproductsWithMofidier: {},
     };
   }
 
@@ -218,6 +219,107 @@ class Products extends Component {
     );
   };
 
+  askUserToSelectProductModifier = () => {
+    const {intlData} = this.props;
+    const {
+      item,
+      productsWithMofidier,
+      selectedproductsWithMofidier,
+    } = this.state;
+    return (
+      <RBSheet
+        ref={ref => {
+          this.RBmodifier = ref;
+        }}
+        animationType={'slide'}
+        // height={250}
+        duration={10}
+        closeOnDragDown={true}
+        closeOnPressMask={true}
+        closeOnPressBack={true}
+        customStyles={{
+          container: {
+            backgroundColor: colorConfig.store.textWhite,
+            // justifyContent: 'center',
+            // alignItems: 'center',
+          },
+        }}>
+        <Text
+          style={{
+            color: colorConfig.store.darkColor,
+            fontSize: 20,
+            paddingBottom: 15,
+            fontWeight: 'bold',
+            fontFamily: 'Lato-Bold',
+            marginLeft: 10,
+          }}>
+          Item in cart :
+        </Text>
+
+        <ScrollView>
+          {productsWithMofidier.map(item => (
+            <TouchableOpacity
+              style={styles.detail}
+              onPress={() =>
+                this.openModal(selectedproductsWithMofidier, item)
+              }>
+              <View style={styles.detailItem}>
+                <View style={{flexDirection: 'row'}}>
+                  <View>
+                    <Text style={[styles.productTitleInModal]}>
+                      <Text
+                        style={{
+                          color: colorConfig.store.defaultColor,
+                          fontWeight: 'bold',
+                        }}>
+                        x {item.quantity}{' '}
+                      </Text>
+                      {item.product.name}
+                    </Text>
+                    <Text style={[styles.productTitleInModal]}>
+                      <Text
+                        style={{
+                          color: colorConfig.store.colorSuccess,
+                          fontWeight: 'bold',
+                          fontSize: 11,
+                        }}>
+                        Edit
+                      </Text>
+                    </Text>
+                  </View>
+                </View>
+                <Text style={[styles.productPrice]}>
+                  {CurrencyFormatter(item.grossAmount)}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+
+        <TouchableOpacity
+          onPress={() => this.openModal(selectedproductsWithMofidier, false)}
+          style={styles.makeAnotherProduct}>
+          <Icon
+            size={25}
+            name={Platform.OS === 'ios' ? 'ios-add' : 'md-add'}
+            style={{color: 'white'}}
+          />
+          <Text
+            style={{
+              marginLeft: 10,
+              color: 'white',
+              fontWeight: 'bold',
+              fontFamily: 'Lato-Bold',
+              fontSize: 15,
+              textAlign: 'center',
+            }}>
+            Make Another
+          </Text>
+        </TouchableOpacity>
+      </RBSheet>
+    );
+  };
+
   checkBucketExist = product => {
     let outletId = this.state.item.storeId;
     try {
@@ -234,7 +336,7 @@ class Products extends Component {
 
   showAlertBasketNotEmpty = async product => {
     Alert.alert(
-      'Change Restaurant ?',
+      'Change outlet ?',
       'You will delete order in previous restaurant..',
       [
         {text: 'Cancel', onPress: () => Actions.pop()},
@@ -350,14 +452,25 @@ class Products extends Component {
     Actions.pop();
   };
 
-  openModal = async product => {
+  openModal = async (product, skipCheckItem) => {
     // make modal empty first
     await this.setState({
       selectedProduct: {},
       loadModifierTime: false,
     });
     // get current quantity from product
-    let existProduct = await this.checkIfItemExistInBasket(product);
+    let existProduct = false;
+
+    // check if open modal is from modal modifier
+    if (skipCheckItem == undefined) {
+      existProduct = await this.checkIfItemExistInBasket(product);
+    } else if (skipCheckItem != undefined && skipCheckItem != false) {
+      existProduct = skipCheckItem;
+    }
+
+    // replace ID product with ID Details
+    product.id = existProduct.id;
+
     product.quantity = 1;
     product.remark = '';
     // add initial status to modal order
@@ -377,9 +490,15 @@ class Products extends Component {
       product.quantity = existProduct.quantity;
 
       // process modifier
-      let find = this.props.dataBasket.details.find(
-        item => item.product.id == product.product.id,
-      );
+      let find = {};
+      if (skipCheckItem != undefined) {
+        find = skipCheckItem;
+      } else {
+        find = this.props.dataBasket.details.find(
+          item => item.product.id == product.product.id,
+        );
+      }
+
       if (find != undefined && !isEmptyArray(find.modifiers)) {
         product.product.productModifiers.map((group, i) => {
           group.modifier.details.map((detail, j) => {
@@ -426,7 +545,27 @@ class Products extends Component {
     if (this.checkBucketExist(product)) {
       this.showAlertBasketNotEmpty(product);
     } else {
-      this.openModal(product);
+      // check if product have modifier, then ask customer to select mode add
+      const hasModifier = product.product.productModifiers.length;
+      const {dataBasket} = this.props;
+      // check if product has in basket
+      let isInBasket = false;
+      if (dataBasket != undefined) {
+        isInBasket = await this.checkIfItemExistInBasket(product);
+      }
+
+      if (hasModifier == 0 || isInBasket == false) {
+        this.openModal(product);
+      } else {
+        const productsWithMofidier = dataBasket.details.filter(
+          data => data.productID == product.productID,
+        );
+        await this.setState({
+          selectedproductsWithMofidier: product,
+          productsWithMofidier,
+        });
+        this.RBmodifier.open();
+      }
     }
   };
 
@@ -442,6 +581,32 @@ class Products extends Component {
         );
         if (productFound != undefined) return productFound;
         else return false;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      return false;
+    }
+  };
+
+  getQuantityInBasket = item => {
+    try {
+      let outletId = `outlet::${this.state.item.storeId}`;
+      if (
+        this.props.dataBasket != undefined &&
+        this.props.dataBasket.outletID == outletId
+      ) {
+        let productFound = this.props.dataBasket.details.filter(
+          data => data.productID == item.productID,
+        );
+
+        if (productFound != undefined) {
+          if (productFound.length == 1) {
+            return productFound[0].quantity;
+          } else {
+            return _.sumBy(productFound, 'quantity');
+          }
+        } else return false;
       } else {
         return false;
       }
@@ -548,6 +713,9 @@ class Products extends Component {
       let response = await this.props.dispatch(addProductToBasket(data));
       console.log('response add ', response);
 
+      // hide modal add modifier
+      this.RBmodifier.close();
+
       // if data basket is empty, then post data to server first, then hide modal
       this.setState({
         selectedProduct: {},
@@ -566,6 +734,9 @@ class Products extends Component {
 
   updateItem = async (product, qty, remark) => {
     try {
+      // hide modal add modifier
+      this.RBmodifier.close();
+
       // make payload format to pass to action
       let data = {};
       data.details = [];
@@ -576,9 +747,10 @@ class Products extends Component {
       };
 
       // search detail ID on previous data
-      let previousData = this.props.dataBasket.details.find(
-        item => item.productID == product.productID,
-      );
+      // let previousData = this.props.dataBasket.details.find(
+      //   item => item.productID == product.productID,
+      // );
+      let previousData = product;
 
       // if product have modifier
       if (product.product.productModifiers.length > 0) {
@@ -812,7 +984,7 @@ class Products extends Component {
                               color: colorConfig.store.defaultColor,
                               fontWeight: 'bold',
                             }}>
-                            x {this.checkIfItemExistInBasket(item).quantity}{' '}
+                            x {this.getQuantityInBasket(item)}{' '}
                           </Text>
                         ) : null}
                         {item.product.name}
@@ -1140,9 +1312,8 @@ class Products extends Component {
     let {loadProducts} = this.state;
 
     let products = this.products;
-
     return (
-      <SafeAreaView style={styles.container}>
+      <View style={styles.container}>
         <ModalOrder
           intlData={intlData}
           isModalVisible={this.state.isModalVisible}
@@ -1165,6 +1336,7 @@ class Products extends Component {
           loadModifierTime={this.state.loadModifierTime}
         />
         {this.askUserToSelectOrderType()}
+        {this.askUserToSelectProductModifier()}
         <ScrollView
           refreshControl={
             <RefreshControl
@@ -1225,14 +1397,14 @@ class Products extends Component {
             <ButtonViewBasket />
           ) : null
         ) : null}
-      </SafeAreaView>
+      </View>
     );
   }
 }
 mapStateToProps = state => ({
   products: state.orderReducer.productsOutlet.products,
   dataBasket: state.orderReducer.dataBasket.product,
-  orderType: state.orderReducer.orderType.orderType,
+  orderType: state.userReducer.orderType.orderType,
   dataStores: state.storesReducer.dataStores.stores,
   dataLength: state.orderReducer.productsOutlet.dataLength,
   intlData: state.intlData,
@@ -1416,6 +1588,12 @@ const styles = StyleSheet.create({
     fontSize: 17,
     maxWidth: Dimensions.get('window').width / 2 - 50,
   },
+  productTitleInModal: {
+    color: colorConfig.store.title,
+    marginLeft: 6,
+    fontSize: 14,
+    // maxWidth: Dimensions.get('window').width / 2 - 50,
+  },
   productTitleModal: {
     color: colorConfig.store.title,
     marginHorizontal: 6,
@@ -1515,6 +1693,18 @@ const styles = StyleSheet.create({
     backgroundColor: colorConfig.pageIndex.inactiveTintColor,
     padding: 2,
     borderRadius: 20,
+  },
+  makeAnotherProduct: {
+    padding: 12,
+    marginTop: 10,
+    marginBottom: 10,
+    backgroundColor: colorConfig.store.colorSuccess,
+    borderRadius: 15,
+    width: '70%',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'center',
   },
   activeDINEINButton: {
     padding: 15,

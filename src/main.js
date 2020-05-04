@@ -23,6 +23,7 @@ import colorConfig from './config/colorConfig';
 import awsConfig from './config/awsConfig';
 import OneSignal from 'react-native-onesignal';
 import {deviceUserInfo} from './actions/user.action';
+import OfflineNotice from './components/OfflineNotice';
 
 class Main extends Component {
   constructor(props) {
@@ -127,7 +128,11 @@ class Main extends Component {
 
     return (
       <View style={styles.container1}>
-        <StatusBar backgroundColor="white" barStyle="dark-content" />
+        <StatusBar
+          backgroundColor={colorConfig.store.defaultColor}
+          barStyle="dark-content"
+        />
+        <OfflineNotice />
         <Routes isLoggedIn={isLoggedIn} />
       </View>
     );

@@ -1,15 +1,6 @@
 import React, {Component} from 'react';
 import {WebView} from 'react-native-webview';
-import {
-  ActivityIndicator,
-  Alert,
-  Dimensions,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  
-} from 'react-native';
+import {Alert, StyleSheet} from 'react-native';
 import {Actions} from 'react-native-router-flux';
 import colorConfig from '../../config/colorConfig';
 import {
@@ -19,12 +10,12 @@ import {
 import {isEmptyArray} from '../../helper/CheckEmpty';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
+import awsConfig from '../../config/awsConfig';
 
-const DEV = `https://payment.proseller.io`;
-const DEMO = `https://payment-demo.proseller.io`;
+const URL = awsConfig.base_url_payment;
 
-const SUCCESS_URL = `${DEMO}/api/account/registration/success`;
-const FAILED_URL = `${DEMO}/api/account/registration/failed`;
+const SUCCESS_URL = `${URL}account/registration/success`;
+const FAILED_URL = `${URL}account/registration/failed`;
 
 let openOne = true;
 

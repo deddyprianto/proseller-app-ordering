@@ -11,7 +11,7 @@ import {
   ScrollView,
   Alert,
   RefreshControl,
-  SafeAreaView
+  SafeAreaView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -748,7 +748,8 @@ class Basket extends Component {
   openModal = async product => {
     try {
       // get current quantity from product
-      let existProduct = await this.checkIfItemExistInBasket(product);
+      // let existProduct = await this.checkIfItemExistInBasket(product);
+      let existProduct = product;
 
       if (existProduct != false) {
         // FIND CATEGORY EXIST PRODUCT
@@ -787,9 +788,10 @@ class Basket extends Component {
         });
 
         // process modifier
-        let find = await this.props.dataBasket.details.find(
-          item => item.product.id == product.product.id,
-        );
+        // let find = await this.props.dataBasket.details.find(
+        //   item => item.product.id == product.product.id,
+        // );
+        let find = product;
         if (find != undefined && !isEmptyArray(find.modifiers)) {
           existProduct.product.productModifiers.map((group, i) => {
             group.modifier.details.map((detail, j) => {
@@ -860,9 +862,10 @@ class Basket extends Component {
         quantity: qty,
       };
       // search detail ID on previous data
-      let previousData = this.props.dataBasket.details.find(
-        item => item.productID == product.productID,
-      );
+      // let previousData = this.props.dataBasket.details.find(
+      //   item => item.productID == product.productID,
+      // );
+      let previousData = product;
 
       // if product have modifier
       if (product.product.productModifiers.length > 0) {
@@ -1372,7 +1375,7 @@ class Basket extends Component {
 
 mapStateToProps = state => ({
   dataBasket: state.orderReducer.dataBasket.product,
-  orderType: state.orderReducer.orderType.orderType,
+  orderType: state.userReducer.orderType.orderType,
   tableType: state.orderReducer.tableType.tableType,
   products: state.orderReducer.productsOutlet.products,
   intlData: state.intlData,
