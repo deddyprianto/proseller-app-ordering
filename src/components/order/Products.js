@@ -131,7 +131,11 @@ class Products extends Component {
     // }
     this.props.dispatch(setOrderType(type));
     this.RBSheet.close();
-    if (!isEmptyObject(productTemp)) this.openModal(productTemp);
+    if (!isEmptyObject(productTemp)) {
+      setTimeout(() => {
+        this.openModal(productTemp);
+      }, 30);
+    }
   };
 
   askUserToSelectOrderType = () => {

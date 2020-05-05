@@ -8,7 +8,7 @@ import {
   RefreshControl,
   TouchableOpacity,
   Alert,
-  SafeAreaView
+  SafeAreaView,
 } from 'react-native';
 import {createAppContainer} from 'react-navigation';
 import {connect} from 'react-redux';
@@ -176,67 +176,67 @@ class Rewards extends Component {
     const {intlData} = this.props;
     return (
       <SafeAreaView>
-      <ScrollView
-        refreshControl={
-          <RefreshControl
-            refreshing={this.state.refreshing}
-            onRefresh={this._onRefresh}
-          />
-        }>
-        <View style={styles.container}>
-          {this.state.isLoading ? (
-            <View style={styles.loading}>{/*<Loader />*/}</View>
-          ) : null}
-          <View>
+        <ScrollView
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.refreshing}
+              onRefresh={this._onRefresh}
+            />
+          }>
+          <View style={styles.container}>
             {this.state.isLoading ? (
-              <RewardsStamp isLoading={this.state.isLoading} />
-            ) : this.props.dataStamps.dataStamps == undefined ||
-              isEmptyObject(this.props.dataStamps.dataStamps) ? (
-              this.greetWelcomeUser()
-            ) : this.props.dataStamps.dataStamps.length == 0 ? null : (
-              <View
-                style={{
-                  backgroundColor: colorConfig.pageIndex.activeTintColor,
-                  alignItems: 'center',
-                }}>
+              <View style={styles.loading}>{/*<Loader />*/}</View>
+            ) : null}
+            <View>
+              {this.state.isLoading ? (
                 <RewardsStamp isLoading={this.state.isLoading} />
-                <TouchableOpacity
-                  onPress={this.detailStamps}
+              ) : this.props.dataStamps.dataStamps == undefined ||
+                isEmptyObject(this.props.dataStamps.dataStamps) ? (
+                this.greetWelcomeUser()
+              ) : this.props.dataStamps.dataStamps.length == 0 ? null : (
+                <View
                   style={{
-                    width: 100,
+                    backgroundColor: colorConfig.pageIndex.activeTintColor,
+                    alignItems: 'center',
                   }}>
-                  <Text style={styles.btn}>{intlData.messages.learnMore}</Text>
-                </TouchableOpacity>
-              </View>
-            )}
+                  <RewardsStamp isLoading={this.state.isLoading} />
+                  <TouchableOpacity
+                    onPress={this.detailStamps}
+                    style={{
+                      width: 100,
+                    }}>
+                    <Text style={styles.btn}>
+                      {intlData.messages.learnMore}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              )}
 
-            {this.props.totalPoint == undefined ? (
-              <View
-                style={{
-                  backgroundColor: colorConfig.pageIndex.activeTintColor,
-                  height: this.state.screenHeight / 3 - 30,
-                }}>
-                {this.state.isLoading ? <MyPointsPlaceHolder /> : null}
-              </View>
-            ) : (
-              <RewardsPoint
-                campaignActive={campaignActive}
-                isLoading={this.state.isLoading}
+              {this.props.totalPoint == undefined ? (
+                <View
+                  style={{
+                    backgroundColor: colorConfig.pageIndex.activeTintColor,
+                    height: this.state.screenHeight / 3 - 30,
+                  }}>
+                  {this.state.isLoading ? <MyPointsPlaceHolder /> : null}
+                </View>
+              ) : (
+                <RewardsPoint
+                  campaignActive={campaignActive}
+                  isLoading={this.state.isLoading}
+                />
+              )}
+              <RewardsMenu
+                intlData={intlData}
+                myVoucers={this.props.myVoucers}
               />
-            )}
-            <RewardsMenu
-              disableStatusGetData={this.disableStatusGetData}
-              enableStatusGetData={this.enableStatusGetData}
-              intlData={intlData}
-              myVoucers={this.props.myVoucers}
-            />
-            <RewardsTransaction
-              isLoading={this.state.isLoading}
-              screen={this.props}
-            />
+              <RewardsTransaction
+                isLoading={this.state.isLoading}
+                screen={this.props}
+              />
+            </View>
           </View>
-        </View>
-      </ScrollView>
+        </ScrollView>
       </SafeAreaView>
     );
   }

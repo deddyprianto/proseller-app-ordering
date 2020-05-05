@@ -11,7 +11,7 @@ import {
   Alert,
   Platform,
   PermissionsAndroid,
-  SafeAreaView
+  SafeAreaView,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
@@ -516,11 +516,20 @@ class Store extends Component {
             elevation: 12,
           }}>
           <View>
-            <Icon
-              size={40}
-              name={Platform.OS === 'ios' ? 'ios-cart' : 'md-cart'}
-              style={{color: colorConfig.store.defaultColor}}
-            />
+            {this.props.dataBasket == undefined ||
+            this.props.dataBasket.status == 'PENDING' ? (
+              <Icon
+                size={40}
+                name={Platform.OS === 'ios' ? 'ios-basket' : 'md-basket'}
+                style={{color: colorConfig.store.defaultColor}}
+              />
+            ) : (
+              <Icon
+                size={40}
+                name={Platform.OS === 'ios' ? 'ios-cart' : 'md-cart'}
+                style={{color: colorConfig.store.defaultColor}}
+              />
+            )}
           </View>
           {/* check data length basket, if not undefined, then show length */}
           {this.props.dataBasket != undefined &&

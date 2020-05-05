@@ -188,7 +188,7 @@ class AccountMenuList extends Component {
           <View
             style={[
               styles.itemMenu,
-              {backgroundColor: colorConfig.store.colorError},
+              {backgroundColor: colorConfig.pageIndex.inactiveTintColor},
             ]}>
             <Icon
               size={20}
@@ -205,7 +205,10 @@ class AccountMenuList extends Component {
                 />
               ) : (
                 <Text
-                  style={[styles.title, {color: colorConfig.store.colorError}]}>
+                  style={[
+                    styles.title,
+                    {color: colorConfig.pageIndex.inactiveTintColor},
+                  ]}>
                   {intlData.messages.logout}
                 </Text>
               )}

@@ -118,7 +118,7 @@ export const submitOder = payload => {
       } = state;
       // get table type
       const {
-        orderReducer: {
+        userReducer: {
           orderType: {orderType},
         },
       } = state;

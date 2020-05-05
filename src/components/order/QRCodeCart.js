@@ -16,7 +16,7 @@ import {Actions} from 'react-native-router-flux';
 import colorConfig from '../../config/colorConfig';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
-import {getBasket} from '../../actions/order.action';
+import {getBasket, getHistoryBasket} from '../../actions/order.action';
 import appConfig from '../../config/appConfig';
 import QRCode from 'react-native-qrcode-svg';
 
@@ -139,7 +139,8 @@ class WaitingFood extends Component {
       if (dataBasket == undefined) {
         clearInterval(this.interval);
         this.interval = undefined;
-        Actions.reset('pageIndex');
+        // Actions.reset('pageIndex');
+        Actions.reset('pageIndex', {fromPayment: true});
       }
     } catch (e) {}
 

@@ -21,7 +21,6 @@ export default class RewardsMenu extends Component {
   }
 
   pagePay = () => {
-    this.props.disableStatusGetData();
     // var pembayaran = {
     //   payment: 9.01,
     //   storeName: 'Bugis Village',
@@ -40,17 +39,12 @@ export default class RewardsMenu extends Component {
     // };
     // console.log(pembayaran);
     // Actions.pay()
-    Actions.scan({
-      enableStatusGetData: this.props.enableStatusGetData,
-    });
+    Actions.scan();
     // Actions.paymentDetail({pembayaran: pembayaran});
   };
 
   pageRewards = () => {
-    this.props.disableStatusGetData();
-    Actions.rewards({
-      enableStatusGetData: this.props.enableStatusGetData,
-    });
+    Actions.rewards();
   };
 
   pageQRCode = () => {

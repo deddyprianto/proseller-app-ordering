@@ -6,7 +6,8 @@ import {
   Dimensions,
   Platform,
   TouchableOpacity,
-  BackHandler, SafeAreaView,
+  BackHandler,
+  SafeAreaView,
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -49,7 +50,6 @@ class RewardsQRscan extends Component {
   };
 
   goBack = () => {
-    this.props.enableStatusGetData();
     Actions.pop();
   };
 

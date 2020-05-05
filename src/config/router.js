@@ -13,17 +13,18 @@ import SignInPhoneNumber from '../pages/SignInPhoneNumber';
 import SignInEmail from '../pages/SignInEmail';
 import MobileRegister from '../pages/MobileRegister';
 import EmailRegister from '../pages/EmailRegister';
-import PageIndex from '../pages/pageIndex';
+import PageIndex from '../pages/pageIndex'
 import VerifyOtpAfterRegister from '../pages/VerifyOtpAfterRegister';
 import VerifyOtpAfterRegisterEmail from '../pages/VerifyOtpAfterRegisterEmail';
 import VerifyRegister from '../pages/VerifyRegister';
+import Store from '../pages/store';
 
 import Pay from '../components/rewardsPay';
 import Rewards from '../components/rewardsRewards';
 import RewardsQRmenu from '../components/rewardsQRmenu';
 import RewardsQRscan from '../components/rewardsQRscan';
 import VoucherDetail from '../components/voucherDetail';
-import HistoryDetailPayment from '../components/historyDetailPayment';
+import HistoryDetailPayment from '../components/history/historyDetailPayment';
 import StoreDetailStores from '../components/storeDetailStores';
 import StoreSeeMorePromotion from '../components/storeSeeMorePromotion';
 import StoreDetailPromotion from '../components/storeDetailPromotion';
@@ -134,6 +135,7 @@ export default class Routes extends Component {
               key="historyDetailPayment"
               component={HistoryDetailPayment}
             />
+            <Scene key="store" component={Store} />
             <Scene key="storeDetailStores" component={StoreDetailStores} />
             <Scene key="seeMorePromotion" component={StoreSeeMorePromotion} />
             <Scene

@@ -20,7 +20,7 @@ import {
   FlatList,
   RefreshControl,
   Alert,
-  SafeAreaView
+  SafeAreaView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';

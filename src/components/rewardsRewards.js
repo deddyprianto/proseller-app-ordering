@@ -9,7 +9,8 @@ import {
   TouchableOpacity,
   Image,
   Platform,
-  BackHandler, SafeAreaView,
+  BackHandler,
+  SafeAreaView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -61,7 +62,6 @@ class RewardsRewards extends Component {
   };
 
   goBack = () => {
-    this.props.enableStatusGetData();
     Actions.pop();
   };
 

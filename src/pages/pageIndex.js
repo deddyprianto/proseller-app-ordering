@@ -3,7 +3,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import {createAppContainer} from 'react-navigation';
 import {createMaterialBottomTabNavigator} from 'react-navigation-material-bottom-tabs';
 import {Container} from 'native-base';
-import {Dimensions, PermissionsAndroid} from 'react-native';
+import {Dimensions} from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
 import {Platform} from 'react-native';
@@ -12,9 +12,7 @@ import History from './history';
 import Rewards from './rewards';
 import Inbox from './inbox';
 import Account from './account';
-import OfflineNotice from '../components/OfflineNotice';
 import colorConfig from '../config/colorConfig';
-import {refreshToken} from '../actions/auth.actions';
 
 const AppTabNavigator = createMaterialBottomTabNavigator(
   {
@@ -95,7 +93,90 @@ const AppTabNavigator = createMaterialBottomTabNavigator(
   },
 );
 
+const AppTabNavigatorHistory = createMaterialBottomTabNavigator(
+  {
+    Store: {
+      screen: Store,
+      navigationOptions: {
+        title: 'Outlet',
+        tabBarIcon: ({tintColor, focused}) => (
+          <Icon
+            size={28}
+            name={Platform.OS === 'ios' ? 'ios-cart' : 'md-cart'}
+            style={{color: tintColor}}
+          />
+        ),
+      },
+    },
+    History: {
+      screen: History,
+      navigationOptions: {
+        title: 'History',
+        tabBarIcon: ({tintColor, focused}) => (
+          <Icon
+            size={28}
+            name={Platform.OS === 'ios' ? 'ios-timer' : 'md-time'}
+            style={{color: tintColor}}
+          />
+        ),
+      },
+    },
+    Rewards: {
+      screen: Rewards,
+      navigationOptions: {
+        title: 'Rewards',
+        tabBarIcon: ({tintColor, focused}) => (
+          <Icon
+            size={28}
+            name={Platform.OS === 'ios' ? 'ios-ribbon' : 'md-ribbon'}
+            style={{color: tintColor}}
+          />
+        ),
+      },
+    },
+    Inbox: {
+      screen: Inbox,
+      navigationOptions: {
+        title: 'Inbox',
+        tabBarIcon: ({tintColor, focused}) => (
+          <Icon
+            size={28}
+            name={Platform.OS === 'ios' ? 'ios-mail' : 'md-mail'}
+            style={{color: tintColor}}
+          />
+        ),
+      },
+    },
+    Account: {
+      screen: Account,
+      navigationOptions: {
+        title: 'Profile',
+        tabBarIcon: ({tintColor, focused}) => (
+          <Icon
+            size={28}
+            name={Platform.OS === 'ios' ? 'ios-contact' : 'md-contact'}
+            style={{color: tintColor}}
+          />
+        ),
+      },
+    },
+  },
+  {
+    initialRouteName: 'History',
+    activeTintColor: colorConfig.pageIndex.activeTintColor,
+    inactiveTintColor: colorConfig.pageIndex.inactiveTintColor,
+    barStyle: {
+      backgroundColor: colorConfig.pageIndex.backgroundColor,
+      fontFamily: 'Lato-Medium',
+    },
+  },
+);
+
 const AppStackContainer = createAppContainer(AppTabNavigator, {
+  transitionConfig: () => ({screenInterpolator: () => null}),
+});
+
+const AppStackContainerHistory = createAppContainer(AppTabNavigatorHistory, {
   transitionConfig: () => ({screenInterpolator: () => null}),
 });
 
@@ -108,10 +189,16 @@ class PageIndex extends Component {
   }
 
   render() {
+    const {fromPayment} = this.props;
     return (
       <Container>
         {/*<OfflineNotice />*/}
-        <AppStackContainer />
+        {/*<AppStackContainerHistory />*/}
+        {fromPayment == true ? (
+          <AppStackContainerHistory />
+        ) : (
+          <AppStackContainer />
+        )}
         {/*/!*{this.props.dataInboxNoRead > 0 ? (*!/*/}
         {/*{true ? (*/}
         {/*  <View*/}
