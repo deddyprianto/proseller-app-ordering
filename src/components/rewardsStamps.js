@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   Image,
   Platform,
+  SafeAreaView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -60,7 +61,7 @@ class RewardsStamps extends Component {
   render() {
     const {intlData} = this.props;
     return (
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
         <View>
           <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
             <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
@@ -96,7 +97,7 @@ class RewardsStamps extends Component {
             </View>
           )}
         </ScrollView>
-      </View>
+      </SafeAreaView>
     );
   }
 }

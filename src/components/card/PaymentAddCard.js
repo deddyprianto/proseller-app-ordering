@@ -20,6 +20,7 @@ import {
   FlatList,
   RefreshControl,
   Alert,
+  SafeAreaView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -300,7 +301,7 @@ class PaymentAddCard extends Component {
   render() {
     const {intlData, myCardAccount, item} = this.props;
     return (
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
         {this.state.loading && <Loader />}
 
         {this.askUserToEnterCVV()}
@@ -342,7 +343,7 @@ class PaymentAddCard extends Component {
         {/*  />*/}
         {/*  <Text style={styles.textAddCard}>ADD {item.paymentName}</Text>*/}
         {/*</TouchableOpacity>*/}
-      </View>
+      </SafeAreaView>
     );
   }
 }
@@ -473,7 +474,7 @@ const styles = StyleSheet.create({
     opacity: 0.6,
     color: 'white',
     // fontWeight: 'bold',
-    fontFamily: 'monospace',
+    // fontFamily: 'monospace',
     textAlign: 'center',
     letterSpacing: 2,
   },
@@ -492,7 +493,7 @@ const styles = StyleSheet.create({
     opacity: 0.6,
     color: 'white',
     // fontWeight: 'bold',
-    fontFamily: 'monospace',
+    // fontFamily: 'monospace',
     textAlign: 'center',
     // letterSpacing: 2,
   },

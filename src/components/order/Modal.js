@@ -15,6 +15,7 @@ import {
   Alert,
   ActivityIndicator,
   FlatList,
+  SafeAreaView
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -542,6 +543,7 @@ export default class ModalOrder extends Component {
         hardwareAccelerated={true}
         onShow={this.props.modalShow}
         onRequestClose={this.props.backButtonClicked}>
+        <SafeAreaView>
         <KeyboardAvoidingView
           style={{
             height: '100%',
@@ -677,6 +679,7 @@ export default class ModalOrder extends Component {
           </View>
         </KeyboardAvoidingView>
         {this.renderDialogQuantityModifier()}
+        </SafeAreaView>
       </Modal>
     );
   }

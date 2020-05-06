@@ -19,6 +19,7 @@ import {
   FlatList,
   TextInput,
   ActivityIndicator,
+  SafeAreaView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -685,7 +686,7 @@ class SettleOrder extends Component {
   render() {
     const {intlData, selectedAccount} = this.props;
     return (
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
         {this.state.loading && <Loader />}
         {this.askUserToEnterCVV()}
         <View style={{backgroundColor: colorConfig.pageIndex.backgroundColor}}>
@@ -1060,7 +1061,7 @@ class SettleOrder extends Component {
             this.hideAlert();
           }}
         />
-      </View>
+      </SafeAreaView>
     );
   }
 }

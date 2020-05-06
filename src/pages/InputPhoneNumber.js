@@ -21,6 +21,7 @@ import {
   AsyncStorage,
   PermissionsAndroid,
   Keyboard,
+  SafeAreaView,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
@@ -327,106 +328,109 @@ class InputPhoneNumber extends Component {
       <>
         {this.state.loading && <Loader />}
         <ScrollView keyboardShouldPersistTaps="handled">
-          <Header
-            titleHeader={'Mobile Register / Register'}
-            backButton={false}
-          />
-          <View style={{width: 0, height: 0}}>
-            <CountryPicker
-              translation="eng"
-              withCallingCode
-              visible={this.state.openModalCountry}
-              onClose={() => this.setState({openModalCountry: false})}
-              withFilter
-              placeholder={`x`}
-              withFlag={true}
-              onSelect={country => {
-                this.setState({
-                  phoneNumber: `+${country.callingCode[0]}`,
-                  country: country.name,
-                });
-              }}
+          <SafeAreaView>
+            <Header
+              titleHeader={'Mobile Sign In / Register'}
+              backButton={false}
             />
-          </View>
-          <View style={{margin: 20}}>
-            <Text
-              style={{
-                color: colorConfig.pageIndex.grayColor,
-                fontSize: 16,
-                fontFamily: 'Lato-Medium',
-              }}>
-              {intlData.messages.enterMobileNumber}
-            </Text>
-            <View
-              style={{
-                marginVertical: 15,
-                flexDirection: 'row',
-                color: colorConfig.store.title,
-                borderColor: colorConfig.pageIndex.inactiveTintColor,
-                borderWidth: 1,
-                borderRadius: 10,
-              }}>
-              <PhoneInput
-                flagStyle={{width: 35, height: 25}}
-                textStyle={{fontSize: 18, fontFamily: 'Lato-Medium'}}
-                style={{
-                  fontSize: 18,
-                  width: '100%',
-                  padding: 15,
-                }}
-                ref={ref => {
-                  this.phone = ref;
-                }}
-                onChangePhoneNumber={() => {
-                  this.setState({phone: this.phone.getValue()});
-                }}
-                value={this.state.phoneNumber}
-                onPressFlag={() => {
+            <View style={{width: 0, height: 0}}>
+              <CountryPicker
+                translation="eng"
+                withCallingCode
+                visible={this.state.openModalCountry}
+                onClose={() => this.setState({openModalCountry: false})}
+                withFilter
+                placeholder={`x`}
+                withFlag={true}
+                onSelect={country => {
                   this.setState({
-                    openModalCountry: true,
+                    phoneNumber: `+${country.callingCode[0]}`,
+                    country: country.name,
                   });
                 }}
               />
             </View>
-            <View style={{marginVertical: 15}}>
-              <TouchableHighlight
-                disabled={this.state.phone == '' ? true : false}
-                onPress={this.checkAccountExist}
+            <View style={{margin: 20}}>
+              <Text
                 style={{
-                  padding: 15,
-                  borderRadius: 10,
-                  backgroundColor:
-                    this.state.phone == ''
-                      ? colorConfig.store.disableButton
-                      : colorConfig.store.defaultColor,
+                  color: colorConfig.pageIndex.grayColor,
+                  fontSize: 16,
+                  fontFamily: 'Lato-Medium',
                 }}>
-                <Text
+                {intlData.messages.enterMobileNumber}
+              </Text>
+              <View
+                style={{
+                  marginVertical: 15,
+                  flexDirection: 'row',
+                  color: colorConfig.store.title,
+                  borderColor: colorConfig.pageIndex.inactiveTintColor,
+                  borderWidth: 1,
+                  borderRadius: 10,
+                }}>
+                <PhoneInput
+                  flagStyle={{width: 35, height: 25}}
+                  textStyle={{fontSize: 18, fontFamily: 'Lato-Medium'}}
                   style={{
-                    color: colorConfig.store.textWhite,
                     fontSize: 18,
-                    textAlign: 'center',
-                    fontWeight: 'bold',
-                    fontFamily: 'Lato-Medium',
-                  }}>
-                  {intlData.messages.next}
-                </Text>
-              </TouchableHighlight>
-            </View>
-            <View style={{marginTop: 30}}>
-              <TouchableOpacity onPress={() => Actions.inputEmail()}>
-                <Text
+                    width: '100%',
+                    padding: 15,
+                    color: 'black'
+                  }}
+                  ref={ref => {
+                    this.phone = ref;
+                  }}
+                  onChangePhoneNumber={() => {
+                    this.setState({phone: this.phone.getValue()});
+                  }}
+                  value={this.state.phoneNumber}
+                  onPressFlag={() => {
+                    this.setState({
+                      openModalCountry: true,
+                    });
+                  }}
+                />
+              </View>
+              <View style={{marginVertical: 15}}>
+                <TouchableHighlight
+                  disabled={this.state.phone == '' ? true : false}
+                  onPress={this.checkAccountExist}
                   style={{
-                    textDecorationLine: 'underline',
-                    fontFamily: 'Lato-Medium',
-                    textAlign: 'center',
-                    color: colorConfig.store.secondaryColor,
-                    fontSize: 17,
+                    padding: 15,
+                    borderRadius: 10,
+                    backgroundColor:
+                      this.state.phone == ''
+                        ? colorConfig.store.disableButton
+                        : colorConfig.store.defaultColor,
                   }}>
-                  {intlData.messages.useEmail}
-                </Text>
-              </TouchableOpacity>
+                  <Text
+                    style={{
+                      color: colorConfig.store.textWhite,
+                      fontSize: 18,
+                      textAlign: 'center',
+                      fontWeight: 'bold',
+                      fontFamily: 'Lato-Medium',
+                    }}>
+                    {intlData.messages.next}
+                  </Text>
+                </TouchableHighlight>
+              </View>
+              <View style={{marginTop: 30}}>
+                <TouchableOpacity onPress={() => Actions.inputEmail()}>
+                  <Text
+                    style={{
+                      textDecorationLine: 'underline',
+                      fontFamily: 'Lato-Medium',
+                      textAlign: 'center',
+                      color: colorConfig.store.secondaryColor,
+                      fontSize: 17,
+                    }}>
+                    {intlData.messages.useEmail}
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </View>
-          </View>
+          </SafeAreaView>
         </ScrollView>
         {this.state.showFooter ? (
           <View>

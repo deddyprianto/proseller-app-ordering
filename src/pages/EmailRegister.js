@@ -16,7 +16,7 @@ import {
   TextInput,
   Linking,
   TouchableHighlight,
-  Alert,
+  Alert, SafeAreaView,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
@@ -192,7 +192,7 @@ class EmailRegister extends Component {
     const {intlData} = this.props;
     const {name, phone} = this.state;
     return (
-      <View style={styles.backgroundImage}>
+      <SafeAreaView style={styles.backgroundImage}>
         {this.state.loading && <Loader />}
         <ScrollView keyboardShouldPersistTaps="handled">
           <Header titleHeader={'Email Register'} backButton={true} />
@@ -330,7 +330,7 @@ class EmailRegister extends Component {
                   style={{
                     fontSize: 15,
                     color: colorConfig.store.defaultColor,
-                    textDecorationLine: colorConfig.store.defaultColor,
+                    textDecorationLine: 'underline',
                   }}>
                   {' '}
                   {this.state.companyName}
@@ -340,7 +340,7 @@ class EmailRegister extends Component {
                   style={{
                     fontSize: 15,
                     color: colorConfig.store.defaultColor,
-                    textDecorationLine: colorConfig.store.defaultColor,
+                    textDecorationLine: 'underline',
                   }}>
                   {' '}
                   {this.state.companyName}
@@ -359,7 +359,7 @@ class EmailRegister extends Component {
             </View>
           </View>
         </ScrollView>
-      </View>
+      </SafeAreaView>
     );
   }
 }

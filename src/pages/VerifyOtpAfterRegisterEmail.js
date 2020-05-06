@@ -17,6 +17,7 @@ import {
   Picker,
   TouchableHighlight,
   Alert,
+  SafeAreaView
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
@@ -272,7 +273,7 @@ class VerifyOtpAfterRegisterEmail extends Component {
     const {intlData} = this.props;
     let {minutes, seconds} = this.state;
     return (
-      <View style={styles.backgroundImage}>
+      <SafeAreaView style={styles.backgroundImage}>
         {this.state.loading && <Loader />}
         <ScrollView>
           <Header titleHeader={'Email Sign In'} backButton={true} />
@@ -400,7 +401,7 @@ class VerifyOtpAfterRegisterEmail extends Component {
             </View>
           </View>
         </ScrollView>
-      </View>
+      </SafeAreaView>
     );
   }
 }

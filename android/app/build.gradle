@@ -84,6 +84,8 @@ project.ext.react = [
 apply from: "../../node_modules/react-native/react.gradle"
 apply from: "../../node_modules/@sentry/react-native/sentry.gradle"
 
+apply from: "../../node_modules/react-native-code-push/android/codepush.gradle"
+
 /**
  * Set this to true to create two separate APKs instead of one:
  *   - An APK that only works on ARM devices
@@ -136,8 +138,8 @@ android {
         applicationId "com.edgeworks"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 6
-        versionName "1.0.3"
+        versionCode 7
+        versionName "1.1"
         missingDimensionStrategy 'react-native-camera', 'general'
         resValue "string", "build_config_package", "com.edgeworks"
         multiDexEnabled true
@@ -188,14 +190,14 @@ android {
             dev {
                 minSdkVersion rootProject.ext.minSdkVersion
                 applicationId 'com.edgeworks.dev'
-                versionName "1.0-dev"
+                versionName "1.1"
                 targetSdkVersion rootProject.ext.targetSdkVersion
                 resValue "string", "build_config_package", "com.edgeworks"
             }
             demo {
                 minSdkVersion rootProject.ext.minSdkVersion
                 applicationId 'com.edgeworks.demo'
-                versionName "1.0.3-demo"
+                versionName "1.1"
                 targetSdkVersion rootProject.ext.targetSdkVersion
                 resValue "string", "build_config_package", "com.edgeworks"
             }

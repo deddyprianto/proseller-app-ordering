@@ -22,6 +22,7 @@ import {Actions} from 'react-native-router-flux';
 import awsConfig from '../config/awsConfig';
 import CryptoJS from 'react-native-crypto-js';
 import {isEmptyArray, isEmptyObject} from '../helper/CheckEmpty';
+import packageJson from '../../package';
 
 class AccountMenuList extends Component {
   constructor(props) {
@@ -65,37 +66,32 @@ class AccountMenuList extends Component {
     let paymentTypes = [];
     if (companyInfo.paymentTypes != undefined)
       paymentTypes = companyInfo.paymentTypes;
-    if (!isEmptyArray(paymentTypes))
-      return (
-        <FlatList
-          data={paymentTypes}
-          renderItem={({item}) => (
-            <TouchableOpacity
-              onPress={() => Actions.listCard({intlData, item})}
-              style={styles.cardMenu}>
-              <View style={styles.itemMenu}>
-                <Icon
-                  size={20}
-                  name={Platform.OS === 'ios' ? 'ios-card' : 'md-card'}
-                  style={{color: 'white'}}
-                />
-              </View>
-              <View>
-                <View style={styles.item}>
-                  {myCardAccount != undefined && myCardAccount.length > 0 ? (
-                    <Text style={styles.title}>
-                      {item.paymentName} ({myCardAccount.length})
-                    </Text>
-                  ) : (
-                    <Text style={styles.title}>ADD {item.paymentName}</Text>
-                  )}
-                </View>
-              </View>
-            </TouchableOpacity>
-          )}
-          keyExtractor={(product, index) => index.toString()}
-        />
-      );
+    if (!isEmptyArray(paymentTypes)) {
+      return paymentTypes.map(item => (
+        <TouchableOpacity
+          onPress={() => Actions.listCard({intlData, item})}
+          style={styles.cardMenu}>
+          <View style={styles.itemMenu}>
+            <Icon
+              size={20}
+              name={Platform.OS === 'ios' ? 'ios-card' : 'md-card'}
+              style={{color: 'white'}}
+            />
+          </View>
+          <View>
+            <View style={styles.item}>
+              {myCardAccount != undefined && myCardAccount.length > 0 ? (
+                <Text style={styles.title}>
+                  {item.paymentName} ({myCardAccount.length})
+                </Text>
+              ) : (
+                <Text style={styles.title}>ADD {item.paymentName}</Text>
+              )}
+            </View>
+          </View>
+        </TouchableOpacity>
+      ));
+    }
   };
 
   render() {
@@ -193,7 +189,7 @@ class AccountMenuList extends Component {
           <View
             style={[
               styles.itemMenu,
-              {backgroundColor: colorConfig.store.colorError},
+              {backgroundColor: colorConfig.pageIndex.inactiveTintColor},
             ]}>
             <Icon
               size={20}
@@ -210,13 +206,26 @@ class AccountMenuList extends Component {
                 />
               ) : (
                 <Text
-                  style={[styles.title, {color: colorConfig.store.colorError}]}>
+                  style={[
+                    styles.title,
+                    {color: colorConfig.pageIndex.inactiveTintColor},
+                  ]}>
                   {intlData.messages.logout}
                 </Text>
               )}
             </View>
           </View>
         </TouchableOpacity>
+
+        <Text
+          style={{
+            alignSelf: 'center',
+            marginTop: 10,
+            color: colorConfig.pageIndex.grayColor,
+            fontSize: 13,
+          }}>
+          Version: {packageJson.version}
+        </Text>
       </View>
     );
   }

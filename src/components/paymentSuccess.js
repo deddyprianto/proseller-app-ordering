@@ -13,6 +13,7 @@ import {
   BackHandler,
   TouchableOpacity,
   Platform,
+  AsyncStorage,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -36,6 +37,9 @@ export default class PaymentSuccess extends Component {
   }
 
   componentDidMount() {
+    try {
+      this.props.dispatch(clearAccount());
+    } catch (e) {}
     this.backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
       this.handleBackPress,
@@ -57,7 +61,8 @@ export default class PaymentSuccess extends Component {
     if (url != undefined && url == '/cart/submitTakeAway') {
       Actions.popTo('basket');
     } else {
-      Actions.reset('pageIndex');
+      Actions.reset('pageIndex', {fromPayment: true});
+      // Actions.reset('pageIndex', {initial: 'History'});
     }
   };
 

@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Alert,
+  SafeAreaView
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -93,7 +94,6 @@ class ScanQRTable extends Component {
         // tableNo: '10',
       };
       let results = await this.props.dispatch(submitOder(payload));
-      // console.log('result ', results);
       if (results.resultCode == 200) {
         // if cart has been submitted, then go back and give info
         if (results.status == 'FAILED') {
@@ -230,7 +230,7 @@ class ScanQRTable extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
         <View>
           <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
             <Icon
@@ -348,7 +348,7 @@ class ScanQRTable extends Component {
             }
           }}
         />
-      </View>
+      </SafeAreaView>
     );
   }
 }

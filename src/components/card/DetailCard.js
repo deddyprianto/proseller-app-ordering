@@ -20,6 +20,7 @@ import {
   FlatList,
   RefreshControl,
   Alert,
+  SafeAreaView
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -73,7 +74,7 @@ class DetailCard extends Component {
   render() {
     const {intlData, item} = this.props;
     return (
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
         {this.state.loading && <Loader />}
         <View
           style={[
@@ -160,7 +161,7 @@ class DetailCard extends Component {
             <Text style={styles.textAddCard}>Delete Card</Text>
           </TouchableOpacity>
         </View>
-      </View>
+      </SafeAreaView>
     );
   }
 }

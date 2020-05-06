@@ -16,7 +16,7 @@ import {
   TextInput,
   Linking,
   TouchableHighlight,
-  Alert,
+  Alert, SafeAreaView,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
@@ -185,7 +185,7 @@ class MobileRegister extends Component {
   render() {
     const {intlData} = this.props;
     return (
-      <View style={styles.backgroundImage}>
+      <SafeAreaView style={styles.backgroundImage}>
         {this.state.loading && <Loader />}
         <ScrollView keyboardShouldPersistTaps="handled">
           <Header titleHeader={'Mobile Register'} backButton={true} />
@@ -287,7 +287,7 @@ class MobileRegister extends Component {
                   style={{
                     fontSize: 15,
                     color: colorConfig.store.defaultColor,
-                    textDecorationLine: colorConfig.store.defaultColor,
+                    textDecorationLine: 'underline',
                   }}>
                   {' '}
                   {this.state.companyName}
@@ -297,7 +297,7 @@ class MobileRegister extends Component {
                   style={{
                     fontSize: 15,
                     color: colorConfig.store.defaultColor,
-                    textDecorationLine: colorConfig.store.defaultColor,
+                    textDecorationLine: 'underline',
                   }}>
                   {' '}
                   {this.state.companyName}
@@ -316,7 +316,7 @@ class MobileRegister extends Component {
             </View>
           </View>
         </ScrollView>
-      </View>
+      </SafeAreaView>
     );
   }
 }

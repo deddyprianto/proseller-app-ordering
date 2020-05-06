@@ -10,6 +10,7 @@ import {
   Image,
   Platform,
   BackHandler,
+  SafeAreaView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -18,6 +19,8 @@ import {compose} from 'redux';
 import {dataPoint, vouchers} from '../actions/rewards.action';
 
 import colorConfig from '../config/colorConfig';
+import RewardsStamp from '../components/rewardsStamp';
+import RewardsStampDetail from '../components/rewardsStampDetail';
 import RewordsVouchers from '../components/rewordsVouchers';
 import Loader from '../components/loader';
 import {myVoucers} from '../actions/account.action';
@@ -59,14 +62,13 @@ class RewardsRewards extends Component {
   };
 
   goBack = () => {
-    this.props.enableStatusGetData();
     Actions.pop();
   };
 
   render() {
-    const {intlData, campaignActive} = this.props;
+    const {intlData} = this.props;
     return (
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
         {this.state.isLoading && <Loader />}
         <View style={{backgroundColor: colorConfig.store.defaultColor}}>
           <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
@@ -85,33 +87,30 @@ class RewardsRewards extends Component {
                 {intlData.messages.rewards}{' '}
               </Text>
             </TouchableOpacity>
-            {campaignActive ? (
-              <View style={styles.point}>
-                <Icon
-                  size={23}
-                  name={
-                    Platform.OS === 'ios' ? 'ios-pricetags' : 'md-pricetags'
-                  }
-                  style={{
-                    color: colorConfig.pageIndex.backgroundColor,
-                    marginRight: 8,
-                  }}
-                />
-                <Text
-                  style={{
-                    color: colorConfig.pageIndex.backgroundColor,
-                    fontWeight: 'bold',
-                  }}>
-                  {this.props.totalPoint == undefined
-                    ? 0 + ' Point'
-                    : this.props.totalPoint + ' Point'}
-                </Text>
-              </View>
-            ) : null}
+            <View style={styles.point}>
+              <Icon
+                size={23}
+                name={Platform.OS === 'ios' ? 'ios-pricetags' : 'md-pricetags'}
+                style={{
+                  color: colorConfig.pageIndex.backgroundColor,
+                  marginRight: 8,
+                }}
+              />
+              <Text
+                style={{
+                  color: colorConfig.pageIndex.backgroundColor,
+                  fontWeight: 'bold',
+                }}>
+                {this.props.totalPoint == undefined
+                  ? 0 + ' Point'
+                  : this.props.totalPoint + ' Point'}
+              </Text>
+            </View>
           </View>
+          {/*<View style={styles.line} />*/}
         </View>
         <RewordsVouchers />
-      </View>
+      </SafeAreaView>
     );
   }
 }
@@ -156,7 +155,6 @@ const styles = StyleSheet.create({
 mapStateToProps = state => ({
   vouchers: state.rewardsReducer.vouchers.dataVoucher,
   totalPoint: state.rewardsReducer.dataPoint.totalPoint,
-  campaignActive: state.rewardsReducer.dataPoint.campaignActive,
   intlData: state.intlData,
 });
 

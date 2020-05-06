@@ -23,6 +23,7 @@ import colorConfig from './config/colorConfig';
 import awsConfig from './config/awsConfig';
 import OneSignal from 'react-native-onesignal';
 import {deviceUserInfo} from './actions/user.action';
+import OfflineNotice from './components/OfflineNotice';
 
 class Main extends Component {
   constructor(props) {
@@ -101,12 +102,15 @@ class Main extends Component {
   }
 
   onIds = async device => {
-    console.log('Device info: ', device);
+    console.log('Device info: ', device.userId);
     try {
       await this.props.dispatch(deviceUserInfo(device.userId));
     } catch (e) {}
     try {
-      await AsyncStorage.setItem('deviceID', device.userId);
+      await this.props.dispatch(deviceUserInfo(device.userId));
+      if (device.userId != null && device.userId != undefined) {
+        await AsyncStorage.setItem('deviceID', device.userId);
+      }
       await this.props.dispatch(deviceUserInfo(device.userId));
     } catch (error) {
       console.log(error, 'error saving device ID');
@@ -124,7 +128,11 @@ class Main extends Component {
 
     return (
       <View style={styles.container1}>
-        <StatusBar backgroundColor="white" barStyle="dark-content" />
+        <StatusBar
+          backgroundColor={colorConfig.store.defaultColor}
+          barStyle="dark-content"
+        />
+        <OfflineNotice />
         <Routes isLoggedIn={isLoggedIn} />
       </View>
     );

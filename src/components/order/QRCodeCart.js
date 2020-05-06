@@ -8,6 +8,7 @@ import {
   BackHandler,
   Platform,
   Alert,
+  SafeAreaView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -15,7 +16,7 @@ import {Actions} from 'react-native-router-flux';
 import colorConfig from '../../config/colorConfig';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
-import {getBasket} from '../../actions/order.action';
+import {getBasket, getHistoryBasket} from '../../actions/order.action';
 import appConfig from '../../config/appConfig';
 import QRCode from 'react-native-qrcode-svg';
 
@@ -138,12 +139,13 @@ class WaitingFood extends Component {
       if (dataBasket == undefined) {
         clearInterval(this.interval);
         this.interval = undefined;
-        Actions.reset('pageIndex');
+        // Actions.reset('pageIndex');
+        Actions.reset('pageIndex', {fromPayment: true});
       }
     } catch (e) {}
 
     return (
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
         <View style={{backgroundColor: colorConfig.pageIndex.backgroundColor}}>
           <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
             <Icon
@@ -168,14 +170,14 @@ class WaitingFood extends Component {
             size={this.state.screenWidth - 60}
           />
         </View>
-      </View>
+      </SafeAreaView>
     );
   }
 }
 
 mapStateToProps = state => ({
   dataBasket: state.orderReducer.dataBasket.product,
-  orderType: state.orderReducer.orderType.orderType,
+  orderType: state.userReducer.orderType.orderType,
   tableType: state.orderReducer.tableType.tableType,
   products: state.orderReducer.productsOutlet.products,
   intlData: state.intlData,

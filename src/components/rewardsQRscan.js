@@ -4,8 +4,10 @@ import {
   Text,
   StyleSheet,
   Dimensions,
+  Platform,
   TouchableOpacity,
   BackHandler,
+  SafeAreaView,
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -48,7 +50,6 @@ class RewardsQRscan extends Component {
   };
 
   goBack = () => {
-    this.props.enableStatusGetData();
     Actions.pop();
   };
 
@@ -120,7 +121,7 @@ class RewardsQRscan extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
         <View>
           <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
             <Icon
@@ -176,7 +177,7 @@ class RewardsQRscan extends Component {
             }
           }}
         />
-      </View>
+      </SafeAreaView>
     );
   }
 }

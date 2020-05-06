@@ -86,6 +86,18 @@ const deviceUserInfo = (state = {}, action) => {
   }
 };
 
+const orderType = (state = {}, action) => {
+  switch (action.type) {
+    case 'ORDER_TYPE':
+      return {
+        orderType: action.orderType,
+      };
+
+    default:
+      return state;
+  }
+};
+
 const defaultPaymentAccount = (state = {}, action) => {
   switch (action.type) {
     case 'GET_USER_DEFAULT_ACCOUNT':
@@ -142,4 +154,5 @@ export default combineReducers({
   statusPageIndex,
   getCompanyInfo,
   defaultPaymentAccount,
+  orderType,
 });

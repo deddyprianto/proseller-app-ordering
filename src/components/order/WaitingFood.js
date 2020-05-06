@@ -8,6 +8,7 @@ import {
   BackHandler,
   Platform,
   Alert,
+  SafeAreaView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -254,7 +255,7 @@ class WaitingFood extends Component {
     }
 
     return (
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
         <View style={{backgroundColor: colorConfig.pageIndex.backgroundColor}}>
           <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
             <Icon
@@ -285,14 +286,14 @@ class WaitingFood extends Component {
         {dataBasket != undefined ? this.renderTextWaiting() : null}
 
         {dataBasket != undefined ? this.renderBottomButton() : null}
-      </View>
+      </SafeAreaView>
     );
   }
 }
 
 mapStateToProps = state => ({
   dataBasket: state.orderReducer.dataBasket.product,
-  orderType: state.orderReducer.orderType.orderType,
+  orderType: state.userReducer.orderType.orderType,
   tableType: state.orderReducer.tableType.tableType,
   products: state.orderReducer.productsOutlet.products,
   intlData: state.intlData,
