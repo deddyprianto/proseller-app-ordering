@@ -18,15 +18,18 @@ import HistoryPendingOrders from './HistoryPendingOrders';
 class HistoryMenuTab extends Component {
   constructor(props) {
     super(props);
+
+    const {dataBasket} = this.props;
+
     this.state = {
-      toggleAll: true,
-      togglePending: false,
+      toggleAll: dataBasket == undefined ? true : false,
+      togglePending: dataBasket != undefined ? true : false,
       isLoading: false,
     };
   }
 
   render() {
-    const {intlData} = this.props;
+    const {intlData, dataBasket} = this.props;
 
     return (
       <View>
@@ -48,7 +51,7 @@ class HistoryMenuTab extends Component {
               <View style={{flexDirection: 'row', marginBottom: 5}}>
                 <Icon
                   size={17}
-                  name={Platform.OS === 'ios' ? 'ios-document' : 'md-document'}
+                  name={Platform.OS === 'ios' ? 'ios-grid' : 'md-grid'}
                   style={{
                     color: colorConfig.pageIndex.backgroundColor,
                     marginRight: 7,
@@ -87,7 +90,7 @@ class HistoryMenuTab extends Component {
                     color: 'white',
                     fontFamily: 'Lato-Medium',
                   }}>
-                  Pending Orders
+                  Pending Orders {dataBasket != undefined ? '(1)' : null}
                 </Text>
               </View>
               {this.state.togglePending ? (
@@ -125,8 +128,7 @@ const styles = StyleSheet.create({
 });
 
 mapStateToProps = state => ({
-  vouchers: state.rewardsReducer.vouchers.dataVoucher,
-  myVoucers: state.accountsReducer.myVoucers.myVoucers,
+  dataBasket: state.orderReducer.dataBasket.product,
   intlData: state.intlData,
 });
 

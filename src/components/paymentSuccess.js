@@ -23,6 +23,8 @@ import colorConfig from '../config/colorConfig';
 import appConfig from '../config/appConfig';
 import CurrencyFormatter from '../helper/CurrencyFormatter';
 import {clearAccount} from '../actions/payment.actions';
+import OneSignal from 'react-native-onesignal';
+import awsConfig from '../config/awsConfig';
 
 export default class PaymentSuccess extends Component {
   constructor(props) {
@@ -34,17 +36,19 @@ export default class PaymentSuccess extends Component {
       titleAlert: `${this.props.intlData.messages.thankYou} !`,
       showDetail: false,
     };
+
+    OneSignal.inFocusDisplaying(2);
   }
 
-  componentDidMount() {
+  componentDidMount = async () => {
     try {
-      this.props.dispatch(clearAccount());
+      await this.props.dispatch(clearAccount());
     } catch (e) {}
     this.backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
       this.handleBackPress,
     );
-  }
+  };
 
   componentWillUnmount() {
     this.backHandler.remove();
@@ -59,7 +63,8 @@ export default class PaymentSuccess extends Component {
     //  If this scene originates from ordering customers who are taking away, then point it back to basketball
     const {url} = this.props;
     if (url != undefined && url == '/cart/submitTakeAway') {
-      Actions.popTo('basket');
+      // Actions.popTo('basket');
+      Actions.reset('pageIndex', {fromPayment: true});
     } else {
       Actions.reset('pageIndex', {fromPayment: true});
       // Actions.reset('pageIndex', {initial: 'History'});

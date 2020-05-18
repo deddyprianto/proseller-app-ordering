@@ -307,7 +307,8 @@ class SettleOrder extends Component {
 
   saveCVV = async () => {
     try {
-      let card = this.props.selectedAccount;
+      let card = JSON.stringify(this.props.selectedAccount);
+      card = JSON.parse(card);
       card.details.CVV = this.state.cvv;
 
       await this.props.dispatch(selectedAccount(card));
@@ -524,7 +525,7 @@ class SettleOrder extends Component {
       console.log('reponse pembayaran settle order ', response);
       if (response.success) {
         //  remove selected account
-        this.props.dispatch(clearAccount());
+        pthis.props.dispatch(clearAccount());
         // go to payment success
         const {url} = this.props;
         Actions.paymentSuccess({
@@ -672,9 +673,9 @@ class SettleOrder extends Component {
   selectedPaymentMethod = selectedAccount => {
     try {
       if (!isEmptyObject(selectedAccount)) {
-        return `${selectedAccount.details.cardIssuer.toUpperCase()} ${
-          selectedAccount.details.maskedAccountNumber
-        }`.substr(0, 15);
+        let number = selectedAccount.details.maskedAccountNumber;
+        number = number.substr(number.length - 4, 4);
+        return `${selectedAccount.details.cardIssuer.toUpperCase()} ${number}`;
       } else {
         return null;
       }

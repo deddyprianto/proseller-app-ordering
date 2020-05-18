@@ -13,7 +13,7 @@ import SignInPhoneNumber from '../pages/SignInPhoneNumber';
 import SignInEmail from '../pages/SignInEmail';
 import MobileRegister from '../pages/MobileRegister';
 import EmailRegister from '../pages/EmailRegister';
-import PageIndex from '../pages/pageIndex'
+import PageIndex from '../pages/pageIndex';
 import VerifyOtpAfterRegister from '../pages/VerifyOtpAfterRegister';
 import VerifyOtpAfterRegisterEmail from '../pages/VerifyOtpAfterRegisterEmail';
 import VerifyRegister from '../pages/VerifyRegister';
@@ -147,7 +147,12 @@ export default class Routes extends Component {
             <Scene key="accountEditProfil" component={AccountEditProfil} />
             <Scene key="editProfile" component={EditProfile} />
             <Scene key="paymentDetail" component={PaymentDetail} />
-            <Scene key="paymentSuccess" component={PaymentSuccess} />
+            <Scene
+              key="paymentSuccess"
+              component={PaymentSuccess}
+              drawerLockMode="locked-closed"
+              gesturesEnabled={false}
+            />
             <Scene key="paymentAddVoucers" component={PaymentAddVoucers} />
             <Scene key="paymentDetailItem" component={PaymentDetailItem} />
             <Scene key="inboxDetail" component={InboxDetail} />

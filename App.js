@@ -42,30 +42,30 @@ export default class App extends Component {
 // import Main from './src/main';
 // import persist from './src/config/store';
 // import config from './src/config/awsConfig';
-
+//
 // // firebase crashlytic
 // import '@react-native-firebase/crashlytics';
 // // sentry crashlytic
 // import * as Sentry from '@sentry/react-native';
 // import codePush from 'react-native-code-push';
 // import colorConfig from './src/config/colorConfig';
-
+//
 // Sentry.init({
 //   dsn: `${config.DSN}`,
 // });
-
+//
 // const persistStore = persist();
-
+//
 // let codePushOptions = {
 //   updateDialog: true,
 //   checkFrequency: codePush.CheckFrequency.ON_APP_START,
 //   installMode: codePush.InstallMode.IMMEDIATE,
 // };
-
+//
 // class App extends Component {
 //   constructor(props) {
 //     super(props);
-
+//
 //     this.state = {
 //       currentStatus: '',
 //       openModal: false,
@@ -73,7 +73,7 @@ export default class App extends Component {
 //       totalBytes: null,
 //     };
 //   }
-
+//
 //   codePushStatusDidChange = status => {
 //     switch (status) {
 //       case codePush.SyncStatus.CHECKING_FOR_UPDATE:
@@ -95,7 +95,7 @@ export default class App extends Component {
 //         break;
 //     }
 //   };
-
+//
 //   codePushDownloadDidProgress = progress => {
 //     this.setState({
 //       receivedBytes: progress.receivedBytes,
@@ -105,7 +105,7 @@ export default class App extends Component {
 //       progress.receivedBytes + ' of ' + progress.totalBytes + ' received.',
 //     );
 //   };
-
+//
 //   renderDialogUpdate = () => {
 //     let {receivedBytes, totalBytes, currentStatus, openModal} = this.state;
 //     receivedBytes = (receivedBytes / totalBytes) * 100;
@@ -127,7 +127,7 @@ export default class App extends Component {
 //               size={'large'}
 //               color={colorConfig.store.defaultColor}
 //             />
-
+//
 //             <Text
 //               style={{
 //                 fontSize: 15,
@@ -155,7 +155,7 @@ export default class App extends Component {
 //       </Dialog>
 //     );
 //   };
-
+//
 //   render() {
 //     return (
 //       <Provider store={persistStore.store}>
@@ -167,5 +167,5 @@ export default class App extends Component {
 //     );
 //   }
 // }
-
+//
 // export default codePush(codePushOptions)(App);

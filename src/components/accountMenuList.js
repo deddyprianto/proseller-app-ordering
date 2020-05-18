@@ -22,6 +22,7 @@ import {Actions} from 'react-native-router-flux';
 import awsConfig from '../config/awsConfig';
 import CryptoJS from 'react-native-crypto-js';
 import {isEmptyArray, isEmptyObject} from '../helper/CheckEmpty';
+import packageJson from '../../package';
 
 class AccountMenuList extends Component {
   constructor(props) {
@@ -215,6 +216,16 @@ class AccountMenuList extends Component {
             </View>
           </View>
         </TouchableOpacity>
+
+        <Text
+          style={{
+            alignSelf: 'center',
+            marginTop: 10,
+            color: colorConfig.pageIndex.grayColor,
+            fontSize: 13,
+          }}>
+          Version: {packageJson.version}
+        </Text>
       </View>
     );
   }

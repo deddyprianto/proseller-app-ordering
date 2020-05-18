@@ -34,6 +34,7 @@ import ProgressiveImage from '../helper/ProgressiveImage';
 import CurrencyFormatter from '../../helper/CurrencyFormatter';
 import {
   getAccountPayment,
+  registerCard,
   selectedAccount,
 } from '../../actions/payment.actions';
 import {movePageIndex} from '../../actions/user.action';
@@ -230,7 +231,7 @@ class PaymentAddCard extends Component {
                 this.checkSelectedAccount(item) ? styles.cardSelected : null,
                 {
                   backgroundColor:
-                    item.details.cardType == 'visa'
+                    item.details.cardIssuer == 'visa'
                       ? colorConfig.card.otherCardColor
                       : colorConfig.card.cardColor,
                 },
@@ -269,6 +270,40 @@ class PaymentAddCard extends Component {
         keyExtractor={(product, index) => index.toString()}
       />
     );
+  };
+
+  registerCard = async () => {
+    const {page} = this.props;
+    await this.setState({loading: true});
+    try {
+      const payload = {
+        referenceNo: 'xxx-xxx-xx',
+        paymentID: 'DBS_Wirecard',
+      };
+
+      const response = await this.props.dispatch(registerCard(payload));
+
+      await this.setState({loading: false});
+
+      if (response.success == true) {
+        let rootPage = '';
+        if (page == 'paymentDetail') {
+          rootPage = 'paymentDetail';
+        } else {
+          rootPage = 'settleOrder';
+        }
+
+        Actions.hostedPayment({
+          url: response.response.data.url,
+          page: rootPage,
+        });
+      } else {
+        Alert.alert('Sorry', 'Cant add credit card, please try again');
+      }
+    } catch (e) {
+      await this.setState({loading: false});
+      Alert.alert('Oppss..', 'Something went wrong, please try again.');
+    }
   };
 
   getDataCard = async () => {
@@ -333,16 +368,30 @@ class PaymentAddCard extends Component {
             ? this.renderCard()
             : this.renderEmptyCard()}
         </ScrollView>
-        {/*<TouchableOpacity*/}
-        {/*  onPress={() => Actions.addCard()}*/}
-        {/*  style={styles.buttonBottomFixed}>*/}
-        {/*  <Icon*/}
-        {/*    size={25}*/}
-        {/*    name={Platform.OS === 'ios' ? 'ios-add' : 'md-add'}*/}
-        {/*    style={{color: 'white', marginRight: 10}}*/}
-        {/*  />*/}
-        {/*  <Text style={styles.textAddCard}>ADD {item.paymentName}</Text>*/}
-        {/*</TouchableOpacity>*/}
+        {item.allowMultipleAccount != undefined &&
+        item.allowMultipleAccount == true ? (
+          <TouchableOpacity
+            onPress={this.registerCard}
+            style={styles.buttonBottomFixed}>
+            <Icon
+              size={25}
+              name={Platform.OS === 'ios' ? 'ios-add' : 'md-add'}
+              style={{color: 'white', marginRight: 10}}
+            />
+            <Text style={styles.textAddCard}>ADD {item.paymentName}</Text>
+          </TouchableOpacity>
+        ) : myCardAccount != undefined && myCardAccount.length == 0 ? (
+          <TouchableOpacity
+            onPress={this.registerCard}
+            style={styles.buttonBottomFixed}>
+            <Icon
+              size={25}
+              name={Platform.OS === 'ios' ? 'ios-add' : 'md-add'}
+              style={{color: 'white', marginRight: 10}}
+            />
+            <Text style={styles.textAddCard}>ADD {item.paymentName}</Text>
+          </TouchableOpacity>
+        ) : null}
       </SafeAreaView>
     );
   }

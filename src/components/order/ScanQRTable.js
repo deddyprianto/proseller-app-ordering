@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Alert,
-  SafeAreaView
+  SafeAreaView,
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -61,7 +61,8 @@ class ScanQRTable extends Component {
           basket.outlet.outletType == 'QUICKSERVICE'
         ) {
           this.props.dispatch(setTableType(scan));
-          Actions.pop();
+          // Actions.pop();
+          Actions.reset('pageIndex', {fromPayment: true});
         } else {
           this.pushDataToServer(scan);
         }
@@ -112,7 +113,8 @@ class ScanQRTable extends Component {
           `Your order has been ${results.data.status}`,
         );
 
-        Actions.pop();
+        // Actions.pop();
+        Actions.reset('pageIndex', {fromPayment: true});
       } else {
         this.setState({
           loadingPushData: false,

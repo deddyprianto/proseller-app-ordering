@@ -33,8 +33,8 @@ class WaitingFood extends Component {
 
       // check if status basket for TAKE AWAY IS CONFIRMED, then request continoustly to get basket
       if (
-        this.props.dataBasket != undefined &&
-        this.props.dataBasket.status == 'PROCESSING'
+        this.props.dataBasket != undefined
+        // this.props.dataBasket.status == 'PROCESSING'
       ) {
         clearInterval(this.interval);
         this.interval = setInterval(() => {
@@ -119,10 +119,16 @@ class WaitingFood extends Component {
               name={Platform.OS === 'ios' ? 'ios-cart' : 'md-cart'}
               style={{color: 'white', marginRight: 5}}
             />
-            <Text style={styles.textBtnBasketModal}>View Cart</Text>
+            <Text style={styles.textBtnBasketModal}>View Detail</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => Actions.replace('QRCodeCart')}
+            onPress={() => {
+              try {
+                clearInterval(this.interval);
+                this.interval = undefined;
+              } catch (e) {}
+              Actions.replace('QRCodeCart');
+            }}
             disabled={
               dataBasket.status == 'READY_FOR_COLLECTION' ? false : true
             }
@@ -234,24 +240,28 @@ class WaitingFood extends Component {
 
   render() {
     const {intlData, dataBasket, orderType} = this.props;
-    try {
-      if (
-        dataBasket.status == 'READY_FOR_COLLECTION' &&
-        this.interval != undefined &&
-        (dataBasket.outlet.outletType == 'QUICKSERVICE' ||
-          orderType == 'TAKEAWAY')
-      ) {
-        clearInterval(this.interval);
-        this.interval = undefined;
-      }
-    } catch (e) {
-      clearInterval(this.interval);
-      this.interval = undefined;
-    }
+    // try {
+    //   if (
+    //     dataBasket.status == 'READY_FOR_COLLECTION' &&
+    //     this.interval != undefined &&
+    //     (dataBasket.outlet.outletType == 'QUICKSERVICE' ||
+    //       orderType == 'TAKEAWAY')
+    //   ) {
+    //     clearInterval(this.interval);
+    //     this.interval = undefined;
+    //   }
+    // } catch (e) {
+    //   clearInterval(this.interval);
+    //   this.interval = undefined;
+    // }
 
     // if basket is canceled by admin, then push back to basket page
     if (dataBasket == undefined) {
       Actions.replace('basket');
+      try {
+        clearInterval(this.interval);
+        this.interval = undefined;
+      } catch (e) {}
     }
 
     return (

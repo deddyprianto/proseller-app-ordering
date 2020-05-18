@@ -33,6 +33,7 @@ import CurrencyFormatter from '../../helper/CurrencyFormatter';
 import {isEmptyArray, isEmptyObject} from '../../helper/CheckEmpty';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import * as _ from 'lodash';
+import {getOutletById} from '../../actions/stores.action';
 
 class Basket extends Component {
   constructor(props) {
@@ -125,6 +126,8 @@ class Basket extends Component {
       if (this.props.dataBasket != undefined) {
         let outletID = this.props.dataBasket.outlet.id;
         await this.getProductsByOutlet(outletID);
+        // fetch details outlet
+        await this.props.dispatch(getOutletById(outletID));
         await this.setState({loading: false});
 
         // check if user not yet select order mode, then open modal
@@ -198,7 +201,9 @@ class Basket extends Component {
           this.RBSheet = ref;
         }}
         animationType={'fade'}
-        height={250}
+        height={
+          item.enableDineIn == false || item.enableTakeAway == false ? 200 : 250
+        }
         duration={10}
         closeOnDragDown={true}
         closeOnPressMask={true}
@@ -220,63 +225,68 @@ class Basket extends Component {
           }}>
           Change Order Mode
         </Text>
-        <TouchableOpacity
-          disabled={item.enableDineIn == false ? true : false}
-          onPress={() => this.setOrderType('DINEIN')}
-          style={
-            item.enableDineIn == false
-              ? styles.deactiveDINEINButton
-              : styles.activeDINEINButton
-          }>
-          <Icon
-            size={30}
-            name={Platform.OS === 'ios' ? 'ios-restaurant' : 'md-restaurant'}
-            style={{color: 'white'}}
-          />
-          <Text
-            style={{
-              marginLeft: 10,
-              color: 'white',
-              fontWeight: 'bold',
-              fontFamily: 'Lato-Bold',
-              fontSize: 18,
-              textAlign: 'center',
-            }}>
-            {intlData.messages.dineIn}
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          disabled={item.enableTakeAway == false ? true : false}
-          onPress={() => this.setOrderType('TAKEAWAY')}
-          style={
-            item.enableTakeAway == false
-              ? styles.deactiveTAKEAWAYButton
-              : styles.activeTAKEAWAYButton
-          }>
-          <Icon
-            size={30}
-            name={Platform.OS === 'ios' ? 'ios-basket' : 'md-basket'}
-            style={{color: 'white'}}
-          />
-          <Text
-            style={{
-              marginLeft: 10,
-              color: 'white',
-              fontWeight: 'bold',
-              fontFamily: 'Lato-Bold',
-              fontSize: 18,
-              textAlign: 'center',
-            }}>
-            {intlData.messages.takeAway}
-          </Text>
-        </TouchableOpacity>
+        {item.enableDineIn == true ? (
+          <TouchableOpacity
+            onPress={() => this.setOrderType('DINEIN')}
+            style={
+              item.enableDineIn == false
+                ? styles.deactiveDINEINButton
+                : styles.activeDINEINButton
+            }>
+            <Icon
+              size={30}
+              name={Platform.OS === 'ios' ? 'ios-restaurant' : 'md-restaurant'}
+              style={{color: 'white'}}
+            />
+            <Text
+              style={{
+                marginLeft: 10,
+                color: 'white',
+                fontWeight: 'bold',
+                fontFamily: 'Lato-Bold',
+                fontSize: 18,
+                textAlign: 'center',
+              }}>
+              {intlData.messages.dineIn}
+            </Text>
+          </TouchableOpacity>
+        ) : null}
+        {item.enableTakeAway == true ? (
+          <TouchableOpacity
+            onPress={() => this.setOrderType('TAKEAWAY')}
+            style={
+              item.enableTakeAway == false
+                ? styles.deactiveTAKEAWAYButton
+                : styles.activeTAKEAWAYButton
+            }>
+            <Icon
+              size={30}
+              name={Platform.OS === 'ios' ? 'ios-basket' : 'md-basket'}
+              style={{color: 'white'}}
+            />
+            <Text
+              style={{
+                marginLeft: 10,
+                color: 'white',
+                fontWeight: 'bold',
+                fontFamily: 'Lato-Bold',
+                fontSize: 18,
+                textAlign: 'center',
+              }}>
+              {intlData.messages.takeAway}
+            </Text>
+          </TouchableOpacity>
+        ) : null}
       </RBSheet>
     );
   };
 
   _onRefresh = async () => {
     await this.setState({refreshing: true});
-    await await this.props.dispatch(getBasket());
+    await this.props.dispatch(getBasket());
+    // fetch details outlet
+    const outletID = this.props.dataBasket.outlet.id;
+    await this.props.dispatch(getOutletById(outletID));
     await this.setState({refreshing: false});
   };
 
@@ -414,12 +424,16 @@ class Basket extends Component {
           </TouchableOpacity>
           <TouchableOpacity
             onPress={this.goToSettle}
-            disabled={this.checkActivateButton(dataBasket) ? false : true}
+            disabled={
+              this.checkActivateButton(dataBasket) ? !this.isOpen() : true
+            }
             style={[
               styles.btnAddBasketModal,
               {
                 backgroundColor: this.checkActivateButton(dataBasket)
-                  ? colorConfig.store.defaultColor
+                  ? this.isOpen()
+                    ? colorConfig.store.defaultColor
+                    : colorConfig.store.disableButton
                   : colorConfig.store.disableButton,
               },
             ]}>
@@ -499,12 +513,16 @@ class Basket extends Component {
           </TouchableOpacity>
           <TouchableOpacity
             onPress={this.goToSettle}
-            disabled={this.checkActivateButton(dataBasket) ? false : true}
+            disabled={
+              this.checkActivateButton(dataBasket) ? !this.isOpen() : true
+            }
             style={[
               styles.btnAddBasketModal,
               {
                 backgroundColor: this.checkActivateButton(dataBasket)
-                  ? colorConfig.store.defaultColor
+                  ? this.isOpen()
+                    ? colorConfig.store.defaultColor
+                    : colorConfig.store.disableButton
                   : colorConfig.store.disableButton,
               },
             ]}>
@@ -1076,6 +1094,62 @@ class Basket extends Component {
     }
   };
 
+  getOperationalHours = data => {
+    try {
+      let operationalHours = data.operationalHours;
+
+      let date = new Date();
+      var dd = date.getDate();
+      var mm = date.getMonth() + 1;
+      var yyyy = date.getFullYear();
+      let currentDate = mm + '/' + dd + '/' + yyyy;
+      let day = date.getDay();
+      let time = date.getHours() + ':' + date.getMinutes();
+
+      let open;
+      operationalHours
+        .filter(item => item.day == day && item.active == true)
+        .map(day => {
+          if (
+            Date.parse(`${currentDate} ${time}`) >
+              Date.parse(`${currentDate} ${day.open}`) &&
+            Date.parse(`${currentDate} ${time}`) <
+              Date.parse(`${currentDate} ${day.close}`)
+          )
+            open = true;
+        });
+
+      if (open) return true;
+      else {
+        if (operationalHours.leading == 0) return true;
+        else return false;
+      }
+    } catch (e) {
+      return false;
+    }
+  };
+
+  isOpen = () => {
+    const {outletSingle} = this.props;
+    if (!isEmptyArray(outletSingle.operationalHours)) {
+      if (this.getOperationalHours(outletSingle)) {
+        return true;
+      } else {
+        if (outletSingle.openAllDays == true) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+    } else {
+      if (outletSingle.openAllDays == true) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  };
+
   render() {
     const {intlData, dataBasket, orderType, tableType} = this.props;
     // give message to user if order has been confirmed
@@ -1097,6 +1171,8 @@ class Basket extends Component {
         if (
           dataBasket.status == 'PROCESSING' &&
           this.interval != undefined &&
+          (Actions.currentScene == 'basket' ||
+            Actions.currentScene == 'waitingFood') &&
           (dataBasket.outlet.outletType == 'QUICKSERVICE' ||
             dataBasket.orderingMode == 'TAKEAWAY')
         ) {
@@ -1170,6 +1246,9 @@ class Basket extends Component {
                 <Text style={styles.title}>
                   {this.props.dataBasket.outlet.name}
                 </Text>
+                {!this.isOpen() ? (
+                  <Text style={styles.titleClosed}>CLOSED</Text>
+                ) : null}
                 <Text style={styles.subTitle}>
                   {intlData.messages.detailOrder}
                 </Text>
@@ -1375,6 +1454,7 @@ class Basket extends Component {
 
 mapStateToProps = state => ({
   dataBasket: state.orderReducer.dataBasket.product,
+  outletSingle: state.storesReducer.dataOutletSingle.outletSingle,
   orderType: state.userReducer.orderType.orderType,
   tableType: state.orderReducer.tableType.tableType,
   products: state.orderReducer.productsOutlet.products,
@@ -1448,6 +1528,17 @@ const styles = StyleSheet.create({
   title: {
     color: colorConfig.pageIndex.activeTintColor,
     fontSize: 18,
+    fontFamily: 'Lato-Bold',
+    padding: 5,
+    textAlign: 'center',
+    fontWeight: 'bold',
+  },
+  titleClosed: {
+    color: 'white',
+    marginHorizontal: '40%',
+    borderRadius: 2,
+    fontSize: 12,
+    backgroundColor: colorConfig.store.colorError,
     fontFamily: 'Lato-Bold',
     padding: 5,
     textAlign: 'center',

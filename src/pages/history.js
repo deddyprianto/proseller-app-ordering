@@ -23,6 +23,7 @@ import Loader from '../components/loader';
 import {myVoucers} from '../actions/account.action';
 import HistoryMenuTab from '../components/history/HistoryMenuTab';
 import {getAccountPayment} from '../actions/payment.actions';
+import OneSignal from 'react-native-onesignal';
 
 class History extends Component {
   constructor(props) {
@@ -33,6 +34,8 @@ class History extends Component {
       rewardPoint: 0,
       refreshing: false,
     };
+
+    OneSignal.inFocusDisplaying(1);
   }
 
   componentDidMount = async () => {

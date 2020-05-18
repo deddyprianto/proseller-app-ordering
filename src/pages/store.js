@@ -184,6 +184,7 @@ class Store extends Component {
             coordinate: response.data[i].location.coordinate,
             orderingStatus: response.data[i].orderingStatus,
             outletType: response.data[i].outletType,
+            offlineMessage: response.data[i].offlineMessage,
             enableDineIn:
               response.data[i].enableDineIn == false ||
               response.data[i].enableDineIn == '-'
@@ -287,10 +288,7 @@ class Store extends Component {
   };
 
   _cekOpen = data => {
-    if (
-      !data.operationalHours == undefined &&
-      !isEmptyArray(data.operationalHours)
-    ) {
+    if (!isEmptyArray(data.operationalHours)) {
       if (this.getOperationalHours(data)) {
         return true;
       } else {
@@ -494,64 +492,58 @@ class Store extends Component {
           )}
         </ScrollView>
 
-        <TouchableOpacity
-          onPress={this.openBasket}
-          style={{
-            position: 'absolute',
-            bottom: '6%',
-            right: '5%',
-            height: 60,
-            borderRadius: 50,
-            justifyContent: 'center',
-            alignItems: 'center',
-            width: 60,
-            backgroundColor: 'white',
-            shadowColor: '#00000021',
-            shadowOffset: {
-              width: 0,
-              height: 9,
-            },
-            shadowOpacity: 0.7,
-            shadowRadius: 7.49,
-            elevation: 12,
-          }}>
-          <View>
-            {this.props.dataBasket == undefined ||
-            this.props.dataBasket.status == 'PENDING' ? (
-              <Icon
-                size={40}
-                name={Platform.OS === 'ios' ? 'ios-basket' : 'md-basket'}
-                style={{color: colorConfig.store.defaultColor}}
-              />
-            ) : (
+        {this.props.dataBasket == undefined ||
+        this.props.dataBasket.status == 'PENDING' ? (
+          <TouchableOpacity
+            onPress={this.openBasket}
+            style={{
+              position: 'absolute',
+              bottom: '6%',
+              right: '5%',
+              height: 60,
+              borderRadius: 50,
+              justifyContent: 'center',
+              alignItems: 'center',
+              width: 60,
+              backgroundColor: 'white',
+              shadowColor: '#00000021',
+              shadowOffset: {
+                width: 0,
+                height: 9,
+              },
+              shadowOpacity: 0.7,
+              shadowRadius: 7.49,
+              elevation: 12,
+            }}>
+            <View>
               <Icon
                 size={40}
                 name={Platform.OS === 'ios' ? 'ios-cart' : 'md-cart'}
                 style={{color: colorConfig.store.defaultColor}}
               />
-            )}
-          </View>
-          {/* check data length basket, if not undefined, then show length */}
-          {this.props.dataBasket != undefined &&
-          this.props.dataBasket.details != undefined ? (
-            <View
-              style={{
-                position: 'absolute',
-                top: -7,
-                right: 1,
-                width: 25,
-                height: 25,
-                backgroundColor: colorConfig.store.colorError,
-                borderRadius: 50,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              <Text style={{color: 'white', padding: 3, fontSize: 11}}>
-                {this.getSumOfQuantityBasket()}
-              </Text>
             </View>
-          ) : null}
-        </TouchableOpacity>
+            {/* check data length basket, if not undefined, then show length */}
+            {this.props.dataBasket != undefined &&
+            this.props.dataBasket.details != undefined ? (
+              <View
+                style={{
+                  position: 'absolute',
+                  top: -7,
+                  right: 1,
+                  width: 25,
+                  height: 25,
+                  backgroundColor: colorConfig.store.colorError,
+                  borderRadius: 50,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <Text style={{color: 'white', padding: 3, fontSize: 11}}>
+                  {this.getSumOfQuantityBasket()}
+                </Text>
+              </View>
+            ) : null}
+          </TouchableOpacity>
+        ) : null}
       </SafeAreaView>
     );
   }

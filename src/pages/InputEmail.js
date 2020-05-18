@@ -16,7 +16,8 @@ import {
   TextInput,
   Picker,
   TouchableHighlight,
-  Alert, SafeAreaView,
+  Alert,
+  SafeAreaView,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
@@ -150,11 +151,7 @@ class InputEmail extends Component {
           email.confirmed = false;
           email.phoneNumber = response.data.phoneNumber;
           Actions.verifyOtpAfterRegisterEmail(email);
-        } else if (
-          response.data.status != 'ACTIVE' &&
-          response.data.status != undefined &&
-          response.data.status != null
-        ) {
+        } else if (response.data.status == 'SUSPENDED') {
           Alert.alert(
             'Sorry',
             `Your account has been ${

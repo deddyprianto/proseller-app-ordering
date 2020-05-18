@@ -2,7 +2,7 @@ import {fetchApiProduct} from '../service/apiProduct';
 import {fetchApiOrder} from '../service/apiOrder';
 import {fetchApi} from '../service/api';
 
-export const getProductByOutlet = OutletId => {
+export const getProductByOutlet = (OutletId, refresh) => {
   return async (dispatch, getState) => {
     const state = getState();
     try {
@@ -32,6 +32,12 @@ export const getProductByOutlet = OutletId => {
         let outletProduct;
         if (products != undefined) {
           outletProduct = products;
+          // if this action is called from refresh method, then remove previous data, and replace with new data
+          if (refresh == true) {
+            outletProduct = await outletProduct.filter(
+              item => item.id != OutletId,
+            );
+          }
         } else {
           outletProduct = [];
         }

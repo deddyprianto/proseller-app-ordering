@@ -27,6 +27,8 @@ import {notifikasi, refreshToken} from '../../actions/auth.actions';
 import {movePageIndex} from '../../actions/user.action';
 import {isEmptyArray} from '../../helper/CheckEmpty';
 import {getBasket} from '../../actions/order.action';
+import CurrencyFormatter from '../../helper/CurrencyFormatter';
+import appConfig from '../../config/appConfig';
 
 class HistoryPayment extends Component {
   constructor(props) {
@@ -139,6 +141,14 @@ class HistoryPayment extends Component {
     console.log('mau load more');
   };
 
+  formatCurrency = value => {
+    try {
+      return CurrencyFormatter(value).match(/[a-z]+|[^a-z]+/gi)[1];
+    } catch (e) {
+      return value;
+    }
+  };
+
   render() {
     const {intlData} = this.props;
     return (
@@ -197,18 +207,15 @@ class HistoryPayment extends Component {
                           <Icon
                             size={18}
                             name={
-                              item.paymentType == 'Cash'
-                                ? Platform.OS === 'ios'
-                                  ? 'ios-cash'
-                                  : 'md-cash'
-                                : Platform.OS === 'ios'
-                                ? 'ios-card'
-                                : 'md-card'
+                              Platform.OS === 'ios'
+                                ? 'ios-pricetag'
+                                : 'md-pricetag'
                             }
                             style={styles.paymentTypeLogo}
                           />
                           <Text style={styles.paymentType}>
-                            {item.paymentType}
+                            {/*{appConfig.appMataUang}*/}
+                            {this.formatCurrency(item.price)}
                           </Text>
                         </View>
                         <Text style={styles.paymentTgl}>
@@ -306,12 +313,12 @@ const styles = StyleSheet.create({
   },
   paymentTypeLogo: {
     width: 20,
-    height: 15,
+    // height: 15,
     marginTop: 2,
     color: colorConfig.store.defaultColor,
   },
   paymentType: {
-    paddingLeft: 10,
+    // paddingLeft: 10,
     color: colorConfig.store.title,
     fontWeight: 'bold',
     fontFamily: 'Lato-Medium',

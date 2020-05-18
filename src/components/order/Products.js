@@ -14,6 +14,7 @@ import {
   ActivityIndicator,
   ScrollView,
   RefreshControl,
+  SafeAreaView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -84,7 +85,7 @@ class Products extends Component {
       this.handleBackPress,
     );
 
-    await this.firstMethodToRun();
+    await this.firstMethodToRun(false);
 
     // berfore get new products, delete old products first, so different outlet got different products
     // await this.props.dispatch(removeProducts());
@@ -95,11 +96,19 @@ class Products extends Component {
     // }
   };
 
-  firstMethodToRun = async () => {
-    // get product outlet
-    await this.getProductsByOutlet();
-    // check if basket soutlet is not same as current outlet
-    await this.checkBucketExist();
+  firstMethodToRun = async refresh => {
+    // get product outlet only if outlet ordering status is available
+    if (
+      this.state.item.orderingStatus == undefined ||
+      this.state.item.orderingStatus == 'AVAILABLE'
+    ) {
+      await this.getProductsByOutlet(refresh);
+      // check if basket outlet is not same as current outlet
+      await this.checkBucketExist();
+    } else {
+      await this.setState({products: []});
+      this.products = [];
+    }
   };
 
   openOrderingMode = () => {
@@ -147,11 +156,13 @@ class Products extends Component {
           this.RBSheet = ref;
         }}
         animationType={'slide'}
-        height={250}
+        height={
+          item.enableDineIn == false || item.enableTakeAway == false ? 200 : 250
+        }
         duration={10}
-        closeOnDragDown={false}
-        closeOnPressMask={false}
-        closeOnPressBack={false}
+        closeOnDragDown={true}
+        closeOnPressMask={true}
+        closeOnPressBack={true}
         customStyles={{
           container: {
             backgroundColor: colorConfig.store.darkColor,
@@ -169,56 +180,59 @@ class Products extends Component {
           }}>
           Order Mode
         </Text>
-        <TouchableOpacity
-          disabled={item.enableDineIn == false ? true : false}
-          onPress={() => this.setOrderType('DINEIN')}
-          style={
-            item.enableDineIn == false
-              ? styles.deactiveDINEINButton
-              : styles.activeDINEINButton
-          }>
-          <Icon
-            size={30}
-            name={Platform.OS === 'ios' ? 'ios-restaurant' : 'md-restaurant'}
-            style={{color: 'white'}}
-          />
-          <Text
-            style={{
-              marginLeft: 10,
-              color: 'white',
-              fontWeight: 'bold',
-              fontFamily: 'Lato-Bold',
-              fontSize: 18,
-              textAlign: 'center',
-            }}>
-            {intlData.messages.dineIn}
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          disabled={item.enableTakeAway == false ? true : false}
-          onPress={() => this.setOrderType('TAKEAWAY')}
-          style={
-            item.enableTakeAway == false
-              ? styles.deactiveTAKEAWAYButton
-              : styles.activeTAKEAWAYButton
-          }>
-          <Icon
-            size={30}
-            name={Platform.OS === 'ios' ? 'ios-basket' : 'md-basket'}
-            style={{color: 'white'}}
-          />
-          <Text
-            style={{
-              marginLeft: 10,
-              color: 'white',
-              fontWeight: 'bold',
-              fontFamily: 'Lato-Bold',
-              fontSize: 18,
-              textAlign: 'center',
-            }}>
-            {intlData.messages.takeAway}
-          </Text>
-        </TouchableOpacity>
+        {item.enableDineIn == true ? (
+          <TouchableOpacity
+            onPress={() => this.setOrderType('DINEIN')}
+            style={
+              item.enableDineIn == false
+                ? styles.deactiveDINEINButton
+                : styles.activeDINEINButton
+            }>
+            <Icon
+              size={30}
+              name={Platform.OS === 'ios' ? 'ios-restaurant' : 'md-restaurant'}
+              style={{color: 'white'}}
+            />
+            <Text
+              style={{
+                marginLeft: 10,
+                color: 'white',
+                fontWeight: 'bold',
+                fontFamily: 'Lato-Bold',
+                fontSize: 18,
+                textAlign: 'center',
+              }}>
+              {intlData.messages.dineIn}
+            </Text>
+          </TouchableOpacity>
+        ) : null}
+        {item.enableTakeAway == true ? (
+          <TouchableOpacity
+            disabled={item.enableTakeAway == false ? true : false}
+            onPress={() => this.setOrderType('TAKEAWAY')}
+            style={
+              item.enableTakeAway == false
+                ? styles.deactiveTAKEAWAYButton
+                : styles.activeTAKEAWAYButton
+            }>
+            <Icon
+              size={30}
+              name={Platform.OS === 'ios' ? 'ios-basket' : 'md-basket'}
+              style={{color: 'white'}}
+            />
+            <Text
+              style={{
+                marginLeft: 10,
+                color: 'white',
+                fontWeight: 'bold',
+                fontFamily: 'Lato-Bold',
+                fontSize: 18,
+                textAlign: 'center',
+              }}>
+              {intlData.messages.takeAway}
+            </Text>
+          </TouchableOpacity>
+        ) : null}
       </RBSheet>
     );
   };
@@ -341,7 +355,7 @@ class Products extends Component {
   showAlertBasketNotEmpty = async product => {
     Alert.alert(
       'Change outlet ?',
-      'You will delete order in previous restaurant..',
+      'You will delete order in previous outlet..',
       [
         {text: 'Cancel', onPress: () => Actions.pop()},
         {
@@ -371,7 +385,7 @@ class Products extends Component {
       ) {
         // check if products is exist, then ask user to select ordering mode
         if (!isEmptyObject(data.products[0])) this.openOrderingMode();
-
+        this.products = [];
         this.products.push(data.products[0]);
         // push data with index 0, (first category products)
         await this.setState({
@@ -393,7 +407,7 @@ class Products extends Component {
     }
   };
 
-  getProductsByOutlet = async () => {
+  getProductsByOutlet = async refresh => {
     try {
       const outletID = this.state.item.storeId;
       if (this.props.products != undefined) {
@@ -402,7 +416,8 @@ class Products extends Component {
         if (
           data != undefined &&
           !isEmptyObject(data) &&
-          !isEmptyArray(data.products)
+          !isEmptyArray(data.products) &&
+          refresh == false
         ) {
           // check if products is exist, then ask user to select ordering mode
           if (!isEmptyObject(data.products[0])) this.openOrderingMode();
@@ -418,7 +433,7 @@ class Products extends Component {
         } else {
           // get data from server
           let response = await this.props.dispatch(
-            getProductByOutlet(outletID),
+            getProductByOutlet(outletID, refresh),
           );
           if (response.success) {
             this.pushDataProductsToState();
@@ -426,7 +441,9 @@ class Products extends Component {
         }
       } else {
         // get data from server
-        let response = await this.props.dispatch(getProductByOutlet(outletID));
+        let response = await this.props.dispatch(
+          getProductByOutlet(outletID, refresh),
+        );
         if (response.success) {
           this.pushDataProductsToState();
         }
@@ -932,16 +949,17 @@ class Products extends Component {
       this.state.item.orderingStatus == undefined ||
       this.state.item.orderingStatus == 'AVAILABLE'
     ) {
-      // check open / close
-      if (this.state.item.storeStatus == true) {
-        // check ordering status product
-        if (
-          item.product.orderingStatus == undefined ||
-          item.product.orderingStatus == 'AVAILABLE'
-        ) {
-          return true;
-        }
-      }
+      return true;
+      // // check open / close
+      // if (this.state.item.storeStatus == true) {
+      //   // check ordering status product
+      //   if (
+      //     item.product.orderingStatus == undefined ||
+      //     item.product.orderingStatus == 'AVAILABLE'
+      //   ) {
+      //     return true;
+      //   }
+      // }
     }
     return false;
   };
@@ -1307,17 +1325,16 @@ class Products extends Component {
     let {item} = this.state;
     await this.setState({products: undefined, refresh: true, item});
     await this.refreshOutlet();
-    await this.firstMethodToRun();
+    await this.firstMethodToRun(true);
     await this.setState({refresh: false});
   };
 
   render() {
-    const {intlData} = this.props;
+    const {intlData, item} = this.props;
     let {loadProducts} = this.state;
-
     let products = this.products;
     return (
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
         <ModalOrder
           intlData={intlData}
           isModalVisible={this.state.isModalVisible}
@@ -1359,7 +1376,7 @@ class Products extends Component {
             }}>
             <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
               <Icon
-                size={25}
+                size={27}
                 name={Platform.OS === 'ios' ? 'ios-close' : 'md-close'}
                 style={styles.btnBackIcon}
               />
@@ -1376,16 +1393,28 @@ class Products extends Component {
               )
             ) : (
               <View style={{height: Dimensions.get('window').height}}>
-                <Text
-                  style={{
-                    marginTop: 50,
-                    textAlign: 'center',
-                    justifyContent: 'center',
-                    fontSize: 27,
-                    color: colorConfig.pageIndex.grayColor,
-                  }}>
-                  Sorry, products is empty :(
-                </Text>
+                {item.orderingStatus == undefined ||
+                item.orderingStatus == 'AVAILABLE' ? (
+                  <Text style={styles.productEmptyText}>
+                    Sorry, products is empty :(
+                  </Text>
+                ) : (
+                  <View>
+                    <Text style={styles.offlineOutlet}>
+                      {item.offlineMessage != undefined &&
+                      item.offlineMessage != '-'
+                        ? item.offlineMessage
+                        : 'Sorry, ordering is not available now.'}
+                    </Text>
+                    <TouchableOpacity
+                      onPress={this.goBack}
+                      style={{flexDirection: 'row', justifyContent: 'center'}}>
+                      <Text style={styles.findAnotherOutlet}>
+                        Let's find another outlet
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
               </View>
             )
           ) : (
@@ -1401,7 +1430,7 @@ class Products extends Component {
             <ButtonViewBasket />
           ) : null
         ) : null}
-      </View>
+      </SafeAreaView>
     );
   }
 }
@@ -1462,11 +1491,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    width: 35,
+    width: 40,
     marginTop: 5,
     marginLeft: 5,
     backgroundColor: colorConfig.store.transparent,
-    height: 35,
+    height: 40,
     borderRadius: 50,
   },
   imageProduct: {
@@ -1747,5 +1776,33 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  offlineOutlet: {
+    marginTop: 50,
+    textAlign: 'center',
+    justifyContent: 'center',
+    marginHorizontal: 15,
+    padding: 5,
+    borderRadius: 10,
+    fontSize: 24,
+    fontFamily: 'Lato-Medium',
+    backgroundColor: colorConfig.pageIndex.inactiveTintColor,
+    color: 'white',
+  },
+  productEmptyText: {
+    marginTop: 50,
+    textAlign: 'center',
+    justifyContent: 'center',
+    fontSize: 27,
+    color: colorConfig.pageIndex.grayColor,
+  },
+  findAnotherOutlet: {
+    textAlign: 'center',
+    marginTop: 25,
+    backgroundColor: colorConfig.store.darkColor,
+    color: 'white',
+    padding: 8,
+    fontFamily: 'Lato-Medium',
+    borderRadius: 13,
   },
 });

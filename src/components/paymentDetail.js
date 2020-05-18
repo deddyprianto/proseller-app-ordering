@@ -18,7 +18,7 @@ import {
   BackHandler,
   TextInput,
   ActivityIndicator,
-  SafeAreaView
+  SafeAreaView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -317,7 +317,8 @@ class PaymentDetail extends Component {
 
   saveCVV = async () => {
     try {
-      let card = this.props.selectedAccount;
+      let card = JSON.stringify(this.props.selectedAccount);
+      card = JSON.parse(card);
       card.details.CVV = this.state.cvv;
 
       await this.props.dispatch(selectedAccount(card));
@@ -667,9 +668,9 @@ class PaymentDetail extends Component {
   selectedPaymentMethod = selectedAccount => {
     try {
       if (!isEmptyObject(selectedAccount)) {
-        return `${selectedAccount.details.cardIssuer.toUpperCase()} ${
-          selectedAccount.details.maskedAccountNumber
-        }`.substr(0, 15);
+        let number = selectedAccount.details.maskedAccountNumber;
+        number = number.substr(number.length - 4, 4);
+        return `${selectedAccount.details.cardIssuer.toUpperCase()} ${number}`;
       } else {
         return null;
       }

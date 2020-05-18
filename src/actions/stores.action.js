@@ -61,3 +61,30 @@ export const dataStores = () => {
     }
   };
 };
+
+export const getOutletById = id => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+      const response = await fetchApiMasterData(
+        `/outlets/get/${id}`,
+        'GET',
+        false,
+        200,
+        token,
+      );
+      console.log(response, 'response outlets get by id');
+      dispatch({
+        type: 'DATA_OUTLET_SINGLE',
+        data: response.response.data,
+      });
+    } catch (error) {
+      return error;
+    }
+  };
+};

@@ -223,11 +223,7 @@ class InputPhoneNumber extends Component {
           phoneNumber.email = response.data.email;
           phoneNumber.confirmed = false;
           Actions.verifyOtpAfterRegister(phoneNumber);
-        } else if (
-          response.data.status != 'ACTIVE' &&
-          response.data.status != undefined &&
-          response.data.status != null
-        ) {
+        } else if (response.data.status == 'SUSPENDED') {
           Alert.alert(
             'Sorry',
             `Your account has been ${
@@ -375,7 +371,7 @@ class InputPhoneNumber extends Component {
                     fontSize: 18,
                     width: '100%',
                     padding: 15,
-                    color: 'black'
+                    color: 'black',
                   }}
                   ref={ref => {
                     this.phone = ref;
