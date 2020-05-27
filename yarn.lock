@@ -1216,6 +1216,11 @@
   resolved "https://registry.yarnpkg.com/@react-native-community/async-storage/-/async-storage-1.7.1.tgz#ef2104d865de61ad91bba66613e57e689ff4e6a1"
   integrity sha512-/oX/x+EU4xNaqIaC/epVKzO8XghzImPA7l8cLz3USEFmtFiXFjBbTeeIFjjEm/u4/cv38Wi1xMEa10PHIWygRg==
 
+"@react-native-community/checkbox@^0.4.1":
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/@react-native-community/checkbox/-/checkbox-0.4.1.tgz#63a8682d7b60d205d539427c2c9bd8951c70673c"
+  integrity sha512-4sDmMj+yV4ti4+CSAOHx7To3g1nEZ7n8hpoIGuUHkJjp+CKOd2dXbdkhGPPFvOGlEeeSkaB6ayGxD4VqevnfOQ==
+
 "@react-native-community/cli-debugger-ui@^3.0.0":
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/@react-native-community/cli-debugger-ui/-/cli-debugger-ui-3.0.0.tgz#d01d08d1e5ddc1633d82c7d84d48fff07bd39416"
@@ -6272,6 +6277,11 @@ lodash-es@^4.17.15:
   resolved "https://registry.yarnpkg.com/lodash-es/-/lodash-es-4.17.15.tgz#21bd96839354412f23d7a10340e5eac6ee455d78"
   integrity sha512-rlrc3yU3+JNOpZ9zj5pQtxnx2THmvRykwL4Xlxoa8I9lHBlVbbyPhgyPMioxVZ4NqyxaVVtaJnzsyOidQIhyyQ==
 
+lodash.debounce@4.0.8:
+  version "4.0.8"
+  resolved "https://registry.yarnpkg.com/lodash.debounce/-/lodash.debounce-4.0.8.tgz#82d79bff30a67c4005ffd5e2515300ad9ca4d7af"
+  integrity sha1-gteb/zCmfEAF/9XiUVMArZyk168=
+
 lodash.once@^4.1.1:
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/lodash.once/-/lodash.once-4.1.1.tgz#0dd3971213c7c56df880977d504c88fb471a97ac"
@@ -7786,6 +7796,13 @@ prompts@^2.3.0:
     kleur "^3.0.3"
     sisteransi "^1.0.4"
 
+prop-types@15.5.8:
+  version "15.5.8"
+  resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.5.8.tgz#6b7b2e141083be38c8595aa51fc55775c7199394"
+  integrity sha1-a3suFBCDvjjIWVqlH8VXdccZk5Q=
+  dependencies:
+    fbjs "^0.8.9"
+
 prop-types@15.7.2, prop-types@^15.5.10, prop-types@^15.5.8, prop-types@^15.6.0, prop-types@^15.6.1, prop-types@^15.6.2, prop-types@^15.7.2:
   version "15.7.2"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.7.2.tgz#52c41e75b8c87e72b9d9360e0206b99dcbffa6c5"
@@ -8302,11 +8319,6 @@ react-native-shimmer@^0.5.0:
   dependencies:
     prop-types "^15.6.0"
 
-react-native-simple-radio-button@^2.7.4:
-  version "2.7.4"
-  resolved "https://registry.yarnpkg.com/react-native-simple-radio-button/-/react-native-simple-radio-button-2.7.4.tgz#86e2dbe8af9e6bf60eee088f60466f7a975e7758"
-  integrity sha512-QOZNmJUn0ViBGU+at7wAG/uGzd5PfXi0kMHr9lfTCLXknW/f9f2fOVjxjdHvOCdf/zA/eMJBjGjtusSDzQf1+w==
-
 react-native-sms-retriever@^1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/react-native-sms-retriever/-/react-native-sms-retriever-1.1.1.tgz#e87225836b394560c63db4c106552a0b9247d9b3"
@@ -8582,6 +8594,15 @@ recursive-fs@^1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/recursive-fs/-/recursive-fs-1.1.2.tgz#1d752e2f1a65d25fb6964109a9dbf83a335f90f0"
   integrity sha512-QPFEt5EwzwlHoqYsZc+NkUSyDTQf1Hvq7c/kpQJHi77OSCAiDXI3wfB0J04ZG+ekGHmv37mdR8MDPEshD3/RlQ==
+
+recyclerlistview@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/recyclerlistview/-/recyclerlistview-3.0.0.tgz#72ef5ef0246cb851695698c37836001651e70b4f"
+  integrity sha512-t9AiPgwGkCwhCXJhrRj7UhEJ0kpiOkc4g89txurZs2crACg8zVStRRYk6tehECz2NQvmM9Gmp+apGBqie33++Q==
+  dependencies:
+    lodash.debounce "4.0.8"
+    prop-types "15.5.8"
+    ts-object-utils "0.0.5"
 
 redux-form@^8.2.6:
   version "8.2.6"
@@ -9941,6 +9962,11 @@ truncate-utf8-bytes@^1.0.0:
   integrity sha1-QFkjkJWS1W94pYGENLC3hInKXys=
   dependencies:
     utf8-byte-length "^1.0.1"
+
+ts-object-utils@0.0.5:
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/ts-object-utils/-/ts-object-utils-0.0.5.tgz#95361cdecd7e52167cfc5e634c76345e90a26077"
+  integrity sha1-lTYc3s1+UhZ8/F5jTHY0XpCiYHc=
 
 tslib@^1.8.0, tslib@^1.8.1, tslib@^1.9.0, tslib@^1.9.3:
   version "1.10.0"

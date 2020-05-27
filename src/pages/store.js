@@ -185,6 +185,9 @@ class Store extends Component {
             orderingStatus: response.data[i].orderingStatus,
             outletType: response.data[i].outletType,
             offlineMessage: response.data[i].offlineMessage,
+            maxOrderQtyPerItem: response.data[i].maxOrderQtyPerItem,
+            maxOrderAmount: response.data[i].maxOrderAmount,
+            lastOrderOn: response.data[i].lastOrderOn,
             enableDineIn:
               response.data[i].enableDineIn == false ||
               response.data[i].enableDineIn == '-'

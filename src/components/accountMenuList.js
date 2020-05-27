@@ -61,6 +61,22 @@ class AccountMenuList extends Component {
     this.props.setLanguage();
   };
 
+  prompLogout = () => {
+    Alert.alert(
+      'Logout',
+      'Are you sure want to logout from apps ?',
+      [
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
+        },
+        {text: 'OK', onPress: () => this.logout()},
+      ],
+      {cancelable: false},
+    );
+  };
+
   renderPaymentMethodOptions = () => {
     const {intlData, myCardAccount, companyInfo} = this.props;
     let paymentTypes = [];
@@ -185,7 +201,7 @@ class AccountMenuList extends Component {
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={this.logout} style={styles.cardMenu}>
+        <TouchableOpacity onPress={this.prompLogout} style={styles.cardMenu}>
           <View
             style={[
               styles.itemMenu,

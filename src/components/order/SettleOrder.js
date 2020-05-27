@@ -525,7 +525,7 @@ class SettleOrder extends Component {
       console.log('reponse pembayaran settle order ', response);
       if (response.success) {
         //  remove selected account
-        pthis.props.dispatch(clearAccount());
+        this.props.dispatch(clearAccount());
         // go to payment success
         const {url} = this.props;
         Actions.paymentSuccess({

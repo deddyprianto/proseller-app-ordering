@@ -27,6 +27,7 @@ import colorConfig from '../config/colorConfig';
 import {Dialog} from 'react-native-paper';
 import {updateLanguage} from '../actions/language.action';
 import Languages from '../service/i18n/languages';
+import {getUserProfile} from '../actions/user.action';
 
 class Account extends Component {
   constructor(props) {
@@ -44,19 +45,8 @@ class Account extends Component {
 
   getDataRewards = async () => {
     try {
-      await this.props.dispatch(campaign());
-      await this.props.dispatch(dataPoint());
-      await this.props.dispatch(vouchers());
-      await this.props.dispatch(myVoucers());
-    } catch (error) {
-      await this.props.dispatch(
-        notifikasi(
-          'Get Data Rewards Error!',
-          error.responseBody.message,
-          console.log('Cancel Pressed'),
-        ),
-      );
-    }
+      await this.props.dispatch(getUserProfile());
+    } catch (error) {}
   };
 
   _onRefresh = () => {

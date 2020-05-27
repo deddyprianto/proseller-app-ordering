@@ -12,4 +12,10 @@ module.exports = {
     }
     return true;
   },
+  isEmptyData: data => {
+    if (data != undefined && data != '' && data != null) {
+      return false;
+    }
+    return true;
+  },
 };

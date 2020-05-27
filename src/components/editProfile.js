@@ -98,6 +98,7 @@ class AccountEditProfil extends Component {
         gender: this.state.gender,
       };
       const response = await this.props.dispatch(updateUser(dataProfile));
+      console.log('respon edit produl', response)
       if (response) {
         this.setState({
           showAlert: true,

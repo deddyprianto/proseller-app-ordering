@@ -15,7 +15,6 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
-
 import colorConfig from '../../config/colorConfig';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
@@ -34,6 +33,8 @@ import {isEmptyArray, isEmptyObject} from '../../helper/CheckEmpty';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import * as _ from 'lodash';
 import {getOutletById} from '../../actions/stores.action';
+import * as geolib from 'geolib';
+import appConfig from '../../config/appConfig';
 
 class Basket extends Component {
   constructor(props) {
@@ -316,21 +317,35 @@ class Basket extends Component {
   };
 
   goToScanTable = () => {
-    if (this.props.orderType == undefined) {
-      this.RBSheet.open();
-      // Alert.alert('Sorry', 'Please select your ordering mode first.');
-    }
+    try {
+      const {outletSingle} = this.props;
 
-    if (this.props.orderType != undefined) {
-      Actions.scanQRTable({
-        basket: this.props.dataBasket,
-        orderType: this.props.orderType,
-      });
-      clearInterval(this.interval);
-      this.interval = setInterval(() => {
-        this.props.dispatch(getBasket());
-      }, 4000);
-    }
+      if (!this.checkLastOrder()) {
+        Alert.alert(
+          'Sorry..',
+          `Last ordering for this outlet is ${
+            outletSingle.lastOrderOn
+          } minutes before closing. Please try again later.`,
+        );
+        return;
+      }
+
+      if (this.props.orderType == undefined) {
+        this.RBSheet.open();
+        // Alert.alert('Sorry', 'Please select your ordering mode first.');
+      }
+
+      if (this.props.orderType != undefined) {
+        Actions.scanQRTable({
+          basket: this.props.dataBasket,
+          orderType: this.props.orderType,
+        });
+        clearInterval(this.interval);
+        this.interval = setInterval(() => {
+          this.props.dispatch(getBasket());
+        }, 4000);
+      }
+    } catch (e) {}
   };
 
   checkActivateButtonClearRestaurant = dataBasket => {
@@ -544,6 +559,18 @@ class Basket extends Component {
 
   goToSettle = () => {
     try {
+      const {outletSingle} = this.props;
+
+      if (!this.checkLastOrder()) {
+        Alert.alert(
+          'Sorry..',
+          `Last ordering for this outlet is ${
+            outletSingle.lastOrderOn
+          } minutes before closing. Please try again later.`,
+        );
+        return;
+      }
+
       //  refresh cart
       clearInterval(this.interval);
       this.interval = setInterval(() => {
@@ -654,7 +681,12 @@ class Basket extends Component {
           </TouchableOpacity>
           <TouchableOpacity
             onPress={this.goToScanTable}
-            style={styles.btnAddBasketModal}>
+            disabled={!this.isOpen() ? true : false}
+            style={
+              !this.isOpen()
+                ? styles.btnAddBasketModalDisabled
+                : styles.btnAddBasketModal
+            }>
             <Icon
               size={23}
               name={
@@ -794,15 +826,20 @@ class Basket extends Component {
         product.remark = existProduct.remark;
         product.quantity = existProduct.quantity;
         product.name = existProduct.product.name;
-        product.description = existProduct.product.description;
+
+        try {
+          product.product.description = originalProduct.product.description;
+        } catch (e) {}
+
         product.product.productModifiers =
           originalProduct.product.productModifiers;
 
         // remove quantity temp from props
         product.product.productModifiers.map((group, i) => {
-          group.modifier.details.map((detail, j) => {
-            delete detail.quantity;
-          });
+          if (!isEmptyArray(group.modifier.details))
+            group.modifier.details.map((detail, j) => {
+              delete detail.quantity;
+            });
         });
 
         // process modifier
@@ -812,24 +849,32 @@ class Basket extends Component {
         let find = product;
         if (find != undefined && !isEmptyArray(find.modifiers)) {
           existProduct.product.productModifiers.map((group, i) => {
-            group.modifier.details.map((detail, j) => {
-              find.modifiers.map(data => {
-                data.modifier.details.map(item => {
-                  // make mark that item is in basket
-                  if (data.modifierID == group.modifierID) {
-                    existProduct.product.productModifiers[
-                      i
-                    ].postToServer = true;
-                    // set quantity basket to product that openend
-                    if (item.id == detail.id) {
-                      existProduct.product.productModifiers[i].modifier.details[
-                        j
-                      ].quantity = item.quantity;
+            if (!isEmptyArray(group.modifier.details))
+              group.modifier.details.map((detail, j) => {
+                find.modifiers.map(data => {
+                  data.modifier.details.map(item => {
+                    // make mark that item is in basket
+                    if (data.modifierID == group.modifierID) {
+                      existProduct.product.productModifiers[
+                        i
+                      ].postToServer = true;
+                      // set quantity basket to product that openend
+                      if (item.id == detail.id) {
+                        existProduct.product.productModifiers[
+                          i
+                        ].modifier.details[j].quantity = item.quantity;
+                        product.product.productModifiers[i].modifier.details[
+                          j
+                        ].isSelected = true;
+                      } else {
+                        product.product.productModifiers[i].modifier.details[
+                          j
+                        ].isSelected = false;
+                      }
                     }
-                  }
+                  });
                 });
               });
-            });
           });
         }
 
@@ -861,7 +906,127 @@ class Basket extends Component {
     });
   };
 
+  checkMaxOrderQty = qty => {
+    try {
+      const {outletSingle} = this.props;
+      if (
+        qty > outletSingle.maxOrderQtyPerItem &&
+        outletSingle.maxOrderQtyPerItem != undefined
+      ) {
+        return false;
+      }
+      return true;
+    } catch (e) {
+      return true;
+    }
+  };
+
+  checkMaxOrderValue = (mode, data) => {
+    try {
+      const {outletSingle} = this.props;
+      const {dataBasket} = this.props;
+      let basketAmount = 0;
+      let priceItem = data.details[0].quantity * data.details[0].unitPrice;
+
+      let result = '';
+      result = JSON.stringify(dataBasket);
+      result = JSON.parse(result);
+      result.details.map(item => {
+        if (item.productID != data.details[0].productID) {
+          basketAmount += parseFloat(item.nettAmount);
+        }
+      });
+      let total = basketAmount + priceItem;
+
+      if (
+        total > outletSingle.maxOrderAmount &&
+        outletSingle.maxOrderAmount != undefined
+      ) {
+        return false;
+      }
+
+      return true;
+    } catch (e) {
+      console.log(e);
+      return true;
+    }
+  };
+
+  pad = date => {
+    try {
+      const item = date.toString();
+      if (item.length == 1) {
+        return `0${item}`;
+      } else {
+        return date;
+      }
+    } catch (e) {
+      return date;
+    }
+  };
+
+  dateCreator = dateString => {
+    // dateString *HAS* to be in this format "YYYY-MM-DD HH:MM:SS"
+    try {
+      let dateParam = dateString.split(/[\s-:]/);
+      dateParam[1] = (parseInt(dateParam[1], 10) - 1).toString();
+      return new Date(...dateParam);
+    } catch (e) {
+      return dateString;
+    }
+  };
+
+  checkLastOrder = () => {
+    const {outletSingle} = this.props;
+    const currentTime = new Date().getTime();
+
+    try {
+      const currentDay = new Date().getDay();
+      const yy = new Date().getFullYear();
+      const dd = new Date().getDate();
+      const mm = new Date().getMonth() + 1;
+      let currentDate = `${yy}-${this.pad(mm)}-${this.pad(dd)}`;
+      // Alert.alert('x', currentDate.toString());
+      if (outletSingle.openAllDays == true) return true;
+
+      if (!isEmptyArray(outletSingle.operationalHours)) {
+        let data = outletSingle.operationalHours;
+        for (let i = 0; i < data.length; i++) {
+          if (data[i].day == currentDay) {
+            // date must be format first, bcouse date in JS Core is not same as in debugger
+            let outletDate = this.dateCreator(
+              `${currentDate} ${data[i].close}:00`,
+            );
+            let outletTime = new Date(outletDate);
+            let remainTime = parseFloat((outletTime - currentTime) / 60000);
+            if (
+              remainTime >= parseFloat(outletSingle.lastOrderOn) ||
+              outletSingle.lastOrderOn == undefined ||
+              outletSingle.lastOrderOn == '-'
+            ) {
+              return true;
+            }
+          }
+        }
+      } else {
+        return false;
+      }
+    } catch (e) {}
+
+    return false;
+  };
+
   addItemToBasket = async (product, qty, remark, mode) => {
+    const {outletSingle} = this.props;
+    // check outlet rules
+    if (!this.checkMaxOrderQty(qty)) {
+      Alert.alert(
+        'Sorry..',
+        'Maximum order quantity per Item is ' + outletSingle.maxOrderQtyPerItem,
+      );
+      return;
+    }
+
     if (mode == 'update') {
       await this.updateItem(product, qty, remark);
       await this.getBasket();
@@ -871,6 +1036,7 @@ class Basket extends Component {
 
   updateItem = async (product, qty, remark) => {
     try {
+      const {outletSingle} = this.props;
       // make payload format to pass to action
       let data = {};
       data.details = [];
@@ -942,6 +1108,16 @@ class Basket extends Component {
       if (remark != undefined && remark != '') dataproduct.remark = remark;
       data.details.push(dataproduct);
 
+      // check max order value outlet
+      if (!this.checkMaxOrderValue('update', data)) {
+        Alert.alert(
+          'Sorry..',
+          'Maximum order amount is ' +
+            CurrencyFormatter(parseFloat(outletSingle.maxOrderAmount)),
+        );
+        return;
+      }
+
       // send data to action
       let response = await this.props.dispatch(
         updateProductToBasket(data, previousData),
@@ -997,6 +1173,19 @@ class Basket extends Component {
     );
   };
 
+  pad = item => {
+    try {
+      const curr = appConfig.appMataUang;
+      item = item.replace(curr, '');
+      if (item.length == 1) {
+        return `${item}.00`;
+      }
+      return item;
+    } catch (e) {
+      return item;
+    }
+  };
+
   renderItemModifier = item => {
     return (
       <FlatList
@@ -1005,13 +1194,15 @@ class Basket extends Component {
           item.modifier.details.map(mod => (
             <Text style={[styles.descModifier]}>
               •{' '}
-              <Text
-                style={{
-                  color: colorConfig.store.defaultColor,
-                }}>
-                {mod.quantity}x
-              </Text>{' '}
-              {mod.name} ( {CurrencyFormatter(mod.productPrice)} )
+              {item.modifier.isYesNo != true ? (
+                <Text
+                  style={{
+                    color: colorConfig.store.defaultColor,
+                  }}>
+                  {mod.quantity}x
+                </Text>
+              ) : null}{' '}
+              {mod.name} ( {this.pad(CurrencyFormatter(mod.productPrice))} )
             </Text>
           ))
         }
@@ -1094,10 +1285,84 @@ class Basket extends Component {
     }
   };
 
+  goToProducts = () => {
+    try {
+      const {userPosition, outletSingle} = this.props;
+      let item = outletSingle;
+
+      // check if user enabled their position permission
+      let statusLocaiton;
+      if (userPosition == undefined || userPosition == false) {
+        statusLocaiton = false;
+      } else {
+        statusLocaiton = true;
+      }
+
+      let position = userPosition;
+
+      let location = {};
+      let coordinate = {};
+      location = {
+        region: item.region,
+        address: item.location,
+        coordinate: {
+          lat: item.latitude,
+          lng: item.longitude,
+        },
+      };
+
+      item.location = location;
+
+      let data = {
+        storeId: item.id,
+        storeName: item.name,
+        storeStatus: this.isOpen(item),
+        storeJarak: statusLocaiton
+          ? geolib.getDistance(position.coords, {
+              latitude: Number(item.latitude),
+              longitude: Number(item.longitude),
+            }) / 1000
+          : '-',
+        image: item.defaultImageURL != undefined ? item.defaultImageURL : '',
+        region: item.region,
+        address: item.location.address,
+        city: item.city,
+        operationalHours: item.operationalHours,
+        openAllDays: item.openAllDays,
+        defaultImageURL: item.defaultImageURL,
+        coordinate: item.location.coordinate,
+        orderingStatus: item.orderingStatus,
+        outletType: item.outletType,
+        offlineMessage: item.offlineMessage,
+        maxOrderQtyPerItem: item.maxOrderQtyPerItem,
+        maxOrderAmount: item.maxOrderAmount,
+        lastOrderOn: item.lastOrderOn,
+        enableDineIn:
+          item.enableDineIn == false || item.enableDineIn == '-' ? false : true,
+        enableTakeAway:
+          item.enableTakeAway == false || item.enableTakeAway == '-'
+            ? false
+            : true,
+        enableTableScan:
+          item.enableTableScan == false || item.enableTableScan == '-'
+            ? false
+            : true,
+      };
+
+      // const screenStack = Actions.prevState.routes[0].routes.length;
+      // if (screenStack == 3) {
+      //   Actions.replace('products', {item: data});
+      // } else {
+      Actions.push('products', {item: data});
+      // }
+    } catch (e) {
+      Actions.pop();
+    }
+  };
+
   getOperationalHours = data => {
     try {
       let operationalHours = data.operationalHours;
-
       let date = new Date();
       var dd = date.getDate();
       var mm = date.getMonth() + 1;
@@ -1131,9 +1396,17 @@ class Basket extends Component {
 
   isOpen = () => {
     const {outletSingle} = this.props;
-    if (!isEmptyArray(outletSingle.operationalHours)) {
-      if (this.getOperationalHours(outletSingle)) {
-        return true;
+    if (outletSingle != undefined)
+      if (!isEmptyArray(outletSingle.operationalHours)) {
+        if (this.getOperationalHours(outletSingle)) {
+          return true;
+        } else {
+          if (outletSingle.openAllDays == true) {
+            return true;
+          } else {
+            return false;
+          }
+        }
       } else {
         if (outletSingle.openAllDays == true) {
           return true;
@@ -1141,13 +1414,7 @@ class Basket extends Component {
           return false;
         }
       }
-    } else {
-      if (outletSingle.openAllDays == true) {
-        return true;
-      } else {
-        return false;
-      }
-    }
+    else return false;
   };
 
   render() {
@@ -1169,7 +1436,8 @@ class Basket extends Component {
 
         //  for outlet type quick service
         if (
-          dataBasket.status == 'PROCESSING' &&
+          (dataBasket.status == 'PROCESSING' ||
+            dataBasket.status == 'READY_FOR_COLLECTION') &&
           this.interval != undefined &&
           (Actions.currentScene == 'basket' ||
             Actions.currentScene == 'waitingFood') &&
@@ -1247,11 +1515,22 @@ class Basket extends Component {
                   {this.props.dataBasket.outlet.name}
                 </Text>
                 {!this.isOpen() ? (
-                  <Text style={styles.titleClosed}>CLOSED</Text>
+                  <Text style={styles.titleClosed}>Outlet is Closed</Text>
                 ) : null}
-                <Text style={styles.subTitle}>
-                  {intlData.messages.detailOrder}
-                </Text>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                  }}>
+                  <Text style={styles.subTitle}>
+                    {intlData.messages.detailOrder}
+                  </Text>
+                  {dataBasket.status == 'PENDING' ? (
+                    <TouchableOpacity onPress={this.goToProducts}>
+                      <Text style={styles.subTitleAddItems}>+ Add Items</Text>
+                    </TouchableOpacity>
+                  ) : null}
+                </View>
                 <View>
                   <FlatList
                     data={this.props.dataBasket.details}
@@ -1273,7 +1552,7 @@ class Basket extends Component {
                                   {item.quantity}x
                                 </Text>{' '}
                                 {item.product.name} ({' '}
-                                {CurrencyFormatter(item.unitPrice)} )
+                                {this.pad(CurrencyFormatter(item.unitPrice))} )
                               </Text>
                               {item.remark != undefined && item.remark != '' ? (
                                 <Text
@@ -1321,7 +1600,7 @@ class Basket extends Component {
                           </View>
                           <View>
                             <Text style={styles.descPrice}>
-                              {CurrencyFormatter(item.grossAmount)}
+                              {this.pad(CurrencyFormatter(item.grossAmount))}
                             </Text>
                           </View>
                         </View>
@@ -1458,6 +1737,7 @@ mapStateToProps = state => ({
   orderType: state.userReducer.orderType.orderType,
   tableType: state.orderReducer.tableType.tableType,
   products: state.orderReducer.productsOutlet.products,
+  userPosition: state.userReducer.userPosition.userPosition,
   intlData: state.intlData,
 });
 
@@ -1535,19 +1815,28 @@ const styles = StyleSheet.create({
   },
   titleClosed: {
     color: 'white',
-    marginHorizontal: '40%',
-    borderRadius: 2,
+    marginHorizontal: '33%',
+    borderRadius: 4,
     fontSize: 12,
     backgroundColor: colorConfig.store.colorError,
     fontFamily: 'Lato-Bold',
     padding: 5,
     textAlign: 'center',
     fontWeight: 'bold',
+    marginBottom: 20,
   },
   subTitle: {
     fontFamily: 'Lato-Bold',
     color: colorConfig.store.title,
-    fontSize: 16,
+    fontSize: 14,
+    padding: 5,
+    fontWeight: 'bold',
+    marginBottom: 5,
+  },
+  subTitleAddItems: {
+    fontFamily: 'Lato-Bold',
+    color: colorConfig.store.defaultColor,
+    fontSize: 14,
     padding: 5,
     fontWeight: 'bold',
     marginBottom: 5,
@@ -1644,6 +1933,17 @@ const styles = StyleSheet.create({
     marginLeft: 20,
     width: '40%',
     backgroundColor: colorConfig.store.colorSuccess,
+  },
+  btnAddBasketModalDisabled: {
+    fontFamily: 'Lato-Bold',
+    borderRadius: 10,
+    padding: 13,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 20,
+    width: '40%',
+    backgroundColor: colorConfig.store.colorSuccessDisabled,
   },
   btnCancelBasketModal: {
     fontFamily: 'Lato-Bold',
