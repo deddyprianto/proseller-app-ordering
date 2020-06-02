@@ -141,9 +141,22 @@ class HistoryPayment extends Component {
     console.log('mau load more');
   };
 
+  format = item => {
+    try {
+      const curr = appConfig.appMataUang;
+      item = item.replace(curr, '');
+      if (curr != 'RP' && curr != 'IDR' && item.includes('.') == false) {
+        return `${item}.00`;
+      }
+      return item;
+    } catch (e) {
+      return item;
+    }
+  };
+
   formatCurrency = value => {
     try {
-      return CurrencyFormatter(value).match(/[a-z]+|[^a-z]+/gi)[1];
+      return this.format(CurrencyFormatter(value).match(/[a-z]+|[^a-z]+/gi)[1]);
     } catch (e) {
       return value;
     }

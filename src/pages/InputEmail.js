@@ -150,7 +150,7 @@ class InputEmail extends Component {
         if (response.data.confirmation == false) {
           email.confirmed = false;
           email.phoneNumber = response.data.phoneNumber;
-          Actions.verifyOtpAfterRegisterEmail(email);
+          Actions.signInEmail(email);
         } else if (response.data.status == 'SUSPENDED') {
           Alert.alert(
             'Sorry',

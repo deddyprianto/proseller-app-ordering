@@ -414,7 +414,10 @@ class Basket extends Component {
             fontSize: 15,
             marginRight: 20,
           }}>
-          TOTAL : {CurrencyFormatter(this.props.dataBasket.totalNettAmount)}
+          TOTAL : {appConfig.appMataUang}
+          {this.format(
+            CurrencyFormatter(this.props.dataBasket.totalNettAmount),
+          )}
         </Text>
         <View style={{flexDirection: 'row', justifyContent: 'center'}}>
           <TouchableOpacity
@@ -499,7 +502,10 @@ class Basket extends Component {
             fontSize: 15,
             marginRight: 20,
           }}>
-          TOTAL : {CurrencyFormatter(this.props.dataBasket.totalNettAmount)}
+          TOTAL : {appConfig.appMataUang}
+          {this.format(
+            CurrencyFormatter(this.props.dataBasket.totalNettAmount),
+          )}
         </Text>
         <View style={{flexDirection: 'row', justifyContent: 'center'}}>
           <TouchableOpacity
@@ -1173,11 +1179,11 @@ class Basket extends Component {
     );
   };
 
-  pad = item => {
+  format = item => {
     try {
       const curr = appConfig.appMataUang;
       item = item.replace(curr, '');
-      if (item.length == 1) {
+      if (curr != 'RP' && curr != 'IDR' && item.includes('.') == false) {
         return `${item}.00`;
       }
       return item;
@@ -1202,7 +1208,7 @@ class Basket extends Component {
                   {mod.quantity}x
                 </Text>
               ) : null}{' '}
-              {mod.name} ( {this.pad(CurrencyFormatter(mod.productPrice))} )
+              {mod.name} ( {this.format(CurrencyFormatter(mod.productPrice))} )
             </Text>
           ))
         }
@@ -1552,7 +1558,8 @@ class Basket extends Component {
                                   {item.quantity}x
                                 </Text>{' '}
                                 {item.product.name} ({' '}
-                                {this.pad(CurrencyFormatter(item.unitPrice))} )
+                                {this.format(CurrencyFormatter(item.unitPrice))}{' '}
+                                )
                               </Text>
                               {item.remark != undefined && item.remark != '' ? (
                                 <Text
@@ -1600,7 +1607,7 @@ class Basket extends Component {
                           </View>
                           <View>
                             <Text style={styles.descPrice}>
-                              {this.pad(CurrencyFormatter(item.grossAmount))}
+                              {this.format(CurrencyFormatter(item.grossAmount))}
                             </Text>
                           </View>
                         </View>

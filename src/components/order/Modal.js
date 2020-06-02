@@ -687,8 +687,9 @@ export default class ModalOrder extends Component {
 
   formatNumber = item => {
     try {
-      item = item.substr(4);
-      if (item.length == 1) {
+      const curr = appConfig.appMataUang;
+      item = item.replace(curr, '');
+      if (curr != 'RP' && curr != 'IDR' && item.includes('.') == false) {
         return `${item}.00`;
       }
       return item;

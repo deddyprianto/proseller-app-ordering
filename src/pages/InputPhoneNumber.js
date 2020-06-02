@@ -222,7 +222,7 @@ class InputPhoneNumber extends Component {
         if (response.data.confirmation == false) {
           phoneNumber.email = response.data.email;
           phoneNumber.confirmed = false;
-          Actions.verifyOtpAfterRegister(phoneNumber);
+          Actions.signInPhoneNumber(phoneNumber);
         } else if (response.data.status == 'SUSPENDED') {
           Alert.alert(
             'Sorry',
