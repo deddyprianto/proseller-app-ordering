@@ -90,6 +90,7 @@ class Basket extends Component {
       if (this.props.products != undefined) {
         // check data products on local storage
         let data = await this.props.products.find(item => item.id == outletID);
+
         if (data != undefined && !isEmptyObject(data)) {
           await this.setState({
             products: data.products,
@@ -894,7 +895,28 @@ class Basket extends Component {
         Alert.alert('Sorry', 'Cant find selected product.');
       }
     } catch (e) {
-      Alert.alert('Opps..', 'Something went wrong, please try again');
+      const message1 = "Cannot read property 'productModifiers' of undefined";
+      const message2 = "Cannot read property 'length' of undefined";
+      if (e.message === message1 || e.message === message2) {
+        try {
+          await this.setState({loading: true});
+          await this.getDataProducts();
+          await this.setState({loading: false});
+          // await this.openModal();
+        } catch (e) {}
+      } else {
+        Alert.alert('Opps..', 'Something went wrong, please try again.');
+      }
+    }
+  };
+
+  getDataProducts = async () => {
+    const outletID = this.props.dataBasket.outlet.id;
+    let response = await this.props.dispatch(
+      getProductByOutlet(outletID, true),
+    );
+    if (response.success) {
+      this.pushDataProductsToState(outletID);
     }
   };
 

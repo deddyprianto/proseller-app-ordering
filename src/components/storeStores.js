@@ -22,7 +22,7 @@ export default class StoreStores extends Component {
     // Actions.storeDetailStores({item, intlData});
     // Actions.order({item});
     // Actions.categoryProducts({item});
-    Actions.products({item});
+    Actions.productsMode2({item});
   };
 
   render() {

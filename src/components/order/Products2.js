@@ -14,6 +14,7 @@ import {
   ScrollView,
   RefreshControl,
   SafeAreaView,
+  TextInput,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -28,6 +29,10 @@ import {
   updateProductToBasket,
   getBasket,
   setOrderType,
+  getCategoryByOutlet,
+  getProductByCategory,
+  saveProductsOutlet,
+  searchProducts,
 } from '../../actions/order.action';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
@@ -44,11 +49,14 @@ import * as _ from 'lodash';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import {dataStores} from '../../actions/stores.action';
 import {StatusBarHeight} from '../../helper/StatusBarChecker';
+import EmptySearch from '../atom/EmptySearch';
+import NewSearch from '../atom/NewSearch';
 
-class Products extends Component {
+class Products2 extends Component {
   constructor(props) {
     super(props);
 
+    this.timeoutTyping = 0;
     this.RBSheet = null;
     this.productsLength = 0;
     this.products = [];
@@ -81,6 +89,11 @@ class Products extends Component {
       productsWithMofidier: [],
       selectedproductsWithMofidier: {},
       visibleMenu: false,
+      dialogSearch: false,
+      searchQuery: '',
+      categories: [],
+      productsSearch: undefined,
+      loadingSearch: false,
     };
   }
 
@@ -91,7 +104,7 @@ class Products extends Component {
   _onViewableItemsChanged = ({viewableItems, changed}) => {
     // console.log('Visible items are', viewableItems);
     // console.log('Changed in this iteration', changed);
-    // this.setState({idx: 3});
+
     if (viewableItems.length == 1) {
       try {
         if (viewableItems[0].index != undefined) {
@@ -145,7 +158,8 @@ class Products extends Component {
       this.state.item.orderingStatus == undefined ||
       this.state.item.orderingStatus == 'AVAILABLE'
     ) {
-      await this.getProductsByOutlet(refresh);
+      await this.getCategoryByOutlet(refresh);
+      // await this.getProductsByOutlet(refresh);
       // check if basket outlet is not same as current outlet
       await this.checkBucketExist();
     } else {
@@ -450,6 +464,87 @@ class Products extends Component {
     }
   };
 
+  getCategoryByOutlet = async refresh => {
+    try {
+      const outletID = this.state.item.storeId;
+      let response = await this.props.dispatch(
+        getCategoryByOutlet(outletID, refresh),
+      );
+      if (response && !isEmptyArray(response.data)) {
+        await this.setState({
+          categories: response.data,
+        });
+        const firstCategoryID = response.data[0].id;
+        await this.getProductsByCategory(firstCategoryID, 0, 10, refresh);
+
+        this.setState({refresh: false});
+        // turn back to first category
+        try {
+          await this.updateCategory([], 0);
+        } catch (e) {}
+
+        this.openOrderingMode();
+        //  asynchronously get all items for every categories
+        if (response.data.length > 1) {
+          for (let i = 1; i < response.data.length; i++) {
+            let categoryId = response.data[i].id;
+            await this.getProductsByCategory(categoryId, 0, 10, refresh);
+          }
+        }
+      }
+    } catch (e) {
+      Alert.alert('Opss..', 'Something went wrong, please try again.');
+      this.setState({
+        loading: false,
+      });
+    }
+  };
+
+  getProductsByCategory = async (category, skip, take, refresh) => {
+    try {
+      const outletID = this.state.item.storeId;
+      let {categories} = this.state;
+      let response = await this.props.dispatch(
+        getProductByCategory(outletID, category, skip, take),
+      );
+
+      if (response && !isEmptyArray(response.data)) {
+        const idxCategory = categories.findIndex(item => item.id == category);
+        // if category products is empty
+        if (isEmptyArray(categories[idxCategory].items)) {
+          categories[idxCategory].items = response.data;
+          categories[idxCategory].dataLength = response.dataLength;
+          categories[idxCategory].skip = take;
+          categories[idxCategory].take = take;
+        } else if (
+          categories[idxCategory].items.length <
+          categories[idxCategory].dataLength
+        ) {
+          const items = [...categories[idxCategory].items, ...response.data];
+          categories[idxCategory].items = items;
+          categories[idxCategory].skip += take;
+          categories[idxCategory].take = take;
+        }
+        await this.setState({
+          products: categories,
+        });
+        this.products.push(categories);
+        // console.log(categories);
+        this.props.dispatch(saveProductsOutlet(categories, outletID, refresh));
+      } else {
+        await this.setState({
+          products: [],
+        });
+        this.products.push(categories);
+      }
+    } catch (e) {
+      Alert.alert('Opss..', 'Something went wrong, please try again.');
+      this.setState({
+        loading: false,
+      });
+    }
+  };
+
   getProductsByOutlet = async refresh => {
     try {
       const outletID = this.state.item.storeId;
@@ -649,6 +744,21 @@ class Products extends Component {
         });
       }, 30);
     }
+  };
+
+  searchItem = async () => {
+    this.setState({loadingSearch: true, productsSearch: undefined});
+    const outletId = this.state.item.storeId;
+    const {categories, searchQuery} = this.state;
+    let productsSearch = undefined;
+
+    if (searchQuery != '' && searchQuery != undefined && searchQuery != null) {
+      productsSearch = await this.props.dispatch(
+        searchProducts(outletId, categories, searchQuery),
+      );
+    }
+
+    await this.setState({productsSearch, loadingSearch: false});
   };
 
   toggleModal = async product => {
@@ -1172,6 +1282,75 @@ class Products extends Component {
     }
   };
 
+  templateItem = item => {
+    return (
+      <TouchableOpacity
+        disabled={this.availableToOrder(item) ? false : true}
+        style={styles.detail}
+        onPress={() =>
+          this.availableToOrder(item) ? this.toggleModal(item) : false
+        }>
+        {!this.availableToOrder(item) ? (
+          <View
+            style={{
+              backgroundColor: 'rgba(52, 73, 94, 0.2)',
+              width: '100%',
+              height: 95,
+              position: 'absolute',
+              zIndex: 2,
+            }}
+          />
+        ) : null}
+        <View style={styles.detailItem}>
+          <View style={{flexDirection: 'row'}}>
+            {!isEmptyData(item.product.defaultImageURL) ? (
+              <ProgressiveImage
+                style={styles.imageProduct}
+                source={this.getImageUrl(item.product.defaultImageURL)}
+              />
+            ) : null}
+            <View
+              style={
+                isEmptyData(item.product.defaultImageURL) ? {height: 80} : {}
+              }>
+              <Text
+                style={[
+                  styles.productTitle,
+                  isEmptyData(item.product.defaultImageURL)
+                    ? {maxWidth: Dimensions.get('window').width / 2}
+                    : null,
+                ]}>
+                {this.checkIfItemExistInBasket(item) != false ? (
+                  <Text
+                    style={{
+                      color: colorConfig.store.defaultColor,
+                      fontWeight: 'bold',
+                    }}>
+                    x {this.getQuantityInBasket(item)}{' '}
+                  </Text>
+                ) : null}
+                {item.product.name}
+              </Text>
+              {item.product.description != undefined &&
+              item.product.description != '' ? (
+                <Text style={[styles.productDesc]}>
+                  {item.product.description}
+                </Text>
+              ) : null}
+            </View>
+          </View>
+          <Text style={[styles.productPrice]}>
+            {item.product.retailPrice != undefined &&
+            item.product.retailPrice != '-' &&
+            !isNaN(item.product.retailPrice)
+              ? this.formatNumber(CurrencyFormatter(item.product.retailPrice))
+              : CurrencyFormatter(0)}
+          </Text>
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
   renderCategoryWithProducts = item => {
     return (
       <View style={styles.card}>
@@ -1182,86 +1361,42 @@ class Products extends Component {
             return {length: 95, offset: 95 * index, index};
           }}
           renderItem={({item}) =>
-            item.product != null ? (
-              <TouchableOpacity
-                disabled={this.availableToOrder(item) ? false : true}
-                style={styles.detail}
-                onPress={() =>
-                  this.availableToOrder(item) ? this.toggleModal(item) : false
-                }>
-                {!this.availableToOrder(item) ? (
-                  <View
-                    style={{
-                      backgroundColor: 'rgba(52, 73, 94, 0.2)',
-                      width: '100%',
-                      height: 95,
-                      position: 'absolute',
-                      zIndex: 2,
-                    }}
-                  />
-                ) : null}
-                <View style={styles.detailItem}>
-                  <View style={{flexDirection: 'row'}}>
-                    {!isEmptyData(item.product.defaultImageURL) ? (
-                      <ProgressiveImage
-                        style={styles.imageProduct}
-                        source={this.getImageUrl(item.product.defaultImageURL)}
-                      />
-                    ) : null}
-                    <View
-                      style={
-                        isEmptyData(item.product.defaultImageURL)
-                          ? {height: 80}
-                          : {}
-                      }>
-                      <Text
-                        style={[
-                          styles.productTitle,
-                          isEmptyData(item.product.defaultImageURL)
-                            ? {maxWidth: Dimensions.get('window').width / 2}
-                            : null,
-                        ]}>
-                        {this.checkIfItemExistInBasket(item) != false ? (
-                          <Text
-                            style={{
-                              color: colorConfig.store.defaultColor,
-                              fontWeight: 'bold',
-                            }}>
-                            x {this.getQuantityInBasket(item)}{' '}
-                          </Text>
-                        ) : null}
-                        {item.product.name}
-                      </Text>
-                      {item.product.description != undefined &&
-                      item.product.description != '' ? (
-                        <Text style={[styles.productDesc]}>
-                          {item.product.description}
-                        </Text>
-                      ) : null}
-                    </View>
-                  </View>
-                  <Text style={[styles.productPrice]}>
-                    {item.product.retailPrice != undefined &&
-                    item.product.retailPrice != '-' &&
-                    !isNaN(item.product.retailPrice)
-                      ? this.formatNumber(
-                          CurrencyFormatter(item.product.retailPrice),
-                        )
-                      : CurrencyFormatter(0)}
-                  </Text>
-                </View>
-              </TouchableOpacity>
-            ) : null
+            item.product != null ? this.templateItem(item) : null
           }
           keyExtractor={(product, index) => index.toString()}
+          ListFooterComponent={() => this.renderFooter(item)}
+          onEndReachedThreshold={0.01}
+          onEndReached={() => this.handleLoadMoreItems(item)}
         />
       </View>
     );
   };
 
+  handleLoadMoreItems = async item => {
+    try {
+      const {selectedCategory} = this.state;
+      const {categories} = this.state;
+
+      const viewableID = categories[selectedCategory].id;
+
+      if (!isEmptyArray(item.items)) {
+        if (item.dataLength > item.items.length) {
+          await this.getProductsByCategory(item.id, item.skip, 10, true);
+        }
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   find_dimesions = layout => {
     const {height} = layout;
     this.heightHeader = height;
+  };
+
+  goToSearch = () => {
+    // this.updateCategory([], 0);
+    this.setState({dialogSearch: true, visibleMenu: true});
   };
 
   updateCategory = async (item, itemIndex) => {
@@ -1278,15 +1413,6 @@ class Products extends Component {
         animated: true,
         item: this.state.products[itemIndex],
       });
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
-  updateHightlightCategory = async itemIndex => {
-    try {
-      // this.setState({selectedCategory: itemIndex});
-      // this.setState({idx: itemIndex});
     } catch (e) {
       console.log(e);
     }
@@ -1329,11 +1455,22 @@ class Products extends Component {
               backgroundColor: 'transparent',
               zIndex: 2,
               top: 0,
+              flexDirection: 'row',
+              width: '100%',
             }}>
             <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
               <Icon
                 size={27}
                 name={Platform.OS === 'ios' ? 'ios-close' : 'md-close'}
+                style={styles.btnBackIcon}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.btnSearch}
+              onPress={this.goToSearch}>
+              <Icon
+                size={27}
+                name={Platform.OS === 'ios' ? 'ios-search' : 'md-search'}
                 style={styles.btnBackIcon}
               />
             </TouchableOpacity>
@@ -1622,10 +1759,10 @@ class Products extends Component {
     );
   };
 
-  renderProgressiveLoadItem = () => {
+  renderProgressiveLoadItem = search => {
     let itemsToLoad = (
-      <View>
-        {this.renderHeaderOutletTemplate()}
+      <View style={{height: '100%', backgroundColor: 'white'}}>
+        {!search ? this.renderHeaderOutletTemplate() : null}
         <Loader />
         <View style={styles.card}>
           <View style={styles.titleCategory}>
@@ -1787,49 +1924,101 @@ class Products extends Component {
     await this.setState({products: undefined, refresh: true, item});
     await this.refreshOutlet();
     await this.firstMethodToRun(true);
-    // turn back to first category
-    try {
-      await this.updateCategory([], 0);
-    } catch (e) {}
-
-    await this.setState({refresh: false});
     this.prompOutletIsClosed();
   };
 
-  renderFooter = () => {
-    let dataLength = this.state.dataLength;
-    // console.log(dataLength, 'DATA LENGTH');
-    // let productsLength = this.products.length;
-    // if (
-    //   productsLength < dataLength &&
-    //   this.state.selectedCategory == 'ALL PRODUCTS'
-    // ) {
-    return <ActivityIndicator size="large" style={{color: '#000'}} />;
-    // } else {
-    //   return null;
-    // }
-  };
-
-  handleLoadMore = () => {
-    // console.log('sEDANG DILOAD');
+  renderFooter = item => {
     try {
-      let dataLength = this.state.dataLength;
-      let productsLength = this.products.length;
-      if (productsLength < dataLength) {
-        this.setState({idx: this.state.idx + 1}, () => {
-          if (this.productsLength <= dataLength) {
-            this.products.push(this.state.products[this.state.idx]);
-          }
-        });
+      const {selectedCategory} = this.state;
+      const {categories} = this.state;
+
+      const viewableID = categories[selectedCategory].id;
+      if (item.items.length < item.dataLength) {
+        return (
+          <ActivityIndicator
+            size={30}
+            color={colorConfig.store.secondaryColor}
+          />
+        );
+      } else {
+        return null;
       }
     } catch (e) {
-      console.log(e);
+      return null;
+    }
+  };
+
+  renderMainList = () => {
+    return (
+      <FlatList
+        refreshControl={
+          <RefreshControl
+            refreshing={this.state.refresh}
+            onRefresh={this._onRefresh}
+          />
+        }
+        ListHeaderComponent={this.renderHeaderOutlet}
+        ref={ref => {
+          this.flatListRef = ref;
+        }}
+        onViewableItemsChanged={this._onViewableItemsChanged}
+        viewabilityConfig={this._viewabilityConfig}
+        // initialNumToRender={2}
+        initialScrollIndex={0}
+        data={this.state.products}
+        extraData={this.props}
+        onScroll={event => {
+          let yOffset = event.nativeEvent.contentOffset.y;
+          try {
+            if (yOffset >= this.heightHeader) {
+              this.setState({visibleMenu: true});
+            } else {
+              this.setState({visibleMenu: false});
+            }
+          } catch (e) {
+            this.setState({visibleMenu: false});
+          }
+        }}
+        renderItem={({item}) => {
+          return this.renderCategoryWithProducts(item);
+        }}
+        keyExtractor={(item, index) => index.toString()}
+      />
+    );
+  };
+
+  renderSearchList = () => {
+    const {productsSearch, searchQuery, loadingSearch} = this.state;
+    if (!isEmptyArray(productsSearch)) {
+      return (
+        <View style={[styles.card, {paddingBottom: 120, height: '100%'}]}>
+          <Text style={styles.titleCategory}>Result for : {searchQuery}</Text>
+          <FlatList
+            data={productsSearch}
+            getItemLayout={(data, index) => {
+              return {length: 95, offset: 95 * index, index};
+            }}
+            renderItem={({item}) =>
+              item.product != null ? this.templateItem(item) : null
+            }
+            keyExtractor={(product, index) => index.toString()}
+          />
+        </View>
+      );
+    } else {
+      if (loadingSearch) {
+        return this.renderProgressiveLoadItem(true);
+      } else if (isEmptyArray(productsSearch) && productsSearch != undefined) {
+        return <EmptySearch />;
+      } else {
+        return <NewSearch />;
+      }
     }
   };
 
   render() {
     const {intlData, item} = this.props;
-    let {loadProducts, visibleMenu} = this.state;
+    let {loadProducts, visibleMenu, dialogSearch} = this.state;
     let products = this.products;
 
     return (
@@ -1862,72 +2051,140 @@ class Products extends Component {
           {visibleMenu ? (
             <View
               style={{
-                backgroundColor: '#e1e4e8',
-                position: 'absolute',
+                backgroundColor: '#f2f2f2',
+                // position: 'absolute',
                 top: StatusBarHeight,
                 zIndex: 99,
                 width: '100%',
               }}>
-              <FlatList
-                ref={ref => {
-                  this.categoryMenuRef = ref;
-                }}
-                horizontal={true}
-                // getItemLayout={(data, index) => {
-                //   return {length: 8, offset: 8 * index, index};
-                // }}
-                data={this.state.products}
-                extraData={this.props}
-                renderItem={({item, index}) => {
-                  return this.renderCategoryProducts(item, index);
-                }}
-                keyExtractor={(item, index) => index.toString()}
-              />
+              {!dialogSearch ? (
+                <View>
+                  <View style={styles.outletHeaderFixed}>
+                    <TouchableOpacity
+                      onPress={this.goBack}
+                      style={{alignItems: 'center', flexDirection: 'row'}}>
+                      <Icon
+                        size={25}
+                        name={
+                          Platform.OS === 'ios'
+                            ? 'ios-arrow-back'
+                            : 'md-arrow-back'
+                        }
+                        style={{color: colorConfig.pageIndex.grayColor}}
+                      />
+                      <Text style={styles.outletHeaderFixedTitle}>
+                        {item.storeName.substr(0, 20)}
+                      </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={{padding: 2, paddingRight: 15}}
+                      onPress={() => this.setState({dialogSearch: true})}>
+                      <Icon
+                        size={28}
+                        name={
+                          Platform.OS === 'ios' ? 'ios-search' : 'md-search'
+                        }
+                        style={{color: colorConfig.store.defaultColor}}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                  <FlatList
+                    ref={ref => {
+                      this.categoryMenuRef = ref;
+                    }}
+                    horizontal={true}
+                    data={this.state.products}
+                    extraData={this.props}
+                    renderItem={({item, index}) => {
+                      return this.renderCategoryProducts(item, index);
+                    }}
+                    keyExtractor={(item, index) => index.toString()}
+                  />
+                </View>
+              ) : (
+                <View style={styles.outletHeaderFixed}>
+                  <TextInput
+                    placeholder={'Product name...'}
+                    autoFocus={true}
+                    value={this.state.searchQuery}
+                    onChangeText={value => {
+                      this.setState({searchQuery: value});
+                      if (this.timeoutTyping) clearTimeout(this.timeoutTyping);
+                      this.timeoutTyping = setTimeout(() => {
+                        this.searchItem();
+                      }, 1800);
+                    }}
+                    keyboardType="web-search"
+                    onSubmitEditing={() => {
+                      this.searchItem();
+                    }}
+                    style={{
+                      backgroundColor: 'white',
+                      borderRadius: 10,
+                      padding: 10,
+                      width: '80%',
+                      fontSize: 15,
+                      color: colorConfig.store.title,
+                      fontFamily: 'Lato-Bold',
+                    }}
+                  />
+                  <TouchableOpacity
+                    style={styles.clearInputSearch}
+                    onPress={() =>
+                      this.setState({
+                        productsSearch: undefined,
+                        searchQuery: '',
+                      })
+                    }>
+                    <Icon
+                      size={20}
+                      name={Platform.OS === 'ios' ? 'ios-close' : 'md-close'}
+                      style={{color: colorConfig.pageIndex.grayColor}}
+                    />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.closeButtonSearch}
+                    onPress={() =>
+                      this.setState({
+                        dialogSearch: false,
+                        visibleMenu: false,
+                        productsSearch: undefined,
+                        searchQuery: '',
+                      })
+                    }>
+                    <Text
+                      style={{
+                        color: colorConfig.store.colorError,
+                        fontFamily: 'Lato-Bold',
+                        fontSize: 17,
+                      }}>
+                      Cancel
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              )}
             </View>
           ) : null}
           {/* MENU FIXED */}
 
           {this.state.products != undefined ? (
-            !isEmptyArray(products) ? (
+            !isEmptyArray(this.state.products) ? (
               loadProducts ? (
-                <FlatList
-                  refreshControl={
-                    <RefreshControl
-                      refreshing={this.state.refresh}
-                      onRefresh={this._onRefresh}
-                    />
-                  }
-                  ListHeaderComponent={this.renderHeaderOutlet}
-                  ref={ref => {
-                    this.flatListRef = ref;
-                  }}
-                  onViewableItemsChanged={this._onViewableItemsChanged}
-                  viewabilityConfig={this._viewabilityConfig}
-                  // initialNumToRender={2}
-                  initialScrollIndex={0}
-                  data={this.state.products}
-                  extraData={this.props}
-                  onScroll={event => {
-                    let yOffset = event.nativeEvent.contentOffset.y;
-                    try {
-                      if (yOffset >= this.heightHeader) {
-                        this.setState({visibleMenu: true});
-                      } else {
-                        this.setState({visibleMenu: false});
-                      }
-                    } catch (e) {
-                      this.setState({visibleMenu: false});
-                    }
-                    // console.log(yOffset, 'INDEXNYA');
-                  }}
-                  renderItem={({item}) => {
-                    return this.renderCategoryWithProducts(item);
-                  }}
-                  keyExtractor={(item, index) => index.toString()}
-                  // ListFooterComponent={this.renderFooter}
-                  // onEndReachedThreshold={0.01}
-                  // onEndReached={this.handleLoadMore}
-                />
+                <>
+                  <View>{this.renderMainList()}</View>
+                  {dialogSearch ? (
+                    <View
+                      style={{
+                        position: 'absolute',
+                        zIndex: 99,
+                        marginTop: 50,
+                        width: '100%',
+                        height: '100%',
+                      }}>
+                      {this.renderSearchList()}
+                    </View>
+                  ) : null}
+                </>
               ) : (
                 this.renderProgressiveLoadItem()
               )
@@ -1935,9 +2192,12 @@ class Products extends Component {
               <View style={{height: Dimensions.get('window').height}}>
                 {item.orderingStatus == undefined ||
                 item.orderingStatus == 'AVAILABLE' ? (
-                  <Text style={styles.productEmptyText}>
-                    Sorry, products is empty :(
-                  </Text>
+                  <View>
+                    {this.renderHeaderOutletTemplate()}
+                    <Text style={styles.productEmptyText}>
+                      Sorry, products is empty :(
+                    </Text>
+                  </View>
                 ) : (
                   <ScrollView
                     refreshControl={
@@ -2002,7 +2262,7 @@ export default compose(
     mapStateToProps,
     mapDispatchToProps,
   ),
-)(Products);
+)(Products2);
 
 const styles = StyleSheet.create({
   container: {
@@ -2044,6 +2304,17 @@ const styles = StyleSheet.create({
     width: 40,
     marginTop: 5,
     marginLeft: 5,
+    backgroundColor: colorConfig.store.transparent,
+    height: 40,
+    borderRadius: 50,
+  },
+  btnSearch: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 40,
+    marginTop: 5,
+    marginLeft: '75%',
     backgroundColor: colorConfig.store.transparent,
     height: 40,
     borderRadius: 50,
@@ -2354,5 +2625,31 @@ const styles = StyleSheet.create({
     padding: 8,
     fontFamily: 'Lato-Medium',
     borderRadius: 13,
+  },
+  outletHeaderFixed: {
+    width: '100%',
+    height: 50,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  outletHeaderFixedTitle: {
+    marginLeft: 20,
+    fontSize: 17,
+    fontFamily: 'Lato-Bold',
+    color: colorConfig.store.defaultColor,
+  },
+  clearInputSearch: {
+    padding: 2,
+    position: 'absolute',
+    alignItems: 'center',
+    marginLeft: '66%',
+  },
+  closeButtonSearch: {
+    padding: 2,
+    alignItems: 'center',
+    marginLeft: '1%',
   },
 });

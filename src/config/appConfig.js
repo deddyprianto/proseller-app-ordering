@@ -19,6 +19,10 @@ const appConfig = {
   // other setting
   appStatusLoginOther: true,
   appStatusBackgroundScreen: true,
+
+  //  image template
+  emptyBox: require('../assets/component/empty-box.png'),
+  newSearch: require('../assets/component/find-food.png'),
 };
 
 export default appConfig;

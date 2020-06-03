@@ -12,6 +12,18 @@ const productsOutlet = (state = {}, action) => {
   }
 };
 
+const categoryOutlet = (state = {}, action) => {
+  switch (action.type) {
+    case 'DATA_CATEGORY_OUTLET':
+      return {
+        cateories: action.products,
+      };
+
+    default:
+      return state;
+  }
+};
+
 const dataBasket = (state = {}, action) => {
   switch (action.type) {
     case 'DATA_BASKET':

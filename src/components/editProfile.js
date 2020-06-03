@@ -16,7 +16,8 @@ import {
   Picker,
   BackHandler,
   Platform,
-  TextInput, SafeAreaView,
+  TextInput,
+  SafeAreaView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -98,7 +99,7 @@ class AccountEditProfil extends Component {
         gender: this.state.gender,
       };
       const response = await this.props.dispatch(updateUser(dataProfile));
-      console.log('respon edit produl', response)
+
       if (response) {
         this.setState({
           showAlert: true,
@@ -162,12 +163,11 @@ class AccountEditProfil extends Component {
     let monthBirth = newDate.getMonth() + 1;
     let birthYear = newDate.getFullYear();
 
-    this.setState({birthDate: `${monthBirth}/${dateBirth}/${birthYear}`});
+    this.setState({birthDate: `${birthYear}-${monthBirth}-${dateBirth}/`});
     this.hideDatePicker();
   };
 
   formatDate = current_datetime => {
-    console.log(current_datetime, 'current_datetime');
     if (current_datetime != undefined) {
       current_datetime = new Date(current_datetime);
       const months = [
@@ -185,11 +185,11 @@ class AccountEditProfil extends Component {
         'DEC',
       ];
       return (
-        current_datetime.getDate() +
+        current_datetime.getFullYear() +
         '-' +
         months[current_datetime.getMonth()] +
         '-' +
-        current_datetime.getFullYear()
+        current_datetime.getDate()
       );
     } else {
       return '';

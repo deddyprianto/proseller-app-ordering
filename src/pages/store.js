@@ -229,7 +229,6 @@ class Store extends Component {
         dataAllStore: _.groupBy(dataStoresTampung, 'region'),
         dataStoreRegion: _.uniq(storeGrupTampung),
       });
-      console.log('MASUK SINI BOY', this.state.dataAllStore);
     } catch (e) {
       await this.setState({
         isLoading: false,

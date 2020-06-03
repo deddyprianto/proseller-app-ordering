@@ -45,6 +45,7 @@ import RewardsStamps from '../components/rewardsStamps';
 import Order from '../pages/order';
 import CategoryProducts from '../components/order/CategoryProducts';
 import Products from '../components/order/Products';
+import Products2 from '../components/order/Products2';
 import Basket from '../components/order/Basket';
 import ScanQRTable from '../components/order/ScanQRTable';
 import ConfirmTable from '../components/order/ConfirmTable';
@@ -161,6 +162,7 @@ export default class Routes extends Component {
             <Scene key="order" component={Order} />
             <Scene key="categoryProducts" component={CategoryProducts} />
             <Scene key="products" component={Products} />
+            <Scene key="productsMode2" component={Products2} />
             <Scene key="basket" component={Basket} />
             <Scene key="scanQRTable" component={ScanQRTable} />
             <Scene key="confirmTable" component={ConfirmTable} />
