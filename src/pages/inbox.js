@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   Image,
   AsyncStorage,
+  Platform,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
@@ -19,10 +20,14 @@ import colorConfig from '../config/colorConfig';
 import appConfig from '../config/appConfig';
 import {dataInbox} from '../actions/inbox.action';
 import {Actions} from 'react-native-router-flux';
+import DetailInbox from '../components/inbox/DetailInbox';
 
 class Inbox extends Component {
   constructor(props) {
     super(props);
+
+    this.detailInbox = React.createRef();
+
     this.state = {
       refreshing: false,
       dataInbox: [],
@@ -44,9 +49,9 @@ class Inbox extends Component {
   };
 
   inboxDetail = async item => {
-    item.read = 'true';
-    await AsyncStorage.setItem('@inbox' + item.id, 'true');
-    await this.props.dispatch(dataInbox());
+    // item.read = 'true';
+    // await AsyncStorage.setItem('@inbox' + item.id, 'true');
+    // await this.props.dispatch(dataInbox());
     Actions.inboxDetail({dataItem: item});
   };
 
@@ -56,8 +61,11 @@ class Inbox extends Component {
     this.setState({refreshing: false});
   };
 
+  openDetailMessage = () => {
+    this.detailInbox.current.openDetail();
+  };
+
   render() {
-    console.log('this.props.dataInbox', this.props.dataInbox);
     return (
       <View>
         <View
@@ -69,6 +77,7 @@ class Inbox extends Component {
               flexDirection: 'row',
               justifyContent: 'center',
               alignItems: 'center',
+              backgroundColor: colorConfig.store.defaultColor,
             }}>
             <Text style={styles.navbarTitle}>Inbox</Text>
           </View>
@@ -93,37 +102,40 @@ class Inbox extends Component {
           <View key={'key'}>
             <TouchableOpacity
               style={styles.item}
-              onPress={() => this.inboxDetail('item')}>
+              onPress={this.openDetailMessage}>
               <View style={styles.sejajarSpace}>
                 <View style={styles.imageDetail}>
-                  <Image
-                    style={{
-                      height: 40,
-                      width: 40,
-                      borderRadius: 40,
-                      borderColor: colorConfig.pageIndex.activeTintColor,
-                      borderWidth: 1,
-                    }}
-                    source={appConfig.appImageNull}
+                  <Icon
+                    size={35}
+                    style={{color: colorConfig.store.defaultColor}}
+                    name={Platform.OS === 'ios' ? 'ios-mail' : 'md-mail'}
                   />
                 </View>
                 <View style={styles.detail}>
                   <Text style={styles.storeName}>Title Inbox</Text>
                   <Text style={styles.paymentType}>Desc Inbox</Text>
                 </View>
-                <View style={styles.btnDetail}>
-                  {/*<Icon*/}
-                  {/*  size={20}*/}
-                  {/*  name={*/}
-                  {/*    Platform.OS === 'ios'*/}
-                  {/*      ? 'ios-arrow-dropright-circle'*/}
-                  {/*      : 'md-arrow-dropright-circle'*/}
-                  {/*  }*/}
-                  {/*  style={{*/}
-                  {/*    color: colorConfig.pageIndex.activeTintColor,*/}
-                  {/*  }}*/}
-                  {/*/>*/}
+                <View style={styles.btnDetail} />
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.item}
+              onPress={this.openDetailMessage}>
+              <View style={styles.sejajarSpace}>
+                <View style={styles.imageDetail}>
+                  <Icon
+                    size={35}
+                    style={{color: colorConfig.pageIndex.grayColor}}
+                    name={
+                      Platform.OS === 'ios' ? 'ios-mail-open' : 'md-mail-open'
+                    }
+                  />
                 </View>
+                <View style={styles.detail}>
+                  <Text style={styles.storeName}>Title Inbox</Text>
+                  <Text style={styles.paymentType}>Desc Inbox</Text>
+                </View>
+                <View style={styles.btnDetail} />
               </View>
             </TouchableOpacity>
           </View>
@@ -134,6 +146,8 @@ class Inbox extends Component {
           {/*  </View>*/}
           {/*)}*/}
         </ScrollView>
+
+        <DetailInbox ref={this.detailInbox} />
       </View>
     );
   }
@@ -144,9 +158,9 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   navbarTitle: {
-    fontSize: 15,
-    color: colorConfig.store.defaultColor,
-    padding: 10,
+    fontSize: 18,
+    padding: 13,
+    color: 'white',
     textAlign: 'center',
     fontWeight: 'bold',
   },
@@ -166,9 +180,8 @@ const styles = StyleSheet.create({
     marginLeft: 5,
     marginRight: 5,
     marginBottom: 2,
+    marginVertical: 8,
     padding: 10,
-    // borderColor: colorConfig.pageIndex.activeTintColor,
-    // borderWidth: 1,
     borderRadius: 5,
     backgroundColor: colorConfig.pageIndex.backgroundColor,
     shadowColor: '#00000021',
@@ -183,6 +196,7 @@ const styles = StyleSheet.create({
   sejajarSpace: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
   },
   detail: {
     paddingTop: 5,
@@ -191,9 +205,9 @@ const styles = StyleSheet.create({
     width: Dimensions.get('window').width - 120,
   },
   storeName: {
-    color: colorConfig.pageIndex.activeTintColor,
-    fontSize: 16,
-    fontWeight: 'bold',
+    color: colorConfig.store.title,
+    fontSize: 15,
+    fontFamily: 'Lato-Bold',
   },
   paymentTgl: {
     color: colorConfig.pageIndex.inactiveTintColor,
@@ -204,7 +218,8 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   paymentType: {
-    color: colorConfig.pageIndex.activeTintColor,
+    color: colorConfig.pageIndex.grayColor,
+    fontSize: 12,
   },
   itemType: {
     color: colorConfig.pageIndex.inactiveTintColor,

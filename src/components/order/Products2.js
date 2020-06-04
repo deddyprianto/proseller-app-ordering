@@ -32,7 +32,6 @@ import {
   getCategoryByOutlet,
   getProductByCategory,
   saveProductsOutlet,
-  searchProducts,
 } from '../../actions/order.action';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
@@ -56,7 +55,6 @@ class Products2 extends Component {
   constructor(props) {
     super(props);
 
-    this.timeoutTyping = 0;
     this.RBSheet = null;
     this.productsLength = 0;
     this.products = [];
@@ -475,7 +473,8 @@ class Products2 extends Component {
           categories: response.data,
         });
         const firstCategoryID = response.data[0].id;
-        await this.getProductsByCategory(firstCategoryID, 0, 10, refresh);
+        // const firstDatLength = response.data[0].dataLength;
+        await this.getProductsByCategory(firstCategoryID, 0, 100, refresh);
 
         this.setState({refresh: false});
         // turn back to first category
@@ -488,9 +487,14 @@ class Products2 extends Component {
         if (response.data.length > 1) {
           for (let i = 1; i < response.data.length; i++) {
             let categoryId = response.data[i].id;
-            await this.getProductsByCategory(categoryId, 0, 10, refresh);
+            await this.getProductsByCategory(categoryId, 0, 100, refresh);
           }
         }
+        let categories = JSON.stringify(response.data);
+        categories = JSON.parse(categories);
+        categories.finished = true;
+
+        await this.setState({categories});
       }
     } catch (e) {
       Alert.alert('Opss..', 'Something went wrong, please try again.');
@@ -746,17 +750,50 @@ class Products2 extends Component {
     }
   };
 
-  searchItem = async () => {
-    this.setState({loadingSearch: true, productsSearch: undefined});
-    const outletId = this.state.item.storeId;
-    const {categories, searchQuery} = this.state;
-    let productsSearch = undefined;
-
-    if (searchQuery != '' && searchQuery != undefined && searchQuery != null) {
-      productsSearch = await this.props.dispatch(
-        searchProducts(outletId, categories, searchQuery),
-      );
+  isItemsFinishedToLoad = value => {
+    const {categories} = this.state;
+    if (value != '' && value != undefined && value != null) {
+      this.setState({loadingSearch: true});
+      // if products not finished loaded, then wait 5sec to search
+      if (categories.finished != true) {
+        setTimeout(() => {
+          this.searchItem(value);
+        }, 5000);
+      } else {
+        this.searchItem(value);
+      }
+    } else {
+      this.setState({
+        productsSearch: undefined,
+      });
     }
+  };
+
+  searchItem = async value => {
+    this.setState({loadingSearch: true, productsSearch: undefined});
+    const {searchQuery, products} = this.state;
+    let productsSearch = undefined;
+    // Search on server
+    // productsSearch = await this.props.dispatch(
+    //   searchProducts(outletId, categories, searchQuery),
+    // );
+    //  Client search
+    for (let i = 0; i < products.length; i++) {
+      try {
+        for (let j = 0; j < products[i].items.length; j++) {
+          if (
+            products[i].items[j].product.name
+              .toLowerCase()
+              .includes(value.toLowerCase())
+          ) {
+            productsSearch == undefined ? (productsSearch = []) : null;
+            productsSearch.push(products[i].items[j]);
+          }
+        }
+      } catch (e) {}
+    }
+
+    if (productsSearch == undefined) productsSearch = [];
 
     await this.setState({productsSearch, loadingSearch: false});
   };
@@ -1255,16 +1292,6 @@ class Products2 extends Component {
       this.state.item.orderingStatus == 'AVAILABLE'
     ) {
       return true;
-      // // check open / close
-      // if (this.state.item.storeStatus == true) {
-      //   // check ordering status product
-      //   if (
-      //     item.product.orderingStatus == undefined ||
-      //     item.product.orderingStatus == 'AVAILABLE'
-      //   ) {
-      //     return true;
-      //   }
-      // }
     }
     return false;
   };
@@ -1365,8 +1392,8 @@ class Products2 extends Component {
           }
           keyExtractor={(product, index) => index.toString()}
           ListFooterComponent={() => this.renderFooter(item)}
-          onEndReachedThreshold={0.01}
-          onEndReached={() => this.handleLoadMoreItems(item)}
+          // onEndReachedThreshold={0.01}
+          // onEndReached={() => this.handleLoadMoreItems(item)}
         />
       </View>
     );
@@ -1401,14 +1428,9 @@ class Products2 extends Component {
 
   updateCategory = async (item, itemIndex) => {
     try {
-      // await this.setState({loadProducts: false});
       this.setState({selectedCategory: itemIndex});
       this.setState({idx: itemIndex});
-      // this.products = [];
-      // this.products.push(this.state.products[itemIndex]);
-      // await setTimeout(async () => {
-      //   await this.setState({loadProducts: true});
-      // }, 500);
+
       this.flatListRef.scrollToItem({
         animated: true,
         item: this.state.products[itemIndex],
@@ -1924,16 +1946,13 @@ class Products2 extends Component {
     await this.setState({products: undefined, refresh: true, item});
     await this.refreshOutlet();
     await this.firstMethodToRun(true);
+    await this.setState({refresh: false});
     this.prompOutletIsClosed();
   };
 
   renderFooter = item => {
     try {
-      const {selectedCategory} = this.state;
-      const {categories} = this.state;
-
-      const viewableID = categories[selectedCategory].id;
-      if (item.items.length < item.dataLength) {
+      if (item.items == undefined) {
         return (
           <ActivityIndicator
             size={30}
@@ -2109,14 +2128,7 @@ class Products2 extends Component {
                     value={this.state.searchQuery}
                     onChangeText={value => {
                       this.setState({searchQuery: value});
-                      if (this.timeoutTyping) clearTimeout(this.timeoutTyping);
-                      this.timeoutTyping = setTimeout(() => {
-                        this.searchItem();
-                      }, 1800);
-                    }}
-                    keyboardType="web-search"
-                    onSubmitEditing={() => {
-                      this.searchItem();
+                      this.isItemsFinishedToLoad(value);
                     }}
                     style={{
                       backgroundColor: 'white',

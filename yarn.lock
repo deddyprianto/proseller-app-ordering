@@ -8590,6 +8590,11 @@ realpath-native@^1.1.0:
   dependencies:
     util.promisify "^1.0.0"
 
+reanimated-bottom-sheet@^1.0.0-alpha.20:
+  version "1.0.0-alpha.20"
+  resolved "https://registry.yarnpkg.com/reanimated-bottom-sheet/-/reanimated-bottom-sheet-1.0.0-alpha.20.tgz#fc586b594a8e8c3e2a49821cfaaccd8c03f80660"
+  integrity sha512-bcXVkmJLL6SOoIPWU2dIJnT7+78a5tDi9eaE6ESsEewZ10lpfJhjfCCFrngPZKPhatQ6mjCJSYEAL+fwbXCiJw==
+
 recursive-fs@^1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/recursive-fs/-/recursive-fs-1.1.2.tgz#1d752e2f1a65d25fb6964109a9dbf83a335f90f0"

@@ -350,7 +350,7 @@ class Basket extends Component {
   };
 
   checkActivateButtonClearRestaurant = dataBasket => {
-    const {orderType} = this.props;
+    const {orderType, outletSingle} = this.props;
 
     if (dataBasket.status == 'PENDING') {
       return false;
@@ -359,8 +359,18 @@ class Basket extends Component {
     }
   };
 
-  checkActivateButton = dataBasket => {
+  checkActivateButton = (dataBasket, button) => {
     const {orderType} = this.props;
+    let {outletSingle} = this.props;
+
+    if (outletSingle == undefined || outletSingle == null) {
+      outletSingle = {};
+    }
+
+    if (outletSingle.orderingStatus == 'UNAVAILABLE' && button != 'cancel') {
+      return false;
+    }
+
     if (
       dataBasket.outlet.outletType == 'QUICKSERVICE' ||
       orderType == 'TAKEAWAY' ||
@@ -422,12 +432,14 @@ class Basket extends Component {
         </Text>
         <View style={{flexDirection: 'row', justifyContent: 'center'}}>
           <TouchableOpacity
-            disabled={this.checkActivateButton(dataBasket) ? false : true}
+            disabled={
+              this.checkActivateButton(dataBasket, 'cancel') ? false : true
+            }
             onPress={this.alertRemoveBasket}
             style={[
               styles.btnCancelBasketModal,
               {
-                backgroundColor: this.checkActivateButton(dataBasket)
+                backgroundColor: this.checkActivateButton(dataBasket, 'cancel')
                   ? colorConfig.store.colorError
                   : colorConfig.store.disableButtonError,
               },
@@ -641,7 +653,10 @@ class Basket extends Component {
   };
 
   renderButtonScanQRCode = () => {
-    const {intlData} = this.props;
+    let {intlData, outletSingle} = this.props;
+    if (outletSingle == undefined || outletSingle == null) {
+      outletSingle = {};
+    }
     return (
       <View
         style={{
@@ -688,9 +703,13 @@ class Basket extends Component {
           </TouchableOpacity>
           <TouchableOpacity
             onPress={this.goToScanTable}
-            disabled={!this.isOpen() ? true : false}
+            disabled={
+              !this.isOpen() || outletSingle.orderingStatus == 'UNAVAILABLE'
+                ? true
+                : false
+            }
             style={
-              !this.isOpen()
+              !this.isOpen() || outletSingle.orderingStatus == 'UNAVAILABLE'
                 ? styles.btnAddBasketModalDisabled
                 : styles.btnAddBasketModal
             }>
@@ -1265,6 +1284,7 @@ class Basket extends Component {
           return dataBasket.queueNo;
         } else {
           let table = '';
+
           if (dataBasket.tableNo == undefined) {
             table = tableType.tableNo;
           } else {
@@ -1377,12 +1397,7 @@ class Basket extends Component {
             : true,
       };
 
-      // const screenStack = Actions.prevState.routes[0].routes.length;
-      // if (screenStack == 3) {
-      //   Actions.replace('products', {item: data});
-      // } else {
-      Actions.push('products', {item: data});
-      // }
+      Actions.push('productsMode2', {item: data});
     } catch (e) {
       Actions.pop();
     }
@@ -1445,8 +1460,30 @@ class Basket extends Component {
     else return false;
   };
 
+  getOfflineMessage = outletSingle => {
+    try {
+      if (
+        outletSingle.offlineMessage == undefined ||
+        outletSingle.offlineMessage == '' ||
+        outletSingle.offlineMessage == '-'
+      ) {
+        return 'Sorry, Ordering is not available now.';
+      } else {
+        return outletSingle.offlineMessage;
+      }
+    } catch (e) {
+      return 'Sorry, Ordering is not available now.';
+    }
+  };
+
   render() {
     const {intlData, dataBasket, orderType, tableType} = this.props;
+
+    let {outletSingle} = this.props;
+    if (outletSingle == undefined || outletSingle == null) {
+      outletSingle = {};
+    }
+
     // give message to user if order has been confirmed
     try {
       if (dataBasket != undefined) {
@@ -1545,6 +1582,11 @@ class Basket extends Component {
                 {!this.isOpen() ? (
                   <Text style={styles.titleClosed}>Outlet is Closed</Text>
                 ) : null}
+                {outletSingle.orderingStatus == 'UNAVAILABLE' ? (
+                  <Text style={styles.titleClosed}>
+                    {this.getOfflineMessage(outletSingle)}
+                  </Text>
+                ) : null}
                 <View
                   style={{
                     flexDirection: 'row',
@@ -1553,7 +1595,9 @@ class Basket extends Component {
                   <Text style={styles.subTitle}>
                     {intlData.messages.detailOrder}
                   </Text>
-                  {dataBasket.status == 'PENDING' ? (
+                  {dataBasket.status == 'PENDING' &&
+                  (outletSingle.orderingStatus == 'AVAILABLE' ||
+                    outletSingle.orderingStatus == undefined) ? (
                     <TouchableOpacity onPress={this.goToProducts}>
                       <Text style={styles.subTitleAddItems}>+ Add Items</Text>
                     </TouchableOpacity>
@@ -1610,7 +1654,9 @@ class Basket extends Component {
                               {this.renderItemModifier(item)}
                               {/* loop item modifier */}
                               {this.props.dataBasket.status == 'PENDING' &&
-                              this.props.tableType == undefined ? (
+                              this.props.tableType == undefined &&
+                              (outletSingle.orderingStatus == 'AVAILABLE' ||
+                                outletSingle.orderingStatus == undefined) ? (
                                 <TouchableOpacity
                                   onPress={() => this.openEditModal(item)}
                                   style={{paddingVertical: 5}}>
@@ -1745,16 +1791,6 @@ class Basket extends Component {
             ? this.renderButtonScanQRCode()
             : this.renderSettleButtonQuickService()
           : null}
-        {/*{this.props.dataBasket != undefined &&*/}
-        {/*this.props.dataBasket.outlet != undefined*/}
-        {/*  ? this.props.dataBasket.status == 'PENDING' &&*/}
-        {/*    this.props.tableType == undefined*/}
-        {/*    ? this.renderButtonScanQRCode()*/}
-        {/*    : this.props.dataBasket.outlet.outletType == 'QUICKSERVICE' ||*/}
-        {/*      this.props.orderType == 'TAKEAWAY'*/}
-        {/*    ? this.renderSettleButtonQuickService()*/}
-        {/*    : this.renderSettleButtonRestaurant()*/}
-        {/*  : null}*/}
       </SafeAreaView>
     );
   }
