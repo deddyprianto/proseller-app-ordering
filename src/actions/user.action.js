@@ -61,6 +61,8 @@ export const getUserProfile = () => {
         token,
       );
 
+      console.log('profile gettt', response);
+
       // encrypt user data before save to asyncstorage
       let dataUser = CryptoJS.AES.encrypt(
         JSON.stringify(response.responseBody.Data[0]),

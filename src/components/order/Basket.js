@@ -35,6 +35,7 @@ import * as _ from 'lodash';
 import {getOutletById} from '../../actions/stores.action';
 import * as geolib from 'geolib';
 import appConfig from '../../config/appConfig';
+import {refreshToken} from '../../actions/auth.actions';
 
 class Basket extends Component {
   constructor(props) {
@@ -122,6 +123,8 @@ class Basket extends Component {
 
   componentDidMount = async () => {
     try {
+      // refresh token
+      await this.props.dispatch(refreshToken());
       // get data basket
       await this.getBasket();
       // get previous data products from this outlet, for modifier detail purpose
@@ -618,7 +621,7 @@ class Basket extends Component {
       const pembayaran = {
         payment: this.props.dataBasket.totalNettAmount,
         totalGrossAmount: this.props.dataBasket.totalGrossAmount,
-        // storeName: this.props.dataBasket.outlet.name,
+        storeName: this.props.dataBasket.outlet.name,
         dataPay: dataPay,
         storeId: this.props.dataBasket.outlet.id,
         // referenceNo: 'scan.referenceNo',

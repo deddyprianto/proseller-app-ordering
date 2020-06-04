@@ -3,7 +3,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import {createAppContainer} from 'react-navigation';
 import {createMaterialBottomTabNavigator} from 'react-navigation-material-bottom-tabs';
 import {Container} from 'native-base';
-import {Dimensions} from 'react-native';
+import {Dimensions, Text} from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
 import {Platform} from 'react-native';
@@ -223,17 +223,16 @@ class PageIndex extends Component {
         {/*      borderColor: colorConfig.pageIndex.backgroundColor,*/}
         {/*      borderWidth: 2,*/}
         {/*    }}>*/}
-        {/*    <Text*/}
-        {/*      style={{*/}
-        {/*        color: colorConfig.pageIndex.backgroundColor,*/}
-        {/*        fontSize: 10,*/}
-        {/*        width: '100%',*/}
-        {/*        textAlign: 'center',*/}
-        {/*        fontWeight: 'bold',*/}
-        {/*      }}>*/}
-        {/*      /!*{this.props.dataInboxNoRead}*!/*/}
-        {/*      5*/}
-        {/*    </Text>*/}
+        <Text
+          style={{
+            color: colorConfig.pageIndex.backgroundColor,
+            fontSize: 10,
+            width: '100%',
+            textAlign: 'center',
+            fontWeight: 'bold',
+          }}>
+          5
+        </Text>
         {/*  </View>*/}
         {/*) : null}*/}
       </Container>

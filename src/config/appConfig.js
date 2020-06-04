@@ -1,6 +1,6 @@
 const appConfig = {
   // info company
-  appName: 'Qiji',
+  appName: 'QIJI',
   appMataUang: 'SGD',
   appVersion: 'Version 1.3.5 (Qiji)',
   // image company

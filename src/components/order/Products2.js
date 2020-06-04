@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import {
   BackHandler,
   Dimensions,
-  Image,
   Platform,
   StyleSheet,
   Text,
@@ -113,8 +112,6 @@ class Products2 extends Component {
   };
 
   updateCategoryPosition = index => {
-    // this.setState({selectedCategory: viewableItems[0].index});
-    // this.setState({idx: viewableItems[0].index});
     this.setState({selectedCategory: index});
     this.setState({idx: index});
     this.categoryMenuRef.scrollToIndex({animation: true, index: index});
@@ -771,14 +768,11 @@ class Products2 extends Component {
 
   searchItem = async value => {
     this.setState({loadingSearch: true, productsSearch: undefined});
-    const {searchQuery, products} = this.state;
+    const {products} = this.state;
     let productsSearch = undefined;
-    // Search on server
-    // productsSearch = await this.props.dispatch(
-    //   searchProducts(outletId, categories, searchQuery),
-    // );
     //  Client search
     for (let i = 0; i < products.length; i++) {
+      let items = [];
       try {
         for (let j = 0; j < products[i].items.length; j++) {
           if (
@@ -786,11 +780,18 @@ class Products2 extends Component {
               .toLowerCase()
               .includes(value.toLowerCase())
           ) {
-            productsSearch == undefined ? (productsSearch = []) : null;
-            productsSearch.push(products[i].items[j]);
+            items.push(products[i].items[j]);
           }
         }
       } catch (e) {}
+
+      if (items.length != 0) {
+        productsSearch == undefined ? (productsSearch = []) : null;
+        let data = JSON.stringify(products[i]);
+        data = JSON.parse(data);
+        data.items = items;
+        productsSearch.push(data);
+      }
     }
 
     if (productsSearch == undefined) productsSearch = [];
@@ -2010,16 +2011,10 @@ class Products2 extends Component {
     const {productsSearch, searchQuery, loadingSearch} = this.state;
     if (!isEmptyArray(productsSearch)) {
       return (
-        <View style={[styles.card, {paddingBottom: 120, height: '100%'}]}>
-          <Text style={styles.titleCategory}>Result for : {searchQuery}</Text>
+        <View style={[styles.card, {height: '100%'}]}>
           <FlatList
             data={productsSearch}
-            getItemLayout={(data, index) => {
-              return {length: 95, offset: 95 * index, index};
-            }}
-            renderItem={({item}) =>
-              item.product != null ? this.templateItem(item) : null
-            }
+            renderItem={({item}) => this.renderCategoryWithProducts(item)}
             keyExtractor={(product, index) => index.toString()}
           />
         </View>
@@ -2070,11 +2065,19 @@ class Products2 extends Component {
           {visibleMenu ? (
             <View
               style={{
-                backgroundColor: '#f2f2f2',
+                backgroundColor: 'white',
                 // position: 'absolute',
                 top: StatusBarHeight,
                 zIndex: 99,
                 width: '100%',
+                shadowColor: '#00000021',
+                shadowOffset: {
+                  width: 0,
+                  height: 9,
+                },
+                shadowOpacity: 0.9,
+                shadowRadius: 7.49,
+                elevation: 16,
               }}>
               {!dialogSearch ? (
                 <View>
@@ -2131,7 +2134,7 @@ class Products2 extends Component {
                       this.isItemsFinishedToLoad(value);
                     }}
                     style={{
-                      backgroundColor: 'white',
+                      backgroundColor: '#f2f2f2',
                       borderRadius: 10,
                       padding: 10,
                       width: '80%',
