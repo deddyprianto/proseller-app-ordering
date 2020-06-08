@@ -25,8 +25,6 @@ export const api = async (url, method, body = null, headers = {}) => {
 
     const fetchPromise = fetch(endPoint, fetchParams);
 
-    console.log(endPoint, 'inbox')
-
     const timeOutPromise = new Promise((resolve, reject) => {
       setTimeout(() => {
         reject('Request Timeout');
@@ -86,17 +84,17 @@ export const fetchApi = async (
       return result;
     }
 
-    // let errorBody;
-    // const errorText = await response.text();
-    //
-    // try {
-    //   errorBody = JSON.parse(errorText);
-    // } catch (e) {
-    //   errorBody = errorText;
-    // }
-    // result.responseBody = errorBody;
-    //
-    // throw result;
+    let errorBody;
+    const errorText = await response.text();
+
+    try {
+      errorBody = JSON.parse(errorText);
+    } catch (e) {
+      errorBody = errorText;
+    }
+    result.responseBody = errorBody;
+
+    throw result;
   } catch (error) {
     return error;
   }

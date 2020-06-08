@@ -19,7 +19,7 @@ import * as _ from 'lodash';
 
 import colorConfig from '../config/colorConfig';
 import appConfig from '../config/appConfig';
-import {dataInbox} from '../actions/inbox.action';
+import {dataInbox, readMessage} from '../actions/inbox.action';
 import DetailInbox from '../components/inbox/DetailInbox';
 import {isEmptyArray} from '../helper/CheckEmpty';
 
@@ -35,11 +35,21 @@ class Inbox extends Component {
   }
 
   componentDidMount = () => {
-    const {dataInbox} = this.props;
-    if (dataInbox == undefined) {
-      this.getDataInbox(0, 10);
-    }
+    try {
+      this.componentInboxFocused = this.props.navigation.addListener(
+        'willFocus',
+        () => {
+          this.getDataInbox(0, 10);
+        },
+      );
+    } catch (e) {}
   };
+
+  componentWillUnmount(): void {
+    try {
+      this.componentInboxFocused.remove();
+    } catch (e) {}
+  }
 
   getDataInbox = async (skip, take) => {
     try {
@@ -55,54 +65,49 @@ class Inbox extends Component {
     await this.setState({refreshing: false});
   };
 
-  openDetailMessage = inbox => {
+  openDetailMessage = (inbox, index) => {
     this.detailInbox.current.openDetail(inbox);
+    setTimeout(() => {
+      this.readMessage(inbox, index);
+    }, 50);
   };
 
-  templateInbox = item => {
+  isRead = item => {
+    if (item.isRead == true) {
+      return (
+        <Icon
+          size={35}
+          style={{color: colorConfig.pageIndex.grayColor}}
+          name={Platform.OS === 'ios' ? 'ios-mail-open' : 'md-mail-open'}
+        />
+      );
+    } else {
+      return (
+        <Icon
+          size={35}
+          style={{color: colorConfig.store.defaultColor}}
+          name={Platform.OS === 'ios' ? 'ios-mail' : 'md-mail'}
+        />
+      );
+    }
+  };
+
+  templateInbox = (item, index) => {
     return (
-      <View key={'key'}>
-        <TouchableOpacity
-          style={styles.item}
-          onPress={() => this.openDetailMessage(item)}>
-          <View style={styles.sejajarSpace}>
-            <View style={styles.imageDetail}>
-              <Icon
-                size={35}
-                style={{color: colorConfig.store.defaultColor}}
-                name={Platform.OS === 'ios' ? 'ios-mail' : 'md-mail'}
-              />
-            </View>
-            <View style={styles.detail}>
-              <Text style={styles.storeName}>{item.title}</Text>
-              <Text style={styles.paymentType}>
-                {item.message.substr(0, 25)}...
-              </Text>
-            </View>
-            <View style={styles.btnDetail} />
+      <TouchableOpacity
+        style={styles.item}
+        onPress={() => this.openDetailMessage(item, index)}>
+        <View style={styles.sejajarSpace}>
+          <View style={styles.imageDetail}>{this.isRead(item)}</View>
+          <View style={styles.detail}>
+            <Text style={styles.storeName}>{item.title}</Text>
+            <Text style={styles.paymentType}>
+              {item.message.substr(0, 25)}...
+            </Text>
           </View>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.item}
-          onPress={() => this.openDetailMessage(item)}>
-          <View style={styles.sejajarSpace}>
-            <View style={styles.imageDetail}>
-              <Icon
-                size={35}
-                style={{color: colorConfig.pageIndex.grayColor}}
-                name={Platform.OS === 'ios' ? 'ios-mail-open' : 'md-mail-open'}
-              />
-            </View>
-            <View style={styles.detail}>
-              <Text style={styles.storeName}>{item.title}</Text>
-              <Text style={styles.paymentType}>
-                {item.message.substr(0, 25)}...
-              </Text>
-            </View>
-            <View style={styles.btnDetail} />
-          </View>
-        </TouchableOpacity>
-      </View>
+          <View style={styles.btnDetail} />
+        </View>
+      </TouchableOpacity>
     );
   };
 
@@ -119,21 +124,29 @@ class Inbox extends Component {
     }
   };
 
+  readMessage = async (item, index) => {
+    try {
+      await this.props.dispatch(readMessage(item, index));
+    } catch (e) {}
+  };
+
   renderInbox = () => {
     const {dataInbox} = this.props;
     return (
-      <FlatList
-        refreshControl={
-          <RefreshControl
-            refreshing={this.state.refreshing}
-            onRefresh={this._onRefresh}
-          />
-        }
-        data={dataInbox.Data}
-        renderItem={({item}) => this.templateInbox(item)}
-        onEndReachedThreshold={0.01}
-        onEndReached={this.handleLoadMoreItems}
-      />
+      <View style={{marginBottom: '8%'}}>
+        <FlatList
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.refreshing}
+              onRefresh={this._onRefresh}
+            />
+          }
+          data={dataInbox.Data}
+          renderItem={({item, index}) => this.templateInbox(item, index)}
+          onEndReachedThreshold={0.01}
+          onEndReached={this.handleLoadMoreItems}
+        />
+      </View>
     );
   };
 
@@ -202,12 +215,6 @@ class Inbox extends Component {
             }}>
             <Text style={styles.navbarTitle}>Inbox</Text>
           </View>
-          <View
-            style={{
-              borderBottomColor: colorConfig.store.defaultColor,
-              borderBottomWidth: 2,
-            }}
-          />
         </View>
 
         {dataInbox != undefined

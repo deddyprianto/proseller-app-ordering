@@ -22,9 +22,8 @@ import {
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
-import {Form, TextValidator} from 'react-native-validator-form';
+import {Form} from 'react-native-validator-form';
 import colorConfig from '../config/colorConfig';
-import awsConfig from '../config/awsConfig';
 import {updateUser} from '../actions/user.action';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
@@ -70,14 +69,18 @@ class AccountEditProfil extends Component {
   };
 
   componentDidMount() {
-    this.backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      this.handleBackPress,
-    );
+    try {
+      this.backHandler = BackHandler.addEventListener(
+        'hardwareBackPress',
+        this.handleBackPress,
+      );
+    } catch (e) {}
   }
 
   componentWillUnmount() {
-    this.backHandler.remove();
+    try {
+      this.backHandler.remove();
+    } catch (e) {}
   }
 
   handleBackPress = () => {

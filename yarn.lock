@@ -8324,6 +8324,11 @@ react-native-sms-retriever@^1.1.1:
   resolved "https://registry.yarnpkg.com/react-native-sms-retriever/-/react-native-sms-retriever-1.1.1.tgz#e87225836b394560c63db4c106552a0b9247d9b3"
   integrity sha512-WRwiITfssx59+TB1iEMmjB7w4OTkatR34js5+4a4pP2jMXJ4aLdXK0hOtHxl8ciS8aIejdd49Sz8AXonlvtdRw==
 
+react-native-snackbar@^2.2.2:
+  version "2.2.2"
+  resolved "https://registry.yarnpkg.com/react-native-snackbar/-/react-native-snackbar-2.2.2.tgz#c9edc7f23408311c7d70ceefbfc95644ec45cfaa"
+  integrity sha512-ZugmZIUU6JK5Yiib4kVTHdXypcmFBH9PskI+C3UUM4u5wg+zYKDCHYF7IWG1P58CzO8OTQRbBqcZLjX2B2xmzA==
+
 react-native-status-bar-height@^2.2.0:
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/react-native-status-bar-height/-/react-native-status-bar-height-2.4.0.tgz#de8cee4bb733a196167210d2d0bc1fa10acba3e3"

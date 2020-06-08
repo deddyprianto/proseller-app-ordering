@@ -25,6 +25,7 @@ import {compose} from 'redux';
 import {connect} from 'react-redux';
 import Loader from '../loader';
 import {Menu, TouchableRipple} from 'react-native-paper';
+import Snackbar from 'react-native-snackbar';
 
 class Notifications extends Component {
   constructor(props) {
@@ -32,30 +33,24 @@ class Notifications extends Component {
     var data;
     try {
       data = {
-        name: this.props.dataDiri.name,
-        birthDate: this.props.dataDiri.birthDate,
-        address: this.props.dataDiri.address,
-        gender: this.props.dataDiri.gender,
+        username: this.props.dataDiri.username,
+        emailNotification: this.props.dataDiri.emailNotification,
+        smsNotification: this.props.dataDiri.smsNotification,
       };
     } catch (e) {
       data = {
-        name: '',
-        birthDate: '',
-        address: '',
-        gender: '',
+        emailNotification: true,
+        smsNotification: false,
       };
     }
 
     this.state = {
       screenWidth: Dimensions.get('window').width,
-      name: data.name,
-      gender: data.gender,
-      birthDate: data.birthDate,
-      address: data.address,
-      isDatePickerVisible: false,
-      showAlert: false,
-      loading: false,
-      field: '',
+      username: data.username,
+      emailNotification:
+        data.emailNotification == undefined ? true : data.emailNotification,
+      smsNotification:
+        data.smsNotification == undefined ? false : data.smsNotification,
     };
   }
 
@@ -64,14 +59,18 @@ class Notifications extends Component {
   };
 
   componentDidMount() {
-    this.backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      this.handleBackPress,
-    );
+    try {
+      this.backHandler = BackHandler.addEventListener(
+        'hardwareBackPress',
+        this.handleBackPress,
+      );
+    } catch (e) {}
   }
 
   componentWillUnmount() {
-    this.backHandler.remove();
+    try {
+      this.backHandler.remove();
+    } catch (e) {}
   }
 
   handleBackPress = () => {
@@ -79,117 +78,55 @@ class Notifications extends Component {
     return true;
   };
 
-  submitEdit = async () => {
+  changeSetting = async (field, value) => {
     try {
       this.setState({loading: true});
-      let dataProfile = {
-        username: this.props.dataDiri.username,
-        // phoneNumber: this.props.dataDiri.phoneNumber,
-        newName: this.state.name,
-        birthDate: this.state.birthDate,
-        address: this.state.address,
-        gender: this.state.gender,
-      };
-      const response = await this.props.dispatch(updateUser(dataProfile));
+      let message = '';
+      let dataProfile = {};
+      dataProfile.username = this.state.username;
+      if (field == 'emailNotification') {
+        dataProfile.emailNotification = value;
+        value
+          ? (message = 'Email Notification Enabled')
+          : (message = 'Email Notification Disabled');
+      } else {
+        dataProfile.smsNotification = value;
+        value
+          ? (message = 'SMS Notification Enabled')
+          : (message = 'SMS Notification Disabled');
+      }
 
+      const response = await this.props.dispatch(updateUser(dataProfile));
       if (response) {
-        this.setState({
-          showAlert: true,
-          pesanAlert: 'Your profile updated',
-          titleAlert: 'Update Success!',
+        Snackbar.show({
+          text: message,
+          duration: Snackbar.LENGTH_SHORT,
         });
       } else {
-        this.setState({
-          showAlert: true,
-          pesanAlert: 'Something went wrong, please try again!',
-          titleAlert: "We're Sorry!",
+        Snackbar.show({
+          text: 'Oppss.. Please try again',
+          duration: Snackbar.LENGTH_SHORT,
         });
       }
       this.setState({loading: false});
     } catch (e) {
-      this.setState({
-        showAlert: true,
-        pesanAlert: 'Something went wrong, please try again!',
-        titleAlert: "We're Sorry!",
-      });
       this.setState({loading: false});
     }
   };
 
-  showDatePicker = () => {
-    this.setState({isDatePickerVisible: true});
+  changeEmailSetting = value => {
+    this.setState({emailNotification: !value});
+    this.changeSetting('emailNotification', !value);
   };
 
-  hideDatePicker = () => {
-    this.setState({isDatePickerVisible: false});
-  };
-
-  hideAlert = () => {
-    this.setState({
-      showAlert: false,
-    });
-  };
-
-  toChangeCredentials = () => {
-    let fieldToChange = {
-      field: this.state.field,
-      dataDiri: this.props.dataDiri,
-    };
-    Actions.changeCredentials(fieldToChange);
-  };
-
-  btnChangeCredentials = field => {
-    // this.setState(
-    //   {
-    //     field,
-    //   },
-    //   () => {
-    //     this.toChangeCredentials();
-    //   },
-    // );
-  };
-
-  handleConfirm = date => {
-    let newDate = new Date(date);
-    let dateBirth = newDate.getDate();
-    let monthBirth = newDate.getMonth() + 1;
-    let birthYear = newDate.getFullYear();
-
-    this.setState({birthDate: `${birthYear}-${monthBirth}-${dateBirth}/`});
-    this.hideDatePicker();
-  };
-
-  formatDate = current_datetime => {
-    if (current_datetime != undefined) {
-      current_datetime = new Date(current_datetime);
-      const months = [
-        'JAN',
-        'FEB',
-        'MAR',
-        'APR',
-        'MAY',
-        'JUN',
-        'JUL',
-        'AUG',
-        'SEP',
-        'OCT',
-        'NOV',
-        'DEC',
-      ];
-      return (
-        current_datetime.getFullYear() +
-        '-' +
-        months[current_datetime.getMonth()] +
-        '-' +
-        current_datetime.getDate()
-      );
-    } else {
-      return '';
-    }
+  changeSMSSetting = value => {
+    this.setState({smsNotification: !value});
+    this.changeSetting('smsNotification', !value);
   };
 
   render(marginRight: number) {
     const {intlData} = this.props;
+    const {smsNotification, emailNotification} = this.state;
     return (
       <SafeAreaView style={styles.container}>
         {this.state.loading && <Loader />}
@@ -208,7 +145,6 @@ class Notifications extends Component {
             />
             <Text style={styles.btnBackText}> Notification Setting </Text>
           </TouchableOpacity>
-          {/*<View style={styles.line} />*/}
         </View>
         <ScrollView>
           <View
@@ -220,21 +156,23 @@ class Notifications extends Component {
             }}>
             <Menu.Item
               icon="email"
-              onPress={() => {}}
+              onPress={() => {
+                this.changeEmailSetting(emailNotification);
+              }}
               title="Email Notification"
             />
             <TouchableRipple
               style={{marginRight: 15}}
-              onPress={() => console.log('Pressed')}
+              onPress={() => this.changeEmailSetting(emailNotification)}
               rippleColor="rgba(0, 0, 0, .32)">
               <Switch
                 trackColor={{false: '#767577', true: '#81b0ff'}}
                 thumbColor={true ? colorConfig.store.defaultColor : 'white'}
                 ios_backgroundColor="white"
-                // onValueChange={() => {
-                //   this.toggleModifierIsYesNo(item, idx);
-                // }}
-                value={true}
+                onValueChange={() => {
+                  this.changeEmailSetting(emailNotification);
+                }}
+                value={emailNotification}
               />
             </TouchableRipple>
           </View>
@@ -248,21 +186,25 @@ class Notifications extends Component {
             }}>
             <Menu.Item
               icon="phone"
-              onPress={() => {}}
+              onPress={() => {
+                this.changeSMSSetting(smsNotification);
+              }}
               title="SMS Notification"
             />
             <TouchableRipple
               style={{marginRight: 15}}
-              onPress={() => console.log('Pressed')}
+              onPress={() => {
+                this.changeSMSSetting(smsNotification);
+              }}
               rippleColor="rgba(0, 0, 0, .32)">
               <Switch
                 trackColor={{false: '#767577', true: '#81b0ff'}}
                 thumbColor={true ? colorConfig.store.defaultColor : 'white'}
                 ios_backgroundColor="white"
-                // onValueChange={() => {
-                //   this.toggleModifierIsYesNo(item, idx);
-                // }}
-                value={true}
+                onValueChange={() => {
+                  this.changeSMSSetting(smsNotification);
+                }}
+                value={smsNotification}
               />
             </TouchableRipple>
           </View>
