@@ -40,6 +40,7 @@ import PaymentDetailItem from '../components/paymentDetailItem';
 import InboxDetail from '../components/inboxDetail';
 import PaymentAddPoint from '../components/paymentAddPoint';
 import RewardsStamps from '../components/rewardsStamps';
+import Notifications from '../components/notifications/Notifications';
 
 // order
 import Order from '../pages/order';
@@ -175,6 +176,8 @@ export default class Routes extends Component {
             <Scene key="detailCard" component={DetailCard} />
             <Scene key="paymentMethods" component={PaymentMethods} />
             <Scene key="paymentAddCard" component={PaymentAddCard} />
+
+            <Scene key="notifications" component={Notifications} />
           </Scene>
         </Scene>
       </Router>

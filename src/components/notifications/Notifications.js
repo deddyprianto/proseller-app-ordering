@@ -11,28 +11,22 @@ import {
   StyleSheet,
   Dimensions,
   TouchableOpacity,
-  TouchableWithoutFeedback,
   ScrollView,
-  Picker,
   BackHandler,
   Platform,
-  TextInput,
   SafeAreaView,
+  Switch,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
-import DateTimePickerModal from 'react-native-modal-datetime-picker';
-import {Form, TextValidator} from 'react-native-validator-form';
-import colorConfig from '../config/colorConfig';
-import awsConfig from '../config/awsConfig';
-import {updateUser} from '../actions/user.action';
+import colorConfig from '../../config/colorConfig';
+import {updateUser} from '../../actions/user.action';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
-import {reduxForm} from 'redux-form';
-import AwesomeAlert from 'react-native-awesome-alerts';
-import Loader from './loader';
+import Loader from '../loader';
+import {Menu, TouchableRipple} from 'react-native-paper';
 
-class AccountEditProfil extends Component {
+class Notifications extends Component {
   constructor(props) {
     super(props);
     var data;
@@ -194,7 +188,7 @@ class AccountEditProfil extends Component {
     }
   };
 
-  render() {
+  render(marginRight: number) {
     const {intlData} = this.props;
     return (
       <SafeAreaView style={styles.container}>
@@ -212,158 +206,67 @@ class AccountEditProfil extends Component {
               }
               style={styles.btnBackIcon}
             />
-            <Text style={styles.btnBackText}>
-              {' '}
-              {intlData.messages.editProfile}{' '}
-            </Text>
+            <Text style={styles.btnBackText}> Notification Setting </Text>
           </TouchableOpacity>
           {/*<View style={styles.line} />*/}
         </View>
         <ScrollView>
-          <View style={styles.card}>
-            <Form ref="form" onSubmit={this.submitEdit}>
-              <View style={styles.detail}>
-                <View style={styles.detailItem}>
-                  <Text style={[styles.desc, {marginLeft: 2}]}>
-                    {intlData.messages.name}
-                  </Text>
-                  <TextInput
-                    placeholder="Name"
-                    style={{paddingVertical: 10}}
-                    value={this.state.name}
-                    onChangeText={value => this.setState({name: value})}
-                  />
-                  <View style={{borderWidth: 0.5, borderColor: 'gray'}} />
-                </View>
-                <View style={styles.detailItem}>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                    }}>
-                    <Text style={styles.desc}>Email</Text>
-                    {/*<TouchableOpacity*/}
-                    {/*  style={[styles.btnChange]}*/}
-                    {/*  onPress={() => this.btnChangeCredentials('Email')}>*/}
-                    {/*  <Text style={[styles.textChange]}>*/}
-                    {/*    {intlData.messages.change}*/}
-                    {/*  </Text>*/}
-                    {/*</TouchableOpacity>*/}
-                  </View>
-                  <Text style={{paddingTop: 12}}>
-                    {this.props.dataDiri.email}
-                  </Text>
-                </View>
-                <View style={styles.detailItem}>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                    }}>
-                    <Text style={styles.desc}>
-                      {intlData.messages.phoneNumber}
-                    </Text>
-                    {/*<TouchableOpacity*/}
-                    {/*  onPress={() => this.btnChangeCredentials('Phone Number')}*/}
-                    {/*  style={[styles.btnChange]}>*/}
-                    {/*  <Text style={[styles.textChange]}>*/}
-                    {/*    {intlData.messages.change}*/}
-                    {/*  </Text>*/}
-                    {/*</TouchableOpacity>*/}
-                  </View>
-                  <Text style={{paddingTop: 12}}>
-                    {this.props.dataDiri.phoneNumber}
-                  </Text>
-                </View>
-                <View style={styles.detailItem}>
-                  <Text style={[styles.desc, {marginLeft: 0}]}>
-                    {intlData.messages.birthDate}
-                  </Text>
-                  <Text
-                    style={{
-                      paddingTop: 12,
-                      borderBottomColor: colorConfig.store.defaultColor,
-                      borderBottomWidth: 1,
-                    }}
-                    onPress={this.showDatePicker}>
-                    {this.state.birthDate == ''
-                      ? 'Enter Birth Date'
-                      : this.formatDate(this.state.birthDate)}
-                  </Text>
-                  <DateTimePickerModal
-                    isVisible={this.state.isDatePickerVisible}
-                    mode="date"
-                    onConfirm={this.handleConfirm}
-                    onCancel={this.hideDatePicker}
-                  />
-                </View>
-                <View style={styles.detailItem}>
-                  <Text style={[styles.desc, {marginLeft: 0}]}>
-                    {intlData.messages.gender}
-                  </Text>
-                  <Picker
-                    selectedValue={this.state.gender}
-                    onValueChange={(itemValue, itemIndex) =>
-                      this.setState({gender: itemValue})
-                    }>
-                    <Picker.Item label="Select one" value="" />
-                    <Picker.Item label={intlData.messages.male} value="male" />
-                    <Picker.Item
-                      label={intlData.messages.female}
-                      value="female"
-                    />
-                  </Picker>
-                </View>
-                <View style={styles.detailItem}>
-                  <Text style={[styles.desc, {marginLeft: 2}]}>
-                    {intlData.messages.address}
-                  </Text>
-                  <TextInput
-                    placeholder={intlData.messages.yourAddress}
-                    style={{paddingVertical: 10}}
-                    value={this.state.address}
-                    onChangeText={value => this.setState({address: value})}
-                  />
-                  <View style={{borderWidth: 0.5, borderColor: 'gray'}} />
-                </View>
-              </View>
-            </Form>
+          <View
+            style={{
+              width: '100%',
+              justifyContent: 'space-between',
+              flexDirection: 'row',
+              alignItems: 'center',
+            }}>
+            <Menu.Item
+              icon="email"
+              onPress={() => {}}
+              title="Email Notification"
+            />
+            <TouchableRipple
+              style={{marginRight: 15}}
+              onPress={() => console.log('Pressed')}
+              rippleColor="rgba(0, 0, 0, .32)">
+              <Switch
+                trackColor={{false: '#767577', true: '#81b0ff'}}
+                thumbColor={true ? colorConfig.store.defaultColor : 'white'}
+                ios_backgroundColor="white"
+                // onValueChange={() => {
+                //   this.toggleModifierIsYesNo(item, idx);
+                // }}
+                value={true}
+              />
+            </TouchableRipple>
+          </View>
+
+          <View
+            style={{
+              width: '100%',
+              justifyContent: 'space-between',
+              flexDirection: 'row',
+              alignItems: 'center',
+            }}>
+            <Menu.Item
+              icon="phone"
+              onPress={() => {}}
+              title="SMS Notification"
+            />
+            <TouchableRipple
+              style={{marginRight: 15}}
+              onPress={() => console.log('Pressed')}
+              rippleColor="rgba(0, 0, 0, .32)">
+              <Switch
+                trackColor={{false: '#767577', true: '#81b0ff'}}
+                thumbColor={true ? colorConfig.store.defaultColor : 'white'}
+                ios_backgroundColor="white"
+                // onValueChange={() => {
+                //   this.toggleModifierIsYesNo(item, idx);
+                // }}
+                value={true}
+              />
+            </TouchableRipple>
           </View>
         </ScrollView>
-        <TouchableWithoutFeedback onPress={this.submitEdit}>
-          <View style={styles.primaryButton}>
-            <Text style={styles.buttonText}>{intlData.messages.save}</Text>
-          </View>
-        </TouchableWithoutFeedback>
-        <AwesomeAlert
-          show={this.state.showAlert}
-          showProgress={false}
-          title={this.state.titleAlert}
-          message={this.state.pesanAlert}
-          closeOnTouchOutside={true}
-          closeOnHardwareBackPress={false}
-          showCancelButton={false}
-          showConfirmButton={true}
-          cancelText="Close"
-          confirmText={
-            this.state.titleAlert != 'Update Success!' ? 'Confirm' : 'Close'
-          }
-          confirmButtonColor={colorConfig.pageIndex.activeTintColor}
-          onCancelPressed={() => {
-            this.hideAlert();
-          }}
-          onConfirmPressed={() => {
-            if (this.state.titleAlert == 'Update Success!') {
-              this.hideAlert();
-              this.goBack();
-            }
-            if (this.state.titleAlert == "We're Sorry!") {
-              this.hideAlert();
-            }
-            // if (this.state.titleAlert == 'Confirmation code has been sent!') {
-            //   this.hideAlert();
-            //   this.toChangeCredentials();
-            // }
-          }}
-        />
       </SafeAreaView>
     );
   }
@@ -383,7 +286,7 @@ export default compose(
     mapStateToProps,
     mapDispatchToProps,
   ),
-)(AccountEditProfil);
+)(Notifications);
 
 const styles = StyleSheet.create({
   container: {
@@ -412,7 +315,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     flexDirection: 'row',
     alignItems: 'center',
-    width: 100,
+    // width: 100,
     height: 80,
   },
   btnBackText: {

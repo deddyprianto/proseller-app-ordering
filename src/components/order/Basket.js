@@ -184,10 +184,12 @@ class Basket extends Component {
       Alert.alert('Opss..', "Can't get data basket, please try again.");
     }
 
-    this.backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      this.handleBackPress,
-    );
+    try {
+      this.backHandler = BackHandler.addEventListener(
+        'hardwareBackPress',
+        this.handleBackPress,
+      );
+    } catch (e) {}
   };
 
   updateSelectedCategory = idx => {

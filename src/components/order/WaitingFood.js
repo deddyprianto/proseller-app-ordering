@@ -45,10 +45,12 @@ class WaitingFood extends Component {
       Alert.alert('Opss..', "Can't get data basket, please try again.");
     }
 
-    this.backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      this.handleBackPress,
-    );
+    try {
+      this.backHandler = BackHandler.addEventListener(
+        'hardwareBackPress',
+        this.handleBackPress,
+      );
+    } catch (e) {}
   };
 
   _onRefresh = async () => {
@@ -67,8 +69,10 @@ class WaitingFood extends Component {
   };
 
   componentWillUnmount() {
-    this.backHandler.remove();
-    clearInterval(this.interval);
+    try {
+      this.backHandler.remove();
+      clearInterval(this.interval);
+    } catch (e) {}
   }
 
   handleBackPress = () => {

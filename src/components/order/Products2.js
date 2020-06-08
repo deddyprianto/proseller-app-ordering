@@ -125,9 +125,6 @@ class Products2 extends Component {
 
     await this.firstMethodToRun(false);
 
-    // check if outlet is open
-    this.prompOutletIsClosed();
-
     // berfore get new products, delete old products first, so different outlet got different products
     // await this.props.dispatch(removeProducts());
 
@@ -472,6 +469,9 @@ class Products2 extends Component {
         const firstCategoryID = response.data[0].id;
         // const firstDatLength = response.data[0].dataLength;
         await this.getProductsByCategory(firstCategoryID, 0, 100, refresh);
+
+        // check if outlet is open
+        this.prompOutletIsClosed();
 
         this.setState({refresh: false});
         // turn back to first category
@@ -2247,7 +2247,7 @@ class Products2 extends Component {
           )}
         </>
         {/* button basket */}
-        {this.state.showBasketButton ? (
+        {this.state.showBasketButton && !dialogSearch ? (
           this.props.dataBasket != undefined &&
           this.props.dataBasket.outlet != undefined &&
           this.props.dataBasket.outlet.id != undefined &&

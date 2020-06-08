@@ -17,7 +17,7 @@ import {
   Picker,
   TouchableHighlight,
   Alert,
-  SafeAreaView
+  SafeAreaView,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
@@ -30,6 +30,7 @@ import awsConfig from '../config/awsConfig';
 import Header from '../components/atom/header';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {isEmptyObject} from '../helper/CheckEmpty';
+import OneSignal from 'react-native-onesignal';
 
 const imageWidth = Dimensions.get('window').width / 2;
 
@@ -114,6 +115,11 @@ const styles = StyleSheet.create({
 class SignInEmail extends Component {
   constructor(props) {
     super(props);
+
+    OneSignal.addEventListener('received', this.onReceived);
+    OneSignal.addEventListener('opened', this.onOpened);
+    OneSignal.addEventListener('ids', this.onIds);
+
     this.seconds = null;
     this.intlData = this.props.intlData;
     this.state = {
@@ -257,7 +263,7 @@ class SignInEmail extends Component {
         player_ids: this.props.deviceID.deviceID,
       };
       const response = await this.props.dispatch(loginUser(dataLogin));
-      console.log(response, 'response nya kawan');
+      console.log(response, 'response login');
       if (response.status == false) {
         this.setState({loading: false});
         Alert.alert('Opss..', response.message);

@@ -8,8 +8,9 @@ import {
   RefreshControl,
   TouchableOpacity,
   Image,
-  AsyncStorage,
   Platform,
+  FlatList,
+  SafeAreaView,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
@@ -19,8 +20,8 @@ import * as _ from 'lodash';
 import colorConfig from '../config/colorConfig';
 import appConfig from '../config/appConfig';
 import {dataInbox} from '../actions/inbox.action';
-import {Actions} from 'react-native-router-flux';
 import DetailInbox from '../components/inbox/DetailInbox';
+import {isEmptyArray} from '../helper/CheckEmpty';
 
 class Inbox extends Component {
   constructor(props) {
@@ -30,44 +31,164 @@ class Inbox extends Component {
 
     this.state = {
       refreshing: false,
-      dataInbox: [],
-      dataRead: [],
     };
   }
 
   componentDidMount = () => {
-    this.getDataInbox();
+    const {dataInbox} = this.props;
+    if (dataInbox == undefined) {
+      this.getDataInbox(0, 10);
+    }
   };
 
-  getDataInbox = async () => {
+  getDataInbox = async (skip, take) => {
     try {
-      let response = await this.props.dispatch(dataInbox());
-      return response.success;
+      await this.props.dispatch(dataInbox(skip, take));
     } catch (error) {
       console.log(error);
     }
   };
 
-  inboxDetail = async item => {
-    // item.read = 'true';
-    // await AsyncStorage.setItem('@inbox' + item.id, 'true');
-    // await this.props.dispatch(dataInbox());
-    Actions.inboxDetail({dataItem: item});
-  };
-
   _onRefresh = async () => {
-    this.setState({refreshing: true});
-    await this.getDataInbox();
-    this.setState({refreshing: false});
+    await this.setState({refreshing: true});
+    await this.getDataInbox(0, 10);
+    await this.setState({refreshing: false});
   };
 
-  openDetailMessage = () => {
-    this.detailInbox.current.openDetail();
+  openDetailMessage = inbox => {
+    this.detailInbox.current.openDetail(inbox);
+  };
+
+  templateInbox = item => {
+    return (
+      <View key={'key'}>
+        <TouchableOpacity
+          style={styles.item}
+          onPress={() => this.openDetailMessage(item)}>
+          <View style={styles.sejajarSpace}>
+            <View style={styles.imageDetail}>
+              <Icon
+                size={35}
+                style={{color: colorConfig.store.defaultColor}}
+                name={Platform.OS === 'ios' ? 'ios-mail' : 'md-mail'}
+              />
+            </View>
+            <View style={styles.detail}>
+              <Text style={styles.storeName}>{item.title}</Text>
+              <Text style={styles.paymentType}>
+                {item.message.substr(0, 25)}...
+              </Text>
+            </View>
+            <View style={styles.btnDetail} />
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.item}
+          onPress={() => this.openDetailMessage(item)}>
+          <View style={styles.sejajarSpace}>
+            <View style={styles.imageDetail}>
+              <Icon
+                size={35}
+                style={{color: colorConfig.pageIndex.grayColor}}
+                name={Platform.OS === 'ios' ? 'ios-mail-open' : 'md-mail-open'}
+              />
+            </View>
+            <View style={styles.detail}>
+              <Text style={styles.storeName}>{item.title}</Text>
+              <Text style={styles.paymentType}>
+                {item.message.substr(0, 25)}...
+              </Text>
+            </View>
+            <View style={styles.btnDetail} />
+          </View>
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
+  handleLoadMoreItems = async item => {
+    try {
+      const {dataInbox} = this.props;
+      if (!isEmptyArray(dataInbox.Data)) {
+        if (dataInbox.dataLength > dataInbox.Data.length) {
+          await this.getDataInbox(item.skip, 10);
+        }
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  renderInbox = () => {
+    const {dataInbox} = this.props;
+    return (
+      <FlatList
+        refreshControl={
+          <RefreshControl
+            refreshing={this.state.refreshing}
+            onRefresh={this._onRefresh}
+          />
+        }
+        data={dataInbox.Data}
+        renderItem={({item}) => this.templateInbox(item)}
+        onEndReachedThreshold={0.01}
+        onEndReached={this.handleLoadMoreItems}
+      />
+    );
+  };
+
+  renderEmptyInbox = () => {
+    return (
+      <ScrollView
+        refreshControl={
+          <RefreshControl
+            refreshing={this.state.refreshing}
+            onRefresh={this._onRefresh}
+          />
+        }>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <Image
+            style={{
+              marginTop: 100,
+              width: 150,
+              height: 150,
+            }}
+            source={appConfig.emptyBox}
+          />
+          <Text
+            style={{
+              marginTop: 20,
+              fontFamily: 'Lato-Bold',
+              fontSize: 20,
+              color: colorConfig.store.title,
+            }}>
+            No incoming message yet
+          </Text>
+          <Text
+            style={{
+              marginTop: 10,
+              fontFamily: 'Lato-Bold',
+              fontSize: 17,
+              marginHorizontal: 40,
+              textAlign: 'center',
+              color: colorConfig.pageIndex.inactiveTintColor,
+            }}>
+            If there is an incoming message, it will appear here.
+          </Text>
+        </View>
+      </ScrollView>
+    );
   };
 
   render() {
+    let {dataInbox} = this.props;
     return (
-      <View>
+      <SafeAreaView>
         <View
           style={{
             backgroundColor: colorConfig.pageIndex.backgroundColor,
@@ -88,67 +209,15 @@ class Inbox extends Component {
             }}
           />
         </View>
-        <ScrollView
-          style={styles.component}
-          refreshControl={
-            <RefreshControl
-              refreshing={this.state.refreshing}
-              onRefresh={this._onRefresh}
-            />
-          }>
-          {/*{this.props.dataInbox !== undefined &&*/}
-          {/*this.props.dataInbox.length > 0 ? (*/}
-          {/*  this.props.dataInbox.map((item, key) => (*/}
-          <View key={'key'}>
-            <TouchableOpacity
-              style={styles.item}
-              onPress={this.openDetailMessage}>
-              <View style={styles.sejajarSpace}>
-                <View style={styles.imageDetail}>
-                  <Icon
-                    size={35}
-                    style={{color: colorConfig.store.defaultColor}}
-                    name={Platform.OS === 'ios' ? 'ios-mail' : 'md-mail'}
-                  />
-                </View>
-                <View style={styles.detail}>
-                  <Text style={styles.storeName}>Title Inbox</Text>
-                  <Text style={styles.paymentType}>Desc Inbox</Text>
-                </View>
-                <View style={styles.btnDetail} />
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.item}
-              onPress={this.openDetailMessage}>
-              <View style={styles.sejajarSpace}>
-                <View style={styles.imageDetail}>
-                  <Icon
-                    size={35}
-                    style={{color: colorConfig.pageIndex.grayColor}}
-                    name={
-                      Platform.OS === 'ios' ? 'ios-mail-open' : 'md-mail-open'
-                    }
-                  />
-                </View>
-                <View style={styles.detail}>
-                  <Text style={styles.storeName}>Title Inbox</Text>
-                  <Text style={styles.paymentType}>Desc Inbox</Text>
-                </View>
-                <View style={styles.btnDetail} />
-              </View>
-            </TouchableOpacity>
-          </View>
-          {/*))*/}
-          {/*) : (*/}
-          {/*  <View style={styles.emptyNotice}>*/}
-          {/*    <Text style={styles.empty}>Oppss, Your inbox is empty</Text>*/}
-          {/*  </View>*/}
-          {/*)}*/}
-        </ScrollView>
+
+        {dataInbox != undefined
+          ? dataInbox.Data.length != 0
+            ? this.renderInbox()
+            : this.renderEmptyInbox()
+          : null}
 
         <DetailInbox ref={this.detailInbox} />
-      </View>
+      </SafeAreaView>
     );
   }
 }
@@ -239,8 +308,7 @@ const styles = StyleSheet.create({
 });
 
 mapStateToProps = state => ({
-  dataInbox: state.inboxReducer.dataInbox.broadcas,
-  dataInboxNoRead: state.inboxReducer.dataInbox.broadcasNoRead,
+  dataInbox: state.inboxReducer.dataInbox.broadcast,
 });
 
 mapDispatchToProps = dispatch => ({

@@ -1,5 +1,4 @@
 import {fetchApi} from '../service/api';
-import {refreshToken} from './auth.actions';
 import awsConfig from '../config/awsConfig';
 import CryptoJS from 'react-native-crypto-js';
 

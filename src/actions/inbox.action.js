@@ -1,44 +1,44 @@
 import {fetchApi} from '../service/api';
-import * as _ from 'lodash';
-import {AsyncStorage} from 'react-native';
-import {refreshToken} from './auth.actions';
 
-export const dataInbox = () => {
+export const dataInbox = (skip, take) => {
   return async (dispatch, getState) => {
     const state = getState();
     try {
       const {
         authReducer: {
-          authData: {token},
+          tokenUser: {token},
         },
       } = state;
-      const response = await fetchApi('/broadcast', 'GET', false, 200, token);
+
+      const payload = {
+        skip,
+        take,
+      };
+
+      const response = await fetchApi(
+        '/broadcast/customer',
+        'POST',
+        payload,
+        200,
+        token,
+      );
       console.log(response, 'response inbox');
 
+      let data = [];
+
       if (response.success) {
-        // const data = [...response.responseBody.Data];
-        // var count = 0;
-        // for (let index = 0; index < data.length; index++) {
-        //   var isi = await AsyncStorage.getItem(
-        //     '@inbox' + data[index].id,
-        //     (err, res) => {
-        //       if (res) {
-        //         data[index].read = true;
-        //         count = count + 1;
-        //       }
-        //     },
-        //   );
-        // }
-        //
-        // var kirim = {
-        //   listInbox: [...data],
-        //   noRead: data.length - count,
-        // };
-        // console.log(kirim, 'response kirim inbox');
-        // await dispatch({
-        //   type: 'DATA_ALL_BROADCAS',
-        //   data: kirim,
-        // });
+        try {
+          data = response.responseBody;
+          data.skip = skip + take;
+          data.take = take;
+        } catch (e) {
+          data = {};
+          data.Data = [];
+        }
+        await dispatch({
+          type: 'DATA_ALL_BROADCAST',
+          data: data,
+        });
       }
       return response;
     } catch (error) {

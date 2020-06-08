@@ -17,7 +17,8 @@ import {
   Picker,
   TouchableHighlight,
   Alert,
-  SafeAreaView
+  SafeAreaView,
+  AsyncStorage,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
@@ -35,6 +36,8 @@ import colorConfig from '../config/colorConfig';
 import awsConfig from '../config/awsConfig';
 import Header from '../components/atom/header';
 import Icon from 'react-native-vector-icons/Ionicons';
+import OneSignal from 'react-native-onesignal';
+import {deviceUserInfo} from '../actions/user.action';
 
 const imageWidth = Dimensions.get('window').width / 2;
 
@@ -168,7 +171,39 @@ class VerifyOtpAfterRegisterEmail extends Component {
 
   componentWillUnmount() {
     clearInterval(this.interval);
+    try {
+      OneSignal.removeEventListener('received', this.onReceived);
+      OneSignal.removeEventListener('opened', this.onOpened);
+      OneSignal.removeEventListener('ids', this.onIds);
+    } catch (e) {}
   }
+
+  onReceived(notification) {
+    console.log('Notification received: ', notification);
+  }
+
+  onOpened(openResult) {
+    console.log('Message: ', openResult.notification.payload.body);
+    console.log('Data: ', openResult.notification.payload.additionalData);
+    console.log('isActive: ', openResult.notification.isAppInFocus);
+    console.log('openResult: ', openResult);
+  }
+
+  onIds = async device => {
+    console.log('Device info: ', device.userId);
+    try {
+      await this.props.dispatch(deviceUserInfo(device.userId));
+    } catch (e) {}
+    try {
+      await this.props.dispatch(deviceUserInfo(device.userId));
+      if (device.userId != null && device.userId != undefined) {
+        await AsyncStorage.setItem('deviceID', device.userId);
+      }
+      await this.props.dispatch(deviceUserInfo(device.userId));
+    } catch (error) {
+      console.log(error, 'error saving device ID');
+    }
+  };
 
   componentDidUpdate() {
     if (this.state.seconds === 0 && this.state.minutes == 0) {

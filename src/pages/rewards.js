@@ -36,6 +36,7 @@ import awsConfig from '../config/awsConfig';
 import {getCompanyInfo} from '../actions/stores.action';
 import {getAccountPayment} from '../actions/payment.actions';
 import OneSignal from 'react-native-onesignal';
+import {dataInbox} from '../actions/inbox.action';
 
 class Rewards extends Component {
   constructor(props) {
@@ -92,9 +93,8 @@ class Rewards extends Component {
       await this.props.dispatch(getBasket());
       await this.props.dispatch(campaign());
       await this.props.dispatch(dataPoint());
-      // await this.props.dispatch(vouchers());
       await this.props.dispatch(getStamps());
-      // await this.props.dispatch(dataInbox());
+      await this.props.dispatch(dataInbox(0, 10));
       await this.props.dispatch(recentTransaction());
 
       this.setState({isLoading: false});

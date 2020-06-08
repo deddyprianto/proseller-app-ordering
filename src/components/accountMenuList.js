@@ -57,6 +57,23 @@ class AccountMenuList extends Component {
     Actions.editProfile(dataDiri);
   };
 
+  notifications = () => {
+    let userDetail;
+    try {
+      // Decrypt data user
+      let bytes = CryptoJS.AES.decrypt(
+        this.props.userDetail,
+        awsConfig.PRIVATE_KEY_RSA,
+      );
+      userDetail = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+    } catch (e) {
+      userDetail = undefined;
+    }
+
+    var dataDiri = {dataDiri: userDetail};
+    Actions.notifications(dataDiri);
+  };
+
   updateLanguage = () => {
     this.props.setLanguage();
   };
@@ -170,6 +187,23 @@ class AccountMenuList extends Component {
         {/*</TouchableOpacity>*/}
 
         <Text style={styles.headingMenu}>Settings</Text>
+
+        <TouchableOpacity onPress={this.notifications} style={styles.cardMenu}>
+          <View style={styles.itemMenu}>
+            <Icon
+              size={20}
+              name={
+                Platform.OS === 'ios' ? 'ios-notifications' : 'md-notifications'
+              }
+              style={{color: 'white'}}
+            />
+          </View>
+          <View>
+            <View style={styles.item}>
+              <Text style={styles.title}>Notifications</Text>
+            </View>
+          </View>
+        </TouchableOpacity>
 
         <TouchableOpacity onPress={this.editProfil} style={styles.cardMenu}>
           <View style={styles.itemMenu}>

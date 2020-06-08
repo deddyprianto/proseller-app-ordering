@@ -84,13 +84,16 @@ class StoreDetailStores extends Component {
     // check bucket exist or not
     // only status order PENDING is allowed to order
     // check whether outlet is open and allowed to order, then ask user to select ordering status
-    if (this.checkBucketExist() || this.props.dataBasket == undefined)
+    if (this.checkBucketExist() || this.props.dataBasket == undefined) {
       if (
         this.props.dataBasket == undefined ||
         this.props.dataBasket.status == 'PENDING'
       ) {
-        if (this.outletAvailableToOrder()) this.RBSheet.open();
+        if (this.outletAvailableToOrder()) {
+          this.RBSheet.open();
+        }
       }
+    }
   };
 
   updateSelectedCategory = idx => {
@@ -350,8 +353,11 @@ class StoreDetailStores extends Component {
         let productFound = this.props.dataBasket.details.find(
           data => data.productID == item.productID,
         );
-        if (productFound != undefined) return productFound;
-        else return false;
+        if (productFound != undefined) {
+          return productFound;
+        } else {
+          return false;
+        }
       } else {
         return false;
       }
@@ -436,7 +442,9 @@ class StoreDetailStores extends Component {
         id: `${this.props.item.storeId}`,
       };
       // if remark is available, then push to array
-      if (remark != undefined && remark != '') dataproduct.remark = remark;
+      if (remark != undefined && remark != '') {
+        dataproduct.remark = remark;
+      }
       data.outletID = `outlet::${this.props.item.storeId}`;
       data.outlet = outlet;
       data.id = this.props.item.storeId;
@@ -544,7 +552,9 @@ class StoreDetailStores extends Component {
       }
 
       // if remark is available, then push to array
-      if (remark != undefined && remark != '') dataproduct.remark = remark;
+      if (remark != undefined && remark != '') {
+        dataproduct.remark = remark;
+      }
       data.outletID = `outlet::${this.props.item.storeId}`;
       data.details.push(dataproduct);
 
