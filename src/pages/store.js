@@ -203,6 +203,11 @@ class Store extends Component {
               response.data[i].enableTableScan == '-'
                 ? false
                 : true,
+            enableDelivery:
+              response.data[i].enableDelivery == false ||
+              response.data[i].enableDelivery == '-'
+                ? false
+                : true,
           });
         }
       }

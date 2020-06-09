@@ -62,6 +62,11 @@ import PaymentMethods from '../components/card/PaymentMethods';
 import PaymentAddCard from '../components/card/PaymentAddCard';
 import QRCodeCart from '../components/order/QRCodeCart';
 
+// address
+import ListAddress from '../components/address/ListAddress';
+import AddAddress from '../components/address/AddAddress';
+import SelectAddress from '../components/address/SelectAddress';
+
 let backPressed = 0;
 
 export default class Routes extends Component {
@@ -178,6 +183,10 @@ export default class Routes extends Component {
             <Scene key="paymentAddCard" component={PaymentAddCard} />
 
             <Scene key="notifications" component={Notifications} />
+
+            <Scene key="listAddress" component={ListAddress} />
+            <Scene key="addAddress" component={AddAddress} />
+            <Scene key="selectAddress" component={SelectAddress} />
           </Scene>
         </Scene>
       </Router>

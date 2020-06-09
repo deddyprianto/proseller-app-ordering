@@ -11,11 +11,12 @@ import {
   Platform,
   FlatList,
   SafeAreaView,
+  ActivityIndicator,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
 import Icon from 'react-native-vector-icons/Ionicons';
-import * as _ from 'lodash';
+import {format} from 'date-fns';
 
 import colorConfig from '../config/colorConfig';
 import appConfig from '../config/appConfig';
@@ -39,7 +40,7 @@ class Inbox extends Component {
       this.componentInboxFocused = this.props.navigation.addListener(
         'willFocus',
         () => {
-          this.getDataInbox(0, 10);
+          this.getDataInbox(0, 50);
         },
       );
     } catch (e) {}
@@ -101,9 +102,21 @@ class Inbox extends Component {
           <View style={styles.imageDetail}>{this.isRead(item)}</View>
           <View style={styles.detail}>
             <Text style={styles.storeName}>{item.title}</Text>
-            <Text style={styles.paymentType}>
-              {item.message.substr(0, 25)}...
-            </Text>
+            <View
+              style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+              <Text style={styles.paymentType}>
+                {item.message.substr(0, 10)}...
+              </Text>
+              {item.sendOn != undefined ? (
+                <Text
+                  style={[
+                    styles.paymentType,
+                    {marginRight: -35, fontSize: 10},
+                  ]}>
+                  {format(new Date(item.sendOn), 'dd/MM/yyyy HH:mm')}
+                </Text>
+              ) : null}
+            </View>
           </View>
           <View style={styles.btnDetail} />
         </View>
@@ -115,12 +128,31 @@ class Inbox extends Component {
     try {
       const {dataInbox} = this.props;
       if (!isEmptyArray(dataInbox.Data)) {
-        if (dataInbox.dataLength > dataInbox.Data.length) {
-          await this.getDataInbox(item.skip, 10);
+        if (dataInbox.DataLength > dataInbox.Data.length) {
+          await this.getDataInbox(dataInbox.skip, 10);
         }
       }
     } catch (e) {
       console.log(e);
+    }
+  };
+
+  renderFooter = () => {
+    try {
+      const {dataInbox} = this.props;
+      if (!isEmptyArray(dataInbox.Data)) {
+        if (dataInbox.DataLength > dataInbox.Data.length) {
+          return (
+            <ActivityIndicator
+              size={30}
+              color={colorConfig.store.secondaryColor}
+            />
+          );
+        }
+      }
+      return null;
+    } catch (e) {
+      return null;
     }
   };
 
@@ -132,8 +164,9 @@ class Inbox extends Component {
 
   renderInbox = () => {
     const {dataInbox} = this.props;
+    console.log(dataInbox.Data);
     return (
-      <View style={{marginBottom: '8%'}}>
+      <View style={{marginBottom: '9%'}}>
         <FlatList
           refreshControl={
             <RefreshControl
@@ -145,6 +178,7 @@ class Inbox extends Component {
           renderItem={({item, index}) => this.templateInbox(item, index)}
           onEndReachedThreshold={0.01}
           onEndReached={this.handleLoadMoreItems}
+          ListFooterComponent={() => this.renderFooter()}
         />
       </View>
     );

@@ -199,15 +199,17 @@ class Products2 extends Component {
   askUserToSelectOrderType = () => {
     const {intlData} = this.props;
     const {item} = this.state;
+    let height = 330;
+    if (item.enableDineIn == false) height -= 50;
+    if (item.enableTakeAway == false) height -= 50;
+    if (item.enableDelivery == false) height -= 50;
     return (
       <RBSheet
         ref={ref => {
           this.RBSheet = ref;
         }}
         animationType={'slide'}
-        height={
-          item.enableDineIn == false || item.enableTakeAway == false ? 200 : 250
-        }
+        height={height}
         duration={10}
         closeOnDragDown={true}
         closeOnPressMask={true}
@@ -232,11 +234,7 @@ class Products2 extends Component {
         {item.enableDineIn == true ? (
           <TouchableOpacity
             onPress={() => this.setOrderType('DINEIN')}
-            style={
-              item.enableDineIn == false
-                ? styles.deactiveDINEINButton
-                : styles.activeDINEINButton
-            }>
+            style={styles.activeDINEINButton}>
             <Icon
               size={30}
               name={Platform.OS === 'ios' ? 'ios-restaurant' : 'md-restaurant'}
@@ -259,11 +257,7 @@ class Products2 extends Component {
           <TouchableOpacity
             disabled={item.enableTakeAway == false ? true : false}
             onPress={() => this.setOrderType('TAKEAWAY')}
-            style={
-              item.enableTakeAway == false
-                ? styles.deactiveTAKEAWAYButton
-                : styles.activeTAKEAWAYButton
-            }>
+            style={styles.activeTAKEAWAYButton}>
             <Icon
               size={30}
               name={Platform.OS === 'ios' ? 'ios-basket' : 'md-basket'}
@@ -279,6 +273,30 @@ class Products2 extends Component {
                 textAlign: 'center',
               }}>
               {intlData.messages.takeAway}
+            </Text>
+          </TouchableOpacity>
+        ) : null}
+        {item.enableTakeAway == true ? (
+          <TouchableOpacity
+            disabled={item.enableTakeAway == false ? true : false}
+            onPress={() => this.setOrderType('DELIVERY')}
+            style={styles.activeDELIVERYButton}>
+            <Icon
+              size={30}
+              name={Platform.OS === 'ios' ? 'ios-car' : 'md-car'}
+              style={{color: 'white'}}
+            />
+            <Text
+              style={{
+                marginLeft: 10,
+                color: 'white',
+                fontWeight: 'bold',
+                fontFamily: 'Lato-Bold',
+                fontSize: 18,
+                textAlign: 'center',
+              }}>
+              {/*{intlData.messages.takeAway}*/}
+              DELIVERY
             </Text>
           </TouchableOpacity>
         ) : null}
@@ -1936,6 +1954,10 @@ class Products2 extends Component {
         outlet.enableTableScan == false || outlet.enableTableScan == '-'
           ? false
           : true;
+      item.enableDelivery =
+        outlet.enableDelivery == false || outlet.enableDelivery == '-'
+          ? false
+          : true;
       item.storeName = outlet.name;
       item.outletType = outlet.outletType;
       item.orderingStatus = outlet.orderingStatus;
@@ -2186,7 +2208,9 @@ class Products2 extends Component {
             !isEmptyArray(this.state.products) ? (
               loadProducts ? (
                 <>
-                  <View>{this.renderMainList()}</View>
+                  <View style={{paddingBottom: '6%'}}>
+                    {this.renderMainList()}
+                  </View>
                   {dialogSearch ? (
                     <View
                       style={{
@@ -2576,7 +2600,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   activeDINEINButton: {
-    padding: 15,
+    padding: 13,
     backgroundColor: colorConfig.store.colorSuccess,
     borderRadius: 15,
     width: '60%',
@@ -2596,8 +2620,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   activeTAKEAWAYButton: {
-    padding: 15,
+    padding: 13,
     backgroundColor: colorConfig.store.secondaryColor,
+    borderRadius: 15,
+    width: '60%',
+    marginBottom: 20,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  activeDELIVERYButton: {
+    padding: 13,
+    backgroundColor: colorConfig.store.defaultColor,
     borderRadius: 15,
     width: '60%',
     flexDirection: 'row',

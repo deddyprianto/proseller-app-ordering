@@ -113,6 +113,19 @@ export const selectedAccount = payload => {
   };
 };
 
+export const selectedAddress = payload => {
+  return async dispatch => {
+    try {
+      dispatch({
+        type: 'SELECTED_ADDRESS',
+        selectedAddress: payload,
+      });
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
 export const clearAccount = () => {
   return async dispatch => {
     try {

@@ -1,5 +1,6 @@
 const PRIMARY_COLOR_RGB = '3, 157, 252';
 const SECONDARY_COLOR_RGB = '250, 162, 28';
+const THIRD_COLOR_RGB = '68, 189, 50';
 
 const colorConfig = {
   statusBar: `rgb(${PRIMARY_COLOR_RGB})`,
@@ -68,6 +69,7 @@ const colorConfig = {
     darkColor: '#2c3e50',
     containerColor: '#f2f2f2',
     secondaryColor: `rgb(${SECONDARY_COLOR_RGB})`,
+    thirdColor: `rgb(${THIRD_COLOR_RGB})`,
     secondaryColorDisabled: `rgba(${SECONDARY_COLOR_RGB}, 0.3)`,
   },
   card: {

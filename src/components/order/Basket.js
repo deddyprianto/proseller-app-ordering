@@ -29,13 +29,20 @@ import {
 import Loader from '../../components/loader';
 import ModalOrder from '../../components/order/Modal';
 import CurrencyFormatter from '../../helper/CurrencyFormatter';
-import {isEmptyArray, isEmptyObject} from '../../helper/CheckEmpty';
+import {
+  isEmptyArray,
+  isEmptyData,
+  isEmptyObject,
+} from '../../helper/CheckEmpty';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import * as _ from 'lodash';
 import {getOutletById} from '../../actions/stores.action';
 import * as geolib from 'geolib';
 import appConfig from '../../config/appConfig';
 import {refreshToken} from '../../actions/auth.actions';
+import {getUserProfile} from '../../actions/user.action';
+import CryptoJS from 'react-native-crypto-js';
+import awsConfig from '../../config/awsConfig';
 
 class Basket extends Component {
   constructor(props) {
@@ -142,6 +149,8 @@ class Basket extends Component {
       }
       await this.setState({loading: false});
 
+      this.getDeliveryAddress();
+
       // check if status basket is submitted, then request continoustly to get basket
       if (
         this.props.dataBasket != undefined &&
@@ -190,6 +199,46 @@ class Basket extends Component {
         this.handleBackPress,
       );
     } catch (e) {}
+  };
+
+  getDeliveryAddress = async () => {
+    try {
+      const {defaultAddress, selectedAddress} = this.props;
+
+      let user = {};
+      try {
+        let bytes = CryptoJS.AES.decrypt(
+          this.props.userDetail,
+          awsConfig.PRIVATE_KEY_RSA,
+        );
+        user = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+      } catch (e) {
+        user = {};
+      }
+
+      let address = {};
+      if (!isEmptyData(user.address)) {
+        address = {
+          addressName: 'My Default Address',
+          address: user.address,
+          postalCode: '-',
+          city: '',
+        };
+        this.props.dispatch(selectedAddress(address));
+      }
+
+      if (!isEmptyObject(defaultAddress) && isEmptyObject(selectedAddress)) {
+        this.props.dispatch(selectedAddress(defaultAddress));
+      }
+    } catch (e) {
+      let address = {
+        addressName: '-',
+        address: '-',
+        postalCode: '-',
+        city: '',
+      };
+      this.props.dispatch(selectedAddress(address));
+    }
   };
 
   updateSelectedCategory = idx => {
@@ -379,11 +428,15 @@ class Basket extends Component {
     if (
       dataBasket.outlet.outletType == 'QUICKSERVICE' ||
       orderType == 'TAKEAWAY' ||
-      dataBasket.orderingMode == 'TAKEAWAY'
+      dataBasket.orderingMode == 'TAKEAWAY' ||
+      orderType == 'DELIVERY' ||
+      dataBasket.orderingMode == 'DELIVERY'
     ) {
       if (
         dataBasket.status == 'PROCESSING' ||
-        dataBasket.status == 'READY_FOR_COLLECTION'
+        dataBasket.status == 'READY_FOR_COLLECTION' ||
+        dataBasket.status == 'READY_FOR_DELIVERY' ||
+        dataBasket.status == 'ON_THE_WAY'
       ) {
         return false;
       } else {
@@ -1400,6 +1453,10 @@ class Basket extends Component {
           item.enableTableScan == false || item.enableTableScan == '-'
             ? false
             : true,
+        enableDelivery:
+          item.enableDelivery == false || item.enableDelivery == '-'
+            ? false
+            : true,
       };
 
       Actions.push('productsMode2', {item: data});
@@ -1478,6 +1535,41 @@ class Basket extends Component {
       }
     } catch (e) {
       return 'Sorry, Ordering is not available now.';
+    }
+  };
+
+  goToAddress = () => {
+    Actions.selectAddress();
+  };
+
+  deliveryAddress = (orderType, dataBasket) => {
+    try {
+      if (orderType == 'DELIVERY' || dataBasket.orderingMode == 'DELIVERY') {
+        return (
+          <View style={styles.itemSummary}>
+            <Text style={styles.total}>Delivery Address</Text>
+            <View>
+              <Text style={styles.total}>
+                {this.props.selectedAddress.addressName}
+              </Text>
+              {dataBasket.status == 'PENDING' ? (
+                <TouchableOpacity
+                  onPress={this.goToAddress}
+                  style={{
+                    marginTop: -10,
+                    flexDirection: 'row',
+                    justifyContent: 'flex-end',
+                    alignItems: 'center',
+                  }}>
+                  <Text style={styles.subTitleAddItems}>Change</Text>
+                </TouchableOpacity>
+              ) : null}
+            </View>
+          </View>
+        );
+      }
+    } catch (e) {
+      return null;
     }
   };
 
@@ -1755,6 +1847,12 @@ class Basket extends Component {
                     </Text>
                   )}
                 </TouchableOpacity>
+
+                {this.deliveryAddress(
+                  this.props.orderType,
+                  this.props.dataBasket,
+                )}
+
                 <View style={styles.itemSummary}>
                   <Text style={styles.total}>
                     {intlData.messages.totalTaxAmmount}
@@ -1781,12 +1879,12 @@ class Basket extends Component {
         {dataBasket != undefined
           ? // check type outlet
             dataBasket.outlet.outletType == 'RESTO'
-            ? orderType == 'TAKEAWAY' || dataBasket.orderingMode == 'TAKEAWAY'
+            ? this.isTakeAwayOrDelivery(orderType, dataBasket)
               ? this.renderSettleButtonRestaurant()
               : dataBasket.status == 'PENDING'
               ? this.renderButtonScanQRCode()
               : this.renderSettleButtonRestaurant()
-            : orderType == 'TAKEAWAY' || dataBasket.orderingMode == 'TAKEAWAY'
+            : this.isTakeAwayOrDelivery(orderType, dataBasket)
             ? this.renderSettleButtonQuickService()
             : dataBasket.outlet.enableTableScan != undefined &&
               (dataBasket.outlet.enableTableScan == false ||
@@ -1799,6 +1897,36 @@ class Basket extends Component {
       </SafeAreaView>
     );
   }
+
+  isTakeAwayOrDelivery = (orderType, dataBasket) => {
+    try {
+      if (
+        orderType == 'TAKEAWAY' ||
+        orderType == 'DELIVERY' ||
+        dataBasket.orderingMode == 'TAKEAWAY' ||
+        dataBasket.orderingMode == 'DELIVERY'
+      ) {
+        return true;
+      } else return false;
+    } catch (e) {
+      return false;
+    }
+  };
+
+  checkModeQuickService = (orderType, dataBasket) => {
+    try {
+      if (
+        orderType == 'TAKEAWAY' ||
+        orderType == 'DELIVERY' ||
+        dataBasket.orderingMode == 'TAKEAWAY' ||
+        dataBasket.orderingMode == 'DELIVERY'
+      ) {
+        return true;
+      } else return false;
+    } catch (e) {
+      return false;
+    }
+  };
 }
 
 mapStateToProps = state => ({
@@ -1808,6 +1936,9 @@ mapStateToProps = state => ({
   tableType: state.orderReducer.tableType.tableType,
   products: state.orderReducer.productsOutlet.products,
   userPosition: state.userReducer.userPosition.userPosition,
+  userDetail: state.userReducer.getUser.userDetails,
+  defaultAddress: state.userReducer.defaultAddress.defaultAddress,
+  selectedAddress: state.userReducer.selectedAddress.selectedAddress,
   intlData: state.intlData,
 });
 

@@ -108,6 +108,19 @@ export const defaultPaymentAccount = defaultAccount => {
   };
 };
 
+export const defaultAddress = defaultAddress => {
+  return async dispatch => {
+    try {
+      dispatch({
+        type: 'GET_USER_DEFAULT_ADDRESS',
+        defaultAddress: defaultAddress,
+      });
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
 export const userPosition = userPosition => {
   return async dispatch => {
     try {

@@ -8,17 +8,12 @@ import React, {Component} from 'react';
 import {
   View,
   Dimensions,
-  Image,
   Text,
   TouchableOpacity,
-  Platform,
   SafeAreaView,
 } from 'react-native';
-import appConfig from '../../config/appConfig';
 import colorConfig from '../../config/colorConfig';
 import RBSheet from 'react-native-raw-bottom-sheet';
-import Icon from 'react-native-vector-icons/Ionicons';
-
 const HEIGHT = Dimensions.get('window').height;
 
 export default class DetailInbox extends Component {

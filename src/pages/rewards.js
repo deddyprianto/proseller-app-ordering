@@ -94,7 +94,7 @@ class Rewards extends Component {
       await this.props.dispatch(campaign());
       await this.props.dispatch(dataPoint());
       await this.props.dispatch(getStamps());
-      await this.props.dispatch(dataInbox(0, 10));
+      await this.props.dispatch(dataInbox(0, 50));
       await this.props.dispatch(recentTransaction());
 
       this.setState({isLoading: false});

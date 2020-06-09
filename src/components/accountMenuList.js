@@ -74,6 +74,10 @@ class AccountMenuList extends Component {
     Actions.notifications(dataDiri);
   };
 
+  address = () => {
+    Actions.listAddress();
+  };
+
   updateLanguage = () => {
     this.props.setLanguage();
   };
@@ -132,7 +136,6 @@ class AccountMenuList extends Component {
     return (
       <View style={styles.container}>
         <Text style={styles.headingMenu}>Default Payment Account</Text>
-
         <TouchableOpacity disabled={true} style={styles.cardMenu}>
           {!isEmptyObject(defaultAccount) ? (
             <View style={styles.itemMenu}>
@@ -188,6 +191,20 @@ class AccountMenuList extends Component {
 
         <Text style={styles.headingMenu}>Settings</Text>
 
+        <TouchableOpacity onPress={this.address} style={styles.cardMenu}>
+          <View style={styles.itemMenu}>
+            <Icon
+              size={20}
+              name={Platform.OS === 'ios' ? 'ios-business' : 'md-business'}
+              style={{color: 'white'}}
+            />
+          </View>
+          <View>
+            <View style={styles.item}>
+              <Text style={styles.title}>My Delivery Address</Text>
+            </View>
+          </View>
+        </TouchableOpacity>
         <TouchableOpacity onPress={this.notifications} style={styles.cardMenu}>
           <View style={styles.itemMenu}>
             <Icon

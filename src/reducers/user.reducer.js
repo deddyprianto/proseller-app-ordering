@@ -110,6 +110,30 @@ const defaultPaymentAccount = (state = {}, action) => {
   }
 };
 
+const selectedAddress = (state = {}, action) => {
+  switch (action.type) {
+    case 'SELECTED_ADDRESS':
+      return {
+        selectedAddress: action.selectedAddress,
+      };
+
+    default:
+      return state;
+  }
+};
+
+const defaultAddress = (state = {}, action) => {
+  switch (action.type) {
+    case 'GET_USER_DEFAULT_ADDRESS':
+      return {
+        defaultAddress: action.defaultAddress,
+      };
+
+    default:
+      return state;
+  }
+};
+
 const userPosition = (state = {}, action) => {
   switch (action.type) {
     case 'GET_USER_POSITION':
@@ -155,4 +179,6 @@ export default combineReducers({
   getCompanyInfo,
   defaultPaymentAccount,
   orderType,
+  defaultAddress,
+  selectedAddress,
 });
