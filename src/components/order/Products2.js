@@ -2208,9 +2208,7 @@ class Products2 extends Component {
             !isEmptyArray(this.state.products) ? (
               loadProducts ? (
                 <>
-                  <View style={{paddingBottom: '6%'}}>
-                    {this.renderMainList()}
-                  </View>
+                  {this.renderMainList()}
                   {dialogSearch ? (
                     <View
                       style={{

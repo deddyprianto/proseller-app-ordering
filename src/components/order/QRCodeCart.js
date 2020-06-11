@@ -16,7 +16,7 @@ import {Actions} from 'react-native-router-flux';
 import colorConfig from '../../config/colorConfig';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
-import {getBasket, getHistoryBasket} from '../../actions/order.action';
+import {getBasket, getCart, getHistoryBasket} from '../../actions/order.action';
 import appConfig from '../../config/appConfig';
 import QRCode from 'react-native-qrcode-svg';
 
@@ -25,7 +25,7 @@ class WaitingFood extends Component {
     super(props);
     this.state = {
       screenWidth: Dimensions.get('window').width,
-      dataBasket: this.props.dataBasket,
+      dataBasket: this.props.myCart,
     };
   }
 
@@ -39,7 +39,7 @@ class WaitingFood extends Component {
       if (this.props.dataBasket != undefined) {
         clearInterval(this.interval);
         this.interval = setInterval(() => {
-          this.props.dispatch(getBasket());
+          this.props.dispatch(getCart(this.props.myCart.id));
         }, 2000);
       }
     } catch (e) {
@@ -54,17 +54,13 @@ class WaitingFood extends Component {
 
   _onRefresh = async () => {
     await this.setState({refreshing: true});
-    await await this.props.dispatch(getBasket());
+    this.props.dispatch(getCart(this.props.myCart.id));
     await this.setState({refreshing: false});
   };
 
   getBasket = async () => {
     this.setState({loading: true});
-    await this.props.dispatch(getBasket());
-    // await this.setState({loading: false});
-    // setTimeout(() => {
-    //   this.setState({loading: false});
-    // }, 10);
+    this.props.dispatch(getCart(this.props.myCart.id));
   };
 
   componentWillUnmount() {
@@ -84,7 +80,10 @@ class WaitingFood extends Component {
   getInfoCart = () => {
     const {dataBasket} = this.state;
 
-    if (dataBasket.orderingMode == 'TAKEAWAY') {
+    if (
+      dataBasket.orderingMode == 'TAKEAWAY' ||
+      dataBasket.orderingMode == 'DELIVERY'
+    ) {
       return `Queue No: ${dataBasket.queueNo}`;
     } else {
       if (
@@ -176,7 +175,7 @@ class WaitingFood extends Component {
 }
 
 mapStateToProps = state => ({
-  dataBasket: state.orderReducer.dataBasket.product,
+  dataBasket: state.orderReducer.dataCartSingle.cartSingle,
   orderType: state.userReducer.orderType.orderType,
   tableType: state.orderReducer.tableType.tableType,
   products: state.orderReducer.productsOutlet.products,

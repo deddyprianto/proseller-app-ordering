@@ -34,12 +34,13 @@ import colorConfig from '../../config/colorConfig';
 import appConfig from '../../config/appConfig';
 import {campaign, dataPoint, getStamps} from '../../actions/rewards.action';
 import {myVoucers} from '../../actions/account.action';
-import {settleOrder} from '../../actions/order.action';
+import {getPendingCart, settleOrder} from '../../actions/order.action';
 import Loader from './../loader';
 // import {refreshToken} from '../actions/auth.actions';
 import CurrencyFormatter from '../../helper/CurrencyFormatter';
 import {
   clearAccount,
+  clearAddress,
   getAccountPayment,
   registerCard,
   selectedAccount,
@@ -463,11 +464,7 @@ class SettleOrder extends Component {
       const UUID = await UUIDGenerator.getRandomUUID();
       this.setState({loading: true});
       pembayaran.price = Number(this.props.pembayaran.payment.toFixed(3));
-      // pembayaran.outletName = this.props.pembayaran.storeName;
-      // pembayaran.referenceNo = this.props.pembayaran.referenceNo;
-      // pembayaran.outletId = this.props.pembayaran.storeId;
-      // pembayaran.dataPay = this.props.pembayaran.dataPay;
-      // pembayaran.void = false;
+      pembayaran.cartID = this.props.pembayaran.cartID;
 
       // if price is 0, then dont add credit card
       if (totalBayar != 0) {
@@ -491,10 +488,6 @@ class SettleOrder extends Component {
         pembayaran.statusAdd = null;
         pembayaran.redeemValue = 0;
       } else {
-        // pembayaran.beforePrice = this.props.pembayaran.payment;
-        // pembayaran.afterPrice = this.state.totalBayar;
-        // pembayaran.afterPrice = Number(this.state.totalBayar.toFixed(3));
-
         if (this.state.dataVoucer != undefined) {
           pembayaran.voucherId = this.state.dataVoucer.id;
           pembayaran.price = Number(this.state.totalBayar.toFixed(3));
@@ -502,9 +495,9 @@ class SettleOrder extends Component {
           pembayaran.statusAdd = 'addVoucher';
         }
         if (this.state.addPoint != undefined) {
-          pembayaran.price = Number(
-            this.props.pembayaran.totalGrossAmount.toFixed(3),
-          );
+          // pembayaran.price = Number(
+          //   this.props.pembayaran.totalGrossAmount.toFixed(3),
+          // );
           pembayaran.redeemValue = this.state.addPoint;
           pembayaran.statusAdd = 'addPoint';
         }
@@ -514,6 +507,27 @@ class SettleOrder extends Component {
       if (this.props.pembayaran.orderingMode != undefined) {
         pembayaran.orderingMode = this.props.pembayaran.orderingMode;
         pembayaran.tableNo = this.props.pembayaran.tableNo;
+      }
+
+      // check if delivery address is exist
+      if (this.props.pembayaran.deliveryAddress != undefined) {
+        pembayaran.deliveryAddress = this.props.pembayaran.deliveryAddress;
+      }
+
+      // check if delivery fee is exist
+      if (this.props.pembayaran.deliveryFee != undefined) {
+        pembayaran.deliveryFee = this.props.pembayaran.deliveryFee;
+        // add delivery fee to total
+        pembayaran.price = Number(
+          pembayaran.price + this.props.pembayaran.deliveryFee,
+        );
+      }
+
+      // check if delivery provider is exist
+      if (this.props.pembayaran.deliveryProvider != undefined) {
+        pembayaran.deliveryProviderId = this.props.pembayaran.deliveryProvider.id;
+        pembayaran.deliveryProvider = this.props.pembayaran.deliveryProvider.name;
+        pembayaran.deliveryService = '-';
       }
 
       // get url
@@ -526,6 +540,11 @@ class SettleOrder extends Component {
       if (response.success) {
         //  remove selected account
         this.props.dispatch(clearAccount());
+        this.props.dispatch(clearAddress());
+
+        // get pending order
+        this.props.dispatch(getPendingCart());
+
         // go to payment success
         const {url} = this.props;
         Actions.paymentSuccess({

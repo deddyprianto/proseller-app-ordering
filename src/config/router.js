@@ -48,6 +48,7 @@ import CategoryProducts from '../components/order/CategoryProducts';
 import Products from '../components/order/Products';
 import Products2 from '../components/order/Products2';
 import Basket from '../components/order/Basket';
+import Cart from '../components/order/Cart';
 import ScanQRTable from '../components/order/ScanQRTable';
 import ConfirmTable from '../components/order/ConfirmTable';
 import SettleOrder from '../components/order/SettleOrder';
@@ -66,6 +67,7 @@ import QRCodeCart from '../components/order/QRCodeCart';
 import ListAddress from '../components/address/ListAddress';
 import AddAddress from '../components/address/AddAddress';
 import SelectAddress from '../components/address/SelectAddress';
+import EditAddress from '../components/address/EditAddress';
 
 let backPressed = 0;
 
@@ -170,6 +172,7 @@ export default class Routes extends Component {
             <Scene key="products" component={Products} />
             <Scene key="productsMode2" component={Products2} />
             <Scene key="basket" component={Basket} />
+            <Scene key="cart" component={Cart} />
             <Scene key="scanQRTable" component={ScanQRTable} />
             <Scene key="confirmTable" component={ConfirmTable} />
             <Scene key="settleOrder" component={SettleOrder} />
@@ -186,6 +189,7 @@ export default class Routes extends Component {
 
             <Scene key="listAddress" component={ListAddress} />
             <Scene key="addAddress" component={AddAddress} />
+            <Scene key="editAddress" component={EditAddress} />
             <Scene key="selectAddress" component={SelectAddress} />
           </Scene>
         </Scene>

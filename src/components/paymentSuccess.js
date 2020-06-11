@@ -13,18 +13,16 @@ import {
   BackHandler,
   TouchableOpacity,
   Platform,
-  AsyncStorage,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
-import AwesomeAlert from 'react-native-awesome-alerts';
 import LottieView from 'lottie-react-native';
 import colorConfig from '../config/colorConfig';
 import appConfig from '../config/appConfig';
 import CurrencyFormatter from '../helper/CurrencyFormatter';
-import {clearAccount} from '../actions/payment.actions';
+import {clearAccount, clearAddress} from '../actions/payment.actions';
 import OneSignal from 'react-native-onesignal';
-import awsConfig from '../config/awsConfig';
+import {getPendingCart} from '../actions/order.action';
 
 export default class PaymentSuccess extends Component {
   constructor(props) {
@@ -41,9 +39,6 @@ export default class PaymentSuccess extends Component {
   }
 
   componentDidMount = async () => {
-    try {
-      await this.props.dispatch(clearAccount());
-    } catch (e) {}
     this.backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
       this.handleBackPress,
@@ -51,7 +46,9 @@ export default class PaymentSuccess extends Component {
   };
 
   componentWillUnmount() {
-    this.backHandler.remove();
+    try {
+      this.backHandler.remove();
+    } catch (e) {}
   }
 
   handleBackPress = () => {

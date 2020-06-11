@@ -145,6 +145,9 @@ class SelectAddress extends Component {
               try {
                 this.setState({selectedAddress: item});
                 this.props.dispatch(selectedAddress(item));
+                try {
+                  this.props.clearDelivery();
+                } catch (e) {}
                 this.goBack();
               } catch (e) {}
             }}
@@ -259,7 +262,7 @@ class SelectAddress extends Component {
       address = user.deliveryAddress;
     }
 
-    if (!isEmptyData(user.address)) {
+    if (!isEmptyData(user.address) && isEmptyArray(user.deliveryAddress)) {
       let tempAddress = {
         addressName: 'My Default Address',
         address: user.address,

@@ -41,25 +41,24 @@ const theme = {
   },
 };
 
-class AddAddress extends Component {
+class EditAddress extends Component {
   constructor(props) {
     super(props);
 
+    const {myAddress} = this.props;
+
     this.state = {
       screenWidth: Dimensions.get('window').width,
-      addressName: '',
-      address: '',
-      postalCode: '',
-      city: '',
+      addressName: myAddress.addressName,
+      address: myAddress.address,
+      oldAddress: myAddress.address,
+      postalCode: myAddress.postalCode,
+      city: myAddress.city,
     };
   }
 
   goBack = async () => {
-    if (this.props.from == 'basket') {
-      Actions.pop();
-    } else {
-      Actions.replace(this.props.from);
-    }
+    Actions.popTo(this.props.from);
   };
 
   componentDidMount() {
@@ -68,6 +67,10 @@ class AddAddress extends Component {
         'hardwareBackPress',
         this.handleBackPress,
       );
+    } catch (e) {}
+
+    try {
+      this.getFullAddress(this.state.oldAddress);
     } catch (e) {}
   }
 
@@ -105,6 +108,9 @@ class AddAddress extends Component {
 
       if (!isEmptyArray(userDetail.deliveryAddress)) {
         data.deliveryAddress = userDetail.deliveryAddress;
+        data.deliveryAddress = data.deliveryAddress.filter(
+          item => item.address != this.state.oldAddress,
+        );
       }
 
       let newAddress = {
@@ -119,13 +125,17 @@ class AddAddress extends Component {
       const response = await this.props.dispatch(updateUser(data));
 
       if (response) {
-        if (isEmptyArray(userDetail.deliveryAddress)) {
+        if (
+          isEmptyArray(userDetail.deliveryAddress) ||
+          userDetail.deliveryAddress.length == 1
+        ) {
           await this.props.dispatch(defaultAddress(newAddress));
-
-          if (this.props.from == 'basket') {
-            await this.props.dispatch(selectedAddress(newAddress));
-          }
         }
+
+        if (this.props.from == 'basket') {
+          await this.props.dispatch(selectedAddress(newAddress));
+        }
+
         this.goBack();
       } else {
         Alert.alert('Oppss..', 'Please try again.');
@@ -191,7 +201,7 @@ class AddAddress extends Component {
               }
               style={styles.btnBackIcon}
             />
-            <Text style={styles.btnBackText}> Add New Address </Text>
+            <Text style={styles.btnBackText}> Edit Address </Text>
           </TouchableOpacity>
         </View>
         <ScrollView>
@@ -277,7 +287,7 @@ export default compose(
     mapStateToProps,
     mapDispatchToProps,
   ),
-)(AddAddress);
+)(EditAddress);
 
 const styles = StyleSheet.create({
   container: {

@@ -1,19 +1,12 @@
 import React, {Component} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Dimensions,
-  TouchableOpacity,
-  TouchableHighlight,
-  Platform,
-} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity, Platform} from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
 import colorConfig from '../../config/colorConfig';
 import Icon from 'react-native-vector-icons/Ionicons';
 import HistoryPayment from './historyPayment';
 import HistoryPendingOrders from './HistoryPendingOrders';
+import {isEmptyArray} from '../../helper/CheckEmpty';
 
 class HistoryMenuTab extends Component {
   constructor(props) {
@@ -22,8 +15,8 @@ class HistoryMenuTab extends Component {
     const {dataBasket} = this.props;
 
     this.state = {
-      toggleAll: dataBasket == undefined ? true : false,
-      togglePending: dataBasket != undefined ? true : false,
+      toggleAll: isEmptyArray(dataBasket) ? true : false,
+      togglePending: !isEmptyArray(dataBasket) ? true : false,
       isLoading: false,
     };
   }
@@ -90,7 +83,8 @@ class HistoryMenuTab extends Component {
                     color: 'white',
                     fontFamily: 'Lato-Medium',
                   }}>
-                  Pending Orders {dataBasket != undefined ? '(1)' : null}
+                  Pending Orders{' '}
+                  {!isEmptyArray(dataBasket) ? `( ${dataBasket.length} )` : null}
                 </Text>
               </View>
               {this.state.togglePending ? (
@@ -128,7 +122,7 @@ const styles = StyleSheet.create({
 });
 
 mapStateToProps = state => ({
-  dataBasket: state.orderReducer.dataBasket.product,
+  dataBasket: state.orderReducer.dataCart.cart,
   intlData: state.intlData,
 });
 

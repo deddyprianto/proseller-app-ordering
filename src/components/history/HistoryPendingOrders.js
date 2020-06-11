@@ -5,13 +5,11 @@ import {
   StyleSheet,
   Dimensions,
   TouchableOpacity,
-  Image,
   Platform,
   ScrollView,
   RefreshControl,
   FlatList,
-  ActivityIndicator,
-  SafeAreaView,
+  Alert,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
@@ -19,12 +17,12 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import colorConfig from '../../config/colorConfig';
 import {Actions} from 'react-native-router-flux';
 import {notifikasi} from '../../actions/auth.actions';
-import {getBasket} from '../../actions/order.action';
+import {getCart, getPendingCart, setCart} from '../../actions/order.action';
+import {isEmptyArray} from '../../helper/CheckEmpty';
 
 class HistoryPayment extends Component {
   constructor(props) {
     super(props);
-    this.onEndReachedCalledDuringMomentum = true;
     this.state = {
       refreshing: false,
     };
@@ -64,16 +62,18 @@ class HistoryPayment extends Component {
     return mount[value];
   }
 
-  gotToBasket = () => {
-    const {dataBasket} = this.props;
-    if (dataBasket != undefined) {
+  gotToBasket = async item => {
+    if (item != undefined) {
+      await this.props.dispatch(setCart(item));
       if (
-        dataBasket.status == 'PROCESSING' ||
-        dataBasket.status == 'READY_FOR_COLLECTION'
+        item.status == 'PROCESSING' ||
+        item.status == 'READY_FOR_COLLECTION' ||
+        item.status == 'READY_FOR_DELIVERY' ||
+        item.status == 'ON_THE_WAY'
       ) {
-        Actions.waitingFood();
+        Actions.waitingFood({myCart: item});
       } else {
-        Actions.basket();
+        Actions.cart({myCart: item});
       }
     }
   };
@@ -81,18 +81,30 @@ class HistoryPayment extends Component {
   componentDidMount = async () => {
     this.setState({refreshing: true});
     this.getDataHistory();
+    try {
+      clearInterval(this.interval);
+      this.interval = setInterval(() => {
+        this.props.dispatch(getPendingCart());
+      }, 3000);
+    } catch (e) {}
   };
+
+  componentWillUnmount(): void {
+    try {
+      clearInterval(this.interval);
+    } catch (e) {}
+  }
 
   getDataHistory = async () => {
     try {
       await this.setState({refreshing: true});
-      await this.props.dispatch(getBasket());
+      await this.props.dispatch(getPendingCart());
       await this.setState({refreshing: false});
     } catch (error) {
       await this.props.dispatch(
         notifikasi(
           "We're Sorry...",
-          "We can't get history transaction, please try again",
+          "We can't get pending cart, please try again",
           console.log('Cancel Pressed'),
         ),
       );
@@ -131,14 +143,10 @@ class HistoryPayment extends Component {
   // };
 
   render() {
-    const {intlData, dataBasket} = this.props;
-    let listItem = [];
-    if (dataBasket != undefined) {
-      listItem.push(dataBasket);
-    }
+    const {intlData, pendingCart} = this.props;
     return (
       <>
-        {dataBasket == undefined ? (
+        {pendingCart == undefined || isEmptyArray(pendingCart) ? (
           <ScrollView
             refreshControl={
               <RefreshControl
@@ -151,7 +159,7 @@ class HistoryPayment extends Component {
         ) : (
           <View style={styles.component}>
             <FlatList
-              data={listItem}
+              data={pendingCart}
               extraData={this.props}
               refreshControl={
                 <RefreshControl
@@ -177,7 +185,7 @@ class HistoryPayment extends Component {
                       <View style={styles.sejajarSpace}>
                         <View style={{flexDirection: 'row'}}>
                           <Icon
-                            size={18}
+                            size={16}
                             name={
                               Platform.OS === 'ios' ? 'ios-play' : 'md-play'
                             }
@@ -285,11 +293,8 @@ const styles = StyleSheet.create({
     color: colorConfig.store.defaultColor,
   },
   paymentType: {
-    // paddingLeft: 10,
     color: colorConfig.store.secondaryColor,
-    // fontWeight: 'bold',
-    // fontSize: 12,
-    // fontFamily: 'Lato-Medium',
+    fontSize: 13,
   },
   itemType: {
     color: colorConfig.pageIndex.activeTintColor,
@@ -313,7 +318,7 @@ const styles = StyleSheet.create({
 });
 
 mapStateToProps = state => ({
-  dataBasket: state.orderReducer.dataBasket.product,
+  pendingCart: state.orderReducer.dataCart.cart,
   intlData: state.intlData,
 });
 

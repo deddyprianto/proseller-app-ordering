@@ -463,6 +463,168 @@ export const getBasket = () => {
   };
 };
 
+export const getPendingCart = () => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+      let response = await fetchApiOrder(
+        `/cart/pending`,
+        'POST',
+        null,
+        200,
+        token,
+      );
+      console.log(response, 'response get pending cart');
+      if (response.success == false) {
+        dispatch({
+          type: 'DATA_CART',
+          product: undefined,
+        });
+      } else {
+        dispatch({
+          type: 'DATA_CART',
+          product: response.response.data,
+        });
+      }
+
+      return response;
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const getCart = id => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+      let response = await fetchApiOrder(
+        `/cart/pending/${id}`,
+        'GET',
+        null,
+        200,
+        token,
+      );
+      console.log(response, 'response get pending cart by id');
+      if (response.success == false) {
+        dispatch({
+          type: 'DATA_CART_SINGLE',
+          cartSingle: undefined,
+        });
+      } else {
+        dispatch({
+          type: 'DATA_CART_SINGLE',
+          cartSingle: response.response.data,
+        });
+      }
+
+      return response;
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const setCart = cart => {
+  return async dispatch => {
+    try {
+      dispatch({
+        type: 'DATA_CART_SINGLE',
+        cartSingle: cart,
+      });
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const getDeliveryProvider = () => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+      let response = await fetchApiOrder(
+        `/delivery/providers`,
+        'POST',
+        null,
+        200,
+        token,
+      );
+      console.log(response, 'response get delivery provider');
+      if (response.success == false) {
+        dispatch({
+          type: 'DATA_PROVIDER',
+          providers: undefined,
+        });
+      } else {
+        dispatch({
+          type: 'DATA_PROVIDER',
+          providers: response.response.data,
+        });
+      }
+
+      return response;
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const getDeliveryFee = payload => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+      let response = await fetchApiOrder(
+        `/delivery/calculateFee`,
+        'POST',
+        payload,
+        200,
+        token,
+      );
+      console.log(response, 'response get delivery fee');
+      if (response.success == true) {
+        return response.response;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const setDeliveryProvider = cart => {
+  return async dispatch => {
+    try {
+      dispatch({
+        type: 'DELIVERY_PROVIDER',
+        cartSingle: cart,
+      });
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
 export const settleOrder = (payload, url) => {
   return async (dispatch, getState) => {
     const state = getState();

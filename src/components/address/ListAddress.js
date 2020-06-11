@@ -28,15 +28,11 @@ import {compose} from 'redux';
 import {connect} from 'react-redux';
 import {reduxForm} from 'redux-form';
 import Loader from './../loader';
+import {clearAddress, getAccountPayment} from '../../actions/payment.actions';
 import {
-  getAccountPayment,
-  registerCard,
-  removeCard,
-} from '../../actions/payment.actions';
-import {
-  defaultPaymentAccount,
+  defaultAddress,
   getUserProfile,
-  movePageIndex,
+  updateUser,
 } from '../../actions/user.action';
 import {isEmptyArray, isEmptyData} from '../../helper/CheckEmpty';
 import RBSheet from 'react-native-raw-bottom-sheet';
@@ -81,23 +77,55 @@ class ListAddress extends Component {
   };
 
   setDefaultAccount = async () => {
-    const {selectedAccount} = this.state;
-    await this.props.dispatch(defaultPaymentAccount(selectedAccount));
+    const {selectedAddress} = this.state;
+    await this.props.dispatch(defaultAddress(selectedAddress));
     this.RBSheet.close();
   };
 
-  removeAccount = async () => {
+  removeAddress = async () => {
     try {
       this.RBSheet.close();
-      const {selectedAccount} = this.state;
+      const {selectedAddress} = this.state;
       await this.setState({loading: true});
-      const response = await this.props.dispatch(removeCard(selectedAccount));
-      if (response.response.resultCode != 200) {
-        Alert.alert('Sorry', 'Cant delete account, please try again');
-      } else {
-        await this.props.dispatch(defaultPaymentAccount(undefined));
+
+      let userDetail = {};
+      try {
+        // Decrypt data user
+        let bytes = CryptoJS.AES.decrypt(
+          this.props.userDetail,
+          awsConfig.PRIVATE_KEY_RSA,
+        );
+        userDetail = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+      } catch (e) {
+        userDetail = {};
       }
-      await this.getDataCard();
+
+      let data = {
+        username: userDetail.username,
+        deliveryAddress: [],
+      };
+
+      if (!isEmptyArray(userDetail.deliveryAddress)) {
+        data.deliveryAddress = userDetail.deliveryAddress;
+
+        data.deliveryAddress = data.deliveryAddress.filter(
+          item => item.address != selectedAddress.address,
+        );
+
+        const response = await this.props.dispatch(updateUser(data));
+
+        if (response) {
+          try {
+            if (selectedAddress.address == this.props.defaultAddress.address) {
+              await this.props.dispatch(defaultAddress(undefined));
+            }
+          } catch (e) {}
+          await this.props.dispatch(clearAddress());
+        } else {
+          Alert.alert('Oppss..', 'Please try again.');
+        }
+      }
+
       await this.setState({loading: false});
     } catch (e) {
       await this.setState({loading: false});
@@ -113,7 +141,7 @@ class ListAddress extends Component {
           this.RBSheet = ref;
         }}
         animationType={'fade'}
-        height={210}
+        height={300}
         duration={10}
         closeOnDragDown={true}
         closeOnPressMask={true}
@@ -151,22 +179,56 @@ class ListAddress extends Component {
               fontSize: 18,
               textAlign: 'center',
             }}>
-            {/*{intlData.messages.dineIn}*/}
             Set as Default
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => {
+            this.RBSheet.close();
+            Actions.editAddress({
+              from: 'listAddress',
+              myAddress: this.state.selectedAddress,
+            });
+          }}
+          style={{
+            padding: 15,
+            backgroundColor: colorConfig.store.secondaryColor,
+            borderRadius: 15,
+            width: '60%',
+            marginBottom: 20,
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <Icon
+            size={30}
+            name={Platform.OS === 'ios' ? 'ios-create' : 'md-create'}
+            style={{color: 'white'}}
+          />
+          <Text
+            style={{
+              marginLeft: 10,
+              color: 'white',
+              fontWeight: 'bold',
+              fontFamily: 'Lato-Bold',
+              fontSize: 18,
+              textAlign: 'center',
+            }}>
+            Edit Address
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
             Alert.alert(
-              'Remove account',
-              'Are you sure to remove this account from list ?',
+              'Remove address',
+              'Are you sure to remove this address from list ?',
               [
                 {
                   text: 'Cancel',
                   onPress: () => console.log('Cancel Pressed'),
                   style: 'cancel',
                 },
-                {text: 'Remove', onPress: () => this.removeAccount()},
+                {text: 'Remove', onPress: () => this.removeAddress()},
               ],
               {cancelable: true},
             );
@@ -202,10 +264,10 @@ class ListAddress extends Component {
     );
   };
 
-  checkDefaultAccount = item => {
-    const {defaultAccount} = this.props;
+  checkDefaultAddress = item => {
+    const {defaultAddress} = this.props;
     try {
-      if (defaultAccount.accountID == item.accountID) return true;
+      if (defaultAddress.address == item.address) return true;
       else return false;
     } catch (e) {
       return false;
@@ -227,108 +289,6 @@ class ListAddress extends Component {
     }
   };
 
-  askUserToEnterCVV = () => {
-    const {intlData} = this.props;
-    return (
-      <RBSheet
-        ref={ref => {
-          this.RBCVV = ref;
-        }}
-        animationType={'fade'}
-        height={210}
-        duration={10}
-        closeOnDragDown={true}
-        closeOnPressMask={true}
-        closeOnPressBack={true}
-        customStyles={{
-          container: {
-            backgroundColor: colorConfig.store.textWhite,
-            justifyContent: 'center',
-            alignItems: 'center',
-          },
-        }}>
-        <Text
-          style={{
-            color: colorConfig.pageIndex.inactiveTintColor,
-            fontSize: 22,
-            paddingBottom: 5,
-            fontWeight: 'bold',
-            fontFamily: 'Lato-Bold',
-          }}>
-          Please Enter CVV
-        </Text>
-
-        <TextInput
-          onChangeText={value => {
-            this.setState({cvv: value});
-          }}
-          keyboardType={'numeric'}
-          secureTextEntry={true}
-          maxLength={3}
-          style={{
-            padding: 10,
-            fontSize: 22,
-            textAlign: 'center',
-            fontWeight: 'bold',
-            fontFamily: 'Lato-Bold',
-            color: colorConfig.pageIndex.grayColor,
-            borderColor: colorConfig.pageIndex.grayColor,
-            borderRadius: 10,
-            borderWidth: 1.5,
-            letterSpacing: 20,
-            width: '35%',
-            flexDirection: 'row',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-        />
-
-        <TouchableOpacity
-          disabled={this.state.cvv.length != 3 ? true : false}
-          onPress={this.saveCVV}
-          style={{
-            marginTop: 20,
-            padding: 12,
-            backgroundColor:
-              this.state.cvv.length != 3
-                ? colorConfig.store.disableButton
-                : colorConfig.store.defaultColor,
-            borderRadius: 15,
-            width: '35%',
-            flexDirection: 'row',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
-          <Text
-            style={{
-              color: 'white',
-              fontWeight: 'bold',
-              fontFamily: 'Lato-Bold',
-              fontSize: 15,
-              textAlign: 'center',
-            }}>
-            SAVE
-          </Text>
-        </TouchableOpacity>
-      </RBSheet>
-    );
-  };
-
-  isCVVRequired = () => {
-    try {
-      const {selectedAccount} = this.state;
-      let requiredCVV = selectedAccount.details.userInput.find(
-        data => data.name == 'cardCVV',
-      );
-      if (requiredCVV != undefined && requiredCVV.required == true) {
-        this.RBCVV.open();
-        // this.RBSheet.close();
-      } else {
-        this.setDefaultAccount(selectedAccount);
-      }
-    } catch (e) {}
-  };
-
   renderAddress = address => {
     return (
       <FlatList
@@ -336,10 +296,13 @@ class ListAddress extends Component {
         renderItem={({item}) => (
           <TouchableOpacity
             onPress={() => {
-              this.setState({selectedAccount: item});
+              this.setState({selectedAddress: item});
               this.RBSheet.open();
             }}
-            style={styles.card}>
+            style={[
+              styles.card,
+              this.checkDefaultAddress(item) ? styles.cardSelected : null,
+            ]}>
             <View style={styles.cardContent}>
               <Text style={styles.cardText}>Address Name : </Text>
               <Text style={styles.cardText}>{item.addressName}</Text>
@@ -362,33 +325,6 @@ class ListAddress extends Component {
                 {item.postalCode}
               </Text>
             </View>
-
-            {this.checkDefaultAccount(item) ? (
-              <View
-                style={{
-                  borderTopLeftRadius: 5,
-                  borderTopRightRadius: 5,
-                  borderBottomLeftRadius: 5,
-                  backgroundColor: colorConfig.store.transparentColor,
-                  height: 40,
-                  width: '35%',
-                  position: 'absolute',
-                  top: 0,
-                  right: 0,
-                  zIndex: 2,
-                  justifyContent: 'center',
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                }}>
-                <Text
-                  style={[
-                    styles.cardNameText,
-                    {textAlign: 'center', fontSize: 12},
-                  ]}>
-                  DEFAULT
-                </Text>
-              </View>
-            ) : null}
           </TouchableOpacity>
         )}
         keyExtractor={(product, index) => index.toString()}
@@ -446,17 +382,6 @@ class ListAddress extends Component {
       address = user.deliveryAddress;
     }
 
-    if (!isEmptyData(user.address)) {
-      let tempAddress = {
-        addressName: 'My Default Address',
-        address: user.address,
-        postalCode: '-',
-        city: '-',
-      };
-
-      address.push(tempAddress);
-    }
-
     return (
       <SafeAreaView style={styles.container}>
         {this.state.loading && <Loader />}
@@ -506,6 +431,7 @@ class ListAddress extends Component {
 mapStateToProps = state => ({
   intlData: state.intlData,
   userDetail: state.userReducer.getUser.userDetails,
+  defaultAddress: state.userReducer.defaultAddress.defaultAddress,
 });
 
 mapDispatchToProps = dispatch => ({
@@ -598,6 +524,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.7,
     shadowRadius: 7.49,
     elevation: 12,
+  },
+  cardSelected: {
+    borderWidth: 4,
+    borderColor: colorConfig.store.defaultColor,
   },
   cardContent: {
     flexDirection: 'row',

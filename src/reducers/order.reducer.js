@@ -12,11 +12,11 @@ const productsOutlet = (state = {}, action) => {
   }
 };
 
-const categoryOutlet = (state = {}, action) => {
+const dataBasket = (state = {}, action) => {
   switch (action.type) {
-    case 'DATA_CATEGORY_OUTLET':
+    case 'DATA_BASKET':
       return {
-        cateories: action.products,
+        product: action.product,
       };
 
     default:
@@ -24,11 +24,35 @@ const categoryOutlet = (state = {}, action) => {
   }
 };
 
-const dataBasket = (state = {}, action) => {
+const dataProvider = (state = {}, action) => {
   switch (action.type) {
-    case 'DATA_BASKET':
+    case 'DATA_PROVIDER':
       return {
-        product: action.product,
+        providers: action.providers,
+      };
+
+    default:
+      return state;
+  }
+};
+
+const dataCart = (state = {}, action) => {
+  switch (action.type) {
+    case 'DATA_CART':
+      return {
+        cart: action.product,
+      };
+
+    default:
+      return state;
+  }
+};
+
+const dataCartSingle = (state = {}, action) => {
+  switch (action.type) {
+    case 'DATA_CART_SINGLE':
+      return {
+        cartSingle: action.cartSingle,
       };
 
     default:
@@ -48,8 +72,24 @@ const tableType = (state = {}, action) => {
   }
 };
 
+const deliveryProvider = (state = {}, action) => {
+  switch (action.type) {
+    case 'DELIVERY_PROVIDER':
+      return {
+        deliveryProvider: action.deliveryProvider,
+      };
+
+    default:
+      return state;
+  }
+};
+
 export default combineReducers({
   productsOutlet,
   dataBasket,
   tableType,
+  dataCart,
+  dataCartSingle,
+  deliveryProvider,
+  dataProvider,
 });

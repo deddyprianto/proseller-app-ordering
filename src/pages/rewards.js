@@ -30,7 +30,7 @@ import {myVoucers} from '../actions/account.action';
 import ShimmerPlaceHolder from 'react-native-shimmer-placeholder';
 import MyPointsPlaceHolder from '../components/placeHolderLoading/MyPointsPlaceHolder';
 import {isEmptyObject, isEmptyArray} from '../helper/CheckEmpty';
-import {getBasket} from '../actions/order.action';
+import {getBasket, getDeliveryProvider, getPendingCart} from '../actions/order.action';
 import CryptoJS from 'react-native-crypto-js';
 import awsConfig from '../config/awsConfig';
 import {getCompanyInfo} from '../actions/stores.action';
@@ -90,12 +90,13 @@ class Rewards extends Component {
     try {
       await this.getUserPosition();
       await this.props.dispatch(refreshToken());
-      await this.props.dispatch(getBasket());
+      await this.props.dispatch(getPendingCart());
       await this.props.dispatch(campaign());
       await this.props.dispatch(dataPoint());
       await this.props.dispatch(getStamps());
       await this.props.dispatch(dataInbox(0, 50));
       await this.props.dispatch(recentTransaction());
+      await this.props.dispatch(getDeliveryProvider());
 
       this.setState({isLoading: false});
     } catch (error) {

@@ -3,16 +3,10 @@ import {
   View,
   Text,
   StyleSheet,
-  ScrollView,
   Dimensions,
-  RefreshControl,
-  TouchableOpacity,
-  Image,
-  Platform,
   BackHandler,
   SafeAreaView,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
 import {connect} from 'react-redux';
 import {compose} from 'redux';

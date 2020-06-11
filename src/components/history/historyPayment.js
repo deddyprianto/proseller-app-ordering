@@ -86,7 +86,6 @@ class HistoryPayment extends Component {
     try {
       await this.setState({refreshing: true});
       await this.props.dispatch(dataTransaction());
-      await this.props.dispatch(getBasket());
       // if (this.props.isSuccessGetTrx) {
       //   this.setState({refreshing: false});
       // } else {

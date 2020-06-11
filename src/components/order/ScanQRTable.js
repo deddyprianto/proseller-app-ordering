@@ -61,8 +61,7 @@ class ScanQRTable extends Component {
           basket.outlet.outletType == 'QUICKSERVICE'
         ) {
           this.props.dispatch(setTableType(scan));
-          // Actions.pop();
-          Actions.reset('pageIndex', {fromPayment: true});
+          Actions.pop();
         } else {
           this.pushDataToServer(scan);
         }

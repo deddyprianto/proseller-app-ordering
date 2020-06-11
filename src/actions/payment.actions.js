@@ -138,3 +138,16 @@ export const clearAccount = () => {
     }
   };
 };
+
+export const clearAddress = () => {
+  return async dispatch => {
+    try {
+      dispatch({
+        type: 'SELECTED_ADDRESS',
+        selectedAddress: undefined,
+      });
+    } catch (error) {
+      return error;
+    }
+  };
+};
