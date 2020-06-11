@@ -85,7 +85,7 @@ class HistoryPayment extends Component {
       clearInterval(this.interval);
       this.interval = setInterval(() => {
         this.props.dispatch(getPendingCart());
-      }, 3000);
+      }, 8000);
     } catch (e) {}
   };
 

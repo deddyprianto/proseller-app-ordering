@@ -5,24 +5,16 @@ import {
   StyleSheet,
   ScrollView,
   RefreshControl,
-  TouchableOpacity,
-  Image,
   Platform,
-  ActivityIndicator,
-  Alert,
   Picker,
   SafeAreaView,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
-import {Actions} from 'react-native-router-flux';
 
-import {logoutUser, notifikasi} from '../actions/auth.actions';
+import {logoutUser} from '../actions/auth.actions';
 import AccountUserDetail from '../components/accountUserDetail';
 import AccountMenuList from '../components/accountMenuList';
-
-import {campaign, dataPoint, vouchers} from '../actions/rewards.action';
-import {myVoucers} from '../actions/account.action';
 import colorConfig from '../config/colorConfig';
 import {Dialog} from 'react-native-paper';
 import {updateLanguage} from '../actions/language.action';

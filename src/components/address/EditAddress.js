@@ -136,6 +136,10 @@ class EditAddress extends Component {
           await this.props.dispatch(selectedAddress(newAddress));
         }
 
+        if (this.props.from == 'selectAddress') {
+          await this.props.dispatch(selectedAddress(newAddress));
+        }
+
         this.goBack();
       } else {
         Alert.alert('Oppss..', 'Please try again.');

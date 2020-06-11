@@ -140,71 +140,66 @@ class SelectAddress extends Component {
       <FlatList
         data={address}
         renderItem={({item}) => (
-          <TouchableOpacity
-            onPress={() => {
-              try {
-                this.setState({selectedAddress: item});
-                this.props.dispatch(selectedAddress(item));
-                try {
-                  this.props.clearDelivery();
-                } catch (e) {}
-                this.goBack();
-              } catch (e) {}
-            }}
+          <View
             style={[
               styles.card,
               this.checkSelectedAddress(item) ? styles.cardSelected : null,
             ]}>
-            <View style={styles.cardContent}>
-              <Text style={styles.cardText}>Address Name : </Text>
-              <Text style={styles.cardText}>{item.addressName}</Text>
-            </View>
-            <View style={styles.cardContent}>
-              <Text style={styles.cardText}>Address Detail : </Text>
-              <Text style={[styles.cardText, {maxWidth: '60%'}]}>
-                {item.address}
-              </Text>
-            </View>
-            <View style={styles.cardContent}>
-              <Text style={styles.cardText}>City : </Text>
-              <Text style={[styles.cardText, {maxWidth: '60%'}]}>
-                {item.city}
-              </Text>
-            </View>
-            <View style={styles.cardContent}>
-              <Text style={styles.cardText}>Postal Code : </Text>
-              <Text style={[styles.cardText, {maxWidth: '70%'}]}>
-                {item.postalCode}
-              </Text>
-            </View>
-
-            {this.checkDefaultAccount(item) ? (
-              <View
-                style={{
-                  borderTopLeftRadius: 5,
-                  borderTopRightRadius: 5,
-                  borderBottomLeftRadius: 5,
-                  backgroundColor: colorConfig.store.transparentColor,
-                  height: 40,
-                  width: '35%',
-                  position: 'absolute',
-                  top: 0,
-                  right: 0,
-                  zIndex: 2,
-                  justifyContent: 'center',
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                }}>
-                <Text
-                  style={[
-                    styles.cardNameText,
-                    {textAlign: 'center', fontSize: 12},
-                  ]}>
-                  DEFAULT
+            <TouchableOpacity
+              onPress={() => {
+                try {
+                  this.setState({selectedAddress: item});
+                  this.props.dispatch(selectedAddress(item));
+                  try {
+                    this.props.clearDelivery();
+                  } catch (e) {}
+                  this.goBack();
+                } catch (e) {}
+              }}>
+              <View style={styles.cardContent}>
+                <Text style={styles.cardText}>Address Name : </Text>
+                <Text style={styles.cardText}>{item.addressName}</Text>
+              </View>
+              <View style={styles.cardContent}>
+                <Text style={styles.cardText}>Address Detail : </Text>
+                <Text style={[styles.cardText, {maxWidth: '60%'}]}>
+                  {item.address}
                 </Text>
               </View>
-            ) : null}
-          </TouchableOpacity>
+              <View style={styles.cardContent}>
+                <Text style={styles.cardText}>City : </Text>
+                <Text style={[styles.cardText, {maxWidth: '60%'}]}>
+                  {item.city}
+                </Text>
+              </View>
+              <View style={styles.cardContent}>
+                <Text style={styles.cardText}>Postal Code : </Text>
+                <Text style={[styles.cardText, {maxWidth: '70%'}]}>
+                  {item.postalCode}
+                </Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                Actions.editAddress({
+                  from: 'selectAddress',
+                  myAddress: item,
+                });
+              }}
+              style={{
+                backgroundColor: colorConfig.store.darkColor,
+                padding: 10,
+                borderRadius: 10,
+                marginTop: 20,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <Text
+                style={{fontSize: 15, fontFamily: 'Lato-Bold', color: 'white'}}>
+                Edit
+              </Text>
+            </TouchableOpacity>
+          </View>
         )}
         keyExtractor={(product, index) => index.toString()}
       />
@@ -424,7 +419,7 @@ const styles = StyleSheet.create({
   },
   cardSelected: {
     borderWidth: 4,
-    borderColor: '#f1c40f',
+    borderColor: colorConfig.store.defaultColor,
   },
   headingCard: {
     flexDirection: 'row',

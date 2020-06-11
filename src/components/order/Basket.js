@@ -312,7 +312,7 @@ class Basket extends Component {
             </Text>
           </TouchableOpacity>
         ) : null}
-        {item.enableTakeAway == true ? (
+        {item.enableDelivery == true ? (
           <TouchableOpacity
             disabled={item.enableTakeAway == false ? true : false}
             onPress={() => this.setOrderType('DELIVERY')}

@@ -25,11 +25,7 @@ class AccountUserDetail extends Component {
 
   renderCustomerGroupBG = cg => {
     try {
-      let bg;
-      if (cg == 'Standard') bg = '#414141';
-      else if (cg == 'Gold') bg = '#e6b31e';
-      else bg = '#bbbbbb';
-      return bg;
+      return '#ff6b6b';
     } catch (e) {
       return '#414141';
     }
@@ -67,8 +63,8 @@ class AccountUserDetail extends Component {
           <View>
             <Image
               style={{
-                height: 75,
-                width: 75,
+                height: 70,
+                width: 70,
                 marginBottom: 20,
                 borderRadius: 10,
                 alignSelf: 'center',

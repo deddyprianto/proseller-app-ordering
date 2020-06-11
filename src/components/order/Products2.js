@@ -276,7 +276,7 @@ class Products2 extends Component {
             </Text>
           </TouchableOpacity>
         ) : null}
-        {item.enableTakeAway == true ? (
+        {item.enableDelivery == true ? (
           <TouchableOpacity
             disabled={item.enableTakeAway == false ? true : false}
             onPress={() => this.setOrderType('DELIVERY')}
@@ -1961,6 +1961,8 @@ class Products2 extends Component {
       item.storeName = outlet.name;
       item.outletType = outlet.outletType;
       item.orderingStatus = outlet.orderingStatus;
+
+      this.setState({item});
     } catch (e) {}
   };
 
@@ -1970,7 +1972,7 @@ class Products2 extends Component {
     await this.refreshOutlet();
     await this.firstMethodToRun(true);
     await this.setState({refresh: false});
-    this.prompOutletIsClosed();
+    // this.prompOutletIsClosed();
   };
 
   renderFooter = item => {

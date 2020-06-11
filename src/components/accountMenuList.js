@@ -3,14 +3,11 @@ import {
   View,
   Text,
   StyleSheet,
-  ScrollView,
   Dimensions,
   Platform,
   TouchableOpacity,
-  Image,
   Alert,
   ActivityIndicator,
-  FlatList,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
