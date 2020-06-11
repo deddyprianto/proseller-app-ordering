@@ -16,17 +16,12 @@ import {
 import {connect} from 'react-redux';
 import {compose} from 'redux';
 import Icon from 'react-native-vector-icons/Ionicons';
-import * as _ from 'lodash';
 
-import logoCash from '../../assets/img/cash.png';
-import logoVisa from '../../assets/img/visa.png';
 import colorConfig from '../../config/colorConfig';
 import {Actions} from 'react-native-router-flux';
 import {dataTransaction} from '../../actions/sales.action';
 import {notifikasi, refreshToken} from '../../actions/auth.actions';
-import {movePageIndex} from '../../actions/user.action';
 import {isEmptyArray} from '../../helper/CheckEmpty';
-import {getBasket} from '../../actions/order.action';
 import CurrencyFormatter from '../../helper/CurrencyFormatter';
 import appConfig from '../../config/appConfig';
 

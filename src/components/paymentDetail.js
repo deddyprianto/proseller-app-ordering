@@ -25,17 +25,13 @@ import {Actions} from 'react-native-router-flux';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
 import * as _ from 'lodash';
-// import {RNSlidingButton, SlideDirection} from 'rn-sliding-button';
 import SwipeButton from 'rn-swipe-button';
 import AwesomeAlert from 'react-native-awesome-alerts';
 
 import colorConfig from '../config/colorConfig';
 import appConfig from '../config/appConfig';
-import {campaign, dataPoint, getStamps} from '../actions/rewards.action';
-import {myVoucers} from '../actions/account.action';
 import {sendPayment} from '../actions/sales.action';
 import Loader from './loader';
-import {refreshToken} from '../actions/auth.actions';
 import CurrencyFormatter from '../helper/CurrencyFormatter';
 import {isEmptyArray, isEmptyObject} from '../helper/CheckEmpty';
 import {
