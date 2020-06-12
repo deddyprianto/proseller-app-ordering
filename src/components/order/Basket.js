@@ -314,7 +314,7 @@ class Basket extends Component {
         ) : null}
         {item.enableDelivery == true ? (
           <TouchableOpacity
-            disabled={item.enableTakeAway == false ? true : false}
+            disabled={item.enableDelivery == false ? true : false}
             onPress={() => this.setOrderType('DELIVERY')}
             style={styles.activeDELIVERYButton}>
             <Icon
@@ -1473,8 +1473,8 @@ class Basket extends Component {
       <FlatList
         data={item.modifiers}
         renderItem={({item}) =>
-          item.modifier.details.map(mod => (
-            <Text style={[styles.descModifier]}>
+          item.modifier.details.map((mod, idx) => (
+            <Text key={idx} style={[styles.descModifier]}>
               •{' '}
               {item.modifier.isYesNo != true ? (
                 <Text
@@ -1839,8 +1839,6 @@ class Basket extends Component {
     if (outletSingle == undefined || outletSingle == null) {
       outletSingle = {};
     }
-
-    console.log(this.state.deliveryFee, 'kjabskajsbk');
 
     try {
       // clear table type if basket is cancelled by admin

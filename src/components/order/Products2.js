@@ -278,7 +278,7 @@ class Products2 extends Component {
         ) : null}
         {item.enableDelivery == true ? (
           <TouchableOpacity
-            disabled={item.enableTakeAway == false ? true : false}
+            disabled={item.enableDelivery == false ? true : false}
             onPress={() => this.setOrderType('DELIVERY')}
             style={styles.activeDELIVERYButton}>
             <Icon

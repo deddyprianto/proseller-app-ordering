@@ -399,6 +399,30 @@ class WaitingFood extends Component {
     );
   };
 
+  renderItemModifier = item => {
+    return (
+      <FlatList
+        data={item.modifiers}
+        renderItem={({item}) =>
+          item.modifier.details.map((mod, idx) => (
+            <Text key={idx} style={[styles.descModifier]}>
+              •{' '}
+              {item.modifier.isYesNo != true ? (
+                <Text
+                  style={{
+                    color: colorConfig.store.defaultColor,
+                  }}>
+                  {mod.quantity}x
+                </Text>
+              ) : null}{' '}
+              {mod.name} ( {this.format(CurrencyFormatter(mod.productPrice))} )
+            </Text>
+          ))
+        }
+      />
+    );
+  };
+
   detailOrder = () => {
     const {intlData, dataBasket} = this.props;
     return (
@@ -474,7 +498,7 @@ class WaitingFood extends Component {
                             Add On:
                           </Text>
                         ) : null}
-                        {/*{this.renderItemModifier(item)}*/}
+                        {this.renderItemModifier(item)}
                       </View>
                     </View>
                     <View>
