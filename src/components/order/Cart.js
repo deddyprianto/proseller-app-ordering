@@ -367,8 +367,12 @@ class Cart extends Component {
 
   renderSettleButtonQuickService = () => {
     const {intlData, dataBasket} = this.props;
-    let fee = dataBasket.deliveryFee;
-    fee == null ? 0 : parseFloat(fee);
+    let fee = dataBasket.deliveryFee == undefined ? 0 : dataBasket.deliveryFee;
+    try {
+      fee = parseFloat(fee);
+    } catch (e) {
+      fee = 0;
+    }
     return (
       <View
         style={{

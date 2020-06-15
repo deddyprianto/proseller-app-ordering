@@ -102,7 +102,6 @@ class HistoryDetailPayment extends Component {
 
   render() {
     const {intlData} = this.props;
-    console.log(this.props.item, 'asasasas');
     return (
       <SafeAreaView style={styles.container}>
         <View style={{backgroundColor: colorConfig.pageIndex.backgroundColor}}>
@@ -144,13 +143,6 @@ class HistoryDetailPayment extends Component {
                   </Text>
                 </View>
               ) : null}
-
-              {/*<View style={styles.detailItem}>*/}
-              {/*  <Text style={styles.desc}>Sub Total</Text>*/}
-              {/*  <Text style={styles.desc}>*/}
-              {/*    {CurrencyFormatter(this.props.item.price)}*/}
-              {/*  </Text>*/}
-              {/*</View>*/}
 
               <View style={styles.detailItem}>
                 <Text style={styles.desc}>Total</Text>
