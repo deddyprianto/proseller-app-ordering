@@ -1280,6 +1280,7 @@ class Cart extends Component {
         //  for outlet type quick service
         if (
           (dataBasket.status == 'PROCESSING' ||
+            dataBasket.status == 'READY_FOR_DELIVERY' ||
             dataBasket.status == 'READY_FOR_COLLECTION') &&
           this.interval != undefined &&
           (Actions.currentScene == 'cart' ||

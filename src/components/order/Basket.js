@@ -42,7 +42,7 @@ import {getOutletById} from '../../actions/stores.action';
 import * as geolib from 'geolib';
 import appConfig from '../../config/appConfig';
 import {refreshToken} from '../../actions/auth.actions';
-import {getUserProfile} from '../../actions/user.action';
+import {defaultAddress, getUserProfile} from '../../actions/user.action';
 import CryptoJS from 'react-native-crypto-js';
 import awsConfig from '../../config/awsConfig';
 import {clearAddress, selectedAddress} from '../../actions/payment.actions';
@@ -137,6 +137,7 @@ class Basket extends Component {
     try {
       // refresh token
       await this.props.dispatch(refreshToken());
+      // await this.props.dispatch(defaultAddress(undefined));
       // await this.props.dispatch(clearAddress());
       // get data basket
       await this.getBasket();
