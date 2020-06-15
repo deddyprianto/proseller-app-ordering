@@ -20,6 +20,7 @@ import awsConfig from '../config/awsConfig';
 import CryptoJS from 'react-native-crypto-js';
 import {isEmptyArray, isEmptyObject} from '../helper/CheckEmpty';
 import packageJson from '../../package';
+import {updateUser} from '../actions/user.action';
 
 class AccountMenuList extends Component {
   constructor(props) {
@@ -33,6 +34,27 @@ class AccountMenuList extends Component {
 
   logout = async () => {
     this.setState({loadingLogout: true});
+
+    // remove device ID from server, so customer not receive notif again if logout
+    try {
+      let user = {};
+      try {
+        let bytes = CryptoJS.AES.decrypt(
+          this.props.userDetail,
+          awsConfig.PRIVATE_KEY_RSA,
+        );
+        user = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+      } catch (e) {
+        user = {};
+      }
+
+      const payload = {
+        username: user.username,
+        player_ids: [],
+      };
+      await this.props.dispatch(updateUser(payload));
+    } catch (e) {}
+
     await this.props.dispatch(logoutUser());
     this.setState({loadingLogout: false});
   };
@@ -307,7 +329,7 @@ const styles = StyleSheet.create({
     width: Dimensions.get('window').width - 60,
   },
   itemMenu: {
-    paddingVertical: 12,
+    // paddingVertical: 12,
     justifyContent: 'center',
     marginLeft: 10,
     width: 30,

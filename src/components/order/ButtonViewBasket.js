@@ -13,20 +13,9 @@ class ButtonViewBasket extends Component {
   }
 
   openBasket = () => {
-    const {dataBasket} = this.props;
-
-    if (dataBasket != undefined) {
-      if (
-        dataBasket.status == 'PROCESSING' ||
-        dataBasket.status == 'READY_FOR_COLLECTION'
-      ) {
-        Actions.waitingFood();
-      } else {
-        Actions.basket();
-      }
-    } else {
-      Actions.basket();
-    }
+    Actions.basket({
+      refreshQuantityProducts: this.props.refreshQuantityProducts,
+    });
   };
 
   format = item => {

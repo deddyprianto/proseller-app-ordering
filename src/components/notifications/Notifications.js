@@ -24,7 +24,7 @@ import {updateUser} from '../../actions/user.action';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
 import Loader from '../loader';
-import {Menu, TouchableRipple} from 'react-native-paper';
+import {Menu, TouchableRipple, List} from 'react-native-paper';
 import Snackbar from 'react-native-snackbar';
 
 class Notifications extends Component {
@@ -147,67 +147,43 @@ class Notifications extends Component {
           </TouchableOpacity>
         </View>
         <ScrollView>
-          <View
-            style={{
-              width: '100%',
-              justifyContent: 'space-between',
-              flexDirection: 'row',
-              alignItems: 'center',
-            }}>
-            <Menu.Item
-              icon="email"
-              onPress={() => {
-                this.changeEmailSetting(emailNotification);
-              }}
-              title="Email Notification"
-            />
-            <TouchableRipple
-              style={{marginRight: 15}}
-              onPress={() => this.changeEmailSetting(emailNotification)}
-              rippleColor="rgba(0, 0, 0, .32)">
-              <Switch
-                trackColor={{false: '#767577', true: '#81b0ff'}}
-                thumbColor={true ? colorConfig.store.defaultColor : 'white'}
-                ios_backgroundColor="white"
-                onValueChange={() => {
-                  this.changeEmailSetting(emailNotification);
-                }}
-                value={emailNotification}
-              />
-            </TouchableRipple>
-          </View>
+          <List.Section>
+            <List.Subheader>Notification Settings</List.Subheader>
 
-          <View
-            style={{
-              width: '100%',
-              justifyContent: 'space-between',
-              flexDirection: 'row',
-              alignItems: 'center',
-            }}>
-            <Menu.Item
-              icon="phone"
-              onPress={() => {
-                this.changeSMSSetting(smsNotification);
-              }}
-              title="SMS Notification"
+            <List.Item
+              title="Email Notification"
+              description="Allow sending Email Notification to your mobile number."
+              left={props => <List.Icon {...props} icon="email" />}
+              right={() => (
+                <Switch
+                  trackColor={{false: '#767577', true: '#81b0ff'}}
+                  thumbColor={true ? colorConfig.store.defaultColor : 'white'}
+                  ios_backgroundColor="white"
+                  onValueChange={() => {
+                    this.changeEmailSetting(emailNotification);
+                  }}
+                  value={emailNotification}
+                />
+              )}
             />
-            <TouchableRipple
-              style={{marginRight: 15}}
-              onPress={() => {
-                this.changeSMSSetting(smsNotification);
-              }}
-              rippleColor="rgba(0, 0, 0, .32)">
-              <Switch
-                trackColor={{false: '#767577', true: '#81b0ff'}}
-                thumbColor={true ? colorConfig.store.defaultColor : 'white'}
-                ios_backgroundColor="white"
-                onValueChange={() => {
-                  this.changeSMSSetting(smsNotification);
-                }}
-                value={smsNotification}
-              />
-            </TouchableRipple>
-          </View>
+
+            <List.Item
+              title="SMS Notification"
+              description="Allow sending SMS Notification to your mobile number."
+              left={props => <List.Icon {...props} icon="phone" />}
+              right={() => (
+                <Switch
+                  trackColor={{false: '#767577', true: '#81b0ff'}}
+                  thumbColor={true ? colorConfig.store.defaultColor : 'white'}
+                  ios_backgroundColor="white"
+                  onValueChange={() => {
+                    this.changeSMSSetting(smsNotification);
+                  }}
+                  value={smsNotification}
+                />
+              )}
+            />
+          </List.Section>
         </ScrollView>
       </SafeAreaView>
     );

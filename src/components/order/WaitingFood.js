@@ -18,7 +18,7 @@ import {Actions} from 'react-native-router-flux';
 import colorConfig from '../../config/colorConfig';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
-import {getCart} from '../../actions/order.action';
+import {completeOrder, getCart} from '../../actions/order.action';
 import LottieView from 'lottie-react-native';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import CurrencyFormatter from '../../helper/CurrencyFormatter';
@@ -157,6 +157,43 @@ class WaitingFood extends Component {
     );
   };
 
+  completeOrder = async () => {
+    try {
+      let {dataBasket} = this.props;
+      const payload = {
+        id: dataBasket.id,
+        status: 'COMPLETED',
+      };
+
+      const response = await this.props.dispatch(completeOrder(payload));
+
+      if (response != false) {
+        try {
+          Actions.pop();
+        } catch (e) {}
+        Alert.alert('Congratulations', 'Your order has been completed');
+      } else {
+        Alert.alert('Oppss...', 'Please try again.');
+      }
+    } catch (e) {}
+  };
+
+  askUserToCompleteOrder = () => {
+    Alert.alert(
+      'Complete Order ?',
+      'Are you sure want to complete this order ?',
+      [
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
+        },
+        {text: 'Complete', onPress: () => this.completeOrder()},
+      ],
+      {cancelable: false},
+    );
+  };
+
   renderBottomButtonDelivery = () => {
     let {intlData, dataBasket} = this.props;
     // if basket is canceled by admin, then give template status
@@ -199,20 +236,29 @@ class WaitingFood extends Component {
             <Text style={styles.textBtnBasketModal}>View Detail</Text>
           </TouchableOpacity>
           <TouchableOpacity
+            disabled={dataBasket.status == 'ON_THE_WAY' ? false : true}
             onPress={() => {
               try {
                 clearInterval(this.interval);
                 this.interval = undefined;
               } catch (e) {}
-              Actions.pop();
+              this.askUserToCompleteOrder();
             }}
-            style={styles.btnAddBasketModal}>
+            style={[
+              styles.btnAddBasketModal,
+              {
+                backgroundColor:
+                  dataBasket.status == 'ON_THE_WAY'
+                    ? colorConfig.store.defaultColor
+                    : colorConfig.store.disableButton,
+              },
+            ]}>
             <Icon
               size={21}
-              name={Platform.OS === 'ios' ? 'ios-apps' : 'md-apps'}
+              name={Platform.OS === 'ios' ? 'ios-checkbox' : 'md-checkbox'}
               style={{color: 'white', marginRight: 5}}
             />
-            <Text style={styles.textBtnBasketModal}>Close</Text>
+            <Text style={styles.textBtnBasketModal}>Received</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -312,6 +358,16 @@ class WaitingFood extends Component {
         )}
       </View>
     );
+  };
+
+  getInfoProvider = id => {
+    const {providers} = this.props;
+    try {
+      const data = providers.find(item => (item.id = id));
+      return data.name;
+    } catch (e) {
+      return false;
+    }
   };
 
   renderTextWaitingDelivery = () => {
@@ -549,11 +605,11 @@ class WaitingFood extends Component {
                 </Text>
               </View>
             ) : null}
-            {dataBasket.deliveryProvider != undefined ? (
+            {dataBasket.deliveryProviderId != undefined ? (
               <View style={styles.itemSummary}>
                 <Text style={styles.total}>Delivery Provider : </Text>
                 <Text style={[styles.total, {textAlign: 'right'}]}>
-                  {dataBasket.deliveryProvider} - {dataBasket.deliveryService}
+                  {this.getInfoProvider(dataBasket.deliveryProviderId)}
                 </Text>
               </View>
             ) : null}
@@ -576,7 +632,7 @@ class WaitingFood extends Component {
                 TOTAL :{' '}
               </Text>
               <Text style={[styles.total, {color: colorConfig.store.title}]}>
-                {CurrencyFormatter(dataBasket.totalNettAmount)}
+                {CurrencyFormatter(dataBasket.confirmationInfo.price)}
               </Text>
             </View>
           </ScrollView>
@@ -700,6 +756,7 @@ class WaitingFood extends Component {
 
 mapStateToProps = state => ({
   dataBasket: state.orderReducer.dataCartSingle.cartSingle,
+  providers: state.orderReducer.dataProvider.providers,
   orderType: state.userReducer.orderType.orderType,
   tableType: state.orderReducer.tableType.tableType,
   products: state.orderReducer.productsOutlet.products,

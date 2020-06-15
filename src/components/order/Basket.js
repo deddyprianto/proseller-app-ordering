@@ -230,11 +230,27 @@ class Basket extends Component {
   };
 
   askUserToSelectOrderType = () => {
-    const {intlData, dataBasket} = this.props;
+    const {intlData, dataBasket, outletSingle} = this.props;
     let item = {};
+
     if (dataBasket != undefined) {
-      item = dataBasket.outlet;
+      item = dataBasket;
     }
+
+    if (outletSingle != undefined) {
+      item = outletSingle;
+      item.enableDelivery =
+        item.enableDelivery == false || item.enableDelivery == '-'
+          ? false
+          : true;
+      item.enableDineIn =
+        item.enableDineIn == false || item.enableDineIn == '-' ? false : true;
+      item.enableTakeAway =
+        item.enableTakeAway == false || item.enableTakeAway == '-'
+          ? false
+          : true;
+    }
+
     let height = 330;
     if (item.enableDineIn == false) height -= 50;
     if (item.enableTakeAway == false) height -= 50;
@@ -350,6 +366,7 @@ class Basket extends Component {
     try {
       await this.setState({loading: true});
       const payload = {
+        cartID: dataBasket.id,
         outletId: dataBasket.outlet.id,
         provider: item.id,
         service: item.name,
@@ -1313,6 +1330,11 @@ class Basket extends Component {
       await this.updateItem(product, qty, remark);
       await this.getBasket();
       await this.setState({loading: false});
+
+      // refresh update recyclerViewList in product page
+      try {
+        this.props.refreshQuantityProducts(product);
+      } catch (e) {}
     }
   };
 

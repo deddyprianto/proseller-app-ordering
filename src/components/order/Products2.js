@@ -49,6 +49,17 @@ import {dataStores} from '../../actions/stores.action';
 import {StatusBarHeight} from '../../helper/StatusBarChecker';
 import EmptySearch from '../atom/EmptySearch';
 import NewSearch from '../atom/NewSearch';
+import {RecyclerListView, DataProvider, LayoutProvider} from 'recyclerlistview';
+
+const ViewTypes = {
+  FULL: 0,
+  HALF_LEFT: 1,
+  HALF_RIGHT: 2,
+};
+
+let dataProvider = new DataProvider((r1, r2) => {
+  return r1.changed || r2.changed;
+});
 
 class Products2 extends Component {
   constructor(props) {
@@ -60,6 +71,20 @@ class Products2 extends Component {
     this.heightHeader = 0;
     this.heightNavBar = 0;
     this.heightCategoryPicker = 0;
+
+    let {width} = Dimensions.get('window');
+
+    this._layoutProvider = new LayoutProvider(
+      index => {
+        if (index !== null) {
+          return ViewTypes.FULL;
+        }
+      },
+      (type, dim) => {
+        dim.width = width;
+        dim.height = 100;
+      },
+    );
 
     this.state = {
       item: this.props.item,
@@ -109,6 +134,22 @@ class Products2 extends Component {
         }
       } catch (e) {}
     }
+  };
+
+  refreshQuantityProducts = async product => {
+    // update recyclerViewList
+    try {
+      const {products} = this.state;
+      for (let i = 0; i < products.length; i++) {
+        for (let j = 0; j < products[i].items.length; j++) {
+          if (products[i].items[j].product.id == product.product.id) {
+            products[i].items[j].changed = true;
+            await this.setState({products});
+            return;
+          }
+        }
+      }
+    } catch (e) {}
   };
 
   updateCategoryPosition = index => {
@@ -785,7 +826,7 @@ class Products2 extends Component {
   };
 
   searchItem = async value => {
-    this.setState({loadingSearch: true, productsSearch: undefined});
+    await this.setState({loadingSearch: true, productsSearch: undefined});
     const {products} = this.state;
     let productsSearch = undefined;
     //  Client search
@@ -1225,6 +1266,20 @@ class Products2 extends Component {
       await this.updateItem(product, qty, remark);
       await this.props.dispatch(getBasket());
     }
+
+    // update recyclerViewList
+    try {
+      const {products} = this.state;
+      for (let i = 0; i < products.length; i++) {
+        for (let j = 0; j < products[i].items.length; j++) {
+          if (products[i].items[j].product.id == product.product.id) {
+            products[i].items[j].changed = true;
+            await this.setState({products});
+            return;
+          }
+        }
+      }
+    } catch (e) {}
   };
 
   closeModal = () => {
@@ -1328,7 +1383,7 @@ class Products2 extends Component {
     }
   };
 
-  templateItem = item => {
+  templateItem = (type, item) => {
     return (
       <TouchableOpacity
         disabled={this.availableToOrder(item) ? false : true}
@@ -1398,24 +1453,30 @@ class Products2 extends Component {
   };
 
   renderCategoryWithProducts = item => {
-    return (
-      <View style={styles.card}>
-        <Text style={styles.titleCategory}>{item.name}</Text>
-        <FlatList
-          data={item.items}
-          getItemLayout={(data, index) => {
-            return {length: 95, offset: 95 * index, index};
-          }}
-          renderItem={({item}) =>
-            item.product != null ? this.templateItem(item) : null
-          }
-          keyExtractor={(product, index) => index.toString()}
-          ListFooterComponent={() => this.renderFooter(item)}
-          // onEndReachedThreshold={0.01}
-          // onEndReached={() => this.handleLoadMoreItems(item)}
-        />
-      </View>
-    );
+    let lengthItem = 1;
+    if (item.items != undefined) {
+      lengthItem = item.items.length;
+      return (
+        <View style={[styles.card, {height: 100 * lengthItem + 100}]}>
+          <Text style={styles.titleCategory}>{item.name}</Text>
+          <RecyclerListView
+            layoutProvider={this._layoutProvider}
+            dataProvider={dataProvider.cloneWithRows(item.items)}
+            rowRenderer={this.templateItem}
+          />
+        </View>
+      );
+    } else {
+      return (
+        <View style={[styles.card, {height: 100}]}>
+          <Text style={styles.titleCategory}>{item.name}</Text>
+          <ActivityIndicator
+            size={30}
+            color={colorConfig.store.secondaryColor}
+          />
+        </View>
+      );
+    }
   };
 
   handleLoadMoreItems = async item => {
@@ -2090,8 +2151,6 @@ class Products2 extends Component {
             <View
               style={{
                 backgroundColor: 'white',
-                // position: 'absolute',
-                top: StatusBarHeight,
                 zIndex: 99,
                 width: '100%',
                 shadowColor: '#00000021',
@@ -2215,8 +2274,8 @@ class Products2 extends Component {
                     <View
                       style={{
                         position: 'absolute',
-                        zIndex: 99,
-                        marginTop: 50,
+                        // zIndex: 99,
+                        top: StatusBarHeight + 50,
                         width: '100%',
                         height: '100%',
                       }}>
@@ -2276,7 +2335,9 @@ class Products2 extends Component {
           this.props.dataBasket.outlet != undefined &&
           this.props.dataBasket.outlet.id != undefined &&
           this.props.dataBasket.outlet.id == this.state.item.storeId ? (
-            <ButtonViewBasket />
+            <ButtonViewBasket
+              refreshQuantityProducts={this.refreshQuantityProducts}
+            />
           ) : null
         ) : null}
       </SafeAreaView>
@@ -2432,6 +2493,7 @@ const styles = StyleSheet.create({
   detail: {
     marginLeft: 15,
     marginRight: 15,
+    maxHeight: 100,
     // marginBottom: 5,
   },
   detailOptionsModal: {

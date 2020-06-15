@@ -612,6 +612,34 @@ export const getDeliveryFee = payload => {
   };
 };
 
+export const completeOrder = payload => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+      let response = await fetchApiOrder(
+        `/outlet/cart/update`,
+        'POST',
+        payload,
+        200,
+        token,
+      );
+      console.log(response, 'response complete cart delivery');
+      if (response.success == true) {
+        return response.response;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
 export const setDeliveryProvider = cart => {
   return async dispatch => {
     try {

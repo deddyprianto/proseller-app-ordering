@@ -164,23 +164,20 @@ class Inbox extends Component {
 
   renderInbox = () => {
     const {dataInbox} = this.props;
-    console.log(dataInbox.Data);
     return (
-      <View style={{marginBottom: '9%'}}>
-        <FlatList
-          refreshControl={
-            <RefreshControl
-              refreshing={this.state.refreshing}
-              onRefresh={this._onRefresh}
-            />
-          }
-          data={dataInbox.Data}
-          renderItem={({item, index}) => this.templateInbox(item, index)}
-          onEndReachedThreshold={0.01}
-          onEndReached={this.handleLoadMoreItems}
-          ListFooterComponent={() => this.renderFooter()}
-        />
-      </View>
+      <FlatList
+        refreshControl={
+          <RefreshControl
+            refreshing={this.state.refreshing}
+            onRefresh={this._onRefresh}
+          />
+        }
+        data={dataInbox.Data}
+        renderItem={({item, index}) => this.templateInbox(item, index)}
+        onEndReachedThreshold={0.01}
+        onEndReached={this.handleLoadMoreItems}
+        ListFooterComponent={() => this.renderFooter()}
+      />
     );
   };
 
@@ -235,7 +232,7 @@ class Inbox extends Component {
   render() {
     let {dataInbox} = this.props;
     return (
-      <SafeAreaView>
+      <SafeAreaView style={{flex: 1}}>
         <View
           style={{
             backgroundColor: colorConfig.pageIndex.backgroundColor,
