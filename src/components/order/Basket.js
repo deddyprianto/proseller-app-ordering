@@ -137,6 +137,7 @@ class Basket extends Component {
     try {
       // refresh token
       await this.props.dispatch(refreshToken());
+      // await this.props.dispatch(clearAddress());
       // get data basket
       await this.getBasket();
       // get previous data products from this outlet, for modifier detail purpose
@@ -155,6 +156,13 @@ class Basket extends Component {
       await this.setState({loading: false});
 
       this.getDeliveryAddress();
+
+      if (
+        this.props.orderType == 'DELIVERY' &&
+        !isEmptyObject(this.props.selectedAddress)
+      ) {
+        this.getDeliveryFee();
+      }
     } catch (e) {
       Alert.alert('Opss..', "Can't get data basket, please try again.");
     }
@@ -353,6 +361,17 @@ class Basket extends Component {
         ) : null}
       </RBSheet>
     );
+  };
+
+  getDeliveryFee = () => {
+    const {providers} = this.props;
+    try {
+      if (!isEmptyArray(providers)) {
+        const item = providers[0];
+        this.setState({selectedProvider: item});
+        this.calculateDeliveryFee(item);
+      }
+    } catch (e) {}
   };
 
   calculateDeliveryFee = async item => {
@@ -1449,6 +1468,11 @@ class Basket extends Component {
     //   this.props.dispatch(setOrderType(type));
     // }
     this.props.dispatch(setOrderType(type));
+
+    if (type == 'DELIVERY') {
+      this.getDeliveryFee();
+    }
+
     this.RBSheet.close();
   };
 
@@ -1739,13 +1763,16 @@ class Basket extends Component {
 
   goToAddress = () => {
     Actions.selectAddress({
-      clearDelivery: this.clearDelivery(),
+      clearDelivery: this.clearDelivery,
+      getDeliveryFee: this.getDeliveryFee,
+      from: 'basket',
     });
   };
 
   goToAddAddress = () => {
     Actions.push('addAddress', {
       from: 'basket',
+      getDeliveryFee: this.getDeliveryFee,
     });
   };
 
@@ -1753,6 +1780,8 @@ class Basket extends Component {
     Actions.editAddress({
       from: 'basket',
       myAddress: this.props.selectedAddress,
+      getDeliveryFee: this.getDeliveryFee,
+      clearDelivery: this.clearDelivery,
     });
   };
 

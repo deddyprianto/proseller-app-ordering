@@ -56,7 +56,7 @@ class AddAddress extends Component {
 
   goBack = async () => {
     if (this.props.from == 'basket') {
-      Actions.pop();
+      Actions.popTo(this.props.from);
     } else {
       Actions.replace(this.props.from);
     }
@@ -121,10 +121,12 @@ class AddAddress extends Component {
       if (response) {
         if (isEmptyArray(userDetail.deliveryAddress)) {
           await this.props.dispatch(defaultAddress(newAddress));
-
-          if (this.props.from == 'basket') {
-            await this.props.dispatch(selectedAddress(newAddress));
-          }
+        }
+        if (this.props.from == 'basket') {
+          await this.props.dispatch(selectedAddress(newAddress));
+          try {
+            await this.props.getDeliveryFee();
+          } catch (e) {}
         }
         this.goBack();
       } else {

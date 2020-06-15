@@ -1256,6 +1256,16 @@ class Cart extends Component {
     }
   };
 
+  getInfoProvider = id => {
+    const {providers} = this.props;
+    try {
+      const data = providers.find(item => item.id == id);
+      return data.name;
+    } catch (e) {
+      return false;
+    }
+  };
+
   render() {
     const {intlData, dataBasket, orderType, tableType} = this.props;
 
@@ -1482,6 +1492,15 @@ class Cart extends Component {
                   </View>
                 ) : null}
 
+                {dataBasket.deliveryProviderId != undefined ? (
+                  <View style={styles.itemSummary}>
+                    <Text style={styles.total}>Delivery Provider : </Text>
+                    <Text style={[styles.total, {textAlign: 'right'}]}>
+                      {this.getInfoProvider(dataBasket.deliveryProviderId)}
+                    </Text>
+                  </View>
+                ) : null}
+
                 {dataBasket.deliveryFee != undefined ? (
                   <View style={styles.itemSummary}>
                     <Text style={styles.total}>Delivery Fee</Text>
@@ -1547,6 +1566,7 @@ class Cart extends Component {
 
 mapStateToProps = state => ({
   outletSingle: state.storesReducer.dataOutletSingle.outletSingle,
+  providers: state.orderReducer.dataProvider.providers,
   dataBasket: state.orderReducer.dataCartSingle.cartSingle,
   intlData: state.intlData,
 });

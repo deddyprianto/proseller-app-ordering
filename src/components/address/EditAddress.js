@@ -134,6 +134,10 @@ class EditAddress extends Component {
 
         if (this.props.from == 'basket') {
           await this.props.dispatch(selectedAddress(newAddress));
+          try {
+            this.props.clearDelivery();
+            this.props.getDeliveryFee();
+          } catch (e) {}
         }
 
         if (this.props.from == 'selectAddress') {

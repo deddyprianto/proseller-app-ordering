@@ -276,7 +276,11 @@ class WaitingFood extends Component {
       dataBasket.orderingMode == 'TAKEAWAY' ||
       dataBasket.orderingMode == 'DELIVERY'
     ) {
-      return `Queue No: ${dataBasket.queueNo}`;
+      let trackingNo = '';
+      if (dataBasket.trackingNo != undefined) {
+        trackingNo = `\n\nTracking No: ${dataBasket.trackingNo}`;
+      }
+      return `Queue No: ${dataBasket.queueNo} ${trackingNo}`;
     } else {
       if (
         dataBasket.outlet.enableTableScan != undefined &&
@@ -322,7 +326,7 @@ class WaitingFood extends Component {
             <Text
               style={{
                 fontSize: 27,
-                marginTop: 25,
+                marginTop: 22,
                 color: colorConfig.store.colorSuccess,
                 fontWeight: 'bold',
                 textAlign: 'center',
@@ -345,8 +349,8 @@ class WaitingFood extends Component {
             </Text>
             <Text
               style={{
-                fontSize: 27,
-                marginTop: 25,
+                fontSize: 24,
+                marginTop: 22,
                 color: colorConfig.store.colorSuccess,
                 fontWeight: 'bold',
                 textAlign: 'center',
@@ -416,8 +420,8 @@ class WaitingFood extends Component {
             </Text>
             <Text
               style={{
-                fontSize: 27,
-                marginTop: 25,
+                fontSize: 22,
+                // marginTop: -20,
                 color: colorConfig.store.colorSuccess,
                 fontWeight: 'bold',
                 textAlign: 'center',
@@ -440,8 +444,8 @@ class WaitingFood extends Component {
             </Text>
             <Text
               style={{
-                fontSize: 27,
-                marginTop: 25,
+                fontSize: 24,
+                marginTop: 22,
                 color: colorConfig.store.colorSuccess,
                 fontWeight: 'bold',
                 textAlign: 'center',

@@ -59,7 +59,7 @@ class SelectAddress extends Component {
   }
 
   goBack = async () => {
-    Actions.pop();
+    Actions.popTo('basket');
   };
 
   componentDidMount = async () => {
@@ -149,10 +149,11 @@ class SelectAddress extends Component {
               onPress={() => {
                 try {
                   this.setState({selectedAddress: item});
-                  this.props.dispatch(selectedAddress(item));
                   try {
                     this.props.clearDelivery();
                   } catch (e) {}
+                  this.props.dispatch(selectedAddress(item));
+                  this.props.getDeliveryFee();
                   this.goBack();
                 } catch (e) {}
               }}>
@@ -234,12 +235,14 @@ class SelectAddress extends Component {
   };
 
   addNewAddress = async () => {
-    Actions.replace('addAddress', {from: 'selectAddress'});
+    Actions.replace('addAddress', {
+      from: 'basket',
+      getDeliveryFee: this.props.getDeliveryFee,
+    });
   };
 
   render() {
     const {intlData, defaultAddress} = this.props;
-    console.log({defaultAddress});
     let address = [];
     let user = {};
     try {
