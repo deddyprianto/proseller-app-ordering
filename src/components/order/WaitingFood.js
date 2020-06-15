@@ -363,7 +363,7 @@ class WaitingFood extends Component {
   getInfoProvider = id => {
     const {providers} = this.props;
     try {
-      const data = providers.find(item => (item.id = id));
+      const data = providers.find(item => item.id == id);
       return data.name;
     } catch (e) {
       return false;
@@ -477,6 +477,29 @@ class WaitingFood extends Component {
         }
       />
     );
+  };
+
+  getDetailPayment = () => {
+    const {dataBasket, myCardAccount} = this.props;
+    try {
+      if (dataBasket.confirmationInfo.paymentResponse != undefined) {
+        const accountID = dataBasket.confirmationInfo.paymentResponse.accountId;
+        const data = myCardAccount.find(
+          item => `account::${item.id}` == accountID,
+        );
+
+        const number = data.details.maskedAccountNumber.substr(
+          data.details.maskedAccountNumber.length - 4,
+          data.details.maskedAccountNumber.length,
+        );
+        const card = data.details.cardIssuer.toUpperCase();
+        return `${card} - ${number}`;
+      } else {
+        return dataBasket.confirmationInfo.paymentType;
+      }
+    } catch (e) {
+      return '-';
+    }
   };
 
   detailOrder = () => {
@@ -628,6 +651,42 @@ class WaitingFood extends Component {
               </Text>
             </View>
             <View style={styles.itemSummary}>
+              <Text style={styles.total}>Total Nett Amount : </Text>
+              <Text style={styles.total}>
+                {CurrencyFormatter(dataBasket.totalNettAmount)}
+              </Text>
+            </View>
+            {dataBasket.confirmationInfo != undefined ? (
+              dataBasket.confirmationInfo.paymentType != undefined ? (
+                <View style={styles.itemSummary}>
+                  <Text style={styles.total}>Payment Method : </Text>
+                  <Text style={styles.total}>{this.getDetailPayment()}</Text>
+                </View>
+              ) : null
+            ) : null}
+            {dataBasket.confirmationInfo != undefined ? (
+              dataBasket.confirmationInfo.redeemPoint != undefined &&
+              dataBasket.confirmationInfo.redeemPoint != 0 ? (
+                <View style={styles.itemSummary}>
+                  <Text style={styles.total}>Redeem Point : </Text>
+                  <Text style={styles.total}>
+                    {dataBasket.confirmationInfo.redeemPoint}
+                  </Text>
+                </View>
+              ) : null
+            ) : null}
+            {dataBasket.confirmationInfo != undefined ? (
+              dataBasket.confirmationInfo.statusAdd != undefined &&
+              dataBasket.confirmationInfo.statusAdd == 'addVoucer' ? (
+                <View style={styles.itemSummary}>
+                  <Text style={styles.total}>Voucher : </Text>
+                  <Text style={styles.total}>
+                    {dataBasket.confirmationInfo.voucher.name}
+                  </Text>
+                </View>
+              ) : null
+            ) : null}
+            <View style={styles.itemSummary}>
               <Text style={[styles.total, {color: colorConfig.store.title}]}>
                 TOTAL :{' '}
               </Text>
@@ -756,6 +815,7 @@ class WaitingFood extends Component {
 
 mapStateToProps = state => ({
   dataBasket: state.orderReducer.dataCartSingle.cartSingle,
+  myCardAccount: state.cardReducer.myCardAccount.card,
   providers: state.orderReducer.dataProvider.providers,
   orderType: state.userReducer.orderType.orderType,
   tableType: state.orderReducer.tableType.tableType,

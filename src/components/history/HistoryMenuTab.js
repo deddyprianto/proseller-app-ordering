@@ -25,7 +25,7 @@ class HistoryMenuTab extends Component {
     const {intlData, dataBasket} = this.props;
 
     return (
-      <View>
+      <>
         {/*Tabs*/}
         <View
           style={{
@@ -99,7 +99,7 @@ class HistoryMenuTab extends Component {
         {this.state.togglePending ? (
           <HistoryPendingOrders intlData={intlData} />
         ) : null}
-      </View>
+      </>
     );
   }
 }

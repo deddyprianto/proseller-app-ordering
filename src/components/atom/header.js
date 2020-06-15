@@ -19,7 +19,6 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
 import colorConfig from '../../config/colorConfig';
 import awsConfig from '../../config/awsConfig';
-import OfflineNotice from '../../components/OfflineNotice';
 
 const imageWidth = Dimensions.get('window').width / 2;
 
@@ -130,7 +129,7 @@ export default class Header extends Component {
           backgroundColor={colorConfig.store.defaultColor}
           barStyle="light-content"
         />
-        <OfflineNotice />
+
         <View
           style={{
             flexDirection: 'row',

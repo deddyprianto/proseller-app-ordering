@@ -157,7 +157,7 @@ class HistoryPayment extends Component {
             <Text style={styles.empty}>There is no pending orders.</Text>
           </ScrollView>
         ) : (
-          <View style={styles.component}>
+          // <View style={styles.component}>
             <FlatList
               data={pendingCart}
               extraData={this.props}
@@ -219,7 +219,7 @@ class HistoryPayment extends Component {
               // onEndReachedThreshold={0.01}
               // onEndReached={this.handleLoadMore}
             />
-          </View>
+          // </View>
         )}
       </>
     );
@@ -229,9 +229,9 @@ class HistoryPayment extends Component {
 const styles = StyleSheet.create({
   component: {
     marginTop: -3,
-    marginBottom: 10,
+    // marginBottom: 10,
     // flexDirection: 'row',
-    // height: '100%',
+    height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
   },
