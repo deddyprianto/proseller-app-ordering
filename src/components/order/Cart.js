@@ -367,6 +367,8 @@ class Cart extends Component {
 
   renderSettleButtonQuickService = () => {
     const {intlData, dataBasket} = this.props;
+    let fee = dataBasket.deliveryFee;
+    fee == null ? 0 : parseFloat(fee);
     return (
       <View
         style={{
@@ -398,7 +400,7 @@ class Cart extends Component {
           }}>
           TOTAL : {appConfig.appMataUang}
           {this.format(
-            CurrencyFormatter(this.props.dataBasket.totalNettAmount),
+            CurrencyFormatter(this.props.dataBasket.totalNettAmount + fee),
           )}
         </Text>
         <View style={{flexDirection: 'row', justifyContent: 'center'}}>

@@ -102,13 +102,7 @@ class HistoryDetailPayment extends Component {
 
   render() {
     const {intlData} = this.props;
-    let discount = 0;
-    if (
-      this.props.item.redeemValue != 0 &&
-      this.props.item.redeemValue != undefined
-    ) {
-      discount = this.props.item.redeemValue;
-    }
+    console.log(this.props.item, 'asasasas');
     return (
       <SafeAreaView style={styles.container}>
         <View style={{backgroundColor: colorConfig.pageIndex.backgroundColor}}>
@@ -142,6 +136,15 @@ class HistoryDetailPayment extends Component {
                 </Text>
               </View>
 
+              {this.props.item.orderingMode != undefined ? (
+                <View style={styles.detailItem}>
+                  <Text style={styles.desc}>Order Mode</Text>
+                  <Text style={styles.desc}>
+                    {this.props.item.orderingMode}
+                  </Text>
+                </View>
+              ) : null}
+
               {/*<View style={styles.detailItem}>*/}
               {/*  <Text style={styles.desc}>Sub Total</Text>*/}
               {/*  <Text style={styles.desc}>*/}
@@ -149,21 +152,19 @@ class HistoryDetailPayment extends Component {
               {/*  </Text>*/}
               {/*</View>*/}
 
-              {/*{this.props.item.statusAdd == 'addVoucer' ? (*/}
-              {/*  <View style={styles.detailItem}>*/}
-              {/*    <Text style={styles.desc}>Discount</Text>*/}
-              {/*    <Text style={styles.desc}>*/}
-              {/*      {CurrencyFormatter(this.props.item.discount)}*/}
-              {/*    </Text>*/}
-              {/*  </View>*/}
-              {/*) : null}*/}
-
               <View style={styles.detailItem}>
                 <Text style={styles.desc}>Total</Text>
                 <Text style={styles.desc}>
                   {CurrencyFormatter(this.props.item.price)}
                 </Text>
               </View>
+
+              {this.props.item.statusAdd == 'addVoucer' ? (
+                <View style={styles.detailItem}>
+                  <Text style={styles.desc}>{intlData.messages.voucher}</Text>
+                  <Text style={styles.desc}>{this.props.item.voucherName}</Text>
+                </View>
+              ) : null}
 
               <View style={[styles.detailItem, {borderBottomWidth: 0}]}>
                 <Text style={[styles.desc, {fontWeight: 'bold'}]}>
@@ -179,8 +180,7 @@ class HistoryDetailPayment extends Component {
                     • {this.props.item.paymentType}
                   </Text>
                   <Text style={styles.desc}>
-                    {/*{CurrencyFormatter(this.calculateCash(this.props.item))}*/}
-                    {CurrencyFormatter(this.props.item.price - discount)}
+                    {CurrencyFormatter(this.props.item.afterPrice)}
                   </Text>
                 </View>
               ) : null}

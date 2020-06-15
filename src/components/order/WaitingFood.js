@@ -691,7 +691,7 @@ class WaitingFood extends Component {
                 TOTAL :{' '}
               </Text>
               <Text style={[styles.total, {color: colorConfig.store.title}]}>
-                {CurrencyFormatter(dataBasket.confirmationInfo.price)}
+                {CurrencyFormatter(dataBasket.confirmationInfo.afterPrice)}
               </Text>
             </View>
           </ScrollView>
