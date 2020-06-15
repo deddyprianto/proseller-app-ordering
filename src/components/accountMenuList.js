@@ -97,10 +97,6 @@ class AccountMenuList extends Component {
     Actions.listAddress();
   };
 
-  updateLanguage = () => {
-    this.props.setLanguage();
-  };
-
   prompLogout = () => {
     Alert.alert(
       'Logout',
@@ -123,8 +119,9 @@ class AccountMenuList extends Component {
     if (companyInfo.paymentTypes != undefined)
       paymentTypes = companyInfo.paymentTypes;
     if (!isEmptyArray(paymentTypes)) {
-      return paymentTypes.map(item => (
+      return paymentTypes.map((item, idx) => (
         <TouchableOpacity
+          key={idx}
           onPress={() => Actions.listCard({intlData, item})}
           style={styles.cardMenu}>
           <View style={styles.itemMenu}>
@@ -256,7 +253,9 @@ class AccountMenuList extends Component {
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={this.updateLanguage} style={styles.cardMenu}>
+        <TouchableOpacity
+          onPress={() => Actions.listLanguages()}
+          style={styles.cardMenu}>
           <View style={styles.itemMenu}>
             <Icon
               size={20}

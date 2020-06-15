@@ -15,19 +15,17 @@ import {
   BackHandler,
   Platform,
   SafeAreaView,
-  Switch,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
 import colorConfig from '../../config/colorConfig';
-import {updateUser} from '../../actions/user.action';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
-import Loader from '../loader';
 import {List} from 'react-native-paper';
-import Snackbar from 'react-native-snackbar';
+import Languages from '../../service/i18n/languages';
+import {updateLanguage} from '../../actions/language.action';
 
-class Notifications extends Component {
+class ListLanguages extends Component {
   constructor(props) {
     super(props);
     var data;
@@ -78,58 +76,17 @@ class Notifications extends Component {
     return true;
   };
 
-  changeSetting = async (field, value) => {
+  _updateLanguage = async lang => {
     try {
-      this.setState({loading: true});
-      let message = '';
-      let dataProfile = {};
-      dataProfile.username = this.state.username;
-      if (field == 'emailNotification') {
-        dataProfile.emailNotification = value;
-        value
-          ? (message = 'Email Notification Enabled')
-          : (message = 'Email Notification Disabled');
-      } else {
-        dataProfile.smsNotification = value;
-        value
-          ? (message = 'SMS Notification Enabled')
-          : (message = 'SMS Notification Disabled');
-      }
-
-      const response = await this.props.dispatch(updateUser(dataProfile));
-      if (response) {
-        Snackbar.show({
-          text: message,
-          duration: Snackbar.LENGTH_SHORT,
-        });
-      } else {
-        Snackbar.show({
-          text: 'Oppss.. Please try again',
-          duration: Snackbar.LENGTH_SHORT,
-        });
-      }
-      this.setState({loading: false});
-    } catch (e) {
-      this.setState({loading: false});
-    }
-  };
-
-  changeEmailSetting = value => {
-    this.setState({emailNotification: !value});
-    this.changeSetting('emailNotification', !value);
-  };
-
-  changeSMSSetting = value => {
-    this.setState({smsNotification: !value});
-    this.changeSetting('smsNotification', !value);
+      await this.props.dispatch(updateLanguage(lang.code));
+      Actions.pop();
+    } catch (e) {}
   };
 
   render(marginRight: number) {
     const {intlData} = this.props;
-    const {smsNotification, emailNotification} = this.state;
     return (
       <SafeAreaView style={styles.container}>
-        {this.state.loading && <Loader />}
         <View
           style={[
             styles.header,
@@ -143,47 +100,25 @@ class Notifications extends Component {
               }
               style={styles.btnBackIcon}
             />
-            <Text style={styles.btnBackText}> Notification Setting </Text>
+            <Text style={styles.btnBackText}>
+              {' '}
+              {intlData.messages.selectLanguage}{' '}
+            </Text>
           </TouchableOpacity>
         </View>
         <ScrollView>
-          <List.Section>
-            <List.Subheader>Notification Settings</List.Subheader>
-
+          {Languages.map(language => (
             <List.Item
-              title="Email Notification"
-              description="Allow sending notification to your email."
-              left={props => <List.Icon {...props} icon="email" />}
-              right={() => (
-                <Switch
-                  trackColor={{false: '#767577', true: '#81b0ff'}}
-                  thumbColor={true ? colorConfig.store.defaultColor : 'white'}
-                  ios_backgroundColor="white"
-                  onValueChange={() => {
-                    this.changeEmailSetting(emailNotification);
-                  }}
-                  value={emailNotification}
-                />
-              )}
+              onPress={() => this._updateLanguage(language)}
+              title={language.name}
+              left={props => <List.Icon {...props} icon="earth" />}
+              right={props =>
+                intlData.locale == language.code ? (
+                  <List.Icon {...props} icon="check" />
+                ) : null
+              }
             />
-
-            <List.Item
-              title="SMS Notification"
-              description="Allow sending notification to your mobile number."
-              left={props => <List.Icon {...props} icon="phone" />}
-              right={() => (
-                <Switch
-                  trackColor={{false: '#767577', true: '#81b0ff'}}
-                  thumbColor={true ? colorConfig.store.defaultColor : 'white'}
-                  ios_backgroundColor="white"
-                  onValueChange={() => {
-                    this.changeSMSSetting(smsNotification);
-                  }}
-                  value={smsNotification}
-                />
-              )}
-            />
-          </List.Section>
+          ))}
         </ScrollView>
       </SafeAreaView>
     );
@@ -204,7 +139,7 @@ export default compose(
     mapStateToProps,
     mapDispatchToProps,
   ),
-)(Notifications);
+)(ListLanguages);
 
 const styles = StyleSheet.create({
   container: {

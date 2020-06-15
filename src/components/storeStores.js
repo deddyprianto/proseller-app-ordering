@@ -3,6 +3,7 @@ import {
   View,
   Text,
   StyleSheet,
+  Platform,
   TouchableOpacity,
   Dimensions,
 } from 'react-native';
@@ -32,8 +33,8 @@ export default class StoreStores extends Component {
         {dataStoreRegion.map((region, index) => (
           <View style={styles.stores} key={index}>
             <Text style={styles.stores}>
-              {intlData.messages.outlets} -{' '}
-              {region != undefined ? ` ${region}` : null}
+              {intlData.messages.outlets}{' '}
+              {region != undefined ? ` - ${region}` : null}
             </Text>
             {dataAllStore[dataStoreRegion[index]].map((item, keys) => (
               <View key={keys}>

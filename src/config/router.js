@@ -68,6 +68,7 @@ import ListAddress from '../components/address/ListAddress';
 import AddAddress from '../components/address/AddAddress';
 import SelectAddress from '../components/address/SelectAddress';
 import EditAddress from '../components/address/EditAddress';
+import ListLanguages from '../components/language/ListLanguages';
 
 let backPressed = 0;
 
@@ -132,6 +133,8 @@ export default class Routes extends Component {
             <Scene key="mobileRegister" component={MobileRegister} />
             <Scene key="verifyRegister" component={VerifyRegister} />
             <Scene key="emailRegister" component={EmailRegister} />
+
+            <Scene key="listLanguages" component={ListLanguages} />
           </Scene>
           <Scene key="app" hideNavBar={true} initial={this.props.isLoggedIn}>
             <Scene key="pageIndex" component={PageIndex} initial={true} />
@@ -191,6 +194,8 @@ export default class Routes extends Component {
             <Scene key="addAddress" component={AddAddress} />
             <Scene key="editAddress" component={EditAddress} />
             <Scene key="selectAddress" component={SelectAddress} />
+
+            <Scene key="listLanguages" component={ListLanguages} />
           </Scene>
         </Scene>
       </Router>

@@ -1,12 +1,9 @@
 import React, {Component} from 'react';
 import {
   View,
-  Text,
   StyleSheet,
   ScrollView,
   RefreshControl,
-  Platform,
-  Picker,
   SafeAreaView,
 } from 'react-native';
 import {connect} from 'react-redux';
@@ -16,9 +13,6 @@ import {logoutUser} from '../actions/auth.actions';
 import AccountUserDetail from '../components/accountUserDetail';
 import AccountMenuList from '../components/accountMenuList';
 import colorConfig from '../config/colorConfig';
-import {Dialog} from 'react-native-paper';
-import {updateLanguage} from '../actions/language.action';
-import Languages from '../service/i18n/languages';
 import {getUserProfile} from '../actions/user.action';
 
 class Account extends Component {
@@ -53,73 +47,6 @@ class Account extends Component {
     this.setState({loadingLogout: false});
   };
 
-  // myVouchers = () => {
-  //   var myVoucers = [];
-  //   if (this.props.myVoucers != undefined) {
-  //     _.forEach(
-  //       _.groupBy(
-  //         this.props.myVoucers.filter(voucher => voucher.deleted == false),
-  //         'id',
-  //       ),
-  //       function(value, key) {
-  //         value[0].totalRedeem = value.length;
-  //         myVoucers.push(value[0]);
-  //       },
-  //     );
-  //   }
-  //   Actions.accountVouchers({data: myVoucers});
-  // };
-
-  _updateLanguage = async lang => {
-    await this.props.dispatch(updateLanguage(lang));
-    await this.setState({dialogChangeLanguage: false});
-  };
-
-  renderDialogChangeLanguage = () => {
-    const {intlData} = this.props;
-
-    const options = Languages.map(language => {
-      return (
-        <Picker.Item
-          value={language.code}
-          key={language.code}
-          label={language.name}
-        />
-      );
-    });
-
-    return (
-      <Dialog
-        dismissable={true}
-        visible={this.state.dialogChangeLanguage}
-        onDismiss={() => this.setState({dialogChangeLanguage: false})}>
-        <Dialog.Content>
-          <Text
-            style={{
-              textAlign: 'center',
-              fontWeight: 'bold',
-            }}>
-            {intlData.messages.selectLanguage}
-          </Text>
-          <View style={{flexDirection: 'row', justifyContent: 'center'}}>
-            <View style={styles.panelQty}>
-              <Picker
-                style={{height: 60, width: 300}}
-                selectedValue={intlData.locale}
-                onValueChange={itemValue => this._updateLanguage(itemValue)}>
-                {options}
-              </Picker>
-            </View>
-          </View>
-        </Dialog.Content>
-      </Dialog>
-    );
-  };
-
-  setLanguage = () => {
-    this.setState({dialogChangeLanguage: true});
-  };
-
   render() {
     const {intlData} = this.props;
     return (
@@ -142,7 +69,6 @@ class Account extends Component {
             />
           </View>
         </ScrollView>
-        {this.renderDialogChangeLanguage()}
       </SafeAreaView>
     );
   }

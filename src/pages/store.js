@@ -55,8 +55,6 @@ class Store extends Component {
   }
 
   componentDidMount = async () => {
-    await this.props.dispatch(refreshToken());
-    await this.props.dispatch(dataPromotion());
     await this.props.dispatch(myVoucers());
 
     this.getDataStores();
@@ -118,6 +116,7 @@ class Store extends Component {
       await this.props.dispatch(refreshToken());
       await this.props.dispatch(dataStores());
       await this.props.dispatch(getBasket());
+      await this.props.dispatch(dataPromotion());
       // check if user enabled their position permission
       let statusLocaiton;
       if (
