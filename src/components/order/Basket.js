@@ -1470,7 +1470,7 @@ class Basket extends Component {
     // }
     this.props.dispatch(setOrderType(type));
 
-    if (type == 'DELIVERY') {
+    if (type == 'DELIVERY' && !isEmptyObject(this.props.selectedAddress)) {
       this.getDeliveryFee();
     }
 
