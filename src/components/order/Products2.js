@@ -1435,7 +1435,7 @@ class Products2 extends Component {
               {item.product.description != undefined &&
               item.product.description != '' ? (
                 <Text style={[styles.productDesc]}>
-                  {item.product.description}
+                  {item.product.description.substr(0, 30)}...
                 </Text>
               ) : null}
             </View>
@@ -2519,6 +2519,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     paddingBottom: 15,
     marginBottom: 5,
+    overflow: 'hidden'
   },
   detailItemModal: {
     marginTop: 20,
@@ -2540,7 +2541,7 @@ const styles = StyleSheet.create({
   productTitle: {
     color: colorConfig.store.title,
     marginLeft: 6,
-    fontSize: 17,
+    fontSize: 15,
     maxWidth: Dimensions.get('window').width / 2 - 50,
   },
   productTitleInModal: {
