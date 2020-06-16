@@ -43,6 +43,7 @@ import {
 import RBSheet from 'react-native-raw-bottom-sheet';
 
 import UUIDGenerator from 'react-native-uuid-generator';
+import {defaultPaymentAccount} from '../actions/user.action';
 
 class PaymentDetail extends Component {
   constructor(props) {
@@ -73,7 +74,7 @@ class PaymentDetail extends Component {
 
     // check if default account has been set, then add selected account
     if (!isEmptyObject(this.props.defaultAccount)) {
-      this.props.dispatch(selectedAccount(this.props.defaultAccount));
+      this.checkDefaultPaymentAccount();
     }
   }
 
@@ -134,17 +135,7 @@ class PaymentDetail extends Component {
     await this.setDataPayment(false);
 
     try {
-      // if there are only 1 account, then set
       await this.props.dispatch(getAccountPayment());
-      // const {myCardAccount} = this.props;
-      // if (
-      //   !isEmptyArray(myCardAccount) &&
-      //   myCardAccount.length == 1 &&
-      //   isEmptyObject(defaultAccount)
-      // ) {
-      //   let card = myCardAccount[0];
-      //   this.props.dispatch(selectedAccount(card));
-      // }
       await this.setState({loading: false});
     } catch (e) {
       await this.setState({loading: false});
@@ -154,6 +145,24 @@ class PaymentDetail extends Component {
       'hardwareBackPress',
       this.handleBackPress,
     );
+  };
+
+  checkDefaultPaymentAccount = async () => {
+    try {
+      const {defaultAccount, myCardAccount} = this.props;
+      if (!isEmptyArray(myCardAccount)) {
+        const data = await myCardAccount.find(
+          item => item.id == defaultAccount.id,
+        );
+        if (data == undefined) {
+          await this.props.dispatch(defaultPaymentAccount(undefined));
+        } else {
+          this.props.dispatch(selectedAccount(this.props.defaultAccount));
+        }
+      } else {
+        await this.props.dispatch(defaultPaymentAccount(undefined));
+      }
+    } catch (e) {}
   };
 
   setDataVoucher = async dataVoucer => {

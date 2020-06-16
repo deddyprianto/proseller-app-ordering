@@ -13,7 +13,8 @@ import {logoutUser} from '../actions/auth.actions';
 import AccountUserDetail from '../components/accountUserDetail';
 import AccountMenuList from '../components/accountMenuList';
 import colorConfig from '../config/colorConfig';
-import {getUserProfile} from '../actions/user.action';
+import {defaultPaymentAccount, getUserProfile} from '../actions/user.action';
+import {referral} from '../actions/referral.action';
 
 class Account extends Component {
   constructor(props) {
@@ -32,6 +33,7 @@ class Account extends Component {
   getDataRewards = async () => {
     try {
       await this.props.dispatch(getUserProfile());
+      await this.props.dispatch(referral());
     } catch (error) {}
   };
 
@@ -43,6 +45,7 @@ class Account extends Component {
 
   logout = async () => {
     this.setState({loadingLogout: true});
+    await this.props.dispatch(defaultPaymentAccount(undefined));
     await this.props.dispatch(logoutUser());
     this.setState({loadingLogout: false});
   };

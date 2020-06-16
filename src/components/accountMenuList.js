@@ -148,7 +148,13 @@ class AccountMenuList extends Component {
   };
 
   render() {
-    const {intlData, myCardAccount, companyInfo, defaultAccount} = this.props;
+    const {
+      intlData,
+      myCardAccount,
+      companyInfo,
+      defaultAccount,
+      referral,
+    } = this.props;
     return (
       <View style={styles.container}>
         <Text style={styles.headingMenu}>Default Payment Account</Text>
@@ -206,6 +212,27 @@ class AccountMenuList extends Component {
         {/*</TouchableOpacity>*/}
 
         <Text style={styles.headingMenu}>Settings</Text>
+
+        {referral != undefined && referral.capacity > 0 ? (
+          <TouchableOpacity
+            onPress={() => Actions.listReferral()}
+            style={styles.cardMenu}>
+            <View style={styles.itemMenu}>
+              <Icon
+                size={20}
+                name={Platform.OS === 'ios' ? 'ios-mail' : 'md-mail'}
+                style={{color: 'white'}}
+              />
+            </View>
+            <View>
+              <View style={styles.item}>
+                <Text style={styles.title}>
+                  Referral ( {referral.amount}/{referral.capacity} )
+                </Text>
+              </View>
+            </View>
+          </TouchableOpacity>
+        ) : null}
 
         <TouchableOpacity onPress={this.address} style={styles.cardMenu}>
           <View style={styles.itemMenu}>
@@ -378,6 +405,7 @@ const styles = StyleSheet.create({
 mapStateToProps = state => ({
   logoutUser: state.authReducer.logoutUser,
   userDetail: state.userReducer.getUser.userDetails,
+  referral: state.referralReducer.getReferral.referral,
   myCardAccount: state.cardReducer.myCardAccount.card,
   totalPoint: state.rewardsReducer.dataPoint.totalPoint,
   companyInfo: state.userReducer.getCompanyInfo.companyInfo,

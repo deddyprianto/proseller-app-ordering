@@ -16,6 +16,7 @@ import inboxReducer from './inbox.reducer';
 import promotionReducer from './promotion.reducer';
 import orderReducer from './order.reducer';
 import cardReducer from './card.reducer';
+import referralReducer from './referral.reducer';
 import intlData from './language.reducer';
 
 const reducers = {
@@ -28,6 +29,7 @@ const reducers = {
   promotionReducer,
   orderReducer,
   cardReducer,
+  referralReducer,
   intlData,
   form: formReducer,
 };
