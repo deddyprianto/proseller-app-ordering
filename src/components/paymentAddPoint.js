@@ -194,7 +194,7 @@ class paymentAddPoint extends Component {
       ) {
         return parseFloat(maxPoint.toFixed(2));
       } else {
-        return Math.ceil(maxPoint);
+        return Math.floor(maxPoint);
       }
     } catch (e) {
       return 0;

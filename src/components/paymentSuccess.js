@@ -13,16 +13,16 @@ import {
   BackHandler,
   TouchableOpacity,
   Platform,
-  AsyncStorage,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
-import AwesomeAlert from 'react-native-awesome-alerts';
 import LottieView from 'lottie-react-native';
 import colorConfig from '../config/colorConfig';
 import appConfig from '../config/appConfig';
 import CurrencyFormatter from '../helper/CurrencyFormatter';
-import {clearAccount} from '../actions/payment.actions';
+import {clearAccount, clearAddress} from '../actions/payment.actions';
+import OneSignal from 'react-native-onesignal';
+import {getPendingCart} from '../actions/order.action';
 
 export default class PaymentSuccess extends Component {
   constructor(props) {
@@ -34,20 +34,21 @@ export default class PaymentSuccess extends Component {
       titleAlert: `${this.props.intlData.messages.thankYou} !`,
       showDetail: false,
     };
+
+    OneSignal.inFocusDisplaying(2);
   }
 
-  componentDidMount() {
-    try {
-      this.props.dispatch(clearAccount());
-    } catch (e) {}
+  componentDidMount = async () => {
     this.backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
       this.handleBackPress,
     );
-  }
+  };
 
   componentWillUnmount() {
-    this.backHandler.remove();
+    try {
+      this.backHandler.remove();
+    } catch (e) {}
   }
 
   handleBackPress = () => {
@@ -59,7 +60,8 @@ export default class PaymentSuccess extends Component {
     //  If this scene originates from ordering customers who are taking away, then point it back to basketball
     const {url} = this.props;
     if (url != undefined && url == '/cart/submitTakeAway') {
-      Actions.popTo('basket');
+      // Actions.popTo('basket');
+      Actions.reset('pageIndex', {fromPayment: true});
     } else {
       Actions.reset('pageIndex', {fromPayment: true});
       // Actions.reset('pageIndex', {initial: 'History'});

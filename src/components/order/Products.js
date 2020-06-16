@@ -10,10 +10,10 @@ import {
   View,
   FlatList,
   Alert,
-  Picker,
   ActivityIndicator,
   ScrollView,
   RefreshControl,
+  SafeAreaView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -35,10 +35,15 @@ import Loader from '../../components/loader';
 import ButtonViewBasket from '../../components/order/ButtonViewBasket';
 import CurrencyFormatter from '../../helper/CurrencyFormatter';
 import ShimmerPlaceHolder from 'react-native-shimmer-placeholder';
-import {isEmptyArray, isEmptyObject} from '../../helper/CheckEmpty';
+import {
+  isEmptyArray,
+  isEmptyData,
+  isEmptyObject,
+} from '../../helper/CheckEmpty';
 import * as _ from 'lodash';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import {dataStores} from '../../actions/stores.action';
+import {StatusBarHeight} from '../../helper/StatusBarChecker';
 
 class Products extends Component {
   constructor(props) {
@@ -75,8 +80,34 @@ class Products extends Component {
       refresh: false,
       productsWithMofidier: [],
       selectedproductsWithMofidier: {},
+      visibleMenu: false,
     };
   }
+
+  _viewabilityConfig = {
+    itemVisiblePercentThreshold: 10,
+  };
+
+  _onViewableItemsChanged = ({viewableItems, changed}) => {
+    // console.log('Visible items are', viewableItems);
+    // console.log('Changed in this iteration', changed);
+    // this.setState({idx: 3});
+    if (viewableItems.length == 1) {
+      try {
+        if (viewableItems[0].index != undefined) {
+          this.updateCategoryPosition(viewableItems[0].index);
+        }
+      } catch (e) {}
+    }
+  };
+
+  updateCategoryPosition = index => {
+    // this.setState({selectedCategory: viewableItems[0].index});
+    // this.setState({idx: viewableItems[0].index});
+    this.setState({selectedCategory: index});
+    this.setState({idx: index});
+    this.categoryMenuRef.scrollToIndex({animation: true, index: index});
+  };
 
   componentDidMount = async () => {
     this.backHandler = BackHandler.addEventListener(
@@ -85,6 +116,9 @@ class Products extends Component {
     );
 
     await this.firstMethodToRun(false);
+
+    // check if outlet is open
+    this.prompOutletIsClosed();
 
     // berfore get new products, delete old products first, so different outlet got different products
     // await this.props.dispatch(removeProducts());
@@ -95,11 +129,29 @@ class Products extends Component {
     // }
   };
 
+  prompOutletIsClosed = () => {
+    const {item} = this.state;
+    if (item.storeStatus == false) {
+      Alert.alert(
+        'Outlet is Closed.',
+        'Outlet is closed now, but you can still add items to the cart first. :)',
+      );
+    }
+  };
+
   firstMethodToRun = async refresh => {
-    // get product outlet
-    await this.getProductsByOutlet(refresh);
-    // check if basket outlet is not same as current outlet
-    await this.checkBucketExist();
+    // get product outlet only if outlet ordering status is available
+    if (
+      this.state.item.orderingStatus == undefined ||
+      this.state.item.orderingStatus == 'AVAILABLE'
+    ) {
+      await this.getProductsByOutlet(refresh);
+      // check if basket outlet is not same as current outlet
+      await this.checkBucketExist();
+    } else {
+      await this.setState({products: []});
+      this.products = [];
+    }
   };
 
   openOrderingMode = () => {
@@ -147,11 +199,13 @@ class Products extends Component {
           this.RBSheet = ref;
         }}
         animationType={'slide'}
-        height={250}
+        height={
+          item.enableDineIn == false || item.enableTakeAway == false ? 200 : 250
+        }
         duration={10}
-        closeOnDragDown={false}
-        closeOnPressMask={false}
-        closeOnPressBack={false}
+        closeOnDragDown={true}
+        closeOnPressMask={true}
+        closeOnPressBack={true}
         customStyles={{
           container: {
             backgroundColor: colorConfig.store.darkColor,
@@ -169,56 +223,59 @@ class Products extends Component {
           }}>
           Order Mode
         </Text>
-        <TouchableOpacity
-          disabled={item.enableDineIn == false ? true : false}
-          onPress={() => this.setOrderType('DINEIN')}
-          style={
-            item.enableDineIn == false
-              ? styles.deactiveDINEINButton
-              : styles.activeDINEINButton
-          }>
-          <Icon
-            size={30}
-            name={Platform.OS === 'ios' ? 'ios-restaurant' : 'md-restaurant'}
-            style={{color: 'white'}}
-          />
-          <Text
-            style={{
-              marginLeft: 10,
-              color: 'white',
-              fontWeight: 'bold',
-              fontFamily: 'Lato-Bold',
-              fontSize: 18,
-              textAlign: 'center',
-            }}>
-            {intlData.messages.dineIn}
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          disabled={item.enableTakeAway == false ? true : false}
-          onPress={() => this.setOrderType('TAKEAWAY')}
-          style={
-            item.enableTakeAway == false
-              ? styles.deactiveTAKEAWAYButton
-              : styles.activeTAKEAWAYButton
-          }>
-          <Icon
-            size={30}
-            name={Platform.OS === 'ios' ? 'ios-basket' : 'md-basket'}
-            style={{color: 'white'}}
-          />
-          <Text
-            style={{
-              marginLeft: 10,
-              color: 'white',
-              fontWeight: 'bold',
-              fontFamily: 'Lato-Bold',
-              fontSize: 18,
-              textAlign: 'center',
-            }}>
-            {intlData.messages.takeAway}
-          </Text>
-        </TouchableOpacity>
+        {item.enableDineIn == true ? (
+          <TouchableOpacity
+            onPress={() => this.setOrderType('DINEIN')}
+            style={
+              item.enableDineIn == false
+                ? styles.deactiveDINEINButton
+                : styles.activeDINEINButton
+            }>
+            <Icon
+              size={30}
+              name={Platform.OS === 'ios' ? 'ios-restaurant' : 'md-restaurant'}
+              style={{color: 'white'}}
+            />
+            <Text
+              style={{
+                marginLeft: 10,
+                color: 'white',
+                fontWeight: 'bold',
+                fontFamily: 'Lato-Bold',
+                fontSize: 18,
+                textAlign: 'center',
+              }}>
+              {intlData.messages.dineIn}
+            </Text>
+          </TouchableOpacity>
+        ) : null}
+        {item.enableTakeAway == true ? (
+          <TouchableOpacity
+            disabled={item.enableTakeAway == false ? true : false}
+            onPress={() => this.setOrderType('TAKEAWAY')}
+            style={
+              item.enableTakeAway == false
+                ? styles.deactiveTAKEAWAYButton
+                : styles.activeTAKEAWAYButton
+            }>
+            <Icon
+              size={30}
+              name={Platform.OS === 'ios' ? 'ios-basket' : 'md-basket'}
+              style={{color: 'white'}}
+            />
+            <Text
+              style={{
+                marginLeft: 10,
+                color: 'white',
+                fontWeight: 'bold',
+                fontFamily: 'Lato-Bold',
+                fontSize: 18,
+                textAlign: 'center',
+              }}>
+              {intlData.messages.takeAway}
+            </Text>
+          </TouchableOpacity>
+        ) : null}
       </RBSheet>
     );
   };
@@ -415,7 +472,7 @@ class Products extends Component {
               products: data.products,
               dataLength: data.dataLength,
             });
-          }, 1000);
+          }, 500);
         } else {
           // get data from server
           let response = await this.props.dispatch(
@@ -456,10 +513,12 @@ class Products extends Component {
     // roll back order type if user is canceled to select outlet
     if (orderType != undefined) this.props.dispatch(setOrderType(orderType));
 
-    Actions.pop();
+    Actions.popTo('pageIndex');
+    // console.log(Actions)
   };
 
   openModal = async (product, skipCheckItem) => {
+    this.RBmodifier.close();
     // make modal empty first
     await this.setState({
       selectedProduct: {},
@@ -485,9 +544,48 @@ class Products extends Component {
 
     // remove quantity temp from props
     product.product.productModifiers.map((group, i) => {
-      group.modifier.details.map((detail, j) => {
-        delete detail.quantity;
-      });
+      if (!isEmptyArray(group.modifier.details))
+        group.modifier.details.map((detail, j) => {
+          delete detail.quantity;
+
+          if (
+            group.modifier.isYesNo == true &&
+            detail.orderingStatus == 'AVAILABLE'
+          ) {
+            product.product.productModifiers[i].postToServer = true;
+            product.product.productModifiers[i].modifier.details[
+              j
+            ].isSelected = false;
+            product.product.productModifiers[i].modifier.details[
+              j
+            ].quantity = 0;
+
+            // create default value
+            if (
+              group.modifier.yesNoDefaultValue == true &&
+              detail.yesNoValue == 'yes'
+            ) {
+              product.product.productModifiers[i].modifier.details[
+                j
+              ].isSelected = true;
+              product.product.productModifiers[i].modifier.details[
+                j
+              ].quantity = 1;
+            }
+
+            if (
+              group.modifier.yesNoDefaultValue == false &&
+              detail.yesNoValue == 'no'
+            ) {
+              product.product.productModifiers[i].modifier.details[
+                j
+              ].isSelected = true;
+              product.product.productModifiers[i].modifier.details[
+                j
+              ].quantity = 1;
+            }
+          }
+        });
     });
 
     // if quantity exist, then mode is update
@@ -519,6 +617,14 @@ class Products extends Component {
                     product.product.productModifiers[i].modifier.details[
                       j
                     ].quantity = item.quantity;
+                    // for is selected
+                    product.product.productModifiers[i].modifier.details[
+                      j
+                    ].isSelected = true;
+                  } else {
+                    product.product.productModifiers[i].modifier.details[
+                      j
+                    ].isSelected = false;
                   }
                 }
               });
@@ -527,11 +633,22 @@ class Products extends Component {
         });
       }
     }
-    await this.setState({
-      selectedCategoryModifier: 0,
-      selectedProduct: product,
-      isModalVisible: !this.state.isModalVisible,
-    });
+
+    if (skipCheckItem == undefined) {
+      await this.setState({
+        selectedCategoryModifier: 0,
+        selectedProduct: product,
+        isModalVisible: !this.state.isModalVisible,
+      });
+    } else {
+      setTimeout(async () => {
+        await this.setState({
+          selectedCategoryModifier: 0,
+          selectedProduct: product,
+          isModalVisible: !this.state.isModalVisible,
+        });
+      }, 30);
+    }
   };
 
   toggleModal = async product => {
@@ -626,6 +743,7 @@ class Products extends Component {
     try {
       let data = {};
       data.details = [];
+      const {item} = this.state;
 
       // check if retail price is not in number format
       if (
@@ -716,6 +834,16 @@ class Products extends Component {
       //   });
       // }
 
+      // check max order value outlet
+      if (!this.checkMaxOrderValue('add', data)) {
+        Alert.alert(
+          'Sorry..',
+          'Maximum order amount is ' +
+            CurrencyFormatter(parseFloat(item.maxOrderAmount)),
+        );
+        return;
+      }
+
       // post data to server
       let response = await this.props.dispatch(addProductToBasket(data));
       console.log('response add ', response);
@@ -741,6 +869,7 @@ class Products extends Component {
 
   updateItem = async (product, qty, remark) => {
     try {
+      const {item} = this.state;
       // hide modal add modifier
       this.RBmodifier.close();
 
@@ -817,6 +946,16 @@ class Products extends Component {
       data.outletID = `outlet::${this.state.item.storeId}`;
       data.details.push(dataproduct);
 
+      // check max order value outlet
+      if (!this.checkMaxOrderValue('update', data)) {
+        Alert.alert(
+          'Sorry..',
+          'Maximum order amount is ' +
+            CurrencyFormatter(parseFloat(item.maxOrderAmount)),
+        );
+        return;
+      }
+
       // hide modal
       this.setState({
         selectedProduct: {},
@@ -838,7 +977,77 @@ class Products extends Component {
     }
   };
 
+  checkMaxOrderQty = qty => {
+    try {
+      const {item} = this.state;
+      if (
+        qty > item.maxOrderQtyPerItem &&
+        item.maxOrderQtyPerItem != undefined
+      ) {
+        return false;
+      }
+      return true;
+    } catch (e) {
+      return true;
+    }
+  };
+
+  checkMaxOrderValue = (mode, data) => {
+    try {
+      const {item} = this.state;
+      const {dataBasket} = this.props;
+      let basketAmount = 0;
+      let priceItem = data.details[0].quantity * data.details[0].unitPrice;
+
+      if (mode == 'add') {
+        if (dataBasket != undefined) {
+          dataBasket.details.map(item => {
+            basketAmount += parseFloat(item.nettAmount);
+          });
+        } else {
+          basketAmount = 0;
+        }
+
+        let total = basketAmount + priceItem;
+
+        if (total > item.maxOrderAmount && item.maxOrderAmount != undefined) {
+          return false;
+        }
+      } else {
+        let result = '';
+        result = JSON.stringify(dataBasket);
+        result = JSON.parse(result);
+        result.details.map(item => {
+          if (item.productID != data.details[0].productID) {
+            basketAmount += parseFloat(item.nettAmount);
+          }
+        });
+        let total = basketAmount + priceItem;
+
+        if (total > item.maxOrderAmount && item.maxOrderAmount != undefined) {
+          return false;
+        }
+
+        return true;
+      }
+
+      return true;
+    } catch (e) {
+      return true;
+    }
+  };
+
   addItemToBasket = async (product, qty, remark, mode) => {
+    const {item} = this.state;
+    // check outlet rules
+    if (!this.checkMaxOrderQty(qty)) {
+      Alert.alert(
+        'Sorry..',
+        'Maximum order quantity per Item is ' + item.maxOrderQtyPerItem,
+      );
+      return;
+    }
+
     if (mode == 'add') {
       // to show loading button at Modal, check status data basket is empty or not
       let outletId = `outlet::${this.state.item.storeId}`;
@@ -935,26 +1144,40 @@ class Products extends Component {
       this.state.item.orderingStatus == undefined ||
       this.state.item.orderingStatus == 'AVAILABLE'
     ) {
-      // check open / close
-      if (this.state.item.storeStatus == true) {
-        // check ordering status product
-        if (
-          item.product.orderingStatus == undefined ||
-          item.product.orderingStatus == 'AVAILABLE'
-        ) {
-          return true;
-        }
-      }
+      return true;
+      // // check open / close
+      // if (this.state.item.storeStatus == true) {
+      //   // check ordering status product
+      //   if (
+      //     item.product.orderingStatus == undefined ||
+      //     item.product.orderingStatus == 'AVAILABLE'
+      //   ) {
+      //     return true;
+      //   }
+      // }
     }
     return false;
+  };
+
+  formatNumber = item => {
+    try {
+      const curr = appConfig.appMataUang;
+      item = item.replace(curr, '');
+      if (curr != 'RP' && curr != 'IDR' && item.includes('.') == false) {
+        return `${item}.00`;
+      }
+      return item;
+    } catch (e) {
+      return item;
+    }
   };
 
   renderCategoryWithProducts = item => {
     return (
       <View style={styles.card}>
-        <Text style={styles.titleCategory}>{item[0].name}</Text>
+        <Text style={styles.titleCategory}>{item.name}</Text>
         <FlatList
-          data={item[0].items}
+          data={item.items}
           getItemLayout={(data, index) => {
             return {length: 95, offset: 95 * index, index};
           }}
@@ -979,12 +1202,25 @@ class Products extends Component {
                 ) : null}
                 <View style={styles.detailItem}>
                   <View style={{flexDirection: 'row'}}>
-                    <ProgressiveImage
-                      style={styles.imageProduct}
-                      source={this.getImageUrl(item.product.defaultImageURL)}
-                    />
-                    <View>
-                      <Text style={[styles.productTitle]}>
+                    {!isEmptyData(item.product.defaultImageURL) ? (
+                      <ProgressiveImage
+                        style={styles.imageProduct}
+                        source={this.getImageUrl(item.product.defaultImageURL)}
+                      />
+                    ) : null}
+                    <View
+                      style={
+                        isEmptyData(item.product.defaultImageURL)
+                          ? {height: 80}
+                          : {}
+                      }>
+                      <Text
+                        style={[
+                          styles.productTitle,
+                          isEmptyData(item.product.defaultImageURL)
+                            ? {maxWidth: Dimensions.get('window').width / 2}
+                            : null,
+                        ]}>
                         {this.checkIfItemExistInBasket(item) != false ? (
                           <Text
                             style={{
@@ -996,16 +1232,21 @@ class Products extends Component {
                         ) : null}
                         {item.product.name}
                       </Text>
-                      <Text style={[styles.productDesc]}>
-                        Product description here ...
-                      </Text>
+                      {item.product.description != undefined &&
+                      item.product.description != '' ? (
+                        <Text style={[styles.productDesc]}>
+                          {item.product.description}
+                        </Text>
+                      ) : null}
                     </View>
                   </View>
                   <Text style={[styles.productPrice]}>
                     {item.product.retailPrice != undefined &&
                     item.product.retailPrice != '-' &&
                     !isNaN(item.product.retailPrice)
-                      ? CurrencyFormatter(item.product.retailPrice)
+                      ? this.formatNumber(
+                          CurrencyFormatter(item.product.retailPrice),
+                        )
                       : CurrencyFormatter(0)}
                   </Text>
                 </View>
@@ -1025,14 +1266,27 @@ class Products extends Component {
 
   updateCategory = async (item, itemIndex) => {
     try {
-      await this.setState({loadProducts: false});
+      // await this.setState({loadProducts: false});
       this.setState({selectedCategory: itemIndex});
       this.setState({idx: itemIndex});
-      this.products = [];
-      this.products.push(this.state.products[itemIndex]);
-      await setTimeout(async () => {
-        await this.setState({loadProducts: true});
-      }, 500);
+      // this.products = [];
+      // this.products.push(this.state.products[itemIndex]);
+      // await setTimeout(async () => {
+      //   await this.setState({loadProducts: true});
+      // }, 500);
+      this.flatListRef.scrollToItem({
+        animated: true,
+        item: this.state.products[itemIndex],
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  updateHightlightCategory = async itemIndex => {
+    try {
+      // this.setState({selectedCategory: itemIndex});
+      // this.setState({idx: itemIndex});
     } catch (e) {
       console.log(e);
     }
@@ -1068,6 +1322,23 @@ class Products extends Component {
           this.find_dimesions(event.nativeEvent.layout);
         }}>
         <View>
+          {/* Button Close */}
+          <View
+            style={{
+              position: 'absolute',
+              backgroundColor: 'transparent',
+              zIndex: 2,
+              top: 0,
+            }}>
+            <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
+              <Icon
+                size={27}
+                name={Platform.OS === 'ios' ? 'ios-close' : 'md-close'}
+                style={styles.btnBackIcon}
+              />
+            </TouchableOpacity>
+          </View>
+          {/* Button Close */}
           <View style={styles.cardImage}>
             {this.state.item.defaultImageURL != undefined ? (
               <ProgressiveImage
@@ -1209,9 +1480,152 @@ class Products extends Component {
     );
   };
 
+  renderHeaderOutletTemplate = () => {
+    const {intlData} = this.props;
+    return (
+      <View>
+        {/* Button Close */}
+        <View
+          style={{
+            position: 'absolute',
+            backgroundColor: 'transparent',
+            zIndex: 2,
+            top: 0,
+          }}>
+          <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
+            <Icon
+              size={27}
+              name={Platform.OS === 'ios' ? 'ios-close' : 'md-close'}
+              style={styles.btnBackIcon}
+            />
+          </TouchableOpacity>
+        </View>
+        {/* Button Close */}
+        <View>
+          <View style={styles.cardImage}>
+            {this.state.item.defaultImageURL != undefined ? (
+              <ProgressiveImage
+                resizeMode="cover"
+                style={styles.image}
+                source={{
+                  uri: this.state.item.defaultImageURL,
+                }}
+              />
+            ) : (
+              <ProgressiveImage
+                resizeMode="cover"
+                style={[styles.image, {width: '100%'}]}
+                source={appConfig.appImageNull}
+              />
+            )}
+          </View>
+          <View style={styles.storeDescription}>
+            <View
+              style={{
+                // flex: 1,
+                flexDirection: 'row',
+                justifyContent: 'center',
+                marginVertical: 17,
+              }}>
+              <Text
+                style={{
+                  fontWeight: 'bold',
+                  fontSize: 20,
+                  textAlign: 'center',
+                  marginRight: 10,
+                }}>
+                {this.state.item.storeName}
+              </Text>
+              <TouchableOpacity
+                onPress={() =>
+                  Actions.storeDetailStores({item: this.state.item, intlData})
+                }>
+                <Icon
+                  size={26}
+                  name={
+                    Platform.OS === 'ios' ? 'ios-information' : 'md-information'
+                  }
+                  style={{
+                    color: 'white',
+                    textAlign: 'center',
+                    width: 25,
+                    borderRadius: 50,
+                    height: 25,
+                    backgroundColor: colorConfig.pageIndex.inactiveTintColor,
+                  }}
+                />
+              </TouchableOpacity>
+            </View>
+            <View
+              style={{
+                // flex: 1,
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                marginHorizontal: 10,
+              }}>
+              <Text>
+                <Icon
+                  size={18}
+                  name={Platform.OS === 'ios' ? 'ios-time' : 'md-time'}
+                  style={{
+                    color: this.state.item.storeStatus
+                      ? colorConfig.store.colorSuccess
+                      : colorConfig.store.colorError,
+                    paddingRight: 10,
+                  }}
+                />
+                <Text
+                  style={{
+                    fontWeight: 'bold',
+                    fontSize: 15,
+                    color: this.state.item.storeStatus
+                      ? colorConfig.store.colorSuccess
+                      : colorConfig.store.colorError,
+                  }}>
+                  {' '}
+                  {this.state.item.storeStatus
+                    ? intlData.messages.open
+                    : intlData.messages.closed}
+                </Text>
+              </Text>
+              <Text>
+                <Icon
+                  size={18}
+                  name={Platform.OS === 'ios' ? 'ios-pin' : 'md-pin'}
+                  style={{color: 'red', paddingRight: 10}}
+                />
+                <Text style={{fontSize: 13}}>
+                  {' '}
+                  {this.state.item.region} - {this.state.item.city}
+                </Text>
+              </Text>
+              <Text>
+                <Icon
+                  size={18}
+                  name={Platform.OS === 'ios' ? 'ios-map' : 'md-map'}
+                  style={{
+                    color: colorConfig.store.defaultColor,
+                    paddingRight: 10,
+                  }}
+                />
+                <Text style={{fontSize: 13}}>
+                  {' '}
+                  {this.state.item.storeJarak != '-'
+                    ? this.state.item.storeJarak.toFixed(1) + ' KM'
+                    : '-'}
+                </Text>
+              </Text>
+            </View>
+          </View>
+        </View>
+      </View>
+    );
+  };
+
   renderProgressiveLoadItem = () => {
     let itemsToLoad = (
       <View>
+        {this.renderHeaderOutletTemplate()}
         <Loader />
         <View style={styles.card}>
           <View style={styles.titleCategory}>
@@ -1283,11 +1697,73 @@ class Products extends Component {
     return itemsToLoad;
   };
 
+  getOperationalHours = data => {
+    try {
+      let operationalHours = data.operationalHours;
+
+      let date = new Date();
+      var dd = date.getDate();
+      var mm = date.getMonth() + 1;
+      var yyyy = date.getFullYear();
+      let currentDate = mm + '/' + dd + '/' + yyyy;
+      let day = date.getDay();
+      let time = date.getHours() + ':' + date.getMinutes();
+
+      let open;
+      operationalHours
+        .filter(item => item.day == day && item.active == true)
+        .map(day => {
+          if (
+            Date.parse(`${currentDate} ${time}`) >
+              Date.parse(`${currentDate} ${day.open}`) &&
+            Date.parse(`${currentDate} ${time}`) <
+              Date.parse(`${currentDate} ${day.close}`)
+          )
+            open = true;
+        });
+
+      if (open) return true;
+      else {
+        if (operationalHours.leading == 0) return true;
+        else return false;
+      }
+    } catch (e) {
+      return false;
+    }
+  };
+
+  isOpen = outletSingle => {
+    if (outletSingle != undefined)
+      if (!isEmptyArray(outletSingle.operationalHours)) {
+        if (this.getOperationalHours(outletSingle)) {
+          return true;
+        } else {
+          if (outletSingle.openAllDays == true) {
+            return true;
+          } else {
+            return false;
+          }
+        }
+      } else {
+        if (outletSingle.openAllDays == true) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+    else return false;
+  };
+
   refreshOutlet = async () => {
     try {
       await this.props.dispatch(dataStores());
       let {item} = this.state;
       let outlet = this.props.dataStores.find(data => data.id == item.storeId);
+      item.storeStatus = this.isOpen(outlet);
+      item.maxOrderQtyPerItem = outlet.maxOrderQtyPerItem;
+      item.maxOrderAmount = outlet.maxOrderAmount;
+      item.lastOrderOn = outlet.lastOrderOn;
+      item.offlineMessage = outlet.offlineMessage;
       item.enableDineIn =
         outlet.enableDineIn == false || outlet.enableDineIn == '-'
           ? false
@@ -1311,15 +1787,53 @@ class Products extends Component {
     await this.setState({products: undefined, refresh: true, item});
     await this.refreshOutlet();
     await this.firstMethodToRun(true);
+    // turn back to first category
+    try {
+      await this.updateCategory([], 0);
+    } catch (e) {}
+
     await this.setState({refresh: false});
+    this.prompOutletIsClosed();
+  };
+
+  renderFooter = () => {
+    let dataLength = this.state.dataLength;
+    // console.log(dataLength, 'DATA LENGTH');
+    // let productsLength = this.products.length;
+    // if (
+    //   productsLength < dataLength &&
+    //   this.state.selectedCategory == 'ALL PRODUCTS'
+    // ) {
+    return <ActivityIndicator size="large" style={{color: '#000'}} />;
+    // } else {
+    //   return null;
+    // }
+  };
+
+  handleLoadMore = () => {
+    // console.log('sEDANG DILOAD');
+    try {
+      let dataLength = this.state.dataLength;
+      let productsLength = this.products.length;
+      if (productsLength < dataLength) {
+        this.setState({idx: this.state.idx + 1}, () => {
+          if (this.productsLength <= dataLength) {
+            this.products.push(this.state.products[this.state.idx]);
+          }
+        });
+      }
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   render() {
-    const {intlData} = this.props;
-    let {loadProducts} = this.state;
+    const {intlData, item} = this.props;
+    let {loadProducts, visibleMenu} = this.state;
     let products = this.products;
+
     return (
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
         <ModalOrder
           intlData={intlData}
           isModalVisible={this.state.isModalVisible}
@@ -1343,57 +1857,120 @@ class Products extends Component {
         />
         {this.askUserToSelectOrderType()}
         {this.askUserToSelectProductModifier()}
-        <ScrollView
-          refreshControl={
-            <RefreshControl
-              refreshing={this.state.refresh}
-              onRefresh={this._onRefresh}
-            />
-          }>
-          {this.renderHeaderOutlet()}
-          {/* Button Close */}
-          <View
-            style={{
-              position: 'absolute',
-              backgroundColor: 'transparent',
-              zIndex: 2,
-              top: 0,
-            }}>
-            <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
-              <Icon
-                size={25}
-                name={Platform.OS === 'ios' ? 'ios-close' : 'md-close'}
-                style={styles.btnBackIcon}
+        <>
+          {/* MENU FIXED */}
+          {visibleMenu ? (
+            <View
+              style={{
+                backgroundColor: '#e1e4e8',
+                position: 'absolute',
+                top: StatusBarHeight,
+                zIndex: 99,
+                width: '100%',
+              }}>
+              <FlatList
+                ref={ref => {
+                  this.categoryMenuRef = ref;
+                }}
+                horizontal={true}
+                // getItemLayout={(data, index) => {
+                //   return {length: 8, offset: 8 * index, index};
+                // }}
+                data={this.state.products}
+                extraData={this.props}
+                renderItem={({item, index}) => {
+                  return this.renderCategoryProducts(item, index);
+                }}
+                keyExtractor={(item, index) => index.toString()}
               />
-            </TouchableOpacity>
-          </View>
-          {/* Button Close */}
+            </View>
+          ) : null}
+          {/* MENU FIXED */}
 
           {this.state.products != undefined ? (
             !isEmptyArray(products) ? (
               loadProducts ? (
-                this.renderCategoryWithProducts(products)
+                <FlatList
+                  refreshControl={
+                    <RefreshControl
+                      refreshing={this.state.refresh}
+                      onRefresh={this._onRefresh}
+                    />
+                  }
+                  ListHeaderComponent={this.renderHeaderOutlet}
+                  ref={ref => {
+                    this.flatListRef = ref;
+                  }}
+                  onViewableItemsChanged={this._onViewableItemsChanged}
+                  viewabilityConfig={this._viewabilityConfig}
+                  // initialNumToRender={2}
+                  initialScrollIndex={0}
+                  data={this.state.products}
+                  extraData={this.props}
+                  onScroll={event => {
+                    let yOffset = event.nativeEvent.contentOffset.y;
+                    try {
+                      if (yOffset >= this.heightHeader) {
+                        this.setState({visibleMenu: true});
+                      } else {
+                        this.setState({visibleMenu: false});
+                      }
+                    } catch (e) {
+                      this.setState({visibleMenu: false});
+                    }
+                    // console.log(yOffset, 'INDEXNYA');
+                  }}
+                  renderItem={({item}) => {
+                    return this.renderCategoryWithProducts(item);
+                  }}
+                  keyExtractor={(item, index) => index.toString()}
+                  // ListFooterComponent={this.renderFooter}
+                  // onEndReachedThreshold={0.01}
+                  // onEndReached={this.handleLoadMore}
+                />
               ) : (
                 this.renderProgressiveLoadItem()
               )
             ) : (
               <View style={{height: Dimensions.get('window').height}}>
-                <Text
-                  style={{
-                    marginTop: 50,
-                    textAlign: 'center',
-                    justifyContent: 'center',
-                    fontSize: 27,
-                    color: colorConfig.pageIndex.grayColor,
-                  }}>
-                  Sorry, products is empty :(
-                </Text>
+                {item.orderingStatus == undefined ||
+                item.orderingStatus == 'AVAILABLE' ? (
+                  <Text style={styles.productEmptyText}>
+                    Sorry, products is empty :(
+                  </Text>
+                ) : (
+                  <ScrollView
+                    refreshControl={
+                      <RefreshControl
+                        refreshing={this.state.refresh}
+                        onRefresh={this._onRefresh}
+                      />
+                    }>
+                    {this.renderHeaderOutletTemplate()}
+                    <Text style={styles.offlineOutlet}>
+                      {item.offlineMessage != undefined &&
+                      item.offlineMessage != '-'
+                        ? item.offlineMessage
+                        : 'Sorry, ordering is not available now.'}
+                    </Text>
+                    <TouchableOpacity
+                      onPress={this.goBack}
+                      style={{
+                        flexDirection: 'row',
+                        justifyContent: 'center',
+                      }}>
+                      <Text style={styles.findAnotherOutlet}>
+                        Let's find another outlet
+                      </Text>
+                    </TouchableOpacity>
+                  </ScrollView>
+                )}
               </View>
             )
           ) : (
             this.renderProgressiveLoadItem()
           )}
-        </ScrollView>
+        </>
         {/* button basket */}
         {this.state.showBasketButton ? (
           this.props.dataBasket != undefined &&
@@ -1403,7 +1980,7 @@ class Products extends Component {
             <ButtonViewBasket />
           ) : null
         ) : null}
-      </View>
+      </SafeAreaView>
     );
   }
 }
@@ -1464,11 +2041,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    width: 35,
+    width: 40,
     marginTop: 5,
     marginLeft: 5,
     backgroundColor: colorConfig.store.transparent,
-    height: 35,
+    height: 40,
     borderRadius: 50,
   },
   imageProduct: {
@@ -1749,5 +2326,33 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  offlineOutlet: {
+    marginTop: 50,
+    textAlign: 'center',
+    justifyContent: 'center',
+    marginHorizontal: 15,
+    padding: 5,
+    borderRadius: 10,
+    fontSize: 24,
+    fontFamily: 'Lato-Medium',
+    backgroundColor: colorConfig.pageIndex.inactiveTintColor,
+    color: 'white',
+  },
+  productEmptyText: {
+    marginTop: 50,
+    textAlign: 'center',
+    justifyContent: 'center',
+    fontSize: 27,
+    color: colorConfig.pageIndex.grayColor,
+  },
+  findAnotherOutlet: {
+    textAlign: 'center',
+    marginTop: 25,
+    backgroundColor: colorConfig.store.darkColor,
+    color: 'white',
+    padding: 8,
+    fontFamily: 'Lato-Medium',
+    borderRadius: 13,
   },
 });

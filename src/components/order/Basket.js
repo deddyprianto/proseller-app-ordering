@@ -15,7 +15,6 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
-
 import colorConfig from '../../config/colorConfig';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
@@ -26,13 +25,27 @@ import {
   setOrderType,
   getProductByOutlet,
   clearTableType,
+  getDeliveryFee,
+  getDeliveryProvider,
 } from '../../actions/order.action';
 import Loader from '../../components/loader';
 import ModalOrder from '../../components/order/Modal';
 import CurrencyFormatter from '../../helper/CurrencyFormatter';
-import {isEmptyArray, isEmptyObject} from '../../helper/CheckEmpty';
+import {
+  isEmptyArray,
+  isEmptyData,
+  isEmptyObject,
+} from '../../helper/CheckEmpty';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import * as _ from 'lodash';
+import {getOutletById} from '../../actions/stores.action';
+import * as geolib from 'geolib';
+import appConfig from '../../config/appConfig';
+import {refreshToken} from '../../actions/auth.actions';
+import {defaultAddress, getUserProfile} from '../../actions/user.action';
+import CryptoJS from 'react-native-crypto-js';
+import awsConfig from '../../config/awsConfig';
+import {clearAddress, selectedAddress} from '../../actions/payment.actions';
 
 class Basket extends Component {
   constructor(props) {
@@ -57,6 +70,8 @@ class Basket extends Component {
       refreshing: false,
       loadModifierTime: false,
       selectedCategoryModifier: 0,
+      selectedProvider: {},
+      deliveryFee: null,
     };
   }
 
@@ -88,6 +103,7 @@ class Basket extends Component {
       if (this.props.products != undefined) {
         // check data products on local storage
         let data = await this.props.products.find(item => item.id == outletID);
+
         if (data != undefined && !isEmptyObject(data)) {
           await this.setState({
             products: data.products,
@@ -119,12 +135,18 @@ class Basket extends Component {
 
   componentDidMount = async () => {
     try {
+      // refresh token
+      await this.props.dispatch(refreshToken());
+      // await this.props.dispatch(defaultAddress(undefined));
+      // await this.props.dispatch(clearAddress());
       // get data basket
       await this.getBasket();
       // get previous data products from this outlet, for modifier detail purpose
       if (this.props.dataBasket != undefined) {
         let outletID = this.props.dataBasket.outlet.id;
         await this.getProductsByOutlet(outletID);
+        // fetch details outlet
+        await this.props.dispatch(getOutletById(outletID));
         await this.setState({loading: false});
 
         // check if user not yet select order mode, then open modal
@@ -134,52 +156,82 @@ class Basket extends Component {
       }
       await this.setState({loading: false});
 
-      // check if status basket is submitted, then request continoustly to get basket
-      if (
-        this.props.dataBasket != undefined &&
-        this.props.dataBasket.status == 'SUBMITTED' &&
-        this.props.dataBasket.orderingMode == 'DINEIN'
-      ) {
-        clearInterval(this.interval);
-        this.interval = setInterval(() => {
-          this.props.dispatch(getBasket());
-        }, 4000);
-      }
+      this.getDeliveryAddress();
 
-      // check if status basket is pending and its take away, then request continoustly to get basket
-      const {orderType} = this.props;
       if (
-        this.props.dataBasket != undefined &&
-        this.props.dataBasket.status == 'PENDING' &&
-        orderType == 'TAKEAWAY'
+        this.props.orderType == 'DELIVERY' &&
+        !isEmptyObject(this.props.selectedAddress)
       ) {
-        clearInterval(this.interval);
-        this.interval = setInterval(() => {
-          this.props.dispatch(getBasket());
-        }, 4000);
-      }
-
-      // check if status basket for TAKE AWAY IS CONFIRMED or SUBMITTED, then request continoustly to get basket
-      if (
-        this.props.dataBasket != undefined &&
-        (this.props.dataBasket.status == 'CONFIRMED' ||
-          this.props.dataBasket.status == 'SUBMITTED') &&
-        (this.props.dataBasket.outlet.outletType == 'QUICKSERVICE' ||
-          this.props.dataBasket.orderingMode == 'TAKEAWAY')
-      ) {
-        clearInterval(this.interval);
-        this.interval = setInterval(() => {
-          this.props.dispatch(getBasket());
-        }, 4000);
+        this.getDeliveryFee();
       }
     } catch (e) {
       Alert.alert('Opss..', "Can't get data basket, please try again.");
     }
 
-    this.backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      this.handleBackPress,
-    );
+    try {
+      this.backHandler = BackHandler.addEventListener(
+        'hardwareBackPress',
+        this.handleBackPress,
+      );
+    } catch (e) {}
+  };
+
+  getDeliveryAddress = async () => {
+    try {
+      const {defaultAddress} = this.props;
+
+      let user = {};
+      try {
+        let bytes = CryptoJS.AES.decrypt(
+          this.props.userDetail,
+          awsConfig.PRIVATE_KEY_RSA,
+        );
+        user = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+      } catch (e) {
+        user = {};
+      }
+
+      if (!isEmptyObject(defaultAddress)) {
+        this.props.dispatch(selectedAddress(defaultAddress));
+        return;
+      }
+
+      let address = {};
+      if (
+        isEmptyObject(defaultAddress) &&
+        !isEmptyData(user.address) &&
+        isEmptyObject(this.props.selectedAddress) &&
+        isEmptyArray(user.deliveryAddress)
+      ) {
+        address = {
+          addressName: 'My Default Address',
+          address: user.address,
+          postalCode: '-',
+          city: '-',
+        };
+        this.props.dispatch(selectedAddress(address));
+      } else {
+        if (
+          isEmptyObject(this.props.selectedAddress) &&
+          !isEmptyArray(user.deliveryAddress)
+        ) {
+          this.props.dispatch(selectedAddress(user.deliveryAddress[0]));
+          return;
+        }
+        if (isEmptyObject(this.props.selectedAddress)) {
+          address = {};
+          this.props.dispatch(selectedAddress(address));
+        }
+      }
+    } catch (e) {
+      let address = {
+        addressName: '-',
+        address: '-',
+        postalCode: '-',
+        city: '-',
+      };
+      this.props.dispatch(selectedAddress(address));
+    }
   };
 
   updateSelectedCategory = idx => {
@@ -187,18 +239,38 @@ class Basket extends Component {
   };
 
   askUserToSelectOrderType = () => {
-    const {intlData, dataBasket} = this.props;
+    const {intlData, dataBasket, outletSingle} = this.props;
     let item = {};
+
     if (dataBasket != undefined) {
-      item = dataBasket.outlet;
+      item = dataBasket;
     }
+
+    if (outletSingle != undefined) {
+      item = outletSingle;
+      item.enableDelivery =
+        item.enableDelivery == false || item.enableDelivery == '-'
+          ? false
+          : true;
+      item.enableDineIn =
+        item.enableDineIn == false || item.enableDineIn == '-' ? false : true;
+      item.enableTakeAway =
+        item.enableTakeAway == false || item.enableTakeAway == '-'
+          ? false
+          : true;
+    }
+
+    let height = 330;
+    if (item.enableDineIn == false) height -= 50;
+    if (item.enableTakeAway == false) height -= 50;
+    if (item.enableDelivery == false) height -= 50;
     return (
       <RBSheet
         ref={ref => {
           this.RBSheet = ref;
         }}
-        animationType={'fade'}
-        height={250}
+        animationType={'slide'}
+        height={height}
         duration={10}
         closeOnDragDown={true}
         closeOnPressMask={true}
@@ -218,65 +290,194 @@ class Basket extends Component {
             fontWeight: 'bold',
             fontFamily: 'Lato-Bold',
           }}>
-          Change Order Mode
+          Order Mode
         </Text>
-        <TouchableOpacity
-          disabled={item.enableDineIn == false ? true : false}
-          onPress={() => this.setOrderType('DINEIN')}
-          style={
-            item.enableDineIn == false
-              ? styles.deactiveDINEINButton
-              : styles.activeDINEINButton
-          }>
-          <Icon
-            size={30}
-            name={Platform.OS === 'ios' ? 'ios-restaurant' : 'md-restaurant'}
-            style={{color: 'white'}}
-          />
-          <Text
-            style={{
-              marginLeft: 10,
-              color: 'white',
-              fontWeight: 'bold',
-              fontFamily: 'Lato-Bold',
-              fontSize: 18,
-              textAlign: 'center',
-            }}>
-            {intlData.messages.dineIn}
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          disabled={item.enableTakeAway == false ? true : false}
-          onPress={() => this.setOrderType('TAKEAWAY')}
-          style={
-            item.enableTakeAway == false
-              ? styles.deactiveTAKEAWAYButton
-              : styles.activeTAKEAWAYButton
-          }>
-          <Icon
-            size={30}
-            name={Platform.OS === 'ios' ? 'ios-basket' : 'md-basket'}
-            style={{color: 'white'}}
-          />
-          <Text
-            style={{
-              marginLeft: 10,
-              color: 'white',
-              fontWeight: 'bold',
-              fontFamily: 'Lato-Bold',
-              fontSize: 18,
-              textAlign: 'center',
-            }}>
-            {intlData.messages.takeAway}
-          </Text>
-        </TouchableOpacity>
+        {item.enableDineIn == true ? (
+          <TouchableOpacity
+            onPress={() => this.setOrderType('DINEIN')}
+            style={styles.activeDINEINButton}>
+            <Icon
+              size={30}
+              name={Platform.OS === 'ios' ? 'ios-restaurant' : 'md-restaurant'}
+              style={{color: 'white'}}
+            />
+            <Text
+              style={{
+                marginLeft: 10,
+                color: 'white',
+                fontWeight: 'bold',
+                fontFamily: 'Lato-Bold',
+                fontSize: 18,
+                textAlign: 'center',
+              }}>
+              {intlData.messages.dineIn}
+            </Text>
+          </TouchableOpacity>
+        ) : null}
+        {item.enableTakeAway == true ? (
+          <TouchableOpacity
+            disabled={item.enableTakeAway == false ? true : false}
+            onPress={() => this.setOrderType('TAKEAWAY')}
+            style={styles.activeTAKEAWAYButton}>
+            <Icon
+              size={30}
+              name={Platform.OS === 'ios' ? 'ios-basket' : 'md-basket'}
+              style={{color: 'white'}}
+            />
+            <Text
+              style={{
+                marginLeft: 10,
+                color: 'white',
+                fontWeight: 'bold',
+                fontFamily: 'Lato-Bold',
+                fontSize: 18,
+                textAlign: 'center',
+              }}>
+              {intlData.messages.takeAway}
+            </Text>
+          </TouchableOpacity>
+        ) : null}
+        {item.enableDelivery == true ? (
+          <TouchableOpacity
+            disabled={item.enableDelivery == false ? true : false}
+            onPress={() => this.setOrderType('DELIVERY')}
+            style={styles.activeDELIVERYButton}>
+            <Icon
+              size={30}
+              name={Platform.OS === 'ios' ? 'ios-car' : 'md-car'}
+              style={{color: 'white'}}
+            />
+            <Text
+              style={{
+                marginLeft: 10,
+                color: 'white',
+                fontWeight: 'bold',
+                fontFamily: 'Lato-Bold',
+                fontSize: 18,
+                textAlign: 'center',
+              }}>
+              DELIVERY
+            </Text>
+          </TouchableOpacity>
+        ) : null}
+      </RBSheet>
+    );
+  };
+
+  getDeliveryFee = () => {
+    const {providers} = this.props;
+    try {
+      if (!isEmptyArray(providers)) {
+        const item = providers[0];
+        this.setState({selectedProvider: item});
+        this.calculateDeliveryFee(item);
+      }
+    } catch (e) {}
+  };
+
+  calculateDeliveryFee = async item => {
+    const {dataBasket, selectedAddress} = this.props;
+
+    if (isEmptyObject(selectedAddress)) {
+      Alert.alert('Oppss', 'Please use a correct delivery address');
+      return;
+    }
+
+    try {
+      await this.setState({loading: true});
+      const payload = {
+        cartID: dataBasket.id,
+        outletId: dataBasket.outlet.id,
+        provider: item.id,
+        service: item.name,
+        deliveryAddress: selectedAddress,
+      };
+
+      const response = await this.props.dispatch(getDeliveryFee(payload));
+      if (response != false) {
+        this.setState({deliveryFee: response.data.deliveryFee});
+      } else {
+        this.setState({deliveryFee: null});
+      }
+      await this.setState({loading: false});
+    } catch (e) {}
+  };
+
+  askUserToSelectProviders = () => {
+    const {intlData, providers} = this.props;
+    const {selectedProvider} = this.state;
+
+    let height = 330;
+    return (
+      <RBSheet
+        ref={ref => {
+          this.RBproviders = ref;
+        }}
+        animationType={'slide'}
+        height={height}
+        duration={10}
+        closeOnDragDown={true}
+        closeOnPressMask={true}
+        closeOnPressBack={true}
+        customStyles={{
+          container: {
+            backgroundColor: colorConfig.store.textWhite,
+            paddingHorizontal: 5,
+            paddingTop: 20,
+          },
+        }}>
+        {providers != undefined ? (
+          <ScrollView>
+            <FlatList
+              getItemLayout={(data, index) => {
+                return {length: 30, offset: 30 * index, index};
+              }}
+              data={providers}
+              renderItem={({item}) => (
+                <TouchableOpacity
+                  onPress={() => {
+                    this.setState({selectedProvider: item});
+                    this.RBproviders.close();
+                    this.calculateDeliveryFee(item);
+                  }}
+                  style={styles.itemSummary}>
+                  <Text style={styles.total}>{item.name}</Text>
+                  {item.id == selectedProvider.id ? (
+                    <View>
+                      <Icon
+                        size={17}
+                        name={
+                          Platform.OS === 'ios'
+                            ? 'ios-checkmark'
+                            : 'md-checkmark'
+                        }
+                        style={{
+                          color: colorConfig.store.colorSuccess,
+                          marginRight: 20,
+                        }}
+                      />
+                    </View>
+                  ) : null}
+                </TouchableOpacity>
+              )}
+              keyExtractor={(product, index) => index.toString()}
+            />
+          </ScrollView>
+        ) : null}
       </RBSheet>
     );
   };
 
   _onRefresh = async () => {
     await this.setState({refreshing: true});
-    await await this.props.dispatch(getBasket());
+    await this.props.dispatch(getBasket());
+
+    // fetch data provider
+    await this.props.dispatch(getDeliveryProvider());
+
+    // fetch details outlet
+    const outletID = this.props.dataBasket.outlet.id;
+    await this.props.dispatch(getOutletById(outletID));
     await this.setState({refreshing: false});
   };
 
@@ -306,25 +507,39 @@ class Basket extends Component {
   };
 
   goToScanTable = () => {
-    if (this.props.orderType == undefined) {
-      this.RBSheet.open();
-      // Alert.alert('Sorry', 'Please select your ordering mode first.');
-    }
+    try {
+      const {outletSingle} = this.props;
 
-    if (this.props.orderType != undefined) {
-      Actions.scanQRTable({
-        basket: this.props.dataBasket,
-        orderType: this.props.orderType,
-      });
-      clearInterval(this.interval);
-      this.interval = setInterval(() => {
-        this.props.dispatch(getBasket());
-      }, 4000);
-    }
+      if (!this.checkLastOrder()) {
+        Alert.alert(
+          'Sorry..',
+          `Last ordering for this outlet is ${
+            outletSingle.lastOrderOn
+          } minutes before closing. Please try again later.`,
+        );
+        return;
+      }
+
+      if (this.props.orderType == undefined) {
+        this.RBSheet.open();
+        // Alert.alert('Sorry', 'Please select your ordering mode first.');
+      }
+
+      if (this.props.orderType != undefined) {
+        Actions.scanQRTable({
+          basket: this.props.dataBasket,
+          orderType: this.props.orderType,
+        });
+        clearInterval(this.interval);
+        this.interval = setInterval(() => {
+          this.props.dispatch(getBasket());
+        }, 4000);
+      }
+    } catch (e) {}
   };
 
   checkActivateButtonClearRestaurant = dataBasket => {
-    const {orderType} = this.props;
+    const {orderType, outletSingle} = this.props;
 
     if (dataBasket.status == 'PENDING') {
       return false;
@@ -333,16 +548,30 @@ class Basket extends Component {
     }
   };
 
-  checkActivateButton = dataBasket => {
+  checkActivateButton = (dataBasket, button) => {
     const {orderType} = this.props;
+    let {outletSingle} = this.props;
+
+    if (outletSingle == undefined || outletSingle == null) {
+      outletSingle = {};
+    }
+
+    if (outletSingle.orderingStatus == 'UNAVAILABLE' && button != 'cancel') {
+      return false;
+    }
+
     if (
       dataBasket.outlet.outletType == 'QUICKSERVICE' ||
       orderType == 'TAKEAWAY' ||
-      dataBasket.orderingMode == 'TAKEAWAY'
+      dataBasket.orderingMode == 'TAKEAWAY' ||
+      orderType == 'DELIVERY' ||
+      dataBasket.orderingMode == 'DELIVERY'
     ) {
       if (
         dataBasket.status == 'PROCESSING' ||
-        dataBasket.status == 'READY_FOR_COLLECTION'
+        dataBasket.status == 'READY_FOR_COLLECTION' ||
+        dataBasket.status == 'READY_FOR_DELIVERY' ||
+        dataBasket.status == 'ON_THE_WAY'
       ) {
         return false;
       } else {
@@ -358,8 +587,18 @@ class Basket extends Component {
     }
   };
 
+  clearDelivery = () => {
+    this.setState({
+      deliveryFee: null,
+      selectedProvider: {},
+    });
+  };
+
   renderSettleButtonQuickService = () => {
     const {intlData, dataBasket} = this.props;
+    const {deliveryFee} = this.state;
+    let fee = deliveryFee;
+    fee == null ? 0 : parseFloat(fee);
     return (
       <View
         style={{
@@ -389,16 +628,21 @@ class Basket extends Component {
             fontSize: 15,
             marginRight: 20,
           }}>
-          TOTAL : {CurrencyFormatter(this.props.dataBasket.totalNettAmount)}
+          TOTAL : {appConfig.appMataUang}
+          {this.format(
+            CurrencyFormatter(this.props.dataBasket.totalNettAmount + fee),
+          )}
         </Text>
         <View style={{flexDirection: 'row', justifyContent: 'center'}}>
           <TouchableOpacity
-            disabled={this.checkActivateButton(dataBasket) ? false : true}
+            disabled={
+              this.checkActivateButton(dataBasket, 'cancel') ? false : true
+            }
             onPress={this.alertRemoveBasket}
             style={[
               styles.btnCancelBasketModal,
               {
-                backgroundColor: this.checkActivateButton(dataBasket)
+                backgroundColor: this.checkActivateButton(dataBasket, 'cancel')
                   ? colorConfig.store.colorError
                   : colorConfig.store.disableButtonError,
               },
@@ -414,12 +658,16 @@ class Basket extends Component {
           </TouchableOpacity>
           <TouchableOpacity
             onPress={this.goToSettle}
-            disabled={this.checkActivateButton(dataBasket) ? false : true}
+            disabled={
+              this.checkActivateButton(dataBasket) ? !this.isOpen() : true
+            }
             style={[
               styles.btnAddBasketModal,
               {
                 backgroundColor: this.checkActivateButton(dataBasket)
-                  ? colorConfig.store.defaultColor
+                  ? this.isOpen()
+                    ? colorConfig.store.defaultColor
+                    : colorConfig.store.disableButton
                   : colorConfig.store.disableButton,
               },
             ]}>
@@ -470,7 +718,10 @@ class Basket extends Component {
             fontSize: 15,
             marginRight: 20,
           }}>
-          TOTAL : {CurrencyFormatter(this.props.dataBasket.totalNettAmount)}
+          TOTAL : {appConfig.appMataUang}
+          {this.format(
+            CurrencyFormatter(this.props.dataBasket.totalNettAmount),
+          )}
         </Text>
         <View style={{flexDirection: 'row', justifyContent: 'center'}}>
           <TouchableOpacity
@@ -499,12 +750,16 @@ class Basket extends Component {
           </TouchableOpacity>
           <TouchableOpacity
             onPress={this.goToSettle}
-            disabled={this.checkActivateButton(dataBasket) ? false : true}
+            disabled={
+              this.checkActivateButton(dataBasket) ? !this.isOpen() : true
+            }
             style={[
               styles.btnAddBasketModal,
               {
                 backgroundColor: this.checkActivateButton(dataBasket)
-                  ? colorConfig.store.defaultColor
+                  ? this.isOpen()
+                    ? colorConfig.store.defaultColor
+                    : colorConfig.store.disableButton
                   : colorConfig.store.disableButton,
               },
             ]}>
@@ -524,13 +779,85 @@ class Basket extends Component {
     );
   };
 
+  isDeliveryAddressValid = () => {
+    const {selectedAddress} = this.props;
+
+    if (isEmptyObject(selectedAddress)) {
+      Alert.alert(
+        'Delivery Address Not Set',
+        'Looks like your delivery address is invalid, please check again.',
+        [{text: 'Create', onPress: () => this.goToAddAddress()}],
+        {cancelable: false},
+      );
+      return false;
+    }
+
+    if (selectedAddress.city == '-') {
+      Alert.alert(
+        'Incomplete Delivery Address',
+        'Looks like your address is incomplete, please check it again',
+        [{text: 'Ok', onPress: () => this.goToEditAddress()}],
+        {cancelable: false},
+      );
+    } else {
+      return true;
+    }
+  };
+
+  isDeliveryFeeValid = () => {
+    const {deliveryFee, selectedProvider} = this.state;
+
+    if (isEmptyObject(selectedProvider)) {
+      Alert.alert(
+        'Delivery Provider Not Set',
+        'It seems you have not selected a delivery provider for this order.',
+      );
+      return false;
+    }
+
+    if (deliveryFee == null) {
+      Alert.alert(
+        'Delivery Provider Not Set',
+        'It seems you have not selected a delivery provider for this order.',
+      );
+      return false;
+    } else {
+      return true;
+    }
+  };
+
   goToSettle = () => {
     try {
+      const {outletSingle} = this.props;
+
+      if (
+        this.props.orderType == 'DELIVERY' ||
+        this.props.dataBasket.orderingMode == 'DELIVERY'
+      ) {
+        if (!this.isDeliveryAddressValid()) {
+          return;
+        }
+
+        if (!this.isDeliveryFeeValid()) {
+          return;
+        }
+      }
+
+      if (!this.checkLastOrder()) {
+        Alert.alert(
+          'Sorry..',
+          `Last ordering for this outlet is ${
+            outletSingle.lastOrderOn
+          } minutes before closing. Please try again later.`,
+        );
+        return;
+      }
+
       //  refresh cart
-      clearInterval(this.interval);
-      this.interval = setInterval(() => {
-        this.props.dispatch(getBasket());
-      }, 3000);
+      // clearInterval(this.interval);
+      // this.interval = setInterval(() => {
+      //   this.props.dispatch(getBasket());
+      // }, 3000);
 
       let dataPay = [];
       // create dataPay item
@@ -554,7 +881,7 @@ class Basket extends Component {
       const pembayaran = {
         payment: this.props.dataBasket.totalNettAmount,
         totalGrossAmount: this.props.dataBasket.totalGrossAmount,
-        // storeName: this.props.dataBasket.outlet.name,
+        storeName: this.props.dataBasket.outlet.name,
         dataPay: dataPay,
         storeId: this.props.dataBasket.outlet.id,
         // referenceNo: 'scan.referenceNo',
@@ -562,9 +889,10 @@ class Basket extends Component {
 
       // set url to pay
       let url;
-      const {orderType, tableType, dataBasket} = this.props;
+      const {orderType, tableType, dataBasket, selectedAddress} = this.props;
       if (
         orderType == 'TAKEAWAY' ||
+        orderType == 'DELIVERY' ||
         dataBasket.outlet.outletType == 'QUICKSERVICE'
       ) {
         if (tableType != undefined) {
@@ -573,9 +901,17 @@ class Basket extends Component {
           pembayaran.tableNo = '-';
         }
         pembayaran.orderingMode = orderType;
+        pembayaran.cartID = this.props.dataBasket.cartID;
         url = '/cart/submitTakeAway';
       } else {
         url = '/cart/settle';
+      }
+
+      // for delivery order
+      if (orderType == 'DELIVERY') {
+        pembayaran.deliveryAddress = selectedAddress;
+        pembayaran.deliveryProvider = this.state.selectedProvider;
+        pembayaran.deliveryFee = this.state.deliveryFee;
       }
 
       Actions.settleOrder({pembayaran: pembayaran, url: url});
@@ -589,7 +925,10 @@ class Basket extends Component {
   };
 
   renderButtonScanQRCode = () => {
-    const {intlData} = this.props;
+    let {intlData, outletSingle} = this.props;
+    if (outletSingle == undefined || outletSingle == null) {
+      outletSingle = {};
+    }
     return (
       <View
         style={{
@@ -636,7 +975,16 @@ class Basket extends Component {
           </TouchableOpacity>
           <TouchableOpacity
             onPress={this.goToScanTable}
-            style={styles.btnAddBasketModal}>
+            disabled={
+              !this.isOpen() || outletSingle.orderingStatus == 'UNAVAILABLE'
+                ? true
+                : false
+            }
+            style={
+              !this.isOpen() || outletSingle.orderingStatus == 'UNAVAILABLE'
+                ? styles.btnAddBasketModalDisabled
+                : styles.btnAddBasketModal
+            }>
             <Icon
               size={23}
               name={
@@ -776,15 +1124,20 @@ class Basket extends Component {
         product.remark = existProduct.remark;
         product.quantity = existProduct.quantity;
         product.name = existProduct.product.name;
-        product.description = existProduct.product.description;
+
+        try {
+          product.product.description = originalProduct.product.description;
+        } catch (e) {}
+
         product.product.productModifiers =
           originalProduct.product.productModifiers;
 
         // remove quantity temp from props
         product.product.productModifiers.map((group, i) => {
-          group.modifier.details.map((detail, j) => {
-            delete detail.quantity;
-          });
+          if (!isEmptyArray(group.modifier.details))
+            group.modifier.details.map((detail, j) => {
+              delete detail.quantity;
+            });
         });
 
         // process modifier
@@ -794,24 +1147,32 @@ class Basket extends Component {
         let find = product;
         if (find != undefined && !isEmptyArray(find.modifiers)) {
           existProduct.product.productModifiers.map((group, i) => {
-            group.modifier.details.map((detail, j) => {
-              find.modifiers.map(data => {
-                data.modifier.details.map(item => {
-                  // make mark that item is in basket
-                  if (data.modifierID == group.modifierID) {
-                    existProduct.product.productModifiers[
-                      i
-                    ].postToServer = true;
-                    // set quantity basket to product that openend
-                    if (item.id == detail.id) {
-                      existProduct.product.productModifiers[i].modifier.details[
-                        j
-                      ].quantity = item.quantity;
+            if (!isEmptyArray(group.modifier.details))
+              group.modifier.details.map((detail, j) => {
+                find.modifiers.map(data => {
+                  data.modifier.details.map(item => {
+                    // make mark that item is in basket
+                    if (data.modifierID == group.modifierID) {
+                      existProduct.product.productModifiers[
+                        i
+                      ].postToServer = true;
+                      // set quantity basket to product that openend
+                      if (item.id == detail.id) {
+                        existProduct.product.productModifiers[
+                          i
+                        ].modifier.details[j].quantity = item.quantity;
+                        product.product.productModifiers[i].modifier.details[
+                          j
+                        ].isSelected = true;
+                      } else {
+                        product.product.productModifiers[i].modifier.details[
+                          j
+                        ].isSelected = false;
+                      }
                     }
-                  }
+                  });
                 });
               });
-            });
           });
         }
 
@@ -825,7 +1186,28 @@ class Basket extends Component {
         Alert.alert('Sorry', 'Cant find selected product.');
       }
     } catch (e) {
-      Alert.alert('Opps..', 'Something went wrong, please try again');
+      const message1 = "Cannot read property 'productModifiers' of undefined";
+      const message2 = "Cannot read property 'length' of undefined";
+      if (e.message === message1 || e.message === message2) {
+        try {
+          await this.setState({loading: true});
+          await this.getDataProducts();
+          await this.setState({loading: false});
+          // await this.openModal();
+        } catch (e) {}
+      } else {
+        Alert.alert('Opps..', 'Something went wrong, please try again.');
+      }
+    }
+  };
+
+  getDataProducts = async () => {
+    const outletID = this.props.dataBasket.outlet.id;
+    let response = await this.props.dispatch(
+      getProductByOutlet(outletID, true),
+    );
+    if (response.success) {
+      this.pushDataProductsToState(outletID);
     }
   };
 
@@ -843,16 +1225,142 @@ class Basket extends Component {
     });
   };
 
+  checkMaxOrderQty = qty => {
+    try {
+      const {outletSingle} = this.props;
+      if (
+        qty > outletSingle.maxOrderQtyPerItem &&
+        outletSingle.maxOrderQtyPerItem != undefined
+      ) {
+        return false;
+      }
+      return true;
+    } catch (e) {
+      return true;
+    }
+  };
+
+  checkMaxOrderValue = (mode, data) => {
+    try {
+      const {outletSingle} = this.props;
+      const {dataBasket} = this.props;
+      let basketAmount = 0;
+      let priceItem = data.details[0].quantity * data.details[0].unitPrice;
+
+      let result = '';
+      result = JSON.stringify(dataBasket);
+      result = JSON.parse(result);
+      result.details.map(item => {
+        if (item.productID != data.details[0].productID) {
+          basketAmount += parseFloat(item.nettAmount);
+        }
+      });
+      let total = basketAmount + priceItem;
+
+      if (
+        total > outletSingle.maxOrderAmount &&
+        outletSingle.maxOrderAmount != undefined
+      ) {
+        return false;
+      }
+
+      return true;
+    } catch (e) {
+      console.log(e);
+      return true;
+    }
+  };
+
+  pad = date => {
+    try {
+      const item = date.toString();
+      if (item.length == 1) {
+        return `0${item}`;
+      } else {
+        return date;
+      }
+    } catch (e) {
+      return date;
+    }
+  };
+
+  dateCreator = dateString => {
+    // dateString *HAS* to be in this format "YYYY-MM-DD HH:MM:SS"
+    try {
+      let dateParam = dateString.split(/[\s-:]/);
+      dateParam[1] = (parseInt(dateParam[1], 10) - 1).toString();
+      return new Date(...dateParam);
+    } catch (e) {
+      return dateString;
+    }
+  };
+
+  checkLastOrder = () => {
+    const {outletSingle} = this.props;
+    const currentTime = new Date().getTime();
+
+    try {
+      const currentDay = new Date().getDay();
+      const yy = new Date().getFullYear();
+      const dd = new Date().getDate();
+      const mm = new Date().getMonth() + 1;
+      let currentDate = `${yy}-${this.pad(mm)}-${this.pad(dd)}`;
+      // Alert.alert('x', currentDate.toString());
+      if (outletSingle.openAllDays == true) return true;
+
+      if (!isEmptyArray(outletSingle.operationalHours)) {
+        let data = outletSingle.operationalHours;
+        for (let i = 0; i < data.length; i++) {
+          if (data[i].day == currentDay) {
+            // date must be format first, bcouse date in JS Core is not same as in debugger
+            let outletDate = this.dateCreator(
+              `${currentDate} ${data[i].close}:00`,
+            );
+            let outletTime = new Date(outletDate);
+            let remainTime = parseFloat((outletTime - currentTime) / 60000);
+            if (
+              remainTime >= parseFloat(outletSingle.lastOrderOn) ||
+              outletSingle.lastOrderOn == undefined ||
+              outletSingle.lastOrderOn == '-'
+            ) {
+              return true;
+            }
+          }
+        }
+      } else {
+        return false;
+      }
+    } catch (e) {}
+
+    return false;
+  };
+
   addItemToBasket = async (product, qty, remark, mode) => {
+    const {outletSingle} = this.props;
+    // check outlet rules
+    if (!this.checkMaxOrderQty(qty)) {
+      Alert.alert(
+        'Sorry..',
+        'Maximum order quantity per Item is ' + outletSingle.maxOrderQtyPerItem,
+      );
+      return;
+    }
+
     if (mode == 'update') {
       await this.updateItem(product, qty, remark);
       await this.getBasket();
       await this.setState({loading: false});
+
+      // refresh update recyclerViewList in product page
+      try {
+        this.props.refreshQuantityProducts(product);
+      } catch (e) {}
     }
   };
 
   updateItem = async (product, qty, remark) => {
     try {
+      const {outletSingle} = this.props;
       // make payload format to pass to action
       let data = {};
       data.details = [];
@@ -924,6 +1432,16 @@ class Basket extends Component {
       if (remark != undefined && remark != '') dataproduct.remark = remark;
       data.details.push(dataproduct);
 
+      // check max order value outlet
+      if (!this.checkMaxOrderValue('update', data)) {
+        Alert.alert(
+          'Sorry..',
+          'Maximum order amount is ' +
+            CurrencyFormatter(parseFloat(outletSingle.maxOrderAmount)),
+        );
+        return;
+      }
+
       // send data to action
       let response = await this.props.dispatch(
         updateProductToBasket(data, previousData),
@@ -951,6 +1469,11 @@ class Basket extends Component {
     //   this.props.dispatch(setOrderType(type));
     // }
     this.props.dispatch(setOrderType(type));
+
+    if (type == 'DELIVERY' && !isEmptyObject(this.props.selectedAddress)) {
+      this.getDeliveryFee();
+    }
+
     this.RBSheet.close();
   };
 
@@ -979,21 +1502,36 @@ class Basket extends Component {
     );
   };
 
+  format = item => {
+    try {
+      const curr = appConfig.appMataUang;
+      item = item.replace(curr, '');
+      if (curr != 'RP' && curr != 'IDR' && item.includes('.') == false) {
+        return `${item}.00`;
+      }
+      return item;
+    } catch (e) {
+      return item;
+    }
+  };
+
   renderItemModifier = item => {
     return (
       <FlatList
         data={item.modifiers}
         renderItem={({item}) =>
-          item.modifier.details.map(mod => (
-            <Text style={[styles.descModifier]}>
+          item.modifier.details.map((mod, idx) => (
+            <Text key={idx} style={[styles.descModifier]}>
               •{' '}
-              <Text
-                style={{
-                  color: colorConfig.store.defaultColor,
-                }}>
-                {mod.quantity}x
-              </Text>{' '}
-              {mod.name} ( {CurrencyFormatter(mod.productPrice)} )
+              {item.modifier.isYesNo != true ? (
+                <Text
+                  style={{
+                    color: colorConfig.store.defaultColor,
+                  }}>
+                  {mod.quantity}x
+                </Text>
+              ) : null}{' '}
+              {mod.name} ( {this.format(CurrencyFormatter(mod.productPrice))} )
             </Text>
           ))
         }
@@ -1028,7 +1566,8 @@ class Basket extends Component {
           return dataBasket.queueNo;
         } else {
           let table = '';
-          if (dataBasket.tableNo == undefined) {
+
+          if (dataBasket.tableNo == undefined && tableType != undefined) {
             table = tableType.tableNo;
           } else {
             table = dataBasket.tableNo;
@@ -1041,7 +1580,7 @@ class Basket extends Component {
         return dataBasket.queueNo;
       } else {
         let table = '';
-        if (dataBasket.tableNo == undefined) {
+        if (dataBasket.tableNo == undefined && tableType != undefined) {
           table = tableType.tableNo;
         } else {
           table = dataBasket.tableNo;
@@ -1076,36 +1615,284 @@ class Basket extends Component {
     }
   };
 
-  render() {
-    const {intlData, dataBasket, orderType, tableType} = this.props;
-    // give message to user if order has been confirmed
+  goToProducts = () => {
     try {
-      if (dataBasket != undefined) {
-        //  for outlet type restaurant
-        if (
-          dataBasket.status == 'CONFIRMED' &&
-          this.interval != undefined &&
-          dataBasket.outlet.outletType != 'QUICKSERVICE' &&
-          dataBasket.orderingMode != 'TAKEAWAY'
-        ) {
-          // Alert.alert('Congratulation', 'Your order has been CONFIRMED');
-          // clearInterval(this.interval);
-          // this.interval = undefined;
-        }
+      const {userPosition, outletSingle} = this.props;
+      let item = outletSingle;
 
-        //  for outlet type quick service
-        if (
-          dataBasket.status == 'PROCESSING' &&
-          this.interval != undefined &&
-          (dataBasket.outlet.outletType == 'QUICKSERVICE' ||
-            dataBasket.orderingMode == 'TAKEAWAY')
-        ) {
-          clearInterval(this.interval);
-          this.interval = undefined;
-          Actions.replace('waitingFood');
-        }
+      // check if user enabled their position permission
+      let statusLocaiton;
+      if (userPosition == undefined || userPosition == false) {
+        statusLocaiton = false;
+      } else {
+        statusLocaiton = true;
       }
 
+      let position = userPosition;
+
+      let location = {};
+      let coordinate = {};
+      location = {
+        region: item.region,
+        address: item.location,
+        coordinate: {
+          lat: item.latitude,
+          lng: item.longitude,
+        },
+      };
+
+      item.location = location;
+
+      let data = {
+        storeId: item.id,
+        storeName: item.name,
+        storeStatus: this.isOpen(item),
+        storeJarak: statusLocaiton
+          ? geolib.getDistance(position.coords, {
+              latitude: Number(item.latitude),
+              longitude: Number(item.longitude),
+            }) / 1000
+          : '-',
+        image: item.defaultImageURL != undefined ? item.defaultImageURL : '',
+        region: item.region,
+        address: item.location.address,
+        city: item.city,
+        operationalHours: item.operationalHours,
+        openAllDays: item.openAllDays,
+        defaultImageURL: item.defaultImageURL,
+        coordinate: item.location.coordinate,
+        orderingStatus: item.orderingStatus,
+        outletType: item.outletType,
+        offlineMessage: item.offlineMessage,
+        maxOrderQtyPerItem: item.maxOrderQtyPerItem,
+        maxOrderAmount: item.maxOrderAmount,
+        lastOrderOn: item.lastOrderOn,
+        enableDineIn:
+          item.enableDineIn == false || item.enableDineIn == '-' ? false : true,
+        enableTakeAway:
+          item.enableTakeAway == false || item.enableTakeAway == '-'
+            ? false
+            : true,
+        enableTableScan:
+          item.enableTableScan == false || item.enableTableScan == '-'
+            ? false
+            : true,
+        enableDelivery:
+          item.enableDelivery == false || item.enableDelivery == '-'
+            ? false
+            : true,
+      };
+
+      Actions.push('productsMode2', {item: data});
+    } catch (e) {
+      Actions.pop();
+    }
+  };
+
+  getOperationalHours = data => {
+    try {
+      let operationalHours = data.operationalHours;
+      let date = new Date();
+      var dd = date.getDate();
+      var mm = date.getMonth() + 1;
+      var yyyy = date.getFullYear();
+      let currentDate = mm + '/' + dd + '/' + yyyy;
+      let day = date.getDay();
+      let time = date.getHours() + ':' + date.getMinutes();
+
+      let open;
+      operationalHours
+        .filter(item => item.day == day && item.active == true)
+        .map(day => {
+          if (
+            Date.parse(`${currentDate} ${time}`) >
+              Date.parse(`${currentDate} ${day.open}`) &&
+            Date.parse(`${currentDate} ${time}`) <
+              Date.parse(`${currentDate} ${day.close}`)
+          )
+            open = true;
+        });
+
+      if (open) return true;
+      else {
+        if (operationalHours.leading == 0) return true;
+        else return false;
+      }
+    } catch (e) {
+      return false;
+    }
+  };
+
+  isOpen = () => {
+    const {outletSingle} = this.props;
+    if (outletSingle != undefined)
+      if (!isEmptyArray(outletSingle.operationalHours)) {
+        if (this.getOperationalHours(outletSingle)) {
+          return true;
+        } else {
+          if (outletSingle.openAllDays == true) {
+            return true;
+          } else {
+            return false;
+          }
+        }
+      } else {
+        if (outletSingle.openAllDays == true) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+    else return false;
+  };
+
+  getOfflineMessage = outletSingle => {
+    try {
+      if (
+        outletSingle.offlineMessage == undefined ||
+        outletSingle.offlineMessage == '' ||
+        outletSingle.offlineMessage == '-'
+      ) {
+        return 'Sorry, Ordering is not available now.';
+      } else {
+        return outletSingle.offlineMessage;
+      }
+    } catch (e) {
+      return 'Sorry, Ordering is not available now.';
+    }
+  };
+
+  goToAddress = () => {
+    Actions.selectAddress({
+      clearDelivery: this.clearDelivery,
+      getDeliveryFee: this.getDeliveryFee,
+      from: 'basket',
+    });
+  };
+
+  goToAddAddress = () => {
+    Actions.push('addAddress', {
+      from: 'basket',
+      getDeliveryFee: this.getDeliveryFee,
+    });
+  };
+
+  goToEditAddress = () => {
+    Actions.editAddress({
+      from: 'basket',
+      myAddress: this.props.selectedAddress,
+      getDeliveryFee: this.getDeliveryFee,
+      clearDelivery: this.clearDelivery,
+    });
+  };
+
+  deliveryAddress = (orderType, dataBasket) => {
+    try {
+      if (orderType == 'DELIVERY' || dataBasket.orderingMode == 'DELIVERY') {
+        return (
+          <View style={styles.itemSummary}>
+            <Text style={styles.total}>
+              {this.props.selectedAddress.addressName == undefined ? (
+                <Text style={{color: colorConfig.store.colorError}}>
+                  Delivery Address
+                </Text>
+              ) : (
+                'Delivery Address'
+              )}
+            </Text>
+            <View>
+              <Text style={styles.total}>
+                {this.props.selectedAddress.addressName == undefined ? (
+                  <Text style={{color: colorConfig.store.colorError}}>-</Text>
+                ) : (
+                  this.props.selectedAddress.addressName
+                )}
+              </Text>
+              {dataBasket.status == 'PENDING' ? (
+                <TouchableOpacity
+                  onPress={this.goToAddress}
+                  style={{
+                    marginTop: -10,
+                    flexDirection: 'row',
+                    justifyContent: 'flex-end',
+                    alignItems: 'center',
+                  }}>
+                  <Text style={styles.subTitleAddItems}>Change</Text>
+                </TouchableOpacity>
+              ) : null}
+            </View>
+          </View>
+        );
+      }
+    } catch (e) {
+      return null;
+    }
+  };
+
+  deliveryProvider = (orderType, dataBasket) => {
+    const {selectedProvider} = this.state;
+    const {selectedAddress} = this.props;
+    try {
+      if (
+        (orderType == 'DELIVERY' || dataBasket.orderingMode == 'DELIVERY') &&
+        !isEmptyObject(selectedAddress)
+      ) {
+        return (
+          <View style={styles.itemSummary}>
+            <Text style={styles.total}>
+              {this.props.selectedAddress.addressName == undefined ? (
+                <Text style={{color: 'red'}}>No Set</Text>
+              ) : (
+                'Delivery Provider'
+              )}
+            </Text>
+            <View>
+              {isEmptyObject(selectedProvider) ? (
+                <TouchableOpacity onPress={() => this.RBproviders.open()}>
+                  <Text
+                    style={[
+                      styles.total,
+                      {
+                        letterSpacing: 1,
+                        backgroundColor: colorConfig.store.darkColor,
+                        borderRadius: 5,
+                        padding: 5,
+                        color: 'white',
+                      },
+                    ]}>
+                    Select Provider
+                  </Text>
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity onPress={() => this.RBproviders.open()}>
+                  <Text style={styles.total}>{selectedProvider.name}</Text>
+                  <Text
+                    style={[
+                      styles.subTitleAddItems,
+                      {textAlign: 'right', marginTop: -12},
+                    ]}>
+                    Change
+                  </Text>
+                </TouchableOpacity>
+              )}
+            </View>
+          </View>
+        );
+      }
+    } catch (e) {
+      return null;
+    }
+  };
+
+  render() {
+    const {intlData, dataBasket, orderType, tableType} = this.props;
+
+    let {outletSingle} = this.props;
+    if (outletSingle == undefined || outletSingle == null) {
+      outletSingle = {};
+    }
+
+    try {
       // clear table type if basket is cancelled by admin
       if (dataBasket == undefined) {
         this.props.dispatch(clearTableType());
@@ -1137,6 +1924,7 @@ class Basket extends Component {
           loadModifierTime={this.state.loadModifierTime}
         />
 
+        {this.askUserToSelectProviders()}
         {this.askUserToSelectOrderType()}
 
         <View style={{backgroundColor: colorConfig.pageIndex.backgroundColor}}>
@@ -1170,9 +1958,30 @@ class Basket extends Component {
                 <Text style={styles.title}>
                   {this.props.dataBasket.outlet.name}
                 </Text>
-                <Text style={styles.subTitle}>
-                  {intlData.messages.detailOrder}
-                </Text>
+                {!this.isOpen() ? (
+                  <Text style={styles.titleClosed}>Outlet is Closed</Text>
+                ) : null}
+                {outletSingle.orderingStatus == 'UNAVAILABLE' ? (
+                  <Text style={styles.titleClosed}>
+                    {this.getOfflineMessage(outletSingle)}
+                  </Text>
+                ) : null}
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                  }}>
+                  <Text style={styles.subTitle}>
+                    {intlData.messages.detailOrder}
+                  </Text>
+                  {dataBasket.status == 'PENDING' &&
+                  (outletSingle.orderingStatus == 'AVAILABLE' ||
+                    outletSingle.orderingStatus == undefined) ? (
+                    <TouchableOpacity onPress={this.goToProducts}>
+                      <Text style={styles.subTitleAddItems}>+ Add Items</Text>
+                    </TouchableOpacity>
+                  ) : null}
+                </View>
                 <View>
                   <FlatList
                     data={this.props.dataBasket.details}
@@ -1194,7 +2003,8 @@ class Basket extends Component {
                                   {item.quantity}x
                                 </Text>{' '}
                                 {item.product.name} ({' '}
-                                {CurrencyFormatter(item.unitPrice)} )
+                                {this.format(CurrencyFormatter(item.unitPrice))}{' '}
+                                )
                               </Text>
                               {item.remark != undefined && item.remark != '' ? (
                                 <Text
@@ -1223,7 +2033,9 @@ class Basket extends Component {
                               {this.renderItemModifier(item)}
                               {/* loop item modifier */}
                               {this.props.dataBasket.status == 'PENDING' &&
-                              this.props.tableType == undefined ? (
+                              this.props.tableType == undefined &&
+                              (outletSingle.orderingStatus == 'AVAILABLE' ||
+                                outletSingle.orderingStatus == undefined) ? (
                                 <TouchableOpacity
                                   onPress={() => this.openEditModal(item)}
                                   style={{paddingVertical: 5}}>
@@ -1242,7 +2054,7 @@ class Basket extends Component {
                           </View>
                           <View>
                             <Text style={styles.descPrice}>
-                              {CurrencyFormatter(item.grossAmount)}
+                              {this.format(CurrencyFormatter(item.grossAmount))}
                             </Text>
                           </View>
                         </View>
@@ -1317,6 +2129,26 @@ class Basket extends Component {
                     </Text>
                   )}
                 </TouchableOpacity>
+
+                {this.deliveryAddress(
+                  this.props.orderType,
+                  this.props.dataBasket,
+                )}
+
+                {this.deliveryProvider(
+                  this.props.orderType,
+                  this.props.dataBasket,
+                )}
+
+                {this.state.deliveryFee != null ? (
+                  <View style={styles.itemSummary}>
+                    <Text style={styles.total}>Delivery Fee</Text>
+                    <Text style={styles.total}>
+                      {CurrencyFormatter(this.state.deliveryFee)}
+                    </Text>
+                  </View>
+                ) : null}
+
                 <View style={styles.itemSummary}>
                   <Text style={styles.total}>
                     {intlData.messages.totalTaxAmmount}
@@ -1343,12 +2175,12 @@ class Basket extends Component {
         {dataBasket != undefined
           ? // check type outlet
             dataBasket.outlet.outletType == 'RESTO'
-            ? orderType == 'TAKEAWAY' || dataBasket.orderingMode == 'TAKEAWAY'
+            ? this.isTakeAwayOrDelivery(orderType, dataBasket)
               ? this.renderSettleButtonRestaurant()
               : dataBasket.status == 'PENDING'
               ? this.renderButtonScanQRCode()
               : this.renderSettleButtonRestaurant()
-            : orderType == 'TAKEAWAY' || dataBasket.orderingMode == 'TAKEAWAY'
+            : this.isTakeAwayOrDelivery(orderType, dataBasket)
             ? this.renderSettleButtonQuickService()
             : dataBasket.outlet.enableTableScan != undefined &&
               (dataBasket.outlet.enableTableScan == false ||
@@ -1358,26 +2190,37 @@ class Basket extends Component {
             ? this.renderButtonScanQRCode()
             : this.renderSettleButtonQuickService()
           : null}
-        {/*{this.props.dataBasket != undefined &&*/}
-        {/*this.props.dataBasket.outlet != undefined*/}
-        {/*  ? this.props.dataBasket.status == 'PENDING' &&*/}
-        {/*    this.props.tableType == undefined*/}
-        {/*    ? this.renderButtonScanQRCode()*/}
-        {/*    : this.props.dataBasket.outlet.outletType == 'QUICKSERVICE' ||*/}
-        {/*      this.props.orderType == 'TAKEAWAY'*/}
-        {/*    ? this.renderSettleButtonQuickService()*/}
-        {/*    : this.renderSettleButtonRestaurant()*/}
-        {/*  : null}*/}
       </SafeAreaView>
     );
   }
+
+  isTakeAwayOrDelivery = (orderType, dataBasket) => {
+    try {
+      if (
+        orderType == 'TAKEAWAY' ||
+        orderType == 'DELIVERY' ||
+        dataBasket.orderingMode == 'TAKEAWAY' ||
+        dataBasket.orderingMode == 'DELIVERY'
+      ) {
+        return true;
+      } else return false;
+    } catch (e) {
+      return false;
+    }
+  };
 }
 
 mapStateToProps = state => ({
   dataBasket: state.orderReducer.dataBasket.product,
+  providers: state.orderReducer.dataProvider.providers,
+  outletSingle: state.storesReducer.dataOutletSingle.outletSingle,
   orderType: state.userReducer.orderType.orderType,
   tableType: state.orderReducer.tableType.tableType,
   products: state.orderReducer.productsOutlet.products,
+  userPosition: state.userReducer.userPosition.userPosition,
+  userDetail: state.userReducer.getUser.userDetails,
+  defaultAddress: state.userReducer.defaultAddress.defaultAddress,
+  selectedAddress: state.userReducer.selectedAddress.selectedAddress,
   intlData: state.intlData,
 });
 
@@ -1443,6 +2286,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     borderBottomColor: colorConfig.pageIndex.inactiveTintColor,
     borderBottomWidth: 1,
+    alignItems: 'center',
     // margin: 5,
   },
   title: {
@@ -1453,10 +2297,30 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: 'bold',
   },
+  titleClosed: {
+    color: 'white',
+    marginHorizontal: '33%',
+    borderRadius: 4,
+    fontSize: 12,
+    backgroundColor: colorConfig.store.colorError,
+    fontFamily: 'Lato-Bold',
+    padding: 5,
+    textAlign: 'center',
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
   subTitle: {
     fontFamily: 'Lato-Bold',
     color: colorConfig.store.title,
-    fontSize: 16,
+    fontSize: 14,
+    padding: 5,
+    fontWeight: 'bold',
+    marginBottom: 5,
+  },
+  subTitleAddItems: {
+    fontFamily: 'Lato-Bold',
+    color: colorConfig.store.defaultColor,
+    fontSize: 14,
     padding: 5,
     fontWeight: 'bold',
     marginBottom: 5,
@@ -1554,6 +2418,17 @@ const styles = StyleSheet.create({
     width: '40%',
     backgroundColor: colorConfig.store.colorSuccess,
   },
+  btnAddBasketModalDisabled: {
+    fontFamily: 'Lato-Bold',
+    borderRadius: 10,
+    padding: 13,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 20,
+    width: '40%',
+    backgroundColor: colorConfig.store.colorSuccessDisabled,
+  },
   btnCancelBasketModal: {
     fontFamily: 'Lato-Bold',
     borderRadius: 10,
@@ -1573,7 +2448,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   activeDINEINButton: {
-    padding: 15,
+    padding: 13,
     backgroundColor: colorConfig.store.colorSuccess,
     borderRadius: 15,
     width: '60%',
@@ -1593,8 +2468,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   activeTAKEAWAYButton: {
-    padding: 15,
+    padding: 13,
     backgroundColor: colorConfig.store.secondaryColor,
+    borderRadius: 15,
+    width: '60%',
+    marginBottom: 20,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  activeDELIVERYButton: {
+    padding: 13,
+    backgroundColor: colorConfig.store.defaultColor,
     borderRadius: 15,
     width: '60%',
     flexDirection: 'row',

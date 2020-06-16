@@ -3,14 +3,11 @@ import {
   View,
   Text,
   StyleSheet,
-  ScrollView,
   Dimensions,
   Platform,
   TouchableOpacity,
-  Image,
   Alert,
   ActivityIndicator,
-  FlatList,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
@@ -23,6 +20,7 @@ import awsConfig from '../config/awsConfig';
 import CryptoJS from 'react-native-crypto-js';
 import {isEmptyArray, isEmptyObject} from '../helper/CheckEmpty';
 import packageJson from '../../package';
+import {updateUser} from '../actions/user.action';
 
 class AccountMenuList extends Component {
   constructor(props) {
@@ -36,6 +34,27 @@ class AccountMenuList extends Component {
 
   logout = async () => {
     this.setState({loadingLogout: true});
+
+    // remove device ID from server, so customer not receive notif again if logout
+    try {
+      let user = {};
+      try {
+        let bytes = CryptoJS.AES.decrypt(
+          this.props.userDetail,
+          awsConfig.PRIVATE_KEY_RSA,
+        );
+        user = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+      } catch (e) {
+        user = {};
+      }
+
+      const payload = {
+        username: user.username,
+        player_ids: [],
+      };
+      await this.props.dispatch(updateUser(payload));
+    } catch (e) {}
+
     await this.props.dispatch(logoutUser());
     this.setState({loadingLogout: false});
   };
@@ -57,8 +76,41 @@ class AccountMenuList extends Component {
     Actions.editProfile(dataDiri);
   };
 
-  updateLanguage = () => {
-    this.props.setLanguage();
+  notifications = () => {
+    let userDetail;
+    try {
+      // Decrypt data user
+      let bytes = CryptoJS.AES.decrypt(
+        this.props.userDetail,
+        awsConfig.PRIVATE_KEY_RSA,
+      );
+      userDetail = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+    } catch (e) {
+      userDetail = undefined;
+    }
+
+    var dataDiri = {dataDiri: userDetail};
+    Actions.notifications(dataDiri);
+  };
+
+  address = () => {
+    Actions.listAddress();
+  };
+
+  prompLogout = () => {
+    Alert.alert(
+      'Logout',
+      'Are you sure want to logout from apps ?',
+      [
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
+        },
+        {text: 'OK', onPress: () => this.logout()},
+      ],
+      {cancelable: false},
+    );
   };
 
   renderPaymentMethodOptions = () => {
@@ -67,8 +119,9 @@ class AccountMenuList extends Component {
     if (companyInfo.paymentTypes != undefined)
       paymentTypes = companyInfo.paymentTypes;
     if (!isEmptyArray(paymentTypes)) {
-      return paymentTypes.map(item => (
+      return paymentTypes.map((item, idx) => (
         <TouchableOpacity
+          key={idx}
           onPress={() => Actions.listCard({intlData, item})}
           style={styles.cardMenu}>
           <View style={styles.itemMenu}>
@@ -99,7 +152,6 @@ class AccountMenuList extends Component {
     return (
       <View style={styles.container}>
         <Text style={styles.headingMenu}>Default Payment Account</Text>
-
         <TouchableOpacity disabled={true} style={styles.cardMenu}>
           {!isEmptyObject(defaultAccount) ? (
             <View style={styles.itemMenu}>
@@ -155,6 +207,37 @@ class AccountMenuList extends Component {
 
         <Text style={styles.headingMenu}>Settings</Text>
 
+        <TouchableOpacity onPress={this.address} style={styles.cardMenu}>
+          <View style={styles.itemMenu}>
+            <Icon
+              size={20}
+              name={Platform.OS === 'ios' ? 'ios-business' : 'md-business'}
+              style={{color: 'white'}}
+            />
+          </View>
+          <View>
+            <View style={styles.item}>
+              <Text style={styles.title}>My Delivery Address</Text>
+            </View>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={this.notifications} style={styles.cardMenu}>
+          <View style={styles.itemMenu}>
+            <Icon
+              size={20}
+              name={
+                Platform.OS === 'ios' ? 'ios-notifications' : 'md-notifications'
+              }
+              style={{color: 'white'}}
+            />
+          </View>
+          <View>
+            <View style={styles.item}>
+              <Text style={styles.title}>Notifications</Text>
+            </View>
+          </View>
+        </TouchableOpacity>
+
         <TouchableOpacity onPress={this.editProfil} style={styles.cardMenu}>
           <View style={styles.itemMenu}>
             <Icon
@@ -170,7 +253,9 @@ class AccountMenuList extends Component {
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={this.updateLanguage} style={styles.cardMenu}>
+        <TouchableOpacity
+          onPress={() => Actions.listLanguages()}
+          style={styles.cardMenu}>
           <View style={styles.itemMenu}>
             <Icon
               size={20}
@@ -185,7 +270,7 @@ class AccountMenuList extends Component {
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={this.logout} style={styles.cardMenu}>
+        <TouchableOpacity onPress={this.prompLogout} style={styles.cardMenu}>
           <View
             style={[
               styles.itemMenu,
@@ -243,7 +328,7 @@ const styles = StyleSheet.create({
     width: Dimensions.get('window').width - 60,
   },
   itemMenu: {
-    paddingVertical: 12,
+    // paddingVertical: 12,
     justifyContent: 'center',
     marginLeft: 10,
     width: 30,

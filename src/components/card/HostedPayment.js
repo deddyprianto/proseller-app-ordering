@@ -11,6 +11,7 @@ import {isEmptyArray} from '../../helper/CheckEmpty';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
 import awsConfig from '../../config/awsConfig';
+import {defaultPaymentAccount} from '../../actions/user.action';
 
 const URL = awsConfig.base_url_payment;
 
@@ -32,8 +33,16 @@ class HostedPayment extends Component {
       // if there are only 1 account, then set
       await this.props.dispatch(getAccountPayment());
       const {myCardAccount} = this.props;
+      // set selected account for latest added card
+      if (!isEmptyArray(myCardAccount)) {
+        this.props.dispatch(
+          selectedAccount(myCardAccount[myCardAccount.length - 1]),
+        );
+      }
+
+      // if customer have only 1 card, then set as default
       if (!isEmptyArray(myCardAccount) && myCardAccount.length == 1) {
-        this.props.dispatch(selectedAccount(myCardAccount[0]));
+        await this.props.dispatch(defaultPaymentAccount(myCardAccount[0]));
       }
     } catch (e) {}
   };
@@ -49,9 +58,10 @@ class HostedPayment extends Component {
             let url = navState.url;
             if (url == SUCCESS_URL && openOne) {
               // if page come from payment, then return back with selected account that has been created
-              if (page == 'paymentDetail' || page == 'settleOrder') {
-                await this.setSelectedAccount();
-              }
+              // if (page == 'paymentDetail' || page == 'settleOrder') {
+              //   await this.setSelectedAccount();
+              // }
+              await this.setSelectedAccount();
               Actions.popTo(page);
               // openOne = false;
             } else if (url == FAILED_URL && openOne) {

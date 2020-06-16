@@ -1,6 +1,6 @@
 const appConfig = {
   // info company
-  appName: 'Qiji',
+  appName: 'QIJI',
   appMataUang: 'SGD',
   appVersion: 'Version 1.3.5 (Qiji)',
   // image company
@@ -19,6 +19,10 @@ const appConfig = {
   // other setting
   appStatusLoginOther: true,
   appStatusBackgroundScreen: true,
+
+  //  image template
+  emptyBox: require('../assets/component/empty-box.png'),
+  newSearch: require('../assets/component/find-food.png'),
 };
 
 export default appConfig;

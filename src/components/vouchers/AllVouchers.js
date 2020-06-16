@@ -192,26 +192,26 @@ class AllVouchers extends Component {
                     }}>
                     Opps, you don't have enough points to see active vouchers.
                   </Text>
-                  <TouchableHighlight
-                    onPress={() => Actions.pop()}
-                    style={{
-                      marginTop: 20,
-                      marginHorizontal: '15%',
-                      borderRadius: 10,
-                      backgroundColor: colorConfig.store.colorSuccess,
-                    }}>
-                    <Text
-                      style={{
-                        fontSize: 20,
-                        textAlign: 'center',
-                        color: 'white',
-                        fontWeight: 'bold',
-                        fontFamily: 'Lato-Bold',
-                        padding: 8,
-                      }}>
-                      Start shopping now !
-                    </Text>
-                  </TouchableHighlight>
+                  {/*<TouchableHighlight*/}
+                  {/*  onPress={() => Actions.pop()}*/}
+                  {/*  style={{*/}
+                  {/*    marginTop: 20,*/}
+                  {/*    marginHorizontal: '15%',*/}
+                  {/*    borderRadius: 10,*/}
+                  {/*    backgroundColor: colorConfig.store.colorSuccess,*/}
+                  {/*  }}>*/}
+                  {/*  <Text*/}
+                  {/*    style={{*/}
+                  {/*      fontSize: 20,*/}
+                  {/*      textAlign: 'center',*/}
+                  {/*      color: 'white',*/}
+                  {/*      fontWeight: 'bold',*/}
+                  {/*      fontFamily: 'Lato-Bold',*/}
+                  {/*      padding: 8,*/}
+                  {/*    }}>*/}
+                  {/*    Start shopping now !*/}
+                  {/*  </Text>*/}
+                  {/*</TouchableHighlight>*/}
                 </View>
               ) : null}
             </View>

@@ -15,7 +15,8 @@ import {
   ScrollView,
   Image,
   TouchableHighlight,
-  BackHandler, SafeAreaView,
+  BackHandler,
+  SafeAreaView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -60,6 +61,18 @@ export default class StoreDetailStores extends Component {
       // longitude: coordinate.lng,
     });
   }
+
+  formatTime = item => {
+    try {
+      const time = item.split(':');
+      const x = time[0].length == 1 ? `0${time[0]}` : time[0];
+      const y = time[1].length == 1 ? `0${time[1]}` : time[1];
+
+      return `${x}:${y}`;
+    } catch (e) {
+      return item;
+    }
+  };
 
   render() {
     const {intlData} = this.props;
@@ -208,7 +221,8 @@ export default class StoreDetailStores extends Component {
                         {data.nameOfDay}
                       </Text>
                       <Text style={styles.desc}>
-                        {data.open} {intlData.messages.until} {data.close}
+                        {this.formatTime(data.open)} {intlData.messages.until}{' '}
+                        {this.formatTime(data.close)}
                       </Text>
                     </View>
                   </View>

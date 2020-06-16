@@ -7,10 +7,10 @@ import {
   ScrollView,
   RefreshControl,
   TouchableOpacity,
-  Alert,
   SafeAreaView,
+  Alert,
+  AsyncStorage,
 } from 'react-native';
-import {createAppContainer} from 'react-navigation';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
 import {notifikasi} from '../actions/auth.actions';
@@ -25,17 +25,22 @@ import Loader from '../components/loader';
 import colorConfig from '../config/colorConfig';
 import {Actions} from 'react-native-router-flux';
 import Geolocation from 'react-native-geolocation-service';
-import {movePageIndex, userPosition} from '../actions/user.action';
-import {myVoucers} from '../actions/account.action';
+import {
+  deviceUserInfo,
+  getUserProfile,
+  updateUser,
+  userPosition,
+} from '../actions/user.action';
 import ShimmerPlaceHolder from 'react-native-shimmer-placeholder';
 import MyPointsPlaceHolder from '../components/placeHolderLoading/MyPointsPlaceHolder';
-import {isEmptyObject, isEmptyArray} from '../helper/CheckEmpty';
-import {getBasket} from '../actions/order.action';
+import {isEmptyArray, isEmptyObject} from '../helper/CheckEmpty';
+import {getDeliveryProvider, getPendingCart} from '../actions/order.action';
 import CryptoJS from 'react-native-crypto-js';
 import awsConfig from '../config/awsConfig';
 import {getCompanyInfo} from '../actions/stores.action';
 import {getAccountPayment} from '../actions/payment.actions';
 import OneSignal from 'react-native-onesignal';
+import {dataInbox} from '../actions/inbox.action';
 
 class Rewards extends Component {
   constructor(props) {
@@ -53,10 +58,20 @@ class Rewards extends Component {
       refreshing: false,
       isLoading: true,
       statusGetData: true,
+      onesignalID: null,
     };
 
     OneSignal.addEventListener('received', this.onReceived);
+    OneSignal.addEventListener('ids', this.onIds);
   }
+
+  onIds = async device => {
+    try {
+      if (device.userId != undefined) {
+        this.setState({onesignalID: device.userId});
+      }
+    } catch (e) {}
+  };
 
   onReceived = notification => {
     console.log('Notification received: ', notification);
@@ -76,6 +91,57 @@ class Rewards extends Component {
 
     await this.props.dispatch(getCompanyInfo());
     await this.props.dispatch(getAccountPayment());
+
+    this.checkOneSignal();
+    this.checkUseApp();
+  };
+
+  checkOneSignal = () => {
+    try {
+      let user = {};
+      try {
+        let bytes = CryptoJS.AES.decrypt(
+          this.props.userDetail,
+          awsConfig.PRIVATE_KEY_RSA,
+        );
+        user = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+      } catch (e) {
+        user = {};
+      }
+
+      if (isEmptyArray(user.player_ids)) {
+        let player_ids = [];
+        player_ids.push(this.state.onesignalID);
+        const payload = {
+          username: user.username,
+          player_ids,
+        };
+        this.props.dispatch(updateUser(payload));
+      }
+    } catch (e) {}
+  };
+
+  checkUseApp = () => {
+    try {
+      let user = {};
+      try {
+        let bytes = CryptoJS.AES.decrypt(
+          this.props.userDetail,
+          awsConfig.PRIVATE_KEY_RSA,
+        );
+        user = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+      } catch (e) {
+        user = {};
+      }
+
+      if (user.isUseApp == undefined) {
+        const payload = {
+          username: user.username,
+          isUseApp: true,
+        };
+        this.props.dispatch(updateUser(payload));
+      }
+    } catch (e) {}
   };
 
   refreshStampsAndPoints = async () => {
@@ -89,13 +155,14 @@ class Rewards extends Component {
     try {
       await this.getUserPosition();
       await this.props.dispatch(refreshToken());
-      await this.props.dispatch(getBasket());
+      await this.props.dispatch(getUserProfile());
       await this.props.dispatch(campaign());
       await this.props.dispatch(dataPoint());
-      // await this.props.dispatch(vouchers());
       await this.props.dispatch(getStamps());
-      // await this.props.dispatch(dataInbox());
+      await this.props.dispatch(getPendingCart());
+      await this.props.dispatch(dataInbox(0, 50));
       await this.props.dispatch(recentTransaction());
+      await this.props.dispatch(getDeliveryProvider());
 
       this.setState({isLoading: false});
     } catch (error) {

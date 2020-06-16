@@ -1,6 +1,7 @@
 import {fetchApiProduct} from '../service/apiProduct';
 import {fetchApiOrder} from '../service/apiOrder';
 import {fetchApi} from '../service/api';
+import {isEmptyArray} from '../helper/CheckEmpty';
 
 export const getProductByOutlet = (OutletId, refresh) => {
   return async (dispatch, getState) => {
@@ -19,13 +20,16 @@ export const getProductByOutlet = (OutletId, refresh) => {
         },
       } = state;
 
+      const PRESET_TYPE = 'CRM';
+
       let response = await fetchApiProduct(
-        `/productpreset/load/CRM/${OutletId}`,
+        `/productpreset/load/${PRESET_TYPE}/${OutletId}`,
         'POST',
         null,
         200,
         token,
       );
+
       // console.log(response, 'response data product by outlet');
       if (response.success == true) {
         // get previous data products and concat it
@@ -56,6 +60,136 @@ export const getProductByOutlet = (OutletId, refresh) => {
       return response;
     } catch (error) {
       return error;
+    }
+  };
+};
+
+export const getCategoryByOutlet = (OutletId, refresh) => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      const PRESET_TYPE = 'CRM';
+
+      const payload = {
+        skip: 0,
+        take: 100,
+      };
+
+      let response = await fetchApiProduct(
+        `/productpreset/loadcategory/${PRESET_TYPE}/${OutletId}`,
+        'POST',
+        payload,
+        200,
+        token,
+      );
+
+      // console.log('RESPONSE GET CATEGORY ', response);
+
+      if (response.success == true) {
+        // dispatch({
+        //   type: 'DATA_CATEGORY_OUTLET',
+        //   cateories: response,
+        // });
+        return response.response;
+      }
+      return false;
+    } catch (e) {}
+  };
+};
+
+export const getProductByCategory = (OutletId, categoryId, skip, take) => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      const payload = {
+        skip,
+        take,
+      };
+
+      const PRESET_TYPE = 'CRM';
+
+      let response = await fetchApiProduct(
+        `/productpreset/loaditems/${PRESET_TYPE}/${OutletId}/${categoryId}`,
+        'POST',
+        payload,
+        200,
+        token,
+      );
+
+      // console.log('RESPONSE GET ITEMS BY CATEGORY ', response);
+
+      if (response.success == true) {
+        // dispatch({
+        //   type: 'DATA_PRODUCT_BY_CATEGORY_OUTLET',
+        //   productsCategory: response,
+        // });
+        return response.response;
+      }
+      return false;
+    } catch (e) {}
+  };
+};
+
+export const searchProducts = (OutletId, categories, query) => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      const payload = {
+        skip: 0,
+        take: 100,
+        sortBy: 'name',
+        sortDirection: 'asc',
+        parameters: [
+          {
+            key: 'name',
+            value: query,
+          },
+        ],
+      };
+
+      const PRESET_TYPE = 'CRM';
+
+      let searchResults = [];
+
+      for (let i = 0; i < categories.length; i++) {
+        let response = await fetchApiProduct(
+          `/productpreset/loaditems/${PRESET_TYPE}/${OutletId}/${
+            categories[i].id
+          }`,
+          'POST',
+          payload,
+          200,
+          token,
+        );
+
+        if (response.success && !isEmptyArray(response.response.data)) {
+          searchResults = [...searchResults, ...response.response.data];
+        }
+      }
+
+      console.log('RESPONSE GET SEARCH ITEMS ', searchResults);
+
+      return searchResults;
+    } catch (e) {
+      console.log(e);
     }
   };
 };
@@ -329,6 +463,196 @@ export const getBasket = () => {
   };
 };
 
+export const getPendingCart = () => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+      let response = await fetchApiOrder(
+        `/cart/pending`,
+        'POST',
+        null,
+        200,
+        token,
+      );
+      console.log(response, 'response get pending cart');
+      if (response.success == false) {
+        dispatch({
+          type: 'DATA_CART',
+          product: undefined,
+        });
+      } else {
+        dispatch({
+          type: 'DATA_CART',
+          product: response.response.data,
+        });
+      }
+
+      return response;
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const getCart = id => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+      let response = await fetchApiOrder(
+        `/cart/pending/${id}`,
+        'GET',
+        null,
+        200,
+        token,
+      );
+      console.log(response, 'response get pending cart by id');
+      if (response.success == false) {
+        dispatch({
+          type: 'DATA_CART_SINGLE',
+          cartSingle: undefined,
+        });
+      } else {
+        dispatch({
+          type: 'DATA_CART_SINGLE',
+          cartSingle: response.response.data,
+        });
+      }
+
+      return response;
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const setCart = cart => {
+  return async dispatch => {
+    try {
+      dispatch({
+        type: 'DATA_CART_SINGLE',
+        cartSingle: cart,
+      });
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const getDeliveryProvider = () => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+      let response = await fetchApiOrder(
+        `/delivery/providers`,
+        'POST',
+        null,
+        200,
+        token,
+      );
+      console.log(response, 'response get delivery provider');
+      if (response.success == false) {
+        dispatch({
+          type: 'DATA_PROVIDER',
+          providers: undefined,
+        });
+      } else {
+        dispatch({
+          type: 'DATA_PROVIDER',
+          providers: response.response.data,
+        });
+      }
+
+      return response;
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const getDeliveryFee = payload => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+      let response = await fetchApiOrder(
+        `/delivery/calculateFee`,
+        'POST',
+        payload,
+        200,
+        token,
+      );
+      console.log(response, 'response get delivery fee');
+      if (response.success == true) {
+        return response.response;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const completeOrder = payload => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+      let response = await fetchApiOrder(
+        `/outlet/cart/update`,
+        'POST',
+        payload,
+        200,
+        token,
+      );
+      console.log(response, 'response complete cart delivery');
+      if (response.success == true) {
+        return response.response;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const setDeliveryProvider = cart => {
+  return async dispatch => {
+    try {
+      dispatch({
+        type: 'DELIVERY_PROVIDER',
+        cartSingle: cart,
+      });
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
 export const settleOrder = (payload, url) => {
   return async (dispatch, getState) => {
     const state = getState();
@@ -342,6 +666,7 @@ export const settleOrder = (payload, url) => {
       console.log(payload, 'payload settle order');
       const response = await fetchApiOrder(url, 'POST', payload, 200, token);
       console.log(response, 'response settle order');
+
       // remove table type
       dispatch({
         type: 'TABLE_TYPE',
@@ -356,6 +681,45 @@ export const settleOrder = (payload, url) => {
         success: response.success,
       };
       return result;
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const saveProductsOutlet = (data, OutletId, refresh) => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      // get previous data products outlet
+      const {
+        orderReducer: {
+          productsOutlet: {products},
+        },
+      } = state;
+
+      let outletProduct;
+      if (products != undefined) {
+        outletProduct = products;
+        // if this action is called from refresh method, then remove previous data, and replace with new data
+        if (refresh == true) {
+          outletProduct = await outletProduct.filter(
+            item => item.id != OutletId,
+          );
+        }
+      } else {
+        outletProduct = [];
+      }
+
+      let product = {
+        id: OutletId,
+        products: data,
+      };
+      outletProduct.push(product);
+      dispatch({
+        type: 'DATA_PRODUCTS_OUTLET',
+        products: outletProduct,
+      });
     } catch (error) {
       return error;
     }

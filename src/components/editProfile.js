@@ -16,21 +16,20 @@ import {
   Picker,
   BackHandler,
   Platform,
-  TextInput, SafeAreaView,
+  TextInput,
+  SafeAreaView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
-import {Form, TextValidator} from 'react-native-validator-form';
+import {Form} from 'react-native-validator-form';
 import colorConfig from '../config/colorConfig';
-import awsConfig from '../config/awsConfig';
 import {updateUser} from '../actions/user.action';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
 import {reduxForm} from 'redux-form';
 import AwesomeAlert from 'react-native-awesome-alerts';
 import Loader from './loader';
-import {refreshToken} from '../actions/auth.actions';
 
 class AccountEditProfil extends Component {
   constructor(props) {
@@ -70,15 +69,18 @@ class AccountEditProfil extends Component {
   };
 
   componentDidMount() {
-    this.props.dispatch(refreshToken);
-    this.backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      this.handleBackPress,
-    );
+    try {
+      this.backHandler = BackHandler.addEventListener(
+        'hardwareBackPress',
+        this.handleBackPress,
+      );
+    } catch (e) {}
   }
 
   componentWillUnmount() {
-    this.backHandler.remove();
+    try {
+      this.backHandler.remove();
+    } catch (e) {}
   }
 
   handleBackPress = () => {
@@ -98,6 +100,7 @@ class AccountEditProfil extends Component {
         gender: this.state.gender,
       };
       const response = await this.props.dispatch(updateUser(dataProfile));
+
       if (response) {
         this.setState({
           showAlert: true,
@@ -161,12 +164,11 @@ class AccountEditProfil extends Component {
     let monthBirth = newDate.getMonth() + 1;
     let birthYear = newDate.getFullYear();
 
-    this.setState({birthDate: `${monthBirth}/${dateBirth}/${birthYear}`});
+    this.setState({birthDate: `${birthYear}-${monthBirth}-${dateBirth}/`});
     this.hideDatePicker();
   };
 
   formatDate = current_datetime => {
-    console.log(current_datetime, 'current_datetime');
     if (current_datetime != undefined) {
       current_datetime = new Date(current_datetime);
       const months = [
@@ -184,11 +186,11 @@ class AccountEditProfil extends Component {
         'DEC',
       ];
       return (
-        current_datetime.getDate() +
+        current_datetime.getFullYear() +
         '-' +
         months[current_datetime.getMonth()] +
         '-' +
-        current_datetime.getFullYear()
+        current_datetime.getDate()
       );
     } else {
       return '';
@@ -242,13 +244,13 @@ class AccountEditProfil extends Component {
                       flexDirection: 'row',
                     }}>
                     <Text style={styles.desc}>Email</Text>
-                    <TouchableOpacity
-                      style={[styles.btnChange]}
-                      onPress={() => this.btnChangeCredentials('Email')}>
-                      <Text style={[styles.textChange]}>
-                        {intlData.messages.change}
-                      </Text>
-                    </TouchableOpacity>
+                    {/*<TouchableOpacity*/}
+                    {/*  style={[styles.btnChange]}*/}
+                    {/*  onPress={() => this.btnChangeCredentials('Email')}>*/}
+                    {/*  <Text style={[styles.textChange]}>*/}
+                    {/*    {intlData.messages.change}*/}
+                    {/*  </Text>*/}
+                    {/*</TouchableOpacity>*/}
                   </View>
                   <Text style={{paddingTop: 12}}>
                     {this.props.dataDiri.email}
@@ -262,13 +264,13 @@ class AccountEditProfil extends Component {
                     <Text style={styles.desc}>
                       {intlData.messages.phoneNumber}
                     </Text>
-                    <TouchableOpacity
-                      onPress={() => this.btnChangeCredentials('Phone Number')}
-                      style={[styles.btnChange]}>
-                      <Text style={[styles.textChange]}>
-                        {intlData.messages.change}
-                      </Text>
-                    </TouchableOpacity>
+                    {/*<TouchableOpacity*/}
+                    {/*  onPress={() => this.btnChangeCredentials('Phone Number')}*/}
+                    {/*  style={[styles.btnChange]}>*/}
+                    {/*  <Text style={[styles.textChange]}>*/}
+                    {/*    {intlData.messages.change}*/}
+                    {/*  </Text>*/}
+                    {/*</TouchableOpacity>*/}
                   </View>
                   <Text style={{paddingTop: 12}}>
                     {this.props.dataDiri.phoneNumber}

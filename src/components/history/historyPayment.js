@@ -16,17 +16,14 @@ import {
 import {connect} from 'react-redux';
 import {compose} from 'redux';
 import Icon from 'react-native-vector-icons/Ionicons';
-import * as _ from 'lodash';
 
-import logoCash from '../../assets/img/cash.png';
-import logoVisa from '../../assets/img/visa.png';
 import colorConfig from '../../config/colorConfig';
 import {Actions} from 'react-native-router-flux';
 import {dataTransaction} from '../../actions/sales.action';
 import {notifikasi, refreshToken} from '../../actions/auth.actions';
-import {movePageIndex} from '../../actions/user.action';
 import {isEmptyArray} from '../../helper/CheckEmpty';
-import {getBasket} from '../../actions/order.action';
+import CurrencyFormatter from '../../helper/CurrencyFormatter';
+import appConfig from '../../config/appConfig';
 
 class HistoryPayment extends Component {
   constructor(props) {
@@ -84,7 +81,6 @@ class HistoryPayment extends Component {
     try {
       await this.setState({refreshing: true});
       await this.props.dispatch(dataTransaction());
-      await this.props.dispatch(getBasket());
       // if (this.props.isSuccessGetTrx) {
       //   this.setState({refreshing: false});
       // } else {
@@ -137,6 +133,27 @@ class HistoryPayment extends Component {
       console.log(e);
     }
     console.log('mau load more');
+  };
+
+  format = item => {
+    try {
+      const curr = appConfig.appMataUang;
+      item = item.replace(curr, '');
+      if (curr != 'RP' && curr != 'IDR' && item.includes('.') == false) {
+        return `${item}.00`;
+      }
+      return item;
+    } catch (e) {
+      return item;
+    }
+  };
+
+  formatCurrency = value => {
+    try {
+      return this.format(CurrencyFormatter(value).match(/[a-z]+|[^a-z]+/gi)[1]);
+    } catch (e) {
+      return value;
+    }
   };
 
   render() {
@@ -197,18 +214,15 @@ class HistoryPayment extends Component {
                           <Icon
                             size={18}
                             name={
-                              item.paymentType == 'Cash'
-                                ? Platform.OS === 'ios'
-                                  ? 'ios-cash'
-                                  : 'md-cash'
-                                : Platform.OS === 'ios'
-                                ? 'ios-card'
-                                : 'md-card'
+                              Platform.OS === 'ios'
+                                ? 'ios-pricetag'
+                                : 'md-pricetag'
                             }
                             style={styles.paymentTypeLogo}
                           />
                           <Text style={styles.paymentType}>
-                            {item.paymentType}
+                            {/*{appConfig.appMataUang}*/}
+                            {this.formatCurrency(item.price)}
                           </Text>
                         </View>
                         <Text style={styles.paymentTgl}>
@@ -306,12 +320,12 @@ const styles = StyleSheet.create({
   },
   paymentTypeLogo: {
     width: 20,
-    height: 15,
+    // height: 15,
     marginTop: 2,
     color: colorConfig.store.defaultColor,
   },
   paymentType: {
-    paddingLeft: 10,
+    // paddingLeft: 10,
     color: colorConfig.store.title,
     fontWeight: 'bold',
     fontFamily: 'Lato-Medium',

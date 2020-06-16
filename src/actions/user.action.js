@@ -1,5 +1,4 @@
 import {fetchApi} from '../service/api';
-import {refreshToken} from './auth.actions';
 import awsConfig from '../config/awsConfig';
 import CryptoJS from 'react-native-crypto-js';
 
@@ -61,6 +60,8 @@ export const getUserProfile = () => {
         token,
       );
 
+      console.log('profile gettt', response);
+
       // encrypt user data before save to asyncstorage
       let dataUser = CryptoJS.AES.encrypt(
         JSON.stringify(response.responseBody.Data[0]),
@@ -100,6 +101,19 @@ export const defaultPaymentAccount = defaultAccount => {
       dispatch({
         type: 'GET_USER_DEFAULT_ACCOUNT',
         defaultAccount: defaultAccount,
+      });
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const defaultAddress = defaultAddress => {
+  return async dispatch => {
+    try {
+      dispatch({
+        type: 'GET_USER_DEFAULT_ADDRESS',
+        defaultAddress: defaultAddress,
       });
     } catch (error) {
       return error;

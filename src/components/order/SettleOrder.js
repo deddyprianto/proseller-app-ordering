@@ -11,12 +11,10 @@ import {
   StyleSheet,
   Dimensions,
   TouchableOpacity,
-  Image,
   Platform,
   ScrollView,
   Alert,
   BackHandler,
-  FlatList,
   TextInput,
   ActivityIndicator,
   SafeAreaView,
@@ -26,28 +24,22 @@ import {Actions} from 'react-native-router-flux';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
 import * as _ from 'lodash';
-// import {RNSlidingButton, SlideDirection} from 'rn-sliding-button';
 import SwipeButton from 'rn-swipe-button';
 import AwesomeAlert from 'react-native-awesome-alerts';
 
 import colorConfig from '../../config/colorConfig';
 import appConfig from '../../config/appConfig';
-import {campaign, dataPoint, getStamps} from '../../actions/rewards.action';
-import {myVoucers} from '../../actions/account.action';
-import {settleOrder} from '../../actions/order.action';
+import {getPendingCart, settleOrder} from '../../actions/order.action';
 import Loader from './../loader';
-// import {refreshToken} from '../actions/auth.actions';
 import CurrencyFormatter from '../../helper/CurrencyFormatter';
 import {
   clearAccount,
-  getAccountPayment,
+  clearAddress,
   registerCard,
   selectedAccount,
 } from '../../actions/payment.actions';
 import {isEmptyArray, isEmptyObject} from '../../helper/CheckEmpty';
-import {getUserProfile} from '../../actions/user.action';
 import RBSheet from 'react-native-raw-bottom-sheet';
-import {sendPayment} from '../../actions/sales.action';
 import UUIDGenerator from 'react-native-uuid-generator';
 
 class SettleOrder extends Component {
@@ -307,7 +299,8 @@ class SettleOrder extends Component {
 
   saveCVV = async () => {
     try {
-      let card = this.props.selectedAccount;
+      let card = JSON.stringify(this.props.selectedAccount);
+      card = JSON.parse(card);
       card.details.CVV = this.state.cvv;
 
       await this.props.dispatch(selectedAccount(card));
@@ -462,11 +455,7 @@ class SettleOrder extends Component {
       const UUID = await UUIDGenerator.getRandomUUID();
       this.setState({loading: true});
       pembayaran.price = Number(this.props.pembayaran.payment.toFixed(3));
-      // pembayaran.outletName = this.props.pembayaran.storeName;
-      // pembayaran.referenceNo = this.props.pembayaran.referenceNo;
-      // pembayaran.outletId = this.props.pembayaran.storeId;
-      // pembayaran.dataPay = this.props.pembayaran.dataPay;
-      // pembayaran.void = false;
+      pembayaran.cartID = this.props.pembayaran.cartID;
 
       // if price is 0, then dont add credit card
       if (totalBayar != 0) {
@@ -490,10 +479,6 @@ class SettleOrder extends Component {
         pembayaran.statusAdd = null;
         pembayaran.redeemValue = 0;
       } else {
-        // pembayaran.beforePrice = this.props.pembayaran.payment;
-        // pembayaran.afterPrice = this.state.totalBayar;
-        // pembayaran.afterPrice = Number(this.state.totalBayar.toFixed(3));
-
         if (this.state.dataVoucer != undefined) {
           pembayaran.voucherId = this.state.dataVoucer.id;
           pembayaran.price = Number(this.state.totalBayar.toFixed(3));
@@ -501,9 +486,9 @@ class SettleOrder extends Component {
           pembayaran.statusAdd = 'addVoucher';
         }
         if (this.state.addPoint != undefined) {
-          pembayaran.price = Number(
-            this.props.pembayaran.totalGrossAmount.toFixed(3),
-          );
+          // pembayaran.price = Number(
+          //   this.props.pembayaran.totalGrossAmount.toFixed(3),
+          // );
           pembayaran.redeemValue = this.state.addPoint;
           pembayaran.statusAdd = 'addPoint';
         }
@@ -515,16 +500,41 @@ class SettleOrder extends Component {
         pembayaran.tableNo = this.props.pembayaran.tableNo;
       }
 
+      // check if delivery address is exist
+      if (this.props.pembayaran.deliveryAddress != undefined) {
+        pembayaran.deliveryAddress = this.props.pembayaran.deliveryAddress;
+      }
+
+      // check if delivery fee is exist
+      if (this.props.pembayaran.deliveryFee != undefined) {
+        pembayaran.deliveryFee = this.props.pembayaran.deliveryFee;
+        // add delivery fee to total
+        pembayaran.price = Number(
+          pembayaran.price + this.props.pembayaran.deliveryFee,
+        );
+      }
+
+      // check if delivery provider is exist
+      if (this.props.pembayaran.deliveryProvider != undefined) {
+        pembayaran.deliveryProviderId = this.props.pembayaran.deliveryProvider.id;
+        pembayaran.deliveryProvider = this.props.pembayaran.deliveryProvider.name;
+        pembayaran.deliveryService = '-';
+      }
+
       // get url
       const {url} = this.props;
       console.log('Payload settle order ', JSON.stringify(pembayaran));
       console.log('URL settle order ', url);
       const response = await this.props.dispatch(settleOrder(pembayaran, url));
-
       console.log('reponse pembayaran settle order ', response);
       if (response.success) {
         //  remove selected account
         this.props.dispatch(clearAccount());
+        this.props.dispatch(clearAddress());
+
+        // get pending order
+        this.props.dispatch(getPendingCart());
+
         // go to payment success
         const {url} = this.props;
         Actions.paymentSuccess({
@@ -590,7 +600,7 @@ class SettleOrder extends Component {
 
   formatCurrency = value => {
     try {
-      return CurrencyFormatter(value).match(/[a-z]+|[^a-z]+/gi)[1];
+      return this.format(CurrencyFormatter(value).match(/[a-z]+|[^a-z]+/gi)[1]);
     } catch (e) {
       return value;
     }
@@ -672,14 +682,27 @@ class SettleOrder extends Component {
   selectedPaymentMethod = selectedAccount => {
     try {
       if (!isEmptyObject(selectedAccount)) {
-        return `${selectedAccount.details.cardIssuer.toUpperCase()} ${
-          selectedAccount.details.maskedAccountNumber
-        }`.substr(0, 15);
+        let number = selectedAccount.details.maskedAccountNumber;
+        number = number.substr(number.length - 4, 4);
+        return `${selectedAccount.details.cardIssuer.toUpperCase()} ${number}`;
       } else {
         return null;
       }
     } catch (e) {
       return null;
+    }
+  };
+
+  format = item => {
+    try {
+      const curr = appConfig.appMataUang;
+      item = item.replace(curr, '');
+      if (curr != 'RP' && curr != 'IDR' && item.includes('.') == false) {
+        return `${item}.00`;
+      }
+      return item;
+    } catch (e) {
+      return item;
     }
   };
 

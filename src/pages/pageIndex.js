@@ -3,7 +3,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import {createAppContainer} from 'react-navigation';
 import {createMaterialBottomTabNavigator} from 'react-navigation-material-bottom-tabs';
 import {Container} from 'native-base';
-import {Dimensions} from 'react-native';
+import {Alert, Dimensions, SafeAreaView, Text, View} from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
 import {Platform} from 'react-native';
@@ -13,6 +13,7 @@ import Rewards from './rewards';
 import Inbox from './inbox';
 import Account from './account';
 import colorConfig from '../config/colorConfig';
+import IconMail from '../components/atom/IconMail';
 
 const AppTabNavigator = createMaterialBottomTabNavigator(
   {
@@ -60,11 +61,7 @@ const AppTabNavigator = createMaterialBottomTabNavigator(
       navigationOptions: {
         title: 'Inbox',
         tabBarIcon: ({tintColor, focused}) => (
-          <Icon
-            size={28}
-            name={Platform.OS === 'ios' ? 'ios-mail' : 'md-mail'}
-            style={{color: tintColor}}
-          />
+          <IconMail tintColor={tintColor} />
         ),
       },
     },
@@ -139,11 +136,7 @@ const AppTabNavigatorHistory = createMaterialBottomTabNavigator(
       navigationOptions: {
         title: 'Inbox',
         tabBarIcon: ({tintColor, focused}) => (
-          <Icon
-            size={28}
-            name={Platform.OS === 'ios' ? 'ios-mail' : 'md-mail'}
-            style={{color: tintColor}}
-          />
+          <IconMail tintColor={tintColor} />
         ),
       },
     },
@@ -192,57 +185,18 @@ class PageIndex extends Component {
     const {fromPayment} = this.props;
     return (
       <Container>
-        {/*<OfflineNotice />*/}
-        {/*<AppStackContainerHistory />*/}
         {fromPayment == true ? (
           <AppStackContainerHistory />
         ) : (
           <AppStackContainer />
         )}
-        {/*/!*{this.props.dataInboxNoRead > 0 ? (*!/*/}
-        {/*{true ? (*/}
-        {/*  <View*/}
-        {/*    style={{*/}
-        {/*      position: 'absolute',*/}
-        {/*      top: null,*/}
-        {/*      left: null,*/}
-        {/*      bottom: 30,*/}
-        {/*      right: this.state.screenWidth / 4 - 5,*/}
-        {/*      height: 18,*/}
-        {/*      borderTopLeftRadius: 10,*/}
-        {/*      borderTopRightRadius: 10,*/}
-        {/*      borderBottomLeftRadius: 10,*/}
-        {/*      borderBottomRightRadius: 10,*/}
-        {/*      backgroundColor: 'red',*/}
-        {/*      alignItems: 'center',*/}
-        {/*      justifyContent: 'center',*/}
-        {/*      paddingLeft: 5,*/}
-        {/*      paddingRight: 5,*/}
-        {/*      paddingTop: 5,*/}
-        {/*      paddingBottom: 5,*/}
-        {/*      borderColor: colorConfig.pageIndex.backgroundColor,*/}
-        {/*      borderWidth: 2,*/}
-        {/*    }}>*/}
-        {/*    <Text*/}
-        {/*      style={{*/}
-        {/*        color: colorConfig.pageIndex.backgroundColor,*/}
-        {/*        fontSize: 10,*/}
-        {/*        width: '100%',*/}
-        {/*        textAlign: 'center',*/}
-        {/*        fontWeight: 'bold',*/}
-        {/*      }}>*/}
-        {/*      /!*{this.props.dataInboxNoRead}*!/*/}
-        {/*      5*/}
-        {/*    </Text>*/}
-        {/*  </View>*/}
-        {/*) : null}*/}
       </Container>
     );
   }
 }
 
 mapStateToProps = state => ({
-  dataInboxNoRead: state.inboxReducer.dataInbox.broadcasNoRead,
+  dataInbox: state.inboxReducer.dataInbox.broadcast,
   intlData: state.intlData,
 });
 

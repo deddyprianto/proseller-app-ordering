@@ -13,7 +13,7 @@ import SignInPhoneNumber from '../pages/SignInPhoneNumber';
 import SignInEmail from '../pages/SignInEmail';
 import MobileRegister from '../pages/MobileRegister';
 import EmailRegister from '../pages/EmailRegister';
-import PageIndex from '../pages/pageIndex'
+import PageIndex from '../pages/pageIndex';
 import VerifyOtpAfterRegister from '../pages/VerifyOtpAfterRegister';
 import VerifyOtpAfterRegisterEmail from '../pages/VerifyOtpAfterRegisterEmail';
 import VerifyRegister from '../pages/VerifyRegister';
@@ -40,12 +40,15 @@ import PaymentDetailItem from '../components/paymentDetailItem';
 import InboxDetail from '../components/inboxDetail';
 import PaymentAddPoint from '../components/paymentAddPoint';
 import RewardsStamps from '../components/rewardsStamps';
+import Notifications from '../components/notifications/Notifications';
 
 // order
 import Order from '../pages/order';
 import CategoryProducts from '../components/order/CategoryProducts';
 import Products from '../components/order/Products';
+import Products2 from '../components/order/Products2';
 import Basket from '../components/order/Basket';
+import Cart from '../components/order/Cart';
 import ScanQRTable from '../components/order/ScanQRTable';
 import ConfirmTable from '../components/order/ConfirmTable';
 import SettleOrder from '../components/order/SettleOrder';
@@ -59,6 +62,13 @@ import DetailCard from '../components/card/DetailCard';
 import PaymentMethods from '../components/card/PaymentMethods';
 import PaymentAddCard from '../components/card/PaymentAddCard';
 import QRCodeCart from '../components/order/QRCodeCart';
+
+// address
+import ListAddress from '../components/address/ListAddress';
+import AddAddress from '../components/address/AddAddress';
+import SelectAddress from '../components/address/SelectAddress';
+import EditAddress from '../components/address/EditAddress';
+import ListLanguages from '../components/language/ListLanguages';
 
 let backPressed = 0;
 
@@ -123,6 +133,8 @@ export default class Routes extends Component {
             <Scene key="mobileRegister" component={MobileRegister} />
             <Scene key="verifyRegister" component={VerifyRegister} />
             <Scene key="emailRegister" component={EmailRegister} />
+
+            <Scene key="listLanguages" component={ListLanguages} />
           </Scene>
           <Scene key="app" hideNavBar={true} initial={this.props.isLoggedIn}>
             <Scene key="pageIndex" component={PageIndex} initial={true} />
@@ -147,7 +159,12 @@ export default class Routes extends Component {
             <Scene key="accountEditProfil" component={AccountEditProfil} />
             <Scene key="editProfile" component={EditProfile} />
             <Scene key="paymentDetail" component={PaymentDetail} />
-            <Scene key="paymentSuccess" component={PaymentSuccess} />
+            <Scene
+              key="paymentSuccess"
+              component={PaymentSuccess}
+              drawerLockMode="locked-closed"
+              gesturesEnabled={false}
+            />
             <Scene key="paymentAddVoucers" component={PaymentAddVoucers} />
             <Scene key="paymentDetailItem" component={PaymentDetailItem} />
             <Scene key="inboxDetail" component={InboxDetail} />
@@ -156,7 +173,9 @@ export default class Routes extends Component {
             <Scene key="order" component={Order} />
             <Scene key="categoryProducts" component={CategoryProducts} />
             <Scene key="products" component={Products} />
+            <Scene key="productsMode2" component={Products2} />
             <Scene key="basket" component={Basket} />
+            <Scene key="cart" component={Cart} />
             <Scene key="scanQRTable" component={ScanQRTable} />
             <Scene key="confirmTable" component={ConfirmTable} />
             <Scene key="settleOrder" component={SettleOrder} />
@@ -168,6 +187,15 @@ export default class Routes extends Component {
             <Scene key="detailCard" component={DetailCard} />
             <Scene key="paymentMethods" component={PaymentMethods} />
             <Scene key="paymentAddCard" component={PaymentAddCard} />
+
+            <Scene key="notifications" component={Notifications} />
+
+            <Scene key="listAddress" component={ListAddress} />
+            <Scene key="addAddress" component={AddAddress} />
+            <Scene key="editAddress" component={EditAddress} />
+            <Scene key="selectAddress" component={SelectAddress} />
+
+            <Scene key="listLanguages" component={ListLanguages} />
           </Scene>
         </Scene>
       </Router>

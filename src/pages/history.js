@@ -3,16 +3,10 @@ import {
   View,
   Text,
   StyleSheet,
-  ScrollView,
   Dimensions,
-  RefreshControl,
-  TouchableOpacity,
-  Image,
-  Platform,
   BackHandler,
   SafeAreaView,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
@@ -23,6 +17,7 @@ import Loader from '../components/loader';
 import {myVoucers} from '../actions/account.action';
 import HistoryMenuTab from '../components/history/HistoryMenuTab';
 import {getAccountPayment} from '../actions/payment.actions';
+import OneSignal from 'react-native-onesignal';
 
 class History extends Component {
   constructor(props) {
@@ -33,6 +28,8 @@ class History extends Component {
       rewardPoint: 0,
       refreshing: false,
     };
+
+    OneSignal.inFocusDisplaying(1);
   }
 
   componentDidMount = async () => {

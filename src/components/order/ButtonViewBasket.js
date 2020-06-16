@@ -5,6 +5,7 @@ import colorConfig from '../../config/colorConfig';
 import CurrencyFormatter from '../../helper/CurrencyFormatter';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
+import appConfig from '../../config/appConfig';
 
 class ButtonViewBasket extends Component {
   constructor(props) {
@@ -12,19 +13,21 @@ class ButtonViewBasket extends Component {
   }
 
   openBasket = () => {
-    const {dataBasket} = this.props;
+    Actions.basket({
+      refreshQuantityProducts: this.props.refreshQuantityProducts,
+    });
+  };
 
-    if (dataBasket != undefined) {
-      if (
-        dataBasket.status == 'PROCESSING' ||
-        dataBasket.status == 'READY_FOR_COLLECTION'
-      ) {
-        Actions.waitingFood();
-      } else {
-        Actions.basket();
+  format = item => {
+    try {
+      const curr = appConfig.appMataUang;
+      item = item.replace(curr, '');
+      if (curr != 'RP' && curr != 'IDR' && item.includes('.') == false) {
+        return `${item}.00`;
       }
-    } else {
-      Actions.basket();
+      return item;
+    } catch (e) {
+      return item;
     }
   };
 
@@ -60,8 +63,10 @@ class ButtonViewBasket extends Component {
             fontSize: 14,
             fontFamily: 'Lato-Bold',
           }}>
-          View Basket -{' '}
-          {CurrencyFormatter(this.props.dataBasket.totalNettAmount)}{' '}
+          View Basket - {appConfig.appMataUang}
+          {this.format(
+            CurrencyFormatter(this.props.dataBasket.totalNettAmount),
+          )}{' '}
         </Text>
         {/*<ActivityIndicator size={'small'} color={'white'} />*/}
       </TouchableOpacity>

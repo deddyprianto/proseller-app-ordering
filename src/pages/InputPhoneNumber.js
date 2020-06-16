@@ -13,9 +13,7 @@ import {
   ScrollView,
   Animated,
   Dimensions,
-  TextInput,
   Platform,
-  Picker,
   TouchableHighlight,
   Alert,
   AsyncStorage,
@@ -26,7 +24,6 @@ import {
 import {connect} from 'react-redux';
 import {compose} from 'redux';
 import {reduxForm} from 'redux-form';
-import AwesomeAlert from 'react-native-awesome-alerts';
 import {checkAccountExist} from '../actions/auth.actions';
 import Loader from '../components/loader';
 import {Actions} from 'react-native-router-flux';
@@ -36,9 +33,6 @@ import Header from '../components/atom/header';
 import CountryPicker from 'react-native-country-picker-modal';
 import {deviceUserInfo, userPosition} from '../actions/user.action';
 import Geolocation from 'react-native-geolocation-service';
-import {Dialog} from 'react-native-paper';
-import {updateLanguage} from '../actions/language.action';
-import Languages from '../service/i18n/languages';
 import packageJson from '../../package';
 import PhoneInput from 'react-native-phone-input';
 
@@ -222,12 +216,8 @@ class InputPhoneNumber extends Component {
         if (response.data.confirmation == false) {
           phoneNumber.email = response.data.email;
           phoneNumber.confirmed = false;
-          Actions.verifyOtpAfterRegister(phoneNumber);
-        } else if (
-          response.data.status != 'ACTIVE' &&
-          response.data.status != undefined &&
-          response.data.status != null
-        ) {
+          Actions.signInPhoneNumber(phoneNumber);
+        } else if (response.data.status == 'SUSPENDED') {
           Alert.alert(
             'Sorry',
             `Your account has been ${
@@ -270,55 +260,6 @@ class InputPhoneNumber extends Component {
     } catch (error) {
       console.log(error, 'error get position');
     }
-  };
-
-  _updateLanguage = async lang => {
-    await this.props.dispatch(updateLanguage(lang));
-    await this.setState({dialogChangeLanguage: false});
-  };
-
-  renderDialogQuantityModifier = () => {
-    const {intlData} = this.props;
-    const options = Languages.map(language => {
-      return (
-        <Picker.Item
-          value={language.code}
-          key={language.code}
-          label={language.name}
-        />
-      );
-    });
-
-    return (
-      <Dialog
-        dismissable={true}
-        visible={this.state.dialogChangeLanguage}
-        onDismiss={() => this.setState({dialogChangeLanguage: false})}>
-        <Dialog.Content>
-          <Text
-            style={{
-              textAlign: 'center',
-              fontWeight: 'bold',
-            }}>
-            {intlData.messages.selectLanguage}
-          </Text>
-          <View style={{flexDirection: 'row', justifyContent: 'center'}}>
-            <View style={styles.panelQty}>
-              <Picker
-                style={{height: 60, width: 300}}
-                selectedValue={intlData.locale}
-                onValueChange={itemValue => this._updateLanguage(itemValue)}>
-                {options}
-              </Picker>
-            </View>
-          </View>
-        </Dialog.Content>
-      </Dialog>
-    );
-  };
-
-  openDialogLanguage = () => {
-    this.setState({dialogChangeLanguage: true});
   };
 
   render() {
@@ -375,7 +316,7 @@ class InputPhoneNumber extends Component {
                     fontSize: 18,
                     width: '100%',
                     padding: 15,
-                    color: 'black'
+                    color: 'black',
                   }}
                   ref={ref => {
                     this.phone = ref;
@@ -440,7 +381,7 @@ class InputPhoneNumber extends Component {
                 alignSelf: 'center',
                 bottom: 40,
               }}
-              onPress={this.openDialogLanguage}>
+              onPress={() => Actions.listLanguages()}>
               <Text
                 style={{
                   textDecorationLine: 'underline',
@@ -464,7 +405,6 @@ class InputPhoneNumber extends Component {
             </Text>
           </View>
         ) : null}
-        {this.renderDialogQuantityModifier()}
       </>
     );
   }
