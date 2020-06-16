@@ -183,7 +183,7 @@ class SelectAddress extends Component {
             <TouchableOpacity
               onPress={() => {
                 Actions.editAddress({
-                  from: 'selectAddress',
+                  from: 'basket',
                   myAddress: item,
                 });
               }}

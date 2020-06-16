@@ -201,9 +201,9 @@ android {
                 targetSdkVersion rootProject.ext.targetSdkVersion
                 resValue "string", "build_config_package", "com.qiji"
             }
-            production {
+            app {
                 minSdkVersion rootProject.ext.minSdkVersion
-                applicationId 'com.qiji.production'
+                applicationId 'com.qiji.app'
                 versionName "1.1"
                 targetSdkVersion rootProject.ext.targetSdkVersion
                 resValue "string", "build_config_package", "com.qiji"

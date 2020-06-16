@@ -1,11 +1,11 @@
 {
-  "name": "Qiji",
+  "name": "QIJI",
   "version": "1.1",
   "private": true,
   "scripts": {
     "android-dev": "SET ENVFILE=.env.dev && react-native run-android --variant=devDebug --appIdSuffix=dev",
     "android-demo": "SET ENVFILE=.env.demo && react-native run-android --variant=demoDebug --appIdSuffix=demo",
-    "android-prod": "SET ENVFILE=.env.production && react-native run-android --variant=productionDebug --appIdSuffix=production",
+    "android-prod": "SET ENVFILE=.env.production && react-native run-android --variant=appDebug --appIdSuffix=app",
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "start": "react-native start",
