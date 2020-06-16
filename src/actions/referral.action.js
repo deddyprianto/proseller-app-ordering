@@ -76,3 +76,67 @@ export const addReferral = payload => {
     }
   };
 };
+
+export const cancelReferral = id => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      const response = await fetchApi(
+        `/referral/delete/${id}`,
+        'DELETE',
+        null,
+        200,
+        token,
+      );
+      console.log(response, 'response cancel referral');
+
+      if (response.success) {
+        dispatch({
+          type: 'DATA_REFERRAL',
+          referral: response.responseBody.Data,
+        });
+        return response.responseBody.Data;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const resendReferral = id => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      const response = await fetchApi(
+        `/referral/resend/${id}`,
+        'GET',
+        null,
+        200,
+        token,
+      );
+      console.log(response, 'response resend referral');
+
+      if (response.success) {
+        return response.responseBody.Data;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      return error;
+    }
+  };
+};

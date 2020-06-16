@@ -99,25 +99,40 @@ class AddReferral extends Component {
       const response = await this.props.dispatch(addReferral(payload));
       //
       if (response != false) {
-        let address =
-          payload.mobileNo != undefined ? payload.mobileNo : payload.email;
-        Alert.alert(
-          'Invitation Sent!',
-          `Invitation has been sent to ${address}`,
-        );
+        if (response.status == false) {
+          let message = 'Please try again.';
+          if (response.message != undefined) message = response.message;
+          Alert.alert('Oppss...', message);
+        } else {
+          let address =
+            payload.mobileNo != undefined ? payload.mobileNo : payload.email;
+          Alert.alert(
+            'Invitation Sent!',
+            `Invitation has been sent to ${address}`,
+          );
 
-        if (payload.mobileNo != '' && modeInvitation == 'mobileNo') {
-          Linking.openURL(response.url);
+          if (payload.mobileNo != '' && modeInvitation == 'mobileNo') {
+            Linking.openURL(response.url);
+          }
         }
-
-        this.setState({email: '', mobileNo: ''});
       } else {
         Alert.alert('Oppss..', 'Please try again.');
       }
+
+      this.setState({
+        email: '',
+        mobileNo: '',
+        phoneNumber: awsConfig.phoneNumberCode,
+      });
       this.setState({loading: false});
     } catch (e) {
       Alert.alert(e.message, 'Something went wrong, please try again');
       this.setState({loading: false});
+      this.setState({
+        email: '',
+        mobileNo: '',
+        phoneNumber: awsConfig.phoneNumberCode,
+      });
     }
   };
 
@@ -128,13 +143,13 @@ class AddReferral extends Component {
     if (
       modeInvitation == 'email' &&
       email != '' &&
-      referral.amount <= referral.capacity
+      referral.amount < referral.capacity
     )
       return false;
     if (
       modeInvitation == 'mobileNo' &&
       mobileNo != '' &&
-      referral.amount <= referral.capacity
+      referral.amount < referral.capacity
     )
       return false;
 

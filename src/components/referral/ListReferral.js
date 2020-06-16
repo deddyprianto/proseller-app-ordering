@@ -14,29 +14,25 @@ import {
   ScrollView,
   BackHandler,
   Platform,
-  TextInput,
   FlatList,
   RefreshControl,
   Alert,
   SafeAreaView,
+  Linking,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
 import colorConfig from '../../config/colorConfig';
-import awsConfig from '../../config/awsConfig';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
 import {reduxForm} from 'redux-form';
 import Loader from './../loader';
-import {clearAddress, getAccountPayment} from '../../actions/payment.actions';
+import {isEmptyArray} from '../../helper/CheckEmpty';
 import {
-  defaultAddress,
-  getUserProfile,
-  updateUser,
-} from '../../actions/user.action';
-import {isEmptyArray, isEmptyData} from '../../helper/CheckEmpty';
-import RBSheet from 'react-native-raw-bottom-sheet';
-import CryptoJS from 'react-native-crypto-js';
+  cancelReferral,
+  referral,
+  resendReferral,
+} from '../../actions/referral.action';
 
 class ListReferral extends Component {
   constructor(props) {
@@ -56,7 +52,7 @@ class ListReferral extends Component {
 
   componentDidMount = async () => {
     try {
-      await this.props.dispatch(getUserProfile());
+      await this.props.dispatch(referral());
 
       this.backHandler = BackHandler.addEventListener(
         'hardwareBackPress',
@@ -76,217 +72,72 @@ class ListReferral extends Component {
     return true;
   };
 
-  setDefaultAccount = async () => {
-    const {selectedAddress} = this.state;
-    await this.props.dispatch(defaultAddress(selectedAddress));
-    this.RBSheet.close();
+  getStatusReferral = item => {
+    if (item.signUpStatus == 'PENDING' && item.purchaseStatus == 'PENDING') {
+      return 'PENDING';
+    }
+    if (item.signUpStatus == 'DONE' && item.purchaseStatus == 'PENDING') {
+      return 'CUSTOMER REGISTER';
+    }
+    if (item.signUpStatus == 'DONE' && item.purchaseStatus == 'DONE') {
+      return 'CUSTOMER PURCHASED';
+    }
   };
 
-  removeAddress = async () => {
+  cancelInvitation = async item => {
+    await this.setState({loading: true});
     try {
-      this.RBSheet.close();
-      const {selectedAddress} = this.state;
-      await this.setState({loading: true});
+      const response = await this.props.dispatch(cancelReferral(item.id));
 
-      let userDetail = {};
-      try {
-        // Decrypt data user
-        let bytes = CryptoJS.AES.decrypt(
-          this.props.userDetail,
-          awsConfig.PRIVATE_KEY_RSA,
-        );
-        userDetail = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
-      } catch (e) {
-        userDetail = {};
-      }
-
-      let data = {
-        username: userDetail.username,
-        deliveryAddress: [],
-      };
-
-      if (!isEmptyArray(userDetail.deliveryAddress)) {
-        data.deliveryAddress = userDetail.deliveryAddress;
-
-        data.deliveryAddress = data.deliveryAddress.filter(
-          item => item.address != selectedAddress.address,
-        );
-
-        const response = await this.props.dispatch(updateUser(data));
-
-        if (response) {
-          try {
-            if (selectedAddress.address == this.props.defaultAddress.address) {
-              await this.props.dispatch(defaultAddress(undefined));
-            }
-          } catch (e) {}
-          await this.props.dispatch(clearAddress());
+      if (response != false) {
+        if (response.status == false) {
+          let message = 'Please try again.';
+          if (response.message != undefined) message = response.message;
+          Alert.alert('Oppss...', message);
         } else {
-          Alert.alert('Oppss..', 'Please try again.');
+          let address = item.mobileNo != undefined ? item.mobileNo : item.email;
+          Alert.alert(
+            'Invitation Canceled.',
+            `Your invitation to ${address} has been canceled.`,
+          );
         }
+      } else {
+        Alert.alert('Oppss..', 'Please try again.');
       }
-
-      await this.setState({loading: false});
     } catch (e) {
-      await this.setState({loading: false});
-      Alert.alert('Sorry', 'Something went wrong, please try again');
+      Alert.alert('Opsss', 'Please try again');
     }
+    await this.setState({loading: false});
   };
 
-  askUserToSelectPaymentType = () => {
-    const {intlData} = this.props;
-    return (
-      <RBSheet
-        ref={ref => {
-          this.RBSheet = ref;
-        }}
-        animationType={'fade'}
-        height={300}
-        duration={10}
-        closeOnDragDown={true}
-        closeOnPressMask={true}
-        closeOnPressBack={true}
-        customStyles={{
-          container: {
-            backgroundColor: colorConfig.store.textWhite,
-            justifyContent: 'center',
-            alignItems: 'center',
-          },
-        }}>
-        <TouchableOpacity
-          onPress={() => this.setDefaultAccount()}
-          style={{
-            padding: 15,
-            backgroundColor: colorConfig.store.defaultColor,
-            borderRadius: 15,
-            width: '60%',
-            marginBottom: 20,
-            flexDirection: 'row',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
-          <Icon
-            size={30}
-            name={Platform.OS === 'ios' ? 'ios-save' : 'md-save'}
-            style={{color: 'white'}}
-          />
-          <Text
-            style={{
-              marginLeft: 10,
-              color: 'white',
-              fontWeight: 'bold',
-              fontFamily: 'Lato-Bold',
-              fontSize: 18,
-              textAlign: 'center',
-            }}>
-            Set as Default
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            this.RBSheet.close();
-            Actions.editAddress({
-              from: 'listAddress',
-              myAddress: this.state.selectedAddress,
-            });
-          }}
-          style={{
-            padding: 15,
-            backgroundColor: colorConfig.store.secondaryColor,
-            borderRadius: 15,
-            width: '60%',
-            marginBottom: 20,
-            flexDirection: 'row',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
-          <Icon
-            size={30}
-            name={Platform.OS === 'ios' ? 'ios-create' : 'md-create'}
-            style={{color: 'white'}}
-          />
-          <Text
-            style={{
-              marginLeft: 10,
-              color: 'white',
-              fontWeight: 'bold',
-              fontFamily: 'Lato-Bold',
-              fontSize: 18,
-              textAlign: 'center',
-            }}>
-            Edit Address
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            Alert.alert(
-              'Remove address',
-              'Are you sure to remove this address from list ?',
-              [
-                {
-                  text: 'Cancel',
-                  onPress: () => console.log('Cancel Pressed'),
-                  style: 'cancel',
-                },
-                {text: 'Remove', onPress: () => this.removeAddress()},
-              ],
-              {cancelable: true},
-            );
-          }}
-          style={{
-            padding: 15,
-            backgroundColor: colorConfig.store.colorError,
-            borderRadius: 15,
-            width: '60%',
-            flexDirection: 'row',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
-          <Icon
-            size={30}
-            name={Platform.OS === 'ios' ? 'ios-trash' : 'md-trash'}
-            style={{color: 'white'}}
-          />
-          <Text
-            style={{
-              marginLeft: 10,
-              color: 'white',
-              fontWeight: 'bold',
-              fontFamily: 'Lato-Bold',
-              fontSize: 18,
-              textAlign: 'center',
-            }}>
-            {/*{intlData.messages.takeAway}*/}
-            Remove
-          </Text>
-        </TouchableOpacity>
-      </RBSheet>
-    );
-  };
-
-  checkDefaultAddress = item => {
-    const {defaultAddress} = this.props;
+  resendInvitation = async item => {
+    await this.setState({loading: true});
     try {
-      if (defaultAddress.address == item.address) return true;
-      else return false;
-    } catch (e) {
-      return false;
-    }
-  };
+      const response = await this.props.dispatch(resendReferral(item.id));
 
-  saveCVV = () => {
-    try {
-      let {selectedAccount} = this.state;
-      selectedAccount.details.CVV = this.state.cvv;
-      this.setDefaultAccount(selectedAccount);
-      this.RBCVV.close();
-      this.RBSheet.close();
+      if (response != false) {
+        if (response.status == false) {
+          let message = 'Please try again.';
+          if (response.message != undefined) message = response.message;
+          Alert.alert('Oppss...', message);
+        } else {
+          let address = item.mobileNo != undefined ? item.mobileNo : item.email;
+          Alert.alert(
+            'Invitation Resent!',
+            `Invitation to ${address} has been resent.`,
+          );
+
+          if (item.mobileNo != undefined) {
+            Linking.openURL(response.url);
+          }
+        }
+      } else {
+        Alert.alert('Oppss..', 'Please try again.');
+      }
     } catch (e) {
-      this.RBCVV.close();
-      this.RBSheet.close();
-      Alert.alert('Sorry', 'Can`t set CVV, please try again');
-      console.log(e);
+      Alert.alert('Opsss', 'Please try again');
     }
+    await this.setState({loading: false});
   };
 
   renderAddress = address => {
@@ -294,38 +145,97 @@ class ListReferral extends Component {
       <FlatList
         data={address}
         renderItem={({item}) => (
-          <TouchableOpacity
-            onPress={() => {
-              this.setState({selectedAddress: item});
-              this.RBSheet.open();
-            }}
-            style={[
-              styles.card,
-              this.checkDefaultAddress(item) ? styles.cardSelected : null,
-            ]}>
-            <View style={styles.cardContent}>
-              <Text style={styles.cardText}>Address Name : </Text>
-              <Text style={styles.cardText}>{item.addressName}</Text>
+          <View style={styles.card}>
+            <View>
+              <View style={styles.cardContent}>
+                <Text style={styles.cardText}>Contact : </Text>
+                <Text style={styles.cardText}>
+                  {item.email != undefined ? item.email : item.mobileNo}
+                </Text>
+              </View>
+              <View style={styles.cardContent}>
+                <Text style={styles.cardText}>Status : </Text>
+                <Text style={[styles.cardText, {maxWidth: '60%'}]}>
+                  {this.getStatusReferral(item)}
+                </Text>
+              </View>
             </View>
-            <View style={styles.cardContent}>
-              <Text style={styles.cardText}>Address Detail : </Text>
-              <Text style={[styles.cardText, {maxWidth: '60%'}]}>
-                {item.address}
-              </Text>
-            </View>
-            <View style={styles.cardContent}>
-              <Text style={styles.cardText}>City : </Text>
-              <Text style={[styles.cardText, {maxWidth: '60%'}]}>
-                {item.city}
-              </Text>
-            </View>
-            <View style={styles.cardContent}>
-              <Text style={styles.cardText}>Postal Code : </Text>
-              <Text style={[styles.cardText, {maxWidth: '70%'}]}>
-                {item.postalCode}
-              </Text>
-            </View>
-          </TouchableOpacity>
+            {item.signUpStatus == 'PENDING' ? (
+              <View style={{flexDirection: 'row', justifyContent: 'flex-end'}}>
+                <TouchableOpacity
+                  onPress={() => {
+                    Alert.alert(
+                      'Resend Invitation ?',
+                      'Are you sure want to resend this invitation ?',
+                      [
+                        {
+                          text: 'No',
+                          onPress: () => console.log('Cancel Pressed'),
+                          style: 'cancel',
+                        },
+                        {
+                          text: 'Yes',
+                          onPress: () => this.resendInvitation(item),
+                        },
+                      ],
+                      {cancelable: true},
+                    );
+                  }}
+                  style={{
+                    backgroundColor: colorConfig.store.secondaryColor,
+                    padding: 8,
+                    marginTop: 20,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    marginRight: 10,
+                  }}>
+                  <Text
+                    style={{
+                      fontSize: 15,
+                      fontFamily: 'Lato-Bold',
+                      color: 'white',
+                    }}>
+                    Resend
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {
+                    Alert.alert(
+                      'Cancel Invitation ?',
+                      'Are you sure want to cancel this invitation ?',
+                      [
+                        {
+                          text: 'No',
+                          onPress: () => console.log('Cancel Pressed'),
+                          style: 'cancel',
+                        },
+                        {
+                          text: 'Yes',
+                          onPress: () => this.cancelInvitation(item),
+                        },
+                      ],
+                      {cancelable: true},
+                    );
+                  }}
+                  style={{
+                    backgroundColor: colorConfig.store.colorError,
+                    padding: 8,
+                    marginTop: 20,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}>
+                  <Text
+                    style={{
+                      fontSize: 15,
+                      fontFamily: 'Lato-Bold',
+                      color: 'white',
+                    }}>
+                    Cancel
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            ) : null}
+          </View>
         )}
         keyExtractor={(product, index) => index.toString()}
       />
@@ -333,7 +243,7 @@ class ListReferral extends Component {
   };
 
   getDataCard = async () => {
-    await this.props.dispatch(getAccountPayment());
+    await this.props.dispatch(referral());
     await this.setState({refreshing: false});
   };
 
@@ -352,8 +262,8 @@ class ListReferral extends Component {
           alignItems: 'center',
           marginTop: 30,
         }}>
-        <Text style={{fontSize: 20, color: colorConfig.pageIndex.grayColor}}>
-          You haven't added a delivery address
+        <Text style={{fontSize: 18, color: colorConfig.pageIndex.grayColor}}>
+          You haven't sent a referral invitation yet.
         </Text>
       </View>
     );
@@ -364,22 +274,16 @@ class ListReferral extends Component {
   };
 
   render() {
-    const {intlData, userDetail} = this.props;
-    let address = [];
-    let user = {};
-    try {
-      // Decrypt data user
-      let bytes = CryptoJS.AES.decrypt(
-        this.props.userDetail,
-        awsConfig.PRIVATE_KEY_RSA,
-      );
-      user = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
-    } catch (e) {
-      user = undefined;
-    }
-
-    if (!isEmptyArray(user.deliveryAddress)) {
-      address = user.deliveryAddress;
+    const {intlData, referral} = this.props;
+    let dataList = [];
+    let capacity = 0;
+    let amount = 0;
+    if (referral != undefined) {
+      if (!isEmptyArray(referral.list)) {
+        dataList = referral.list;
+      }
+      capacity = referral.capacity;
+      amount = referral.amount;
     }
 
     return (
@@ -398,10 +302,15 @@ class ListReferral extends Component {
               }
               style={styles.btnBackIcon}
             />
-            <Text style={styles.btnBackText}>My Delivery Address</Text>
+            <Text style={styles.btnBackText}>Referral</Text>
           </TouchableOpacity>
+          {referral != undefined ? (
+            <Text style={[styles.btnBackText, {paddingRight: 10}]}>
+              ( {amount}/{capacity} )
+            </Text>
+          ) : null}
         </View>
-        {this.askUserToSelectPaymentType()}
+
         <ScrollView
           refreshControl={
             <RefreshControl
@@ -409,20 +318,22 @@ class ListReferral extends Component {
               onRefresh={this._onRefresh}
             />
           }>
-          {!isEmptyArray(address)
-            ? this.renderAddress(address)
+          {!isEmptyArray(dataList)
+            ? this.renderAddress(dataList)
             : this.renderEmptyCard()}
         </ScrollView>
-        <TouchableOpacity
-          onPress={this.addNewReferral}
-          style={styles.buttonBottomFixed}>
-          <Icon
-            size={25}
-            name={Platform.OS === 'ios' ? 'ios-add' : 'md-add'}
-            style={{color: 'white', marginRight: 10}}
-          />
-          <Text style={styles.textAddCard}>New Invitation</Text>
-        </TouchableOpacity>
+        {amount < capacity ? (
+          <TouchableOpacity
+            onPress={this.addNewReferral}
+            style={styles.buttonBottomFixed}>
+            <Icon
+              size={25}
+              name={Platform.OS === 'ios' ? 'ios-add' : 'md-add'}
+              style={{color: 'white', marginRight: 10}}
+            />
+            <Text style={styles.textAddCard}>New Invitation</Text>
+          </TouchableOpacity>
+        ) : null}
       </SafeAreaView>
     );
   }
@@ -457,9 +368,10 @@ const styles = StyleSheet.create({
     margin: 10,
   },
   header: {
-    // height: ,
+    flexDirection: 'row',
+    alignItems: 'center',
     marginBottom: 20,
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     // backgroundColor: colorConfig.store.defaultColor,
     shadowColor: '#00000021',
     shadowOffset: {
@@ -554,9 +466,9 @@ const styles = StyleSheet.create({
     paddingBottom: 25,
   },
   cardText: {
-    fontSize: 15,
-    color: colorConfig.pageIndex.grayColor,
-    // fontFamily: 'Lato-Medium',
+    fontSize: 14,
+    color: colorConfig.store.title,
+    fontFamily: 'Lato-Medium',
   },
   cardNumberText: {
     fontSize: 24,
