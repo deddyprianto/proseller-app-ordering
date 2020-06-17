@@ -18,6 +18,7 @@ import {
   Alert,
   Picker,
   Linking,
+  PermissionsAndroid,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -30,6 +31,9 @@ import awsConfig from '../../config/awsConfig';
 import PhoneInput from 'react-native-phone-input';
 import CountryPicker from 'react-native-country-picker-modal';
 import {addReferral} from '../../actions/referral.action';
+import Contacts from 'react-native-contacts';
+import {isEmptyArray} from '../../helper/CheckEmpty';
+import _ from 'lodash';
 
 const theme = {
   ...DefaultTheme,
@@ -73,6 +77,25 @@ class AddReferral extends Component {
       this.backHandler.remove();
     } catch (e) {}
   }
+
+  setPhoneNumber = item => {
+    try {
+      let data = item.item.phoneNumber;
+      if (data != null && data != '') {
+        data = data.replace(/[^a-zA-Z0-9]/g, '');
+        data = data.replace(/\s/g, '');
+
+        if (data[0] === '0') {
+          data = data.substr(1, data.length);
+          data = '62' + data;
+        }
+
+        data = '+' + data;
+
+        this.setState({mobileNo: data, phoneNumber: data});
+      }
+    } catch (e) {}
+  };
 
   handleBackPress = () => {
     this.goBack();
@@ -156,6 +179,72 @@ class AddReferral extends Component {
     return true;
   };
 
+  accessContact = () => {
+    try {
+      if (Platform.OS === 'android') {
+        PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.READ_CONTACTS,
+          {
+            title: 'View Contacts',
+            message:
+              'We want to display your contacts to make it easier to add a mobile number.',
+          },
+        ).then(granted => {
+          if (granted === 'denied') {
+            return;
+          } else {
+            this.loadContacts();
+          }
+        });
+      } else {
+        this.loadContacts();
+      }
+    } catch (e) {}
+  };
+
+  loadContacts = async () => {
+    await this.setState({loading: true});
+    try {
+      Contacts.getAll((err, contacts) => {
+        if (err === 'denied') {
+          console.warn('Permission to access contacts was denied');
+          Alert.alert('Permission', 'You denied permission to access contacts');
+        } else {
+          let dataContacts = [];
+
+          try {
+            for (let i = 0; i < contacts.length; i++) {
+              if (
+                contacts[i].displayName != null &&
+                contacts[i].displayName != '' &&
+                contacts[i].displayName != undefined &&
+                !isEmptyArray(contacts[i].phoneNumbers)
+              ) {
+                let data = {
+                  name: contacts[i].displayName,
+                  phoneNumber: contacts[i].phoneNumbers[0].number,
+                };
+                dataContacts.push(data);
+              }
+            }
+            dataContacts = _.sortBy(dataContacts, [
+              function(o) {
+                return o.name;
+              },
+            ]);
+          } catch (e) {}
+          Actions.push('contacts', {
+            dataContacts,
+            setPhoneNumber: this.setPhoneNumber,
+          });
+        }
+      });
+    } catch (e) {}
+    setTimeout(() => {
+      this.setState({loading: false});
+    }, 1000);
+  };
+
   render() {
     const {modeInvitation} = this.state;
     const {referral} = this.props;
@@ -203,7 +292,12 @@ class AddReferral extends Component {
               <Picker
                 selectedValue={modeInvitation}
                 onValueChange={(itemValue, itemIndex) =>
-                  this.setState({modeInvitation: itemValue})
+                  this.setState({
+                    modeInvitation: itemValue,
+                    email: '',
+                    mobileNo: '',
+                    phoneNumber: awsConfig.phoneNumberCode,
+                  })
                 }>
                 <Picker.Item label="Email" value="email" />
                 <Picker.Item label="Mobile No" value="mobileNo" />
@@ -245,39 +339,57 @@ class AddReferral extends Component {
                   }}>
                   Enter Mobile Number
                 </Text>
-                <View
-                  style={{
-                    marginVertical: 15,
-                    flexDirection: 'row',
-                    color: colorConfig.store.title,
-                    borderColor: colorConfig.pageIndex.grayColor,
-                    borderWidth: 1,
-                  }}>
-                  <PhoneInput
-                    flagStyle={{width: 35, height: 25}}
-                    textStyle={{fontSize: 18, fontFamily: 'Lato-Medium'}}
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                  <View
                     style={{
-                      fontSize: 15,
-                      width: '100%',
-                      padding: 15,
-                      color: 'black',
+                      marginVertical: 15,
+                      flexDirection: 'row',
+                      color: colorConfig.store.title,
+                      borderColor: colorConfig.pageIndex.grayColor,
+                      borderWidth: 1,
+                      width: '80%',
+                    }}>
+                    <PhoneInput
+                      flagStyle={{width: 35, height: 25}}
+                      textStyle={{fontSize: 18, fontFamily: 'Lato-Medium'}}
+                      style={{
+                        fontSize: 15,
+                        width: '100%',
+                        padding: 10,
+                        color: 'black',
+                      }}
+                      ref={ref => {
+                        this.phone = ref;
+                      }}
+                      onChangePhoneNumber={() => {
+                        this.setState({
+                          phoneNumber: this.phone.getValue(),
+                          mobileNo: this.phone.getValue(),
+                        });
+                      }}
+                      value={this.state.phoneNumber}
+                      onPressFlag={() => {
+                        this.setState({
+                          openModalCountry: true,
+                        });
+                      }}
+                    />
+                  </View>
+                  <TouchableOpacity
+                    style={{
+                      backgroundColor: colorConfig.store.defaultColor,
+                      marginLeft: 20,
+                      borderRadius: 10,
                     }}
-                    ref={ref => {
-                      this.phone = ref;
-                    }}
-                    onChangePhoneNumber={() => {
-                      this.setState({
-                        phoneNumber: this.phone.getValue(),
-                        mobileNo: this.phone.getValue(),
-                      });
-                    }}
-                    value={this.state.phoneNumber}
-                    onPressFlag={() => {
-                      this.setState({
-                        openModalCountry: true,
-                      });
-                    }}
-                  />
+                    onPress={this.accessContact}>
+                    <Icon
+                      size={30}
+                      name={
+                        Platform.OS === 'ios' ? 'ios-contact' : 'md-contact'
+                      }
+                      style={[styles.btnBackIcon, {color: 'white'}]}
+                    />
+                  </TouchableOpacity>
                 </View>
               </>
             )}
@@ -295,7 +407,11 @@ class AddReferral extends Component {
                 alignItems: 'center',
               }}>
               <Text
-                style={{color: 'white', fontFamily: 'Lato-Bold', fontSize: 20}}>
+                style={{
+                  color: 'white',
+                  fontFamily: 'Lato-Bold',
+                  fontSize: 20,
+                }}>
                 Send
               </Text>
             </TouchableOpacity>

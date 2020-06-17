@@ -1435,7 +1435,7 @@ class Products2 extends Component {
               {item.product.description != undefined &&
               item.product.description != '' ? (
                 <Text style={[styles.productDesc]}>
-                  {item.product.description.substr(0, 30)}...
+                  {item.product.description.substr(0, 60)}...
                 </Text>
               ) : null}
             </View>
