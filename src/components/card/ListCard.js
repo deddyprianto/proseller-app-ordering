@@ -94,9 +94,12 @@ class ListCard extends Component {
         Alert.alert('Sorry', 'Cant delete account, please try again');
       }
 
-      if (defaultAccount.id == selectedAccount.id) {
-        await this.props.dispatch(defaultPaymentAccount(undefined));
+      if (defaultAccount != undefined) {
+        if (defaultAccount.id == selectedAccount.id) {
+          await this.props.dispatch(defaultPaymentAccount(undefined));
+        }
       }
+
       await this.getDataCard();
       await this.setState({loading: false});
     } catch (e) {

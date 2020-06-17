@@ -647,9 +647,9 @@ export default class ModalOrder extends Component {
         item.modifier.min != 0 &&
         item.modifier.isYesNo != true
       ) {
-        return `${item.modifierName}, Pick ${item.modifier.min}, max ${
-          item.modifier.max != undefined ? item.modifier.max : '-'
-        }`;
+        return `${item.modifierName}, Pick ${
+          item.modifier.min != undefined ? item.modifier.min : '-'
+        }, max ${item.modifier.max != undefined ? item.modifier.max : '-'}`;
       }
     } catch (e) {
       return `${item.modifierName}`;

@@ -42,7 +42,6 @@ import {getAccountPayment} from '../actions/payment.actions';
 import OneSignal from 'react-native-onesignal';
 import {dataInbox} from '../actions/inbox.action';
 import {referral} from '../actions/referral.action';
-import awaitAsyncGenerator from '@babel/runtime/helpers/esm/awaitAsyncGenerator';
 
 class Rewards extends Component {
   constructor(props) {

@@ -138,7 +138,7 @@ android {
         applicationId "com.qiji"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 10
+        versionCode 11
         versionName "1.1"
         missingDimensionStrategy 'react-native-camera', 'general'
         resValue "string", "build_config_package", "com.qiji"

@@ -526,6 +526,7 @@ class SettleOrder extends Component {
       if (this.props.pembayaran.deliveryProvider != undefined) {
         pembayaran.deliveryProviderId = this.props.pembayaran.deliveryProvider.id;
         pembayaran.deliveryProvider = this.props.pembayaran.deliveryProvider.name;
+        pembayaran.deliveryProviderName = this.props.pembayaran.deliveryProvider.name;
         pembayaran.deliveryService = '-';
       }
 

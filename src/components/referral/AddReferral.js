@@ -87,10 +87,23 @@ class AddReferral extends Component {
 
         if (data[0] === '0') {
           data = data.substr(1, data.length);
-          data = '62' + data;
         }
 
-        data = '+' + data;
+        let countryCode = data.substr(0, 2);
+        countryCode = '+' + countryCode;
+
+        if (
+          countryCode.includes(awsConfig.phoneNumberCode) ||
+          countryCode.includes('+62')
+        ) {
+          data = '+' + data;
+        } else {
+          if (data.length == 8) {
+            data = awsConfig.phoneNumberCode + data;
+          } else {
+            data = '+62' + data;
+          }
+        }
 
         this.setState({mobileNo: data, phoneNumber: data});
       }
