@@ -11,11 +11,11 @@ import {
   StyleSheet,
   Dimensions,
   TouchableOpacity,
-  ScrollView,
   BackHandler,
   Platform,
   SafeAreaView,
   Alert,
+  KeyboardAvoidingView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -27,9 +27,13 @@ import Loader from '../loader';
 import {TextInput, DefaultTheme} from 'react-native-paper';
 import CryptoJS from 'react-native-crypto-js';
 import awsConfig from '../../config/awsConfig';
-import {isEmptyArray} from '../../helper/CheckEmpty';
+import {isEmptyArray, isEmptyData} from '../../helper/CheckEmpty';
 import Geocoder from 'react-native-geocoding';
 import {selectedAddress} from '../../actions/payment.actions';
+import appConfig from '../../config/appConfig';
+import DropDownPicker from 'react-native-dropdown-picker';
+import {getAddress, getCityAddress} from '../../actions/address.action';
+import SearchableDropdown from 'react-native-searchable-dropdown';
 
 const theme = {
   ...DefaultTheme,
@@ -47,6 +51,12 @@ class EditAddress extends Component {
 
     const {myAddress} = this.props;
 
+    const options = ['Work', 'Office', 'Home', 'School', 'Other'];
+
+    if (!options.includes(myAddress.addressName)) {
+      myAddress.addressName = 'Home';
+    }
+
     this.state = {
       screenWidth: Dimensions.get('window').width,
       addressName: myAddress.addressName,
@@ -54,25 +64,50 @@ class EditAddress extends Component {
       oldAddress: myAddress.address,
       postalCode: myAddress.postalCode,
       city: myAddress.city,
+      province: myAddress.province == undefined ? '' : myAddress.province,
+      dataProvince: [],
+      dataCity: [],
+      loading: true,
     };
   }
 
-  goBack = async () => {
-    Actions.popTo(this.props.from);
-  };
-
-  componentDidMount() {
+  getCity = async item => {
     try {
+      await this.setState({loading: true});
+      const dataCity = await this.props.dispatch(getCityAddress(item));
+
+      await this.setState({dataCity});
+
       this.backHandler = BackHandler.addEventListener(
         'hardwareBackPress',
         this.handleBackPress,
       );
     } catch (e) {}
 
+    await this.setState({loading: false});
+  };
+
+  goBack = async () => {
+    Actions.popTo(this.props.from);
+  };
+
+  componentDidMount = async () => {
+    try {
+      const dataProvince = await this.props.dispatch(getAddress());
+
+      await this.setState({dataProvince});
+
+      this.backHandler = BackHandler.addEventListener(
+        'hardwareBackPress',
+        this.handleBackPress,
+      );
+    } catch (e) {}
+    await this.setState({loading: false});
+
     try {
       this.getFullAddress(this.state.oldAddress);
     } catch (e) {}
-  }
+  };
 
   componentWillUnmount() {
     try {
@@ -120,6 +155,10 @@ class EditAddress extends Component {
         city: this.state.city,
       };
 
+      if (!isEmptyData(this.state.province)) {
+        newAddress.province = this.state.province;
+      }
+
       data.deliveryAddress.push(newAddress);
 
       const response = await this.props.dispatch(updateUser(data));
@@ -163,15 +202,15 @@ class EditAddress extends Component {
           let location = json.results[0];
 
           try {
-            let city = location.address_components.find(
-              item =>
-                item.types[0] == 'administrative_area_level_2' ||
-                item.types[0] == 'locality' ||
-                item.types[0] == 'neighborhood' ||
-                item.types[0] == 'route',
-            );
+            if (awsConfig.COUNTRY !== 'Singapore') {
+              let city = location.address_components.find(
+                item =>
+                  item.types[0] == 'administrative_area_level_2' ||
+                  item.types[0] == 'locality',
+              );
 
-            this.setState({city: city.long_name});
+              this.setState({city: city.long_name});
+            }
 
             let postalCode = location.address_components.find(
               item => item.types[0] == 'postal_code',
@@ -186,7 +225,7 @@ class EditAddress extends Component {
   notCompleted = () => {
     const {addressName, address, city, postalCode} = this.state;
 
-    if (addressName != '' && address != '' && city != '') {
+    if (addressName != '' && address != '') {
       return false;
     }
     return true;
@@ -212,29 +251,103 @@ class EditAddress extends Component {
             <Text style={styles.btnBackText}> Edit Address </Text>
           </TouchableOpacity>
         </View>
-        <ScrollView>
-          <View style={{padding: 15}}>
-            <TextInput
-              style={{height: 50, marginVertical: 10}}
-              theme={theme}
-              mode={'outlined'}
-              label="Address Name"
-              value={this.state.addressName}
-              onChangeText={text => this.setState({addressName: text})}
-            />
-            <TextInput
-              style={{height: 60, marginVertical: 10}}
-              theme={theme}
-              multiline={true}
-              mode={'outlined'}
-              label="Address"
-              value={this.state.address}
-              onChangeText={text => {
-                this.setState({address: text});
-                this.getFullAddress(text);
+        <KeyboardAvoidingView
+          behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
+          style={{padding: 15}}>
+          <DropDownPicker
+            items={[
+              {label: 'Home', value: 'Home'},
+              {label: 'Work', value: 'Work'},
+              {label: 'School', value: 'School'},
+              {label: 'Office', value: 'Office'},
+              {label: 'Other', value: 'Other'},
+            ]}
+            defaultValue={this.state.addressName}
+            containerStyle={{height: 55}}
+            style={{
+              backgroundColor: '#fafafa',
+              borderColor: colorConfig.pageIndex.grayColor,
+              borderRadius: 0,
+            }}
+            dropDownStyle={{backgroundColor: '#fafafa'}}
+            onChangeItem={item =>
+              this.setState({
+                addressName: item.value,
+              })
+            }
+          />
+
+          {awsConfig.COUNTRY != 'Singapore' ? (
+            <SearchableDropdown
+              onItemSelect={item => {
+                this.setState({province: item.name, city: '', dataCity: []});
+                this.getCity(item.code);
+              }}
+              containerStyle={{marginTop: 15, backgroundColor: '#f2f2f2'}}
+              itemStyle={{
+                padding: 10,
+                marginTop: 2,
+                color: 'white',
+                backgroundColor: '#bbb',
+                borderColor: '#bbb',
+              }}
+              itemTextStyle={{color: 'white'}}
+              itemsContainerStyle={{maxHeight: 140}}
+              items={this.state.dataProvince}
+              textInputProps={{
+                placeholder: 'Select Province',
+                underlineColorAndroid: 'transparent',
+                style: {
+                  borderWidth: 1,
+                  padding: 17,
+                  borderColor: colorConfig.pageIndex.grayColor,
+                },
               }}
             />
+          ) : null}
 
+          {awsConfig.COUNTRY != 'Singapore' ? (
+            <SearchableDropdown
+              onItemSelect={item => {
+                this.setState({city: item.name});
+              }}
+              containerStyle={{marginTop: 15, backgroundColor: '#f2f2f2'}}
+              itemStyle={{
+                padding: 10,
+                marginTop: 2,
+                color: 'white',
+                backgroundColor: '#bbb',
+                borderColor: '#bbb',
+              }}
+              itemTextStyle={{color: 'white'}}
+              itemsContainerStyle={{maxHeight: 140}}
+              items={this.state.dataCity}
+              textInputProps={{
+                placeholder: 'Select City',
+                underlineColorAndroid: 'transparent',
+                style: {
+                  borderWidth: 1,
+                  padding: 17,
+                  borderColor: colorConfig.pageIndex.grayColor,
+                },
+              }}
+            />
+          ) : null}
+
+          <TextInput
+            style={{height: 50, marginVertical: 10}}
+            theme={theme}
+            multiline={true}
+            mode={'outlined'}
+            label="Address"
+            value={this.state.address}
+            onChangeText={text => {
+              this.setState({address: text});
+              this.getFullAddress(text);
+            }}
+          />
+
+          {awsConfig.COUNTRY != 'Singapore' ? (
             <TextInput
               style={{
                 height: 50,
@@ -246,35 +359,36 @@ class EditAddress extends Component {
               value={this.state.city}
               onChangeText={text => this.setState({city: text})}
             />
-            <TextInput
-              style={{height: 50, marginVertical: 10}}
-              theme={theme}
-              keyboardType={'numeric'}
-              mode={'outlined'}
-              label="Postal Code"
-              value={this.state.postalCode}
-              onChangeText={text => this.setState({postalCode: text})}
-            />
+          ) : null}
 
-            <TouchableOpacity
-              onPress={this.submitEdit}
-              disabled={this.notCompleted() ? true : false}
-              style={{
-                marginTop: 40,
-                backgroundColor: this.notCompleted()
-                  ? colorConfig.store.disableButton
-                  : colorConfig.store.defaultColor,
-                padding: 10,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              <Text
-                style={{color: 'white', fontFamily: 'Lato-Bold', fontSize: 20}}>
-                Save
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </ScrollView>
+          <TextInput
+            style={{height: 50, marginVertical: 10}}
+            theme={theme}
+            keyboardType={'numeric'}
+            mode={'outlined'}
+            label="Postal Code"
+            value={this.state.postalCode}
+            onChangeText={text => this.setState({postalCode: text})}
+          />
+
+          <TouchableOpacity
+            onPress={this.submitEdit}
+            disabled={this.notCompleted() ? true : false}
+            style={{
+              marginTop: 40,
+              backgroundColor: this.notCompleted()
+                ? colorConfig.store.disableButton
+                : colorConfig.store.defaultColor,
+              padding: 10,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <Text
+              style={{color: 'white', fontFamily: 'Lato-Bold', fontSize: 20}}>
+              Save
+            </Text>
+          </TouchableOpacity>
+        </KeyboardAvoidingView>
       </SafeAreaView>
     );
   }

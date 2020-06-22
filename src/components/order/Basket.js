@@ -38,7 +38,7 @@ import {
 } from '../../helper/CheckEmpty';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import * as _ from 'lodash';
-import {getOutletById} from '../../actions/stores.action';
+import {dataStores, getOutletById} from '../../actions/stores.action';
 import * as geolib from 'geolib';
 import appConfig from '../../config/appConfig';
 import {refreshToken} from '../../actions/auth.actions';
@@ -72,6 +72,7 @@ class Basket extends Component {
       selectedCategoryModifier: 0,
       selectedProvider: {},
       deliveryFee: null,
+      isOpen: true,
     };
   }
 
@@ -141,29 +142,37 @@ class Basket extends Component {
       // await this.props.dispatch(clearAddress());
       // get data basket
       await this.getBasket();
+
+      this.refreshOpeningHours();
+
       // get previous data products from this outlet, for modifier detail purpose
       if (this.props.dataBasket != undefined) {
         let outletID = this.props.dataBasket.outlet.id;
         await this.getProductsByOutlet(outletID);
         // fetch details outlet
         await this.props.dispatch(getOutletById(outletID));
+
+        await this.setState({
+          isOpen: this.isOpen(),
+        });
+
         await this.setState({loading: false});
 
         // check if user not yet select order mode, then open modal
         if (this.props.orderType == undefined) {
           this.RBSheet.open();
         }
+
+        this.getDeliveryAddress();
+
+        if (
+          this.props.orderType == 'DELIVERY' &&
+          !isEmptyObject(this.props.selectedAddress)
+        ) {
+          this.getDeliveryFee();
+        }
       }
       await this.setState({loading: false});
-
-      this.getDeliveryAddress();
-
-      if (
-        this.props.orderType == 'DELIVERY' &&
-        !isEmptyObject(this.props.selectedAddress)
-      ) {
-        this.getDeliveryFee();
-      }
     } catch (e) {
       Alert.alert('Opss..', "Can't get data basket, please try again.");
     }
@@ -173,6 +182,17 @@ class Basket extends Component {
         'hardwareBackPress',
         this.handleBackPress,
       );
+    } catch (e) {}
+  };
+
+  refreshOpeningHours = () => {
+    try {
+      clearInterval(this.intervalOutlet);
+    } catch (e) {}
+    try {
+      this.intervalOutlet = setInterval(async () => {
+        await this.setState({isOpen: this.isOpen()});
+      }, 10000);
     } catch (e) {}
   };
 
@@ -399,8 +419,8 @@ class Basket extends Component {
       } else {
         this.setState({deliveryFee: null});
       }
-      await this.setState({loading: false});
     } catch (e) {}
+    await this.setState({loading: false});
   };
 
   askUserToSelectProviders = () => {
@@ -479,6 +499,7 @@ class Basket extends Component {
     const outletID = this.props.dataBasket.outlet.id;
     await this.props.dispatch(getOutletById(outletID));
     await this.setState({refreshing: false});
+    this.props.dispatch(dataStores());
   };
 
   getBasket = async () => {
@@ -494,6 +515,7 @@ class Basket extends Component {
     try {
       this.backHandler.remove();
       clearInterval(this.interval);
+      clearInterval(this.intervalOutlet);
     } catch (e) {}
   }
 
@@ -659,13 +681,13 @@ class Basket extends Component {
           <TouchableOpacity
             onPress={this.goToSettle}
             disabled={
-              this.checkActivateButton(dataBasket) ? !this.isOpen() : true
+              this.checkActivateButton(dataBasket) ? !this.state.isOpen : true
             }
             style={[
               styles.btnAddBasketModal,
               {
                 backgroundColor: this.checkActivateButton(dataBasket)
-                  ? this.isOpen()
+                  ? this.state.isOpen
                     ? colorConfig.store.defaultColor
                     : colorConfig.store.disableButton
                   : colorConfig.store.disableButton,
@@ -751,13 +773,13 @@ class Basket extends Component {
           <TouchableOpacity
             onPress={this.goToSettle}
             disabled={
-              this.checkActivateButton(dataBasket) ? !this.isOpen() : true
+              this.checkActivateButton(dataBasket) ? !this.state.isOpen : true
             }
             style={[
               styles.btnAddBasketModal,
               {
                 backgroundColor: this.checkActivateButton(dataBasket)
-                  ? this.isOpen()
+                  ? this.state.isOpen
                     ? colorConfig.store.defaultColor
                     : colorConfig.store.disableButton
                   : colorConfig.store.disableButton,
@@ -976,12 +998,12 @@ class Basket extends Component {
           <TouchableOpacity
             onPress={this.goToScanTable}
             disabled={
-              !this.isOpen() || outletSingle.orderingStatus == 'UNAVAILABLE'
+              !this.state.isOpen || outletSingle.orderingStatus == 'UNAVAILABLE'
                 ? true
                 : false
             }
             style={
-              !this.isOpen() || outletSingle.orderingStatus == 'UNAVAILABLE'
+              !this.state.isOpen || outletSingle.orderingStatus == 'UNAVAILABLE'
                 ? styles.btnAddBasketModalDisabled
                 : styles.btnAddBasketModal
             }>
@@ -1005,9 +1027,13 @@ class Basket extends Component {
 
   removeBasket = async () => {
     clearInterval(this.interval);
+    const {dataBasket} = this.props;
     await this.setState({loading: true});
     await this.props.dispatch(removeBasket());
     await this.getBasket();
+    try {
+      this.props.refreshQuantityProducts(dataBasket);
+    } catch (e) {}
     await this.setState({loading: false});
   };
 
@@ -1163,11 +1189,7 @@ class Basket extends Component {
                         ].modifier.details[j].quantity = item.quantity;
                         product.product.productModifiers[i].modifier.details[
                           j
-                        ].isSelected = true;
-                      } else {
-                        product.product.productModifiers[i].modifier.details[
-                          j
-                        ].isSelected = false;
+                        ].isSelected = item.isSelected;
                       }
                     }
                   });
@@ -1683,7 +1705,11 @@ class Basket extends Component {
             : true,
       };
 
-      Actions.push('productsMode2', {item: data});
+      if (this.props.from == 'products') {
+        Actions.pop();
+      } else {
+        Actions.push('productsMode2', {item: data});
+      }
     } catch (e) {
       Actions.pop();
     }
@@ -1705,7 +1731,7 @@ class Basket extends Component {
         .filter(item => item.day == day && item.active == true)
         .map(day => {
           if (
-            Date.parse(`${currentDate} ${time}`) >
+            Date.parse(`${currentDate} ${time}`) >=
               Date.parse(`${currentDate} ${day.open}`) &&
             Date.parse(`${currentDate} ${time}`) <
               Date.parse(`${currentDate} ${day.close}`)
@@ -1958,7 +1984,7 @@ class Basket extends Component {
                 <Text style={styles.title}>
                   {this.props.dataBasket.outlet.name}
                 </Text>
-                {!this.isOpen() ? (
+                {!this.state.isOpen ? (
                   <Text style={styles.titleClosed}>Outlet is Closed</Text>
                 ) : null}
                 {outletSingle.orderingStatus == 'UNAVAILABLE' ? (

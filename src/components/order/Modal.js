@@ -456,49 +456,55 @@ export default class ModalOrder extends Component {
         indexModifier
       ].modifier.details.findIndex(item => item.id == selectedModifier.id);
 
-      // remove quantity ( IF OPTION IS RADIO BUTTON )
       if (
-        productModifiers[indexModifier].modifier.max == 1 &&
-        productModifiers[indexModifier].modifier.isYesNo != true
+        this.props.product.product.productModifiers[indexModifier].modifier
+          .details[indexDetails].quantity == undefined ||
+        this.props.product.product.productModifiers[indexModifier].modifier
+          .details[indexDetails].quantity == 0
       ) {
-        await this.props.product.product.productModifiers[
+        // revert quantity
+        this.props.product.product.productModifiers[
           indexModifier
-        ].modifier.details.map(item => {
-          delete item.quantity;
-        });
-      }
-
-      // remove quantity to details selected props
-      this.props.product.product.productModifiers[
-        indexModifier
-      ].modifier.details[indexDetails].quantity = 0;
-      // remove is selected
-      this.props.product.product.productModifiers[
-        indexModifier
-      ].modifier.details[indexDetails].isSelected = false;
-
-      let toggleIndex = indexDetails;
-      if (toggleIndex == 0) {
-        toggleIndex = 1;
+        ].modifier.details[indexDetails].quantity = 1;
+        // revert is selected
+        this.props.product.product.productModifiers[
+          indexModifier
+        ].modifier.details[indexDetails].isSelected = !this.props.product
+          .product.productModifiers[indexModifier].modifier.details[
+          indexDetails
+        ].isSelected;
       } else {
-        toggleIndex = 0;
+        // revert quantity
+        this.props.product.product.productModifiers[
+          indexModifier
+        ].modifier.details[indexDetails].quantity = 0;
+        // await this.props.product.product.productModifiers[
+        //   indexModifier
+        // ].modifier.details.map(item => {
+        //   delete item.quantity;
+        // });
+
+        // revert is selected
+        this.props.product.product.productModifiers[
+          indexModifier
+        ].modifier.details[indexDetails].isSelected = !this.props.product
+          .product.productModifiers[indexModifier].modifier.details[
+          indexDetails
+        ].isSelected;
       }
-
-      // add quantity to details selected props
-      this.props.product.product.productModifiers[
-        indexModifier
-      ].modifier.details[toggleIndex].quantity = 1;
-      // add is selected
-      this.props.product.product.productModifiers[
-        indexModifier
-      ].modifier.details[toggleIndex].isSelected = true;
-
-      // mark modifier group that has been selected
-      this.props.product.product.productModifiers[
-        indexModifier
-      ].postToServer = true;
 
       this.setState({modalQty: false});
+
+      await this.props.product.product.productModifiers[
+        indexModifier
+      ].modifier.details.map(item => {
+        if (item.quantity != undefined && item.quantity != 0) {
+          // mark modifier group that has been selected
+          this.props.product.product.productModifiers[
+            indexModifier
+          ].postToServer = true;
+        }
+      });
     } catch (e) {
       console.log(e);
       Alert.alert('Sorry', 'Cant add modifier, please try again');
@@ -595,49 +601,42 @@ export default class ModalOrder extends Component {
     let isYesNo = false;
 
     item.orderingStatus != 'AVAILABLE' ? (available = false) : true;
-    modifier.modifier.isYesNo == true ? (isYesNo = true) : false;
-    if (item.isSelected == true) {
-      item.quantity = 1;
-      item.quantityTemp = item.quantity;
-      item.isSelected = true;
-      // this.addModifierIsYesNo(item);
-      // this.setState({modalQty: false});
-      return (
-        <TouchableOpacity
-          onPress={() =>
-            available ? this.toggleModifierIsYesNo(item, idx) : false
-          }
-          style={[
-            styles.detailOptionsModal,
-            !available ? {backgroundColor: 'rgba(52, 73, 94, 0.2)'} : null,
-          ]}>
-          <View style={{marginRight: 10}}>
-            <Switch
-              trackColor={{false: '#767577', true: '#81b0ff'}}
-              thumbColor={true ? colorConfig.store.defaultColor : 'white'}
-              ios_backgroundColor="white"
-              onValueChange={() => {
-                this.toggleModifierIsYesNo(item, idx);
-              }}
-              value={this.findToggleModifier(item) ? true : false}
-            />
-          </View>
-          <Text style={{paddingVertical: 5, color: colorConfig.store.title}}>
-            {item.name}
-          </Text>
-          <Text
-            style={{
-              marginTop: 5,
-              position: 'absolute',
-              right: 3,
-              color: colorConfig.store.title,
-            }}>
-            {' + '}
-            {this.formatNumber(CurrencyFormatter(item.productPrice))}{' '}
-          </Text>
-        </TouchableOpacity>
-      );
-    }
+    return (
+      <TouchableOpacity
+        onPress={() =>
+          available ? this.toggleModifierIsYesNo(item, idx) : false
+        }
+        style={[
+          styles.detailOptionsModal,
+          !available ? {backgroundColor: 'rgba(52, 73, 94, 0.2)'} : null,
+        ]}>
+        <View style={{marginRight: 10}}>
+          <Switch
+            trackColor={{false: '#767577', true: '#81b0ff'}}
+            thumbColor={true ? colorConfig.store.defaultColor : 'white'}
+            ios_backgroundColor="white"
+            onValueChange={() => {
+              this.toggleModifierIsYesNo(item, idx);
+            }}
+            // value={this.findToggleModifier(item) ? true : false}
+            value={!item.isSelected}
+          />
+        </View>
+        <Text style={{paddingVertical: 5, color: colorConfig.store.title}}>
+          {item.name}
+        </Text>
+        <Text
+          style={{
+            marginTop: 5,
+            position: 'absolute',
+            right: 3,
+            color: colorConfig.store.title,
+          }}>
+          {' + '}
+          {this.formatNumber(CurrencyFormatter(item.productPrice))}{' '}
+        </Text>
+      </TouchableOpacity>
+    );
   };
 
   renderTitleModifier = item => {
@@ -722,12 +721,16 @@ export default class ModalOrder extends Component {
         onRequestClose={this.props.backButtonClicked}>
         <SafeAreaView>
           <KeyboardAvoidingView
+            behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
             style={{
               height: '100%',
               // paddingBottom: 100,
               backgroundColor: colorConfig.store.containerColor,
             }}>
-            <ScrollView>
+            <ScrollView
+              ref={view => {
+                this.scrollView = view;
+              }}>
               <View style={styles.cardModal}>
                 <TouchableOpacity
                   onPress={this.props.closeModal}
@@ -847,16 +850,18 @@ export default class ModalOrder extends Component {
               </View>
 
               <KeyboardAvoidingView
-                style={[styles.cardModal, {paddingBottom: 50}]}
-                behavior={Platform.OS === 'ios' ? 'padding' : null}
+                style={[styles.cardModal, {paddingBottom: 20}]}
                 enabled
                 keyboardVerticalOffset={Platform.select({
-                  ios: 80,
+                  ios: 0,
                   android: 500,
                 })}>
                 <Text style={styles.titleModifierModal}>Remark</Text>
                 <View style={{flexDirection: 'column', paddingBottom: 20}}>
                   <TextInput
+                    onFocus={() =>
+                      this.scrollView.scrollToEnd({animated: true})
+                    }
                     value={this.props.remark}
                     onChangeText={value => this.props.changeRemarkText(value)}
                     placeholder={'Type your remark...'}

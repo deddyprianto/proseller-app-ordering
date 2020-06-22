@@ -8096,6 +8096,14 @@ react-native-drawer@2.5.1:
     prop-types "^15.5.8"
     tween-functions "^1.0.1"
 
+react-native-dropdown-picker@^3.0.5:
+  version "3.0.5"
+  resolved "https://registry.yarnpkg.com/react-native-dropdown-picker/-/react-native-dropdown-picker-3.0.5.tgz#f5c66dcf0aa2e4a0c68eccf7a68f841ec5fa91e1"
+  integrity sha512-0aFKde6AF62++Dzbjj3GmOERBRlo2oVziWI9y/49rSbSCUClSo0YdeRLEpp5SAizgYFDQf+SMee7eqcH3hGpWg==
+  dependencies:
+    prop-types "^15.7.2"
+    react-native-vector-icons "^6.6.0"
+
 react-native-easy-grid@0.2.2:
   version "0.2.2"
   resolved "https://registry.yarnpkg.com/react-native-easy-grid/-/react-native-easy-grid-0.2.2.tgz#f0be33620be1ebe2d2295918eb58b0a27e8272ab"
@@ -8321,6 +8329,11 @@ react-native-safe-modules@^1.0.0:
   integrity sha512-tOxHGQUN83MTmQB4ghoQkibqOdGiX4JQEmeyEv96MKWO/x8T2PJv84ECUos9hD3blPRQwVwSpAid1PPPhrVEaw==
   dependencies:
     debounce "^1.2.0"
+
+react-native-searchable-dropdown@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/react-native-searchable-dropdown/-/react-native-searchable-dropdown-1.1.1.tgz#73d2cdd71b82af1299b2fe280ce4b7102797e826"
+  integrity sha512-A7vGyOlYGpXyMws71qwVuYwPzr7CXFDZfVFVhm44r3yxbohzpAC8PnoA644S6yUloyj9NauVNDcZTrVlcHVxcw==
 
 react-native-shimmer-placeholder@^1.0.35:
   version "1.0.35"

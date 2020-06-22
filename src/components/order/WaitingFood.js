@@ -26,6 +26,7 @@ import CurrencyFormatter from '../../helper/CurrencyFormatter';
 import {isEmptyArray} from '../../helper/CheckEmpty';
 import appConfig from '../../config/appConfig';
 import Snackbar from 'react-native-snackbar';
+import awsConfig from '../../config/awsConfig';
 
 class WaitingFood extends Component {
   constructor(props) {
@@ -432,7 +433,9 @@ class WaitingFood extends Component {
               {dataBasket.status == 'READY_FOR_DELIVERY'
                 ? 'We are getting ready to deliver your order ... \n \n '
                 : `Go to ${dataBasket.deliveryAddress.address}, ${
-                    dataBasket.deliveryAddress.city
+                    awsConfig.COUNTRY != 'Singapore'
+                      ? dataBasket.deliveryAddress.city
+                      : awsConfig.COUNTRY
                   }, ${dataBasket.deliveryAddress.postalCode} \n `}
             </Text>
             <Text
@@ -651,8 +654,16 @@ class WaitingFood extends Component {
                   style={[styles.total, {textAlign: 'right', fontSize: 12}]}>
                   {dataBasket.deliveryAddress.address}
                   {' \n'}
-                  {dataBasket.deliveryAddress.city}
+                  {awsConfig.COUNTRY != 'Singapore'
+                    ? dataBasket.deliveryAddress.city
+                    : awsConfig.COUNTRY}
                   {' \n'}
+                  {dataBasket.deliveryAddress.province != undefined
+                    ? dataBasket.deliveryAddress.province
+                    : null}
+                  {dataBasket.deliveryAddress.province != undefined
+                    ? ' \n'
+                    : null}
                   {dataBasket.deliveryAddress.postalCode}
                 </Text>
               </View>

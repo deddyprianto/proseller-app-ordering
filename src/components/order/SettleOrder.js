@@ -1045,32 +1045,58 @@ class SettleOrder extends Component {
             </View>
 
             <View style={{marginTop: 50}} />
-            <SwipeButton
+            <TouchableOpacity
+              onPress={this.onSlideRight}
               disabled={
                 selectedAccount != undefined || this.state.totalBayar == 0
                   ? false
                   : true
               }
-              disabledThumbIconBackgroundColor="#FFFFFF"
-              disabledThumbIconBorderColor={
-                colorConfig.pageIndex.activeTintColor
-              }
-              thumbIconImageSource={appConfig.arrowRight}
-              height={60}
-              thumbIconBackgroundColor="#FFFFFF"
-              railBorderColor="#FFFFFF"
-              railFillBackgroundColor={colorConfig.pageIndex.grayColor}
-              thumbIconBorderColor={colorConfig.pageIndex.activeTintColor}
-              titleColor="#FFFFFF"
-              titleFontSize={20}
-              shouldResetAfterSuccess={this.state.failedPay}
-              railBackgroundColor={colorConfig.pageIndex.activeTintColor}
-              title={
-                'Pay ' + CurrencyFormatter(this.state.totalBayar)
-                // Number(this.state.totalBayar.toFixed(3))
-              }
-              onSwipeSuccess={this.onSlideRight}
-            />
+              style={{
+                backgroundColor:
+                  selectedAccount != undefined || this.state.totalBayar == 0
+                    ? colorConfig.store.defaultColor
+                    : colorConfig.store.disableButton,
+                padding: 15,
+                borderRadius: 20,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <Text
+                style={{
+                  fontSize: 19,
+                  color: 'white',
+                  fontFamily: 'Lato-Medium',
+                }}>
+                {'Pay ' + CurrencyFormatter(this.state.totalBayar)}
+              </Text>
+            </TouchableOpacity>
+            {/*<SwipeButton*/}
+            {/*  disabled={*/}
+            {/*    selectedAccount != undefined || this.state.totalBayar == 0*/}
+            {/*      ? false*/}
+            {/*      : true*/}
+            {/*  }*/}
+            {/*  disabledThumbIconBackgroundColor="#FFFFFF"*/}
+            {/*  disabledThumbIconBorderColor={*/}
+            {/*    colorConfig.pageIndex.activeTintColor*/}
+            {/*  }*/}
+            {/*  thumbIconImageSource={appConfig.arrowRight}*/}
+            {/*  height={60}*/}
+            {/*  thumbIconBackgroundColor="#FFFFFF"*/}
+            {/*  railBorderColor="#FFFFFF"*/}
+            {/*  railFillBackgroundColor={colorConfig.pageIndex.grayColor}*/}
+            {/*  thumbIconBorderColor={colorConfig.pageIndex.activeTintColor}*/}
+            {/*  titleColor="#FFFFFF"*/}
+            {/*  titleFontSize={20}*/}
+            {/*  shouldResetAfterSuccess={this.state.failedPay}*/}
+            {/*  railBackgroundColor={colorConfig.pageIndex.activeTintColor}*/}
+            {/*  title={*/}
+            {/*    'Pay ' + CurrencyFormatter(this.state.totalBayar)*/}
+            {/*    // Number(this.state.totalBayar.toFixed(3))*/}
+            {/*  }*/}
+            {/*  onSwipeSuccess={this.onSlideRight}*/}
+            {/*/>*/}
           </View>
         </ScrollView>
         <AwesomeAlert

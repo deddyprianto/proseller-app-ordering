@@ -9,7 +9,6 @@ import {
   ScrollView,
   RefreshControl,
   FlatList,
-  Alert,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
@@ -142,6 +141,18 @@ class HistoryPayment extends Component {
   //   console.log('mau load more');
   // };
 
+  getStatusText = item => {
+    try {
+      if (item === 'SUBMITTED') return 'Submitted';
+      else if (item === 'CONFIRMED') return 'Confirmed';
+      else if (item === 'PROCESSING') return 'Processing';
+      else if (item === 'READY_FOR_COLLECTION') return 'Ready for Colection';
+      else if (item === 'READY_FOR_DELIVERY') return 'Ready for Delivery';
+      else if (item === 'ON_THE_WAY') return 'On The Way';
+      else return item;
+    } catch (e) {}
+  };
+
   render() {
     const {intlData, pendingCart} = this.props;
     return (
@@ -158,67 +169,71 @@ class HistoryPayment extends Component {
           </ScrollView>
         ) : (
           // <View style={styles.component}>
-            <FlatList
-              data={pendingCart}
-              extraData={this.props}
-              refreshControl={
-                <RefreshControl
-                  refreshing={this.state.refreshing}
-                  onRefresh={this._onRefresh}
-                />
-              }
-              renderItem={({item}) => (
-                <TouchableOpacity
-                  style={styles.item}
-                  onPress={() => this.gotToBasket(item)}>
-                  <View style={styles.sejajarSpace}>
-                    <View style={styles.detail}>
-                      <View style={styles.sejajarSpace}>
-                        <Text style={styles.storeName}>{item.outlet.name}</Text>
-                        <Text style={styles.itemType}>
-                          <Text
-                            style={{color: colorConfig.store.secondaryColor}}>
-                            x {item.details.length} Items
-                          </Text>
+          <FlatList
+            data={pendingCart}
+            extraData={this.props}
+            refreshControl={
+              <RefreshControl
+                refreshing={this.state.refreshing}
+                onRefresh={this._onRefresh}
+              />
+            }
+            renderItem={({item}) => (
+              <TouchableOpacity
+                style={styles.item}
+                onPress={() => this.gotToBasket(item)}>
+                <View style={styles.sejajarSpace}>
+                  <View style={styles.detail}>
+                    <View style={styles.sejajarSpace}>
+                      <Text style={styles.storeName}>{item.outlet.name}</Text>
+                      <Text style={styles.itemType}>
+                        <Text style={{color: colorConfig.store.title}}>
+                          {item.queueNo != undefined ? item.queueNo : null}
+                          {item.tableNo != undefined && item.tableNo != '-'
+                            ? item.tableNo
+                            : null}
+                          {' - '}
+                          {item.details.length} Items
                         </Text>
-                      </View>
-                      <View style={styles.sejajarSpace}>
-                        <View style={{flexDirection: 'row'}}>
-                          <Icon
-                            size={16}
-                            name={
-                              Platform.OS === 'ios' ? 'ios-play' : 'md-play'
-                            }
-                            style={styles.paymentTypeLogo}
-                          />
-                          <Text style={styles.paymentType}>{item.status}</Text>
-                        </View>
-                        <Text style={styles.paymentTgl}>
-                          {this.getDate(item.createdOn)}
-                        </Text>
-                      </View>
+                      </Text>
                     </View>
-                    <View style={styles.btnDetail}>
-                      <Icon
-                        size={20}
-                        name={
-                          Platform.OS === 'ios'
-                            ? 'ios-arrow-dropright-circle'
-                            : 'md-arrow-dropright-circle'
-                        }
-                        style={{
-                          color: colorConfig.pageIndex.activeTintColor,
-                        }}
-                      />
+                    <View style={styles.sejajarSpace}>
+                      <View style={{flexDirection: 'row'}}>
+                        <Icon
+                          size={16}
+                          name={Platform.OS === 'ios' ? 'ios-play' : 'md-play'}
+                          style={styles.paymentTypeLogo}
+                        />
+                        <Text style={styles.paymentType}>
+                          {this.getStatusText(item.status)}
+                        </Text>
+                      </View>
+                      <Text style={styles.paymentTgl}>
+                        {this.getDate(item.createdOn)}
+                      </Text>
                     </View>
                   </View>
-                </TouchableOpacity>
-              )}
-              keyExtractor={(item, index) => index.toString()}
-              // ListFooterComponent={this.renderFooter}
-              // onEndReachedThreshold={0.01}
-              // onEndReached={this.handleLoadMore}
-            />
+                  <View style={styles.btnDetail}>
+                    <Icon
+                      size={20}
+                      name={
+                        Platform.OS === 'ios'
+                          ? 'ios-arrow-dropright-circle'
+                          : 'md-arrow-dropright-circle'
+                      }
+                      style={{
+                        color: colorConfig.pageIndex.activeTintColor,
+                      }}
+                    />
+                  </View>
+                </View>
+              </TouchableOpacity>
+            )}
+            keyExtractor={(item, index) => index.toString()}
+            // ListFooterComponent={this.renderFooter}
+            // onEndReachedThreshold={0.01}
+            // onEndReached={this.handleLoadMore}
+          />
           // </View>
         )}
       </>

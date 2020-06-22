@@ -16,6 +16,8 @@ const ENV = {
 
   COUNTRY: 'Singapore',
 
+  COUNTRY_CODE: 'SG',
+
   COMPANY_NAME: 'Qiji',
 
   COMPANY_POLICY_URL: 'http://qiji-demo.proseller.io/',

@@ -167,12 +167,22 @@ class SelectAddress extends Component {
                   {item.address}
                 </Text>
               </View>
-              <View style={styles.cardContent}>
-                <Text style={styles.cardText}>City : </Text>
-                <Text style={[styles.cardText, {maxWidth: '60%'}]}>
-                  {item.city}
-                </Text>
-              </View>
+              {awsConfig.COUNTRY != 'Singapore' ? (
+                <View style={styles.cardContent}>
+                  <Text style={styles.cardText}>City : </Text>
+                  <Text style={[styles.cardText, {maxWidth: '60%'}]}>
+                    {item.city}
+                  </Text>
+                </View>
+              ) : null}
+              {item.province != undefined ? (
+                <View style={styles.cardContent}>
+                  <Text style={styles.cardText}>Province : </Text>
+                  <Text style={[styles.cardText, {maxWidth: '60%'}]}>
+                    {item.province}
+                  </Text>
+                </View>
+              ) : null}
               <View style={styles.cardContent}>
                 <Text style={styles.cardText}>Postal Code : </Text>
                 <Text style={[styles.cardText, {maxWidth: '70%'}]}>

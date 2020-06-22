@@ -11,14 +11,13 @@ import {
   StyleSheet,
   Dimensions,
   TouchableOpacity,
-  ScrollView,
   BackHandler,
   Platform,
   SafeAreaView,
   Alert,
-  Picker,
   Linking,
   PermissionsAndroid,
+  KeyboardAvoidingView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -34,6 +33,7 @@ import {addReferral} from '../../actions/referral.action';
 import Contacts from 'react-native-contacts';
 import {isEmptyArray} from '../../helper/CheckEmpty';
 import _ from 'lodash';
+import DropDownPicker from 'react-native-dropdown-picker';
 
 const theme = {
   ...DefaultTheme,
@@ -280,7 +280,8 @@ class AddReferral extends Component {
             <Text style={styles.btnBackText}> New Invitation </Text>
           </TouchableOpacity>
         </View>
-        <ScrollView>
+        <KeyboardAvoidingView
+          behavior={Platform.OS == 'ios' ? 'padding' : 'height'}>
           <View style={{paddingHorizontal: 15}}>
             <Text
               style={{
@@ -297,25 +298,28 @@ class AddReferral extends Component {
             <Text style={{marginBottom: 10, fontSize: 15}}>
               Invitation Mode :{' '}
             </Text>
-            <View
+            <DropDownPicker
+              items={[
+                {label: 'Email', value: 'email'},
+                {label: 'Mobile No', value: 'mobileNo'},
+              ]}
+              defaultValue={this.state.modeInvitation}
+              containerStyle={{height: 50}}
               style={{
-                borderWidth: 1,
+                backgroundColor: '#fafafa',
                 borderColor: colorConfig.pageIndex.grayColor,
-              }}>
-              <Picker
-                selectedValue={modeInvitation}
-                onValueChange={(itemValue, itemIndex) =>
-                  this.setState({
-                    modeInvitation: itemValue,
-                    email: '',
-                    mobileNo: '',
-                    phoneNumber: awsConfig.phoneNumberCode,
-                  })
-                }>
-                <Picker.Item label="Email" value="email" />
-                <Picker.Item label="Mobile No" value="mobileNo" />
-              </Picker>
-            </View>
+                borderRadius: 0,
+              }}
+              dropDownStyle={{backgroundColor: '#fafafa'}}
+              onChangeItem={item =>
+                this.setState({
+                  modeInvitation: item.value,
+                  email: '',
+                  mobileNo: '',
+                  phoneNumber: awsConfig.phoneNumberCode,
+                })
+              }
+            />
 
             {modeInvitation == 'email' ? (
               <TextInput
@@ -360,7 +364,7 @@ class AddReferral extends Component {
                       color: colorConfig.store.title,
                       borderColor: colorConfig.pageIndex.grayColor,
                       borderWidth: 1,
-                      width: '80%',
+                      width: '100%',
                     }}>
                     <PhoneInput
                       flagStyle={{width: 35, height: 25}}
@@ -388,21 +392,21 @@ class AddReferral extends Component {
                       }}
                     />
                   </View>
-                  <TouchableOpacity
-                    style={{
-                      backgroundColor: colorConfig.store.defaultColor,
-                      marginLeft: 20,
-                      borderRadius: 10,
-                    }}
-                    onPress={this.accessContact}>
-                    <Icon
-                      size={30}
-                      name={
-                        Platform.OS === 'ios' ? 'ios-contact' : 'md-contact'
-                      }
-                      style={[styles.btnBackIcon, {color: 'white'}]}
-                    />
-                  </TouchableOpacity>
+                  {/*<TouchableOpacity*/}
+                  {/*  style={{*/}
+                  {/*    backgroundColor: colorConfig.store.defaultColor,*/}
+                  {/*    marginLeft: 20,*/}
+                  {/*    borderRadius: 10,*/}
+                  {/*  }}*/}
+                  {/*  onPress={this.accessContact}>*/}
+                  {/*  <Icon*/}
+                  {/*    size={30}*/}
+                  {/*    name={*/}
+                  {/*      Platform.OS === 'ios' ? 'ios-contact' : 'md-contact'*/}
+                  {/*    }*/}
+                  {/*    style={[styles.btnBackIcon, {color: 'white'}]}*/}
+                  {/*  />*/}
+                  {/*</TouchableOpacity>*/}
                 </View>
               </>
             )}
@@ -429,7 +433,7 @@ class AddReferral extends Component {
               </Text>
             </TouchableOpacity>
           </View>
-        </ScrollView>
+        </KeyboardAvoidingView>
       </SafeAreaView>
     );
   }

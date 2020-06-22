@@ -14,6 +14,7 @@ import {
   RefreshControl,
   SafeAreaView,
   TextInput,
+  Image,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -81,8 +82,15 @@ class Products2 extends Component {
         }
       },
       (type, dim) => {
-        dim.width = width;
-        dim.height = 100;
+        switch (type) {
+          case ViewTypes.FULL:
+            dim.width = width;
+            dim.height = 100;
+            break;
+          default:
+            dim.width = width;
+            dim.height = 100;
+        }
       },
     );
 
@@ -140,12 +148,30 @@ class Products2 extends Component {
     // update recyclerViewList
     try {
       const {products} = this.state;
-      for (let i = 0; i < products.length; i++) {
-        for (let j = 0; j < products[i].items.length; j++) {
-          if (products[i].items[j].product.id == product.product.id) {
-            products[i].items[j].changed = true;
-            await this.setState({products});
-            return;
+
+      // if products is undefined, then clear all list
+      if (!isEmptyArray(product.details)) {
+        let arrayID = [];
+        for (let i = 0; i < product.details.length; i++) {
+          arrayID.push(product.details[i].product.id);
+        }
+
+        for (let i = 0; i < products.length; i++) {
+          for (let j = 0; j < products[i].items.length; j++) {
+            if (arrayID.includes(products[i].items[j].product.id)) {
+              products[i].items[j].changed = true;
+              await this.setState({products});
+            }
+          }
+        }
+      } else {
+        for (let i = 0; i < products.length; i++) {
+          for (let j = 0; j < products[i].items.length; j++) {
+            if (products[i].items[j].product.id == product.product.id) {
+              products[i].items[j].changed = true;
+              await this.setState({products});
+              return;
+            }
           }
         }
       }
@@ -164,7 +190,13 @@ class Products2 extends Component {
       this.handleBackPress,
     );
 
+    this.checkOpeningHours();
+
     await this.firstMethodToRun(false);
+
+    // this.refreshOutletStatus();
+
+    // this.refreshOpeningHours();
 
     // berfore get new products, delete old products first, so different outlet got different products
     // await this.props.dispatch(removeProducts());
@@ -173,6 +205,41 @@ class Products2 extends Component {
     // if (this.state.item.outletType == 'QUICKSERVICE') {
     //   this.props.dispatch(setOrderType('TAKEAWAY'));
     // }
+  };
+
+  checkOpeningHours = async () => {
+    try {
+      const {item} = this.state;
+      item.storeStatus = this.isOpen(this.props.item);
+      await this.setState({item});
+      setTimeout(() => {
+        this.prompOutletIsClosed();
+      }, 50);
+    } catch (e) {}
+  };
+
+  refreshOpeningHours = () => {
+    try {
+      clearInterval(this.intervalOutlet);
+    } catch (e) {}
+    try {
+      const {item} = this.state;
+      this.intervalOutlet = setInterval(async () => {
+        item.storeStatus = this.isOpen(this.props.item);
+        await this.setState({item});
+      }, 20000);
+    } catch (e) {}
+  };
+
+  refreshOutletStatus = () => {
+    try {
+      clearInterval(this.interval);
+    } catch (e) {}
+    try {
+      this.interval = setInterval(async () => {
+        await this.refreshOutlet();
+      }, 20000);
+    } catch (e) {}
   };
 
   prompOutletIsClosed = () => {
@@ -191,6 +258,7 @@ class Products2 extends Component {
       this.state.item.orderingStatus == undefined ||
       this.state.item.orderingStatus == 'AVAILABLE'
     ) {
+      this.openOrderingMode();
       await this.getCategoryByOutlet(refresh);
       // await this.getProductsByOutlet(refresh);
       // check if basket outlet is not same as current outlet
@@ -398,7 +466,7 @@ class Products2 extends Component {
                           color: colorConfig.store.defaultColor,
                           fontWeight: 'bold',
                         }}>
-                        x {item.quantity}{' '}
+                        {item.quantity} x{' '}
                       </Text>
                       {item.product.name}
                     </Text>
@@ -517,6 +585,7 @@ class Products2 extends Component {
 
   getCategoryByOutlet = async refresh => {
     try {
+      const {products} = this.state;
       const outletID = this.state.item.storeId;
       let response = await this.props.dispatch(
         getCategoryByOutlet(outletID, refresh),
@@ -527,10 +596,10 @@ class Products2 extends Component {
         });
         const firstCategoryID = response.data[0].id;
         // const firstDatLength = response.data[0].dataLength;
-        await this.getProductsByCategory(firstCategoryID, 0, 100, refresh);
+        await this.getProductsByCategory(firstCategoryID, 0, 5, refresh, 0);
 
         // check if outlet is open
-        this.prompOutletIsClosed();
+        // this.prompOutletIsClosed();
 
         this.setState({refresh: false});
         // turn back to first category
@@ -538,12 +607,31 @@ class Products2 extends Component {
           await this.updateCategory([], 0);
         } catch (e) {}
 
-        this.openOrderingMode();
-        //  asynchronously get all items for every categories
+        //  asynchronously get first item
+        if (response.data.length > 1) {
+          let skip = 5;
+          for (let i = 0; i < response.data[0].dataLength / 5; i++) {
+            await this.loadMoreProducts(firstCategoryID, outletID, skip, 0);
+            skip += 5;
+          }
+        }
+        //  asynchronously get all item
+        // if (response.data.length > 1) {
+        //   for (let i = 1; i < response.data.length; i++) {
+        //     let categoryId = response.data[i].id;
+        //     await this.getProductsByCategory(categoryId, 0, 100, refresh);
+        //   }
+        // }
         if (response.data.length > 1) {
           for (let i = 1; i < response.data.length; i++) {
             let categoryId = response.data[i].id;
-            await this.getProductsByCategory(categoryId, 0, 100, refresh);
+            let skip = 0;
+            await this.getProductsByCategory(categoryId, 0, 5, refresh, i);
+            skip = 5;
+            for (let j = 0; j < response.data[i].dataLength / 5; j++) {
+              await this.loadMoreProducts(categoryId, outletID, skip, i);
+              skip += 5;
+            }
           }
         }
         let categories = JSON.stringify(response.data);
@@ -560,7 +648,13 @@ class Products2 extends Component {
     }
   };
 
-  getProductsByCategory = async (category, skip, take, refresh) => {
+  getProductsByCategory = async (
+    category,
+    skip,
+    take,
+    refresh,
+    idxCategory,
+  ) => {
     try {
       const outletID = this.state.item.storeId;
       let {categories} = this.state;
@@ -569,20 +663,12 @@ class Products2 extends Component {
       );
 
       if (response && !isEmptyArray(response.data)) {
-        const idxCategory = categories.findIndex(item => item.id == category);
+        // const idxCategory = categories.findIndex(item => item.id == category);
         // if category products is empty
         if (isEmptyArray(categories[idxCategory].items)) {
           categories[idxCategory].items = response.data;
           categories[idxCategory].dataLength = response.dataLength;
           categories[idxCategory].skip = take;
-          categories[idxCategory].take = take;
-        } else if (
-          categories[idxCategory].items.length <
-          categories[idxCategory].dataLength
-        ) {
-          const items = [...categories[idxCategory].items, ...response.data];
-          categories[idxCategory].items = items;
-          categories[idxCategory].skip += take;
           categories[idxCategory].take = take;
         }
         await this.setState({
@@ -655,7 +741,11 @@ class Products2 extends Component {
   };
 
   componentWillUnmount() {
-    this.backHandler.remove();
+    try {
+      this.backHandler.remove();
+      clearInterval(this.intervalOutlet);
+      clearInterval(this.interval);
+    } catch (e) {}
   }
 
   handleBackPress = () => {
@@ -707,37 +797,37 @@ class Products2 extends Component {
             group.modifier.isYesNo == true &&
             detail.orderingStatus == 'AVAILABLE'
           ) {
-            product.product.productModifiers[i].postToServer = true;
-            product.product.productModifiers[i].modifier.details[
-              j
-            ].isSelected = false;
-            product.product.productModifiers[i].modifier.details[
-              j
-            ].quantity = 0;
+            // product.product.productModifiers[i].postToServer = true;
+            // product.product.productModifiers[i].modifier.details[
+            //   j
+            // ].isSelected = false;
+            // product.product.productModifiers[i].modifier.details[
+            //   j
+            // ].quantity = 0;
 
             // create default value
             if (
               group.modifier.yesNoDefaultValue == true &&
+              detail.yesNoValue == 'no'
+            ) {
+              product.product.productModifiers[i].modifier.details[
+                j
+              ].isSelected = false;
+              // product.product.productModifiers[i].modifier.details[
+              //   j
+              // ].quantity = 1;
+            }
+
+            if (
+              group.modifier.yesNoDefaultValue == false &&
               detail.yesNoValue == 'yes'
             ) {
               product.product.productModifiers[i].modifier.details[
                 j
               ].isSelected = true;
-              product.product.productModifiers[i].modifier.details[
-                j
-              ].quantity = 1;
-            }
-
-            if (
-              group.modifier.yesNoDefaultValue == false &&
-              detail.yesNoValue == 'no'
-            ) {
-              product.product.productModifiers[i].modifier.details[
-                j
-              ].isSelected = true;
-              product.product.productModifiers[i].modifier.details[
-                j
-              ].quantity = 1;
+              // product.product.productModifiers[i].modifier.details[
+              //   j
+              // ].quantity = 1;
             }
           }
         });
@@ -775,11 +865,7 @@ class Products2 extends Component {
                     // for is selected
                     product.product.productModifiers[i].modifier.details[
                       j
-                    ].isSelected = true;
-                  } else {
-                    product.product.productModifiers[i].modifier.details[
-                      j
-                    ].isSelected = false;
+                    ].isSelected = item.isSelected;
                   }
                 }
               });
@@ -1362,8 +1448,8 @@ class Products2 extends Component {
   availableToOrder = item => {
     // check ordering status outlet
     if (
-      this.state.item.orderingStatus == undefined ||
-      this.state.item.orderingStatus == 'AVAILABLE'
+      item.product.orderingStatus == undefined ||
+      item.product.orderingStatus == 'AVAILABLE'
     ) {
       return true;
     }
@@ -1396,7 +1482,8 @@ class Products2 extends Component {
             style={{
               backgroundColor: 'rgba(52, 73, 94, 0.2)',
               width: '100%',
-              height: 95,
+              marginTop: -10,
+              height: 100,
               position: 'absolute',
               zIndex: 2,
             }}
@@ -1427,7 +1514,7 @@ class Products2 extends Component {
                       color: colorConfig.store.defaultColor,
                       fontWeight: 'bold',
                     }}>
-                    x {this.getQuantityInBasket(item)}{' '}
+                    {this.getQuantityInBasket(item)}x{' '}
                   </Text>
                 ) : null}
                 {item.product.name}
@@ -1435,7 +1522,7 @@ class Products2 extends Component {
               {item.product.description != undefined &&
               item.product.description != '' ? (
                 <Text style={[styles.productDesc]}>
-                  {item.product.description.substr(0, 60)}...
+                  {item.product.description.substr(0, 45)}...
                 </Text>
               ) : null}
             </View>
@@ -1452,17 +1539,23 @@ class Products2 extends Component {
     );
   };
 
-  renderCategoryWithProducts = item => {
-    let lengthItem = 1;
-    if (item.items != undefined) {
-      lengthItem = item.items.length;
+  renderCategoryWithProducts = (item, search) => {
+    if (item.dataLength != undefined) {
+      let length = 1;
+      if (!search) {
+        length = item.dataLength;
+      } else {
+        length = item.items.length;
+      }
       return (
-        <View style={[styles.card, {height: 100 * lengthItem + 100}]}>
+        <View style={[styles.card, {height: 100 * length + 100}]}>
           <Text style={styles.titleCategory}>{item.name}</Text>
           <RecyclerListView
             layoutProvider={this._layoutProvider}
             dataProvider={dataProvider.cloneWithRows(item.items)}
             rowRenderer={this.templateItem}
+            renderFooter={this.renderFooter}
+            // onEndReached={this.handleLoadMoreItems}
           />
         </View>
       );
@@ -1479,18 +1572,78 @@ class Products2 extends Component {
     }
   };
 
+  loadMoreProducts = async (categoryId, outletID, skip, idx) => {
+    try {
+      const {products} = this.state;
+      if (!isEmptyObject(products[idx])) {
+        if (products[idx].dataLength > products[idx].items.length) {
+          let response = await this.props.dispatch(
+            getProductByCategory(outletID, categoryId, skip, 5),
+          );
+
+          if (response && !isEmptyArray(response.data)) {
+            const items = [...products[idx].items, ...response.data];
+            products[idx].items = items;
+            products[idx].skip = skip;
+            products[idx].take = 5;
+
+            // console.log({categories});
+
+            await this.setState({
+              products,
+            });
+            this.products.push(products);
+            this.props.dispatch(saveProductsOutlet(products, outletID, true));
+          }
+        }
+      }
+    } catch (e) {}
+  };
+
+  getProductsLoadMore = async (products, outletID) => {
+    try {
+      if (!isEmptyObject(products[0])) {
+        if (products[0].dataLength > products[0].items.length) {
+          // if (products[0].skip == undefined) {
+          //   products[0].skipNow = products[0].items.length;
+          // }
+
+          // console.log(products[0].skip, 'skip');
+          // console.log(products[0].skipNow, 'skip now');
+          // console.log(products[0].items.length, 'length');
+          let response = await this.props.dispatch(
+            getProductByCategory(outletID, products[0].id, products[0].skip, 5),
+          );
+
+          if (response && !isEmptyArray(response.data)) {
+            const items = [...products[0].items, ...response.data];
+            products[0].items = items;
+            products[0].skip += response.data.length;
+            products[0].take = 5;
+
+            // console.log({categories});
+
+            await this.setState({
+              products,
+            });
+            this.products.push(products);
+            this.props.dispatch(saveProductsOutlet(products, outletID, true));
+          }
+        }
+      }
+    } catch (e) {}
+  };
+
   handleLoadMoreItems = async item => {
     try {
       const {selectedCategory} = this.state;
-      const {categories} = this.state;
+      const {products} = this.state;
+      const outletID = this.state.item.storeId;
 
-      const viewableID = categories[selectedCategory].id;
-
-      if (!isEmptyArray(item.items)) {
-        if (item.dataLength > item.items.length) {
-          await this.getProductsByCategory(item.id, item.skip, 10, true);
-        }
-      }
+      // if (products[0].items.length != products[0].skip) {
+      //   console.log(products[0].skip, 'COBAAAA');
+      //   await this.getProductsLoadMore(products, outletID);
+      // }
     } catch (e) {
       console.log(e);
     }
@@ -1556,13 +1709,13 @@ class Products2 extends Component {
               position: 'absolute',
               backgroundColor: 'transparent',
               zIndex: 2,
-              top: 0,
+              top: 10,
               flexDirection: 'row',
               width: '100%',
             }}>
             <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
               <Icon
-                size={27}
+                size={35}
                 name={Platform.OS === 'ios' ? 'ios-close' : 'md-close'}
                 style={styles.btnBackIcon}
               />
@@ -1580,17 +1733,21 @@ class Products2 extends Component {
           {/* Button Close */}
           <View style={styles.cardImage}>
             {this.state.item.defaultImageURL != undefined ? (
-              <ProgressiveImage
-                resizeMode="cover"
-                style={styles.image}
-                source={{
-                  uri: this.state.item.defaultImageURL,
-                }}
-              />
+              <View style={styles.image}>
+                <ProgressiveImage
+                  style={{
+                    height: 250,
+                    resizeMode: 'cover',
+                    backgroundColor: 'black',
+                  }}
+                  source={{
+                    uri: this.state.item.defaultImageURL,
+                  }}
+                />
+              </View>
             ) : (
               <ProgressiveImage
-                resizeMode="cover"
-                style={[styles.image, {width: '100%'}]}
+                style={[styles.image, {width: '100%', resizeMode: 'stretch'}]}
                 source={appConfig.appImageNull}
               />
             )}
@@ -1744,16 +1901,18 @@ class Products2 extends Component {
           <View style={styles.cardImage}>
             {this.state.item.defaultImageURL != undefined ? (
               <ProgressiveImage
-                resizeMode="cover"
-                style={styles.image}
+                style={{
+                  height: 250,
+                  resizeMode: 'cover',
+                  backgroundColor: 'black',
+                }}
                 source={{
                   uri: this.state.item.defaultImageURL,
                 }}
               />
             ) : (
               <ProgressiveImage
-                resizeMode="cover"
-                style={[styles.image, {width: '100%'}]}
+                style={[styles.image, {width: '100%', resizeMode: 'stretch'}]}
                 source={appConfig.appImageNull}
               />
             )}
@@ -1953,7 +2112,7 @@ class Products2 extends Component {
         .filter(item => item.day == day && item.active == true)
         .map(day => {
           if (
-            Date.parse(`${currentDate} ${time}`) >
+            Date.parse(`${currentDate} ${time}`) >=
               Date.parse(`${currentDate} ${day.open}`) &&
             Date.parse(`${currentDate} ${time}`) <
               Date.parse(`${currentDate} ${day.close}`)
@@ -1997,7 +2156,10 @@ class Products2 extends Component {
     try {
       await this.props.dispatch(dataStores());
       let {item} = this.state;
-      let outlet = this.props.dataStores.find(data => data.id == item.storeId);
+      let outlet = await this.props.dataStores.find(
+        data => data.id == item.storeId,
+      );
+
       item.storeStatus = this.isOpen(outlet);
       item.maxOrderQtyPerItem = outlet.maxOrderQtyPerItem;
       item.maxOrderAmount = outlet.maxOrderAmount;
@@ -2023,6 +2185,12 @@ class Products2 extends Component {
       item.outletType = outlet.outletType;
       item.orderingStatus = outlet.orderingStatus;
 
+      this.props.item = item;
+
+      if (outlet.orderingStatus == 'UNAVAILABLE') {
+        this.setState({products: []});
+      }
+
       this.setState({item});
     } catch (e) {}
   };
@@ -2030,18 +2198,27 @@ class Products2 extends Component {
   _onRefresh = async () => {
     let {item} = this.state;
     await this.setState({products: undefined, refresh: true, item});
+    try {
+      clearInterval(this.interval);
+    } catch (e) {}
     await this.refreshOutlet();
+    this.checkOpeningHours();
     await this.firstMethodToRun(true);
     await this.setState({refresh: false});
     // this.prompOutletIsClosed();
+
+    try {
+      this.refreshOutletStatus();
+    } catch (e) {}
   };
 
   renderFooter = item => {
     try {
-      if (item.items == undefined) {
+      const {products} = this.state;
+      if (products[0].dataLength != products[0].items.length) {
         return (
           <ActivityIndicator
-            size={30}
+            size={50}
             color={colorConfig.store.secondaryColor}
           />
         );
@@ -2085,7 +2262,7 @@ class Products2 extends Component {
           }
         }}
         renderItem={({item}) => {
-          return this.renderCategoryWithProducts(item);
+          return this.renderCategoryWithProducts(item, false);
         }}
         keyExtractor={(item, index) => index.toString()}
       />
@@ -2099,7 +2276,7 @@ class Products2 extends Component {
         <View style={[styles.card, {height: '100%'}]}>
           <FlatList
             data={productsSearch}
-            renderItem={({item}) => this.renderCategoryWithProducts(item)}
+            renderItem={({item}) => this.renderCategoryWithProducts(item, true)}
             keyExtractor={(product, index) => index.toString()}
           />
         </View>
@@ -2395,27 +2572,26 @@ const styles = StyleSheet.create({
   },
   btnBackIcon: {
     color: 'white',
-    margin: 10,
+    // margin: 10,
+    textAlign: 'center',
   },
   btnBack: {
-    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     width: 40,
     marginTop: 5,
     marginLeft: 5,
-    backgroundColor: colorConfig.store.transparent,
+    backgroundColor: colorConfig.store.transparentItem,
     height: 40,
     borderRadius: 50,
   },
   btnSearch: {
-    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     width: 40,
     marginTop: 5,
     marginLeft: '75%',
-    backgroundColor: colorConfig.store.transparent,
+    backgroundColor: colorConfig.store.transparentItem,
     height: 40,
     borderRadius: 50,
   },
@@ -2470,11 +2646,12 @@ const styles = StyleSheet.create({
     margin: 10,
   },
   titleCategory: {
-    color: colorConfig.pageIndex.inactiveTintColor,
+    color: colorConfig.store.title,
     fontSize: 18,
     textAlign: 'left',
-    fontWeight: 'bold',
+    fontFamily: 'Lato-Bold',
     padding: 14,
+    marginBottom: 5,
   },
   titleModifierModal: {
     color: colorConfig.pageIndex.inactiveTintColor,
@@ -2493,7 +2670,7 @@ const styles = StyleSheet.create({
   detail: {
     marginLeft: 15,
     marginRight: 15,
-    maxHeight: 100,
+    maxHeight: 95,
     // marginBottom: 5,
   },
   detailOptionsModal: {
@@ -2505,8 +2682,9 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
   },
   image: {
-    height: 180,
-    resizeMode: 'stretch',
+    height: 250,
+    resizeMode: 'contain',
+    backgroundColor: 'black',
   },
   imageModal: {
     height: Dimensions.get('window').height / 3,
@@ -2517,9 +2695,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     borderBottomColor: colorConfig.pageIndex.inactiveTintColor,
     borderBottomWidth: 1,
-    paddingBottom: 15,
+    paddingBottom: 10,
     marginBottom: 5,
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   detailItemModal: {
     marginTop: 20,
@@ -2561,7 +2739,7 @@ const styles = StyleSheet.create({
   productDesc: {
     color: colorConfig.pageIndex.grayColor,
     marginLeft: 6,
-    fontSize: 10,
+    fontSize: 12,
     maxWidth: Dimensions.get('window').width / 2 + 2,
   },
   productDescModal: {

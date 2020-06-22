@@ -33,6 +33,7 @@ import * as _ from 'lodash';
 import {getOutletById} from '../../actions/stores.action';
 import appConfig from '../../config/appConfig';
 import {refreshToken} from '../../actions/auth.actions';
+import awsConfig from '../../config/awsConfig';
 
 class Cart extends Component {
   constructor(props) {
@@ -1241,9 +1242,18 @@ class Cart extends Component {
               <Text style={styles.totalAddress}>
                 {dataBasket.deliveryAddress.address}
               </Text>
-              <Text style={styles.totalAddress}>
-                {dataBasket.deliveryAddress.city}
-              </Text>
+              {awsConfig.COUNTRY != 'Singapore' ? (
+                <Text style={styles.totalAddress}>
+                  {dataBasket.deliveryAddress.city}
+                </Text>
+              ) : (
+                <Text style={styles.totalAddress}>{awsConfig.COUNTRY}</Text>
+              )}
+              {dataBasket.deliveryAddress.province != undefined ? (
+                <Text style={styles.totalAddress}>
+                  Province: {dataBasket.deliveryAddress.province}
+                </Text>
+              ) : null}
               <Text style={styles.totalAddress}>
                 Postal Code: {dataBasket.deliveryAddress.postalCode}
               </Text>
