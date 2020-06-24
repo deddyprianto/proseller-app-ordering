@@ -94,6 +94,25 @@ class Products2 extends Component {
       },
     );
 
+    this._gridLayoutProvider = new LayoutProvider(
+      index => {
+        if (index !== null) {
+          return ViewTypes.FULL;
+        }
+      },
+      (type, dim) => {
+        switch (type) {
+          case ViewTypes.FULL:
+            dim.width = width / 2 - 10;
+            dim.height = 260;
+            break;
+          default:
+            dim.width = width / 2 - 10;
+            dim.height = 255;
+        }
+      },
+    );
+
     this.state = {
       item: this.props.item,
       products: undefined,
@@ -678,9 +697,9 @@ class Products2 extends Component {
         // console.log(categories);
         this.props.dispatch(saveProductsOutlet(categories, outletID, refresh));
       } else {
-        await this.setState({
-          products: [],
-        });
+        // await this.setState({
+        //   products: [],
+        // });
         this.products.push(categories);
       }
     } catch (e) {
@@ -793,6 +812,13 @@ class Products2 extends Component {
         group.modifier.details.map((detail, j) => {
           delete detail.quantity;
 
+          if (group.modifier.max == 1) {
+            product.product.productModifiers[i].modifier.show = false;
+            delete product.product.productModifiers[i].modifier.selected;
+          } else {
+            product.product.productModifiers[i].modifier.show = true;
+          }
+
           if (
             group.modifier.isYesNo == true &&
             detail.orderingStatus == 'AVAILABLE'
@@ -859,6 +885,14 @@ class Products2 extends Component {
                   product.product.productModifiers[i].postToServer = true;
                   // set quantity basket to product that openend
                   if (item.id == detail.id) {
+                    // check for radio button
+                    if (group.modifier.max == 1) {
+                      product.product.productModifiers[i].modifier.show =
+                        data.modifier.show;
+                      product.product.productModifiers[i].modifier.selected =
+                        data.modifier.selected;
+                    }
+
                     product.product.productModifiers[i].modifier.details[
                       j
                     ].quantity = item.quantity;
@@ -1075,6 +1109,11 @@ class Products2 extends Component {
               data.modifier.details[j].quantity != undefined &&
               data.modifier.details[j].quantity > 0
             ) {
+              // check if price is undefined
+              if (data.modifier.details[j].productPrice == undefined) {
+                data.modifier.details[j].productPrice = 0;
+              }
+
               tempDetails.push(data.modifier.details[j]);
             }
           }
@@ -1150,8 +1189,8 @@ class Products2 extends Component {
         isModalVisible: false,
       });
 
-      if (response.response.resultCode != 200) {
-        Alert.alert('Oppss..', response.response.data.message);
+      if (response.success == false) {
+        Alert.alert('Oppss..', response.response.message);
         this.props.dispatch(getBasket());
       }
     } catch (e) {
@@ -1204,6 +1243,10 @@ class Products2 extends Component {
               data.modifier.details[j].quantity != undefined &&
               data.modifier.details[j].quantity > 0
             ) {
+              // check if price is undefined
+              if (data.modifier.details[j].productPrice == undefined) {
+                data.modifier.details[j].productPrice = 0;
+              }
               tempDetails.push(data.modifier.details[j]);
             }
           }
@@ -1260,7 +1303,7 @@ class Products2 extends Component {
         updateProductToBasket(data, previousData),
       );
 
-      if (response.response.resultCode != 200) {
+      if (response.success == false) {
         Alert.alert('Oppss..', response.response.data.message);
         this.props.dispatch(getBasket());
       }
@@ -1419,9 +1462,9 @@ class Products2 extends Component {
         return {uri: image};
       }
     } catch (e) {
-      return appConfig.appImageNull;
+      return appConfig.foodPlaceholder;
     }
-    return appConfig.appImageNull;
+    return appConfig.foodPlaceholder;
   };
 
   outletAvailableToOrder = () => {
@@ -1469,74 +1512,183 @@ class Products2 extends Component {
     }
   };
 
-  templateItem = (type, item) => {
-    return (
-      <TouchableOpacity
-        disabled={this.availableToOrder(item) ? false : true}
-        style={styles.detail}
-        onPress={() =>
-          this.availableToOrder(item) ? this.toggleModal(item) : false
-        }>
-        {!this.availableToOrder(item) ? (
-          <View
-            style={{
-              backgroundColor: 'rgba(52, 73, 94, 0.2)',
-              width: '100%',
-              marginTop: -10,
-              height: 100,
-              position: 'absolute',
-              zIndex: 2,
-            }}
-          />
-        ) : null}
-        <View style={styles.detailItem}>
-          <View style={{flexDirection: 'row'}}>
+  templateItemGrid = (type, item) => {
+    if (item.product != undefined) {
+      return (
+        <TouchableOpacity
+          disabled={this.availableToOrder(item) ? false : true}
+          onPress={() =>
+            this.availableToOrder(item) ? this.toggleModal(item) : false
+          }
+          style={styles.gridView}>
+          <View>
             {!isEmptyData(item.product.defaultImageURL) ? (
-              <ProgressiveImage
-                style={styles.imageProduct}
+              <Image
                 source={this.getImageUrl(item.product.defaultImageURL)}
-              />
-            ) : null}
-            <View
-              style={
-                isEmptyData(item.product.defaultImageURL) ? {height: 80} : {}
-              }>
-              <Text
                 style={[
-                  styles.productTitle,
-                  isEmptyData(item.product.defaultImageURL)
-                    ? {maxWidth: Dimensions.get('window').width / 2}
-                    : null,
-                ]}>
-                {this.checkIfItemExistInBasket(item) != false ? (
-                  <Text
-                    style={{
-                      color: colorConfig.store.defaultColor,
-                      fontWeight: 'bold',
-                    }}>
-                    {this.getQuantityInBasket(item)}x{' '}
-                  </Text>
-                ) : null}
-                {item.product.name}
-              </Text>
-              {item.product.description != undefined &&
-              item.product.description != '' ? (
-                <Text style={[styles.productDesc]}>
-                  {item.product.description.substr(0, 45)}...
+                  {
+                    alignSelf: 'center',
+                    borderRadius: 5,
+                    height: 150,
+                    width: Dimensions.get('window').width / 2 - 30,
+                    resizeMode: 'cover',
+                  },
+                  !this.availableToOrder(item) ? {opacity: 0.3} : null,
+                ]}
+              />
+            ) : (
+              <Image
+                source={this.getImageUrl(item.product.defaultImageURL)}
+                style={{
+                  alignSelf: 'center',
+                  borderRadius: 5,
+                  height: 150,
+                  width: Dimensions.get('window').width / 2 - 30,
+                  resizeMode: 'cover',
+                }}
+              />
+            )}
+            <Text
+              style={[
+                {
+                  marginTop: 15,
+                  marginLeft: 10,
+                  fontSize: 15,
+                  fontFamily: 'Lato-Medium',
+                  color: colorConfig.store.title,
+                },
+                !this.availableToOrder(item) ? {opacity: 0.3} : null,
+              ]}>
+              {this.checkIfItemExistInBasket(item) != false ? (
+                <Text
+                  style={{
+                    color: colorConfig.store.defaultColor,
+                    fontWeight: 'bold',
+                  }}>
+                  {this.getQuantityInBasket(item)}x{' '}
                 </Text>
               ) : null}
-            </View>
+              <Icon
+                size={17}
+                name={Platform.OS === 'ios' ? 'ios-pricetag' : 'md-pricetag'}
+                style={
+                  this.availableToOrder(item)
+                    ? {color: colorConfig.store.secondaryColor}
+                    : {color: colorConfig.pageIndex.grayColor}
+                }
+              />{' '}
+              {item.product != undefined ? item.product.name : '-'}
+            </Text>
+            {this.availableToOrder(item) ? (
+              <Text
+                style={{
+                  marginLeft: 10,
+                  marginTop: 5,
+                  fontFamily: 'Lato-Bold',
+                  fontSize: 16,
+                  color: colorConfig.store.title,
+                }}>
+                {item.product != undefined &&
+                item.product.retailPrice != undefined &&
+                item.product.retailPrice != '-' &&
+                !isNaN(item.product.retailPrice)
+                  ? this.formatNumber(
+                      CurrencyFormatter(item.product.retailPrice),
+                    )
+                  : CurrencyFormatter(0)}
+              </Text>
+            ) : (
+              <Text
+                style={{
+                  marginLeft: 10,
+                  marginTop: 5,
+                  fontFamily: 'Lato-Medium',
+                  fontSize: 16,
+                  opacity: 0.3,
+                  color: colorConfig.store.title,
+                }}>
+                Unavailable
+              </Text>
+            )}
           </View>
-          <Text style={[styles.productPrice]}>
-            {item.product.retailPrice != undefined &&
-            item.product.retailPrice != '-' &&
-            !isNaN(item.product.retailPrice)
-              ? this.formatNumber(CurrencyFormatter(item.product.retailPrice))
-              : CurrencyFormatter(0)}
-          </Text>
-        </View>
-      </TouchableOpacity>
-    );
+        </TouchableOpacity>
+      );
+    } else {
+      return null;
+    }
+  };
+
+  templateItem = (type, item) => {
+    if (item.product != undefined) {
+      return (
+        <TouchableOpacity
+          disabled={this.availableToOrder(item) ? false : true}
+          style={styles.detail}
+          onPress={() =>
+            this.availableToOrder(item) ? this.toggleModal(item) : false
+          }>
+          <View style={styles.detailItem}>
+            <View style={{flexDirection: 'row'}}>
+              {!isEmptyData(item.product.defaultImageURL) ? (
+                <ProgressiveImage
+                  style={
+                    !this.availableToOrder(item)
+                      ? styles.imageProductUnavailable
+                      : styles.imageProduct
+                  }
+                  source={this.getImageUrl(item.product.defaultImageURL)}
+                />
+              ) : null}
+              <View
+                style={
+                  isEmptyData(item.product.defaultImageURL) ? {height: 80} : {}
+                }>
+                <Text
+                  style={[
+                    styles.productTitle,
+                    !this.availableToOrder(item) ? {opacity: 0.4} : null,
+                    isEmptyData(item.product.defaultImageURL)
+                      ? {maxWidth: Dimensions.get('window').width / 2}
+                      : null,
+                  ]}>
+                  {this.checkIfItemExistInBasket(item) != false ? (
+                    <Text
+                      style={{
+                        color: colorConfig.store.defaultColor,
+                        fontWeight: 'bold',
+                      }}>
+                      {this.getQuantityInBasket(item)}x{' '}
+                    </Text>
+                  ) : null}
+                  {item.product.name}
+                </Text>
+                {!this.availableToOrder(item) ? (
+                  <Text style={styles.productUnavailable}>Unavailable</Text>
+                ) : item.product.description != undefined &&
+                  item.product.description != '' ? (
+                  <Text style={[styles.productDesc]}>
+                    {item.product.description.substr(0, 45)}...
+                  </Text>
+                ) : null}
+              </View>
+            </View>
+            <Text
+              style={[
+                styles.productPrice,
+                !this.availableToOrder(item) ? {opacity: 0.4} : null,
+              ]}>
+              {item.product.retailPrice != undefined &&
+              item.product.retailPrice != '-' &&
+              !isNaN(item.product.retailPrice)
+                ? this.formatNumber(CurrencyFormatter(item.product.retailPrice))
+                : CurrencyFormatter(0)}
+            </Text>
+          </View>
+        </TouchableOpacity>
+      );
+    } else {
+      return null;
+    }
   };
 
   renderCategoryWithProducts = (item, search) => {
@@ -1547,18 +1699,38 @@ class Products2 extends Component {
       } else {
         length = item.items.length;
       }
-      return (
-        <View style={[styles.card, {height: 100 * length + 100}]}>
-          <Text style={styles.titleCategory}>{item.name}</Text>
-          <RecyclerListView
-            layoutProvider={this._layoutProvider}
-            dataProvider={dataProvider.cloneWithRows(item.items)}
-            rowRenderer={this.templateItem}
-            renderFooter={this.renderFooter}
-            // onEndReached={this.handleLoadMoreItems}
-          />
-        </View>
-      );
+
+      // check mode display
+      if (item.displayMode != undefined && item.displayMode === 'GRID') {
+        return (
+          <View
+            style={[styles.card, {height: 260 * Math.ceil(length / 2) + 100}]}>
+            <Text style={[styles.titleCategory]}>
+              {item.name.substr(0, 35)}
+            </Text>
+            <RecyclerListView
+              style={{marginLeft: 5}}
+              layoutProvider={this._gridLayoutProvider}
+              dataProvider={dataProvider.cloneWithRows(item.items)}
+              rowRenderer={this.templateItemGrid}
+              renderFooter={this.renderFooter}
+            />
+          </View>
+        );
+      } else {
+        return (
+          <View style={[styles.card, {height: 100 * length + 100}]}>
+            <Text style={styles.titleCategory}>{item.name.substr(0, 35)}</Text>
+            <RecyclerListView
+              layoutProvider={this._layoutProvider}
+              dataProvider={dataProvider.cloneWithRows(item.items)}
+              rowRenderer={this.templateItem}
+              renderFooter={this.renderFooter}
+              // onEndReached={this.handleLoadMoreItems}
+            />
+          </View>
+        );
+      }
     } else {
       return (
         <View style={[styles.card, {height: 100}]}>
@@ -2600,6 +2772,12 @@ const styles = StyleSheet.create({
     height: 80,
     borderRadius: 5,
   },
+  imageProductUnavailable: {
+    width: 80,
+    height: 80,
+    borderRadius: 5,
+    opacity: 0.3,
+  },
   btnBackText: {
     color: colorConfig.store.defaultColor,
     fontWeight: 'bold',
@@ -2694,7 +2872,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     borderBottomColor: colorConfig.pageIndex.inactiveTintColor,
-    borderBottomWidth: 1,
+    borderBottomWidth: 0.6,
     paddingBottom: 10,
     marginBottom: 5,
     overflow: 'hidden',
@@ -2740,6 +2918,14 @@ const styles = StyleSheet.create({
     color: colorConfig.pageIndex.grayColor,
     marginLeft: 6,
     fontSize: 12,
+    maxWidth: Dimensions.get('window').width / 2 + 2,
+  },
+  productUnavailable: {
+    color: colorConfig.pageIndex.grayColor,
+    fontFamily: 'Lato-Medium',
+    marginLeft: 6,
+    marginTop: 3,
+    fontSize: 14,
     maxWidth: Dimensions.get('window').width / 2 + 2,
   },
   productDescModal: {
@@ -2941,5 +3127,10 @@ const styles = StyleSheet.create({
     padding: 2,
     alignItems: 'center',
     marginLeft: '1%',
+  },
+  gridView: {
+    flex: 1,
+    height: 240,
+    alignItems: 'stretch',
   },
 });

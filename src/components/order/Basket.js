@@ -1139,9 +1139,11 @@ class Basket extends Component {
         const {products} = this.state;
         for (let i = 0; i < products.length; i++) {
           for (let j = 0; j < products[i].items.length; j++) {
-            if (products[i].items[j].product.id == existProduct.product.id) {
-              originalProduct = products[i].items[j];
-              break;
+            if (products[i].items[j].product != undefined) {
+              if (products[i].items[j].product.id == existProduct.product.id) {
+                originalProduct = products[i].items[j];
+                break;
+              }
             }
           }
         }
@@ -1163,6 +1165,14 @@ class Basket extends Component {
           if (!isEmptyArray(group.modifier.details))
             group.modifier.details.map((detail, j) => {
               delete detail.quantity;
+
+              // return back to normal
+              if (group.modifier.max == 1) {
+                product.product.productModifiers[i].modifier.show = false;
+                delete product.product.productModifiers[i].modifier.selected;
+              } else {
+                product.product.productModifiers[i].modifier.show = true;
+              }
             });
         });
 
@@ -1184,6 +1194,15 @@ class Basket extends Component {
                       ].postToServer = true;
                       // set quantity basket to product that openend
                       if (item.id == detail.id) {
+                        // check for radio button selected
+                        if (group.modifier.max == 1) {
+                          product.product.productModifiers[i].modifier.show =
+                            data.modifier.show;
+                          product.product.productModifiers[
+                            i
+                          ].modifier.selected = data.modifier.selected;
+                        }
+
                         existProduct.product.productModifiers[
                           i
                         ].modifier.details[j].quantity = item.quantity;
@@ -1420,6 +1439,11 @@ class Basket extends Component {
               data.modifier.details[j].quantity != undefined &&
               data.modifier.details[j].quantity > 0
             ) {
+              // check if price is undefined
+              if (data.modifier.details[j].productPrice == undefined) {
+                data.modifier.details[j].productPrice = 0;
+              }
+
               tempDetails.push(data.modifier.details[j]);
             }
           }
@@ -1473,7 +1497,7 @@ class Basket extends Component {
         selectedProduct: {},
         isModalVisible: false,
       });
-      if (response.response.resultCode != 200) {
+      if (response.success == false) {
         Alert.alert('Oppss..', response.response.data.message);
         this.props.dispatch(getBasket());
       }
@@ -2028,21 +2052,19 @@ class Basket extends Component {
                                   }}>
                                   {item.quantity}x
                                 </Text>{' '}
-                                {item.product.name} ({' '}
-                                {this.format(CurrencyFormatter(item.unitPrice))}{' '}
+                                {item.product != undefined
+                                  ? item.product.name
+                                  : '-'}{' '}
+                                ({' '}
+                                {this.format(
+                                  CurrencyFormatter(
+                                    item.product != undefined
+                                      ? item.product.retailPrice
+                                      : 0,
+                                  ),
+                                )}{' '}
                                 )
                               </Text>
-                              {item.remark != undefined && item.remark != '' ? (
-                                <Text
-                                  style={{
-                                    color:
-                                      colorConfig.pageIndex.inactiveTintColor,
-                                    fontSize: 12,
-                                    fontStyle: 'italic',
-                                  }}>
-                                  note: {item.remark}
-                                </Text>
-                              ) : null}
                               {/* loop item modifier */}
                               {!isEmptyArray(item.modifiers) ? (
                                 <Text
@@ -2050,13 +2072,26 @@ class Basket extends Component {
                                     color:
                                       colorConfig.pageIndex.inactiveTintColor,
                                     fontSize: 10,
-                                    marginLeft: 10,
+                                    marginLeft: 17,
                                     fontStyle: 'italic',
                                   }}>
                                   Add On:
                                 </Text>
                               ) : null}
                               {this.renderItemModifier(item)}
+                              {item.remark != undefined && item.remark != '' ? (
+                                <Text
+                                  style={{
+                                    marginTop: 3,
+                                    color:
+                                      colorConfig.pageIndex.inactiveTintColor,
+                                    fontSize: 12,
+                                    marginLeft: 17,
+                                    fontStyle: 'italic',
+                                  }}>
+                                  Note: {item.remark}
+                                </Text>
+                              ) : null}
                               {/* loop item modifier */}
                               {this.props.dataBasket.status == 'PENDING' &&
                               this.props.tableType == undefined &&
@@ -2382,7 +2417,7 @@ const styles = StyleSheet.create({
     maxWidth: Dimensions.get('window').width,
     fontSize: 11,
     fontStyle: 'italic',
-    marginLeft: 10,
+    marginLeft: 17,
     fontFamily: 'Lato-Medium',
   },
   descPrice: {
