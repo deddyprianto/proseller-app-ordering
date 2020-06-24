@@ -584,32 +584,42 @@ class WaitingFood extends Component {
                             }}>
                             {item.quantity}x
                           </Text>{' '}
-                          {item.product.name} ({' '}
-                          {this.format(CurrencyFormatter(item.unitPrice))} )
+                          {item.product != undefined ? item.product.name : '-'}{' '}
+                          (
+                          {this.format(
+                            CurrencyFormatter(
+                              item.product != undefined
+                                ? item.product.retailPrice
+                                : 0,
+                            ),
+                          )}{' '}
+                          )
                         </Text>
-                        {item.remark != undefined && item.remark != '' ? (
-                          <Text
-                            style={{
-                              color: colorConfig.pageIndex.inactiveTintColor,
-                              fontSize: 12,
-                              fontStyle: 'italic',
-                            }}>
-                            note: {item.remark}
-                          </Text>
-                        ) : null}
                         {/* loop item modifier */}
                         {!isEmptyArray(item.modifiers) ? (
                           <Text
                             style={{
                               color: colorConfig.pageIndex.inactiveTintColor,
                               fontSize: 10,
-                              marginLeft: 10,
+                              marginLeft: 17,
                               fontStyle: 'italic',
                             }}>
                             Add On:
                           </Text>
                         ) : null}
                         {this.renderItemModifier(item)}
+                        {item.remark != undefined && item.remark != '' ? (
+                          <Text
+                            style={{
+                              color: colorConfig.pageIndex.inactiveTintColor,
+                              fontSize: 12,
+                              marginLeft: 17,
+                              marginTop: 5,
+                              fontStyle: 'italic',
+                            }}>
+                            Note: {item.remark}
+                          </Text>
+                        ) : null}
                       </View>
                     </View>
                     <View>
@@ -988,7 +998,7 @@ const styles = StyleSheet.create({
     maxWidth: Dimensions.get('window').width,
     fontSize: 11,
     fontStyle: 'italic',
-    marginLeft: 10,
+    marginLeft: 17,
     fontFamily: 'Lato-Medium',
   },
   descPrice: {

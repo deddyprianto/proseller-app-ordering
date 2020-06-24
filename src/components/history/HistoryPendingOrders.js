@@ -143,13 +143,21 @@ class HistoryPayment extends Component {
 
   getStatusText = item => {
     try {
-      if (item === 'SUBMITTED') return 'Submitted';
-      else if (item === 'CONFIRMED') return 'Confirmed';
-      else if (item === 'PROCESSING') return 'Processing';
-      else if (item === 'READY_FOR_COLLECTION') return 'Ready for Colection';
-      else if (item === 'READY_FOR_DELIVERY') return 'Ready for Delivery';
-      else if (item === 'ON_THE_WAY') return 'On The Way';
-      else return item;
+      if (item === 'SUBMITTED') {
+        return 'Submitted';
+      } else if (item === 'CONFIRMED') {
+        return 'Confirmed';
+      } else if (item === 'PROCESSING') {
+        return 'Processing';
+      } else if (item === 'READY_FOR_COLLECTION') {
+        return 'Ready for Colection';
+      } else if (item === 'READY_FOR_DELIVERY') {
+        return 'Ready for Delivery';
+      } else if (item === 'ON_THE_WAY') {
+        return 'On The Way';
+      } else {
+        return item;
+      }
     } catch (e) {}
   };
 
@@ -198,7 +206,12 @@ class HistoryPayment extends Component {
                       </Text>
                     </View>
                     <View style={styles.sejajarSpace}>
-                      <View style={{flexDirection: 'row'}}>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                        }}>
                         <Icon
                           size={16}
                           name={Platform.OS === 'ios' ? 'ios-play' : 'md-play'}
