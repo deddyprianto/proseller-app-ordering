@@ -500,7 +500,7 @@ class Store extends Component {
           ) : (
             <View style={styles.container}>
               {this.props.dataPromotion == undefined ||
-              this.props.dataPromotion.count == 0 ? null : (
+              isEmptyArray(this.props.dataPromotion) ? null : (
                 <StorePromotion />
               )}
 

@@ -1,10 +1,11 @@
 import React, {Component} from 'react';
-import {StyleSheet, TouchableOpacity} from 'react-native';
+import {Platform, StyleSheet, TouchableOpacity} from 'react-native';
 import {View} from 'react-native-animatable';
 import PropTypes from 'prop-types';
+import Icon from 'react-native-vector-icons/Ionicons';
 
-const DEFAULT_SIZE_MULTIPLIER = 1.2;
-const DEFAULT_OUTER_BORDER_WIDTH_MULTIPLIER = 0.1;
+const DEFAULT_SIZE_MULTIPLIER = 1.1;
+const DEFAULT_OUTER_BORDER_WIDTH_MULTIPLIER = 0.08;
 
 export default class RadioButton extends Component {
   static propTypes = {
@@ -29,20 +30,34 @@ export default class RadioButton extends Component {
       borderColor: outerColor,
       width: size + size * DEFAULT_SIZE_MULTIPLIER,
       height: size + size * DEFAULT_SIZE_MULTIPLIER,
-      // borderRadius: (size + size * DEFAULT_SIZE_MULTIPLIER) / 2,
+      borderRadius: 3,
       borderWidth: size * DEFAULT_OUTER_BORDER_WIDTH_MULTIPLIER,
     };
 
     const innerStyle = {
-      width: size + 5,
-      height: size + 5,
-      // borderRadius: size / 2,
+      width: size + size * DEFAULT_SIZE_MULTIPLIER,
+      height: size + size * DEFAULT_SIZE_MULTIPLIER,
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderRadius: 3,
       backgroundColor: innerColor,
     };
 
     return (
       <TouchableOpacity style={[styles.radio, outerStyle]} onPress={onPress}>
-        {isSelected ? <View style={innerStyle} {...this.props} /> : null}
+        {isSelected ? (
+          <View style={innerStyle}>
+            <Icon
+              size={17}
+              name={Platform.OS === 'ios' ? 'ios-checkmark' : 'md-checkmark'}
+              style={{
+                color: 'white',
+                margin: 0,
+                padding: 0,
+              }}
+            />
+          </View>
+        ) : null}
       </TouchableOpacity>
     );
   }

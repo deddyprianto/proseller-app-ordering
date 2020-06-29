@@ -3,8 +3,8 @@ import {StyleSheet, TouchableOpacity} from 'react-native';
 import {View} from 'react-native-animatable';
 import PropTypes from 'prop-types';
 
-const DEFAULT_SIZE_MULTIPLIER = 0.6;
-const DEFAULT_OUTER_BORDER_WIDTH_MULTIPLIER = 0.1;
+const DEFAULT_SIZE_MULTIPLIER = 0.7;
+const DEFAULT_OUTER_BORDER_WIDTH_MULTIPLIER = 0.08;
 
 export default class RadioButton extends Component {
   static propTypes = {
@@ -34,8 +34,8 @@ export default class RadioButton extends Component {
     };
 
     const innerStyle = {
-      width: size - 2,
-      height: size - 2,
+      width: size,
+      height: size,
       borderRadius: size / 2,
       backgroundColor: innerColor,
     };

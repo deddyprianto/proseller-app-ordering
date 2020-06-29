@@ -196,7 +196,7 @@ class InputEmail extends Component {
             </Text>
             <View
               style={{
-                marginVertical: 25,
+                marginVertical: 18,
               }}>
               <TextInput
                 keyboardType="email-address"

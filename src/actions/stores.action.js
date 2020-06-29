@@ -1,22 +1,16 @@
 import {fetchApiMasterData} from '../service/apiMasterData';
 import {refreshToken} from './auth.actions';
 
-export const getCompanyInfo = payload => {
+export const getCompanyInfo = () => {
   return async (dispatch, getState) => {
     const state = getState();
     try {
-      const {
-        authReducer: {
-          tokenUser: {token},
-        },
-      } = state;
-
       const response = await fetchApiMasterData(
         '/info/company',
         'GET',
         null,
         200,
-        token,
+        null,
       );
       console.log('responsenya company info', response);
 

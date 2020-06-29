@@ -1169,7 +1169,7 @@ class Basket extends Component {
               // return back to normal
               if (group.modifier.max == 1) {
                 product.product.productModifiers[i].modifier.show = false;
-                delete product.product.productModifiers[i].modifier.selected;
+                // delete product.product.productModifiers[i].modifier.selected;
               } else {
                 product.product.productModifiers[i].modifier.show = true;
               }
@@ -1198,9 +1198,9 @@ class Basket extends Component {
                         if (group.modifier.max == 1) {
                           product.product.productModifiers[i].modifier.show =
                             data.modifier.show;
-                          product.product.productModifiers[
-                            i
-                          ].modifier.selected = data.modifier.selected;
+                          // product.product.productModifiers[
+                          //   i
+                          // ].modifier.selected = data.modifier.selected;
                         }
 
                         existProduct.product.productModifiers[

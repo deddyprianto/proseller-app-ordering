@@ -20,6 +20,7 @@ import {
   PermissionsAndroid,
   Keyboard,
   SafeAreaView,
+  TextInput,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
@@ -203,7 +204,7 @@ class InputPhoneNumber extends Component {
     this.setState({loading: true});
     try {
       var dataRequest = {
-        phoneNumber: this.state.phone,
+        phoneNumber: this.state.phoneNumber + this.state.phone,
       };
       let phoneNumber = {
         phoneNumber: dataRequest.phoneNumber,
@@ -295,42 +296,83 @@ class InputPhoneNumber extends Component {
               <Text
                 style={{
                   color: colorConfig.pageIndex.grayColor,
-                  fontSize: 16,
+                  fontSize: 15,
+                  marginBottom: 5,
                   fontFamily: 'Lato-Medium',
                 }}>
                 {intlData.messages.enterMobileNumber}
               </Text>
               <View
                 style={{
-                  marginVertical: 15,
+                  marginVertical: 10,
                   flexDirection: 'row',
                   color: colorConfig.store.title,
-                  borderColor: colorConfig.pageIndex.inactiveTintColor,
-                  borderWidth: 1,
                   borderRadius: 10,
                 }}>
-                <PhoneInput
-                  flagStyle={{width: 35, height: 25}}
-                  textStyle={{fontSize: 18, fontFamily: 'Lato-Medium'}}
+                <View
                   style={{
-                    fontSize: 18,
+                    flexDirection: 'row',
                     width: '100%',
-                    padding: 15,
-                    color: 'black',
-                  }}
-                  ref={ref => {
-                    this.phone = ref;
-                  }}
-                  onChangePhoneNumber={() => {
-                    this.setState({phone: this.phone.getValue()});
-                  }}
-                  value={this.state.phoneNumber}
-                  onPressFlag={() => {
-                    this.setState({
-                      openModalCountry: true,
-                    });
-                  }}
-                />
+                    maxWidth: '100%',
+                  }}>
+                  <PhoneInput
+                    flagStyle={{
+                      width: 35,
+                      height: 25,
+                      justifyContent: 'center',
+                      marginRight: -5,
+                      marginLeft: 5
+                    }}
+                    textStyle={{fontSize: 0, fontFamily: 'Lato-Medium'}}
+                    style={{
+                      padding: 5,
+                      color: 'black',
+                      backgroundColor: colorConfig.store.transparentBG,
+                      borderRadius: 5,
+                    }}
+                    ref={ref => {
+                      this.phone = ref;
+                    }}
+                    onChangePhoneNumber={() => {
+                      this.setState({phone: this.phone.getValue()});
+                    }}
+                    value={this.state.phoneNumber}
+                    onPressFlag={() => {
+                      this.setState({
+                        openModalCountry: true,
+                      });
+                    }}
+                  />
+                  <TouchableOpacity
+                    onPress={() => {
+                      this.setState({
+                        openModalCountry: true,
+                      });
+                    }}
+                    style={{
+                      justifyContent: 'center',
+                      paddingHorizontal: 5,
+                    }}>
+                    <Text style={{fontSize: 18, fontFamily: 'Lato-Medium'}}>
+                      {this.state.phoneNumber}
+                    </Text>
+                  </TouchableOpacity>
+                  <TextInput
+                    value={this.state.phone}
+                    keyboardType={'numeric'}
+                    onChangeText={value => this.setState({phone: value})}
+                    style={{
+                      fontSize: 17,
+                      fontFamily: 'Lato-Medium',
+                      paddingHorizontal: 10,
+                      color: colorConfig.store.title,
+                      borderColor: colorConfig.pageIndex.inactiveTintColor,
+                      borderWidth: 1,
+                      borderRadius: 10,
+                      flex: 1,
+                    }}
+                  />
+                </View>
               </View>
               <View style={{marginVertical: 15}}>
                 <TouchableHighlight

@@ -11,6 +11,7 @@ const appConfig = {
   appTextWelcome: require('../assets/img/welcome.png'),
   appImageNull: require('../assets/img/image_null.png'),
   foodPlaceholder: require('../assets/img/food-placeholder.jpg'),
+  welcomeLogo: require('../assets/img/welcome-logo.jpg'),
   // button
   appButtonSignin: require('../assets/img/button_sigin.png'),
   appButtonFB: require('../assets/img/button_fb.png'),

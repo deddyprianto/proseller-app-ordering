@@ -16,7 +16,8 @@ import {
   TextInput,
   Linking,
   TouchableHighlight,
-  Alert, SafeAreaView,
+  Alert,
+  SafeAreaView,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
@@ -142,7 +143,7 @@ class EmailRegister extends Component {
     try {
       var dataRequest = {
         username: this.props.email,
-        phoneNumber: this.state.phone,
+        phoneNumber: this.state.phoneNumber + this.state.phone,
         email: this.props.email,
         name: this.state.name,
         type: 'userPool',
@@ -219,8 +220,7 @@ class EmailRegister extends Component {
                 style={{
                   color: colorConfig.store.title,
                   fontSize: 15,
-                  fontWeight: 'bold',
-                  fontFamily: 'Lato-Medium',
+                  fontFamily: 'Lato-Bold',
                 }}>
                 {intlData.messages.register} {intlData.messages.for}{' '}
                 {this.props.email}
@@ -244,7 +244,7 @@ class EmailRegister extends Component {
                 style={{
                   fontSize: 15,
                   fontFamily: 'Lato-Medium',
-                  padding: 15,
+                  padding: 12,
                   color: colorConfig.store.title,
                   borderColor: colorConfig.pageIndex.inactiveTintColor,
                   borderWidth: 1,
@@ -264,34 +264,75 @@ class EmailRegister extends Component {
             </View>
             <View
               style={{
-                // marginVertical: 15,
+                marginVertical: 5,
                 flexDirection: 'row',
                 color: colorConfig.store.title,
-                borderColor: colorConfig.pageIndex.inactiveTintColor,
-                borderWidth: 1,
                 borderRadius: 10,
               }}>
-              <PhoneInput
-                flagStyle={{width: 35, height: 25}}
-                textStyle={{fontSize: 18, fontFamily: 'Lato-Medium'}}
+              <View
                 style={{
-                  fontSize: 18,
+                  flexDirection: 'row',
                   width: '100%',
-                  padding: 15,
-                }}
-                ref={ref => {
-                  this.phone = ref;
-                }}
-                onChangePhoneNumber={() => {
-                  this.setState({phone: this.phone.getValue()});
-                }}
-                value={this.state.phoneNumber}
-                onPressFlag={() => {
-                  this.setState({
-                    openModalCountry: true,
-                  });
-                }}
-              />
+                  maxWidth: '100%',
+                }}>
+                <PhoneInput
+                  flagStyle={{
+                    width: 35,
+                    height: 25,
+                    justifyContent: 'center',
+                    marginRight: -5,
+                    marginLeft: 5,
+                  }}
+                  textStyle={{fontSize: 0, fontFamily: 'Lato-Medium'}}
+                  style={{
+                    padding: 5,
+                    color: 'black',
+                    backgroundColor: colorConfig.store.transparentBG,
+                    borderRadius: 5,
+                  }}
+                  ref={ref => {
+                    this.phone = ref;
+                  }}
+                  onChangePhoneNumber={() => {
+                    this.setState({phone: this.phone.getValue()});
+                  }}
+                  value={this.state.phoneNumber}
+                  onPressFlag={() => {
+                    this.setState({
+                      openModalCountry: true,
+                    });
+                  }}
+                />
+                <TouchableOpacity
+                  onPress={() => {
+                    this.setState({
+                      openModalCountry: true,
+                    });
+                  }}
+                  style={{
+                    justifyContent: 'center',
+                    paddingHorizontal: 5,
+                  }}>
+                  <Text style={{fontSize: 18, fontFamily: 'Lato-Medium'}}>
+                    {this.state.phoneNumber}
+                  </Text>
+                </TouchableOpacity>
+                <TextInput
+                  value={this.state.phone}
+                  keyboardType={'numeric'}
+                  onChangeText={value => this.setState({phone: value})}
+                  style={{
+                    fontSize: 17,
+                    fontFamily: 'Lato-Medium',
+                    paddingHorizontal: 10,
+                    color: colorConfig.store.title,
+                    borderColor: colorConfig.pageIndex.inactiveTintColor,
+                    borderWidth: 1,
+                    borderRadius: 10,
+                    flex: 1,
+                  }}
+                />
+              </View>
             </View>
             <View style={{marginVertical: 30}}>
               <TouchableHighlight

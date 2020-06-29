@@ -15,7 +15,6 @@ import {
   ActivityIndicator,
   FlatList,
   SafeAreaView,
-  Switch,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/EvilIcons';
 import {Actions} from 'react-native-router-flux';
@@ -312,7 +311,7 @@ export default class ModalOrder extends Component {
                 : null,
             ]}>
             <Text style={styles.textBtnAddModifier}>
-              {this.state.selectedModifier.quantity != 0 ? 'Add' : 'Remove'}
+              {this.state.selectedModifier.quantity != 0 ? 'Ok' : 'Remove'}
             </Text>
           </TouchableOpacity>
         </Dialog.Content>
@@ -343,7 +342,7 @@ export default class ModalOrder extends Component {
     );
   };
 
-  openModalModifierQty = async (item, indexDetails, modifier) => {
+  openModalModifierQty = async (item, indexDetails, modifier, toggle) => {
     item.quantityTemp = item.quantity;
     await this.setState({selectedModifier: item});
     // check if mode modifier is checkbox
@@ -371,6 +370,11 @@ export default class ModalOrder extends Component {
         }
         return;
       }
+    }
+
+    if (toggle == true) {
+      await this.removeModifier();
+      return;
     }
 
     await this.setState({modalQty: true});
@@ -450,23 +454,6 @@ export default class ModalOrder extends Component {
         this.props.product.product.productModifiers[
           indexModifier
         ].modifier.details[indexDetails].quantity = 1;
-
-        if (
-          productModifiers[indexModifier].modifier.max == 1 &&
-          productModifiers[indexModifier].modifier.isYesNo != true
-        ) {
-          // mark selected for radio button
-          this.props.product.product.productModifiers[
-            indexModifier
-          ].modifier.selected = this.props.product.product.productModifiers[
-            indexModifier
-          ].modifier.details[indexDetails];
-
-          // toggle collapse for radio button
-          this.props.product.product.productModifiers[
-            indexModifier
-          ].modifier.show = false;
-        }
 
         // mark modifier group that has been selected
         this.props.product.product.productModifiers[
@@ -644,26 +631,29 @@ export default class ModalOrder extends Component {
     let available = true;
     item.orderingStatus != 'AVAILABLE' ? (available = false) : true;
     return (
-      <TouchableOpacity
-        onPress={() =>
-          available
-            ? this.openModalModifierQty(item, idx, modifier.modifier)
-            : false
-        }
+      <View
         style={[styles.detailOptionsModal, !available ? {opacity: 0.3} : null]}>
         <CheckBox
           value={item}
           isSelected={this.findExistModifier(item) ? true : false}
           onPress={() => {
             available
-              ? this.openModalModifierQty(item, idx, modifier.modifier)
+              ? this.openModalModifierQty(item, idx, modifier.modifier, true)
               : false;
           }}
         />
-        <Text
+        <TouchableOpacity
+          onPress={() =>
+            available
+              ? this.openModalModifierQty(item, idx, modifier.modifier, true)
+              : false
+          }
           style={{
-            color: colorConfig.pageIndex.grayColor,
-            fontFamily: 'Lato-Bold',
+            marginLeft: 5,
+            alignItems: 'center',
+            paddingVertical: 10,
+            paddingRight: 10,
+            flexDirection: 'row',
           }}>
           <Text
             style={{
@@ -674,20 +664,42 @@ export default class ModalOrder extends Component {
               ? `${item.quantity}x `
               : null}
           </Text>
-          {item.name}
-          {'   '}
-          {item.quantity != undefined && item.quantity > 0 ? (
+          <Text
+            style={{
+              color: colorConfig.pageIndex.grayColor,
+              fontFamily: 'Lato-Bold',
+            }}>
+            {item.name}
+          </Text>
+          {/* Make more padding right */}
+          {item.quantity != undefined && item.quantity > 0 ? null : (
+            <View
+              style={{
+                width: '100%',
+                paddingVertical: 10,
+              }}
+            />
+          )}
+        </TouchableOpacity>
+        {item.quantity != undefined && item.quantity > 0 ? (
+          <TouchableOpacity
+            onPress={() =>
+              available
+                ? this.openModalModifierQty(item, idx, modifier.modifier)
+                : false
+            }>
             <Text
               style={{
                 color: colorConfig.store.defaultColor,
                 fontSize: 12,
                 paddingLeft: 10,
+                paddingVertical: 10,
                 textDecorationLine: 'underline',
               }}>
               more
             </Text>
-          ) : null}
-        </Text>
+          </TouchableOpacity>
+        ) : null}
         {!available ? (
           <Text
             style={{
@@ -699,7 +711,7 @@ export default class ModalOrder extends Component {
             }}>
             Unavailable
           </Text>
-        ) : (
+        ) : item.productPrice == undefined || item.productPrice === 0 ? null : (
           <Text
             style={{
               marginTop: 5,
@@ -712,41 +724,46 @@ export default class ModalOrder extends Component {
             {this.formatNumber(CurrencyFormatter(item.productPrice))}{' '}
           </Text>
         )}
-      </TouchableOpacity>
+      </View>
     );
   };
 
-  renderSelectedItem = item => {
-    if (item.modifier.selected != undefined)
-      return (
-        <TouchableOpacity
-          onPress={async () => {
-            await this.setState({selectedModifier: item.modifier.selected});
-            await this.removeModifier();
-          }}
-          style={[styles.detailOptionsModal]}>
-          <RadioButton isSelected={true} />
-          <Text
-            style={{
-              color: colorConfig.pageIndex.grayColor,
-              fontFamily: 'Lato-Bold',
-            }}>
-            {item.modifier.selected.name}
-          </Text>
-          <Text
-            style={{
-              marginTop: 5,
-              position: 'absolute',
-              right: 3,
-              color: colorConfig.pageIndex.grayColor,
-              fontFamily: 'Lato-Bold',
-            }}>
-            {' + '}
-            {this.formatNumber(CurrencyFormatter(item.productPrice))}{' '}
-          </Text>
-        </TouchableOpacity>
-      );
-  };
+  // renderSelectedItem = item => {
+  //   if (item.modifier.selected != undefined)
+  //     return (
+  //       <TouchableOpacity
+  //         onPress={async () => {
+  //           await this.setState({selectedModifier: item.modifier.selected});
+  //           await this.removeModifier();
+  //         }}
+  //         style={[styles.detailOptionsModal]}>
+  //         <RadioButton isSelected={true} />
+  //         <Text
+  //           style={{
+  //             color: colorConfig.pageIndex.grayColor,
+  //             fontFamily: 'Lato-Bold',
+  //           }}>
+  //           {item.modifier.selected.name}
+  //         </Text>
+  //         {item.modifier.selected.productPrice == undefined ||
+  //         item.modifier.selected.productPrice === 0 ? null : (
+  //           <Text
+  //             style={{
+  //               marginTop: 5,
+  //               position: 'absolute',
+  //               right: 3,
+  //               color: colorConfig.pageIndex.grayColor,
+  //               fontFamily: 'Lato-Bold',
+  //             }}>
+  //             {' + '}
+  //             {this.formatNumber(
+  //               CurrencyFormatter(item.modifier.selected.productPrice),
+  //             )}{' '}
+  //           </Text>
+  //         )}
+  //       </TouchableOpacity>
+  //     );
+  // };
 
   renderItemModifierRadioButton = (item, idx, modifier) => {
     let available = true;
@@ -758,7 +775,11 @@ export default class ModalOrder extends Component {
             ? this.openModalModifierQty(item, idx, modifier.modifier)
             : false
         }
-        style={[styles.detailOptionsModal, !available ? {opacity: 0.3} : null]}>
+        style={[
+          styles.detailOptionsModal,
+          {paddingVertical: 10},
+          !available ? {opacity: 0.3} : null,
+        ]}>
         <RadioButton
           value={item}
           isSelected={this.findExistModifier(item) ? true : false}
@@ -770,8 +791,12 @@ export default class ModalOrder extends Component {
         />
         <Text
           style={{
-            color: colorConfig.pageIndex.grayColor,
+            color: this.findExistModifier(item)
+              ? colorConfig.store.titleSelected
+              : colorConfig.pageIndex.grayColor,
             fontFamily: 'Lato-Bold',
+            marginLeft: 5,
+            fontSize: this.findExistModifier(item) ? 15 : null,
           }}>
           {item.name}
         </Text>
@@ -786,7 +811,7 @@ export default class ModalOrder extends Component {
             }}>
             Unavailable
           </Text>
-        ) : (
+        ) : item.productPrice == undefined || item.productPrice === 0 ? null : (
           <Text
             style={{
               marginTop: 5,
@@ -819,23 +844,30 @@ export default class ModalOrder extends Component {
         }
         style={[styles.detailOptionsModalYesNo]}>
         <View style={{marginRight: 10}}>
-          <Switch
-            trackColor={
-              available
-                ? {false: '#e0e0e0', true: '#2dc0fa'}
-                : {false: '#e0e0e0', true: '#e0e0e0'}
-            }
-            thumbColor={
-              available
-                ? colorConfig.store.defaultColor
-                : colorConfig.pageIndex.grayColor
-            }
-            ios_backgroundColor="white"
-            onValueChange={() => {
+          {/*<Switch*/}
+          {/*  trackColor={*/}
+          {/*    available*/}
+          {/*      ? {false: '#e0e0e0', true: '#2dc0fa'}*/}
+          {/*      : {false: '#e0e0e0', true: '#e0e0e0'}*/}
+          {/*  }*/}
+          {/*  thumbColor={*/}
+          {/*    available*/}
+          {/*      ? colorConfig.store.defaultColor*/}
+          {/*      : colorConfig.pageIndex.grayColor*/}
+          {/*  }*/}
+          {/*  ios_backgroundColor="white"*/}
+          {/*  onValueChange={() => {*/}
+          {/*    available ? this.toggleModifierIsYesNo(item, idx) : false;*/}
+          {/*  }}*/}
+          {/*  // value={this.findToggleModifier(item) ? true : false}*/}
+          {/*  value={!item.isSelected}*/}
+          {/*/>*/}
+          <CheckBox
+            value={item}
+            isSelected={!item.isSelected}
+            onPress={() => {
               available ? this.toggleModifierIsYesNo(item, idx) : false;
             }}
-            // value={this.findToggleModifier(item) ? true : false}
-            value={!item.isSelected}
           />
         </View>
         <Text
@@ -861,7 +893,7 @@ export default class ModalOrder extends Component {
             }}>
             Unavailable
           </Text>
-        ) : (
+        ) : item.productPrice == undefined || item.productPrice === 0 ? null : (
           <Text
             style={{
               marginTop: 5,
@@ -1107,6 +1139,9 @@ export default class ModalOrder extends Component {
                     data={productModifiers}
                     extraData={this.props}
                     renderItem={({item, index}) => {
+                      if (isEmptyArray(item.modifier.details)) {
+                        return;
+                      }
                       if (item.modifier.isYesNo !== true) {
                         return (
                           <View style={styles.cardModal}>
@@ -1144,15 +1179,15 @@ export default class ModalOrder extends Component {
                                       )
                                     : null}
                                 </View>
-                                {!isEmptyArray(productModifiers) &&
-                                item.modifier.max == 1 &&
-                                !productModifiers[index].modifier.show ? (
-                                  <View>
-                                    {this.renderSelectedItem(
-                                      productModifiers[index],
-                                    )}
-                                  </View>
-                                ) : null}
+                                {/*{!isEmptyArray(productModifiers) &&*/}
+                                {/*item.modifier.max == 1 &&*/}
+                                {/*!productModifiers[index].modifier.show ? (*/}
+                                {/*  <View>*/}
+                                {/*    {this.renderSelectedItem(*/}
+                                {/*      productModifiers[index],*/}
+                                {/*    )}*/}
+                                {/*  </View>*/}
+                                {/*) : null}*/}
                               </TouchableOpacity>
                               {!isEmptyArray(productModifiers) &&
                               productModifiers[index].modifier.show ? (
@@ -1213,7 +1248,16 @@ export default class ModalOrder extends Component {
                   ios: 0,
                   android: 500,
                 })}>
-                <Text style={styles.titleModifierModal}>Remark</Text>
+                <Text style={styles.titleModifierModal}>
+                  Special Instructions{' '}
+                  <Text
+                    style={{
+                      color: colorConfig.pageIndex.inactiveTintColor,
+                      fontSize: 12,
+                    }}>
+                    Optional
+                  </Text>
+                </Text>
                 <View style={{flexDirection: 'column', paddingBottom: 20}}>
                   <TextInput
                     onFocus={() =>
@@ -1221,8 +1265,9 @@ export default class ModalOrder extends Component {
                     }
                     value={this.props.remark}
                     onChangeText={value => this.props.changeRemarkText(value)}
-                    placeholder={'Type your remark...'}
+                    placeholder={'Place your note here...'}
                     style={{
+                      borderRadius: 3,
                       marginHorizontal: 14,
                       padding: 5,
                       height: 50,
@@ -1362,9 +1407,9 @@ const styles = StyleSheet.create({
   },
   titleModifierRules: {
     color: colorConfig.pageIndex.grayColor,
-    fontSize: 14,
+    fontSize: 13,
     textAlign: 'left',
-    fontFamily: 'Lato-Medium',
+    // fontFamily: 'Lato-Medium',
     padding: 14,
   },
   title: {
@@ -1385,9 +1430,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     flexDirection: 'row',
     borderBottomColor: colorConfig.pageIndex.inactiveTintColor,
-    borderBottomWidth: 0.6,
+    borderBottomWidth: 0.55,
     alignItems: 'center',
-    paddingVertical: 5,
   },
   detailOptionsModalYesNo: {
     marginLeft: 15,

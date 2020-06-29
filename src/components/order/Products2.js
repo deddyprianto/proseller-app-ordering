@@ -814,7 +814,7 @@ class Products2 extends Component {
 
           if (group.modifier.max == 1) {
             product.product.productModifiers[i].modifier.show = false;
-            delete product.product.productModifiers[i].modifier.selected;
+            // delete product.product.productModifiers[i].modifier.selected;
           } else {
             product.product.productModifiers[i].modifier.show = true;
           }
@@ -889,8 +889,8 @@ class Products2 extends Component {
                     if (group.modifier.max == 1) {
                       product.product.productModifiers[i].modifier.show =
                         data.modifier.show;
-                      product.product.productModifiers[i].modifier.selected =
-                        data.modifier.selected;
+                      // product.product.productModifiers[i].modifier.selected =
+                      //   data.modifier.selected;
                     }
 
                     product.product.productModifiers[i].modifier.details[
@@ -1533,7 +1533,7 @@ class Products2 extends Component {
                     width: Dimensions.get('window').width / 2 - 30,
                     resizeMode: 'cover',
                   },
-                  !this.availableToOrder(item) ? {opacity: 0.3} : null,
+                  !this.availableToOrder(item) ? {opacity: 0.2} : null,
                 ]}
               />
             ) : (
@@ -1565,18 +1565,9 @@ class Products2 extends Component {
                     color: colorConfig.store.defaultColor,
                     fontWeight: 'bold',
                   }}>
-                  {this.getQuantityInBasket(item)}x{' '}
+                  {this.getQuantityInBasket(item)} x{' '}
                 </Text>
               ) : null}
-              <Icon
-                size={17}
-                name={Platform.OS === 'ios' ? 'ios-pricetag' : 'md-pricetag'}
-                style={
-                  this.availableToOrder(item)
-                    ? {color: colorConfig.store.secondaryColor}
-                    : {color: colorConfig.pageIndex.grayColor}
-                }
-              />{' '}
               {item.product != undefined ? item.product.name : '-'}
             </Text>
             {this.availableToOrder(item) ? (
@@ -1646,7 +1637,7 @@ class Products2 extends Component {
                 <Text
                   style={[
                     styles.productTitle,
-                    !this.availableToOrder(item) ? {opacity: 0.4} : null,
+                    !this.availableToOrder(item) ? {opacity: 0.3} : null,
                     isEmptyData(item.product.defaultImageURL)
                       ? {maxWidth: Dimensions.get('window').width / 2}
                       : null,
@@ -1675,7 +1666,7 @@ class Products2 extends Component {
             <Text
               style={[
                 styles.productPrice,
-                !this.availableToOrder(item) ? {opacity: 0.4} : null,
+                !this.availableToOrder(item) ? {opacity: 0.3} : null,
               ]}>
               {item.product.retailPrice != undefined &&
               item.product.retailPrice != '-' &&
@@ -2776,7 +2767,7 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 5,
-    opacity: 0.3,
+    opacity: 0.2,
   },
   btnBackText: {
     color: colorConfig.store.defaultColor,
@@ -2922,6 +2913,7 @@ const styles = StyleSheet.create({
   },
   productUnavailable: {
     color: colorConfig.pageIndex.grayColor,
+    opacity: 0.5,
     fontFamily: 'Lato-Medium',
     marginLeft: 6,
     marginTop: 3,

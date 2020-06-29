@@ -195,8 +195,7 @@ class MobileRegister extends Component {
                 style={{
                   color: colorConfig.store.title,
                   fontSize: 15,
-                  fontWeight: 'bold',
-                  fontFamily: 'Lato-Medium',
+                  fontFamily: 'Lato-Bold',
                 }}>
                 {intlData.messages.register} {intlData.messages.for}{' '}
                 {this.props.phoneNumber}
@@ -220,7 +219,7 @@ class MobileRegister extends Component {
                 style={{
                   fontSize: 15,
                   fontFamily: 'Lato-Medium',
-                  padding: 15,
+                  padding: 12,
                   color: colorConfig.store.title,
                   borderColor: colorConfig.pageIndex.inactiveTintColor,
                   borderWidth: 2,
@@ -246,7 +245,7 @@ class MobileRegister extends Component {
                 style={{
                   fontSize: 15,
                   fontFamily: 'Lato-Medium',
-                  padding: 15,
+                  padding: 12,
                   color: colorConfig.store.title,
                   borderColor: colorConfig.pageIndex.inactiveTintColor,
                   borderWidth: 2,

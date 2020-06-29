@@ -16,7 +16,7 @@ import {
   TextInput,
   TouchableHighlight,
   Alert,
-  SafeAreaView
+  SafeAreaView,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
@@ -348,9 +348,8 @@ class SignInPhoneNumber extends Component {
             <View>
               <Text
                 style={{
-                  color: colorConfig.store.title,
+                  color: colorConfig.store.titleSelected,
                   fontSize: 15,
-                  fontWeight: 'bold',
                   fontFamily: 'Lato-Medium',
                 }}>
                 {intlData.messages.signIn} {intlData.messages.to}{' '}
@@ -419,7 +418,7 @@ class SignInPhoneNumber extends Component {
             {/*Tab OTP and Password*/}
             {/*Form login by OTP*/}
             {this.state.toggleSMSOTP ? (
-              <View style={{marginVertical: 15}}>
+              <View style={{marginVertical: 10}}>
                 <Text
                   style={{
                     marginVertical: 10,

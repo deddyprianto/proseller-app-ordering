@@ -14,7 +14,6 @@ import {
   Animated,
   Dimensions,
   TextInput,
-  Picker,
   TouchableHighlight,
   Alert,
   SafeAreaView,
@@ -24,9 +23,7 @@ import {compose} from 'redux';
 import {reduxForm} from 'redux-form';
 import {notifikasi, sendOTP, loginUser} from '../actions/auth.actions';
 import Loader from '../components/loader';
-import {Actions} from 'react-native-router-flux';
 import colorConfig from '../config/colorConfig';
-import awsConfig from '../config/awsConfig';
 import Header from '../components/atom/header';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {isEmptyObject} from '../helper/CheckEmpty';
@@ -306,8 +303,7 @@ class SignInEmail extends Component {
                 style={{
                   color: colorConfig.store.title,
                   fontSize: 15,
-                  fontWeight: 'bold',
-                  fontFamily: 'Lato-Medium',
+                  fontFamily: 'Lato-Bold',
                 }}>
                 {intlData.messages.signIn} {intlData.messages.to}{' '}
                 {this.props.email}
