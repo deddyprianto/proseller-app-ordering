@@ -697,9 +697,16 @@ class Products2 extends Component {
         // console.log(categories);
         this.props.dispatch(saveProductsOutlet(categories, outletID, refresh));
       } else {
-        // await this.setState({
-        //   products: [],
-        // });
+        const {products} = this.state;
+        if (isEmptyArray(products)) {
+          await this.setState({
+            products: [],
+          });
+        } else {
+          await this.setState({
+            products,
+          });
+        }
         this.products.push(categories);
       }
     } catch (e) {

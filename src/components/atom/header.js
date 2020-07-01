@@ -150,12 +150,12 @@ class Header extends Component {
             {companyInfo !== undefined && !isEmptyData(companyInfo.imageURL) ? (
               <Image
                 source={{uri: companyInfo.imageURL}}
-                style={{width: WIDTH / 2, height: 80, resizeMode: 'stretch'}}
+                style={{width: WIDTH / 2, height: 90, resizeMode: 'contain'}}
               />
             ) : (
               <Image
                 source={appConfig.welcomeLogo}
-                style={{width: WIDTH / 2, height: 80, resizeMode: 'stretch'}}
+                style={{width: WIDTH / 2, height: 90, resizeMode: 'contain'}}
               />
             )}
             <Text
