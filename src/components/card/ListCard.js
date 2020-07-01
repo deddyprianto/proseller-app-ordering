@@ -20,7 +20,7 @@ import {
   FlatList,
   RefreshControl,
   Alert,
-  SafeAreaView
+  SafeAreaView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -87,13 +87,19 @@ class ListCard extends Component {
     try {
       this.RBSheet.close();
       const {selectedAccount} = this.state;
+      const {defaultAccount} = this.props;
       await this.setState({loading: true});
       const response = await this.props.dispatch(removeCard(selectedAccount));
       if (response.response.resultCode != 200) {
         Alert.alert('Sorry', 'Cant delete account, please try again');
-      } else {
-        await this.props.dispatch(defaultPaymentAccount(undefined));
       }
+
+      if (defaultAccount != undefined) {
+        if (defaultAccount.id == selectedAccount.id) {
+          await this.props.dispatch(defaultPaymentAccount(undefined));
+        }
+      }
+
       await this.getDataCard();
       await this.setState({loading: false});
     } catch (e) {

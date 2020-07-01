@@ -1,4 +1,30 @@
 {
+  "SG": {
+    "currency": ["SGD"],
+    "callingCode": ["65"],
+    "region": "Asia",
+    "subregion": "South-Eastern Asia",
+    "flag": "flag-sg",
+    "name": {
+      "common": "Singapore",
+      "ces": "Singapur",
+      "deu": "Singapur",
+      "fra": "Singapour",
+      "hrv": "Singapur",
+      "ita": "Singapore",
+      "jpn": "シンガポール",
+      "nld": "Singapore",
+      "por": "Singapura",
+      "rus": "Сингапур",
+      "slk": "Singapur",
+      "spa": "Singapur",
+      "fin": "Singapore",
+      "est": "Singapur",
+      "pol": "Singapur",
+      "urd": "سنگاپور",
+      "kor": "싱가포르"
+    }
+  },
   "AU": {
     "currency": ["AUD"],
     "callingCode": ["61"],
@@ -569,32 +595,6 @@
       "pol": "Arabia Saudyjska",
       "urd": "سعودی عرب",
       "kor": "사우디아라비아"
-    }
-  },
-  "SG": {
-    "currency": ["SGD"],
-    "callingCode": ["65"],
-    "region": "Asia",
-    "subregion": "South-Eastern Asia",
-    "flag": "flag-sg",
-    "name": {
-      "common": "Singapore",
-      "ces": "Singapur",
-      "deu": "Singapur",
-      "fra": "Singapour",
-      "hrv": "Singapur",
-      "ita": "Singapore",
-      "jpn": "シンガポール",
-      "nld": "Singapore",
-      "por": "Singapura",
-      "rus": "Сингапур",
-      "slk": "Singapur",
-      "spa": "Singapur",
-      "fin": "Singapore",
-      "est": "Singapur",
-      "pol": "Singapur",
-      "urd": "سنگاپور",
-      "kor": "싱가포르"
     }
   },
   "KR": {

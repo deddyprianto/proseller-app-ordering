@@ -9,7 +9,6 @@ import {
   TouchableOpacity,
   SafeAreaView,
   Alert,
-  AsyncStorage,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
@@ -26,6 +25,7 @@ import colorConfig from '../config/colorConfig';
 import {Actions} from 'react-native-router-flux';
 import Geolocation from 'react-native-geolocation-service';
 import {
+  defaultPaymentAccount,
   deviceUserInfo,
   getUserProfile,
   updateUser,
@@ -41,6 +41,7 @@ import {getCompanyInfo} from '../actions/stores.action';
 import {getAccountPayment} from '../actions/payment.actions';
 import OneSignal from 'react-native-onesignal';
 import {dataInbox} from '../actions/inbox.action';
+import {referral} from '../actions/referral.action';
 
 class Rewards extends Component {
   constructor(props) {
@@ -89,11 +90,35 @@ class Rewards extends Component {
   componentDidMount = async () => {
     await this.getDataRewards();
 
-    await this.props.dispatch(getCompanyInfo());
-    await this.props.dispatch(getAccountPayment());
-
     this.checkOneSignal();
     this.checkUseApp();
+  };
+
+  checkDefaultPaymentAccount = async response => {
+    try {
+      const {defaultAccount} = this.props;
+
+      if (response.success == false) {
+        await this.props.dispatch(defaultPaymentAccount(undefined));
+        return;
+      }
+
+      try {
+        if (isEmptyArray(response.response.data)) {
+          await this.props.dispatch(defaultPaymentAccount(undefined));
+          return;
+        }
+      } catch (e) {}
+
+      const MyCardAccount = response.response.data;
+      const data = await MyCardAccount.find(
+        item => item.id == defaultAccount.id,
+      );
+      if (data == undefined) {
+        await this.props.dispatch(defaultPaymentAccount(undefined));
+      }
+      return;
+    } catch (e) {}
   };
 
   checkOneSignal = () => {
@@ -156,6 +181,8 @@ class Rewards extends Component {
       await this.getUserPosition();
       await this.props.dispatch(refreshToken());
       await this.props.dispatch(getUserProfile());
+      await this.props.dispatch(getCompanyInfo());
+      const response = await this.props.dispatch(getAccountPayment());
       await this.props.dispatch(campaign());
       await this.props.dispatch(dataPoint());
       await this.props.dispatch(getStamps());
@@ -163,6 +190,9 @@ class Rewards extends Component {
       await this.props.dispatch(dataInbox(0, 50));
       await this.props.dispatch(recentTransaction());
       await this.props.dispatch(getDeliveryProvider());
+      await this.props.dispatch(referral());
+
+      await this.checkDefaultPaymentAccount(response);
 
       this.setState({isLoading: false});
     } catch (error) {
@@ -352,6 +382,8 @@ const styles = StyleSheet.create({
 
 mapStateToProps = state => ({
   recentTransaction: state.rewardsReducer.dataPoint.recentTransaction,
+  defaultAccount: state.userReducer.defaultPaymentAccount.defaultAccount,
+  myCardAccount: state.cardReducer.myCardAccount.card,
   myVoucers: state.accountsReducer.myVoucers.myVoucers,
   dataStamps: state.rewardsReducer.getStamps,
   totalPoint: state.rewardsReducer.dataPoint.totalPoint,

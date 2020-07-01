@@ -14,6 +14,7 @@ class ButtonViewBasket extends Component {
 
   openBasket = () => {
     Actions.basket({
+      from: 'products',
       refreshQuantityProducts: this.props.refreshQuantityProducts,
     });
   };

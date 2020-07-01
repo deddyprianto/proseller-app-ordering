@@ -172,86 +172,85 @@ class HistoryPayment extends Component {
             <Text style={styles.empty}>{intlData.messages.noTransaction}</Text>
           </ScrollView>
         ) : (
-          <View style={styles.component}>
-            <FlatList
-              data={this.props.pointTransaction}
-              extraData={this.props}
-              refreshControl={
-                <RefreshControl
-                  refreshing={this.state.refreshing}
-                  onRefresh={this._onRefresh}
-                />
-              }
-              renderItem={({item}) => (
-                <TouchableOpacity
-                  style={styles.item}
-                  onPress={() => this.historyDetailPayment(item)}>
-                  <View style={styles.sejajarSpace}>
-                    <View style={styles.detail}>
-                      <View style={styles.sejajarSpace}>
-                        <Text style={styles.storeName}>{item.outletName}</Text>
-                        {item.point > 0 ? (
-                          <Text style={styles.itemType}>
-                            <Text style={{color: colorConfig.store.title}}>
-                              x{' '}
-                            </Text>
-                            {item.point + ' ' + intlData.messages.point}
+          // <View style={styles.component}>
+          <FlatList
+            data={this.props.pointTransaction}
+            extraData={this.props}
+            refreshControl={
+              <RefreshControl
+                refreshing={this.state.refreshing}
+                onRefresh={this._onRefresh}
+              />
+            }
+            renderItem={({item}) => (
+              <TouchableOpacity
+                style={styles.item}
+                onPress={() => this.historyDetailPayment(item)}>
+                <View style={styles.sejajarSpace}>
+                  <View style={styles.detail}>
+                    <View style={styles.sejajarSpace}>
+                      <Text style={styles.storeName}>{item.outletName}</Text>
+                      {item.point > 0 ? (
+                        <Text style={styles.itemType}>
+                          <Text style={{color: colorConfig.store.title}}>
+                            x{' '}
                           </Text>
-                        ) : null}
-                      </View>
-                      {!isEmptyArray(item.stamps) && item.stamps.length > 1 ? (
-                        <View style={styles.sejajarSpaceFlexEnd}>
-                          <Text style={styles.itemTypeStamps}>
-                            <Text style={{color: colorConfig.store.title}}>
-                              x{' '}
-                            </Text>
-                            {item.stamps.length + ' ' + intlData.messages.stamp}
-                          </Text>
-                        </View>
+                          {item.point + ' ' + intlData.messages.point}
+                        </Text>
                       ) : null}
-                      <View style={styles.sejajarSpace}>
-                        <View style={{flexDirection: 'row'}}>
-                          <Icon
-                            size={18}
-                            name={
-                              Platform.OS === 'ios'
-                                ? 'ios-pricetag'
-                                : 'md-pricetag'
-                            }
-                            style={styles.paymentTypeLogo}
-                          />
-                          <Text style={styles.paymentType}>
-                            {/*{appConfig.appMataUang}*/}
-                            {this.formatCurrency(item.price)}
+                    </View>
+                    {!isEmptyArray(item.stamps) && item.stamps.length > 1 ? (
+                      <View style={styles.sejajarSpaceFlexEnd}>
+                        <Text style={styles.itemTypeStamps}>
+                          <Text style={{color: colorConfig.store.title}}>
+                            x{' '}
                           </Text>
-                        </View>
-                        <Text style={styles.paymentTgl}>
-                          {this.getDate(item.createdAt)}
+                          {item.stamps.length + ' ' + intlData.messages.stamp}
                         </Text>
                       </View>
-                    </View>
-                    <View style={styles.btnDetail}>
-                      <Icon
-                        size={20}
-                        name={
-                          Platform.OS === 'ios'
-                            ? 'ios-arrow-dropright-circle'
-                            : 'md-arrow-dropright-circle'
-                        }
-                        style={{
-                          color: colorConfig.pageIndex.activeTintColor,
-                        }}
-                      />
+                    ) : null}
+                    <View style={styles.sejajarSpace}>
+                      <View style={{flexDirection: 'row'}}>
+                        <Icon
+                          size={18}
+                          name={
+                            Platform.OS === 'ios'
+                              ? 'ios-pricetag'
+                              : 'md-pricetag'
+                          }
+                          style={styles.paymentTypeLogo}
+                        />
+                        <Text style={styles.paymentType}>
+                          {/*{appConfig.appMataUang}*/}
+                          {this.formatCurrency(item.price)}
+                        </Text>
+                      </View>
+                      <Text style={styles.paymentTgl}>
+                        {this.getDate(item.createdAt)}
+                      </Text>
                     </View>
                   </View>
-                </TouchableOpacity>
-              )}
-              keyExtractor={(item, index) => index.toString()}
-              ListFooterComponent={this.renderFooter}
-              onEndReachedThreshold={0.01}
-              onEndReached={this.handleLoadMore}
-            />
-          </View>
+                  <View style={styles.btnDetail}>
+                    <Icon
+                      size={20}
+                      name={
+                        Platform.OS === 'ios'
+                          ? 'ios-arrow-dropright-circle'
+                          : 'md-arrow-dropright-circle'
+                      }
+                      style={{
+                        color: colorConfig.pageIndex.activeTintColor,
+                      }}
+                    />
+                  </View>
+                </View>
+              </TouchableOpacity>
+            )}
+            keyExtractor={(item, index) => index.toString()}
+            ListFooterComponent={this.renderFooter}
+            onEndReachedThreshold={0.01}
+            onEndReached={this.handleLoadMore}
+          />
         )}
       </>
     );

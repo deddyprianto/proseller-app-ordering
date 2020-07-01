@@ -24,13 +24,13 @@ import {Actions} from 'react-native-router-flux';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
 import * as _ from 'lodash';
-import SwipeButton from 'rn-swipe-button';
+// import SwipeButton from 'rn-swipe-button';
 import AwesomeAlert from 'react-native-awesome-alerts';
 
 import colorConfig from '../../config/colorConfig';
 import appConfig from '../../config/appConfig';
 import {getPendingCart, settleOrder} from '../../actions/order.action';
-import Loader from './../loader';
+// import Loader from './../loader';
 import CurrencyFormatter from '../../helper/CurrencyFormatter';
 import {
   clearAccount,
@@ -41,6 +41,8 @@ import {
 import {isEmptyArray, isEmptyObject} from '../../helper/CheckEmpty';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import UUIDGenerator from 'react-native-uuid-generator';
+import {defaultPaymentAccount} from '../../actions/user.action';
+import LoaderDarker from '../LoaderDarker';
 
 class SettleOrder extends Component {
   constructor(props) {
@@ -71,7 +73,7 @@ class SettleOrder extends Component {
 
     // check if default accout has been set, then add selected account
     if (!isEmptyObject(this.props.defaultAccount)) {
-      this.props.dispatch(selectedAccount(this.props.defaultAccount));
+      this.checkDefaultPaymentAccount();
     }
   }
 
@@ -123,17 +125,6 @@ class SettleOrder extends Component {
     await this.setState({loading: true});
     await this.setDataPayment(false);
     try {
-      // // if there are only 1 account, then set
-      // await this.props.dispatch(getAccountPayment());
-      // const {myCardAccount} = this.props;
-      // if (
-      //   !isEmptyArray(myCardAccount) &&
-      //   myCardAccount.length == 1 &&
-      //   isEmptyObject(defaultAccount)
-      // ) {
-      //   let card = myCardAccount[0];
-      //   this.props.dispatch(selectedAccount(card));
-      // }
       await this.setState({loading: false});
     } catch (e) {
       await this.setState({loading: false});
@@ -143,6 +134,24 @@ class SettleOrder extends Component {
       'hardwareBackPress',
       this.handleBackPress,
     );
+  };
+
+  checkDefaultPaymentAccount = async () => {
+    try {
+      const {defaultAccount, myCardAccount} = this.props;
+      if (!isEmptyArray(myCardAccount)) {
+        const data = await myCardAccount.find(
+          item => item.id == defaultAccount.id,
+        );
+        if (data == undefined) {
+          await this.props.dispatch(defaultPaymentAccount(undefined));
+        } else {
+          this.props.dispatch(selectedAccount(this.props.defaultAccount));
+        }
+      } else {
+        await this.props.dispatch(defaultPaymentAccount(undefined));
+      }
+    } catch (e) {}
   };
 
   setDataVoucher = async dataVoucer => {
@@ -518,6 +527,7 @@ class SettleOrder extends Component {
       if (this.props.pembayaran.deliveryProvider != undefined) {
         pembayaran.deliveryProviderId = this.props.pembayaran.deliveryProvider.id;
         pembayaran.deliveryProvider = this.props.pembayaran.deliveryProvider.name;
+        pembayaran.deliveryProviderName = this.props.pembayaran.deliveryProvider.name;
         pembayaran.deliveryService = '-';
       }
 
@@ -710,7 +720,7 @@ class SettleOrder extends Component {
     const {intlData, selectedAccount} = this.props;
     return (
       <SafeAreaView style={styles.container}>
-        {this.state.loading && <Loader />}
+        {this.state.loading && <LoaderDarker />}
         {this.askUserToEnterCVV()}
         <View style={{backgroundColor: colorConfig.pageIndex.backgroundColor}}>
           <View
@@ -1036,32 +1046,58 @@ class SettleOrder extends Component {
             </View>
 
             <View style={{marginTop: 50}} />
-            <SwipeButton
+            <TouchableOpacity
+              onPress={this.onSlideRight}
               disabled={
                 selectedAccount != undefined || this.state.totalBayar == 0
                   ? false
                   : true
               }
-              disabledThumbIconBackgroundColor="#FFFFFF"
-              disabledThumbIconBorderColor={
-                colorConfig.pageIndex.activeTintColor
-              }
-              thumbIconImageSource={appConfig.arrowRight}
-              height={60}
-              thumbIconBackgroundColor="#FFFFFF"
-              railBorderColor="#FFFFFF"
-              railFillBackgroundColor={colorConfig.pageIndex.grayColor}
-              thumbIconBorderColor={colorConfig.pageIndex.activeTintColor}
-              titleColor="#FFFFFF"
-              titleFontSize={20}
-              shouldResetAfterSuccess={this.state.failedPay}
-              railBackgroundColor={colorConfig.pageIndex.activeTintColor}
-              title={
-                'Pay ' + CurrencyFormatter(this.state.totalBayar)
-                // Number(this.state.totalBayar.toFixed(3))
-              }
-              onSwipeSuccess={this.onSlideRight}
-            />
+              style={{
+                backgroundColor:
+                  selectedAccount != undefined || this.state.totalBayar == 0
+                    ? colorConfig.store.defaultColor
+                    : colorConfig.store.disableButton,
+                padding: 15,
+                borderRadius: 20,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <Text
+                style={{
+                  fontSize: 19,
+                  color: 'white',
+                  fontFamily: 'Lato-Medium',
+                }}>
+                {'Pay ' + CurrencyFormatter(this.state.totalBayar)}
+              </Text>
+            </TouchableOpacity>
+            {/*<SwipeButton*/}
+            {/*  disabled={*/}
+            {/*    selectedAccount != undefined || this.state.totalBayar == 0*/}
+            {/*      ? false*/}
+            {/*      : true*/}
+            {/*  }*/}
+            {/*  disabledThumbIconBackgroundColor="#FFFFFF"*/}
+            {/*  disabledThumbIconBorderColor={*/}
+            {/*    colorConfig.pageIndex.activeTintColor*/}
+            {/*  }*/}
+            {/*  thumbIconImageSource={appConfig.arrowRight}*/}
+            {/*  height={60}*/}
+            {/*  thumbIconBackgroundColor="#FFFFFF"*/}
+            {/*  railBorderColor="#FFFFFF"*/}
+            {/*  railFillBackgroundColor={colorConfig.pageIndex.grayColor}*/}
+            {/*  thumbIconBorderColor={colorConfig.pageIndex.activeTintColor}*/}
+            {/*  titleColor="#FFFFFF"*/}
+            {/*  titleFontSize={20}*/}
+            {/*  shouldResetAfterSuccess={this.state.failedPay}*/}
+            {/*  railBackgroundColor={colorConfig.pageIndex.activeTintColor}*/}
+            {/*  title={*/}
+            {/*    'Pay ' + CurrencyFormatter(this.state.totalBayar)*/}
+            {/*    // Number(this.state.totalBayar.toFixed(3))*/}
+            {/*  }*/}
+            {/*  onSwipeSuccess={this.onSlideRight}*/}
+            {/*/>*/}
           </View>
         </ScrollView>
         <AwesomeAlert

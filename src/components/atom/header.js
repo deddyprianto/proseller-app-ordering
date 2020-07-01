@@ -14,11 +14,17 @@ import {
   Animated,
   Dimensions,
   StatusBar,
+  Image,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
 import colorConfig from '../../config/colorConfig';
 import awsConfig from '../../config/awsConfig';
+import {compose} from 'redux';
+import {connect} from 'react-redux';
+import {reduxForm} from 'redux-form';
+import appConfig from '../../config/appConfig';
+import {isEmptyData} from '../../helper/CheckEmpty';
 
 const imageWidth = Dimensions.get('window').width / 2;
 
@@ -32,9 +38,9 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 10,
+    marginTop: 5,
     marginBottom: 10,
-    left: -20,
+    // left: -20,
   },
   signupTextCont: {
     flexGrow: 1,
@@ -100,21 +106,11 @@ const styles = StyleSheet.create({
   },
 });
 
-export default class Header extends Component {
+const WIDTH = Dimensions.get('window').width;
+
+class Header extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      phoneNumber: awsConfig.phoneNumberCode,
-      confirmationCode: '',
-      press: false,
-      showPass: true,
-      showAlert: false,
-
-      pesanAlert: '',
-      titleAlert: '',
-      loading: false,
-      showPageConfirmation: false,
-    };
     this.imageWidth = new Animated.Value(styles.$largeImageSize);
   }
 
@@ -123,6 +119,7 @@ export default class Header extends Component {
   }
 
   render() {
+    const {backButton, companyInfo} = this.props;
     return (
       <View>
         <StatusBar
@@ -133,7 +130,6 @@ export default class Header extends Component {
         <View
           style={{
             flexDirection: 'row',
-            backgroundColor: colorConfig.store.defaultColor,
             paddingVertical: !this.props.backButton ? 5 : 0,
           }}>
           {this.props.backButton ? (
@@ -144,25 +140,51 @@ export default class Header extends Component {
                   Platform.OS === 'ios' ? 'ios-arrow-back' : 'md-arrow-back'
                 }
                 style={{
-                  color: colorConfig.pageIndex.backgroundColor,
+                  color: colorConfig.store.titleSelected,
                   margin: 10,
                 }}
               />
             </TouchableOpacity>
           ) : null}
-          <View style={styles.container}>
+          <View style={[styles.container, backButton ? {left: -25} : null]}>
+            {companyInfo !== undefined && !isEmptyData(companyInfo.imageURL) ? (
+              <Image
+                source={{uri: companyInfo.imageURL}}
+                style={{width: WIDTH / 2, height: 90, resizeMode: 'contain'}}
+              />
+            ) : (
+              <Image
+                source={appConfig.welcomeLogo}
+                style={{width: WIDTH / 2, height: 90, resizeMode: 'contain'}}
+              />
+            )}
             <Text
               style={{
-                color: colorConfig.pageIndex.backgroundColor,
-                fontSize: 17,
-                fontWeight: 'bold',
+                marginTop: 6,
+                color: colorConfig.store.titleSelected,
+                fontSize: 22,
+                fontFamily: 'Lato-Bold',
               }}>
               {this.props.titleHeader}
             </Text>
           </View>
         </View>
-        <View style={styles.line} />
       </View>
     );
   }
 }
+
+mapStateToProps = state => ({
+  companyInfo: state.userReducer.getCompanyInfo.companyInfo,
+});
+
+mapDispatchToProps = dispatch => ({
+  dispatch,
+});
+
+export default compose(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  ),
+)(Header);

@@ -332,8 +332,7 @@ class VerifyOtpAfterRegister extends Component {
                 style={{
                   color: colorConfig.store.title,
                   fontSize: 15,
-                  fontWeight: 'bold',
-                  fontFamily: 'Lato-Medium',
+                  fontFamily: 'Lato-Bold',
                 }}>
                 {intlData.messages.signIn} {intlData.messages.to}{' '}
                 {this.props.phoneNumber}

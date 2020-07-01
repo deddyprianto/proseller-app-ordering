@@ -24,6 +24,7 @@ import awsConfig from './config/awsConfig';
 import OneSignal from 'react-native-onesignal';
 import {deviceUserInfo} from './actions/user.action';
 import OfflineNotice from './components/OfflineNotice';
+import {getCompanyInfo} from './actions/stores.action';
 
 class Main extends Component {
   constructor(props) {
@@ -47,6 +48,7 @@ class Main extends Component {
   async componentDidMount() {
     try {
       await this.props.dispatch(refreshToken());
+      await this.props.dispatch(getCompanyInfo());
 
       const data = await this.performTimeConsumingTask();
       if (data !== null) {

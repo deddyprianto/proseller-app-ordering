@@ -100,6 +100,27 @@ class HistoryDetailPayment extends Component {
     }
   };
 
+  format = item => {
+    try {
+      const curr = appConfig.appMataUang;
+      // item = item.replace(curr, '');
+      if (curr != 'RP' && curr != 'IDR' && item.includes('.') == false) {
+        return `${item}.00`;
+      }
+      return item;
+    } catch (e) {
+      return item;
+    }
+  };
+
+  formatCurrency = value => {
+    try {
+      return this.format(CurrencyFormatter(value));
+    } catch (e) {
+      return value;
+    }
+  };
+
   render() {
     const {intlData} = this.props;
     return (
@@ -147,7 +168,7 @@ class HistoryDetailPayment extends Component {
               <View style={styles.detailItem}>
                 <Text style={styles.desc}>Total</Text>
                 <Text style={styles.desc}>
-                  {CurrencyFormatter(this.props.item.price)}
+                  {this.formatCurrency(this.props.item.price)}
                 </Text>
               </View>
 
@@ -172,7 +193,7 @@ class HistoryDetailPayment extends Component {
                     • {this.props.item.paymentType}
                   </Text>
                   <Text style={styles.desc}>
-                    {CurrencyFormatter(this.props.item.afterPrice)}
+                    {this.formatCurrency(this.props.item.afterPrice)}
                   </Text>
                 </View>
               ) : null}
@@ -319,7 +340,7 @@ class HistoryDetailPayment extends Component {
                       {item.itemName}
                     </Text>
                     <Text style={styles.desc}>
-                      {CurrencyFormatter(item.price)}
+                      {this.formatCurrency(item.price)}
                     </Text>
                   </View>
                 ))}

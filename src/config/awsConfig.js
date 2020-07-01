@@ -43,7 +43,8 @@
 // export default awsConfig;
 
 import Config from 'react-native-config';
-import ENV from '../../env_ios';
+import ENV from '../../env-ios-demo';
+// import ENV from '../../env-ios';
 import Base64 from 'Base64';
 import {Platform} from 'react-native';
 
@@ -74,6 +75,7 @@ const awsConfig = {
 
   phoneNumberCode: Data.PHONE_NUMBER_CODE,
   COUNTRY: Data.COUNTRY,
+  COUNTRY_CODE: Data.COUNTRY_CODE,
   COMPANY_NAME: Data.COMPANY_NAME,
   COMPANY_POLICY_URL: Data.COMPANY_POLICY_URL,
 

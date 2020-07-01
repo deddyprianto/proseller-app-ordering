@@ -11,6 +11,7 @@ import {
   SafeAreaView,
   ScrollView,
   FlatList,
+  Clipboard,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -24,6 +25,8 @@ import RBSheet from 'react-native-raw-bottom-sheet';
 import CurrencyFormatter from '../../helper/CurrencyFormatter';
 import {isEmptyArray} from '../../helper/CheckEmpty';
 import appConfig from '../../config/appConfig';
+import Snackbar from 'react-native-snackbar';
+import awsConfig from '../../config/awsConfig';
 
 class WaitingFood extends Component {
   constructor(props) {
@@ -325,7 +328,7 @@ class WaitingFood extends Component {
             </Text>
             <Text
               style={{
-                fontSize: 27,
+                fontSize: 25,
                 marginTop: 22,
                 color: colorConfig.store.colorSuccess,
                 fontWeight: 'bold',
@@ -374,6 +377,21 @@ class WaitingFood extends Component {
     }
   };
 
+  copyTrackingNo = () => {
+    const {dataBasket} = this.props;
+    try {
+      if (dataBasket != undefined) {
+        if (dataBasket.trackingNo != undefined) {
+          Clipboard.setString(dataBasket.trackingNo);
+        }
+      }
+      Snackbar.show({
+        text: 'Tracking No copied.',
+        duration: Snackbar.LENGTH_SHORT,
+      });
+    } catch (e) {}
+  };
+
   renderTextWaitingDelivery = () => {
     let {intlData, dataBasket} = this.props;
     // if basket is canceled by admin, then give template status
@@ -405,7 +423,7 @@ class WaitingFood extends Component {
             </Text>
             <Text
               style={{
-                fontSize: 20,
+                fontSize: 17,
                 marginTop: -30,
                 color: colorConfig.pageIndex.grayColor,
                 fontWeight: 'bold',
@@ -415,19 +433,29 @@ class WaitingFood extends Component {
               {dataBasket.status == 'READY_FOR_DELIVERY'
                 ? 'We are getting ready to deliver your order ... \n \n '
                 : `Go to ${dataBasket.deliveryAddress.address}, ${
-                    dataBasket.deliveryAddress.city
+                    awsConfig.COUNTRY != 'Singapore'
+                      ? dataBasket.deliveryAddress.city
+                      : awsConfig.COUNTRY
                   }, ${dataBasket.deliveryAddress.postalCode} \n `}
             </Text>
             <Text
               style={{
-                fontSize: 22,
+                fontSize: 19,
                 // marginTop: -20,
                 color: colorConfig.store.colorSuccess,
                 fontWeight: 'bold',
                 textAlign: 'center',
                 fontFamily: 'Lato-Bold',
               }}>
-              {this.getInfoCart()}
+              {this.getInfoCart()}{' '}
+              {dataBasket != undefined && dataBasket.trackingNo != undefined ? (
+                <Icon
+                  onPress={this.copyTrackingNo}
+                  size={25}
+                  name={Platform.OS === 'ios' ? 'ios-copy' : 'md-copy'}
+                  style={{color: colorConfig.pageIndex.grayColor}}
+                />
+              ) : null}
             </Text>
           </View>
         ) : (
@@ -475,7 +503,7 @@ class WaitingFood extends Component {
                   {mod.quantity}x
                 </Text>
               ) : null}{' '}
-              {mod.name} ( {this.format(CurrencyFormatter(mod.productPrice))} )
+              {mod.name} ( {this.format(CurrencyFormatter(mod.price))} )
             </Text>
           ))
         }
@@ -556,32 +584,42 @@ class WaitingFood extends Component {
                             }}>
                             {item.quantity}x
                           </Text>{' '}
-                          {item.product.name} ({' '}
-                          {this.format(CurrencyFormatter(item.unitPrice))} )
+                          {item.product != undefined ? item.product.name : '-'}{' '}
+                          (
+                          {this.format(
+                            CurrencyFormatter(
+                              item.product != undefined
+                                ? item.product.retailPrice
+                                : 0,
+                            ),
+                          )}{' '}
+                          )
                         </Text>
-                        {item.remark != undefined && item.remark != '' ? (
-                          <Text
-                            style={{
-                              color: colorConfig.pageIndex.inactiveTintColor,
-                              fontSize: 12,
-                              fontStyle: 'italic',
-                            }}>
-                            note: {item.remark}
-                          </Text>
-                        ) : null}
                         {/* loop item modifier */}
                         {!isEmptyArray(item.modifiers) ? (
                           <Text
                             style={{
                               color: colorConfig.pageIndex.inactiveTintColor,
                               fontSize: 10,
-                              marginLeft: 10,
+                              marginLeft: 17,
                               fontStyle: 'italic',
                             }}>
                             Add On:
                           </Text>
                         ) : null}
                         {this.renderItemModifier(item)}
+                        {item.remark != undefined && item.remark != '' ? (
+                          <Text
+                            style={{
+                              color: colorConfig.pageIndex.inactiveTintColor,
+                              fontSize: 12,
+                              marginLeft: 17,
+                              marginTop: 5,
+                              fontStyle: 'italic',
+                            }}>
+                            Note: {item.remark}
+                          </Text>
+                        ) : null}
                       </View>
                     </View>
                     <View>
@@ -626,17 +664,25 @@ class WaitingFood extends Component {
                   style={[styles.total, {textAlign: 'right', fontSize: 12}]}>
                   {dataBasket.deliveryAddress.address}
                   {' \n'}
-                  {dataBasket.deliveryAddress.city}
+                  {awsConfig.COUNTRY != 'Singapore'
+                    ? dataBasket.deliveryAddress.city
+                    : awsConfig.COUNTRY}
                   {' \n'}
+                  {dataBasket.deliveryAddress.province != undefined
+                    ? dataBasket.deliveryAddress.province
+                    : null}
+                  {dataBasket.deliveryAddress.province != undefined
+                    ? ' \n'
+                    : null}
                   {dataBasket.deliveryAddress.postalCode}
                 </Text>
               </View>
             ) : null}
-            {dataBasket.deliveryProviderId != undefined ? (
+            {dataBasket.deliveryProvider != undefined ? (
               <View style={styles.itemSummary}>
                 <Text style={styles.total}>Delivery Provider : </Text>
                 <Text style={[styles.total, {textAlign: 'right'}]}>
-                  {this.getInfoProvider(dataBasket.deliveryProviderId)}
+                  {dataBasket.deliveryProvider}
                 </Text>
               </View>
             ) : null}
@@ -776,7 +822,7 @@ class WaitingFood extends Component {
           <View style={styles.line} />
         </View>
 
-        <View style={{height: '40%'}}>
+        <View style={{height: '35%'}}>
           {dataBasket != undefined ? (
             <LottieView
               speed={1}
@@ -952,7 +998,7 @@ const styles = StyleSheet.create({
     maxWidth: Dimensions.get('window').width,
     fontSize: 11,
     fontStyle: 'italic',
-    marginLeft: 10,
+    marginLeft: 17,
     fontFamily: 'Lato-Medium',
   },
   descPrice: {

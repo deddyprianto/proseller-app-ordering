@@ -61,11 +61,26 @@ class Store extends Component {
 
     this.getUserLocation();
 
-    var hours = new Date().getHours();
-    var min = new Date().getMinutes();
-    this.setState({
-      currentClock: hours + ':' + this.getMenit(min),
-    });
+    // var hours = new Date().getHours();
+    // var min = new Date().getMinutes();
+    // this.setState({
+    //   currentClock: hours + ':' + this.getMenit(min),
+    // });
+
+    this.checkOpen();
+
+    try {
+      this.checkFocused = this.props.navigation.addListener('willFocus', () => {
+        clearInterval(this.interval);
+        this.checkOpen();
+      });
+    } catch (e) {}
+
+    try {
+      this.checkBlur = this.props.navigation.addListener('willBlur', () => {
+        clearInterval(this.interval);
+      });
+    } catch (e) {}
   };
 
   getUserLocation = async () => {
@@ -95,6 +110,40 @@ class Store extends Component {
       },
     );
     return granted;
+  };
+
+  checkOpen = async () => {
+    try {
+      clearInterval(this.interval);
+    } catch (e) {}
+    try {
+      this.interval = setInterval(async () => {
+        await this.refreshOpeningHours();
+      }, 10000);
+    } catch (e) {}
+  };
+
+  refreshOpeningHours = async () => {
+    const {dataStores} = this.props;
+    const {dataAllStore, dataStoresNear, dataStoreRegion} = this.state;
+
+    try {
+      for (let i = 0; i < dataStoreRegion.length; i++) {
+        for (let j = 0; j < dataAllStore[dataStoreRegion[i]].length; j++) {
+          dataAllStore[dataStoreRegion[i]][j].storeStatus = this._cekOpen(
+            dataAllStore[dataStoreRegion[i]][j],
+          );
+        }
+      }
+      await this.setState({dataAllStore});
+    } catch (e) {}
+
+    try {
+      for (let i = 0; i < 3; i++) {
+        dataStoresNear[i].storeStatus = this._cekOpen(dataStoresNear[i]);
+      }
+      await this.setState({dataStoresNear});
+    } catch (e) {}
   };
 
   componentWillUnmount = () => {
@@ -275,7 +324,7 @@ class Store extends Component {
         .filter(item => item.day == day && item.active == true)
         .map(day => {
           if (
-            Date.parse(`${currentDate} ${time}`) >
+            Date.parse(`${currentDate} ${time}`) >=
               Date.parse(`${currentDate} ${day.open}`) &&
             Date.parse(`${currentDate} ${time}`) <
               Date.parse(`${currentDate} ${day.close}`)
@@ -451,7 +500,7 @@ class Store extends Component {
           ) : (
             <View style={styles.container}>
               {this.props.dataPromotion == undefined ||
-              this.props.dataPromotion.count == 0 ? null : (
+              isEmptyArray(this.props.dataPromotion) ? null : (
                 <StorePromotion />
               )}
 

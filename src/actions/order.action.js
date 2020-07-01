@@ -350,7 +350,7 @@ export const updateProductToBasket = (payload, previousData) => {
         data.remark = payload.details[0].remark;
       }
       updatedProduct.push(data);
-      console.log('payload update product ', updatedProduct);
+      console.log('payload update product ', JSON.stringify(updatedProduct));
       let response = await fetchApiOrder(
         `/cart/updateitem`,
         'POST',
@@ -668,14 +668,16 @@ export const settleOrder = (payload, url) => {
       console.log(response, 'response settle order');
 
       // remove table type
-      dispatch({
-        type: 'TABLE_TYPE',
-        tableType: undefined,
-      });
-      dispatch({
-        type: 'SELECTED_ACCOUNT',
-        selectedAccount: undefined,
-      });
+      if (response.success) {
+        dispatch({
+          type: 'TABLE_TYPE',
+          tableType: undefined,
+        });
+        dispatch({
+          type: 'SELECTED_ACCOUNT',
+          selectedAccount: undefined,
+        });
+      }
       var result = {
         responseBody: response.response,
         success: response.success,

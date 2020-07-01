@@ -70,6 +70,11 @@ import SelectAddress from '../components/address/SelectAddress';
 import EditAddress from '../components/address/EditAddress';
 import ListLanguages from '../components/language/ListLanguages';
 
+// referral
+import ListReferral from '../components/referral/ListReferral';
+import AddReferral from '../components/referral/AddReferral';
+import Contacts from '../components/referral/Contacts';
+
 let backPressed = 0;
 
 export default class Routes extends Component {
@@ -196,6 +201,10 @@ export default class Routes extends Component {
             <Scene key="selectAddress" component={SelectAddress} />
 
             <Scene key="listLanguages" component={ListLanguages} />
+
+            <Scene key="listReferral" component={ListReferral} />
+            <Scene key="addReferral" component={AddReferral} />
+            <Scene key="contacts" component={Contacts} />
           </Scene>
         </Scene>
       </Router>

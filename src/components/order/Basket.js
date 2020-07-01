@@ -38,7 +38,7 @@ import {
 } from '../../helper/CheckEmpty';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import * as _ from 'lodash';
-import {getOutletById} from '../../actions/stores.action';
+import {dataStores, getOutletById} from '../../actions/stores.action';
 import * as geolib from 'geolib';
 import appConfig from '../../config/appConfig';
 import {refreshToken} from '../../actions/auth.actions';
@@ -72,6 +72,7 @@ class Basket extends Component {
       selectedCategoryModifier: 0,
       selectedProvider: {},
       deliveryFee: null,
+      isOpen: true,
     };
   }
 
@@ -141,29 +142,37 @@ class Basket extends Component {
       // await this.props.dispatch(clearAddress());
       // get data basket
       await this.getBasket();
+
+      this.refreshOpeningHours();
+
       // get previous data products from this outlet, for modifier detail purpose
       if (this.props.dataBasket != undefined) {
         let outletID = this.props.dataBasket.outlet.id;
         await this.getProductsByOutlet(outletID);
         // fetch details outlet
         await this.props.dispatch(getOutletById(outletID));
+
+        await this.setState({
+          isOpen: this.isOpen(),
+        });
+
         await this.setState({loading: false});
 
         // check if user not yet select order mode, then open modal
         if (this.props.orderType == undefined) {
           this.RBSheet.open();
         }
+
+        this.getDeliveryAddress();
+
+        if (
+          this.props.orderType == 'DELIVERY' &&
+          !isEmptyObject(this.props.selectedAddress)
+        ) {
+          this.getDeliveryFee();
+        }
       }
       await this.setState({loading: false});
-
-      this.getDeliveryAddress();
-
-      if (
-        this.props.orderType == 'DELIVERY' &&
-        !isEmptyObject(this.props.selectedAddress)
-      ) {
-        this.getDeliveryFee();
-      }
     } catch (e) {
       Alert.alert('Opss..', "Can't get data basket, please try again.");
     }
@@ -173,6 +182,17 @@ class Basket extends Component {
         'hardwareBackPress',
         this.handleBackPress,
       );
+    } catch (e) {}
+  };
+
+  refreshOpeningHours = () => {
+    try {
+      clearInterval(this.intervalOutlet);
+    } catch (e) {}
+    try {
+      this.intervalOutlet = setInterval(async () => {
+        await this.setState({isOpen: this.isOpen()});
+      }, 10000);
     } catch (e) {}
   };
 
@@ -399,8 +419,8 @@ class Basket extends Component {
       } else {
         this.setState({deliveryFee: null});
       }
-      await this.setState({loading: false});
     } catch (e) {}
+    await this.setState({loading: false});
   };
 
   askUserToSelectProviders = () => {
@@ -479,6 +499,7 @@ class Basket extends Component {
     const outletID = this.props.dataBasket.outlet.id;
     await this.props.dispatch(getOutletById(outletID));
     await this.setState({refreshing: false});
+    this.props.dispatch(dataStores());
   };
 
   getBasket = async () => {
@@ -494,6 +515,7 @@ class Basket extends Component {
     try {
       this.backHandler.remove();
       clearInterval(this.interval);
+      clearInterval(this.intervalOutlet);
     } catch (e) {}
   }
 
@@ -659,13 +681,13 @@ class Basket extends Component {
           <TouchableOpacity
             onPress={this.goToSettle}
             disabled={
-              this.checkActivateButton(dataBasket) ? !this.isOpen() : true
+              this.checkActivateButton(dataBasket) ? !this.state.isOpen : true
             }
             style={[
               styles.btnAddBasketModal,
               {
                 backgroundColor: this.checkActivateButton(dataBasket)
-                  ? this.isOpen()
+                  ? this.state.isOpen
                     ? colorConfig.store.defaultColor
                     : colorConfig.store.disableButton
                   : colorConfig.store.disableButton,
@@ -751,13 +773,13 @@ class Basket extends Component {
           <TouchableOpacity
             onPress={this.goToSettle}
             disabled={
-              this.checkActivateButton(dataBasket) ? !this.isOpen() : true
+              this.checkActivateButton(dataBasket) ? !this.state.isOpen : true
             }
             style={[
               styles.btnAddBasketModal,
               {
                 backgroundColor: this.checkActivateButton(dataBasket)
-                  ? this.isOpen()
+                  ? this.state.isOpen
                     ? colorConfig.store.defaultColor
                     : colorConfig.store.disableButton
                   : colorConfig.store.disableButton,
@@ -976,12 +998,12 @@ class Basket extends Component {
           <TouchableOpacity
             onPress={this.goToScanTable}
             disabled={
-              !this.isOpen() || outletSingle.orderingStatus == 'UNAVAILABLE'
+              !this.state.isOpen || outletSingle.orderingStatus == 'UNAVAILABLE'
                 ? true
                 : false
             }
             style={
-              !this.isOpen() || outletSingle.orderingStatus == 'UNAVAILABLE'
+              !this.state.isOpen || outletSingle.orderingStatus == 'UNAVAILABLE'
                 ? styles.btnAddBasketModalDisabled
                 : styles.btnAddBasketModal
             }>
@@ -1005,9 +1027,13 @@ class Basket extends Component {
 
   removeBasket = async () => {
     clearInterval(this.interval);
+    const {dataBasket} = this.props;
     await this.setState({loading: true});
     await this.props.dispatch(removeBasket());
     await this.getBasket();
+    try {
+      this.props.refreshQuantityProducts(dataBasket);
+    } catch (e) {}
     await this.setState({loading: false});
   };
 
@@ -1113,9 +1139,11 @@ class Basket extends Component {
         const {products} = this.state;
         for (let i = 0; i < products.length; i++) {
           for (let j = 0; j < products[i].items.length; j++) {
-            if (products[i].items[j].product.id == existProduct.product.id) {
-              originalProduct = products[i].items[j];
-              break;
+            if (products[i].items[j].product != undefined) {
+              if (products[i].items[j].product.id == existProduct.product.id) {
+                originalProduct = products[i].items[j];
+                break;
+              }
             }
           }
         }
@@ -1137,6 +1165,14 @@ class Basket extends Component {
           if (!isEmptyArray(group.modifier.details))
             group.modifier.details.map((detail, j) => {
               delete detail.quantity;
+
+              // return back to normal
+              if (group.modifier.max == 1) {
+                product.product.productModifiers[i].modifier.show = false;
+                // delete product.product.productModifiers[i].modifier.selected;
+              } else {
+                product.product.productModifiers[i].modifier.show = true;
+              }
             });
         });
 
@@ -1158,16 +1194,21 @@ class Basket extends Component {
                       ].postToServer = true;
                       // set quantity basket to product that openend
                       if (item.id == detail.id) {
+                        // check for radio button selected
+                        if (group.modifier.max == 1) {
+                          product.product.productModifiers[i].modifier.show =
+                            data.modifier.show;
+                          // product.product.productModifiers[
+                          //   i
+                          // ].modifier.selected = data.modifier.selected;
+                        }
+
                         existProduct.product.productModifiers[
                           i
                         ].modifier.details[j].quantity = item.quantity;
                         product.product.productModifiers[i].modifier.details[
                           j
-                        ].isSelected = true;
-                      } else {
-                        product.product.productModifiers[i].modifier.details[
-                          j
-                        ].isSelected = false;
+                        ].isSelected = item.isSelected;
                       }
                     }
                   });
@@ -1398,6 +1439,11 @@ class Basket extends Component {
               data.modifier.details[j].quantity != undefined &&
               data.modifier.details[j].quantity > 0
             ) {
+              // check if price is undefined
+              if (data.modifier.details[j].price == undefined) {
+                data.modifier.details[j].price = 0;
+              }
+
               tempDetails.push(data.modifier.details[j]);
             }
           }
@@ -1411,9 +1457,7 @@ class Basket extends Component {
           if (group.postToServer == true) {
             group.modifier.details.map(detail => {
               if (detail.quantity != undefined && detail.quantity > 0) {
-                totalModifier += parseFloat(
-                  detail.quantity * detail.productPrice,
-                );
+                totalModifier += parseFloat(detail.quantity * detail.price);
               }
             });
           }
@@ -1451,7 +1495,7 @@ class Basket extends Component {
         selectedProduct: {},
         isModalVisible: false,
       });
-      if (response.response.resultCode != 200) {
+      if (response.success == false) {
         Alert.alert('Oppss..', response.response.data.message);
         this.props.dispatch(getBasket());
       }
@@ -1531,7 +1575,7 @@ class Basket extends Component {
                   {mod.quantity}x
                 </Text>
               ) : null}{' '}
-              {mod.name} ( {this.format(CurrencyFormatter(mod.productPrice))} )
+              {mod.name} ( {this.format(CurrencyFormatter(mod.price))} )
             </Text>
           ))
         }
@@ -1683,7 +1727,11 @@ class Basket extends Component {
             : true,
       };
 
-      Actions.push('productsMode2', {item: data});
+      if (this.props.from == 'products') {
+        Actions.pop();
+      } else {
+        Actions.push('productsMode2', {item: data});
+      }
     } catch (e) {
       Actions.pop();
     }
@@ -1705,7 +1753,7 @@ class Basket extends Component {
         .filter(item => item.day == day && item.active == true)
         .map(day => {
           if (
-            Date.parse(`${currentDate} ${time}`) >
+            Date.parse(`${currentDate} ${time}`) >=
               Date.parse(`${currentDate} ${day.open}`) &&
             Date.parse(`${currentDate} ${time}`) <
               Date.parse(`${currentDate} ${day.close}`)
@@ -1958,7 +2006,7 @@ class Basket extends Component {
                 <Text style={styles.title}>
                   {this.props.dataBasket.outlet.name}
                 </Text>
-                {!this.isOpen() ? (
+                {!this.state.isOpen ? (
                   <Text style={styles.titleClosed}>Outlet is Closed</Text>
                 ) : null}
                 {outletSingle.orderingStatus == 'UNAVAILABLE' ? (
@@ -2002,21 +2050,19 @@ class Basket extends Component {
                                   }}>
                                   {item.quantity}x
                                 </Text>{' '}
-                                {item.product.name} ({' '}
-                                {this.format(CurrencyFormatter(item.unitPrice))}{' '}
+                                {item.product != undefined
+                                  ? item.product.name
+                                  : '-'}{' '}
+                                ({' '}
+                                {this.format(
+                                  CurrencyFormatter(
+                                    item.product != undefined
+                                      ? item.product.retailPrice
+                                      : 0,
+                                  ),
+                                )}{' '}
                                 )
                               </Text>
-                              {item.remark != undefined && item.remark != '' ? (
-                                <Text
-                                  style={{
-                                    color:
-                                      colorConfig.pageIndex.inactiveTintColor,
-                                    fontSize: 12,
-                                    fontStyle: 'italic',
-                                  }}>
-                                  note: {item.remark}
-                                </Text>
-                              ) : null}
                               {/* loop item modifier */}
                               {!isEmptyArray(item.modifiers) ? (
                                 <Text
@@ -2024,13 +2070,26 @@ class Basket extends Component {
                                     color:
                                       colorConfig.pageIndex.inactiveTintColor,
                                     fontSize: 10,
-                                    marginLeft: 10,
+                                    marginLeft: 17,
                                     fontStyle: 'italic',
                                   }}>
                                   Add On:
                                 </Text>
                               ) : null}
                               {this.renderItemModifier(item)}
+                              {item.remark != undefined && item.remark != '' ? (
+                                <Text
+                                  style={{
+                                    marginTop: 3,
+                                    color:
+                                      colorConfig.pageIndex.inactiveTintColor,
+                                    fontSize: 12,
+                                    marginLeft: 17,
+                                    fontStyle: 'italic',
+                                  }}>
+                                  Note: {item.remark}
+                                </Text>
+                              ) : null}
                               {/* loop item modifier */}
                               {this.props.dataBasket.status == 'PENDING' &&
                               this.props.tableType == undefined &&
@@ -2356,7 +2415,7 @@ const styles = StyleSheet.create({
     maxWidth: Dimensions.get('window').width,
     fontSize: 11,
     fontStyle: 'italic',
-    marginLeft: 10,
+    marginLeft: 17,
     fontFamily: 'Lato-Medium',
   },
   descPrice: {
