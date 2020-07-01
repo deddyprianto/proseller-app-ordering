@@ -355,12 +355,12 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   imageNotNull: {
-    height: 200,
-    resizeMode: 'stretch',
+    height: 230,
+    resizeMode: 'cover',
   },
   image: {
-    height: 200,
-    resizeMode: 'stretch',
+    height: 230,
+    resizeMode: 'cover',
     width: '100%',
   },
   detailItem: {

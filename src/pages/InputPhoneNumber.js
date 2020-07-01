@@ -321,7 +321,7 @@ class InputPhoneNumber extends Component {
                       height: 25,
                       justifyContent: 'center',
                       marginRight: -5,
-                      marginLeft: 5
+                      marginLeft: 5,
                     }}
                     textStyle={{fontSize: 0, fontFamily: 'Lato-Medium'}}
                     style={{
@@ -365,6 +365,7 @@ class InputPhoneNumber extends Component {
                       fontSize: 17,
                       fontFamily: 'Lato-Medium',
                       paddingHorizontal: 10,
+                      paddingVertical: 12,
                       color: colorConfig.store.title,
                       borderColor: colorConfig.pageIndex.inactiveTintColor,
                       borderWidth: 1,

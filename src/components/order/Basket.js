@@ -1440,8 +1440,8 @@ class Basket extends Component {
               data.modifier.details[j].quantity > 0
             ) {
               // check if price is undefined
-              if (data.modifier.details[j].productPrice == undefined) {
-                data.modifier.details[j].productPrice = 0;
+              if (data.modifier.details[j].price == undefined) {
+                data.modifier.details[j].price = 0;
               }
 
               tempDetails.push(data.modifier.details[j]);
@@ -1457,9 +1457,7 @@ class Basket extends Component {
           if (group.postToServer == true) {
             group.modifier.details.map(detail => {
               if (detail.quantity != undefined && detail.quantity > 0) {
-                totalModifier += parseFloat(
-                  detail.quantity * detail.productPrice,
-                );
+                totalModifier += parseFloat(detail.quantity * detail.price);
               }
             });
           }
@@ -1577,7 +1575,7 @@ class Basket extends Component {
                   {mod.quantity}x
                 </Text>
               ) : null}{' '}
-              {mod.name} ( {this.format(CurrencyFormatter(mod.productPrice))} )
+              {mod.name} ( {this.format(CurrencyFormatter(mod.price))} )
             </Text>
           ))
         }

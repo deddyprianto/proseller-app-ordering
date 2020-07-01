@@ -48,7 +48,7 @@ export default class RadioButton extends Component {
         {isSelected ? (
           <View style={innerStyle}>
             <Icon
-              size={17}
+              size={Platform.OS === 'ios' ? 22 : 17}
               name={Platform.OS === 'ios' ? 'ios-checkmark' : 'md-checkmark'}
               style={{
                 color: 'white',

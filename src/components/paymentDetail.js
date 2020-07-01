@@ -11,7 +11,6 @@ import {
   StyleSheet,
   Dimensions,
   TouchableOpacity,
-  Image,
   Platform,
   ScrollView,
   Alert,
@@ -25,13 +24,13 @@ import {Actions} from 'react-native-router-flux';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
 import * as _ from 'lodash';
-import SwipeButton from 'rn-swipe-button';
+// import SwipeButton from 'rn-swipe-button';
 import AwesomeAlert from 'react-native-awesome-alerts';
 
 import colorConfig from '../config/colorConfig';
 import appConfig from '../config/appConfig';
 import {sendPayment} from '../actions/sales.action';
-import Loader from './loader';
+// import Loader from './loader';
 import CurrencyFormatter from '../helper/CurrencyFormatter';
 import {isEmptyArray, isEmptyObject} from '../helper/CheckEmpty';
 import {
@@ -44,6 +43,7 @@ import RBSheet from 'react-native-raw-bottom-sheet';
 
 import UUIDGenerator from 'react-native-uuid-generator';
 import {defaultPaymentAccount} from '../actions/user.action';
+import LoaderDarker from './LoaderDarker';
 
 class PaymentDetail extends Component {
   constructor(props) {
@@ -701,7 +701,7 @@ class PaymentDetail extends Component {
     const {intlData, selectedAccount} = this.props;
     return (
       <SafeAreaView style={styles.container}>
-        {this.state.loading && <Loader />}
+        {this.state.loading && <LoaderDarker />}
         {this.askUserToEnterCVV()}
         <View style={{backgroundColor: colorConfig.pageIndex.backgroundColor}}>
           <View

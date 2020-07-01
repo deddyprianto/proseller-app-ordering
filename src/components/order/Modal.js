@@ -109,7 +109,7 @@ export default class ModalOrder extends Component {
         if (group.postToServer == true) {
           group.modifier.details.map(detail => {
             if (detail.quantity != undefined && detail.quantity > 0) {
-              let price = detail.productPrice;
+              let price = detail.price;
               if (price == undefined) price = 0;
               totalModifier += parseFloat(detail.quantity * price);
             }
@@ -631,99 +631,113 @@ export default class ModalOrder extends Component {
     let available = true;
     item.orderingStatus != 'AVAILABLE' ? (available = false) : true;
     return (
-      <View
-        style={[styles.detailOptionsModal, !available ? {opacity: 0.3} : null]}>
-        <CheckBox
-          value={item}
-          isSelected={this.findExistModifier(item) ? true : false}
-          onPress={() => {
-            available
-              ? this.openModalModifierQty(item, idx, modifier.modifier, true)
-              : false;
-          }}
-        />
-        <TouchableOpacity
-          onPress={() =>
-            available
-              ? this.openModalModifierQty(item, idx, modifier.modifier, true)
-              : false
-          }
-          style={{
-            marginLeft: 5,
-            alignItems: 'center',
-            paddingVertical: 10,
-            paddingRight: 10,
-            flexDirection: 'row',
-          }}>
-          <Text
-            style={{
-              color: colorConfig.store.defaultColor,
-              fontWeight: 'bold',
-            }}>
-            {item.quantity != undefined && item.quantity > 0
-              ? `${item.quantity}x `
-              : null}
-          </Text>
-          <Text
-            style={{
-              color: colorConfig.pageIndex.grayColor,
-              fontFamily: 'Lato-Bold',
-            }}>
-            {item.name}
-          </Text>
-          {/* Make more padding right */}
-          {item.quantity != undefined && item.quantity > 0 ? null : (
-            <View
-              style={{
-                width: '100%',
-                paddingVertical: 10,
-              }}
-            />
-          )}
-        </TouchableOpacity>
-        {item.quantity != undefined && item.quantity > 0 ? (
+      <View>
+        <View
+          style={[
+            styles.detailOptionsModalCheckBox,
+            !available ? {opacity: 0.3} : null,
+          ]}>
           <TouchableOpacity
+            style={{flexDirection: 'row', paddingLeft: 15, paddingVertical: 6}}
             onPress={() =>
               available
-                ? this.openModalModifierQty(item, idx, modifier.modifier)
+                ? this.openModalModifierQty(item, idx, modifier.modifier, true)
                 : false
             }>
+            <CheckBox
+              value={item}
+              isSelected={this.findExistModifier(item) ? true : false}
+              onPress={() => {
+                available
+                  ? this.openModalModifierQty(
+                      item,
+                      idx,
+                      modifier.modifier,
+                      true,
+                    )
+                  : false;
+              }}
+            />
+            <View
+              style={{
+                marginLeft: 5,
+                alignItems: 'center',
+                paddingVertical: 10,
+                paddingRight: 10,
+                flexDirection: 'row',
+              }}>
+              <Text
+                style={{
+                  color: colorConfig.store.defaultColor,
+                  fontWeight: 'bold',
+                }}>
+                {item.quantity != undefined && item.quantity > 0
+                  ? `${item.quantity}x `
+                  : null}
+              </Text>
+              <Text
+                style={{
+                  color: colorConfig.pageIndex.grayColor,
+                  fontFamily: 'Lato-Bold',
+                }}>
+                {item.name}
+              </Text>
+              {/* Make more padding right */}
+              {item.quantity != undefined && item.quantity > 0 ? null : (
+                <View
+                  style={{
+                    width: '100%',
+                    paddingVertical: 10,
+                  }}
+                />
+              )}
+            </View>
+          </TouchableOpacity>
+          {item.quantity != undefined && item.quantity > 0 ? (
+            <TouchableOpacity
+              onPress={() =>
+                available
+                  ? this.openModalModifierQty(item, idx, modifier.modifier)
+                  : false
+              }>
+              <Text
+                style={{
+                  color: colorConfig.store.defaultColor,
+                  fontSize: 12,
+                  paddingLeft: 10,
+                  paddingVertical: 10,
+                  textDecorationLine: 'underline',
+                }}>
+                more
+              </Text>
+            </TouchableOpacity>
+          ) : null}
+          {!available ? (
             <Text
               style={{
-                color: colorConfig.store.defaultColor,
-                fontSize: 12,
-                paddingLeft: 10,
-                paddingVertical: 10,
-                textDecorationLine: 'underline',
+                marginTop: 5,
+                position: 'absolute',
+                right: 3,
+                color: colorConfig.pageIndex.grayColor,
+                fontFamily: 'Lato-Bold',
               }}>
-              more
+              Unavailable
             </Text>
-          </TouchableOpacity>
-        ) : null}
-        {!available ? (
-          <Text
-            style={{
-              marginTop: 5,
-              position: 'absolute',
-              right: 3,
-              color: colorConfig.pageIndex.grayColor,
-              fontFamily: 'Lato-Bold',
-            }}>
-            Unavailable
-          </Text>
-        ) : item.productPrice == undefined || item.productPrice === 0 ? null : (
-          <Text
-            style={{
-              marginTop: 5,
-              position: 'absolute',
-              right: 3,
-              color: colorConfig.pageIndex.grayColor,
-              fontFamily: 'Lato-Bold',
-            }}>
-            {' + '}
-            {this.formatNumber(CurrencyFormatter(item.productPrice))}{' '}
-          </Text>
-        )}
+          ) : item.price == undefined || item.price === 0 ? null : (
+            <Text
+              style={{
+                marginTop: 5,
+                position: 'absolute',
+                right: 3,
+                color: colorConfig.pageIndex.grayColor,
+                fontFamily: 'Lato-Bold',
+              }}>
+              {' + '}
+              {this.formatNumber(CurrencyFormatter(item.price))}{' '}
+            </Text>
+          )}
+        </View>
+        <View style={styles.lineBottom} />
       </View>
     );
   };
@@ -811,7 +825,7 @@ export default class ModalOrder extends Component {
             }}>
             Unavailable
           </Text>
-        ) : item.productPrice == undefined || item.productPrice === 0 ? null : (
+        ) : item.price == undefined || item.price === 0 ? null : (
           <Text
             style={{
               marginTop: 5,
@@ -821,7 +835,7 @@ export default class ModalOrder extends Component {
               fontFamily: 'Lato-Bold',
             }}>
             {' + '}
-            {this.formatNumber(CurrencyFormatter(item.productPrice))}{' '}
+            {this.formatNumber(CurrencyFormatter(item.price))}{' '}
           </Text>
         )}
       </TouchableOpacity>
@@ -893,7 +907,7 @@ export default class ModalOrder extends Component {
             }}>
             Unavailable
           </Text>
-        ) : item.productPrice == undefined || item.productPrice === 0 ? null : (
+        ) : item.price == undefined || item.price === 0 ? null : (
           <Text
             style={{
               marginTop: 5,
@@ -903,7 +917,7 @@ export default class ModalOrder extends Component {
               fontFamily: 'Lato-Bold',
             }}>
             {' + '}
-            {this.formatNumber(CurrencyFormatter(item.productPrice))}{' '}
+            {this.formatNumber(CurrencyFormatter(item.price))}{' '}
           </Text>
         )}
       </TouchableOpacity>
@@ -1432,6 +1446,18 @@ const styles = StyleSheet.create({
     borderBottomColor: colorConfig.pageIndex.inactiveTintColor,
     borderBottomWidth: 0.55,
     alignItems: 'center',
+  },
+  detailOptionsModalCheckBox: {
+    // marginLeft: 15,
+    marginRight: 15,
+    // marginBottom: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  lineBottom: {
+    borderBottomColor: colorConfig.pageIndex.inactiveTintColor,
+    borderBottomWidth: 0.55,
+    marginHorizontal: 15
   },
   detailOptionsModalYesNo: {
     marginLeft: 15,

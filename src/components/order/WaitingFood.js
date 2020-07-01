@@ -503,7 +503,7 @@ class WaitingFood extends Component {
                   {mod.quantity}x
                 </Text>
               ) : null}{' '}
-              {mod.name} ( {this.format(CurrencyFormatter(mod.productPrice))} )
+              {mod.name} ( {this.format(CurrencyFormatter(mod.price))} )
             </Text>
           ))
         }

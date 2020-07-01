@@ -1,16 +1,11 @@
 import React, {Component} from 'react';
 import {View, Text, Dimensions, Image} from 'react-native';
-import {connect} from 'react-redux';
-import {compose} from 'redux';
-
 import colorConfig from '../config/colorConfig';
 import appConfig from '../config/appConfig';
 import {Actions} from 'react-native-router-flux';
-import CryptoJS from 'react-native-crypto-js';
-import awsConfig from '../config/awsConfig';
 import ShimmerPlaceHolder from 'react-native-shimmer-placeholder';
 
-class AccountUserDetail extends Component {
+export default class AccountUserDetail extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -32,17 +27,7 @@ class AccountUserDetail extends Component {
   };
 
   render() {
-    let userDetail;
-    try {
-      // Decrypt data user
-      let bytes = CryptoJS.AES.decrypt(
-        this.props.userDetail,
-        awsConfig.PRIVATE_KEY_RSA,
-      );
-      userDetail = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
-    } catch (e) {
-      userDetail = undefined;
-    }
+    const {userDetail} = this.props;
     return (
       <View
         style={{
@@ -153,19 +138,3 @@ class AccountUserDetail extends Component {
     );
   }
 }
-
-mapStateToProps = state => ({
-  userDetail: state.userReducer.getUser.userDetails,
-  totalPoint: state.rewardsReducer.dataPoint.totalPoint,
-});
-
-mapDispatchToProps = dispatch => ({
-  dispatch,
-});
-
-export default compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
-)(AccountUserDetail);

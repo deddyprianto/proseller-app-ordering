@@ -256,7 +256,7 @@ class EmailRegister extends Component {
               <Text
                 style={{
                   color: colorConfig.pageIndex.grayColor,
-                  paddingVertical: 10,
+                  paddingVertical: 5,
                   fontSize: 17,
                 }}>
                 {intlData.messages.phoneNumber}
@@ -325,6 +325,7 @@ class EmailRegister extends Component {
                     fontSize: 17,
                     fontFamily: 'Lato-Medium',
                     paddingHorizontal: 10,
+                    paddingVertical: 12,
                     color: colorConfig.store.title,
                     borderColor: colorConfig.pageIndex.inactiveTintColor,
                     borderWidth: 1,

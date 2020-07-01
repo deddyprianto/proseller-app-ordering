@@ -1110,8 +1110,8 @@ class Products2 extends Component {
               data.modifier.details[j].quantity > 0
             ) {
               // check if price is undefined
-              if (data.modifier.details[j].productPrice == undefined) {
-                data.modifier.details[j].productPrice = 0;
+              if (data.modifier.details[j].price == undefined) {
+                data.modifier.details[j].price = 0;
               }
 
               tempDetails.push(data.modifier.details[j]);
@@ -1132,9 +1132,7 @@ class Products2 extends Component {
           if (group.postToServer == true) {
             group.modifier.details.map(detail => {
               if (detail.quantity != undefined && detail.quantity > 0) {
-                totalModifier += parseFloat(
-                  detail.quantity * detail.productPrice,
-                );
+                totalModifier += parseFloat(detail.quantity * detail.price);
               }
             });
           }
@@ -1244,8 +1242,8 @@ class Products2 extends Component {
               data.modifier.details[j].quantity > 0
             ) {
               // check if price is undefined
-              if (data.modifier.details[j].productPrice == undefined) {
-                data.modifier.details[j].productPrice = 0;
+              if (data.modifier.details[j].price == undefined) {
+                data.modifier.details[j].price = 0;
               }
               tempDetails.push(data.modifier.details[j]);
             }
@@ -1260,9 +1258,7 @@ class Products2 extends Component {
           if (group.postToServer == true) {
             group.modifier.details.map(detail => {
               if (detail.quantity != undefined && detail.quantity > 0) {
-                totalModifier += parseFloat(
-                  detail.quantity * detail.productPrice,
-                );
+                totalModifier += parseFloat(detail.quantity * detail.price);
               }
             });
           }
@@ -1866,91 +1862,106 @@ class Products2 extends Component {
           this.find_dimesions(event.nativeEvent.layout);
         }}>
         <View>
-          {/* Button Close */}
-          <View
-            style={{
-              position: 'absolute',
-              backgroundColor: 'transparent',
-              zIndex: 2,
-              top: 10,
-              flexDirection: 'row',
-              width: '100%',
-            }}>
-            <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
-              <Icon
-                size={35}
-                name={Platform.OS === 'ios' ? 'ios-close' : 'md-close'}
-                style={styles.btnBackIcon}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.btnSearch}
-              onPress={this.goToSearch}>
-              <Icon
-                size={27}
-                name={Platform.OS === 'ios' ? 'ios-search' : 'md-search'}
-                style={styles.btnBackIcon}
-              />
-            </TouchableOpacity>
-          </View>
-          {/* Button Close */}
-          <View style={styles.cardImage}>
-            {this.state.item.defaultImageURL != undefined ? (
-              <View style={styles.image}>
-                <ProgressiveImage
-                  style={{
-                    height: 250,
-                    resizeMode: 'cover',
-                    backgroundColor: 'black',
-                  }}
-                  source={{
-                    uri: this.state.item.defaultImageURL,
-                  }}
-                />
-              </View>
-            ) : (
-              <ProgressiveImage
-                style={[styles.image, {width: '100%', resizeMode: 'stretch'}]}
-                source={appConfig.appImageNull}
-              />
-            )}
-          </View>
           <View style={styles.storeDescription}>
             <View
               style={{
-                flex: 1,
                 flexDirection: 'row',
-                justifyContent: 'center',
-                marginVertical: 17,
+                width: '100%',
+                paddingBottom: 20,
               }}>
-              <Text
+              <View
                 style={{
-                  fontWeight: 'bold',
-                  fontSize: 20,
-                  textAlign: 'center',
-                  marginRight: 10,
+                  width: '15%',
+                  justifyContent: 'center',
+                  alignItems: 'center',
                 }}>
-                {this.state.item.storeName}
-              </Text>
-              <TouchableOpacity
-                onPress={() =>
-                  Actions.storeDetailStores({item: this.state.item, intlData})
-                }>
-                <Icon
-                  size={26}
-                  name={
-                    Platform.OS === 'ios' ? 'ios-information' : 'md-information'
-                  }
+                <TouchableOpacity
+                  onPress={this.goBack}
                   style={{
-                    color: 'white',
-                    textAlign: 'center',
-                    width: 25,
+                    width: 35,
+                    height: 35,
+                    backgroundColor: colorConfig.store.colorError,
                     borderRadius: 50,
-                    height: 25,
-                    backgroundColor: colorConfig.pageIndex.inactiveTintColor,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}>
+                  <Icon
+                    size={28}
+                    name={Platform.OS === 'ios' ? 'ios-close' : 'md-close'}
+                    style={{color: 'white'}}
+                  />
+                </TouchableOpacity>
+              </View>
+              <View
+                style={{
+                  width: '70%',
+                  maxWidth: '70%',
+                  flex: 1,
+                  flexDirection: 'row',
+                  justifyContent: 'center',
+                  marginVertical: 17,
+                }}>
+                <TouchableOpacity
+                  style={{
+                    flexDirection: 'row',
+                    width: '70%',
+                    maxWidth: '70%',
+                    alignItems: 'center',
+                    justifyContent: 'center',
                   }}
-                />
-              </TouchableOpacity>
+                  onPress={() =>
+                    Actions.storeDetailStores({item: this.state.item, intlData})
+                  }>
+                  <Text
+                    style={{
+                      fontFamily: 'Lato-Bold',
+                      fontSize: 18,
+                      textAlign: 'center',
+                      marginRight: 10,
+                    }}>
+                    {this.state.item.storeName}
+                  </Text>
+                  <Icon
+                    size={26}
+                    name={
+                      Platform.OS === 'ios'
+                        ? 'ios-information'
+                        : 'md-information'
+                    }
+                    style={{
+                      color: 'white',
+                      textAlign: 'center',
+                      width: 25,
+                      borderRadius: 50,
+                      height: 25,
+                      backgroundColor: colorConfig.pageIndex.inactiveTintColor,
+                    }}
+                  />
+                </TouchableOpacity>
+              </View>
+              <View
+                style={{
+                  width: '15%',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <TouchableOpacity
+                  style={{
+                    width: 35,
+                    height: 35,
+                    backgroundColor: colorConfig.store.defaultColor,
+                    borderRadius: 50,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                  onPress={this.goToSearch}>
+                  <Icon
+                    size={28}
+                    name={Platform.OS === 'ios' ? 'ios-search' : 'md-search'}
+                    style={{color: 'white'}}
+                  />
+                </TouchableOpacity>
+              </View>
             </View>
             <View
               style={{
@@ -2043,64 +2054,65 @@ class Products2 extends Component {
     const {intlData} = this.props;
     return (
       <View>
-        {/* Button Close */}
-        <View
-          style={{
-            position: 'absolute',
-            backgroundColor: 'transparent',
-            zIndex: 2,
-            top: 0,
-          }}>
-          <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
-            <Icon
-              size={27}
-              name={Platform.OS === 'ios' ? 'ios-close' : 'md-close'}
-              style={styles.btnBackIcon}
-            />
-          </TouchableOpacity>
-        </View>
-        {/* Button Close */}
-        <View>
-          <View style={styles.cardImage}>
-            {this.state.item.defaultImageURL != undefined ? (
-              <ProgressiveImage
-                style={{
-                  height: 250,
-                  resizeMode: 'cover',
-                  backgroundColor: 'black',
-                }}
-                source={{
-                  uri: this.state.item.defaultImageURL,
-                }}
-              />
-            ) : (
-              <ProgressiveImage
-                style={[styles.image, {width: '100%', resizeMode: 'stretch'}]}
-                source={appConfig.appImageNull}
-              />
-            )}
-          </View>
-          <View style={styles.storeDescription}>
+        <View style={styles.storeDescription}>
+          <View
+            style={{
+              flexDirection: 'row',
+              width: '100%',
+              paddingBottom: 20,
+            }}>
             <View
               style={{
-                // flex: 1,
+                width: '15%',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <TouchableOpacity
+                onPress={this.goBack}
+                style={{
+                  width: 35,
+                  height: 35,
+                  backgroundColor: colorConfig.store.colorError,
+                  borderRadius: 50,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                <Icon
+                  size={28}
+                  name={Platform.OS === 'ios' ? 'ios-close' : 'md-close'}
+                  style={{color: 'white'}}
+                />
+              </TouchableOpacity>
+            </View>
+            <View
+              style={{
+                width: '70%',
+                maxWidth: '70%',
+                flex: 1,
                 flexDirection: 'row',
                 justifyContent: 'center',
                 marginVertical: 17,
               }}>
-              <Text
-                style={{
-                  fontWeight: 'bold',
-                  fontSize: 20,
-                  textAlign: 'center',
-                  marginRight: 10,
-                }}>
-                {this.state.item.storeName}
-              </Text>
               <TouchableOpacity
+                style={{
+                  flexDirection: 'row',
+                  width: '70%',
+                  maxWidth: '70%',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
                 onPress={() =>
                   Actions.storeDetailStores({item: this.state.item, intlData})
                 }>
+                <Text
+                  style={{
+                    fontFamily: 'Lato-Bold',
+                    fontSize: 18,
+                    textAlign: 'center',
+                    marginRight: 10,
+                  }}>
+                  {this.state.item.storeName}
+                </Text>
                 <Icon
                   size={26}
                   name={
@@ -2119,64 +2131,71 @@ class Products2 extends Component {
             </View>
             <View
               style={{
-                // flex: 1,
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                marginHorizontal: 10,
-              }}>
-              <Text>
-                <Icon
-                  size={18}
-                  name={Platform.OS === 'ios' ? 'ios-time' : 'md-time'}
-                  style={{
-                    color: this.state.item.storeStatus
-                      ? colorConfig.store.colorSuccess
-                      : colorConfig.store.colorError,
-                    paddingRight: 10,
-                  }}
-                />
-                <Text
-                  style={{
-                    fontWeight: 'bold',
-                    fontSize: 15,
-                    color: this.state.item.storeStatus
-                      ? colorConfig.store.colorSuccess
-                      : colorConfig.store.colorError,
-                  }}>
-                  {' '}
-                  {this.state.item.storeStatus
-                    ? intlData.messages.open
-                    : intlData.messages.closed}
-                </Text>
+                width: '15%',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            />
+          </View>
+          <View
+            style={{
+              flex: 1,
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              marginHorizontal: 10,
+            }}>
+            <Text>
+              <Icon
+                size={18}
+                name={Platform.OS === 'ios' ? 'ios-time' : 'md-time'}
+                style={{
+                  color: this.state.item.storeStatus
+                    ? colorConfig.store.colorSuccess
+                    : colorConfig.store.colorError,
+                  paddingRight: 10,
+                }}
+              />
+              <Text
+                style={{
+                  fontWeight: 'bold',
+                  fontSize: 15,
+                  color: this.state.item.storeStatus
+                    ? colorConfig.store.colorSuccess
+                    : colorConfig.store.colorError,
+                }}>
+                {' '}
+                {this.state.item.storeStatus
+                  ? intlData.messages.open
+                  : intlData.messages.closed}
               </Text>
-              <Text>
-                <Icon
-                  size={18}
-                  name={Platform.OS === 'ios' ? 'ios-pin' : 'md-pin'}
-                  style={{color: 'red', paddingRight: 10}}
-                />
-                <Text style={{fontSize: 13}}>
-                  {' '}
-                  {this.state.item.region} - {this.state.item.city}
-                </Text>
+            </Text>
+            <Text>
+              <Icon
+                size={18}
+                name={Platform.OS === 'ios' ? 'ios-pin' : 'md-pin'}
+                style={{color: 'red', paddingRight: 10}}
+              />
+              <Text style={{fontSize: 13}}>
+                {' '}
+                {this.state.item.region} - {this.state.item.city}
               </Text>
-              <Text>
-                <Icon
-                  size={18}
-                  name={Platform.OS === 'ios' ? 'ios-map' : 'md-map'}
-                  style={{
-                    color: colorConfig.store.defaultColor,
-                    paddingRight: 10,
-                  }}
-                />
-                <Text style={{fontSize: 13}}>
-                  {' '}
-                  {this.state.item.storeJarak != '-'
-                    ? this.state.item.storeJarak.toFixed(1) + ' KM'
-                    : '-'}
-                </Text>
+            </Text>
+            <Text>
+              <Icon
+                size={18}
+                name={Platform.OS === 'ios' ? 'ios-map' : 'md-map'}
+                style={{
+                  color: colorConfig.store.defaultColor,
+                  paddingRight: 10,
+                }}
+              />
+              <Text style={{fontSize: 13}}>
+                {' '}
+                {this.state.item.storeJarak != '-'
+                  ? this.state.item.storeJarak.toFixed(1) + ' KM'
+                  : '-'}
               </Text>
-            </View>
+            </Text>
           </View>
         </View>
       </View>
@@ -2776,6 +2795,7 @@ const styles = StyleSheet.create({
   storeDescription: {
     backgroundColor: colorConfig.splash.container,
     paddingBottom: 20,
+    paddingTop: 10,
   },
   line: {
     borderBottomColor: colorConfig.store.defaultColor,

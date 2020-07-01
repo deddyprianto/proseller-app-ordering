@@ -15,6 +15,8 @@ import AccountMenuList from '../components/accountMenuList';
 import colorConfig from '../config/colorConfig';
 import {defaultPaymentAccount, getUserProfile} from '../actions/user.action';
 import {referral} from '../actions/referral.action';
+import CryptoJS from 'react-native-crypto-js';
+import awsConfig from '../config/awsConfig';
 
 class Account extends Component {
   constructor(props) {
@@ -27,7 +29,9 @@ class Account extends Component {
   }
 
   componentDidMount = async () => {
-    // await this.getDataRewards();
+    this.setState({refreshing: true});
+    this.getDataRewards();
+    this.setState({refreshing: false});
   };
 
   getDataRewards = async () => {
@@ -52,6 +56,17 @@ class Account extends Component {
 
   render() {
     const {intlData} = this.props;
+    let userDetail;
+    try {
+      // Decrypt data user
+      let bytes = CryptoJS.AES.decrypt(
+        this.props.userDetail,
+        awsConfig.PRIVATE_KEY_RSA,
+      );
+      userDetail = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+    } catch (e) {
+      userDetail = undefined;
+    }
     return (
       <SafeAreaView style={{flex: 1}}>
         <ScrollView
@@ -62,7 +77,7 @@ class Account extends Component {
             />
           }>
           <View style={styles.card}>
-            <AccountUserDetail screen={this.props} />
+            <AccountUserDetail screen={this.props} userDetail={userDetail} />
           </View>
           <View style={styles.card}>
             <AccountMenuList
