@@ -56,7 +56,6 @@ target 'Qiji' do
 
   pod 'RNFBApp', :path => '../node_modules/@react-native-firebase/app'
 
-  pod 'RNFBCrashlytics', :path => '../node_modules/@react-native-firebase/crashlytics'
 
 
   pod 'BVLinearGradient', :path => '../node_modules/react-native-linear-gradient'
