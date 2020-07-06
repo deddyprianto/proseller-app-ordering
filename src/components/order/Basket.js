@@ -1,17 +1,17 @@
 import React, {Component} from 'react';
 import {
-  View,
-  Text,
-  StyleSheet,
-  Dimensions,
-  TouchableOpacity,
-  BackHandler,
-  Platform,
-  FlatList,
-  ScrollView,
   Alert,
+  BackHandler,
+  Dimensions,
+  FlatList,
+  Platform,
   RefreshControl,
   SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -19,14 +19,14 @@ import colorConfig from '../../config/colorConfig';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
 import {
-  getBasket,
-  updateProductToBasket,
-  removeBasket,
-  setOrderType,
-  getProductByOutlet,
   clearTableType,
+  getBasket,
   getDeliveryFee,
   getDeliveryProvider,
+  getProductByOutlet,
+  removeBasket,
+  setOrderType,
+  updateProductToBasket,
 } from '../../actions/order.action';
 import Loader from '../../components/loader';
 import ModalOrder from '../../components/order/Modal';
@@ -42,10 +42,11 @@ import {dataStores, getOutletById} from '../../actions/stores.action';
 import * as geolib from 'geolib';
 import appConfig from '../../config/appConfig';
 import {refreshToken} from '../../actions/auth.actions';
-import {defaultAddress, getUserProfile} from '../../actions/user.action';
 import CryptoJS from 'react-native-crypto-js';
 import awsConfig from '../../config/awsConfig';
-import {clearAddress, selectedAddress} from '../../actions/payment.actions';
+import {selectedAddress} from '../../actions/payment.actions';
+import {SwipeListView} from 'react-native-swipe-list-view';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 
 class Basket extends Component {
   constructor(props) {
@@ -73,6 +74,7 @@ class Basket extends Component {
       selectedProvider: {},
       deliveryFee: null,
       isOpen: true,
+      loadingDelte: false,
     };
   }
 
@@ -1137,12 +1139,17 @@ class Basket extends Component {
         //  FIND PRODUCTS
         let originalProduct = {};
         const {products} = this.state;
+
         for (let i = 0; i < products.length; i++) {
-          for (let j = 0; j < products[i].items.length; j++) {
-            if (products[i].items[j].product != undefined) {
-              if (products[i].items[j].product.id == existProduct.product.id) {
-                originalProduct = products[i].items[j];
-                break;
+          if (!isEmptyArray(products[i].items)) {
+            for (let j = 0; j < products[i].items.length; j++) {
+              if (products[i].items[j].product != undefined) {
+                if (
+                  products[i].items[j].product.id == existProduct.product.id
+                ) {
+                  originalProduct = products[i].items[j];
+                  break;
+                }
               }
             }
           }
@@ -1196,7 +1203,9 @@ class Basket extends Component {
                       if (item.id == detail.id) {
                         // check for radio button selected
                         if (group.modifier.max == 1) {
-                          product.product.productModifiers[i].modifier.show =
+                          product.product.productModifiers[
+                            i
+                          ].modifier.show =
                             data.modifier.show;
                           // product.product.productModifiers[
                           //   i
@@ -1205,7 +1214,8 @@ class Basket extends Component {
 
                         existProduct.product.productModifiers[
                           i
-                        ].modifier.details[j].quantity = item.quantity;
+                        ].modifier.details[j].quantity =
+                          item.quantity;
                         product.product.productModifiers[i].modifier.details[
                           j
                         ].isSelected = item.isSelected;
@@ -1237,7 +1247,7 @@ class Basket extends Component {
           // await this.openModal();
         } catch (e) {}
       } else {
-        Alert.alert('Opps..', 'Something went wrong, please try again.');
+        // Alert.alert('Opps..', 'Something went wrong, please try again.');
       }
     }
   };
@@ -1396,6 +1406,36 @@ class Basket extends Component {
       try {
         this.props.refreshQuantityProducts(product);
       } catch (e) {}
+    }
+  };
+
+  removeItem = async product => {
+    try {
+      let data = {};
+      data.details = [];
+      let dataproduct = {
+        productID: product.productID,
+        unitPrice: product.product.retailPrice,
+        quantity: 0,
+      };
+
+      data.details.push(dataproduct);
+
+      // send data to action
+      await this.setState({loadingDelte: true});
+      let response = await this.props.dispatch(
+        updateProductToBasket(data, product),
+      );
+
+      if (response.success == false) {
+        Alert.alert('Oppss..', response.response.data.message);
+        this.props.dispatch(getBasket());
+      } else {
+        await this.props.dispatch(getBasket());
+      }
+      await this.setState({loadingDelte: false});
+    } catch (e) {
+      await this.setState({loadingDelte: false});
     }
   };
 
@@ -1932,6 +1972,10 @@ class Basket extends Component {
     }
   };
 
+  backButtonClicked = () => {
+    this.setState({isModalVisible: false});
+  };
+
   render() {
     const {intlData, dataBasket, orderType, tableType} = this.props;
 
@@ -1974,6 +2018,8 @@ class Basket extends Component {
 
         {this.askUserToSelectProviders()}
         {this.askUserToSelectOrderType()}
+
+        {this.state.loadingDelte && <Loader />}
 
         <View style={{backgroundColor: colorConfig.pageIndex.backgroundColor}}>
           <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
@@ -2031,9 +2077,10 @@ class Basket extends Component {
                   ) : null}
                 </View>
                 <View>
-                  <FlatList
+                  <SwipeListView
+                    useFlatList={true}
                     data={this.props.dataBasket.details}
-                    renderItem={({item}) => (
+                    renderItem={(rowData, rowMap) => (
                       <View style={styles.item}>
                         <View
                           style={{
@@ -2048,23 +2095,23 @@ class Basket extends Component {
                                   style={{
                                     color: colorConfig.store.defaultColor,
                                   }}>
-                                  {item.quantity}x
+                                  {rowData.item.quantity}x
                                 </Text>{' '}
-                                {item.product != undefined
-                                  ? item.product.name
+                                {rowData.item.product != undefined
+                                  ? rowData.item.product.name
                                   : '-'}{' '}
                                 ({' '}
                                 {this.format(
                                   CurrencyFormatter(
-                                    item.product != undefined
-                                      ? item.product.retailPrice
+                                    rowData.item.product != undefined
+                                      ? rowData.item.product.retailPrice
                                       : 0,
                                   ),
                                 )}{' '}
                                 )
                               </Text>
                               {/* loop item modifier */}
-                              {!isEmptyArray(item.modifiers) ? (
+                              {!isEmptyArray(rowData.item.modifiers) ? (
                                 <Text
                                   style={{
                                     color:
@@ -2076,8 +2123,9 @@ class Basket extends Component {
                                   Add On:
                                 </Text>
                               ) : null}
-                              {this.renderItemModifier(item)}
-                              {item.remark != undefined && item.remark != '' ? (
+                              {this.renderItemModifier(rowData.item)}
+                              {rowData.item.remark != undefined &&
+                              rowData.item.remark != '' ? (
                                 <Text
                                   style={{
                                     marginTop: 3,
@@ -2087,7 +2135,7 @@ class Basket extends Component {
                                     marginLeft: 17,
                                     fontStyle: 'italic',
                                   }}>
-                                  Note: {item.remark}
+                                  Note: {rowData.item.remark}
                                 </Text>
                               ) : null}
                               {/* loop item modifier */}
@@ -2096,7 +2144,9 @@ class Basket extends Component {
                               (outletSingle.orderingStatus == 'AVAILABLE' ||
                                 outletSingle.orderingStatus == undefined) ? (
                                 <TouchableOpacity
-                                  onPress={() => this.openEditModal(item)}
+                                  onPress={() =>
+                                    this.openEditModal(rowData.item)
+                                  }
                                   style={{paddingVertical: 5}}>
                                   <Text
                                     style={{
@@ -2113,14 +2163,167 @@ class Basket extends Component {
                           </View>
                           <View>
                             <Text style={styles.descPrice}>
-                              {this.format(CurrencyFormatter(item.grossAmount))}
+                              {this.format(
+                                CurrencyFormatter(rowData.item.grossAmount),
+                              )}
                             </Text>
                           </View>
                         </View>
                       </View>
                     )}
-                    keyExtractor={(product, index) => index.toString()}
+                    rightOpenValue={-80}
+                    onRowOpen={(rowKey, rowMap) => {
+                      try {
+                        const options = {
+                          enableVibrateFallback: true,
+                          ignoreAndroidSystemSettings: true,
+                        };
+
+                        ReactNativeHapticFeedback.trigger(
+                          'impactLight',
+                          options,
+                        );
+                      } catch (e) {}
+                    }}
+                    renderHiddenItem={(rowData, rowMap) => (
+                      <View style={styles.rowBack}>
+                        <TouchableOpacity
+                          style={{
+                            backgroundColor: colorConfig.store.colorError,
+                            height: '100%',
+                            width: '20%',
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            justifyContent: 'flex-end',
+                            paddingRight: 25,
+                          }}
+                          onPress={() => {
+                            try {
+                              Alert.alert(
+                                `Delete Item ?`,
+                                `Are you sure want to delete ${
+                                  rowData.item.product.name
+                                } from basket ?`,
+                                [
+                                  {
+                                    text: 'Cancel',
+                                    onPress: () =>
+                                      console.log('Cancel Pressed'),
+                                    style: 'cancel',
+                                  },
+                                  {
+                                    text: 'Delete',
+                                    onPress: () => {
+                                      this.removeItem(rowData.item);
+                                    },
+                                  },
+                                ],
+                                {cancelable: true},
+                              );
+                              // rowMap[rowData.item.key].closeRow();
+                            } catch (e) {}
+                          }}>
+                          <Icon
+                            size={30}
+                            name={
+                              Platform.OS === 'ios' ? 'ios-trash' : 'md-trash'
+                            }
+                            style={{color: 'white'}}
+                          />
+                        </TouchableOpacity>
+                      </View>
+                    )}
                   />
+                  {/*<FlatList*/}
+                  {/*  data={this.props.dataBasket.details}*/}
+                  {/*  renderItem={({item}) => (*/}
+                  {/*    <View style={styles.item}>*/}
+                  {/*      <View*/}
+                  {/*        style={{*/}
+                  {/*          flexDirection: 'row',*/}
+                  {/*          justifyContent: 'space-between',*/}
+                  {/*          padding: 3,*/}
+                  {/*        }}>*/}
+                  {/*        <View style={{width: '80%'}}>*/}
+                  {/*          <View>*/}
+                  {/*            <Text style={[styles.desc]}>*/}
+                  {/*              <Text*/}
+                  {/*                style={{*/}
+                  {/*                  color: colorConfig.store.defaultColor,*/}
+                  {/*                }}>*/}
+                  {/*                {item.quantity}x*/}
+                  {/*              </Text>{' '}*/}
+                  {/*              {item.product != undefined*/}
+                  {/*                ? item.product.name*/}
+                  {/*                : '-'}{' '}*/}
+                  {/*              ({' '}*/}
+                  {/*              {this.format(*/}
+                  {/*                CurrencyFormatter(*/}
+                  {/*                  item.product != undefined*/}
+                  {/*                    ? item.product.retailPrice*/}
+                  {/*                    : 0,*/}
+                  {/*                ),*/}
+                  {/*              )}{' '}*/}
+                  {/*              )*/}
+                  {/*            </Text>*/}
+                  {/*            /!* loop item modifier *!/*/}
+                  {/*            {!isEmptyArray(item.modifiers) ? (*/}
+                  {/*              <Text*/}
+                  {/*                style={{*/}
+                  {/*                  color:*/}
+                  {/*                    colorConfig.pageIndex.inactiveTintColor,*/}
+                  {/*                  fontSize: 10,*/}
+                  {/*                  marginLeft: 17,*/}
+                  {/*                  fontStyle: 'italic',*/}
+                  {/*                }}>*/}
+                  {/*                Add On:*/}
+                  {/*              </Text>*/}
+                  {/*            ) : null}*/}
+                  {/*            {this.renderItemModifier(item)}*/}
+                  {/*            {item.remark != undefined && item.remark != '' ? (*/}
+                  {/*              <Text*/}
+                  {/*                style={{*/}
+                  {/*                  marginTop: 3,*/}
+                  {/*                  color:*/}
+                  {/*                    colorConfig.pageIndex.inactiveTintColor,*/}
+                  {/*                  fontSize: 12,*/}
+                  {/*                  marginLeft: 17,*/}
+                  {/*                  fontStyle: 'italic',*/}
+                  {/*                }}>*/}
+                  {/*                Note: {item.remark}*/}
+                  {/*              </Text>*/}
+                  {/*            ) : null}*/}
+                  {/*            /!* loop item modifier *!/*/}
+                  {/*            {this.props.dataBasket.status == 'PENDING' &&*/}
+                  {/*            this.props.tableType == undefined &&*/}
+                  {/*            (outletSingle.orderingStatus == 'AVAILABLE' ||*/}
+                  {/*              outletSingle.orderingStatus == undefined) ? (*/}
+                  {/*              <TouchableOpacity*/}
+                  {/*                onPress={() => this.openEditModal(item)}*/}
+                  {/*                style={{paddingVertical: 5}}>*/}
+                  {/*                <Text*/}
+                  {/*                  style={{*/}
+                  {/*                    color: colorConfig.store.colorSuccess,*/}
+                  {/*                    fontWeight: 'bold',*/}
+                  {/*                    fontFamily: 'Lato-Bold',*/}
+                  {/*                    fontSize: 14,*/}
+                  {/*                  }}>*/}
+                  {/*                  Edit*/}
+                  {/*                </Text>*/}
+                  {/*              </TouchableOpacity>*/}
+                  {/*            ) : null}*/}
+                  {/*          </View>*/}
+                  {/*        </View>*/}
+                  {/*        <View>*/}
+                  {/*          <Text style={styles.descPrice}>*/}
+                  {/*            {this.format(CurrencyFormatter(item.grossAmount))}*/}
+                  {/*          </Text>*/}
+                  {/*        </View>*/}
+                  {/*      </View>*/}
+                  {/*    </View>*/}
+                  {/*  )}*/}
+                  {/*  keyExtractor={(product, index) => index.toString()}*/}
+                  {/*/>*/}
                 </View>
                 <View style={{marginTop: 20}} />
                 {dataBasket != undefined ? (
@@ -2339,6 +2542,7 @@ const styles = StyleSheet.create({
     padding: 5,
     width: '100%',
     maxWidth: '100%',
+    backgroundColor: 'white',
   },
   itemSummary: {
     justifyContent: 'space-between',
@@ -2553,5 +2757,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  rowBack: {
+    alignItems: 'center',
+    marginTop: 5,
+    // padding: 5,
+    marginBottom: 6,
+    backgroundColor: 'white',
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
   },
 });

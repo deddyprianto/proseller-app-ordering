@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   SafeAreaView,
   Alert,
+  Platform,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
@@ -42,6 +43,7 @@ import {getAccountPayment} from '../actions/payment.actions';
 import OneSignal from 'react-native-onesignal';
 import {dataInbox} from '../actions/inbox.action';
 import {referral} from '../actions/referral.action';
+import Icon from 'react-native-vector-icons/EvilIcons';
 
 class Rewards extends Component {
   constructor(props) {
@@ -75,7 +77,23 @@ class Rewards extends Component {
   };
 
   onReceived = notification => {
-    console.log('Notification received: ', notification);
+    const scene = Actions.currentScene;
+    const page1 = 'paymentDetail';
+    const page2 = 'paymentSuccess';
+    const page3 = 'settleOrder';
+    // console.log('Notification received: ', notification);
+
+    if (
+      (notification.payload.title === 'Payment' ||
+        notification.payload.title === 'Ordering') &&
+      scene != page1 &&
+      scene != page2 &&
+      scene != page3
+    ) {
+      try {
+        Alert.alert(notification.payload.title, notification.payload.body);
+      } catch (e) {}
+    }
     this._onRefresh();
   };
 
@@ -296,16 +314,32 @@ class Rewards extends Component {
                     backgroundColor: colorConfig.pageIndex.activeTintColor,
                     alignItems: 'center',
                   }}>
-                  <RewardsStamp isLoading={this.state.isLoading} />
                   <TouchableOpacity
                     onPress={this.detailStamps}
                     style={{
                       width: 100,
+                      marginTop: 15,
+                      flexDirection: 'row',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      marginLeft: 32,
                     }}>
-                    <Text style={styles.btn}>
-                      {intlData.messages.learnMore}
+                    <Text
+                      style={{
+                        color: 'white',
+                        fontSize: 15,
+                        fontWeight: 'bold',
+                        textAlign: 'center',
+                      }}>
+                      {intlData.messages.stampsCard}
                     </Text>
+                    <Icon
+                      size={32}
+                      name={'chevron-right'}
+                      style={{color: 'white'}}
+                    />
                   </TouchableOpacity>
+                  <RewardsStamp isLoading={this.state.isLoading} />
                 </View>
               )}
 

@@ -67,10 +67,10 @@ class PaymentDetail extends Component {
     };
 
     // check if users payment methods is empty
-    const {myCardAccount} = this.props;
-    if (isEmptyArray(myCardAccount)) {
-      this.askUserToAddAccount();
-    }
+    // const {myCardAccount} = this.props;
+    // if (isEmptyArray(myCardAccount)) {
+    //   this.askUserToAddAccount();
+    // }
 
     // check if default account has been set, then add selected account
     if (!isEmptyObject(this.props.defaultAccount)) {
@@ -238,7 +238,9 @@ class PaymentDetail extends Component {
   };
 
   componentWillUnmount() {
-    this.backHandler.remove();
+    try {
+      this.backHandler.remove();
+    } catch (e) {}
   }
 
   handleBackPress = () => {
@@ -610,78 +612,80 @@ class PaymentDetail extends Component {
     }
   };
 
-  renderUsePoint = () => [
-    <View
-      style={{
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        flexDirection: 'row',
-      }}>
-      <Text
+  renderUsePoint = () => {
+    return (
+      <View
         style={{
-          fontSize: 17,
-          fontFamily: 'Lato-Bold',
-          color: colorConfig.pageIndex.grayColor,
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexDirection: 'row',
         }}>
-        Point
-      </Text>
-      {this.state.cancelPoint == false && this.state.addPoint != undefined ? (
-        <View
+        <Text
           style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
+            fontSize: 17,
+            fontFamily: 'Lato-Bold',
+            color: colorConfig.pageIndex.grayColor,
           }}>
+          Point
+        </Text>
+        {this.state.cancelPoint == false && this.state.addPoint != undefined ? (
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}>
+            <TouchableOpacity
+              style={styles.btnMethodCencel}
+              onPress={() => this.cencelPoint()}>
+              <Icon
+                size={18}
+                name={
+                  Platform.OS === 'ios'
+                    ? 'ios-close-circle-outline'
+                    : 'md-close-circle-outline'
+                }
+                style={{color: colorConfig.store.colorError}}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.btnMethodSelected}
+              onPress={this.myPoint}>
+              {/*<Image*/}
+              {/*  style={{height: 18, width: 23, marginRight: 5}}*/}
+              {/*  source={require('../assets/img/ticket.png')}*/}
+              {/*/>*/}
+              <Icon
+                size={20}
+                name={Platform.OS === 'ios' ? 'ios-pricetags' : 'md-pricetags'}
+                style={{
+                  color: colorConfig.store.textWhite,
+                  marginRight: 8,
+                }}
+              />
+              <Text style={styles.descMethodSelected}>
+                {'- ' + this.state.addPoint + ' Point'}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
           <TouchableOpacity
-            style={styles.btnMethodCencel}
-            onPress={() => this.cencelPoint()}>
-            <Icon
-              size={18}
-              name={
-                Platform.OS === 'ios'
-                  ? 'ios-close-circle-outline'
-                  : 'md-close-circle-outline'
-              }
-              style={{color: colorConfig.store.colorError}}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.btnMethodSelected}
+            style={styles.btnMethodUnselected}
             onPress={this.myPoint}>
-            {/*<Image*/}
-            {/*  style={{height: 18, width: 23, marginRight: 5}}*/}
-            {/*  source={require('../assets/img/ticket.png')}*/}
-            {/*/>*/}
             <Icon
               size={20}
               name={Platform.OS === 'ios' ? 'ios-pricetags' : 'md-pricetags'}
               style={{
-                color: colorConfig.store.textWhite,
+                color: colorConfig.store.defaultColor,
                 marginRight: 8,
               }}
             />
-            <Text style={styles.descMethodSelected}>
-              {'- ' + this.state.addPoint + ' Point'}
-            </Text>
+            <Text style={styles.descMethodUnselected}>Pick Points</Text>
           </TouchableOpacity>
-        </View>
-      ) : (
-        <TouchableOpacity
-          style={styles.btnMethodUnselected}
-          onPress={this.myPoint}>
-          <Icon
-            size={20}
-            name={Platform.OS === 'ios' ? 'ios-pricetags' : 'md-pricetags'}
-            style={{
-              color: colorConfig.store.defaultColor,
-              marginRight: 8,
-            }}
-          />
-          <Text style={styles.descMethodUnselected}>Pick Points</Text>
-        </TouchableOpacity>
-      )}
-    </View>,
-  ];
+        )}
+      </View>
+    );
+  };
 
   selectedPaymentMethod = selectedAccount => {
     try {

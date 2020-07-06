@@ -1,15 +1,14 @@
 import React, {Component} from 'react';
 import {
   View,
-  Text,
   StyleSheet,
   ScrollView,
   Dimensions,
   RefreshControl,
   TouchableOpacity,
-  Image,
   Platform,
   SafeAreaView,
+  BackHandler, Text,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -40,6 +39,21 @@ class RewardsStamps extends Component {
     this.setState({isLoading: false});
     // }
     // this.getDataVoucher();
+    this.backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      this.handleBackPress,
+    );
+  };
+
+  componentWillUnmount() {
+    try {
+      this.backHandler.remove();
+    } catch (e) {}
+  }
+
+  handleBackPress = () => {
+    this.goBack(); // works best when the goBack is async
+    return true;
   };
 
   getDataVoucher = async () => {
@@ -54,30 +68,32 @@ class RewardsStamps extends Component {
     this.setState({refreshing: false});
   };
 
-  goBack() {
+  goBack = async () => {
     Actions.pop();
-  }
+  };
 
   render() {
     const {intlData} = this.props;
     return (
       <SafeAreaView style={styles.container}>
         <View>
-          <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+          <View
+            style={{
+              flexDirection: 'row',
+              paddingHorizontal: 10,
+              marginBottom: -25,
+              zIndex: 2,
+              backgroundColor: colorConfig.store.defaultColor,
+            }}>
             <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
               <Icon
-                size={28}
-                name={
-                  Platform.OS === 'ios'
-                    ? 'ios-arrow-back'
-                    : 'md-arrow-round-back'
-                }
+                size={32}
+                name={Platform.OS === 'ios' ? 'ios-close' : 'md-close'}
                 style={styles.btnBackIcon}
               />
-              <Text style={styles.btnBackText}> {intlData.messages.back} </Text>
             </TouchableOpacity>
           </View>
-          <View style={styles.line} />
+          {/*<View style={styles.line} />*/}
         </View>
         <ScrollView
           refreshControl={
@@ -92,6 +108,7 @@ class RewardsStamps extends Component {
             </View>
           ) : (
             <View>
+              <Text style={styles.title}>{intlData.messages.stampsCard}</Text>
               <RewardsStamp />
               <RewardsStampDetail />
             </View>
@@ -107,8 +124,16 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colorConfig.pageIndex.backgroundColor,
   },
+  title: {
+    backgroundColor: colorConfig.store.defaultColor,
+    color: 'white',
+    marginTop: 25,
+    textAlign: 'center',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
   btnBackIcon: {
-    color: colorConfig.pageIndex.activeTintColor,
+    color: 'white',
     margin: 10,
   },
   btnBack: {

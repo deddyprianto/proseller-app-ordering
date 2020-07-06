@@ -57,7 +57,6 @@ class StorePromotion extends Component {
                 style={styles.slide}
                 onPress={() => this.storeDetailPromotion(item)}>
                 <Image
-                  resizeMode="stretch"
                   style={styles.image}
                   source={{
                     uri: item.defaultImageURL,
@@ -120,8 +119,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   image: {
-    width: Dimensions.get('window').width - 40,
+    width: Dimensions.get('window').width,
     flex: 1,
+    resizeMode: 'cover',
   },
   titleSlide: {
     color: colorConfig.pageIndex.activeTintColor,

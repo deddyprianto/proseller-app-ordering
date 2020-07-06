@@ -101,7 +101,19 @@ class Inbox extends Component {
         <View style={styles.sejajarSpace}>
           <View style={styles.imageDetail}>{this.isRead(item)}</View>
           <View style={styles.detail}>
-            <Text style={styles.storeName}>{item.title}</Text>
+            <Text style={styles.storeName}>
+              {item.title}{' '}
+              {item.isRead != true ? (
+                <View
+                  style={{
+                    width: 8,
+                    height: 8,
+                    borderRadius: 50,
+                    backgroundColor: 'red',
+                  }}
+                />
+              ) : null}
+            </Text>
             <View
               style={{flexDirection: 'row', justifyContent: 'space-between'}}>
               <Text style={styles.paymentType}>

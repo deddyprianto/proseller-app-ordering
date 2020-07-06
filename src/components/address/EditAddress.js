@@ -335,7 +335,7 @@ class EditAddress extends Component {
           ) : null}
 
           <TextInput
-            style={{height: 50, marginVertical: 10}}
+            style={{height: 55, marginVertical: 10}}
             theme={theme}
             multiline={true}
             mode={'outlined'}
@@ -350,7 +350,7 @@ class EditAddress extends Component {
           {awsConfig.COUNTRY != 'Singapore' ? (
             <TextInput
               style={{
-                height: 50,
+                height: 55,
                 marginVertical: 10,
               }}
               theme={theme}
@@ -362,7 +362,7 @@ class EditAddress extends Component {
           ) : null}
 
           <TextInput
-            style={{height: 50, marginVertical: 10}}
+            style={{height: 55, marginVertical: 10}}
             theme={theme}
             keyboardType={'numeric'}
             mode={'outlined'}

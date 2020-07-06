@@ -11,6 +11,7 @@ import {
   Dimensions,
   StatusBar,
   AsyncStorage,
+  Alert,
 } from 'react-native';
 import {connect} from 'react-redux';
 
@@ -40,6 +41,7 @@ class Main extends Component {
       geolocation: true,
     };
 
+    OneSignal.inFocusDisplaying(2);
     OneSignal.addEventListener('received', this.onReceived);
     OneSignal.addEventListener('opened', this.onOpened);
     OneSignal.addEventListener('ids', this.onIds);
@@ -89,15 +91,23 @@ class Main extends Component {
     OneSignal.removeEventListener('ids', this.onIds);
   }
 
-  onReceived(notification) {
-    console.log('Notification received: ', notification);
-  }
+  onReceived = notification => {
+    // console.log('Notification diterima: ', notification);
+    // if (
+    //   notification.payload.title === 'Payment' ||
+    //   notification.payload.title === 'Ordering'
+    // ) {
+    //   try {
+    //     Alert.alert(notification.payload.title, notification.payload.body);
+    //   } catch (e) {}
+    // }
+  };
 
   onOpened(openResult) {
-    console.log('Message: ', openResult.notification.payload.body);
-    console.log('Data: ', openResult.notification.payload.additionalData);
-    console.log('isActive: ', openResult.notification.isAppInFocus);
-    console.log('openResult: ', openResult);
+    // console.log('Message: ', openResult.notification.payload.body);
+    // console.log('Data: ', openResult.notification.payload.additionalData);
+    // console.log('isActive: ', openResult.notification.isAppInFocus);
+    // console.log('openResult: ', openResult);
   }
 
   onIds = async device => {

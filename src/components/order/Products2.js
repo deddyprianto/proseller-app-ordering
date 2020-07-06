@@ -2146,7 +2146,7 @@ class Products2 extends Component {
           </View>
           <View
             style={{
-              flex: 1,
+              // flex: 1,
               flexDirection: 'row',
               justifyContent: 'space-between',
               marginHorizontal: 10,

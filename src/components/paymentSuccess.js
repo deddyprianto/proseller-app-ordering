@@ -21,7 +21,7 @@ import colorConfig from '../config/colorConfig';
 import appConfig from '../config/appConfig';
 import CurrencyFormatter from '../helper/CurrencyFormatter';
 import {clearAccount, clearAddress} from '../actions/payment.actions';
-import OneSignal from 'react-native-onesignal';
+// import OneSignal from 'react-native-onesignal';
 import {getPendingCart} from '../actions/order.action';
 
 export default class PaymentSuccess extends Component {
@@ -35,7 +35,7 @@ export default class PaymentSuccess extends Component {
       showDetail: false,
     };
 
-    OneSignal.inFocusDisplaying(2);
+    // OneSignal.inFocusDisplaying(2);
   }
 
   componentDidMount = async () => {

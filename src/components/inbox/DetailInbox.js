@@ -55,23 +55,25 @@ export default class DetailInbox extends Component {
           }}>
           <View style={{flex: 1}}>
             <Text
+              selectable={true}
               style={{
                 marginTop: 10,
                 fontSize: 22,
                 fontFamily: 'Lato-Bold',
-                color: colorConfig.store.defaultColor,
+                color: colorConfig.store.title,
                 textAlign: 'center',
                 textDecorationLine: 'underline',
               }}>
               {inbox.title}
             </Text>
             <Text
+              selectable={true}
               style={{
                 padding: 15,
                 fontSize: 17,
                 marginTop: 25,
                 fontFamily: 'Lato-Medium',
-                color: colorConfig.store.title,
+                color: colorConfig.store.titleSelected,
               }}>
               {inbox.message}
             </Text>

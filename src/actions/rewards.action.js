@@ -151,7 +151,6 @@ export const dataPoint = () => {
       } = state;
 
       var dataResponse = [];
-      console.log('/customer/point?history=false');
       let response = await fetchApi(
         '/customer/point?history=false',
         'GET',
@@ -168,6 +167,45 @@ export const dataPoint = () => {
         totalPoint: totalPoint,
         campaignActive,
       });
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const dataPointHistory = () => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      var dataResponse = [];
+      let response = await fetchApi(
+        '/customer/point?history=true',
+        'GET',
+        false,
+        200,
+        token,
+      );
+
+      let totalPoint = response.responseBody.Data.totalPoint;
+      let campaignActive = response.responseBody.Data.campaignActive;
+
+      dispatch({
+        type: 'DATA_TOTAL_POINT',
+        totalPoint: totalPoint,
+        campaignActive,
+      });
+
+      if (response.success) {
+        return response.responseBody.Data;
+      } else {
+        return false;
+      }
     } catch (error) {
       return error;
     }

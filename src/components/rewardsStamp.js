@@ -95,7 +95,6 @@ class RewardsStamp extends Component {
 
     return (
       <View style={styles.container}>
-        <Text style={styles.title}>{intlData.messages.stampsCard}</Text>
         <View style={styles.card}>
           {this.props.isLoading ? <StampsPlaceHolder /> : this.getItemStamp()}
         </View>
@@ -119,8 +118,8 @@ const styles = StyleSheet.create({
   card: {
     height: Dimensions.get('window').height / 6 - 200,
     width: Dimensions.get('window').width - 20,
-    borderColor: colorConfig.pageIndex.activeTintColor,
-    borderWidth: 1,
+    // borderColor: colorConfig.pageIndex.activeTintColor,
+    // borderWidth: 1,
     marginLeft: 10,
     marginRight: 10,
     borderRadius: 10,

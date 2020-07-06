@@ -444,7 +444,7 @@ class Store extends Component {
                 paddingTop: 5,
               }}>
               <Image
-                resizeMode="stretch"
+                resizeMode="contain"
                 style={styles.imageLogo}
                 source={appConfig.appLogo}
               />

@@ -19,8 +19,8 @@ import {compose} from 'redux';
 import {dataPoint, vouchers} from '../actions/rewards.action';
 
 import colorConfig from '../config/colorConfig';
-import RewardsStamp from '../components/rewardsStamp';
-import RewardsStampDetail from '../components/rewardsStampDetail';
+// import RewardsStamp from '../components/rewardsStamp';
+// import RewardsStampDetail from '../components/rewardsStampDetail';
 import RewordsVouchers from '../components/rewordsVouchers';
 import Loader from '../components/loader';
 import {myVoucers} from '../actions/account.action';

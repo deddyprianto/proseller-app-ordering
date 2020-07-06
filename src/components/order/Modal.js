@@ -1457,7 +1457,7 @@ const styles = StyleSheet.create({
   lineBottom: {
     borderBottomColor: colorConfig.pageIndex.inactiveTintColor,
     borderBottomWidth: 0.55,
-    marginHorizontal: 15
+    marginHorizontal: 15,
   },
   detailOptionsModalYesNo: {
     marginLeft: 15,

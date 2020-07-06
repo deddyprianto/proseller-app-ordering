@@ -53,6 +53,7 @@ const colorConfig = {
   },
   store: {
     defaultColor: `rgb(${PRIMARY_COLOR_RGB})`,
+    TransBG: `rgba(255, 255, 255, 0.7)`,
     storesItem: '#FFFFFF',
     scrollView: '#FFFBF4',
     storesTitle: '#f39c12',

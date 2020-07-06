@@ -1,13 +1,5 @@
 import React, {Component} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Dimensions,
-  TouchableOpacity,
-  Image,
-  SafeAreaView,
-} from 'react-native';
+import {View, Text, StyleSheet, Dimensions, SafeAreaView} from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
 
@@ -96,6 +88,7 @@ const styles = StyleSheet.create({
     color: colorConfig.pageIndex.backgroundColor,
     fontSize: 12,
     marginBottom: 5,
+    fontFamily: 'Lato-Medium',
   },
   description: {
     color: colorConfig.pageIndex.backgroundColor,

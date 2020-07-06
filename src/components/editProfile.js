@@ -30,6 +30,7 @@ import {connect} from 'react-redux';
 import {reduxForm} from 'redux-form';
 import AwesomeAlert from 'react-native-awesome-alerts';
 import Loader from './loader';
+import DropDownPicker from 'react-native-dropdown-picker';
 
 class AccountEditProfil extends Component {
   constructor(props) {
@@ -222,14 +223,15 @@ class AccountEditProfil extends Component {
           </TouchableOpacity>
           {/*<View style={styles.line} />*/}
         </View>
-        <ScrollView>
+        <ScrollView
+          ref={view => {
+            this.scrollView = view;
+          }}>
           <View style={styles.card}>
             <Form ref="form" onSubmit={this.submitEdit}>
               <View style={styles.detail}>
                 <View style={styles.detailItem}>
-                  <Text style={[styles.desc, {marginLeft: 2}]}>
-                    {intlData.messages.name}
-                  </Text>
+                  <Text style={styles.desc}>{intlData.messages.name}</Text>
                   <TextInput
                     placeholder="Name"
                     style={{paddingVertical: 10}}
@@ -285,9 +287,11 @@ class AccountEditProfil extends Component {
                       paddingTop: 12,
                       borderBottomColor: colorConfig.store.defaultColor,
                       borderBottomWidth: 1,
+                      paddingBottom: 5,
                     }}
                     onPress={this.showDatePicker}>
-                    {this.state.birthDate == ''
+                    {this.state.birthDate == '' ||
+                    this.state.birthDate == undefined
                       ? 'Enter Birth Date'
                       : this.formatDate(this.state.birthDate)}
                   </Text>
@@ -302,24 +306,33 @@ class AccountEditProfil extends Component {
                   <Text style={[styles.desc, {marginLeft: 0}]}>
                     {intlData.messages.gender}
                   </Text>
-                  <Picker
-                    selectedValue={this.state.gender}
-                    onValueChange={(itemValue, itemIndex) =>
-                      this.setState({gender: itemValue})
-                    }>
-                    <Picker.Item label="Select one" value="" />
-                    <Picker.Item label={intlData.messages.male} value="male" />
-                    <Picker.Item
-                      label={intlData.messages.female}
-                      value="female"
-                    />
-                  </Picker>
+                  <DropDownPicker
+                    placeholder={'Select gender'}
+                    items={[
+                      {label: intlData.messages.male, value: 'male'},
+                      {label: intlData.messages.female, value: 'female'},
+                    ]}
+                    defaultValue={this.state.gender}
+                    containerStyle={{height: 47}}
+                    style={{
+                      backgroundColor: 'white',
+                      marginTop: 5,
+                      borderRadius: 0,
+                    }}
+                    dropDownStyle={{backgroundColor: '#fafafa'}}
+                    onChangeItem={item =>
+                      this.setState({
+                        gender: item.value,
+                      })
+                    }
+                  />
                 </View>
                 <View style={styles.detailItem}>
-                  <Text style={[styles.desc, {marginLeft: 2}]}>
-                    {intlData.messages.address}
-                  </Text>
+                  <Text style={styles.desc}>{intlData.messages.address}</Text>
                   <TextInput
+                    onFocus={() =>
+                      this.scrollView.scrollToEnd({animated: true})
+                    }
                     placeholder={intlData.messages.yourAddress}
                     style={{paddingVertical: 10}}
                     value={this.state.address}
@@ -398,7 +411,8 @@ const styles = StyleSheet.create({
     margin: 10,
   },
   header: {
-    height: 65,
+    // height: 65,
+    paddingVertical: 6,
     marginBottom: 20,
     justifyContent: 'center',
     // backgroundColor: colorConfig.store.defaultColor,
@@ -415,8 +429,6 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     flexDirection: 'row',
     alignItems: 'center',
-    width: 100,
-    height: 80,
   },
   btnBackText: {
     color: colorConfig.store.defaultColor,

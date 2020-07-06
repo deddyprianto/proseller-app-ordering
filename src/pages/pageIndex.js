@@ -3,7 +3,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import {createAppContainer} from 'react-navigation';
 import {createMaterialBottomTabNavigator} from 'react-navigation-material-bottom-tabs';
 import {Container} from 'native-base';
-import {Alert, Dimensions, SafeAreaView, Text, View} from 'react-native';
+import {Dimensions} from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
 import {Platform} from 'react-native';
@@ -81,8 +81,9 @@ const AppTabNavigator = createMaterialBottomTabNavigator(
   },
   {
     initialRouteName: 'Rewards',
-    activeTintColor: colorConfig.pageIndex.activeTintColor,
-    inactiveTintColor: colorConfig.pageIndex.inactiveTintColor,
+    activeColor: colorConfig.store.defaultColor,
+    inactiveColor: colorConfig.pageIndex.grayColor,
+    shifting: false,
     barStyle: {
       backgroundColor: colorConfig.pageIndex.backgroundColor,
       fontFamily: 'Lato-Medium',
@@ -156,8 +157,9 @@ const AppTabNavigatorHistory = createMaterialBottomTabNavigator(
   },
   {
     initialRouteName: 'History',
-    activeTintColor: colorConfig.pageIndex.activeTintColor,
-    inactiveTintColor: colorConfig.pageIndex.inactiveTintColor,
+    activeColor: colorConfig.store.defaultColor,
+    inactiveColor: colorConfig.pageIndex.grayColor,
+    shifting: false,
     barStyle: {
       backgroundColor: colorConfig.pageIndex.backgroundColor,
       fontFamily: 'Lato-Medium',

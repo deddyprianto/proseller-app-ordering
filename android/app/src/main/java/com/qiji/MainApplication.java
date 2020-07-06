@@ -7,8 +7,8 @@ import com.facebook.react.ReactApplication;
 import com.reactnativecommunity.geolocation.GeolocationPackage;
 import io.github.traviskn.rnuuidgenerator.RNUUIDGeneratorPackage;
 import com.BV.LinearGradient.LinearGradientPackage;
-import io.invertase.firebase.crashlytics.ReactNativeFirebaseCrashlyticsPackage;
-import io.invertase.firebase.app.ReactNativeFirebaseAppPackage;
+//import io.invertase.firebase.crashlytics.ReactNativeFirebaseCrashlyticsPackage;
+//import io.invertase.firebase.app.ReactNativeFirebaseAppPackage;
 
 import org.capslock.RNDeviceBrightness.RNDeviceBrightness;
 import com.lugg.ReactNativeConfig.ReactNativeConfigPackage;
