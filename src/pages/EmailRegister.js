@@ -22,7 +22,7 @@ import {
 import {connect} from 'react-redux';
 import {compose} from 'redux';
 import {reduxForm} from 'redux-form';
-import AwesomeAlert from 'react-native-awesome-alerts';
+// import AwesomeAlert from 'react-native-awesome-alerts';
 import {createNewUser, resendOTPCognito} from '../actions/auth.actions';
 import Loader from '../components/loader';
 import {Actions} from 'react-native-router-flux';
@@ -30,7 +30,7 @@ import colorConfig from '../config/colorConfig';
 import awsConfig from '../config/awsConfig';
 import Header from '../components/atom/header';
 import generate from 'password-generation';
-import CountryPicker from 'react-native-country-picker-modal';
+import CountryPicker from '../components/react-native-country-picker-modal';
 import PhoneInput from 'react-native-phone-input';
 
 const imageWidth = Dimensions.get('window').width / 2;
