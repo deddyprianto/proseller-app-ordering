@@ -143,9 +143,7 @@ class DetailPoint extends Component {
                       <View style={styles.historyPoint}>
                         <Icon
                           size={27}
-                          name={
-                            Platform.OS === 'ios' ? 'ios-ellipse' : 'md-list'
-                          }
+                          name={Platform.OS === 'ios' ? 'ios-list' : 'md-list'}
                           style={{
                             color: colorConfig.store.defaultColor,
                             marginRight: 10,

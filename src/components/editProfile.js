@@ -18,6 +18,8 @@ import {
   Platform,
   TextInput,
   SafeAreaView,
+  Alert,
+  KeyboardAvoidingView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -227,128 +229,147 @@ class AccountEditProfil extends Component {
           ref={view => {
             this.scrollView = view;
           }}>
-          <View style={styles.card}>
-            <Form ref="form" onSubmit={this.submitEdit}>
-              <View style={styles.detail}>
-                <View style={styles.detailItem}>
-                  <Text style={styles.desc}>{intlData.messages.name}</Text>
-                  <TextInput
-                    placeholder="Name"
-                    style={{paddingVertical: 10}}
-                    value={this.state.name}
-                    onChangeText={value => this.setState({name: value})}
-                  />
-                  <View style={{borderWidth: 0.5, borderColor: 'gray'}} />
-                </View>
-                <View style={styles.detailItem}>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                    }}>
-                    <Text style={styles.desc}>Email</Text>
-                    {/*<TouchableOpacity*/}
-                    {/*  style={[styles.btnChange]}*/}
-                    {/*  onPress={() => this.btnChangeCredentials('Email')}>*/}
-                    {/*  <Text style={[styles.textChange]}>*/}
-                    {/*    {intlData.messages.change}*/}
-                    {/*  </Text>*/}
-                    {/*</TouchableOpacity>*/}
+          <KeyboardAvoidingView
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+            <View style={styles.card}>
+              <Form ref="form" onSubmit={this.submitEdit}>
+                <View style={styles.detail}>
+                  <View style={styles.detailItem}>
+                    <Text style={styles.desc}>{intlData.messages.name}</Text>
+                    <TextInput
+                      placeholder="Name"
+                      style={{paddingVertical: 10}}
+                      value={this.state.name}
+                      onChangeText={value => this.setState({name: value})}
+                    />
+                    <View style={{borderWidth: 0.5, borderColor: 'gray'}} />
                   </View>
-                  <Text style={{paddingTop: 12}}>
-                    {this.props.dataDiri.email}
-                  </Text>
-                </View>
-                <View style={styles.detailItem}>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                    }}>
-                    <Text style={styles.desc}>
-                      {intlData.messages.phoneNumber}
+                  <View style={styles.detailItem}>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                      }}>
+                      <Text style={styles.desc}>Email</Text>
+                      {/*<TouchableOpacity*/}
+                      {/*  style={[styles.btnChange]}*/}
+                      {/*  onPress={() => this.btnChangeCredentials('Email')}>*/}
+                      {/*  <Text style={[styles.textChange]}>*/}
+                      {/*    {intlData.messages.change}*/}
+                      {/*  </Text>*/}
+                      {/*</TouchableOpacity>*/}
+                    </View>
+                    <Text style={{paddingTop: 12}}>
+                      {this.props.dataDiri.email}
                     </Text>
-                    {/*<TouchableOpacity*/}
-                    {/*  onPress={() => this.btnChangeCredentials('Phone Number')}*/}
-                    {/*  style={[styles.btnChange]}>*/}
-                    {/*  <Text style={[styles.textChange]}>*/}
-                    {/*    {intlData.messages.change}*/}
-                    {/*  </Text>*/}
-                    {/*</TouchableOpacity>*/}
                   </View>
-                  <Text style={{paddingTop: 12}}>
-                    {this.props.dataDiri.phoneNumber}
-                  </Text>
+                  <View style={styles.detailItem}>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                      }}>
+                      <Text style={styles.desc}>
+                        {intlData.messages.phoneNumber}
+                      </Text>
+                      {/*<TouchableOpacity*/}
+                      {/*  onPress={() => this.btnChangeCredentials('Phone Number')}*/}
+                      {/*  style={[styles.btnChange]}>*/}
+                      {/*  <Text style={[styles.textChange]}>*/}
+                      {/*    {intlData.messages.change}*/}
+                      {/*  </Text>*/}
+                      {/*</TouchableOpacity>*/}
+                    </View>
+                    <Text style={{paddingTop: 12}}>
+                      {this.props.dataDiri.phoneNumber}
+                    </Text>
+                  </View>
+                  <View style={styles.detailItem}>
+                    <Text style={[styles.desc, {marginLeft: 0}]}>
+                      {intlData.messages.birthDate}
+                    </Text>
+                    <Text
+                      style={{
+                        paddingTop: 12,
+                        borderBottomColor: colorConfig.store.defaultColor,
+                        borderBottomWidth: 1,
+                        paddingBottom: 5,
+                      }}
+                      onPress={this.showDatePicker}>
+                      {this.state.birthDate == '' ||
+                      this.state.birthDate == undefined
+                        ? 'Enter Birth Date'
+                        : this.formatDate(this.state.birthDate)}
+                    </Text>
+                    <DateTimePickerModal
+                      isVisible={this.state.isDatePickerVisible}
+                      mode="date"
+                      onConfirm={this.handleConfirm}
+                      onCancel={this.hideDatePicker}
+                    />
+                  </View>
+                  <View style={styles.detailItem}>
+                    <Text style={[styles.desc, {marginLeft: 0}]}>
+                      {intlData.messages.gender}
+                    </Text>
+                    <DropDownPicker
+                      placeholder={'Select gender'}
+                      items={[
+                        {label: intlData.messages.male, value: 'male'},
+                        {label: intlData.messages.female, value: 'female'},
+                      ]}
+                      defaultValue={this.state.gender}
+                      containerStyle={{height: 47}}
+                      style={{
+                        backgroundColor: 'white',
+                        marginTop: 5,
+                        borderRadius: 0,
+                      }}
+                      dropDownStyle={{backgroundColor: '#fafafa'}}
+                      onChangeItem={item =>
+                        this.setState({
+                          gender: item.value,
+                        })
+                      }
+                    />
+                  </View>
+                  <View style={styles.detailItem}>
+                    <Text style={styles.desc}>{intlData.messages.address}</Text>
+                    <TextInput
+                      onFocus={() => {
+                        this.scrollView.scrollToEnd({animated: true});
+                      }}
+                      placeholder={intlData.messages.yourAddress}
+                      style={{paddingVertical: 10}}
+                      value={this.state.address}
+                      onChangeText={value => this.setState({address: value})}
+                    />
+                    <View style={{borderWidth: 0.5, borderColor: 'gray'}} />
+                  </View>
                 </View>
-                <View style={styles.detailItem}>
-                  <Text style={[styles.desc, {marginLeft: 0}]}>
-                    {intlData.messages.birthDate}
-                  </Text>
-                  <Text
-                    style={{
-                      paddingTop: 12,
-                      borderBottomColor: colorConfig.store.defaultColor,
-                      borderBottomWidth: 1,
-                      paddingBottom: 5,
-                    }}
-                    onPress={this.showDatePicker}>
-                    {this.state.birthDate == '' ||
-                    this.state.birthDate == undefined
-                      ? 'Enter Birth Date'
-                      : this.formatDate(this.state.birthDate)}
-                  </Text>
-                  <DateTimePickerModal
-                    isVisible={this.state.isDatePickerVisible}
-                    mode="date"
-                    onConfirm={this.handleConfirm}
-                    onCancel={this.hideDatePicker}
-                  />
-                </View>
-                <View style={styles.detailItem}>
-                  <Text style={[styles.desc, {marginLeft: 0}]}>
-                    {intlData.messages.gender}
-                  </Text>
-                  <DropDownPicker
-                    placeholder={'Select gender'}
-                    items={[
-                      {label: intlData.messages.male, value: 'male'},
-                      {label: intlData.messages.female, value: 'female'},
-                    ]}
-                    defaultValue={this.state.gender}
-                    containerStyle={{height: 47}}
-                    style={{
-                      backgroundColor: 'white',
-                      marginTop: 5,
-                      borderRadius: 0,
-                    }}
-                    dropDownStyle={{backgroundColor: '#fafafa'}}
-                    onChangeItem={item =>
-                      this.setState({
-                        gender: item.value,
-                      })
-                    }
-                  />
-                </View>
-                <View style={styles.detailItem}>
-                  <Text style={styles.desc}>{intlData.messages.address}</Text>
-                  <TextInput
-                    onFocus={() =>
-                      this.scrollView.scrollToEnd({animated: true})
-                    }
-                    placeholder={intlData.messages.yourAddress}
-                    style={{paddingVertical: 10}}
-                    value={this.state.address}
-                    onChangeText={value => this.setState({address: value})}
-                  />
-                  <View style={{borderWidth: 0.5, borderColor: 'gray'}} />
-                </View>
-              </View>
-            </Form>
-          </View>
+              </Form>
+            </View>
+            {Platform === 'ios' ? (
+              <>
+                <TouchableWithoutFeedback onPress={this.submitEdit}>
+                  <View style={styles.primaryButton}>
+                    <Text style={styles.buttonText}>
+                      {intlData.messages.save}
+                    </Text>
+                  </View>
+                </TouchableWithoutFeedback>
+                <View style={{height: 100}} />
+              </>
+            ) : null}
+          </KeyboardAvoidingView>
         </ScrollView>
-        <TouchableWithoutFeedback onPress={this.submitEdit}>
-          <View style={styles.primaryButton}>
-            <Text style={styles.buttonText}>{intlData.messages.save}</Text>
-          </View>
-        </TouchableWithoutFeedback>
+        {Platform != 'ios' ? (
+          <>
+            <TouchableWithoutFeedback onPress={this.submitEdit}>
+              <View style={styles.primaryButton}>
+                <Text style={styles.buttonText}>{intlData.messages.save}</Text>
+              </View>
+            </TouchableWithoutFeedback>
+          </>
+        ) : null}
         <AwesomeAlert
           show={this.state.showAlert}
           showProgress={false}
@@ -441,11 +462,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
+    marginTop: 25,
     borderRadius: 40,
     padding: 12,
     alignSelf: 'stretch',
-    marginLeft: 10,
-    marginRight: 10,
+    marginLeft: 30,
+    marginRight: 30,
     shadowColor: '#00000021',
     shadowOffset: {
       width: 0,
