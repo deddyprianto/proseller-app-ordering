@@ -359,7 +359,7 @@ class AccountEditProfil extends Component {
                     </Text>
                   </View>
                 </TouchableWithoutFeedback>
-                <View style={{height: 100}} />
+                <View style={{height: 150}} />
               </>
             ) : null}
           </KeyboardAvoidingView>
