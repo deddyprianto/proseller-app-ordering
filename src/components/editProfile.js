@@ -330,7 +330,11 @@ class AccountEditProfil extends Component {
                       }
                     />
                   </View>
-                  <View style={styles.detailItem}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      this.scrollView.scrollToEnd({animated: true});
+                    }}
+                    style={styles.detailItem}>
                     <Text style={styles.desc}>{intlData.messages.address}</Text>
                     <TextInput
                       onFocus={() => {
@@ -342,7 +346,7 @@ class AccountEditProfil extends Component {
                       onChangeText={value => this.setState({address: value})}
                     />
                     <View style={{borderWidth: 0.5, borderColor: 'gray'}} />
-                  </View>
+                  </TouchableOpacity>
                 </View>
               </Form>
             </View>
