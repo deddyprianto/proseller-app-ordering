@@ -346,7 +346,7 @@ class AccountEditProfil extends Component {
                 </View>
               </Form>
             </View>
-            {Platform == 'ios' ? (
+            {Platform.OS == 'ios' ? (
               <>
                 <TouchableWithoutFeedback onPress={this.submitEdit}>
                   <View style={styles.primaryButton}>
@@ -360,15 +360,15 @@ class AccountEditProfil extends Component {
             ) : null}
           </KeyboardAvoidingView>
         </ScrollView>
-        {/*{Platform != 'ios' ? (*/}
-        {/*  <>*/}
-        {/*    <TouchableWithoutFeedback onPress={this.submitEdit}>*/}
-        {/*      <View style={styles.primaryButton}>*/}
-        {/*        <Text style={styles.buttonText}>{intlData.messages.save}</Text>*/}
-        {/*      </View>*/}
-        {/*    </TouchableWithoutFeedback>*/}
-        {/*  </>*/}
-        {/*) : null}*/}
+        {Platform.OS != 'ios' ? (
+          <>
+            <TouchableWithoutFeedback onPress={this.submitEdit}>
+              <View style={styles.primaryButton}>
+                <Text style={styles.buttonText}>{intlData.messages.save}</Text>
+              </View>
+            </TouchableWithoutFeedback>
+          </>
+        ) : null}
         <AwesomeAlert
           show={this.state.showAlert}
           showProgress={false}
