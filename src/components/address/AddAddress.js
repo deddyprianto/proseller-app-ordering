@@ -229,7 +229,7 @@ class AddAddress extends Component {
             <Text style={styles.btnBackText}> Add New Address </Text>
           </TouchableOpacity>
         </View>
-        <KeyboardAwareScrollView>
+        <KeyboardAwareScrollView style={{padding: 15}}>
           <DropDownPicker
             items={[
               {label: 'Home', value: 'Home'},

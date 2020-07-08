@@ -271,7 +271,8 @@ class AccountMenuList extends Component {
           <View>
             <View style={styles.item}>
               <Text style={styles.title}>
-                {intlData.messages.notifications}
+                {/*{intlData.messages.notifications}*/}
+                Notifications
               </Text>
             </View>
           </View>

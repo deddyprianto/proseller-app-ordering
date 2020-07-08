@@ -379,8 +379,7 @@ class AccountEditProfil extends Component {
                       }
                     />
                   </View>
-                  <View
-                    style={styles.detailItem}>
+                  <View style={styles.detailItem}>
                     <Text style={styles.desc}>
                       {intlData.messages.address}{' '}
                       <Text style={{color: 'red'}}>*</Text>
