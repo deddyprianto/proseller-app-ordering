@@ -24,6 +24,18 @@
 		43681597396048A0961F05E9 /* Lato-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 61448CC0B03644E5AE6729E7 /* Lato-Regular.ttf */; };
 		7490C58633EBA5BBB48B1D4E /* libPods-Qiji-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F9AAE5177C0446E6ED8CD2C3 /* libPods-Qiji-tvOSTests.a */; };
 		7BB3D94E24568C89007B35B8 /* Qiji.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BB3D94D24568C89007B35B8 /* Qiji.swift */; };
+		7BD116B524B58D930070B304 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
+		7BD116B624B58D930070B304 /* Qiji.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BB3D94D24568C89007B35B8 /* Qiji.swift */; };
+		7BD116B724B58D930070B304 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		7BD116B924B58D930070B304 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B8783AC08D84065AC0B2230 /* libz.tbd */; };
+		7BD116BA24B58D930070B304 /* libPods-Qiji.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A256DC280C3C4E635F16DE66 /* libPods-Qiji.a */; };
+		7BD116BC24B58D930070B304 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
+		7BD116BD24B58D930070B304 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB11A68108700A75B9A /* LaunchScreen.xib */; };
+		7BD116BE24B58D930070B304 /* Lato-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F2539776D32B4B29B0B8C8A7 /* Lato-Bold.ttf */; };
+		7BD116BF24B58D930070B304 /* Lato-Heavy.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 35A970A69DA7440188817DD0 /* Lato-Heavy.ttf */; };
+		7BD116C024B58D930070B304 /* Lato-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5004E2CBAFBB4547A8CCA619 /* Lato-Italic.ttf */; };
+		7BD116C124B58D930070B304 /* Lato-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 40AD4A3553664601BD423484 /* Lato-Medium.ttf */; };
+		7BD116C224B58D930070B304 /* Lato-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 61448CC0B03644E5AE6729E7 /* Lato-Regular.ttf */; };
 		8A64F5AC74B7E012BDB13AA6 /* libPods-QijiTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 67AF0806354F730E44E4AE82 /* libPods-QijiTests.a */; };
 		942F222339174ACAB6A6FDA4 /* Lato-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 40AD4A3553664601BD423484 /* Lato-Medium.ttf */; };
 		B6FA351076D44777B6129C53 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B8783AC08D84065AC0B2230 /* libz.tbd */; };
@@ -96,6 +108,8 @@
 		7BB3D94C24568C89007B35B8 /* Qiji-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Qiji-Bridging-Header.h"; sourceTree = "<group>"; };
 		7BB3D94D24568C89007B35B8 /* Qiji.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Qiji.swift; sourceTree = "<group>"; };
 		7BB3D94F2456C9C3007B35B8 /* Qiji.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Qiji.entitlements; path = Qiji/Qiji.entitlements; sourceTree = "<group>"; };
+		7BD116C924B58D930070B304 /* QIJI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = QIJI.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		7BD116CA24B58D930070B304 /* Qiji copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Qiji copy-Info.plist"; path = "/Users/iqbaldp/merge/crm-app/ios/Qiji copy-Info.plist"; sourceTree = "<absolute>"; };
 		85986F88DD9B478882E6871F /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/native-base/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
 		9973A613510A02C43AE8D32E /* Pods-Qiji-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Qiji-tvOS.release.xcconfig"; path = "Target Support Files/Pods-Qiji-tvOS/Pods-Qiji-tvOS.release.xcconfig"; sourceTree = "<group>"; };
 		A0BC91CFE3234766897D3F88 /* FontAwesome5_Brands.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Brands.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Brands.ttf"; sourceTree = "<group>"; };
@@ -152,6 +166,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				7490C58633EBA5BBB48B1D4E /* libPods-Qiji-tvOSTests.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7BD116B824B58D930070B304 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7BD116B924B58D930070B304 /* libz.tbd in Frameworks */,
+				7BD116BA24B58D930070B304 /* libPods-Qiji.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -230,6 +253,7 @@
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				852A7AC518F649BB91866045 /* Resources */,
 				247D06E5D541788A6EB94538 /* Pods */,
+				7BD116CA24B58D930070B304 /* Qiji copy-Info.plist */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -243,6 +267,7 @@
 				00E356EE1AD99517003FC87E /* QijiTests.xctest */,
 				2D02E47B1E0B4A5D006451C7 /* Qiji-tvOS.app */,
 				2D02E4901E0B4A5D006451C7 /* Qiji-tvOSTests.xctest */,
+				7BD116C924B58D930070B304 /* QIJI.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -378,6 +403,28 @@
 			productReference = 2D02E4901E0B4A5D006451C7 /* Qiji-tvOSTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		7BD116B124B58D930070B304 /* Qiji-apps */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7BD116C624B58D930070B304 /* Build configuration list for PBXNativeTarget "Qiji-apps" */;
+			buildPhases = (
+				7BD116B224B58D930070B304 /* [CP] Check Pods Manifest.lock */,
+				7BD116B324B58D930070B304 /* Start Packager */,
+				7BD116B424B58D930070B304 /* Sources */,
+				7BD116B824B58D930070B304 /* Frameworks */,
+				7BD116BB24B58D930070B304 /* Resources */,
+				7BD116C324B58D930070B304 /* Bundle React Native code and images */,
+				7BD116C424B58D930070B304 /* Upload Debug Symbols to Sentry */,
+				7BD116C524B58D930070B304 /* [CP] Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Qiji-apps";
+			productName = Qiji;
+			productReference = 7BD116C924B58D930070B304 /* QIJI.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -405,6 +452,9 @@
 						ProvisioningStyle = Automatic;
 						TestTargetID = 2D02E47A1E0B4A5D006451C7;
 					};
+					7BD116B124B58D930070B304 = {
+						DevelopmentTeam = YSZ34Z59CY;
+					};
 				};
 			};
 			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "Qiji" */;
@@ -425,6 +475,7 @@
 				00E356ED1AD99517003FC87E /* QijiTests */,
 				2D02E47A1E0B4A5D006451C7 /* Qiji-tvOS */,
 				2D02E48F1E0B4A5D006451C7 /* Qiji-tvOSTests */,
+				7BD116B124B58D930070B304 /* Qiji-apps */,
 			);
 		};
 /* End PBXProject section */
@@ -463,6 +514,20 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7BD116BB24B58D930070B304 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7BD116BC24B58D930070B304 /* Images.xcassets in Resources */,
+				7BD116BD24B58D930070B304 /* LaunchScreen.xib in Resources */,
+				7BD116BE24B58D930070B304 /* Lato-Bold.ttf in Resources */,
+				7BD116BF24B58D930070B304 /* Lato-Heavy.ttf in Resources */,
+				7BD116C024B58D930070B304 /* Lato-Italic.ttf in Resources */,
+				7BD116C124B58D930070B304 /* Lato-Medium.ttf in Resources */,
+				7BD116C224B58D930070B304 /* Lato-Regular.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -532,6 +597,125 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "export SENTRY_PROPERTIES=sentry.properties\n../node_modules/@sentry/cli/bin/sentry-cli upload-dsym";
+		};
+		7BD116B224B58D930070B304 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Qiji-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		7BD116B324B58D930070B304 /* Start Packager */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Start Packager";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "export RCT_METRO_PORT=\"${RCT_METRO_PORT:=8081}\"\necho \"export RCT_METRO_PORT=${RCT_METRO_PORT}\" > \"${SRCROOT}/../node_modules/react-native/scripts/.packager.env\"\nif [ -z \"${RCT_NO_LAUNCH_PACKAGER+xxx}\" ] ; then\n  if nc -w 5 -z localhost ${RCT_METRO_PORT} ; then\n    if ! curl -s \"http://localhost:${RCT_METRO_PORT}/status\" | grep -q \"packager-status:running\" ; then\n      echo \"Port ${RCT_METRO_PORT} already in use, packager is either not running or not running correctly\"\n      exit 2\n    fi\n  else\n    open \"$SRCROOT/../node_modules/react-native/scripts/launchPackager.command\" || echo \"Can't start packager automatically\"\n  fi\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		7BD116C324B58D930070B304 /* Bundle React Native code and images */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Bundle React Native code and images";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "export SENTRY_PROPERTIES=sentry.properties\nexport NODE_BINARY=node\n../node_modules/@sentry/cli/bin/sentry-cli react-native xcode ../node_modules/react-native/scripts/react-native-xcode.sh";
+		};
+		7BD116C424B58D930070B304 /* Upload Debug Symbols to Sentry */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Upload Debug Symbols to Sentry";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "export SENTRY_PROPERTIES=sentry.properties\n../node_modules/@sentry/cli/bin/sentry-cli upload-dsym";
+		};
+		7BD116C524B58D930070B304 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Qiji/Pods-Qiji-resources.sh",
+				"${PODS_ROOT}/FBSDKCoreKit/FacebookSDKStrings.bundle",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Entypo.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Feather.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/FontAwesome.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Brands.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Regular.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Solid.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Fontisto.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Foundation.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Octicons.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Zocial.ttf",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FacebookSDKStrings.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AntDesign.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Entypo.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/EvilIcons.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Feather.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FontAwesome.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FontAwesome5_Brands.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FontAwesome5_Regular.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FontAwesome5_Solid.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Fontisto.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Foundation.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Ionicons.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MaterialCommunityIcons.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MaterialIcons.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Octicons.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/SimpleLineIcons.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Zocial.ttf",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Qiji/Pods-Qiji-resources.sh\"\n";
+			showEnvVarsInLog = 0;
 		};
 		8CF368B20D68DDC168A80163 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -722,6 +906,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				2DCD954D1E0B4F2C00145EB5 /* QijiTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7BD116B424B58D930070B304 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7BD116B524B58D930070B304 /* AppDelegate.m in Sources */,
+				7BD116B624B58D930070B304 /* Qiji.swift in Sources */,
+				7BD116B724B58D930070B304 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -988,6 +1182,58 @@
 			};
 			name = Release;
 		};
+		7BD116C724B58D930070B304 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3E919C420DB3371976D68FB4 /* Pods-Qiji.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-apps";
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Qiji/Qiji.entitlements;
+				CURRENT_PROJECT_VERSION = 17;
+				DEAD_CODE_STRIPPING = NO;
+				DEVELOPMENT_TEAM = YSZ34Z59CY;
+				INFOPLIST_FILE = "Qiji copy-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 1.1;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-lc++",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.edgeworks.qiji-apps";
+				PRODUCT_NAME = QIJI;
+				SWIFT_OBJC_BRIDGING_HEADER = "Qiji-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Debug;
+		};
+		7BD116C824B58D930070B304 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0879CA77FF868BA300D95B7F /* Pods-Qiji.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-apps";
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Qiji/Qiji.entitlements;
+				CURRENT_PROJECT_VERSION = 17;
+				DEVELOPMENT_TEAM = YSZ34Z59CY;
+				INFOPLIST_FILE = "Qiji copy-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 1.1;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-lc++",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.edgeworks.qiji-apps";
+				PRODUCT_NAME = QIJI;
+				SWIFT_OBJC_BRIDGING_HEADER = "Qiji-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Release;
+		};
 		83CBBA201A601CBA00E9B192 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1122,6 +1368,15 @@
 			buildConfigurations = (
 				2D02E4991E0B4A5E006451C7 /* Debug */,
 				2D02E49A1E0B4A5E006451C7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		7BD116C624B58D930070B304 /* Build configuration list for PBXNativeTarget "Qiji-apps" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7BD116C724B58D930070B304 /* Debug */,
+				7BD116C824B58D930070B304 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
