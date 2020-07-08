@@ -158,7 +158,8 @@ class AccountMenuList extends Component {
     return (
       <View style={styles.container}>
         <Text style={styles.headingMenu}>
-          {intlData.messages.defaultPaymentAccount}
+          {/*{intlData.messages.defaultPaymentAccount}*/}
+          Default Payment Account
         </Text>
         <TouchableOpacity disabled={true} style={styles.cardMenu}>
           {!isEmptyObject(defaultAccount) ? (
@@ -184,7 +185,8 @@ class AccountMenuList extends Component {
                   </>
                 ) : (
                   <Text style={{color: colorConfig.store.colorError}}>
-                    {intlData.messages.notYesAdded}
+                    {/*{intlData.messages.notYesAdded}*/}
+                    NOT YET ADDED
                   </Text>
                 )}
               </Text>
@@ -193,7 +195,8 @@ class AccountMenuList extends Component {
         </TouchableOpacity>
 
         <Text style={styles.headingMenu}>
-          {intlData.messages.myPaymentOptions}
+          {/*{intlData.messages.myPaymentOptions}*/}
+          My Payment Options
         </Text>
 
         {this.renderPaymentMethodOptions()}
@@ -215,7 +218,7 @@ class AccountMenuList extends Component {
         {/*  </View>*/}
         {/*</TouchableOpacity>*/}
 
-        <Text style={styles.headingMenu}>{intlData.messages.settings}</Text>
+        <Text style={styles.headingMenu}>Settings</Text>
 
         {referral != undefined && referral.capacity > 0 ? (
           <TouchableOpacity
@@ -249,7 +252,8 @@ class AccountMenuList extends Component {
           <View>
             <View style={styles.item}>
               <Text style={styles.title}>
-                {intlData.messages.myDeliveryAddress}
+                {/*{intlData.messages.myDeliveryAddress}*/}
+                My Delivery Address
               </Text>
             </View>
           </View>

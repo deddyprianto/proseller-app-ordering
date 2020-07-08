@@ -229,9 +229,7 @@ class AddAddress extends Component {
             <Text style={styles.btnBackText}> Add New Address </Text>
           </TouchableOpacity>
         </View>
-        <KeyboardAvoidingView
-          behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
-          style={{padding: 15}}>
+        <KeyboardAwareScrollView>
           <DropDownPicker
             items={[
               {label: 'Home', value: 'Home'},
@@ -312,44 +310,42 @@ class AddAddress extends Component {
             />
           ) : null}
 
-          <KeyboardAwareScrollView>
+          <TextInput
+            style={{height: 55, marginVertical: 10}}
+            theme={theme}
+            multiline={true}
+            mode={'outlined'}
+            label="Address"
+            value={this.state.address}
+            onChangeText={text => {
+              this.setState({address: text});
+              this.getFullAddress(text);
+            }}
+          />
+
+          {awsConfig.COUNTRY != 'Singapore' ? (
             <TextInput
-              style={{height: 55, marginVertical: 10}}
-              theme={theme}
-              multiline={true}
-              mode={'outlined'}
-              label="Address"
-              value={this.state.address}
-              onChangeText={text => {
-                this.setState({address: text});
-                this.getFullAddress(text);
+              style={{
+                height: 55,
+                marginVertical: 10,
               }}
-            />
-
-            {awsConfig.COUNTRY != 'Singapore' ? (
-              <TextInput
-                style={{
-                  height: 55,
-                  marginVertical: 10,
-                }}
-                theme={theme}
-                mode={'outlined'}
-                label="City"
-                value={this.state.city}
-                onChangeText={text => this.setState({city: text})}
-              />
-            ) : null}
-
-            <TextInput
-              style={{height: 55, marginVertical: 10}}
               theme={theme}
-              keyboardType={'numeric'}
               mode={'outlined'}
-              label="Postal Code"
-              value={this.state.postalCode}
-              onChangeText={text => this.setState({postalCode: text})}
+              label="City"
+              value={this.state.city}
+              onChangeText={text => this.setState({city: text})}
             />
-          </KeyboardAwareScrollView>
+          ) : null}
+
+          <TextInput
+            style={{height: 55, marginVertical: 10}}
+            theme={theme}
+            keyboardType={'numeric'}
+            mode={'outlined'}
+            label="Postal Code"
+            value={this.state.postalCode}
+            onChangeText={text => this.setState({postalCode: text})}
+          />
 
           <TouchableOpacity
             onPress={this.submitEdit}
@@ -368,7 +364,7 @@ class AddAddress extends Component {
               Save
             </Text>
           </TouchableOpacity>
-        </KeyboardAvoidingView>
+        </KeyboardAwareScrollView>
       </SafeAreaView>
     );
   }

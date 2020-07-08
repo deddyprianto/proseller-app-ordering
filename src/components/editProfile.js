@@ -255,10 +255,7 @@ class AccountEditProfil extends Component {
           </TouchableOpacity>
           {/*<View style={styles.line} />*/}
         </View>
-        <ScrollView
-          ref={view => {
-            this.scrollView = view;
-          }}>
+        <KeyboardAwareScrollView>
           <View>
             <View style={styles.card}>
               <Form ref="form" onSubmit={this.submitEdit}>
@@ -382,28 +379,20 @@ class AccountEditProfil extends Component {
                       }
                     />
                   </View>
-                  <KeyboardAwareScrollView>
-                    <TouchableOpacity
-                      onPress={() => {
-                        this.scrollView.scrollToEnd({animated: true});
-                      }}
-                      style={styles.detailItem}>
-                      <Text style={styles.desc}>
-                        {intlData.messages.address}{' '}
-                        <Text style={{color: 'red'}}>*</Text>
-                      </Text>
-                      <TextInput
-                        onFocus={() => {
-                          this.scrollView.scrollToEnd({animated: true});
-                        }}
-                        placeholder={intlData.messages.yourAddress}
-                        style={{paddingVertical: 10}}
-                        value={this.state.address}
-                        onChangeText={value => this.setState({address: value})}
-                      />
-                      <View style={{borderWidth: 0.5, borderColor: 'gray'}} />
-                    </TouchableOpacity>
-                  </KeyboardAwareScrollView>
+                  <View
+                    style={styles.detailItem}>
+                    <Text style={styles.desc}>
+                      {intlData.messages.address}{' '}
+                      <Text style={{color: 'red'}}>*</Text>
+                    </Text>
+                    <TextInput
+                      placeholder={intlData.messages.yourAddress}
+                      style={{paddingVertical: 10}}
+                      value={this.state.address}
+                      onChangeText={value => this.setState({address: value})}
+                    />
+                    <View style={{borderWidth: 0.5, borderColor: 'gray'}} />
+                  </View>
                 </View>
               </Form>
             </View>
@@ -418,7 +407,7 @@ class AccountEditProfil extends Component {
               {/*<View style={{height: 150}} />*/}
             </>
           </View>
-        </ScrollView>
+        </KeyboardAwareScrollView>
         {/*{Platform.OS != 'ios' ? (*/}
         {/*  <>*/}
         {/*    <TouchableWithoutFeedback onPress={this.submitEdit}>*/}
