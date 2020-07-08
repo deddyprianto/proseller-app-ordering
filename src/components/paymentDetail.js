@@ -18,6 +18,7 @@ import {
   TextInput,
   ActivityIndicator,
   SafeAreaView,
+  RefreshControl,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -44,6 +45,7 @@ import RBSheet from 'react-native-raw-bottom-sheet';
 import UUIDGenerator from 'react-native-uuid-generator';
 import {defaultPaymentAccount} from '../actions/user.action';
 import LoaderDarker from './LoaderDarker';
+import {getOutletById} from '../actions/stores.action';
 
 class PaymentDetail extends Component {
   constructor(props) {
@@ -64,6 +66,8 @@ class PaymentDetail extends Component {
       addPoint: undefined,
       cvv: '',
       selectedItem: {},
+      refreshing: false,
+      outlet: {},
     };
 
     // check if users payment methods is empty
@@ -130,9 +134,18 @@ class PaymentDetail extends Component {
   };
 
   componentDidMount = async () => {
-    const {defaultAccount} = this.props;
+    const {defaultAccount, pembayaran} = this.props;
     await this.setState({loading: true});
     await this.setDataPayment(false);
+
+    // get outlet details
+    try {
+      const outletID = pembayaran.storeId;
+      const response = await this.props.dispatch(getOutletById(outletID));
+      if (response != false) {
+        await this.setState({outlet: response});
+      }
+    } catch (e) {}
 
     try {
       await this.props.dispatch(getAccountPayment());
@@ -701,8 +714,22 @@ class PaymentDetail extends Component {
     }
   };
 
+  _onRefresh = async () => {
+    try {
+      await this.setState({refreshing: true});
+      // fetch details outlet
+      const outletID = this.state.outlet.id;
+      const response = await this.props.dispatch(getOutletById(outletID));
+      if (response != false) {
+        await this.setState({outlet: response});
+      }
+      await this.setState({refreshing: false});
+    } catch (e) {}
+  };
+
   render() {
     const {intlData, selectedAccount} = this.props;
+    const {outlet} = this.state;
     return (
       <SafeAreaView style={styles.container}>
         {this.state.loading && <LoaderDarker />}
@@ -713,6 +740,15 @@ class PaymentDetail extends Component {
               flexDirection: 'row',
               backgroundColor: colorConfig.pageIndex.backgroundColor,
               alignItems: 'center',
+              paddingVertical: 4,
+              shadowColor: '#00000021',
+              shadowOffset: {
+                width: 0,
+                height: 6,
+              },
+              shadowOpacity: 0.37,
+              shadowRadius: 7.49,
+              elevation: 12,
             }}>
             <TouchableOpacity onPress={this.goBack}>
               <Icon
@@ -747,9 +783,14 @@ class PaymentDetail extends Component {
               </Text>
             </View>
           </View>
-          <View style={styles.line} />
         </View>
-        <ScrollView>
+        <ScrollView
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.refreshing}
+              onRefresh={this._onRefresh}
+            />
+          }>
           <View
             style={{
               flexDirection: 'row',
@@ -862,7 +903,7 @@ class PaymentDetail extends Component {
                           fontSize: 14,
                           color: colorConfig.pageIndex.grayColor,
                         }}>
-                        {this.props.pembayaran.storeName}
+                        {this.state.outlet.name}
                       </Text>
                     </View>
                   </View>
@@ -972,7 +1013,9 @@ class PaymentDetail extends Component {
                 </TouchableOpacity>
               )}
             </View>
-            {this.props.campaignActive ? this.renderUsePoint() : null}
+            {this.props.campaignActive && outlet.enableRedeemPoint
+              ? this.renderUsePoint()
+              : null}
 
             <View
               style={{

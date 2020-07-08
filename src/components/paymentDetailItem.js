@@ -14,7 +14,7 @@ import {
   TouchableOpacity,
   ScrollView,
   BackHandler,
-  SafeAreaView
+  SafeAreaView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -39,7 +39,9 @@ export default class PaymentDetailItem extends Component {
   };
 
   componentWillUnmount() {
-    this.backHandler.remove();
+    try {
+      this.backHandler.remove();
+    } catch (e) {}
   }
 
   handleBackPress = () => {
@@ -51,11 +53,37 @@ export default class PaymentDetailItem extends Component {
     Actions.pop();
   };
 
+  format = item => {
+    try {
+      const curr = appConfig.appMataUang;
+      item = item.replace(curr, '');
+      if (curr != 'RP' && curr != 'IDR' && item.includes('.') == false) {
+        return `${item}.00`;
+      }
+      return item;
+    } catch (e) {
+      return item;
+    }
+  };
+
   render() {
     const {intlData} = this.props;
     return (
       <SafeAreaView style={styles.container}>
-        <View style={{backgroundColor: colorConfig.pageIndex.backgroundColor}}>
+        <View
+          style={{
+            backgroundColor: colorConfig.pageIndex.backgroundColor,
+            paddingVertical: 3,
+            marginBottom: 20,
+            shadowColor: '#00000021',
+            shadowOffset: {
+              width: 0,
+              height: 6,
+            },
+            shadowOpacity: 0.37,
+            shadowRadius: 7.49,
+            elevation: 12,
+          }}>
           <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
             <Icon
               size={28}
@@ -66,7 +94,6 @@ export default class PaymentDetailItem extends Component {
             />
             <Text style={styles.btnBackText}> {intlData.messages.back} </Text>
           </TouchableOpacity>
-          <View style={styles.line} />
         </View>
         <ScrollView>
           <View style={styles.card}>
@@ -118,7 +145,7 @@ export default class PaymentDetailItem extends Component {
                           <Text style={styles.descItem}>{item.itemName}</Text>
                           <View style={styles.itemDesc}>
                             <Text style={styles.descItemPrice}>
-                              {CurrencyFormatter(item.price)}
+                              {this.format(CurrencyFormatter(item.price))}
                             </Text>
                             <Text style={styles.descItemPrice}>{item.qty}</Text>
                             <Text
@@ -126,7 +153,9 @@ export default class PaymentDetailItem extends Component {
                                 styles.descItemPrice,
                                 {color: colorConfig.store.title},
                               ]}>
-                              {CurrencyFormatter(item.qty * item.price)}
+                              {this.format(
+                                CurrencyFormatter(item.qty * item.price),
+                              )}
                             </Text>
                           </View>
                           <View style={styles.itemDescModifier}>
@@ -143,7 +172,10 @@ export default class PaymentDetailItem extends Component {
                                       ]}>
                                       • <Text>{detail.quantity}x</Text>{' '}
                                       {detail.name} ({' '}
-                                      {CurrencyFormatter(detail.productPrice)} )
+                                      {this.format(
+                                        CurrencyFormatter(detail.productPrice),
+                                      )}{' '}
+                                      )
                                     </Text>
                                   )),
                                 )
@@ -163,7 +195,10 @@ export default class PaymentDetailItem extends Component {
                     }}>
                     <Text style={styles.desc}>Sub Total</Text>
                     <Text style={styles.desc}>
-                      {CurrencyFormatter(this.props.pembayaran.payment)}
+                      {appConfig.appMataUang}
+                      {this.format(
+                        CurrencyFormatter(this.props.pembayaran.payment),
+                      )}
                     </Text>
                   </View>
 
@@ -208,9 +243,11 @@ export default class PaymentDetailItem extends Component {
                             styles.desc,
                             {color: colorConfig.store.colorSuccess},
                           ]}>
-                          {CurrencyFormatter(
-                            this.props.pembayaran.payment -
-                              this.props.totalBayar,
+                          {this.format(
+                            CurrencyFormatter(
+                              this.props.pembayaran.payment -
+                                this.props.totalBayar,
+                            ),
                           )}
                         </Text>
                       </View>
@@ -247,7 +284,8 @@ export default class PaymentDetailItem extends Component {
                     }}>
                     <Text style={styles.desc}>Total</Text>
                     <Text style={styles.desc}>
-                      {CurrencyFormatter(this.props.totalBayar)}
+                      {appConfig.appMataUang}
+                      {this.format(CurrencyFormatter(this.props.totalBayar))}
                     </Text>
                   </View>
                 </View>

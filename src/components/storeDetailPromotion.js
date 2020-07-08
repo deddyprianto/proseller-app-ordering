@@ -69,7 +69,7 @@ export default class StoreDetailPromotion extends Component {
         </View>
         <View style={styles.card}>
           <ProgressiveImage
-            resizeMode="cover"
+            resizeMode="contain"
             style={styles.imageStamp}
             source={{uri: this.props.dataPromotion.defaultImageURL}}
           />

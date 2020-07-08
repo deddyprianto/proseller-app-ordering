@@ -27,9 +27,9 @@ const CurrencyFormatter = value => {
   }
 
   let currencyCheck = currencyCode.replace(/\s/g, '').toLowerCase();
-  if (currencyCheck === 'idr' || currencyCheck === 'rp') {
-    value = Math.ceil(value);
-  }
+  // if (currencyCheck === 'idr' || currencyCheck === 'rp') {
+  //   value = Math.ceil(value);
+  // }
 
   const valueSplit = String(value.toFixed(maxFractionDigits)).split(
     `${thousandSeparator}`,

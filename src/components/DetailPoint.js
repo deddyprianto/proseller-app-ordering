@@ -110,7 +110,7 @@ class DetailPoint extends Component {
             <View style={styles.header}>
               <TouchableOpacity onPress={this.goBack}>
                 <Icon
-                  size={32}
+                  size={Platform.OS === 'ios' ? 37 : 32}
                   name={Platform.OS === 'ios' ? 'ios-close' : 'md-close'}
                   style={{color: 'white'}}
                 />

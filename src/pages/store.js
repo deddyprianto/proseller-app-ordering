@@ -236,6 +236,9 @@ class Store extends Component {
             maxOrderQtyPerItem: response.data[i].maxOrderQtyPerItem,
             maxOrderAmount: response.data[i].maxOrderAmount,
             lastOrderOn: response.data[i].lastOrderOn,
+            enableRedeemPoint: response.data[i].enableRedeemPoint,
+            enableItemSpecialInstructions:
+              response.data[i].enableItemSpecialInstructions,
             enableDineIn:
               response.data[i].enableDineIn == false ||
               response.data[i].enableDineIn == '-'
@@ -431,6 +434,15 @@ class Store extends Component {
         <View
           style={{
             backgroundColor: colorConfig.pageIndex.backgroundColor,
+            paddingVertical: 3,
+            shadowColor: '#00000021',
+            shadowOffset: {
+              width: 0,
+              height: 9,
+            },
+            shadowOpacity: 0.7,
+            shadowRadius: 7.49,
+            elevation: 12,
           }}>
           <View
             style={{
@@ -478,12 +490,6 @@ class Store extends Component {
               </View>
             </View>
           </View>
-          <View
-            style={{
-              borderBottomColor: colorConfig.store.defaultColor,
-              borderBottomWidth: 2,
-            }}
-          />
         </View>
         <ScrollView
           style={styles.scrollView}

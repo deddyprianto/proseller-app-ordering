@@ -33,6 +33,7 @@ import {selectedAddress} from '../../actions/payment.actions';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {getAddress, getCityAddress} from '../../actions/address.action';
 import SearchableDropdown from 'react-native-searchable-dropdown';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview';
 
 const theme = {
   ...DefaultTheme,
@@ -311,42 +312,44 @@ class AddAddress extends Component {
             />
           ) : null}
 
-          <TextInput
-            style={{height: 55, marginVertical: 10}}
-            theme={theme}
-            multiline={true}
-            mode={'outlined'}
-            label="Address"
-            value={this.state.address}
-            onChangeText={text => {
-              this.setState({address: text});
-              this.getFullAddress(text);
-            }}
-          />
-
-          {awsConfig.COUNTRY != 'Singapore' ? (
+          <KeyboardAwareScrollView>
             <TextInput
-              style={{
-                height: 55,
-                marginVertical: 10,
-              }}
+              style={{height: 55, marginVertical: 10}}
               theme={theme}
+              multiline={true}
               mode={'outlined'}
-              label="City"
-              value={this.state.city}
-              onChangeText={text => this.setState({city: text})}
+              label="Address"
+              value={this.state.address}
+              onChangeText={text => {
+                this.setState({address: text});
+                this.getFullAddress(text);
+              }}
             />
-          ) : null}
 
-          <TextInput
-            style={{height: 55, marginVertical: 10}}
-            theme={theme}
-            keyboardType={'numeric'}
-            mode={'outlined'}
-            label="Postal Code"
-            value={this.state.postalCode}
-            onChangeText={text => this.setState({postalCode: text})}
-          />
+            {awsConfig.COUNTRY != 'Singapore' ? (
+              <TextInput
+                style={{
+                  height: 55,
+                  marginVertical: 10,
+                }}
+                theme={theme}
+                mode={'outlined'}
+                label="City"
+                value={this.state.city}
+                onChangeText={text => this.setState({city: text})}
+              />
+            ) : null}
+
+            <TextInput
+              style={{height: 55, marginVertical: 10}}
+              theme={theme}
+              keyboardType={'numeric'}
+              mode={'outlined'}
+              label="Postal Code"
+              value={this.state.postalCode}
+              onChangeText={text => this.setState({postalCode: text})}
+            />
+          </KeyboardAwareScrollView>
 
           <TouchableOpacity
             onPress={this.submitEdit}

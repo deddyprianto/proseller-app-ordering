@@ -17,8 +17,6 @@ import {
   Platform,
   TextInput,
   SafeAreaView,
-  Alert,
-  KeyboardAvoidingView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -32,6 +30,7 @@ import {reduxForm} from 'redux-form';
 import AwesomeAlert from 'react-native-awesome-alerts';
 import Loader from './loader';
 import DropDownPicker from 'react-native-dropdown-picker';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview';
 
 class AccountEditProfil extends Component {
   constructor(props) {
@@ -53,6 +52,21 @@ class AccountEditProfil extends Component {
       };
     }
 
+    const months = [
+      {label: 'January', value: 'January'},
+      {label: 'February', value: 'February'},
+      {label: 'March', value: 'March'},
+      {label: 'April', value: 'April'},
+      {label: 'May', value: 'May'},
+      {label: 'June', value: 'June'},
+      {label: 'July', value: 'July'},
+      {label: 'August', value: 'August'},
+      {label: 'September', value: 'September'},
+      {label: 'October', value: 'October'},
+      {label: 'November', value: 'November'},
+      {label: 'December', value: 'December'},
+    ];
+
     this.state = {
       screenWidth: Dimensions.get('window').width,
       name: data.name,
@@ -63,6 +77,7 @@ class AccountEditProfil extends Component {
       showAlert: false,
       loading: false,
       field: '',
+      months,
     };
   }
 
@@ -160,13 +175,29 @@ class AccountEditProfil extends Component {
     // );
   };
 
+  pad = item => {
+    try {
+      item = item.toString();
+      if (item.length == 1) {
+        return `0${item}`;
+      } else {
+        return item;
+      }
+    } catch (e) {
+      return item;
+    }
+  };
+
   handleConfirm = date => {
     let newDate = new Date(date);
     let dateBirth = newDate.getDate();
     let monthBirth = newDate.getMonth() + 1;
     let birthYear = newDate.getFullYear();
 
-    this.setState({birthDate: `${birthYear}-${monthBirth}-${dateBirth}/`});
+    dateBirth = this.pad(dateBirth);
+    monthBirth = this.pad(monthBirth);
+
+    this.setState({birthDate: `${birthYear}-${monthBirth}-${dateBirth}`});
     this.hideDatePicker();
   };
 
@@ -228,8 +259,7 @@ class AccountEditProfil extends Component {
           ref={view => {
             this.scrollView = view;
           }}>
-          <KeyboardAvoidingView
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+          <View>
             <View style={styles.card}>
               <Form ref="form" onSubmit={this.submitEdit}>
                 <View style={styles.detail}>
@@ -296,13 +326,35 @@ class AccountEditProfil extends Component {
                       {this.state.birthDate == '' ||
                       this.state.birthDate == undefined
                         ? 'Enter Birth Date'
-                        : this.formatDate(this.state.birthDate)}
+                        : this.state.birthDate}
                     </Text>
                     <DateTimePickerModal
                       isVisible={this.state.isDatePickerVisible}
                       mode="date"
                       onConfirm={this.handleConfirm}
                       onCancel={this.hideDatePicker}
+                    />
+                  </View>
+                  <View style={styles.detailItem}>
+                    <Text style={[styles.desc, {marginLeft: 0}]}>
+                      Birth Month
+                    </Text>
+                    <DropDownPicker
+                      placeholder={'Select your birth month'}
+                      items={this.state.months}
+                      // defaultValue={this.state.gender}
+                      containerStyle={{height: 47}}
+                      style={{
+                        backgroundColor: 'white',
+                        marginTop: 5,
+                        borderRadius: 0,
+                      }}
+                      dropDownStyle={{backgroundColor: '#fafafa'}}
+                      onChangeItem={item =>
+                        this.setState({
+                          gender: item.value,
+                        })
+                      }
                     />
                   </View>
                   <View style={styles.detailItem}>
@@ -330,49 +382,52 @@ class AccountEditProfil extends Component {
                       }
                     />
                   </View>
-                  <TouchableOpacity
-                    onPress={() => {
-                      this.scrollView.scrollToEnd({animated: true});
-                    }}
-                    style={styles.detailItem}>
-                    <Text style={styles.desc}>{intlData.messages.address}</Text>
-                    <TextInput
-                      onFocus={() => {
+                  <KeyboardAwareScrollView>
+                    <TouchableOpacity
+                      onPress={() => {
                         this.scrollView.scrollToEnd({animated: true});
                       }}
-                      placeholder={intlData.messages.yourAddress}
-                      style={{paddingVertical: 10}}
-                      value={this.state.address}
-                      onChangeText={value => this.setState({address: value})}
-                    />
-                    <View style={{borderWidth: 0.5, borderColor: 'gray'}} />
-                  </TouchableOpacity>
+                      style={styles.detailItem}>
+                      <Text style={styles.desc}>
+                        {intlData.messages.address}{' '}
+                        <Text style={{color: 'red'}}>*</Text>
+                      </Text>
+                      <TextInput
+                        onFocus={() => {
+                          this.scrollView.scrollToEnd({animated: true});
+                        }}
+                        placeholder={intlData.messages.yourAddress}
+                        style={{paddingVertical: 10}}
+                        value={this.state.address}
+                        onChangeText={value => this.setState({address: value})}
+                      />
+                      <View style={{borderWidth: 0.5, borderColor: 'gray'}} />
+                    </TouchableOpacity>
+                  </KeyboardAwareScrollView>
                 </View>
               </Form>
             </View>
-            {Platform.OS == 'ios' ? (
-              <>
-                <TouchableWithoutFeedback onPress={this.submitEdit}>
-                  <View style={styles.primaryButton}>
-                    <Text style={styles.buttonText}>
-                      {intlData.messages.save}
-                    </Text>
-                  </View>
-                </TouchableWithoutFeedback>
-                <View style={{height: 150}} />
-              </>
-            ) : null}
-          </KeyboardAvoidingView>
+            <>
+              <TouchableWithoutFeedback onPress={this.submitEdit}>
+                <View style={styles.primaryButton}>
+                  <Text style={styles.buttonText}>
+                    {intlData.messages.save}
+                  </Text>
+                </View>
+              </TouchableWithoutFeedback>
+              {/*<View style={{height: 150}} />*/}
+            </>
+          </View>
         </ScrollView>
-        {Platform.OS != 'ios' ? (
-          <>
-            <TouchableWithoutFeedback onPress={this.submitEdit}>
-              <View style={styles.primaryButton}>
-                <Text style={styles.buttonText}>{intlData.messages.save}</Text>
-              </View>
-            </TouchableWithoutFeedback>
-          </>
-        ) : null}
+        {/*{Platform.OS != 'ios' ? (*/}
+        {/*  <>*/}
+        {/*    <TouchableWithoutFeedback onPress={this.submitEdit}>*/}
+        {/*      <View style={styles.primaryButton}>*/}
+        {/*        <Text style={styles.buttonText}>{intlData.messages.save}</Text>*/}
+        {/*      </View>*/}
+        {/*    </TouchableWithoutFeedback>*/}
+        {/*  </>*/}
+        {/*) : null}*/}
         <AwesomeAlert
           show={this.state.showAlert}
           showProgress={false}

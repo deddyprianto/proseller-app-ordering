@@ -1320,7 +1320,20 @@ class Cart extends Component {
       <SafeAreaView style={styles.container}>
         {this.askUserToSelectOrderType()}
 
-        <View style={{backgroundColor: colorConfig.pageIndex.backgroundColor}}>
+        <View
+          style={{
+            backgroundColor: colorConfig.pageIndex.backgroundColor,
+            marginBottom: 10,
+            paddingVertical: 3,
+            shadowColor: '#00000021',
+            shadowOffset: {
+              width: 0,
+              height: 6,
+            },
+            shadowOpacity: 0.37,
+            shadowRadius: 7.49,
+            elevation: 12,
+          }}>
           <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
             <Icon
               size={28}
@@ -1335,8 +1348,8 @@ class Cart extends Component {
               Detail Cart
             </Text>
           </TouchableOpacity>
-          <View style={styles.line} />
         </View>
+
         {this.state.loading == false ? (
           this.props.dataBasket != undefined &&
           this.props.dataBasket.outlet != undefined ? (
@@ -1647,7 +1660,7 @@ const styles = StyleSheet.create({
     // margin: 5,
   },
   title: {
-    color: colorConfig.pageIndex.activeTintColor,
+    color: colorConfig.store.title,
     fontSize: 18,
     fontFamily: 'Lato-Bold',
     padding: 5,

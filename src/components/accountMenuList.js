@@ -157,7 +157,9 @@ class AccountMenuList extends Component {
     } = this.props;
     return (
       <View style={styles.container}>
-        <Text style={styles.headingMenu}>Default Payment Account</Text>
+        <Text style={styles.headingMenu}>
+          {intlData.messages.defaultPaymentAccount}
+        </Text>
         <TouchableOpacity disabled={true} style={styles.cardMenu}>
           {!isEmptyObject(defaultAccount) ? (
             <View style={styles.itemMenu}>
@@ -182,7 +184,7 @@ class AccountMenuList extends Component {
                   </>
                 ) : (
                   <Text style={{color: colorConfig.store.colorError}}>
-                    NOT YET ADDED
+                    {intlData.messages.notYesAdded}
                   </Text>
                 )}
               </Text>
@@ -190,7 +192,9 @@ class AccountMenuList extends Component {
           </View>
         </TouchableOpacity>
 
-        <Text style={styles.headingMenu}>My Payment Options</Text>
+        <Text style={styles.headingMenu}>
+          {intlData.messages.myPaymentOptions}
+        </Text>
 
         {this.renderPaymentMethodOptions()}
 
@@ -211,7 +215,7 @@ class AccountMenuList extends Component {
         {/*  </View>*/}
         {/*</TouchableOpacity>*/}
 
-        <Text style={styles.headingMenu}>Settings</Text>
+        <Text style={styles.headingMenu}>{intlData.messages.settings}</Text>
 
         {referral != undefined && referral.capacity > 0 ? (
           <TouchableOpacity
@@ -244,7 +248,9 @@ class AccountMenuList extends Component {
           </View>
           <View>
             <View style={styles.item}>
-              <Text style={styles.title}>My Delivery Address</Text>
+              <Text style={styles.title}>
+                {intlData.messages.myDeliveryAddress}
+              </Text>
             </View>
           </View>
         </TouchableOpacity>
@@ -260,7 +266,9 @@ class AccountMenuList extends Component {
           </View>
           <View>
             <View style={styles.item}>
-              <Text style={styles.title}>Notifications</Text>
+              <Text style={styles.title}>
+                {intlData.messages.notifications}
+              </Text>
             </View>
           </View>
         </TouchableOpacity>

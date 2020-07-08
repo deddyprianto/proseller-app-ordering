@@ -143,5 +143,12 @@
   "addToBasket": "Add to ",
   "basket": "Basket",
   "changeOrderMode": "Change Order Mode",
-  "bucketEmpty": "Sorry, your bucket is empty"
+  "bucketEmpty": "Sorry, your bucket is empty",
+  "pleaseCompleteProfile": "Please complete your profile information to start to earn points",
+  "defaultPaymentAccount": "Default Payment Account",
+  "myPaymentOptions": "My Payment Options",
+  "settings": "Settings",
+  "myDeliveryAddress": "My Delivery Address",
+  "notifications": "Notifications",
+  "notYesAdded": "NOT YET ADDED"
 }

@@ -165,7 +165,7 @@ export default class Routes extends Component {
             <Scene key="myVouchers" component={MyVouchers} />
             <Scene key="redeemVoucher" component={RedeemVoucher} />
             <Scene key="accountEditProfil" component={AccountEditProfil} />
-            <Scene key="editProfile" component={EditProfile} />
+            <Scene  key="editProfile" component={EditProfile} />
             <Scene key="paymentDetail" component={PaymentDetail} />
             <Scene
               key="paymentSuccess"

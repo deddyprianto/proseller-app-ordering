@@ -938,7 +938,11 @@ class Basket extends Component {
         pembayaran.deliveryFee = this.state.deliveryFee;
       }
 
-      Actions.settleOrder({pembayaran: pembayaran, url: url});
+      Actions.settleOrder({
+        pembayaran: pembayaran,
+        url: url,
+        outlet: outletSingle,
+      });
     } catch (e) {
       this.setState({
         showAlert: true,
@@ -1203,9 +1207,7 @@ class Basket extends Component {
                       if (item.id == detail.id) {
                         // check for radio button selected
                         if (group.modifier.max == 1) {
-                          product.product.productModifiers[
-                            i
-                          ].modifier.show =
+                          product.product.productModifiers[i].modifier.show =
                             data.modifier.show;
                           // product.product.productModifiers[
                           //   i
@@ -1214,8 +1216,7 @@ class Basket extends Component {
 
                         existProduct.product.productModifiers[
                           i
-                        ].modifier.details[j].quantity =
-                          item.quantity;
+                        ].modifier.details[j].quantity = item.quantity;
                         product.product.productModifiers[i].modifier.details[
                           j
                         ].isSelected = item.isSelected;
@@ -1751,6 +1752,7 @@ class Basket extends Component {
         maxOrderQtyPerItem: item.maxOrderQtyPerItem,
         maxOrderAmount: item.maxOrderAmount,
         lastOrderOn: item.lastOrderOn,
+        enableItemSpecialInstructions: item.enableItemSpecialInstructions,
         enableDineIn:
           item.enableDineIn == false || item.enableDineIn == '-' ? false : true,
         enableTakeAway:
@@ -1996,6 +1998,7 @@ class Basket extends Component {
     return (
       <SafeAreaView style={styles.container}>
         <ModalOrder
+          outlet={outletSingle}
           isModalVisible={this.state.isModalVisible}
           qtyItem={this.state.qtyItem}
           remark={this.state.remark}
@@ -2021,7 +2024,20 @@ class Basket extends Component {
 
         {this.state.loadingDelte && <Loader />}
 
-        <View style={{backgroundColor: colorConfig.pageIndex.backgroundColor}}>
+        <View
+          style={{
+            backgroundColor: colorConfig.pageIndex.backgroundColor,
+            marginBottom: 10,
+            paddingVertical: 3,
+            shadowColor: '#00000021',
+            shadowOffset: {
+              width: 0,
+              height: 6,
+            },
+            shadowOpacity: 0.37,
+            shadowRadius: 7.49,
+            elevation: 12,
+          }}>
           <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
             <Icon
               size={28}
@@ -2035,8 +2051,8 @@ class Basket extends Component {
               {intlData.messages.detailOrder}{' '}
             </Text>
           </TouchableOpacity>
-          <View style={styles.line} />
         </View>
+
         {this.state.loading == false ? (
           this.props.dataBasket != undefined &&
           this.props.dataBasket.outlet != undefined ? (
@@ -2171,6 +2187,7 @@ class Basket extends Component {
                         </View>
                       </View>
                     )}
+                    disableRightSwipe={true}
                     rightOpenValue={-80}
                     onRowOpen={(rowKey, rowMap) => {
                       try {
@@ -2553,7 +2570,7 @@ const styles = StyleSheet.create({
     // margin: 5,
   },
   title: {
-    color: colorConfig.pageIndex.activeTintColor,
+    color: colorConfig.store.title,
     fontSize: 18,
     fontFamily: 'Lato-Bold',
     padding: 5,

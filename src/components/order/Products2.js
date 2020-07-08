@@ -2373,6 +2373,8 @@ class Products2 extends Component {
       item.storeName = outlet.name;
       item.outletType = outlet.outletType;
       item.orderingStatus = outlet.orderingStatus;
+      item.enableItemSpecialInstructions = outlet.enableItemSpecialInstructions;
+      item.enableRedeemPoint = outlet.enableRedeemPoint;
 
       this.props.item = item;
 
@@ -2489,6 +2491,7 @@ class Products2 extends Component {
     return (
       <SafeAreaView style={styles.container}>
         <ModalOrder
+          outlet={item}
           intlData={intlData}
           isModalVisible={this.state.isModalVisible}
           qtyItem={this.state.qtyItem}

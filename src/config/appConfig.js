@@ -2,7 +2,7 @@ const appConfig = {
   // info company
   appName: 'QIJI',
   appMataUang: 'SGD',
-  appVersion: 'Version 1.3.5 (Qiji)',
+  appVersion: 'Version 1.1',
   // image company
   appLogo: require('../assets/img/logo2.png'),
   appLogo3D: require('../assets/img/logo_3D.png'),

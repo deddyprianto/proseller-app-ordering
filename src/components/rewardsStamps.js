@@ -87,7 +87,7 @@ class RewardsStamps extends Component {
             }}>
             <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
               <Icon
-                size={32}
+                size={Platform.OS === 'ios' ? 37 : 32}
                 name={Platform.OS === 'ios' ? 'ios-close' : 'md-close'}
                 style={styles.btnBackIcon}
               />

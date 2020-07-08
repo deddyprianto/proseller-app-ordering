@@ -88,7 +88,7 @@ class RewardsPoint extends Component {
           <View style={styles.information}>
             <View style={styles.boxInfo}>
               <Text style={styles.textInfo}>
-                Please complete your profile information to start to earn points
+                {intlData.messages.pleaseCompleteProfile}
               </Text>
               <TouchableOpacity
                 onPress={this.editProfile}

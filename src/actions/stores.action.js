@@ -77,6 +77,12 @@ export const getOutletById = id => {
         type: 'DATA_OUTLET_SINGLE',
         data: response.response.data,
       });
+
+      if (response.success == true) {
+        return response.response.data;
+      } else {
+        return false;
+      }
     } catch (error) {
       return error;
     }
