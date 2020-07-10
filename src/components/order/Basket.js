@@ -816,7 +816,7 @@ class Basket extends Component {
       return false;
     }
 
-    if (selectedAddress.city == '-') {
+    if (selectedAddress.postalCode == '-') {
       Alert.alert(
         'Incomplete Delivery Address',
         'Looks like your address is incomplete, please check it again',

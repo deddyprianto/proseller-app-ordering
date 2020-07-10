@@ -123,7 +123,9 @@ class DetailPoint extends Component {
                 <Text style={styles.subTitle}>Customer Group</Text>
                 <Text style={styles.value}>
                   {userDetail != undefined
-                    ? userDetail.customerGroupName.toUpperCase()
+                    ? userDetail.customerGroupName != undefined
+                      ? userDetail.customerGroupName.toUpperCase()
+                      : ''
                     : ''}
                 </Text>
               </View>
