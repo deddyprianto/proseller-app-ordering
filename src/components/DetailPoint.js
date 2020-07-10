@@ -110,7 +110,7 @@ class DetailPoint extends Component {
             <View style={styles.header}>
               <TouchableOpacity onPress={this.goBack}>
                 <Icon
-                  size={Platform.OS === 'ios' ? 37 : 32}
+                  size={Platform.OS === 'ios' ? 40 : 32}
                   name={Platform.OS === 'ios' ? 'ios-close' : 'md-close'}
                   style={{color: 'white'}}
                 />
@@ -130,6 +130,10 @@ class DetailPoint extends Component {
               {campign.points != undefined ? (
                 <View style={styles.panel}>
                   <Text style={styles.subTitle}>Campaign Rules</Text>
+                  <Text style={styles.simpleTextValueRatio}>
+                    {campign.points.netSpendToPoint0} :{' '}
+                    {campign.points.netSpendToPoint1}
+                  </Text>
                   <Text style={styles.simpleTextValue}>
                     Get {campign.points.netSpendToPoint1} points for every $
                     {campign.points.netSpendToPoint0} Purchases
@@ -250,7 +254,14 @@ const styles = StyleSheet.create({
   simpleTextValue: {
     color: colorConfig.store.secondaryColor,
     fontSize: 14,
-    marginTop: 15,
+    marginTop: 5,
+    textAlign: 'center',
+    fontWeight: 'bold',
+  },
+  simpleTextValueRatio: {
+    color: colorConfig.store.secondaryColor,
+    fontSize: 18,
+    // marginTop: 5,
     textAlign: 'center',
     fontWeight: 'bold',
   },

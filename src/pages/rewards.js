@@ -34,7 +34,7 @@ import {
 } from '../actions/user.action';
 import ShimmerPlaceHolder from 'react-native-shimmer-placeholder';
 import MyPointsPlaceHolder from '../components/placeHolderLoading/MyPointsPlaceHolder';
-import {isEmptyArray, isEmptyObject} from '../helper/CheckEmpty';
+import {isEmptyArray, isEmptyData, isEmptyObject} from '../helper/CheckEmpty';
 import {getDeliveryProvider, getPendingCart} from '../actions/order.action';
 import CryptoJS from 'react-native-crypto-js';
 import awsConfig from '../config/awsConfig';
@@ -44,6 +44,7 @@ import OneSignal from 'react-native-onesignal';
 import {dataInbox} from '../actions/inbox.action';
 import {referral} from '../actions/referral.action';
 import Icon from 'react-native-vector-icons/EvilIcons';
+import {getMandatoryFields} from '../actions/account.action';
 
 class Rewards extends Component {
   constructor(props) {
@@ -200,6 +201,7 @@ class Rewards extends Component {
       await this.props.dispatch(refreshToken());
       await this.props.dispatch(getUserProfile());
       await this.props.dispatch(getCompanyInfo());
+      await this.props.dispatch(getMandatoryFields());
       const response = await this.props.dispatch(getAccountPayment());
       await this.props.dispatch(campaign());
       await this.props.dispatch(dataPoint());
@@ -285,6 +287,82 @@ class Rewards extends Component {
     );
   };
 
+  profileCompleted = () => {
+    try {
+      let {fields} = this.props;
+      let userDetail;
+      try {
+        // Decrypt data user
+        let bytes = CryptoJS.AES.decrypt(
+          this.props.userDetail,
+          awsConfig.PRIVATE_KEY_RSA,
+        );
+        userDetail = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+      } catch (e) {
+        userDetail = undefined;
+      }
+
+      if (userDetail == undefined) return false;
+
+      if (!isEmptyArray(fields)) {
+        // mark field that has been completed
+        for (let i = 0; i < fields.length; i++) {
+          if (
+            fields[i].fieldName.toLowerCase() === 'birthdate' &&
+            fields[i].mandatory
+          ) {
+            fields[i].filled = userDetail.birthDate;
+          }
+          if (
+            fields[i].fieldName.toLowerCase() === 'gender' &&
+            fields[i].mandatory
+          ) {
+            fields[i].filled = userDetail.gender;
+          }
+          if (
+            fields[i].fieldName.toLowerCase() === 'address' &&
+            fields[i].mandatory
+          ) {
+            fields[i].filled = userDetail.address;
+          }
+        }
+
+        //  check filled data
+        let passed = true;
+
+        for (let i = 0; i < fields.length; i++) {
+          if (fields[i].mandatory && isEmptyData(fields[i].filled)) {
+            passed = false;
+            break;
+          }
+        }
+
+        return passed;
+      } else {
+        return true;
+      }
+    } catch (e) {
+      return false;
+    }
+  };
+
+  editProfile = () => {
+    let userDetail;
+    try {
+      // Decrypt data user
+      let bytes = CryptoJS.AES.decrypt(
+        this.props.userDetail,
+        awsConfig.PRIVATE_KEY_RSA,
+      );
+      userDetail = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+    } catch (e) {
+      userDetail = undefined;
+    }
+
+    var dataDiri = {dataDiri: userDetail};
+    Actions.editProfile(dataDiri);
+  };
+
   render() {
     const {campaignActive} = this.props;
 
@@ -308,7 +386,24 @@ class Rewards extends Component {
               ) : this.props.dataStamps.dataStamps == undefined ||
                 isEmptyObject(this.props.dataStamps.dataStamps) ? (
                 this.greetWelcomeUser()
-              ) : this.props.dataStamps.dataStamps.length == 0 ? null : (
+              ) : this.props.dataStamps.dataStamps.length == 0 ? null : this
+                  .props.dataStamps.campaignTrigger === 'COMPLETE_PROFILE' &&
+                !this.profileCompleted() ? (
+                <View style={styles.information}>
+                  <View style={styles.boxInfo}>
+                    <Text style={styles.textInfo}>
+                      {intlData.messages.pleaseCompleteProfile}
+                    </Text>
+                    <TouchableOpacity
+                      onPress={this.editProfile}
+                      style={styles.buttonComplete}>
+                      <Text style={{color: 'white', fontWeight: 'bold'}}>
+                        Complete Now
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              ) : (
                 <View
                   style={{
                     backgroundColor: colorConfig.pageIndex.activeTintColor,
@@ -412,9 +507,36 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     padding: 10,
   },
+  information: {
+    backgroundColor: colorConfig.store.defaultColor,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  buttonComplete: {
+    backgroundColor: colorConfig.store.secondaryColor,
+    borderRadius: 10,
+    marginHorizontal: '20%',
+    padding: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  boxInfo: {
+    marginHorizontal: '15%',
+    marginTop: 15,
+    borderRadius: 10,
+    padding: 10,
+    backgroundColor: colorConfig.store.TransBG,
+  },
+  textInfo: {
+    color: colorConfig.store.colorError,
+    textAlign: 'center',
+    fontFamily: 'Lato-Medium',
+  },
 });
 
 mapStateToProps = state => ({
+  fields: state.accountsReducer.mandatoryFields.fields,
   recentTransaction: state.rewardsReducer.dataPoint.recentTransaction,
   defaultAccount: state.userReducer.defaultPaymentAccount.defaultAccount,
   myCardAccount: state.cardReducer.myCardAccount.card,

@@ -13,6 +13,7 @@ import {Actions} from 'react-native-router-flux';
 import Icon from 'react-native-vector-icons/EvilIcons';
 import CryptoJS from 'react-native-crypto-js';
 import awsConfig from '../config/awsConfig';
+import {isEmptyArray, isEmptyData, isEmptyObject} from '../helper/CheckEmpty';
 
 class RewardsPoint extends Component {
   constructor(props) {
@@ -44,13 +45,17 @@ class RewardsPoint extends Component {
   render() {
     const {intlData, campaignActive, totalPoint} = this.props;
     const HEIGHT = campaignActive ? 3 : 5;
+    const {campign, detailPoint} = this.props;
     return (
       <View
         style={{
           backgroundColor: colorConfig.pageIndex.activeTintColor,
           height: this.state.screenHeight / HEIGHT - 30,
         }}>
-        {totalPoint != undefined && campaignActive ? (
+        {totalPoint != undefined &&
+        campaignActive &&
+        !isEmptyObject(detailPoint.trigger) &&
+        detailPoint.trigger.campaignTrigger === 'USER_SIGNUP' ? (
           <View>
             <TouchableOpacity
               style={{
@@ -84,7 +89,11 @@ class RewardsPoint extends Component {
               {totalPoint}
             </Text>
           </View>
-        ) : (
+        ) : null}
+        {campaignActive &&
+        !isEmptyObject(detailPoint.trigger) &&
+        detailPoint.trigger.campaignTrigger === 'COMPLETE_PROFILE' &&
+        detailPoint.trigger.status === false ? (
           <View style={styles.information}>
             <View style={styles.boxInfo}>
               <Text style={styles.textInfo}>
@@ -99,7 +108,41 @@ class RewardsPoint extends Component {
               </TouchableOpacity>
             </View>
           </View>
-        )}
+        ) : totalPoint != undefined && campaignActive ? (
+          <View>
+            <TouchableOpacity
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginLeft: 32,
+                paddingTop: 25,
+              }}
+              onPress={() => {
+                Actions.detailPoint({intlData});
+              }}>
+              <Text
+                style={{
+                  color: colorConfig.pageIndex.backgroundColor,
+                  textAlign: 'center',
+                  fontSize: 16,
+                  fontWeight: 'bold',
+                }}>
+                {intlData.messages.myPoints}
+              </Text>
+              <Icon size={32} name={'chevron-right'} style={{color: 'white'}} />
+            </TouchableOpacity>
+            <Text
+              style={{
+                color: colorConfig.pageIndex.backgroundColor,
+                textAlign: 'center',
+                fontSize: 42,
+                fontFamily: 'Lato-Bold',
+              }}>
+              {totalPoint}
+            </Text>
+          </View>
+        ) : null}
       </View>
     );
   }
@@ -134,8 +177,11 @@ const styles = StyleSheet.create({
 });
 
 mapStateToProps = state => ({
+  campign: state.rewardsReducer.campaign.campaign,
+  fields: state.accountsReducer.mandatoryFields.fields,
   userDetail: state.userReducer.getUser.userDetails,
   totalPoint: state.rewardsReducer.dataPoint.totalPoint,
+  detailPoint: state.rewardsReducer.dataPoint.detailPoint,
   campaignActive: state.rewardsReducer.dataPoint.campaignActive,
   intlData: state.intlData,
 });

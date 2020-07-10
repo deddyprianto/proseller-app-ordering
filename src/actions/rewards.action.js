@@ -166,6 +166,7 @@ export const dataPoint = () => {
         type: 'DATA_TOTAL_POINT',
         totalPoint: totalPoint,
         campaignActive,
+        detailPoint: response.responseBody.Data,
       });
     } catch (error) {
       return error;

@@ -12,6 +12,18 @@ const myVoucers = (state = {}, action) => {
   }
 };
 
+const mandatoryFields = (state = {}, action) => {
+  switch (action.type) {
+    case 'DATA_MANDATORY_FIELDS':
+      return {
+        fields: action.fields,
+      };
+
+    default:
+      return state;
+  }
+};
+
 const accountExist = (state = {}, action) => {
   switch (action.type) {
     case 'DATA_ACCOUNT_EXIST':
@@ -27,4 +39,5 @@ const accountExist = (state = {}, action) => {
 export default combineReducers({
   myVoucers,
   accountExist,
+  mandatoryFields,
 });

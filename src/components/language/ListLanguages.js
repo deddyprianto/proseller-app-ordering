@@ -24,6 +24,8 @@ import {connect} from 'react-redux';
 import {List} from 'react-native-paper';
 import Languages from '../../service/i18n/languages';
 import {updateLanguage} from '../../actions/language.action';
+import {userLanguage} from '../../actions/user.action';
+import awsConfig from '../../config/awsConfig';
 
 class ListLanguages extends Component {
   constructor(props) {

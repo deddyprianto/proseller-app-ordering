@@ -12,11 +12,12 @@ import {
   Dimensions,
   TouchableOpacity,
   TouchableWithoutFeedback,
-  ScrollView,
+  // ScrollView,
   BackHandler,
   Platform,
   TextInput,
   SafeAreaView,
+  Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -28,9 +29,28 @@ import {compose} from 'redux';
 import {connect} from 'react-redux';
 import {reduxForm} from 'redux-form';
 import AwesomeAlert from 'react-native-awesome-alerts';
-import Loader from './loader';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview';
+import LoaderDarker from './LoaderDarker';
+import {getMandatoryFields} from '../actions/account.action';
+import {isEmptyArray, isEmptyData, isEmptyObject} from '../helper/CheckEmpty';
+import {formatISO, format} from 'date-fns';
+import {dataPoint} from '../actions/rewards.action';
+
+const monthNames = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
+];
 
 class AccountEditProfil extends Component {
   constructor(props) {
@@ -52,19 +72,34 @@ class AccountEditProfil extends Component {
       };
     }
 
-    const months = [
-      {label: 'January', value: 'January'},
-      {label: 'February', value: 'February'},
-      {label: 'March', value: 'March'},
-      {label: 'April', value: 'April'},
-      {label: 'May', value: 'May'},
-      {label: 'June', value: 'June'},
-      {label: 'July', value: 'July'},
-      {label: 'August', value: 'August'},
-      {label: 'September', value: 'September'},
-      {label: 'October', value: 'October'},
-      {label: 'November', value: 'November'},
-      {label: 'December', value: 'December'},
+    const MMM = [
+      {label: 'January', value: '2000-Jan-01'},
+      {label: 'February', value: '2000-Feb-01'},
+      {label: 'March', value: '2000-Mar-01'},
+      {label: 'April', value: '2000-Apr-01'},
+      {label: 'May', value: '2000-May-01'},
+      {label: 'June', value: '2000-Jun-01'},
+      {label: 'July', value: '2000-Jul-01'},
+      {label: 'August', value: '2000-Aug-01'},
+      {label: 'September', value: '2000-Sep-01'},
+      {label: 'October', value: '2000-Oct-01'},
+      {label: 'November', value: '2000-Nov-01'},
+      {label: 'December', value: '2000-Dec-01'},
+    ];
+
+    const MM = [
+      {label: 'January', value: '2000-01-01'},
+      {label: 'February', value: '2000-02-01'},
+      {label: 'March', value: '2000-03-01'},
+      {label: 'April', value: '2000-04-01'},
+      {label: 'May', value: '2000-05-01'},
+      {label: 'June', value: '2000-06-01'},
+      {label: 'July', value: '2000-07-01'},
+      {label: 'August', value: '2000-08-01'},
+      {label: 'September', value: '2000-09-01'},
+      {label: 'October', value: '2000-10-01'},
+      {label: 'November', value: '2000-11-01'},
+      {label: 'December', value: '2000-12-01'},
     ];
 
     this.state = {
@@ -77,7 +112,9 @@ class AccountEditProfil extends Component {
       showAlert: false,
       loading: false,
       field: '',
-      months,
+      MMM,
+      MM,
+      fields: [],
     };
   }
 
@@ -85,8 +122,20 @@ class AccountEditProfil extends Component {
     Actions.pop();
   };
 
+  getMandatoryField = async () => {
+    await this.setState({loading: true});
+    try {
+      const response = await this.props.dispatch(getMandatoryFields());
+      if (!isEmptyObject(response)) {
+        await this.setState({fields: response.fields});
+      }
+    } catch (e) {}
+    await this.setState({loading: false});
+  };
+
   componentDidMount() {
     try {
+      this.getMandatoryField();
       this.backHandler = BackHandler.addEventListener(
         'hardwareBackPress',
         this.handleBackPress,
@@ -105,6 +154,58 @@ class AccountEditProfil extends Component {
     return true;
   };
 
+  checkMandatory = async () => {
+    try {
+      let {fields} = this.state;
+      await fields.map((item, index) => {
+        if (item.fieldName.toLowerCase() === 'birthdate' && item.mandatory) {
+          fields[index].filled = this.state.birthDate;
+        }
+        if (item.fieldName.toLowerCase() === 'gender' && item.mandatory) {
+          fields[index].filled = this.state.gender;
+        }
+        if (item.fieldName.toLowerCase() === 'address' && item.mandatory) {
+          fields[index].filled = this.state.address;
+        }
+      });
+
+      let passed = true;
+
+      for (let i = 0; i < fields.length; i++) {
+        if (fields[i].mandatory && isEmptyData(fields[i].filled)) {
+          passed = false;
+          break;
+        }
+      }
+
+      if (!passed) {
+        Alert.alert(
+          'Are you sure want to save ?',
+          'There is some mandatory information that you have not filled out.',
+          [
+            {
+              text: 'Cancel',
+              onPress: () => console.log('Cancel Pressed'),
+              style: 'cancel',
+            },
+            {
+              text: 'Save',
+              onPress: () => {
+                this.submitEdit();
+              },
+            },
+          ],
+          {cancelable: true},
+        );
+        return false;
+      } else {
+        this.submitEdit();
+      }
+    } catch (e) {
+      return true;
+    }
+  };
+
   submitEdit = async () => {
     try {
       this.setState({loading: true});
@@ -119,12 +220,14 @@ class AccountEditProfil extends Component {
       const response = await this.props.dispatch(updateUser(dataProfile));
 
       if (response) {
+        await this.props.dispatch(dataPoint());
         this.setState({
           showAlert: true,
           pesanAlert: 'Your profile updated',
           titleAlert: 'Update Success!',
         });
       } else {
+        await this.props.dispatch(dataPoint());
         this.setState({
           showAlert: true,
           pesanAlert: 'Something went wrong, please try again!',
@@ -230,11 +333,81 @@ class AccountEditProfil extends Component {
     }
   };
 
+  isShow = async index => {
+    try {
+      const {fields} = this.state;
+      if (!isEmptyArray(fields) && fields[index].show != undefined) {
+        if (fields[index].show == true) return true;
+        else return false;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      return false;
+    }
+  };
+
+  isMandatory = async index => {
+    try {
+      const {fields} = this.state;
+      if (!isEmptyArray(fields) && fields[index].mandatory != undefined) {
+        if (fields[index].mandatory == true) return true;
+        else return false;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      return false;
+    }
+  };
+
+  getMonth = item => {
+    try {
+      const date = new Date(item);
+      return `2000-${this.pad(date.getMonth() + 1)}-01`;
+    } catch (e) {
+      return null;
+    }
+  };
+
+  formatBirthDate = item => {
+    try {
+      const {fields} = this.state;
+      let formatDate = 'dd-MMM-yyy';
+
+      let find = fields.find(item => item.displayName.includes('1a. Birthday'));
+      if (find != undefined && find.format != undefined) {
+        formatDate = find.format;
+      }
+
+      return format(new Date(item), formatDate);
+    } catch (e) {
+      return null;
+    }
+  };
+
+  getFormatMonth = () => {
+    try {
+      const {fields} = this.state;
+      let find = fields.find(item => item.displayName.includes('1b. Birthday'));
+      if (find != undefined && find.format != undefined) {
+        if (find.format === 'MMM') {
+          return this.state.MMM;
+        } else {
+          return this.state.MM;
+        }
+      }
+    } catch (e) {
+      return this.state.MMM;
+    }
+  };
+
   render() {
     const {intlData} = this.props;
+    const {fields} = this.state;
     return (
       <SafeAreaView style={styles.container}>
-        {this.state.loading && <Loader />}
+        {this.state.loading && <LoaderDarker />}
         <View
           style={[
             styles.header,
@@ -258,7 +431,7 @@ class AccountEditProfil extends Component {
         <KeyboardAwareScrollView>
           <View>
             <View style={styles.card}>
-              <Form ref="form" onSubmit={this.submitEdit}>
+              <Form ref="form" onSubmit={this.checkMandatory}>
                 <View style={styles.detail}>
                   <View style={styles.detailItem}>
                     <Text style={styles.desc}>{intlData.messages.name}</Text>
@@ -308,103 +481,152 @@ class AccountEditProfil extends Component {
                       {this.props.dataDiri.phoneNumber}
                     </Text>
                   </View>
-                  <View style={styles.detailItem}>
-                    <Text style={[styles.desc, {marginLeft: 0}]}>
-                      {intlData.messages.birthDate}
-                    </Text>
-                    <Text
-                      style={{
-                        paddingTop: 12,
-                        borderBottomColor: colorConfig.store.defaultColor,
-                        borderBottomWidth: 1,
-                        paddingBottom: 5,
-                      }}
-                      onPress={this.showDatePicker}>
-                      {this.state.birthDate == '' ||
-                      this.state.birthDate == undefined
-                        ? 'Enter Birth Date'
-                        : this.state.birthDate}
-                    </Text>
-                    <DateTimePickerModal
-                      isVisible={this.state.isDatePickerVisible}
-                      mode="date"
-                      onConfirm={this.handleConfirm}
-                      onCancel={this.hideDatePicker}
-                    />
-                  </View>
-                  <View style={styles.detailItem}>
-                    <Text style={[styles.desc, {marginLeft: 0}]}>
-                      Birth Month
-                    </Text>
-                    <DropDownPicker
-                      placeholder={'Select your birth month'}
-                      items={this.state.months}
-                      // defaultValue={this.state.gender}
-                      containerStyle={{height: 47}}
-                      style={{
-                        backgroundColor: 'white',
-                        marginTop: 5,
-                        borderRadius: 0,
-                      }}
-                      dropDownStyle={{backgroundColor: '#fafafa'}}
-                      onChangeItem={item =>
-                        this.setState({
-                          gender: item.value,
-                        })
-                      }
-                    />
-                  </View>
-                  <View style={styles.detailItem}>
-                    <Text style={[styles.desc, {marginLeft: 0}]}>
-                      {intlData.messages.gender}
-                    </Text>
-                    <DropDownPicker
-                      placeholder={'Select gender'}
-                      items={[
-                        {label: intlData.messages.male, value: 'male'},
-                        {label: intlData.messages.female, value: 'female'},
-                      ]}
-                      defaultValue={this.state.gender}
-                      containerStyle={{height: 47}}
-                      style={{
-                        backgroundColor: 'white',
-                        marginTop: 5,
-                        borderRadius: 0,
-                      }}
-                      dropDownStyle={{backgroundColor: '#fafafa'}}
-                      onChangeItem={item =>
-                        this.setState({
-                          gender: item.value,
-                        })
-                      }
-                    />
-                  </View>
-                  <View style={styles.detailItem}>
-                    <Text style={styles.desc}>
-                      {intlData.messages.address}{' '}
-                      <Text style={{color: 'red'}}>*</Text>
-                    </Text>
-                    <TextInput
-                      placeholder={intlData.messages.yourAddress}
-                      style={{paddingVertical: 10}}
-                      value={this.state.address}
-                      onChangeText={value => this.setState({address: value})}
-                    />
-                    <View style={{borderWidth: 0.5, borderColor: 'gray'}} />
-                  </View>
+
+                  {fields.map(item => {
+                    if (
+                      item.fieldName === 'birthDate' &&
+                      item.format.length > 4 &&
+                      item.show
+                    )
+                      return (
+                        <View style={styles.detailItem}>
+                          <Text style={[styles.desc, {marginLeft: 0}]}>
+                            {intlData.messages.birthDate}{' '}
+                            {item.mandatory ? (
+                              <Text style={{color: 'red'}}>*</Text>
+                            ) : null}
+                          </Text>
+                          <Text
+                            style={{
+                              paddingTop: 12,
+                              borderBottomColor: colorConfig.store.defaultColor,
+                              borderBottomWidth: 1,
+
+                              paddingBottom: 5,
+                            }}
+                            onPress={this.showDatePicker}>
+                            {this.state.birthDate == '' ||
+                            this.state.birthDate == undefined ||
+                            this.state.birthDate.length == 3
+                              ? 'Enter Birth Date'
+                              : this.formatBirthDate(this.state.birthDate)}
+                          </Text>
+                          <DateTimePickerModal
+                            isVisible={this.state.isDatePickerVisible}
+                            mode="date"
+                            onConfirm={this.handleConfirm}
+                            onCancel={this.hideDatePicker}
+                          />
+                        </View>
+                      );
+
+                    if (
+                      item.fieldName === 'birthDate' &&
+                      item.format.length <= 4 &&
+                      item.show
+                    )
+                      return (
+                        <View style={styles.detailItem}>
+                          <Text style={[styles.desc, {marginLeft: 0}]}>
+                            Birth Month{' '}
+                            {item.mandatory ? (
+                              <Text style={{color: 'red'}}>*</Text>
+                            ) : null}
+                          </Text>
+                          <DropDownPicker
+                            placeholder={'Select your birth month'}
+                            items={this.state.MM}
+                            defaultValue={this.getMonth(this.state.birthDate)}
+                            containerStyle={{height: 47}}
+                            style={{
+                              backgroundColor: 'white',
+                              marginTop: 5,
+                              borderRadius: 0,
+                            }}
+                            dropDownStyle={{backgroundColor: '#fafafa'}}
+                            onChangeItem={item =>
+                              this.setState({
+                                birthDate: item.value,
+                              })
+                            }
+                          />
+                        </View>
+                      );
+
+                    if (
+                      (item.fieldName === 'gender' ||
+                        item.fieldName === 'Gender') &&
+                      item.show
+                    )
+                      return (
+                        <View style={styles.detailItem}>
+                          <Text style={[styles.desc, {marginLeft: 0}]}>
+                            {intlData.messages.gender}{' '}
+                            {item.mandatory ? (
+                              <Text style={{color: 'red'}}>*</Text>
+                            ) : null}
+                          </Text>
+                          <DropDownPicker
+                            placeholder={'Select gender'}
+                            items={[
+                              {label: intlData.messages.male, value: 'male'},
+                              {
+                                label: intlData.messages.female,
+                                value: 'female',
+                              },
+                            ]}
+                            defaultValue={this.state.gender}
+                            containerStyle={{height: 47}}
+                            style={{
+                              backgroundColor: 'white',
+                              marginTop: 5,
+                              borderRadius: 0,
+                            }}
+                            dropDownStyle={{backgroundColor: '#fafafa'}}
+                            onChangeItem={item =>
+                              this.setState({
+                                gender: item.value,
+                              })
+                            }
+                          />
+                        </View>
+                      );
+
+                    if (
+                      (item.fieldName === 'address' ||
+                        item.fieldName === 'Address') &&
+                      item.show
+                    )
+                      return (
+                        <View style={styles.detailItem}>
+                          <Text style={styles.desc}>
+                            {intlData.messages.address}{' '}
+                            {item.mandatory ? (
+                              <Text style={{color: 'red'}}>*</Text>
+                            ) : null}
+                          </Text>
+                          <TextInput
+                            placeholder={intlData.messages.yourAddress}
+                            style={{paddingVertical: 10}}
+                            value={this.state.address}
+                            onChangeText={value =>
+                              this.setState({address: value})
+                            }
+                          />
+                          <View
+                            style={{borderWidth: 0.5, borderColor: 'gray'}}
+                          />
+                        </View>
+                      );
+                  })}
                 </View>
               </Form>
             </View>
-            <>
-              <TouchableWithoutFeedback onPress={this.submitEdit}>
-                <View style={styles.primaryButton}>
-                  <Text style={styles.buttonText}>
-                    {intlData.messages.save}
-                  </Text>
-                </View>
-              </TouchableWithoutFeedback>
-              {/*<View style={{height: 150}} />*/}
-            </>
+            <TouchableOpacity onPress={this.checkMandatory}>
+              <View style={styles.primaryButton}>
+                <Text style={styles.buttonText}>{intlData.messages.save}</Text>
+              </View>
+            </TouchableOpacity>
           </View>
         </KeyboardAwareScrollView>
         {/*{Platform.OS != 'ios' ? (*/}
