@@ -110,7 +110,12 @@ class RewardsPoint extends Component {
               </TouchableOpacity>
             </View>
           </View>
-        ) : totalPoint != undefined && campaignActive ? (
+        ) : totalPoint != undefined &&
+          campaignActive &&
+          detailPoint != undefined &&
+          !isEmptyObject(detailPoint.trigger) &&
+          detailPoint.trigger.campaignTrigger === 'COMPLETE_PROFILE' &&
+          detailPoint.trigger.status === true ? (
           <View>
             <TouchableOpacity
               style={{
