@@ -728,7 +728,7 @@ class PaymentDetail extends Component {
   };
 
   render() {
-    const {intlData, selectedAccount} = this.props;
+    const {intlData, selectedAccount, detailPoint} = this.props;
     const {outlet} = this.state;
     return (
       <SafeAreaView style={styles.container}>
@@ -1013,7 +1013,12 @@ class PaymentDetail extends Component {
                 </TouchableOpacity>
               )}
             </View>
-            {this.props.campaignActive && outlet.enableRedeemPoint
+            {this.props.campaignActive &&
+            outlet.enableRedeemPoint &&
+            detailPoint != undefined &&
+            !isEmptyObject(detailPoint.trigger) &&
+            (detailPoint.trigger.status === true ||
+              detailPoint.trigger.campaignTrigger === 'USER_SIGNUP')
               ? this.renderUsePoint()
               : null}
 
@@ -1282,6 +1287,7 @@ mapStateToProps = state => ({
   totalPoint: state.rewardsReducer.dataPoint.totalPoint,
   recentTransaction: state.rewardsReducer.dataPoint.recentTransaction,
   campaignActive: state.rewardsReducer.dataPoint.campaignActive,
+  detailPoint: state.rewardsReducer.dataPoint.detailPoint,
   selectedAccount: state.cardReducer.selectedAccount.selectedAccount,
   defaultAccount: state.userReducer.defaultPaymentAccount.defaultAccount,
   myCardAccount: state.cardReducer.myCardAccount.card,

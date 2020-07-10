@@ -24,7 +24,7 @@ import {Actions} from 'react-native-router-flux';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import {Form} from 'react-native-validator-form';
 import colorConfig from '../config/colorConfig';
-import {updateUser} from '../actions/user.action';
+import {getUserProfile, updateUser} from '../actions/user.action';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
 import {reduxForm} from 'redux-form';
@@ -35,7 +35,7 @@ import LoaderDarker from './LoaderDarker';
 import {getMandatoryFields} from '../actions/account.action';
 import {isEmptyArray, isEmptyData, isEmptyObject} from '../helper/CheckEmpty';
 import {formatISO, format} from 'date-fns';
-import {dataPoint} from '../actions/rewards.action';
+import {dataPoint, getStamps} from '../actions/rewards.action';
 
 const monthNames = [
   'Jan',
@@ -220,14 +220,18 @@ class AccountEditProfil extends Component {
       const response = await this.props.dispatch(updateUser(dataProfile));
 
       if (response) {
+        await this.props.dispatch(getUserProfile());
         await this.props.dispatch(dataPoint());
+        await this.props.dispatch(getStamps());
         this.setState({
           showAlert: true,
           pesanAlert: 'Your profile updated',
           titleAlert: 'Update Success!',
         });
       } else {
+        await this.props.dispatch(getUserProfile());
         await this.props.dispatch(dataPoint());
+        await this.props.dispatch(getStamps());
         this.setState({
           showAlert: true,
           pesanAlert: 'Something went wrong, please try again!',

@@ -141,7 +141,9 @@ class DetailPoint extends Component {
                 </View>
               ) : null}
               <View style={styles.panelNoBorder}>
-                <Text style={styles.subTitle}>Expiry</Text>
+                {!isEmptyArray(history) ? (
+                  <Text style={styles.subTitle}>Expiry</Text>
+                ) : null}
                 {!isEmptyArray(history)
                   ? history.map(item => (
                       <View style={styles.historyPoint}>

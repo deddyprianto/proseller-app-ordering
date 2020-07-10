@@ -54,6 +54,7 @@ class RewardsPoint extends Component {
         }}>
         {totalPoint != undefined &&
         campaignActive &&
+        detailPoint != undefined &&
         !isEmptyObject(detailPoint.trigger) &&
         detailPoint.trigger.campaignTrigger === 'USER_SIGNUP' ? (
           <View>
@@ -91,6 +92,7 @@ class RewardsPoint extends Component {
           </View>
         ) : null}
         {campaignActive &&
+        detailPoint != undefined &&
         !isEmptyObject(detailPoint.trigger) &&
         detailPoint.trigger.campaignTrigger === 'COMPLETE_PROFILE' &&
         detailPoint.trigger.status === false ? (

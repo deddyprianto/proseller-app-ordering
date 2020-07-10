@@ -3,11 +3,8 @@ import {
   View,
   Text,
   StyleSheet,
-  ScrollView,
   Dimensions,
-  RefreshControl,
   TouchableOpacity,
-  Image,
   Platform,
   BackHandler,
   SafeAreaView,
@@ -24,6 +21,7 @@ import colorConfig from '../config/colorConfig';
 import RewordsVouchers from '../components/rewordsVouchers';
 import Loader from '../components/loader';
 import {myVoucers} from '../actions/account.action';
+import {isEmptyObject} from '../helper/CheckEmpty';
 
 class RewardsRewards extends Component {
   constructor(props) {
@@ -66,7 +64,7 @@ class RewardsRewards extends Component {
   };
 
   render() {
-    const {intlData} = this.props;
+    const {intlData, detailPoint} = this.props;
     return (
       <SafeAreaView style={styles.container}>
         {this.state.isLoading && <Loader />}
@@ -87,25 +85,33 @@ class RewardsRewards extends Component {
                 {intlData.messages.rewards}{' '}
               </Text>
             </TouchableOpacity>
-            <View style={styles.point}>
-              <Icon
-                size={23}
-                name={Platform.OS === 'ios' ? 'ios-pricetags' : 'md-pricetags'}
-                style={{
-                  color: colorConfig.pageIndex.backgroundColor,
-                  marginRight: 8,
-                }}
-              />
-              <Text
-                style={{
-                  color: colorConfig.pageIndex.backgroundColor,
-                  fontWeight: 'bold',
-                }}>
-                {this.props.totalPoint == undefined
-                  ? 0 + ' Point'
-                  : this.props.totalPoint + ' Point'}
-              </Text>
-            </View>
+            {this.props.totalPoint != undefined &&
+            detailPoint != undefined &&
+            !isEmptyObject(detailPoint.trigger) &&
+            (detailPoint.trigger.status === true ||
+              detailPoint.trigger.campaignTrigger === 'USER_SIGNUP') ? (
+              <View style={styles.point}>
+                <Icon
+                  size={23}
+                  name={
+                    Platform.OS === 'ios' ? 'ios-pricetags' : 'md-pricetags'
+                  }
+                  style={{
+                    color: colorConfig.pageIndex.backgroundColor,
+                    marginRight: 8,
+                  }}
+                />
+                <Text
+                  style={{
+                    color: colorConfig.pageIndex.backgroundColor,
+                    fontWeight: 'bold',
+                  }}>
+                  {this.props.totalPoint == undefined
+                    ? 0 + ' Point'
+                    : this.props.totalPoint + ' Point'}
+                </Text>
+              </View>
+            ) : null}
           </View>
           {/*<View style={styles.line} />*/}
         </View>
@@ -153,6 +159,7 @@ const styles = StyleSheet.create({
 });
 
 mapStateToProps = state => ({
+  detailPoint: state.rewardsReducer.dataPoint.detailPoint,
   vouchers: state.rewardsReducer.vouchers.dataVoucher,
   totalPoint: state.rewardsReducer.dataPoint.totalPoint,
   intlData: state.intlData,

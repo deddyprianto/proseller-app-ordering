@@ -287,65 +287,6 @@ class Rewards extends Component {
     );
   };
 
-  profileCompleted = () => {
-    try {
-      let {fields} = this.props;
-      let userDetail;
-      try {
-        // Decrypt data user
-        let bytes = CryptoJS.AES.decrypt(
-          this.props.userDetail,
-          awsConfig.PRIVATE_KEY_RSA,
-        );
-        userDetail = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
-      } catch (e) {
-        userDetail = undefined;
-      }
-
-      if (userDetail == undefined) return false;
-
-      if (!isEmptyArray(fields)) {
-        // mark field that has been completed
-        for (let i = 0; i < fields.length; i++) {
-          if (
-            fields[i].fieldName.toLowerCase() === 'birthdate' &&
-            fields[i].mandatory
-          ) {
-            fields[i].filled = userDetail.birthDate;
-          }
-          if (
-            fields[i].fieldName.toLowerCase() === 'gender' &&
-            fields[i].mandatory
-          ) {
-            fields[i].filled = userDetail.gender;
-          }
-          if (
-            fields[i].fieldName.toLowerCase() === 'address' &&
-            fields[i].mandatory
-          ) {
-            fields[i].filled = userDetail.address;
-          }
-        }
-
-        //  check filled data
-        let passed = true;
-
-        for (let i = 0; i < fields.length; i++) {
-          if (fields[i].mandatory && isEmptyData(fields[i].filled)) {
-            passed = false;
-            break;
-          }
-        }
-
-        return passed;
-      } else {
-        return true;
-      }
-    } catch (e) {
-      return false;
-    }
-  };
-
   editProfile = () => {
     let userDetail;
     try {
@@ -383,16 +324,17 @@ class Rewards extends Component {
             <View>
               {this.state.isLoading ? (
                 <RewardsStamp isLoading={this.state.isLoading} />
-              ) : this.props.dataStamps.dataStamps == undefined ||
+              ) : this.props.dataStamps == undefined ||
                 isEmptyObject(this.props.dataStamps.dataStamps) ? (
                 this.greetWelcomeUser()
-              ) : this.props.dataStamps.dataStamps.length == 0 ? null : this
-                  .props.dataStamps.campaignTrigger === 'COMPLETE_PROFILE' &&
-                !this.profileCompleted() ? (
+              ) : !isEmptyObject(this.props.dataStamps.dataStamps.trigger) &&
+                this.props.dataStamps.dataStamps.trigger.campaignTrigger ===
+                  'COMPLETE_PROFILE' &&
+                this.props.dataStamps.dataStamps.trigger.status === false ? (
                 <View style={styles.information}>
                   <View style={styles.boxInfo}>
                     <Text style={styles.textInfo}>
-                      {intlData.messages.pleaseCompleteProfile}
+                      {intlData.messages.pleaseCompleteProfileStamps}
                     </Text>
                     <TouchableOpacity
                       onPress={this.editProfile}

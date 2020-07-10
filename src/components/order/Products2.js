@@ -320,7 +320,7 @@ class Products2 extends Component {
     if (!isEmptyObject(productTemp)) {
       setTimeout(() => {
         this.openModal(productTemp);
-      }, 100);
+      }, 30);
     }
   };
 
@@ -929,7 +929,7 @@ class Products2 extends Component {
           selectedProduct: product,
           isModalVisible: !this.state.isModalVisible,
         });
-      }, 100);
+      }, 30);
     }
   };
 

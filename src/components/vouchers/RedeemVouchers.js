@@ -6,7 +6,6 @@ import {
   Dimensions,
   TouchableOpacity,
   Image,
-  TouchableHighlight,
   ScrollView,
   RefreshControl,
   Platform,
@@ -25,7 +24,7 @@ import {myVoucers} from '../../actions/account.action';
 import Loader from '../loader';
 import {clearAccount} from '../../actions/payment.actions';
 import * as _ from 'lodash';
-import {isEmptyArray} from '../../helper/CheckEmpty';
+import {isEmptyArray, isEmptyObject} from '../../helper/CheckEmpty';
 
 class RedeemVoucher extends Component {
   constructor(props) {
@@ -34,15 +33,24 @@ class RedeemVoucher extends Component {
       dataVoucher: this.props.dataVoucher,
       currentDay: new Date(),
       refreshing: false,
+      isLoading: true,
     };
   }
 
-  componentDidMount(): void {
+  componentDidMount = async () => {
+    try {
+      await this.setState({isLoading: true});
+      await this.props.dispatch(vouchers());
+      await this.props.dispatch(myVoucers());
+      await this.setState({isLoading: false});
+    } catch (e) {
+      await this.setState({isLoading: false});
+    }
     this.backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
       this.handleBackPress,
     );
-  }
+  };
 
   componentWillUnmount() {
     try {
@@ -134,7 +142,7 @@ class RedeemVoucher extends Component {
   };
 
   render() {
-    const {intlData, totalPoint, vouchers} = this.props;
+    const {intlData, totalPoint, vouchers, detailPoint} = this.props;
     // check if voucher available but customer point not enough to see em
     let voucherNotShowing = false;
     if (vouchers != undefined && vouchers.length > 0) {
@@ -145,12 +153,12 @@ class RedeemVoucher extends Component {
     }
     return (
       <SafeAreaView>
+        {this.state.isLoading && <Loader />}
         <View
           style={{
             backgroundColor: colorConfig.store.defaultColor,
             paddingVertical: 5,
           }}>
-          {this.state.isLoading && <Loader />}
           <View style={{backgroundColor: colorConfig.store.defaultColor}}>
             <View
               style={{flexDirection: 'row', justifyContent: 'space-between'}}>
@@ -166,27 +174,33 @@ class RedeemVoucher extends Component {
                 />
                 <Text style={styles.btnBackText}>Redeem Vouchers</Text>
               </TouchableOpacity>
-              <View style={styles.point}>
-                <Icon
-                  size={23}
-                  name={
-                    Platform.OS === 'ios' ? 'ios-pricetags' : 'md-pricetags'
-                  }
-                  style={{
-                    color: colorConfig.pageIndex.backgroundColor,
-                    marginRight: 8,
-                  }}
-                />
-                <Text
-                  style={{
-                    color: colorConfig.pageIndex.backgroundColor,
-                    fontWeight: 'bold',
-                  }}>
-                  {this.props.totalPoint == undefined
-                    ? 0 + ' Point'
-                    : this.props.totalPoint + ' Point'}
-                </Text>
-              </View>
+              {this.props.totalPoint != undefined &&
+              detailPoint != undefined &&
+              !isEmptyObject(detailPoint.trigger) &&
+              (detailPoint.trigger.status === true ||
+                detailPoint.trigger.campaignTrigger === 'USER_SIGNUP') ? (
+                <View style={styles.point}>
+                  <Icon
+                    size={23}
+                    name={
+                      Platform.OS === 'ios' ? 'ios-pricetags' : 'md-pricetags'
+                    }
+                    style={{
+                      color: colorConfig.pageIndex.backgroundColor,
+                      marginRight: 8,
+                    }}
+                  />
+                  <Text
+                    style={{
+                      color: colorConfig.pageIndex.backgroundColor,
+                      fontWeight: 'bold',
+                    }}>
+                    {this.props.totalPoint == undefined
+                      ? 0 + ' Point'
+                      : this.props.totalPoint + ' Point'}
+                  </Text>
+                </View>
+              ) : null}
             </View>
             {/*<View style={styles.line} />*/}
           </View>
@@ -337,6 +351,7 @@ const styles = StyleSheet.create({
     color: 'white',
     marginLeft: 10,
     fontWeight: 'bold',
+    paddingVertical: 15,
   },
   line: {
     borderBottomColor: colorConfig.store.defaultColor,
@@ -450,6 +465,7 @@ const styles = StyleSheet.create({
 });
 
 mapStateToProps = state => ({
+  detailPoint: state.rewardsReducer.dataPoint.detailPoint,
   myVoucers: state.accountsReducer.myVoucers.myVoucers,
   vouchers: state.rewardsReducer.vouchers.dataVoucher,
   totalPoint: state.rewardsReducer.dataPoint.totalPoint,

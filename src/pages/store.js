@@ -484,7 +484,9 @@ class Store extends Component {
                     fontFamily: 'Lato-Bold',
                   }}>
                   {this.props.userDetail != undefined
-                    ? userDetail.name.split(' ')[0]
+                    ? userDetail.name != undefined
+                      ? userDetail.name.split(' ')[0]
+                      : ''
                     : ''}
                 </Text>
               </View>
