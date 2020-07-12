@@ -200,6 +200,7 @@ export const dataPointHistory = () => {
         type: 'DATA_TOTAL_POINT',
         totalPoint: totalPoint,
         campaignActive,
+        detailPoint: response.responseBody.Data,
       });
 
       if (response.success) {

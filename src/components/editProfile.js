@@ -547,7 +547,10 @@ class AccountEditProfil extends Component {
                               marginTop: 5,
                               borderRadius: 0,
                             }}
-                            dropDownStyle={{backgroundColor: '#fafafa'}}
+                            dropDownStyle={{
+                              backgroundColor: '#fafafa',
+                              zIndex: 3,
+                            }}
                             onChangeItem={item =>
                               this.setState({
                                 birthDate: item.value,
@@ -586,7 +589,11 @@ class AccountEditProfil extends Component {
                               marginTop: 5,
                               borderRadius: 0,
                             }}
-                            dropDownStyle={{backgroundColor: '#fafafa'}}
+                            dropDownStyle={{
+                              backgroundColor: '#fafafa',
+                              zIndex: 3,
+                            }}
+                            // onOpen={{height: 90}}
                             onChangeItem={item =>
                               this.setState({
                                 gender: item.value,
