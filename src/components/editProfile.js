@@ -115,6 +115,8 @@ class AccountEditProfil extends Component {
       MMM,
       MM,
       fields: [],
+      openGender: false,
+      openBirthDate: false,
     };
   }
 
@@ -593,13 +595,22 @@ class AccountEditProfil extends Component {
                               backgroundColor: '#fafafa',
                               zIndex: 3,
                             }}
-                            // onOpen={{height: 90}}
+                            onOpen={() => {
+                              this.setState({openGender: true});
+                            }}
+                            onClose={() => {
+                              this.setState({openGender: false});
+                            }}
                             onChangeItem={item =>
                               this.setState({
                                 gender: item.value,
                               })
                             }
                           />
+
+                          {this.state.openGender ? (
+                            <View style={{height: 50}} />
+                          ) : null}
                         </View>
                       );
 
