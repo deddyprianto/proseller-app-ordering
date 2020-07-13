@@ -929,7 +929,7 @@ class Products2 extends Component {
           selectedProduct: product,
           isModalVisible: !this.state.isModalVisible,
         });
-      }, 40);
+      }, 500);
     }
   };
 
