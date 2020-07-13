@@ -372,7 +372,7 @@ class AccountEditProfil extends Component {
       const date = new Date(item);
       return `2000-${this.pad(date.getMonth() + 1)}-01`;
     } catch (e) {
-      return null;
+      return '2000-01-01';
     }
   };
 
