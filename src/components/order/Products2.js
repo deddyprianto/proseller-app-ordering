@@ -920,16 +920,16 @@ class Products2 extends Component {
       await this.setState({
         selectedCategoryModifier: 0,
         selectedProduct: product,
-        isModalVisible: !this.state.isModalVisible,
+        isModalVisible: true,
       });
     } else {
       setTimeout(async () => {
         await this.setState({
           selectedCategoryModifier: 0,
           selectedProduct: product,
-          isModalVisible: !this.state.isModalVisible,
+          isModalVisible: true,
         });
-      }, 500);
+      }, 800);
     }
   };
 
