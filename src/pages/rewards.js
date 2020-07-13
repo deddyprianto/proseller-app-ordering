@@ -201,7 +201,7 @@ class Rewards extends Component {
       await this.props.dispatch(refreshToken());
       await this.props.dispatch(getUserProfile());
       await this.props.dispatch(getCompanyInfo());
-      await this.props.dispatch(getMandatoryFields());
+      // await this.props.dispatch(getMandatoryFields());
       const response = await this.props.dispatch(getAccountPayment());
       await this.props.dispatch(campaign());
       await this.props.dispatch(dataPoint());

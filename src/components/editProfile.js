@@ -491,7 +491,7 @@ class AccountEditProfil extends Component {
                   {fields.map(item => {
                     if (
                       item.fieldName === 'birthDate' &&
-                      item.format.length > 4 &&
+                      item.format.length > 40 &&
                       item.show
                     )
                       return (
@@ -528,7 +528,7 @@ class AccountEditProfil extends Component {
 
                     if (
                       item.fieldName === 'birthDate' &&
-                      item.format.length <= 4 &&
+                      // item.format.length <= 4 &&
                       item.show
                     )
                       return (
