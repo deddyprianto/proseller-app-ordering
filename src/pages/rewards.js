@@ -197,7 +197,6 @@ class Rewards extends Component {
 
   getDataRewards = async () => {
     try {
-      await this.getUserPosition();
       await this.props.dispatch(refreshToken());
       await this.props.dispatch(getUserProfile());
       await this.props.dispatch(getCompanyInfo());
@@ -211,6 +210,7 @@ class Rewards extends Component {
       await this.props.dispatch(recentTransaction());
       await this.props.dispatch(getDeliveryProvider());
       await this.props.dispatch(referral());
+      await this.getUserPosition();
 
       await this.checkDefaultPaymentAccount(response);
 

@@ -36,6 +36,8 @@ import {getMandatoryFields} from '../actions/account.action';
 import {isEmptyArray, isEmptyData, isEmptyObject} from '../helper/CheckEmpty';
 import {formatISO, format} from 'date-fns';
 import {dataPoint, getStamps} from '../actions/rewards.action';
+import CryptoJS from 'react-native-crypto-js';
+import awsConfig from '../config/awsConfig';
 
 const monthNames = [
   'Jan',
@@ -124,8 +126,35 @@ class AccountEditProfil extends Component {
     Actions.pop();
   };
 
+  refreshDataCustomer = async () => {
+    try {
+      let userDetail;
+      try {
+        // Decrypt data user
+        let bytes = CryptoJS.AES.decrypt(
+          this.props.userDetail,
+          awsConfig.PRIVATE_KEY_RSA,
+        );
+        userDetail = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+      } catch (e) {
+        userDetail = undefined;
+      }
+
+      if (!isEmptyData(userDetail)) {
+        await this.setState({
+          name: userDetail.name,
+          gender: userDetail.gender,
+          birthDate: userDetail.birthDate,
+          address: userDetail.address,
+        });
+      }
+    } catch (e) {}
+  };
+
   getMandatoryField = async () => {
     await this.setState({loading: true});
+    await this.props.dispatch(getUserProfile());
+    await this.refreshDataCustomer();
     try {
       const response = await this.props.dispatch(getMandatoryFields());
       if (!isEmptyObject(response)) {
@@ -412,6 +441,18 @@ class AccountEditProfil extends Component {
     }
   };
 
+  validateGender = gender => {
+    try {
+      if (gender === 'male' || gender === 'female') {
+        return gender;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      return null;
+    }
+  };
+
   render() {
     const {intlData} = this.props;
     const {fields} = this.state;
@@ -598,7 +639,9 @@ class AccountEditProfil extends Component {
                                 value: 'female',
                               },
                             ]}
-                            defaultValue={this.state.gender}
+                            defaultValue={this.validateGender(
+                              this.state.gender,
+                            )}
                             containerStyle={{height: 47}}
                             style={{
                               backgroundColor: 'white',
@@ -711,6 +754,7 @@ class AccountEditProfil extends Component {
 }
 
 mapStateToProps = state => ({
+  userDetail: state.userReducer.getUser.userDetails,
   updateUser: state.userReducer.updateUser,
   intlData: state.intlData,
 });
