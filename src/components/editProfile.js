@@ -562,7 +562,17 @@ class AccountEditProfil extends Component {
                                 birthDate: item.value,
                               })
                             }
+                            onOpen={() => {
+                              this.setState({openBirthDate: true});
+                            }}
+                            onClose={() => {
+                              this.setState({openBirthDate: false});
+                            }}
                           />
+
+                          {this.state.openBirthDate ? (
+                            <View style={{height: 130}} />
+                          ) : null}
                         </View>
                       );
 
