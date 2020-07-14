@@ -47,6 +47,8 @@
 	<string>Permission to access your location which is used to display the distance of the closest outlet from your position.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Permission to access your location which is used to display the distance of the closest outlet from your position.</string>
+	<key>NSContactsUsageDescription</key>
+	<string>Permission to access your contacts so that you can send invitations more easily.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Avenir Roman.otf</string>
