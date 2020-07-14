@@ -66,7 +66,7 @@ class HostedPayment extends Component {
               // openOne = false;
             } else if (url == FAILED_URL && openOne) {
               Actions.popTo(page);
-              Alert.alert('Sorry', 'Cant register your account.');
+              Alert.alert('Sorry', `Can't register your credit card.`);
               // openOne = false;
             }
           }}
