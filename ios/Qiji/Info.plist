@@ -20,6 +20,19 @@
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>qiji-demo</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>qiji-demo</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>LSRequiresIPhoneOS</key>
@@ -39,6 +52,8 @@
 	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>Permission to access the camera used to scan QR Code for payment.</string>
+	<key>NSContactsUsageDescription</key>
+	<string>Permission to access your contacts so that you can send invitations more easily.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>Permission to access your location which is used to display the distance of the closest outlet from your position.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
@@ -47,8 +62,6 @@
 	<string>Permission to access your location which is used to display the distance of the closest outlet from your position.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Permission to access your location which is used to display the distance of the closest outlet from your position.</string>
-	<key>NSContactsUsageDescription</key>
-	<string>Permission to access your contacts so that you can send invitations more easily.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Avenir Roman.otf</string>
