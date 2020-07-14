@@ -66,6 +66,7 @@ const AppTabNavigator = createMaterialBottomTabNavigator(
       },
     },
     Account: {
+      // path: 'first',
       screen: Account,
       navigationOptions: {
         title: 'Profile',
