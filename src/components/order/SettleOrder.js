@@ -49,6 +49,7 @@ import UUIDGenerator from 'react-native-uuid-generator';
 import {defaultPaymentAccount} from '../../actions/user.action';
 import LoaderDarker from '../LoaderDarker';
 import {dataStores, getOutletById} from '../../actions/stores.action';
+import {refreshToken} from '../../actions/auth.actions';
 
 class SettleOrder extends Component {
   constructor(props) {
@@ -131,6 +132,7 @@ class SettleOrder extends Component {
   componentDidMount = async () => {
     const {defaultAccount} = this.props;
     await this.setState({loading: true});
+    await this.props.dispatch(refreshToken());
     await this.setDataPayment(false);
     try {
       await this.setState({loading: false});

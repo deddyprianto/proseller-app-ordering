@@ -46,6 +46,7 @@ import UUIDGenerator from 'react-native-uuid-generator';
 import {defaultPaymentAccount} from '../actions/user.action';
 import LoaderDarker from './LoaderDarker';
 import {getOutletById} from '../actions/stores.action';
+import {refreshToken} from '../actions/auth.actions';
 
 class PaymentDetail extends Component {
   constructor(props) {
@@ -136,6 +137,7 @@ class PaymentDetail extends Component {
   componentDidMount = async () => {
     const {defaultAccount, pembayaran} = this.props;
     await this.setState({loading: true});
+    await this.props.dispatch(refreshToken());
     await this.setDataPayment(false);
 
     // get outlet details
