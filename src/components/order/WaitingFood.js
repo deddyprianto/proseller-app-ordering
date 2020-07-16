@@ -43,8 +43,8 @@ class WaitingFood extends Component {
 
       // get data continously
       if (this.props.dataBasket != undefined) {
-        clearInterval(this.interval);
-        this.interval = setInterval(() => {
+        clearInterval(this.intervalWaitingFood);
+        this.intervalWaitingFood = setInterval(() => {
           this.props.dispatch(getCart(this.props.myCart.id));
         }, 2000);
       }
@@ -75,7 +75,7 @@ class WaitingFood extends Component {
   componentWillUnmount() {
     try {
       this.backHandler.remove();
-      clearInterval(this.interval);
+      clearInterval(this.intervalWaitingFood);
     } catch (e) {}
   }
 
@@ -133,8 +133,8 @@ class WaitingFood extends Component {
           <TouchableOpacity
             onPress={() => {
               try {
-                clearInterval(this.interval);
-                this.interval = undefined;
+                clearInterval(this.intervalWaitingFood);
+                this.intervalWaitingFood = undefined;
               } catch (e) {}
               Actions.replace('QRCodeCart', {myCart: dataBasket});
             }}
@@ -244,8 +244,8 @@ class WaitingFood extends Component {
             disabled={dataBasket.status == 'ON_THE_WAY' ? false : true}
             onPress={() => {
               try {
-                clearInterval(this.interval);
-                this.interval = undefined;
+                clearInterval(this.intervalWaitingFood);
+                this.intervalWaitingFood = undefined;
               } catch (e) {}
               this.askUserToCompleteOrder();
             }}
@@ -802,8 +802,8 @@ class WaitingFood extends Component {
     if (dataBasket == undefined) {
       try {
         Actions.reset('pageIndex', {fromPayment: true});
-        clearInterval(this.interval);
-        this.interval = undefined;
+        clearInterval(this.intervalWaitingFood);
+        this.intervalWaitingFood = undefined;
       } catch (e) {}
     }
 

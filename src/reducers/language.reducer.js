@@ -30,13 +30,13 @@ const intlData = (state = initialState, action) => {
     default:
       // if (state != undefined) {
       //   console.log({state});
-        return {
-          locale: state.locale,
-          messages: setLanguage(state.locale),
-        };
+      // return {
+      //   locale: state.locale,
+      //   messages: setLanguage(state.locale),
+      // };
       // } else {
-      //   return state;
-      // }
+      return state;
+    // }
   }
 };
 export default intlData;

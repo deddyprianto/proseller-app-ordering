@@ -105,15 +105,15 @@ const styles = StyleSheet.create({
   },
   card: {
     // marginVertical: 10,
-    backgroundColor: colorConfig.pageIndex.backgroundColor,
-    shadowColor: '#00000021',
-    shadowOffset: {
-      width: 0,
-      height: 9,
-    },
-    shadowOpacity: 0.7,
-    shadowRadius: 7.49,
-    elevation: 12,
+    // backgroundColor: '#f2f2f2',
+    // shadowColor: '#00000021',
+    // shadowOffset: {
+    //   width: 0,
+    //   height: 9,
+    // },
+    // shadowOpacity: 0.7,
+    // shadowRadius: 7.49,
+    // elevation: 12,
   },
 });
 

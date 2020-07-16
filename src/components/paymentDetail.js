@@ -47,6 +47,7 @@ import {defaultPaymentAccount} from '../actions/user.action';
 import LoaderDarker from './LoaderDarker';
 import {getOutletById} from '../actions/stores.action';
 import {refreshToken} from '../actions/auth.actions';
+import {Dialog} from 'react-native-paper';
 
 class PaymentDetail extends Component {
   constructor(props) {
@@ -729,6 +730,34 @@ class PaymentDetail extends Component {
     } catch (e) {}
   };
 
+  renderLoadingProcessing = () => {
+    return (
+      <Dialog
+        dismissable={false}
+        visible={this.state.loading}
+        onDismiss={() => {
+          this.setState({loading: false});
+        }}>
+        <Dialog.Content>
+          <Text
+            style={{
+              textAlign: 'center',
+              fontFamily: 'Lato-Bold',
+              fontSize: 18,
+              color: colorConfig.store.defaultColor,
+            }}>
+            Processing your payment
+          </Text>
+          <ActivityIndicator
+            size={'large'}
+            color={colorConfig.store.defaultColor}
+            style={{marginTop: 10}}
+          />
+        </Dialog.Content>
+      </Dialog>
+    );
+  };
+
   render() {
     const {intlData, selectedAccount, detailPoint} = this.props;
     const {outlet} = this.state;
@@ -1157,6 +1186,8 @@ class PaymentDetail extends Component {
             this.hideAlert();
           }}
         />
+
+        {/*{this.renderLoadingProcessing()}*/}
       </SafeAreaView>
     );
   }
