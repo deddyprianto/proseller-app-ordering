@@ -9,8 +9,7 @@ import io.github.traviskn.rnuuidgenerator.RNUUIDGeneratorPackage;
 import com.BV.LinearGradient.LinearGradientPackage;
 //import io.invertase.firebase.crashlytics.ReactNativeFirebaseCrashlyticsPackage;
 //import io.invertase.firebase.app.ReactNativeFirebaseAppPackage;
-
-import org.capslock.RNDeviceBrightness.RNDeviceBrightness;
+
 import com.lugg.ReactNativeConfig.ReactNativeConfigPackage;
 import com.reactnativecommunity.rnpermissions.RNPermissionsPackage;
 import com.oblador.vectoricons.VectorIconsPackage;

@@ -6273,10 +6273,25 @@ lodash.debounce@4.0.8:
   resolved "https://registry.yarnpkg.com/lodash.debounce/-/lodash.debounce-4.0.8.tgz#82d79bff30a67c4005ffd5e2515300ad9ca4d7af"
   integrity sha1-gteb/zCmfEAF/9XiUVMArZyk168=
 
+lodash.isfunction@^3.0.9:
+  version "3.0.9"
+  resolved "https://registry.yarnpkg.com/lodash.isfunction/-/lodash.isfunction-3.0.9.tgz#06de25df4db327ac931981d1bdb067e5af68d051"
+  integrity sha512-AirXNj15uRIMMPihnkInB4i3NHeb4iBtNg9WRWuK2o31S+ePwwNmDPaTL3o7dTJ+VXNZim7rFs4rxN4YU1oUJw==
+
+lodash.isnil@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/lodash.isnil/-/lodash.isnil-4.0.0.tgz#49e28cd559013458c814c5479d3c663a21bfaa6c"
+  integrity sha1-SeKM1VkBNFjIFMVHnTxmOiG/qmw=
+
 lodash.once@^4.1.1:
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/lodash.once/-/lodash.once-4.1.1.tgz#0dd3971213c7c56df880977d504c88fb471a97ac"
   integrity sha1-DdOXEhPHxW34gJd9UEyI+0cal6w=
+
+lodash.pick@^4.4.0:
+  version "4.4.0"
+  resolved "https://registry.yarnpkg.com/lodash.pick/-/lodash.pick-4.4.0.tgz#52f05610fff9ded422611441ed1fc123a03001b3"
+  integrity sha1-UvBWEP/53tQiYRRB7R/BI6AwAbM=
 
 lodash.sortby@^4.7.0:
   version "4.7.0"
@@ -8038,11 +8053,6 @@ react-native-config@^0.12.0:
   resolved "https://registry.yarnpkg.com/react-native-config/-/react-native-config-0.12.0.tgz#910e52226b60e0c9f2b648772eea2a93f8701751"
   integrity sha512-lC8QOZCGCXgFh74uWSVGMaChg+Qf2BScWzVd9C4yrFnfxrHSFyIekqOOq/sjE8Uu2ifgxZmSiK1Z8EEi78AmQA==
 
-react-native-contacts@^5.2.0:
-  version "5.2.0"
-  resolved "https://registry.yarnpkg.com/react-native-contacts/-/react-native-contacts-5.2.0.tgz#e7a75460053a771c845ed2bc758a941dc70939ca"
-  integrity sha512-6Y709LriwNvj88ghpk3bWEtAZDBf0F76zteM2DVoZJu70Y/j8AwMwRsL1nkxuYbzkMdqJ9gXAkTJ/F9xjt71eQ==
-
 react-native-country-picker-modal@^1.10.0:
   version "1.10.0"
   resolved "https://registry.yarnpkg.com/react-native-country-picker-modal/-/react-native-country-picker-modal-1.10.0.tgz#ff4a3b73f08d5241f75f9edfaa2ad4cc0b1823f7"
@@ -8073,11 +8083,6 @@ react-native-datepicker-modal@^1.3.0:
   integrity sha512-VUda9oszVgwhJ0q9wRULcxm+e7fb3pZmfYCqNY54C7KmESBXV6IQCeFG/+05Lw7IocW4PxUmFdXovHEYKS5Etw==
   dependencies:
     prop-types "^15.6.2"
-
-react-native-device-brightness@^1.2.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/react-native-device-brightness/-/react-native-device-brightness-1.2.0.tgz#f6498ca5af4c6283212f74aa2f05d1cff0596af0"
-  integrity sha512-EWH4UOvsSiXrNpWSboPe/gHYoOxiZ0vp0JfY67Gjn+TJuAP+gWyvGobpC8mYV//ioirco000ZH9Zu9o5ezUzxg==
 
 react-native-drawer@2.5.1:
   version "2.5.1"
@@ -8413,6 +8418,16 @@ react-native-vector-icons@^6.6.0:
     lodash "^4.0.0"
     prop-types "^15.6.2"
     yargs "^13.2.2"
+
+react-native-version-check@^3.4.1:
+  version "3.4.1"
+  resolved "https://registry.yarnpkg.com/react-native-version-check/-/react-native-version-check-3.4.1.tgz#6629da999104b281a5f0358c1b69a8ea7ae81ea9"
+  integrity sha512-9VNeeSBFyzI8kD3PoYub7rHssc8eCi8k8cUbEQ3pdo+PCmj+b8LsMvf6EoNmBusGOEh++fCVOyqvY8Qljti1mA==
+  dependencies:
+    lodash.isfunction "^3.0.9"
+    lodash.isnil "^4.0.0"
+    lodash.pick "^4.4.0"
+    semver "^6.1.1"
 
 react-native-webview@^9.0.1:
   version "9.0.1"

@@ -27,6 +27,7 @@ import {isEmptyArray} from '../../helper/CheckEmpty';
 import appConfig from '../../config/appConfig';
 import Snackbar from 'react-native-snackbar';
 import awsConfig from '../../config/awsConfig';
+import {refreshToken} from '../../actions/auth.actions';
 
 class WaitingFood extends Component {
   constructor(props) {
@@ -67,7 +68,8 @@ class WaitingFood extends Component {
 
   getBasket = async () => {
     this.setState({loading: true});
-    this.props.dispatch(getCart(this.props.myCart.id));
+    await this.props.dispatch(refreshToken());
+    await this.props.dispatch(getCart(this.props.myCart.id));
   };
 
   componentWillUnmount() {

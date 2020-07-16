@@ -232,7 +232,7 @@ dependencies {
     // implementation project(':@react-native-firebase_crashlytics')
     // implementation project(':@react-native-firebase_app')
     implementation project(':react-native-sms-retriever')
-    implementation project(':react-native-device-brightness')
+    // implementation project(':react-native-device-brightness')
     implementation project(':react-native-config')
     implementation project(':react-native-permissions')
     implementation project(':react-native-vector-icons')

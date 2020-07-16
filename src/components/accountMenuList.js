@@ -21,6 +21,7 @@ import CryptoJS from 'react-native-crypto-js';
 import {isEmptyArray, isEmptyObject} from '../helper/CheckEmpty';
 import packageJson from '../../package';
 import {updateUser} from '../actions/user.action';
+import VersionCheck from 'react-native-version-check';
 
 class AccountMenuList extends Component {
   constructor(props) {
@@ -349,7 +350,8 @@ class AccountMenuList extends Component {
             color: colorConfig.pageIndex.grayColor,
             fontSize: 13,
           }}>
-          Version: {packageJson.version}
+          Version: {VersionCheck.getCurrentVersion()} (
+          {VersionCheck.getCurrentBuildNumber()})
         </Text>
       </View>
     );
