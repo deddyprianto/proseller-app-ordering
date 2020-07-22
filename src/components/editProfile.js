@@ -157,7 +157,7 @@ class AccountEditProfil extends Component {
     await this.refreshDataCustomer();
     try {
       const response = await this.props.dispatch(getMandatoryFields());
-      if (!isEmptyObject(response)) {
+      if (!isEmptyObject(response) && !isEmptyArray(response.fields)) {
         await this.setState({fields: response.fields});
       }
     } catch (e) {}

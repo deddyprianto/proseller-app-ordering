@@ -84,7 +84,7 @@ project.ext.react = [
 apply from: "../../node_modules/react-native/react.gradle"
 apply from: "../../node_modules/@sentry/react-native/sentry.gradle"
 
-apply from: "../../node_modules/react-native-code-push/android/codepush.gradle"
+// apply from: "../../node_modules/react-native-code-push/android/codepush.gradle"
 
 /**
  * Set this to true to create two separate APKs instead of one:
@@ -135,13 +135,13 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.qiji"
+        applicationId "com.ustar"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 14
         versionName "1.1"
         missingDimensionStrategy 'react-native-camera', 'general'
-        resValue "string", "build_config_package", "com.qiji"
+        resValue "string", "build_config_package", "com.ustar"
         multiDexEnabled true
         // detox
         testBuildType System.getProperty('testBuildType', 'debug')
@@ -189,24 +189,24 @@ android {
     productFlavors {
             dev {
                 minSdkVersion rootProject.ext.minSdkVersion
-                applicationId 'com.qiji.dev'
+                applicationId 'com.ustar.dev'
                 versionName "1.1"
                 targetSdkVersion rootProject.ext.targetSdkVersion
-                resValue "string", "build_config_package", "com.qiji"
+                resValue "string", "build_config_package", "com.ustar"
             }
             demo {
                 minSdkVersion rootProject.ext.minSdkVersion
-                applicationId 'com.qiji.demo'
+                applicationId 'com.ustar.demo'
                 versionName "1.1"
                 targetSdkVersion rootProject.ext.targetSdkVersion
-                resValue "string", "build_config_package", "com.qiji"
+                resValue "string", "build_config_package", "com.ustar"
             }
             app {
                 minSdkVersion rootProject.ext.minSdkVersion
-                applicationId 'com.qiji.app'
+                applicationId 'com.ustar.app'
                 versionName "1.1"
                 targetSdkVersion rootProject.ext.targetSdkVersion
-                resValue "string", "build_config_package", "com.qiji"
+                resValue "string", "build_config_package", "com.ustar"
             }
         }
     // applicationVariants are e.g. debug, release
@@ -237,7 +237,7 @@ dependencies {
     implementation project(':react-native-permissions')
     implementation project(':react-native-vector-icons')
     implementation project(':@react-native-community_async-storage')
-    implementation project(':react-native-fbsdk')
+    // implementation project(':react-native-fbsdk')
     implementation project(':react-native-android-location-enabler')
     implementation project(':react-native-svg')
     implementation project(':react-native-camera')

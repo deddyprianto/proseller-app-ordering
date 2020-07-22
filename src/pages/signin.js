@@ -24,7 +24,7 @@ import {connect} from 'react-redux';
 import {compose} from 'redux';
 import {Field, reduxForm} from 'redux-form';
 import AwesomeAlert from 'react-native-awesome-alerts';
-import {LoginManager, AccessToken} from 'react-native-fbsdk';
+// import {LoginManager, AccessToken} from 'react-native-fbsdk';
 import {Form, TextValidator} from 'react-native-validator-form';
 import Icon from 'react-native-vector-icons/Ionicons';
 

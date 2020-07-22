@@ -89,7 +89,7 @@ export const getCategoryByOutlet = (OutletId, refresh) => {
         token,
       );
 
-      // console.log('RESPONSE GET CATEGORY ', response);
+      console.log('RESPONSE GET CATEGORY ', response);
 
       if (response.success == true) {
         // dispatch({

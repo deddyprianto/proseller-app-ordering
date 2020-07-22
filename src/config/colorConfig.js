@@ -1,5 +1,5 @@
-const PRIMARY_COLOR_RGB = '3, 157, 252';
-const SECONDARY_COLOR_RGB = '250, 162, 28';
+const PRIMARY_COLOR_RGB = '255, 63, 52';
+const SECONDARY_COLOR_RGB = '251, 197, 49';
 const THIRD_COLOR_RGB = '68, 189, 50';
 
 const colorConfig = {

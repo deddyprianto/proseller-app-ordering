@@ -18,10 +18,23 @@ import IconMail from '../components/atom/IconMail';
 
 const AppTabNavigator = createMaterialBottomTabNavigator(
   {
+    // Store: {
+    //   screen: Products2,
+    //   navigationOptions: {
+    //     title: 'Store',
+    //     tabBarIcon: ({tintColor, focused}) => (
+    //       <Icon
+    //         size={28}
+    //         name={Platform.OS === 'ios' ? 'ios-cart' : 'md-cart'}
+    //         style={{color: tintColor}}
+    //       />
+    //     ),
+    //   },
+    // },
     Store: {
-      screen: Products2,
+      screen: Store,
       navigationOptions: {
-        title: 'Store',
+        title: 'Outlet',
         tabBarIcon: ({tintColor, focused}) => (
           <Icon
             size={28}
@@ -31,19 +44,6 @@ const AppTabNavigator = createMaterialBottomTabNavigator(
         ),
       },
     },
-    // Store: {
-    //   screen: Store,
-    //   navigationOptions: {
-    //     title: 'Outlet',
-    //     tabBarIcon: ({tintColor, focused}) => (
-    //         <Icon
-    //             size={28}
-    //             name={Platform.OS === 'ios' ? 'ios-cart' : 'md-cart'}
-    //             style={{color: tintColor}}
-    //         />
-    //     ),
-    //   },
-    // },
     History: {
       screen: History,
       navigationOptions: {

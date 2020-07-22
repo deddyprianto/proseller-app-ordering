@@ -214,10 +214,12 @@ class Store extends Component {
             storeName: response.data[i].name,
             storeStatus: this._cekOpen(response.data[i]),
             storeJarak: statusLocation
-              ? geolib.getDistance(position.coords, {
-                  latitude: Number(response.data[i].latitude),
-                  longitude: Number(response.data[i].longitude),
-                }) / 1000
+              ? this.getDistance(
+                  geolib.getDistance(position.coords, {
+                    latitude: Number(response.data[i].latitude),
+                    longitude: Number(response.data[i].longitude),
+                  }) / 1000,
+                )
               : '-',
             image:
               response.data[i].defaultImageURL != undefined
@@ -309,6 +311,15 @@ class Store extends Component {
     }
     return comparison;
   }
+
+  getDistance = distance => {
+    try {
+      if (isNaN(distance)) return 0;
+      else return distance;
+    } catch (e) {
+      return 0;
+    }
+  };
 
   getOperationalHours = data => {
     try {

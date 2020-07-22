@@ -5,6 +5,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   Dimensions,
+  Platform,
 } from 'react-native';
 
 import colorConfig from '../config/colorConfig';

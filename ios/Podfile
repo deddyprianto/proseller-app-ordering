@@ -44,7 +44,6 @@ target 'Qiji' do
 
   pod 'RNSVG', :path => '../node_modules/react-native-svg'
 
-  pod 'react-native-fbsdk', :path => '../node_modules/react-native-fbsdk'
 
   pod 'RNCAsyncStorage', :path => '../node_modules/@react-native-community/async-storage'
 

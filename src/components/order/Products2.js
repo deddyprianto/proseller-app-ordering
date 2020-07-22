@@ -663,6 +663,8 @@ class Products2 extends Component {
         categories.finished = true;
 
         await this.setState({categories});
+      } else {
+        await this.setState({products: []});
       }
     } catch (e) {
       // Alert.alert('Opss..', 'Something went wrong, please try again.');
