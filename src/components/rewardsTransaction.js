@@ -4,6 +4,7 @@ import {
   Text,
   StyleSheet,
   Dimensions,
+  Platform,
   TouchableOpacity,
   Image,
 } from 'react-native';

@@ -38,13 +38,20 @@ import {isEmptyArray, isEmptyData, isEmptyObject} from '../helper/CheckEmpty';
 import {getDeliveryProvider, getPendingCart} from '../actions/order.action';
 import CryptoJS from 'react-native-crypto-js';
 import awsConfig from '../config/awsConfig';
-import {getCompanyInfo} from '../actions/stores.action';
+import {
+  dataStores,
+  getCompanyInfo,
+  setSingleOutlet,
+} from '../actions/stores.action';
 import {getAccountPayment} from '../actions/payment.actions';
 import OneSignal from 'react-native-onesignal';
 import {dataInbox} from '../actions/inbox.action';
 import {referral} from '../actions/referral.action';
 import Icon from 'react-native-vector-icons/EvilIcons';
 import {getMandatoryFields} from '../actions/account.action';
+import {Overlay} from 'react-native-elements';
+import * as geolib from 'geolib';
+import * as _ from 'lodash';
 
 class Rewards extends Component {
   constructor(props) {
@@ -111,6 +118,29 @@ class Rewards extends Component {
 
     this.checkOneSignal();
     this.checkUseApp();
+
+    // IF OUTLET FOR THIS COMPANY IS ONLY 1, THEN SETUP DETAIL OUTLET NOW
+    // this.initializeStore();
+  };
+
+  initializeStore = async () => {
+    try {
+      // check if user enabled their position permission
+      let statusLocaiton;
+      if (
+        this.props.userPosition == undefined ||
+        this.props.userPosition == false
+      ) {
+        statusLocaiton = false;
+      } else {
+        statusLocaiton = true;
+      }
+      await this.setDataStore(
+        this.props.dataStores,
+        statusLocaiton,
+        this.props.userPosition,
+      );
+    } catch (e) {}
   };
 
   checkDefaultPaymentAccount = async response => {
@@ -210,9 +240,12 @@ class Rewards extends Component {
       await this.props.dispatch(recentTransaction());
       await this.props.dispatch(getDeliveryProvider());
       await this.props.dispatch(referral());
+      // await this.props.dispatch(dataStores());
       await this.getUserPosition();
 
       await this.checkDefaultPaymentAccount(response);
+
+      // this.setDataStore();
 
       this.setState({isLoading: false});
     } catch (error) {
@@ -223,6 +256,76 @@ class Rewards extends Component {
           console.log('Cancel Pressed'),
         ),
       );
+    }
+  };
+
+  setDataStore = async (response, statusLocation, position) => {
+    var coordinate = {};
+    var location = {};
+    try {
+      location = {};
+      location = {
+        region: response[0].region,
+        address: response[0].location,
+        coordinate: {
+          lat: response[0].latitude,
+          lng: response[0].longitude,
+        },
+      };
+
+      response[0].location = location;
+
+      const selectedOutlet = {
+        storeId: response[0].id,
+        storeName: response[0].name,
+        storeStatus: true,
+        storeJarak: statusLocation
+          ? geolib.getDistance(position.coords, {
+              latitude: Number(response[0].latitude),
+              longitude: Number(response[0].longitude),
+            }) / 1000
+          : '-',
+        image:
+          response[0].defaultImageURL != undefined
+            ? response[0].defaultImageURL
+            : '',
+        region: response[0].region,
+        address: response[0].location.address,
+        city: response[0].city,
+        operationalHours: response[0].operationalHours,
+        openAllDays: response[0].openAllDays,
+        defaultImageURL: response[0].defaultImageURL,
+        coordinate: response[0].location.coordinate,
+        orderingStatus: response[0].orderingStatus,
+        outletType: response[0].outletType,
+        offlineMessage: response[0].offlineMessage,
+        maxOrderQtyPerItem: response[0].maxOrderQtyPerItem,
+        maxOrderAmount: response[0].maxOrderAmount,
+        lastOrderOn: response[0].lastOrderOn,
+        enableRedeemPoint: response[0].enableRedeemPoint,
+        enableItemSpecialInstructions:
+          response[0].enableItemSpecialInstructions,
+        enableDineIn: !(
+          response[0].enableDineIn == false || response[0].enableDineIn == '-'
+        ),
+        enableTakeAway: !(
+          response[0].enableTakeAway == false ||
+          response[0].enableTakeAway == '-'
+        ),
+        enableTableScan: !(
+          response[0].enableTableScan == false ||
+          response[0].enableTableScan == '-'
+        ),
+        enableDelivery: !(
+          response[0].enableDelivery == false ||
+          response[0].enableDelivery == '-'
+        ),
+      };
+
+      console.log({selectedOutlet});
+      await this.props.dispatch(setSingleOutlet(selectedOutlet));
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -310,6 +413,13 @@ class Rewards extends Component {
     const {intlData} = this.props;
     return (
       <SafeAreaView>
+        <Overlay
+          isVisible={this.state.isLoading}
+          fullScreen={true}
+          windowBackgroundColor={'rgba(0, 0, 0, 0)'}
+          overlayBackgroundColor={'transparent'}
+          children={null}
+        />
         <ScrollView
           refreshControl={
             <RefreshControl
@@ -489,6 +599,8 @@ mapStateToProps = state => ({
   status: state.userReducer.statusPageIndex.status,
   userDetail: state.userReducer.getUser.userDetails,
   intlData: state.intlData,
+  userPosition: state.userReducer.userPosition.userPosition,
+  dataStores: state.storesReducer.dataStores.stores,
 });
 
 mapDispatchToProps = dispatch => ({

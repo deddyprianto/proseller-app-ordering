@@ -143,6 +143,15 @@ class AccountMenuList extends Component {
               ) : (
                 <Text style={styles.title}>ADD {item.paymentName}</Text>
               )}
+              <Icon
+                size={20}
+                name={
+                  Platform.OS === 'ios'
+                    ? 'ios-arrow-dropright'
+                    : 'md-arrow-dropright'
+                }
+                style={{color: colorConfig.store.defaultColor, marginRight: 20}}
+              />
             </View>
           </View>
         </TouchableOpacity>
@@ -240,6 +249,18 @@ class AccountMenuList extends Component {
                 <Text style={styles.title}>
                   Referral ( {referral.amount}/{referral.capacity} )
                 </Text>
+                <Icon
+                  size={20}
+                  name={
+                    Platform.OS === 'ios'
+                      ? 'ios-arrow-dropright'
+                      : 'md-arrow-dropright'
+                  }
+                  style={{
+                    color: colorConfig.store.defaultColor,
+                    marginRight: 20,
+                  }}
+                />
               </View>
             </View>
           </TouchableOpacity>
@@ -259,6 +280,15 @@ class AccountMenuList extends Component {
                 {intlData.messages.myDeliveryAddress}
                 {/*My Delivery Address*/}
               </Text>
+              <Icon
+                size={20}
+                name={
+                  Platform.OS === 'ios'
+                    ? 'ios-arrow-dropright'
+                    : 'md-arrow-dropright'
+                }
+                style={{color: colorConfig.store.defaultColor, marginRight: 20}}
+              />
             </View>
           </View>
         </TouchableOpacity>
@@ -278,6 +308,15 @@ class AccountMenuList extends Component {
                 {intlData.messages.notifications}
                 {/*Notifications*/}
               </Text>
+              <Icon
+                size={20}
+                name={
+                  Platform.OS === 'ios'
+                    ? 'ios-arrow-dropright'
+                    : 'md-arrow-dropright'
+                }
+                style={{color: colorConfig.store.defaultColor, marginRight: 20}}
+              />
             </View>
           </View>
         </TouchableOpacity>
@@ -293,6 +332,15 @@ class AccountMenuList extends Component {
           <View>
             <View style={styles.item}>
               <Text style={styles.title}>{intlData.messages.editProfile}</Text>
+              <Icon
+                size={20}
+                name={
+                  Platform.OS === 'ios'
+                    ? 'ios-arrow-dropright'
+                    : 'md-arrow-dropright'
+                }
+                style={{color: colorConfig.store.defaultColor, marginRight: 20}}
+              />
             </View>
           </View>
         </TouchableOpacity>
@@ -310,6 +358,15 @@ class AccountMenuList extends Component {
           <View>
             <View style={styles.item}>
               <Text style={styles.title}>{intlData.messages.languages}</Text>
+              <Icon
+                size={20}
+                name={
+                  Platform.OS === 'ios'
+                    ? 'ios-arrow-dropright'
+                    : 'md-arrow-dropright'
+                }
+                style={{color: colorConfig.store.defaultColor, marginRight: 20}}
+              />
             </View>
           </View>
         </TouchableOpacity>
@@ -410,7 +467,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 5,
     // paddingVertical: 5,
-    marginBottom: 12,
+    marginBottom: 5,
     // shadowColor: '#00000021',
     // shadowOffset: {
     //   width: 0,

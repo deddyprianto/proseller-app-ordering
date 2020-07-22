@@ -66,6 +66,11 @@ class Products2 extends Component {
   constructor(props) {
     super(props);
 
+    /* CHECK IF ONLY ONE OUTLET IS ACTIVATED */
+    if (this.props.item === undefined) {
+      this.props.item = this.props.oneOutlet;
+    }
+
     this.RBSheet = null;
     this.productsLength = 0;
     this.products = [];
@@ -2718,6 +2723,7 @@ mapStateToProps = state => ({
   dataBasket: state.orderReducer.dataBasket.product,
   orderType: state.userReducer.orderType.orderType,
   dataStores: state.storesReducer.dataStores.stores,
+  oneOutlet: state.storesReducer.oneOutlet.oneOutlet,
   dataLength: state.orderReducer.productsOutlet.dataLength,
   intlData: state.intlData,
 });

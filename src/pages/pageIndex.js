@@ -8,6 +8,7 @@ import {connect} from 'react-redux';
 import {compose} from 'redux';
 import {Platform} from 'react-native';
 import Store from './store';
+import Products2 from '../components/order/Products2';
 import History from './history';
 import Rewards from './rewards';
 import Inbox from './inbox';
@@ -18,9 +19,9 @@ import IconMail from '../components/atom/IconMail';
 const AppTabNavigator = createMaterialBottomTabNavigator(
   {
     Store: {
-      screen: Store,
+      screen: Products2,
       navigationOptions: {
-        title: 'Outlet',
+        title: 'Store',
         tabBarIcon: ({tintColor, focused}) => (
           <Icon
             size={28}
@@ -30,6 +31,19 @@ const AppTabNavigator = createMaterialBottomTabNavigator(
         ),
       },
     },
+    // Store: {
+    //   screen: Store,
+    //   navigationOptions: {
+    //     title: 'Outlet',
+    //     tabBarIcon: ({tintColor, focused}) => (
+    //         <Icon
+    //             size={28}
+    //             name={Platform.OS === 'ios' ? 'ios-cart' : 'md-cart'}
+    //             style={{color: tintColor}}
+    //         />
+    //     ),
+    //   },
+    // },
     History: {
       screen: History,
       navigationOptions: {

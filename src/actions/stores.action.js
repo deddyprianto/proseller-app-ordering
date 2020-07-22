@@ -88,3 +88,17 @@ export const getOutletById = id => {
     }
   };
 };
+
+export const setSingleOutlet = outlet => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      dispatch({
+        type: 'ONE_OUTLET',
+        data: outlet,
+      });
+    } catch (error) {
+      return error;
+    }
+  };
+};
