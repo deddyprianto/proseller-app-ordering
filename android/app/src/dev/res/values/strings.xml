@@ -1,4 +1,7 @@
 <resources>
-    <string name="app_name">QIJI Dev</string>
+    <string name="app_name">Edgeworks CRM Dev</string>
     <string name="facebook_app_id">340760273400416</string> <string name="fb_login_protocol_scheme">fb340760273400416</string>
+    <string name="appCenterCrashes_whenToSendCrashes" moduleConfig="true" translatable="false">ALWAYS_SEND</string>
+    <string name="appCenterAnalytics_whenToEnableAnalytics" moduleConfig="true" translatable="false">ALWAYS_SEND</string>
+    <string moduleConfig="true" name="CodePushDeploymentKey">HhZAWV7kulr-MjW8sEnuQZ9SRxMoI-mTxhc4L</string>
 </resources>

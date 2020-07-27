@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   SafeAreaView,
   Alert,
+  Platform,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
@@ -33,15 +34,24 @@ import {
 } from '../actions/user.action';
 import ShimmerPlaceHolder from 'react-native-shimmer-placeholder';
 import MyPointsPlaceHolder from '../components/placeHolderLoading/MyPointsPlaceHolder';
-import {isEmptyArray, isEmptyObject} from '../helper/CheckEmpty';
+import {isEmptyArray, isEmptyData, isEmptyObject} from '../helper/CheckEmpty';
 import {getDeliveryProvider, getPendingCart} from '../actions/order.action';
 import CryptoJS from 'react-native-crypto-js';
 import awsConfig from '../config/awsConfig';
-import {getCompanyInfo} from '../actions/stores.action';
+import {
+  dataStores,
+  getCompanyInfo,
+  setSingleOutlet,
+} from '../actions/stores.action';
 import {getAccountPayment} from '../actions/payment.actions';
 import OneSignal from 'react-native-onesignal';
 import {dataInbox} from '../actions/inbox.action';
 import {referral} from '../actions/referral.action';
+import Icon from 'react-native-vector-icons/EvilIcons';
+import {getMandatoryFields} from '../actions/account.action';
+import {Overlay} from 'react-native-elements';
+import * as geolib from 'geolib';
+import * as _ from 'lodash';
 
 class Rewards extends Component {
   constructor(props) {
@@ -75,7 +85,23 @@ class Rewards extends Component {
   };
 
   onReceived = notification => {
-    console.log('Notification received: ', notification);
+    const scene = Actions.currentScene;
+    const page1 = 'paymentDetail';
+    const page2 = 'paymentSuccess';
+    const page3 = 'settleOrder';
+    // console.log('Notification received: ', notification);
+
+    if (
+      (notification.payload.title === 'Payment' ||
+        notification.payload.title === 'Ordering') &&
+      scene != page1 &&
+      scene != page2 &&
+      scene != page3
+    ) {
+      try {
+        Alert.alert(notification.payload.title, notification.payload.body);
+      } catch (e) {}
+    }
     this._onRefresh();
   };
 
@@ -92,6 +118,29 @@ class Rewards extends Component {
 
     this.checkOneSignal();
     this.checkUseApp();
+
+    // IF OUTLET FOR THIS COMPANY IS ONLY 1, THEN SETUP DETAIL OUTLET NOW
+    // this.initializeStore();
+  };
+
+  initializeStore = async () => {
+    try {
+      // check if user enabled their position permission
+      let statusLocaiton;
+      if (
+        this.props.userPosition == undefined ||
+        this.props.userPosition == false
+      ) {
+        statusLocaiton = false;
+      } else {
+        statusLocaiton = true;
+      }
+      await this.setDataStore(
+        this.props.dataStores,
+        statusLocaiton,
+        this.props.userPosition,
+      );
+    } catch (e) {}
   };
 
   checkDefaultPaymentAccount = async response => {
@@ -178,10 +227,10 @@ class Rewards extends Component {
 
   getDataRewards = async () => {
     try {
-      await this.getUserPosition();
       await this.props.dispatch(refreshToken());
       await this.props.dispatch(getUserProfile());
       await this.props.dispatch(getCompanyInfo());
+      // await this.props.dispatch(getMandatoryFields());
       const response = await this.props.dispatch(getAccountPayment());
       await this.props.dispatch(campaign());
       await this.props.dispatch(dataPoint());
@@ -191,8 +240,12 @@ class Rewards extends Component {
       await this.props.dispatch(recentTransaction());
       await this.props.dispatch(getDeliveryProvider());
       await this.props.dispatch(referral());
+      // await this.props.dispatch(dataStores());
+      await this.getUserPosition();
 
       await this.checkDefaultPaymentAccount(response);
+
+      // this.setDataStore();
 
       this.setState({isLoading: false});
     } catch (error) {
@@ -203,6 +256,76 @@ class Rewards extends Component {
           console.log('Cancel Pressed'),
         ),
       );
+    }
+  };
+
+  setDataStore = async (response, statusLocation, position) => {
+    var coordinate = {};
+    var location = {};
+    try {
+      location = {};
+      location = {
+        region: response[0].region,
+        address: response[0].location,
+        coordinate: {
+          lat: response[0].latitude,
+          lng: response[0].longitude,
+        },
+      };
+
+      response[0].location = location;
+
+      const selectedOutlet = {
+        storeId: response[0].id,
+        storeName: response[0].name,
+        storeStatus: true,
+        storeJarak: statusLocation
+          ? geolib.getDistance(position.coords, {
+              latitude: Number(response[0].latitude),
+              longitude: Number(response[0].longitude),
+            }) / 1000
+          : '-',
+        image:
+          response[0].defaultImageURL != undefined
+            ? response[0].defaultImageURL
+            : '',
+        region: response[0].region,
+        address: response[0].location.address,
+        city: response[0].city,
+        operationalHours: response[0].operationalHours,
+        openAllDays: response[0].openAllDays,
+        defaultImageURL: response[0].defaultImageURL,
+        coordinate: response[0].location.coordinate,
+        orderingStatus: response[0].orderingStatus,
+        outletType: response[0].outletType,
+        offlineMessage: response[0].offlineMessage,
+        maxOrderQtyPerItem: response[0].maxOrderQtyPerItem,
+        maxOrderAmount: response[0].maxOrderAmount,
+        lastOrderOn: response[0].lastOrderOn,
+        enableRedeemPoint: response[0].enableRedeemPoint,
+        enableItemSpecialInstructions:
+          response[0].enableItemSpecialInstructions,
+        enableDineIn: !(
+          response[0].enableDineIn == false || response[0].enableDineIn == '-'
+        ),
+        enableTakeAway: !(
+          response[0].enableTakeAway == false ||
+          response[0].enableTakeAway == '-'
+        ),
+        enableTableScan: !(
+          response[0].enableTableScan == false ||
+          response[0].enableTableScan == '-'
+        ),
+        enableDelivery: !(
+          response[0].enableDelivery == false ||
+          response[0].enableDelivery == '-'
+        ),
+      };
+
+      console.log({selectedOutlet});
+      await this.props.dispatch(setSingleOutlet(selectedOutlet));
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -267,12 +390,36 @@ class Rewards extends Component {
     );
   };
 
+  editProfile = () => {
+    let userDetail;
+    try {
+      // Decrypt data user
+      let bytes = CryptoJS.AES.decrypt(
+        this.props.userDetail,
+        awsConfig.PRIVATE_KEY_RSA,
+      );
+      userDetail = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+    } catch (e) {
+      userDetail = undefined;
+    }
+
+    var dataDiri = {dataDiri: userDetail};
+    Actions.editProfile(dataDiri);
+  };
+
   render() {
     const {campaignActive} = this.props;
 
     const {intlData} = this.props;
     return (
       <SafeAreaView>
+        <Overlay
+          isVisible={this.state.isLoading}
+          fullScreen={true}
+          windowBackgroundColor={'rgba(0, 0, 0, 0)'}
+          overlayBackgroundColor={'transparent'}
+          children={null}
+        />
         <ScrollView
           refreshControl={
             <RefreshControl
@@ -287,25 +434,59 @@ class Rewards extends Component {
             <View>
               {this.state.isLoading ? (
                 <RewardsStamp isLoading={this.state.isLoading} />
-              ) : this.props.dataStamps.dataStamps == undefined ||
+              ) : this.props.dataStamps == undefined ||
                 isEmptyObject(this.props.dataStamps.dataStamps) ? (
                 this.greetWelcomeUser()
-              ) : this.props.dataStamps.dataStamps.length == 0 ? null : (
+              ) : !isEmptyObject(this.props.dataStamps.dataStamps.trigger) &&
+                this.props.dataStamps.dataStamps.trigger.campaignTrigger ===
+                  'COMPLETE_PROFILE' &&
+                this.props.dataStamps.dataStamps.trigger.status === false ? (
+                <View style={styles.information}>
+                  <View style={styles.boxInfo}>
+                    <Text style={styles.textInfo}>
+                      {intlData.messages.pleaseCompleteProfileStamps}
+                    </Text>
+                    <TouchableOpacity
+                      onPress={this.editProfile}
+                      style={styles.buttonComplete}>
+                      <Text style={{color: 'white', fontWeight: 'bold'}}>
+                        Complete Now
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              ) : (
                 <View
                   style={{
                     backgroundColor: colorConfig.pageIndex.activeTintColor,
                     alignItems: 'center',
                   }}>
-                  <RewardsStamp isLoading={this.state.isLoading} />
                   <TouchableOpacity
                     onPress={this.detailStamps}
                     style={{
                       width: 100,
+                      marginTop: 15,
+                      flexDirection: 'row',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      marginLeft: 32,
                     }}>
-                    <Text style={styles.btn}>
-                      {intlData.messages.learnMore}
+                    <Text
+                      style={{
+                        color: 'white',
+                        fontSize: 15,
+                        fontWeight: 'bold',
+                        textAlign: 'center',
+                      }}>
+                      {intlData.messages.stampsCard}
                     </Text>
+                    <Icon
+                      size={32}
+                      name={'chevron-right'}
+                      style={{color: 'white'}}
+                    />
                   </TouchableOpacity>
+                  <RewardsStamp isLoading={this.state.isLoading} />
                 </View>
               )}
 
@@ -378,9 +559,36 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     padding: 10,
   },
+  information: {
+    backgroundColor: colorConfig.store.defaultColor,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  buttonComplete: {
+    backgroundColor: colorConfig.store.secondaryColor,
+    borderRadius: 10,
+    marginHorizontal: '20%',
+    padding: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  boxInfo: {
+    marginHorizontal: '15%',
+    marginTop: 15,
+    borderRadius: 10,
+    padding: 10,
+    backgroundColor: colorConfig.store.TransBG,
+  },
+  textInfo: {
+    color: colorConfig.store.colorError,
+    textAlign: 'center',
+    fontFamily: 'Lato-Medium',
+  },
 });
 
 mapStateToProps = state => ({
+  fields: state.accountsReducer.mandatoryFields.fields,
   recentTransaction: state.rewardsReducer.dataPoint.recentTransaction,
   defaultAccount: state.userReducer.defaultPaymentAccount.defaultAccount,
   myCardAccount: state.cardReducer.myCardAccount.card,
@@ -391,6 +599,8 @@ mapStateToProps = state => ({
   status: state.userReducer.statusPageIndex.status,
   userDetail: state.userReducer.getUser.userDetails,
   intlData: state.intlData,
+  userPosition: state.userReducer.userPosition.userPosition,
+  dataStores: state.storesReducer.dataStores.stores,
 });
 
 mapDispatchToProps = dispatch => ({

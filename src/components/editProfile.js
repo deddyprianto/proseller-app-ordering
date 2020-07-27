@@ -12,24 +12,47 @@ import {
   Dimensions,
   TouchableOpacity,
   TouchableWithoutFeedback,
-  ScrollView,
-  Picker,
+  // ScrollView,
   BackHandler,
   Platform,
   TextInput,
   SafeAreaView,
+  Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import {Form} from 'react-native-validator-form';
 import colorConfig from '../config/colorConfig';
-import {updateUser} from '../actions/user.action';
+import {getUserProfile, updateUser} from '../actions/user.action';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
 import {reduxForm} from 'redux-form';
 import AwesomeAlert from 'react-native-awesome-alerts';
-import Loader from './loader';
+import DropDownPicker from 'react-native-dropdown-picker';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview';
+import LoaderDarker from './LoaderDarker';
+import {getMandatoryFields} from '../actions/account.action';
+import {isEmptyArray, isEmptyData, isEmptyObject} from '../helper/CheckEmpty';
+import {formatISO, format} from 'date-fns';
+import {dataPoint, getStamps} from '../actions/rewards.action';
+import CryptoJS from 'react-native-crypto-js';
+import awsConfig from '../config/awsConfig';
+
+const monthNames = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
+];
 
 class AccountEditProfil extends Component {
   constructor(props) {
@@ -51,6 +74,36 @@ class AccountEditProfil extends Component {
       };
     }
 
+    const MMM = [
+      {label: 'January', value: '2000-Jan-01'},
+      {label: 'February', value: '2000-Feb-01'},
+      {label: 'March', value: '2000-Mar-01'},
+      {label: 'April', value: '2000-Apr-01'},
+      {label: 'May', value: '2000-May-01'},
+      {label: 'June', value: '2000-Jun-01'},
+      {label: 'July', value: '2000-Jul-01'},
+      {label: 'August', value: '2000-Aug-01'},
+      {label: 'September', value: '2000-Sep-01'},
+      {label: 'October', value: '2000-Oct-01'},
+      {label: 'November', value: '2000-Nov-01'},
+      {label: 'December', value: '2000-Dec-01'},
+    ];
+
+    const MM = [
+      {label: 'January', value: '2000-01-01'},
+      {label: 'February', value: '2000-02-01'},
+      {label: 'March', value: '2000-03-01'},
+      {label: 'April', value: '2000-04-01'},
+      {label: 'May', value: '2000-05-01'},
+      {label: 'June', value: '2000-06-01'},
+      {label: 'July', value: '2000-07-01'},
+      {label: 'August', value: '2000-08-01'},
+      {label: 'September', value: '2000-09-01'},
+      {label: 'October', value: '2000-10-01'},
+      {label: 'November', value: '2000-11-01'},
+      {label: 'December', value: '2000-12-01'},
+    ];
+
     this.state = {
       screenWidth: Dimensions.get('window').width,
       name: data.name,
@@ -61,6 +114,11 @@ class AccountEditProfil extends Component {
       showAlert: false,
       loading: false,
       field: '',
+      MMM,
+      MM,
+      fields: [],
+      openGender: false,
+      openBirthDate: false,
     };
   }
 
@@ -68,8 +126,47 @@ class AccountEditProfil extends Component {
     Actions.pop();
   };
 
+  refreshDataCustomer = async () => {
+    try {
+      let userDetail;
+      try {
+        // Decrypt data user
+        let bytes = CryptoJS.AES.decrypt(
+          this.props.userDetail,
+          awsConfig.PRIVATE_KEY_RSA,
+        );
+        userDetail = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+      } catch (e) {
+        userDetail = undefined;
+      }
+
+      if (!isEmptyData(userDetail)) {
+        await this.setState({
+          name: userDetail.name,
+          gender: userDetail.gender,
+          birthDate: userDetail.birthDate,
+          address: userDetail.address,
+        });
+      }
+    } catch (e) {}
+  };
+
+  getMandatoryField = async () => {
+    await this.setState({loading: true});
+    await this.props.dispatch(getUserProfile());
+    await this.refreshDataCustomer();
+    try {
+      const response = await this.props.dispatch(getMandatoryFields());
+      if (!isEmptyObject(response) && !isEmptyArray(response.fields)) {
+        await this.setState({fields: response.fields});
+      }
+    } catch (e) {}
+    await this.setState({loading: false});
+  };
+
   componentDidMount() {
     try {
+      this.getMandatoryField();
       this.backHandler = BackHandler.addEventListener(
         'hardwareBackPress',
         this.handleBackPress,
@@ -88,6 +185,58 @@ class AccountEditProfil extends Component {
     return true;
   };
 
+  checkMandatory = async () => {
+    try {
+      let {fields} = this.state;
+      await fields.map((item, index) => {
+        if (item.fieldName.toLowerCase() === 'birthdate' && item.mandatory) {
+          fields[index].filled = this.state.birthDate;
+        }
+        if (item.fieldName.toLowerCase() === 'gender' && item.mandatory) {
+          fields[index].filled = this.state.gender;
+        }
+        if (item.fieldName.toLowerCase() === 'address' && item.mandatory) {
+          fields[index].filled = this.state.address;
+        }
+      });
+
+      let passed = true;
+
+      for (let i = 0; i < fields.length; i++) {
+        if (fields[i].mandatory && isEmptyData(fields[i].filled)) {
+          passed = false;
+          break;
+        }
+      }
+
+      if (!passed) {
+        Alert.alert(
+          'Are you sure want to save ?',
+          'There is some mandatory information that you have not filled out.',
+          [
+            {
+              text: 'Cancel',
+              onPress: () => console.log('Cancel Pressed'),
+              style: 'cancel',
+            },
+            {
+              text: 'Save',
+              onPress: () => {
+                this.submitEdit();
+              },
+            },
+          ],
+          {cancelable: true},
+        );
+        return false;
+      } else {
+        this.submitEdit();
+      }
+    } catch (e) {
+      return true;
+    }
+  };
+
   submitEdit = async () => {
     try {
       this.setState({loading: true});
@@ -102,12 +251,18 @@ class AccountEditProfil extends Component {
       const response = await this.props.dispatch(updateUser(dataProfile));
 
       if (response) {
+        await this.props.dispatch(getUserProfile());
+        await this.props.dispatch(dataPoint());
+        await this.props.dispatch(getStamps());
         this.setState({
           showAlert: true,
           pesanAlert: 'Your profile updated',
           titleAlert: 'Update Success!',
         });
       } else {
+        await this.props.dispatch(getUserProfile());
+        await this.props.dispatch(dataPoint());
+        await this.props.dispatch(getStamps());
         this.setState({
           showAlert: true,
           pesanAlert: 'Something went wrong, please try again!',
@@ -158,13 +313,29 @@ class AccountEditProfil extends Component {
     // );
   };
 
+  pad = item => {
+    try {
+      item = item.toString();
+      if (item.length == 1) {
+        return `0${item}`;
+      } else {
+        return item;
+      }
+    } catch (e) {
+      return item;
+    }
+  };
+
   handleConfirm = date => {
     let newDate = new Date(date);
     let dateBirth = newDate.getDate();
     let monthBirth = newDate.getMonth() + 1;
     let birthYear = newDate.getFullYear();
 
-    this.setState({birthDate: `${birthYear}-${monthBirth}-${dateBirth}/`});
+    dateBirth = this.pad(dateBirth);
+    monthBirth = this.pad(monthBirth);
+
+    this.setState({birthDate: `${birthYear}-${monthBirth}-${dateBirth}`});
     this.hideDatePicker();
   };
 
@@ -197,11 +368,97 @@ class AccountEditProfil extends Component {
     }
   };
 
+  isShow = async index => {
+    try {
+      const {fields} = this.state;
+      if (!isEmptyArray(fields) && fields[index].show != undefined) {
+        if (fields[index].show == true) return true;
+        else return false;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      return false;
+    }
+  };
+
+  isMandatory = async index => {
+    try {
+      const {fields} = this.state;
+      if (!isEmptyArray(fields) && fields[index].mandatory != undefined) {
+        if (fields[index].mandatory == true) return true;
+        else return false;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      return false;
+    }
+  };
+
+  getMonth = item => {
+    try {
+      if (isEmptyData(item)) {
+        return null;
+      } else {
+        const date = new Date(item);
+        return `2000-${this.pad(date.getMonth() + 1)}-01`;
+      }
+    } catch (e) {
+      return null;
+    }
+  };
+
+  formatBirthDate = item => {
+    try {
+      const {fields} = this.state;
+      let formatDate = 'dd-MMM-yyy';
+
+      let find = fields.find(item => item.displayName.includes('1a. Birthday'));
+      if (find != undefined && find.format != undefined) {
+        formatDate = find.format;
+      }
+
+      return format(new Date(item), formatDate);
+    } catch (e) {
+      return null;
+    }
+  };
+
+  getFormatMonth = () => {
+    try {
+      const {fields} = this.state;
+      let find = fields.find(item => item.displayName.includes('1b. Birthday'));
+      if (find != undefined && find.format != undefined) {
+        if (find.format === 'MMM') {
+          return this.state.MMM;
+        } else {
+          return this.state.MM;
+        }
+      }
+    } catch (e) {
+      return this.state.MMM;
+    }
+  };
+
+  validateGender = gender => {
+    try {
+      if (gender === 'male' || gender === 'female') {
+        return gender;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      return null;
+    }
+  };
+
   render() {
     const {intlData} = this.props;
+    const {fields} = this.state;
     return (
       <SafeAreaView style={styles.container}>
-        {this.state.loading && <Loader />}
+        {this.state.loading && <LoaderDarker />}
         <View
           style={[
             styles.header,
@@ -222,120 +479,244 @@ class AccountEditProfil extends Component {
           </TouchableOpacity>
           {/*<View style={styles.line} />*/}
         </View>
-        <ScrollView>
-          <View style={styles.card}>
-            <Form ref="form" onSubmit={this.submitEdit}>
-              <View style={styles.detail}>
-                <View style={styles.detailItem}>
-                  <Text style={[styles.desc, {marginLeft: 2}]}>
-                    {intlData.messages.name}
-                  </Text>
-                  <TextInput
-                    placeholder="Name"
-                    style={{paddingVertical: 10}}
-                    value={this.state.name}
-                    onChangeText={value => this.setState({name: value})}
-                  />
-                  <View style={{borderWidth: 0.5, borderColor: 'gray'}} />
-                </View>
-                <View style={styles.detailItem}>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                    }}>
-                    <Text style={styles.desc}>Email</Text>
-                    {/*<TouchableOpacity*/}
-                    {/*  style={[styles.btnChange]}*/}
-                    {/*  onPress={() => this.btnChangeCredentials('Email')}>*/}
-                    {/*  <Text style={[styles.textChange]}>*/}
-                    {/*    {intlData.messages.change}*/}
-                    {/*  </Text>*/}
-                    {/*</TouchableOpacity>*/}
-                  </View>
-                  <Text style={{paddingTop: 12}}>
-                    {this.props.dataDiri.email}
-                  </Text>
-                </View>
-                <View style={styles.detailItem}>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                    }}>
-                    <Text style={styles.desc}>
-                      {intlData.messages.phoneNumber}
-                    </Text>
-                    {/*<TouchableOpacity*/}
-                    {/*  onPress={() => this.btnChangeCredentials('Phone Number')}*/}
-                    {/*  style={[styles.btnChange]}>*/}
-                    {/*  <Text style={[styles.textChange]}>*/}
-                    {/*    {intlData.messages.change}*/}
-                    {/*  </Text>*/}
-                    {/*</TouchableOpacity>*/}
-                  </View>
-                  <Text style={{paddingTop: 12}}>
-                    {this.props.dataDiri.phoneNumber}
-                  </Text>
-                </View>
-                <View style={styles.detailItem}>
-                  <Text style={[styles.desc, {marginLeft: 0}]}>
-                    {intlData.messages.birthDate}
-                  </Text>
-                  <Text
-                    style={{
-                      paddingTop: 12,
-                      borderBottomColor: colorConfig.store.defaultColor,
-                      borderBottomWidth: 1,
-                    }}
-                    onPress={this.showDatePicker}>
-                    {this.state.birthDate == ''
-                      ? 'Enter Birth Date'
-                      : this.formatDate(this.state.birthDate)}
-                  </Text>
-                  <DateTimePickerModal
-                    isVisible={this.state.isDatePickerVisible}
-                    mode="date"
-                    onConfirm={this.handleConfirm}
-                    onCancel={this.hideDatePicker}
-                  />
-                </View>
-                <View style={styles.detailItem}>
-                  <Text style={[styles.desc, {marginLeft: 0}]}>
-                    {intlData.messages.gender}
-                  </Text>
-                  <Picker
-                    selectedValue={this.state.gender}
-                    onValueChange={(itemValue, itemIndex) =>
-                      this.setState({gender: itemValue})
-                    }>
-                    <Picker.Item label="Select one" value="" />
-                    <Picker.Item label={intlData.messages.male} value="male" />
-                    <Picker.Item
-                      label={intlData.messages.female}
-                      value="female"
+        <KeyboardAwareScrollView>
+          <View>
+            <View style={styles.card}>
+              <Form ref="form" onSubmit={this.checkMandatory}>
+                <View style={styles.detail}>
+                  <View style={styles.detailItem}>
+                    <Text style={styles.desc}>{intlData.messages.name}</Text>
+                    <TextInput
+                      placeholder="Name"
+                      style={{paddingVertical: 10}}
+                      value={this.state.name}
+                      onChangeText={value => this.setState({name: value})}
                     />
-                  </Picker>
+                    <View style={{borderWidth: 0.5, borderColor: 'gray'}} />
+                  </View>
+                  <View style={styles.detailItem}>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                      }}>
+                      <Text style={styles.desc}>Email</Text>
+                      {/*<TouchableOpacity*/}
+                      {/*  style={[styles.btnChange]}*/}
+                      {/*  onPress={() => this.btnChangeCredentials('Email')}>*/}
+                      {/*  <Text style={[styles.textChange]}>*/}
+                      {/*    {intlData.messages.change}*/}
+                      {/*  </Text>*/}
+                      {/*</TouchableOpacity>*/}
+                    </View>
+                    <Text style={{paddingTop: 12}}>
+                      {this.props.dataDiri.email}
+                    </Text>
+                  </View>
+                  <View style={styles.detailItem}>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                      }}>
+                      <Text style={styles.desc}>
+                        {intlData.messages.phoneNumber}
+                      </Text>
+                      {/*<TouchableOpacity*/}
+                      {/*  onPress={() => this.btnChangeCredentials('Phone Number')}*/}
+                      {/*  style={[styles.btnChange]}>*/}
+                      {/*  <Text style={[styles.textChange]}>*/}
+                      {/*    {intlData.messages.change}*/}
+                      {/*  </Text>*/}
+                      {/*</TouchableOpacity>*/}
+                    </View>
+                    <Text style={{paddingTop: 12}}>
+                      {this.props.dataDiri.phoneNumber}
+                    </Text>
+                  </View>
+
+                  {fields.map(item => {
+                    if (
+                      item.fieldName === 'birthDate' &&
+                      item.format.length > 4 &&
+                      item.show
+                    )
+                      return (
+                        <View style={styles.detailItem}>
+                          <Text style={[styles.desc, {marginLeft: 0}]}>
+                            {intlData.messages.birthDate}{' '}
+                            {item.mandatory ? (
+                              <Text style={{color: 'red'}}>*</Text>
+                            ) : null}
+                          </Text>
+                          <Text
+                            style={{
+                              paddingTop: 12,
+                              borderBottomColor: colorConfig.store.defaultColor,
+                              borderBottomWidth: 1,
+
+                              paddingBottom: 5,
+                            }}
+                            onPress={this.showDatePicker}>
+                            {this.state.birthDate == '' ||
+                            this.state.birthDate == undefined ||
+                            this.state.birthDate.length == 3
+                              ? 'Enter Birth Date'
+                              : this.formatBirthDate(this.state.birthDate)}
+                          </Text>
+                          <DateTimePickerModal
+                            isVisible={this.state.isDatePickerVisible}
+                            mode="date"
+                            onConfirm={this.handleConfirm}
+                            onCancel={this.hideDatePicker}
+                          />
+                        </View>
+                      );
+
+                    if (
+                      item.fieldName === 'birthDate' &&
+                      item.format.length <= 4 &&
+                      item.show
+                    )
+                      return (
+                        <View style={styles.detailItem}>
+                          <Text style={[styles.desc, {marginLeft: 0}]}>
+                            Birth Month{' '}
+                            {item.mandatory ? (
+                              <Text style={{color: 'red'}}>*</Text>
+                            ) : null}
+                          </Text>
+                          <DropDownPicker
+                            placeholder={'Select your birth month'}
+                            items={this.state.MM}
+                            defaultValue={this.getMonth(this.state.birthDate)}
+                            containerStyle={{height: 47}}
+                            style={{
+                              backgroundColor: 'white',
+                              marginTop: 5,
+                              borderRadius: 0,
+                            }}
+                            dropDownStyle={{
+                              backgroundColor: '#fafafa',
+                              zIndex: 3,
+                            }}
+                            onChangeItem={item =>
+                              this.setState({
+                                birthDate: item.value,
+                              })
+                            }
+                            onOpen={() => {
+                              this.setState({openBirthDate: true});
+                            }}
+                            onClose={() => {
+                              this.setState({openBirthDate: false});
+                            }}
+                          />
+
+                          {this.state.openBirthDate ? (
+                            <View style={{height: 130}} />
+                          ) : null}
+                        </View>
+                      );
+
+                    if (
+                      (item.fieldName === 'gender' ||
+                        item.fieldName === 'Gender') &&
+                      item.show
+                    )
+                      return (
+                        <View style={styles.detailItem}>
+                          <Text style={[styles.desc, {marginLeft: 0}]}>
+                            {intlData.messages.gender}{' '}
+                            {item.mandatory ? (
+                              <Text style={{color: 'red'}}>*</Text>
+                            ) : null}
+                          </Text>
+                          <DropDownPicker
+                            placeholder={'Select gender'}
+                            items={[
+                              {label: intlData.messages.male, value: 'male'},
+                              {
+                                label: intlData.messages.female,
+                                value: 'female',
+                              },
+                            ]}
+                            defaultValue={this.validateGender(
+                              this.state.gender,
+                            )}
+                            containerStyle={{height: 47}}
+                            style={{
+                              backgroundColor: 'white',
+                              marginTop: 5,
+                              borderRadius: 0,
+                            }}
+                            dropDownStyle={{
+                              backgroundColor: '#fafafa',
+                              zIndex: 3,
+                            }}
+                            onOpen={() => {
+                              this.setState({openGender: true});
+                            }}
+                            onClose={() => {
+                              this.setState({openGender: false});
+                            }}
+                            onChangeItem={item =>
+                              this.setState({
+                                gender: item.value,
+                              })
+                            }
+                          />
+
+                          {this.state.openGender ? (
+                            <View style={{height: 50}} />
+                          ) : null}
+                        </View>
+                      );
+
+                    if (
+                      (item.fieldName === 'address' ||
+                        item.fieldName === 'Address') &&
+                      item.show
+                    )
+                      return (
+                        <View style={styles.detailItem}>
+                          <Text style={styles.desc}>
+                            {intlData.messages.address}{' '}
+                            {item.mandatory ? (
+                              <Text style={{color: 'red'}}>*</Text>
+                            ) : null}
+                          </Text>
+                          <TextInput
+                            placeholder={intlData.messages.yourAddress}
+                            style={{paddingVertical: 10}}
+                            value={this.state.address}
+                            onChangeText={value =>
+                              this.setState({address: value})
+                            }
+                          />
+                          <View
+                            style={{borderWidth: 0.5, borderColor: 'gray'}}
+                          />
+                        </View>
+                      );
+                  })}
                 </View>
-                <View style={styles.detailItem}>
-                  <Text style={[styles.desc, {marginLeft: 2}]}>
-                    {intlData.messages.address}
-                  </Text>
-                  <TextInput
-                    placeholder={intlData.messages.yourAddress}
-                    style={{paddingVertical: 10}}
-                    value={this.state.address}
-                    onChangeText={value => this.setState({address: value})}
-                  />
-                  <View style={{borderWidth: 0.5, borderColor: 'gray'}} />
-                </View>
+              </Form>
+            </View>
+            <TouchableOpacity onPress={this.checkMandatory}>
+              <View style={styles.primaryButton}>
+                <Text style={styles.buttonText}>{intlData.messages.save}</Text>
               </View>
-            </Form>
+            </TouchableOpacity>
           </View>
-        </ScrollView>
-        <TouchableWithoutFeedback onPress={this.submitEdit}>
-          <View style={styles.primaryButton}>
-            <Text style={styles.buttonText}>{intlData.messages.save}</Text>
-          </View>
-        </TouchableWithoutFeedback>
+        </KeyboardAwareScrollView>
+        {/*{Platform.OS != 'ios' ? (*/}
+        {/*  <>*/}
+        {/*    <TouchableWithoutFeedback onPress={this.submitEdit}>*/}
+        {/*      <View style={styles.primaryButton}>*/}
+        {/*        <Text style={styles.buttonText}>{intlData.messages.save}</Text>*/}
+        {/*      </View>*/}
+        {/*    </TouchableWithoutFeedback>*/}
+        {/*  </>*/}
+        {/*) : null}*/}
         <AwesomeAlert
           show={this.state.showAlert}
           showProgress={false}
@@ -373,6 +754,7 @@ class AccountEditProfil extends Component {
 }
 
 mapStateToProps = state => ({
+  userDetail: state.userReducer.getUser.userDetails,
   updateUser: state.userReducer.updateUser,
   intlData: state.intlData,
 });
@@ -398,7 +780,8 @@ const styles = StyleSheet.create({
     margin: 10,
   },
   header: {
-    height: 65,
+    // height: 65,
+    paddingVertical: 6,
     marginBottom: 20,
     justifyContent: 'center',
     // backgroundColor: colorConfig.store.defaultColor,
@@ -415,8 +798,6 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     flexDirection: 'row',
     alignItems: 'center',
-    width: 100,
-    height: 80,
   },
   btnBackText: {
     color: colorConfig.store.defaultColor,
@@ -429,11 +810,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
+    marginTop: 25,
     borderRadius: 40,
     padding: 12,
     alignSelf: 'stretch',
-    marginLeft: 10,
-    marginRight: 10,
+    marginLeft: 30,
+    marginRight: 30,
     shadowColor: '#00000021',
     shadowOffset: {
       width: 0,

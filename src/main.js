@@ -11,6 +11,7 @@ import {
   Dimensions,
   StatusBar,
   AsyncStorage,
+  Alert,
 } from 'react-native';
 import {connect} from 'react-redux';
 
@@ -25,6 +26,7 @@ import OneSignal from 'react-native-onesignal';
 import {deviceUserInfo} from './actions/user.action';
 import OfflineNotice from './components/OfflineNotice';
 import {getCompanyInfo} from './actions/stores.action';
+import VersionCheck from 'react-native-version-check';
 
 class Main extends Component {
   constructor(props) {
@@ -40,6 +42,7 @@ class Main extends Component {
       geolocation: true,
     };
 
+    OneSignal.inFocusDisplaying(2);
     OneSignal.addEventListener('received', this.onReceived);
     OneSignal.addEventListener('opened', this.onOpened);
     OneSignal.addEventListener('ids', this.onIds);
@@ -58,7 +61,18 @@ class Main extends Component {
     } catch (error) {
       console.log(error);
     }
+
+    this.checkUpdateAndVersion();
   }
+
+  checkUpdateAndVersion = () => {
+    try {
+      VersionCheck.getCountry().then(country => console.log(country));
+      console.log(VersionCheck.getPackageName());
+      console.log(VersionCheck.getCurrentBuildNumber());
+      console.log(VersionCheck.getCurrentVersion());
+    } catch (e) {}
+  };
 
   turnOnLocation = () => {
     RNAndroidLocationEnabler.promptForEnableLocationIfNeeded({
@@ -89,15 +103,23 @@ class Main extends Component {
     OneSignal.removeEventListener('ids', this.onIds);
   }
 
-  onReceived(notification) {
-    console.log('Notification received: ', notification);
-  }
+  onReceived = notification => {
+    // console.log('Notification diterima: ', notification);
+    // if (
+    //   notification.payload.title === 'Payment' ||
+    //   notification.payload.title === 'Ordering'
+    // ) {
+    //   try {
+    //     Alert.alert(notification.payload.title, notification.payload.body);
+    //   } catch (e) {}
+    // }
+  };
 
   onOpened(openResult) {
-    console.log('Message: ', openResult.notification.payload.body);
-    console.log('Data: ', openResult.notification.payload.additionalData);
-    console.log('isActive: ', openResult.notification.isAppInFocus);
-    console.log('openResult: ', openResult);
+    // console.log('Message: ', openResult.notification.payload.body);
+    // console.log('Data: ', openResult.notification.payload.additionalData);
+    // console.log('isActive: ', openResult.notification.isAppInFocus);
+    // console.log('openResult: ', openResult);
   }
 
   onIds = async device => {

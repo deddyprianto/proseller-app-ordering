@@ -31,11 +31,12 @@ import {Actions} from 'react-native-router-flux';
 import colorConfig from '../config/colorConfig';
 import awsConfig from '../config/awsConfig';
 import Header from '../components/atom/header';
-import CountryPicker from 'react-native-country-picker-modal';
+import CountryPicker from '../components/react-native-country-picker-modal';
 import {deviceUserInfo, userPosition} from '../actions/user.action';
 import Geolocation from 'react-native-geolocation-service';
 import packageJson from '../../package';
 import PhoneInput from 'react-native-phone-input';
+import VersionCheck from 'react-native-version-check';
 
 const imageWidth = Dimensions.get('window').width / 2;
 
@@ -444,7 +445,8 @@ class InputPhoneNumber extends Component {
                 color: colorConfig.pageIndex.grayColor,
                 fontSize: 14,
               }}>
-              Version: {packageJson.version}
+              Version: {VersionCheck.getCurrentVersion()} (
+              {VersionCheck.getCurrentBuildNumber()})
             </Text>
           </View>
         ) : null}

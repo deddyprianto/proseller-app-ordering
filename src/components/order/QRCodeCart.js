@@ -145,7 +145,20 @@ class WaitingFood extends Component {
 
     return (
       <SafeAreaView style={styles.container}>
-        <View style={{backgroundColor: colorConfig.pageIndex.backgroundColor}}>
+        <View
+          style={{
+            backgroundColor: colorConfig.pageIndex.backgroundColor,
+            marginBottom: 10,
+            paddingVertical: 3,
+            shadowColor: '#00000021',
+            shadowOffset: {
+              width: 0,
+              height: 6,
+            },
+            shadowOpacity: 0.37,
+            shadowRadius: 7.49,
+            elevation: 12,
+          }}>
           <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
             <Icon
               size={28}
@@ -156,8 +169,8 @@ class WaitingFood extends Component {
             />
             <Text style={styles.btnBackText}>Cart QRCode</Text>
           </TouchableOpacity>
-          <View style={styles.line} />
         </View>
+
         {this.renderTextWaiting()}
         <View style={styles.card}>
           <QRCode

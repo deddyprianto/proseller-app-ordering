@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Alert,
   ActivityIndicator,
+  Image,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
@@ -21,6 +22,8 @@ import CryptoJS from 'react-native-crypto-js';
 import {isEmptyArray, isEmptyObject} from '../helper/CheckEmpty';
 import packageJson from '../../package';
 import {updateUser} from '../actions/user.action';
+import VersionCheck from 'react-native-version-check';
+import appConfig from '../config/appConfig';
 
 class AccountMenuList extends Component {
   constructor(props) {
@@ -113,6 +116,17 @@ class AccountMenuList extends Component {
     );
   };
 
+  getLengthAccount = item => {
+    try {
+      const {myCardAccount} = this.props;
+      const find = myCardAccount.filter(
+        data => data.paymentID === item.paymentID,
+      );
+      if (find != undefined && find.length > 0) return `( ${find.length} )`;
+      else return null;
+    } catch (e) {}
+  };
+
   renderPaymentMethodOptions = () => {
     const {intlData, myCardAccount, companyInfo} = this.props;
     let paymentTypes = [];
@@ -133,13 +147,20 @@ class AccountMenuList extends Component {
           </View>
           <View>
             <View style={styles.item}>
-              {myCardAccount != undefined && myCardAccount.length > 0 ? (
+              {myCardAccount != undefined ? (
                 <Text style={styles.title}>
-                  {item.paymentName} ({myCardAccount.length})
+                  {item.paymentName} {this.getLengthAccount(item)}
                 </Text>
-              ) : (
-                <Text style={styles.title}>ADD {item.paymentName}</Text>
-              )}
+              ) : null}
+              <Icon
+                size={20}
+                name={
+                  Platform.OS === 'ios'
+                    ? 'ios-arrow-dropright'
+                    : 'md-arrow-dropright'
+                }
+                style={{color: colorConfig.store.defaultColor, marginRight: 20}}
+              />
             </View>
           </View>
         </TouchableOpacity>
@@ -157,7 +178,10 @@ class AccountMenuList extends Component {
     } = this.props;
     return (
       <View style={styles.container}>
-        <Text style={styles.headingMenu}>Default Payment Account</Text>
+        <Text style={styles.headingMenu}>
+          {intlData.messages.defaultPaymentAccount}
+          {/*Default Payment Account*/}
+        </Text>
         <TouchableOpacity disabled={true} style={styles.cardMenu}>
           {!isEmptyObject(defaultAccount) ? (
             <View style={styles.itemMenu}>
@@ -170,7 +194,8 @@ class AccountMenuList extends Component {
           ) : null}
           <View>
             <View style={styles.item}>
-              <Text style={styles.title}>
+              <Text
+                style={[styles.title, {color: colorConfig.store.defaultColor}]}>
                 {!isEmptyObject(defaultAccount) ? (
                   <>
                     <Text>
@@ -182,7 +207,8 @@ class AccountMenuList extends Component {
                   </>
                 ) : (
                   <Text style={{color: colorConfig.store.colorError}}>
-                    NOT YET ADDED
+                    {intlData.messages.notYesAdded}
+                    {/*NOT YET ADDED*/}
                   </Text>
                 )}
               </Text>
@@ -190,7 +216,10 @@ class AccountMenuList extends Component {
           </View>
         </TouchableOpacity>
 
-        <Text style={styles.headingMenu}>My Payment Options</Text>
+        <Text style={styles.headingMenu}>
+          {intlData.messages.myPaymentOptions}
+          {/*My Payment Options*/}
+        </Text>
 
         {this.renderPaymentMethodOptions()}
 
@@ -211,7 +240,7 @@ class AccountMenuList extends Component {
         {/*  </View>*/}
         {/*</TouchableOpacity>*/}
 
-        <Text style={styles.headingMenu}>Settings</Text>
+        <Text style={styles.headingMenu}>{intlData.messages.settings}</Text>
 
         {referral != undefined && referral.capacity > 0 ? (
           <TouchableOpacity
@@ -229,6 +258,18 @@ class AccountMenuList extends Component {
                 <Text style={styles.title}>
                   Referral ( {referral.amount}/{referral.capacity} )
                 </Text>
+                <Icon
+                  size={20}
+                  name={
+                    Platform.OS === 'ios'
+                      ? 'ios-arrow-dropright'
+                      : 'md-arrow-dropright'
+                  }
+                  style={{
+                    color: colorConfig.store.defaultColor,
+                    marginRight: 20,
+                  }}
+                />
               </View>
             </View>
           </TouchableOpacity>
@@ -244,7 +285,19 @@ class AccountMenuList extends Component {
           </View>
           <View>
             <View style={styles.item}>
-              <Text style={styles.title}>My Delivery Address</Text>
+              <Text style={styles.title}>
+                {intlData.messages.myDeliveryAddress}
+                {/*My Delivery Address*/}
+              </Text>
+              <Icon
+                size={20}
+                name={
+                  Platform.OS === 'ios'
+                    ? 'ios-arrow-dropright'
+                    : 'md-arrow-dropright'
+                }
+                style={{color: colorConfig.store.defaultColor, marginRight: 20}}
+              />
             </View>
           </View>
         </TouchableOpacity>
@@ -260,7 +313,19 @@ class AccountMenuList extends Component {
           </View>
           <View>
             <View style={styles.item}>
-              <Text style={styles.title}>Notifications</Text>
+              <Text style={styles.title}>
+                {intlData.messages.notifications}
+                {/*Notifications*/}
+              </Text>
+              <Icon
+                size={20}
+                name={
+                  Platform.OS === 'ios'
+                    ? 'ios-arrow-dropright'
+                    : 'md-arrow-dropright'
+                }
+                style={{color: colorConfig.store.defaultColor, marginRight: 20}}
+              />
             </View>
           </View>
         </TouchableOpacity>
@@ -276,6 +341,15 @@ class AccountMenuList extends Component {
           <View>
             <View style={styles.item}>
               <Text style={styles.title}>{intlData.messages.editProfile}</Text>
+              <Icon
+                size={20}
+                name={
+                  Platform.OS === 'ios'
+                    ? 'ios-arrow-dropright'
+                    : 'md-arrow-dropright'
+                }
+                style={{color: colorConfig.store.defaultColor, marginRight: 20}}
+              />
             </View>
           </View>
         </TouchableOpacity>
@@ -293,6 +367,15 @@ class AccountMenuList extends Component {
           <View>
             <View style={styles.item}>
               <Text style={styles.title}>{intlData.messages.languages}</Text>
+              <Icon
+                size={20}
+                name={
+                  Platform.OS === 'ios'
+                    ? 'ios-arrow-dropright'
+                    : 'md-arrow-dropright'
+                }
+                style={{color: colorConfig.store.defaultColor, marginRight: 20}}
+              />
             </View>
           </View>
         </TouchableOpacity>
@@ -335,8 +418,10 @@ class AccountMenuList extends Component {
             marginTop: 10,
             color: colorConfig.pageIndex.grayColor,
             fontSize: 13,
+            marginBottom: 15,
           }}>
-          Version: {packageJson.version}
+          Version: {VersionCheck.getCurrentVersion()} (
+          {VersionCheck.getCurrentBuildNumber()})
         </Text>
       </View>
     );
@@ -345,7 +430,7 @@ class AccountMenuList extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    margin: 10,
+    marginTop: 10,
   },
   item: {
     margin: 10,
@@ -374,31 +459,32 @@ const styles = StyleSheet.create({
   title: {
     color: colorConfig.store.title,
     letterSpacing: 1,
-    fontSize: 16,
+    fontSize: 14,
     // fontWeight: 'bold',
     fontFamily: 'Lato-Bold',
   },
   headingMenu: {
+    marginLeft: 15,
     color: colorConfig.pageIndex.grayColor,
     fontSize: 18,
-    fontWeight: 'bold',
     fontFamily: 'Lato-Bold',
-    marginBottom: 13,
+    marginBottom: 7,
   },
   cardMenu: {
     flexDirection: 'row',
+    paddingLeft: 5,
     backgroundColor: 'white',
     borderRadius: 5,
-    paddingVertical: 5,
-    marginBottom: 12,
-    shadowColor: '#00000021',
-    shadowOffset: {
-      width: 0,
-      height: 9,
-    },
-    shadowOpacity: 0.7,
-    shadowRadius: 7.49,
-    elevation: 12,
+    // paddingVertical: 5,
+    marginBottom: 5,
+    // shadowColor: '#00000021',
+    // shadowOffset: {
+    //   width: 0,
+    //   height: 9,
+    // },
+    // shadowOpacity: 0.7,
+    // shadowRadius: 7.49,
+    // elevation: 12,
   },
 });
 

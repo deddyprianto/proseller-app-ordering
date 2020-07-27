@@ -125,16 +125,11 @@ export default class Splash extends Component {
               resizeMode="contain"
             />
           ) : (
-            <ImageBackground
-              source={appConfig.appBackground}
-              style={styles.backgroundImage}
-              resizeMode="stretch">
-              <Animated.Image
-                source={appConfig.appLogo}
-                style={imageStyle}
-                resizeMode="contain"
-              />
-            </ImageBackground>
+            <Animated.Image
+              source={appConfig.appLogo}
+              style={imageStyle}
+              resizeMode="contain"
+            />
           )}
         </Animated.View>
       </View>

@@ -12,7 +12,7 @@ export default class StampsPlaceHolder extends Component {
     return (
       <View
         style={{
-          marginTop: 5,
+          marginTop: 10,
           flexDirection: 'row',
           justifyContent: 'space-between',
         }}>

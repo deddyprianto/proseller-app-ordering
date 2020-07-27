@@ -143,5 +143,13 @@
   "addToBasket": "Tambah ke ",
   "basket": "Keranjang",
   "changeOrderMode": "Ubah Mode Pesan",
-  "bucketEmpty": "Maaf, keranjang anda kosong"
+  "bucketEmpty": "Maaf, keranjang anda kosong",
+  "pleaseCompleteProfile": "Mohon lengkapi informasi profil anda untuk mendapatkan point",
+  "pleaseCompleteProfileStamps": "Mohon lengkapi informasi profil anda untuk mendapatkan stempel",
+  "defaultPaymentAccount": "Akun Pembayaran Default",
+  "myPaymentOptions": "Opsi Pembayaran",
+  "settings": "Pengaturan",
+  "myDeliveryAddress": "Alamat Pengiriman",
+  "notifications": "Notifikasi",
+  "notYesAdded": "BELUM ADA"
 }

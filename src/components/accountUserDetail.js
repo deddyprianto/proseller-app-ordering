@@ -91,7 +91,9 @@ export default class AccountUserDetail extends Component {
                   zIndex: 2,
                 }}>
                 {userDetail != undefined
-                  ? userDetail.customerGroupName.toUpperCase()
+                  ? userDetail.customerGroupName != undefined
+                    ? userDetail.customerGroupName.toUpperCase()
+                    : ''
                   : ''}
               </Text>
               <ShimmerPlaceHolder

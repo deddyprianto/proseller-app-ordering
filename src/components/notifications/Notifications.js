@@ -20,7 +20,7 @@ import {
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
 import colorConfig from '../../config/colorConfig';
-import {updateUser} from '../../actions/user.action';
+import {getUserProfile, updateUser} from '../../actions/user.action';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
 import Loader from '../loader';
@@ -97,6 +97,7 @@ class Notifications extends Component {
       }
 
       const response = await this.props.dispatch(updateUser(dataProfile));
+      await this.props.dispatch(getUserProfile());
       if (response) {
         Snackbar.show({
           text: message,

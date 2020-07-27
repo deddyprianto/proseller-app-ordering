@@ -160,7 +160,7 @@ class Header extends Component {
             )}
             <Text
               style={{
-                marginTop: 6,
+                marginTop: 10,
                 color: colorConfig.store.titleSelected,
                 fontSize: 22,
                 fontFamily: 'Lato-Bold',

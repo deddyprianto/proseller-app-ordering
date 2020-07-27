@@ -88,7 +88,6 @@ class AllVouchers extends Component {
       );
       if (data == undefined || data.length == 0) voucherNotShowing = true;
     }
-    console.log(voucherNotShowing, 'voucherNotShowing');
     return (
       <View>
         <ScrollView

@@ -69,7 +69,7 @@ export default class StoreDetailPromotion extends Component {
         </View>
         <View style={styles.card}>
           <ProgressiveImage
-            resizeMode="stretch"
+            resizeMode="contain"
             style={styles.imageStamp}
             source={{uri: this.props.dataPromotion.defaultImageURL}}
           />
@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
   },
   imageStamp: {
     width: '100%',
-    height: 130,
+    height: Dimensions.get('window').width / 3,
     shadowColor: '#00000021',
     shadowOffset: {
       width: 0,

@@ -97,7 +97,9 @@ export default class StoreStores extends Component {
                             color: colorConfig.pageIndex.grayColor,
                             fontSize: 11,
                           }}>
-                          {item.storeJarak.toFixed(1) + ' KM'}
+                          {isNaN(item.storeJarak.toFixed(1))
+                            ? '0 KM'
+                            : item.storeJarak.toFixed(1) + ' KM'}
                         </Text>
                       </View>
                     ) : null}

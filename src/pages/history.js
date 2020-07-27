@@ -29,7 +29,7 @@ class History extends Component {
       refreshing: false,
     };
 
-    OneSignal.inFocusDisplaying(1);
+    // OneSignal.inFocusDisplaying(1);
   }
 
   componentDidMount = async () => {

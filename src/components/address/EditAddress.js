@@ -34,6 +34,7 @@ import appConfig from '../../config/appConfig';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {getAddress, getCityAddress} from '../../actions/address.action';
 import SearchableDropdown from 'react-native-searchable-dropdown';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview';
 
 const theme = {
   ...DefaultTheme,
@@ -251,9 +252,7 @@ class EditAddress extends Component {
             <Text style={styles.btnBackText}> Edit Address </Text>
           </TouchableOpacity>
         </View>
-        <KeyboardAvoidingView
-          behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
-          style={{padding: 15}}>
+        <KeyboardAwareScrollView style={{padding: 15}}>
           <DropDownPicker
             items={[
               {label: 'Home', value: 'Home'},
@@ -335,7 +334,7 @@ class EditAddress extends Component {
           ) : null}
 
           <TextInput
-            style={{height: 50, marginVertical: 10}}
+            style={{height: 55, marginVertical: 10}}
             theme={theme}
             multiline={true}
             mode={'outlined'}
@@ -350,7 +349,7 @@ class EditAddress extends Component {
           {awsConfig.COUNTRY != 'Singapore' ? (
             <TextInput
               style={{
-                height: 50,
+                height: 55,
                 marginVertical: 10,
               }}
               theme={theme}
@@ -362,7 +361,7 @@ class EditAddress extends Component {
           ) : null}
 
           <TextInput
-            style={{height: 50, marginVertical: 10}}
+            style={{height: 55, marginVertical: 10}}
             theme={theme}
             keyboardType={'numeric'}
             mode={'outlined'}
@@ -388,7 +387,7 @@ class EditAddress extends Component {
               Save
             </Text>
           </TouchableOpacity>
-        </KeyboardAvoidingView>
+        </KeyboardAwareScrollView>
       </SafeAreaView>
     );
   }

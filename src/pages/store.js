@@ -214,10 +214,12 @@ class Store extends Component {
             storeName: response.data[i].name,
             storeStatus: this._cekOpen(response.data[i]),
             storeJarak: statusLocation
-              ? geolib.getDistance(position.coords, {
-                  latitude: Number(response.data[i].latitude),
-                  longitude: Number(response.data[i].longitude),
-                }) / 1000
+              ? this.getDistance(
+                  geolib.getDistance(position.coords, {
+                    latitude: Number(response.data[i].latitude),
+                    longitude: Number(response.data[i].longitude),
+                  }) / 1000,
+                )
               : '-',
             image:
               response.data[i].defaultImageURL != undefined
@@ -236,6 +238,9 @@ class Store extends Component {
             maxOrderQtyPerItem: response.data[i].maxOrderQtyPerItem,
             maxOrderAmount: response.data[i].maxOrderAmount,
             lastOrderOn: response.data[i].lastOrderOn,
+            enableRedeemPoint: response.data[i].enableRedeemPoint,
+            enableItemSpecialInstructions:
+              response.data[i].enableItemSpecialInstructions,
             enableDineIn:
               response.data[i].enableDineIn == false ||
               response.data[i].enableDineIn == '-'
@@ -306,6 +311,15 @@ class Store extends Component {
     }
     return comparison;
   }
+
+  getDistance = distance => {
+    try {
+      if (isNaN(distance)) return 0;
+      else return distance;
+    } catch (e) {
+      return 0;
+    }
+  };
 
   getOperationalHours = data => {
     try {
@@ -431,6 +445,15 @@ class Store extends Component {
         <View
           style={{
             backgroundColor: colorConfig.pageIndex.backgroundColor,
+            paddingVertical: 3,
+            shadowColor: '#00000021',
+            shadowOffset: {
+              width: 0,
+              height: 9,
+            },
+            shadowOpacity: 0.7,
+            shadowRadius: 7.49,
+            elevation: 12,
           }}>
           <View
             style={{
@@ -444,7 +467,7 @@ class Store extends Component {
                 paddingTop: 5,
               }}>
               <Image
-                resizeMode="stretch"
+                resizeMode="contain"
                 style={styles.imageLogo}
                 source={appConfig.appLogo}
               />
@@ -472,18 +495,14 @@ class Store extends Component {
                     fontFamily: 'Lato-Bold',
                   }}>
                   {this.props.userDetail != undefined
-                    ? userDetail.name.split(' ')[0]
+                    ? userDetail.name != undefined
+                      ? userDetail.name.split(' ')[0]
+                      : ''
                     : ''}
                 </Text>
               </View>
             </View>
           </View>
-          <View
-            style={{
-              borderBottomColor: colorConfig.store.defaultColor,
-              borderBottomWidth: 2,
-            }}
-          />
         </View>
         <ScrollView
           style={styles.scrollView}

@@ -1,3 +1,5 @@
+import awsConfig from '../config/awsConfig';
+
 const setLanguage = language => {
   let messages = {};
   switch (language) {
@@ -14,7 +16,7 @@ const setLanguage = language => {
 
 const initialState = {
   locale: 'en',
-  messages: setLanguage('en'),
+  messages: setLanguage(awsConfig.LOCALES),
 };
 
 const intlData = (state = initialState, action) => {
@@ -26,7 +28,15 @@ const intlData = (state = initialState, action) => {
         messages: setLanguage(action.language),
       };
     default:
+      // if (state != undefined) {
+      //   console.log({state});
+      // return {
+      //   locale: state.locale,
+      //   messages: setLanguage(state.locale),
+      // };
+      // } else {
       return state;
+    // }
   }
 };
 export default intlData;

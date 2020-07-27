@@ -66,6 +66,11 @@ class Products2 extends Component {
   constructor(props) {
     super(props);
 
+    /* CHECK IF ONLY ONE OUTLET IS ACTIVATED */
+    if (this.props.item === undefined) {
+      this.props.item = this.props.oneOutlet;
+    }
+
     this.RBSheet = null;
     this.productsLength = 0;
     this.products = [];
@@ -320,7 +325,7 @@ class Products2 extends Component {
     if (!isEmptyObject(productTemp)) {
       setTimeout(() => {
         this.openModal(productTemp);
-      }, 30);
+      }, 600);
     }
   };
 
@@ -658,6 +663,8 @@ class Products2 extends Component {
         categories.finished = true;
 
         await this.setState({categories});
+      } else {
+        await this.setState({products: []});
       }
     } catch (e) {
       // Alert.alert('Opss..', 'Something went wrong, please try again.');
@@ -920,16 +927,16 @@ class Products2 extends Component {
       await this.setState({
         selectedCategoryModifier: 0,
         selectedProduct: product,
-        isModalVisible: !this.state.isModalVisible,
+        isModalVisible: true,
       });
     } else {
       setTimeout(async () => {
         await this.setState({
           selectedCategoryModifier: 0,
           selectedProduct: product,
-          isModalVisible: !this.state.isModalVisible,
+          isModalVisible: true,
         });
-      }, 30);
+      }, 800);
     }
   };
 
@@ -2373,6 +2380,8 @@ class Products2 extends Component {
       item.storeName = outlet.name;
       item.outletType = outlet.outletType;
       item.orderingStatus = outlet.orderingStatus;
+      item.enableItemSpecialInstructions = outlet.enableItemSpecialInstructions;
+      item.enableRedeemPoint = outlet.enableRedeemPoint;
 
       this.props.item = item;
 
@@ -2489,6 +2498,7 @@ class Products2 extends Component {
     return (
       <SafeAreaView style={styles.container}>
         <ModalOrder
+          outlet={item}
           intlData={intlData}
           isModalVisible={this.state.isModalVisible}
           qtyItem={this.state.qtyItem}
@@ -2715,6 +2725,7 @@ mapStateToProps = state => ({
   dataBasket: state.orderReducer.dataBasket.product,
   orderType: state.userReducer.orderType.orderType,
   dataStores: state.storesReducer.dataStores.stores,
+  oneOutlet: state.storesReducer.oneOutlet.oneOutlet,
   dataLength: state.orderReducer.productsOutlet.dataLength,
   intlData: state.intlData,
 });

@@ -24,12 +24,14 @@ import Rewards from '../components/rewardsRewards';
 import RewardsQRmenu from '../components/rewardsQRmenu';
 import RewardsQRscan from '../components/rewardsQRscan';
 import VoucherDetail from '../components/voucherDetail';
+import DetailPoint from '../components/DetailPoint';
 import HistoryDetailPayment from '../components/history/historyDetailPayment';
 import StoreDetailStores from '../components/storeDetailStores';
 import StoreSeeMorePromotion from '../components/storeSeeMorePromotion';
 import StoreDetailPromotion from '../components/storeDetailPromotion';
 import StoresMap from '../components/storesMap';
 import MyVouchers from '../components/vouchers/MyVouchers';
+import RedeemVoucher from '../components/vouchers/RedeemVouchers';
 import AllVouchers from '../components/vouchers/AllVouchers';
 import AccountEditProfil from '../components/accountEditProfil';
 import EditProfile from '../components/editProfile';
@@ -161,8 +163,9 @@ export default class Routes extends Component {
             />
             <Scene key="storeSeeMap" component={StoresMap} />
             <Scene key="myVouchers" component={MyVouchers} />
+            <Scene key="redeemVoucher" component={RedeemVoucher} />
             <Scene key="accountEditProfil" component={AccountEditProfil} />
-            <Scene key="editProfile" component={EditProfile} />
+            <Scene  key="editProfile" component={EditProfile} />
             <Scene key="paymentDetail" component={PaymentDetail} />
             <Scene
               key="paymentSuccess"
@@ -175,6 +178,7 @@ export default class Routes extends Component {
             <Scene key="inboxDetail" component={InboxDetail} />
             <Scene key="paymentAddPoint" component={PaymentAddPoint} />
             <Scene key="detailStamps" component={RewardsStamps} />
+            <Scene key="detailPoint" component={DetailPoint} />
             <Scene key="order" component={Order} />
             <Scene key="categoryProducts" component={CategoryProducts} />
             <Scene key="products" component={Products} />

@@ -30,7 +30,7 @@ import awsConfig from '../../config/awsConfig';
 import PhoneInput from 'react-native-phone-input';
 import CountryPicker from 'react-native-country-picker-modal';
 import {addReferral} from '../../actions/referral.action';
-import Contacts from 'react-native-contacts';
+// import Contacts from 'react-native-contacts';
 import {isEmptyArray} from '../../helper/CheckEmpty';
 import _ from 'lodash';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -210,53 +210,53 @@ class AddReferral extends Component {
           }
         });
       } else {
-        this.loadContacts();
+        // this.loadContacts();
       }
     } catch (e) {}
   };
 
-  loadContacts = async () => {
-    await this.setState({loading: true});
-    try {
-      Contacts.getAll((err, contacts) => {
-        if (err === 'denied') {
-          console.warn('Permission to access contacts was denied');
-          Alert.alert('Permission', 'You denied permission to access contacts');
-        } else {
-          let dataContacts = [];
-
-          try {
-            for (let i = 0; i < contacts.length; i++) {
-              if (
-                contacts[i].displayName != null &&
-                contacts[i].displayName != '' &&
-                contacts[i].displayName != undefined &&
-                !isEmptyArray(contacts[i].phoneNumbers)
-              ) {
-                let data = {
-                  name: contacts[i].displayName,
-                  phoneNumber: contacts[i].phoneNumbers[0].number,
-                };
-                dataContacts.push(data);
-              }
-            }
-            dataContacts = _.sortBy(dataContacts, [
-              function(o) {
-                return o.name;
-              },
-            ]);
-          } catch (e) {}
-          Actions.push('contacts', {
-            dataContacts,
-            setPhoneNumber: this.setPhoneNumber,
-          });
-        }
-      });
-    } catch (e) {}
-    setTimeout(() => {
-      this.setState({loading: false});
-    }, 1000);
-  };
+  // loadContacts = async () => {
+  //   await this.setState({loading: true});
+  //   try {
+  //     Contacts.getAll((err, contacts) => {
+  //       if (err === 'denied') {
+  //         console.warn('Permission to access contacts was denied');
+  //         Alert.alert('Permission', 'You denied permission to access contacts');
+  //       } else {
+  //         let dataContacts = [];
+  //
+  //         try {
+  //           for (let i = 0; i < contacts.length; i++) {
+  //             if (
+  //               contacts[i].displayName != null &&
+  //               contacts[i].displayName != '' &&
+  //               contacts[i].displayName != undefined &&
+  //               !isEmptyArray(contacts[i].phoneNumbers)
+  //             ) {
+  //               let data = {
+  //                 name: contacts[i].displayName,
+  //                 phoneNumber: contacts[i].phoneNumbers[0].number,
+  //               };
+  //               dataContacts.push(data);
+  //             }
+  //           }
+  //           dataContacts = _.sortBy(dataContacts, [
+  //             function(o) {
+  //               return o.name;
+  //             },
+  //           ]);
+  //         } catch (e) {}
+  //         Actions.push('contacts', {
+  //           dataContacts,
+  //           setPhoneNumber: this.setPhoneNumber,
+  //         });
+  //       }
+  //     });
+  //   } catch (e) {}
+  //   setTimeout(() => {
+  //     this.setState({loading: false});
+  //   }, 1000);
+  // };
 
   render() {
     const {modeInvitation} = this.state;

@@ -3286,10 +3286,10 @@ data-urls@^1.1.0:
     whatwg-mimetype "^2.2.0"
     whatwg-url "^7.0.0"
 
-date-fns@^2.14.0:
-  version "2.14.0"
-  resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.14.0.tgz#359a87a265bb34ef2e38f93ecf63ac453f9bc7ba"
-  integrity sha512-1zD+68jhFgDIM0rF05rcwYO8cExdNqxjq4xP1QKM60Q45mnO6zaMWB4tOzrIr4M4GSLntsKeE4c9Bdl2jhL/yw==
+date-fns@^2.15.0:
+  version "2.15.0"
+  resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.15.0.tgz#424de6b3778e4e69d3ff27046ec136af58ae5d5f"
+  integrity sha512-ZCPzAMJZn3rNUvvQIMlXhDr4A+Ar07eLeGsGREoWU19a3Pqf5oYa+ccd+B3F6XVtQY6HANMFdOQ8A+ipFnvJdQ==
 
 dayjs@^1.8.15:
   version "1.8.19"
@@ -6277,10 +6277,25 @@ lodash.debounce@4.0.8:
   resolved "https://registry.yarnpkg.com/lodash.debounce/-/lodash.debounce-4.0.8.tgz#82d79bff30a67c4005ffd5e2515300ad9ca4d7af"
   integrity sha1-gteb/zCmfEAF/9XiUVMArZyk168=
 
+lodash.isfunction@^3.0.9:
+  version "3.0.9"
+  resolved "https://registry.yarnpkg.com/lodash.isfunction/-/lodash.isfunction-3.0.9.tgz#06de25df4db327ac931981d1bdb067e5af68d051"
+  integrity sha512-AirXNj15uRIMMPihnkInB4i3NHeb4iBtNg9WRWuK2o31S+ePwwNmDPaTL3o7dTJ+VXNZim7rFs4rxN4YU1oUJw==
+
+lodash.isnil@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/lodash.isnil/-/lodash.isnil-4.0.0.tgz#49e28cd559013458c814c5479d3c663a21bfaa6c"
+  integrity sha1-SeKM1VkBNFjIFMVHnTxmOiG/qmw=
+
 lodash.once@^4.1.1:
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/lodash.once/-/lodash.once-4.1.1.tgz#0dd3971213c7c56df880977d504c88fb471a97ac"
   integrity sha1-DdOXEhPHxW34gJd9UEyI+0cal6w=
+
+lodash.pick@^4.4.0:
+  version "4.4.0"
+  resolved "https://registry.yarnpkg.com/lodash.pick/-/lodash.pick-4.4.0.tgz#52f05610fff9ded422611441ed1fc123a03001b3"
+  integrity sha1-UvBWEP/53tQiYRRB7R/BI6AwAbM=
 
 lodash.sortby@^4.7.0:
   version "4.7.0"
@@ -8037,11 +8052,6 @@ react-native-config@^0.12.0:
   resolved "https://registry.yarnpkg.com/react-native-config/-/react-native-config-0.12.0.tgz#910e52226b60e0c9f2b648772eea2a93f8701751"
   integrity sha512-lC8QOZCGCXgFh74uWSVGMaChg+Qf2BScWzVd9C4yrFnfxrHSFyIekqOOq/sjE8Uu2ifgxZmSiK1Z8EEi78AmQA==
 
-react-native-contacts@^5.2.3:
-  version "5.2.3"
-  resolved "https://registry.yarnpkg.com/react-native-contacts/-/react-native-contacts-5.2.3.tgz#d0192d695fef3cf590a39f56d817c861c4ae6bc0"
-  integrity sha512-dD//eKxZ3Id8yzewjJOzXUC1qeB9RXNEJ/JemAHUx6YsJ0t13lYfR+h71TtSMklMAoOchVtw9Qv6FRxwaCBb2Q==
-
 react-native-country-picker-modal@^1.10.0:
   version "1.10.0"
   resolved "https://registry.yarnpkg.com/react-native-country-picker-modal/-/react-native-country-picker-modal-1.10.0.tgz#ff4a3b73f08d5241f75f9edfaa2ad4cc0b1823f7"
@@ -8081,13 +8091,13 @@ react-native-drawer@2.5.1:
     prop-types "^15.5.8"
     tween-functions "^1.0.1"
 
-react-native-dropdown-picker@^3.0.5:
-  version "3.0.5"
-  resolved "https://registry.yarnpkg.com/react-native-dropdown-picker/-/react-native-dropdown-picker-3.0.5.tgz#f5c66dcf0aa2e4a0c68eccf7a68f841ec5fa91e1"
-  integrity sha512-0aFKde6AF62++Dzbjj3GmOERBRlo2oVziWI9y/49rSbSCUClSo0YdeRLEpp5SAizgYFDQf+SMee7eqcH3hGpWg==
+react-native-dropdown-picker@^3.1.11:
+  version "3.1.11"
+  resolved "https://registry.yarnpkg.com/react-native-dropdown-picker/-/react-native-dropdown-picker-3.1.11.tgz#663efcef168e7e56bb34fb8e1d54bc5e2de82b22"
+  integrity sha512-2dY5Kt9iVN/IXSfruU89rIEM0WXjfspKuJ/hVobaHYiTzJ2gy7xHRakUYkbDrsWrMgAq7+Q+iTp3c92CQjnTWg==
   dependencies:
     prop-types "^15.7.2"
-    react-native-vector-icons "^6.6.0"
+    react-native-vector-icons "^7.0.0"
 
 react-native-easy-grid@0.2.2:
   version "0.2.2"
@@ -8147,6 +8157,11 @@ react-native-half-modal@^0.2.5:
   resolved "https://registry.yarnpkg.com/react-native-half-modal/-/react-native-half-modal-0.2.5.tgz#8bd48751e280a6324699f5a90685cafdf85aa875"
   integrity sha512-KOwQEfccHyykl+T3EwBK3Yy+VkpaJ26mRu67QwDPqR5hKp5h0iFGg+sEs3CLS6+vxDOzp/ChwhTJttpI25B7ng==
 
+react-native-haptic-feedback@^1.10.0:
+  version "1.10.0"
+  resolved "https://registry.yarnpkg.com/react-native-haptic-feedback/-/react-native-haptic-feedback-1.10.0.tgz#869d2e7179a17226becf43173c6f6495038524a0"
+  integrity sha512-2aEXYTLrQq2N3phaGJ23V0x6qsIz4j1vhTck9A7geTfW7J54mOfk1Pr4Y1WEMMKptFA9p78kZHBb31IIE+g37w==
+
 react-native-intl@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/react-native-intl/-/react-native-intl-1.0.0.tgz#c1e2281125f925b323d1c8837586774876abe703"
@@ -8164,6 +8179,11 @@ react-native-keyboard-aware-scroll-view@0.9.1:
   dependencies:
     prop-types "^15.6.2"
     react-native-iphone-x-helper "^1.0.3"
+
+react-native-keyboard-aware-scrollview@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/react-native-keyboard-aware-scrollview/-/react-native-keyboard-aware-scrollview-2.1.0.tgz#418a6b868f4cf2f9d28e77914f11ecbf8ae8e556"
+  integrity sha512-XfWozWFPhdecfxN+wuqERX3mCGDrAim5siC6TWg3Qw7wK/zlwIwe1UIsHDNOQCzf9oIh0SkZXvoOFsMrnyIVmQ==
 
 react-native-linear-gradient@^2.5.6:
   version "2.5.6"
@@ -8360,6 +8380,11 @@ react-native-svg@^9.13.2:
     css-select "^2.0.2"
     css-tree "^1.0.0-alpha.37"
 
+react-native-swipe-list-view@^3.2.3:
+  version "3.2.3"
+  resolved "https://registry.yarnpkg.com/react-native-swipe-list-view/-/react-native-swipe-list-view-3.2.3.tgz#2b4aa361f26b6e55efe38a829ce122dff6c00292"
+  integrity sha512-f0B92eZiO0mCk7ZFtn8tbLz4lb+mR8xzcfjFqCVSDeXnuNw7GenUMsccGnclIOhnxnip5BHvUHavlD41peGqig==
+
 react-native-swiper@^1.6.0-nightly.5:
   version "1.6.0-nightly.5"
   resolved "https://registry.yarnpkg.com/react-native-swiper/-/react-native-swiper-1.6.0-nightly.5.tgz#894319918ff22680c325b8052457ccf213a7c7cd"
@@ -8397,6 +8422,25 @@ react-native-vector-icons@^6.6.0:
     lodash "^4.0.0"
     prop-types "^15.6.2"
     yargs "^13.2.2"
+
+react-native-vector-icons@^7.0.0:
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-vector-icons/-/react-native-vector-icons-7.0.0.tgz#5b92ed363c867645daad48c559e1f99efcfbb813"
+  integrity sha512-Ku8+dTUAnR9pexRPQqsUcQEZlxEpFZsIy8iOFqVL/3mrUyncZJHtqJyx2cUOmltZIC6W2GI4IkD3EYzPerXV5g==
+  dependencies:
+    lodash "^4.17.15"
+    prop-types "^15.7.2"
+    yargs "^15.0.2"
+
+react-native-version-check@^3.4.1:
+  version "3.4.1"
+  resolved "https://registry.yarnpkg.com/react-native-version-check/-/react-native-version-check-3.4.1.tgz#6629da999104b281a5f0358c1b69a8ea7ae81ea9"
+  integrity sha512-9VNeeSBFyzI8kD3PoYub7rHssc8eCi8k8cUbEQ3pdo+PCmj+b8LsMvf6EoNmBusGOEh++fCVOyqvY8Qljti1mA==
+  dependencies:
+    lodash.isfunction "^3.0.9"
+    lodash.isnil "^4.0.0"
+    lodash.pick "^4.4.0"
+    semver "^6.1.1"
 
 react-native-webview@^9.0.1:
   version "9.0.1"
@@ -10592,6 +10636,14 @@ yargs-parser@^16.1.0:
     camelcase "^5.0.0"
     decamelize "^1.2.0"
 
+yargs-parser@^18.1.2:
+  version "18.1.3"
+  resolved "https://registry.yarnpkg.com/yargs-parser/-/yargs-parser-18.1.3.tgz#be68c4975c6b2abf469236b0c870362fab09a7b0"
+  integrity sha512-o50j0JeToy/4K6OZcaQmW6lyXXKhq7csREXcDwk2omFPJEwUNOVtJKvmDr9EI1fAJZUyZcRF7kxGBWmRXudrCQ==
+  dependencies:
+    camelcase "^5.0.0"
+    decamelize "^1.2.0"
+
 yargs-parser@^7.0.0:
   version "7.0.0"
   resolved "https://registry.yarnpkg.com/yargs-parser/-/yargs-parser-7.0.0.tgz#8d0ac42f16ea55debd332caf4c4038b3e3f5dfd9"
@@ -10658,6 +10710,23 @@ yargs@^15.0.0:
     which-module "^2.0.0"
     y18n "^4.0.0"
     yargs-parser "^16.1.0"
+
+yargs@^15.0.2:
+  version "15.4.1"
+  resolved "https://registry.yarnpkg.com/yargs/-/yargs-15.4.1.tgz#0d87a16de01aee9d8bec2bfbf74f67851730f4f8"
+  integrity sha512-aePbxDmcYW++PaqBsJ+HYUFwCdv4LVvdnhBy78E57PIor8/OVvhMrADFFEDh8DHDFRv/O9i3lPhsENjO7QX0+A==
+  dependencies:
+    cliui "^6.0.0"
+    decamelize "^1.2.0"
+    find-up "^4.1.0"
+    get-caller-file "^2.0.1"
+    require-directory "^2.1.1"
+    require-main-filename "^2.0.0"
+    set-blocking "^2.0.0"
+    string-width "^4.2.0"
+    which-module "^2.0.0"
+    y18n "^4.0.0"
+    yargs-parser "^18.1.2"
 
 yargs@^8.0.2:
   version "8.0.2"

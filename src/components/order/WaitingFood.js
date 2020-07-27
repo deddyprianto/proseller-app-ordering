@@ -27,6 +27,7 @@ import {isEmptyArray} from '../../helper/CheckEmpty';
 import appConfig from '../../config/appConfig';
 import Snackbar from 'react-native-snackbar';
 import awsConfig from '../../config/awsConfig';
+import {refreshToken} from '../../actions/auth.actions';
 
 class WaitingFood extends Component {
   constructor(props) {
@@ -42,8 +43,8 @@ class WaitingFood extends Component {
 
       // get data continously
       if (this.props.dataBasket != undefined) {
-        clearInterval(this.interval);
-        this.interval = setInterval(() => {
+        clearInterval(this.intervalWaitingFood);
+        this.intervalWaitingFood = setInterval(() => {
           this.props.dispatch(getCart(this.props.myCart.id));
         }, 2000);
       }
@@ -67,13 +68,14 @@ class WaitingFood extends Component {
 
   getBasket = async () => {
     this.setState({loading: true});
-    this.props.dispatch(getCart(this.props.myCart.id));
+    await this.props.dispatch(refreshToken());
+    await this.props.dispatch(getCart(this.props.myCart.id));
   };
 
   componentWillUnmount() {
     try {
       this.backHandler.remove();
-      clearInterval(this.interval);
+      clearInterval(this.intervalWaitingFood);
     } catch (e) {}
   }
 
@@ -131,8 +133,8 @@ class WaitingFood extends Component {
           <TouchableOpacity
             onPress={() => {
               try {
-                clearInterval(this.interval);
-                this.interval = undefined;
+                clearInterval(this.intervalWaitingFood);
+                this.intervalWaitingFood = undefined;
               } catch (e) {}
               Actions.replace('QRCodeCart', {myCart: dataBasket});
             }}
@@ -242,8 +244,8 @@ class WaitingFood extends Component {
             disabled={dataBasket.status == 'ON_THE_WAY' ? false : true}
             onPress={() => {
               try {
-                clearInterval(this.interval);
-                this.interval = undefined;
+                clearInterval(this.intervalWaitingFood);
+                this.intervalWaitingFood = undefined;
               } catch (e) {}
               this.askUserToCompleteOrder();
             }}
@@ -800,15 +802,28 @@ class WaitingFood extends Component {
     if (dataBasket == undefined) {
       try {
         Actions.reset('pageIndex', {fromPayment: true});
-        clearInterval(this.interval);
-        this.interval = undefined;
+        clearInterval(this.intervalWaitingFood);
+        this.intervalWaitingFood = undefined;
       } catch (e) {}
     }
 
     return (
       <SafeAreaView style={styles.container}>
         {this.detailOrder()}
-        <View style={{backgroundColor: colorConfig.pageIndex.backgroundColor}}>
+        <View
+          style={{
+            backgroundColor: colorConfig.pageIndex.backgroundColor,
+            marginBottom: 10,
+            paddingVertical: 3,
+            shadowColor: '#00000021',
+            shadowOffset: {
+              width: 0,
+              height: 6,
+            },
+            shadowOpacity: 0.37,
+            shadowRadius: 7.49,
+            elevation: 12,
+          }}>
           <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
             <Icon
               size={28}
@@ -819,7 +834,6 @@ class WaitingFood extends Component {
             />
             <Text style={styles.btnBackText}>Waiting Order</Text>
           </TouchableOpacity>
-          <View style={styles.line} />
         </View>
 
         <View style={{height: '35%'}}>

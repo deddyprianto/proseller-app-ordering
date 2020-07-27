@@ -33,6 +33,7 @@ const dataPoint = (state = {}, action) => {
         ...state,
         totalPoint: action.totalPoint,
         campaignActive: action.campaignActive,
+        detailPoint: action.detailPoint,
       };
     default:
       return state;

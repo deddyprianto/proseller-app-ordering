@@ -41,7 +41,7 @@ class StorePromotion extends Component {
         {/*  <Text style={styles.seeAllTitle}>See More</Text>*/}
         {/*</TouchableOpacity>*/}
         {this.props.dataPromotion == undefined ? null : this.props.dataPromotion
-            .count < 0 ? null : (
+            .length === 0 ? null : (
           <Swiper
             style={styles.swiper}
             autoplay={true}
@@ -57,7 +57,6 @@ class StorePromotion extends Component {
                 style={styles.slide}
                 onPress={() => this.storeDetailPromotion(item)}>
                 <Image
-                  resizeMode="stretch"
                   style={styles.image}
                   source={{
                     uri: item.defaultImageURL,
@@ -120,8 +119,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   image: {
-    width: Dimensions.get('window').width - 40,
+    width: '100%',
+    height: '100%',
     flex: 1,
+    resizeMode: 'cover',
   },
   titleSlide: {
     color: colorConfig.pageIndex.activeTintColor,

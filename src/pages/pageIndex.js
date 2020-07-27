@@ -3,11 +3,12 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import {createAppContainer} from 'react-navigation';
 import {createMaterialBottomTabNavigator} from 'react-navigation-material-bottom-tabs';
 import {Container} from 'native-base';
-import {Alert, Dimensions, SafeAreaView, Text, View} from 'react-native';
+import {Dimensions} from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
 import {Platform} from 'react-native';
 import Store from './store';
+import Products2 from '../components/order/Products2';
 import History from './history';
 import Rewards from './rewards';
 import Inbox from './inbox';
@@ -17,6 +18,19 @@ import IconMail from '../components/atom/IconMail';
 
 const AppTabNavigator = createMaterialBottomTabNavigator(
   {
+    // Store: {
+    //   screen: Products2,
+    //   navigationOptions: {
+    //     title: 'Store',
+    //     tabBarIcon: ({tintColor, focused}) => (
+    //       <Icon
+    //         size={28}
+    //         name={Platform.OS === 'ios' ? 'ios-cart' : 'md-cart'}
+    //         style={{color: tintColor}}
+    //       />
+    //     ),
+    //   },
+    // },
     Store: {
       screen: Store,
       navigationOptions: {
@@ -66,6 +80,7 @@ const AppTabNavigator = createMaterialBottomTabNavigator(
       },
     },
     Account: {
+      // path: 'first',
       screen: Account,
       navigationOptions: {
         title: 'Profile',
@@ -81,8 +96,9 @@ const AppTabNavigator = createMaterialBottomTabNavigator(
   },
   {
     initialRouteName: 'Rewards',
-    activeTintColor: colorConfig.pageIndex.activeTintColor,
-    inactiveTintColor: colorConfig.pageIndex.inactiveTintColor,
+    activeColor: colorConfig.store.defaultColor,
+    inactiveColor: colorConfig.pageIndex.grayColor,
+    shifting: false,
     barStyle: {
       backgroundColor: colorConfig.pageIndex.backgroundColor,
       fontFamily: 'Lato-Medium',
@@ -156,8 +172,9 @@ const AppTabNavigatorHistory = createMaterialBottomTabNavigator(
   },
   {
     initialRouteName: 'History',
-    activeTintColor: colorConfig.pageIndex.activeTintColor,
-    inactiveTintColor: colorConfig.pageIndex.inactiveTintColor,
+    activeColor: colorConfig.store.defaultColor,
+    inactiveColor: colorConfig.pageIndex.grayColor,
+    shifting: false,
     barStyle: {
       backgroundColor: colorConfig.pageIndex.backgroundColor,
       fontFamily: 'Lato-Medium',

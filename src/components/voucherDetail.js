@@ -24,6 +24,7 @@ import {redeemVoucher, campaign, dataPoint} from '../actions/rewards.action';
 import {myVoucers} from '../actions/account.action';
 import Loader from './loader';
 import * as _ from 'lodash';
+import {isEmptyArray} from '../helper/CheckEmpty';
 
 class VoucherDetail extends Component {
   constructor(props) {
@@ -151,6 +152,32 @@ class VoucherDetail extends Component {
       showAlert: false,
     });
   }
+
+  refreshMyVouchers = () => {
+    let myVoucers = [];
+    try {
+      if (
+        this.props.myVoucers != undefined &&
+        !isEmptyArray(this.props.myVoucers)
+      ) {
+        _.forEach(
+          _.groupBy(
+            this.props.myVoucers.filter(voucher => voucher.deleted == false),
+            'id',
+          ),
+          function(value, key) {
+            value[0].totalRedeem = value.length;
+            myVoucers.push(value[0]);
+          },
+        );
+
+        this.props.setVouchers(myVoucers);
+      }
+      Actions.popTo('paymentAddVoucers');
+    } catch {
+      Actions.pop();
+    }
+  };
 
   render() {
     const {intlData} = this.props;
@@ -343,8 +370,22 @@ class VoucherDetail extends Component {
           }}
           onConfirmPressed={() => {
             if (this.state.titleAlert == 'Success!') {
-              this.hideAlert();
-            } else if (this.state.titleAlert == `${this.intlData.messages.redeemVoucher} ?`) {
+              try {
+                if (
+                  this.props.from != undefined &&
+                  this.props.from === 'paymentAddVoucers'
+                ) {
+                  this.refreshMyVouchers();
+                } else {
+                  Actions.pop();
+                }
+              } catch (e) {
+                this.hideAlert();
+              }
+            } else if (
+              this.state.titleAlert ==
+              `${this.intlData.messages.redeemVoucher} ?`
+            ) {
               this.btnRedeem(this.props.dataVoucher);
             } else {
               this.hideAlert();

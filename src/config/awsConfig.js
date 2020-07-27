@@ -43,8 +43,8 @@
 // export default awsConfig;
 
 import Config from 'react-native-config';
-import ENV from '../../env-ios-demo';
-// import ENV from '../../env-ios';
+// import ENV from '../../env-ios-demo';
+import ENV from '../../env-ios';
 import Base64 from 'Base64';
 import {Platform} from 'react-native';
 
@@ -87,6 +87,8 @@ const awsConfig = {
 
   // RSA PRIVATE KEY
   PRIVATE_KEY_RSA: Base64.atob(Data.PRIVATE_KEY_RSA),
+
+  APP_DEEP_LINK: Data.appUrl,
 };
 
 export default awsConfig;

@@ -89,7 +89,7 @@ export const getCategoryByOutlet = (OutletId, refresh) => {
         token,
       );
 
-      // console.log('RESPONSE GET CATEGORY ', response);
+      console.log('RESPONSE GET CATEGORY ', response);
 
       if (response.success == true) {
         // dispatch({
@@ -308,10 +308,10 @@ export const removeBasket = () => {
       );
       console.log(response, 'response delete basket');
       // remove basket
-      dispatch({
-        type: 'DATA_BASKET',
-        product: undefined,
-      });
+      // dispatch({
+      //   type: 'DATA_BASKET',
+      //   product: undefined,
+      // });
       // remove table type
       dispatch({
         type: 'TABLE_TYPE',

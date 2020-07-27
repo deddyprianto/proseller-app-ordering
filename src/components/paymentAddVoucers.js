@@ -16,7 +16,7 @@ import {
   BackHandler,
   Alert,
   Platform,
-  SafeAreaView
+  SafeAreaView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -30,19 +30,32 @@ export default class PaymentAddVoucers extends Component {
     this.state = {
       screenWidth: Dimensions.get('window').width,
       currentDay: new Date(),
+      data: this.props.data,
     };
   }
 
   componentDidMount() {
-    this.backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      this.handleBackPress,
-    );
+    try {
+      this.backHandler = BackHandler.addEventListener(
+        'hardwareBackPress',
+        this.handleBackPress,
+      );
+    } catch (e) {}
   }
 
   componentWillUnmount() {
-    this.backHandler.remove();
+    try {
+      this.backHandler.remove();
+    } catch (e) {}
   }
+
+  setVouchers = data => {
+    try {
+      this.setState({
+        data,
+      });
+    } catch (e) {}
+  };
 
   handleBackPress = () => {
     this.goBack(); // works best when the goBack is async
@@ -133,7 +146,7 @@ export default class PaymentAddVoucers extends Component {
 
   render() {
     const {intlData} = this.props;
-    const myVoucers = this.props.data;
+    const myVoucers = this.state.data;
     return (
       <SafeAreaView style={styles.container}>
         <View style={{backgroundColor: colorConfig.pageIndex.backgroundColor}}>
@@ -145,7 +158,7 @@ export default class PaymentAddVoucers extends Component {
               }
               style={styles.btnBackIcon}
             />
-            <Text style={styles.btnBackText}> {intlData.messages.back} </Text>
+            <Text style={styles.btnBackText}> Select Vouchers </Text>
           </TouchableOpacity>
           <View style={styles.line} />
         </View>
@@ -293,6 +306,18 @@ export default class PaymentAddVoucers extends Component {
               ))
           )}
         </ScrollView>
+        <TouchableOpacity
+          onPress={() => {
+            Actions.redeemVoucher({setVouchers: this.setVouchers});
+          }}
+          style={styles.buttonBottomFixed}>
+          <Icon
+            size={25}
+            name={Platform.OS === 'ios' ? 'ios-bookmark' : 'md-bookmark'}
+            style={{color: 'white', marginRight: 10}}
+          />
+          <Text style={styles.textAddCard}>Redeem Voucher</Text>
+        </TouchableOpacity>
       </SafeAreaView>
     );
   }
@@ -391,5 +416,25 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     paddingTop: 0,
     color: colorConfig.pageIndex.backgroundColor,
+  },
+  textAddCard: {
+    fontSize: 18,
+    color: 'white',
+    fontWeight: 'bold',
+    fontFamily: 'Lato-Bold',
+  },
+  buttonBottomFixed: {
+    backgroundColor: colorConfig.store.defaultColor,
+    padding: 15,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    shadowColor: '#00000021',
+    shadowOffset: {
+      width: 0,
+      height: 6,
+    },
+    shadowOpacity: 0.37,
+    shadowRadius: 7.49,
+    elevation: 12,
   },
 });

@@ -77,6 +77,26 @@ export const getOutletById = id => {
         type: 'DATA_OUTLET_SINGLE',
         data: response.response.data,
       });
+
+      if (response.success == true) {
+        return response.response.data;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const setSingleOutlet = outlet => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      dispatch({
+        type: 'ONE_OUTLET',
+        data: outlet,
+      });
     } catch (error) {
       return error;
     }

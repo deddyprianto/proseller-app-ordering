@@ -1255,47 +1255,49 @@ export default class ModalOrder extends Component {
                 </View>
               </View>
 
-              <KeyboardAvoidingView
-                style={[styles.cardModal, {paddingBottom: 20}]}
-                enabled
-                keyboardVerticalOffset={Platform.select({
-                  ios: 0,
-                  android: 500,
-                })}>
-                <Text style={styles.titleModifierModal}>
-                  Special Instructions{' '}
-                  <Text
-                    style={{
-                      color: colorConfig.pageIndex.inactiveTintColor,
-                      fontSize: 12,
-                    }}>
-                    Optional
+              {this.props.outlet.enableItemSpecialInstructions == true ? (
+                <KeyboardAvoidingView
+                  style={[styles.cardModal, {paddingBottom: 20}]}
+                  enabled
+                  keyboardVerticalOffset={Platform.select({
+                    ios: 0,
+                    android: 500,
+                  })}>
+                  <Text style={styles.titleModifierModal}>
+                    Special Instructions{' '}
+                    <Text
+                      style={{
+                        color: colorConfig.pageIndex.inactiveTintColor,
+                        fontSize: 12,
+                      }}>
+                      Optional
+                    </Text>
                   </Text>
-                </Text>
-                <View style={{flexDirection: 'column', paddingBottom: 20}}>
-                  <TextInput
-                    onFocus={() =>
-                      this.scrollView.scrollToEnd({animated: true})
-                    }
-                    value={this.props.remark}
-                    onChangeText={value => this.props.changeRemarkText(value)}
-                    placeholder={'Place your note here...'}
-                    style={{
-                      borderRadius: 3,
-                      marginHorizontal: 14,
-                      padding: 5,
-                      height: 50,
-                      borderWidth: 1,
-                      fontSize: 13,
-                      color: colorConfig.pageIndex.grayColor,
-                      fontFamily: 'Lato-Medium',
-                      borderColor: colorConfig.pageIndex.inactiveTintColor,
-                      textAlignVertical: 'top',
-                    }}
-                    multiline={true}
-                  />
-                </View>
-              </KeyboardAvoidingView>
+                  <View style={{flexDirection: 'column', paddingBottom: 20}}>
+                    <TextInput
+                      onFocus={() =>
+                        this.scrollView.scrollToEnd({animated: true})
+                      }
+                      value={this.props.remark}
+                      onChangeText={value => this.props.changeRemarkText(value)}
+                      placeholder={'Place your note here...'}
+                      style={{
+                        borderRadius: 3,
+                        marginHorizontal: 14,
+                        padding: 5,
+                        height: 50,
+                        borderWidth: 1,
+                        fontSize: 13,
+                        color: colorConfig.pageIndex.grayColor,
+                        fontFamily: 'Lato-Medium',
+                        borderColor: colorConfig.pageIndex.inactiveTintColor,
+                        textAlignVertical: 'top',
+                      }}
+                      multiline={true}
+                    />
+                  </View>
+                </KeyboardAvoidingView>
+              ) : null}
 
               {/*<View style={[styles.cardModal, {height: 60}]} />*/}
             </ScrollView>
@@ -1457,7 +1459,7 @@ const styles = StyleSheet.create({
   lineBottom: {
     borderBottomColor: colorConfig.pageIndex.inactiveTintColor,
     borderBottomWidth: 0.55,
-    marginHorizontal: 15
+    marginHorizontal: 15,
   },
   detailOptionsModalYesNo: {
     marginLeft: 15,
