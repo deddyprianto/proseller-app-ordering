@@ -138,7 +138,7 @@ android {
         applicationId "com.ustar"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 14
+        versionCode 15
         versionName "1.1"
         missingDimensionStrategy 'react-native-camera', 'general'
         resValue "string", "build_config_package", "com.ustar"
@@ -201,9 +201,9 @@ android {
                 targetSdkVersion rootProject.ext.targetSdkVersion
                 resValue "string", "build_config_package", "com.ustar"
             }
-            app {
+            staff {
                 minSdkVersion rootProject.ext.minSdkVersion
-                applicationId 'com.ustar.app'
+                applicationId 'com.ustar.staff'
                 versionName "1.1"
                 targetSdkVersion rootProject.ext.targetSdkVersion
                 resValue "string", "build_config_package", "com.ustar"
