@@ -336,6 +336,8 @@ PODS:
     - Shimmer (~> 1)
   - react-native-uuid-generator (6.1.1):
     - React
+  - react-native-version-check (3.4.1):
+    - React
   - react-native-viewpager (3.3.0):
     - React
   - react-native-webview (9.0.1):
@@ -395,11 +397,15 @@ PODS:
     - React
   - RNPermissions (2.0.9):
     - React
+  - RNReactNativeHapticFeedback (1.10.0):
+    - React
   - RNReanimated (1.7.0):
     - React
   - RNSentry (1.3.1):
     - React
     - Sentry (~> 4.4.0)
+  - RNSnackbar (2.2.3):
+    - React
   - RNSVG (9.13.6):
     - React
   - RNVectorIcons (6.6.0):
@@ -444,6 +450,7 @@ DEPENDENCIES:
   - react-native-onesignal (from `../node_modules/react-native-onesignal`)
   - react-native-shimmer (from `../node_modules/react-native-shimmer`)
   - react-native-uuid-generator (from `../node_modules/react-native-uuid-generator`)
+  - react-native-version-check (from `../node_modules/react-native-version-check`)
   - "react-native-viewpager (from `../node_modules/@react-native-community/viewpager`)"
   - react-native-webview (from `../node_modules/react-native-webview`)
   - React-RCTActionSheet (from `../node_modules/react-native/Libraries/ActionSheetIOS`)
@@ -464,8 +471,10 @@ DEPENDENCIES:
   - "RNFBCrashlytics (from `../node_modules/@react-native-firebase/crashlytics`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNPermissions (from `../node_modules/react-native-permissions`)
+  - RNReactNativeHapticFeedback (from `../node_modules/react-native-haptic-feedback`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - "RNSentry (from `../node_modules/@sentry/react-native`)"
+  - RNSnackbar (from `../node_modules/react-native-snackbar`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
@@ -561,6 +570,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-shimmer"
   react-native-uuid-generator:
     :path: "../node_modules/react-native-uuid-generator"
+  react-native-version-check:
+    :path: "../node_modules/react-native-version-check"
   react-native-viewpager:
     :path: "../node_modules/@react-native-community/viewpager"
   react-native-webview:
@@ -599,10 +610,14 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-gesture-handler"
   RNPermissions:
     :path: "../node_modules/react-native-permissions"
+  RNReactNativeHapticFeedback:
+    :path: "../node_modules/react-native-haptic-feedback"
   RNReanimated:
     :path: "../node_modules/react-native-reanimated"
   RNSentry:
     :path: "../node_modules/@sentry/react-native"
+  RNSnackbar:
+    :path: "../node_modules/react-native-snackbar"
   RNSVG:
     :path: "../node_modules/react-native-svg"
   RNVectorIcons:
@@ -665,6 +680,7 @@ SPEC CHECKSUMS:
   react-native-onesignal: 80fc3683083d23b17a2aba180f965dc83bd77efd
   react-native-shimmer: d9e6f436e8b0318da2b6f391e04725363b01c2d9
   react-native-uuid-generator: 82ffa2a1cac94242ebed52c4dedc5044d3412717
+  react-native-version-check: 40245490503879ff64f020b285ebc4075abd40c7
   react-native-viewpager: a7b438ca32c57b2614ece2a123e7fe116f743131
   react-native-webview: 3f2f9934ba8633a170d209cb84045b6cbc5e5f48
   React-RCTActionSheet: 600b4d10e3aea0913b5a92256d2719c0cdd26d76
@@ -684,8 +700,10 @@ SPEC CHECKSUMS:
   RNFBCrashlytics: 93e1cc09a93aa4bb1e9b5a07af0efb2702db5a39
   RNGestureHandler: 02905abe54e1f6e59c081a10b4bd689721e17aa6
   RNPermissions: 2f74237e97b08beda01e914301e12524ddddf5b8
+  RNReactNativeHapticFeedback: 22c5ecf474428766c6b148f96f2ff6155cd7225e
   RNReanimated: 031fe8d9ea93c2bd689a40f05320ef9d96f74d7f
   RNSentry: 6458ba85aa3f8ae291abed4f72abbd7080839c71
+  RNSnackbar: a08d0d7e1e18c7312cd2b9c6f476211267855bce
   RNSVG: 8ba35cbeb385a52fd960fd28db9d7d18b4c2974f
   RNVectorIcons: 0bb4def82230be1333ddaeee9fcba45f0b288ed4
   Sentry: 14bdd673870e8cf64932b149fad5bbbf39a9b390
