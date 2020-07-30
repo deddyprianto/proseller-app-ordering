@@ -56,7 +56,7 @@
 		07D29F7341A34399B8E33E01 /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/native-base/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
 		0879CA77FF868BA300D95B7F /* Pods-Qiji.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Qiji.release.xcconfig"; path = "Target Support Files/Pods-Qiji/Pods-Qiji.release.xcconfig"; sourceTree = "<group>"; };
 		0FC8840274CD468D92E245A8 /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = SimpleLineIcons.ttf; path = "../node_modules/native-base/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; };
-		13B07F961A680F5B00A75B9A /* U Stars.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "U Stars.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		13B07F961A680F5B00A75B9A /* UStars Staff App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "UStars Staff App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = Qiji/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = Qiji/AppDelegate.m; sourceTree = "<group>"; };
 		13B07FB21A68108700A75B9A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
@@ -241,7 +241,7 @@
 		83CBBA001A601CBA00E9B192 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				13B07F961A680F5B00A75B9A /* U Stars.app */,
+				13B07F961A680F5B00A75B9A /* UStars Staff App.app */,
 				00E356EE1AD99517003FC87E /* UstarsTests.xctest */,
 				2D02E47B1E0B4A5D006451C7 /* Ustars-tvOS.app */,
 				2D02E4901E0B4A5D006451C7 /* Ustars-tvOSTests.xctest */,
@@ -338,7 +338,7 @@
 			);
 			name = Ustars;
 			productName = Qiji;
-			productReference = 13B07F961A680F5B00A75B9A /* U Stars.app */;
+			productReference = 13B07F961A680F5B00A75B9A /* UStars Staff App.app */;
 			productType = "com.apple.product-type.application";
 		};
 		2D02E47A1E0B4A5D006451C7 /* Ustars-tvOS */ = {
@@ -817,7 +817,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Qiji/Qiji.entitlements;
-				CURRENT_PROJECT_VERSION = 25;
+				CURRENT_PROJECT_VERSION = 27;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = YSZ34Z59CY;
 				INFOPLIST_FILE = Qiji/Info.plist;
@@ -829,7 +829,7 @@
 					"-lc++",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.edgeworks.ustars-app";
-				PRODUCT_NAME = "U Stars";
+				PRODUCT_NAME = "UStars Staff App";
 				SWIFT_OBJC_BRIDGING_HEADER = "Qiji-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -844,7 +844,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Qiji/Qiji.entitlements;
-				CURRENT_PROJECT_VERSION = 25;
+				CURRENT_PROJECT_VERSION = 27;
 				DEVELOPMENT_TEAM = YSZ34Z59CY;
 				INFOPLIST_FILE = Qiji/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -855,7 +855,7 @@
 					"-lc++",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.edgeworks.ustars-app";
-				PRODUCT_NAME = "U Stars";
+				PRODUCT_NAME = "UStars Staff App";
 				SWIFT_OBJC_BRIDGING_HEADER = "Qiji-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
