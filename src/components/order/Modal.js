@@ -942,7 +942,9 @@ export default class ModalOrder extends Component {
         return `Optional`;
       } else if (
         item.modifier.min == 1 &&
-        (item.modifier.max == 1 || item.modifier.max <= 0)
+        (item.modifier.max == 1 ||
+          item.modifier.max <= 0 ||
+          item.modifier.max == undefined)
       ) {
         return `Pick 1`;
       } else if (item.modifier.min > 0 && item.modifier.max > 0) {
