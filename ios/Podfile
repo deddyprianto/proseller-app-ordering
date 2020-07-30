@@ -2,7 +2,7 @@ platform :ios, '9.0'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
 target 'Ustars' do
-  # Pods for Qiji
+  # Pods for Ustars
   permissions_path = '../node_modules/react-native-permissions/ios'
 
   pod 'Permission-Camera', :path => "#{permissions_path}/Camera.podspec"
@@ -63,7 +63,7 @@ target 'Ustars' do
 
   pod 'react-native-geolocation', :path => '../node_modules/@react-native-community/geolocation'
 
-  target 'QijiTests' do
+  target 'UstarsTests' do
     inherit! :search_paths
     # Pods for testing
   end
@@ -72,7 +72,7 @@ target 'Ustars' do
 end
 
 target 'Ustars-tvOS' do
-  # Pods for Qiji-tvOS
+  # Pods for Ustars-tvOS
 
   target 'Ustars-tvOSTests' do
     inherit! :search_paths
