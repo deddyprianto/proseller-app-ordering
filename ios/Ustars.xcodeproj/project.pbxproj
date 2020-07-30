@@ -9,22 +9,22 @@
 /* Begin PBXBuildFile section */
 		00E356F31AD99517003FC87E /* QijiTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* QijiTests.m */; };
 		0476245040064097B9D1D051 /* Lato-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F2539776D32B4B29B0B8C8A7 /* Lato-Bold.ttf */; };
-		112729949E0BF740CD1E4433 /* libPods-Qiji.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A256DC280C3C4E635F16DE66 /* libPods-Qiji.a */; };
+		136664550EF2C42BBB97CE74 /* libPods-Ustars-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0333BA80AC3D81596ADFD30B /* libPods-Ustars-tvOS.a */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB11A68108700A75B9A /* LaunchScreen.xib */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		260E8F5148DD35FA054AB634 /* libPods-Qiji-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F552E4FC05FB6F9F9628BD72 /* libPods-Qiji-tvOS.a */; };
 		27CFB91208C84B89AAE58C56 /* Lato-Heavy.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 35A970A69DA7440188817DD0 /* Lato-Heavy.ttf */; };
+		2A52B7A6888C2460E3C19221 /* libPods-Ustars.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F64640F9E05E69C2C0B20A89 /* libPods-Ustars.a */; };
 		2D02E4BC1E0B4A80006451C7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		2D02E4BD1E0B4A84006451C7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		2D02E4BF1E0B4AB3006451C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		2DCD954D1E0B4F2C00145EB5 /* QijiTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* QijiTests.m */; };
 		4364869283FE453CB8F3B773 /* Lato-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5004E2CBAFBB4547A8CCA619 /* Lato-Italic.ttf */; };
 		43681597396048A0961F05E9 /* Lato-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 61448CC0B03644E5AE6729E7 /* Lato-Regular.ttf */; };
-		7490C58633EBA5BBB48B1D4E /* libPods-Qiji-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F9AAE5177C0446E6ED8CD2C3 /* libPods-Qiji-tvOSTests.a */; };
+		526656F60CF21488AC8927C4 /* libPods-Ustars-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05ED7DE829EDCB4827FF5B82 /* libPods-Ustars-tvOSTests.a */; };
 		7BB3D94E24568C89007B35B8 /* Qiji.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BB3D94D24568C89007B35B8 /* Qiji.swift */; };
-		8A64F5AC74B7E012BDB13AA6 /* libPods-QijiTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 67AF0806354F730E44E4AE82 /* libPods-QijiTests.a */; };
+		826D26897D1B29CA26481476 /* libPods-UstarsTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D52F391268655D351C91E379 /* libPods-UstarsTests.a */; };
 		942F222339174ACAB6A6FDA4 /* Lato-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 40AD4A3553664601BD423484 /* Lato-Medium.ttf */; };
 		B6FA351076D44777B6129C53 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B8783AC08D84065AC0B2230 /* libz.tbd */; };
 /* End PBXBuildFile section */
@@ -51,18 +51,22 @@
 		00E356EE1AD99517003FC87E /* UstarsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UstarsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* QijiTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = QijiTests.m; sourceTree = "<group>"; };
+		02FFD6118A810F1AF766D06D /* Pods-UstarsTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UstarsTests.debug.xcconfig"; path = "Target Support Files/Pods-UstarsTests/Pods-UstarsTests.debug.xcconfig"; sourceTree = "<group>"; };
+		0333BA80AC3D81596ADFD30B /* libPods-Ustars-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Ustars-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		03D612D6E6AE46A49C9EF182 /* Octicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Octicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Octicons.ttf"; sourceTree = "<group>"; };
 		04D0C37507FF435B83A7D5D4 /* Roboto.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Roboto.ttf; path = "../node_modules/native-base/Fonts/Roboto.ttf"; sourceTree = "<group>"; };
+		05ED7DE829EDCB4827FF5B82 /* libPods-Ustars-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Ustars-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		07D29F7341A34399B8E33E01 /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/native-base/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
 		0879CA77FF868BA300D95B7F /* Pods-Qiji.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Qiji.release.xcconfig"; path = "Target Support Files/Pods-Qiji/Pods-Qiji.release.xcconfig"; sourceTree = "<group>"; };
 		0FC8840274CD468D92E245A8 /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = SimpleLineIcons.ttf; path = "../node_modules/native-base/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; };
-		13B07F961A680F5B00A75B9A /* UStars Staff App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "UStars Staff App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		13B07F961A680F5B00A75B9A /* UStars.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = UStars.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = Qiji/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = Qiji/AppDelegate.m; sourceTree = "<group>"; };
 		13B07FB21A68108700A75B9A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = Qiji/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Qiji/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = Qiji/main.m; sourceTree = "<group>"; };
+		15657DC83F321CE2E25154E3 /* Pods-Ustars-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Ustars-tvOS.debug.xcconfig"; path = "Target Support Files/Pods-Ustars-tvOS/Pods-Ustars-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
 		1B72DACACE284B79B036A8DA /* Feather.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Feather.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Feather.ttf"; sourceTree = "<group>"; };
 		2C3DC72BAF59423B9B8EF4ED /* Roboto_medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Roboto_medium.ttf; path = "../node_modules/native-base/Fonts/Roboto_medium.ttf"; sourceTree = "<group>"; };
 		2D02E47B1E0B4A5D006451C7 /* Ustars-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Ustars-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -86,13 +90,15 @@
 		5E54C8B705E547D6B696A56C /* rubicon-icon-font.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "rubicon-icon-font.ttf"; path = "../node_modules/native-base/Fonts/rubicon-icon-font.ttf"; sourceTree = "<group>"; };
 		61448CC0B03644E5AE6729E7 /* Lato-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Lato-Regular.ttf"; path = "../src/assets/fonts/Lato-Regular.ttf"; sourceTree = "<group>"; };
 		62064FDBDE0F4C309F61F0C0 /* Avenir Roman.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Avenir Roman.otf"; path = "../src/assets/fonts/Avenir Roman.otf"; sourceTree = "<group>"; };
-		67AF0806354F730E44E4AE82 /* libPods-QijiTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-QijiTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		672D2F38AB11A48773378887 /* Pods-Ustars.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Ustars.debug.xcconfig"; path = "Target Support Files/Pods-Ustars/Pods-Ustars.debug.xcconfig"; sourceTree = "<group>"; };
 		681D603EA623CDE0E56F0AE3 /* Pods-QijiTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-QijiTests.debug.xcconfig"; path = "Target Support Files/Pods-QijiTests/Pods-QijiTests.debug.xcconfig"; sourceTree = "<group>"; };
+		68FA99EA51F3F4A2CB4A71D4 /* Pods-Ustars-tvOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Ustars-tvOSTests.debug.xcconfig"; path = "Target Support Files/Pods-Ustars-tvOSTests/Pods-Ustars-tvOSTests.debug.xcconfig"; sourceTree = "<group>"; };
 		69ED6665E3F6450BB9AE6B27 /* Ionicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Ionicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf"; sourceTree = "<group>"; };
 		70C100F033444774AB94D71C /* AntDesign.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = AntDesign.ttf; path = "../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf"; sourceTree = "<group>"; };
 		730C959629B449DB968FA651 /* FontAwesome5_Solid.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Solid.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Solid.ttf"; sourceTree = "<group>"; };
 		74A5200E323F44E8AC0721D8 /* Foundation.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Foundation.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
 		7774919F44DB41218B6811A4 /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = SimpleLineIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; };
+		7B9B169AA713CAE792E10C44 /* Pods-Ustars.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Ustars.release.xcconfig"; path = "Target Support Files/Pods-Ustars/Pods-Ustars.release.xcconfig"; sourceTree = "<group>"; };
 		7BB3D94C24568C89007B35B8 /* Qiji-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Qiji-Bridging-Header.h"; sourceTree = "<group>"; };
 		7BB3D94D24568C89007B35B8 /* Qiji.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Qiji.swift; sourceTree = "<group>"; };
 		7BB3D94F2456C9C3007B35B8 /* Qiji.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Qiji.entitlements; path = Qiji/Qiji.entitlements; sourceTree = "<group>"; };
@@ -100,26 +106,28 @@
 		85986F88DD9B478882E6871F /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/native-base/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
 		9973A613510A02C43AE8D32E /* Pods-Qiji-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Qiji-tvOS.release.xcconfig"; path = "Target Support Files/Pods-Qiji-tvOS/Pods-Qiji-tvOS.release.xcconfig"; sourceTree = "<group>"; };
 		A0BC91CFE3234766897D3F88 /* FontAwesome5_Brands.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Brands.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Brands.ttf"; sourceTree = "<group>"; };
-		A256DC280C3C4E635F16DE66 /* libPods-Qiji.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Qiji.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A6FF59B69ABC43C59EDA18B4 /* Fontisto.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Fontisto.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Fontisto.ttf"; sourceTree = "<group>"; };
 		AB7D62DD040C42A2B611FB0D /* Ionicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Ionicons.ttf; path = "../node_modules/native-base/Fonts/Ionicons.ttf"; sourceTree = "<group>"; };
 		BA0A826735F34A19B2A47275 /* Octicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Octicons.ttf; path = "../node_modules/native-base/Fonts/Octicons.ttf"; sourceTree = "<group>"; };
 		BA75DC515749470BB6A5BB11 /* Fontisto.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Fontisto.ttf; path = "../node_modules/native-base/Fonts/Fontisto.ttf"; sourceTree = "<group>"; };
+		BAA1BAE618EC4A71AA1CD34F /* Pods-Ustars-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Ustars-tvOS.release.xcconfig"; path = "Target Support Files/Pods-Ustars-tvOS/Pods-Ustars-tvOS.release.xcconfig"; sourceTree = "<group>"; };
 		BE9397026B394242A67C5A18 /* Feather.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Feather.ttf; path = "../node_modules/native-base/Fonts/Feather.ttf"; sourceTree = "<group>"; };
+		C6538E5E6EEBD963304B6E18 /* Pods-Ustars-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Ustars-tvOSTests.release.xcconfig"; path = "Target Support Files/Pods-Ustars-tvOSTests/Pods-Ustars-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
 		C9A3B5E8FBDD4EBB91B0B1F4 /* FontAwesome5_Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Regular.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Regular.ttf"; sourceTree = "<group>"; };
 		CA8778DEB0FD4FD787674DC9 /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = "../node_modules/native-base/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
 		CEAC92907F8E4E6E8A8098F0 /* Foundation.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Foundation.ttf; path = "../node_modules/native-base/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
+		D52F391268655D351C91E379 /* libPods-UstarsTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-UstarsTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D7BD8C712156486598A6C52A /* FontAwesome5_Solid.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Solid.ttf; path = "../node_modules/native-base/Fonts/FontAwesome5_Solid.ttf"; sourceTree = "<group>"; };
 		D912DE87CDF55ED088A586B1 /* Pods-Qiji-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Qiji-tvOS.debug.xcconfig"; path = "Target Support Files/Pods-Qiji-tvOS/Pods-Qiji-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
+		DCB055D5125CE6BE57C8D3BE /* Pods-UstarsTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UstarsTests.release.xcconfig"; path = "Target Support Files/Pods-UstarsTests/Pods-UstarsTests.release.xcconfig"; sourceTree = "<group>"; };
 		E09C9D233F064FE7A691C0C7 /* FontAwesome5_Brands.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Brands.ttf; path = "../node_modules/native-base/Fonts/FontAwesome5_Brands.ttf"; sourceTree = "<group>"; };
 		E6CEDEEE8B4E4ABE9AFF98B7 /* Entypo.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Entypo.ttf; path = "../node_modules/native-base/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
 		EA6D1BB2E6C14AF895653436 /* FontAwesome.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome.ttf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
 		F2539776D32B4B29B0B8C8A7 /* Lato-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Lato-Bold.ttf"; path = "../src/assets/fonts/Lato-Bold.ttf"; sourceTree = "<group>"; };
-		F552E4FC05FB6F9F9628BD72 /* libPods-Qiji-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Qiji-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		F64640F9E05E69C2C0B20A89 /* libPods-Ustars.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Ustars.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F82A72A513974AF1948867F4 /* FontAwesome.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome.ttf; path = "../node_modules/native-base/Fonts/FontAwesome.ttf"; sourceTree = "<group>"; };
-		F9AAE5177C0446E6ED8CD2C3 /* libPods-Qiji-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Qiji-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -127,7 +135,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8A64F5AC74B7E012BDB13AA6 /* libPods-QijiTests.a in Frameworks */,
+				826D26897D1B29CA26481476 /* libPods-UstarsTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -136,7 +144,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B6FA351076D44777B6129C53 /* libz.tbd in Frameworks */,
-				112729949E0BF740CD1E4433 /* libPods-Qiji.a in Frameworks */,
+				2A52B7A6888C2460E3C19221 /* libPods-Ustars.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -144,7 +152,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				260E8F5148DD35FA054AB634 /* libPods-Qiji-tvOS.a in Frameworks */,
+				136664550EF2C42BBB97CE74 /* libPods-Ustars-tvOS.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -152,7 +160,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7490C58633EBA5BBB48B1D4E /* libPods-Qiji-tvOSTests.a in Frameworks */,
+				526656F60CF21488AC8927C4 /* libPods-Ustars-tvOSTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -204,6 +212,14 @@
 				4F01AE35B6A5686A17AA57FB /* Pods-Qiji-tvOSTests.release.xcconfig */,
 				681D603EA623CDE0E56F0AE3 /* Pods-QijiTests.debug.xcconfig */,
 				48774C077BF147A0855FF36F /* Pods-QijiTests.release.xcconfig */,
+				672D2F38AB11A48773378887 /* Pods-Ustars.debug.xcconfig */,
+				7B9B169AA713CAE792E10C44 /* Pods-Ustars.release.xcconfig */,
+				15657DC83F321CE2E25154E3 /* Pods-Ustars-tvOS.debug.xcconfig */,
+				BAA1BAE618EC4A71AA1CD34F /* Pods-Ustars-tvOS.release.xcconfig */,
+				68FA99EA51F3F4A2CB4A71D4 /* Pods-Ustars-tvOSTests.debug.xcconfig */,
+				C6538E5E6EEBD963304B6E18 /* Pods-Ustars-tvOSTests.release.xcconfig */,
+				02FFD6118A810F1AF766D06D /* Pods-UstarsTests.debug.xcconfig */,
+				DCB055D5125CE6BE57C8D3BE /* Pods-UstarsTests.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -214,10 +230,10 @@
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				ED2971642150620600B7C4FE /* JavaScriptCore.framework */,
 				4B8783AC08D84065AC0B2230 /* libz.tbd */,
-				A256DC280C3C4E635F16DE66 /* libPods-Qiji.a */,
-				F552E4FC05FB6F9F9628BD72 /* libPods-Qiji-tvOS.a */,
-				F9AAE5177C0446E6ED8CD2C3 /* libPods-Qiji-tvOSTests.a */,
-				67AF0806354F730E44E4AE82 /* libPods-QijiTests.a */,
+				F64640F9E05E69C2C0B20A89 /* libPods-Ustars.a */,
+				0333BA80AC3D81596ADFD30B /* libPods-Ustars-tvOS.a */,
+				05ED7DE829EDCB4827FF5B82 /* libPods-Ustars-tvOSTests.a */,
+				D52F391268655D351C91E379 /* libPods-UstarsTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -241,7 +257,7 @@
 		83CBBA001A601CBA00E9B192 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				13B07F961A680F5B00A75B9A /* UStars Staff App.app */,
+				13B07F961A680F5B00A75B9A /* UStars.app */,
 				00E356EE1AD99517003FC87E /* UstarsTests.xctest */,
 				2D02E47B1E0B4A5D006451C7 /* Ustars-tvOS.app */,
 				2D02E4901E0B4A5D006451C7 /* Ustars-tvOSTests.xctest */,
@@ -338,7 +354,7 @@
 			);
 			name = Ustars;
 			productName = Qiji;
-			productReference = 13B07F961A680F5B00A75B9A /* UStars Staff App.app */;
+			productReference = 13B07F961A680F5B00A75B9A /* UStars.app */;
 			productType = "com.apple.product-type.application";
 		};
 		2D02E47A1E0B4A5D006451C7 /* Ustars-tvOS */ = {
@@ -500,7 +516,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-Qiji-tvOS-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-Ustars-tvOS-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -550,7 +566,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-Qiji-tvOSTests-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-Ustars-tvOSTests-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -572,7 +588,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-Qiji-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-Ustars-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -585,7 +601,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Qiji/Pods-Qiji-resources.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-Ustars/Pods-Ustars-resources.sh",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Entypo.ttf",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf",
@@ -624,7 +640,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Qiji/Pods-Qiji-resources.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Ustars/Pods-Ustars-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		FA6E94600E5205CBC54BCC34 /* [CP] Check Pods Manifest.lock */ = {
@@ -642,7 +658,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-QijiTests-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-UstarsTests-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -755,7 +771,7 @@
 /* Begin XCBuildConfiguration section */
 		00E356F61AD99517003FC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 681D603EA623CDE0E56F0AE3 /* Pods-QijiTests.debug.xcconfig */;
+			baseConfigurationReference = 02FFD6118A810F1AF766D06D /* Pods-UstarsTests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -785,7 +801,7 @@
 		};
 		00E356F71AD99517003FC87E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 48774C077BF147A0855FF36F /* Pods-QijiTests.release.xcconfig */;
+			baseConfigurationReference = DCB055D5125CE6BE57C8D3BE /* Pods-UstarsTests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -812,7 +828,7 @@
 		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3E919C420DB3371976D68FB4 /* Pods-Qiji.debug.xcconfig */;
+			baseConfigurationReference = 672D2F38AB11A48773378887 /* Pods-Ustars.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -822,14 +838,14 @@
 				DEVELOPMENT_TEAM = YSZ34Z59CY;
 				INFOPLIST_FILE = Qiji/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.1;
+				MARKETING_VERSION = 1.1.1;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.edgeworks.ustars-app";
-				PRODUCT_NAME = "UStars Staff App";
+				PRODUCT_NAME = UStars;
 				SWIFT_OBJC_BRIDGING_HEADER = "Qiji-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -839,7 +855,7 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0879CA77FF868BA300D95B7F /* Pods-Qiji.release.xcconfig */;
+			baseConfigurationReference = 7B9B169AA713CAE792E10C44 /* Pods-Ustars.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -848,14 +864,14 @@
 				DEVELOPMENT_TEAM = YSZ34Z59CY;
 				INFOPLIST_FILE = Qiji/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.1;
+				MARKETING_VERSION = 1.1.1;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.edgeworks.ustars-app";
-				PRODUCT_NAME = "UStars Staff App";
+				PRODUCT_NAME = UStars;
 				SWIFT_OBJC_BRIDGING_HEADER = "Qiji-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -864,7 +880,7 @@
 		};
 		2D02E4971E0B4A5E006451C7 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D912DE87CDF55ED088A586B1 /* Pods-Qiji-tvOS.debug.xcconfig */;
+			baseConfigurationReference = 15657DC83F321CE2E25154E3 /* Pods-Ustars-tvOS.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -896,7 +912,7 @@
 		};
 		2D02E4981E0B4A5E006451C7 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9973A613510A02C43AE8D32E /* Pods-Qiji-tvOS.release.xcconfig */;
+			baseConfigurationReference = BAA1BAE618EC4A71AA1CD34F /* Pods-Ustars-tvOS.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -928,7 +944,7 @@
 		};
 		2D02E4991E0B4A5E006451C7 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5992360A8DC52A126FB38FA8 /* Pods-Qiji-tvOSTests.debug.xcconfig */;
+			baseConfigurationReference = 68FA99EA51F3F4A2CB4A71D4 /* Pods-Ustars-tvOSTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NONNULL = YES;
@@ -959,7 +975,7 @@
 		};
 		2D02E49A1E0B4A5E006451C7 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 4F01AE35B6A5686A17AA57FB /* Pods-Qiji-tvOSTests.release.xcconfig */;
+			baseConfigurationReference = C6538E5E6EEBD963304B6E18 /* Pods-Ustars-tvOSTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NONNULL = YES;
