@@ -71,10 +71,10 @@ target 'Ustars' do
   use_native_modules!
 end
 
-target 'Qiji-tvOS' do
+target 'Ustars-tvOS' do
   # Pods for Qiji-tvOS
 
-  target 'Qiji-tvOSTests' do
+  target 'Ustars-tvOSTests' do
     inherit! :search_paths
     # Pods for testing
   end
