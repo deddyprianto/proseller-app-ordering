@@ -76,6 +76,7 @@ import ListLanguages from '../components/language/ListLanguages';
 import ListReferral from '../components/referral/ListReferral';
 import AddReferral from '../components/referral/AddReferral';
 import Contacts from '../components/referral/Contacts';
+import HostedTransaction from '../components/card/HostedTransaction';
 
 let backPressed = 0;
 
@@ -193,6 +194,7 @@ export default class Routes extends Component {
 
             <Scene key="listCard" component={ListCard} />
             <Scene key="hostedPayment" component={HostedPayment} />
+            <Scene key="hostedTrx" component={HostedTransaction} />
             <Scene key="detailCard" component={DetailCard} />
             <Scene key="paymentMethods" component={PaymentMethods} />
             <Scene key="paymentAddCard" component={PaymentAddCard} />

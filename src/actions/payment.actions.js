@@ -1,6 +1,7 @@
 import awsConfig from '../config/awsConfig';
 import CryptoJS from 'react-native-crypto-js';
 import {fetchApiPayment} from '../service/apiPayment';
+import {fetchApi} from '../service/api';
 
 export const getAccountPayment = payload => {
   return async (dispatch, getState) => {
@@ -92,6 +93,32 @@ export const removeCard = payload => {
         token,
       );
       console.log('response delete account', JSON.stringify(response));
+
+      return response;
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const checkStatusPayment = referenceNo => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      const response = await fetchApi(
+        `/sales/status?referenceNo=${referenceNo}`,
+        'GET',
+        null,
+        200,
+        token,
+      );
+      console.log('response status sales', response);
 
       return response;
     } catch (error) {

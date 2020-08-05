@@ -33,7 +33,7 @@ import appConfig from '../config/appConfig';
 import {sendPayment} from '../actions/sales.action';
 // import Loader from './loader';
 import CurrencyFormatter from '../helper/CurrencyFormatter';
-import {isEmptyArray, isEmptyObject} from '../helper/CheckEmpty';
+import {isEmptyArray, isEmptyData, isEmptyObject} from '../helper/CheckEmpty';
 import {
   clearAccount,
   getAccountPayment,
@@ -48,6 +48,8 @@ import LoaderDarker from './LoaderDarker';
 import {getOutletById} from '../actions/stores.action';
 import {refreshToken} from '../actions/auth.actions';
 import {Dialog} from 'react-native-paper';
+import CryptoJS from 'react-native-crypto-js';
+import awsConfig from '../config/awsConfig';
 
 class PaymentDetail extends Component {
   constructor(props) {
@@ -490,9 +492,23 @@ class PaymentDetail extends Component {
     const {intlData, selectedAccount, companyInfo} = this.props;
     const {totalBayar} = this.state;
 
+    let userDetail;
+    try {
+      try {
+        // Decrypt data user
+        let bytes = CryptoJS.AES.decrypt(
+          this.props.userDetail,
+          awsConfig.PRIVATE_KEY_RSA,
+        );
+        userDetail = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+      } catch (e) {
+        userDetail = undefined;
+      }
+    } catch (e) {}
+
     var pembayaran = {};
     try {
-      const UUID = await UUIDGenerator.getRandomUUID();
+      // const UUID = await UUIDGenerator.getRandomUUID();
       this.setState({loading: true});
       pembayaran.price = Number(this.props.pembayaran.payment);
       // pembayaran.outletName = this.props.pembayaran.storeName;
@@ -504,16 +520,24 @@ class PaymentDetail extends Component {
       // if price is 0, then dont add credit card
       if (totalBayar != 0) {
         // Payment Type Detail
-        pembayaran.paymentType = 'CREDITCARD';
-        const creditCardPayload = {
+        // pembayaran.paymentType = 'CREDITCARD';
+        let paymentPayload = {
           accountId: selectedAccount.accountID,
-          cardCVV: selectedAccount.details.CVV,
-          companyID: companyInfo.companyId,
-          referenceNo: UUID,
-          remark: '-',
         };
 
-        pembayaran.creditCardPayload = creditCardPayload;
+        if (!isEmptyArray(companyInfo.paymentTypes)) {
+          const find = companyInfo.paymentTypes.find(
+            item => item.paymentID == selectedAccount.paymentID,
+          );
+          if (find != undefined) {
+            if (find.isAccountRequired == false) {
+              paymentPayload.paymentID = selectedAccount.paymentID;
+              paymentPayload.accountData = userDetail;
+            }
+          }
+        }
+
+        pembayaran.paymentPayload = paymentPayload;
       }
 
       if (
@@ -523,10 +547,6 @@ class PaymentDetail extends Component {
         pembayaran.statusAdd = null;
         pembayaran.redeemValue = 0;
       } else {
-        // pembayaran.beforePrice = this.props.pembayaran.payment;
-        // pembayaran.afterPrice = this.state.totalBayar;
-        // pembayaran.afterPrice = Number(this.state.totalBayar.toFixed(3));
-
         if (this.state.dataVoucer != undefined) {
           pembayaran.voucherId = this.state.dataVoucer.id;
           pembayaran.price = Number(this.state.totalBayar.toFixed(3));
@@ -542,13 +562,23 @@ class PaymentDetail extends Component {
       const response = await this.props.dispatch(sendPayment(pembayaran));
       console.log('reponse payment ', response);
       if (response.success) {
-        //  remove selected account
-        this.props.dispatch(clearAccount());
-        // return back to payment success
-        Actions.paymentSuccess({
-          intlData,
-          dataRespons: response.responseBody.Data.data,
-        });
+        if (response.responseBody.Data.data.action != undefined) {
+          if (response.responseBody.Data.data.action.type === 'url') {
+            Actions.hostedTrx({
+              url: response.responseBody.Data.data.action.url,
+              referenceNo: response.responseBody.Data.data.referenceNo,
+              page: 'paymentDetail',
+            });
+          }
+        } else {
+          //  remove selected account
+          this.props.dispatch(clearAccount());
+          // return back to payment success
+          Actions.paymentSuccess({
+            intlData,
+            dataRespons: response.responseBody.Data.data,
+          });
+        }
       } else {
         //  cancel voucher and pont selected
         this.cencelPoint();
@@ -571,6 +601,7 @@ class PaymentDetail extends Component {
         titleAlert: 'Oopss!',
         failedPay: true,
       });
+      console.log(e)
       this.setState({loading: false});
     }
   };
@@ -1327,6 +1358,7 @@ mapStateToProps = state => ({
   companyInfo: state.userReducer.getCompanyInfo.companyInfo,
   dataStamps: state.rewardsReducer.getStamps,
   intlData: state.intlData,
+  userDetail: state.userReducer.getUser.userDetails,
 });
 
 mapDispatchToProps = dispatch => ({

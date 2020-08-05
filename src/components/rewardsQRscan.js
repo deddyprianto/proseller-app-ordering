@@ -59,8 +59,8 @@ class RewardsQRscan extends Component {
       console.log('scan ', scan);
       if (
         scan.price == undefined ||
-        scan.dataPay == undefined ||
-        scan.referenceNo == undefined
+        scan.dataPay == undefined
+        // scan.referenceNo == undefined
       ) {
         this.setState({
           showAlert: true,
