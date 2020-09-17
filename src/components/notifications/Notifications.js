@@ -157,7 +157,10 @@ class Notifications extends Component {
               left={props => <List.Icon {...props} icon="email" />}
               right={() => (
                 <Switch
-                  trackColor={{false: '#767577', true: '#81b0ff'}}
+                  trackColor={{
+                    false: '#767577',
+                    true: colorConfig.store.disableButton,
+                  }}
                   thumbColor={true ? colorConfig.store.defaultColor : 'white'}
                   ios_backgroundColor="white"
                   onValueChange={() => {
@@ -174,7 +177,10 @@ class Notifications extends Component {
               left={props => <List.Icon {...props} icon="phone" />}
               right={() => (
                 <Switch
-                  trackColor={{false: '#767577', true: '#81b0ff'}}
+                  trackColor={{
+                    false: '#767577',
+                    true: colorConfig.store.disableButton,
+                  }}
                   thumbColor={true ? colorConfig.store.defaultColor : 'white'}
                   ios_backgroundColor="white"
                   onValueChange={() => {

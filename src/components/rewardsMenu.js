@@ -9,8 +9,9 @@ import {
 } from 'react-native';
 import colorConfig from '../config/colorConfig';
 import Icon from 'react-native-vector-icons/Ionicons';
+import Icon2 from 'react-native-vector-icons/FontAwesome';
 import {Actions} from 'react-native-router-flux';
-import {movePageIndex} from '../actions/user.action';
+// import {movePageIndex} from '../actions/user.action';
 
 export default class RewardsMenu extends Component {
   constructor(props) {
@@ -68,11 +69,9 @@ export default class RewardsMenu extends Component {
           </TouchableOpacity>
           <TouchableOpacity onPress={() => this.pageQRCode(this.props)}>
             <View style={{alignItems: 'center'}}>
-              <Icon
+              <Icon2
                 size={this.state.screenHeight / 5 / 2 - 10}
-                name={
-                  Platform.OS === 'ios' ? 'ios-qr-scanner' : 'md-qr-scanner'
-                }
+                name={'qrcode'}
                 style={{color: colorConfig.pageIndex.activeTintColor}}
               />
             </View>
@@ -106,7 +105,7 @@ const styles = StyleSheet.create({
     // borderWidth: 1,
     marginLeft: 20,
     marginRight: 20,
-    borderRadius: 10,
+    borderRadius: 7,
     position: 'absolute',
     top: -(Dimensions.get('window').height / 5) / 2,
     backgroundColor: colorConfig.store.storesItem,

@@ -40,6 +40,7 @@ import CurrencyFormatter from '../../helper/CurrencyFormatter';
 import {
   clearAccount,
   clearAddress,
+  getAccountPayment,
   registerCard,
   selectedAccount,
 } from '../../actions/payment.actions';
@@ -50,6 +51,9 @@ import {defaultPaymentAccount} from '../../actions/user.action';
 import LoaderDarker from '../LoaderDarker';
 import {dataStores, getOutletById} from '../../actions/stores.action';
 import {refreshToken} from '../../actions/auth.actions';
+import CryptoJS from 'react-native-crypto-js';
+import awsConfig from '../../config/awsConfig';
+import {afterPayment, myVoucers} from '../../actions/account.action';
 
 class SettleOrder extends Component {
   constructor(props) {
@@ -72,6 +76,7 @@ class SettleOrder extends Component {
       selectedItem: {},
       refreshing: false,
       outlet: this.props.outlet,
+      paymentFailed: false,
     };
 
     // check if users payment methods is empty
@@ -130,11 +135,23 @@ class SettleOrder extends Component {
   };
 
   componentDidMount = async () => {
-    const {defaultAccount} = this.props;
+    const {defaultAccount, pembayaran} = this.props;
     await this.setState({loading: true});
     await this.props.dispatch(refreshToken());
     await this.setDataPayment(false);
+
+    // get outlet details
     try {
+      const outletID = pembayaran.storeId;
+      const response = await this.props.dispatch(getOutletById(outletID));
+      if (response != false) {
+        await this.setState({outlet: response});
+      }
+    } catch (e) {}
+
+    try {
+      this.props.dispatch(myVoucers());
+      await this.props.dispatch(getAccountPayment());
       await this.setState({loading: false});
     } catch (e) {
       await this.setState({loading: false});
@@ -148,18 +165,50 @@ class SettleOrder extends Component {
 
   checkDefaultPaymentAccount = async () => {
     try {
-      const {defaultAccount, myCardAccount} = this.props;
-      if (!isEmptyArray(myCardAccount)) {
-        const data = await myCardAccount.find(
-          item => item.id == defaultAccount.id,
-        );
-        if (data == undefined) {
-          await this.props.dispatch(defaultPaymentAccount(undefined));
+      const {defaultAccount, myCardAccount, companyInfo} = this.props;
+      if (defaultAccount.isAccountRequired != false) {
+        if (!isEmptyArray(myCardAccount)) {
+          const data = await myCardAccount.find(
+            item => item.id == defaultAccount.id,
+          );
+          if (data == undefined) {
+            await this.props.dispatch(defaultPaymentAccount(undefined));
+            return;
+          } else {
+            this.props.dispatch(selectedAccount(this.props.defaultAccount));
+            return;
+          }
         } else {
-          this.props.dispatch(selectedAccount(this.props.defaultAccount));
+          await this.props.dispatch(defaultPaymentAccount(undefined));
+          return;
         }
       } else {
-        await this.props.dispatch(defaultPaymentAccount(undefined));
+        // check if payment provider was deleted
+        try {
+          if (isEmptyArray(companyInfo.paymentTypes)) {
+            await this.props.dispatch(defaultPaymentAccount(undefined));
+            return;
+          }
+        } catch (e) {}
+
+        try {
+          if (!isEmptyArray(companyInfo.paymentTypes)) {
+            if (!isEmptyObject(defaultAccount)) {
+              const findPaymentProvider = companyInfo.paymentTypes.find(
+                item => item.paymentID == defaultAccount.paymentID,
+              );
+              if (findPaymentProvider == undefined) {
+                await this.props.dispatch(defaultPaymentAccount(undefined));
+                return;
+              }
+            }
+          }
+        } catch (e) {}
+
+        if (!isEmptyObject(defaultAccount)) {
+          this.props.dispatch(selectedAccount(this.props.defaultAccount));
+          return;
+        }
       }
     } catch (e) {}
   };
@@ -219,6 +268,14 @@ class SettleOrder extends Component {
               redeemVoucer = this.state.dataVoucer.voucherValue;
             }
           }
+
+          //  check cap Amount
+          if (this.state.dataVoucer.capAmount != undefined) {
+            let capAmount = parseFloat(this.state.dataVoucer.capAmount);
+            if (redeemVoucer > capAmount && capAmount > 0) {
+              redeemVoucer = capAmount;
+            }
+          }
         }
       } catch (e) {}
 
@@ -249,6 +306,11 @@ class SettleOrder extends Component {
 
   goBack = async () => {
     await this.props.dispatch(clearAccount());
+
+    try {
+      this.props.dispatch(afterPayment(false));
+    } catch (e) {}
+
     Actions.pop();
   };
 
@@ -445,7 +507,9 @@ class SettleOrder extends Component {
       } else {
         return false;
       }
-    } catch (e) {}
+    } catch (e) {
+      return true;
+    }
   };
 
   onSlideRight = async () => {
@@ -481,16 +545,23 @@ class SettleOrder extends Component {
       // if price is 0, then dont add credit card
       if (totalBayar != 0) {
         // Payment Type Detail
-        pembayaran.paymentType = 'CREDITCARD';
-        const creditCardPayload = {
-          accountId: selectedAccount.accountID,
-          cardCVV: selectedAccount.details.CVV,
-          companyID: companyInfo.companyId,
-          referenceNo: UUID,
-          remark: '-',
-        };
+        let paymentPayload = {};
 
-        pembayaran.creditCardPayload = creditCardPayload;
+        if (!isEmptyArray(companyInfo.paymentTypes)) {
+          const find = companyInfo.paymentTypes.find(
+            item => item.paymentID == selectedAccount.paymentID,
+          );
+          if (find != undefined) {
+            paymentPayload.paymentID = selectedAccount.paymentID;
+            paymentPayload.paymentName = selectedAccount.paymentName;
+
+            if (find.isAccountRequired != false) {
+              paymentPayload.accountId = selectedAccount.accountID;
+            }
+          }
+        }
+
+        pembayaran.paymentPayload = paymentPayload;
       }
 
       if (
@@ -544,26 +615,47 @@ class SettleOrder extends Component {
       }
 
       // get url
-      const {url} = this.props;
+      let {url} = this.props;
+      // if (this.state.paymentFailed) {
+      //   url = '/cart/settle';
+      // }
       console.log('Payload settle order ', JSON.stringify(pembayaran));
       console.log('URL settle order ', url);
+
       const response = await this.props.dispatch(settleOrder(pembayaran, url));
       console.log('reponse pembayaran settle order ', response);
       if (response.success) {
-        //  remove selected account
-        this.props.dispatch(clearAccount());
-        this.props.dispatch(clearAddress());
+        try {
+          this.props.dispatch(afterPayment(true));
+        } catch (e) {}
 
-        // get pending order
-        this.props.dispatch(getPendingCart());
+        if (response.responseBody.data.action != undefined) {
+          if (response.responseBody.data.action.type === 'url') {
+            Actions.hostedTrx({
+              url: response.responseBody.data.action.url,
+              urlSettle: url,
+              referenceNo: response.responseBody.data.referenceNo,
+              cartID: this.props.pembayaran.cartID,
+              page: 'settleOrder',
+            });
+            this.setState({loading: false});
+          }
+        } else {
+          //  remove selected account
+          this.props.dispatch(clearAccount());
+          this.props.dispatch(clearAddress());
 
-        // go to payment success
-        const {url} = this.props;
-        Actions.paymentSuccess({
-          intlData,
-          url,
-          dataRespons: response.responseBody.data,
-        });
+          // get pending order
+          this.props.dispatch(getPendingCart());
+
+          // go to payment success
+          const {url} = this.props;
+          Actions.paymentSuccess({
+            intlData,
+            url,
+            dataRespons: response.responseBody.data,
+          });
+        }
       } else {
         //  cancel voucher and pont selected
         this.setState({loading: false, failedPay: true});
@@ -585,6 +677,7 @@ class SettleOrder extends Component {
       //  cancel voucher and pont selected
       this.cencelPoint();
       this.cencelVoucher();
+      console.log(e);
       Alert.alert('Oppss', 'Something went wrong, please try again');
       this.setState({loading: false, failedPay: true});
     }
@@ -705,12 +798,16 @@ class SettleOrder extends Component {
 
   selectedPaymentMethod = selectedAccount => {
     try {
-      if (!isEmptyObject(selectedAccount)) {
-        let number = selectedAccount.details.maskedAccountNumber;
-        number = number.substr(number.length - 4, 4);
-        return `${selectedAccount.details.cardIssuer.toUpperCase()} ${number}`;
+      if (selectedAccount.isAccountRequired != false) {
+        if (!isEmptyObject(selectedAccount)) {
+          let number = selectedAccount.details.maskedAccountNumber;
+          number = number.substr(number.length - 4, 4);
+          return `${selectedAccount.details.cardIssuer.toUpperCase()} ${number}`;
+        } else {
+          return null;
+        }
       } else {
-        return null;
+        return selectedAccount.paymentName;
       }
     } catch (e) {
       return null;
@@ -777,6 +874,8 @@ class SettleOrder extends Component {
                 style={{
                   color: colorConfig.pageIndex.activeTintColor,
                   margin: 10,
+                  marginLeft: 20,
+                  paddingRight: 50,
                 }}
               />
             </TouchableOpacity>
@@ -787,7 +886,7 @@ class SettleOrder extends Component {
                 justifyContent: 'center',
                 marginTop: 10,
                 marginBottom: 10,
-                left: -20,
+                left: -50,
               }}>
               <Text
                 style={{
@@ -1028,6 +1127,7 @@ class SettleOrder extends Component {
               )}
             </View>
             {this.props.campaignActive &&
+            outlet != undefined &&
             outlet.enableRedeemPoint &&
             detailPoint != undefined &&
             !isEmptyObject(detailPoint.trigger) &&
@@ -1108,7 +1208,7 @@ class SettleOrder extends Component {
                     ? colorConfig.store.defaultColor
                     : colorConfig.store.disableButton,
                 padding: 15,
-                borderRadius: 20,
+                borderRadius: 10,
                 justifyContent: 'center',
                 alignItems: 'center',
               }}>

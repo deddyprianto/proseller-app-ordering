@@ -33,7 +33,7 @@ import appConfig from '../config/appConfig';
 import {sendPayment} from '../actions/sales.action';
 // import Loader from './loader';
 import CurrencyFormatter from '../helper/CurrencyFormatter';
-import {isEmptyArray, isEmptyObject} from '../helper/CheckEmpty';
+import {isEmptyArray, isEmptyData, isEmptyObject} from '../helper/CheckEmpty';
 import {
   clearAccount,
   getAccountPayment,
@@ -48,6 +48,9 @@ import LoaderDarker from './LoaderDarker';
 import {getOutletById} from '../actions/stores.action';
 import {refreshToken} from '../actions/auth.actions';
 import {Dialog} from 'react-native-paper';
+import CryptoJS from 'react-native-crypto-js';
+import awsConfig from '../config/awsConfig';
+import {afterPayment, myVoucers} from '../actions/account.action';
 
 class PaymentDetail extends Component {
   constructor(props) {
@@ -151,6 +154,7 @@ class PaymentDetail extends Component {
     } catch (e) {}
 
     try {
+      await this.props.dispatch(myVoucers());
       await this.props.dispatch(getAccountPayment());
       await this.setState({loading: false});
     } catch (e) {
@@ -165,18 +169,50 @@ class PaymentDetail extends Component {
 
   checkDefaultPaymentAccount = async () => {
     try {
-      const {defaultAccount, myCardAccount} = this.props;
-      if (!isEmptyArray(myCardAccount)) {
-        const data = await myCardAccount.find(
-          item => item.id == defaultAccount.id,
-        );
-        if (data == undefined) {
-          await this.props.dispatch(defaultPaymentAccount(undefined));
+      const {defaultAccount, myCardAccount, companyInfo} = this.props;
+      if (defaultAccount.isAccountRequired != false) {
+        if (!isEmptyArray(myCardAccount)) {
+          const data = await myCardAccount.find(
+            item => item.id == defaultAccount.id,
+          );
+          if (data == undefined) {
+            await this.props.dispatch(defaultPaymentAccount(undefined));
+            return;
+          } else {
+            this.props.dispatch(selectedAccount(this.props.defaultAccount));
+            return;
+          }
         } else {
-          this.props.dispatch(selectedAccount(this.props.defaultAccount));
+          await this.props.dispatch(defaultPaymentAccount(undefined));
+          return;
         }
       } else {
-        await this.props.dispatch(defaultPaymentAccount(undefined));
+        // check if payment provider was deleted
+        try {
+          if (isEmptyArray(companyInfo.paymentTypes)) {
+            await this.props.dispatch(defaultPaymentAccount(undefined));
+            return;
+          }
+        } catch (e) {}
+
+        try {
+          if (!isEmptyArray(companyInfo.paymentTypes)) {
+            if (!isEmptyObject(defaultAccount)) {
+              const findPaymentProvider = companyInfo.paymentTypes.find(
+                item => item.paymentID == defaultAccount.paymentID,
+              );
+              if (findPaymentProvider == undefined) {
+                await this.props.dispatch(defaultPaymentAccount(undefined));
+                return;
+              }
+            }
+          }
+        } catch (e) {}
+
+        if (!isEmptyObject(defaultAccount)) {
+          this.props.dispatch(selectedAccount(this.props.defaultAccount));
+          return;
+        }
       }
     } catch (e) {}
   };
@@ -234,6 +270,13 @@ class PaymentDetail extends Component {
                 100;
             } else if (this.state.dataVoucer.voucherType == 'discAmount') {
               redeemVoucer = this.state.dataVoucer.voucherValue;
+            }
+          }
+          //  check cap Amount
+          if (this.state.dataVoucer.capAmount != undefined) {
+            let capAmount = parseFloat(this.state.dataVoucer.capAmount);
+            if (redeemVoucer > capAmount && capAmount > 0) {
+              redeemVoucer = capAmount;
             }
           }
         }
@@ -462,9 +505,11 @@ class PaymentDetail extends Component {
       } else if (requiredCVV.required == false) {
         return true;
       } else {
-        return false;
+        return true;
       }
-    } catch (e) {}
+    } catch (e) {
+      return true;
+    }
   };
 
   onSlideRight = async () => {
@@ -492,7 +537,7 @@ class PaymentDetail extends Component {
 
     var pembayaran = {};
     try {
-      const UUID = await UUIDGenerator.getRandomUUID();
+      // const UUID = await UUIDGenerator.getRandomUUID();
       this.setState({loading: true});
       pembayaran.price = Number(this.props.pembayaran.payment);
       // pembayaran.outletName = this.props.pembayaran.storeName;
@@ -504,16 +549,23 @@ class PaymentDetail extends Component {
       // if price is 0, then dont add credit card
       if (totalBayar != 0) {
         // Payment Type Detail
-        pembayaran.paymentType = 'CREDITCARD';
-        const creditCardPayload = {
-          accountId: selectedAccount.accountID,
-          cardCVV: selectedAccount.details.CVV,
-          companyID: companyInfo.companyId,
-          referenceNo: UUID,
-          remark: '-',
-        };
+        let paymentPayload = {};
 
-        pembayaran.creditCardPayload = creditCardPayload;
+        if (!isEmptyArray(companyInfo.paymentTypes)) {
+          const find = companyInfo.paymentTypes.find(
+            item => item.paymentID == selectedAccount.paymentID,
+          );
+          if (find != undefined) {
+            paymentPayload.paymentID = selectedAccount.paymentID;
+            paymentPayload.paymentName = selectedAccount.paymentName;
+
+            if (find.isAccountRequired != false) {
+              paymentPayload.accountId = selectedAccount.accountID;
+            }
+          }
+        }
+
+        pembayaran.paymentPayload = paymentPayload;
       }
 
       if (
@@ -523,10 +575,6 @@ class PaymentDetail extends Component {
         pembayaran.statusAdd = null;
         pembayaran.redeemValue = 0;
       } else {
-        // pembayaran.beforePrice = this.props.pembayaran.payment;
-        // pembayaran.afterPrice = this.state.totalBayar;
-        // pembayaran.afterPrice = Number(this.state.totalBayar.toFixed(3));
-
         if (this.state.dataVoucer != undefined) {
           pembayaran.voucherId = this.state.dataVoucer.id;
           pembayaran.price = Number(this.state.totalBayar.toFixed(3));
@@ -542,13 +590,27 @@ class PaymentDetail extends Component {
       const response = await this.props.dispatch(sendPayment(pembayaran));
       console.log('reponse payment ', response);
       if (response.success) {
-        //  remove selected account
-        this.props.dispatch(clearAccount());
-        // return back to payment success
-        Actions.paymentSuccess({
-          intlData,
-          dataRespons: response.responseBody.Data.data,
-        });
+        try {
+          this.props.dispatch(afterPayment(false));
+        } catch (e) {}
+
+        if (response.responseBody.Data.data.action != undefined) {
+          if (response.responseBody.Data.data.action.type === 'url') {
+            Actions.hostedTrx({
+              url: response.responseBody.Data.data.action.url,
+              referenceNo: response.responseBody.Data.data.referenceNo,
+              page: 'paymentDetail',
+            });
+          }
+        } else {
+          //  remove selected account
+          this.props.dispatch(clearAccount());
+          // return back to payment success
+          Actions.paymentSuccess({
+            intlData,
+            dataRespons: response.responseBody.Data.data,
+          });
+        }
       } else {
         //  cancel voucher and pont selected
         this.cencelPoint();
@@ -571,6 +633,7 @@ class PaymentDetail extends Component {
         titleAlert: 'Oopss!',
         failedPay: true,
       });
+      console.log(e);
       this.setState({loading: false});
     }
   };
@@ -705,12 +768,16 @@ class PaymentDetail extends Component {
 
   selectedPaymentMethod = selectedAccount => {
     try {
-      if (!isEmptyObject(selectedAccount)) {
-        let number = selectedAccount.details.maskedAccountNumber;
-        number = number.substr(number.length - 4, 4);
-        return `${selectedAccount.details.cardIssuer.toUpperCase()} ${number}`;
+      if (selectedAccount.isAccountRequired != false) {
+        if (!isEmptyObject(selectedAccount)) {
+          let number = selectedAccount.details.maskedAccountNumber;
+          number = number.substr(number.length - 4, 4);
+          return `${selectedAccount.details.cardIssuer.toUpperCase()} ${number}`;
+        } else {
+          return null;
+        }
       } else {
-        return null;
+        return selectedAccount.paymentName;
       }
     } catch (e) {
       return null;
@@ -792,6 +859,8 @@ class PaymentDetail extends Component {
                 style={{
                   color: colorConfig.pageIndex.activeTintColor,
                   margin: 10,
+                  marginLeft: 20,
+                  paddingRight: 50,
                 }}
               />
             </TouchableOpacity>
@@ -802,7 +871,7 @@ class PaymentDetail extends Component {
                 justifyContent: 'center',
                 marginTop: 10,
                 marginBottom: 10,
-                left: -20,
+                left: -50,
               }}>
               <Text
                 style={{
@@ -1125,7 +1194,7 @@ class PaymentDetail extends Component {
                     ? colorConfig.store.defaultColor
                     : colorConfig.store.disableButton,
                 padding: 15,
-                borderRadius: 20,
+                borderRadius: 10,
                 justifyContent: 'center',
                 alignItems: 'center',
               }}>
@@ -1327,6 +1396,7 @@ mapStateToProps = state => ({
   companyInfo: state.userReducer.getCompanyInfo.companyInfo,
   dataStamps: state.rewardsReducer.getStamps,
   intlData: state.intlData,
+  userDetail: state.userReducer.getUser.userDetails,
 });
 
 mapDispatchToProps = dispatch => ({

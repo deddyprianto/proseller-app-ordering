@@ -19,12 +19,25 @@ export const myVoucers = () => {
         200,
         token,
       );
-      console.log(response.responseBody.Data, 'response myVoucers');
+      console.log(response, 'response myVoucers');
       var dataVouchers = response.responseBody.Data;
 
       dispatch({
         type: 'DATA_MY_VOUCHERS',
         data: dataVouchers,
+      });
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const afterPayment = status => {
+  return async (dispatch, getState) => {
+    try {
+      dispatch({
+        type: 'AFTER_PAYMENT',
+        data: status,
       });
     } catch (error) {
       return error;

@@ -13,7 +13,7 @@ import {
   FlatList,
   Clipboard,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import {Actions} from 'react-native-router-flux';
 
 import colorConfig from '../../config/colorConfig';
@@ -124,8 +124,8 @@ class WaitingFood extends Component {
             onPress={() => this.RBorder.open()}
             style={styles.btnCancelBasketModal}>
             <Icon
-              size={21}
-              name={Platform.OS === 'ios' ? 'ios-cart' : 'md-cart'}
+              size={18}
+              name={'th-list'}
               style={{color: 'white', marginRight: 5}}
             />
             <Text style={styles.textBtnBasketModal}>View Detail</Text>
@@ -152,10 +152,10 @@ class WaitingFood extends Component {
             ]}>
             <Icon
               size={21}
-              name={Platform.OS === 'ios' ? 'ios-qr-scanner' : 'md-qr-scanner'}
+              name={'qrcode'}
               style={{color: 'white', marginRight: 5}}
             />
-            <Text style={styles.textBtnBasketModal}>Show QR Code</Text>
+            <Text style={styles.textBtnBasketModal}>Order QR Code</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -234,8 +234,8 @@ class WaitingFood extends Component {
             onPress={() => this.RBorder.open()}
             style={styles.btnCancelBasketModal}>
             <Icon
-              size={21}
-              name={Platform.OS === 'ios' ? 'ios-cart' : 'md-cart'}
+              size={18}
+              name={'th-list'}
               style={{color: 'white', marginRight: 5}}
             />
             <Text style={styles.textBtnBasketModal}>View Detail</Text>
@@ -260,7 +260,7 @@ class WaitingFood extends Component {
             ]}>
             <Icon
               size={21}
-              name={Platform.OS === 'ios' ? 'ios-checkbox' : 'md-checkbox'}
+              name={'check-square'}
               style={{color: 'white', marginRight: 5}}
             />
             <Text style={styles.textBtnBasketModal}>Received</Text>
@@ -434,7 +434,10 @@ class WaitingFood extends Component {
               }}>
               {dataBasket.status == 'READY_FOR_DELIVERY'
                 ? 'We are getting ready to deliver your order ... \n \n '
-                : `Go to ${dataBasket.deliveryAddress.address}, ${
+                : // : `Go to ${dataBasket.deliveryAddress.address}, ${
+                  `Go to ${dataBasket.deliveryAddress.streetName}, ${
+                    dataBasket.deliveryAddress.unitNo
+                  }, ${
                     awsConfig.COUNTRY != 'Singapore'
                       ? dataBasket.deliveryAddress.city
                       : awsConfig.COUNTRY
@@ -453,8 +456,8 @@ class WaitingFood extends Component {
               {dataBasket != undefined && dataBasket.trackingNo != undefined ? (
                 <Icon
                   onPress={this.copyTrackingNo}
-                  size={25}
-                  name={Platform.OS === 'ios' ? 'ios-copy' : 'md-copy'}
+                  size={16}
+                  name={'files-o'}
                   style={{color: colorConfig.pageIndex.grayColor}}
                 />
               ) : null}
@@ -664,7 +667,9 @@ class WaitingFood extends Component {
                 <Text style={styles.total}>Delivery Address : </Text>
                 <Text
                   style={[styles.total, {textAlign: 'right', fontSize: 12}]}>
-                  {dataBasket.deliveryAddress.address}
+                  {dataBasket.deliveryAddress.address}{' '}
+                  {dataBasket.deliveryAddress.streetName},{' '}
+                  {dataBasket.deliveryAddress.unitNo}
                   {' \n'}
                   {awsConfig.COUNTRY != 'Singapore'
                     ? dataBasket.deliveryAddress.city
@@ -708,14 +713,14 @@ class WaitingFood extends Component {
                 {CurrencyFormatter(dataBasket.totalNettAmount)}
               </Text>
             </View>
-            {dataBasket.confirmationInfo != undefined ? (
-              dataBasket.confirmationInfo.paymentType != undefined ? (
-                <View style={styles.itemSummary}>
-                  <Text style={styles.total}>Payment Method : </Text>
-                  <Text style={styles.total}>{this.getDetailPayment()}</Text>
-                </View>
-              ) : null
-            ) : null}
+            {/*{dataBasket.confirmationInfo != undefined ? (*/}
+            {/*  dataBasket.confirmationInfo.paymentType != undefined ? (*/}
+            {/*    <View style={styles.itemSummary}>*/}
+            {/*      <Text style={styles.total}>Payment Method : </Text>*/}
+            {/*      <Text style={styles.total}>{this.getDetailPayment()}</Text>*/}
+            {/*    </View>*/}
+            {/*  ) : null*/}
+            {/*) : null}*/}
             {dataBasket.confirmationInfo != undefined ? (
               dataBasket.confirmationInfo.redeemPoint != undefined &&
               dataBasket.confirmationInfo.redeemPoint != 0 ? (
@@ -825,13 +830,7 @@ class WaitingFood extends Component {
             elevation: 12,
           }}>
           <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
-            <Icon
-              size={28}
-              name={
-                Platform.OS === 'ios' ? 'ios-arrow-back' : 'md-arrow-round-back'
-              }
-              style={styles.btnBackIcon}
-            />
+            <Icon size={25} name={'chevron-left'} style={styles.btnBackIcon} />
             <Text style={styles.btnBackText}>Waiting Order</Text>
           </TouchableOpacity>
         </View>

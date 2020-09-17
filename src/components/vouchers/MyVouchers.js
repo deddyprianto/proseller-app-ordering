@@ -28,6 +28,7 @@ import accountsReducer from '../../reducers/accounts.reducer';
 import * as _ from 'lodash';
 import {dataPoint, vouchers} from '../../actions/rewards.action';
 import {myVoucers} from '../../actions/account.action';
+import {format} from 'date-fns';
 
 class MyVouchers extends Component {
   constructor(props) {
@@ -232,6 +233,27 @@ class MyVouchers extends Component {
                             </Text>
                           )}
                         </View>
+                        {item['expiryDate'] && (
+                          <View style={{flexDirection: 'row'}}>
+                            <Icon
+                              size={15}
+                              name={
+                                Platform.OS === 'ios' ? 'ios-alert' : 'md-alert'
+                              }
+                              style={{
+                                color: colorConfig.pageIndex.activeTintColor,
+                                marginRight: 5,
+                              }}
+                            />
+                            <Text style={styles.descVoucher}>
+                              This voucher will expire on{' '}
+                              {format(
+                                new Date(item['expiryDate']),
+                                'dd MMM yyyy',
+                              )}
+                            </Text>
+                          </View>
+                        )}
                       </View>
                     </View>
                   }
@@ -322,7 +344,7 @@ const styles = StyleSheet.create({
   },
   descVoucher: {
     fontSize: 13,
-    color: colorConfig.pageIndex.inactiveTintColor,
+    color: colorConfig.store.titleSelected,
   },
   descVoucherTime: {
     fontSize: 12,

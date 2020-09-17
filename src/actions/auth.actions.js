@@ -8,6 +8,8 @@ import {Alert} from 'react-native';
 import awsConfig from '../config/awsConfig';
 import {fetchApi} from '../service/api';
 import CryptoJS from 'react-native-crypto-js';
+import appConfig from '../config/appConfig';
+import AsyncStorage from '@react-native-community/async-storage';
 
 export const notifikasi = (type, status, action) => {
   Alert.alert(type, status, [
@@ -25,8 +27,6 @@ export const createNewUser = payload => {
       dispatch({
         type: 'CREATE_USER_LOADING',
       });
-      console.log('PAYLOAD CREATE');
-      console.log(payload);
       const response = await fetchApi(
         '/customer/register',
         'POST',
@@ -34,6 +34,38 @@ export const createNewUser = payload => {
         200,
       );
       console.log(response, 'response register');
+      if (response.success) {
+        dispatch({
+          type: 'CREAT_USER_SUCCESS',
+          dataRegister: payload,
+        });
+        return true;
+      } else {
+        return response.responseBody;
+      }
+    } catch (error) {
+      dispatch({
+        type: 'CREAT_USER_FAIL',
+        payload: error.responseBody,
+      });
+      return error;
+    }
+  };
+};
+
+export const createNewUserByPassword = payload => {
+  return async dispatch => {
+    try {
+      dispatch({
+        type: 'CREATE_USER_LOADING',
+      });
+      const response = await fetchApi(
+        '/customer/registerByPassword',
+        'POST',
+        payload,
+        200,
+      );
+      console.log(response, 'response register by password');
       if (response.success) {
         dispatch({
           type: 'CREAT_USER_SUCCESS',
@@ -112,6 +144,12 @@ export const loginUser = payload => {
           data.refreshToken.token,
           awsConfig.PRIVATE_KEY_RSA,
         ).toString();
+
+        // Save backup data refresh token
+        try {
+          await AsyncStorage.setItem(`refreshToken`, data.refreshToken.token);
+        } catch (error) {}
+
         // save data to reducer
         dispatch({
           type: 'LOGIN_USER_SUCCESS',
@@ -234,6 +272,15 @@ export const refreshToken = () => {
         awsConfig.PRIVATE_KEY_RSA,
       );
       let refreshToken = bytes.toString(CryptoJS.enc.Utf8);
+
+      // check backup refreshToken
+      try {
+        const value = await AsyncStorage.getItem('refreshToken');
+        if (value !== null) {
+          refreshToken = value;
+        }
+      } catch (error) {}
+
       var payload = {
         refreshToken: refreshToken,
       };

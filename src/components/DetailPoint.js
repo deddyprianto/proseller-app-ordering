@@ -22,6 +22,7 @@ import {campaign, dataPoint, dataPointHistory} from '../actions/rewards.action';
 import {getUserProfile} from '../actions/user.action';
 import Loader from './loader';
 import {isEmptyArray} from '../helper/CheckEmpty';
+import LinearGradient from 'react-native-linear-gradient';
 
 class DetailPoint extends Component {
   constructor(props) {
@@ -102,81 +103,67 @@ class DetailPoint extends Component {
     } catch (e) {
       userDetail = undefined;
     }
+
+    let color1 = `#f1c40f`;
+    let color2 = `#f39c12`;
+    let color3 = `#e67e22`;
+
     return (
       <SafeAreaView>
         {this.state.loading && <Loader />}
         <ScrollView>
           <View style={styles.container}>
             <View style={styles.header}>
-              <TouchableOpacity onPress={this.goBack}>
+              <TouchableOpacity
+                onPress={this.goBack}
+                style={{alignItems: 'flex-start'}}>
                 <Icon
-                  size={Platform.OS === 'ios' ? 40 : 32}
+                  size={Platform.OS === 'ios' ? 36 : 27}
                   name={Platform.OS === 'ios' ? 'ios-close' : 'md-close'}
-                  style={{color: 'white'}}
+                  style={{color: colorConfig.store.defaultColor}}
                 />
               </TouchableOpacity>
-              <Text style={styles.title}>{intlData.messages.myPoints}</Text>
-              <Text style={styles.titlePoint}>{this.props.totalPoint}</Text>
+              <Text style={styles.titleHeader}>Rewards Points</Text>
+              {/*<Text style={styles.title}>{intlData.messages.myPoints}</Text>*/}
+              {/*<Text style={styles.titlePoint}>{this.props.totalPoint}</Text>*/}
             </View>
+            <LinearGradient
+              colors={[color1, color2, color3]}
+              style={styles.card}>
+              <Text style={styles.textCustomerGroup}>You Have</Text>
+              <View style={styles.line} />
+              <Text style={styles.textPoint}>
+                {this.props.totalPoint}{' '}
+                <Text style={{fontSize: 23}}> {campign.name}</Text>
+              </Text>
+            </LinearGradient>
+
             <View style={styles.mainPanel}>
-              <View style={[styles.panel, {paddingTop: 45}]}>
-                <Text style={styles.subTitle}>Customer Group</Text>
-                <Text style={styles.value}>
-                  {userDetail != undefined
-                    ? userDetail.customerGroupName != undefined
-                      ? userDetail.customerGroupName.toUpperCase()
-                      : ''
-                    : ''}
-                </Text>
-              </View>
-              {campign.points != undefined ? (
-                <View style={styles.panel}>
-                  <Text style={styles.subTitle}>Campaign Rules</Text>
-                  <Text style={styles.simpleTextValueRatio}>
-                    {campign.points.netSpendToPoint0} :{' '}
-                    {campign.points.netSpendToPoint1}
-                  </Text>
-                  <Text style={styles.simpleTextValue}>
-                    Get {campign.points.netSpendToPoint1} points for every $
-                    {campign.points.netSpendToPoint0} Purchases
-                  </Text>
-                </View>
-              ) : null}
-              <View style={styles.panelNoBorder}>
-                {!isEmptyArray(history) ? (
-                  <Text style={styles.subTitle}>Expiry</Text>
-                ) : null}
-                {!isEmptyArray(history)
-                  ? history.map(item => (
-                      <View style={styles.historyPoint}>
-                        <Icon
-                          size={27}
-                          name={Platform.OS === 'ios' ? 'ios-list' : 'md-list'}
-                          style={{
-                            color: colorConfig.store.defaultColor,
-                            marginRight: 10,
-                          }}
-                        />
-                        <View>
-                          <Text style={styles.simpleText}>
-                            Point :{' '}
-                            <Text
-                              style={{color: colorConfig.store.secondaryColor}}>
-                              {this.getPointInfo(item)}
+              <View style={[styles.panel, {paddingTop: 10}]}>
+                <View style={styles.panelNoBorder}>
+                  {!isEmptyArray(history)
+                    ? history.map(item => (
+                        <View style={styles.historyPoint}>
+                          <View>
+                            <Text style={styles.simpleText}>
+                              <Text
+                                style={{
+                                  color: colorConfig.store.defaultColor,
+                                  fontWeight: 'bold',
+                                }}>
+                                {this.getPointInfo(item)}
+                              </Text>{' '}
+                              points will expire on{' '}
+                              {format(new Date(item.expiryDate), 'dd MMM yyyy')}
                             </Text>
-                          </Text>
-                          <Text style={styles.simpleText}>
-                            Expiry :{' '}
-                            <Text
-                              style={{color: colorConfig.store.secondaryColor}}>
-                              {format(new Date(item.expiryDate), 'dd-MM-yyyy')}
-                            </Text>
-                          </Text>
+                          </View>
                         </View>
-                      </View>
-                    ))
-                  : null}
+                      ))
+                    : null}
+                </View>
               </View>
+
+              <Text style={styles.subTitle}>{campign.campaignDesc}</Text>
             </View>
           </View>
         </ScrollView>
@@ -187,29 +174,40 @@ class DetailPoint extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: colorConfig.store.defaultColor,
+    backgroundColor: '#f5f5f5',
     height: '100%',
   },
   header: {
-    padding: 20,
+    padding: 15,
+    flexDirection: 'row',
+    backgroundColor: 'white',
+    alignItems: 'center',
   },
   historyPoint: {
-    margin: 5,
-    padding: 5,
+    marginTop: 15,
+    borderRadius: 5,
+    padding: 10,
+    paddingVertical: 15,
     flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
     borderWidth: 0.5,
     borderColor: colorConfig.pageIndex.grayColor,
   },
   mainPanel: {
+    marginTop: -5,
     backgroundColor: 'white',
     // alignItems: 'center',
     // justifyContent: 'center',
     flex: 1,
-    borderTopRightRadius: 20,
-    borderTopLeftRadius: 20,
-    paddingHorizontal: 40,
+    paddingHorizontal: 30,
+    zIndex: 10,
+    shadowColor: '#00000021',
+    shadowOffset: {
+      width: 0,
+      height: 9,
+    },
+    shadowOpacity: 0.8,
+    shadowRadius: 10.49,
+    elevation: 12,
   },
   panel: {
     marginVertical: 5,
@@ -219,7 +217,7 @@ const styles = StyleSheet.create({
   },
   panelNoBorder: {
     marginVertical: 5,
-    paddingBottom: 15,
+    paddingBottom: 10,
   },
   title: {
     color: 'white',
@@ -229,6 +227,14 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     textAlign: 'center',
   },
+  titleHeader: {
+    color: colorConfig.store.defaultColor,
+    fontSize: 20,
+    fontFamily: 'Lato-Medium',
+    marginBottom: 5,
+    textAlign: 'center',
+    marginLeft: 30,
+  },
   titlePoint: {
     color: 'white',
     fontSize: 45,
@@ -237,10 +243,15 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   subTitle: {
-    color: colorConfig.pageIndex.grayColor,
-    fontSize: 18,
-    marginVertical: 5,
-    textAlign: 'center',
+    color: colorConfig.store.titleSelected,
+    fontSize: 17,
+    marginVertical: 10,
+    // textAlign: 'center',
+    fontFamily: 'Lato-Medium',
+  },
+  subTitlePoint: {
+    color: colorConfig.store.titleSelected,
+    fontSize: 30,
     fontFamily: 'Lato-Bold',
   },
   value: {
@@ -251,9 +262,9 @@ const styles = StyleSheet.create({
   },
   simpleText: {
     color: colorConfig.store.titleSelected,
-    fontSize: 13,
+    fontSize: 16,
     padding: 2,
-    fontWeight: 'bold',
+    fontFamily: 'Lato-Medium',
   },
   simpleTextValue: {
     color: colorConfig.store.secondaryColor,
@@ -297,6 +308,43 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.7,
     shadowRadius: 7.49,
     elevation: 12,
+  },
+  card: {
+    backgroundColor: colorConfig.store.defaultColor,
+    height: 180,
+    marginTop: 15,
+    borderTopRightRadius: 20,
+    borderTopLeftRadius: 20,
+    marginHorizontal: 20,
+    shadowColor: '#00000021',
+    shadowOffset: {
+      width: 0,
+      height: 9,
+    },
+    shadowOpacity: 0.8,
+    shadowRadius: 10.49,
+    elevation: 12,
+  },
+  textCustomerGroup: {
+    color: 'white',
+    marginTop: 20,
+    marginLeft: 20,
+    fontSize: 20,
+    letterSpacing: 2,
+    fontFamily: 'Lato-Bold',
+  },
+  textPoint: {
+    color: 'white',
+    marginTop: 10,
+    marginLeft: 20,
+    fontSize: 35,
+    fontFamily: 'Lato-Bold',
+  },
+  line: {
+    borderBottomWidth: 2,
+    marginHorizontal: 20,
+    borderColor: 'white',
+    marginTop: 20,
   },
 });
 

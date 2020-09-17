@@ -19,7 +19,7 @@ export default class RecentTransactionPlaceHolder extends Component {
               autoRun={true}
               duration={800}
               colorShimmer={[
-                colorConfig.store.transparent,
+                colorConfig.store.disableButton,
                 'white',
                 colorConfig.store.disableButton,
               ]}
@@ -35,7 +35,7 @@ export default class RecentTransactionPlaceHolder extends Component {
               autoRun={true}
               duration={800}
               colorShimmer={[
-                colorConfig.store.transparent,
+                colorConfig.store.disableButton,
                 'white',
                 colorConfig.store.disableButton,
               ]}
@@ -51,7 +51,7 @@ export default class RecentTransactionPlaceHolder extends Component {
               autoRun={true}
               duration={800}
               colorShimmer={[
-                colorConfig.store.transparent,
+                colorConfig.store.disableButton,
                 'white',
                 colorConfig.store.disableButton,
               ]}

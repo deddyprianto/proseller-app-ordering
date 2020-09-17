@@ -38,6 +38,8 @@ import {formatISO, format} from 'date-fns';
 import {dataPoint, getStamps} from '../actions/rewards.action';
 import CryptoJS from 'react-native-crypto-js';
 import awsConfig from '../config/awsConfig';
+import PhoneInput from 'react-native-phone-input';
+import CountryPicker from './react-native-country-picker-modal/lib';
 
 const monthNames = [
   'Jan',
@@ -59,11 +61,16 @@ class AccountEditProfil extends Component {
     super(props);
     var data;
     try {
+      const phoneNumber = this.props.dataDiri.phoneNumber.substr(0, 3);
+      const phone = this.props.dataDiri.phoneNumber.replace(phoneNumber, '');
       data = {
         name: this.props.dataDiri.name,
         birthDate: this.props.dataDiri.birthDate,
         address: this.props.dataDiri.address,
         gender: this.props.dataDiri.gender,
+        email: this.props.dataDiri.email,
+        phoneNumber: phoneNumber,
+        phone: phone,
       };
     } catch (e) {
       data = {
@@ -71,6 +78,8 @@ class AccountEditProfil extends Component {
         birthDate: '',
         address: '',
         gender: '',
+        email: '',
+        phoneNumber: '',
       };
     }
 
@@ -106,7 +115,11 @@ class AccountEditProfil extends Component {
 
     this.state = {
       screenWidth: Dimensions.get('window').width,
+      originalData: data,
       name: data.name,
+      email: data.email,
+      phoneNumber: data.phoneNumber,
+      phone: data.phone,
       gender: data.gender,
       birthDate: data.birthDate,
       address: data.address,
@@ -119,6 +132,9 @@ class AccountEditProfil extends Component {
       fields: [],
       openGender: false,
       openBirthDate: false,
+      openModalCountry: false,
+      editEmail: false,
+      editPhoneNumber: false,
     };
   }
 
@@ -240,14 +256,50 @@ class AccountEditProfil extends Component {
   submitEdit = async () => {
     try {
       this.setState({loading: true});
+
+      if (this.state.editEmail && this.state.email == '') {
+        Alert.alert('Sorry', 'Please provide a valid email');
+        this.setState({loading: false});
+        return;
+      }
+
+      if (this.state.editPhoneNumber && this.state.phone == '') {
+        Alert.alert('Sorry', 'Please provide a valid phone number');
+        this.setState({loading: false});
+        return;
+      }
+
       let dataProfile = {
         username: this.props.dataDiri.username,
+        cognitoUsername: this.props.dataDiri.cognitoUsername,
         // phoneNumber: this.props.dataDiri.phoneNumber,
         newName: this.state.name,
         birthDate: this.state.birthDate,
         address: this.state.address,
         gender: this.state.gender,
       };
+
+      // detect change email
+      if (this.state.editEmail) {
+        if (
+          this.props.dataDiri.email.toLowerCase() !=
+          this.state.email.toLowerCase()
+        ) {
+          dataProfile.newEmail = this.state.email.toLowerCase();
+        }
+      }
+
+      // detect change phoneNumber
+      if (this.state.editPhoneNumber) {
+        if (
+          this.props.dataDiri.phoneNumber !=
+          this.state.phoneNumber + this.state.phone
+        ) {
+          dataProfile.newPhoneNumber =
+            this.state.phoneNumber + this.state.phone;
+        }
+      }
+
       const response = await this.props.dispatch(updateUser(dataProfile));
 
       if (response) {
@@ -281,7 +333,14 @@ class AccountEditProfil extends Component {
   };
 
   showDatePicker = () => {
-    this.setState({isDatePickerVisible: true});
+    if (
+      this.props.dataDiri.birthDate === '' ||
+      this.props.dataDiri.birthDate === undefined
+    ) {
+      this.setState({isDatePickerVisible: true});
+    } else {
+      Alert.alert('Sorry', 'You have filled out the birthday form.');
+    }
   };
 
   hideDatePicker = () => {
@@ -303,14 +362,16 @@ class AccountEditProfil extends Component {
   };
 
   btnChangeCredentials = field => {
-    // this.setState(
-    //   {
-    //     field,
-    //   },
-    //   () => {
-    //     this.toChangeCredentials();
-    //   },
-    // );
+    if (field === 'email') {
+      this.setState({editEmail: !this.state.editEmail});
+      this.setState({email: this.state.originalData.email});
+    } else if (field === 'phoneNumber') {
+      this.setState({editPhoneNumber: !this.state.editPhoneNumber});
+      this.setState({
+        phone: this.state.originalData.phone,
+        phoneNumber: this.state.originalData.phoneNumber,
+      });
+    }
   };
 
   pad = item => {
@@ -500,17 +561,29 @@ class AccountEditProfil extends Component {
                         flexDirection: 'row',
                       }}>
                       <Text style={styles.desc}>Email</Text>
-                      {/*<TouchableOpacity*/}
-                      {/*  style={[styles.btnChange]}*/}
-                      {/*  onPress={() => this.btnChangeCredentials('Email')}>*/}
-                      {/*  <Text style={[styles.textChange]}>*/}
-                      {/*    {intlData.messages.change}*/}
-                      {/*  </Text>*/}
-                      {/*</TouchableOpacity>*/}
+                      <TouchableOpacity
+                        style={[styles.btnChange]}
+                        onPress={() => this.btnChangeCredentials('email')}>
+                        <Text style={[styles.textChange]}>
+                          {this.state.editEmail ? 'Cancel' : 'Change'}
+                        </Text>
+                      </TouchableOpacity>
                     </View>
-                    <Text style={{paddingTop: 12}}>
-                      {this.props.dataDiri.email}
-                    </Text>
+                    {!this.state.editEmail ? (
+                      <Text style={{paddingTop: 12}}>
+                        {this.props.dataDiri.email}
+                      </Text>
+                    ) : (
+                      <>
+                        <TextInput
+                          placeholder="Email"
+                          style={{paddingVertical: 10}}
+                          value={this.state.email}
+                          onChangeText={value => this.setState({email: value})}
+                        />
+                        <View style={{borderWidth: 0.5, borderColor: 'gray'}} />
+                      </>
+                    )}
                   </View>
                   <View style={styles.detailItem}>
                     <View
@@ -520,184 +593,275 @@ class AccountEditProfil extends Component {
                       <Text style={styles.desc}>
                         {intlData.messages.phoneNumber}
                       </Text>
-                      {/*<TouchableOpacity*/}
-                      {/*  onPress={() => this.btnChangeCredentials('Phone Number')}*/}
-                      {/*  style={[styles.btnChange]}>*/}
-                      {/*  <Text style={[styles.textChange]}>*/}
-                      {/*    {intlData.messages.change}*/}
-                      {/*  </Text>*/}
-                      {/*</TouchableOpacity>*/}
+                      <TouchableOpacity
+                        onPress={() => this.btnChangeCredentials('phoneNumber')}
+                        style={[styles.btnChange]}>
+                        <Text style={[styles.textChange]}>
+                          {this.state.editPhoneNumber ? 'Cancel' : 'Change'}
+                        </Text>
+                      </TouchableOpacity>
                     </View>
-                    <Text style={{paddingTop: 12}}>
-                      {this.props.dataDiri.phoneNumber}
-                    </Text>
+                    <View style={{width: 0, height: 0}}>
+                      <CountryPicker
+                        translation="eng"
+                        withCallingCode
+                        visible={this.state.openModalCountry}
+                        onClose={() => this.setState({openModalCountry: false})}
+                        withFilter
+                        placeholder={`x`}
+                        withFlag={true}
+                        onSelect={country => {
+                          this.setState({
+                            phoneNumber: `+${country.callingCode[0]}`,
+                            country: country.name,
+                          });
+                        }}
+                      />
+                    </View>
+                    {!this.state.editPhoneNumber ? (
+                      <Text style={{paddingTop: 12}}>
+                        {this.props.dataDiri.phoneNumber}
+                      </Text>
+                    ) : (
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          width: '100%',
+                          maxWidth: '100%',
+                          marginTop: 10,
+                        }}>
+                        <PhoneInput
+                          flagStyle={{
+                            width: 30,
+                            height: 20,
+                            justifyContent: 'center',
+                            marginRight: -5,
+                            marginLeft: 5,
+                          }}
+                          textStyle={{fontSize: 0, fontFamily: 'Lato-Medium'}}
+                          style={{
+                            padding: 5,
+                            color: 'black',
+                            backgroundColor: colorConfig.store.transparentBG,
+                            borderRadius: 5,
+                          }}
+                          ref={ref => {
+                            this.phone = ref;
+                          }}
+                          onChangePhoneNumber={() => {
+                            this.setState({phone: this.phone.getValue()});
+                          }}
+                          value={this.state.phoneNumber}
+                          onPressFlag={() => {
+                            this.setState({
+                              openModalCountry: true,
+                            });
+                          }}
+                        />
+                        <TouchableOpacity
+                          onPress={() => {
+                            this.setState({
+                              openModalCountry: true,
+                            });
+                          }}
+                          style={{
+                            justifyContent: 'center',
+                            paddingHorizontal: 5,
+                          }}>
+                          <Text
+                            style={{fontSize: 15, fontFamily: 'Lato-Medium'}}>
+                            {this.state.phoneNumber}
+                          </Text>
+                        </TouchableOpacity>
+                        <TextInput
+                          value={this.state.phone}
+                          keyboardType={'numeric'}
+                          onChangeText={value => this.setState({phone: value})}
+                          style={{
+                            fontSize: 15,
+                            fontFamily: 'Lato-Medium',
+                            paddingHorizontal: 10,
+                            paddingVertical: 10,
+                            color: colorConfig.store.title,
+                            borderColor:
+                              colorConfig.pageIndex.inactiveTintColor,
+                            borderWidth: 1,
+                            borderRadius: 5,
+                            flex: 1,
+                          }}
+                        />
+                      </View>
+                    )}
                   </View>
 
-                  {fields.map(item => {
-                    if (
-                      item.fieldName === 'birthDate' &&
-                      item.format.length > 4 &&
-                      item.show
-                    )
-                      return (
-                        <View style={styles.detailItem}>
-                          <Text style={[styles.desc, {marginLeft: 0}]}>
-                            {intlData.messages.birthDate}{' '}
-                            {item.mandatory ? (
-                              <Text style={{color: 'red'}}>*</Text>
+                  {!isEmptyArray(fields) &&
+                    fields.map(item => {
+                      if (
+                        item.fieldName === 'birthDate' &&
+                        item.format.length > 4 &&
+                        item.show
+                      )
+                        return (
+                          <View style={styles.detailItem}>
+                            <Text style={[styles.desc, {marginLeft: 0}]}>
+                              Birthday{' '}
+                              {item.mandatory ? (
+                                <Text style={{color: 'red'}}>*</Text>
+                              ) : null}
+                            </Text>
+                            <Text
+                              style={{
+                                paddingTop: 12,
+                                borderBottomColor:
+                                  colorConfig.store.defaultColor,
+                                borderBottomWidth: 1,
+
+                                paddingBottom: 5,
+                              }}
+                              onPress={this.showDatePicker}>
+                              {this.state.birthDate == '' ||
+                              this.state.birthDate == undefined ||
+                              this.state.birthDate.length == 3
+                                ? 'Enter Birthday'
+                                : this.formatBirthDate(this.state.birthDate)}
+                            </Text>
+                            <DateTimePickerModal
+                              maximumDate={new Date()}
+                              isVisible={this.state.isDatePickerVisible}
+                              mode="date"
+                              onConfirm={this.handleConfirm}
+                              onCancel={this.hideDatePicker}
+                            />
+                          </View>
+                        );
+
+                      if (
+                        item.fieldName === 'birthDate' &&
+                        item.format.length <= 4 &&
+                        item.show
+                      )
+                        return (
+                          <View style={styles.detailItem}>
+                            <Text style={[styles.desc, {marginLeft: 0}]}>
+                              Birth Month{' '}
+                              {item.mandatory ? (
+                                <Text style={{color: 'red'}}>*</Text>
+                              ) : null}
+                            </Text>
+                            <DropDownPicker
+                              placeholder={'Select your birth month'}
+                              items={this.state.MM}
+                              defaultValue={this.getMonth(this.state.birthDate)}
+                              containerStyle={{height: 47}}
+                              style={{
+                                backgroundColor: 'white',
+                                marginTop: 5,
+                                borderRadius: 0,
+                              }}
+                              dropDownStyle={{
+                                backgroundColor: '#fafafa',
+                                zIndex: 3,
+                              }}
+                              onChangeItem={item =>
+                                this.setState({
+                                  birthDate: item.value,
+                                })
+                              }
+                              onOpen={() => {
+                                this.setState({openBirthDate: true});
+                              }}
+                              onClose={() => {
+                                this.setState({openBirthDate: false});
+                              }}
+                            />
+
+                            {this.state.openBirthDate ? (
+                              <View style={{height: 130}} />
                             ) : null}
-                          </Text>
-                          <Text
-                            style={{
-                              paddingTop: 12,
-                              borderBottomColor: colorConfig.store.defaultColor,
-                              borderBottomWidth: 1,
+                          </View>
+                        );
 
-                              paddingBottom: 5,
-                            }}
-                            onPress={this.showDatePicker}>
-                            {this.state.birthDate == '' ||
-                            this.state.birthDate == undefined ||
-                            this.state.birthDate.length == 3
-                              ? 'Enter Birth Date'
-                              : this.formatBirthDate(this.state.birthDate)}
-                          </Text>
-                          <DateTimePickerModal
-                            isVisible={this.state.isDatePickerVisible}
-                            mode="date"
-                            onConfirm={this.handleConfirm}
-                            onCancel={this.hideDatePicker}
-                          />
-                        </View>
-                      );
+                      if (
+                        (item.fieldName === 'gender' ||
+                          item.fieldName === 'Gender') &&
+                        item.show
+                      )
+                        return (
+                          <View style={styles.detailItem}>
+                            <Text style={[styles.desc, {marginLeft: 0}]}>
+                              {intlData.messages.gender}{' '}
+                              {item.mandatory ? (
+                                <Text style={{color: 'red'}}>*</Text>
+                              ) : null}
+                            </Text>
+                            <DropDownPicker
+                              placeholder={'Select gender'}
+                              items={[
+                                {label: intlData.messages.male, value: 'male'},
+                                {
+                                  label: intlData.messages.female,
+                                  value: 'female',
+                                },
+                              ]}
+                              defaultValue={this.validateGender(
+                                this.state.gender,
+                              )}
+                              containerStyle={{height: 47}}
+                              style={{
+                                backgroundColor: 'white',
+                                marginTop: 5,
+                                borderRadius: 0,
+                              }}
+                              dropDownStyle={{
+                                backgroundColor: '#fafafa',
+                                zIndex: 3,
+                              }}
+                              onOpen={() => {
+                                this.setState({openGender: true});
+                              }}
+                              onClose={() => {
+                                this.setState({openGender: false});
+                              }}
+                              onChangeItem={item =>
+                                this.setState({
+                                  gender: item.value,
+                                })
+                              }
+                            />
 
-                    if (
-                      item.fieldName === 'birthDate' &&
-                      item.format.length <= 4 &&
-                      item.show
-                    )
-                      return (
-                        <View style={styles.detailItem}>
-                          <Text style={[styles.desc, {marginLeft: 0}]}>
-                            Birth Month{' '}
-                            {item.mandatory ? (
-                              <Text style={{color: 'red'}}>*</Text>
+                            {this.state.openGender ? (
+                              <View style={{height: 50}} />
                             ) : null}
-                          </Text>
-                          <DropDownPicker
-                            placeholder={'Select your birth month'}
-                            items={this.state.MM}
-                            defaultValue={this.getMonth(this.state.birthDate)}
-                            containerStyle={{height: 47}}
-                            style={{
-                              backgroundColor: 'white',
-                              marginTop: 5,
-                              borderRadius: 0,
-                            }}
-                            dropDownStyle={{
-                              backgroundColor: '#fafafa',
-                              zIndex: 3,
-                            }}
-                            onChangeItem={item =>
-                              this.setState({
-                                birthDate: item.value,
-                              })
-                            }
-                            onOpen={() => {
-                              this.setState({openBirthDate: true});
-                            }}
-                            onClose={() => {
-                              this.setState({openBirthDate: false});
-                            }}
-                          />
+                          </View>
+                        );
 
-                          {this.state.openBirthDate ? (
-                            <View style={{height: 130}} />
-                          ) : null}
-                        </View>
-                      );
-
-                    if (
-                      (item.fieldName === 'gender' ||
-                        item.fieldName === 'Gender') &&
-                      item.show
-                    )
-                      return (
-                        <View style={styles.detailItem}>
-                          <Text style={[styles.desc, {marginLeft: 0}]}>
-                            {intlData.messages.gender}{' '}
-                            {item.mandatory ? (
-                              <Text style={{color: 'red'}}>*</Text>
-                            ) : null}
-                          </Text>
-                          <DropDownPicker
-                            placeholder={'Select gender'}
-                            items={[
-                              {label: intlData.messages.male, value: 'male'},
-                              {
-                                label: intlData.messages.female,
-                                value: 'female',
-                              },
-                            ]}
-                            defaultValue={this.validateGender(
-                              this.state.gender,
-                            )}
-                            containerStyle={{height: 47}}
-                            style={{
-                              backgroundColor: 'white',
-                              marginTop: 5,
-                              borderRadius: 0,
-                            }}
-                            dropDownStyle={{
-                              backgroundColor: '#fafafa',
-                              zIndex: 3,
-                            }}
-                            onOpen={() => {
-                              this.setState({openGender: true});
-                            }}
-                            onClose={() => {
-                              this.setState({openGender: false});
-                            }}
-                            onChangeItem={item =>
-                              this.setState({
-                                gender: item.value,
-                              })
-                            }
-                          />
-
-                          {this.state.openGender ? (
-                            <View style={{height: 50}} />
-                          ) : null}
-                        </View>
-                      );
-
-                    if (
-                      (item.fieldName === 'address' ||
-                        item.fieldName === 'Address') &&
-                      item.show
-                    )
-                      return (
-                        <View style={styles.detailItem}>
-                          <Text style={styles.desc}>
-                            {intlData.messages.address}{' '}
-                            {item.mandatory ? (
-                              <Text style={{color: 'red'}}>*</Text>
-                            ) : null}
-                          </Text>
-                          <TextInput
-                            placeholder={intlData.messages.yourAddress}
-                            style={{paddingVertical: 10}}
-                            value={this.state.address}
-                            onChangeText={value =>
-                              this.setState({address: value})
-                            }
-                          />
-                          <View
-                            style={{borderWidth: 0.5, borderColor: 'gray'}}
-                          />
-                        </View>
-                      );
-                  })}
+                      if (
+                        (item.fieldName === 'address' ||
+                          item.fieldName === 'Address') &&
+                        item.show
+                      )
+                        return (
+                          <View style={styles.detailItem}>
+                            <Text style={styles.desc}>
+                              {intlData.messages.address}{' '}
+                              {item.mandatory ? (
+                                <Text style={{color: 'red'}}>*</Text>
+                              ) : null}
+                            </Text>
+                            <TextInput
+                              placeholder={intlData.messages.yourAddress}
+                              style={{paddingVertical: 10}}
+                              value={this.state.address}
+                              onChangeText={value =>
+                                this.setState({address: value})
+                              }
+                            />
+                            <View
+                              style={{borderWidth: 0.5, borderColor: 'gray'}}
+                            />
+                          </View>
+                        );
+                    })}
                 </View>
               </Form>
             </View>
@@ -863,16 +1027,16 @@ const styles = StyleSheet.create({
     // borderBottomColor: colorConfig.pageIndex.inactiveTintColor,
     // borderBottomWidth: 1,
     paddingBottom: 5,
-    marginBottom: 10,
+    marginBottom: 3,
   },
   desc: {
     color: colorConfig.pageIndex.grayColor,
     fontSize: 18,
   },
   textChange: {
-    color: colorConfig.pageIndex.inactiveTintColor,
+    color: colorConfig.store.defaultColor,
     // color: 'gray',
-    fontSize: 11,
+    fontSize: 13,
     fontWeight: 'bold',
   },
   btnChange: {

@@ -6,6 +6,7 @@ import {compose} from 'redux';
 import colorConfig from '../config/colorConfig';
 import appConfig from '../config/appConfig';
 import ProgressiveImage from '../components/helper/ProgressiveImage';
+import {format} from 'date-fns';
 
 class StampDetail extends Component {
   constructor(props) {
@@ -55,10 +56,24 @@ class StampDetail extends Component {
               {this.props.dataStamps.dataStamps.stamps.stampsDesc}
             </Text>
           ) : null}
+
+          {this.props.dataStamps.dataStamps.expiryDate != undefined ? (
+            <View style={styles.box}>
+              <Text style={styles.subTitle}>
+                Your stamps will expire on{' '}
+                <Text style={{fontWeight: 'bold'}}>
+                  {format(
+                    new Date(this.props.dataStamps.dataStamps.expiryDate),
+                    'dd MMM yyyy',
+                  )}
+                </Text>
+              </Text>
+            </View>
+          ) : null}
         </View>
         <View style={styles.stampsDescription}>
           <ProgressiveImage
-            resizeMode="stretch"
+            resizeMode="contain"
             style={styles.imageStamp}
             source={this.getImageUrl()}
           />
@@ -75,25 +90,27 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     paddingRight: 10,
     paddingBottom: 10,
-    paddingTop: 10,
+    // paddingTop: 10,
     alignItems: 'center',
   },
   title: {
     color: colorConfig.pageIndex.backgroundColor,
     fontSize: 20,
-    fontWeight: 'bold',
+    fontFamily: 'Lato-Bold',
     marginBottom: 5,
   },
   subTitle: {
     color: colorConfig.pageIndex.backgroundColor,
-    fontSize: 12,
+    fontSize: 13,
     marginBottom: 5,
     fontFamily: 'Lato-Medium',
+    textAlign: 'center',
   },
   description: {
     color: colorConfig.pageIndex.backgroundColor,
     textAlign: 'center',
     fontSize: 14,
+    fontFamily: 'Lato-Medium',
   },
   btn: {
     color: colorConfig.pageIndex.listBorder,
@@ -108,6 +125,7 @@ const styles = StyleSheet.create({
   },
   imageStamp: {
     height: Dimensions.get('window').height / 2,
+    width: '100%',
     // borderRadius: 30,
     // marginHorizontal: 10,
     shadowColor: '#00000021',
@@ -118,6 +136,13 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.7,
     shadowRadius: 7.49,
     elevation: 12,
+  },
+  box: {
+    borderWidth: 1,
+    padding: 7,
+    borderColor: 'white',
+    borderRadius: 9,
+    marginTop: 10,
   },
 });
 

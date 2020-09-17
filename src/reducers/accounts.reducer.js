@@ -12,6 +12,18 @@ const myVoucers = (state = {}, action) => {
   }
 };
 
+const afterPayment = (state = {}, action) => {
+  switch (action.type) {
+    case 'AFTER_PAYMENT':
+      return {
+        afterPayment: action.data,
+      };
+
+    default:
+      return state;
+  }
+};
+
 const mandatoryFields = (state = {}, action) => {
   switch (action.type) {
     case 'DATA_MANDATORY_FIELDS':
@@ -40,4 +52,5 @@ export default combineReducers({
   myVoucers,
   accountExist,
   mandatoryFields,
+  afterPayment,
 });

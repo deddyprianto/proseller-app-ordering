@@ -144,14 +144,20 @@ export default class ModalOrder extends Component {
     try {
       let data = this.props.product.product.productModifiers;
       for (let i = 0; i < data.length; i++) {
-        let lengthDetail = data[i].modifier.details.filter(
-          item => item.quantity > 0 && item.quantity != undefined,
-        );
+        let lengthDetail = 0;
+        for (let x = 0; x < data[i].modifier.details.length; x++) {
+          if (
+            data[i].modifier.details[x].quantity > 0 &&
+            data[i].modifier.details[x].quantity != undefined
+          ) {
+            lengthDetail += data[i].modifier.details[x].quantity;
+          }
+        }
         // check rule min max
         if (data[i].modifier.min != 0 || data[i].modifier.max != 0) {
           // check min modifier
           if (
-            lengthDetail.length < data[i].modifier.min &&
+            lengthDetail < data[i].modifier.min &&
             lengthDetail != undefined &&
             data[i].modifier.min != 0 &&
             data[i].modifier.isYesNo != true &&
@@ -162,7 +168,7 @@ export default class ModalOrder extends Component {
 
           // check max modifier
           if (
-            lengthDetail.length > data[i].modifier.max &&
+            lengthDetail > data[i].modifier.max &&
             lengthDetail != undefined &&
             data[i].modifier.max != 0 &&
             data[i].modifier.isYesNo != true &&
@@ -170,8 +176,6 @@ export default class ModalOrder extends Component {
           ) {
             return true;
           }
-        } else {
-          return false;
         }
       }
       return false;
@@ -189,24 +193,56 @@ export default class ModalOrder extends Component {
             // dummy variable created, so even the code below is error, then alert still showing
             let name = 'Item';
             let qty = 1;
+            let status = 'lack';
 
             // check name and quantity modifier that hasnt been success passed min & max
             try {
               let productModifiers = this.props.product.product
                 .productModifiers;
               for (let i = 0; i < productModifiers.length; i++) {
-                let lengthDetail = productModifiers[i].modifier.details.filter(
-                  item => item.quantity > 0 && item.quantity != undefined,
-                );
-                if (productModifiers[i].modifier.min > lengthDetail.length) {
+                let lengthDetail = 0;
+
+                for (
+                  let x = 0;
+                  x < productModifiers[i].modifier.details.length;
+                  x++
+                ) {
+                  if (
+                    productModifiers[i].modifier.details[x].quantity > 0 &&
+                    productModifiers[i].modifier.details[x].quantity !=
+                      undefined
+                  ) {
+                    lengthDetail +=
+                      productModifiers[i].modifier.details[x].quantity;
+                  }
+                }
+
+                if (productModifiers[i].modifier.min > lengthDetail) {
                   name = productModifiers[i].modifierName;
                   qty = productModifiers[i].modifier.min;
+                  status = 'lack';
+                  break;
+                }
+
+                if (lengthDetail > productModifiers[i].modifier.max) {
+                  name = productModifiers[i].modifierName;
+                  qty = productModifiers[i].modifier.min;
+                  status = 'excess';
                   break;
                 }
               }
             } catch (e) {}
 
-            Alert.alert('Opps', `Please pick minimum ${qty} ${name}`);
+            if (name != 'Item') {
+              if (status === 'lack') {
+                Alert.alert('Opps', `Please pick minimum ${qty} ${name}`);
+              } else {
+                Alert.alert(
+                  'Opps',
+                  `The maximum ${name} that can be taken is ${qty}`,
+                );
+              }
+            }
             return;
           }
           this.props.addItemToBasket(
@@ -942,7 +978,9 @@ export default class ModalOrder extends Component {
         return `Optional`;
       } else if (
         item.modifier.min == 1 &&
-        (item.modifier.max == 1 || item.modifier.max <= 0)
+        (item.modifier.max == 1 ||
+          item.modifier.max <= 0 ||
+          item.modifier.max == undefined)
       ) {
         return `Pick 1`;
       } else if (item.modifier.min > 0 && item.modifier.max > 0) {

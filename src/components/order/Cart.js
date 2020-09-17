@@ -24,6 +24,7 @@ import {
   setOrderType,
   clearTableType,
   getCart,
+  getBasket,
 } from '../../actions/order.action';
 import Loader from '../../components/loader';
 import CurrencyFormatter from '../../helper/CurrencyFormatter';
@@ -34,6 +35,7 @@ import {getOutletById} from '../../actions/stores.action';
 import appConfig from '../../config/appConfig';
 import {refreshToken} from '../../actions/auth.actions';
 import awsConfig from '../../config/awsConfig';
+import * as geolib from 'geolib';
 
 class Cart extends Component {
   constructor(props) {
@@ -89,6 +91,7 @@ class Cart extends Component {
       // refresh token
       await this.props.dispatch(refreshToken());
       // get data basket
+      this.props.dispatch(getBasket());
       await this.getBasket();
 
       // If ordering mode is DINE IN, then fetch again data outlet to know outlet is available or closed
@@ -366,14 +369,25 @@ class Cart extends Component {
     }
   };
 
+  getPrice = () => {
+    try {
+      if (
+        this.props.dataBasket.confirmationInfo != undefined &&
+        this.props.dataBasket.confirmationInfo.afterPrice != undefined
+      ) {
+        return this.format(
+          CurrencyFormatter(this.props.dataBasket.confirmationInfo.afterPrice),
+        );
+      } else {
+        return '-';
+      }
+    } catch (e) {
+      return '-';
+    }
+  };
+
   renderSettleButtonQuickService = () => {
     const {intlData, dataBasket} = this.props;
-    let fee = dataBasket.deliveryFee == undefined ? 0 : dataBasket.deliveryFee;
-    try {
-      fee = parseFloat(fee);
-    } catch (e) {
-      fee = 0;
-    }
     return (
       <View
         style={{
@@ -404,9 +418,7 @@ class Cart extends Component {
             marginRight: 20,
           }}>
           TOTAL : {appConfig.appMataUang}
-          {this.format(
-            CurrencyFormatter(this.props.dataBasket.totalNettAmount + fee),
-          )}
+          {this.getPrice()}
         </Text>
         <View style={{flexDirection: 'row', justifyContent: 'center'}}>
           <TouchableOpacity
@@ -455,7 +467,7 @@ class Cart extends Component {
               }
               style={{color: 'white', marginRight: 5}}
             />
-            <Text style={styles.textBtnBasketModal}>Settle</Text>
+            <Text style={styles.textBtnBasketModal}>Check Out</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -547,7 +559,7 @@ class Cart extends Component {
               }
               style={{color: 'white', marginRight: 5}}
             />
-            <Text style={styles.textBtnBasketModal}>Settle</Text>
+            <Text style={styles.textBtnBasketModal}>Check Out</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -1239,9 +1251,21 @@ class Cart extends Component {
               <Text style={styles.totalAddress}>
                 {dataBasket.deliveryAddress.addressName}
               </Text>
-              <Text style={styles.totalAddress}>
-                {dataBasket.deliveryAddress.address}
-              </Text>
+              {dataBasket.deliveryAddress.address && (
+                <Text style={styles.totalAddress}>
+                  {dataBasket.deliveryAddress.address}
+                </Text>
+              )}
+              {dataBasket.deliveryAddress.streetName && (
+                <Text style={styles.totalAddress}>
+                  {dataBasket.deliveryAddress.streetName}
+                </Text>
+              )}
+              {dataBasket.deliveryAddress.unitNo && (
+                <Text style={styles.totalAddress}>
+                  {dataBasket.deliveryAddress.unitNo}
+                </Text>
+              )}
               {awsConfig.COUNTRY != 'Singapore' ? (
                 <Text style={styles.totalAddress}>
                   {dataBasket.deliveryAddress.city}
@@ -1274,6 +1298,83 @@ class Cart extends Component {
     } catch (e) {
       return false;
     }
+  };
+
+  goToProducts = () => {
+    try {
+      const {userPosition, outletSingle, dataBasket} = this.props;
+      let item = outletSingle;
+
+      // check if user enabled their position permission
+      let statusLocaiton;
+      if (userPosition == undefined || userPosition == false) {
+        statusLocaiton = false;
+      } else {
+        statusLocaiton = true;
+      }
+
+      let position = userPosition;
+
+      let location = {};
+      let coordinate = {};
+      location = {
+        region: item.region,
+        address: item.location,
+        coordinate: {
+          lat: item.latitude,
+          lng: item.longitude,
+        },
+      };
+
+      item.location = location;
+
+      let data = {
+        storeId: item.id,
+        storeName: item.name,
+        storeStatus: this.isOpen(item),
+        storeJarak: statusLocaiton
+          ? geolib.getDistance(position.coords, {
+              latitude: Number(item.latitude),
+              longitude: Number(item.longitude),
+            }) / 1000
+          : '-',
+        image: item.defaultImageURL != undefined ? item.defaultImageURL : '',
+        region: item.region,
+        address: item.location.address,
+        city: item.city,
+        operationalHours: item.operationalHours,
+        openAllDays: item.openAllDays,
+        defaultImageURL: item.defaultImageURL,
+        coordinate: item.location.coordinate,
+        orderingStatus: item.orderingStatus,
+        outletType: item.outletType,
+        offlineMessage: item.offlineMessage,
+        maxOrderQtyPerItem: item.maxOrderQtyPerItem,
+        maxOrderAmount: item.maxOrderAmount,
+        lastOrderOn: item.lastOrderOn,
+        enableItemSpecialInstructions: item.enableItemSpecialInstructions,
+        enableDineIn:
+          item.enableDineIn == false || item.enableDineIn == '-' ? false : true,
+        enableTakeAway:
+          item.enableTakeAway == false || item.enableTakeAway == '-'
+            ? false
+            : true,
+        enableTableScan:
+          item.enableTableScan == false || item.enableTableScan == '-'
+            ? false
+            : true,
+        enableDelivery:
+          item.enableDelivery == false || item.enableDelivery == '-'
+            ? false
+            : true,
+      };
+
+      Actions.push('productsMode2', {
+        item: data,
+        previousOrderingMode: dataBasket.orderingMode,
+        previousTableNo: dataBasket.tableNo,
+      });
+    } catch (e) {}
   };
 
   render() {
@@ -1381,6 +1482,12 @@ class Cart extends Component {
                   <Text style={styles.subTitle}>
                     {intlData.messages.detailOrder}
                   </Text>
+                  {dataBasket.orderingMode == 'DINEIN' &&
+                  dataBasket.outlet.outletType == 'RESTO' ? (
+                    <TouchableOpacity onPress={this.goToProducts}>
+                      <Text style={styles.subTitleAddItems}>+ Add Items</Text>
+                    </TouchableOpacity>
+                  ) : null}
                 </View>
                 <View>
                   <FlatList
@@ -1534,14 +1641,35 @@ class Cart extends Component {
                   </View>
                 ) : null}
 
-                <View style={styles.itemSummary}>
-                  <Text style={styles.total}>
-                    {intlData.messages.totalTaxAmmount}
-                  </Text>
-                  <Text style={styles.total}>
-                    {CurrencyFormatter(this.props.dataBasket.totalTaxAmount)}
-                  </Text>
-                </View>
+                {this.props.dataBasket.totalTaxAmount != undefined &&
+                  this.props.dataBasket.totalTaxAmount != 0 && (
+                    <View style={styles.itemSummary}>
+                      <Text style={styles.total}>
+                        {intlData.messages.totalTaxAmmount}
+                      </Text>
+                      <Text style={styles.total}>
+                        {this.format(
+                          CurrencyFormatter(
+                            this.props.dataBasket.totalTaxAmount,
+                          ),
+                        )}
+                      </Text>
+                    </View>
+                  )}
+
+                {this.props.dataBasket.totalSurchargeAmount != undefined &&
+                  this.props.dataBasket.totalSurchargeAmount != 0 && (
+                    <View style={styles.itemSummary}>
+                      <Text style={styles.total}>Surcharge Amount</Text>
+                      <Text style={styles.total}>
+                        {this.format(
+                          CurrencyFormatter(
+                            this.props.dataBasket.totalSurchargeAmount,
+                          ),
+                        )}
+                      </Text>
+                    </View>
+                  )}
               </View>
             </ScrollView>
           ) : (
@@ -1590,6 +1718,7 @@ class Cart extends Component {
 
 mapStateToProps = state => ({
   outletSingle: state.storesReducer.dataOutletSingle.outletSingle,
+  userPosition: state.userReducer.userPosition.userPosition,
   providers: state.orderReducer.dataProvider.providers,
   dataBasket: state.orderReducer.dataCartSingle.cartSingle,
   intlData: state.intlData,

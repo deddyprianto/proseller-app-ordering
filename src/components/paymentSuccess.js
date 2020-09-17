@@ -13,6 +13,7 @@ import {
   BackHandler,
   TouchableOpacity,
   Platform,
+  Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -23,8 +24,11 @@ import CurrencyFormatter from '../helper/CurrencyFormatter';
 import {clearAccount, clearAddress} from '../actions/payment.actions';
 // import OneSignal from 'react-native-onesignal';
 import {getPendingCart} from '../actions/order.action';
+import {compose} from 'redux';
+import {connect} from 'react-redux';
+import {isEmptyObject} from '../helper/CheckEmpty';
 
-export default class PaymentSuccess extends Component {
+class PaymentSuccess extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -39,10 +43,16 @@ export default class PaymentSuccess extends Component {
   }
 
   componentDidMount = async () => {
-    this.backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      this.handleBackPress,
-    );
+    try {
+      this.backHandler = BackHandler.addEventListener(
+        'hardwareBackPress',
+        this.handleBackPress,
+      );
+    } catch (e) {}
+    try {
+      this.props.dispatch(clearAccount());
+      this.props.dispatch(getPendingCart());
+    } catch (e) {}
   };
 
   componentWillUnmount() {
@@ -65,6 +75,13 @@ export default class PaymentSuccess extends Component {
     } else {
       Actions.reset('pageIndex', {fromPayment: true});
       // Actions.reset('pageIndex', {initial: 'History'});
+    }
+
+    if (url != undefined && url == '/cart/submitTakeAway') {
+      Alert.alert(
+        'Order is Processing',
+        'Estimated waiting time is 10 minutes',
+      );
     }
   };
 
@@ -112,6 +129,18 @@ export default class PaymentSuccess extends Component {
       return CurrencyFormatter(value).match(/[a-z]+|[^a-z]+/gi)[1];
     } catch (e) {
       return value;
+    }
+  };
+
+  getPaymentType = item => {
+    try {
+      if (!isEmptyObject(item.details)) {
+        return item.details.cardIssuer.toUpperCase() + ' ' + item.paymentName;
+      } else {
+        return item.paymentName;
+      }
+    } catch (e) {
+      return '-';
     }
   };
 
@@ -296,7 +325,7 @@ export default class PaymentSuccess extends Component {
               style={{
                 color: colorConfig.pageIndex.grayColor,
               }}>
-              {this.props.dataRespons.paymentType}
+              {this.getPaymentType(this.props.dataRespons.paymentCard)}
             </Text>
           </View>
           <View
@@ -403,3 +432,18 @@ const styles = StyleSheet.create({
     backgroundColor: colorConfig.pageIndex.backgroundColor,
   },
 });
+
+mapStateToProps = state => ({
+  intlData: state.intlData,
+});
+
+mapDispatchToProps = dispatch => ({
+  dispatch,
+});
+
+export default compose(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  ),
+)(PaymentSuccess);

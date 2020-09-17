@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, Text, Dimensions, Image} from 'react-native';
+import {View, Text, Dimensions, Image, TouchableOpacity} from 'react-native';
 import colorConfig from '../config/colorConfig';
 import appConfig from '../config/appConfig';
 import {Actions} from 'react-native-router-flux';
@@ -26,6 +26,12 @@ export default class AccountUserDetail extends Component {
     }
   };
 
+  openQRCode = () => {
+    try {
+      this.props.setQrCodeVisibility(true);
+    } catch (e) {}
+  };
+
   render() {
     const {userDetail} = this.props;
     return (
@@ -35,30 +41,34 @@ export default class AccountUserDetail extends Component {
           flexDirection: 'column',
           alignItems: 'center',
           backgroundColor: colorConfig.store.defaultColor,
-          shadowColor: '#00000021',
-          shadowOffset: {
-            width: 0,
-            height: 9,
-          },
-          shadowOpacity: 0.7,
-          shadowRadius: 7.49,
-          elevation: 12,
         }}>
         <View style={{padding: 20}}>
+          <Text
+            style={{
+              textAlign: 'center',
+              fontFamily: 'Lato-Bold',
+              color: 'white',
+              marginBottom: 10,
+              fontSize: 18,
+            }}>
+            My Account
+          </Text>
           <View>
-            <Image
-              style={{
-                height: 70,
-                width: 70,
-                marginBottom: 20,
-                borderRadius: 10,
-                alignSelf: 'center',
-              }}
-              source={appConfig.appImageNull}
-            />
+            <TouchableOpacity onPress={this.openQRCode}>
+              <Image
+                style={{
+                  height: 90,
+                  width: 90,
+                  marginBottom: 10,
+                  borderRadius: 10,
+                  alignSelf: 'center',
+                }}
+                source={appConfig.userQRCode}
+              />
+            </TouchableOpacity>
             <View
               style={{
-                marginBottom: 10,
+                marginBottom: 7,
                 flexDirection: 'row',
                 justifyContent: 'center',
               }}>
@@ -66,7 +76,7 @@ export default class AccountUserDetail extends Component {
                 style={{
                   color: 'white',
                   textAlign: 'center',
-                  fontSize: 18,
+                  fontSize: 16,
                   fontWeight: 'bold',
                   fontFamily: 'Lato-Bold',
                 }}>
@@ -115,7 +125,7 @@ export default class AccountUserDetail extends Component {
             <View>
               <Text
                 style={{
-                  color: colorConfig.store.darkColor,
+                  color: 'white',
                   textAlign: 'center',
                   fontSize: 14,
                   fontFamily: 'Lato-Medium',
@@ -126,7 +136,7 @@ export default class AccountUserDetail extends Component {
             <View>
               <Text
                 style={{
-                  color: colorConfig.store.darkColor,
+                  color: 'white',
                   textAlign: 'center',
                   fontSize: 14,
                   fontFamily: 'Lato-Italic',

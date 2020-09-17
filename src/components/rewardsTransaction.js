@@ -32,7 +32,6 @@ class RewardsTransaction extends Component {
 
   render() {
     const {intlData} = this.props;
-    console.log('intlData', intlData);
     return (
       <View style={styles.container}>
         <Text style={styles.title}>{intlData.messages.recentTransactions}</Text>
@@ -67,9 +66,8 @@ class RewardsTransaction extends Component {
                         <Text
                           style={{
                             marginLeft: 12,
-                            fontWeight: 'bold',
-                            color: colorConfig.pageIndex.grayColor,
-                            fontFamily: 'Lato-Medium',
+                            color: colorConfig.store.titleSelected,
+                            fontFamily: 'Lato-Bold',
                           }}>
                           {item.outletName}
                         </Text>
@@ -146,7 +144,7 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: colorConfig.pageIndex.backgroundColor,
-    borderRadius: 15,
+    borderRadius: 7,
     marginLeft: 10,
     marginRight: 10,
     borderColor: colorConfig.store.border,

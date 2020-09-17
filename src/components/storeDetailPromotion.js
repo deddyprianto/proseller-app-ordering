@@ -53,7 +53,7 @@ export default class StoreDetailPromotion extends Component {
   render() {
     return (
       <SafeAreaView style={styles.container}>
-        {console.log(this.props.dataPromotion)}
+        {/*{console.log(this.props.dataPromotion)}*/}
         <View style={{backgroundColor: colorConfig.pageIndex.backgroundColor}}>
           <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
             <Icon
@@ -110,24 +110,25 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
   },
   card: {
-    margin: 5,
+    // margin: 5,
+    marginTop: 5,
     borderColor: colorConfig.pageIndex.inactiveTintColor,
     borderWidth: 1,
     borderRadius: 5,
     backgroundColor: colorConfig.pageIndex.backgroundColor,
-    shadowColor: '#00000021',
-    shadowOffset: {
-      width: 0,
-      height: 9,
-    },
-    shadowOpacity: 0.7,
-    shadowRadius: 7.49,
-    elevation: 12,
+    // shadowColor: '#00000021',
+    // shadowOffset: {
+    //   width: 0,
+    //   height: 9,
+    // },
+    // shadowOpacity: 0.7,
+    // shadowRadius: 7.49,
+    // elevation: 12,
   },
   item: {
     alignItems: 'center',
-    borderBottomColor: colorConfig.pageIndex.grayColor,
-    borderBottomWidth: 1,
+    // borderBottomColor: colorConfig.pageIndex.grayColor,
+    // borderBottomWidth: 1,
     margin: 10,
   },
   title: {
@@ -135,12 +136,12 @@ const styles = StyleSheet.create({
     fontSize: 18,
     padding: 5,
     textAlign: 'center',
-    fontWeight: 'bold',
+    fontFamily: 'Lato-Bold',
     marginBottom: 10,
   },
   detail: {
-    marginLeft: 30,
-    marginRight: 30,
+    marginLeft: 20,
+    marginRight: 20,
     marginBottom: 10,
   },
   detailItem: {
@@ -150,10 +151,10 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   desc: {
-    color: colorConfig.pageIndex.grayColor,
+    color: colorConfig.store.titleSelected,
     maxWidth: Dimensions.get('window').width,
-    textAlign: 'right',
-    alignItems: 'flex-start',
+    textAlign: 'left',
+    fontFamily: 'Lato-Medium',
     fontSize: 14,
   },
   image: {
@@ -163,6 +164,7 @@ const styles = StyleSheet.create({
   imageStamp: {
     width: '100%',
     height: Dimensions.get('window').width / 3,
+    resizeMode: 'contain',
     shadowColor: '#00000021',
     shadowOffset: {
       width: 0,

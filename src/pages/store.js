@@ -15,7 +15,7 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
-import {dataStores} from '../actions/stores.action';
+import {dataStores, getCompanyInfo} from '../actions/stores.action';
 
 import * as geolib from 'geolib';
 import * as _ from 'lodash';
@@ -36,6 +36,9 @@ import CryptoJS from 'react-native-crypto-js';
 import awsConfig from '../config/awsConfig';
 import {isEmptyArray} from '../helper/CheckEmpty';
 import {refreshToken} from '../actions/auth.actions';
+import {getUserProfile} from '../actions/user.action';
+import {referral} from '../actions/referral.action';
+import {getAccountPayment} from '../actions/payment.actions';
 
 class Store extends Component {
   constructor(props) {
@@ -163,9 +166,14 @@ class Store extends Component {
   getDataStores = async () => {
     try {
       await this.props.dispatch(refreshToken());
-      await this.props.dispatch(dataStores());
-      await this.props.dispatch(getBasket());
-      await this.props.dispatch(dataPromotion());
+      // await this.props.dispatch(dataStores());
+      // await this.props.dispatch(getBasket());
+      // await this.props.dispatch(dataPromotion());
+      await Promise.all([
+        this.props.dispatch(dataStores()),
+        this.props.dispatch(getBasket()),
+        this.props.dispatch(dataPromotion()),
+      ]);
       // check if user enabled their position permission
       let statusLocaiton;
       if (
@@ -199,7 +207,7 @@ class Store extends Component {
           coordinate = {};
           location = {
             region: response.data[i].region,
-            address: response.data[i].location,
+            address: response.data[i].address,
             coordinate: {
               lat: response.data[i].latitude,
               lng: response.data[i].longitude,
@@ -258,7 +266,8 @@ class Store extends Component {
                 : true,
             enableDelivery:
               response.data[i].enableDelivery == false ||
-              response.data[i].enableDelivery == '-'
+              response.data[i].enableDelivery == '-' ||
+              response.data[i].enableDelivery == undefined
                 ? false
                 : true,
           });
@@ -567,7 +576,8 @@ class Store extends Component {
         </ScrollView>
 
         {this.props.dataBasket == undefined ||
-        this.props.dataBasket.status == 'PENDING' ? (
+        (this.props.dataBasket.status == 'PENDING' ||
+          this.props.dataBasket.status == 'PENDING_PAYMENT') ? (
           <TouchableOpacity
             onPress={this.openBasket}
             style={{

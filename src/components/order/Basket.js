@@ -26,7 +26,9 @@ import {
   getProductByOutlet,
   removeBasket,
   setOrderType,
+  submitOder,
   updateProductToBasket,
+  updateSurcharge,
 } from '../../actions/order.action';
 import Loader from '../../components/loader';
 import ModalOrder from '../../components/order/Modal';
@@ -271,7 +273,9 @@ class Basket extends Component {
     if (outletSingle != undefined) {
       item = outletSingle;
       item.enableDelivery =
-        item.enableDelivery == false || item.enableDelivery == '-'
+        item.enableDelivery == false ||
+        item.enableDelivery == '-' ||
+        item.enableDelivery == undefined
           ? false
           : true;
       item.enableDineIn =
@@ -507,6 +511,7 @@ class Basket extends Component {
   getBasket = async () => {
     this.setState({loading: true});
     await this.props.dispatch(getBasket());
+    await this.props.dispatch(getDeliveryProvider());
     // await this.setState({loading: false});
     // setTimeout(() => {
     //   this.setState({loading: false});
@@ -549,7 +554,10 @@ class Basket extends Component {
         // Alert.alert('Sorry', 'Please select your ordering mode first.');
       }
 
-      if (this.props.orderType != undefined) {
+      if (
+        this.props.orderType != undefined &&
+        this.props.previousTableNo == undefined
+      ) {
         Actions.scanQRTable({
           basket: this.props.dataBasket,
           orderType: this.props.orderType,
@@ -558,14 +566,47 @@ class Basket extends Component {
         this.interval = setInterval(() => {
           this.props.dispatch(getBasket());
         }, 4000);
+      } else {
+        this.submitDineInOrder();
       }
     } catch (e) {}
+  };
+
+  submitDineInOrder = async () => {
+    try {
+      await this.setState({loading: true});
+
+      let payload = {
+        tableNo: this.props.previousTableNo,
+        orderingMode: this.props.orderType,
+      };
+      let results = await this.props.dispatch(submitOder(payload));
+      if (results.resultCode == 200) {
+        // if cart has been submitted, then go back and give info
+        if (results.status == 'FAILED') {
+          Alert.alert('Info!', results.data.message);
+        }
+
+        this.props.dispatch(getBasket());
+        Actions.reset('pageIndex', {fromPayment: true});
+      } else {
+        this.setState({
+          loading: false,
+        });
+      }
+    } catch (e) {
+      Alert.alert('Oppps..', 'Something went wrong, please try again.');
+      Actions.pop();
+    }
   };
 
   checkActivateButtonClearRestaurant = dataBasket => {
     const {orderType, outletSingle} = this.props;
 
-    if (dataBasket.status == 'PENDING') {
+    if (
+      dataBasket.status == 'PENDING' ||
+      dataBasket.status == 'PENDING_PAYMENT'
+    ) {
       return false;
     } else {
       return true;
@@ -599,7 +640,11 @@ class Basket extends Component {
       ) {
         return false;
       } else {
-        if (dataBasket.status == 'PENDING') return true;
+        if (
+          dataBasket.status == 'PENDING' ||
+          dataBasket.status == 'PENDING_PAYMENT'
+        )
+          return true;
         else return false;
       }
     } else {
@@ -704,7 +749,7 @@ class Basket extends Component {
               }
               style={{color: 'white', marginRight: 5}}
             />
-            <Text style={styles.textBtnBasketModal}>Settle</Text>
+            <Text style={styles.textBtnBasketModal}>Check Out</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -796,7 +841,7 @@ class Basket extends Component {
               }
               style={{color: 'white', marginRight: 5}}
             />
-            <Text style={styles.textBtnBasketModal}>Settle</Text>
+            <Text style={styles.textBtnBasketModal}>Check Out</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -816,7 +861,7 @@ class Basket extends Component {
       return false;
     }
 
-    if (selectedAddress.postalCode == '-') {
+    if (selectedAddress.streetName == undefined) {
       Alert.alert(
         'Incomplete Delivery Address',
         'Looks like your address is incomplete, please check it again',
@@ -1013,18 +1058,33 @@ class Basket extends Component {
                 ? styles.btnAddBasketModalDisabled
                 : styles.btnAddBasketModal
             }>
-            <Icon
-              size={23}
-              name={
-                Platform.OS === 'ios'
-                  ? 'ios-checkbox-outline'
-                  : 'md-checkbox-outline'
-              }
-              style={{color: 'white', marginRight: 5}}
-            />
-            <Text style={styles.textBtnBasketModal}>
-              {intlData.messages.submit}
-            </Text>
+            {this.props.previousTableNo == undefined ? (
+              <>
+                <Icon
+                  size={20}
+                  name={
+                    Platform.OS === 'ios' ? 'ios-qr-scanner' : 'md-qr-scanner'
+                  }
+                  style={{color: 'white', marginRight: 5}}
+                />
+                <Text style={styles.textBtnBasketModal}>Scan QR Code</Text>
+              </>
+            ) : (
+              <>
+                <Icon
+                  size={23}
+                  name={
+                    Platform.OS === 'ios'
+                      ? 'ios-checkbox-outline'
+                      : 'md-checkbox-outline'
+                  }
+                  style={{color: 'white', marginRight: 5}}
+                />
+                <Text style={styles.textBtnBasketModal}>
+                  {intlData.messages.submit}
+                </Text>
+              </>
+            )}
           </TouchableOpacity>
         </View>
       </View>
@@ -1547,19 +1607,27 @@ class Basket extends Component {
   };
 
   setOrderType = async type => {
-    // const {dataBasket} = this.props;
+    const {dataBasket} = this.props;
     // if (dataBasket.outlet.outletType == 'QUICKSERVICE') {
     //   this.props.dispatch(setOrderType('TAKEAWAY'));
     // } else {
     //   this.props.dispatch(setOrderType(type));
     // }
-    this.props.dispatch(setOrderType(type));
+    await this.props.dispatch(setOrderType(type));
 
     if (type == 'DELIVERY' && !isEmptyObject(this.props.selectedAddress)) {
       this.getDeliveryFee();
     }
 
     this.RBSheet.close();
+
+    await this.setState({loading: true});
+    try {
+      if (dataBasket.orderingMode != type)
+        await this.props.dispatch(updateSurcharge(this.props.orderType));
+    } catch (e) {}
+
+    await this.setState({loading: false});
   };
 
   renderStatusOrder = () => {
@@ -1878,7 +1946,7 @@ class Basket extends Component {
 
   deliveryAddress = (orderType, dataBasket) => {
     try {
-      if (orderType == 'DELIVERY' || dataBasket.orderingMode == 'DELIVERY') {
+      if (orderType == 'DELIVERY') {
         return (
           <View style={styles.itemSummary}>
             <Text style={styles.total}>
@@ -1923,10 +1991,7 @@ class Basket extends Component {
     const {selectedProvider} = this.state;
     const {selectedAddress} = this.props;
     try {
-      if (
-        (orderType == 'DELIVERY' || dataBasket.orderingMode == 'DELIVERY') &&
-        !isEmptyObject(selectedAddress)
-      ) {
+      if (orderType == 'DELIVERY' && !isEmptyObject(selectedAddress)) {
         return (
           <View style={styles.itemSummary}>
             <Text style={styles.total}>
@@ -2084,7 +2149,8 @@ class Basket extends Component {
                   <Text style={styles.subTitle}>
                     {intlData.messages.detailOrder}
                   </Text>
-                  {dataBasket.status == 'PENDING' &&
+                  {(dataBasket.status == 'PENDING' ||
+                    dataBasket.status == 'PENDING_PAYMENT') &&
                   (outletSingle.orderingStatus == 'AVAILABLE' ||
                     outletSingle.orderingStatus == undefined) ? (
                     <TouchableOpacity onPress={this.goToProducts}>
@@ -2155,7 +2221,9 @@ class Basket extends Component {
                                 </Text>
                               ) : null}
                               {/* loop item modifier */}
-                              {this.props.dataBasket.status == 'PENDING' &&
+                              {(this.props.dataBasket.status == 'PENDING' ||
+                                this.props.dataBasket.status ==
+                                  'PENDING_PAYMENT') &&
                               this.props.tableType == undefined &&
                               (outletSingle.orderingStatus == 'AVAILABLE' ||
                                 outletSingle.orderingStatus == undefined) ? (
@@ -2353,6 +2421,14 @@ class Basket extends Component {
                     </View>
                   ) : null
                 ) : null}
+                {this.props.previousTableNo && (
+                  <View style={styles.itemSummary}>
+                    <Text style={styles.total}>Table No</Text>
+                    <Text style={styles.total}>
+                      {this.props.previousTableNo}
+                    </Text>
+                  </View>
+                )}
                 <View style={styles.itemSummary}>
                   <Text style={styles.total}>
                     {intlData.messages.statusOrder}
@@ -2370,54 +2446,23 @@ class Basket extends Component {
                   <Text style={styles.total}>
                     {intlData.messages.orderMode}
                   </Text>
-                  {this.props.orderType == 'TAKEAWAY' ? (
-                    <Text
-                      style={[
-                        styles.total,
-                        {
-                          backgroundColor:
-                            this.props.dataBasket.status == 'PENDING'
-                              ? colorConfig.store.secondaryColor
-                              : null,
-                          color:
-                            this.props.dataBasket.status == 'PENDING'
-                              ? 'white'
-                              : colorConfig.pageIndex.grayColor,
-                          borderRadius: 5,
-                          padding: 5,
-                        },
-                      ]}>
-                      {this.props.dataBasket.orderingMode != undefined
-                        ? this.props.dataBasket.orderingMode
-                        : this.props.orderType}
-                    </Text>
-                  ) : (
-                    <Text
-                      style={[
-                        styles.total,
-                        {
-                          backgroundColor: colorConfig.store.colorSuccess,
-                          color: 'white',
-                          borderRadius: 5,
-                          padding: 5,
-                        },
-                      ]}>
-                      {this.props.dataBasket.orderingMode != undefined
-                        ? this.props.dataBasket.orderingMode
-                        : this.props.orderType}
-                    </Text>
-                  )}
+                  <Text
+                    style={[
+                      styles.total,
+                      {
+                        backgroundColor: colorConfig.store.defaultColor,
+                        color: 'white',
+                        borderRadius: 5,
+                        padding: 5,
+                      },
+                    ]}>
+                    {orderType}
+                  </Text>
                 </TouchableOpacity>
 
-                {this.deliveryAddress(
-                  this.props.orderType,
-                  this.props.dataBasket,
-                )}
+                {this.deliveryAddress(orderType, this.props.dataBasket)}
 
-                {this.deliveryProvider(
-                  this.props.orderType,
-                  this.props.dataBasket,
-                )}
+                {this.deliveryProvider(orderType, this.props.dataBasket)}
 
                 {this.state.deliveryFee != null ? (
                   <View style={styles.itemSummary}>
@@ -2428,14 +2473,35 @@ class Basket extends Component {
                   </View>
                 ) : null}
 
-                <View style={styles.itemSummary}>
-                  <Text style={styles.total}>
-                    {intlData.messages.totalTaxAmmount}
-                  </Text>
-                  <Text style={styles.total}>
-                    {CurrencyFormatter(this.props.dataBasket.totalTaxAmount)}
-                  </Text>
-                </View>
+                {this.props.dataBasket.totalTaxAmount != undefined &&
+                  this.props.dataBasket.totalTaxAmount != 0 && (
+                    <View style={styles.itemSummary}>
+                      <Text style={styles.total}>
+                        {intlData.messages.totalTaxAmmount}
+                      </Text>
+                      <Text style={styles.total}>
+                        {this.format(
+                          CurrencyFormatter(
+                            this.props.dataBasket.totalTaxAmount,
+                          ),
+                        )}
+                      </Text>
+                    </View>
+                  )}
+
+                {this.props.dataBasket.totalSurchargeAmount != undefined &&
+                  this.props.dataBasket.totalSurchargeAmount != 0 && (
+                    <View style={styles.itemSummary}>
+                      <Text style={styles.total}>Surcharge Amount</Text>
+                      <Text style={styles.total}>
+                        {this.format(
+                          CurrencyFormatter(
+                            this.props.dataBasket.totalSurchargeAmount,
+                          ),
+                        )}
+                      </Text>
+                    </View>
+                  )}
                 {/*<View style={styles.itemSummary}>*/}
                 {/*  <Text style={styles.total}>Total</Text>*/}
                 {/*  <Text style={styles.total}>*/}
@@ -2729,7 +2795,7 @@ const styles = StyleSheet.create({
   },
   activeDINEINButton: {
     padding: 13,
-    backgroundColor: colorConfig.store.colorSuccess,
+    backgroundColor: colorConfig.card.otherCardColor,
     borderRadius: 15,
     width: '60%',
     marginBottom: 20,

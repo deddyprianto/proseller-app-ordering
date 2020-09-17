@@ -19,7 +19,8 @@ import {
   TextInput,
   FlatList,
   RefreshControl,
-  SafeAreaView
+  SafeAreaView,
+  Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -29,8 +30,12 @@ import {compose} from 'redux';
 import {connect} from 'react-redux';
 import {reduxForm} from 'redux-form';
 import Loader from './../loader';
-import {getAccountPayment} from '../../actions/payment.actions';
-import {isEmptyArray} from '../../helper/CheckEmpty';
+import {
+  getAccountPayment,
+  selectedAccount,
+} from '../../actions/payment.actions';
+import {isEmptyArray, isEmptyObject} from '../../helper/CheckEmpty';
+import {defaultPaymentAccount} from '../../actions/user.action';
 
 class PaymentMethods extends Component {
   constructor(props) {
@@ -85,6 +90,20 @@ class PaymentMethods extends Component {
     }
   };
 
+  gotoAccounts = async (intlData, item, page) => {
+    try {
+      if (item.isAccountRequired != false) {
+        Actions.paymentAddCard({intlData, item, page});
+      } else {
+        await this.props.dispatch(selectedAccount(item));
+        if (isEmptyObject(this.props.defaultAccount)) {
+          await this.props.dispatch(defaultPaymentAccount(item));
+        }
+        Actions.pop();
+      }
+    } catch (e) {}
+  };
+
   renderPaymentMethodOptions = () => {
     const {intlData, myCardAccount, companyInfo, page} = this.props;
     let paymentTypes = [];
@@ -96,7 +115,7 @@ class PaymentMethods extends Component {
           data={paymentTypes}
           renderItem={({item}) => (
             <TouchableOpacity
-              onPress={() => Actions.paymentAddCard({intlData, item, page})}
+              onPress={() => this.gotoAccounts(intlData, item, page)}
               style={[styles.card]}>
               <View style={styles.headingCard}>
                 <Text style={styles.cardText}>{item.paymentName}</Text>
@@ -158,6 +177,7 @@ mapStateToProps = state => ({
   companyInfo: state.userReducer.getCompanyInfo.companyInfo,
   myCardAccount: state.cardReducer.myCardAccount.card,
   selectedAccount: state.cardReducer.selectedAccount.selectedAccount,
+  defaultAccount: state.userReducer.defaultPaymentAccount.defaultAccount,
 });
 
 mapDispatchToProps = dispatch => ({

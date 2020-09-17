@@ -126,7 +126,7 @@ class SelectAddress extends Component {
     try {
       if (
         !isEmptyObject(selectedAddress) &&
-        selectedAddress.address == item.address
+        selectedAddress.streetName == item.streetName
       ) {
         return true;
       } else return false;
@@ -161,10 +161,22 @@ class SelectAddress extends Component {
                 <Text style={styles.cardText}>Address Name : </Text>
                 <Text style={styles.cardText}>{item.addressName}</Text>
               </View>
+              {/*<View style={styles.cardContent}>*/}
+              {/*  <Text style={styles.cardText}>Address Detail : </Text>*/}
+              {/*  <Text style={[styles.cardText, {maxWidth: '60%'}]}>*/}
+              {/*    {item.address}*/}
+              {/*  </Text>*/}
+              {/*</View>*/}
               <View style={styles.cardContent}>
-                <Text style={styles.cardText}>Address Detail : </Text>
+                <Text style={styles.cardText}>Street Name : </Text>
                 <Text style={[styles.cardText, {maxWidth: '60%'}]}>
-                  {item.address}
+                  {item.streetName}
+                </Text>
+              </View>
+              <View style={styles.cardContent}>
+                <Text style={styles.cardText}>Unit No : </Text>
+                <Text style={[styles.cardText, {maxWidth: '60%'}]}>
+                  {item.unitNo}
                 </Text>
               </View>
               {awsConfig.COUNTRY != 'Singapore' ? (

@@ -32,6 +32,7 @@ import {
   getCategoryByOutlet,
   getProductByCategory,
   saveProductsOutlet,
+  updateSurcharge,
 } from '../../actions/order.action';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
@@ -302,7 +303,14 @@ class Products2 extends Component {
         this.props.dataBasket == undefined ||
         this.props.dataBasket.status == 'PENDING'
       ) {
-        if (this.outletAvailableToOrder()) this.RBSheet.open();
+        if (
+          this.outletAvailableToOrder() &&
+          this.props.previousOrderingMode == undefined
+        ) {
+          this.RBSheet.open();
+        } else {
+          this.props.dispatch(setOrderType(this.props.previousOrderingMode));
+        }
       }
   };
 
@@ -1194,6 +1202,18 @@ class Products2 extends Component {
 
       // hide modal add modifier
       this.RBmodifier.close();
+
+      //count surcharge
+      try {
+        const {dataBasket} = this.props;
+        if (
+          dataBasket == undefined ||
+          isEmptyObject(dataBasket) ||
+          dataBasket.details.length == 1
+        ) {
+          this.props.dispatch(updateSurcharge(this.props.orderType));
+        }
+      } catch (e) {}
 
       // if data basket is empty, then post data to server first, then hide modal
       this.setState({
@@ -2712,6 +2732,7 @@ class Products2 extends Component {
           this.props.dataBasket.outlet.id != undefined &&
           this.props.dataBasket.outlet.id == this.state.item.storeId ? (
             <ButtonViewBasket
+              previousTableNo={this.props.previousTableNo}
               refreshQuantityProducts={this.refreshQuantityProducts}
             />
           ) : null
@@ -3058,7 +3079,7 @@ const styles = StyleSheet.create({
   },
   activeDINEINButton: {
     padding: 13,
-    backgroundColor: colorConfig.store.colorSuccess,
+    backgroundColor: colorConfig.card.otherCardColor,
     borderRadius: 15,
     width: '60%',
     marginBottom: 20,

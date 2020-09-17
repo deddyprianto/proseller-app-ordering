@@ -24,7 +24,7 @@ import appConfig from '../../config/appConfig';
 import CurrencyFormatter from '../../helper/CurrencyFormatter';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
-import {isEmptyArray} from '../../helper/CheckEmpty';
+import {isEmptyArray, isEmptyObject} from '../../helper/CheckEmpty';
 
 class HistoryDetailPayment extends Component {
   constructor(props) {
@@ -64,9 +64,9 @@ class HistoryDetailPayment extends Component {
       ' ' +
       tanggal.getFullYear() +
       ' • ' +
-      tanggal.getHours() +
+      this.pad(tanggal.getHours()) +
       ':' +
-      tanggal.getMinutes()
+      this.pad(tanggal.getMinutes())
     );
   }
 
@@ -121,6 +121,24 @@ class HistoryDetailPayment extends Component {
     }
   };
 
+  getPaymentType = item => {
+    try {
+      if (!isEmptyObject(item.details)) {
+        return item.details.cardIssuer.toUpperCase() + ' ' + item.paymentName;
+      } else {
+        return item.paymentName;
+      }
+    } catch (e) {
+      return '-';
+    }
+  };
+
+  pad = item => {
+    let time = item.toString();
+    if (time.length == 1) return `0${item}`;
+    else return item;
+  };
+
   render() {
     const {intlData} = this.props;
     return (
@@ -165,10 +183,51 @@ class HistoryDetailPayment extends Component {
                 </View>
               ) : null}
 
+              {this.props.item.queueNo != undefined ? (
+                <View style={styles.detailItem}>
+                  <Text style={styles.desc}>Queue No</Text>
+                  <Text style={styles.desc}>{this.props.item.queueNo}</Text>
+                </View>
+              ) : null}
+
+              {/*{this.props.item.referenceNo != undefined ? (*/}
+              {/*  <View style={styles.detailItem}>*/}
+              {/*    <Text style={styles.desc}>Ref No</Text>*/}
+              {/*    <Text*/}
+              {/*      style={[styles.desc, {maxWidth: 150, textAlign: 'right'}]}>*/}
+              {/*      {this.props.item.referenceNo}*/}
+              {/*    </Text>*/}
+              {/*  </View>*/}
+              {/*) : null}*/}
+
               <View style={styles.detailItem}>
-                <Text style={styles.desc}>Total</Text>
+                <Text style={styles.desc}>Sub Total</Text>
                 <Text style={styles.desc}>
-                  {this.formatCurrency(this.props.item.price)}
+                  {this.formatCurrency(this.props.item.beforePrice)}
+                </Text>
+              </View>
+
+              {this.props.item.statusAdd === 'addVoucher' ? (
+                <View style={styles.detailItem}>
+                  <Text style={styles.desc}>Voucher</Text>
+                  <Text style={styles.desc}>{this.props.item.voucherName}</Text>
+                </View>
+              ) : null}
+
+              <View style={styles.detailItem}>
+                <Text
+                  style={[
+                    styles.desc,
+                    {color: colorConfig.store.title, fontWeight: 'bold'},
+                  ]}>
+                  Total
+                </Text>
+                <Text
+                  style={[
+                    styles.desc,
+                    {color: colorConfig.store.title, fontWeight: 'bold'},
+                  ]}>
+                  {this.formatCurrency(this.props.item.afterPrice)}
                 </Text>
               </View>
 
@@ -179,18 +238,21 @@ class HistoryDetailPayment extends Component {
                 </View>
               ) : null}
 
-              <View style={[styles.detailItem, {borderBottomWidth: 0}]}>
-                <Text style={[styles.desc, {fontWeight: 'bold'}]}>
-                  {intlData.messages.paymentType}
-                </Text>
-              </View>
+              {this.props.item.paymentCard != undefined &&
+              this.props.item.price != 0 ? (
+                <View style={[styles.detailItem, {borderBottomWidth: 0}]}>
+                  <Text style={[styles.desc, {fontWeight: 'bold'}]}>
+                    {intlData.messages.paymentType}
+                  </Text>
+                </View>
+              ) : null}
 
-              {this.props.item.paymentType != undefined &&
+              {this.props.item.paymentCard != undefined &&
               this.props.item.price != 0 ? (
                 <View style={[styles.detailItem, {marginLeft: 10}]}>
                   <Text style={styles.desc}>
                     {' '}
-                    • {this.props.item.paymentType}
+                    • {this.getPaymentType(this.props.item.paymentCard)}
                   </Text>
                   <Text style={styles.desc}>
                     {this.formatCurrency(this.props.item.afterPrice)}

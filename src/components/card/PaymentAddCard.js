@@ -39,6 +39,7 @@ import {
 } from '../../actions/payment.actions';
 import {movePageIndex} from '../../actions/user.action';
 import RBSheet from 'react-native-raw-bottom-sheet';
+import UUIDGenerator from 'react-native-uuid-generator';
 
 class PaymentAddCard extends Component {
   constructor(props) {
@@ -274,11 +275,14 @@ class PaymentAddCard extends Component {
 
   registerCard = async () => {
     const {page} = this.props;
+    const {item} = this.props;
     await this.setState({loading: true});
     try {
+      const paymentID = item.paymentID;
+      const referenceNo = await UUIDGenerator.getRandomUUID();
       const payload = {
-        referenceNo: 'xxx-xxx-xx',
-        paymentID: 'DBS_Wirecard',
+        referenceNo,
+        paymentID,
       };
 
       const response = await this.props.dispatch(registerCard(payload));
@@ -326,7 +330,12 @@ class PaymentAddCard extends Component {
           alignItems: 'center',
           marginTop: 30,
         }}>
-        <Text style={{fontSize: 20, color: colorConfig.pageIndex.grayColor}}>
+        <Text
+          style={{
+            fontSize: 20,
+            color: colorConfig.pageIndex.grayColor,
+            textAlign: 'center',
+          }}>
           You haven't added a {item.paymentName} yet.
         </Text>
       </View>
@@ -561,7 +570,7 @@ const styles = StyleSheet.create({
     elevation: 12,
   },
   textAddCard: {
-    fontSize: 18,
+    fontSize: 15,
     color: 'white',
     fontWeight: 'bold',
     fontFamily: 'Lato-Bold',

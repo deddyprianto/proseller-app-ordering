@@ -51,6 +51,7 @@ class RewardsPoint extends Component {
         style={{
           backgroundColor: colorConfig.pageIndex.activeTintColor,
           height: this.state.screenHeight / HEIGHT - 30,
+          marginBottom: 10,
         }}>
         {totalPoint != undefined &&
         campaignActive &&
@@ -58,16 +59,13 @@ class RewardsPoint extends Component {
         !isEmptyObject(detailPoint.trigger) &&
         detailPoint.trigger.campaignTrigger === 'USER_SIGNUP' ? (
           <View>
-            <TouchableOpacity
+            <View
               style={{
                 flexDirection: 'row',
                 justifyContent: 'center',
                 alignItems: 'center',
-                marginLeft: 32,
+                // marginLeft: 13,
                 paddingTop: 25,
-              }}
-              onPress={() => {
-                Actions.detailPoint({intlData});
               }}>
               <Text
                 style={{
@@ -76,19 +74,30 @@ class RewardsPoint extends Component {
                   fontSize: 16,
                   fontWeight: 'bold',
                 }}>
-                {intlData.messages.myPoints}
+                Rewards Points
               </Text>
-              <Icon size={32} name={'chevron-right'} style={{color: 'white'}} />
-            </TouchableOpacity>
-            <Text
+            </View>
+            <TouchableOpacity
               style={{
-                color: colorConfig.pageIndex.backgroundColor,
-                textAlign: 'center',
-                fontSize: 42,
-                fontFamily: 'Lato-Bold',
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+              onPress={() => {
+                Actions.detailPoint({intlData});
               }}>
-              {totalPoint}
-            </Text>
+              <Text
+                style={{
+                  marginLeft: 40,
+                  color: colorConfig.pageIndex.backgroundColor,
+                  textAlign: 'center',
+                  fontSize: 42,
+                  fontFamily: 'Lato-Bold',
+                }}>
+                {totalPoint}
+              </Text>
+              <Icon size={40} name={'chevron-right'} style={{color: 'white'}} />
+            </TouchableOpacity>
           </View>
         ) : null}
         {campaignActive &&
@@ -117,16 +126,13 @@ class RewardsPoint extends Component {
           detailPoint.trigger.campaignTrigger === 'COMPLETE_PROFILE' &&
           detailPoint.trigger.status === true ? (
           <View>
-            <TouchableOpacity
+            <View
               style={{
                 flexDirection: 'row',
                 justifyContent: 'center',
                 alignItems: 'center',
-                marginLeft: 32,
+                // marginLeft: 13,
                 paddingTop: 25,
-              }}
-              onPress={() => {
-                Actions.detailPoint({intlData});
               }}>
               <Text
                 style={{
@@ -135,19 +141,30 @@ class RewardsPoint extends Component {
                   fontSize: 16,
                   fontWeight: 'bold',
                 }}>
-                {intlData.messages.myPoints}
+                Rewards Points
               </Text>
-              <Icon size={32} name={'chevron-right'} style={{color: 'white'}} />
-            </TouchableOpacity>
-            <Text
+            </View>
+            <TouchableOpacity
               style={{
-                color: colorConfig.pageIndex.backgroundColor,
-                textAlign: 'center',
-                fontSize: 42,
-                fontFamily: 'Lato-Bold',
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+              onPress={() => {
+                Actions.detailPoint({intlData});
               }}>
-              {totalPoint}
-            </Text>
+              <Text
+                style={{
+                  marginLeft: 40,
+                  color: colorConfig.pageIndex.backgroundColor,
+                  textAlign: 'center',
+                  fontSize: 42,
+                  fontFamily: 'Lato-Bold',
+                }}>
+                {totalPoint}
+              </Text>
+              <Icon size={40} name={'chevron-right'} style={{color: 'white'}} />
+            </TouchableOpacity>
           </View>
         ) : null}
       </View>

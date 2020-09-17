@@ -43,11 +43,17 @@ class HistoryPayment extends Component {
       ' ' +
       tanggal.getFullYear() +
       ' • ' +
-      tanggal.getHours() +
+      this.pad(tanggal.getHours()) +
       ':' +
-      tanggal.getMinutes()
+      this.pad(tanggal.getMinutes())
     );
   }
+
+  pad = item => {
+    let time = item.toString();
+    if (time.length == 1) return `0${item}`;
+    else return item;
+  };
 
   getMonth(value) {
     var mount = [
@@ -199,6 +205,11 @@ class HistoryPayment extends Component {
                         </Text>
                       ) : null}
                     </View>
+
+                    {/*{item.queueNo != undefined ? (*/}
+                    {/*    <Text style={styles.paymentType}>- {item.queueNo}</Text>*/}
+                    {/*) : null}*/}
+
                     {!isEmptyArray(item.stamps) && item.stamps.length > 1 ? (
                       <View style={styles.sejajarSpaceFlexEnd}>
                         <Text style={styles.itemTypeStamps}>
@@ -212,7 +223,7 @@ class HistoryPayment extends Component {
                     <View style={styles.sejajarSpace}>
                       <View style={{flexDirection: 'row'}}>
                         <Icon
-                          size={18}
+                          size={16}
                           name={
                             Platform.OS === 'ios'
                               ? 'ios-pricetag'
@@ -222,7 +233,7 @@ class HistoryPayment extends Component {
                         />
                         <Text style={styles.paymentType}>
                           {/*{appConfig.appMataUang}*/}
-                          {this.formatCurrency(item.price)}
+                          {this.formatCurrency(item.afterPrice)}
                         </Text>
                       </View>
                       <Text style={styles.paymentTgl}>

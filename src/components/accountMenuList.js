@@ -21,9 +21,10 @@ import awsConfig from '../config/awsConfig';
 import CryptoJS from 'react-native-crypto-js';
 import {isEmptyArray, isEmptyObject} from '../helper/CheckEmpty';
 import packageJson from '../../package';
-import {updateUser} from '../actions/user.action';
+import {defaultPaymentAccount, updateUser} from '../actions/user.action';
 import VersionCheck from 'react-native-version-check';
 import appConfig from '../config/appConfig';
+import RBSheet from 'react-native-raw-bottom-sheet';
 
 class AccountMenuList extends Component {
   constructor(props) {
@@ -32,6 +33,7 @@ class AccountMenuList extends Component {
       screenWidth: Dimensions.get('window').width,
       dialogChangeLanguage: false,
       loadingLogout: false,
+      selectedAccount: {},
     };
   }
 
@@ -116,6 +118,29 @@ class AccountMenuList extends Component {
     );
   };
 
+  getLengthAccount = item => {
+    try {
+      const {myCardAccount} = this.props;
+      const find = myCardAccount.filter(
+        data => data.paymentID === item.paymentID,
+      );
+      if (find != undefined && find.length > 0) return `( ${find.length} )`;
+      else return null;
+    } catch (e) {}
+  };
+
+  gotoAccounts = async item => {
+    const {intlData} = this.props;
+    try {
+      if (item.isAccountRequired != false) {
+        Actions.listCard({intlData, item});
+      } else {
+        await this.setState({selectedAccount: item});
+        this.RBSheet.open();
+      }
+    } catch (e) {}
+  };
+
   renderPaymentMethodOptions = () => {
     const {intlData, myCardAccount, companyInfo} = this.props;
     let paymentTypes = [];
@@ -125,7 +150,7 @@ class AccountMenuList extends Component {
       return paymentTypes.map((item, idx) => (
         <TouchableOpacity
           key={idx}
-          onPress={() => Actions.listCard({intlData, item})}
+          onPress={() => this.gotoAccounts(item)}
           style={styles.cardMenu}>
           <View style={styles.itemMenu}>
             <Icon
@@ -136,27 +161,99 @@ class AccountMenuList extends Component {
           </View>
           <View>
             <View style={styles.item}>
-              {myCardAccount != undefined && myCardAccount.length > 0 ? (
+              {myCardAccount != undefined ? (
                 <Text style={styles.title}>
-                  {item.paymentName} ({myCardAccount.length})
+                  {item.paymentName} {this.getLengthAccount(item)}
                 </Text>
-              ) : (
-                <Text style={styles.title}>ADD {item.paymentName}</Text>
-              )}
-              <Icon
-                size={20}
-                name={
-                  Platform.OS === 'ios'
-                    ? 'ios-arrow-dropright'
-                    : 'md-arrow-dropright'
-                }
-                style={{color: colorConfig.store.defaultColor, marginRight: 20}}
-              />
+              ) : null}
+              {item.isAccountRequired != false ? (
+                <Icon
+                  size={20}
+                  name={
+                    Platform.OS === 'ios'
+                      ? 'ios-arrow-dropright'
+                      : 'md-arrow-dropright'
+                  }
+                  style={{
+                    color: colorConfig.store.defaultColor,
+                    marginRight: 20,
+                  }}
+                />
+              ) : null}
             </View>
           </View>
         </TouchableOpacity>
       ));
     }
+  };
+
+  setDefaultAccount = async () => {
+    const {selectedAccount} = this.state;
+    await this.props.dispatch(defaultPaymentAccount(selectedAccount));
+    this.RBSheet.close();
+  };
+
+  askUserToSelectPaymentType = () => {
+    const {intlData} = this.props;
+    return (
+      <RBSheet
+        ref={ref => {
+          this.RBSheet = ref;
+        }}
+        animationType={'fade'}
+        height={210}
+        duration={10}
+        closeOnDragDown={true}
+        closeOnPressMask={true}
+        closeOnPressBack={true}
+        customStyles={{
+          container: {
+            backgroundColor: colorConfig.store.textWhite,
+            justifyContent: 'center',
+            alignItems: 'center',
+          },
+        }}>
+        <Text
+          style={{
+            fontSize: 19,
+            color: colorConfig.store.titleSelected,
+            fontFamily: 'Lato-Medium',
+            marginBottom: 10,
+          }}>
+          Default Payment Method
+        </Text>
+        <TouchableOpacity
+          onPress={() => this.setDefaultAccount()}
+          style={{
+            padding: 12,
+            backgroundColor: colorConfig.store.defaultColor,
+            borderRadius: 15,
+            width: '60%',
+            marginBottom: 20,
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <Icon
+            size={30}
+            name={Platform.OS === 'ios' ? 'ios-save' : 'md-save'}
+            style={{color: 'white'}}
+          />
+          <Text
+            style={{
+              marginLeft: 10,
+              color: 'white',
+              fontWeight: 'bold',
+              fontFamily: 'Lato-Bold',
+              fontSize: 18,
+              textAlign: 'center',
+            }}>
+            {/*{intlData.messages.dineIn}*/}
+            Set as Default
+          </Text>
+        </TouchableOpacity>
+      </RBSheet>
+    );
   };
 
   render() {
@@ -169,6 +266,7 @@ class AccountMenuList extends Component {
     } = this.props;
     return (
       <View style={styles.container}>
+        {this.askUserToSelectPaymentType()}
         <Text style={styles.headingMenu}>
           {intlData.messages.defaultPaymentAccount}
           {/*Default Payment Account*/}
@@ -188,14 +286,18 @@ class AccountMenuList extends Component {
               <Text
                 style={[styles.title, {color: colorConfig.store.defaultColor}]}>
                 {!isEmptyObject(defaultAccount) ? (
-                  <>
-                    <Text>
-                      {defaultAccount.details.cardIssuer != undefined
-                        ? defaultAccount.details.cardIssuer.toUpperCase()
-                        : null}
-                    </Text>{' '}
-                    <Text>{defaultAccount.details.maskedAccountNumber}</Text>
-                  </>
+                  defaultAccount.isAccountRequired != false ? (
+                    <>
+                      <Text>
+                        {defaultAccount.details.cardIssuer != undefined
+                          ? defaultAccount.details.cardIssuer.toUpperCase()
+                          : null}
+                      </Text>{' '}
+                      <Text>{defaultAccount.details.maskedAccountNumber}</Text>
+                    </>
+                  ) : (
+                    <Text>{defaultAccount.paymentName}</Text>
+                  )
                 ) : (
                   <Text style={{color: colorConfig.store.colorError}}>
                     {intlData.messages.notYesAdded}
@@ -450,7 +552,7 @@ const styles = StyleSheet.create({
   title: {
     color: colorConfig.store.title,
     letterSpacing: 1,
-    fontSize: 16,
+    fontSize: 14,
     // fontWeight: 'bold',
     fontFamily: 'Lato-Bold',
   },

@@ -461,7 +461,7 @@ const styles = StyleSheet.create({
   },
   descVoucher: {
     fontSize: 15,
-    color: colorConfig.pageIndex.inactiveTintColor,
+    color: colorConfig.store.titleSelected,
   },
   descVoucherTime: {
     fontSize: 13,

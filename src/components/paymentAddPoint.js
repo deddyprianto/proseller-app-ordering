@@ -14,7 +14,7 @@ import {
   BackHandler,
   Platform,
   Alert,
-  SafeAreaView
+  SafeAreaView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -146,17 +146,19 @@ class paymentAddPoint extends Component {
     const {campign} = this.props;
     try {
       let ratio = this.state.jumPoint / this.state.jumPointRatio;
-      if (
-        campign.points.roundingOptions != undefined &&
-        campign.points.roundingOptions == 'DECIMAL'
-      ) {
-        let money = parseFloat(ratio * this.state.jumMoneyRatio);
-        return this.to2PointDecimal(money);
-        // return money.toFixed(2);
-      } else {
-        ratio = Math.floor(ratio);
-        return ratio * this.state.jumMoneyRatio;
-      }
+      // if (
+      //   campign.points.roundingOptions != undefined &&
+      //   campign.points.roundingOptions == 'DECIMAL'
+      // ) {
+      //   let money = parseFloat(ratio * this.state.jumMoneyRatio);
+      //   return this.to2PointDecimal(money);
+      //   // return money.toFixed(2);
+      // } else {
+      //   ratio = Math.floor(ratio);
+      //   return ratio * this.state.jumMoneyRatio;
+      // }
+      let money = parseFloat(ratio * this.state.jumMoneyRatio);
+      return this.to2PointDecimal(money);
     } catch (e) {
       return 0;
     }

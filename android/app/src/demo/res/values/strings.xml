@@ -1,7 +1,7 @@
 <resources>
-    <string name="app_name">QIJI Demo</string>
+    <string name="app_name">UStars Demo</string>
     <string name="facebook_app_id">340760273400416</string> <string name="fb_login_protocol_scheme">fb340760273400416</string>
     <string name="appCenterCrashes_whenToSendCrashes" moduleConfig="true" translatable="false">ALWAYS_SEND</string>
     <string name="appCenterAnalytics_whenToEnableAnalytics" moduleConfig="true" translatable="false">ALWAYS_SEND</string>
-    <string moduleConfig="true" name="CodePushDeploymentKey">XYSTgEABsHTUkVRDXNfSF5T05ytrTGW8reUxW</string>
+    <string moduleConfig="true" name="CodePushDeploymentKey">FdQAsS9KSd_T-VZ-rCrezNXWzDbWHHdOhq83S</string>
 </resources>

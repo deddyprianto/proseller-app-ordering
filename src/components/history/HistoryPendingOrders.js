@@ -18,6 +18,8 @@ import {Actions} from 'react-native-router-flux';
 import {notifikasi} from '../../actions/auth.actions';
 import {getCart, getPendingCart, setCart} from '../../actions/order.action';
 import {isEmptyArray} from '../../helper/CheckEmpty';
+import CurrencyFormatter from '../../helper/CurrencyFormatter';
+import appConfig from '../../config/appConfig';
 
 class HistoryPayment extends Component {
   constructor(props) {
@@ -36,9 +38,9 @@ class HistoryPayment extends Component {
       ' ' +
       tanggal.getFullYear() +
       ' • ' +
-      tanggal.getHours() +
+      this.pad(tanggal.getHours()) +
       ':' +
-      tanggal.getMinutes()
+      this.pad(tanggal.getMinutes())
     );
   }
 
@@ -88,7 +90,7 @@ class HistoryPayment extends Component {
     } catch (e) {}
   };
 
-  componentWillUnmount(): void {
+  componentWillUnmount() {
     try {
       clearInterval(this.interval);
     } catch (e) {}
@@ -161,6 +163,62 @@ class HistoryPayment extends Component {
     } catch (e) {}
   };
 
+  formatCurrency = value => {
+    try {
+      return this.format(CurrencyFormatter(value).match(/[a-z]+|[^a-z]+/gi)[1]);
+    } catch (e) {
+      return value;
+    }
+  };
+
+  format = item => {
+    try {
+      const curr = appConfig.appMataUang;
+      item = item.replace(curr, '');
+      if (curr != 'RP' && curr != 'IDR' && item.includes('.') == false) {
+        return `${item}.00`;
+      }
+      return item;
+    } catch (e) {
+      return item;
+    }
+  };
+
+  pad = item => {
+    let time = item.toString();
+    if (time.length == 1) return `0${item}`;
+    else return item;
+  };
+
+  getPrice = item => {
+    try {
+      if (
+        item.confirmationInfo != undefined &&
+        item.confirmationInfo.afterPrice != undefined
+      ) {
+        return this.formatCurrency(item.confirmationInfo.afterPrice);
+      } else {
+        return '';
+      }
+    } catch (e) {
+      return '';
+    }
+  };
+
+  getItemLength = item => {
+    try {
+      let qty = 0;
+      item.map(data => {
+        if (data.quantity != undefined) {
+          qty += data.quantity;
+        }
+      });
+      return qty;
+    } catch (e) {
+      return '';
+    }
+  };
+
   render() {
     const {intlData, pendingCart} = this.props;
     return (
@@ -201,7 +259,9 @@ class HistoryPayment extends Component {
                             ? item.tableNo
                             : null}
                           {' - '}
-                          {item.details.length} Items
+                          {this.getItemLength(item.details)} Items
+                          {' -'}
+                          {this.getPrice(item)}
                         </Text>
                       </Text>
                     </View>

@@ -463,6 +463,42 @@ export const getBasket = () => {
   };
 };
 
+export const updateSurcharge = orderingMode => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      const payload = {
+        orderingMode,
+      };
+
+      let response = await fetchApiOrder(
+        `/cart/changeOrderingMode`,
+        'POST',
+        payload,
+        200,
+        token,
+      );
+      console.log(response, 'response update surcharge');
+      if (response.success == true) {
+        dispatch({
+          type: 'DATA_BASKET',
+          product: response.response.data,
+        });
+      }
+
+      return response;
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
 export const getPendingCart = () => {
   return async (dispatch, getState) => {
     const state = getState();
@@ -673,10 +709,10 @@ export const settleOrder = (payload, url) => {
           type: 'TABLE_TYPE',
           tableType: undefined,
         });
-        dispatch({
-          type: 'SELECTED_ACCOUNT',
-          selectedAccount: undefined,
-        });
+        // dispatch({
+        //   type: 'SELECTED_ACCOUNT',
+        //   selectedAccount: undefined,
+        // });
       }
       var result = {
         responseBody: response.response,

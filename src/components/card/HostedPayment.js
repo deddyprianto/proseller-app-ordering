@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {WebView} from 'react-native-webview';
-import {Alert, StyleSheet} from 'react-native';
+import {Alert, StyleSheet, Text, TouchableOpacity} from 'react-native';
 import {Actions} from 'react-native-router-flux';
 import colorConfig from '../../config/colorConfig';
 import {
@@ -15,8 +15,8 @@ import {defaultPaymentAccount} from '../../actions/user.action';
 
 const URL = awsConfig.base_url_payment;
 
-const SUCCESS_URL = `${URL}account/registration/success`;
-const FAILED_URL = `${URL}account/registration/failed`;
+const SUCCESS_URL = `account/registration/success`;
+const FAILED_URL = `account/registration/failed`;
 
 let openOne = true;
 
@@ -56,7 +56,7 @@ class HostedPayment extends Component {
           style={{marginTop: 10}}
           onNavigationStateChange={async navState => {
             let url = navState.url;
-            if (url == SUCCESS_URL && openOne) {
+            if (url.includes(SUCCESS_URL) && openOne) {
               // if page come from payment, then return back with selected account that has been created
               // if (page == 'paymentDetail' || page == 'settleOrder') {
               //   await this.setSelectedAccount();
@@ -64,13 +64,32 @@ class HostedPayment extends Component {
               await this.setSelectedAccount();
               Actions.popTo(page);
               // openOne = false;
-            } else if (url == FAILED_URL && openOne) {
+            } else if (url.includes(FAILED_URL) && openOne) {
               Actions.popTo(page);
               Alert.alert('Sorry', "Can't register your credit card.");
               // openOne = false;
             }
           }}
         />
+        <TouchableOpacity
+          onPress={() => Actions.pop()}
+          style={{
+            backgroundColor: 'white',
+            borderTopWidth: 0.5,
+            marginTop: 10,
+            justifyContent: 'center',
+            alignItems: 'center',
+            padding: 11,
+          }}>
+          <Text
+            style={{
+              fontSize: 19,
+              color: colorConfig.store.colorError,
+              fontFamily: 'Lato-Bold',
+            }}>
+            Close
+          </Text>
+        </TouchableOpacity>
       </>
     );
   }

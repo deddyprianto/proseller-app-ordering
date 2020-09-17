@@ -1,15 +1,16 @@
 const appConfig = {
   // info company
-  appName: 'QIJI',
+  appName: 'UStars',
   appMataUang: 'SGD',
   appVersion: 'Version 1.1',
   // image company
   appLogo: require('../assets/img/logo2.png'),
   appLogo3D: require('../assets/img/logo_3D.png'),
-  appLogoQR: require('../assets/img/logoQR.png'),
+  appLogoQR: require('../assets/img/logo.jpg'),
   appBackground: require('../assets/img/bg.png'),
   appTextWelcome: require('../assets/img/welcome.png'),
-  appImageNull: require('../assets/img/image_null.png'),
+  appImageNull: require('../assets/img/logo.jpg'),
+  userQRCode: require('../assets/img/qrcode.jpg'),
   foodPlaceholder: require('../assets/img/food-placeholder.jpg'),
   welcomeLogo: require('../assets/img/welcome-logo.jpg'),
   dbsLogo: require('../assets/img/dbs.png'),

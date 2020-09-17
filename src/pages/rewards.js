@@ -89,14 +89,16 @@ class Rewards extends Component {
     const page1 = 'paymentDetail';
     const page2 = 'paymentSuccess';
     const page3 = 'settleOrder';
+    const page4 = 'hostedTrx';
     // console.log('Notification received: ', notification);
 
     if (
-      (notification.payload.title === 'Payment' ||
-        notification.payload.title === 'Ordering') &&
+      (notification.payload.title.includes('Payment') ||
+        notification.payload.title.includes('Ordering')) &&
       scene != page1 &&
       scene != page2 &&
-      scene != page3
+      scene != page3 &&
+      scene != page4
     ) {
       try {
         Alert.alert(notification.payload.title, notification.payload.body);
@@ -123,50 +125,50 @@ class Rewards extends Component {
     // this.initializeStore();
   };
 
-  initializeStore = async () => {
-    try {
-      // check if user enabled their position permission
-      let statusLocaiton;
-      if (
-        this.props.userPosition == undefined ||
-        this.props.userPosition == false
-      ) {
-        statusLocaiton = false;
-      } else {
-        statusLocaiton = true;
-      }
-      await this.setDataStore(
-        this.props.dataStores,
-        statusLocaiton,
-        this.props.userPosition,
-      );
-    } catch (e) {}
-  };
-
   checkDefaultPaymentAccount = async response => {
     try {
-      const {defaultAccount} = this.props;
+      const {defaultAccount, companyInfo} = this.props;
 
       if (response.success == false) {
         await this.props.dispatch(defaultPaymentAccount(undefined));
         return;
       }
 
+      // check if payment provider was deleted
       try {
-        if (isEmptyArray(response.response.data)) {
+        if (isEmptyArray(companyInfo.paymentTypes)) {
           await this.props.dispatch(defaultPaymentAccount(undefined));
           return;
         }
       } catch (e) {}
 
-      const MyCardAccount = response.response.data;
-      const data = await MyCardAccount.find(
-        item => item.id == defaultAccount.id,
-      );
-      if (data == undefined) {
-        await this.props.dispatch(defaultPaymentAccount(undefined));
+      try {
+        if (!isEmptyArray(companyInfo.paymentTypes)) {
+          if (!isEmptyObject(defaultAccount)) {
+            const findPaymentProvider = companyInfo.paymentTypes.find(
+              item => item.paymentID == defaultAccount.paymentID,
+            );
+            if (findPaymentProvider == undefined) {
+              await this.props.dispatch(defaultPaymentAccount(undefined));
+              return;
+            }
+          }
+        }
+      } catch (e) {}
+
+      if (
+        !isEmptyObject(defaultAccount) &&
+        defaultAccount.isAccountRequired != false
+      ) {
+        const MyCardAccount = response.response.data;
+        const data = await MyCardAccount.find(
+          item => item.id == defaultAccount.id,
+        );
+        if (data == undefined) {
+          await this.props.dispatch(defaultPaymentAccount(undefined));
+        }
+        return;
       }
-      return;
     } catch (e) {}
   };
 
@@ -228,26 +230,29 @@ class Rewards extends Component {
   getDataRewards = async () => {
     try {
       await this.props.dispatch(refreshToken());
-      await this.props.dispatch(getUserProfile());
-      await this.props.dispatch(getCompanyInfo());
-      // await this.props.dispatch(getMandatoryFields());
+      await Promise.all([
+        this.props.dispatch(campaign()),
+        this.props.dispatch(dataPoint()),
+        this.props.dispatch(getStamps()),
+        this.props.dispatch(recentTransaction()),
+        // this.props.dispatch(getUserProfile()),
+        // this.props.dispatch(getMandatoryFields()),
+      ]);
+      await this.setState({isLoading: false});
+      this.props.dispatch(getUserProfile());
+      this.props.dispatch(getMandatoryFields());
+      this.props.dispatch(dataInbox(0, 10));
+      this.props.dispatch(getCompanyInfo());
       const response = await this.props.dispatch(getAccountPayment());
-      await this.props.dispatch(campaign());
-      await this.props.dispatch(dataPoint());
-      await this.props.dispatch(getStamps());
-      await this.props.dispatch(getPendingCart());
-      await this.props.dispatch(dataInbox(0, 50));
-      await this.props.dispatch(recentTransaction());
-      await this.props.dispatch(getDeliveryProvider());
-      await this.props.dispatch(referral());
-      // await this.props.dispatch(dataStores());
-      await this.getUserPosition();
-
       await this.checkDefaultPaymentAccount(response);
-
-      // this.setDataStore();
-
-      this.setState({isLoading: false});
+      await this.getUserPosition();
+      // await this.props.dispatch(refreshToken());
+      // await this.props.dispatch(campaign());
+      // await this.props.dispatch(dataPoint());
+      // await this.props.dispatch(getStamps());
+      // await this.props.dispatch(recentTransaction());
+      // await this.props.dispatch(getUserProfile());
+      // await this.props.dispatch(getMandatoryFields());
     } catch (error) {
       await this.props.dispatch(
         notifikasi(
@@ -256,76 +261,6 @@ class Rewards extends Component {
           console.log('Cancel Pressed'),
         ),
       );
-    }
-  };
-
-  setDataStore = async (response, statusLocation, position) => {
-    var coordinate = {};
-    var location = {};
-    try {
-      location = {};
-      location = {
-        region: response[0].region,
-        address: response[0].location,
-        coordinate: {
-          lat: response[0].latitude,
-          lng: response[0].longitude,
-        },
-      };
-
-      response[0].location = location;
-
-      const selectedOutlet = {
-        storeId: response[0].id,
-        storeName: response[0].name,
-        storeStatus: true,
-        storeJarak: statusLocation
-          ? geolib.getDistance(position.coords, {
-              latitude: Number(response[0].latitude),
-              longitude: Number(response[0].longitude),
-            }) / 1000
-          : '-',
-        image:
-          response[0].defaultImageURL != undefined
-            ? response[0].defaultImageURL
-            : '',
-        region: response[0].region,
-        address: response[0].location.address,
-        city: response[0].city,
-        operationalHours: response[0].operationalHours,
-        openAllDays: response[0].openAllDays,
-        defaultImageURL: response[0].defaultImageURL,
-        coordinate: response[0].location.coordinate,
-        orderingStatus: response[0].orderingStatus,
-        outletType: response[0].outletType,
-        offlineMessage: response[0].offlineMessage,
-        maxOrderQtyPerItem: response[0].maxOrderQtyPerItem,
-        maxOrderAmount: response[0].maxOrderAmount,
-        lastOrderOn: response[0].lastOrderOn,
-        enableRedeemPoint: response[0].enableRedeemPoint,
-        enableItemSpecialInstructions:
-          response[0].enableItemSpecialInstructions,
-        enableDineIn: !(
-          response[0].enableDineIn == false || response[0].enableDineIn == '-'
-        ),
-        enableTakeAway: !(
-          response[0].enableTakeAway == false ||
-          response[0].enableTakeAway == '-'
-        ),
-        enableTableScan: !(
-          response[0].enableTableScan == false ||
-          response[0].enableTableScan == '-'
-        ),
-        enableDelivery: !(
-          response[0].enableDelivery == false ||
-          response[0].enableDelivery == '-'
-        ),
-      };
-
-      console.log({selectedOutlet});
-      await this.props.dispatch(setSingleOutlet(selectedOutlet));
-    } catch (error) {
-      console.log(error);
     }
   };
 
@@ -384,8 +319,8 @@ class Rewards extends Component {
 
     return (
       <View style={{backgroundColor: colorConfig.store.defaultColor}}>
-        <Text style={styles.textWelcome}>{status},</Text>
-        <Text style={styles.textName}>{userDetail.name.toUpperCase()}</Text>
+        <Text style={styles.textWelcome}>{status}</Text>
+        <Text style={styles.textName}>{userDetail.name}</Text>
       </View>
     );
   };
@@ -409,8 +344,8 @@ class Rewards extends Component {
 
   render() {
     const {campaignActive} = this.props;
-
     const {intlData} = this.props;
+
     return (
       <SafeAreaView>
         <Overlay
@@ -460,6 +395,7 @@ class Rewards extends Component {
                   style={{
                     backgroundColor: colorConfig.pageIndex.activeTintColor,
                     alignItems: 'center',
+                    paddingBottom: 20,
                   }}>
                   <TouchableOpacity
                     onPress={this.detailStamps}
@@ -469,7 +405,7 @@ class Rewards extends Component {
                       flexDirection: 'row',
                       justifyContent: 'center',
                       alignItems: 'center',
-                      marginLeft: 32,
+                      // marginLeft: 32,
                     }}>
                     <Text
                       style={{
@@ -480,13 +416,19 @@ class Rewards extends Component {
                       }}>
                       {intlData.messages.stampsCard}
                     </Text>
-                    <Icon
-                      size={32}
-                      name={'chevron-right'}
-                      style={{color: 'white'}}
-                    />
                   </TouchableOpacity>
                   <RewardsStamp isLoading={this.state.isLoading} />
+                  <TouchableOpacity onPress={this.detailStamps}>
+                    <Text
+                      style={{
+                        textAlign: 'center',
+                        color: 'white',
+                        fontFamily: 'Lato-Bold',
+                        fontSize: 15,
+                      }}>
+                      Learn More
+                    </Text>
+                  </TouchableOpacity>
                 </View>
               )}
 
@@ -546,18 +488,16 @@ const styles = StyleSheet.create({
   textWelcome: {
     fontSize: 18,
     color: colorConfig.store.secondaryColor,
-    fontWeight: 'bold',
     fontFamily: 'Lato-Medium',
     textAlign: 'center',
-    marginTop: 40,
+    marginTop: 25,
   },
   textName: {
     fontSize: 26,
     color: 'white',
-    fontWeight: 'bold',
     fontFamily: 'Lato-Bold',
     textAlign: 'center',
-    padding: 10,
+    padding: 5,
   },
   information: {
     backgroundColor: colorConfig.store.defaultColor,
@@ -601,6 +541,7 @@ mapStateToProps = state => ({
   intlData: state.intlData,
   userPosition: state.userReducer.userPosition.userPosition,
   dataStores: state.storesReducer.dataStores.stores,
+  companyInfo: state.userReducer.getCompanyInfo.companyInfo,
 });
 
 mapDispatchToProps = dispatch => ({

@@ -105,10 +105,17 @@ export const getStamps = () => {
       );
       console.log(response, 'response getStamps');
 
-      dispatch({
-        type: 'DATA_STAMPS',
-        dataStamps: response.responseBody.Data,
-      });
+      if (response.success == true) {
+        dispatch({
+          type: 'DATA_STAMPS',
+          dataStamps: response.responseBody.Data,
+        });
+      } else {
+        dispatch({
+          type: 'DATA_STAMPS',
+          dataStamps: undefined,
+        });
+      }
     } catch (error) {
       return error;
     }

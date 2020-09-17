@@ -143,14 +143,6 @@ class RedeemVoucher extends Component {
 
   render() {
     const {intlData, totalPoint, vouchers, detailPoint} = this.props;
-    // check if voucher available but customer point not enough to see em
-    let voucherNotShowing = false;
-    if (vouchers != undefined && vouchers.length > 0) {
-      const data = this.props.vouchers.filter(
-        data => data.redeemValue <= totalPoint,
-      );
-      if (data == undefined || data.length == 0) voucherNotShowing = true;
-    }
     return (
       <SafeAreaView>
         {this.state.isLoading && <Loader />}
@@ -230,104 +222,62 @@ class RedeemVoucher extends Component {
                   </Text>
                 </View>
               ) : (
-                this.props.vouchers
-                  .filter(data => data.redeemValue <= totalPoint)
-                  .map((item, keys) => (
-                    <View key={keys}>
-                      {
-                        <TouchableOpacity
-                          style={styles.voucherItem}
-                          onPress={() => this.pageDetailVoucher(item)}>
-                          <View style={{alignItems: 'center'}}>
-                            <Image
-                              style={
-                                item['image'] != '' &&
-                                item['image'] != undefined
-                                  ? styles.voucherImage1
-                                  : styles.voucherImage2
-                              }
-                              source={
-                                item['image'] != '' &&
-                                item['image'] != undefined
-                                  ? {uri: item['image']}
-                                  : appConfig.appImageNull
-                              }
-                            />
-                            <View style={styles.vourcherPoint}>
-                              <Text
-                                style={{
-                                  color: colorConfig.pageIndex.backgroundColor,
-                                  fontSize: 16,
-                                  fontWeight: 'bold',
-                                  textAlign: 'right',
-                                }}>
-                                {item['redeemValue']} {intlData.messages.point}
-                              </Text>
-                            </View>
-                          </View>
-                          <View style={styles.voucherDetail}>
-                            <Text style={styles.nameVoucher}>
-                              {item['name']}
+                this.props.vouchers.map((item, keys) => (
+                  <View key={keys}>
+                    {
+                      <TouchableOpacity
+                        style={styles.voucherItem}
+                        onPress={() => this.pageDetailVoucher(item)}>
+                        <View style={{alignItems: 'center'}}>
+                          <Image
+                            style={
+                              item['image'] != '' && item['image'] != undefined
+                                ? styles.voucherImage1
+                                : styles.voucherImage2
+                            }
+                            source={
+                              item['image'] != '' && item['image'] != undefined
+                                ? {uri: item['image']}
+                                : appConfig.appImageNull
+                            }
+                          />
+                          <View style={styles.vourcherPoint}>
+                            <Text
+                              style={{
+                                color: colorConfig.pageIndex.backgroundColor,
+                                fontSize: 16,
+                                fontWeight: 'bold',
+                                textAlign: 'right',
+                              }}>
+                              {item['redeemValue']} {intlData.messages.point}
                             </Text>
-                            <View style={{flexDirection: 'row'}}>
-                              <Icon
-                                size={15}
-                                name={
-                                  Platform.OS === 'ios' ? 'ios-list' : 'md-list'
-                                }
-                                style={{
-                                  color:
-                                    colorConfig.pageIndex.inactiveTintColor,
-                                  marginRight: 3,
-                                }}
-                              />
-                              <Text style={styles.descVoucher}>
-                                {item['voucherDesc'] != null
-                                  ? item['voucherDesc']
-                                  : 'No description for this voucher'}
-                              </Text>
-                            </View>
                           </View>
-                        </TouchableOpacity>
-                      }
-                    </View>
-                  ))
+                        </View>
+                        <View style={styles.voucherDetail}>
+                          <Text style={styles.nameVoucher}>{item['name']}</Text>
+                          <View style={{flexDirection: 'row'}}>
+                            <Icon
+                              size={15}
+                              name={
+                                Platform.OS === 'ios' ? 'ios-list' : 'md-list'
+                              }
+                              style={{
+                                color: colorConfig.pageIndex.inactiveTintColor,
+                                marginRight: 3,
+                              }}
+                            />
+                            <Text style={styles.descVoucher}>
+                              {item['voucherDesc'] != null
+                                ? item['voucherDesc']
+                                : 'No description for this voucher'}
+                            </Text>
+                          </View>
+                        </View>
+                      </TouchableOpacity>
+                    }
+                  </View>
+                ))
               )}
-              {voucherNotShowing ? (
-                <View>
-                  <Text
-                    style={{
-                      marginTop: '50%',
-                      fontSize: 20,
-                      textAlign: 'center',
-                      color: colorConfig.pageIndex.inactiveTintColor,
-                      fontWeight: 'bold',
-                      fontFamily: 'Lato-Bold',
-                    }}>
-                    Opps, you don't have enough points to see active vouchers.
-                  </Text>
-                  {/*<TouchableHighlight*/}
-                  {/*  onPress={() => Actions.pop()}*/}
-                  {/*  style={{*/}
-                  {/*    marginTop: 20,*/}
-                  {/*    marginHorizontal: '15%',*/}
-                  {/*    borderRadius: 10,*/}
-                  {/*    backgroundColor: colorConfig.store.colorSuccess,*/}
-                  {/*  }}>*/}
-                  {/*  <Text*/}
-                  {/*    style={{*/}
-                  {/*      fontSize: 20,*/}
-                  {/*      textAlign: 'center',*/}
-                  {/*      color: 'white',*/}
-                  {/*      fontWeight: 'bold',*/}
-                  {/*      fontFamily: 'Lato-Bold',*/}
-                  {/*      padding: 8,*/}
-                  {/*    }}>*/}
-                  {/*    Start shopping now !*/}
-                  {/*  </Text>*/}
-                  {/*</TouchableHighlight>*/}
-                </View>
-              ) : null}
             </View>
           </View>
         </ScrollView>
@@ -440,7 +390,7 @@ const styles = StyleSheet.create({
   },
   descVoucher: {
     fontSize: 13,
-    color: colorConfig.pageIndex.inactiveTintColor,
+    color: colorConfig.store.titleSelected,
   },
   pointVoucher: {
     fontSize: 12,

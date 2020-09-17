@@ -16,6 +16,7 @@ class ButtonViewBasket extends Component {
     Actions.basket({
       from: 'products',
       refreshQuantityProducts: this.props.refreshQuantityProducts,
+      previousTableNo: this.props.previousTableNo,
     });
   };
 
