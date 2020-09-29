@@ -67,6 +67,8 @@ class paymentAddPoint extends Component {
     }, 1000);
 
     try {
+      const {pendingPoints} = this.props;
+
       var jumPointRatio = this.props.campign.points.pointsToRebateRatio0;
       var jumMoneyRatio = this.props.campign.points.pointsToRebateRatio1;
 
@@ -85,16 +87,23 @@ class paymentAddPoint extends Component {
 
       // if settings from admin is not set to decimal, then round
       let pointToSet = this.state.myPoint;
+
+      if (pendingPoints != undefined && pendingPoints > 0) {
+        pointToSet -= pendingPoints;
+      }
+
       if (
         campign.points.roundingOptions != undefined &&
         campign.points.roundingOptions == 'INTEGER'
       ) {
         setDefault = Math.ceil(setDefault);
-        pointToSet = Math.floor(this.props.totalPoint);
+        // pointToSet = Math.floor(this.props.totalPoint);
+        pointToSet = Math.floor(pointToSet);
       }
 
       if (this.props.valueSet == 0) {
-        if (setDefault >= this.props.totalPoint) {
+        // if (setDefault >= this.props.totalPoint) {
+        if (setDefault >= pointToSet) {
           this.setState({jumPoint: pointToSet});
         } else {
           this.setState({jumPoint: setDefault});
@@ -179,9 +188,13 @@ class paymentAddPoint extends Component {
   };
 
   getMaximumPoint = () => {
-    const {campign} = this.props;
-    const {ratio, myPoint} = this.state;
+    const {campign, pendingPoints} = this.props;
+    let {ratio, myPoint} = this.state;
     try {
+      if (pendingPoints != undefined && pendingPoints > 0) {
+        myPoint -= pendingPoints;
+      }
+
       const maxPayment = this.props.pembayaran.payment * ratio;
 
       let maxPoint;
@@ -204,7 +217,7 @@ class paymentAddPoint extends Component {
   };
 
   render() {
-    const {intlData, campign} = this.props;
+    const {intlData, campign, pendingPoints} = this.props;
     return (
       <SafeAreaView style={styles.container}>
         <View style={{backgroundColor: colorConfig.pageIndex.backgroundColor}}>
@@ -226,6 +239,25 @@ class paymentAddPoint extends Component {
           </View>
         ) : (
           <View>
+            {pendingPoints != undefined && pendingPoints > 0 && (
+              <View
+                style={{
+                  backgroundColor: colorConfig.store.defaultColor,
+                  paddingVertical: 10,
+                }}>
+                <View style={styles.pendingPointsInfo}>
+                  <Text
+                    style={{
+                      color: 'white',
+                      textAlign: 'center',
+                    }}>
+                    Your {pendingPoints} points is locked, because your order
+                    has not been completed.
+                  </Text>
+                </View>
+              </View>
+            )}
+
             <RewardsPoint />
             <View
               style={{
@@ -243,6 +275,7 @@ class paymentAddPoint extends Component {
                 }`}
               </Text>
             </View>
+
             <View style={styles.card}>
               <View
                 style={{
@@ -393,11 +426,23 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     backgroundColor: colorConfig.pageIndex.backgroundColor,
   },
+  pendingPointsInfo: {
+    padding: 10,
+    backgroundColor: colorConfig.store.transparent,
+    borderWidth: 0.2,
+    borderColor: colorConfig.store.titleSelected,
+    marginHorizontal: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 6,
+    // marginTop: 10,
+  },
 });
 
 mapStateToProps = state => ({
   campign: state.rewardsReducer.campaign.campaign,
   totalPoint: state.rewardsReducer.dataPoint.totalPoint,
+  pendingPoints: state.rewardsReducer.dataPoint.pendingPoints,
 });
 
 mapDispatchToProps = dispatch => ({

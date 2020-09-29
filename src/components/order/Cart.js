@@ -91,8 +91,9 @@ class Cart extends Component {
       // refresh token
       await this.props.dispatch(refreshToken());
       // get data basket
-      this.props.dispatch(getBasket());
       await this.getBasket();
+      await this.setState({loading: false});
+      this.props.dispatch(getBasket());
 
       // If ordering mode is DINE IN, then fetch again data outlet to know outlet is available or closed
       if (this.props.dataBasket != undefined) {
@@ -109,32 +110,15 @@ class Cart extends Component {
 
       await this.setState({loading: false});
 
-      // check if status basket is submitted, then request continoustly to get basket
-      if (
-        this.props.dataBasket != undefined &&
-        this.props.dataBasket.status == 'SUBMITTED' &&
-        this.props.dataBasket.orderingMode == 'DINEIN'
-      ) {
+      try {
         clearInterval(this.interval);
-        this.interval = setInterval(() => {
-          this.props.dispatch(getCart(this.props.myCart.id));
-        }, 4000);
-      }
+      } catch (e) {}
 
-      // check if status basket for TAKE AWAY IS CONFIRMED or SUBMITTED, then request continoustly to get basket
-      if (
-        this.props.dataBasket != undefined &&
-        (this.props.dataBasket.status == 'CONFIRMED' ||
-          this.props.dataBasket.status == 'SUBMITTED') &&
-        (this.props.dataBasket.outlet.outletType == 'QUICKSERVICE' ||
-          this.props.dataBasket.orderingMode == 'TAKEAWAY' ||
-          this.props.dataBasket.orderingMode == 'DELIVERY')
-      ) {
-        clearInterval(this.interval);
+      try {
         this.interval = setInterval(() => {
           this.props.dispatch(getCart(this.props.myCart.id));
         }, 4000);
-      }
+      } catch (e) {}
     } catch (e) {
       Alert.alert('Opss..', e.message);
     }
@@ -418,20 +402,16 @@ class Cart extends Component {
             marginRight: 20,
           }}>
           TOTAL : {appConfig.appMataUang}
-          {this.getPrice()}
+          {this.format(CurrencyFormatter(dataBasket.totalNettAmount))}
         </Text>
         <View style={{flexDirection: 'row', justifyContent: 'center'}}>
           <TouchableOpacity
-            disabled={
-              this.checkActivateButton(dataBasket, 'cancel') ? false : true
-            }
+            disabled={true}
             onPress={this.alertRemoveBasket}
             style={[
               styles.btnCancelBasketModal,
               {
-                backgroundColor: this.checkActivateButton(dataBasket, 'cancel')
-                  ? colorConfig.store.colorError
-                  : colorConfig.store.disableButtonError,
+                backgroundColor: colorConfig.store.disableButtonError,
               },
             ]}>
             <Icon
@@ -445,17 +425,11 @@ class Cart extends Component {
           </TouchableOpacity>
           <TouchableOpacity
             onPress={this.goToSettle}
-            disabled={
-              this.checkActivateButton(dataBasket) ? !this.isOpen() : true
-            }
+            disabled={true}
             style={[
               styles.btnAddBasketModal,
               {
-                backgroundColor: this.checkActivateButton(dataBasket)
-                  ? this.isOpen()
-                    ? colorConfig.store.defaultColor
-                    : colorConfig.store.disableButton
-                  : colorConfig.store.disableButton,
+                backgroundColor: colorConfig.store.disableButton,
               },
             ]}>
             <Icon
@@ -1107,76 +1081,19 @@ class Cart extends Component {
 
   getInfoOrder = () => {
     const {dataBasket, tableType} = this.props;
-    if (dataBasket.outlet.outletType == 'QUICKSERVICE') {
-      if (
-        dataBasket.orderingMode == 'TAKEAWAY' ||
-        dataBasket.orderingMode == 'DELIVERY'
-      ) {
-        return dataBasket.queueNo;
-      } else {
-        if (
-          dataBasket.outlet.enableTableScan != undefined &&
-          (dataBasket.outlet.enableTableScan == false ||
-            dataBasket.outlet.enableTableScan == '-')
-        ) {
-          return dataBasket.queueNo;
-        } else {
-          let table = '';
-
-          if (dataBasket.tableNo == undefined) {
-            table = tableType.tableNo;
-          } else {
-            table = dataBasket.tableNo;
-          }
-          return table;
-        }
-      }
+    if (dataBasket.tableNo != undefined && dataBasket.tableNo != '-') {
+      return dataBasket.tableNo;
     } else {
-      if (
-        dataBasket.orderingMode == 'TAKEAWAY' ||
-        dataBasket.orderingMode == 'DELIVERY'
-      ) {
-        return dataBasket.queueNo;
-      } else {
-        let table = '';
-        if (dataBasket.tableNo == undefined) {
-          table = tableType.tableNo;
-        } else {
-          table = dataBasket.tableNo;
-        }
-        return table;
-      }
+      return dataBasket.queueNo;
     }
   };
 
   getInfoTextOrder = () => {
     const {dataBasket} = this.props;
-    if (dataBasket.outlet.outletType == 'QUICKSERVICE') {
-      if (
-        dataBasket.orderingMode == 'TAKEAWAY' ||
-        dataBasket.orderingMode == 'DELIVERY'
-      ) {
-        return 'Queue No.';
-      } else {
-        if (
-          dataBasket.outlet.enableTableScan != undefined &&
-          (dataBasket.outlet.enableTableScan == false ||
-            dataBasket.outlet.enableTableScan == '-')
-        ) {
-          return 'Queue No.';
-        } else {
-          return 'Table No';
-        }
-      }
+    if (dataBasket.tableNo != undefined && dataBasket.tableNo != '-') {
+      return 'Table No';
     } else {
-      if (
-        dataBasket.orderingMode == 'TAKEAWAY' ||
-        dataBasket.orderingMode == 'DELIVERY'
-      ) {
-        return 'Queue No.';
-      } else {
-        return 'Table No';
-      }
+      return 'Queue No';
     }
   };
 
@@ -1645,7 +1562,9 @@ class Cart extends Component {
                   this.props.dataBasket.totalTaxAmount != 0 && (
                     <View style={styles.itemSummary}>
                       <Text style={styles.total}>
-                        {intlData.messages.totalTaxAmmount}
+                        {appConfig.appName === 'QIJI'
+                          ? 'Tax Amount Inclusive'
+                          : 'Tax Amount'}
                       </Text>
                       <Text style={styles.total}>
                         {this.format(
@@ -1678,24 +1597,7 @@ class Cart extends Component {
         ) : (
           <Loader />
         )}
-        {dataBasket != undefined
-          ? // check type outlet
-            dataBasket.outlet.outletType == 'RESTO'
-            ? this.isTakeAwayOrDelivery(orderType, dataBasket)
-              ? this.renderSettleButtonRestaurant()
-              : dataBasket.status == 'PENDING'
-              ? this.renderButtonScanQRCode()
-              : this.renderSettleButtonRestaurant()
-            : this.isTakeAwayOrDelivery(orderType, dataBasket)
-            ? this.renderSettleButtonQuickService()
-            : dataBasket.outlet.enableTableScan != undefined &&
-              (dataBasket.outlet.enableTableScan == false ||
-                dataBasket.outlet.enableTableScan == '-')
-            ? this.renderSettleButtonQuickService()
-            : dataBasket.status == 'PENDING' && tableType == undefined
-            ? this.renderButtonScanQRCode()
-            : this.renderSettleButtonQuickService()
-          : null}
+        {dataBasket != undefined ? this.renderSettleButtonQuickService() : null}
       </SafeAreaView>
     );
   }

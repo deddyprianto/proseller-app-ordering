@@ -101,6 +101,32 @@ export const removeCard = payload => {
   };
 };
 
+export const checkAccount = accountID => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      const response = await fetchApiPayment(
+        `/account/check/${accountID}`,
+        'GET',
+        null,
+        200,
+        token,
+      );
+      console.log('response check account', response);
+
+      return response;
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
 export const checkStatusPayment = referenceNo => {
   return async (dispatch, getState) => {
     const state = getState();

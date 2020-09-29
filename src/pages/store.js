@@ -219,6 +219,11 @@ class Store extends Component {
           storeGrupTampung.push(response.data[i].location.region);
           dataStoresTampung.push({
             storeId: response.data[i].id,
+            orderValidation:
+              response.data[i].orderValidation != undefined &&
+              response.data[i].orderValidation != null
+                ? response.data[i].orderValidation
+                : undefined,
             storeName: response.data[i].name,
             storeStatus: this._cekOpen(response.data[i]),
             storeJarak: statusLocation
@@ -249,14 +254,14 @@ class Store extends Component {
             enableRedeemPoint: response.data[i].enableRedeemPoint,
             enableItemSpecialInstructions:
               response.data[i].enableItemSpecialInstructions,
-            enableDineIn:
-              response.data[i].enableDineIn == false ||
-              response.data[i].enableDineIn == '-'
+            enableStoreCheckOut:
+              response.data[i].enableStoreCheckOut == false ||
+              response.data[i].enableStoreCheckOut == '-'
                 ? false
                 : true,
-            enableTakeAway:
-              response.data[i].enableTakeAway == false ||
-              response.data[i].enableTakeAway == '-'
+            enableStorePickUp:
+              response.data[i].enableStorePickUp == false ||
+              response.data[i].enableStorePickUp == '-'
                 ? false
                 : true,
             enableTableScan:

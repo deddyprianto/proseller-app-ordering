@@ -333,6 +333,22 @@ class ListCard extends Component {
     } catch (e) {}
   };
 
+  getCardIssuer = item => {
+    try {
+      if (item.details.cardIssuer != undefined) {
+        if (item.details.cardIssuer.toUpperCase() == 'VISA') {
+          return colorConfig.card.otherCardColor;
+        } else {
+          return colorConfig.card.cardColor;
+        }
+      } else {
+        return colorConfig.card.cardColor;
+      }
+    } catch (e) {
+      return colorConfig.card.cardColor;
+    }
+  };
+
   renderCard = () => {
     const {myCardAccount, item} = this.props;
     const paymentID = item.paymentID;
@@ -349,10 +365,7 @@ class ListCard extends Component {
               style={[
                 styles.card,
                 {
-                  backgroundColor:
-                    item.details.cardIssuer == 'visa'
-                      ? colorConfig.card.otherCardColor
-                      : colorConfig.card.cardColor,
+                  backgroundColor: this.getCardIssuer(item),
                 },
               ]}>
               <View style={styles.headingCard}>
@@ -473,6 +486,7 @@ class ListCard extends Component {
       if (response.success == true) {
         Actions.hostedPayment({
           url: response.response.data.url,
+          data: response.response.data,
           page: 'listCard',
         });
       } else {
@@ -481,6 +495,24 @@ class ListCard extends Component {
     } catch (e) {
       await this.setState({loading: false});
       Alert.alert('Oppss..', 'Something went wrong, please try again.');
+    }
+  };
+
+  getCountCard = () => {
+    try {
+      const {myCardAccount, item} = this.props;
+
+      if (isEmptyArray(myCardAccount)) {
+        return true;
+      } else {
+        const find = myCardAccount.find(
+          data => data.paymentID == item.paymentID,
+        );
+        if (find == undefined) return true;
+        else return false;
+      }
+    } catch (e) {
+      return false;
     }
   };
 
@@ -520,8 +552,7 @@ class ListCard extends Component {
             ? this.renderCard()
             : this.renderEmptyCard()}
         </ScrollView>
-        {item.allowMultipleAccount != undefined &&
-        item.allowMultipleAccount == true ? (
+        {item.allowMultipleAccount != false ? (
           <TouchableOpacity
             onPress={this.registerCard}
             style={styles.buttonBottomFixed}>
@@ -532,7 +563,7 @@ class ListCard extends Component {
             />
             <Text style={styles.textAddCard}>ADD {item.paymentName}</Text>
           </TouchableOpacity>
-        ) : myCardAccount != undefined && myCardAccount.length == 0 ? (
+        ) : myCardAccount != undefined && this.getCountCard() ? (
           <TouchableOpacity
             onPress={this.registerCard}
             style={styles.buttonBottomFixed}>

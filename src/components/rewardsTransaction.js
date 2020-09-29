@@ -69,7 +69,7 @@ class RewardsTransaction extends Component {
                             color: colorConfig.store.titleSelected,
                             fontFamily: 'Lato-Bold',
                           }}>
-                          {item.outletName}
+                          {item.outletName.substr(0, 25)}
                         </Text>
                       </View>
                       <View

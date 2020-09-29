@@ -8,8 +8,8 @@ import {
   ScrollView,
   Image,
   SafeAreaView,
-  AsyncStorage,
   Platform,
+  TextInput,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
@@ -20,11 +20,21 @@ import {Actions} from 'react-native-router-flux';
 import colorConfig from '../config/colorConfig';
 import appConfig from '../config/appConfig';
 import {notifikasi, refreshToken} from '../actions/auth.actions';
-import {redeemVoucher, campaign, dataPoint} from '../actions/rewards.action';
+import {
+  redeemVoucher,
+  campaign,
+  dataPoint,
+  getStamps,
+} from '../actions/rewards.action';
 import {myVoucers} from '../actions/account.action';
-import Loader from './loader';
+// import Loader from './loader';
 import * as _ from 'lodash';
 import {isEmptyArray} from '../helper/CheckEmpty';
+// import CryptoJS from 'react-native-crypto-js';
+import awsConfig from '../config/awsConfig';
+import {Dialog} from 'react-native-paper';
+import LoaderDarker from './LoaderDarker';
+import {recentTransaction} from '../actions/sales.action';
 
 class VoucherDetail extends Component {
   constructor(props) {
@@ -38,6 +48,8 @@ class VoucherDetail extends Component {
       currentDay: new Date(),
       loadRedeem: false,
       cancelButton: false,
+      prompQuantity: false,
+      amountRedeem: 1,
     };
   }
 
@@ -93,9 +105,14 @@ class VoucherDetail extends Component {
       let timeZone = date.getTimezoneOffset();
       const data = {voucher: dataVoucher, timeZoneOffset: timeZone};
       const response = await this.props.dispatch(redeemVoucher(data));
-      await this.props.dispatch(campaign());
-      await this.props.dispatch(dataPoint());
-      await this.props.dispatch(myVoucers());
+      // await this.props.dispatch(campaign());
+      // await this.props.dispatch(dataPoint());
+      // await this.props.dispatch(myVoucers());
+      Promise.all([
+        // this.props.dispatch(campaign())
+        this.props.dispatch(dataPoint()),
+        this.props.dispatch(myVoucers()),
+      ]);
       if (response.success) {
         this.setState({
           showAlert: true,
@@ -110,6 +127,55 @@ class VoucherDetail extends Component {
           pesanAlert: response.responseBody.Data.message,
           titleAlert: 'Oppss...',
         });
+      }
+      this.setState({loadRedeem: false});
+    } catch (error) {
+      console.log(error);
+      this.setState({
+        showAlert: true,
+        cancelButton: false,
+        pesanAlert: error.responseBody.message,
+        titleAlert: 'Oppss...',
+      });
+      this.setState({loadRedeem: false});
+    }
+  };
+
+  btnRedeemMultiple = async (dataVoucher, amountRedeem) => {
+    try {
+      this.setState({loadRedeem: true, prompQuantity: false});
+      await this.props.dispatch(refreshToken);
+      let date = new Date();
+      let timeZone = date.getTimezoneOffset();
+      const data = {
+        voucher: dataVoucher,
+        timeZoneOffset: timeZone,
+        qty: amountRedeem,
+      };
+      let response = '';
+      response = await this.props.dispatch(redeemVoucher(data));
+
+      Promise.all([
+        // this.props.dispatch(campaign())
+        this.props.dispatch(dataPoint()),
+        this.props.dispatch(myVoucers()),
+      ]);
+      if (response.success) {
+        this.setState({
+          showAlert: true,
+          pesanAlert: response.responseBody.Data.message,
+          cancelButton: false,
+          titleAlert: 'Success!',
+        });
+      } else {
+        this.setState({
+          showAlert: true,
+          cancelButton: false,
+          pesanAlert: response.responseBody.Data.message,
+          titleAlert: 'Oppss...',
+        });
+        // await this.props.dispatch(dataPoint());
+        // await this.props.dispatch(myVoucers());
       }
       this.setState({loadRedeem: false});
     } catch (error) {
@@ -147,7 +213,7 @@ class VoucherDetail extends Component {
     Actions.accountVouchers({data: myVoucers});
   };
 
-  componentWillUnmount(): void {
+  componentWillUnmount() {
     this.setState({
       showAlert: false,
     });
@@ -179,11 +245,203 @@ class VoucherDetail extends Component {
     }
   };
 
+  checkActive = () => {
+    try {
+      const {dataVoucher, totalPoint, pendingPoints} = this.props;
+
+      let actualPoints = totalPoint;
+      if (pendingPoints != undefined && pendingPoints > 0) {
+        actualPoints -= pendingPoints;
+      }
+
+      if (actualPoints < dataVoucher.redeemValue) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      return true;
+    }
+  };
+
+  checkDisabledMultipleAmount = () => {
+    const {amountRedeem} = this.state;
+    const {dataVoucher, totalPoint, pendingPoints} = this.props;
+    if (amountRedeem == '' || amountRedeem == 0) {
+      return true;
+    } else {
+      let total = dataVoucher.redeemValue * amountRedeem;
+
+      let actualPoints = totalPoint;
+      if (pendingPoints != undefined && pendingPoints > 0) {
+        actualPoints -= pendingPoints;
+      }
+
+      if (actualPoints < total) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  };
+
+  addQty = () => {
+    let {amountRedeem} = this.state;
+    const {dataVoucher, totalPoint, pendingPoints} = this.props;
+
+    let actualPoints = totalPoint;
+    if (pendingPoints != undefined && pendingPoints > 0) {
+      actualPoints -= pendingPoints;
+    }
+
+    let total = dataVoucher.redeemValue * amountRedeem;
+    if (actualPoints > total) {
+      amountRedeem = amountRedeem + 1;
+      this.setState({amountRedeem});
+    }
+  };
+
+  minQty = () => {
+    let {amountRedeem} = this.state;
+    if (amountRedeem > 1) {
+      amountRedeem = amountRedeem - 1;
+      this.setState({amountRedeem});
+    }
+  };
+
+  renderQuantityVoucher = () => {
+    return (
+      <Dialog
+        dismissable={false}
+        visible={this.state.prompQuantity}
+        onDismiss={() => {
+          this.setState({prompQuantity: false, amountRedeem: 1});
+        }}>
+        <Dialog.Content>
+          <Text
+            style={{
+              textAlign: 'center',
+              fontFamily: 'Lato-Bold',
+              fontSize: 17,
+              color: colorConfig.store.defaultColor,
+            }}>
+            How many vouchers do you want to redeem?
+          </Text>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginVertical: 20,
+            }}>
+            <TouchableOpacity onPress={this.minQty} style={styles.buttonQty}>
+              <Text style={{fontSize: 20, fontWeight: 'bold', color: 'white'}}>
+                -
+              </Text>
+            </TouchableOpacity>
+            <TextInput
+              keyboardType="number-pad"
+              value={this.state.amountRedeem.toString()}
+              onChangeText={value => this.setState({amountRedeem: value})}
+              style={{
+                fontSize: 17,
+                fontFamily: 'Lato-Bold',
+                padding: 10,
+                textAlign: 'center',
+                color: colorConfig.store.title,
+                borderColor: colorConfig.pageIndex.inactiveTintColor,
+                borderWidth: 1,
+                borderRadius: 6,
+                width: '30%',
+              }}
+            />
+            <TouchableOpacity onPress={this.addQty} style={styles.buttonQty}>
+              <Text style={{fontSize: 20, fontWeight: 'bold', color: 'white'}}>
+                +
+              </Text>
+            </TouchableOpacity>
+          </View>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'center',
+              marginTop: 10,
+            }}>
+            <TouchableOpacity
+              onPress={() =>
+                this.setState({prompQuantity: false, amountRedeem: 1})
+              }
+              style={{
+                width: '40%',
+                borderRadius: 5,
+                backgroundColor: colorConfig.pageIndex.grayColor,
+                marginRight: 20,
+                padding: 10,
+              }}>
+              <Text
+                style={{
+                  color: 'white',
+                  fontFamily: 'Lato-Bold',
+                  textAlign: 'center',
+                  fontSize: 16,
+                }}>
+                Cancel
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() =>
+                this.btnRedeemMultiple(
+                  this.props.dataVoucher,
+                  this.state.amountRedeem,
+                )
+              }
+              disabled={this.checkDisabledMultipleAmount()}
+              style={{
+                width: '40%',
+                borderRadius: 5,
+                backgroundColor: this.checkDisabledMultipleAmount()
+                  ? colorConfig.store.disableButton
+                  : colorConfig.store.defaultColor,
+                padding: 10,
+              }}>
+              <Text
+                style={{
+                  color: 'white',
+                  fontFamily: 'Lato-Bold',
+                  textAlign: 'center',
+                  fontSize: 16,
+                }}>
+                Redeem {this.state.amountRedeem}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </Dialog.Content>
+      </Dialog>
+    );
+  };
+
+  checkAmountVouchers = () => {
+    const {dataVoucher, totalPoint, pendingPoints} = this.props;
+    let total = dataVoucher.redeemValue * 2;
+
+    let actualPoints = totalPoint;
+
+    if (pendingPoints != undefined && pendingPoints > 0) {
+      actualPoints -= pendingPoints;
+    }
+
+    if (actualPoints >= total) {
+      this.setState({prompQuantity: true, amountRedeem: 1});
+    } else {
+      this.prompRedeem(this.props.dataVoucher);
+    }
+  };
+
   render() {
-    const {intlData} = this.props;
+    const {intlData, pendingPoints} = this.props;
     return (
       <SafeAreaView style={styles.container}>
-        {this.state.loadRedeem && <Loader />}
+        {this.state.loadRedeem && <LoaderDarker />}
         <View>
           <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
             <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
@@ -326,11 +584,26 @@ class VoucherDetail extends Component {
                 </View>
               </View>
             </View>
+            {pendingPoints != undefined && pendingPoints > 0 && (
+              <View style={styles.pendingPointsInfo}>
+                <Text
+                  style={{
+                    color: colorConfig.store.titleSelected,
+                    textAlign: 'center',
+                  }}>
+                  Your {pendingPoints} points is locked, because your order has
+                  not been completed.
+                </Text>
+              </View>
+            )}
             <TouchableOpacity
-              onPress={() => this.prompRedeem(this.props.dataVoucher)}
+              onPress={() => this.checkAmountVouchers()}
+              disabled={this.checkActive()}
               style={{
                 height: 50,
-                backgroundColor: colorConfig.pageIndex.activeTintColor,
+                backgroundColor: this.checkActive()
+                  ? colorConfig.store.disableButton
+                  : colorConfig.pageIndex.activeTintColor,
                 borderRadius: 8,
                 marginTop: 30,
                 marginHorizontal: 15,
@@ -392,6 +665,7 @@ class VoucherDetail extends Component {
             }
           }}
         />
+        {this.renderQuantityVoucher()}
       </SafeAreaView>
     );
   }
@@ -481,10 +755,29 @@ const styles = StyleSheet.create({
     paddingTop: 0,
     color: colorConfig.pageIndex.backgroundColor,
   },
+  buttonQty: {
+    backgroundColor: colorConfig.store.defaultColor,
+    padding: 10,
+    borderRadius: 5,
+    width: 40,
+    marginHorizontal: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  pendingPointsInfo: {
+    padding: 10,
+    backgroundColor: colorConfig.store.transparent,
+    margin: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 6,
+    marginTop: 20,
+  },
 });
 
 mapStateToProps = state => ({
   totalPoint: state.rewardsReducer.dataPoint.totalPoint,
+  pendingPoints: state.rewardsReducer.dataPoint.pendingPoints,
   myVoucers: state.accountsReducer.myVoucers.myVoucers,
 });
 

@@ -277,21 +277,14 @@ class WaitingFood extends Component {
       dataBasket.outlet = {};
     }
 
-    if (
-      dataBasket.orderingMode == 'TAKEAWAY' ||
-      dataBasket.orderingMode == 'DELIVERY'
-    ) {
+    if (dataBasket.orderingMode == 'DELIVERY') {
       let trackingNo = '';
       if (dataBasket.trackingNo != undefined) {
         trackingNo = `\n\nTracking No: ${dataBasket.trackingNo}`;
       }
       return `Queue No: ${dataBasket.queueNo} ${trackingNo}`;
     } else {
-      if (
-        dataBasket.outlet.enableTableScan != undefined &&
-        (dataBasket.outlet.enableTableScan == false ||
-          dataBasket.outlet.enableTableScan == '-')
-      ) {
+      if (dataBasket.queueNo != undefined) {
         return `Queue No: ${dataBasket.queueNo}`;
       } else {
         return `Table No: ${dataBasket.tableNo}`;
@@ -434,13 +427,8 @@ class WaitingFood extends Component {
               }}>
               {dataBasket.status == 'READY_FOR_DELIVERY'
                 ? 'We are getting ready to deliver your order ... \n \n '
-                : // : `Go to ${dataBasket.deliveryAddress.address}, ${
-                  `Go to ${dataBasket.deliveryAddress.streetName}, ${
-                    dataBasket.deliveryAddress.unitNo
-                  }, ${
-                    awsConfig.COUNTRY != 'Singapore'
-                      ? dataBasket.deliveryAddress.city
-                      : awsConfig.COUNTRY
+                : `Go to ${dataBasket.deliveryAddress.address}, ${
+                    dataBasket.deliveryAddress.city
                   }, ${dataBasket.deliveryAddress.postalCode} \n `}
             </Text>
             <Text
@@ -668,8 +656,8 @@ class WaitingFood extends Component {
                 <Text
                   style={[styles.total, {textAlign: 'right', fontSize: 12}]}>
                   {dataBasket.deliveryAddress.address}{' '}
-                  {dataBasket.deliveryAddress.streetName},{' '}
-                  {dataBasket.deliveryAddress.unitNo}
+                  {/*{dataBasket.deliveryAddress.streetName},{' '}*/}
+                  {/*{dataBasket.deliveryAddress.unitNo}*/}
                   {' \n'}
                   {awsConfig.COUNTRY != 'Singapore'
                     ? dataBasket.deliveryAddress.city
@@ -702,13 +690,18 @@ class WaitingFood extends Component {
               </View>
             ) : null}
             <View style={styles.itemSummary}>
-              <Text style={styles.total}>Tax Amount : </Text>
+              <Text style={styles.total}>
+                {appConfig.appName === 'QIJI'
+                  ? 'Tax Amount Inclusive'
+                  : 'Tax Amount'}{' '}
+                :{' '}
+              </Text>
               <Text style={styles.total}>
                 {CurrencyFormatter(dataBasket.totalTaxAmount)}
               </Text>
             </View>
             <View style={styles.itemSummary}>
-              <Text style={styles.total}>Total Nett Amount : </Text>
+              <Text style={styles.total}>Nett Amount : </Text>
               <Text style={styles.total}>
                 {CurrencyFormatter(dataBasket.totalNettAmount)}
               </Text>
@@ -860,18 +853,18 @@ class WaitingFood extends Component {
   getAnimation = dataBasket => {
     try {
       if (dataBasket.status == 'PROCESSING') {
-        return require('../../assets/animate/cooking');
+        return require('../../../assets/animate/cooking');
       } else if (dataBasket.status == 'READY_FOR_DELIVERY') {
-        return require('../../assets/animate/food-ready');
+        return require('../../../assets/animate/food-ready');
       } else if (dataBasket.status == 'READY_FOR_COLLECTION') {
-        return require('../../assets/animate/food-ready');
+        return require('../../../assets/animate/food-ready');
       } else if (dataBasket.status == 'ON_THE_WAY') {
-        return require('../../assets/animate/delivery');
+        return require('../../../assets/animate/delivery');
       } else {
-        return require('../../assets/animate/cooking');
+        return require('../../../assets/animate/cooking');
       }
     } catch (e) {
-      return require('../../assets/animate/cooking');
+      return require('../../../assets/animate/cooking');
     }
   };
 }

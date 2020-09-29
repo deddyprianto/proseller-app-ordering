@@ -147,6 +147,12 @@ class AddAddress extends Component {
         city: this.state.city,
       };
 
+      newAddress.address = `${newAddress.streetName}`;
+
+      if (newAddress.unitNo != '' && newAddress.unitNo != undefined) {
+        newAddress.address = `${newAddress.address}, ${newAddress.unitNo}`;
+      }
+
       if (!isEmptyData(this.state.province)) {
         newAddress.province = this.state.province;
       }

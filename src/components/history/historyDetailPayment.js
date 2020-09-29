@@ -124,7 +124,11 @@ class HistoryDetailPayment extends Component {
   getPaymentType = item => {
     try {
       if (!isEmptyObject(item.details)) {
-        return item.details.cardIssuer.toUpperCase() + ' ' + item.paymentName;
+        let cardNo = item.paymentName;
+        if (item.paymentName != undefined && item.paymentName.length > 4) {
+          cardNo = item.paymentName.substr(item.paymentName.length - 4);
+        }
+        return item.details.cardIssuer.toUpperCase() + ' ' + cardNo;
       } else {
         return item.paymentName;
       }

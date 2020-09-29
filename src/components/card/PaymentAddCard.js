@@ -40,6 +40,7 @@ import {
 import {movePageIndex} from '../../actions/user.action';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import UUIDGenerator from 'react-native-uuid-generator';
+import {isEmptyArray} from '../../helper/CheckEmpty';
 
 class PaymentAddCard extends Component {
   constructor(props) {
@@ -231,10 +232,7 @@ class PaymentAddCard extends Component {
                 styles.card,
                 this.checkSelectedAccount(item) ? styles.cardSelected : null,
                 {
-                  backgroundColor:
-                    item.details.cardIssuer == 'visa'
-                      ? colorConfig.card.otherCardColor
-                      : colorConfig.card.cardColor,
+                  backgroundColor: this.getCardIssuer(item),
                 },
               ]}>
               <View style={styles.headingCard}>
@@ -299,6 +297,7 @@ class PaymentAddCard extends Component {
 
         Actions.hostedPayment({
           url: response.response.data.url,
+          data: response.response.data,
           page: rootPage,
         });
       } else {
@@ -342,6 +341,40 @@ class PaymentAddCard extends Component {
     );
   };
 
+  getCountCard = () => {
+    try {
+      const {myCardAccount, item} = this.props;
+
+      if (isEmptyArray(myCardAccount)) {
+        return true;
+      } else {
+        const find = myCardAccount.find(
+          data => data.paymentID == item.paymentID,
+        );
+        if (find == undefined) return true;
+        else return false;
+      }
+    } catch (e) {
+      return false;
+    }
+  };
+
+  getCardIssuer = item => {
+    try {
+      if (item.details.cardIssuer != undefined) {
+        if (item.details.cardIssuer.toUpperCase() == 'VISA') {
+          return colorConfig.card.otherCardColor;
+        } else {
+          return colorConfig.card.cardColor;
+        }
+      } else {
+        return colorConfig.card.cardColor;
+      }
+    } catch (e) {
+      return colorConfig.card.cardColor;
+    }
+  };
+
   render() {
     const {intlData, myCardAccount, item} = this.props;
     return (
@@ -377,8 +410,7 @@ class PaymentAddCard extends Component {
             ? this.renderCard()
             : this.renderEmptyCard()}
         </ScrollView>
-        {item.allowMultipleAccount != undefined &&
-        item.allowMultipleAccount == true ? (
+        {item.allowMultipleAccount != false ? (
           <TouchableOpacity
             onPress={this.registerCard}
             style={styles.buttonBottomFixed}>
@@ -389,7 +421,7 @@ class PaymentAddCard extends Component {
             />
             <Text style={styles.textAddCard}>ADD {item.paymentName}</Text>
           </TouchableOpacity>
-        ) : myCardAccount != undefined && myCardAccount.length == 0 ? (
+        ) : myCardAccount != undefined && this.getCountCard() ? (
           <TouchableOpacity
             onPress={this.registerCard}
             style={styles.buttonBottomFixed}>

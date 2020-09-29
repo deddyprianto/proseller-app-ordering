@@ -31,8 +31,11 @@ import AwesomeAlert from 'react-native-awesome-alerts';
 import colorConfig from '../../config/colorConfig';
 import appConfig from '../../config/appConfig';
 import {
+  getBasket,
+  getCart,
   getDeliveryProvider,
   getPendingCart,
+  getPendingCartSingle,
   settleOrder,
 } from '../../actions/order.action';
 // import Loader from './../loader';
@@ -54,6 +57,7 @@ import {refreshToken} from '../../actions/auth.actions';
 import CryptoJS from 'react-native-crypto-js';
 import awsConfig from '../../config/awsConfig';
 import {afterPayment, myVoucers} from '../../actions/account.action';
+import {Dialog} from 'react-native-paper';
 
 class SettleOrder extends Component {
   constructor(props) {
@@ -77,6 +81,8 @@ class SettleOrder extends Component {
       refreshing: false,
       outlet: this.props.outlet,
       paymentFailed: false,
+      prompPayAtPOS: false,
+      pendingCart: {},
     };
 
     // check if users payment methods is empty
@@ -149,12 +155,14 @@ class SettleOrder extends Component {
       }
     } catch (e) {}
 
+    await this.setState({loading: false});
+
     try {
       this.props.dispatch(myVoucers());
       await this.props.dispatch(getAccountPayment());
-      await this.setState({loading: false});
+      // await this.setState({loading: false});
     } catch (e) {
-      await this.setState({loading: false});
+      // await this.setState({loading: false});
     }
 
     this.backHandler = BackHandler.addEventListener(
@@ -296,6 +304,10 @@ class SettleOrder extends Component {
   componentWillUnmount() {
     try {
       this.backHandler.remove();
+    } catch (e) {}
+
+    try {
+      clearInterval(this.loopCart);
     } catch (e) {}
   }
 
@@ -523,12 +535,13 @@ class SettleOrder extends Component {
     }
 
     // check if total is 0, then dont add creditcard
-    if (totalBayar != 0) {
-      // check if CVV is required and has been filled
-      this.checkCVV(selectedAccount);
-    } else {
-      this.createPayment();
-    }
+    // if (totalBayar != 0) {
+    //   // check if CVV is required and has been filled
+    //   this.checkCVV(selectedAccount);
+    // } else {
+    //   this.createPayment();
+    // }
+    this.createPayment();
   };
 
   createPayment = async () => {
@@ -537,6 +550,7 @@ class SettleOrder extends Component {
 
     var pembayaran = {};
     try {
+      await this.setState({loading: true});
       const UUID = await UUIDGenerator.getRandomUUID();
       this.setState({loading: true});
       pembayaran.price = Number(this.props.pembayaran.payment.toFixed(3));
@@ -557,6 +571,18 @@ class SettleOrder extends Component {
 
             if (find.isAccountRequired != false) {
               paymentPayload.accountId = selectedAccount.accountID;
+            }
+
+            if (find.minimumPayment != undefined) {
+              if (totalBayar < find.minimumPayment) {
+                this.setState({loading: false});
+                Alert.alert(
+                  'Sorry',
+                  `Minimum transaction amount is ${appConfig.appMataUang}` +
+                    this.formatCurrency(find.minimumPayment),
+                );
+                return;
+              }
             }
           }
         }
@@ -614,12 +640,17 @@ class SettleOrder extends Component {
         pembayaran.deliveryService = '-';
       }
 
+      try {
+        pembayaran.cartDetails = {
+          partitionKey: this.props.pembayaran.cartDetails.partitionKey,
+          sortKey: this.props.pembayaran.cartDetails.sortKey,
+        };
+      } catch (e) {}
+
       // get url
       let {url} = this.props;
-      // if (this.state.paymentFailed) {
-      //   url = '/cart/settle';
-      // }
-      console.log('Payload settle order ', JSON.stringify(pembayaran));
+
+      console.log('Payload settle order ', pembayaran);
       console.log('URL settle order ', url);
 
       const response = await this.props.dispatch(settleOrder(pembayaran, url));
@@ -632,6 +663,7 @@ class SettleOrder extends Component {
         if (response.responseBody.data.action != undefined) {
           if (response.responseBody.data.action.type === 'url') {
             Actions.hostedTrx({
+              outlet: this.state.outlet,
               url: response.responseBody.data.action.url,
               urlSettle: url,
               referenceNo: response.responseBody.data.referenceNo,
@@ -652,12 +684,14 @@ class SettleOrder extends Component {
           const {url} = this.props;
           Actions.paymentSuccess({
             intlData,
+            outlet: this.state.outlet,
             url,
             dataRespons: response.responseBody.data,
           });
         }
       } else {
         //  cancel voucher and pont selected
+        this.props.dispatch(getBasket());
         this.setState({loading: false, failedPay: true});
         this.cencelPoint();
         this.cencelVoucher();
@@ -840,8 +874,216 @@ class SettleOrder extends Component {
     } catch (e) {}
   };
 
+  getOutletName = item => {
+    try {
+      if (item != undefined) {
+        return item.substr(0, 20);
+      } else {
+        return item;
+      }
+    } catch (e) {
+      return item;
+    }
+  };
+
+  payAtPOS = async () => {
+    const {intlData, selectedAccount, companyInfo} = this.props;
+    const {totalBayar} = this.state;
+
+    var pembayaran = {};
+    try {
+      await this.setState({loading: true});
+      const UUID = await UUIDGenerator.getRandomUUID();
+      this.setState({loading: true});
+      pembayaran.price = Number(this.props.pembayaran.payment.toFixed(3));
+      pembayaran.cartID = this.props.pembayaran.cartID;
+
+      // if ordering mode is exist
+      if (this.props.pembayaran.orderingMode != undefined) {
+        pembayaran.orderingMode = this.props.pembayaran.orderingMode;
+        pembayaran.tableNo = this.props.pembayaran.tableNo;
+      }
+
+      // check if delivery address is exist
+      if (this.props.pembayaran.deliveryAddress != undefined) {
+        pembayaran.deliveryAddress = this.props.pembayaran.deliveryAddress;
+      }
+
+      // check if delivery fee is exist
+      if (this.props.pembayaran.deliveryFee != undefined) {
+        pembayaran.deliveryFee = this.props.pembayaran.deliveryFee;
+        // add delivery fee to total
+        pembayaran.price = Number(
+          pembayaran.price + this.props.pembayaran.deliveryFee,
+        );
+      }
+
+      // check if delivery provider is exist
+      if (this.props.pembayaran.deliveryProvider != undefined) {
+        pembayaran.deliveryProviderId = this.props.pembayaran.deliveryProvider.id;
+        pembayaran.deliveryProvider = this.props.pembayaran.deliveryProvider.name;
+        pembayaran.deliveryProviderName = this.props.pembayaran.deliveryProvider.name;
+        pembayaran.deliveryService = '-';
+      }
+
+      try {
+        pembayaran.cartDetails = {
+          partitionKey: this.props.pembayaran.cartDetails.partitionKey,
+          sortKey: this.props.pembayaran.cartDetails.sortKey,
+        };
+      } catch (e) {}
+
+      pembayaran.payAtPOS = true;
+
+      // get url
+      let {url} = this.props;
+
+      console.log('Payload settle order ', pembayaran);
+
+      const response = await this.props.dispatch(settleOrder(pembayaran, url));
+      console.log('reponse pembayaran settle order ', response);
+      this.setState({
+        loading: false,
+        prompPayAtPOS: true,
+        pendingCart: response.responseBody.data,
+      });
+      if (response.success) {
+        try {
+          this.props.dispatch(afterPayment(true));
+          this.getPendingOrder(response.responseBody.data);
+        } catch (e) {}
+      } else {
+        //  cancel voucher and pont selected
+        this.props.dispatch(getBasket());
+        this.setState({loading: false, failedPay: true});
+        this.cencelPoint();
+        this.cencelVoucher();
+        if (
+          response.responseBody.data != undefined &&
+          response.responseBody.data.message != undefined
+        ) {
+          Alert.alert('Sorry', response.responseBody.data.message);
+        } else {
+          Alert.alert(
+            'Sorry',
+            'Something went wrong with server, please try again',
+          );
+        }
+      }
+    } catch (e) {
+      //  cancel voucher and pont selected
+      this.cencelPoint();
+      this.cencelVoucher();
+      console.log(e);
+      Alert.alert('Oppss', 'Something went wrong, please try again');
+      this.setState({loading: false, failedPay: true});
+    }
+  };
+
+  getPendingOrder = async cart => {
+    try {
+      clearInterval(this.loopCart);
+    } catch (e) {}
+
+    this.loopCart = setInterval(async () => {
+      await this.loopPendingCart(cart);
+    }, 1500);
+  };
+
+  loopPendingCart = async cart => {
+    try {
+      const response = await this.props.dispatch(getPendingCartSingle(cart.id));
+
+      if (response.isPaymentComplete == true) {
+        const {url, intlData} = this.props;
+        try {
+          clearInterval(this.loopCart);
+        } catch (e) {}
+        Actions.paymentSuccess({
+          intlData,
+          outlet: this.state.outlet,
+          url,
+          dataRespons: response.confirmationInfo,
+        });
+      }
+    } catch (e) {}
+  };
+
+  renderPrompPayAtPOS = () => {
+    const {pendingCart} = this.state;
+    return (
+      <Dialog
+        dismissable={false}
+        visible={this.state.prompPayAtPOS}
+        onDismiss={() => {
+          this.setState({prompPayAtPOS: false});
+        }}>
+        <Dialog.Content>
+          <Text
+            style={{
+              textAlign: 'center',
+              fontFamily: 'Lato-Bold',
+              fontSize: 17,
+              color: colorConfig.store.defaultColor,
+            }}>
+            Processing your payment
+          </Text>
+          <View style={{marginTop: 10}}>
+            <ActivityIndicator
+              color={colorConfig.store.secondaryColor}
+              size={50}
+            />
+          </View>
+          {pendingCart.tableNo != undefined && pendingCart.tableNo != '-' ? (
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'center',
+                borderWidth: 1,
+                borderColor: colorConfig.store.secondaryColor,
+                borderRadius: 7,
+                padding: 10,
+                marginTop: 30,
+              }}>
+              <Text
+                style={{
+                  color: colorConfig.store.titleSelected,
+                  fontFamily: 'Lato-Bold',
+                  textAlign: 'center',
+                  fontSize: 18,
+                }}>
+                Table No : {pendingCart.tableNo}
+              </Text>
+            </View>
+          ) : (
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'center',
+                borderWidth: 1,
+                borderColor: colorConfig.store.secondaryColor,
+                borderRadius: 7,
+                padding: 10,
+                marginTop: 30,
+              }}>
+              <Text
+                style={{
+                  color: colorConfig.store.titleSelected,
+                  fontFamily: 'Lato-Bold',
+                  textAlign: 'center',
+                  fontSize: 18,
+                }}>
+                Queue No : {pendingCart.queueNo}
+              </Text>
+            </View>
+          )}
+        </Dialog.Content>
+      </Dialog>
+    );
+  };
+
   render() {
-    const {intlData, selectedAccount, detailPoint} = this.props;
+    const {intlData, selectedAccount, detailPoint, campign} = this.props;
     const {outlet} = this.state;
     return (
       <SafeAreaView style={styles.container}>
@@ -1016,7 +1258,7 @@ class SettleOrder extends Component {
                           fontSize: 14,
                           color: colorConfig.pageIndex.grayColor,
                         }}>
-                        {this.props.pembayaran.storeName}
+                        {this.getOutletName(this.props.pembayaran.storeName)}
                       </Text>
                     </View>
                   </View>
@@ -1127,8 +1369,9 @@ class SettleOrder extends Component {
               )}
             </View>
             {this.props.campaignActive &&
-            outlet != undefined &&
-            outlet.enableRedeemPoint &&
+            campign != undefined &&
+            campign.points &&
+            campign.points.pointsToRebateRatio1 != 0 &&
             detailPoint != undefined &&
             !isEmptyObject(detailPoint.trigger) &&
             (detailPoint.trigger.status === true ||
@@ -1218,9 +1461,35 @@ class SettleOrder extends Component {
                   color: 'white',
                   fontFamily: 'Lato-Medium',
                 }}>
-                {'Pay ' + CurrencyFormatter(this.state.totalBayar)}
+                {'Pay' + this.format(CurrencyFormatter(this.state.totalBayar))}
               </Text>
             </TouchableOpacity>
+
+            {outlet.enablePayAtPOS == true ? (
+              <View style={{marginTop: 20}}>
+                <Text
+                  style={{
+                    color: colorConfig.store.titleSelected,
+                    fontSize: 18,
+                    textAlign: 'center',
+                    marginBottom: 20,
+                  }}>
+                  OR
+                </Text>
+                <TouchableOpacity
+                  onPress={this.payAtPOS}
+                  style={styles.payAtPOS}>
+                  <Text
+                    style={{
+                      fontSize: 19,
+                      color: colorConfig.store.defaultColor,
+                      fontFamily: 'Lato-Bold',
+                    }}>
+                    Pay at POS
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            ) : null}
             {/*<SwipeButton*/}
             {/*  disabled={*/}
             {/*    selectedAccount != undefined || this.state.totalBayar == 0*/}
@@ -1269,6 +1538,7 @@ class SettleOrder extends Component {
             this.hideAlert();
           }}
         />
+        {this.renderPrompPayAtPOS()}
       </SafeAreaView>
     );
   }
@@ -1393,9 +1663,18 @@ const styles = StyleSheet.create({
     color: colorConfig.store.textWhite,
     fontSize: 13,
   },
+  payAtPOS: {
+    borderWidth: 0.7,
+    borderColor: colorConfig.store.defaultColor,
+    padding: 15,
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });
 
 mapStateToProps = state => ({
+  campign: state.rewardsReducer.campaign.campaign,
   myVoucers: state.accountsReducer.myVoucers.myVoucers,
   totalPoint: state.rewardsReducer.dataPoint.totalPoint,
   recentTransaction: state.rewardsReducer.dataPoint.recentTransaction,

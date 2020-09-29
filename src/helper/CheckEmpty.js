@@ -13,7 +13,7 @@ module.exports = {
     return true;
   },
   isEmptyData: data => {
-    if (data != undefined && data != '' && data != null) {
+    if (data != undefined && data != '' && data != '-' && data != null) {
       return false;
     }
     return true;

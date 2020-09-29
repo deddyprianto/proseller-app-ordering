@@ -18,11 +18,17 @@ import {Actions} from 'react-native-router-flux';
 import Icon from 'react-native-vector-icons/Ionicons';
 import CryptoJS from 'react-native-crypto-js';
 import awsConfig from '../config/awsConfig';
-import {campaign, dataPoint, dataPointHistory} from '../actions/rewards.action';
+import {
+  campaign,
+  cutomerActivity,
+  dataPoint,
+  dataPointHistory,
+} from '../actions/rewards.action';
 import {getUserProfile} from '../actions/user.action';
 import Loader from './loader';
 import {isEmptyArray} from '../helper/CheckEmpty';
 import LinearGradient from 'react-native-linear-gradient';
+import TouchableRipple from 'react-native-paper/src/components/TouchableRipple/index';
 
 class DetailPoint extends Component {
   constructor(props) {
@@ -32,6 +38,12 @@ class DetailPoint extends Component {
       screenHeight: Dimensions.get('window').height,
       loading: false,
       history: [],
+      customerActivity: [],
+      skip: 0,
+      take: 20,
+      filterReceive: true,
+      dataLength: 0,
+      actualLength: 0,
     };
   }
 
@@ -41,6 +53,31 @@ class DetailPoint extends Component {
       this.handleBackPress,
     );
     this.getInfoPoint();
+    this.getCustomerActivity();
+  };
+
+  getCustomerActivity = async () => {
+    const {
+      skip,
+      take,
+      filterReceive,
+      actualLength,
+      customerActivity,
+    } = this.state;
+    const response = await this.props.dispatch(
+      cutomerActivity(actualLength, take, filterReceive),
+    );
+
+    let dataActivity = customerActivity.concat(response.data);
+
+    let actualDataLength = actualLength + response.actualLength;
+    await this.setState({
+      customerActivity: dataActivity,
+      dataLength: response.dataLength,
+      actualLength: actualDataLength,
+      skip: take,
+      take: take,
+    });
   };
 
   getInfoPoint = async () => {
@@ -89,9 +126,76 @@ class DetailPoint extends Component {
     }
   };
 
+  getLabelActivity = item => {
+    if (item === 'GET_POINT') return 'Receive Points';
+    if (item === 'RECEIVE_POINT') return 'Receive Points';
+    if (item === 'ADJUST_POINT') return 'Adjusted by admin';
+    if (item === 'REDEEM_POINT') return 'Redeem points';
+    if (item === 'VOID_POINT') return 'Points voided';
+  };
+
+  filterReceivePoint = async () => {
+    try {
+      const {filterReceive} = this.state;
+      if (filterReceive != true) {
+        await this.setState({
+          filterReceive: true,
+          loading: true,
+          skip: 0,
+          take: 20,
+          dataLength: 0,
+          actualLength: 0,
+          customerActivity: [],
+        });
+        await this.getCustomerActivity();
+        await this.setState({loading: false});
+      }
+    } catch (e) {}
+  };
+
+  filterUsePoint = async () => {
+    try {
+      const {filterReceive} = this.state;
+      if (filterReceive != false) {
+        await this.setState({
+          filterReceive: false,
+          loading: true,
+          skip: 0,
+          take: 20,
+          dataLength: 0,
+          actualLength: 0,
+          customerActivity: [],
+        });
+
+        await this.getCustomerActivity();
+        await this.setState({loading: false});
+      }
+    } catch (e) {}
+  };
+
+  loadMore = async () => {
+    try {
+      let {skip, take} = this.state;
+      await this.setState({
+        loading: true,
+        skip: take,
+        take: take,
+      });
+
+      await this.getCustomerActivity();
+      await this.setState({loading: false});
+    } catch (e) {}
+  };
+
   render() {
     const {intlData, campign} = this.props;
-    const {history} = this.state;
+    const {
+      history,
+      customerActivity,
+      filterReceive,
+      dataLength,
+      actualLength,
+    } = this.state;
     let userDetail;
     try {
       // Decrypt data user
@@ -109,7 +213,7 @@ class DetailPoint extends Component {
     let color3 = `#e67e22`;
 
     return (
-      <SafeAreaView>
+      <SafeAreaView style={{flex: 1, backgroundColor: '#f0f0f0'}}>
         {this.state.loading && <Loader />}
         <ScrollView>
           <View style={styles.container}>
@@ -139,7 +243,8 @@ class DetailPoint extends Component {
             </LinearGradient>
 
             <View style={styles.mainPanel}>
-              <View style={[styles.panel, {paddingTop: 10}]}>
+              <Text style={styles.subTitle}>{campign.campaignDesc}</Text>
+              <View style={[styles.panel, {paddingTop: 5}]}>
                 <View style={styles.panelNoBorder}>
                   {!isEmptyArray(history)
                     ? history.map(item => (
@@ -161,9 +266,106 @@ class DetailPoint extends Component {
                       ))
                     : null}
                 </View>
+                <TouchableOpacity
+                  onPress={() => Actions.rewards()}
+                  style={{
+                    marginTop: 40,
+                    borderColor: colorConfig.store.defaultColor,
+                    borderWidth: 0.8,
+                    padding: 10,
+                    justifyContent: 'space-between',
+                    flexDirection: 'row',
+                    borderRadius: 6,
+                    width: '100%',
+                    alignItems: 'center',
+                    paddingHorizontal: 20,
+                  }}>
+                  <Text
+                    style={{
+                      color: colorConfig.store.defaultColor,
+                      fontFamily: 'Lato-Medium',
+                      fontSize: 16,
+                    }}>
+                    Redeem Voucher
+                  </Text>
+                  <Icon
+                    size={Platform.OS === 'ios' ? 36 : 27}
+                    name={
+                      Platform.OS === 'ios'
+                        ? 'ios-arrow-dropright'
+                        : 'md-arrow-dropright'
+                    }
+                    style={{color: colorConfig.store.defaultColor}}
+                  />
+                </TouchableOpacity>
               </View>
+            </View>
+            <View
+              style={[styles.mainPanel, {marginTop: 10, paddingBottom: 10}]}>
+              <Text style={styles.title}>Points History</Text>
+              <View style={styles.panelTab}>
+                <TouchableOpacity
+                  onPress={this.filterReceivePoint}
+                  style={
+                    filterReceive ? styles.activeLeft : styles.inactiveFilter
+                  }>
+                  <Text>Points Received</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={this.filterUsePoint}
+                  style={
+                    filterReceive ? styles.inactiveFilter : styles.activeRight
+                  }>
+                  <Text>Points Used</Text>
+                </TouchableOpacity>
+              </View>
+              {!isEmptyArray(customerActivity) &&
+                customerActivity.map(item => (
+                  <View style={styles.customerActivityList}>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                      }}>
+                      <Text style={styles.activityTitle}>
+                        {this.getLabelActivity(item.activityType)}
+                      </Text>
+                      <Text style={styles.activityRewardsPositive}>
+                        {item.amount > 0 && filterReceive ? '+' : null}
+                        {item.amount > 0 && !filterReceive ? '-' : null}
+                        {item.amount}
+                      </Text>
+                    </View>
+                    <Text style={styles.activityDate}>
+                      {format(
+                        new Date(item.activityDate),
+                        'iii dd MMM yyyy HH:mm',
+                      )}
+                    </Text>
+                  </View>
+                ))}
 
-              <Text style={styles.subTitle}>{campign.campaignDesc}</Text>
+              {dataLength > 0 && dataLength != actualLength && (
+                <TouchableOpacity
+                  onPress={this.loadMore}
+                  style={{
+                    borderColor: colorConfig.pageIndex.grayColor,
+                    borderWidth: 0.5,
+                    borderRadius: 5,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    padding: 10,
+                    marginVertical: 20,
+                  }}>
+                  <Text
+                    style={{
+                      color: colorConfig.pageIndex.grayColor,
+                      fontWeight: 'bold',
+                    }}>
+                    Load More
+                  </Text>
+                </TouchableOpacity>
+              )}
             </View>
           </View>
         </ScrollView>
@@ -175,7 +377,7 @@ class DetailPoint extends Component {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#f5f5f5',
-    height: '100%',
+    // height: '100%',
   },
   header: {
     padding: 15,
@@ -206,26 +408,24 @@ const styles = StyleSheet.create({
       height: 9,
     },
     shadowOpacity: 0.8,
-    shadowRadius: 10.49,
+    shadowRadius: 0,
     elevation: 12,
   },
   panel: {
     marginVertical: 5,
-    borderBottomWidth: 1,
+    borderTopWidth: 1,
     paddingBottom: 15,
-    borderBottomColor: colorConfig.pageIndex.inactiveTintColor,
+    borderTopColor: colorConfig.pageIndex.inactiveTintColor,
   },
   panelNoBorder: {
     marginVertical: 5,
     paddingBottom: 10,
   },
   title: {
-    color: 'white',
-    fontSize: 18,
-    opacity: 0.7,
-    fontFamily: 'Lato-Medium',
-    marginBottom: 5,
-    textAlign: 'center',
+    color: colorConfig.store.title,
+    fontSize: 20,
+    fontFamily: 'Lato-Bold',
+    marginVertical: 10,
   },
   titleHeader: {
     color: colorConfig.store.defaultColor,
@@ -345,6 +545,60 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     borderColor: 'white',
     marginTop: 20,
+  },
+  activityTitle: {
+    fontSize: 17,
+    fontFamily: 'Lato-Medium',
+    color: colorConfig.store.defaultColor,
+  },
+  activityRewardsPositive: {
+    fontSize: 18,
+    fontFamily: 'Lato-Bold',
+    color: colorConfig.store.colorSuccess,
+  },
+  activityDate: {
+    fontSize: 12,
+    color: colorConfig.store.titleSelected,
+  },
+  customerActivityList: {
+    borderBottomWidth: 0.7,
+    borderBottomColor: colorConfig.pageIndex.grayColor,
+    paddingVertical: 6,
+    marginVertical: 7,
+  },
+  activeLeft: {
+    width: '50%',
+    backgroundColor: colorConfig.store.defaultColor,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 7,
+    borderTopLeftRadius: 5,
+    borderBottomLeftRadius: 5,
+  },
+  activeRight: {
+    width: '50%',
+    backgroundColor: colorConfig.store.defaultColor,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 7,
+    borderTopRightRadius: 5,
+    borderBottomRightRadius: 5,
+  },
+  inactiveFilter: {
+    borderTopRightRadius: 6,
+    borderBottomRightRadius: 6,
+    width: '50%',
+    padding: 7,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  panelTab: {
+    marginVertical: 8,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    borderWidth: 1,
+    borderRadius: 6,
+    borderColor: colorConfig.store.defaultColor,
   },
 });
 

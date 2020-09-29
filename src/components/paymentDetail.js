@@ -51,6 +51,7 @@ import {Dialog} from 'react-native-paper';
 import CryptoJS from 'react-native-crypto-js';
 import awsConfig from '../config/awsConfig';
 import {afterPayment, myVoucers} from '../actions/account.action';
+import {dataPoint} from '../actions/rewards.action';
 
 class PaymentDetail extends Component {
   constructor(props) {
@@ -148,17 +149,20 @@ class PaymentDetail extends Component {
     try {
       const outletID = pembayaran.storeId;
       const response = await this.props.dispatch(getOutletById(outletID));
+      await this.props.dispatch(dataPoint());
       if (response != false) {
         await this.setState({outlet: response});
       }
     } catch (e) {}
 
+    await this.setState({loading: false});
+
     try {
       await this.props.dispatch(myVoucers());
       await this.props.dispatch(getAccountPayment());
-      await this.setState({loading: false});
+      // await this.setState({loading: false});
     } catch (e) {
-      await this.setState({loading: false});
+      // await this.setState({loading: false});
     }
 
     this.backHandler = BackHandler.addEventListener(
@@ -562,6 +566,18 @@ class PaymentDetail extends Component {
             if (find.isAccountRequired != false) {
               paymentPayload.accountId = selectedAccount.accountID;
             }
+
+            if (find.minimumPayment != undefined) {
+              if (totalBayar < find.minimumPayment) {
+                this.setState({loading: false});
+                Alert.alert(
+                  'Sorry',
+                  `Minimum transaction amount is ${appConfig.appMataUang}` +
+                    this.formatCurrency(find.minimumPayment),
+                );
+                return;
+              }
+            }
           }
         }
 
@@ -826,7 +842,7 @@ class PaymentDetail extends Component {
   };
 
   render() {
-    const {intlData, selectedAccount, detailPoint} = this.props;
+    const {intlData, selectedAccount, detailPoint, campign} = this.props;
     const {outlet} = this.state;
     return (
       <SafeAreaView style={styles.container}>
@@ -1114,7 +1130,9 @@ class PaymentDetail extends Component {
               )}
             </View>
             {this.props.campaignActive &&
-            outlet.enableRedeemPoint &&
+            campign != undefined &&
+            campign.points &&
+            campign.points.pointsToRebateRatio1 != 0 &&
             detailPoint != undefined &&
             !isEmptyObject(detailPoint.trigger) &&
             (detailPoint.trigger.status === true ||
@@ -1385,6 +1403,7 @@ const styles = StyleSheet.create({
 });
 
 mapStateToProps = state => ({
+  campign: state.rewardsReducer.campaign.campaign,
   myVoucers: state.accountsReducer.myVoucers.myVoucers,
   totalPoint: state.rewardsReducer.dataPoint.totalPoint,
   recentTransaction: state.rewardsReducer.dataPoint.recentTransaction,

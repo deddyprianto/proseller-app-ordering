@@ -151,6 +151,30 @@ class Rewards extends Component {
             if (findPaymentProvider == undefined) {
               await this.props.dispatch(defaultPaymentAccount(undefined));
               return;
+            } else {
+              try {
+                if (defaultAccount.isAccountRequired == false) {
+                  if (
+                    findPaymentProvider.paymentName !=
+                    defaultAccount.paymentName
+                  ) {
+                    await this.props.dispatch(
+                      defaultPaymentAccount(findPaymentProvider),
+                    );
+                  }
+
+                  try {
+                    if (
+                      defaultAccount.isAccountRequired !=
+                      findPaymentProvider.isAccountRequired
+                    ) {
+                      await this.props.dispatch(
+                        defaultPaymentAccount(undefined),
+                      );
+                    }
+                  } catch (e) {}
+                }
+              } catch (e) {}
             }
           }
         }

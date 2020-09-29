@@ -571,6 +571,30 @@ export const getCart = id => {
   };
 };
 
+export const getPendingCartSingle = id => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+      let response = await fetchApiOrder(
+        `/cart/pending/${id}`,
+        'GET',
+        null,
+        200,
+        token,
+      );
+      console.log(response, 'response get pending cart by id');
+      return response.response.data;
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
 export const setCart = cart => {
   return async dispatch => {
     try {

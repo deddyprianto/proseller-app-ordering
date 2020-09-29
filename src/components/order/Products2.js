@@ -178,24 +178,39 @@ class Products2 extends Component {
       if (!isEmptyArray(product.details)) {
         let arrayID = [];
         for (let i = 0; i < product.details.length; i++) {
-          arrayID.push(product.details[i].product.id);
+          if (
+            product.details[i].product != undefined &&
+            product.details[i].product != null
+          ) {
+            arrayID.push(product.details[i].product.id);
+          }
         }
 
         for (let i = 0; i < products.length; i++) {
           for (let j = 0; j < products[i].items.length; j++) {
-            if (arrayID.includes(products[i].items[j].product.id)) {
-              products[i].items[j].changed = true;
-              await this.setState({products});
+            if (
+              products[i].items[j].product != undefined &&
+              products[i].items[j].product != null
+            ) {
+              if (arrayID.includes(products[i].items[j].product.id)) {
+                products[i].items[j].changed = true;
+                await this.setState({products});
+              }
             }
           }
         }
       } else {
         for (let i = 0; i < products.length; i++) {
           for (let j = 0; j < products[i].items.length; j++) {
-            if (products[i].items[j].product.id == product.product.id) {
-              products[i].items[j].changed = true;
-              await this.setState({products});
-              return;
+            if (
+              products[i].items[j].product != undefined &&
+              products[i].items[j].product != null
+            ) {
+              if (products[i].items[j].product.id == product.product.id) {
+                products[i].items[j].changed = true;
+                await this.setState({products});
+                return;
+              }
             }
           }
         }
@@ -210,6 +225,8 @@ class Products2 extends Component {
   };
 
   componentDidMount = async () => {
+    //TODO: add refresh token here
+
     this.backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
       this.handleBackPress,
@@ -341,8 +358,8 @@ class Products2 extends Component {
     const {intlData} = this.props;
     const {item} = this.state;
     let height = 330;
-    if (item.enableDineIn == false) height -= 50;
-    if (item.enableTakeAway == false) height -= 50;
+    if (item.enableStoreCheckOut == false) height -= 50;
+    if (item.enableStorePickUp == false) height -= 50;
     if (item.enableDelivery == false) height -= 50;
     return (
       <RBSheet
@@ -372,13 +389,14 @@ class Products2 extends Component {
           }}>
           Order Mode
         </Text>
-        {item.enableDineIn == true ? (
+        {item.enableStoreCheckOut == true ? (
           <TouchableOpacity
-            onPress={() => this.setOrderType('DINEIN')}
-            style={styles.activeDINEINButton}>
+            disabled={item.enableStoreCheckOut == false ? true : false}
+            onPress={() => this.setOrderType('STORECHECKOUT')}
+            style={styles.activeTAKEAWAYButton}>
             <Icon
               size={30}
-              name={Platform.OS === 'ios' ? 'ios-restaurant' : 'md-restaurant'}
+              name={Platform.OS === 'ios' ? 'ios-card' : 'md-card'}
               style={{color: 'white'}}
             />
             <Text
@@ -390,15 +408,14 @@ class Products2 extends Component {
                 fontSize: 18,
                 textAlign: 'center',
               }}>
-              {intlData.messages.dineIn}
+              Srore Checkout
             </Text>
           </TouchableOpacity>
         ) : null}
-        {item.enableTakeAway == true ? (
+        {item.enableStorePickUp == true ? (
           <TouchableOpacity
-            disabled={item.enableTakeAway == false ? true : false}
-            onPress={() => this.setOrderType('TAKEAWAY')}
-            style={styles.activeTAKEAWAYButton}>
+            onPress={() => this.setOrderType('STOREPICKUP')}
+            style={styles.activeDINEINButton}>
             <Icon
               size={30}
               name={Platform.OS === 'ios' ? 'ios-basket' : 'md-basket'}
@@ -413,7 +430,7 @@ class Products2 extends Component {
                 fontSize: 18,
                 textAlign: 'center',
               }}>
-              {intlData.messages.takeAway}
+              Store Pickup
             </Text>
           </TouchableOpacity>
         ) : null}
@@ -1187,14 +1204,14 @@ class Products2 extends Component {
       // }
 
       // check max order value outlet
-      if (!this.checkMaxOrderValue('add', data)) {
-        Alert.alert(
-          'Sorry..',
-          'Maximum order amount is ' +
-            CurrencyFormatter(parseFloat(item.maxOrderAmount)),
-        );
-        return;
-      }
+      // if (!this.checkMaxOrderValue('add', data)) {
+      //   Alert.alert(
+      //     'Sorry..',
+      //     'Maximum order amount is ' +
+      //       CurrencyFormatter(parseFloat(item.maxOrderAmount)),
+      //   );
+      //   return;
+      // }
 
       // post data to server
       let response = await this.props.dispatch(addProductToBasket(data));
@@ -1313,14 +1330,14 @@ class Products2 extends Component {
       data.details.push(dataproduct);
 
       // check max order value outlet
-      if (!this.checkMaxOrderValue('update', data)) {
-        Alert.alert(
-          'Sorry..',
-          'Maximum order amount is ' +
-            CurrencyFormatter(parseFloat(item.maxOrderAmount)),
-        );
-        return;
-      }
+      // if (!this.checkMaxOrderValue('update', data)) {
+      //   Alert.alert(
+      //     'Sorry..',
+      //     'Maximum order amount is ' +
+      //       CurrencyFormatter(parseFloat(item.maxOrderAmount)),
+      //   );
+      //   return;
+      // }
 
       // hide modal
       this.setState({
@@ -1406,13 +1423,13 @@ class Products2 extends Component {
   addItemToBasket = async (product, qty, remark, mode) => {
     const {item} = this.state;
     // check outlet rules
-    if (!this.checkMaxOrderQty(qty)) {
-      Alert.alert(
-        'Sorry..',
-        'Maximum order quantity per Item is ' + item.maxOrderQtyPerItem,
-      );
-      return;
-    }
+    // if (!this.checkMaxOrderQty(qty)) {
+    //   Alert.alert(
+    //     'Sorry..',
+    //     'Maximum order quantity per Item is ' + item.maxOrderQtyPerItem,
+    //   );
+    //   return;
+    // }
 
     if (mode == 'add') {
       // to show loading button at Modal, check status data basket is empty or not
@@ -1431,10 +1448,15 @@ class Products2 extends Component {
       const {products} = this.state;
       for (let i = 0; i < products.length; i++) {
         for (let j = 0; j < products[i].items.length; j++) {
-          if (products[i].items[j].product.id == product.product.id) {
-            products[i].items[j].changed = true;
-            await this.setState({products});
-            return;
+          if (
+            products[i].items[j].product != null &&
+            products[i].items[j].product != undefined
+          ) {
+            if (products[i].items[j].product.id == product.product.id) {
+              products[i].items[j].changed = true;
+              await this.setState({products});
+              return;
+            }
           }
         }
       }
@@ -1464,7 +1486,7 @@ class Products2 extends Component {
 
     setTimeout(() => {
       this.setState({loadModifierTime: true});
-    }, 700);
+    }, 300);
   };
 
   addQty = () => {
@@ -1543,7 +1565,7 @@ class Products2 extends Component {
   };
 
   templateItemGrid = (type, item) => {
-    if (item.product != undefined) {
+    if (item.product != undefined && item.product != null) {
       return (
         <TouchableOpacity
           disabled={this.availableToOrder(item) ? false : true}
@@ -1640,7 +1662,7 @@ class Products2 extends Component {
   };
 
   templateItem = (type, item) => {
-    if (item.product != undefined) {
+    if (item.product != undefined && item.product != null) {
       return (
         <TouchableOpacity
           disabled={this.availableToOrder(item) ? false : true}
@@ -1721,6 +1743,14 @@ class Products2 extends Component {
         length = item.items.length;
       }
 
+      let dataProducts = item.items;
+
+      if (!isEmptyArray(item.items)) {
+        dataProducts = item.items.filter(
+          item => item.product != null && item.product != undefined,
+        );
+      }
+
       // check mode display
       if (item.displayMode != undefined && item.displayMode === 'GRID') {
         return (
@@ -1732,7 +1762,7 @@ class Products2 extends Component {
             <RecyclerListView
               style={{marginLeft: 5}}
               layoutProvider={this._gridLayoutProvider}
-              dataProvider={dataProvider.cloneWithRows(item.items)}
+              dataProvider={dataProvider.cloneWithRows(dataProducts)}
               rowRenderer={this.templateItemGrid}
               renderFooter={this.renderFooter}
             />
@@ -1744,7 +1774,7 @@ class Products2 extends Component {
             <Text style={styles.titleCategory}>{item.name.substr(0, 35)}</Text>
             <RecyclerListView
               layoutProvider={this._layoutProvider}
-              dataProvider={dataProvider.cloneWithRows(item.items)}
+              dataProvider={dataProvider.cloneWithRows(dataProducts)}
               rowRenderer={this.templateItem}
               renderFooter={this.renderFooter}
               // onEndReached={this.handleLoadMoreItems}
@@ -2382,11 +2412,11 @@ class Products2 extends Component {
       item.lastOrderOn = outlet.lastOrderOn;
       item.offlineMessage = outlet.offlineMessage;
       item.enableDineIn =
-        outlet.enableDineIn == false || outlet.enableDineIn == '-'
+        outlet.enableStoreCheckOut == false || outlet.enableStoreCheckOut == '-'
           ? false
           : true;
-      item.enableTakeAway =
-        outlet.enableTakeAway == false || outlet.enableTakeAway == '-'
+      item.enableStorePickUp =
+        outlet.enableStorePickUp == false || outlet.enableStorePickUp == '-'
           ? false
           : true;
       item.enableTableScan =
@@ -2875,11 +2905,11 @@ const styles = StyleSheet.create({
   },
   titleCategory: {
     color: colorConfig.store.title,
-    fontSize: 18,
+    fontSize: 20,
     textAlign: 'left',
     fontFamily: 'Lato-Bold',
     padding: 14,
-    marginBottom: 5,
+    marginBottom: 10,
   },
   titleModifierModal: {
     color: colorConfig.pageIndex.inactiveTintColor,

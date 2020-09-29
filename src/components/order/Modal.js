@@ -1147,13 +1147,12 @@ export default class ModalOrder extends Component {
                     {this.props.product.product != undefined &&
                     this.props.product.product.retailPrice != undefined ? (
                       <Text style={[styles.productPriceAfterTitle]}>
-                        ({' '}
+                        {' '}
                         {this.formatNumber(
                           CurrencyFormatter(
                             this.props.product.product.retailPrice,
                           ),
                         )}{' '}
-                        )
                       </Text>
                     ) : null}
                   </View>

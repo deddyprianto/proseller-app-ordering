@@ -251,7 +251,9 @@ class HistoryPayment extends Component {
                 <View style={styles.sejajarSpace}>
                   <View style={styles.detail}>
                     <View style={styles.sejajarSpace}>
-                      <Text style={styles.storeName}>{item.outlet.name}</Text>
+                      <Text style={styles.storeName}>
+                        {item.outlet.name.substr(0, 18)}
+                      </Text>
                       <Text style={styles.itemType}>
                         <Text style={{color: colorConfig.store.title}}>
                           {item.queueNo != undefined ? item.queueNo : null}
@@ -261,7 +263,7 @@ class HistoryPayment extends Component {
                           {' - '}
                           {this.getItemLength(item.details)} Items
                           {' -'}
-                          {this.getPrice(item)}
+                          {this.format(CurrencyFormatter(item.totalNettAmount))}
                         </Text>
                       </Text>
                     </View>

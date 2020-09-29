@@ -10,6 +10,7 @@ import {
   Alert,
   Dimensions,
   TouchableOpacity,
+  Platform,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
@@ -179,7 +180,7 @@ class Account extends Component {
           <View
             style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
             <ActivityIndicator
-              size={50}
+              size={Platform.OS === 'ios' ? 80 : 50}
               color={colorConfig.store.defaultColor}
             />
           </View>

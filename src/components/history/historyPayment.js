@@ -195,20 +195,21 @@ class HistoryPayment extends Component {
                 <View style={styles.sejajarSpace}>
                   <View style={styles.detail}>
                     <View style={styles.sejajarSpace}>
-                      <Text style={styles.storeName}>{item.outletName}</Text>
-                      {item.point > 0 ? (
-                        <Text style={styles.itemType}>
-                          <Text style={{color: colorConfig.store.title}}>
-                            x{' '}
+                      <Text style={styles.storeName}>{item.outletName.substr(0, 20)}</Text>
+                      <View>
+                        {item.queueNo != undefined ? (
+                          <Text style={styles.queueNo}>{item.queueNo}</Text>
+                        ) : null}
+                        {item.point > 0 ? (
+                          <Text style={styles.itemType}>
+                            <Text style={{color: colorConfig.store.title}}>
+                              x{' '}
+                            </Text>
+                            {item.point + ' ' + intlData.messages.point}
                           </Text>
-                          {item.point + ' ' + intlData.messages.point}
-                        </Text>
-                      ) : null}
+                        ) : null}
+                      </View>
                     </View>
-
-                    {/*{item.queueNo != undefined ? (*/}
-                    {/*    <Text style={styles.paymentType}>- {item.queueNo}</Text>*/}
-                    {/*) : null}*/}
 
                     {!isEmptyArray(item.stamps) && item.stamps.length > 1 ? (
                       <View style={styles.sejajarSpaceFlexEnd}>
@@ -337,6 +338,13 @@ const styles = StyleSheet.create({
   paymentType: {
     // paddingLeft: 10,
     color: colorConfig.store.title,
+    fontWeight: 'bold',
+    fontFamily: 'Lato-Medium',
+  },
+  queueNo: {
+    textAlign: 'right',
+    fontSize: 12,
+    color: colorConfig.store.titleSelected,
     fontWeight: 'bold',
     fontFamily: 'Lato-Medium',
   },

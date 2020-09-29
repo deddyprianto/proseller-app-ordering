@@ -41,6 +41,39 @@ import awsConfig from '../config/awsConfig';
 import PhoneInput from 'react-native-phone-input';
 import CountryPicker from './react-native-country-picker-modal/lib';
 
+const backupMandatoryFields = [
+  {
+    format: 'dd-MM-yyyy',
+    show: true,
+    sequence: 1,
+    fieldName: 'birthDate',
+    mandatory: true,
+    displayName: '1a. Birthday (dd-MM-yyyy)',
+  },
+  {
+    format: 'MMM',
+    show: false,
+    sequence: 2,
+    fieldName: 'birthDate',
+    mandatory: false,
+    displayName: '1b. Birthday (MMM)',
+  },
+  {
+    show: true,
+    sequence: 3,
+    fieldName: 'gender',
+    mandatory: true,
+    displayName: '2. Gender',
+  },
+  {
+    show: true,
+    sequence: 4,
+    fieldName: 'address',
+    mandatory: true,
+    displayName: '3. address',
+  },
+];
+
 const monthNames = [
   'Jan',
   'Feb',
@@ -175,6 +208,8 @@ class AccountEditProfil extends Component {
       const response = await this.props.dispatch(getMandatoryFields());
       if (!isEmptyObject(response) && !isEmptyArray(response.fields)) {
         await this.setState({fields: response.fields});
+      } else {
+        await this.setState({fields: backupMandatoryFields});
       }
     } catch (e) {}
     await this.setState({loading: false});
@@ -514,6 +549,15 @@ class AccountEditProfil extends Component {
     }
   };
 
+  getMaxDate = () => {
+    try {
+      let year = new Date().getFullYear() - 1;
+      return new Date(`${year}-12-31`);
+    } catch (e) {
+      return new Date();
+    }
+  };
+
   render() {
     const {intlData} = this.props;
     const {fields} = this.state;
@@ -726,7 +770,7 @@ class AccountEditProfil extends Component {
                                 : this.formatBirthDate(this.state.birthDate)}
                             </Text>
                             <DateTimePickerModal
-                              maximumDate={new Date()}
+                              maximumDate={this.getMaxDate()}
                               isVisible={this.state.isDatePickerVisible}
                               mode="date"
                               onConfirm={this.handleConfirm}

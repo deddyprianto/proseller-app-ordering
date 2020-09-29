@@ -68,20 +68,30 @@ class PaymentSuccess extends Component {
 
   goBack = async () => {
     //  If this scene originates from ordering customers who are taking away, then point it back to basketball
-    const {url} = this.props;
+    const {url, outlet} = this.props;
     if (url != undefined && url == '/cart/submitTakeAway') {
       // Actions.popTo('basket');
-      Actions.reset('pageIndex', {fromPayment: true});
+      Actions.reset('app', {fromPayment: true});
     } else {
-      Actions.reset('pageIndex', {fromPayment: true});
+      Actions.reset('app', {fromPayment: true});
       // Actions.reset('pageIndex', {initial: 'History'});
     }
 
-    if (url != undefined && url == '/cart/submitTakeAway') {
-      Alert.alert(
-        'Order is Processing',
-        'Estimated waiting time is 10 minutes',
-      );
+    // Order Notifications
+    if (
+      outlet != undefined &&
+      outlet.orderNotification != undefined &&
+      outlet.orderNotification.estimatedWaitingMessage != undefined
+    ) {
+      if (
+        outlet.orderNotification.estimatedWaitingMessage != '' &&
+        outlet.orderNotification.estimatedWaitingMessage != '-'
+      ) {
+        Alert.alert(
+          'Ordering',
+          outlet.orderNotification.estimatedWaitingMessage,
+        );
+      }
     }
   };
 
@@ -312,17 +322,19 @@ class PaymentSuccess extends Component {
           </View>
           <View
             style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
+              flexDirection: 'column',
+              // justifyContent: 'space-between',
             }}>
+            {/*<Text*/}
+            {/*  style={{*/}
+            {/*    color: colorConfig.pageIndex.grayColor,*/}
+            {/*  }}>*/}
+            {/*  {intlData.messages.paymentType}*/}
+            {/*</Text>*/}
             <Text
               style={{
-                color: colorConfig.pageIndex.grayColor,
-              }}>
-              {intlData.messages.paymentType}
-            </Text>
-            <Text
-              style={{
+                marginTop: 10,
+                textAlign: 'right',
                 color: colorConfig.pageIndex.grayColor,
               }}>
               {this.getPaymentType(this.props.dataRespons.paymentCard)}

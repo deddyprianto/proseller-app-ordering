@@ -404,6 +404,8 @@ class ListAddress extends Component {
       address = user.deliveryAddress;
     }
 
+    console.log(address, 'address');
+
     return (
       <SafeAreaView style={styles.container}>
         {this.state.loading && <Loader />}
