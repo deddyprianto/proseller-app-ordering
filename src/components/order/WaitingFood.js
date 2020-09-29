@@ -527,6 +527,21 @@ class WaitingFood extends Component {
     }
   };
 
+  getTotal = item => {
+    try {
+      if (item.confirmationInfo == undefined) {
+        return item.totalNettAmount;
+      } else if (
+        item.confirmationInfo != undefined &&
+        item.confirmationInfo.afterPrice != undefined
+      ) {
+        return item.confirmationInfo.afterPrice;
+      }
+    } catch (e) {
+      return 0;
+    }
+  };
+
   detailOrder = () => {
     const {intlData, dataBasket} = this.props;
     return (
@@ -741,7 +756,7 @@ class WaitingFood extends Component {
                 TOTAL :{' '}
               </Text>
               <Text style={[styles.total, {color: colorConfig.store.title}]}>
-                {CurrencyFormatter(dataBasket.confirmationInfo.afterPrice)}
+                {CurrencyFormatter(this.getTotal(dataBasket))}
               </Text>
             </View>
           </ScrollView>

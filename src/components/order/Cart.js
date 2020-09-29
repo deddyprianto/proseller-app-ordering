@@ -1314,6 +1314,7 @@ class Cart extends Component {
           (Actions.currentScene == 'cart' ||
             Actions.currentScene == 'waitingFood') &&
           (dataBasket.outlet.outletType == 'QUICKSERVICE' ||
+            dataBasket.outlet.outletType == 'RETAIL' ||
             dataBasket.orderingMode == 'TAKEAWAY' ||
             dataBasket.orderingMode == 'DELIVERY')
         ) {

@@ -888,7 +888,7 @@ class SettleOrder extends Component {
 
   payAtPOS = async () => {
     const {intlData, selectedAccount, companyInfo} = this.props;
-    const {totalBayar} = this.state;
+    const {totalBayar, outlet} = this.state;
 
     var pembayaran = {};
     try {
@@ -897,6 +897,28 @@ class SettleOrder extends Component {
       this.setState({loading: true});
       pembayaran.price = Number(this.props.pembayaran.payment.toFixed(3));
       pembayaran.cartID = this.props.pembayaran.cartID;
+
+      if (
+        this.state.dataVoucer == undefined &&
+        this.state.addPoint == undefined
+      ) {
+        pembayaran.statusAdd = null;
+        pembayaran.redeemValue = 0;
+      } else {
+        if (this.state.dataVoucer != undefined) {
+          pembayaran.voucherId = this.state.dataVoucer.id;
+          pembayaran.price = Number(this.state.totalBayar.toFixed(3));
+          pembayaran.voucherSerialNumber = this.state.dataVoucer.serialNumber;
+          pembayaran.statusAdd = 'addVoucher';
+        }
+        if (this.state.addPoint != undefined) {
+          // pembayaran.price = Number(
+          //   this.props.pembayaran.totalGrossAmount.toFixed(3),
+          // );
+          pembayaran.redeemValue = this.state.addPoint;
+          pembayaran.statusAdd = 'addPoint';
+        }
+      }
 
       // if ordering mode is exist
       if (this.props.pembayaran.orderingMode != undefined) {
@@ -933,25 +955,43 @@ class SettleOrder extends Component {
         };
       } catch (e) {}
 
-      pembayaran.payAtPOS = true;
-
       // get url
       let {url} = this.props;
 
+      pembayaran.payAtPOS = true;
+
       console.log('Payload settle order ', pembayaran);
+      console.log('URL settle order ', url);
 
       const response = await this.props.dispatch(settleOrder(pembayaran, url));
       console.log('reponse pembayaran settle order ', response);
-      this.setState({
-        loading: false,
-        prompPayAtPOS: true,
-        pendingCart: response.responseBody.data,
-      });
       if (response.success) {
         try {
           this.props.dispatch(afterPayment(true));
-          this.getPendingOrder(response.responseBody.data);
         } catch (e) {}
+
+        this.props.dispatch(clearAccount());
+        this.props.dispatch(clearAddress());
+
+        // get pending order
+        this.props.dispatch(getPendingCart());
+
+        // go to payment success
+        const {url} = this.props;
+
+        const dataResponse = {
+          message: 'Congratulations \n You will make payment at the store',
+          createdAt: new Date(),
+          outletName: outlet.name,
+          price: totalBayar,
+        };
+
+        Actions.paymentSuccess({
+          intlData,
+          outlet: this.state.outlet,
+          url,
+          dataRespons: dataResponse,
+        });
       } else {
         //  cancel voucher and pont selected
         this.props.dispatch(getBasket());
@@ -1485,7 +1525,7 @@ class SettleOrder extends Component {
                       color: colorConfig.store.defaultColor,
                       fontFamily: 'Lato-Bold',
                     }}>
-                    Pay at POS
+                    Pay at Store
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -1538,7 +1578,7 @@ class SettleOrder extends Component {
             this.hideAlert();
           }}
         />
-        {this.renderPrompPayAtPOS()}
+        {/*{this.renderPrompPayAtPOS()}*/}
       </SafeAreaView>
     );
   }
