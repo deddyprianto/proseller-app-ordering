@@ -154,6 +154,19 @@ class PaymentSuccess extends Component {
     }
   };
 
+  getMessage = () => {
+    const {intlData} = this.props;
+    try {
+      if (this.props.dataRespons.payAtPOS == true) {
+        return 'Amount to Pay';
+      } else {
+        return intlData.messages.youPaid;
+      }
+    } catch (e) {
+      return intlData.messages.youPaid;
+    }
+  };
+
   renderPaymentDetails = () => {
     const {intlData} = this.props;
     return (
@@ -192,7 +205,7 @@ class PaymentSuccess extends Component {
               fontSize: 14,
               fontWeight: 'bold',
             }}>
-            {intlData.messages.youPaid}
+            {this.getMessage()}
           </Text>
           <View
             style={{

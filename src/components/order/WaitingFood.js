@@ -343,7 +343,7 @@ class WaitingFood extends Component {
                 textAlign: 'center',
                 fontFamily: 'Lato-Bold',
               }}>
-              Please wait, We are preparing your food in the kitchen.
+              Please wait, We are preparing your order.
             </Text>
             <Text
               style={{
@@ -868,7 +868,7 @@ class WaitingFood extends Component {
   getAnimation = dataBasket => {
     try {
       if (dataBasket.status == 'PROCESSING') {
-        return require('../../../assets/animate/cooking');
+        return require('../../../assets/animate/shopping-lady');
       } else if (dataBasket.status == 'READY_FOR_DELIVERY') {
         return require('../../../assets/animate/food-ready');
       } else if (dataBasket.status == 'READY_FOR_COLLECTION') {

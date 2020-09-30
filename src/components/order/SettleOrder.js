@@ -980,10 +980,11 @@ class SettleOrder extends Component {
         const {url} = this.props;
 
         const dataResponse = {
-          message: 'Congratulations \n You will make payment at the store',
+          message: 'Please proceed payment at the store',
           createdAt: new Date(),
           outletName: outlet.name,
           price: totalBayar,
+          payAtPOS: true,
         };
 
         Actions.paymentSuccess({
