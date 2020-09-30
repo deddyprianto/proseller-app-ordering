@@ -1590,6 +1590,14 @@ class Cart extends Component {
                       </Text>
                     </View>
                   )}
+                {this.props.dataBasket.payAtPOS == true && (
+                  <View style={styles.itemSummary}>
+                    <Text style={styles.total}>Pay at Store</Text>
+                    <Text style={styles.total}>
+                      {CurrencyFormatter(this.props.dataBasket.totalNettAmount)}
+                    </Text>
+                  </View>
+                )}
               </View>
             </ScrollView>
           ) : (

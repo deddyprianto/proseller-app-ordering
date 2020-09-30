@@ -753,7 +753,7 @@ class WaitingFood extends Component {
             ) : null}
             <View style={styles.itemSummary}>
               <Text style={[styles.total, {color: colorConfig.store.title}]}>
-                TOTAL :{' '}
+                {dataBasket.payAtPOS ? 'Pay at Store' : 'TOTAL'} :{' '}
               </Text>
               <Text style={[styles.total, {color: colorConfig.store.title}]}>
                 {CurrencyFormatter(this.getTotal(dataBasket))}
@@ -872,7 +872,7 @@ class WaitingFood extends Component {
       } else if (dataBasket.status == 'READY_FOR_DELIVERY') {
         return require('../../../assets/animate/food-ready');
       } else if (dataBasket.status == 'READY_FOR_COLLECTION') {
-        return require('../../../assets/animate/food-ready');
+        return require('../../../assets/animate/ready');
       } else if (dataBasket.status == 'ON_THE_WAY') {
         return require('../../../assets/animate/delivery');
       } else {
