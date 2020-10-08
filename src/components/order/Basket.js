@@ -4,6 +4,7 @@ import {
   BackHandler,
   Dimensions,
   FlatList,
+  Picker,
   Platform,
   RefreshControl,
   SafeAreaView,
@@ -49,8 +50,8 @@ import awsConfig from '../../config/awsConfig';
 import {selectedAddress} from '../../actions/payment.actions';
 import {SwipeListView} from 'react-native-swipe-list-view';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
-import {or} from 'react-native-reanimated';
 import {dataPoint} from '../../actions/rewards.action';
+import {format} from 'date-fns';
 
 class Basket extends Component {
   constructor(props) {
@@ -79,6 +80,8 @@ class Basket extends Component {
       deliveryFee: null,
       isOpen: true,
       loadingDelte: false,
+      datePickup: null,
+      timePickup: null,
     };
   }
 
@@ -151,12 +154,13 @@ class Basket extends Component {
 
       // await this.props.dispatch(refreshToken());
 
-      this.refreshOpeningHours();
+      // this.refreshOpeningHours();
 
       // get previous data products from this outlet, for modifier detail purpose
       if (this.props.dataBasket != undefined) {
         let outletID = this.props.dataBasket.outlet.id;
         await this.props.dispatch(getOutletById(outletID));
+        await this.initializePickupTime();
 
         await this.setState({loading: false});
 
@@ -196,6 +200,90 @@ class Basket extends Component {
         'hardwareBackPress',
         this.handleBackPress,
       );
+    } catch (e) {}
+  };
+
+  initializePickupTime = () => {
+    const {outletSingle} = this.props;
+    let pickerItem = [];
+    let value = '';
+    try {
+      const day = new Date().getDay();
+      let current = new Date().getTime();
+      if (isEmptyArray(outletSingle.operationalHours)) {
+        let datePickup = format(new Date(), 'yyyy-MM-dd');
+        let timePickup = format(new Date(), 'HH:mm');
+
+        this.setState({datePickup, timePickup});
+        return;
+      } else {
+        const find = outletSingle.operationalHours.find(
+          item => item.day == day,
+        );
+        if (find == undefined) {
+          const findNextDay = outletSingle.operationalHours.find(
+            item => item.day >= day,
+          );
+          if (findNextDay == undefined) return null;
+          else {
+            let diff = findNextDay.day;
+            if (findNextDay.day < day) {
+              diff += 7;
+            } else {
+              diff = diff - day;
+            }
+            let nextDate = diff * 86400000;
+            let finalDate = new Date(current + nextDate);
+
+            let arrayTime = [];
+            for (
+              let i = parseInt(findNextDay.open);
+              i <= parseInt(findNextDay.close);
+              i++
+            ) {
+              arrayTime.push(i);
+            }
+            let goal = parseInt(new Date().getHours() + 1);
+            let closest = arrayTime.reduce(function(prev, curr) {
+              return Math.abs(curr - goal) < Math.abs(prev - goal)
+                ? curr
+                : prev;
+            });
+            this.setState({
+              datePickup: finalDate,
+              timePickup: `${closest}:00`,
+            });
+          }
+        } else {
+          let arrayTime = [];
+          let datePickup = format(new Date(), 'yyyy-MM-dd');
+          for (let i = parseInt(find.open); i <= parseInt(find.close); i++) {
+            arrayTime.push(i);
+          }
+          let goal = parseInt(new Date().getHours() + 1);
+          let closest = arrayTime.reduce(function(prev, curr) {
+            return Math.abs(curr - goal) < Math.abs(prev - goal) ? curr : prev;
+          });
+          this.setState({datePickup, timePickup: `${closest}:00`});
+        }
+      }
+    } catch (e) {
+      let datePickup = format(new Date(), 'yyyy-MM-dd');
+      let timePickup = format(new Date(), 'HH:mm');
+
+      this.setState({datePickup, timePickup});
+    }
+  };
+
+  setPickupDate = datePickup => {
+    try {
+      this.setState({datePickup});
+    } catch (e) {}
+  };
+
+  setPickupTime = timePickup => {
+    try {
+      this.setState({timePickup});
     } catch (e) {}
   };
 
@@ -1001,15 +1089,15 @@ class Basket extends Component {
         }
       }
 
-      if (!this.checkLastOrder()) {
-        Alert.alert(
-          'Sorry..',
-          `Last ordering for this outlet is ${
-            outletSingle.lastOrderOn
-          } minutes before closing. Please try again later.`,
-        );
-        return;
-      }
+      // if (!this.checkLastOrder()) {
+      //   Alert.alert(
+      //     'Sorry..',
+      //     `Last ordering for this outlet is ${
+      //       outletSingle.lastOrderOn
+      //     } minutes before closing. Please try again later.`,
+      //   );
+      //   return;
+      // }
 
       //  refresh cart
       // clearInterval(this.interval);
@@ -1075,6 +1163,17 @@ class Basket extends Component {
 
       try {
         pembayaran.cartDetails = dataBasket;
+      } catch (e) {}
+
+      try {
+        if (
+          orderType == 'DELIVERY' ||
+          orderType == 'TAKEAWAY' ||
+          orderType == 'STOREPICKUP'
+        ) {
+          pembayaran.orderActionDate = this.state.datePickup;
+          pembayaran.orderActionTime = this.state.timePickup;
+        }
       } catch (e) {}
 
       Actions.settleOrder({
@@ -2140,6 +2239,36 @@ class Basket extends Component {
     this.setState({isModalVisible: false});
   };
 
+  goToPickUpTime = () => {
+    let {outletSingle, orderType} = this.props;
+    try {
+      Actions.push('pickUpTime', {
+        setPickupDate: this.setPickupDate,
+        setPickupTime: this.setPickupTime,
+        date: this.state.datePickup,
+        time: this.state.timePickup,
+        outlet: outletSingle,
+        header:
+          orderType == 'DELIVERY'
+            ? 'Delivery Date & Time'
+            : 'Pickup Date & Time',
+      });
+    } catch (e) {
+    }
+  };
+
+  formatDatePickup = () => {
+    try {
+      if (this.state.datePickup != null) {
+        return format(new Date(this.state.datePickup), 'dd MMM yyyy');
+      } else {
+        return this.state.datePickup;
+      }
+    } catch (e) {
+      return this.state.datePickup;
+    }
+  };
+
   render() {
     const {intlData, dataBasket, orderType, tableType} = this.props;
 
@@ -2544,18 +2673,7 @@ class Basket extends Component {
                   <Text style={styles.total}>
                     {intlData.messages.orderMode}
                   </Text>
-                  <Text
-                    style={[
-                      styles.total,
-                      {
-                        backgroundColor: colorConfig.store.defaultColor,
-                        color: 'white',
-                        borderRadius: 5,
-                        padding: 5,
-                      },
-                    ]}>
-                    {orderType}
-                  </Text>
+                  <Text style={[styles.total, styles.badge]}>{orderType}</Text>
                 </TouchableOpacity>
 
                 {this.deliveryAddress(orderType, this.props.dataBasket)}
@@ -2602,6 +2720,32 @@ class Basket extends Component {
                       </Text>
                     </View>
                   )}
+
+                {orderType == 'DELIVERY' ||
+                orderType == 'TAKEAWAY' ||
+                orderType == 'STOREPICKUP' ? (
+                  <View style={styles.itemSummary}>
+                    <Text style={styles.total}>
+                      {orderType == 'DELIVERY'
+                        ? 'Delivery Date & Time'
+                        : 'Pickup Date & Time'}
+                    </Text>
+                    <TouchableOpacity onPress={this.goToPickUpTime}>
+                      <Text style={[styles.total, styles.badge]}>
+                        {this.formatDatePickup()} at {this.state.timePickup}
+                      </Text>
+                      <Text
+                        style={{
+                          textAlign: 'right',
+                          color: colorConfig.store.titleSelected,
+                          fontFamily: 'Lato-Bold',
+                        }}>
+                        Change
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                ) : null}
+
                 {/*<View style={styles.itemSummary}>*/}
                 {/*  <Text style={styles.total}>Total</Text>*/}
                 {/*  <Text style={styles.total}>*/}
@@ -2714,8 +2858,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     flexDirection: 'row',
     borderBottomColor: colorConfig.pageIndex.inactiveTintColor,
-    borderBottomWidth: 1,
-    alignItems: 'center',
+    borderBottomWidth: 0.7,
+    alignItems: 'baseline',
     // margin: 5,
   },
   title: {
@@ -2933,5 +3077,11 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'flex-end',
+  },
+  badge: {
+    backgroundColor: colorConfig.store.secondaryColor,
+    color: 'white',
+    borderRadius: 5,
+    padding: 5,
   },
 });

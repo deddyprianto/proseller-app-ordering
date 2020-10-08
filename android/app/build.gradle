@@ -194,9 +194,9 @@ android {
                 targetSdkVersion rootProject.ext.targetSdkVersion
                 resValue "string", "build_config_package", "com.ustar"
             }
-            demo {
+            ustarsdemo {
                 minSdkVersion rootProject.ext.minSdkVersion
-                applicationId 'com.ustar.demo'
+                applicationId 'com.ustar.ustarsdemo'
                 versionName "1.1"
                 targetSdkVersion rootProject.ext.targetSdkVersion
                 resValue "string", "build_config_package", "com.ustar"

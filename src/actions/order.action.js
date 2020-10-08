@@ -571,6 +571,49 @@ export const getCart = id => {
   };
 };
 
+export const getCartHomePage = id => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      const {
+        orderReducer: {
+          dataCartSingle: {cartSingle},
+        },
+      } = state;
+
+      let response = await fetchApiOrder(
+        `/cart/pending/${cartSingle.id}`,
+        'GET',
+        null,
+        200,
+        token,
+      );
+      console.log(response, 'response get pending cart by id');
+      if (response.success == false) {
+        dispatch({
+          type: 'DATA_CART_SINGLE',
+          cartSingle: undefined,
+        });
+      } else {
+        dispatch({
+          type: 'DATA_CART_SINGLE',
+          cartSingle: response.response.data,
+        });
+      }
+
+      return response;
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
 export const getPendingCartSingle = id => {
   return async (dispatch, getState) => {
     const state = getState();
@@ -617,10 +660,18 @@ export const getDeliveryProvider = () => {
           tokenUser: {token},
         },
       } = state;
+
+      let payload = {
+        take: 100,
+        skip: 0,
+        sortBy: 'name',
+        sortDirection: 'ASC',
+      };
+
       let response = await fetchApiOrder(
         `/delivery/providers`,
         'POST',
-        null,
+        payload,
         200,
         token,
       );

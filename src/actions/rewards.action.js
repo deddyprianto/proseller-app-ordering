@@ -256,8 +256,14 @@ export const cutomerActivity = (skip, take, isReceive) => {
       const payload = {
         skip,
         take,
+        parameters: [
+          {
+            id: 'search',
+            value: '_POINT',
+          },
+        ],
       };
-
+      console.log(JSON.stringify(payload), 'payload');
       let response = await fetchApi(
         `/customer/activity/${userDetails.id}`,
         'POST',
@@ -276,6 +282,7 @@ export const cutomerActivity = (skip, take, isReceive) => {
               data = response.responseBody.data.filter(
                 item =>
                   item.activityType == 'GET_POINT' ||
+                  item.activityType == 'VOID_POINT_REDEEMED' ||
                   (item.activityType == 'ADJUST_POINT' && item.amount > 0),
               );
             } else {

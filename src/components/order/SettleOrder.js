@@ -650,6 +650,16 @@ class SettleOrder extends Component {
       // get url
       let {url} = this.props;
 
+      try {
+        if (
+          this.props.pembayaran.orderActionDate != undefined &&
+          this.props.pembayaran.orderActionTime != undefined
+        ) {
+          pembayaran.orderActionDate = this.props.pembayaran.orderActionDate;
+          pembayaran.orderActionTime = this.props.pembayaran.orderActionTime;
+        }
+      } catch (e) {}
+
       console.log('Payload settle order ', pembayaran);
       console.log('URL settle order ', url);
 
@@ -959,6 +969,16 @@ class SettleOrder extends Component {
       let {url} = this.props;
 
       pembayaran.payAtPOS = true;
+
+      try {
+        if (
+          this.props.pembayaran.orderActionDate != undefined &&
+          this.props.pembayaran.orderActionTime != undefined
+        ) {
+          pembayaran.orderActionDate = this.props.pembayaran.orderActionDate;
+          pembayaran.orderActionTime = this.props.pembayaran.orderActionTime;
+        }
+      } catch (e) {}
 
       console.log('Payload settle order ', pembayaran);
       console.log('URL settle order ', url);

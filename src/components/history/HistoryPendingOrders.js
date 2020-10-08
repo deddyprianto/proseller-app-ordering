@@ -83,16 +83,16 @@ class HistoryPayment extends Component {
     this.setState({refreshing: true});
     this.getDataHistory();
     try {
-      clearInterval(this.interval);
-      this.interval = setInterval(() => {
-        this.props.dispatch(getPendingCart());
-      }, 8000);
+      // clearInterval(this.interval);
+      // this.interval = setInterval(() => {
+      //   this.props.dispatch(getPendingCart());
+      // }, 8000);
     } catch (e) {}
   };
 
   componentWillUnmount() {
     try {
-      clearInterval(this.interval);
+      // clearInterval(this.interval);
     } catch (e) {}
   }
 

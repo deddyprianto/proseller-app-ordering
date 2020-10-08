@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
-import {notifikasi} from '../actions/auth.actions';
+import {notifikasi, validateSSL} from '../actions/auth.actions';
 import {dataPoint, getStamps, campaign} from '../actions/rewards.action';
 import {refreshToken} from '../actions/auth.actions';
 import {recentTransaction} from '../actions/sales.action';
@@ -21,7 +21,7 @@ import RewardsPoint from '../components/rewardsPoint';
 import RewardsStamp from '../components/rewardsStamp';
 import RewardsMenu from '../components/rewardsMenu';
 import RewardsTransaction from '../components/rewardsTransaction';
-import Loader from '../components/loader';
+// import Loader from '../components/loader';
 import colorConfig from '../config/colorConfig';
 import {Actions} from 'react-native-router-flux';
 import Geolocation from 'react-native-geolocation-service';
@@ -32,26 +32,20 @@ import {
   updateUser,
   userPosition,
 } from '../actions/user.action';
-import ShimmerPlaceHolder from 'react-native-shimmer-placeholder';
+// import ShimmerPlaceHolder from 'react-native-shimmer-placeholder';
 import MyPointsPlaceHolder from '../components/placeHolderLoading/MyPointsPlaceHolder';
 import {isEmptyArray, isEmptyData, isEmptyObject} from '../helper/CheckEmpty';
-import {getDeliveryProvider, getPendingCart} from '../actions/order.action';
+// import {getDeliveryProvider, getPendingCart} from '../actions/order.action';
 import CryptoJS from 'react-native-crypto-js';
 import awsConfig from '../config/awsConfig';
-import {
-  dataStores,
-  getCompanyInfo,
-  setSingleOutlet,
-} from '../actions/stores.action';
+import {getCompanyInfo} from '../actions/stores.action';
 import {getAccountPayment} from '../actions/payment.actions';
 import OneSignal from 'react-native-onesignal';
 import {dataInbox} from '../actions/inbox.action';
-import {referral} from '../actions/referral.action';
-import Icon from 'react-native-vector-icons/EvilIcons';
 import {getMandatoryFields} from '../actions/account.action';
 import {Overlay} from 'react-native-elements';
-import * as geolib from 'geolib';
-import * as _ from 'lodash';
+import NetInfo from '@react-native-community/netinfo';
+import {getCartHomePage, getPendingCart} from '../actions/order.action';
 
 class Rewards extends Component {
   constructor(props) {
@@ -92,6 +86,16 @@ class Rewards extends Component {
     const page4 = 'hostedTrx';
     // console.log('Notification received: ', notification);
 
+    // refresh pending cart
+    try {
+      console.log('try to get pending cart.');
+      this.props.dispatch(getPendingCart());
+    } catch (e) {}
+
+    try {
+      this.props.dispatch(getCartHomePage());
+    } catch (e) {}
+
     if (
       (notification.payload.title.includes('Payment') ||
         notification.payload.title.includes('Ordering')) &&
@@ -121,8 +125,23 @@ class Rewards extends Component {
     this.checkOneSignal();
     this.checkUseApp();
 
+    // if (Platform.OS != 'ios') {
+    //   this.validateSSL();
+    // }
+
     // IF OUTLET FOR THIS COMPANY IS ONLY 1, THEN SETUP DETAIL OUTLET NOW
     // this.initializeStore();
+  };
+
+  validateSSL = () => {
+    try {
+      NetInfo.fetch().then(state => {
+        //  check if connected to internet
+        if (state.isConnected) {
+          this.props.dispatch(validateSSL());
+        }
+      });
+    } catch (e) {}
   };
 
   checkDefaultPaymentAccount = async response => {

@@ -102,6 +102,7 @@ class AccountEditProfil extends Component {
         address: this.props.dataDiri.address,
         gender: this.props.dataDiri.gender,
         email: this.props.dataDiri.email,
+        postalcode: this.props.dataDiri.postalcode,
         phoneNumber: phoneNumber,
         phone: phone,
       };
@@ -113,6 +114,7 @@ class AccountEditProfil extends Component {
         gender: '',
         email: '',
         phoneNumber: '',
+        postalcode: '',
       };
     }
 
@@ -152,6 +154,7 @@ class AccountEditProfil extends Component {
       name: data.name,
       email: data.email,
       phoneNumber: data.phoneNumber,
+      postalcode: data.postalcode,
       phone: data.phone,
       gender: data.gender,
       birthDate: data.birthDate,
@@ -195,6 +198,7 @@ class AccountEditProfil extends Component {
           gender: userDetail.gender,
           birthDate: userDetail.birthDate,
           address: userDetail.address,
+          postalcode: userDetail.postalcode,
         });
       }
     } catch (e) {}
@@ -248,6 +252,9 @@ class AccountEditProfil extends Component {
         }
         if (item.fieldName.toLowerCase() === 'address' && item.mandatory) {
           fields[index].filled = this.state.address;
+        }
+        if (item.fieldName.toLowerCase() === 'postalcode' && item.mandatory) {
+          fields[index].filled = this.state.postalcode;
         }
       });
 
@@ -312,6 +319,7 @@ class AccountEditProfil extends Component {
         birthDate: this.state.birthDate,
         address: this.state.address,
         gender: this.state.gender,
+        postalcode: this.state.postalcode,
       };
 
       // detect change email
@@ -334,7 +342,7 @@ class AccountEditProfil extends Component {
             this.state.phoneNumber + this.state.phone;
         }
       }
-
+      console.log(JSON.stringify(dataProfile));
       const response = await this.props.dispatch(updateUser(dataProfile));
 
       if (response) {
@@ -388,12 +396,8 @@ class AccountEditProfil extends Component {
     });
   };
 
-  toChangeCredentials = () => {
-    let fieldToChange = {
-      field: this.state.field,
-      dataDiri: this.props.dataDiri,
-    };
-    Actions.changeCredentials(fieldToChange);
+  toChangeCredentials = mode => {
+    Actions.changeCredentials({mode, dataDiri: this.props.dataDiri});
   };
 
   btnChangeCredentials = field => {
@@ -607,7 +611,7 @@ class AccountEditProfil extends Component {
                       <Text style={styles.desc}>Email</Text>
                       <TouchableOpacity
                         style={[styles.btnChange]}
-                        onPress={() => this.btnChangeCredentials('email')}>
+                        onPress={() => this.toChangeCredentials('Email')}>
                         <Text style={[styles.textChange]}>
                           {this.state.editEmail ? 'Cancel' : 'Change'}
                         </Text>
@@ -638,7 +642,9 @@ class AccountEditProfil extends Component {
                         {intlData.messages.phoneNumber}
                       </Text>
                       <TouchableOpacity
-                        onPress={() => this.btnChangeCredentials('phoneNumber')}
+                        onPress={() =>
+                          this.toChangeCredentials('Mobile Number')
+                        }
                         style={[styles.btnChange]}>
                         <Text style={[styles.textChange]}>
                           {this.state.editPhoneNumber ? 'Cancel' : 'Change'}
@@ -898,6 +904,30 @@ class AccountEditProfil extends Component {
                               value={this.state.address}
                               onChangeText={value =>
                                 this.setState({address: value})
+                              }
+                            />
+                            <View
+                              style={{borderWidth: 0.5, borderColor: 'gray'}}
+                            />
+                          </View>
+                        );
+
+                      if (item.fieldName === 'postalcode' && item.show)
+                        return (
+                          <View style={styles.detailItem}>
+                            <Text style={styles.desc}>
+                              {item.displayName}{' '}
+                              {item.mandatory ? (
+                                <Text style={{color: 'red'}}>*</Text>
+                              ) : null}
+                            </Text>
+                            <TextInput
+                              keyboardType={'numeric'}
+                              placeholder={'Your postal code'}
+                              style={{paddingVertical: 10}}
+                              value={this.state.postalcode}
+                              onChangeText={value =>
+                                this.setState({postalcode: value})
                               }
                             />
                             <View

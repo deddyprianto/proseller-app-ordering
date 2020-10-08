@@ -10,6 +10,7 @@ import {fetchApi} from '../service/api';
 import CryptoJS from 'react-native-crypto-js';
 import appConfig from '../config/appConfig';
 import AsyncStorage from '@react-native-community/async-storage';
+import pinch from 'react-native-pinch';
 
 export const notifikasi = (type, status, action) => {
   Alert.alert(type, status, [
@@ -19,6 +20,47 @@ export const notifikasi = (type, status, action) => {
       style: 'ok',
     },
   ]);
+};
+
+export const validateSSL = (type, status, action) => {
+  return async dispatch => {
+    try {
+      pinch.fetch(
+        `${awsConfig.base_url_master_data}/info`,
+        {
+          method: 'GET',
+          timeoutInterval: 10000,
+          sslPinning: {
+            cert: 'proseller',
+          },
+        },
+        (err, res) => {
+          if (err) {
+            console.log(`=== SSL INVALID ====  ${err}`);
+            dispatch({
+              type: 'USER_LOGGED_OUT_SUCCESS',
+            });
+
+            // wipe all data
+            try {
+              try {
+                AsyncStorage.removeItem(`refreshToken`);
+              } catch (error) {}
+
+              dispatch({
+                type: 'TOKEN_USER',
+                token: null,
+                refreshToken: null,
+              });
+            } catch (e) {}
+            return null;
+          }
+          console.log(`==== SSL VALID ====`);
+          return null;
+        },
+      );
+    } catch (e) {}
+  };
 };
 
 export const createNewUser = payload => {
@@ -232,10 +274,20 @@ export const logoutUser = () => {
         type: 'USER_LOGGED_OUT_SUCCESS',
       });
 
-      // remove default account
+      // wipe all data
       dispatch({
         type: 'GET_USER_DEFAULT_ACCOUNT',
         defaultAccount: {},
+      });
+
+      try {
+        await AsyncStorage.removeItem(`refreshToken`);
+      } catch (error) {}
+
+      dispatch({
+        type: 'TOKEN_USER',
+        token: null,
+        refreshToken: null,
       });
     } catch (e) {
       console.log(e);
@@ -293,6 +345,19 @@ export const refreshToken = () => {
         dispatch({
           type: 'USER_LOGGED_OUT_SUCCESS',
         });
+
+        // wipe all data
+        try {
+          try {
+            await AsyncStorage.removeItem(`refreshToken`);
+          } catch (error) {}
+
+          dispatch({
+            type: 'TOKEN_USER',
+            token: null,
+            refreshToken: null,
+          });
+        } catch (e) {}
       }
 
       // if success, then save data

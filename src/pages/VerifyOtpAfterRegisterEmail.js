@@ -38,6 +38,7 @@ import Header from '../components/atom/header';
 import Icon from 'react-native-vector-icons/Ionicons';
 import OneSignal from 'react-native-onesignal';
 import {deviceUserInfo} from '../actions/user.action';
+import BackgroundTimer from 'react-native-background-timer';
 
 const imageWidth = Dimensions.get('window').width / 2;
 
@@ -139,7 +140,7 @@ class VerifyOtpAfterRegisterEmail extends Component {
     this.imageWidth = new Animated.Value(styles.$largeImageSize);
   }
 
-  componentDidMount(): void {
+  componentDidMount() {
     const {confirmed} = this.props;
     if (confirmed == undefined) {
       this.beginTimer();
@@ -148,7 +149,7 @@ class VerifyOtpAfterRegisterEmail extends Component {
   }
 
   beginTimer = () => {
-    this.interval = setInterval(() => {
+    this.interval = BackgroundTimer.setInterval(() => {
       const {seconds, minutes} = this.state;
 
       if (seconds > 0) {
@@ -158,7 +159,7 @@ class VerifyOtpAfterRegisterEmail extends Component {
       }
       if (seconds === 0) {
         if (minutes === 0) {
-          clearInterval(this.interval);
+          BackgroundTimer.clearInterval(this.interval);
         } else {
           this.setState(({minutes}) => ({
             minutes: minutes - 1,
@@ -170,11 +171,14 @@ class VerifyOtpAfterRegisterEmail extends Component {
   };
 
   componentWillUnmount() {
-    clearInterval(this.interval);
+    // clearInterval(this.interval);
     try {
       OneSignal.removeEventListener('received', this.onReceived);
       OneSignal.removeEventListener('opened', this.onOpened);
       OneSignal.removeEventListener('ids', this.onIds);
+    } catch (e) {}
+    try {
+      BackgroundTimer.clearInterval(this.interval);
     } catch (e) {}
   }
 
@@ -207,7 +211,10 @@ class VerifyOtpAfterRegisterEmail extends Component {
 
   componentDidUpdate() {
     if (this.state.seconds === 0 && this.state.minutes == 0) {
-      clearInterval(this.interval);
+      // clearInterval(this.interval);
+      try {
+        BackgroundTimer.clearInterval(this.interval);
+      } catch (e) {}
       this.setState({
         minutes: this.state.initialTimer,
         buttonOTPpressed: false,

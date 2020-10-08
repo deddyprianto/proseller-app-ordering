@@ -1,6 +1,8 @@
 import {fetchApi} from '../service/api';
+import {isEmptyArray} from '../helper/CheckEmpty';
 // import {refreshToken} from './auth.actions';
 // import * as _ from 'lodash';
+import format from 'date-fns/format';
 
 export const myVoucers = () => {
   return async (dispatch, getState) => {
@@ -21,6 +23,24 @@ export const myVoucers = () => {
       );
       console.log(response, 'response myVoucers');
       var dataVouchers = response.responseBody.Data;
+
+      try {
+        if (!isEmptyArray(dataVouchers)) {
+          for (let i = 0; i < dataVouchers.length; i++) {
+            if (
+              dataVouchers[i].expiryDate != undefined &&
+              dataVouchers[i].expiryDate != null
+            ) {
+              dataVouchers[i].uniqueID =
+                format(new Date(dataVouchers[i].expiryDate), 'dd MMM yyyy') +
+                ' ' +
+                dataVouchers[i].id;
+            } else {
+              dataVouchers[i].uniqueID = null;
+            }
+          }
+        }
+      } catch (e) {}
 
       dispatch({
         type: 'DATA_MY_VOUCHERS',

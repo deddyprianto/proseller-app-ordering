@@ -36,6 +36,8 @@ import appConfig from '../../config/appConfig';
 import {refreshToken} from '../../actions/auth.actions';
 import awsConfig from '../../config/awsConfig';
 import * as geolib from 'geolib';
+import IconAwesome from 'react-native-vector-icons/FontAwesome';
+import {format} from 'date-fns';
 
 class Cart extends Component {
   constructor(props) {
@@ -110,15 +112,15 @@ class Cart extends Component {
 
       await this.setState({loading: false});
 
-      try {
-        clearInterval(this.interval);
-      } catch (e) {}
-
-      try {
-        this.interval = setInterval(() => {
-          this.props.dispatch(getCart(this.props.myCart.id));
-        }, 4000);
-      } catch (e) {}
+      // try {
+      //   clearInterval(this.interval);
+      // } catch (e) {}
+      //
+      // try {
+      //   this.interval = setInterval(() => {
+      //     this.props.dispatch(getCart(this.props.myCart.id));
+      //   }, 4000);
+      // } catch (e) {}
     } catch (e) {
       Alert.alert('Opss..', e.message);
     }
@@ -242,12 +244,45 @@ class Cart extends Component {
   };
 
   _onRefresh = async () => {
+    const {dataBasket} = this.props;
+
     await this.setState({refreshing: true});
     this.props.dispatch(getCart(this.props.myCart.id));
     // fetch details outlet
     const outletID = this.props.dataBasket.outlet.id;
     await this.props.dispatch(getOutletById(outletID));
     await this.setState({refreshing: false});
+
+    try {
+      if (dataBasket != undefined) {
+        //  for outlet type quick service
+        if (
+          (dataBasket.status == 'PROCESSING' ||
+            dataBasket.status == 'READY_FOR_DELIVERY' ||
+            dataBasket.status == 'READY_FOR_COLLECTION') &&
+          (Actions.currentScene == 'cart' ||
+            Actions.currentScene == 'waitingFood') &&
+          (dataBasket.outlet.outletType == 'QUICKSERVICE' ||
+            dataBasket.outlet.outletType == 'RETAIL' ||
+            dataBasket.orderingMode == 'TAKEAWAY' ||
+            dataBasket.orderingMode == 'DELIVERY')
+        ) {
+          // clearInterval(this.interval);
+          // this.interval = undefined;
+          Actions.replace('waitingFood', {myCart: dataBasket});
+        }
+      }
+
+      // clear table type if basket is cancelled by admin
+      if (dataBasket == undefined) {
+        try {
+          this.props.dispatch(clearTableType());
+          clearInterval(this.interval);
+          // Actions.pop();
+          this.interval = undefined;
+        } catch (e) {}
+      }
+    } catch (e) {}
   };
 
   getBasket = async () => {
@@ -370,13 +405,18 @@ class Cart extends Component {
     }
   };
 
+  goToOrderQRCode = () => {
+    const {dataBasket} = this.props;
+    Actions.push('QRCodeCart', {myCart: dataBasket});
+  };
+
   renderSettleButtonQuickService = () => {
     const {intlData, dataBasket} = this.props;
     return (
       <View
         style={{
           width: '100%',
-          paddingBottom: 20,
+          paddingVertical: 15,
           backgroundColor: 'white',
           shadowColor: '#00000021',
           shadowOffset: {
@@ -391,57 +431,21 @@ class Cart extends Component {
           bottom: 0,
           flexDirection: 'column',
         }}>
-        <Text
+        <View
           style={{
-            color: colorConfig.store.title,
-            textAlign: 'right',
-            fontWeight: 'bold',
-            fontFamily: 'Lato-Bold',
-            paddingVertical: 8,
-            fontSize: 15,
-            marginRight: 20,
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
           }}>
-          TOTAL : {appConfig.appMataUang}
-          {this.format(CurrencyFormatter(dataBasket.totalNettAmount))}
-        </Text>
-        <View style={{flexDirection: 'row', justifyContent: 'center'}}>
           <TouchableOpacity
-            disabled={true}
-            onPress={this.alertRemoveBasket}
-            style={[
-              styles.btnCancelBasketModal,
-              {
-                backgroundColor: colorConfig.store.disableButtonError,
-              },
-            ]}>
-            <Icon
+            onPress={this.goToOrderQRCode}
+            style={[styles.btnCancelBasketModal]}>
+            <IconAwesome
               size={23}
-              name={Platform.OS === 'ios' ? 'ios-trash' : 'md-trash'}
+              name={'qrcode'}
               style={{color: 'white', marginRight: 5}}
             />
-            <Text style={styles.textBtnBasketModal}>
-              {intlData.messages.clear}
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={this.goToSettle}
-            disabled={true}
-            style={[
-              styles.btnAddBasketModal,
-              {
-                backgroundColor: colorConfig.store.disableButton,
-              },
-            ]}>
-            <Icon
-              size={23}
-              name={
-                Platform.OS === 'ios'
-                  ? 'ios-checkbox-outline'
-                  : 'md-checkbox-outline'
-              }
-              style={{color: 'white', marginRight: 5}}
-            />
-            <Text style={styles.textBtnBasketModal}>Check Out</Text>
+            <Text style={styles.textBtnBasketModal}>Order QR Code</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -1310,7 +1314,6 @@ class Cart extends Component {
           (dataBasket.status == 'PROCESSING' ||
             dataBasket.status == 'READY_FOR_DELIVERY' ||
             dataBasket.status == 'READY_FOR_COLLECTION') &&
-          this.interval != undefined &&
           (Actions.currentScene == 'cart' ||
             Actions.currentScene == 'waitingFood') &&
           (dataBasket.outlet.outletType == 'QUICKSERVICE' ||
@@ -1318,8 +1321,8 @@ class Cart extends Component {
             dataBasket.orderingMode == 'TAKEAWAY' ||
             dataBasket.orderingMode == 'DELIVERY')
         ) {
-          clearInterval(this.interval);
-          this.interval = undefined;
+          // clearInterval(this.interval);
+          // this.interval = undefined;
           Actions.replace('waitingFood', {myCart: dataBasket});
         }
       }
@@ -1329,7 +1332,7 @@ class Cart extends Component {
         try {
           this.props.dispatch(clearTableType());
           clearInterval(this.interval);
-          Actions.pop();
+          // Actions.pop();
           this.interval = undefined;
         } catch (e) {}
       }
@@ -1590,10 +1593,30 @@ class Cart extends Component {
                       </Text>
                     </View>
                   )}
+                {this.props.dataBasket.orderActionDate != undefined && (
+                  <View style={styles.itemSummary}>
+                    <Text style={styles.total}>
+                      {this.props.dataBasket.orderingMode == 'DELIVERY'
+                        ? 'Delivery Date & Time'
+                        : 'Pickup Date & Time'}
+                    </Text>
+                    <Text style={styles.total}>
+                      {format(
+                        new Date(this.props.dataBasket.orderActionDate),
+                        'dd MMM yyyy',
+                      )}{' '}
+                      at {this.props.dataBasket.orderActionTime}
+                    </Text>
+                  </View>
+                )}
                 {this.props.dataBasket.payAtPOS == true && (
                   <View style={styles.itemSummary}>
-                    <Text style={styles.total}>Pay at Store</Text>
-                    <Text style={styles.total}>
+                    <Text
+                      style={[styles.total, {color: colorConfig.store.title}]}>
+                      Pay at Store
+                    </Text>
+                    <Text
+                      style={[styles.total, {color: colorConfig.store.title}]}>
                       {CurrencyFormatter(this.props.dataBasket.totalNettAmount)}
                     </Text>
                   </View>
@@ -1855,9 +1878,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 13,
-    marginRight: 20,
-    width: '40%',
-    backgroundColor: colorConfig.store.colorError,
+    marginHorizontal: 20,
+    width: '90%',
+    backgroundColor: colorConfig.store.secondaryColor,
   },
   textBtnBasketModal: {
     color: 'white',

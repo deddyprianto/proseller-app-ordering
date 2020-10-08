@@ -29,7 +29,8 @@ class RewordsVouchers extends Component {
         _.forEach(
           _.groupBy(
             this.props.myVoucers.filter(voucher => voucher.deleted == false),
-            'id',
+            // 'id',
+            'uniqueID',
           ),
           function(value, key) {
             value[0].totalRedeem = value.length;

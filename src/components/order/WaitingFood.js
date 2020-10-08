@@ -19,7 +19,7 @@ import {Actions} from 'react-native-router-flux';
 import colorConfig from '../../config/colorConfig';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
-import {completeOrder, getCart} from '../../actions/order.action';
+import {completeOrder, getCart, setCart} from '../../actions/order.action';
 import LottieView from 'lottie-react-native';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import CurrencyFormatter from '../../helper/CurrencyFormatter';
@@ -28,6 +28,7 @@ import appConfig from '../../config/appConfig';
 import Snackbar from 'react-native-snackbar';
 import awsConfig from '../../config/awsConfig';
 import {refreshToken} from '../../actions/auth.actions';
+import {format} from 'date-fns';
 
 class WaitingFood extends Component {
   constructor(props) {
@@ -42,12 +43,12 @@ class WaitingFood extends Component {
       await this.setState({loading: false});
 
       // get data continously
-      if (this.props.dataBasket != undefined) {
-        clearInterval(this.intervalWaitingFood);
-        this.intervalWaitingFood = setInterval(() => {
-          this.props.dispatch(getCart(this.props.myCart.id));
-        }, 2000);
-      }
+      // if (this.props.dataBasket != undefined) {
+      //   clearInterval(this.intervalWaitingFood);
+      //   this.intervalWaitingFood = setInterval(async () => {
+      //     await this.props.dispatch(getCart(this.props.myCart.id));
+      //   }, 3000);
+      // }
     } catch (e) {
       Alert.alert('Opss..', "Can't get data basket, please try again.");
     }
@@ -75,7 +76,12 @@ class WaitingFood extends Component {
   componentWillUnmount() {
     try {
       this.backHandler.remove();
-      clearInterval(this.intervalWaitingFood);
+      // clearInterval(this.intervalWaitingFood);
+    } catch (e) {}
+    try {
+      // clearInterval(this.intervalWaitingFood);
+      // this.intervalWaitingFood = undefined;
+      this.props.dispatch(setCart(undefined));
     } catch (e) {}
   }
 
@@ -86,6 +92,11 @@ class WaitingFood extends Component {
 
   goBack = async () => {
     Actions.pop();
+    try {
+      // clearInterval(this.intervalWaitingFood);
+      // this.intervalWaitingFood = undefined;
+      this.props.dispatch(setCart(undefined));
+    } catch (e) {}
   };
 
   renderBottomButton = () => {
@@ -133,8 +144,8 @@ class WaitingFood extends Component {
           <TouchableOpacity
             onPress={() => {
               try {
-                clearInterval(this.intervalWaitingFood);
-                this.intervalWaitingFood = undefined;
+                // clearInterval(this.intervalWaitingFood);
+                // this.intervalWaitingFood = undefined;
               } catch (e) {}
               Actions.replace('QRCodeCart', {myCart: dataBasket});
             }}
@@ -244,8 +255,8 @@ class WaitingFood extends Component {
             disabled={dataBasket.status == 'ON_THE_WAY' ? false : true}
             onPress={() => {
               try {
-                clearInterval(this.intervalWaitingFood);
-                this.intervalWaitingFood = undefined;
+                // clearInterval(this.intervalWaitingFood);
+                // this.intervalWaitingFood = undefined;
               } catch (e) {}
               this.askUserToCompleteOrder();
             }}
@@ -661,6 +672,21 @@ class WaitingFood extends Component {
               <Text style={styles.total}>Queue No : </Text>
               <Text style={styles.total}>{dataBasket.queueNo}</Text>
             </View>
+            {dataBasket.orderActionDate != undefined && (
+              <View style={styles.itemSummary}>
+                <Text style={styles.total}>
+                  {dataBasket.orderingMode == 'DELIVERY'
+                    ? 'Delivery Date & Time'
+                    : 'Pickup Date & Time'}{' '}
+                  :{' '}
+                </Text>
+                <Text style={styles.total}>
+                  {format(new Date(dataBasket.orderActionDate), 'dd MMM yyyy')}{' '}
+                  at {dataBasket.orderActionTime}
+                </Text>
+              </View>
+            )}
+
             <View style={styles.itemSummary}>
               <Text style={styles.total}>Ordering Mode : </Text>
               <Text style={styles.total}>{dataBasket.orderingMode}</Text>
@@ -814,9 +840,9 @@ class WaitingFood extends Component {
     // if basket is canceled by admin, then push back to basket page
     if (dataBasket == undefined) {
       try {
-        Actions.reset('pageIndex', {fromPayment: true});
-        clearInterval(this.intervalWaitingFood);
-        this.intervalWaitingFood = undefined;
+        // clearInterval(this.intervalWaitingFood);
+        // this.intervalWaitingFood = undefined;
+        Actions.reset('app', {fromPayment: true});
       } catch (e) {}
     }
 
