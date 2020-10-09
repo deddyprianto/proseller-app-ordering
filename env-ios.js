@@ -1,5 +1,5 @@
 const ENV = {
-  APP: 'U Stars',
+  APP: 'UStars',
   IS_DEVELOP: true,
 
   API_HOST: 'https://ustars-staff.proseller.io/',
@@ -16,7 +16,7 @@ const ENV = {
 
   COUNTRY: 'Singapore',
 
-  COMPANY_NAME: 'U Stars',
+  COMPANY_NAME: 'UStars',
 
   COMPANY_POLICY_URL: 'https://ustars-staff.proseller.io/',
 
