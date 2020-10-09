@@ -125,8 +125,8 @@ class Account extends Component {
                 token: qrcode,
               })}
               logo={appConfig.appLogoQR}
-              logoSize={this.state.screenWidth / 6 - 5}
-              size={this.state.screenWidth - 110}
+              logoSize={this.state.screenWidth / 6 - 20}
+              size={this.state.screenWidth - 160}
             />
           </View>
           <TouchableOpacity

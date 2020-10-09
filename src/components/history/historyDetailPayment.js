@@ -166,10 +166,10 @@ class HistoryDetailPayment extends Component {
               <Text style={styles.title}>{this.props.item.outletName}</Text>
             </View>
             <View style={styles.detail}>
-              <View style={styles.detailItem}>
-                <Text style={styles.desc}>{intlData.messages.outletName}</Text>
-                <Text style={styles.desc}>{this.props.item.outletName}</Text>
-              </View>
+              {/*<View style={styles.detailItem}>*/}
+              {/*  <Text style={styles.desc}>{intlData.messages.outletName}</Text>*/}
+              {/*  <Text style={styles.desc}>{this.props.item.outletName}</Text>*/}
+              {/*</View>*/}
 
               <View style={[styles.detailItem]}>
                 <Text style={styles.desc}>{intlData.messages.dateAndTime}</Text>
@@ -478,7 +478,7 @@ const styles = StyleSheet.create({
   },
   title: {
     color: colorConfig.pageIndex.activeTintColor,
-    fontSize: 17,
+    fontSize: 15,
     textAlign: 'center',
     fontFamily: 'Lato-Bold',
     marginBottom: 10,

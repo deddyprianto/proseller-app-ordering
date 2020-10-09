@@ -114,6 +114,7 @@ class PickUpTime extends Component {
 
   getMaximumDate = () => {
     const {outlet} = this.props;
+    console.log(outlet, 'outlet');
     let current = new Date().getTime();
     let date = new Date().getDate();
     let month = new Date().getMonth() + 1;
@@ -130,7 +131,8 @@ class PickUpTime extends Component {
           return new Date(`${year + 1}-${month}-${date}`);
         }
       }
-      return new Date(`${year + 1}-${month}-${date}`);
+      let ayear = 360 * 86400000;
+      return new Date(current + ayear);
     } catch (e) {
       return new Date();
     }

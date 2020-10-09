@@ -189,8 +189,8 @@ class WaitingFood extends Component {
               cartID: this.state.dataBasket.id,
             })}
             logo={appConfig.appLogoQR}
-            logoSize={this.state.screenWidth / 6 - 20}
-            size={this.state.screenWidth - 60}
+            logoSize={this.state.screenWidth / 6 - 45}
+            size={this.state.screenWidth - 230}
           />
         </View>
 
@@ -198,7 +198,7 @@ class WaitingFood extends Component {
           style={{
             justifyContent: 'center',
             flexDirection: 'row',
-            marginTop: 30,
+            marginTop: 60,
           }}>
           <TouchableOpacity
             onPress={this.close}
@@ -236,7 +236,7 @@ const styles = StyleSheet.create({
   },
   buttonBottomFixed: {
     backgroundColor: colorConfig.store.secondaryColor,
-    padding: 15,
+    padding: 13,
     width: '80%',
     borderRadius: 10,
     flexDirection: 'row',
