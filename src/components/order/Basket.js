@@ -2253,8 +2253,7 @@ class Basket extends Component {
             ? 'Delivery Date & Time'
             : 'Pickup Date & Time',
       });
-    } catch (e) {
-    }
+    } catch (e) {}
   };
 
   formatDatePickup = () => {

@@ -645,7 +645,7 @@ class Products2 extends Component {
         });
         const firstCategoryID = response.data[0].id;
         // const firstDatLength = response.data[0].dataLength;
-        await this.getProductsByCategory(firstCategoryID, 0, 5, refresh, 0);
+        await this.getProductsByCategory(firstCategoryID, 0, 10, refresh, 0);
 
         // check if outlet is open
         // this.prompOutletIsClosed();
@@ -658,10 +658,10 @@ class Products2 extends Component {
 
         //  asynchronously get first item
         if (response.data.length > 1) {
-          let skip = 5;
-          for (let i = 0; i < response.data[0].dataLength / 5; i++) {
+          let skip = 10;
+          for (let i = 0; i < response.data[0].dataLength / 10; i++) {
             await this.loadMoreProducts(firstCategoryID, outletID, skip, 0);
-            skip += 5;
+            skip += 10;
           }
         }
         //  asynchronously get all item
@@ -675,11 +675,11 @@ class Products2 extends Component {
           for (let i = 1; i < response.data.length; i++) {
             let categoryId = response.data[i].id;
             let skip = 0;
-            await this.getProductsByCategory(categoryId, 0, 5, refresh, i);
-            skip = 5;
-            for (let j = 0; j < response.data[i].dataLength / 5; j++) {
+            await this.getProductsByCategory(categoryId, 0, 10, refresh, i);
+            skip = 10;
+            for (let j = 0; j < response.data[i].dataLength / 10; j++) {
               await this.loadMoreProducts(categoryId, outletID, skip, i);
-              skip += 5;
+              skip += 10;
             }
           }
         }
@@ -1711,7 +1711,7 @@ class Products2 extends Component {
                       {this.getQuantityInBasket(item)}x{' '}
                     </Text>
                   ) : null}
-                  {item.product.name}
+                  {item.product.name.substr(0, 25)}
                 </Text>
                 {!this.availableToOrder(item) ? (
                   <Text style={styles.productUnavailable}>Unavailable</Text>
@@ -1809,14 +1809,14 @@ class Products2 extends Component {
       if (!isEmptyObject(products[idx])) {
         if (products[idx].dataLength > products[idx].items.length) {
           let response = await this.props.dispatch(
-            getProductByCategory(outletID, categoryId, skip, 5),
+            getProductByCategory(outletID, categoryId, skip, 10),
           );
 
           if (response && !isEmptyArray(response.data)) {
             const items = [...products[idx].items, ...response.data];
             products[idx].items = items;
             products[idx].skip = skip;
-            products[idx].take = 5;
+            products[idx].take = 10;
 
             // console.log({categories});
 

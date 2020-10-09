@@ -84,6 +84,7 @@ import Contacts from '../components/referral/Contacts';
 import HostedTransaction from '../components/card/HostedTransaction';
 import ChangeCredentials from '../pages/ChangeCredentials';
 import ChangeCredentialsOTP from '../pages/ChangeCredentialsOTP';
+import PickUpTime from '../components/order/PickUpTime';
 
 let backPressed = 0;
 
@@ -167,10 +168,7 @@ export default class Routes extends Component {
 
             <Scene key="listLanguages" component={ListLanguages} />
           </Scene>
-          <Scene
-            key="app"
-            hideNavBar={true}
-            initial={this.props.isLoggedIn}>
+          <Scene key="app" hideNavBar={true} initial={this.props.isLoggedIn}>
             <Scene key="pageIndex" component={PageIndex} initial={true} />
             <Scene key="pay" component={Pay} />
             <Scene key="rewards" component={Rewards} />
@@ -183,10 +181,7 @@ export default class Routes extends Component {
             />
             <Scene key="store" component={Store} />
             <Scene key="storeDetailStores" component={StoreDetailStores} />
-            <Scene
-              key="seeMorePromotion"
-              component={StoreSeeMorePromotion}
-            />
+            <Scene key="seeMorePromotion" component={StoreSeeMorePromotion} />
             <Scene
               key="storeDetailPromotion"
               component={StoreDetailPromotion}
@@ -240,6 +235,7 @@ export default class Routes extends Component {
             <Scene key="listReferral" component={ListReferral} />
             <Scene key="addReferral" component={AddReferral} />
             <Scene key="contacts" component={Contacts} />
+            <Scene key="pickUpTime" component={PickUpTime} />
             <Scene key="changeCredentials" component={ChangeCredentials} />
             <Scene
               key="changeCredentialsOTP"
