@@ -1763,7 +1763,7 @@ class Products2 extends Component {
       if (item.displayMode != undefined && item.displayMode === 'GRID') {
         return (
           <View
-            style={[styles.card, {height: 260 * Math.ceil(length / 2) + 105}]}>
+            style={[styles.card, {height: 260 * Math.ceil(length / 2) + 100}]}>
             <Text style={[styles.titleCategory]}>
               {item.name.substr(0, 35)}
             </Text>
@@ -2917,7 +2917,7 @@ const styles = StyleSheet.create({
     textAlign: 'left',
     fontFamily: 'Lato-Bold',
     padding: 14,
-    marginBottom: 10,
+    marginBottom: 7,
   },
   titleModifierModal: {
     color: colorConfig.pageIndex.inactiveTintColor,
