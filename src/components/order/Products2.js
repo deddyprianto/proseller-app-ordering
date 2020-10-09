@@ -1763,7 +1763,7 @@ class Products2 extends Component {
       if (item.displayMode != undefined && item.displayMode === 'GRID') {
         return (
           <View
-            style={[styles.card, {height: 260 * Math.ceil(length / 2) + 100}]}>
+            style={[styles.card, {height: 260 * Math.ceil(length / 2) + 105}]}>
             <Text style={[styles.titleCategory]}>
               {item.name.substr(0, 35)}
             </Text>
