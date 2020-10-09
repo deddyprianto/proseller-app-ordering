@@ -973,7 +973,7 @@ class Products2 extends Component {
       if (categories.finished != true) {
         setTimeout(() => {
           this.searchItem(value);
-        }, 5000);
+        }, 9000);
       } else {
         this.searchItem(value);
       }
@@ -985,6 +985,8 @@ class Products2 extends Component {
   };
 
   searchItem = async value => {
+    let param = value.toLowerCase();
+    param = param.split(' ');
     await this.setState({loadingSearch: true, productsSearch: undefined});
     const {products} = this.state;
     let productsSearch = undefined;
@@ -996,7 +998,13 @@ class Products2 extends Component {
           if (
             products[i].items[j].product.name
               .toLowerCase()
-              .includes(value.toLowerCase())
+              .includes(value.toLowerCase()) ||
+            products[i].items[j].product.name
+              .toLowerCase()
+              .includes(param[0].toLowerCase()) ||
+            products[i].items[j].product.name
+              .toLowerCase()
+              .includes(param[1].toLowerCase())
           ) {
             items.push(products[i].items[j]);
           }

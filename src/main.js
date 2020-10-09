@@ -11,6 +11,7 @@ import {
   Dimensions,
   StatusBar,
   AsyncStorage,
+  Linking,
   Alert,
 } from 'react-native';
 import {connect} from 'react-redux';
@@ -67,10 +68,28 @@ class Main extends Component {
 
   checkUpdateAndVersion = () => {
     try {
-      VersionCheck.getCountry().then(country => console.log(country));
-      console.log(VersionCheck.getPackageName());
-      console.log(VersionCheck.getCurrentBuildNumber());
-      console.log(VersionCheck.getCurrentVersion());
+      // VersionCheck.getCountry().then(country => console.log(country));
+      // console.log(VersionCheck.getPackageName());
+      // console.log(VersionCheck.getCurrentBuildNumber());
+      // console.log(VersionCheck.getCurrentVersion());
+
+      VersionCheck.needUpdate().then(async res => {
+        if (res.isNeeded) {
+          Alert.alert(
+            'Apps Update.',
+            'Application updates are already available on the store.',
+            [
+              {
+                text: 'Later',
+                onPress: () => console.log('Cancel Pressed'),
+                style: 'cancel',
+              },
+              {text: 'Update', onPress: () => Linking.openURL(res.storeUrl)},
+            ],
+            {cancelable: false},
+          );
+        }
+      });
     } catch (e) {}
   };
 

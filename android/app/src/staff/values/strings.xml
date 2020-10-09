@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Ustar</string>
+    <string name="app_name">UStars</string>
     <string name="facebook_app_id">340760273400416</string> <string name="fb_login_protocol_scheme">fb340760273400416</string>
     <string name="appCenterCrashes_whenToSendCrashes" moduleConfig="true" translatable="false">ALWAYS_SEND</string>
     <string name="appCenterAnalytics_whenToEnableAnalytics" moduleConfig="true" translatable="false">ALWAYS_SEND</string>
