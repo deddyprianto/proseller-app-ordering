@@ -1593,22 +1593,22 @@ class Cart extends Component {
                       </Text>
                     </View>
                   )}
-                {this.props.dataBasket.orderActionDate != undefined && (
-                  <View style={styles.itemSummary}>
-                    <Text style={styles.total}>
-                      {this.props.dataBasket.orderingMode == 'DELIVERY'
-                        ? 'Delivery Date & Time'
-                        : 'Pickup Date & Time'}
-                    </Text>
-                    <Text style={styles.total}>
-                      {format(
-                        new Date(this.props.dataBasket.orderActionDate),
-                        'dd MMM yyyy',
-                      )}{' '}
-                      at {this.props.dataBasket.orderActionTime}
-                    </Text>
-                  </View>
-                )}
+                {/*{this.props.dataBasket.orderActionDate != undefined && (*/}
+                {/*  <View style={styles.itemSummary}>*/}
+                {/*    <Text style={styles.total}>*/}
+                {/*      {this.props.dataBasket.orderingMode == 'DELIVERY'*/}
+                {/*        ? 'Delivery Date & Time'*/}
+                {/*        : 'Pickup Date & Time'}*/}
+                {/*    </Text>*/}
+                {/*    <Text style={styles.total}>*/}
+                {/*      {format(*/}
+                {/*        new Date(this.props.dataBasket.orderActionDate),*/}
+                {/*        'dd MMM yyyy',*/}
+                {/*      )}{' '}*/}
+                {/*      at {this.props.dataBasket.orderActionTime}*/}
+                {/*    </Text>*/}
+                {/*  </View>*/}
+                {/*)}*/}
                 {this.props.dataBasket.payAtPOS == true && (
                   <View style={styles.itemSummary}>
                     <Text

@@ -2720,30 +2720,30 @@ class Basket extends Component {
                     </View>
                   )}
 
-                {orderType == 'DELIVERY' ||
-                orderType == 'TAKEAWAY' ||
-                orderType == 'STOREPICKUP' ? (
-                  <View style={styles.itemSummary}>
-                    <Text style={styles.total}>
-                      {orderType == 'DELIVERY'
-                        ? 'Delivery Date & Time'
-                        : 'Pickup Date & Time'}
-                    </Text>
-                    <TouchableOpacity onPress={this.goToPickUpTime}>
-                      <Text style={[styles.total, styles.badge]}>
-                        {this.formatDatePickup()} at {this.state.timePickup}
-                      </Text>
-                      <Text
-                        style={{
-                          textAlign: 'right',
-                          color: colorConfig.store.titleSelected,
-                          fontFamily: 'Lato-Bold',
-                        }}>
-                        Change
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
-                ) : null}
+                {/*{orderType == 'DELIVERY' ||*/}
+                {/*orderType == 'TAKEAWAY' ||*/}
+                {/*orderType == 'STOREPICKUP' ? (*/}
+                {/*  <View style={styles.itemSummary}>*/}
+                {/*    <Text style={styles.total}>*/}
+                {/*      {orderType == 'DELIVERY'*/}
+                {/*        ? 'Delivery Date & Time'*/}
+                {/*        : 'Pickup Date & Time'}*/}
+                {/*    </Text>*/}
+                {/*    <TouchableOpacity onPress={this.goToPickUpTime}>*/}
+                {/*      <Text style={[styles.total, styles.badge]}>*/}
+                {/*        {this.formatDatePickup()} at {this.state.timePickup}*/}
+                {/*      </Text>*/}
+                {/*      <Text*/}
+                {/*        style={{*/}
+                {/*          textAlign: 'right',*/}
+                {/*          color: colorConfig.store.titleSelected,*/}
+                {/*          fontFamily: 'Lato-Bold',*/}
+                {/*        }}>*/}
+                {/*        Change*/}
+                {/*      </Text>*/}
+                {/*    </TouchableOpacity>*/}
+                {/*  </View>*/}
+                {/*) : null}*/}
 
                 {/*<View style={styles.itemSummary}>*/}
                 {/*  <Text style={styles.total}>Total</Text>*/}

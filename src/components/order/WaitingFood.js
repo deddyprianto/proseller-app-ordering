@@ -672,20 +672,20 @@ class WaitingFood extends Component {
               <Text style={styles.total}>Queue No : </Text>
               <Text style={styles.total}>{dataBasket.queueNo}</Text>
             </View>
-            {dataBasket.orderActionDate != undefined && (
-              <View style={styles.itemSummary}>
-                <Text style={styles.total}>
-                  {dataBasket.orderingMode == 'DELIVERY'
-                    ? 'Delivery Date & Time'
-                    : 'Pickup Date & Time'}{' '}
-                  :{' '}
-                </Text>
-                <Text style={styles.total}>
-                  {format(new Date(dataBasket.orderActionDate), 'dd MMM yyyy')}{' '}
-                  at {dataBasket.orderActionTime}
-                </Text>
-              </View>
-            )}
+            {/*{dataBasket.orderActionDate != undefined && (*/}
+            {/*  <View style={styles.itemSummary}>*/}
+            {/*    <Text style={styles.total}>*/}
+            {/*      {dataBasket.orderingMode == 'DELIVERY'*/}
+            {/*        ? 'Delivery Date & Time'*/}
+            {/*        : 'Pickup Date & Time'}{' '}*/}
+            {/*      :{' '}*/}
+            {/*    </Text>*/}
+            {/*    <Text style={styles.total}>*/}
+            {/*      {format(new Date(dataBasket.orderActionDate), 'dd MMM yyyy')}{' '}*/}
+            {/*      at {dataBasket.orderActionTime}*/}
+            {/*    </Text>*/}
+            {/*  </View>*/}
+            {/*)}*/}
 
             <View style={styles.itemSummary}>
               <Text style={styles.total}>Ordering Mode : </Text>
