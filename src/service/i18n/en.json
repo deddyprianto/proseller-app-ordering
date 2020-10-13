@@ -151,5 +151,6 @@
   "settings": "Settings",
   "myDeliveryAddress": "My Delivery Address",
   "notifications": "Notifications",
-  "notYesAdded": "NOT YET ADDED"
+  "notYesAdded": "NOT YET ADDED",
+  "pleaseTryAgain": "Sorry, Please try again"
 }

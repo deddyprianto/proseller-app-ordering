@@ -151,5 +151,6 @@
   "settings": "Pengaturan",
   "myDeliveryAddress": "Alamat Pengiriman",
   "notifications": "Notifikasi",
-  "notYesAdded": "BELUM ADA"
+  "notYesAdded": "BELUM ADA",
+  "pleaseTryAgain": "Maaf, Mohon coba lagi"
 }

@@ -406,7 +406,8 @@ class Store extends Component {
     } else if (date.getHours() < 18) {
       return `${intlData.messages.good} ${intlData.messages.afternoon}`;
     } else {
-      return `${intlData.messages.good} ${intlData.messages.night}`;
+      // return `${intlData.messages.good} ${intlData.messages.night}`;
+      return `Good Evening`;
     }
   };
 

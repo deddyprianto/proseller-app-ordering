@@ -347,7 +347,8 @@ class Rewards extends Component {
       } else if (date.getHours() < 18) {
         status = `${intlData.messages.good} ${intlData.messages.afternoon}`;
       } else {
-        status = `${intlData.messages.good} ${intlData.messages.night}`;
+        // status = `${intlData.messages.good} ${intlData.messages.night}`;
+        status = `Good Evening`;
       }
 
       // Decrypt data user

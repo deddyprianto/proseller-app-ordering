@@ -735,6 +735,20 @@ class Products2 extends Component {
             products: [],
           });
         } else {
+          if (isEmptyArray(categories[idxCategory].items)) {
+            categories[idxCategory].items = response.data;
+            categories[idxCategory].dataLength = response.dataLength;
+            categories[idxCategory].skip = take;
+            categories[idxCategory].take = take;
+          }
+          await this.setState({
+            products: categories,
+          });
+          this.products.push(categories);
+          // console.log(categories);
+          this.props.dispatch(
+            saveProductsOutlet(categories, outletID, refresh),
+          );
           await this.setState({
             products,
           });
@@ -998,13 +1012,7 @@ class Products2 extends Component {
           if (
             products[i].items[j].product.name
               .toLowerCase()
-              .includes(value.toLowerCase()) ||
-            products[i].items[j].product.name
-              .toLowerCase()
-              .includes(param[0].toLowerCase()) ||
-            products[i].items[j].product.name
-              .toLowerCase()
-              .includes(param[1].toLowerCase())
+              .includes(value.toLowerCase())
           ) {
             items.push(products[i].items[j]);
           }
@@ -1763,7 +1771,7 @@ class Products2 extends Component {
       if (item.displayMode != undefined && item.displayMode === 'GRID') {
         return (
           <View
-            style={[styles.card, {height: 260 * Math.ceil(length / 2) + 100}]}>
+            style={[styles.card, {height: 260 * Math.ceil(length / 2) + 105}]}>
             <Text style={[styles.titleCategory]}>
               {item.name.substr(0, 35)}
             </Text>
@@ -2518,7 +2526,9 @@ class Products2 extends Component {
           }
         }}
         renderItem={({item}) => {
-          return this.renderCategoryWithProducts(item, false);
+          if (item.dataLength != undefined && item.dataLength > 0) {
+            return this.renderCategoryWithProducts(item, false);
+          } else return null;
         }}
         keyExtractor={(item, index) => index.toString()}
       />
@@ -2917,7 +2927,7 @@ const styles = StyleSheet.create({
     textAlign: 'left',
     fontFamily: 'Lato-Bold',
     padding: 14,
-    marginBottom: 7,
+    marginBottom: 10,
   },
   titleModifierModal: {
     color: colorConfig.pageIndex.inactiveTintColor,
