@@ -2927,7 +2927,7 @@ const styles = StyleSheet.create({
     textAlign: 'left',
     fontFamily: 'Lato-Bold',
     padding: 14,
-    marginBottom: 10,
+    marginBottom: 5,
   },
   titleModifierModal: {
     color: colorConfig.pageIndex.inactiveTintColor,

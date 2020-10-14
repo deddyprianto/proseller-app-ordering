@@ -10,6 +10,7 @@ import {
   SafeAreaView,
   Alert,
   Platform,
+  Linking,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
@@ -46,6 +47,7 @@ import {getMandatoryFields} from '../actions/account.action';
 import {Overlay} from 'react-native-elements';
 import NetInfo from '@react-native-community/netinfo';
 import {getCartHomePage, getPendingCart} from '../actions/order.action';
+import VersionCheck from 'react-native-version-check';
 
 class Rewards extends Component {
   constructor(props) {
@@ -281,6 +283,7 @@ class Rewards extends Component {
         // this.props.dispatch(getUserProfile()),
         // this.props.dispatch(getMandatoryFields()),
       ]);
+      this.checkUpdateAndVersion();
       await this.setState({isLoading: false});
       this.props.dispatch(getUserProfile());
       this.props.dispatch(getMandatoryFields());
@@ -305,6 +308,33 @@ class Rewards extends Component {
         ),
       );
     }
+  };
+
+  checkUpdateAndVersion = () => {
+    try {
+      // VersionCheck.getCountry().then(country => console.log(country));
+      // console.log(VersionCheck.getPackageName());
+      // console.log(VersionCheck.getCurrentBuildNumber());
+      // console.log(VersionCheck.getCurrentVersion());
+
+      VersionCheck.needUpdate().then(async res => {
+        if (res.isNeeded) {
+          Alert.alert(
+            'Apps Update.',
+            'Application updates are already available on the store.',
+            [
+              {
+                text: 'Later',
+                onPress: () => console.log('Cancel Pressed'),
+                style: 'cancel',
+              },
+              {text: 'Update', onPress: () => Linking.openURL(res.storeUrl)},
+            ],
+            {cancelable: false},
+          );
+        }
+      });
+    } catch (e) {}
   };
 
   getUserPosition = async () => {

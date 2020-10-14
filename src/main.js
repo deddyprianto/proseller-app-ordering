@@ -63,7 +63,7 @@ class Main extends Component {
       console.log(error);
     }
 
-    this.checkUpdateAndVersion();
+    // this.checkUpdateAndVersion();
   }
 
   checkUpdateAndVersion = () => {
