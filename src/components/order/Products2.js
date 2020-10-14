@@ -1759,6 +1759,8 @@ class Products2 extends Component {
         length = item.items.length;
       }
 
+      if (length == 0) length = 1;
+
       let dataProducts = item.items;
 
       if (!isEmptyArray(item.items)) {
@@ -2526,9 +2528,7 @@ class Products2 extends Component {
           }
         }}
         renderItem={({item}) => {
-          if (item.dataLength != undefined && item.dataLength > 0) {
-            return this.renderCategoryWithProducts(item, false);
-          } else return null;
+          return this.renderCategoryWithProducts(item, false);
         }}
         keyExtractor={(item, index) => index.toString()}
       />

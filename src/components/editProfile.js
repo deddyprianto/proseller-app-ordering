@@ -400,18 +400,18 @@ class AccountEditProfil extends Component {
     Actions.changeCredentials({mode, dataDiri: this.props.dataDiri});
   };
 
-  btnChangeCredentials = field => {
-    if (field === 'email') {
-      this.setState({editEmail: !this.state.editEmail});
-      this.setState({email: this.state.originalData.email});
-    } else if (field === 'phoneNumber') {
-      this.setState({editPhoneNumber: !this.state.editPhoneNumber});
-      this.setState({
-        phone: this.state.originalData.phone,
-        phoneNumber: this.state.originalData.phoneNumber,
-      });
-    }
-  };
+  // btnChangeCredentials = field => {
+  //   if (field === 'email') {
+  //     this.setState({editEmail: !this.state.editEmail});
+  //     this.setState({email: this.state.originalData.email});
+  //   } else if (field === 'phoneNumber') {
+  //     this.setState({editPhoneNumber: !this.state.editPhoneNumber});
+  //     this.setState({
+  //       phone: this.state.originalData.phone,
+  //       phoneNumber: this.state.originalData.phoneNumber,
+  //     });
+  //   }
+  // };
 
   pad = item => {
     try {
