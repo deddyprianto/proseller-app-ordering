@@ -156,7 +156,7 @@ class AllVouchers extends Component {
                                   Platform.OS === 'ios' ? 'ios-list' : 'md-list'
                                 }
                                 style={{
-                                  color: colorConfig.store.defaultColor,
+                                  color: colorConfig.store.secondaryColor,
                                   marginRight: 3,
                                 }}
                               />
@@ -229,8 +229,10 @@ const styles = StyleSheet.create({
     elevation: 12,
   },
   voucherImage1: {
-    height: Dimensions.get('window').width / 4,
-    width: Dimensions.get('window').width - 22,
+    // height: Dimensions.get('window').width / 4,
+    width: '100%',
+    resizeMode: 'contain',
+    aspectRatio: 2.5,
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
   },
@@ -264,11 +266,13 @@ const styles = StyleSheet.create({
   },
   nameVoucher: {
     fontSize: 18,
-    color: colorConfig.store.defaultColor,
+    color: colorConfig.store.secondaryColor,
     fontWeight: 'bold',
   },
   descVoucher: {
-    fontSize: 13,
+    fontSize: 12,
+    maxWidth: '95%',
+    marginLeft: 5,
     color: colorConfig.store.titleSelected,
   },
   pointVoucher: {

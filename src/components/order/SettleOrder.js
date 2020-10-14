@@ -369,6 +369,7 @@ class SettleOrder extends Component {
       Actions.paymentAddVoucers({
         intlData,
         data: myVoucers,
+        totalPrice: this.state.totalBayar,
         pembayaran: this.props.pembayaran,
         setDataVoucher: this.setDataVoucher,
       });
@@ -909,25 +910,17 @@ class SettleOrder extends Component {
       pembayaran.cartID = this.props.pembayaran.cartID;
 
       if (
-        this.state.dataVoucer == undefined &&
-        this.state.addPoint == undefined
+        this.state.dataVoucer != undefined ||
+        this.state.addPoint != undefined
       ) {
-        pembayaran.statusAdd = null;
-        pembayaran.redeemValue = 0;
-      } else {
-        if (this.state.dataVoucer != undefined) {
-          pembayaran.voucherId = this.state.dataVoucer.id;
-          pembayaran.price = Number(this.state.totalBayar.toFixed(3));
-          pembayaran.voucherSerialNumber = this.state.dataVoucer.serialNumber;
-          pembayaran.statusAdd = 'addVoucher';
-        }
-        if (this.state.addPoint != undefined) {
-          // pembayaran.price = Number(
-          //   this.props.pembayaran.totalGrossAmount.toFixed(3),
-          // );
-          pembayaran.redeemValue = this.state.addPoint;
-          pembayaran.statusAdd = 'addPoint';
-        }
+        Alert.alert(
+          'Sorry',
+          'Can not use voucher or point if you make payment at the store.',
+        );
+        this.setState({loading: false});
+        this.cencelPoint();
+        this.cencelVoucher();
+        return;
       }
 
       // if ordering mode is exist
