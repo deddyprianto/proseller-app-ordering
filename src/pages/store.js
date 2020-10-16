@@ -252,29 +252,19 @@ class Store extends Component {
             maxOrderAmount: response.data[i].maxOrderAmount,
             lastOrderOn: response.data[i].lastOrderOn,
             enableRedeemPoint: response.data[i].enableRedeemPoint,
+            storePickUpName: response.data[i].storePickUpName,
+            storeCheckOutName: response.data[i].storeCheckOutName,
+            deliveryName: response.data[i].deliveryName,
             enableItemSpecialInstructions:
               response.data[i].enableItemSpecialInstructions,
             enableStoreCheckOut:
-              response.data[i].enableStoreCheckOut == false ||
-              response.data[i].enableStoreCheckOut == '-'
-                ? false
-                : true,
+              response.data[i].enableStoreCheckOut == true ? true : false,
             enableStorePickUp:
-              response.data[i].enableStorePickUp == false ||
-              response.data[i].enableStorePickUp == '-'
-                ? false
-                : true,
+              response.data[i].enableStorePickUp == true ? true : false,
             enableTableScan:
-              response.data[i].enableTableScan == false ||
-              response.data[i].enableTableScan == '-'
-                ? false
-                : true,
+              response.data[i].enableTableScan == true ? true : false,
             enableDelivery:
-              response.data[i].enableDelivery == false ||
-              response.data[i].enableDelivery == '-' ||
-              response.data[i].enableDelivery == undefined
-                ? false
-                : true,
+              response.data[i].enableDelivery == true ? true : false,
           });
         }
       }

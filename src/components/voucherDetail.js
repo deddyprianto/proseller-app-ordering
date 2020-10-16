@@ -543,7 +543,7 @@ class VoucherDetail extends Component {
                         : 'md-help-circle-outline'
                     }
                     style={{
-                      color: colorConfig.pageIndex.activeTintColor,
+                      color: colorConfig.store.secondaryColor,
                       marginRight: 10,
                     }}
                   />
@@ -558,7 +558,7 @@ class VoucherDetail extends Component {
                     size={15}
                     name={Platform.OS === 'ios' ? 'ios-time' : 'md-time'}
                     style={{
-                      color: colorConfig.pageIndex.activeTintColor,
+                      color: colorConfig.store.secondaryColor,
                       marginRight: 10,
                     }}
                   />
@@ -710,8 +710,9 @@ const styles = StyleSheet.create({
     backgroundColor: colorConfig.store.storesItem,
   },
   voucherImage1: {
-    height: Dimensions.get('window').width / 2,
-    width: Dimensions.get('window').width,
+    width: '100%',
+    resizeMode: 'contain',
+    aspectRatio: 2.5,
     // borderTopLeftRadius: 10,
     // borderTopRightRadius: 10,
   },
@@ -720,6 +721,7 @@ const styles = StyleSheet.create({
     width: Dimensions.get('window').width,
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
+    resizeMode: 'contain',
   },
   voucherDetail: {
     borderTopColor: colorConfig.pageIndex.activeTintColor,
@@ -730,7 +732,7 @@ const styles = StyleSheet.create({
   nameVoucher: {
     fontSize: 20,
     textAlign: 'center',
-    color: colorConfig.store.defaultColor,
+    color: colorConfig.store.secondaryColor,
     fontWeight: 'bold',
   },
   descVoucher: {

@@ -408,7 +408,10 @@ class Products2 extends Component {
                 fontSize: 18,
                 textAlign: 'center',
               }}>
-              Srore Checkout
+              {item.storeCheckOutName != undefined &&
+              item.storeCheckOutName != ''
+                ? item.storeCheckOutName
+                : 'Srore Checkout'}
             </Text>
           </TouchableOpacity>
         ) : null}
@@ -430,7 +433,9 @@ class Products2 extends Component {
                 fontSize: 18,
                 textAlign: 'center',
               }}>
-              Store Pickup
+              {item.storePickUpName != undefined && item.storePickUpName != ''
+                ? item.storePickUpName
+                : 'Store Pickup'}
             </Text>
           </TouchableOpacity>
         ) : null}
@@ -453,8 +458,9 @@ class Products2 extends Component {
                 fontSize: 18,
                 textAlign: 'center',
               }}>
-              {/*{intlData.messages.takeAway}*/}
-              DELIVERY
+              {item.deliveryName != undefined && item.deliveryName != ''
+                ? item.deliveryName
+                : 'DELIVERY'}
             </Text>
           </TouchableOpacity>
         ) : null}
@@ -2429,22 +2435,13 @@ class Products2 extends Component {
       item.maxOrderAmount = outlet.maxOrderAmount;
       item.lastOrderOn = outlet.lastOrderOn;
       item.offlineMessage = outlet.offlineMessage;
-      item.enableDineIn =
-        outlet.enableStoreCheckOut == false || outlet.enableStoreCheckOut == '-'
-          ? false
-          : true;
-      item.enableStorePickUp =
-        outlet.enableStorePickUp == false || outlet.enableStorePickUp == '-'
-          ? false
-          : true;
-      item.enableTableScan =
-        outlet.enableTableScan == false || outlet.enableTableScan == '-'
-          ? false
-          : true;
-      item.enableDelivery =
-        outlet.enableDelivery == false || outlet.enableDelivery == '-'
-          ? false
-          : true;
+      item.storePickUpName = outlet.storePickUpName;
+      item.storeCheckOutName = outlet.storeCheckOutName;
+      item.deliveryName = outlet.deliveryName;
+      item.enableDineIn = outlet.enableStoreCheckOut == true ? true : false;
+      item.enableStorePickUp = outlet.enableStorePickUp == true ? true : false;
+      item.enableTableScan = outlet.enableTableScan == true ? true : false;
+      item.enableDelivery = outlet.enableDelivery == true ? true : false;
       item.storeName = outlet.name;
       item.outletType = outlet.outletType;
       item.orderingStatus = outlet.orderingStatus;
