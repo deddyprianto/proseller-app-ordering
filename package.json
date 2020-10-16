@@ -46,6 +46,7 @@
     "react-native": "0.61.5",
     "react-native-24h-timepicker": "^1.1.0",
     "react-native-android-location-enabler": "^1.2.0",
+    "react-native-auto-height-image": "^3.2.2",
     "react-native-awesome-alerts": "^1.2.0",
     "react-native-background-timer": "^2.4.1",
     "react-native-camera": "^3.8.0",

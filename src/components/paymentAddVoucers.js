@@ -98,19 +98,6 @@ export default class PaymentAddVoucers extends Component {
     return mount[value];
   }
 
-  format = item => {
-    try {
-      const curr = appConfig.appMataUang;
-      item = item.replace(curr, '');
-      if (curr != 'RP' && curr != 'IDR' && item.includes('.') == false) {
-        return `${curr}${item}.00`;
-      }
-      return item;
-    } catch (e) {
-      return item;
-    }
-  };
-
   pageDetailVoucher = async item => {
     const {totalPrice} = this.props;
 
@@ -128,11 +115,6 @@ export default class PaymentAddVoucers extends Component {
       }
     } catch (e) {}
 
-    // check if redemeble
-    if (!item.validity.isRedeemable) {
-      Alert.alert('Sorry', 'This voucher cannot be used.');
-      return;
-    }
     // check valid for this outlet
     if (!(await this.checkOutletAvailable(item))) {
       Alert.alert('Sorry', 'This voucher cannot be used to this outlet.');

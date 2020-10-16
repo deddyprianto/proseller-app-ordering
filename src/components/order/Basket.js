@@ -25,6 +25,7 @@ import {
   getDeliveryFee,
   getDeliveryProvider,
   getProductByOutlet,
+  getProductsUnavailable,
   removeBasket,
   setOrderType,
   submitOder,
@@ -80,6 +81,7 @@ class Basket extends Component {
       deliveryFee: null,
       isOpen: true,
       loadingDelte: false,
+      productsUnavailable: [],
       datePickup: null,
       timePickup: null,
     };
@@ -161,6 +163,8 @@ class Basket extends Component {
         let outletID = this.props.dataBasket.outlet.id;
         await this.props.dispatch(getOutletById(outletID));
         await this.initializePickupTime();
+        // GET PRODUCTS UNAVAILABLE
+        await this.fetchProductsUnavailable(outletID);
 
         await this.setState({loading: false});
 
@@ -200,6 +204,20 @@ class Basket extends Component {
         'hardwareBackPress',
         this.handleBackPress,
       );
+    } catch (e) {}
+  };
+
+  fetchProductsUnavailable = async outletID => {
+    try {
+      const productsUnavailable = await this.props.dispatch(
+        getProductsUnavailable(outletID),
+      );
+
+      if (productsUnavailable == false || isEmptyArray(productsUnavailable)) {
+        this.setState({productsUnavailable: []});
+      } else {
+        this.setState({productsUnavailable});
+      }
     } catch (e) {}
   };
 
@@ -370,125 +388,238 @@ class Basket extends Component {
 
     if (outletSingle != undefined) {
       item = outletSingle;
-      item.enableDelivery =
-        item.enableDelivery == false ||
-        item.enableDelivery == '-' ||
-        item.enableDelivery == undefined
-          ? false
-          : true;
-      item.enableStorePickUp =
-        item.enableStorePickUp == false || item.enableStorePickUp == '-'
-          ? false
-          : true;
       item.enableStoreCheckOut =
-        item.enableStoreCheckOut == false || item.enableStoreCheckOut == '-'
-          ? false
-          : true;
+        outletSingle.enableStoreCheckOut == true ? true : false;
+      item.enableStorePickUp =
+        outletSingle.enableStorePickUp == true ? true : false;
+      item.enableTakeAway = outletSingle.enableTakeAway == true ? true : false;
+      item.enableDineIn = outletSingle.enableDineIn == true ? true : false;
+      item.enableDelivery = outletSingle.enableDelivery == true ? true : false;
     }
 
     let height = 330;
-    if (item.enableStoreCheckOut == false) height -= 50;
-    if (item.enableStorePickUp == false) height -= 50;
-    if (item.enableDelivery == false) height -= 50;
-    return (
-      <RBSheet
-        ref={ref => {
-          this.RBSheet = ref;
-        }}
-        animationType={'slide'}
-        height={height}
-        duration={10}
-        closeOnDragDown={true}
-        closeOnPressMask={true}
-        closeOnPressBack={true}
-        customStyles={{
-          container: {
-            backgroundColor: colorConfig.store.darkColor,
-            justifyContent: 'center',
-            alignItems: 'center',
-          },
-        }}>
-        <Text
-          style={{
-            color: colorConfig.pageIndex.inactiveTintColor,
-            fontSize: 25,
-            paddingBottom: 5,
-            fontWeight: 'bold',
-            fontFamily: 'Lato-Bold',
+    if (item.outletType === 'RETAIL') {
+      if (item.enableStoreCheckOut == false) height -= 50;
+      if (item.enableStorePickUp == false) height -= 50;
+      if (item.enableDelivery == false) height -= 50;
+
+      return (
+        <RBSheet
+          ref={ref => {
+            this.RBSheet = ref;
+          }}
+          animationType={'slide'}
+          height={height}
+          duration={10}
+          closeOnDragDown={true}
+          closeOnPressMask={true}
+          closeOnPressBack={true}
+          customStyles={{
+            container: {
+              backgroundColor: colorConfig.store.darkColor,
+              justifyContent: 'center',
+              alignItems: 'center',
+            },
           }}>
-          Order Mode
-        </Text>
-        {item.enableStoreCheckOut == true ? (
-          <TouchableOpacity
-            disabled={item.enableStoreCheckOut == false ? true : false}
-            onPress={() => this.setOrderType('STORECHECKOUT')}
-            style={styles.activeTAKEAWAYButton}>
-            <Icon
-              size={30}
-              name={Platform.OS === 'ios' ? 'ios-card' : 'md-card'}
-              style={{color: 'white'}}
-            />
-            <Text
-              style={{
-                marginLeft: 10,
-                color: 'white',
-                fontWeight: 'bold',
-                fontFamily: 'Lato-Bold',
-                fontSize: 18,
-                textAlign: 'center',
-              }}>
-              Srore Checkout
-            </Text>
-          </TouchableOpacity>
-        ) : null}
-        {item.enableStorePickUp == true ? (
-          <TouchableOpacity
-            onPress={() => this.setOrderType('STOREPICKUP')}
-            style={styles.activeDINEINButton}>
-            <Icon
-              size={30}
-              name={Platform.OS === 'ios' ? 'ios-basket' : 'md-basket'}
-              style={{color: 'white'}}
-            />
-            <Text
-              style={{
-                marginLeft: 10,
-                color: 'white',
-                fontWeight: 'bold',
-                fontFamily: 'Lato-Bold',
-                fontSize: 18,
-                textAlign: 'center',
-              }}>
-              Store Pickup
-            </Text>
-          </TouchableOpacity>
-        ) : null}
-        {item.enableDelivery == true ? (
-          <TouchableOpacity
-            disabled={item.enableDelivery == false ? true : false}
-            onPress={() => this.setOrderType('DELIVERY')}
-            style={styles.activeDELIVERYButton}>
-            <Icon
-              size={30}
-              name={Platform.OS === 'ios' ? 'ios-car' : 'md-car'}
-              style={{color: 'white'}}
-            />
-            <Text
-              style={{
-                marginLeft: 10,
-                color: 'white',
-                fontWeight: 'bold',
-                fontFamily: 'Lato-Bold',
-                fontSize: 18,
-                textAlign: 'center',
-              }}>
-              {/*{intlData.messages.takeAway}*/}
-              DELIVERY
-            </Text>
-          </TouchableOpacity>
-        ) : null}
-      </RBSheet>
-    );
+          <Text
+            style={{
+              color: colorConfig.pageIndex.inactiveTintColor,
+              fontSize: 25,
+              paddingBottom: 5,
+              fontWeight: 'bold',
+              fontFamily: 'Lato-Bold',
+            }}>
+            Order Mode
+          </Text>
+          {item.enableStoreCheckOut == true ? (
+            <TouchableOpacity
+              disabled={item.enableStoreCheckOut == false ? true : false}
+              onPress={() => this.setOrderType('STORECHECKOUT')}
+              style={styles.activeTAKEAWAYButton}>
+              <Icon
+                size={30}
+                name={Platform.OS === 'ios' ? 'ios-card' : 'md-card'}
+                style={{color: 'white'}}
+              />
+              <Text
+                style={{
+                  marginLeft: 10,
+                  color: 'white',
+                  fontWeight: 'bold',
+                  fontFamily: 'Lato-Bold',
+                  fontSize: 18,
+                  textAlign: 'center',
+                }}>
+                {item.storeCheckOutName != undefined &&
+                item.storeCheckOutName != ''
+                  ? item.storeCheckOutName
+                  : 'Srore Checkout'}
+              </Text>
+            </TouchableOpacity>
+          ) : null}
+          {item.enableStorePickUp == true ? (
+            <TouchableOpacity
+              onPress={() => this.setOrderType('STOREPICKUP')}
+              style={styles.activeDINEINButton}>
+              <Icon
+                size={30}
+                name={Platform.OS === 'ios' ? 'ios-basket' : 'md-basket'}
+                style={{color: 'white'}}
+              />
+              <Text
+                style={{
+                  marginLeft: 10,
+                  color: 'white',
+                  fontWeight: 'bold',
+                  fontFamily: 'Lato-Bold',
+                  fontSize: 18,
+                  textAlign: 'center',
+                }}>
+                {item.storePickUpName != undefined && item.storePickUpName != ''
+                  ? item.storePickUpName
+                  : 'Store Pickup'}
+              </Text>
+            </TouchableOpacity>
+          ) : null}
+          {item.enableDelivery == true ? (
+            <TouchableOpacity
+              disabled={item.enableDelivery == false ? true : false}
+              onPress={() => this.setOrderType('DELIVERY')}
+              style={styles.activeDELIVERYButton}>
+              <Icon
+                size={30}
+                name={Platform.OS === 'ios' ? 'ios-car' : 'md-car'}
+                style={{color: 'white'}}
+              />
+              <Text
+                style={{
+                  marginLeft: 10,
+                  color: 'white',
+                  fontWeight: 'bold',
+                  fontFamily: 'Lato-Bold',
+                  fontSize: 18,
+                  textAlign: 'center',
+                }}>
+                {item.deliveryName != undefined && item.deliveryName != ''
+                  ? item.deliveryName
+                  : 'DELIVERY'}
+              </Text>
+            </TouchableOpacity>
+          ) : null}
+        </RBSheet>
+      );
+    } else {
+      if (item.enableDineIn == false) height -= 50;
+      if (item.enableTakeAway == false) height -= 50;
+      if (item.enableDelivery == false) height -= 50;
+
+      return (
+        <RBSheet
+          ref={ref => {
+            this.RBSheet = ref;
+          }}
+          animationType={'slide'}
+          height={height}
+          duration={10}
+          closeOnDragDown={true}
+          closeOnPressMask={true}
+          closeOnPressBack={true}
+          customStyles={{
+            container: {
+              backgroundColor: colorConfig.store.darkColor,
+              justifyContent: 'center',
+              alignItems: 'center',
+            },
+          }}>
+          <Text
+            style={{
+              color: colorConfig.pageIndex.inactiveTintColor,
+              fontSize: 25,
+              paddingBottom: 5,
+              fontWeight: 'bold',
+              fontFamily: 'Lato-Bold',
+            }}>
+            Order Mode
+          </Text>
+          {item.enableDineIn == true ? (
+            <TouchableOpacity
+              onPress={() => this.setOrderType('DINEIN')}
+              style={styles.activeDINEINButton}>
+              <Icon
+                size={30}
+                name={
+                  Platform.OS === 'ios' ? 'ios-restaurant' : 'md-restaurant'
+                }
+                style={{color: 'white'}}
+              />
+              <Text
+                style={{
+                  marginLeft: 10,
+                  color: 'white',
+                  fontWeight: 'bold',
+                  fontFamily: 'Lato-Bold',
+                  fontSize: 18,
+                  textAlign: 'center',
+                }}>
+                {item.dineInName != undefined && item.dineInName != ''
+                  ? item.dineInName
+                  : 'DINE IN'}
+              </Text>
+            </TouchableOpacity>
+          ) : null}
+          {item.enableTakeAway == true ? (
+            <TouchableOpacity
+              disabled={item.enableTakeAway == false ? true : false}
+              onPress={() => this.setOrderType('TAKEAWAY')}
+              style={styles.activeTAKEAWAYButton}>
+              <Icon
+                size={30}
+                name={Platform.OS === 'ios' ? 'ios-basket' : 'md-basket'}
+                style={{color: 'white'}}
+              />
+              <Text
+                style={{
+                  marginLeft: 10,
+                  color: 'white',
+                  fontWeight: 'bold',
+                  fontFamily: 'Lato-Bold',
+                  fontSize: 18,
+                  textAlign: 'center',
+                }}>
+                {item.takeAwayName != undefined && item.takeAwayName != ''
+                  ? item.takeAwayName
+                  : 'TAKE AWAY'}
+              </Text>
+            </TouchableOpacity>
+          ) : null}
+          {item.enableDelivery == true ? (
+            <TouchableOpacity
+              disabled={item.enableDelivery == false ? true : false}
+              onPress={() => this.setOrderType('DELIVERY')}
+              style={styles.activeDELIVERYButton}>
+              <Icon
+                size={30}
+                name={Platform.OS === 'ios' ? 'ios-car' : 'md-car'}
+                style={{color: 'white'}}
+              />
+              <Text
+                style={{
+                  marginLeft: 10,
+                  color: 'white',
+                  fontWeight: 'bold',
+                  fontFamily: 'Lato-Bold',
+                  fontSize: 18,
+                  textAlign: 'center',
+                }}>
+                {item.deliveryName != undefined && item.deliveryName != ''
+                  ? item.deliveryName
+                  : 'DELIVERY'}
+              </Text>
+            </TouchableOpacity>
+          ) : null}
+        </RBSheet>
+      );
+    }
   };
 
   getDeliveryFee = () => {
@@ -768,7 +899,11 @@ class Basket extends Component {
     const {intlData, dataBasket} = this.props;
     const {deliveryFee} = this.state;
     let fee = deliveryFee;
-    fee == null ? 0 : parseFloat(fee);
+    if (fee == null || fee == undefined) {
+      fee = 0;
+    } else {
+      fee = parseFloat(fee);
+    }
     return (
       <View
         style={{
@@ -1061,9 +1196,121 @@ class Basket extends Component {
     } catch (e) {}
   };
 
+  isPassValidationOrder = async outlet => {
+    try {
+      let store = outlet;
+      const {orderType} = this.props;
+      if (store.orderValidation == undefined || store.orderValidation == null) {
+        return true;
+      } else {
+        if (orderType === 'TAKEAWAY') {
+          store.orderValidation[orderType] = store.orderValidation.takeAway;
+        } else if (orderType === 'DINEIN') {
+          store.orderValidation[orderType] = store.orderValidation.dineIn;
+        } else if (orderType === 'DELIVERY') {
+          store.orderValidation[orderType] = store.orderValidation.delivery;
+        } else if (orderType === 'STORECHECKOUT') {
+          store.orderValidation[orderType] =
+            store.orderValidation.storeCheckOut;
+        } else if (orderType === 'STOREPICKUP') {
+          store.orderValidation[orderType] = store.orderValidation.storePickUp;
+        }
+
+        const {dataBasket} = this.props;
+        let totalQty = 0;
+        let totalAmount = 0;
+
+        await dataBasket.details.map(item => {
+          totalQty += item.quantity;
+          totalAmount += item.grossAmount;
+        });
+
+        if (
+          store.orderValidation[orderType] == undefined ||
+          store.orderValidation[orderType] == null
+        )
+          return true;
+
+        if (store.orderValidation[orderType].maxAmount > 0) {
+          if (totalAmount > store.orderValidation[orderType].maxAmount) {
+            Alert.alert(
+              'Sorry',
+              `Maximum order amount for ${orderType.toLowerCase()} is ` +
+                CurrencyFormatter(store.orderValidation[orderType].maxAmount),
+            );
+            return false;
+          }
+        }
+        if (store.orderValidation[orderType].minAmount > 0) {
+          if (totalAmount < store.orderValidation[orderType].minAmount) {
+            Alert.alert(
+              'Sorry',
+              `Minimum order amount for ${orderType.toLowerCase()} is ` +
+                CurrencyFormatter(store.orderValidation[orderType].minAmount),
+            );
+            return false;
+          }
+        }
+        if (store.orderValidation[orderType].maxQty > 0) {
+          if (totalQty > store.orderValidation[orderType].maxQty) {
+            Alert.alert(
+              'Sorry',
+              `Maximum order quantity for ${orderType.toLowerCase()} is ` +
+                store.orderValidation[orderType].maxQty,
+            );
+            return false;
+          }
+        }
+        if (store.orderValidation[orderType].minQty > 0) {
+          if (totalQty < store.orderValidation[orderType].minQty) {
+            Alert.alert(
+              'Sorry',
+              `Minimum order quantity for ${orderType.toLowerCase()} is ` +
+                store.orderValidation[orderType].minQty,
+            );
+            return false;
+          }
+        }
+        return true;
+      }
+    } catch (e) {}
+  };
+
+  anyProductsUnavailable = () => {
+    try {
+      const {productsUnavailable} = this.state;
+      const {dataBasket} = this.props;
+      for (let i = 0; i < dataBasket.details.length; i++) {
+        if (productsUnavailable.includes(dataBasket.details[i].productID)) {
+          return true;
+        }
+      }
+      return false;
+    } catch (e) {}
+  };
+
   goToSettle = async () => {
     try {
       const {outletSingle} = this.props;
+
+      try {
+        await this.setState({loading: true});
+        if (!(await this.isPassValidationOrder(outletSingle))) {
+          await this.setState({loading: false});
+          return;
+        }
+      } catch (e) {
+        await this.setState({loading: false});
+      }
+      await this.setState({loading: false});
+
+      if (this.anyProductsUnavailable()) {
+        Alert.alert(
+          'Sorry',
+          'There are items that are currently unavailable on your cart.',
+        );
+        return;
+      }
 
       try {
         await this.setState({loading: true});
@@ -1113,6 +1360,7 @@ class Basket extends Component {
         data.itemName = item.product.name;
         data.qty = item.quantity;
         data.price = item.unitPrice;
+        data.id = item.product.id;
 
         // if data have modifiers, then add
         if (!isEmptyArray(item.modifiers)) {
@@ -1433,9 +1681,28 @@ class Basket extends Component {
               // return back to normal
               if (group.modifier.max == 1) {
                 product.product.productModifiers[i].modifier.show = false;
-                // delete product.product.productModifiers[i].modifier.selected;
               } else {
                 product.product.productModifiers[i].modifier.show = true;
+              }
+
+              if (group.modifier.isYesNo == true) {
+                if (
+                  group.modifier.yesNoDefaultValue == true &&
+                  detail.yesNoValue == 'no'
+                ) {
+                  product.product.productModifiers[i].modifier.details[
+                    j
+                  ].isSelected = false;
+                }
+
+                if (
+                  group.modifier.yesNoDefaultValue == false &&
+                  detail.yesNoValue == 'yes'
+                ) {
+                  product.product.productModifiers[i].modifier.details[
+                    j
+                  ].isSelected = true;
+                }
               }
             });
         });
@@ -1470,9 +1737,9 @@ class Basket extends Component {
                         existProduct.product.productModifiers[
                           i
                         ].modifier.details[j].quantity = item.quantity;
-                        product.product.productModifiers[i].modifier.details[
-                          j
-                        ].isSelected = item.isSelected;
+                        existProduct.product.productModifiers[
+                          i
+                        ].modifier.details[j].isSelected = item.isSelected;
                       }
                     }
                   });
@@ -2014,23 +2281,19 @@ class Basket extends Component {
         maxOrderQtyPerItem: item.maxOrderQtyPerItem,
         maxOrderAmount: item.maxOrderAmount,
         lastOrderOn: item.lastOrderOn,
+        takeAwayName: item.takeAwayName,
+        dineInName: item.dineInName,
+        storePickUpName: item.storePickUpName,
+        storeCheckOutName: item.storeCheckOutName,
+        deliveryName: item.deliveryName,
+        enableStoreCheckOut: item.enableStoreCheckOut == true ? true : false,
+        enableStorePickUp: item.enableStorePickUp == true ? true : false,
+        enableTakeAway: item.enableTakeAway == true ? true : false,
+        enableDineIn: item.enableDineIn == true ? true : false,
+        enableTableScan: item.enableTableScan == true ? true : false,
+        enableDelivery: item.enableDelivery == true ? true : false,
         enableItemSpecialInstructions: item.enableItemSpecialInstructions,
-        enableStorePickUp:
-          item.enableStorePickUp == false || item.enableStorePickUp == '-'
-            ? false
-            : true,
-        enableStoreCheckOut:
-          item.enableStoreCheckOut == false || item.enableStoreCheckOut == '-'
-            ? false
-            : true,
-        enableTableScan:
-          item.enableTableScan == false || item.enableTableScan == '-'
-            ? false
-            : true,
-        enableDelivery:
-          item.enableDelivery == false || item.enableDelivery == '-'
-            ? false
-            : true,
+        enableRedeemPoint: item.enableRedeemPoint,
       };
 
       if (this.props.from == 'products') {
@@ -2248,6 +2511,7 @@ class Basket extends Component {
         date: this.state.datePickup,
         time: this.state.timePickup,
         outlet: outletSingle,
+        orderType: orderType,
         header:
           orderType == 'DELIVERY'
             ? 'Delivery Date & Time'
@@ -2266,6 +2530,31 @@ class Basket extends Component {
     } catch (e) {
       return this.state.datePickup;
     }
+  };
+
+  isUseTimingSetting = () => {
+    let {outletSingle, orderType} = this.props;
+    try {
+      if (isEmptyObject(outletSingle.timing)) return false;
+      if (orderType == 'DELIVERY') {
+        if (isEmptyObject(outletSingle.timing.delivery)) return false;
+        if (outletSingle.timing.delivery.enabled == true) return true;
+      } else if (orderType == 'DINEIN') {
+        if (isEmptyObject(outletSingle.timing.dineIn)) return false;
+        if (outletSingle.timing.dineIn.enabled == true) return true;
+      } else if (orderType == 'TAKEAWAY') {
+        if (isEmptyObject(outletSingle.timing.takeAway)) return false;
+        if (outletSingle.timing.takeAway.enabled == true) return true;
+      } else if (orderType == 'STOREPICKUP') {
+        if (isEmptyObject(outletSingle.timing.storePickUp)) return false;
+        if (outletSingle.timing.storePickUp.enabled == true) return true;
+      } else if (orderType == 'STORECHECKOUT') {
+        if (isEmptyObject(outletSingle.timing.storeCheckOut)) return false;
+        if (outletSingle.timing.storeCheckOut.enabled == true) return true;
+      }
+
+      return false;
+    } catch (e) {}
   };
 
   render() {
@@ -2720,30 +3009,28 @@ class Basket extends Component {
                     </View>
                   )}
 
-                {/*{orderType == 'DELIVERY' ||*/}
-                {/*orderType == 'TAKEAWAY' ||*/}
-                {/*orderType == 'STOREPICKUP' ? (*/}
-                {/*  <View style={styles.itemSummary}>*/}
-                {/*    <Text style={styles.total}>*/}
-                {/*      {orderType == 'DELIVERY'*/}
-                {/*        ? 'Delivery Date & Time'*/}
-                {/*        : 'Pickup Date & Time'}*/}
-                {/*    </Text>*/}
-                {/*    <TouchableOpacity onPress={this.goToPickUpTime}>*/}
-                {/*      <Text style={[styles.total, styles.badge]}>*/}
-                {/*        {this.formatDatePickup()} at {this.state.timePickup}*/}
-                {/*      </Text>*/}
-                {/*      <Text*/}
-                {/*        style={{*/}
-                {/*          textAlign: 'right',*/}
-                {/*          color: colorConfig.store.titleSelected,*/}
-                {/*          fontFamily: 'Lato-Bold',*/}
-                {/*        }}>*/}
-                {/*        Change*/}
-                {/*      </Text>*/}
-                {/*    </TouchableOpacity>*/}
-                {/*  </View>*/}
-                {/*) : null}*/}
+                {this.isUseTimingSetting() ? (
+                  <View style={styles.itemSummary}>
+                    <Text style={styles.total}>
+                      {orderType == 'DELIVERY'
+                        ? 'Delivery Date & Time'
+                        : 'Pickup Date & Time'}
+                    </Text>
+                    <TouchableOpacity onPress={this.goToPickUpTime}>
+                      <Text style={[styles.total, styles.badge]}>
+                        {this.formatDatePickup()} at {this.state.timePickup}
+                      </Text>
+                      <Text
+                        style={{
+                          textAlign: 'right',
+                          color: colorConfig.store.titleSelected,
+                          fontFamily: 'Lato-Bold',
+                        }}>
+                        Change
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                ) : null}
 
                 {/*<View style={styles.itemSummary}>*/}
                 {/*  <Text style={styles.total}>Total</Text>*/}

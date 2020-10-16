@@ -68,16 +68,18 @@ class DetailPoint extends Component {
       cutomerActivity(actualLength, take, filterReceive),
     );
 
-    let dataActivity = customerActivity.concat(response.data);
+    if (!isEmptyArray(response.data)) {
+      let dataActivity = customerActivity.concat(response.data);
 
-    let actualDataLength = actualLength + response.actualLength;
-    await this.setState({
-      customerActivity: dataActivity,
-      dataLength: response.dataLength,
-      actualLength: actualDataLength,
-      skip: take,
-      take: take,
-    });
+      let actualDataLength = actualLength + response.actualLength;
+      await this.setState({
+        customerActivity: dataActivity,
+        dataLength: response.dataLength,
+        actualLength: actualDataLength,
+        skip: take,
+        take: take,
+      });
+    }
   };
 
   getInfoPoint = async () => {
@@ -212,6 +214,8 @@ class DetailPoint extends Component {
     let color2 = `#f39c12`;
     let color3 = `#e67e22`;
 
+    console.log(customerActivity, 'customerActivity');
+
     return (
       <SafeAreaView style={{flex: 1, backgroundColor: '#f0f0f0'}}>
         {this.state.loading && <Loader />}
@@ -253,7 +257,7 @@ class DetailPoint extends Component {
                             <Text style={styles.simpleText}>
                               <Text
                                 style={{
-                                  color: colorConfig.store.defaultColor,
+                                  color: colorConfig.store.secondaryColor,
                                   fontWeight: 'bold',
                                 }}>
                                 {this.getPointInfo(item)}
@@ -270,7 +274,7 @@ class DetailPoint extends Component {
                   onPress={() => Actions.rewards()}
                   style={{
                     marginTop: 40,
-                    borderColor: colorConfig.store.defaultColor,
+                    borderColor: colorConfig.store.secondaryColor,
                     borderWidth: 0.8,
                     padding: 10,
                     justifyContent: 'space-between',
@@ -282,20 +286,20 @@ class DetailPoint extends Component {
                   }}>
                   <Text
                     style={{
-                      color: colorConfig.store.defaultColor,
+                      color: colorConfig.store.secondaryColor,
                       fontFamily: 'Lato-Medium',
                       fontSize: 16,
                     }}>
                     Redeem Voucher
                   </Text>
                   <Icon
-                    size={Platform.OS === 'ios' ? 36 : 27}
+                    size={Platform.OS === 'ios' ? 28 : 27}
                     name={
                       Platform.OS === 'ios'
                         ? 'ios-arrow-dropright'
                         : 'md-arrow-dropright'
                     }
-                    style={{color: colorConfig.store.defaultColor}}
+                    style={{color: colorConfig.store.secondaryColor}}
                   />
                 </TouchableOpacity>
               </View>
@@ -549,7 +553,7 @@ const styles = StyleSheet.create({
   activityTitle: {
     fontSize: 17,
     fontFamily: 'Lato-Medium',
-    color: colorConfig.store.defaultColor,
+    color: colorConfig.store.secondaryColor,
   },
   activityRewardsPositive: {
     fontSize: 18,
@@ -568,7 +572,7 @@ const styles = StyleSheet.create({
   },
   activeLeft: {
     width: '50%',
-    backgroundColor: colorConfig.store.defaultColor,
+    backgroundColor: colorConfig.store.secondaryColor,
     justifyContent: 'center',
     alignItems: 'center',
     padding: 7,
@@ -577,7 +581,7 @@ const styles = StyleSheet.create({
   },
   activeRight: {
     width: '50%',
-    backgroundColor: colorConfig.store.defaultColor,
+    backgroundColor: colorConfig.store.secondaryColor,
     justifyContent: 'center',
     alignItems: 'center',
     padding: 7,
@@ -598,7 +602,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     borderWidth: 1,
     borderRadius: 6,
-    borderColor: colorConfig.store.defaultColor,
+    borderColor: colorConfig.store.secondaryColor,
   },
 });
 

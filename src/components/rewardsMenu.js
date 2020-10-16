@@ -62,7 +62,7 @@ export default class RewardsMenu extends Component {
               <Icon
                 size={this.state.screenHeight / 5 / 2 - 10}
                 name={Platform.OS === 'ios' ? 'ios-wallet' : 'md-wallet'}
-                style={{color: colorConfig.pageIndex.activeTintColor}}
+                style={{color: colorConfig.store.secondaryColor, height: 70}}
               />
             </View>
             <Text style={styles.menuText}>{intlData.messages.pay}</Text>
@@ -72,7 +72,7 @@ export default class RewardsMenu extends Component {
               <Icon2
                 size={this.state.screenHeight / 5 / 2 - 10}
                 name={'qrcode'}
-                style={{color: colorConfig.pageIndex.activeTintColor}}
+                style={{color: colorConfig.store.secondaryColor, height: 70}}
               />
             </View>
             <Text style={styles.menuText}>{intlData.messages.myQrCode}</Text>
@@ -82,7 +82,7 @@ export default class RewardsMenu extends Component {
               <Icon
                 size={this.state.screenHeight / 5 / 2 - 10}
                 name={Platform.OS === 'ios' ? 'ios-ribbon' : 'md-ribbon'}
-                style={{color: colorConfig.pageIndex.activeTintColor}}
+                style={{color: colorConfig.store.secondaryColor, height: 70}}
               />
             </View>
             <Text style={styles.menuText}>{intlData.messages.rewards}</Text>
@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
     // borderWidth: 1,
     marginLeft: 20,
     marginRight: 20,
-    borderRadius: 7,
+    borderRadius: 10,
     position: 'absolute',
     top: -(Dimensions.get('window').height / 5) / 2,
     backgroundColor: colorConfig.store.storesItem,

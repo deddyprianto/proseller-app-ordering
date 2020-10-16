@@ -229,7 +229,7 @@ class VoucherDetail extends Component {
         _.forEach(
           _.groupBy(
             this.props.myVoucers.filter(voucher => voucher.deleted == false),
-            'id',
+            'uniqueID',
           ),
           function(value, key) {
             value[0].totalRedeem = value.length;
@@ -737,6 +737,7 @@ const styles = StyleSheet.create({
   },
   descVoucher: {
     fontSize: 15,
+    maxWidth: '90%',
     color: colorConfig.store.titleSelected,
   },
   descVoucherTime: {

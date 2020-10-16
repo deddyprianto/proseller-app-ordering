@@ -250,11 +250,22 @@ class SettleOrder extends Component {
 
       try {
         if (this.state.dataVoucer != undefined) {
-          if (this.state.dataVoucer.applyToSpecificProduct == true) {
+          if (
+            this.state.dataVoucer.appliedTo != undefined &&
+            this.state.dataVoucer.appliedTo === 'PRODUCT'
+          ) {
             //  search specific product
-            let result = this.props.pembayaran.dataPay.find(
-              item => item.barcode == this.state.dataVoucer.product.barcode,
-            );
+            let result = undefined;
+
+            for (let i = 0; i < this.props.pembayaran.dataPay.length; i++) {
+              result = await this.state.dataVoucer.appliedItems.find(
+                item => item.value === this.props.pembayaran.dataPay[i].id,
+              );
+              if (result != undefined) {
+                result = this.props.pembayaran.dataPay[i];
+                break;
+              }
+            }
             // check if apply to specific product is found
             if (result == undefined) {
               this.cencelVoucher();
@@ -617,6 +628,65 @@ class SettleOrder extends Component {
       if (this.props.pembayaran.orderingMode != undefined) {
         pembayaran.orderingMode = this.props.pembayaran.orderingMode;
         pembayaran.tableNo = this.props.pembayaran.tableNo;
+
+        // send order mode value to server
+        pembayaran.validateOutletSetting = {};
+
+        //  check if ordering mode is still active
+        try {
+          const {outlet} = this.state;
+          if (this.props.pembayaran.orderingMode == 'TAKEAWAY') {
+            pembayaran.validateOutletSetting.enableTakeAway = true;
+            if (outlet.enableTakeAway == false) {
+              Alert.alert(
+                'Sorry',
+                `Order mode Take Away is currently inactive, please choose another order mode.`,
+              );
+              this.setState({loading: false});
+              return;
+            }
+          } else if (this.props.pembayaran.orderingMode == 'DINEIN') {
+            pembayaran.validateOutletSetting.enableDineIn = true;
+            if (outlet.enableDineIn == false) {
+              Alert.alert(
+                'Sorry',
+                `Order mode Dine In is currently inactive, please choose another order mode.`,
+              );
+              this.setState({loading: false});
+              return;
+            }
+          } else if (this.props.pembayaran.orderingMode == 'DELIVERY') {
+            pembayaran.validateOutletSetting.enableDelivery = true;
+            if (outlet.enableDelivery == false) {
+              Alert.alert(
+                'Sorry',
+                `Order mode Delivery is currently inactive, please choose another order mode.`,
+              );
+              this.setState({loading: false});
+              return;
+            }
+          } else if (this.props.pembayaran.orderingMode == 'STOREPICKUP') {
+            pembayaran.validateOutletSetting.enableStorePickUp = true;
+            if (outlet.enableStorePickUp == false) {
+              Alert.alert(
+                'Sorry',
+                `Order mode Store Pickup is currently inactive, please choose another order mode.`,
+              );
+              this.setState({loading: false});
+              return;
+            }
+          } else if (this.props.pembayaran.orderingMode == 'STORECHECKOUT') {
+            pembayaran.validateOutletSetting.enableStoreCheckOut = true;
+            if (outlet.enableStoreCheckOut == false) {
+              Alert.alert(
+                'Sorry',
+                `Order mode Store Checkout is currently inactive, please choose another order mode.`,
+              );
+              this.setState({loading: false});
+              return;
+            }
+          }
+        } catch (e) {}
       }
 
       // check if delivery address is exist

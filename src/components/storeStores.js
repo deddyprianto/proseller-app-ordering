@@ -46,7 +46,7 @@ export default class StoreStores extends Component {
                       <Text
                         style={{
                           fontSize: 14,
-                          color: colorConfig.pageIndex.activeTintColor,
+                          color: colorConfig.store.secondaryColor,
                           fontFamily: 'Lato-Bold',
                         }}>
                         {item.storeName}

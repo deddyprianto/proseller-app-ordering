@@ -15,6 +15,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import colorConfig from '../config/colorConfig';
 import RecentTransactionPlaceHolder from '../components/placeHolderLoading/RecentTransactionPlaceHolder';
 import {movePageIndex} from '../actions/user.action';
+import {afterPayment} from '../actions/account.action';
 
 class RewardsTransaction extends Component {
   constructor(props) {
@@ -28,6 +29,14 @@ class RewardsTransaction extends Component {
     // to disable refresh timeout on page index
     this.props.dispatch(movePageIndex(false));
     Actions.historyDetailPayment({item});
+  };
+
+  goToHistory = async () => {
+    try {
+      await this.props.dispatch(afterPayment(false));
+      Actions.reset('app', {fromPayment: true});
+      // this.props.screen.navigation.navigate('History');
+    } catch (e) {}
   };
 
   render() {
@@ -111,10 +120,10 @@ class RewardsTransaction extends Component {
               alignItems: 'center',
               margin: 10,
             }}
-            onPress={() => this.props.screen.navigation.navigate('History')}>
+            onPress={this.goToHistory}>
             <Text
               style={{
-                color: colorConfig.pageIndex.activeTintColor,
+                color: colorConfig.store.secondaryColor,
                 fontWeight: 'bold',
               }}>
               {this.props.recentTransaction != undefined

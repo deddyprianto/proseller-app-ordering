@@ -27,7 +27,7 @@ import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import TimePicker from 'react-native-24h-timepicker';
 import {format} from 'date-fns';
-import {isEmptyArray} from '../../helper/CheckEmpty';
+import {isEmptyArray, isEmptyObject} from '../../helper/CheckEmpty';
 
 class PickUpTime extends Component {
   constructor(props) {
@@ -113,26 +113,63 @@ class PickUpTime extends Component {
   };
 
   getMaximumDate = () => {
-    const {outlet} = this.props;
-    console.log(outlet, 'outlet');
+    const {outlet, orderType} = this.props;
     let current = new Date().getTime();
     let date = new Date().getDate();
     let month = new Date().getMonth() + 1;
     let year = new Date().getFullYear();
     try {
-      if (
-        outlet.maxStorePickupDays != undefined &&
-        outlet.maxStorePickupDays != null
-      ) {
-        if (outlet.maxStorePickupDays >= 0) {
-          let nextDate = outlet.maxStorePickupDays * 86400000;
-          return new Date(current + nextDate);
-        } else if (outlet.maxStorePickupDays < 0) {
-          return new Date(`${year + 1}-${month}-${date}`);
+      let maxDays = 360;
+      if (!isEmptyObject(outlet.timing)) {
+        if (orderType == 'DELIVERY') {
+          if (
+            !isEmptyObject(outlet.timing.delivery) &&
+            outlet.timing.delivery.maxDays != undefined &&
+            outlet.timing.delivery.maxDays != null
+          ) {
+            maxDays = outlet.timing.delivery.maxDays;
+          }
+        } else if (orderType == 'DINEIN') {
+          if (
+            !isEmptyObject(outlet.timing.dineIn) &&
+            outlet.timing.dineIn.maxDays != undefined &&
+            outlet.timing.dineIn.maxDays != null
+          ) {
+            maxDays = outlet.timing.dineIn.maxDays;
+          }
+        } else if (orderType == 'TAKEAWAY') {
+          if (
+            !isEmptyObject(outlet.timing.takeAway) &&
+            outlet.timing.takeAway.maxDays != undefined &&
+            outlet.timing.takeAway.maxDays != null
+          ) {
+            maxDays = outlet.timing.takeAway.maxDays;
+          }
+        } else if (orderType == 'STOREPICKUP') {
+          if (
+            !isEmptyObject(outlet.timing.storePickUp) &&
+            outlet.timing.storePickUp.maxDays != undefined &&
+            outlet.timing.storePickUp.maxDays != null
+          ) {
+            maxDays = outlet.timing.storePickUp.maxDays;
+          }
+        } else if (orderType == 'STORECHECKOUT') {
+          if (
+            !isEmptyObject(outlet.timing.storeCheckOut) &&
+            outlet.timing.storeCheckOut.maxDays != undefined &&
+            outlet.timing.storeCheckOut.maxDays != null
+          ) {
+            maxDays = outlet.timing.storeCheckOut.maxDays;
+          }
         }
       }
-      let ayear = 360 * 86400000;
-      return new Date(current + ayear);
+
+      if (maxDays < 0) {
+        return new Date(`${year + 1}-${month}-${date}`);
+      } else {
+        let nextDate = maxDays * 86400000;
+        return new Date(current + nextDate);
+      }
     } catch (e) {
       return new Date();
     }

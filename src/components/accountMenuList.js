@@ -541,7 +541,7 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     alignItems: 'center',
     alignSelf: 'center',
-    backgroundColor: colorConfig.store.defaultColor,
+    backgroundColor: colorConfig.store.secondaryColor,
   },
   line: {
     borderBottomColor: colorConfig.pageIndex.inactiveTintColor,

@@ -254,6 +254,8 @@ class Store extends Component {
             enableRedeemPoint: response.data[i].enableRedeemPoint,
             storePickUpName: response.data[i].storePickUpName,
             storeCheckOutName: response.data[i].storeCheckOutName,
+            dineInName: response.data[i].dineInName,
+            takeAwayName: response.data[i].takeAwayName,
             deliveryName: response.data[i].deliveryName,
             enableItemSpecialInstructions:
               response.data[i].enableItemSpecialInstructions,
@@ -265,6 +267,9 @@ class Store extends Component {
               response.data[i].enableTableScan == true ? true : false,
             enableDelivery:
               response.data[i].enableDelivery == true ? true : false,
+            enableTakeAway:
+              response.data[i].enableTakeAway == true ? true : false,
+            enableDineIn: response.data[i].enableDineIn == true ? true : false,
           });
         }
       }

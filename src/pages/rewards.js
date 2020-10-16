@@ -10,11 +10,10 @@ import {
   SafeAreaView,
   Alert,
   Platform,
-  Linking,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
-import {notifikasi, validateSSL} from '../actions/auth.actions';
+import {notifikasi} from '../actions/auth.actions';
 import {dataPoint, getStamps, campaign} from '../actions/rewards.action';
 import {refreshToken} from '../actions/auth.actions';
 import {recentTransaction} from '../actions/sales.action';
@@ -22,7 +21,7 @@ import RewardsPoint from '../components/rewardsPoint';
 import RewardsStamp from '../components/rewardsStamp';
 import RewardsMenu from '../components/rewardsMenu';
 import RewardsTransaction from '../components/rewardsTransaction';
-// import Loader from '../components/loader';
+import Loader from '../components/loader';
 import colorConfig from '../config/colorConfig';
 import {Actions} from 'react-native-router-flux';
 import Geolocation from 'react-native-geolocation-service';
@@ -33,10 +32,8 @@ import {
   updateUser,
   userPosition,
 } from '../actions/user.action';
-// import ShimmerPlaceHolder from 'react-native-shimmer-placeholder';
 import MyPointsPlaceHolder from '../components/placeHolderLoading/MyPointsPlaceHolder';
 import {isEmptyArray, isEmptyData, isEmptyObject} from '../helper/CheckEmpty';
-// import {getDeliveryProvider, getPendingCart} from '../actions/order.action';
 import CryptoJS from 'react-native-crypto-js';
 import awsConfig from '../config/awsConfig';
 import {getCompanyInfo} from '../actions/stores.action';
@@ -45,9 +42,11 @@ import OneSignal from 'react-native-onesignal';
 import {dataInbox} from '../actions/inbox.action';
 import {getMandatoryFields} from '../actions/account.action';
 import {Overlay} from 'react-native-elements';
-import NetInfo from '@react-native-community/netinfo';
-import {getCartHomePage, getPendingCart} from '../actions/order.action';
-import VersionCheck from 'react-native-version-check';
+import {
+  getCart,
+  getCartHomePage,
+  getPendingCart,
+} from '../actions/order.action';
 
 class Rewards extends Component {
   constructor(props) {
@@ -127,23 +126,8 @@ class Rewards extends Component {
     this.checkOneSignal();
     this.checkUseApp();
 
-    // if (Platform.OS != 'ios') {
-    //   this.validateSSL();
-    // }
-
     // IF OUTLET FOR THIS COMPANY IS ONLY 1, THEN SETUP DETAIL OUTLET NOW
     // this.initializeStore();
-  };
-
-  validateSSL = () => {
-    try {
-      NetInfo.fetch().then(state => {
-        //  check if connected to internet
-        if (state.isConnected) {
-          this.props.dispatch(validateSSL());
-        }
-      });
-    } catch (e) {}
   };
 
   checkDefaultPaymentAccount = async response => {
@@ -162,58 +146,6 @@ class Rewards extends Component {
           return;
         }
       } catch (e) {}
-
-      try {
-        if (!isEmptyArray(companyInfo.paymentTypes)) {
-          if (!isEmptyObject(defaultAccount)) {
-            const findPaymentProvider = companyInfo.paymentTypes.find(
-              item => item.paymentID == defaultAccount.paymentID,
-            );
-            if (findPaymentProvider == undefined) {
-              await this.props.dispatch(defaultPaymentAccount(undefined));
-              return;
-            } else {
-              try {
-                if (defaultAccount.isAccountRequired == false) {
-                  if (
-                    findPaymentProvider.paymentName !=
-                    defaultAccount.paymentName
-                  ) {
-                    await this.props.dispatch(
-                      defaultPaymentAccount(findPaymentProvider),
-                    );
-                  }
-
-                  try {
-                    if (
-                      defaultAccount.isAccountRequired !=
-                      findPaymentProvider.isAccountRequired
-                    ) {
-                      await this.props.dispatch(
-                        defaultPaymentAccount(undefined),
-                      );
-                    }
-                  } catch (e) {}
-                }
-              } catch (e) {}
-            }
-          }
-        }
-      } catch (e) {}
-
-      if (
-        !isEmptyObject(defaultAccount) &&
-        defaultAccount.isAccountRequired != false
-      ) {
-        const MyCardAccount = response.response.data;
-        const data = await MyCardAccount.find(
-          item => item.id == defaultAccount.id,
-        );
-        if (data == undefined) {
-          await this.props.dispatch(defaultPaymentAccount(undefined));
-        }
-        return;
-      }
     } catch (e) {}
   };
 
@@ -283,8 +215,8 @@ class Rewards extends Component {
         // this.props.dispatch(getUserProfile()),
         // this.props.dispatch(getMandatoryFields()),
       ]);
-      this.checkUpdateAndVersion();
       await this.setState({isLoading: false});
+      this.props.dispatch(getAccountPayment());
       this.props.dispatch(getUserProfile());
       this.props.dispatch(getMandatoryFields());
       this.props.dispatch(dataInbox(0, 10));
@@ -308,33 +240,6 @@ class Rewards extends Component {
         ),
       );
     }
-  };
-
-  checkUpdateAndVersion = () => {
-    try {
-      // VersionCheck.getCountry().then(country => console.log(country));
-      // console.log(VersionCheck.getPackageName());
-      // console.log(VersionCheck.getCurrentBuildNumber());
-      // console.log(VersionCheck.getCurrentVersion());
-
-      VersionCheck.needUpdate().then(async res => {
-        if (res.isNeeded) {
-          Alert.alert(
-            'Apps Update.',
-            'Application updates are already available on the store.',
-            [
-              {
-                text: 'Later',
-                onPress: () => console.log('Cancel Pressed'),
-                style: 'cancel',
-              },
-              {text: 'Update', onPress: () => Linking.openURL(res.storeUrl)},
-            ],
-            {cancelable: false},
-          );
-        }
-      });
-    } catch (e) {}
   };
 
   getUserPosition = async () => {
@@ -377,7 +282,7 @@ class Rewards extends Component {
       } else if (date.getHours() < 18) {
         status = `${intlData.messages.good} ${intlData.messages.afternoon}`;
       } else {
-        // status = `${intlData.messages.good} ${intlData.messages.night}`;
+        status = `${intlData.messages.good} ${intlData.messages.night}`;
         status = `Good Evening`;
       }
 
@@ -474,7 +379,7 @@ class Rewards extends Component {
                   <TouchableOpacity
                     onPress={this.detailStamps}
                     style={{
-                      width: 100,
+                      width: '100%',
                       marginTop: 15,
                       flexDirection: 'row',
                       justifyContent: 'center',
@@ -496,7 +401,7 @@ class Rewards extends Component {
                     <Text
                       style={{
                         textAlign: 'center',
-                        color: 'white',
+                        color: colorConfig.pageIndex.inactiveTintColor,
                         fontFamily: 'Lato-Bold',
                         fontSize: 15,
                       }}>
@@ -602,6 +507,7 @@ const styles = StyleSheet.create({
 });
 
 mapStateToProps = state => ({
+  dataBasket: state.orderReducer.dataCartSingle.cartSingle,
   fields: state.accountsReducer.mandatoryFields.fields,
   recentTransaction: state.rewardsReducer.dataPoint.recentTransaction,
   defaultAccount: state.userReducer.defaultPaymentAccount.defaultAccount,

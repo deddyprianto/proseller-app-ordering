@@ -128,8 +128,10 @@ class RewardsStamps extends Component {
               {this.state.isLoading && <Loader />}
             </View>
           ) : (
-            <View>
-              {/*<Text style={styles.title}>{intlData.messages.stampsCard}</Text>*/}
+            <View style={styles.card}>
+              <Text style={styles.titleStamps}>
+                {this.props.dataStamps.dataStamps.stamps.stampsTitle}
+              </Text>
               <RewardsStamp />
               <RewardsStampDetail />
             </View>
@@ -143,7 +145,7 @@ class RewardsStamps extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colorConfig.pageIndex.backgroundColor,
+    backgroundColor: 'white',
   },
   title: {
     backgroundColor: colorConfig.store.defaultColor,
@@ -181,9 +183,22 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 5,
   },
+  titleStamps: {
+    color: 'white',
+    fontSize: 22,
+    fontFamily: 'Lato-Bold',
+    marginBottom: 10,
+    textAlign: 'center',
+  },
+  card: {
+    paddingTop: 20,
+    zIndex: 10,
+    backgroundColor: colorConfig.store.defaultColor,
+  },
 });
 
 mapStateToProps = state => ({
+  dataStamps: state.rewardsReducer.getStamps,
   vouchers: state.rewardsReducer.vouchers.dataVoucher,
   totalPoint: state.rewardsReducer.dataPoint.totalPoint,
   intlData: state.intlData,

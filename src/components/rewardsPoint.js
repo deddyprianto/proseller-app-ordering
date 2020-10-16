@@ -50,8 +50,8 @@ class RewardsPoint extends Component {
       <View
         style={{
           backgroundColor: colorConfig.pageIndex.activeTintColor,
-          height: this.state.screenHeight / HEIGHT - 30,
-          marginBottom: 10,
+          height: this.state.screenHeight / HEIGHT - 40,
+          // marginBottom: 10,
         }}>
         {totalPoint != undefined &&
         campaignActive &&

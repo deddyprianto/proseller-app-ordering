@@ -882,3 +882,32 @@ export const saveProductsOutlet = (data, OutletId, refresh) => {
     }
   };
 };
+
+export const getProductsUnavailable = OutletId => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      let response = await fetchApiProduct(
+        `/product/unavailable/${OutletId}/`,
+        'GET',
+        null,
+        200,
+        token,
+      );
+
+      console.log('RESPONSE GET PRODUCTS UNAVAILABLE ', response);
+
+      if (response.success == true) {
+        return response.response.data;
+      } else {
+        return false;
+      }
+    } catch (e) {}
+  };
+};

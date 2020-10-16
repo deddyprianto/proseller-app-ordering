@@ -103,13 +103,13 @@ class RewardsQRmenu extends Component {
           <View style={styles.line} />
         </View>
         <View style={styles.card}>
-          <View style={{marginTop: 50}}>
+          <View>
             <QRCode
               value={JSON.stringify({
                 token: qrcode,
               })}
               logo={appConfig.appLogoQR}
-              logoSize={this.state.screenWidth / 6 - 40}
+              logoSize={this.state.screenWidth / 6 - 30}
               size={this.state.screenWidth - 160}
             />
             {/* <TouchableOpacity
@@ -148,8 +148,9 @@ const styles = StyleSheet.create({
   card: {
     marginLeft: 50,
     marginRight: 50,
-    marginTop: 50,
+    marginTop: 100,
     alignItems: 'center',
+    justifyContent: 'center',
   },
   btnScan: {
     marginTop: 10,
