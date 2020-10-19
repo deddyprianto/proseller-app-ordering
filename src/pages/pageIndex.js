@@ -34,7 +34,7 @@ const AppTabNavigator = createMaterialBottomTabNavigator(
     Store: {
       screen: Store,
       navigationOptions: {
-        title: 'Outlet',
+        title: 'Order',
         tabBarIcon: ({tintColor, focused}) => (
           <Icon
             size={28}
@@ -111,7 +111,7 @@ const AppTabNavigatorHistory = createMaterialBottomTabNavigator(
     Store: {
       screen: Store,
       navigationOptions: {
-        title: 'Outlet',
+        title: 'Order',
         tabBarIcon: ({tintColor, focused}) => (
           <Icon
             size={28}

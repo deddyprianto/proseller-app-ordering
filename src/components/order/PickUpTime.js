@@ -22,12 +22,11 @@ import colorConfig from '../../config/colorConfig';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
 import Loader from '../loader';
-import {DefaultTheme} from 'react-native-paper';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
-import TimePicker from 'react-native-24h-timepicker';
 import {format} from 'date-fns';
 import {isEmptyArray, isEmptyObject} from '../../helper/CheckEmpty';
+import DropDownPicker from 'react-native-dropdown-picker';
 
 class PickUpTime extends Component {
   constructor(props) {
@@ -41,6 +40,7 @@ class PickUpTime extends Component {
       timeVisible: false,
       hour: null,
       minute: null,
+      openTimePicker: false,
     };
   }
 
@@ -228,14 +228,14 @@ class PickUpTime extends Component {
 
   getOperationalHours = () => {
     const {outlet} = this.props;
-    let pickerItem = [];
+    let pickerItem = [{label: 'Select Pickup Time', value: null}];
     let value = '';
     try {
       const day = new Date().getDay();
       if (isEmptyArray(outlet.operationalHours)) {
         for (let i = 0; i < 24; i++) {
           value = `${this.pad(i.toString())}:00`;
-          value = pickerItem.push(<Picker.Item label={value} value={value} />);
+          value = pickerItem.push({label: value, value});
         }
         return pickerItem;
       } else {
@@ -243,17 +243,13 @@ class PickUpTime extends Component {
         if (find == undefined) {
           for (let i = 0; i < 24; i++) {
             value = `${this.pad(i.toString())}:00`;
-            value = pickerItem.push(
-              <Picker.Item label={value} value={value} />,
-            );
+            value = pickerItem.push({label: value, value});
           }
           return pickerItem;
         } else {
           for (let i = parseInt(find.open); i <= parseInt(find.close); i++) {
             value = `${this.pad(i.toString())}:00`;
-            value = pickerItem.push(
-              <Picker.Item label={value} value={value} />,
-            );
+            value = pickerItem.push({label: value, value});
           }
           return pickerItem;
         }
@@ -328,6 +324,7 @@ class PickUpTime extends Component {
               flexDirection: 'row',
               alignItems: 'center',
               paddingVertical: 10,
+              paddingBottom: 250,
             }}>
             <View style={{width: '30%'}}>
               <Text style={styles.option}>Time </Text>
@@ -335,41 +332,54 @@ class PickUpTime extends Component {
             <View
               style={{
                 width: '50%',
-                borderWidth: 0.6,
-                borderColor: colorConfig.store.defaultColor,
-                // padding: 7,
-                borderRadius: 5,
+                // borderWidth: 0.6,
+                // borderColor: colorConfig.store.defaultColor,
+                // // padding: 7,
+                // borderRadius: 5,
               }}>
               {/*<Text style={styles.option}>{time}</Text>*/}
-              {/*<DateTimePickerModal*/}
-              {/*  isVisible={this.state.timeVisible}*/}
-              {/*  mode="time"*/}
-              {/*  onConfirm={this.handleConfirmTime}*/}
-              {/*  onCancel={this.hideTimePicker}*/}
-              {/*/>*/}
-              {/*<TimePicker*/}
-              {/*  ref={ref => {*/}
-              {/*    this.TimePicker = ref;*/}
-              {/*  }}*/}
-              {/*  maxHour={this.getMaxHours()}*/}
-              {/*  maxMinute={this.getMaxMinutes()}*/}
-              {/*  onCancel={() => this.TimePicker.close()}*/}
-              {/*  onConfirm={(hour, minute) => {*/}
-              {/*    if (hour.length == 1) {*/}
-              {/*      hour = `0${hour}`;*/}
-              {/*    }*/}
-              {/*    this.setState({time: `${hour}:${minute}`, hour, minute});*/}
-              {/*    this.TimePicker.close();*/}
-              {/*  }}*/}
-              {/*/>*/}
-              <Picker
-                selectedValue={time}
-                style={{width: '100%'}}
-                onValueChange={(itemValue, itemIndex) =>
-                  this.setState({time: itemValue})
-                }>
-                {this.getOperationalHours()}
-              </Picker>
+              <DropDownPicker
+                placeholder={'Select Pickup Time'}
+                items={this.getOperationalHours()}
+                // defaultValue={'Select Pickup Time'}
+                containerStyle={{
+                  height: 50,
+                }}
+                style={{
+                  backgroundColor: 'white',
+                  marginTop: 5,
+                  borderWidth: 0.6,
+                  borderColor: colorConfig.store.defaultColor,
+                  borderRadius: 5,
+                }}
+                dropDownStyle={{
+                  backgroundColor: '#fafafa',
+                  borderColor: 'red',
+                  borderWidth: 0.6,
+                  zIndex: 3,
+                  height: 250,
+                }}
+                dropDownMaxHeight={250}
+                activeLabelStyle={{
+                  color: colorConfig.store.defaultColor,
+                  fontWeight: 'bold',
+                }}
+                onOpen={() => {
+                  this.setState({openTimePicker: true});
+                }}
+                onClose={() => {
+                  this.setState({openTimePicker: false});
+                }}
+                onChangeItem={item => item}
+              />
+              {/*<Picker*/}
+              {/*  selectedValue={time}*/}
+              {/*  style={{width: '100%'}}*/}
+              {/*  onValueChange={(itemValue, itemIndex) =>*/}
+              {/*    this.setState({time: itemValue})*/}
+              {/*  }>*/}
+              {/*  {this.getOperationalHours()}*/}
+              {/*</Picker>*/}
             </View>
           </View>
 

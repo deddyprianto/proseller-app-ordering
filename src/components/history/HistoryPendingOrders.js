@@ -152,7 +152,7 @@ class HistoryPayment extends Component {
       } else if (item === 'PROCESSING') {
         return 'Processing';
       } else if (item === 'READY_FOR_COLLECTION') {
-        return 'Ready for Colection';
+        return 'Ready for Collection';
       } else if (item === 'READY_FOR_DELIVERY') {
         return 'Ready for Delivery';
       } else if (item === 'ON_THE_WAY') {
