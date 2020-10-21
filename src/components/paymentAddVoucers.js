@@ -158,6 +158,19 @@ export default class PaymentAddVoucers extends Component {
     return false;
   };
 
+  format = item => {
+    try {
+      const curr = appConfig.appMataUang;
+      item = item.replace(curr, '');
+      if (curr != 'RP' && curr != 'IDR' && item.includes('.') == false) {
+        return `${item}.00`;
+      }
+      return item;
+    } catch (e) {
+      return item;
+    }
+  };
+
   render() {
     const {intlData} = this.props;
     const myVoucers = this.state.data;
