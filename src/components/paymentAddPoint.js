@@ -92,11 +92,18 @@ class paymentAddPoint extends Component {
         pointToSet -= pendingPoints;
       }
 
+      if (pointToSet < 0) pointToSet = 0;
+
       if (
         campign.points.roundingOptions != undefined &&
         campign.points.roundingOptions == 'INTEGER'
       ) {
-        setDefault = Math.ceil(setDefault);
+        try {
+          setDefault = Number(setDefault.toFixed(0));
+        } catch (e) {
+          setDefault = Math.ceil(setDefault);
+        }
+
         // pointToSet = Math.floor(this.props.totalPoint);
         pointToSet = Math.floor(pointToSet);
       }
@@ -194,6 +201,8 @@ class paymentAddPoint extends Component {
       if (pendingPoints != undefined && pendingPoints > 0) {
         myPoint -= pendingPoints;
       }
+
+      if (myPoint < 0) myPoint = 0;
 
       const maxPayment = this.props.pembayaran.payment * ratio;
 

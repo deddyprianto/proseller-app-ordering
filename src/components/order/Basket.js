@@ -1352,31 +1352,32 @@ class Basket extends Component {
       //   this.props.dispatch(getBasket());
       // }, 3000);
 
-      let dataPay = [];
+      let details = [];
       // create dataPay item
       let data = {};
 
       this.props.dataBasket.details.map((item, index) => {
-        data.itemName = item.product.name;
-        data.qty = item.quantity;
-        data.price = item.unitPrice;
-        data.id = item.product.id;
+        data.quantity = item.quantity;
+        data.unitPrice = item.unitPrice;
+        data.product = item.product;
 
         // if data have modifiers, then add
         if (!isEmptyArray(item.modifiers)) {
           data.modifiers = item.modifiers;
         }
 
-        dataPay.push(data);
+        // details;
+        details.push(data);
         // make data empty before push again
         data = {};
       });
 
       const pembayaran = {
         payment: this.props.dataBasket.totalNettAmount,
+        totalNettAmount: this.props.dataBasket.totalNettAmount,
         totalGrossAmount: this.props.dataBasket.totalGrossAmount,
         storeName: this.props.dataBasket.outlet.name,
-        dataPay: dataPay,
+        details: details,
         storeId: this.props.dataBasket.outlet.id,
         // referenceNo: 'scan.referenceNo',
       };
@@ -1397,9 +1398,9 @@ class Basket extends Component {
         }
         pembayaran.orderingMode = orderType;
         pembayaran.cartID = this.props.dataBasket.cartID;
-        url = '/cart/submitTakeAway';
+        url = '/cart/submitAndPay';
       } else {
-        url = '/cart/settle';
+        url = '/cart/customer/settle';
       }
 
       // for delivery order

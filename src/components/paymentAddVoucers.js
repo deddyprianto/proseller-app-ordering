@@ -100,6 +100,38 @@ export default class PaymentAddVoucers extends Component {
 
   pageDetailVoucher = async item => {
     const {totalPrice} = this.props;
+    // check if voucher is applied on specific products only
+    try {
+      if (item.appliedTo != undefined && item.appliedTo === 'PRODUCT') {
+        //  search specific product
+        let result = undefined;
+        for (let i = 0; i < this.props.pembayaran.details.length; i++) {
+          result = await item.appliedItems.find(
+            item => item.value === this.props.pembayaran.details[i].product.id,
+          );
+          if (result != undefined) {
+            if (
+              this.props.pembayaran.details[i].appliedVoucher <
+                this.props.pembayaran.details[i].quantity ||
+              this.props.pembayaran.details[i].appliedVoucher == undefined
+            ) {
+              result = this.props.pembayaran.details[i];
+              break;
+            } else {
+              result = undefined;
+            }
+          }
+        }
+        // check if apply to specific product is found
+        if (result == undefined) {
+          Alert.alert(
+            'Sorry',
+            `${item.name} is only available on specific product`,
+          );
+          return false;
+        }
+      }
+    } catch (e) {}
 
     // check minimal price for use voucher
     try {
@@ -156,19 +188,6 @@ export default class PaymentAddVoucers extends Component {
       else return false;
     }
     return false;
-  };
-
-  format = item => {
-    try {
-      const curr = appConfig.appMataUang;
-      item = item.replace(curr, '');
-      if (curr != 'RP' && curr != 'IDR' && item.includes('.') == false) {
-        return `${item}.00`;
-      }
-      return item;
-    } catch (e) {
-      return item;
-    }
   };
 
   render() {
@@ -360,7 +379,10 @@ export default class PaymentAddVoucers extends Component {
         </ScrollView>
         <TouchableOpacity
           onPress={() => {
-            Actions.redeemVoucher({setVouchers: this.setVouchers});
+            Actions.redeemVoucher({
+              setVouchers: this.setVouchers,
+              dataVoucer: this.props.dataVoucer,
+            });
           }}
           style={styles.buttonBottomFixed}>
           <Icon

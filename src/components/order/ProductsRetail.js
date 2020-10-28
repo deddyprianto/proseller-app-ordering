@@ -15,6 +15,7 @@ import {
   SafeAreaView,
   TextInput,
   Image,
+  Button,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -52,6 +53,8 @@ import {StatusBarHeight} from '../../helper/StatusBarChecker';
 import EmptySearch from '../atom/EmptySearch';
 import NewSearch from '../atom/NewSearch';
 import {RecyclerListView, DataProvider, LayoutProvider} from 'recyclerlistview';
+import ButtonNavMenu from './ButtonNavMenu';
+import CartIcon from './CartIcon';
 
 const ViewTypes = {
   FULL: 0,
@@ -765,12 +768,16 @@ class Products2 extends Component {
         getCategoryByOutlet(outletID, refresh),
       );
       if (response && !isEmptyArray(response.data)) {
+        response.data.unshift({
+          id: 'allCategories',
+          name: 'All Categories',
+        });
         await this.setState({
           categories: response.data,
         });
-        const firstCategoryID = response.data[0].id;
+        const firstCategoryID = response.data[1].id;
         // const firstDatLength = response.data[0].dataLength;
-        await this.getProductsByCategory(firstCategoryID, 0, 20, refresh, 0);
+        await this.getProductsByCategory(firstCategoryID, 0, 20, refresh, 1);
 
         // check if outlet is open
         // this.prompOutletIsClosed();
@@ -782,13 +789,17 @@ class Products2 extends Component {
         } catch (e) {}
 
         //  asynchronously get first item
-        // if (response.data.length > 1) {
-        //   let skip = 5;
-        //   for (let i = 0; i < response.data[0].dataLength / 5; i++) {
-        //     await this.loadMoreProducts(firstCategoryID, outletID, skip, 0);
-        //     skip += 5;
-        //   }
-        // }
+        if (response.data.length > 0) {
+          let skip = 20;
+          for (
+            let i = 0;
+            i < Math.floor(response.data[1].dataLength / 20);
+            i++
+          ) {
+            await this.loadMoreProducts(firstCategoryID, outletID, skip, 1);
+            skip += 20;
+          }
+        }
         //  asynchronously get all item
         // if (response.data.length > 1) {
         //   for (let i = 1; i < response.data.length; i++) {
@@ -1910,54 +1921,36 @@ class Products2 extends Component {
               layoutProvider={this._gridLayoutProvider}
               dataProvider={dataProvider.cloneWithRows(dataProducts)}
               rowRenderer={this.templateItemGrid}
-              renderFooter={this.renderFooter}
-              onEndReached={() =>
-                this.loadMoreProducts(
-                  item.id,
-                  outletID,
-                  item.items.length,
-                  this.state.selectedCategory,
-                )
-              }
+              // renderFooter={this.renderFooter}
+              // onEndReached={() =>
+              //   this.loadMoreProducts(
+              //     item.id,
+              //     outletID,
+              //     item.items.length,
+              //     this.state.selectedCategory,
+              //   )
+              // }
             />
-            <Text
-              style={{
-                paddingTop: 20,
-                color: colorConfig.pageIndex.grayColor,
-                fontFamily: 'Lato-Bold',
-                textAlign: 'center',
-              }}>
-              You have reach end of category {item.name}
-            </Text>
           </View>
         );
       } else {
         return (
-          <View style={[styles.card, {height: 100 * length + 150}]}>
+          <View style={[styles.card, {height: 100 * length + 110}]}>
             <Text style={styles.titleCategory}>{item.name.substr(0, 35)}</Text>
             <RecyclerListView
               layoutProvider={this._layoutProvider}
               dataProvider={dataProvider.cloneWithRows(dataProducts)}
               rowRenderer={this.templateItem}
-              renderFooter={this.renderFooter}
-              onEndReached={() =>
-                this.loadMoreProducts(
-                  item.id,
-                  outletID,
-                  item.items.length,
-                  this.state.selectedCategory,
-                )
-              }
+              // renderFooter={this.renderFooter}
+              // onEndReached={() =>
+              //   this.loadMoreProducts(
+              //     item.id,
+              //     outletID,
+              //     item.items.length,
+              //     this.state.selectedCategory,
+              //   )
+              // }
             />
-            <Text
-              style={{
-                paddingTop: 20,
-                color: colorConfig.pageIndex.grayColor,
-                fontFamily: 'Lato-Bold',
-                textAlign: 'center',
-              }}>
-              You have reach end of category {item.name}
-            </Text>
           </View>
         );
       }
@@ -2042,7 +2035,6 @@ class Products2 extends Component {
       const {selectedCategory} = this.state;
       const {products} = this.state;
       const outletID = this.state.item.storeId;
-      console.log('reachhhhhhhhhhhh');
       // if (products[0].items.length != products[0].skip) {
       //   console.log(products[0].skip, 'COBAAAA');
       //   await this.getProductsLoadMore(products, outletID);
@@ -2063,31 +2055,34 @@ class Products2 extends Component {
   };
 
   updateCategory = async (item, itemIndex) => {
-    try {
-      const {products} = this.state;
-      if (this.state.selectedCategory != itemIndex) {
-        this.updateCategoryPosition(itemIndex);
-        await this.setState({selectedCategory: itemIndex});
-        await this.setState({idx: itemIndex});
-        await this.setState({loadProducts: false});
+    requestAnimationFrame(async () => {
+      try {
+        const {products} = this.state;
+        if (this.state.selectedCategory != itemIndex) {
+          this.setState({selectedCategory: itemIndex});
+          this.updateCategoryPosition(itemIndex);
+          await this.setState({idx: itemIndex});
+          await this.setState({loadProducts: false});
 
-        if (isEmptyArray(products[itemIndex].items)) {
-          await this.getProductsByCategory(item.id, 0, 20, false, itemIndex);
-          await this.setState({loadProducts: true});
-        } else {
-          setTimeout(() => {
-            this.setState({loadProducts: true});
-          }, 1500);
+          if (isEmptyArray(products[itemIndex].items) && itemIndex != 0) {
+            await this.setState({loadProducts: true});
+            // await this.getProductsByCategory(item.id, 0, 20, false, itemIndex);
+            this.getCategoryData(itemIndex);
+          } else {
+            setTimeout(() => {
+              this.setState({loadProducts: true});
+            }, 1500);
+          }
         }
-      }
 
-      // this.flatListRef.scrollToItem({
-      //   animated: true,
-      //   item: this.state.products[itemIndex],
-      // });
-    } catch (e) {
-      console.log(e);
-    }
+        // this.flatListRef.scrollToItem({
+        //   animated: true,
+        //   item: this.state.products[itemIndex],
+        // });
+      } catch (e) {
+        console.log(e);
+      }
+    });
   };
 
   renderCategoryProducts = (item, idx) => {
@@ -2677,7 +2672,85 @@ class Products2 extends Component {
     }
   };
 
+  loadMoreCategory = async () => {
+    try {
+      let {products} = this.state;
+      const outletID = this.state.item.storeId;
+      const categorySelected = await products.find(
+        item =>
+          isEmptyArray(item.items) &&
+          item.dataLength != 0 &&
+          item.id != 'allCategories',
+      );
+      const categoryIndex = await products.findIndex(
+        item => item.id == categorySelected.id,
+      );
+      if (categoryIndex > -1) {
+        // await this.setState({selectedCategory: categoryIndex});
+        await this.getProductsByCategory(
+          categorySelected.id,
+          0,
+          20,
+          false,
+          categoryIndex,
+        );
+        if (this.state.products[categoryIndex].dataLength > 0) {
+          let skip = 20;
+          for (
+            let i = 0;
+            i < Math.floor(this.state.products[categoryIndex].dataLength / 20);
+            i++
+          ) {
+            await this.loadMoreProducts(
+              this.state.products[categoryIndex].id,
+              outletID,
+              skip,
+              categoryIndex,
+            );
+            skip += 20;
+          }
+        }
+      }
+    } catch (e) {}
+  };
+
+  getCategoryData = async index => {
+    try {
+      let {products} = this.state;
+      const outletID = this.state.item.storeId;
+      const categorySelected = products[index];
+      const categoryIndex = index;
+      if (categoryIndex > -1) {
+        // await this.setState({selectedCategory: categoryIndex});
+        await this.getProductsByCategory(
+          categorySelected.id,
+          0,
+          20,
+          false,
+          categoryIndex,
+        );
+        if (this.state.products[categoryIndex].dataLength > 0) {
+          let skip = 20;
+          for (
+            let i = 0;
+            i < Math.floor(this.state.products[categoryIndex].dataLength / 20);
+            i++
+          ) {
+            await this.loadMoreProducts(
+              this.state.products[categoryIndex].id,
+              outletID,
+              skip,
+              categoryIndex,
+            );
+            skip += 20;
+          }
+        }
+      }
+    } catch (e) {}
+  };
+
   renderMainList = () => {
+    const {products} = this.state;
     return (
       <FlatList
         refreshControl={
@@ -2692,9 +2765,38 @@ class Products2 extends Component {
         }}
         // onViewableItemsChanged={this._onViewableItemsChanged}
         // viewabilityConfig={this._viewabilityConfig}
-        // initialNumToRender={2}
+        initialNumToRender={0}
+        ListFooterComponent={() => {
+          try {
+            const {products} = this.state;
+            if (products[products.length - 1].items == undefined) {
+              return (
+                <ActivityIndicator
+                  size={50}
+                  color={colorConfig.store.secondaryColor}
+                />
+              );
+            } else if (
+              products[products.length - 1].items.length !=
+              products[products.length - 1].dataLength
+            ) {
+              return (
+                <ActivityIndicator
+                  size={50}
+                  color={colorConfig.store.secondaryColor}
+                />
+              );
+            } else {
+              return null;
+            }
+          } catch (e) {
+            return null;
+          }
+        }}
+        onEndReached={this.loadMoreCategory}
+        onEndReachedThreshold={0.1}
         initialScrollIndex={0}
-        data={this.state.products}
+        data={products}
         extraData={this.props}
         // onScroll={event => {
         //   let yOffset = event.nativeEvent.contentOffset.y;
@@ -2709,7 +2811,7 @@ class Products2 extends Component {
         //   }
         // }}
         renderItem={({item, index}) => {
-          if (this.state.selectedCategory === index)
+          if (!isEmptyArray(item.items))
             return this.renderCategoryWithProducts(item, false);
         }}
         keyExtractor={(item, index) => index.toString()}
@@ -2753,7 +2855,12 @@ class Products2 extends Component {
 
   render() {
     const {intlData, item} = this.props;
-    let {loadProducts, visibleMenu, dialogSearch} = this.state;
+    let {
+      loadProducts,
+      visibleMenu,
+      dialogSearch,
+      selectedCategory,
+    } = this.state;
     let products = this.products;
 
     return (
@@ -2823,26 +2930,36 @@ class Products2 extends Component {
                       {item.storeName.substr(0, 20)}
                     </Text>
                   </TouchableOpacity>
+                  <CartIcon dataBasket={this.props.dataBasket} />
                   <TouchableOpacity
-                    style={{padding: 2, paddingRight: 1, marginLeft: '15%'}}
-                    onPress={this.goToCategorySelection}>
-                    <Icon
-                      size={28}
-                      name={Platform.OS === 'ios' ? 'ios-apps' : 'md-apps'}
-                      style={{color: colorConfig.store.defaultColor}}
-                    />
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={{padding: 2, paddingRight: 15, marginLeft: '10%'}}
+                    style={{
+                      padding: 2,
+                      paddingRight: 15,
+                      marginLeft: '10%',
+                      marginTop: 5,
+                      alignItems: 'center',
+                    }}
                     onPress={() => this.setState({dialogSearch: true})}>
                     <Icon
-                      size={28}
+                      size={22}
                       name={Platform.OS === 'ios' ? 'ios-search' : 'md-search'}
                       style={{color: colorConfig.store.defaultColor}}
                     />
+                    <Text
+                      style={{
+                        color: colorConfig.store.defaultColor,
+                        fontSize: 10,
+                        fontFamily: 'Lato-Medium',
+                      }}>
+                      Search
+                    </Text>
                   </TouchableOpacity>
                 </View>
                 <FlatList
+                  style={{
+                    borderTopWidth: 3,
+                    borderTopColor: colorConfig.store.containerColor,
+                  }}
                   ref={ref => {
                     this.categoryMenuRef = ref;
                   }}
@@ -2918,7 +3035,16 @@ class Products2 extends Component {
             !isEmptyArray(this.state.products) ? (
               loadProducts ? (
                 <>
-                  {this.renderMainList()}
+                  {selectedCategory == 0 ? (
+                    this.renderMainList()
+                  ) : (
+                    <ScrollView>
+                      {this.renderCategoryWithProducts(
+                        this.state.products[selectedCategory],
+                        false,
+                      )}
+                    </ScrollView>
+                  )}
                   {dialogSearch ? (
                     <View
                       style={{
@@ -2979,16 +3105,22 @@ class Products2 extends Component {
           )}
         </>
         {/* button basket */}
+        {/*{this.state.showBasketButton && !dialogSearch ? (*/}
+        {/*  this.props.dataBasket != undefined &&*/}
+        {/*  this.props.dataBasket.outlet != undefined &&*/}
+        {/*  this.props.dataBasket.outlet.id != undefined &&*/}
+        {/*  this.props.dataBasket.outlet.id == this.state.item.storeId ? (*/}
+        {/*    <ButtonViewBasket*/}
+        {/*      previousTableNo={this.props.previousTableNo}*/}
+        {/*      refreshQuantityProducts={this.refreshQuantityProducts}*/}
+        {/*    />*/}
+        {/*  ) : null*/}
+        {/*) : null}*/}
         {this.state.showBasketButton && !dialogSearch ? (
-          this.props.dataBasket != undefined &&
-          this.props.dataBasket.outlet != undefined &&
-          this.props.dataBasket.outlet.id != undefined &&
-          this.props.dataBasket.outlet.id == this.state.item.storeId ? (
-            <ButtonViewBasket
-              previousTableNo={this.props.previousTableNo}
-              refreshQuantityProducts={this.refreshQuantityProducts}
-            />
-          ) : null
+          <ButtonNavMenu
+            updateCategory={this.updateCategory}
+            products={this.state.products}
+          />
         ) : null}
       </SafeAreaView>
     );
@@ -3308,9 +3440,12 @@ const styles = StyleSheet.create({
   },
   categoryActive: {
     justifyContent: 'center',
-    borderBottomColor: colorConfig.store.defaultColor,
-    borderBottomWidth: 4,
-    marginBottom: -8,
+    borderColor: colorConfig.store.defaultColor,
+    borderWidth: 1,
+    marginRight: 5,
+    borderRadius: 3,
+    backgroundColor: `rgba(${colorConfig.PRIMARY_COLOR_RGB}, 0.05)`,
+    // marginBottom: -8,
     // padding: 2,
   },
   categoryNonActive: {

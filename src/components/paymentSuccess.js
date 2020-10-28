@@ -26,7 +26,7 @@ import {clearAccount, clearAddress} from '../actions/payment.actions';
 import {getPendingCart} from '../actions/order.action';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
-import {isEmptyObject} from '../helper/CheckEmpty';
+import {isEmptyArray, isEmptyObject} from '../helper/CheckEmpty';
 
 class PaymentSuccess extends Component {
   constructor(props) {
@@ -67,32 +67,34 @@ class PaymentSuccess extends Component {
   };
 
   goBack = async () => {
-    //  If this scene originates from ordering customers who are taking away, then point it back to basketball
     const {url, outlet} = this.props;
-    if (url != undefined && url == '/cart/submitTakeAway') {
-      // Actions.popTo('basket');
-      Actions.reset('app', {fromPayment: true});
-    } else {
-      Actions.reset('app', {fromPayment: true});
-      // Actions.reset('pageIndex', {initial: 'History'});
-    }
+    Actions.reset('app', {fromPayment: true});
 
     // Order Notifications
-    if (
-      outlet != undefined &&
-      outlet.orderNotification != undefined &&
-      outlet.orderNotification.estimatedWaitingMessage != undefined
-    ) {
-      if (
-        outlet.orderNotification.estimatedWaitingMessage != '' &&
-        outlet.orderNotification.estimatedWaitingMessage != '-'
-      ) {
-        Alert.alert(
-          'Ordering',
-          outlet.orderNotification.estimatedWaitingMessage,
-        );
-      }
-    }
+    try {
+      setTimeout(async () => {
+        if (
+          outlet != undefined &&
+          !isEmptyArray(outlet.waitingTimeMessages) &&
+          url != undefined
+        ) {
+          let needle = this.props.dataRespons.totalNettAmount;
+          let closest = await outlet.waitingTimeMessages.find(
+            item => needle >= item.minAmount && needle <= item.maxAmount,
+          );
+
+          if (closest != undefined) {
+            if (
+              closest.message != undefined &&
+              closest.message != null &&
+              closest.message != ''
+            ) {
+              Alert.alert('Ordering', closest.message);
+            }
+          }
+        }
+      }, 1000);
+    } catch (e) {}
   };
 
   getDate(date) {
@@ -139,6 +141,19 @@ class PaymentSuccess extends Component {
       return CurrencyFormatter(value).match(/[a-z]+|[^a-z]+/gi)[1];
     } catch (e) {
       return value;
+    }
+  };
+
+  format = item => {
+    try {
+      const curr = appConfig.appMataUang;
+      item = item.replace(curr, '');
+      if (curr != 'RP' && curr != 'IDR' && item.includes('.') == false) {
+        return `${item}.00`;
+      }
+      return item;
+    } catch (e) {
+      return item;
     }
   };
 
@@ -228,7 +243,9 @@ class PaymentSuccess extends Component {
                 fontSize: 35,
                 fontWeight: 'bold',
               }}>
-              {this.formatCurrency(this.props.dataRespons.price)}
+              {this.format(
+                CurrencyFormatter(this.props.dataRespons.totalNettAmount),
+              )}
             </Text>
           </View>
           {/*{this.props.dataRespons.earnedPoint > 0 ? (*/}
@@ -298,7 +315,7 @@ class PaymentSuccess extends Component {
                 fontSize: 14,
                 color: colorConfig.pageIndex.grayColor,
               }}>
-              {this.props.dataRespons.outletName}
+              {this.props.outlet.name}
             </Text>
           </View>
         </View>
@@ -333,26 +350,26 @@ class PaymentSuccess extends Component {
               {this.getDate(this.props.dataRespons.createdAt)}
             </Text>
           </View>
-          <View
-            style={{
-              flexDirection: 'column',
-              // justifyContent: 'space-between',
-            }}>
-            {/*<Text*/}
-            {/*  style={{*/}
-            {/*    color: colorConfig.pageIndex.grayColor,*/}
-            {/*  }}>*/}
-            {/*  {intlData.messages.paymentType}*/}
-            {/*</Text>*/}
-            <Text
-              style={{
-                marginTop: 10,
-                textAlign: 'right',
-                color: colorConfig.pageIndex.grayColor,
-              }}>
-              {this.getPaymentType(this.props.dataRespons.paymentCard)}
-            </Text>
-          </View>
+          {/*<View*/}
+          {/*  style={{*/}
+          {/*    flexDirection: 'column',*/}
+          {/*    // justifyContent: 'space-between',*/}
+          {/*  }}>*/}
+          {/*  /!*<Text*!/*/}
+          {/*  /!*  style={{*!/*/}
+          {/*  /!*    color: colorConfig.pageIndex.grayColor,*!/*/}
+          {/*  /!*  }}>*!/*/}
+          {/*  /!*  {intlData.messages.paymentType}*!/*/}
+          {/*  /!*</Text>*!/*/}
+          {/*  <Text*/}
+          {/*    style={{*/}
+          {/*      marginTop: 10,*/}
+          {/*      textAlign: 'right',*/}
+          {/*      color: colorConfig.pageIndex.grayColor,*/}
+          {/*    }}>*/}
+          {/*    {this.getPaymentType(this.props.dataRespons.paymentCard)}*/}
+          {/*  </Text>*/}
+          {/*</View>*/}
           <View
             style={{
               backgroundColor: colorConfig.pageIndex.grayColor,
@@ -381,7 +398,7 @@ class PaymentSuccess extends Component {
                 backgroundColor: colorConfig.pageIndex.activeTintColor,
                 borderRadius: 10,
               }}
-              onPress={this.goBack}>
+              onPress={this.handleBackPress}>
               <Text
                 style={{
                   color: colorConfig.pageIndex.backgroundColor,
