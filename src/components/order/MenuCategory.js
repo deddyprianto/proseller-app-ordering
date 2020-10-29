@@ -16,11 +16,11 @@ import {
   TouchableOpacity,
   BackHandler,
 } from 'react-native';
-import ListItem from '../referral/ListItem';
 import {isEmptyArray} from '../../helper/CheckEmpty';
 import Icon from 'react-native-vector-icons/Ionicons';
 import colorConfig from '../../config/colorConfig';
 import {Actions} from 'react-native-router-flux';
+import GridItem from './GridItem';
 
 export default class MenuCategory extends Component {
   constructor(props) {
@@ -113,10 +113,12 @@ export default class MenuCategory extends Component {
             style={styles.searchBar}
           />
           <FlatList
+            style={{marginLeft: 2}}
             data={products}
+            numColumns={3}
             renderItem={(item, index) => {
               return (
-                <ListItem
+                <GridItem
                   key={index}
                   item={item}
                   onPress={() => this.updateCategory(item.item, item.index)}
@@ -167,8 +169,14 @@ const styles = StyleSheet.create({
     fontSize: 17,
   },
   searchBar: {
-    backgroundColor: '#f0eded',
+    backgroundColor: colorConfig.store.transparentBG,
+    borderRadius: 6,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: 'gray',
+    width: '85%',
+    alignSelf: 'center',
+    marginBottom: 10,
     paddingHorizontal: 30,
-    paddingVertical: 13,
+    paddingVertical: 10,
   },
 });

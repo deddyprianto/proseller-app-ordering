@@ -40,7 +40,7 @@ export default class CartIcon extends Component {
         style={{
           padding: 2,
           paddingRight: 1,
-          marginLeft: '15%',
+          marginLeft: '5%',
           marginTop: 5,
           justifyContent: 'center',
         }}

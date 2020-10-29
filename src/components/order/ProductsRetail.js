@@ -152,6 +152,7 @@ class Products2 extends Component {
       categories: [],
       productsSearch: undefined,
       loadingSearch: false,
+      indexLoaded: 1,
     };
   }
 
@@ -857,6 +858,7 @@ class Products2 extends Component {
           categories[idxCategory].dataLength = response.dataLength;
           categories[idxCategory].skip = take;
           categories[idxCategory].take = take;
+          categories[idxCategory].index = idxCategory;
         }
         await this.setState({
           products: categories,
@@ -2057,7 +2059,7 @@ class Products2 extends Component {
   updateCategory = async (item, itemIndex) => {
     requestAnimationFrame(async () => {
       try {
-        const {products} = this.state;
+        let {products} = this.state;
         if (this.state.selectedCategory != itemIndex) {
           this.setState({selectedCategory: itemIndex});
           this.updateCategoryPosition(itemIndex);
@@ -2072,6 +2074,14 @@ class Products2 extends Component {
             setTimeout(() => {
               this.setState({loadProducts: true});
             }, 1500);
+          }
+
+          if (itemIndex === 0) {
+            try {
+              products[products.length - 1].items = undefined;
+              this.setState({products});
+            } catch (e) {}
+            this.setState({indexLoaded: 1});
           }
         }
 
@@ -2685,6 +2695,7 @@ class Products2 extends Component {
       const categoryIndex = await products.findIndex(
         item => item.id == categorySelected.id,
       );
+      await this.setState({indexLoaded: this.state.indexLoaded + 1});
       if (categoryIndex > -1) {
         // await this.setState({selectedCategory: categoryIndex});
         await this.getProductsByCategory(
@@ -2750,7 +2761,7 @@ class Products2 extends Component {
   };
 
   renderMainList = () => {
-    const {products} = this.state;
+    const {products, indexLoaded} = this.state;
     return (
       <FlatList
         refreshControl={
@@ -2811,8 +2822,11 @@ class Products2 extends Component {
         //   }
         // }}
         renderItem={({item, index}) => {
-          if (!isEmptyArray(item.items))
-            return this.renderCategoryWithProducts(item, false);
+          if (!isEmptyArray(item.items)) {
+            if (item.index <= indexLoaded) {
+              return this.renderCategoryWithProducts(item, false);
+            }
+          }
         }}
         keyExtractor={(item, index) => index.toString()}
       />
@@ -2930,12 +2944,11 @@ class Products2 extends Component {
                       {item.storeName.substr(0, 20)}
                     </Text>
                   </TouchableOpacity>
-                  <CartIcon dataBasket={this.props.dataBasket} />
                   <TouchableOpacity
                     style={{
                       padding: 2,
                       paddingRight: 15,
-                      marginLeft: '10%',
+                      marginLeft: '12%',
                       marginTop: 5,
                       alignItems: 'center',
                     }}
@@ -2954,6 +2967,7 @@ class Products2 extends Component {
                       Search
                     </Text>
                   </TouchableOpacity>
+                  <CartIcon dataBasket={this.props.dataBasket} />
                 </View>
                 <FlatList
                   style={{
