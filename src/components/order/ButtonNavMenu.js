@@ -1,10 +1,5 @@
 import React, {Component} from 'react';
-import {
-  Text,
-  TouchableOpacity,
-  Platform,
-  View,
-} from 'react-native';
+import {Text, TouchableOpacity, Platform, View} from 'react-native';
 import {Actions} from 'react-native-router-flux';
 import colorConfig from '../../config/colorConfig';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -35,7 +30,7 @@ export default class ButtonNavMenu extends Component {
           paddingVertical: 13,
           flexDirection: 'row',
           alignItems: 'center',
-          justifyContent: 'space-evenly',
+          // justifyContent: 'center',
           shadowColor: '#00000021',
           shadowOffset: {
             width: 10,
@@ -51,6 +46,7 @@ export default class ButtonNavMenu extends Component {
             flexDirection: 'row',
             justifyContent: 'center',
             alignItems: 'center',
+            width: '48%',
           }}>
           <Icon
             size={27}
@@ -73,6 +69,7 @@ export default class ButtonNavMenu extends Component {
             flexDirection: 'row',
             justifyContent: 'center',
             alignItems: 'center',
+            width: '48%',
           }}>
           <Icon
             size={27}
