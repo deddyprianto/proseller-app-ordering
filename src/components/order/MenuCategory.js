@@ -21,13 +21,16 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import colorConfig from '../../config/colorConfig';
 import {Actions} from 'react-native-router-flux';
 import GridItem from './GridItem';
+import LoaderDarker from '../LoaderDarker';
+import Loader from '../loader';
 
 export default class MenuCategory extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      products: this.props.products,
+      products: [],
       selectedCategory: this.props.selectedCategory,
+      loading: true,
     };
   }
 
@@ -41,6 +44,11 @@ export default class MenuCategory extends Component {
         'hardwareBackPress',
         this.handleBackPress,
       );
+    } catch (e) {}
+    try {
+      setTimeout(() => {
+        this.setState({products: this.props.products, loading: false});
+      }, 2500);
     } catch (e) {}
   }
 
@@ -88,6 +96,7 @@ export default class MenuCategory extends Component {
 
     return (
       <SafeAreaView style={styles.container}>
+        {this.state.loading && <Loader />}
         <View style={styles.container}>
           <View
             style={[

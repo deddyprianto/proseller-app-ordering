@@ -72,7 +72,7 @@ class HistoryPayment extends Component {
         item.status == 'READY_FOR_DELIVERY' ||
         item.status == 'ON_THE_WAY'
       ) {
-        Actions.waitingFood({myCart: item});
+        Actions.waitingFood({myCart: item, isPop: true});
       } else {
         Actions.cart({myCart: item});
       }
@@ -82,17 +82,17 @@ class HistoryPayment extends Component {
   componentDidMount = async () => {
     this.setState({refreshing: true});
     this.getDataHistory();
-    try {
-      // clearInterval(this.interval);
-      // this.interval = setInterval(() => {
-      //   this.props.dispatch(getPendingCart());
-      // }, 8000);
-    } catch (e) {}
+    // try {
+    //   clearInterval(this.interval);
+    //   this.interval = setInterval(() => {
+    //     this.props.dispatch(getPendingCart());
+    //   }, 60000);
+    // } catch (e) {}
   };
 
   componentWillUnmount() {
     try {
-      // clearInterval(this.interval);
+      clearInterval(this.interval);
     } catch (e) {}
   }
 
@@ -368,13 +368,14 @@ const styles = StyleSheet.create({
     width: Dimensions.get('window').width - 60,
   },
   storeName: {
-    color: colorConfig.pageIndex.activeTintColor,
+    color: colorConfig.store.secondaryColor,
     fontSize: 16,
     fontFamily: 'Lato-Bold',
   },
   paymentTgl: {
     color: colorConfig.pageIndex.inactiveTintColor,
     fontFamily: 'Lato-Medium',
+    fontSize: 13,
   },
   paymentTypeLogo: {
     width: 20,
@@ -383,7 +384,7 @@ const styles = StyleSheet.create({
     color: colorConfig.store.defaultColor,
   },
   paymentType: {
-    color: colorConfig.store.secondaryColor,
+    color: colorConfig.store.defaultColor,
     fontSize: 13,
   },
   itemType: {

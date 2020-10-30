@@ -772,6 +772,7 @@ class Products2 extends Component {
         response.data.unshift({
           id: 'allCategories',
           name: 'All Categories',
+          index: 0,
         });
         await this.setState({
           categories: response.data,
@@ -2967,7 +2968,10 @@ class Products2 extends Component {
                       Search
                     </Text>
                   </TouchableOpacity>
-                  <CartIcon dataBasket={this.props.dataBasket} />
+                  <CartIcon
+                    outletID={this.state.item.storeId}
+                    dataBasket={this.props.dataBasket}
+                  />
                 </View>
                 <FlatList
                   style={{

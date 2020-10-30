@@ -22,19 +22,23 @@ export default class CartIcon extends Component {
 
   getCountProducts = () => {
     try {
-      const {dataBasket} = this.props;
-      let total = 0;
-      dataBasket.details.map(item => {
-        total += item.quantity;
-      });
-      return total;
+      const {dataBasket, outletID} = this.props;
+      if (dataBasket != undefined) {
+        if (dataBasket.outlet.id === outletID) {
+          let total = 0;
+          dataBasket.details.map(item => {
+            total += item.quantity;
+          });
+          return total;
+        }
+      }
     } catch (e) {
       return null;
     }
   };
 
   render() {
-    const {dataBasket} = this.props;
+    const {dataBasket, outletID} = this.props;
     return (
       <TouchableOpacity
         style={{
@@ -58,7 +62,7 @@ export default class CartIcon extends Component {
           }}>
           Cart
         </Text>
-        {dataBasket != undefined && (
+        {dataBasket != undefined && dataBasket.outlet.id === outletID && (
           <View
             style={{
               position: 'absolute',

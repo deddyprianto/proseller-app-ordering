@@ -162,6 +162,18 @@ class HistoryPayment extends Component {
     }
   };
 
+  getAmountHistory = item => {
+    try {
+      if (item.totalNettAmount != undefined) {
+        return this.formatCurrency(item.totalNettAmount);
+      } else {
+        return this.formatCurrency(item.afterPrice);
+      }
+    } catch (e) {
+      return this.formatCurrency(item.afterPrice);
+    }
+  };
+
   render() {
     const {intlData} = this.props;
     return (
@@ -195,7 +207,9 @@ class HistoryPayment extends Component {
                 <View style={styles.sejajarSpace}>
                   <View style={styles.detail}>
                     <View style={styles.sejajarSpace}>
-                      <Text style={styles.storeName}>{item.outletName.substr(0, 20)}</Text>
+                      <Text style={styles.storeName}>
+                        {item.outletName.substr(0, 20)}
+                      </Text>
                       <View>
                         {item.queueNo != undefined ? (
                           <Text style={styles.queueNo}>{item.queueNo}</Text>
@@ -211,7 +225,7 @@ class HistoryPayment extends Component {
                       </View>
                     </View>
 
-                    {!isEmptyArray(item.stamps) && item.stamps.length > 1 ? (
+                    {!isEmptyArray(item.stamps) && item.stamps.length > 0 ? (
                       <View style={styles.sejajarSpaceFlexEnd}>
                         <Text style={styles.itemTypeStamps}>
                           <Text style={{color: colorConfig.store.title}}>
@@ -234,7 +248,7 @@ class HistoryPayment extends Component {
                         />
                         <Text style={styles.paymentType}>
                           {/*{appConfig.appMataUang}*/}
-                          {this.formatCurrency(item.afterPrice)}
+                          {this.getAmountHistory(item)}
                         </Text>
                       </View>
                       <Text style={styles.paymentTgl}>
@@ -321,7 +335,7 @@ const styles = StyleSheet.create({
     width: Dimensions.get('window').width - 60,
   },
   storeName: {
-    color: colorConfig.pageIndex.activeTintColor,
+    color: colorConfig.store.secondaryColor,
     fontSize: 16,
     fontFamily: 'Lato-Bold',
   },

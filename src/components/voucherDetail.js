@@ -221,6 +221,7 @@ class VoucherDetail extends Component {
 
   refreshMyVouchers = () => {
     let myVoucers = [];
+    const {dataVoucer} = this.props;
     try {
       if (
         this.props.myVoucers != undefined &&
@@ -236,6 +237,19 @@ class VoucherDetail extends Component {
             myVoucers.push(value[0]);
           },
         );
+
+        // REMOVE VOUCHER SELECTED FROM LIST
+        if (!isEmptyArray(dataVoucer)) {
+          for (let x = 0; x < dataVoucer.length; x++) {
+            for (let y = 0; y < myVoucers.length; y++) {
+              if (dataVoucer[x].isVoucher == true) {
+                if (dataVoucer[x].uniqueID == myVoucers[y].uniqueID) {
+                  myVoucers[y].totalRedeem -= 1;
+                }
+              }
+            }
+          }
+        }
 
         this.props.setVouchers(myVoucers);
       }
