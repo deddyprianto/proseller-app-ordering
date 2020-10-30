@@ -142,50 +142,6 @@ export const getProductByCategory = (OutletId, categoryId, skip, take) => {
   };
 };
 
-export const searchItem = (OutletId, categoryId, value) => {
-  return async (dispatch, getState) => {
-    const state = getState();
-    try {
-      const {
-        authReducer: {
-          tokenUser: {token},
-        },
-      } = state;
-
-      const payload = {
-        skip: 0,
-        take: 100,
-        sortBy: 'name',
-        sortDirection: 'asc',
-        parameters: [
-          {
-            key: 'name',
-            value: value,
-          },
-        ],
-      };
-
-      const PRESET_TYPE = 'CRM';
-
-      let response = await fetchApiProduct(
-        `/productpreset/loaditems/${PRESET_TYPE}/${OutletId}/${categoryId}`,
-        'POST',
-        payload,
-        200,
-        token,
-      );
-
-      console.log('RESPONSE SEARCH ITEMS BY CATEGORY ', response);
-
-      if (response.success == true) {
-        return response.response.data;
-      } else {
-        return false;
-      }
-    } catch (e) {}
-  };
-};
-
 export const searchProducts = (OutletId, categories, query) => {
   return async (dispatch, getState) => {
     const state = getState();
@@ -909,5 +865,36 @@ export const getProductsUnavailable = OutletId => {
         return false;
       }
     } catch (e) {}
+  };
+};
+
+export const getTermsConditions = (payload, url) => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      const response = await fetchApiOrder(
+        '/orderingsetting/app',
+        'GET',
+        null,
+        200,
+        token,
+      );
+
+      console.log(response, 'RESPONSE ORDERING SETTING');
+
+      if (response.success) {
+        return response.response.data;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      return error;
+    }
   };
 };

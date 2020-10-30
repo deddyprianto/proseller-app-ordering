@@ -40,7 +40,7 @@ import {getCompanyInfo} from '../actions/stores.action';
 import {getAccountPayment} from '../actions/payment.actions';
 import OneSignal from 'react-native-onesignal';
 import {dataInbox} from '../actions/inbox.action';
-import {getMandatoryFields} from '../actions/account.action';
+import {getMandatoryFields, paymentRefNo} from '../actions/account.action';
 import {Overlay} from 'react-native-elements';
 import {
   getCart,
@@ -67,8 +67,12 @@ class Rewards extends Component {
       onesignalID: null,
     };
 
-    OneSignal.addEventListener('received', this.onReceived);
-    OneSignal.addEventListener('ids', this.onIds);
+    try {
+      OneSignal.removeEventListener('received', this.onReceived);
+    } catch (e) {}
+    try {
+      OneSignal.addEventListener('received', this.onReceived);
+    } catch (e) {}
   }
 
   onIds = async device => {
@@ -85,7 +89,6 @@ class Rewards extends Component {
     const page2 = 'paymentSuccess';
     const page3 = 'settleOrder';
     const page4 = 'hostedTrx';
-    // console.log('Notification received: ', notification);
 
     // refresh pending cart
     try {
@@ -97,9 +100,13 @@ class Rewards extends Component {
       this.props.dispatch(getCartHomePage());
     } catch (e) {}
 
+    // DETECT IN APP PAYMENT
+    this.inAppPayment(notification);
+
     if (
       (notification.payload.title.includes('Payment') ||
         notification.payload.title.includes('Ordering')) &&
+      !notification.payload.title.includes('Payment Request') &&
       scene != page1 &&
       scene != page2 &&
       scene != page3 &&
@@ -112,6 +119,29 @@ class Rewards extends Component {
     this._onRefresh();
   };
 
+  inAppPayment = async notification => {
+    try {
+      if (notification.payload.launchURL != undefined) {
+        const refNo = notification.payload.launchURL.replace(
+          `${awsConfig.APP_DEEP_LINK}/payment/`,
+          '',
+        );
+        // await this.props.dispatch(paymentRefNo(refNo));
+        Actions.scan({paymentRefNo: refNo});
+      }
+    } catch (e) {}
+  };
+
+  getDeepLinkiOS = async () => {
+    try {
+      if (this.props.paymentRefNo != undefined) {
+        if (Actions.currentScene === 'pageIndex') {
+          Actions.scan({paymentRefNo: this.props.paymentRefNo});
+        }
+      }
+    } catch (e) {}
+  };
+
   disableStatusGetData = () => {
     this.setState({statusGetData: false});
   };
@@ -122,12 +152,8 @@ class Rewards extends Component {
 
   componentDidMount = async () => {
     await this.getDataRewards();
-
     this.checkOneSignal();
     this.checkUseApp();
-
-    // IF OUTLET FOR THIS COMPANY IS ONLY 1, THEN SETUP DETAIL OUTLET NOW
-    // this.initializeStore();
   };
 
   checkDefaultPaymentAccount = async response => {
@@ -212,8 +238,6 @@ class Rewards extends Component {
         this.props.dispatch(dataPoint()),
         this.props.dispatch(getStamps()),
         this.props.dispatch(recentTransaction()),
-        // this.props.dispatch(getUserProfile()),
-        // this.props.dispatch(getMandatoryFields()),
       ]);
       await this.setState({isLoading: false});
       this.props.dispatch(getAccountPayment());
@@ -223,14 +247,8 @@ class Rewards extends Component {
       this.props.dispatch(getCompanyInfo());
       const response = await this.props.dispatch(getAccountPayment());
       await this.checkDefaultPaymentAccount(response);
+      this.getDeepLinkiOS();
       await this.getUserPosition();
-      // await this.props.dispatch(refreshToken());
-      // await this.props.dispatch(campaign());
-      // await this.props.dispatch(dataPoint());
-      // await this.props.dispatch(getStamps());
-      // await this.props.dispatch(recentTransaction());
-      // await this.props.dispatch(getUserProfile());
-      // await this.props.dispatch(getMandatoryFields());
     } catch (error) {
       await this.props.dispatch(
         notifikasi(
@@ -349,9 +367,12 @@ class Rewards extends Component {
               {this.state.isLoading ? (
                 <RewardsStamp isLoading={this.state.isLoading} />
               ) : this.props.dataStamps == undefined ||
-                isEmptyObject(this.props.dataStamps.dataStamps) ? (
-                this.greetWelcomeUser()
-              ) : !isEmptyObject(this.props.dataStamps.dataStamps.trigger) &&
+                isEmptyObject(
+                  this.props.dataStamps.dataStamps,
+                ) ? null : !isEmptyObject(
+                  // this.greetWelcomeUser()
+                  this.props.dataStamps.dataStamps.trigger,
+                ) &&
                 this.props.dataStamps.dataStamps.trigger.campaignTrigger ===
                   'COMPLETE_PROFILE' &&
                 this.props.dataStamps.dataStamps.trigger.status === false ? (
@@ -507,8 +528,6 @@ const styles = StyleSheet.create({
 });
 
 mapStateToProps = state => ({
-  dataBasket: state.orderReducer.dataCartSingle.cartSingle,
-  fields: state.accountsReducer.mandatoryFields.fields,
   recentTransaction: state.rewardsReducer.dataPoint.recentTransaction,
   defaultAccount: state.userReducer.defaultPaymentAccount.defaultAccount,
   myCardAccount: state.cardReducer.myCardAccount.card,
@@ -520,8 +539,8 @@ mapStateToProps = state => ({
   userDetail: state.userReducer.getUser.userDetails,
   intlData: state.intlData,
   userPosition: state.userReducer.userPosition.userPosition,
-  dataStores: state.storesReducer.dataStores.stores,
   companyInfo: state.userReducer.getCompanyInfo.companyInfo,
+  paymentRefNo: state.accountsReducer.paymentRefNo.paymentRefNo,
 });
 
 mapDispatchToProps = dispatch => ({

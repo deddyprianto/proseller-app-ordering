@@ -24,6 +24,17 @@ const afterPayment = (state = {}, action) => {
   }
 };
 
+const paymentRefNo = (state = {}, action) => {
+  switch (action.type) {
+    case 'PAYMENT_REF_NO':
+      return {
+        paymentRefNo: action.data,
+      };
+    default:
+      return state;
+  }
+};
+
 const mandatoryFields = (state = {}, action) => {
   switch (action.type) {
     case 'DATA_MANDATORY_FIELDS':
@@ -53,4 +64,5 @@ export default combineReducers({
   accountExist,
   mandatoryFields,
   afterPayment,
+  paymentRefNo,
 });

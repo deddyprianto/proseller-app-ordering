@@ -11,8 +11,8 @@ import {
   Dimensions,
   StatusBar,
   AsyncStorage,
-  Linking,
   Alert,
+  Platform,
 } from 'react-native';
 import {connect} from 'react-redux';
 
@@ -28,6 +28,7 @@ import {deviceUserInfo} from './actions/user.action';
 import OfflineNotice from './components/OfflineNotice';
 import {getCompanyInfo} from './actions/stores.action';
 import VersionCheck from 'react-native-version-check';
+import {paymentRefNo} from './actions/account.action';
 
 class Main extends Component {
   constructor(props) {
@@ -44,8 +45,11 @@ class Main extends Component {
     };
 
     OneSignal.inFocusDisplaying(2);
-    OneSignal.addEventListener('received', this.onReceived);
-    OneSignal.addEventListener('opened', this.onOpened);
+
+    if (Platform.OS === 'ios') {
+      OneSignal.addEventListener('opened', this.onOpened);
+    }
+
     OneSignal.addEventListener('ids', this.onIds);
   }
 
@@ -63,33 +67,15 @@ class Main extends Component {
       console.log(error);
     }
 
-    // this.checkUpdateAndVersion();
+    this.checkUpdateAndVersion();
   }
 
   checkUpdateAndVersion = () => {
     try {
-      // VersionCheck.getCountry().then(country => console.log(country));
-      // console.log(VersionCheck.getPackageName());
-      // console.log(VersionCheck.getCurrentBuildNumber());
-      // console.log(VersionCheck.getCurrentVersion());
-
-      VersionCheck.needUpdate().then(async res => {
-        if (res.isNeeded) {
-          Alert.alert(
-            'Apps Update.',
-            'Application updates are already available on the store.',
-            [
-              {
-                text: 'Later',
-                onPress: () => console.log('Cancel Pressed'),
-                style: 'cancel',
-              },
-              {text: 'Update', onPress: () => Linking.openURL(res.storeUrl)},
-            ],
-            {cancelable: false},
-          );
-        }
-      });
+      VersionCheck.getCountry().then(country => console.log(country));
+      console.log(VersionCheck.getPackageName());
+      console.log(VersionCheck.getCurrentBuildNumber());
+      console.log(VersionCheck.getCurrentVersion());
     } catch (e) {}
   };
 
@@ -117,9 +103,9 @@ class Main extends Component {
   };
 
   componentWillUnmount() {
-    OneSignal.removeEventListener('received', this.onReceived);
+    // OneSignal.removeEventListener('received', this.onReceived);
     OneSignal.removeEventListener('opened', this.onOpened);
-    OneSignal.removeEventListener('ids', this.onIds);
+    // OneSignal.removeEventListener('ids', this.onIds);
   }
 
   onReceived = notification => {
@@ -134,12 +120,30 @@ class Main extends Component {
     // }
   };
 
-  onOpened(openResult) {
+  onOpened = openResult => {
     // console.log('Message: ', openResult.notification.payload.body);
     // console.log('Data: ', openResult.notification.payload.additionalData);
     // console.log('isActive: ', openResult.notification.isAppInFocus);
     // console.log('openResult: ', openResult);
-  }
+    this.getDeepLink(openResult);
+  };
+
+  getDeepLink = async openResult => {
+    try {
+      if (Platform.OS === 'ios') {
+        if (openResult.notification.payload.launchURL != undefined) {
+          const refNo = openResult.notification.payload.launchURL.replace(
+            `${awsConfig.APP_DEEP_LINK}/payment/`,
+            '',
+          );
+          await this.props.dispatch(paymentRefNo(refNo));
+        }
+      }
+    } catch (e) {}
+    try {
+      OneSignal.removeEventListener('opened', this.onOpened);
+    } catch (e) {}
+  };
 
   onIds = async device => {
     console.log('Device info: ', device.userId);

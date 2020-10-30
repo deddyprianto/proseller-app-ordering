@@ -15,6 +15,7 @@ import Inbox from './inbox';
 import Account from './account';
 import colorConfig from '../config/colorConfig';
 import IconMail from '../components/atom/IconMail';
+import {paymentRefNo} from '../actions/account.action';
 
 const AppTabNavigator = createMaterialBottomTabNavigator(
   {
@@ -198,8 +199,19 @@ class PageIndex extends Component {
     };
   }
 
+  componentDidMount = async () => {
+    try {
+      try {
+        if (this.props.paymentRefNo != undefined) {
+          await this.props.dispatch(paymentRefNo(this.props.paymentRefNo));
+        }
+      } catch (e) {}
+    } catch (e) {}
+  };
+
   render() {
     const {fromPayment} = this.props;
+
     return (
       <Container>
         {fromPayment == true ? (

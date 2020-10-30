@@ -36,7 +36,7 @@ export const myVoucers = () => {
                 ' ' +
                 dataVouchers[i].id;
             } else {
-              dataVouchers[i].uniqueID = null;
+              dataVouchers[i].uniqueID = dataVouchers[i].id;
             }
           }
         }
@@ -58,6 +58,19 @@ export const afterPayment = status => {
       dispatch({
         type: 'AFTER_PAYMENT',
         data: status,
+      });
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const paymentRefNo = data => {
+  return async (dispatch, getState) => {
+    try {
+      dispatch({
+        type: 'PAYMENT_REF_NO',
+        data: data,
       });
     } catch (error) {
       return error;

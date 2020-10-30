@@ -96,7 +96,14 @@ export const sendPayment = payload => {
       } = state;
 
       console.log(payload, 'payload sendPayment');
-      const response = await fetchApi('/sales', 'POST', payload, 200, token);
+      // const response = await fetchApi('/sales', 'POST', payload, 200, token);
+      const response = await fetchApi(
+        '/payment/create',
+        'POST',
+        payload,
+        200,
+        token,
+      );
       console.log(response, 'response send payment');
       var result = {
         responseBody: response.responseBody,

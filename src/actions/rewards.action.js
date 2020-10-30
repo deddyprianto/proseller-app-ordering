@@ -295,6 +295,11 @@ export const cutomerActivity = (skip, take, isReceive) => {
             }
             const dataLength = response.responseBody.dataLength;
             const actualLength = response.responseBody.data.length;
+
+            if (data == undefined) {
+              data = [];
+            }
+
             return {data, dataLength, actualLength};
           } else {
             return [];

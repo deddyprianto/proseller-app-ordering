@@ -86,6 +86,7 @@ import ChangeCredentialsOTP from '../pages/ChangeCredentialsOTP';
 import PickUpTime from '../components/order/PickUpTime';
 import ProductsRetail from '../components/order/ProductsRetail';
 import MenuCategory from '../components/order/MenuCategory';
+import awsConfig from './awsConfig';
 
 let backPressed = 0;
 
@@ -122,7 +123,7 @@ export default class Routes extends Component {
 
   render() {
     return (
-      <Router>
+      <Router uriPrefix={awsConfig.APP_DEEP_LINK}>
         <Scene>
           <Scene
             key="root"
@@ -174,7 +175,11 @@ export default class Routes extends Component {
             <Scene key="pay" component={Pay} />
             <Scene key="rewards" component={Rewards} />
             <Scene key="qrcode" component={RewardsQRmenu} />
-            <Scene key="scan" component={RewardsQRscan} />
+            <Scene
+              key="scan"
+              path={'/payment/:paymentRefNo/'}
+              component={RewardsQRscan}
+            />
             <Scene key="voucher" component={VoucherDetail} />
             <Scene
               key="historyDetailPayment"
