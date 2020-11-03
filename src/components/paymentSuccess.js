@@ -13,6 +13,7 @@ import {
   BackHandler,
   TouchableOpacity,
   Platform,
+  Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -23,8 +24,11 @@ import CurrencyFormatter from '../helper/CurrencyFormatter';
 import {clearAccount, clearAddress} from '../actions/payment.actions';
 // import OneSignal from 'react-native-onesignal';
 import {getPendingCart} from '../actions/order.action';
+import {compose} from 'redux';
+import {connect} from 'react-redux';
+import {isEmptyArray, isEmptyObject} from '../helper/CheckEmpty';
 
-export default class PaymentSuccess extends Component {
+class PaymentSuccess extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -39,10 +43,16 @@ export default class PaymentSuccess extends Component {
   }
 
   componentDidMount = async () => {
-    this.backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      this.handleBackPress,
-    );
+    try {
+      this.backHandler = BackHandler.addEventListener(
+        'hardwareBackPress',
+        this.handleBackPress,
+      );
+    } catch (e) {}
+    try {
+      this.props.dispatch(clearAccount());
+      this.props.dispatch(getPendingCart());
+    } catch (e) {}
   };
 
   componentWillUnmount() {
@@ -57,15 +67,34 @@ export default class PaymentSuccess extends Component {
   };
 
   goBack = async () => {
-    //  If this scene originates from ordering customers who are taking away, then point it back to basketball
-    const {url} = this.props;
-    if (url != undefined && url == '/cart/submitTakeAway') {
-      // Actions.popTo('basket');
-      Actions.reset('pageIndex', {fromPayment: true});
-    } else {
-      Actions.reset('pageIndex', {fromPayment: true});
-      // Actions.reset('pageIndex', {initial: 'History'});
-    }
+    const {url, outlet} = this.props;
+    Actions.reset('app', {fromPayment: true});
+
+    // Order Notifications
+    try {
+      setTimeout(async () => {
+        if (
+          outlet != undefined &&
+          !isEmptyArray(outlet.waitingTimeMessages) &&
+          url != undefined
+        ) {
+          let needle = this.props.dataRespons.totalNettAmount;
+          let closest = await outlet.waitingTimeMessages.find(
+            item => needle >= item.minAmount && needle <= item.maxAmount,
+          );
+
+          if (closest != undefined) {
+            if (
+              closest.message != undefined &&
+              closest.message != null &&
+              closest.message != ''
+            ) {
+              Alert.alert('Ordering', closest.message);
+            }
+          }
+        }
+      }, 1000);
+    } catch (e) {}
   };
 
   getDate(date) {
@@ -112,6 +141,31 @@ export default class PaymentSuccess extends Component {
       return CurrencyFormatter(value).match(/[a-z]+|[^a-z]+/gi)[1];
     } catch (e) {
       return value;
+    }
+  };
+
+  format = item => {
+    try {
+      const curr = appConfig.appMataUang;
+      item = item.replace(curr, '');
+      if (curr != 'RP' && curr != 'IDR' && item.includes('.') == false) {
+        return `${item}.00`;
+      }
+      return item;
+    } catch (e) {
+      return item;
+    }
+  };
+
+  getPaymentType = item => {
+    try {
+      if (!isEmptyObject(item.details)) {
+        return item.details.cardIssuer.toUpperCase() + ' ' + item.paymentName;
+      } else {
+        return item.paymentName;
+      }
+    } catch (e) {
+      return '-';
     }
   };
 
@@ -176,7 +230,9 @@ export default class PaymentSuccess extends Component {
                 fontSize: 35,
                 fontWeight: 'bold',
               }}>
-              {this.formatCurrency(this.props.dataRespons.price)}
+              {this.format(
+                CurrencyFormatter(this.props.dataRespons.totalNettAmount),
+              )}
             </Text>
           </View>
           {/*{this.props.dataRespons.earnedPoint > 0 ? (*/}
@@ -246,7 +302,7 @@ export default class PaymentSuccess extends Component {
                 fontSize: 14,
                 color: colorConfig.pageIndex.grayColor,
               }}>
-              {this.props.dataRespons.outletName}
+              {this.props.outlet.name}
             </Text>
           </View>
         </View>
@@ -281,24 +337,26 @@ export default class PaymentSuccess extends Component {
               {this.getDate(this.props.dataRespons.createdAt)}
             </Text>
           </View>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-            }}>
-            <Text
-              style={{
-                color: colorConfig.pageIndex.grayColor,
-              }}>
-              {intlData.messages.paymentType}
-            </Text>
-            <Text
-              style={{
-                color: colorConfig.pageIndex.grayColor,
-              }}>
-              {this.props.dataRespons.paymentType}
-            </Text>
-          </View>
+          {/*<View*/}
+          {/*  style={{*/}
+          {/*    flexDirection: 'column',*/}
+          {/*    // justifyContent: 'space-between',*/}
+          {/*  }}>*/}
+          {/*  /!*<Text*!/*/}
+          {/*  /!*  style={{*!/*/}
+          {/*  /!*    color: colorConfig.pageIndex.grayColor,*!/*/}
+          {/*  /!*  }}>*!/*/}
+          {/*  /!*  {intlData.messages.paymentType}*!/*/}
+          {/*  /!*</Text>*!/*/}
+          {/*  <Text*/}
+          {/*    style={{*/}
+          {/*      marginTop: 10,*/}
+          {/*      textAlign: 'right',*/}
+          {/*      color: colorConfig.pageIndex.grayColor,*/}
+          {/*    }}>*/}
+          {/*    {this.getPaymentType(this.props.dataRespons.paymentCard)}*/}
+          {/*  </Text>*/}
+          {/*</View>*/}
           <View
             style={{
               backgroundColor: colorConfig.pageIndex.grayColor,
@@ -327,7 +385,7 @@ export default class PaymentSuccess extends Component {
                 backgroundColor: colorConfig.pageIndex.activeTintColor,
                 borderRadius: 10,
               }}
-              onPress={this.goBack}>
+              onPress={this.handleBackPress}>
               <Text
                 style={{
                   color: colorConfig.pageIndex.backgroundColor,
@@ -403,3 +461,18 @@ const styles = StyleSheet.create({
     backgroundColor: colorConfig.pageIndex.backgroundColor,
   },
 });
+
+mapStateToProps = state => ({
+  intlData: state.intlData,
+});
+
+mapDispatchToProps = dispatch => ({
+  dispatch,
+});
+
+export default compose(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  ),
+)(PaymentSuccess);

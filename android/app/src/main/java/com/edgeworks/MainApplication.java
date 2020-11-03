@@ -5,8 +5,8 @@ import android.content.Context;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
 import com.BV.LinearGradient.LinearGradientPackage;
-import io.invertase.firebase.crashlytics.ReactNativeFirebaseCrashlyticsPackage;
-import io.invertase.firebase.app.ReactNativeFirebaseAppPackage;
+// import io.invertase.firebase.crashlytics.ReactNativeFirebaseCrashlyticsPackage;
+// import io.invertase.firebase.app.ReactNativeFirebaseAppPackage;
 
 import com.lugg.ReactNativeConfig.ReactNativeConfigPackage;
 import com.reactnativecommunity.rnpermissions.RNPermissionsPackage;
@@ -30,7 +30,7 @@ import com.facebook.appevents.AppEventsLogger;
 // Multidex
 import androidx.multidex.MultiDexApplication;
 
-import com.microsoft.codepush.react.CodePush;
+// import com.microsoft.codepush.react.CodePush;
 
 
 public class MainApplication extends MultiDexApplication implements ReactApplication {
@@ -46,10 +46,10 @@ public class MainApplication extends MultiDexApplication implements ReactApplica
       return BuildConfig.DEBUG;
     }
 
-    @Override
-    protected String getJSBundleFile() {
-        return CodePush.getJSBundleFile();
-    }
+    //@Override
+    //protected String getJSBundleFile() {
+    //    return CodePush.getJSBundleFile();
+    //}
 
     @Override
     protected List<ReactPackage> getPackages() {

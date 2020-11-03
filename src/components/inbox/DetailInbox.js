@@ -82,7 +82,7 @@ export default class DetailInbox extends Component {
               onPress={this.closeDetail}
               style={{
                 position: 'absolute',
-                bottom: 10,
+                bottom: 25,
                 width: '100%',
                 backgroundColor: colorConfig.store.secondaryColor,
                 justifyContent: 'center',

@@ -8,7 +8,8 @@ import {
   TouchableOpacity,
   Platform,
   SafeAreaView,
-  BackHandler, Text,
+  BackHandler,
+  Text,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -81,17 +82,37 @@ class RewardsStamps extends Component {
             style={{
               flexDirection: 'row',
               paddingHorizontal: 10,
-              marginBottom: -25,
+              paddingLeft: 25,
+              // marginBottom: -25,
               zIndex: 2,
+              paddingVertical: 10,
+              alignItems: 'center',
               backgroundColor: colorConfig.store.defaultColor,
+              shadowColor: '#00000021',
+              shadowOffset: {
+                width: 0,
+                height: 9,
+              },
+              shadowOpacity: 0.7,
+              shadowRadius: 7.49,
+              elevation: 12,
             }}>
             <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
               <Icon
-                size={Platform.OS === 'ios' ? 40 : 32}
+                size={Platform.OS === 'ios' ? 38 : 30}
                 name={Platform.OS === 'ios' ? 'ios-close' : 'md-close'}
-                style={styles.btnBackIcon}
+                style={{color: 'white'}}
               />
             </TouchableOpacity>
+            <Text
+              style={{
+                color: 'white',
+                fontSize: 18,
+                marginLeft: 20,
+                fontWeight: 'bold',
+              }}>
+              {intlData.messages.stampsCard}
+            </Text>
           </View>
           {/*<View style={styles.line} />*/}
         </View>
@@ -107,8 +128,10 @@ class RewardsStamps extends Component {
               {this.state.isLoading && <Loader />}
             </View>
           ) : (
-            <View>
-              <Text style={styles.title}>{intlData.messages.stampsCard}</Text>
+            <View style={styles.card}>
+              <Text style={styles.titleStamps}>
+                {this.props.dataStamps.dataStamps.stamps.stampsTitle}
+              </Text>
               <RewardsStamp />
               <RewardsStampDetail />
             </View>
@@ -122,7 +145,7 @@ class RewardsStamps extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colorConfig.pageIndex.backgroundColor,
+    backgroundColor: 'white',
   },
   title: {
     backgroundColor: colorConfig.store.defaultColor,
@@ -160,9 +183,22 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 5,
   },
+  titleStamps: {
+    color: 'white',
+    fontSize: 22,
+    fontFamily: 'Lato-Bold',
+    marginBottom: 10,
+    textAlign: 'center',
+  },
+  card: {
+    paddingTop: 20,
+    zIndex: 10,
+    backgroundColor: colorConfig.store.defaultColor,
+  },
 });
 
 mapStateToProps = state => ({
+  dataStamps: state.rewardsReducer.getStamps,
   vouchers: state.rewardsReducer.vouchers.dataVoucher,
   totalPoint: state.rewardsReducer.dataPoint.totalPoint,
   intlData: state.intlData,

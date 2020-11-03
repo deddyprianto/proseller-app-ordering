@@ -17,12 +17,15 @@ import {
   Alert,
   Platform,
   SafeAreaView,
+  ColorPropType,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
 
 import colorConfig from '../config/colorConfig';
 import appConfig from '../config/appConfig';
+import {format} from 'date-fns';
+import CurrencyFormatter from '../helper/CurrencyFormatter';
 
 export default class PaymentAddVoucers extends Component {
   constructor(props) {
@@ -96,11 +99,54 @@ export default class PaymentAddVoucers extends Component {
   }
 
   pageDetailVoucher = async item => {
-    // check if redemeble
-    if (!item.validity.isRedeemable) {
-      Alert.alert('Sorry', 'This voucher cannot be used.');
-      return;
-    }
+    const {totalPrice} = this.props;
+    // check if voucher is applied on specific products only
+    try {
+      if (item.appliedTo != undefined && item.appliedTo === 'PRODUCT') {
+        //  search specific product
+        let result = undefined;
+        for (let i = 0; i < this.props.pembayaran.details.length; i++) {
+          result = await item.appliedItems.find(
+            item => item.value === this.props.pembayaran.details[i].product.id,
+          );
+          if (result != undefined) {
+            if (
+              this.props.pembayaran.details[i].appliedVoucher <
+                this.props.pembayaran.details[i].quantity ||
+              this.props.pembayaran.details[i].appliedVoucher == undefined
+            ) {
+              result = this.props.pembayaran.details[i];
+              break;
+            } else {
+              result = undefined;
+            }
+          }
+        }
+        // check if apply to specific product is found
+        if (result == undefined) {
+          Alert.alert(
+            'Sorry',
+            `${item.name} is only available on specific product`,
+          );
+          return false;
+        }
+      }
+    } catch (e) {}
+
+    // check minimal price for use voucher
+    try {
+      if (item.minPurchaseAmount != undefined) {
+        if (totalPrice < item.minPurchaseAmount) {
+          Alert.alert(
+            'Sorry',
+            'Minimum purchase amount to use this voucher is ' +
+              this.format(CurrencyFormatter(item.minPurchaseAmount)),
+          );
+          return;
+        }
+      }
+    } catch (e) {}
+
     // check valid for this outlet
     if (!(await this.checkOutletAvailable(item))) {
       Alert.alert('Sorry', 'This voucher cannot be used to this outlet.');
@@ -204,7 +250,7 @@ export default class PaymentAddVoucers extends Component {
                             position: 'absolute',
                             left: 0,
                             top: 0,
-                            backgroundColor: 'rgba(128,128,128, 0.8)',
+                            backgroundColor: colorConfig.store.transparentColor,
                             height: 30,
                             // width: this.state.screenWidth / 2 - 11,
                             borderTopLeftRadius: 9,
@@ -249,9 +295,9 @@ export default class PaymentAddVoucers extends Component {
                         </View> */}
                       </View>
                       <View style={styles.voucherDetail}>
-                        <View style={styles.status}>
-                          <Text style={styles.statusTitle}>Awarded</Text>
-                        </View>
+                        {/*<View style={styles.status}>*/}
+                        {/*  <Text style={styles.statusTitle}>Awarded</Text>*/}
+                        {/*</View>*/}
                         <Text style={styles.nameVoucher}>{item['name']}</Text>
                         <View style={{flexDirection: 'row'}}>
                           <Icon
@@ -260,7 +306,7 @@ export default class PaymentAddVoucers extends Component {
                               Platform.OS === 'ios' ? 'ios-list' : 'md-list'
                             }
                             style={{
-                              color: colorConfig.pageIndex.activeTintColor,
+                              color: colorConfig.store.secondaryColor,
                               marginRight: 8,
                             }}
                           />
@@ -275,7 +321,7 @@ export default class PaymentAddVoucers extends Component {
                               Platform.OS === 'ios' ? 'ios-time' : 'md-time'
                             }
                             style={{
-                              color: colorConfig.pageIndex.activeTintColor,
+                              color: colorConfig.store.secondaryColor,
                               marginRight: 8,
                             }}
                           />
@@ -299,6 +345,31 @@ export default class PaymentAddVoucers extends Component {
                             </Text>
                           )}
                         </View>
+                        {item['expiryDate'] && (
+                          <View style={{flexDirection: 'row'}}>
+                            <Icon
+                              size={15}
+                              name={
+                                Platform.OS === 'ios' ? 'ios-alert' : 'md-alert'
+                              }
+                              style={{
+                                color: colorConfig.store.secondaryColor,
+                                marginRight: 5,
+                              }}
+                            />
+                            <Text
+                              style={[
+                                styles.descVoucher,
+                                {color: colorConfig.store.colorError},
+                              ]}>
+                              This voucher will expire on{' '}
+                              {format(
+                                new Date(item['expiryDate']),
+                                'dd MMM yyyy',
+                              )}
+                            </Text>
+                          </View>
+                        )}
                       </View>
                     </TouchableOpacity>
                   }
@@ -308,7 +379,10 @@ export default class PaymentAddVoucers extends Component {
         </ScrollView>
         <TouchableOpacity
           onPress={() => {
-            Actions.redeemVoucher({setVouchers: this.setVouchers});
+            Actions.redeemVoucher({
+              setVouchers: this.setVouchers,
+              dataVoucer: this.props.dataVoucer,
+            });
           }}
           style={styles.buttonBottomFixed}>
           <Icon
@@ -361,8 +435,9 @@ const styles = StyleSheet.create({
     backgroundColor: colorConfig.store.storesItem,
   },
   voucherImage1: {
-    height: Dimensions.get('window').width / 4,
-    width: Dimensions.get('window').width - 22,
+    width: '100%',
+    resizeMode: 'contain',
+    aspectRatio: 2.5,
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
   },
@@ -394,13 +469,14 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   nameVoucher: {
-    fontSize: 14,
-    color: colorConfig.store.defaultColor,
+    fontSize: 17,
+    color: colorConfig.store.secondaryColor,
     fontWeight: 'bold',
   },
   descVoucher: {
     fontSize: 12,
-    color: colorConfig.pageIndex.inactiveTintColor,
+    maxWidth: '95%',
+    color: colorConfig.store.titleSelected,
   },
   descVoucherTime: {
     fontSize: 11,

@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {StyleSheet, TouchableOpacity} from 'react-native';
 import {View} from 'react-native-animatable';
 import PropTypes from 'prop-types';
+import colorConfig from '../../config/colorConfig';
 
 const DEFAULT_SIZE_MULTIPLIER = 0.7;
 const DEFAULT_OUTER_BORDER_WIDTH_MULTIPLIER = 0.08;
@@ -17,8 +18,8 @@ export default class RadioButton extends Component {
 
   static defaultProps = {
     size: 10,
-    innerColor: 'dodgerblue',
-    outerColor: 'dodgerblue',
+    innerColor: colorConfig.store.defaultColor,
+    outerColor: colorConfig.store.defaultColor,
     isSelected: false,
     onPress: () => null,
   };

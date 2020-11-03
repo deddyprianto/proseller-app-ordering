@@ -37,6 +37,7 @@ import Geolocation from 'react-native-geolocation-service';
 import packageJson from '../../package';
 import PhoneInput from 'react-native-phone-input';
 import VersionCheck from 'react-native-version-check';
+import {getCompanyInfo} from '../actions/stores.action';
 
 const imageWidth = Dimensions.get('window').width / 2;
 
@@ -145,6 +146,10 @@ class InputPhoneNumber extends Component {
       this._keyboardDidHide,
     );
 
+    try {
+      await this.props.dispatch(getCompanyInfo());
+    } catch (e) {}
+
     // get device ID for push notif
     try {
       const value = await AsyncStorage.getItem('deviceID');
@@ -202,6 +207,7 @@ class InputPhoneNumber extends Component {
   }
 
   checkAccountExist = async () => {
+    const {companyInfo} = this.props;
     this.setState({loading: true});
     try {
       var dataRequest = {
@@ -218,7 +224,16 @@ class InputPhoneNumber extends Component {
         if (response.data.confirmation == false) {
           phoneNumber.email = response.data.email;
           phoneNumber.confirmed = false;
-          Actions.signInPhoneNumber(phoneNumber);
+
+          // check mode sign in ( by password or by OTP )
+          if (
+            companyInfo.enableRegisterWithPassword != undefined &&
+            companyInfo.enableRegisterWithPassword == true
+          ) {
+            Actions.signInPhoneNumberWithPassword(phoneNumber);
+          } else {
+            Actions.signInPhoneNumber(phoneNumber);
+          }
         } else if (response.data.status == 'SUSPENDED') {
           Alert.alert(
             'Sorry',
@@ -228,7 +243,15 @@ class InputPhoneNumber extends Component {
           );
         } else {
           phoneNumber.email = response.data.email;
-          Actions.signInPhoneNumber(phoneNumber);
+          // check mode sign in ( by password or by OTP )
+          if (
+            companyInfo.enableRegisterWithPassword != undefined &&
+            companyInfo.enableRegisterWithPassword == true
+          ) {
+            Actions.signInPhoneNumberWithPassword(phoneNumber);
+          } else {
+            Actions.signInPhoneNumber(phoneNumber);
+          }
         }
         this.setState({
           loading: false,
@@ -237,7 +260,15 @@ class InputPhoneNumber extends Component {
         this.setState({
           loading: false,
         });
-        Actions.mobileRegister(phoneNumber);
+        // check mode sign in ( by password or by OTP )
+        if (
+          companyInfo.enableRegisterWithPassword != undefined &&
+          companyInfo.enableRegisterWithPassword == true
+        ) {
+          Actions.mobileRegisterWithPassword(phoneNumber);
+        } else {
+          Actions.mobileRegister(phoneNumber);
+        }
       }
     } catch (error) {
       Alert.alert('Opss..', this.intlData.messages.somethingWentWrong);
@@ -419,7 +450,7 @@ class InputPhoneNumber extends Component {
         </ScrollView>
         {this.state.showFooter ? (
           <View>
-            <TouchableOpacity
+            {/*<TouchableOpacity
               style={{
                 position: 'absolute',
                 alignSelf: 'center',
@@ -436,7 +467,7 @@ class InputPhoneNumber extends Component {
                 }}>
                 {intlData.messages.languageName}
               </Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
             <Text
               style={{
                 position: 'absolute',
@@ -455,6 +486,7 @@ class InputPhoneNumber extends Component {
   }
 }
 mapStateToProps = state => ({
+  companyInfo: state.userReducer.getCompanyInfo.companyInfo,
   status: state.accountsReducer.accountExist.status,
   deviceID: state.userReducer.deviceUserInfo,
   intlData: state.intlData,

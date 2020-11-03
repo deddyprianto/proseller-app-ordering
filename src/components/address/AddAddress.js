@@ -53,6 +53,8 @@ class AddAddress extends Component {
       screenWidth: Dimensions.get('window').width,
       addressName: 'Home',
       address: '',
+      streetName: '',
+      unitNo: '',
       postalCode: '',
       city: awsConfig.COUNTRY == 'Singapore' ? awsConfig.COUNTRY : '',
       dataProvince: [],
@@ -138,10 +140,18 @@ class AddAddress extends Component {
 
       let newAddress = {
         addressName: this.state.addressName,
-        address: this.state.address,
+        // address: this.state.address,
+        unitNo: this.state.unitNo,
+        streetName: this.state.streetName,
         postalCode: this.state.postalCode,
         city: this.state.city,
       };
+
+      newAddress.address = `${newAddress.streetName}`;
+
+      if (newAddress.unitNo != '' && newAddress.unitNo != undefined) {
+        newAddress.address = `${newAddress.address}, ${newAddress.unitNo}`;
+      }
 
       if (!isEmptyData(this.state.province)) {
         newAddress.province = this.state.province;
@@ -201,9 +211,16 @@ class AddAddress extends Component {
   };
 
   notCompleted = () => {
-    const {addressName, address, city, postalCode} = this.state;
+    const {
+      addressName,
+      address,
+      city,
+      postalCode,
+      streetName,
+      unitNo,
+    } = this.state;
 
-    if (addressName != '' && address != '') {
+    if (streetName != '' && streetName != '') {
       return false;
     }
     return true;
@@ -310,24 +327,49 @@ class AddAddress extends Component {
             />
           ) : null}
 
+          {/*<TextInput*/}
+          {/*  style={{height: 58, marginVertical: 10, fontSize: 13}}*/}
+          {/*  theme={theme}*/}
+          {/*  multiline={true}*/}
+          {/*  mode={'outlined'}*/}
+          {/*  label="Address"*/}
+          {/*  value={this.state.address}*/}
+          {/*  onChangeText={text => {*/}
+          {/*    this.setState({address: text});*/}
+          {/*    this.getFullAddress(text);*/}
+          {/*  }}*/}
+          {/*/>*/}
+
           <TextInput
-            style={{height: 55, marginVertical: 10}}
+            style={{height: 58, marginVertical: 8, fontSize: 13}}
             theme={theme}
             multiline={true}
             mode={'outlined'}
-            label="Address"
-            value={this.state.address}
+            label="Street Name"
+            value={this.state.streetName}
             onChangeText={text => {
-              this.setState({address: text});
-              this.getFullAddress(text);
+              this.setState({streetName: text});
+            }}
+          />
+
+          <TextInput
+            style={{height: 58, marginVertical: 8, fontSize: 13}}
+            theme={theme}
+            multiline={true}
+            mode={'outlined'}
+            label="Unit No"
+            value={this.state.unitNo}
+            onChangeText={text => {
+              this.setState({unitNo: text});
             }}
           />
 
           {awsConfig.COUNTRY != 'Singapore' ? (
             <TextInput
               style={{
-                height: 55,
-                marginVertical: 10,
+                height: 58,
+                marginVertical: 8,
+                fontSize: 13,
               }}
               theme={theme}
               mode={'outlined'}
@@ -338,7 +380,7 @@ class AddAddress extends Component {
           ) : null}
 
           <TextInput
-            style={{height: 55, marginVertical: 10}}
+            style={{height: 58, marginVertical: 8, fontSize: 13}}
             theme={theme}
             keyboardType={'numeric'}
             mode={'outlined'}

@@ -24,7 +24,7 @@ import appConfig from '../../config/appConfig';
 import CurrencyFormatter from '../../helper/CurrencyFormatter';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
-import {isEmptyArray} from '../../helper/CheckEmpty';
+import {isEmptyArray, isEmptyObject} from '../../helper/CheckEmpty';
 
 class HistoryDetailPayment extends Component {
   constructor(props) {
@@ -64,9 +64,9 @@ class HistoryDetailPayment extends Component {
       ' ' +
       tanggal.getFullYear() +
       ' • ' +
-      tanggal.getHours() +
+      this.pad(tanggal.getHours()) +
       ':' +
-      tanggal.getMinutes()
+      this.pad(tanggal.getMinutes())
     );
   }
 
@@ -121,8 +121,78 @@ class HistoryDetailPayment extends Component {
     }
   };
 
+  getPaymentType = item => {
+    try {
+      if (!isEmptyObject(item.details)) {
+        let cardNo = item.paymentName;
+        if (item.paymentName != undefined && item.paymentName.length > 4) {
+          cardNo = item.paymentName.substr(item.paymentName.length - 4);
+        }
+        return item.details.cardIssuer.toUpperCase() + ' ' + cardNo;
+      } else {
+        return item.paymentName;
+      }
+    } catch (e) {
+      return '-';
+    }
+  };
+
+  pad = item => {
+    let time = item.toString();
+    if (time.length == 1) return `0${item}`;
+    else return item;
+  };
+
+  getSubtotal = item => {
+    try {
+      if (item.totalNettAmount != undefined) {
+        return this.formatCurrency(item.totalNettAmount);
+      } else {
+        return this.formatCurrency(item.beforePrice);
+      }
+    } catch (e) {
+      return this.formatCurrency(0);
+    }
+  };
+
+  getGrandTotal = item => {
+    try {
+      if (item.payments != undefined && !isEmptyArray(item.payments)) {
+        let total = item.totalNettAmount;
+        for (let i = 0; i < item.payments.length; i++) {
+          if (
+            item.payments[i].isVoucher == true ||
+            item.payments[i].isPoint == true
+          ) {
+            total -= item.payments[i].paymentAmount;
+          }
+        }
+        if (total < 0) total = 0;
+        return this.formatCurrency(total);
+      } else {
+        return this.formatCurrency(item.afterPrice);
+      }
+    } catch (e) {}
+  };
+
+  renderPaymentType = item => {
+    try {
+      if (item.isVoucher == true) {
+        return item.paymentName;
+      } else if (item.isPoint == true) {
+        return `${item.paymentName} ${item.redeemValue}`;
+      } else if (item.isAppPayment) {
+        return item.paymentName;
+      } else {
+        return item.paymentType;
+      }
+    } catch (e) {
+      return null;
+    }
+  };
+
   render() {
-    const {intlData} = this.props;
+    const {intlData, item} = this.props;
     return (
       <SafeAreaView style={styles.container}>
         <View style={{backgroundColor: colorConfig.pageIndex.backgroundColor}}>
@@ -141,59 +211,110 @@ class HistoryDetailPayment extends Component {
         <ScrollView style={{height: '100%', width: '100%'}}>
           <View style={styles.card}>
             <View style={styles.item}>
-              <Text style={styles.title}>{this.props.item.outletName}</Text>
+              <Text style={styles.title}>{item.outletName}</Text>
             </View>
             <View style={styles.detail}>
-              <View style={styles.detailItem}>
-                <Text style={styles.desc}>{intlData.messages.outletName}</Text>
-                <Text style={styles.desc}>{this.props.item.outletName}</Text>
-              </View>
-
               <View style={[styles.detailItem]}>
                 <Text style={styles.desc}>{intlData.messages.dateAndTime}</Text>
-                <Text style={styles.desc}>
-                  {this.getDate(this.props.item.createdAt)}
-                </Text>
+                <Text style={styles.desc}>{this.getDate(item.createdAt)}</Text>
               </View>
 
               {this.props.item.orderingMode != undefined ? (
                 <View style={styles.detailItem}>
                   <Text style={styles.desc}>Order Mode</Text>
-                  <Text style={styles.desc}>
-                    {this.props.item.orderingMode}
-                  </Text>
+                  <Text style={styles.desc}>{item.orderingMode}</Text>
                 </View>
               ) : null}
 
+              {this.props.item.queueNo != undefined ? (
+                <View style={styles.detailItem}>
+                  <Text style={styles.desc}>Queue No</Text>
+                  <Text style={styles.desc}>{item.queueNo}</Text>
+                </View>
+              ) : null}
+
+              {item.transactionRefNo != undefined && (
+                <View style={[styles.detailItem]}>
+                  <Text style={styles.desc}>Ref No</Text>
+                  <Text style={styles.desc}>{item.transactionRefNo}</Text>
+                </View>
+              )}
+
               <View style={styles.detailItem}>
-                <Text style={styles.desc}>Total</Text>
-                <Text style={styles.desc}>
-                  {this.formatCurrency(this.props.item.price)}
+                <Text style={styles.desc}>Sub Total</Text>
+                <Text style={styles.desc}>{this.getSubtotal(item)}</Text>
+              </View>
+
+              {this.props.item.statusAdd === 'addVoucher' ? (
+                <View style={styles.detailItem}>
+                  <Text style={styles.desc}>Voucher</Text>
+                  <Text style={styles.desc}>{item.voucherName}</Text>
+                </View>
+              ) : null}
+
+              {item.payments != undefined && !isEmptyArray(item.payments)
+                ? item.payments.map(data => (
+                    <View style={styles.detailItem}>
+                      <Text style={styles.desc}>
+                        • {this.renderPaymentType(data)}
+                      </Text>
+                      <Text style={styles.desc}>
+                        {this.formatCurrency(data.paymentAmount)}
+                      </Text>
+                    </View>
+                  ))
+                : null}
+
+              <View style={styles.detailItem}>
+                <Text
+                  style={[
+                    styles.desc,
+                    {
+                      color: colorConfig.store.titleSelected,
+                      fontWeight: 'bold',
+                    },
+                  ]}>
+                  Total
+                </Text>
+                <Text
+                  style={[
+                    styles.desc,
+                    {
+                      color: colorConfig.store.titleSelected,
+                      fontWeight: 'bold',
+                    },
+                  ]}>
+                  {this.getGrandTotal(item)}
                 </Text>
               </View>
 
               {this.props.item.statusAdd == 'addVoucer' ? (
                 <View style={styles.detailItem}>
                   <Text style={styles.desc}>{intlData.messages.voucher}</Text>
-                  <Text style={styles.desc}>{this.props.item.voucherName}</Text>
+                  <Text style={styles.desc}>{item.voucherName}</Text>
                 </View>
               ) : null}
 
-              <View style={[styles.detailItem, {borderBottomWidth: 0}]}>
-                <Text style={[styles.desc, {fontWeight: 'bold'}]}>
-                  {intlData.messages.paymentType}
-                </Text>
-              </View>
+              {this.props.item.paymentCard != undefined &&
+              this.props.item.price != 0 &&
+              item.payments == undefined ? (
+                <View style={[styles.detailItem, {borderBottomWidth: 0}]}>
+                  <Text style={[styles.desc, {fontWeight: 'bold'}]}>
+                    {intlData.messages.paymentType}
+                  </Text>
+                </View>
+              ) : null}
 
-              {this.props.item.paymentType != undefined &&
-              this.props.item.price != 0 ? (
+              {this.props.item.paymentCard != undefined &&
+              this.props.item.price != 0 &&
+              item.payments == undefined ? (
                 <View style={[styles.detailItem, {marginLeft: 10}]}>
                   <Text style={styles.desc}>
                     {' '}
-                    • {this.props.item.paymentType}
+                    • {this.getPaymentType(item.paymentCard)}
                   </Text>
                   <Text style={styles.desc}>
-                    {this.formatCurrency(this.props.item.afterPrice)}
+                    {this.formatCurrency(item.afterPrice)}
                   </Text>
                 </View>
               ) : null}
@@ -201,7 +322,7 @@ class HistoryDetailPayment extends Component {
               {this.props.item.statusAdd == 'addPoint' ? (
                 <View style={[styles.detailItem, {marginLeft: 10}]}>
                   <Text style={styles.desc}> • POINT</Text>
-                  <Text style={styles.desc}>{this.props.item.redeemValue}</Text>
+                  <Text style={styles.desc}>{item.redeemValue}</Text>
                 </View>
               ) : null}
 
@@ -238,7 +359,7 @@ class HistoryDetailPayment extends Component {
                 </View>
               ) : null}
               {!isEmptyArray(this.props.item.stamps) &&
-              this.props.item.stamps.length > 1 ? (
+              this.props.item.stamps.length > 0 ? (
                 <View style={[styles.detailItem, {borderBottomWidth: 0}]}>
                   <Text
                     style={[

@@ -24,6 +24,7 @@ import {
   setOrderType,
   clearTableType,
   getCart,
+  getBasket,
 } from '../../actions/order.action';
 import Loader from '../../components/loader';
 import CurrencyFormatter from '../../helper/CurrencyFormatter';
@@ -34,6 +35,8 @@ import {getOutletById} from '../../actions/stores.action';
 import appConfig from '../../config/appConfig';
 import {refreshToken} from '../../actions/auth.actions';
 import awsConfig from '../../config/awsConfig';
+import * as geolib from 'geolib';
+import {afterPayment} from '../../actions/account.action';
 
 class Cart extends Component {
   constructor(props) {
@@ -90,6 +93,8 @@ class Cart extends Component {
       await this.props.dispatch(refreshToken());
       // get data basket
       await this.getBasket();
+      await this.setState({loading: false});
+      // this.props.dispatch(getBasket());
 
       // If ordering mode is DINE IN, then fetch again data outlet to know outlet is available or closed
       if (this.props.dataBasket != undefined) {
@@ -112,10 +117,10 @@ class Cart extends Component {
         this.props.dataBasket.status == 'SUBMITTED' &&
         this.props.dataBasket.orderingMode == 'DINEIN'
       ) {
-        clearInterval(this.interval);
-        this.interval = setInterval(() => {
-          this.props.dispatch(getCart(this.props.myCart.id));
-        }, 4000);
+        // clearInterval(this.interval);
+        // this.interval = setInterval(() => {
+        //   this.props.dispatch(getCart(this.props.myCart.id));
+        // }, 6000);
       }
 
       // check if status basket for TAKE AWAY IS CONFIRMED or SUBMITTED, then request continoustly to get basket
@@ -127,10 +132,10 @@ class Cart extends Component {
           this.props.dataBasket.orderingMode == 'TAKEAWAY' ||
           this.props.dataBasket.orderingMode == 'DELIVERY')
       ) {
-        clearInterval(this.interval);
-        this.interval = setInterval(() => {
-          this.props.dispatch(getCart(this.props.myCart.id));
-        }, 4000);
+        // clearInterval(this.interval);
+        // // this.interval = setInterval(() => {
+        // //   this.props.dispatch(getCart(this.props.myCart.id));
+        // // }, 4000);
       }
     } catch (e) {
       Alert.alert('Opss..', e.message);
@@ -255,12 +260,29 @@ class Cart extends Component {
   };
 
   _onRefresh = async () => {
+    const {dataBasket} = this.props;
+
     await this.setState({refreshing: true});
-    this.props.dispatch(getCart(this.props.myCart.id));
+    await this.props.dispatch(getCart(this.props.myCart.id));
     // fetch details outlet
     const outletID = this.props.dataBasket.outlet.id;
     await this.props.dispatch(getOutletById(outletID));
     await this.setState({refreshing: false});
+
+    try {
+      if (dataBasket != undefined) {
+        //  for outlet type quick service
+        if (
+          (dataBasket.status == 'PROCESSING' ||
+            dataBasket.status == 'READY_FOR_DELIVERY' ||
+            dataBasket.status == 'READY_FOR_COLLECTION') &&
+          (Actions.currentScene == 'cart' ||
+            Actions.currentScene == 'waitingFood')
+        ) {
+          Actions.replace('waitingFood', {myCart: dataBasket});
+        }
+      }
+    } catch (e) {}
   };
 
   getBasket = async () => {
@@ -309,10 +331,10 @@ class Cart extends Component {
           basket: this.props.dataBasket,
           orderType: this.props.orderType,
         });
-        clearInterval(this.interval);
-        this.interval = setInterval(() => {
-          this.props.dispatch(getCart(this.props.myCart.id));
-        }, 4000);
+        // clearInterval(this.interval);
+        // this.interval = setInterval(() => {
+        //   this.props.dispatch(getCart(this.props.myCart.id));
+        // }, 4000);
       }
     } catch (e) {}
   };
@@ -366,14 +388,25 @@ class Cart extends Component {
     }
   };
 
+  getPrice = () => {
+    try {
+      if (
+        this.props.dataBasket.confirmationInfo != undefined &&
+        this.props.dataBasket.confirmationInfo.afterPrice != undefined
+      ) {
+        return this.format(
+          CurrencyFormatter(this.props.dataBasket.confirmationInfo.afterPrice),
+        );
+      } else {
+        return '-';
+      }
+    } catch (e) {
+      return '-';
+    }
+  };
+
   renderSettleButtonQuickService = () => {
     const {intlData, dataBasket} = this.props;
-    let fee = dataBasket.deliveryFee == undefined ? 0 : dataBasket.deliveryFee;
-    try {
-      fee = parseFloat(fee);
-    } catch (e) {
-      fee = 0;
-    }
     return (
       <View
         style={{
@@ -404,9 +437,7 @@ class Cart extends Component {
             marginRight: 20,
           }}>
           TOTAL : {appConfig.appMataUang}
-          {this.format(
-            CurrencyFormatter(this.props.dataBasket.totalNettAmount + fee),
-          )}
+          {this.format(CurrencyFormatter(dataBasket.totalNettAmount))}
         </Text>
         <View style={{flexDirection: 'row', justifyContent: 'center'}}>
           <TouchableOpacity
@@ -455,7 +486,7 @@ class Cart extends Component {
               }
               style={{color: 'white', marginRight: 5}}
             />
-            <Text style={styles.textBtnBasketModal}>Settle</Text>
+            <Text style={styles.textBtnBasketModal}>Check Out</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -547,7 +578,7 @@ class Cart extends Component {
               }
               style={{color: 'white', marginRight: 5}}
             />
-            <Text style={styles.textBtnBasketModal}>Settle</Text>
+            <Text style={styles.textBtnBasketModal}>Check Out</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -648,9 +679,9 @@ class Cart extends Component {
           pembayaran.tableNo = '-';
         }
         pembayaran.orderingMode = orderType;
-        url = '/cart/submitTakeAway';
+        url = '/cart/submitAndPay';
       } else {
-        url = '/cart/settle';
+        url = '/cart/customer/settle';
         pembayaran.cartID = this.props.dataBasket.cartID;
       }
 
@@ -1068,27 +1099,76 @@ class Cart extends Component {
       return item;
     }
   };
+  format2 = item => {
+    try {
+      const curr = appConfig.appMataUang;
+      item = item.replace(`${curr} `, '');
+      if (curr != 'RP' && curr != 'IDR' && item.includes('.') == false) {
+        return `${item}.00`;
+      }
+      return item;
+    } catch (e) {
+      return item;
+    }
+  };
 
   renderItemModifier = item => {
     return (
       <FlatList
         data={item.modifiers}
-        renderItem={({item}) =>
-          item.modifier.details.map(mod => (
-            <Text style={[styles.descModifier]}>
-              •{' '}
-              {item.modifier.isYesNo != true ? (
-                <Text
-                  style={{
-                    color: colorConfig.store.defaultColor,
-                  }}>
-                  {mod.quantity}x
-                </Text>
-              ) : null}{' '}
-              {mod.name} ( {this.format(CurrencyFormatter(mod.price))} )
-            </Text>
-          ))
-        }
+        renderItem={({item}) => {
+          if (item.modifier.max != 1 && item.modifier.isYesNo != true) {
+            if (!isEmptyArray(item.modifier.details)) {
+              return (
+                <>
+                  <Text style={[styles.descModifier]}>
+                    <Text style={{fontStyle: 'normal'}}>{'\u25CF'}</Text>{' '}
+                    {item.modifierName}:{' '}
+                  </Text>
+                  {item.modifier.details.map((mod, idx) => (
+                    <View style={{marginLeft: 9}}>
+                      <Text
+                        key={idx}
+                        style={[styles.descModifier, {fontSize: 13}]}>
+                        <Text style={{fontStyle: 'normal'}}>{'\u25CF'}</Text>{' '}
+                        <Text
+                          style={{
+                            color: colorConfig.store.defaultColor,
+                          }}>
+                          {mod.quantity}x
+                        </Text>{' '}
+                        {mod.name}{' '}
+                        {mod.price > 0
+                          ? `  +${this.format2(CurrencyFormatter(mod.price))}`
+                          : null}{' '}
+                      </Text>
+                    </View>
+                  ))}
+                </>
+              );
+            }
+          } else {
+            return item.modifier.details.map((mod, idx) => (
+              <Text key={idx} style={[styles.descModifier]}>
+                <Text style={{fontStyle: 'normal'}}>{'\u25CF'}</Text>{' '}
+                {item.modifier.max == 1 && item.modifier.isYesNo != true
+                  ? `${item.modifierName}: ${mod.name} ${
+                      mod.price > 0
+                        ? `  +${this.format2(CurrencyFormatter(mod.price))}`
+                        : ''
+                    }`
+                  : null}
+                {item.modifier.isYesNo == true
+                  ? `${mod.name} ${
+                      mod.price > 0
+                        ? `  +${this.format2(CurrencyFormatter(mod.price))}`
+                        : ''
+                    }`
+                  : null}
+              </Text>
+            ));
+          }
+        }}
       />
     );
   };
@@ -1239,9 +1319,21 @@ class Cart extends Component {
               <Text style={styles.totalAddress}>
                 {dataBasket.deliveryAddress.addressName}
               </Text>
-              <Text style={styles.totalAddress}>
-                {dataBasket.deliveryAddress.address}
-              </Text>
+              {dataBasket.deliveryAddress.address && (
+                <Text style={styles.totalAddress}>
+                  {dataBasket.deliveryAddress.address}
+                </Text>
+              )}
+              {dataBasket.deliveryAddress.streetName && (
+                <Text style={styles.totalAddress}>
+                  {dataBasket.deliveryAddress.streetName}
+                </Text>
+              )}
+              {dataBasket.deliveryAddress.unitNo && (
+                <Text style={styles.totalAddress}>
+                  {dataBasket.deliveryAddress.unitNo}
+                </Text>
+              )}
               {awsConfig.COUNTRY != 'Singapore' ? (
                 <Text style={styles.totalAddress}>
                   {dataBasket.deliveryAddress.city}
@@ -1276,6 +1368,83 @@ class Cart extends Component {
     }
   };
 
+  goToProducts = () => {
+    try {
+      const {userPosition, outletSingle, dataBasket} = this.props;
+      let item = outletSingle;
+
+      // check if user enabled their position permission
+      let statusLocaiton;
+      if (userPosition == undefined || userPosition == false) {
+        statusLocaiton = false;
+      } else {
+        statusLocaiton = true;
+      }
+
+      let position = userPosition;
+
+      let location = {};
+      let coordinate = {};
+      location = {
+        region: item.region,
+        address: item.location,
+        coordinate: {
+          lat: item.latitude,
+          lng: item.longitude,
+        },
+      };
+
+      item.location = location;
+
+      let data = {
+        storeId: item.id,
+        storeName: item.name,
+        storeStatus: this.isOpen(item),
+        storeJarak: statusLocaiton
+          ? geolib.getDistance(position.coords, {
+              latitude: Number(item.latitude),
+              longitude: Number(item.longitude),
+            }) / 1000
+          : '-',
+        image: item.defaultImageURL != undefined ? item.defaultImageURL : '',
+        region: item.region,
+        address: item.location.address,
+        city: item.city,
+        operationalHours: item.operationalHours,
+        openAllDays: item.openAllDays,
+        defaultImageURL: item.defaultImageURL,
+        coordinate: item.location.coordinate,
+        orderingStatus: item.orderingStatus,
+        outletType: item.outletType,
+        offlineMessage: item.offlineMessage,
+        maxOrderQtyPerItem: item.maxOrderQtyPerItem,
+        maxOrderAmount: item.maxOrderAmount,
+        lastOrderOn: item.lastOrderOn,
+        enableItemSpecialInstructions: item.enableItemSpecialInstructions,
+        enableDineIn:
+          item.enableDineIn == false || item.enableDineIn == '-' ? false : true,
+        enableTakeAway:
+          item.enableTakeAway == false || item.enableTakeAway == '-'
+            ? false
+            : true,
+        enableTableScan:
+          item.enableTableScan == false || item.enableTableScan == '-'
+            ? false
+            : true,
+        enableDelivery:
+          item.enableDelivery == false || item.enableDelivery == '-'
+            ? false
+            : true,
+      };
+
+      Actions.push('productsMode2', {
+        item: data,
+        previousOrderingMode: dataBasket.orderingMode,
+        previousTableNo: dataBasket.tableNo,
+      });
+    } catch (e) {}
+  };
+
   render() {
     const {intlData, dataBasket, orderType, tableType} = this.props;
 
@@ -1292,15 +1461,11 @@ class Cart extends Component {
           (dataBasket.status == 'PROCESSING' ||
             dataBasket.status == 'READY_FOR_DELIVERY' ||
             dataBasket.status == 'READY_FOR_COLLECTION') &&
-          this.interval != undefined &&
           (Actions.currentScene == 'cart' ||
-            Actions.currentScene == 'waitingFood') &&
-          (dataBasket.outlet.outletType == 'QUICKSERVICE' ||
-            dataBasket.orderingMode == 'TAKEAWAY' ||
-            dataBasket.orderingMode == 'DELIVERY')
+            Actions.currentScene == 'waitingFood')
         ) {
-          clearInterval(this.interval);
-          this.interval = undefined;
+          // clearInterval(this.interval);
+          // this.interval = undefined;
           Actions.replace('waitingFood', {myCart: dataBasket});
         }
       }
@@ -1345,7 +1510,7 @@ class Cart extends Component {
             <Text style={styles.btnBackText}>
               {' '}
               {/*{intlData.messages.detailOrder}{' '}*/}
-              Detail Cart
+              Order Details
             </Text>
           </TouchableOpacity>
         </View>
@@ -1378,9 +1543,13 @@ class Cart extends Component {
                     flexDirection: 'row',
                     justifyContent: 'space-between',
                   }}>
-                  <Text style={styles.subTitle}>
-                    {intlData.messages.detailOrder}
-                  </Text>
+                  <Text style={styles.subTitle}>Order Details</Text>
+                  {dataBasket.orderingMode == 'DINEIN' &&
+                  dataBasket.outlet.outletType == 'RESTO' ? (
+                    <TouchableOpacity onPress={this.goToProducts}>
+                      <Text style={styles.subTitleAddItems}>+ Add Items</Text>
+                    </TouchableOpacity>
+                  ) : null}
                 </View>
                 <View>
                   <FlatList
@@ -1402,9 +1571,14 @@ class Cart extends Component {
                                   }}>
                                   {item.quantity}x
                                 </Text>{' '}
-                                {item.product.name} ({' '}
-                                {this.format(CurrencyFormatter(item.unitPrice))}{' '}
-                                )
+                                {item.product.name} {'  +'}
+                                {this.format2(
+                                  CurrencyFormatter(
+                                    item.product != undefined
+                                      ? item.product.retailPrice
+                                      : 0,
+                                  ),
+                                )}{' '}
                               </Text>
                               {item.remark != undefined && item.remark != '' ? (
                                 <Text
@@ -1418,18 +1592,18 @@ class Cart extends Component {
                                 </Text>
                               ) : null}
                               {/* loop item modifier */}
-                              {!isEmptyArray(item.modifiers) ? (
-                                <Text
-                                  style={{
-                                    color:
-                                      colorConfig.pageIndex.inactiveTintColor,
-                                    fontSize: 10,
-                                    marginLeft: 10,
-                                    fontStyle: 'italic',
-                                  }}>
-                                  Add On:
-                                </Text>
-                              ) : null}
+                              {/*{!isEmptyArray(item.modifiers) ? (*/}
+                              {/*  <Text*/}
+                              {/*    style={{*/}
+                              {/*      color:*/}
+                              {/*        colorConfig.pageIndex.inactiveTintColor,*/}
+                              {/*      fontSize: 10,*/}
+                              {/*      marginLeft: 10,*/}
+                              {/*      fontStyle: 'italic',*/}
+                              {/*    }}>*/}
+                              {/*    Add On:*/}
+                              {/*  </Text>*/}
+                              {/*) : null}*/}
                               {this.renderItemModifier(item)}
                               {/* loop item modifier */}
                             </View>
@@ -1534,14 +1708,37 @@ class Cart extends Component {
                   </View>
                 ) : null}
 
-                <View style={styles.itemSummary}>
-                  <Text style={styles.total}>
-                    {intlData.messages.totalTaxAmmount}
-                  </Text>
-                  <Text style={styles.total}>
-                    {CurrencyFormatter(this.props.dataBasket.totalTaxAmount)}
-                  </Text>
-                </View>
+                {this.props.dataBasket.totalTaxAmount != undefined &&
+                  this.props.dataBasket.totalTaxAmount != 0 && (
+                    <View style={styles.itemSummary}>
+                      <Text style={styles.total}>
+                        {appConfig.appName === 'QIJI'
+                          ? 'Tax Amount Inclusive'
+                          : 'Tax Amount'}
+                      </Text>
+                      <Text style={styles.total}>
+                        {this.format(
+                          CurrencyFormatter(
+                            this.props.dataBasket.totalTaxAmount,
+                          ),
+                        )}
+                      </Text>
+                    </View>
+                  )}
+
+                {this.props.dataBasket.totalSurchargeAmount != undefined &&
+                  this.props.dataBasket.totalSurchargeAmount != 0 && (
+                    <View style={styles.itemSummary}>
+                      <Text style={styles.total}>Surcharge Amount</Text>
+                      <Text style={styles.total}>
+                        {this.format(
+                          CurrencyFormatter(
+                            this.props.dataBasket.totalSurchargeAmount,
+                          ),
+                        )}
+                      </Text>
+                    </View>
+                  )}
               </View>
             </ScrollView>
           ) : (
@@ -1590,6 +1787,7 @@ class Cart extends Component {
 
 mapStateToProps = state => ({
   outletSingle: state.storesReducer.dataOutletSingle.outletSingle,
+  userPosition: state.userReducer.userPosition.userPosition,
   providers: state.orderReducer.dataProvider.providers,
   dataBasket: state.orderReducer.dataCartSingle.cartSingle,
   intlData: state.intlData,
@@ -1733,7 +1931,7 @@ const styles = StyleSheet.create({
   descModifier: {
     color: colorConfig.pageIndex.grayColor,
     maxWidth: Dimensions.get('window').width,
-    fontSize: 11,
+    fontSize: 13,
     fontStyle: 'italic',
     marginLeft: 10,
     fontFamily: 'Lato-Medium',

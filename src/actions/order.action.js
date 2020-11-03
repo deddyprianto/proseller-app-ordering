@@ -463,6 +463,42 @@ export const getBasket = () => {
   };
 };
 
+export const updateSurcharge = orderingMode => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      const payload = {
+        orderingMode,
+      };
+
+      let response = await fetchApiOrder(
+        `/cart/changeOrderingMode`,
+        'POST',
+        payload,
+        200,
+        token,
+      );
+      console.log(response, 'response update surcharge');
+      if (response.success == true) {
+        dispatch({
+          type: 'DATA_BASKET',
+          product: response.response.data,
+        });
+      }
+
+      return response;
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
 export const getPendingCart = () => {
   return async (dispatch, getState) => {
     const state = getState();
@@ -535,6 +571,73 @@ export const getCart = id => {
   };
 };
 
+export const getCartHomePage = id => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      const {
+        orderReducer: {
+          dataCartSingle: {cartSingle},
+        },
+      } = state;
+
+      let response = await fetchApiOrder(
+        `/cart/pending/${cartSingle.id}`,
+        'GET',
+        null,
+        200,
+        token,
+      );
+      console.log(response, 'response get pending cart by id');
+      if (response.success == false) {
+        dispatch({
+          type: 'DATA_CART_SINGLE',
+          cartSingle: undefined,
+        });
+      } else {
+        dispatch({
+          type: 'DATA_CART_SINGLE',
+          cartSingle: response.response.data,
+        });
+      }
+
+      return response;
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const getPendingCartSingle = id => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+      let response = await fetchApiOrder(
+        `/cart/pending/${id}`,
+        'GET',
+        null,
+        200,
+        token,
+      );
+      console.log(response, 'response get pending cart by id');
+      return response.response.data;
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
 export const setCart = cart => {
   return async dispatch => {
     try {
@@ -557,10 +660,18 @@ export const getDeliveryProvider = () => {
           tokenUser: {token},
         },
       } = state;
+
+      let payload = {
+        take: 100,
+        skip: 0,
+        sortBy: 'name',
+        sortDirection: 'ASC',
+      };
+
       let response = await fetchApiOrder(
         `/delivery/providers`,
         'POST',
-        null,
+        payload,
         200,
         token,
       );
@@ -673,10 +784,10 @@ export const settleOrder = (payload, url) => {
           type: 'TABLE_TYPE',
           tableType: undefined,
         });
-        dispatch({
-          type: 'SELECTED_ACCOUNT',
-          selectedAccount: undefined,
-        });
+        // dispatch({
+        //   type: 'SELECTED_ACCOUNT',
+        //   selectedAccount: undefined,
+        // });
       }
       var result = {
         responseBody: response.response,
@@ -722,6 +833,66 @@ export const saveProductsOutlet = (data, OutletId, refresh) => {
         type: 'DATA_PRODUCTS_OUTLET',
         products: outletProduct,
       });
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const getProductsUnavailable = OutletId => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      let response = await fetchApiProduct(
+        `/product/unavailable/${OutletId}/`,
+        'GET',
+        null,
+        200,
+        token,
+      );
+
+      console.log('RESPONSE GET PRODUCTS UNAVAILABLE ', response);
+
+      if (response.success == true) {
+        return response.response.data;
+      } else {
+        return false;
+      }
+    } catch (e) {}
+  };
+};
+
+export const getTermsConditions = (payload, url) => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      const response = await fetchApiOrder(
+        '/orderingsetting/app',
+        'GET',
+        null,
+        200,
+        token,
+      );
+
+      console.log(response, 'RESPONSE ORDERING SETTING');
+
+      if (response.success) {
+        return response.response.data;
+      } else {
+        return false;
+      }
     } catch (error) {
       return error;
     }

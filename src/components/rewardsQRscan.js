@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   BackHandler,
   SafeAreaView,
+  ActivityIndicator,
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -18,8 +19,17 @@ import {compose} from 'redux';
 import AwesomeAlert from 'react-native-awesome-alerts';
 
 import colorConfig from '../config/colorConfig';
-import {sendPayment, campaign, dataPoint} from '../actions/rewards.action';
-import {myVoucers} from '../actions/account.action';
+import {
+  sendPayment,
+  campaign,
+  dataPoint,
+  vouchers,
+} from '../actions/rewards.action';
+import {myVoucers, paymentRefNo} from '../actions/account.action';
+import {Dialog} from 'react-native-paper';
+import QRCode from 'react-native-qrcode-svg';
+import {getPaymentData} from '../actions/payment.actions';
+import {isEmptyArray} from '../helper/CheckEmpty';
 
 class RewardsQRscan extends Component {
   constructor(props) {
@@ -29,11 +39,28 @@ class RewardsQRscan extends Component {
       showAlert: false,
       pesanAlert: '',
       titleAlert: '',
+      loadingDialog: false,
     };
   }
 
   componentDidMount = async () => {
     await this.props.dispatch(myVoucers());
+
+    // CHECK IF PAGE IS FROM DEEP LINKING
+    try {
+      if (this.props.paymentRefNo != undefined) {
+        await this.setState({loadingDialog: true});
+        this.props.dispatch(vouchers());
+        const data = {
+          id: this.props.paymentRefNo,
+        };
+        const e = {};
+        e.data = JSON.stringify(data);
+        this.onSuccess(e);
+        this.props.dispatch(paymentRefNo(undefined));
+      }
+    } catch (e) {}
+
     this.backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
       this.handleBackPress,
@@ -41,7 +68,9 @@ class RewardsQRscan extends Component {
   };
 
   componentWillUnmount() {
-    this.backHandler.remove();
+    try {
+      this.backHandler.remove();
+    } catch (e) {}
   }
 
   handleBackPress = () => {
@@ -53,41 +82,45 @@ class RewardsQRscan extends Component {
     Actions.pop();
   };
 
-  onSuccess = e => {
+  onSuccess = async e => {
     try {
-      const scan = JSON.parse(e.data);
-      console.log('scan ', scan);
-      if (
-        scan.price == undefined ||
-        scan.dataPay == undefined
-        // scan.referenceNo == undefined
-      ) {
+      let resultScan = JSON.parse(e.data);
+      await this.setState({loadingDialog: true});
+      const response = await this.props.dispatch(getPaymentData(resultScan.id));
+
+      if (response.success == false) {
         this.setState({
           showAlert: true,
-          pesanAlert: 'Looks like you scan wrong Qr Code.',
+          pesanAlert: response.message,
           titleAlert: 'Opps...',
+          loadingDialog: false,
         });
       } else {
-        var pembayaran = {
-          payment: scan.price,
-          storeName: scan.outletName,
-          dataPay: scan.dataPay,
-          storeId: scan.outletId,
-          referenceNo: scan.referenceNo,
-          paymentType: scan.paymentType,
-        };
-        // console.log('hasil pembayaran', pembayaran);
-        // this.sendPayment(pembayaran);
-        // this.paymentDetail(pembayaran);
-        Actions.paymentDetail({pembayaran: pembayaran});
+        let paymentData = response.responseBody.Data;
+        paymentData.payment = response.responseBody.Data.totalNettAmount;
+        paymentData.storeId = response.responseBody.Data.outletId;
+
+        if (!isEmptyArray(response.responseBody.Data.payments)) {
+          const result = response.responseBody.Data.payments.find(
+            item => item.isPoint == true,
+          );
+          if (result != undefined) {
+            paymentData.moneyPoint = result.paymentAmount;
+            paymentData.addPoint = result.redeemValue;
+          }
+        }
+
+        Actions.replace('paymentDetail', {pembayaran: paymentData});
       }
     } catch (e) {
+      await this.setState({loadingDialog: false});
       this.setState({
         showAlert: true,
         pesanAlert: 'Please try again',
         titleAlert: 'Opps...',
       });
     }
+    await this.setState({loadingDialog: false});
   };
 
   sendPayment = async pembayaran => {
@@ -119,6 +152,50 @@ class RewardsQRscan extends Component {
     });
   };
 
+  renderDialogLoading = () => {
+    return (
+      <Dialog
+        dismissable={false}
+        visible={this.state.loadingDialog}
+        onDismiss={() => {
+          this.setState({loadingDialog: false});
+        }}>
+        <Dialog.Content>
+          <Text
+            style={{
+              textAlign: 'center',
+              fontFamily: 'Lato-Bold',
+              fontSize: 20,
+              color: colorConfig.store.defaultColor,
+            }}>
+            Please wait
+          </Text>
+          <View
+            style={{
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginVertical: 20,
+            }}>
+            <ActivityIndicator
+              size={50}
+              color={colorConfig.store.secondaryColor}
+            />
+            <Text
+              style={{
+                marginTop: 20,
+                textAlign: 'center',
+                fontFamily: 'Lato-Medium',
+                fontSize: 15,
+                color: colorConfig.store.defaultColor,
+              }}>
+              We're getting your payment
+            </Text>
+          </View>
+        </Dialog.Content>
+      </Dialog>
+    );
+  };
+
   render() {
     return (
       <SafeAreaView style={styles.container}>
@@ -137,17 +214,19 @@ class RewardsQRscan extends Component {
         </View>
         <View style={styles.card}>
           <View style={{marginTop: 60}}>
-            <QRCodeScanner
-              markerStyle={{
-                borderColor: 'white',
-                borderRadius: 10,
-                borderStyle: 'dashed',
-                width: Dimensions.get('window').width - 50,
-                height: Dimensions.get('window').width - 50,
-              }}
-              showMarker={true}
-              onRead={this.onSuccess}
-            />
+            {this.props.paymentRefNo != undefined ? null : (
+              <QRCodeScanner
+                markerStyle={{
+                  borderColor: 'white',
+                  borderRadius: 10,
+                  borderStyle: 'dashed',
+                  width: Dimensions.get('window').width - 50,
+                  height: Dimensions.get('window').width - 50,
+                }}
+                showMarker={true}
+                onRead={this.onSuccess}
+              />
+            )}
           </View>
         </View>
         <AwesomeAlert
@@ -177,6 +256,7 @@ class RewardsQRscan extends Component {
             }
           }}
         />
+        {this.renderDialogLoading()}
       </SafeAreaView>
     );
   }
@@ -207,6 +287,10 @@ const styles = StyleSheet.create({
     flex: 1,
     // backgroundColor: colorConfig.pageIndex.activeTintColor
   },
+});
+
+mapStateToProps = state => ({
+  paymentRefNo: state.accountsReducer.paymentRefNo.paymentRefNo,
 });
 
 mapDispatchToProps = dispatch => ({

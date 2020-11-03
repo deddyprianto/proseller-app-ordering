@@ -13,7 +13,12 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
-import {dataPoint, vouchers} from '../actions/rewards.action';
+import {
+  campaign,
+  dataPoint,
+  getStamps,
+  vouchers,
+} from '../actions/rewards.action';
 
 import colorConfig from '../config/colorConfig';
 // import RewardsStamp from '../components/rewardsStamp';
@@ -22,6 +27,8 @@ import RewordsVouchers from '../components/rewordsVouchers';
 import Loader from '../components/loader';
 import {myVoucers} from '../actions/account.action';
 import {isEmptyObject} from '../helper/CheckEmpty';
+import LoaderDarker from './LoaderDarker';
+import {recentTransaction} from '../actions/sales.action';
 
 class RewardsRewards extends Component {
   constructor(props) {
@@ -53,9 +60,11 @@ class RewardsRewards extends Component {
 
   getDataVoucher = async () => {
     this.setState({isLoading: true});
-    await this.props.dispatch(dataPoint());
-    await this.props.dispatch(vouchers());
-    await this.props.dispatch(myVoucers());
+    await Promise.all([
+      this.props.dispatch(dataPoint()),
+      this.props.dispatch(vouchers()),
+      this.props.dispatch(myVoucers()),
+    ]);
     this.setState({isLoading: false});
   };
 
@@ -67,7 +76,7 @@ class RewardsRewards extends Component {
     const {intlData, detailPoint} = this.props;
     return (
       <SafeAreaView style={styles.container}>
-        {this.state.isLoading && <Loader />}
+        {this.state.isLoading && <LoaderDarker />}
         <View style={{backgroundColor: colorConfig.store.defaultColor}}>
           <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
             <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
@@ -91,16 +100,16 @@ class RewardsRewards extends Component {
             (detailPoint.trigger.status === true ||
               detailPoint.trigger.campaignTrigger === 'USER_SIGNUP') ? (
               <View style={styles.point}>
-                <Icon
-                  size={23}
-                  name={
-                    Platform.OS === 'ios' ? 'ios-pricetags' : 'md-pricetags'
-                  }
-                  style={{
-                    color: colorConfig.pageIndex.backgroundColor,
-                    marginRight: 8,
-                  }}
-                />
+                {/*<Icon*/}
+                {/*  size={23}*/}
+                {/*  name={*/}
+                {/*    Platform.OS === 'ios' ? 'ios-pricetags' : 'md-pricetags'*/}
+                {/*  }*/}
+                {/*  style={{*/}
+                {/*    color: colorConfig.pageIndex.backgroundColor,*/}
+                {/*    marginRight: 8,*/}
+                {/*  }}*/}
+                {/*/>*/}
                 <Text
                   style={{
                     color: colorConfig.pageIndex.backgroundColor,
@@ -108,7 +117,7 @@ class RewardsRewards extends Component {
                   }}>
                   {this.props.totalPoint == undefined
                     ? 0 + ' Point'
-                    : this.props.totalPoint + ' Point'}
+                    : this.props.totalPoint + ' Points'}
                 </Text>
               </View>
             ) : null}
@@ -153,8 +162,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderColor: colorConfig.pageIndex.backgroundColor,
     borderWidth: 1,
-    borderRadius: 10,
-    padding: 5,
+    borderRadius: 6,
+    padding: 6,
   },
 });
 

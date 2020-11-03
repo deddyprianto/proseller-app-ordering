@@ -84,7 +84,7 @@ project.ext.react = [
 apply from: "../../node_modules/react-native/react.gradle"
 apply from: "../../node_modules/@sentry/react-native/sentry.gradle"
 
-apply from: "../../node_modules/react-native-code-push/android/codepush.gradle"
+// apply from: "../../node_modules/react-native-code-push/android/codepush.gradle"
 
 /**
  * Set this to true to create two separate APKs instead of one:
@@ -138,7 +138,7 @@ android {
         applicationId "com.edgeworks"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 14
+        versionCode 24
         versionName "1.1"
         missingDimensionStrategy 'react-native-camera', 'general'
         resValue "string", "build_config_package", "com.edgeworks"
@@ -226,15 +226,15 @@ android {
 
 dependencies {
     implementation project(':react-native-linear-gradient')
-    implementation project(':@react-native-firebase_crashlytics')
-    implementation project(':@react-native-firebase_app')
+    // implementation project(':@react-native-firebase_crashlytics')
+    // implementation project(':@react-native-firebase_app')
     implementation project(':react-native-sms-retriever')
     // implementation project(':react-native-device-brightness')
     implementation project(':react-native-config')
     implementation project(':react-native-permissions')
     implementation project(':react-native-vector-icons')
     implementation project(':@react-native-community_async-storage')
-    implementation project(':react-native-fbsdk')
+    // implementation project(':react-native-fbsdk')
     implementation project(':react-native-android-location-enabler')
     implementation project(':react-native-svg')
     implementation project(':react-native-camera')
@@ -242,13 +242,13 @@ dependencies {
     implementation "com.facebook.react:react-native:+"  // From node_modules
     // implementation 'com.facebook.android:facebook-android-sdk:[4,5)'
     implementation 'com.facebook.android:facebook-login:[5,6)'
-    implementation 'com.google.firebase:firebase-analytics:17.2.2'
+    // implementation 'com.google.firebase:firebase-analytics:17.2.2'
     implementation 'com.facebook.android:facebook-android-sdk:5.15.3'
     // Firebase dependencies
     implementation "com.google.android.gms:play-services-base:16.1.0"
-    implementation "com.google.firebase:firebase-core:16.0.9"
+    // implementation "com.google.firebase:firebase-core:16.0.9"
     // Add the Firebase SDK for Crashlytics.
-    implementation 'com.google.firebase:firebase-crashlytics:17.0.0-beta01'
+    // implementation 'com.google.firebase:firebase-crashlytics:17.0.0-beta01'
 
     // def multidex_version = "2.0.1"
     // implementation 'androidx.multidex:multidex:$multidex_version'
@@ -281,5 +281,5 @@ apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.grad
 apply plugin: 'com.android.application'
 apply plugin: 'com.onesignal.androidsdk.onesignal-gradle-plugin'
 apply plugin: 'com.google.gms.google-services'
-apply plugin: 'com.google.firebase.crashlytics'
+// apply plugin: 'com.google.firebase.crashlytics'
 

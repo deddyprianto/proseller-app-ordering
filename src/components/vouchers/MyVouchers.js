@@ -28,6 +28,7 @@ import accountsReducer from '../../reducers/accounts.reducer';
 import * as _ from 'lodash';
 import {dataPoint, vouchers} from '../../actions/rewards.action';
 import {myVoucers} from '../../actions/account.action';
+import {format} from 'date-fns';
 
 class MyVouchers extends Component {
   constructor(props) {
@@ -89,7 +90,7 @@ class MyVouchers extends Component {
   }
 
   pageDetailVoucher = item => {
-    console.log(item);
+    // console.log(item);
     // Actions.voucher({dataVoucher: item})
   };
 
@@ -159,7 +160,7 @@ class MyVouchers extends Component {
                             position: 'absolute',
                             left: 0,
                             top: 0,
-                            backgroundColor: 'rgba(128,128,128, 0.8)',
+                            backgroundColor: colorConfig.store.transparentColor,
                             height: 30,
                             // width: this.state.screenWidth / 2 - 11,
                             borderTopLeftRadius: 9,
@@ -180,9 +181,9 @@ class MyVouchers extends Component {
                         </View>
                       </View>
                       <View style={styles.voucherDetail}>
-                        <View style={styles.status}>
-                          <Text style={styles.statusTitle}>Awarded</Text>
-                        </View>
+                        {/*<View style={styles.status}>*/}
+                        {/*  <Text style={styles.statusTitle}>Awarded</Text>*/}
+                        {/*</View>*/}
                         <Text style={styles.nameVoucher}>{item['name']}</Text>
                         <View style={{flexDirection: 'row'}}>
                           <Icon
@@ -191,7 +192,7 @@ class MyVouchers extends Component {
                               Platform.OS === 'ios' ? 'ios-list' : 'md-list'
                             }
                             style={{
-                              color: colorConfig.pageIndex.activeTintColor,
+                              color: colorConfig.store.secondaryColor,
                               marginRight: 5,
                             }}
                           />
@@ -208,7 +209,7 @@ class MyVouchers extends Component {
                               Platform.OS === 'ios' ? 'ios-time' : 'md-time'
                             }
                             style={{
-                              color: colorConfig.pageIndex.activeTintColor,
+                              color: colorConfig.store.secondaryColor,
                               marginRight: 5,
                             }}
                           />
@@ -232,6 +233,31 @@ class MyVouchers extends Component {
                             </Text>
                           )}
                         </View>
+                        {item['expiryDate'] && (
+                          <View style={{flexDirection: 'row'}}>
+                            <Icon
+                              size={15}
+                              name={
+                                Platform.OS === 'ios' ? 'ios-alert' : 'md-alert'
+                              }
+                              style={{
+                                color: colorConfig.store.secondaryColor,
+                                marginRight: 5,
+                              }}
+                            />
+                            <Text
+                              style={[
+                                styles.descVoucher,
+                                {color: colorConfig.store.colorError},
+                              ]}>
+                              This voucher will expire on{' '}
+                              {format(
+                                new Date(item['expiryDate']),
+                                'dd MMM yyyy',
+                              )}
+                            </Text>
+                          </View>
+                        )}
                       </View>
                     </View>
                   }
@@ -283,8 +309,9 @@ const styles = StyleSheet.create({
     backgroundColor: colorConfig.store.storesItem,
   },
   voucherImage1: {
-    height: Dimensions.get('window').width / 4,
-    width: Dimensions.get('window').width - 22,
+    width: '100%',
+    resizeMode: 'contain',
+    aspectRatio: 2.5,
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
   },
@@ -317,12 +344,13 @@ const styles = StyleSheet.create({
   },
   nameVoucher: {
     fontSize: 18,
-    color: colorConfig.store.defaultColor,
+    color: colorConfig.store.secondaryColor,
     fontWeight: 'bold',
   },
   descVoucher: {
-    fontSize: 13,
-    color: colorConfig.pageIndex.inactiveTintColor,
+    fontSize: 12,
+    maxWidth: '95%',
+    color: colorConfig.store.titleSelected,
   },
   descVoucherTime: {
     fontSize: 12,

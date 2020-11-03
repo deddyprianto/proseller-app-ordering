@@ -1,6 +1,7 @@
 import {fetchApi} from '../service/api';
 import awsConfig from '../config/awsConfig';
 import CryptoJS from 'react-native-crypto-js';
+import {fetchApiPayment} from '../service/apiPayment';
 
 export const updateUser = payload => {
   return async (dispatch, getState) => {
@@ -34,7 +35,36 @@ export const updateUser = payload => {
         });
       }
 
-      return response.success;
+      return response;
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const requestOTP = payload => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+      console.log(payload, 'PAYLOAD REQUEST OTP');
+      const response = await fetchApi(
+        `/customer/updateProfile/?requestOtp=true`,
+        'PUT',
+        payload,
+        200,
+        token,
+      );
+
+      console.log(response, 'RESPONSE REQUEST OTP');
+
+      if (response.success) {
+        return true;
+      } else return false;
     } catch (error) {
       return error;
     }
@@ -96,12 +126,36 @@ export const deviceUserInfo = deviceID => {
 };
 
 export const defaultPaymentAccount = defaultAccount => {
-  return async dispatch => {
+  return async (dispatch, getState) => {
+    const state = getState();
     try {
-      dispatch({
-        type: 'GET_USER_DEFAULT_ACCOUNT',
-        defaultAccount: defaultAccount,
-      });
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      if (defaultAccount != undefined) {
+        const response = await fetchApiPayment(
+          `/account/setdefault/${defaultAccount.id}`,
+          'GET',
+          null,
+          200,
+          token,
+        );
+        console.log('responsenya set default payment account', response);
+        if (response.success) {
+          dispatch({
+            type: 'GET_USER_DEFAULT_ACCOUNT',
+            defaultAccount: defaultAccount,
+          });
+        }
+      } else {
+        dispatch({
+          type: 'GET_USER_DEFAULT_ACCOUNT',
+          defaultAccount: defaultAccount,
+        });
+      }
     } catch (error) {
       return error;
     }

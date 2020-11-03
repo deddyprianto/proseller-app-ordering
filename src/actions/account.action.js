@@ -1,6 +1,8 @@
 import {fetchApi} from '../service/api';
+import {isEmptyArray} from '../helper/CheckEmpty';
 // import {refreshToken} from './auth.actions';
 // import * as _ from 'lodash';
+import format from 'date-fns/format';
 
 export const myVoucers = () => {
   return async (dispatch, getState) => {
@@ -19,12 +21,56 @@ export const myVoucers = () => {
         200,
         token,
       );
-      console.log(response.responseBody.Data, 'response myVoucers');
+      console.log(response, 'response myVoucers');
       var dataVouchers = response.responseBody.Data;
+
+      try {
+        if (!isEmptyArray(dataVouchers)) {
+          for (let i = 0; i < dataVouchers.length; i++) {
+            if (
+              dataVouchers[i].expiryDate != undefined &&
+              dataVouchers[i].expiryDate != null
+            ) {
+              dataVouchers[i].uniqueID =
+                format(new Date(dataVouchers[i].expiryDate), 'dd MMM yyyy') +
+                ' ' +
+                dataVouchers[i].id;
+            } else {
+              dataVouchers[i].uniqueID = dataVouchers[i].id;
+            }
+          }
+        }
+      } catch (e) {}
 
       dispatch({
         type: 'DATA_MY_VOUCHERS',
         data: dataVouchers,
+      });
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const afterPayment = status => {
+  return async (dispatch, getState) => {
+    try {
+      dispatch({
+        type: 'AFTER_PAYMENT',
+        data: status,
+      });
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const paymentRefNo = data => {
+  return async (dispatch, getState) => {
+    try {
+      dispatch({
+        type: 'PAYMENT_REF_NO',
+        data: data,
       });
     } catch (error) {
       return error;

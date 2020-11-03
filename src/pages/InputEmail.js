@@ -134,7 +134,10 @@ class InputEmail extends Component {
       Alert.alert('Oppss..', 'Please use a valid email.');
       return;
     }
+
     this.setState({loading: true});
+    const {companyInfo} = this.props;
+
     try {
       var dataRequest = {
         email: this.state.email.toLowerCase(),
@@ -150,7 +153,15 @@ class InputEmail extends Component {
         if (response.data.confirmation == false) {
           email.confirmed = false;
           email.phoneNumber = response.data.phoneNumber;
-          Actions.signInEmail(email);
+          // check mode sign in ( by password or by OTP )
+          if (
+            companyInfo.enableRegisterWithPassword != undefined &&
+            companyInfo.enableRegisterWithPassword == true
+          ) {
+            Actions.signInEmailWithPassword(email);
+          } else {
+            Actions.signInEmail(email);
+          }
         } else if (response.data.status == 'SUSPENDED') {
           Alert.alert(
             'Sorry',
@@ -159,7 +170,15 @@ class InputEmail extends Component {
             }. Please contact administrator.`,
           );
         } else {
-          Actions.signInEmail(email);
+          // check mode sign in ( by password or by OTP )
+          if (
+            companyInfo.enableRegisterWithPassword != undefined &&
+            companyInfo.enableRegisterWithPassword == true
+          ) {
+            Actions.signInEmailWithPassword(email);
+          } else {
+            Actions.signInEmail(email);
+          }
         }
         this.setState({
           loading: false,
@@ -168,7 +187,16 @@ class InputEmail extends Component {
         this.setState({
           loading: false,
         });
-        Actions.emailRegister(email);
+
+        // check mode sign up ( by password or by OTP )
+        if (
+          companyInfo.enableRegisterWithPassword != undefined &&
+          companyInfo.enableRegisterWithPassword == true
+        ) {
+          Actions.emailRegisterWithPassword(email);
+        } else {
+          Actions.emailRegister(email);
+        }
       }
     } catch (error) {
       Alert.alert('Opss..', 'Something went wrong, please try again.');
@@ -259,6 +287,7 @@ class InputEmail extends Component {
   }
 }
 mapStateToProps = state => ({
+  companyInfo: state.userReducer.getCompanyInfo.companyInfo,
   status: state.accountsReducer.accountExist.status,
   intlData: state.intlData,
 });

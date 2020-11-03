@@ -10,9 +10,13 @@ import {Router, Scene, Actions} from 'react-native-router-flux';
 import InputPhoneNumber from '../pages/InputPhoneNumber';
 import InputEmail from '../pages/InputEmail';
 import SignInPhoneNumber from '../pages/SignInPhoneNumber';
+import SignInPhoneNumberWithPassword from '../pages/SignInPhoneNumberWithPassword';
 import SignInEmail from '../pages/SignInEmail';
+import SignInEmailWithPassword from '../pages/SignInEmailWithPassword';
 import MobileRegister from '../pages/MobileRegister';
+import MobileRegisterWithPassword from '../pages/MobileRegisterWithPassword';
 import EmailRegister from '../pages/EmailRegister';
+import EmailRegisterWithPassword from '../pages/EmailRegisterWithPassword';
 import PageIndex from '../pages/pageIndex';
 import VerifyOtpAfterRegister from '../pages/VerifyOtpAfterRegister';
 import VerifyOtpAfterRegisterEmail from '../pages/VerifyOtpAfterRegisterEmail';
@@ -76,7 +80,12 @@ import ListLanguages from '../components/language/ListLanguages';
 import ListReferral from '../components/referral/ListReferral';
 import AddReferral from '../components/referral/AddReferral';
 import Contacts from '../components/referral/Contacts';
+
 import HostedTransaction from '../components/card/HostedTransaction';
+import ChangeCredentials from '../pages/ChangeCredentials';
+import ChangeCredentialsOTP from '../pages/ChangeCredentialsOTP';
+import TermsCondition from '../pages/TermsCondition';
+import awsConfig from './awsConfig';
 
 let backPressed = 0;
 
@@ -113,7 +122,7 @@ export default class Routes extends Component {
 
   render() {
     return (
-      <Router>
+      <Router uriPrefix={awsConfig.APP_DEEP_LINK}>
         <Scene>
           <Scene
             key="root"
@@ -128,7 +137,15 @@ export default class Routes extends Component {
               initial={true}
             />
             <Scene key="signInPhoneNumber" component={SignInPhoneNumber} />
+            <Scene
+              key="signInPhoneNumberWithPassword"
+              component={SignInPhoneNumberWithPassword}
+            />
             <Scene key="signInEmail" component={SignInEmail} />
+            <Scene
+              key="signInEmailWithPassword"
+              component={SignInEmailWithPassword}
+            />
             <Scene key="inputEmail" component={InputEmail} />
             <Scene
               key="verifyOtpAfterRegister"
@@ -139,8 +156,16 @@ export default class Routes extends Component {
               component={VerifyOtpAfterRegisterEmail}
             />
             <Scene key="mobileRegister" component={MobileRegister} />
+            <Scene
+              key="mobileRegisterWithPassword"
+              component={MobileRegisterWithPassword}
+            />
             <Scene key="verifyRegister" component={VerifyRegister} />
             <Scene key="emailRegister" component={EmailRegister} />
+            <Scene
+              key="emailRegisterWithPassword"
+              component={EmailRegisterWithPassword}
+            />
 
             <Scene key="listLanguages" component={ListLanguages} />
           </Scene>
@@ -149,7 +174,11 @@ export default class Routes extends Component {
             <Scene key="pay" component={Pay} />
             <Scene key="rewards" component={Rewards} />
             <Scene key="qrcode" component={RewardsQRmenu} />
-            <Scene key="scan" component={RewardsQRscan} />
+            <Scene
+              key="scan"
+              path={'/payment/:paymentRefNo/'}
+              component={RewardsQRscan}
+            />
             <Scene key="voucher" component={VoucherDetail} />
             <Scene
               key="historyDetailPayment"
@@ -166,7 +195,7 @@ export default class Routes extends Component {
             <Scene key="myVouchers" component={MyVouchers} />
             <Scene key="redeemVoucher" component={RedeemVoucher} />
             <Scene key="accountEditProfil" component={AccountEditProfil} />
-            <Scene  key="editProfile" component={EditProfile} />
+            <Scene key="editProfile" component={EditProfile} />
             <Scene key="paymentDetail" component={PaymentDetail} />
             <Scene
               key="paymentSuccess"
@@ -211,6 +240,12 @@ export default class Routes extends Component {
             <Scene key="listReferral" component={ListReferral} />
             <Scene key="addReferral" component={AddReferral} />
             <Scene key="contacts" component={Contacts} />
+            <Scene key="changeCredentials" component={ChangeCredentials} />
+            <Scene key="termsCondition" component={TermsCondition} />
+            <Scene
+              key="changeCredentialsOTP"
+              component={ChangeCredentialsOTP}
+            />
           </Scene>
         </Scene>
       </Router>

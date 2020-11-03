@@ -267,7 +267,7 @@ class ListAddress extends Component {
   checkDefaultAddress = item => {
     const {defaultAddress} = this.props;
     try {
-      if (defaultAddress.address == item.address) return true;
+      if (defaultAddress.streetName == item.streetName) return true;
       else return false;
     } catch (e) {
       return false;
@@ -307,10 +307,22 @@ class ListAddress extends Component {
               <Text style={styles.cardText}>Address Name : </Text>
               <Text style={styles.cardText}>{item.addressName}</Text>
             </View>
+            {/*<View style={styles.cardContent}>*/}
+            {/*  <Text style={styles.cardText}>Address Detail : </Text>*/}
+            {/*  <Text style={[styles.cardText, {maxWidth: '60%'}]}>*/}
+            {/*    {item.address}*/}
+            {/*  </Text>*/}
+            {/*</View>*/}
             <View style={styles.cardContent}>
-              <Text style={styles.cardText}>Address Detail : </Text>
+              <Text style={styles.cardText}>Street Name : </Text>
               <Text style={[styles.cardText, {maxWidth: '60%'}]}>
-                {item.address}
+                {item.streetName}
+              </Text>
+            </View>
+            <View style={styles.cardContent}>
+              <Text style={styles.cardText}>Unit No : </Text>
+              <Text style={[styles.cardText, {maxWidth: '60%'}]}>
+                {item.unitNo}
               </Text>
             </View>
             {awsConfig.COUNTRY != 'Singapore' ? (
@@ -391,6 +403,8 @@ class ListAddress extends Component {
     if (!isEmptyArray(user.deliveryAddress)) {
       address = user.deliveryAddress;
     }
+
+    console.log(address, 'address');
 
     return (
       <SafeAreaView style={styles.container}>
@@ -536,7 +550,7 @@ const styles = StyleSheet.create({
     elevation: 12,
   },
   cardSelected: {
-    borderWidth: 4,
+    borderWidth: 2,
     borderColor: colorConfig.store.defaultColor,
   },
   cardContent: {

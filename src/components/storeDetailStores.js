@@ -103,8 +103,8 @@ export default class StoreDetailStores extends Component {
               />
             ) : (
               <Image
-                resizeMode="stretch"
-                style={styles.image}
+                resizeMode="contain"
+                style={[styles.image, {marginVertical: 10}]}
                 source={appConfig.appImageNull}
               />
             )}

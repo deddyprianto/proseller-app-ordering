@@ -9,8 +9,9 @@ import {
 } from 'react-native';
 import colorConfig from '../config/colorConfig';
 import Icon from 'react-native-vector-icons/Ionicons';
+import Icon2 from 'react-native-vector-icons/FontAwesome';
 import {Actions} from 'react-native-router-flux';
-import {movePageIndex} from '../actions/user.action';
+// import {movePageIndex} from '../actions/user.action';
 
 export default class RewardsMenu extends Component {
   constructor(props) {
@@ -61,19 +62,17 @@ export default class RewardsMenu extends Component {
               <Icon
                 size={this.state.screenHeight / 5 / 2 - 10}
                 name={Platform.OS === 'ios' ? 'ios-wallet' : 'md-wallet'}
-                style={{color: colorConfig.pageIndex.activeTintColor}}
+                style={{color: colorConfig.store.secondaryColor, height: 70}}
               />
             </View>
             <Text style={styles.menuText}>{intlData.messages.pay}</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => this.pageQRCode(this.props)}>
             <View style={{alignItems: 'center'}}>
-              <Icon
+              <Icon2
                 size={this.state.screenHeight / 5 / 2 - 10}
-                name={
-                  Platform.OS === 'ios' ? 'ios-qr-scanner' : 'md-qr-scanner'
-                }
-                style={{color: colorConfig.pageIndex.activeTintColor}}
+                name={'qrcode'}
+                style={{color: colorConfig.store.secondaryColor, height: 70}}
               />
             </View>
             <Text style={styles.menuText}>{intlData.messages.myQrCode}</Text>
@@ -83,7 +82,7 @@ export default class RewardsMenu extends Component {
               <Icon
                 size={this.state.screenHeight / 5 / 2 - 10}
                 name={Platform.OS === 'ios' ? 'ios-ribbon' : 'md-ribbon'}
-                style={{color: colorConfig.pageIndex.activeTintColor}}
+                style={{color: colorConfig.store.secondaryColor, height: 70}}
               />
             </View>
             <Text style={styles.menuText}>{intlData.messages.rewards}</Text>

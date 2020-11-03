@@ -46,27 +46,40 @@ export default class StoreStores extends Component {
                       <Text
                         style={{
                           fontSize: 14,
-                          color: colorConfig.pageIndex.activeTintColor,
+                          color: colorConfig.store.secondaryColor,
                           fontFamily: 'Lato-Bold',
                         }}>
                         {item.storeName}
                       </Text>
                       {item.storeStatus ? (
-                        <Text
-                          style={{
-                            fontSize: 12,
-                            marginTop: 10,
-                            width: 70,
-                            padding: 5,
-                            textAlign: 'center',
-                            fontWeight: 'bold',
-                            backgroundColor: colorConfig.store.colorSuccess,
-                            borderRadius: 30,
-                            color: colorConfig.store.textWhite,
-                            fontFamily: 'Lato-Medium',
-                          }}>
-                          {intlData.messages.open}
-                        </Text>
+                        <View
+                          style={{flexDirection: 'row', alignItems: 'center'}}>
+                          <Text
+                            style={{
+                              fontSize: 12,
+                              marginTop: 10,
+                              width: 70,
+                              padding: 5,
+                              textAlign: 'center',
+                              fontWeight: 'bold',
+                              backgroundColor: colorConfig.store.colorSuccess,
+                              borderRadius: 30,
+                              color: colorConfig.store.textWhite,
+                              fontFamily: 'Lato-Medium',
+                            }}>
+                            {intlData.messages.open}
+                          </Text>
+                          <Text
+                            style={{
+                              padding: 5,
+                              marginTop: 10,
+                              marginLeft: 50,
+                              fontFamily: 'Lato-Medium',
+                              color: colorConfig.pageIndex.grayColor,
+                            }}>
+                            Tap here to order
+                          </Text>
+                        </View>
                       ) : (
                         <Text
                           style={{

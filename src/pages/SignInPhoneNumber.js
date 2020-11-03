@@ -27,6 +27,7 @@ import colorConfig from '../config/colorConfig';
 import Header from '../components/atom/header';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {isEmptyObject} from '../helper/CheckEmpty';
+import BackgroundTimer from 'react-native-background-timer';
 
 const imageWidth = Dimensions.get('window').width / 2;
 
@@ -130,12 +131,12 @@ class SignInPhoneNumber extends Component {
     this.imageWidth = new Animated.Value(styles.$largeImageSize);
   }
 
-  componentDidMount(): void {
+  componentDidMount() {
     // this.sendOTP();
   }
 
   beginTimer() {
-    this.interval = setInterval(() => {
+    this.interval = BackgroundTimer.setInterval(() => {
       const {seconds, minutes} = this.state;
 
       if (seconds > 0) {
@@ -145,7 +146,7 @@ class SignInPhoneNumber extends Component {
       }
       if (seconds === 0) {
         if (minutes === 0) {
-          clearInterval(this.interval);
+          BackgroundTimer.clearInterval(this.interval);
         } else {
           this.setState(({minutes}) => ({
             minutes: minutes - 1,
@@ -157,12 +158,18 @@ class SignInPhoneNumber extends Component {
   }
 
   componentWillUnmount() {
-    clearInterval(this.interval);
+    // clearInterval(this.interval);
+    try {
+      BackgroundTimer.clearInterval(this.interval);
+    } catch (e) {}
   }
 
   componentDidUpdate() {
     if (this.state.seconds === 0 && this.state.minutes == 0) {
-      clearInterval(this.interval);
+      // clearInterval(this.interval);
+      try {
+        BackgroundTimer.clearInterval(this.interval);
+      } catch (e) {}
       this.setState({
         minutes: this.state.initialTimer,
         buttonOTPpressed: false,

@@ -25,7 +25,7 @@ export const fetchApiOrder = async (
     }
     // const response = await fetchJson(method, path, data, token)
     const response = await apiOrder(url, method, body, headers);
-    console.log('response master basket ', response);
+    // console.log('response master basket ', response);
     if (response.resultCode === statusCode) {
       result.success = true;
       result.response = response;

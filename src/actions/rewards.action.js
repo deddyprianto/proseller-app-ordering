@@ -3,6 +3,7 @@ import * as _ from 'lodash';
 import {refreshToken} from './auth.actions';
 import CryptoJS from 'react-native-crypto-js';
 import awsConfig from '../config/awsConfig';
+import {isEmptyArray} from '../helper/CheckEmpty';
 
 export const campaign = () => {
   return async (dispatch, getState) => {
@@ -105,10 +106,17 @@ export const getStamps = () => {
       );
       console.log(response, 'response getStamps');
 
-      dispatch({
-        type: 'DATA_STAMPS',
-        dataStamps: response.responseBody.Data,
-      });
+      if (response.success == true) {
+        dispatch({
+          type: 'DATA_STAMPS',
+          dataStamps: response.responseBody.Data,
+        });
+      } else {
+        dispatch({
+          type: 'DATA_STAMPS',
+          dataStamps: undefined,
+        });
+      }
     } catch (error) {
       return error;
     }
@@ -159,15 +167,26 @@ export const dataPoint = () => {
         token,
       );
       console.log(response, 'response data point');
-      let totalPoint = response.responseBody.Data.totalPoint;
-      let campaignActive = response.responseBody.Data.campaignActive;
+      if (response.success == true) {
+        let totalPoint = response.responseBody.Data.totalPoint;
+        let campaignActive = response.responseBody.Data.campaignActive;
+        let pendingPoints = 0;
+        // check pending points
+        if (
+          response.responseBody.Data.pendingPoints != undefined &&
+          response.responseBody.Data.pendingPoints != null
+        ) {
+          pendingPoints = response.responseBody.Data.pendingPoints;
+        }
 
-      dispatch({
-        type: 'DATA_TOTAL_POINT',
-        totalPoint: totalPoint,
-        campaignActive,
-        detailPoint: response.responseBody.Data,
-      });
+        dispatch({
+          type: 'DATA_TOTAL_POINT',
+          totalPoint: totalPoint,
+          pendingPoints: pendingPoints,
+          campaignActive,
+          detailPoint: response.responseBody.Data,
+        });
+      }
     } catch (error) {
       return error;
     }
@@ -207,6 +226,89 @@ export const dataPointHistory = () => {
         return response.responseBody.Data;
       } else {
         return false;
+      }
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const cutomerActivity = (skip, take, isReceive) => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      let {
+        userReducer: {
+          getUser: {userDetails},
+        },
+      } = state;
+
+      // Decrypt data user
+      let bytes = CryptoJS.AES.decrypt(userDetails, awsConfig.PRIVATE_KEY_RSA);
+      userDetails = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+
+      const payload = {
+        skip,
+        take,
+        parameters: [
+          {
+            id: 'search',
+            value: '_POINT',
+          },
+        ],
+      };
+      console.log(JSON.stringify(payload), 'payload');
+      let response = await fetchApi(
+        `/customer/activity/${userDetails.id}`,
+        'POST',
+        payload,
+        200,
+        token,
+      );
+
+      console.log(response, 'RESPONSE CUSTOMER ACTIVITY');
+
+      if (response.success) {
+        try {
+          if (!isEmptyArray(response.responseBody.data)) {
+            let data = [];
+            if (isReceive) {
+              data = response.responseBody.data.filter(
+                item =>
+                  item.activityType == 'GET_POINT' ||
+                  item.activityType == 'VOID_POINT_REDEEMED' ||
+                  (item.activityType == 'ADJUST_POINT' && item.amount > 0),
+              );
+            } else {
+              data = response.responseBody.data.filter(
+                item =>
+                  item.activityType == 'REDEEM_POINT' ||
+                  item.activityType == 'VOID_POINT' ||
+                  (item.activityType == 'ADJUST_POINT' && item.amount < 0),
+              );
+            }
+            const dataLength = response.responseBody.dataLength;
+            const actualLength = response.responseBody.data.length;
+
+            if (data == undefined) {
+              data = [];
+            }
+
+            return {data, dataLength, actualLength};
+          } else {
+            return [];
+          }
+        } catch (e) {
+          return [];
+        }
+      } else {
+        return [];
       }
     } catch (error) {
       return error;

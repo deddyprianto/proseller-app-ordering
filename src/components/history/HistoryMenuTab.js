@@ -12,11 +12,11 @@ class HistoryMenuTab extends Component {
   constructor(props) {
     super(props);
 
-    const {dataBasket} = this.props;
+    const {afterPayment} = this.props;
 
     this.state = {
-      toggleAll: isEmptyArray(dataBasket) ? true : false,
-      togglePending: !isEmptyArray(dataBasket) ? true : false,
+      toggleAll: afterPayment == undefined || !afterPayment ? true : false,
+      togglePending: afterPayment && afterPayment != undefined ? true : false,
       isLoading: false,
     };
   }
@@ -84,7 +84,9 @@ class HistoryMenuTab extends Component {
                     fontFamily: 'Lato-Medium',
                   }}>
                   Pending Orders{' '}
-                  {!isEmptyArray(dataBasket) ? `( ${dataBasket.length} )` : null}
+                  {!isEmptyArray(dataBasket)
+                    ? `( ${dataBasket.length} )`
+                    : null}
                 </Text>
               </View>
               {this.state.togglePending ? (
@@ -122,6 +124,7 @@ const styles = StyleSheet.create({
 });
 
 mapStateToProps = state => ({
+  afterPayment: state.accountsReducer.afterPayment.afterPayment,
   dataBasket: state.orderReducer.dataCart.cart,
   intlData: state.intlData,
 });

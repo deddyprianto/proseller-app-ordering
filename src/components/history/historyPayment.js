@@ -43,11 +43,17 @@ class HistoryPayment extends Component {
       ' ' +
       tanggal.getFullYear() +
       ' • ' +
-      tanggal.getHours() +
+      this.pad(tanggal.getHours()) +
       ':' +
-      tanggal.getMinutes()
+      this.pad(tanggal.getMinutes())
     );
   }
+
+  pad = item => {
+    let time = item.toString();
+    if (time.length == 1) return `0${item}`;
+    else return item;
+  };
 
   getMonth(value) {
     var mount = [
@@ -156,6 +162,18 @@ class HistoryPayment extends Component {
     }
   };
 
+  getAmountHistory = item => {
+    try {
+      if (item.totalNettAmount != undefined) {
+        return this.formatCurrency(item.totalNettAmount);
+      } else {
+        return this.formatCurrency(item.afterPrice);
+      }
+    } catch (e) {
+      return this.formatCurrency(item.afterPrice);
+    }
+  };
+
   render() {
     const {intlData} = this.props;
     return (
@@ -189,17 +207,25 @@ class HistoryPayment extends Component {
                 <View style={styles.sejajarSpace}>
                   <View style={styles.detail}>
                     <View style={styles.sejajarSpace}>
-                      <Text style={styles.storeName}>{item.outletName}</Text>
-                      {item.point > 0 ? (
-                        <Text style={styles.itemType}>
-                          <Text style={{color: colorConfig.store.title}}>
-                            x{' '}
+                      <Text style={styles.storeName}>
+                        {item.outletName.substr(0, 20)}
+                      </Text>
+                      <View>
+                        {item.queueNo != undefined ? (
+                          <Text style={styles.queueNo}>{item.queueNo}</Text>
+                        ) : null}
+                        {item.point > 0 ? (
+                          <Text style={styles.itemType}>
+                            <Text style={{color: colorConfig.store.title}}>
+                              x{' '}
+                            </Text>
+                            {item.point + ' ' + intlData.messages.point}
                           </Text>
-                          {item.point + ' ' + intlData.messages.point}
-                        </Text>
-                      ) : null}
+                        ) : null}
+                      </View>
                     </View>
-                    {!isEmptyArray(item.stamps) && item.stamps.length > 1 ? (
+
+                    {!isEmptyArray(item.stamps) && item.stamps.length > 0 ? (
                       <View style={styles.sejajarSpaceFlexEnd}>
                         <Text style={styles.itemTypeStamps}>
                           <Text style={{color: colorConfig.store.title}}>
@@ -212,7 +238,7 @@ class HistoryPayment extends Component {
                     <View style={styles.sejajarSpace}>
                       <View style={{flexDirection: 'row'}}>
                         <Icon
-                          size={18}
+                          size={16}
                           name={
                             Platform.OS === 'ios'
                               ? 'ios-pricetag'
@@ -222,7 +248,7 @@ class HistoryPayment extends Component {
                         />
                         <Text style={styles.paymentType}>
                           {/*{appConfig.appMataUang}*/}
-                          {this.formatCurrency(item.price)}
+                          {this.getAmountHistory(item)}
                         </Text>
                       </View>
                       <Text style={styles.paymentTgl}>
@@ -309,7 +335,7 @@ const styles = StyleSheet.create({
     width: Dimensions.get('window').width - 60,
   },
   storeName: {
-    color: colorConfig.pageIndex.activeTintColor,
+    color: colorConfig.store.secondaryColor,
     fontSize: 16,
     fontFamily: 'Lato-Bold',
   },
@@ -326,6 +352,13 @@ const styles = StyleSheet.create({
   paymentType: {
     // paddingLeft: 10,
     color: colorConfig.store.title,
+    fontWeight: 'bold',
+    fontFamily: 'Lato-Medium',
+  },
+  queueNo: {
+    textAlign: 'right',
+    fontSize: 12,
+    color: colorConfig.store.titleSelected,
     fontWeight: 'bold',
     fontFamily: 'Lato-Medium',
   },

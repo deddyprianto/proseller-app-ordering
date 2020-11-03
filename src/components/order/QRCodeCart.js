@@ -16,7 +16,12 @@ import {Actions} from 'react-native-router-flux';
 import colorConfig from '../../config/colorConfig';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
-import {getBasket, getCart, getHistoryBasket} from '../../actions/order.action';
+import {
+  getBasket,
+  getCart,
+  getHistoryBasket,
+  getPendingCart,
+} from '../../actions/order.action';
 import appConfig from '../../config/appConfig';
 import QRCode from 'react-native-qrcode-svg';
 
@@ -36,12 +41,12 @@ class WaitingFood extends Component {
       await this.setState({loading: false});
 
       // check if status basket for TAKE AWAY IS CONFIRMED, then request continoustly to get basket
-      if (this.props.dataBasket != undefined) {
-        clearInterval(this.interval);
-        this.interval = setInterval(() => {
-          this.props.dispatch(getCart(this.props.myCart.id));
-        }, 2000);
-      }
+      // if (this.props.dataBasket != undefined) {
+      //   clearInterval(this.interval);
+      //   this.interval = setInterval(() => {
+      //     this.props.dispatch(getCart(this.props.myCart.id));
+      //   }, 60000);
+      // }
     } catch (e) {
       Alert.alert('Opss..', "Can't get data basket, please try again.");
     }
@@ -65,7 +70,7 @@ class WaitingFood extends Component {
 
   componentWillUnmount() {
     this.backHandler.remove();
-    clearInterval(this.interval);
+    // clearInterval(this.interval);
   }
 
   handleBackPress = () => {
@@ -132,15 +137,20 @@ class WaitingFood extends Component {
     );
   };
 
+  close = async () => {
+    try {
+      this.props.dispatch(getCart(this.props.myCart.id));
+      this.props.dispatch(getPendingCart());
+      Actions.pop();
+    } catch (e) {}
+  };
+
   render() {
     const {intlData, dataBasket} = this.props;
     try {
-      if (dataBasket == undefined) {
-        clearInterval(this.interval);
-        this.interval = undefined;
-        // Actions.reset('pageIndex');
-        Actions.reset('pageIndex', {fromPayment: true});
-      }
+      // if (dataBasket == undefined) {
+      //   Actions.pop();
+      // }
     } catch (e) {}
 
     return (
@@ -178,9 +188,22 @@ class WaitingFood extends Component {
               cartID: this.state.dataBasket.id,
             })}
             logo={appConfig.appLogoQR}
-            logoSize={this.state.screenWidth / 6 - 20}
-            size={this.state.screenWidth - 60}
+            logoSize={this.state.screenWidth / 6 - 40}
+            size={this.state.screenWidth - 195}
           />
+        </View>
+
+        <View
+          style={{
+            justifyContent: 'center',
+            flexDirection: 'row',
+            marginTop: 30,
+          }}>
+          <TouchableOpacity
+            onPress={this.close}
+            style={styles.buttonBottomFixed}>
+            <Text style={styles.textAddCard}>Close</Text>
+          </TouchableOpacity>
         </View>
       </SafeAreaView>
     );
@@ -209,6 +232,21 @@ export default compose(
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  buttonBottomFixed: {
+    marginTop: 40,
+    backgroundColor: colorConfig.store.secondaryColor,
+    padding: 13,
+    width: '80%',
+    borderRadius: 10,
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  textAddCard: {
+    fontSize: 18,
+    color: 'white',
+    fontWeight: 'bold',
+    fontFamily: 'Lato-Bold',
   },
   containerBody: {
     marginHorizontal: 5,

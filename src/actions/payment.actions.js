@@ -2,6 +2,7 @@ import awsConfig from '../config/awsConfig';
 import CryptoJS from 'react-native-crypto-js';
 import {fetchApiPayment} from '../service/apiPayment';
 import {fetchApi} from '../service/api';
+import {isEmptyArray, isEmptyObject} from '../helper/CheckEmpty';
 
 export const getAccountPayment = payload => {
   return async (dispatch, getState) => {
@@ -26,6 +27,30 @@ export const getAccountPayment = payload => {
         type: 'MY_CARD_ACCOUNT',
         card: response.response.data,
       });
+
+      try {
+        if (!isEmptyArray(response.response.data)) {
+          const find = response.response.data.find(
+            item => item.isDefault == true,
+          );
+          if (find != undefined) {
+            dispatch({
+              type: 'GET_USER_DEFAULT_ACCOUNT',
+              defaultAccount: find,
+            });
+          } else {
+            dispatch({
+              type: 'GET_USER_DEFAULT_ACCOUNT',
+              defaultAccount: undefined,
+            });
+          }
+        } else {
+          dispatch({
+            type: 'GET_USER_DEFAULT_ACCOUNT',
+            defaultAccount: undefined,
+          });
+        }
+      } catch (e) {}
 
       return response;
     } catch (error) {
@@ -93,6 +118,32 @@ export const removeCard = payload => {
         token,
       );
       console.log('response delete account', JSON.stringify(response));
+
+      return response;
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const checkAccount = accountID => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      const response = await fetchApiPayment(
+        `/account/check/${accountID}`,
+        'GET',
+        null,
+        200,
+        token,
+      );
+      console.log('response check account', response);
 
       return response;
     } catch (error) {
@@ -173,6 +224,101 @@ export const clearAddress = () => {
         type: 'SELECTED_ADDRESS',
         selectedAddress: undefined,
       });
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const getPaymentData = referenceNo => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      const {
+        accountsReducer: {
+          myVoucers: {myVoucers},
+        },
+      } = state;
+
+      let {
+        userReducer: {
+          getUser: {userDetails},
+        },
+      } = state;
+
+      // Decrypt data user
+      let bytes = CryptoJS.AES.decrypt(userDetails, awsConfig.PRIVATE_KEY_RSA);
+      userDetails = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+
+      const response = await fetchApi(
+        `/payment/pending/get/${referenceNo}`,
+        'GET',
+        null,
+        200,
+        token,
+      );
+      console.log('response get payment data', response);
+      if (response.success == true) {
+        if (isEmptyObject(response.responseBody.Data.customerDetails)) {
+          response.responseBody.Data.customerDetails = {};
+          response.responseBody.Data.customerDetails.id = userDetails.sortKey;
+        }
+
+        if (!isEmptyObject(response.responseBody.Data.customerDetails)) {
+          if (
+            response.responseBody.Data.customerDetails.id != userDetails.id &&
+            response.responseBody.Data.customerDetails.id != userDetails.sortKey
+          ) {
+            response.success = false;
+            response.message = 'Looks like you scan wrong QR Code.';
+            return response;
+          }
+        }
+
+        if (response.responseBody.Data.status === 'COMPLETED') {
+          response.success = false;
+          response.message = 'This payment request has been paid.';
+          return response;
+        }
+
+        if (!isEmptyArray(response.responseBody.Data.payments)) {
+          let dataVoucer = response.responseBody.Data.payments;
+          for (let i = 0; i < dataVoucer.length; i++) {
+            if (dataVoucer[i].isVoucher == true) {
+              let find = await myVoucers.find(
+                item => item.serialNumber == dataVoucer[i].serialNumber,
+              );
+              if (find != undefined) {
+                find.paymentType = dataVoucer[i].paymentType;
+                find.paymentAmount = dataVoucer[i].paymentAmount;
+                find.isVoucher = dataVoucer[i].isVoucher;
+                find.voucherId = dataVoucer[i].voucherId;
+                find.serialNumber = dataVoucer[i].serialNumber;
+                dataVoucer[i] = find;
+              }
+              find = undefined;
+            }
+          }
+
+          response.responseBody.Data.dataVoucer = dataVoucer;
+          return response;
+        } else {
+          response.responseBody.Data.dataVoucer = [];
+          return response;
+        }
+      } else {
+        response.message = 'Looks like you scan wrong QR Code.';
+        if (response.responseBody.message != undefined) {
+          response.message = response.responseBody.message;
+        }
+        return response;
+      }
     } catch (error) {
       return error;
     }

@@ -62,7 +62,10 @@ class EditAddress extends Component {
       screenWidth: Dimensions.get('window').width,
       addressName: myAddress.addressName,
       address: myAddress.address,
-      oldAddress: myAddress.address,
+      streetName: myAddress.streetName,
+      unitNo: myAddress.unitNo,
+      // oldAddress: myAddress.address,
+      oldAddress: myAddress.streetName,
       postalCode: myAddress.postalCode,
       city: myAddress.city,
       province: myAddress.province == undefined ? '' : myAddress.province,
@@ -145,16 +148,25 @@ class EditAddress extends Component {
       if (!isEmptyArray(userDetail.deliveryAddress)) {
         data.deliveryAddress = userDetail.deliveryAddress;
         data.deliveryAddress = data.deliveryAddress.filter(
-          item => item.address != this.state.oldAddress,
+          // item => item.address != this.state.oldAddress,
+          item => item.streetName != this.state.oldAddress,
         );
       }
 
       let newAddress = {
         addressName: this.state.addressName,
-        address: this.state.address,
+        // address: this.state.address,
+        streetName: this.state.streetName,
+        unitNo: this.state.unitNo,
         postalCode: this.state.postalCode,
         city: this.state.city,
       };
+
+      newAddress.address = `${newAddress.streetName}`;
+
+      if (newAddress.unitNo != '' && newAddress.unitNo != undefined) {
+        newAddress.address = `${newAddress.address}, ${newAddress.unitNo}`;
+      }
 
       if (!isEmptyData(this.state.province)) {
         newAddress.province = this.state.province;
@@ -333,16 +345,39 @@ class EditAddress extends Component {
             />
           ) : null}
 
+          {/*<TextInput*/}
+          {/*  style={{height: 58, marginVertical: 10, fontSize: 13}}*/}
+          {/*  theme={theme}*/}
+          {/*  multiline={true}*/}
+          {/*  mode={'outlined'}*/}
+          {/*  label="Address"*/}
+          {/*  value={this.state.address}*/}
+          {/*  onChangeText={text => {*/}
+          {/*    this.setState({address: text});*/}
+          {/*    this.getFullAddress(text);*/}
+          {/*  }}*/}
+          {/*/>*/}
           <TextInput
-            style={{height: 55, marginVertical: 10}}
+            style={{height: 58, marginVertical: 8, fontSize: 13}}
             theme={theme}
             multiline={true}
             mode={'outlined'}
-            label="Address"
-            value={this.state.address}
+            label="Street Name"
+            value={this.state.streetName}
             onChangeText={text => {
-              this.setState({address: text});
-              this.getFullAddress(text);
+              this.setState({streetName: text});
+            }}
+          />
+
+          <TextInput
+            style={{height: 58, marginVertical: 8, fontSize: 13}}
+            theme={theme}
+            multiline={true}
+            mode={'outlined'}
+            label="Unit No"
+            value={this.state.unitNo}
+            onChangeText={text => {
+              this.setState({unitNo: text});
             }}
           />
 
@@ -361,7 +396,7 @@ class EditAddress extends Component {
           ) : null}
 
           <TextInput
-            style={{height: 55, marginVertical: 10}}
+            style={{height: 58, marginVertical: 8, fontSize: 13}}
             theme={theme}
             keyboardType={'numeric'}
             mode={'outlined'}

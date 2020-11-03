@@ -15,6 +15,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import colorConfig from '../config/colorConfig';
 import RecentTransactionPlaceHolder from '../components/placeHolderLoading/RecentTransactionPlaceHolder';
 import {movePageIndex} from '../actions/user.action';
+import {afterPayment} from '../actions/account.action';
 
 class RewardsTransaction extends Component {
   constructor(props) {
@@ -30,9 +31,16 @@ class RewardsTransaction extends Component {
     Actions.historyDetailPayment({item});
   };
 
+  goToHistory = async () => {
+    try {
+      await this.props.dispatch(afterPayment(false));
+      Actions.reset('app', {fromPayment: true});
+      // this.props.screen.navigation.navigate('History');
+    } catch (e) {}
+  };
+
   render() {
     const {intlData} = this.props;
-    console.log('intlData', intlData);
     return (
       <View style={styles.container}>
         <Text style={styles.title}>{intlData.messages.recentTransactions}</Text>
@@ -67,11 +75,10 @@ class RewardsTransaction extends Component {
                         <Text
                           style={{
                             marginLeft: 12,
-                            fontWeight: 'bold',
-                            color: colorConfig.pageIndex.grayColor,
-                            fontFamily: 'Lato-Medium',
+                            color: colorConfig.store.titleSelected,
+                            fontFamily: 'Lato-Bold',
                           }}>
-                          {item.outletName}
+                          {item.outletName.substr(0, 25)}
                         </Text>
                       </View>
                       <View
@@ -113,10 +120,10 @@ class RewardsTransaction extends Component {
               alignItems: 'center',
               margin: 10,
             }}
-            onPress={() => this.props.screen.navigation.navigate('History')}>
+            onPress={this.goToHistory}>
             <Text
               style={{
-                color: colorConfig.pageIndex.activeTintColor,
+                color: colorConfig.store.secondaryColor,
                 fontWeight: 'bold',
               }}>
               {this.props.recentTransaction != undefined
@@ -146,7 +153,7 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: colorConfig.pageIndex.backgroundColor,
-    borderRadius: 15,
+    borderRadius: 7,
     marginLeft: 10,
     marginRight: 10,
     borderColor: colorConfig.store.border,

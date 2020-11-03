@@ -12,8 +12,9 @@ import {
   ScrollView,
   FlatList,
   Clipboard,
+  RefreshControl,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import {Actions} from 'react-native-router-flux';
 
 import colorConfig from '../../config/colorConfig';
@@ -28,11 +29,14 @@ import appConfig from '../../config/appConfig';
 import Snackbar from 'react-native-snackbar';
 import awsConfig from '../../config/awsConfig';
 import {refreshToken} from '../../actions/auth.actions';
+import {afterPayment} from '../../actions/account.action';
 
 class WaitingFood extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      refreshing: false,
+    };
   }
 
   componentDidMount = async () => {
@@ -43,10 +47,10 @@ class WaitingFood extends Component {
 
       // get data continously
       if (this.props.dataBasket != undefined) {
-        clearInterval(this.intervalWaitingFood);
-        this.intervalWaitingFood = setInterval(() => {
-          this.props.dispatch(getCart(this.props.myCart.id));
-        }, 2000);
+        // clearInterval(this.intervalWaitingFood);
+        // this.intervalWaitingFood = setInterval(async () => {
+        //   await this.props.dispatch(getCart(this.props.myCart.id));
+        // }, 3000);
       }
     } catch (e) {
       Alert.alert('Opss..', "Can't get data basket, please try again.");
@@ -62,7 +66,7 @@ class WaitingFood extends Component {
 
   _onRefresh = async () => {
     await this.setState({refreshing: true});
-    this.props.dispatch(getCart(this.props.myCart.id));
+    await this.props.dispatch(getCart(this.props.myCart.id));
     await this.setState({refreshing: false});
   };
 
@@ -85,7 +89,19 @@ class WaitingFood extends Component {
   };
 
   goBack = async () => {
-    Actions.pop();
+    await this.setState({loading: true});
+    try {
+      if (this.props.isPop == true) {
+        Actions.pop();
+        return;
+      }
+
+      await this.props.dispatch(afterPayment(true));
+      Actions.reset('app', {fromPayment: true});
+    } catch (e) {
+      await this.setState({loading: false});
+      Actions.pop();
+    }
   };
 
   renderBottomButton = () => {
@@ -124,8 +140,8 @@ class WaitingFood extends Component {
             onPress={() => this.RBorder.open()}
             style={styles.btnCancelBasketModal}>
             <Icon
-              size={21}
-              name={Platform.OS === 'ios' ? 'ios-cart' : 'md-cart'}
+              size={18}
+              name={'th-list'}
               style={{color: 'white', marginRight: 5}}
             />
             <Text style={styles.textBtnBasketModal}>View Detail</Text>
@@ -152,10 +168,10 @@ class WaitingFood extends Component {
             ]}>
             <Icon
               size={21}
-              name={Platform.OS === 'ios' ? 'ios-qr-scanner' : 'md-qr-scanner'}
+              name={'qrcode'}
               style={{color: 'white', marginRight: 5}}
             />
-            <Text style={styles.textBtnBasketModal}>Show QR Code</Text>
+            <Text style={styles.textBtnBasketModal}>Order QR Code</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -234,8 +250,8 @@ class WaitingFood extends Component {
             onPress={() => this.RBorder.open()}
             style={styles.btnCancelBasketModal}>
             <Icon
-              size={21}
-              name={Platform.OS === 'ios' ? 'ios-cart' : 'md-cart'}
+              size={18}
+              name={'th-list'}
               style={{color: 'white', marginRight: 5}}
             />
             <Text style={styles.textBtnBasketModal}>View Detail</Text>
@@ -260,7 +276,7 @@ class WaitingFood extends Component {
             ]}>
             <Icon
               size={21}
-              name={Platform.OS === 'ios' ? 'ios-checkbox' : 'md-checkbox'}
+              name={'check-square'}
               style={{color: 'white', marginRight: 5}}
             />
             <Text style={styles.textBtnBasketModal}>Received</Text>
@@ -435,9 +451,7 @@ class WaitingFood extends Component {
               {dataBasket.status == 'READY_FOR_DELIVERY'
                 ? 'We are getting ready to deliver your order ... \n \n '
                 : `Go to ${dataBasket.deliveryAddress.address}, ${
-                    awsConfig.COUNTRY != 'Singapore'
-                      ? dataBasket.deliveryAddress.city
-                      : awsConfig.COUNTRY
+                    dataBasket.deliveryAddress.city
                   }, ${dataBasket.deliveryAddress.postalCode} \n `}
             </Text>
             <Text
@@ -453,8 +467,8 @@ class WaitingFood extends Component {
               {dataBasket != undefined && dataBasket.trackingNo != undefined ? (
                 <Icon
                   onPress={this.copyTrackingNo}
-                  size={25}
-                  name={Platform.OS === 'ios' ? 'ios-copy' : 'md-copy'}
+                  size={16}
+                  name={'files-o'}
                   style={{color: colorConfig.pageIndex.grayColor}}
                 />
               ) : null}
@@ -493,22 +507,59 @@ class WaitingFood extends Component {
     return (
       <FlatList
         data={item.modifiers}
-        renderItem={({item}) =>
-          item.modifier.details.map((mod, idx) => (
-            <Text key={idx} style={[styles.descModifier]}>
-              •{' '}
-              {item.modifier.isYesNo != true ? (
-                <Text
-                  style={{
-                    color: colorConfig.store.defaultColor,
-                  }}>
-                  {mod.quantity}x
-                </Text>
-              ) : null}{' '}
-              {mod.name} ( {this.format(CurrencyFormatter(mod.price))} )
-            </Text>
-          ))
-        }
+        renderItem={({item}) => {
+          if (item.modifier.max != 1 && item.modifier.isYesNo != true) {
+            if (!isEmptyArray(item.modifier.details)) {
+              return (
+                <>
+                  <Text style={[styles.descModifier]}>
+                    <Text style={{fontStyle: 'normal'}}>{'\u25CF'}</Text>{' '}
+                    {item.modifierName}:{' '}
+                  </Text>
+                  {item.modifier.details.map((mod, idx) => (
+                    <View style={{marginLeft: 9}}>
+                      <Text
+                        key={idx}
+                        style={[styles.descModifier, {fontSize: 13}]}>
+                        <Text style={{fontStyle: 'normal'}}>{'\u25CF'}</Text>{' '}
+                        <Text
+                          style={{
+                            color: colorConfig.store.defaultColor,
+                          }}>
+                          {mod.quantity}x
+                        </Text>{' '}
+                        {mod.name}{' '}
+                        {mod.price > 0
+                          ? `  +${this.format2(CurrencyFormatter(mod.price))}`
+                          : null}{' '}
+                      </Text>
+                    </View>
+                  ))}
+                </>
+              );
+            }
+          } else {
+            return item.modifier.details.map((mod, idx) => (
+              <Text key={idx} style={[styles.descModifier]}>
+                <Text style={{fontStyle: 'normal'}}>{'\u25CF'}</Text>{' '}
+                {item.modifier.max == 1 && item.modifier.isYesNo != true
+                  ? `${item.modifierName}: ${mod.name} ${
+                      mod.price > 0
+                        ? `  +${this.format2(CurrencyFormatter(mod.price))}`
+                        : ''
+                    }`
+                  : null}
+                {item.modifier.isYesNo == true
+                  ? `${mod.name} ${
+                      mod.price > 0
+                        ? `  +${this.format2(CurrencyFormatter(mod.price))}`
+                        : ''
+                    }`
+                  : null}
+              </Text>
+            ));
+          }
+        }}
       />
     );
   };
@@ -536,6 +587,89 @@ class WaitingFood extends Component {
     }
   };
 
+  renderPayments = item => {
+    try {
+      return item.map(data => (
+        <View style={styles.itemSummary}>
+          {data.isVoucher != true && data.isPoint != true ? (
+            <Text style={styles.total}>
+              {data.isAppPayment ? data.paymentName : data.paymentType}
+            </Text>
+          ) : (
+            <Text style={styles.total} />
+          )}
+
+          {data.isVoucher && (
+            <Text style={styles.total}>
+              {data.paymentName} {'  '} {appConfig.appMataUang}{' '}
+              {this.formatCurrency(data.paymentAmount)}
+            </Text>
+          )}
+          {data.isPoint && (
+            <Text style={styles.total}>
+              {data.redeemValue} {data.paymentName} {'  '}
+              {appConfig.appMataUang} {this.formatCurrency(data.paymentAmount)}
+            </Text>
+          )}
+          {data.isVoucher != true && data.isPoint != true && (
+            <Text style={styles.total}>
+              {appConfig.appMataUang} {this.formatCurrency(data.paymentAmount)}
+            </Text>
+          )}
+        </View>
+      ));
+    } catch (e) {}
+  };
+
+  formatCurrency = value => {
+    try {
+      return this.format(CurrencyFormatter(value));
+    } catch (e) {
+      return value;
+    }
+  };
+
+  getGrandTotal = data => {
+    try {
+      let item = data;
+      if (item.payments != undefined && !isEmptyArray(item.payments)) {
+        let total = data.totalNettAmount;
+        for (let i = 0; i < item.payments.length; i++) {
+          if (
+            item.payments[i].isVoucher == true ||
+            item.payments[i].isPoint == true
+          ) {
+            total -= item.payments[i].paymentAmount;
+          }
+        }
+        if (total < 0) total = 0;
+        return this.formatCurrency(total);
+      } else {
+        return this.formatCurrency(data.totalNettAmount);
+      }
+    } catch (e) {}
+  };
+
+  getStatusText = item => {
+    try {
+      if (item === 'SUBMITTED') {
+        return 'Submitted';
+      } else if (item === 'CONFIRMED') {
+        return 'Confirmed';
+      } else if (item === 'PROCESSING') {
+        return 'Processing';
+      } else if (item === 'READY_FOR_COLLECTION') {
+        return 'Ready for Collection';
+      } else if (item === 'READY_FOR_DELIVERY') {
+        return 'Ready for Delivery';
+      } else if (item === 'ON_THE_WAY') {
+        return 'On The Way';
+      } else {
+        return item;
+      }
+    } catch (e) {}
+  };
+
   detailOrder = () => {
     const {intlData, dataBasket} = this.props;
     return (
@@ -557,7 +691,13 @@ class WaitingFood extends Component {
           },
         }}>
         {dataBasket != undefined ? (
-          <ScrollView>
+          <ScrollView
+            refreshControl={
+              <RefreshControl
+                refreshing={this.state.refreshing}
+                onRefresh={this._onRefresh}
+              />
+            }>
             <Text
               style={{
                 color: colorConfig.store.darkColor,
@@ -565,7 +705,7 @@ class WaitingFood extends Component {
                 fontFamily: 'Lato-Bold',
                 marginLeft: 10,
               }}>
-              Detail Order :
+              Order Details :
             </Text>
             <FlatList
               data={this.props.dataBasket.details}
@@ -586,29 +726,28 @@ class WaitingFood extends Component {
                             }}>
                             {item.quantity}x
                           </Text>{' '}
-                          {item.product != undefined ? item.product.name : '-'}{' '}
-                          (
-                          {this.format(
+                          {item.product != undefined ? item.product.name : '-'}
+                          {' +'}
+                          {this.format2(
                             CurrencyFormatter(
                               item.product != undefined
                                 ? item.product.retailPrice
                                 : 0,
                             ),
                           )}{' '}
-                          )
                         </Text>
                         {/* loop item modifier */}
-                        {!isEmptyArray(item.modifiers) ? (
-                          <Text
-                            style={{
-                              color: colorConfig.pageIndex.inactiveTintColor,
-                              fontSize: 10,
-                              marginLeft: 17,
-                              fontStyle: 'italic',
-                            }}>
-                            Add On:
-                          </Text>
-                        ) : null}
+                        {/*{!isEmptyArray(item.modifiers) ? (*/}
+                        {/*  <Text*/}
+                        {/*    style={{*/}
+                        {/*      color: colorConfig.pageIndex.inactiveTintColor,*/}
+                        {/*      fontSize: 10,*/}
+                        {/*      marginLeft: 17,*/}
+                        {/*      fontStyle: 'italic',*/}
+                        {/*    }}>*/}
+                        {/*    Add On:*/}
+                        {/*  </Text>*/}
+                        {/*) : null}*/}
                         {this.renderItemModifier(item)}
                         {item.remark != undefined && item.remark != '' ? (
                           <Text
@@ -647,13 +786,21 @@ class WaitingFood extends Component {
               Order Summary :
             </Text>
 
-            <View style={styles.itemSummary}>
-              <Text style={styles.total}>Status : </Text>
-              <Text style={styles.total}>{dataBasket.status}</Text>
-            </View>
+            {dataBasket.transactionRefNo && (
+              <View style={styles.itemSummary}>
+                <Text style={styles.total}>Ref No : </Text>
+                <Text style={styles.total}>{dataBasket.transactionRefNo}</Text>
+              </View>
+            )}
             <View style={styles.itemSummary}>
               <Text style={styles.total}>Queue No : </Text>
               <Text style={styles.total}>{dataBasket.queueNo}</Text>
+            </View>
+            <View style={styles.itemSummary}>
+              <Text style={styles.total}>Status : </Text>
+              <Text style={styles.total}>
+                {this.getStatusText(dataBasket.status)}
+              </Text>
             </View>
             <View style={styles.itemSummary}>
               <Text style={styles.total}>Ordering Mode : </Text>
@@ -664,7 +811,9 @@ class WaitingFood extends Component {
                 <Text style={styles.total}>Delivery Address : </Text>
                 <Text
                   style={[styles.total, {textAlign: 'right', fontSize: 12}]}>
-                  {dataBasket.deliveryAddress.address}
+                  {dataBasket.deliveryAddress.address}{' '}
+                  {/*{dataBasket.deliveryAddress.streetName},{' '}*/}
+                  {/*{dataBasket.deliveryAddress.unitNo}*/}
                   {' \n'}
                   {awsConfig.COUNTRY != 'Singapore'
                     ? dataBasket.deliveryAddress.city
@@ -697,53 +846,54 @@ class WaitingFood extends Component {
               </View>
             ) : null}
             <View style={styles.itemSummary}>
-              <Text style={styles.total}>Tax Amount : </Text>
+              <Text style={styles.total}>
+                {appConfig.appName === 'QIJI'
+                  ? 'Tax Amount Inclusive'
+                  : 'Tax Amount'}{' '}
+                :{' '}
+              </Text>
               <Text style={styles.total}>
                 {CurrencyFormatter(dataBasket.totalTaxAmount)}
               </Text>
             </View>
             <View style={styles.itemSummary}>
-              <Text style={styles.total}>Total Nett Amount : </Text>
+              <Text style={styles.total}>Sub Total : </Text>
               <Text style={styles.total}>
-                {CurrencyFormatter(dataBasket.totalNettAmount)}
+                {appConfig.appMataUang}{' '}
+                {this.format(CurrencyFormatter(dataBasket.totalNettAmount))}
               </Text>
             </View>
-            {dataBasket.confirmationInfo != undefined ? (
-              dataBasket.confirmationInfo.paymentType != undefined ? (
-                <View style={styles.itemSummary}>
-                  <Text style={styles.total}>Payment Method : </Text>
-                  <Text style={styles.total}>{this.getDetailPayment()}</Text>
-                </View>
-              ) : null
-            ) : null}
-            {dataBasket.confirmationInfo != undefined ? (
-              dataBasket.confirmationInfo.redeemPoint != undefined &&
-              dataBasket.confirmationInfo.redeemPoint != 0 ? (
-                <View style={styles.itemSummary}>
-                  <Text style={styles.total}>Redeem Point : </Text>
-                  <Text style={styles.total}>
-                    {dataBasket.confirmationInfo.redeemPoint}
-                  </Text>
-                </View>
-              ) : null
-            ) : null}
-            {dataBasket.confirmationInfo != undefined ? (
-              dataBasket.confirmationInfo.statusAdd != undefined &&
-              dataBasket.confirmationInfo.statusAdd == 'addVoucer' ? (
-                <View style={styles.itemSummary}>
-                  <Text style={styles.total}>Voucher : </Text>
-                  <Text style={styles.total}>
-                    {dataBasket.confirmationInfo.voucher.name}
-                  </Text>
-                </View>
-              ) : null
-            ) : null}
+            {!isEmptyArray(dataBasket.payments)
+              ? this.renderPayments(dataBasket.payments)
+              : null}
+            {/*{dataBasket.confirmationInfo != undefined ? (*/}
+            {/*  dataBasket.confirmationInfo.redeemPoint != undefined &&*/}
+            {/*  dataBasket.confirmationInfo.redeemPoint != 0 ? (*/}
+            {/*    <View style={styles.itemSummary}>*/}
+            {/*      <Text style={styles.total}>Redeem Point : </Text>*/}
+            {/*      <Text style={styles.total}>*/}
+            {/*        {dataBasket.confirmationInfo.redeemPoint}*/}
+            {/*      </Text>*/}
+            {/*    </View>*/}
+            {/*  ) : null*/}
+            {/*) : null}*/}
+            {/*{dataBasket.confirmationInfo != undefined ? (*/}
+            {/*  dataBasket.confirmationInfo.statusAdd != undefined &&*/}
+            {/*  dataBasket.confirmationInfo.statusAdd == 'addVoucer' ? (*/}
+            {/*    <View style={styles.itemSummary}>*/}
+            {/*      <Text style={styles.total}>Voucher : </Text>*/}
+            {/*      <Text style={styles.total}>*/}
+            {/*        {dataBasket.confirmationInfo.voucher.name}*/}
+            {/*      </Text>*/}
+            {/*    </View>*/}
+            {/*  ) : null*/}
+            {/*) : null}*/}
             <View style={styles.itemSummary}>
               <Text style={[styles.total, {color: colorConfig.store.title}]}>
                 TOTAL :{' '}
               </Text>
               <Text style={[styles.total, {color: colorConfig.store.title}]}>
-                {CurrencyFormatter(dataBasket.confirmationInfo.afterPrice)}
+                {appConfig.appMataUang} {this.getGrandTotal(dataBasket)}
               </Text>
             </View>
           </ScrollView>
@@ -781,6 +931,19 @@ class WaitingFood extends Component {
     }
   };
 
+  format2 = item => {
+    try {
+      const curr = appConfig.appMataUang;
+      item = item.replace(`${curr} `, '');
+      if (curr != 'RP' && curr != 'IDR' && item.includes('.') == false) {
+        return `${item}.00`;
+      }
+      return item;
+    } catch (e) {
+      return item;
+    }
+  };
+
   render() {
     const {intlData, dataBasket, orderType} = this.props;
     // try {
@@ -801,7 +964,7 @@ class WaitingFood extends Component {
     // if basket is canceled by admin, then push back to basket page
     if (dataBasket == undefined) {
       try {
-        Actions.reset('pageIndex', {fromPayment: true});
+        Actions.reset('app', {fromPayment: true});
         clearInterval(this.intervalWaitingFood);
         this.intervalWaitingFood = undefined;
       } catch (e) {}
@@ -825,13 +988,7 @@ class WaitingFood extends Component {
             elevation: 12,
           }}>
           <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
-            <Icon
-              size={28}
-              name={
-                Platform.OS === 'ios' ? 'ios-arrow-back' : 'md-arrow-round-back'
-              }
-              style={styles.btnBackIcon}
-            />
+            <Icon size={25} name={'chevron-left'} style={styles.btnBackIcon} />
             <Text style={styles.btnBackText}>Waiting Order</Text>
           </TouchableOpacity>
         </View>
@@ -861,18 +1018,18 @@ class WaitingFood extends Component {
   getAnimation = dataBasket => {
     try {
       if (dataBasket.status == 'PROCESSING') {
-        return require('../../assets/animate/cooking');
+        return require('../../../assets/animate/cooking');
       } else if (dataBasket.status == 'READY_FOR_DELIVERY') {
-        return require('../../assets/animate/food-ready');
+        return require('../../../assets/animate/food-ready');
       } else if (dataBasket.status == 'READY_FOR_COLLECTION') {
-        return require('../../assets/animate/food-ready');
+        return require('../../../assets/animate/food-ready');
       } else if (dataBasket.status == 'ON_THE_WAY') {
-        return require('../../assets/animate/delivery');
+        return require('../../../assets/animate/delivery');
       } else {
-        return require('../../assets/animate/cooking');
+        return require('../../../assets/animate/cooking');
       }
     } catch (e) {
-      return require('../../assets/animate/cooking');
+      return require('../../../assets/animate/cooking');
     }
   };
 }
@@ -1010,7 +1167,7 @@ const styles = StyleSheet.create({
   descModifier: {
     color: colorConfig.pageIndex.grayColor,
     maxWidth: Dimensions.get('window').width,
-    fontSize: 11,
+    fontSize: 12,
     fontStyle: 'italic',
     marginLeft: 17,
     fontFamily: 'Lato-Medium',
@@ -1083,7 +1240,7 @@ const styles = StyleSheet.create({
     padding: 13,
     marginRight: 20,
     width: '40%',
-    backgroundColor: colorConfig.store.colorSuccess,
+    backgroundColor: colorConfig.store.secondaryColor,
   },
   textBtnBasketModal: {
     color: 'white',

@@ -32,6 +32,7 @@ import {
   getCategoryByOutlet,
   getProductByCategory,
   saveProductsOutlet,
+  updateSurcharge,
 } from '../../actions/order.action';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
@@ -177,24 +178,39 @@ class Products2 extends Component {
       if (!isEmptyArray(product.details)) {
         let arrayID = [];
         for (let i = 0; i < product.details.length; i++) {
-          arrayID.push(product.details[i].product.id);
+          if (
+            product.details[i].product != undefined &&
+            product.details[i].product != null
+          ) {
+            arrayID.push(product.details[i].product.id);
+          }
         }
 
         for (let i = 0; i < products.length; i++) {
           for (let j = 0; j < products[i].items.length; j++) {
-            if (arrayID.includes(products[i].items[j].product.id)) {
-              products[i].items[j].changed = true;
-              await this.setState({products});
+            if (
+              products[i].items[j].product != undefined &&
+              products[i].items[j].product != null
+            ) {
+              if (arrayID.includes(products[i].items[j].product.id)) {
+                products[i].items[j].changed = true;
+                await this.setState({products});
+              }
             }
           }
         }
       } else {
         for (let i = 0; i < products.length; i++) {
           for (let j = 0; j < products[i].items.length; j++) {
-            if (products[i].items[j].product.id == product.product.id) {
-              products[i].items[j].changed = true;
-              await this.setState({products});
-              return;
+            if (
+              products[i].items[j].product != undefined &&
+              products[i].items[j].product != null
+            ) {
+              if (products[i].items[j].product.id == product.product.id) {
+                products[i].items[j].changed = true;
+                await this.setState({products});
+                return;
+              }
             }
           }
         }
@@ -209,6 +225,8 @@ class Products2 extends Component {
   };
 
   componentDidMount = async () => {
+    //TODO: add refresh token here
+
     this.backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
       this.handleBackPress,
@@ -302,7 +320,14 @@ class Products2 extends Component {
         this.props.dataBasket == undefined ||
         this.props.dataBasket.status == 'PENDING'
       ) {
-        if (this.outletAvailableToOrder()) this.RBSheet.open();
+        if (
+          this.outletAvailableToOrder() &&
+          this.props.previousOrderingMode == undefined
+        ) {
+          this.RBSheet.open();
+        } else {
+          this.props.dispatch(setOrderType(this.props.previousOrderingMode));
+        }
       }
   };
 
@@ -344,9 +369,9 @@ class Products2 extends Component {
         animationType={'slide'}
         height={height}
         duration={10}
-        closeOnDragDown={true}
-        closeOnPressMask={true}
-        closeOnPressBack={true}
+        closeOnDragDown={false}
+        closeOnPressMask={false}
+        closeOnPressBack={false}
         customStyles={{
           container: {
             backgroundColor: colorConfig.store.darkColor,
@@ -826,12 +851,21 @@ class Products2 extends Component {
         group.modifier.details.map((detail, j) => {
           delete detail.quantity;
 
-          if (group.modifier.max == 1) {
-            product.product.productModifiers[i].modifier.show = false;
-            // delete product.product.productModifiers[i].modifier.selected;
-          } else {
-            product.product.productModifiers[i].modifier.show = true;
-          }
+          // if (
+          //   group.modifier.min == 1 ||
+          //   (group.modifier.min == 0 && group.modifier.max == 0) ||
+          //   (group.modifier.min == undefined && group.modifier.max == 0) ||
+          //   (group.modifier.min == 0 && group.modifier.max == undefined) ||
+          //   (group.modifier.min == undefined && group.modifier.max == undefined)
+          // ) {
+          //   product.product.productModifiers[i].modifier.show = true;
+          //   // delete product.product.productModifiers[i].modifier.selected;
+          // } else {
+          //   product.product.productModifiers[i].modifier.show = false;
+          // }
+
+          // ALWAYS SHOW
+          product.product.productModifiers[i].modifier.show = true;
 
           if (
             group.modifier.isYesNo == true &&
@@ -1179,14 +1213,14 @@ class Products2 extends Component {
       // }
 
       // check max order value outlet
-      if (!this.checkMaxOrderValue('add', data)) {
-        Alert.alert(
-          'Sorry..',
-          'Maximum order amount is ' +
-            CurrencyFormatter(parseFloat(item.maxOrderAmount)),
-        );
-        return;
-      }
+      // if (!this.checkMaxOrderValue('add', data)) {
+      //   Alert.alert(
+      //     'Sorry..',
+      //     'Maximum order amount is ' +
+      //       CurrencyFormatter(parseFloat(item.maxOrderAmount)),
+      //   );
+      //   return;
+      // }
 
       // post data to server
       let response = await this.props.dispatch(addProductToBasket(data));
@@ -1194,6 +1228,18 @@ class Products2 extends Component {
 
       // hide modal add modifier
       this.RBmodifier.close();
+
+      //count surcharge
+      try {
+        const {dataBasket} = this.props;
+        if (
+          dataBasket == undefined ||
+          isEmptyObject(dataBasket) ||
+          dataBasket.details.length == 1
+        ) {
+          this.props.dispatch(updateSurcharge(this.props.orderType));
+        }
+      } catch (e) {}
 
       // if data basket is empty, then post data to server first, then hide modal
       this.setState({
@@ -1293,14 +1339,14 @@ class Products2 extends Component {
       data.details.push(dataproduct);
 
       // check max order value outlet
-      if (!this.checkMaxOrderValue('update', data)) {
-        Alert.alert(
-          'Sorry..',
-          'Maximum order amount is ' +
-            CurrencyFormatter(parseFloat(item.maxOrderAmount)),
-        );
-        return;
-      }
+      // if (!this.checkMaxOrderValue('update', data)) {
+      //   Alert.alert(
+      //     'Sorry..',
+      //     'Maximum order amount is ' +
+      //       CurrencyFormatter(parseFloat(item.maxOrderAmount)),
+      //   );
+      //   return;
+      // }
 
       // hide modal
       this.setState({
@@ -1386,13 +1432,13 @@ class Products2 extends Component {
   addItemToBasket = async (product, qty, remark, mode) => {
     const {item} = this.state;
     // check outlet rules
-    if (!this.checkMaxOrderQty(qty)) {
-      Alert.alert(
-        'Sorry..',
-        'Maximum order quantity per Item is ' + item.maxOrderQtyPerItem,
-      );
-      return;
-    }
+    // if (!this.checkMaxOrderQty(qty)) {
+    //   Alert.alert(
+    //     'Sorry..',
+    //     'Maximum order quantity per Item is ' + item.maxOrderQtyPerItem,
+    //   );
+    //   return;
+    // }
 
     if (mode == 'add') {
       // to show loading button at Modal, check status data basket is empty or not
@@ -1411,10 +1457,15 @@ class Products2 extends Component {
       const {products} = this.state;
       for (let i = 0; i < products.length; i++) {
         for (let j = 0; j < products[i].items.length; j++) {
-          if (products[i].items[j].product.id == product.product.id) {
-            products[i].items[j].changed = true;
-            await this.setState({products});
-            return;
+          if (
+            products[i].items[j].product != null &&
+            products[i].items[j].product != undefined
+          ) {
+            if (products[i].items[j].product.id == product.product.id) {
+              products[i].items[j].changed = true;
+              await this.setState({products});
+              return;
+            }
           }
         }
       }
@@ -1444,7 +1495,7 @@ class Products2 extends Component {
 
     setTimeout(() => {
       this.setState({loadModifierTime: true});
-    }, 700);
+    }, 300);
   };
 
   addQty = () => {
@@ -1523,7 +1574,7 @@ class Products2 extends Component {
   };
 
   templateItemGrid = (type, item) => {
-    if (item.product != undefined) {
+    if (item.product != undefined && item.product != null) {
       return (
         <TouchableOpacity
           disabled={this.availableToOrder(item) ? false : true}
@@ -1537,7 +1588,8 @@ class Products2 extends Component {
                 source={this.getImageUrl(item.product.defaultImageURL)}
                 style={[
                   {
-                    alignSelf: 'center',
+                    // alignSelf: 'center',
+                    marginLeft: 10,
                     borderRadius: 5,
                     height: 150,
                     width: Dimensions.get('window').width / 2 - 30,
@@ -1550,7 +1602,8 @@ class Products2 extends Component {
               <Image
                 source={this.getImageUrl(item.product.defaultImageURL)}
                 style={{
-                  alignSelf: 'center',
+                  // alignSelf: 'center',
+                  marginLeft: 10,
                   borderRadius: 5,
                   height: 150,
                   width: Dimensions.get('window').width / 2 - 30,
@@ -1620,7 +1673,7 @@ class Products2 extends Component {
   };
 
   templateItem = (type, item) => {
-    if (item.product != undefined) {
+    if (item.product != undefined && item.product != null) {
       return (
         <TouchableOpacity
           disabled={this.availableToOrder(item) ? false : true}
@@ -1642,7 +1695,14 @@ class Products2 extends Component {
               ) : null}
               <View
                 style={
-                  isEmptyData(item.product.defaultImageURL) ? {height: 80} : {}
+                  isEmptyData(item.product.defaultImageURL)
+                    ? {
+                        height:
+                          item.product.orderingStatus == 'UNAVAILABLE'
+                            ? 80
+                            : 50,
+                      }
+                    : {paddingVertical: 0}
                 }>
                 <Text
                   style={[
@@ -1661,7 +1721,7 @@ class Products2 extends Component {
                       {this.getQuantityInBasket(item)}x{' '}
                     </Text>
                   ) : null}
-                  {item.product.name}
+                  {item.product.name.substr(0, 35)}
                 </Text>
                 {!this.availableToOrder(item) ? (
                   <Text style={styles.productUnavailable}>Unavailable</Text>
@@ -1701,34 +1761,72 @@ class Products2 extends Component {
         length = item.items.length;
       }
 
+      let dataProducts = item.items;
+
+      if (!isEmptyArray(item.items)) {
+        dataProducts = item.items.filter(
+          item => item.product != null && item.product != undefined,
+        );
+      }
+
       // check mode display
       if (item.displayMode != undefined && item.displayMode === 'GRID') {
+        {
+          /* style={[
+              styles.card,
+              {height: 250 * Math.ceil(dataProducts.length / 2) + 100},
+            ]}> */
+        }
         return (
-          <View
-            style={[styles.card, {height: 260 * Math.ceil(length / 2) + 100}]}>
+          <View style={[styles.card]}>
             <Text style={[styles.titleCategory]}>
               {item.name.substr(0, 35)}
             </Text>
-            <RecyclerListView
-              style={{marginLeft: 5}}
-              layoutProvider={this._gridLayoutProvider}
-              dataProvider={dataProvider.cloneWithRows(item.items)}
-              rowRenderer={this.templateItemGrid}
-              renderFooter={this.renderFooter}
+            <FlatList
+              data={dataProducts}
+              numColumns={2}
+              removeClippedSubviews={true}
+              maxToRenderPerBatch={5}
+              updateCellsBatchingPeriod={30}
+              initialNumToRender={5}
+              getItemLayout={(data, index) => {
+                return {length: 260, offset: 8 * index, index};
+              }}
+              renderItem={({item}) => this.templateItemGrid('grid', item)}
+              keyExtractor={(product, index) => index.toString()}
             />
+            {/*<RecyclerListView*/}
+            {/*  style={{marginLeft: 5}}*/}
+            {/*  layoutProvider={this._gridLayoutProvider}*/}
+            {/*  dataProvider={dataProvider.cloneWithRows(dataProducts)}*/}
+            {/*  rowRenderer={this.templateItemGrid}*/}
+            {/*  renderFooter={this.renderFooter}*/}
+            {/*/>*/}
           </View>
         );
       } else {
         return (
-          <View style={[styles.card, {height: 100 * length + 100}]}>
+          // <View style={[styles.card, {height: 100 * length + 100}]}>
+          <View style={[styles.cardListMenu]}>
             <Text style={styles.titleCategory}>{item.name.substr(0, 35)}</Text>
-            <RecyclerListView
-              layoutProvider={this._layoutProvider}
-              dataProvider={dataProvider.cloneWithRows(item.items)}
-              rowRenderer={this.templateItem}
-              renderFooter={this.renderFooter}
-              // onEndReached={this.handleLoadMoreItems}
+            <FlatList
+              data={dataProducts}
+              removeClippedSubviews={true}
+              maxToRenderPerBatch={5}
+              updateCellsBatchingPeriod={30}
+              initialNumToRender={5}
+              getItemLayout={(data, index) => {
+                return {length: 100, offset: 8 * index, index};
+              }}
+              renderItem={({item}) => this.templateItem('list', item)}
+              keyExtractor={(product, index) => index.toString()}
             />
+            {/*<RecyclerListView*/}
+            {/*  layoutProvider={this._layoutProvider}*/}
+            {/*  dataProvider={dataProvider.cloneWithRows(dataProducts)}*/}
+            {/*  rowRenderer={this.templateItem}*/}
+            {/*  renderFooter={this.renderFooter}*/}
+            {/*/>*/}
           </View>
         );
       }
@@ -1935,22 +2033,24 @@ class Products2 extends Component {
                     }}>
                     {this.state.item.storeName}
                   </Text>
-                  <Icon
-                    size={26}
-                    name={
-                      Platform.OS === 'ios'
-                        ? 'ios-information'
-                        : 'md-information'
-                    }
+                  <View
                     style={{
-                      color: 'white',
-                      textAlign: 'center',
-                      width: 25,
+                      width: 22,
                       borderRadius: 50,
-                      height: 25,
-                      backgroundColor: colorConfig.pageIndex.inactiveTintColor,
-                    }}
-                  />
+                      height: 22,
+                      backgroundColor: colorConfig.store.secondaryColor,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}>
+                    <Icon
+                      size={Platform.OS === 'ios' ? 25 : 15}
+                      name={Platform.OS === 'ios' ? 'ios-help' : 'md-help'}
+                      style={{
+                        color: 'white',
+                        textAlign: 'center',
+                      }}
+                    />
+                  </View>
                 </TouchableOpacity>
               </View>
               <View
@@ -2127,20 +2227,24 @@ class Products2 extends Component {
                   }}>
                   {this.state.item.storeName}
                 </Text>
-                <Icon
-                  size={26}
-                  name={
-                    Platform.OS === 'ios' ? 'ios-information' : 'md-information'
-                  }
+                <View
                   style={{
-                    color: 'white',
-                    textAlign: 'center',
-                    width: 25,
+                    width: 22,
                     borderRadius: 50,
-                    height: 25,
-                    backgroundColor: colorConfig.pageIndex.inactiveTintColor,
-                  }}
-                />
+                    height: 22,
+                    backgroundColor: colorConfig.store.secondaryColor,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}>
+                  <Icon
+                    size={15}
+                    name={Platform.OS === 'ios' ? 'ios-help' : 'md-help'}
+                    style={{
+                      color: 'white',
+                      textAlign: 'center',
+                    }}
+                  />
+                </View>
               </TouchableOpacity>
             </View>
             <View
@@ -2221,7 +2325,7 @@ class Products2 extends Component {
       <View style={{height: '100%', backgroundColor: 'white'}}>
         {!search ? this.renderHeaderOutletTemplate() : null}
         <Loader />
-        <View style={styles.card}>
+        <View style={styles.cardListMenu}>
           <View style={styles.titleCategory}>
             <View style={{backgroundColor: colorConfig.pageIndex.grayColor}} />
           </View>
@@ -2253,7 +2357,7 @@ class Products2 extends Component {
             </View>
           </View>
         </View>
-        <View style={styles.card}>
+        <View style={styles.cardListMenu}>
           <View style={styles.titleCategory}>
             <View style={{backgroundColor: colorConfig.pageIndex.grayColor}} />
           </View>
@@ -2361,22 +2465,18 @@ class Products2 extends Component {
       item.maxOrderAmount = outlet.maxOrderAmount;
       item.lastOrderOn = outlet.lastOrderOn;
       item.offlineMessage = outlet.offlineMessage;
-      item.enableDineIn =
-        outlet.enableDineIn == false || outlet.enableDineIn == '-'
-          ? false
-          : true;
-      item.enableTakeAway =
-        outlet.enableTakeAway == false || outlet.enableTakeAway == '-'
-          ? false
-          : true;
-      item.enableTableScan =
-        outlet.enableTableScan == false || outlet.enableTableScan == '-'
-          ? false
-          : true;
-      item.enableDelivery =
-        outlet.enableDelivery == false || outlet.enableDelivery == '-'
-          ? false
-          : true;
+      item.takeAwayName = outlet.takeAwayName;
+      item.dineInName = outlet.dineInName;
+      item.storePickUpName = outlet.storePickUpName;
+      item.storeCheckOutName = outlet.storeCheckOutName;
+      item.deliveryName = outlet.deliveryName;
+      item.enableStoreCheckOut =
+        outlet.enableStoreCheckOut == true ? true : false;
+      item.enableStorePickUp = outlet.enableStorePickUp == true ? true : false;
+      item.enableTakeAway = outlet.enableTakeAway == true ? true : false;
+      item.enableDineIn = outlet.enableDineIn == true ? true : false;
+      item.enableTableScan = outlet.enableTableScan == true ? true : false;
+      item.enableDelivery = outlet.enableDelivery == true ? true : false;
       item.storeName = outlet.name;
       item.outletType = outlet.outletType;
       item.orderingStatus = outlet.orderingStatus;
@@ -2712,6 +2812,7 @@ class Products2 extends Component {
           this.props.dataBasket.outlet.id != undefined &&
           this.props.dataBasket.outlet.id == this.state.item.storeId ? (
             <ButtonViewBasket
+              previousTableNo={this.props.previousTableNo}
               refreshQuantityProducts={this.refreshQuantityProducts}
             />
           ) : null
@@ -2824,6 +2925,20 @@ const styles = StyleSheet.create({
   },
   card: {
     marginBottom: 10,
+    paddingBottom: 10,
+
+    backgroundColor: colorConfig.pageIndex.backgroundColor,
+    shadowColor: '#00000021',
+    shadowOffset: {
+      width: 0,
+      height: 9,
+    },
+    shadowOpacity: 0.7,
+    shadowRadius: 7.49,
+    elevation: 12,
+  },
+  cardListMenu: {
+    marginBottom: 10,
     paddingBottom: 40,
 
     backgroundColor: colorConfig.pageIndex.backgroundColor,
@@ -2854,7 +2969,7 @@ const styles = StyleSheet.create({
   },
   titleCategory: {
     color: colorConfig.store.title,
-    fontSize: 18,
+    fontSize: 19,
     textAlign: 'left',
     fontFamily: 'Lato-Bold',
     padding: 14,
@@ -2877,7 +2992,7 @@ const styles = StyleSheet.create({
   detail: {
     marginLeft: 15,
     marginRight: 15,
-    maxHeight: 95,
+    maxHeight: 100,
     // marginBottom: 5,
   },
   detailOptionsModal: {
@@ -2903,6 +3018,7 @@ const styles = StyleSheet.create({
     borderBottomColor: colorConfig.pageIndex.inactiveTintColor,
     borderBottomWidth: 0.6,
     paddingBottom: 10,
+    paddingTop: 10, // this is new
     marginBottom: 5,
     overflow: 'hidden',
   },
@@ -2927,7 +3043,7 @@ const styles = StyleSheet.create({
     color: colorConfig.store.title,
     marginLeft: 6,
     fontSize: 15,
-    maxWidth: Dimensions.get('window').width / 2 - 50,
+    maxWidth: Dimensions.get('window').width / 2 - 40,
   },
   productTitleInModal: {
     color: colorConfig.store.title,
@@ -2954,7 +3070,7 @@ const styles = StyleSheet.create({
     opacity: 0.5,
     fontFamily: 'Lato-Medium',
     marginLeft: 6,
-    marginTop: 3,
+    // marginVertical: 10,
     fontSize: 14,
     maxWidth: Dimensions.get('window').width / 2 + 2,
   },
@@ -3058,7 +3174,7 @@ const styles = StyleSheet.create({
   },
   activeDINEINButton: {
     padding: 13,
-    backgroundColor: colorConfig.store.colorSuccess,
+    backgroundColor: colorConfig.card.otherCardColor,
     borderRadius: 15,
     width: '60%',
     marginBottom: 20,
@@ -3161,6 +3277,14 @@ const styles = StyleSheet.create({
   gridView: {
     flex: 1,
     height: 240,
+    marginLeft: 3, // INI BARU
     alignItems: 'stretch',
+    width: Dimensions.get('window').width / 2 - 10,
+    marginBottom: 10,
+  },
+  containerGrid: {
+    justifyContent: 'center',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
   },
 });

@@ -4,19 +4,18 @@ import {
   Text,
   StyleSheet,
   Dimensions,
-  TouchableOpacity,
-  ScrollView,
-  Platform,
   Alert,
+  Image,
+  TouchableOpacity,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
 
 import colorConfig from '../config/colorConfig';
-import appConfig from '../config/appConfig';
-import Icon from 'react-native-vector-icons/Ionicons';
+import AutoHeightImage from 'react-native-auto-height-image';
 import StampsPlaceHolder from './placeHolderLoading/StampsPlaceHolder';
 import {isEmptyArray, isEmptyObject} from '../helper/CheckEmpty';
+import {Actions} from 'react-native-router-flux';
 
 class RewardsStamp extends Component {
   constructor(props) {
@@ -28,6 +27,7 @@ class RewardsStamp extends Component {
       screenWidth: Dimensions.get('window').width,
       screenHeight: Dimensions.get('window').height,
       stampsItem: [],
+      imageStamps: '',
     };
   }
 
@@ -77,11 +77,11 @@ class RewardsStamp extends Component {
                 style={
                   item.stampsStatus == '-' ? styles.detail : styles.detailFree
                 }>
-                <Icon
-                  size={22}
-                  name={Platform.OS === 'ios' ? 'ios-bookmark' : 'md-bookmark'}
-                  style={{color: colorConfig.store.defaultColor}}
-                />
+                {/*<Icon*/}
+                {/*  size={22}*/}
+                {/*  name={Platform.OS === 'ios' ? 'ios-bookmark' : 'md-bookmark'}*/}
+                {/*  style={{color: colorConfig.store.defaultColor}}*/}
+                {/*/>*/}
               </Text>
             </View>
           ))}
@@ -90,13 +90,91 @@ class RewardsStamp extends Component {
     else return null;
   }
 
-  render() {
-    const {intlData} = this.props;
+  getImageStamps = () => {
+    try {
+      let data = this.props.dataStamps.dataStamps.stamps.stampsItem;
+      for (let i = 0; i < data.length; i++) {
+        if (data[i]['stampsStatus'] == '-') {
+          if (i > 0) {
+            if (
+              data[i - 1]['reward']['imageURL'] != undefined &&
+              data[i - 1]['reward']['imageURL'] != null &&
+              data[i - 1]['reward']['imageURL'] != '-' &&
+              data[i - 1]['reward']['imageURL'] != ''
+            ) {
+              this.setState({imageStamps: data[i - 1]['reward']['imageURL']});
+              // return {uri: data[i]['reward']['imageURL']};
+              return true;
+            } else {
+              this.setState({imageStamps: null});
+              return false;
+            }
+          } else {
+            if (
+              data[i]['reward']['imageURL'] != undefined &&
+              data[i]['reward']['imageURL'] != null &&
+              data[i]['reward']['imageURL'] != '-' &&
+              data[i]['reward']['imageURL'] != ''
+            ) {
+              this.setState({imageStamps: data[i]['reward']['imageURL']});
+              // return {uri: data[i]['reward']['imageURL']};
+              return true;
+            } else {
+              this.setState({imageStamps: null});
+              return false;
+            }
+          }
+        }
+      }
+      this.setState({imageStamps: null});
+      return false;
+    } catch (e) {
+      return false;
+    }
+  };
 
+  detailStamps() {
+    if (Actions.currentScene === 'pageIndex') {
+      Actions.detailStamps();
+    }
+  }
+
+  displayStamps = () => {
+    const {imageStamps} = this.state;
+    this.getImageStamps();
+    if (imageStamps != null) {
+      try {
+        return (
+          <TouchableOpacity onPress={this.detailStamps}>
+            <AutoHeightImage
+              style={{borderRadius: 15}}
+              width={Dimensions.get('window').width - 50}
+              source={{uri: imageStamps}}
+            />
+          </TouchableOpacity>
+        );
+      } catch (e) {
+        return <Image source={{uri: imageStamps}} style={styles.imageStamps} />;
+      }
+    } else {
+      return this.getItemStamp();
+    }
+  };
+
+  render() {
+    const {intlData, bg} = this.props;
     return (
-      <View style={styles.container}>
-        <View style={styles.card}>
-          {this.props.isLoading ? <StampsPlaceHolder /> : this.getItemStamp()}
+      <View
+        style={[
+          styles.container,
+          bg != undefined ? {backgroundColor: 'white'} : null,
+        ]}>
+        <View
+          style={[
+            styles.card,
+            bg != undefined ? {backgroundColor: 'white'} : null,
+          ]}>
+          {this.props.isLoading ? <StampsPlaceHolder /> : this.displayStamps()}
         </View>
       </View>
     );
@@ -106,7 +184,7 @@ class RewardsStamp extends Component {
 const styles = StyleSheet.create({
   container: {
     alignContent: 'center',
-    backgroundColor: colorConfig.pageIndex.activeTintColor,
+    backgroundColor: colorConfig.store.defaultColor,
   },
   title: {
     color: colorConfig.pageIndex.backgroundColor,
@@ -116,13 +194,14 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   card: {
-    height: Dimensions.get('window').height / 6 - 200,
+    // height: Dimensions.get('window').width / 3,
+    // height: 150,
     width: Dimensions.get('window').width - 20,
     // borderColor: colorConfig.pageIndex.activeTintColor,
     // borderWidth: 1,
     marginLeft: 10,
     marginRight: 10,
-    borderRadius: 10,
+    // borderRadius: 10,
     backgroundColor: colorConfig.pageIndex.activeTintColor,
     justifyContent: 'space-evenly',
     alignItems: 'center',
@@ -142,7 +221,7 @@ const styles = StyleSheet.create({
     fontSize: 10,
   },
   itemFree: {
-    backgroundColor: colorConfig.pageIndex.listBorder,
+    backgroundColor: colorConfig.store.transparentItem,
     width: 40,
     height: 40,
     borderRadius: 40,
@@ -155,6 +234,12 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontWeight: 'bold',
     color: colorConfig.pageIndex.backgroundColor,
+  },
+  imageStamps: {
+    width: '100%',
+    borderRadius: 15,
+    aspectRatio: 2.2,
+    resizeMode: 'contain',
   },
 });
 

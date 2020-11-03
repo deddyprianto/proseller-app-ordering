@@ -42,7 +42,7 @@ export default class StoreNearYou extends Component {
                     <Text
                       style={{
                         fontSize: 12,
-                        color: colorConfig.pageIndex.activeTintColor,
+                        color: colorConfig.store.secondaryColor,
                         fontFamily: 'Lato-Medium',
                       }}>
                       {item.storeName}

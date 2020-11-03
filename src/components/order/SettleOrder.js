@@ -21,25 +21,27 @@ import {
   RefreshControl,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import Fa from 'react-native-vector-icons/FontAwesome';
 import {Actions} from 'react-native-router-flux';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
 import * as _ from 'lodash';
-// import SwipeButton from 'rn-swipe-button';
 import AwesomeAlert from 'react-native-awesome-alerts';
 
 import colorConfig from '../../config/colorConfig';
 import appConfig from '../../config/appConfig';
 import {
-  getDeliveryProvider,
+  getBasket,
+  getCart,
   getPendingCart,
+  getPendingCartSingle,
   settleOrder,
 } from '../../actions/order.action';
-// import Loader from './../loader';
 import CurrencyFormatter from '../../helper/CurrencyFormatter';
 import {
   clearAccount,
   clearAddress,
+  getAccountPayment,
   registerCard,
   selectedAccount,
 } from '../../actions/payment.actions';
@@ -48,8 +50,10 @@ import RBSheet from 'react-native-raw-bottom-sheet';
 import UUIDGenerator from 'react-native-uuid-generator';
 import {defaultPaymentAccount} from '../../actions/user.action';
 import LoaderDarker from '../LoaderDarker';
-import {dataStores, getOutletById} from '../../actions/stores.action';
+import {getOutletById} from '../../actions/stores.action';
 import {refreshToken} from '../../actions/auth.actions';
+import {afterPayment, myVoucers} from '../../actions/account.action';
+import {Dialog} from 'react-native-paper';
 
 class SettleOrder extends Component {
   constructor(props) {
@@ -72,6 +76,9 @@ class SettleOrder extends Component {
       selectedItem: {},
       refreshing: false,
       outlet: this.props.outlet,
+      paymentFailed: false,
+      prompPayAtPOS: false,
+      pendingCart: {},
     };
 
     // check if users payment methods is empty
@@ -130,14 +137,30 @@ class SettleOrder extends Component {
   };
 
   componentDidMount = async () => {
-    const {defaultAccount} = this.props;
+    const {defaultAccount, pembayaran} = this.props;
     await this.setState({loading: true});
     await this.props.dispatch(refreshToken());
-    await this.setDataPayment(false);
+    // await this.setDataPayment(false);
+
+    await this.resetAppliedVouchers();
+
+    // get outlet details
     try {
-      await this.setState({loading: false});
+      const outletID = pembayaran.storeId;
+      const response = await this.props.dispatch(getOutletById(outletID));
+      if (response != false) {
+        await this.setState({outlet: response});
+      }
+    } catch (e) {}
+
+    await this.setState({loading: false});
+
+    try {
+      this.props.dispatch(myVoucers());
+      await this.props.dispatch(getAccountPayment());
+      // await this.setState({loading: false});
     } catch (e) {
-      await this.setState({loading: false});
+      // await this.setState({loading: false});
     }
 
     this.backHandler = BackHandler.addEventListener(
@@ -148,83 +171,249 @@ class SettleOrder extends Component {
 
   checkDefaultPaymentAccount = async () => {
     try {
-      const {defaultAccount, myCardAccount} = this.props;
-      if (!isEmptyArray(myCardAccount)) {
-        const data = await myCardAccount.find(
-          item => item.id == defaultAccount.id,
-        );
-        if (data == undefined) {
-          await this.props.dispatch(defaultPaymentAccount(undefined));
+      const {defaultAccount, myCardAccount, companyInfo} = this.props;
+      if (defaultAccount.isAccountRequired != false) {
+        if (!isEmptyArray(myCardAccount)) {
+          const data = await myCardAccount.find(
+            item => item.id == defaultAccount.id,
+          );
+          if (data == undefined) {
+            await this.props.dispatch(defaultPaymentAccount(undefined));
+            return;
+          } else {
+            this.props.dispatch(selectedAccount(this.props.defaultAccount));
+            return;
+          }
         } else {
-          this.props.dispatch(selectedAccount(this.props.defaultAccount));
+          await this.props.dispatch(defaultPaymentAccount(undefined));
+          return;
         }
       } else {
-        await this.props.dispatch(defaultPaymentAccount(undefined));
+        // check if payment provider was deleted
+        try {
+          if (isEmptyArray(companyInfo.paymentTypes)) {
+            await this.props.dispatch(defaultPaymentAccount(undefined));
+            return;
+          }
+        } catch (e) {}
+
+        try {
+          if (!isEmptyArray(companyInfo.paymentTypes)) {
+            if (!isEmptyObject(defaultAccount)) {
+              const findPaymentProvider = companyInfo.paymentTypes.find(
+                item => item.paymentID == defaultAccount.paymentID,
+              );
+              if (findPaymentProvider == undefined) {
+                await this.props.dispatch(defaultPaymentAccount(undefined));
+                return;
+              }
+            }
+          }
+        } catch (e) {}
+
+        if (!isEmptyObject(defaultAccount)) {
+          this.props.dispatch(selectedAccount(this.props.defaultAccount));
+          return;
+        }
       }
     } catch (e) {}
   };
 
-  setDataVoucher = async dataVoucer => {
-    await this.setDataPayment(true);
-    await this.setState({
-      dataVoucer,
-      addPoint: undefined,
-      moneyPoint: undefined,
-      cancelVoucher: false,
-    });
-    await this.setDataPayment(false);
+  resetAppliedVouchers = async () => {
+    try {
+      for (let i = 0; i < this.props.pembayaran.details.length; i++) {
+        this.props.pembayaran.details[i].appliedVoucher = 0;
+      }
+    } catch (e) {}
+  };
+
+  setDataVoucher = async item => {
+    let {dataVoucer} = this.state;
+    await this.setState({loading: true});
+    try {
+      await this.resetAppliedVouchers();
+      await this.setDataPayment(true);
+      if (dataVoucer == undefined) {
+        dataVoucer = [];
+      }
+      item.isVoucher = true;
+      item.clientID = new Date().valueOf();
+      dataVoucer.push(item);
+      await this.setState({
+        dataVoucer,
+        cancelVoucher: false,
+      });
+      await this.setDataPayment(false);
+    } catch (e) {}
+    await this.setState({loading: false});
   };
 
   setDataPoint = async (addPoint, moneyPoint) => {
-    await this.setDataPayment(true);
-    await this.setState({
-      addPoint,
-      moneyPoint,
-      dataVoucer: undefined,
-      cancelPoint: false,
-    });
-    await this.setDataPayment(false);
+    if (addPoint > 0) {
+      await this.setState({loading: true});
+      await this.resetAppliedVouchers();
+      await this.setDataPayment(true);
+      let {dataVoucer} = this.state;
+
+      // REMOVE DATA THAT CONTAINING  POINT FIRST, SO DATA POINT IS NOT DOUBLE
+      try {
+        let findOldPoint = undefined;
+        if (!isEmptyArray(dataVoucer)) {
+          findOldPoint = dataVoucer.find(i => i.isPoint == true);
+        } else {
+          dataVoucer = [];
+        }
+
+        if (findOldPoint != undefined) {
+          for (let x = 0; x < dataVoucer.length; x++) {
+            if (dataVoucer[x].isPoint == true) {
+              dataVoucer[x].redeemValue = addPoint;
+              dataVoucer[x].paymentAmount = moneyPoint;
+              break;
+            }
+          }
+        } else {
+          dataVoucer.push({
+            paymentType: 'point',
+            redeemValue: addPoint,
+            paymentAmount: moneyPoint,
+            isPoint: true,
+          });
+        }
+
+        await this.setState({
+          addPoint,
+          moneyPoint,
+          dataVoucer,
+          cancelPoint: false,
+        });
+        await this.setDataPayment(false);
+      } catch (e) {
+        console.log(e);
+      }
+      await this.setState({loading: false});
+    }
   };
 
   setDataPayment = async cancel => {
     var totalBayar = 0;
+    let index = 0;
+    let tmpTotal = this.props.pembayaran.payment;
+
     if (!cancel) {
       var redeemVoucer = 0;
+      let discount = 0;
+      let {dataVoucer} = this.state;
+      dataVoucer = JSON.stringify(dataVoucer);
+      dataVoucer = JSON.parse(dataVoucer);
 
-      try {
-        if (this.state.dataVoucer != undefined) {
-          if (this.state.dataVoucer.applyToSpecificProduct == true) {
-            //  search specific product
-            let result = this.props.pembayaran.dataPay.find(
-              item => item.barcode == this.state.dataVoucer.product.barcode,
-            );
-            // check if apply to specific product is found
-            if (result == undefined) {
-              this.cencelVoucher();
-              Alert.alert(
-                'Sorry',
-                `This voucher is only available on specific product`,
-              );
+      for (let i = 0; i < dataVoucer.length; i++) {
+        try {
+          if (dataVoucer[i] != undefined) {
+            if (
+              dataVoucer[i].appliedTo != undefined &&
+              dataVoucer[i].appliedTo === 'PRODUCT'
+            ) {
+              //  search specific product
+              let result = undefined;
+              for (let z = 0; z < this.props.pembayaran.details.length; z++) {
+                result = await dataVoucer[i].appliedItems.find(
+                  item =>
+                    item.value === this.props.pembayaran.details[z].product.id,
+                );
+                if (result != undefined) {
+                  if (
+                    this.props.pembayaran.details[z].appliedVoucher <
+                      this.props.pembayaran.details[z].quantity ||
+                    this.props.pembayaran.details[z].appliedVoucher == undefined
+                  ) {
+                    result = this.props.pembayaran.details[z];
+                    index = z;
+                    break;
+                  } else {
+                    result = undefined;
+                  }
+                }
+              }
+              // check if apply to specific product is found
+              if (result != undefined) {
+                if (
+                  this.props.pembayaran.details[index].appliedVoucher ==
+                  undefined
+                ) {
+                  this.props.pembayaran.details[index].appliedVoucher = 1;
+                } else {
+                  this.props.pembayaran.details[index].appliedVoucher++;
+                }
+
+                if (dataVoucer[i].voucherType == 'discPercentage') {
+                  // FIND DISCOUNT
+                  discount =
+                    (result.unitPrice * dataVoucer[i].voucherValue) / 100;
+
+                  //  check cap Amount
+                  if (dataVoucer[i].capAmount != undefined) {
+                    let capAmount = parseFloat(dataVoucer[i].capAmount);
+                    if (discount > capAmount && capAmount > 0) {
+                      discount = capAmount;
+                    }
+                  }
+
+                  // set value payment amount for payload
+                  dataVoucer[i].paymentAmount = discount;
+                  tmpTotal -= discount;
+
+                  redeemVoucer = redeemVoucer + discount;
+                } else if (dataVoucer[i].voucherType == 'discAmount') {
+                  // set value payment amount for payload
+                  dataVoucer[i].paymentAmount = dataVoucer[i].voucherValue;
+                  redeemVoucer = redeemVoucer + dataVoucer[i].voucherValue;
+                  tmpTotal -= dataVoucer[i].voucherValue;
+                }
+              }
             } else {
-              redeemVoucer =
-                (result.price * this.state.dataVoucer.voucherValue) / 100;
-            }
-          } else {
-            if (this.state.dataVoucer.voucherType == 'discPercentage') {
-              redeemVoucer =
-                (this.props.pembayaran.payment *
-                  this.state.dataVoucer.voucherValue) /
-                100;
-            } else if (this.state.dataVoucer.voucherType == 'discAmount') {
-              redeemVoucer = this.state.dataVoucer.voucherValue;
-            }
-          }
-        }
-      } catch (e) {}
+              if (dataVoucer[i].voucherType == 'discPercentage') {
+                // FIND DISCOUNT
+                discount = (tmpTotal * dataVoucer[i].voucherValue) / 100;
 
+                //  check cap Amount
+                if (dataVoucer[i].capAmount != undefined) {
+                  let capAmount = parseFloat(dataVoucer[i].capAmount);
+                  if (discount > capAmount && capAmount > 0) {
+                    discount = capAmount;
+                  }
+                }
+
+                dataVoucer[i].paymentAmount = discount;
+                // set value payment amount for payload
+                console.log(dataVoucer[i].paymentAmount, 'discount');
+                tmpTotal -= discount;
+
+                redeemVoucer = redeemVoucer + discount;
+              } else if (dataVoucer[i].voucherType == 'discAmount') {
+                // set value payment amount for payload
+                dataVoucer[i].paymentAmount = dataVoucer[i].voucherValue;
+                redeemVoucer = redeemVoucer + dataVoucer[i].voucherValue;
+                tmpTotal -= dataVoucer[i].voucherValue;
+              }
+            }
+
+            if (dataVoucer[i].isPoint == true) {
+              tmpTotal -= dataVoucer[i].paymentAmount;
+            }
+            if (tmpTotal < 0) tmpTotal = 0;
+          }
+        } catch (e) {}
+      }
+      this.setState({dataVoucer});
       var redeemPoint =
         this.state.addPoint == undefined ? 0 : this.state.moneyPoint;
       totalBayar = this.state.totalBayar - (redeemVoucer + redeemPoint);
+
+      if (totalBayar < 0 && this.state.addPoint != undefined) {
+        let reducedMoneyPoint = this.state.moneyPoint + totalBayar;
+        await this.recalculatePoint(reducedMoneyPoint);
+      }
     } else {
       totalBayar = this.props.pembayaran.payment;
     }
@@ -232,13 +421,60 @@ class SettleOrder extends Component {
     if (totalBayar < 0) {
       totalBayar = 0;
     }
-    // console.log('total bayar ', totalBayar);
     this.setState({totalBayar});
+  };
+
+  calculateMoneyPoint = async () => {
+    const {campign} = this.props;
+    try {
+      let jumPointRatio = this.props.campign.points.pointsToRebateRatio0;
+      let jumMoneyRatio = this.props.campign.points.pointsToRebateRatio1;
+
+      let ratio = this.state.addPoint / jumPointRatio;
+      let money = parseFloat(ratio * jumMoneyRatio);
+      await this.setState({moneyPoint: money});
+    } catch (e) {
+      return 0;
+    }
+  };
+
+  recalculatePoint = async price => {
+    const {campign} = this.props;
+    let {addPoint} = this.state;
+    try {
+      var jumPointRatio = campign.points.pointsToRebateRatio0;
+      var jumMoneyRatio = campign.points.pointsToRebateRatio1;
+
+      let ratio = jumPointRatio / jumMoneyRatio;
+
+      // create default point to set based on the ratio of point to rebate
+      let setDefault = parseFloat((price * ratio).toFixed(2));
+
+      if (setDefault <= 0) {
+        this.cencelPoint();
+        return;
+      }
+
+      if (
+        campign.points.roundingOptions != undefined &&
+        campign.points.roundingOptions == 'INTEGER'
+      ) {
+        setDefault = Math.ceil(setDefault);
+        await this.setState({addPoint: setDefault});
+      }
+      await this.calculateMoneyPoint();
+    } catch (e) {
+      return addPoint;
+    }
   };
 
   componentWillUnmount() {
     try {
       this.backHandler.remove();
+    } catch (e) {}
+
+    try {
+      clearInterval(this.loopCart);
     } catch (e) {}
   }
 
@@ -249,6 +485,11 @@ class SettleOrder extends Component {
 
   goBack = async () => {
     await this.props.dispatch(clearAccount());
+
+    try {
+      this.props.dispatch(afterPayment(false));
+    } catch (e) {}
+
     Actions.pop();
   };
 
@@ -257,14 +498,44 @@ class SettleOrder extends Component {
   };
 
   myVouchers = () => {
+    const {totalBayar} = this.state;
+    if (totalBayar == 0) {
+      Alert.alert(
+        'Sorry',
+        "Can't add more vouchers, your total payment is already 0.",
+      );
+      return;
+    }
+
     const {intlData} = this.props;
+    let originalVouchers = this.props.myVoucers;
+    originalVouchers = JSON.stringify(originalVouchers);
+    originalVouchers = JSON.parse(originalVouchers);
+    const {dataVoucer} = this.state;
     var myVoucers = [];
+    this.setState({loading: true});
     try {
-      if (this.props.myVoucers != undefined) {
+      // REMOVE VOUCHER SELECTED FROM LIST
+      if (!isEmptyArray(dataVoucer)) {
+        for (let x = 0; x < dataVoucer.length; x++) {
+          for (let y = 0; y < originalVouchers.length; y++) {
+            if (dataVoucer[x].isVoucher == true) {
+              if (
+                dataVoucer[x].serialNumber == originalVouchers[y].serialNumber
+              ) {
+                originalVouchers.splice(y, 1);
+              }
+            }
+          }
+        }
+      }
+
+      if (originalVouchers != undefined) {
         _.forEach(
           _.groupBy(
-            this.props.myVoucers.filter(voucher => voucher.deleted == false),
-            'id',
+            originalVouchers.filter(voucher => voucher.deleted == false),
+            // 'id',
+            'uniqueID',
           ),
           function(value, key) {
             value[0].totalRedeem = value.length;
@@ -273,28 +544,30 @@ class SettleOrder extends Component {
         );
       }
 
-      if (
-        this.state.cancelVoucher == false &&
-        this.state.dataVoucer != undefined
-      ) {
-        var jumlah = _.find(myVoucers, {id: this.state.dataVoucer.id})
-          .totalRedeem;
-
-        var index = _.findIndex(myVoucers, {
-          id: this.state.dataVoucer.id,
-        });
-
-        _.updateWith(
-          myVoucers,
-          '[' + index + "]['totalRedeem']",
-          _.constant(jumlah - 1),
-          Object,
-        );
-      }
+      // if (
+      //   this.state.cancelVoucher == false &&
+      //   this.state.dataVoucer != undefined
+      // ) {
+      //   var jumlah = _.find(myVoucers, {id: this.state.dataVoucer.id})
+      //     .totalRedeem;
+      //
+      //   var index = _.findIndex(myVoucers, {
+      //     id: this.state.dataVoucer.id,
+      //   });
+      //
+      //   _.updateWith(
+      //     myVoucers,
+      //     '[' + index + "]['totalRedeem']",
+      //     _.constant(jumlah - 1),
+      //     Object,
+      //   );
+      // }
 
       Actions.paymentAddVoucers({
         intlData,
+        dataVoucer,
         data: myVoucers,
+        totalPrice: this.state.totalBayar,
         pembayaran: this.props.pembayaran,
         setDataVoucher: this.setDataVoucher,
       });
@@ -305,14 +578,34 @@ class SettleOrder extends Component {
         titleAlert: 'Oopss!',
       });
     }
+    this.setState({loading: false});
   };
 
   myPoint = () => {
-    const {intlData} = this.props;
+    let {intlData} = this.props;
+    let {totalBayar, dataVoucer} = this.state;
+
+    let pembayaran = JSON.stringify(this.props.pembayaran);
+    pembayaran = JSON.parse(pembayaran);
+
+    // Adjust total
+    try {
+      let total = pembayaran.payment;
+      if (!isEmptyArray(dataVoucer)) {
+        for (let i = 0; i < dataVoucer.length; i++) {
+          if (dataVoucer[i].isVoucher == true) {
+            total -= dataVoucer[i].paymentAmount;
+          }
+        }
+        if (total < 0) total = 0;
+        pembayaran.payment = total;
+      }
+    } catch (e) {}
+
     Actions.paymentAddPoint({
       intlData,
       data: this.props.totalPoint,
-      pembayaran: this.props.pembayaran,
+      pembayaran: pembayaran,
       valueSet: this.state.addPoint == undefined ? 0 : this.state.addPoint,
       setDataPoint: this.setDataPoint,
     });
@@ -445,7 +738,9 @@ class SettleOrder extends Component {
       } else {
         return false;
       }
-    } catch (e) {}
+    } catch (e) {
+      return true;
+    }
   };
 
   onSlideRight = async () => {
@@ -458,13 +753,19 @@ class SettleOrder extends Component {
       return;
     }
 
-    // check if total is 0, then dont add creditcard
-    if (totalBayar != 0) {
-      // check if CVV is required and has been filled
-      this.checkCVV(selectedAccount);
-    } else {
-      this.createPayment();
+    if (selectedAccount == undefined && totalBayar != 0) {
+      Alert.alert('Oppss', 'Please select payment method');
+      return;
     }
+
+    // check if total is 0, then dont add creditcard
+    // if (totalBayar != 0) {
+    //   // check if CVV is required and has been filled
+    //   this.checkCVV(selectedAccount);
+    // } else {
+    //   this.createPayment();
+    // }
+    this.createPayment();
   };
 
   createPayment = async () => {
@@ -473,6 +774,7 @@ class SettleOrder extends Component {
 
     var pembayaran = {};
     try {
+      await this.setState({loading: true});
       const UUID = await UUIDGenerator.getRandomUUID();
       this.setState({loading: true});
       pembayaran.price = Number(this.props.pembayaran.payment.toFixed(3));
@@ -481,16 +783,35 @@ class SettleOrder extends Component {
       // if price is 0, then dont add credit card
       if (totalBayar != 0) {
         // Payment Type Detail
-        pembayaran.paymentType = 'CREDITCARD';
-        const creditCardPayload = {
-          accountId: selectedAccount.accountID,
-          cardCVV: selectedAccount.details.CVV,
-          companyID: companyInfo.companyId,
-          referenceNo: UUID,
-          remark: '-',
-        };
+        let paymentPayload = {};
 
-        pembayaran.creditCardPayload = creditCardPayload;
+        if (!isEmptyArray(companyInfo.paymentTypes)) {
+          const find = companyInfo.paymentTypes.find(
+            item => item.paymentID == selectedAccount.paymentID,
+          );
+          if (find != undefined) {
+            paymentPayload.paymentID = selectedAccount.paymentID;
+            paymentPayload.paymentName = selectedAccount.paymentName;
+
+            if (find.isAccountRequired != false) {
+              paymentPayload.accountId = selectedAccount.accountID;
+            }
+
+            if (find.minimumPayment != undefined) {
+              if (totalBayar < find.minimumPayment) {
+                this.setState({loading: false});
+                Alert.alert(
+                  'Sorry',
+                  `Minimum transaction amount is ${appConfig.appMataUang}` +
+                    this.formatCurrency(find.minimumPayment),
+                );
+                return;
+              }
+            }
+          }
+        }
+
+        pembayaran.paymentPayload = paymentPayload;
       }
 
       if (
@@ -519,6 +840,65 @@ class SettleOrder extends Component {
       if (this.props.pembayaran.orderingMode != undefined) {
         pembayaran.orderingMode = this.props.pembayaran.orderingMode;
         pembayaran.tableNo = this.props.pembayaran.tableNo;
+
+        // send order mode value to server
+        pembayaran.validateOutletSetting = {};
+
+        //  check if ordering mode is still active
+        try {
+          const {outlet} = this.state;
+          if (this.props.pembayaran.orderingMode == 'TAKEAWAY') {
+            pembayaran.validateOutletSetting.enableTakeAway = true;
+            if (outlet.enableTakeAway == false) {
+              Alert.alert(
+                'Sorry',
+                `Order mode Take Away is currently inactive, please choose another order mode.`,
+              );
+              this.setState({loading: false});
+              return;
+            }
+          } else if (this.props.pembayaran.orderingMode == 'DINEIN') {
+            pembayaran.validateOutletSetting.enableDineIn = true;
+            if (outlet.enableDineIn == false) {
+              Alert.alert(
+                'Sorry',
+                `Order mode Dine In is currently inactive, please choose another order mode.`,
+              );
+              this.setState({loading: false});
+              return;
+            }
+          } else if (this.props.pembayaran.orderingMode == 'DELIVERY') {
+            pembayaran.validateOutletSetting.enableDelivery = true;
+            if (outlet.enableDelivery == false) {
+              Alert.alert(
+                'Sorry',
+                `Order mode Delivery is currently inactive, please choose another order mode.`,
+              );
+              this.setState({loading: false});
+              return;
+            }
+          } else if (this.props.pembayaran.orderingMode == 'STOREPICKUP') {
+            pembayaran.validateOutletSetting.enableStorePickUp = true;
+            if (outlet.enableStorePickUp == false) {
+              Alert.alert(
+                'Sorry',
+                `Order mode Store Pickup is currently inactive, please choose another order mode.`,
+              );
+              this.setState({loading: false});
+              return;
+            }
+          } else if (this.props.pembayaran.orderingMode == 'STORECHECKOUT') {
+            pembayaran.validateOutletSetting.enableStoreCheckOut = true;
+            if (outlet.enableStoreCheckOut == false) {
+              Alert.alert(
+                'Sorry',
+                `Order mode Store Checkout is currently inactive, please choose another order mode.`,
+              );
+              this.setState({loading: false});
+              return;
+            }
+          }
+        } catch (e) {}
       }
 
       // check if delivery address is exist
@@ -543,29 +923,58 @@ class SettleOrder extends Component {
         pembayaran.deliveryService = '-';
       }
 
+      try {
+        pembayaran.cartDetails = {
+          partitionKey: this.props.pembayaran.cartDetails.partitionKey,
+          sortKey: this.props.pembayaran.cartDetails.sortKey,
+        };
+      } catch (e) {}
+
       // get url
-      const {url} = this.props;
-      console.log('Payload settle order ', JSON.stringify(pembayaran));
+      let {url} = this.props;
+
+      console.log('Payload settle order ', pembayaran);
       console.log('URL settle order ', url);
+
       const response = await this.props.dispatch(settleOrder(pembayaran, url));
       console.log('reponse pembayaran settle order ', response);
       if (response.success) {
-        //  remove selected account
-        this.props.dispatch(clearAccount());
-        this.props.dispatch(clearAddress());
+        try {
+          this.props.dispatch(afterPayment(true));
+        } catch (e) {}
 
-        // get pending order
-        this.props.dispatch(getPendingCart());
+        if (response.responseBody.data.action != undefined) {
+          if (response.responseBody.data.action.type === 'url') {
+            Actions.hostedTrx({
+              outlet: this.state.outlet,
+              url: response.responseBody.data.action.url,
+              urlSettle: url,
+              referenceNo: response.responseBody.data.referenceNo,
+              cartID: this.props.pembayaran.cartID,
+              page: 'settleOrder',
+            });
+            this.setState({loading: false});
+          }
+        } else {
+          //  remove selected account
+          this.props.dispatch(clearAccount());
+          this.props.dispatch(clearAddress());
 
-        // go to payment success
-        const {url} = this.props;
-        Actions.paymentSuccess({
-          intlData,
-          url,
-          dataRespons: response.responseBody.data,
-        });
+          // get pending order
+          this.props.dispatch(getPendingCart());
+
+          // go to payment success
+          const {url} = this.props;
+          Actions.paymentSuccess({
+            intlData,
+            outlet: this.state.outlet,
+            url,
+            dataRespons: response.responseBody.data,
+          });
+        }
       } else {
         //  cancel voucher and pont selected
+        this.props.dispatch(getBasket());
         this.setState({loading: false, failedPay: true});
         this.cencelPoint();
         this.cencelVoucher();
@@ -585,6 +994,277 @@ class SettleOrder extends Component {
       //  cancel voucher and pont selected
       this.cencelPoint();
       this.cencelVoucher();
+      console.log(e);
+      Alert.alert('Oppss', 'Something went wrong, please try again');
+      this.setState({loading: false, failedPay: true});
+    }
+  };
+
+  doPayment = async () => {
+    const {intlData, selectedAccount, companyInfo} = this.props;
+    let {totalBayar, dataVoucer} = this.state;
+    let realTotal = 0;
+
+    let payload = {};
+    try {
+      await this.setState({loading: true});
+      payload.cartID = this.props.pembayaran.cartID;
+
+      // ADJUST POINT IF THERE ARE ANY REDUCE
+      try {
+        for (let x = 0; x < dataVoucer.length; x++) {
+          if (dataVoucer[x].isPoint == true) {
+            dataVoucer[x].redeemValue = this.state.addPoint;
+            dataVoucer[x].paymentAmount = this.state.moneyPoint;
+          }
+          realTotal += dataVoucer[x].paymentAmount;
+        }
+      } catch (e) {}
+
+      // ADJUST VOUCHER IF PAYMENT IS ALREADY 0
+      try {
+        if (totalBayar == 0 && dataVoucer.length > 0) {
+          if (dataVoucer[dataVoucer.length - 1].isVoucher == true) {
+            const diff = parseFloat(
+              realTotal - this.props.pembayaran.totalNettAmount,
+            );
+            dataVoucer[dataVoucer.length - 1].paymentAmount -= diff;
+          }
+        }
+      } catch (e) {}
+
+      let payments = [];
+      if (!isEmptyArray(dataVoucer)) {
+        for (let i = 0; i < dataVoucer.length; i++) {
+          if (dataVoucer[i].isVoucher == true) {
+            payments.push({
+              paymentType: 'voucher',
+              voucherId: dataVoucer[i].id,
+              serialNumber: dataVoucer[i].serialNumber,
+              paymentAmount: dataVoucer[i].paymentAmount,
+              isVoucher: true,
+            });
+          } else if (dataVoucer[i].isPoint == true) {
+            payments.push({
+              paymentType: 'point',
+              redeemValue: dataVoucer[i].redeemValue,
+              paymentAmount: dataVoucer[i].paymentAmount,
+              isPoint: true,
+            });
+          } else {
+            payments.push(dataVoucer[i]);
+          }
+        }
+      }
+
+      payload.payments = payments;
+
+      // if price is 0, then dont add payment method
+      if (totalBayar != 0) {
+        // Payment Type Detail
+        let paymentPayload = {};
+
+        if (!isEmptyArray(companyInfo.paymentTypes)) {
+          const find = companyInfo.paymentTypes.find(
+            item => item.paymentID == selectedAccount.paymentID,
+          );
+          if (find != undefined) {
+            paymentPayload.paymentID = selectedAccount.paymentID;
+            paymentPayload.paymentName = selectedAccount.paymentName;
+
+            if (find.isAccountRequired != false) {
+              paymentPayload.accountId = selectedAccount.accountID;
+            }
+
+            if (find.minimumPayment != undefined) {
+              if (totalBayar < find.minimumPayment) {
+                this.setState({loading: false});
+                Alert.alert(
+                  'Sorry',
+                  `Minimum transaction amount is ${appConfig.appMataUang}` +
+                    this.formatCurrency(find.minimumPayment),
+                );
+                return;
+              }
+            }
+          }
+        }
+
+        payments.push({
+          accountId: paymentPayload.accountId,
+          paymentType: paymentPayload.paymentID,
+          paymentRefNo: paymentPayload.paymentName,
+          paymentID: paymentPayload.paymentID,
+          paymentName: this.selectedPaymentMethod(selectedAccount),
+          paymentAmount: this.state.totalBayar,
+        });
+      }
+
+      try {
+        delete payload.payment;
+        delete payload.storeId;
+        delete payload.dataVoucer;
+      } catch (e) {}
+
+      // if ordering mode is exist
+      if (this.props.pembayaran.orderingMode != undefined) {
+        payload.orderingMode = this.props.pembayaran.orderingMode;
+        payload.tableNo = this.props.pembayaran.tableNo;
+
+        // send order mode value to server
+        payload.validateOutletSetting = {};
+
+        //  check if ordering mode is still active
+        try {
+          const {outlet} = this.state;
+          if (this.props.pembayaran.orderingMode == 'TAKEAWAY') {
+            payload.validateOutletSetting.enableTakeAway = true;
+            if (outlet.enableTakeAway == false) {
+              Alert.alert(
+                'Sorry',
+                `Order mode Take Away is currently inactive, please choose another order mode.`,
+              );
+              this.setState({loading: false});
+              return;
+            }
+          } else if (this.props.pembayaran.orderingMode == 'DINEIN') {
+            payload.validateOutletSetting.enableDineIn = true;
+            if (outlet.enableDineIn == false) {
+              Alert.alert(
+                'Sorry',
+                `Order mode Dine In is currently inactive, please choose another order mode.`,
+              );
+              this.setState({loading: false});
+              return;
+            }
+          } else if (this.props.pembayaran.orderingMode == 'DELIVERY') {
+            payload.validateOutletSetting.enableDelivery = true;
+            if (outlet.enableDelivery == false) {
+              Alert.alert(
+                'Sorry',
+                `Order mode Delivery is currently inactive, please choose another order mode.`,
+              );
+              this.setState({loading: false});
+              return;
+            }
+          } else if (this.props.pembayaran.orderingMode == 'STOREPICKUP') {
+            payload.validateOutletSetting.enableStorePickUp = true;
+            if (outlet.enableStorePickUp == false) {
+              Alert.alert(
+                'Sorry',
+                `Order mode Store Pickup is currently inactive, please choose another order mode.`,
+              );
+              this.setState({loading: false});
+              return;
+            }
+          } else if (this.props.pembayaran.orderingMode == 'STORECHECKOUT') {
+            payload.validateOutletSetting.enableStoreCheckOut = true;
+            if (outlet.enableStoreCheckOut == false) {
+              Alert.alert(
+                'Sorry',
+                `Order mode Store Checkout is currently inactive, please choose another order mode.`,
+              );
+              this.setState({loading: false});
+              return;
+            }
+          }
+        } catch (e) {}
+      }
+
+      // check if delivery address is exist
+      if (this.props.pembayaran.deliveryAddress != undefined) {
+        payload.deliveryAddress = this.props.pembayaran.deliveryAddress;
+      }
+
+      // check if delivery fee is exist
+      if (this.props.pembayaran.deliveryFee != undefined) {
+        payload.deliveryFee = this.props.pembayaran.deliveryFee;
+        // add delivery fee to total
+        payload.price = Number(
+          payload.price + this.props.pembayaran.deliveryFee,
+        );
+      }
+
+      // check if delivery provider is exist
+      if (this.props.pembayaran.deliveryProvider != undefined) {
+        payload.deliveryProviderId = this.props.pembayaran.deliveryProvider.id;
+        payload.deliveryProvider = this.props.pembayaran.deliveryProvider.name;
+        payload.deliveryProviderName = this.props.pembayaran.deliveryProvider.name;
+        payload.deliveryService = '-';
+      }
+
+      try {
+        payload.cartDetails = {
+          partitionKey: this.props.pembayaran.cartDetails.partitionKey,
+          sortKey: this.props.pembayaran.cartDetails.sortKey,
+        };
+      } catch (e) {}
+
+      // get url
+      let {url} = this.props;
+
+      console.log('Payload settle order ', payload);
+      console.log('URL settle order ', url);
+
+      const response = await this.props.dispatch(settleOrder(payload, url));
+      console.log('reponse pembayaran settle order ', response);
+      if (response.success) {
+        try {
+          this.props.dispatch(afterPayment(true));
+        } catch (e) {}
+
+        if (response.responseBody.data.action != undefined) {
+          if (response.responseBody.data.action.type === 'url') {
+            Actions.hostedTrx({
+              outlet: this.state.outlet,
+              url: response.responseBody.data.action.url,
+              urlSettle: url,
+              referenceNo: response.responseBody.data.referenceNo,
+              cartID: this.props.pembayaran.cartID,
+              page: 'settleOrder',
+            });
+            this.setState({loading: false});
+          }
+        } else {
+          //  remove selected account
+          this.props.dispatch(clearAccount());
+          this.props.dispatch(clearAddress());
+
+          // get pending order
+          this.props.dispatch(getPendingCart());
+
+          // go to payment success
+          const {url} = this.props;
+          Actions.paymentSuccess({
+            intlData,
+            outlet: this.state.outlet,
+            url,
+            dataRespons: response.responseBody.data,
+          });
+        }
+      } else {
+        //  cancel voucher and pont selected
+        this.props.dispatch(getBasket());
+        this.setState({loading: false, failedPay: true});
+        // this.cencelPoint();
+        // this.cencelVoucher();
+        if (
+          response.responseBody.data != undefined &&
+          response.responseBody.data.message != undefined
+        ) {
+          Alert.alert('Sorry', response.responseBody.data.message);
+        } else {
+          Alert.alert(
+            'Sorry',
+            'Something went wrong with server, please try again',
+          );
+        }
+      }
+    } catch (e) {
+      //  cancel voucher and pont selected
+      // this.cencelPoint();
+      // this.cencelVoucher();
+      console.log(e);
       Alert.alert('Oppss', 'Something went wrong, please try again');
       this.setState({loading: false, failedPay: true});
     }
@@ -594,6 +1274,7 @@ class SettleOrder extends Component {
     const {intlData} = this.props;
     Actions.paymentDetailItem({
       intlData,
+      dataVoucer: this.state.dataVoucer,
       point: this.state.addPoint,
       voucher: this.state.dataVoucer,
       totalBayar: this.state.totalBayar,
@@ -614,10 +1295,46 @@ class SettleOrder extends Component {
     this.setState({cancelVoucher: true});
   };
 
+  cencelOneVoucher = async i => {
+    let {dataVoucer} = this.state;
+    await this.setState({loading: true});
+    await this.setState({totalBayar: this.props.pembayaran.payment});
+
+    // reset applied products length
+    await this.resetAppliedVouchers();
+
+    try {
+      if (dataVoucer.length > 1) {
+        dataVoucer.splice(i, 1);
+      } else {
+        dataVoucer = [];
+      }
+      await this.setState({dataVoucer});
+      await this.setDataPayment(false);
+    } catch (e) {
+      await this.setDataPayment(true);
+    }
+    await this.setState({loading: false});
+  };
+
   cencelPoint = async () => {
-    await delete this.state.addPoint;
-    await this.setDataPayment(true);
-    this.setState({cancelPoint: true});
+    let {dataVoucer} = this.state;
+    await this.setState({loading: true});
+    await this.setState({totalBayar: this.props.pembayaran.payment});
+    await this.resetAppliedVouchers();
+    try {
+      if (dataVoucer.length > 0) {
+        dataVoucer = dataVoucer.filter(i => i.isPoint != true);
+      } else {
+        dataVoucer = [];
+      }
+      await this.setState({dataVoucer, addPoint: undefined});
+      this.setState({cancelPoint: true});
+      await this.setDataPayment(false);
+    } catch (e) {
+      await this.setDataPayment(true);
+    }
+    await this.setState({loading: false});
   };
 
   formatCurrency = value => {
@@ -705,12 +1422,16 @@ class SettleOrder extends Component {
 
   selectedPaymentMethod = selectedAccount => {
     try {
-      if (!isEmptyObject(selectedAccount)) {
-        let number = selectedAccount.details.maskedAccountNumber;
-        number = number.substr(number.length - 4, 4);
-        return `${selectedAccount.details.cardIssuer.toUpperCase()} ${number}`;
+      if (selectedAccount.isAccountRequired != false) {
+        if (!isEmptyObject(selectedAccount)) {
+          let number = selectedAccount.details.maskedAccountNumber;
+          number = number.substr(number.length - 4, 4);
+          return `${selectedAccount.details.cardIssuer.toUpperCase()} ${number}`;
+        } else {
+          return null;
+        }
       } else {
-        return null;
+        return selectedAccount.paymentName;
       }
     } catch (e) {
       return null;
@@ -743,8 +1464,216 @@ class SettleOrder extends Component {
     } catch (e) {}
   };
 
+  getOutletName = item => {
+    try {
+      if (item != undefined) {
+        return item.substr(0, 20);
+      } else {
+        return item;
+      }
+    } catch (e) {
+      return item;
+    }
+  };
+
+  payAtPOS = async () => {
+    const {intlData, selectedAccount, companyInfo} = this.props;
+    const {totalBayar} = this.state;
+
+    var pembayaran = {};
+    try {
+      await this.setState({loading: true});
+      const UUID = await UUIDGenerator.getRandomUUID();
+      this.setState({loading: true});
+      pembayaran.price = Number(this.props.pembayaran.payment.toFixed(3));
+      pembayaran.cartID = this.props.pembayaran.cartID;
+
+      // if ordering mode is exist
+      if (this.props.pembayaran.orderingMode != undefined) {
+        pembayaran.orderingMode = this.props.pembayaran.orderingMode;
+        pembayaran.tableNo = this.props.pembayaran.tableNo;
+      }
+
+      // check if delivery address is exist
+      if (this.props.pembayaran.deliveryAddress != undefined) {
+        pembayaran.deliveryAddress = this.props.pembayaran.deliveryAddress;
+      }
+
+      // check if delivery fee is exist
+      if (this.props.pembayaran.deliveryFee != undefined) {
+        pembayaran.deliveryFee = this.props.pembayaran.deliveryFee;
+        // add delivery fee to total
+        pembayaran.price = Number(
+          pembayaran.price + this.props.pembayaran.deliveryFee,
+        );
+      }
+
+      // check if delivery provider is exist
+      if (this.props.pembayaran.deliveryProvider != undefined) {
+        pembayaran.deliveryProviderId = this.props.pembayaran.deliveryProvider.id;
+        pembayaran.deliveryProvider = this.props.pembayaran.deliveryProvider.name;
+        pembayaran.deliveryProviderName = this.props.pembayaran.deliveryProvider.name;
+        pembayaran.deliveryService = '-';
+      }
+
+      try {
+        pembayaran.cartDetails = {
+          partitionKey: this.props.pembayaran.cartDetails.partitionKey,
+          sortKey: this.props.pembayaran.cartDetails.sortKey,
+        };
+      } catch (e) {}
+
+      pembayaran.payAtPOS = true;
+
+      // get url
+      let {url} = this.props;
+
+      console.log('Payload settle order ', pembayaran);
+
+      const response = await this.props.dispatch(settleOrder(pembayaran, url));
+      console.log('reponse pembayaran settle order ', response);
+      this.setState({
+        loading: false,
+        prompPayAtPOS: true,
+        pendingCart: response.responseBody.data,
+      });
+      if (response.success) {
+        try {
+          this.props.dispatch(afterPayment(true));
+          this.getPendingOrder(response.responseBody.data);
+        } catch (e) {}
+      } else {
+        //  cancel voucher and pont selected
+        this.props.dispatch(getBasket());
+        this.setState({loading: false, failedPay: true});
+        this.cencelPoint();
+        this.cencelVoucher();
+        if (
+          response.responseBody.data != undefined &&
+          response.responseBody.data.message != undefined
+        ) {
+          Alert.alert('Sorry', response.responseBody.data.message);
+        } else {
+          Alert.alert(
+            'Sorry',
+            'Something went wrong with server, please try again',
+          );
+        }
+      }
+    } catch (e) {
+      //  cancel voucher and pont selected
+      this.cencelPoint();
+      this.cencelVoucher();
+      console.log(e);
+      Alert.alert('Oppss', 'Something went wrong, please try again');
+      this.setState({loading: false, failedPay: true});
+    }
+  };
+
+  getPendingOrder = async cart => {
+    try {
+      clearInterval(this.loopCart);
+    } catch (e) {}
+
+    this.loopCart = setInterval(async () => {
+      await this.loopPendingCart(cart);
+    }, 1500);
+  };
+
+  loopPendingCart = async cart => {
+    try {
+      const response = await this.props.dispatch(getPendingCartSingle(cart.id));
+
+      if (response.isPaymentComplete == true) {
+        const {url, intlData} = this.props;
+        try {
+          clearInterval(this.loopCart);
+        } catch (e) {}
+        Actions.paymentSuccess({
+          intlData,
+          outlet: this.state.outlet,
+          url,
+          dataRespons: response.confirmationInfo,
+        });
+      }
+    } catch (e) {}
+  };
+
+  renderPrompPayAtPOS = () => {
+    const {pendingCart} = this.state;
+    return (
+      <Dialog
+        dismissable={false}
+        visible={this.state.prompPayAtPOS}
+        onDismiss={() => {
+          this.setState({prompPayAtPOS: false});
+        }}>
+        <Dialog.Content>
+          <Text
+            style={{
+              textAlign: 'center',
+              fontFamily: 'Lato-Bold',
+              fontSize: 17,
+              color: colorConfig.store.defaultColor,
+            }}>
+            Processing your payment
+          </Text>
+          <View style={{marginTop: 10}}>
+            <ActivityIndicator
+              color={colorConfig.store.secondaryColor}
+              size={50}
+            />
+          </View>
+          {pendingCart.tableNo != undefined && pendingCart.tableNo != '-' ? (
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'center',
+                borderWidth: 1,
+                borderColor: colorConfig.store.secondaryColor,
+                borderRadius: 7,
+                padding: 10,
+                marginTop: 30,
+              }}>
+              <Text
+                style={{
+                  color: colorConfig.store.titleSelected,
+                  fontFamily: 'Lato-Bold',
+                  textAlign: 'center',
+                  fontSize: 18,
+                }}>
+                Table No : {pendingCart.tableNo}
+              </Text>
+            </View>
+          ) : (
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'center',
+                borderWidth: 1,
+                borderColor: colorConfig.store.secondaryColor,
+                borderRadius: 7,
+                padding: 10,
+                marginTop: 30,
+              }}>
+              <Text
+                style={{
+                  color: colorConfig.store.titleSelected,
+                  fontFamily: 'Lato-Bold',
+                  textAlign: 'center',
+                  fontSize: 18,
+                }}>
+                Queue No : {pendingCart.queueNo}
+              </Text>
+            </View>
+          )}
+        </Dialog.Content>
+      </Dialog>
+    );
+  };
+
   render() {
-    const {intlData, selectedAccount, detailPoint} = this.props;
+    const {intlData, selectedAccount, detailPoint, campign} = this.props;
     const {outlet} = this.state;
     return (
       <SafeAreaView style={styles.container}>
@@ -756,6 +1685,8 @@ class SettleOrder extends Component {
               flexDirection: 'row',
               backgroundColor: colorConfig.pageIndex.backgroundColor,
               alignItems: 'center',
+              borderWidth: 0.4,
+              borderColor: colorConfig.pageIndex.grayColor,
               paddingVertical: 4,
               shadowColor: '#00000021',
               shadowOffset: {
@@ -777,6 +1708,8 @@ class SettleOrder extends Component {
                 style={{
                   color: colorConfig.pageIndex.activeTintColor,
                   margin: 10,
+                  marginLeft: 20,
+                  paddingRight: 50,
                 }}
               />
             </TouchableOpacity>
@@ -787,7 +1720,7 @@ class SettleOrder extends Component {
                 justifyContent: 'center',
                 marginTop: 10,
                 marginBottom: 10,
-                left: -20,
+                left: -50,
               }}>
               <Text
                 style={{
@@ -801,6 +1734,7 @@ class SettleOrder extends Component {
           </View>
         </View>
         <ScrollView
+          style={{backgroundColor: '#f5f5f5'}}
           refreshControl={
             <RefreshControl
               refreshing={this.state.refreshing}
@@ -811,9 +1745,12 @@ class SettleOrder extends Component {
             style={{
               flexDirection: 'row',
               justifyContent: 'center',
-              left: -10,
-              marginTop: 30,
-              marginBottom: 50,
+              marginTop: 3,
+              backgroundColor: 'white',
+              paddingVertical: 30,
+              borderWidth: 0.4,
+              width: '100%',
+              borderColor: colorConfig.pageIndex.grayColor,
             }}>
             <Text
               style={{
@@ -850,14 +1787,8 @@ class SettleOrder extends Component {
             {/* value discount */}
           </View>
           <View
-            onPress={() => this.detailPayment(this.props.pembayaran)}
             style={{
-              backgroundColor: colorConfig.pageIndex.backgroundColor,
-              paddingLeft: 20,
-              paddingRight: 20,
-              paddingBottom: 20,
-              marginTop: 15,
-              height: this.state.screenHeight - 250,
+              marginTop: 13,
             }}>
             <View
               style={{
@@ -865,14 +1796,13 @@ class SettleOrder extends Component {
               }}>
               <View
                 style={{
-                  position: 'absolute',
-                  top: -30,
-                  height: 60,
-                  width: this.state.screenWidth - 40,
+                  marginBottom: 13,
+                  paddingVertical: 5,
+                  paddingHorizontal: 5,
+                  width: '100%',
                   backgroundColor: colorConfig.pageIndex.backgroundColor,
-                  borderColor: colorConfig.pageIndex.activeTintColor,
-                  borderWidth: 1,
-                  borderRadius: 10,
+                  borderWidth: 0.4,
+                  borderColor: colorConfig.pageIndex.grayColor,
                 }}>
                 <View
                   style={{
@@ -890,8 +1820,7 @@ class SettleOrder extends Component {
                         height: 40,
                         width: 40,
                         borderRadius: 40,
-                        borderColor: colorConfig.pageIndex.activeTintColor,
-                        borderWidth: 1,
+                        backgroundColor: colorConfig.store.defaultColor,
                         alignItems: 'center',
                         justifyContent: 'center',
                         marginRight: 10,
@@ -900,7 +1829,7 @@ class SettleOrder extends Component {
                       <Icon
                         size={20}
                         name={Platform.OS === 'ios' ? 'ios-cart' : 'md-cart'}
-                        style={{color: colorConfig.pageIndex.activeTintColor}}
+                        style={{color: 'white'}}
                       />
                     </View>
                     <View>
@@ -915,9 +1844,10 @@ class SettleOrder extends Component {
                       <Text
                         style={{
                           fontSize: 14,
-                          color: colorConfig.pageIndex.grayColor,
+                          color: colorConfig.store.titleSelected,
+                          fontFamily: 'Lato-Medium',
                         }}>
-                        {this.props.pembayaran.storeName}
+                        {this.getOutletName(this.props.pembayaran.storeName)}
                       </Text>
                     </View>
                   </View>
@@ -930,173 +1860,228 @@ class SettleOrder extends Component {
                     }}>
                     <Text
                       style={{
-                        marginRight: 5,
-                        fontWeight: 'bold',
-                        fontSize: 17,
-                        color: colorConfig.pageIndex.activeTintColor,
+                        marginRight: 10,
+                        fontFamily: 'Lato-Bold',
+                        fontSize: 15,
+                        color: colorConfig.store.defaultColor,
                       }}>
-                      Detail
+                      Order Detail
                     </Text>
-                    <Icon
-                      size={18}
-                      name={
-                        Platform.OS === 'ios'
-                          ? 'ios-arrow-dropright-circle'
-                          : 'md-arrow-dropright-circle'
-                      }
-                      style={{
-                        color: colorConfig.pageIndex.activeTintColor,
-                      }}
-                    />
                   </TouchableOpacity>
                 </View>
               </View>
             </View>
             <View
               style={{
-                marginTop: 50,
-                marginBottom: 10,
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                flexDirection: 'row',
+                marginTop: 5,
+                width: '100%',
+                borderWidth: 0.4,
+                padding: 13,
+                backgroundColor: 'white',
+                borderColor: colorConfig.pageIndex.grayColor,
               }}>
-              <Text
-                style={{
-                  fontSize: 17,
-                  fontFamily: 'Lato-Bold',
-                  color: colorConfig.pageIndex.grayColor,
-                }}>
-                Vouchers
-              </Text>
-              {this.state.cancelVoucher == false &&
-              this.state.dataVoucer != undefined ? (
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                  }}>
-                  <TouchableOpacity
-                    style={styles.btnMethodCencel}
-                    onPress={() => this.cencelVoucher()}>
-                    <Icon
-                      size={18}
-                      name={
-                        Platform.OS === 'ios'
-                          ? 'ios-close-circle-outline'
-                          : 'md-close-circle-outline'
-                      }
-                      style={{color: colorConfig.store.colorError}}
-                    />
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={styles.btnMethodSelected}
-                    onPress={this.myVouchers}>
-                    <Icon
-                      size={20}
-                      name={Platform.OS === 'ios' ? 'ios-card' : 'md-card'}
-                      style={{
-                        color: colorConfig.store.textWhite,
-                        marginRight: 8,
-                      }}
-                    />
-                    <Text style={styles.descMethodSelected}>
-                      {this.state.dataVoucer.name.substr(0, 13)}
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              ) : (
-                <TouchableOpacity
-                  style={styles.btnMethodUnselected}
-                  onPress={this.myVouchers}>
-                  {/*<Image*/}
-                  {/*  style={{height: 18, width: 23, marginRight: 5}}*/}
-                  {/*  source={require('../assets/img/voucher.png')}*/}
-                  {/*/>*/}
-                  <Icon
-                    size={20}
-                    name={Platform.OS === 'ios' ? 'ios-card' : 'md-card'}
+              <TouchableOpacity
+                style={styles.btnMethodUnselected}
+                onPress={this.myVouchers}>
+                <View style={{flexDirection: 'row'}}>
+                  <Fa
+                    size={21}
+                    name={'ticket'}
                     style={{
                       color: colorConfig.store.defaultColor,
-                      marginRight: 8,
+                      marginRight: 10,
                     }}
                   />
-                  <Text style={styles.descMethodUnselected}>
-                    Select Vouchers
-                  </Text>
-                </TouchableOpacity>
-              )}
+                  <Text style={styles.descMethodUnselected}>Use Vouchers</Text>
+                </View>
+                <Icon
+                  size={25}
+                  name={
+                    Platform.OS === 'ios'
+                      ? 'ios-arrow-dropright'
+                      : 'md-arrow-dropright'
+                  }
+                  style={{
+                    color: colorConfig.store.defaultColor,
+                    marginLeft: 10,
+                  }}
+                />
+              </TouchableOpacity>
+              {!isEmptyArray(this.state.dataVoucer)
+                ? this.state.dataVoucer.map(
+                    (item, i) =>
+                      item.isVoucher == true && (
+                        <View
+                          style={{
+                            margin: 5,
+                            marginTop: 10,
+                            flexDirection: 'row',
+                            justifyContent: 'space-between',
+                          }}>
+                          <Text
+                            style={{
+                              fontSize: 15,
+                              fontFamily: 'Lato-Bold',
+                              color: colorConfig.store.secondaryColor,
+                            }}>
+                            {item.name}
+                          </Text>
+                          <TouchableOpacity>
+                            <TouchableOpacity
+                              onPress={() => this.cencelOneVoucher(i)}
+                              style={{
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                              }}>
+                              <Text
+                                style={{
+                                  color: colorConfig.store.colorError,
+                                  fontFamily: 'Lato-Bold',
+                                  fontSize: 14,
+                                }}>
+                                Cancel
+                              </Text>
+                            </TouchableOpacity>
+                          </TouchableOpacity>
+                        </View>
+                      ),
+                  )
+                : null}
             </View>
             {this.props.campaignActive &&
-            outlet.enableRedeemPoint &&
+            campign != undefined &&
+            campign.points &&
+            campign.points.pointsToRebateRatio1 != 0 &&
             detailPoint != undefined &&
             !isEmptyObject(detailPoint.trigger) &&
             (detailPoint.trigger.status === true ||
-              detailPoint.trigger.campaignTrigger === 'USER_SIGNUP')
-              ? this.renderUsePoint()
-              : null}
+              detailPoint.trigger.campaignTrigger === 'USER_SIGNUP') ? (
+              <View
+                style={{
+                  marginTop: 5,
+                  width: '100%',
+                  borderWidth: 0.4,
+                  padding: 13,
+                  backgroundColor: 'white',
+                  borderColor: colorConfig.pageIndex.grayColor,
+                }}>
+                {this.state.cancelPoint == false &&
+                this.state.addPoint != undefined ? (
+                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                    <View style={{width: '20%', alignItems: 'center'}}>
+                      <TouchableOpacity
+                        style={{
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}
+                        onPress={this.cencelPoint}>
+                        <Text
+                          style={{
+                            color: colorConfig.store.colorError,
+                            fontFamily: 'Lato-Bold',
+                            fontSize: 14,
+                          }}>
+                          Cancel
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                    <TouchableOpacity
+                      style={styles.btnMethodSelectedPoints}
+                      onPress={this.myPoint}>
+                      <Text style={styles.descMethodSelected}>
+                        {this.state.addPoint} points
+                      </Text>
+                      <Icon
+                        size={25}
+                        name={
+                          Platform.OS === 'ios'
+                            ? 'ios-arrow-dropright'
+                            : 'md-arrow-dropright'
+                        }
+                        style={{
+                          color: colorConfig.store.defaultColor,
+                          marginLeft: 10,
+                        }}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                ) : (
+                  <TouchableOpacity
+                    style={styles.btnMethodUnselected}
+                    onPress={this.myPoint}>
+                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                      <Fa
+                        size={18}
+                        name={'tags'}
+                        style={{
+                          color: colorConfig.store.defaultColor,
+                          marginRight: 10,
+                        }}
+                      />
+                      <Text style={styles.descMethodUnselected}>
+                        Use Points
+                      </Text>
+                    </View>
+                    <Icon
+                      size={25}
+                      name={
+                        Platform.OS === 'ios'
+                          ? 'ios-arrow-dropright'
+                          : 'md-arrow-dropright'
+                      }
+                      style={{
+                        color: colorConfig.store.defaultColor,
+                        marginLeft: 10,
+                      }}
+                    />
+                  </TouchableOpacity>
+                )}
+              </View>
+            ) : null}
 
             <View
               style={{
-                marginTop: 12,
-                marginBottom: 10,
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                flexDirection: 'row',
+                marginTop: 13,
+                width: '100%',
+                borderWidth: 0.4,
+                padding: 13,
+                backgroundColor: 'white',
+                borderColor: colorConfig.pageIndex.grayColor,
               }}>
-              <Text
-                style={{
-                  fontSize: 17,
-                  fontFamily: 'Lato-Bold',
-                  color:
-                    selectedAccount == undefined
-                      ? colorConfig.store.colorError
-                      : colorConfig.pageIndex.grayColor,
-                }}>
-                Payment Method <Text style={{lineHeight: 30}}>*</Text>
-              </Text>
               <TouchableOpacity
-                style={
-                  selectedAccount != undefined
-                    ? styles.btnMethodSelected
-                    : [
-                        styles.btnMethodUnselected,
-                        selectedAccount == undefined
-                          ? {
-                              borderColor: colorConfig.store.colorError,
-                              borderWidth: 1.5,
-                            }
-                          : null,
-                      ]
-                }
+                style={styles.btnPaymentMethod}
                 onPress={() => Actions.paymentMethods({page: 'settleOrder'})}>
-                <Icon
-                  size={20}
-                  name={Platform.OS === 'ios' ? 'ios-cash' : 'md-cash'}
-                  style={{
-                    color:
-                      selectedAccount != undefined
-                        ? colorConfig.store.textWhite
-                        : colorConfig.store.defaultColor,
-                    marginRight: 8,
-                  }}
-                />
                 <Text
-                  style={
-                    selectedAccount != undefined
-                      ? styles.descMethodSelected
-                      : styles.descMethodUnselected
-                  }>
+                  style={[
+                    styles.descMethodUnselected,
+                    {
+                      color: colorConfig.store.titleSelected,
+                      fontWeight: 'bold',
+                    },
+                  ]}>
+                  {' '}
                   {selectedAccount != undefined
                     ? this.selectedPaymentMethod(selectedAccount)
-                    : 'Select Methods'}
+                    : 'Payment Method'}
                 </Text>
+                <Icon
+                  size={25}
+                  name={
+                    Platform.OS === 'ios'
+                      ? 'ios-arrow-dropright'
+                      : 'md-arrow-dropright'
+                  }
+                  style={{
+                    color: colorConfig.store.titleSelected,
+                    marginLeft: 10,
+                  }}
+                />
               </TouchableOpacity>
             </View>
 
             <View style={{marginTop: 50}} />
             <TouchableOpacity
-              onPress={this.onSlideRight}
+              onPress={this.doPayment}
               disabled={
                 selectedAccount != undefined || this.state.totalBayar == 0
                   ? false
@@ -1108,7 +2093,9 @@ class SettleOrder extends Component {
                     ? colorConfig.store.defaultColor
                     : colorConfig.store.disableButton,
                 padding: 15,
-                borderRadius: 20,
+                borderRadius: 7,
+                width: '88%',
+                alignSelf: 'center',
                 justifyContent: 'center',
                 alignItems: 'center',
               }}>
@@ -1118,36 +2105,37 @@ class SettleOrder extends Component {
                   color: 'white',
                   fontFamily: 'Lato-Medium',
                 }}>
-                {'Pay ' + CurrencyFormatter(this.state.totalBayar)}
+                {'Pay' + this.format(CurrencyFormatter(this.state.totalBayar))}
               </Text>
             </TouchableOpacity>
-            {/*<SwipeButton*/}
-            {/*  disabled={*/}
-            {/*    selectedAccount != undefined || this.state.totalBayar == 0*/}
-            {/*      ? false*/}
-            {/*      : true*/}
-            {/*  }*/}
-            {/*  disabledThumbIconBackgroundColor="#FFFFFF"*/}
-            {/*  disabledThumbIconBorderColor={*/}
-            {/*    colorConfig.pageIndex.activeTintColor*/}
-            {/*  }*/}
-            {/*  thumbIconImageSource={appConfig.arrowRight}*/}
-            {/*  height={60}*/}
-            {/*  thumbIconBackgroundColor="#FFFFFF"*/}
-            {/*  railBorderColor="#FFFFFF"*/}
-            {/*  railFillBackgroundColor={colorConfig.pageIndex.grayColor}*/}
-            {/*  thumbIconBorderColor={colorConfig.pageIndex.activeTintColor}*/}
-            {/*  titleColor="#FFFFFF"*/}
-            {/*  titleFontSize={20}*/}
-            {/*  shouldResetAfterSuccess={this.state.failedPay}*/}
-            {/*  railBackgroundColor={colorConfig.pageIndex.activeTintColor}*/}
-            {/*  title={*/}
-            {/*    'Pay ' + CurrencyFormatter(this.state.totalBayar)*/}
-            {/*    // Number(this.state.totalBayar.toFixed(3))*/}
-            {/*  }*/}
-            {/*  onSwipeSuccess={this.onSlideRight}*/}
-            {/*/>*/}
+
+            {outlet.enablePayAtPOS == true ? (
+              <View style={{marginTop: 20}}>
+                <Text
+                  style={{
+                    color: colorConfig.store.titleSelected,
+                    fontSize: 18,
+                    textAlign: 'center',
+                    marginBottom: 20,
+                  }}>
+                  OR
+                </Text>
+                <TouchableOpacity
+                  onPress={this.payAtPOS}
+                  style={styles.payAtPOS}>
+                  <Text
+                    style={{
+                      fontSize: 19,
+                      color: colorConfig.store.defaultColor,
+                      fontFamily: 'Lato-Bold',
+                    }}>
+                    Pay at Store
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            ) : null}
           </View>
+          <View style={{paddingBottom: 100}} />
         </ScrollView>
         <AwesomeAlert
           show={this.state.showAlert}
@@ -1169,6 +2157,7 @@ class SettleOrder extends Component {
             this.hideAlert();
           }}
         />
+        {this.renderPrompPayAtPOS()}
       </SafeAreaView>
     );
   }
@@ -1250,18 +2239,33 @@ const styles = StyleSheet.create({
     top: -2,
   },
   btnMethodUnselected: {
-    borderColor: colorConfig.pageIndex.activeTintColor,
-    borderWidth: 1,
-    backgroundColor: 'white',
-    borderRadius: 10,
-    paddingLeft: 10,
-    paddingRight: 10,
-    paddingTop: 8,
-    paddingBottom: 8,
-    alignItems: 'center',
-    width: Dimensions.get('window').width / 2 - 10,
+    width: '100%',
     flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    borderWidth: 0.6,
+    borderColor: '#bababa',
+    paddingVertical: 7,
+    borderRadius: 5,
+  },
+  btnMethodSelectedPoints: {
+    width: '80%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    borderWidth: 0.6,
+    borderColor: '#bababa',
+    paddingVertical: 7,
+    borderRadius: 5,
+  },
+  btnPaymentMethod: {
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
   },
   btnMethodSelected: {
     borderColor: colorConfig.pageIndex.activeTintColor,
@@ -1287,15 +2291,30 @@ const styles = StyleSheet.create({
   },
   descMethodUnselected: {
     color: colorConfig.store.defaultColor,
-    fontSize: 13,
+    fontSize: 16,
+    fontFamily: 'Lato-Medium',
+    borderRadius: 5,
   },
   descMethodSelected: {
-    color: colorConfig.store.textWhite,
-    fontSize: 13,
+    color: colorConfig.store.secondaryColor,
+    fontSize: 16,
+    fontWeight: 'bold',
+    borderRadius: 5,
+  },
+  payAtPOS: {
+    borderWidth: 0.7,
+    borderColor: colorConfig.store.defaultColor,
+    padding: 15,
+    borderRadius: 7,
+    width: '88%',
+    alignSelf: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 
 mapStateToProps = state => ({
+  campign: state.rewardsReducer.campaign.campaign,
   myVoucers: state.accountsReducer.myVoucers.myVoucers,
   totalPoint: state.rewardsReducer.dataPoint.totalPoint,
   recentTransaction: state.rewardsReducer.dataPoint.recentTransaction,

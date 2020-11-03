@@ -32,26 +32,21 @@ import {
   updateUser,
   userPosition,
 } from '../actions/user.action';
-import ShimmerPlaceHolder from 'react-native-shimmer-placeholder';
 import MyPointsPlaceHolder from '../components/placeHolderLoading/MyPointsPlaceHolder';
 import {isEmptyArray, isEmptyData, isEmptyObject} from '../helper/CheckEmpty';
-import {getDeliveryProvider, getPendingCart} from '../actions/order.action';
 import CryptoJS from 'react-native-crypto-js';
 import awsConfig from '../config/awsConfig';
-import {
-  dataStores,
-  getCompanyInfo,
-  setSingleOutlet,
-} from '../actions/stores.action';
+import {getCompanyInfo} from '../actions/stores.action';
 import {getAccountPayment} from '../actions/payment.actions';
 import OneSignal from 'react-native-onesignal';
 import {dataInbox} from '../actions/inbox.action';
-import {referral} from '../actions/referral.action';
-import Icon from 'react-native-vector-icons/EvilIcons';
-import {getMandatoryFields} from '../actions/account.action';
+import {getMandatoryFields, paymentRefNo} from '../actions/account.action';
 import {Overlay} from 'react-native-elements';
-import * as geolib from 'geolib';
-import * as _ from 'lodash';
+import {
+  getCart,
+  getCartHomePage,
+  getPendingCart,
+} from '../actions/order.action';
 
 class Rewards extends Component {
   constructor(props) {
@@ -72,8 +67,12 @@ class Rewards extends Component {
       onesignalID: null,
     };
 
-    OneSignal.addEventListener('received', this.onReceived);
-    OneSignal.addEventListener('ids', this.onIds);
+    try {
+      OneSignal.removeEventListener('received', this.onReceived);
+    } catch (e) {}
+    try {
+      OneSignal.addEventListener('received', this.onReceived);
+    } catch (e) {}
   }
 
   onIds = async device => {
@@ -89,20 +88,58 @@ class Rewards extends Component {
     const page1 = 'paymentDetail';
     const page2 = 'paymentSuccess';
     const page3 = 'settleOrder';
-    // console.log('Notification received: ', notification);
+    const page4 = 'hostedTrx';
+
+    // refresh pending cart
+    try {
+      console.log('try to get pending cart.');
+      this.props.dispatch(getPendingCart());
+    } catch (e) {}
+
+    try {
+      this.props.dispatch(getCartHomePage());
+    } catch (e) {}
+
+    // DETECT IN APP PAYMENT
+    this.inAppPayment(notification);
 
     if (
-      (notification.payload.title === 'Payment' ||
-        notification.payload.title === 'Ordering') &&
+      (notification.payload.title.includes('Payment') ||
+        notification.payload.title.includes('Ordering')) &&
+      !notification.payload.title.includes('Payment Request') &&
       scene != page1 &&
       scene != page2 &&
-      scene != page3
+      scene != page3 &&
+      scene != page4
     ) {
       try {
         Alert.alert(notification.payload.title, notification.payload.body);
       } catch (e) {}
     }
     this._onRefresh();
+  };
+
+  inAppPayment = async notification => {
+    try {
+      if (notification.payload.launchURL != undefined) {
+        const refNo = notification.payload.launchURL.replace(
+          `${awsConfig.APP_DEEP_LINK}/payment/`,
+          '',
+        );
+        // await this.props.dispatch(paymentRefNo(refNo));
+        Actions.scan({paymentRefNo: refNo});
+      }
+    } catch (e) {}
+  };
+
+  getDeepLinkiOS = async () => {
+    try {
+      if (this.props.paymentRefNo != undefined) {
+        if (Actions.currentScene === 'pageIndex') {
+          Actions.scan({paymentRefNo: this.props.paymentRefNo});
+        }
+      }
+    } catch (e) {}
   };
 
   disableStatusGetData = () => {
@@ -115,58 +152,26 @@ class Rewards extends Component {
 
   componentDidMount = async () => {
     await this.getDataRewards();
-
     this.checkOneSignal();
     this.checkUseApp();
-
-    // IF OUTLET FOR THIS COMPANY IS ONLY 1, THEN SETUP DETAIL OUTLET NOW
-    // this.initializeStore();
-  };
-
-  initializeStore = async () => {
-    try {
-      // check if user enabled their position permission
-      let statusLocaiton;
-      if (
-        this.props.userPosition == undefined ||
-        this.props.userPosition == false
-      ) {
-        statusLocaiton = false;
-      } else {
-        statusLocaiton = true;
-      }
-      await this.setDataStore(
-        this.props.dataStores,
-        statusLocaiton,
-        this.props.userPosition,
-      );
-    } catch (e) {}
   };
 
   checkDefaultPaymentAccount = async response => {
     try {
-      const {defaultAccount} = this.props;
+      const {defaultAccount, companyInfo} = this.props;
 
       if (response.success == false) {
         await this.props.dispatch(defaultPaymentAccount(undefined));
         return;
       }
 
+      // check if payment provider was deleted
       try {
-        if (isEmptyArray(response.response.data)) {
+        if (isEmptyArray(companyInfo.paymentTypes)) {
           await this.props.dispatch(defaultPaymentAccount(undefined));
           return;
         }
       } catch (e) {}
-
-      const MyCardAccount = response.response.data;
-      const data = await MyCardAccount.find(
-        item => item.id == defaultAccount.id,
-      );
-      if (data == undefined) {
-        await this.props.dispatch(defaultPaymentAccount(undefined));
-      }
-      return;
     } catch (e) {}
   };
 
@@ -228,26 +233,22 @@ class Rewards extends Component {
   getDataRewards = async () => {
     try {
       await this.props.dispatch(refreshToken());
-      await this.props.dispatch(getUserProfile());
-      await this.props.dispatch(getCompanyInfo());
-      // await this.props.dispatch(getMandatoryFields());
+      await Promise.all([
+        this.props.dispatch(campaign()),
+        this.props.dispatch(dataPoint()),
+        this.props.dispatch(getStamps()),
+        this.props.dispatch(recentTransaction()),
+      ]);
+      await this.setState({isLoading: false});
+      this.props.dispatch(getAccountPayment());
+      this.props.dispatch(getUserProfile());
+      this.props.dispatch(getMandatoryFields());
+      this.props.dispatch(dataInbox(0, 10));
+      this.props.dispatch(getCompanyInfo());
       const response = await this.props.dispatch(getAccountPayment());
-      await this.props.dispatch(campaign());
-      await this.props.dispatch(dataPoint());
-      await this.props.dispatch(getStamps());
-      await this.props.dispatch(getPendingCart());
-      await this.props.dispatch(dataInbox(0, 50));
-      await this.props.dispatch(recentTransaction());
-      await this.props.dispatch(getDeliveryProvider());
-      await this.props.dispatch(referral());
-      // await this.props.dispatch(dataStores());
-      await this.getUserPosition();
-
       await this.checkDefaultPaymentAccount(response);
-
-      // this.setDataStore();
-
-      this.setState({isLoading: false});
+      this.getDeepLinkiOS();
+      await this.getUserPosition();
     } catch (error) {
       await this.props.dispatch(
         notifikasi(
@@ -256,76 +257,6 @@ class Rewards extends Component {
           console.log('Cancel Pressed'),
         ),
       );
-    }
-  };
-
-  setDataStore = async (response, statusLocation, position) => {
-    var coordinate = {};
-    var location = {};
-    try {
-      location = {};
-      location = {
-        region: response[0].region,
-        address: response[0].location,
-        coordinate: {
-          lat: response[0].latitude,
-          lng: response[0].longitude,
-        },
-      };
-
-      response[0].location = location;
-
-      const selectedOutlet = {
-        storeId: response[0].id,
-        storeName: response[0].name,
-        storeStatus: true,
-        storeJarak: statusLocation
-          ? geolib.getDistance(position.coords, {
-              latitude: Number(response[0].latitude),
-              longitude: Number(response[0].longitude),
-            }) / 1000
-          : '-',
-        image:
-          response[0].defaultImageURL != undefined
-            ? response[0].defaultImageURL
-            : '',
-        region: response[0].region,
-        address: response[0].location.address,
-        city: response[0].city,
-        operationalHours: response[0].operationalHours,
-        openAllDays: response[0].openAllDays,
-        defaultImageURL: response[0].defaultImageURL,
-        coordinate: response[0].location.coordinate,
-        orderingStatus: response[0].orderingStatus,
-        outletType: response[0].outletType,
-        offlineMessage: response[0].offlineMessage,
-        maxOrderQtyPerItem: response[0].maxOrderQtyPerItem,
-        maxOrderAmount: response[0].maxOrderAmount,
-        lastOrderOn: response[0].lastOrderOn,
-        enableRedeemPoint: response[0].enableRedeemPoint,
-        enableItemSpecialInstructions:
-          response[0].enableItemSpecialInstructions,
-        enableDineIn: !(
-          response[0].enableDineIn == false || response[0].enableDineIn == '-'
-        ),
-        enableTakeAway: !(
-          response[0].enableTakeAway == false ||
-          response[0].enableTakeAway == '-'
-        ),
-        enableTableScan: !(
-          response[0].enableTableScan == false ||
-          response[0].enableTableScan == '-'
-        ),
-        enableDelivery: !(
-          response[0].enableDelivery == false ||
-          response[0].enableDelivery == '-'
-        ),
-      };
-
-      console.log({selectedOutlet});
-      await this.props.dispatch(setSingleOutlet(selectedOutlet));
-    } catch (error) {
-      console.log(error);
     }
   };
 
@@ -370,6 +301,7 @@ class Rewards extends Component {
         status = `${intlData.messages.good} ${intlData.messages.afternoon}`;
       } else {
         status = `${intlData.messages.good} ${intlData.messages.night}`;
+        status = `Good Evening`;
       }
 
       // Decrypt data user
@@ -384,8 +316,8 @@ class Rewards extends Component {
 
     return (
       <View style={{backgroundColor: colorConfig.store.defaultColor}}>
-        <Text style={styles.textWelcome}>{status},</Text>
-        <Text style={styles.textName}>{userDetail.name.toUpperCase()}</Text>
+        <Text style={styles.textWelcome}>{status}</Text>
+        <Text style={styles.textName}>{userDetail.name}</Text>
       </View>
     );
   };
@@ -409,8 +341,8 @@ class Rewards extends Component {
 
   render() {
     const {campaignActive} = this.props;
-
     const {intlData} = this.props;
+
     return (
       <SafeAreaView>
         <Overlay
@@ -435,9 +367,12 @@ class Rewards extends Component {
               {this.state.isLoading ? (
                 <RewardsStamp isLoading={this.state.isLoading} />
               ) : this.props.dataStamps == undefined ||
-                isEmptyObject(this.props.dataStamps.dataStamps) ? (
-                this.greetWelcomeUser()
-              ) : !isEmptyObject(this.props.dataStamps.dataStamps.trigger) &&
+                isEmptyObject(
+                  this.props.dataStamps.dataStamps,
+                ) ? null : !isEmptyObject(
+                  // this.greetWelcomeUser()
+                  this.props.dataStamps.dataStamps.trigger,
+                ) &&
                 this.props.dataStamps.dataStamps.trigger.campaignTrigger ===
                   'COMPLETE_PROFILE' &&
                 this.props.dataStamps.dataStamps.trigger.status === false ? (
@@ -460,16 +395,17 @@ class Rewards extends Component {
                   style={{
                     backgroundColor: colorConfig.pageIndex.activeTintColor,
                     alignItems: 'center',
+                    paddingBottom: 20,
                   }}>
                   <TouchableOpacity
                     onPress={this.detailStamps}
                     style={{
-                      width: 100,
+                      width: '100%',
                       marginTop: 15,
                       flexDirection: 'row',
                       justifyContent: 'center',
                       alignItems: 'center',
-                      marginLeft: 32,
+                      // marginLeft: 32,
                     }}>
                     <Text
                       style={{
@@ -478,15 +414,22 @@ class Rewards extends Component {
                         fontWeight: 'bold',
                         textAlign: 'center',
                       }}>
-                      {intlData.messages.stampsCard}
+                       {/*intlData.messages.stampsCard*/}
+                      Stamp Card
                     </Text>
-                    <Icon
-                      size={32}
-                      name={'chevron-right'}
-                      style={{color: 'white'}}
-                    />
                   </TouchableOpacity>
                   <RewardsStamp isLoading={this.state.isLoading} />
+                  <TouchableOpacity onPress={this.detailStamps}>
+                    <Text
+                      style={{
+                        textAlign: 'center',
+                        color: colorConfig.pageIndex.inactiveTintColor,
+                        fontFamily: 'Lato-Bold',
+                        fontSize: 15,
+                      }}>
+                      Learn More
+                    </Text>
+                  </TouchableOpacity>
                 </View>
               )}
 
@@ -546,18 +489,16 @@ const styles = StyleSheet.create({
   textWelcome: {
     fontSize: 18,
     color: colorConfig.store.secondaryColor,
-    fontWeight: 'bold',
     fontFamily: 'Lato-Medium',
     textAlign: 'center',
-    marginTop: 40,
+    marginTop: 25,
   },
   textName: {
     fontSize: 26,
     color: 'white',
-    fontWeight: 'bold',
     fontFamily: 'Lato-Bold',
     textAlign: 'center',
-    padding: 10,
+    padding: 5,
   },
   information: {
     backgroundColor: colorConfig.store.defaultColor,
@@ -588,7 +529,6 @@ const styles = StyleSheet.create({
 });
 
 mapStateToProps = state => ({
-  fields: state.accountsReducer.mandatoryFields.fields,
   recentTransaction: state.rewardsReducer.dataPoint.recentTransaction,
   defaultAccount: state.userReducer.defaultPaymentAccount.defaultAccount,
   myCardAccount: state.cardReducer.myCardAccount.card,
@@ -600,7 +540,8 @@ mapStateToProps = state => ({
   userDetail: state.userReducer.getUser.userDetails,
   intlData: state.intlData,
   userPosition: state.userReducer.userPosition.userPosition,
-  dataStores: state.storesReducer.dataStores.stores,
+  companyInfo: state.userReducer.getCompanyInfo.companyInfo,
+  paymentRefNo: state.accountsReducer.paymentRefNo.paymentRefNo,
 });
 
 mapDispatchToProps = dispatch => ({

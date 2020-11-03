@@ -66,8 +66,22 @@ export default class PaymentDetailItem extends Component {
     }
   };
 
+  getPaymentName = item => {
+    try {
+      if (item.isVoucher) {
+        return item.name;
+      } else if (item.isPoint) {
+        return 'Points ' + item.redeemValue;
+      } else {
+        return item.paymentType;
+      }
+    } catch (e) {
+      return null;
+    }
+  };
+
   render() {
-    const {intlData} = this.props;
+    const {intlData, dataVoucer} = this.props;
     return (
       <SafeAreaView style={styles.container}>
         <View
@@ -98,9 +112,7 @@ export default class PaymentDetailItem extends Component {
         <ScrollView>
           <View style={styles.card}>
             <View style={styles.item}>
-              <Text style={styles.title}>
-                {intlData.messages.paymentDetail}
-              </Text>
+              <Text style={styles.title}>Order Summary</Text>
             </View>
             <View style={styles.detail}>
               {/*<View style={styles.detailItem}>*/}
@@ -132,7 +144,7 @@ export default class PaymentDetailItem extends Component {
                   {intlData.messages.detailItem} :
                 </Text>
                 <View style={styles.itemDetail}>
-                  {this.props.pembayaran.dataPay.map((item, key) => (
+                  {this.props.pembayaran.details.map((item, key) => (
                     <View key={key}>
                       {
                         <View
@@ -142,20 +154,24 @@ export default class PaymentDetailItem extends Component {
                             borderStyle: 'dotted',
                             paddingVertical: 6,
                           }}>
-                          <Text style={styles.descItem}>{item.itemName}</Text>
+                          <Text style={styles.descItem}>
+                            {item.product.name}
+                          </Text>
                           <View style={styles.itemDesc}>
                             <Text style={styles.descItemPrice}>
-                              {this.format(CurrencyFormatter(item.price))}
+                              {this.format(
+                                CurrencyFormatter(item.product.retailPrice),
+                              )}
                             </Text>
-                            <Text style={styles.descItemPrice}>{item.qty}</Text>
+                            <Text style={styles.descItemPrice}>
+                              {item.quantity}
+                            </Text>
                             <Text
                               style={[
                                 styles.descItemPrice,
                                 {color: colorConfig.store.title},
                               ]}>
-                              {this.format(
-                                CurrencyFormatter(item.qty * item.price),
-                              )}
+                              {this.format(CurrencyFormatter(item.unitPrice))}
                             </Text>
                           </View>
                           <View style={styles.itemDescModifier}>
@@ -197,85 +213,38 @@ export default class PaymentDetailItem extends Component {
                     <Text style={styles.desc}>
                       {appConfig.appMataUang}
                       {this.format(
-                        CurrencyFormatter(this.props.pembayaran.payment),
+                        CurrencyFormatter(
+                          this.props.pembayaran.totalNettAmount,
+                        ),
                       )}
                     </Text>
                   </View>
 
-                  {this.props.voucher != undefined ? (
-                    <View>
-                      <View
-                        style={{
-                          flexDirection: 'row',
-                          justifyContent: 'space-between',
-                          paddingVertical: 5,
-                        }}>
-                        <Text
-                          style={[
-                            styles.desc,
-                            {color: colorConfig.store.colorSuccess},
-                          ]}>
-                          {intlData.messages.voucherApplied}
-                        </Text>
-                        <Text
-                          style={[
-                            styles.desc,
-                            {color: colorConfig.store.colorSuccess},
-                          ]}>
-                          {this.props.voucher.name}
-                        </Text>
-                      </View>
-                      <View
-                        style={{
-                          flexDirection: 'row',
-                          justifyContent: 'space-between',
-                          paddingVertical: 5,
-                        }}>
-                        <Text
-                          style={[
-                            styles.desc,
-                            {color: colorConfig.store.colorSuccess},
-                          ]}>
-                          {intlData.messages.discount}
-                        </Text>
-                        <Text
-                          style={[
-                            styles.desc,
-                            {color: colorConfig.store.colorSuccess},
-                          ]}>
-                          {this.format(
-                            CurrencyFormatter(
-                              this.props.pembayaran.payment -
-                                this.props.totalBayar,
-                            ),
-                          )}
-                        </Text>
-                      </View>
-                    </View>
-                  ) : null}
-                  {this.props.point != undefined ? (
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        paddingVertical: 5,
-                      }}>
-                      <Text
-                        style={[
-                          styles.desc,
-                          {color: colorConfig.store.colorSuccess},
-                        ]}>
-                        {intlData.messages.pointApplied}
-                      </Text>
-                      <Text
-                        style={[
-                          styles.desc,
-                          {color: colorConfig.store.colorSuccess},
-                        ]}>
-                        {this.props.point}
-                      </Text>
-                    </View>
-                  ) : null}
+                  {!isEmptyArray(dataVoucer)
+                    ? dataVoucer.map(item => (
+                        <View>
+                          <View
+                            style={{
+                              flexDirection: 'row',
+                              justifyContent: 'flex-end',
+                              paddingVertical: 5,
+                            }}>
+                            <Text
+                              style={[
+                                styles.desc,
+                                {color: colorConfig.store.colorSuccess},
+                              ]}>
+                              {this.getPaymentName(item)}
+                              {'    '}
+                              {appConfig.appMataUang}
+                              {this.format(
+                                CurrencyFormatter(item.paymentAmount),
+                              )}
+                            </Text>
+                          </View>
+                        </View>
+                      ))
+                    : null}
                   <View
                     style={{
                       flexDirection: 'row',
@@ -349,9 +318,8 @@ const styles = StyleSheet.create({
   },
   desc: {
     color: colorConfig.store.title,
-    fontWeight: 'bold',
-    fontSize: 16,
-    fontFamily: 'Lato-Bold',
+    fontSize: 15,
+    fontFamily: 'Lato-Medium',
   },
   descAddress: {
     color: colorConfig.pageIndex.grayColor,

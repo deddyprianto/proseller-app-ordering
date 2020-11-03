@@ -109,8 +109,8 @@ class RewardsQRmenu extends Component {
                 token: qrcode,
               })}
               logo={appConfig.appLogoQR}
-              logoSize={this.state.screenWidth / 6 - 20}
-              size={this.state.screenWidth - 100}
+              logoSize={this.state.screenWidth / 6 - 40}
+              size={this.state.screenWidth - 190}
             />
             {/* <TouchableOpacity
               style={styles.btnScan}
@@ -148,8 +148,9 @@ const styles = StyleSheet.create({
   card: {
     marginLeft: 50,
     marginRight: 50,
-    marginTop: 50,
+    marginTop: 100,
     alignItems: 'center',
+    justifyContent: 'center',
   },
   btnScan: {
     marginTop: 10,

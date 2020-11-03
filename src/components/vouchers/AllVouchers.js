@@ -6,6 +6,7 @@ import {
   Dimensions,
   TouchableOpacity,
   Image,
+  Platform,
   TouchableHighlight,
   ScrollView,
   RefreshControl,
@@ -80,14 +81,6 @@ class AllVouchers extends Component {
 
   render() {
     const {intlData, totalPoint, vouchers} = this.props;
-    // check if voucher available but customer point not enough to see em
-    let voucherNotShowing = false;
-    if (vouchers != undefined && vouchers.length > 0) {
-      const data = this.props.vouchers.filter(
-        data => data.redeemValue <= totalPoint,
-      );
-      if (data == undefined || data.length == 0) voucherNotShowing = true;
-    }
     return (
       <View>
         <ScrollView
@@ -116,7 +109,9 @@ class AllVouchers extends Component {
                 </View>
               ) : (
                 this.props.vouchers
-                  .filter(data => data.redeemValue <= totalPoint)
+                  .filter(
+                    data => data.validity.canOnlyRedeemedByMerchant != true,
+                  )
                   .map((item, keys) => (
                     <View key={keys}>
                       {
@@ -161,8 +156,7 @@ class AllVouchers extends Component {
                                   Platform.OS === 'ios' ? 'ios-list' : 'md-list'
                                 }
                                 style={{
-                                  color:
-                                    colorConfig.pageIndex.inactiveTintColor,
+                                  color: colorConfig.store.secondaryColor,
                                   marginRight: 3,
                                 }}
                               />
@@ -178,41 +172,6 @@ class AllVouchers extends Component {
                     </View>
                   ))
               )}
-              {voucherNotShowing ? (
-                <View>
-                  <Text
-                    style={{
-                      marginTop: '50%',
-                      fontSize: 20,
-                      textAlign: 'center',
-                      color: colorConfig.pageIndex.inactiveTintColor,
-                      fontWeight: 'bold',
-                      fontFamily: 'Lato-Bold',
-                    }}>
-                    Opps, you don't have enough points to see active vouchers.
-                  </Text>
-                  {/*<TouchableHighlight*/}
-                  {/*  onPress={() => Actions.pop()}*/}
-                  {/*  style={{*/}
-                  {/*    marginTop: 20,*/}
-                  {/*    marginHorizontal: '15%',*/}
-                  {/*    borderRadius: 10,*/}
-                  {/*    backgroundColor: colorConfig.store.colorSuccess,*/}
-                  {/*  }}>*/}
-                  {/*  <Text*/}
-                  {/*    style={{*/}
-                  {/*      fontSize: 20,*/}
-                  {/*      textAlign: 'center',*/}
-                  {/*      color: 'white',*/}
-                  {/*      fontWeight: 'bold',*/}
-                  {/*      fontFamily: 'Lato-Bold',*/}
-                  {/*      padding: 8,*/}
-                  {/*    }}>*/}
-                  {/*    Start shopping now !*/}
-                  {/*  </Text>*/}
-                  {/*</TouchableHighlight>*/}
-                </View>
-              ) : null}
             </View>
           </View>
         </ScrollView>
@@ -270,8 +229,10 @@ const styles = StyleSheet.create({
     elevation: 12,
   },
   voucherImage1: {
-    height: Dimensions.get('window').width / 4,
-    width: Dimensions.get('window').width - 22,
+    // height: Dimensions.get('window').width / 4,
+    width: '100%',
+    resizeMode: 'contain',
+    aspectRatio: 2.5,
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
   },
@@ -305,12 +266,14 @@ const styles = StyleSheet.create({
   },
   nameVoucher: {
     fontSize: 18,
-    color: colorConfig.store.defaultColor,
+    color: colorConfig.store.secondaryColor,
     fontWeight: 'bold',
   },
   descVoucher: {
-    fontSize: 13,
-    color: colorConfig.pageIndex.inactiveTintColor,
+    fontSize: 12,
+    maxWidth: '95%',
+    marginLeft: 5,
+    color: colorConfig.store.titleSelected,
   },
   pointVoucher: {
     fontSize: 12,

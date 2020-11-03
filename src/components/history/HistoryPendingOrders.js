@@ -18,6 +18,8 @@ import {Actions} from 'react-native-router-flux';
 import {notifikasi} from '../../actions/auth.actions';
 import {getCart, getPendingCart, setCart} from '../../actions/order.action';
 import {isEmptyArray} from '../../helper/CheckEmpty';
+import CurrencyFormatter from '../../helper/CurrencyFormatter';
+import appConfig from '../../config/appConfig';
 
 class HistoryPayment extends Component {
   constructor(props) {
@@ -36,9 +38,9 @@ class HistoryPayment extends Component {
       ' ' +
       tanggal.getFullYear() +
       ' • ' +
-      tanggal.getHours() +
+      this.pad(tanggal.getHours()) +
       ':' +
-      tanggal.getMinutes()
+      this.pad(tanggal.getMinutes())
     );
   }
 
@@ -70,7 +72,7 @@ class HistoryPayment extends Component {
         item.status == 'READY_FOR_DELIVERY' ||
         item.status == 'ON_THE_WAY'
       ) {
-        Actions.waitingFood({myCart: item});
+        Actions.waitingFood({myCart: item, isPop: true});
       } else {
         Actions.cart({myCart: item});
       }
@@ -80,15 +82,15 @@ class HistoryPayment extends Component {
   componentDidMount = async () => {
     this.setState({refreshing: true});
     this.getDataHistory();
-    try {
-      clearInterval(this.interval);
-      this.interval = setInterval(() => {
-        this.props.dispatch(getPendingCart());
-      }, 8000);
-    } catch (e) {}
+    // try {
+    //   clearInterval(this.interval);
+    //   this.interval = setInterval(() => {
+    //     this.props.dispatch(getPendingCart());
+    //   }, 60000);
+    // } catch (e) {}
   };
 
-  componentWillUnmount(): void {
+  componentWillUnmount() {
     try {
       clearInterval(this.interval);
     } catch (e) {}
@@ -150,7 +152,7 @@ class HistoryPayment extends Component {
       } else if (item === 'PROCESSING') {
         return 'Processing';
       } else if (item === 'READY_FOR_COLLECTION') {
-        return 'Ready for Colection';
+        return 'Ready for Collection';
       } else if (item === 'READY_FOR_DELIVERY') {
         return 'Ready for Delivery';
       } else if (item === 'ON_THE_WAY') {
@@ -159,6 +161,62 @@ class HistoryPayment extends Component {
         return item;
       }
     } catch (e) {}
+  };
+
+  formatCurrency = value => {
+    try {
+      return this.format(CurrencyFormatter(value).match(/[a-z]+|[^a-z]+/gi)[1]);
+    } catch (e) {
+      return value;
+    }
+  };
+
+  format = item => {
+    try {
+      const curr = appConfig.appMataUang;
+      item = item.replace(curr, '');
+      if (curr != 'RP' && curr != 'IDR' && item.includes('.') == false) {
+        return `${item}.00`;
+      }
+      return item;
+    } catch (e) {
+      return item;
+    }
+  };
+
+  pad = item => {
+    let time = item.toString();
+    if (time.length == 1) return `0${item}`;
+    else return item;
+  };
+
+  getPrice = item => {
+    try {
+      if (
+        item.confirmationInfo != undefined &&
+        item.confirmationInfo.afterPrice != undefined
+      ) {
+        return this.formatCurrency(item.confirmationInfo.afterPrice);
+      } else {
+        return '';
+      }
+    } catch (e) {
+      return '';
+    }
+  };
+
+  getItemLength = item => {
+    try {
+      let qty = 0;
+      item.map(data => {
+        if (data.quantity != undefined) {
+          qty += data.quantity;
+        }
+      });
+      return qty;
+    } catch (e) {
+      return '';
+    }
   };
 
   render() {
@@ -193,7 +251,9 @@ class HistoryPayment extends Component {
                 <View style={styles.sejajarSpace}>
                   <View style={styles.detail}>
                     <View style={styles.sejajarSpace}>
-                      <Text style={styles.storeName}>{item.outlet.name}</Text>
+                      <Text style={styles.storeName}>
+                        {item.outlet.name.substr(0, 18)}
+                      </Text>
                       <Text style={styles.itemType}>
                         <Text style={{color: colorConfig.store.title}}>
                           {item.queueNo != undefined ? item.queueNo : null}
@@ -201,7 +261,9 @@ class HistoryPayment extends Component {
                             ? item.tableNo
                             : null}
                           {' - '}
-                          {item.details.length} Items
+                          {this.getItemLength(item.details)} Items
+                          {' -'}
+                          {this.format(CurrencyFormatter(item.totalNettAmount))}
                         </Text>
                       </Text>
                     </View>
@@ -306,13 +368,14 @@ const styles = StyleSheet.create({
     width: Dimensions.get('window').width - 60,
   },
   storeName: {
-    color: colorConfig.pageIndex.activeTintColor,
+    color: colorConfig.store.secondaryColor,
     fontSize: 16,
     fontFamily: 'Lato-Bold',
   },
   paymentTgl: {
     color: colorConfig.pageIndex.inactiveTintColor,
     fontFamily: 'Lato-Medium',
+    fontSize: 13,
   },
   paymentTypeLogo: {
     width: 20,
@@ -321,7 +384,7 @@ const styles = StyleSheet.create({
     color: colorConfig.store.defaultColor,
   },
   paymentType: {
-    color: colorConfig.store.secondaryColor,
+    color: colorConfig.store.defaultColor,
     fontSize: 13,
   },
   itemType: {

@@ -15,7 +15,7 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
-import {dataStores} from '../actions/stores.action';
+import {dataStores, getCompanyInfo} from '../actions/stores.action';
 
 import * as geolib from 'geolib';
 import * as _ from 'lodash';
@@ -36,6 +36,9 @@ import CryptoJS from 'react-native-crypto-js';
 import awsConfig from '../config/awsConfig';
 import {isEmptyArray} from '../helper/CheckEmpty';
 import {refreshToken} from '../actions/auth.actions';
+import {getUserProfile} from '../actions/user.action';
+import {referral} from '../actions/referral.action';
+import {getAccountPayment} from '../actions/payment.actions';
 
 class Store extends Component {
   constructor(props) {
@@ -163,9 +166,14 @@ class Store extends Component {
   getDataStores = async () => {
     try {
       await this.props.dispatch(refreshToken());
-      await this.props.dispatch(dataStores());
-      await this.props.dispatch(getBasket());
-      await this.props.dispatch(dataPromotion());
+      // await this.props.dispatch(dataStores());
+      // await this.props.dispatch(getBasket());
+      // await this.props.dispatch(dataPromotion());
+      await Promise.all([
+        this.props.dispatch(dataStores()),
+        this.props.dispatch(getBasket()),
+        this.props.dispatch(dataPromotion()),
+      ]);
       // check if user enabled their position permission
       let statusLocaiton;
       if (
@@ -199,7 +207,7 @@ class Store extends Component {
           coordinate = {};
           location = {
             region: response.data[i].region,
-            address: response.data[i].location,
+            address: response.data[i].address,
             coordinate: {
               lat: response.data[i].latitude,
               lng: response.data[i].longitude,
@@ -211,6 +219,11 @@ class Store extends Component {
           storeGrupTampung.push(response.data[i].location.region);
           dataStoresTampung.push({
             storeId: response.data[i].id,
+            orderValidation:
+              response.data[i].orderValidation != undefined &&
+              response.data[i].orderValidation != null
+                ? response.data[i].orderValidation
+                : undefined,
             storeName: response.data[i].name,
             storeStatus: this._cekOpen(response.data[i]),
             storeJarak: statusLocation
@@ -239,28 +252,24 @@ class Store extends Component {
             maxOrderAmount: response.data[i].maxOrderAmount,
             lastOrderOn: response.data[i].lastOrderOn,
             enableRedeemPoint: response.data[i].enableRedeemPoint,
+            storePickUpName: response.data[i].storePickUpName,
+            storeCheckOutName: response.data[i].storeCheckOutName,
+            dineInName: response.data[i].dineInName,
+            takeAwayName: response.data[i].takeAwayName,
+            deliveryName: response.data[i].deliveryName,
             enableItemSpecialInstructions:
               response.data[i].enableItemSpecialInstructions,
-            enableDineIn:
-              response.data[i].enableDineIn == false ||
-              response.data[i].enableDineIn == '-'
-                ? false
-                : true,
-            enableTakeAway:
-              response.data[i].enableTakeAway == false ||
-              response.data[i].enableTakeAway == '-'
-                ? false
-                : true,
+            enableStoreCheckOut:
+              response.data[i].enableStoreCheckOut == true ? true : false,
+            enableStorePickUp:
+              response.data[i].enableStorePickUp == true ? true : false,
             enableTableScan:
-              response.data[i].enableTableScan == false ||
-              response.data[i].enableTableScan == '-'
-                ? false
-                : true,
+              response.data[i].enableTableScan == true ? true : false,
             enableDelivery:
-              response.data[i].enableDelivery == false ||
-              response.data[i].enableDelivery == '-'
-                ? false
-                : true,
+              response.data[i].enableDelivery == true ? true : false,
+            enableTakeAway:
+              response.data[i].enableTakeAway == true ? true : false,
+            enableDineIn: response.data[i].enableDineIn == true ? true : false,
           });
         }
       }
@@ -392,7 +401,8 @@ class Store extends Component {
     } else if (date.getHours() < 18) {
       return `${intlData.messages.good} ${intlData.messages.afternoon}`;
     } else {
-      return `${intlData.messages.good} ${intlData.messages.night}`;
+      // return `${intlData.messages.good} ${intlData.messages.night}`;
+      return `Good Evening`;
     }
   };
 
@@ -567,7 +577,8 @@ class Store extends Component {
         </ScrollView>
 
         {this.props.dataBasket == undefined ||
-        this.props.dataBasket.status == 'PENDING' ? (
+        (this.props.dataBasket.status == 'PENDING' ||
+          this.props.dataBasket.status == 'PENDING_PAYMENT') ? (
           <TouchableOpacity
             onPress={this.openBasket}
             style={{

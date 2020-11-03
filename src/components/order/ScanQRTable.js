@@ -19,6 +19,7 @@ import {compose} from 'redux';
 import AwesomeAlert from 'react-native-awesome-alerts';
 import colorConfig from '../../config/colorConfig';
 import {setTableType, submitOder} from '../../actions/order.action';
+import {afterPayment} from '../../actions/account.action';
 
 class ScanQRTable extends Component {
   constructor(props) {
@@ -113,7 +114,12 @@ class ScanQRTable extends Component {
         );
 
         // Actions.pop();
-        Actions.reset('pageIndex', {fromPayment: true});
+
+        try {
+          this.props.dispatch(afterPayment(true));
+        } catch (e) {}
+
+        Actions.reset('app', {fromPayment: true});
       } else {
         this.setState({
           loadingPushData: false,
