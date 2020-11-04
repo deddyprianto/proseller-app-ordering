@@ -62,9 +62,7 @@ export const requestOTP = payload => {
 
       console.log(response, 'RESPONSE REQUEST OTP');
 
-      if (response.success) {
-        return true;
-      } else return false;
+      return response;
     } catch (error) {
       return error;
     }

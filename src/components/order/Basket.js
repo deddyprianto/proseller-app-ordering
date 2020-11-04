@@ -453,7 +453,7 @@ class Basket extends Component {
                 {item.storeCheckOutName != undefined &&
                 item.storeCheckOutName != ''
                   ? item.storeCheckOutName
-                  : 'Srore Checkout'}
+                  : 'Store Checkout'}
               </Text>
             </TouchableOpacity>
           ) : null}

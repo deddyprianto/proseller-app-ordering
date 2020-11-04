@@ -367,9 +367,9 @@ class Rewards extends Component {
               {this.state.isLoading ? (
                 <RewardsStamp isLoading={this.state.isLoading} />
               ) : this.props.dataStamps == undefined ||
-                isEmptyObject(
-                  this.props.dataStamps.dataStamps,
-                ) ? null : !isEmptyObject(
+                isEmptyObject(this.props.dataStamps.dataStamps) ? (
+                this.greetWelcomeUser()
+              ) : !isEmptyObject(
                   // this.greetWelcomeUser()
                   this.props.dataStamps.dataStamps.trigger,
                 ) &&
