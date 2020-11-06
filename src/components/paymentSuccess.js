@@ -243,9 +243,16 @@ class PaymentSuccess extends Component {
                 fontSize: 35,
                 fontWeight: 'bold',
               }}>
-              {this.format(
-                CurrencyFormatter(this.props.dataRespons.totalNettAmount),
-              )}
+              {this.props.dataRespons.deliveryFee != undefined
+                ? this.format(
+                    CurrencyFormatter(
+                      this.props.dataRespons.totalNettAmount +
+                        this.props.dataRespons.deliveryFee,
+                    ),
+                  )
+                : this.format(
+                    CurrencyFormatter(this.props.dataRespons.totalNettAmount),
+                  )}
             </Text>
           </View>
           {/*{this.props.dataRespons.earnedPoint > 0 ? (*/}

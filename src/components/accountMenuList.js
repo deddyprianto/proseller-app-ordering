@@ -8,7 +8,6 @@ import {
   TouchableOpacity,
   Alert,
   ActivityIndicator,
-  Image,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
@@ -20,11 +19,15 @@ import {Actions} from 'react-native-router-flux';
 import awsConfig from '../config/awsConfig';
 import CryptoJS from 'react-native-crypto-js';
 import {isEmptyArray, isEmptyObject} from '../helper/CheckEmpty';
-import packageJson from '../../package';
 import {defaultPaymentAccount, updateUser} from '../actions/user.action';
 import VersionCheck from 'react-native-version-check';
-import appConfig from '../config/appConfig';
 import RBSheet from 'react-native-raw-bottom-sheet';
+import AsyncStorage from '@react-native-community/async-storage';
+import {
+  netsclickDeregister,
+  netsclickRegister,
+} from '../actions/payment.actions';
+import Loader from './loader';
 
 class AccountMenuList extends Component {
   constructor(props) {
@@ -34,6 +37,7 @@ class AccountMenuList extends Component {
       dialogChangeLanguage: false,
       loadingLogout: false,
       selectedAccount: {},
+      loading: false,
     };
   }
 
@@ -58,6 +62,12 @@ class AccountMenuList extends Component {
         player_ids: [],
       };
       await this.props.dispatch(updateUser(payload));
+    } catch (e) {}
+
+    try {
+      if (this.props.netsclickStatus == true) {
+        await this.props.dispatch(netsclickDeregister());
+      }
     } catch (e) {}
 
     await this.props.dispatch(logoutUser());
@@ -256,6 +266,115 @@ class AccountMenuList extends Component {
     );
   };
 
+  netsClickOptions = () => {
+    const {intlData} = this.props;
+    return (
+      <RBSheet
+        ref={ref => {
+          this.RBNetsClick = ref;
+        }}
+        animationType={'fade'}
+        height={210}
+        duration={10}
+        closeOnDragDown={true}
+        closeOnPressMask={true}
+        closeOnPressBack={true}
+        customStyles={{
+          container: {
+            backgroundColor: colorConfig.store.textWhite,
+            justifyContent: 'center',
+            alignItems: 'center',
+          },
+        }}>
+        <Text
+          style={{
+            fontSize: 19,
+            color: colorConfig.store.titleSelected,
+            fontFamily: 'Lato-Medium',
+            marginBottom: 10,
+          }}>
+          NETS Click Options
+        </Text>
+        <TouchableOpacity
+          onPress={() => this.setDefaultAccount()}
+          style={{
+            padding: 12,
+            paddingVertical: 15,
+            backgroundColor: colorConfig.store.colorSuccess,
+            borderRadius: 15,
+            width: '60%',
+            marginBottom: 10,
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <Text
+            style={{
+              marginLeft: 10,
+              color: 'white',
+              fontWeight: 'bold',
+              fontFamily: 'Lato-Bold',
+              fontSize: 13,
+              textAlign: 'center',
+            }}>
+            Set as Default Payment
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={this.netsClickDeregister}
+          style={{
+            padding: 12,
+            paddingVertical: 15,
+            backgroundColor: colorConfig.store.colorError,
+            borderRadius: 15,
+            width: '60%',
+            marginBottom: 20,
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <Text
+            style={{
+              marginLeft: 10,
+              color: 'white',
+              fontWeight: 'bold',
+              fontFamily: 'Lato-Bold',
+              fontSize: 13,
+              textAlign: 'center',
+            }}>
+            Remove NETS Click Account
+          </Text>
+        </TouchableOpacity>
+      </RBSheet>
+    );
+  };
+
+  handleNetsClick = async () => {
+    await this.setState({loading: true});
+    try {
+      try {
+        const value = await AsyncStorage.getItem('@netsclick_register_status');
+        if (value !== null) {
+          this.RBNetsClick.open();
+        } else {
+          this.props.dispatch(netsclickRegister());
+        }
+      } catch (e) {}
+    } catch (e) {}
+    await this.setState({loading: false});
+  };
+
+  netsClickDeregister = async () => {
+    this.RBNetsClick.close();
+    setTimeout(async () => {
+      await this.setState({loading: true});
+      try {
+        await this.props.dispatch(netsclickDeregister());
+      } catch (e) {}
+      await this.setState({loading: false});
+    }, 200);
+  };
+
   render() {
     const {
       intlData,
@@ -263,10 +382,14 @@ class AccountMenuList extends Component {
       companyInfo,
       defaultAccount,
       referral,
+      netsclickStatus,
     } = this.props;
+    const {loading} = this.state;
     return (
       <View style={styles.container}>
+        {loading && <Loader />}
         {this.askUserToSelectPaymentType()}
+        {this.netsClickOptions()}
         <Text style={styles.headingMenu}>
           {intlData.messages.defaultPaymentAccount}
           {/*Default Payment Account*/}
@@ -315,6 +438,41 @@ class AccountMenuList extends Component {
         </Text>
 
         {this.renderPaymentMethodOptions()}
+        <TouchableOpacity
+          style={styles.cardMenu}
+          onPress={this.handleNetsClick}>
+          <View style={styles.itemMenu}>
+            <Icon
+              size={20}
+              name={Platform.OS === 'ios' ? 'ios-card' : 'md-card'}
+              style={{color: 'white'}}
+            />
+          </View>
+          <View>
+            <View style={styles.item}>
+              <View>
+                <Text style={styles.title}>NETS Click</Text>
+                {netsclickStatus == true ? (
+                  <Text style={styles.subTitle}>NETS Click Registered</Text>
+                ) : (
+                  <Text style={styles.subTitleGray}>Add NETS Bank Card</Text>
+                )}
+              </View>
+              <Icon
+                size={20}
+                name={
+                  Platform.OS === 'ios'
+                    ? 'ios-arrow-dropright'
+                    : 'md-arrow-dropright'
+                }
+                style={{
+                  color: colorConfig.store.defaultColor,
+                  marginRight: 20,
+                }}
+              />
+            </View>
+          </View>
+        </TouchableOpacity>
 
         {/*<TouchableOpacity*/}
         {/*  onPress={() => this.props.screen.navigation.navigate('History')}*/}
@@ -556,6 +714,16 @@ const styles = StyleSheet.create({
     // fontWeight: 'bold',
     fontFamily: 'Lato-Bold',
   },
+  subTitle: {
+    color: colorConfig.store.colorSuccess,
+    fontSize: 12,
+    fontFamily: 'Lato-Medium',
+  },
+  subTitleGray: {
+    color: colorConfig.pageIndex.grayColor,
+    fontSize: 12,
+    fontFamily: 'Lato-Medium',
+  },
   headingMenu: {
     marginLeft: 15,
     color: colorConfig.pageIndex.grayColor,
@@ -590,6 +758,7 @@ mapStateToProps = state => ({
   companyInfo: state.userReducer.getCompanyInfo.companyInfo,
   defaultAccount: state.userReducer.defaultPaymentAccount.defaultAccount,
   intlData: state.intlData,
+  netsclickStatus: state.accountsReducer.netsclickStatus.netsclickStatus,
 });
 
 mapDispatchToProps = dispatch => ({

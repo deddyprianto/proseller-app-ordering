@@ -27,6 +27,7 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import {format} from 'date-fns';
 import {isEmptyArray, isEmptyObject} from '../../helper/CheckEmpty';
 import DropDownPicker from 'react-native-dropdown-picker';
+import {loginOther} from '../../actions/auth.actions';
 
 class PickUpTime extends Component {
   constructor(props) {
@@ -230,6 +231,7 @@ class PickUpTime extends Component {
     const {outlet} = this.props;
     let pickerItem = [{label: 'Select Pickup Time', value: null}];
     let value = '';
+    let label = '';
     try {
       const day = new Date().getDay();
       if (isEmptyArray(outlet.operationalHours)) {
@@ -249,7 +251,12 @@ class PickUpTime extends Component {
         } else {
           for (let i = parseInt(find.open); i <= parseInt(find.close); i++) {
             value = `${this.pad(i.toString())}:00`;
-            value = pickerItem.push({label: value, value});
+            if (parseInt(find.close) != i) {
+              label = `${this.pad(i.toString())}:00 - ${this.pad(
+                (i + 1).toString(),
+              )}:00`;
+            }
+            value = pickerItem.push({label: label, value});
           }
           return pickerItem;
         }
@@ -341,7 +348,7 @@ class PickUpTime extends Component {
               <DropDownPicker
                 placeholder={'Select Pickup Time'}
                 items={this.getOperationalHours()}
-                // defaultValue={'Select Pickup Time'}
+                defaultValue={time}
                 containerStyle={{
                   height: 50,
                 }}
@@ -370,7 +377,9 @@ class PickUpTime extends Component {
                 onClose={() => {
                   this.setState({openTimePicker: false});
                 }}
-                onChangeItem={item => item}
+                onChangeItem={item => {
+                  this.setState({time: item.value});
+                }}
               />
               {/*<Picker*/}
               {/*  selectedValue={time}*/}

@@ -48,7 +48,7 @@ export default class MenuCategory extends Component {
     try {
       setTimeout(() => {
         this.setState({products: this.props.products, loading: false});
-      }, 2500);
+      }, 1200);
     } catch (e) {}
   }
 

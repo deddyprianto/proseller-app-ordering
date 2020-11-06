@@ -153,6 +153,10 @@ class AddAddress extends Component {
         newAddress.address = `${newAddress.address}, ${newAddress.unitNo}`;
       }
 
+      if (newAddress.postalCode != '' && newAddress.postalCode != undefined) {
+        newAddress.address = `${newAddress.address}, ${newAddress.postalCode}`;
+      }
+
       if (!isEmptyData(this.state.province)) {
         newAddress.province = this.state.province;
       }
@@ -258,11 +262,11 @@ class AddAddress extends Component {
             defaultValue={this.state.addressName}
             containerStyle={{height: 55}}
             style={{
-              backgroundColor: '#fafafa',
-              borderColor: colorConfig.pageIndex.grayColor,
-              borderRadius: 0,
+              backgroundColor: '#ebebeb',
+              // borderColor: colorConfig.pageIndex.grayColor,
+              // borderRadius: 0,
             }}
-            dropDownStyle={{backgroundColor: '#fafafa'}}
+            dropDownStyle={{backgroundColor: '#ebebeb'}}
             onChangeItem={item =>
               this.setState({
                 addressName: item.value,
@@ -341,10 +345,15 @@ class AddAddress extends Component {
           {/*/>*/}
 
           <TextInput
-            style={{height: 58, marginVertical: 8, fontSize: 13}}
+            style={{
+              height: 58,
+              marginVertical: 8,
+              fontSize: 13,
+              backgroundColor: '#ebebeb',
+            }}
             theme={theme}
             multiline={true}
-            mode={'outlined'}
+            // mode={'outlined'}
             label="Street Name"
             value={this.state.streetName}
             onChangeText={text => {
@@ -353,10 +362,15 @@ class AddAddress extends Component {
           />
 
           <TextInput
-            style={{height: 58, marginVertical: 8, fontSize: 13}}
+            style={{
+              height: 58,
+              marginVertical: 8,
+              fontSize: 13,
+              backgroundColor: '#ebebeb',
+            }}
             theme={theme}
-            multiline={true}
-            mode={'outlined'}
+            // multiline={true}
+            // mode={'outlined'}
             label="Unit No"
             value={this.state.unitNo}
             onChangeText={text => {
@@ -380,10 +394,15 @@ class AddAddress extends Component {
           ) : null}
 
           <TextInput
-            style={{height: 58, marginVertical: 8, fontSize: 13}}
+            style={{
+              height: 58,
+              marginVertical: 8,
+              fontSize: 13,
+              backgroundColor: '#ebebeb',
+            }}
             theme={theme}
             keyboardType={'numeric'}
-            mode={'outlined'}
+            // mode={'outlined'}
             label="Postal Code"
             value={this.state.postalCode}
             onChangeText={text => this.setState({postalCode: text})}

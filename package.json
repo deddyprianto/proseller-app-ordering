@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "android-dev": "SET ENVFILE=.env.dev && react-native run-android --variant=devDebug --appIdSuffix=dev",
-    "android-demo": "SET ENVFILE=.env.demo && react-native run-android --variant=ustarsdemoDebug --appIdSuffix=ustarsdemo",
+    "android-demo": "SET ENVFILE=.env.demo && react-native run-android --variant=demoDebug --appIdSuffix=demo",
     "android-prod": "SET ENVFILE=.env.production && react-native run-android --variant=staffDebug --appIdSuffix=staff",
     "android-apps": "SET ENVFILE=.env.production && react-native run-android --variant=appsDebug --appIdSuffix=apps",
     "android": "react-native run-android",
@@ -12,7 +12,7 @@
     "start": "react-native start",
     "test": "jest",
     "lint": "eslint .",
-    "build-assets": "react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res"
+    "build-assets": "react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/mainan/assets/index.android.bundle --assets-dest android/app/src/mainan/res"
   },
   "dependencies": {
     "@react-native-community/async-storage": "^1.6.2",

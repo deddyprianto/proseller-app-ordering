@@ -84,6 +84,7 @@ class Basket extends Component {
       productsUnavailable: [],
       datePickup: null,
       timePickup: null,
+      timeslot: '',
     };
   }
 
@@ -165,10 +166,7 @@ class Basket extends Component {
         await this.initializePickupTime();
         // GET PRODUCTS UNAVAILABLE
         await this.fetchProductsUnavailable(outletID);
-
-        await this.setState({loading: false});
-
-        this.getProductsByOutlet(outletID);
+        // this.getProductsByOutlet(outletID);
 
         this.props.dispatch(dataPoint());
         // await Promise.all([
@@ -176,7 +174,7 @@ class Basket extends Component {
         //   this.props.dispatch(getOutletById(outletID)),
         // ]);
 
-        await this.setState({
+        this.setState({
           isOpen: this.isOpen(),
         });
 
@@ -191,8 +189,9 @@ class Basket extends Component {
           this.props.orderType == 'DELIVERY' &&
           !isEmptyObject(this.props.selectedAddress)
         ) {
-          this.getDeliveryFee();
+          await this.calculateDeliveryFee();
         }
+        await this.setState({loading: false});
       }
       await this.setState({loading: false});
     } catch (e) {
@@ -225,6 +224,7 @@ class Basket extends Component {
     const {outletSingle} = this.props;
     let pickerItem = [];
     let value = '';
+    let timeslot = '';
     try {
       const day = new Date().getDay();
       let current = new Date().getTime();
@@ -282,7 +282,13 @@ class Basket extends Component {
           let closest = arrayTime.reduce(function(prev, curr) {
             return Math.abs(curr - goal) < Math.abs(prev - goal) ? curr : prev;
           });
-          this.setState({datePickup, timePickup: `${closest}:00`});
+
+          if (closest == parseInt(find.close)) {
+            timeslot = `${closest - 1}:00 - ${closest}:00`;
+          } else {
+            timeslot = `${closest}:00 - ${closest + 1}:00`;
+          }
+          this.setState({datePickup, timePickup: `${closest}:00`, timeslot});
         }
       }
     } catch (e) {
@@ -344,7 +350,7 @@ class Basket extends Component {
         isEmptyArray(user.deliveryAddress)
       ) {
         address = {
-          addressName: 'My Default Address',
+          addressName: 'Home',
           address: user.address,
           postalCode: '-',
           city: '-',
@@ -623,39 +629,32 @@ class Basket extends Component {
   };
 
   getDeliveryFee = () => {
-    const {providers} = this.props;
+    // const {providers} = this.props;
     try {
-      if (!isEmptyArray(providers)) {
-        const item = providers[0];
-        this.setState({selectedProvider: item});
-        this.calculateDeliveryFee(item);
-      }
+      this.calculateDeliveryFee();
+      // if (!isEmptyArray(providers)) {
+      //   const item = providers[0];
+      //   this.setState({selectedProvider: item});
+      //   this.calculateDeliveryFee(item);
+      // }
     } catch (e) {}
   };
 
   calculateDeliveryFee = async item => {
     const {dataBasket, selectedAddress} = this.props;
-
-    if (isEmptyObject(selectedAddress)) {
-      Alert.alert('Oppss', 'Please use a correct delivery address');
-      return;
-    }
-
     try {
       await this.setState({loading: true});
       const payload = {
         cartID: dataBasket.id,
         outletId: dataBasket.outlet.id,
-        provider: item.id,
-        service: item.name,
         deliveryAddress: selectedAddress,
       };
 
       const response = await this.props.dispatch(getDeliveryFee(payload));
       if (response != false) {
-        this.setState({deliveryFee: response.data.deliveryFee});
+        this.setState({selectedProvider: response.data.dataProfider[0]});
       } else {
-        this.setState({deliveryFee: null});
+        this.setState({selectedProvider: {}});
       }
     } catch (e) {}
     await this.setState({loading: false});
@@ -698,24 +697,30 @@ class Basket extends Component {
                     this.RBproviders.close();
                     this.calculateDeliveryFee(item);
                   }}
-                  style={styles.itemSummary}>
-                  <Text style={styles.total}>{item.name}</Text>
-                  {item.id == selectedProvider.id ? (
-                    <View>
-                      <Icon
-                        size={17}
-                        name={
-                          Platform.OS === 'ios'
-                            ? 'ios-checkmark'
-                            : 'md-checkmark'
-                        }
-                        style={{
-                          color: colorConfig.store.colorSuccess,
-                          marginRight: 20,
-                        }}
-                      />
-                    </View>
-                  ) : null}
+                  style={styles.listProviders}>
+                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                    <Text style={styles.total}>
+                      {item.name}
+                      {'     '}
+                      {item.id == selectedProvider.id ? (
+                        <Icon
+                          size={20}
+                          name={
+                            Platform.OS === 'ios'
+                              ? 'ios-checkmark'
+                              : 'md-checkmark'
+                          }
+                          style={{
+                            color: colorConfig.store.colorSuccess,
+                            marginLeft: 20,
+                          }}
+                        />
+                      ) : null}
+                    </Text>
+                  </View>
+                  <Text style={styles.total}>
+                    SGD {this.format(CurrencyFormatter(item.deliveryFee))}
+                  </Text>
                 </TouchableOpacity>
               )}
               keyExtractor={(product, index) => index.toString()}
@@ -731,7 +736,7 @@ class Basket extends Component {
     await this.props.dispatch(getBasket());
 
     // fetch data provider
-    await this.props.dispatch(getDeliveryProvider());
+    // await this.props.dispatch(getDeliveryProvider());
 
     // fetch details outlet
     const outletID = this.props.dataBasket.outlet.id;
@@ -743,7 +748,7 @@ class Basket extends Component {
   getBasket = async () => {
     this.setState({loading: true});
     await this.props.dispatch(getBasket());
-    this.props.dispatch(getDeliveryProvider());
+    // this.props.dispatch(getDeliveryProvider());
     // await this.setState({loading: false});
     // setTimeout(() => {
     //   this.setState({loading: false});
@@ -896,13 +901,13 @@ class Basket extends Component {
   };
 
   renderSettleButtonQuickService = () => {
-    const {intlData, dataBasket} = this.props;
-    const {deliveryFee} = this.state;
-    let fee = deliveryFee;
-    if (fee == null || fee == undefined) {
-      fee = 0;
-    } else {
-      fee = parseFloat(fee);
+    const {intlData, dataBasket, orderType} = this.props;
+    let deliveryFee = 0;
+    if (
+      !isEmptyObject(this.state.selectedProvider) &&
+      orderType === 'DELIVERY'
+    ) {
+      deliveryFee = this.state.selectedProvider.deliveryFee;
     }
     return (
       <View
@@ -935,7 +940,9 @@ class Basket extends Component {
           }}>
           TOTAL : {appConfig.appMataUang}
           {this.format(
-            CurrencyFormatter(this.props.dataBasket.totalNettAmount + fee),
+            CurrencyFormatter(
+              this.props.dataBasket.totalNettAmount + deliveryFee,
+            ),
           )}
         </Text>
         <View style={{flexDirection: 'row', justifyContent: 'center'}}>
@@ -1101,14 +1108,6 @@ class Basket extends Component {
     const {deliveryFee, selectedProvider} = this.state;
 
     if (isEmptyObject(selectedProvider)) {
-      Alert.alert(
-        'Delivery Provider Not Set',
-        'It seems you have not selected a delivery provider for this order.',
-      );
-      return false;
-    }
-
-    if (deliveryFee == null) {
       Alert.alert(
         'Delivery Provider Not Set',
         'It seems you have not selected a delivery provider for this order.',
@@ -1407,7 +1406,8 @@ class Basket extends Component {
       if (orderType == 'DELIVERY') {
         pembayaran.deliveryAddress = selectedAddress;
         pembayaran.deliveryProvider = this.state.selectedProvider;
-        pembayaran.deliveryFee = this.state.deliveryFee;
+        pembayaran.totalNettAmount += this.state.selectedProvider.deliveryFee;
+        pembayaran.payment += this.state.selectedProvider.deliveryFee;
       }
 
       try {
@@ -1422,6 +1422,7 @@ class Basket extends Component {
         ) {
           pembayaran.orderActionDate = this.state.datePickup;
           pembayaran.orderActionTime = this.state.timePickup;
+          pembayaran.orderActionTimeSlot = this.state.timeslot;
         }
       } catch (e) {}
 
@@ -2536,25 +2537,25 @@ class Basket extends Component {
   isUseTimingSetting = () => {
     let {outletSingle, orderType} = this.props;
     try {
-      if (isEmptyObject(outletSingle.timing)) return false;
-      if (orderType == 'DELIVERY') {
-        if (isEmptyObject(outletSingle.timing.delivery)) return false;
-        if (outletSingle.timing.delivery.enabled == true) return true;
-      } else if (orderType == 'DINEIN') {
-        if (isEmptyObject(outletSingle.timing.dineIn)) return false;
-        if (outletSingle.timing.dineIn.enabled == true) return true;
-      } else if (orderType == 'TAKEAWAY') {
-        if (isEmptyObject(outletSingle.timing.takeAway)) return false;
-        if (outletSingle.timing.takeAway.enabled == true) return true;
-      } else if (orderType == 'STOREPICKUP') {
-        if (isEmptyObject(outletSingle.timing.storePickUp)) return false;
-        if (outletSingle.timing.storePickUp.enabled == true) return true;
-      } else if (orderType == 'STORECHECKOUT') {
-        if (isEmptyObject(outletSingle.timing.storeCheckOut)) return false;
-        if (outletSingle.timing.storeCheckOut.enabled == true) return true;
-      }
-
-      return false;
+      // if (isEmptyObject(outletSingle.timing)) return false;
+      // if (orderType == 'DELIVERY') {
+      //   if (isEmptyObject(outletSingle.timing.delivery)) return false;
+      //   if (outletSingle.timing.delivery.enabled == true) return true;
+      // } else if (orderType == 'DINEIN') {
+      //   if (isEmptyObject(outletSingle.timing.dineIn)) return false;
+      //   if (outletSingle.timing.dineIn.enabled == true) return true;
+      // } else if (orderType == 'TAKEAWAY') {
+      //   if (isEmptyObject(outletSingle.timing.takeAway)) return false;
+      //   if (outletSingle.timing.takeAway.enabled == true) return true;
+      // } else if (orderType == 'STOREPICKUP') {
+      //   if (isEmptyObject(outletSingle.timing.storePickUp)) return false;
+      //   if (outletSingle.timing.storePickUp.enabled == true) return true;
+      // } else if (orderType == 'STORECHECKOUT') {
+      //   if (isEmptyObject(outletSingle.timing.storeCheckOut)) return false;
+      //   if (outletSingle.timing.storeCheckOut.enabled == true) return true;
+      // }
+      if (orderType === 'DINEIN') return false;
+      return true;
     } catch (e) {}
   };
 
@@ -2969,15 +2970,6 @@ class Basket extends Component {
 
                 {this.deliveryProvider(orderType, this.props.dataBasket)}
 
-                {this.state.deliveryFee != null ? (
-                  <View style={styles.itemSummary}>
-                    <Text style={styles.total}>Delivery Fee</Text>
-                    <Text style={styles.total}>
-                      {CurrencyFormatter(this.state.deliveryFee)}
-                    </Text>
-                  </View>
-                ) : null}
-
                 {this.props.dataBasket.totalTaxAmount != undefined &&
                   this.props.dataBasket.totalTaxAmount != 0 && (
                     <View style={styles.itemSummary}>
@@ -3010,28 +3002,53 @@ class Basket extends Component {
                     </View>
                   )}
 
-                {/*{this.isUseTimingSetting() ? (*/}
-                {/*  <View style={styles.itemSummary}>*/}
-                {/*    <Text style={styles.total}>*/}
-                {/*      {orderType == 'DELIVERY'*/}
-                {/*        ? 'Delivery Date & Time'*/}
-                {/*        : 'Pickup Date & Time'}*/}
-                {/*    </Text>*/}
-                {/*    <TouchableOpacity onPress={this.goToPickUpTime}>*/}
-                {/*      <Text style={[styles.total, styles.badge]}>*/}
-                {/*        {this.formatDatePickup()} at {this.state.timePickup}*/}
-                {/*      </Text>*/}
-                {/*      <Text*/}
-                {/*        style={{*/}
-                {/*          textAlign: 'right',*/}
-                {/*          color: colorConfig.store.titleSelected,*/}
-                {/*          fontFamily: 'Lato-Bold',*/}
-                {/*        }}>*/}
-                {/*        Change*/}
-                {/*      </Text>*/}
-                {/*    </TouchableOpacity>*/}
-                {/*  </View>*/}
-                {/*) : null}*/}
+                {this.isUseTimingSetting() ? (
+                  <View style={styles.itemSummary}>
+                    <Text style={styles.total}>
+                      {orderType == 'DELIVERY'
+                        ? 'Delivery Date & Time'
+                        : 'Pickup Date & Time'}
+                    </Text>
+                    <TouchableOpacity onPress={this.goToPickUpTime}>
+                      <Text style={[styles.total, styles.badge]}>
+                        {this.formatDatePickup()} at {this.state.timePickup}
+                      </Text>
+                      <Text
+                        style={{
+                          textAlign: 'right',
+                          color: colorConfig.store.titleSelected,
+                          fontFamily: 'Lato-Bold',
+                        }}>
+                        Change
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                ) : null}
+
+                {!isEmptyObject(this.state.selectedProvider) &&
+                orderType === 'DELIVERY' ? (
+                  <View style={styles.itemSummary}>
+                    <Text
+                      style={[
+                        styles.total,
+                        {color: colorConfig.store.secondaryColor},
+                      ]}>
+                      Delivery Fee
+                    </Text>
+                    <Text
+                      style={[
+                        styles.total,
+                        {color: colorConfig.store.secondaryColor},
+                      ]}>
+                      {appConfig.appMataUang}{' '}
+                      {this.format(
+                        CurrencyFormatter(
+                          this.state.selectedProvider.deliveryFee,
+                        ),
+                      )}
+                    </Text>
+                  </View>
+                ) : null}
 
                 {/*<View style={styles.itemSummary}>*/}
                 {/*  <Text style={styles.total}>Total</Text>*/}
@@ -3149,6 +3166,14 @@ const styles = StyleSheet.create({
     alignItems: 'baseline',
     // margin: 5,
   },
+  listProviders: {
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    borderBottomColor: colorConfig.pageIndex.inactiveTintColor,
+    borderBottomWidth: 0.7,
+    alignItems: 'center',
+    // margin: 5,
+  },
   title: {
     color: colorConfig.store.title,
     fontSize: 18,
@@ -3188,8 +3213,8 @@ const styles = StyleSheet.create({
   total: {
     marginVertical: 10,
     fontFamily: 'Lato-Bold',
-    color: colorConfig.pageIndex.grayColor,
-    fontSize: 14,
+    color: colorConfig.store.titleSelected,
+    fontSize: 15,
     padding: 3,
     fontWeight: 'bold',
     marginBottom: 5,

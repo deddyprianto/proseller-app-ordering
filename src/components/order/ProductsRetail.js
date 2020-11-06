@@ -406,7 +406,7 @@ class Products2 extends Component {
               onPress={() => this.setOrderType('STORECHECKOUT')}
               style={styles.activeTAKEAWAYButton}>
               <Icon
-                size={30}
+                size={25}
                 name={Platform.OS === 'ios' ? 'ios-card' : 'md-card'}
                 style={{color: 'white'}}
               />
@@ -422,7 +422,7 @@ class Products2 extends Component {
                 {item.storeCheckOutName != undefined &&
                 item.storeCheckOutName != ''
                   ? item.storeCheckOutName
-                  : 'Store Checkout'}
+                  : 'Srore Checkout'}
               </Text>
             </TouchableOpacity>
           ) : null}
@@ -431,7 +431,7 @@ class Products2 extends Component {
               onPress={() => this.setOrderType('STOREPICKUP')}
               style={styles.activeDINEINButton}>
               <Icon
-                size={30}
+                size={25}
                 name={Platform.OS === 'ios' ? 'ios-basket' : 'md-basket'}
                 style={{color: 'white'}}
               />
@@ -455,24 +455,30 @@ class Products2 extends Component {
               disabled={item.enableDelivery == false ? true : false}
               onPress={() => this.setOrderType('DELIVERY')}
               style={styles.activeDELIVERYButton}>
-              <Icon
-                size={30}
-                name={Platform.OS === 'ios' ? 'ios-car' : 'md-car'}
-                style={{color: 'white'}}
-              />
-              <Text
-                style={{
-                  marginLeft: 10,
-                  color: 'white',
-                  fontWeight: 'bold',
-                  fontFamily: 'Lato-Bold',
-                  fontSize: 18,
-                  textAlign: 'center',
-                }}>
-                {item.deliveryName != undefined && item.deliveryName != ''
-                  ? item.deliveryName
-                  : 'DELIVERY'}
-              </Text>
+              <View style={{flexDirection: 'row'}}>
+                <Icon
+                  size={25}
+                  name={Platform.OS === 'ios' ? 'ios-car' : 'md-car'}
+                  style={{color: 'white'}}
+                />
+                <Text
+                  style={{
+                    marginLeft: 10,
+                    color: 'white',
+                    fontWeight: 'bold',
+                    fontFamily: 'Lato-Bold',
+                    fontSize: 18,
+                    textAlign: 'center',
+                  }}>
+                  {item.deliveryName != undefined && item.deliveryName != ''
+                    ? item.deliveryName
+                    : 'DELIVERY'}
+                </Text>
+              </View>
+              <View>
+                  <Text style={{color: 'white', fontSize: 12}}>Item quantity range 3 to 4 items</Text>
+                  <Text style={{color: 'white', fontSize: 12}}>Amount range SGD 3 to SGD 4</Text>
+              </View>
             </TouchableOpacity>
           ) : null}
         </RBSheet>
@@ -2777,7 +2783,7 @@ class Products2 extends Component {
         }}
         // onViewableItemsChanged={this._onViewableItemsChanged}
         // viewabilityConfig={this._viewabilityConfig}
-        initialNumToRender={0}
+        initialNumToRender={3}
         ListFooterComponent={() => {
           try {
             const {products} = this.state;
@@ -3497,11 +3503,11 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   activeDINEINButton: {
-    padding: 13,
+    padding: 10,
     backgroundColor: colorConfig.card.otherCardColor,
-    borderRadius: 15,
+    borderRadius: 10,
     width: '60%',
-    marginBottom: 20,
+    marginBottom: 15,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
@@ -3517,21 +3523,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   activeTAKEAWAYButton: {
-    padding: 13,
+    padding: 10,
     backgroundColor: colorConfig.store.secondaryColor,
-    borderRadius: 15,
+    borderRadius: 10,
     width: '60%',
-    marginBottom: 20,
+    marginBottom: 15,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
   },
   activeDELIVERYButton: {
-    padding: 13,
+    padding: 10,
     backgroundColor: colorConfig.store.defaultColor,
-    borderRadius: 15,
+    borderRadius: 10,
     width: '60%',
-    flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
   },

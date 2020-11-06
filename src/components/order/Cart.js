@@ -1169,14 +1169,14 @@ class Cart extends Component {
           <View style={styles.itemSummary}>
             <Text style={styles.total}>Delivery Address</Text>
             <View style={{justifyContent: 'flex-end'}}>
-              <Text style={styles.totalAddress}>
+              <Text style={[styles.totalAddress, {marginTop: 13}]}>
                 {dataBasket.deliveryAddress.addressName}
               </Text>
-              {dataBasket.deliveryAddress.address && (
-                <Text style={styles.totalAddress}>
-                  {dataBasket.deliveryAddress.address}
-                </Text>
-              )}
+              {/*{dataBasket.deliveryAddress.address && (*/}
+              {/*  <Text style={styles.totalAddress}>*/}
+              {/*    {dataBasket.deliveryAddress.address}*/}
+              {/*  </Text>*/}
+              {/*)}*/}
               {dataBasket.deliveryAddress.streetName && (
                 <Text style={styles.totalAddress}>
                   {dataBasket.deliveryAddress.streetName}
@@ -1184,16 +1184,16 @@ class Cart extends Component {
               )}
               {dataBasket.deliveryAddress.unitNo && (
                 <Text style={styles.totalAddress}>
-                  {dataBasket.deliveryAddress.unitNo}
+                  Unit No: {dataBasket.deliveryAddress.unitNo}
                 </Text>
               )}
-              {awsConfig.COUNTRY != 'Singapore' ? (
-                <Text style={styles.totalAddress}>
-                  {dataBasket.deliveryAddress.city}
-                </Text>
-              ) : (
-                <Text style={styles.totalAddress}>{awsConfig.COUNTRY}</Text>
-              )}
+              {/*{awsConfig.COUNTRY != 'Singapore' ? (*/}
+              {/*  <Text style={styles.totalAddress}>*/}
+              {/*    {dataBasket.deliveryAddress.city}*/}
+              {/*  </Text>*/}
+              {/*) : (*/}
+              {/*  <Text style={styles.totalAddress}>{awsConfig.COUNTRY}</Text>*/}
+              {/*)}*/}
               {dataBasket.deliveryAddress.province != undefined ? (
                 <Text style={styles.totalAddress}>
                   Province: {dataBasket.deliveryAddress.province}
@@ -1538,15 +1538,14 @@ class Cart extends Component {
                   <View style={styles.itemSummary}>
                     <Text style={styles.total}>Delivery Provider</Text>
                     <Text style={styles.total}>
-                      {dataBasket.deliveryProvider} |{' '}
-                      {dataBasket.deliveryService}
+                      {dataBasket.deliveryProvider}
                     </Text>
                   </View>
                 ) : null}
 
                 {dataBasket.deliveryProviderId != undefined ? (
                   <View style={styles.itemSummary}>
-                    <Text style={styles.total}>Delivery Provider : </Text>
+                    <Text style={styles.total}>Delivery Provider </Text>
                     <Text style={[styles.total, {textAlign: 'right'}]}>
                       {this.getInfoProvider(dataBasket.deliveryProviderId)}
                     </Text>
@@ -1557,7 +1556,7 @@ class Cart extends Component {
                   <View style={styles.itemSummary}>
                     <Text style={styles.total}>Delivery Fee</Text>
                     <Text style={styles.total}>
-                      {CurrencyFormatter(dataBasket.deliveryFee)}
+                      {this.format(CurrencyFormatter(dataBasket.deliveryFee))}
                     </Text>
                   </View>
                 ) : null}

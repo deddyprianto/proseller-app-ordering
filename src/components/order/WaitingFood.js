@@ -12,6 +12,7 @@ import {
   ScrollView,
   FlatList,
   Clipboard,
+  RefreshControl,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Actions} from 'react-native-router-flux';
@@ -59,6 +60,107 @@ class WaitingFood extends Component {
         this.handleBackPress,
       );
     } catch (e) {}
+  };
+
+  getStatusText = item => {
+    try {
+      if (item === 'SUBMITTED') {
+        return 'Submitted';
+      } else if (item === 'CONFIRMED') {
+        return 'Confirmed';
+      } else if (item === 'PROCESSING') {
+        return 'Processing';
+      } else if (item === 'READY_FOR_COLLECTION') {
+        return 'Ready for Collection';
+      } else if (item === 'READY_FOR_DELIVERY') {
+        return 'Ready for Delivery';
+      } else if (item === 'ON_THE_WAY') {
+        return 'On The Way';
+      } else {
+        return item;
+      }
+    } catch (e) {}
+  };
+
+  renderPayments = item => {
+    try {
+      return item.map(data => (
+        <View style={styles.itemSummary}>
+          {data.isVoucher != true && data.isPoint != true ? (
+            <Text style={styles.total}>
+              {data.isAppPayment ? data.paymentName : data.paymentType}
+            </Text>
+          ) : (
+            <Text style={styles.total} />
+          )}
+
+          {data.isVoucher && (
+            <Text style={styles.total}>
+              {data.paymentName} {'  '} {appConfig.appMataUang}{' '}
+              {this.formatCurrency(data.paymentAmount)}
+            </Text>
+          )}
+          {data.isPoint && (
+            <Text style={styles.total}>
+              {data.redeemValue} {data.paymentName} {'  '}
+              {appConfig.appMataUang} {this.formatCurrency(data.paymentAmount)}
+            </Text>
+          )}
+          {data.isVoucher != true && data.isPoint != true && (
+            <Text style={styles.total}>
+              {appConfig.appMataUang} {this.formatCurrency(data.paymentAmount)}
+            </Text>
+          )}
+        </View>
+      ));
+    } catch (e) {}
+  };
+
+  getGrandTotal = data => {
+    try {
+      let item = data;
+      if (item.payments != undefined && !isEmptyArray(item.payments)) {
+        let total = data.totalNettAmount;
+
+        if (data.deliveryFee != undefined) {
+          total += data.deliveryFee;
+        }
+
+        for (let i = 0; i < item.payments.length; i++) {
+          if (
+            item.payments[i].isVoucher == true ||
+            item.payments[i].isPoint == true
+          ) {
+            total -= item.payments[i].paymentAmount;
+          }
+        }
+        if (total < 0) total = 0;
+        return this.formatCurrency(total);
+      } else {
+        return this.formatCurrency(data.totalNettAmount);
+      }
+    } catch (e) {}
+  };
+
+  formatCurrency = value => {
+    try {
+      return this.format(CurrencyFormatter(value));
+    } catch (e) {
+      return value;
+    }
+  };
+
+  format2 = item => {
+    try {
+      const curr = appConfig.appMataUang;
+      item = item.replace(`${curr} `, '');
+      if (curr != 'RP' && curr != 'IDR' && item.includes('.') == false) {
+        return `${item}.00`;
+      }
+      return item;
+    } catch (e) {
+      return item;
+    }
   };
 
   _onRefresh = async () => {
@@ -438,9 +540,9 @@ class WaitingFood extends Component {
               }}>
               {dataBasket.status == 'READY_FOR_DELIVERY'
                 ? 'We are getting ready to deliver your order ... \n \n '
-                : `Go to ${dataBasket.deliveryAddress.address}, ${
-                    dataBasket.deliveryAddress.city
-                  }, ${dataBasket.deliveryAddress.postalCode} \n `}
+                : `Go to ${dataBasket.deliveryAddress.streetName}, Unit No ${
+                    dataBasket.deliveryAddress.unitNo
+                  }, Postal Code ${dataBasket.deliveryAddress.postalCode} \n `}
             </Text>
             <Text
               style={{
@@ -574,7 +676,13 @@ class WaitingFood extends Component {
           },
         }}>
         {dataBasket != undefined ? (
-          <ScrollView>
+          <ScrollView
+            refreshControl={
+              <RefreshControl
+                refreshing={this.state.refreshing}
+                onRefresh={this._onRefresh}
+              />
+            }>
             <Text
               style={{
                 color: colorConfig.store.darkColor,
@@ -582,7 +690,7 @@ class WaitingFood extends Component {
                 fontFamily: 'Lato-Bold',
                 marginLeft: 10,
               }}>
-              Detail Order :
+              Order Details :
             </Text>
             <FlatList
               data={this.props.dataBasket.details}
@@ -603,29 +711,28 @@ class WaitingFood extends Component {
                             }}>
                             {item.quantity}x
                           </Text>{' '}
-                          {item.product != undefined ? item.product.name : '-'}{' '}
-                          (
-                          {this.format(
+                          {item.product != undefined ? item.product.name : '-'}
+                          {' +'}
+                          {this.format2(
                             CurrencyFormatter(
                               item.product != undefined
                                 ? item.product.retailPrice
                                 : 0,
                             ),
                           )}{' '}
-                          )
                         </Text>
                         {/* loop item modifier */}
-                        {!isEmptyArray(item.modifiers) ? (
-                          <Text
-                            style={{
-                              color: colorConfig.pageIndex.inactiveTintColor,
-                              fontSize: 10,
-                              marginLeft: 17,
-                              fontStyle: 'italic',
-                            }}>
-                            Add On:
-                          </Text>
-                        ) : null}
+                        {/*{!isEmptyArray(item.modifiers) ? (*/}
+                        {/*  <Text*/}
+                        {/*    style={{*/}
+                        {/*      color: colorConfig.pageIndex.inactiveTintColor,*/}
+                        {/*      fontSize: 10,*/}
+                        {/*      marginLeft: 17,*/}
+                        {/*      fontStyle: 'italic',*/}
+                        {/*    }}>*/}
+                        {/*    Add On:*/}
+                        {/*  </Text>*/}
+                        {/*) : null}*/}
                         {this.renderItemModifier(item)}
                         {item.remark != undefined && item.remark != '' ? (
                           <Text
@@ -664,29 +771,22 @@ class WaitingFood extends Component {
               Order Summary :
             </Text>
 
-            <View style={styles.itemSummary}>
-              <Text style={styles.total}>Status : </Text>
-              <Text style={styles.total}>{dataBasket.status}</Text>
-            </View>
+            {dataBasket.transactionRefNo && (
+              <View style={styles.itemSummary}>
+                <Text style={styles.total}>Ref No : </Text>
+                <Text style={styles.total}>{dataBasket.transactionRefNo}</Text>
+              </View>
+            )}
             <View style={styles.itemSummary}>
               <Text style={styles.total}>Queue No : </Text>
               <Text style={styles.total}>{dataBasket.queueNo}</Text>
             </View>
-            {/*{dataBasket.orderActionDate != undefined && (*/}
-            {/*  <View style={styles.itemSummary}>*/}
-            {/*    <Text style={styles.total}>*/}
-            {/*      {dataBasket.orderingMode == 'DELIVERY'*/}
-            {/*        ? 'Delivery Date & Time'*/}
-            {/*        : 'Pickup Date & Time'}{' '}*/}
-            {/*      :{' '}*/}
-            {/*    </Text>*/}
-            {/*    <Text style={styles.total}>*/}
-            {/*      {format(new Date(dataBasket.orderActionDate), 'dd MMM yyyy')}{' '}*/}
-            {/*      at {dataBasket.orderActionTime}*/}
-            {/*    </Text>*/}
-            {/*  </View>*/}
-            {/*)}*/}
-
+            <View style={styles.itemSummary}>
+              <Text style={styles.total}>Status : </Text>
+              <Text style={styles.total}>
+                {this.getStatusText(dataBasket.status)}
+              </Text>
+            </View>
             <View style={styles.itemSummary}>
               <Text style={styles.total}>Ordering Mode : </Text>
               <Text style={styles.total}>{dataBasket.orderingMode}</Text>
@@ -696,21 +796,22 @@ class WaitingFood extends Component {
                 <Text style={styles.total}>Delivery Address : </Text>
                 <Text
                   style={[styles.total, {textAlign: 'right', fontSize: 12}]}>
-                  {dataBasket.deliveryAddress.address}{' '}
-                  {/*{dataBasket.deliveryAddress.streetName},{' '}*/}
-                  {/*{dataBasket.deliveryAddress.unitNo}*/}
+                  {/*{dataBasket.deliveryAddress.address}{' '}*/}
+                  {dataBasket.deliveryAddress.streetName}
                   {' \n'}
-                  {awsConfig.COUNTRY != 'Singapore'
-                    ? dataBasket.deliveryAddress.city
-                    : awsConfig.COUNTRY}
+                  Unit No, {dataBasket.deliveryAddress.unitNo}
                   {' \n'}
+                  {/*{awsConfig.COUNTRY != 'Singapore'*/}
+                  {/*  ? dataBasket.deliveryAddress.city*/}
+                  {/*  : awsConfig.COUNTRY}*/}
+                  {/*{' \n'}*/}
                   {dataBasket.deliveryAddress.province != undefined
                     ? dataBasket.deliveryAddress.province
                     : null}
                   {dataBasket.deliveryAddress.province != undefined
                     ? ' \n'
                     : null}
-                  {dataBasket.deliveryAddress.postalCode}
+                  Postal Code, {dataBasket.deliveryAddress.postalCode}
                 </Text>
               </View>
             ) : null}
@@ -722,67 +823,66 @@ class WaitingFood extends Component {
                 </Text>
               </View>
             ) : null}
+            {dataBasket.totalTaxAmount != 0 && (
+              <View style={styles.itemSummary}>
+                <Text style={styles.total}>
+                  {appConfig.appName === 'QIJI'
+                    ? 'Tax Amount Inclusive'
+                    : 'Tax Amount'}{' '}
+                  :{' '}
+                </Text>
+                <Text style={styles.total}>
+                  {CurrencyFormatter(dataBasket.totalTaxAmount)}
+                </Text>
+              </View>
+            )}
+            <View style={styles.itemSummary}>
+              <Text style={styles.total}>Sub Total : </Text>
+              <Text style={styles.total}>
+                {appConfig.appMataUang}{' '}
+                {this.format(CurrencyFormatter(dataBasket.totalNettAmount))}
+              </Text>
+            </View>
             {dataBasket.deliveryFee != undefined ? (
               <View style={styles.itemSummary}>
                 <Text style={styles.total}>Delivery Fee : </Text>
                 <Text style={[styles.total, {textAlign: 'right'}]}>
-                  {CurrencyFormatter(dataBasket.deliveryFee)}
+                  {appConfig.appMataUang}{' '}
+                  {this.format(CurrencyFormatter(dataBasket.deliveryFee))}
                 </Text>
               </View>
             ) : null}
-            <View style={styles.itemSummary}>
-              <Text style={styles.total}>
-                {appConfig.appName === 'QIJI'
-                  ? 'Tax Amount Inclusive'
-                  : 'Tax Amount'}{' '}
-                :{' '}
-              </Text>
-              <Text style={styles.total}>
-                {CurrencyFormatter(dataBasket.totalTaxAmount)}
-              </Text>
-            </View>
-            <View style={styles.itemSummary}>
-              <Text style={styles.total}>Nett Amount : </Text>
-              <Text style={styles.total}>
-                {CurrencyFormatter(dataBasket.totalNettAmount)}
-              </Text>
-            </View>
+            {!isEmptyArray(dataBasket.payments)
+              ? this.renderPayments(dataBasket.payments)
+              : null}
             {/*{dataBasket.confirmationInfo != undefined ? (*/}
-            {/*  dataBasket.confirmationInfo.paymentType != undefined ? (*/}
+            {/*  dataBasket.confirmationInfo.redeemPoint != undefined &&*/}
+            {/*  dataBasket.confirmationInfo.redeemPoint != 0 ? (*/}
             {/*    <View style={styles.itemSummary}>*/}
-            {/*      <Text style={styles.total}>Payment Method : </Text>*/}
-            {/*      <Text style={styles.total}>{this.getDetailPayment()}</Text>*/}
+            {/*      <Text style={styles.total}>Redeem Point : </Text>*/}
+            {/*      <Text style={styles.total}>*/}
+            {/*        {dataBasket.confirmationInfo.redeemPoint}*/}
+            {/*      </Text>*/}
             {/*    </View>*/}
             {/*  ) : null*/}
             {/*) : null}*/}
-            {dataBasket.confirmationInfo != undefined ? (
-              dataBasket.confirmationInfo.redeemPoint != undefined &&
-              dataBasket.confirmationInfo.redeemPoint != 0 ? (
-                <View style={styles.itemSummary}>
-                  <Text style={styles.total}>Redeem Point : </Text>
-                  <Text style={styles.total}>
-                    {dataBasket.confirmationInfo.redeemPoint}
-                  </Text>
-                </View>
-              ) : null
-            ) : null}
-            {dataBasket.confirmationInfo != undefined ? (
-              dataBasket.confirmationInfo.statusAdd != undefined &&
-              dataBasket.confirmationInfo.statusAdd == 'addVoucer' ? (
-                <View style={styles.itemSummary}>
-                  <Text style={styles.total}>Voucher : </Text>
-                  <Text style={styles.total}>
-                    {dataBasket.confirmationInfo.voucher.name}
-                  </Text>
-                </View>
-              ) : null
-            ) : null}
+            {/*{dataBasket.confirmationInfo != undefined ? (*/}
+            {/*  dataBasket.confirmationInfo.statusAdd != undefined &&*/}
+            {/*  dataBasket.confirmationInfo.statusAdd == 'addVoucer' ? (*/}
+            {/*    <View style={styles.itemSummary}>*/}
+            {/*      <Text style={styles.total}>Voucher : </Text>*/}
+            {/*      <Text style={styles.total}>*/}
+            {/*        {dataBasket.confirmationInfo.voucher.name}*/}
+            {/*      </Text>*/}
+            {/*    </View>*/}
+            {/*  ) : null*/}
+            {/*) : null}*/}
             <View style={styles.itemSummary}>
               <Text style={[styles.total, {color: colorConfig.store.title}]}>
-                {dataBasket.payAtPOS ? 'Pay at Store' : 'TOTAL'} :{' '}
+                TOTAL :{' '}
               </Text>
               <Text style={[styles.total, {color: colorConfig.store.title}]}>
-                {CurrencyFormatter(this.getTotal(dataBasket))}
+                {appConfig.appMataUang} {this.getGrandTotal(dataBasket)}
               </Text>
             </View>
           </ScrollView>
@@ -896,7 +996,7 @@ class WaitingFood extends Component {
       if (dataBasket.status == 'PROCESSING') {
         return require('../../../assets/animate/shopping-lady');
       } else if (dataBasket.status == 'READY_FOR_DELIVERY') {
-        return require('../../../assets/animate/food-ready');
+        return require('../../../assets/animate/ready');
       } else if (dataBasket.status == 'READY_FOR_COLLECTION') {
         return require('../../../assets/animate/ready');
       } else if (dataBasket.status == 'ON_THE_WAY') {

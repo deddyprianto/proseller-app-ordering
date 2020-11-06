@@ -434,7 +434,7 @@ const styles = StyleSheet.create({
       height: 9,
     },
     shadowOpacity: 0.7,
-    shadowRadius: 7.49,
+    shadowRadius: 1.49,
     elevation: 12,
   },
   cardContent: {
@@ -443,7 +443,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   cardSelected: {
-    borderWidth: 4,
+    borderWidth: 2,
     borderColor: colorConfig.store.defaultColor,
   },
   headingCard: {

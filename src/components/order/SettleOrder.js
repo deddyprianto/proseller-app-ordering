@@ -54,6 +54,7 @@ import {getOutletById} from '../../actions/stores.action';
 import {refreshToken} from '../../actions/auth.actions';
 import {afterPayment, myVoucers} from '../../actions/account.action';
 import {Dialog} from 'react-native-paper';
+import NetsClick from '../../helper/NetsClick';
 
 class SettleOrder extends Component {
   constructor(props) {
@@ -1008,6 +1009,20 @@ class SettleOrder extends Component {
     let payload = {};
     try {
       await this.setState({loading: true});
+
+      // if (selectedAccount.paymentType === 'NETSCLICK') {
+      //   await NetsClick.Debit({amount: totalBayar})
+      //     .then(async r => {
+      //       await this.setState({loading: false});
+      //       Alert.alert('Success', 'Payment using netslick success');
+      //     })
+      //     .catch(async e => {
+      //       await this.setState({loading: false});
+      //       Alert.alert('Failed', 'Payment using netslick failed');
+      //     });
+      //   return;
+      // }
+
       payload.cartID = this.props.pembayaran.cartID;
 
       // ADJUST POINT IF THERE ARE ANY REDUCE
@@ -1176,21 +1191,12 @@ class SettleOrder extends Component {
         payload.deliveryAddress = this.props.pembayaran.deliveryAddress;
       }
 
-      // check if delivery fee is exist
-      if (this.props.pembayaran.deliveryFee != undefined) {
-        payload.deliveryFee = this.props.pembayaran.deliveryFee;
-        // add delivery fee to total
-        payload.price = Number(
-          payload.price + this.props.pembayaran.deliveryFee,
-        );
-      }
-
       // check if delivery provider is exist
       if (this.props.pembayaran.deliveryProvider != undefined) {
         payload.deliveryProviderId = this.props.pembayaran.deliveryProvider.id;
         payload.deliveryProvider = this.props.pembayaran.deliveryProvider.name;
         payload.deliveryProviderName = this.props.pembayaran.deliveryProvider.name;
-        payload.deliveryService = '-';
+        payload.deliveryFee = this.props.pembayaran.deliveryProvider.deliveryFee;
       }
 
       try {
