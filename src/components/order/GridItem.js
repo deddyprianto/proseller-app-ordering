@@ -1,23 +1,30 @@
 import React, {memo} from 'react';
 import {
   View,
-  TouchableOpacity,
   Text,
   StyleSheet,
   Dimensions,
   Image,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import appConfig from '../../config/appConfig';
 
 const ListItem = props => {
   const {item, onPress} = props;
+  let image = appConfig.productPlaceholder;
+  try {
+    if (item.item.defaultImageURL != undefined) {
+      image = {uri: item.item.defaultImageURL};
+    }
+  } catch (e) {}
   return (
     <View>
-      <TouchableOpacity onPress={() => onPress(item)}>
+      <TouchableWithoutFeedback onPress={() => onPress(item)}>
         <View style={styles.itemContainer}>
           <Image
-            source={appConfig.productPlaceholder}
+            progressiveRenderingEnabled={true}
+            source={image}
             style={{
               width: Dimensions.get('window').width / 3 - 30,
               height: 100,
@@ -31,7 +38,7 @@ const ListItem = props => {
             </View>
           </View>
         </View>
-      </TouchableOpacity>
+      </TouchableWithoutFeedback>
     </View>
   );
 };

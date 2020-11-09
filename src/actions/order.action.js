@@ -89,13 +89,9 @@ export const getCategoryByOutlet = (OutletId, refresh) => {
         token,
       );
 
-      console.log('RESPONSE GET CATEGORY ', response);
+      // console.log('RESPONSE GET CATEGORY ', response);
 
       if (response.success == true) {
-        // dispatch({
-        //   type: 'DATA_CATEGORY_OUTLET',
-        //   cateories: response,
-        // });
         return response.response;
       }
       return false;
@@ -131,10 +127,62 @@ export const getProductByCategory = (OutletId, categoryId, skip, take) => {
       // console.log('RESPONSE GET ITEMS BY CATEGORY ', response);
 
       if (response.success == true) {
-        // dispatch({
-        //   type: 'DATA_PRODUCT_BY_CATEGORY_OUTLET',
-        //   productsCategory: response,
-        // });
+        return response.response;
+      }
+      return false;
+    } catch (e) {}
+  };
+};
+
+export const productByCategory = (OutletId, category, skip, take, search) => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      let payload = {};
+
+      if (search != undefined) {
+        payload = {
+          skip,
+          take,
+          outletID: `outlet::${OutletId}`,
+          sortBy: 'name',
+          sortDirection: 'asc',
+          // categoryID: `category::${category.id}`,
+          filters: [
+            {
+              id: 'search',
+              value: search,
+            },
+          ],
+        };
+      } else {
+        payload = {
+          skip,
+          take,
+          outletID: `outlet::${OutletId}`,
+          sortBy: 'name',
+          sortDirection: 'asc',
+          categoryID: `category::${category.id}`,
+        };
+      }
+
+      const response = await fetchApiProduct(
+        `/product/load/`,
+        'POST',
+        payload,
+        200,
+        token,
+      );
+
+      // console.log('RESPONSE GET PRODUCTS BY CATEGORY ', response);
+
+      if (response.success == true) {
         return response.response;
       }
       return false;
@@ -890,6 +938,44 @@ export const getTermsConditions = (payload, url) => {
 
       if (response.success) {
         return response.response.data;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const getAllCategory = (skip, take) => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      const payload = {
+        take,
+        skip,
+        sortBy: 'name',
+        sortDirection: 'ASC',
+      };
+
+      const response = await fetchApiProduct(
+        '/category/load',
+        'POST',
+        payload,
+        200,
+        token,
+      );
+
+      console.log(response, 'RESPONSE GET CATEGORY');
+
+      if (response.success) {
+        return response.response;
       } else {
         return false;
       }

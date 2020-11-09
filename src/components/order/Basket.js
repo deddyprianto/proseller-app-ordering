@@ -4,6 +4,7 @@ import {
   BackHandler,
   Dimensions,
   FlatList,
+  Image,
   Picker,
   Platform,
   RefreshControl,
@@ -42,7 +43,11 @@ import {
 } from '../../helper/CheckEmpty';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import * as _ from 'lodash';
-import {dataStores, getOutletById} from '../../actions/stores.action';
+import {
+  dataStores,
+  getOutletById,
+  getTimeSlot,
+} from '../../actions/stores.action';
 import * as geolib from 'geolib';
 import appConfig from '../../config/appConfig';
 import {refreshToken} from '../../actions/auth.actions';
@@ -164,6 +169,7 @@ class Basket extends Component {
         let outletID = this.props.dataBasket.outlet.id;
         await this.props.dispatch(getOutletById(outletID));
         await this.initializePickupTime();
+        await this.setPickUpTime(outletID);
         // GET PRODUCTS UNAVAILABLE
         await this.fetchProductsUnavailable(outletID);
         // this.getProductsByOutlet(outletID);
@@ -203,6 +209,12 @@ class Basket extends Component {
         'hardwareBackPress',
         this.handleBackPress,
       );
+    } catch (e) {}
+  };
+
+  setPickUpTime = async outletID => {
+    try {
+      await this.props.dispatch(getTimeSlot(outletID, this.state.datePickup));
     } catch (e) {}
   };
 
@@ -269,7 +281,7 @@ class Basket extends Component {
             });
             this.setState({
               datePickup: finalDate,
-              timePickup: `${closest}:00`,
+              // timePickup: `${closest}:00`,
             });
           }
         } else {
@@ -288,14 +300,16 @@ class Basket extends Component {
           } else {
             timeslot = `${closest}:00 - ${closest + 1}:00`;
           }
-          this.setState({datePickup, timePickup: `${closest}:00`, timeslot});
+          this.setState({datePickup});
+          // this.setState({datePickup, timePickup: `${closest}:00`, timeslot});
         }
       }
     } catch (e) {
       let datePickup = format(new Date(), 'yyyy-MM-dd');
       let timePickup = format(new Date(), 'HH:mm');
 
-      this.setState({datePickup, timePickup});
+      this.setState({datePickup});
+      // this.setState({datePickup, timePickup});
     }
   };
 
@@ -968,7 +982,7 @@ class Basket extends Component {
             style={[
               styles.btnAddBasketModal,
               {
-                backgroundColor: colorConfig.store.defaultColor,
+                backgroundColor: colorConfig.store.secondaryColor,
               },
             ]}>
             <Icon
@@ -1631,36 +1645,29 @@ class Basket extends Component {
   openModal = async product => {
     try {
       // get current quantity from product
-      // let existProduct = await this.checkIfItemExistInBasket(product);
       let existProduct = product;
 
       if (existProduct != false) {
-        // FIND CATEGORY EXIST PRODUCT
-        // const categoryProduct = this.state.products.find(
-        //   item => `category::${item.id}` == existProduct.product.categoryID,
-        // );
-        // // FIND PRODUCT BY CATEGORY ABOVE
-        // const originalProduct = categoryProduct.items.find(
-        //   item => item.id == existProduct.product.id,
-        // );
         //  FIND PRODUCTS
         let originalProduct = {};
         const {products} = this.state;
 
-        for (let i = 0; i < products.length; i++) {
-          if (!isEmptyArray(products[i].items)) {
-            for (let j = 0; j < products[i].items.length; j++) {
-              if (products[i].items[j].product != undefined) {
-                if (
-                  products[i].items[j].product.id == existProduct.product.id
-                ) {
-                  originalProduct = products[i].items[j];
-                  break;
-                }
-              }
-            }
-          }
-        }
+        // for (let i = 0; i < products.length; i++) {
+        //   if (!isEmptyArray(products[i].items)) {
+        //     for (let j = 0; j < products[i].items.length; j++) {
+        //       if (products[i].items[j].product != undefined) {
+        //         if (
+        //           products[i].items[j].product.id == existProduct.product.id
+        //         ) {
+        //           originalProduct = products[i].items[j];
+        //           break;
+        //         }
+        //       }
+        //     }
+        //   }
+        // }
+        originalProduct = JSON.stringify(products);
+        originalProduct = JSON.parse(originalProduct);
 
         product.mode = 'update';
         product.remark = existProduct.remark;
@@ -1671,83 +1678,79 @@ class Basket extends Component {
           product.product.description = originalProduct.product.description;
         } catch (e) {}
 
-        product.product.productModifiers =
-          originalProduct.product.productModifiers;
+        if (product.product.productModifiers != undefined) {
+          product.product.productModifiers =
+            originalProduct.product.productModifiers;
 
-        // remove quantity temp from props
-        product.product.productModifiers.map((group, i) => {
-          if (!isEmptyArray(group.modifier.details))
-            group.modifier.details.map((detail, j) => {
-              delete detail.quantity;
-
-              // return back to normal
-              if (group.modifier.max == 1) {
-                product.product.productModifiers[i].modifier.show = false;
-              } else {
-                product.product.productModifiers[i].modifier.show = true;
-              }
-
-              if (group.modifier.isYesNo == true) {
-                if (
-                  group.modifier.yesNoDefaultValue == true &&
-                  detail.yesNoValue == 'no'
-                ) {
-                  product.product.productModifiers[i].modifier.details[
-                    j
-                  ].isSelected = false;
-                }
-
-                if (
-                  group.modifier.yesNoDefaultValue == false &&
-                  detail.yesNoValue == 'yes'
-                ) {
-                  product.product.productModifiers[i].modifier.details[
-                    j
-                  ].isSelected = true;
-                }
-              }
-            });
-        });
-
-        // process modifier
-        // let find = await this.props.dataBasket.details.find(
-        //   item => item.product.id == product.product.id,
-        // );
-        let find = product;
-        if (find != undefined && !isEmptyArray(find.modifiers)) {
-          existProduct.product.productModifiers.map((group, i) => {
+          // remove quantity temp from props
+          product.product.productModifiers.map((group, i) => {
             if (!isEmptyArray(group.modifier.details))
               group.modifier.details.map((detail, j) => {
-                find.modifiers.map(data => {
-                  data.modifier.details.map(item => {
-                    // make mark that item is in basket
-                    if (data.modifierID == group.modifierID) {
-                      existProduct.product.productModifiers[
-                        i
-                      ].postToServer = true;
-                      // set quantity basket to product that openend
-                      if (item.id == detail.id) {
-                        // check for radio button selected
-                        if (group.modifier.max == 1) {
-                          product.product.productModifiers[i].modifier.show =
-                            data.modifier.show;
-                          // product.product.productModifiers[
-                          //   i
-                          // ].modifier.selected = data.modifier.selected;
-                        }
+                delete detail.quantity;
 
-                        existProduct.product.productModifiers[
-                          i
-                        ].modifier.details[j].quantity = item.quantity;
-                        existProduct.product.productModifiers[
-                          i
-                        ].modifier.details[j].isSelected = item.isSelected;
-                      }
-                    }
-                  });
-                });
+                // return back to normal
+                if (group.modifier.max == 1) {
+                  product.product.productModifiers[i].modifier.show = false;
+                } else {
+                  product.product.productModifiers[i].modifier.show = true;
+                }
+
+                if (group.modifier.isYesNo == true) {
+                  if (
+                    group.modifier.yesNoDefaultValue == true &&
+                    detail.yesNoValue == 'no'
+                  ) {
+                    product.product.productModifiers[i].modifier.details[
+                      j
+                    ].isSelected = false;
+                  }
+
+                  if (
+                    group.modifier.yesNoDefaultValue == false &&
+                    detail.yesNoValue == 'yes'
+                  ) {
+                    product.product.productModifiers[i].modifier.details[
+                      j
+                    ].isSelected = true;
+                  }
+                }
               });
           });
+
+          // process modifier
+          let find = product;
+          if (find != undefined && !isEmptyArray(find.modifiers)) {
+            existProduct.product.productModifiers.map((group, i) => {
+              if (!isEmptyArray(group.modifier.details))
+                group.modifier.details.map((detail, j) => {
+                  find.modifiers.map(data => {
+                    data.modifier.details.map(item => {
+                      // make mark that item is in basket
+                      if (data.modifierID == group.modifierID) {
+                        existProduct.product.productModifiers[
+                          i
+                        ].postToServer = true;
+                        // set quantity basket to product that openend
+                        if (item.id == detail.id) {
+                          // check for radio button selected
+                          if (group.modifier.max == 1) {
+                            product.product.productModifiers[i].modifier.show =
+                              data.modifier.show;
+                          }
+
+                          existProduct.product.productModifiers[
+                            i
+                          ].modifier.details[j].quantity = item.quantity;
+                          existProduct.product.productModifiers[
+                            i
+                          ].modifier.details[j].isSelected = item.isSelected;
+                        }
+                      }
+                    });
+                  });
+                });
+            });
+          }
         }
 
         // open modal
@@ -1765,9 +1768,10 @@ class Basket extends Component {
       if (e.message === message1 || e.message === message2) {
         try {
           await this.setState({loading: true});
-          await this.getDataProducts();
+          // await this.getDataProducts();
           await this.setState({loading: false});
           // await this.openModal();
+          console.log(e);
         } catch (e) {}
       } else {
         // Alert.alert('Opps..', 'Something went wrong, please try again.');
@@ -1981,59 +1985,64 @@ class Basket extends Component {
       let previousData = product;
 
       // if product have modifier
-      if (product.product.productModifiers.length > 0) {
-        let totalModifier = 0;
-        const productModifierClone = JSON.stringify(
-          product.product.productModifiers,
-        );
-        let productModifiers = JSON.parse(productModifierClone);
-        productModifiers = productModifiers.filter(
-          item => item.postToServer == true,
-        );
-        // add moodifier to data product
-        dataproduct.modifiers = productModifiers;
+      if (product.product.productModifiers != undefined) {
+        if (product.product.productModifiers.length > 0) {
+          let totalModifier = 0;
+          const productModifierClone = JSON.stringify(
+            product.product.productModifiers,
+          );
+          let productModifiers = JSON.parse(productModifierClone);
+          productModifiers = productModifiers.filter(
+            item => item.postToServer == true,
+          );
+          // add moodifier to data product
+          dataproduct.modifiers = productModifiers;
 
-        let tempDetails = [];
-        for (let i = 0; i < dataproduct.modifiers.length; i++) {
-          tempDetails = [];
-          let data = dataproduct.modifiers[i];
+          let tempDetails = [];
+          for (let i = 0; i < dataproduct.modifiers.length; i++) {
+            tempDetails = [];
+            let data = dataproduct.modifiers[i];
 
-          for (let j = 0; j < data.modifier.details.length; j++) {
-            if (
-              data.modifier.details[j].quantity != undefined &&
-              data.modifier.details[j].quantity > 0
-            ) {
-              // check if price is undefined
-              if (data.modifier.details[j].price == undefined) {
-                data.modifier.details[j].price = 0;
+            for (let j = 0; j < data.modifier.details.length; j++) {
+              if (
+                data.modifier.details[j].quantity != undefined &&
+                data.modifier.details[j].quantity > 0
+              ) {
+                // check if price is undefined
+                if (data.modifier.details[j].price == undefined) {
+                  data.modifier.details[j].price = 0;
+                }
+
+                tempDetails.push(data.modifier.details[j]);
               }
-
-              tempDetails.push(data.modifier.details[j]);
             }
+
+            // if not null, then replace details
+            dataproduct.modifiers[i].modifier.details = tempDetails;
           }
 
-          // if not null, then replace details
-          dataproduct.modifiers[i].modifier.details = tempDetails;
+          //  calculate total modifier
+          await dataproduct.modifiers.map((group, i) => {
+            if (group.postToServer == true) {
+              group.modifier.details.map(detail => {
+                if (detail.quantity != undefined && detail.quantity > 0) {
+                  totalModifier += parseFloat(detail.quantity * detail.price);
+                }
+              });
+            }
+          });
+
+          // check if item modifier was deleted, if yes, then remove array modifier
+          dataproduct.modifiers = await _.remove(
+            dataproduct.modifiers,
+            group => {
+              return group.modifier.details.length > 0;
+            },
+          );
+
+          //  add total item modifier to subtotal product
+          dataproduct.unitPrice += totalModifier;
         }
-
-        //  calculate total modifier
-        await dataproduct.modifiers.map((group, i) => {
-          if (group.postToServer == true) {
-            group.modifier.details.map(detail => {
-              if (detail.quantity != undefined && detail.quantity > 0) {
-                totalModifier += parseFloat(detail.quantity * detail.price);
-              }
-            });
-          }
-        });
-
-        // check if item modifier was deleted, if yes, then remove array modifier
-        dataproduct.modifiers = await _.remove(dataproduct.modifiers, group => {
-          return group.modifier.details.length > 0;
-        });
-
-        //  add total item modifier to subtotal product
-        dataproduct.unitPrice += totalModifier;
       }
 
       // if remark is available, then push to array
@@ -2296,6 +2305,7 @@ class Basket extends Component {
         enableDelivery: item.enableDelivery == true ? true : false,
         enableItemSpecialInstructions: item.enableItemSpecialInstructions,
         enableRedeemPoint: item.enableRedeemPoint,
+        orderValidation: item.orderValidation,
       };
 
       if (this.props.from == 'products') {
@@ -2544,6 +2554,17 @@ class Basket extends Component {
     } catch (e) {}
   };
 
+  getImageUrl = image => {
+    try {
+      if (image != undefined && image != '-' && image != null) {
+        return {uri: image};
+      }
+    } catch (e) {
+      return appConfig.foodPlaceholder;
+    }
+    return appConfig.foodPlaceholder;
+  };
+
   render() {
     const {intlData, dataBasket, orderType, tableType} = this.props;
 
@@ -2670,9 +2691,21 @@ class Basket extends Component {
                           style={{
                             flexDirection: 'row',
                             justifyContent: 'space-between',
-                            padding: 3,
+                            // padding: 3,
                           }}>
-                          <View style={{width: '80%'}}>
+                          <View style={{width: '75%', flexDirection: 'row'}}>
+                            <Image
+                              source={this.getImageUrl(
+                                rowData.item.product.defaultImageURL,
+                              )}
+                              style={{
+                                marginRight: 7,
+                                borderRadius: 3,
+                                width: 60,
+                                height: 60,
+                                resizeMode: 'contain',
+                              }}
+                            />
                             <View>
                               <Text style={[styles.desc]}>
                                 <Text
@@ -2821,96 +2854,6 @@ class Basket extends Component {
                       </View>
                     )}
                   />
-                  {/*<FlatList*/}
-                  {/*  data={this.props.dataBasket.details}*/}
-                  {/*  renderItem={({item}) => (*/}
-                  {/*    <View style={styles.item}>*/}
-                  {/*      <View*/}
-                  {/*        style={{*/}
-                  {/*          flexDirection: 'row',*/}
-                  {/*          justifyContent: 'space-between',*/}
-                  {/*          padding: 3,*/}
-                  {/*        }}>*/}
-                  {/*        <View style={{width: '80%'}}>*/}
-                  {/*          <View>*/}
-                  {/*            <Text style={[styles.desc]}>*/}
-                  {/*              <Text*/}
-                  {/*                style={{*/}
-                  {/*                  color: colorConfig.store.defaultColor,*/}
-                  {/*                }}>*/}
-                  {/*                {item.quantity}x*/}
-                  {/*              </Text>{' '}*/}
-                  {/*              {item.product != undefined*/}
-                  {/*                ? item.product.name*/}
-                  {/*                : '-'}{' '}*/}
-                  {/*              ({' '}*/}
-                  {/*              {this.format(*/}
-                  {/*                CurrencyFormatter(*/}
-                  {/*                  item.product != undefined*/}
-                  {/*                    ? item.product.retailPrice*/}
-                  {/*                    : 0,*/}
-                  {/*                ),*/}
-                  {/*              )}{' '}*/}
-                  {/*              )*/}
-                  {/*            </Text>*/}
-                  {/*            /!* loop item modifier *!/*/}
-                  {/*            {!isEmptyArray(item.modifiers) ? (*/}
-                  {/*              <Text*/}
-                  {/*                style={{*/}
-                  {/*                  color:*/}
-                  {/*                    colorConfig.pageIndex.inactiveTintColor,*/}
-                  {/*                  fontSize: 10,*/}
-                  {/*                  marginLeft: 17,*/}
-                  {/*                  fontStyle: 'italic',*/}
-                  {/*                }}>*/}
-                  {/*                Add On:*/}
-                  {/*              </Text>*/}
-                  {/*            ) : null}*/}
-                  {/*            {this.renderItemModifier(item)}*/}
-                  {/*            {item.remark != undefined && item.remark != '' ? (*/}
-                  {/*              <Text*/}
-                  {/*                style={{*/}
-                  {/*                  marginTop: 3,*/}
-                  {/*                  color:*/}
-                  {/*                    colorConfig.pageIndex.inactiveTintColor,*/}
-                  {/*                  fontSize: 12,*/}
-                  {/*                  marginLeft: 17,*/}
-                  {/*                  fontStyle: 'italic',*/}
-                  {/*                }}>*/}
-                  {/*                Note: {item.remark}*/}
-                  {/*              </Text>*/}
-                  {/*            ) : null}*/}
-                  {/*            /!* loop item modifier *!/*/}
-                  {/*            {this.props.dataBasket.status == 'PENDING' &&*/}
-                  {/*            this.props.tableType == undefined &&*/}
-                  {/*            (outletSingle.orderingStatus == 'AVAILABLE' ||*/}
-                  {/*              outletSingle.orderingStatus == undefined) ? (*/}
-                  {/*              <TouchableOpacity*/}
-                  {/*                onPress={() => this.openEditModal(item)}*/}
-                  {/*                style={{paddingVertical: 5}}>*/}
-                  {/*                <Text*/}
-                  {/*                  style={{*/}
-                  {/*                    color: colorConfig.store.colorSuccess,*/}
-                  {/*                    fontWeight: 'bold',*/}
-                  {/*                    fontFamily: 'Lato-Bold',*/}
-                  {/*                    fontSize: 14,*/}
-                  {/*                  }}>*/}
-                  {/*                  Edit*/}
-                  {/*                </Text>*/}
-                  {/*              </TouchableOpacity>*/}
-                  {/*            ) : null}*/}
-                  {/*          </View>*/}
-                  {/*        </View>*/}
-                  {/*        <View>*/}
-                  {/*          <Text style={styles.descPrice}>*/}
-                  {/*            {this.format(CurrencyFormatter(item.grossAmount))}*/}
-                  {/*          </Text>*/}
-                  {/*        </View>*/}
-                  {/*      </View>*/}
-                  {/*    </View>*/}
-                  {/*  )}*/}
-                  {/*  keyExtractor={(product, index) => index.toString()}*/}
-                  {/*/>*/}
                 </View>
                 <View style={{marginTop: 20}} />
                 {dataBasket != undefined ? (
@@ -3133,10 +3076,11 @@ const styles = StyleSheet.create({
     elevation: 12,
   },
   item: {
-    borderBottomColor: colorConfig.pageIndex.inactiveTintColor,
-    borderBottomWidth: 1,
+    borderBottomColor: colorConfig.store.containerColor,
+    borderBottomWidth: 1.5,
     margin: 5,
-    padding: 5,
+    paddingVertical: 5,
+    paddingRight: 5,
     width: '100%',
     maxWidth: '100%',
     backgroundColor: 'white',

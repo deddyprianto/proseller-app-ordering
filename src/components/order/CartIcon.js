@@ -9,17 +9,6 @@ export default class CartIcon extends Component {
     super(props);
   }
 
-  goToCategorySelection = () => {
-    try {
-      const {products, selectedCategory} = this.props;
-      Actions.push('menuCategory', {
-        products,
-        selectedCategory,
-        updateCategory: this.props.updateCategory,
-      });
-    } catch (e) {}
-  };
-
   getCountProducts = () => {
     try {
       const {dataBasket, outletID} = this.props;
@@ -48,7 +37,11 @@ export default class CartIcon extends Component {
           marginTop: 5,
           justifyContent: 'center',
         }}
-        onPress={() => Actions.basket()}>
+        onPress={() =>
+          Actions.basket({
+            refreshQuantityProducts: this.props.refreshQuantityProducts,
+          })
+        }>
         <Icon
           size={20}
           name={Platform.OS === 'ios' ? 'ios-cart' : 'md-cart'}

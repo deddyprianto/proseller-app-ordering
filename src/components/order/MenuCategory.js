@@ -21,14 +21,17 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import colorConfig from '../../config/colorConfig';
 import {Actions} from 'react-native-router-flux';
 import GridItem from './GridItem';
-import LoaderDarker from '../LoaderDarker';
 import Loader from '../loader';
+import {compose} from 'redux';
+import {connect} from 'react-redux';
+import {getAllCategory} from '../../actions/order.action';
 
-export default class MenuCategory extends Component {
+class MenuCategory extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      products: [],
+      categories2: [],
+      categories: [],
       selectedCategory: this.props.selectedCategory,
       loading: true,
     };
@@ -45,12 +48,42 @@ export default class MenuCategory extends Component {
         this.handleBackPress,
       );
     } catch (e) {}
-    try {
-      setTimeout(() => {
-        this.setState({products: this.props.products, loading: false});
-      }, 1200);
-    } catch (e) {}
+
+    this.loadCategory();
   }
+
+  loadCategory = async () => {
+    try {
+      const response = await this.props.dispatch(getAllCategory(0, 10));
+      if (response != false) {
+        await this.setState({
+          categories: response.data,
+          categories2: response.data,
+          loading: false,
+        });
+
+        if (response.dataLength > 10) {
+          this.loadMoreCategory(response.dataLength);
+        }
+      }
+    } catch (e) {}
+  };
+
+  loadMoreCategory = async length => {
+    try {
+      let skip = 10;
+      for (let i = 0; i < Math.floor(length / 10); i++) {
+        const response = await this.props.dispatch(getAllCategory(skip, 10));
+        if (response != false) {
+          let categories = [...this.state.categories, ...response.data];
+          await this.setState({categories, categories2: categories});
+        }
+        skip += 10;
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   componentWillUnmount() {
     try {
@@ -64,35 +97,38 @@ export default class MenuCategory extends Component {
   };
 
   search = key => {
-    let {products, selectedCategory} = this.state;
+    let {categories2, categories, selectedCategory} = this.state;
     if (key == '' || key == null) {
-      this.setState({products: this.props.products});
+      this.setState({categories: this.state.categories2});
     }
 
     try {
-      let list = JSON.stringify(this.props.products);
+      let list = JSON.stringify(this.state.categories2);
       list = JSON.parse(list);
-      if (!isEmptyArray(this.props.products)) {
+      if (!isEmptyArray(this.state.categories2)) {
         list = list.filter(item =>
           item.name.toLowerCase().includes(key.toLowerCase()),
         );
 
-        this.setState({products: list});
+        this.setState({categories: list});
       }
     } catch (e) {}
   };
 
-  updateCategory = (item, index) => {
+  updateCategory = (categoryDetail, index) => {
     try {
-      const {products} = this.props;
-      index = products.findIndex(data => data.id == item.id);
-      this.props.updateCategory(item, index);
-      this.goBack();
+      let {outlet, isSpecificPageActive} = this.props;
+      if (isSpecificPageActive == true) {
+        this.props.refreshPage(categoryDetail, undefined);
+        Actions.pop();
+      } else {
+        Actions.replace('specificCategory', {categoryDetail, item: outlet});
+      }
     } catch (e) {}
   };
 
   render() {
-    let {products, selectedCategory} = this.state;
+    let {products, categories, selectedCategory} = this.state;
 
     return (
       <SafeAreaView style={styles.container}>
@@ -123,7 +159,7 @@ export default class MenuCategory extends Component {
           />
           <FlatList
             style={{marginLeft: 2}}
-            data={products}
+            data={categories}
             numColumns={3}
             renderItem={(item, index) => {
               return (
@@ -141,6 +177,21 @@ export default class MenuCategory extends Component {
     );
   }
 }
+
+mapStateToProps = state => ({
+  intlData: state.intlData,
+});
+
+mapDispatchToProps = dispatch => ({
+  dispatch,
+});
+
+export default compose(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  ),
+)(MenuCategory);
 
 const styles = StyleSheet.create({
   container: {

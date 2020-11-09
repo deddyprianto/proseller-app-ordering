@@ -1,5 +1,6 @@
 import {fetchApiMasterData} from '../service/apiMasterData';
 import {refreshToken} from './auth.actions';
+import {fetchApiOrder} from '../service/apiOrder';
 
 export const getCompanyInfo = () => {
   return async (dispatch, getState) => {
@@ -97,6 +98,43 @@ export const setSingleOutlet = outlet => {
         type: 'ONE_OUTLET',
         data: outlet,
       });
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const getTimeSlot = (outletID, date) => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      const payload = {
+        outletID: `outlet::${outletID}`,
+        date,
+      };
+
+      console.log(payload);
+
+      const response = await fetchApiOrder(
+        `/timeslot`,
+        'POST',
+        payload,
+        200,
+        token,
+      );
+      console.log(response, 'response get timeslot');
+
+      if (response.success == true) {
+        return response.response.data;
+      } else {
+        return false;
+      }
     } catch (error) {
       return error;
     }

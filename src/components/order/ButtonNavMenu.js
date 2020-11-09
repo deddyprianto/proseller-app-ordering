@@ -11,9 +11,12 @@ export default class ButtonNavMenu extends Component {
 
   goToCategorySelection = () => {
     try {
-      const {products, selectedCategory} = this.props;
+      const {products, selectedCategory, outlet} = this.props;
       Actions.push('menuCategory', {
         products,
+        isSpecificPageActive: this.props.isSpecificPageActive,
+        refreshPage: this.props.refreshPage,
+        outlet: this.props.outlet,
         selectedCategory,
         updateCategory: this.props.updateCategory,
       });
@@ -41,7 +44,7 @@ export default class ButtonNavMenu extends Component {
           elevation: 12,
         }}>
         <TouchableOpacity
-          onPress={() => Actions.pop()}
+          onPress={() => Actions.popTo('pageIndex')}
           style={{
             flexDirection: 'row',
             justifyContent: 'center',

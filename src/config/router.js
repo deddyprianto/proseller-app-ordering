@@ -87,6 +87,7 @@ import PickUpTime from '../components/order/PickUpTime';
 import ProductsRetail from '../components/order/ProductsRetail';
 import MenuCategory from '../components/order/MenuCategory';
 import awsConfig from './awsConfig';
+import ProductsSpecific from '../components/order/ProductsSpecific';
 
 let backPressed = 0;
 
@@ -213,6 +214,7 @@ export default class Routes extends Component {
             <Scene key="order" component={Order} />
             <Scene key="categoryProducts" component={CategoryProducts} />
             <Scene key="productsMode2" component={ProductsRetail} />
+            <Scene key="specificCategory" component={ProductsSpecific} />
             <Scene key="basket" component={Basket} />
             <Scene key="cart" component={Cart} />
             <Scene key="scanQRTable" component={ScanQRTable} />
