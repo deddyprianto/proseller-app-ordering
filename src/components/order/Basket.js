@@ -695,7 +695,6 @@ class Basket extends Component {
                   onPress={() => {
                     this.setState({selectedProvider: item});
                     this.RBproviders.close();
-                    this.calculateDeliveryFee(item);
                   }}
                   style={styles.listProviders}>
                   <View style={{flexDirection: 'row', alignItems: 'center'}}>
@@ -760,6 +759,7 @@ class Basket extends Component {
       this.backHandler.remove();
       clearInterval(this.interval);
       clearInterval(this.intervalOutlet);
+      this.props.dispatch(selectedAddress(undefined));
     } catch (e) {}
   }
 
@@ -2409,7 +2409,9 @@ class Basket extends Component {
     try {
       if (orderType == 'DELIVERY') {
         return (
-          <View style={styles.itemSummary}>
+          <TouchableOpacity
+            onPress={this.goToAddress}
+            style={styles.itemSummary}>
             <Text style={styles.total}>
               {this.props.selectedAddress.addressName == undefined ? (
                 <Text style={{color: colorConfig.store.colorError}}>
@@ -2420,27 +2422,15 @@ class Basket extends Component {
               )}
             </Text>
             <View>
-              <Text style={styles.total}>
+              <Text style={[styles.total, styles.badge]}>
                 {this.props.selectedAddress.addressName == undefined ? (
                   <Text style={{color: colorConfig.store.colorError}}>-</Text>
                 ) : (
                   this.props.selectedAddress.addressName
                 )}
               </Text>
-              {dataBasket.status == 'PENDING' ? (
-                <TouchableOpacity
-                  onPress={this.goToAddress}
-                  style={{
-                    marginTop: -10,
-                    flexDirection: 'row',
-                    justifyContent: 'flex-end',
-                    alignItems: 'center',
-                  }}>
-                  <Text style={styles.subTitleAddItems}>Change</Text>
-                </TouchableOpacity>
-              ) : null}
             </View>
-          </View>
+          </TouchableOpacity>
         );
       }
     } catch (e) {
@@ -2481,13 +2471,8 @@ class Basket extends Component {
                 </TouchableOpacity>
               ) : (
                 <TouchableOpacity onPress={() => this.RBproviders.open()}>
-                  <Text style={styles.total}>{selectedProvider.name}</Text>
-                  <Text
-                    style={[
-                      styles.subTitleAddItems,
-                      {textAlign: 'right', marginTop: -12},
-                    ]}>
-                    Change
+                  <Text style={[styles.total, styles.badge]}>
+                    {selectedProvider.name}
                   </Text>
                 </TouchableOpacity>
               )}
@@ -3013,14 +2998,6 @@ class Basket extends Component {
                       <Text style={[styles.total, styles.badge]}>
                         {this.formatDatePickup()} at {this.state.timePickup}
                       </Text>
-                      <Text
-                        style={{
-                          textAlign: 'right',
-                          color: colorConfig.store.titleSelected,
-                          fontFamily: 'Lato-Bold',
-                        }}>
-                        Change
-                      </Text>
                     </TouchableOpacity>
                   </View>
                 ) : null}
@@ -3031,14 +3008,20 @@ class Basket extends Component {
                     <Text
                       style={[
                         styles.total,
-                        {color: colorConfig.store.secondaryColor},
+                        {
+                          color: colorConfig.store.secondaryColor,
+                          fontWeight: 'bold',
+                        },
                       ]}>
                       Delivery Fee
                     </Text>
                     <Text
                       style={[
                         styles.total,
-                        {color: colorConfig.store.secondaryColor},
+                        {
+                          color: colorConfig.store.secondaryColor,
+                          fontWeight: 'bold',
+                        },
                       ]}>
                       {appConfig.appMataUang}{' '}
                       {this.format(
@@ -3212,11 +3195,11 @@ const styles = StyleSheet.create({
   },
   total: {
     marginVertical: 10,
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Lato-Medium',
     color: colorConfig.store.titleSelected,
-    fontSize: 15,
+    fontSize: 14,
     padding: 3,
-    fontWeight: 'bold',
+    // fontWeight: 'bold',
     marginBottom: 5,
   },
   detail: {

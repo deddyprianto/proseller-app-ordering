@@ -713,10 +713,6 @@ export const getDeliveryFee = payload => {
       );
       console.log(response, 'response get delivery fee');
       if (response.success == true) {
-        dispatch({
-          type: 'DATA_PROVIDER',
-          providers: response.response.data.dataProfider,
-        });
         return response.response;
       } else {
         return false;

@@ -298,7 +298,7 @@ class PickUpTime extends Component {
               alignItems: 'center',
               paddingVertical: 10,
             }}>
-            <View style={{width: '30%'}}>
+            <View style={{width: '20%'}}>
               <Text style={styles.option}>Date </Text>
             </View>
             <TouchableOpacity
@@ -306,9 +306,9 @@ class PickUpTime extends Component {
                 this.setState({dateVisible: !this.state.dateVisible});
               }}
               style={{
-                width: '50%',
+                width: '60%',
                 borderWidth: 0.6,
-                borderColor: colorConfig.store.defaultColor,
+                borderColor: colorConfig.pageIndex.grayColor,
                 padding: 7,
                 borderRadius: 5,
               }}>
@@ -331,14 +331,14 @@ class PickUpTime extends Component {
               flexDirection: 'row',
               alignItems: 'center',
               paddingVertical: 10,
-              paddingBottom: 250,
+              paddingBottom: this.state.openTimePicker ? 250 : 10,
             }}>
-            <View style={{width: '30%'}}>
+            <View style={{width: '20%'}}>
               <Text style={styles.option}>Time </Text>
             </View>
             <View
               style={{
-                width: '50%',
+                width: '60%',
                 // borderWidth: 0.6,
                 // borderColor: colorConfig.store.defaultColor,
                 // // padding: 7,
@@ -356,20 +356,32 @@ class PickUpTime extends Component {
                   backgroundColor: 'white',
                   marginTop: 5,
                   borderWidth: 0.6,
-                  borderColor: colorConfig.store.defaultColor,
+                  borderColor: colorConfig.pageIndex.grayColor,
                   borderRadius: 5,
                 }}
                 dropDownStyle={{
                   backgroundColor: '#fafafa',
-                  borderColor: 'red',
+                  // borderColor: 'red',
                   borderWidth: 0.6,
                   zIndex: 3,
                   height: 250,
                 }}
                 dropDownMaxHeight={250}
                 activeLabelStyle={{
-                  color: colorConfig.store.defaultColor,
-                  fontWeight: 'bold',
+                  color: 'white',
+                  fontFamily: 'Lato-Bold',
+                }}
+                activeItemStyle={{
+                  backgroundColor: colorConfig.store.defaultColor,
+                }}
+                itemStyle={{
+                  marginVertical: 4,
+                  backgroundColor: 'white',
+                  borderColor: 'gray',
+                }}
+                labelStyle={{
+                  fontFamily: 'Lato-Medium',
+                  fontSize: 14,
                 }}
                 onOpen={() => {
                   this.setState({openTimePicker: true});

@@ -40,6 +40,7 @@ import CryptoJS from 'react-native-crypto-js';
 import awsConfig from '../config/awsConfig';
 import PhoneInput from 'react-native-phone-input';
 import CountryPicker from './react-native-country-picker-modal/lib';
+import {getTermsConditions} from '../actions/order.action';
 
 const backupMandatoryFields = [
   {
@@ -171,6 +172,7 @@ class AccountEditProfil extends Component {
       openModalCountry: false,
       editEmail: false,
       editPhoneNumber: false,
+      appSetting: {},
     };
   }
 
@@ -207,6 +209,8 @@ class AccountEditProfil extends Component {
   getMandatoryField = async () => {
     await this.setState({loading: true});
     await this.props.dispatch(getUserProfile());
+    const appSetting = await this.props.dispatch(getTermsConditions());
+    if (appSetting != false) this.setState({appSetting});
     await this.refreshDataCustomer();
     try {
       const response = await this.props.dispatch(getMandatoryFields());
@@ -397,6 +401,50 @@ class AccountEditProfil extends Component {
   };
 
   toChangeCredentials = mode => {
+    const {appSetting} = this.state;
+    let userDetail;
+    try {
+      // Decrypt data user
+      let bytes = CryptoJS.AES.decrypt(
+        this.props.userDetail,
+        awsConfig.PRIVATE_KEY_RSA,
+      );
+      userDetail = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+    } catch (e) {
+      userDetail = undefined;
+    }
+
+    if (mode === 'Email') {
+      if (appSetting != undefined && !isEmptyArray(appSetting.settings)) {
+        const find = appSetting.settings.find(
+          item => item.settingKey === 'MaxChangeEmailPerDay',
+        );
+        if (find != undefined) {
+          if (userDetail.changeEmailTodayCount >= find.settingValue) {
+            Alert.alert(
+              'Sorry',
+              'You have reached the limit for changing email today.',
+            );
+            return;
+          }
+        }
+      }
+    } else {
+      if (appSetting != undefined && !isEmptyArray(appSetting.settings)) {
+        const find = appSetting.settings.find(
+          item => item.settingKey === 'MaxChangePhonePerDay',
+        );
+        if (find != undefined) {
+          if (userDetail.changePhoneTodayCount >= find.settingValue) {
+            Alert.alert(
+              'Sorry',
+              'You have reached the limit for changing phone number today.',
+            );
+            return;
+          }
+        }
+      }
+    }
     Actions.changeCredentials({mode, dataDiri: this.props.dataDiri});
   };
 

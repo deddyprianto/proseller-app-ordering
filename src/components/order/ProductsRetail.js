@@ -38,7 +38,7 @@ import {
 import {compose} from 'redux';
 import {connect} from 'react-redux';
 import Loader from '../../components/loader';
-import ButtonViewBasket from '../../components/order/ButtonViewBasket';
+// import ButtonViewBasket from '../../components/order/ButtonViewBasket';
 import CurrencyFormatter from '../../helper/CurrencyFormatter';
 import ShimmerPlaceHolder from 'react-native-shimmer-placeholder';
 import {
@@ -55,6 +55,10 @@ import NewSearch from '../atom/NewSearch';
 import {RecyclerListView, DataProvider, LayoutProvider} from 'recyclerlistview';
 import ButtonNavMenu from './ButtonNavMenu';
 import CartIcon from './CartIcon';
+import CryptoJS from 'react-native-crypto-js';
+import awsConfig from '../../config/awsConfig';
+import {Dialog} from 'react-native-paper';
+import QRCode from 'react-native-qrcode-svg';
 
 const ViewTypes = {
   FULL: 0,
@@ -153,6 +157,7 @@ class Products2 extends Component {
       productsSearch: undefined,
       loadingSearch: false,
       indexLoaded: 1,
+      deliveryInfo: false,
     };
   }
 
@@ -344,7 +349,7 @@ class Products2 extends Component {
   };
 
   setOrderType = type => {
-    const {productTemp} = this.state;
+    const {productTemp, item} = this.state;
     // check outlet type
     // if (this.state.item.outletType == 'QUICKSERVICE') {
     //   this.props.dispatch(setOrderType('TAKEAWAY'));
@@ -360,6 +365,107 @@ class Products2 extends Component {
         this.openModal(productTemp);
       }, 600);
     }
+    if (type === 'DELIVERY') {
+      if (
+        !isEmptyObject(item.orderValidation) &&
+        !isEmptyObject(item.orderValidation.delivery)
+      ) {
+        const data = item.orderValidation.delivery;
+        console.log(data, 'datadatadatadatadata');
+        if (
+          data.maxAmount > 0 ||
+          data.minAmount > 0 ||
+          data.minQty > 0 ||
+          data.maxQty > 0
+        ) {
+          setTimeout(() => {
+            this.setState({deliveryInfo: true});
+          }, 700);
+        }
+      }
+    }
+  };
+
+  renderDeliveryInfo = () => {
+    const {item} = this.state;
+    const data = item.orderValidation.delivery;
+    let text1 = '';
+    let text2 = '';
+    if (data.minQty > 0) {
+      text1 = `Minimum item quantity is ${data.minQty}`;
+    }
+    if (data.maxQty > 0) {
+      text1 = `Maximum item quantity is ${data.maxQty}`;
+    }
+    if (data.minQty > 0 && data.maxQty > 0) {
+      text1 = `Item quantity range ${data.minQty} to ${data.maxQty} items`;
+    }
+
+    if (data.minAmount > 0) {
+      text2 = `Minimum amount is ${CurrencyFormatter(data.minAmount)}`;
+    }
+    if (data.maxAmount > 0) {
+      text2 = `Maximum amount is ${CurrencyFormatter(data.maxAmount)}`;
+    }
+    if (data.minAmount > 0 && data.maxAmount > 0) {
+      text2 = `Amount range is ${CurrencyFormatter(
+        data.minAmount,
+      )} to ${CurrencyFormatter(data.maxAmount)}`;
+    }
+    return (
+      <Dialog
+        dismissable={false}
+        visible={this.state.deliveryInfo}
+        onDismiss={() => {
+          this.setState({deliveryInfo: false});
+        }}>
+        <Dialog.Content>
+          <Text
+            style={{
+              textAlign: 'center',
+              fontFamily: 'Lato-Bold',
+              fontSize: 18,
+              color: colorConfig.store.defaultColor,
+            }}>
+            Delivery Info
+          </Text>
+
+          <View
+            style={{
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginVertical: 15,
+            }}>
+            <Icon
+              size={80}
+              name={Platform.OS === 'ios' ? 'ios-car' : 'md-car'}
+              style={{color: colorConfig.store.secondaryColor}}
+            />
+            <Text style={styles.textInfoDelivery}>{text1}</Text>
+            <Text style={styles.textInfoDelivery}>{text2}</Text>
+          </View>
+
+          <TouchableOpacity
+            onPress={() => this.setState({deliveryInfo: false})}
+            style={{
+              width: '100%',
+              borderRadius: 5,
+              backgroundColor: colorConfig.store.defaultColor,
+              padding: 10,
+            }}>
+            <Text
+              style={{
+                color: 'white',
+                fontFamily: 'Lato-Bold',
+                textAlign: 'center',
+                fontSize: 16,
+              }}>
+              Got it
+            </Text>
+          </TouchableOpacity>
+        </Dialog.Content>
+      </Dialog>
+    );
   };
 
   askUserToSelectOrderType = () => {
@@ -474,10 +580,6 @@ class Products2 extends Component {
                     ? item.deliveryName
                     : 'DELIVERY'}
                 </Text>
-              </View>
-              <View>
-                  <Text style={{color: 'white', fontSize: 12}}>Item quantity range 3 to 4 items</Text>
-                  <Text style={{color: 'white', fontSize: 12}}>Amount range SGD 3 to SGD 4</Text>
               </View>
             </TouchableOpacity>
           ) : null}
@@ -3146,6 +3248,7 @@ class Products2 extends Component {
             products={this.state.products}
           />
         ) : null}
+        {this.renderDeliveryInfo()}
       </SafeAreaView>
     );
   }
@@ -3503,7 +3606,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   activeDINEINButton: {
-    padding: 10,
+    padding: 14,
     backgroundColor: colorConfig.card.otherCardColor,
     borderRadius: 10,
     width: '60%',
@@ -3523,7 +3626,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   activeTAKEAWAYButton: {
-    padding: 10,
+    padding: 14,
     backgroundColor: colorConfig.store.secondaryColor,
     borderRadius: 10,
     width: '60%',
@@ -3533,7 +3636,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   activeDELIVERYButton: {
-    padding: 10,
+    padding: 14,
     backgroundColor: colorConfig.store.defaultColor,
     borderRadius: 10,
     width: '60%',
@@ -3607,5 +3710,11 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 240,
     alignItems: 'stretch',
+  },
+  textInfoDelivery: {
+    color: colorConfig.store.titleSelected,
+    fontSize: 16,
+    fontFamily: 'Lato-Medium',
+    lineHeight: 30,
   },
 });
