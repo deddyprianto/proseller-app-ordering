@@ -146,15 +146,17 @@ class SelectAddress extends Component {
               this.checkSelectedAddress(item) ? styles.cardSelected : null,
             ]}>
             <TouchableOpacity
-              onPress={() => {
+              onPress={async () => {
                 try {
-                  this.setState({selectedAddress: item});
+                  await this.setState({loading: true});
+                  await this.setState({selectedAddress: item});
                   try {
                     this.props.clearDelivery();
                   } catch (e) {}
-                  this.props.dispatch(selectedAddress(item));
-                  this.props.getDeliveryFee();
-                  this.goBack();
+                  await this.props.dispatch(selectedAddress(item));
+                  await this.props.getDeliveryFee();
+                  await this.goBack();
+                  await this.setState({loading: false});
                 } catch (e) {}
               }}>
               <View style={styles.cardContent}>
@@ -207,6 +209,8 @@ class SelectAddress extends Component {
                 Actions.editAddress({
                   from: 'basket',
                   myAddress: item,
+                  getDeliveryFee: this.props.getDeliveryFee,
+                  clearDelivery: this.props.clearDelivery,
                 });
               }}
               style={{

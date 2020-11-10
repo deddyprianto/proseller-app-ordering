@@ -1,7 +1,22 @@
 <resources>
-    <string name="app_name">U Stars Supermarket</string>
+    <string name="app_name">Ustar</string>
     <string name="facebook_app_id">340760273400416</string> <string name="fb_login_protocol_scheme">fb340760273400416</string>
     <string name="appCenterCrashes_whenToSendCrashes" moduleConfig="true" translatable="false">ALWAYS_SEND</string>
     <string name="appCenterAnalytics_whenToEnableAnalytics" moduleConfig="true" translatable="false">ALWAYS_SEND</string>
     <string moduleConfig="true" name="CodePushDeploymentKey">FdQAsS9KSd_T-VZ-rCrezNXWzDbWHHdOhq83S</string>
+    <!-- NetsClick -->
+    <string name="appType">NON_RIDE_HAILING</string>
+    <string name="envType">UAT</string>
+    <string name="appId">00011000001</string>
+    <string name="appSecret">B4C110917EABBF699F08C52AF3A7BF71B3E754C2687C8313C9198C31E8B62CAF</string>
+    <string name="mapPubKeyId">2</string>
+    <string name="mapPubKeyExp">03</string>
+    <string name="mapPubKeyModulus">cfbb65135256d4e525fc6aada10ff7a78e0f239d6f4ac7ed0ef2b883e1b4cba8ec1c49208142952cdc530380024d6ca7bae28f7d82a36e8b95baad64df079b368d17dce484e00e88ba008e41576da8e9aaa102d4287f07f0edd89a76df8eeb02e08498c01b6a9fd5014e3b73fd49b0c76ba32180894fe1da728c858bad96db9191e7c8244bf0649f09577ebe4bd1d0a1640dc2b8ad6f64b2a2f8715777b669703f3fcb8023dbe024fcb21ca0697044400dcdc288b335ccb254e8d98bb93eb4c71b84141467e35cb284d13c62099ba90367d490581dabdf33744898a54a81bf05451288ec4c1065df003efa51aab502acadba022ee6d48b91901140e00d5eb20b</string>
+    <string name="mapServerCert">ca_uat</string>
+    <string name="mid">11138032800</string>
+    <string name="tid">38032800</string>
+    <string name="urlMap">https://uatnetspay.nets.com.sg</string>
+    <string name="urlApiGw">https://uat-api.nets.com.sg/uat</string>
+    <string name="mhostType">APIGW</string>
+    <string name="mhostUrl">https://nfp-uat.nets.com.sg:9182/uat</string>
 </resources>

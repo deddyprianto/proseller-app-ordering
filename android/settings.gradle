@@ -1,3 +1,6 @@
+include ':vos-app-protection-android-4.8.2.9'
+include ':vos-processor-android-4.8.2.34'
+include ':nofsdk'
 rootProject.name = 'Ustar'
 include ':@react-native-community_geolocation'
 project(':@react-native-community_geolocation').projectDir = new File(rootProject.projectDir, '../node_modules/@react-native-community/geolocation/android')

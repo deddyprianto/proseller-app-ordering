@@ -1298,6 +1298,45 @@ class Cart extends Component {
     } catch (e) {}
   };
 
+  formatCurrency = value => {
+    try {
+      return this.format(CurrencyFormatter(value));
+    } catch (e) {
+      return value;
+    }
+  };
+
+  getGrandTotal = data => {
+    try {
+      let item = data;
+      if (item.payments != undefined && !isEmptyArray(item.payments)) {
+        let total = data.totalNettAmount;
+
+        if (data.deliveryFee != undefined) {
+          total += data.deliveryFee;
+        }
+
+        for (let i = 0; i < item.payments.length; i++) {
+          if (
+            item.payments[i].isVoucher == true ||
+            item.payments[i].isPoint == true
+          ) {
+            total -= item.payments[i].paymentAmount;
+          }
+        }
+        if (total < 0) total = 0;
+        return this.formatCurrency(total);
+      } else {
+        let total = data.totalNettAmount;
+
+        if (data.deliveryFee != undefined) {
+          total += data.deliveryFee;
+        }
+        return this.formatCurrency(total);
+      }
+    } catch (e) {}
+  };
+
   render() {
     const {intlData, dataBasket, orderType, tableType} = this.props;
 
@@ -1556,6 +1595,7 @@ class Cart extends Component {
                   <View style={styles.itemSummary}>
                     <Text style={styles.total}>Delivery Fee</Text>
                     <Text style={styles.total}>
+                      {appConfig.appMataUang}
                       {this.format(CurrencyFormatter(dataBasket.deliveryFee))}
                     </Text>
                   </View>
@@ -1592,22 +1632,22 @@ class Cart extends Component {
                       </Text>
                     </View>
                   )}
-                {/*{this.props.dataBasket.orderActionDate != undefined && (*/}
-                {/*  <View style={styles.itemSummary}>*/}
-                {/*    <Text style={styles.total}>*/}
-                {/*      {this.props.dataBasket.orderingMode == 'DELIVERY'*/}
-                {/*        ? 'Delivery Date & Time'*/}
-                {/*        : 'Pickup Date & Time'}*/}
-                {/*    </Text>*/}
-                {/*    <Text style={styles.total}>*/}
-                {/*      {format(*/}
-                {/*        new Date(this.props.dataBasket.orderActionDate),*/}
-                {/*        'dd MMM yyyy',*/}
-                {/*      )}{' '}*/}
-                {/*      at {this.props.dataBasket.orderActionTime}*/}
-                {/*    </Text>*/}
-                {/*  </View>*/}
-                {/*)}*/}
+                {this.props.dataBasket.orderActionDate != undefined && (
+                  <View style={styles.itemSummary}>
+                    <Text style={styles.total}>
+                      {this.props.dataBasket.orderingMode == 'DELIVERY'
+                        ? 'Delivery Date & Time'
+                        : 'Pickup Date & Time'}
+                    </Text>
+                    <Text style={styles.total}>
+                      {format(
+                        new Date(this.props.dataBasket.orderActionDate),
+                        'dd MMM yyyy',
+                      )}{' '}
+                      at {this.props.dataBasket.orderActionTimeSlot}
+                    </Text>
+                  </View>
+                )}
                 {this.props.dataBasket.payAtPOS == true && (
                   <View style={styles.itemSummary}>
                     <Text
@@ -1616,7 +1656,8 @@ class Cart extends Component {
                     </Text>
                     <Text
                       style={[styles.total, {color: colorConfig.store.title}]}>
-                      {CurrencyFormatter(this.props.dataBasket.totalNettAmount)}
+                      {appConfig.appMataUang}
+                      {this.getGrandTotal(this.props.dataBasket)}
                     </Text>
                   </View>
                 )}

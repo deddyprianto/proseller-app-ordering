@@ -27,7 +27,7 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import {format} from 'date-fns';
 import {isEmptyArray, isEmptyObject} from '../../helper/CheckEmpty';
 import DropDownPicker from 'react-native-dropdown-picker';
-import {loginOther} from '../../actions/auth.actions';
+import {getTimeslot} from '../../actions/order.action';
 
 class PickUpTime extends Component {
   constructor(props) {
@@ -52,10 +52,8 @@ class PickUpTime extends Component {
   componentDidMount = async () => {
     const {date, time} = this.props;
     try {
-      // let date = format(new Date(), 'yyyy-MM-dd');
-      // let time = format(new Date(), 'HH:mm');
-
-      this.setState({date, time});
+      this.setState({date, time: null});
+      await this.getDefaultTime(time);
     } catch (e) {}
   };
 
@@ -90,13 +88,27 @@ class PickUpTime extends Component {
     this.setState({dateVisible: false});
   };
 
-  handleConfirmDate = date => {
+  handleConfirmDate = async date => {
     let formattedDate = date;
     try {
       formattedDate = format(date, 'yyyy-MM-dd');
     } catch (e) {}
-    this.setState({date: formattedDate});
+    await this.setState({date: formattedDate, time: null});
     this.hideDatePicker();
+    this.getTimeslot();
+  };
+
+  getTimeslot = async () => {
+    const {outlet} = this.props;
+    const outletID = outlet.id;
+    await this.setState({loading: true});
+    try {
+      const clientTimeZone = Math.abs(new Date().getTimezoneOffset());
+      await this.props.dispatch(
+        getTimeslot(outletID, this.state.date, clientTimeZone),
+      );
+    } catch (e) {}
+    await this.setState({loading: false});
   };
 
   hideTimePicker = () => {
@@ -121,46 +133,46 @@ class PickUpTime extends Component {
     let year = new Date().getFullYear();
     try {
       let maxDays = 360;
-      if (!isEmptyObject(outlet.timing)) {
+      if (!isEmptyObject(outlet.orderValidation)) {
         if (orderType == 'DELIVERY') {
           if (
-            !isEmptyObject(outlet.timing.delivery) &&
-            outlet.timing.delivery.maxDays != undefined &&
-            outlet.timing.delivery.maxDays != null
+            !isEmptyObject(outlet.orderValidation.delivery) &&
+            outlet.orderValidation.delivery.maxDays != undefined &&
+            outlet.orderValidation.delivery.maxDays != null
           ) {
-            maxDays = outlet.timing.delivery.maxDays;
+            maxDays = outlet.orderValidation.delivery.maxDays;
           }
         } else if (orderType == 'DINEIN') {
           if (
-            !isEmptyObject(outlet.timing.dineIn) &&
-            outlet.timing.dineIn.maxDays != undefined &&
-            outlet.timing.dineIn.maxDays != null
+            !isEmptyObject(outlet.orderValidation.dineIn) &&
+            outlet.orderValidation.dineIn.maxDays != undefined &&
+            outlet.orderValidation.dineIn.maxDays != null
           ) {
-            maxDays = outlet.timing.dineIn.maxDays;
+            maxDays = outlet.orderValidation.dineIn.maxDays;
           }
         } else if (orderType == 'TAKEAWAY') {
           if (
-            !isEmptyObject(outlet.timing.takeAway) &&
-            outlet.timing.takeAway.maxDays != undefined &&
-            outlet.timing.takeAway.maxDays != null
+            !isEmptyObject(outlet.orderValidation.takeAway) &&
+            outlet.orderValidation.takeAway.maxDays != undefined &&
+            outlet.orderValidation.takeAway.maxDays != null
           ) {
-            maxDays = outlet.timing.takeAway.maxDays;
+            maxDays = outlet.orderValidation.takeAway.maxDays;
           }
         } else if (orderType == 'STOREPICKUP') {
           if (
-            !isEmptyObject(outlet.timing.storePickUp) &&
-            outlet.timing.storePickUp.maxDays != undefined &&
-            outlet.timing.storePickUp.maxDays != null
+            !isEmptyObject(outlet.orderValidation.storePickUp) &&
+            outlet.orderValidation.storePickUp.maxDays != undefined &&
+            outlet.orderValidation.storePickUp.maxDays != null
           ) {
-            maxDays = outlet.timing.storePickUp.maxDays;
+            maxDays = outlet.orderValidation.storePickUp.maxDays;
           }
         } else if (orderType == 'STORECHECKOUT') {
           if (
-            !isEmptyObject(outlet.timing.storeCheckOut) &&
-            outlet.timing.storeCheckOut.maxDays != undefined &&
-            outlet.timing.storeCheckOut.maxDays != null
+            !isEmptyObject(outlet.orderValidation.storeCheckOut) &&
+            outlet.orderValidation.storeCheckOut.maxDays != undefined &&
+            outlet.orderValidation.storeCheckOut.maxDays != null
           ) {
-            maxDays = outlet.timing.storeCheckOut.maxDays;
+            maxDays = outlet.orderValidation.storeCheckOut.maxDays;
           }
         }
       }
@@ -228,45 +240,35 @@ class PickUpTime extends Component {
   };
 
   getOperationalHours = () => {
-    const {outlet} = this.props;
-    let pickerItem = [{label: 'Select Pickup Time', value: null}];
+    const {outlet, timeslots, orderType} = this.props;
+    let type = 'Pickup';
+    if (orderType === 'DELIVERY') type = 'Delivery';
+    let pickerItem = [{label: `Select ${type} Time`, value: null}];
     let value = '';
-    let label = '';
     try {
-      const day = new Date().getDay();
-      if (isEmptyArray(outlet.operationalHours)) {
-        for (let i = 0; i < 24; i++) {
-          value = `${this.pad(i.toString())}:00`;
+      for (let i = 0; i < timeslots.length; i++) {
+        if (timeslots[i].isAvailable == true) {
+          value = timeslots[i].time;
           value = pickerItem.push({label: value, value});
         }
-        return pickerItem;
-      } else {
-        const find = outlet.operationalHours.find(item => item.day == day);
-        if (find == undefined) {
-          for (let i = 0; i < 24; i++) {
-            value = `${this.pad(i.toString())}:00`;
-            value = pickerItem.push({label: value, value});
-          }
-          return pickerItem;
-        } else {
-          for (let i = parseInt(find.open); i <= parseInt(find.close); i++) {
-            value = `${this.pad(i.toString())}:00`;
-            if (parseInt(find.close) != i) {
-              label = `${this.pad(i.toString())}:00 - ${this.pad(
-                (i + 1).toString(),
-              )}:00`;
-            }
-            value = pickerItem.push({label: label, value});
-          }
-          return pickerItem;
-        }
-      }
-    } catch (e) {
-      for (let i = 0; i < 24; i++) {
-        value = `${this.pad(i.toString())}:00`;
-        value = pickerItem.push(<Picker.Item label={value} value={value} />);
       }
       return pickerItem;
+    } catch (e) {
+      return pickerItem;
+    }
+  };
+
+  getDefaultTime = async time => {
+    try {
+      const {timeslots} = this.props;
+      const find = timeslots.find(item => item.time == time);
+      if (find == undefined) {
+        await this.setState({time: null});
+      } else {
+        await this.setState({time: find.time});
+      }
+    } catch (e) {
+      return null;
     }
   };
 
@@ -320,6 +322,7 @@ class PickUpTime extends Component {
                 maximumDate={this.getMaximumDate()}
                 isVisible={this.state.dateVisible}
                 mode="date"
+                date={new Date(this.state.date)}
                 onConfirm={this.handleConfirmDate}
                 onCancel={this.hideDatePicker}
               />
@@ -429,6 +432,7 @@ class PickUpTime extends Component {
 }
 
 mapStateToProps = state => ({
+  timeslots: state.orderReducer.timeslot.timeslots,
   updateUser: state.userReducer.updateUser,
   userDetail: state.userReducer.getUser.userDetails,
   intlData: state.intlData,

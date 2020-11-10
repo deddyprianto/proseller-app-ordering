@@ -27,6 +27,7 @@ import {
   getDeliveryProvider,
   getProductByOutlet,
   getProductsUnavailable,
+  getTimeslot,
   removeBasket,
   setOrderType,
   submitOder,
@@ -43,14 +44,9 @@ import {
 } from '../../helper/CheckEmpty';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import * as _ from 'lodash';
-import {
-  dataStores,
-  getOutletById,
-  getTimeSlot,
-} from '../../actions/stores.action';
+import {dataStores, getOutletById} from '../../actions/stores.action';
 import * as geolib from 'geolib';
 import appConfig from '../../config/appConfig';
-import {refreshToken} from '../../actions/auth.actions';
 import CryptoJS from 'react-native-crypto-js';
 import awsConfig from '../../config/awsConfig';
 import {selectedAddress} from '../../actions/payment.actions';
@@ -155,13 +151,9 @@ class Basket extends Component {
     try {
       // refresh token
       // await this.props.dispatch(refreshToken());
-      // await this.props.dispatch(defaultAddress(undefined));
       // await this.props.dispatch(clearAddress());
       // get data basket
       await this.getBasket();
-
-      // await this.props.dispatch(refreshToken());
-
       // this.refreshOpeningHours();
 
       // get previous data products from this outlet, for modifier detail purpose
@@ -169,7 +161,7 @@ class Basket extends Component {
         let outletID = this.props.dataBasket.outlet.id;
         await this.props.dispatch(getOutletById(outletID));
         await this.initializePickupTime();
-        await this.setPickUpTime(outletID);
+        await this.getTimeslot(outletID);
         // GET PRODUCTS UNAVAILABLE
         await this.fetchProductsUnavailable(outletID);
         // this.getProductsByOutlet(outletID);
@@ -212,9 +204,22 @@ class Basket extends Component {
     } catch (e) {}
   };
 
-  setPickUpTime = async outletID => {
+  getTimeslot = async outletID => {
     try {
-      await this.props.dispatch(getTimeSlot(outletID, this.state.datePickup));
+      const clientTimeZone = Math.abs(new Date().getTimezoneOffset());
+      const response = await this.props.dispatch(
+        getTimeslot(outletID, this.state.datePickup, clientTimeZone),
+      );
+      if (response != false && !isEmptyArray(response)) {
+        const find = response.find(item => item.isAvailable == true);
+        if (find != undefined) {
+          this.setState({timePickup: find.time});
+        } else {
+          this.setState({timePickup: null});
+        }
+      } else {
+        this.setState({timePickup: null});
+      }
     } catch (e) {}
   };
 
@@ -242,9 +247,8 @@ class Basket extends Component {
       let current = new Date().getTime();
       if (isEmptyArray(outletSingle.operationalHours)) {
         let datePickup = format(new Date(), 'yyyy-MM-dd');
-        let timePickup = format(new Date(), 'HH:mm');
 
-        this.setState({datePickup, timePickup});
+        this.setState({datePickup});
         return;
       } else {
         const find = outletSingle.operationalHours.find(
@@ -281,7 +285,6 @@ class Basket extends Component {
             });
             this.setState({
               datePickup: finalDate,
-              // timePickup: `${closest}:00`,
             });
           }
         } else {
@@ -294,22 +297,13 @@ class Basket extends Component {
           let closest = arrayTime.reduce(function(prev, curr) {
             return Math.abs(curr - goal) < Math.abs(prev - goal) ? curr : prev;
           });
-
-          if (closest == parseInt(find.close)) {
-            timeslot = `${closest - 1}:00 - ${closest}:00`;
-          } else {
-            timeslot = `${closest}:00 - ${closest + 1}:00`;
-          }
           this.setState({datePickup});
-          // this.setState({datePickup, timePickup: `${closest}:00`, timeslot});
         }
       }
     } catch (e) {
       let datePickup = format(new Date(), 'yyyy-MM-dd');
-      let timePickup = format(new Date(), 'HH:mm');
 
       this.setState({datePickup});
-      // this.setState({datePickup, timePickup});
     }
   };
 
@@ -754,6 +748,7 @@ class Basket extends Component {
     // fetch details outlet
     const outletID = this.props.dataBasket.outlet.id;
     await this.props.dispatch(getOutletById(outletID));
+    await this.getTimeslot(outletID);
     await this.setState({refreshing: false});
     this.props.dispatch(dataStores());
   };
@@ -1304,7 +1299,16 @@ class Basket extends Component {
 
   goToSettle = async () => {
     try {
-      const {outletSingle} = this.props;
+      const {outletSingle, oderType} = this.props;
+      let message = 'Please select pickup date & time.';
+      if (oderType === 'DELIVERY') {
+        message = 'Please select delivery date & time.';
+      }
+
+      if (this.state.timePickup === null) {
+        Alert.alert('Sorry', message);
+        return;
+      }
 
       try {
         await this.setState({loading: true});
@@ -1435,8 +1439,8 @@ class Basket extends Component {
           orderType == 'STOREPICKUP'
         ) {
           pembayaran.orderActionDate = this.state.datePickup;
-          pembayaran.orderActionTime = this.state.timePickup;
-          pembayaran.orderActionTimeSlot = this.state.timeslot;
+          pembayaran.orderActionTime = this.state.timePickup.substr(0, 5);
+          pembayaran.orderActionTimeSlot = this.state.timePickup;
         }
       } catch (e) {}
 
@@ -2450,7 +2454,7 @@ class Basket extends Component {
 
   deliveryProvider = (orderType, dataBasket) => {
     const {selectedProvider} = this.state;
-    const {selectedAddress} = this.props;
+    const {selectedAddress, providers} = this.props;
     try {
       if (orderType == 'DELIVERY' && !isEmptyObject(selectedAddress)) {
         return (
@@ -2480,7 +2484,14 @@ class Basket extends Component {
                   </Text>
                 </TouchableOpacity>
               ) : (
-                <TouchableOpacity onPress={() => this.RBproviders.open()}>
+                <TouchableOpacity
+                  onPress={() => {
+                    if (!isEmptyArray(providers) && providers.length > 1) {
+                      this.RBproviders.open();
+                    } else {
+                      return false;
+                    }
+                  }}>
                   <Text style={[styles.total, styles.badge]}>
                     {selectedProvider.name}
                   </Text>
@@ -2532,24 +2543,7 @@ class Basket extends Component {
   isUseTimingSetting = () => {
     let {outletSingle, orderType} = this.props;
     try {
-      // if (isEmptyObject(outletSingle.timing)) return false;
-      // if (orderType == 'DELIVERY') {
-      //   if (isEmptyObject(outletSingle.timing.delivery)) return false;
-      //   if (outletSingle.timing.delivery.enabled == true) return true;
-      // } else if (orderType == 'DINEIN') {
-      //   if (isEmptyObject(outletSingle.timing.dineIn)) return false;
-      //   if (outletSingle.timing.dineIn.enabled == true) return true;
-      // } else if (orderType == 'TAKEAWAY') {
-      //   if (isEmptyObject(outletSingle.timing.takeAway)) return false;
-      //   if (outletSingle.timing.takeAway.enabled == true) return true;
-      // } else if (orderType == 'STOREPICKUP') {
-      //   if (isEmptyObject(outletSingle.timing.storePickUp)) return false;
-      //   if (outletSingle.timing.storePickUp.enabled == true) return true;
-      // } else if (orderType == 'STORECHECKOUT') {
-      //   if (isEmptyObject(outletSingle.timing.storeCheckOut)) return false;
-      //   if (outletSingle.timing.storeCheckOut.enabled == true) return true;
-      // }
-      if (orderType === 'DINEIN') return false;
+      if (orderType === 'DINEIN' || orderType === 'STORECHECKOUT') return false;
       return true;
     } catch (e) {}
   };
@@ -2938,9 +2932,15 @@ class Basket extends Component {
                         : 'Pickup Date & Time'}
                     </Text>
                     <TouchableOpacity onPress={this.goToPickUpTime}>
-                      <Text style={[styles.total, styles.badge]}>
-                        {this.formatDatePickup()} at {this.state.timePickup}
-                      </Text>
+                      {this.state.timePickup != null ? (
+                        <Text style={[styles.total, styles.badge]}>
+                          {this.formatDatePickup()} at {this.state.timePickup}
+                        </Text>
+                      ) : (
+                        <Text style={[styles.total, styles.badgeDanger]}>
+                          Please select timeslot
+                        </Text>
+                      )}
                     </TouchableOpacity>
                   </View>
                 ) : null}
@@ -3319,6 +3319,12 @@ const styles = StyleSheet.create({
   },
   badge: {
     backgroundColor: colorConfig.store.secondaryColor,
+    color: 'white',
+    borderRadius: 5,
+    padding: 5,
+  },
+  badgeDanger: {
+    backgroundColor: colorConfig.store.colorError,
     color: 'white',
     borderRadius: 5,
     padding: 5,

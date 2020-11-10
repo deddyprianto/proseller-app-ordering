@@ -1,0 +1,98 @@
+{
+  "project_info": {
+    "project_number": "1076366072433",
+    "firebase_url": "https://crm-app-cd47e.firebaseio.com",
+    "project_id": "crm-app-cd47e",
+    "storage_bucket": "crm-app-cd47e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1076366072433:android:e1f09cee4358eba20419d0",
+        "android_client_info": {
+          "package_name": "com.qiji"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1076366072433-pv2fhepv5r25md2tp3tdicst1d834cm2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDZ8m-o9LJyYm1AlPOiYUekpf-3Jl7LZyY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1076366072433-pv2fhepv5r25md2tp3tdicst1d834cm2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1076366072433:android:bfd33c2c04abf8340419d0",
+        "android_client_info": {
+          "package_name": "com.qiji.demo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1076366072433-pv2fhepv5r25md2tp3tdicst1d834cm2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDZ8m-o9LJyYm1AlPOiYUekpf-3Jl7LZyY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1076366072433-pv2fhepv5r25md2tp3tdicst1d834cm2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1076366072433:android:d1d01aca159a1d3d0419d0",
+        "android_client_info": {
+          "package_name": "com.qiji.dev"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1076366072433-pv2fhepv5r25md2tp3tdicst1d834cm2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDZ8m-o9LJyYm1AlPOiYUekpf-3Jl7LZyY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1076366072433-pv2fhepv5r25md2tp3tdicst1d834cm2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

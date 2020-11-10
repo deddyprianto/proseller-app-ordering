@@ -372,7 +372,6 @@ class Products2 extends Component {
         !isEmptyObject(item.orderValidation.delivery)
       ) {
         const data = item.orderValidation.delivery;
-        console.log(data, 'datadatadatadatadata');
         if (
           data.maxAmount > 0 ||
           data.minAmount > 0 ||
@@ -624,7 +623,7 @@ class Products2 extends Component {
               onPress={() => this.setOrderType('DINEIN')}
               style={styles.activeDINEINButton}>
               <Icon
-                size={30}
+                size={25}
                 name={
                   Platform.OS === 'ios' ? 'ios-restaurant' : 'md-restaurant'
                 }
@@ -651,7 +650,7 @@ class Products2 extends Component {
               onPress={() => this.setOrderType('TAKEAWAY')}
               style={styles.activeTAKEAWAYButton}>
               <Icon
-                size={30}
+                size={25}
                 name={Platform.OS === 'ios' ? 'ios-basket' : 'md-basket'}
                 style={{color: 'white'}}
               />
@@ -676,7 +675,7 @@ class Products2 extends Component {
               onPress={() => this.setOrderType('DELIVERY')}
               style={styles.activeDELIVERYButton}>
               <Icon
-                size={30}
+                size={25}
                 name={Platform.OS === 'ios' ? 'ios-car' : 'md-car'}
                 style={{color: 'white'}}
               />
@@ -3632,6 +3631,7 @@ const styles = StyleSheet.create({
     backgroundColor: colorConfig.store.defaultColor,
     borderRadius: 10,
     width: '60%',
+    flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
   },

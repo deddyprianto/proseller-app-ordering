@@ -20,7 +20,7 @@ export const getProductByOutlet = (OutletId, refresh) => {
         },
       } = state;
 
-      const PRESET_TYPE = 'CRM';
+      const PRESET_TYPE = 'app';
 
       let response = await fetchApiProduct(
         `/productpreset/load/${PRESET_TYPE}/${OutletId}`,
@@ -74,7 +74,7 @@ export const getCategoryByOutlet = (OutletId, refresh) => {
         },
       } = state;
 
-      const PRESET_TYPE = 'CRM';
+      const PRESET_TYPE = 'app';
 
       const payload = {
         skip: 0,
@@ -114,7 +114,7 @@ export const getProductByCategory = (OutletId, categoryId, skip, take) => {
         take,
       };
 
-      const PRESET_TYPE = 'CRM';
+      const PRESET_TYPE = 'app';
 
       let response = await fetchApiProduct(
         `/productpreset/loaditems/${PRESET_TYPE}/${OutletId}/${categoryId}`,
@@ -213,7 +213,7 @@ export const searchProducts = (OutletId, categories, query) => {
         ],
       };
 
-      const PRESET_TYPE = 'CRM';
+      const PRESET_TYPE = 'app';
 
       let searchResults = [];
 
@@ -761,6 +761,17 @@ export const getDeliveryFee = payload => {
       );
       console.log(response, 'response get delivery fee');
       if (response.success == true) {
+        if (!isEmptyArray(response.response.data.dataProfider)) {
+          dispatch({
+            type: 'DATA_PROVIDER',
+            providers: response.response.data.dataProfider,
+          });
+        } else {
+          dispatch({
+            type: 'DATA_PROVIDER',
+            providers: [],
+          });
+        }
         return response.response;
       } else {
         return false;
@@ -982,5 +993,45 @@ export const getAllCategory = (skip, take) => {
     } catch (error) {
       return error;
     }
+  };
+};
+
+export const getTimeslot = (outletID, date, clientTimezone, dontSave) => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      const payload = {
+        date,
+        outletID: `outlet::${outletID}`,
+        clientTimezone,
+      };
+
+      let response = await fetchApiOrder(
+        `/timeslot`,
+        'POST',
+        payload,
+        200,
+        token,
+      );
+
+      // console.log('RESPONSE GET TIMESLOT ', response);
+
+      if (response.success == true) {
+        if (!isEmptyArray(response.response.data) && dontSave == undefined) {
+          dispatch({
+            type: 'DATA_TIMESLOT',
+            timeslots: response.response.data,
+          });
+        }
+        return response.response.data;
+      }
+      return false;
+    } catch (e) {}
   };
 };

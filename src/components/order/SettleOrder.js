@@ -35,6 +35,7 @@ import {
   getCart,
   getPendingCart,
   getPendingCartSingle,
+  getTimeslot,
   settleOrder,
 } from '../../actions/order.action';
 import CurrencyFormatter from '../../helper/CurrencyFormatter';
@@ -146,13 +147,15 @@ class SettleOrder extends Component {
     await this.resetAppliedVouchers();
 
     // get outlet details
+    const outletID = pembayaran.storeId;
     try {
-      const outletID = pembayaran.storeId;
       const response = await this.props.dispatch(getOutletById(outletID));
       if (response != false) {
         await this.setState({outlet: response});
       }
     } catch (e) {}
+
+    await this.validatePickupTime(outletID);
 
     await this.setState({loading: false});
 
@@ -168,6 +171,49 @@ class SettleOrder extends Component {
       'hardwareBackPress',
       this.handleBackPress,
     );
+  };
+
+  validatePickupTime = async outletID => {
+    try {
+      if (this.props.pembayaran.orderActionDate != undefined) {
+        const clientTimeZone = Math.abs(new Date().getTimezoneOffset());
+        const response = await this.props.dispatch(
+          getTimeslot(
+            outletID,
+            this.props.pembayaran.orderActionDate,
+            clientTimeZone,
+            true,
+          ),
+        );
+
+        let message = `Pickup at ${
+          this.props.pembayaran.orderActionTimeSlot
+        } is no longer available, please choose another pickup time.`;
+
+        if (this.props.pembayaran.orderingMode === 'DELIVERY') {
+          message = `Delivery at ${
+            this.props.pembayaran.orderActionTimeSlot
+          } is no longer available, please choose another delivery time.`;
+        }
+
+        const timeSelected = this.props.pembayaran.orderActionTimeSlot;
+        if (response != false && !isEmptyArray(response)) {
+          const find = response.find(
+            item => item.isAvailable == true && item.time == timeSelected,
+          );
+          if (find == undefined) {
+            Alert.alert(
+              'Sorry',
+              message,
+              [{text: 'Got it', onPress: () => Actions.pop()}],
+              {cancelable: false},
+            );
+            return;
+          }
+        }
+        return;
+      }
+    } catch (e) {}
   };
 
   checkDefaultPaymentAccount = async () => {
@@ -1199,6 +1245,12 @@ class SettleOrder extends Component {
         payload.deliveryFee = this.props.pembayaran.deliveryProvider.deliveryFee;
       }
 
+      if (this.props.pembayaran.orderActionDate != undefined) {
+        payload.orderActionDate = this.props.pembayaran.orderActionDate;
+        payload.orderActionTime = this.props.pembayaran.orderActionTime;
+        payload.orderActionTimeSlot = this.props.pembayaran.orderActionTimeSlot;
+      }
+
       try {
         payload.cartDetails = {
           partitionKey: this.props.pembayaran.cartDetails.partitionKey,
@@ -1580,7 +1632,13 @@ class SettleOrder extends Component {
         payload.deliveryProviderId = this.props.pembayaran.deliveryProvider.id;
         payload.deliveryProvider = this.props.pembayaran.deliveryProvider.name;
         payload.deliveryProviderName = this.props.pembayaran.deliveryProvider.name;
-        payload.deliveryService = '-';
+        payload.deliveryFee = this.props.pembayaran.deliveryProvider.deliveryFee;
+      }
+
+      if (this.props.pembayaran.orderActionDate != undefined) {
+        payload.orderActionDate = this.props.pembayaran.orderActionDate;
+        payload.orderActionTime = this.props.pembayaran.orderActionTime;
+        payload.orderActionTimeSlot = this.props.pembayaran.orderActionTimeSlot;
       }
 
       payload.payAtPOS = true;

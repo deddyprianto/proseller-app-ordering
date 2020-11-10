@@ -84,6 +84,18 @@ const deliveryProvider = (state = {}, action) => {
   }
 };
 
+const timeslot = (state = {}, action) => {
+  switch (action.type) {
+    case 'DATA_TIMESLOT':
+      return {
+        timeslots: action.timeslots,
+      };
+
+    default:
+      return state;
+  }
+};
+
 export default combineReducers({
   productsOutlet,
   dataBasket,
@@ -92,4 +104,5 @@ export default combineReducers({
   dataCartSingle,
   deliveryProvider,
   dataProvider,
+  timeslot,
 });

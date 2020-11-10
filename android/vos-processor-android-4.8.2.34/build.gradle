@@ -1,0 +1,2 @@
+configurations.maybeCreate("default")
+artifacts.add("default", file('vos-processor-android-4.8.2.34.aar'))

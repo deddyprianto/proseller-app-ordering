@@ -137,7 +137,12 @@ class WaitingFood extends Component {
         if (total < 0) total = 0;
         return this.formatCurrency(total);
       } else {
-        return this.formatCurrency(data.totalNettAmount);
+        let total = data.totalNettAmount;
+
+        if (data.deliveryFee != undefined) {
+          total += data.deliveryFee;
+        }
+        return this.formatCurrency(total);
       }
     } catch (e) {}
   };
@@ -791,6 +796,20 @@ class WaitingFood extends Component {
               <Text style={styles.total}>Ordering Mode : </Text>
               <Text style={styles.total}>{dataBasket.orderingMode}</Text>
             </View>
+            {dataBasket.orderActionDate != undefined && (
+              <View style={styles.itemSummary}>
+                <Text style={styles.total}>
+                  {dataBasket.orderingMode == 'DELIVERY'
+                    ? 'Delivery Date & Time'
+                    : 'Pickup Date & Time'}{' '}
+                  :{' '}
+                </Text>
+                <Text style={styles.total}>
+                  {format(new Date(dataBasket.orderActionDate), 'dd MMM yyyy')}{' '}
+                  at {dataBasket.orderActionTimeSlot}
+                </Text>
+              </View>
+            )}
             {dataBasket.orderingMode == 'DELIVERY' ? (
               <View style={styles.itemSummary}>
                 <Text style={styles.total}>Delivery Address : </Text>
