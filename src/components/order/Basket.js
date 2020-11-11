@@ -13,6 +13,7 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   View,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -1299,15 +1300,20 @@ class Basket extends Component {
 
   goToSettle = async () => {
     try {
-      const {outletSingle, oderType} = this.props;
+      const {outletSingle} = this.props;
       let message = 'Please select pickup date & time.';
-      if (oderType === 'DELIVERY') {
+      if (this.props.orderType === 'DELIVERY') {
         message = 'Please select delivery date & time.';
       }
 
       if (this.state.timePickup === null) {
-        Alert.alert('Sorry', message);
-        return;
+        if (
+          this.props.orderType === 'STOREPICKUP' ||
+          this.props.orderType === 'DELIVERY'
+        ) {
+          Alert.alert('Sorry', message);
+          return;
+        }
       }
 
       try {
@@ -2484,7 +2490,7 @@ class Basket extends Component {
                   </Text>
                 </TouchableOpacity>
               ) : (
-                <TouchableOpacity
+                <TouchableWithoutFeedback
                   onPress={() => {
                     if (!isEmptyArray(providers) && providers.length > 1) {
                       this.RBproviders.open();
@@ -2495,7 +2501,7 @@ class Basket extends Component {
                   <Text style={[styles.total, styles.badge]}>
                     {selectedProvider.name}
                   </Text>
-                </TouchableOpacity>
+                </TouchableWithoutFeedback>
               )}
             </View>
           </View>
@@ -2687,7 +2693,7 @@ class Basket extends Component {
                             justifyContent: 'space-between',
                             // padding: 3,
                           }}>
-                          <View style={{width: '75%', flexDirection: 'row'}}>
+                          <View style={{width: '70%', flexDirection: 'row'}}>
                             <Image
                               source={this.getImageUrl(
                                 rowData.item.product.defaultImageURL,
@@ -2938,7 +2944,7 @@ class Basket extends Component {
                         </Text>
                       ) : (
                         <Text style={[styles.total, styles.badgeDanger]}>
-                          Please select timeslot
+                          Select Timeslot
                         </Text>
                       )}
                     </TouchableOpacity>
@@ -3177,7 +3183,7 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     alignItems: 'flex-end',
     fontSize: 13,
-    fontFamily: 'Lato-Medium',
+    fontFamily: 'Lato-Bold',
   },
   descPriceModifier: {
     color: colorConfig.pageIndex.grayColor,

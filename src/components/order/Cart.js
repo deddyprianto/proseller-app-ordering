@@ -1350,15 +1350,15 @@ class Cart extends Component {
       if (dataBasket != undefined) {
         //  for outlet type quick service
         if (
-          (dataBasket.status == 'PROCESSING' ||
-            dataBasket.status == 'READY_FOR_DELIVERY' ||
-            dataBasket.status == 'READY_FOR_COLLECTION') &&
-          (Actions.currentScene == 'cart' ||
-            Actions.currentScene == 'waitingFood') &&
-          (dataBasket.outlet.outletType == 'QUICKSERVICE' ||
-            dataBasket.outlet.outletType == 'RETAIL' ||
-            dataBasket.orderingMode == 'TAKEAWAY' ||
-            dataBasket.orderingMode == 'DELIVERY')
+          (dataBasket.status === 'PROCESSING' ||
+            dataBasket.status === 'READY_FOR_DELIVERY' ||
+            dataBasket.status === 'READY_FOR_COLLECTION') &&
+          (Actions.currentScene === 'cart' ||
+            Actions.currentScene === 'waitingFood') &&
+          (dataBasket.outlet.outletType === 'QUICKSERVICE' ||
+            dataBasket.outlet.outletType === 'RETAIL' ||
+            dataBasket.orderingMode === 'TAKEAWAY' ||
+            dataBasket.orderingMode === 'DELIVERY')
         ) {
           // clearInterval(this.interval);
           // this.interval = undefined;
@@ -1648,19 +1648,20 @@ class Cart extends Component {
                     </Text>
                   </View>
                 )}
-                {this.props.dataBasket.payAtPOS == true && (
-                  <View style={styles.itemSummary}>
-                    <Text
-                      style={[styles.total, {color: colorConfig.store.title}]}>
-                      Pay at Store
-                    </Text>
-                    <Text
-                      style={[styles.total, {color: colorConfig.store.title}]}>
-                      {appConfig.appMataUang}
-                      {this.getGrandTotal(this.props.dataBasket)}
-                    </Text>
-                  </View>
-                )}
+
+                <View style={styles.itemSummary}>
+                  <Text
+                    style={[styles.total, {color: colorConfig.store.title}]}>
+                    {this.props.dataBasket.payAtPOS == true
+                      ? 'Pay at Store'
+                      : 'TOTAL'}
+                  </Text>
+                  <Text
+                    style={[styles.total, {color: colorConfig.store.title}]}>
+                    {appConfig.appMataUang}
+                    {this.getGrandTotal(this.props.dataBasket)}
+                  </Text>
+                </View>
               </View>
             </ScrollView>
           ) : (

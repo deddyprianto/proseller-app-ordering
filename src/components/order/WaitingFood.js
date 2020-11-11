@@ -20,7 +20,12 @@ import {Actions} from 'react-native-router-flux';
 import colorConfig from '../../config/colorConfig';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
-import {completeOrder, getCart, setCart} from '../../actions/order.action';
+import {
+  completeOrder,
+  getCart,
+  getPendingCart,
+  setCart,
+} from '../../actions/order.action';
 import LottieView from 'lottie-react-native';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import CurrencyFormatter from '../../helper/CurrencyFormatter';
@@ -289,6 +294,7 @@ class WaitingFood extends Component {
       };
 
       const response = await this.props.dispatch(completeOrder(payload));
+      this.props.dispatch(getPendingCart());
 
       if (response != false) {
         try {

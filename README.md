@@ -41,7 +41,7 @@ SET ENVFILE=.env.dev && gradlew assembleDevRelease
 To build app on **demo** environment, run :
 
 ```
-SET ENVFILE=.env.demo && gradlew assembleDemoRelease 
+p
 ```
 To build app on **production** environment, run :
 

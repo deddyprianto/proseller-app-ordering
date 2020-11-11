@@ -169,16 +169,25 @@ class PaymentSuccess extends Component {
     }
   };
 
-  getMessage = () => {
-    const {intlData} = this.props;
+  getGrandTotal = () => {
+    const {dataRespons} = this.props;
     try {
-      if (this.props.dataRespons.payAtPOS == true) {
-        return 'Amount to Pay';
+      if (!isEmptyArray(dataRespons.payments)) {
+        const find = dataRespons.payments.find(
+          item => item.isAppPayment === true,
+        );
+        if (find !== undefined) {
+          return this.format(CurrencyFormatter(find.paymentAmount));
+        } else if (find === undefined && dataRespons.payAtPOS != true) {
+          return this.format(CurrencyFormatter(0));
+        } else {
+          return this.format(CurrencyFormatter(dataRespons.totalNettAmount));
+        }
       } else {
-        return intlData.messages.youPaid;
+        return this.format(CurrencyFormatter(dataRespons.totalNettAmount));
       }
     } catch (e) {
-      return intlData.messages.youPaid;
+      return dataRespons.totalNettAmount;
     }
   };
 
@@ -220,7 +229,7 @@ class PaymentSuccess extends Component {
               fontSize: 14,
               fontWeight: 'bold',
             }}>
-            {this.getMessage()}
+            {intlData.messages.youPaid}
           </Text>
           <View
             style={{
@@ -243,16 +252,10 @@ class PaymentSuccess extends Component {
                 fontSize: 35,
                 fontWeight: 'bold',
               }}>
-              {this.props.dataRespons.deliveryFee != undefined
-                ? this.format(
-                    CurrencyFormatter(
-                      this.props.dataRespons.totalNettAmount +
-                        this.props.dataRespons.deliveryFee,
-                    ),
-                  )
-                : this.format(
-                    CurrencyFormatter(this.props.dataRespons.totalNettAmount),
-                  )}
+              {/*{this.format(*/}
+              {/*  CurrencyFormatter(this.props.dataRespons.totalNettAmount),*/}
+              {/*)}*/}
+              {this.getGrandTotal()}
             </Text>
           </View>
           {/*{this.props.dataRespons.earnedPoint > 0 ? (*/}
@@ -315,7 +318,7 @@ class PaymentSuccess extends Component {
                 fontWeight: 'bold',
                 color: colorConfig.pageIndex.activeTintColor,
               }}>
-              {appConfig.appName.toUpperCase()}
+              {this.props.companyInfo.companyName}
             </Text>
             <Text
               style={{
@@ -484,6 +487,7 @@ const styles = StyleSheet.create({
 
 mapStateToProps = state => ({
   intlData: state.intlData,
+  companyInfo: state.userReducer.getCompanyInfo.companyInfo,
 });
 
 mapDispatchToProps = dispatch => ({

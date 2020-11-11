@@ -1552,6 +1552,237 @@ class ProductsSpecific extends Component {
     return <NewSearch />;
   };
 
+  askUserToSelectOrderType = () => {
+    const {intlData} = this.props;
+    const {item} = this.state;
+    let height = 330;
+
+    if (item.outletType === 'RETAIL') {
+      if (item.enableStoreCheckOut == false) height -= 50;
+      if (item.enableStorePickUp == false) height -= 50;
+      if (item.enableDelivery == false) height -= 50;
+
+      return (
+        <RBSheet
+          ref={ref => {
+            this.RBSheet = ref;
+          }}
+          animationType={'slide'}
+          height={height}
+          duration={10}
+          closeOnDragDown={true}
+          closeOnPressMask={true}
+          closeOnPressBack={true}
+          customStyles={{
+            container: {
+              backgroundColor: colorConfig.store.darkColor,
+              justifyContent: 'center',
+              alignItems: 'center',
+            },
+          }}>
+          <Text
+            style={{
+              color: colorConfig.pageIndex.inactiveTintColor,
+              fontSize: 25,
+              paddingBottom: 5,
+              fontWeight: 'bold',
+              fontFamily: 'Lato-Bold',
+            }}>
+            Order Mode
+          </Text>
+          {item.enableStoreCheckOut == true ? (
+            <TouchableOpacity
+              disabled={item.enableStoreCheckOut == false ? true : false}
+              onPress={() => this.setOrderType('STORECHECKOUT')}
+              style={styles.activeTAKEAWAYButton}>
+              <Icon
+                size={25}
+                name={Platform.OS === 'ios' ? 'ios-card' : 'md-card'}
+                style={{color: 'white'}}
+              />
+              <Text
+                style={{
+                  marginLeft: 10,
+                  color: 'white',
+                  fontWeight: 'bold',
+                  fontFamily: 'Lato-Bold',
+                  fontSize: 18,
+                  textAlign: 'center',
+                }}>
+                {item.storeCheckOutName != undefined &&
+                item.storeCheckOutName != ''
+                  ? item.storeCheckOutName
+                  : 'Srore Checkout'}
+              </Text>
+            </TouchableOpacity>
+          ) : null}
+          {item.enableStorePickUp == true ? (
+            <TouchableOpacity
+              onPress={() => this.setOrderType('STOREPICKUP')}
+              style={styles.activeDINEINButton}>
+              <Icon
+                size={25}
+                name={Platform.OS === 'ios' ? 'ios-basket' : 'md-basket'}
+                style={{color: 'white'}}
+              />
+              <Text
+                style={{
+                  marginLeft: 10,
+                  color: 'white',
+                  fontWeight: 'bold',
+                  fontFamily: 'Lato-Bold',
+                  fontSize: 18,
+                  textAlign: 'center',
+                }}>
+                {item.storePickUpName != undefined && item.storePickUpName != ''
+                  ? item.storePickUpName
+                  : 'Store Pickup'}
+              </Text>
+            </TouchableOpacity>
+          ) : null}
+          {item.enableDelivery == true ? (
+            <TouchableOpacity
+              disabled={item.enableDelivery == false ? true : false}
+              onPress={() => this.setOrderType('DELIVERY')}
+              style={styles.activeDELIVERYButton}>
+              <View style={{flexDirection: 'row'}}>
+                <Icon
+                  size={25}
+                  name={Platform.OS === 'ios' ? 'ios-car' : 'md-car'}
+                  style={{color: 'white'}}
+                />
+                <Text
+                  style={{
+                    marginLeft: 10,
+                    color: 'white',
+                    fontWeight: 'bold',
+                    fontFamily: 'Lato-Bold',
+                    fontSize: 18,
+                    textAlign: 'center',
+                  }}>
+                  {item.deliveryName != undefined && item.deliveryName != ''
+                    ? item.deliveryName
+                    : 'DELIVERY'}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          ) : null}
+        </RBSheet>
+      );
+    } else {
+      if (item.enableDineIn == false) height -= 50;
+      if (item.enableTakeAway == false) height -= 50;
+      if (item.enableDelivery == false) height -= 50;
+
+      return (
+        <RBSheet
+          ref={ref => {
+            this.RBSheet = ref;
+          }}
+          animationType={'slide'}
+          height={height}
+          duration={10}
+          closeOnDragDown={true}
+          closeOnPressMask={true}
+          closeOnPressBack={true}
+          customStyles={{
+            container: {
+              backgroundColor: colorConfig.store.darkColor,
+              justifyContent: 'center',
+              alignItems: 'center',
+            },
+          }}>
+          <Text
+            style={{
+              color: colorConfig.pageIndex.inactiveTintColor,
+              fontSize: 25,
+              paddingBottom: 5,
+              fontWeight: 'bold',
+              fontFamily: 'Lato-Bold',
+            }}>
+            Order Mode
+          </Text>
+          {item.enableDineIn == true ? (
+            <TouchableOpacity
+              onPress={() => this.setOrderType('DINEIN')}
+              style={styles.activeDINEINButton}>
+              <Icon
+                size={25}
+                name={
+                  Platform.OS === 'ios' ? 'ios-restaurant' : 'md-restaurant'
+                }
+                style={{color: 'white'}}
+              />
+              <Text
+                style={{
+                  marginLeft: 10,
+                  color: 'white',
+                  fontWeight: 'bold',
+                  fontFamily: 'Lato-Bold',
+                  fontSize: 18,
+                  textAlign: 'center',
+                }}>
+                {item.dineInName != undefined && item.dineInName != ''
+                  ? item.dineInName
+                  : 'DINE IN'}
+              </Text>
+            </TouchableOpacity>
+          ) : null}
+          {item.enableTakeAway == true ? (
+            <TouchableOpacity
+              disabled={item.enableTakeAway == false ? true : false}
+              onPress={() => this.setOrderType('TAKEAWAY')}
+              style={styles.activeTAKEAWAYButton}>
+              <Icon
+                size={25}
+                name={Platform.OS === 'ios' ? 'ios-basket' : 'md-basket'}
+                style={{color: 'white'}}
+              />
+              <Text
+                style={{
+                  marginLeft: 10,
+                  color: 'white',
+                  fontWeight: 'bold',
+                  fontFamily: 'Lato-Bold',
+                  fontSize: 18,
+                  textAlign: 'center',
+                }}>
+                {item.takeAwayName != undefined && item.takeAwayName != ''
+                  ? item.takeAwayName
+                  : 'TAKE AWAY'}
+              </Text>
+            </TouchableOpacity>
+          ) : null}
+          {item.enableDelivery == true ? (
+            <TouchableOpacity
+              disabled={item.enableDelivery == false ? true : false}
+              onPress={() => this.setOrderType('DELIVERY')}
+              style={styles.activeDELIVERYButton}>
+              <Icon
+                size={25}
+                name={Platform.OS === 'ios' ? 'ios-car' : 'md-car'}
+                style={{color: 'white'}}
+              />
+              <Text
+                style={{
+                  marginLeft: 10,
+                  color: 'white',
+                  fontWeight: 'bold',
+                  fontFamily: 'Lato-Bold',
+                  fontSize: 18,
+                  textAlign: 'center',
+                }}>
+                {item.deliveryName != undefined && item.deliveryName != ''
+                  ? item.deliveryName
+                  : 'DELIVERY'}
+              </Text>
+            </TouchableOpacity>
+          ) : null}
+        </RBSheet>
+      );
+    }
+  };
+
   render() {
     const {intlData, item} = this.props;
     let {loadProducts, dialogSearch} = this.state;
@@ -1582,6 +1813,7 @@ class ProductsSpecific extends Component {
           loadModifierTime={this.state.loadModifierTime}
         />
         {this.askUserToSelectProductModifier()}
+        {this.askUserToSelectOrderType()}
         <>
           {/* MENU FIXED */}
           {/*{visibleMenu ? (*/}
@@ -1643,7 +1875,7 @@ class ProductsSpecific extends Component {
                       }}>
                       {this.state.search != undefined
                         ? this.state.search
-                        : `Find Products in ${this.state.item.storeName.substr(
+                        : `Search in ${this.state.item.storeName.substr(
                             0,
                             15,
                           )}`}

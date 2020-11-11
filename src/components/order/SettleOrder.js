@@ -1542,6 +1542,24 @@ class SettleOrder extends Component {
     try {
       payload.payments = [];
 
+      // CHECK IF USER APPLY VOUCHER OR POINTS, THEN PREVENT
+      if (!isEmptyArray(dataVoucer)) {
+        const findVoucherOrPoints = await dataVoucer.find(
+          item => item.isVoucher == true,
+        );
+        if (
+          findVoucherOrPoints != undefined ||
+          this.state.addPoint != undefined
+        ) {
+          Alert.alert(
+            'Sorry',
+            `Cannot apply voucher or points if using pay at store.`,
+          );
+          this.setState({loading: false});
+          return;
+        }
+      }
+
       try {
         delete payload.payment;
         delete payload.storeId;
@@ -1969,7 +1987,7 @@ class SettleOrder extends Component {
                           fontWeight: 'bold',
                           color: colorConfig.pageIndex.activeTintColor,
                         }}>
-                        {appConfig.appName}
+                        {this.props.companyInfo.companyName}
                       </Text>
                       <Text
                         style={{

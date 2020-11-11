@@ -439,43 +439,43 @@ class AccountMenuList extends Component {
         </Text>
 
         {this.renderPaymentMethodOptions()}
-        {appConfig.appName === 'U Stars Supermarket' && (
-          <TouchableOpacity
-            style={styles.cardMenu}
-            onPress={this.handleNetsClick}>
-            <View style={styles.itemMenu}>
-              <Icon
-                size={20}
-                name={Platform.OS === 'ios' ? 'ios-card' : 'md-card'}
-                style={{color: 'white'}}
-              />
-            </View>
-            <View>
-              <View style={styles.item}>
-                <View>
-                  <Text style={styles.title}>NETS Click</Text>
-                  {netsclickStatus == true ? (
-                    <Text style={styles.subTitle}>NETS Click Registered</Text>
-                  ) : (
-                    <Text style={styles.subTitleGray}>Add NETS Bank Card</Text>
-                  )}
-                </View>
-                <Icon
-                  size={20}
-                  name={
-                    Platform.OS === 'ios'
-                      ? 'ios-arrow-dropright'
-                      : 'md-arrow-dropright'
-                  }
-                  style={{
-                    color: colorConfig.store.defaultColor,
-                    marginRight: 20,
-                  }}
-                />
-              </View>
-            </View>
-          </TouchableOpacity>
-        )}
+        {/*{appConfig.appName === 'U Stars Supermarket' && (*/}
+        {/*  <TouchableOpacity*/}
+        {/*    style={styles.cardMenu}*/}
+        {/*    onPress={this.handleNetsClick}>*/}
+        {/*    <View style={styles.itemMenu}>*/}
+        {/*      <Icon*/}
+        {/*        size={20}*/}
+        {/*        name={Platform.OS === 'ios' ? 'ios-card' : 'md-card'}*/}
+        {/*        style={{color: 'white'}}*/}
+        {/*      />*/}
+        {/*    </View>*/}
+        {/*    <View>*/}
+        {/*      <View style={styles.item}>*/}
+        {/*        <View>*/}
+        {/*          <Text style={styles.title}>NETS Click</Text>*/}
+        {/*          {netsclickStatus == true ? (*/}
+        {/*            <Text style={styles.subTitle}>NETS Click Registered</Text>*/}
+        {/*          ) : (*/}
+        {/*            <Text style={styles.subTitleGray}>Add NETS Bank Card</Text>*/}
+        {/*          )}*/}
+        {/*        </View>*/}
+        {/*        <Icon*/}
+        {/*          size={20}*/}
+        {/*          name={*/}
+        {/*            Platform.OS === 'ios'*/}
+        {/*              ? 'ios-arrow-dropright'*/}
+        {/*              : 'md-arrow-dropright'*/}
+        {/*          }*/}
+        {/*          style={{*/}
+        {/*            color: colorConfig.store.defaultColor,*/}
+        {/*            marginRight: 20,*/}
+        {/*          }}*/}
+        {/*        />*/}
+        {/*      </View>*/}
+        {/*    </View>*/}
+        {/*  </TouchableOpacity>*/}
+        {/*)}*/}
 
         {/*<TouchableOpacity*/}
         {/*  onPress={() => this.props.screen.navigation.navigate('History')}*/}

@@ -67,6 +67,9 @@ class MenuCategory extends Component {
         }
       }
     } catch (e) {}
+    await this.setState({
+      loading: false,
+    });
   };
 
   loadMoreCategory = async length => {

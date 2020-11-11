@@ -3049,7 +3049,7 @@ class Products2 extends Component {
                         marginLeft: 10,
                         fontFamily: 'Lato-Medium',
                       }}>
-                      Find Products in {this.state.item.storeName.substr(0, 15)}
+                      Search in {this.state.item.storeName.substr(0, 15)}
                     </Text>
                   </TouchableOpacity>
                   <CartIcon
