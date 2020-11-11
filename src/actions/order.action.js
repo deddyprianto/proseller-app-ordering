@@ -927,7 +927,7 @@ export const getProductsUnavailable = OutletId => {
   };
 };
 
-export const getTermsConditions = (payload, url) => {
+export const getTermsConditions = () => {
   return async (dispatch, getState) => {
     const state = getState();
     try {
@@ -948,6 +948,10 @@ export const getTermsConditions = (payload, url) => {
       console.log(response, 'RESPONSE ORDERING SETTING');
 
       if (response.success) {
+        dispatch({
+          type: 'DATA_ORDERING_SETTING',
+          orderingSetting: response.response.data,
+        });
         return response.response.data;
       } else {
         return false;

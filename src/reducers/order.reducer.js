@@ -96,6 +96,18 @@ const timeslot = (state = {}, action) => {
   }
 };
 
+const orderingSetting = (state = {}, action) => {
+  switch (action.type) {
+    case 'DATA_ORDERING_SETTING':
+      return {
+        orderingSetting: action.orderingSetting,
+      };
+
+    default:
+      return state;
+  }
+};
+
 export default combineReducers({
   productsOutlet,
   dataBasket,
@@ -105,4 +117,5 @@ export default combineReducers({
   deliveryProvider,
   dataProvider,
   timeslot,
+  orderingSetting,
 });
