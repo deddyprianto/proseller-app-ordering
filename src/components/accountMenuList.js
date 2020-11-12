@@ -29,6 +29,7 @@ import {
 } from '../actions/payment.actions';
 import Loader from './loader';
 import appConfig from '../config/appConfig';
+import {getTermsConditions} from '../actions/order.action';
 
 class AccountMenuList extends Component {
   constructor(props) {
@@ -72,6 +73,7 @@ class AccountMenuList extends Component {
     } catch (e) {}
 
     await this.props.dispatch(logoutUser());
+    this.props.dispatch(getTermsConditions());
     this.setState({loadingLogout: false});
   };
 
