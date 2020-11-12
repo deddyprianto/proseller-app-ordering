@@ -155,7 +155,7 @@ class SettleOrder extends Component {
       }
     } catch (e) {}
 
-    await this.validatePickupTime(outletID);
+    // await this.validatePickupTime(outletID);
 
     await this.setState({loading: false});
 

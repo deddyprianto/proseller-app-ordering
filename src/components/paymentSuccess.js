@@ -23,7 +23,7 @@ import appConfig from '../config/appConfig';
 import CurrencyFormatter from '../helper/CurrencyFormatter';
 import {clearAccount, clearAddress} from '../actions/payment.actions';
 // import OneSignal from 'react-native-onesignal';
-import {getPendingCart} from '../actions/order.action';
+import {getPendingCart, removeTimeslot} from '../actions/order.action';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
 import {isEmptyArray, isEmptyObject} from '../helper/CheckEmpty';
@@ -52,6 +52,7 @@ class PaymentSuccess extends Component {
     try {
       this.props.dispatch(clearAccount());
       this.props.dispatch(getPendingCart());
+      this.props.dispatch(removeTimeslot());
     } catch (e) {}
   };
 

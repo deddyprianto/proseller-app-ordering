@@ -1644,7 +1644,10 @@ class Cart extends Component {
                         new Date(this.props.dataBasket.orderActionDate),
                         'dd MMM yyyy',
                       )}{' '}
-                      at {this.props.dataBasket.orderActionTimeSlot}
+                      at{' '}
+                      {this.props.dataBasket.orderActionTimeSlot === null
+                        ? this.props.dataBasket.orderActionTime
+                        : this.props.dataBasket.orderActionTimeSlot}
                     </Text>
                   </View>
                 )}

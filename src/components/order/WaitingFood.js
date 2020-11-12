@@ -812,7 +812,10 @@ class WaitingFood extends Component {
                 </Text>
                 <Text style={styles.total}>
                   {format(new Date(dataBasket.orderActionDate), 'dd MMM yyyy')}{' '}
-                  at {dataBasket.orderActionTimeSlot}
+                  at{' '}
+                  {dataBasket.orderActionTimeSlot === null
+                    ? dataBasket.orderActionTime
+                    : dataBasket.orderActionTimeSlot}
                 </Text>
               </View>
             )}

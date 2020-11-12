@@ -72,14 +72,24 @@ class PickUpTime extends Component {
     try {
       this.setState({loading: true});
 
-      this.props.setPickupDate(this.state.date);
-      this.props.setPickupTime(this.state.time);
+      if (this.state.time != null && this.state.time != undefined) {
+        this.props.setPickupTime(this.state.time);
+        this.props.setPickupDate(this.state.date);
+      } else {
+        if (this.checkTimeslotAvailibility()) {
+          Alert.alert('Sorry', 'Please select order timeslot.');
+          this.setState({loading: false});
+          return;
+        } else {
+          this.props.setPickupDate(this.state.date);
+        }
+      }
 
       this.setState({loading: false});
 
       Actions.pop();
     } catch (e) {
-      Alert.alert(e.message, 'Something went wrong, please try again');
+      Alert.alert('Sorry', 'Something went wrong, please try again');
       this.setState({loading: false});
     }
   };
@@ -272,6 +282,21 @@ class PickUpTime extends Component {
     }
   };
 
+  checkTimeslotAvailibility = () => {
+    try {
+      const {timeslots} = this.props;
+      if (isEmptyArray(timeslots)) {
+        return false;
+      } else {
+        const find = timeslots.find(item => item.isAvailable == true);
+        if (find != undefined) return true;
+        else return false;
+      }
+    } catch (e) {
+      return false;
+    }
+  };
+
   render() {
     const {date, time} = this.state;
     return (
@@ -329,83 +354,80 @@ class PickUpTime extends Component {
             </TouchableOpacity>
           </View>
 
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              paddingVertical: 10,
-              paddingBottom: this.state.openTimePicker ? 250 : 10,
-            }}>
-            <View style={{width: '20%'}}>
-              <Text style={styles.option}>Time </Text>
-            </View>
+          {this.checkTimeslotAvailibility() && (
             <View
               style={{
-                width: '60%',
-                // borderWidth: 0.6,
-                // borderColor: colorConfig.store.defaultColor,
-                // // padding: 7,
-                // borderRadius: 5,
+                flexDirection: 'row',
+                alignItems: 'center',
+                paddingVertical: 10,
+                paddingBottom: this.state.openTimePicker ? 250 : 10,
               }}>
-              {/*<Text style={styles.option}>{time}</Text>*/}
-              <DropDownPicker
-                placeholder={'Select Pickup Time'}
-                items={this.getOperationalHours()}
-                defaultValue={time}
-                containerStyle={{
-                  height: 50,
-                }}
+              <View style={{width: '20%'}}>
+                <Text style={styles.option}>Time </Text>
+              </View>
+              <View
                 style={{
-                  backgroundColor: 'white',
-                  marginTop: 5,
-                  borderWidth: 0.6,
-                  borderColor: colorConfig.pageIndex.grayColor,
-                  borderRadius: 5,
-                }}
-                dropDownStyle={{
-                  backgroundColor: '#fafafa',
-                  // borderColor: 'red',
-                  borderWidth: 0.6,
-                  zIndex: 3,
-                  height: 250,
-                }}
-                dropDownMaxHeight={250}
-                activeLabelStyle={{
-                  color: 'white',
-                  fontFamily: 'Lato-Bold',
-                }}
-                activeItemStyle={{
-                  backgroundColor: colorConfig.store.defaultColor,
-                }}
-                itemStyle={{
-                  marginVertical: 4,
-                  backgroundColor: 'white',
-                  borderColor: 'gray',
-                }}
-                labelStyle={{
-                  fontFamily: 'Lato-Medium',
-                  fontSize: 14,
-                }}
-                onOpen={() => {
-                  this.setState({openTimePicker: true});
-                }}
-                onClose={() => {
-                  this.setState({openTimePicker: false});
-                }}
-                onChangeItem={item => {
-                  this.setState({time: item.value});
-                }}
-              />
-              {/*<Picker*/}
-              {/*  selectedValue={time}*/}
-              {/*  style={{width: '100%'}}*/}
-              {/*  onValueChange={(itemValue, itemIndex) =>*/}
-              {/*    this.setState({time: itemValue})*/}
-              {/*  }>*/}
-              {/*  {this.getOperationalHours()}*/}
-              {/*</Picker>*/}
+                  width: '60%',
+                }}>
+                <DropDownPicker
+                  placeholder={'Select Pickup Time'}
+                  items={this.getOperationalHours()}
+                  defaultValue={time}
+                  containerStyle={{
+                    height: 50,
+                  }}
+                  style={{
+                    backgroundColor: 'white',
+                    marginTop: 5,
+                    borderWidth: 0.6,
+                    borderColor: colorConfig.pageIndex.grayColor,
+                    borderRadius: 5,
+                  }}
+                  dropDownStyle={{
+                    backgroundColor: '#fafafa',
+                    // borderColor: 'red',
+                    borderWidth: 0.6,
+                    zIndex: 3,
+                    height: 250,
+                  }}
+                  dropDownMaxHeight={250}
+                  activeLabelStyle={{
+                    color: 'white',
+                    fontFamily: 'Lato-Bold',
+                  }}
+                  activeItemStyle={{
+                    backgroundColor: colorConfig.store.defaultColor,
+                  }}
+                  itemStyle={{
+                    marginVertical: 4,
+                    backgroundColor: 'white',
+                    borderColor: 'gray',
+                  }}
+                  labelStyle={{
+                    fontFamily: 'Lato-Medium',
+                    fontSize: 14,
+                  }}
+                  onOpen={() => {
+                    this.setState({openTimePicker: true});
+                  }}
+                  onClose={() => {
+                    this.setState({openTimePicker: false});
+                  }}
+                  onChangeItem={item => {
+                    this.setState({time: item.value});
+                  }}
+                />
+                {/*<Picker*/}
+                {/*  selectedValue={time}*/}
+                {/*  style={{width: '100%'}}*/}
+                {/*  onValueChange={(itemValue, itemIndex) =>*/}
+                {/*    this.setState({time: itemValue})*/}
+                {/*  }>*/}
+                {/*  {this.getOperationalHours()}*/}
+                {/*</Picker>*/}
+              </View>
             </View>
-          </View>
+          )}
 
           <TouchableOpacity
             onPress={this.submit}

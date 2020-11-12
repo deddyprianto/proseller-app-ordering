@@ -26,7 +26,7 @@ import Loader from '../components/loader';
 import colorConfig from '../config/colorConfig';
 import Header from '../components/atom/header';
 import Icon from 'react-native-vector-icons/Ionicons';
-import {isEmptyObject} from '../helper/CheckEmpty';
+import {isEmptyArray, isEmptyObject} from '../helper/CheckEmpty';
 import BackgroundTimer from 'react-native-background-timer';
 
 const imageWidth = Dimensions.get('window').width / 2;
@@ -343,6 +343,30 @@ class SignInPhoneNumber extends Component {
     }
   };
 
+  getLabelText = () => {
+    try {
+      const {orderingSetting} = this.props;
+      if (
+        orderingSetting !== undefined &&
+        !isEmptyArray(orderingSetting.settings)
+      ) {
+        const find = orderingSetting.settings.find(
+          item => item.settingKey === 'MobileOTP',
+        );
+
+        if (find != undefined) {
+          if (find.settingValue === 'WHATSAPP') {
+            return 'Whatsapp';
+          } else if (find.settingValue === 'SMS') {
+            return 'SMS';
+          }
+        }
+      }
+    } catch (e) {
+      return 'SMS';
+    }
+  };
+
   render() {
     const {intlData} = this.props;
     let {minutes, seconds} = this.state;
@@ -387,14 +411,14 @@ class SignInPhoneNumber extends Component {
                 }}>
                 <Text
                   style={{
-                    fontSize: 15,
+                    fontSize: 14,
                     color: this.state.toggleSMSOTP
                       ? colorConfig.store.title
                       : colorConfig.pageIndex.backgroundColor,
                     fontWeight: 'bold',
                     fontFamily: 'Lato-Medium',
                   }}>
-                  {intlData.messages.use} SMS OTP
+                  {intlData.messages.use} {this.getLabelText()} OTP
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
@@ -488,7 +512,7 @@ class SignInPhoneNumber extends Component {
                           fontWeight: 'bold',
                           fontFamily: 'Lato-Medium',
                         }}>
-                        {intlData.messages.get} OTP via SMS
+                        {intlData.messages.get} OTP
                       </Text>
                     </TouchableHighlight>
                   ) : (
@@ -659,6 +683,7 @@ mapStateToProps = state => ({
   status: state.accountsReducer.accountExist.status,
   deviceID: state.userReducer.deviceUserInfo,
   attempt: state.authReducer.attemptSendOTP.attempt,
+  orderingSetting: state.orderReducer.orderingSetting.orderingSetting,
   intlData: state.intlData,
 });
 

@@ -34,6 +34,7 @@ import {
   getProductByCategory,
   saveProductsOutlet,
   updateSurcharge,
+  removeTimeslot,
 } from '../../actions/order.action';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
@@ -261,6 +262,9 @@ class Products2 extends Component {
     // if (this.state.item.outletType == 'QUICKSERVICE') {
     //   this.props.dispatch(setOrderType('TAKEAWAY'));
     // }
+    try {
+      this.props.dispatch(removeTimeslot());
+    } catch (e) {}
   };
 
   checkOpeningHours = async () => {

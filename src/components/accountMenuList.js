@@ -402,7 +402,9 @@ class AccountMenuList extends Component {
             <View style={styles.itemMenu}>
               <Icon
                 size={20}
-                name={Platform.OS === 'ios' ? 'ios-checkmark' : 'md-checkmark'}
+                name={
+                  Platform.OS === 'ios' ? 'ios-checkmark' : 'md-checkmark'
+                }
                 style={{color: 'white'}}
               />
             </View>
@@ -410,7 +412,10 @@ class AccountMenuList extends Component {
           <View>
             <View style={styles.item}>
               <Text
-                style={[styles.title, {color: colorConfig.store.defaultColor}]}>
+                style={[
+                  styles.title,
+                  {color: colorConfig.store.defaultColor},
+                ]}>
                 {!isEmptyObject(defaultAccount) ? (
                   defaultAccount.isAccountRequired != false ? (
                     <>
@@ -419,7 +424,9 @@ class AccountMenuList extends Component {
                           ? defaultAccount.details.cardIssuer.toUpperCase()
                           : null}
                       </Text>{' '}
-                      <Text>{defaultAccount.details.maskedAccountNumber}</Text>
+                      <Text>
+                        {defaultAccount.details.maskedAccountNumber}
+                      </Text>
                     </>
                   ) : (
                     <Text>{defaultAccount.paymentName}</Text>
@@ -457,9 +464,13 @@ class AccountMenuList extends Component {
         {/*        <View>*/}
         {/*          <Text style={styles.title}>NETS Click</Text>*/}
         {/*          {netsclickStatus == true ? (*/}
-        {/*            <Text style={styles.subTitle}>NETS Click Registered</Text>*/}
+        {/*            <Text style={styles.subTitle}>*/}
+        {/*              NETS Click Registered*/}
+        {/*            </Text>*/}
         {/*          ) : (*/}
-        {/*            <Text style={styles.subTitleGray}>Add NETS Bank Card</Text>*/}
+        {/*            <Text style={styles.subTitleGray}>*/}
+        {/*              Add NETS Bank Card*/}
+        {/*            </Text>*/}
         {/*          )}*/}
         {/*        </View>*/}
         {/*        <Icon*/}
@@ -552,17 +563,24 @@ class AccountMenuList extends Component {
                     ? 'ios-arrow-dropright'
                     : 'md-arrow-dropright'
                 }
-                style={{color: colorConfig.store.defaultColor, marginRight: 20}}
+                style={{
+                  color: colorConfig.store.defaultColor,
+                  marginRight: 20,
+                }}
               />
             </View>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity onPress={this.notifications} style={styles.cardMenu}>
+        <TouchableOpacity
+          onPress={this.notifications}
+          style={styles.cardMenu}>
           <View style={styles.itemMenu}>
             <Icon
               size={20}
               name={
-                Platform.OS === 'ios' ? 'ios-notifications' : 'md-notifications'
+                Platform.OS === 'ios'
+                  ? 'ios-notifications'
+                  : 'md-notifications'
               }
               style={{color: 'white'}}
             />
@@ -580,7 +598,10 @@ class AccountMenuList extends Component {
                     ? 'ios-arrow-dropright'
                     : 'md-arrow-dropright'
                 }
-                style={{color: colorConfig.store.defaultColor, marginRight: 20}}
+                style={{
+                  color: colorConfig.store.defaultColor,
+                  marginRight: 20,
+                }}
               />
             </View>
           </View>
@@ -596,7 +617,9 @@ class AccountMenuList extends Component {
           </View>
           <View>
             <View style={styles.item}>
-              <Text style={styles.title}>{intlData.messages.editProfile}</Text>
+              <Text style={styles.title}>
+                {intlData.messages.editProfile}
+              </Text>
               <Icon
                 size={20}
                 name={
@@ -604,7 +627,10 @@ class AccountMenuList extends Component {
                     ? 'ios-arrow-dropright'
                     : 'md-arrow-dropright'
                 }
-                style={{color: colorConfig.store.defaultColor, marginRight: 20}}
+                style={{
+                  color: colorConfig.store.defaultColor,
+                  marginRight: 20,
+                }}
               />
             </View>
           </View>
@@ -622,7 +648,9 @@ class AccountMenuList extends Component {
           </View>
           <View>
             <View style={styles.item}>
-              <Text style={styles.title}>{intlData.messages.languages}</Text>
+              <Text style={styles.title}>
+                {intlData.messages.languages}
+              </Text>
               <Icon
                 size={20}
                 name={
@@ -630,13 +658,18 @@ class AccountMenuList extends Component {
                     ? 'ios-arrow-dropright'
                     : 'md-arrow-dropright'
                 }
-                style={{color: colorConfig.store.defaultColor, marginRight: 20}}
+                style={{
+                  color: colorConfig.store.defaultColor,
+                  marginRight: 20,
+                }}
               />
             </View>
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={this.prompLogout} style={styles.cardMenu}>
+        <TouchableOpacity
+          onPress={this.prompLogout}
+          style={styles.cardMenu}>
           <View
             style={[
               styles.itemMenu,

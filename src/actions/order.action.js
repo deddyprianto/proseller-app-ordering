@@ -1039,3 +1039,15 @@ export const getTimeslot = (outletID, date, clientTimezone, dontSave) => {
     } catch (e) {}
   };
 };
+
+export const removeTimeslot = () => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      dispatch({
+        type: 'DATA_TIMESLOT',
+        timeslots: undefined,
+      });
+    } catch (e) {}
+  };
+};

@@ -216,10 +216,12 @@ class Basket extends Component {
         if (find != undefined) {
           this.setState({timePickup: find.time});
         } else {
-          this.setState({timePickup: null});
+          const timepickup = new Date().getHours() + 1;
+          this.setState({timePickup: `${timepickup}:00`});
         }
       } else {
-        this.setState({timePickup: null});
+        const timepickup = new Date().getHours() + 1;
+        this.setState({timePickup: `${timepickup}:00`});
       }
     } catch (e) {}
   };
@@ -1306,13 +1308,15 @@ class Basket extends Component {
         message = 'Please select delivery date & time.';
       }
 
-      if (this.state.timePickup === null) {
-        if (
-          this.props.orderType === 'STOREPICKUP' ||
-          this.props.orderType === 'DELIVERY'
-        ) {
-          Alert.alert('Sorry', message);
-          return;
+      if (this.state.timePickup.length === 5) {
+        if (this.checkTimeslotAvailibility()) {
+          if (
+            this.props.orderType === 'STOREPICKUP' ||
+            this.props.orderType === 'DELIVERY'
+          ) {
+            Alert.alert('Sorry', message);
+            return;
+          }
         }
       }
 
@@ -1446,7 +1450,11 @@ class Basket extends Component {
         ) {
           pembayaran.orderActionDate = this.state.datePickup;
           pembayaran.orderActionTime = this.state.timePickup.substr(0, 5);
-          pembayaran.orderActionTimeSlot = this.state.timePickup;
+          if (this.state.timePickup.length === 5) {
+            pembayaran.orderActionTimeSlot = null;
+          } else {
+            pembayaran.orderActionTimeSlot = this.state.timePickup;
+          }
         }
       } catch (e) {}
 
@@ -2565,6 +2573,21 @@ class Basket extends Component {
     return appConfig.foodPlaceholder;
   };
 
+  checkTimeslotAvailibility = () => {
+    try {
+      const {timeslots} = this.props;
+      if (isEmptyArray(timeslots)) {
+        return false;
+      } else {
+        const find = timeslots.find(item => item.isAvailable == true);
+        if (find != undefined) return true;
+        else return false;
+      }
+    } catch (e) {
+      return false;
+    }
+  };
+
   render() {
     const {intlData, dataBasket, orderType, tableType} = this.props;
 
@@ -3019,6 +3042,7 @@ class Basket extends Component {
 }
 
 mapStateToProps = state => ({
+  timeslots: state.orderReducer.timeslot.timeslots,
   dataBasket: state.orderReducer.dataBasket.product,
   providers: state.orderReducer.dataProvider.providers,
   outletSingle: state.storesReducer.dataOutletSingle.outletSingle,
