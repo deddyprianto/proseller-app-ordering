@@ -299,7 +299,6 @@ class PickUpTime extends Component {
 
   getMinimumDate = () => {
     try {
-      console.log(this.props.minimumDate, 'minimumDate');
       if (
         this.props.minimumDate != null &&
         this.props.minimumDate != undefined
