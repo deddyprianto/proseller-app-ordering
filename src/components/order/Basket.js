@@ -30,6 +30,7 @@ import {
   getProductsUnavailable,
   getTimeslot,
   removeBasket,
+  removeTimeslot,
   setOrderType,
   submitOder,
   updateProductToBasket,
@@ -87,6 +88,7 @@ class Basket extends Component {
       datePickup: null,
       timePickup: null,
       timeslot: '',
+      minimumDate: new Date(),
     };
   }
 
@@ -207,6 +209,7 @@ class Basket extends Component {
 
   getTimeslot = async outletID => {
     try {
+      this.props.dispatch(removeTimeslot());
       const clientTimeZone = Math.abs(new Date().getTimezoneOffset());
       const response = await this.props.dispatch(
         getTimeslot(outletID, this.state.datePickup, clientTimeZone),
@@ -241,43 +244,79 @@ class Basket extends Component {
   };
 
   initializePickupTime = () => {
-    const {outletSingle} = this.props;
+    const {outletSingle, orderType} = this.props;
     let pickerItem = [];
     let value = '';
     let timeslot = '';
     try {
       const day = new Date().getDay();
       let current = new Date().getTime();
-      if (isEmptyArray(outletSingle.operationalHours)) {
-        let datePickup = format(new Date(), 'yyyy-MM-dd');
+      let dataOutlet = {};
+      if (!isEmptyObject(outletSingle.orderValidation)) {
+        if (orderType === 'DELIVERY') {
+          dataOutlet = outletSingle.orderValidation.delivery;
+        } else if (orderType === 'STOREPICKUP') {
+          dataOutlet = outletSingle.orderValidation.storePickUp;
+        } else if (orderType === 'TAKEAWAY') {
+          dataOutlet = outletSingle.orderValidation.takeAway;
+        } else if (orderType === 'DINEIN') {
+          dataOutlet = outletSingle.orderValidation.dineIn;
+        }
+      }
 
-        this.setState({datePickup});
-        return;
-      } else {
-        const find = outletSingle.operationalHours.find(
-          item => item.day == day,
-        );
-        if (find == undefined) {
-          const findNextDay = outletSingle.operationalHours.find(
-            item => item.day >= day,
+      if (
+        !isEmptyObject(dataOutlet) &&
+        dataOutlet.maxDays != undefined &&
+        dataOutlet.maxDays != null &&
+        dataOutlet.maxDays != 0
+      ) {
+        if (isEmptyArray(outletSingle.operationalHours)) {
+          let datePickup = format(new Date(), 'yyyy-MM-dd');
+
+          this.setState({datePickup, minimumDate: datePickup});
+          return;
+        } else {
+          const find = outletSingle.operationalHours.find(
+            item => item.day == day,
           );
-          if (findNextDay == undefined) return null;
-          else {
-            let diff = findNextDay.day;
-            if (findNextDay.day < day) {
-              diff += 7;
-            } else {
-              diff = diff - day;
-            }
-            let nextDate = diff * 86400000;
-            let finalDate = new Date(current + nextDate);
+          if (find == undefined) {
+            const findNextDay = outletSingle.operationalHours.find(
+              item => item.day >= day,
+            );
+            if (findNextDay == undefined) return null;
+            else {
+              let diff = findNextDay.day;
+              if (findNextDay.day < day) {
+                diff += 7;
+              } else {
+                diff = diff - day;
+              }
+              let nextDate = diff * 86400000;
+              let finalDate = new Date(current + nextDate);
 
+              let arrayTime = [];
+              for (
+                let i = parseInt(findNextDay.open);
+                i <= parseInt(findNextDay.close);
+                i++
+              ) {
+                arrayTime.push(i);
+              }
+              let goal = parseInt(new Date().getHours() + 1);
+              let closest = arrayTime.reduce(function(prev, curr) {
+                return Math.abs(curr - goal) < Math.abs(prev - goal)
+                  ? curr
+                  : prev;
+              });
+              this.setState({
+                datePickup: finalDate,
+                minimumDate: finalDate,
+              });
+            }
+          } else {
             let arrayTime = [];
-            for (
-              let i = parseInt(findNextDay.open);
-              i <= parseInt(findNextDay.close);
-              i++
-            ) {
+            let datePickup = format(new Date(), 'yyyy-MM-dd');
+            for (let i = parseInt(find.open); i <= parseInt(find.close); i++) {
               arrayTime.push(i);
             }
             let goal = parseInt(new Date().getHours() + 1);
@@ -286,21 +325,8 @@ class Basket extends Component {
                 ? curr
                 : prev;
             });
-            this.setState({
-              datePickup: finalDate,
-            });
+            this.setState({datePickup, minimumDate: datePickup});
           }
-        } else {
-          let arrayTime = [];
-          let datePickup = format(new Date(), 'yyyy-MM-dd');
-          for (let i = parseInt(find.open); i <= parseInt(find.close); i++) {
-            arrayTime.push(i);
-          }
-          let goal = parseInt(new Date().getHours() + 1);
-          let closest = arrayTime.reduce(function(prev, curr) {
-            return Math.abs(curr - goal) < Math.abs(prev - goal) ? curr : prev;
-          });
-          this.setState({datePickup});
         }
       }
     } catch (e) {
@@ -752,6 +778,8 @@ class Basket extends Component {
     const outletID = this.props.dataBasket.outlet.id;
     await this.props.dispatch(getOutletById(outletID));
     await this.getTimeslot(outletID);
+    await this.setState({datePickup: null});
+    await this.initializePickupTime();
     await this.setState({refreshing: false});
     this.props.dispatch(dataStores());
   };
@@ -1448,8 +1476,18 @@ class Basket extends Component {
           orderType == 'TAKEAWAY' ||
           orderType == 'STOREPICKUP'
         ) {
-          pembayaran.orderActionDate = this.state.datePickup;
-          pembayaran.orderActionTime = this.state.timePickup.substr(0, 5);
+          if (this.state.datePickup === null) {
+            pembayaran.orderActionDate = format(new Date(), 'yyyy-MM-dd');
+          } else {
+            pembayaran.orderActionDate = this.state.datePickup;
+          }
+
+          if (this.state.timePickup === null) {
+            pembayaran.orderActionTime = new Date().getHours() + 1;
+          } else {
+            pembayaran.orderActionTime = this.state.timePickup.substr(0, 5);
+          }
+
           if (this.state.timePickup.length === 5) {
             pembayaran.orderActionTimeSlot = null;
           } else {
@@ -2105,8 +2143,13 @@ class Basket extends Component {
     // }
     await this.props.dispatch(setOrderType(type));
 
-    if (type == 'DELIVERY' && !isEmptyObject(this.props.selectedAddress)) {
+    if (type === 'DELIVERY' && !isEmptyObject(this.props.selectedAddress)) {
       this.getDeliveryFee();
+    }
+
+    if (type === 'DELIVERY' || type === 'STOREPICKUP' || type === 'TAKEAWAY') {
+      await this.setState({datePickup: null});
+      await this.initializePickupTime();
     }
 
     this.RBSheet.close();
@@ -2534,6 +2577,7 @@ class Basket extends Component {
         time: this.state.timePickup,
         outlet: outletSingle,
         orderType: orderType,
+        minimumDate: this.state.minimumDate,
         header:
           orderType == 'DELIVERY'
             ? 'Delivery Date & Time'
@@ -2558,6 +2602,8 @@ class Basket extends Component {
     let {outletSingle, orderType} = this.props;
     try {
       if (orderType === 'DINEIN' || orderType === 'STORECHECKOUT') return false;
+      if (this.state.datePickup === undefined || this.state.datePickup === null)
+        return false;
       return true;
     } catch (e) {}
   };
@@ -2585,6 +2631,23 @@ class Basket extends Component {
       }
     } catch (e) {
       return false;
+    }
+  };
+
+  getLabelTimeslot = () => {
+    try {
+      const {orderType} = this.props;
+      if (this.state.timePickup != null && this.state.timePickup.length > 5) {
+        if (orderType === 'DELIVERY') return 'Delivery Date & Time';
+        if (orderType === 'STOREPICKUP' || orderType === 'TAKEAWAY')
+          return 'Pickup Date & Time';
+      } else {
+        if (orderType === 'DELIVERY') return 'Delivery Date';
+        if (orderType === 'STOREPICKUP' || orderType === 'TAKEAWAY')
+          return 'Pickup Date';
+      }
+    } catch (e) {
+      return null;
     }
   };
 
@@ -2955,15 +3018,15 @@ class Basket extends Component {
 
                 {this.isUseTimingSetting() ? (
                   <View style={styles.itemSummary}>
-                    <Text style={styles.total}>
-                      {orderType == 'DELIVERY'
-                        ? 'Delivery Date & Time'
-                        : 'Pickup Date & Time'}
-                    </Text>
+                    <Text style={styles.total}>{this.getLabelTimeslot()}</Text>
                     <TouchableOpacity onPress={this.goToPickUpTime}>
                       {this.state.timePickup != null ? (
                         <Text style={[styles.total, styles.badge]}>
-                          {this.formatDatePickup()} at {this.state.timePickup}
+                          {this.formatDatePickup()}{' '}
+                          {this.state.timePickup != null &&
+                          this.state.timePickup.length > 5
+                            ? ` at ${this.state.timePickup}`
+                            : null}
                         </Text>
                       ) : (
                         <Text style={[styles.total, styles.badgeDanger]}>

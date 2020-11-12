@@ -297,6 +297,22 @@ class PickUpTime extends Component {
     }
   };
 
+  getMinimumDate = () => {
+    try {
+      console.log(this.props.minimumDate, 'minimumDate');
+      if (
+        this.props.minimumDate != null &&
+        this.props.minimumDate != undefined
+      ) {
+        return new Date(this.props.minimumDate);
+      } else {
+        return new Date();
+      }
+    } catch (e) {
+      return new Date();
+    }
+  };
+
   render() {
     const {date, time} = this.state;
     return (
@@ -343,7 +359,7 @@ class PickUpTime extends Component {
                 {format(new Date(date), 'dd MMM yyyy')}
               </Text>
               <DateTimePickerModal
-                minimumDate={new Date()}
+                minimumDate={this.getMinimumDate()}
                 maximumDate={this.getMaximumDate()}
                 isVisible={this.state.dateVisible}
                 mode="date"
@@ -437,6 +453,7 @@ class PickUpTime extends Component {
               padding: 10,
               justifyContent: 'center',
               alignItems: 'center',
+              borderRadius: 5,
             }}>
             <Text
               style={{

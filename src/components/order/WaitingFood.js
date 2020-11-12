@@ -666,6 +666,23 @@ class WaitingFood extends Component {
     }
   };
 
+  getLabelTimeslot = () => {
+    try {
+      const orderType = this.props.dataBasket.orderingMode;
+      if (this.props.dataBasket.orderActionTimeSlot != null) {
+        if (orderType === 'DELIVERY') return 'Delivery Date & Time';
+        if (orderType === 'STOREPICKUP' || orderType === 'TAKEAWAY')
+          return 'Pickup Date & Time';
+      } else {
+        if (orderType === 'DELIVERY') return 'Delivery Date';
+        if (orderType === 'STOREPICKUP' || orderType === 'TAKEAWAY')
+          return 'Pickup Date';
+      }
+    } catch (e) {
+      return null;
+    }
+  };
+
   detailOrder = () => {
     const {intlData, dataBasket} = this.props;
     return (
@@ -804,18 +821,11 @@ class WaitingFood extends Component {
             </View>
             {dataBasket.orderActionDate != undefined && (
               <View style={styles.itemSummary}>
-                <Text style={styles.total}>
-                  {dataBasket.orderingMode == 'DELIVERY'
-                    ? 'Delivery Date & Time'
-                    : 'Pickup Date & Time'}{' '}
-                  :{' '}
-                </Text>
+                <Text style={styles.total}>{this.getLabelTimeslot()}</Text>
                 <Text style={styles.total}>
                   {format(new Date(dataBasket.orderActionDate), 'dd MMM yyyy')}{' '}
-                  at{' '}
-                  {dataBasket.orderActionTimeSlot === null
-                    ? dataBasket.orderActionTime
-                    : dataBasket.orderActionTimeSlot}
+                  {dataBasket.orderActionTimeSlot != null &&
+                    ` at ${dataBasket.orderActionTimeSlot}`}
                 </Text>
               </View>
             )}

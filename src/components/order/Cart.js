@@ -1337,6 +1337,23 @@ class Cart extends Component {
     } catch (e) {}
   };
 
+  getLabelTimeslot = () => {
+    try {
+      const orderType = this.props.dataBasket.orderingMode;
+      if (this.props.dataBasket.orderActionTimeSlot != null) {
+        if (orderType === 'DELIVERY') return 'Delivery Date & Time';
+        if (orderType === 'STOREPICKUP' || orderType === 'TAKEAWAY')
+          return 'Pickup Date & Time';
+      } else {
+        if (orderType === 'DELIVERY') return 'Delivery Date';
+        if (orderType === 'STOREPICKUP' || orderType === 'TAKEAWAY')
+          return 'Pickup Date';
+      }
+    } catch (e) {
+      return null;
+    }
+  };
+
   render() {
     const {intlData, dataBasket, orderType, tableType} = this.props;
 
@@ -1634,20 +1651,14 @@ class Cart extends Component {
                   )}
                 {this.props.dataBasket.orderActionDate != undefined && (
                   <View style={styles.itemSummary}>
-                    <Text style={styles.total}>
-                      {this.props.dataBasket.orderingMode == 'DELIVERY'
-                        ? 'Delivery Date & Time'
-                        : 'Pickup Date & Time'}
-                    </Text>
+                    <Text style={styles.total}>{this.getLabelTimeslot()}</Text>
                     <Text style={styles.total}>
                       {format(
                         new Date(this.props.dataBasket.orderActionDate),
                         'dd MMM yyyy',
                       )}{' '}
-                      at{' '}
-                      {this.props.dataBasket.orderActionTimeSlot === null
-                        ? this.props.dataBasket.orderActionTime
-                        : this.props.dataBasket.orderActionTimeSlot}
+                      {this.props.dataBasket.orderActionTimeSlot != null &&
+                        ` at ${this.props.dataBasket.orderActionTimeSlot}`}
                     </Text>
                   </View>
                 )}
