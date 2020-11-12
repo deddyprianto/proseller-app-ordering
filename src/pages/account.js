@@ -24,7 +24,11 @@ import {referral} from '../actions/referral.action';
 import CryptoJS from 'react-native-crypto-js';
 import awsConfig from '../config/awsConfig';
 import {getCompanyInfo} from '../actions/stores.action';
-import {getAccountPayment} from '../actions/payment.actions';
+import {
+  getAccountPayment,
+  netsclickRegister,
+  setNetsclickStatus,
+} from '../actions/payment.actions';
 import {Overlay} from 'react-native-elements';
 // import {campaign, dataPoint, getStamps} from '../actions/rewards.action';
 // import {recentTransaction} from '../actions/sales.action';
@@ -32,6 +36,7 @@ import {Overlay} from 'react-native-elements';
 import {Dialog} from 'react-native-paper';
 import appConfig from '../config/appConfig';
 import QRCode from 'react-native-qrcode-svg';
+import AsyncStorage from '@react-native-community/async-storage';
 
 class Account extends Component {
   constructor(props) {
@@ -65,16 +70,26 @@ class Account extends Component {
 
   getDataRewards = async () => {
     try {
-      // await this.setState({isLoading: true});
+      await this.setState({isLoading: true});
       await this.props.dispatch(refreshToken());
-      // await this.setState({isLoading: false});
       await Promise.all([
         this.props.dispatch(getUserProfile()),
         this.props.dispatch(referral()),
         this.props.dispatch(getCompanyInfo()),
         this.props.dispatch(getAccountPayment()),
       ]);
-      // await this.setState({isLoading: false});
+      await this.setState({isLoading: false});
+
+      try {
+        const value = await AsyncStorage.getItem('@netsclick_register_status');
+        if (value !== null) {
+          this.props.dispatch(setNetsclickStatus(true));
+        } else {
+          this.props.dispatch(setNetsclickStatus(false));
+        }
+      } catch (e) {
+        this.props.dispatch(setNetsclickStatus(false));
+      }
     } catch (error) {}
   };
 
@@ -126,8 +141,8 @@ class Account extends Component {
                 token: qrcode,
               })}
               logo={appConfig.appLogoQR}
-              logoSize={30}
-              size={this.state.screenWidth - 200}
+              logoSize={this.state.screenWidth / 6 - 20}
+              size={this.state.screenWidth - 160}
             />
           </View>
           <TouchableOpacity
