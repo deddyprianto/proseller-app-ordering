@@ -20,7 +20,12 @@ import {Actions} from 'react-native-router-flux';
 import colorConfig from '../../config/colorConfig';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
-import {completeOrder, getCart} from '../../actions/order.action';
+import {
+  completeOrder,
+  getCart,
+  getPendingCart,
+  setCart,
+} from '../../actions/order.action';
 import LottieView from 'lottie-react-native';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import CurrencyFormatter from '../../helper/CurrencyFormatter';
@@ -29,14 +34,12 @@ import appConfig from '../../config/appConfig';
 import Snackbar from 'react-native-snackbar';
 import awsConfig from '../../config/awsConfig';
 import {refreshToken} from '../../actions/auth.actions';
-import {afterPayment} from '../../actions/account.action';
+import {format} from 'date-fns';
 
 class WaitingFood extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      refreshing: false,
-    };
+    this.state = {};
   }
 
   componentDidMount = async () => {
@@ -46,12 +49,12 @@ class WaitingFood extends Component {
       await this.setState({loading: false});
 
       // get data continously
-      if (this.props.dataBasket != undefined) {
-        // clearInterval(this.intervalWaitingFood);
-        // this.intervalWaitingFood = setInterval(async () => {
-        //   await this.props.dispatch(getCart(this.props.myCart.id));
-        // }, 3000);
-      }
+      // if (this.props.dataBasket != undefined) {
+      //   clearInterval(this.intervalWaitingFood);
+      //   this.intervalWaitingFood = setInterval(async () => {
+      //     await this.props.dispatch(getCart(this.props.myCart.id));
+      //   }, 3000);
+      // }
     } catch (e) {
       Alert.alert('Opss..', "Can't get data basket, please try again.");
     }
@@ -64,9 +67,115 @@ class WaitingFood extends Component {
     } catch (e) {}
   };
 
+  getStatusText = item => {
+    try {
+      if (item === 'SUBMITTED') {
+        return 'Submitted';
+      } else if (item === 'CONFIRMED') {
+        return 'Confirmed';
+      } else if (item === 'PROCESSING') {
+        return 'Processing';
+      } else if (item === 'READY_FOR_COLLECTION') {
+        return 'Ready for Collection';
+      } else if (item === 'READY_FOR_DELIVERY') {
+        return 'Ready for Delivery';
+      } else if (item === 'ON_THE_WAY') {
+        return 'On The Way';
+      } else {
+        return item;
+      }
+    } catch (e) {}
+  };
+
+  renderPayments = item => {
+    try {
+      return item.map(data => (
+        <View style={styles.itemSummary}>
+          {data.isVoucher != true && data.isPoint != true ? (
+            <Text style={styles.total}>
+              {data.isAppPayment ? data.paymentName : data.paymentType}
+            </Text>
+          ) : (
+            <Text style={styles.total} />
+          )}
+
+          {data.isVoucher && (
+            <Text style={styles.total}>
+              {data.paymentName} {'  '} {appConfig.appMataUang}{' '}
+              {this.formatCurrency(data.paymentAmount)}
+            </Text>
+          )}
+          {data.isPoint && (
+            <Text style={styles.total}>
+              {data.redeemValue} {data.paymentName} {'  '}
+              {appConfig.appMataUang} {this.formatCurrency(data.paymentAmount)}
+            </Text>
+          )}
+          {data.isVoucher != true && data.isPoint != true && (
+            <Text style={styles.total}>
+              {appConfig.appMataUang} {this.formatCurrency(data.paymentAmount)}
+            </Text>
+          )}
+        </View>
+      ));
+    } catch (e) {}
+  };
+
+  getGrandTotal = data => {
+    try {
+      let item = data;
+      if (item.payments != undefined && !isEmptyArray(item.payments)) {
+        let total = data.totalNettAmount;
+
+        if (data.deliveryFee != undefined) {
+          total += data.deliveryFee;
+        }
+
+        for (let i = 0; i < item.payments.length; i++) {
+          if (
+            item.payments[i].isVoucher == true ||
+            item.payments[i].isPoint == true
+          ) {
+            total -= item.payments[i].paymentAmount;
+          }
+        }
+        if (total < 0) total = 0;
+        return this.formatCurrency(total);
+      } else {
+        let total = data.totalNettAmount;
+
+        if (data.deliveryFee != undefined) {
+          total += data.deliveryFee;
+        }
+        return this.formatCurrency(total);
+      }
+    } catch (e) {}
+  };
+
+  formatCurrency = value => {
+    try {
+      return this.format(CurrencyFormatter(value));
+    } catch (e) {
+      return value;
+    }
+  };
+
+  format2 = item => {
+    try {
+      const curr = appConfig.appMataUang;
+      item = item.replace(`${curr} `, '');
+      if (curr != 'RP' && curr != 'IDR' && item.includes('.') == false) {
+        return `${item}.00`;
+      }
+      return item;
+    } catch (e) {
+      return item;
+    }
+  };
+
   _onRefresh = async () => {
     await this.setState({refreshing: true});
-    await this.props.dispatch(getCart(this.props.myCart.id));
+    this.props.dispatch(getCart(this.props.myCart.id));
     await this.setState({refreshing: false});
   };
 
@@ -79,7 +188,12 @@ class WaitingFood extends Component {
   componentWillUnmount() {
     try {
       this.backHandler.remove();
-      clearInterval(this.intervalWaitingFood);
+      // clearInterval(this.intervalWaitingFood);
+    } catch (e) {}
+    try {
+      // clearInterval(this.intervalWaitingFood);
+      // this.intervalWaitingFood = undefined;
+      this.props.dispatch(setCart(undefined));
     } catch (e) {}
   }
 
@@ -89,19 +203,12 @@ class WaitingFood extends Component {
   };
 
   goBack = async () => {
-    await this.setState({loading: true});
+    Actions.pop();
     try {
-      if (this.props.isPop == true) {
-        Actions.pop();
-        return;
-      }
-
-      await this.props.dispatch(afterPayment(true));
-      Actions.reset('app', {fromPayment: true});
-    } catch (e) {
-      await this.setState({loading: false});
-      Actions.pop();
-    }
+      // clearInterval(this.intervalWaitingFood);
+      // this.intervalWaitingFood = undefined;
+      this.props.dispatch(setCart(undefined));
+    } catch (e) {}
   };
 
   renderBottomButton = () => {
@@ -149,8 +256,8 @@ class WaitingFood extends Component {
           <TouchableOpacity
             onPress={() => {
               try {
-                clearInterval(this.intervalWaitingFood);
-                this.intervalWaitingFood = undefined;
+                // clearInterval(this.intervalWaitingFood);
+                // this.intervalWaitingFood = undefined;
               } catch (e) {}
               Actions.replace('QRCodeCart', {myCart: dataBasket});
             }}
@@ -187,6 +294,7 @@ class WaitingFood extends Component {
       };
 
       const response = await this.props.dispatch(completeOrder(payload));
+      this.props.dispatch(getPendingCart());
 
       if (response != false) {
         try {
@@ -260,8 +368,8 @@ class WaitingFood extends Component {
             disabled={dataBasket.status == 'ON_THE_WAY' ? false : true}
             onPress={() => {
               try {
-                clearInterval(this.intervalWaitingFood);
-                this.intervalWaitingFood = undefined;
+                // clearInterval(this.intervalWaitingFood);
+                // this.intervalWaitingFood = undefined;
               } catch (e) {}
               this.askUserToCompleteOrder();
             }}
@@ -293,21 +401,14 @@ class WaitingFood extends Component {
       dataBasket.outlet = {};
     }
 
-    if (
-      dataBasket.orderingMode == 'TAKEAWAY' ||
-      dataBasket.orderingMode == 'DELIVERY'
-    ) {
+    if (dataBasket.orderingMode == 'DELIVERY') {
       let trackingNo = '';
       if (dataBasket.trackingNo != undefined) {
         trackingNo = `\n\nTracking No: ${dataBasket.trackingNo}`;
       }
       return `Queue No: ${dataBasket.queueNo} ${trackingNo}`;
     } else {
-      if (
-        dataBasket.outlet.enableTableScan != undefined &&
-        (dataBasket.outlet.enableTableScan == false ||
-          dataBasket.outlet.enableTableScan == '-')
-      ) {
+      if (dataBasket.queueNo != undefined) {
         return `Queue No: ${dataBasket.queueNo}`;
       } else {
         return `Table No: ${dataBasket.tableNo}`;
@@ -366,7 +467,7 @@ class WaitingFood extends Component {
                 textAlign: 'center',
                 fontFamily: 'Lato-Bold',
               }}>
-              Please wait, We are preparing your food in the kitchen.
+              Please wait, We are preparing your order.
             </Text>
             <Text
               style={{
@@ -450,9 +551,9 @@ class WaitingFood extends Component {
               }}>
               {dataBasket.status == 'READY_FOR_DELIVERY'
                 ? 'We are getting ready to deliver your order ... \n \n '
-                : `Go to ${dataBasket.deliveryAddress.address}, ${
-                    dataBasket.deliveryAddress.city
-                  }, ${dataBasket.deliveryAddress.postalCode} \n `}
+                : `Go to ${dataBasket.deliveryAddress.streetName}, Unit No ${
+                    dataBasket.deliveryAddress.unitNo
+                  }, Postal Code ${dataBasket.deliveryAddress.postalCode} \n `}
             </Text>
             <Text
               style={{
@@ -507,59 +608,22 @@ class WaitingFood extends Component {
     return (
       <FlatList
         data={item.modifiers}
-        renderItem={({item}) => {
-          if (item.modifier.max != 1 && item.modifier.isYesNo != true) {
-            if (!isEmptyArray(item.modifier.details)) {
-              return (
-                <>
-                  <Text style={[styles.descModifier]}>
-                    <Text style={{fontStyle: 'normal'}}>{'\u25CF'}</Text>{' '}
-                    {item.modifierName}:{' '}
-                  </Text>
-                  {item.modifier.details.map((mod, idx) => (
-                    <View style={{marginLeft: 9}}>
-                      <Text
-                        key={idx}
-                        style={[styles.descModifier, {fontSize: 13}]}>
-                        <Text style={{fontStyle: 'normal'}}>{'\u25CF'}</Text>{' '}
-                        <Text
-                          style={{
-                            color: colorConfig.store.defaultColor,
-                          }}>
-                          {mod.quantity}x
-                        </Text>{' '}
-                        {mod.name}{' '}
-                        {mod.price > 0
-                          ? `  +${this.format2(CurrencyFormatter(mod.price))}`
-                          : null}{' '}
-                      </Text>
-                    </View>
-                  ))}
-                </>
-              );
-            }
-          } else {
-            return item.modifier.details.map((mod, idx) => (
-              <Text key={idx} style={[styles.descModifier]}>
-                <Text style={{fontStyle: 'normal'}}>{'\u25CF'}</Text>{' '}
-                {item.modifier.max == 1 && item.modifier.isYesNo != true
-                  ? `${item.modifierName}: ${mod.name} ${
-                      mod.price > 0
-                        ? `  +${this.format2(CurrencyFormatter(mod.price))}`
-                        : ''
-                    }`
-                  : null}
-                {item.modifier.isYesNo == true
-                  ? `${mod.name} ${
-                      mod.price > 0
-                        ? `  +${this.format2(CurrencyFormatter(mod.price))}`
-                        : ''
-                    }`
-                  : null}
-              </Text>
-            ));
-          }
-        }}
+        renderItem={({item}) =>
+          item.modifier.details.map((mod, idx) => (
+            <Text key={idx} style={[styles.descModifier]}>
+              •{' '}
+              {item.modifier.isYesNo != true ? (
+                <Text
+                  style={{
+                    color: colorConfig.store.defaultColor,
+                  }}>
+                  {mod.quantity}x
+                </Text>
+              ) : null}{' '}
+              {mod.name} ( {this.format(CurrencyFormatter(mod.price))} )
+            </Text>
+          ))
+        }
       />
     );
   };
@@ -587,87 +651,36 @@ class WaitingFood extends Component {
     }
   };
 
-  renderPayments = item => {
+  getTotal = item => {
     try {
-      return item.map(data => (
-        <View style={styles.itemSummary}>
-          {data.isVoucher != true && data.isPoint != true ? (
-            <Text style={styles.total}>
-              {data.isAppPayment ? data.paymentName : data.paymentType}
-            </Text>
-          ) : (
-            <Text style={styles.total} />
-          )}
-
-          {data.isVoucher && (
-            <Text style={styles.total}>
-              {data.paymentName} {'  '} {appConfig.appMataUang}{' '}
-              {this.formatCurrency(data.paymentAmount)}
-            </Text>
-          )}
-          {data.isPoint && (
-            <Text style={styles.total}>
-              {data.redeemValue} {data.paymentName} {'  '}
-              {appConfig.appMataUang} {this.formatCurrency(data.paymentAmount)}
-            </Text>
-          )}
-          {data.isVoucher != true && data.isPoint != true && (
-            <Text style={styles.total}>
-              {appConfig.appMataUang} {this.formatCurrency(data.paymentAmount)}
-            </Text>
-          )}
-        </View>
-      ));
-    } catch (e) {}
-  };
-
-  formatCurrency = value => {
-    try {
-      return this.format(CurrencyFormatter(value));
+      if (item.confirmationInfo == undefined) {
+        return item.totalNettAmount;
+      } else if (
+        item.confirmationInfo != undefined &&
+        item.confirmationInfo.afterPrice != undefined
+      ) {
+        return item.confirmationInfo.afterPrice;
+      }
     } catch (e) {
-      return value;
+      return 0;
     }
   };
 
-  getGrandTotal = data => {
+  getLabelTimeslot = () => {
     try {
-      let item = data;
-      if (item.payments != undefined && !isEmptyArray(item.payments)) {
-        let total = data.totalNettAmount;
-        for (let i = 0; i < item.payments.length; i++) {
-          if (
-            item.payments[i].isVoucher == true ||
-            item.payments[i].isPoint == true
-          ) {
-            total -= item.payments[i].paymentAmount;
-          }
-        }
-        if (total < 0) total = 0;
-        return this.formatCurrency(total);
+      const orderType = this.props.dataBasket.orderingMode;
+      if (this.props.dataBasket.orderActionTimeSlot != null) {
+        if (orderType === 'DELIVERY') return 'Delivery Date & Time';
+        if (orderType === 'STOREPICKUP' || orderType === 'TAKEAWAY')
+          return 'Pickup Date & Time';
       } else {
-        return this.formatCurrency(data.totalNettAmount);
+        if (orderType === 'DELIVERY') return 'Delivery Date';
+        if (orderType === 'STOREPICKUP' || orderType === 'TAKEAWAY')
+          return 'Pickup Date';
       }
-    } catch (e) {}
-  };
-
-  getStatusText = item => {
-    try {
-      if (item === 'SUBMITTED') {
-        return 'Submitted';
-      } else if (item === 'CONFIRMED') {
-        return 'Confirmed';
-      } else if (item === 'PROCESSING') {
-        return 'Processing';
-      } else if (item === 'READY_FOR_COLLECTION') {
-        return 'Ready for Collection';
-      } else if (item === 'READY_FOR_DELIVERY') {
-        return 'Ready for Delivery';
-      } else if (item === 'ON_THE_WAY') {
-        return 'On The Way';
-      } else {
-        return item;
-      }
-    } catch (e) {}
+    } catch (e) {
+      return null;
+    }
   };
 
   detailOrder = () => {
@@ -806,26 +819,37 @@ class WaitingFood extends Component {
               <Text style={styles.total}>Ordering Mode : </Text>
               <Text style={styles.total}>{dataBasket.orderingMode}</Text>
             </View>
+            {dataBasket.orderActionDate != undefined && (
+              <View style={styles.itemSummary}>
+                <Text style={styles.total}>{this.getLabelTimeslot()}</Text>
+                <Text style={styles.total}>
+                  {format(new Date(dataBasket.orderActionDate), 'dd MMM yyyy')}{' '}
+                  {dataBasket.orderActionTimeSlot != null &&
+                    ` at ${dataBasket.orderActionTimeSlot}`}
+                </Text>
+              </View>
+            )}
             {dataBasket.orderingMode == 'DELIVERY' ? (
               <View style={styles.itemSummary}>
                 <Text style={styles.total}>Delivery Address : </Text>
                 <Text
                   style={[styles.total, {textAlign: 'right', fontSize: 12}]}>
-                  {dataBasket.deliveryAddress.address}{' '}
-                  {/*{dataBasket.deliveryAddress.streetName},{' '}*/}
-                  {/*{dataBasket.deliveryAddress.unitNo}*/}
+                  {/*{dataBasket.deliveryAddress.address}{' '}*/}
+                  {dataBasket.deliveryAddress.streetName}
                   {' \n'}
-                  {awsConfig.COUNTRY != 'Singapore'
-                    ? dataBasket.deliveryAddress.city
-                    : awsConfig.COUNTRY}
+                  Unit No, {dataBasket.deliveryAddress.unitNo}
                   {' \n'}
+                  {/*{awsConfig.COUNTRY != 'Singapore'*/}
+                  {/*  ? dataBasket.deliveryAddress.city*/}
+                  {/*  : awsConfig.COUNTRY}*/}
+                  {/*{' \n'}*/}
                   {dataBasket.deliveryAddress.province != undefined
                     ? dataBasket.deliveryAddress.province
                     : null}
                   {dataBasket.deliveryAddress.province != undefined
                     ? ' \n'
                     : null}
-                  {dataBasket.deliveryAddress.postalCode}
+                  Postal Code, {dataBasket.deliveryAddress.postalCode}
                 </Text>
               </View>
             ) : null}
@@ -837,25 +861,19 @@ class WaitingFood extends Component {
                 </Text>
               </View>
             ) : null}
-            {dataBasket.deliveryFee != undefined ? (
+            {dataBasket.totalTaxAmount != 0 && (
               <View style={styles.itemSummary}>
-                <Text style={styles.total}>Delivery Fee : </Text>
-                <Text style={[styles.total, {textAlign: 'right'}]}>
-                  {CurrencyFormatter(dataBasket.deliveryFee)}
+                <Text style={styles.total}>
+                  {appConfig.appName === 'QIJI'
+                    ? 'Tax Amount Inclusive'
+                    : 'Tax Amount'}{' '}
+                  :{' '}
+                </Text>
+                <Text style={styles.total}>
+                  {CurrencyFormatter(dataBasket.totalTaxAmount)}
                 </Text>
               </View>
-            ) : null}
-            <View style={styles.itemSummary}>
-              <Text style={styles.total}>
-                {appConfig.appName === 'QIJI'
-                  ? 'Tax Amount Inclusive'
-                  : 'Tax Amount'}{' '}
-                :{' '}
-              </Text>
-              <Text style={styles.total}>
-                {CurrencyFormatter(dataBasket.totalTaxAmount)}
-              </Text>
-            </View>
+            )}
             <View style={styles.itemSummary}>
               <Text style={styles.total}>Sub Total : </Text>
               <Text style={styles.total}>
@@ -863,6 +881,15 @@ class WaitingFood extends Component {
                 {this.format(CurrencyFormatter(dataBasket.totalNettAmount))}
               </Text>
             </View>
+            {dataBasket.deliveryFee != undefined ? (
+              <View style={styles.itemSummary}>
+                <Text style={styles.total}>Delivery Fee : </Text>
+                <Text style={[styles.total, {textAlign: 'right'}]}>
+                  {appConfig.appMataUang}{' '}
+                  {this.format(CurrencyFormatter(dataBasket.deliveryFee))}
+                </Text>
+              </View>
+            ) : null}
             {!isEmptyArray(dataBasket.payments)
               ? this.renderPayments(dataBasket.payments)
               : null}
@@ -931,19 +958,6 @@ class WaitingFood extends Component {
     }
   };
 
-  format2 = item => {
-    try {
-      const curr = appConfig.appMataUang;
-      item = item.replace(`${curr} `, '');
-      if (curr != 'RP' && curr != 'IDR' && item.includes('.') == false) {
-        return `${item}.00`;
-      }
-      return item;
-    } catch (e) {
-      return item;
-    }
-  };
-
   render() {
     const {intlData, dataBasket, orderType} = this.props;
     // try {
@@ -964,9 +978,9 @@ class WaitingFood extends Component {
     // if basket is canceled by admin, then push back to basket page
     if (dataBasket == undefined) {
       try {
+        // clearInterval(this.intervalWaitingFood);
+        // this.intervalWaitingFood = undefined;
         Actions.reset('app', {fromPayment: true});
-        clearInterval(this.intervalWaitingFood);
-        this.intervalWaitingFood = undefined;
       } catch (e) {}
     }
 
@@ -1018,11 +1032,11 @@ class WaitingFood extends Component {
   getAnimation = dataBasket => {
     try {
       if (dataBasket.status == 'PROCESSING') {
-        return require('../../../assets/animate/cooking');
+        return require('../../../assets/animate/shopping-lady');
       } else if (dataBasket.status == 'READY_FOR_DELIVERY') {
-        return require('../../../assets/animate/food-ready');
+        return require('../../../assets/animate/ready');
       } else if (dataBasket.status == 'READY_FOR_COLLECTION') {
-        return require('../../../assets/animate/food-ready');
+        return require('../../../assets/animate/ready');
       } else if (dataBasket.status == 'ON_THE_WAY') {
         return require('../../../assets/animate/delivery');
       } else {
@@ -1167,7 +1181,7 @@ const styles = StyleSheet.create({
   descModifier: {
     color: colorConfig.pageIndex.grayColor,
     maxWidth: Dimensions.get('window').width,
-    fontSize: 12,
+    fontSize: 11,
     fontStyle: 'italic',
     marginLeft: 17,
     fontFamily: 'Lato-Medium',
@@ -1240,7 +1254,7 @@ const styles = StyleSheet.create({
     padding: 13,
     marginRight: 20,
     width: '40%',
-    backgroundColor: colorConfig.store.secondaryColor,
+    backgroundColor: colorConfig.store.colorSuccess,
   },
   textBtnBasketModal: {
     color: 'white',

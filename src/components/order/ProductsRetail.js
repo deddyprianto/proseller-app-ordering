@@ -15,6 +15,7 @@ import {
   SafeAreaView,
   TextInput,
   Image,
+  Button,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -33,11 +34,12 @@ import {
   getProductByCategory,
   saveProductsOutlet,
   updateSurcharge,
+  removeTimeslot,
 } from '../../actions/order.action';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
 import Loader from '../../components/loader';
-import ButtonViewBasket from '../../components/order/ButtonViewBasket';
+// import ButtonViewBasket from '../../components/order/ButtonViewBasket';
 import CurrencyFormatter from '../../helper/CurrencyFormatter';
 import ShimmerPlaceHolder from 'react-native-shimmer-placeholder';
 import {
@@ -52,6 +54,9 @@ import {StatusBarHeight} from '../../helper/StatusBarChecker';
 import EmptySearch from '../atom/EmptySearch';
 import NewSearch from '../atom/NewSearch';
 import {RecyclerListView, DataProvider, LayoutProvider} from 'recyclerlistview';
+import ButtonNavMenu from './ButtonNavMenu';
+import CartIcon from './CartIcon';
+import {Dialog} from 'react-native-paper';
 
 const ViewTypes = {
   FULL: 0,
@@ -149,6 +154,8 @@ class Products2 extends Component {
       categories: [],
       productsSearch: undefined,
       loadingSearch: false,
+      indexLoaded: 1,
+      deliveryInfo: false,
     };
   }
 
@@ -176,6 +183,7 @@ class Products2 extends Component {
 
       // if products is undefined, then clear all list
       if (!isEmptyArray(product.details)) {
+        console.log('BABI 1');
         let arrayID = [];
         for (let i = 0; i < product.details.length; i++) {
           if (
@@ -187,35 +195,42 @@ class Products2 extends Component {
         }
 
         for (let i = 0; i < products.length; i++) {
-          for (let j = 0; j < products[i].items.length; j++) {
-            if (
-              products[i].items[j].product != undefined &&
-              products[i].items[j].product != null
-            ) {
-              if (arrayID.includes(products[i].items[j].product.id)) {
-                products[i].items[j].changed = true;
-                await this.setState({products});
+          if (!isEmptyArray(products[i].items)) {
+            for (let j = 0; j < products[i].items.length; j++) {
+              if (
+                products[i].items[j].product != undefined &&
+                products[i].items[j].product != null
+              ) {
+                if (arrayID.includes(products[i].items[j].product.id)) {
+                  products[i].items[j].changed = true;
+                  await this.setState({products});
+                }
               }
             }
           }
         }
       } else {
+        console.log('BABI 2');
         for (let i = 0; i < products.length; i++) {
-          for (let j = 0; j < products[i].items.length; j++) {
-            if (
-              products[i].items[j].product != undefined &&
-              products[i].items[j].product != null
-            ) {
-              if (products[i].items[j].product.id == product.product.id) {
-                products[i].items[j].changed = true;
-                await this.setState({products});
-                return;
+          if (!isEmptyArray(products[i].items)) {
+            for (let j = 0; j < products[i].items.length; j++) {
+              if (
+                products[i].items[j].product != undefined &&
+                products[i].items[j].product != null
+              ) {
+                if (products[i].items[j].product.id == product.product.id) {
+                  products[i].items[j].changed = true;
+                  await this.setState({products});
+                  return;
+                }
               }
             }
           }
         }
       }
-    } catch (e) {}
+    } catch (e) {
+      console.log(e, 'anjinggggg');
+    }
   };
 
   updateCategoryPosition = index => {
@@ -247,6 +262,9 @@ class Products2 extends Component {
     // if (this.state.item.outletType == 'QUICKSERVICE') {
     //   this.props.dispatch(setOrderType('TAKEAWAY'));
     // }
+    try {
+      this.props.dispatch(removeTimeslot());
+    } catch (e) {}
   };
 
   checkOpeningHours = async () => {
@@ -336,7 +354,7 @@ class Products2 extends Component {
   };
 
   setOrderType = type => {
-    const {productTemp} = this.state;
+    const {productTemp, item} = this.state;
     // check outlet type
     // if (this.state.item.outletType == 'QUICKSERVICE') {
     //   this.props.dispatch(setOrderType('TAKEAWAY'));
@@ -352,6 +370,106 @@ class Products2 extends Component {
         this.openModal(productTemp);
       }, 600);
     }
+    if (type === 'DELIVERY') {
+      if (
+        !isEmptyObject(item.orderValidation) &&
+        !isEmptyObject(item.orderValidation.delivery)
+      ) {
+        const data = item.orderValidation.delivery;
+        if (
+          data.maxAmount > 0 ||
+          data.minAmount > 0 ||
+          data.minQty > 0 ||
+          data.maxQty > 0
+        ) {
+          setTimeout(() => {
+            this.setState({deliveryInfo: true});
+          }, 700);
+        }
+      }
+    }
+  };
+
+  renderDeliveryInfo = () => {
+    const {item} = this.state;
+    const data = item.orderValidation.delivery;
+    let text1 = '';
+    let text2 = '';
+    if (data.minQty > 0) {
+      text1 = `Minimum item quantity is ${data.minQty}`;
+    }
+    if (data.maxQty > 0) {
+      text1 = `Maximum item quantity is ${data.maxQty}`;
+    }
+    if (data.minQty > 0 && data.maxQty > 0) {
+      text1 = `Item quantity range ${data.minQty} to ${data.maxQty} items`;
+    }
+
+    if (data.minAmount > 0) {
+      text2 = `Minimum amount is ${CurrencyFormatter(data.minAmount)}`;
+    }
+    if (data.maxAmount > 0) {
+      text2 = `Maximum amount is ${CurrencyFormatter(data.maxAmount)}`;
+    }
+    if (data.minAmount > 0 && data.maxAmount > 0) {
+      text2 = `Amount range is ${CurrencyFormatter(
+        data.minAmount,
+      )} to ${CurrencyFormatter(data.maxAmount)}`;
+    }
+    return (
+      <Dialog
+        dismissable={false}
+        visible={this.state.deliveryInfo}
+        onDismiss={() => {
+          this.setState({deliveryInfo: false});
+        }}>
+        <Dialog.Content>
+          <Text
+            style={{
+              textAlign: 'center',
+              fontFamily: 'Lato-Bold',
+              fontSize: 18,
+              color: colorConfig.store.defaultColor,
+            }}>
+            Delivery Info
+          </Text>
+
+          <View
+            style={{
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginVertical: 15,
+            }}>
+            <Icon
+              size={80}
+              name={Platform.OS === 'ios' ? 'ios-car' : 'md-car'}
+              style={{color: colorConfig.store.secondaryColor}}
+            />
+            <Text style={styles.textInfoDelivery}>{text1}</Text>
+            <Text style={styles.textInfoDelivery}>{text2}</Text>
+          </View>
+
+          <TouchableOpacity
+            onPress={() => this.setState({deliveryInfo: false})}
+            style={{
+              width: '100%',
+              borderRadius: 5,
+              backgroundColor: colorConfig.store.defaultColor,
+              padding: 10,
+            }}>
+            <Text
+              style={{
+                color: 'white',
+                fontFamily: 'Lato-Bold',
+                textAlign: 'center',
+                fontSize: 16,
+              }}>
+              Got it
+            </Text>
+          </TouchableOpacity>
+        </Dialog.Content>
+      </Dialog>
+    );
   };
 
   askUserToSelectOrderType = () => {
@@ -398,7 +516,7 @@ class Products2 extends Component {
               onPress={() => this.setOrderType('STORECHECKOUT')}
               style={styles.activeTAKEAWAYButton}>
               <Icon
-                size={30}
+                size={25}
                 name={Platform.OS === 'ios' ? 'ios-card' : 'md-card'}
                 style={{color: 'white'}}
               />
@@ -423,7 +541,7 @@ class Products2 extends Component {
               onPress={() => this.setOrderType('STOREPICKUP')}
               style={styles.activeDINEINButton}>
               <Icon
-                size={30}
+                size={25}
                 name={Platform.OS === 'ios' ? 'ios-basket' : 'md-basket'}
                 style={{color: 'white'}}
               />
@@ -447,24 +565,26 @@ class Products2 extends Component {
               disabled={item.enableDelivery == false ? true : false}
               onPress={() => this.setOrderType('DELIVERY')}
               style={styles.activeDELIVERYButton}>
-              <Icon
-                size={30}
-                name={Platform.OS === 'ios' ? 'ios-car' : 'md-car'}
-                style={{color: 'white'}}
-              />
-              <Text
-                style={{
-                  marginLeft: 10,
-                  color: 'white',
-                  fontWeight: 'bold',
-                  fontFamily: 'Lato-Bold',
-                  fontSize: 18,
-                  textAlign: 'center',
-                }}>
-                {item.deliveryName != undefined && item.deliveryName != ''
-                  ? item.deliveryName
-                  : 'DELIVERY'}
-              </Text>
+              <View style={{flexDirection: 'row'}}>
+                <Icon
+                  size={25}
+                  name={Platform.OS === 'ios' ? 'ios-car' : 'md-car'}
+                  style={{color: 'white'}}
+                />
+                <Text
+                  style={{
+                    marginLeft: 10,
+                    color: 'white',
+                    fontWeight: 'bold',
+                    fontFamily: 'Lato-Bold',
+                    fontSize: 18,
+                    textAlign: 'center',
+                  }}>
+                  {item.deliveryName != undefined && item.deliveryName != ''
+                    ? item.deliveryName
+                    : 'DELIVERY'}
+                </Text>
+              </View>
             </TouchableOpacity>
           ) : null}
         </RBSheet>
@@ -507,7 +627,7 @@ class Products2 extends Component {
               onPress={() => this.setOrderType('DINEIN')}
               style={styles.activeDINEINButton}>
               <Icon
-                size={30}
+                size={25}
                 name={
                   Platform.OS === 'ios' ? 'ios-restaurant' : 'md-restaurant'
                 }
@@ -534,7 +654,7 @@ class Products2 extends Component {
               onPress={() => this.setOrderType('TAKEAWAY')}
               style={styles.activeTAKEAWAYButton}>
               <Icon
-                size={30}
+                size={25}
                 name={Platform.OS === 'ios' ? 'ios-basket' : 'md-basket'}
                 style={{color: 'white'}}
               />
@@ -559,7 +679,7 @@ class Products2 extends Component {
               onPress={() => this.setOrderType('DELIVERY')}
               style={styles.activeDELIVERYButton}>
               <Icon
-                size={30}
+                size={25}
                 name={Platform.OS === 'ios' ? 'ios-car' : 'md-car'}
                 style={{color: 'white'}}
               />
@@ -761,12 +881,17 @@ class Products2 extends Component {
         getCategoryByOutlet(outletID, refresh),
       );
       if (response && !isEmptyArray(response.data)) {
+        response.data.unshift({
+          id: 'allCategories',
+          name: 'All Categories',
+          index: 0,
+        });
         await this.setState({
           categories: response.data,
         });
-        const firstCategoryID = response.data[0].id;
+        const firstCategoryID = response.data[1].id;
         // const firstDatLength = response.data[0].dataLength;
-        await this.getProductsByCategory(firstCategoryID, 0, 10, refresh, 0);
+        await this.getProductsByCategory(firstCategoryID, 0, 20, refresh, 1);
 
         // check if outlet is open
         // this.prompOutletIsClosed();
@@ -778,11 +903,15 @@ class Products2 extends Component {
         } catch (e) {}
 
         //  asynchronously get first item
-        if (response.data.length > 1) {
-          let skip = 10;
-          for (let i = 0; i < response.data[0].dataLength / 10; i++) {
-            await this.loadMoreProducts(firstCategoryID, outletID, skip, 0);
-            skip += 10;
+        if (response.data.length > 0) {
+          let skip = 20;
+          for (
+            let i = 0;
+            i < Math.floor(response.data[1].dataLength / 20);
+            i++
+          ) {
+            await this.loadMoreProducts(firstCategoryID, outletID, skip, 1);
+            skip += 20;
           }
         }
         //  asynchronously get all item
@@ -792,18 +921,18 @@ class Products2 extends Component {
         //     await this.getProductsByCategory(categoryId, 0, 100, refresh);
         //   }
         // }
-        if (response.data.length > 1) {
-          for (let i = 1; i < response.data.length; i++) {
-            let categoryId = response.data[i].id;
-            let skip = 0;
-            await this.getProductsByCategory(categoryId, 0, 10, refresh, i);
-            skip = 10;
-            for (let j = 0; j < response.data[i].dataLength / 10; j++) {
-              await this.loadMoreProducts(categoryId, outletID, skip, i);
-              skip += 10;
-            }
-          }
-        }
+        // if (response.data.length > 1) {
+        //   for (let i = 1; i < response.data.length; i++) {
+        //     let categoryId = response.data[i].id;
+        //     let skip = 0;
+        //     await this.getProductsByCategory(categoryId, 0, 10, refresh, i);
+        //     skip = 10;
+        //     for (let j = 0; j < response.data[i].dataLength / 10; j++) {
+        //       await this.loadMoreProducts(categoryId, outletID, skip, i);
+        //       skip += 10;
+        //     }
+        //   }
+        // }
         let categories = JSON.stringify(response.data);
         categories = JSON.parse(categories);
         categories.finished = true;
@@ -842,6 +971,7 @@ class Products2 extends Component {
           categories[idxCategory].dataLength = response.dataLength;
           categories[idxCategory].skip = take;
           categories[idxCategory].take = take;
+          categories[idxCategory].index = idxCategory;
         }
         await this.setState({
           products: categories,
@@ -1584,15 +1714,17 @@ class Products2 extends Component {
     try {
       const {products} = this.state;
       for (let i = 0; i < products.length; i++) {
-        for (let j = 0; j < products[i].items.length; j++) {
-          if (
-            products[i].items[j].product != null &&
-            products[i].items[j].product != undefined
-          ) {
-            if (products[i].items[j].product.id == product.product.id) {
-              products[i].items[j].changed = true;
-              await this.setState({products});
-              return;
+        if (!isEmptyArray(products[i].items)) {
+          for (let j = 0; j < products[i].items.length; j++) {
+            if (
+              products[i].items[j].product != null &&
+              products[i].items[j].product != undefined
+            ) {
+              if (products[i].items[j].product.id == product.product.id) {
+                products[i].items[j].changed = true;
+                await this.setState({products});
+                return;
+              }
             }
           }
         }
@@ -1874,6 +2006,7 @@ class Products2 extends Component {
   renderCategoryWithProducts = (item, search) => {
     if (item.dataLength != undefined) {
       let length = 1;
+      const outletID = this.state.item.storeId;
       if (!search) {
         length = item.dataLength;
       } else {
@@ -1903,20 +2036,35 @@ class Products2 extends Component {
               layoutProvider={this._gridLayoutProvider}
               dataProvider={dataProvider.cloneWithRows(dataProducts)}
               rowRenderer={this.templateItemGrid}
-              renderFooter={this.renderFooter}
+              // renderFooter={this.renderFooter}
+              // onEndReached={() =>
+              //   this.loadMoreProducts(
+              //     item.id,
+              //     outletID,
+              //     item.items.length,
+              //     this.state.selectedCategory,
+              //   )
+              // }
             />
           </View>
         );
       } else {
         return (
-          <View style={[styles.card, {height: 100 * length + 100}]}>
+          <View style={[styles.card, {height: 100 * length + 110}]}>
             <Text style={styles.titleCategory}>{item.name.substr(0, 35)}</Text>
             <RecyclerListView
               layoutProvider={this._layoutProvider}
               dataProvider={dataProvider.cloneWithRows(dataProducts)}
               rowRenderer={this.templateItem}
-              renderFooter={this.renderFooter}
-              // onEndReached={this.handleLoadMoreItems}
+              // renderFooter={this.renderFooter}
+              // onEndReached={() =>
+              //   this.loadMoreProducts(
+              //     item.id,
+              //     outletID,
+              //     item.items.length,
+              //     this.state.selectedCategory,
+              //   )
+              // }
             />
           </View>
         );
@@ -1936,11 +2084,12 @@ class Products2 extends Component {
 
   loadMoreProducts = async (categoryId, outletID, skip, idx) => {
     try {
+      // console.log('ON END REACH TRIGGERED');
       const {products} = this.state;
       if (!isEmptyObject(products[idx])) {
         if (products[idx].dataLength > products[idx].items.length) {
           let response = await this.props.dispatch(
-            getProductByCategory(outletID, categoryId, skip, 10),
+            getProductByCategory(outletID, categoryId, skip, 20),
           );
 
           if (response && !isEmptyArray(response.data)) {
@@ -2001,7 +2150,6 @@ class Products2 extends Component {
       const {selectedCategory} = this.state;
       const {products} = this.state;
       const outletID = this.state.item.storeId;
-
       // if (products[0].items.length != products[0].skip) {
       //   console.log(products[0].skip, 'COBAAAA');
       //   await this.getProductsLoadMore(products, outletID);
@@ -2022,17 +2170,42 @@ class Products2 extends Component {
   };
 
   updateCategory = async (item, itemIndex) => {
-    try {
-      this.setState({selectedCategory: itemIndex});
-      this.setState({idx: itemIndex});
+    requestAnimationFrame(async () => {
+      try {
+        let {products} = this.state;
+        if (this.state.selectedCategory != itemIndex) {
+          this.setState({selectedCategory: itemIndex});
+          this.updateCategoryPosition(itemIndex);
+          await this.setState({idx: itemIndex});
+          await this.setState({loadProducts: false});
 
-      this.flatListRef.scrollToItem({
-        animated: true,
-        item: this.state.products[itemIndex],
-      });
-    } catch (e) {
-      console.log(e);
-    }
+          if (isEmptyArray(products[itemIndex].items) && itemIndex != 0) {
+            await this.setState({loadProducts: true});
+            // await this.getProductsByCategory(item.id, 0, 20, false, itemIndex);
+            this.getCategoryData(itemIndex);
+          } else {
+            setTimeout(() => {
+              this.setState({loadProducts: true});
+            }, 1500);
+          }
+
+          if (itemIndex === 0) {
+            try {
+              products[products.length - 1].items = undefined;
+              this.setState({products});
+            } catch (e) {}
+            this.setState({indexLoaded: 1});
+          }
+        }
+
+        // this.flatListRef.scrollToItem({
+        //   animated: true,
+        //   item: this.state.products[itemIndex],
+        // });
+      } catch (e) {
+        console.log(e);
+      }
+    });
   };
 
   renderCategoryProducts = (item, idx) => {
@@ -2049,7 +2222,13 @@ class Products2 extends Component {
               ? styles.categoryActive
               : styles.categoryNonActive,
           ]}>
-          <Text style={{padding: 8, fontFamily: 'Lato-Medium', color: 'white'}}>
+          <Text
+            style={{
+              padding: 8,
+              fontSize: 12,
+              fontFamily: 'Lato-Medium',
+              color: colorConfig.store.defaultColor,
+            }}>
             {item.name}
           </Text>
         </View>
@@ -2228,27 +2407,27 @@ class Products2 extends Component {
             </View>
           </View>
         </View>
-        <View
-          onLayout={event => {
-            let {height} = event.nativeEvent.layout;
-            this.heightCategoryPicker = height;
-          }}
-          style={{
-            backgroundColor: '#e1e4e8',
-          }}>
-          <FlatList
-            horizontal={true}
-            getItemLayout={(data, index) => {
-              return {length: 8, offset: 8 * index, index};
-            }}
-            data={this.state.products}
-            extraData={this.props}
-            renderItem={({item, index}) => {
-              return this.renderCategoryProducts(item, index);
-            }}
-            keyExtractor={(item, index) => index.toString()}
-          />
-        </View>
+        {/*<View*/}
+        {/*  onLayout={event => {*/}
+        {/*    let {height} = event.nativeEvent.layout;*/}
+        {/*    this.heightCategoryPicker = height;*/}
+        {/*  }}*/}
+        {/*  style={{*/}
+        {/*    backgroundColor: '#e1e4e8',*/}
+        {/*  }}>*/}
+        {/*  <FlatList*/}
+        {/*    horizontal={true}*/}
+        {/*    getItemLayout={(data, index) => {*/}
+        {/*      return {length: 8, offset: 8 * index, index};*/}
+        {/*    }}*/}
+        {/*    data={this.state.categories}*/}
+        {/*    extraData={this.props}*/}
+        {/*    renderItem={({item, index}) => {*/}
+        {/*      return this.renderCategoryProducts(item, index);*/}
+        {/*    }}*/}
+        {/*    keyExtractor={(item, index) => index.toString()}*/}
+        {/*  />*/}
+        {/*</View>*/}
       </View>
     );
   };
@@ -2408,7 +2587,7 @@ class Products2 extends Component {
   renderProgressiveLoadItem = search => {
     let itemsToLoad = (
       <View style={{height: '100%', backgroundColor: 'white'}}>
-        {!search ? this.renderHeaderOutletTemplate() : null}
+        {/*{!search ? this.renderHeaderOutletTemplate() : null}*/}
         <Loader />
         <View style={styles.card}>
           <View style={styles.titleCategory}>
@@ -2597,8 +2776,11 @@ class Products2 extends Component {
 
   renderFooter = item => {
     try {
-      const {products} = this.state;
-      if (products[0].dataLength != products[0].items.length) {
+      const {products, selectedCategory} = this.state;
+      if (
+        products[selectedCategory].dataLength !=
+        products[selectedCategory].items.length
+      ) {
         return (
           <ActivityIndicator
             size={50}
@@ -2613,7 +2795,86 @@ class Products2 extends Component {
     }
   };
 
+  loadMoreCategory = async () => {
+    try {
+      let {products} = this.state;
+      const outletID = this.state.item.storeId;
+      const categorySelected = await products.find(
+        item =>
+          isEmptyArray(item.items) &&
+          item.dataLength != 0 &&
+          item.id != 'allCategories',
+      );
+      const categoryIndex = await products.findIndex(
+        item => item.id == categorySelected.id,
+      );
+      await this.setState({indexLoaded: this.state.indexLoaded + 1});
+      if (categoryIndex > -1) {
+        // await this.setState({selectedCategory: categoryIndex});
+        await this.getProductsByCategory(
+          categorySelected.id,
+          0,
+          20,
+          false,
+          categoryIndex,
+        );
+        if (this.state.products[categoryIndex].dataLength > 0) {
+          let skip = 20;
+          for (
+            let i = 0;
+            i < Math.floor(this.state.products[categoryIndex].dataLength / 20);
+            i++
+          ) {
+            await this.loadMoreProducts(
+              this.state.products[categoryIndex].id,
+              outletID,
+              skip,
+              categoryIndex,
+            );
+            skip += 20;
+          }
+        }
+      }
+    } catch (e) {}
+  };
+
+  getCategoryData = async index => {
+    try {
+      let {products} = this.state;
+      const outletID = this.state.item.storeId;
+      const categorySelected = products[index];
+      const categoryIndex = index;
+      if (categoryIndex > -1) {
+        // await this.setState({selectedCategory: categoryIndex});
+        await this.getProductsByCategory(
+          categorySelected.id,
+          0,
+          20,
+          false,
+          categoryIndex,
+        );
+        if (this.state.products[categoryIndex].dataLength > 0) {
+          let skip = 20;
+          for (
+            let i = 0;
+            i < Math.floor(this.state.products[categoryIndex].dataLength / 20);
+            i++
+          ) {
+            await this.loadMoreProducts(
+              this.state.products[categoryIndex].id,
+              outletID,
+              skip,
+              categoryIndex,
+            );
+            skip += 20;
+          }
+        }
+      }
+    } catch (e) {}
+  };
+
   renderMainList = () => {
+    const {products, indexLoaded} = this.state;
     return (
       <FlatList
         refreshControl={
@@ -2622,30 +2883,63 @@ class Products2 extends Component {
             onRefresh={this._onRefresh}
           />
         }
-        ListHeaderComponent={this.renderHeaderOutlet}
+        // ListHeaderComponent={this.renderHeaderOutlet}
         ref={ref => {
           this.flatListRef = ref;
         }}
-        onViewableItemsChanged={this._onViewableItemsChanged}
-        viewabilityConfig={this._viewabilityConfig}
-        // initialNumToRender={2}
-        initialScrollIndex={0}
-        data={this.state.products}
-        extraData={this.props}
-        onScroll={event => {
-          let yOffset = event.nativeEvent.contentOffset.y;
+        // onViewableItemsChanged={this._onViewableItemsChanged}
+        // viewabilityConfig={this._viewabilityConfig}
+        initialNumToRender={5}
+        ListFooterComponent={() => {
           try {
-            if (yOffset >= this.heightHeader) {
-              this.setState({visibleMenu: true});
+            const {products} = this.state;
+            if (products[products.length - 1].items == undefined) {
+              return (
+                <ActivityIndicator
+                  size={50}
+                  color={colorConfig.store.secondaryColor}
+                />
+              );
+            } else if (
+              products[products.length - 1].items.length !=
+              products[products.length - 1].dataLength
+            ) {
+              return (
+                <ActivityIndicator
+                  size={50}
+                  color={colorConfig.store.secondaryColor}
+                />
+              );
             } else {
-              this.setState({visibleMenu: false});
+              return null;
             }
           } catch (e) {
-            this.setState({visibleMenu: false});
+            return null;
           }
         }}
-        renderItem={({item}) => {
-          return this.renderCategoryWithProducts(item, false);
+        onEndReached={this.loadMoreCategory}
+        onEndReachedThreshold={0.1}
+        initialScrollIndex={0}
+        data={products}
+        extraData={this.props}
+        // onScroll={event => {
+        //   let yOffset = event.nativeEvent.contentOffset.y;
+        //   try {
+        //     if (yOffset >= this.heightHeader) {
+        //       this.setState({visibleMenu: true});
+        //     } else {
+        //       this.setState({visibleMenu: false});
+        //     }
+        //   } catch (e) {
+        //     this.setState({visibleMenu: false});
+        //   }
+        // }}
+        renderItem={({item, index}) => {
+          if (!isEmptyArray(item.items)) {
+            if (item.index <= indexLoaded) {
+              return this.renderCategoryWithProducts(item, false);
+            }
+          }
         }}
         keyExtractor={(item, index) => index.toString()}
       />
@@ -2653,31 +2947,17 @@ class Products2 extends Component {
   };
 
   renderSearchList = () => {
-    const {productsSearch, searchQuery, loadingSearch} = this.state;
-    if (!isEmptyArray(productsSearch)) {
-      return (
-        <View style={[styles.card, {height: '100%'}]}>
-          <FlatList
-            data={productsSearch}
-            renderItem={({item}) => this.renderCategoryWithProducts(item, true)}
-            keyExtractor={(product, index) => index.toString()}
-          />
-        </View>
-      );
-    } else {
-      if (loadingSearch) {
-        return this.renderProgressiveLoadItem(true);
-      } else if (isEmptyArray(productsSearch) && productsSearch != undefined) {
-        return <EmptySearch />;
-      } else {
-        return <NewSearch />;
-      }
-    }
+    return <NewSearch />;
   };
 
   render() {
     const {intlData, item} = this.props;
-    let {loadProducts, visibleMenu, dialogSearch} = this.state;
+    let {
+      loadProducts,
+      visibleMenu,
+      dialogSearch,
+      selectedCategory,
+    } = this.state;
     let products = this.products;
 
     return (
@@ -2708,141 +2988,195 @@ class Products2 extends Component {
         {this.askUserToSelectProductModifier()}
         <>
           {/* MENU FIXED */}
-          {visibleMenu ? (
-            <View
-              style={{
-                backgroundColor: 'white',
-                zIndex: 99,
-                width: '100%',
-                shadowColor: '#00000021',
-                shadowOffset: {
-                  width: 0,
-                  height: 9,
-                },
-                shadowOpacity: 0.9,
-                shadowRadius: 7.49,
-                elevation: 16,
-              }}>
-              {!dialogSearch ? (
-                <View>
-                  <View style={styles.outletHeaderFixed}>
-                    <TouchableOpacity
-                      onPress={this.goBack}
-                      style={{alignItems: 'center', flexDirection: 'row'}}>
-                      <Icon
-                        size={25}
-                        name={
-                          Platform.OS === 'ios'
-                            ? 'ios-arrow-back'
-                            : 'md-arrow-back'
-                        }
-                        style={{color: colorConfig.pageIndex.grayColor}}
-                      />
-                      <Text style={styles.outletHeaderFixedTitle}>
-                        {item.storeName.substr(0, 20)}
-                      </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      style={{padding: 2, paddingRight: 15}}
-                      onPress={() => this.setState({dialogSearch: true})}>
-                      <Icon
-                        size={28}
-                        name={
-                          Platform.OS === 'ios' ? 'ios-search' : 'md-search'
-                        }
-                        style={{color: colorConfig.store.defaultColor}}
-                      />
-                    </TouchableOpacity>
-                  </View>
-                  <FlatList
-                    ref={ref => {
-                      this.categoryMenuRef = ref;
-                    }}
-                    horizontal={true}
-                    data={this.state.products}
-                    extraData={this.props}
-                    renderItem={({item, index}) => {
-                      return this.renderCategoryProducts(item, index);
-                    }}
-                    keyExtractor={(item, index) => index.toString()}
-                  />
-                </View>
-              ) : (
+          {/*{visibleMenu ? (*/}
+          <View
+            style={{
+              backgroundColor: 'white',
+              zIndex: 99,
+              width: '100%',
+              marginBottom: 5,
+              // shadowColor: '#00000021',
+              // shadowOffset: {
+              //   width: 0,
+              //   height: 9,
+              // },
+              // shadowOpacity: 0.9,
+              // shadowRadius: 7.49,
+              // elevation: 16,
+            }}>
+            {!dialogSearch ? (
+              <View>
                 <View style={styles.outletHeaderFixed}>
-                  <TextInput
-                    placeholder={'Product name...'}
-                    autoFocus={true}
-                    value={this.state.searchQuery}
-                    onChangeText={value => {
-                      this.setState({searchQuery: value});
-                      this.isItemsFinishedToLoad(value);
-                    }}
-                    style={{
-                      backgroundColor: '#f2f2f2',
-                      borderRadius: 10,
-                      padding: 10,
-                      width: '80%',
-                      fontSize: 15,
-                      color: colorConfig.store.title,
-                      fontFamily: 'Lato-Bold',
-                    }}
-                  />
                   <TouchableOpacity
-                    style={styles.clearInputSearch}
-                    onPress={() =>
-                      this.setState({
-                        productsSearch: undefined,
-                        searchQuery: '',
-                      })
-                    }>
+                    onPress={this.goBack}
+                    style={{
+                      alignItems: 'center',
+                      flexDirection: 'row',
+                      // width: '60%',
+                      marginLeft: 5,
+                    }}>
                     <Icon
-                      size={20}
-                      name={Platform.OS === 'ios' ? 'ios-close' : 'md-close'}
+                      size={25}
+                      name={
+                        Platform.OS === 'ios'
+                          ? 'ios-arrow-back'
+                          : 'md-arrow-back'
+                      }
                       style={{color: colorConfig.pageIndex.grayColor}}
                     />
                   </TouchableOpacity>
                   <TouchableOpacity
-                    style={styles.closeButtonSearch}
-                    onPress={() =>
-                      this.setState({
-                        dialogSearch: false,
-                        visibleMenu: false,
-                        productsSearch: undefined,
-                        searchQuery: '',
-                      })
-                    }>
+                    style={{
+                      padding: 2,
+                      paddingRight: 15,
+                      marginLeft: 15,
+                      width: '70%',
+                      borderRadius: 7,
+                      backgroundColor: '#e1e4e8',
+                      flexDirection: 'row',
+                      paddingVertical: 7,
+                      alignItems: 'center',
+                    }}
+                    onPress={() => this.setState({dialogSearch: true})}>
+                    <Icon
+                      size={22}
+                      name={Platform.OS === 'ios' ? 'ios-search' : 'md-search'}
+                      style={{
+                        color: colorConfig.pageIndex.grayColor,
+                        marginLeft: 10,
+                      }}
+                    />
                     <Text
                       style={{
-                        color: colorConfig.store.colorError,
-                        fontFamily: 'Lato-Bold',
-                        fontSize: 17,
+                        color: colorConfig.pageIndex.grayColor,
+                        fontSize: 13,
+                        marginLeft: 10,
+                        fontFamily: 'Lato-Medium',
                       }}>
-                      Cancel
+                      Search in {this.state.item.storeName.substr(0, 15)}
                     </Text>
                   </TouchableOpacity>
+                  <CartIcon
+                    outletID={this.state.item.storeId}
+                    dataBasket={this.props.dataBasket}
+                    refreshQuantityProducts={this.refreshQuantityProducts}
+                  />
                 </View>
-              )}
-            </View>
-          ) : null}
+                {/*<FlatList*/}
+                {/*  style={{*/}
+                {/*    borderTopWidth: 3,*/}
+                {/*    borderTopColor: colorConfig.store.containerColor,*/}
+                {/*  }}*/}
+                {/*  ref={ref => {*/}
+                {/*    this.categoryMenuRef = ref;*/}
+                {/*  }}*/}
+                {/*  horizontal={true}*/}
+                {/*  data={this.state.products}*/}
+                {/*  extraData={this.props}*/}
+                {/*  renderItem={({item, index}) => {*/}
+                {/*    return this.renderCategoryProducts(item, index);*/}
+                {/*  }}*/}
+                {/*  keyExtractor={(item, index) => index.toString()}*/}
+                {/*/>*/}
+              </View>
+            ) : (
+              <View style={styles.outletHeaderFixed}>
+                <TextInput
+                  placeholder={'Product name...'}
+                  autoFocus={true}
+                  returnKeyType={'search'}
+                  value={this.state.searchQuery}
+                  onChangeText={value => {
+                    this.setState({searchQuery: value});
+                  }}
+                  onSubmitEditing={() => {
+                    const {item, searchQuery} = this.state;
+                    if (searchQuery != '') {
+                      this.setState({searchQuery: '', dialogSearch: false});
+                      Actions.push('specificCategory', {
+                        categoryDetail: {name: searchQuery},
+                        item,
+                        search: searchQuery,
+                      });
+                    }
+                  }}
+                  style={{
+                    backgroundColor: '#f2f2f2',
+                    borderRadius: 7,
+                    padding: 10,
+                    width: '80%',
+                    fontSize: 15,
+                    color: colorConfig.store.title,
+                    fontFamily: 'Lato-Bold',
+                  }}
+                />
+                <TouchableOpacity
+                  style={styles.clearInputSearch}
+                  onPress={() =>
+                    this.setState({
+                      productsSearch: undefined,
+                      searchQuery: '',
+                    })
+                  }>
+                  <Icon
+                    size={20}
+                    name={Platform.OS === 'ios' ? 'ios-close' : 'md-close'}
+                    style={{color: colorConfig.pageIndex.grayColor}}
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.closeButtonSearch}
+                  onPress={() =>
+                    this.setState({
+                      dialogSearch: false,
+                      visibleMenu: false,
+                      productsSearch: undefined,
+                      searchQuery: '',
+                    })
+                  }>
+                  <Text
+                    style={{
+                      color: colorConfig.store.colorError,
+                      fontFamily: 'Lato-Bold',
+                      fontSize: 17,
+                    }}>
+                    Cancel
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            )}
+          </View>
+          {/*) : null}*/}
           {/* MENU FIXED */}
 
           {this.state.products != undefined ? (
             !isEmptyArray(this.state.products) ? (
               loadProducts ? (
                 <>
-                  {this.renderMainList()}
-                  {dialogSearch ? (
-                    <View
-                      style={{
-                        position: 'absolute',
-                        // zIndex: 99,
-                        top: StatusBarHeight + 50,
-                        width: '100%',
-                        height: '100%',
-                      }}>
-                      {this.renderSearchList()}
-                    </View>
-                  ) : null}
+                  {selectedCategory == 0 ? (
+                    <>
+                      {this.renderMainList()}
+                      {dialogSearch ? (
+                        <View
+                          style={{
+                            position: 'absolute',
+                            // zIndex: 99,
+                            top: StatusBarHeight + 50,
+                            width: '100%',
+                            height: '100%',
+                          }}>
+                          {this.renderSearchList()}
+                        </View>
+                      ) : null}
+                    </>
+                  ) : (
+                    <ScrollView>
+                      {this.renderCategoryWithProducts(
+                        this.state.products[selectedCategory],
+                        false,
+                      )}
+                    </ScrollView>
+                  )}
                 </>
               ) : (
                 this.renderProgressiveLoadItem()
@@ -2891,17 +3225,25 @@ class Products2 extends Component {
           )}
         </>
         {/* button basket */}
+        {/*{this.state.showBasketButton && !dialogSearch ? (*/}
+        {/*  this.props.dataBasket != undefined &&*/}
+        {/*  this.props.dataBasket.outlet != undefined &&*/}
+        {/*  this.props.dataBasket.outlet.id != undefined &&*/}
+        {/*  this.props.dataBasket.outlet.id == this.state.item.storeId ? (*/}
+        {/*    <ButtonViewBasket*/}
+        {/*      previousTableNo={this.props.previousTableNo}*/}
+        {/*      refreshQuantityProducts={this.refreshQuantityProducts}*/}
+        {/*    />*/}
+        {/*  ) : null*/}
+        {/*) : null}*/}
         {this.state.showBasketButton && !dialogSearch ? (
-          this.props.dataBasket != undefined &&
-          this.props.dataBasket.outlet != undefined &&
-          this.props.dataBasket.outlet.id != undefined &&
-          this.props.dataBasket.outlet.id == this.state.item.storeId ? (
-            <ButtonViewBasket
-              previousTableNo={this.props.previousTableNo}
-              refreshQuantityProducts={this.refreshQuantityProducts}
-            />
-          ) : null
+          <ButtonNavMenu
+            updateCategory={this.updateCategory}
+            products={this.state.products}
+            outlet={this.state.item}
+          />
         ) : null}
+        {this.renderDeliveryInfo()}
       </SafeAreaView>
     );
   }
@@ -3013,14 +3355,14 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
 
     backgroundColor: colorConfig.pageIndex.backgroundColor,
-    shadowColor: '#00000021',
-    shadowOffset: {
-      width: 0,
-      height: 9,
-    },
-    shadowOpacity: 0.7,
-    shadowRadius: 7.49,
-    elevation: 12,
+    // shadowColor: '#00000021',
+    // shadowOffset: {
+    //   width: 0,
+    //   height: 9,
+    // },
+    // shadowOpacity: 0.7,
+    // shadowRadius: 7.49,
+    // elevation: 12,
   },
   cardModal: {
     marginBottom: 10,
@@ -3220,16 +3562,32 @@ const styles = StyleSheet.create({
   },
   categoryActive: {
     justifyContent: 'center',
-    backgroundColor: colorConfig.store.defaultColor,
-    padding: 2,
-    borderRadius: 20,
+    borderColor: colorConfig.store.defaultColor,
+    borderWidth: 1,
+    marginRight: 5,
+    borderRadius: 3,
+    backgroundColor: `rgba(${colorConfig.PRIMARY_COLOR_RGB}, 0.05)`,
+    // marginBottom: -8,
+    // padding: 2,
   },
   categoryNonActive: {
     justifyContent: 'center',
-    backgroundColor: colorConfig.pageIndex.inactiveTintColor,
+    // backgroundColor: colorConfig.pageIndex.inactiveTintColor,
     padding: 2,
-    borderRadius: 20,
+    // borderRadius: 20,
   },
+  // categoryActive: {
+  //   justifyContent: 'center',
+  //   backgroundColor: colorConfig.store.defaultColor,
+  //   padding: 2,
+  //   borderRadius: 20,
+  // },
+  // categoryNonActive: {
+  //   justifyContent: 'center',
+  //   backgroundColor: colorConfig.pageIndex.inactiveTintColor,
+  //   padding: 2,
+  //   borderRadius: 20,
+  // },
   makeAnotherProduct: {
     padding: 12,
     marginTop: 10,
@@ -3243,11 +3601,11 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   activeDINEINButton: {
-    padding: 13,
+    padding: 14,
     backgroundColor: colorConfig.card.otherCardColor,
-    borderRadius: 15,
+    borderRadius: 10,
     width: '60%',
-    marginBottom: 20,
+    marginBottom: 15,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
@@ -3263,19 +3621,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   activeTAKEAWAYButton: {
-    padding: 13,
+    padding: 14,
     backgroundColor: colorConfig.store.secondaryColor,
-    borderRadius: 15,
+    borderRadius: 10,
     width: '60%',
-    marginBottom: 20,
+    marginBottom: 15,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
   },
   activeDELIVERYButton: {
-    padding: 13,
+    padding: 14,
     backgroundColor: colorConfig.store.defaultColor,
-    borderRadius: 15,
+    borderRadius: 10,
     width: '60%',
     flexDirection: 'row',
     justifyContent: 'center',
@@ -3320,18 +3678,18 @@ const styles = StyleSheet.create({
   },
   outletHeaderFixed: {
     width: '100%',
-    height: 50,
+    height: 55,
     paddingVertical: 5,
     paddingHorizontal: 10,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
   },
   outletHeaderFixedTitle: {
     marginLeft: 20,
-    fontSize: 17,
+    fontSize: 15,
     fontFamily: 'Lato-Bold',
-    color: colorConfig.store.defaultColor,
+    color: colorConfig.store.titleSelected,
   },
   clearInputSearch: {
     padding: 2,
@@ -3348,5 +3706,11 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 240,
     alignItems: 'stretch',
+  },
+  textInfoDelivery: {
+    color: colorConfig.store.titleSelected,
+    fontSize: 16,
+    fontFamily: 'Lato-Medium',
+    lineHeight: 30,
   },
 });

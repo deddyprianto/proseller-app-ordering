@@ -1,5 +1,17 @@
 import {combineReducers} from 'redux';
 
+const netsclickStatus = (state = {}, action) => {
+  switch (action.type) {
+    case 'NETSCLICK_STATUS':
+      return {
+        netsclickStatus: action.netsclickStatus,
+      };
+
+    default:
+      return state;
+  }
+};
+
 const myVoucers = (state = {}, action) => {
   switch (action.type) {
     case 'DATA_MY_VOUCHERS':
@@ -65,4 +77,5 @@ export default combineReducers({
   mandatoryFields,
   afterPayment,
   paymentRefNo,
+  netsclickStatus,
 });

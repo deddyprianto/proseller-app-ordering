@@ -83,19 +83,20 @@ class WaitingFood extends Component {
   };
 
   getInfoCart = () => {
-    const {dataBasket} = this.state;
+    let {intlData, dataBasket} = this.props;
+    if (dataBasket == undefined) {
+      dataBasket = {};
+      dataBasket.outlet = {};
+    }
 
-    if (
-      dataBasket.orderingMode == 'TAKEAWAY' ||
-      dataBasket.orderingMode == 'DELIVERY'
-    ) {
-      return `Queue No: ${dataBasket.queueNo}`;
+    if (dataBasket.orderingMode == 'DELIVERY') {
+      let trackingNo = '';
+      if (dataBasket.trackingNo != undefined) {
+        trackingNo = `\n\nTracking No: ${dataBasket.trackingNo}`;
+      }
+      return `Queue No: ${dataBasket.queueNo} ${trackingNo}`;
     } else {
-      if (
-        dataBasket.outlet.enableTableScan != undefined &&
-        (dataBasket.outlet.enableTableScan == false ||
-          dataBasket.outlet.enableTableScan == '-')
-      ) {
+      if (dataBasket.queueNo != undefined) {
         return `Queue No: ${dataBasket.queueNo}`;
       } else {
         return `Table No: ${dataBasket.tableNo}`;
@@ -188,8 +189,8 @@ class WaitingFood extends Component {
               cartID: this.state.dataBasket.id,
             })}
             logo={appConfig.appLogoQR}
-            logoSize={this.state.screenWidth / 6 - 40}
-            size={this.state.screenWidth - 195}
+            logoSize={this.state.screenWidth / 6 - 45}
+            size={this.state.screenWidth - 230}
           />
         </View>
 
@@ -197,7 +198,7 @@ class WaitingFood extends Component {
           style={{
             justifyContent: 'center',
             flexDirection: 'row',
-            marginTop: 30,
+            marginTop: 60,
           }}>
           <TouchableOpacity
             onPress={this.close}
@@ -234,7 +235,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   buttonBottomFixed: {
-    marginTop: 40,
     backgroundColor: colorConfig.store.secondaryColor,
     padding: 13,
     width: '80%',

@@ -36,7 +36,8 @@ import appConfig from '../../config/appConfig';
 import {refreshToken} from '../../actions/auth.actions';
 import awsConfig from '../../config/awsConfig';
 import * as geolib from 'geolib';
-import {afterPayment} from '../../actions/account.action';
+import IconAwesome from 'react-native-vector-icons/FontAwesome';
+import {format} from 'date-fns';
 
 class Cart extends Component {
   constructor(props) {
@@ -94,7 +95,7 @@ class Cart extends Component {
       // get data basket
       await this.getBasket();
       await this.setState({loading: false});
-      // this.props.dispatch(getBasket());
+      this.props.dispatch(getBasket());
 
       // If ordering mode is DINE IN, then fetch again data outlet to know outlet is available or closed
       if (this.props.dataBasket != undefined) {
@@ -111,32 +112,15 @@ class Cart extends Component {
 
       await this.setState({loading: false});
 
-      // check if status basket is submitted, then request continoustly to get basket
-      if (
-        this.props.dataBasket != undefined &&
-        this.props.dataBasket.status == 'SUBMITTED' &&
-        this.props.dataBasket.orderingMode == 'DINEIN'
-      ) {
-        // clearInterval(this.interval);
-        // this.interval = setInterval(() => {
-        //   this.props.dispatch(getCart(this.props.myCart.id));
-        // }, 6000);
-      }
-
-      // check if status basket for TAKE AWAY IS CONFIRMED or SUBMITTED, then request continoustly to get basket
-      if (
-        this.props.dataBasket != undefined &&
-        (this.props.dataBasket.status == 'CONFIRMED' ||
-          this.props.dataBasket.status == 'SUBMITTED') &&
-        (this.props.dataBasket.outlet.outletType == 'QUICKSERVICE' ||
-          this.props.dataBasket.orderingMode == 'TAKEAWAY' ||
-          this.props.dataBasket.orderingMode == 'DELIVERY')
-      ) {
-        // clearInterval(this.interval);
-        // // this.interval = setInterval(() => {
-        // //   this.props.dispatch(getCart(this.props.myCart.id));
-        // // }, 4000);
-      }
+      // try {
+      //   clearInterval(this.interval);
+      // } catch (e) {}
+      //
+      // try {
+      //   this.interval = setInterval(() => {
+      //     this.props.dispatch(getCart(this.props.myCart.id));
+      //   }, 4000);
+      // } catch (e) {}
     } catch (e) {
       Alert.alert('Opss..', e.message);
     }
@@ -263,7 +247,7 @@ class Cart extends Component {
     const {dataBasket} = this.props;
 
     await this.setState({refreshing: true});
-    await this.props.dispatch(getCart(this.props.myCart.id));
+    this.props.dispatch(getCart(this.props.myCart.id));
     // fetch details outlet
     const outletID = this.props.dataBasket.outlet.id;
     await this.props.dispatch(getOutletById(outletID));
@@ -277,10 +261,26 @@ class Cart extends Component {
             dataBasket.status == 'READY_FOR_DELIVERY' ||
             dataBasket.status == 'READY_FOR_COLLECTION') &&
           (Actions.currentScene == 'cart' ||
-            Actions.currentScene == 'waitingFood')
+            Actions.currentScene == 'waitingFood') &&
+          (dataBasket.outlet.outletType == 'QUICKSERVICE' ||
+            dataBasket.outlet.outletType == 'RETAIL' ||
+            dataBasket.orderingMode == 'TAKEAWAY' ||
+            dataBasket.orderingMode == 'DELIVERY')
         ) {
+          // clearInterval(this.interval);
+          // this.interval = undefined;
           Actions.replace('waitingFood', {myCart: dataBasket});
         }
+      }
+
+      // clear table type if basket is cancelled by admin
+      if (dataBasket == undefined) {
+        try {
+          this.props.dispatch(clearTableType());
+          clearInterval(this.interval);
+          // Actions.pop();
+          this.interval = undefined;
+        } catch (e) {}
       }
     } catch (e) {}
   };
@@ -331,10 +331,10 @@ class Cart extends Component {
           basket: this.props.dataBasket,
           orderType: this.props.orderType,
         });
-        // clearInterval(this.interval);
-        // this.interval = setInterval(() => {
-        //   this.props.dispatch(getCart(this.props.myCart.id));
-        // }, 4000);
+        clearInterval(this.interval);
+        this.interval = setInterval(() => {
+          this.props.dispatch(getCart(this.props.myCart.id));
+        }, 4000);
       }
     } catch (e) {}
   };
@@ -405,13 +405,18 @@ class Cart extends Component {
     }
   };
 
+  goToOrderQRCode = () => {
+    const {dataBasket} = this.props;
+    Actions.push('QRCodeCart', {myCart: dataBasket});
+  };
+
   renderSettleButtonQuickService = () => {
     const {intlData, dataBasket} = this.props;
     return (
       <View
         style={{
           width: '100%',
-          paddingBottom: 20,
+          paddingVertical: 15,
           backgroundColor: 'white',
           shadowColor: '#00000021',
           shadowOffset: {
@@ -426,67 +431,21 @@ class Cart extends Component {
           bottom: 0,
           flexDirection: 'column',
         }}>
-        <Text
+        <View
           style={{
-            color: colorConfig.store.title,
-            textAlign: 'right',
-            fontWeight: 'bold',
-            fontFamily: 'Lato-Bold',
-            paddingVertical: 8,
-            fontSize: 15,
-            marginRight: 20,
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
           }}>
-          TOTAL : {appConfig.appMataUang}
-          {this.format(CurrencyFormatter(dataBasket.totalNettAmount))}
-        </Text>
-        <View style={{flexDirection: 'row', justifyContent: 'center'}}>
           <TouchableOpacity
-            disabled={
-              this.checkActivateButton(dataBasket, 'cancel') ? false : true
-            }
-            onPress={this.alertRemoveBasket}
-            style={[
-              styles.btnCancelBasketModal,
-              {
-                backgroundColor: this.checkActivateButton(dataBasket, 'cancel')
-                  ? colorConfig.store.colorError
-                  : colorConfig.store.disableButtonError,
-              },
-            ]}>
-            <Icon
+            onPress={this.goToOrderQRCode}
+            style={[styles.btnCancelBasketModal]}>
+            <IconAwesome
               size={23}
-              name={Platform.OS === 'ios' ? 'ios-trash' : 'md-trash'}
+              name={'qrcode'}
               style={{color: 'white', marginRight: 5}}
             />
-            <Text style={styles.textBtnBasketModal}>
-              {intlData.messages.clear}
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={this.goToSettle}
-            disabled={
-              this.checkActivateButton(dataBasket) ? !this.isOpen() : true
-            }
-            style={[
-              styles.btnAddBasketModal,
-              {
-                backgroundColor: this.checkActivateButton(dataBasket)
-                  ? this.isOpen()
-                    ? colorConfig.store.defaultColor
-                    : colorConfig.store.disableButton
-                  : colorConfig.store.disableButton,
-              },
-            ]}>
-            <Icon
-              size={23}
-              name={
-                Platform.OS === 'ios'
-                  ? 'ios-checkbox-outline'
-                  : 'md-checkbox-outline'
-              }
-              style={{color: 'white', marginRight: 5}}
-            />
-            <Text style={styles.textBtnBasketModal}>Check Out</Text>
+            <Text style={styles.textBtnBasketModal}>Order QR Code</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -679,9 +638,9 @@ class Cart extends Component {
           pembayaran.tableNo = '-';
         }
         pembayaran.orderingMode = orderType;
-        url = '/cart/submitAndPay';
+        url = '/cart/submitTakeAway';
       } else {
-        url = '/cart/customer/settle';
+        url = '/cart/settle';
         pembayaran.cartID = this.props.dataBasket.cartID;
       }
 
@@ -1099,152 +1058,46 @@ class Cart extends Component {
       return item;
     }
   };
-  format2 = item => {
-    try {
-      const curr = appConfig.appMataUang;
-      item = item.replace(`${curr} `, '');
-      if (curr != 'RP' && curr != 'IDR' && item.includes('.') == false) {
-        return `${item}.00`;
-      }
-      return item;
-    } catch (e) {
-      return item;
-    }
-  };
 
   renderItemModifier = item => {
     return (
       <FlatList
         data={item.modifiers}
-        renderItem={({item}) => {
-          if (item.modifier.max != 1 && item.modifier.isYesNo != true) {
-            if (!isEmptyArray(item.modifier.details)) {
-              return (
-                <>
-                  <Text style={[styles.descModifier]}>
-                    <Text style={{fontStyle: 'normal'}}>{'\u25CF'}</Text>{' '}
-                    {item.modifierName}:{' '}
-                  </Text>
-                  {item.modifier.details.map((mod, idx) => (
-                    <View style={{marginLeft: 9}}>
-                      <Text
-                        key={idx}
-                        style={[styles.descModifier, {fontSize: 13}]}>
-                        <Text style={{fontStyle: 'normal'}}>{'\u25CF'}</Text>{' '}
-                        <Text
-                          style={{
-                            color: colorConfig.store.defaultColor,
-                          }}>
-                          {mod.quantity}x
-                        </Text>{' '}
-                        {mod.name}{' '}
-                        {mod.price > 0
-                          ? `  +${this.format2(CurrencyFormatter(mod.price))}`
-                          : null}{' '}
-                      </Text>
-                    </View>
-                  ))}
-                </>
-              );
-            }
-          } else {
-            return item.modifier.details.map((mod, idx) => (
-              <Text key={idx} style={[styles.descModifier]}>
-                <Text style={{fontStyle: 'normal'}}>{'\u25CF'}</Text>{' '}
-                {item.modifier.max == 1 && item.modifier.isYesNo != true
-                  ? `${item.modifierName}: ${mod.name} ${
-                      mod.price > 0
-                        ? `  +${this.format2(CurrencyFormatter(mod.price))}`
-                        : ''
-                    }`
-                  : null}
-                {item.modifier.isYesNo == true
-                  ? `${mod.name} ${
-                      mod.price > 0
-                        ? `  +${this.format2(CurrencyFormatter(mod.price))}`
-                        : ''
-                    }`
-                  : null}
-              </Text>
-            ));
-          }
-        }}
+        renderItem={({item}) =>
+          item.modifier.details.map(mod => (
+            <Text style={[styles.descModifier]}>
+              •{' '}
+              {item.modifier.isYesNo != true ? (
+                <Text
+                  style={{
+                    color: colorConfig.store.defaultColor,
+                  }}>
+                  {mod.quantity}x
+                </Text>
+              ) : null}{' '}
+              {mod.name} ( {this.format(CurrencyFormatter(mod.price))} )
+            </Text>
+          ))
+        }
       />
     );
   };
 
   getInfoOrder = () => {
     const {dataBasket, tableType} = this.props;
-    if (dataBasket.outlet.outletType == 'QUICKSERVICE') {
-      if (
-        dataBasket.orderingMode == 'TAKEAWAY' ||
-        dataBasket.orderingMode == 'DELIVERY'
-      ) {
-        return dataBasket.queueNo;
-      } else {
-        if (
-          dataBasket.outlet.enableTableScan != undefined &&
-          (dataBasket.outlet.enableTableScan == false ||
-            dataBasket.outlet.enableTableScan == '-')
-        ) {
-          return dataBasket.queueNo;
-        } else {
-          let table = '';
-
-          if (dataBasket.tableNo == undefined) {
-            table = tableType.tableNo;
-          } else {
-            table = dataBasket.tableNo;
-          }
-          return table;
-        }
-      }
+    if (dataBasket.tableNo != undefined && dataBasket.tableNo != '-') {
+      return dataBasket.tableNo;
     } else {
-      if (
-        dataBasket.orderingMode == 'TAKEAWAY' ||
-        dataBasket.orderingMode == 'DELIVERY'
-      ) {
-        return dataBasket.queueNo;
-      } else {
-        let table = '';
-        if (dataBasket.tableNo == undefined) {
-          table = tableType.tableNo;
-        } else {
-          table = dataBasket.tableNo;
-        }
-        return table;
-      }
+      return dataBasket.queueNo;
     }
   };
 
   getInfoTextOrder = () => {
     const {dataBasket} = this.props;
-    if (dataBasket.outlet.outletType == 'QUICKSERVICE') {
-      if (
-        dataBasket.orderingMode == 'TAKEAWAY' ||
-        dataBasket.orderingMode == 'DELIVERY'
-      ) {
-        return 'Queue No.';
-      } else {
-        if (
-          dataBasket.outlet.enableTableScan != undefined &&
-          (dataBasket.outlet.enableTableScan == false ||
-            dataBasket.outlet.enableTableScan == '-')
-        ) {
-          return 'Queue No.';
-        } else {
-          return 'Table No';
-        }
-      }
+    if (dataBasket.tableNo != undefined && dataBasket.tableNo != '-') {
+      return 'Table No';
     } else {
-      if (
-        dataBasket.orderingMode == 'TAKEAWAY' ||
-        dataBasket.orderingMode == 'DELIVERY'
-      ) {
-        return 'Queue No.';
-      } else {
-        return 'Table No';
-      }
+      return 'Queue No';
     }
   };
 
@@ -1316,14 +1169,14 @@ class Cart extends Component {
           <View style={styles.itemSummary}>
             <Text style={styles.total}>Delivery Address</Text>
             <View style={{justifyContent: 'flex-end'}}>
-              <Text style={styles.totalAddress}>
+              <Text style={[styles.totalAddress, {marginTop: 13}]}>
                 {dataBasket.deliveryAddress.addressName}
               </Text>
-              {dataBasket.deliveryAddress.address && (
-                <Text style={styles.totalAddress}>
-                  {dataBasket.deliveryAddress.address}
-                </Text>
-              )}
+              {/*{dataBasket.deliveryAddress.address && (*/}
+              {/*  <Text style={styles.totalAddress}>*/}
+              {/*    {dataBasket.deliveryAddress.address}*/}
+              {/*  </Text>*/}
+              {/*)}*/}
               {dataBasket.deliveryAddress.streetName && (
                 <Text style={styles.totalAddress}>
                   {dataBasket.deliveryAddress.streetName}
@@ -1331,16 +1184,16 @@ class Cart extends Component {
               )}
               {dataBasket.deliveryAddress.unitNo && (
                 <Text style={styles.totalAddress}>
-                  {dataBasket.deliveryAddress.unitNo}
+                  Unit No: {dataBasket.deliveryAddress.unitNo}
                 </Text>
               )}
-              {awsConfig.COUNTRY != 'Singapore' ? (
-                <Text style={styles.totalAddress}>
-                  {dataBasket.deliveryAddress.city}
-                </Text>
-              ) : (
-                <Text style={styles.totalAddress}>{awsConfig.COUNTRY}</Text>
-              )}
+              {/*{awsConfig.COUNTRY != 'Singapore' ? (*/}
+              {/*  <Text style={styles.totalAddress}>*/}
+              {/*    {dataBasket.deliveryAddress.city}*/}
+              {/*  </Text>*/}
+              {/*) : (*/}
+              {/*  <Text style={styles.totalAddress}>{awsConfig.COUNTRY}</Text>*/}
+              {/*)}*/}
               {dataBasket.deliveryAddress.province != undefined ? (
                 <Text style={styles.totalAddress}>
                   Province: {dataBasket.deliveryAddress.province}
@@ -1445,6 +1298,62 @@ class Cart extends Component {
     } catch (e) {}
   };
 
+  formatCurrency = value => {
+    try {
+      return this.format(CurrencyFormatter(value));
+    } catch (e) {
+      return value;
+    }
+  };
+
+  getGrandTotal = data => {
+    try {
+      let item = data;
+      if (item.payments != undefined && !isEmptyArray(item.payments)) {
+        let total = data.totalNettAmount;
+
+        if (data.deliveryFee != undefined) {
+          total += data.deliveryFee;
+        }
+
+        for (let i = 0; i < item.payments.length; i++) {
+          if (
+            item.payments[i].isVoucher == true ||
+            item.payments[i].isPoint == true
+          ) {
+            total -= item.payments[i].paymentAmount;
+          }
+        }
+        if (total < 0) total = 0;
+        return this.formatCurrency(total);
+      } else {
+        let total = data.totalNettAmount;
+
+        if (data.deliveryFee != undefined) {
+          total += data.deliveryFee;
+        }
+        return this.formatCurrency(total);
+      }
+    } catch (e) {}
+  };
+
+  getLabelTimeslot = () => {
+    try {
+      const orderType = this.props.dataBasket.orderingMode;
+      if (this.props.dataBasket.orderActionTimeSlot != null) {
+        if (orderType === 'DELIVERY') return 'Delivery Date & Time';
+        if (orderType === 'STOREPICKUP' || orderType === 'TAKEAWAY')
+          return 'Pickup Date & Time';
+      } else {
+        if (orderType === 'DELIVERY') return 'Delivery Date';
+        if (orderType === 'STOREPICKUP' || orderType === 'TAKEAWAY')
+          return 'Pickup Date';
+      }
+    } catch (e) {
+      return null;
+    }
+  };
+
   render() {
     const {intlData, dataBasket, orderType, tableType} = this.props;
 
@@ -1458,11 +1367,15 @@ class Cart extends Component {
       if (dataBasket != undefined) {
         //  for outlet type quick service
         if (
-          (dataBasket.status == 'PROCESSING' ||
-            dataBasket.status == 'READY_FOR_DELIVERY' ||
-            dataBasket.status == 'READY_FOR_COLLECTION') &&
-          (Actions.currentScene == 'cart' ||
-            Actions.currentScene == 'waitingFood')
+          (dataBasket.status === 'PROCESSING' ||
+            dataBasket.status === 'READY_FOR_DELIVERY' ||
+            dataBasket.status === 'READY_FOR_COLLECTION') &&
+          (Actions.currentScene === 'cart' ||
+            Actions.currentScene === 'waitingFood') &&
+          (dataBasket.outlet.outletType === 'QUICKSERVICE' ||
+            dataBasket.outlet.outletType === 'RETAIL' ||
+            dataBasket.orderingMode === 'TAKEAWAY' ||
+            dataBasket.orderingMode === 'DELIVERY')
         ) {
           // clearInterval(this.interval);
           // this.interval = undefined;
@@ -1475,7 +1388,7 @@ class Cart extends Component {
         try {
           this.props.dispatch(clearTableType());
           clearInterval(this.interval);
-          Actions.pop();
+          // Actions.pop();
           this.interval = undefined;
         } catch (e) {}
       }
@@ -1510,7 +1423,7 @@ class Cart extends Component {
             <Text style={styles.btnBackText}>
               {' '}
               {/*{intlData.messages.detailOrder}{' '}*/}
-              Order Details
+              Detail Cart
             </Text>
           </TouchableOpacity>
         </View>
@@ -1543,7 +1456,9 @@ class Cart extends Component {
                     flexDirection: 'row',
                     justifyContent: 'space-between',
                   }}>
-                  <Text style={styles.subTitle}>Order Details</Text>
+                  <Text style={styles.subTitle}>
+                    {intlData.messages.detailOrder}
+                  </Text>
                   {dataBasket.orderingMode == 'DINEIN' &&
                   dataBasket.outlet.outletType == 'RESTO' ? (
                     <TouchableOpacity onPress={this.goToProducts}>
@@ -1571,14 +1486,9 @@ class Cart extends Component {
                                   }}>
                                   {item.quantity}x
                                 </Text>{' '}
-                                {item.product.name} {'  +'}
-                                {this.format2(
-                                  CurrencyFormatter(
-                                    item.product != undefined
-                                      ? item.product.retailPrice
-                                      : 0,
-                                  ),
-                                )}{' '}
+                                {item.product.name} ({' '}
+                                {this.format(CurrencyFormatter(item.unitPrice))}{' '}
+                                )
                               </Text>
                               {item.remark != undefined && item.remark != '' ? (
                                 <Text
@@ -1592,18 +1502,18 @@ class Cart extends Component {
                                 </Text>
                               ) : null}
                               {/* loop item modifier */}
-                              {/*{!isEmptyArray(item.modifiers) ? (*/}
-                              {/*  <Text*/}
-                              {/*    style={{*/}
-                              {/*      color:*/}
-                              {/*        colorConfig.pageIndex.inactiveTintColor,*/}
-                              {/*      fontSize: 10,*/}
-                              {/*      marginLeft: 10,*/}
-                              {/*      fontStyle: 'italic',*/}
-                              {/*    }}>*/}
-                              {/*    Add On:*/}
-                              {/*  </Text>*/}
-                              {/*) : null}*/}
+                              {!isEmptyArray(item.modifiers) ? (
+                                <Text
+                                  style={{
+                                    color:
+                                      colorConfig.pageIndex.inactiveTintColor,
+                                    fontSize: 10,
+                                    marginLeft: 10,
+                                    fontStyle: 'italic',
+                                  }}>
+                                  Add On:
+                                </Text>
+                              ) : null}
                               {this.renderItemModifier(item)}
                               {/* loop item modifier */}
                             </View>
@@ -1684,15 +1594,14 @@ class Cart extends Component {
                   <View style={styles.itemSummary}>
                     <Text style={styles.total}>Delivery Provider</Text>
                     <Text style={styles.total}>
-                      {dataBasket.deliveryProvider} |{' '}
-                      {dataBasket.deliveryService}
+                      {dataBasket.deliveryProvider}
                     </Text>
                   </View>
                 ) : null}
 
                 {dataBasket.deliveryProviderId != undefined ? (
                   <View style={styles.itemSummary}>
-                    <Text style={styles.total}>Delivery Provider : </Text>
+                    <Text style={styles.total}>Delivery Provider </Text>
                     <Text style={[styles.total, {textAlign: 'right'}]}>
                       {this.getInfoProvider(dataBasket.deliveryProviderId)}
                     </Text>
@@ -1703,7 +1612,8 @@ class Cart extends Component {
                   <View style={styles.itemSummary}>
                     <Text style={styles.total}>Delivery Fee</Text>
                     <Text style={styles.total}>
-                      {CurrencyFormatter(dataBasket.deliveryFee)}
+                      {appConfig.appMataUang}
+                      {this.format(CurrencyFormatter(dataBasket.deliveryFee))}
                     </Text>
                   </View>
                 ) : null}
@@ -1739,6 +1649,33 @@ class Cart extends Component {
                       </Text>
                     </View>
                   )}
+                {this.props.dataBasket.orderActionDate != undefined && (
+                  <View style={styles.itemSummary}>
+                    <Text style={styles.total}>{this.getLabelTimeslot()}</Text>
+                    <Text style={styles.total}>
+                      {format(
+                        new Date(this.props.dataBasket.orderActionDate),
+                        'dd MMM yyyy',
+                      )}{' '}
+                      {this.props.dataBasket.orderActionTimeSlot != null &&
+                        ` at ${this.props.dataBasket.orderActionTimeSlot}`}
+                    </Text>
+                  </View>
+                )}
+
+                <View style={styles.itemSummary}>
+                  <Text
+                    style={[styles.total, {color: colorConfig.store.title}]}>
+                    {this.props.dataBasket.payAtPOS == true
+                      ? 'Pay at Store'
+                      : 'TOTAL'}
+                  </Text>
+                  <Text
+                    style={[styles.total, {color: colorConfig.store.title}]}>
+                    {appConfig.appMataUang}
+                    {this.getGrandTotal(this.props.dataBasket)}
+                  </Text>
+                </View>
               </View>
             </ScrollView>
           ) : (
@@ -1747,24 +1684,7 @@ class Cart extends Component {
         ) : (
           <Loader />
         )}
-        {dataBasket != undefined
-          ? // check type outlet
-            dataBasket.outlet.outletType == 'RESTO'
-            ? this.isTakeAwayOrDelivery(orderType, dataBasket)
-              ? this.renderSettleButtonRestaurant()
-              : dataBasket.status == 'PENDING'
-              ? this.renderButtonScanQRCode()
-              : this.renderSettleButtonRestaurant()
-            : this.isTakeAwayOrDelivery(orderType, dataBasket)
-            ? this.renderSettleButtonQuickService()
-            : dataBasket.outlet.enableTableScan != undefined &&
-              (dataBasket.outlet.enableTableScan == false ||
-                dataBasket.outlet.enableTableScan == '-')
-            ? this.renderSettleButtonQuickService()
-            : dataBasket.status == 'PENDING' && tableType == undefined
-            ? this.renderButtonScanQRCode()
-            : this.renderSettleButtonQuickService()
-          : null}
+        {dataBasket != undefined ? this.renderSettleButtonQuickService() : null}
       </SafeAreaView>
     );
   }
@@ -1931,7 +1851,7 @@ const styles = StyleSheet.create({
   descModifier: {
     color: colorConfig.pageIndex.grayColor,
     maxWidth: Dimensions.get('window').width,
-    fontSize: 13,
+    fontSize: 11,
     fontStyle: 'italic',
     marginLeft: 10,
     fontFamily: 'Lato-Medium',
@@ -2013,9 +1933,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 13,
-    marginRight: 20,
-    width: '40%',
-    backgroundColor: colorConfig.store.colorError,
+    marginHorizontal: 20,
+    width: '90%',
+    backgroundColor: colorConfig.store.secondaryColor,
   },
   textBtnBasketModal: {
     color: 'white',

@@ -71,7 +71,7 @@ class HostedPayment extends Component {
         Alert.alert('Sorry', "Can't register your credit card.");
         return;
       }
-    }, 5000);
+    }, 1000);
   };
 
   setSelectedAccount = async () => {

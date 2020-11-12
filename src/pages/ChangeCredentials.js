@@ -255,7 +255,7 @@ class ChangeCredentials extends Component {
 
       const response = await this.props.dispatch(requestOTP(dataProfile));
 
-      if (response) {
+      if (response.success) {
         let address = phoneNumber + phone;
         let initialTimer = 1;
         if (mode === 'Email') {
@@ -269,7 +269,11 @@ class ChangeCredentials extends Component {
           dataDiri: this.props.dataDiri,
         });
       } else {
-        Alert.alert('Sorry', 'Please try again');
+        let message = 'Please try again';
+        try {
+          message = response.responseBody.Data.message;
+        } catch (e) {}
+        Alert.alert('Sorry', message);
       }
     } catch (e) {}
     this.setState({loading: false});

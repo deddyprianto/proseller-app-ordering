@@ -1,6 +1,6 @@
 const appConfig = {
   // info company
-  appName: 'Edgeworks',
+  appName: 'U Stars Supermarket',
   appMataUang: 'SGD',
   appVersion: 'Version 1.1',
   // image company
@@ -27,6 +27,7 @@ const appConfig = {
   //  image template
   emptyBox: require('../../assets/component/empty-box.png'),
   newSearch: require('../../assets/component/find-food.png'),
+  productPlaceholder: require('../../assets/component/product-placeholder.png'),
 };
 
 export default appConfig;

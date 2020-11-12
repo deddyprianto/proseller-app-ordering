@@ -1773,7 +1773,7 @@ class PaymentDetail extends Component {
                           fontWeight: 'bold',
                           color: colorConfig.pageIndex.activeTintColor,
                         }}>
-                        {appConfig.appName}
+                        {this.props.companyInfo.companyName}
                       </Text>
                       <Text
                         style={{

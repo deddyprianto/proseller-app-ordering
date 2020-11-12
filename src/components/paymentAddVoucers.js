@@ -225,7 +225,11 @@ export default class PaymentAddVoucers extends Component {
             </View>
           ) : (
             myVoucers
-              .filter(voucher => voucher.totalRedeem > 0)
+              .filter(
+                voucher =>
+                  voucher.totalRedeem > 0 &&
+                  voucher.validity.canOnlyRedeemedByMerchant != true,
+              )
               .map((item, keys) => (
                 <View key={keys}>
                   {

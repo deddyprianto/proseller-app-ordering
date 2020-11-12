@@ -23,7 +23,7 @@ import appConfig from '../config/appConfig';
 import CurrencyFormatter from '../helper/CurrencyFormatter';
 import {clearAccount, clearAddress} from '../actions/payment.actions';
 // import OneSignal from 'react-native-onesignal';
-import {getPendingCart} from '../actions/order.action';
+import {getPendingCart, removeTimeslot} from '../actions/order.action';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
 import {isEmptyArray, isEmptyObject} from '../helper/CheckEmpty';
@@ -52,6 +52,7 @@ class PaymentSuccess extends Component {
     try {
       this.props.dispatch(clearAccount());
       this.props.dispatch(getPendingCart());
+      this.props.dispatch(removeTimeslot());
     } catch (e) {}
   };
 
@@ -169,6 +170,28 @@ class PaymentSuccess extends Component {
     }
   };
 
+  getGrandTotal = () => {
+    const {dataRespons} = this.props;
+    try {
+      if (!isEmptyArray(dataRespons.payments)) {
+        const find = dataRespons.payments.find(
+          item => item.isAppPayment === true,
+        );
+        if (find !== undefined) {
+          return this.format(CurrencyFormatter(find.paymentAmount));
+        } else if (find === undefined && dataRespons.payAtPOS != true) {
+          return this.format(CurrencyFormatter(0));
+        } else {
+          return this.format(CurrencyFormatter(dataRespons.totalNettAmount));
+        }
+      } else {
+        return this.format(CurrencyFormatter(dataRespons.totalNettAmount));
+      }
+    } catch (e) {
+      return dataRespons.totalNettAmount;
+    }
+  };
+
   renderPaymentDetails = () => {
     const {intlData} = this.props;
     return (
@@ -230,9 +253,10 @@ class PaymentSuccess extends Component {
                 fontSize: 35,
                 fontWeight: 'bold',
               }}>
-              {this.format(
-                CurrencyFormatter(this.props.dataRespons.totalNettAmount),
-              )}
+              {/*{this.format(*/}
+              {/*  CurrencyFormatter(this.props.dataRespons.totalNettAmount),*/}
+              {/*)}*/}
+              {this.getGrandTotal()}
             </Text>
           </View>
           {/*{this.props.dataRespons.earnedPoint > 0 ? (*/}
@@ -295,7 +319,7 @@ class PaymentSuccess extends Component {
                 fontWeight: 'bold',
                 color: colorConfig.pageIndex.activeTintColor,
               }}>
-              {appConfig.appName.toUpperCase()}
+              {this.props.companyInfo.companyName}
             </Text>
             <Text
               style={{
@@ -464,6 +488,7 @@ const styles = StyleSheet.create({
 
 mapStateToProps = state => ({
   intlData: state.intlData,
+  companyInfo: state.userReducer.getCompanyInfo.companyInfo,
 });
 
 mapDispatchToProps = dispatch => ({

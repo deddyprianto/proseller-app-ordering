@@ -367,9 +367,9 @@ class Rewards extends Component {
               {this.state.isLoading ? (
                 <RewardsStamp isLoading={this.state.isLoading} />
               ) : this.props.dataStamps == undefined ||
-                isEmptyObject(
-                  this.props.dataStamps.dataStamps,
-                ) ? null : !isEmptyObject(
+                isEmptyObject(this.props.dataStamps.dataStamps) ? (
+                this.greetWelcomeUser()
+              ) : !isEmptyObject(
                   // this.greetWelcomeUser()
                   this.props.dataStamps.dataStamps.trigger,
                 ) &&
@@ -414,8 +414,7 @@ class Rewards extends Component {
                         fontWeight: 'bold',
                         textAlign: 'center',
                       }}>
-                       {/*intlData.messages.stampsCard*/}
-                      Stamp Card
+                      {intlData.messages.stampsCard}
                     </Text>
                   </TouchableOpacity>
                   <RewardsStamp isLoading={this.state.isLoading} />

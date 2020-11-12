@@ -51,8 +51,7 @@ import Notifications from '../components/notifications/Notifications';
 // order
 import Order from '../pages/order';
 import CategoryProducts from '../components/order/CategoryProducts';
-import Products from '../components/order/Products';
-import Products2 from '../components/order/Products2';
+// import Products2 from '../components/order/Products2';
 import Basket from '../components/order/Basket';
 import Cart from '../components/order/Cart';
 import ScanQRTable from '../components/order/ScanQRTable';
@@ -84,8 +83,11 @@ import Contacts from '../components/referral/Contacts';
 import HostedTransaction from '../components/card/HostedTransaction';
 import ChangeCredentials from '../pages/ChangeCredentials';
 import ChangeCredentialsOTP from '../pages/ChangeCredentialsOTP';
-import TermsCondition from '../pages/TermsCondition';
+import PickUpTime from '../components/order/PickUpTime';
+import ProductsRetail from '../components/order/ProductsRetail';
+import MenuCategory from '../components/order/MenuCategory';
 import awsConfig from './awsConfig';
+import ProductsSpecific from '../components/order/ProductsSpecific';
 
 let backPressed = 0;
 
@@ -211,8 +213,8 @@ export default class Routes extends Component {
             <Scene key="detailPoint" component={DetailPoint} />
             <Scene key="order" component={Order} />
             <Scene key="categoryProducts" component={CategoryProducts} />
-            <Scene key="products" component={Products} />
-            <Scene key="productsMode2" component={Products2} />
+            <Scene key="productsMode2" component={ProductsRetail} />
+            <Scene key="specificCategory" component={ProductsSpecific} />
             <Scene key="basket" component={Basket} />
             <Scene key="cart" component={Cart} />
             <Scene key="scanQRTable" component={ScanQRTable} />
@@ -240,8 +242,9 @@ export default class Routes extends Component {
             <Scene key="listReferral" component={ListReferral} />
             <Scene key="addReferral" component={AddReferral} />
             <Scene key="contacts" component={Contacts} />
+            <Scene key="pickUpTime" component={PickUpTime} />
             <Scene key="changeCredentials" component={ChangeCredentials} />
-            <Scene key="termsCondition" component={TermsCondition} />
+            <Scene key="menuCategory" component={MenuCategory} />
             <Scene
               key="changeCredentialsOTP"
               component={ChangeCredentialsOTP}

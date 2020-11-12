@@ -41,7 +41,10 @@ class HostedTransaction extends Component {
     this.interval = setInterval(async () => {
       const response = await this.props.dispatch(getBasket());
       // console.log(response.response.data, 'aksjbaskj');
-      if (response.response.data.isPaymentComplete == true) {
+      if (
+        response.response.data.confirmationInfo != undefined &&
+        response.response.data.isPaymentComplete == true
+      ) {
         clearInterval(this.interval);
         this.props.dispatch(getBasket());
         if (this.props.page === 'settleOrder') {
@@ -50,7 +53,7 @@ class HostedTransaction extends Component {
             outlet: this.props.outlet,
             intlData,
             url: this.props.urlSettle,
-            dataRespons: response.response.data,
+            dataRespons: response.response.data.confirmationInfo,
           });
           return;
         } else {

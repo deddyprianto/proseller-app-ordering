@@ -11,31 +11,27 @@ import {
   StyleSheet,
   Dimensions,
   TouchableOpacity,
-  TouchableWithoutFeedback,
   ScrollView,
-  Picker,
   BackHandler,
   Platform,
-  TextInput,
   FlatList,
   RefreshControl,
   SafeAreaView,
-  Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
 import colorConfig from '../../config/colorConfig';
-import awsConfig from '../../config/awsConfig';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
-import {reduxForm} from 'redux-form';
 import Loader from './../loader';
 import {
   getAccountPayment,
+  netsclickRegister,
   selectedAccount,
 } from '../../actions/payment.actions';
 import {isEmptyArray, isEmptyObject} from '../../helper/CheckEmpty';
 import {defaultPaymentAccount} from '../../actions/user.action';
+import AsyncStorage from '@react-native-community/async-storage';
 
 class PaymentMethods extends Component {
   constructor(props) {
@@ -90,16 +86,35 @@ class PaymentMethods extends Component {
     }
   };
 
+  handleNetsClick = async item => {
+    try {
+      try {
+        const value = await AsyncStorage.getItem('@netsclick_register_status');
+        if (value !== null) {
+          await this.props.dispatch(selectedAccount(item));
+          Actions.pop();
+        } else {
+          await this.props.dispatch(netsclickRegister(item));
+          Actions.pop();
+        }
+      } catch (e) {}
+    } catch (e) {}
+  };
+
   gotoAccounts = async (intlData, item, page) => {
     try {
       if (item.isAccountRequired != false) {
         Actions.paymentAddCard({intlData, item, page});
       } else {
-        await this.props.dispatch(selectedAccount(item));
-        if (isEmptyObject(this.props.defaultAccount)) {
-          await this.props.dispatch(defaultPaymentAccount(item));
+        if (item.paymentType === 'NETSCLICK') {
+          this.handleNetsClick(item);
+        } else {
+          await this.props.dispatch(selectedAccount(item));
+          if (isEmptyObject(this.props.defaultAccount)) {
+            await this.props.dispatch(defaultPaymentAccount(item));
+          }
+          Actions.pop();
         }
-        Actions.pop();
       }
     } catch (e) {}
   };
@@ -137,7 +152,7 @@ class PaymentMethods extends Component {
   };
 
   render() {
-    const {intlData, companyInfo} = this.props;
+    const {intlData, companyInfo, page, netsclickStatus} = this.props;
     return (
       <SafeAreaView style={styles.container}>
         {this.state.loading && <Loader />}
@@ -166,6 +181,35 @@ class PaymentMethods extends Component {
           }>
           <Text style={styles.headingMenu}>Available Payment Methods</Text>
           {this.renderPaymentMethodOptions()}
+          {/*<TouchableOpacity*/}
+          {/*  style={[styles.card]}*/}
+          {/*  onPress={() =>*/}
+          {/*    this.gotoAccounts(*/}
+          {/*      intlData,*/}
+          {/*      {*/}
+          {/*        paymentType: 'NETSCLICK',*/}
+          {/*        isAccountRequired: false,*/}
+          {/*        paymentName: 'NETS Click',*/}
+          {/*      },*/}
+          {/*      page,*/}
+          {/*    )*/}
+          {/*  }>*/}
+          {/*  <View style={styles.headingCard}>*/}
+          {/*    <View>*/}
+          {/*      <Text style={styles.cardText}>NETS Click</Text>*/}
+          {/*      {netsclickStatus == true ? (*/}
+          {/*        <Text style={styles.subTitle}>NETS Click Registered</Text>*/}
+          {/*      ) : (*/}
+          {/*        <Text style={styles.subTitleGray}>Add NETS Bank Card</Text>*/}
+          {/*      )}*/}
+          {/*    </View>*/}
+          {/*    <Icon*/}
+          {/*      size={22}*/}
+          {/*      name={Platform.OS === 'ios' ? 'ios-checkmark' : 'md-checkmark'}*/}
+          {/*      style={{color: colorConfig.store.colorSuccess}}*/}
+          {/*    />*/}
+          {/*  </View>*/}
+          {/*</TouchableOpacity>*/}
         </ScrollView>
       </SafeAreaView>
     );
@@ -178,6 +222,7 @@ mapStateToProps = state => ({
   myCardAccount: state.cardReducer.myCardAccount.card,
   selectedAccount: state.cardReducer.selectedAccount.selectedAccount,
   defaultAccount: state.userReducer.defaultPaymentAccount.defaultAccount,
+  netsclickStatus: state.accountsReducer.netsclickStatus.netsclickStatus,
 });
 
 mapDispatchToProps = dispatch => ({
@@ -259,7 +304,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 15,
     padding: 10,
     marginBottom: 20,
-    borderRadius: 5,
+    borderRadius: 3,
     backgroundColor: 'white',
     shadowColor: '#00000021',
     shadowOffset: {
@@ -362,5 +407,17 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontFamily: 'Lato-Bold',
     marginBottom: 13,
+  },
+  subTitle: {
+    color: colorConfig.store.colorSuccess,
+    fontSize: 12,
+    letterSpacing: 1,
+    fontFamily: 'Lato-Medium',
+  },
+  subTitleGray: {
+    color: colorConfig.pageIndex.grayColor,
+    letterSpacing: 1,
+    fontSize: 12,
+    fontFamily: 'Lato-Medium',
   },
 });

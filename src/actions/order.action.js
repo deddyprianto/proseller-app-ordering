@@ -20,7 +20,7 @@ export const getProductByOutlet = (OutletId, refresh) => {
         },
       } = state;
 
-      const PRESET_TYPE = 'CRM';
+      const PRESET_TYPE = 'app';
 
       let response = await fetchApiProduct(
         `/productpreset/load/${PRESET_TYPE}/${OutletId}`,
@@ -74,7 +74,7 @@ export const getCategoryByOutlet = (OutletId, refresh) => {
         },
       } = state;
 
-      const PRESET_TYPE = 'CRM';
+      const PRESET_TYPE = 'app';
 
       const payload = {
         skip: 0,
@@ -92,10 +92,6 @@ export const getCategoryByOutlet = (OutletId, refresh) => {
       console.log('RESPONSE GET CATEGORY ', response);
 
       if (response.success == true) {
-        // dispatch({
-        //   type: 'DATA_CATEGORY_OUTLET',
-        //   cateories: response,
-        // });
         return response.response;
       }
       return false;
@@ -118,7 +114,7 @@ export const getProductByCategory = (OutletId, categoryId, skip, take) => {
         take,
       };
 
-      const PRESET_TYPE = 'CRM';
+      const PRESET_TYPE = 'app';
 
       let response = await fetchApiProduct(
         `/productpreset/loaditems/${PRESET_TYPE}/${OutletId}/${categoryId}`,
@@ -131,10 +127,62 @@ export const getProductByCategory = (OutletId, categoryId, skip, take) => {
       // console.log('RESPONSE GET ITEMS BY CATEGORY ', response);
 
       if (response.success == true) {
-        // dispatch({
-        //   type: 'DATA_PRODUCT_BY_CATEGORY_OUTLET',
-        //   productsCategory: response,
-        // });
+        return response.response;
+      }
+      return false;
+    } catch (e) {}
+  };
+};
+
+export const productByCategory = (OutletId, category, skip, take, search) => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      let payload = {};
+
+      if (search != undefined) {
+        payload = {
+          skip,
+          take,
+          outletID: `outlet::${OutletId}`,
+          sortBy: 'name',
+          sortDirection: 'asc',
+          // categoryID: `category::${category.id}`,
+          filters: [
+            {
+              id: 'search',
+              value: search,
+            },
+          ],
+        };
+      } else {
+        payload = {
+          skip,
+          take,
+          outletID: `outlet::${OutletId}`,
+          sortBy: 'name',
+          sortDirection: 'asc',
+          categoryID: `category::${category.id}`,
+        };
+      }
+
+      const response = await fetchApiProduct(
+        `/product/load/`,
+        'POST',
+        payload,
+        200,
+        token,
+      );
+
+      // console.log('RESPONSE GET PRODUCTS BY CATEGORY ', response);
+
+      if (response.success == true) {
         return response.response;
       }
       return false;
@@ -165,7 +213,7 @@ export const searchProducts = (OutletId, categories, query) => {
         ],
       };
 
-      const PRESET_TYPE = 'CRM';
+      const PRESET_TYPE = 'app';
 
       let searchResults = [];
 
@@ -713,6 +761,17 @@ export const getDeliveryFee = payload => {
       );
       console.log(response, 'response get delivery fee');
       if (response.success == true) {
+        if (!isEmptyArray(response.response.data.dataProfider)) {
+          dispatch({
+            type: 'DATA_PROVIDER',
+            providers: response.response.data.dataProfider,
+          });
+        } else {
+          dispatch({
+            type: 'DATA_PROVIDER',
+            providers: [],
+          });
+        }
         return response.response;
       } else {
         return false;
@@ -868,7 +927,7 @@ export const getProductsUnavailable = OutletId => {
   };
 };
 
-export const getTermsConditions = (payload, url) => {
+export const getTermsConditions = () => {
   return async (dispatch, getState) => {
     const state = getState();
     try {
@@ -889,6 +948,10 @@ export const getTermsConditions = (payload, url) => {
       console.log(response, 'RESPONSE ORDERING SETTING');
 
       if (response.success) {
+        dispatch({
+          type: 'DATA_ORDERING_SETTING',
+          orderingSetting: response.response.data,
+        });
         return response.response.data;
       } else {
         return false;
@@ -896,5 +959,95 @@ export const getTermsConditions = (payload, url) => {
     } catch (error) {
       return error;
     }
+  };
+};
+
+export const getAllCategory = (skip, take) => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      const payload = {
+        take,
+        skip,
+        sortBy: 'name',
+        sortDirection: 'ASC',
+      };
+
+      const response = await fetchApiProduct(
+        '/category/load',
+        'POST',
+        payload,
+        200,
+        token,
+      );
+
+      console.log(response, 'RESPONSE GET CATEGORY');
+
+      if (response.success) {
+        return response.response;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const getTimeslot = (outletID, date, clientTimezone, dontSave) => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      const payload = {
+        date,
+        outletID: `outlet::${outletID}`,
+        clientTimezone,
+      };
+
+      let response = await fetchApiOrder(
+        `/timeslot`,
+        'POST',
+        payload,
+        200,
+        token,
+      );
+
+      // console.log('RESPONSE GET TIMESLOT ', response);
+
+      if (response.success == true) {
+        if (!isEmptyArray(response.response.data) && dontSave == undefined) {
+          dispatch({
+            type: 'DATA_TIMESLOT',
+            timeslots: response.response.data,
+          });
+        }
+        return response.response.data;
+      }
+      return false;
+    } catch (e) {}
+  };
+};
+
+export const removeTimeslot = () => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      dispatch({
+        type: 'DATA_TIMESLOT',
+        timeslots: undefined,
+      });
+    } catch (e) {}
   };
 };

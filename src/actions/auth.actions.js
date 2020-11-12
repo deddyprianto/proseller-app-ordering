@@ -10,6 +10,7 @@ import {fetchApi} from '../service/api';
 import CryptoJS from 'react-native-crypto-js';
 import appConfig from '../config/appConfig';
 import AsyncStorage from '@react-native-community/async-storage';
+import {isEmptyArray} from '../helper/CheckEmpty';
 
 export const notifikasi = (type, status, action) => {
   Alert.alert(type, status, [
@@ -448,8 +449,37 @@ export const sendOtpAttempts = attempt => {
 };
 
 export const sendOTP = payload => {
-  return async dispatch => {
+  return async (dispatch, getState) => {
     try {
+      const state = getState();
+      // CHECK IF SETTING FOR OTP IS SEND BY WHATSAPP OR SMS
+      try {
+        const {
+          orderReducer: {
+            orderingSetting: {orderingSetting},
+          },
+        } = state;
+
+        if (payload.phoneNumber != undefined) {
+          if (
+            orderingSetting !== undefined &&
+            !isEmptyArray(orderingSetting.settings)
+          ) {
+            const find = orderingSetting.settings.find(
+              item => item.settingKey === 'MobileOTP',
+            );
+
+            if (find != undefined) {
+              if (find.settingValue === 'WHATSAPP') {
+                payload.sendBy = 'WhatsappOTP';
+              } else if (find.settingValue === 'SMS') {
+                payload.sendBy = 'SMSOTP';
+              }
+            }
+          }
+        }
+      } catch (e) {}
+
       const response = await fetchApi(
         '/customer/login/send-otp',
         'POST',
@@ -469,8 +499,37 @@ export const sendOTP = payload => {
 };
 
 export const resendOTPCognito = payload => {
-  return async dispatch => {
+  return async (dispatch, getState) => {
     try {
+      const state = getState();
+      // CHECK IF SETTING FOR OTP IS SEND BY WHATSAPP OR SMS
+      try {
+        const {
+          orderReducer: {
+            orderingSetting: {orderingSetting},
+          },
+        } = state;
+
+        if (payload.phoneNumber != undefined) {
+          if (
+            orderingSetting !== undefined &&
+            !isEmptyArray(orderingSetting.settings)
+          ) {
+            const find = orderingSetting.settings.find(
+              item => item.settingKey === 'MobileOTP',
+            );
+
+            if (find != undefined) {
+              if (find.settingValue === 'WHATSAPP') {
+                payload.sendBy = 'WhatsappOTP';
+              } else if (find.settingValue === 'SMS') {
+                payload.sendBy = 'SMSOTP';
+              }
+            }
+          }
+        }
+      } catch (e) {}
+
       const response = await fetchApi(
         '/customer/login/send-otp',
         'POST',

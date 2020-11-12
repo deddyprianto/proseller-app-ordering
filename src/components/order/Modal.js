@@ -105,17 +105,19 @@ export default class ModalOrder extends Component {
       subTotal = parseFloat(subTotal);
 
       // if product have modifier, calculate modifier price
-      productModifiers.map(group => {
-        if (group.postToServer == true) {
-          group.modifier.details.map(detail => {
-            if (detail.quantity != undefined && detail.quantity > 0) {
-              let price = detail.price;
-              if (price == undefined) price = 0;
-              totalModifier += parseFloat(detail.quantity * price);
-            }
-          });
-        }
-      });
+      if (productModifiers != undefined) {
+        productModifiers.map(group => {
+          if (group.postToServer == true) {
+            group.modifier.details.map(detail => {
+              if (detail.quantity != undefined && detail.quantity > 0) {
+                let price = detail.price;
+                if (price == undefined) price = 0;
+                totalModifier += parseFloat(detail.quantity * price);
+              }
+            });
+          }
+        });
+      }
       // add total item + total modifier price
       subTotal += totalModifier;
       // calculate subtotal with quantity item
@@ -973,9 +975,7 @@ export default class ModalOrder extends Component {
         (item.modifier.min == 0 ||
           item.modifier.min == undefined ||
           item.modifier.min == '-') &&
-        (item.modifier.max <= 0 ||
-          item.modifier.max == 0 ||
-          item.modifier.max == undefined)
+        item.modifier.max <= 0
       ) {
         return `Optional`;
       } else if (
@@ -1219,7 +1219,7 @@ export default class ModalOrder extends Component {
                                     <Text style={styles.titleModifierModal}>
                                       {item.modifierName}
                                       <Text style={styles.titleModifierRules}>
-                                        {'   '}
+                                        {' '}
                                         {this.renderTitleModifier(
                                           productModifiers[index],
                                         )}

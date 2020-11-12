@@ -109,8 +109,8 @@ class RewardsQRmenu extends Component {
                 token: qrcode,
               })}
               logo={appConfig.appLogoQR}
-              logoSize={this.state.screenWidth / 6 - 40}
-              size={this.state.screenWidth - 190}
+              logoSize={this.state.screenWidth / 6 - 30}
+              size={this.state.screenWidth - 160}
             />
             {/* <TouchableOpacity
               style={styles.btnScan}

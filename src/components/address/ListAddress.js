@@ -546,7 +546,7 @@ const styles = StyleSheet.create({
       height: 9,
     },
     shadowOpacity: 0.7,
-    shadowRadius: 7.49,
+    shadowRadius: 1.49,
     elevation: 12,
   },
   cardSelected: {

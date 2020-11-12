@@ -29,6 +29,7 @@ import OfflineNotice from './components/OfflineNotice';
 import {getCompanyInfo} from './actions/stores.action';
 import VersionCheck from 'react-native-version-check';
 import {paymentRefNo} from './actions/account.action';
+import {getTermsConditions} from './actions/order.action';
 
 class Main extends Component {
   constructor(props) {
@@ -57,6 +58,7 @@ class Main extends Component {
     try {
       await this.props.dispatch(refreshToken());
       await this.props.dispatch(getCompanyInfo());
+      await this.props.dispatch(getTermsConditions());
 
       const data = await this.performTimeConsumingTask();
       if (data !== null) {

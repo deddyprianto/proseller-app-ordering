@@ -114,9 +114,9 @@ class SignInEmail extends Component {
   constructor(props) {
     super(props);
 
-    // OneSignal.addEventListener('received', this.onReceived);
-    // OneSignal.addEventListener('opened', this.onOpened);
-    // OneSignal.addEventListener('ids', this.onIds);
+    OneSignal.addEventListener('received', this.onReceived);
+    OneSignal.addEventListener('opened', this.onOpened);
+    OneSignal.addEventListener('ids', this.onIds);
 
     this.seconds = null;
     this.intlData = this.props.intlData;

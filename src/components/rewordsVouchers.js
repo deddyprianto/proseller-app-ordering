@@ -39,7 +39,7 @@ class RewordsVouchers extends Component {
         );
       }
     } catch (e) {
-      myVoucers = [];
+      var myVoucers = [];
     }
     return (
       <View>

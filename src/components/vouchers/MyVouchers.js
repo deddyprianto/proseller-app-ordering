@@ -24,8 +24,6 @@ import colorConfig from '../../config/colorConfig';
 import appConfig from '../../config/appConfig';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
-import accountsReducer from '../../reducers/accounts.reducer';
-import * as _ from 'lodash';
 import {dataPoint, vouchers} from '../../actions/rewards.action';
 import {myVoucers} from '../../actions/account.action';
 import {format} from 'date-fns';
@@ -202,6 +200,24 @@ class MyVouchers extends Component {
                               : 'No description for this voucher'}
                           </Text>
                         </View>
+                        {item['validity']['canOnlyRedeemedByMerchant'] ===
+                          true && (
+                          <View style={{flexDirection: 'row', marginTop: 10}}>
+                            <Icon
+                              size={15}
+                              name={
+                                Platform.OS === 'ios' ? 'ios-alert' : 'md-alert'
+                              }
+                              style={{
+                                color: colorConfig.store.secondaryColor,
+                                marginRight: 5,
+                              }}
+                            />
+                            <Text style={styles.descVoucher}>
+                              This voucher can only be redeemed by Merchant.
+                            </Text>
+                          </View>
+                        )}
                         <View style={{flexDirection: 'row'}}>
                           <Icon
                             size={15}

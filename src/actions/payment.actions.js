@@ -3,6 +3,117 @@ import CryptoJS from 'react-native-crypto-js';
 import {fetchApiPayment} from '../service/apiPayment';
 import {fetchApi} from '../service/api';
 import {isEmptyArray, isEmptyObject} from '../helper/CheckEmpty';
+import NetsClick from '../helper/NetsClick';
+import {Alert} from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
+
+export const setNetsclickStatus = status => {
+  return async dispatch => {
+    try {
+      dispatch({
+        type: 'NETSCLICK_STATUS',
+        netsclickStatus: status,
+      });
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const netsclickRegister = item => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      // get user details
+      let {
+        userReducer: {
+          getUser: {userDetails},
+        },
+      } = state;
+
+      // Decrypt data user
+      // let bytes = CryptoJS.AES.decrypt(userDetails, awsConfig.PRIVATE_KEY_RSA);
+      // userDetails = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+
+      const userId = '1111111';
+      await NetsClick.Register({userId})
+        .then(async r => {
+          try {
+            await AsyncStorage.setItem('@netsclick_register_status', userId);
+          } catch (e) {}
+
+          dispatch({
+            type: 'NETSCLICK_STATUS',
+            netsclickStatus: true,
+          });
+
+          if (item != undefined) {
+            dispatch({
+              type: 'SELECTED_ACCOUNT',
+              selectedAccount: item,
+            });
+          }
+
+          if (item == undefined) {
+            setTimeout(() => {
+              Alert.alert('NETS Click', 'NETS Click registration success!');
+            }, 200);
+          }
+        })
+        .catch(async e => {
+          setTimeout(() => {
+            Alert.alert(
+              'Sorry',
+              'NETS Click registration failed ' + e.toString(),
+            );
+          }, 200);
+          try {
+            await AsyncStorage.removeItem('@netsclick_register_status');
+          } catch (e) {}
+        });
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const netsclickDeregister = () => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      await NetsClick.Deregister()
+        .then(async r => {
+          try {
+            await AsyncStorage.removeItem('@netsclick_register_status');
+          } catch (e) {}
+
+          dispatch({
+            type: 'NETSCLICK_STATUS',
+            netsclickStatus: false,
+          });
+
+          setTimeout(() => {
+            Alert.alert('NETS Click', 'NETS Click account has been removed!');
+          }, 200);
+        })
+        .catch(async e => {
+          setTimeout(() => {
+            Alert.alert('Sorry', 'NETS Click deregistration failed');
+          }, 200);
+          try {
+            await AsyncStorage.removeItem('@netsclick_register_status');
+          } catch (e) {}
+
+          dispatch({
+            type: 'NETSCLICK_STATUS',
+            netsclickStatus: false,
+          });
+        });
+    } catch (error) {
+      return error;
+    }
+  };
+};
 
 export const getAccountPayment = payload => {
   return async (dispatch, getState) => {

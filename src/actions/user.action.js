@@ -2,6 +2,7 @@ import {fetchApi} from '../service/api';
 import awsConfig from '../config/awsConfig';
 import CryptoJS from 'react-native-crypto-js';
 import {fetchApiPayment} from '../service/apiPayment';
+import {isEmptyArray} from '../helper/CheckEmpty';
 
 export const updateUser = payload => {
   return async (dispatch, getState) => {
@@ -51,6 +52,35 @@ export const requestOTP = payload => {
           tokenUser: {token},
         },
       } = state;
+
+      // CHECK IF SETTING FOR OTP IS SEND BY WHATSAPP OR SMS
+      try {
+        const {
+          orderReducer: {
+            orderingSetting: {orderingSetting},
+          },
+        } = state;
+
+        if (payload.newPhoneNumber != undefined) {
+          if (
+            orderingSetting !== undefined &&
+            !isEmptyArray(orderingSetting.settings)
+          ) {
+            const find = orderingSetting.settings.find(
+              item => item.settingKey === 'MobileOTP',
+            );
+
+            if (find != undefined) {
+              if (find.settingValue === 'WHATSAPP') {
+                payload.sendBy = 'WhatsappOTP';
+              } else if (find.settingValue === 'SMS') {
+                payload.sendBy = 'SMSOTP';
+              }
+            }
+          }
+        }
+      } catch (e) {}
+
       console.log(payload, 'PAYLOAD REQUEST OTP');
       const response = await fetchApi(
         `/customer/updateProfile/?requestOtp=true`,
@@ -62,9 +92,7 @@ export const requestOTP = payload => {
 
       console.log(response, 'RESPONSE REQUEST OTP');
 
-      if (response.success) {
-        return true;
-      } else return false;
+      return response;
     } catch (error) {
       return error;
     }

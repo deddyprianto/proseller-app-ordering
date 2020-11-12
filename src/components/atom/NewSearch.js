@@ -27,16 +27,16 @@ export default class NewSearch extends Component {
         }}>
         <Image
           style={{
-            width: 150,
-            height: 150,
+            width: 190,
+            height: 190,
           }}
-          source={appConfig.newSearch}
+          source={appConfig.productPlaceholder}
         />
         <Text
           style={{
-            marginTop: 20,
-            fontFamily: 'Lato-Bold',
-            fontSize: 20,
+            // marginTop: 10,
+            fontFamily: 'Lato-Medium',
+            fontSize: 23,
             color: colorConfig.pageIndex.grayColor,
           }}>
           Let's find your specific item.

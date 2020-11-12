@@ -450,7 +450,7 @@ class InputPhoneNumber extends Component {
         </ScrollView>
         {this.state.showFooter ? (
           <View>
-            {/*<TouchableOpacity
+            <TouchableOpacity
               style={{
                 position: 'absolute',
                 alignSelf: 'center',
@@ -467,7 +467,7 @@ class InputPhoneNumber extends Component {
                 }}>
                 {intlData.messages.languageName}
               </Text>
-            </TouchableOpacity> */}
+            </TouchableOpacity>
             <Text
               style={{
                 position: 'absolute',

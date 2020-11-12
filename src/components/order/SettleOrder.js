@@ -35,6 +35,7 @@ import {
   getCart,
   getPendingCart,
   getPendingCartSingle,
+  getTimeslot,
   settleOrder,
 } from '../../actions/order.action';
 import CurrencyFormatter from '../../helper/CurrencyFormatter';
@@ -54,6 +55,7 @@ import {getOutletById} from '../../actions/stores.action';
 import {refreshToken} from '../../actions/auth.actions';
 import {afterPayment, myVoucers} from '../../actions/account.action';
 import {Dialog} from 'react-native-paper';
+import NetsClick from '../../helper/NetsClick';
 
 class SettleOrder extends Component {
   constructor(props) {
@@ -145,13 +147,15 @@ class SettleOrder extends Component {
     await this.resetAppliedVouchers();
 
     // get outlet details
+    const outletID = pembayaran.storeId;
     try {
-      const outletID = pembayaran.storeId;
       const response = await this.props.dispatch(getOutletById(outletID));
       if (response != false) {
         await this.setState({outlet: response});
       }
     } catch (e) {}
+
+    // await this.validatePickupTime(outletID);
 
     await this.setState({loading: false});
 
@@ -167,6 +171,49 @@ class SettleOrder extends Component {
       'hardwareBackPress',
       this.handleBackPress,
     );
+  };
+
+  validatePickupTime = async outletID => {
+    try {
+      if (this.props.pembayaran.orderActionDate != undefined) {
+        const clientTimeZone = Math.abs(new Date().getTimezoneOffset());
+        const response = await this.props.dispatch(
+          getTimeslot(
+            outletID,
+            this.props.pembayaran.orderActionDate,
+            clientTimeZone,
+            true,
+          ),
+        );
+
+        let message = `Pickup at ${
+          this.props.pembayaran.orderActionTimeSlot
+        } is no longer available, please choose another pickup time.`;
+
+        if (this.props.pembayaran.orderingMode === 'DELIVERY') {
+          message = `Delivery at ${
+            this.props.pembayaran.orderActionTimeSlot
+          } is no longer available, please choose another delivery time.`;
+        }
+
+        const timeSelected = this.props.pembayaran.orderActionTimeSlot;
+        if (response != false && !isEmptyArray(response)) {
+          const find = response.find(
+            item => item.isAvailable == true && item.time == timeSelected,
+          );
+          if (find == undefined) {
+            Alert.alert(
+              'Sorry',
+              message,
+              [{text: 'Got it', onPress: () => Actions.pop()}],
+              {cancelable: false},
+            );
+            return;
+          }
+        }
+        return;
+      }
+    } catch (e) {}
   };
 
   checkDefaultPaymentAccount = async () => {
@@ -1008,6 +1055,20 @@ class SettleOrder extends Component {
     let payload = {};
     try {
       await this.setState({loading: true});
+
+      // if (selectedAccount.paymentType === 'NETSCLICK') {
+      //   await NetsClick.Debit({amount: totalBayar})
+      //     .then(async r => {
+      //       await this.setState({loading: false});
+      //       Alert.alert('Success', 'Payment using netslick success');
+      //     })
+      //     .catch(async e => {
+      //       await this.setState({loading: false});
+      //       Alert.alert('Failed', 'Payment using netslick failed');
+      //     });
+      //   return;
+      // }
+
       payload.cartID = this.props.pembayaran.cartID;
 
       // ADJUST POINT IF THERE ARE ANY REDUCE
@@ -1176,21 +1237,18 @@ class SettleOrder extends Component {
         payload.deliveryAddress = this.props.pembayaran.deliveryAddress;
       }
 
-      // check if delivery fee is exist
-      if (this.props.pembayaran.deliveryFee != undefined) {
-        payload.deliveryFee = this.props.pembayaran.deliveryFee;
-        // add delivery fee to total
-        payload.price = Number(
-          payload.price + this.props.pembayaran.deliveryFee,
-        );
-      }
-
       // check if delivery provider is exist
       if (this.props.pembayaran.deliveryProvider != undefined) {
         payload.deliveryProviderId = this.props.pembayaran.deliveryProvider.id;
         payload.deliveryProvider = this.props.pembayaran.deliveryProvider.name;
         payload.deliveryProviderName = this.props.pembayaran.deliveryProvider.name;
-        payload.deliveryService = '-';
+        payload.deliveryFee = this.props.pembayaran.deliveryProvider.deliveryFee;
+      }
+
+      if (this.props.pembayaran.orderActionDate != undefined) {
+        payload.orderActionDate = this.props.pembayaran.orderActionDate;
+        payload.orderActionTime = this.props.pembayaran.orderActionTime;
+        payload.orderActionTimeSlot = this.props.pembayaran.orderActionTimeSlot;
       }
 
       try {
@@ -1478,76 +1536,165 @@ class SettleOrder extends Component {
 
   payAtPOS = async () => {
     const {intlData, selectedAccount, companyInfo} = this.props;
-    const {totalBayar} = this.state;
-
-    var pembayaran = {};
+    let {totalBayar, dataVoucer} = this.state;
+    let payload = {};
+    await this.setState({loading: true});
     try {
-      await this.setState({loading: true});
-      const UUID = await UUIDGenerator.getRandomUUID();
-      this.setState({loading: true});
-      pembayaran.price = Number(this.props.pembayaran.payment.toFixed(3));
-      pembayaran.cartID = this.props.pembayaran.cartID;
+      payload.payments = [];
+
+      // CHECK IF USER APPLY VOUCHER OR POINTS, THEN PREVENT
+      if (!isEmptyArray(dataVoucer)) {
+        const findVoucherOrPoints = await dataVoucer.find(
+          item => item.isVoucher == true,
+        );
+        if (
+          findVoucherOrPoints != undefined ||
+          this.state.addPoint != undefined
+        ) {
+          Alert.alert(
+            'Sorry',
+            `Cannot apply voucher or points if using pay at store.`,
+          );
+          this.setState({loading: false});
+          return;
+        }
+      }
+
+      try {
+        delete payload.payment;
+        delete payload.storeId;
+        delete payload.dataVoucer;
+      } catch (e) {}
 
       // if ordering mode is exist
       if (this.props.pembayaran.orderingMode != undefined) {
-        pembayaran.orderingMode = this.props.pembayaran.orderingMode;
-        pembayaran.tableNo = this.props.pembayaran.tableNo;
+        payload.orderingMode = this.props.pembayaran.orderingMode;
+        payload.tableNo = this.props.pembayaran.tableNo;
+
+        // send order mode value to server
+        payload.validateOutletSetting = {};
+
+        //  check if ordering mode is still active
+        try {
+          const {outlet} = this.state;
+          if (this.props.pembayaran.orderingMode == 'TAKEAWAY') {
+            payload.validateOutletSetting.enableTakeAway = true;
+            if (outlet.enableTakeAway == false) {
+              Alert.alert(
+                'Sorry',
+                `Order mode Take Away is currently inactive, please choose another order mode.`,
+              );
+              this.setState({loading: false});
+              return;
+            }
+          } else if (this.props.pembayaran.orderingMode == 'DINEIN') {
+            payload.validateOutletSetting.enableDineIn = true;
+            if (outlet.enableDineIn == false) {
+              Alert.alert(
+                'Sorry',
+                `Order mode Dine In is currently inactive, please choose another order mode.`,
+              );
+              this.setState({loading: false});
+              return;
+            }
+          } else if (this.props.pembayaran.orderingMode == 'DELIVERY') {
+            payload.validateOutletSetting.enableDelivery = true;
+            if (outlet.enableDelivery == false) {
+              Alert.alert(
+                'Sorry',
+                `Order mode Delivery is currently inactive, please choose another order mode.`,
+              );
+              this.setState({loading: false});
+              return;
+            }
+          } else if (this.props.pembayaran.orderingMode == 'STOREPICKUP') {
+            payload.validateOutletSetting.enableStorePickUp = true;
+            if (outlet.enableStorePickUp == false) {
+              Alert.alert(
+                'Sorry',
+                `Order mode Store Pickup is currently inactive, please choose another order mode.`,
+              );
+              this.setState({loading: false});
+              return;
+            }
+          } else if (this.props.pembayaran.orderingMode == 'STORECHECKOUT') {
+            payload.validateOutletSetting.enableStoreCheckOut = true;
+            if (outlet.enableStoreCheckOut == false) {
+              Alert.alert(
+                'Sorry',
+                `Order mode Store Checkout is currently inactive, please choose another order mode.`,
+              );
+              this.setState({loading: false});
+              return;
+            }
+          }
+        } catch (e) {}
       }
 
       // check if delivery address is exist
       if (this.props.pembayaran.deliveryAddress != undefined) {
-        pembayaran.deliveryAddress = this.props.pembayaran.deliveryAddress;
+        payload.deliveryAddress = this.props.pembayaran.deliveryAddress;
       }
 
       // check if delivery fee is exist
       if (this.props.pembayaran.deliveryFee != undefined) {
-        pembayaran.deliveryFee = this.props.pembayaran.deliveryFee;
+        payload.deliveryFee = this.props.pembayaran.deliveryFee;
         // add delivery fee to total
-        pembayaran.price = Number(
-          pembayaran.price + this.props.pembayaran.deliveryFee,
+        payload.price = Number(
+          payload.price + this.props.pembayaran.deliveryFee,
         );
       }
 
       // check if delivery provider is exist
       if (this.props.pembayaran.deliveryProvider != undefined) {
-        pembayaran.deliveryProviderId = this.props.pembayaran.deliveryProvider.id;
-        pembayaran.deliveryProvider = this.props.pembayaran.deliveryProvider.name;
-        pembayaran.deliveryProviderName = this.props.pembayaran.deliveryProvider.name;
-        pembayaran.deliveryService = '-';
+        payload.deliveryProviderId = this.props.pembayaran.deliveryProvider.id;
+        payload.deliveryProvider = this.props.pembayaran.deliveryProvider.name;
+        payload.deliveryProviderName = this.props.pembayaran.deliveryProvider.name;
+        payload.deliveryFee = this.props.pembayaran.deliveryProvider.deliveryFee;
       }
 
-      try {
-        pembayaran.cartDetails = {
-          partitionKey: this.props.pembayaran.cartDetails.partitionKey,
-          sortKey: this.props.pembayaran.cartDetails.sortKey,
-        };
-      } catch (e) {}
+      if (this.props.pembayaran.orderActionDate != undefined) {
+        payload.orderActionDate = this.props.pembayaran.orderActionDate;
+        payload.orderActionTime = this.props.pembayaran.orderActionTime;
+        payload.orderActionTimeSlot = this.props.pembayaran.orderActionTimeSlot;
+      }
 
-      pembayaran.payAtPOS = true;
+      payload.payAtPOS = true;
 
       // get url
       let {url} = this.props;
 
-      console.log('Payload settle order ', pembayaran);
+      console.log('Payload settle order ', payload);
+      console.log('URL settle order ', url);
 
-      const response = await this.props.dispatch(settleOrder(pembayaran, url));
+      const response = await this.props.dispatch(settleOrder(payload, url));
       console.log('reponse pembayaran settle order ', response);
-      this.setState({
-        loading: false,
-        prompPayAtPOS: true,
-        pendingCart: response.responseBody.data,
-      });
       if (response.success) {
         try {
           this.props.dispatch(afterPayment(true));
-          this.getPendingOrder(response.responseBody.data);
         } catch (e) {}
+
+        const {url} = this.props;
+        const dataResponse = {
+          message: 'Please proceed payment at the store',
+          createdAt: new Date(),
+          outletName: this.state.outlet.name,
+          totalNettAmount: totalBayar,
+          payAtPOS: true,
+        };
+
+        Actions.paymentSuccess({
+          intlData,
+          outlet: this.state.outlet,
+          url,
+          dataRespons: dataResponse,
+        });
       } else {
         //  cancel voucher and pont selected
         this.props.dispatch(getBasket());
         this.setState({loading: false, failedPay: true});
-        this.cencelPoint();
-        this.cencelVoucher();
+        // this.cencelPoint();
+        // this.cencelVoucher();
         if (
           response.responseBody.data != undefined &&
           response.responseBody.data.message != undefined
@@ -1562,12 +1709,13 @@ class SettleOrder extends Component {
       }
     } catch (e) {
       //  cancel voucher and pont selected
-      this.cencelPoint();
-      this.cencelVoucher();
+      // this.cencelPoint();
+      // this.cencelVoucher();
       console.log(e);
       Alert.alert('Oppss', 'Something went wrong, please try again');
       this.setState({loading: false, failedPay: true});
     }
+    await this.setState({loading: true});
   };
 
   getPendingOrder = async cart => {
@@ -1839,7 +1987,7 @@ class SettleOrder extends Component {
                           fontWeight: 'bold',
                           color: colorConfig.pageIndex.activeTintColor,
                         }}>
-                        {appConfig.appName}
+                        {this.props.companyInfo.companyName}
                       </Text>
                       <Text
                         style={{
