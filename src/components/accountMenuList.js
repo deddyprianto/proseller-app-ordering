@@ -448,7 +448,7 @@ class AccountMenuList extends Component {
         </Text>
 
         {this.renderPaymentMethodOptions()}
-        {/*{appConfig.appName === 'U Stars Supermarket' && (*/}
+        {/*{companyInfo.companyName === 'USTARS' && (*/}
         {/*  <TouchableOpacity*/}
         {/*    style={styles.cardMenu}*/}
         {/*    onPress={this.handleNetsClick}>*/}
@@ -487,7 +487,7 @@ class AccountMenuList extends Component {
         {/*        />*/}
         {/*      </View>*/}
         {/*    </View>*/}
-        {/*  </TouchableOpacity>*/}
+        {/*  y</TouchableOpacity>*/}
         {/*)}*/}
 
         {/*<TouchableOpacity*/}

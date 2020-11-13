@@ -230,7 +230,9 @@ class PaymentSuccess extends Component {
               fontSize: 14,
               fontWeight: 'bold',
             }}>
-            {intlData.messages.youPaid}
+            {this.props.dataRespons.payAtPOS === true
+              ? 'Amount to Pay'
+              : intlData.messages.youPaid}
           </Text>
           <View
             style={{
