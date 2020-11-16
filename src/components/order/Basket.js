@@ -2136,11 +2136,7 @@ class Basket extends Component {
 
   setOrderType = async type => {
     const {dataBasket} = this.props;
-    // if (dataBasket.outlet.outletType == 'QUICKSERVICE') {
-    //   this.props.dispatch(setOrderType('TAKEAWAY'));
-    // } else {
-    //   this.props.dispatch(setOrderType(type));
-    // }
+    const outletID = this.props.dataBasket.outlet.id;
     await this.props.dispatch(setOrderType(type));
 
     if (type === 'DELIVERY' && !isEmptyObject(this.props.selectedAddress)) {
@@ -2150,6 +2146,7 @@ class Basket extends Component {
     if (type === 'DELIVERY' || type === 'STOREPICKUP' || type === 'TAKEAWAY') {
       await this.setState({datePickup: null});
       await this.initializePickupTime();
+      await this.getTimeslot(outletID);
     }
 
     this.RBSheet.close();

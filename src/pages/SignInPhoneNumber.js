@@ -360,7 +360,11 @@ class SignInPhoneNumber extends Component {
           } else if (find.settingValue === 'SMS') {
             return 'SMS';
           }
+        } else {
+          return 'SMS';
         }
+      } else {
+        return 'SMS';
       }
     } catch (e) {
       return 'SMS';
