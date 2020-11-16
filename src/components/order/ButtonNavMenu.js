@@ -23,6 +23,16 @@ export default class ButtonNavMenu extends Component {
     } catch (e) {}
   };
 
+  goToHome = () => {
+    try {
+      if (Actions.currentScene != 'productsMode2') {
+        Actions.pop();
+      }
+    } catch (e) {
+      Actions.popTo('pageIndex');
+    }
+  };
+
   render() {
     return (
       <View
@@ -44,7 +54,7 @@ export default class ButtonNavMenu extends Component {
           elevation: 12,
         }}>
         <TouchableOpacity
-          onPress={() => Actions.popTo('pageIndex')}
+          onPress={this.goToHome}
           style={{
             flexDirection: 'row',
             justifyContent: 'center',
