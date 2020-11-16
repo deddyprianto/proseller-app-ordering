@@ -10,6 +10,7 @@ import {
   SafeAreaView,
   Alert,
   Platform,
+  Linking,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
@@ -47,6 +48,7 @@ import {
   getCartHomePage,
   getPendingCart,
 } from '../actions/order.action';
+import VersionCheck from 'react-native-version-check';
 
 class Rewards extends Component {
   constructor(props) {
@@ -239,6 +241,7 @@ class Rewards extends Component {
         this.props.dispatch(getStamps()),
         this.props.dispatch(recentTransaction()),
       ]);
+      this.checkUpdateAndVersion();
       await this.setState({isLoading: false});
       this.props.dispatch(getAccountPayment());
       this.props.dispatch(getUserProfile());
@@ -258,6 +261,30 @@ class Rewards extends Component {
         ),
       );
     }
+  };
+
+  checkUpdateAndVersion = () => {
+    try {
+      VersionCheck.needUpdate().then(async res => {
+        if (res != null && res != undefined) {
+          if (res.isNeeded) {
+            Alert.alert(
+              'App Update.',
+              'Updates are already available on the store.',
+              [
+                {
+                  text: 'Later',
+                  onPress: () => console.log('Cancel Pressed'),
+                  style: 'cancel',
+                },
+                {text: 'Update', onPress: () => Linking.openURL(res.storeUrl)},
+              ],
+              {cancelable: false},
+            );
+          }
+        }
+      });
+    } catch (e) {}
   };
 
   getUserPosition = async () => {

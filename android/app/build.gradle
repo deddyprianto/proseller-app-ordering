@@ -204,7 +204,7 @@ android {
             staff {
                 minSdkVersion rootProject.ext.minSdkVersion
                 applicationId 'com.ustar.staff'
-                versionName "1.1.1"
+                versionName "1.1.2"
                 targetSdkVersion rootProject.ext.targetSdkVersion
                 resValue "string", "build_config_package", "com.ustar"
             }
