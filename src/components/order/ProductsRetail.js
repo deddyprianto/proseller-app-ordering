@@ -412,7 +412,7 @@ class Products2 extends Component {
       text2 = `Maximum amount is ${CurrencyFormatter(data.maxAmount)}`;
     }
     if (data.minAmount > 0 && data.maxAmount > 0) {
-      text2 = `Amount range is ${CurrencyFormatter(
+      text2 = `Range amount is ${CurrencyFormatter(
         data.minAmount,
       )} to ${CurrencyFormatter(data.maxAmount)}`;
     }

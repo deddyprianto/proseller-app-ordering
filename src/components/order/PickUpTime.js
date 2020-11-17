@@ -109,14 +109,20 @@ class PickUpTime extends Component {
   };
 
   getTimeslot = async () => {
-    const {outlet} = this.props;
+    const {outlet, orderType} = this.props;
     const outletID = outlet.id;
     await this.setState({loading: true});
     try {
       const clientTimeZone = Math.abs(new Date().getTimezoneOffset());
-      await this.props.dispatch(
-        getTimeslot(outletID, this.state.date, clientTimeZone),
+      const response = await this.props.dispatch(
+        getTimeslot(outletID, this.state.date, clientTimeZone, orderType),
       );
+      if (response === false || isEmptyArray(response)) {
+        Alert.alert(
+          'Sorry',
+          'Ordering timeslot is not available on this date, please choose other date.',
+        );
+      }
     } catch (e) {}
     await this.setState({loading: false});
   };

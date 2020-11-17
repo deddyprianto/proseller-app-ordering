@@ -182,6 +182,7 @@ class SettleOrder extends Component {
             outletID,
             this.props.pembayaran.orderActionDate,
             clientTimeZone,
+            this.props.pembayaran.orderingMode,
             true,
           ),
         );

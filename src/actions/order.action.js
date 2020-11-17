@@ -1000,7 +1000,13 @@ export const getAllCategory = (skip, take) => {
   };
 };
 
-export const getTimeslot = (outletID, date, clientTimezone, dontSave) => {
+export const getTimeslot = (
+  outletID,
+  date,
+  clientTimezone,
+  orderingMode,
+  dontSave,
+) => {
   return async (dispatch, getState) => {
     const state = getState();
     try {
@@ -1014,6 +1020,7 @@ export const getTimeslot = (outletID, date, clientTimezone, dontSave) => {
         date,
         outletID: `outlet::${outletID}`,
         clientTimezone,
+        orderingMode,
       };
 
       let response = await fetchApiOrder(
@@ -1032,8 +1039,18 @@ export const getTimeslot = (outletID, date, clientTimezone, dontSave) => {
             type: 'DATA_TIMESLOT',
             timeslots: response.response.data,
           });
+        } else {
+          dispatch({
+            type: 'DATA_TIMESLOT',
+            timeslots: [],
+          });
         }
         return response.response.data;
+      } else {
+        dispatch({
+          type: 'DATA_TIMESLOT',
+          timeslots: [],
+        });
       }
       return false;
     } catch (e) {}
