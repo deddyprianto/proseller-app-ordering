@@ -2889,7 +2889,7 @@ class Products2 extends Component {
         }}
         // onViewableItemsChanged={this._onViewableItemsChanged}
         // viewabilityConfig={this._viewabilityConfig}
-        initialNumToRender={3}
+        initialNumToRender={5}
         ListFooterComponent={() => {
           try {
             const {products} = this.state;
