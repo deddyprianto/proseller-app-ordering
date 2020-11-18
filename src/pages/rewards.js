@@ -37,7 +37,7 @@ import MyPointsPlaceHolder from '../components/placeHolderLoading/MyPointsPlaceH
 import {isEmptyArray, isEmptyData, isEmptyObject} from '../helper/CheckEmpty';
 import CryptoJS from 'react-native-crypto-js';
 import awsConfig from '../config/awsConfig';
-import {getCompanyInfo} from '../actions/stores.action';
+import {getCompanyInfo, getDefaultOutlet} from '../actions/stores.action';
 import {getAccountPayment} from '../actions/payment.actions';
 import OneSignal from 'react-native-onesignal';
 import {dataInbox} from '../actions/inbox.action';
@@ -153,9 +153,16 @@ class Rewards extends Component {
   };
 
   componentDidMount = async () => {
+    await this.getDefaultOutlet();
     await this.getDataRewards();
     this.checkOneSignal();
     this.checkUseApp();
+  };
+
+  getDefaultOutlet = async () => {
+    try {
+      // await this.props.dispatch(getDefaultOutlet());
+    } catch (e) {}
   };
 
   checkDefaultPaymentAccount = async response => {
