@@ -213,7 +213,6 @@ class Basket extends Component {
   getTimeslot = async (outletID, orderingMode) => {
     try {
       const {outletSingle} = this.props;
-      console.log(outletSingle);
       this.props.dispatch(removeTimeslot());
       const clientTimeZone = Math.abs(new Date().getTimezoneOffset());
       const response = await this.props.dispatch(
@@ -304,7 +303,7 @@ class Basket extends Component {
           </View>
 
           <TouchableOpacity
-            onPress={this.goToPickUpTime}
+            onPress={() => this.goToPickUpTime(true)}
             style={{
               width: '100%',
               borderRadius: 5,
@@ -429,7 +428,7 @@ class Basket extends Component {
       try {
         let currDay = new Date(this.state.datePickup);
         let nextDay = new Date(currDay);
-        nextDay.setDate(day.getDate() + 1);
+        nextDay.setDate(currDay.getDate() + 1);
         this.setState({
           nextDatePickup: format(new Date(nextDay), 'yyyy-MM-dd'),
         });
@@ -2669,9 +2668,13 @@ class Basket extends Component {
     this.setState({isModalVisible: false});
   };
 
-  goToPickUpTime = () => {
+  goToPickUpTime = timeslotEmpty => {
     let {outletSingle, orderType} = this.props;
     this.setState({timeslotInfo: false});
+    let minimumDate = this.state.minimumDate;
+    if (timeslotEmpty === true) {
+      minimumDate = this.state.nextDatePickup;
+    }
     try {
       Actions.push('pickUpTime', {
         setPickupDate: this.setPickupDate,
@@ -2680,7 +2683,7 @@ class Basket extends Component {
         time: this.state.timePickup,
         outlet: outletSingle,
         orderType: orderType,
-        minimumDate: this.state.minimumDate,
+        minimumDate,
         header:
           orderType == 'DELIVERY'
             ? 'Delivery Date & Time'
