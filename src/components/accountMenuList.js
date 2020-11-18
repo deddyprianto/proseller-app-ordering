@@ -378,6 +378,23 @@ class AccountMenuList extends Component {
     }, 200);
   };
 
+  goToInbox = () => {
+    try {
+      Actions.inbox();
+    } catch (e) {}
+  };
+
+  countUnreadInbox = () => {
+    try {
+      const {dataInbox} = this.props;
+      let count = dataInbox.Data.filter(item => item.isRead != true);
+      if (count.length > 0) return `( ${count.length} )`;
+      else return null;
+    } catch (e) {
+      return 0;
+    }
+  };
+
   render() {
     const {
       intlData,
@@ -402,9 +419,7 @@ class AccountMenuList extends Component {
             <View style={styles.itemMenu}>
               <Icon
                 size={20}
-                name={
-                  Platform.OS === 'ios' ? 'ios-checkmark' : 'md-checkmark'
-                }
+                name={Platform.OS === 'ios' ? 'ios-checkmark' : 'md-checkmark'}
                 style={{color: 'white'}}
               />
             </View>
@@ -412,10 +427,7 @@ class AccountMenuList extends Component {
           <View>
             <View style={styles.item}>
               <Text
-                style={[
-                  styles.title,
-                  {color: colorConfig.store.defaultColor},
-                ]}>
+                style={[styles.title, {color: colorConfig.store.defaultColor}]}>
                 {!isEmptyObject(defaultAccount) ? (
                   defaultAccount.isAccountRequired != false ? (
                     <>
@@ -424,9 +436,7 @@ class AccountMenuList extends Component {
                           ? defaultAccount.details.cardIssuer.toUpperCase()
                           : null}
                       </Text>{' '}
-                      <Text>
-                        {defaultAccount.details.maskedAccountNumber}
-                      </Text>
+                      <Text>{defaultAccount.details.maskedAccountNumber}</Text>
                     </>
                   ) : (
                     <Text>{defaultAccount.paymentName}</Text>
@@ -507,6 +517,34 @@ class AccountMenuList extends Component {
         {/*  </View>*/}
         {/*</TouchableOpacity>*/}
 
+        <Text style={styles.headingMenu}>Inbox</Text>
+        <TouchableOpacity onPress={this.goToInbox} style={styles.cardMenu}>
+          <View style={styles.itemMenu}>
+            <Icon
+              size={20}
+              name={Platform.OS === 'ios' ? 'ios-mail' : 'md-mail'}
+              style={{color: 'white'}}
+            />
+          </View>
+          <View>
+            <View style={styles.item}>
+              <Text style={styles.title}>Inbox {this.countUnreadInbox()} </Text>
+              <Icon
+                size={20}
+                name={
+                  Platform.OS === 'ios'
+                    ? 'ios-arrow-dropright'
+                    : 'md-arrow-dropright'
+                }
+                style={{
+                  color: colorConfig.store.defaultColor,
+                  marginRight: 20,
+                }}
+              />
+            </View>
+          </View>
+        </TouchableOpacity>
+
         <Text style={styles.headingMenu}>{intlData.messages.settings}</Text>
 
         {referral != undefined && referral.capacity > 0 ? (
@@ -571,16 +609,12 @@ class AccountMenuList extends Component {
             </View>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity
-          onPress={this.notifications}
-          style={styles.cardMenu}>
+        <TouchableOpacity onPress={this.notifications} style={styles.cardMenu}>
           <View style={styles.itemMenu}>
             <Icon
               size={20}
               name={
-                Platform.OS === 'ios'
-                  ? 'ios-notifications'
-                  : 'md-notifications'
+                Platform.OS === 'ios' ? 'ios-notifications' : 'md-notifications'
               }
               style={{color: 'white'}}
             />
@@ -617,9 +651,7 @@ class AccountMenuList extends Component {
           </View>
           <View>
             <View style={styles.item}>
-              <Text style={styles.title}>
-                {intlData.messages.editProfile}
-              </Text>
+              <Text style={styles.title}>{intlData.messages.editProfile}</Text>
               <Icon
                 size={20}
                 name={
@@ -648,9 +680,7 @@ class AccountMenuList extends Component {
           </View>
           <View>
             <View style={styles.item}>
-              <Text style={styles.title}>
-                {intlData.messages.languages}
-              </Text>
+              <Text style={styles.title}>{intlData.messages.languages}</Text>
               <Icon
                 size={20}
                 name={
@@ -668,8 +698,35 @@ class AccountMenuList extends Component {
         </TouchableOpacity>
 
         <TouchableOpacity
-          onPress={this.prompLogout}
+          onPress={() => Actions.termsCondition()}
           style={styles.cardMenu}>
+          <View style={styles.itemMenu}>
+            <Icon
+              size={20}
+              name={Platform.OS === 'ios' ? 'ios-paper' : 'md-paper'}
+              style={{color: 'white'}}
+            />
+          </View>
+          <View>
+            <View style={styles.item}>
+              <Text style={styles.title}>Terms & Conditions</Text>
+              <Icon
+                size={20}
+                name={
+                  Platform.OS === 'ios'
+                    ? 'ios-arrow-dropright'
+                    : 'md-arrow-dropright'
+                }
+                style={{
+                  color: colorConfig.store.defaultColor,
+                  marginRight: 20,
+                }}
+              />
+            </View>
+          </View>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={this.prompLogout} style={styles.cardMenu}>
           <View
             style={[
               styles.itemMenu,
@@ -797,6 +854,7 @@ mapStateToProps = state => ({
   defaultAccount: state.userReducer.defaultPaymentAccount.defaultAccount,
   intlData: state.intlData,
   netsclickStatus: state.accountsReducer.netsclickStatus.netsclickStatus,
+  dataInbox: state.inboxReducer.dataInbox.broadcast,
 });
 
 mapDispatchToProps = dispatch => ({

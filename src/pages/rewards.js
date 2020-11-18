@@ -49,6 +49,7 @@ import {
   getPendingCart,
 } from '../actions/order.action';
 import VersionCheck from 'react-native-version-check';
+import {dataPromotion} from '../actions/promotion.action';
 
 class Rewards extends Component {
   constructor(props) {
@@ -161,7 +162,7 @@ class Rewards extends Component {
 
   getDefaultOutlet = async () => {
     try {
-      // await this.props.dispatch(getDefaultOutlet());
+      await this.props.dispatch(getDefaultOutlet());
     } catch (e) {}
   };
 
@@ -247,6 +248,7 @@ class Rewards extends Component {
         this.props.dispatch(dataPoint()),
         this.props.dispatch(getStamps()),
         this.props.dispatch(recentTransaction()),
+        this.props.dispatch(dataPromotion()),
       ]);
       this.checkUpdateAndVersion();
       await this.setState({isLoading: false});

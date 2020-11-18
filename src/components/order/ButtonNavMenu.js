@@ -14,6 +14,7 @@ export default class ButtonNavMenu extends Component {
       const {products, selectedCategory, outlet} = this.props;
       Actions.push('menuCategory', {
         products,
+        hideBackButton: this.props.hideBackButton,
         isSpecificPageActive: this.props.isSpecificPageActive,
         refreshPage: this.props.refreshPage,
         outlet: this.props.outlet,

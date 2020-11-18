@@ -57,6 +57,9 @@ import {RecyclerListView, DataProvider, LayoutProvider} from 'recyclerlistview';
 import ButtonNavMenu from './ButtonNavMenu';
 import CartIcon from './CartIcon';
 import {Dialog} from 'react-native-paper';
+import {dataPromotion} from '../../actions/promotion.action';
+import StorePromotion from '../storePromotion';
+import OutletIcon from './OutletIcon';
 
 const ViewTypes = {
   FULL: 0,
@@ -183,7 +186,6 @@ class Products2 extends Component {
 
       // if products is undefined, then clear all list
       if (!isEmptyArray(product.details)) {
-        console.log('BABI 1');
         let arrayID = [];
         for (let i = 0; i < product.details.length; i++) {
           if (
@@ -240,14 +242,12 @@ class Products2 extends Component {
   };
 
   componentDidMount = async () => {
-    //TODO: add refresh token here
-
     this.backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
       this.handleBackPress,
     );
 
-    this.checkOpeningHours();
+    // this.checkOpeningHours();
 
     await this.firstMethodToRun(false);
 
@@ -265,6 +265,15 @@ class Products2 extends Component {
     try {
       this.props.dispatch(removeTimeslot());
     } catch (e) {}
+  };
+
+  refreshProducts = async () => {
+    await this.setState({
+      item: this.props.item,
+      products: undefined,
+      dataLength: undefined,
+    });
+    await this.firstMethodToRun(false);
   };
 
   checkOpeningHours = async () => {
@@ -318,7 +327,7 @@ class Products2 extends Component {
       this.state.item.orderingStatus == undefined ||
       this.state.item.orderingStatus == 'AVAILABLE'
     ) {
-      this.openOrderingMode();
+      // this.openOrderingMode();
       await this.getCategoryByOutlet(refresh);
       // await this.getProductsByOutlet(refresh);
       // check if basket outlet is not same as current outlet
@@ -805,7 +814,7 @@ class Products2 extends Component {
   };
 
   checkBucketExist = product => {
-    let outletId = this.state.item.storeId;
+    let outletId = this.state.item.id;
     try {
       if (this.props.dataBasket != undefined) {
         if (this.props.dataBasket.outlet.id != outletId) {
@@ -841,7 +850,7 @@ class Products2 extends Component {
 
   pushDataProductsToState = async () => {
     try {
-      const outletID = this.state.item.storeId;
+      const outletID = this.state.item.id;
       let data = await this.props.products.find(item => item.id == outletID);
       // if data is found
       if (
@@ -876,7 +885,7 @@ class Products2 extends Component {
   getCategoryByOutlet = async refresh => {
     try {
       const {products} = this.state;
-      const outletID = this.state.item.storeId;
+      const outletID = this.state.item.id;
       let response = await this.props.dispatch(
         getCategoryByOutlet(outletID, refresh),
       );
@@ -891,7 +900,7 @@ class Products2 extends Component {
         });
         const firstCategoryID = response.data[1].id;
         // const firstDatLength = response.data[0].dataLength;
-        await this.getProductsByCategory(firstCategoryID, 0, 20, refresh, 1);
+        await this.getProductsByCategory(firstCategoryID, 0, 10, refresh, 1);
 
         // check if outlet is open
         // this.prompOutletIsClosed();
@@ -904,14 +913,14 @@ class Products2 extends Component {
 
         //  asynchronously get first item
         if (response.data.length > 0) {
-          let skip = 20;
+          let skip = 10;
           for (
             let i = 0;
-            i < Math.floor(response.data[1].dataLength / 20);
+            i < Math.floor(response.data[1].dataLength / 10);
             i++
           ) {
             await this.loadMoreProducts(firstCategoryID, outletID, skip, 1);
-            skip += 20;
+            skip += 10;
           }
         }
         //  asynchronously get all item
@@ -957,7 +966,7 @@ class Products2 extends Component {
     idxCategory,
   ) => {
     try {
-      const outletID = this.state.item.storeId;
+      const outletID = this.state.item.id;
       let {categories} = this.state;
       let response = await this.props.dispatch(
         getProductByCategory(outletID, category, skip, take),
@@ -1016,7 +1025,7 @@ class Products2 extends Component {
 
   getProductsByOutlet = async refresh => {
     try {
-      const outletID = this.state.item.storeId;
+      const outletID = this.state.item.id;
       if (this.props.products != undefined) {
         // check data products on local storage
         let data = await this.props.products.find(item => item.id == outletID);
@@ -1328,7 +1337,7 @@ class Products2 extends Component {
 
   checkIfItemExistInBasket = item => {
     try {
-      let outletId = `outlet::${this.state.item.storeId}`;
+      let outletId = `outlet::${this.state.item.id}`;
       if (
         this.props.dataBasket != undefined &&
         this.props.dataBasket.outletID == outletId
@@ -1348,7 +1357,7 @@ class Products2 extends Component {
 
   getQuantityInBasket = item => {
     try {
-      let outletId = `outlet::${this.state.item.storeId}`;
+      let outletId = `outlet::${this.state.item.id}`;
       if (
         this.props.dataBasket != undefined &&
         this.props.dataBasket.outletID == outletId
@@ -1449,17 +1458,17 @@ class Products2 extends Component {
       }
 
       let outlet = {
-        id: `${this.state.item.storeId}`,
+        id: `${this.state.item.id}`,
       };
       // if remark is available, then push to array
       if (remark != undefined && remark != '') dataproduct.remark = remark;
-      data.outletID = `outlet::${this.state.item.storeId}`;
+      data.outletID = `outlet::${this.state.item.id}`;
       data.outlet = outlet;
-      data.id = this.state.item.storeId;
+      data.id = this.state.item.id;
       data.details.push(dataproduct);
 
       // if data basket is not empty, then hide modal and syncronously add to server
-      // let outletId = `outlet::${this.state.item.storeId}`;
+      // let outletId = `outlet::${this.state.item.id}`;
       // if (
       //   this.props.dataBasket != undefined &&
       //   this.props.dataBasket.outletID == outletId
@@ -1593,7 +1602,7 @@ class Products2 extends Component {
 
       // if remark is available, then push to array
       if (remark != undefined && remark != '') dataproduct.remark = remark;
-      data.outletID = `outlet::${this.state.item.storeId}`;
+      data.outletID = `outlet::${this.state.item.id}`;
       data.details.push(dataproduct);
 
       // check max order value outlet
@@ -1700,7 +1709,7 @@ class Products2 extends Component {
 
     if (mode == 'add') {
       // to show loading button at Modal, check status data basket is empty or not
-      let outletId = `outlet::${this.state.item.storeId}`;
+      let outletId = `outlet::${this.state.item.id}`;
       // conditional loading if basket is null
       await this.setState({loadingAddItem: true});
       await this.postItem(product, qty, remark);
@@ -1797,7 +1806,7 @@ class Products2 extends Component {
       // check basket is empty then open modal mode order
       if (this.props.dataBasket == undefined) return true;
       // check open / close & outlet ID
-      const currentOutletId = this.state.item.storeId;
+      const currentOutletId = this.state.item.id;
       const outletIDSelected = this.props.dataBasket.outlet.id;
       if (
         this.state.item.storeStatus == true &&
@@ -2006,7 +2015,7 @@ class Products2 extends Component {
   renderCategoryWithProducts = (item, search) => {
     if (item.dataLength != undefined) {
       let length = 1;
-      const outletID = this.state.item.storeId;
+      const outletID = this.state.item.id;
       if (!search) {
         length = item.dataLength;
       } else {
@@ -2149,7 +2158,7 @@ class Products2 extends Component {
     try {
       const {selectedCategory} = this.state;
       const {products} = this.state;
-      const outletID = this.state.item.storeId;
+      const outletID = this.state.item.id;
       // if (products[0].items.length != products[0].skip) {
       //   console.log(products[0].skip, 'COBAAAA');
       //   await this.getProductsLoadMore(products, outletID);
@@ -2301,7 +2310,7 @@ class Products2 extends Component {
                       textAlign: 'center',
                       marginRight: 10,
                     }}>
-                    {this.state.item.storeName}
+                    {this.state.item.name}
                   </Text>
                   <Icon
                     size={26}
@@ -2493,7 +2502,7 @@ class Products2 extends Component {
                     textAlign: 'center',
                     marginRight: 10,
                   }}>
-                  {this.state.item.storeName}
+                  {this.state.item.name}
                 </Text>
                 <Icon
                   size={26}
@@ -2720,9 +2729,7 @@ class Products2 extends Component {
     try {
       await this.props.dispatch(dataStores());
       let {item} = this.state;
-      let outlet = await this.props.dataStores.find(
-        data => data.id == item.storeId,
-      );
+      let outlet = await this.props.dataStores.find(data => data.id == item.id);
 
       item.storeStatus = this.isOpen(outlet);
       item.maxOrderQtyPerItem = outlet.maxOrderQtyPerItem;
@@ -2741,7 +2748,7 @@ class Products2 extends Component {
       item.enableDineIn = outlet.enableDineIn == true ? true : false;
       item.enableTableScan = outlet.enableTableScan == true ? true : false;
       item.enableDelivery = outlet.enableDelivery == true ? true : false;
-      item.storeName = outlet.name;
+      item.name = outlet.name;
       item.outletType = outlet.outletType;
       item.orderingStatus = outlet.orderingStatus;
       item.enableItemSpecialInstructions = outlet.enableItemSpecialInstructions;
@@ -2798,7 +2805,7 @@ class Products2 extends Component {
   loadMoreCategory = async () => {
     try {
       let {products} = this.state;
-      const outletID = this.state.item.storeId;
+      const outletID = this.state.item.id;
       const categorySelected = await products.find(
         item =>
           isEmptyArray(item.items) &&
@@ -2841,7 +2848,7 @@ class Products2 extends Component {
   getCategoryData = async index => {
     try {
       let {products} = this.state;
-      const outletID = this.state.item.storeId;
+      const outletID = this.state.item.id;
       const categorySelected = products[index];
       const categoryIndex = index;
       if (categoryIndex > -1) {
@@ -2883,7 +2890,7 @@ class Products2 extends Component {
             onRefresh={this._onRefresh}
           />
         }
-        // ListHeaderComponent={this.renderHeaderOutlet}
+        ListHeaderComponent={<StorePromotion />}
         ref={ref => {
           this.flatListRef = ref;
         }}
@@ -2984,7 +2991,7 @@ class Products2 extends Component {
           selectedCategoryModifier={this.state.selectedCategoryModifier}
           loadModifierTime={this.state.loadModifierTime}
         />
-        {this.askUserToSelectOrderType()}
+        {/*{this.askUserToSelectOrderType()}*/}
         {this.askUserToSelectProductModifier()}
         <>
           {/* MENU FIXED */}
@@ -3007,29 +3014,29 @@ class Products2 extends Component {
             {!dialogSearch ? (
               <View>
                 <View style={styles.outletHeaderFixed}>
-                  <TouchableOpacity
-                    onPress={this.goBack}
-                    style={{
-                      alignItems: 'center',
-                      flexDirection: 'row',
-                      // width: '60%',
-                      marginLeft: 5,
-                    }}>
-                    <Icon
-                      size={25}
-                      name={
-                        Platform.OS === 'ios'
-                          ? 'ios-arrow-back'
-                          : 'md-arrow-back'
-                      }
-                      style={{color: colorConfig.pageIndex.grayColor}}
-                    />
-                  </TouchableOpacity>
+                  {/*<TouchableOpacity*/}
+                  {/*  onPress={this.goBack}*/}
+                  {/*  style={{*/}
+                  {/*    alignItems: 'center',*/}
+                  {/*    flexDirection: 'row',*/}
+                  {/*    // width: '60%',*/}
+                  {/*    marginLeft: 5,*/}
+                  {/*  }}>*/}
+                  {/*  <Icon*/}
+                  {/*    size={25}*/}
+                  {/*    name={*/}
+                  {/*      Platform.OS === 'ios'*/}
+                  {/*        ? 'ios-arrow-back'*/}
+                  {/*        : 'md-arrow-back'*/}
+                  {/*    }*/}
+                  {/*    style={{color: colorConfig.pageIndex.grayColor}}*/}
+                  {/*  />*/}
+                  {/*</TouchableOpacity>*/}
                   <TouchableOpacity
                     style={{
                       padding: 2,
                       paddingRight: 15,
-                      marginLeft: 15,
+                      marginLeft: 7,
                       width: '70%',
                       borderRadius: 7,
                       backgroundColor: '#e1e4e8',
@@ -3053,11 +3060,12 @@ class Products2 extends Component {
                         marginLeft: 10,
                         fontFamily: 'Lato-Medium',
                       }}>
-                      Search in {this.state.item.storeName.substr(0, 15)}
+                      Search in {this.state.item.name.substr(0, 20)}
                     </Text>
                   </TouchableOpacity>
+                  <OutletIcon refreshProducts={this.refreshProducts} />
                   <CartIcon
-                    outletID={this.state.item.storeId}
+                    outletID={this.state.item.id}
                     dataBasket={this.props.dataBasket}
                     refreshQuantityProducts={this.refreshQuantityProducts}
                   />
@@ -3229,20 +3237,20 @@ class Products2 extends Component {
         {/*  this.props.dataBasket != undefined &&*/}
         {/*  this.props.dataBasket.outlet != undefined &&*/}
         {/*  this.props.dataBasket.outlet.id != undefined &&*/}
-        {/*  this.props.dataBasket.outlet.id == this.state.item.storeId ? (*/}
+        {/*  this.props.dataBasket.outlet.id == this.state.item.id ? (*/}
         {/*    <ButtonViewBasket*/}
         {/*      previousTableNo={this.props.previousTableNo}*/}
         {/*      refreshQuantityProducts={this.refreshQuantityProducts}*/}
         {/*    />*/}
         {/*  ) : null*/}
         {/*) : null}*/}
-        {this.state.showBasketButton && !dialogSearch ? (
-          <ButtonNavMenu
-            updateCategory={this.updateCategory}
-            products={this.state.products}
-            outlet={this.state.item}
-          />
-        ) : null}
+        {/*{this.state.showBasketButton && !dialogSearch ? (*/}
+        {/*  <ButtonNavMenu*/}
+        {/*    updateCategory={this.updateCategory}*/}
+        {/*    products={this.state.products}*/}
+        {/*    outlet={this.state.item}*/}
+        {/*  />*/}
+        {/*) : null}*/}
         {this.renderDeliveryInfo()}
       </SafeAreaView>
     );
@@ -3252,7 +3260,7 @@ mapStateToProps = state => ({
   products: state.orderReducer.productsOutlet.products,
   dataBasket: state.orderReducer.dataBasket.product,
   orderType: state.userReducer.orderType.orderType,
-  dataStores: state.storesReducer.dataStores.stores,
+  item: state.storesReducer.defaultOutlet.defaultOutlet,
   oneOutlet: state.storesReducer.oneOutlet.oneOutlet,
   dataLength: state.orderReducer.productsOutlet.dataLength,
   intlData: state.intlData,

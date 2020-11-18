@@ -8,10 +8,11 @@ import {connect} from 'react-redux';
 import {compose} from 'redux';
 import {Platform} from 'react-native';
 import Store from './store';
-import Products2 from '../components/order/Products2';
+import ProductsRetail from '../components/order/ProductsRetail';
+import MenuCategory from '../components/order/MenuCategory';
 import History from './history';
 import Rewards from './rewards';
-import Inbox from './inbox';
+// import Inbox from './inbox';
 import Account from './account';
 import colorConfig from '../config/colorConfig';
 import IconMail from '../components/atom/IconMail';
@@ -19,21 +20,8 @@ import {paymentRefNo} from '../actions/account.action';
 
 const AppTabNavigator = createMaterialBottomTabNavigator(
   {
-    // Store: {
-    //   screen: Products2,
-    //   navigationOptions: {
-    //     title: 'Store',
-    //     tabBarIcon: ({tintColor, focused}) => (
-    //       <Icon
-    //         size={28}
-    //         name={Platform.OS === 'ios' ? 'ios-cart' : 'md-cart'}
-    //         style={{color: tintColor}}
-    //       />
-    //     ),
-    //   },
-    // },
     Store: {
-      screen: Store,
+      screen: ProductsRetail,
       navigationOptions: {
         title: 'Order',
         tabBarIcon: ({tintColor, focused}) => (
@@ -45,14 +33,14 @@ const AppTabNavigator = createMaterialBottomTabNavigator(
         ),
       },
     },
-    History: {
-      screen: History,
+    Category: {
+      screen: MenuCategory,
       navigationOptions: {
-        title: 'History',
+        title: 'Category',
         tabBarIcon: ({tintColor, focused}) => (
           <Icon
             size={28}
-            name={Platform.OS === 'ios' ? 'ios-timer' : 'md-time'}
+            name={Platform.OS === 'ios' ? 'ios-apps' : 'md-apps'}
             style={{color: tintColor}}
           />
         ),
@@ -71,12 +59,16 @@ const AppTabNavigator = createMaterialBottomTabNavigator(
         ),
       },
     },
-    Inbox: {
-      screen: Inbox,
+    History: {
+      screen: History,
       navigationOptions: {
-        title: 'Inbox',
+        title: 'History',
         tabBarIcon: ({tintColor, focused}) => (
-          <IconMail tintColor={tintColor} />
+          <Icon
+            size={28}
+            name={Platform.OS === 'ios' ? 'ios-timer' : 'md-time'}
+            style={{color: tintColor}}
+          />
         ),
       },
     },
@@ -84,11 +76,11 @@ const AppTabNavigator = createMaterialBottomTabNavigator(
       // path: 'first',
       screen: Account,
       navigationOptions: {
-        title: 'Profile',
+        title: 'More',
         tabBarIcon: ({tintColor, focused}) => (
           <Icon
             size={28}
-            name={Platform.OS === 'ios' ? 'ios-contact' : 'md-contact'}
+            name={Platform.OS === 'ios' ? 'ios-ellipsis-vertical' : 'md-menu'}
             style={{color: tintColor}}
           />
         ),
@@ -110,7 +102,7 @@ const AppTabNavigator = createMaterialBottomTabNavigator(
 const AppTabNavigatorHistory = createMaterialBottomTabNavigator(
   {
     Store: {
-      screen: Store,
+      screen: ProductsRetail,
       navigationOptions: {
         title: 'Order',
         tabBarIcon: ({tintColor, focused}) => (
@@ -122,14 +114,14 @@ const AppTabNavigatorHistory = createMaterialBottomTabNavigator(
         ),
       },
     },
-    History: {
-      screen: History,
+    Category: {
+      screen: MenuCategory,
       navigationOptions: {
-        title: 'History',
+        title: 'Category',
         tabBarIcon: ({tintColor, focused}) => (
           <Icon
             size={28}
-            name={Platform.OS === 'ios' ? 'ios-timer' : 'md-time'}
+            name={Platform.OS === 'ios' ? 'ios-apps' : 'md-apps'}
             style={{color: tintColor}}
           />
         ),
@@ -148,23 +140,28 @@ const AppTabNavigatorHistory = createMaterialBottomTabNavigator(
         ),
       },
     },
-    Inbox: {
-      screen: Inbox,
+    History: {
+      screen: History,
       navigationOptions: {
-        title: 'Inbox',
+        title: 'History',
         tabBarIcon: ({tintColor, focused}) => (
-          <IconMail tintColor={tintColor} />
+          <Icon
+            size={28}
+            name={Platform.OS === 'ios' ? 'ios-timer' : 'md-time'}
+            style={{color: tintColor}}
+          />
         ),
       },
     },
     Account: {
+      // path: 'first',
       screen: Account,
       navigationOptions: {
-        title: 'Profile',
+        title: 'More',
         tabBarIcon: ({tintColor, focused}) => (
           <Icon
             size={28}
-            name={Platform.OS === 'ios' ? 'ios-contact' : 'md-contact'}
+            name={Platform.OS === 'ios' ? 'ios-ellipsis-vertical' : 'md-menu'}
             style={{color: tintColor}}
           />
         ),
@@ -225,7 +222,6 @@ class PageIndex extends Component {
 }
 
 mapStateToProps = state => ({
-  dataInbox: state.inboxReducer.dataInbox.broadcast,
   intlData: state.intlData,
 });
 

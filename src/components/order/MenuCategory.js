@@ -125,7 +125,7 @@ class MenuCategory extends Component {
         this.props.refreshPage(categoryDetail, undefined);
         Actions.pop();
       } else {
-        Actions.replace('specificCategory', {categoryDetail, item: outlet});
+        Actions.push('specificCategory', {categoryDetail, item: outlet});
       }
     } catch (e) {}
   };
@@ -137,23 +137,30 @@ class MenuCategory extends Component {
       <SafeAreaView style={styles.container}>
         {this.state.loading && <Loader />}
         <View style={styles.container}>
-          <View
-            style={[
-              styles.header,
-              {backgroundColor: colorConfig.pageIndex.backgroundColor},
-            ]}>
+          <View style={styles.header}>
             <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
-              <Icon
-                size={28}
-                name={
-                  Platform.OS === 'ios'
-                    ? 'ios-arrow-back'
-                    : 'md-arrow-round-back'
-                }
-                style={styles.btnBackIcon}
-              />
-              <Text style={styles.btnBackText}> Categories </Text>
+              {this.props.hideBackButton === true && (
+                <Icon
+                  size={28}
+                  name={
+                    Platform.OS === 'ios'
+                      ? 'ios-arrow-back'
+                      : 'md-arrow-round-back'
+                  }
+                  style={styles.btnBackIcon}
+                />
+              )}
             </TouchableOpacity>
+            <Text
+              style={[
+                styles.btnBackText,
+                this.props.hideBackButton === undefined
+                  ? {marginLeft: '35%'}
+                  : null,
+              ]}>
+              {' '}
+              Categories{' '}
+            </Text>
           </View>
           <TextInput
             onChangeText={search => this.search(search)}
@@ -183,6 +190,7 @@ class MenuCategory extends Component {
 
 mapStateToProps = state => ({
   intlData: state.intlData,
+  outlet: state.storesReducer.defaultOutlet.defaultOutlet,
 });
 
 mapDispatchToProps = dispatch => ({
@@ -199,12 +207,15 @@ export default compose(
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: colorConfig.store.containerColor,
   },
   header: {
-    height: 65,
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: 55,
     marginBottom: 20,
-    justifyContent: 'center',
-    // backgroundColor: colorConfig.store.defaultColor,
+    // justifyContent: 'center',
+    backgroundColor: colorConfig.store.defaultColor,
     shadowColor: '#00000021',
     shadowOffset: {
       width: 0,
@@ -216,7 +227,7 @@ const styles = StyleSheet.create({
   },
   btnBackIcon: {
     marginLeft: 10,
-    color: colorConfig.store.defaultColor,
+    color: 'white',
     margin: 10,
   },
   btnBack: {
@@ -227,12 +238,14 @@ const styles = StyleSheet.create({
     height: 80,
   },
   btnBackText: {
-    color: colorConfig.store.defaultColor,
+    marginLeft: '25%',
+    color: 'white',
+    textAlign: 'center',
     fontWeight: 'bold',
     fontSize: 17,
   },
   searchBar: {
-    backgroundColor: colorConfig.store.transparentBG,
+    backgroundColor: 'white',
     borderRadius: 6,
     borderWidth: StyleSheet.hairlineWidth,
     borderColor: 'gray',

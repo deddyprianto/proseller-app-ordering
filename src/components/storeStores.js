@@ -10,9 +10,8 @@ import {
 import Icon from 'react-native-vector-icons/Ionicons';
 
 import colorConfig from '../config/colorConfig';
-import {Actions} from 'react-native-router-flux';
 
-export default class StoreStores extends Component {
+class StoreStores extends Component {
   constructor(props) {
     super(props);
   }
@@ -113,6 +112,9 @@ export default class StoreStores extends Component {
     );
   }
 }
+import {Actions} from 'react-native-router-flux';
+import {compose} from 'redux';
+import {connect} from 'react-redux';
 
 const styles = StyleSheet.create({
   stores: {
@@ -152,3 +154,14 @@ const styles = StyleSheet.create({
     // borderLeftWidth: 1,
   },
 });
+
+mapDispatchToProps = dispatch => ({
+  dispatch,
+});
+
+export default compose(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  ),
+)(StoreStores);

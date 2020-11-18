@@ -29,6 +29,7 @@ import {
   getProductByOutlet,
   getProductsUnavailable,
   getTimeslot,
+  moveCart,
   removeBasket,
   removeTimeslot,
   setOrderType,
@@ -165,7 +166,7 @@ class Basket extends Component {
       // get previous data products from this outlet, for modifier detail purpose
       if (this.props.dataBasket != undefined) {
         let outletID = this.props.dataBasket.outlet.id;
-        await this.props.dispatch(getOutletById(outletID));
+        // await this.props.dispatch(getOutletById(outletID));
         await this.initializePickupTime();
         await this.getTimeslot(outletID, this.props.orderType);
         // GET PRODUCTS UNAVAILABLE
@@ -891,6 +892,17 @@ class Basket extends Component {
   getBasket = async () => {
     this.setState({loading: true});
     await this.props.dispatch(getBasket());
+    if (this.props.orderType === 'DELIVERY') {
+      const cart = this.props.dataBasket;
+      const response = await this.props.dispatch(
+        moveCart(this.props.selectedAddress),
+      );
+      if (response != false) {
+        if (cart.outlet.id != response.outlet.id) {
+          await this.props.dispatch(getOutletById(response.outlet.id));
+        }
+      }
+    }
     // this.props.dispatch(getDeliveryProvider());
     // await this.setState({loading: false});
     // setTimeout(() => {
@@ -3215,7 +3227,7 @@ mapStateToProps = state => ({
   timeslots: state.orderReducer.timeslot.timeslots,
   dataBasket: state.orderReducer.dataBasket.product,
   providers: state.orderReducer.dataProvider.providers,
-  outletSingle: state.storesReducer.dataOutletSingle.outletSingle,
+  outletSingle: state.storesReducer.defaultOutlet.defaultOutlet,
   orderType: state.userReducer.orderType.orderType,
   tableType: state.orderReducer.tableType.tableType,
   products: state.orderReducer.productsOutlet.products,

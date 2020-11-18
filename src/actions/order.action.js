@@ -511,6 +511,56 @@ export const getBasket = () => {
   };
 };
 
+export const moveCart = deliveryAddress => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      const {
+        orderReducer: {
+          dataBasket: {product},
+        },
+      } = state;
+
+      let payload = {
+        orderBy: 'provider',
+        cart: product,
+        deliveryAddress,
+      };
+
+      let response = await fetchApiOrder(
+        `/cart/moveItem`,
+        'POST',
+        payload,
+        200,
+        token,
+      );
+      console.log(response, 'response moveCart');
+      if (response.success == false) {
+        dispatch({
+          type: 'DATA_BASKET',
+          product: undefined,
+        });
+        return false;
+      } else {
+        dispatch({
+          type: 'DATA_BASKET',
+          product: response.response.data,
+        });
+      }
+
+      return response.response.data;
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
 export const updateSurcharge = orderingMode => {
   return async (dispatch, getState) => {
     const state = getState();
