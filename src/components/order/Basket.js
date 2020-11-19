@@ -93,6 +93,7 @@ class Basket extends Component {
       timeslot: '',
       minimumDate: new Date(),
       timeslotInfo: false,
+      selectedTimeSlot: {},
     };
   }
 
@@ -166,7 +167,7 @@ class Basket extends Component {
       // get previous data products from this outlet, for modifier detail purpose
       if (this.props.dataBasket != undefined) {
         let outletID = this.props.dataBasket.outlet.id;
-        // await this.props.dispatch(getOutletById(outletID));
+        await this.props.dispatch(getOutletById(outletID));
         await this.initializePickupTime();
         await this.getTimeslot(outletID, this.props.orderType);
         // GET PRODUCTS UNAVAILABLE
@@ -224,29 +225,41 @@ class Basket extends Component {
           orderingMode,
         ),
       );
+      let gotSlot = false;
       if (response != false && !isEmptyArray(response)) {
-        const find = response.find(item => item.isAvailable == true);
-        if (find != undefined) {
-          this.setState({timePickup: find.time});
-        } else {
-          const timepickup = new Date().getHours() + 1;
-          this.setState({timePickup: `${timepickup}:00`});
-          if (
-            !isEmptyArray(outletSingle.timeSlots) &&
-            (orderingMode === 'DELIVERY' || orderingMode === 'STOREPICKUP')
-          ) {
-            this.setState({timeslotInfo: true});
+        for (let i = 0; i < response.length; i++) {
+          if (!isEmptyArray(response[i].timeSlot)) {
+            for (let j = 0; j < response[i].timeSlot.length; j++) {
+              if (response[i].timeSlot[j].isAvailable === true) {
+                await this.setState({
+                  timePickup: response[i].timeSlot[j].time,
+                  datePickup: response[i].date,
+                  selectedTimeSlot: response[i],
+                });
+                gotSlot = true;
+                break;
+              }
+            }
           }
+          if (gotSlot) break;
         }
+        // if (find != undefined) {
+        //   this.setState({timePickup: find.time});
+        // } else {
+        //   const timepickup = new Date().getHours() + 1;
+        //   this.setState({timePickup: `${timepickup}:00`});
+        //   if (
+        //     !isEmptyArray(outletSingle.timeSlots) &&
+        //     (orderingMode === 'DELIVERY' || orderingMode === 'STOREPICKUP')
+        //   ) {
+        //     this.setState({timeslotInfo: true});
+        //   }
+        // }
       } else {
-        const timepickup = new Date().getHours() + 1;
-        this.setState({timePickup: `${timepickup}:00`});
-        if (
-          !isEmptyArray(outletSingle.timeSlots) &&
-          (orderingMode === 'DELIVERY' || orderingMode === 'STOREPICKUP')
-        ) {
-          this.setState({timeslotInfo: true});
-        }
+        await this.setState({
+          timePickup: `${new Date().getHours() + 1}:00`,
+          selectedTimeSlot: {}
+        });
       }
     } catch (e) {}
   };
@@ -444,6 +457,12 @@ class Basket extends Component {
   setPickupDate = datePickup => {
     try {
       this.setState({datePickup});
+    } catch (e) {}
+  };
+
+  setSelectedTimeSlot = selectedTimeSlot => {
+    try {
+      this.setState({selectedTimeSlot});
     } catch (e) {}
   };
 
@@ -1288,8 +1307,6 @@ class Basket extends Component {
         } else if (orderType === 'DELIVERY') {
           store.orderValidation[orderType] = store.orderValidation.delivery;
         }
-
-        console.log(store);
 
         const {dataBasket} = this.props;
         let totalQty = 0;
@@ -2701,8 +2718,10 @@ class Basket extends Component {
       Actions.push('pickUpTime', {
         setPickupDate: this.setPickupDate,
         setPickupTime: this.setPickupTime,
+        setSelectedTimeSlot: this.setSelectedTimeSlot,
         date: this.state.datePickup,
         time: this.state.timePickup,
+        selectedTimeSlot: this.state.selectedTimeSlot,
         outlet: outletSingle,
         orderType: orderType,
         minimumDate,
@@ -2869,9 +2888,9 @@ class Basket extends Component {
                 <Text style={styles.title}>
                   {this.props.dataBasket.outlet.name}
                 </Text>
-                {!this.state.isOpen ? (
-                  <Text style={styles.titleClosed}>Outlet is Closed</Text>
-                ) : null}
+                {/*{!this.state.isOpen ? (*/}
+                {/*  <Text style={styles.titleClosed}>Outlet is Closed</Text>*/}
+                {/*) : null}*/}
                 {outletSingle.orderingStatus == 'UNAVAILABLE' ? (
                   <Text style={styles.titleClosed}>
                     {this.getOfflineMessage(outletSingle)}

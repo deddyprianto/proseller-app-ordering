@@ -15,6 +15,7 @@ import {
   SafeAreaView,
   Alert,
   Picker,
+  FlatList,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -36,12 +37,15 @@ class PickUpTime extends Component {
     this.state = {
       screenWidth: Dimensions.get('window').width,
       date: null,
+      dateSelected: null,
       time: null,
+      timeSelected: null,
       dateVisible: false,
       timeVisible: false,
       hour: null,
       minute: null,
       openTimePicker: false,
+      selectedTimeSlot: this.props.selectedTimeSlot,
     };
   }
 
@@ -52,8 +56,39 @@ class PickUpTime extends Component {
   componentDidMount = async () => {
     const {date, time} = this.props;
     try {
-      this.setState({date, time: null});
-      await this.getDefaultTime(time);
+      this.setState({date, time});
+      // await this.getDefaultTime(time);
+    } catch (e) {}
+    this.scrollToData();
+  };
+
+  scrollToData = () => {
+    try {
+      const dataTimeSlot = this.props.timeslots.findIndex(
+        item => item.date === this.state.selectedTimeSlot.date,
+      );
+      let wait = new Promise(resolve => setTimeout(resolve, 500));
+      wait.then(() => {
+        this.DateRef.scrollToIndex({
+          animated: true,
+          index: dataTimeSlot,
+        });
+      });
+    } catch (e) {}
+    try {
+      let wait = new Promise(resolve => setTimeout(resolve, 500));
+      wait.then(() => {
+        const dataTimeSlot = this.state.selectedTimeSlot.timeSlot.filter(
+          item => item.isAvailable,
+        );
+        const find = dataTimeSlot.findIndex(
+          item => item.time === this.state.time,
+        );
+        this.TimeRef.scrollToIndex({
+          animated: true,
+          index: find,
+        });
+      });
     } catch (e) {}
   };
 
@@ -75,6 +110,7 @@ class PickUpTime extends Component {
       if (this.state.time != null && this.state.time != undefined) {
         this.props.setPickupTime(this.state.time);
         this.props.setPickupDate(this.state.date);
+        this.props.setSelectedTimeSlot(this.state.selectedTimeSlot);
       } else {
         if (this.checkTimeslotAvailibility()) {
           Alert.alert('Sorry', 'Please select order timeslot.');
@@ -105,7 +141,7 @@ class PickUpTime extends Component {
     } catch (e) {}
     await this.setState({date: formattedDate, time: null});
     this.hideDatePicker();
-    this.getTimeslot();
+    // this.getTimeslot();
   };
 
   getTimeslot = async () => {
@@ -294,9 +330,7 @@ class PickUpTime extends Component {
       if (isEmptyArray(timeslots)) {
         return false;
       } else {
-        const find = timeslots.find(item => item.isAvailable == true);
-        if (find != undefined) return true;
-        else return false;
+        return true;
       }
     } catch (e) {
       return false;
@@ -318,8 +352,77 @@ class PickUpTime extends Component {
     }
   };
 
+  renderItem = ({item}) => {
+    const {dateSelected, date, timeSelected, time} = this.state;
+    return (
+      <TouchableOpacity
+        onPress={() => {
+          this.setState({date: item.date, selectedTimeSlot: item, time: null});
+        }}
+        style={
+          date === item.date ? styles.cardSelected : styles.cardNotSelected
+        }>
+        <Text
+          style={
+            date === item.date
+              ? styles.selectedTextSmall
+              : styles.notSelectedTextSmall
+          }>
+          {format(new Date(item.date), 'iii')}
+        </Text>
+        <Text
+          style={
+            date === item.date ? styles.selectedText : styles.notSelectedText
+          }>
+          {format(new Date(item.date), 'dd')}
+        </Text>
+        <Text
+          style={
+            date === item.date
+              ? styles.selectedTextSmall
+              : styles.notSelectedTextSmall
+          }>
+          {format(new Date(item.date), 'LLL')}
+        </Text>
+      </TouchableOpacity>
+    );
+  };
+
+  renderItemTimeslot = ({item}) => {
+    const {
+      dateSelected,
+      date,
+      timeSelected,
+      selectedTimeSlot,
+      time,
+    } = this.state;
+    if (item.isAvailable) {
+      return (
+        <TouchableOpacity
+          onPress={() => {
+            this.setState({time: item.time});
+          }}
+          style={
+            time === item.time && date === selectedTimeSlot.date
+              ? styles.timeSelected
+              : styles.timeNotSelected
+          }>
+          <Text
+            style={
+              time === item.time && date === selectedTimeSlot.date
+                ? styles.selectedTextTime
+                : styles.notSelectedTextTime
+            }>
+            {item.time}
+          </Text>
+        </TouchableOpacity>
+      );
+    }
+  };
+
   render() {
     const {date, time} = this.state;
+    const {timeslots} = this.props;
     return (
       <SafeAreaView style={styles.container}>
         {this.state.loading && <Loader />}
@@ -340,115 +443,167 @@ class PickUpTime extends Component {
           </TouchableOpacity>
         </View>
         <KeyboardAwareScrollView style={{padding: 15}}>
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              paddingVertical: 10,
-            }}>
-            <View style={{width: '20%'}}>
-              <Text style={styles.option}>Date </Text>
-            </View>
-            <TouchableOpacity
-              onPress={() => {
-                this.setState({dateVisible: !this.state.dateVisible});
-              }}
-              style={{
-                width: '60%',
-                borderWidth: 0.6,
-                borderColor: colorConfig.pageIndex.grayColor,
-                padding: 7,
-                borderRadius: 5,
-              }}>
-              <Text style={styles.option}>
-                {format(new Date(date), 'dd MMM yyyy')}
-              </Text>
-              <DateTimePickerModal
-                minimumDate={this.getMinimumDate()}
-                maximumDate={this.getMaximumDate()}
-                isVisible={this.state.dateVisible}
-                mode="date"
-                date={new Date(this.state.date)}
-                onConfirm={this.handleConfirmDate}
-                onCancel={this.hideDatePicker}
-              />
-            </TouchableOpacity>
-          </View>
-
-          {this.checkTimeslotAvailibility() && (
+          {time != null && time.length > 5 && (
             <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                paddingVertical: 10,
-                paddingBottom: this.state.openTimePicker ? 250 : 10,
-              }}>
-              <View style={{width: '20%'}}>
-                <Text style={styles.option}>Time </Text>
-              </View>
-              <View
-                style={{
-                  width: '60%',
-                }}>
-                <DropDownPicker
-                  placeholder={'Select Pickup Time'}
-                  items={this.getOperationalHours()}
-                  defaultValue={time}
-                  containerStyle={{
-                    height: 50,
-                  }}
-                  style={{
-                    backgroundColor: 'white',
-                    marginTop: 5,
-                    borderWidth: 0.6,
-                    borderColor: colorConfig.pageIndex.grayColor,
-                    borderRadius: 5,
-                  }}
-                  dropDownStyle={{
-                    backgroundColor: '#fafafa',
-                    // borderColor: 'red',
-                    borderWidth: 0.6,
-                    zIndex: 3,
-                    height: 250,
-                  }}
-                  dropDownMaxHeight={250}
-                  activeLabelStyle={{
-                    color: 'white',
-                    fontFamily: 'Lato-Bold',
-                  }}
-                  activeItemStyle={{
-                    backgroundColor: colorConfig.store.defaultColor,
-                  }}
-                  itemStyle={{
-                    marginVertical: 4,
-                    backgroundColor: 'white',
-                    borderColor: 'gray',
-                  }}
-                  labelStyle={{
-                    fontFamily: 'Lato-Medium',
-                    fontSize: 14,
-                  }}
-                  onOpen={() => {
-                    this.setState({openTimePicker: true});
-                  }}
-                  onClose={() => {
-                    this.setState({openTimePicker: false});
-                  }}
-                  onChangeItem={item => {
-                    this.setState({time: item.value});
-                  }}
-                />
-                {/*<Picker*/}
-                {/*  selectedValue={time}*/}
-                {/*  style={{width: '100%'}}*/}
-                {/*  onValueChange={(itemValue, itemIndex) =>*/}
-                {/*    this.setState({time: itemValue})*/}
-                {/*  }>*/}
-                {/*  {this.getOperationalHours()}*/}
-                {/*</Picker>*/}
-              </View>
+              style={{justifyContent: 'space-between', flexDirection: 'row'}}>
+              <Text style={[styles.option, {marginBottom: 10}]}>Date</Text>
+              {/*<TouchableOpacity*/}
+              {/*  style={{flexDirection: 'row', alignItems: 'center'}}>*/}
+              {/*  <Icon*/}
+              {/*    size={19}*/}
+              {/*    name={Platform.OS === 'ios' ? 'ios-calendar' : 'md-calendar'}*/}
+              {/*    style={{*/}
+              {/*      color: colorConfig.store.defaultColor,*/}
+              {/*      marginRight: 10,*/}
+              {/*      marginBottom: 6,*/}
+              {/*    }}*/}
+              {/*  />*/}
+              {/*  <Text*/}
+              {/*    style={[*/}
+              {/*      styles.option,*/}
+              {/*      {marginBottom: 10, color: colorConfig.store.defaultColor},*/}
+              {/*    ]}>*/}
+              {/*    More dates*/}
+              {/*  </Text>*/}
+              {/*</TouchableOpacity>*/}
             </View>
           )}
+          <FlatList
+            ref={ref => {
+              this.DateRef = ref;
+            }}
+            data={timeslots}
+            horizontal={true}
+            renderItem={this.renderItem}
+            keyExtractor={item => item.id}
+          />
+          {/*<View*/}
+          {/*  style={{*/}
+          {/*    flexDirection: 'row',*/}
+          {/*    alignItems: 'center',*/}
+          {/*    paddingVertical: 10,*/}
+          {/*  }}>*/}
+          {/*  <View style={{width: '20%'}}>*/}
+          {/*    <Text style={styles.option}>Date </Text>*/}
+          {/*  </View>*/}
+          {/*  <TouchableOpacity*/}
+          {/*    onPress={() => {*/}
+          {/*      this.setState({dateVisible: !this.state.dateVisible});*/}
+          {/*    }}*/}
+          {/*    style={{*/}
+          {/*      width: '60%',*/}
+          {/*      borderWidth: 0.6,*/}
+          {/*      borderColor: colorConfig.pageIndex.grayColor,*/}
+          {/*      padding: 7,*/}
+          {/*      borderRadius: 5,*/}
+          {/*    }}>*/}
+          {/*    <Text style={styles.option}>*/}
+          {/*      {format(new Date(date), 'dd MMM yyyy')}*/}
+          {/*    </Text>*/}
+          {/*    <DateTimePickerModal*/}
+          {/*      minimumDate={this.getMinimumDate()}*/}
+          {/*      maximumDate={this.getMaximumDate()}*/}
+          {/*      isVisible={this.state.dateVisible}*/}
+          {/*      mode="date"*/}
+          {/*      date={new Date(this.state.date)}*/}
+          {/*      onConfirm={this.handleConfirmDate}*/}
+          {/*      onCancel={this.hideDatePicker}*/}
+          {/*    />*/}
+          {/*  </TouchableOpacity>*/}
+          {/*</View>*/}
+
+          <Text style={[styles.option, {marginVertical: 15}]}>Time :</Text>
+          <FlatList
+            ref={ref => {
+              this.TimeRef = ref;
+            }}
+            // getItemLayout={(data, index) => {
+            //   return {
+            //     length: this.state.selectedTimeSlot.timeSlot.length,
+            //     offset: 100 * index,
+            //     index,
+            //   };
+            // }}
+            data={this.state.selectedTimeSlot.timeSlot}
+            horizontal={true}
+            renderItem={this.renderItemTimeslot}
+            keyExtractor={item => item.id}
+          />
+
+          {/*{this.checkTimeslotAvailibility() && (*/}
+          {/*  <View*/}
+          {/*    style={{*/}
+          {/*      flexDirection: 'row',*/}
+          {/*      alignItems: 'center',*/}
+          {/*      paddingVertical: 10,*/}
+          {/*      paddingBottom: this.state.openTimePicker ? 250 : 10,*/}
+          {/*    }}>*/}
+          {/*    <View style={{width: '20%'}}>*/}
+          {/*      <Text style={styles.option}>Time </Text>*/}
+          {/*    </View>*/}
+          {/*    <View*/}
+          {/*      style={{*/}
+          {/*        width: '60%',*/}
+          {/*      }}>*/}
+          {/*      <DropDownPicker*/}
+          {/*        placeholder={'Select Pickup Time'}*/}
+          {/*        items={this.getOperationalHours()}*/}
+          {/*        defaultValue={time}*/}
+          {/*        containerStyle={{*/}
+          {/*          height: 50,*/}
+          {/*        }}*/}
+          {/*        style={{*/}
+          {/*          backgroundColor: 'white',*/}
+          {/*          marginTop: 5,*/}
+          {/*          borderWidth: 0.6,*/}
+          {/*          borderColor: colorConfig.pageIndex.grayColor,*/}
+          {/*          borderRadius: 5,*/}
+          {/*        }}*/}
+          {/*        dropDownStyle={{*/}
+          {/*          backgroundColor: '#fafafa',*/}
+          {/*          // borderColor: 'red',*/}
+          {/*          borderWidth: 0.6,*/}
+          {/*          zIndex: 3,*/}
+          {/*          height: 250,*/}
+          {/*        }}*/}
+          {/*        dropDownMaxHeight={250}*/}
+          {/*        activeLabelStyle={{*/}
+          {/*          color: 'white',*/}
+          {/*          fontFamily: 'Lato-Bold',*/}
+          {/*        }}*/}
+          {/*        activeItemStyle={{*/}
+          {/*          backgroundColor: colorConfig.store.defaultColor,*/}
+          {/*        }}*/}
+          {/*        itemStyle={{*/}
+          {/*          marginVertical: 4,*/}
+          {/*          backgroundColor: 'white',*/}
+          {/*          borderColor: 'gray',*/}
+          {/*        }}*/}
+          {/*        labelStyle={{*/}
+          {/*          fontFamily: 'Lato-Medium',*/}
+          {/*          fontSize: 14,*/}
+          {/*        }}*/}
+          {/*        onOpen={() => {*/}
+          {/*          this.setState({openTimePicker: true});*/}
+          {/*        }}*/}
+          {/*        onClose={() => {*/}
+          {/*          this.setState({openTimePicker: false});*/}
+          {/*        }}*/}
+          {/*        onChangeItem={item => {*/}
+          {/*          this.setState({time: item.value});*/}
+          {/*        }}*/}
+          {/*      />*/}
+          {/*      /!*<Picker*!/*/}
+          {/*      /!*  selectedValue={time}*!/*/}
+          {/*      /!*  style={{width: '100%'}}*!/*/}
+          {/*      /!*  onValueChange={(itemValue, itemIndex) =>*!/*/}
+          {/*      /!*    this.setState({time: itemValue})*!/*/}
+          {/*      /!*  }>*!/*/}
+          {/*      /!*  {this.getOperationalHours()}*!/*/}
+          {/*      /!*</Picker>*!/*/}
+          {/*    </View>*/}
+          {/*  </View>*/}
+          {/*)}*/}
 
           <TouchableOpacity
             onPress={this.submit}
@@ -612,5 +767,83 @@ const styles = StyleSheet.create({
     fontFamily: 'Lato-Bold',
     color: colorConfig.store.titleSelected,
     fontSize: 16,
+  },
+  notSelectedText: {
+    fontFamily: 'Lato-Bold',
+    fontSize: 18,
+    color: colorConfig.pageIndex.grayColor,
+  },
+  notSelectedTextSmall: {
+    fontFamily: 'Lato-Medium',
+    fontSize: 14,
+    color: colorConfig.pageIndex.grayColor,
+  },
+  selectedTextSmall: {
+    fontFamily: 'Lato-Bold',
+    fontSize: 14,
+    color: colorConfig.store.title,
+  },
+  selectedText: {
+    fontFamily: 'Lato-Bold',
+    fontSize: 19,
+    color: colorConfig.store.title,
+  },
+  selectedTextTime: {
+    fontFamily: 'Lato-Bold',
+    fontSize: 13,
+    color: colorConfig.store.title,
+  },
+  notSelectedTextTime: {
+    fontFamily: 'Lato-Bold',
+    fontSize: 13,
+    color: colorConfig.pageIndex.grayColor,
+  },
+  cardNotSelected: {
+    backgroundColor: colorConfig.store.containerColor,
+    borderRadius: 5,
+    width: 75,
+    maxWidth: 75,
+    height: 100,
+    maxHeight: 100,
+    marginRight: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderColor: colorConfig.store.titleSelected,
+  },
+  cardSelected: {
+    backgroundColor: colorConfig.store.secondaryColor,
+    borderRadius: 5,
+    width: 75,
+    maxWidth: 75,
+    height: 100,
+    maxHeight: 100,
+    marginRight: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderColor: colorConfig.store.titleSelected,
+  },
+  timeSelected: {
+    backgroundColor: colorConfig.store.secondaryColor,
+    borderRadius: 5,
+    width: 100,
+    maxWidth: 100,
+    height: 60,
+    maxHeight: 60,
+    marginRight: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderColor: colorConfig.store.titleSelected,
+  },
+  timeNotSelected: {
+    backgroundColor: colorConfig.store.containerColor,
+    borderRadius: 5,
+    width: 100,
+    maxWidth: 100,
+    height: 60,
+    maxHeight: 60,
+    marginRight: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderColor: colorConfig.store.titleSelected,
   },
 });

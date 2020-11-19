@@ -1,7 +1,7 @@
 import {fetchApiProduct} from '../service/apiProduct';
 import {fetchApiOrder} from '../service/apiOrder';
 import {fetchApi} from '../service/api';
-import {isEmptyArray} from '../helper/CheckEmpty';
+import {isEmptyArray, isEmptyObject} from '../helper/CheckEmpty';
 
 export const getProductByOutlet = (OutletId, refresh) => {
   return async (dispatch, getState) => {
@@ -1066,12 +1066,39 @@ export const getTimeslot = (
         },
       } = state;
 
-      const payload = {
+      const {
+        storesReducer: {
+          defaultOutlet: {defaultOutlet},
+        },
+      } = state;
+
+      let dataOutlet = {};
+      if (!isEmptyObject(defaultOutlet.orderValidation)) {
+        if (orderingMode === 'DELIVERY') {
+          dataOutlet = defaultOutlet.orderValidation.delivery;
+        } else if (orderingMode === 'STOREPICKUP') {
+          dataOutlet = defaultOutlet.orderValidation.storePickUp;
+        } else if (orderingMode === 'TAKEAWAY') {
+          dataOutlet = defaultOutlet.orderValidation.takeAway;
+        } else if (orderingMode === 'DINEIN') {
+          dataOutlet = defaultOutlet.orderValidation.dineIn;
+        }
+      }
+
+      let payload = {
         date,
         outletID: `outlet::${outletID}`,
         clientTimezone,
         orderingMode,
       };
+
+      if (
+        !isEmptyObject(dataOutlet) &&
+        dataOutlet.maxDays != undefined &&
+        dataOutlet.maxDays > 0
+      ) {
+        payload.maxDays = dataOutlet.maxDays;
+      }
 
       let response = await fetchApiOrder(
         `/timeslot`,
@@ -1081,7 +1108,7 @@ export const getTimeslot = (
         token,
       );
 
-      // console.log('RESPONSE GET TIMESLOT ', response);
+      console.log('RESPONSE GET TIMESLOT ', response);
 
       if (response.success == true) {
         if (!isEmptyArray(response.response.data) && dontSave == undefined) {

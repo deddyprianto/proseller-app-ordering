@@ -18,7 +18,7 @@ import {myVoucers} from '../actions/account.action';
 import HistoryMenuTab from '../components/history/HistoryMenuTab';
 import {getAccountPayment} from '../actions/payment.actions';
 import OneSignal from 'react-native-onesignal';
-import {getPendingCart} from '../actions/order.action';
+import {getBasket, getPendingCart} from '../actions/order.action';
 
 class History extends Component {
   constructor(props) {
@@ -37,6 +37,7 @@ class History extends Component {
     try {
       // await this.props.dispatch(getAccountPayment());
       await this.props.dispatch(getPendingCart());
+      this.props.dispatch(getBasket());
     } catch (e) {}
     this.backHandler = BackHandler.addEventListener(
       'hardwareBackPress',

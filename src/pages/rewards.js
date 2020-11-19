@@ -22,7 +22,7 @@ import RewardsPoint from '../components/rewardsPoint';
 import RewardsStamp from '../components/rewardsStamp';
 import RewardsMenu from '../components/rewardsMenu';
 import RewardsTransaction from '../components/rewardsTransaction';
-import Loader from '../components/loader';
+// import Loader from '../components/loader';
 import colorConfig from '../config/colorConfig';
 import {Actions} from 'react-native-router-flux';
 import Geolocation from 'react-native-geolocation-service';
@@ -44,6 +44,7 @@ import {dataInbox} from '../actions/inbox.action';
 import {getMandatoryFields, paymentRefNo} from '../actions/account.action';
 import {Overlay} from 'react-native-elements';
 import {
+  getBasket,
   getCart,
   getCartHomePage,
   getPendingCart,
@@ -250,6 +251,8 @@ class Rewards extends Component {
         this.props.dispatch(recentTransaction()),
         this.props.dispatch(dataPromotion()),
       ]);
+      this.getDefaultOutlet();
+      this.props.dispatch(getBasket());
       this.checkUpdateAndVersion();
       await this.setState({isLoading: false});
       this.props.dispatch(getAccountPayment());
