@@ -477,53 +477,50 @@ class PickUpTime extends Component {
             renderItem={this.renderItem}
             keyExtractor={item => item.id}
           />
-          {/*<View*/}
-          {/*  style={{*/}
-          {/*    flexDirection: 'row',*/}
-          {/*    alignItems: 'center',*/}
-          {/*    paddingVertical: 10,*/}
-          {/*  }}>*/}
-          {/*  <View style={{width: '20%'}}>*/}
-          {/*    <Text style={styles.option}>Date </Text>*/}
-          {/*  </View>*/}
-          {/*  <TouchableOpacity*/}
-          {/*    onPress={() => {*/}
-          {/*      this.setState({dateVisible: !this.state.dateVisible});*/}
-          {/*    }}*/}
-          {/*    style={{*/}
-          {/*      width: '60%',*/}
-          {/*      borderWidth: 0.6,*/}
-          {/*      borderColor: colorConfig.pageIndex.grayColor,*/}
-          {/*      padding: 7,*/}
-          {/*      borderRadius: 5,*/}
-          {/*    }}>*/}
-          {/*    <Text style={styles.option}>*/}
-          {/*      {format(new Date(date), 'dd MMM yyyy')}*/}
-          {/*    </Text>*/}
-          {/*    <DateTimePickerModal*/}
-          {/*      minimumDate={this.getMinimumDate()}*/}
-          {/*      maximumDate={this.getMaximumDate()}*/}
-          {/*      isVisible={this.state.dateVisible}*/}
-          {/*      mode="date"*/}
-          {/*      date={new Date(this.state.date)}*/}
-          {/*      onConfirm={this.handleConfirmDate}*/}
-          {/*      onCancel={this.hideDatePicker}*/}
-          {/*    />*/}
-          {/*  </TouchableOpacity>*/}
-          {/*</View>*/}
+          {isEmptyObject(this.state.selectedTimeSlot) && (
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                paddingVertical: 10,
+              }}>
+              <View style={{width: '20%'}}>
+                <Text style={styles.option}>Date </Text>
+              </View>
+              <TouchableOpacity
+                onPress={() => {
+                  this.setState({dateVisible: !this.state.dateVisible});
+                }}
+                style={{
+                  width: '60%',
+                  borderWidth: 0.6,
+                  borderColor: colorConfig.pageIndex.grayColor,
+                  padding: 7,
+                  borderRadius: 5,
+                }}>
+                <Text style={styles.option}>
+                  {format(new Date(date), 'dd MMM yyyy')}
+                </Text>
+                <DateTimePickerModal
+                  minimumDate={this.getMinimumDate()}
+                  maximumDate={this.getMaximumDate()}
+                  isVisible={this.state.dateVisible}
+                  mode="date"
+                  date={new Date(this.state.date)}
+                  onConfirm={this.handleConfirmDate}
+                  onCancel={this.hideDatePicker}
+                />
+              </TouchableOpacity>
+            </View>
+          )}
 
-          <Text style={[styles.option, {marginVertical: 15}]}>Time :</Text>
+          {!isEmptyObject(this.state.selectedTimeSlot) && (
+            <Text style={[styles.option, {marginVertical: 15}]}>Time :</Text>
+          )}
           <FlatList
             ref={ref => {
               this.TimeRef = ref;
             }}
-            // getItemLayout={(data, index) => {
-            //   return {
-            //     length: this.state.selectedTimeSlot.timeSlot.length,
-            //     offset: 100 * index,
-            //     index,
-            //   };
-            // }}
             data={this.state.selectedTimeSlot.timeSlot}
             horizontal={true}
             renderItem={this.renderItemTimeslot}
