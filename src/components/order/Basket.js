@@ -2257,6 +2257,16 @@ class Basket extends Component {
 
     if (type === 'DELIVERY' && !isEmptyObject(this.props.selectedAddress)) {
       this.getDeliveryFee();
+      // MOVE CART to Nearest Outlet
+      const cart = this.props.dataBasket;
+      const response = await this.props.dispatch(
+        moveCart(this.props.selectedAddress),
+      );
+      if (response != false) {
+        if (cart.outlet.id != response.outlet.id) {
+          await this.props.dispatch(getOutletById(response.outlet.id));
+        }
+      }
     }
 
     if (type === 'DELIVERY' || type === 'STOREPICKUP' || type === 'TAKEAWAY') {
