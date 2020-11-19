@@ -1308,30 +1308,51 @@ class Products2 extends Component {
         return;
       }
     } catch (e) {}
-    if (this.checkBucketExist(product)) {
-      this.showAlertBasketNotEmpty(product);
-    } else {
-      // check if product have modifier, then ask customer to select mode add
-      const hasModifier = product.product.productModifiers.length;
-      const {dataBasket} = this.props;
-      // check if product has in basket
-      let isInBasket = false;
-      if (dataBasket != undefined) {
-        isInBasket = await this.checkIfItemExistInBasket(product);
-      }
+    // if (this.checkBucketExist(product)) {
+    //   this.showAlertBasketNotEmpty(product);
+    // } else {
+    //   // check if product have modifier, then ask customer to select mode add
+    //   const hasModifier = product.product.productModifiers.length;
+    //   const {dataBasket} = this.props;
+    //   // check if product has in basket
+    //   let isInBasket = false;
+    //   if (dataBasket != undefined) {
+    //     isInBasket = await this.checkIfItemExistInBasket(product);
+    //   }
+    //
+    //   if (hasModifier == 0 || isInBasket == false) {
+    //     this.openModal(product);
+    //   } else {
+    //     const productsWithMofidier = dataBasket.details.filter(
+    //       data => data.productID == product.productID,
+    //     );
+    //     await this.setState({
+    //       selectedproductsWithMofidier: product,
+    //       productsWithMofidier,
+    //     });
+    //     this.RBmodifier.open();
+    //   }
+    // }
+    // check if product have modifier, then ask customer to select mode add
+    const hasModifier = product.product.productModifiers.length;
+    const {dataBasket} = this.props;
+    // check if product has in basket
+    let isInBasket = false;
+    if (dataBasket != undefined) {
+      isInBasket = await this.checkIfItemExistInBasket(product);
+    }
 
-      if (hasModifier == 0 || isInBasket == false) {
-        this.openModal(product);
-      } else {
-        const productsWithMofidier = dataBasket.details.filter(
-          data => data.productID == product.productID,
-        );
-        await this.setState({
-          selectedproductsWithMofidier: product,
-          productsWithMofidier,
-        });
-        this.RBmodifier.open();
-      }
+    if (hasModifier == 0 || isInBasket == false) {
+      this.openModal(product);
+    } else {
+      const productsWithMofidier = dataBasket.details.filter(
+        data => data.productID == product.productID,
+      );
+      await this.setState({
+        selectedproductsWithMofidier: product,
+        productsWithMofidier,
+      });
+      this.RBmodifier.open();
     }
   };
 
