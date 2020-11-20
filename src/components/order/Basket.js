@@ -22,6 +22,7 @@ import colorConfig from '../../config/colorConfig';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
 import {
+  changeOrderingMode,
   clearTableType,
   getBasket,
   getDeliveryFee,
@@ -258,7 +259,7 @@ class Basket extends Component {
       } else {
         await this.setState({
           timePickup: `${new Date().getHours() + 1}:00`,
-          selectedTimeSlot: {}
+          selectedTimeSlot: {},
         });
       }
     } catch (e) {}
@@ -802,7 +803,7 @@ class Basket extends Component {
   };
 
   calculateDeliveryFee = async item => {
-    const {dataBasket, selectedAddress} = this.props;
+    const {dataBasket, selectedAddress, orderType} = this.props;
     try {
       await this.setState({loading: true});
       const payload = {
@@ -813,6 +814,9 @@ class Basket extends Component {
 
       const response = await this.props.dispatch(getDeliveryFee(payload));
       if (response != false) {
+        await this.props.dispatch(
+          changeOrderingMode(orderType, response.data.dataProfider[0]),
+        );
         this.setState({selectedProvider: response.data.dataProfider[0]});
       } else {
         this.setState({selectedProvider: {}});
@@ -854,7 +858,9 @@ class Basket extends Component {
               renderItem={({item}) => (
                 <TouchableOpacity
                   onPress={() => {
+                    const {orderType} = this.props;
                     this.setState({selectedProvider: item});
+                    this.props.dispatch(changeOrderingMode(orderType, item));
                     this.RBproviders.close();
                   }}
                   style={styles.listProviders}>

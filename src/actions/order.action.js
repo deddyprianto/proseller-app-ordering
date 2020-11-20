@@ -1145,3 +1145,40 @@ export const removeTimeslot = () => {
     } catch (e) {}
   };
 };
+
+export const changeOrderingMode = (orderingMode, provider) => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      const payload = {
+        orderingMode,
+        provider,
+      };
+
+      let response = await fetchApiOrder(
+        `/cart/changeOrderingMode`,
+        'POST',
+        payload,
+        200,
+        token,
+      );
+      console.log(payload, 'payload change ordering mode');
+      console.log(response, 'response change ordering mode');
+      if (response.success == true) {
+        dispatch({
+          type: 'DATA_BASKET',
+          product: response.response.data,
+        });
+      }
+      return response;
+    } catch (error) {
+      return error;
+    }
+  };
+};
