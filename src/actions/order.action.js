@@ -1168,8 +1168,8 @@ export const changeOrderingMode = (orderingMode, provider) => {
         200,
         token,
       );
-      console.log(payload, 'payload change ordering mode');
-      console.log(response, 'response change ordering mode');
+      // console.log(payload, 'payload change ordering mode');
+      // console.log(response, 'response change ordering mode');
       if (response.success == true) {
         dispatch({
           type: 'DATA_BASKET',
