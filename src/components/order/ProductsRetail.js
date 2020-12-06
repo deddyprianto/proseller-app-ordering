@@ -900,7 +900,7 @@ class Products2 extends Component {
         });
         const firstCategoryID = response.data[1].id;
         // const firstDatLength = response.data[0].dataLength;
-        await this.getProductsByCategory(firstCategoryID, 0, 10, refresh, 1);
+        await this.getProductsByCategory(firstCategoryID, 0, 20, refresh, 1);
 
         // check if outlet is open
         // this.prompOutletIsClosed();
@@ -913,14 +913,14 @@ class Products2 extends Component {
 
         //  asynchronously get first item
         if (response.data.length > 0) {
-          let skip = 10;
+          let skip = 20;
           for (
             let i = 0;
-            i < Math.floor(response.data[1].dataLength / 10);
+            i < Math.floor(response.data[1].dataLength / 20);
             i++
           ) {
             await this.loadMoreProducts(firstCategoryID, outletID, skip, 1);
-            skip += 10;
+            skip += 20;
           }
         }
         //  asynchronously get all item

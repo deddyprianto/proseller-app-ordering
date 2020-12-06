@@ -815,9 +815,9 @@ class Basket extends Component {
       const response = await this.props.dispatch(getDeliveryFee(payload));
       if (response != false) {
         await this.props.dispatch(
-          changeOrderingMode(orderType, response.data.dataProfider[0]),
+          changeOrderingMode(orderType, response.data.dataProvider[0]),
         );
-        this.setState({selectedProvider: response.data.dataProfider[0]});
+        this.setState({selectedProvider: response.data.dataProvider[0]});
       } else {
         this.setState({selectedProvider: {}});
       }

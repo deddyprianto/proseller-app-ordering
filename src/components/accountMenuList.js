@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Alert,
   ActivityIndicator,
+  Image,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
@@ -165,13 +166,20 @@ class AccountMenuList extends Component {
           key={idx}
           onPress={() => this.gotoAccounts(item)}
           style={styles.cardMenu}>
-          <View style={styles.itemMenu}>
-            <Icon
-              size={20}
-              name={Platform.OS === 'ios' ? 'ios-card' : 'md-card'}
-              style={{color: 'white'}}
+          {item.image && item.image != '' ? (
+            <Image
+              source={{uri: item.image}}
+              style={{width: 35, marginLeft: 5, resizeMode: 'contain'}}
             />
-          </View>
+          ) : (
+            <View style={styles.itemMenu}>
+              <Icon
+                size={20}
+                name={Platform.OS === 'ios' ? 'ios-card' : 'md-card'}
+                style={{color: 'white'}}
+              />
+            </View>
+          )}
           <View>
             <View style={styles.item}>
               {myCardAccount != undefined ? (

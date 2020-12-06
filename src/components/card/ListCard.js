@@ -352,83 +352,82 @@ class ListCard extends Component {
   renderCard = () => {
     const {myCardAccount, item} = this.props;
     const paymentID = item.paymentID;
+
     return (
       <FlatList
-        data={myCardAccount}
-        renderItem={({item}) =>
-          item.paymentID == paymentID ? (
-            <TouchableOpacity
-              onPress={() => {
-                this.setState({selectedAccount: item});
-                this.RBSheet.open();
-              }}
-              style={[
-                styles.card,
-                {
-                  backgroundColor: this.getCardIssuer(item),
-                },
-              ]}>
-              <View style={styles.headingCard}>
-                <Text style={styles.cardText}>
-                  {item.details.cardIssuer != undefined
-                    ? item.details.cardIssuer.toUpperCase()
-                    : 'CREDIT CARD'}
-                </Text>
-                {/*<Text style={styles.cardText}>My First Card</Text>*/}
-                {!this.checkDefaultAccount(item) ? (
-                  <Icon
-                    size={32}
-                    name={Platform.OS === 'ios' ? 'ios-card' : 'md-card'}
-                    style={{color: 'white'}}
-                  />
-                ) : null}
-              </View>
-              <View style={styles.cardNumber}>
-                <Text style={styles.cardNumberText}>
-                  {item.details.maskedAccountNumber}
-                </Text>
-              </View>
-              <View style={styles.cardName}>
-                <Text style={styles.cardNameText}>
-                  {item.details.firstName} {item.details.lastName}
-                </Text>
-                <View>
-                  <Text style={styles.cardValid}>
-                    {' '}
-                    VALID THRU {item.details.cardExpiryMonth} /{' '}
-                    {item.details.cardExpiryYear}
-                  </Text>
-                </View>
-              </View>
-              {this.checkDefaultAccount(item) ? (
-                <View
-                  style={{
-                    borderTopLeftRadius: 5,
-                    borderTopRightRadius: 5,
-                    borderBottomLeftRadius: 5,
-                    backgroundColor: colorConfig.store.transparentColor,
-                    height: 40,
-                    width: '35%',
-                    position: 'absolute',
-                    top: 0,
-                    right: 0,
-                    zIndex: 2,
-                    justifyContent: 'center',
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                  }}>
-                  <Text
-                    style={[
-                      styles.cardNameText,
-                      {textAlign: 'center', fontSize: 12},
-                    ]}>
-                    DEFAULT
-                  </Text>
-                </View>
+        data={myCardAccount.filter(item => item.paymentID === paymentID)}
+        renderItem={({item}) => (
+          <TouchableOpacity
+            onPress={() => {
+              this.setState({selectedAccount: item});
+              this.RBSheet.open();
+            }}
+            style={[
+              styles.card,
+              {
+                backgroundColor: this.getCardIssuer(item),
+              },
+            ]}>
+            <View style={styles.headingCard}>
+              <Text style={styles.cardText}>
+                {item.details.cardIssuer != undefined
+                  ? item.details.cardIssuer.toUpperCase()
+                  : 'CREDIT CARD'}
+              </Text>
+              {/*<Text style={styles.cardText}>My First Card</Text>*/}
+              {!this.checkDefaultAccount(item) ? (
+                <Icon
+                  size={32}
+                  name={Platform.OS === 'ios' ? 'ios-card' : 'md-card'}
+                  style={{color: 'white'}}
+                />
               ) : null}
-            </TouchableOpacity>
-          ) : null
-        }
+            </View>
+            <View style={styles.cardNumber}>
+              <Text style={styles.cardNumberText}>
+                {item.details.maskedAccountNumber}
+              </Text>
+            </View>
+            <View style={styles.cardName}>
+              <Text style={styles.cardNameText}>
+                {item.details.firstName} {item.details.lastName}
+              </Text>
+              <View>
+                <Text style={styles.cardValid}>
+                  {' '}
+                  VALID THRU {item.details.cardExpiryMonth} /{' '}
+                  {item.details.cardExpiryYear}
+                </Text>
+              </View>
+            </View>
+            {this.checkDefaultAccount(item) ? (
+              <View
+                style={{
+                  borderTopLeftRadius: 5,
+                  borderTopRightRadius: 5,
+                  borderBottomLeftRadius: 5,
+                  backgroundColor: colorConfig.store.transparentColor,
+                  height: 40,
+                  width: '35%',
+                  position: 'absolute',
+                  top: 0,
+                  right: 0,
+                  zIndex: 2,
+                  justifyContent: 'center',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                }}>
+                <Text
+                  style={[
+                    styles.cardNameText,
+                    {textAlign: 'center', fontSize: 12},
+                  ]}>
+                  DEFAULT
+                </Text>
+              </View>
+            ) : null}
+          </TouchableOpacity>
+        )}
         keyExtractor={(product, index) => index.toString()}
       />
     );
@@ -466,6 +465,10 @@ class ListCard extends Component {
     );
   };
 
+  setLoader = async loading => {
+    await this.setState({loading});
+  };
+
   registerCard = async () => {
     await this.setState({loading: true});
     const {item} = this.props;
@@ -481,12 +484,13 @@ class ListCard extends Component {
 
       const response = await this.props.dispatch(registerCard(payload));
 
-      await this.setState({loading: false});
+      // await this.setState({loading: false});
 
       if (response.success == true) {
         Actions.hostedPayment({
           url: response.response.data.url,
           data: response.response.data,
+          setLoader: this.setLoader,
           page: 'listCard',
         });
       } else {

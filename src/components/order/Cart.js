@@ -1599,14 +1599,14 @@ class Cart extends Component {
                   </View>
                 ) : null}
 
-                {dataBasket.deliveryProviderId != undefined ? (
-                  <View style={styles.itemSummary}>
-                    <Text style={styles.total}>Delivery Provider </Text>
-                    <Text style={[styles.total, {textAlign: 'right'}]}>
-                      {this.getInfoProvider(dataBasket.deliveryProviderId)}
-                    </Text>
-                  </View>
-                ) : null}
+                {/*{dataBasket.deliveryProviderId != undefined ? (*/}
+                {/*  <View style={styles.itemSummary}>*/}
+                {/*    <Text style={styles.total}>Delivery Provider </Text>*/}
+                {/*    <Text style={[styles.total, {textAlign: 'right'}]}>*/}
+                {/*      {this.getInfoProvider(dataBasket.deliveryProviderId)}*/}
+                {/*    </Text>*/}
+                {/*  </View>*/}
+                {/*) : null}*/}
 
                 {dataBasket.deliveryFee != undefined ? (
                   <View style={styles.itemSummary}>
