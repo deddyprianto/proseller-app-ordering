@@ -19,7 +19,7 @@ target 'edgeworks' do
   pod 'React-RCTAnimation', :path => '../node_modules/react-native/Libraries/NativeAnimation'
   pod 'React-RCTBlob', :path => '../node_modules/react-native/Libraries/Blob'
   pod 'React-RCTImage', :path => '../node_modules/react-native/Libraries/Image'
-  pod 'React-RCTLinking', :path => '../node_modules/react-native/Libraries/LinkingIOS'
+  pod 'React-RCTLinking', :path => '../node_modules/react-native/Libraries/LinkingIOS'  
   pod 'React-RCTNetwork', :path => '../node_modules/react-native/Libraries/Network'
   pod 'React-RCTSettings', :path => '../node_modules/react-native/Libraries/Settings'
   pod 'React-RCTText', :path => '../node_modules/react-native/Libraries/Text'
@@ -42,8 +42,6 @@ target 'edgeworks' do
 
   pod 'RNSVG', :path => '../node_modules/react-native-svg'
 
-  pod 'react-native-fbsdk', :path => '../node_modules/react-native-fbsdk'
-
   pod 'RNCAsyncStorage', :path => '../node_modules/@react-native-community/async-storage'
 
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
@@ -51,8 +49,6 @@ target 'edgeworks' do
   pod 'RNPermissions', :path => '../node_modules/react-native-permissions'
 
   pod 'react-native-config', :path => '../node_modules/react-native-config'
-
-  pod 'RNFBApp', :path => '../node_modules/@react-native-firebase/app'
 
   pod 'BVLinearGradient', :path => '../node_modules/react-native-linear-gradient'
 
