@@ -13,13 +13,13 @@ export default class CartIcon extends Component {
     try {
       const {dataBasket, outletID} = this.props;
       if (dataBasket != undefined) {
-        if (dataBasket.outlet.id === outletID) {
-          let total = 0;
-          dataBasket.details.map(item => {
-            total += item.quantity;
-          });
-          return total;
-        }
+        // if (dataBasket.outlet.id === outletID) {
+        let total = 0;
+        dataBasket.details.map(item => {
+          total += item.quantity;
+        });
+        return total;
+        // }
       }
     } catch (e) {
       return null;
@@ -55,7 +55,7 @@ export default class CartIcon extends Component {
           }}>
           Cart
         </Text>
-        {dataBasket != undefined && dataBasket.outlet.id === outletID && (
+        {dataBasket != undefined && (
           <View
             style={{
               position: 'absolute',

@@ -402,7 +402,7 @@ class ProductsSpecific extends Component {
   };
 
   checkBucketExist = product => {
-    let outletId = this.state.item.storeId;
+    let outletId = this.state.item.id;
     try {
       if (this.props.dataBasket != undefined) {
         if (this.props.dataBasket.outlet.id != outletId) {
@@ -438,7 +438,7 @@ class ProductsSpecific extends Component {
 
   pushDataProductsToState = async () => {
     try {
-      const outletID = this.state.item.storeId;
+      const outletID = this.state.item.id;
       let data = await this.props.products.find(item => item.id == outletID);
       // if data is found
       if (
@@ -473,7 +473,7 @@ class ProductsSpecific extends Component {
   getProductsByCategory = async () => {
     try {
       const {categoryDetail, search} = this.state;
-      const outletID = this.state.item.storeId;
+      const outletID = this.state.item.id;
       let response = await this.props.dispatch(
         productByCategory(outletID, categoryDetail, 0, 10, search),
       );
@@ -691,7 +691,7 @@ class ProductsSpecific extends Component {
 
   checkIfItemExistInBasket = item => {
     try {
-      let outletId = `outlet::${this.state.item.storeId}`;
+      let outletId = `outlet::${this.state.item.id}`;
       if (
         this.props.dataBasket != undefined &&
         this.props.dataBasket.outletID == outletId
@@ -711,7 +711,7 @@ class ProductsSpecific extends Component {
 
   getQuantityInBasket = item => {
     try {
-      let outletId = `outlet::${this.state.item.storeId}`;
+      let outletId = `outlet::${this.state.item.id}`;
       if (
         this.props.dataBasket != undefined &&
         this.props.dataBasket.outletID == outletId
@@ -815,13 +815,13 @@ class ProductsSpecific extends Component {
       }
 
       let outlet = {
-        id: `${this.state.item.storeId}`,
+        id: `${this.state.item.id}`,
       };
       // if remark is available, then push to array
       if (remark != undefined && remark != '') dataproduct.remark = remark;
-      data.outletID = `outlet::${this.state.item.storeId}`;
+      data.outletID = `outlet::${this.state.item.id}`;
       data.outlet = outlet;
-      data.id = this.state.item.storeId;
+      data.id = this.state.item.id;
       data.details.push(dataproduct);
 
       // post data to server
@@ -940,7 +940,7 @@ class ProductsSpecific extends Component {
 
       // if remark is available, then push to array
       if (remark != undefined && remark != '') dataproduct.remark = remark;
-      data.outletID = `outlet::${this.state.item.storeId}`;
+      data.outletID = `outlet::${this.state.item.id}`;
       data.details.push(dataproduct);
 
       // hide modal
@@ -968,7 +968,7 @@ class ProductsSpecific extends Component {
     const {item} = this.state;
     if (mode == 'add') {
       // to show loading button at Modal, check status data basket is empty or not
-      let outletId = `outlet::${this.state.item.storeId}`;
+      let outletId = `outlet::${this.state.item.id}`;
       // conditional loading if basket is null
       await this.setState({loadingAddItem: true});
       await this.postItem(product, qty, remark);
@@ -1061,7 +1061,7 @@ class ProductsSpecific extends Component {
       // check basket is empty then open modal mode order
       if (this.props.dataBasket == undefined) return true;
       // check open / close & outlet ID
-      const currentOutletId = this.state.item.storeId;
+      const currentOutletId = this.state.item.id;
       const outletIDSelected = this.props.dataBasket.outlet.id;
       if (
         this.state.item.storeStatus == true &&
@@ -1199,7 +1199,7 @@ class ProductsSpecific extends Component {
   renderCategoryWithProducts = (item, search) => {
     if (item.dataLength != undefined) {
       let length = 1;
-      const outletID = this.state.item.storeId;
+      const outletID = this.state.item.id;
       if (!search) {
         length = item.dataLength;
       } else {
@@ -1235,7 +1235,7 @@ class ProductsSpecific extends Component {
       try {
         const {categoryDetail, search} = this.state;
         let {products} = this.state;
-        const outletID = this.state.item.storeId;
+        const outletID = this.state.item.id;
         let response = await this.props.dispatch(
           productByCategory(
             outletID,
@@ -1441,9 +1441,7 @@ class ProductsSpecific extends Component {
     try {
       await this.props.dispatch(dataStores());
       let {item} = this.state;
-      let outlet = await this.props.dataStores.find(
-        data => data.id == item.storeId,
-      );
+      let outlet = await this.props.dataStores.find(data => data.id == item.id);
 
       item.storeStatus = this.isOpen(outlet);
       item.maxOrderQtyPerItem = outlet.maxOrderQtyPerItem;
@@ -1462,7 +1460,7 @@ class ProductsSpecific extends Component {
       item.enableDineIn = outlet.enableDineIn == true ? true : false;
       item.enableTableScan = outlet.enableTableScan == true ? true : false;
       item.enableDelivery = outlet.enableDelivery == true ? true : false;
-      item.storeName = outlet.name;
+      item.name = outlet.name;
       item.outletType = outlet.outletType;
       item.orderingStatus = outlet.orderingStatus;
       item.enableItemSpecialInstructions = outlet.enableItemSpecialInstructions;
@@ -1516,7 +1514,7 @@ class ProductsSpecific extends Component {
   getCategoryData = async index => {
     try {
       let {products} = this.state;
-      const outletID = this.state.item.storeId;
+      const outletID = this.state.item.id;
       const categorySelected = products[index];
       const categoryIndex = index;
       if (categoryIndex > -1) {
@@ -1875,14 +1873,11 @@ class ProductsSpecific extends Component {
                       }}>
                       {this.state.search != undefined
                         ? this.state.search
-                        : `Search in ${this.state.item.storeName.substr(
-                            0,
-                            15,
-                          )}`}
+                        : `Search in ${this.state.item.name.substr(0, 15)}`}
                     </Text>
                   </TouchableOpacity>
                   <CartIcon
-                    outletID={this.state.item.storeId}
+                    outletID={this.state.item.id}
                     dataBasket={this.props.dataBasket}
                     refreshQuantityProducts={this.refreshQuantityProducts}
                   />
@@ -2030,6 +2025,7 @@ class ProductsSpecific extends Component {
         </>
         {!dialogSearch ? (
           <ButtonNavMenu
+            hideBackButton={true}
             updateCategory={this.updateCategory}
             products={this.state.products}
             outlet={this.state.item}

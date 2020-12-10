@@ -11,8 +11,11 @@ import {
 import colorConfig from '../config/colorConfig';
 import {Actions} from 'react-native-router-flux';
 import Icon from 'react-native-vector-icons/Ionicons';
+import {getOutletById} from '../actions/stores.action';
+import {compose} from 'redux';
+import {connect} from 'react-redux';
 
-export default class StoreNearYou extends Component {
+class StoreNearYou extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -20,10 +23,13 @@ export default class StoreNearYou extends Component {
     };
   }
 
-  storeDetailStores = item => {
+  storeDetailStores = async item => {
     const {intlData} = this.props;
-    // Actions.storeDetailStores({item, intlData});
-    Actions.productsMode2({item});
+    try {
+      await this.props.dispatch(getOutletById(item.storeId));
+      this.props.refreshProducts();
+      Actions.pop();
+    } catch (e) {}
   };
 
   render() {
@@ -111,3 +117,14 @@ const styles = StyleSheet.create({
     height: Dimensions.get('window').width / 3 - 55,
   },
 });
+
+mapDispatchToProps = dispatch => ({
+  dispatch,
+});
+
+export default compose(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  ),
+)(StoreNearYou);

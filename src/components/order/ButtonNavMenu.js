@@ -14,6 +14,7 @@ export default class ButtonNavMenu extends Component {
       const {products, selectedCategory, outlet} = this.props;
       Actions.push('menuCategory', {
         products,
+        hideBackButton: this.props.hideBackButton,
         isSpecificPageActive: this.props.isSpecificPageActive,
         refreshPage: this.props.refreshPage,
         outlet: this.props.outlet,
@@ -21,6 +22,16 @@ export default class ButtonNavMenu extends Component {
         updateCategory: this.props.updateCategory,
       });
     } catch (e) {}
+  };
+
+  goToHome = () => {
+    try {
+      if (Actions.currentScene != 'productsMode2') {
+        Actions.pop();
+      }
+    } catch (e) {
+      Actions.popTo('pageIndex');
+    }
   };
 
   render() {
@@ -44,7 +55,7 @@ export default class ButtonNavMenu extends Component {
           elevation: 12,
         }}>
         <TouchableOpacity
-          onPress={() => Actions.popTo('pageIndex')}
+          onPress={this.goToHome}
           style={{
             flexDirection: 'row',
             justifyContent: 'center',

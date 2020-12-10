@@ -1,7 +1,7 @@
 import {fetchApiProduct} from '../service/apiProduct';
 import {fetchApiOrder} from '../service/apiOrder';
 import {fetchApi} from '../service/api';
-import {isEmptyArray} from '../helper/CheckEmpty';
+import {isEmptyArray, isEmptyObject} from '../helper/CheckEmpty';
 
 export const getProductByOutlet = (OutletId, refresh) => {
   return async (dispatch, getState) => {
@@ -89,7 +89,7 @@ export const getCategoryByOutlet = (OutletId, refresh) => {
         token,
       );
 
-      console.log('RESPONSE GET CATEGORY ', response);
+      // console.log('RESPONSE GET CATEGORY ', response);
 
       if (response.success == true) {
         return response.response;
@@ -505,6 +505,56 @@ export const getBasket = () => {
       }
 
       return response;
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const moveCart = deliveryAddress => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      const {
+        orderReducer: {
+          dataBasket: {product},
+        },
+      } = state;
+
+      let payload = {
+        orderBy: 'provider',
+        cart: product,
+        deliveryAddress,
+      };
+
+      let response = await fetchApiOrder(
+        `/cart/moveItem`,
+        'POST',
+        payload,
+        200,
+        token,
+      );
+      console.log(response, 'response moveCart');
+      if (response.success == false) {
+        dispatch({
+          type: 'DATA_BASKET',
+          product: undefined,
+        });
+        return false;
+      } else {
+        dispatch({
+          type: 'DATA_BASKET',
+          product: response.response.data,
+        });
+      }
+
+      return response.response.data;
     } catch (error) {
       return error;
     }
@@ -1000,7 +1050,13 @@ export const getAllCategory = (skip, take) => {
   };
 };
 
-export const getTimeslot = (outletID, date, clientTimezone, dontSave) => {
+export const getTimeslot = (
+  outletID,
+  date,
+  clientTimezone,
+  orderingMode,
+  dontSave,
+) => {
   return async (dispatch, getState) => {
     const state = getState();
     try {
@@ -1010,11 +1066,41 @@ export const getTimeslot = (outletID, date, clientTimezone, dontSave) => {
         },
       } = state;
 
-      const payload = {
+      const {
+        storesReducer: {
+          defaultOutlet: {defaultOutlet},
+        },
+      } = state;
+
+      let dataOutlet = {};
+      if (!isEmptyObject(defaultOutlet.orderValidation)) {
+        if (orderingMode === 'DELIVERY') {
+          dataOutlet = defaultOutlet.orderValidation.delivery;
+        } else if (orderingMode === 'STOREPICKUP') {
+          dataOutlet = defaultOutlet.orderValidation.storePickUp;
+        } else if (orderingMode === 'TAKEAWAY') {
+          dataOutlet = defaultOutlet.orderValidation.takeAway;
+        } else if (orderingMode === 'DINEIN') {
+          dataOutlet = defaultOutlet.orderValidation.dineIn;
+        }
+      }
+
+      let payload = {
         date,
         outletID: `outlet::${outletID}`,
         clientTimezone,
+        orderingMode,
       };
+
+      if (
+        !isEmptyObject(dataOutlet) &&
+        dataOutlet.maxDays != undefined &&
+        dataOutlet.maxDays > 0
+      ) {
+        payload.maxDays = dataOutlet.maxDays;
+      } else {
+        payload.maxDays = 90;
+      }
 
       let response = await fetchApiOrder(
         `/timeslot`,
@@ -1024,7 +1110,7 @@ export const getTimeslot = (outletID, date, clientTimezone, dontSave) => {
         token,
       );
 
-      // console.log('RESPONSE GET TIMESLOT ', response);
+      console.log('RESPONSE GET TIMESLOT ', response);
 
       if (response.success == true) {
         if (!isEmptyArray(response.response.data) && dontSave == undefined) {
@@ -1032,8 +1118,18 @@ export const getTimeslot = (outletID, date, clientTimezone, dontSave) => {
             type: 'DATA_TIMESLOT',
             timeslots: response.response.data,
           });
+        } else {
+          dispatch({
+            type: 'DATA_TIMESLOT',
+            timeslots: [],
+          });
         }
         return response.response.data;
+      } else {
+        dispatch({
+          type: 'DATA_TIMESLOT',
+          timeslots: [],
+        });
       }
       return false;
     } catch (e) {}
@@ -1049,5 +1145,42 @@ export const removeTimeslot = () => {
         timeslots: undefined,
       });
     } catch (e) {}
+  };
+};
+
+export const changeOrderingMode = (orderingMode, provider) => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      const payload = {
+        orderingMode,
+        provider,
+      };
+
+      let response = await fetchApiOrder(
+        `/cart/changeOrderingMode`,
+        'POST',
+        payload,
+        200,
+        token,
+      );
+      // console.log(payload, 'payload change ordering mode');
+      // console.log(response, 'response change ordering mode');
+      if (response.success == true) {
+        dispatch({
+          type: 'DATA_BASKET',
+          product: response.response.data,
+        });
+      }
+      return response;
+    } catch (error) {
+      return error;
+    }
   };
 };

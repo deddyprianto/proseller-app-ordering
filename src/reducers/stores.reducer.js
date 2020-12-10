@@ -12,6 +12,18 @@ const dataStores = (state = {}, action) => {
   }
 };
 
+const defaultOutlet = (state = {}, action) => {
+  switch (action.type) {
+    case 'DATA_DEFAULT_OUTLET':
+      return {
+        defaultOutlet: action.data,
+      };
+
+    default:
+      return state;
+  }
+};
+
 const dataOutletSingle = (state = {}, action) => {
   switch (action.type) {
     case 'DATA_OUTLET_SINGLE':
@@ -40,4 +52,5 @@ export default combineReducers({
   dataStores,
   dataOutletSingle,
   oneOutlet,
+  defaultOutlet,
 });

@@ -36,7 +36,7 @@ class StorePromotion extends Component {
     let dataPromotion = this.props.dataPromotion;
     // let dataPromotion = [];
     return (
-      <View style={{paddingBottom: 20}}>
+      <View style={{paddingBottom: 10}}>
         {/*<TouchableOpacity style={styles.seeAll} onPress={this.seeMorePromotion}>*/}
         {/*  <Text style={styles.seeAllTitle}>See More</Text>*/}
         {/*</TouchableOpacity>*/}
@@ -74,7 +74,7 @@ class StorePromotion extends Component {
 const styles = StyleSheet.create({
   stores: {
     paddingTop: 5,
-    paddingBottom: 10,
+    paddingBottom: 5,
     color: colorConfig.store.storesTitle,
     fontSize: 16,
     fontWeight: 'bold',

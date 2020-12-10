@@ -22,6 +22,7 @@ import colorConfig from '../../config/colorConfig';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
 import {
+  changeOrderingMode,
   clearTableType,
   getBasket,
   getDeliveryFee,
@@ -29,6 +30,7 @@ import {
   getProductByOutlet,
   getProductsUnavailable,
   getTimeslot,
+  moveCart,
   removeBasket,
   removeTimeslot,
   setOrderType,
@@ -56,6 +58,7 @@ import {SwipeListView} from 'react-native-swipe-list-view';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import {dataPoint} from '../../actions/rewards.action';
 import {format} from 'date-fns';
+import {Dialog} from 'react-native-paper';
 
 class Basket extends Component {
   constructor(props) {
@@ -86,9 +89,12 @@ class Basket extends Component {
       loadingDelte: false,
       productsUnavailable: [],
       datePickup: null,
+      nextDatePickup: null,
       timePickup: null,
       timeslot: '',
       minimumDate: new Date(),
+      timeslotInfo: false,
+      selectedTimeSlot: {},
     };
   }
 
@@ -164,7 +170,7 @@ class Basket extends Component {
         let outletID = this.props.dataBasket.outlet.id;
         await this.props.dispatch(getOutletById(outletID));
         await this.initializePickupTime();
-        await this.getTimeslot(outletID);
+        await this.getTimeslot(outletID, this.props.orderType);
         // GET PRODUCTS UNAVAILABLE
         await this.fetchProductsUnavailable(outletID);
         // this.getProductsByOutlet(outletID);
@@ -207,26 +213,131 @@ class Basket extends Component {
     } catch (e) {}
   };
 
-  getTimeslot = async outletID => {
+  getTimeslot = async (outletID, orderingMode) => {
     try {
+      const {outletSingle} = this.props;
       this.props.dispatch(removeTimeslot());
       const clientTimeZone = Math.abs(new Date().getTimezoneOffset());
       const response = await this.props.dispatch(
-        getTimeslot(outletID, this.state.datePickup, clientTimeZone),
+        getTimeslot(
+          outletID,
+          this.state.datePickup,
+          clientTimeZone,
+          orderingMode,
+        ),
       );
+      let gotSlot = false;
       if (response != false && !isEmptyArray(response)) {
-        const find = response.find(item => item.isAvailable == true);
-        if (find != undefined) {
-          this.setState({timePickup: find.time});
-        } else {
-          const timepickup = new Date().getHours() + 1;
-          this.setState({timePickup: `${timepickup}:00`});
+        for (let i = 0; i < response.length; i++) {
+          if (!isEmptyArray(response[i].timeSlot)) {
+            for (let j = 0; j < response[i].timeSlot.length; j++) {
+              if (response[i].timeSlot[j].isAvailable === true) {
+                await this.setState({
+                  timePickup: response[i].timeSlot[j].time,
+                  datePickup: response[i].date,
+                  selectedTimeSlot: response[i],
+                });
+                gotSlot = true;
+                break;
+              }
+            }
+          }
+          if (gotSlot) break;
         }
+        // if (find != undefined) {
+        //   this.setState({timePickup: find.time});
+        // } else {
+        //   const timepickup = new Date().getHours() + 1;
+        //   this.setState({timePickup: `${timepickup}:00`});
+        //   if (
+        //     !isEmptyArray(outletSingle.timeSlots) &&
+        //     (orderingMode === 'DELIVERY' || orderingMode === 'STOREPICKUP')
+        //   ) {
+        //     this.setState({timeslotInfo: true});
+        //   }
+        // }
       } else {
-        const timepickup = new Date().getHours() + 1;
-        this.setState({timePickup: `${timepickup}:00`});
+        await this.setState({
+          timePickup: `${new Date().getHours() + 1}:00`,
+          selectedTimeSlot: {},
+        });
       }
     } catch (e) {}
+  };
+
+  getNextDay = () => {
+    try {
+      let day = new Date(this.state.datePickup);
+      let nextDay = new Date(day);
+      nextDay.setDate(day.getDate() + 1);
+      return format(new Date(nextDay), 'dd MMM yyyy');
+    } catch (e) {
+      return null;
+    }
+  };
+
+  renderTimeSlotInfo = () => {
+    const {item} = this.state;
+    const {orderType} = this.props;
+    let orderingMode = 'pickup';
+    if (orderType === 'DELIVERY') orderingMode = 'delivery';
+    return (
+      <Dialog
+        dismissable={false}
+        visible={this.state.timeslotInfo}
+        onDismiss={() => {
+          this.setState({timeslotInfo: false});
+        }}>
+        <Dialog.Content>
+          <Text
+            style={{
+              textAlign: 'center',
+              fontFamily: 'Lato-Bold',
+              fontSize: 18,
+              color: colorConfig.store.defaultColor,
+            }}>
+            Timeslot Info
+          </Text>
+
+          <View
+            style={{
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginVertical: 15,
+            }}>
+            <Icon
+              size={80}
+              name={Platform.OS === 'ios' ? 'ios-cart' : 'md-cart'}
+              style={{color: colorConfig.store.secondaryColor}}
+            />
+            <Text style={styles.textInfoDelivery}>
+              Your selected {orderingMode} date: {this.formatDatePickup()}, does
+              not have any available delivery time slot. Next available{' '}
+              {orderingMode} date is {this.getNextDay()}.
+            </Text>
+          </View>
+
+          <TouchableOpacity
+            onPress={() => this.goToPickUpTime(true)}
+            style={{
+              width: '100%',
+              borderRadius: 5,
+              backgroundColor: colorConfig.store.defaultColor,
+              padding: 10,
+            }}>
+            <Text
+              style={{
+                color: 'white',
+                fontFamily: 'Lato-Bold',
+                textAlign: 'center',
+                fontSize: 16,
+              }}>
+              Select {orderingMode} date
+            </Text>
+          </TouchableOpacity>
+        </Dialog.Content>
+      </Dialog>
+    );
   };
 
   fetchProductsUnavailable = async outletID => {
@@ -243,7 +354,7 @@ class Basket extends Component {
     } catch (e) {}
   };
 
-  initializePickupTime = () => {
+  initializePickupTime = async () => {
     const {outletSingle, orderType} = this.props;
     let pickerItem = [];
     let value = '';
@@ -273,7 +384,7 @@ class Basket extends Component {
         if (isEmptyArray(outletSingle.operationalHours)) {
           let datePickup = format(new Date(), 'yyyy-MM-dd');
 
-          this.setState({datePickup, minimumDate: datePickup});
+          await this.setState({datePickup, minimumDate: datePickup});
           return;
         } else {
           const find = outletSingle.operationalHours.find(
@@ -325,10 +436,18 @@ class Basket extends Component {
                 ? curr
                 : prev;
             });
-            this.setState({datePickup, minimumDate: datePickup});
+            await this.setState({datePickup, minimumDate: datePickup});
           }
         }
       }
+      try {
+        let currDay = new Date(this.state.datePickup);
+        let nextDay = new Date(currDay);
+        nextDay.setDate(currDay.getDate() + 1);
+        this.setState({
+          nextDatePickup: format(new Date(nextDay), 'yyyy-MM-dd'),
+        });
+      } catch (e) {}
     } catch (e) {
       let datePickup = format(new Date(), 'yyyy-MM-dd');
 
@@ -339,6 +458,12 @@ class Basket extends Component {
   setPickupDate = datePickup => {
     try {
       this.setState({datePickup});
+    } catch (e) {}
+  };
+
+  setSelectedTimeSlot = selectedTimeSlot => {
+    try {
+      this.setState({selectedTimeSlot});
     } catch (e) {}
   };
 
@@ -678,7 +803,7 @@ class Basket extends Component {
   };
 
   calculateDeliveryFee = async item => {
-    const {dataBasket, selectedAddress} = this.props;
+    const {dataBasket, selectedAddress, orderType} = this.props;
     try {
       await this.setState({loading: true});
       const payload = {
@@ -689,7 +814,10 @@ class Basket extends Component {
 
       const response = await this.props.dispatch(getDeliveryFee(payload));
       if (response != false) {
-        this.setState({selectedProvider: response.data.dataProfider[0]});
+        await this.props.dispatch(
+          changeOrderingMode(orderType, response.data.dataProvider[0]),
+        );
+        this.setState({selectedProvider: response.data.dataProvider[0]});
       } else {
         this.setState({selectedProvider: {}});
       }
@@ -730,7 +858,9 @@ class Basket extends Component {
               renderItem={({item}) => (
                 <TouchableOpacity
                   onPress={() => {
+                    const {orderType} = this.props;
                     this.setState({selectedProvider: item});
+                    this.props.dispatch(changeOrderingMode(orderType, item));
                     this.RBproviders.close();
                   }}
                   style={styles.listProviders}>
@@ -777,7 +907,7 @@ class Basket extends Component {
     // fetch details outlet
     const outletID = this.props.dataBasket.outlet.id;
     await this.props.dispatch(getOutletById(outletID));
-    await this.getTimeslot(outletID);
+    await this.getTimeslot(outletID, this.props.orderType);
     await this.setState({datePickup: null});
     await this.initializePickupTime();
     await this.setState({refreshing: false});
@@ -787,6 +917,17 @@ class Basket extends Component {
   getBasket = async () => {
     this.setState({loading: true});
     await this.props.dispatch(getBasket());
+    if (this.props.orderType === 'DELIVERY') {
+      const cart = this.props.dataBasket;
+      const response = await this.props.dispatch(
+        moveCart(this.props.selectedAddress),
+      );
+      if (response != false) {
+        if (cart.outlet.id != response.outlet.id) {
+          await this.props.dispatch(getOutletById(response.outlet.id));
+        }
+      }
+    }
     // this.props.dispatch(getDeliveryProvider());
     // await this.setState({loading: false});
     // setTimeout(() => {
@@ -1172,8 +1313,6 @@ class Basket extends Component {
         } else if (orderType === 'DELIVERY') {
           store.orderValidation[orderType] = store.orderValidation.delivery;
         }
-
-        console.log(store);
 
         const {dataBasket} = this.props;
         let totalQty = 0;
@@ -2136,20 +2275,27 @@ class Basket extends Component {
 
   setOrderType = async type => {
     const {dataBasket} = this.props;
-    // if (dataBasket.outlet.outletType == 'QUICKSERVICE') {
-    //   this.props.dispatch(setOrderType('TAKEAWAY'));
-    // } else {
-    //   this.props.dispatch(setOrderType(type));
-    // }
+    const outletID = this.props.dataBasket.outlet.id;
     await this.props.dispatch(setOrderType(type));
 
     if (type === 'DELIVERY' && !isEmptyObject(this.props.selectedAddress)) {
       this.getDeliveryFee();
+      // MOVE CART to Nearest Outlet
+      const cart = this.props.dataBasket;
+      const response = await this.props.dispatch(
+        moveCart(this.props.selectedAddress),
+      );
+      if (response != false) {
+        if (cart.outlet.id != response.outlet.id) {
+          await this.props.dispatch(getOutletById(response.outlet.id));
+        }
+      }
     }
 
     if (type === 'DELIVERY' || type === 'STOREPICKUP' || type === 'TAKEAWAY') {
       await this.setState({datePickup: null});
       await this.initializePickupTime();
+      await this.getTimeslot(outletID, type);
     }
 
     this.RBSheet.close();
@@ -2567,17 +2713,24 @@ class Basket extends Component {
     this.setState({isModalVisible: false});
   };
 
-  goToPickUpTime = () => {
+  goToPickUpTime = timeslotEmpty => {
     let {outletSingle, orderType} = this.props;
+    this.setState({timeslotInfo: false});
+    let minimumDate = this.state.minimumDate;
+    if (timeslotEmpty === true) {
+      minimumDate = this.state.nextDatePickup;
+    }
     try {
       Actions.push('pickUpTime', {
         setPickupDate: this.setPickupDate,
         setPickupTime: this.setPickupTime,
+        setSelectedTimeSlot: this.setSelectedTimeSlot,
         date: this.state.datePickup,
         time: this.state.timePickup,
+        selectedTimeSlot: this.state.selectedTimeSlot,
         outlet: outletSingle,
         orderType: orderType,
-        minimumDate: this.state.minimumDate,
+        minimumDate,
         header:
           orderType == 'DELIVERY'
             ? 'Delivery Date & Time'
@@ -2741,9 +2894,9 @@ class Basket extends Component {
                 <Text style={styles.title}>
                   {this.props.dataBasket.outlet.name}
                 </Text>
-                {!this.state.isOpen ? (
-                  <Text style={styles.titleClosed}>Outlet is Closed</Text>
-                ) : null}
+                {/*{!this.state.isOpen ? (*/}
+                {/*  <Text style={styles.titleClosed}>Outlet is Closed</Text>*/}
+                {/*) : null}*/}
                 {outletSingle.orderingStatus == 'UNAVAILABLE' ? (
                   <Text style={styles.titleClosed}>
                     {this.getOfflineMessage(outletSingle)}
@@ -3084,6 +3237,7 @@ class Basket extends Component {
           <Loader />
         )}
         {dataBasket != undefined ? this.renderSettleButtonQuickService() : null}
+        {this.renderTimeSlotInfo()}
       </SafeAreaView>
     );
   }
@@ -3108,7 +3262,7 @@ mapStateToProps = state => ({
   timeslots: state.orderReducer.timeslot.timeslots,
   dataBasket: state.orderReducer.dataBasket.product,
   providers: state.orderReducer.dataProvider.providers,
-  outletSingle: state.storesReducer.dataOutletSingle.outletSingle,
+  outletSingle: state.storesReducer.defaultOutlet.defaultOutlet,
   orderType: state.userReducer.orderType.orderType,
   tableType: state.orderReducer.tableType.tableType,
   products: state.orderReducer.productsOutlet.products,
@@ -3421,5 +3575,13 @@ const styles = StyleSheet.create({
     color: 'white',
     borderRadius: 5,
     padding: 5,
+  },
+  textInfoDelivery: {
+    marginTop: 15,
+    color: colorConfig.store.titleSelected,
+    fontSize: 15,
+    fontFamily: 'Lato-Medium',
+    lineHeight: 22,
+    textAlign: 'center',
   },
 });

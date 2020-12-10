@@ -10,6 +10,7 @@ import {
   SafeAreaView,
   Alert,
   Platform,
+  Linking,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
@@ -21,7 +22,7 @@ import RewardsPoint from '../components/rewardsPoint';
 import RewardsStamp from '../components/rewardsStamp';
 import RewardsMenu from '../components/rewardsMenu';
 import RewardsTransaction from '../components/rewardsTransaction';
-import Loader from '../components/loader';
+// import Loader from '../components/loader';
 import colorConfig from '../config/colorConfig';
 import {Actions} from 'react-native-router-flux';
 import Geolocation from 'react-native-geolocation-service';
@@ -36,17 +37,20 @@ import MyPointsPlaceHolder from '../components/placeHolderLoading/MyPointsPlaceH
 import {isEmptyArray, isEmptyData, isEmptyObject} from '../helper/CheckEmpty';
 import CryptoJS from 'react-native-crypto-js';
 import awsConfig from '../config/awsConfig';
-import {getCompanyInfo} from '../actions/stores.action';
+import {getCompanyInfo, getDefaultOutlet} from '../actions/stores.action';
 import {getAccountPayment} from '../actions/payment.actions';
 import OneSignal from 'react-native-onesignal';
 import {dataInbox} from '../actions/inbox.action';
 import {getMandatoryFields, paymentRefNo} from '../actions/account.action';
 import {Overlay} from 'react-native-elements';
 import {
+  getBasket,
   getCart,
   getCartHomePage,
   getPendingCart,
 } from '../actions/order.action';
+import VersionCheck from 'react-native-version-check';
+import {dataPromotion} from '../actions/promotion.action';
 
 class Rewards extends Component {
   constructor(props) {
@@ -151,9 +155,16 @@ class Rewards extends Component {
   };
 
   componentDidMount = async () => {
+    await this.getDefaultOutlet();
     await this.getDataRewards();
     this.checkOneSignal();
     this.checkUseApp();
+  };
+
+  getDefaultOutlet = async () => {
+    try {
+      await this.props.dispatch(getDefaultOutlet());
+    } catch (e) {}
   };
 
   checkDefaultPaymentAccount = async response => {
@@ -238,7 +249,11 @@ class Rewards extends Component {
         this.props.dispatch(dataPoint()),
         this.props.dispatch(getStamps()),
         this.props.dispatch(recentTransaction()),
+        this.props.dispatch(dataPromotion()),
       ]);
+      this.getDefaultOutlet();
+      this.props.dispatch(getBasket());
+      this.checkUpdateAndVersion();
       await this.setState({isLoading: false});
       this.props.dispatch(getAccountPayment());
       this.props.dispatch(getUserProfile());
@@ -258,6 +273,30 @@ class Rewards extends Component {
         ),
       );
     }
+  };
+
+  checkUpdateAndVersion = () => {
+    try {
+      VersionCheck.needUpdate().then(async res => {
+        if (res != null && res != undefined) {
+          if (res.isNeeded) {
+            Alert.alert(
+              'App Update.',
+              'Updates are already available on the store.',
+              [
+                {
+                  text: 'Later',
+                  onPress: () => console.log('Cancel Pressed'),
+                  style: 'cancel',
+                },
+                {text: 'Update', onPress: () => Linking.openURL(res.storeUrl)},
+              ],
+              {cancelable: false},
+            );
+          }
+        }
+      });
+    } catch (e) {}
   };
 
   getUserPosition = async () => {

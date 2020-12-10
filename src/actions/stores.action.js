@@ -1,6 +1,7 @@
 import {fetchApiMasterData} from '../service/apiMasterData';
 import {refreshToken} from './auth.actions';
 import {fetchApiOrder} from '../service/apiOrder';
+import {isEmptyObject} from '../helper/CheckEmpty';
 
 export const getCompanyInfo = () => {
   return async (dispatch, getState) => {
@@ -57,6 +58,52 @@ export const dataStores = () => {
   };
 };
 
+export const getDefaultOutlet = () => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+      const {
+        userReducer: {
+          userPosition: {userPosition},
+        },
+      } = state;
+
+      let payload = {};
+      if (!isEmptyObject(userPosition) && !isEmptyObject(userPosition.coords)) {
+        payload.latitude = userPosition.coords.latitude;
+        payload.longitude = userPosition.coords.longitude;
+      }
+
+      const response = await fetchApiMasterData(
+        '/outlets/nearestoutlet',
+        'POST',
+        !isEmptyObject(payload) ? payload : false,
+        200,
+        token,
+      );
+      console.log(response.response.data, 'response default outlets');
+      if (response.success) {
+        dispatch({
+          type: 'DATA_DEFAULT_OUTLET',
+          data: response.response.data,
+        });
+      } else {
+        dispatch({
+          type: 'DATA_DEFAULT_OUTLET',
+          data: {},
+        });
+      }
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
 export const getOutletById = id => {
   return async (dispatch, getState) => {
     const state = getState();
@@ -75,7 +122,7 @@ export const getOutletById = id => {
       );
       console.log(response, 'response outlets get by id');
       dispatch({
-        type: 'DATA_OUTLET_SINGLE',
+        type: 'DATA_DEFAULT_OUTLET',
         data: response.response.data,
       });
 

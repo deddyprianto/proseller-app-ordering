@@ -182,6 +182,7 @@ class SettleOrder extends Component {
             outletID,
             this.props.pembayaran.orderActionDate,
             clientTimeZone,
+            this.props.pembayaran.orderingMode,
             true,
           ),
         );
@@ -345,6 +346,8 @@ class SettleOrder extends Component {
   setDataPayment = async cancel => {
     var totalBayar = 0;
     let index = 0;
+    let indexModifier = undefined;
+    let indexModifierDetail = undefined;
     let tmpTotal = this.props.pembayaran.payment;
 
     if (!cancel) {
@@ -363,7 +366,19 @@ class SettleOrder extends Component {
             ) {
               //  search specific product
               let result = undefined;
+
+              // Sort details by price
+              try {
+                const sortedDetails = _.orderBy(
+                  this.props.pembayaran.details,
+                  ['product.retailPrice'],
+                  ['asc'],
+                );
+                this.props.pembayaran.details = sortedDetails;
+              } catch (e) {}
+
               for (let z = 0; z < this.props.pembayaran.details.length; z++) {
+                //TODO: check cat
                 result = await dataVoucer[i].appliedItems.find(
                   item =>
                     item.value === this.props.pembayaran.details[z].product.id,
@@ -376,30 +391,122 @@ class SettleOrder extends Component {
                   ) {
                     result = this.props.pembayaran.details[z];
                     index = z;
+                    indexModifier = undefined;
+                    indexModifierDetail = undefined;
                     break;
                   } else {
                     result = undefined;
                   }
                 }
               }
+              // CHECK IF MODIFIER CONTAIN SPECIFIC PRODUCT
+
+              if (result === undefined) {
+                //  Search specific products in modifier
+                let sortedDetailsModifier = [];
+                result = undefined;
+                indexModifier = undefined;
+                indexModifierDetail = undefined;
+                for (let z = 0; z < this.props.pembayaran.details.length; z++) {
+                  let dataProduct = this.props.pembayaran.details[z];
+                  if (isEmptyArray(dataProduct.modifiers)) {
+                    continue;
+                  } else {
+                    for (let j = 0; j < dataProduct.modifiers.length; j++) {
+                      if (
+                        !isEmptyArray(dataProduct.modifiers[j].modifier.details)
+                      ) {
+                        // Sort modifier item
+                        try {
+                          sortedDetailsModifier = _.orderBy(
+                            dataProduct.modifiers[j].modifier.details,
+                            ['price'],
+                            ['asc'],
+                          );
+                          dataProduct.modifiers[
+                            j
+                          ].modifier.details = sortedDetailsModifier;
+                        } catch (e) {}
+
+                        for (
+                          let k = 0;
+                          k < dataProduct.modifiers[j].modifier.details.length;
+                          k++
+                        ) {
+                          let dataModifier =
+                            dataProduct.modifiers[j].modifier.details[k];
+                          result = await dataVoucer[i].appliedItems.find(
+                            item => item.value === dataModifier.product.id,
+                          );
+                          if (result != undefined) {
+                            if (
+                              dataModifier.appliedVoucher <
+                                dataModifier.quantity ||
+                              dataModifier.appliedVoucher == undefined
+                            ) {
+                              result =
+                                dataProduct.modifiers[j].modifier.details[k];
+                              index = z;
+                              indexModifier = j;
+                              indexModifierDetail = k;
+                              break;
+                            } else {
+                              result = undefined;
+                            }
+                          }
+                        }
+                      }
+                      if (result !== undefined) break;
+                    }
+                  }
+                  if (result !== undefined) break;
+                }
+              }
+
               // check if apply to specific product is found
               if (result != undefined) {
                 if (
-                  this.props.pembayaran.details[index].appliedVoucher ==
-                  undefined
+                  indexModifier !== undefined &&
+                  indexModifierDetail !== undefined
                 ) {
-                  this.props.pembayaran.details[index].appliedVoucher = 1;
+                  // Assign Unit Price to Price, if product is modifier
+                  result.unitPrice = this.props.pembayaran.details[
+                    index
+                  ].modifiers[indexModifier].modifier.details[
+                    indexModifierDetail
+                  ].price;
+
+                  let productFound = this.props.pembayaran.details[index]
+                    .modifiers[indexModifier].modifier.details[
+                    indexModifierDetail
+                  ];
+                  if (productFound.appliedVoucher == undefined) {
+                    this.props.pembayaran.details[index].modifiers[
+                      indexModifier
+                    ].modifier.details[indexModifierDetail].appliedVoucher = 1;
+                  } else {
+                    this.props.pembayaran.details[index].modifiers[
+                      indexModifier
+                    ].modifier.details[indexModifierDetail].appliedVoucher++;
+                  }
                 } else {
-                  this.props.pembayaran.details[index].appliedVoucher++;
+                  if (
+                    this.props.pembayaran.details[index].appliedVoucher ==
+                    undefined
+                  ) {
+                    this.props.pembayaran.details[index].appliedVoucher = 1;
+                  } else {
+                    this.props.pembayaran.details[index].appliedVoucher++;
+                  }
                 }
 
                 if (dataVoucer[i].voucherType == 'discPercentage') {
                   // FIND DISCOUNT
                   discount =
                     (result.unitPrice * dataVoucer[i].voucherValue) / 100;
-
+                  // console.log(discount, 'discount');
                   //  check cap Amount
-                  if (dataVoucer[i].capAmount != undefined) {
+                  if (dataVoucer[i].capAmount !== undefined) {
                     let capAmount = parseFloat(dataVoucer[i].capAmount);
                     if (discount > capAmount && capAmount > 0) {
                       discount = capAmount;
@@ -421,7 +528,9 @@ class SettleOrder extends Component {
             } else {
               if (dataVoucer[i].voucherType == 'discPercentage') {
                 // FIND DISCOUNT
-                discount = (tmpTotal * dataVoucer[i].voucherValue) / 100;
+                discount =
+                  (this.props.pembayaran.payment * dataVoucer[i].voucherValue) /
+                  100;
 
                 //  check cap Amount
                 if (dataVoucer[i].capAmount != undefined) {
@@ -433,7 +542,6 @@ class SettleOrder extends Component {
 
                 dataVoucer[i].paymentAmount = discount;
                 // set value payment amount for payload
-                console.log(dataVoucer[i].paymentAmount, 'discount');
                 tmpTotal -= discount;
 
                 redeemVoucer = redeemVoucer + discount;

@@ -10,20 +10,20 @@ import {
 import Icon from 'react-native-vector-icons/Ionicons';
 
 import colorConfig from '../config/colorConfig';
-import {Actions} from 'react-native-router-flux';
 
-export default class StoreStores extends Component {
+class StoreStores extends Component {
   constructor(props) {
     super(props);
   }
 
-  storeDetailStores = item => {
+  storeDetailStores = async item => {
     const {intlData} = this.props;
-
-    // Actions.storeDetailStores({item, intlData});
-    // Actions.order({item});
-    // Actions.categoryProducts({item});
-    Actions.productsMode2({item});
+    // Actions.productsMode2({item});
+    try {
+      await this.props.dispatch(getOutletById(item.storeId));
+      this.props.refreshProducts();
+      Actions.pop();
+    } catch (e) {}
   };
 
   render() {
@@ -113,6 +113,10 @@ export default class StoreStores extends Component {
     );
   }
 }
+import {Actions} from 'react-native-router-flux';
+import {compose} from 'redux';
+import {connect} from 'react-redux';
+import {getOutletById} from '../actions/stores.action';
 
 const styles = StyleSheet.create({
   stores: {
@@ -152,3 +156,14 @@ const styles = StyleSheet.create({
     // borderLeftWidth: 1,
   },
 });
+
+mapDispatchToProps = dispatch => ({
+  dispatch,
+});
+
+export default compose(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  ),
+)(StoreStores);

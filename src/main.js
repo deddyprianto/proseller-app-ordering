@@ -27,7 +27,6 @@ import OneSignal from 'react-native-onesignal';
 import {deviceUserInfo} from './actions/user.action';
 import OfflineNotice from './components/OfflineNotice';
 import {getCompanyInfo} from './actions/stores.action';
-import VersionCheck from 'react-native-version-check';
 import {paymentRefNo} from './actions/account.action';
 import {getTermsConditions} from './actions/order.action';
 
@@ -68,18 +67,7 @@ class Main extends Component {
     } catch (error) {
       console.log(error);
     }
-
-    this.checkUpdateAndVersion();
   }
-
-  checkUpdateAndVersion = () => {
-    try {
-      VersionCheck.getCountry().then(country => console.log(country));
-      console.log(VersionCheck.getPackageName());
-      console.log(VersionCheck.getCurrentBuildNumber());
-      console.log(VersionCheck.getCurrentVersion());
-    } catch (e) {}
-  };
 
   turnOnLocation = () => {
     RNAndroidLocationEnabler.promptForEnableLocationIfNeeded({

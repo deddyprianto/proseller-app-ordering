@@ -451,7 +451,7 @@ class Store extends Component {
     const {intlData} = this.props;
 
     return (
-      <SafeAreaView style={{marginBottom: 40}}>
+      <SafeAreaView style={{marginBottom: 30}}>
         <View
           style={{
             backgroundColor: colorConfig.pageIndex.backgroundColor,
@@ -465,54 +465,18 @@ class Store extends Component {
             shadowRadius: 7.49,
             elevation: 12,
           }}>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-            }}>
-            <TouchableOpacity
-              style={{
-                paddingLeft: 10,
-                paddingBottom: 5,
-                paddingTop: 5,
-              }}>
-              <Image
-                resizeMode="contain"
-                style={styles.imageLogo}
-                source={appConfig.appLogo}
-              />
-            </TouchableOpacity>
-            <View
-              style={{
-                alignItems: 'center',
-                justifyContent: 'center',
-                marginRight: 10,
-              }}>
-              <View
-                style={{
-                  flexDirection: 'row',
-                }}>
-                <Text
-                  style={{
-                    color: colorConfig.store.title,
-                    fontFamily: 'Lato-Medium',
-                  }}>
-                  {this.getHallo() + ', '}
-                </Text>
-                <Text
-                  style={{
-                    color: colorConfig.pageIndex.activeTintColor,
-                    fontFamily: 'Lato-Bold',
-                  }}>
-                  {this.props.userDetail != undefined
-                    ? userDetail.name != undefined
-                      ? userDetail.name.split(' ')[0]
-                      : ''
-                    : ''}
-                </Text>
-              </View>
-            </View>
-          </View>
+          <TouchableOpacity
+            style={styles.btnBack}
+            onPress={() => Actions.pop()}>
+            <Icon
+              size={28}
+              name={
+                Platform.OS === 'ios' ? 'ios-arrow-back' : 'md-arrow-round-back'
+              }
+              style={styles.btnBackIcon}
+            />
+            <Text style={styles.btnBackText}> Outlet List </Text>
+          </TouchableOpacity>
         </View>
         <ScrollView
           style={styles.scrollView}
@@ -528,14 +492,10 @@ class Store extends Component {
             </View>
           ) : (
             <View style={styles.container}>
-              {this.props.dataPromotion == undefined ||
-              isEmptyArray(this.props.dataPromotion) ? null : (
-                <StorePromotion />
-              )}
-
               {this.state.dataStoresNear.length != 0 ? (
                 <View>
                   <StoreNearYou
+                    refreshProducts={this.props.refreshProducts}
                     intlData={intlData}
                     dataStoresNear={this.state.dataStoresNear}
                   />
@@ -567,6 +527,7 @@ class Store extends Component {
                 <View>
                   <StoreStores
                     intlData={intlData}
+                    refreshProducts={this.props.refreshProducts}
                     dataStoreRegion={this.state.dataStoreRegion}
                     dataAllStore={this.state.dataAllStore}
                   />
@@ -575,60 +536,6 @@ class Store extends Component {
             </View>
           )}
         </ScrollView>
-
-        {this.props.dataBasket == undefined ||
-        (this.props.dataBasket.status == 'PENDING' ||
-          this.props.dataBasket.status == 'PENDING_PAYMENT') ? (
-          <TouchableOpacity
-            onPress={this.openBasket}
-            style={{
-              position: 'absolute',
-              bottom: '6%',
-              right: '5%',
-              height: 60,
-              borderRadius: 50,
-              justifyContent: 'center',
-              alignItems: 'center',
-              width: 60,
-              backgroundColor: 'white',
-              shadowColor: '#00000021',
-              shadowOffset: {
-                width: 0,
-                height: 9,
-              },
-              shadowOpacity: 0.7,
-              shadowRadius: 7.49,
-              elevation: 12,
-            }}>
-            <View>
-              <Icon
-                size={40}
-                name={Platform.OS === 'ios' ? 'ios-cart' : 'md-cart'}
-                style={{color: colorConfig.store.defaultColor}}
-              />
-            </View>
-            {/* check data length basket, if not undefined, then show length */}
-            {this.props.dataBasket != undefined &&
-            this.props.dataBasket.details != undefined ? (
-              <View
-                style={{
-                  position: 'absolute',
-                  top: -7,
-                  right: 1,
-                  width: 25,
-                  height: 25,
-                  backgroundColor: colorConfig.store.colorError,
-                  borderRadius: 50,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
-                <Text style={{color: 'white', padding: 3, fontSize: 11}}>
-                  {this.getSumOfQuantityBasket()}
-                </Text>
-              </View>
-            ) : null}
-          </TouchableOpacity>
-        ) : null}
       </SafeAreaView>
     );
   }
@@ -638,6 +545,23 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 10,
+  },
+  btnBack: {
+    marginLeft: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    // width: 100,
+    height: 50,
+  },
+  btnBackText: {
+    color: colorConfig.store.defaultColor,
+    fontWeight: 'bold',
+    fontSize: 17,
+  },
+  btnBackIcon: {
+    marginLeft: 10,
+    color: colorConfig.store.defaultColor,
+    margin: 10,
   },
   scrollView: {
     backgroundColor: colorConfig.pageIndex.backgroundColor,

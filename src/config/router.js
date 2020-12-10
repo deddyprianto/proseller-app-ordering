@@ -44,6 +44,7 @@ import PaymentSuccess from '../components/paymentSuccess';
 import PaymentAddVoucers from '../components/paymentAddVoucers';
 import PaymentDetailItem from '../components/paymentDetailItem';
 import InboxDetail from '../components/inboxDetail';
+import Inbox from '../pages/inbox';
 import PaymentAddPoint from '../components/paymentAddPoint';
 import RewardsStamps from '../components/rewardsStamps';
 import Notifications from '../components/notifications/Notifications';
@@ -88,6 +89,8 @@ import ProductsRetail from '../components/order/ProductsRetail';
 import MenuCategory from '../components/order/MenuCategory';
 import awsConfig from './awsConfig';
 import ProductsSpecific from '../components/order/ProductsSpecific';
+import TermsCondition from '../pages/TermCondition';
+import Stores from '../pages/store';
 
 let backPressed = 0;
 
@@ -208,6 +211,7 @@ export default class Routes extends Component {
             <Scene key="paymentAddVoucers" component={PaymentAddVoucers} />
             <Scene key="paymentDetailItem" component={PaymentDetailItem} />
             <Scene key="inboxDetail" component={InboxDetail} />
+            <Scene key="inbox" component={Inbox} />
             <Scene key="paymentAddPoint" component={PaymentAddPoint} />
             <Scene key="detailStamps" component={RewardsStamps} />
             <Scene key="detailPoint" component={DetailPoint} />
@@ -245,6 +249,8 @@ export default class Routes extends Component {
             <Scene key="pickUpTime" component={PickUpTime} />
             <Scene key="changeCredentials" component={ChangeCredentials} />
             <Scene key="menuCategory" component={MenuCategory} />
+            <Scene key="termsCondition" component={TermsCondition} />
+            <Scene key="stores" component={Stores} />
             <Scene
               key="changeCredentialsOTP"
               component={ChangeCredentialsOTP}
