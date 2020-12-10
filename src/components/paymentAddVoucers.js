@@ -26,6 +26,7 @@ import colorConfig from '../config/colorConfig';
 import appConfig from '../config/appConfig';
 import {format} from 'date-fns';
 import CurrencyFormatter from '../helper/CurrencyFormatter';
+import {isEmptyArray} from '../helper/CheckEmpty';
 
 export default class PaymentAddVoucers extends Component {
   constructor(props) {
@@ -122,6 +123,45 @@ export default class PaymentAddVoucers extends Component {
             }
           }
         }
+        // CHECK IF MODIFIER CONTAIN SPECIFIC PRODUCT
+        if (result === undefined) {
+          //  Search specific products in modifier
+          result = undefined;
+          for (let z = 0; z < this.props.pembayaran.details.length; z++) {
+            let dataProduct = this.props.pembayaran.details[z];
+            if (isEmptyArray(dataProduct.modifiers)) {
+              continue;
+            } else {
+              try {
+                for (let modifier of dataProduct.modifiers) {
+                  if (!isEmptyArray(modifier.modifier.details)) {
+                    for (let detailModifier of modifier.modifier.details) {
+                      result = await item.appliedItems.find(
+                        item => item.value === detailModifier.product.id,
+                      );
+
+                      if (result != undefined) {
+                        if (
+                          detailModifier.appliedVoucher <
+                            detailModifier.quantity ||
+                          detailModifier.appliedVoucher == undefined
+                        ) {
+                          result = detailModifier;
+                          break;
+                        } else {
+                          result = undefined;
+                        }
+                      }
+                    }
+                  }
+                  if (result !== undefined) break;
+                }
+              } catch (e) {}
+            }
+            if (result !== undefined) break;
+          }
+        }
+
         // check if apply to specific product is found
         if (result == undefined) {
           Alert.alert(
@@ -171,7 +211,7 @@ export default class PaymentAddVoucers extends Component {
     let find = item.validity.activeWeekDays.find(
       (item, idx) => item.active == true && idx == date.getDay(),
     );
-    console.log(find, 'FIND');
+
     // TODO buat filter time
     if (find != undefined) return {status: true, message: ''};
     else return {status: false, message: 'This voucher cannot be used today.'};
