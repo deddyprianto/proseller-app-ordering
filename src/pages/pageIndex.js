@@ -80,7 +80,7 @@ const AppTabNavigator = createMaterialBottomTabNavigator(
         tabBarIcon: ({tintColor, focused}) => (
           <Icon
             size={28}
-            name={Platform.OS === 'ios' ? 'ios-ellipsis-vertical' : 'md-menu'}
+            name={Platform.OS === 'ios' ? 'ios-menu' : 'md-menu'}
             style={{color: tintColor}}
           />
         ),
@@ -161,7 +161,7 @@ const AppTabNavigatorHistory = createMaterialBottomTabNavigator(
         tabBarIcon: ({tintColor, focused}) => (
           <Icon
             size={28}
-            name={Platform.OS === 'ios' ? 'ios-ellipsis-vertical' : 'md-menu'}
+            name={Platform.OS === 'ios' ? 'ios-menu' : 'md-menu'}
             style={{color: tintColor}}
           />
         ),
