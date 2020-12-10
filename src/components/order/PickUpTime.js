@@ -27,7 +27,7 @@ import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import {format} from 'date-fns';
 import {isEmptyArray, isEmptyObject} from '../../helper/CheckEmpty';
-import DropDownPicker from 'react-native-dropdown-picker';
+// import DropDownPicker from 'react-native-dropdown-picker';
 import {getTimeslot} from '../../actions/order.action';
 
 class PickUpTime extends Component {
@@ -46,6 +46,7 @@ class PickUpTime extends Component {
       minute: null,
       openTimePicker: false,
       selectedTimeSlot: this.props.selectedTimeSlot,
+      moreDates: false,
     };
   }
 
@@ -136,12 +137,21 @@ class PickUpTime extends Component {
 
   handleConfirmDate = async date => {
     let formattedDate = date;
+    const {timeslots} = this.props;
     try {
       formattedDate = format(date, 'yyyy-MM-dd');
     } catch (e) {}
+    const selectedDate = timeslots.find(item => item.date === formattedDate);
+    if (selectedDate !== undefined) {
+      formattedDate = selectedDate.date;
+      this.setState({selectedTimeSlot: selectedDate});
+    } else {
+      this.setState({selectedTimeSlot: {}});
+    }
+    console.log(timeslots, 'selectedDate');
+    console.log(formattedDate, 'date');
     await this.setState({date: formattedDate, time: null});
     this.hideDatePicker();
-    // this.getTimeslot();
   };
 
   getTimeslot = async () => {
@@ -184,7 +194,7 @@ class PickUpTime extends Component {
     let month = new Date().getMonth() + 1;
     let year = new Date().getFullYear();
     try {
-      let maxDays = 360;
+      let maxDays = 90;
       if (!isEmptyObject(outlet.orderValidation)) {
         if (orderType == 'DELIVERY') {
           if (
@@ -421,7 +431,7 @@ class PickUpTime extends Component {
   };
 
   render() {
-    const {date, time} = this.state;
+    const {date, time, moreDates} = this.state;
     const {timeslots} = this.props;
     return (
       <SafeAreaView style={styles.container}>
@@ -443,56 +453,54 @@ class PickUpTime extends Component {
           </TouchableOpacity>
         </View>
         <KeyboardAwareScrollView style={{padding: 15}}>
-          {time != null && time.length > 5 && (
-            <View
-              style={{justifyContent: 'space-between', flexDirection: 'row'}}>
-              <Text style={[styles.option, {marginBottom: 10}]}>Date</Text>
-              {/*<TouchableOpacity*/}
-              {/*  style={{flexDirection: 'row', alignItems: 'center'}}>*/}
-              {/*  <Icon*/}
-              {/*    size={19}*/}
-              {/*    name={Platform.OS === 'ios' ? 'ios-calendar' : 'md-calendar'}*/}
-              {/*    style={{*/}
-              {/*      color: colorConfig.store.defaultColor,*/}
-              {/*      marginRight: 10,*/}
-              {/*      marginBottom: 6,*/}
-              {/*    }}*/}
-              {/*  />*/}
-              {/*  <Text*/}
-              {/*    style={[*/}
-              {/*      styles.option,*/}
-              {/*      {marginBottom: 10, color: colorConfig.store.defaultColor},*/}
-              {/*    ]}>*/}
-              {/*    More dates*/}
-              {/*  </Text>*/}
-              {/*</TouchableOpacity>*/}
-            </View>
+          <View style={{justifyContent: 'space-between', flexDirection: 'row'}}>
+            <Text style={[styles.option, {marginBottom: 10}]}>Date</Text>
+            <TouchableOpacity
+              onPress={() => this.setState({moreDates: !this.state.moreDates})}
+              style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Icon
+                size={19}
+                name={Platform.OS === 'ios' ? 'ios-calendar' : 'md-calendar'}
+                style={{
+                  color: colorConfig.store.defaultColor,
+                  marginRight: 10,
+                  marginBottom: 6,
+                }}
+              />
+              <Text
+                style={[
+                  styles.option,
+                  {marginBottom: 10, color: colorConfig.store.defaultColor},
+                ]}>
+                {moreDates ? 'Less dates' : 'More dates'}
+              </Text>
+            </TouchableOpacity>
+          </View>
+          {!moreDates && (
+            <FlatList
+              ref={ref => {
+                this.DateRef = ref;
+              }}
+              data={timeslots}
+              horizontal={true}
+              renderItem={this.renderItem}
+              keyExtractor={item => item.id}
+            />
           )}
-          <FlatList
-            ref={ref => {
-              this.DateRef = ref;
-            }}
-            data={timeslots}
-            horizontal={true}
-            renderItem={this.renderItem}
-            keyExtractor={item => item.id}
-          />
-          {isEmptyObject(this.state.selectedTimeSlot) && (
+
+          {moreDates && (
             <View
               style={{
                 flexDirection: 'row',
                 alignItems: 'center',
                 paddingVertical: 10,
               }}>
-              <View style={{width: '20%'}}>
-                <Text style={styles.option}>Date </Text>
-              </View>
               <TouchableOpacity
                 onPress={() => {
                   this.setState({dateVisible: !this.state.dateVisible});
                 }}
                 style={{
-                  width: '60%',
+                  width: '96%',
                   borderWidth: 0.6,
                   borderColor: colorConfig.pageIndex.grayColor,
                   padding: 7,

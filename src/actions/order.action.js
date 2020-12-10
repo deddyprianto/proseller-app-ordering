@@ -1098,6 +1098,8 @@ export const getTimeslot = (
         dataOutlet.maxDays > 0
       ) {
         payload.maxDays = dataOutlet.maxDays;
+      } else {
+        payload.maxDays = 90;
       }
 
       let response = await fetchApiOrder(
