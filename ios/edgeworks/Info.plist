@@ -4,6 +4,8 @@
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
+	<key>UIUserInterfaceStyle</key>
+	<string>Light</string>
 	<key>CFBundleDisplayName</key>
 	<string>Edgeworks CRM Demo</string>
 	<key>CFBundleExecutable</key>
@@ -27,6 +29,10 @@
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
 			<string>edgeworks-demo-crm</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>edgeworks-demo-crm</string>
+			</array>
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
