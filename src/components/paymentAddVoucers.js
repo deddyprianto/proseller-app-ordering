@@ -103,13 +103,23 @@ export default class PaymentAddVoucers extends Component {
     const {totalPrice} = this.props;
     // check if voucher is applied on specific products only
     try {
-      if (item.appliedTo != undefined && item.appliedTo === 'PRODUCT') {
+      if (item.appliedTo != undefined) {
         //  search specific product
         let result = undefined;
         for (let i = 0; i < this.props.pembayaran.details.length; i++) {
-          result = await item.appliedItems.find(
-            item => item.value === this.props.pembayaran.details[i].product.id,
-          );
+          if (item.appliedTo === 'PRODUCT') {
+            result = await item.appliedItems.find(
+              item =>
+                item.value === this.props.pembayaran.details[i].product.id,
+            );
+          }
+          if (item.appliedTo === 'CATEGORY') {
+            result = await item.appliedItems.find(
+              item =>
+                item.value ===
+                this.props.pembayaran.details[i].product.categoryID,
+            );
+          }
           if (result != undefined) {
             if (
               this.props.pembayaran.details[i].appliedVoucher <
@@ -129,6 +139,7 @@ export default class PaymentAddVoucers extends Component {
           result = undefined;
           for (let z = 0; z < this.props.pembayaran.details.length; z++) {
             let dataProduct = this.props.pembayaran.details[z];
+
             if (isEmptyArray(dataProduct.modifiers)) {
               continue;
             } else {
@@ -141,9 +152,10 @@ export default class PaymentAddVoucers extends Component {
                       );
 
                       if (result != undefined) {
+                        let quantityModifier =
+                          dataProduct.quantity * detailModifier.quantity;
                         if (
-                          detailModifier.appliedVoucher <
-                            detailModifier.quantity ||
+                          detailModifier.appliedVoucher < quantityModifier ||
                           detailModifier.appliedVoucher == undefined
                         ) {
                           result = detailModifier;

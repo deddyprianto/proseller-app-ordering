@@ -337,10 +337,7 @@ class PaymentDetail extends Component {
       for (let i = 0; i < dataVoucer.length; i++) {
         try {
           if (dataVoucer[i] != undefined) {
-            if (
-              dataVoucer[i].appliedTo != undefined &&
-              dataVoucer[i].appliedTo === 'PRODUCT'
-            ) {
+            if (dataVoucer[i].appliedTo != undefined) {
               //  search specific product
               let result = undefined;
 
@@ -355,11 +352,20 @@ class PaymentDetail extends Component {
               } catch (e) {}
 
               for (let z = 0; z < this.props.pembayaran.details.length; z++) {
-                //TODO: check cat
-                result = await dataVoucer[i].appliedItems.find(
-                  item =>
-                    item.value === this.props.pembayaran.details[z].product.id,
-                );
+                if (dataVoucer[i].appliedTo === 'PRODUCT') {
+                  result = await dataVoucer[i].appliedItems.find(
+                    item =>
+                      item.value ===
+                      this.props.pembayaran.details[z].product.id,
+                  );
+                }
+                if (dataVoucer[i].appliedTo === 'CATEGORY') {
+                  result = await dataVoucer[i].appliedItems.find(
+                    item =>
+                      item.value ===
+                      this.props.pembayaran.details[z].product.categoryID,
+                  );
+                }
                 if (result != undefined) {
                   if (
                     this.props.pembayaran.details[z].appliedVoucher <
@@ -412,13 +418,23 @@ class PaymentDetail extends Component {
                         ) {
                           let dataModifier =
                             dataProduct.modifiers[j].modifier.details[k];
-                          result = await dataVoucer[i].appliedItems.find(
-                            item => item.value === dataModifier.product.id,
-                          );
+                          if (dataVoucer[i].appliedTo === 'PRODUCT') {
+                            result = await dataVoucer[i].appliedItems.find(
+                              item => item.value === dataModifier.product.id,
+                            );
+                          }
+                          if (dataVoucer[i].appliedTo === 'CATEGORY') {
+                            result = await dataVoucer[i].appliedItems.find(
+                              item =>
+                                item.value === dataModifier.product.categoryID,
+                            );
+                          }
+
                           if (result != undefined) {
+                            let quantityModifier =
+                              dataProduct.quantity * dataModifier.quantity;
                             if (
-                              dataModifier.appliedVoucher <
-                                dataModifier.quantity ||
+                              dataModifier.appliedVoucher < quantityModifier ||
                               dataModifier.appliedVoucher == undefined
                             ) {
                               result =
