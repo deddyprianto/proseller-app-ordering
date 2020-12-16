@@ -1084,12 +1084,12 @@ class Basket extends Component {
   renderSettleButtonQuickService = () => {
     const {intlData, dataBasket, orderType} = this.props;
     let deliveryFee = 0;
-    if (
-      !isEmptyObject(this.state.selectedProvider) &&
-      orderType === 'DELIVERY'
-    ) {
-      deliveryFee = this.state.selectedProvider.deliveryFee;
-    }
+    // if (
+    //   !isEmptyObject(this.state.selectedProvider) &&
+    //   orderType === 'DELIVERY'
+    // ) {
+    //   deliveryFee = this.state.selectedProvider.deliveryFee;
+    // }
     return (
       <View
         style={{
@@ -1121,9 +1121,7 @@ class Basket extends Component {
           }}>
           TOTAL : {appConfig.appMataUang}
           {this.format(
-            CurrencyFormatter(
-              this.props.dataBasket.totalNettAmount + deliveryFee,
-            ),
+            CurrencyFormatter(this.props.dataBasket.totalNettAmount),
           )}
         </Text>
         <View style={{flexDirection: 'row', justifyContent: 'center'}}>
@@ -1601,8 +1599,6 @@ class Basket extends Component {
       if (orderType == 'DELIVERY') {
         pembayaran.deliveryAddress = selectedAddress;
         pembayaran.deliveryProvider = this.state.selectedProvider;
-        pembayaran.totalNettAmount += this.state.selectedProvider.deliveryFee;
-        pembayaran.payment += this.state.selectedProvider.deliveryFee;
       }
 
       try {
