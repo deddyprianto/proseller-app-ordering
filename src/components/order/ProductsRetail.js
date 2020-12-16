@@ -923,6 +923,12 @@ class Products2 extends Component {
             skip += 20;
           }
         }
+
+        // Fetch second group preset if the first group preset length is less then 10, because if
+        // the list of product is less than 10 (visible in viewport), then the lazy load will not called
+        if (response.data[1].dataLength < 10) {
+          this.loadMoreCategory();
+        }
         //  asynchronously get all item
         // if (response.data.length > 1) {
         //   for (let i = 1; i < response.data.length; i++) {
