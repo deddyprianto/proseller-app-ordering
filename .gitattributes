@@ -1,21 +1,21 @@
 *.pbxproj -text
 
 # Config
-.env
-.env.demo
-.env.production
-.env.dev
-app.json
-env-ios.js
-env-ios-demo.js
-index.js
-package.json
+.env merge=ours
+.env.demo merge=ours
+.env.production merge=ours
+.env.dev merge=ours
+app.json merge=ours
+env-ios.js merge=ours
+env-ios-demo.js merge=ours
+index.js merge=ours
+package.json merge=ours
 
 # iOS
-/ios
+/ios merge=ours
 
 # Android
-/android
-/certificate
-/config
-/assets
+/android merge=ours
+/certificate merge=ours
+/config merge=ours
+/assets merge=ours
