@@ -1,1 +1,21 @@
 *.pbxproj -text
+
+# Config
+.env
+.env.demo
+.env.production
+.env.dev
+app.json
+env-ios.js
+env-ios-demo.js
+index.js
+package.json
+
+# iOS
+/ios
+
+# Android
+/android
+/certificate
+/config
+/assets
