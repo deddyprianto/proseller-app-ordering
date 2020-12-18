@@ -542,10 +542,6 @@ export const moveCart = deliveryAddress => {
       );
       console.log(response, 'response moveCart');
       if (response.success == false) {
-        dispatch({
-          type: 'DATA_BASKET',
-          product: undefined,
-        });
         return false;
       } else {
         dispatch({
