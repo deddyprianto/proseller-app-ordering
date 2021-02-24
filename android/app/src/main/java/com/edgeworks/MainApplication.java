@@ -22,9 +22,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 // Facebook login
-import com.facebook.CallbackManager;
-import com.facebook.FacebookSdk;
-import com.facebook.appevents.AppEventsLogger;
+// import com.facebook.CallbackManager;
+// import com.facebook.FacebookSdk;
+// import com.facebook.appevents.AppEventsLogger;
 
 
 // Multidex
@@ -34,11 +34,11 @@ import androidx.multidex.MultiDexApplication;
 
 
 public class MainApplication extends MultiDexApplication implements ReactApplication {
-  private static CallbackManager mCallbackManager = CallbackManager.Factory.create();
+  // private static CallbackManager mCallbackManager = CallbackManager.Factory.create();
 
-  protected static CallbackManager getCallbackManager() {
-    return mCallbackManager;
-  }
+  // protected static CallbackManager getCallbackManager() {
+  //   return mCallbackManager;
+  // }
 
   private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
     @Override
@@ -76,8 +76,8 @@ public class MainApplication extends MultiDexApplication implements ReactApplica
   public void onCreate() {
     super.onCreate();
     SoLoader.init(this, /* native exopackage */ false);
-    FacebookSdk.sdkInitialize(getApplicationContext());
-    AppEventsLogger.activateApp(this);
+    // FacebookSdk.sdkInitialize(getApplicationContext());
+    // AppEventsLogger.activateApp(this);
     initializeFlipper(this); // Remove this line if you don't want Flipper enabled
   }
 
