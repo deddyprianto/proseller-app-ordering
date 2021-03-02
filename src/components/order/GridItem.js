@@ -11,9 +11,12 @@ import PropTypes from 'prop-types';
 import appConfig from '../../config/appConfig';
 
 const ListItem = props => {
-  const {item, onPress} = props;
+  const {item, onPress, productPlaceholder} = props;
   let image = appConfig.productPlaceholder;
   try {
+    if (productPlaceholder !== undefined && productPlaceholder !== null) {
+      image = {uri: productPlaceholder};
+    }
     if (item.item.defaultImageURL != undefined) {
       image = {uri: item.item.defaultImageURL};
     }
@@ -28,6 +31,7 @@ const ListItem = props => {
             style={{
               width: Dimensions.get('window').width / 3 - 30,
               height: 100,
+              borderRadius: 5,
               alignSelf: 'center',
               resizeMode: 'contain',
             }}
@@ -53,14 +57,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     margin: 5,
     backgroundColor: 'white',
-    shadowColor: '#00000021',
-    shadowOffset: {
-      width: 0,
-      height: 9,
-    },
-    shadowOpacity: 0.9,
-    shadowRadius: 7.49,
-    elevation: 16,
+    // shadowColor: '#00000021',
+    // shadowOffset: {
+    //   width: 0,
+    //   height: 9,
+    // },
+    // shadowOpacity: 0.9,
+    // shadowRadius: 7.49,
+    // elevation: 16,
   },
   leftElementContainer: {
     justifyContent: 'center',
@@ -83,7 +87,8 @@ const styles = StyleSheet.create({
   titleStyle: {
     fontSize: 13,
     textAlign: 'center',
-    fontFamily: 'Lato-Medium',
+    fontFamily: 'Poppins-Regular',
+    textTransform: 'capitalize',
   },
 });
 

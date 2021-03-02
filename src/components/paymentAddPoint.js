@@ -15,6 +15,7 @@ import {
   Platform,
   Alert,
   SafeAreaView,
+  ScrollView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -22,12 +23,13 @@ import {connect} from 'react-redux';
 import {compose} from 'redux';
 import {Slider} from 'react-native-elements';
 
-import {campaign, dataPoint, vouchers} from '../actions/rewards.action';
+// import {campaign, dataPoint, vouchers} from '../actions/rewards.action';
 import colorConfig from '../config/colorConfig';
 import RewardsPoint from '../components/rewardsPoint';
 import appConfig from '../config/appConfig';
 import Loader from '../components/loader';
-import {parse} from 'react-native-svg';
+import {VirtualKeyboard} from '../helper/react-native-screen-keyboard';
+// import {parse} from 'react-native-svg';
 
 class paymentAddPoint extends Component {
   constructor(props) {
@@ -52,9 +54,7 @@ class paymentAddPoint extends Component {
     return true;
   };
 
-  componentDidMount = async () => {
-    const {campign} = this.props;
-
+  componentDidMount = () => {
     this.backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
       this.handleBackPress,
@@ -65,9 +65,13 @@ class paymentAddPoint extends Component {
         isLoading: false,
       });
     }, 1000);
+  };
+
+  componentWillMount = async () => {
+    const {campign, detailPoint} = this.props;
 
     try {
-      const {pendingPoints} = this.props;
+      const {pendingPoints, amountSVC, percentageUseSVC} = this.props;
 
       var jumPointRatio = this.props.campign.points.pointsToRebateRatio0;
       var jumMoneyRatio = this.props.campign.points.pointsToRebateRatio1;
@@ -88,9 +92,26 @@ class paymentAddPoint extends Component {
       // if settings from admin is not set to decimal, then round
       let pointToSet = this.state.myPoint;
 
-      if (pendingPoints != undefined && pendingPoints > 0) {
+      if (pendingPoints !== undefined && pendingPoints > 0) {
         pointToSet -= pendingPoints;
       }
+
+      if (detailPoint !== undefined && detailPoint.lockPoints > 0) {
+        if (percentageUseSVC > 0) {
+          let minusPoint = 0;
+          minusPoint =
+            (amountSVC / this.props.defaultBalance) * detailPoint.defaultPoints;
+          let diff = detailPoint.lockPoints - minusPoint;
+          diff = diff < 0 ? 0 : diff;
+          pointToSet = pointToSet - diff;
+        } else {
+          pointToSet -= detailPoint.lockPoints;
+        }
+      }
+
+      try {
+        pointToSet = Number(pointToSet.toFixed(2));
+      } catch (e) {}
 
       if (pointToSet < 0) pointToSet = 0;
 
@@ -195,11 +216,30 @@ class paymentAddPoint extends Component {
   };
 
   getMaximumPoint = () => {
-    const {campign, pendingPoints} = this.props;
+    const {
+      campign,
+      pendingPoints,
+      detailPoint,
+      amountSVC,
+      percentageUseSVC,
+    } = this.props;
     let {ratio, myPoint} = this.state;
     try {
       if (pendingPoints != undefined && pendingPoints > 0) {
         myPoint -= pendingPoints;
+      }
+
+      if (detailPoint !== undefined && detailPoint.lockPoints > 0) {
+        if (percentageUseSVC > 0) {
+          let minusPoint = 0;
+          minusPoint =
+            (amountSVC / this.props.defaultBalance) * detailPoint.defaultPoints;
+          let diff = detailPoint.lockPoints - minusPoint;
+          diff = diff < 0 ? 0 : diff;
+          myPoint = myPoint - diff;
+        } else {
+          myPoint -= detailPoint.lockPoints;
+        }
       }
 
       if (myPoint < 0) myPoint = 0;
@@ -225,218 +265,140 @@ class paymentAddPoint extends Component {
     }
   };
 
+  isDisabled = () => {
+    try {
+      const maxPoint = this.getMaximumPoint();
+      if (
+        Number(this.state.jumPoint) === 0 ||
+        isNaN(this.state.jumPoint) ||
+        Number(this.state.jumPoint) > maxPoint
+      ) {
+        return true;
+      }
+      return false;
+    } catch (e) {
+      return true;
+    }
+  };
+
   render() {
     const {intlData, campign, pendingPoints} = this.props;
     return (
-      <SafeAreaView style={styles.container}>
-        <View style={{backgroundColor: colorConfig.pageIndex.backgroundColor}}>
-          <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
-            <Icon
-              size={28}
-              name={
-                Platform.OS === 'ios' ? 'ios-arrow-back' : 'md-arrow-round-back'
-              }
-              style={styles.btnBackIcon}
-            />
-            <Text style={styles.btnBackText}> {intlData.messages.back} </Text>
-          </TouchableOpacity>
-          <View style={styles.line} />
-        </View>
-        {this.state.isLoading ? (
-          <View style={styles.loading}>
-            {this.state.isLoading && <Loader />}
+      <SafeAreaView>
+        {this.state.isLoading && <Loader />}
+        <ScrollView>
+          <View
+            style={{
+              paddingVertical: 5,
+            }}>
+            <View>
+              <View
+                style={{
+                  flexDirection: 'row',
+                }}>
+                <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
+                  <Icon
+                    size={35}
+                    name={Platform.OS === 'ios' ? 'ios-close' : 'md-close'}
+                    style={{color: 'black', padding: 10}}
+                  />
+                </TouchableOpacity>
+              </View>
+            </View>
+            <View
+              style={{
+                marginTop: -30,
+                alignItems: 'center',
+                marginBottom: 30,
+              }}>
+              <Text style={{fontFamily: 'Poppins-Medium'}}>Point to use</Text>
+              <Text
+                style={{
+                  color: colorConfig.store.secondaryColor,
+                }}>
+                {`${intlData.messages.redeem} ${this.state.jumPointRatio} point ${
+                  intlData.messages.to
+                } ${appConfig.appMataUang} ${this.state.jumMoneyRatio}`}
+              </Text>
+            </View>
           </View>
-        ) : (
+          <Text
+            style={{
+              textAlign: 'center',
+              fontSize: 30,
+              fontFamily: 'Poppins-Medium',
+              marginBottom: '4%',
+            }}>
+            {this.state.jumPoint}
+          </Text>
           <View>
             {pendingPoints != undefined && pendingPoints > 0 && (
               <View
                 style={{
-                  backgroundColor: colorConfig.store.defaultColor,
-                  paddingVertical: 10,
+                  paddingVertical: 8,
                 }}>
                 <View style={styles.pendingPointsInfo}>
                   <Text
                     style={{
-                      color: 'white',
+                      color: colorConfig.store.colorError,
                       textAlign: 'center',
+                      fontSize: 12
                     }}>
-                    Your {pendingPoints} points is locked, because your order
-                    has not been completed.
+                    Your {pendingPoints.toFixed(2)} points is locked, because your order has
+                    not been completed.
                   </Text>
                 </View>
               </View>
             )}
-
-            <RewardsPoint />
             <View
               style={{
-                alignItems: 'center',
-                top: -70,
+                justifyContent: 'space-between',
+                flexDirection: 'row',
+                paddingHorizontal: 20,
+                marginBottom: '5%',
               }}>
-              <Text
-                style={{
-                  color: colorConfig.pageIndex.backgroundColor,
-                }}>
-                {`${intlData.messages.redeem} ${
-                  this.state.jumPointRatio
-                } point ${intlData.messages.to} ${appConfig.appMataUang} ${
-                  this.state.jumMoneyRatio
-                }`}
+              <Text style={{fontSize: 17, fontFamily: 'Poppins-Regular'}}>
+                Point Balance
+              </Text>
+              <Text style={{fontSize: 17, fontFamily: 'Poppins-Regular'}}>
+                {this.props.totalPoint}
               </Text>
             </View>
-
-            <View style={styles.card}>
-              <View
-                style={{
-                  marginTop: 10,
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}>
-                <Text
-                  style={{
-                    fontSize: 20,
-                    fontWeight: 'bold',
-                    color: colorConfig.pageIndex.activeTintColor,
-                  }}>
-                  {isNaN(this.state.jumPoint) ? 0 : this.state.jumPoint}
-                </Text>
-                <Text
-                  style={{
-                    fontSize: 14,
-                    fontWeight: 'bold',
-                    color: colorConfig.pageIndex.grayColor,
-                  }}>
-                  {' ' +
-                    intlData.messages.point +
-                    ' ' +
-                    intlData.messages.to +
-                    ' ' +
-                    appConfig.appMataUang +
-                    ' '}
-                </Text>
-                <Text
-                  style={{
-                    fontSize: 20,
-                    fontWeight: 'bold',
-                    color: colorConfig.pageIndex.activeTintColor,
-                  }}>
-                  {isNaN(
-                    (this.state.jumPoint / this.state.jumPointRatio) *
-                      this.state.jumMoneyRatio,
-                  )
-                    ? 0
-                    : this.calculateMoneyPoint()}
-                </Text>
-              </View>
-              <View style={{alignItems: 'center', justifyContent: 'center'}}>
-                <Slider
-                  disabled={this.state.jumPointRatio == 0 ? true : false}
-                  minimumValue={0}
-                  maximumValue={this.getMaximumPoint()}
-                  trackStyle={{
-                    width: 280,
-                  }}
-                  thumbTintColor={colorConfig.pageIndex.activeTintColor}
-                  value={this.state.jumPoint}
-                  onValueChange={value => {
-                    // get ratio
-                    let defaultPoint =
-                      this.props.pembayaran.payment * this.state.ratio;
-                    // if (defaultPoint < this.state.jumPointRatio) {
-                    //   defaultPoint = this.state.jumPointRatio;
-                    // }
-                    // get max pont
-                    let jumPoint;
-                    if (value <= defaultPoint) {
-                      jumPoint = this.calculateJumPoint(value);
-                      this.setState({jumPoint});
-                    }
-                  }}
-                />
-                {this.state.jumPoint == 0 ? null : this.state.jumPoint <
-                  this.props.pembayaran.payment * this.state.ratio ? null : (
-                  <Text
-                    style={{
-                      color: colorConfig.store.colorError,
-                    }}>
-                    {'You only need ' + this.getMaximumPoint() + ' Point'}
-                  </Text>
-                )}
-              </View>
-              <TouchableOpacity
-                disabled={
-                  this.state.jumPointRatio == 0 || this.state.myPoint == 0
-                    ? true
-                    : false
+            <VirtualKeyboard
+              defaultText={parseFloat(this.state.jumPoint)}
+              onRef={ref => (this.keyboard = ref)}
+              onChange={e => {
+                if (e !== null && e !== '') {
+                  this.setState({jumPoint: e});
+                } else {
+                  this.setState({jumPoint: '0'});
                 }
-                style={{
-                  backgroundColor:
-                    this.state.jumPointRatio == 0 || this.state.myPoint == 0
-                      ? colorConfig.store.disableButton
-                      : colorConfig.pageIndex.activeTintColor,
-                  borderRadius: 25,
-                  marginVertical: 10,
-                  paddingVertical: 13,
-                  marginTop: 20,
-                  width: '80%',
-                }}
-                onPress={this.pageDetailPoint}>
-                <Text
-                  style={{
-                    fontSize: 16,
-                    fontWeight: 'bold',
-                    color: colorConfig.auth.buttonText,
-                    textAlign: 'center',
-                  }}>
-                  {intlData.messages.setPoint}
-                </Text>
-              </TouchableOpacity>
-            </View>
+              }}
+              keyboardStyle={{fontFamily: 'Poppins-Regular'}}
+            />
           </View>
-        )}
+          <TouchableOpacity
+            onPress={this.pageDetailPoint}
+            disabled={this.isDisabled()}
+            style={[
+              styles.buttonBottomFixed,
+              this.isDisabled() ? {opacity: 0.3} : null,
+            ]}>
+            <Icon
+              size={40}
+              name={Platform.OS === 'ios' ? 'ios-checkmark' : 'md-checkmark'}
+              style={{color: 'white', alignSelf: 'center'}}
+            />
+          </TouchableOpacity>
+        </ScrollView>
       </SafeAreaView>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  btnBackIcon: {
-    color: colorConfig.pageIndex.activeTintColor,
-    margin: 10,
-  },
-  btnBack: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  btnBackText: {
-    color: colorConfig.pageIndex.activeTintColor,
-    fontWeight: 'bold',
-  },
-  loading: {
-    height: Dimensions.get('window').height,
-  },
-  line: {
-    borderBottomColor: colorConfig.store.defaultColor,
-    borderBottomWidth: 2,
-  },
-  card: {
-    // position: 'absolute',
-    alignItems: 'center',
-    justifyContent: 'center',
-    top: -60,
-    // height: 100,
-    margin: 10,
-    borderColor: colorConfig.pageIndex.activeTintColor,
-    borderWidth: 1,
-    borderRadius: 5,
-    backgroundColor: colorConfig.pageIndex.backgroundColor,
-  },
   pendingPointsInfo: {
-    padding: 10,
+    padding: 6,
     backgroundColor: colorConfig.store.transparent,
     borderWidth: 0.2,
     borderColor: colorConfig.store.titleSelected,
@@ -446,12 +408,163 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     // marginTop: 10,
   },
+  buttonBottomFixed: {
+    top: '10%',
+    marginBottom: 100,
+    backgroundColor: colorConfig.store.defaultColor,
+    alignSelf: 'center',
+    width: 70,
+    height: 70,
+    borderRadius: 50,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    shadowColor: '#00000021',
+    shadowOffset: {
+      width: 0,
+      height: 6,
+    },
+    shadowOpacity: 0.37,
+    shadowRadius: 7.49,
+    elevation: 12,
+  },
+
+  container: {
+    alignContent: 'center',
+    margin: 10,
+    paddingBottom: 200,
+  },
+  btnBack: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 10,
+  },
+  btnBackText: {
+    color: 'white',
+    marginLeft: 10,
+    fontWeight: 'bold',
+    paddingVertical: 15,
+  },
+  line: {
+    borderBottomColor: colorConfig.store.defaultColor,
+    borderBottomWidth: 2,
+  },
+  title: {
+    color: colorConfig.pageIndex.activeTintColor,
+    fontSize: 16,
+    marginBottom: 5,
+    fontWeight: 'bold',
+  },
+  vourcherPoint: {
+    position: 'absolute',
+    right: 0,
+    top: 0,
+    backgroundColor: colorConfig.store.transparentColor,
+    height: 30,
+    // width: this.state.screenWidth / 2 - 11,
+    borderTopRightRadius: 9,
+    alignItems: 'flex-end',
+    justifyContent: 'center',
+    paddingLeft: 10,
+    paddingRight: 10,
+    shadowColor: '#00000021',
+    shadowOffset: {
+      width: 0,
+      height: 9,
+    },
+    shadowOpacity: 0.7,
+    shadowRadius: 7.49,
+    elevation: 12,
+  },
+  voucherItem: {
+    borderColor: colorConfig.store.defaultColor,
+    borderWidth: 1,
+    marginBottom: 10,
+    borderRadius: 10,
+    backgroundColor: colorConfig.store.storesItem,
+    shadowColor: '#00000021',
+    shadowOffset: {
+      width: 0,
+      height: 9,
+    },
+    shadowOpacity: 0.7,
+    shadowRadius: 7.49,
+    elevation: 12,
+  },
+  voucherImage1: {
+    width: '100%',
+    resizeMode: 'contain',
+    aspectRatio: 2.5,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+  },
+  voucherImage2: {
+    height: Dimensions.get('window').width / 4,
+    width: Dimensions.get('window').width / 4,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+  },
+  voucherDetail: {
+    paddingLeft: 10,
+    paddingTop: 5,
+    fontSize: 16,
+    paddingRight: 5,
+    borderTopColor: colorConfig.store.defaultColor,
+    borderTopWidth: 1,
+    paddingBottom: 10,
+  },
+  status: {
+    backgroundColor: colorConfig.pageIndex.listBorder,
+    height: 20,
+    paddingLeft: 5,
+    paddingRight: 5,
+    borderRadius: 5,
+    width: 70,
+  },
+  statusTitle: {
+    fontSize: 12,
+    color: colorConfig.pageIndex.backgroundColor,
+    textAlign: 'center',
+  },
+  nameVoucher: {
+    fontSize: 18,
+    color: colorConfig.store.secondaryColor,
+    fontWeight: 'bold',
+  },
+  descVoucher: {
+    fontSize: 12,
+    maxWidth: '95%',
+    marginLeft: 5,
+    color: colorConfig.store.titleSelected,
+  },
+  pointVoucher: {
+    fontSize: 12,
+    color: colorConfig.pageIndex.activeTintColor,
+  },
+  pointVoucherText: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    paddingTop: 0,
+    color: colorConfig.pageIndex.backgroundColor,
+  },
+  point: {
+    margin: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderColor: colorConfig.pageIndex.backgroundColor,
+    borderWidth: 1,
+    borderRadius: 10,
+    padding: 5,
+  },
 });
 
 mapStateToProps = state => ({
   campign: state.rewardsReducer.campaign.campaign,
   totalPoint: state.rewardsReducer.dataPoint.totalPoint,
   pendingPoints: state.rewardsReducer.dataPoint.pendingPoints,
+  detailPoint: state.rewardsReducer.dataPoint.detailPoint,
+  balance: state.SVCReducer.balance.balance,
+  defaultBalance: state.SVCReducer.balance.defaultBalance,
 });
 
 mapDispatchToProps = dispatch => ({

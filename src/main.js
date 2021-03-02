@@ -11,7 +11,6 @@ import {
   Dimensions,
   StatusBar,
   AsyncStorage,
-  Alert,
   Platform,
 } from 'react-native';
 import {connect} from 'react-redux';
@@ -26,9 +25,12 @@ import awsConfig from './config/awsConfig';
 import OneSignal from 'react-native-onesignal';
 import {deviceUserInfo} from './actions/user.action';
 import OfflineNotice from './components/OfflineNotice';
-import {getCompanyInfo} from './actions/stores.action';
+import {getCompanyInfo, getDefaultOutlet} from './actions/stores.action';
 import {paymentRefNo} from './actions/account.action';
-import {getTermsConditions} from './actions/order.action';
+import {getBasket, getTermsConditions} from './actions/order.action';
+import NetInfo from '@react-native-community/netinfo';
+
+this.isConnected = false;
 
 class Main extends Component {
   constructor(props) {
@@ -40,7 +42,6 @@ class Main extends Component {
 
     this.state = {
       isLoading: true,
-      // geolocation: false,
       geolocation: true,
     };
 
@@ -53,11 +54,20 @@ class Main extends Component {
     OneSignal.addEventListener('ids', this.onIds);
   }
 
-  async componentDidMount() {
+  componentDidMount = async () => {
     try {
-      await this.props.dispatch(refreshToken());
-      await this.props.dispatch(getCompanyInfo());
+      const response = await NetInfo.fetch();
+      this.isConnected = response.isConnected;
+    } catch (e) {}
+
+    try {
       await this.props.dispatch(getTermsConditions());
+      await this.props.dispatch(getDefaultOutlet());
+      await Promise.all([
+        this.props.dispatch(refreshToken()),
+        this.props.dispatch(getBasket()),
+        this.props.dispatch(getCompanyInfo()),
+      ]);
 
       const data = await this.performTimeConsumingTask();
       if (data !== null) {
@@ -67,7 +77,7 @@ class Main extends Component {
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
   turnOnLocation = () => {
     RNAndroidLocationEnabler.promptForEnableLocationIfNeeded({
@@ -156,10 +166,9 @@ class Main extends Component {
       authData: {isLoggedIn},
     } = this.props;
 
-    if (this.state.isLoading) {
+    if (this.state.isLoading || !this.isConnected) {
       return <Splash />;
     }
-
     return (
       <View style={styles.container1}>
         <StatusBar

@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     padding: 5,
     textAlign: 'center',
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
     marginBottom: 10,
   },
   detail: {
@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
     color: colorConfig.store.titleSelected,
     maxWidth: Dimensions.get('window').width,
     textAlign: 'left',
-    fontFamily: 'Lato-Medium',
+    fontFamily: 'Poppins-Regular',
     fontSize: 14,
   },
   image: {

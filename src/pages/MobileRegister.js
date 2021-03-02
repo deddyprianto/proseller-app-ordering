@@ -195,7 +195,7 @@ class MobileRegister extends Component {
                 style={{
                   color: colorConfig.store.title,
                   fontSize: 15,
-                  fontFamily: 'Lato-Bold',
+                  fontFamily: 'Poppins-Medium',
                 }}>
                 {intlData.messages.register} {intlData.messages.for}{' '}
                 {this.props.phoneNumber}
@@ -218,7 +218,7 @@ class MobileRegister extends Component {
                 onChangeText={value => this.setState({name: value})}
                 style={{
                   fontSize: 15,
-                  fontFamily: 'Lato-Medium',
+                  fontFamily: 'Poppins-Regular',
                   padding: 12,
                   color: colorConfig.store.title,
                   borderColor: colorConfig.pageIndex.inactiveTintColor,
@@ -244,7 +244,7 @@ class MobileRegister extends Component {
                 onChangeText={value => this.setState({email: value.trim()})}
                 style={{
                   fontSize: 15,
-                  fontFamily: 'Lato-Medium',
+                  fontFamily: 'Poppins-Regular',
                   padding: 12,
                   color: colorConfig.store.title,
                   borderColor: colorConfig.pageIndex.inactiveTintColor,
@@ -267,7 +267,7 @@ class MobileRegister extends Component {
                     fontSize: 18,
                     textAlign: 'center',
                     fontWeight: 'bold',
-                    fontFamily: 'Lato-Medium',
+                    fontFamily: 'Poppins-Regular',
                   }}>
                   {intlData.messages.createAccount}
                 </Text>
@@ -279,7 +279,7 @@ class MobileRegister extends Component {
                   textAlign: 'center',
                   fontSize: 15,
                   color: colorConfig.pageIndex.grayColor,
-                  fontFamily: 'Lato-Medium',
+                  fontFamily: 'Poppins-Regular',
                 }}>
                 {intlData.messages.string1}{' '}
                 <Text

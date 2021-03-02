@@ -9,6 +9,7 @@ import {
   ScrollView,
   RefreshControl,
   FlatList,
+  ActivityIndicator,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
@@ -109,6 +110,20 @@ class HistoryPayment extends Component {
           console.log('Cancel Pressed'),
         ),
       );
+      console.log(error);
+    }
+  };
+
+  loadMoreHistory = async () => {
+    try {
+      await this.setState({refreshing: true});
+      const payload = {
+        skip: this.props.pendingCart.length,
+        take: 10,
+      };
+      await this.props.dispatch(getPendingCart(payload));
+      await this.setState({refreshing: false});
+    } catch (error) {
       console.log(error);
     }
   };
@@ -219,6 +234,30 @@ class HistoryPayment extends Component {
     }
   };
 
+  renderFooter = () => {
+    const {pendingCartLength, pendingCart} = this.props;
+    let trxLength = pendingCart.length;
+
+    if (!this.state.refreshing && trxLength < pendingCartLength) {
+      return <ActivityIndicator style={{color: '#000'}} />;
+    } else {
+      return null;
+    }
+  };
+
+  handleLoadMore = () => {
+    try {
+      const {pendingCartLength, pendingCart} = this.props;
+      let trxLength = pendingCart.length;
+
+      if (!this.state.refreshing && trxLength < pendingCartLength) {
+        this.loadMoreHistory();
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   render() {
     const {intlData, pendingCart} = this.props;
     return (
@@ -252,7 +291,11 @@ class HistoryPayment extends Component {
                   <View style={styles.detail}>
                     <View style={styles.sejajarSpace}>
                       <Text style={styles.storeName}>
-                        {item.outlet.name.substr(0, 18)}
+                        {item.outlet.name.substr(0, 15)}
+                        {item.outlet !== undefined &&
+                          item.outlet.name.length >
+                            item.outlet.name.substr(0, 15).length &&
+                          '...'}
                       </Text>
                       <Text style={styles.itemType}>
                         <Text style={{color: colorConfig.store.title}}>
@@ -305,9 +348,9 @@ class HistoryPayment extends Component {
               </TouchableOpacity>
             )}
             keyExtractor={(item, index) => index.toString()}
-            // ListFooterComponent={this.renderFooter}
-            // onEndReachedThreshold={0.01}
-            // onEndReached={this.handleLoadMore}
+            ListFooterComponent={this.renderFooter}
+            onEndReachedThreshold={0.01}
+            onEndReached={this.handleLoadMore}
           />
           // </View>
         )}
@@ -328,7 +371,7 @@ const styles = StyleSheet.create({
   empty: {
     color: colorConfig.pageIndex.inactiveTintColor,
     textAlign: 'center',
-    fontFamily: 'Lato-Medium',
+    fontFamily: 'Poppins-Regular',
     fontSize: 20,
     marginHorizontal: '5%',
     marginTop: 50,
@@ -369,13 +412,13 @@ const styles = StyleSheet.create({
   },
   storeName: {
     color: colorConfig.store.secondaryColor,
-    fontSize: 16,
-    fontFamily: 'Lato-Bold',
+    fontSize: 14,
+    fontFamily: 'Poppins-Medium',
   },
   paymentTgl: {
     color: colorConfig.pageIndex.inactiveTintColor,
-    fontFamily: 'Lato-Medium',
-    fontSize: 13,
+    fontFamily: 'Poppins-Regular',
+    fontSize: 12,
   },
   paymentTypeLogo: {
     width: 20,
@@ -386,17 +429,18 @@ const styles = StyleSheet.create({
   paymentType: {
     color: colorConfig.store.defaultColor,
     fontSize: 13,
+    fontFamily: 'Poppins-Regular',
   },
   itemType: {
     color: colorConfig.pageIndex.activeTintColor,
-    fontSize: 12,
-    fontFamily: 'Lato-Bold',
-    fontWeight: 'bold',
+    fontSize: 11,
+    fontFamily: 'Poppins-Medium',
+    // fontWeight: 'bold',
   },
   itemTypeStamps: {
     color: colorConfig.pageIndex.activeTintColor,
-    fontSize: 12,
-    fontFamily: 'Lato-Medium',
+    fontSize: 11,
+    fontFamily: 'Poppins-Regular',
     alignItems: 'flex-end',
   },
   btnDetail: {
@@ -410,6 +454,7 @@ const styles = StyleSheet.create({
 
 mapStateToProps = state => ({
   pendingCart: state.orderReducer.dataCart.cart,
+  pendingCartLength: state.orderReducer.dataCart.pendingCartLength,
   intlData: state.intlData,
 });
 

@@ -44,13 +44,19 @@ class RewardsPoint extends Component {
 
   render() {
     const {intlData, campaignActive, totalPoint} = this.props;
-    const HEIGHT = campaignActive ? 3 : 5;
+    const HEIGHT = campaignActive ? 4 : 6;
     const {campign, detailPoint} = this.props;
     return (
       <View
         style={{
-          backgroundColor: colorConfig.pageIndex.activeTintColor,
-          height: this.state.screenHeight / HEIGHT - 40,
+          // height: this.state.screenHeight / HEIGHT - 40,
+          borderWidth: 0.4,
+          borderColor: 'white',
+          justifyContent: 'center',
+          alignItems: 'center',
+          paddingTop: 14,
+          borderRadius: 5,
+          width: '40%',
           // marginBottom: 10,
         }}>
         {totalPoint != undefined &&
@@ -65,7 +71,8 @@ class RewardsPoint extends Component {
                 justifyContent: 'center',
                 alignItems: 'center',
                 // marginLeft: 13,
-                paddingTop: 25,
+                // paddingTop: 25,
+                marginBottom: 10
               }}>
               <Text
                 style={{
@@ -91,12 +98,16 @@ class RewardsPoint extends Component {
                   marginLeft: 40,
                   color: colorConfig.pageIndex.backgroundColor,
                   textAlign: 'center',
-                  fontSize: 42,
-                  fontFamily: 'Lato-Bold',
+                  fontSize: 30,
+                  fontFamily: 'Poppins-Medium',
                 }}>
                 {totalPoint}
               </Text>
-              <Icon size={40} name={'chevron-right'} style={{color: 'white'}} />
+              <Icon
+                size={40}
+                name={'chevron-right'}
+                style={{color: 'white'}}
+              />
             </TouchableOpacity>
           </View>
         ) : null}
@@ -133,6 +144,7 @@ class RewardsPoint extends Component {
                 alignItems: 'center',
                 // marginLeft: 13,
                 paddingTop: 25,
+                marginBottom: 10
               }}>
               <Text
                 style={{
@@ -158,12 +170,16 @@ class RewardsPoint extends Component {
                   marginLeft: 40,
                   color: colorConfig.pageIndex.backgroundColor,
                   textAlign: 'center',
-                  fontSize: 42,
-                  fontFamily: 'Lato-Bold',
+                  fontSize: 30,
+                  fontFamily: 'Poppins-Medium',
                 }}>
                 {totalPoint}
               </Text>
-              <Icon size={40} name={'chevron-right'} style={{color: 'white'}} />
+              <Icon
+                size={40}
+                name={'chevron-right'}
+                style={{color: 'white'}}
+              />
             </TouchableOpacity>
           </View>
         ) : null}
@@ -196,7 +212,7 @@ const styles = StyleSheet.create({
   textInfo: {
     color: colorConfig.store.colorError,
     textAlign: 'center',
-    fontFamily: 'Lato-Medium',
+    fontFamily: 'Poppins-Regular',
   },
 });
 

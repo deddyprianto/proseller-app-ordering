@@ -153,7 +153,7 @@ class ScanQRTable extends Component {
               textAlign: 'center',
               marginRight: 5,
               fontWeight: 'bold',
-              fontFamily: 'Lato-Bold',
+              fontFamily: 'Poppins-Medium',
             }}>
             SORRY..
           </Text>
@@ -164,7 +164,7 @@ class ScanQRTable extends Component {
               marginTop: 10,
               textAlign: 'center',
               marginRight: 5,
-              fontFamily: 'Lato-Bold',
+              fontFamily: 'Poppins-Medium',
             }}>
             {this.state.responseFailed.toUpperCase()}
           </Text>
@@ -198,7 +198,7 @@ class ScanQRTable extends Component {
               textAlign: 'center',
               marginRight: 5,
               fontWeight: 'bold',
-              fontFamily: 'Lato-Bold',
+              fontFamily: 'Poppins-Medium',
             }}>
             Oppss...
           </Text>
@@ -210,7 +210,7 @@ class ScanQRTable extends Component {
               textAlign: 'center',
               marginBottom: 20,
               marginHorizontal: 7,
-              fontFamily: 'Lato-Bold',
+              fontFamily: 'Poppins-Medium',
             }}>
             Looks like you scan QR Code from different outlet.
           </Text>
@@ -262,7 +262,7 @@ class ScanQRTable extends Component {
               textAlign: 'center',
               marginRight: 5,
               fontWeight: 'bold',
-              fontFamily: 'Lato-Bold',
+              fontFamily: 'Poppins-Medium',
               marginVertical: 20,
             }}>
             Please scan table QR Code.
@@ -294,7 +294,7 @@ class ScanQRTable extends Component {
                     textAlign: 'center',
                     marginRight: 5,
                     fontWeight: 'bold',
-                    fontFamily: 'Lato-Bold',
+                    fontFamily: 'Poppins-Medium',
                   }}>
                   Please wait
                 </Text>
@@ -306,7 +306,7 @@ class ScanQRTable extends Component {
                     textAlign: 'center',
                     marginRight: 5,
                     fontWeight: 'bold',
-                    fontFamily: 'Lato-Bold',
+                    fontFamily: 'Poppins-Medium',
                   }}>
                   We are submit your order.
                 </Text>
@@ -424,7 +424,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: 'white',
     fontWeight: 'bold',
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
     textAlign: 'center',
   },
 });

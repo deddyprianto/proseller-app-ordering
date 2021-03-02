@@ -574,7 +574,7 @@ class PickUpTime extends Component {
           {/*        dropDownMaxHeight={250}*/}
           {/*        activeLabelStyle={{*/}
           {/*          color: 'white',*/}
-          {/*          fontFamily: 'Lato-Bold',*/}
+          {/*          fontFamily: 'Poppins-Medium',*/}
           {/*        }}*/}
           {/*        activeItemStyle={{*/}
           {/*          backgroundColor: colorConfig.store.defaultColor,*/}
@@ -585,7 +585,7 @@ class PickUpTime extends Component {
           {/*          borderColor: 'gray',*/}
           {/*        }}*/}
           {/*        labelStyle={{*/}
-          {/*          fontFamily: 'Lato-Medium',*/}
+          {/*          fontFamily: 'Poppins-Regular',*/}
           {/*          fontSize: 14,*/}
           {/*        }}*/}
           {/*        onOpen={() => {*/}
@@ -623,7 +623,7 @@ class PickUpTime extends Component {
             <Text
               style={{
                 color: 'white',
-                fontFamily: 'Lato-Bold',
+                fontFamily: 'Poppins-Medium',
                 fontSize: 20,
               }}>
               Set
@@ -769,37 +769,37 @@ const styles = StyleSheet.create({
     textAlign: 'right',
   },
   option: {
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
     color: colorConfig.store.titleSelected,
     fontSize: 16,
   },
   notSelectedText: {
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
     fontSize: 18,
     color: colorConfig.pageIndex.grayColor,
   },
   notSelectedTextSmall: {
-    fontFamily: 'Lato-Medium',
+    fontFamily: 'Poppins-Regular',
     fontSize: 14,
     color: colorConfig.pageIndex.grayColor,
   },
   selectedTextSmall: {
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
     fontSize: 14,
     color: colorConfig.store.title,
   },
   selectedText: {
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
     fontSize: 19,
     color: colorConfig.store.title,
   },
   selectedTextTime: {
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
     fontSize: 13,
     color: colorConfig.store.title,
   },
   notSelectedTextTime: {
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
     fontSize: 13,
     color: colorConfig.pageIndex.grayColor,
   },
@@ -816,7 +816,7 @@ const styles = StyleSheet.create({
     borderColor: colorConfig.store.titleSelected,
   },
   cardSelected: {
-    backgroundColor: colorConfig.store.secondaryColor,
+    backgroundColor: colorConfig.store.thirdColor,
     borderRadius: 5,
     width: 75,
     maxWidth: 75,
@@ -828,7 +828,7 @@ const styles = StyleSheet.create({
     borderColor: colorConfig.store.titleSelected,
   },
   timeSelected: {
-    backgroundColor: colorConfig.store.secondaryColor,
+    backgroundColor: colorConfig.store.thirdColor,
     borderRadius: 5,
     width: 100,
     maxWidth: 100,

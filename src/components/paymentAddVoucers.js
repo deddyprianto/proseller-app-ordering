@@ -103,7 +103,7 @@ export default class PaymentAddVoucers extends Component {
     const {totalPrice} = this.props;
     // check if voucher is applied on specific products only
     try {
-      if (item.appliedTo != undefined) {
+      if (item.appliedTo !== undefined && item.appliedTo !== 'ALL') {
         //  search specific product
         let result = undefined;
         for (let i = 0; i < this.props.pembayaran.details.length; i++) {
@@ -553,7 +553,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: 'white',
     fontWeight: 'bold',
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
   },
   buttonBottomFixed: {
     backgroundColor: colorConfig.store.defaultColor,

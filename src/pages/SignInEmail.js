@@ -310,78 +310,78 @@ class SignInEmail extends Component {
                 style={{
                   color: colorConfig.store.title,
                   fontSize: 15,
-                  fontFamily: 'Lato-Bold',
+                  fontFamily: 'Poppins-Medium',
                 }}>
                 {intlData.messages.signIn} {intlData.messages.to}{' '}
                 {this.props.email}
               </Text>
             </View>
-            {/*Tab OTP and Password*/}
-            <View
-              style={{
-                marginVertical: 15,
-                borderWidth: 1,
-                borderColor: colorConfig.pageIndex.grayColor,
-                flexDirection: 'row',
-              }}>
-              <TouchableOpacity
-                onPress={() =>
-                  this.setState({
-                    toggleSMSOTP: true,
-                    togglePassword: false,
-                  })
-                }
-                style={{
-                  backgroundColor: this.state.toggleSMSOTP
-                    ? colorConfig.pageIndex.backgroundColor
-                    : colorConfig.pageIndex.grayColor,
-                  borderRightWidth: 1,
-                  borderColor: colorConfig.pageIndex.grayColor,
-                  padding: 15,
-                  alignItems: 'center',
-                  width: '50%',
-                }}>
-                <Text
-                  style={{
-                    fontSize: 15,
-                    color: this.state.toggleSMSOTP
-                      ? colorConfig.store.title
-                      : colorConfig.pageIndex.backgroundColor,
-                    fontWeight: 'bold',
-                    fontFamily: 'Lato-Medium',
-                  }}>
-                  {intlData.messages.use} Email OTP
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() =>
-                  this.setState({
-                    toggleSMSOTP: false,
-                    togglePassword: true,
-                  })
-                }
-                style={{
-                  backgroundColor: this.state.togglePassword
-                    ? colorConfig.pageIndex.backgroundColor
-                    : colorConfig.pageIndex.grayColor,
-                  padding: 15,
-                  alignItems: 'center',
-                  width: '50%',
-                }}>
-                <Text
-                  style={{
-                    fontSize: 15,
-                    color: this.state.togglePassword
-                      ? colorConfig.store.title
-                      : colorConfig.pageIndex.backgroundColor,
-                    fontWeight: 'bold',
-                    fontFamily: 'Lato-Medium',
-                  }}>
-                  {intlData.messages.use} {intlData.messages.password}
-                </Text>
-              </TouchableOpacity>
-            </View>
-            {/*Tab OTP and Password*/}
+            {/*/!*Tab OTP and Password*!/*/}
+            {/*<View*/}
+            {/*  style={{*/}
+            {/*    marginVertical: 15,*/}
+            {/*    borderWidth: 1,*/}
+            {/*    borderColor: colorConfig.pageIndex.grayColor,*/}
+            {/*    flexDirection: 'row',*/}
+            {/*  }}>*/}
+            {/*  <TouchableOpacity*/}
+            {/*    onPress={() =>*/}
+            {/*      this.setState({*/}
+            {/*        toggleSMSOTP: true,*/}
+            {/*        togglePassword: false,*/}
+            {/*      })*/}
+            {/*    }*/}
+            {/*    style={{*/}
+            {/*      backgroundColor: this.state.toggleSMSOTP*/}
+            {/*        ? colorConfig.pageIndex.backgroundColor*/}
+            {/*        : colorConfig.pageIndex.grayColor,*/}
+            {/*      borderRightWidth: 1,*/}
+            {/*      borderColor: colorConfig.pageIndex.grayColor,*/}
+            {/*      padding: 15,*/}
+            {/*      alignItems: 'center',*/}
+            {/*      width: '50%',*/}
+            {/*    }}>*/}
+            {/*    <Text*/}
+            {/*      style={{*/}
+            {/*        fontSize: 15,*/}
+            {/*        color: this.state.toggleSMSOTP*/}
+            {/*          ? colorConfig.store.title*/}
+            {/*          : colorConfig.pageIndex.backgroundColor,*/}
+            {/*        fontWeight: 'bold',*/}
+            {/*        fontFamily: 'Poppins-Regular',*/}
+            {/*      }}>*/}
+            {/*      {intlData.messages.use} Email OTP*/}
+            {/*    </Text>*/}
+            {/*  </TouchableOpacity>*/}
+            {/*  <TouchableOpacity*/}
+            {/*    onPress={() =>*/}
+            {/*      this.setState({*/}
+            {/*        toggleSMSOTP: false,*/}
+            {/*        togglePassword: true,*/}
+            {/*      })*/}
+            {/*    }*/}
+            {/*    style={{*/}
+            {/*      backgroundColor: this.state.togglePassword*/}
+            {/*        ? colorConfig.pageIndex.backgroundColor*/}
+            {/*        : colorConfig.pageIndex.grayColor,*/}
+            {/*      padding: 15,*/}
+            {/*      alignItems: 'center',*/}
+            {/*      width: '50%',*/}
+            {/*    }}>*/}
+            {/*    <Text*/}
+            {/*      style={{*/}
+            {/*        fontSize: 15,*/}
+            {/*        color: this.state.togglePassword*/}
+            {/*          ? colorConfig.store.title*/}
+            {/*          : colorConfig.pageIndex.backgroundColor,*/}
+            {/*        fontWeight: 'bold',*/}
+            {/*        fontFamily: 'Poppins-Regular',*/}
+            {/*      }}>*/}
+            {/*      {intlData.messages.use} {intlData.messages.password}*/}
+            {/*    </Text>*/}
+            {/*  </TouchableOpacity>*/}
+            {/*</View>*/}
+            {/*/!*Tab OTP and Password*!/*/}
             {/*Form login by OTP*/}
             {this.state.toggleSMSOTP ? (
               <View style={{marginVertical: 15}}>
@@ -410,7 +410,7 @@ class SignInEmail extends Component {
                     style={{
                       fontSize: 20,
                       width: '45%',
-                      fontFamily: 'Lato-Medium',
+                      fontFamily: 'Poppins-Regular',
                       padding: 12,
                       color: colorConfig.pageIndex.grayColor,
                       borderColor: colorConfig.pageIndex.inactiveTintColor,
@@ -443,7 +443,7 @@ class SignInEmail extends Component {
                         fontSize: 18,
                         textAlign: 'center',
                         fontWeight: 'bold',
-                        fontFamily: 'Lato-Medium',
+                        fontFamily: 'Poppins-Regular',
                       }}>
                       {intlData.messages.send} OTP
                     </Text>
@@ -489,7 +489,7 @@ class SignInEmail extends Component {
                     style={{
                       fontSize: 20,
                       width: '100%',
-                      fontFamily: 'Lato-Medium',
+                      fontFamily: 'Poppins-Regular',
                       padding: 12,
                       color: colorConfig.store.title,
                       borderColor: colorConfig.pageIndex.inactiveTintColor,
@@ -544,7 +544,7 @@ class SignInEmail extends Component {
                       fontSize: 18,
                       textAlign: 'center',
                       fontWeight: 'bold',
-                      fontFamily: 'Lato-Medium',
+                      fontFamily: 'Poppins-Regular',
                     }}>
                     {intlData.messages.submit}
                   </Text>
@@ -575,7 +575,7 @@ class SignInEmail extends Component {
                       fontSize: 18,
                       textAlign: 'center',
                       fontWeight: 'bold',
-                      fontFamily: 'Lato-Medium',
+                      fontFamily: 'Poppins-Regular',
                     }}>
                     {intlData.messages.submit}
                   </Text>

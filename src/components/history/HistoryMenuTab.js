@@ -54,7 +54,7 @@ class HistoryMenuTab extends Component {
                   style={{
                     fontSize: 14,
                     color: 'white',
-                    fontFamily: 'Lato-Medium',
+                    fontFamily: 'Poppins-Regular',
                   }}>
                   Orders
                 </Text>
@@ -81,7 +81,7 @@ class HistoryMenuTab extends Component {
                   style={{
                     fontSize: 14,
                     color: 'white',
-                    fontFamily: 'Lato-Medium',
+                    fontFamily: 'Poppins-Regular',
                   }}>
                   Pending Orders{' '}
                   {!isEmptyArray(dataBasket)

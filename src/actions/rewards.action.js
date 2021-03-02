@@ -340,3 +340,34 @@ export const redeemVoucher = payload => {
     }
   };
 };
+
+export const checkPromo = codeVoucher => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      let response = await fetchApi(
+        `/voucher/take/${codeVoucher}`,
+        'GET',
+        false,
+        200,
+        token,
+      );
+      console.log(`/voucher/take/${codeVoucher}`);
+      console.log(response, 'response check promo');
+
+      if (response.success) {
+        if (isEmptyArray(response.responseBody.Data)) return false;
+        return response.responseBody.Data[0];
+      }
+      return false;
+    } catch (error) {
+      return error;
+    }
+  };
+};

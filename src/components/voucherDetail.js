@@ -335,7 +335,7 @@ class VoucherDetail extends Component {
           <Text
             style={{
               textAlign: 'center',
-              fontFamily: 'Lato-Bold',
+              fontFamily: 'Poppins-Medium',
               fontSize: 17,
               color: colorConfig.store.defaultColor,
             }}>
@@ -359,7 +359,7 @@ class VoucherDetail extends Component {
               onChangeText={value => this.setState({amountRedeem: value})}
               style={{
                 fontSize: 17,
-                fontFamily: 'Lato-Bold',
+                fontFamily: 'Poppins-Medium',
                 padding: 10,
                 textAlign: 'center',
                 color: colorConfig.store.title,
@@ -395,7 +395,7 @@ class VoucherDetail extends Component {
               <Text
                 style={{
                   color: 'white',
-                  fontFamily: 'Lato-Bold',
+                  fontFamily: 'Poppins-Medium',
                   textAlign: 'center',
                   fontSize: 16,
                 }}>
@@ -421,7 +421,7 @@ class VoucherDetail extends Component {
               <Text
                 style={{
                   color: 'white',
-                  fontFamily: 'Lato-Bold',
+                  fontFamily: 'Poppins-Medium',
                   textAlign: 'center',
                   fontSize: 16,
                 }}>

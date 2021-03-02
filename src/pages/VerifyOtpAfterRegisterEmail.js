@@ -325,7 +325,7 @@ class VerifyOtpAfterRegisterEmail extends Component {
                 style={{
                   color: colorConfig.store.title,
                   fontSize: 15,
-                  fontFamily: 'Lato-Bold',
+                  fontFamily: 'Poppins-Medium',
                 }}>
                 {intlData.messages.signIn} {intlData.messages.to}{' '}
                 {this.props.email}
@@ -356,7 +356,7 @@ class VerifyOtpAfterRegisterEmail extends Component {
                     style={{
                       fontSize: 20,
                       width: '45%',
-                      fontFamily: 'Lato-Medium',
+                      fontFamily: 'Poppins-Regular',
                       padding: 12,
                       color: colorConfig.pageIndex.grayColor,
                       borderColor: colorConfig.pageIndex.inactiveTintColor,
@@ -386,7 +386,7 @@ class VerifyOtpAfterRegisterEmail extends Component {
                         fontSize: 16,
                         textAlign: 'center',
                         fontWeight: 'bold',
-                        fontFamily: 'Lato-Medium',
+                        fontFamily: 'Poppins-Regular',
                       }}>
                       {intlData.messages.resend} OTP
                     </Text>
@@ -434,7 +434,7 @@ class VerifyOtpAfterRegisterEmail extends Component {
                     fontSize: 18,
                     textAlign: 'center',
                     fontWeight: 'bold',
-                    fontFamily: 'Lato-Medium',
+                    fontFamily: 'Poppins-Regular',
                   }}>
                   {intlData.messages.submit}
                 </Text>

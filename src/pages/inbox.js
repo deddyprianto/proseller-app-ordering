@@ -23,6 +23,7 @@ import appConfig from '../config/appConfig';
 import {dataInbox, readMessage} from '../actions/inbox.action';
 import DetailInbox from '../components/inbox/DetailInbox';
 import {isEmptyArray} from '../helper/CheckEmpty';
+import {Actions} from 'react-native-router-flux';
 
 class Inbox extends Component {
   constructor(props) {
@@ -219,7 +220,7 @@ class Inbox extends Component {
           <Text
             style={{
               marginTop: 20,
-              fontFamily: 'Lato-Bold',
+              fontFamily: 'Poppins-Medium',
               fontSize: 20,
               color: colorConfig.store.title,
             }}>
@@ -228,7 +229,7 @@ class Inbox extends Component {
           <Text
             style={{
               marginTop: 10,
-              fontFamily: 'Lato-Bold',
+              fontFamily: 'Poppins-Medium',
               fontSize: 17,
               marginHorizontal: 40,
               textAlign: 'center',
@@ -252,10 +253,20 @@ class Inbox extends Component {
           <View
             style={{
               flexDirection: 'row',
-              justifyContent: 'center',
+              justifyContent: 'flex-start',
               alignItems: 'center',
+              paddingLeft: 25,
               backgroundColor: colorConfig.store.defaultColor,
             }}>
+            <TouchableOpacity
+              onPress={() => Actions.pop()}
+              style={{alignItems: 'flex-start'}}>
+              <Icon
+                size={Platform.OS === 'ios' ? 35 : 26}
+                name={Platform.OS === 'ios' ? 'ios-close' : 'md-close'}
+                style={{color: 'white'}}
+              />
+            </TouchableOpacity>
             <Text style={styles.navbarTitle}>Inbox</Text>
           </View>
         </View>
@@ -282,6 +293,7 @@ const styles = StyleSheet.create({
     color: 'white',
     textAlign: 'center',
     fontWeight: 'bold',
+    marginLeft: '32%',
   },
   emptyNotice: {
     justifyContent: 'center',
@@ -292,7 +304,7 @@ const styles = StyleSheet.create({
     fontSize: 22,
     color: colorConfig.pageIndex.grayColor,
     fontStyle: 'italic',
-    fontFamily: 'Lato-Medium',
+    fontFamily: 'Poppins-Regular',
     textAlign: 'center',
   },
   item: {
@@ -326,7 +338,7 @@ const styles = StyleSheet.create({
   storeName: {
     color: colorConfig.store.title,
     fontSize: 15,
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
   },
   paymentTgl: {
     color: colorConfig.pageIndex.inactiveTintColor,

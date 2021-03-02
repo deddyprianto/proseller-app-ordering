@@ -25,6 +25,7 @@ import {connect} from 'react-redux';
 import {reduxForm} from 'redux-form';
 import appConfig from '../../config/appConfig';
 import {isEmptyData} from '../../helper/CheckEmpty';
+import {getSetting} from '../../actions/order.action';
 
 const imageWidth = Dimensions.get('window').width / 2;
 
@@ -112,14 +113,26 @@ class Header extends Component {
   constructor(props) {
     super(props);
     this.imageWidth = new Animated.Value(styles.$largeImageSize);
+    this.state = {
+      logo: null,
+    };
   }
 
   gotoBack() {
     Actions.pop();
   }
 
+  componentDidMount = async () => {
+    try {
+      const logo = await this.props.dispatch(getSetting('Logo'));
+      if (!isEmptyData(logo)) await this.setState({logo});
+      console.log(logo, 'logologologo')
+    } catch (e) {}
+  };
+
   render() {
     const {backButton, companyInfo} = this.props;
+    const {logo} = this.state;
     return (
       <View>
         <StatusBar
@@ -147,9 +160,9 @@ class Header extends Component {
             </TouchableOpacity>
           ) : null}
           <View style={[styles.container, backButton ? {left: -25} : null]}>
-            {companyInfo !== undefined && !isEmptyData(companyInfo.imageURL) ? (
+            {!isEmptyData(logo) ? (
               <Image
-                source={{uri: companyInfo.imageURL}}
+                source={{uri: logo}}
                 style={{width: WIDTH / 2, height: 90, resizeMode: 'contain'}}
               />
             ) : (
@@ -163,7 +176,7 @@ class Header extends Component {
                 marginTop: 10,
                 color: colorConfig.store.titleSelected,
                 fontSize: 22,
-                fontFamily: 'Lato-Bold',
+                fontFamily: 'Poppins-Medium',
               }}>
               {this.props.titleHeader}
             </Text>

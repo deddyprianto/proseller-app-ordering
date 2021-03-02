@@ -287,7 +287,7 @@ class EmailRegister extends Component {
                 style={{
                   color: colorConfig.store.title,
                   fontSize: 15,
-                  fontFamily: 'Lato-Bold',
+                  fontFamily: 'Poppins-Medium',
                 }}>
                 {intlData.messages.register} {intlData.messages.for}{' '}
                 {this.props.email}
@@ -310,7 +310,7 @@ class EmailRegister extends Component {
                 onChangeText={value => this.setState({name: value})}
                 style={{
                   fontSize: 15,
-                  fontFamily: 'Lato-Medium',
+                  fontFamily: 'Poppins-Regular',
                   padding: 12,
                   color: colorConfig.store.title,
                   borderColor: colorConfig.pageIndex.inactiveTintColor,
@@ -350,7 +350,7 @@ class EmailRegister extends Component {
                     marginRight: -5,
                     marginLeft: 5,
                   }}
-                  textStyle={{fontSize: 0, fontFamily: 'Lato-Medium'}}
+                  textStyle={{fontSize: 0, fontFamily: 'Poppins-Regular'}}
                   style={{
                     padding: 5,
                     color: 'black',
@@ -380,7 +380,7 @@ class EmailRegister extends Component {
                     justifyContent: 'center',
                     paddingHorizontal: 5,
                   }}>
-                  <Text style={{fontSize: 18, fontFamily: 'Lato-Medium'}}>
+                  <Text style={{fontSize: 18, fontFamily: 'Poppins-Regular'}}>
                     {this.state.phoneNumber}
                   </Text>
                 </TouchableOpacity>
@@ -388,10 +388,18 @@ class EmailRegister extends Component {
                   placeholder={'Phone Number'}
                   value={this.state.phone}
                   keyboardType={'numeric'}
-                  onChangeText={value => this.setState({phone: value})}
+                  onChangeText={value => {
+                    try {
+                      if (value[0] !== 0 && value[0] !== '0') {
+                        this.setState({phone: value});
+                      }
+                    } catch (e) {
+                      this.setState({phone: value});
+                    }
+                  }}
                   style={{
                     fontSize: 17,
-                    fontFamily: 'Lato-Medium',
+                    fontFamily: 'Poppins-Regular',
                     paddingHorizontal: 10,
                     paddingVertical: 11,
                     color: colorConfig.store.title,
@@ -433,7 +441,7 @@ class EmailRegister extends Component {
                   style={{
                     fontSize: 15,
                     width: '100%',
-                    fontFamily: 'Lato-Medium',
+                    fontFamily: 'Poppins-Regular',
                     padding: 12,
                     color: colorConfig.store.title,
                     borderColor: colorConfig.pageIndex.inactiveTintColor,
@@ -490,7 +498,7 @@ class EmailRegister extends Component {
                   style={{
                     fontSize: 15,
                     width: '100%',
-                    fontFamily: 'Lato-Medium',
+                    fontFamily: 'Poppins-Regular',
                     padding: 12,
                     color: colorConfig.store.title,
                     borderColor: colorConfig.pageIndex.inactiveTintColor,
@@ -535,7 +543,7 @@ class EmailRegister extends Component {
                     fontSize: 18,
                     textAlign: 'center',
                     fontWeight: 'bold',
-                    fontFamily: 'Lato-Medium',
+                    fontFamily: 'Poppins-Regular',
                   }}>
                   {intlData.messages.createAccount}
                 </Text>
@@ -547,7 +555,7 @@ class EmailRegister extends Component {
                   textAlign: 'center',
                   fontSize: 15,
                   color: colorConfig.pageIndex.grayColor,
-                  fontFamily: 'Lato-Medium',
+                  fontFamily: 'Poppins-Regular',
                 }}>
                 {intlData.messages.string1}{' '}
                 <Text

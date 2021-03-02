@@ -388,7 +388,7 @@ class Products2 extends Component {
               fontSize: 25,
               paddingBottom: 5,
               fontWeight: 'bold',
-              fontFamily: 'Lato-Bold',
+              fontFamily: 'Poppins-Medium',
             }}>
             Order Mode
           </Text>
@@ -407,7 +407,7 @@ class Products2 extends Component {
                   marginLeft: 10,
                   color: 'white',
                   fontWeight: 'bold',
-                  fontFamily: 'Lato-Bold',
+                  fontFamily: 'Poppins-Medium',
                   fontSize: 18,
                   textAlign: 'center',
                 }}>
@@ -432,7 +432,7 @@ class Products2 extends Component {
                   marginLeft: 10,
                   color: 'white',
                   fontWeight: 'bold',
-                  fontFamily: 'Lato-Bold',
+                  fontFamily: 'Poppins-Medium',
                   fontSize: 18,
                   textAlign: 'center',
                 }}>
@@ -457,7 +457,7 @@ class Products2 extends Component {
                   marginLeft: 10,
                   color: 'white',
                   fontWeight: 'bold',
-                  fontFamily: 'Lato-Bold',
+                  fontFamily: 'Poppins-Medium',
                   fontSize: 18,
                   textAlign: 'center',
                 }}>
@@ -498,7 +498,7 @@ class Products2 extends Component {
               fontSize: 25,
               paddingBottom: 5,
               fontWeight: 'bold',
-              fontFamily: 'Lato-Bold',
+              fontFamily: 'Poppins-Medium',
             }}>
             Order Mode
           </Text>
@@ -518,7 +518,7 @@ class Products2 extends Component {
                   marginLeft: 10,
                   color: 'white',
                   fontWeight: 'bold',
-                  fontFamily: 'Lato-Bold',
+                  fontFamily: 'Poppins-Medium',
                   fontSize: 18,
                   textAlign: 'center',
                 }}>
@@ -543,7 +543,7 @@ class Products2 extends Component {
                   marginLeft: 10,
                   color: 'white',
                   fontWeight: 'bold',
-                  fontFamily: 'Lato-Bold',
+                  fontFamily: 'Poppins-Medium',
                   fontSize: 18,
                   textAlign: 'center',
                 }}>
@@ -568,7 +568,7 @@ class Products2 extends Component {
                   marginLeft: 10,
                   color: 'white',
                   fontWeight: 'bold',
-                  fontFamily: 'Lato-Bold',
+                  fontFamily: 'Poppins-Medium',
                   fontSize: 18,
                   textAlign: 'center',
                 }}>
@@ -614,7 +614,7 @@ class Products2 extends Component {
             fontSize: 20,
             paddingBottom: 15,
             fontWeight: 'bold',
-            fontFamily: 'Lato-Bold',
+            fontFamily: 'Poppins-Medium',
             marginLeft: 10,
           }}>
           Item in cart :
@@ -673,7 +673,7 @@ class Products2 extends Component {
               marginLeft: 10,
               color: 'white',
               fontWeight: 'bold',
-              fontFamily: 'Lato-Bold',
+              fontFamily: 'Poppins-Medium',
               fontSize: 15,
               textAlign: 'center',
             }}>
@@ -1743,7 +1743,7 @@ class Products2 extends Component {
                   marginTop: 15,
                   marginLeft: 10,
                   fontSize: 15,
-                  fontFamily: 'Lato-Medium',
+                  fontFamily: 'Poppins-Regular',
                   color: colorConfig.store.title,
                 },
                 !this.availableToOrder(item) ? {opacity: 0.3} : null,
@@ -1764,7 +1764,7 @@ class Products2 extends Component {
                 style={{
                   marginLeft: 10,
                   marginTop: 5,
-                  fontFamily: 'Lato-Bold',
+                  fontFamily: 'Poppins-Medium',
                   fontSize: 16,
                   color: colorConfig.store.title,
                 }}>
@@ -1782,7 +1782,7 @@ class Products2 extends Component {
                 style={{
                   marginLeft: 10,
                   marginTop: 5,
-                  fontFamily: 'Lato-Medium',
+                  fontFamily: 'Poppins-Regular',
                   fontSize: 16,
                   opacity: 0.3,
                   color: colorConfig.store.title,
@@ -2049,7 +2049,7 @@ class Products2 extends Component {
               ? styles.categoryActive
               : styles.categoryNonActive,
           ]}>
-          <Text style={{padding: 8, fontFamily: 'Lato-Medium', color: 'white'}}>
+          <Text style={{padding: 8, fontFamily: 'Poppins-Regular', color: 'white'}}>
             {item.name}
           </Text>
         </View>
@@ -2117,7 +2117,7 @@ class Products2 extends Component {
                   }>
                   <Text
                     style={{
-                      fontFamily: 'Lato-Bold',
+                      fontFamily: 'Poppins-Medium',
                       fontSize: 18,
                       textAlign: 'center',
                       marginRight: 10,
@@ -2309,7 +2309,7 @@ class Products2 extends Component {
                 }>
                 <Text
                   style={{
-                    fontFamily: 'Lato-Bold',
+                    fontFamily: 'Poppins-Medium',
                     fontSize: 18,
                     textAlign: 'center',
                     marginRight: 10,
@@ -2784,7 +2784,7 @@ class Products2 extends Component {
                       width: '80%',
                       fontSize: 15,
                       color: colorConfig.store.title,
-                      fontFamily: 'Lato-Bold',
+                      fontFamily: 'Poppins-Medium',
                     }}
                   />
                   <TouchableOpacity
@@ -2814,7 +2814,7 @@ class Products2 extends Component {
                     <Text
                       style={{
                         color: colorConfig.store.colorError,
-                        fontFamily: 'Lato-Bold',
+                        fontFamily: 'Poppins-Medium',
                         fontSize: 17,
                       }}>
                       Cancel
@@ -3042,7 +3042,7 @@ const styles = StyleSheet.create({
     color: colorConfig.store.title,
     fontSize: 20,
     textAlign: 'left',
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
     padding: 14,
     marginBottom: 5,
   },
@@ -3107,7 +3107,7 @@ const styles = StyleSheet.create({
     marginTop: 27,
     fontSize: 28,
     textAlign: 'center',
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
   },
   productTitle: {
     color: colorConfig.store.title,
@@ -3124,7 +3124,7 @@ const styles = StyleSheet.create({
   productTitleModal: {
     color: colorConfig.store.title,
     marginHorizontal: 6,
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
     fontSize: 23,
     fontWeight: 'bold',
     maxWidth: Dimensions.get('window').width,
@@ -3138,7 +3138,7 @@ const styles = StyleSheet.create({
   productUnavailable: {
     color: colorConfig.pageIndex.grayColor,
     opacity: 0.5,
-    fontFamily: 'Lato-Medium',
+    fontFamily: 'Poppins-Regular',
     marginLeft: 6,
     marginTop: 3,
     fontSize: 14,
@@ -3147,7 +3147,7 @@ const styles = StyleSheet.create({
   productDescModal: {
     color: colorConfig.pageIndex.grayColor,
     marginHorizontal: 6,
-    fontFamily: 'Lato-Medium',
+    fontFamily: 'Poppins-Regular',
     fontSize: 13,
     marginTop: 5,
     maxWidth: Dimensions.get('window').width,
@@ -3183,7 +3183,7 @@ const styles = StyleSheet.create({
   btnIncreaseDecrease: {
     textAlign: 'center',
     fontSize: 24,
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
     fontWeight: 'bold',
     color: 'white',
   },
@@ -3205,7 +3205,7 @@ const styles = StyleSheet.create({
     elevation: 12,
   },
   btnAddBasketModal: {
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
     borderRadius: 10,
     padding: 13,
     marginHorizontal: 45,
@@ -3214,7 +3214,7 @@ const styles = StyleSheet.create({
   textBtnBasketModal: {
     color: 'white',
     fontWeight: 'bold',
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
     fontSize: 17,
     textAlign: 'center',
   },
@@ -3298,7 +3298,7 @@ const styles = StyleSheet.create({
     padding: 5,
     borderRadius: 10,
     fontSize: 24,
-    fontFamily: 'Lato-Medium',
+    fontFamily: 'Poppins-Regular',
     backgroundColor: colorConfig.pageIndex.inactiveTintColor,
     color: 'white',
   },
@@ -3315,7 +3315,7 @@ const styles = StyleSheet.create({
     backgroundColor: colorConfig.store.darkColor,
     color: 'white',
     padding: 8,
-    fontFamily: 'Lato-Medium',
+    fontFamily: 'Poppins-Regular',
     borderRadius: 13,
   },
   outletHeaderFixed: {
@@ -3330,7 +3330,7 @@ const styles = StyleSheet.create({
   outletHeaderFixedTitle: {
     marginLeft: 20,
     fontSize: 17,
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
     color: colorConfig.store.defaultColor,
   },
   clearInputSearch: {

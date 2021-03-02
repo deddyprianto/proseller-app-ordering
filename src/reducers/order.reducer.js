@@ -108,6 +108,18 @@ const orderingSetting = (state = {}, action) => {
   }
 };
 
+const outletSelectionMode = (state = {}, action) => {
+  switch (action.type) {
+    case 'OUTLET_SELECTION_MODE':
+      return {
+        outletSelectionMode: action.outletSelectionMode,
+      };
+
+    default:
+      return state;
+  }
+};
+
 export default combineReducers({
   productsOutlet,
   dataBasket,
@@ -118,4 +130,5 @@ export default combineReducers({
   dataProvider,
   timeslot,
   orderingSetting,
+  outletSelectionMode,
 });

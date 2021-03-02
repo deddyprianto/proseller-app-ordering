@@ -81,7 +81,20 @@ export default class PaymentDetailItem extends Component {
   };
 
   render() {
-    const {intlData, dataVoucer} = this.props;
+    const {intlData, dataVoucer, pembayaran} = this.props;
+    let taxAmount = 0;
+    let taxAmountText = 'Tax';
+    try {
+      if (pembayaran.cartDetails && pembayaran.cartDetails.totalTaxAmount) {
+        taxAmount = pembayaran.cartDetails.totalTaxAmount;
+      }
+
+      if (pembayaran.cartDetails && pembayaran.cartDetails.inclusiveTax > 0) {
+        taxAmount = pembayaran.cartDetails.inclusiveTax;
+        taxAmountText = 'Inclusive Tax';
+      }
+    } catch (e) {}
+
     return (
       <SafeAreaView style={styles.container}>
         <View
@@ -139,7 +152,10 @@ export default class PaymentDetailItem extends Component {
                 <Text
                   style={[
                     styles.desc,
-                    {marginBottom: 10, color: colorConfig.pageIndex.grayColor},
+                    {
+                      marginBottom: 10,
+                      color: colorConfig.pageIndex.grayColor,
+                    },
                   ]}>
                   {intlData.messages.detailItem} :
                 </Text>
@@ -209,16 +225,100 @@ export default class PaymentDetailItem extends Component {
                       marginTop: 10,
                       paddingVertical: 5,
                     }}>
-                    <Text style={styles.desc}>Sub Total</Text>
+                    <Text style={styles.desc}>Subtotal</Text>
                     <Text style={styles.desc}>
                       {appConfig.appMataUang}
                       {this.format(
                         CurrencyFormatter(
-                          this.props.pembayaran.totalNettAmount,
+                          this.props.pembayaran.totalGrossAmount,
                         ),
                       )}
                     </Text>
                   </View>
+
+                  {this.props.pembayaran.totalDiscountAmount > 0 && (
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        paddingVertical: 5,
+                      }}>
+                      <Text
+                        style={[
+                          styles.desc,
+                          {color: colorConfig.store.colorError},
+                        ]}>
+                        Discount
+                      </Text>
+                      <Text
+                        style={[
+                          styles.desc,
+                          {color: colorConfig.store.colorError},
+                        ]}>
+                        - {appConfig.appMataUang}
+                        {this.format(
+                          CurrencyFormatter(
+                            this.props.pembayaran.totalDiscountAmount,
+                          ),
+                        )}
+                      </Text>
+                    </View>
+                  )}
+
+                  {this.props.pembayaran.totalSurchargeAmount > 0 && (
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        paddingVertical: 5,
+                      }}>
+                      <Text style={styles.desc}>Surcharge</Text>
+                      <Text style={styles.desc}>
+                        {appConfig.appMataUang}
+                        {this.format(
+                          CurrencyFormatter(
+                            this.props.pembayaran.totalSurchargeAmount,
+                          ),
+                        )}
+                      </Text>
+                    </View>
+                  )}
+
+                  {pembayaran.cartDetails && (
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        paddingVertical: 5,
+                      }}>
+                      <Text style={styles.desc}>{taxAmountText}</Text>
+                      <Text style={styles.desc}>
+                        {appConfig.appMataUang}
+                        {this.format(CurrencyFormatter(taxAmount))}
+                      </Text>
+                    </View>
+                  )}
+
+                  {pembayaran.cartDetails &&
+                    pembayaran.cartDetails.provider &&
+                    pembayaran.cartDetails.provider.deliveryFee > 0 && (
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          justifyContent: 'space-between',
+                          paddingVertical: 5,
+                        }}>
+                        <Text style={styles.desc}>Delivery Fee</Text>
+                        <Text style={styles.desc}>
+                          {appConfig.appMataUang}
+                          {this.format(
+                            CurrencyFormatter(
+                              pembayaran.cartDetails.provider.deliveryFee,
+                            ),
+                          )}
+                        </Text>
+                      </View>
+                    )}
 
                   {!isEmptyArray(dataVoucer)
                     ? dataVoucer.map(item => (
@@ -251,8 +351,10 @@ export default class PaymentDetailItem extends Component {
                       justifyContent: 'space-between',
                       paddingVertical: 5,
                     }}>
-                    <Text style={styles.desc}>Total</Text>
-                    <Text style={styles.desc}>
+                    <Text style={[styles.desc, {fontFamily: 'Poppins-Bold'}]}>
+                      Total
+                    </Text>
+                    <Text style={[styles.desc, {fontFamily: 'Poppins-Bold'}]}>
                       {appConfig.appMataUang}
                       {this.format(CurrencyFormatter(this.props.totalBayar))}
                     </Text>
@@ -319,7 +421,7 @@ const styles = StyleSheet.create({
   desc: {
     color: colorConfig.store.title,
     fontSize: 15,
-    fontFamily: 'Lato-Medium',
+    fontFamily: 'Poppins-Regular',
   },
   descAddress: {
     color: colorConfig.pageIndex.grayColor,
@@ -330,12 +432,12 @@ const styles = StyleSheet.create({
   descItem: {
     fontSize: 14,
     color: colorConfig.store.title,
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
   },
   descItemPrice: {
     fontSize: 12,
     color: colorConfig.pageIndex.grayColor,
-    fontFamily: 'Lato-Medium',
+    fontFamily: 'Poppins-Regular',
   },
   itemDetail: {
     marginLeft: 10,

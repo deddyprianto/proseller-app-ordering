@@ -311,7 +311,7 @@ export default class ModalOrder extends Component {
               fontSize: 16,
               color: colorConfig.pageIndex.grayColor,
               marginBottom: 35,
-              fontFamily: 'Lato-Bold',
+              fontFamily: 'Poppins-Medium',
             }}>
             {this.state.selectedModifier.name == undefined
               ? 1
@@ -372,7 +372,8 @@ export default class ModalOrder extends Component {
               ? styles.categoryActive
               : styles.categoryNonActive,
           ]}>
-          <Text style={{padding: 5, fontFamily: 'Lato-Medium', color: 'white'}}>
+          <Text
+            style={{padding: 5, fontFamily: 'Poppins-Regular', color: 'white'}}>
             {item.modifierName}
           </Text>
         </View>
@@ -716,7 +717,7 @@ export default class ModalOrder extends Component {
               <Text
                 style={{
                   color: colorConfig.pageIndex.grayColor,
-                  fontFamily: 'Lato-Bold',
+                  fontFamily: 'Poppins-Medium',
                 }}>
                 {item.name}
               </Text>
@@ -757,7 +758,7 @@ export default class ModalOrder extends Component {
                 position: 'absolute',
                 right: 3,
                 color: colorConfig.pageIndex.grayColor,
-                fontFamily: 'Lato-Bold',
+                fontFamily: 'Poppins-Medium',
               }}>
               Unavailable
             </Text>
@@ -768,7 +769,7 @@ export default class ModalOrder extends Component {
                 position: 'absolute',
                 right: 3,
                 color: colorConfig.pageIndex.grayColor,
-                fontFamily: 'Lato-Bold',
+                fontFamily: 'Poppins-Medium',
               }}>
               {' + '}
               {this.formatNumber(CurrencyFormatter(item.price))}{' '}
@@ -793,7 +794,7 @@ export default class ModalOrder extends Component {
   //         <Text
   //           style={{
   //             color: colorConfig.pageIndex.grayColor,
-  //             fontFamily: 'Lato-Bold',
+  //             fontFamily: 'Poppins-Medium',
   //           }}>
   //           {item.modifier.selected.name}
   //         </Text>
@@ -805,7 +806,7 @@ export default class ModalOrder extends Component {
   //               position: 'absolute',
   //               right: 3,
   //               color: colorConfig.pageIndex.grayColor,
-  //               fontFamily: 'Lato-Bold',
+  //               fontFamily: 'Poppins-Medium',
   //             }}>
   //             {' + '}
   //             {this.formatNumber(
@@ -846,7 +847,7 @@ export default class ModalOrder extends Component {
             color: this.findExistModifier(item)
               ? colorConfig.store.titleSelected
               : colorConfig.pageIndex.grayColor,
-            fontFamily: 'Lato-Bold',
+            fontFamily: 'Poppins-Medium',
             marginLeft: 5,
             fontSize: this.findExistModifier(item) ? 15 : null,
           }}>
@@ -859,7 +860,7 @@ export default class ModalOrder extends Component {
               position: 'absolute',
               right: 3,
               color: colorConfig.pageIndex.grayColor,
-              fontFamily: 'Lato-Bold',
+              fontFamily: 'Poppins-Medium',
             }}>
             Unavailable
           </Text>
@@ -870,7 +871,7 @@ export default class ModalOrder extends Component {
               position: 'absolute',
               right: 3,
               color: colorConfig.pageIndex.grayColor,
-              fontFamily: 'Lato-Bold',
+              fontFamily: 'Poppins-Medium',
             }}>
             {' + '}
             {this.formatNumber(CurrencyFormatter(item.price))}{' '}
@@ -927,7 +928,7 @@ export default class ModalOrder extends Component {
             {
               paddingVertical: 5,
               color: colorConfig.pageIndex.grayColor,
-              fontFamily: 'Lato-Bold',
+              fontFamily: 'Poppins-Medium',
             },
             !available ? {opacity: 0.3} : null,
           ]}>
@@ -941,7 +942,7 @@ export default class ModalOrder extends Component {
               right: 3,
               opacity: 0.3,
               color: colorConfig.pageIndex.grayColor,
-              fontFamily: 'Lato-Bold',
+              fontFamily: 'Poppins-Medium',
             }}>
             Unavailable
           </Text>
@@ -952,7 +953,7 @@ export default class ModalOrder extends Component {
               position: 'absolute',
               right: 3,
               color: colorConfig.pageIndex.grayColor,
-              fontFamily: 'Lato-Bold',
+              fontFamily: 'Poppins-Medium',
             }}>
             {' + '}
             {this.formatNumber(CurrencyFormatter(item.price))}{' '}
@@ -1074,6 +1075,19 @@ export default class ModalOrder extends Component {
     }
   };
 
+  renderPromotions = promotions => {
+    return promotions.map(item => (
+      <View style={{flexDirection: 'row', marginHorizontal: 8, marginTop: 10}}>
+        <Icon
+          size={25}
+          name={'tag'}
+          style={{color: colorConfig.store.defaultColor, marginRight: 7}}
+        />
+        <Text style={styles.textPromotion}>{item.name}</Text>
+      </View>
+    ));
+  };
+
   render() {
     // loading indicator
     let {loadModifierTime} = this.props;
@@ -1158,6 +1172,13 @@ export default class ModalOrder extends Component {
                       </Text>
                     ) : null}
                   </View>
+
+                  {this.props.product.product != undefined &&
+                  !isEmptyArray(this.props.product.product.promotions)
+                    ? this.renderPromotions(
+                        this.props.product.product.promotions,
+                      )
+                    : null}
 
                   {this.props.product.product != undefined &&
                   this.props.product.product.description != undefined ? (
@@ -1328,7 +1349,7 @@ export default class ModalOrder extends Component {
                         borderWidth: 1,
                         fontSize: 13,
                         color: colorConfig.pageIndex.grayColor,
-                        fontFamily: 'Lato-Medium',
+                        fontFamily: 'Poppins-Regular',
                         borderColor: colorConfig.pageIndex.inactiveTintColor,
                         textAlignVertical: 'top',
                       }}
@@ -1457,14 +1478,14 @@ const styles = StyleSheet.create({
     color: colorConfig.store.title,
     fontSize: 15,
     textAlign: 'left',
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
     padding: 14,
   },
   titleModifierRules: {
     color: colorConfig.pageIndex.grayColor,
     fontSize: 13,
     textAlign: 'left',
-    // fontFamily: 'Lato-Medium',
+    // fontFamily: 'Poppins-Regular',
     padding: 14,
   },
   title: {
@@ -1540,7 +1561,7 @@ const styles = StyleSheet.create({
     marginTop: 27,
     fontSize: 28,
     textAlign: 'center',
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
   },
   productTitle: {
     color: colorConfig.store.title,
@@ -1551,7 +1572,7 @@ const styles = StyleSheet.create({
   productTitleModal: {
     color: colorConfig.store.title,
     marginHorizontal: 6,
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
     fontSize: 21,
     fontWeight: 'bold',
     maxWidth: Dimensions.get('window').width - 150,
@@ -1559,7 +1580,7 @@ const styles = StyleSheet.create({
   productPriceAfterTitle: {
     color: colorConfig.store.title,
     marginHorizontal: 6,
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
     fontSize: 16,
     fontWeight: 'bold',
     flex: 1,
@@ -1576,7 +1597,7 @@ const styles = StyleSheet.create({
   productDescModal: {
     color: colorConfig.pageIndex.grayColor,
     marginHorizontal: 6,
-    fontFamily: 'Lato-Medium',
+    fontFamily: 'Poppins-Regular',
     fontSize: 13,
     marginTop: 5,
     maxWidth: Dimensions.get('window').width,
@@ -1626,7 +1647,7 @@ const styles = StyleSheet.create({
   btnIncreaseDecrease: {
     textAlign: 'center',
     fontSize: 24,
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
     fontWeight: 'bold',
     color: 'white',
   },
@@ -1648,7 +1669,7 @@ const styles = StyleSheet.create({
     elevation: 12,
   },
   btnAddModifier: {
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
     borderRadius: 10,
     padding: 13,
     marginHorizontal: 55,
@@ -1658,12 +1679,12 @@ const styles = StyleSheet.create({
   textBtnAddModifier: {
     color: 'white',
     fontWeight: 'bold',
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
     fontSize: 15,
     textAlign: 'center',
   },
   btnAddBasketModal: {
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
     borderRadius: 10,
     padding: 13,
     marginHorizontal: 45,
@@ -1672,7 +1693,7 @@ const styles = StyleSheet.create({
   textBtnBasketModal: {
     color: 'white',
     fontWeight: 'bold',
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
     fontSize: 15,
     textAlign: 'center',
   },
@@ -1687,5 +1708,11 @@ const styles = StyleSheet.create({
     backgroundColor: colorConfig.pageIndex.inactiveTintColor,
     padding: 2,
     borderRadius: 20,
+  },
+  textPromotion: {
+    textTransform: 'capitalize',
+    fontFamily: 'Poppins-Italic',
+    fontSize: 13,
+    color: colorConfig.store.secondaryColor,
   },
 });

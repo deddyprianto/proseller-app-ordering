@@ -61,6 +61,7 @@ class AddAddress extends Component {
       dataCity: [],
       loading: true,
       province: '',
+      isPostalCodeValid: true,
     };
   }
 
@@ -215,22 +216,17 @@ class AddAddress extends Component {
   };
 
   notCompleted = () => {
-    const {
-      addressName,
-      address,
-      city,
-      postalCode,
-      streetName,
-      unitNo,
-    } = this.state;
+    const {streetName, postalCode} = this.state;
 
-    if (streetName != '' && streetName != '') {
+    if (streetName !== '' && postalCode !== '') {
+      if (this.state.isPostalCodeValid === false) return true;
       return false;
     }
     return true;
   };
 
   render() {
+    const {isPostalCodeValid} = this.state;
     return (
       <SafeAreaView style={styles.container}>
         {this.state.loading && <Loader />}
@@ -405,8 +401,31 @@ class AddAddress extends Component {
             // mode={'outlined'}
             label="Postal Code"
             value={this.state.postalCode}
-            onChangeText={text => this.setState({postalCode: text})}
+            onChangeText={text => {
+              try {
+                const isValid = new RegExp(
+                  /((\d{6}.*)*\s)?(\d{6})([^\d].*)?$/,
+                ).test(Number(text));
+                if (isValid) {
+                  this.setState({isPostalCodeValid: true});
+                } else {
+                  this.setState({isPostalCodeValid: false});
+                }
+              } catch (e) {}
+              this.setState({postalCode: text});
+            }}
           />
+
+          {!isPostalCodeValid && (
+            <Text
+              style={{
+                fontSize: 10,
+                fontStyle: 'italic',
+                color: colorConfig.store.colorError,
+              }}>
+              Postal code is not valid
+            </Text>
+          )}
 
           <TouchableOpacity
             onPress={this.submitEdit}
@@ -421,7 +440,7 @@ class AddAddress extends Component {
               alignItems: 'center',
             }}>
             <Text
-              style={{color: 'white', fontFamily: 'Lato-Bold', fontSize: 20}}>
+              style={{color: 'white', fontFamily: 'Poppins-Medium', fontSize: 20}}>
               Save
             </Text>
           </TouchableOpacity>

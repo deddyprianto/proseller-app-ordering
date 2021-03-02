@@ -138,7 +138,6 @@ class HistoryPayment extends Component {
     } catch (e) {
       console.log(e);
     }
-    console.log('mau load more');
   };
 
   format = item => {
@@ -176,6 +175,11 @@ class HistoryPayment extends Component {
 
   render() {
     const {intlData} = this.props;
+    let {outletSingle} = this.props;
+    if (outletSingle === undefined) {
+      outletSingle = {};
+      outletSingle.name = '';
+    }
     return (
       <>
         {this.props.pointTransaction == undefined ||
@@ -208,30 +212,62 @@ class HistoryPayment extends Component {
                   <View style={styles.detail}>
                     <View style={styles.sejajarSpace}>
                       <Text style={styles.storeName}>
-                        {item.outletName.substr(0, 20)}
+                        {item.outlet !== undefined
+                          ? item.outlet.name.substr(0, 18)
+                          : outletSingle.name.substr(0, 18)}
+                        {item.outlet !== undefined &&
+                          item.outlet.name.length >
+                            item.outlet.name.substr(0, 15).length &&
+                          '...'}
                       </Text>
-                      <View>
-                        {item.queueNo != undefined ? (
-                          <Text style={styles.queueNo}>{item.queueNo}</Text>
-                        ) : null}
-                        {item.point > 0 ? (
-                          <Text style={styles.itemType}>
-                            <Text style={{color: colorConfig.store.title}}>
-                              x{' '}
+                      {item.status === 'COMPLETED' ? (
+                        <View>
+                          {item.queueNo != undefined ? (
+                            <Text style={styles.queueNo}>{item.queueNo}</Text>
+                          ) : null}
+                          {item.point > 0 ? (
+                            <Text style={styles.itemType}>
+                              <Text style={{color: colorConfig.store.title}}>
+                                x{' '}
+                              </Text>
+                              {item.point + ' ' + intlData.messages.point}
                             </Text>
-                            {item.point + ' ' + intlData.messages.point}
-                          </Text>
-                        ) : null}
-                      </View>
+                          ) : null}
+                          {item.point < 0 ? (
+                            <Text
+                              style={[
+                                styles.itemType,
+                                {color: colorConfig.store.colorError},
+                              ]}>
+                              {item.point + ' ' + intlData.messages.point}
+                            </Text>
+                          ) : null}
+                        </View>
+                      ) : (
+                        <Text style={styles.salesStatus}>{item.status}</Text>
+                      )}
                     </View>
 
-                    {!isEmptyArray(item.stamps) && item.stamps.length > 0 ? (
+                    {item.sumGiftStamps &&
+                    item.sumGiftStamps > 0 &&
+                    item.status === 'COMPLETED' ? (
                       <View style={styles.sejajarSpaceFlexEnd}>
                         <Text style={styles.itemTypeStamps}>
                           <Text style={{color: colorConfig.store.title}}>
                             x{' '}
                           </Text>
-                          {item.stamps.length + ' ' + intlData.messages.stamp}
+                          {item.sumGiftStamps + ' ' + intlData.messages.stamp}
+                        </Text>
+                      </View>
+                    ) : null}
+                    {item.sumGiftStamps &&
+                    item.sumGiftStamps < 0 &&
+                    item.status === 'COMPLETED' ? (
+                      <View style={styles.sejajarSpaceFlexEnd}>
+                        <Text style={styles.itemTypeStamps}>
+                          <Text style={{color: colorConfig.store.colorError}}>
+                            {item.sumGiftStamps + ' ' + intlData.messages.stamp}
+                          </Text>
                         </Text>
                       </View>
                     ) : null}
@@ -295,7 +331,7 @@ const styles = StyleSheet.create({
   empty: {
     color: colorConfig.pageIndex.inactiveTintColor,
     textAlign: 'center',
-    fontFamily: 'Lato-Medium',
+    fontFamily: 'Poppins-Regular',
     fontSize: 20,
     marginHorizontal: '5%',
     marginTop: 50,
@@ -336,12 +372,13 @@ const styles = StyleSheet.create({
   },
   storeName: {
     color: colorConfig.store.secondaryColor,
-    fontSize: 16,
-    fontFamily: 'Lato-Bold',
+    fontSize: 15,
+    fontFamily: 'Poppins-Medium',
   },
   paymentTgl: {
     color: colorConfig.pageIndex.inactiveTintColor,
-    fontFamily: 'Lato-Medium',
+    fontFamily: 'Poppins-Regular',
+    fontSize: 13,
   },
   paymentTypeLogo: {
     width: 20,
@@ -352,25 +389,32 @@ const styles = StyleSheet.create({
   paymentType: {
     // paddingLeft: 10,
     color: colorConfig.store.title,
-    fontWeight: 'bold',
-    fontFamily: 'Lato-Medium',
+    // fontWeight: 'bold',
+    fontFamily: 'Poppins-Regular',
   },
   queueNo: {
     textAlign: 'right',
     fontSize: 12,
     color: colorConfig.store.titleSelected,
-    fontWeight: 'bold',
-    fontFamily: 'Lato-Medium',
+    // fontWeight: 'bold',
+    fontFamily: 'Poppins-Regular',
+  },
+  salesStatus: {
+    textAlign: 'right',
+    fontSize: 12,
+    color: colorConfig.store.colorError,
+    // fontWeight: 'bold',
+    fontFamily: 'Poppins-Regular',
   },
   itemType: {
     color: colorConfig.pageIndex.activeTintColor,
     fontSize: 12,
-    fontFamily: 'Lato-Medium',
+    fontFamily: 'Poppins-Regular',
   },
   itemTypeStamps: {
     color: colorConfig.pageIndex.activeTintColor,
     fontSize: 12,
-    fontFamily: 'Lato-Medium',
+    fontFamily: 'Poppins-Regular',
     alignItems: 'flex-end',
   },
   btnDetail: {
@@ -384,6 +428,7 @@ const styles = StyleSheet.create({
 
 mapStateToProps = state => ({
   pointTransaction: state.rewardsReducer.dataPoint.pointTransaction,
+  outletSingle: state.storesReducer.dataOutletSingle.outletSingle,
   isSuccessGetTrx: state.rewardsReducer.dataPoint.isSuccessGetTrx,
   dataLength: state.rewardsReducer.dataPoint.dataLength,
   page: state.rewardsReducer.dataPoint.page,

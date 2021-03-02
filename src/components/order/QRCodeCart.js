@@ -119,7 +119,7 @@ class WaitingFood extends Component {
             fontSize: 23,
             color: colorConfig.store.title,
             fontWeight: 'bold',
-            fontFamily: 'Lato-Bold',
+            fontFamily: 'Poppins-Medium',
             textAlign: 'center',
           }}>
           Show QRCode to the cashier.
@@ -129,7 +129,7 @@ class WaitingFood extends Component {
             fontSize: 20,
             color: colorConfig.store.defaultColor,
             fontWeight: 'bold',
-            fontFamily: 'Lato-Bold',
+            fontFamily: 'Poppins-Medium',
             textAlign: 'center',
           }}>
           {this.getInfoCart()}
@@ -246,7 +246,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: 'white',
     fontWeight: 'bold',
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
   },
   containerBody: {
     marginHorizontal: 5,
@@ -291,13 +291,13 @@ const styles = StyleSheet.create({
   title: {
     color: colorConfig.pageIndex.activeTintColor,
     fontSize: 18,
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
     padding: 5,
     textAlign: 'center',
     fontWeight: 'bold',
   },
   subTitle: {
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
     color: colorConfig.store.title,
     fontSize: 16,
     padding: 5,
@@ -306,7 +306,7 @@ const styles = StyleSheet.create({
   },
   total: {
     marginVertical: 10,
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
     color: colorConfig.pageIndex.grayColor,
     fontSize: 14,
     padding: 3,
@@ -328,7 +328,7 @@ const styles = StyleSheet.create({
     color: colorConfig.store.title,
     maxWidth: Dimensions.get('window').width,
     fontSize: 13,
-    fontFamily: 'Lato-Medium',
+    fontFamily: 'Poppins-Regular',
   },
   descModifier: {
     color: colorConfig.pageIndex.grayColor,
@@ -336,7 +336,7 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontStyle: 'italic',
     marginLeft: 10,
-    fontFamily: 'Lato-Medium',
+    fontFamily: 'Poppins-Regular',
   },
   descPrice: {
     color: colorConfig.store.title,
@@ -344,7 +344,7 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     alignItems: 'flex-end',
     fontSize: 13,
-    fontFamily: 'Lato-Medium',
+    fontFamily: 'Poppins-Regular',
   },
   descPriceModifier: {
     color: colorConfig.pageIndex.grayColor,
@@ -352,7 +352,7 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     alignItems: 'flex-end',
     fontSize: 10,
-    fontFamily: 'Lato-Medium',
+    fontFamily: 'Poppins-Regular',
   },
   image: {
     width: Dimensions.get('window').width - 40,
@@ -387,7 +387,7 @@ const styles = StyleSheet.create({
     elevation: 12,
   },
   btnAddBasketModal: {
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
     borderRadius: 10,
     padding: 13,
     flexDirection: 'row',
@@ -398,7 +398,7 @@ const styles = StyleSheet.create({
     backgroundColor: colorConfig.store.defaultColor,
   },
   btnCancelBasketModal: {
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
     borderRadius: 10,
     flexDirection: 'row',
     justifyContent: 'center',
@@ -411,7 +411,7 @@ const styles = StyleSheet.create({
   textBtnBasketModal: {
     color: 'white',
     fontWeight: 'bold',
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
     fontSize: 15,
     textAlign: 'center',
   },

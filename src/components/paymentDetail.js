@@ -54,6 +54,8 @@ import {afterPayment, myVoucers} from '../actions/account.action';
 import {Dialog} from 'react-native-paper';
 import {sendPayment} from '../actions/sales.action';
 import Fa from 'react-native-vector-icons/FontAwesome';
+import {campaign, dataPoint} from '../actions/rewards.action';
+import {getSVCBalance} from '../actions/SVC.action';
 
 class PaymentDetail extends Component {
   constructor(props) {
@@ -104,6 +106,8 @@ class PaymentDetail extends Component {
       paymentFailed: false,
       prompPayAtPOS: false,
       pendingCart: {},
+      amountSVC: 0,
+      percentageUseSVC: 0,
     };
 
     // check if users payment methods is empty
@@ -183,6 +187,9 @@ class PaymentDetail extends Component {
     try {
       this.props.dispatch(myVoucers());
       await this.props.dispatch(getAccountPayment());
+      this.props.dispatch(campaign());
+      this.props.dispatch(dataPoint());
+      this.props.dispatch(getSVCBalance());
       // await this.setState({loading: false});
     } catch (e) {
       // await this.setState({loading: false});
@@ -558,6 +565,11 @@ class PaymentDetail extends Component {
         this.state.addPoint == undefined ? 0 : this.state.moneyPoint;
       totalBayar = this.state.totalBayar - (redeemVoucer + redeemPoint);
 
+      // DEDUCT AMOUNT WITH SVC Balance
+      if (this.state.amountSVC > 0) {
+        totalBayar -= Number(this.state.amountSVC);
+      }
+
       if (totalBayar < 0 && this.state.addPoint != undefined) {
         let reducedMoneyPoint = this.state.moneyPoint + totalBayar;
         await this.recalculatePoint(reducedMoneyPoint);
@@ -799,7 +811,7 @@ class PaymentDetail extends Component {
             fontSize: 20,
             paddingBottom: 5,
             fontWeight: 'bold',
-            fontFamily: 'Lato-Bold',
+            fontFamily: 'Poppins-Medium',
           }}>
           Please Enter Your Card CVV
         </Text>
@@ -816,7 +828,7 @@ class PaymentDetail extends Component {
             fontSize: 22,
             textAlign: 'center',
             fontWeight: 'bold',
-            fontFamily: 'Lato-Bold',
+            fontFamily: 'Poppins-Medium',
             color: colorConfig.pageIndex.grayColor,
             borderColor: colorConfig.pageIndex.grayColor,
             borderRadius: 10,
@@ -855,7 +867,7 @@ class PaymentDetail extends Component {
               style={{
                 color: 'white',
                 fontWeight: 'bold',
-                fontFamily: 'Lato-Bold',
+                fontFamily: 'Poppins-Medium',
                 fontSize: 15,
                 textAlign: 'center',
               }}>
@@ -1251,6 +1263,9 @@ class PaymentDetail extends Component {
         delete payload.dataVoucer;
       } catch (e) {}
 
+      // Add status Completed
+      payload.status = 'COMPLETED';
+
       let {url} = this.props;
       console.log('Payload send payment', payload);
 
@@ -1413,7 +1428,7 @@ class PaymentDetail extends Component {
         <Text
           style={{
             fontSize: 17,
-            fontFamily: 'Lato-Bold',
+            fontFamily: 'Poppins-Medium',
             color: colorConfig.pageIndex.grayColor,
           }}>
           Point
@@ -1669,7 +1684,7 @@ class PaymentDetail extends Component {
           <Text
             style={{
               textAlign: 'center',
-              fontFamily: 'Lato-Bold',
+              fontFamily: 'Poppins-Medium',
               fontSize: 17,
               color: colorConfig.store.defaultColor,
             }}>
@@ -1695,7 +1710,7 @@ class PaymentDetail extends Component {
               <Text
                 style={{
                   color: colorConfig.store.titleSelected,
-                  fontFamily: 'Lato-Bold',
+                  fontFamily: 'Poppins-Medium',
                   textAlign: 'center',
                   fontSize: 18,
                 }}>
@@ -1716,7 +1731,7 @@ class PaymentDetail extends Component {
               <Text
                 style={{
                   color: colorConfig.store.titleSelected,
-                  fontFamily: 'Lato-Bold',
+                  fontFamily: 'Poppins-Medium',
                   textAlign: 'center',
                   fontSize: 18,
                 }}>
@@ -1729,8 +1744,86 @@ class PaymentDetail extends Component {
     );
   };
 
+  setDataSVC = async () => {
+    await this.setState({loading: true});
+    await this.resetAppliedVouchers();
+    await this.setDataPayment(true);
+    let {dataVoucer} = this.state;
+
+    // REMOVE DATA THAT CONTAINING  SVC FIRST, SO DATA SVC IS NOT DOUBLE
+    try {
+      let findOldPoint = undefined;
+      if (!isEmptyArray(dataVoucer)) {
+        findOldPoint = dataVoucer.find(i => i.isSVC === true);
+      } else {
+        dataVoucer = [];
+      }
+
+      if (findOldPoint !== undefined) {
+        for (let x = 0; x < dataVoucer.length; x++) {
+          if (dataVoucer[x].isSVC === true) {
+            dataVoucer[x].paymentAmount = this.state.amountSVC;
+            break;
+          }
+        }
+      } else {
+        dataVoucer.push({
+          paymentType: 'Store Value Card',
+          paymentAmount: Number(this.state.amountSVC),
+          isSVC: true,
+        });
+      }
+
+      await this.setState({
+        dataVoucer,
+      });
+      await this.setDataPayment(false);
+    } catch (e) {
+      console.log(e);
+    }
+    await this.setState({loading: false});
+  };
+
+  cencelSVC = async () => {
+    let {dataVoucer} = this.state;
+    await this.setState({loading: true});
+    await this.setState({totalBayar: this.props.pembayaran.payment});
+    await this.resetAppliedVouchers();
+    try {
+      if (dataVoucer.length > 0) {
+        dataVoucer = dataVoucer.filter(i => i.isSVC !== true);
+      } else {
+        dataVoucer = [];
+      }
+      await this.setState({dataVoucer, amountSVC: 0, percentageUseSVC: 0});
+      await this.setDataPayment(false);
+    } catch (e) {
+      await this.setDataPayment(true);
+    }
+    await this.setState({loading: false});
+  };
+
+  setSVCAmount = async amountSVC => {
+    try {
+      let percentageUseSVC = 0;
+      percentageUseSVC = (amountSVC / this.props.balance) * 100;
+      await this.setState({amountSVC, percentageUseSVC});
+      if (amountSVC > 0) {
+        await this.setDataSVC();
+      } else {
+        await this.cencelSVC();
+      }
+    } catch (e) {}
+  };
+
   render() {
-    const {intlData, selectedAccount, detailPoint, campign} = this.props;
+    const {
+      intlData,
+      selectedAccount,
+      detailPoint,
+      campign,
+      balance,
+    } = this.props;
     const {outlet} = this.state;
     return (
       <SafeAreaView style={styles.container}>
@@ -1902,7 +1995,7 @@ class PaymentDetail extends Component {
                         style={{
                           fontSize: 14,
                           color: colorConfig.store.titleSelected,
-                          fontFamily: 'Lato-Medium',
+                          fontFamily: 'Poppins-Regular',
                         }}>
                         {this.getOutletName(outlet.name)}
                       </Text>
@@ -1918,7 +2011,7 @@ class PaymentDetail extends Component {
                     <Text
                       style={{
                         marginRight: 10,
-                        fontFamily: 'Lato-Bold',
+                        fontFamily: 'Poppins-Medium',
                         fontSize: 15,
                         color: colorConfig.store.defaultColor,
                       }}>
@@ -1978,7 +2071,7 @@ class PaymentDetail extends Component {
                           <Text
                             style={{
                               fontSize: 15,
-                              fontFamily: 'Lato-Bold',
+                              fontFamily: 'Poppins-Medium',
                               color: colorConfig.store.secondaryColor,
                             }}>
                             {item.name}
@@ -1993,7 +2086,7 @@ class PaymentDetail extends Component {
                               <Text
                                 style={{
                                   color: colorConfig.store.colorError,
-                                  fontFamily: 'Lato-Bold',
+                                  fontFamily: 'Poppins-Medium',
                                   fontSize: 14,
                                 }}>
                                 Cancel
@@ -2035,7 +2128,7 @@ class PaymentDetail extends Component {
                         <Text
                           style={{
                             color: colorConfig.store.colorError,
-                            fontFamily: 'Lato-Bold',
+                            fontFamily: 'Poppins-Medium',
                             fontSize: 14,
                           }}>
                           Cancel
@@ -2095,6 +2188,103 @@ class PaymentDetail extends Component {
                 )}
               </View>
             ) : null}
+
+            {balance && balance > 0 && (
+              <View
+                style={{
+                  marginTop: 5,
+                  width: '100%',
+                  borderWidth: 0.4,
+                  padding: 13,
+                  backgroundColor: 'white',
+                  borderColor: colorConfig.pageIndex.grayColor,
+                }}>
+                {this.state.amountSVC > 0 ? (
+                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                    <View style={{width: '20%', alignItems: 'center'}}>
+                      <TouchableOpacity
+                        style={{
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}
+                        onPress={this.cencelSVC}>
+                        <Text
+                          style={{
+                            color: colorConfig.store.colorError,
+                            fontFamily: 'Poppins-Medium',
+                            fontSize: 14,
+                          }}>
+                          Cancel
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                    <TouchableOpacity
+                      style={styles.btnMethodSelectedPoints}
+                      onPress={() =>
+                        Actions.virtualKeyboard({
+                          useSVC: true,
+                          amountSVC: this.state.amountSVC,
+                          totalPurchase: this.state.totalBayar,
+                          setSVCAmount: this.setSVCAmount,
+                        })
+                      }>
+                      <Text style={styles.descMethodSelected}>
+                        {this.state.amountSVC} SVC Balance
+                      </Text>
+                      <Icon
+                        size={25}
+                        name={
+                          Platform.OS === 'ios'
+                            ? 'ios-arrow-dropright'
+                            : 'md-arrow-dropright'
+                        }
+                        style={{
+                          color: colorConfig.store.defaultColor,
+                          marginLeft: 10,
+                        }}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                ) : (
+                  <TouchableOpacity
+                    style={styles.btnMethodUnselected}
+                    onPress={() =>
+                      Actions.virtualKeyboard({
+                        useSVC: true,
+                        amountSVC: this.state.amountSVC,
+                        totalPurchase: this.state.totalBayar,
+                        setSVCAmount: this.setSVCAmount,
+                      })
+                    }>
+                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                      <Fa
+                        size={18}
+                        name={'money'}
+                        style={{
+                          color: colorConfig.store.defaultColor,
+                          marginRight: 10,
+                        }}
+                      />
+                      <Text style={styles.descMethodUnselected}>
+                        Use Store Value Card
+                      </Text>
+                    </View>
+                    <Icon
+                      size={25}
+                      name={
+                        Platform.OS === 'ios'
+                          ? 'ios-arrow-dropright'
+                          : 'md-arrow-dropright'
+                      }
+                      style={{
+                        color: colorConfig.store.defaultColor,
+                        marginLeft: 10,
+                      }}
+                    />
+                  </TouchableOpacity>
+                )}
+              </View>
+            )}
 
             <View
               style={{
@@ -2160,7 +2350,7 @@ class PaymentDetail extends Component {
                 style={{
                   fontSize: 19,
                   color: 'white',
-                  fontFamily: 'Lato-Medium',
+                  fontFamily: 'Poppins-Regular',
                 }}>
                 {'Pay' + this.format(CurrencyFormatter(this.state.totalBayar))}
               </Text>
@@ -2184,7 +2374,7 @@ class PaymentDetail extends Component {
             {/*        style={{*/}
             {/*          fontSize: 19,*/}
             {/*          color: colorConfig.store.defaultColor,*/}
-            {/*          fontFamily: 'Lato-Bold',*/}
+            {/*          fontFamily: 'Poppins-Medium',*/}
             {/*        }}>*/}
             {/*        Pay at POS*/}
             {/*      </Text>*/}
@@ -2375,7 +2565,7 @@ const styles = StyleSheet.create({
   descMethodUnselected: {
     color: colorConfig.store.defaultColor,
     fontSize: 16,
-    fontFamily: 'Lato-Medium',
+    fontFamily: 'Poppins-Regular',
     borderRadius: 5,
   },
   descMethodSelected: {
@@ -2404,6 +2594,8 @@ mapStateToProps = state => ({
   selectedAccount: state.cardReducer.selectedAccount.selectedAccount,
   myCardAccount: state.cardReducer.myCardAccount.card,
   defaultAccount: state.userReducer.defaultPaymentAccount.defaultAccount,
+  balance: state.SVCReducer.balance.balance,
+  defaultBalance: state.SVCReducer.balance.defaultBalance,
   companyInfo: state.userReducer.getCompanyInfo.companyInfo,
   dataStamps: state.rewardsReducer.getStamps,
   intlData: state.intlData,

@@ -340,7 +340,7 @@ class ChangeCredentials extends Component {
               color: colorConfig.pageIndex.grayColor,
               fontSize: 15,
               marginBottom: 5,
-              fontFamily: 'Lato-Medium',
+              fontFamily: 'Poppins-Regular',
             }}>
             Enter your new {mode}
           </Text>
@@ -356,7 +356,7 @@ class ChangeCredentials extends Component {
                 onChangeText={value => this.setState({email: value})}
                 style={{
                   fontSize: 17,
-                  fontFamily: 'Lato-Medium',
+                  fontFamily: 'Poppins-Regular',
                   padding: 13,
                   color: colorConfig.store.title,
                   borderColor: colorConfig.pageIndex.inactiveTintColor,
@@ -387,7 +387,7 @@ class ChangeCredentials extends Component {
                     marginRight: -5,
                     marginLeft: 5,
                   }}
-                  textStyle={{fontSize: 0, fontFamily: 'Lato-Medium'}}
+                  textStyle={{fontSize: 0, fontFamily: 'Poppins-Regular'}}
                   style={{
                     padding: 5,
                     color: 'black',
@@ -417,7 +417,7 @@ class ChangeCredentials extends Component {
                     justifyContent: 'center',
                     paddingHorizontal: 5,
                   }}>
-                  <Text style={{fontSize: 18, fontFamily: 'Lato-Medium'}}>
+                  <Text style={{fontSize: 18, fontFamily: 'Poppins-Regular'}}>
                     {this.state.phoneNumber}
                   </Text>
                 </TouchableOpacity>
@@ -427,7 +427,7 @@ class ChangeCredentials extends Component {
                   onChangeText={value => this.setState({phone: value})}
                   style={{
                     fontSize: 17,
-                    fontFamily: 'Lato-Medium',
+                    fontFamily: 'Poppins-Regular',
                     paddingHorizontal: 10,
                     paddingVertical: 12,
                     color: colorConfig.store.title,
@@ -457,7 +457,7 @@ class ChangeCredentials extends Component {
                   fontSize: 18,
                   textAlign: 'center',
                   fontWeight: 'bold',
-                  fontFamily: 'Lato-Medium',
+                  fontFamily: 'Poppins-Regular',
                 }}>
                 Submit
               </Text>

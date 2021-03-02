@@ -63,7 +63,7 @@ class ButtonViewBasket extends Component {
           style={{
             color: 'white',
             fontSize: 14,
-            fontFamily: 'Lato-Bold',
+            fontFamily: 'Poppins-Medium',
           }}>
           View Basket - {appConfig.appMataUang}
           {this.format(

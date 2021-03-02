@@ -6,6 +6,7 @@ import {
   Platform,
   TouchableOpacity,
   Dimensions,
+  Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
@@ -16,14 +17,58 @@ class StoreStores extends Component {
     super(props);
   }
 
+  showAlertBasketNotEmpty = async item => {
+    const {dataBasket} = this.props;
+    Alert.alert(
+      'Change outlet ?',
+      `You will delete your cart in outlet ${dataBasket.outlet.name}`,
+      [
+        {text: 'Cancel'},
+        {
+          text: 'Continue',
+          onPress: () => {
+            this.removeCart();
+            this.storeDetailStores(item);
+          },
+        },
+      ],
+      {cancelable: false},
+    );
+  };
+
+  removeCart = async () => {
+    await this.props.dispatch(removeBasket());
+    await this.props.dispatch(getBasket());
+  };
+
   storeDetailStores = async item => {
-    const {intlData} = this.props;
-    // Actions.productsMode2({item});
     try {
       await this.props.dispatch(getOutletById(item.storeId));
-      this.props.refreshProducts();
-      Actions.pop();
     } catch (e) {}
+    try {
+      this.props.refreshProducts();
+    } catch (e) {}
+    Actions.pop();
+  };
+
+  processChangeOutlet = item => {
+    try {
+      const {dataBasket} = this.props;
+      if (dataBasket === undefined || dataBasket === null) {
+        this.storeDetailStores(item);
+        return;
+      }
+      if (dataBasket && dataBasket.outlet.id === item.storeId) {
+        this.storeDetailStores(item);
+        return;
+      }
+      if (dataBasket && dataBasket.outlet.id !== item.storeId) {
+        this.showAlertBasketNotEmpty(item);
+        return;
+      }
+    } catch (e) {
+      this.storeDetailStores(item);
+    }
   };
 
   render() {
@@ -41,13 +86,13 @@ class StoreStores extends Component {
                 {
                   <TouchableOpacity
                     style={styles.storesItem}
-                    onPress={() => this.storeDetailStores(item)}>
+                    onPress={() => this.processChangeOutlet(item)}>
                     <View style={styles.storesDetail}>
                       <Text
                         style={{
                           fontSize: 14,
                           color: colorConfig.store.secondaryColor,
-                          fontFamily: 'Lato-Bold',
+                          fontFamily: 'Poppins-Medium',
                         }}>
                         {item.storeName}
                       </Text>
@@ -63,7 +108,7 @@ class StoreStores extends Component {
                             backgroundColor: colorConfig.store.colorSuccess,
                             borderRadius: 30,
                             color: colorConfig.store.textWhite,
-                            fontFamily: 'Lato-Medium',
+                            fontFamily: 'Poppins-Regular',
                           }}>
                           {intlData.messages.open}
                         </Text>
@@ -79,7 +124,7 @@ class StoreStores extends Component {
                             backgroundColor: colorConfig.store.colorError,
                             borderRadius: 30,
                             color: colorConfig.store.textWhite,
-                            fontFamily: 'Lato-Medium',
+                            fontFamily: 'Poppins-Regular',
                           }}>
                           {intlData.messages.closed}
                         </Text>
@@ -117,6 +162,7 @@ import {Actions} from 'react-native-router-flux';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
 import {getOutletById} from '../actions/stores.action';
+import {getBasket, removeBasket} from '../actions/order.action';
 
 const styles = StyleSheet.create({
   stores: {
@@ -124,7 +170,7 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     color: colorConfig.store.title,
     fontSize: 19,
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
   },
   storesItem: {
     height: Dimensions.get('window').width / 4 - 10,
@@ -152,9 +198,11 @@ const styles = StyleSheet.create({
   },
   storesDetail: {
     padding: 10,
-    // borderLeftColor: colorConfig.store.defaultColor,
-    // borderLeftWidth: 1,
   },
+});
+
+mapStateToProps = state => ({
+  dataBasket: state.orderReducer.dataBasket.product,
 });
 
 mapDispatchToProps = dispatch => ({

@@ -91,6 +91,78 @@ import awsConfig from './awsConfig';
 import ProductsSpecific from '../components/order/ProductsSpecific';
 import TermsCondition from '../pages/TermCondition';
 import Stores from '../pages/store';
+import ListMembership from '../components/membership/ListMembership';
+import DetailMembership from '../components/membership/DetailMembership';
+import Summary from '../components/SVC/Summary';
+import BuySVC from '../components/SVC/BuySVC';
+import SVCDetail from '../components/SVC/SVCDetail';
+import TransferSVC from '../components/SVC/TransferSVC';
+import VirtualKeyboardCom from '../components/SVC/VirtualKeyboard';
+import ApplyPromoCode from '../pages/ApplyPromoCode';
+
+const MyTransitionSpec = {
+  duration: 200,
+  // easing: Easing.bezier(0.2833, 0.99, 0.31833, 0.99),
+  // timing: Animated.timing,
+};
+
+const transitionConfig = () => ({
+  transitionSpec: MyTransitionSpec,
+  // screenInterpolator: StackViewStyleInterpolator.forFadeFromBottomAndroid,
+  screenInterpolator: sceneProps => {
+    const {layout, position, scene} = sceneProps;
+    const {index} = scene;
+    const width = layout.initWidth;
+
+    ////right to left by replacing bottom scene
+    return {
+      transform: [
+        {
+          translateX: position.interpolate({
+            inputRange: [index - 1, index, index + 1],
+            outputRange: [width, 0, -width],
+          }),
+        },
+      ],
+    };
+
+    // const inputRange = [index - 1, index, index + 1];
+    //
+    // const opacity = position.interpolate({
+    //   inputRange,
+    //   outputRange: [0, 1, 0],
+    // });
+    //
+    // const translateX = position.interpolate({
+    //   inputRange,
+    //   outputRange: [width, 0, 0],
+    // });
+    //
+    // return {
+    //   opacity,
+    //   transform: [{translateX}],
+    // };
+
+    ////from center to corners
+    // const inputRange = [index - 1, index, index + 1];
+    // const opacity = position.interpolate({
+    //     inputRange,
+    //     outputRange: [0.8, 1, 1],
+    // });
+
+    // const scaleY = position.interpolate({
+    //     inputRange,
+    //     outputRange: ([0.8, 1, 1]),
+    // });
+
+    // return {
+    //     opacity,
+    //     transform: [
+    //         { scaleY },
+    //     ],
+    // };
+  },
+});
 
 let backPressed = 0;
 
@@ -130,17 +202,11 @@ export default class Routes extends Component {
       <Router uriPrefix={awsConfig.APP_DEEP_LINK}>
         <Scene>
           <Scene
-            key="root"
-            hideNavBar={true}
-            swipeEnabled={false}
-            animationEnabled={false}
-            panHandlers={null}
-            initial={!this.props.isLoggedIn}>
-            <Scene
-              key="inputPhoneNumber"
-              component={InputPhoneNumber}
-              initial={true}
-            />
+            transitionConfig={transitionConfig}
+            key="app"
+            hideNavBar={true}>
+            <Scene key="pageIndex" component={PageIndex} initial={true} />
+            <Scene key="inputPhoneNumber" component={InputPhoneNumber} />
             <Scene key="signInPhoneNumber" component={SignInPhoneNumber} />
             <Scene
               key="signInPhoneNumberWithPassword"
@@ -171,11 +237,7 @@ export default class Routes extends Component {
               key="emailRegisterWithPassword"
               component={EmailRegisterWithPassword}
             />
-
             <Scene key="listLanguages" component={ListLanguages} />
-          </Scene>
-          <Scene key="app" hideNavBar={true} initial={this.props.isLoggedIn}>
-            <Scene key="pageIndex" component={PageIndex} initial={true} />
             <Scene key="pay" component={Pay} />
             <Scene key="rewards" component={Rewards} />
             <Scene key="qrcode" component={RewardsQRmenu} />
@@ -235,6 +297,8 @@ export default class Routes extends Component {
             <Scene key="paymentAddCard" component={PaymentAddCard} />
 
             <Scene key="notifications" component={Notifications} />
+            <Scene key="listMembership" component={ListMembership} />
+            <Scene key="detailMembership" component={DetailMembership} />
 
             <Scene key="listAddress" component={ListAddress} />
             <Scene key="addAddress" component={AddAddress} />
@@ -255,6 +319,13 @@ export default class Routes extends Component {
               key="changeCredentialsOTP"
               component={ChangeCredentialsOTP}
             />
+
+            <Scene key="summary" component={Summary} />
+            <Scene key="buySVC" component={BuySVC} />
+            <Scene key="SVCDetail" component={SVCDetail} />
+            <Scene key="virtualKeyboard" component={VirtualKeyboardCom} />
+            <Scene key="transferSVC" component={TransferSVC} />
+            <Scene key="applyPromoCode" component={ApplyPromoCode} />
           </Scene>
         </Scene>
       </Router>

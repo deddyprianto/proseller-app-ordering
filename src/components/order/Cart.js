@@ -12,6 +12,7 @@ import {
   Alert,
   RefreshControl,
   SafeAreaView,
+  Image,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -167,7 +168,7 @@ class Cart extends Component {
             fontSize: 25,
             paddingBottom: 5,
             fontWeight: 'bold',
-            fontFamily: 'Lato-Bold',
+            fontFamily: 'Poppins-Medium',
           }}>
           Order Mode
         </Text>
@@ -185,7 +186,7 @@ class Cart extends Component {
                 marginLeft: 10,
                 color: 'white',
                 fontWeight: 'bold',
-                fontFamily: 'Lato-Bold',
+                fontFamily: 'Poppins-Medium',
                 fontSize: 18,
                 textAlign: 'center',
               }}>
@@ -208,7 +209,7 @@ class Cart extends Component {
                 marginLeft: 10,
                 color: 'white',
                 fontWeight: 'bold',
-                fontFamily: 'Lato-Bold',
+                fontFamily: 'Poppins-Medium',
                 fontSize: 18,
                 textAlign: 'center',
               }}>
@@ -231,7 +232,7 @@ class Cart extends Component {
                 marginLeft: 10,
                 color: 'white',
                 fontWeight: 'bold',
-                fontFamily: 'Lato-Bold',
+                fontFamily: 'Poppins-Medium',
                 fontSize: 18,
                 textAlign: 'center',
               }}>
@@ -478,7 +479,7 @@ class Cart extends Component {
             color: colorConfig.store.title,
             textAlign: 'right',
             fontWeight: 'bold',
-            fontFamily: 'Lato-Bold',
+            fontFamily: 'Poppins-Medium',
             paddingVertical: 8,
             fontSize: 15,
             marginRight: 20,
@@ -688,7 +689,7 @@ class Cart extends Component {
             color: colorConfig.store.title,
             textAlign: 'right',
             fontWeight: 'bold',
-            fontFamily: 'Lato-Bold',
+            fontFamily: 'Poppins-Medium',
             paddingVertical: 8,
             fontSize: 15,
             marginRight: 20,
@@ -1354,6 +1355,58 @@ class Cart extends Component {
     }
   };
 
+  getOfflineMessage = outletSingle => {
+    try {
+      if (
+        outletSingle.offlineMessage == undefined ||
+        outletSingle.offlineMessage == '' ||
+        outletSingle.offlineMessage == '-'
+      ) {
+        return 'Sorry, Ordering is not available now.';
+      } else {
+        return outletSingle.offlineMessage;
+      }
+    } catch (e) {
+      return 'Sorry, Ordering is not available now.';
+    }
+  };
+
+  getImageUrl = image => {
+    try {
+      if (image != undefined && image != '-' && image != null) {
+        return {uri: image};
+      }
+    } catch (e) {
+      return appConfig.foodPlaceholder;
+    }
+    return appConfig.foodPlaceholder;
+  };
+
+  format2 = item => {
+    try {
+      const curr = appConfig.appMataUang;
+      item = item.replace(`${curr} `, '');
+      if (curr != 'RP' && curr != 'IDR' && item.includes('.') == false) {
+        return `${item}.00`;
+      }
+      return item;
+    } catch (e) {
+      return item;
+    }
+  };
+
+  format3 = item => {
+    try {
+      const curr = appConfig.appMataUang;
+      if (curr != 'RP' && curr != 'IDR' && item.includes('.') == false) {
+        return `${item}.00`;
+      }
+      return item;
+    } catch (e) {
+      return item;
+    }
+  };
+
   render() {
     const {intlData, dataBasket, orderType, tableType} = this.props;
 
@@ -1391,6 +1444,24 @@ class Cart extends Component {
           // Actions.pop();
           this.interval = undefined;
         } catch (e) {}
+      }
+    } catch (e) {}
+
+    let taxAmount = 0;
+    let taxAmountText = 'Tax';
+    try {
+      if (this.props.dataBasket && this.props.dataBasket.totalTaxAmount) {
+        taxAmount = this.props.dataBasket.totalTaxAmount;
+      }
+
+      if (this.props.dataBasket && this.props.dataBasket.inclusiveTax > 0) {
+        taxAmount = this.props.dataBasket.inclusiveTax;
+        taxAmountText = 'Inclusive Tax ' + this.props.dataBasket.outlet.taxPercentage + '%';
+      }
+
+      if (this.props.dataBasket && this.props.dataBasket.exclusiveTax > 0) {
+        taxAmount = this.props.dataBasket.exclusiveTax;
+        taxAmountText = 'Tax ' + this.props.dataBasket.outlet.taxPercentage + '%';
       }
     } catch (e) {}
 
@@ -1474,10 +1545,20 @@ class Cart extends Component {
                         <View
                           style={{
                             flexDirection: 'row',
-                            justifyContent: 'space-between',
-                            padding: 3,
                           }}>
-                          <View style={{width: '80%'}}>
+                          <View style={{width: '100%', flexDirection: 'row'}}>
+                            <Image
+                              source={this.getImageUrl(
+                                item.product.defaultImageURL,
+                              )}
+                              style={{
+                                marginRight: 7,
+                                borderRadius: 3,
+                                width: 80,
+                                height: 80,
+                                resizeMode: 'contain',
+                              }}
+                            />
                             <View>
                               <Text style={[styles.desc]}>
                                 <Text
@@ -1486,21 +1567,47 @@ class Cart extends Component {
                                   }}>
                                   {item.quantity}x
                                 </Text>{' '}
-                                {item.product.name} ({' '}
-                                {this.format(CurrencyFormatter(item.unitPrice))}{' '}
-                                )
+                                {item.product != undefined
+                                  ? item.product.name
+                                  : '-'}{' '}
+                                {`  +${this.format2(
+                                  CurrencyFormatter(
+                                    item.product != undefined
+                                      ? item.product.retailPrice
+                                      : 0,
+                                  ),
+                                )}`}{' '}
                               </Text>
-                              {item.remark != undefined && item.remark != '' ? (
-                                <Text
-                                  style={{
-                                    color:
-                                      colorConfig.pageIndex.inactiveTintColor,
-                                    fontSize: 12,
-                                    fontStyle: 'italic',
-                                  }}>
-                                  note: {item.remark}
-                                </Text>
-                              ) : null}
+                              {!isEmptyArray(item.promotions)
+                                ? item.promotions.map(promo =>
+                                    item.nettAmount &&
+                                    item.nettAmount < item.grossAmount ? (
+                                      <Text style={styles.promotionActive}>
+                                        <Icon
+                                          size={13}
+                                          name={
+                                            Platform.OS === 'ios'
+                                              ? 'ios-pricetags'
+                                              : 'md-pricetags'
+                                          }
+                                        />{' '}
+                                        {promo.name}
+                                      </Text>
+                                    ) : (
+                                      <Text style={styles.promotionInactive}>
+                                        <Icon
+                                          size={13}
+                                          name={
+                                            Platform.OS === 'ios'
+                                              ? 'ios-pricetags'
+                                              : 'md-pricetags'
+                                          }
+                                        />{' '}
+                                        {promo.name}
+                                      </Text>
+                                    ),
+                                  )
+                                : null}
                               {/* loop item modifier */}
                               {!isEmptyArray(item.modifiers) ? (
                                 <Text
@@ -1508,20 +1615,59 @@ class Cart extends Component {
                                     color:
                                       colorConfig.pageIndex.inactiveTintColor,
                                     fontSize: 10,
-                                    marginLeft: 10,
+                                    marginLeft: 17,
                                     fontStyle: 'italic',
                                   }}>
                                   Add On:
                                 </Text>
                               ) : null}
                               {this.renderItemModifier(item)}
-                              {/* loop item modifier */}
+                              {item.remark != undefined && item.remark != '' ? (
+                                <Text
+                                  style={{
+                                    marginTop: 3,
+                                    color:
+                                      colorConfig.pageIndex.inactiveTintColor,
+                                    fontSize: 12,
+                                    marginLeft: 17,
+                                    fontStyle: 'italic',
+                                  }}>
+                                  Note: {item.remark}
+                                </Text>
+                              ) : null}
+
+                              {item.nettAmount &&
+                              item.nettAmount < item.grossAmount ? (
+                                <View style={{flexDirection: 'row'}}>
+                                  <Text style={styles.descPrice}>
+                                    {this.format3(
+                                      CurrencyFormatter(item.nettAmount),
+                                    )}
+                                  </Text>
+                                  <Text
+                                    style={[
+                                      styles.descPrice,
+                                      {
+                                        textDecorationLine: 'line-through',
+                                        marginLeft: 20,
+                                        color: colorConfig.pageIndex.grayColor,
+                                      },
+                                    ]}>
+                                    {this.format3(
+                                      CurrencyFormatter(item.grossAmount),
+                                    )}
+                                  </Text>
+                                </View>
+                              ) : (
+                                <View>
+                                  <Text style={styles.descPrice}>
+                                    {this.format3(
+                                      CurrencyFormatter(item.grossAmount),
+                                    )}
+                                  </Text>
+                                </View>
+                              )}
                             </View>
-                          </View>
-                          <View>
-                            <Text style={styles.descPrice}>
-                              {this.format(CurrencyFormatter(item.grossAmount))}
-                            </Text>
                           </View>
                         </View>
                       </View>
@@ -1618,23 +1764,44 @@ class Cart extends Component {
                   </View>
                 ) : null}
 
-                {this.props.dataBasket.totalTaxAmount != undefined &&
-                  this.props.dataBasket.totalTaxAmount != 0 && (
+                {this.props.dataBasket.totalGrossAmount !== undefined &&
+                  this.props.dataBasket.totalGrossAmount !== 0 && (
                     <View style={styles.itemSummary}>
-                      <Text style={styles.total}>
-                        {appConfig.appName === 'QIJI'
-                          ? 'Tax Amount Inclusive'
-                          : 'Tax Amount'}
-                      </Text>
+                      <Text style={styles.total}>Sub-Total</Text>
                       <Text style={styles.total}>
                         {this.format(
                           CurrencyFormatter(
-                            this.props.dataBasket.totalTaxAmount,
+                            this.props.dataBasket.totalGrossAmount,
                           ),
                         )}
                       </Text>
                     </View>
                   )}
+
+                {this.props.dataBasket.totalDiscountAmount !== undefined &&
+                  this.props.dataBasket.totalDiscountAmount !== 0 && (
+                    <View style={styles.itemSummary}>
+                      <Text style={styles.total}>Discount</Text>
+                      <Text style={styles.total}>
+                        {this.format(
+                          CurrencyFormatter(
+                            this.props.dataBasket.totalDiscountAmount,
+                          ),
+                        )}
+                      </Text>
+                    </View>
+                  )}
+
+                {taxAmount !== undefined && taxAmount !== 0 && (
+                  <View style={styles.itemSummary}>
+                    <Text style={styles.total}>
+                      {taxAmountText}
+                    </Text>
+                    <Text style={styles.total}>
+                      {this.format(CurrencyFormatter(taxAmount))}
+                    </Text>
+                  </View>
+                )}
 
                 {this.props.dataBasket.totalSurchargeAmount != undefined &&
                   this.props.dataBasket.totalSurchargeAmount != 0 && (
@@ -1764,7 +1931,7 @@ const styles = StyleSheet.create({
   },
   item: {
     borderBottomColor: colorConfig.pageIndex.inactiveTintColor,
-    borderBottomWidth: 1,
+    borderBottomWidth: 0.5,
     margin: 5,
     padding: 5,
     width: '100%',
@@ -1780,7 +1947,7 @@ const styles = StyleSheet.create({
   title: {
     color: colorConfig.store.title,
     fontSize: 18,
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
     padding: 5,
     textAlign: 'center',
     fontWeight: 'bold',
@@ -1791,14 +1958,14 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     fontSize: 12,
     backgroundColor: colorConfig.store.colorError,
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
     padding: 5,
     textAlign: 'center',
     fontWeight: 'bold',
     marginBottom: 20,
   },
   subTitle: {
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
     color: colorConfig.store.title,
     fontSize: 14,
     padding: 5,
@@ -1806,7 +1973,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   subTitleAddItems: {
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
     color: colorConfig.store.defaultColor,
     fontSize: 14,
     padding: 5,
@@ -1815,7 +1982,7 @@ const styles = StyleSheet.create({
   },
   total: {
     marginVertical: 10,
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
     color: colorConfig.pageIndex.grayColor,
     fontSize: 14,
     padding: 3,
@@ -1825,7 +1992,7 @@ const styles = StyleSheet.create({
   },
   totalAddress: {
     // marginVertical: -,
-    // fontFamily: 'Lato-Bold',
+    // fontFamily: 'Poppins-Medium',
     color: colorConfig.pageIndex.grayColor,
     fontSize: 12,
     marginBottom: 5,
@@ -1846,7 +2013,7 @@ const styles = StyleSheet.create({
     color: colorConfig.store.title,
     maxWidth: Dimensions.get('window').width,
     fontSize: 13,
-    fontFamily: 'Lato-Medium',
+    fontFamily: 'Poppins-Regular',
   },
   descModifier: {
     color: colorConfig.pageIndex.grayColor,
@@ -1854,15 +2021,13 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontStyle: 'italic',
     marginLeft: 10,
-    fontFamily: 'Lato-Medium',
+    fontFamily: 'Poppins-Regular',
   },
   descPrice: {
     color: colorConfig.store.title,
-    maxWidth: Dimensions.get('window').width,
-    textAlign: 'right',
-    alignItems: 'flex-end',
-    fontSize: 13,
-    fontFamily: 'Lato-Medium',
+    fontSize: 12,
+    marginTop: 8,
+    fontFamily: 'Poppins-Medium',
   },
   descPriceModifier: {
     color: colorConfig.pageIndex.grayColor,
@@ -1870,7 +2035,7 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     alignItems: 'flex-end',
     fontSize: 10,
-    fontFamily: 'Lato-Medium',
+    fontFamily: 'Poppins-Regular',
   },
   image: {
     width: Dimensions.get('window').width - 40,
@@ -1905,7 +2070,7 @@ const styles = StyleSheet.create({
     elevation: 12,
   },
   btnAddBasketModal: {
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
     borderRadius: 10,
     padding: 13,
     flexDirection: 'row',
@@ -1916,7 +2081,7 @@ const styles = StyleSheet.create({
     backgroundColor: colorConfig.store.colorSuccess,
   },
   btnAddBasketModalDisabled: {
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
     borderRadius: 10,
     padding: 13,
     flexDirection: 'row',
@@ -1927,7 +2092,7 @@ const styles = StyleSheet.create({
     backgroundColor: colorConfig.store.colorSuccessDisabled,
   },
   btnCancelBasketModal: {
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
     borderRadius: 10,
     flexDirection: 'row',
     justifyContent: 'center',
@@ -1940,7 +2105,7 @@ const styles = StyleSheet.create({
   textBtnBasketModal: {
     color: 'white',
     fontWeight: 'bold',
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
     fontSize: 17,
     textAlign: 'center',
   },
@@ -1991,5 +2156,17 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  promotionActive: {
+    fontFamily: 'Poppins-Italic',
+    fontSize: 12,
+    paddingVertical: 3,
+    color: colorConfig.store.defaultColor,
+  },
+  promotionInactive: {
+    fontFamily: 'Poppins-Italic',
+    fontSize: 12,
+    paddingVertical: 3,
+    color: colorConfig.pageIndex.grayColor,
   },
 });

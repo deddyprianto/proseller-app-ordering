@@ -1,0 +1,35 @@
+{
+  "name": "react-native-screen-keyboard",
+  "version": "1.2.0",
+  "description": "On-screen keyboard with customisable keys and tactile / UI feedback 📱",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lukebrandonfarrell/react-native-screen-keyboard.git"
+  },
+  "author": "Luke Brandon Farrell",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/lukebrandonfarrell/react-native-screen-keyboard/issues"
+  },
+  "homepage": "https://github.com/lukebrandonfarrell/react-native-screen-keyboard#readme",
+  "dependencies": {
+    "react-native-material-ripple": "git+https://github.com/lukebrandonfarrell/react-native-material-ripple.git"
+  },
+  "keywords": [
+    "on-screen",
+    "on-screen-keyboard",
+    "screen",
+    "keyboard",
+    "feedback",
+    "react-native",
+    "native",
+    "javascript",
+    "pins",
+    "pin-code",
+    "react-native-pins"
+  ]
+}

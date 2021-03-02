@@ -288,7 +288,7 @@ class AddReferral extends Component {
                 marginBottom: 20,
                 fontSize: 16,
                 color: colorConfig.store.defaultColor,
-                fontFamily: 'Lato-Bold',
+                fontFamily: 'Poppins-Medium',
                 padding: 5,
                 textAlign: 'right',
               }}>
@@ -323,9 +323,9 @@ class AddReferral extends Component {
 
             {modeInvitation == 'email' ? (
               <TextInput
-                style={{height: 50, marginVertical: 10}}
+                style={{height: 60, marginVertical: 10}}
                 theme={theme}
-                mode={'outlined'}
+                // mode={'outlined'}
                 label="Email Address"
                 value={this.state.email}
                 onChangeText={text => this.setState({email: text})}
@@ -368,11 +368,12 @@ class AddReferral extends Component {
                     }}>
                     <PhoneInput
                       flagStyle={{width: 35, height: 25}}
-                      textStyle={{fontSize: 18, fontFamily: 'Lato-Medium'}}
+                      textStyle={{fontSize: 15, fontFamily: 'Poppins-Regular'}}
                       style={{
                         fontSize: 15,
                         width: '100%',
                         padding: 10,
+                        paddingVertical: 15,
                         color: 'black',
                       }}
                       ref={ref => {
@@ -426,7 +427,7 @@ class AddReferral extends Component {
               <Text
                 style={{
                   color: 'white',
-                  fontFamily: 'Lato-Bold',
+                  fontFamily: 'Poppins-Medium',
                   fontSize: 20,
                 }}>
                 Send

@@ -130,7 +130,7 @@ class StoreDetailStores extends Component {
             fontSize: 25,
             paddingBottom: 5,
             fontWeight: 'bold',
-            fontFamily: 'Lato-Bold',
+            fontFamily: 'Poppins-Medium',
           }}>
           Order Mode
         </Text>
@@ -156,7 +156,7 @@ class StoreDetailStores extends Component {
               marginLeft: 10,
               color: 'white',
               fontWeight: 'bold',
-              fontFamily: 'Lato-Bold',
+              fontFamily: 'Poppins-Medium',
               fontSize: 18,
               textAlign: 'center',
             }}>
@@ -184,7 +184,7 @@ class StoreDetailStores extends Component {
               marginLeft: 10,
               color: 'white',
               fontWeight: 'bold',
-              fontFamily: 'Lato-Bold',
+              fontFamily: 'Poppins-Medium',
               fontSize: 18,
               textAlign: 'center',
             }}>
@@ -933,7 +933,7 @@ class StoreDetailStores extends Component {
               marginHorizontal: 10,
               marginTop: 10,
               textAlign: 'center',
-              fontFamily: 'Lato-Bold',
+              fontFamily: 'Poppins-Medium',
               backgroundColor: colorConfig.pageIndex.backgroundColor,
             }}
             onValueChange={(itemValue, itemIndex) => {
@@ -1106,7 +1106,7 @@ class StoreDetailStores extends Component {
                 marginHorizontal: 10,
                 marginTop: 10,
                 textAlign: 'center',
-                fontFamily: 'Lato-Bold',
+                fontFamily: 'Poppins-Medium',
                 backgroundColor: colorConfig.pageIndex.backgroundColor,
               }}
               onValueChange={(itemValue, itemIndex) => {
@@ -1444,7 +1444,7 @@ const styles = StyleSheet.create({
     marginTop: 27,
     fontSize: 28,
     textAlign: 'center',
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
   },
   productTitle: {
     color: colorConfig.store.title,
@@ -1455,7 +1455,7 @@ const styles = StyleSheet.create({
   productTitleModal: {
     color: colorConfig.store.title,
     marginHorizontal: 6,
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
     fontSize: 23,
     fontWeight: 'bold',
     maxWidth: Dimensions.get('window').width,
@@ -1469,7 +1469,7 @@ const styles = StyleSheet.create({
   productDescModal: {
     color: colorConfig.pageIndex.grayColor,
     marginHorizontal: 6,
-    fontFamily: 'Lato-Medium',
+    fontFamily: 'Poppins-Regular',
     fontSize: 13,
     marginTop: 5,
     maxWidth: Dimensions.get('window').width,
@@ -1505,7 +1505,7 @@ const styles = StyleSheet.create({
   btnIncreaseDecrease: {
     textAlign: 'center',
     fontSize: 24,
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
     fontWeight: 'bold',
     color: 'white',
   },
@@ -1527,7 +1527,7 @@ const styles = StyleSheet.create({
     elevation: 12,
   },
   btnAddBasketModal: {
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
     borderRadius: 10,
     padding: 13,
     marginHorizontal: 45,
@@ -1536,7 +1536,7 @@ const styles = StyleSheet.create({
   textBtnBasketModal: {
     color: 'white',
     fontWeight: 'bold',
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
     fontSize: 17,
     textAlign: 'center',
   },

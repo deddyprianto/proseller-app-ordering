@@ -119,8 +119,9 @@ class DetailPoint extends Component {
 
   getPointInfo = item => {
     try {
-      if (item.pointBalance != undefined) return item.pointBalance;
-      else {
+      if (item.pointBalance != undefined) {
+        return item.pointBalance;
+      } else {
         return this.roundToTwo(item.pointDebit - item.pointKredit);
       }
     } catch (e) {
@@ -129,11 +130,21 @@ class DetailPoint extends Component {
   };
 
   getLabelActivity = item => {
-    if (item === 'GET_POINT') return 'Receive Points';
-    if (item === 'RECEIVE_POINT') return 'Receive Points';
-    if (item === 'ADJUST_POINT') return 'Adjusted by admin';
-    if (item === 'REDEEM_POINT') return 'Redeem points';
-    if (item === 'VOID_POINT') return 'Points voided';
+    if (item === 'GET_POINT') {
+      return 'Receive Points';
+    }
+    if (item === 'RECEIVE_POINT') {
+      return 'Receive Points';
+    }
+    if (item === 'ADJUST_POINT') {
+      return 'Adjusted by admin';
+    }
+    if (item === 'REDEEM_POINT') {
+      return 'Redeem points';
+    }
+    if (item === 'VOID_POINT') {
+      return 'Points voided';
+    }
   };
 
   filterReceivePoint = async () => {
@@ -210,11 +221,9 @@ class DetailPoint extends Component {
       userDetail = undefined;
     }
 
-    let color1 = `#f1c40f`;
-    let color2 = `#f39c12`;
-    let color3 = `#e67e22`;
-
-    console.log(customerActivity, 'customerActivity');
+    let color1 = '#f1c40f';
+    let color2 = '#f39c12';
+    let color3 = '#e67e22';
 
     return (
       <SafeAreaView style={{flex: 1, backgroundColor: '#f0f0f0'}}>
@@ -224,16 +233,14 @@ class DetailPoint extends Component {
             <View style={styles.header}>
               <TouchableOpacity
                 onPress={this.goBack}
-                style={{alignItems: 'flex-start'}}>
+                style={{alignItems: 'center'}}>
                 <Icon
-                  size={Platform.OS === 'ios' ? 36 : 27}
+                  size={Platform.OS === 'ios' ? 37 : 28}
                   name={Platform.OS === 'ios' ? 'ios-close' : 'md-close'}
                   style={{color: colorConfig.store.defaultColor}}
                 />
               </TouchableOpacity>
               <Text style={styles.titleHeader}>Rewards Points</Text>
-              {/*<Text style={styles.title}>{intlData.messages.myPoints}</Text>*/}
-              {/*<Text style={styles.titlePoint}>{this.props.totalPoint}</Text>*/}
             </View>
             <LinearGradient
               colors={[color1, color2, color3]}
@@ -250,25 +257,26 @@ class DetailPoint extends Component {
               <Text style={styles.subTitle}>{campign.campaignDesc}</Text>
               <View style={[styles.panel, {paddingTop: 5}]}>
                 <View style={styles.panelNoBorder}>
-                  {!isEmptyArray(history)
-                    ? history.map(item => (
-                        <View style={styles.historyPoint}>
-                          <View>
-                            <Text style={styles.simpleText}>
-                              <Text
-                                style={{
-                                  color: colorConfig.store.secondaryColor,
-                                  fontWeight: 'bold',
-                                }}>
-                                {this.getPointInfo(item)}
-                              </Text>{' '}
-                              points will expire on{' '}
-                              {format(new Date(item.expiryDate), 'dd MMM yyyy')}
-                            </Text>
-                          </View>
-                        </View>
-                      ))
-                    : null}
+                  {!isEmptyArray(history) && (
+                    <View style={styles.historyPoint}>
+                      <View>
+                        <Text style={styles.simpleText}>
+                          <Text
+                            style={{
+                              color: colorConfig.store.secondaryColor,
+                              fontWeight: 'bold',
+                            }}>
+                            {this.getPointInfo(history[0])}
+                          </Text>{' '}
+                          points will expire on{' '}
+                          {format(
+                            new Date(history[0].expiryDate),
+                            'dd MMM yyyy',
+                          )}
+                        </Text>
+                      </View>
+                    </View>
+                  )}
                 </View>
                 <TouchableOpacity
                   onPress={() => Actions.rewards()}
@@ -287,7 +295,7 @@ class DetailPoint extends Component {
                   <Text
                     style={{
                       color: colorConfig.store.secondaryColor,
-                      fontFamily: 'Lato-Medium',
+                      fontFamily: 'Poppins-Regular',
                       fontSize: 16,
                     }}>
                     Redeem Voucher
@@ -385,6 +393,7 @@ const styles = StyleSheet.create({
   },
   header: {
     padding: 15,
+    paddingLeft: 23,
     flexDirection: 'row',
     backgroundColor: 'white',
     alignItems: 'center',
@@ -428,14 +437,14 @@ const styles = StyleSheet.create({
   title: {
     color: colorConfig.store.title,
     fontSize: 20,
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
     marginVertical: 10,
   },
   titleHeader: {
     color: colorConfig.store.defaultColor,
     fontSize: 20,
-    fontFamily: 'Lato-Medium',
-    marginBottom: 5,
+    fontFamily: 'Poppins-Regular',
+    // marginBottom: 5,
     textAlign: 'center',
     marginLeft: 30,
   },
@@ -451,12 +460,12 @@ const styles = StyleSheet.create({
     fontSize: 17,
     marginVertical: 10,
     // textAlign: 'center',
-    fontFamily: 'Lato-Medium',
+    fontFamily: 'Poppins-Regular',
   },
   subTitlePoint: {
     color: colorConfig.store.titleSelected,
     fontSize: 30,
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
   },
   value: {
     color: colorConfig.store.secondaryColor,
@@ -468,7 +477,7 @@ const styles = StyleSheet.create({
     color: colorConfig.store.titleSelected,
     fontSize: 16,
     padding: 2,
-    fontFamily: 'Lato-Medium',
+    fontFamily: 'Poppins-Regular',
   },
   simpleTextValue: {
     color: colorConfig.store.secondaryColor,
@@ -535,14 +544,14 @@ const styles = StyleSheet.create({
     marginLeft: 20,
     fontSize: 20,
     letterSpacing: 2,
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
   },
   textPoint: {
     color: 'white',
     marginTop: 10,
     marginLeft: 20,
     fontSize: 35,
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
   },
   line: {
     borderBottomWidth: 2,
@@ -552,12 +561,12 @@ const styles = StyleSheet.create({
   },
   activityTitle: {
     fontSize: 17,
-    fontFamily: 'Lato-Medium',
+    fontFamily: 'Poppins-Regular',
     color: colorConfig.store.secondaryColor,
   },
   activityRewardsPositive: {
     fontSize: 18,
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
     color: colorConfig.store.colorSuccess,
   },
   activityDate: {

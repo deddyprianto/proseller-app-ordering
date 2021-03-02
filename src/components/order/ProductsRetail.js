@@ -15,7 +15,6 @@ import {
   SafeAreaView,
   TextInput,
   Image,
-  Button,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -35,6 +34,7 @@ import {
   saveProductsOutlet,
   updateSurcharge,
   removeTimeslot,
+  getSetting,
 } from '../../actions/order.action';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
@@ -51,15 +51,13 @@ import * as _ from 'lodash';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import {dataStores} from '../../actions/stores.action';
 import {StatusBarHeight} from '../../helper/StatusBarChecker';
-import EmptySearch from '../atom/EmptySearch';
 import NewSearch from '../atom/NewSearch';
 import {RecyclerListView, DataProvider, LayoutProvider} from 'recyclerlistview';
-import ButtonNavMenu from './ButtonNavMenu';
 import CartIcon from './CartIcon';
 import {Dialog} from 'react-native-paper';
-import {dataPromotion} from '../../actions/promotion.action';
 import StorePromotion from '../storePromotion';
 import OutletIcon from './OutletIcon';
+import CategoryList from './CategoryList';
 
 const ViewTypes = {
   FULL: 0,
@@ -118,11 +116,11 @@ class Products2 extends Component {
         switch (type) {
           case ViewTypes.FULL:
             dim.width = width / 2 - 10;
-            dim.height = 260;
+            dim.height = 330;
             break;
           default:
             dim.width = width / 2 - 10;
-            dim.height = 255;
+            dim.height = 275;
         }
       },
     );
@@ -159,6 +157,8 @@ class Products2 extends Component {
       loadingSearch: false,
       indexLoaded: 1,
       deliveryInfo: false,
+      productPlaceholder: null,
+      showAllCategory: false,
     };
   }
 
@@ -167,9 +167,6 @@ class Products2 extends Component {
   };
 
   _onViewableItemsChanged = ({viewableItems, changed}) => {
-    // console.log('Visible items are', viewableItems);
-    // console.log('Changed in this iteration', changed);
-
     if (viewableItems.length == 1) {
       try {
         if (viewableItems[0].index != undefined) {
@@ -212,7 +209,6 @@ class Products2 extends Component {
           }
         }
       } else {
-        console.log('BABI 2');
         for (let i = 0; i < products.length; i++) {
           if (!isEmptyArray(products[i].items)) {
             for (let j = 0; j < products[i].items.length; j++) {
@@ -230,9 +226,7 @@ class Products2 extends Component {
           }
         }
       }
-    } catch (e) {
-      console.log(e, 'anjinggggg');
-    }
+    } catch (e) {}
   };
 
   updateCategoryPosition = index => {
@@ -247,21 +241,19 @@ class Products2 extends Component {
       this.handleBackPress,
     );
 
-    // this.checkOpeningHours();
+    const productPlaceholder = await this.props.dispatch(
+      getSetting('ProductPlaceholder'),
+    );
+    if (!isEmptyData(productPlaceholder))
+      await this.setState({productPlaceholder});
+
+    const showAllCategory = await this.props.dispatch(
+      getSetting('ShowAllCategory'),
+    );
+    if (!isEmptyData(showAllCategory)) await this.setState({showAllCategory});
 
     await this.firstMethodToRun(false);
 
-    // this.refreshOutletStatus();
-
-    // this.refreshOpeningHours();
-
-    // berfore get new products, delete old products first, so different outlet got different products
-    // await this.props.dispatch(removeProducts());
-
-    //  if outlet type is Quick Service, then ignore popup select ordering mode, force set to TAKEAWAY
-    // if (this.state.item.outletType == 'QUICKSERVICE') {
-    //   this.props.dispatch(setOrderType('TAKEAWAY'));
-    // }
     try {
       this.props.dispatch(removeTimeslot());
     } catch (e) {}
@@ -327,9 +319,7 @@ class Products2 extends Component {
       this.state.item.orderingStatus == undefined ||
       this.state.item.orderingStatus == 'AVAILABLE'
     ) {
-      // this.openOrderingMode();
       await this.getCategoryByOutlet(refresh);
-      // await this.getProductsByOutlet(refresh);
       // check if basket outlet is not same as current outlet
       await this.checkBucketExist();
     } else {
@@ -364,14 +354,6 @@ class Products2 extends Component {
 
   setOrderType = type => {
     const {productTemp, item} = this.state;
-    // check outlet type
-    // if (this.state.item.outletType == 'QUICKSERVICE') {
-    //   this.props.dispatch(setOrderType('TAKEAWAY'));
-    //   this.RBSheet.close();
-    // } else {
-    //   this.props.dispatch(setOrderType(type));
-    //   this.RBSheet.close();
-    // }
     this.props.dispatch(setOrderType(type));
     this.RBSheet.close();
     if (!isEmptyObject(productTemp)) {
@@ -436,7 +418,7 @@ class Products2 extends Component {
           <Text
             style={{
               textAlign: 'center',
-              fontFamily: 'Lato-Bold',
+              fontFamily: 'Poppins-Medium',
               fontSize: 18,
               color: colorConfig.store.defaultColor,
             }}>
@@ -469,7 +451,7 @@ class Products2 extends Component {
             <Text
               style={{
                 color: 'white',
-                fontFamily: 'Lato-Bold',
+                fontFamily: 'Poppins-Medium',
                 textAlign: 'center',
                 fontSize: 16,
               }}>
@@ -515,7 +497,7 @@ class Products2 extends Component {
               fontSize: 25,
               paddingBottom: 5,
               fontWeight: 'bold',
-              fontFamily: 'Lato-Bold',
+              fontFamily: 'Poppins-Medium',
             }}>
             Order Mode
           </Text>
@@ -534,7 +516,7 @@ class Products2 extends Component {
                   marginLeft: 10,
                   color: 'white',
                   fontWeight: 'bold',
-                  fontFamily: 'Lato-Bold',
+                  fontFamily: 'Poppins-Medium',
                   fontSize: 18,
                   textAlign: 'center',
                 }}>
@@ -559,7 +541,7 @@ class Products2 extends Component {
                   marginLeft: 10,
                   color: 'white',
                   fontWeight: 'bold',
-                  fontFamily: 'Lato-Bold',
+                  fontFamily: 'Poppins-Medium',
                   fontSize: 18,
                   textAlign: 'center',
                 }}>
@@ -585,7 +567,7 @@ class Products2 extends Component {
                     marginLeft: 10,
                     color: 'white',
                     fontWeight: 'bold',
-                    fontFamily: 'Lato-Bold',
+                    fontFamily: 'Poppins-Medium',
                     fontSize: 18,
                     textAlign: 'center',
                   }}>
@@ -627,7 +609,7 @@ class Products2 extends Component {
               fontSize: 25,
               paddingBottom: 5,
               fontWeight: 'bold',
-              fontFamily: 'Lato-Bold',
+              fontFamily: 'Poppins-Medium',
             }}>
             Order Mode
           </Text>
@@ -647,7 +629,7 @@ class Products2 extends Component {
                   marginLeft: 10,
                   color: 'white',
                   fontWeight: 'bold',
-                  fontFamily: 'Lato-Bold',
+                  fontFamily: 'Poppins-Medium',
                   fontSize: 18,
                   textAlign: 'center',
                 }}>
@@ -672,7 +654,7 @@ class Products2 extends Component {
                   marginLeft: 10,
                   color: 'white',
                   fontWeight: 'bold',
-                  fontFamily: 'Lato-Bold',
+                  fontFamily: 'Poppins-Medium',
                   fontSize: 18,
                   textAlign: 'center',
                 }}>
@@ -697,7 +679,7 @@ class Products2 extends Component {
                   marginLeft: 10,
                   color: 'white',
                   fontWeight: 'bold',
-                  fontFamily: 'Lato-Bold',
+                  fontFamily: 'Poppins-Medium',
                   fontSize: 18,
                   textAlign: 'center',
                 }}>
@@ -733,8 +715,6 @@ class Products2 extends Component {
         customStyles={{
           container: {
             backgroundColor: colorConfig.store.textWhite,
-            // justifyContent: 'center',
-            // alignItems: 'center',
           },
         }}>
         <Text
@@ -743,7 +723,7 @@ class Products2 extends Component {
             fontSize: 20,
             paddingBottom: 15,
             fontWeight: 'bold',
-            fontFamily: 'Lato-Bold',
+            fontFamily: 'Poppins-Medium',
             marginLeft: 10,
           }}>
           Item in cart :
@@ -802,7 +782,7 @@ class Products2 extends Component {
               marginLeft: 10,
               color: 'white',
               fontWeight: 'bold',
-              fontFamily: 'Lato-Bold',
+              fontFamily: 'Poppins-Medium',
               fontSize: 15,
               textAlign: 'center',
             }}>
@@ -923,25 +903,13 @@ class Products2 extends Component {
             skip += 20;
           }
         }
-        //  asynchronously get all item
-        // if (response.data.length > 1) {
-        //   for (let i = 1; i < response.data.length; i++) {
-        //     let categoryId = response.data[i].id;
-        //     await this.getProductsByCategory(categoryId, 0, 100, refresh);
-        //   }
-        // }
-        // if (response.data.length > 1) {
-        //   for (let i = 1; i < response.data.length; i++) {
-        //     let categoryId = response.data[i].id;
-        //     let skip = 0;
-        //     await this.getProductsByCategory(categoryId, 0, 10, refresh, i);
-        //     skip = 10;
-        //     for (let j = 0; j < response.data[i].dataLength / 10; j++) {
-        //       await this.loadMoreProducts(categoryId, outletID, skip, i);
-        //       skip += 10;
-        //     }
-        //   }
-        // }
+
+        // Fetch second group preset if the first group preset length is less then 10, because if
+        // the list of product is less than 10 (visible in viewport), then the lazy load will not called
+        if (response.data[1].dataLength < 10) {
+          this.loadMoreCategory();
+        }
+
         let categories = JSON.stringify(response.data);
         categories = JSON.parse(categories);
         categories.finished = true;
@@ -1009,9 +977,9 @@ class Products2 extends Component {
           this.props.dispatch(
             saveProductsOutlet(categories, outletID, refresh),
           );
-          await this.setState({
-            products,
-          });
+          // await this.setState({
+          //   products,
+          // });
         }
         this.products.push(categories);
       }
@@ -1308,31 +1276,6 @@ class Products2 extends Component {
         return;
       }
     } catch (e) {}
-    // if (this.checkBucketExist(product)) {
-    //   this.showAlertBasketNotEmpty(product);
-    // } else {
-    //   // check if product have modifier, then ask customer to select mode add
-    //   const hasModifier = product.product.productModifiers.length;
-    //   const {dataBasket} = this.props;
-    //   // check if product has in basket
-    //   let isInBasket = false;
-    //   if (dataBasket != undefined) {
-    //     isInBasket = await this.checkIfItemExistInBasket(product);
-    //   }
-    //
-    //   if (hasModifier == 0 || isInBasket == false) {
-    //     this.openModal(product);
-    //   } else {
-    //     const productsWithMofidier = dataBasket.details.filter(
-    //       data => data.productID == product.productID,
-    //     );
-    //     await this.setState({
-    //       selectedproductsWithMofidier: product,
-    //       productsWithMofidier,
-    //     });
-    //     this.RBmodifier.open();
-    //   }
-    // }
     // check if product have modifier, then ask customer to select mode add
     const hasModifier = product.product.productModifiers.length;
     const {dataBasket} = this.props;
@@ -1488,28 +1431,6 @@ class Products2 extends Component {
       data.id = this.state.item.id;
       data.details.push(dataproduct);
 
-      // if data basket is not empty, then hide modal and syncronously add to server
-      // let outletId = `outlet::${this.state.item.id}`;
-      // if (
-      //   this.props.dataBasket != undefined &&
-      //   this.props.dataBasket.outletID == outletId
-      // ) {
-      //   this.setState({
-      //     selectedProduct: {},
-      //     isModalVisible: false,
-      //   });
-      // }
-
-      // check max order value outlet
-      // if (!this.checkMaxOrderValue('add', data)) {
-      //   Alert.alert(
-      //     'Sorry..',
-      //     'Maximum order amount is ' +
-      //       CurrencyFormatter(parseFloat(item.maxOrderAmount)),
-      //   );
-      //   return;
-      // }
-
       // post data to server
       let response = await this.props.dispatch(addProductToBasket(data));
       console.log('response add ', response);
@@ -1561,9 +1482,7 @@ class Products2 extends Component {
       };
 
       // search detail ID on previous data
-      // let previousData = this.props.dataBasket.details.find(
-      //   item => item.productID == product.productID,
-      // );
+
       let previousData = product;
 
       // if product have modifier
@@ -1625,16 +1544,6 @@ class Products2 extends Component {
       if (remark != undefined && remark != '') dataproduct.remark = remark;
       data.outletID = `outlet::${this.state.item.id}`;
       data.details.push(dataproduct);
-
-      // check max order value outlet
-      // if (!this.checkMaxOrderValue('update', data)) {
-      //   Alert.alert(
-      //     'Sorry..',
-      //     'Maximum order amount is ' +
-      //       CurrencyFormatter(parseFloat(item.maxOrderAmount)),
-      //   );
-      //   return;
-      // }
 
       // hide modal
       this.setState({
@@ -1719,15 +1628,6 @@ class Products2 extends Component {
 
   addItemToBasket = async (product, qty, remark, mode) => {
     const {item} = this.state;
-    // check outlet rules
-    // if (!this.checkMaxOrderQty(qty)) {
-    //   Alert.alert(
-    //     'Sorry..',
-    //     'Maximum order quantity per Item is ' + item.maxOrderQtyPerItem,
-    //   );
-    //   return;
-    // }
-
     if (mode == 'add') {
       // to show loading button at Modal, check status data basket is empty or not
       let outletId = `outlet::${this.state.item.id}`;
@@ -1808,10 +1708,12 @@ class Products2 extends Component {
   };
 
   getImageUrl = image => {
+    const {productPlaceholder} = this.state;
     try {
       if (image != undefined && image != '-' && image != null) {
         return {uri: image};
       }
+      if (!isEmptyData(productPlaceholder)) return {uri: productPlaceholder};
     } catch (e) {
       return appConfig.foodPlaceholder;
     }
@@ -1863,6 +1765,19 @@ class Products2 extends Component {
     }
   };
 
+  renderPromotions = promotions => {
+    return promotions.map(item => (
+      <View style={{flexDirection: 'row', marginHorizontal: 8, alignItems: 'center'}}>
+        <Icon
+          size={9}
+          name={Platform.OS === 'ios' ? 'ios-pricetags' : 'md-pricetags'}
+          style={{color: colorConfig.store.defaultColor, marginRight: 7}}
+        />
+        <Text style={styles.textPromotion}>{item.name}</Text>
+      </View>
+    ));
+  };
+
   templateItemGrid = (type, item) => {
     if (item.product != undefined && item.product != null) {
       return (
@@ -1880,7 +1795,7 @@ class Products2 extends Component {
                   {
                     alignSelf: 'center',
                     borderRadius: 5,
-                    height: 150,
+                    height: 180,
                     width: Dimensions.get('window').width / 2 - 30,
                     resizeMode: 'cover',
                   },
@@ -1893,7 +1808,7 @@ class Products2 extends Component {
                 style={{
                   alignSelf: 'center',
                   borderRadius: 5,
-                  height: 150,
+                  height: 180,
                   width: Dimensions.get('window').width / 2 - 30,
                   resizeMode: 'cover',
                 }}
@@ -1904,8 +1819,8 @@ class Products2 extends Component {
                 {
                   marginTop: 15,
                   marginLeft: 10,
-                  fontSize: 15,
-                  fontFamily: 'Lato-Medium',
+                  fontSize: 14,
+                  fontFamily: 'Poppins-Medium',
                   color: colorConfig.store.title,
                 },
                 !this.availableToOrder(item) ? {opacity: 0.3} : null,
@@ -1914,22 +1829,30 @@ class Products2 extends Component {
                 <Text
                   style={{
                     color: colorConfig.store.defaultColor,
-                    fontWeight: 'bold',
+                    fontFamily: 'Poppins-Bold',
                   }}>
                   {this.getQuantityInBasket(item)} x{' '}
                 </Text>
               ) : null}
               {item.product != undefined ? item.product.name : '-'}
             </Text>
+
+            {/* Display Promotion */}
+            {item.product &&
+              !isEmptyArray(item.product.promotions) &&
+              this.renderPromotions(item.product.promotions)}
+            {/* Display Promotion */}
+
             {this.availableToOrder(item) ? (
               <Text
                 style={{
                   marginLeft: 10,
                   marginTop: 5,
-                  fontFamily: 'Lato-Bold',
+                  fontFamily: 'Poppins-Medium',
                   fontSize: 16,
-                  color: colorConfig.store.title,
+                  color: colorConfig.store.secondaryColor,
                 }}>
+                $
                 {item.product != undefined &&
                 item.product.retailPrice != undefined &&
                 item.product.retailPrice != '-' &&
@@ -1944,7 +1867,7 @@ class Products2 extends Component {
                 style={{
                   marginLeft: 10,
                   marginTop: 5,
-                  fontFamily: 'Lato-Medium',
+                  fontFamily: 'Poppins-Regular',
                   fontSize: 16,
                   opacity: 0.3,
                   color: colorConfig.store.title,
@@ -1980,7 +1903,16 @@ class Products2 extends Component {
                   }
                   source={this.getImageUrl(item.product.defaultImageURL)}
                 />
-              ) : null}
+              ) : (
+                <ProgressiveImage
+                  style={
+                    !this.availableToOrder(item)
+                      ? styles.imageProductUnavailable
+                      : styles.imageProduct
+                  }
+                  source={this.getImageUrl(item.product.defaultImageURL)}
+                />
+              )}
               <View
                 style={
                   isEmptyData(item.product.defaultImageURL) ? {height: 80} : {}
@@ -1997,13 +1929,18 @@ class Products2 extends Component {
                     <Text
                       style={{
                         color: colorConfig.store.defaultColor,
-                        fontWeight: 'bold',
+                        fontFamily: 'Poppins-Medium',
                       }}>
                       {this.getQuantityInBasket(item)}x{' '}
                     </Text>
                   ) : null}
                   {item.product.name.substr(0, 25)}
                 </Text>
+                {/* Display Promotion */}
+                {item.product &&
+                  !isEmptyArray(item.product.promotions) &&
+                  this.renderPromotions(item.product.promotions)}
+                {/* Display Promotion */}
                 {!this.availableToOrder(item) ? (
                   <Text style={styles.productUnavailable}>Unavailable</Text>
                 ) : item.product.description != undefined &&
@@ -2019,6 +1956,7 @@ class Products2 extends Component {
                 styles.productPrice,
                 !this.availableToOrder(item) ? {opacity: 0.3} : null,
               ]}>
+              $
               {item.product.retailPrice != undefined &&
               item.product.retailPrice != '-' &&
               !isNaN(item.product.retailPrice)
@@ -2057,7 +1995,7 @@ class Products2 extends Component {
       if (item.displayMode != undefined && item.displayMode === 'GRID') {
         return (
           <View
-            style={[styles.card, {height: 260 * Math.ceil(length / 2) + 105}]}>
+            style={[styles.card, {height: 330 * Math.ceil(length / 2) + 120}]}>
             <Text style={[styles.titleCategory]}>
               {item.name.substr(0, 35)}
             </Text>
@@ -2145,13 +2083,6 @@ class Products2 extends Component {
     try {
       if (!isEmptyObject(products[0])) {
         if (products[0].dataLength > products[0].items.length) {
-          // if (products[0].skip == undefined) {
-          //   products[0].skipNow = products[0].items.length;
-          // }
-
-          // console.log(products[0].skip, 'skip');
-          // console.log(products[0].skipNow, 'skip now');
-          // console.log(products[0].items.length, 'length');
           let response = await this.props.dispatch(
             getProductByCategory(outletID, products[0].id, products[0].skip, 5),
           );
@@ -2180,10 +2111,6 @@ class Products2 extends Component {
       const {selectedCategory} = this.state;
       const {products} = this.state;
       const outletID = this.state.item.id;
-      // if (products[0].items.length != products[0].skip) {
-      //   console.log(products[0].skip, 'COBAAAA');
-      //   await this.getProductsLoadMore(products, outletID);
-      // }
     } catch (e) {
       console.log(e);
     }
@@ -2256,7 +2183,7 @@ class Products2 extends Component {
             style={{
               padding: 8,
               fontSize: 12,
-              fontFamily: 'Lato-Medium',
+              fontFamily: 'Poppins-Regular',
               color: colorConfig.store.defaultColor,
             }}>
             {item.name}
@@ -2326,7 +2253,7 @@ class Products2 extends Component {
                   }>
                   <Text
                     style={{
-                      fontFamily: 'Lato-Bold',
+                      fontFamily: 'Poppins-Medium',
                       fontSize: 18,
                       textAlign: 'center',
                       marginRight: 10,
@@ -2437,27 +2364,6 @@ class Products2 extends Component {
             </View>
           </View>
         </View>
-        {/*<View*/}
-        {/*  onLayout={event => {*/}
-        {/*    let {height} = event.nativeEvent.layout;*/}
-        {/*    this.heightCategoryPicker = height;*/}
-        {/*  }}*/}
-        {/*  style={{*/}
-        {/*    backgroundColor: '#e1e4e8',*/}
-        {/*  }}>*/}
-        {/*  <FlatList*/}
-        {/*    horizontal={true}*/}
-        {/*    getItemLayout={(data, index) => {*/}
-        {/*      return {length: 8, offset: 8 * index, index};*/}
-        {/*    }}*/}
-        {/*    data={this.state.categories}*/}
-        {/*    extraData={this.props}*/}
-        {/*    renderItem={({item, index}) => {*/}
-        {/*      return this.renderCategoryProducts(item, index);*/}
-        {/*    }}*/}
-        {/*    keyExtractor={(item, index) => index.toString()}*/}
-        {/*  />*/}
-        {/*</View>*/}
       </View>
     );
   };
@@ -2518,7 +2424,7 @@ class Products2 extends Component {
                 }>
                 <Text
                   style={{
-                    fontFamily: 'Lato-Bold',
+                    fontFamily: 'Poppins-Medium',
                     fontSize: 18,
                     textAlign: 'center',
                     marginRight: 10,
@@ -2833,6 +2739,7 @@ class Products2 extends Component {
           item.dataLength != 0 &&
           item.id != 'allCategories',
       );
+      // console.log(categorySelected, 'categorySelected');
       const categoryIndex = await products.findIndex(
         item => item.id == categorySelected.id,
       );
@@ -2902,7 +2809,12 @@ class Products2 extends Component {
   };
 
   renderMainList = () => {
-    const {products, indexLoaded} = this.state;
+    const {
+      products,
+      indexLoaded,
+      productPlaceholder,
+      showAllCategory,
+    } = this.state;
     return (
       <FlatList
         refreshControl={
@@ -2911,7 +2823,14 @@ class Products2 extends Component {
             onRefresh={this._onRefresh}
           />
         }
-        ListHeaderComponent={<StorePromotion />}
+        ListHeaderComponent={
+          <>
+            <StorePromotion />
+            {showAllCategory && (
+              <CategoryList productPlaceholder={productPlaceholder} />
+            )}
+          </>
+        }
         ref={ref => {
           this.flatListRef = ref;
         }}
@@ -2946,7 +2865,7 @@ class Products2 extends Component {
           }
         }}
         onEndReached={this.loadMoreCategory}
-        onEndReachedThreshold={0.1}
+        onEndReachedThreshold={10}
         initialScrollIndex={0}
         data={products}
         extraData={this.props}
@@ -2964,7 +2883,7 @@ class Products2 extends Component {
         // }}
         renderItem={({item, index}) => {
           if (!isEmptyArray(item.items)) {
-            if (item.index <= indexLoaded) {
+            if (item.index <= indexLoaded && item.dataLength > 0) {
               return this.renderCategoryWithProducts(item, false);
             }
           }
@@ -2979,7 +2898,7 @@ class Products2 extends Component {
   };
 
   render() {
-    const {intlData, item} = this.props;
+    const {intlData, item, outletSelectionMode} = this.props;
     let {
       loadProducts,
       visibleMenu,
@@ -3012,101 +2931,64 @@ class Products2 extends Component {
           selectedCategoryModifier={this.state.selectedCategoryModifier}
           loadModifierTime={this.state.loadModifierTime}
         />
-        {/*{this.askUserToSelectOrderType()}*/}
         {this.askUserToSelectProductModifier()}
         <>
           {/* MENU FIXED */}
-          {/*{visibleMenu ? (*/}
           <View
             style={{
               backgroundColor: 'white',
               zIndex: 99,
               width: '100%',
               marginBottom: 5,
-              // shadowColor: '#00000021',
-              // shadowOffset: {
-              //   width: 0,
-              //   height: 9,
-              // },
-              // shadowOpacity: 0.9,
-              // shadowRadius: 7.49,
-              // elevation: 16,
             }}>
             {!dialogSearch ? (
               <View>
-                <View style={styles.outletHeaderFixed}>
-                  {/*<TouchableOpacity*/}
-                  {/*  onPress={this.goBack}*/}
-                  {/*  style={{*/}
-                  {/*    alignItems: 'center',*/}
-                  {/*    flexDirection: 'row',*/}
-                  {/*    // width: '60%',*/}
-                  {/*    marginLeft: 5,*/}
-                  {/*  }}>*/}
-                  {/*  <Icon*/}
-                  {/*    size={25}*/}
-                  {/*    name={*/}
-                  {/*      Platform.OS === 'ios'*/}
-                  {/*        ? 'ios-arrow-back'*/}
-                  {/*        : 'md-arrow-back'*/}
-                  {/*    }*/}
-                  {/*    style={{color: colorConfig.pageIndex.grayColor}}*/}
-                  {/*  />*/}
-                  {/*</TouchableOpacity>*/}
-                  <TouchableOpacity
-                    style={{
-                      padding: 2,
-                      paddingRight: 15,
-                      marginLeft: 7,
-                      width: '70%',
-                      borderRadius: 7,
-                      backgroundColor: '#e1e4e8',
-                      flexDirection: 'row',
-                      paddingVertical: 7,
-                      alignItems: 'center',
-                    }}
-                    onPress={() => this.setState({dialogSearch: true})}>
-                    <Icon
-                      size={22}
-                      name={Platform.OS === 'ios' ? 'ios-search' : 'md-search'}
+                <>
+                  <View style={styles.outletHeaderFixed}>
+                    <TouchableOpacity
                       style={{
-                        color: colorConfig.pageIndex.grayColor,
-                        marginLeft: 10,
+                        padding: 2,
+                        paddingRight: 15,
+                        marginLeft: 7,
+                        width:
+                          outletSelectionMode !== 'DEFAULT' ? '70%' : '80%',
+                        borderRadius: 7,
+                        backgroundColor: '#e1e4e8',
+                        flexDirection: 'row',
+                        paddingVertical: 7,
+                        alignItems: 'center',
                       }}
+                      onPress={() => this.setState({dialogSearch: true})}>
+                      <Icon
+                        size={22}
+                        name={
+                          Platform.OS === 'ios' ? 'ios-search' : 'md-search'
+                        }
+                        style={{
+                          color: colorConfig.pageIndex.grayColor,
+                          marginLeft: 10,
+                        }}
+                      />
+                      <Text
+                        style={{
+                          color: colorConfig.pageIndex.grayColor,
+                          fontSize: 13,
+                          marginLeft: 10,
+                          fontFamily: 'Poppins-Regular',
+                        }}>
+                        Search in {this.state.item.name.substr(0, 20)}
+                      </Text>
+                    </TouchableOpacity>
+                    {outletSelectionMode !== 'DEFAULT' && (
+                      <OutletIcon refreshProducts={this.refreshProducts} />
+                    )}
+                    <CartIcon
+                      outletID={this.state.item.id}
+                      dataBasket={this.props.dataBasket}
+                      refreshQuantityProducts={this.refreshQuantityProducts}
                     />
-                    <Text
-                      style={{
-                        color: colorConfig.pageIndex.grayColor,
-                        fontSize: 13,
-                        marginLeft: 10,
-                        fontFamily: 'Lato-Medium',
-                      }}>
-                      Search in {this.state.item.name.substr(0, 20)}
-                    </Text>
-                  </TouchableOpacity>
-                  <OutletIcon refreshProducts={this.refreshProducts} />
-                  <CartIcon
-                    outletID={this.state.item.id}
-                    dataBasket={this.props.dataBasket}
-                    refreshQuantityProducts={this.refreshQuantityProducts}
-                  />
-                </View>
-                {/*<FlatList*/}
-                {/*  style={{*/}
-                {/*    borderTopWidth: 3,*/}
-                {/*    borderTopColor: colorConfig.store.containerColor,*/}
-                {/*  }}*/}
-                {/*  ref={ref => {*/}
-                {/*    this.categoryMenuRef = ref;*/}
-                {/*  }}*/}
-                {/*  horizontal={true}*/}
-                {/*  data={this.state.products}*/}
-                {/*  extraData={this.props}*/}
-                {/*  renderItem={({item, index}) => {*/}
-                {/*    return this.renderCategoryProducts(item, index);*/}
-                {/*  }}*/}
-                {/*  keyExtractor={(item, index) => index.toString()}*/}
-                {/*/>*/}
+                  </View>
+                </>
               </View>
             ) : (
               <View style={styles.outletHeaderFixed}>
@@ -3136,7 +3018,7 @@ class Products2 extends Component {
                     width: '80%',
                     fontSize: 15,
                     color: colorConfig.store.title,
-                    fontFamily: 'Lato-Bold',
+                    fontFamily: 'Poppins-Medium',
                   }}
                 />
                 <TouchableOpacity
@@ -3166,7 +3048,7 @@ class Products2 extends Component {
                   <Text
                     style={{
                       color: colorConfig.store.colorError,
-                      fontFamily: 'Lato-Bold',
+                      fontFamily: 'Poppins-Medium',
                       fontSize: 17,
                     }}>
                     Cancel
@@ -3215,7 +3097,7 @@ class Products2 extends Component {
                 {item.orderingStatus == undefined ||
                 item.orderingStatus == 'AVAILABLE' ? (
                   <View>
-                    {this.renderHeaderOutletTemplate()}
+                    {/*{this.renderHeaderOutletTemplate()}*/}
                     <Text style={styles.productEmptyText}>
                       Sorry, products is empty :(
                     </Text>
@@ -3228,23 +3110,12 @@ class Products2 extends Component {
                         onRefresh={this._onRefresh}
                       />
                     }>
-                    {this.renderHeaderOutletTemplate()}
                     <Text style={styles.offlineOutlet}>
                       {item.offlineMessage != undefined &&
                       item.offlineMessage != '-'
                         ? item.offlineMessage
                         : 'Sorry, ordering is not available now.'}
                     </Text>
-                    <TouchableOpacity
-                      onPress={this.goBack}
-                      style={{
-                        flexDirection: 'row',
-                        justifyContent: 'center',
-                      }}>
-                      <Text style={styles.findAnotherOutlet}>
-                        Let's find another outlet
-                      </Text>
-                    </TouchableOpacity>
                   </ScrollView>
                 )}
               </View>
@@ -3253,25 +3124,6 @@ class Products2 extends Component {
             this.renderProgressiveLoadItem()
           )}
         </>
-        {/* button basket */}
-        {/*{this.state.showBasketButton && !dialogSearch ? (*/}
-        {/*  this.props.dataBasket != undefined &&*/}
-        {/*  this.props.dataBasket.outlet != undefined &&*/}
-        {/*  this.props.dataBasket.outlet.id != undefined &&*/}
-        {/*  this.props.dataBasket.outlet.id == this.state.item.id ? (*/}
-        {/*    <ButtonViewBasket*/}
-        {/*      previousTableNo={this.props.previousTableNo}*/}
-        {/*      refreshQuantityProducts={this.refreshQuantityProducts}*/}
-        {/*    />*/}
-        {/*  ) : null*/}
-        {/*) : null}*/}
-        {/*{this.state.showBasketButton && !dialogSearch ? (*/}
-        {/*  <ButtonNavMenu*/}
-        {/*    updateCategory={this.updateCategory}*/}
-        {/*    products={this.state.products}*/}
-        {/*    outlet={this.state.item}*/}
-        {/*  />*/}
-        {/*) : null}*/}
         {this.renderDeliveryInfo()}
       </SafeAreaView>
     );
@@ -3285,6 +3137,8 @@ mapStateToProps = state => ({
   oneOutlet: state.storesReducer.oneOutlet.oneOutlet,
   dataLength: state.orderReducer.productsOutlet.dataLength,
   intlData: state.intlData,
+  outletSelectionMode:
+    state.orderReducer.outletSelectionMode.outletSelectionMode,
 });
 
 mapDispatchToProps = dispatch => ({
@@ -3413,7 +3267,7 @@ const styles = StyleSheet.create({
     color: colorConfig.store.title,
     fontSize: 20,
     textAlign: 'left',
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
     padding: 14,
     marginBottom: 5,
   },
@@ -3478,12 +3332,12 @@ const styles = StyleSheet.create({
     marginTop: 27,
     fontSize: 28,
     textAlign: 'center',
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
   },
   productTitle: {
     color: colorConfig.store.title,
     marginLeft: 6,
-    fontSize: 15,
+    fontSize: 14,
     maxWidth: Dimensions.get('window').width / 2 - 50,
   },
   productTitleInModal: {
@@ -3495,7 +3349,7 @@ const styles = StyleSheet.create({
   productTitleModal: {
     color: colorConfig.store.title,
     marginHorizontal: 6,
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
     fontSize: 23,
     fontWeight: 'bold',
     maxWidth: Dimensions.get('window').width,
@@ -3509,7 +3363,7 @@ const styles = StyleSheet.create({
   productUnavailable: {
     color: colorConfig.pageIndex.grayColor,
     opacity: 0.5,
-    fontFamily: 'Lato-Medium',
+    fontFamily: 'Poppins-Regular',
     marginLeft: 6,
     marginTop: 3,
     fontSize: 14,
@@ -3518,7 +3372,7 @@ const styles = StyleSheet.create({
   productDescModal: {
     color: colorConfig.pageIndex.grayColor,
     marginHorizontal: 6,
-    fontFamily: 'Lato-Medium',
+    fontFamily: 'Poppins-Regular',
     fontSize: 13,
     marginTop: 5,
     maxWidth: Dimensions.get('window').width,
@@ -3554,7 +3408,7 @@ const styles = StyleSheet.create({
   btnIncreaseDecrease: {
     textAlign: 'center',
     fontSize: 24,
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
     fontWeight: 'bold',
     color: 'white',
   },
@@ -3576,7 +3430,7 @@ const styles = StyleSheet.create({
     elevation: 12,
   },
   btnAddBasketModal: {
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
     borderRadius: 10,
     padding: 13,
     marginHorizontal: 45,
@@ -3585,7 +3439,7 @@ const styles = StyleSheet.create({
   textBtnBasketModal: {
     color: 'white',
     fontWeight: 'bold',
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
     fontSize: 17,
     textAlign: 'center',
   },
@@ -3685,7 +3539,7 @@ const styles = StyleSheet.create({
     padding: 5,
     borderRadius: 10,
     fontSize: 24,
-    fontFamily: 'Lato-Medium',
+    fontFamily: 'Poppins-Regular',
     backgroundColor: colorConfig.pageIndex.inactiveTintColor,
     color: 'white',
   },
@@ -3702,7 +3556,7 @@ const styles = StyleSheet.create({
     backgroundColor: colorConfig.store.darkColor,
     color: 'white',
     padding: 8,
-    fontFamily: 'Lato-Medium',
+    fontFamily: 'Poppins-Regular',
     borderRadius: 13,
   },
   outletHeaderFixed: {
@@ -3717,7 +3571,7 @@ const styles = StyleSheet.create({
   outletHeaderFixedTitle: {
     marginLeft: 20,
     fontSize: 15,
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
     color: colorConfig.store.titleSelected,
   },
   clearInputSearch: {
@@ -3733,13 +3587,23 @@ const styles = StyleSheet.create({
   },
   gridView: {
     flex: 1,
-    height: 240,
+    height: 245,
     alignItems: 'stretch',
+    margin: 5,
+    padding: 5,
+    borderWidth: 0.3,
+    borderRadius: 7,
   },
   textInfoDelivery: {
     color: colorConfig.store.titleSelected,
     fontSize: 16,
-    fontFamily: 'Lato-Medium',
+    fontFamily: 'Poppins-Regular',
     lineHeight: 30,
+  },
+  textPromotion: {
+    textTransform: 'capitalize',
+    fontFamily: 'Poppins-Italic',
+    fontSize: 9,
+    color: colorConfig.store.secondaryColor,
   },
 });

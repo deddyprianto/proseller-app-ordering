@@ -13,6 +13,7 @@ import {
   FlatList,
   Clipboard,
   RefreshControl,
+  Image,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Actions} from 'react-native-router-flux';
@@ -91,7 +92,9 @@ class WaitingFood extends Component {
     try {
       return item.map(data => (
         <View style={styles.itemSummary}>
-          {data.isVoucher != true && data.isPoint != true ? (
+          {data.isVoucher != true &&
+          data.isPoint != true &&
+          data.isVoucherPromoCode !== true ? (
             <Text style={styles.total}>
               {data.isAppPayment ? data.paymentName : data.paymentType}
             </Text>
@@ -111,11 +114,20 @@ class WaitingFood extends Component {
               {appConfig.appMataUang} {this.formatCurrency(data.paymentAmount)}
             </Text>
           )}
-          {data.isVoucher != true && data.isPoint != true && (
+          {data.isVoucherPromoCode && (
             <Text style={styles.total}>
+              {data.redeemValue} {data.paymentName} {'  '}
               {appConfig.appMataUang} {this.formatCurrency(data.paymentAmount)}
             </Text>
           )}
+          {data.isVoucher !== true &&
+            data.isPoint !== true &&
+            data.isVoucherPromoCode !== true && (
+              <Text style={styles.total}>
+                {appConfig.appMataUang}{' '}
+                {this.formatCurrency(data.paymentAmount)}
+              </Text>
+            )}
         </View>
       ));
     } catch (e) {}
@@ -133,8 +145,10 @@ class WaitingFood extends Component {
 
         for (let i = 0; i < item.payments.length; i++) {
           if (
-            item.payments[i].isVoucher == true ||
-            item.payments[i].isPoint == true
+            item.payments[i].isVoucher === true ||
+            item.payments[i].isPoint === true ||
+            item.payments[i].isSVC === true ||
+            item.payments[i].isVoucherPromoCode === true
           ) {
             total -= item.payments[i].paymentAmount;
           }
@@ -171,6 +185,29 @@ class WaitingFood extends Component {
     } catch (e) {
       return item;
     }
+  };
+
+  format3 = item => {
+    try {
+      const curr = appConfig.appMataUang;
+      if (curr != 'RP' && curr != 'IDR' && item.includes('.') == false) {
+        return `${item}.00`;
+      }
+      return item;
+    } catch (e) {
+      return item;
+    }
+  };
+
+  getImageUrl = image => {
+    try {
+      if (image != undefined && image != '-' && image != null) {
+        return {uri: image};
+      }
+    } catch (e) {
+      return appConfig.foodPlaceholder;
+    }
+    return appConfig.foodPlaceholder;
   };
 
   _onRefresh = async () => {
@@ -437,7 +474,7 @@ class WaitingFood extends Component {
                 fontSize: 23,
                 color: colorConfig.store.defaultColor,
                 fontWeight: 'bold',
-                fontFamily: 'Lato-Bold',
+                fontFamily: 'Poppins-Medium',
                 textAlign: 'center',
               }}>
               Yeay, your order is ready. {'\n'} {'\n'}
@@ -452,7 +489,7 @@ class WaitingFood extends Component {
                 color: colorConfig.store.colorSuccess,
                 fontWeight: 'bold',
                 textAlign: 'center',
-                fontFamily: 'Lato-Bold',
+                fontFamily: 'Poppins-Medium',
               }}>
               {this.getInfoCart()}
             </Text>
@@ -465,7 +502,7 @@ class WaitingFood extends Component {
                 color: colorConfig.pageIndex.inactiveTintColor,
                 fontWeight: 'bold',
                 textAlign: 'center',
-                fontFamily: 'Lato-Bold',
+                fontFamily: 'Poppins-Medium',
               }}>
               Please wait, We are preparing your order.
             </Text>
@@ -476,7 +513,7 @@ class WaitingFood extends Component {
                 color: colorConfig.store.colorSuccess,
                 fontWeight: 'bold',
                 textAlign: 'center',
-                fontFamily: 'Lato-Bold',
+                fontFamily: 'Poppins-Medium',
               }}>
               {this.getInfoCart()}
             </Text>
@@ -533,7 +570,7 @@ class WaitingFood extends Component {
                 fontSize: 23,
                 color: colorConfig.store.defaultColor,
                 fontWeight: 'bold',
-                fontFamily: 'Lato-Bold',
+                fontFamily: 'Poppins-Medium',
                 textAlign: 'center',
               }}>
               {dataBasket.status == 'READY_FOR_DELIVERY'
@@ -546,7 +583,7 @@ class WaitingFood extends Component {
                 marginTop: -30,
                 color: colorConfig.pageIndex.grayColor,
                 fontWeight: 'bold',
-                fontFamily: 'Lato-Bold',
+                fontFamily: 'Poppins-Medium',
                 textAlign: 'center',
               }}>
               {dataBasket.status == 'READY_FOR_DELIVERY'
@@ -562,7 +599,7 @@ class WaitingFood extends Component {
                 color: colorConfig.store.colorSuccess,
                 fontWeight: 'bold',
                 textAlign: 'center',
-                fontFamily: 'Lato-Bold',
+                fontFamily: 'Poppins-Medium',
               }}>
               {this.getInfoCart()}{' '}
               {dataBasket != undefined && dataBasket.trackingNo != undefined ? (
@@ -583,7 +620,7 @@ class WaitingFood extends Component {
                 color: colorConfig.pageIndex.inactiveTintColor,
                 fontWeight: 'bold',
                 textAlign: 'center',
-                fontFamily: 'Lato-Bold',
+                fontFamily: 'Poppins-Medium',
               }}>
               Please wait, We are preparing your food in the kitchen.
             </Text>
@@ -594,7 +631,7 @@ class WaitingFood extends Component {
                 color: colorConfig.store.colorSuccess,
                 fontWeight: 'bold',
                 textAlign: 'center',
-                fontFamily: 'Lato-Bold',
+                fontFamily: 'Poppins-Medium',
               }}>
               {this.getInfoCart()}
             </Text>
@@ -715,7 +752,7 @@ class WaitingFood extends Component {
               style={{
                 color: colorConfig.store.darkColor,
                 fontSize: 18,
-                fontFamily: 'Lato-Bold',
+                fontFamily: 'Poppins-Medium',
                 marginLeft: 10,
               }}>
               Order Details :
@@ -727,10 +764,18 @@ class WaitingFood extends Component {
                   <View
                     style={{
                       flexDirection: 'row',
-                      justifyContent: 'space-between',
-                      padding: 3,
                     }}>
-                    <View style={{width: '80%'}}>
+                    <View style={{width: '100%', flexDirection: 'row'}}>
+                      <Image
+                        source={this.getImageUrl(item.product.defaultImageURL)}
+                        style={{
+                          marginRight: 7,
+                          borderRadius: 3,
+                          width: 75,
+                          height: 75,
+                          resizeMode: 'contain',
+                        }}
+                      />
                       <View>
                         <Text style={[styles.desc]}>
                           <Text
@@ -739,47 +784,85 @@ class WaitingFood extends Component {
                             }}>
                             {item.quantity}x
                           </Text>{' '}
-                          {item.product != undefined ? item.product.name : '-'}
-                          {' +'}
-                          {this.format2(
+                          {item.product != undefined ? item.product.name : '-'}{' '}
+                          {`  +${this.format2(
                             CurrencyFormatter(
                               item.product != undefined
                                 ? item.product.retailPrice
                                 : 0,
                             ),
-                          )}{' '}
+                          )}`}{' '}
                         </Text>
+                        {!isEmptyArray(item.promotions)
+                          ? item.promotions.map(promo =>
+                              item.nettAmount &&
+                              item.nettAmount < item.grossAmount ? (
+                                <Text style={styles.promotionActive}>
+                                  <Icon size={13} name={'tags'} /> {promo.name}
+                                </Text>
+                              ) : (
+                                <Text style={styles.promotionInactive}>
+                                  <Icon size={13} name={'tags'} /> {promo.name}
+                                </Text>
+                              ),
+                            )
+                          : null}
                         {/* loop item modifier */}
-                        {/*{!isEmptyArray(item.modifiers) ? (*/}
-                        {/*  <Text*/}
-                        {/*    style={{*/}
-                        {/*      color: colorConfig.pageIndex.inactiveTintColor,*/}
-                        {/*      fontSize: 10,*/}
-                        {/*      marginLeft: 17,*/}
-                        {/*      fontStyle: 'italic',*/}
-                        {/*    }}>*/}
-                        {/*    Add On:*/}
-                        {/*  </Text>*/}
-                        {/*) : null}*/}
+                        {!isEmptyArray(item.modifiers) ? (
+                          <Text
+                            style={{
+                              color: colorConfig.pageIndex.inactiveTintColor,
+                              fontSize: 10,
+                              marginLeft: 17,
+                              fontStyle: 'italic',
+                            }}>
+                            Add On:
+                          </Text>
+                        ) : null}
                         {this.renderItemModifier(item)}
                         {item.remark != undefined && item.remark != '' ? (
                           <Text
                             style={{
+                              marginTop: 3,
                               color: colorConfig.pageIndex.inactiveTintColor,
                               fontSize: 12,
                               marginLeft: 17,
-                              marginTop: 5,
                               fontStyle: 'italic',
                             }}>
                             Note: {item.remark}
                           </Text>
                         ) : null}
+
+                        {item.nettAmount &&
+                        item.nettAmount < item.grossAmount ? (
+                          <View style={{flexDirection: 'row'}}>
+                            <Text style={styles.descPrice}>
+                              {this.format3(CurrencyFormatter(item.nettAmount))}
+                            </Text>
+                            <Text
+                              style={[
+                                styles.descPrice,
+                                {
+                                  textDecorationLine: 'line-through',
+                                  marginLeft: 20,
+                                  color: colorConfig.pageIndex.grayColor,
+                                },
+                              ]}>
+                              {this.format3(
+                                CurrencyFormatter(item.grossAmount),
+                              )}
+                            </Text>
+                          </View>
+                        ) : (
+                          <View>
+                            <Text style={styles.descPrice}>
+                              {this.format3(
+                                CurrencyFormatter(item.grossAmount),
+                              )}
+                            </Text>
+                          </View>
+                        )}
                       </View>
-                    </View>
-                    <View>
-                      <Text style={styles.descPrice}>
-                        {this.format(CurrencyFormatter(item.grossAmount))}
-                      </Text>
                     </View>
                   </View>
                 </View>
@@ -793,7 +876,7 @@ class WaitingFood extends Component {
               style={{
                 color: colorConfig.store.darkColor,
                 fontSize: 18,
-                fontFamily: 'Lato-Bold',
+                fontFamily: 'Poppins-Medium',
                 marginLeft: 10,
               }}>
               Order Summary :
@@ -861,27 +944,47 @@ class WaitingFood extends Component {
                 </Text>
               </View>
             ) : null}
-            {dataBasket.totalTaxAmount != 0 && (
+
+            {
+              dataBasket.totalDiscountAmount > 0 &&
               <View style={styles.itemSummary}>
+                <Text style={styles.total}>Subtotal b/f Disc : </Text>
                 <Text style={styles.total}>
-                  {appConfig.appName === 'QIJI'
-                    ? 'Tax Amount Inclusive'
-                    : 'Tax Amount'}{' '}
-                  :{' '}
-                </Text>
-                <Text style={styles.total}>
-                  {CurrencyFormatter(dataBasket.totalTaxAmount)}
+                  {appConfig.appMataUang}{' '}
+                  {this.format(CurrencyFormatter(dataBasket.totalGrossAmount))}
                 </Text>
               </View>
-            )}
+            }
+            {
+              dataBasket.totalDiscountAmount > 0 &&
+              <View style={styles.itemSummary}>
+                <Text style={[styles.total, {color: colorConfig.store.colorError}]}>Discount : </Text>
+                <Text style={[styles.total, {color: colorConfig.store.colorError}]}>
+                  - {appConfig.appMataUang}{' '}
+                  {this.format(CurrencyFormatter(dataBasket.totalDiscountAmount))}
+                </Text>
+              </View>
+            }
             <View style={styles.itemSummary}>
-              <Text style={styles.total}>Sub Total : </Text>
+              <Text style={styles.total}>Subtotal : </Text>
               <Text style={styles.total}>
                 {appConfig.appMataUang}{' '}
-                {this.format(CurrencyFormatter(dataBasket.totalNettAmount))}
+                {this.format(CurrencyFormatter(dataBasket.totalGrossAmount - dataBasket.totalDiscountAmount))}
               </Text>
             </View>
-            {dataBasket.deliveryFee != undefined ? (
+
+            {
+              dataBasket.totalSurchargeAmount > 0 &&
+              <View style={styles.itemSummary}>
+                <Text style={styles.total}>Surcharge : </Text>
+                <Text style={styles.total}>
+                  {appConfig.appMataUang}{' '}
+                  {this.format(CurrencyFormatter(dataBasket.totalSurchargeAmount))}
+                </Text>
+              </View>
+            }
+
+            {dataBasket.deliveryFee !== undefined && dataBasket.provider && dataBasket.provider.taxRuleID === 'EXC-TAX' ? (
               <View style={styles.itemSummary}>
                 <Text style={styles.total}>Delivery Fee : </Text>
                 <Text style={[styles.total, {textAlign: 'right'}]}>
@@ -890,39 +993,57 @@ class WaitingFood extends Component {
                 </Text>
               </View>
             ) : null}
+
+            {dataBasket.exclusiveTax > 0 &&
+              <View style={styles.itemSummary}>
+                <Text style={styles.total}>Tax {dataBasket.outlet.taxPercentage}%</Text>
+                <Text style={[styles.total, {textAlign: 'right'}]}>
+                  {appConfig.appMataUang}{' '}
+                  {this.format(CurrencyFormatter(dataBasket.exclusiveTax))}
+                </Text>
+              </View>
+            }
+
+            {dataBasket.deliveryFee !== undefined && dataBasket.provider && dataBasket.provider.taxRuleID !== 'EXC-TAX' ? (
+              <View style={styles.itemSummary}>
+                <Text style={styles.total}>Delivery Fee : </Text>
+                <Text style={[styles.total, {textAlign: 'right'}]}>
+                  {appConfig.appMataUang}{' '}
+                  {this.format(CurrencyFormatter(dataBasket.deliveryFee))}
+                </Text>
+              </View>
+            ) : null}
+
+            <View style={[styles.itemSummary, {borderBottomWidth: 0}]}>
+              <Text style={[styles.total, {color: colorConfig.store.title}]}>
+                GRAND TOTAL :{' '}
+              </Text>
+              <Text style={[styles.total, {color: colorConfig.store.title}]}>
+                {appConfig.appMataUang} {this.format(CurrencyFormatter(dataBasket.totalNettAmount))}
+              </Text>
+            </View>
+
+            {
+              dataBasket.inclusiveTax > 0 &&
+              <View style={[styles.itemSummary, {borderBottomWidth: 0, marginTop: -17}]}>
+                <Text style={[styles.total, {color: colorConfig.pageIndex.inactiveTintColor, fontSize: 11}]}>
+                  Inclusive Tax
+                </Text>
+                <Text style={[styles.total, {color: colorConfig.pageIndex.inactiveTintColor, fontSize: 11}]}>
+                  {appConfig.appMataUang} {this.format(CurrencyFormatter(dataBasket.inclusiveTax))}
+                </Text>
+              </View>
+            }
+
+            <View style={[styles.itemSummary, {borderBottomWidth: 0}]}>
+              <Text style={[styles.total, {color: colorConfig.store.titleSelected}]}>
+                Payment Method:
+              </Text>
+            </View>
+
             {!isEmptyArray(dataBasket.payments)
               ? this.renderPayments(dataBasket.payments)
               : null}
-            {/*{dataBasket.confirmationInfo != undefined ? (*/}
-            {/*  dataBasket.confirmationInfo.redeemPoint != undefined &&*/}
-            {/*  dataBasket.confirmationInfo.redeemPoint != 0 ? (*/}
-            {/*    <View style={styles.itemSummary}>*/}
-            {/*      <Text style={styles.total}>Redeem Point : </Text>*/}
-            {/*      <Text style={styles.total}>*/}
-            {/*        {dataBasket.confirmationInfo.redeemPoint}*/}
-            {/*      </Text>*/}
-            {/*    </View>*/}
-            {/*  ) : null*/}
-            {/*) : null}*/}
-            {/*{dataBasket.confirmationInfo != undefined ? (*/}
-            {/*  dataBasket.confirmationInfo.statusAdd != undefined &&*/}
-            {/*  dataBasket.confirmationInfo.statusAdd == 'addVoucer' ? (*/}
-            {/*    <View style={styles.itemSummary}>*/}
-            {/*      <Text style={styles.total}>Voucher : </Text>*/}
-            {/*      <Text style={styles.total}>*/}
-            {/*        {dataBasket.confirmationInfo.voucher.name}*/}
-            {/*      </Text>*/}
-            {/*    </View>*/}
-            {/*  ) : null*/}
-            {/*) : null}*/}
-            <View style={styles.itemSummary}>
-              <Text style={[styles.total, {color: colorConfig.store.title}]}>
-                TOTAL :{' '}
-              </Text>
-              <Text style={[styles.total, {color: colorConfig.store.title}]}>
-                {appConfig.appMataUang} {this.getGrandTotal(dataBasket)}
-              </Text>
-            </View>
           </ScrollView>
         ) : null}
 
@@ -934,7 +1055,7 @@ class WaitingFood extends Component {
               marginLeft: 10,
               color: 'white',
               fontWeight: 'bold',
-              fontFamily: 'Lato-Bold',
+              fontFamily: 'Poppins-Medium',
               fontSize: 15,
               textAlign: 'center',
             }}>
@@ -1139,13 +1260,13 @@ const styles = StyleSheet.create({
   title: {
     color: colorConfig.pageIndex.activeTintColor,
     fontSize: 18,
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
     padding: 5,
     textAlign: 'center',
     fontWeight: 'bold',
   },
   subTitle: {
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
     color: colorConfig.store.title,
     fontSize: 16,
     padding: 5,
@@ -1154,7 +1275,7 @@ const styles = StyleSheet.create({
   },
   total: {
     marginVertical: 10,
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
     color: colorConfig.pageIndex.grayColor,
     fontSize: 14,
     padding: 3,
@@ -1176,7 +1297,7 @@ const styles = StyleSheet.create({
     color: colorConfig.store.title,
     maxWidth: Dimensions.get('window').width,
     fontSize: 13,
-    fontFamily: 'Lato-Medium',
+    fontFamily: 'Poppins-Regular',
   },
   descModifier: {
     color: colorConfig.pageIndex.grayColor,
@@ -1184,15 +1305,13 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontStyle: 'italic',
     marginLeft: 17,
-    fontFamily: 'Lato-Medium',
+    fontFamily: 'Poppins-Regular',
   },
   descPrice: {
     color: colorConfig.store.title,
-    maxWidth: Dimensions.get('window').width,
-    textAlign: 'right',
-    alignItems: 'flex-end',
-    fontSize: 13,
-    fontFamily: 'Lato-Medium',
+    fontSize: 12,
+    marginTop: 8,
+    fontFamily: 'Poppins-Medium',
   },
   descPriceModifier: {
     color: colorConfig.pageIndex.grayColor,
@@ -1200,7 +1319,7 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     alignItems: 'flex-end',
     fontSize: 10,
-    fontFamily: 'Lato-Medium',
+    fontFamily: 'Poppins-Regular',
   },
   image: {
     width: Dimensions.get('window').width - 40,
@@ -1235,7 +1354,7 @@ const styles = StyleSheet.create({
     elevation: 12,
   },
   btnAddBasketModal: {
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
     borderRadius: 10,
     padding: 13,
     flexDirection: 'row',
@@ -1246,7 +1365,7 @@ const styles = StyleSheet.create({
     backgroundColor: colorConfig.store.defaultColor,
   },
   btnCancelBasketModal: {
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
     borderRadius: 10,
     flexDirection: 'row',
     justifyContent: 'center',
@@ -1259,8 +1378,20 @@ const styles = StyleSheet.create({
   textBtnBasketModal: {
     color: 'white',
     fontWeight: 'bold',
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
     fontSize: 15,
     textAlign: 'center',
+  },
+  promotionActive: {
+    fontFamily: 'Poppins-Italic',
+    fontSize: 12,
+    paddingVertical: 3,
+    color: colorConfig.store.defaultColor,
+  },
+  promotionInactive: {
+    fontFamily: 'Poppins-Italic',
+    fontSize: 12,
+    paddingVertical: 3,
+    color: colorConfig.pageIndex.grayColor,
   },
 });

@@ -13,6 +13,7 @@ import {
 import {connect} from 'react-redux';
 import {compose} from 'redux';
 import Icon from 'react-native-vector-icons/Ionicons';
+import Fontisto from 'react-native-vector-icons/Feather';
 
 import {logoutUser} from '../actions/auth.actions';
 import colorConfig from '../config/colorConfig';
@@ -29,7 +30,6 @@ import {
   netsclickRegister,
 } from '../actions/payment.actions';
 import Loader from './loader';
-import appConfig from '../config/appConfig';
 import {getTermsConditions} from '../actions/order.action';
 
 class AccountMenuList extends Component {
@@ -188,15 +188,11 @@ class AccountMenuList extends Component {
                 </Text>
               ) : null}
               {item.isAccountRequired != false ? (
-                <Icon
-                  size={20}
-                  name={
-                    Platform.OS === 'ios'
-                      ? 'ios-arrow-dropright'
-                      : 'md-arrow-dropright'
-                  }
+                <Fontisto
+                  name={'chevron-right'}
+                  size={25}
                   style={{
-                    color: colorConfig.store.defaultColor,
+                    color: colorConfig.store.titleSelected,
                     marginRight: 20,
                   }}
                 />
@@ -238,7 +234,7 @@ class AccountMenuList extends Component {
           style={{
             fontSize: 19,
             color: colorConfig.store.titleSelected,
-            fontFamily: 'Lato-Medium',
+            fontFamily: 'Poppins-Regular',
             marginBottom: 10,
           }}>
           Default Payment Method
@@ -265,7 +261,7 @@ class AccountMenuList extends Component {
               marginLeft: 10,
               color: 'white',
               fontWeight: 'bold',
-              fontFamily: 'Lato-Bold',
+              fontFamily: 'Poppins-Medium',
               fontSize: 18,
               textAlign: 'center',
             }}>
@@ -301,7 +297,7 @@ class AccountMenuList extends Component {
           style={{
             fontSize: 19,
             color: colorConfig.store.titleSelected,
-            fontFamily: 'Lato-Medium',
+            fontFamily: 'Poppins-Regular',
             marginBottom: 10,
           }}>
           NETS Click Options
@@ -324,7 +320,7 @@ class AccountMenuList extends Component {
               marginLeft: 10,
               color: 'white',
               fontWeight: 'bold',
-              fontFamily: 'Lato-Bold',
+              fontFamily: 'Poppins-Medium',
               fontSize: 13,
               textAlign: 'center',
             }}>
@@ -349,7 +345,7 @@ class AccountMenuList extends Component {
               marginLeft: 10,
               color: 'white',
               fontWeight: 'bold',
-              fontFamily: 'Lato-Bold',
+              fontFamily: 'Poppins-Medium',
               fontSize: 13,
               textAlign: 'center',
             }}>
@@ -399,7 +395,7 @@ class AccountMenuList extends Component {
       if (count.length > 0) return `( ${count.length} )`;
       else return null;
     } catch (e) {
-      return 0;
+      return null;
     }
   };
 
@@ -411,61 +407,79 @@ class AccountMenuList extends Component {
       defaultAccount,
       referral,
       netsclickStatus,
+      balance,
     } = this.props;
     const {loading} = this.state;
     return (
       <View style={styles.container}>
         {loading && <Loader />}
         {this.askUserToSelectPaymentType()}
-        {this.netsClickOptions()}
-        <Text style={styles.headingMenu}>
-          {intlData.messages.defaultPaymentAccount}
-          {/*Default Payment Account*/}
-        </Text>
-        <TouchableOpacity disabled={true} style={styles.cardMenu}>
-          {!isEmptyObject(defaultAccount) ? (
-            <View style={styles.itemMenu}>
-              <Icon
-                size={20}
-                name={Platform.OS === 'ios' ? 'ios-checkmark' : 'md-checkmark'}
-                style={{color: 'white'}}
-              />
-            </View>
-          ) : null}
-          <View>
-            <View style={styles.item}>
-              <Text
-                style={[styles.title, {color: colorConfig.store.defaultColor}]}>
-                {!isEmptyObject(defaultAccount) ? (
-                  defaultAccount.isAccountRequired != false ? (
-                    <>
-                      <Text>
-                        {defaultAccount.details.cardIssuer != undefined
-                          ? defaultAccount.details.cardIssuer.toUpperCase()
-                          : null}
-                      </Text>{' '}
-                      <Text>{defaultAccount.details.maskedAccountNumber}</Text>
-                    </>
-                  ) : (
-                    <Text>{defaultAccount.paymentName}</Text>
-                  )
-                ) : (
-                  <Text style={{color: colorConfig.store.colorError}}>
-                    {intlData.messages.notYesAdded}
-                    {/*NOT YET ADDED*/}
-                  </Text>
-                )}
-              </Text>
-            </View>
+        {/*{this.netsClickOptions()}*/}
+        {/*<View style={styles.svcCard}>*/}
+        {/*  <TouchableOpacity*/}
+        {/*    style={styles.buttonSVC}*/}
+        {/*    onPress={() => Actions.summary()}>*/}
+        {/*    <Fontisto*/}
+        {/*      size={23}*/}
+        {/*      name={'box'}*/}
+        {/*      style={{color: '#747d8c', marginRight: 16, marginTop: -5}}*/}
+        {/*    />*/}
+        {/*    <Text style={styles.textCard}>Store Value Card</Text>*/}
+        {/*  </TouchableOpacity>*/}
+        {/*</View>*/}
+        {/*{!isEmptyObject(defaultAccount) ? (*/}
+        {/*  <View style={styles.singleCard}>*/}
+        {/*    <Text style={{fontFamily: 'Poppins-Medium', marginBottom: 10}}>*/}
+        {/*      Default Payment Account*/}
+        {/*    </Text>*/}
+        {/*    <View*/}
+        {/*      style={{*/}
+        {/*        flexDirection: 'row',*/}
+        {/*        paddingVertical: 10,*/}
+        {/*        alignItems: 'center',*/}
+        {/*      }}>*/}
+        {/*      <Fontisto*/}
+        {/*        size={23}*/}
+        {/*        name={'check-circle'}*/}
+        {/*        style={{*/}
+        {/*          color: colorConfig.store.secondaryColor,*/}
+        {/*          marginRight: 20,*/}
+        {/*        }}*/}
+        {/*      />*/}
+        {/*      <Text style={{fontFamily: 'Poppins-Regular', letterSpacing: 1.4}}>*/}
+        {/*        {!isEmptyObject(defaultAccount) ? (*/}
+        {/*          defaultAccount.isAccountRequired !== false ? (*/}
+        {/*            <>*/}
+        {/*              <Text>*/}
+        {/*                {defaultAccount.details.cardIssuer != undefined*/}
+        {/*                  ? defaultAccount.details.cardIssuer.toUpperCase()*/}
+        {/*                  : null}*/}
+        {/*              </Text>{' '}*/}
+        {/*              <Text>{defaultAccount.details.maskedAccountNumber}</Text>*/}
+        {/*            </>*/}
+        {/*          ) : (*/}
+        {/*            <Text>{defaultAccount.paymentName}</Text>*/}
+        {/*          )*/}
+        {/*        ) : null}*/}
+        {/*      </Text>*/}
+        {/*    </View>*/}
+        {/*  </View>*/}
+        {/*) : null}*/}
+
+        <View style={styles.singleCard}>
+          <Text style={{fontFamily: 'Poppins-Medium', marginBottom: 10}}>
+            Payment Methods
+          </Text>
+          <View
+            style={{
+              flexDirection: 'row',
+              // paddingVertical: 10,
+              alignItems: 'center',
+            }}>
+            {this.renderPaymentMethodOptions()}
           </View>
-        </TouchableOpacity>
+        </View>
 
-        <Text style={styles.headingMenu}>
-          {intlData.messages.myPaymentOptions}
-          {/*My Payment Options*/}
-        </Text>
-
-        {this.renderPaymentMethodOptions()}
         {/*{companyInfo.companyName === 'USTARS' && (*/}
         {/*  <TouchableOpacity*/}
         {/*    style={styles.cardMenu}*/}
@@ -508,263 +522,204 @@ class AccountMenuList extends Component {
         {/*  y</TouchableOpacity>*/}
         {/*)}*/}
 
-        {/*<TouchableOpacity*/}
-        {/*  onPress={() => this.props.screen.navigation.navigate('History')}*/}
-        {/*  style={styles.cardMenu}>*/}
-        {/*  <View style={styles.itemMenu}>*/}
-        {/*    <Icon*/}
-        {/*      size={20}*/}
-        {/*      name={Platform.OS === 'ios' ? 'ios-wallet' : 'md-wallet'}*/}
-        {/*      style={{color: 'white'}}*/}
-        {/*    />*/}
-        {/*  </View>*/}
-        {/*  <View>*/}
-        {/*    <View style={styles.item}>*/}
-        {/*      <Text style={styles.title}>DBS Paylah</Text>*/}
-        {/*    </View>*/}
-        {/*  </View>*/}
-        {/*</TouchableOpacity>*/}
-
-        <Text style={styles.headingMenu}>Inbox</Text>
-        <TouchableOpacity onPress={this.goToInbox} style={styles.cardMenu}>
-          <View style={styles.itemMenu}>
-            <Icon
-              size={20}
-              name={Platform.OS === 'ios' ? 'ios-mail' : 'md-mail'}
-              style={{color: 'white'}}
-            />
-          </View>
-          <View>
-            <View style={styles.item}>
-              <Text style={styles.title}>Inbox {this.countUnreadInbox()} </Text>
-              <Icon
-                size={20}
-                name={
-                  Platform.OS === 'ios'
-                    ? 'ios-arrow-dropright'
-                    : 'md-arrow-dropright'
-                }
+        <View style={styles.singleCard}>
+          <Text style={{fontFamily: 'Poppins-Medium', marginBottom: 10}}>
+            Settings
+          </Text>
+          <TouchableOpacity onPress={this.editProfil} style={styles.cardMenu}>
+            <View style={styles.itemMenu}>
+              <Fontisto
+                size={21}
+                name={'user'}
                 style={{
-                  color: colorConfig.store.defaultColor,
+                  color: colorConfig.store.titleSelected,
                   marginRight: 20,
                 }}
-              />
-            </View>
-          </View>
-        </TouchableOpacity>
-
-        <Text style={styles.headingMenu}>{intlData.messages.settings}</Text>
-
-        {referral != undefined && referral.capacity > 0 ? (
-          <TouchableOpacity
-            onPress={() => Actions.listReferral()}
-            style={styles.cardMenu}>
-            <View style={styles.itemMenu}>
-              <Icon
-                size={20}
-                name={Platform.OS === 'ios' ? 'ios-mail' : 'md-mail'}
-                style={{color: 'white'}}
               />
             </View>
             <View>
               <View style={styles.item}>
                 <Text style={styles.title}>
-                  Referral ( {referral.amount}/{referral.capacity} )
+                  {intlData.messages.editProfile}
                 </Text>
-                <Icon
-                  size={20}
-                  name={
-                    Platform.OS === 'ios'
-                      ? 'ios-arrow-dropright'
-                      : 'md-arrow-dropright'
-                  }
+                <Fontisto
+                  name={'chevron-right'}
+                  size={25}
                   style={{
-                    color: colorConfig.store.defaultColor,
+                    color: colorConfig.store.titleSelected,
                     marginRight: 20,
                   }}
                 />
               </View>
             </View>
           </TouchableOpacity>
-        ) : null}
-
-        <TouchableOpacity onPress={this.address} style={styles.cardMenu}>
-          <View style={styles.itemMenu}>
-            <Icon
-              size={20}
-              name={Platform.OS === 'ios' ? 'ios-business' : 'md-business'}
-              style={{color: 'white'}}
-            />
-          </View>
-          <View>
-            <View style={styles.item}>
-              <Text style={styles.title}>
-                {intlData.messages.myDeliveryAddress}
-                {/*My Delivery Address*/}
-              </Text>
-              <Icon
-                size={20}
-                name={
-                  Platform.OS === 'ios'
-                    ? 'ios-arrow-dropright'
-                    : 'md-arrow-dropright'
-                }
-                style={{
-                  color: colorConfig.store.defaultColor,
-                  marginRight: 20,
-                }}
-              />
-            </View>
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={this.notifications} style={styles.cardMenu}>
-          <View style={styles.itemMenu}>
-            <Icon
-              size={20}
-              name={
-                Platform.OS === 'ios' ? 'ios-notifications' : 'md-notifications'
-              }
-              style={{color: 'white'}}
-            />
-          </View>
-          <View>
-            <View style={styles.item}>
-              <Text style={styles.title}>
-                {intlData.messages.notifications}
-                {/*Notifications*/}
-              </Text>
-              <Icon
-                size={20}
-                name={
-                  Platform.OS === 'ios'
-                    ? 'ios-arrow-dropright'
-                    : 'md-arrow-dropright'
-                }
-                style={{
-                  color: colorConfig.store.defaultColor,
-                  marginRight: 20,
-                }}
-              />
-            </View>
-          </View>
-        </TouchableOpacity>
-
-        <TouchableOpacity onPress={this.editProfil} style={styles.cardMenu}>
-          <View style={styles.itemMenu}>
-            <Icon
-              size={20}
-              name={Platform.OS === 'ios' ? 'ios-contact' : 'md-contact'}
-              style={{color: 'white'}}
-            />
-          </View>
-          <View>
-            <View style={styles.item}>
-              <Text style={styles.title}>{intlData.messages.editProfile}</Text>
-              <Icon
-                size={20}
-                name={
-                  Platform.OS === 'ios'
-                    ? 'ios-arrow-dropright'
-                    : 'md-arrow-dropright'
-                }
-                style={{
-                  color: colorConfig.store.defaultColor,
-                  marginRight: 20,
-                }}
-              />
-            </View>
-          </View>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={() => Actions.listLanguages()}
-          style={styles.cardMenu}>
-          <View style={styles.itemMenu}>
-            <Icon
-              size={20}
-              name={Platform.OS === 'ios' ? 'ios-globe' : 'md-globe'}
-              style={{color: 'white'}}
-            />
-          </View>
-          <View>
-            <View style={styles.item}>
-              <Text style={styles.title}>{intlData.messages.languages}</Text>
-              <Icon
-                size={20}
-                name={
-                  Platform.OS === 'ios'
-                    ? 'ios-arrow-dropright'
-                    : 'md-arrow-dropright'
-                }
-                style={{
-                  color: colorConfig.store.defaultColor,
-                  marginRight: 20,
-                }}
-              />
-            </View>
-          </View>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={() => Actions.termsCondition()}
-          style={styles.cardMenu}>
-          <View style={styles.itemMenu}>
-            <Icon
-              size={20}
-              name={Platform.OS === 'ios' ? 'ios-paper' : 'md-paper'}
-              style={{color: 'white'}}
-            />
-          </View>
-          <View>
-            <View style={styles.item}>
-              <Text style={styles.title}>Terms & Conditions</Text>
-              <Icon
-                size={20}
-                name={
-                  Platform.OS === 'ios'
-                    ? 'ios-arrow-dropright'
-                    : 'md-arrow-dropright'
-                }
-                style={{
-                  color: colorConfig.store.defaultColor,
-                  marginRight: 20,
-                }}
-              />
-            </View>
-          </View>
-        </TouchableOpacity>
-
-        <TouchableOpacity onPress={this.prompLogout} style={styles.cardMenu}>
-          <View
-            style={[
-              styles.itemMenu,
-              {backgroundColor: colorConfig.pageIndex.inactiveTintColor},
-            ]}>
-            <Icon
-              size={20}
-              name={Platform.OS === 'ios' ? 'ios-exit' : 'md-exit'}
-              style={{color: 'white'}}
-            />
-          </View>
-          <View>
-            <View style={styles.item}>
-              {this.state.loadingLogout ? (
-                <ActivityIndicator
-                  size={'large'}
-                  color={colorConfig.store.colorError}
+          {referral != undefined && referral.capacity > 0 ? (
+            <TouchableOpacity
+              onPress={() => Actions.listReferral()}
+              style={styles.cardMenu}>
+              <View style={styles.itemMenu}>
+                <Fontisto
+                  size={21}
+                  name={'send'}
+                  style={{
+                    color: colorConfig.store.titleSelected,
+                    marginRight: 20,
+                  }}
                 />
-              ) : (
-                <Text
-                  style={[
-                    styles.title,
-                    {color: colorConfig.pageIndex.inactiveTintColor},
-                  ]}>
-                  {intlData.messages.logout}
-                </Text>
-              )}
+              </View>
+              <View>
+                <View style={styles.item}>
+                  <Text style={styles.title}>
+                    Referral ( {referral.amount}/{referral.capacity} )
+                  </Text>
+                  <Fontisto
+                    name={'chevron-right'}
+                    size={25}
+                    style={{
+                      color: colorConfig.store.titleSelected,
+                      marginRight: 20,
+                    }}
+                  />
+                </View>
+              </View>
+            </TouchableOpacity>
+          ) : null}
+          <TouchableOpacity onPress={this.address} style={styles.cardMenu}>
+            <View style={styles.itemMenu}>
+              <Fontisto
+                size={21}
+                name={'home'}
+                style={{
+                  color: colorConfig.store.titleSelected,
+                  marginRight: 20,
+                }}
+              />
             </View>
-          </View>
-        </TouchableOpacity>
+            <View>
+              <View style={styles.item}>
+                <Text style={styles.title}>
+                  {intlData.messages.myDeliveryAddress}
+                </Text>
+                <Fontisto
+                  name={'chevron-right'}
+                  size={25}
+                  style={{
+                    color: colorConfig.store.titleSelected,
+                    marginRight: 20,
+                  }}
+                />
+              </View>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={this.notifications}
+            style={styles.cardMenu}>
+            <View style={styles.itemMenu}>
+              <Fontisto
+                size={21}
+                name={'bell'}
+                style={{
+                  color: colorConfig.store.titleSelected,
+                  marginRight: 20,
+                }}
+              />
+            </View>
+            <View>
+              <View style={styles.item}>
+                <Text style={styles.title}>
+                  {intlData.messages.notifications}
+                </Text>
+                <Fontisto
+                  name={'chevron-right'}
+                  size={25}
+                  style={{
+                    color: colorConfig.store.titleSelected,
+                    marginRight: 20,
+                  }}
+                />
+              </View>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => Actions.listLanguages()}
+            style={styles.cardMenu}>
+            <View style={styles.itemMenu}>
+              <Fontisto
+                size={21}
+                name={'globe'}
+                style={{
+                  color: colorConfig.store.titleSelected,
+                  marginRight: 20,
+                }}
+              />
+            </View>
+            <View>
+              <View style={styles.item}>
+                <Text style={styles.title}>{intlData.messages.languages}</Text>
+                <Fontisto
+                  name={'chevron-right'}
+                  size={25}
+                  style={{
+                    color: colorConfig.store.titleSelected,
+                    marginRight: 20,
+                  }}
+                />
+              </View>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => Actions.termsCondition()}
+            style={styles.cardMenu}>
+            <View style={styles.itemMenu}>
+              <Fontisto
+                size={21}
+                name={'book-open'}
+                style={{
+                  color: colorConfig.store.titleSelected,
+                  marginRight: 20,
+                }}
+              />
+            </View>
+            <View>
+              <View style={styles.item}>
+                <Text style={styles.title}>Terms & Conditions</Text>
+                <Fontisto
+                  name={'chevron-right'}
+                  size={25}
+                  style={{
+                    color: colorConfig.store.titleSelected,
+                    marginRight: 20,
+                  }}
+                />
+              </View>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={this.prompLogout} style={styles.cardMenu}>
+            <View style={styles.itemMenu}>
+              <Fontisto
+                size={21}
+                name={'log-out'}
+                style={{
+                  color: colorConfig.store.titleSelected,
+                  marginRight: 20,
+                }}
+              />
+            </View>
+            <View>
+              <View style={styles.item}>
+                <Text style={styles.title}>{intlData.messages.logout}</Text>
+                <Fontisto
+                  name={'chevron-right'}
+                  size={25}
+                  style={{
+                    color: colorConfig.store.titleSelected,
+                    marginRight: 20,
+                  }}
+                />
+              </View>
+            </View>
+          </TouchableOpacity>
+        </View>
 
         <Text
           style={{
@@ -787,22 +742,16 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   item: {
-    margin: 10,
-    paddingVertical: 8,
+    marginHorizontal: 10,
+    // paddingVertical: 8,
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: Dimensions.get('window').width - 60,
   },
   itemMenu: {
-    // paddingVertical: 12,
-    justifyContent: 'center',
-    marginLeft: 10,
-    width: 30,
-    height: 30,
-    borderRadius: 50,
+    // justifyContent: 'center',
     alignItems: 'center',
-    alignSelf: 'center',
-    backgroundColor: colorConfig.store.secondaryColor,
+    // paddingVertical: 8,
   },
   line: {
     borderBottomColor: colorConfig.pageIndex.inactiveTintColor,
@@ -811,44 +760,67 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   title: {
+    marginTop: 3,
     color: colorConfig.store.title,
     letterSpacing: 1,
     fontSize: 14,
     // fontWeight: 'bold',
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
   },
   subTitle: {
     color: colorConfig.store.colorSuccess,
     fontSize: 12,
-    fontFamily: 'Lato-Medium',
+    fontFamily: 'Poppins-Regular',
   },
   subTitleGray: {
     color: colorConfig.pageIndex.grayColor,
     fontSize: 12,
-    fontFamily: 'Lato-Medium',
+    fontFamily: 'Poppins-Regular',
   },
   headingMenu: {
     marginLeft: 15,
     color: colorConfig.pageIndex.grayColor,
     fontSize: 18,
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
     marginBottom: 7,
   },
   cardMenu: {
     flexDirection: 'row',
-    paddingLeft: 5,
-    backgroundColor: 'white',
+    // alignItems: 'center',
     borderRadius: 5,
-    // paddingVertical: 5,
-    marginBottom: 5,
-    // shadowColor: '#00000021',
-    // shadowOffset: {
-    //   width: 0,
-    //   height: 9,
-    // },
-    // shadowOpacity: 0.7,
-    // shadowRadius: 7.49,
-    // elevation: 12,
+    borderBottomWidth: 0.5,
+    borderBottomColor: colorConfig.pageIndex.inactiveTintColor,
+    paddingVertical: 15,
+    width: '100%',
+  },
+  svcCard: {
+    backgroundColor: colorConfig.pageIndex.backgroundColor,
+    padding: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 13,
+  },
+  buttonSVC: {
+    borderWidth: 0.5,
+    borderColor: colorConfig.pageIndex.grayColor,
+    padding: 15,
+    width: '98%',
+    borderRadius: 5,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  textCard: {
+    textAlign: 'center',
+    fontSize: 17,
+    fontFamily: 'Poppins-Medium',
+    color: colorConfig.store.title,
+  },
+  singleCard: {
+    backgroundColor: colorConfig.pageIndex.backgroundColor,
+    padding: 10,
+    paddingLeft: 15,
+    marginBottom: 13,
   },
 });
 

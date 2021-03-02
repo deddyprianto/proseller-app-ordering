@@ -11,6 +11,7 @@ import CryptoJS from 'react-native-crypto-js';
 import appConfig from '../config/appConfig';
 import AsyncStorage from '@react-native-community/async-storage';
 import {isEmptyArray} from '../helper/CheckEmpty';
+import {submitOfflineCart} from './order.action';
 
 export const notifikasi = (type, status, action) => {
   Alert.alert(type, status, [
@@ -128,8 +129,6 @@ export const loginUser = payload => {
       console.log(payload, 'payload login');
       const response = await fetchApi('/customer/login', 'POST', payload, 200);
 
-      console.log(response);
-
       if (response.responseBody.Data.accessToken != undefined) {
         let data = response.responseBody.Data;
         // encrypt data
@@ -150,6 +149,9 @@ export const loginUser = payload => {
         try {
           await AsyncStorage.setItem(`refreshToken`, data.refreshToken.token);
         } catch (error) {}
+
+        // SUBMIT OFFLINE CART
+        await dispatch(submitOfflineCart(jwtToken));
 
         // save data to reducer
         dispatch({
@@ -290,7 +292,7 @@ export const refreshToken = () => {
       console.log(response, 'response refresh token');
 
       // check if not authorized
-      if (response.responseBody.ResultCode == 401) {
+      if (response.responseBody.ResultCode === 401) {
         dispatch({
           type: 'USER_LOGGED_OUT_SUCCESS',
         });
@@ -453,13 +455,12 @@ export const sendOTP = payload => {
     try {
       const state = getState();
       // CHECK IF SETTING FOR OTP IS SEND BY WHATSAPP OR SMS
+      const {
+        orderReducer: {
+          orderingSetting: {orderingSetting},
+        },
+      } = state;
       try {
-        const {
-          orderReducer: {
-            orderingSetting: {orderingSetting},
-          },
-        } = state;
-
         if (payload.phoneNumber != undefined) {
           if (
             orderingSetting !== undefined &&
@@ -469,13 +470,29 @@ export const sendOTP = payload => {
               item => item.settingKey === 'MobileOTP',
             );
 
-            if (find != undefined) {
+            if (find !== undefined) {
               if (find.settingValue === 'WHATSAPP') {
                 payload.sendBy = 'WhatsappOTP';
               } else if (find.settingValue === 'SMS') {
                 payload.sendBy = 'SMSOTP';
               }
             }
+          }
+        }
+      } catch (e) {}
+
+      // Give sender name if exist
+      try {
+        if (
+          orderingSetting !== undefined &&
+          !isEmptyArray(orderingSetting.settings)
+        ) {
+          const find = orderingSetting.settings.find(
+            item => item.settingKey === 'senderName',
+          );
+
+          if (find !== undefined) {
+            payload.senderName = find.settingValue;
           }
         }
       } catch (e) {}

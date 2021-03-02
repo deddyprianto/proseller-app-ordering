@@ -34,9 +34,9 @@ import Header from '../components/atom/header';
 import CountryPicker from '../components/react-native-country-picker-modal';
 import {deviceUserInfo, userPosition} from '../actions/user.action';
 import Geolocation from 'react-native-geolocation-service';
-import packageJson from '../../package';
+// import packageJson from '../../package';
 import PhoneInput from 'react-native-phone-input';
-import VersionCheck from 'react-native-version-check';
+// import VersionCheck from 'react-native-version-check';
 import {getCompanyInfo} from '../actions/stores.action';
 
 const imageWidth = Dimensions.get('window').width / 2;
@@ -298,6 +298,11 @@ class InputPhoneNumber extends Component {
   render() {
     const {intlData} = this.props;
     this.getUserPosition();
+    let backButton = false;
+    if (Actions.currentScene !== 'pageIndex') {
+      backButton = true;
+    }
+
     return (
       <>
         {this.state.loading && <Loader />}
@@ -305,7 +310,7 @@ class InputPhoneNumber extends Component {
           <SafeAreaView>
             <Header
               titleHeader={'Mobile Sign In / Register'}
-              backButton={false}
+              backButton={backButton}
             />
             <View style={{width: 0, height: 0}}>
               <CountryPicker
@@ -330,7 +335,7 @@ class InputPhoneNumber extends Component {
                   color: colorConfig.pageIndex.grayColor,
                   fontSize: 15,
                   marginBottom: 5,
-                  fontFamily: 'Lato-Medium',
+                  fontFamily: 'Poppins-Regular',
                 }}>
                 {intlData.messages.enterMobileNumber}
               </Text>
@@ -355,7 +360,7 @@ class InputPhoneNumber extends Component {
                       marginRight: -5,
                       marginLeft: 5,
                     }}
-                    textStyle={{fontSize: 0, fontFamily: 'Lato-Medium'}}
+                    textStyle={{fontSize: 0, fontFamily: 'Poppins-Regular'}}
                     style={{
                       padding: 5,
                       color: 'black',
@@ -385,17 +390,25 @@ class InputPhoneNumber extends Component {
                       justifyContent: 'center',
                       paddingHorizontal: 5,
                     }}>
-                    <Text style={{fontSize: 18, fontFamily: 'Lato-Medium'}}>
+                    <Text style={{fontSize: 18, fontFamily: 'Poppins-Regular'}}>
                       {this.state.phoneNumber}
                     </Text>
                   </TouchableOpacity>
                   <TextInput
                     value={this.state.phone}
                     keyboardType={'numeric'}
-                    onChangeText={value => this.setState({phone: value})}
+                    onChangeText={value => {
+                      try {
+                        if (value[0] !== 0 && value[0] !== '0') {
+                          this.setState({phone: value});
+                        }
+                      } catch (e) {
+                        this.setState({phone: value});
+                      }
+                    }}
                     style={{
                       fontSize: 17,
-                      fontFamily: 'Lato-Medium',
+                      fontFamily: 'Poppins-Regular',
                       paddingHorizontal: 10,
                       paddingVertical: 12,
                       color: colorConfig.store.title,
@@ -425,7 +438,7 @@ class InputPhoneNumber extends Component {
                       fontSize: 18,
                       textAlign: 'center',
                       fontWeight: 'bold',
-                      fontFamily: 'Lato-Medium',
+                      fontFamily: 'Poppins-Regular',
                     }}>
                     {intlData.messages.next}
                   </Text>
@@ -436,7 +449,7 @@ class InputPhoneNumber extends Component {
                   <Text
                     style={{
                       textDecorationLine: 'underline',
-                      fontFamily: 'Lato-Medium',
+                      fontFamily: 'Poppins-Regular',
                       textAlign: 'center',
                       color: colorConfig.store.secondaryColor,
                       fontSize: 17,
@@ -448,39 +461,6 @@ class InputPhoneNumber extends Component {
             </View>
           </SafeAreaView>
         </ScrollView>
-        {this.state.showFooter ? (
-          <View>
-            <TouchableOpacity
-              style={{
-                position: 'absolute',
-                alignSelf: 'center',
-                bottom: 40,
-              }}
-              onPress={() => Actions.listLanguages()}>
-              <Text
-                style={{
-                  textDecorationLine: 'underline',
-                  color: colorConfig.store.defaultColor,
-                  fontWeight: 'bold',
-                  fontFamily: 'Lato-Bold',
-                  fontSize: 16,
-                }}>
-                {intlData.messages.languageName}
-              </Text>
-            </TouchableOpacity>
-            <Text
-              style={{
-                position: 'absolute',
-                alignSelf: 'center',
-                bottom: 10,
-                color: colorConfig.pageIndex.grayColor,
-                fontSize: 14,
-              }}>
-              Version: {VersionCheck.getCurrentVersion()} (
-              {VersionCheck.getCurrentBuildNumber()})
-            </Text>
-          </View>
-        ) : null}
       </>
     );
   }

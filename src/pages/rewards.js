@@ -43,14 +43,11 @@ import OneSignal from 'react-native-onesignal';
 import {dataInbox} from '../actions/inbox.action';
 import {getMandatoryFields, paymentRefNo} from '../actions/account.action';
 import {Overlay} from 'react-native-elements';
-import {
-  getBasket,
-  getCart,
-  getCartHomePage,
-  getPendingCart,
-} from '../actions/order.action';
+import {getCartHomePage, getPendingCart} from '../actions/order.action';
 import VersionCheck from 'react-native-version-check';
-import {dataPromotion} from '../actions/promotion.action';
+import RewardsSVC from '../components/rewardsSVC';
+import {getSVCBalance, getSVCCard} from '../actions/SVC.action';
+// import {dataPromotion} from '../actions/promotion.action';
 
 class Rewards extends Component {
   constructor(props) {
@@ -72,10 +69,10 @@ class Rewards extends Component {
     };
 
     try {
-      OneSignal.removeEventListener('received', this.onReceived);
+      // OneSignal.removeEventListener('received', this.onReceived);
     } catch (e) {}
     try {
-      OneSignal.addEventListener('received', this.onReceived);
+      // OneSignal.addEventListener('received', this.onReceived);
     } catch (e) {}
   }
 
@@ -247,19 +244,20 @@ class Rewards extends Component {
       await Promise.all([
         this.props.dispatch(campaign()),
         this.props.dispatch(dataPoint()),
+        this.props.dispatch(getSVCBalance()),
         this.props.dispatch(getStamps()),
         this.props.dispatch(recentTransaction()),
-        this.props.dispatch(dataPromotion()),
+        this.props.dispatch(getSVCCard()),
+        // this.props.dispatch(dataPromotion()),
       ]);
-      this.getDefaultOutlet();
-      this.props.dispatch(getBasket());
+      // this.getDefaultOutlet();
+      // this.props.dispatch(getBasket());
       this.checkUpdateAndVersion();
       await this.setState({isLoading: false});
       this.props.dispatch(getAccountPayment());
       this.props.dispatch(getUserProfile());
       this.props.dispatch(getMandatoryFields());
-      this.props.dispatch(dataInbox(0, 10));
-      this.props.dispatch(getCompanyInfo());
+      // this.props.dispatch(getCompanyInfo());
       const response = await this.props.dispatch(getAccountPayment());
       await this.checkDefaultPaymentAccount(response);
       this.getDeepLinkiOS();
@@ -380,7 +378,7 @@ class Rewards extends Component {
 
   render() {
     const {campaignActive} = this.props;
-    const {intlData} = this.props;
+    const {intlData, balance, svc} = this.props;
 
     return (
       <SafeAreaView>
@@ -406,9 +404,9 @@ class Rewards extends Component {
               {this.state.isLoading ? (
                 <RewardsStamp isLoading={this.state.isLoading} />
               ) : this.props.dataStamps == undefined ||
-                isEmptyObject(this.props.dataStamps.dataStamps) ? (
-                this.greetWelcomeUser()
-              ) : !isEmptyObject(
+                isEmptyObject(
+                  this.props.dataStamps.dataStamps,
+                ) ? null : !isEmptyObject(
                   // this.greetWelcomeUser()
                   this.props.dataStamps.dataStamps.trigger,
                 ) &&
@@ -462,7 +460,7 @@ class Rewards extends Component {
                       style={{
                         textAlign: 'center',
                         color: colorConfig.pageIndex.inactiveTintColor,
-                        fontFamily: 'Lato-Bold',
+                        fontFamily: 'Poppins-Medium',
                         fontSize: 15,
                       }}>
                       Learn More
@@ -471,20 +469,17 @@ class Rewards extends Component {
                 </View>
               )}
 
-              {this.props.totalPoint == undefined ? (
-                <View
-                  style={{
-                    backgroundColor: colorConfig.pageIndex.activeTintColor,
-                    height: this.state.screenHeight / 3 - 30,
-                  }}>
-                  {this.state.isLoading ? <MyPointsPlaceHolder /> : null}
-                </View>
-              ) : (
-                <RewardsPoint
-                  campaignActive={campaignActive}
-                  isLoading={this.state.isLoading}
-                />
-              )}
+              <View style={styles.tabBalance}>
+                {balance !== undefined && !isEmptyArray(svc) && (
+                  <RewardsSVC isLoading={this.state.isLoading} />
+                )}
+                {this.props.totalPoint !== undefined && campaignActive && (
+                  <RewardsPoint
+                    campaignActive={campaignActive}
+                    isLoading={this.state.isLoading}
+                  />
+                )}
+              </View>
               <RewardsMenu
                 intlData={intlData}
                 myVoucers={this.props.myVoucers}
@@ -527,14 +522,14 @@ const styles = StyleSheet.create({
   textWelcome: {
     fontSize: 18,
     color: colorConfig.store.secondaryColor,
-    fontFamily: 'Lato-Medium',
+    fontFamily: 'Poppins-Regular',
     textAlign: 'center',
     marginTop: 25,
   },
   textName: {
     fontSize: 26,
     color: 'white',
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
     textAlign: 'center',
     padding: 5,
   },
@@ -562,7 +557,17 @@ const styles = StyleSheet.create({
   textInfo: {
     color: colorConfig.store.colorError,
     textAlign: 'center',
-    fontFamily: 'Lato-Medium',
+    fontFamily: 'Poppins-Regular',
+  },
+  tabBalance: {
+    flexDirection: 'row',
+    // height: Dimensions.get('window').height / 3 + 30,
+    paddingBottom: 100,
+    paddingTop: 30,
+    width: '100%',
+    backgroundColor: colorConfig.store.defaultColor,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 
@@ -574,12 +579,14 @@ mapStateToProps = state => ({
   dataStamps: state.rewardsReducer.getStamps,
   totalPoint: state.rewardsReducer.dataPoint.totalPoint,
   campaignActive: state.rewardsReducer.dataPoint.campaignActive,
+  svc: state.SVCReducer.SVCCard.svc,
   status: state.userReducer.statusPageIndex.status,
   userDetail: state.userReducer.getUser.userDetails,
   intlData: state.intlData,
   userPosition: state.userReducer.userPosition.userPosition,
   companyInfo: state.userReducer.getCompanyInfo.companyInfo,
   paymentRefNo: state.accountsReducer.paymentRefNo.paymentRefNo,
+  balance: state.SVCReducer.balance.balance,
 });
 
 mapDispatchToProps = dispatch => ({

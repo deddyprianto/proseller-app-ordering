@@ -16,7 +16,11 @@ import {
   TouchableOpacity,
   BackHandler,
 } from 'react-native';
-import {isEmptyArray} from '../../helper/CheckEmpty';
+import {
+  isEmptyArray,
+  isEmptyData,
+  isEmptyObject,
+} from '../../helper/CheckEmpty';
 import Icon from 'react-native-vector-icons/Ionicons';
 import colorConfig from '../../config/colorConfig';
 import {Actions} from 'react-native-router-flux';
@@ -24,7 +28,8 @@ import GridItem from './GridItem';
 import Loader from '../loader';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
-import {getAllCategory} from '../../actions/order.action';
+import {getAllCategory, getSetting} from '../../actions/order.action';
+import {dataStores, setDefaultOutlet} from '../../actions/stores.action';
 
 class MenuCategory extends Component {
   constructor(props) {
@@ -34,6 +39,7 @@ class MenuCategory extends Component {
       categories: [],
       selectedCategory: this.props.selectedCategory,
       loading: true,
+      productPlaceholder: null,
     };
   }
 
@@ -50,10 +56,33 @@ class MenuCategory extends Component {
     } catch (e) {}
 
     this.loadCategory();
+    this.getDefaultOutlet();
   }
+
+  getDefaultOutlet = async () => {
+    try {
+      let {outlet} = this.props;
+      if (isEmptyObject(outlet)) {
+        const outlets = await this.props.dispatch(dataStores());
+        const find = outlets.find(
+          item => item.orderingStatus !== 'UNAVAILABLE',
+        );
+        if (find !== undefined) {
+          await this.props.dispatch(setDefaultOutlet(find));
+        }
+      }
+    } catch (e) {}
+  };
 
   loadCategory = async () => {
     try {
+      const productPlaceholder = await this.props.dispatch(
+        getSetting('ProductPlaceholder'),
+      );
+      if (!isEmptyData(productPlaceholder)) {
+        await this.setState({productPlaceholder});
+      }
+
       const response = await this.props.dispatch(getAllCategory(0, 10));
       if (response != false) {
         await this.setState({
@@ -131,7 +160,7 @@ class MenuCategory extends Component {
   };
 
   render() {
-    let {products, categories, selectedCategory} = this.state;
+    let {products, categories, selectedCategory, productPlaceholder} = this.state;
 
     return (
       <SafeAreaView style={styles.container}>
@@ -139,28 +168,17 @@ class MenuCategory extends Component {
         <View style={styles.container}>
           <View style={styles.header}>
             <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
-              {this.props.hideBackButton === true && (
-                <Icon
-                  size={28}
-                  name={
-                    Platform.OS === 'ios'
-                      ? 'ios-arrow-back'
-                      : 'md-arrow-round-back'
-                  }
-                  style={styles.btnBackIcon}
-                />
-              )}
+              <Icon
+                size={28}
+                name={
+                  Platform.OS === 'ios'
+                    ? 'ios-arrow-back'
+                    : 'md-arrow-round-back'
+                }
+                style={styles.btnBackIcon}
+              />
             </TouchableOpacity>
-            <Text
-              style={[
-                styles.btnBackText,
-                this.props.hideBackButton === undefined
-                  ? {marginLeft: '35%'}
-                  : null,
-              ]}>
-              {' '}
-              Categories{' '}
-            </Text>
+            <Text style={[styles.btnBackText]}> Categories </Text>
           </View>
           <TextInput
             onChangeText={search => this.search(search)}
@@ -176,6 +194,7 @@ class MenuCategory extends Component {
                 <GridItem
                   key={index}
                   item={item}
+                  productPlaceholder={productPlaceholder}
                   onPress={() => this.updateCategory(item.item, item.index)}
                 />
               );

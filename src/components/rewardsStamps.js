@@ -186,7 +186,7 @@ const styles = StyleSheet.create({
   titleStamps: {
     color: 'white',
     fontSize: 22,
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
     marginBottom: 10,
     textAlign: 'center',
   },

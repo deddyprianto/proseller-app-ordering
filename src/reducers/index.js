@@ -17,6 +17,8 @@ import promotionReducer from './promotion.reducer';
 import orderReducer from './order.reducer';
 import cardReducer from './card.reducer';
 import referralReducer from './referral.reducer';
+import SVCReducer from './SVC.reducer';
+import membershipReducer from './membership.reducer';
 import intlData from './language.reducer';
 
 const reducers = {
@@ -30,6 +32,8 @@ const reducers = {
   orderReducer,
   cardReducer,
   referralReducer,
+  SVCReducer,
+  membershipReducer,
   intlData,
   form: formReducer,
 };
@@ -38,7 +42,11 @@ const appReducer = combineReducers(reducers);
 
 const rootReducer = (state, action) => {
   if (action.type === 'USER_LOGGED_OUT_SUCCESS') {
+    const backupStoreReducer = state.storesReducer;
+    const backupOrderingSetting = state.orderReducer;
     state = {};
+    state.storesReducer = backupStoreReducer;
+    state.orderReducer = backupOrderingSetting;
   }
 
   return appReducer(state, action);

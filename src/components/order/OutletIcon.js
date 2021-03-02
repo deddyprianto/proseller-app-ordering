@@ -34,7 +34,7 @@ export default class OutletIcon extends Component {
             color: colorConfig.store.defaultColor,
             fontSize: 10,
             textAlign: 'center',
-            fontFamily: 'Lato-Medium',
+            fontFamily: 'Poppins-Regular',
           }}>
           Outlet
         </Text>

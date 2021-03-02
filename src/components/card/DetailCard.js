@@ -284,7 +284,7 @@ const styles = StyleSheet.create({
     letterSpacing: 2,
     color: 'white',
     fontWeight: 'bold',
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
   },
   cardNumberText: {
     fontSize: 24,
@@ -301,7 +301,7 @@ const styles = StyleSheet.create({
     opacity: 0.8,
     color: 'white',
     fontWeight: 'bold',
-    // fontFamily: 'Lato-Bold',
+    // fontFamily: 'Poppins-Medium',
     // textAlign: 'center',
     // letterSpacing: 2,
   },
@@ -332,7 +332,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: 'white',
     fontWeight: 'bold',
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
   },
   item: {
     alignItems: 'center',

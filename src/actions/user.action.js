@@ -163,14 +163,15 @@ export const defaultPaymentAccount = defaultAccount => {
         },
       } = state;
 
-      if (defaultAccount != undefined) {
+      if (defaultAccount !== undefined) {
         const response = await fetchApiPayment(
-          `/account/setdefault/${defaultAccount.id}`,
+          `/account/setdefault/${defaultAccount.accountID}`,
           'GET',
           null,
           200,
           token,
         );
+        console.log(`/account/setdefault/${defaultAccount.id}`);
         console.log('responsenya set default payment account', response);
         if (response.success) {
           dispatch({

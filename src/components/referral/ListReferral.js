@@ -192,7 +192,7 @@ class ListReferral extends Component {
                   <Text
                     style={{
                       fontSize: 15,
-                      fontFamily: 'Lato-Bold',
+                      fontFamily: 'Poppins-Medium',
                       color: 'white',
                     }}>
                     Resend
@@ -227,7 +227,7 @@ class ListReferral extends Component {
                   <Text
                     style={{
                       fontSize: 15,
-                      fontFamily: 'Lato-Bold',
+                      fontFamily: 'Poppins-Medium',
                       color: 'white',
                     }}>
                     Cancel
@@ -468,7 +468,7 @@ const styles = StyleSheet.create({
   cardText: {
     fontSize: 14,
     color: colorConfig.store.title,
-    fontFamily: 'Lato-Medium',
+    fontFamily: 'Poppins-Regular',
   },
   cardNumberText: {
     fontSize: 24,
@@ -485,7 +485,7 @@ const styles = StyleSheet.create({
     opacity: 0.8,
     color: 'white',
     fontWeight: 'bold',
-    // fontFamily: 'Lato-Bold',
+    // fontFamily: 'Poppins-Medium',
     // textAlign: 'center',
     // letterSpacing: 2,
   },
@@ -516,7 +516,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: 'white',
     fontWeight: 'bold',
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
   },
   item: {
     alignItems: 'center',

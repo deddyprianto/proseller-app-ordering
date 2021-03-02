@@ -98,6 +98,18 @@ const orderType = (state = {}, action) => {
   }
 };
 
+const offlineCart = (state = {}, action) => {
+  switch (action.type) {
+    case 'OFFLINE_CART':
+      return {
+        offlineCart: action.product,
+      };
+
+    default:
+      return state;
+  }
+};
+
 const defaultPaymentAccount = (state = {}, action) => {
   switch (action.type) {
     case 'GET_USER_DEFAULT_ACCOUNT':
@@ -181,4 +193,5 @@ export default combineReducers({
   orderType,
   defaultAddress,
   selectedAddress,
+  offlineCart,
 });

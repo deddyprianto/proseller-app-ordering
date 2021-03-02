@@ -339,7 +339,7 @@ class VerifyOtpAfterRegister extends Component {
                 style={{
                   color: colorConfig.store.title,
                   fontSize: 15,
-                  fontFamily: 'Lato-Bold',
+                  fontFamily: 'Poppins-Medium',
                 }}>
                 {intlData.messages.signIn} {intlData.messages.to}{' '}
                 {this.props.phoneNumber}
@@ -370,7 +370,7 @@ class VerifyOtpAfterRegister extends Component {
                     style={{
                       fontSize: 20,
                       width: '45%',
-                      fontFamily: 'Lato-Medium',
+                      fontFamily: 'Poppins-Regular',
                       padding: 12,
                       color: colorConfig.pageIndex.grayColor,
                       borderColor: colorConfig.pageIndex.inactiveTintColor,
@@ -400,7 +400,7 @@ class VerifyOtpAfterRegister extends Component {
                         fontSize: 16,
                         textAlign: 'center',
                         fontWeight: 'bold',
-                        fontFamily: 'Lato-Medium',
+                        fontFamily: 'Poppins-Regular',
                       }}>
                       {intlData.messages.get} OTP via SMS
                     </Text>
@@ -445,7 +445,7 @@ class VerifyOtpAfterRegister extends Component {
                     fontSize: 18,
                     textAlign: 'center',
                     fontWeight: 'bold',
-                    fontFamily: 'Lato-Medium',
+                    fontFamily: 'Poppins-Regular',
                   }}>
                   {intlData.messages.submit}
                 </Text>

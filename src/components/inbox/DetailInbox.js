@@ -59,7 +59,7 @@ export default class DetailInbox extends Component {
               style={{
                 marginTop: 10,
                 fontSize: 22,
-                fontFamily: 'Lato-Bold',
+                fontFamily: 'Poppins-Medium',
                 color: colorConfig.store.title,
                 textAlign: 'center',
                 textDecorationLine: 'underline',
@@ -72,7 +72,7 @@ export default class DetailInbox extends Component {
                 padding: 15,
                 fontSize: 17,
                 marginTop: 25,
-                fontFamily: 'Lato-Medium',
+                fontFamily: 'Poppins-Regular',
                 color: colorConfig.store.titleSelected,
               }}>
               {inbox.message}
@@ -90,7 +90,7 @@ export default class DetailInbox extends Component {
               <Text
                 style={{
                   paddingVertical: 13,
-                  fontFamily: 'Lato-Bold',
+                  fontFamily: 'Poppins-Medium',
                   fontSize: 19,
                   textAlign: 'center',
                   color: 'white',

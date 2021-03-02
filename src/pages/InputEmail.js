@@ -218,7 +218,7 @@ class InputEmail extends Component {
               style={{
                 color: colorConfig.pageIndex.grayColor,
                 fontSize: 16,
-                fontFamily: 'Lato-Medium',
+                fontFamily: 'Poppins-Regular',
               }}>
               {intlData.messages.enterEmail}
             </Text>
@@ -233,7 +233,7 @@ class InputEmail extends Component {
                 onChangeText={value => this.setState({email: value})}
                 style={{
                   fontSize: 17,
-                  fontFamily: 'Lato-Medium',
+                  fontFamily: 'Poppins-Regular',
                   padding: 13,
                   color: colorConfig.store.title,
                   borderColor: colorConfig.pageIndex.inactiveTintColor,
@@ -260,7 +260,7 @@ class InputEmail extends Component {
                     fontSize: 18,
                     textAlign: 'center',
                     fontWeight: 'bold',
-                    fontFamily: 'Lato-Medium',
+                    fontFamily: 'Poppins-Regular',
                   }}>
                   {intlData.messages.next}
                 </Text>
@@ -271,7 +271,7 @@ class InputEmail extends Component {
                 <Text
                   style={{
                     textDecorationLine: 'underline',
-                    fontFamily: 'Lato-Medium',
+                    fontFamily: 'Poppins-Regular',
                     textAlign: 'center',
                     color: colorConfig.store.secondaryColor,
                     fontSize: 17,

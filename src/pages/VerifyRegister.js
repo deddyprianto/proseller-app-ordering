@@ -180,7 +180,7 @@ class VerifyRegister extends Component {
                 fontSize: 16,
                 marginBottom: 70,
                 width: '80%',
-                fontFamily: 'Lato-Medium',
+                fontFamily: 'Poppins-Regular',
               }}>
               You will receive 4-digit verification code via
               {this.props.fromMethod == 'mobile' ? (
@@ -199,7 +199,7 @@ class VerifyRegister extends Component {
                   fontWeight: 'bold',
                   width: '100%',
                   marginBottom: 60,
-                  fontFamily: 'Lato-Bold',
+                  fontFamily: 'Poppins-Medium',
                 }}>
                 {this.props.phoneNumber}
               </Text>
@@ -212,7 +212,7 @@ class VerifyRegister extends Component {
                   fontWeight: 'bold',
                   width: '100%',
                   marginBottom: 60,
-                  fontFamily: 'Lato-Bold',
+                  fontFamily: 'Poppins-Medium',
                 }}>
                 {this.props.email}
               </Text>
@@ -232,7 +232,7 @@ class VerifyRegister extends Component {
                       fontSize: 18,
                       textAlign: 'center',
                       fontWeight: 'bold',
-                      fontFamily: 'Lato-Medium',
+                      fontFamily: 'Poppins-Regular',
                     }}>
                     Continue
                   </Text>
@@ -251,7 +251,7 @@ class VerifyRegister extends Component {
                       fontSize: 18,
                       textAlign: 'center',
                       fontWeight: 'bold',
-                      fontFamily: 'Lato-Medium',
+                      fontFamily: 'Poppins-Regular',
                     }}>
                     Continue
                   </Text>

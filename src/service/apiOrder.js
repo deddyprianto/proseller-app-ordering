@@ -54,6 +54,7 @@ export const apiOrder = async (url, method, body = null, headers = {}) => {
       fetchParams.body = reqBody;
     }
 
+    console.log(endPoint, 'endPoint');
     var response = await fetch(endPoint, fetchParams);
     response = await response.json();
 

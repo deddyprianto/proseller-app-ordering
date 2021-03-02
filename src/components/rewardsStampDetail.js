@@ -109,21 +109,21 @@ const styles = StyleSheet.create({
   title: {
     color: colorConfig.pageIndex.backgroundColor,
     fontSize: 22,
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
     marginBottom: 5,
   },
   subTitle: {
     color: colorConfig.store.title,
     fontSize: 16,
     marginBottom: 10,
-    fontFamily: 'Lato-Medium',
+    fontFamily: 'Poppins-Regular',
     textAlign: 'center',
   },
   subTitleExpiry: {
     color: colorConfig.pageIndex.backgroundColor,
     fontSize: 12,
     marginBottom: 5,
-    fontFamily: 'Lato-Medium',
+    fontFamily: 'Poppins-Regular',
     textAlign: 'center',
   },
   description: {
@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     marginTop: 15,
     lineHeight: 22,
-    fontFamily: 'Lato-Medium',
+    fontFamily: 'Poppins-Regular',
   },
   btn: {
     color: colorConfig.pageIndex.listBorder,

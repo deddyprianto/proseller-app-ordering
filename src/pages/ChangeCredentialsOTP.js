@@ -327,7 +327,7 @@ class ChangeCredentialsOTP extends Component {
               style={{
                 color: colorConfig.store.title,
                 fontSize: 15,
-                fontFamily: 'Lato-Bold',
+                fontFamily: 'Poppins-Medium',
               }}>
               You will receive 4-digit verification code via{' '}
               <Text style={{color: colorConfig.store.secondaryColor}}>
@@ -364,7 +364,7 @@ class ChangeCredentialsOTP extends Component {
                   style={{
                     fontSize: 20,
                     width: '45%',
-                    fontFamily: 'Lato-Medium',
+                    fontFamily: 'Poppins-Regular',
                     padding: 12,
                     color: colorConfig.pageIndex.grayColor,
                     borderColor: colorConfig.pageIndex.inactiveTintColor,
@@ -394,7 +394,7 @@ class ChangeCredentialsOTP extends Component {
                       fontSize: 16,
                       textAlign: 'center',
                       fontWeight: 'bold',
-                      fontFamily: 'Lato-Medium',
+                      fontFamily: 'Poppins-Regular',
                     }}>
                     {intlData.messages.resend} OTP
                   </Text>
@@ -442,7 +442,7 @@ class ChangeCredentialsOTP extends Component {
                   fontSize: 18,
                   textAlign: 'center',
                   fontWeight: 'bold',
-                  fontFamily: 'Lato-Medium',
+                  fontFamily: 'Poppins-Regular',
                 }}>
                 Confirm
               </Text>

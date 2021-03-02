@@ -129,6 +129,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: colorConfig.store.title,
     textAlign: 'center',
-    fontFamily: 'Lato-Medium',
+    fontFamily: 'Poppins-Regular',
   },
 });

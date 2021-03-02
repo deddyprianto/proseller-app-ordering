@@ -164,7 +164,7 @@ class RewardsQRscan extends Component {
           <Text
             style={{
               textAlign: 'center',
-              fontFamily: 'Lato-Bold',
+              fontFamily: 'Poppins-Medium',
               fontSize: 20,
               color: colorConfig.store.defaultColor,
             }}>
@@ -184,7 +184,7 @@ class RewardsQRscan extends Component {
               style={{
                 marginTop: 20,
                 textAlign: 'center',
-                fontFamily: 'Lato-Medium',
+                fontFamily: 'Poppins-Regular',
                 fontSize: 15,
                 color: colorConfig.store.defaultColor,
               }}>

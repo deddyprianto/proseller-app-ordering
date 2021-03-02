@@ -35,7 +35,7 @@ export default class EmptySearch extends Component {
         <Text
           style={{
             marginTop: 20,
-            fontFamily: 'Lato-Bold',
+            fontFamily: 'Poppins-Medium',
             fontSize: 20,
             color: colorConfig.pageIndex.grayColor,
           }}>

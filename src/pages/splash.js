@@ -12,10 +12,12 @@ import {
   Animated,
   Platform,
   StyleSheet,
+  Text,
 } from 'react-native';
 import {Dimensions} from 'react-native';
 import appConfig from '../config/appConfig';
 import colorConfig from '../config/colorConfig';
+import VersionCheck from 'react-native-version-check';
 
 const imageWidth = Dimensions.get('window').width / 2;
 
@@ -118,19 +120,15 @@ export default class Splash extends Component {
     return (
       <View style={styles.container}>
         <Animated.View style={containerImageStyle}>
-          {appConfig.appStatusBackgroundScreen == false ? (
-            <Animated.Image
-              source={appConfig.appLogo}
-              style={imageStyle}
-              resizeMode="contain"
-            />
-          ) : (
-            <Animated.Image
-              source={appConfig.appLogo}
-              style={imageStyle}
-              resizeMode="contain"
-            />
-          )}
+          <Animated.Image
+            source={appConfig.appLogo}
+            style={imageStyle}
+            resizeMode="contain"
+          />
+          <Text style={{position: 'absolute', bottom: 30}}>
+            Version {VersionCheck.getCurrentVersion()} (
+            {VersionCheck.getCurrentBuildNumber()})
+          </Text>
         </Animated.View>
       </View>
     );

@@ -165,7 +165,7 @@ class Store extends Component {
 
   getDataStores = async () => {
     try {
-      await this.props.dispatch(refreshToken());
+      // await this.props.dispatch(refreshToken());
       // await this.props.dispatch(dataStores());
       // await this.props.dispatch(getBasket());
       // await this.props.dispatch(dataPromotion());
@@ -190,12 +190,14 @@ class Store extends Component {
         this.props.userPosition,
       );
     } catch (e) {
+      console.log(e, 'xxxxxxx');
       Alert.alert('Oppss...', 'Something went wrong, please try again.');
     }
   };
 
-  setDataStore = async (response, statusLocation, position) => {
-    response.data = response;
+  setDataStore = async (outletList, statusLocation, position) => {
+    let response = {};
+    response.data = outletList;
     var dataStoresTampung = [];
     var storeGrupTampung = [];
     var coordinate = {};
@@ -449,35 +451,43 @@ class Store extends Component {
     }
 
     const {intlData} = this.props;
-
     return (
-      <SafeAreaView style={{marginBottom: 30}}>
-        <View
-          style={{
-            backgroundColor: colorConfig.pageIndex.backgroundColor,
-            paddingVertical: 3,
-            shadowColor: '#00000021',
-            shadowOffset: {
-              width: 0,
-              height: 9,
-            },
-            shadowOpacity: 0.7,
-            shadowRadius: 7.49,
-            elevation: 12,
-          }}>
-          <TouchableOpacity
-            style={styles.btnBack}
-            onPress={() => Actions.pop()}>
-            <Icon
-              size={28}
-              name={
-                Platform.OS === 'ios' ? 'ios-arrow-back' : 'md-arrow-round-back'
-              }
-              style={styles.btnBackIcon}
-            />
-            <Text style={styles.btnBackText}> Outlet List </Text>
-          </TouchableOpacity>
-        </View>
+      <SafeAreaView
+        style={
+          Actions.currentScene !== 'pageIndex'
+            ? {marginBottom: 30}
+            : {marginBottom: 0}
+        }>
+        {Actions.currentScene !== 'pageIndex' && (
+          <View
+            style={{
+              backgroundColor: colorConfig.pageIndex.backgroundColor,
+              paddingVertical: 3,
+              shadowColor: '#00000021',
+              shadowOffset: {
+                width: 0,
+                height: 9,
+              },
+              shadowOpacity: 0.7,
+              shadowRadius: 7.49,
+              elevation: 12,
+            }}>
+            <TouchableOpacity
+              style={styles.btnBack}
+              onPress={() => Actions.pop()}>
+              <Icon
+                size={28}
+                name={
+                  Platform.OS === 'ios'
+                    ? 'ios-arrow-back'
+                    : 'md-arrow-round-back'
+                }
+                style={styles.btnBackIcon}
+              />
+              <Text style={styles.btnBackText}> Outlet List </Text>
+            </TouchableOpacity>
+          </View>
+        )}
         <ScrollView
           style={styles.scrollView}
           refreshControl={
@@ -515,7 +525,7 @@ class Store extends Component {
                     style={{
                       textAlign: 'center',
                       color: colorConfig.pageIndex.grayColor,
-                      fontFamily: 'Lato-Medium',
+                      fontFamily: 'Poppins-Regular',
                       fontSize: 24,
                       fontWeight: 'bold',
                       marginTop: 100,

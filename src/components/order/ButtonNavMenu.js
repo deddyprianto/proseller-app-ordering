@@ -71,7 +71,7 @@ export default class ButtonNavMenu extends Component {
             style={{
               fontSize: 15,
               color: colorConfig.store.defaultColor,
-              fontFamily: 'Lato-Bold',
+              fontFamily: 'Poppins-Medium',
               marginLeft: 10,
             }}>
             Home
@@ -94,7 +94,7 @@ export default class ButtonNavMenu extends Component {
             style={{
               fontSize: 15,
               color: colorConfig.store.defaultColor,
-              fontFamily: 'Lato-Bold',
+              fontFamily: 'Poppins-Medium',
               marginLeft: 10,
             }}>
             Categories

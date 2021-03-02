@@ -114,12 +114,12 @@ class HostedPayment extends Component {
       const response = await this.props.dispatch(checkAccount(data.accountID));
       // set selected account for latest added card
       if (page === 'paymentDetail' || page == 'settleOrder') {
-        if (response.success && response.response.data != undefined) {
+        if (response.success && response.response.data !== undefined) {
           this.props.dispatch(selectedAccount(response.response.data));
         }
       }
-      if (response.success && response.response.data != undefined) {
-        if (response.response.data.isDefault == true) {
+      if (response.success && response.response.data !== undefined) {
+        if (response.response.data.isDefault === true) {
           await this.props.dispatch(
             defaultPaymentAccount(response.response.data),
           );
@@ -164,7 +164,7 @@ class HostedPayment extends Component {
             style={{
               fontSize: 25,
               color: 'white',
-              fontFamily: 'Lato-Bold',
+              fontFamily: 'Poppins-Medium',
             }}>
             x
           </Text>
@@ -211,7 +211,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: 'white',
     fontWeight: 'bold',
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
   },
 });
 

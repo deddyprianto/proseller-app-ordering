@@ -7,53 +7,67 @@ import {Dimensions} from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
 import {Platform} from 'react-native';
-import Store from './store';
-import ProductsRetail from '../components/order/ProductsRetail';
 import MenuCategory from '../components/order/MenuCategory';
 import History from './history';
 import Rewards from './rewards';
-// import Inbox from './inbox';
 import Account from './account';
 import colorConfig from '../config/colorConfig';
-import IconMail from '../components/atom/IconMail';
 import {paymentRefNo} from '../actions/account.action';
+import Home from './home';
+import InputPhoneNumber from './InputPhoneNumber';
+import Inbox from './inbox';
+
+const AppTabNavigatorNonLogin = createMaterialBottomTabNavigator(
+  {
+    Home: {
+      screen: Home,
+      navigationOptions: {
+        title: 'Home',
+        tabBarIcon: ({tintColor, focused}) => (
+          <Icon
+            size={28}
+            name={Platform.OS === 'ios' ? 'ios-home' : 'md-home'}
+            style={{color: tintColor}}
+          />
+        ),
+      },
+    },
+    Auth: {
+      screen: InputPhoneNumber,
+      navigationOptions: {
+        title: 'Login',
+        tabBarIcon: ({tintColor, focused}) => (
+          <Icon
+            size={28}
+            name={Platform.OS === 'ios' ? 'ios-apps' : 'md-log-in'}
+            style={{color: tintColor}}
+          />
+        ),
+      },
+    },
+  },
+  {
+    initialRouteName: 'Home',
+    activeColor: colorConfig.store.defaultColor,
+    inactiveColor: colorConfig.pageIndex.grayColor,
+    shifting: false,
+    barStyle: {
+      backgroundColor: colorConfig.pageIndex.backgroundColor,
+      fontFamily: 'Poppins-Regular',
+    },
+  },
+);
 
 const AppTabNavigator = createMaterialBottomTabNavigator(
   {
-    Store: {
-      screen: ProductsRetail,
+    Home: {
+      screen: Home,
       navigationOptions: {
-        title: 'Order',
+        title: 'Home',
         tabBarIcon: ({tintColor, focused}) => (
           <Icon
             size={28}
-            name={Platform.OS === 'ios' ? 'ios-cart' : 'md-cart'}
-            style={{color: tintColor}}
-          />
-        ),
-      },
-    },
-    Category: {
-      screen: MenuCategory,
-      navigationOptions: {
-        title: 'Category',
-        tabBarIcon: ({tintColor, focused}) => (
-          <Icon
-            size={28}
-            name={Platform.OS === 'ios' ? 'ios-apps' : 'md-apps'}
-            style={{color: tintColor}}
-          />
-        ),
-      },
-    },
-    Rewards: {
-      screen: Rewards,
-      navigationOptions: {
-        title: 'Rewards',
-        tabBarIcon: ({tintColor, focused}) => (
-          <Icon
-            size={28}
-            name={Platform.OS === 'ios' ? 'ios-ribbon' : 'md-ribbon'}
+            name={Platform.OS === 'ios' ? 'ios-home' : 'md-home'}
             style={{color: tintColor}}
           />
         ),
@@ -72,15 +86,41 @@ const AppTabNavigator = createMaterialBottomTabNavigator(
         ),
       },
     },
-    Account: {
-      // path: 'first',
-      screen: Account,
+    Rewards: {
+      screen: Rewards,
       navigationOptions: {
-        title: 'More',
+        title: 'Rewards',
         tabBarIcon: ({tintColor, focused}) => (
           <Icon
             size={28}
-            name={Platform.OS === 'ios' ? 'ios-menu' : 'md-menu'}
+            name={Platform.OS === 'ios' ? 'ios-ribbon' : 'md-ribbon'}
+            style={{color: tintColor}}
+          />
+        ),
+      },
+    },
+    Inbox: {
+      screen: Inbox,
+      navigationOptions: {
+        title: 'Inbox',
+        tabBarIcon: ({tintColor, focused}) => (
+          <Icon
+            size={28}
+            name={Platform.OS === 'ios' ? 'ios-mail' : 'md-mail'}
+            style={{color: tintColor}}
+          />
+        ),
+      },
+    },
+    Profile: {
+      // path: 'first',
+      screen: Account,
+      navigationOptions: {
+        title: 'Profile',
+        tabBarIcon: ({tintColor, focused}) => (
+          <Icon
+            size={28}
+            name={Platform.OS === 'ios' ? 'ios-person' : 'md-person'}
             style={{color: tintColor}}
           />
         ),
@@ -88,53 +128,27 @@ const AppTabNavigator = createMaterialBottomTabNavigator(
     },
   },
   {
-    initialRouteName: 'Rewards',
+    initialRouteName: 'Home',
     activeColor: colorConfig.store.defaultColor,
     inactiveColor: colorConfig.pageIndex.grayColor,
     shifting: false,
     barStyle: {
       backgroundColor: colorConfig.pageIndex.backgroundColor,
-      fontFamily: 'Lato-Medium',
+      fontFamily: 'Poppins-Regular',
     },
   },
 );
 
 const AppTabNavigatorHistory = createMaterialBottomTabNavigator(
   {
-    Store: {
-      screen: ProductsRetail,
+    Home: {
+      screen: Home,
       navigationOptions: {
         title: 'Order',
         tabBarIcon: ({tintColor, focused}) => (
           <Icon
             size={28}
-            name={Platform.OS === 'ios' ? 'ios-cart' : 'md-cart'}
-            style={{color: tintColor}}
-          />
-        ),
-      },
-    },
-    Category: {
-      screen: MenuCategory,
-      navigationOptions: {
-        title: 'Category',
-        tabBarIcon: ({tintColor, focused}) => (
-          <Icon
-            size={28}
-            name={Platform.OS === 'ios' ? 'ios-apps' : 'md-apps'}
-            style={{color: tintColor}}
-          />
-        ),
-      },
-    },
-    Rewards: {
-      screen: Rewards,
-      navigationOptions: {
-        title: 'Rewards',
-        tabBarIcon: ({tintColor, focused}) => (
-          <Icon
-            size={28}
-            name={Platform.OS === 'ios' ? 'ios-ribbon' : 'md-ribbon'}
+            name={Platform.OS === 'ios' ? 'ios-home' : 'md-home'}
             style={{color: tintColor}}
           />
         ),
@@ -153,15 +167,41 @@ const AppTabNavigatorHistory = createMaterialBottomTabNavigator(
         ),
       },
     },
-    Account: {
-      // path: 'first',
-      screen: Account,
+    Rewards: {
+      screen: Rewards,
       navigationOptions: {
-        title: 'More',
+        title: 'Rewards',
         tabBarIcon: ({tintColor, focused}) => (
           <Icon
             size={28}
-            name={Platform.OS === 'ios' ? 'ios-menu' : 'md-menu'}
+            name={Platform.OS === 'ios' ? 'ios-ribbon' : 'md-ribbon'}
+            style={{color: tintColor}}
+          />
+        ),
+      },
+    },
+    Inbox: {
+      screen: Inbox,
+      navigationOptions: {
+        title: 'Inbox',
+        tabBarIcon: ({tintColor, focused}) => (
+          <Icon
+            size={28}
+            name={Platform.OS === 'ios' ? 'ios-mail' : 'md-mail'}
+            style={{color: tintColor}}
+          />
+        ),
+      },
+    },
+    Profile: {
+      // path: 'first',
+      screen: Account,
+      navigationOptions: {
+        title: 'Profile',
+        tabBarIcon: ({tintColor, focused}) => (
+          <Icon
+            size={28}
+            name={Platform.OS === 'ios' ? 'ios-person' : 'md-person'}
             style={{color: tintColor}}
           />
         ),
@@ -175,12 +215,16 @@ const AppTabNavigatorHistory = createMaterialBottomTabNavigator(
     shifting: false,
     barStyle: {
       backgroundColor: colorConfig.pageIndex.backgroundColor,
-      fontFamily: 'Lato-Medium',
+      fontFamily: 'Poppins-Regular',
     },
   },
 );
 
 const AppStackContainer = createAppContainer(AppTabNavigator, {
+  transitionConfig: () => ({screenInterpolator: () => null}),
+});
+
+const AppStackContainerNonLogin = createAppContainer(AppTabNavigatorNonLogin, {
   transitionConfig: () => ({screenInterpolator: () => null}),
 });
 
@@ -207,14 +251,15 @@ class PageIndex extends Component {
   };
 
   render() {
-    const {fromPayment} = this.props;
-
+    const {fromPayment, isLoggedIn} = this.props;
     return (
       <Container>
         {fromPayment == true ? (
           <AppStackContainerHistory />
-        ) : (
+        ) : isLoggedIn ? (
           <AppStackContainer />
+        ) : (
+          <AppStackContainerNonLogin />
         )}
       </Container>
     );
@@ -223,6 +268,7 @@ class PageIndex extends Component {
 
 mapStateToProps = state => ({
   intlData: state.intlData,
+  isLoggedIn: state.authReducer.authData.isLoggedIn,
 });
 
 mapDispatchToProps = dispatch => ({

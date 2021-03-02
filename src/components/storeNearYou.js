@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Dimensions,
   Platform,
+  Alert,
 } from 'react-native';
 
 import colorConfig from '../config/colorConfig';
@@ -14,6 +15,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import {getOutletById} from '../actions/stores.action';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
+import {getBasket, removeBasket} from '../actions/order.action';
 
 class StoreNearYou extends Component {
   constructor(props) {
@@ -23,6 +25,30 @@ class StoreNearYou extends Component {
     };
   }
 
+  showAlertBasketNotEmpty = async item => {
+    const {dataBasket} = this.props;
+    Alert.alert(
+      'Change outlet ?',
+      `You will delete your cart in outlet ${dataBasket.outlet.name}`,
+      [
+        {text: 'Cancel'},
+        {
+          text: 'Continue',
+          onPress: () => {
+            this.removeCart();
+            this.storeDetailStores(item);
+          },
+        },
+      ],
+      {cancelable: false},
+    );
+  };
+
+  removeCart = async () => {
+    await this.props.dispatch(removeBasket());
+    await this.props.dispatch(getBasket());
+  };
+
   storeDetailStores = async item => {
     const {intlData} = this.props;
     try {
@@ -30,6 +56,26 @@ class StoreNearYou extends Component {
       this.props.refreshProducts();
       Actions.pop();
     } catch (e) {}
+  };
+
+  processChangeOutlet = item => {
+    try {
+      const {dataBasket} = this.props;
+      if (dataBasket === undefined || dataBasket === null) {
+        this.storeDetailStores(item);
+        return;
+      }
+      if (dataBasket && dataBasket.outlet.id === item.storeId) {
+        this.storeDetailStores(item);
+        return;
+      }
+      if (dataBasket && dataBasket.outlet.id !== item.storeId) {
+        this.showAlertBasketNotEmpty(item);
+        return;
+      }
+    } catch (e) {
+      this.storeDetailStores(item);
+    }
   };
 
   render() {
@@ -43,13 +89,13 @@ class StoreNearYou extends Component {
               {
                 <TouchableOpacity
                   style={styles.storesNearItem}
-                  onPress={() => this.storeDetailStores(item)}>
+                  onPress={() => this.processChangeOutlet(item)}>
                   <View style={styles.storesNearDetail}>
                     <Text
                       style={{
                         fontSize: 12,
                         color: colorConfig.store.secondaryColor,
-                        fontFamily: 'Lato-Medium',
+                        fontFamily: 'Poppins-Regular',
                       }}>
                       {item.storeName}
                     </Text>
@@ -60,7 +106,7 @@ class StoreNearYou extends Component {
                         bottom: 0,
                         padding: 7,
                         color: colorConfig.pageIndex.grayColor,
-                        fontFamily: 'Lato-Medium',
+                        fontFamily: 'Poppins-Regular',
                       }}>
                       <Icon
                         size={10}
@@ -86,7 +132,7 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     color: colorConfig.store.title,
     fontSize: 19,
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
   },
   storesNearItem: {
     borderColor: colorConfig.pageIndex.inactiveTintColor,
@@ -112,10 +158,12 @@ const styles = StyleSheet.create({
   },
   storesNearDetail: {
     padding: 10,
-    // borderTopColor: colorConfig.store.defaultColor,
-    // borderTopWidth: 1,
     height: Dimensions.get('window').width / 3 - 55,
   },
+});
+
+mapStateToProps = state => ({
+  dataBasket: state.orderReducer.dataBasket.product,
 });
 
 mapDispatchToProps = dispatch => ({

@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 5,
     marginLeft: 10,
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
   },
   card: {
     backgroundColor: colorConfig.pageIndex.backgroundColor,

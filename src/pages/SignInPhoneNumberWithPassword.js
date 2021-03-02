@@ -350,7 +350,7 @@ class SignInPhoneNumber extends Component {
                 style={{
                   color: colorConfig.store.titleSelected,
                   fontSize: 15,
-                  fontFamily: 'Lato-Medium',
+                  fontFamily: 'Poppins-Regular',
                 }}>
                 {intlData.messages.signIn} {intlData.messages.to}{' '}
                 {this.props.phoneNumber}
@@ -378,7 +378,7 @@ class SignInPhoneNumber extends Component {
                   style={{
                     fontSize: 20,
                     width: '100%',
-                    fontFamily: 'Lato-Medium',
+                    fontFamily: 'Poppins-Regular',
                     padding: 12,
                     color: colorConfig.store.title,
                     borderColor: colorConfig.pageIndex.inactiveTintColor,
@@ -422,7 +422,7 @@ class SignInPhoneNumber extends Component {
                     fontSize: 18,
                     textAlign: 'center',
                     fontWeight: 'bold',
-                    fontFamily: 'Lato-Medium',
+                    fontFamily: 'Poppins-Regular',
                   }}>
                   {intlData.messages.submit}
                 </Text>

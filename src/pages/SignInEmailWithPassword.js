@@ -303,7 +303,7 @@ class SignInEmail extends Component {
                 style={{
                   color: colorConfig.store.title,
                   fontSize: 15,
-                  fontFamily: 'Lato-Bold',
+                  fontFamily: 'Poppins-Medium',
                 }}>
                 {intlData.messages.signIn} {intlData.messages.to}{' '}
                 {this.props.email}
@@ -331,7 +331,7 @@ class SignInEmail extends Component {
                   style={{
                     fontSize: 20,
                     width: '100%',
-                    fontFamily: 'Lato-Medium',
+                    fontFamily: 'Poppins-Regular',
                     padding: 12,
                     color: colorConfig.store.title,
                     borderColor: colorConfig.pageIndex.inactiveTintColor,
@@ -380,7 +380,7 @@ class SignInEmail extends Component {
                     fontSize: 18,
                     textAlign: 'center',
                     fontWeight: 'bold',
-                    fontFamily: 'Lato-Medium',
+                    fontFamily: 'Poppins-Regular',
                   }}>
                   {intlData.messages.submit}
                 </Text>

@@ -10,7 +10,7 @@ export default class CustomTextInput extends Component {
         value={this.props.value}
         style={{
           fontSize: 20,
-          fontFamily: 'Lato-Medium',
+          fontFamily: 'Poppins-Regular',
           padding: 15,
           color: colorConfig.pageIndex.grayColor,
           borderColor: colorConfig.pageIndex.inactiveTintColor,

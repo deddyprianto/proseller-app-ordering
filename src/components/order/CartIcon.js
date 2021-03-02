@@ -51,7 +51,7 @@ export default class CartIcon extends Component {
           style={{
             color: colorConfig.store.defaultColor,
             fontSize: 10,
-            fontFamily: 'Lato-Medium',
+            fontFamily: 'Poppins-Regular',
           }}>
           Cart
         </Text>

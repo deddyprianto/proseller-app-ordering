@@ -30,13 +30,15 @@ import {
   setNetsclickStatus,
 } from '../actions/payment.actions';
 import {Overlay} from 'react-native-elements';
-// import {campaign, dataPoint, getStamps} from '../actions/rewards.action';
-// import {recentTransaction} from '../actions/sales.action';
-// import {getMandatoryFields} from '../actions/account.action';
+
 import {Dialog} from 'react-native-paper';
 import appConfig from '../config/appConfig';
 import QRCode from 'react-native-qrcode-svg';
 import AsyncStorage from '@react-native-community/async-storage';
+import {dataInbox} from '../actions/inbox.action';
+import {getPaidMembership} from '../actions/membership.action';
+import {dataPoint} from '../actions/rewards.action';
+import {getSVCBalance} from '../actions/SVC.action';
 
 class Account extends Component {
   constructor(props) {
@@ -48,6 +50,7 @@ class Account extends Component {
       dialogChangeLanguage: false,
       screenWidth: Dimensions.get('window').width,
       qrCodeVisible: false,
+      memberships: {},
     };
   }
 
@@ -62,21 +65,30 @@ class Account extends Component {
     } catch (e) {}
   };
 
-  componentWillUnmount(): void {
+  componentWillUnmount() {
     try {
       this.getAccountInfo.remove();
     } catch (e) {}
   }
 
+  getPaidMembership = async () => {
+    try {
+      await this.props.dispatch(getPaidMembership());
+    } catch (e) {}
+  };
+
   getDataRewards = async () => {
     try {
       await this.setState({isLoading: true});
-      await this.props.dispatch(refreshToken());
       await Promise.all([
         this.props.dispatch(getUserProfile()),
         this.props.dispatch(referral()),
-        this.props.dispatch(getCompanyInfo()),
+        this.props.dispatch(dataPoint()),
+        this.props.dispatch(getSVCBalance()),
+        // this.props.dispatch(getCompanyInfo()),
         this.props.dispatch(getAccountPayment()),
+        this.props.dispatch(dataInbox(0, 10)),
+        this.getPaidMembership(),
       ]);
       await this.setState({isLoading: false});
 
@@ -124,7 +136,7 @@ class Account extends Component {
           <Text
             style={{
               textAlign: 'center',
-              fontFamily: 'Lato-Bold',
+              fontFamily: 'Poppins-Medium',
               fontSize: 20,
               color: colorConfig.store.defaultColor,
             }}>
@@ -156,7 +168,7 @@ class Account extends Component {
             <Text
               style={{
                 color: 'white',
-                fontFamily: 'Lato-Bold',
+                fontFamily: 'Poppins-Medium',
                 textAlign: 'center',
                 fontSize: 16,
               }}>
@@ -213,6 +225,7 @@ class Account extends Component {
               setQrCodeVisibility={this.setQrCodeVisibility}
               screen={this.props}
               userDetail={userDetail}
+              memberships={this.props.memberships}
             />
           </View>
           <View style={styles.card}>
@@ -220,6 +233,7 @@ class Account extends Component {
               setLanguage={this.setLanguage}
               dialogChangeLanguage={this.state.dialogChangeLanguage}
               screen={this.props}
+              balance={this.props.balance}
             />
           </View>
         </ScrollView>
@@ -258,7 +272,9 @@ mapStateToProps = state => ({
   userDetail: state.userReducer.getUser.userDetails,
   totalPoint: state.rewardsReducer.dataPoint.totalPoint,
   myVoucers: state.accountsReducer.myVoucers.myVoucers,
+  balance: state.SVCReducer.balance.balance,
   qrcode: state.authReducer.authData.qrcode,
+  memberships: state.membershipReducer.memberships.memberships,
   intlData: state.intlData,
 });
 

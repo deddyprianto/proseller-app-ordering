@@ -41,6 +41,11 @@ class RewardsTransaction extends Component {
 
   render() {
     const {intlData} = this.props;
+    let {outletSingle} = this.props;
+    if (outletSingle === undefined) {
+      outletSingle = {};
+      outletSingle.name = '';
+    }
     return (
       <View style={styles.container}>
         <Text style={styles.title}>{intlData.messages.recentTransactions}</Text>
@@ -76,9 +81,11 @@ class RewardsTransaction extends Component {
                           style={{
                             marginLeft: 12,
                             color: colorConfig.store.titleSelected,
-                            fontFamily: 'Lato-Bold',
+                            fontFamily: 'Poppins-Medium',
                           }}>
-                          {item.outletName.substr(0, 25)}
+                          {item.outlet
+                            ? item.outlet.name.substr(0, 25)
+                            : outletSingle.name.substr(0, 25)}
                         </Text>
                       </View>
                       <View
@@ -91,7 +98,7 @@ class RewardsTransaction extends Component {
                           style={{
                             marginRight: 5,
                             color: colorConfig.pageIndex.grayColor,
-                            fontFamily: 'Lato-Medium',
+                            fontFamily: 'Poppins-Regular',
                           }}>
                           {item.pointDebit}
                         </Text>
@@ -149,7 +156,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 5,
     marginLeft: 10,
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
   },
   card: {
     backgroundColor: colorConfig.pageIndex.backgroundColor,
@@ -194,6 +201,7 @@ const styles = StyleSheet.create({
 
 mapStateToProps = state => ({
   recentTransaction: state.rewardsReducer.dataPoint.recentTransaction,
+  outletSingle: state.storesReducer.dataOutletSingle.outletSingle,
   intlData: state.intlData,
 });
 

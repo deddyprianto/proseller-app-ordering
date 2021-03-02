@@ -68,33 +68,40 @@ class PaymentSuccess extends Component {
   };
 
   goBack = async () => {
-    const {url, outlet} = this.props;
-    Actions.reset('app', {fromPayment: true});
-
+    const {url, outlet, paidMembership, paySVC} = this.props;
+    if (paidMembership === true) {
+      Actions.popTo('pageIndex');
+    } else if (paySVC === true) {
+      Actions.popTo('summary');
+    } else {
+      Actions.reset('app', {fromPayment: true});
+    }
     // Order Notifications
     try {
-      setTimeout(async () => {
-        if (
-          outlet != undefined &&
-          !isEmptyArray(outlet.waitingTimeMessages) &&
-          url != undefined
-        ) {
-          let needle = this.props.dataRespons.totalNettAmount;
-          let closest = await outlet.waitingTimeMessages.find(
-            item => needle >= item.minAmount && needle <= item.maxAmount,
-          );
+      if (paidMembership !== true) {
+        setTimeout(async () => {
+          if (
+            outlet !== undefined &&
+            !isEmptyArray(outlet.waitingTimeMessages) &&
+            url !== undefined
+          ) {
+            let needle = this.props.dataRespons.totalNettAmount;
+            let closest = await outlet.waitingTimeMessages.find(
+              item => needle >= item.minAmount && needle <= item.maxAmount,
+            );
 
-          if (closest != undefined) {
-            if (
-              closest.message != undefined &&
-              closest.message != null &&
-              closest.message != ''
-            ) {
-              Alert.alert('Ordering', closest.message);
+            if (closest != undefined) {
+              if (
+                closest.message !== undefined &&
+                closest.message !== null &&
+                closest.message !== ''
+              ) {
+                Alert.alert('Ordering', closest.message);
+              }
             }
           }
-        }
-      }, 1000);
+        }, 1000);
+      }
     } catch (e) {}
   };
 
@@ -185,7 +192,11 @@ class PaymentSuccess extends Component {
           return this.format(CurrencyFormatter(dataRespons.totalNettAmount));
         }
       } else {
-        return this.format(CurrencyFormatter(dataRespons.totalNettAmount));
+        if (dataRespons.totalNettAmount) {
+          return this.format(CurrencyFormatter(dataRespons.totalNettAmount));
+        } else {
+          return this.format(CurrencyFormatter(dataRespons.price));
+        }
       }
     } catch (e) {
       return dataRespons.totalNettAmount;
@@ -194,6 +205,7 @@ class PaymentSuccess extends Component {
 
   renderPaymentDetails = () => {
     const {intlData} = this.props;
+    const {paidMembership, paySVC} = this.props;
     return (
       <View style={styles.card}>
         <View
@@ -276,7 +288,7 @@ class PaymentSuccess extends Component {
             style={{
               fontSize: 13,
               fontWeight: 'bold',
-              fontFamily: 'Lato-Bold',
+              fontFamily: 'Poppins-Medium',
               textAlign: 'center',
               marginVertical: 10,
               color: colorConfig.pageIndex.activeTintColor,
@@ -323,13 +335,15 @@ class PaymentSuccess extends Component {
               }}>
               {this.props.companyInfo.companyName}
             </Text>
-            <Text
-              style={{
-                fontSize: 14,
-                color: colorConfig.pageIndex.grayColor,
-              }}>
-              {this.props.outlet.name}
-            </Text>
+            {paidMembership || paySVC ? null : (
+              <Text
+                style={{
+                  fontSize: 14,
+                  color: colorConfig.pageIndex.grayColor,
+                }}>
+                {this.props.outlet.name}
+              </Text>
+            )}
           </View>
         </View>
         <View

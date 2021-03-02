@@ -58,6 +58,17 @@ class EditAddress extends Component {
       myAddress.addressName = 'Home';
     }
 
+    let isPostalCodeValid = true;
+
+    try {
+      if (myAddress.postalCode !== undefined && myAddress.postalCode !== '') {
+        const isValid = new RegExp(/((\d{6}.*)*\s)?(\d{6})([^\d].*)?$/).test(
+          Number(myAddress.postalCode),
+        );
+        if (!isValid) isPostalCodeValid = false;
+      }
+    } catch (e) {}
+
     this.state = {
       screenWidth: Dimensions.get('window').width,
       addressName: myAddress.addressName,
@@ -72,6 +83,7 @@ class EditAddress extends Component {
       dataProvince: [],
       dataCity: [],
       loading: true,
+      isPostalCodeValid,
     };
   }
 
@@ -181,12 +193,7 @@ class EditAddress extends Component {
       const response = await this.props.dispatch(updateUser(data));
 
       if (response) {
-        if (
-          isEmptyArray(userDetail.deliveryAddress) ||
-          userDetail.deliveryAddress.length == 1
-        ) {
-          await this.props.dispatch(defaultAddress(newAddress));
-        }
+        await this.props.dispatch(defaultAddress(newAddress));
 
         if (this.props.from == 'basket') {
           await this.props.dispatch(selectedAddress(newAddress));
@@ -197,6 +204,7 @@ class EditAddress extends Component {
         }
 
         if (this.props.from == 'selectAddress') {
+          console.log('defaultAddress');
           await this.props.dispatch(selectedAddress(newAddress));
         }
 
@@ -240,15 +248,17 @@ class EditAddress extends Component {
   };
 
   notCompleted = () => {
-    const {addressName, address, city, postalCode} = this.state;
+    const {streetName, postalCode} = this.state;
 
-    if (addressName != '' && address != '') {
+    if (streetName !== '' && postalCode !== '') {
+      if (this.state.isPostalCodeValid === false) return true;
       return false;
     }
     return true;
   };
 
   render() {
+    const {isPostalCodeValid} = this.state;
     return (
       <SafeAreaView style={styles.container}>
         {this.state.loading && <Loader />}
@@ -421,8 +431,31 @@ class EditAddress extends Component {
             // mode={'outlined'}
             label="Postal Code"
             value={this.state.postalCode}
-            onChangeText={text => this.setState({postalCode: text})}
+            onChangeText={text => {
+              try {
+                const isValid = new RegExp(
+                  /((\d{6}.*)*\s)?(\d{6})([^\d].*)?$/,
+                ).test(Number(text));
+                if (isValid) {
+                  this.setState({isPostalCodeValid: true});
+                } else {
+                  this.setState({isPostalCodeValid: false});
+                }
+              } catch (e) {}
+              this.setState({postalCode: text});
+            }}
           />
+
+          {!isPostalCodeValid && (
+            <Text
+              style={{
+                fontSize: 10,
+                fontStyle: 'italic',
+                color: colorConfig.store.colorError,
+              }}>
+              Postal code is not valid
+            </Text>
+          )}
 
           <TouchableOpacity
             onPress={this.submitEdit}
@@ -437,7 +470,7 @@ class EditAddress extends Component {
               alignItems: 'center',
             }}>
             <Text
-              style={{color: 'white', fontFamily: 'Lato-Bold', fontSize: 20}}>
+              style={{color: 'white', fontFamily: 'Poppins-Medium', fontSize: 20}}>
               Save
             </Text>
           </TouchableOpacity>

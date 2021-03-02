@@ -119,7 +119,7 @@ class HostedTransaction extends Component {
             style={{
               fontSize: 25,
               color: 'white',
-              fontFamily: 'Lato-Bold',
+              fontFamily: 'Poppins-Medium',
             }}>
             x
           </Text>
@@ -141,7 +141,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: 'white',
     fontWeight: 'bold',
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
   },
 });
 

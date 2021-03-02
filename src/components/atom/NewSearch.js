@@ -35,7 +35,7 @@ export default class NewSearch extends Component {
         <Text
           style={{
             // marginTop: 10,
-            fontFamily: 'Lato-Medium',
+            fontFamily: 'Poppins-Regular',
             fontSize: 23,
             color: colorConfig.pageIndex.grayColor,
           }}>

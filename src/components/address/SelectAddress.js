@@ -14,10 +14,8 @@ import {
   ScrollView,
   BackHandler,
   Platform,
-  TextInput,
   FlatList,
   RefreshControl,
-  Alert,
   SafeAreaView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -26,25 +24,17 @@ import colorConfig from '../../config/colorConfig';
 import awsConfig from '../../config/awsConfig';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
-import {reduxForm} from 'redux-form';
 import Loader from './../loader';
 import {
   getAccountPayment,
-  registerCard,
-  removeCard,
   selectedAddress,
 } from '../../actions/payment.actions';
-import {
-  defaultPaymentAccount,
-  getUserProfile,
-  movePageIndex,
-} from '../../actions/user.action';
+import {defaultAddress, getUserProfile} from '../../actions/user.action';
 import {
   isEmptyArray,
   isEmptyData,
   isEmptyObject,
 } from '../../helper/CheckEmpty';
-import RBSheet from 'react-native-raw-bottom-sheet';
 import CryptoJS from 'react-native-crypto-js';
 
 class SelectAddress extends Component {
@@ -114,8 +104,11 @@ class SelectAddress extends Component {
   checkDefaultAccount = item => {
     const {defaultAccount} = this.props;
     try {
-      if (defaultAccount.accountID == item.accountID) return true;
-      else return false;
+      if (defaultAccount.accountID == item.accountID) {
+        return true;
+      } else {
+        return false;
+      }
     } catch (e) {
       return false;
     }
@@ -129,10 +122,27 @@ class SelectAddress extends Component {
         selectedAddress.streetName == item.streetName
       ) {
         return true;
-      } else return false;
+      } else {
+        return false;
+      }
     } catch (e) {
       return false;
     }
+  };
+
+  selectAddress = async item => {
+    try {
+      await this.setState({loading: true});
+      await this.setState({selectedAddress: item});
+      try {
+        this.props.clearDelivery();
+      } catch (e) {}
+      await this.props.dispatch(selectedAddress(item));
+      await this.props.dispatch(defaultAddress(item));
+      await this.props.getDeliveryFee();
+      await this.goBack();
+      await this.setState({loading: false});
+    } catch (e) {}
   };
 
   renderAddress = address => {
@@ -146,18 +156,13 @@ class SelectAddress extends Component {
               this.checkSelectedAddress(item) ? styles.cardSelected : null,
             ]}>
             <TouchableOpacity
-              onPress={async () => {
-                try {
-                  await this.setState({loading: true});
-                  await this.setState({selectedAddress: item});
-                  try {
-                    this.props.clearDelivery();
-                  } catch (e) {}
-                  await this.props.dispatch(selectedAddress(item));
-                  await this.props.getDeliveryFee();
-                  await this.goBack();
-                  await this.setState({loading: false});
-                } catch (e) {}
+              onPress={() => {
+                Actions.editAddress({
+                  from: 'basket',
+                  myAddress: item,
+                  getDeliveryFee: this.props.getDeliveryFee,
+                  clearDelivery: this.props.clearDelivery,
+                });
               }}>
               <View style={styles.cardContent}>
                 <Text style={styles.cardText}>Address Name : </Text>
@@ -204,28 +209,56 @@ class SelectAddress extends Component {
                 </Text>
               </View>
             </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => {
-                Actions.editAddress({
-                  from: 'basket',
-                  myAddress: item,
-                  getDeliveryFee: this.props.getDeliveryFee,
-                  clearDelivery: this.props.clearDelivery,
-                });
-              }}
-              style={{
-                backgroundColor: colorConfig.store.darkColor,
-                padding: 10,
-                borderRadius: 10,
-                marginTop: 20,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              <Text
-                style={{fontSize: 15, fontFamily: 'Lato-Bold', color: 'white'}}>
-                Edit
-              </Text>
-            </TouchableOpacity>
+            <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+              <TouchableOpacity
+                onPress={() => this.selectAddress(item)}
+                style={{
+                  backgroundColor: colorConfig.store.defaultColor,
+                  padding: 10,
+                  borderRadius: 10,
+                  marginTop: 20,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  width: '45%',
+                  marginRight: '5%',
+                }}>
+                <Text
+                  style={{
+                    fontSize: 15,
+                    fontFamily: 'Poppins-Medium',
+                    color: 'white',
+                  }}>
+                  Select
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  Actions.editAddress({
+                    from: 'basket',
+                    myAddress: item,
+                    getDeliveryFee: this.props.getDeliveryFee,
+                    clearDelivery: this.props.clearDelivery,
+                  });
+                }}
+                style={{
+                  backgroundColor: colorConfig.store.darkColor,
+                  padding: 10,
+                  borderRadius: 10,
+                  marginTop: 20,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  width: '45%',
+                }}>
+                <Text
+                  style={{
+                    fontSize: 15,
+                    fontFamily: 'Poppins-Medium',
+                    color: 'white',
+                  }}>
+                  Edit
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
         )}
         keyExtractor={(product, index) => index.toString()}
@@ -487,7 +520,7 @@ const styles = StyleSheet.create({
     opacity: 0.8,
     color: 'white',
     fontWeight: 'bold',
-    // fontFamily: 'Lato-Bold',
+    // fontFamily: 'Poppins-Medium',
     // textAlign: 'center',
     // letterSpacing: 2,
   },
@@ -518,7 +551,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: 'white',
     fontWeight: 'bold',
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
   },
   item: {
     alignItems: 'center',

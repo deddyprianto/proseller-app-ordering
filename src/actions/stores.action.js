@@ -52,6 +52,7 @@ export const dataStores = () => {
         type: 'DATA_ALL_STORES',
         data: response.response.data,
       });
+      return response.response.data;
     } catch (error) {
       return error;
     }
@@ -73,20 +74,59 @@ export const getDefaultOutlet = () => {
         },
       } = state;
 
+      const {
+        orderReducer: {
+          orderingSetting: {orderingSetting},
+        },
+      } = state;
+
+      let outletSelectionMode = 'DEFAULT';
+      if (
+        orderingSetting !== undefined &&
+        orderingSetting.settings !== undefined
+      ) {
+        const find = orderingSetting.settings.find(
+          item => item.settingKey === 'OutletSelection',
+        );
+        if (find !== undefined) {
+          outletSelectionMode = find.settingValue;
+        }
+      }
+
+      if (outletSelectionMode === 'Customer Select Manually')
+        outletSelectionMode = 'MANUAL';
+
       let payload = {};
       if (!isEmptyObject(userPosition) && !isEmptyObject(userPosition.coords)) {
         payload.latitude = userPosition.coords.latitude;
         payload.longitude = userPosition.coords.longitude;
       }
 
-      const response = await fetchApiMasterData(
-        '/outlets/nearestoutlet',
-        'POST',
-        !isEmptyObject(payload) ? payload : false,
-        200,
-        token,
-      );
-      console.log(response.response.data, 'response default outlets');
+      let response = {};
+      if (outletSelectionMode === 'DEFAULT') {
+        response = await fetchApiMasterData(
+          '/outlets/defaultoutlet',
+          'GET',
+          null,
+          200,
+          token,
+        );
+      } else if (outletSelectionMode === 'NEAREST') {
+        console.log(payload, 'payload');
+        response = await fetchApiMasterData(
+          '/outlets/nearestoutlet',
+          'POST',
+          !isEmptyObject(payload) ? payload : false,
+          200,
+          token,
+        );
+      }
+      console.log(response, 'response default outlets');
+      dispatch({
+        type: 'OUTLET_SELECTION_MODE',
+        outletSelectionMode: outletSelectionMode,
+      });
+
       if (response.success) {
         dispatch({
           type: 'DATA_DEFAULT_OUTLET',
@@ -97,6 +137,50 @@ export const getDefaultOutlet = () => {
           type: 'DATA_DEFAULT_OUTLET',
           data: {},
         });
+      }
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const setDefaultOutlet = outlet => {
+  return async (dispatch, getState) => {
+    try {
+      dispatch({
+        type: 'DATA_DEFAULT_OUTLET',
+        data: outlet,
+      });
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const getBackupOutlet = () => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      const response = await fetchApiMasterData(
+        '/outlets/defaultoutlet',
+        'GET',
+        null,
+        200,
+        token,
+      );
+
+      console.log(response, 'response default outlets');
+
+      if (response.success) {
+        return response.response.data;
+      } else {
+        return false;
       }
     } catch (error) {
       return error;

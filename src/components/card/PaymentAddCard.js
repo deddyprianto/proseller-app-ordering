@@ -118,7 +118,7 @@ class PaymentAddCard extends Component {
             fontSize: 22,
             paddingBottom: 5,
             fontWeight: 'bold',
-            fontFamily: 'Lato-Bold',
+            fontFamily: 'Poppins-Medium',
           }}>
           Please Enter CVV
         </Text>
@@ -135,7 +135,7 @@ class PaymentAddCard extends Component {
             fontSize: 22,
             textAlign: 'center',
             fontWeight: 'bold',
-            fontFamily: 'Lato-Bold',
+            fontFamily: 'Poppins-Medium',
             color: colorConfig.pageIndex.grayColor,
             borderColor: colorConfig.pageIndex.grayColor,
             borderRadius: 10,
@@ -168,7 +168,7 @@ class PaymentAddCard extends Component {
             style={{
               color: 'white',
               fontWeight: 'bold',
-              fontFamily: 'Lato-Bold',
+              fontFamily: 'Poppins-Medium',
               fontSize: 15,
               textAlign: 'center',
             }}>
@@ -557,7 +557,7 @@ const styles = StyleSheet.create({
     letterSpacing: 2,
     color: 'white',
     fontWeight: 'bold',
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
   },
   cardNumberText: {
     fontSize: 24,
@@ -574,7 +574,7 @@ const styles = StyleSheet.create({
     opacity: 0.8,
     color: 'white',
     fontWeight: 'bold',
-    // fontFamily: 'Lato-Bold',
+    // fontFamily: 'Poppins-Medium',
     // textAlign: 'center',
     // letterSpacing: 2,
   },
@@ -605,7 +605,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: 'white',
     fontWeight: 'bold',
-    fontFamily: 'Lato-Bold',
+    fontFamily: 'Poppins-Medium',
   },
   item: {
     alignItems: 'center',
