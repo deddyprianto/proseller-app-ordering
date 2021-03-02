@@ -472,7 +472,7 @@ class AccountMenuList extends Component {
           </Text>
           <View
             style={{
-              flexDirection: 'row',
+              // flexDirection: 'row',
               // paddingVertical: 10,
               alignItems: 'center',
             }}>
