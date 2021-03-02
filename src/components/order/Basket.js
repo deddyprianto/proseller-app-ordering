@@ -233,7 +233,7 @@ class Basket extends Component {
         ),
       );
       let gotSlot = false;
-      if (response != false && !isEmptyArray(response)) {
+      if (response !== false && !isEmptyArray(response)) {
         for (let i = 0; i < response.length; i++) {
           if (!isEmptyArray(response[i].timeSlot)) {
             for (let j = 0; j < response[i].timeSlot.length; j++) {
@@ -247,6 +247,10 @@ class Basket extends Component {
                 break;
               }
             }
+          } else {
+            await this.setState({
+              datePickup: null,
+            });
           }
           if (gotSlot) {
             break;
@@ -268,6 +272,7 @@ class Basket extends Component {
         await this.setState({
           timePickup: `${new Date().getHours() + 1}:00`,
           selectedTimeSlot: {},
+          datePickup: null
         });
       }
     } catch (e) {}
@@ -383,6 +388,17 @@ class Basket extends Component {
         } else if (orderType === 'DINEIN') {
           dataOutlet = outletSingle.orderValidation.dineIn;
         }
+      }
+
+      if (!isEmptyObject(dataOutlet)) {
+        if (!isEmptyData(dataOutlet.maxDays) || dataOutlet.maxDays === 0) {
+          dataOutlet.maxDays = 90;
+        }
+      }
+
+      if (isEmptyObject(dataOutlet)) {
+        dataOutlet = {};
+        dataOutlet.maxDays = 90;
       }
 
       if (
@@ -2819,9 +2835,6 @@ class Basket extends Component {
   isUseTimingSetting = () => {
     let {outletSingle, orderType} = this.props;
     try {
-      if (orderType === 'DINEIN' || orderType === 'STORECHECKOUT') {
-        return false;
-      }
       if (
         this.state.datePickup === undefined ||
         this.state.datePickup === null
