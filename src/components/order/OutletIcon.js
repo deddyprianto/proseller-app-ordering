@@ -16,8 +16,9 @@ export default class OutletIcon extends Component {
         style={{
           padding: 2,
           paddingRight: 1,
-          marginLeft: '4%',
+          // marginLeft: '4%',
           marginTop: 5,
+          marginRight: 10,
           alignItems: 'center',
           justifyContent: 'center',
         }}

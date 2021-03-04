@@ -52,7 +52,7 @@ export const apiProduct = async (url, method, body = null, headers = {}) => {
       fetchParams.headers['Content-type'] = 'application/json';
       fetchParams.body = reqBody;
     }
-
+    console.log(endPoint);
     var response = await fetch(endPoint, fetchParams);
     response = await response.json();
 

@@ -22,6 +22,7 @@ import VerifyOtpAfterRegister from '../pages/VerifyOtpAfterRegister';
 import VerifyOtpAfterRegisterEmail from '../pages/VerifyOtpAfterRegisterEmail';
 import VerifyRegister from '../pages/VerifyRegister';
 import Store from '../pages/store';
+import ScanBarcode from '../pages/ScanBarcode';
 
 import Pay from '../components/rewardsPay';
 import Rewards from '../components/rewardsRewards';
@@ -246,6 +247,7 @@ export default class Routes extends Component {
               path={'/payment/:paymentRefNo/'}
               component={RewardsQRscan}
             />
+            <Scene key="scanBarcode" component={ScanBarcode} />
             <Scene key="voucher" component={VoucherDetail} />
             <Scene
               key="historyDetailPayment"

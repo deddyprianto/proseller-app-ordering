@@ -154,7 +154,7 @@ export const getProductByCategory = (OutletId, categoryId, skip, take) => {
         token,
       );
 
-      // console.log('RESPONSE GET ITEMS BY CATEGORY ', response);
+      console.log('RESPONSE GET ITEMS BY CATEGORY ', response);
 
       if (response.success == true) {
         return response.response;
@@ -1461,5 +1461,33 @@ export const getSetting = settingKey => {
     } catch (error) {
       return null;
     }
+  };
+};
+
+export const getProductByBarcode = barcode => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        storesReducer: {
+          defaultOutlet: {defaultOutlet},
+        },
+      } = state;
+
+      let response = await fetchApiProduct(
+        `/product/getbybarcode/${defaultOutlet.id}/${barcode}`,
+        'GET',
+        null,
+        200,
+        null,
+      );
+
+      console.log('RESPONSE GET PRODUCT BY BARCODE ', response);
+
+      if (response.success === true) {
+        return response.response;
+      }
+      return false;
+    } catch (e) {}
   };
 };

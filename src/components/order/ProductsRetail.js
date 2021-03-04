@@ -116,7 +116,7 @@ class Products2 extends Component {
         switch (type) {
           case ViewTypes.FULL:
             dim.width = width / 2 - 10;
-            dim.height = 330;
+            dim.height = 310;
             break;
           default:
             dim.width = width / 2 - 10;
@@ -1767,7 +1767,12 @@ class Products2 extends Component {
 
   renderPromotions = promotions => {
     return promotions.map(item => (
-      <View style={{flexDirection: 'row', marginHorizontal: 8, alignItems: 'center'}}>
+      <View
+        style={{
+          flexDirection: 'row',
+          marginHorizontal: 8,
+          alignItems: 'center',
+        }}>
         <Icon
           size={9}
           name={Platform.OS === 'ios' ? 'ios-pricetags' : 'md-pricetags'}
@@ -1779,7 +1784,7 @@ class Products2 extends Component {
   };
 
   templateItemGrid = (type, item) => {
-    if (item.product != undefined && item.product != null) {
+    if (item.itemType === 'PRODUCT') {
       return (
         <TouchableOpacity
           disabled={this.availableToOrder(item) ? false : true}
@@ -1879,7 +1884,53 @@ class Products2 extends Component {
         </TouchableOpacity>
       );
     } else {
-      return null;
+      return (
+        <TouchableOpacity
+          onPress={() => this.toggleModal(item)}
+          style={styles.gridViewCategory}>
+          <View>
+            {!isEmptyData(item.defaultImageURL) ? (
+              <Image
+                source={this.getImageUrl(item.defaultImageURL)}
+                style={[
+                  {
+                    alignSelf: 'center',
+                    borderRadius: 5,
+                    height: 180,
+                    width: Dimensions.get('window').width / 2 - 30,
+                    resizeMode: 'cover',
+                  },
+                  !this.availableToOrder(item) ? {opacity: 0.2} : null,
+                ]}
+              />
+            ) : (
+              <Image
+                source={this.getImageUrl(item.defaultImageURL)}
+                style={{
+                  alignSelf: 'center',
+                  borderRadius: 5,
+                  height: 180,
+                  width: Dimensions.get('window').width / 2 - 30,
+                  resizeMode: 'cover',
+                }}
+              />
+            )}
+            <Text
+              style={[
+                {
+                  marginTop: 15,
+                  // marginLeft: 10,
+                  fontSize: 15,
+                  textAlign: 'center',
+                  fontFamily: 'Poppins-Bold',
+                  color: colorConfig.store.title,
+                },
+              ]}>
+              {item.name}
+            </Text>
+          </View>
+        </TouchableOpacity>
+      );
     }
   };
 
@@ -1985,17 +2036,11 @@ class Products2 extends Component {
 
       let dataProducts = item.items;
 
-      if (!isEmptyArray(item.items)) {
-        dataProducts = item.items.filter(
-          item => item.product != null && item.product != undefined,
-        );
-      }
-
       // check mode display
       if (item.displayMode != undefined && item.displayMode === 'GRID') {
         return (
           <View
-            style={[styles.card, {height: 330 * Math.ceil(length / 2) + 120}]}>
+            style={[styles.card, {height: 310 * Math.ceil(length / 2) + 120}]}>
             <Text style={[styles.titleCategory]}>
               {item.name.substr(0, 35)}
             </Text>
@@ -2815,6 +2860,7 @@ class Products2 extends Component {
       productPlaceholder,
       showAllCategory,
     } = this.state;
+    console.log(products, 'products');
     return (
       <FlatList
         refreshControl={
@@ -2906,7 +2952,7 @@ class Products2 extends Component {
       selectedCategory,
     } = this.state;
     let products = this.products;
-
+    console.log(this.state.products, 'this.state.products');
     return (
       <SafeAreaView style={styles.container}>
         <ModalOrder
@@ -2945,13 +2991,16 @@ class Products2 extends Component {
               <View>
                 <>
                   <View style={styles.outletHeaderFixed}>
+                    {outletSelectionMode !== 'DEFAULT' && (
+                      <OutletIcon refreshProducts={this.refreshProducts} />
+                    )}
                     <TouchableOpacity
                       style={{
                         padding: 2,
                         paddingRight: 15,
                         marginLeft: 7,
                         width:
-                          outletSelectionMode !== 'DEFAULT' ? '70%' : '80%',
+                          outletSelectionMode !== 'DEFAULT' ? '60%' : '80%',
                         borderRadius: 7,
                         backgroundColor: '#e1e4e8',
                         flexDirection: 'row',
@@ -2979,9 +3028,36 @@ class Products2 extends Component {
                         Search in {this.state.item.name.substr(0, 20)}
                       </Text>
                     </TouchableOpacity>
-                    {outletSelectionMode !== 'DEFAULT' && (
-                      <OutletIcon refreshProducts={this.refreshProducts} />
-                    )}
+                    <TouchableOpacity
+                      style={{
+                        padding: 2,
+                        paddingRight: 1,
+                        marginLeft: '5%',
+                        marginTop: 5,
+                        justifyContent: 'center',
+                      }}
+                      onPress={() =>
+                        Actions.scanBarcode({
+                          setProductFromBarcode: this.toggleModal,
+                        })
+                      }>
+                      <Icon
+                        size={20}
+                        name={
+                          Platform.OS === 'ios' ? 'ios-barcode' : 'md-barcode'
+                        }
+                        style={{color: colorConfig.store.defaultColor}}
+                      />
+                      <Text
+                        style={{
+                          color: colorConfig.store.defaultColor,
+                          fontSize: 10,
+                          fontFamily: 'Poppins-Regular',
+                          marginLeft: -2,
+                        }}>
+                        Scan
+                      </Text>
+                    </TouchableOpacity>
                     <CartIcon
                       outletID={this.state.item.id}
                       dataBasket={this.props.dataBasket}
@@ -3592,6 +3668,15 @@ const styles = StyleSheet.create({
     margin: 5,
     padding: 5,
     borderWidth: 0.3,
+    borderRadius: 7,
+  },
+  gridViewCategory: {
+    flex: 1,
+    height: 245,
+    alignItems: 'stretch',
+    margin: 5,
+    padding: 5,
+    // borderWidth: 0.3,
     borderRadius: 7,
   },
   textInfoDelivery: {

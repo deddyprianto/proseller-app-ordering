@@ -1966,7 +1966,11 @@ class SettleOrder extends Component {
       console.log('reponse pembayaran settle order ', response);
       if (response.success) {
         try {
-          this.props.dispatch(afterPayment(true));
+          if (this.props.pembayaran.orderingMode == 'STORECHECKOUT') {
+            this.props.dispatch(afterPayment(false));
+          } else {
+            this.props.dispatch(afterPayment(true));
+          }
           this.props.dispatch(setOrderType(undefined));
         } catch (e) {}
 

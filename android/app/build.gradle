@@ -141,7 +141,7 @@ android {
         versionCode 32
         versionName "1.1.1"
         missingDimensionStrategy 'react-native-camera', 'general'
-        resValue "string", "build_config_package", "com.edgeworks"
+        resValue "string", "build_config_package", "com.acemart"
         multiDexEnabled true
         // detox
         testBuildType System.getProperty('testBuildType', 'debug')

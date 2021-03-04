@@ -1915,7 +1915,7 @@ class ProductsSpecific extends Component {
                       padding: 2,
                       paddingRight: 15,
                       marginLeft: 15,
-                      width: '70%',
+                      width: '60%',
                       borderRadius: 7,
                       backgroundColor: '#e1e4e8',
                       flexDirection: 'row',
@@ -1941,6 +1941,36 @@ class ProductsSpecific extends Component {
                       {this.state.search != undefined
                         ? this.state.search
                         : `Search in ${this.state.item.name.substr(0, 15)}`}
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={{
+                      padding: 2,
+                      paddingRight: 1,
+                      marginLeft: '5%',
+                      marginTop: 5,
+                      justifyContent: 'center',
+                    }}
+                    onPress={() =>
+                      Actions.scanBarcode({
+                        setProductFromBarcode: this.toggleModal,
+                      })
+                    }>
+                    <Icon
+                      size={20}
+                      name={
+                        Platform.OS === 'ios' ? 'ios-barcode' : 'md-barcode'
+                      }
+                      style={{color: colorConfig.store.defaultColor}}
+                    />
+                    <Text
+                      style={{
+                        color: colorConfig.store.defaultColor,
+                        fontSize: 10,
+                        fontFamily: 'Poppins-Regular',
+                        marginLeft: -2,
+                      }}>
+                      Scan
                     </Text>
                   </TouchableOpacity>
                   <CartIcon
