@@ -29,9 +29,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "edgeworks.app"
-               BlueprintName = "edgeworks"
-               ReferencedContainer = "container:edgeworks.xcodeproj">
+               BuildableName = "acemart.app"
+               BlueprintName = "acemart"
+               ReferencedContainer = "container:acemart.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -43,9 +43,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "edgeworksTests.xctest"
-               BlueprintName = "edgeworksTests"
-               ReferencedContainer = "container:edgeworks.xcodeproj">
+               BuildableName = "acemartTests.xctest"
+               BlueprintName = "acemartTests"
+               ReferencedContainer = "container:acemart.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -59,9 +59,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "edgeworks.app"
-            BlueprintName = "edgeworks"
-            ReferencedContainer = "container:edgeworks.xcodeproj">
+            BuildableName = "acemart.app"
+            BlueprintName = "acemart"
+            ReferencedContainer = "container:acemart.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <Testables>
@@ -70,9 +70,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "edgeworksTests.xctest"
-               BlueprintName = "edgeworksTests"
-               ReferencedContainer = "container:edgeworks.xcodeproj">
+               BuildableName = "acemartTests.xctest"
+               BlueprintName = "acemartTests"
+               ReferencedContainer = "container:acemart.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -92,9 +92,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "edgeworks.app"
-            BlueprintName = "edgeworks"
-            ReferencedContainer = "container:edgeworks.xcodeproj">
+            BuildableName = "acemart.app"
+            BlueprintName = "acemart"
+            ReferencedContainer = "container:acemart.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -109,9 +109,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "edgeworks.app"
-            BlueprintName = "edgeworks"
-            ReferencedContainer = "container:edgeworks.xcodeproj">
+            BuildableName = "acemart.app"
+            BlueprintName = "acemart"
+            ReferencedContainer = "container:acemart.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

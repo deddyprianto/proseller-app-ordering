@@ -14,11 +14,11 @@
 #define TIMEOUT_SECONDS 600
 #define TEXT_TO_LOOK_FOR @"Welcome to React"
 
-@interface edgeworksTests : XCTestCase
+@interface acemartTests : XCTestCase
 
 @end
 
-@implementation edgeworksTests
+@implementation acemartTests
 
 - (BOOL)findSubviewInView:(UIView *)view matching:(BOOL(^)(UIView *view))test
 {

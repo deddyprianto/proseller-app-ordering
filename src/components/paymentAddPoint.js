@@ -113,7 +113,9 @@ class paymentAddPoint extends Component {
         pointToSet = Number(pointToSet.toFixed(2));
       } catch (e) {}
 
-      if (pointToSet < 0) pointToSet = 0;
+      if (pointToSet < 0) {
+        pointToSet = 0;
+      }
 
       if (
         campign.points.roundingOptions != undefined &&
@@ -207,9 +209,11 @@ class paymentAddPoint extends Component {
       if (
         campign.points.roundingOptions != undefined &&
         campign.points.roundingOptions == 'DECIMAL'
-      )
+      ) {
         return parseFloat(jumPoint.toFixed(2));
-      else return Math.ceil(jumPoint);
+      } else {
+        return Math.ceil(jumPoint);
+      }
     } catch (e) {
       return Math.ceil(jumPoint);
     }
@@ -242,7 +246,9 @@ class paymentAddPoint extends Component {
         }
       }
 
-      if (myPoint < 0) myPoint = 0;
+      if (myPoint < 0) {
+        myPoint = 0;
+      }
 
       const maxPayment = this.props.pembayaran.payment * ratio;
 
@@ -269,7 +275,6 @@ class paymentAddPoint extends Component {
     try {
       const maxPoint = this.getMaximumPoint();
       if (
-        Number(this.state.jumPoint) === 0 ||
         isNaN(this.state.jumPoint) ||
         Number(this.state.jumPoint) > maxPoint
       ) {
@@ -316,9 +321,11 @@ class paymentAddPoint extends Component {
                 style={{
                   color: colorConfig.store.secondaryColor,
                 }}>
-                {`${intlData.messages.redeem} ${this.state.jumPointRatio} point ${
-                  intlData.messages.to
-                } ${appConfig.appMataUang} ${this.state.jumMoneyRatio}`}
+                {`${intlData.messages.redeem} ${
+                  this.state.jumPointRatio
+                } point ${intlData.messages.to} ${appConfig.appMataUang} ${
+                  this.state.jumMoneyRatio
+                }`}
               </Text>
             </View>
           </View>
@@ -342,10 +349,10 @@ class paymentAddPoint extends Component {
                     style={{
                       color: colorConfig.store.colorError,
                       textAlign: 'center',
-                      fontSize: 12
+                      fontSize: 12,
                     }}>
-                    Your {pendingPoints.toFixed(2)} points is locked, because your order has
-                    not been completed.
+                    Your {pendingPoints.toFixed(2)} points is locked, because
+                    your order has not been completed.
                   </Text>
                 </View>
               </View>

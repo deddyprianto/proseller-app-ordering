@@ -61,9 +61,15 @@ export default class AccountUserDetail extends Component {
   isRenew = () => {
     const {userDetail, memberships} = this.props;
     try {
-      if (userDetail.expiryCustomerGroup === undefined) return false;
-      if (userDetail.customerGroupLevel === 1 || !userDetail.customerGroupLevel)
+      if (userDetail.expiryCustomerGroup === undefined) {
         return false;
+      }
+      if (
+        userDetail.customerGroupLevel === 1 ||
+        !userDetail.customerGroupLevel
+      ) {
+        return false;
+      }
       const result = differenceInCalendarDays(
         new Date(userDetail.expiryCustomerGroup),
         new Date(),
@@ -76,7 +82,9 @@ export default class AccountUserDetail extends Component {
         item => item.sortKey === userDetail.customerGroupId,
       );
 
-      if (findMembership === undefined) return false;
+      if (findMembership === undefined) {
+        return false;
+      }
 
       const dayRenewal = findMembership.renewalReminders.filter(
         item => item.periodUnit === 'DAY',
@@ -88,15 +96,19 @@ export default class AccountUserDetail extends Component {
       let maxDay = dayRenewal.reduce(function(prev, current) {
         return prev.period > current.period ? prev : current;
       });
-      if (maxDay !== undefined) dateRenewal = maxDay.period;
+      if (maxDay !== undefined) {
+        dateRenewal = maxDay.period;
+      }
 
       let maxMonth = monthRenewal.reduce(function(prev, current) {
         return prev.period > current.period ? prev : current;
       });
-      if (maxMonth !== undefined) dateRenewal = maxMonth.period * 30;
+      if (maxMonth !== undefined) {
+        dateRenewal = maxMonth.period * 30;
+      }
       // Check if customer groupp exipry less then 8 months
-      // console.log(dateRenewal, 'dateRenewal');
-      if (!isEmptyData(result) && result <= dateRenewal) {
+      // console.log(result, 'dateRenewal');
+      if (result <= dateRenewal) {
         return true;
       }
       return false;

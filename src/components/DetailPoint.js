@@ -343,9 +343,9 @@ class DetailPoint extends Component {
                         {this.getLabelActivity(item.activityType)}
                       </Text>
                       <Text style={styles.activityRewardsPositive}>
-                        {item.amount > 0 && filterReceive ? '+' : null}
-                        {item.amount > 0 && !filterReceive ? '-' : null}
-                        {item.amount}
+                        {Number(item.amount) > 0 && filterReceive ? '+' : null}
+                        {Number(item.amount) > 0 && !filterReceive ? '-' : null}
+                        {Number(item.amount)}
                       </Text>
                     </View>
                     <Text style={styles.activityDate}>

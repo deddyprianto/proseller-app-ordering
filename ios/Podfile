@@ -1,8 +1,8 @@
 platform :ios, '9.0'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
-target 'edgeworks' do
-  # Pods for edgeworks
+target 'acemart' do
+  # Pods for acemart
   permissions_path = '../node_modules/react-native-permissions/ios'
 
   pod 'Permission-Camera', :path => "#{permissions_path}/Camera.podspec"
@@ -54,7 +54,7 @@ target 'edgeworks' do
 
   pod 'react-native-geolocation', :path => '../node_modules/@react-native-community/geolocation'
 
-  target 'edgeworksTests' do
+  target 'acemartTests' do
     inherit! :search_paths
     # Pods for testing
   end
@@ -62,10 +62,10 @@ target 'edgeworks' do
   use_native_modules!
 end
 
-target 'edgeworks-tvOS' do
-  # Pods for edgeworks-tvOS
+target 'acemart-tvOS' do
+  # Pods for acemart-tvOS
 
-  target 'edgeworks-tvOSTests' do
+  target 'acemart-tvOSTests' do
     inherit! :search_paths
     # Pods for testing
   end

@@ -110,7 +110,7 @@ class ProductsSpecific extends Component {
         switch (type) {
           case ViewTypes.FULL:
             dim.width = width / 2 - 10;
-            dim.height = 310;
+            dim.height = 320;
             break;
           default:
             dim.width = width / 2 - 10;
@@ -240,8 +240,9 @@ class ProductsSpecific extends Component {
     const productPlaceholder = await this.props.dispatch(
       getSetting('ProductPlaceholder'),
     );
-    if (!isEmptyData(productPlaceholder))
+    if (!isEmptyData(productPlaceholder)) {
       await this.setState({productPlaceholder});
+    }
 
     await this.firstMethodToRun();
   };
@@ -261,7 +262,7 @@ class ProductsSpecific extends Component {
     // check bucket exist or not
     // only status order PENDING is allowed to order
     // check whether outlet is open and allowed to order, then ask user to select ordering status
-    if (this.checkBucketExist() || this.props.dataBasket == undefined)
+    if (this.checkBucketExist() || this.props.dataBasket == undefined) {
       if (
         this.props.dataBasket == undefined ||
         this.props.dataBasket.status == 'PENDING'
@@ -275,6 +276,7 @@ class ProductsSpecific extends Component {
           this.props.dispatch(setOrderType(this.props.previousOrderingMode));
         }
       }
+    }
   };
 
   setOrderType = type => {
@@ -454,7 +456,9 @@ class ProductsSpecific extends Component {
         !isEmptyArray(data.products)
       ) {
         // check if products is exist, then ask user to select ordering mode
-        if (!isEmptyObject(data.products[0])) this.openOrderingMode();
+        if (!isEmptyObject(data.products[0])) {
+          this.openOrderingMode();
+        }
         this.products = [];
         this.products.push(data.products[0]);
         // push data with index 0, (first category products)
@@ -546,7 +550,7 @@ class ProductsSpecific extends Component {
     // remove quantity temp from props
     if (product.product.productModifiers != undefined) {
       product.product.productModifiers.map((group, i) => {
-        if (!isEmptyArray(group.modifier.details))
+        if (!isEmptyArray(group.modifier.details)) {
           group.modifier.details.map((detail, j) => {
             delete detail.quantity;
 
@@ -580,6 +584,7 @@ class ProductsSpecific extends Component {
               }
             }
           });
+        }
       });
     }
 
@@ -706,8 +711,11 @@ class ProductsSpecific extends Component {
         let productFound = this.props.dataBasket.details.find(
           data => data.productID == item.productID,
         );
-        if (productFound != undefined) return productFound;
-        else return false;
+        if (productFound != undefined) {
+          return productFound;
+        } else {
+          return false;
+        }
       } else {
         return false;
       }
@@ -733,7 +741,9 @@ class ProductsSpecific extends Component {
           } else {
             return _.sumBy(productFound, 'quantity');
           }
-        } else return false;
+        } else {
+          return false;
+        }
       } else {
         return false;
       }
@@ -825,7 +835,9 @@ class ProductsSpecific extends Component {
         id: `${this.state.item.id}`,
       };
       // if remark is available, then push to array
-      if (remark != undefined && remark != '') dataproduct.remark = remark;
+      if (remark != undefined && remark != '') {
+        dataproduct.remark = remark;
+      }
       data.outletID = `outlet::${this.state.item.id}`;
       data.outlet = outlet;
       data.id = this.state.item.id;
@@ -946,7 +958,9 @@ class ProductsSpecific extends Component {
       }
 
       // if remark is available, then push to array
-      if (remark != undefined && remark != '') dataproduct.remark = remark;
+      if (remark != undefined && remark != '') {
+        dataproduct.remark = remark;
+      }
       data.outletID = `outlet::${this.state.item.id}`;
       data.details.push(dataproduct);
 
@@ -1054,7 +1068,9 @@ class ProductsSpecific extends Component {
       if (image != undefined && image != '-' && image != null) {
         return {uri: image};
       }
-      if (!isEmptyData(productPlaceholder)) return {uri: productPlaceholder};
+      if (!isEmptyData(productPlaceholder)) {
+        return {uri: productPlaceholder};
+      }
     } catch (e) {
       return appConfig.foodPlaceholder;
     }
@@ -1068,7 +1084,9 @@ class ProductsSpecific extends Component {
       this.state.item.orderingStatus == 'AVAILABLE'
     ) {
       // check basket is empty then open modal mode order
-      if (this.props.dataBasket == undefined) return true;
+      if (this.props.dataBasket == undefined) {
+        return true;
+      }
       // check open / close & outlet ID
       const currentOutletId = this.state.item.id;
       const outletIDSelected = this.props.dataBasket.outlet.id;
@@ -1160,7 +1178,7 @@ class ProductsSpecific extends Component {
                 {
                   marginTop: 15,
                   marginLeft: 10,
-                  fontSize: 13,
+                  fontSize: 12,
                   fontFamily: 'Poppins-Medium',
                   color: colorConfig.store.title,
                 },
@@ -1232,7 +1250,9 @@ class ProductsSpecific extends Component {
       } else {
         length = item.dataLength;
       }
-      if (length == 0) length = 1;
+      if (length == 0) {
+        length = 1;
+      }
 
       let dataProducts = item.data;
       console.log(dataProducts, 'dataProductsdataProducts');
@@ -1429,14 +1449,19 @@ class ProductsSpecific extends Component {
               Date.parse(`${currentDate} ${day.open}`) &&
             Date.parse(`${currentDate} ${time}`) <
               Date.parse(`${currentDate} ${day.close}`)
-          )
+          ) {
             open = true;
+          }
         });
 
-      if (open) return true;
-      else {
-        if (operationalHours.leading == 0) return true;
-        else return false;
+      if (open) {
+        return true;
+      } else {
+        if (operationalHours.leading == 0) {
+          return true;
+        } else {
+          return false;
+        }
       }
     } catch (e) {
       return false;
@@ -1444,7 +1469,7 @@ class ProductsSpecific extends Component {
   };
 
   isOpen = outletSingle => {
-    if (outletSingle != undefined)
+    if (outletSingle != undefined) {
       if (!isEmptyArray(outletSingle.operationalHours)) {
         if (this.getOperationalHours(outletSingle)) {
           return true;
@@ -1462,7 +1487,9 @@ class ProductsSpecific extends Component {
           return false;
         }
       }
-    else return false;
+    } else {
+      return false;
+    }
   };
 
   refreshOutlet = async () => {
@@ -1584,9 +1611,15 @@ class ProductsSpecific extends Component {
     let height = 330;
 
     if (item.outletType === 'RETAIL') {
-      if (item.enableStoreCheckOut == false) height -= 50;
-      if (item.enableStorePickUp == false) height -= 50;
-      if (item.enableDelivery == false) height -= 50;
+      if (item.enableStoreCheckOut == false) {
+        height -= 50;
+      }
+      if (item.enableStorePickUp == false) {
+        height -= 50;
+      }
+      if (item.enableDelivery == false) {
+        height -= 50;
+      }
 
       return (
         <RBSheet
@@ -1696,9 +1729,15 @@ class ProductsSpecific extends Component {
         </RBSheet>
       );
     } else {
-      if (item.enableDineIn == false) height -= 50;
-      if (item.enableTakeAway == false) height -= 50;
-      if (item.enableDelivery == false) height -= 50;
+      if (item.enableDineIn == false) {
+        height -= 50;
+      }
+      if (item.enableTakeAway == false) {
+        height -= 50;
+      }
+      if (item.enableDelivery == false) {
+        height -= 50;
+      }
 
       return (
         <RBSheet
@@ -2511,7 +2550,7 @@ const styles = StyleSheet.create({
   },
   gridView: {
     flex: 1,
-    height: 240,
+    height: 320,
     // alignItems: 'stretch',
     backgroundColor: 'white',
     marginRight: 13,
@@ -2529,7 +2568,7 @@ const styles = StyleSheet.create({
   textPromotion: {
     textTransform: 'capitalize',
     fontFamily: 'Poppins-Italic',
-    fontSize: 10,
+    fontSize: 9,
     color: colorConfig.store.secondaryColor,
   },
 });

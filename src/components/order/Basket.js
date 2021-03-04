@@ -272,7 +272,7 @@ class Basket extends Component {
         await this.setState({
           timePickup: `${new Date().getHours() + 1}:00`,
           selectedTimeSlot: {},
-          datePickup: null
+          datePickup: null,
         });
       }
     } catch (e) {}
@@ -3092,9 +3092,7 @@ class Basket extends Component {
                                     ),
                                   )}`}{' '}
                                 </Text>
-                                {rowData.item.nettAmount &&
-                                rowData.item.nettAmount <
-                                  rowData.item.grossAmount ? (
+                                {rowData.item.isPromotionApplied ? (
                                   <View style={{width: '29%', maxWidth: '29%'}}>
                                     <Text
                                       style={[
@@ -3588,18 +3586,17 @@ class Basket extends Component {
                       marginVertical: 10,
                     }}
                   />
-                  {dataBasket.totalNettAmount !== undefined &&
-                    dataBasket.totalNettAmount !== 0 && (
-                      <View style={styles.twoLineItem}>
-                        <Text style={styles.grandTotal}>GRAND TOTAL</Text>
-                        <Text style={styles.grandTotal}>
-                          {appConfig.appMataUang}{' '}
-                          {this.format(
-                            CurrencyFormatter(dataBasket.totalNettAmount),
-                          )}
-                        </Text>
-                      </View>
-                    )}
+                  {dataBasket.totalNettAmount !== undefined && (
+                    <View style={styles.twoLineItem}>
+                      <Text style={styles.grandTotal}>GRAND TOTAL</Text>
+                      <Text style={styles.grandTotal}>
+                        {appConfig.appMataUang}{' '}
+                        {this.format(
+                          CurrencyFormatter(dataBasket.totalNettAmount),
+                        )}
+                      </Text>
+                    </View>
+                  )}
 
                   {dataBasket.inclusiveTax !== undefined &&
                     dataBasket.inclusiveTax !== 0 && (

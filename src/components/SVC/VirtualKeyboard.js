@@ -196,6 +196,17 @@ class VirtualKeyboardCom extends Component {
     ) {
       return true;
     }
+
+    try {
+      let tempTotal = Number(totalPurchase.toFixed(2)) - amount;
+      if (this.props.amountSVC !== undefined) {
+        tempTotal += Number(this.props.amountSVC);
+      }
+      if (tempTotal < 0) {
+        return true;
+      }
+    } catch (e) {}
+
     return false;
   };
 

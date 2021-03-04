@@ -360,6 +360,8 @@ class SettleOrder extends Component {
         console.log(e);
       }
       await this.setState({loading: false});
+    } else {
+      this.cencelPoint();
     }
   };
 
@@ -852,6 +854,9 @@ class SettleOrder extends Component {
           }
           if (dataVoucer[i].isSVC === true) {
             total -= dataVoucer[i].paymentAmount;
+          }
+          if (dataVoucer[i].voucherValue) {
+            total -= dataVoucer[i].voucherValue;
           }
         }
         if (total < 0) {
@@ -1949,6 +1954,11 @@ class SettleOrder extends Component {
 
       // get url
       let {url} = this.props;
+
+      /* Add client Timezone */
+      try {
+        payload.clientTimezone = Math.abs(new Date().getTimezoneOffset());
+      } catch (e) {}
 
       console.log('Payload settle order ', payload);
       console.log('URL settle order ', url);

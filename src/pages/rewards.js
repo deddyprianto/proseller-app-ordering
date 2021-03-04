@@ -338,7 +338,7 @@ class Rewards extends Component {
         status = `${intlData.messages.good} ${intlData.messages.afternoon}`;
       } else {
         status = `${intlData.messages.good} ${intlData.messages.night}`;
-        status = `Good Evening`;
+        status = 'Good Evening';
       }
 
       // Decrypt data user
@@ -470,7 +470,7 @@ class Rewards extends Component {
               )}
 
               <View style={styles.tabBalance}>
-                {balance !== undefined && !isEmptyArray(svc) && (
+                {balance !== undefined && (
                   <RewardsSVC isLoading={this.state.isLoading} />
                 )}
                 {this.props.totalPoint !== undefined && campaignActive && (

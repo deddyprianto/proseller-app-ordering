@@ -189,21 +189,21 @@ android {
     productFlavors {
             dev {
                 minSdkVersion rootProject.ext.minSdkVersion
-                applicationId 'com.edgeworks.dev'
+                applicationId 'com.acemart.dev'
                 versionName "1.1"
                 targetSdkVersion rootProject.ext.targetSdkVersion
                 resValue "string", "build_config_package", "com.edgeworks"
             }
             demo {
                 minSdkVersion rootProject.ext.minSdkVersion
-                applicationId 'com.edgeworks.demo'
+                applicationId 'com.acemart.demo'
                 versionName "1.1.1"
                 targetSdkVersion rootProject.ext.targetSdkVersion
                 resValue "string", "build_config_package", "com.edgeworks"
             }
-            production {
+            app {
                 minSdkVersion rootProject.ext.minSdkVersion
-                applicationId 'com.edgeworks.production'
+                applicationId 'com.acemart.app'
                 targetSdkVersion rootProject.ext.targetSdkVersion
                 resValue "string", "build_config_package", "com.edgeworks"
             }
