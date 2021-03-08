@@ -100,6 +100,8 @@ class Basket extends Component {
       loadingQuantityItem: false,
       disabledCheckout: false,
       productPlaceholder: null,
+      latitude: 0,
+      longitude: 0,
     };
   }
 
@@ -173,6 +175,8 @@ class Basket extends Component {
     }
 
     await this.setState({loading: false});
+
+    await this.getGeolocation();
 
     try {
       this.backHandler = BackHandler.addEventListener(
@@ -1399,6 +1403,42 @@ class Basket extends Component {
     } catch (e) {}
   };
 
+  getDistanceManual = (from, to) => {
+    const {longitude, latitude} = this.state;
+    let lat1 = Number(from.latitude || latitude);
+    let lon1 = Number(from.longitude || longitude);
+    let lat2 = Number(to.latitude || to.lat);
+    let lon2 = Number(to.longitude || to.lng);
+
+    let R = 6371e3; // metres
+    let rarians1 = (lat1 * Math.PI) / 180;
+    let radians2 = (lat2 * Math.PI) / 180;
+    let sudut1 = ((lat2 - lat1) * Math.PI) / 180;
+    let sudut2 = ((lon2 - lon1) * Math.PI) / 180;
+
+    let a =
+      Math.sin(sudut1 / 2) * Math.sin(sudut1 / 2) +
+      Math.cos(rarians1) *
+        Math.cos(radians2) *
+        Math.sin(sudut2 / 2) *
+        Math.sin(sudut2 / 2);
+    let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+    return ((R * c) / 1000).toFixed(2); // KM
+  };
+
+  getGeolocation = async () => {
+    const from = this.props.outletSingle.address || '-';
+    let url = `https://maps.google.com/maps/api/geocode/json?address=${from}&sensor=false&key=AIzaSyC9KLjlHDwdfmp7AbzuW7B3PRe331RJIu4`;
+    let response = await fetch(url);
+    response = await response.json();
+
+    await this.setState({
+      latitude: response.results[0].geometry.location.lat,
+      longitude: response.results[0].geometry.location.longitude,
+    });
+  };
+
   goToSettle = async () => {
     try {
       const {outletSingle} = this.props;
@@ -1453,6 +1493,25 @@ class Basket extends Component {
                         clearDelivery: this.clearDelivery,
                       });
                     },
+                  },
+                ],
+                {cancelable: false},
+              );
+              return false;
+            }
+
+            //  calculate distance to outlet
+            const distance = await this.getDistanceManual(
+              this.props.outletSingle,
+              this.props.selectedAddress.coordinate,
+            );
+            if (Number(this.state.selectedProvider) > distance) {
+              Alert.alert(
+                'Maximum Delivery Coverage Is 100 Km',
+                'Your delivery address exceeds our maximum shipping limits..',
+                [
+                  {
+                    text: 'Got it',
                   },
                 ],
                 {cancelable: false},
