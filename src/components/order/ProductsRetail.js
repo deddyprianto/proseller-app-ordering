@@ -1946,7 +1946,7 @@ class Products2 extends Component {
   };
 
   templateItem = (type, item) => {
-    if (item.product != undefined && item.product != null) {
+    if (item.itemType === 'PRODUCT') {
       return (
         <TouchableOpacity
           disabled={this.availableToOrder(item) ? false : true}
@@ -2029,7 +2029,40 @@ class Products2 extends Component {
         </TouchableOpacity>
       );
     } else {
-      return null;
+      return (
+        <TouchableOpacity
+          style={styles.detail}
+          onPress={() => this.openDetailCategory(item)}>
+          <View style={styles.detailItem}>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              {!isEmptyData(item.defaultImageURL) ? (
+                <ProgressiveImage
+                  style={styles.imageProduct}
+                  source={this.getImageUrl(item.defaultImageURL)}
+                />
+              ) : (
+                <ProgressiveImage
+                  style={styles.imageProduct}
+                  source={this.getImageUrl(item.defaultImageURL)}
+                />
+              )}
+              <View>
+                <Text
+                  style={[
+                    styles.productTitle,
+                    {
+                      marginLeft: 10,
+                      fontFamily: 'Poppins-Bold',
+                      color: colorConfig.store.defaultColor,
+                    },
+                  ]}>
+                  {item.name}
+                </Text>
+              </View>
+            </View>
+          </View>
+        </TouchableOpacity>
+      );
     }
   };
 
