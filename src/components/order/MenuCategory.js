@@ -28,7 +28,11 @@ import GridItem from './GridItem';
 import Loader from '../loader';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
-import {getAllCategory, getSetting} from '../../actions/order.action';
+import {
+  getAllCategory,
+  getSetting,
+  isParentCategory,
+} from '../../actions/order.action';
 import {dataStores, setDefaultOutlet} from '../../actions/stores.action';
 
 class MenuCategory extends Component {
@@ -83,10 +87,23 @@ class MenuCategory extends Component {
         await this.setState({productPlaceholder});
       }
 
-      const response = await this.props.dispatch(getAllCategory(0, 10));
-      if (response != false) {
+      const response = await this.props.dispatch(
+        getAllCategory(0, 10, this.props.parentCategoryID),
+      );
+
+      if (response !== false) {
+        let categoriesData = response.data;
+
+        if (this.props.parentCategoryID === undefined) {
+          categoriesData = response.data.filter(
+            item =>
+              item.parentCategoryID === undefined ||
+              item.parentCategoryID === null,
+          );
+        }
+
         await this.setState({
-          categories: response.data,
+          categories: categoriesData,
           categories2: response.data,
           loading: false,
         });
@@ -105,9 +122,20 @@ class MenuCategory extends Component {
     try {
       let skip = 10;
       for (let i = 0; i < Math.floor(length / 10); i++) {
-        const response = await this.props.dispatch(getAllCategory(skip, 10));
-        if (response != false) {
-          let categories = [...this.state.categories, ...response.data];
+        const response = await this.props.dispatch(
+          getAllCategory(skip, 10, this.props.parentCategoryID),
+        );
+        if (response !== false) {
+          let categoriesData = response.data;
+
+          if (this.props.parentCategoryID === undefined) {
+            categoriesData = response.data.filter(
+              item =>
+                item.parentCategoryID === undefined ||
+                item.parentCategoryID === null,
+            );
+          }
+          let categories = [...this.state.categories, ...categoriesData];
           await this.setState({categories, categories2: categories});
         }
         skip += 10;
@@ -147,21 +175,31 @@ class MenuCategory extends Component {
     } catch (e) {}
   };
 
-  updateCategory = (categoryDetail, index) => {
+  updateCategory = async (categoryDetail, index) => {
     try {
-      let {outlet, isSpecificPageActive} = this.props;
-      if (isSpecificPageActive == true) {
-        this.props.refreshPage(categoryDetail, undefined);
-        Actions.pop();
+      let {outlet} = this.props;
+      await this.setState({loading: true});
+      const isParent = await this.props.dispatch(
+        isParentCategory(categoryDetail.sortKey),
+      );
+
+      if (isParent === true) {
+        Actions.push('menuCategory', {
+          parentCategoryID: categoryDetail.sortKey,
+          categoryName: categoryDetail.name,
+        });
       } else {
         Actions.push('specificCategory', {categoryDetail, item: outlet});
       }
-    } catch (e) {}
+      await this.setState({loading: false});
+    } catch (e) {
+      await this.setState({loading: false});
+    }
   };
 
   render() {
-    let {products, categories, selectedCategory, productPlaceholder} = this.state;
-
+    let {categories, productPlaceholder} = this.state;
+    const {categoryName} = this.props;
     return (
       <SafeAreaView style={styles.container}>
         {this.state.loading && <Loader />}
@@ -178,13 +216,18 @@ class MenuCategory extends Component {
                 style={styles.btnBackIcon}
               />
             </TouchableOpacity>
-            <Text style={[styles.btnBackText]}> Categories </Text>
+            <Text style={[styles.btnBackText]}>
+              {' '}
+              {categoryName || 'Categories'}{' '}
+            </Text>
           </View>
-          <TextInput
-            onChangeText={search => this.search(search)}
-            placeholder="Search"
-            style={styles.searchBar}
-          />
+          {this.props.parentCategoryID === undefined && (
+            <TextInput
+              onChangeText={search => this.search(search)}
+              placeholder="Search"
+              style={styles.searchBar}
+            />
+          )}
           <FlatList
             style={{marginLeft: 2}}
             data={categories}
@@ -257,7 +300,6 @@ const styles = StyleSheet.create({
     height: 80,
   },
   btnBackText: {
-    marginLeft: '25%',
     color: 'white',
     textAlign: 'center',
     fontWeight: 'bold',

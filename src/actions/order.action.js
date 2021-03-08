@@ -1266,7 +1266,50 @@ export const getTermsConditions = () => {
   };
 };
 
-export const getAllCategory = (skip, take) => {
+export const getAllCategory = (skip, take, parentCategoryID) => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      let payload = {
+        take,
+        skip,
+        sortBy: 'name',
+        sortDirection: 'ASC',
+      };
+
+      if (parentCategoryID) {
+        payload.parentCategoryID = parentCategoryID;
+      }
+
+      const response = await fetchApiProduct(
+        '/category/load',
+        'POST',
+        payload,
+        200,
+        token,
+      );
+
+      console.log(JSON.stringify(payload), 'payload GET CATEGORY');
+      console.log(response, 'RESPONSE GET CATEGORY');
+
+      if (response.success) {
+        return response.response;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const isParentCategory = parentCategoryID => {
   return async (dispatch, getState) => {
     const state = getState();
     try {
@@ -1277,10 +1320,11 @@ export const getAllCategory = (skip, take) => {
       } = state;
 
       const payload = {
-        take,
-        skip,
+        take: 1,
+        skip: 0,
         sortBy: 'name',
         sortDirection: 'ASC',
+        parentCategoryID: parentCategoryID,
       };
 
       const response = await fetchApiProduct(
@@ -1291,10 +1335,14 @@ export const getAllCategory = (skip, take) => {
         token,
       );
 
-      console.log(response, 'RESPONSE GET CATEGORY');
+      console.log(response, 'RESPONSE CHECK PARENT');
 
       if (response.success) {
-        return response.response;
+        if (isEmptyArray(response.response.data)) {
+          return false;
+        } else {
+          return true;
+        }
       } else {
         return false;
       }
