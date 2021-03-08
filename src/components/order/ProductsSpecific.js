@@ -485,18 +485,28 @@ class ProductsSpecific extends Component {
     try {
       const {categoryDetail, search} = this.state;
       const outletID = this.state.item.id;
-      let response = await this.props.dispatch(
-        productByCategory(outletID, categoryDetail, 0, 10, search),
-      );
-
-      if (response && !isEmptyArray(response.data)) {
+      if (categoryDetail.itemType === 'GROUP') {
+        let response = {
+          data: categoryDetail.items,
+          dataLength: categoryDetail.items.length,
+        };
         await this.setState({
           products: response,
         });
       } else {
-        await this.setState({
-          products: [],
-        });
+        let response = await this.props.dispatch(
+          productByCategory(outletID, categoryDetail, 0, 10, search),
+        );
+
+        if (response && !isEmptyArray(response.data)) {
+          await this.setState({
+            products: response,
+          });
+        } else {
+          await this.setState({
+            products: [],
+          });
+        }
       }
     } catch (e) {
       this.setState({
@@ -1137,8 +1147,26 @@ class ProductsSpecific extends Component {
     ));
   };
 
+  openDetailCategory = cat => {
+    const {item, searchQuery} = this.state;
+    if (cat.itemType === 'CATEGORY') {
+      cat.id = cat.categoryID.replace('category::', '');
+    }
+    cat.isProductPreset = true;
+    Actions.push('specificCategory', {
+      categoryDetail: cat,
+      item,
+    });
+  };
+
   templateItemGrid = (type, item) => {
-    if (item.product != undefined && item.product != null) {
+    const {categoryDetail} = this.props;
+    console.log(categoryDetail, 'categoryDetail');
+    if (
+      item.itemType === 'PRODUCT' ||
+      item.itemType === undefined ||
+      categoryDetail.isProductPreset !== true
+    ) {
       return (
         <TouchableOpacity
           disabled={this.availableToOrder(item) ? false : true}
@@ -1237,7 +1265,52 @@ class ProductsSpecific extends Component {
         </TouchableOpacity>
       );
     } else {
-      return null;
+      return (
+        <TouchableOpacity
+          onPress={() => this.openDetailCategory(item)}
+          style={styles.gridView}>
+          <View>
+            {!isEmptyData(item.defaultImageURL) ? (
+              <Image
+                source={this.getImageUrl(item.defaultImageURL)}
+                style={[
+                  {
+                    alignSelf: 'center',
+                    borderRadius: 5,
+                    height: 180,
+                    width: Dimensions.get('window').width / 2 - 30,
+                    resizeMode: 'cover',
+                  },
+                ]}
+              />
+            ) : (
+              <Image
+                source={this.getImageUrl(item.defaultImageURL)}
+                style={{
+                  alignSelf: 'center',
+                  borderRadius: 5,
+                  height: 180,
+                  width: Dimensions.get('window').width / 2 - 30,
+                  resizeMode: 'cover',
+                }}
+              />
+            )}
+            <Text
+              style={[
+                {
+                  marginTop: 15,
+                  // marginLeft: 10,
+                  fontSize: 15,
+                  textAlign: 'center',
+                  fontFamily: 'Poppins-Bold',
+                  color: colorConfig.store.defaultColor,
+                },
+              ]}>
+              {item.name}
+            </Text>
+          </View>
+        </TouchableOpacity>
+      );
     }
   };
 

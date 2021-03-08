@@ -135,7 +135,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.edgeworks"
+        applicationId "com.acemart"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 32
@@ -192,20 +192,20 @@ android {
                 applicationId 'com.acemart.dev'
                 versionName "1.1"
                 targetSdkVersion rootProject.ext.targetSdkVersion
-                resValue "string", "build_config_package", "com.edgeworks"
+                resValue "string", "build_config_package", "com.acemart"
             }
             demo {
                 minSdkVersion rootProject.ext.minSdkVersion
                 applicationId 'com.acemart.demo'
                 versionName "1.1.1"
                 targetSdkVersion rootProject.ext.targetSdkVersion
-                resValue "string", "build_config_package", "com.edgeworks"
+                resValue "string", "build_config_package", "com.acemart"
             }
             app {
                 minSdkVersion rootProject.ext.minSdkVersion
                 applicationId 'com.acemart.app'
                 targetSdkVersion rootProject.ext.targetSdkVersion
-                resValue "string", "build_config_package", "com.edgeworks"
+                resValue "string", "build_config_package", "com.acemart"
             }
         }
     // applicationVariants are e.g. debug, release

@@ -1783,6 +1783,18 @@ class Products2 extends Component {
     ));
   };
 
+  openDetailCategory = cat => {
+    const {item, searchQuery} = this.state;
+    if (cat.itemType === 'CATEGORY') {
+      cat.id = cat.categoryID.replace('category::', '');
+    }
+    cat.isProductPreset = true;
+    Actions.push('specificCategory', {
+      categoryDetail: cat,
+      item,
+    });
+  };
+
   templateItemGrid = (type, item) => {
     if (item.itemType === 'PRODUCT') {
       return (
@@ -1886,7 +1898,7 @@ class Products2 extends Component {
     } else {
       return (
         <TouchableOpacity
-          onPress={() => this.toggleModal(item)}
+          onPress={() => this.openDetailCategory(item)}
           style={styles.gridViewCategory}>
           <View>
             {!isEmptyData(item.defaultImageURL) ? (
@@ -1900,7 +1912,6 @@ class Products2 extends Component {
                     width: Dimensions.get('window').width / 2 - 30,
                     resizeMode: 'cover',
                   },
-                  !this.availableToOrder(item) ? {opacity: 0.2} : null,
                 ]}
               />
             ) : (
@@ -1923,7 +1934,7 @@ class Products2 extends Component {
                   fontSize: 15,
                   textAlign: 'center',
                   fontFamily: 'Poppins-Bold',
-                  color: colorConfig.store.title,
+                  color: colorConfig.store.defaultColor,
                 },
               ]}>
               {item.name}
