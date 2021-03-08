@@ -100,6 +100,7 @@ import SVCDetail from '../components/SVC/SVCDetail';
 import TransferSVC from '../components/SVC/TransferSVC';
 import VirtualKeyboardCom from '../components/SVC/VirtualKeyboard';
 import ApplyPromoCode from '../pages/ApplyPromoCode';
+import PickCoordinate from '../pages/PickCoordinate';
 
 const MyTransitionSpec = {
   duration: 200,
@@ -304,6 +305,7 @@ export default class Routes extends Component {
 
             <Scene key="listAddress" component={ListAddress} />
             <Scene key="addAddress" component={AddAddress} />
+            <Scene key="pickCoordinate" component={PickCoordinate} />
             <Scene key="editAddress" component={EditAddress} />
             <Scene key="selectAddress" component={SelectAddress} />
 

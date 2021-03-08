@@ -1432,6 +1432,35 @@ class Basket extends Component {
             return;
           }
         }
+
+        if (this.state.selectedProvider) {
+          if (this.state.selectedProvider.calculationMode === 'DISTANCE') {
+            if (
+              isEmptyObject(this.props.selectedAddress.coordinate) ||
+              isEmptyData(this.props.selectedAddress.coordinate.latitude)
+            ) {
+              Alert.alert(
+                'Delivery Address Coordinate.',
+                'Please pick the coordinate of your delivery address.',
+                [
+                  {
+                    text: 'Got it',
+                    onPress: () => {
+                      Actions.editAddress({
+                        from: 'basket',
+                        myAddress: this.props.selectedAddress,
+                        getDeliveryFee: this.getDeliveryFee,
+                        clearDelivery: this.clearDelivery,
+                      });
+                    },
+                  },
+                ],
+                {cancelable: false},
+              );
+              return false;
+            }
+          }
+        }
       }
 
       let message = 'Please select pickup date & time.';

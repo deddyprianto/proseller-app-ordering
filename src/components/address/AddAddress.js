@@ -27,7 +27,11 @@ import Loader from '../loader';
 import {TextInput, DefaultTheme} from 'react-native-paper';
 import CryptoJS from 'react-native-crypto-js';
 import awsConfig from '../../config/awsConfig';
-import {isEmptyArray, isEmptyData} from '../../helper/CheckEmpty';
+import {
+  isEmptyArray,
+  isEmptyData,
+  isEmptyObject,
+} from '../../helper/CheckEmpty';
 import Geocoder from 'react-native-geocoding';
 import {selectedAddress} from '../../actions/payment.actions';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -62,6 +66,7 @@ class AddAddress extends Component {
       loading: true,
       province: '',
       isPostalCodeValid: true,
+      coordinate: {},
     };
   }
 
@@ -162,6 +167,10 @@ class AddAddress extends Component {
         newAddress.province = this.state.province;
       }
 
+      if (!isEmptyObject(this.state.coordinate)) {
+        newAddress.coordinate = this.state.coordinate;
+      }
+
       data.deliveryAddress.push(newAddress);
 
       const response = await this.props.dispatch(updateUser(data));
@@ -223,6 +232,12 @@ class AddAddress extends Component {
       return false;
     }
     return true;
+  };
+
+  setCoordinate = coordinate => {
+    this.setState({
+      coordinate,
+    });
   };
 
   render() {
@@ -428,6 +443,40 @@ class AddAddress extends Component {
           )}
 
           <TouchableOpacity
+            style={{
+              backgroundColor: '#f2f2f2',
+              padding: 10,
+              borderRadius: 6,
+              marginTop: 5,
+            }}
+            onPress={() =>
+              Actions.pickCoordinate({setCoordinate: this.setCoordinate})
+            }>
+            <Text style={{fontFamily: 'Poppins-Regular', fontSize: 12}}>
+              Pick Coordinate
+            </Text>
+            {!isEmptyObject(this.state.coordinate) ? (
+              <Text
+                style={{
+                  fontFamily: 'Poppins-Regular',
+                  fontSize: 11,
+                  color: colorConfig.store.colorSuccess,
+                }}>
+                Location already pinned.
+              </Text>
+            ) : (
+              <Text
+                style={{
+                  fontFamily: 'Poppins-Regular',
+                  fontSize: 11,
+                  color: colorConfig.store.colorError,
+                }}>
+                Location has not been pinned.
+              </Text>
+            )}
+          </TouchableOpacity>
+
+          <TouchableOpacity
             onPress={this.submitEdit}
             disabled={this.notCompleted() ? true : false}
             style={{
@@ -440,7 +489,11 @@ class AddAddress extends Component {
               alignItems: 'center',
             }}>
             <Text
-              style={{color: 'white', fontFamily: 'Poppins-Medium', fontSize: 20}}>
+              style={{
+                color: 'white',
+                fontFamily: 'Poppins-Medium',
+                fontSize: 20,
+              }}>
               Save
             </Text>
           </TouchableOpacity>
