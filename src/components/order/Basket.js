@@ -1505,10 +1505,19 @@ class Basket extends Component {
               this.props.outletSingle,
               this.props.selectedAddress.coordinate,
             );
-            if (Number(this.state.selectedProvider) > distance) {
+            console.log(
+              this.state.selectedProvider,
+              'this.state.selectedProvider.maximumCoverage',
+            );
+            console.log(distance, 'distance');
+            if (
+              distance > Number(this.state.selectedProvider.maximumCoverage)
+            ) {
               Alert.alert(
-                'Maximum Delivery Coverage Is 100 Km',
-                'Your delivery address exceeds our maximum shipping limits..',
+                `Maximum delivery coverage is ${
+                  this.state.selectedProvider.maximumCoverage
+                } km`,
+                'Your delivery address exceeds our maximum shipping limits.',
                 [
                   {
                     text: 'Got it',
