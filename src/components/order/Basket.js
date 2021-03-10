@@ -1505,11 +1505,7 @@ class Basket extends Component {
               this.props.outletSingle,
               this.props.selectedAddress.coordinate,
             );
-            console.log(
-              this.state.selectedProvider,
-              'this.state.selectedProvider.maximumCoverage',
-            );
-            console.log(distance, 'distance');
+
             if (
               distance > Number(this.state.selectedProvider.maximumCoverage)
             ) {

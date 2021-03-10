@@ -270,6 +270,20 @@ class EditAddress extends Component {
     this.setState({
       coordinate,
     });
+
+    if (coordinate.detailAddress !== '') {
+      try {
+        const streetName = `${
+          coordinate.detailAddress.address_components[0].long_name
+        } ${coordinate.detailAddress.address_components[1].long_name}`;
+        this.setState({streetName});
+
+        const postalCode = `${
+          coordinate.detailAddress.address_components[5].long_name
+        }`;
+        this.setState({postalCode});
+      } catch (e) {}
+    }
   };
 
   render() {

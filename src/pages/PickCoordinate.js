@@ -46,6 +46,7 @@ class PickCoordinate extends Component {
       regionChangeProgress: false,
       isMapReady: false,
       userLocation: '',
+      detailAddress: {},
     };
   }
 
@@ -108,6 +109,7 @@ class PickCoordinate extends Component {
         const userLocation = responseJson.results[0].formatted_address;
         this.setState({
           userLocation: userLocation,
+          detailAddress: responseJson.results[0],
           regionChangeProgress: false,
         });
       });
@@ -121,6 +123,7 @@ class PickCoordinate extends Component {
         latitudeDelta: this.state.latitudeDelta,
         longitudeDelta: this.state.longitudeDelta,
         userLocation: this.state.userLocation,
+        detailAddress: this.state.detailAddress,
       });
       Actions.pop();
     } catch (e) {}
