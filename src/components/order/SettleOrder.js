@@ -1704,6 +1704,230 @@ class SettleOrder extends Component {
     }
   };
 
+  payVoucher = async () => {
+    const {
+      intlData,
+      selectedAccount,
+      companyInfo,
+      voucherDetail,
+      pembayaran,
+    } = this.props;
+    let {totalBayar, dataVoucer} = this.state;
+    let realTotal = 0;
+    let payload = {};
+    try {
+      let userDetail;
+      try {
+        // Decrypt data user
+        let bytes = CryptoJS.AES.decrypt(
+          this.props.userDetail,
+          awsConfig.PRIVATE_KEY_RSA,
+        );
+        userDetail = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+      } catch (e) {
+        userDetail = undefined;
+      }
+
+      await this.setState({loading: true});
+      // ADJUST POINT IF THERE ARE ANY REDUCE
+      try {
+        for (let x = 0; x < dataVoucer.length; x++) {
+          if (dataVoucer[x].isPoint == true) {
+            dataVoucer[x].redeemValue = this.state.addPoint;
+            dataVoucer[x].paymentAmount = this.state.moneyPoint;
+          }
+          realTotal += dataVoucer[x].paymentAmount;
+        }
+      } catch (e) {}
+
+      // ADJUST VOUCHER IF PAYMENT IS ALREADY 0
+      try {
+        if (totalBayar == 0 && dataVoucer.length > 0) {
+          if (dataVoucer[dataVoucer.length - 1].isVoucher == true) {
+            const diff = parseFloat(
+              realTotal - this.props.pembayaran.totalNettAmount,
+            );
+            dataVoucer[dataVoucer.length - 1].paymentAmount -= diff;
+          }
+        }
+      } catch (e) {}
+
+      let payments = [];
+      if (!isEmptyArray(dataVoucer)) {
+        for (let i = 0; i < dataVoucer.length; i++) {
+          if (dataVoucer[i].isVoucher === true) {
+            payments.push({
+              paymentType: 'voucher',
+              voucherId: dataVoucer[i].id,
+              serialNumber: dataVoucer[i].serialNumber,
+              paymentAmount: dataVoucer[i].paymentAmount,
+              isVoucher: true,
+            });
+          } else if (dataVoucer[i].isVoucherPromoCode === true) {
+            payments.push({
+              paymentType: 'voucher',
+              code: dataVoucer[i].code,
+              paymentAmount: dataVoucer[i].paymentAmount,
+              isVoucherPromoCode: true,
+            });
+          } else if (dataVoucer[i].isPoint === true) {
+            payments.push({
+              paymentType: 'point',
+              redeemValue: dataVoucer[i].redeemValue,
+              paymentAmount: dataVoucer[i].paymentAmount,
+              isPoint: true,
+            });
+          } else {
+            payments.push(dataVoucer[i]);
+          }
+        }
+      }
+
+      payload.payments = payments;
+
+      // if price is 0, then dont add payment method
+      if (totalBayar != 0) {
+        // Payment Type Detail
+        let paymentPayload = {};
+
+        if (!isEmptyArray(companyInfo.paymentTypes)) {
+          const find = companyInfo.paymentTypes.find(
+            item => item.paymentID == selectedAccount.paymentID,
+          );
+          if (find != undefined) {
+            paymentPayload.paymentID = selectedAccount.paymentID;
+            paymentPayload.paymentName = selectedAccount.paymentName;
+
+            if (find.isAccountRequired != false) {
+              paymentPayload.accountId = selectedAccount.accountID;
+            }
+
+            if (find.minimumPayment != undefined) {
+              if (totalBayar < find.minimumPayment) {
+                this.setState({loading: false});
+                Alert.alert(
+                  'Sorry',
+                  `Minimum transaction amount is ${appConfig.appMataUang}` +
+                    this.formatCurrency(find.minimumPayment),
+                );
+                return;
+              }
+            }
+          }
+        }
+
+        payments.push({
+          accountId: paymentPayload.accountId,
+          paymentType: paymentPayload.paymentID,
+          paymentRefNo: paymentPayload.paymentName,
+          paymentID: paymentPayload.paymentID,
+          paymentName: this.selectedPaymentMethod(selectedAccount),
+          paymentAmount: this.state.totalBayar,
+        });
+      }
+
+      try {
+        delete payload.payment;
+        delete payload.storeId;
+        delete payload.dataVoucer;
+      } catch (e) {}
+
+      // BUILD PAYLOAD FOR PAID MEMBERSHIP
+      const UUID = await UUIDGenerator.getRandomUUID();
+      payload.outletId = pembayaran.storeId;
+      payload.price = pembayaran.totalNettAmount;
+      payload.referenceNo = UUID;
+      payload.customerId = `customer::${userDetail.id}`;
+      payload.dataPay = {
+        voucher: {
+          id: voucherDetail.id,
+          qty: pembayaran.cartDetails.details[0].quantity,
+        },
+      };
+
+      // ADD TAX
+      try {
+        payload.dataPay.voucher.amountAfterDisc =
+          pembayaran.cartDetails.details[0].amountAfterDisc;
+        payload.dataPay.voucher.amountAfterTax =
+          pembayaran.cartDetails.details[0].amountAfterTax;
+        payload.dataPay.voucher.billDiscAmount =
+          pembayaran.cartDetails.details[0].billDiscAmount;
+        payload.dataPay.voucher.discountableAmount =
+          pembayaran.cartDetails.details[0].discountableAmount;
+        payload.dataPay.voucher.lineDiscAmount =
+          pembayaran.cartDetails.details[0].lineDiscAmount;
+        payload.dataPay.voucher.lineDiscPercentage =
+          pembayaran.cartDetails.details[0].lineDiscPercentage;
+        payload.dataPay.voucher.taxPercentage =
+          pembayaran.cartDetails.details[0].taxPercentage;
+        payload.dataPay.voucher.taxableAmount =
+          pembayaran.cartDetails.details[0].taxableAmount;
+        payload.dataPay.voucher.totalDiscAmount =
+          pembayaran.cartDetails.details[0].totalDiscAmount;
+        payload.dataPay.voucher.totalNettAmount = pembayaran.totalNettAmount;
+      } catch (e) {}
+
+      console.log('Payload settle order ', payload);
+      const response = await this.props.dispatch(submitMembership(payload));
+      console.log('reponse pay SVC ', response);
+      if (response.success) {
+        await this.props.dispatch(myVoucers());
+
+        try {
+          this.props.refreshMyVouchers();
+        } catch (e) {}
+
+        try {
+          this.props.getCustomerActivity();
+        } catch (e) {}
+
+        if (response.responseBody.Data.action != undefined) {
+          if (response.responseBody.Data.action.type === 'url') {
+            Actions.hostedTrx({
+              outlet: this.state.outlet,
+              url: response.responseBody.Data.action.url,
+              urlSettle: 'url',
+              referenceNo: response.responseBody.Data.referenceNo,
+              cartID: this.props.pembayaran.cartID,
+              page: 'settleOrder',
+              payVoucher: true,
+              fromPage: this.props.fromPage,
+            });
+            this.setState({loading: false});
+          }
+        } else {
+          this.props.dispatch(clearAccount());
+          Actions.paymentSuccess({
+            intlData,
+            url: 'url',
+            outlet: this.state.outlet,
+            payVoucher: true,
+            dataRespons: response.responseBody.Data,
+            fromPage: this.props.fromPage,
+          });
+        }
+      } else {
+        //  cancel voucher and pont selected
+        this.props.dispatch(getBasket());
+        this.setState({loading: false, failedPay: true});
+        if (
+          response.responseBody.Data != undefined &&
+          response.responseBody.Data.message != undefined
+        ) {
+          Alert.alert('Sorry', response.responseBody.Data.message);
+        } else {
+          Alert.alert(
+            'Sorry',
+            'Something went wrong with server, please try again',
+          );
+        }
+      }
+    } catch (e) {
+      Alert.alert('Sorry', 'Something went wrong, please try again');
+    }
+  };
+
   doPayment = async () => {
     const {
       intlData,
@@ -1711,6 +1935,7 @@ class SettleOrder extends Component {
       companyInfo,
       payMembership,
       paySVC,
+      payVoucher,
     } = this.props;
 
     if (payMembership === true) {
@@ -1720,6 +1945,11 @@ class SettleOrder extends Component {
 
     if (paySVC === true) {
       this.paySVC();
+      return;
+    }
+
+    if (payVoucher === true) {
+      this.payVoucher();
       return;
     }
 
@@ -2734,6 +2964,7 @@ class SettleOrder extends Component {
                         {this.props.companyInfo.companyName}
                       </Text>
                       {this.props.paySVC !== true &&
+                      this.props.payVoucher !== true &&
                       this.props.payMembership !== true ? (
                         <Text
                           style={{
@@ -2766,7 +2997,9 @@ class SettleOrder extends Component {
                 </View>
               </View>
             </View>
-            {this.props.paySVC || this.props.payMembership ? null : (
+            {this.props.paySVC ||
+            this.props.payMembership ||
+            this.props.payVoucher ? null : (
               <View
                 style={{
                   marginTop: 5,
@@ -2804,7 +3037,9 @@ class SettleOrder extends Component {
                 </TouchableOpacity>
               </View>
             )}
-            {this.props.paySVC || this.props.payMembership ? null : (
+            {this.props.paySVC ||
+            this.props.payMembership ||
+            this.props.payVoucher ? null : (
               <View
                 style={{
                   marginTop: 5,
@@ -2887,6 +3122,7 @@ class SettleOrder extends Component {
             )}
             {this.props.campaignActive &&
             this.props.paySVC == undefined &&
+            this.props.payVoucher == undefined &&
             this.props.payMembership == undefined &&
             campign != undefined &&
             campign.points &&
@@ -2979,6 +3215,7 @@ class SettleOrder extends Component {
             ) : null}
 
             {this.props.paySVC == undefined &&
+            this.props.payVoucher == undefined &&
             this.props.payMembership == undefined &&
             balance &&
             balance > 0 ? (

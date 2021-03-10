@@ -10,6 +10,7 @@ import {
   SafeAreaView,
   Platform,
   TextInput,
+  BackHandler,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
@@ -29,12 +30,14 @@ import {
 import {myVoucers} from '../actions/account.action';
 // import Loader from './loader';
 import * as _ from 'lodash';
-import {isEmptyArray} from '../helper/CheckEmpty';
+import {isEmptyArray, isEmptyObject} from '../helper/CheckEmpty';
 // import CryptoJS from 'react-native-crypto-js';
 import awsConfig from '../config/awsConfig';
 import {Dialog} from 'react-native-paper';
 import LoaderDarker from './LoaderDarker';
 import {recentTransaction} from '../actions/sales.action';
+import {getBackupOutlet} from '../actions/stores.action';
+import calculateTAX from '../helper/TaxCalculation';
 
 class VoucherDetail extends Component {
   constructor(props) {
@@ -49,9 +52,56 @@ class VoucherDetail extends Component {
       loadRedeem: false,
       cancelButton: false,
       prompQuantity: false,
+      prompQuantityPrice: false,
       amountRedeem: 1,
+      backupOutlet: {},
+      voucherData: {},
+      detailPurchase: {},
     };
   }
+
+  componentDidMount = async () => {
+    try {
+      this.backHandler = BackHandler.addEventListener(
+        'hardwareBackPress',
+        this.handleBackPress,
+      );
+    } catch (e) {}
+    await this.getBackupOutlet();
+    await this.findTax(this.props.dataVoucher, 1);
+  };
+
+  getBackupOutlet = async () => {
+    const response = await this.props.dispatch(getBackupOutlet());
+    if (response !== false) {
+      await this.setState({backupOutlet: response});
+    }
+  };
+
+  findTax = async (dataDetail, quantity) => {
+    const {backupOutlet} = this.state;
+    let {defaultOutlet} = this.props;
+
+    if (isEmptyObject(defaultOutlet)) defaultOutlet = backupOutlet;
+
+    let returnData = {
+      outlet: defaultOutlet,
+      details: [],
+    };
+    let product = {};
+    product.unitPrice = dataDetail.price;
+    product.quantity = quantity;
+    product.product = dataDetail;
+    returnData.details.push(product);
+
+    const detailPurchase = await calculateTAX(
+      returnData.details,
+      returnData,
+      {},
+    );
+    console.log(detailPurchase, 'detailPurchase');
+    await this.setState({voucherData: dataDetail, detailPurchase});
+  };
 
   goBack() {
     Actions.pop();
@@ -323,6 +373,24 @@ class VoucherDetail extends Component {
     }
   };
 
+  addQtyPrice = async () => {
+    let {amountRedeem} = this.state;
+    let {dataVoucher} = this.props;
+    amountRedeem = amountRedeem + 1;
+    await this.setState({amountRedeem});
+    this.findTax(dataVoucher, amountRedeem);
+  };
+
+  minQtyPrice = () => {
+    let {amountRedeem} = this.state;
+    let {dataVoucher} = this.props;
+    if (amountRedeem > 1) {
+      amountRedeem = amountRedeem - 1;
+      this.setState({amountRedeem});
+      this.findTax(dataVoucher, amountRedeem);
+    }
+  };
+
   renderQuantityVoucher = () => {
     return (
       <Dialog
@@ -409,7 +477,6 @@ class VoucherDetail extends Component {
                   this.state.amountRedeem,
                 )
               }
-              disabled={this.checkDisabledMultipleAmount()}
               style={{
                 width: '40%',
                 borderRadius: 5,
@@ -426,6 +493,165 @@ class VoucherDetail extends Component {
                   fontSize: 16,
                 }}>
                 Redeem {this.state.amountRedeem}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </Dialog.Content>
+      </Dialog>
+    );
+  };
+
+  purchaseVoucher = async () => {
+    const {detailPurchase} = this.state;
+    const {dataVoucher} = this.props;
+
+    const {backupOutlet} = this.state;
+    let {defaultOutlet} = this.props;
+
+    if (isEmptyObject(defaultOutlet)) defaultOutlet = backupOutlet;
+
+    let details = [];
+    // create dataPay item
+    let data = {};
+
+    this.state.detailPurchase.details.map((item, index) => {
+      data.quantity = item.quantity;
+      data.unitPrice = item.unitPrice;
+      data.product = {
+        name: dataVoucher.name,
+        retailPrice: dataVoucher.price,
+      };
+      details.push(data);
+      data = {};
+    });
+
+    const purchaseData = {
+      payment: this.state.detailPurchase.totalNettAmount,
+      totalNettAmount: this.state.detailPurchase.totalNettAmount,
+      totalGrossAmount: this.state.detailPurchase.totalGrossAmount,
+      storeName: this.state.detailPurchase.outlet.name,
+      details: details,
+      storeId: defaultOutlet.id,
+    };
+
+    // set url to pay
+    let url = '/cart/customer/settle';
+
+    try {
+      purchaseData.cartDetails = detailPurchase;
+    } catch (e) {}
+
+    Actions.settleOrder({
+      pembayaran: purchaseData,
+      url: url,
+      outlet: defaultOutlet,
+      payVoucher: true,
+      fromPage: this.props.fromPage || 'rewards',
+      voucherDetail: dataVoucher,
+      refreshMyVouchers: this.refreshMyVouchers,
+    });
+  };
+
+  renderQuantityVoucherPrice = () => {
+    return (
+      <Dialog
+        dismissable={false}
+        visible={this.state.prompQuantityPrice}
+        onDismiss={() => {
+          this.setState({prompQuantityPrice: false, amountRedeem: 1});
+        }}>
+        <Dialog.Content>
+          <Text
+            style={{
+              textAlign: 'center',
+              fontFamily: 'Poppins-Medium',
+              fontSize: 17,
+              color: colorConfig.store.defaultColor,
+            }}>
+            How many vouchers do you want to purchase?
+          </Text>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginVertical: 20,
+            }}>
+            <TouchableOpacity
+              onPress={this.minQtyPrice}
+              style={styles.buttonQty}>
+              <Text style={{fontSize: 20, fontWeight: 'bold', color: 'white'}}>
+                -
+              </Text>
+            </TouchableOpacity>
+            <TextInput
+              keyboardType="number-pad"
+              value={this.state.amountRedeem.toString()}
+              onChangeText={value => this.setState({amountRedeem: value})}
+              style={{
+                fontSize: 17,
+                fontFamily: 'Poppins-Medium',
+                padding: 10,
+                textAlign: 'center',
+                color: colorConfig.store.title,
+                borderColor: colorConfig.pageIndex.inactiveTintColor,
+                borderWidth: 1,
+                borderRadius: 6,
+                width: '30%',
+              }}
+            />
+            <TouchableOpacity
+              onPress={this.addQtyPrice}
+              style={styles.buttonQty}>
+              <Text style={{fontSize: 20, fontWeight: 'bold', color: 'white'}}>
+                +
+              </Text>
+            </TouchableOpacity>
+          </View>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'center',
+              marginTop: 10,
+            }}>
+            <TouchableOpacity
+              onPress={() => {
+                this.setState({prompQuantityPrice: false, amountRedeem: 1});
+                this.findTax(this.props.dataVoucher, 1);
+              }}
+              style={{
+                width: '40%',
+                borderRadius: 5,
+                backgroundColor: colorConfig.pageIndex.grayColor,
+                marginRight: 20,
+                padding: 10,
+              }}>
+              <Text
+                style={{
+                  color: 'white',
+                  fontFamily: 'Poppins-Medium',
+                  textAlign: 'center',
+                  fontSize: 16,
+                }}>
+                Cancel
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => this.purchaseVoucher()}
+              style={{
+                width: '40%',
+                borderRadius: 5,
+                backgroundColor: colorConfig.store.defaultColor,
+                padding: 10,
+              }}>
+              <Text
+                style={{
+                  color: 'white',
+                  fontFamily: 'Poppins-Medium',
+                  textAlign: 'center',
+                  fontSize: 16,
+                }}>
+                Purchase
               </Text>
             </TouchableOpacity>
           </View>
@@ -451,8 +677,21 @@ class VoucherDetail extends Component {
     }
   };
 
+  getTaxAmount = () => {
+    const {defaultOutlet} = this.props;
+    const {backupOutlet} = this.state;
+    if (!isEmptyObject(defaultOutlet)) {
+      return defaultOutlet.taxPercentage;
+    }
+    if (!isEmptyObject(backupOutlet)) {
+      return backupOutlet.taxPercentage;
+    }
+    return null;
+  };
+
   render() {
     const {intlData, pendingPoints} = this.props;
+    const {detailPurchase} = this.state;
     return (
       <SafeAreaView style={styles.container}>
         {this.state.loadRedeem && <LoaderDarker />}
@@ -510,32 +749,6 @@ class VoucherDetail extends Component {
                     : appConfig.appImageNull
                 }
               />
-              <View
-                style={{
-                  position: 'absolute',
-                  right: 0,
-                  top: 0,
-                  backgroundColor: colorConfig.store.transparentColor,
-                  height: 30,
-                  // width: this.state.screenWidth / 2 - 11,
-                  // borderTopRightRadius: 9,
-                  alignItems: 'flex-end',
-                  justifyContent: 'center',
-                  paddingLeft: 15,
-                  paddingRight: 15,
-                }}>
-                <Text
-                  style={{
-                    color: colorConfig.pageIndex.backgroundColor,
-                    fontSize: 16,
-                    fontWeight: 'bold',
-                    textAlign: 'right',
-                  }}>
-                  {`${this.props.dataVoucher['redeemValue']} ${
-                    intlData.messages.point
-                  }`}
-                </Text>
-              </View>
             </View>
             <View style={styles.voucherDetail}>
               <View
@@ -548,7 +761,12 @@ class VoucherDetail extends Component {
                 <Text style={styles.nameVoucher}>
                   {this.props.dataVoucher['name']}
                 </Text>
-                <View style={{flexDirection: 'row', marginTop: 20}}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    marginTop: 20,
+                    alignItems: 'center',
+                  }}>
                   <Icon
                     size={15}
                     name={
@@ -567,7 +785,12 @@ class VoucherDetail extends Component {
                       : 'No description for this voucher'}
                   </Text>
                 </View>
-                <View style={{flexDirection: 'row', marginTop: 10}}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    marginTop: 10,
+                    alignItems: 'center',
+                  }}>
                   <Icon
                     size={15}
                     name={Platform.OS === 'ios' ? 'ios-time' : 'md-time'}
@@ -596,6 +819,30 @@ class VoucherDetail extends Component {
                     </Text>
                   )}
                 </View>
+                {this.props.dataVoucher['taxRuleID'] === 'EXC-TAX' && (
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      marginTop: 10,
+                      alignItems: 'center',
+                    }}>
+                    <Icon
+                      size={15}
+                      name={
+                        Platform.OS === 'ios'
+                          ? 'ios-help-circle-outline'
+                          : 'md-help-circle-outline'
+                      }
+                      style={{
+                        color: colorConfig.store.secondaryColor,
+                        marginRight: 10,
+                      }}
+                    />
+                    <Text style={styles.descVoucher}>
+                      Price is before {this.getTaxAmount()}% tax.
+                    </Text>
+                  </View>
+                )}
               </View>
             </View>
             {pendingPoints != undefined && pendingPoints > 0 && (
@@ -626,13 +873,51 @@ class VoucherDetail extends Component {
               <Text
                 style={{
                   color: colorConfig.pageIndex.backgroundColor,
-                  fontWeight: 'bold',
+                  fontFamily: 'Poppins-Regular',
                   paddingTop: 10,
-                  fontSize: 19,
+                  fontSize: 17,
                 }}>
-                {intlData.messages.redeemVoucher}
+                Redeem {this.props.dataVoucher.redeemValue} Points
               </Text>
             </TouchableOpacity>
+
+            {this.props.dataVoucher.price &&
+              this.props.dataVoucher.redeemValue && (
+                <Text
+                  style={{
+                    textAlign: 'center',
+                    fontFamily: 'Poppins-Regular',
+                    marginTop: 15,
+                  }}>
+                  {' '}
+                  Or{' '}
+                </Text>
+              )}
+
+            {!isEmptyObject(detailPurchase) && this.props.dataVoucher.price && (
+              <TouchableOpacity
+                onPress={() => {
+                  this.setState({prompQuantityPrice: true, amountRedeem: 1});
+                }}
+                style={{
+                  height: 50,
+                  backgroundColor: colorConfig.store.secondaryColor,
+                  borderRadius: 8,
+                  marginTop: 15,
+                  marginHorizontal: 15,
+                  alignItems: 'center',
+                }}>
+                <Text
+                  style={{
+                    color: colorConfig.pageIndex.backgroundColor,
+                    fontFamily: 'Poppins-Regular',
+                    paddingTop: 10,
+                    fontSize: 17,
+                  }}>
+                  Purchase ${detailPurchase.totalNettAmount}
+                </Text>
+              </TouchableOpacity>
+            )}
           </View>
         </ScrollView>
         <AwesomeAlert
@@ -680,6 +965,7 @@ class VoucherDetail extends Component {
           }}
         />
         {this.renderQuantityVoucher()}
+        {this.renderQuantityVoucherPrice()}
       </SafeAreaView>
     );
   }
@@ -796,6 +1082,7 @@ mapStateToProps = state => ({
   totalPoint: state.rewardsReducer.dataPoint.totalPoint,
   pendingPoints: state.rewardsReducer.dataPoint.pendingPoints,
   myVoucers: state.accountsReducer.myVoucers.myVoucers,
+  defaultOutlet: state.storesReducer.defaultOutlet.defaultOutlet,
 });
 
 mapDispatchToProps = dispatch => ({

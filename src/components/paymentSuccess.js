@@ -68,11 +68,13 @@ class PaymentSuccess extends Component {
   };
 
   goBack = async () => {
-    const {url, outlet, paidMembership, paySVC} = this.props;
+    const {url, outlet, paidMembership, paySVC, payVoucher} = this.props;
     if (paidMembership === true) {
       Actions.popTo('pageIndex');
     } else if (paySVC === true) {
       Actions.popTo('summary');
+    } else if (payVoucher === true) {
+      Actions.popTo(this.props.fromPage);
     } else {
       Actions.reset('app', {fromPayment: true});
     }

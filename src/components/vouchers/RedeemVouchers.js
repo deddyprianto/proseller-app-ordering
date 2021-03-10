@@ -136,7 +136,7 @@ class RedeemVoucher extends Component {
       dataVoucher: item,
       dataVoucer: this.props.dataVoucer,
       intlData,
-      from: 'paymentAddVoucers',
+      fromPage: 'paymentAddVoucers',
       setVouchers: this.props.setVouchers,
     });
   };
@@ -255,31 +255,25 @@ class RedeemVoucher extends Component {
                                 : appConfig.appImageNull
                             }
                           />
-                          <View style={styles.vourcherPoint}>
-                            <Text
-                              style={{
-                                color: colorConfig.pageIndex.backgroundColor,
-                                fontSize: 16,
-                                fontWeight: 'bold',
-                                textAlign: 'right',
-                              }}>
-                              {item['redeemValue']} {intlData.messages.point}
-                            </Text>
-                          </View>
                         </View>
                         <View style={styles.voucherDetail}>
                           <Text style={styles.nameVoucher}>{item['name']}</Text>
+
                           <View style={{flexDirection: 'row'}}>
-                            <Icon
-                              size={15}
-                              name={
-                                Platform.OS === 'ios' ? 'ios-list' : 'md-list'
-                              }
-                              style={{
-                                color: colorConfig.store.secondaryColor,
-                                marginRight: 3,
-                              }}
-                            />
+                            <Text style={styles.descPrice}>
+                              - Redeem Value {item['redeemValue']} Points
+                            </Text>
+                          </View>
+
+                          {item.price && (
+                            <View style={{flexDirection: 'row'}}>
+                              <Text style={styles.descPrice}>
+                                - Purchase Value ${item['price']}
+                              </Text>
+                            </View>
+                          )}
+
+                          <View style={{flexDirection: 'row'}}>
                             <Text style={styles.descVoucher}>
                               {item['voucherDesc'] != null
                                 ? item['voucherDesc']
@@ -316,6 +310,12 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     fontWeight: 'bold',
     paddingVertical: 15,
+  },
+  descPrice: {
+    fontSize: 11,
+    maxWidth: '95%',
+    fontFamily: 'Poppins-Medium',
+    color: colorConfig.store.defaultColor,
   },
   line: {
     borderBottomColor: colorConfig.store.defaultColor,
@@ -399,15 +399,17 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   nameVoucher: {
-    fontSize: 18,
+    fontSize: 15,
     color: colorConfig.store.secondaryColor,
-    fontWeight: 'bold',
+    fontFamily: 'Poppins-Bold',
+    marginBottom: 2,
   },
   descVoucher: {
-    fontSize: 12,
+    fontSize: 11,
     maxWidth: '95%',
     marginLeft: 5,
     color: colorConfig.store.titleSelected,
+    fontFamily: 'Poppins-Italic',
   },
   pointVoucher: {
     fontSize: 12,
