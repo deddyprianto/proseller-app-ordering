@@ -1177,6 +1177,19 @@ class PaymentDetail extends Component {
         }
       } catch (e) {}
 
+      // ADJUST VOUCHER IF PAYMENT IS ALREADY 0
+      let usedAmount = 0;
+      try {
+        if (totalBayar == 0 && dataVoucer.length > 0) {
+          if (dataVoucer[dataVoucer.length - 1].isVoucher == true) {
+            const diff = parseFloat(
+              realTotal - this.props.pembayaran.totalNettAmount,
+            );
+            usedAmount = dataVoucer[dataVoucer.length - 1].paymentAmount - diff;
+          }
+        }
+      } catch (e) {}
+
       if (!isEmptyArray(dataVoucer)) {
         // payments = dataVoucer;
         payments = [];
@@ -1187,6 +1200,7 @@ class PaymentDetail extends Component {
               voucherId: dataVoucer[i].id,
               serialNumber: dataVoucer[i].serialNumber,
               paymentAmount: dataVoucer[i].paymentAmount,
+              usedAmount,
               isVoucher: true,
             });
           } else if (dataVoucer[i].isPoint == true) {
