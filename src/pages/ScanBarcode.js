@@ -40,8 +40,9 @@ class ScanBarcode extends Component {
       enterBarcode: false,
       camera: {
         type: RNCamera.Constants.Type.back,
-        flashMode: RNCamera.Constants.FlashMode.auto,
+        flashMode: RNCamera.Constants.FlashMode.off,
       },
+      flashStatus: false,
       barcode: '',
     };
   }
@@ -209,7 +210,23 @@ class ScanBarcode extends Component {
     return true;
   };
 
+  toggleFlash = () => {
+    const {flashStatus} = this.state;
+    let statusFlashMode = RNCamera.Constants.FlashMode.torch;
+    if (flashStatus) {
+      statusFlashMode = RNCamera.Constants.FlashMode.off;
+    }
+    this.setState({
+      camera: {
+        type: RNCamera.Constants.Type.back,
+        flashMode: statusFlashMode,
+      },
+      flashStatus: !flashStatus,
+    });
+  };
+
   render() {
+    const {flashStatus} = this.state;
     return (
       <SafeAreaView style={styles.container}>
         <View>
@@ -245,6 +262,39 @@ class ScanBarcode extends Component {
             <Text style={styles.scanScreenMessage}>
               Please point your camera at the product barcode.
             </Text>
+            <View
+              style={{
+                borderWidth: 2,
+                borderColor: 'red',
+                height: 300,
+                width: '90%',
+                borderRadius: 5,
+                marginTop: 60,
+              }}
+            />
+
+            <TouchableOpacity
+              onPress={this.toggleFlash}
+              style={{marginTop: 40}}>
+              {!flashStatus ? (
+                <Icon
+                  size={32}
+                  name={
+                    Platform.OS === 'ios' ? 'ios-flash-off' : 'md-flash-off'
+                  }
+                  style={{color: 'white', alignSelf: 'center'}}
+                />
+              ) : (
+                <Icon
+                  size={32}
+                  name={Platform.OS === 'ios' ? 'ios-flash' : 'md-flash'}
+                  style={{color: 'white', alignSelf: 'center'}}
+                />
+              )}
+              <Text style={styles.scanScreenMessage}>
+                {flashStatus ? 'Flash On' : 'Flash Off'}
+              </Text>
+            </TouchableOpacity>
           </View>
           <View style={[styles.overlay, styles.bottomOverlay]}>
             <Button
@@ -296,7 +346,7 @@ const styles = StyleSheet.create({
   topOverlay: {
     top: 50,
     flex: 1,
-    flexDirection: 'row',
+    flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -313,11 +363,12 @@ const styles = StyleSheet.create({
     borderRadius: 40,
   },
   scanScreenMessage: {
-    fontSize: 14,
+    fontSize: 13,
     color: 'white',
     textAlign: 'center',
     alignItems: 'center',
     justifyContent: 'center',
+    fontFamily: 'Poppins-Bold',
   },
 });
 

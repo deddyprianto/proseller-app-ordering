@@ -1222,7 +1222,7 @@ class ProductsSpecific extends Component {
                 </Text>
               ) : null}
               {item.product != undefined
-                ? item.product.name.substr(0, 25)
+                ? item.product.name.substr(0, 40)
                 : '-'}
             </Text>
             {item.product &&
@@ -1328,7 +1328,6 @@ class ProductsSpecific extends Component {
       }
 
       let dataProducts = item.data;
-      console.log(dataProducts, 'dataProductsdataProducts');
       return (
         <RecyclerListView
           style={{marginLeft: 15}}

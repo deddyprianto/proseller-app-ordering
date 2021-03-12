@@ -93,6 +93,7 @@ class SettleOrder extends Component {
       pendingCart: {},
       amountSVC: 0,
       percentageUseSVC: 0,
+      totalNonDiscountable: 0,
     };
 
     // check if users payment methods is empty
@@ -158,6 +159,8 @@ class SettleOrder extends Component {
 
     await this.resetAppliedVouchers();
 
+    await this.findNonDiscountable();
+
     // get outlet details
     const outletID = pembayaran.storeId;
     try {
@@ -186,6 +189,24 @@ class SettleOrder extends Component {
       'hardwareBackPress',
       this.handleBackPress,
     );
+  };
+
+  findNonDiscountable = async () => {
+    const {pembayaran} = this.props;
+    try {
+      let totalNonDiscountable = 0;
+
+      for (let i = 0; i < pembayaran.details.length; i++) {
+        if (pembayaran.details[i].product.disableReward === true) {
+          let nettAmount =
+            pembayaran.details[i].nettAmount ||
+            pembayaran.details[i].grossAmount;
+          totalNonDiscountable += nettAmount;
+        }
+      }
+      console.log(totalNonDiscountable, 'totalNonDiscountable');
+      await this.setState({totalNonDiscountable});
+    } catch (e) {}
   };
 
   validatePickupTime = async outletID => {
@@ -406,11 +427,13 @@ class SettleOrder extends Component {
   };
 
   setDataPayment = async cancel => {
-    var totalBayar = 0;
+    const {totalNonDiscountable} = this.state;
+    let totalBayar = 0;
     let index = 0;
     let indexModifier;
     let indexModifierDetail;
-    let tmpTotal = this.props.pembayaran.payment;
+    let tmpTotal =
+      this.props.pembayaran.payment - this.state.totalNonDiscountable;
 
     if (!cancel) {
       var redeemVoucer = 0;
@@ -613,9 +636,9 @@ class SettleOrder extends Component {
             } else {
               if (dataVoucer[i].voucherType == 'discPercentage') {
                 // FIND DISCOUNT
-                discount =
-                  (this.props.pembayaran.payment * dataVoucer[i].voucherValue) /
-                  100;
+                let totalAmount =
+                  this.props.pembayaran.payment - totalNonDiscountable;
+                discount = (totalAmount * dataVoucer[i].voucherValue) / 100;
 
                 //  check cap Amount
                 if (dataVoucer[i].capAmount != undefined) {
@@ -652,7 +675,13 @@ class SettleOrder extends Component {
       // DEDUCT AMOUNT WITH VOUCHER + POINT VALUE
       var redeemPoint =
         this.state.addPoint == undefined ? 0 : this.state.moneyPoint;
-      totalBayar = this.state.totalBayar - (redeemVoucer + redeemPoint);
+      totalBayar =
+        this.state.totalBayar -
+        totalNonDiscountable -
+        (redeemVoucer + redeemPoint);
+
+      if (totalBayar < 0) totalBayar = 0;
+      totalBayar += totalNonDiscountable;
 
       // DEDUCT AMOUNT WITH SVC Balance
       if (this.state.amountSVC > 0) {
@@ -749,12 +778,10 @@ class SettleOrder extends Component {
   };
 
   myVouchers = () => {
-    const {totalBayar} = this.state;
-    if (totalBayar == 0) {
-      Alert.alert(
-        'Sorry',
-        "Can't add more vouchers, your total payment is already 0.",
-      );
+    const {totalBayar, totalNonDiscountable} = this.state;
+    let totalNett = totalBayar - totalNonDiscountable;
+    if (totalNett === 0) {
+      Alert.alert('Sorry', "Can't add more vouchers.");
       return;
     }
 
@@ -839,10 +866,11 @@ class SettleOrder extends Component {
 
   myPoint = () => {
     let {intlData} = this.props;
-    let {totalBayar, dataVoucer} = this.state;
+    let {totalBayar, dataVoucer, totalNonDiscountable} = this.state;
 
     let pembayaran = JSON.stringify(this.props.pembayaran);
     pembayaran = JSON.parse(pembayaran);
+    pembayaran.payment -= totalNonDiscountable;
 
     // Adjust total
     try {
@@ -1954,7 +1982,6 @@ class SettleOrder extends Component {
     }
 
     let {totalBayar, dataVoucer} = this.state;
-    console.log(totalBayar, 'totalBayar 0');
     let realTotal = 0;
 
     let payload = {};
@@ -1998,18 +2025,6 @@ class SettleOrder extends Component {
         }
       } catch (e) {}
 
-      // ADJUST VOUCHER IF PAYMENT IS ALREADY 0
-      try {
-        if (totalBayar == 0 && dataVoucer.length > 0) {
-          if (dataVoucer[dataVoucer.length - 1].isVoucher == true) {
-            const diff = parseFloat(
-              realTotal - this.props.pembayaran.totalNettAmount,
-            );
-            dataVoucer[dataVoucer.length - 1].paymentAmount -= diff;
-          }
-        }
-      } catch (e) {}
-
       let payments = [];
       if (!isEmptyArray(dataVoucer)) {
         for (let i = 0; i < dataVoucer.length; i++) {
@@ -2044,7 +2059,6 @@ class SettleOrder extends Component {
       payload.payments = payments;
 
       // if price is 0, then dont add payment method
-      console.log(totalBayar, 'totalBayar');
       if (totalBayar > 0) {
         // Payment Type Detail
         let paymentPayload = {};
@@ -3012,10 +3026,21 @@ class SettleOrder extends Component {
                 <TouchableOpacity
                   style={styles.btnMethodUnselected}
                   onPress={() => {
-                    Actions.applyPromoCode({
-                      setDataVoucher: this.setDataVoucher,
-                      originalPurchase: this.props.pembayaran.totalNettAmount,
-                    });
+                    try {
+                      const total =
+                        Number(this.state.totalBayar) -
+                        this.state.totalNonDiscountable;
+                      if (total > 0) {
+                        Actions.applyPromoCode({
+                          setDataVoucher: this.setDataVoucher,
+                          originalPurchase: this.props.pembayaran
+                            .totalNettAmount,
+                        });
+                      } else {
+                        Alert.alert('Sorry', "Can't add more promo code.");
+                        return;
+                      }
+                    } catch (e) {}
                   }}>
                   <View style={{flexDirection: 'row'}}>
                     <Text style={styles.descMethodUnselected}>

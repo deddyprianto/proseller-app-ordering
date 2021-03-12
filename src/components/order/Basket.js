@@ -1610,6 +1610,8 @@ class Basket extends Component {
       this.props.dataBasket.details.map((item, index) => {
         data.quantity = item.quantity;
         data.unitPrice = item.unitPrice;
+        data.nettAmount = item.nettAmount;
+        data.grossAmount = item.grossAmount;
         data.product = item.product;
 
         // if data have modifiers, then add
