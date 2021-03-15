@@ -366,8 +366,7 @@ class Summary extends Component {
                       color: 'white',
                       fontFamily: 'Poppins-Regular',
                     }}>
-                    You are not eligible to use Store Value Card now. Please
-                    upgrade your membership to use the SVC feature.
+                    You are not eligible to use Store Value Card now.
                   </Text>
                 </View>
               )}
