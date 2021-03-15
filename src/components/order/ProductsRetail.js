@@ -880,7 +880,13 @@ class Products2 extends Component {
         });
         const firstCategoryID = response.data[1].id;
         // const firstDatLength = response.data[0].dataLength;
-        await this.getProductsByCategory(firstCategoryID, 0, 20, refresh, 1);
+        const idxCategory = await this.getProductsByCategory(
+          firstCategoryID,
+          0,
+          20,
+          refresh,
+          1,
+        );
 
         // check if outlet is open
         // this.prompOutletIsClosed();
@@ -893,20 +899,18 @@ class Products2 extends Component {
 
         //  asynchronously get first item
         if (response.data.length > 0) {
+          let dataItems = response.data[idxCategory];
+          const catID = response.data[idxCategory].id;
           let skip = 20;
-          for (
-            let i = 0;
-            i < Math.floor(response.data[1].dataLength / 20);
-            i++
-          ) {
-            await this.loadMoreProducts(firstCategoryID, outletID, skip, 1);
+          for (let i = 0; i < Math.floor(dataItems.dataLength / 20); i++) {
+            await this.loadMoreProducts(catID, outletID, skip, idxCategory);
             skip += 20;
           }
         }
 
         // Fetch second group preset if the first group preset length is less then 10, because if
         // the list of product is less than 10 (visible in viewport), then the lazy load will not called
-        if (response.data[1].dataLength < 10) {
+        if (response.data[idxCategory].dataLength < 10) {
           this.loadMoreCategory();
         }
 
@@ -939,6 +943,33 @@ class Products2 extends Component {
       let response = await this.props.dispatch(
         getProductByCategory(outletID, category, skip, take),
       );
+
+      if (idxCategory === 1 && isEmptyArray(response.data)) {
+        idxCategory = 2;
+        category = categories[2].id;
+        await this.setState({indexLoaded: this.state.indexLoaded + 1});
+        response = await this.props.dispatch(
+          getProductByCategory(outletID, category, skip, take),
+        );
+
+        if (idxCategory === 2 && isEmptyArray(response.data)) {
+          idxCategory = 3;
+          category = categories[3].id;
+          await this.setState({indexLoaded: this.state.indexLoaded + 1});
+          response = await this.props.dispatch(
+            getProductByCategory(outletID, category, skip, take),
+          );
+
+          if (idxCategory === 3 && isEmptyArray(response.data)) {
+            idxCategory = 4;
+            category = categories[4].id;
+            await this.setState({indexLoaded: this.state.indexLoaded + 1});
+            response = await this.props.dispatch(
+              getProductByCategory(outletID, category, skip, take),
+            );
+          }
+        }
+      }
 
       if (response && !isEmptyArray(response.data)) {
         // const idxCategory = categories.findIndex(item => item.id == category);
@@ -983,6 +1014,7 @@ class Products2 extends Component {
         }
         this.products.push(categories);
       }
+      return idxCategory;
     } catch (e) {
       // Alert.alert('Opss..', 'Something went wrong, please try again.');
       this.setState({
@@ -2820,6 +2852,7 @@ class Products2 extends Component {
 
   loadMoreCategory = async () => {
     try {
+      console.log('terpanggil');
       let {products} = this.state;
       const outletID = this.state.item.id;
       const categorySelected = await products.find(

@@ -197,7 +197,7 @@ class SettleOrder extends Component {
       let totalNonDiscountable = 0;
 
       for (let i = 0; i < pembayaran.details.length; i++) {
-        if (pembayaran.details[i].product.disableReward === true) {
+        if (pembayaran.details[i].product.isNotRedeemable === true) {
           let nettAmount =
             pembayaran.details[i].nettAmount ||
             pembayaran.details[i].grossAmount;
