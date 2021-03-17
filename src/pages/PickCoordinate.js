@@ -14,23 +14,15 @@ import {
   BackHandler,
   Platform,
   SafeAreaView,
-  Alert,
-  KeyboardAvoidingView,
   Image,
+  TextInput,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
 import colorConfig from '../config/colorConfig';
-import {defaultAddress, updateUser} from '../actions/user.action';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
-import {TextInput, DefaultTheme} from 'react-native-paper';
-import CryptoJS from 'react-native-crypto-js';
-import awsConfig from '../config/awsConfig';
-import {isEmptyArray, isEmptyData, isEmptyObject} from '../helper/CheckEmpty';
-import Geocoder from 'react-native-geocoding';
-import {selectedAddress} from '../actions/payment.actions';
-import {getAddress, getCityAddress} from '../actions/address.action';
+import {isEmptyObject} from '../helper/CheckEmpty';
 import MapView from 'react-native-maps';
 
 class PickCoordinate extends Component {
@@ -47,6 +39,7 @@ class PickCoordinate extends Component {
       isMapReady: false,
       userLocation: '',
       detailAddress: {},
+      searchLocation: '',
     };
   }
 
@@ -115,6 +108,20 @@ class PickCoordinate extends Component {
       });
   };
 
+  getGeolocation = async () => {
+    const {searchLocation} = this.state;
+    let url = `https://maps.google.com/maps/api/geocode/json?address=${searchLocation}&sensor=false&key=AIzaSyC9KLjlHDwdfmp7AbzuW7B3PRe331RJIu4`;
+    let response = await fetch(url);
+    response = await response.json();
+    console.log(response.results[0].geometry.location, 'sdsjbdskdjb');
+    try {
+      await this.setState({
+        latitude: response.results[0].geometry.location.lat,
+        longitude: response.results[0].geometry.location.lng,
+      });
+    } catch (e) {}
+  };
+
   submitCoordinate = () => {
     try {
       this.props.setCoordinate({
@@ -131,6 +138,8 @@ class PickCoordinate extends Component {
 
   render() {
     const {latitude, longitude, latitudeDelta, longitudeDelta} = this.state;
+    console.log(latitude);
+    console.log(longitude);
     return (
       <SafeAreaView style={styles.map}>
         <TouchableOpacity
@@ -144,9 +153,40 @@ class PickCoordinate extends Component {
             style={{color: colorConfig.pageIndex.grayColor, padding: 15}}
           />
         </TouchableOpacity>
+
+        <View style={styles.searchBar}>
+          <TextInput
+            placeholder={'Location'}
+            value={this.state.searchLocation}
+            onChangeText={value => this.setState({searchLocation: value})}
+            onSubmitEditing={this.getGeolocation}
+            style={{
+              fontSize: 12,
+              fontFamily: 'Poppins-Regular',
+              padding: 5,
+              paddingHorizontal: 10,
+              color: colorConfig.store.title,
+              borderColor: colorConfig.pageIndex.inactiveTintColor,
+              borderWidth: 1,
+              width: '80%',
+              borderRadius: 5,
+            }}
+          />
+          <TouchableOpacity
+            onPress={this.getGeolocation}
+            style={{
+              backgroundColor: colorConfig.store.defaultColor,
+              padding: 10,
+              borderRadius: 5,
+              width: '18%',
+            }}>
+            <Text style={{color: 'white', textAlign: 'center'}}>Go</Text>
+          </TouchableOpacity>
+        </View>
+
         <MapView
           style={styles.map}
-          initialRegion={{
+          region={{
             latitude,
             longitude,
             latitudeDelta,
@@ -274,5 +314,26 @@ const styles = StyleSheet.create({
     color: '#fff',
     lineHeight: 20,
     margin: 20,
+  },
+  searchBar: {
+    position: 'absolute',
+    flexDirection: 'row',
+    zIndex: 2,
+    backgroundColor: 'white',
+    width: '95%',
+    padding: 10,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    alignSelf: 'center',
+    borderRadius: 6,
+    top: 60,
+    shadowColor: '#00000021',
+    shadowOffset: {
+      width: 0,
+      height: 6,
+    },
+    shadowOpacity: 0.37,
+    shadowRadius: 7.49,
+    elevation: 12,
   },
 });

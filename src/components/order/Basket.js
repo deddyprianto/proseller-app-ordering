@@ -1435,7 +1435,7 @@ class Basket extends Component {
 
     await this.setState({
       latitude: response.results[0].geometry.location.lat,
-      longitude: response.results[0].geometry.location.longitude,
+      longitude: response.results[0].geometry.location.lng,
     });
   };
 

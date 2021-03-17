@@ -32,7 +32,6 @@ import {
   isEmptyData,
   isEmptyObject,
 } from '../../helper/CheckEmpty';
-import Geocoder from 'react-native-geocoding';
 import {selectedAddress} from '../../actions/payment.actions';
 import appConfig from '../../config/appConfig';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -124,10 +123,6 @@ class EditAddress extends Component {
       );
     } catch (e) {}
     await this.setState({loading: false});
-
-    try {
-      this.getFullAddress(this.state.oldAddress);
-    } catch (e) {}
   };
 
   componentWillUnmount() {
@@ -226,34 +221,6 @@ class EditAddress extends Component {
       Alert.alert(e.message, 'Something went wrong, please try again');
       this.setState({loading: false});
     }
-  };
-
-  getFullAddress = value => {
-    Geocoder.init('AIzaSyC9KLjlHDwdfmp7AbzuW7B3PRe331RJIu4');
-    if (value != '' && value != undefined)
-      Geocoder.from(value)
-        .then(json => {
-          let location = json.results[0];
-
-          try {
-            if (awsConfig.COUNTRY !== 'Singapore') {
-              let city = location.address_components.find(
-                item =>
-                  item.types[0] == 'administrative_area_level_2' ||
-                  item.types[0] == 'locality',
-              );
-
-              this.setState({city: city.long_name});
-            }
-
-            let postalCode = location.address_components.find(
-              item => item.types[0] == 'postal_code',
-            );
-
-            this.setState({postalCode: postalCode.long_name});
-          } catch (e) {}
-        })
-        .catch(error => console.warn(error));
   };
 
   notCompleted = () => {
