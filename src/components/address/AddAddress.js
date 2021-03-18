@@ -216,9 +216,13 @@ class AddAddress extends Component {
           coordinate.detailAddress.address_components[0].long_name
         } ${coordinate.detailAddress.address_components[1].long_name}`;
         this.setState({streetName});
+      } catch (e) {}
 
+      try {
         const postalCode = `${
-          coordinate.detailAddress.address_components[5].long_name
+          coordinate.detailAddress.address_components.find(
+            item => item.types[0] === 'postal_code',
+          ).long_name
         }`;
         this.setState({postalCode});
       } catch (e) {}
