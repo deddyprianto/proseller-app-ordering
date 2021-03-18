@@ -2028,12 +2028,14 @@ class SettleOrder extends Component {
       // ADJUST VOUCHER IF PAYMENT IS ALREADY 0
       let usedAmount = 0;
       try {
-        if (totalBayar == 0 && dataVoucer.length > 0) {
+        if (dataVoucer.length > 0) {
           if (dataVoucer[dataVoucer.length - 1].isVoucher == true) {
-            const diff = parseFloat(
-              realTotal - this.props.pembayaran.totalNettAmount,
-            );
-            usedAmount = dataVoucer[dataVoucer.length - 1].paymentAmount - diff;
+            const diff = this.props.pembayaran.totalNettAmount - totalBayar;
+            if (diff > 0) {
+              usedAmount = diff;
+            } else {
+              usedAmount = dataVoucer[dataVoucer.length - 1].paymentAmount;
+            }
           }
         }
       } catch (e) {}
@@ -2220,6 +2222,7 @@ class SettleOrder extends Component {
 
       console.log('Payload settle order ', payload);
       console.log('URL settle order ', url);
+
       const response = await this.props.dispatch(settleOrder(payload, url));
       console.log('reponse pembayaran settle order ', response);
       if (response.success) {
