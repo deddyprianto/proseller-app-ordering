@@ -1296,7 +1296,7 @@ export const getAllCategory = (skip, take, parentCategoryID) => {
       );
 
       console.log(JSON.stringify(payload), 'payload GET CATEGORY');
-      console.log(response, 'RESPONSE GET CATEGORY');
+      console.log(response, 'RESPONSE GET CATEGORY 12345');
 
       if (response.success) {
         return response.response;
