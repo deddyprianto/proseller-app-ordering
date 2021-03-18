@@ -10,7 +10,7 @@ import colorConfig from '../../config/colorConfig';
 import {Actions} from 'react-native-router-flux';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
-import {getAllCategory} from '../../actions/order.action';
+import {getAllCategory, isParentCategory} from '../../actions/order.action';
 import CategoryCard from './CategoryCard';
 
 class CategoryList extends Component {
@@ -41,8 +41,8 @@ class CategoryList extends Component {
 
   loadCategory = async () => {
     try {
-      const response = await this.props.dispatch(getAllCategory(0, 10));
-      if (response != false) {
+      const response = await this.props.dispatch(getAllCategory(0, 10, null));
+      if (response !== false) {
         response.data.unshift({
           name: 'See All',
           type: 'all',
@@ -65,13 +65,24 @@ class CategoryList extends Component {
     return true;
   };
 
-  updateCategory = (categoryDetail, index) => {
+  updateCategory = async (categoryDetail, index) => {
     try {
       let {outlet} = this.props;
       if (categoryDetail.type === 'all') {
         Actions.push('menuCategory');
       } else {
-        Actions.push('specificCategory', {categoryDetail, item: outlet});
+        const isParent = await this.props.dispatch(
+          isParentCategory(categoryDetail.sortKey),
+        );
+
+        if (isParent === true) {
+          Actions.push('menuCategory', {
+            parentCategoryID: categoryDetail.sortKey,
+            categoryName: categoryDetail.name,
+          });
+        } else {
+          Actions.push('specificCategory', {categoryDetail, item: outlet});
+        }
       }
     } catch (e) {}
   };

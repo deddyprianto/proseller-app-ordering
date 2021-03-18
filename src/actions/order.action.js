@@ -1283,7 +1283,7 @@ export const getAllCategory = (skip, take, parentCategoryID) => {
         sortDirection: 'ASC',
       };
 
-      if (parentCategoryID) {
+      if (parentCategoryID !== undefined) {
         payload.parentCategoryID = parentCategoryID;
       }
 

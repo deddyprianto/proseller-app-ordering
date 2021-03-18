@@ -2049,7 +2049,7 @@ class SettleOrder extends Component {
               voucherId: dataVoucer[i].id,
               serialNumber: dataVoucer[i].serialNumber,
               paymentAmount: dataVoucer[i].paymentAmount,
-              usedAmount,
+              // usedAmount,
               isVoucher: true,
             });
           } else if (dataVoucer[i].isVoucherPromoCode == true) {
