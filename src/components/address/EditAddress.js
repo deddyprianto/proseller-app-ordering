@@ -253,6 +253,15 @@ class EditAddress extends Component {
           ).long_name
         }`;
         this.setState({postalCode});
+
+        const isValid = new RegExp(/((\d{6}.*)*\s)?(\d{6})([^\d].*)?$/).test(
+          Number(postalCode),
+        );
+        if (isValid) {
+          this.setState({isPostalCodeValid: true});
+        } else {
+          this.setState({isPostalCodeValid: false});
+        }
       } catch (e) {}
     }
   };
