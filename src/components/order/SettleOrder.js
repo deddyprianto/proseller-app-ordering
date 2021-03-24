@@ -311,10 +311,85 @@ class SettleOrder extends Component {
     } catch (e) {}
   };
 
+  decreaseExcludedItem = async voucher => {
+    try {
+      let {totalNonDiscountable} = this.state;
+      const {pembayaran} = this.props;
+
+      let totalNettItem = 0;
+      for (let i = 0; i < pembayaran.details.length; i++) {
+        let product = pembayaran.details[i];
+        let find = undefined;
+
+        if (voucher.appliedTo === 'PRODUCT') {
+          find = voucher.appliedItems.find(
+            data => data.value === product.product.id,
+          );
+        }
+        if (voucher.appliedTo === 'CATEGORY') {
+          find = voucher.appliedItems.find(
+            data => data.value === product.product.categoryID,
+          );
+        }
+        if (find) {
+          totalNettItem += product.nettAmount;
+        }
+      }
+
+      totalNonDiscountable -= totalNettItem;
+      await this.setState({totalNonDiscountable});
+      return {totalNonDiscountable, totalNettItem};
+    } catch (e) {}
+  };
+
+  checkExcludedItem = async voucher => {
+    try {
+      let {totalNonDiscountable} = this.state;
+      const {pembayaran} = this.props;
+
+      let totalNettItem = 0;
+      for (let i = 0; i < pembayaran.details.length; i++) {
+        let product = pembayaran.details[i];
+        let find = undefined;
+
+        if (voucher.appliedTo === 'PRODUCT') {
+          find = voucher.appliedItems.find(
+            data => data.value === product.product.id,
+          );
+        }
+        if (voucher.appliedTo === 'CATEGORY') {
+          find = voucher.appliedItems.find(
+            data => data.value === product.product.categoryID,
+          );
+        }
+
+        if (find) {
+          totalNettItem += product.nettAmount;
+        }
+      }
+      console.log(totalNettItem, 'totalNettItem');
+      totalNonDiscountable += totalNettItem;
+      await this.setState({totalNonDiscountable});
+      return {totalNonDiscountable, totalNettItem};
+    } catch (e) {}
+  };
+
   setDataVoucher = async item => {
     let {dataVoucer} = this.state;
+    const {pembayaran} = this.props;
     await this.setState({loading: true});
     try {
+      // check if some item is excluded
+      if (item.excludeSelectedItem === true) {
+        const calcResult = await this.checkExcludedItem(item);
+        if (calcResult.totalNonDiscountable >= pembayaran.totalNettAmount) {
+          let {totalNonDiscountable} = this.state;
+          totalNonDiscountable -= calcResult.totalNettItem;
+          await this.setState({totalNonDiscountable});
+          await this.setState({loading: false});
+          return;
+        }
+      }
       await this.resetAppliedVouchers();
       await this.setDataPayment(true);
       if (dataVoucer == undefined) {
@@ -780,7 +855,8 @@ class SettleOrder extends Component {
   myVouchers = () => {
     const {totalBayar, totalNonDiscountable} = this.state;
     let totalNett = totalBayar - totalNonDiscountable;
-    if (totalNett === 0) {
+
+    if (totalNett <= 0) {
       Alert.alert('Sorry', "Can't add more vouchers.");
       return;
     }
@@ -2312,6 +2388,7 @@ class SettleOrder extends Component {
 
   cencelVoucher = async () => {
     // await delete this.state.dataVoucer;
+    await this.findNonDiscountable();
     await this.setState({dataVoucer: undefined});
     await this.setDataPayment(true);
     this.setState({cancelVoucher: true});
@@ -2321,6 +2398,12 @@ class SettleOrder extends Component {
     let {dataVoucer} = this.state;
     await this.setState({loading: true});
     await this.setState({totalBayar: this.props.pembayaran.payment});
+
+    try {
+      if (dataVoucer[i].excludeSelectedItem === true) {
+        await this.decreaseExcludedItem(dataVoucer[i]);
+      }
+    } catch (e) {}
 
     // reset applied products length
     await this.resetAppliedVouchers();

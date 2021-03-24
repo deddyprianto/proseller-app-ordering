@@ -175,12 +175,22 @@ export default class PaymentAddVoucers extends Component {
         }
 
         // check if apply to specific product is found
-        if (result == undefined) {
+        if (
+          result === undefined &&
+          (item.excludeSelectedItem === false ||
+            item.excludeSelectedItem === undefined)
+        ) {
           Alert.alert(
             'Sorry',
             `${item.name} is only available on specific product`,
           );
           return false;
+        } else if (result !== undefined && item.excludeSelectedItem === true) {
+          console.log(result, 'result');
+          Alert.alert(
+            'Sorry',
+            `${item.name} cannot be applied to ${result.product.name}`,
+          );
         }
       }
     } catch (e) {}
