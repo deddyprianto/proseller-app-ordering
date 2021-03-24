@@ -18,6 +18,14 @@ export const api = async (url, method, body = null, headers = {}) => {
       throw new Error('Request body required');
     }
 
+    fetchParams.headers['clienttimezone'] = Math.abs(
+      new Date().getTimezoneOffset(),
+    );
+
+    fetchParams.headers['client-timezone'] = Math.abs(
+      new Date().getTimezoneOffset(),
+    );
+
     if (reqBody) {
       fetchParams.headers['Content-type'] = 'application/json';
       fetchParams.body = reqBody;

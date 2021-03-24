@@ -145,7 +145,10 @@ export const getProductByCategory = (OutletId, categoryId, skip, take) => {
       // console.log(payload, 'payload product preset');
 
       const PRESET_TYPE = 'app';
-
+      // console.log(
+      //   `/productpreset/loaditems/${PRESET_TYPE}/${OutletId}/${categoryId}`,
+      //   '`/productpreset/loaditems/${PRESET_TYPE}/${OutletId}/${categoryId}`',
+      // );
       let response = await fetchApiProduct(
         `/productpreset/loaditems/${PRESET_TYPE}/${OutletId}/${categoryId}`,
         'POST',

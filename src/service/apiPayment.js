@@ -47,6 +47,10 @@ export const apiPayment = async (url, method, body = null, headers = {}) => {
 
     const fetchParams = {method, headers};
 
+    fetchParams.headers['clientTimezone'] = Math.abs(
+      new Date().getTimezoneOffset(),
+    );
+
     if (reqBody) {
       fetchParams.headers['Content-type'] = 'application/json';
       fetchParams.body = reqBody;

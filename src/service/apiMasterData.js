@@ -47,6 +47,19 @@ export const apiMasterData = async (url, method, body = null, headers = {}) => {
 
     const fetchParams = {method, headers};
 
+    fetchParams.headers['clienttimezone'] = Math.abs(
+      new Date().getTimezoneOffset(),
+    );
+
+    fetchParams.headers['client-timezone'] = Math.abs(
+      new Date().getTimezoneOffset(),
+    );
+
+    if (reqBody) {
+      fetchParams.headers['Content-type'] = 'application/json';
+      fetchParams.body = reqBody;
+    }
+
     if (reqBody) {
       fetchParams.headers['Content-type'] = 'application/json';
       fetchParams.body = reqBody;
