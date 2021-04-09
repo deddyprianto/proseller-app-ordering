@@ -23,9 +23,9 @@ import colorConfig from '../config/colorConfig';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
 import {TextInput, DefaultTheme} from 'react-native-paper';
-import Snackbar from 'react-native-snackbar';
 import Loader from '../components/loader';
 import {checkPromo} from '../actions/rewards.action';
+import {isEmptyArray} from '../helper/CheckEmpty';
 
 const theme = {
   ...DefaultTheme,
@@ -76,15 +76,76 @@ class ApplyPromoCode extends Component {
       const {promoCode} = this.state;
       this.setState({loading: true});
       const voucher = await this.props.dispatch(checkPromo(promoCode));
-      if (voucher !== false) {
+
+      if (voucher.status !== false) {
+        try {
+          if (
+            !isEmptyArray(this.props.dataVoucher) &&
+            voucher.validity &&
+            voucher.validity.canOnlyUseOneTime === true
+          ) {
+            const find = this.props.dataVoucher.find(
+              item => item.id === voucher.id,
+            );
+            if (find) {
+              Alert.alert(
+                'Sorry',
+                'You have used this promo code on this order.',
+              );
+              this.setState({loading: false});
+              return;
+            }
+
+            /* Check if voucher can be mixed */
+            try {
+              if (
+                !isEmptyArray(this.props.dataVoucher) &&
+                voucher.validity &&
+                voucher.validity.cannotBeMixed === true
+              ) {
+                this.setState({loading: false});
+                Alert.alert(
+                  'Sorry',
+                  `Cannot mix ${voucher.name} with other vouchers.`,
+                );
+                return;
+              }
+
+              if (!isEmptyArray(this.props.dataVoucher)) {
+                let cannotBeMixed = false;
+                let voucherName = '';
+                for (let i = 0; i < this.props.dataVoucher.length; i++) {
+                  if (
+                    this.props.dataVoucher[i].validity &&
+                    this.props.dataVoucher[i].validity.cannotBeMixed === true
+                  ) {
+                    cannotBeMixed = true;
+                    voucherName = this.props.dataVoucher[i].name;
+                    break;
+                  }
+                }
+
+                if (cannotBeMixed === true) {
+                  this.setState({loading: false});
+                  Alert.alert(
+                    'Sorry',
+                    `Cannot mix ${voucherName} with other vouchers.`,
+                  );
+                  return;
+                }
+              }
+            } catch (e) {}
+          }
+        } catch (e) {}
+
         if (voucher.minPurchaseAmount > 0) {
           if (Number(this.props.originalPurchase) < voucher.minPurchaseAmount) {
-            Snackbar.show({
-              text: `Minimum purchase amount is $${
+            Alert.alert(
+              'Sorry',
+              `Minimum purchase amount for using this voucher is $${
                 voucher.minPurchaseAmount
-              } !`,
-              duration: Snackbar.LENGTH_LONG,
-            });
+              }`,
+            );
             this.setState({loading: false});
             return;
           }
@@ -92,15 +153,8 @@ class ApplyPromoCode extends Component {
         voucher.isVoucherPromoCode = true;
         this.props.setDataVoucher(voucher);
         Actions.pop();
-        Snackbar.show({
-          text: 'Promo Code Applied!',
-          duration: Snackbar.LENGTH_LONG,
-        });
       } else {
-        Snackbar.show({
-          text: 'Promo Code Invalid!',
-          duration: Snackbar.LENGTH_LONG,
-        });
+        Alert.alert('Sorry', voucher.message);
       }
 
       this.setState({loading: false});

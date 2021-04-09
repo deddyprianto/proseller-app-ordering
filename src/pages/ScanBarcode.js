@@ -245,6 +245,7 @@ class ScanBarcode extends Component {
             ref={ref => {
               this.camera = ref;
             }}
+            captureAudio={false}
             defaultTouchToFocus
             flashMode={this.state.camera.flashMode}
             mirrorImage={false}

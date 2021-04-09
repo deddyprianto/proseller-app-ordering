@@ -5,7 +5,6 @@ import {
   Dimensions,
   FlatList,
   Image,
-  Picker,
   Platform,
   RefreshControl,
   SafeAreaView,
@@ -50,17 +49,19 @@ import {
 import RBSheet from 'react-native-raw-bottom-sheet';
 import * as _ from 'lodash';
 import {dataStores, getOutletById} from '../../actions/stores.action';
-import * as geolib from 'geolib';
+// import * as geolib from 'geolib';
 import appConfig from '../../config/appConfig';
 import CryptoJS from 'react-native-crypto-js';
 import awsConfig from '../../config/awsConfig';
 import {selectedAddress} from '../../actions/payment.actions';
 import {SwipeListView} from 'react-native-swipe-list-view';
-import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
-import {dataPoint} from '../../actions/rewards.action';
+// import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
+import {campaign, dataPoint} from '../../actions/rewards.action';
 import {format} from 'date-fns';
 import {Dialog} from 'react-native-paper';
 import LoaderOpacity from '../LoaderOpacity';
+import {dataPromotion} from '../../actions/promotion.action';
+import {getSVCCard} from '../../actions/SVC.action';
 
 class Basket extends Component {
   constructor(props) {
@@ -102,6 +103,7 @@ class Basket extends Component {
       productPlaceholder: null,
       latitude: 0,
       longitude: 0,
+      isTimeslotAvailable: false,
     };
   }
 
@@ -195,13 +197,13 @@ class Basket extends Component {
       // get previous data products from this outlet, for modifier detail purpose
       if (this.props.dataBasket !== undefined) {
         let outletID = this.props.dataBasket.outlet.id;
-        await this.props.dispatch(getOutletById(outletID));
         await this.initializePickupTime();
         await this.getTimeslot(outletID, this.props.orderType);
-        // GET PRODUCTS UNAVAILABLE
-        await this.fetchProductsUnavailable(outletID);
-
-        this.props.dispatch(dataPoint());
+        Promise.all([
+          this.props.dispatch(getOutletById(outletID)),
+          this.props.dispatch(dataPoint()),
+          this.fetchProductsUnavailable(outletID),
+        ]);
 
         this.setState({
           isOpen: this.isOpen(),
@@ -211,12 +213,12 @@ class Basket extends Component {
         if (this.props.orderType == undefined) {
           this.RBSheet.open();
         }
-        if (
-          this.props.orderType == 'DELIVERY' &&
-          !isEmptyObject(this.props.selectedAddress)
-        ) {
-          await this.calculateDeliveryFee();
-        }
+        // if (
+        //   this.props.orderType === 'DELIVERY' &&
+        //   !isEmptyObject(this.props.selectedAddress)
+        // ) {
+        //   await this.calculateDeliveryFee();
+        // }
         await this.setState({loading: false});
       }
       await this.setState({loading: false});
@@ -236,49 +238,65 @@ class Basket extends Component {
           orderingMode,
         ),
       );
-      let gotSlot = false;
-      if (response !== false && !isEmptyArray(response)) {
-        for (let i = 0; i < response.length; i++) {
-          if (!isEmptyArray(response[i].timeSlot)) {
-            for (let j = 0; j < response[i].timeSlot.length; j++) {
-              if (response[i].timeSlot[j].isAvailable === true) {
-                await this.setState({
-                  timePickup: response[i].timeSlot[j].time,
-                  datePickup: response[i].date,
-                  selectedTimeSlot: response[i],
-                });
-                gotSlot = true;
-                break;
-              }
-            }
-          } else {
-            await this.setState({
-              datePickup: null,
-            });
-          }
-          if (gotSlot) {
-            break;
-          }
-        }
-        // if (find != undefined) {
-        //   this.setState({timePickup: find.time});
-        // } else {
-        //   const timepickup = new Date().getHours() + 1;
-        //   this.setState({timePickup: `${timepickup}:00`});
-        //   if (
-        //     !isEmptyArray(outletSingle.timeSlots) &&
-        //     (orderingMode === 'DELIVERY' || orderingMode === 'STOREPICKUP')
-        //   ) {
-        //     this.setState({timeslotInfo: true});
-        //   }
-        // }
+
+      if (!isEmptyArray(response)) {
+        await this.setState({
+          isTimeslotAvailable: true,
+        });
       } else {
         await this.setState({
-          timePickup: `${new Date().getHours() + 1}:00`,
-          selectedTimeSlot: {},
-          datePickup: null,
+          isTimeslotAvailable: false,
         });
       }
+
+      // let gotSlot = false;
+      // if (response !== false && !isEmptyArray(response)) {
+      //   for (let i = 0; i < response.length; i++) {
+      //     if (!isEmptyArray(response[i].timeSlot)) {
+      //       for (let j = 0; j < response[i].timeSlot.length; j++) {
+      //         if (response[i].timeSlot[j].isAvailable === true) {
+      //           await this.setState({
+      //             timePickup: response[i].timeSlot[j].time,
+      //             datePickup: response[i].date,
+      //             selectedTimeSlot: response[i],
+      //           });
+      //           gotSlot = true;
+      //           break;
+      //         }
+      //       }
+      //     } else {
+      //       await this.setState({
+      //         datePickup: null,
+      //       });
+      //     }
+      //     if (gotSlot) {
+      //       break;
+      //     }
+      //   }
+      //   // if (find != undefined) {
+      //   //   this.setState({timePickup: find.time});
+      //   // } else {
+      //   //   const timepickup = new Date().getHours() + 1;
+      //   //   this.setState({timePickup: `${timepickup}:00`});
+      //   //   if (
+      //   //     !isEmptyArray(outletSingle.timeSlots) &&
+      //   //     (orderingMode === 'DELIVERY' || orderingMode === 'STOREPICKUP')
+      //   //   ) {
+      //   //     this.setState({timeslotInfo: true});
+      //   //   }
+      //   // }
+      // } else {
+      //   await this.setState({
+      //     timePickup: `${new Date().getHours() + 1}:00`,
+      //     selectedTimeSlot: {},
+      //     datePickup: null,
+      //   });
+      // }
+      await this.setState({
+        // timePickup: `${new Date().getHours() + 1}:00`,
+        selectedTimeSlot: {},
+        datePickup: null,
+      });
     } catch (e) {}
   };
 
@@ -1008,6 +1026,13 @@ class Basket extends Component {
       clearInterval(this.intervalOutlet);
       this.props.dispatch(selectedAddress(undefined));
     } catch (e) {}
+
+    try {
+      if (isEmptyObject(this.props.dataBasket)) {
+        this.props.dispatch(setOrderType(undefined));
+      }
+      this.props.dispatch(selectedAddress(undefined));
+    } catch (e) {}
   }
 
   handleBackPress = () => {
@@ -1464,6 +1489,23 @@ class Basket extends Component {
       // CHECK DELIVERY AVAILIBILITY
       if (this.props.orderType === 'DELIVERY') {
         if (this.props.dataBasket !== undefined) {
+          if (isEmptyObject(this.props.selectedAddress)) {
+            Alert.alert(
+              'Delivery Address.',
+              'Please select your delivery address first.',
+              [
+                {
+                  text: 'Got it',
+                  onPress: () => {
+                    this.goToAddress();
+                  },
+                },
+              ],
+              {cancelable: false},
+            );
+            return false;
+          }
+
           if (
             this.props.dataBasket.provider !== undefined &&
             this.props.dataBasket.provider.deliveryFee < 0
@@ -1532,16 +1574,21 @@ class Basket extends Component {
         message = 'Please select delivery date & time.';
       }
 
-      if (this.state.timePickup.length === 5) {
-        if (this.checkTimeslotAvailibility()) {
-          if (
-            this.props.orderType === 'STOREPICKUP' ||
-            this.props.orderType === 'DELIVERY'
-          ) {
-            Alert.alert('Sorry', message);
-            return;
-          }
-        }
+      if (this.state.isTimeslotAvailable && this.state.timePickup === null) {
+        Alert.alert(
+          'Order Date & Time',
+          message,
+          [
+            {
+              text: 'Got it',
+              onPress: () => {
+                this.goToPickUpTime();
+              },
+            },
+          ],
+          {cancelable: false},
+        );
+        return false;
       }
 
       try {
@@ -2401,16 +2448,22 @@ class Basket extends Component {
 
   setOrderType = async type => {
     await this.props.dispatch(setOrderType(type));
-    if (type === 'DELIVERY' && !isEmptyObject(this.props.selectedAddress)) {
-      await this.reCalculateDeliveryFee();
-    }
+    let datePickup = format(new Date(), 'yyyy-MM-dd');
+    await this.setState({
+      timePickup: null,
+      datePickup,
+    });
+    this.props.dispatch(selectedAddress(undefined));
+    // if (type === 'DELIVERY' && !isEmptyObject(this.props.selectedAddress)) {
+    //   await this.reCalculateDeliveryFee();
+    // }
 
     const {dataBasket} = this.props;
     const outletID = this.props.dataBasket.outlet.id;
 
     if (type === 'DELIVERY' || type === 'STOREPICKUP' || type === 'TAKEAWAY') {
-      await this.setState({datePickup: null});
-      await this.initializePickupTime();
+      // await this.setState({datePickup: null});
+      // await this.initializePickupTime();
       await this.getTimeslot(outletID, type);
     }
 
@@ -2423,7 +2476,6 @@ class Basket extends Component {
       }
     } catch (e) {}
 
-    // TODO: GET CART HERE
     await this.props.dispatch(getBasket());
     await this.setState({loading: false});
   };
@@ -2785,15 +2837,7 @@ class Basket extends Component {
           <TouchableOpacity
             onPress={this.goToAddress}
             style={[styles.itemSummary, {alignItems: 'baseline'}]}>
-            <Text style={styles.total}>
-              {this.props.selectedAddress === undefined ? (
-                <Text style={{color: colorConfig.store.colorError}}>
-                  Delivery Address
-                </Text>
-              ) : (
-                'Delivery Address'
-              )}
-            </Text>
+            <Text style={styles.total}>Delivery Address</Text>
             <View>
               <Text
                 style={[
@@ -2928,15 +2972,15 @@ class Basket extends Component {
   };
 
   isUseTimingSetting = () => {
-    let {outletSingle, orderType} = this.props;
     try {
-      if (
-        this.state.datePickup === undefined ||
-        this.state.datePickup === null
-      ) {
-        return false;
+      console.log(
+        this.state.isTimeslotAvailable,
+        'this.state.isTimeslotAvailable',
+      );
+      if (this.state.isTimeslotAvailable === true) {
+        return true;
       }
-      return true;
+      return false;
     } catch (e) {}
   };
 
@@ -3033,6 +3077,8 @@ class Basket extends Component {
     if (outletSingle == undefined || outletSingle == null) {
       outletSingle = {};
     }
+    // console.log(JSON.stringify(this.props.selectedAddress));
+    // console.log(JSON.stringify(this.props.dataBasket));
     try {
       // clear table type if basket is cancelled by admin
       if (dataBasket == undefined) {
@@ -3546,17 +3592,25 @@ class Basket extends Component {
                   <View style={styles.itemSummary}>
                     <Text style={styles.total}>{this.getLabelTimeslot()}</Text>
                     <TouchableOpacity onPress={this.goToPickUpTime}>
-                      {this.state.timePickup != null ? (
+                      {this.state.timePickup !== null ? (
                         <Text style={[styles.total, styles.badge]}>
                           {this.formatDatePickup()}{' '}
-                          {this.state.timePickup != null &&
+                          {this.state.timePickup !== null &&
                           this.state.timePickup.length > 5
                             ? ` at ${this.state.timePickup}`
                             : null}
                         </Text>
                       ) : (
-                        <Text style={[styles.total, styles.badgeDanger]}>
-                          Select Timeslot
+                        <Text
+                          style={[
+                            styles.total,
+                            {
+                              fontFamily: 'Poppins-Bold',
+                              textAlign: 'right',
+                              color: colorConfig.store.secondaryColor,
+                            },
+                          ]}>
+                          Select Order Date
                         </Text>
                       )}
                     </TouchableOpacity>

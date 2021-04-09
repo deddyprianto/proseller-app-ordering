@@ -45,37 +45,11 @@ class AccountMenuList extends Component {
   }
 
   logout = async () => {
-    this.setState({loadingLogout: true});
-
-    // remove device ID from server, so customer not receive notif again if logout
-    try {
-      let user = {};
-      try {
-        let bytes = CryptoJS.AES.decrypt(
-          this.props.userDetail,
-          awsConfig.PRIVATE_KEY_RSA,
-        );
-        user = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
-      } catch (e) {
-        user = {};
-      }
-
-      const payload = {
-        username: user.username,
-        player_ids: [],
-      };
-      await this.props.dispatch(updateUser(payload));
-    } catch (e) {}
-
-    try {
-      if (this.props.netsclickStatus == true) {
-        await this.props.dispatch(netsclickDeregister());
-      }
-    } catch (e) {}
+    this.setState({loading: true});
 
     await this.props.dispatch(logoutUser());
     this.props.dispatch(getTermsConditions());
-    this.setState({loadingLogout: false});
+    this.setState({loading: false});
   };
 
   editProfil = () => {
@@ -138,8 +112,11 @@ class AccountMenuList extends Component {
       const find = myCardAccount.filter(
         data => data.paymentID === item.paymentID,
       );
-      if (find != undefined && find.length > 0) return `( ${find.length} )`;
-      else return null;
+      if (find != undefined && find.length > 0) {
+        return `( ${find.length} )`;
+      } else {
+        return null;
+      }
     } catch (e) {}
   };
 
@@ -158,8 +135,9 @@ class AccountMenuList extends Component {
   renderPaymentMethodOptions = () => {
     const {intlData, myCardAccount, companyInfo} = this.props;
     let paymentTypes = [];
-    if (companyInfo.paymentTypes != undefined)
+    if (companyInfo.paymentTypes != undefined) {
       paymentTypes = companyInfo.paymentTypes;
+    }
     if (!isEmptyArray(paymentTypes)) {
       return paymentTypes.map((item, idx) => (
         <TouchableOpacity
@@ -392,8 +370,11 @@ class AccountMenuList extends Component {
     try {
       const {dataInbox} = this.props;
       let count = dataInbox.Data.filter(item => item.isRead != true);
-      if (count.length > 0) return `( ${count.length} )`;
-      else return null;
+      if (count.length > 0) {
+        return `( ${count.length} )`;
+      } else {
+        return null;
+      }
     } catch (e) {
       return null;
     }

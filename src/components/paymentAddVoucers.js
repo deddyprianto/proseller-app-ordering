@@ -100,12 +100,48 @@ export default class PaymentAddVoucers extends Component {
   }
 
   pageDetailVoucher = async item => {
-    const {totalPrice} = this.props;
+    const {totalPrice, dataVoucer} = this.props;
     // check if voucher is applied on specific products only
+
+    /* Check if voucher can be mixed */
+    try {
+      if (
+        !isEmptyArray(dataVoucer) &&
+        item.validity &&
+        item.validity.cannotBeMixed === true
+      ) {
+        Alert.alert('Sorry', `Cannot mix ${item.name} with other vouchers.`);
+        return;
+      }
+
+      if (!isEmptyArray(dataVoucer)) {
+        let cannotBeMixed = false;
+        let voucherName = '';
+        for (let i = 0; i < dataVoucer.length; i++) {
+          if (
+            dataVoucer[i].validity &&
+            dataVoucer[i].validity.cannotBeMixed === true
+          ) {
+            cannotBeMixed = true;
+            voucherName = dataVoucer[i].name;
+            break;
+          }
+        }
+
+        if (cannotBeMixed === true) {
+          Alert.alert(
+            'Sorry',
+            `Cannot mix ${voucherName} with other vouchers.`,
+          );
+          return;
+        }
+      }
+    } catch (e) {}
+
     try {
       if (item.appliedTo !== undefined && item.appliedTo !== 'ALL') {
         //  search specific product
-        let result = undefined;
+        let result;
         for (let i = 0; i < this.props.pembayaran.details.length; i++) {
           if (item.appliedTo === 'PRODUCT') {
             result = await item.appliedItems.find(
@@ -166,11 +202,15 @@ export default class PaymentAddVoucers extends Component {
                       }
                     }
                   }
-                  if (result !== undefined) break;
+                  if (result !== undefined) {
+                    break;
+                  }
                 }
               } catch (e) {}
             }
-            if (result !== undefined) break;
+            if (result !== undefined) {
+              break;
+            }
           }
         }
 
@@ -235,8 +275,11 @@ export default class PaymentAddVoucers extends Component {
     );
 
     // TODO buat filter time
-    if (find != undefined) return {status: true, message: ''};
-    else return {status: false, message: 'This voucher cannot be used today.'};
+    if (find != undefined) {
+      return {status: true, message: ''};
+    } else {
+      return {status: false, message: 'This voucher cannot be used today.'};
+    }
   };
 
   checkOutletAvailable = async item => {
@@ -246,8 +289,11 @@ export default class PaymentAddVoucers extends Component {
       let data = item.selectedOutlets.find(
         outlet => outlet == `outlet::${this.props.pembayaran.storeId}`,
       );
-      if (data != undefined) return true;
-      else return false;
+      if (data != undefined) {
+        return true;
+      } else {
+        return false;
+      }
     }
     return false;
   };
@@ -301,13 +347,13 @@ export default class PaymentAddVoucers extends Component {
                       <View style={{alignItems: 'center'}}>
                         <Image
                           style={
-                            item['image'] != '' && item['image'] != undefined
+                            item.image != '' && item.image != undefined
                               ? styles.voucherImage1
                               : styles.voucherImage2
                           }
                           source={
-                            item['image'] != '' && item['image'] != undefined
-                              ? {uri: item['image']}
+                            item.image != '' && item.image != undefined
+                              ? {uri: item.image}
                               : appConfig.appImageNull
                           }
                         />
@@ -332,7 +378,7 @@ export default class PaymentAddVoucers extends Component {
                               fontWeight: 'bold',
                               textAlign: 'left',
                             }}>
-                            {item['totalRedeem'] + 'x'}
+                            {item.totalRedeem + 'x'}
                           </Text>
                         </View>
                         {/* <View
@@ -364,7 +410,7 @@ export default class PaymentAddVoucers extends Component {
                         {/*<View style={styles.status}>*/}
                         {/*  <Text style={styles.statusTitle}>Awarded</Text>*/}
                         {/*</View>*/}
-                        <Text style={styles.nameVoucher}>{item['name']}</Text>
+                        <Text style={styles.nameVoucher}>{item.name}</Text>
                         <View style={{flexDirection: 'row'}}>
                           <Icon
                             size={15}
@@ -377,7 +423,7 @@ export default class PaymentAddVoucers extends Component {
                             }}
                           />
                           <Text style={styles.descVoucher}>
-                            {item['voucherDesc']}
+                            {item.voucherDesc}
                           </Text>
                         </View>
                         <View style={{flexDirection: 'row'}}>
@@ -391,14 +437,14 @@ export default class PaymentAddVoucers extends Component {
                               marginRight: 8,
                             }}
                           />
-                          {item['validity']['allDays'] ? (
+                          {item.validity.allDays ? (
                             <Text style={styles.descVoucher}>
                               {intlData.messages.voucherValid}
                             </Text>
                           ) : (
                             <Text style={styles.descVoucherTime}>
                               {intlData.messages.voucherValidOn}
-                              {item['validity']['activeWeekDays']
+                              {item.validity.activeWeekDays
                                 .filter(items => items.active == true)
                                 .map(data => (
                                   <Text>
@@ -411,7 +457,7 @@ export default class PaymentAddVoucers extends Component {
                             </Text>
                           )}
                         </View>
-                        {item['expiryDate'] && (
+                        {item.expiryDate && (
                           <View style={{flexDirection: 'row'}}>
                             <Icon
                               size={15}
@@ -429,10 +475,7 @@ export default class PaymentAddVoucers extends Component {
                                 {color: colorConfig.store.colorError},
                               ]}>
                               This voucher will expire on{' '}
-                              {format(
-                                new Date(item['expiryDate']),
-                                'dd MMM yyyy',
-                              )}
+                              {format(new Date(item.expiryDate), 'dd MMM yyyy')}
                             </Text>
                           </View>
                         )}

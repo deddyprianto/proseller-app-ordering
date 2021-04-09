@@ -7,7 +7,7 @@ import {Dimensions} from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
 import {Platform} from 'react-native';
-import MenuCategory from '../components/order/MenuCategory';
+// import MenuCategory from '../components/order/MenuCategory';
 import History from './history';
 import Rewards from './rewards';
 import Account from './account';

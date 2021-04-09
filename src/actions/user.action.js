@@ -3,6 +3,7 @@ import awsConfig from '../config/awsConfig';
 import CryptoJS from 'react-native-crypto-js';
 import {fetchApiPayment} from '../service/apiPayment';
 import {isEmptyArray} from '../helper/CheckEmpty';
+import {Alert, Linking} from 'react-native';
 
 export const updateUser = payload => {
   return async (dispatch, getState) => {
@@ -83,7 +84,7 @@ export const requestOTP = payload => {
 
       console.log(payload, 'PAYLOAD REQUEST OTP');
       const response = await fetchApi(
-        `/customer/updateProfile/?requestOtp=true`,
+        '/customer/updateProfile/?requestOtp=true',
         'PUT',
         payload,
         200,
@@ -110,6 +111,12 @@ export const getUserProfile = () => {
         },
       } = state;
 
+      const {
+        userReducer: {
+          deviceUserInfo: {deviceID},
+        },
+      } = state;
+
       const response = await fetchApi(
         '/customer/getProfile',
         'GET',
@@ -118,7 +125,45 @@ export const getUserProfile = () => {
         token,
       );
 
-      console.log('profile gettt', response);
+      console.log('response get profile', response);
+      // console.log('response get profile', deviceID);
+
+      // check if user already logged in on another device
+      try {
+        if (
+          response.responseBody.Data &&
+          !isEmptyArray(response.responseBody.Data[0].player_ids)
+        ) {
+          if (deviceID !== undefined && deviceID !== null) {
+            const find = response.responseBody.Data[0].player_ids.find(
+              item => item === deviceID,
+            );
+            if (find === undefined) {
+              Alert.alert(
+                'Your session has ended...',
+                'Looks like your account is already logged in on another device, we will end the session on this device.',
+                [
+                  {
+                    text: 'Got it!',
+                    onPress: () => {
+                      dispatch({
+                        type: 'USER_LOGGED_OUT_SUCCESS',
+                      });
+
+                      // remove default account
+                      dispatch({
+                        type: 'GET_USER_DEFAULT_ACCOUNT',
+                        defaultAccount: {},
+                      });
+                    },
+                  },
+                ],
+                {cancelable: false},
+              );
+            }
+          }
+        }
+      } catch (e) {}
 
       // encrypt user data before save to asyncstorage
       let dataUser = CryptoJS.AES.encrypt(

@@ -312,7 +312,7 @@ class SignInPhoneNumber extends Component {
   submitLogin = async () => {
     this.setState({loading: true});
     try {
-      var dataLogin = {
+      let dataLogin = {
         phoneNumber: this.props.phoneNumber,
         codeOTP: this.state.OTPCode,
         isUseApp: true,
@@ -475,7 +475,9 @@ class SignInPhoneNumber extends Component {
                     value={this.state.OTPCode}
                     onChangeText={async value => {
                       await this.setState({OTPCode: value});
-                      if (value.length == 4) this.submitLogin();
+                      if (value.length == 4) {
+                        this.submitLogin();
+                      }
                     }}
                     style={{
                       fontSize: 20,

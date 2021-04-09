@@ -113,7 +113,6 @@ class PickCoordinate extends Component {
     let url = `https://maps.google.com/maps/api/geocode/json?address=${searchLocation}&sensor=false&key=AIzaSyC9KLjlHDwdfmp7AbzuW7B3PRe331RJIu4`;
     let response = await fetch(url);
     response = await response.json();
-    console.log(response.results[0].geometry.location, 'sdsjbdskdjb');
     try {
       await this.setState({
         latitude: response.results[0].geometry.location.lat,

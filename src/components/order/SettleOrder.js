@@ -319,7 +319,7 @@ class SettleOrder extends Component {
       let totalNettItem = 0;
       for (let i = 0; i < pembayaran.details.length; i++) {
         let product = pembayaran.details[i];
-        let find = undefined;
+        let find;
 
         if (voucher.appliedTo === 'PRODUCT') {
           find = voucher.appliedItems.find(
@@ -350,7 +350,7 @@ class SettleOrder extends Component {
       let totalNettItem = 0;
       for (let i = 0; i < pembayaran.details.length; i++) {
         let product = pembayaran.details[i];
-        let find = undefined;
+        let find;
 
         if (voucher.appliedTo === 'PRODUCT') {
           find = voucher.appliedItems.find(
@@ -755,7 +755,9 @@ class SettleOrder extends Component {
         totalNonDiscountable -
         (redeemVoucer + redeemPoint);
 
-      if (totalBayar < 0) totalBayar = 0;
+      if (totalBayar < 0) {
+        totalBayar = 0;
+      }
       totalBayar += totalNonDiscountable;
 
       // DEDUCT AMOUNT WITH SVC Balance
@@ -1728,6 +1730,7 @@ class SettleOrder extends Component {
           retailPrice: svc.retailPrice,
           pointReward: svc.pointReward * svc.quantity,
         },
+        id: svc.id,
       };
 
       // ADD TAX
@@ -1947,6 +1950,7 @@ class SettleOrder extends Component {
           id: voucherDetail.id,
           qty: pembayaran.cartDetails.details[0].quantity,
         },
+        id: voucherDetail.id,
       };
 
       // ADD TAX
@@ -2268,11 +2272,15 @@ class SettleOrder extends Component {
       }
 
       // check if delivery provider is exist
-      if (this.props.pembayaran.deliveryProvider != undefined) {
+      if (this.props.pembayaran.deliveryProvider !== undefined) {
         payload.deliveryProviderId = this.props.pembayaran.deliveryProvider.id;
         payload.deliveryProvider = this.props.pembayaran.deliveryProvider.name;
         payload.deliveryProviderName = this.props.pembayaran.deliveryProvider.name;
         payload.deliveryFee = this.props.pembayaran.deliveryProvider.deliveryFee;
+
+        if (this.props.pembayaran.deliveryProvider.integration !== undefined) {
+          payload.deliveryProviderIntegration = this.props.pembayaran.deliveryProvider.integration;
+        }
       }
 
       if (this.props.pembayaran.orderActionDate != undefined) {
@@ -2298,7 +2306,6 @@ class SettleOrder extends Component {
 
       console.log('Payload settle order ', payload);
       console.log('URL settle order ', url);
-
       const response = await this.props.dispatch(settleOrder(payload, url));
       console.log('reponse pembayaran settle order ', response);
       if (response.success) {
@@ -3133,6 +3140,7 @@ class SettleOrder extends Component {
                       if (total > 0) {
                         Actions.applyPromoCode({
                           setDataVoucher: this.setDataVoucher,
+                          dataVoucher: this.state.dataVoucer,
                           originalPurchase: this.props.pembayaran
                             .totalNettAmount,
                         });

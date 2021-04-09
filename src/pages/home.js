@@ -47,7 +47,7 @@ class Home extends Component {
 
   componentDidMount = async () => {
     await this.getDataRewards();
-    this.checkOneSignal();
+    // this.checkOneSignal();
     this.checkUseApp();
   };
 

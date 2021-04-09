@@ -244,13 +244,16 @@ class Products2 extends Component {
     const productPlaceholder = await this.props.dispatch(
       getSetting('ProductPlaceholder'),
     );
-    if (!isEmptyData(productPlaceholder))
+    if (!isEmptyData(productPlaceholder)) {
       await this.setState({productPlaceholder});
+    }
 
     const showAllCategory = await this.props.dispatch(
       getSetting('ShowAllCategory'),
     );
-    if (!isEmptyData(showAllCategory)) await this.setState({showAllCategory});
+    if (!isEmptyData(showAllCategory)) {
+      await this.setState({showAllCategory});
+    }
 
     await this.firstMethodToRun(false);
 
@@ -332,7 +335,7 @@ class Products2 extends Component {
     // check bucket exist or not
     // only status order PENDING is allowed to order
     // check whether outlet is open and allowed to order, then ask user to select ordering status
-    if (this.checkBucketExist() || this.props.dataBasket == undefined)
+    if (this.checkBucketExist() || this.props.dataBasket == undefined) {
       if (
         this.props.dataBasket == undefined ||
         this.props.dataBasket.status == 'PENDING'
@@ -346,6 +349,7 @@ class Products2 extends Component {
           this.props.dispatch(setOrderType(this.props.previousOrderingMode));
         }
       }
+    }
   };
 
   updateSelectedCategory = idx => {
@@ -469,9 +473,15 @@ class Products2 extends Component {
     let height = 330;
 
     if (item.outletType === 'RETAIL') {
-      if (item.enableStoreCheckOut == false) height -= 50;
-      if (item.enableStorePickUp == false) height -= 50;
-      if (item.enableDelivery == false) height -= 50;
+      if (item.enableStoreCheckOut == false) {
+        height -= 50;
+      }
+      if (item.enableStorePickUp == false) {
+        height -= 50;
+      }
+      if (item.enableDelivery == false) {
+        height -= 50;
+      }
 
       return (
         <RBSheet
@@ -581,9 +591,15 @@ class Products2 extends Component {
         </RBSheet>
       );
     } else {
-      if (item.enableDineIn == false) height -= 50;
-      if (item.enableTakeAway == false) height -= 50;
-      if (item.enableDelivery == false) height -= 50;
+      if (item.enableDineIn == false) {
+        height -= 50;
+      }
+      if (item.enableTakeAway == false) {
+        height -= 50;
+      }
+      if (item.enableDelivery == false) {
+        height -= 50;
+      }
 
       return (
         <RBSheet
@@ -839,7 +855,9 @@ class Products2 extends Component {
         !isEmptyArray(data.products)
       ) {
         // check if products is exist, then ask user to select ordering mode
-        if (!isEmptyObject(data.products[0])) this.openOrderingMode();
+        if (!isEmptyObject(data.products[0])) {
+          this.openOrderingMode();
+        }
         this.products = [];
         this.products.push(data.products[0]);
         // push data with index 0, (first category products)
@@ -1036,7 +1054,9 @@ class Products2 extends Component {
           refresh == false
         ) {
           // check if products is exist, then ask user to select ordering mode
-          if (!isEmptyObject(data.products[0])) this.openOrderingMode();
+          if (!isEmptyObject(data.products[0])) {
+            this.openOrderingMode();
+          }
           // delay push data 1 second because Flatlist too slow to process large data
           setTimeout(async () => {
             // push data with index 0, (first category products)
@@ -1088,7 +1108,9 @@ class Products2 extends Component {
   goBack = async () => {
     const {orderType} = this.state;
     // roll back order type if user is canceled to select outlet
-    if (orderType != undefined) this.props.dispatch(setOrderType(orderType));
+    if (orderType != undefined) {
+      this.props.dispatch(setOrderType(orderType));
+    }
 
     Actions.popTo('pageIndex');
     // console.log(Actions)
@@ -1121,7 +1143,7 @@ class Products2 extends Component {
 
     // remove quantity temp from props
     product.product.productModifiers.map((group, i) => {
-      if (!isEmptyArray(group.modifier.details))
+      if (!isEmptyArray(group.modifier.details)) {
         group.modifier.details.map((detail, j) => {
           delete detail.quantity;
 
@@ -1170,6 +1192,7 @@ class Products2 extends Component {
             }
           }
         });
+      }
     });
 
     // if quantity exist, then mode is update
@@ -1263,7 +1286,7 @@ class Products2 extends Component {
     param = param.split(' ');
     await this.setState({loadingSearch: true, productsSearch: undefined});
     const {products} = this.state;
-    let productsSearch = undefined;
+    let productsSearch;
     //  Client search
     for (let i = 0; i < products.length; i++) {
       let items = [];
@@ -1288,7 +1311,9 @@ class Products2 extends Component {
       }
     }
 
-    if (productsSearch == undefined) productsSearch = [];
+    if (productsSearch == undefined) {
+      productsSearch = [];
+    }
 
     await this.setState({productsSearch, loadingSearch: false});
   };
@@ -1341,8 +1366,11 @@ class Products2 extends Component {
         let productFound = this.props.dataBasket.details.find(
           data => data.productID == item.productID,
         );
-        if (productFound != undefined) return productFound;
-        else return false;
+        if (productFound != undefined) {
+          return productFound;
+        } else {
+          return false;
+        }
       } else {
         return false;
       }
@@ -1368,7 +1396,9 @@ class Products2 extends Component {
           } else {
             return _.sumBy(productFound, 'quantity');
           }
-        } else return false;
+        } else {
+          return false;
+        }
       } else {
         return false;
       }
@@ -1457,7 +1487,9 @@ class Products2 extends Component {
         id: `${this.state.item.id}`,
       };
       // if remark is available, then push to array
-      if (remark != undefined && remark != '') dataproduct.remark = remark;
+      if (remark != undefined && remark != '') {
+        dataproduct.remark = remark;
+      }
       data.outletID = `outlet::${this.state.item.id}`;
       data.outlet = outlet;
       data.id = this.state.item.id;
@@ -1573,7 +1605,9 @@ class Products2 extends Component {
       }
 
       // if remark is available, then push to array
-      if (remark != undefined && remark != '') dataproduct.remark = remark;
+      if (remark != undefined && remark != '') {
+        dataproduct.remark = remark;
+      }
       data.outletID = `outlet::${this.state.item.id}`;
       data.details.push(dataproduct);
 
@@ -1745,7 +1779,9 @@ class Products2 extends Component {
       if (image != undefined && image != '-' && image != null) {
         return {uri: image};
       }
-      if (!isEmptyData(productPlaceholder)) return {uri: productPlaceholder};
+      if (!isEmptyData(productPlaceholder)) {
+        return {uri: productPlaceholder};
+      }
     } catch (e) {
       return appConfig.foodPlaceholder;
     }
@@ -1759,7 +1795,9 @@ class Products2 extends Component {
       this.state.item.orderingStatus == 'AVAILABLE'
     ) {
       // check basket is empty then open modal mode order
-      if (this.props.dataBasket == undefined) return true;
+      if (this.props.dataBasket == undefined) {
+        return true;
+      }
       // check open / close & outlet ID
       const currentOutletId = this.state.item.id;
       const outletIDSelected = this.props.dataBasket.outlet.id;
@@ -2108,7 +2146,9 @@ class Products2 extends Component {
         length = item.items.length;
       }
 
-      if (length == 0) length = 1;
+      if (length == 0) {
+        length = 1;
+      }
 
       let dataProducts = item.items;
 
@@ -2737,14 +2777,19 @@ class Products2 extends Component {
               Date.parse(`${currentDate} ${day.open}`) &&
             Date.parse(`${currentDate} ${time}`) <
               Date.parse(`${currentDate} ${day.close}`)
-          )
+          ) {
             open = true;
+          }
         });
 
-      if (open) return true;
-      else {
-        if (operationalHours.leading == 0) return true;
-        else return false;
+      if (open) {
+        return true;
+      } else {
+        if (operationalHours.leading == 0) {
+          return true;
+        } else {
+          return false;
+        }
       }
     } catch (e) {
       return false;
@@ -2752,7 +2797,7 @@ class Products2 extends Component {
   };
 
   isOpen = outletSingle => {
-    if (outletSingle != undefined)
+    if (outletSingle != undefined) {
       if (!isEmptyArray(outletSingle.operationalHours)) {
         if (this.getOperationalHours(outletSingle)) {
           return true;
@@ -2770,7 +2815,9 @@ class Products2 extends Component {
           return false;
         }
       }
-    else return false;
+    } else {
+      return false;
+    }
   };
 
   refreshOutlet = async () => {
@@ -2852,7 +2899,6 @@ class Products2 extends Component {
 
   loadMoreCategory = async () => {
     try {
-      console.log('terpanggil');
       let {products} = this.state;
       const outletID = this.state.item.id;
       const categorySelected = await products.find(
@@ -2937,7 +2983,7 @@ class Products2 extends Component {
       productPlaceholder,
       showAllCategory,
     } = this.state;
-    console.log(products, 'products');
+
     return (
       <FlatList
         refreshControl={
@@ -3029,7 +3075,7 @@ class Products2 extends Component {
       selectedCategory,
     } = this.state;
     let products = this.products;
-    console.log(this.state.products, 'this.state.products');
+
     return (
       <SafeAreaView style={styles.container}>
         <ModalOrder

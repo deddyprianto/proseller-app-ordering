@@ -1415,6 +1415,7 @@ export const getTimeslot = (
         token,
       );
 
+      console.log('PAYLOAD GET TIMESLOT ', payload);
       console.log('RESPONSE GET TIMESLOT ', response);
 
       if (response.success == true) {

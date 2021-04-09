@@ -67,7 +67,9 @@ class SVCDetail extends Component {
     const {backupOutlet} = this.state;
     let {defaultOutlet} = this.props;
 
-    if (isEmptyObject(defaultOutlet)) defaultOutlet = backupOutlet;
+    if (isEmptyObject(defaultOutlet)) {
+      defaultOutlet = backupOutlet;
+    }
 
     let returnData = {
       outlet: defaultOutlet,
@@ -93,7 +95,9 @@ class SVCDetail extends Component {
     const {backupOutlet} = this.state;
     let {defaultOutlet} = this.props;
 
-    if (isEmptyObject(defaultOutlet)) defaultOutlet = backupOutlet;
+    if (isEmptyObject(defaultOutlet)) {
+      defaultOutlet = backupOutlet;
+    }
 
     let details = [];
     // create dataPay item
@@ -177,15 +181,15 @@ class SVCDetail extends Component {
               <Image
                 resizeMode="cover"
                 style={
-                  this.props.svc['image'] != '' &&
-                  this.props.svc['image'] != undefined
+                  this.props.svc.image != '' &&
+                  this.props.svc.image != undefined
                     ? styles.voucherImage1
                     : styles.voucherImage2
                 }
                 source={
-                  this.props.svc['image'] != '' &&
-                  this.props.svc['image'] != undefined
-                    ? {uri: this.props.svc['image']}
+                  this.props.svc.image != '' &&
+                  this.props.svc.image != undefined
+                    ? {uri: this.props.svc.image}
                     : appConfig.appImageNull
                 }
               />
@@ -198,7 +202,7 @@ class SVCDetail extends Component {
                   paddingRight: 5,
                   paddingBottom: 10,
                 }}>
-                <Text style={styles.nameVoucher}>{this.props.svc['name']}</Text>
+                <Text style={styles.nameVoucher}>{this.props.svc.name}</Text>
                 <View style={{flexDirection: 'row', marginTop: 20}}>
                   <Icon
                     size={15}
@@ -213,8 +217,8 @@ class SVCDetail extends Component {
                     }}
                   />
                   <Text style={styles.descVoucher}>
-                    {this.props.svc['description'] != null
-                      ? this.props.svc['description']
+                    {this.props.svc.description != null
+                      ? this.props.svc.description
                       : 'No description for this store value card'}
                   </Text>
                 </View>

@@ -362,10 +362,21 @@ export const checkPromo = codeVoucher => {
       console.log(response, 'response check promo');
 
       if (response.success) {
-        if (isEmptyArray(response.responseBody.Data)) return false;
+        if (isEmptyArray(response.responseBody.Data)) {
+          return {
+            status: false,
+            message: response.responseBody.message || 'Promo Code Invalid!',
+          };
+        }
+
+        response.responseBody.Data[0].status = true;
         return response.responseBody.Data[0];
+      } else {
+        return {
+          status: false,
+          message: response.responseBody.message || 'Promo Code Invalid!',
+        };
       }
-      return false;
     } catch (error) {
       return error;
     }

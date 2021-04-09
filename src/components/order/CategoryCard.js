@@ -62,6 +62,7 @@ const CategoryCard = props => {
 const styles = StyleSheet.create({
   itemContainer: {
     marginTop: 10,
+    marginRight: 15,
     minHeight: 100,
     maxHeight: 100,
     height: 120,
