@@ -2306,6 +2306,7 @@ class SettleOrder extends Component {
 
       console.log('Payload settle order ', payload);
       console.log('URL settle order ', url);
+
       const response = await this.props.dispatch(settleOrder(payload, url));
       console.log('reponse pembayaran settle order ', response);
       if (response.success) {

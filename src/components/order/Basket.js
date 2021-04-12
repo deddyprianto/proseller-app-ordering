@@ -1232,7 +1232,7 @@ class Basket extends Component {
       return false;
     }
 
-    if (selectedAddress.streetName == undefined) {
+    if (selectedAddress.streetName === undefined) {
       Alert.alert(
         'Incomplete Delivery Address',
         'Looks like your address is incomplete, please check it again',
@@ -1453,15 +1453,17 @@ class Basket extends Component {
   };
 
   getGeolocation = async () => {
-    const from = this.props.outletSingle.address || '-';
-    let url = `https://maps.google.com/maps/api/geocode/json?address=${from}&sensor=false&key=AIzaSyC9KLjlHDwdfmp7AbzuW7B3PRe331RJIu4`;
-    let response = await fetch(url);
-    response = await response.json();
+    try {
+      const from = this.props.outletSingle.address || '-';
+      let url = `https://maps.google.com/maps/api/geocode/json?address=${from}&sensor=false&key=AIzaSyC9KLjlHDwdfmp7AbzuW7B3PRe331RJIu4`;
+      let response = await fetch(url);
+      response = await response.json();
 
-    await this.setState({
-      latitude: response.results[0].geometry.location.lat,
-      longitude: response.results[0].geometry.location.lng,
-    });
+      await this.setState({
+        latitude: response.results[0].geometry.location.lat,
+        longitude: response.results[0].geometry.location.lng,
+      });
+    } catch (e) {}
   };
 
   goToSettle = async () => {
@@ -1621,10 +1623,12 @@ class Basket extends Component {
       }
       await this.setState({loading: false});
 
-      if (
-        this.props.orderType == 'DELIVERY' ||
-        this.props.dataBasket.orderingMode == 'DELIVERY'
-      ) {
+      if (this.props.orderType === 'DELIVERY') {
+        console.log(this.props.orderType, 'this.props.orderType');
+        console.log(
+          this.props.dataBasket.orderingMode,
+          'this.props.dataBasket.orderingMode',
+        );
         if (!this.isDeliveryAddressValid()) {
           return;
         }
@@ -2860,7 +2864,7 @@ class Basket extends Component {
                     style={{
                       color: colorConfig.store.titleSelected,
                       fontFamily: 'Poppins-Regular',
-                      fontSize: 12,
+                      fontSize: 11,
                     }}>
                     {this.props.selectedAddress.address}
                   </Text>
@@ -2973,10 +2977,6 @@ class Basket extends Component {
 
   isUseTimingSetting = () => {
     try {
-      console.log(
-        this.state.isTimeslotAvailable,
-        'this.state.isTimeslotAvailable',
-      );
       if (this.state.isTimeslotAvailable === true) {
         return true;
       }
@@ -3610,7 +3610,7 @@ class Basket extends Component {
                               color: colorConfig.store.secondaryColor,
                             },
                           ]}>
-                          Select Order Date
+                          Choose
                         </Text>
                       )}
                     </TouchableOpacity>
