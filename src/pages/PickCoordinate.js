@@ -123,22 +123,37 @@ class PickCoordinate extends Component {
 
   submitCoordinate = () => {
     try {
-      this.props.setCoordinate({
+      const coordinate = {
         latitude: this.state.latitude,
         longitude: this.state.longitude,
         latitudeDelta: this.state.latitudeDelta,
         longitudeDelta: this.state.longitudeDelta,
         userLocation: this.state.userLocation,
         detailAddress: this.state.detailAddress,
-      });
-      Actions.pop();
+      };
+
+      if (this.props.from === 'address') {
+        this.props.setCoordinate({
+          latitude: this.state.latitude,
+          longitude: this.state.longitude,
+          latitudeDelta: this.state.latitudeDelta,
+          longitudeDelta: this.state.longitudeDelta,
+          userLocation: this.state.userLocation,
+          detailAddress: this.state.detailAddress,
+        });
+        Actions.pop();
+      } else {
+        Actions.push('addAddress', {
+          coordinate: coordinate,
+          from: this.props.from,
+          getDeliveryFee: this.props.getDeliveryFee,
+        });
+      }
     } catch (e) {}
   };
 
   render() {
     const {latitude, longitude, latitudeDelta, longitudeDelta} = this.state;
-    console.log(latitude);
-    console.log(longitude);
     return (
       <SafeAreaView style={styles.map}>
         <TouchableOpacity

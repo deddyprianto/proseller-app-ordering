@@ -168,7 +168,7 @@ class Basket extends Component {
   componentDidMount = async () => {
     await this.setState({loading: true});
     await this.initializeCartData();
-
+    this.props.dispatch(selectedAddress(undefined));
     const productPlaceholder = await this.props.dispatch(
       getSetting('ProductPlaceholder'),
     );
@@ -194,7 +194,7 @@ class Basket extends Component {
       // await this.getDeliveryAddress();
       await this.getBasket();
 
-      // get previous data products from this outlet, for modifier detail purpose
+      await this.setState({loading: false});
       if (this.props.dataBasket !== undefined) {
         let outletID = this.props.dataBasket.outlet.id;
         await this.initializePickupTime();
@@ -1624,11 +1624,6 @@ class Basket extends Component {
       await this.setState({loading: false});
 
       if (this.props.orderType === 'DELIVERY') {
-        console.log(this.props.orderType, 'this.props.orderType');
-        console.log(
-          this.props.dataBasket.orderingMode,
-          'this.props.dataBasket.orderingMode',
-        );
         if (!this.isDeliveryAddressValid()) {
           return;
         }

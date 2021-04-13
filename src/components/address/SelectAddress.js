@@ -17,6 +17,7 @@ import {
   FlatList,
   RefreshControl,
   SafeAreaView,
+  Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -26,16 +27,22 @@ import {compose} from 'redux';
 import {connect} from 'react-redux';
 import Loader from './../loader';
 import {
+  clearAddress,
   getAccountPayment,
   selectedAddress,
 } from '../../actions/payment.actions';
-import {defaultAddress, getUserProfile} from '../../actions/user.action';
+import {
+  defaultAddress,
+  getUserProfile,
+  updateUser,
+} from '../../actions/user.action';
 import {
   isEmptyArray,
   isEmptyData,
   isEmptyObject,
 } from '../../helper/CheckEmpty';
 import CryptoJS from 'react-native-crypto-js';
+import RBSheet from 'react-native-raw-bottom-sheet';
 
 class SelectAddress extends Component {
   constructor(props) {
@@ -145,7 +152,161 @@ class SelectAddress extends Component {
     } catch (e) {}
   };
 
+  setDefaultAccount = async () => {
+    const {selectedAddress} = this.state;
+    await this.props.dispatch(defaultAddress(selectedAddress));
+    this.RBSheet.close();
+  };
+
+  removeAddress = async () => {
+    try {
+      this.RBSheet.close();
+      const {selectedAddress} = this.state;
+      await this.setState({loading: true});
+
+      let userDetail = {};
+      try {
+        // Decrypt data user
+        let bytes = CryptoJS.AES.decrypt(
+          this.props.userDetail,
+          awsConfig.PRIVATE_KEY_RSA,
+        );
+        userDetail = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+      } catch (e) {
+        userDetail = {};
+      }
+
+      let data = {
+        username: userDetail.username,
+        deliveryAddress: [],
+      };
+
+      if (!isEmptyArray(userDetail.deliveryAddress)) {
+        data.deliveryAddress = userDetail.deliveryAddress;
+
+        data.deliveryAddress = data.deliveryAddress.filter(
+          item => item.address != selectedAddress.address,
+        );
+
+        const response = await this.props.dispatch(updateUser(data));
+
+        if (response) {
+          try {
+            if (selectedAddress.address == this.props.defaultAddress.address) {
+              await this.props.dispatch(defaultAddress(undefined));
+            }
+          } catch (e) {}
+          await this.props.dispatch(clearAddress());
+        } else {
+          Alert.alert('Oppss..', 'Please try again.');
+        }
+      }
+
+      await this.setState({loading: false});
+    } catch (e) {
+      await this.setState({loading: false});
+      Alert.alert('Sorry', 'Something went wrong, please try again');
+    }
+  };
+
+  askUserToSelectPaymentType = () => {
+    const {intlData} = this.props;
+    return (
+      <RBSheet
+        ref={ref => {
+          this.RBSheet = ref;
+        }}
+        animationType={'fade'}
+        height={220}
+        duration={10}
+        closeOnDragDown={true}
+        closeOnPressMask={true}
+        closeOnPressBack={true}
+        customStyles={{
+          container: {
+            backgroundColor: colorConfig.store.textWhite,
+            justifyContent: 'center',
+            alignItems: 'center',
+          },
+        }}>
+        <TouchableOpacity
+          onPress={() => this.setDefaultAccount()}
+          style={{
+            padding: 15,
+            backgroundColor: colorConfig.store.defaultColor,
+            borderRadius: 15,
+            width: '60%',
+            marginBottom: 20,
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <Icon
+            size={30}
+            name={Platform.OS === 'ios' ? 'ios-save' : 'md-save'}
+            style={{color: 'white'}}
+          />
+          <Text
+            style={{
+              marginLeft: 10,
+              color: 'white',
+              fontWeight: 'bold',
+              fontFamily: 'Poppins-Medium',
+              fontSize: 18,
+              textAlign: 'center',
+            }}>
+            Set as Default
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            Alert.alert(
+              'Remove address',
+              'Are you sure to remove this address from list ?',
+              [
+                {
+                  text: 'Cancel',
+                  onPress: () => console.log('Cancel Pressed'),
+                  style: 'cancel',
+                },
+                {text: 'Remove', onPress: () => this.removeAddress()},
+              ],
+              {cancelable: true},
+            );
+          }}
+          style={{
+            padding: 15,
+            backgroundColor: colorConfig.store.colorError,
+            borderRadius: 15,
+            width: '60%',
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <Icon
+            size={30}
+            name={Platform.OS === 'ios' ? 'ios-trash' : 'md-trash'}
+            style={{color: 'white'}}
+          />
+          <Text
+            style={{
+              marginLeft: 10,
+              color: 'white',
+              fontWeight: 'bold',
+              fontFamily: 'Poppins-Medium',
+              fontSize: 18,
+              textAlign: 'center',
+            }}>
+            {/*{intlData.messages.takeAway}*/}
+            Remove
+          </Text>
+        </TouchableOpacity>
+      </RBSheet>
+    );
+  };
+
   renderAddress = address => {
+    const {defaultAddress} = this.props;
     return (
       <FlatList
         data={address}
@@ -155,109 +316,210 @@ class SelectAddress extends Component {
               styles.card,
               this.checkSelectedAddress(item) ? styles.cardSelected : null,
             ]}>
-            <TouchableOpacity
-              onPress={() => {
-                Actions.editAddress({
-                  from: 'basket',
-                  myAddress: item,
-                  getDeliveryFee: this.props.getDeliveryFee,
-                  clearDelivery: this.props.clearDelivery,
-                });
-              }}>
-              <View style={styles.cardContent}>
-                <Text style={styles.cardText}>Address Name : </Text>
-                <Text style={styles.cardText}>{item.addressName}</Text>
-              </View>
-              {/*<View style={styles.cardContent}>*/}
-              {/*  <Text style={styles.cardText}>Address Detail : </Text>*/}
-              {/*  <Text style={[styles.cardText, {maxWidth: '60%'}]}>*/}
-              {/*    {item.address}*/}
-              {/*  </Text>*/}
-              {/*</View>*/}
-              <View style={styles.cardContent}>
-                <Text style={styles.cardText}>Street Name : </Text>
-                <Text style={[styles.cardText, {maxWidth: '60%'}]}>
-                  {item.streetName}
-                </Text>
-              </View>
-              <View style={styles.cardContent}>
-                <Text style={styles.cardText}>Unit No : </Text>
-                <Text style={[styles.cardText, {maxWidth: '60%'}]}>
-                  {item.unitNo}
-                </Text>
-              </View>
-              {awsConfig.COUNTRY != 'Singapore' ? (
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <TouchableOpacity
+                style={{width: '85%'}}
+                onPress={() => this.selectAddress(item)}>
+                <View style={[styles.cardContent]}>
+                  <View
+                    style={{
+                      marginBottom: 7,
+                      alignItems: 'center',
+                      flexDirection: 'row',
+                    }}>
+                    <Text style={styles.addressName}>{item.addressName}</Text>
+                    {defaultAddress &&
+                    defaultAddress.addressName === item.addressName ? (
+                      <View
+                        style={{
+                          marginLeft: 15,
+                          borderRadius: 5,
+                          padding: 4,
+                          backgroundColor: colorConfig.store.disableButton,
+                        }}>
+                        <Text
+                          style={{
+                            fontSize: 10,
+                            color: colorConfig.store.defaultColor,
+                          }}>
+                          Default
+                        </Text>
+                      </View>
+                    ) : null}
+                  </View>
+                </View>
+                {item.recipient && (
+                  <View style={styles.cardContent}>
+                    <Text style={[styles.addressName, {maxWidth: '95%'}]}>
+                      {item.recipient}
+                    </Text>
+                  </View>
+                )}
+                {item.phoneNumber && (
+                  <View style={styles.cardContent}>
+                    <Text style={[styles.cardText, {maxWidth: '95%'}]}>
+                      {item.phoneNumber}
+                    </Text>
+                  </View>
+                )}
                 <View style={styles.cardContent}>
-                  <Text style={styles.cardText}>City : </Text>
-                  <Text style={[styles.cardText, {maxWidth: '60%'}]}>
-                    {item.city}
+                  <Text style={[styles.cardText, {maxWidth: '95%'}]}>
+                    {item.streetName}
                   </Text>
                 </View>
-              ) : null}
-              {item.province != undefined ? (
                 <View style={styles.cardContent}>
-                  <Text style={styles.cardText}>Province : </Text>
-                  <Text style={[styles.cardText, {maxWidth: '60%'}]}>
-                    {item.province}
+                  <Text style={[styles.cardText, {maxWidth: '95%'}]}>
+                    {item.unitNo}
                   </Text>
                 </View>
-              ) : null}
-              <View style={styles.cardContent}>
-                <Text style={styles.cardText}>Postal Code : </Text>
-                <Text style={[styles.cardText, {maxWidth: '70%'}]}>
-                  {item.postalCode}
-                </Text>
-              </View>
-            </TouchableOpacity>
-            <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+                {awsConfig.COUNTRY != 'Singapore' ? (
+                  <View style={styles.cardContent}>
+                    <Text style={[styles.cardText, {maxWidth: '95%'}]}>
+                      {item.city}
+                    </Text>
+                  </View>
+                ) : null}
+                {item.province != undefined ? (
+                  <View style={styles.cardContent}>
+                    <Text style={[styles.cardText, {maxWidth: '95%'}]}>
+                      {item.province}
+                    </Text>
+                  </View>
+                ) : null}
+                <View style={styles.cardContent}>
+                  <Text style={[styles.cardText, {maxWidth: '95%'}]}>
+                    {item.postalCode}
+                  </Text>
+                </View>
+                {item.coordinate ? (
+                  <View style={[styles.cardContent, {marginTop: 10}]}>
+                    <Icon
+                      size={28}
+                      name={Platform.OS === 'ios' ? 'ios-pin' : 'md-pin'}
+                      style={{
+                        color: colorConfig.store.defaultColor,
+                        marginRight: 15,
+                      }}
+                    />
+                    <Text
+                      style={[
+                        styles.cardText,
+                        {color: colorConfig.store.defaultColor},
+                      ]}>
+                      Location already pinned.
+                    </Text>
+                  </View>
+                ) : (
+                  <View style={[styles.cardContent, {marginTop: 20}]}>
+                    <Icon
+                      size={28}
+                      name={Platform.OS === 'ios' ? 'ios-pin' : 'md-pin'}
+                      style={{
+                        color: colorConfig.pageIndex.grayColor,
+                        marginRight: 15,
+                      }}
+                    />
+                    <Text style={styles.cardText}>No Location pinned.</Text>
+                  </View>
+                )}
+              </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => this.selectAddress(item)}
-                style={{
-                  backgroundColor: colorConfig.store.defaultColor,
-                  padding: 10,
-                  borderRadius: 10,
-                  marginTop: 20,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  width: '45%',
-                  marginRight: '5%',
-                }}>
-                <Text
-                  style={{
-                    fontSize: 15,
-                    fontFamily: 'Poppins-Medium',
-                    color: 'white',
-                  }}>
-                  Select
-                </Text>
+                style={
+                  this.checkSelectedAddress(item)
+                    ? styles.outerPoint
+                    : styles.outerPointUnselected
+                }>
+                {this.checkSelectedAddress(item) && (
+                  <View style={styles.point} />
+                )}
               </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => {
-                  Actions.editAddress({
-                    from: 'basket',
-                    myAddress: item,
-                    getDeliveryFee: this.props.getDeliveryFee,
-                    clearDelivery: this.props.clearDelivery,
-                  });
-                }}
+            </View>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'center',
+                maxWidth: '100%',
+              }}>
+              {/*<TouchableOpacity*/}
+              {/*  onPress={() => this.selectAddress(item)}*/}
+              {/*  style={{*/}
+              {/*    backgroundColor: colorConfig.store.defaultColor,*/}
+              {/*    padding: 10,*/}
+              {/*    borderRadius: 10,*/}
+              {/*    marginTop: 20,*/}
+              {/*    justifyContent: 'center',*/}
+              {/*    alignItems: 'center',*/}
+              {/*    width: '45%',*/}
+              {/*    marginRight: '5%',*/}
+              {/*  }}>*/}
+              {/*  <Text*/}
+              {/*    style={{*/}
+              {/*      fontSize: 15,*/}
+              {/*      fontFamily: 'Poppins-Medium',*/}
+              {/*      color: 'white',*/}
+              {/*    }}>*/}
+              {/*    Select*/}
+              {/*  </Text>*/}
+              {/*</TouchableOpacity>*/}
+              <View
                 style={{
-                  backgroundColor: colorConfig.store.darkColor,
-                  padding: 10,
-                  borderRadius: 10,
-                  marginTop: 20,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  width: '45%',
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
                 }}>
-                <Text
+                <TouchableOpacity
+                  onPress={() => {
+                    Actions.editAddress({
+                      from: 'basket',
+                      myAddress: item,
+                      getDeliveryFee: this.props.getDeliveryFee,
+                      clearDelivery: this.props.clearDelivery,
+                    });
+                  }}
                   style={{
-                    fontSize: 15,
-                    fontFamily: 'Poppins-Medium',
-                    color: 'white',
+                    borderColor: colorConfig.store.defaultColor,
+                    borderWidth: 1,
+                    // padding: 5,
+                    borderRadius: 5,
+                    marginTop: 20,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    width: '80%',
                   }}>
-                  Edit
-                </Text>
-              </TouchableOpacity>
+                  <Text
+                    style={{
+                      fontSize: 15,
+                      fontFamily: 'Poppins-Medium',
+                      color: colorConfig.store.defaultColor,
+                    }}>
+                    Edit Address
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {
+                    this.setState({selectedAddress: item});
+                    this.RBSheet.open();
+                  }}
+                  style={{
+                    borderColor: colorConfig.store.defaultColor,
+                    borderWidth: 1,
+                    // padding: 5,
+                    borderRadius: 5,
+                    marginTop: 20,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    width: '15%',
+                  }}>
+                  <Text
+                    style={{
+                      fontSize: 20,
+                      fontFamily: 'Poppins-Bold',
+                      color: colorConfig.store.defaultColor,
+                    }}>
+                    ...
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
         )}
@@ -294,7 +556,11 @@ class SelectAddress extends Component {
   };
 
   addNewAddress = async () => {
-    Actions.replace('addAddress', {
+    // Actions.replace('addAddress', {
+    //   from: 'basket',
+    //   getDeliveryFee: this.props.getDeliveryFee,
+    // });
+    Actions.replace('pickCoordinate', {
       from: 'basket',
       getDeliveryFee: this.props.getDeliveryFee,
     });
@@ -349,7 +615,7 @@ class SelectAddress extends Component {
             <Text style={styles.btnBackText}>My Delivery Address</Text>
           </TouchableOpacity>
         </View>
-
+        {this.askUserToSelectPaymentType()}
         <ScrollView
           refreshControl={
             <RefreshControl
@@ -460,27 +726,20 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
   },
   card: {
-    padding: 10,
+    padding: 20,
     marginHorizontal: 10,
     marginBottom: 20,
-    borderRadius: 5,
+    borderRadius: 10,
     backgroundColor: 'white',
     shadowColor: '#00000021',
-    shadowOffset: {
-      width: 0,
-      height: 9,
-    },
-    shadowOpacity: 0.7,
-    shadowRadius: 1.49,
-    elevation: 12,
   },
   cardContent: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     width: '100%',
+    alignItems: 'center',
   },
   cardSelected: {
-    borderWidth: 2,
+    borderWidth: 1.2,
     borderColor: colorConfig.store.defaultColor,
   },
   headingCard: {
@@ -503,6 +762,7 @@ const styles = StyleSheet.create({
   },
   cardText: {
     fontSize: 13,
+    fontFamily: 'Poppins-Regular',
     color: colorConfig.pageIndex.grayColor,
   },
   cardNumberText: {
@@ -564,5 +824,35 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: 'bold',
     marginBottom: 5,
+  },
+  addressName: {
+    fontSize: 13,
+    fontFamily: 'Poppins-Bold',
+    color: colorConfig.store.titleSelected,
+    // marginBottom: 10,
+  },
+  point: {
+    backgroundColor: colorConfig.store.defaultColor,
+    borderRadius: 50,
+    width: 15,
+    height: 15,
+  },
+  outerPoint: {
+    borderColor: colorConfig.store.defaultColor,
+    borderRadius: 50,
+    borderWidth: 2,
+    width: 30,
+    height: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  outerPointUnselected: {
+    borderColor: colorConfig.pageIndex.grayColor,
+    borderRadius: 50,
+    borderWidth: 2,
+    width: 30,
+    height: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

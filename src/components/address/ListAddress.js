@@ -26,7 +26,6 @@ import colorConfig from '../../config/colorConfig';
 import awsConfig from '../../config/awsConfig';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
-import {reduxForm} from 'redux-form';
 import Loader from './../loader';
 import {clearAddress, getAccountPayment} from '../../actions/payment.actions';
 import {
@@ -185,7 +184,7 @@ class ListAddress extends Component {
         <TouchableOpacity
           onPress={() => {
             this.RBSheet.close();
-            Actions.editAddress({
+            Actions.push('editAddress', {
               from: 'listAddress',
               myAddress: this.state.selectedAddress,
             });
@@ -294,60 +293,203 @@ class ListAddress extends Component {
       <FlatList
         data={address}
         renderItem={({item}) => (
-          <TouchableOpacity
-            onPress={() => {
-              this.setState({selectedAddress: item});
-              this.RBSheet.open();
-            }}
-            style={[
-              styles.card,
-              this.checkDefaultAddress(item) ? styles.cardSelected : null,
-            ]}>
-            <View style={styles.cardContent}>
-              <Text style={styles.cardText}>Address Name : </Text>
-              <Text style={styles.cardText}>{item.addressName}</Text>
+          <View style={styles.card}>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <TouchableOpacity
+                style={{width: '85%'}}
+                onPress={() => this.selectAddress(item)}>
+                <View style={[styles.cardContent]}>
+                  <View
+                    style={{
+                      marginBottom: 7,
+                      alignItems: 'center',
+                      flexDirection: 'row',
+                    }}>
+                    <Text style={styles.addressName}>{item.addressName}</Text>
+                    {defaultAddress &&
+                    defaultAddress.addressName === item.addressName ? (
+                      <View
+                        style={{
+                          marginLeft: 15,
+                          borderRadius: 5,
+                          padding: 4,
+                          backgroundColor: colorConfig.store.disableButton,
+                        }}>
+                        <Text
+                          style={{
+                            fontSize: 10,
+                            color: colorConfig.store.defaultColor,
+                          }}>
+                          Default
+                        </Text>
+                      </View>
+                    ) : null}
+                  </View>
+                </View>
+                {item.recipient && (
+                  <View style={styles.cardContent}>
+                    <Text style={[styles.addressName, {maxWidth: '95%'}]}>
+                      {item.recipient}
+                    </Text>
+                  </View>
+                )}
+                {item.phoneNumber && (
+                  <View style={styles.cardContent}>
+                    <Text style={[styles.cardText, {maxWidth: '95%'}]}>
+                      {item.phoneNumber}
+                    </Text>
+                  </View>
+                )}
+                <View style={styles.cardContent}>
+                  <Text style={[styles.cardText, {maxWidth: '95%'}]}>
+                    {item.streetName}
+                  </Text>
+                </View>
+                <View style={styles.cardContent}>
+                  <Text style={[styles.cardText, {maxWidth: '95%'}]}>
+                    {item.unitNo}
+                  </Text>
+                </View>
+                {awsConfig.COUNTRY != 'Singapore' ? (
+                  <View style={styles.cardContent}>
+                    <Text style={[styles.cardText, {maxWidth: '95%'}]}>
+                      {item.city}
+                    </Text>
+                  </View>
+                ) : null}
+                {item.province != undefined ? (
+                  <View style={styles.cardContent}>
+                    <Text style={[styles.cardText, {maxWidth: '95%'}]}>
+                      {item.province}
+                    </Text>
+                  </View>
+                ) : null}
+                <View style={styles.cardContent}>
+                  <Text style={[styles.cardText, {maxWidth: '95%'}]}>
+                    {item.postalCode}
+                  </Text>
+                </View>
+                {item.coordinate ? (
+                  <View style={[styles.cardContent, {marginTop: 10}]}>
+                    <Icon
+                      size={28}
+                      name={Platform.OS === 'ios' ? 'ios-pin' : 'md-pin'}
+                      style={{
+                        color: colorConfig.store.defaultColor,
+                        marginRight: 15,
+                      }}
+                    />
+                    <Text
+                      style={[
+                        styles.cardText,
+                        {color: colorConfig.store.defaultColor},
+                      ]}>
+                      Location already pinned.
+                    </Text>
+                  </View>
+                ) : (
+                  <View style={[styles.cardContent, {marginTop: 20}]}>
+                    <Icon
+                      size={28}
+                      name={Platform.OS === 'ios' ? 'ios-pin' : 'md-pin'}
+                      style={{
+                        color: colorConfig.pageIndex.grayColor,
+                        marginRight: 15,
+                      }}
+                    />
+                    <Text style={styles.cardText}>No Location pinned.</Text>
+                  </View>
+                )}
+              </TouchableOpacity>
+              <View style={styles.outerPoint} />
             </View>
-            {/*<View style={styles.cardContent}>*/}
-            {/*  <Text style={styles.cardText}>Address Detail : </Text>*/}
-            {/*  <Text style={[styles.cardText, {maxWidth: '60%'}]}>*/}
-            {/*    {item.address}*/}
-            {/*  </Text>*/}
-            {/*</View>*/}
-            <View style={styles.cardContent}>
-              <Text style={styles.cardText}>Street Name : </Text>
-              <Text style={[styles.cardText, {maxWidth: '60%'}]}>
-                {item.streetName}
-              </Text>
-            </View>
-            <View style={styles.cardContent}>
-              <Text style={styles.cardText}>Unit No : </Text>
-              <Text style={[styles.cardText, {maxWidth: '60%'}]}>
-                {item.unitNo}
-              </Text>
-            </View>
-            {awsConfig.COUNTRY != 'Singapore' ? (
-              <View style={styles.cardContent}>
-                <Text style={styles.cardText}>City : </Text>
-                <Text style={[styles.cardText, {maxWidth: '60%'}]}>
-                  {item.city}
-                </Text>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'center',
+                maxWidth: '100%',
+              }}>
+              {/*<TouchableOpacity*/}
+              {/*  onPress={() => this.selectAddress(item)}*/}
+              {/*  style={{*/}
+              {/*    backgroundColor: colorConfig.store.defaultColor,*/}
+              {/*    padding: 10,*/}
+              {/*    borderRadius: 10,*/}
+              {/*    marginTop: 20,*/}
+              {/*    justifyContent: 'center',*/}
+              {/*    alignItems: 'center',*/}
+              {/*    width: '45%',*/}
+              {/*    marginRight: '5%',*/}
+              {/*  }}>*/}
+              {/*  <Text*/}
+              {/*    style={{*/}
+              {/*      fontSize: 15,*/}
+              {/*      fontFamily: 'Poppins-Medium',*/}
+              {/*      color: 'white',*/}
+              {/*    }}>*/}
+              {/*    Select*/}
+              {/*  </Text>*/}
+              {/*</TouchableOpacity>*/}
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                }}>
+                <TouchableOpacity
+                  onPress={() => {
+                    Actions.editAddress({
+                      from: 'listAddress',
+                      myAddress: item,
+                      getDeliveryFee: this.props.getDeliveryFee,
+                      clearDelivery: this.props.clearDelivery,
+                    });
+                  }}
+                  style={{
+                    borderColor: colorConfig.store.defaultColor,
+                    borderWidth: 1,
+                    // padding: 5,
+                    borderRadius: 5,
+                    marginTop: 20,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    width: '80%',
+                  }}>
+                  <Text
+                    style={{
+                      fontSize: 15,
+                      fontFamily: 'Poppins-Medium',
+                      color: colorConfig.store.defaultColor,
+                    }}>
+                    Edit Address
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {
+                    this.setState({selectedAddress: item});
+                    this.RBSheet.open();
+                  }}
+                  style={{
+                    borderColor: colorConfig.store.defaultColor,
+                    borderWidth: 1,
+                    // padding: 5,
+                    borderRadius: 5,
+                    marginTop: 20,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    width: '15%',
+                  }}>
+                  <Text
+                    style={{
+                      fontSize: 20,
+                      fontFamily: 'Poppins-Bold',
+                      color: colorConfig.store.defaultColor,
+                    }}>
+                    ...
+                  </Text>
+                </TouchableOpacity>
               </View>
-            ) : null}
-            {item.province != undefined ? (
-              <View style={styles.cardContent}>
-                <Text style={styles.cardText}>Province : </Text>
-                <Text style={[styles.cardText, {maxWidth: '60%'}]}>
-                  {item.province}
-                </Text>
-              </View>
-            ) : null}
-            <View style={styles.cardContent}>
-              <Text style={styles.cardText}>Postal Code : </Text>
-              <Text style={[styles.cardText, {maxWidth: '70%'}]}>
-                {item.postalCode}
-              </Text>
             </View>
-          </TouchableOpacity>
+          </View>
         )}
         keyExtractor={(product, index) => index.toString()}
       />
@@ -382,7 +524,7 @@ class ListAddress extends Component {
   };
 
   addNewAddress = async () => {
-    Actions.replace('addAddress', {from: 'listAddress'});
+    Actions.push('pickCoordinate', {from: 'listAddress'});
   };
 
   render() {
@@ -403,8 +545,6 @@ class ListAddress extends Component {
     if (!isEmptyArray(user.deliveryAddress)) {
       address = user.deliveryAddress;
     }
-
-    console.log(address, 'address');
 
     return (
       <SafeAreaView style={styles.container}>
@@ -535,28 +675,21 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
   },
   card: {
-    padding: 10,
+    padding: 20,
     marginHorizontal: 10,
     marginBottom: 20,
-    borderRadius: 5,
+    borderRadius: 10,
     backgroundColor: 'white',
     shadowColor: '#00000021',
-    shadowOffset: {
-      width: 0,
-      height: 9,
-    },
-    shadowOpacity: 0.7,
-    shadowRadius: 1.49,
-    elevation: 12,
-  },
-  cardSelected: {
-    borderWidth: 2,
-    borderColor: colorConfig.store.defaultColor,
   },
   cardContent: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     width: '100%',
+    alignItems: 'center',
+  },
+  cardSelected: {
+    borderWidth: 1.2,
+    borderColor: colorConfig.store.defaultColor,
   },
   headingCard: {
     flexDirection: 'row',
@@ -577,9 +710,9 @@ const styles = StyleSheet.create({
     paddingBottom: 25,
   },
   cardText: {
-    fontSize: 15,
+    fontSize: 13,
+    fontFamily: 'Poppins-Regular',
     color: colorConfig.pageIndex.grayColor,
-    // fontFamily: 'Poppins-Regular',
   },
   cardNumberText: {
     fontSize: 24,
@@ -640,5 +773,32 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: 'bold',
     marginBottom: 5,
+  },
+  addressName: {
+    fontSize: 13,
+    fontFamily: 'Poppins-Bold',
+    color: colorConfig.store.titleSelected,
+    // marginBottom: 10,
+  },
+  point: {
+    backgroundColor: colorConfig.store.defaultColor,
+    borderRadius: 50,
+    width: 15,
+    height: 15,
+  },
+  outerPoint: {
+    width: 30,
+    height: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  outerPointUnselected: {
+    borderColor: colorConfig.pageIndex.grayColor,
+    borderRadius: 50,
+    borderWidth: 2,
+    width: 30,
+    height: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

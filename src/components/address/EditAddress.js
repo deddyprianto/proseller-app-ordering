@@ -15,7 +15,7 @@ import {
   Platform,
   SafeAreaView,
   Alert,
-  KeyboardAvoidingView,
+  TextInput,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -24,7 +24,6 @@ import {defaultAddress, updateUser} from '../../actions/user.action';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
 import Loader from '../loader';
-import {TextInput, DefaultTheme} from 'react-native-paper';
 import CryptoJS from 'react-native-crypto-js';
 import awsConfig from '../../config/awsConfig';
 import {
@@ -38,16 +37,9 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import {getAddress, getCityAddress} from '../../actions/address.action';
 import SearchableDropdown from 'react-native-searchable-dropdown';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview';
-
-const theme = {
-  ...DefaultTheme,
-  roundness: 2,
-  colors: {
-    ...DefaultTheme.colors,
-    primary: colorConfig.store.defaultColor,
-    accent: '#f1c40f',
-  },
-};
+import MapView from 'react-native-maps';
+import CountryPicker from '../react-native-country-picker-modal';
+import PhoneInput from 'react-native-phone-input';
 
 class EditAddress extends Component {
   constructor(props) {
@@ -72,9 +64,20 @@ class EditAddress extends Component {
       }
     } catch (e) {}
 
+    let phoneNumber = awsConfig.phoneNumberCode;
+    let phone = '';
+
+    try {
+      phoneNumber = myAddress.phoneNumber.substr(0, 3);
+      phone = myAddress.phoneNumber.replace(phoneNumber, '');
+    } catch (e) {}
+
     this.state = {
       screenWidth: Dimensions.get('window').width,
       addressName: myAddress.addressName,
+      phoneNumber,
+      phone,
+      recipient: myAddress.recipient,
       address: myAddress.address,
       streetName: myAddress.streetName,
       unitNo: myAddress.unitNo,
@@ -172,6 +175,8 @@ class EditAddress extends Component {
         unitNo: this.state.unitNo,
         postalCode: this.state.postalCode,
         city: this.state.city,
+        recipient: this.state.recipient,
+        phoneNumber: this.state.phoneNumber + this.state.phone,
       };
 
       newAddress.address = `${newAddress.streetName}`;
@@ -238,36 +243,37 @@ class EditAddress extends Component {
       coordinate,
     });
 
-    if (coordinate.detailAddress !== '') {
-      try {
-        const streetName = `${
-          coordinate.detailAddress.address_components[0].long_name
-        } ${coordinate.detailAddress.address_components[1].long_name}`;
-        this.setState({streetName});
-      } catch (e) {}
-
-      try {
-        const postalCode = `${
-          coordinate.detailAddress.address_components.find(
-            item => item.types[0] === 'postal_code',
-          ).long_name
-        }`;
-        this.setState({postalCode});
-
-        const isValid = new RegExp(/((\d{6}.*)*\s)?(\d{6})([^\d].*)?$/).test(
-          Number(postalCode),
-        );
-        if (isValid) {
-          this.setState({isPostalCodeValid: true});
-        } else {
-          this.setState({isPostalCodeValid: false});
-        }
-      } catch (e) {}
-    }
+    // if (coordinate.detailAddress !== '') {
+    //   try {
+    //     const streetName = `${
+    //       coordinate.detailAddress.address_components[0].long_name
+    //     } ${coordinate.detailAddress.address_components[1].long_name}`;
+    //     this.setState({streetName});
+    //   } catch (e) {}
+    //
+    //   try {
+    //     const postalCode = `${
+    //       coordinate.detailAddress.address_components.find(
+    //         item => item.types[0] === 'postal_code',
+    //       ).long_name
+    //     }`;
+    //     this.setState({postalCode});
+    //
+    //     const isValid = new RegExp(/((\d{6}.*)*\s)?(\d{6})([^\d].*)?$/).test(
+    //       Number(postalCode),
+    //     );
+    //     if (isValid) {
+    //       this.setState({isPostalCodeValid: true});
+    //     } else {
+    //       this.setState({isPostalCodeValid: false});
+    //     }
+    //   } catch (e) {}
+    // }
   };
 
   render() {
     const {isPostalCodeValid} = this.state;
+    console.log(this.props.from, 'from');
     return (
       <SafeAreaView style={styles.container}>
         {this.state.loading && <Loader />}
@@ -288,28 +294,155 @@ class EditAddress extends Component {
           </TouchableOpacity>
         </View>
         <KeyboardAwareScrollView style={{padding: 15}}>
-          <DropDownPicker
-            items={[
-              {label: 'Home', value: 'Home'},
-              {label: 'Work', value: 'Work'},
-              {label: 'School', value: 'School'},
-              {label: 'Office', value: 'Office'},
-              {label: 'Other', value: 'Other'},
-            ]}
+          <Text style={styles.textInput}>Address Label</Text>
+          <TextInput
+            style={styles.input}
+            autoFocus={true}
+            keyboardType={'text'}
             defaultValue={this.state.addressName}
-            containerStyle={{height: 55}}
-            style={{
-              backgroundColor: '#ebebeb',
-              // borderColor: colorConfig.pageIndex.grayColor,
-              // borderRadius: 0,
-            }}
-            dropDownStyle={{backgroundColor: '#ebebeb'}}
-            onChangeItem={item =>
+            onChangeText={text =>
               this.setState({
-                addressName: item.value,
+                addressName: text,
               })
             }
           />
+          <View
+            style={{
+              marginVertical: 10,
+              marginBottom: 20,
+              flexDirection: 'row',
+            }}>
+            <TouchableOpacity
+              style={styles.badgeAddressName}
+              onPress={() => {
+                this.setState({addressName: 'Home'});
+              }}>
+              <Text style={styles.textAddressName}>Home</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.badgeAddressName}
+              onPress={() => {
+                this.setState({addressName: 'Work'});
+              }}>
+              <Text style={styles.textAddressName}>Work</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.badgeAddressName}
+              onPress={() => {
+                this.setState({addressName: 'School'});
+              }}>
+              <Text style={styles.textAddressName}>School</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.badgeAddressName}
+              onPress={() => {
+                this.setState({addressName: 'Office'});
+              }}>
+              <Text style={styles.textAddressName}>Office</Text>
+            </TouchableOpacity>
+          </View>
+          <Text style={styles.textInput}>Recipient</Text>
+          <TextInput
+            style={styles.input}
+            keyboardType={'text'}
+            defaultValue={this.state.recipient}
+            onChangeText={text =>
+              this.setState({
+                recipient: text,
+              })
+            }
+          />
+          <View style={{width: 0, height: 0}}>
+            <CountryPicker
+              translation="eng"
+              withCallingCode
+              visible={this.state.openModalCountry}
+              onClose={() => this.setState({openModalCountry: false})}
+              withFilter
+              placeholder={`x`}
+              withFlag={true}
+              onSelect={country => {
+                this.setState({
+                  phoneNumber: `+${country.callingCode[0]}`,
+                  country: country.name,
+                });
+              }}
+            />
+          </View>
+          <View>
+            <Text style={styles.textInput}>Mobile No</Text>
+            <View
+              style={{
+                flexDirection: 'row',
+                color: colorConfig.store.title,
+              }}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  width: '100%',
+                  maxWidth: '100%',
+                }}>
+                <PhoneInput
+                  flagStyle={{
+                    width: 25,
+                    height: 18,
+                    justifyContent: 'center',
+                    marginRight: -5,
+                    marginLeft: 5,
+                  }}
+                  textStyle={{fontSize: 0, fontFamily: 'Poppins-Regular'}}
+                  style={{
+                    backgroundColor: colorConfig.store.transparentBG,
+                  }}
+                  ref={ref => {
+                    this.phone = ref;
+                  }}
+                  onChangePhoneNumber={() => {
+                    this.setState({phone: this.phone.getValue()});
+                  }}
+                  value={this.state.phoneNumber}
+                  onPressFlag={() => {
+                    this.setState({
+                      openModalCountry: true,
+                    });
+                  }}
+                />
+                <TouchableOpacity
+                  onPress={() => {
+                    this.setState({
+                      openModalCountry: true,
+                    });
+                  }}
+                  style={{
+                    justifyContent: 'center',
+                    paddingHorizontal: 2,
+                  }}>
+                  <Text
+                    style={{
+                      fontSize: 13,
+                      fontFamily: 'Poppins-Regular',
+                      marginTop: 4,
+                    }}>
+                    {this.state.phoneNumber}
+                  </Text>
+                </TouchableOpacity>
+                <TextInput
+                  value={this.state.phone}
+                  keyboardType={'numeric'}
+                  onChangeText={value => {
+                    try {
+                      if (value[0] !== 0 && value[0] !== '0') {
+                        this.setState({phone: value});
+                      }
+                    } catch (e) {
+                      this.setState({phone: value});
+                    }
+                  }}
+                  style={styles.input}
+                />
+              </View>
+            </View>
+          </View>
 
           {awsConfig.COUNTRY != 'Singapore' ? (
             <SearchableDropdown
@@ -368,59 +501,37 @@ class EditAddress extends Component {
             />
           ) : null}
 
-          {/*<TextInput*/}
-          {/*  style={{height: 58, marginVertical: 10, fontSize: 13}}*/}
-          {/*  theme={theme}*/}
-          {/*  multiline={true}*/}
-          {/*  mode={'outlined'}*/}
-          {/*  label="Address"*/}
-          {/*  value={this.state.address}*/}
-          {/*  onChangeText={text => {*/}
-          {/*    this.setState({address: text});*/}
-          {/*    this.getFullAddress(text);*/}
-          {/*  }}*/}
-          {/*/>*/}
+          <Text style={styles.textInput}>Street Name</Text>
           <TextInput
-            style={{
-              height: 58,
-              marginVertical: 8,
-              fontSize: 13,
-              backgroundColor: '#ebebeb',
-            }}
-            theme={theme}
-            multiline={true}
-            // mode={'outlined'}
-            label="Street Name"
-            value={this.state.streetName}
-            onChangeText={text => {
-              this.setState({streetName: text});
-            }}
+            style={styles.input}
+            keyboardType={'text'}
+            defaultValue={this.state.streetName}
+            onChangeText={text =>
+              this.setState({
+                streetName: text,
+              })
+            }
           />
 
+          <Text style={styles.textInput}>Unit No</Text>
           <TextInput
-            style={{
-              height: 58,
-              marginVertical: 8,
-              fontSize: 13,
-              backgroundColor: '#ebebeb',
-            }}
-            theme={theme}
-            multiline={true}
-            // mode={'outlined'}
-            label="Unit No"
-            value={this.state.unitNo}
-            onChangeText={text => {
-              this.setState({unitNo: text});
-            }}
+            style={styles.input}
+            keyboardType={'text'}
+            defaultValue={this.state.unitNo}
+            onChangeText={text =>
+              this.setState({
+                unitNo: text,
+              })
+            }
           />
 
           {awsConfig.COUNTRY != 'Singapore' ? (
             <TextInput
               style={{
-                height: 55,
-                marginVertical: 10,
+                height: 58,
+                marginVertical: 8,
+                fontSize: 13,
               }}
-              theme={theme}
               mode={'outlined'}
               label="City"
               value={this.state.city}
@@ -428,18 +539,11 @@ class EditAddress extends Component {
             />
           ) : null}
 
+          <Text style={styles.textInput}>Postal Code</Text>
           <TextInput
-            style={{
-              height: 58,
-              marginVertical: 8,
-              fontSize: 13,
-              backgroundColor: '#ebebeb',
-            }}
-            theme={theme}
+            style={styles.input}
             keyboardType={'numeric'}
-            // mode={'outlined'}
-            label="Postal Code"
-            value={this.state.postalCode}
+            defaultValue={this.state.postalCode}
             onChangeText={text => {
               try {
                 const isValid = new RegExp(
@@ -468,8 +572,6 @@ class EditAddress extends Component {
 
           <TouchableOpacity
             style={{
-              backgroundColor: '#f2f2f2',
-              padding: 10,
               borderRadius: 6,
               marginTop: 5,
             }}
@@ -477,29 +579,51 @@ class EditAddress extends Component {
               Actions.pickCoordinate({
                 setCoordinate: this.setCoordinate,
                 oldCoordinate: this.state.coordinate,
+                from: 'address',
               })
             }>
-            <Text style={{fontFamily: 'Poppins-Regular', fontSize: 12}}>
-              Pick Coordinate
-            </Text>
+            <Text style={styles.textInput}>Pick Coordinate</Text>
             {!isEmptyObject(this.state.coordinate) ? (
-              <Text
-                style={{
-                  fontFamily: 'Poppins-Regular',
-                  fontSize: 11,
-                  color: colorConfig.store.colorSuccess,
-                }}>
-                Location already pinned.
-              </Text>
+              <>
+                <MapView style={styles.map} region={this.state.coordinate} />
+                <View style={styles.markerFixed}>
+                  <Icon
+                    size={28}
+                    name={Platform.OS === 'ios' ? 'ios-pin' : 'md-pin'}
+                    style={styles.btnBackIcon}
+                  />
+                  <Text style={styles.textPintpoint}>Edit Pinpoint</Text>
+                </View>
+              </>
             ) : (
-              <Text
-                style={{
-                  fontFamily: 'Poppins-Regular',
-                  fontSize: 11,
-                  color: colorConfig.store.colorError,
-                }}>
-                Location has not been pinned.
-              </Text>
+              <>
+                <MapView
+                  style={styles.map}
+                  region={{
+                    latitude: 1.29027,
+                    longitude: 103.851959,
+                    latitudeDelta: 0.001,
+                    longitudeDelta: 0.001,
+                  }}
+                />
+                <View style={styles.markerFixed}>
+                  <Icon
+                    size={28}
+                    name={Platform.OS === 'ios' ? 'ios-pin' : 'md-pin'}
+                    style={[
+                      styles.btnBackIcon,
+                      {color: colorConfig.pageIndex.grayColor},
+                    ]}
+                  />
+                  <Text
+                    style={[
+                      styles.textPintpoint,
+                      {color: colorConfig.pageIndex.grayColor},
+                    ]}>
+                    Pin Location
+                  </Text>
+                </View>
+              </>
             )}
           </TouchableOpacity>
 
@@ -508,6 +632,7 @@ class EditAddress extends Component {
             disabled={this.notCompleted() ? true : false}
             style={{
               marginTop: 40,
+              marginBottom: 70,
               backgroundColor: this.notCompleted()
                 ? colorConfig.store.disableButton
                 : colorConfig.store.defaultColor,
@@ -661,5 +786,57 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     maxWidth: Dimensions.get('window').width / 2 + 20,
     textAlign: 'right',
+  },
+  map: {
+    width: '100%',
+    height: 90,
+  },
+  markerFixed: {
+    left: '50%',
+    marginLeft: -80,
+    marginTop: -5,
+    position: 'absolute',
+    top: '50%',
+    zIndex: 99,
+    backgroundColor: 'white',
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: colorConfig.store.defaultColor,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  textPintpoint: {
+    padding: 12,
+    color: colorConfig.store.defaultColor,
+    fontFamily: 'Poppins-Bold',
+    fontSize: 14,
+  },
+  textInput: {
+    fontFamily: 'Poppins-Regular',
+    fontSize: 12,
+    color: colorConfig.store.titleSelected,
+    marginTop: 20,
+  },
+  input: {
+    borderBottomWidth: 0.7,
+    borderBottomColor: colorConfig.pageIndex.inactiveTintColor,
+    padding: 3,
+    width: '100%',
+  },
+  badgeAddressName: {
+    borderRadius: 10,
+    width: 65,
+    paddingVertical: 5,
+    borderWidth: 1,
+    borderColor: colorConfig.store.defaultColor,
+    marginRight: 10,
+    padding: 4,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  textAddressName: {
+    fontFamily: 'Poppins-Medium',
+    fontSize: 12,
+    color: colorConfig.store.defaultColor,
   },
 });
