@@ -84,7 +84,7 @@ class PickCoordinate extends Component {
   }
 
   handleBackPress = () => {
-    this.goBack();
+    // this.goBack();
     return true;
   };
 
@@ -155,130 +155,137 @@ class PickCoordinate extends Component {
   render() {
     const {latitude, longitude, latitudeDelta, longitudeDelta} = this.state;
     return (
-      <SafeAreaView style={styles.map}>
-        <TouchableOpacity
-          style={{position: 'absolute', zIndex: 2}}
-          onPress={this.goBack}>
-          <Icon
-            size={32}
-            name={
-              Platform.OS === 'ios' ? 'ios-arrow-back' : 'md-arrow-round-back'
-            }
-            style={{color: colorConfig.pageIndex.grayColor, padding: 15}}
-          />
-        </TouchableOpacity>
+      <SafeAreaView style={{flex: 1}}>
+        <View style={styles.map}>
+          <View style={styles.searchBar}>
+            <TouchableOpacity
+              // style={{position: 'absolute', zIndex: 22}}
+              onPress={this.goBack}>
+              <Icon
+                size={30}
+                name={
+                  Platform.OS === 'ios'
+                    ? 'ios-arrow-back'
+                    : 'md-arrow-round-back'
+                }
+                style={{
+                  color: colorConfig.pageIndex.grayColor,
+                  paddingLeft: 5,
+                  paddingRight: 10,
+                }}
+              />
+            </TouchableOpacity>
+            <TextInput
+              placeholder={'Location'}
+              value={this.state.searchLocation}
+              onChangeText={value => this.setState({searchLocation: value})}
+              onSubmitEditing={this.getGeolocation}
+              style={{
+                fontSize: 12,
+                fontFamily: 'Poppins-Regular',
+                padding: 5,
+                paddingHorizontal: 10,
+                color: colorConfig.store.title,
+                borderColor: colorConfig.pageIndex.inactiveTintColor,
+                borderWidth: 1,
+                width: '68%',
+                borderRadius: 5,
+              }}
+            />
+            <TouchableOpacity
+              onPress={this.getGeolocation}
+              style={{
+                backgroundColor: colorConfig.store.defaultColor,
+                padding: 10,
+                borderRadius: 5,
+                width: '18%',
+              }}>
+              <Text style={{color: 'white', textAlign: 'center'}}>Go</Text>
+            </TouchableOpacity>
+          </View>
 
-        <View style={styles.searchBar}>
-          <TextInput
-            placeholder={'Location'}
-            value={this.state.searchLocation}
-            onChangeText={value => this.setState({searchLocation: value})}
-            onSubmitEditing={this.getGeolocation}
-            style={{
-              fontSize: 12,
-              fontFamily: 'Poppins-Regular',
-              padding: 5,
-              paddingHorizontal: 10,
-              color: colorConfig.store.title,
-              borderColor: colorConfig.pageIndex.inactiveTintColor,
-              borderWidth: 1,
-              width: '80%',
-              borderRadius: 5,
+          <MapView
+            style={styles.map}
+            region={{
+              latitude,
+              longitude,
+              latitudeDelta,
+              longitudeDelta,
+            }}
+            onRegionChangeComplete={region => {
+              this.setState(
+                {
+                  latitude: region.latitude,
+                  longitude: region.longitude,
+                  latitudeDelta: region.latitudeDelta,
+                  longitudeDelta: region.longitudeDelta,
+                  regionChangeProgress: true,
+                },
+                () => this.fetchAddress(),
+              );
             }}
           />
-          <TouchableOpacity
-            onPress={this.getGeolocation}
-            style={{
-              backgroundColor: colorConfig.store.defaultColor,
-              padding: 10,
-              borderRadius: 5,
-              width: '18%',
-            }}>
-            <Text style={{color: 'white', textAlign: 'center'}}>Go</Text>
-          </TouchableOpacity>
-        </View>
-
-        <MapView
-          style={styles.map}
-          region={{
-            latitude,
-            longitude,
-            latitudeDelta,
-            longitudeDelta,
-          }}
-          onRegionChangeComplete={region => {
-            this.setState(
-              {
-                latitude: region.latitude,
-                longitude: region.longitude,
-                latitudeDelta: region.latitudeDelta,
-                longitudeDelta: region.longitudeDelta,
-                regionChangeProgress: true,
-              },
-              () => this.fetchAddress(),
-            );
-          }}
-        />
-        <View style={styles.markerFixed}>
-          <Image
-            style={styles.marker}
-            source={{
-              uri:
-                'https://raw.githubusercontent.com/alizahid/location-picker-demo/master/assets/icons8-marker.png',
-            }}
-          />
-        </View>
-        <SafeAreaView style={styles.footer}>
-          <Text
-            style={{
-              fontSize: 16,
-              fontFamily: 'Poppins-Medium',
-              marginBottom: 20,
-              marginTop: 10,
-              textAlign: 'center',
-              color: colorConfig.store.defaultColor,
-            }}>
-            Move map to change location
-          </Text>
-          <Text style={{fontSize: 10, color: '#999', marginLeft: 10}}>
-            LOCATION
-          </Text>
-          <Text
-            numberOfLines={2}
-            style={{
-              fontSize: 12,
-              paddingVertical: 15,
-              borderBottomColor: 'silver',
-              borderBottomWidth: 0.5,
-              marginHorizontal: 10,
-              fontFamily: 'Poppins-Italic',
-            }}>
-            {!this.state.regionChangeProgress
-              ? this.state.userLocation
-              : 'Identifying Location...'}
-          </Text>
-          <TouchableOpacity
-            disabled={this.state.regionChangeProgress}
-            onPress={this.submitCoordinate}
-            style={{
-              marginTop: 15,
-              backgroundColor: this.state.regionChangeProgress
-                ? colorConfig.store.disableButton
-                : colorConfig.store.defaultColor,
-              padding: 10,
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
+          <View style={styles.markerFixed}>
+            <Image
+              style={styles.marker}
+              source={{
+                uri:
+                  'https://raw.githubusercontent.com/alizahid/location-picker-demo/master/assets/icons8-marker.png',
+              }}
+            />
+          </View>
+          <SafeAreaView style={styles.footer}>
             <Text
               style={{
-                color: 'white',
+                fontSize: 16,
                 fontFamily: 'Poppins-Medium',
-                fontSize: 20,
+                marginBottom: 20,
+                marginTop: 10,
+                textAlign: 'center',
+                color: colorConfig.store.defaultColor,
               }}>
-              Use This Location
+              Move map to change location
             </Text>
-          </TouchableOpacity>
-        </SafeAreaView>
+            <Text style={{fontSize: 10, color: '#999', marginLeft: 10}}>
+              LOCATION
+            </Text>
+            <Text
+              numberOfLines={2}
+              style={{
+                fontSize: 12,
+                paddingVertical: 15,
+                borderBottomColor: 'silver',
+                borderBottomWidth: 0.5,
+                marginHorizontal: 10,
+                fontFamily: 'Poppins-Italic',
+              }}>
+              {!this.state.regionChangeProgress
+                ? this.state.userLocation
+                : 'Identifying Location...'}
+            </Text>
+            <TouchableOpacity
+              disabled={this.state.regionChangeProgress}
+              onPress={this.submitCoordinate}
+              style={{
+                marginTop: 15,
+                backgroundColor: this.state.regionChangeProgress
+                  ? colorConfig.store.disableButton
+                  : colorConfig.store.defaultColor,
+                padding: 10,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <Text
+                style={{
+                  color: 'white',
+                  fontFamily: 'Poppins-Medium',
+                  fontSize: 20,
+                }}>
+                Use This Location
+              </Text>
+            </TouchableOpacity>
+          </SafeAreaView>
+        </View>
       </SafeAreaView>
     );
   }
@@ -340,7 +347,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignSelf: 'center',
     borderRadius: 6,
-    top: 60,
+    top: 50,
     shadowColor: '#00000021',
     shadowOffset: {
       width: 0,

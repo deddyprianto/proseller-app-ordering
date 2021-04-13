@@ -229,17 +229,6 @@ class ScanBarcode extends Component {
     const {flashStatus} = this.state;
     return (
       <SafeAreaView style={styles.container}>
-        <View>
-          <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
-            <Icon
-              size={32}
-              name={
-                Platform.OS === 'ios' ? 'ios-arrow-back' : 'md-arrow-round-back'
-              }
-              style={styles.btnBackIcon}
-            />
-          </TouchableOpacity>
-        </View>
         <View style={styles.container}>
           <RNCamera
             ref={ref => {
@@ -259,6 +248,15 @@ class ScanBarcode extends Component {
             style={styles.preview}
             type={this.state.camera.type}
           />
+          <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
+            <Icon
+              size={32}
+              name={
+                Platform.OS === 'ios' ? 'ios-arrow-back' : 'md-arrow-round-back'
+              }
+              style={styles.btnBackIcon}
+            />
+          </TouchableOpacity>
           <View style={[styles.overlay, styles.topOverlay]}>
             <Text style={styles.scanScreenMessage}>
               Please point your camera at the product barcode.
@@ -329,7 +327,8 @@ const styles = StyleSheet.create({
     margin: 10,
     marginLeft: 20,
     position: 'absolute',
-    zIndex: 99,
+    zIndex: 999,
+    marginTop: 20,
   },
   btnBackText: {
     color: colorConfig.pageIndex.activeTintColor,
