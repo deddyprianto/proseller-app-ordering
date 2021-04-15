@@ -3997,7 +3997,7 @@ const styles = StyleSheet.create({
   total: {
     fontFamily: 'Poppins-Medium',
     color: colorConfig.store.titleSelected,
-    fontSize: 14,
+    fontSize: 13,
     padding: 3,
     // fontWeight: 'bold',
     marginBottom: 5,
