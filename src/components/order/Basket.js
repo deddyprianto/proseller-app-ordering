@@ -2836,7 +2836,7 @@ class Basket extends Component {
           <TouchableOpacity
             onPress={this.goToAddress}
             style={[styles.itemSummary, {alignItems: 'baseline'}]}>
-            <Text style={styles.total}>Delivery Address</Text>
+            <Text style={styles.total}>Address</Text>
             <View>
               <Text
                 style={[
