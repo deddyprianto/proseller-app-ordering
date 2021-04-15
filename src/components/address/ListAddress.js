@@ -448,6 +448,7 @@ class ListAddress extends Component {
                     borderColor: colorConfig.store.defaultColor,
                     borderWidth: 1,
                     // padding: 5,
+                    paddingVertical: 5,
                     borderRadius: 5,
                     marginTop: 20,
                     justifyContent: 'center',

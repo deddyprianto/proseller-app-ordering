@@ -22,7 +22,12 @@
 		4364869283FE453CB8F3B773 /* Lato-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5004E2CBAFBB4547A8CCA619 /* Lato-Italic.ttf */; };
 		43681597396048A0961F05E9 /* Lato-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 61448CC0B03644E5AE6729E7 /* Lato-Regular.ttf */; };
 		73C879F05A0CD242FBD357F9 /* libPods-acemartTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CE37B9072AEED56AE8C90410 /* libPods-acemartTests.a */; };
-		7BD857312467DD4400AD88B9 /* acemart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BD857302467DD4400AD88B9 /* acemart.swift */; };
+		7B4FF2F926284ECC00262C97 /* acemart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B4FF2F826284ECC00262C97 /* acemart.swift */; };
+		7B4FF300262852E300262C97 /* Poppins-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7B4FF2FE262852DC00262C97 /* Poppins-Black.ttf */; };
+		7B4FF301262852E300262C97 /* Poppins-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7B4FF2FC262852DC00262C97 /* Poppins-Bold.ttf */; };
+		7B4FF302262852E300262C97 /* Poppins-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7B4FF2FB262852DB00262C97 /* Poppins-Italic.ttf */; };
+		7B4FF303262852E300262C97 /* Poppins-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7B4FF2FF262852DC00262C97 /* Poppins-Medium.ttf */; };
+		7B4FF304262852E300262C97 /* Poppins-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7B4FF2FD262852DC00262C97 /* Poppins-Regular.ttf */; };
 		942F222339174ACAB6A6FDA4 /* Lato-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 40AD4A3553664601BD423484 /* Lato-Medium.ttf */; };
 		B6FA351076D44777B6129C53 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B8783AC08D84065AC0B2230 /* libz.tbd */; };
 		C059695DF9A863BFBAED6300 /* libPods-acemart.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CEB3CA18B39250FAA73BB671 /* libPods-acemart.a */; };
@@ -90,8 +95,13 @@
 		730C959629B449DB968FA651 /* FontAwesome5_Solid.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Solid.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Solid.ttf"; sourceTree = "<group>"; };
 		74A5200E323F44E8AC0721D8 /* Foundation.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Foundation.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
 		7774919F44DB41218B6811A4 /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = SimpleLineIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; };
+		7B4FF2F826284ECC00262C97 /* acemart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = acemart.swift; sourceTree = "<group>"; };
+		7B4FF2FB262852DB00262C97 /* Poppins-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-Italic.ttf"; sourceTree = "<group>"; };
+		7B4FF2FC262852DC00262C97 /* Poppins-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-Bold.ttf"; sourceTree = "<group>"; };
+		7B4FF2FD262852DC00262C97 /* Poppins-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-Regular.ttf"; sourceTree = "<group>"; };
+		7B4FF2FE262852DC00262C97 /* Poppins-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-Black.ttf"; sourceTree = "<group>"; };
+		7B4FF2FF262852DC00262C97 /* Poppins-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-Medium.ttf"; sourceTree = "<group>"; };
 		7BD8572F2467DD4300AD88B9 /* acemart-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "acemart-Bridging-Header.h"; sourceTree = "<group>"; };
-		7BD857302467DD4400AD88B9 /* acemart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = acemart.swift; sourceTree = "<group>"; };
 		7BDAC8BD244814D1005E2D36 /* acemart.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = acemart.entitlements; path = acemart/acemart.entitlements; sourceTree = "<group>"; };
 		8219191279BC1E6EC35F3E85 /* Pods-acemart-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-acemart-tvOS.release.xcconfig"; path = "Target Support Files/Pods-acemart-tvOS/Pods-acemart-tvOS.release.xcconfig"; sourceTree = "<group>"; };
 		85986F88DD9B478882E6871F /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/native-base/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
@@ -178,6 +188,7 @@
 		13B07FAE1A68108700A75B9A /* acemart */ = {
 			isa = PBXGroup;
 			children = (
+				7B4FF2FA2628528A00262C97 /* assets */,
 				7BDAC8BD244814D1005E2D36 /* acemart.entitlements */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
@@ -186,8 +197,8 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB11A68108700A75B9A /* LaunchScreen.xib */,
 				13B07FB71A68108700A75B9A /* main.m */,
-				7BD857302467DD4400AD88B9 /* acemart.swift */,
 				7BD8572F2467DD4300AD88B9 /* acemart-Bridging-Header.h */,
+				7B4FF2F826284ECC00262C97 /* acemart.swift */,
 			);
 			name = acemart;
 			sourceTree = "<group>";
@@ -204,6 +215,18 @@
 				CE37B9072AEED56AE8C90410 /* libPods-acemartTests.a */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		7B4FF2FA2628528A00262C97 /* assets */ = {
+			isa = PBXGroup;
+			children = (
+				7B4FF2FE262852DC00262C97 /* Poppins-Black.ttf */,
+				7B4FF2FC262852DC00262C97 /* Poppins-Bold.ttf */,
+				7B4FF2FB262852DB00262C97 /* Poppins-Italic.ttf */,
+				7B4FF2FF262852DC00262C97 /* Poppins-Medium.ttf */,
+				7B4FF2FD262852DC00262C97 /* Poppins-Regular.ttf */,
+			);
+			path = assets;
 			sourceTree = "<group>";
 		};
 		7B83729F244346A300A67095 /* Recovered References */ = {
@@ -400,7 +423,7 @@
 		83CBB9F71A601CBA00E9B192 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 940;
+				LastUpgradeCheck = 1150;
 				ORGANIZATIONNAME = Edgeworks;
 				TargetAttributes = {
 					00E356ED1AD99517003FC87E = {
@@ -457,6 +480,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7B4FF300262852E300262C97 /* Poppins-Black.ttf in Resources */,
+				7B4FF301262852E300262C97 /* Poppins-Bold.ttf in Resources */,
+				7B4FF302262852E300262C97 /* Poppins-Italic.ttf in Resources */,
+				7B4FF303262852E300262C97 /* Poppins-Medium.ttf in Resources */,
+				7B4FF304262852E300262C97 /* Poppins-Regular.ttf in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
 				0476245040064097B9D1D051 /* Lato-Bold.ttf in Resources */,
@@ -716,8 +744,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7BD857312467DD4400AD88B9 /* acemart.swift in Sources */,
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
+				7B4FF2F926284ECC00262C97 /* acemart.swift in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1018,6 +1046,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -1071,6 +1100,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -1109,6 +1139,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;

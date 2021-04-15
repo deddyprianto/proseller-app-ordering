@@ -1,12 +1,12 @@
 const ENV = {
-  APP: 'Edgeworks',
+  APP: 'AceMart',
   IS_DEVELOP: true,
 
-  API_HOST: 'https://edgeworks-demo.proseller.io/',
+  API_HOST: 'https://acemart-demo.proseller.io/',
 
   base_url_payment: 'https://payment-demo.proseller.io/api/',
 
-  ONESIGNAL_ID: 'a2766868-6ca3-48b9-8d98-b82a4498102e',
+  ONESIGNAL_ID: '33917c22-2105-4ba6-aba5-c4a3b996302a',
 
   REGION: 'ap-southeast-1',
 
@@ -16,9 +16,9 @@ const ENV = {
 
   COUNTRY: 'Singapore',
 
-  COMPANY_NAME: 'Edgeworks',
+  COMPANY_NAME: 'Ace Mart',
 
-  COMPANY_POLICY_URL: 'http://edgeworks-demo.proseller.io/',
+  COMPANY_POLICY_URL: 'https://acemart-demo.proseller.io/',
 
   CURRENCY: 'SGD',
 

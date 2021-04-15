@@ -181,6 +181,7 @@ class PickCoordinate extends Component {
               onChangeText={value => this.setState({searchLocation: value})}
               onSubmitEditing={this.getGeolocation}
               style={{
+                paddingVertical: 10,
                 fontSize: 12,
                 fontFamily: 'Poppins-Regular',
                 padding: 5,

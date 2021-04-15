@@ -421,7 +421,7 @@ class EditAddress extends Component {
                     style={{
                       fontSize: 13,
                       fontFamily: 'Poppins-Regular',
-                      marginTop: 4,
+                      marginTop: 3,
                     }}>
                     {this.state.phoneNumber}
                   </Text>
@@ -816,6 +816,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: colorConfig.store.titleSelected,
     marginTop: 20,
+    paddingBottom: 7
   },
   input: {
     borderBottomWidth: 0.7,
