@@ -2836,7 +2836,45 @@ class Basket extends Component {
           <TouchableOpacity
             onPress={this.goToAddress}
             style={[styles.itemSummary, {alignItems: 'baseline'}]}>
-            <Text style={styles.total}>Address</Text>
+            <View>
+              <Text style={styles.total}>Delivery Address</Text>
+              {!isEmptyData(this.props.selectedAddress) && (
+                <View>
+                  <Text
+                    style={{
+                      color: colorConfig.store.titleSelected,
+                      fontFamily: 'Poppins-Bold',
+                      fontSize: 12,
+                      marginHorizontal: 3,
+                    }}>
+                    {this.props.selectedAddress.recipient} (
+                    {this.props.selectedAddress.addressName})
+                  </Text>
+                  {this.props.selectedAddress.phoneNumber && (
+                    <Text
+                      style={{
+                        color: colorConfig.store.titleSelected,
+                        fontFamily: 'Poppins-Regular',
+                        fontSize: 12,
+                        marginHorizontal: 3,
+                      }}>
+                      {this.props.selectedAddress.phoneNumber}
+                    </Text>
+                  )}
+
+                  <Text
+                    style={{
+                      color: colorConfig.store.titleSelected,
+                      fontFamily: 'Poppins-Regular',
+                      fontSize: 12,
+                      marginHorizontal: 3,
+                      maxWidth: '80%',
+                    }}>
+                    {this.props.selectedAddress.address}
+                  </Text>
+                </View>
+              )}
+            </View>
             <View>
               <Text
                 style={[
@@ -2845,26 +2883,15 @@ class Basket extends Component {
                     fontFamily: 'Poppins-Bold',
                     textAlign: 'right',
                     color: colorConfig.store.secondaryColor,
+                    fontSize: 13,
                   },
                 ]}>
                 {this.props.selectedAddress === undefined ? (
                   <Text>Choose</Text>
                 ) : (
-                  this.props.selectedAddress.addressName
+                  <Text>Change</Text>
                 )}
               </Text>
-              {!isEmptyData(this.props.selectedAddress) && (
-                <View>
-                  <Text
-                    style={{
-                      color: colorConfig.store.titleSelected,
-                      fontFamily: 'Poppins-Regular',
-                      fontSize: 11,
-                    }}>
-                    {this.props.selectedAddress.address}
-                  </Text>
-                </View>
-              )}
             </View>
           </TouchableOpacity>
         );

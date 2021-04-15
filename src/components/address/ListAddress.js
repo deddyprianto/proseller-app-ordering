@@ -140,7 +140,7 @@ class ListAddress extends Component {
           this.RBSheet = ref;
         }}
         animationType={'fade'}
-        height={300}
+        height={150}
         duration={10}
         closeOnDragDown={true}
         closeOnPressMask={true}
@@ -152,70 +152,70 @@ class ListAddress extends Component {
             alignItems: 'center',
           },
         }}>
-        <TouchableOpacity
-          onPress={() => this.setDefaultAccount()}
-          style={{
-            padding: 15,
-            backgroundColor: colorConfig.store.defaultColor,
-            borderRadius: 15,
-            width: '60%',
-            marginBottom: 20,
-            flexDirection: 'row',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
-          <Icon
-            size={30}
-            name={Platform.OS === 'ios' ? 'ios-save' : 'md-save'}
-            style={{color: 'white'}}
-          />
-          <Text
-            style={{
-              marginLeft: 10,
-              color: 'white',
-              fontWeight: 'bold',
-              fontFamily: 'Poppins-Medium',
-              fontSize: 18,
-              textAlign: 'center',
-            }}>
-            Set as Default
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            this.RBSheet.close();
-            Actions.push('editAddress', {
-              from: 'listAddress',
-              myAddress: this.state.selectedAddress,
-            });
-          }}
-          style={{
-            padding: 15,
-            backgroundColor: colorConfig.store.secondaryColor,
-            borderRadius: 15,
-            width: '60%',
-            marginBottom: 20,
-            flexDirection: 'row',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
-          <Icon
-            size={30}
-            name={Platform.OS === 'ios' ? 'ios-create' : 'md-create'}
-            style={{color: 'white'}}
-          />
-          <Text
-            style={{
-              marginLeft: 10,
-              color: 'white',
-              fontWeight: 'bold',
-              fontFamily: 'Poppins-Medium',
-              fontSize: 18,
-              textAlign: 'center',
-            }}>
-            Edit Address
-          </Text>
-        </TouchableOpacity>
+        {/*<TouchableOpacity*/}
+        {/*  onPress={() => this.setDefaultAccount()}*/}
+        {/*  style={{*/}
+        {/*    padding: 15,*/}
+        {/*    backgroundColor: colorConfig.store.defaultColor,*/}
+        {/*    borderRadius: 15,*/}
+        {/*    width: '60%',*/}
+        {/*    marginBottom: 20,*/}
+        {/*    flexDirection: 'row',*/}
+        {/*    justifyContent: 'center',*/}
+        {/*    alignItems: 'center',*/}
+        {/*  }}>*/}
+        {/*  <Icon*/}
+        {/*    size={30}*/}
+        {/*    name={Platform.OS === 'ios' ? 'ios-save' : 'md-save'}*/}
+        {/*    style={{color: 'white'}}*/}
+        {/*  />*/}
+        {/*  <Text*/}
+        {/*    style={{*/}
+        {/*      marginLeft: 10,*/}
+        {/*      color: 'white',*/}
+        {/*      fontWeight: 'bold',*/}
+        {/*      fontFamily: 'Poppins-Medium',*/}
+        {/*      fontSize: 18,*/}
+        {/*      textAlign: 'center',*/}
+        {/*    }}>*/}
+        {/*    Set as Default*/}
+        {/*  </Text>*/}
+        {/*</TouchableOpacity>*/}
+        {/*<TouchableOpacity*/}
+        {/*  onPress={() => {*/}
+        {/*    this.RBSheet.close();*/}
+        {/*    Actions.push('editAddress', {*/}
+        {/*      from: 'listAddress',*/}
+        {/*      myAddress: this.state.selectedAddress,*/}
+        {/*    });*/}
+        {/*  }}*/}
+        {/*  style={{*/}
+        {/*    padding: 15,*/}
+        {/*    backgroundColor: colorConfig.store.secondaryColor,*/}
+        {/*    borderRadius: 15,*/}
+        {/*    width: '60%',*/}
+        {/*    marginBottom: 20,*/}
+        {/*    flexDirection: 'row',*/}
+        {/*    justifyContent: 'center',*/}
+        {/*    alignItems: 'center',*/}
+        {/*  }}>*/}
+        {/*  <Icon*/}
+        {/*    size={30}*/}
+        {/*    name={Platform.OS === 'ios' ? 'ios-create' : 'md-create'}*/}
+        {/*    style={{color: 'white'}}*/}
+        {/*  />*/}
+        {/*  <Text*/}
+        {/*    style={{*/}
+        {/*      marginLeft: 10,*/}
+        {/*      color: 'white',*/}
+        {/*      fontWeight: 'bold',*/}
+        {/*      fontFamily: 'Poppins-Medium',*/}
+        {/*      fontSize: 18,*/}
+        {/*      textAlign: 'center',*/}
+        {/*    }}>*/}
+        {/*    Edit Address*/}
+        {/*  </Text>*/}
+        {/*</TouchableOpacity>*/}
         <TouchableOpacity
           onPress={() => {
             Alert.alert(
@@ -306,24 +306,24 @@ class ListAddress extends Component {
                       flexDirection: 'row',
                     }}>
                     <Text style={styles.addressName}>{item.addressName}</Text>
-                    {defaultAddress &&
-                    defaultAddress.addressName === item.addressName ? (
-                      <View
-                        style={{
-                          marginLeft: 15,
-                          borderRadius: 5,
-                          padding: 4,
-                          backgroundColor: colorConfig.store.disableButton,
-                        }}>
-                        <Text
-                          style={{
-                            fontSize: 10,
-                            color: colorConfig.store.defaultColor,
-                          }}>
-                          Default
-                        </Text>
-                      </View>
-                    ) : null}
+                    {/*{defaultAddress &&*/}
+                    {/*defaultAddress.addressName === item.addressName ? (*/}
+                    {/*  <View*/}
+                    {/*    style={{*/}
+                    {/*      marginLeft: 15,*/}
+                    {/*      borderRadius: 5,*/}
+                    {/*      padding: 4,*/}
+                    {/*      backgroundColor: colorConfig.store.disableButton,*/}
+                    {/*    }}>*/}
+                    {/*    <Text*/}
+                    {/*      style={{*/}
+                    {/*        fontSize: 10,*/}
+                    {/*        color: colorConfig.store.defaultColor,*/}
+                    {/*      }}>*/}
+                    {/*      Default*/}
+                    {/*    </Text>*/}
+                    {/*  </View>*/}
+                    {/*) : null}*/}
                   </View>
                 </View>
                 {item.recipient && (
