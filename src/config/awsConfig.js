@@ -43,8 +43,8 @@
 // export default awsConfig;
 
 import Config from 'react-native-config';
+import ENV from '../../env-ios';
 // import ENV from '../../env-ios-demo';
-import ENV from '../../env-ios-demo';
 import Base64 from 'Base64';
 import {Platform} from 'react-native';
 
