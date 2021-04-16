@@ -1031,6 +1031,9 @@ class Products2 extends Component {
           // });
         }
         this.products.push(categories);
+        if (response.dataLength === 0) {
+          this.loadMoreCategory();
+        }
       }
       return idxCategory;
     } catch (e) {
