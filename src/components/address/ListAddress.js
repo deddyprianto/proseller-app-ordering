@@ -295,9 +295,7 @@ class ListAddress extends Component {
         renderItem={({item}) => (
           <View style={styles.card}>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
-              <TouchableOpacity
-                style={{width: '85%'}}
-                onPress={() => this.selectAddress(item)}>
+              <View style={{width: '85%'}}>
                 <View style={[styles.cardContent]}>
                   <View
                     style={{
@@ -400,7 +398,7 @@ class ListAddress extends Component {
                     <Text style={styles.cardText}>No Location pinned.</Text>
                   </View>
                 )}
-              </TouchableOpacity>
+              </View>
               <View style={styles.outerPoint} />
             </View>
             <View

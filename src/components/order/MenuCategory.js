@@ -88,7 +88,7 @@ class MenuCategory extends Component {
       }
 
       const response = await this.props.dispatch(
-        getAllCategory(0, 10, this.props.parentCategoryID),
+        getAllCategory(0, 10, this.props.parentCategoryID || null),
       );
 
       if (response !== false) {
@@ -123,7 +123,7 @@ class MenuCategory extends Component {
       let skip = 10;
       for (let i = 0; i < Math.floor(length / 10); i++) {
         const response = await this.props.dispatch(
-          getAllCategory(skip, 10, this.props.parentCategoryID),
+          getAllCategory(skip, 10, this.props.parentCategoryID || null),
         );
         if (response !== false) {
           let categoriesData = response.data;
@@ -200,6 +200,7 @@ class MenuCategory extends Component {
   render() {
     let {categories, productPlaceholder} = this.state;
     const {categoryName} = this.props;
+
     return (
       <SafeAreaView style={styles.container}>
         {this.state.loading && <Loader />}
@@ -233,14 +234,16 @@ class MenuCategory extends Component {
             data={categories}
             numColumns={3}
             renderItem={(item, index) => {
-              return (
-                <GridItem
-                  key={index}
-                  item={item}
-                  productPlaceholder={productPlaceholder}
-                  onPress={() => this.updateCategory(item.item, item.index)}
-                />
-              );
+              if (item.item && item.item.name) {
+                return (
+                  <GridItem
+                    key={index}
+                    item={item}
+                    productPlaceholder={productPlaceholder}
+                    onPress={() => this.updateCategory(item.item, item.index)}
+                  />
+                );
+              }
             }}
             keyExtractor={(item, index) => index.toString()}
           />

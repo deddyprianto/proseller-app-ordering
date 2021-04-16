@@ -383,9 +383,9 @@ class AddAddress extends Component {
                   }}>
                   <Text
                     style={{
-                      fontSize: 14,
+                      fontSize: Platform.OS === 'ios' ? 13 : 14,
                       fontFamily: 'Poppins-Regular',
-                      marginTop: 3,
+                      marginTop: Platform.OS === 'ios' ? 3 : 5,
                     }}>
                     {this.state.phoneNumber}
                   </Text>
@@ -779,7 +779,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: colorConfig.store.titleSelected,
     marginTop: 20,
-    paddingBottom: 7
+    paddingBottom: 7,
   },
   input: {
     borderBottomWidth: 0.7,
