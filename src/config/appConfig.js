@@ -5,6 +5,7 @@ const appConfig = {
   appVersion: 'Version 1.1',
   // image company
   appLogo: require('../../assets/img/logo2.png'),
+  splashLogo: require('../../assets/img/splash.jpg'),
   appLogo3D: require('../../assets/img/logo_3D.png'),
   appLogoQR: require('../../assets/img/logo.jpg'),
   appBackground: require('../../assets/img/bg.png'),
@@ -12,7 +13,7 @@ const appConfig = {
   appImageNull: require('../../assets/img/logo.jpg'),
   userQRCode: require('../../assets/img/qrcode.jpg'),
   foodPlaceholder: require('../../assets/img/food-placeholder.jpg'),
-  welcomeLogo: require('../../assets/img/welcome-logo.jpg'),
+  welcomeLogo: require('../../assets/img/welcome-logo.png'),
   dbsLogo: require('../../assets/img/dbs.png'),
   // button
   appButtonSignin: require('../../assets/img/button_sigin.png'),
