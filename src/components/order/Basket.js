@@ -413,7 +413,7 @@ class Basket extends Component {
       }
 
       if (!isEmptyObject(dataOutlet)) {
-        if (!isEmptyData(dataOutlet.maxDays) || dataOutlet.maxDays === 0) {
+        if (!dataOutlet.maxDays || dataOutlet.maxDays === 0) {
           dataOutlet.maxDays = 90;
         }
       }
@@ -881,7 +881,7 @@ class Basket extends Component {
   };
 
   calculateDeliveryFee = async item => {
-    const {dataBasket, selectedAddress, orderType} = this.props;
+    const {dataBasket, selectedAddress, orderType, outletSingle} = this.props;
     try {
       const payload = {
         cartID: dataBasket.id,
@@ -892,7 +892,36 @@ class Basket extends Component {
       const response = await this.props.dispatch(getDeliveryFee(payload));
       // console.log(response, 'responseresponseresponse');
       if (response !== false) {
-        let selectedProvider = response.data.dataProvider[0];
+        let selectedProvider = {};
+
+        try {
+          if (
+            response.data.dataProvider[0] &&
+            response.data.dataProvider[0].calculationMode === 'DISTANCE'
+          ) {
+            const distance = await this.getDistanceManual(
+              outletSingle,
+              selectedAddress.coordinate,
+            );
+
+            if (
+              distance <= Number(response.data.dataProvider[0].maximumCoverage)
+            ) {
+              selectedProvider = response.data.dataProvider[0];
+            }
+          }
+
+          if (isEmptyObject(selectedProvider)) {
+            const findProvider = response.data.dataProvider.find(
+              item => item.calculationMode !== 'DISTANCE',
+            );
+            if (findProvider) selectedProvider = findProvider;
+            else selectedProvider = response.data.dataProvider[0];
+          }
+        } catch (e) {
+          selectedProvider = response.data.dataProvider[0];
+        }
+
         if (!isEmptyArray(response.data.dataProvider)) {
           const findDefault = response.data.dataProvider.find(
             item => item.isDefault === true,
@@ -1688,6 +1717,7 @@ class Basket extends Component {
       // set url to pay
       let url;
       const {orderType, tableType, dataBasket, selectedAddress} = this.props;
+      pembayaran.orderingMode = orderType;
       if (
         orderType == 'TAKEAWAY' ||
         orderType == 'DELIVERY' ||
@@ -2451,6 +2481,7 @@ class Basket extends Component {
     await this.setState({
       timePickup: null,
       datePickup,
+      isTimeslotAvailable: false,
     });
     this.props.dispatch(selectedAddress(undefined));
     // if (type === 'DELIVERY' && !isEmptyObject(this.props.selectedAddress)) {

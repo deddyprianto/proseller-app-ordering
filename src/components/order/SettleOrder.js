@@ -2914,6 +2914,7 @@ class SettleOrder extends Component {
       detailPoint,
       campign,
       balance,
+      pembayaran,
     } = this.props;
     const {outlet} = this.state;
 
@@ -3522,7 +3523,9 @@ class SettleOrder extends Component {
               </Text>
             </TouchableOpacity>
 
-            {outlet.enablePayAtPOS == true ? (
+            {outlet.enablePayAtPOS === true &&
+            pembayaran.orderingMode !== 'DELIVERY' &&
+            pembayaran.orderingMode !== 'STORECHECKOUT' ? (
               <View style={{marginTop: 20}}>
                 <Text
                   style={{
