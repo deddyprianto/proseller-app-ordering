@@ -3151,7 +3151,7 @@ class Products2 extends Component {
                           marginLeft: 10,
                           fontFamily: 'Poppins-Regular',
                         }}>
-                        Search in {this.state.item.name.substr(0, 20)}
+                        Search in {this.state.item.name.substr(0, 15)}
                       </Text>
                     </TouchableOpacity>
                     <TouchableOpacity
