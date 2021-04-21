@@ -1143,7 +1143,6 @@ export default class ModalOrder extends Component {
 
                 {this.getImageUrl(this.props.product) != false ? (
                   <ProgressiveImage
-                    resizeMode="cover"
                     style={styles.imageModal}
                     source={this.getImageUrl(this.props.product)}
                   />
@@ -1533,9 +1532,9 @@ const styles = StyleSheet.create({
     resizeMode: 'cover',
   },
   imageModal: {
-    height: Dimensions.get('window').height / 3,
+    height: Dimensions.get('window').height / 2.5,
     // flex: 1,
-    resizeMode: 'cover',
+    resizeMode: 'contain',
     width: '100%',
   },
   detailItem: {

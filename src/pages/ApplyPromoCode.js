@@ -76,21 +76,17 @@ class ApplyPromoCode extends Component {
       const {promoCode} = this.state;
       this.setState({loading: true});
       const voucher = await this.props.dispatch(checkPromo(promoCode));
-
+      console.log(this.props.dataVoucher, 'this.props.dataVoucher');
       if (voucher.status !== false) {
         try {
-          if (
-            !isEmptyArray(this.props.dataVoucher) &&
-            voucher.validity &&
-            voucher.validity.canOnlyUseOneTime === true
-          ) {
+          if (!isEmptyArray(this.props.dataVoucher)) {
             const find = this.props.dataVoucher.find(
-              item => item.id === voucher.id,
+              item => item.isVoucherPromoCode === true,
             );
             if (find) {
               Alert.alert(
                 'Sorry',
-                'You have used this promo code on this order.',
+                'Promo code can only be used once in one order.',
               );
               this.setState({loading: false});
               return;

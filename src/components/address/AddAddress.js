@@ -83,7 +83,7 @@ class AddAddress extends Component {
     if (this.props.from == 'basket') {
       Actions.popTo(this.props.from);
     } else {
-      Actions.replace(this.props.from);
+      Actions.popTo(this.props.from);
     }
   };
 

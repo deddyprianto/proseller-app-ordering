@@ -168,7 +168,7 @@ class Basket extends Component {
   componentDidMount = async () => {
     await this.setState({loading: true});
     await this.initializeCartData();
-    this.props.dispatch(selectedAddress(undefined));
+    // this.props.dispatch(selectedAddress(undefined));
     const productPlaceholder = await this.props.dispatch(
       getSetting('ProductPlaceholder'),
     );
@@ -194,11 +194,15 @@ class Basket extends Component {
       // await this.getDeliveryAddress();
       await this.getBasket();
 
-      await this.setState({loading: false});
       if (this.props.dataBasket !== undefined) {
+        if (!isEmptyObject(this.props.selectedAddress)) {
+          await this.calculateDeliveryFee();
+        }
+        await this.setState({loading: false});
         let outletID = this.props.dataBasket.outlet.id;
         await this.initializePickupTime();
         await this.getTimeslot(outletID, this.props.orderType);
+
         Promise.all([
           this.props.dispatch(getOutletById(outletID)),
           this.props.dispatch(dataPoint()),
@@ -1053,15 +1057,18 @@ class Basket extends Component {
       this.backHandler.remove();
       clearInterval(this.interval);
       clearInterval(this.intervalOutlet);
-      this.props.dispatch(selectedAddress(undefined));
+      // this.props.dispatch(selectedAddress(undefined));
     } catch (e) {}
 
     try {
       if (isEmptyObject(this.props.dataBasket)) {
         this.props.dispatch(setOrderType(undefined));
       }
-      this.props.dispatch(selectedAddress(undefined));
     } catch (e) {}
+
+    if (isEmptyObject(this.props.dataBasket)) {
+      this.props.dispatch(selectedAddress(undefined));
+    }
   }
 
   handleBackPress = () => {
@@ -3153,7 +3160,7 @@ class Basket extends Component {
         taxAmountText = 'Tax Amount (Inclusive)';
       }
     } catch (e) {}
-
+    console.log(this.props.selectedAddress, 'this.props.selectedAddress');
     return (
       <SafeAreaView style={styles.container}>
         <ModalOrder

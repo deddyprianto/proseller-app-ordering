@@ -385,87 +385,87 @@ class Products2 extends Component {
     }
   };
 
-  renderDeliveryInfo = () => {
-    const {item} = this.state;
-    const data = item.orderValidation.delivery;
-    let text1 = '';
-    let text2 = '';
-    if (data.minQty > 0) {
-      text1 = `Minimum item quantity is ${data.minQty}`;
-    }
-    if (data.maxQty > 0) {
-      text1 = `Maximum item quantity is ${data.maxQty}`;
-    }
-    if (data.minQty > 0 && data.maxQty > 0) {
-      text1 = `Item quantity range ${data.minQty} to ${data.maxQty} items`;
-    }
-
-    if (data.minAmount > 0) {
-      text2 = `Minimum amount is ${CurrencyFormatter(data.minAmount)}`;
-    }
-    if (data.maxAmount > 0) {
-      text2 = `Maximum amount is ${CurrencyFormatter(data.maxAmount)}`;
-    }
-    if (data.minAmount > 0 && data.maxAmount > 0) {
-      text2 = `Range amount is ${CurrencyFormatter(
-        data.minAmount,
-      )} to ${CurrencyFormatter(data.maxAmount)}`;
-    }
-    return (
-      <Dialog
-        dismissable={false}
-        visible={this.state.deliveryInfo}
-        onDismiss={() => {
-          this.setState({deliveryInfo: false});
-        }}>
-        <Dialog.Content>
-          <Text
-            style={{
-              textAlign: 'center',
-              fontFamily: 'Poppins-Medium',
-              fontSize: 18,
-              color: colorConfig.store.defaultColor,
-            }}>
-            Delivery Info
-          </Text>
-
-          <View
-            style={{
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginVertical: 15,
-            }}>
-            <Icon
-              size={80}
-              name={Platform.OS === 'ios' ? 'ios-car' : 'md-car'}
-              style={{color: colorConfig.store.secondaryColor}}
-            />
-            <Text style={styles.textInfoDelivery}>{text1}</Text>
-            <Text style={styles.textInfoDelivery}>{text2}</Text>
-          </View>
-
-          <TouchableOpacity
-            onPress={() => this.setState({deliveryInfo: false})}
-            style={{
-              width: '100%',
-              borderRadius: 5,
-              backgroundColor: colorConfig.store.defaultColor,
-              padding: 10,
-            }}>
-            <Text
-              style={{
-                color: 'white',
-                fontFamily: 'Poppins-Medium',
-                textAlign: 'center',
-                fontSize: 16,
-              }}>
-              Got it
-            </Text>
-          </TouchableOpacity>
-        </Dialog.Content>
-      </Dialog>
-    );
-  };
+  // renderDeliveryInfo = () => {
+  //   const {item} = this.state;
+  //   const data = item.orderValidation.delivery;
+  //   let text1 = '';
+  //   let text2 = '';
+  //   if (data.minQty > 0) {
+  //     text1 = `Minimum item quantity is ${data.minQty}`;
+  //   }
+  //   if (data.maxQty > 0) {
+  //     text1 = `Maximum item quantity is ${data.maxQty}`;
+  //   }
+  //   if (data.minQty > 0 && data.maxQty > 0) {
+  //     text1 = `Item quantity range ${data.minQty} to ${data.maxQty} items`;
+  //   }
+  //
+  //   if (data.minAmount > 0) {
+  //     text2 = `Minimum amount is ${CurrencyFormatter(data.minAmount)}`;
+  //   }
+  //   if (data.maxAmount > 0) {
+  //     text2 = `Maximum amount is ${CurrencyFormatter(data.maxAmount)}`;
+  //   }
+  //   if (data.minAmount > 0 && data.maxAmount > 0) {
+  //     text2 = `Range amount is ${CurrencyFormatter(
+  //       data.minAmount,
+  //     )} to ${CurrencyFormatter(data.maxAmount)}`;
+  //   }
+  //   return (
+  //     <Dialog
+  //       dismissable={false}
+  //       visible={this.state.deliveryInfo}
+  //       onDismiss={() => {
+  //         this.setState({deliveryInfo: false});
+  //       }}>
+  //       <Dialog.Content>
+  //         <Text
+  //           style={{
+  //             textAlign: 'center',
+  //             fontFamily: 'Poppins-Medium',
+  //             fontSize: 18,
+  //             color: colorConfig.store.defaultColor,
+  //           }}>
+  //           Delivery Info
+  //         </Text>
+  //
+  //         <View
+  //           style={{
+  //             alignItems: 'center',
+  //             justifyContent: 'center',
+  //             marginVertical: 15,
+  //           }}>
+  //           <Icon
+  //             size={80}
+  //             name={Platform.OS === 'ios' ? 'ios-car' : 'md-car'}
+  //             style={{color: colorConfig.store.secondaryColor}}
+  //           />
+  //           <Text style={styles.textInfoDelivery}>{text1}</Text>
+  //           <Text style={styles.textInfoDelivery}>{text2}</Text>
+  //         </View>
+  //
+  //         <TouchableOpacity
+  //           onPress={() => this.setState({deliveryInfo: false})}
+  //           style={{
+  //             width: '100%',
+  //             borderRadius: 5,
+  //             backgroundColor: colorConfig.store.defaultColor,
+  //             padding: 10,
+  //           }}>
+  //           <Text
+  //             style={{
+  //               color: 'white',
+  //               fontFamily: 'Poppins-Medium',
+  //               textAlign: 'center',
+  //               fontSize: 16,
+  //             }}>
+  //             Got it
+  //           </Text>
+  //         </TouchableOpacity>
+  //       </Dialog.Content>
+  //     </Dialog>
+  //   );
+  // };
 
   askUserToSelectOrderType = () => {
     const {intlData} = this.props;
@@ -3326,7 +3326,6 @@ class Products2 extends Component {
             this.renderProgressiveLoadItem()
           )}
         </>
-        {this.renderDeliveryInfo()}
       </SafeAreaView>
     );
   }

@@ -108,10 +108,16 @@ export default class PaymentAddVoucers extends Component {
       if (
         !isEmptyArray(dataVoucer) &&
         item.validity &&
-        item.validity.cannotBeMixed === true
+        item.validity.canOnlyUseOneTime === true
       ) {
-        Alert.alert('Sorry', `Cannot mix ${item.name} with other vouchers.`);
-        return;
+        const findVoucher = dataVoucer.find(data => data.id === item.id);
+        if (findVoucher) {
+          Alert.alert(
+            'Sorry',
+            `Voucher ${item.name} can only be used once for an order.`,
+          );
+          return;
+        }
       }
 
       if (!isEmptyArray(dataVoucer)) {
@@ -120,7 +126,9 @@ export default class PaymentAddVoucers extends Component {
         for (let i = 0; i < dataVoucer.length; i++) {
           if (
             dataVoucer[i].validity &&
-            dataVoucer[i].validity.cannotBeMixed === true
+            (dataVoucer[i].validity.cannotBeMixed === true ||
+              item.validity.cannotBeMixed) &&
+            dataVoucer[i].id !== item.id
           ) {
             cannotBeMixed = true;
             voucherName = dataVoucer[i].name;
