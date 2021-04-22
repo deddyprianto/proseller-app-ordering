@@ -1593,10 +1593,13 @@ class Basket extends Component {
                 `Maximum delivery coverage is ${
                   this.state.selectedProvider.maximumCoverage
                 } km`,
-                'Your delivery address exceeds our maximum shipping limits.',
+                'Your delivery address exceeds our maximum delivery limit. Please choose another delivery provider.',
                 [
                   {
                     text: 'Got it',
+                    onPress: () => {
+                      this.RBproviders.open();
+                    },
                   },
                 ],
                 {cancelable: false},

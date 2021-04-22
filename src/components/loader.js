@@ -5,7 +5,7 @@
  */
 
 import React, {Component} from 'react';
-import {StyleSheet, View, ActivityIndicator} from 'react-native';
+import {StyleSheet, View, ActivityIndicator, Dimensions} from 'react-native';
 
 export default class Loader extends Component {
   render() {
@@ -19,11 +19,11 @@ export default class Loader extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'rgba(0, 0, 0, 0.1)',
+    backgroundColor: 'rgba(0, 0, 0, 0.2)',
     position: 'absolute',
     width: '100%',
-    height: '100%',
-    zIndex: 99,
+    height: Dimensions.get('window').height,
+    zIndex: 100,
     justifyContent: 'center',
   },
 });

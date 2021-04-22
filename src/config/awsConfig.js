@@ -43,14 +43,14 @@
 // export default awsConfig;
 
 import Config from 'react-native-config';
-import ENV from '../../env-ios';
-// import ENV from '../../env-ios-demo';
+// import ENV from '../../env-ios';
+import ENV from '../../env-ios-demo';
 import Base64 from 'Base64';
 import {Platform} from 'react-native';
 
 let Data = {};
 // if we build to android, then read .env file
-if (Platform.OS == 'android') {
+if (Platform.OS === 'android') {
   Data = Config;
 } else {
   Data = ENV;
