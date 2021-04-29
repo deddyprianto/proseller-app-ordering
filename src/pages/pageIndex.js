@@ -13,7 +13,7 @@ import Rewards from './rewards';
 import Account from './account';
 import colorConfig from '../config/colorConfig';
 import {paymentRefNo} from '../actions/account.action';
-import Home from './Home';
+import Home from './home';
 import InputPhoneNumber from './InputPhoneNumber';
 import Inbox from './inbox';
 
