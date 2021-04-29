@@ -76,7 +76,6 @@ class ApplyPromoCode extends Component {
       const {promoCode} = this.state;
       this.setState({loading: true});
       const voucher = await this.props.dispatch(checkPromo(promoCode));
-      console.log(this.props.dataVoucher, 'this.props.dataVoucher');
       if (voucher.status !== false) {
         try {
           if (!isEmptyArray(this.props.dataVoucher)) {
@@ -84,10 +83,11 @@ class ApplyPromoCode extends Component {
               item => item.isVoucherPromoCode === true,
             );
             if (find) {
-              Alert.alert(
-                'Sorry',
-                'Promo code can only be used once in one order.',
-              );
+              let message = 'Promo code can only be used once in one order.';
+              if (find.id !== voucher.id) {
+                message = 'Can only apply 1 promo code in this transaction';
+              }
+              Alert.alert('Sorry', message);
               this.setState({loading: false});
               return;
             }
@@ -102,7 +102,7 @@ class ApplyPromoCode extends Component {
                 this.setState({loading: false});
                 Alert.alert(
                   'Sorry',
-                  `Cannot mix ${voucher.name} with other vouchers.`,
+                  "Promo code can't be used with this voucher.",
                 );
                 return;
               }
@@ -125,7 +125,7 @@ class ApplyPromoCode extends Component {
                   this.setState({loading: false});
                   Alert.alert(
                     'Sorry',
-                    `Cannot mix ${voucherName} with other vouchers.`,
+                    "Promo code can't be used with this voucher.",
                   );
                   return;
                 }

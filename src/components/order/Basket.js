@@ -919,8 +919,11 @@ class Basket extends Component {
             const findProvider = response.data.dataProvider.find(
               item => item.calculationMode !== 'DISTANCE',
             );
-            if (findProvider) selectedProvider = findProvider;
-            else selectedProvider = response.data.dataProvider[0];
+            if (findProvider) {
+              selectedProvider = findProvider;
+            } else {
+              selectedProvider = response.data.dataProvider[0];
+            }
           }
         } catch (e) {
           selectedProvider = response.data.dataProvider[0];
@@ -1769,7 +1772,8 @@ class Basket extends Component {
           }
 
           if (this.state.timePickup === null) {
-            pembayaran.orderActionTime = new Date().getHours() + 1;
+            let hour = new Date().getHours() + 1;
+            pembayaran.orderActionTime = `${hour}:00`;
           } else {
             pembayaran.orderActionTime = this.state.timePickup.substr(0, 5);
           }

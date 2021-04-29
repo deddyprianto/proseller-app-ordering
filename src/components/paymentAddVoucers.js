@@ -123,24 +123,39 @@ export default class PaymentAddVoucers extends Component {
       if (!isEmptyArray(dataVoucer)) {
         let cannotBeMixed = false;
         let voucherName = '';
+        let postfix = 'this voucher.';
         for (let i = 0; i < dataVoucer.length; i++) {
           if (
             dataVoucer[i].validity &&
-            (dataVoucer[i].validity.cannotBeMixed === true ||
-              item.validity.cannotBeMixed) &&
+            dataVoucer[i].validity.cannotBeMixed === true &&
             dataVoucer[i].id !== item.id
           ) {
             cannotBeMixed = true;
             voucherName = dataVoucer[i].name;
+
+            if (dataVoucer[i].isVoucherPromoCode) {
+              postfix = 'this promo code.';
+            }
+            break;
+          }
+
+          if (
+            dataVoucer[i].validity &&
+            item.validity.cannotBeMixed &&
+            dataVoucer[i].id !== item.id
+          ) {
+            cannotBeMixed = true;
+            voucherName = item.name;
+
+            if (dataVoucer[0].isVoucherPromoCode) {
+              postfix = 'this promo code.';
+            }
             break;
           }
         }
 
         if (cannotBeMixed === true) {
-          Alert.alert(
-            'Sorry',
-            `Cannot mix ${voucherName} with other vouchers.`,
-          );
+          Alert.alert('Sorry', `Cannot mix ${voucherName} with ${postfix}`);
           return;
         }
       }

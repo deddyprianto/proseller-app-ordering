@@ -2918,6 +2918,10 @@ class SettleOrder extends Component {
     } = this.props;
     const {outlet} = this.state;
 
+    console.log(campign, 'campign');
+    console.log(detailPoint, 'detailPoint');
+    console.log(this.props.campaignActive, '{this.props.campaignActive');
+
     return (
       <SafeAreaView style={styles.container}>
         {this.state.loading && <LoaderDarker />}
@@ -3170,6 +3174,49 @@ class SettleOrder extends Component {
                     }}
                   />
                 </TouchableOpacity>
+                {!isEmptyArray(this.state.dataVoucer)
+                  ? this.state.dataVoucer.map((item, i) =>
+                      item.isVoucher === true ||
+                      item.isVoucherPromoCode === true ? (
+                        <View
+                          style={{
+                            height: !item.isVoucherPromoCode ? 0 : 'auto',
+                            margin: 5,
+                            marginTop: !item.isVoucherPromoCode ? 0 : 10,
+                            flexDirection: 'row',
+                            justifyContent: 'space-between',
+                          }}>
+                          <Text
+                            style={{
+                              fontSize: 15,
+                              fontFamily: 'Poppins-Medium',
+                              color: colorConfig.store.secondaryColor,
+                            }}>
+                            {item.name}
+                          </Text>
+                          {item.isVoucherPromoCode && (
+                            <View>
+                              <TouchableOpacity
+                                onPress={() => this.cencelOneVoucher(i)}
+                                style={{
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                }}>
+                                <Text
+                                  style={{
+                                    color: colorConfig.store.colorError,
+                                    fontFamily: 'Poppins-Medium',
+                                    fontSize: 14,
+                                  }}>
+                                  Cancel
+                                </Text>
+                              </TouchableOpacity>
+                            </View>
+                          )}
+                        </View>
+                      ) : null,
+                    )
+                  : null}
               </View>
             )}
             {this.props.paySVC ||
@@ -3219,8 +3266,9 @@ class SettleOrder extends Component {
                       item.isVoucherPromoCode === true ? (
                         <View
                           style={{
+                            height: item.isVoucherPromoCode ? 0 : 'auto',
                             margin: 5,
-                            marginTop: 10,
+                            marginTop: item.isVoucherPromoCode ? 0 : 10,
                             flexDirection: 'row',
                             justifyContent: 'space-between',
                           }}>
@@ -3232,23 +3280,25 @@ class SettleOrder extends Component {
                             }}>
                             {item.name}
                           </Text>
-                          <TouchableOpacity>
-                            <TouchableOpacity
-                              onPress={() => this.cencelOneVoucher(i)}
-                              style={{
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                              }}>
-                              <Text
+                          {!item.isVoucherPromoCode && (
+                            <View>
+                              <TouchableOpacity
+                                onPress={() => this.cencelOneVoucher(i)}
                                 style={{
-                                  color: colorConfig.store.colorError,
-                                  fontFamily: 'Poppins-Medium',
-                                  fontSize: 14,
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
                                 }}>
-                                Cancel
-                              </Text>
-                            </TouchableOpacity>
-                          </TouchableOpacity>
+                                <Text
+                                  style={{
+                                    color: colorConfig.store.colorError,
+                                    fontFamily: 'Poppins-Medium',
+                                    fontSize: 14,
+                                  }}>
+                                  Cancel
+                                </Text>
+                              </TouchableOpacity>
+                            </View>
+                          )}
                         </View>
                       ) : null,
                     )

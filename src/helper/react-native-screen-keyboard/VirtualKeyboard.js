@@ -30,7 +30,6 @@ class VirtualKeyboard extends Component {
       ) {
         text = this.props.defaultText.toString();
       }
-      console.log(text, 'ini textnya');
     } catch (e) {}
 
     this.state = {
@@ -65,7 +64,9 @@ class VirtualKeyboard extends Component {
    */
   componentDidUpdate(prevProps, prevState) {
     if (prevState.text !== this.state.text) {
-      if (this.props.onChange) this.props.onChange(this.state.text);
+      if (this.props.onChange) {
+        this.props.onChange(this.state.text);
+      }
     }
   }
 
@@ -181,7 +182,9 @@ class VirtualKeyboard extends Component {
         text: this.resolveKeyDownVirtualKeyboard(this.state.text, value),
       });
 
-      if (onKeyDown) onKeyDown(value);
+      if (onKeyDown) {
+        onKeyDown(value);
+      }
     };
 
     // Custom functions for the keyboard key
@@ -215,7 +218,9 @@ class VirtualKeyboard extends Component {
           rippleColor={'#000'}
           key={column}
           onPressIn={() => {
-            if (vibration) Vibration.vibrate(50);
+            if (vibration) {
+              Vibration.vibrate(50);
+            }
 
             keyboardFuncSet[row][column]
               ? keyboardFuncSet[row][column]()
@@ -255,7 +260,9 @@ class VirtualKeyboard extends Component {
         return newString.substring(0, newString.length - 1);
       }
       case 'custom':
-        if (this.props.onCustomKey) this.props.onCustomKey(string);
+        if (this.props.onCustomKey) {
+          this.props.onCustomKey(string);
+        }
         return string;
       default: {
         return newString.concat(char);
@@ -274,7 +281,9 @@ class VirtualKeyboard extends Component {
         message,
       },
       () => {
-        if (this.hideMessageTimeout) clearTimeout(this.hideMessageTimeout);
+        if (this.hideMessageTimeout) {
+          clearTimeout(this.hideMessageTimeout);
+        }
 
         this.hideMessageTimeout = setTimeout(() => {
           this.clearMessage();

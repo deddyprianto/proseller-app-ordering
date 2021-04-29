@@ -117,38 +117,38 @@ class AllVouchers extends Component {
                         <View style={{alignItems: 'center'}}>
                           <Image
                             style={
-                              item['image'] != '' && item['image'] != undefined
+                              item.image != '' && item.image != undefined
                                 ? styles.voucherImage1
                                 : styles.voucherImage2
                             }
                             source={
-                              item['image'] != '' && item['image'] != undefined
-                                ? {uri: item['image']}
+                              item.image != '' && item.image != undefined
+                                ? {uri: item.image}
                                 : appConfig.appImageNull
                             }
                           />
                         </View>
                         <View style={styles.voucherDetail}>
-                          <Text style={styles.nameVoucher}>{item['name']}</Text>
+                          <Text style={styles.nameVoucher}>{item.name}</Text>
 
                           <View style={{flexDirection: 'row'}}>
                             <Text style={styles.descPrice}>
-                              - Redeem Value {item['redeemValue']} Points
+                              - Redeem Value {item.redeemValue} Points
                             </Text>
                           </View>
 
-                          {item.price && (
+                          {item.price && item.price > 0 ? (
                             <View style={{flexDirection: 'row'}}>
                               <Text style={styles.descPrice}>
-                                - Purchase Value ${item['price']}
+                                - Purchase Value ${item.price}
                               </Text>
                             </View>
-                          )}
+                          ) : null}
 
                           <View style={{flexDirection: 'row'}}>
                             <Text style={styles.descVoucher}>
-                              {item['voucherDesc'] != null
-                                ? item['voucherDesc']
+                              {item.voucherDesc != null
+                                ? item.voucherDesc
                                 : 'No description for this voucher'}
                             </Text>
                           </View>

@@ -82,7 +82,9 @@ class VoucherDetail extends Component {
     const {backupOutlet} = this.state;
     let {defaultOutlet} = this.props;
 
-    if (isEmptyObject(defaultOutlet)) defaultOutlet = backupOutlet;
+    if (isEmptyObject(defaultOutlet)) {
+      defaultOutlet = backupOutlet;
+    }
 
     let returnData = {
       outlet: defaultOutlet,
@@ -141,7 +143,7 @@ class VoucherDetail extends Component {
       showAlert: true,
       cancelButton: true,
       pesanAlert: `${this.intlData.messages.spendPoint} ${
-        dataVoucher['redeemValue']
+        dataVoucher.redeemValue
       } point`,
       titleAlert: `${this.intlData.messages.redeemVoucher} ?`,
     });
@@ -508,7 +510,9 @@ class VoucherDetail extends Component {
     const {backupOutlet} = this.state;
     let {defaultOutlet} = this.props;
 
-    if (isEmptyObject(defaultOutlet)) defaultOutlet = backupOutlet;
+    if (isEmptyObject(defaultOutlet)) {
+      defaultOutlet = backupOutlet;
+    }
 
     let details = [];
     // create dataPay item
@@ -737,15 +741,15 @@ class VoucherDetail extends Component {
               <Image
                 resizeMode="cover"
                 style={
-                  this.props.dataVoucher['image'] != '' &&
-                  this.props.dataVoucher['image'] != undefined
+                  this.props.dataVoucher.image != '' &&
+                  this.props.dataVoucher.image != undefined
                     ? styles.voucherImage1
                     : styles.voucherImage2
                 }
                 source={
-                  this.props.dataVoucher['image'] != '' &&
-                  this.props.dataVoucher['image'] != undefined
-                    ? {uri: this.props.dataVoucher['image']}
+                  this.props.dataVoucher.image != '' &&
+                  this.props.dataVoucher.image != undefined
+                    ? {uri: this.props.dataVoucher.image}
                     : appConfig.appImageNull
                 }
               />
@@ -759,7 +763,7 @@ class VoucherDetail extends Component {
                   paddingBottom: 10,
                 }}>
                 <Text style={styles.nameVoucher}>
-                  {this.props.dataVoucher['name']}
+                  {this.props.dataVoucher.name}
                 </Text>
                 <View
                   style={{
@@ -780,8 +784,8 @@ class VoucherDetail extends Component {
                     }}
                   />
                   <Text style={styles.descVoucher}>
-                    {this.props.dataVoucher['voucherDesc'] != null
-                      ? this.props.dataVoucher['voucherDesc']
+                    {this.props.dataVoucher.voucherDesc != null
+                      ? this.props.dataVoucher.voucherDesc
                       : 'No description for this voucher'}
                   </Text>
                 </View>
@@ -799,14 +803,14 @@ class VoucherDetail extends Component {
                       marginRight: 10,
                     }}
                   />
-                  {this.props.dataVoucher['validity']['allDays'] ? (
+                  {this.props.dataVoucher.validity.allDays ? (
                     <Text style={styles.descVoucher}>
                       {intlData.messages.voucherValid}
                     </Text>
                   ) : (
                     <Text style={styles.descVoucherTime}>
                       {intlData.messages.voucherValidOn}
-                      {this.props.dataVoucher['validity']['activeWeekDays']
+                      {this.props.dataVoucher.validity.activeWeekDays
                         .filter(item => item.active == true)
                         .map(data => (
                           <Text>
@@ -819,7 +823,7 @@ class VoucherDetail extends Component {
                     </Text>
                   )}
                 </View>
-                {this.props.dataVoucher['taxRuleID'] === 'EXC-TAX' && (
+                {this.props.dataVoucher.taxRuleID === 'EXC-TAX' && (
                   <View
                     style={{
                       flexDirection: 'row',
@@ -882,19 +886,19 @@ class VoucherDetail extends Component {
             </TouchableOpacity>
 
             {this.props.dataVoucher.price &&
-              this.props.dataVoucher.redeemValue && (
-                <Text
-                  style={{
-                    textAlign: 'center',
-                    fontFamily: 'Poppins-Regular',
-                    marginTop: 15,
-                  }}>
-                  {' '}
-                  Or{' '}
-                </Text>
-              )}
+            this.props.dataVoucher.redeemValue ? (
+              <Text
+                style={{
+                  textAlign: 'center',
+                  fontFamily: 'Poppins-Regular',
+                  marginTop: 15,
+                }}>
+                {' '}
+                Or{' '}
+              </Text>
+            ) : null}
 
-            {!isEmptyObject(detailPurchase) && this.props.dataVoucher.price && (
+            {!isEmptyObject(detailPurchase) && this.props.dataVoucher.price ? (
               <TouchableOpacity
                 onPress={() => {
                   this.setState({prompQuantityPrice: true, amountRedeem: 1});
@@ -917,7 +921,7 @@ class VoucherDetail extends Component {
                   Purchase ${detailPurchase.totalNettAmount}
                 </Text>
               </TouchableOpacity>
-            )}
+            ) : null}
           </View>
         </ScrollView>
         <AwesomeAlert
