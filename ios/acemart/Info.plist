@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>SKIP-THE-QUEUE (demo)</string>
+	<string>SKIP-THE-QUEUE</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -26,10 +26,10 @@
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>acemart-demo-crm</string>
+			<string>acemart-crm</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>acemart-demo-crm</string>
+				<string>acemart-crm</string>
 			</array>
 		</dict>
 	</array>

@@ -869,7 +869,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.edgeworks.acemart-demo";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.edgeworks.acemart-app";
 				PRODUCT_NAME = "Ace Mart";
 				SWIFT_OBJC_BRIDGING_HEADER = "acemart-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -899,7 +899,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.edgeworks.acemart-demo";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.edgeworks.acemart-app";
 				PRODUCT_NAME = "Ace Mart";
 				SWIFT_OBJC_BRIDGING_HEADER = "acemart-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
