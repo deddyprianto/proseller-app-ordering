@@ -298,7 +298,7 @@ class EditAddress extends Component {
           <TextInput
             style={styles.input}
             autoFocus={true}
-            keyboardType={'text'}
+            keyboardType={'default'}
             defaultValue={this.state.addressName}
             onChangeText={text =>
               this.setState({
@@ -344,7 +344,7 @@ class EditAddress extends Component {
           <Text style={styles.textInput}>Recipient</Text>
           <TextInput
             style={styles.input}
-            keyboardType={'text'}
+            keyboardType={'default'}
             defaultValue={this.state.recipient}
             onChangeText={text =>
               this.setState({
@@ -504,7 +504,7 @@ class EditAddress extends Component {
           <Text style={styles.textInput}>Street Name</Text>
           <TextInput
             style={styles.input}
-            keyboardType={'text'}
+            keyboardType={'default'}
             defaultValue={this.state.streetName}
             onChangeText={text =>
               this.setState({
@@ -516,7 +516,7 @@ class EditAddress extends Component {
           <Text style={styles.textInput}>Unit No</Text>
           <TextInput
             style={styles.input}
-            keyboardType={'text'}
+            keyboardType={'default'}
             defaultValue={this.state.unitNo}
             onChangeText={text =>
               this.setState({
