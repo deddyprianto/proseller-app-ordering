@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, {Component} from 'react';
 import {
   View,
@@ -17,7 +18,7 @@ import {
 
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
-import {RNCamera} from 'react-native-camera';
+import {BarCodeScanner} from 'expo-barcode-scanner';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
 import colorConfig from '../config/colorConfig';
@@ -38,10 +39,10 @@ class ScanBarcode extends Component {
       titleAlert: '',
       loadingDialog: false,
       enterBarcode: false,
-      camera: {
-        type: RNCamera.Constants.Type.back,
-        flashMode: RNCamera.Constants.FlashMode.off,
-      },
+      // camera: {
+      //   type: RNCamera.Constants.Type.back,
+      //   flashMode: RNCamera.Constants.FlashMode.off,
+      // },
       flashStatus: false,
       barcode: '',
     };
@@ -127,7 +128,7 @@ class ScanBarcode extends Component {
   enterManualBarcode = () => {
     return (
       <Dialog
-        dismissable={false}
+        dismissable={true}
         visible={this.state.enterBarcode}
         onDismiss={() => {
           this.setState({enterBarcode: false});
@@ -177,8 +178,11 @@ class ScanBarcode extends Component {
     );
   };
 
-  onBarCodeRead = async scanResult => {
-    if (scanResult.data != null) {
+  onBarCodeRead = async ({type, data}) => {
+    if (data) {
+      let scanResult = {
+        data: data,
+      };
       this.setState({enterBarcode: false});
       if (!this.barcodeCodes.includes(scanResult.data)) {
         await this.setState({loadingDialog: true});
@@ -210,44 +214,26 @@ class ScanBarcode extends Component {
     return true;
   };
 
-  toggleFlash = () => {
-    const {flashStatus} = this.state;
-    let statusFlashMode = RNCamera.Constants.FlashMode.torch;
-    if (flashStatus) {
-      statusFlashMode = RNCamera.Constants.FlashMode.off;
-    }
-    this.setState({
-      camera: {
-        type: RNCamera.Constants.Type.back,
-        flashMode: statusFlashMode,
-      },
-      flashStatus: !flashStatus,
-    });
-  };
+  // toggleFlash = () => {
+  //   const {flashStatus} = this.state;
+  //   let statusFlashMode = RNCamera.Constants.FlashMode.torch;
+  //   if (flashStatus) {
+  //     statusFlashMode = RNCamera.Constants.FlashMode.off;
+  //   }
+  //   this.setState({
+  //     camera: {
+  //       type: RNCamera.Constants.Type.back,
+  //       flashMode: statusFlashMode,
+  //     },
+  //     flashStatus: !flashStatus,
+  //   });
+  // };
 
   render() {
     const {flashStatus} = this.state;
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.container}>
-          <RNCamera
-            ref={ref => {
-              this.camera = ref;
-            }}
-            captureAudio={false}
-            defaultTouchToFocus
-            flashMode={this.state.camera.flashMode}
-            mirrorImage={false}
-            onBarCodeRead={e => this.onBarCodeRead(e)}
-            onFocusChanged={() => {}}
-            onZoomChanged={() => {}}
-            permissionDialogTitle={'Permission to use camera'}
-            permissionDialogMessage={
-              'We need your permission to use your camera phone to scan the product barcode.'
-            }
-            style={styles.preview}
-            type={this.state.camera.type}
-          />
           <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
             <Icon
               size={32}
@@ -261,40 +247,19 @@ class ScanBarcode extends Component {
             <Text style={styles.scanScreenMessage}>
               Please point your camera at the product barcode.
             </Text>
-            <View
+          </View>
+          <View style={styles.cameraWindow}>
+            <BarCodeScanner
+              onBarCodeScanned={this.onBarCodeRead}
               style={{
-                borderWidth: 2,
-                borderColor: 'red',
-                height: 300,
-                width: '90%',
-                borderRadius: 5,
-                marginTop: 60,
+                width: Dimensions.get('window').width - 50,
+                height: Dimensions.get('window').height / 1.6,
+                borderWidth: 1.3,
+                borderColor: colorConfig.store.defaultColor,
               }}
             />
-
-            <TouchableOpacity
-              onPress={this.toggleFlash}
-              style={{marginTop: 40}}>
-              {!flashStatus ? (
-                <Icon
-                  size={32}
-                  name={
-                    Platform.OS === 'ios' ? 'ios-flash-off' : 'md-flash-off'
-                  }
-                  style={{color: 'white', alignSelf: 'center'}}
-                />
-              ) : (
-                <Icon
-                  size={32}
-                  name={Platform.OS === 'ios' ? 'ios-flash' : 'md-flash'}
-                  style={{color: 'white', alignSelf: 'center'}}
-                />
-              )}
-              <Text style={styles.scanScreenMessage}>
-                {flashStatus ? 'Flash On' : 'Flash Off'}
-              </Text>
-            </TouchableOpacity>
           </View>
+
           <View style={[styles.overlay, styles.bottomOverlay]}>
             <Button
               onPress={() => {
@@ -315,6 +280,7 @@ class ScanBarcode extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: 'black',
   },
   preview: {
     flex: 1,
@@ -326,8 +292,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     margin: 10,
     marginLeft: 20,
-    position: 'absolute',
-    zIndex: 999,
     marginTop: 20,
   },
   btnBackText: {
@@ -337,15 +301,13 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   overlay: {
-    position: 'absolute',
+    // position: 'absolute',
     padding: 16,
     right: 0,
     left: 0,
     alignItems: 'center',
   },
   topOverlay: {
-    top: 50,
-    flex: 1,
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
@@ -369,6 +331,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     fontFamily: 'Poppins-Bold',
+  },
+  cameraWindow: {
+    justifyContent: 'center',
+    alignContent: 'center',
+    alignItems: 'center',
   },
 });
 

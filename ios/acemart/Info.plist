@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>SKIP-THE-QUEUE</string>
+	<string>SKIP-THE-QUEUE ( demo )</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -60,6 +60,8 @@
 	<string>Permission to access your location which is used to display the distance of the closest outlet from your position.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Permission to access your location which is used to display the distance of the closest outlet from your position.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Permission to access the microphone for barcode scanning purpose.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Avenir Roman.otf</string>
