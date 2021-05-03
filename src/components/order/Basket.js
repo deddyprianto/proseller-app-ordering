@@ -3300,7 +3300,9 @@ class Basket extends Component {
                                     ),
                                   )}`}{' '}
                                 </Text>
-                                {rowData.item.isPromotionApplied ? (
+                                {rowData.item.isPromotionApplied &&
+                                rowData.item.nettAmount <
+                                  rowData.item.grossAmount ? (
                                   <View style={{width: '29%', maxWidth: '29%'}}>
                                     <Text
                                       style={[

@@ -179,6 +179,9 @@ class ScanBarcode extends Component {
   };
 
   onBarCodeRead = async ({type, data}) => {
+    // 256 is item type QR Code
+    if (type === 256) return;
+    // console.log(type, 'type');
     if (data) {
       let scanResult = {
         data: data,
