@@ -45,10 +45,14 @@ class ScanBarcode extends Component {
       // },
       flashStatus: false,
       barcode: '',
+      hasPermission: null,
     };
   }
 
-  componentDidMount = async () => {};
+  componentDidMount = async () => {
+    const {status} = await BarCodeScanner.requestPermissionsAsync();
+    if (status === 'granted') await this.setState({hasPermission: true});
+  };
 
   componentWillUnmount() {
     try {
@@ -233,7 +237,19 @@ class ScanBarcode extends Component {
   // };
 
   render() {
-    const {flashStatus} = this.state;
+    const {flashStatus, hasPermission} = this.state;
+
+    if (hasPermission === null) {
+      return (
+        <View style={styles.container}>
+          <Text>Requesting for camera permission</Text>
+        </View>
+      );
+    }
+    if (hasPermission === false) {
+      return <Text>No access to camera</Text>;
+    }
+
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.container}>
