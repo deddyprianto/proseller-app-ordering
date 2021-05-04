@@ -3574,6 +3574,9 @@ class SettleOrder extends Component {
             </TouchableOpacity>
 
             {outlet.enablePayAtPOS === true &&
+            this.props.paySVC == undefined &&
+            this.props.payVoucher == undefined &&
+            this.props.payMembership == undefined &&
             pembayaran.orderingMode !== 'DELIVERY' &&
             pembayaran.orderingMode !== 'STORECHECKOUT' ? (
               <View style={{marginTop: 20}}>
