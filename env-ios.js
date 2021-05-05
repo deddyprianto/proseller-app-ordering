@@ -16,7 +16,7 @@ const ENV = {
 
   COUNTRY: 'Singapore',
 
-  COMPANY_NAME: 'U Stars',
+  COMPANY_NAME: 'Ace Mart',
 
   COMPANY_POLICY_URL: 'https://acemart.proseller.io',
 
