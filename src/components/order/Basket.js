@@ -3140,6 +3140,7 @@ class Basket extends Component {
 
   render() {
     const {intlData, dataBasket, orderType, tableType} = this.props;
+    console.log(dataBasket, 'dataBasket');
     let {outletSingle} = this.props;
     if (outletSingle == undefined || outletSingle == null) {
       outletSingle = {};

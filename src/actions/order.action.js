@@ -470,23 +470,38 @@ export const updateProductToBasket = (payload, previousData) => {
           return item.quantity !== 0;
         });
 
-        const response = await fetchApiOrder(
-          '/cart/build',
-          'POST',
-          cartOffline,
-          200,
-          token,
-        );
-        console.log(response, 'response build cart');
-        dispatch({
-          type: 'DATA_BASKET',
-          product: response.response.data,
-        });
-        dispatch({
-          type: 'OFFLINE_CART',
-          product: response.response.data,
-        });
-        return response;
+        if (cartOffline && !isEmptyArray(cartOffline.details)) {
+          const response = await fetchApiOrder(
+            '/cart/build',
+            'POST',
+            cartOffline,
+            200,
+            token,
+          );
+          console.log(response, 'response build cart');
+          dispatch({
+            type: 'DATA_BASKET',
+            product: response.response.data,
+          });
+          dispatch({
+            type: 'OFFLINE_CART',
+            product: response.response.data,
+          });
+          return response;
+        } else {
+          const response = {
+            status: true,
+          };
+          dispatch({
+            type: 'DATA_BASKET',
+            product: undefined,
+          });
+          dispatch({
+            type: 'OFFLINE_CART',
+            product: undefined,
+          });
+          return response;
+        }
       }
 
       // if remark is available, then add
@@ -638,7 +653,7 @@ export const addProductToBasket = payload => {
           token,
         );
       } else {
-        if (product !== undefined) {
+        if (product !== undefined && product !== null) {
           let cartOffline = product;
           cartOffline.details.push(payload.details[0]);
           payload = cartOffline;
@@ -714,7 +729,7 @@ export const getBasket = () => {
         },
       } = state;
 
-      const {
+      let {
         userReducer: {
           offlineCart: {offlineCart},
         },
@@ -723,6 +738,12 @@ export const getBasket = () => {
       let response = {};
 
       if (isLoggedIn !== true) {
+        try {
+          if (isEmptyArray(offlineCart.details)) {
+            offlineCart = undefined;
+          }
+        } catch (e) {}
+
         response = {
           success: true,
           response: {

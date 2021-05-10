@@ -114,7 +114,8 @@ class RewardsStamp extends Component {
               data[i]['reward']['imageURL'] != undefined &&
               data[i]['reward']['imageURL'] != null &&
               data[i]['reward']['imageURL'] != '-' &&
-              data[i]['reward']['imageURL'] != ''
+              data[i]['reward']['imageURL'] != '' &&
+              data[i]['stampsStatus'] === true
             ) {
               this.setState({imageStamps: data[i]['reward']['imageURL']});
               // return {uri: data[i]['reward']['imageURL']};
