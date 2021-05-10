@@ -141,8 +141,8 @@ android {
         applicationId "com.acemart"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 40
-        versionName "1.1.3"
+        versionCode 41
+        versionName "1.1.4"
         missingDimensionStrategy 'react-native-camera', 'general'
         resValue "string", "build_config_package", "com.acemart"
         multiDexEnabled true
@@ -193,21 +193,21 @@ android {
             dev {
                 minSdkVersion rootProject.ext.minSdkVersion
                 applicationId 'com.acemart.dev'
-                versionName "1.1.3"
+                versionName "1.1.4"
                 targetSdkVersion rootProject.ext.targetSdkVersion
                 resValue "string", "build_config_package", "com.acemart"
             }
             demo {
                 minSdkVersion rootProject.ext.minSdkVersion
                 applicationId 'com.acemart.demo'
-                versionName "1.1.3"
+                versionName "1.1.4"
                 targetSdkVersion rootProject.ext.targetSdkVersion
                 resValue "string", "build_config_package", "com.acemart"
             }
             app {
                 minSdkVersion rootProject.ext.minSdkVersion
                 applicationId 'com.acemart.app'
-                versionName "1.1.3"
+                versionName "1.1.4"
                 targetSdkVersion rootProject.ext.targetSdkVersion
                 resValue "string", "build_config_package", "com.acemart"
             }
