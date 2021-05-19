@@ -281,8 +281,16 @@ class ScanBarcode extends Component {
     }
 
     return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.container}>
+      <SafeAreaView
+        style={[
+          styles.container,
+          enterBarcode ? {backgroundColor: 'white'} : null,
+        ]}>
+        <View
+          style={[
+            styles.container,
+            enterBarcode ? {backgroundColor: 'white'} : null,
+          ]}>
           <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
             <Icon
               size={32}
