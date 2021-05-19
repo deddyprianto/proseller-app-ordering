@@ -1077,13 +1077,30 @@ export default class ModalOrder extends Component {
 
   renderPromotions = promotions => {
     return promotions.map(item => (
-      <View style={{flexDirection: 'row', marginHorizontal: 8, marginTop: 10}}>
+      <View
+        style={{
+          flexDirection: 'row',
+          opacity: 0.8,
+          marginHorizontal: 8,
+          marginTop: 20,
+          paddingVertical: 10,
+          paddingHorizontal: 5,
+          borderRadius: 8,
+          borderWidth: 0.6,
+          borderColor: colorConfig.store.defaultColor,
+          backgroundColor: colorConfig.store.disableButton,
+        }}>
         <Icon
-          size={25}
+          size={26}
           name={'tag'}
           style={{color: colorConfig.store.defaultColor, marginRight: 7}}
         />
-        <Text style={styles.textPromotion}>{item.name}</Text>
+        <View>
+          <Text style={styles.textPromotion}>{item.name}</Text>
+          {item.remark ? (
+            <Text style={styles.textPromotionDesc}>{item.remark}</Text>
+          ) : null}
+        </View>
       </View>
     ));
   };
@@ -1710,8 +1727,14 @@ const styles = StyleSheet.create({
   },
   textPromotion: {
     textTransform: 'capitalize',
+    fontFamily: 'Poppins-Bold',
+    fontSize: 14,
+    color: colorConfig.store.title,
+  },
+  textPromotionDesc: {
+    textTransform: 'capitalize',
     fontFamily: 'Poppins-Italic',
     fontSize: 13,
-    color: colorConfig.store.secondaryColor,
+    color: colorConfig.store.titleSelected,
   },
 });

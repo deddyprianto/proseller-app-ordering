@@ -71,7 +71,7 @@ const colorConfig = {
     titleSelected: theme.store.titleSelected,
     transparentColor: `rgba(${PRIMARY_COLOR_RGB}, 0.8)`,
     transparentBG: theme.store.transparentBG,
-    disableButton: `rgba(${PRIMARY_COLOR_RGB}, 0.4)`,
+    disableButton: `rgba(${PRIMARY_COLOR_RGB}, 0.2)`,
     disableButtonError: theme.store.disableButtonError,
     transparent: theme.store.transparent,
     transparentItem: theme.store.transparentItem,
