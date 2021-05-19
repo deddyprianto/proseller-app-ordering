@@ -132,7 +132,7 @@ class ScanBarcode extends Component {
   enterManualBarcode = () => {
     return (
       <Dialog
-        dismissable={true}
+        dismissable={false}
         visible={this.state.enterBarcode}
         onDismiss={() => {
           this.setState({enterBarcode: false});
@@ -170,11 +170,41 @@ class ScanBarcode extends Component {
                 fontFamily: 'Poppins-Medium',
               }}
             />
-            <View style={{marginTop: 10}}>
-              <Button
-                title={'Submit'}
-                onPress={() => this.onBarCodeRead({data: this.state.barcode})}
-              />
+            <View
+              style={{
+                marginTop: 40,
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+              }}>
+              <TouchableOpacity
+                style={{
+                  backgroundColor: colorConfig.store.defaultColor,
+                  padding: 8,
+                  borderRadius: 5,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  width: '40%',
+                  marginRight: '10%',
+                }}
+                onPress={() => this.onBarCodeRead({data: this.state.barcode})}>
+                <Text style={{color: 'white', fontFamily: 'Poppins-Medium'}}>
+                  Submit
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={{
+                  backgroundColor: colorConfig.store.colorError,
+                  borderRadius: 5,
+                  padding: 8,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  width: '40%',
+                }}
+                onPress={() => this.setState({enterBarcode: false})}>
+                <Text style={{color: 'white', fontFamily: 'Poppins-Medium'}}>
+                  Cancel
+                </Text>
+              </TouchableOpacity>
             </View>
           </View>
         </Dialog.Content>
@@ -237,7 +267,7 @@ class ScanBarcode extends Component {
   // };
 
   render() {
-    const {flashStatus, hasPermission} = this.state;
+    const {flashStatus, hasPermission, enterBarcode} = this.state;
 
     if (hasPermission === null) {
       return (
@@ -262,32 +292,38 @@ class ScanBarcode extends Component {
               style={styles.btnBackIcon}
             />
           </TouchableOpacity>
-          <View style={[styles.overlay, styles.topOverlay]}>
-            <Text style={styles.scanScreenMessage}>
-              Please point your camera at the product barcode.
-            </Text>
-          </View>
-          <View style={styles.cameraWindow}>
-            <BarCodeScanner
-              onBarCodeScanned={this.onBarCodeRead}
-              style={{
-                width: Dimensions.get('window').width - 50,
-                height: Dimensions.get('window').height / 1.6,
-                borderWidth: 1.3,
-                borderColor: colorConfig.store.defaultColor,
-              }}
-            />
-          </View>
-
-          <View style={[styles.overlay, styles.bottomOverlay]}>
-            <Button
-              onPress={() => {
-                this.setState({enterBarcode: true});
-              }}
-              style={styles.enterBarcodeManualButton}
-              title="Enter Barcode Manually"
-            />
-          </View>
+          {!enterBarcode ? (
+            <>
+              <View style={[styles.overlay, styles.topOverlay]}>
+                <Text style={styles.scanScreenMessage}>
+                  Please point your camera at the product barcode.
+                </Text>
+              </View>
+              <View style={styles.cameraWindow}>
+                <BarCodeScanner
+                  onBarCodeScanned={this.onBarCodeRead}
+                  style={{
+                    width: Dimensions.get('window').width - 50,
+                    height: Dimensions.get('window').height / 1.6,
+                    borderWidth: 1.3,
+                    borderColor: colorConfig.store.defaultColor,
+                  }}
+                />
+              </View>
+              <View style={[styles.overlay, styles.bottomOverlay]}>
+                <Button
+                  onPress={() => {
+                    this.setState({enterBarcode: true});
+                    this.barcodeCodes = [];
+                  }}
+                  style={styles.enterBarcodeManualButton}
+                  title="Enter Barcode Manually"
+                />
+              </View>
+            </>
+          ) : (
+            <View style={{height: '100%'}} />
+          )}
         </View>
         {this.renderDialogLoading()}
         {this.enterManualBarcode()}
