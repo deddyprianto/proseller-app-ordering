@@ -618,7 +618,7 @@ class Basket extends Component {
       item.enableDelivery = outletSingle.enableDelivery == true ? true : false;
     }
 
-    let height = 330;
+    let height = 360;
     if (item.outletType === 'RETAIL') {
       if (item.enableStoreCheckOut == false) {
         height -= 50;
@@ -733,6 +733,16 @@ class Basket extends Component {
               </Text>
             </TouchableOpacity>
           ) : null}
+
+          <TouchableOpacity
+            onPress={() => {
+              this.RBSheet.close();
+            }}
+            style={{marginTop: 30}}>
+            <Text style={{fontFamily: 'Poppins-Bold', color: 'white'}}>
+              I'm just browsing
+            </Text>
+          </TouchableOpacity>
         </RBSheet>
       );
     } else {
@@ -1731,6 +1741,12 @@ class Basket extends Component {
       let url;
       const {orderType, tableType, dataBasket, selectedAddress} = this.props;
       pembayaran.orderingMode = orderType;
+
+      if (orderType === null || !orderType || orderType === '') {
+        this.RBSheet.open();
+        return;
+      }
+
       if (
         orderType == 'TAKEAWAY' ||
         orderType == 'DELIVERY' ||
