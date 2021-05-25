@@ -3,6 +3,7 @@ import {isEmptyArray} from '../helper/CheckEmpty';
 // import {refreshToken} from './auth.actions';
 // import * as _ from 'lodash';
 import format from 'date-fns/format';
+import {fetchApiMasterData} from '../service/apiMasterData';
 
 export const myVoucers = () => {
   return async (dispatch, getState) => {
@@ -82,12 +83,6 @@ export const getMandatoryFields = () => {
   return async (dispatch, getState) => {
     const state = getState();
     try {
-      const {
-        authReducer: {
-          tokenUser: {token},
-        },
-      } = state;
-
       const DOCUMENT = 'customer';
 
       const response = await fetchApi(
@@ -95,21 +90,51 @@ export const getMandatoryFields = () => {
         'GET',
         false,
         200,
-        token,
+        null,
       );
 
-      console.log('response mandatory field', response);
+      const responseCutomFields = await fetchApiMasterData(
+        `/customfields/${DOCUMENT}`,
+        'GET',
+        false,
+        200,
+        null,
+      );
+
+      console.log('response custom field', responseCutomFields.response.data);
+
+      let fields = response.responseBody.data.fields;
+      const customFields = responseCutomFields.response.data;
+      if (!isEmptyArray(fields)) {
+        for (let i = 0; i < fields.length; i++) {
+          for (let j = 0; j < customFields.length; j++) {
+            if (fields[i].fieldName === customFields[j].fieldName) {
+              fields[i].dataType = customFields[j].dataType;
+              fields[i].defaultValue = customFields[j].defaultValue;
+
+              if (customFields[j].dataType === 'dropdown') {
+                let itemDropDown = customFields[j].items;
+                for (let x = 0; x < itemDropDown.length; x++) {
+                  itemDropDown[x].label = itemDropDown[x].text;
+                }
+                fields[i].items = itemDropDown;
+              }
+            }
+          }
+        }
+      }
 
       if (response.success) {
         dispatch({
           type: 'DATA_MANDATORY_FIELDS',
-          fields: response.responseBody.data.fields,
+          fields: fields,
         });
-        return response.responseBody.data;
+        return fields;
       } else {
         return false;
       }
     } catch (error) {
+      console.log(error);
       return error;
     }
   };

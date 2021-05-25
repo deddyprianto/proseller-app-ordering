@@ -3630,24 +3630,24 @@ class Basket extends Component {
                   />
                 </View>
                 <View style={{marginTop: 20}} />
-                {dataBasket != undefined ? (
-                  dataBasket.status != 'PENDING' || tableType != undefined ? (
-                    <View style={styles.itemSummary}>
-                      <Text style={styles.total}>
-                        {this.getInfoTextOrder()}
-                      </Text>
-                      <Text style={styles.total}>{this.getInfoOrder()}</Text>
-                    </View>
-                  ) : null
-                ) : null}
-                {this.props.previousTableNo && (
-                  <View style={styles.itemSummary}>
-                    <Text style={styles.total}>Table No</Text>
-                    <Text style={styles.total}>
-                      {this.props.previousTableNo}
-                    </Text>
-                  </View>
-                )}
+                {/*{dataBasket != undefined ? (*/}
+                {/*  dataBasket.status != 'PENDING' || tableType !== undefined ? (*/}
+                {/*    <View style={styles.itemSummary}>*/}
+                {/*      <Text style={styles.total}>*/}
+                {/*        {this.getInfoTextOrder()}*/}
+                {/*      </Text>*/}
+                {/*      <Text style={styles.total}>{this.getInfoOrder()}</Text>*/}
+                {/*    </View>*/}
+                {/*  ) : null*/}
+                {/*) : null}*/}
+                {/*{this.props.previousTableNo && (*/}
+                {/*  <View style={styles.itemSummary}>*/}
+                {/*    <Text style={styles.total}>Table No</Text>*/}
+                {/*    <Text style={styles.total}>*/}
+                {/*      {this.props.previousTableNo}*/}
+                {/*    </Text>*/}
+                {/*  </View>*/}
+                {/*)}*/}
                 {/*<View style={styles.itemSummary}>*/}
                 {/*  <Text style={styles.total}>*/}
                 {/*    {intlData.messages.statusOrder}*/}

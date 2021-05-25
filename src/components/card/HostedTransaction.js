@@ -14,12 +14,16 @@ import {compose} from 'redux';
 import {connect} from 'react-redux';
 import {getBasket, getCart, getPendingCart} from '../../actions/order.action';
 import {myVoucers} from '../../actions/account.action';
+import LoaderDarker from '../LoaderDarker';
+
+const CYBERSOURCE_URL = '/receipt';
 
 class HostedTransaction extends Component {
   constructor(props) {
     super(props);
     this.state = {
       showButton: false,
+      openLoader: false,
     };
   }
 
@@ -100,8 +104,10 @@ class HostedTransaction extends Component {
 
   render() {
     const {url, page, referenceNo} = this.props;
+    const {openLoader} = this.state;
     return (
       <SafeAreaView style={{flex: 1}}>
+        {openLoader && <LoaderDarker />}
         <TouchableOpacity
           onPress={this.alertClose}
           style={{
@@ -124,7 +130,15 @@ class HostedTransaction extends Component {
             x
           </Text>
         </TouchableOpacity>
-        <WebView source={{uri: url}} />
+        <WebView
+          onNavigationStateChange={async navState => {
+            let url = navState.url;
+            if (url.includes(CYBERSOURCE_URL)) {
+              this.setState({openLoader: true});
+            }
+          }}
+          source={{uri: url}}
+        />
       </SafeAreaView>
     );
   }

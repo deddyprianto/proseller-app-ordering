@@ -20,6 +20,7 @@ import {compose} from 'redux';
 import {connect} from 'react-redux';
 import awsConfig from '../../config/awsConfig';
 import {defaultPaymentAccount} from '../../actions/user.action';
+import LoaderDarker from '../LoaderDarker';
 // import {getBasket} from '../../actions/order.action';
 // import {myVoucers} from '../../actions/account.action';
 
@@ -27,14 +28,19 @@ const URL = awsConfig.base_url_payment;
 
 const SUCCESS_URL = `/success`;
 const FAILED_URL = `/failed`;
+const CYBERSOURCE_URL = '/receipt';
 
 let openOne = true;
 
 class HostedPayment extends Component {
   constructor(props) {
     super(props);
+
+    this.openLoader = false;
+
     this.state = {
       showButton: false,
+      openLoader: false,
     };
   }
 
@@ -145,15 +151,17 @@ class HostedPayment extends Component {
 
   render() {
     const {url, page, data} = this.props;
+    const {openLoader} = this.state;
     return (
       <SafeAreaView style={{flex: 1}}>
+        {openLoader && <LoaderDarker />}
         <TouchableOpacity
           onPress={this.goBack}
           style={{
             position: 'absolute',
             top: 30,
             right: 20,
-            zIndex: 100,
+            zIndex: 900,
             backgroundColor: colorConfig.store.disableButtonError,
             width: 40,
             height: 40,
@@ -174,6 +182,15 @@ class HostedPayment extends Component {
           style={{marginTop: 10}}
           onNavigationStateChange={async navState => {
             let url = navState.url;
+            if (url.includes(CYBERSOURCE_URL)) {
+              this.setState({openLoader: true});
+              setTimeout(() => {
+                Actions.popTo(page);
+                try {
+                  this.props.setLoader(false);
+                } catch (e) {}
+              }, 1000);
+            }
             if (url.includes(SUCCESS_URL) && openOne) {
               // if page come from payment, then return back with selected account that has been created
               // if (page == 'paymentDetail' || page == 'settleOrder') {

@@ -18,6 +18,7 @@ import {
   TouchableHighlight,
   Alert,
   SafeAreaView,
+  CheckBox,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
@@ -32,6 +33,10 @@ import Header from '../components/atom/header';
 import generate from 'password-generation';
 import CountryPicker from '../components/react-native-country-picker-modal';
 import PhoneInput from 'react-native-phone-input';
+import {isEmptyArray} from '../helper/CheckEmpty';
+import DropDownPicker from 'react-native-dropdown-picker';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import {format} from 'date-fns';
 
 const imageWidth = Dimensions.get('window').width / 2;
 
@@ -139,9 +144,10 @@ class EmailRegister extends Component {
   };
 
   submitRegister = async () => {
+    const {fields} = this.props;
     this.setState({loading: true});
     try {
-      var dataRequest = {
+      let dataRequest = {
         username: this.props.email,
         phoneNumber: this.state.phoneNumber + this.state.phone,
         email: this.props.email,
@@ -149,6 +155,22 @@ class EmailRegister extends Component {
         type: 'userPool',
         password: this.generatePassword(),
       };
+
+      for (let i = 0; i < fields.length; i++) {
+        if (fields[i].signUpField) {
+          if (fields[i].mandatory && !this.state[fields[i].fieldName]) {
+            Alert.alert('Oppss..', `${fields[i].displayName} is Required.`);
+            this.setState({loading: false});
+            return;
+          }
+          if (this.state[fields[i].fieldName]) {
+            dataRequest[[fields[i].fieldName]] = this.state[
+              fields[i].fieldName
+            ];
+          }
+        }
+      }
+
       console.log(dataRequest, 'payload register by email');
       const response = await this.props.dispatch(createNewUser(dataRequest));
       console.log(response, 'responsenya');
@@ -189,8 +211,111 @@ class EmailRegister extends Component {
     } catch (error) {}
   };
 
+  getMaxDate = () => {
+    try {
+      let year = new Date().getFullYear() - 1;
+      return new Date(`${year}-12-31`);
+    } catch (e) {
+      return new Date();
+    }
+  };
+
+  validateGender = gender => {
+    try {
+      if (gender === 'male' || gender === 'female') {
+        return gender;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      return null;
+    }
+  };
+
+  getKeyboardType = item => {
+    try {
+      if (item === 'number') return 'numeric';
+      if (item === 'email') return 'email';
+      return 'default';
+    } catch (e) {
+      return 'default';
+    }
+  };
+
+  showDatePicker = () => {
+    this.setState({isDatePickerVisible: true});
+  };
+
+  hideDatePicker = () => {
+    this.setState({isDatePickerVisible: false});
+  };
+
+  pad = item => {
+    try {
+      item = item.toString();
+      if (item.length == 1) {
+        return `0${item}`;
+      } else {
+        return item;
+      }
+    } catch (e) {
+      return item;
+    }
+  };
+
+  handleConfirm = date => {
+    let newDate = new Date(date);
+    let dateBirth = newDate.getDate();
+    let monthBirth = newDate.getMonth() + 1;
+    let birthYear = newDate.getFullYear();
+
+    dateBirth = this.pad(dateBirth);
+    monthBirth = this.pad(monthBirth);
+
+    this.setState({birthDate: `${birthYear}-${monthBirth}-${dateBirth}`});
+    this.hideDatePicker();
+  };
+
+  formatDate = current_datetime => {
+    if (current_datetime != undefined) {
+      current_datetime = new Date(current_datetime);
+      const months = [
+        'JAN',
+        'FEB',
+        'MAR',
+        'APR',
+        'MAY',
+        'JUN',
+        'JUL',
+        'AUG',
+        'SEP',
+        'OCT',
+        'NOV',
+        'DEC',
+      ];
+      return (
+        current_datetime.getFullYear() +
+        '-' +
+        months[current_datetime.getMonth()] +
+        '-' +
+        current_datetime.getDate()
+      );
+    } else {
+      return '';
+    }
+  };
+
+  formatBirthDate = item => {
+    try {
+      let formatDate = 'dd-MMM-yyy';
+      return format(new Date(item), formatDate);
+    } catch (e) {
+      return null;
+    }
+  };
+
   render() {
-    const {intlData} = this.props;
+    const {intlData, fields} = this.props;
     const {name, phone} = this.state;
     return (
       <SafeAreaView style={styles.backgroundImage}>
@@ -242,13 +367,13 @@ class EmailRegister extends Component {
                 value={this.state.name}
                 onChangeText={value => this.setState({name: value})}
                 style={{
-                  fontSize: 15,
+                  fontSize: 14,
                   fontFamily: 'Poppins-Regular',
-                  padding: 12,
+                  padding: 10,
                   color: colorConfig.store.title,
                   borderColor: colorConfig.pageIndex.inactiveTintColor,
-                  borderWidth: 1,
-                  borderRadius: 13,
+                  borderWidth: 1.3,
+                  borderRadius: 5,
                 }}
               />
             </View>
@@ -277,8 +402,8 @@ class EmailRegister extends Component {
                 }}>
                 <PhoneInput
                   flagStyle={{
-                    width: 35,
-                    height: 25,
+                    width: 30,
+                    height: 20,
                     justifyContent: 'center',
                     marginRight: -5,
                     marginLeft: 5,
@@ -313,7 +438,7 @@ class EmailRegister extends Component {
                     justifyContent: 'center',
                     paddingHorizontal: 5,
                   }}>
-                  <Text style={{fontSize: 18, fontFamily: 'Poppins-Regular'}}>
+                  <Text style={{fontSize: 14, fontFamily: 'Poppins-Regular'}}>
                     {this.state.phoneNumber}
                   </Text>
                 </TouchableOpacity>
@@ -330,19 +455,282 @@ class EmailRegister extends Component {
                     }
                   }}
                   style={{
-                    fontSize: 17,
+                    fontSize: 14,
                     fontFamily: 'Poppins-Regular',
                     paddingHorizontal: 10,
-                    paddingVertical: 12,
+                    paddingVertical: 10,
                     color: colorConfig.store.title,
                     borderColor: colorConfig.pageIndex.inactiveTintColor,
                     borderWidth: 1,
-                    borderRadius: 10,
+                    borderRadius: 5,
                     flex: 1,
                   }}
                 />
               </View>
             </View>
+
+            {/* Custom Fields */}
+            {!isEmptyArray(fields) &&
+              fields
+                .filter(data => data.show && data.signUpField)
+                .map(item => {
+                  if (
+                    item.fieldName === 'gender' ||
+                    item.fieldName === 'Gender'
+                  )
+                    return (
+                      <View>
+                        <Text
+                          style={{
+                            color: colorConfig.pageIndex.grayColor,
+                            paddingVertical: 10,
+                            fontSize: 17,
+                          }}>
+                          {item.displayName}{' '}
+                          {item.mandatory ? (
+                            <Text style={{color: 'red'}}>*</Text>
+                          ) : null}
+                        </Text>
+                        <DropDownPicker
+                          placeholder={'Select gender'}
+                          items={[
+                            {
+                              label: intlData.messages.male,
+                              value: 'male',
+                            },
+                            {
+                              label: intlData.messages.female,
+                              value: 'female',
+                            },
+                          ]}
+                          defaultValue={this.validateGender(this.state.gender)}
+                          containerStyle={{height: 47}}
+                          style={{
+                            backgroundColor: 'white',
+                            marginTop: 5,
+                            borderRadius: 0,
+                          }}
+                          dropDownStyle={{
+                            backgroundColor: '#fafafa',
+                            zIndex: 3,
+                          }}
+                          onOpen={() => {
+                            this.setState({openGender: true});
+                          }}
+                          onClose={() => {
+                            this.setState({openGender: false});
+                          }}
+                          onChangeItem={item =>
+                            this.setState({
+                              gender: item.value,
+                            })
+                          }
+                        />
+
+                        {this.state.openGender ? (
+                          <View style={{height: 50}} />
+                        ) : null}
+                      </View>
+                    );
+
+                  if (item.fieldName === 'birthDate')
+                    return (
+                      <View>
+                        <Text
+                          style={{
+                            color: colorConfig.pageIndex.grayColor,
+                            paddingVertical: 10,
+                            fontSize: 17,
+                          }}>
+                          Select Birthday{' '}
+                          {item.mandatory ? (
+                            <Text style={{color: 'red'}}>*</Text>
+                          ) : null}
+                        </Text>
+                        <Text
+                          style={{
+                            fontSize: 14,
+                            fontFamily: 'Poppins-Regular',
+                            padding: 10,
+                            color: colorConfig.store.title,
+                            borderColor:
+                              colorConfig.pageIndex.inactiveTintColor,
+                            borderWidth: 1.3,
+                            borderRadius: 5,
+                          }}
+                          onPress={this.showDatePicker}>
+                          {this.state.birthDate == '' ||
+                          this.state.birthDate == undefined ||
+                          this.state.birthDate.length == 3
+                            ? 'Enter Birthday'
+                            : this.formatBirthDate(this.state.birthDate)}
+                        </Text>
+                        <DateTimePickerModal
+                          date={
+                            this.state.birthDate !== undefined &&
+                            this.state.birthDate !== null &&
+                            this.state.birthDate !== ''
+                              ? new Date(this.state.birthDate)
+                              : this.getMaxDate()
+                          }
+                          maximumDate={this.getMaxDate()}
+                          isVisible={this.state.isDatePickerVisible}
+                          mode="date"
+                          onConfirm={this.handleConfirm}
+                          onCancel={this.hideDatePicker}
+                        />
+                      </View>
+                    );
+
+                  if (
+                    item.fieldName !== 'postalcode' &&
+                    item.fieldName !== 'gender' &&
+                    item.fieldName !== 'birthDate'
+                  ) {
+                    if (item.dataType === 'dropdown') {
+                      return (
+                        <View>
+                          <Text
+                            style={{
+                              color: colorConfig.pageIndex.grayColor,
+                              paddingVertical: 10,
+                              fontSize: 17,
+                            }}>
+                            {item.displayName}{' '}
+                            {item.mandatory ? (
+                              <Text style={{color: 'red'}}>*</Text>
+                            ) : null}
+                          </Text>
+                          <DropDownPicker
+                            placeholder={item.displayName}
+                            items={item.items}
+                            defaultValue={this.state[item.fieldName]}
+                            containerStyle={{height: 47}}
+                            style={{
+                              backgroundColor: 'white',
+                              marginTop: 1,
+                              borderRadius: 0,
+                            }}
+                            dropDownStyle={{
+                              backgroundColor: '#fafafa',
+                              zIndex: 3,
+                            }}
+                            onChangeItem={data => {
+                              this.setState({
+                                [item.fieldName]: data.value,
+                              });
+                            }}
+                          />
+                        </View>
+                      );
+                    } else if (item.dataType === 'checkbox') {
+                      return (
+                        <View
+                          style={{
+                            marginVertical: 20,
+                            flexDirection: 'row',
+                            justifyContent: 'space-between',
+                          }}>
+                          <Text
+                            style={{
+                              color: colorConfig.pageIndex.grayColor,
+                              paddingVertical: 10,
+                              fontSize: 17,
+                            }}>
+                            {item.displayName}{' '}
+                            {item.mandatory ? (
+                              <Text style={{color: 'red'}}>*</Text>
+                            ) : null}
+                          </Text>
+                          <CheckBox
+                            value={this.state[item.fieldName]}
+                            onValueChange={e => {
+                              this.setState({[item.fieldName]: e});
+                            }}
+                          />
+                        </View>
+                      );
+                    } else {
+                      return (
+                        <View>
+                          <Text
+                            style={{
+                              color: colorConfig.pageIndex.grayColor,
+                              paddingVertical: 10,
+                              fontSize: 17,
+                            }}>
+                            {item.displayName}{' '}
+                            {item.mandatory ? (
+                              <Text style={{color: 'red'}}>*</Text>
+                            ) : null}
+                          </Text>
+                          <TextInput
+                            placeholder={item.displayName}
+                            style={{
+                              fontSize: 14,
+                              fontFamily: 'Poppins-Regular',
+                              padding: 10,
+                              color: colorConfig.store.title,
+                              borderColor:
+                                colorConfig.pageIndex.inactiveTintColor,
+                              borderWidth: 1.3,
+                              borderRadius: 5,
+                            }}
+                            value={this.state[item.fieldName]}
+                            onChangeText={value =>
+                              this.setState({[item.fieldName]: value})
+                            }
+                            keyboardType={this.getKeyboardType(item.dataType)}
+                          />
+                        </View>
+                      );
+                    }
+                  }
+
+                  if (item.fieldName === 'postalcode')
+                    return (
+                      <View style={styles.detailItem}>
+                        <Text style={styles.desc}>
+                          {item.displayName}{' '}
+                          {item.mandatory ? (
+                            <Text style={{color: 'red'}}>*</Text>
+                          ) : null}
+                        </Text>
+                        <TextInput
+                          keyboardType={'numeric'}
+                          placeholder={item.displayName}
+                          style={{paddingVertical: 10}}
+                          value={this.state.postalcode}
+                          onChangeText={value => {
+                            try {
+                              const isValid = new RegExp(
+                                /((\d{6}.*)*\s)?(\d{6})([^\d].*)?$/,
+                              ).test(Number(value));
+                              if (isValid) {
+                                this.setState({isPostalCodeValid: true});
+                              } else {
+                                this.setState({isPostalCodeValid: false});
+                              }
+                            } catch (e) {}
+                            this.setState({postalcode: value});
+                          }}
+                        />
+                        <View style={{borderWidth: 0.5, borderColor: 'gray'}} />
+                        {!isPostalCodeValid && (
+                          <Text
+                            style={{
+                              fontSize: 10,
+                              fontStyle: 'italic',
+                              color: colorConfig.store.colorError,
+                            }}>
+                            Postal code is not valid
+                          </Text>
+                        )}
+                      </View>
+                    );
+                })}
+            {/* Custom Fields */}
+
             <View style={{marginVertical: 30}}>
               <TouchableHighlight
                 disabled={name && phone ? false : true}
@@ -416,6 +804,7 @@ class EmailRegister extends Component {
 mapStateToProps = state => ({
   status: state.accountsReducer.accountExist.status,
   intlData: state.intlData,
+  fields: state.userReducer.customFields.fields,
 });
 
 mapDispatchToProps = dispatch => ({

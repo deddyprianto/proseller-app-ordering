@@ -30,7 +30,7 @@ export const getProductByOutlet = (OutletId, refresh) => {
         'POST',
         null,
         200,
-        token,
+        null,
       );
 
       // console.log(response, 'response data product by outlet');
@@ -89,7 +89,7 @@ export const getCategoryByOutlet = (OutletId, refresh) => {
         'POST',
         payload,
         200,
-        token,
+        null,
       );
 
       console.log('RESPONSE GET CATEGORY ', response);
@@ -154,7 +154,7 @@ export const getProductByCategory = (OutletId, categoryId, skip, take) => {
         'POST',
         payload,
         200,
-        token,
+        null,
       );
 
       console.log('RESPONSE GET ITEMS BY CATEGORY ', response);
@@ -258,7 +258,7 @@ export const searchProducts = (OutletId, categories, query) => {
           'POST',
           payload,
           200,
-          token,
+          null,
         );
 
         if (response.success && !isEmptyArray(response.response.data)) {

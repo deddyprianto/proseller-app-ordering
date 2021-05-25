@@ -182,6 +182,19 @@ const getCompanyInfo = (state = {}, action) => {
   }
 };
 
+const customFields = (state = {}, action) => {
+  console.log(action, 'actionnnn');
+  switch (action.type) {
+    case 'DATA_MANDATORY_FIELDS':
+      return {
+        fields: action.fields,
+      };
+
+    default:
+      return state;
+  }
+};
+
 export default combineReducers({
   getUser,
   updateUser,
@@ -194,4 +207,5 @@ export default combineReducers({
   defaultAddress,
   selectedAddress,
   offlineCart,
+  customFields,
 });

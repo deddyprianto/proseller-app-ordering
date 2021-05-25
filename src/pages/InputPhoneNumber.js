@@ -38,6 +38,7 @@ import Geolocation from 'react-native-geolocation-service';
 import PhoneInput from 'react-native-phone-input';
 // import VersionCheck from 'react-native-version-check';
 import {getCompanyInfo} from '../actions/stores.action';
+import {getMandatoryFields} from '../actions/account.action';
 
 const imageWidth = Dimensions.get('window').width / 2;
 
@@ -137,6 +138,7 @@ class InputPhoneNumber extends Component {
 
   componentDidMount = async () => {
     // detect keyboard up / down
+    this.props.dispatch(getMandatoryFields());
     this.keyboardDidShowListener = Keyboard.addListener(
       'keyboardDidShow',
       this._keyboardDidShow,

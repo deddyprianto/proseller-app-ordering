@@ -18,6 +18,7 @@ import {
   TextInput,
   SafeAreaView,
   Alert,
+  CheckBox,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -71,7 +72,7 @@ const backupMandatoryFields = [
     sequence: 4,
     fieldName: 'address',
     mandatory: true,
-    displayName: '3. address',
+    displayName: 'Address',
   },
 ];
 
@@ -185,6 +186,7 @@ class AccountEditProfil extends Component {
       editPhoneNumber: false,
       appSetting: {},
       isPostalCodeValid,
+      customFields: [],
     };
   }
 
@@ -226,8 +228,21 @@ class AccountEditProfil extends Component {
     await this.refreshDataCustomer();
     try {
       const response = await this.props.dispatch(getMandatoryFields());
-      if (!isEmptyObject(response) && !isEmptyArray(response.fields)) {
-        await this.setState({fields: response.fields});
+      if (!isEmptyArray(response)) {
+        await this.setState({fields: response});
+        let {customFields} = this.state;
+        for (let i = 0; i < response.length; i++) {
+          await this.setState({
+            [response[i].fieldName]: response[i].defaultValue,
+          });
+          if (this.props.dataDiri[response[i].fieldName]) {
+            await this.setState({
+              [response[i].fieldName]: this.props.dataDiri[
+                response[i].fieldName
+              ],
+            });
+          }
+        }
       } else {
         await this.setState({fields: backupMandatoryFields});
       }
@@ -628,10 +643,21 @@ class AccountEditProfil extends Component {
     }
   };
 
+  getKeyboardType = item => {
+    try {
+      if (item === 'number') return 'numeric';
+      if (item === 'email') return 'email';
+      return 'default';
+    } catch (e) {
+      return 'default';
+    }
+  };
+
   render() {
     const {intlData} = this.props;
-    const {fields, isPostalCodeValid} = this.state;
-
+    const {fields, isPostalCodeValid, customFields} = this.state;
+    console.log(fields, 'fieldsfields');
+    console.log(this.state, 'this.state');
     return (
       <SafeAreaView style={styles.container}>
         {this.state.loading && <LoaderDarker />}
@@ -755,7 +781,10 @@ class AccountEditProfil extends Component {
                             marginRight: -5,
                             marginLeft: 5,
                           }}
-                          textStyle={{fontSize: 0, fontFamily: 'Poppins-Regular'}}
+                          textStyle={{
+                            fontSize: 0,
+                            fontFamily: 'Poppins-Regular',
+                          }}
                           style={{
                             padding: 5,
                             color: 'black',
@@ -786,7 +815,10 @@ class AccountEditProfil extends Component {
                             paddingHorizontal: 5,
                           }}>
                           <Text
-                            style={{fontSize: 15, fontFamily: 'Poppins-Regular'}}>
+                            style={{
+                              fontSize: 15,
+                              fontFamily: 'Poppins-Regular',
+                            }}>
                             {this.state.phoneNumber}
                           </Text>
                         </TouchableOpacity>
@@ -967,28 +999,92 @@ class AccountEditProfil extends Component {
                           item.fieldName !== 'postalcode' &&
                           item.fieldName !== 'gender' &&
                           item.fieldName !== 'birthDate'
-                        )
-                          return (
-                            <View style={styles.detailItem}>
-                              <Text style={styles.desc}>
-                                {item.displayName}{' '}
-                                {item.mandatory ? (
-                                  <Text style={{color: 'red'}}>*</Text>
-                                ) : null}
-                              </Text>
-                              <TextInput
-                                placeholder={item.displayName}
-                                style={{paddingVertical: 10}}
-                                value={this.state[item.fieldName]}
-                                onChangeText={value =>
-                                  this.setState({[item.fieldName]: value})
-                                }
-                              />
+                        ) {
+                          if (item.dataType === 'dropdown') {
+                            return (
+                              <View style={styles.detailItem}>
+                                <Text style={[styles.desc, {marginLeft: 0}]}>
+                                  {item.displayName}{' '}
+                                  {item.mandatory ? (
+                                    <Text style={{color: 'red'}}>*</Text>
+                                  ) : null}
+                                </Text>
+                                <DropDownPicker
+                                  placeholder={item.displayName}
+                                  items={item.items}
+                                  defaultValue={this.state[item.fieldName]}
+                                  containerStyle={{height: 47}}
+                                  style={{
+                                    backgroundColor: 'white',
+                                    marginTop: 5,
+                                    borderRadius: 0,
+                                  }}
+                                  dropDownStyle={{
+                                    backgroundColor: '#fafafa',
+                                    zIndex: 3,
+                                  }}
+                                  onChangeItem={data => {
+                                    this.setState({
+                                      [item.fieldName]: data.value,
+                                    });
+                                  }}
+                                />
+                              </View>
+                            );
+                          } else if (item.dataType === 'checkbox') {
+                            return (
                               <View
-                                style={{borderWidth: 0.5, borderColor: 'gray'}}
-                              />
-                            </View>
-                          );
+                                style={[
+                                  styles.detailItem,
+                                  {
+                                    flexDirection: 'row',
+                                    justifyContent: 'space-between',
+                                  },
+                                ]}>
+                                <Text style={styles.desc}>
+                                  {item.displayName}{' '}
+                                  {item.mandatory ? (
+                                    <Text style={{color: 'red'}}>*</Text>
+                                  ) : null}
+                                </Text>
+                                <CheckBox
+                                  value={this.state[item.fieldName]}
+                                  onValueChange={e => {
+                                    this.setState({[item.fieldName]: e});
+                                  }}
+                                />
+                              </View>
+                            );
+                          } else {
+                            return (
+                              <View style={styles.detailItem}>
+                                <Text style={styles.desc}>
+                                  {item.displayName}{' '}
+                                  {item.mandatory ? (
+                                    <Text style={{color: 'red'}}>*</Text>
+                                  ) : null}
+                                </Text>
+                                <TextInput
+                                  placeholder={item.displayName}
+                                  style={{paddingVertical: 10}}
+                                  value={this.state[item.fieldName]}
+                                  onChangeText={value =>
+                                    this.setState({[item.fieldName]: value})
+                                  }
+                                  keyboardType={this.getKeyboardType(
+                                    item.dataType,
+                                  )}
+                                />
+                                <View
+                                  style={{
+                                    borderWidth: 0.5,
+                                    borderColor: 'gray',
+                                  }}
+                                />
+                              </View>
+                            );
+                          }
+                        }
 
                         if (item.fieldName === 'postalcode')
                           return (
