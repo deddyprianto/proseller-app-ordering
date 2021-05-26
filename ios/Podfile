@@ -61,6 +61,13 @@ target 'acemart' do
 
   pod 'react-native-geolocation', :path => '../node_modules/@react-native-community/geolocation'
 
+  # MLKIT for Barcode Scanning
+  pod 'react-native-camera', path: '../node_modules/react-native-camera', subspecs: [
+    'BarcodeDetectorMLKit'
+  ]
+
+  pod 'Firebase/Core'
+
   target 'acemartTests' do
     inherit! :complete
     # Pods for testing

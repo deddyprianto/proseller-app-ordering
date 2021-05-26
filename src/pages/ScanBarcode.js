@@ -18,7 +18,7 @@ import {
 
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
-import {BarCodeScanner} from 'expo-barcode-scanner';
+import {RNCamera} from 'react-native-camera';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
 import colorConfig from '../config/colorConfig';
@@ -213,9 +213,7 @@ class ScanBarcode extends Component {
   };
 
   onBarCodeRead = async ({type, data}) => {
-    // 256 is item type QR Code
-    if (type === 256 || type === 'org.iso.QRCode') return;
-    // console.log(type, 'type');
+    console.log(type, 'type');
     if (data) {
       let scanResult = {
         data: data,
@@ -269,17 +267,6 @@ class ScanBarcode extends Component {
   render() {
     const {flashStatus, hasPermission, enterBarcode} = this.state;
 
-    if (hasPermission === null) {
-      return (
-        <View style={styles.container}>
-          <Text>Requesting for camera permission</Text>
-        </View>
-      );
-    }
-    if (hasPermission === false) {
-      return <Text>No access to camera</Text>;
-    }
-
     return (
       <SafeAreaView
         style={[
@@ -308,13 +295,30 @@ class ScanBarcode extends Component {
                 </Text>
               </View>
               <View style={styles.cameraWindow}>
-                <BarCodeScanner
-                  onBarCodeScanned={this.onBarCodeRead}
-                  style={{
-                    width: Dimensions.get('window').width - 50,
-                    height: Dimensions.get('window').height / 1.6,
-                    borderWidth: 1.3,
-                    borderColor: colorConfig.store.defaultColor,
+                <RNCamera
+                  ref={ref => {
+                    this.camera = ref;
+                  }}
+                  style={styles.preview}
+                  type={RNCamera.Constants.Type.back}
+                  flashMode={RNCamera.Constants.FlashMode.on}
+                  androidCameraPermissionOptions={{
+                    title: 'Permission to use camera',
+                    message: 'We need your permission to use your camera',
+                    buttonPositive: 'Ok',
+                    buttonNegative: 'Cancel',
+                  }}
+                  androidRecordAudioPermissionOptions={{
+                    title: 'Permission to use audio recording',
+                    message: 'We need your permission to use your audio',
+                    buttonPositive: 'Ok',
+                    buttonNegative: 'Cancel',
+                  }}
+                  onGoogleVisionBarcodesDetected={({barcodes}) => {
+                    console.log(barcodes);
+                    if (barcodes.length > 0) {
+                      this.onBarCodeRead(barcodes[0])
+                    }
                   }}
                 />
               </View>
@@ -343,6 +347,7 @@ class ScanBarcode extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    flexDirection: 'column',
     backgroundColor: 'black',
   },
   preview: {
@@ -396,9 +401,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Bold',
   },
   cameraWindow: {
-    justifyContent: 'center',
-    alignContent: 'center',
-    alignItems: 'center',
+    flex: 1,
   },
 });
 

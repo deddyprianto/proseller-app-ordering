@@ -15,6 +15,9 @@
 #import <UMReactNativeAdapter/UMNativeModulesProxy.h>
 #import <UMReactNativeAdapter/UMModuleRegistryAdapter.h>
 
+// Firebase ML Kit Barcode
+#import <Firebase.h>
+
 @interface AppDelegate () <RCTBridgeDelegate>
  
 @property (nonatomic, strong) UMModuleRegistryAdapter *moduleRegistryAdapter;
@@ -25,7 +28,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-
+  [FIRApp configure];
   self.moduleRegistryAdapter = [[UMModuleRegistryAdapter alloc] initWithModuleRegistryProvider:[[UMModuleRegistryProvider alloc] init]];
 
   RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];

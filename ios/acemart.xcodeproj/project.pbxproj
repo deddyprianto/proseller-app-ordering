@@ -26,6 +26,7 @@
 		7B4FF302262852E300262C97 /* Poppins-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7B4FF2FB262852DB00262C97 /* Poppins-Italic.ttf */; };
 		7B4FF303262852E300262C97 /* Poppins-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7B4FF2FF262852DC00262C97 /* Poppins-Medium.ttf */; };
 		7B4FF304262852E300262C97 /* Poppins-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7B4FF2FD262852DC00262C97 /* Poppins-Regular.ttf */; };
+		7BD1A640265E73280011B660 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 7BD1A63F265E73280011B660 /* GoogleService-Info.plist */; };
 		942F222339174ACAB6A6FDA4 /* Lato-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 40AD4A3553664601BD423484 /* Lato-Medium.ttf */; };
 		B6FA351076D44777B6129C53 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B8783AC08D84065AC0B2230 /* libz.tbd */; };
 		C059695DF9A863BFBAED6300 /* libPods-acemart.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CEB3CA18B39250FAA73BB671 /* libPods-acemart.a */; };
@@ -96,6 +97,7 @@
 		7B4FF2FD262852DC00262C97 /* Poppins-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-Regular.ttf"; sourceTree = "<group>"; };
 		7B4FF2FE262852DC00262C97 /* Poppins-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-Black.ttf"; sourceTree = "<group>"; };
 		7B4FF2FF262852DC00262C97 /* Poppins-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-Medium.ttf"; sourceTree = "<group>"; };
+		7BD1A63F265E73280011B660 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "acemart/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		7BD8572F2467DD4300AD88B9 /* acemart-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "acemart-Bridging-Header.h"; sourceTree = "<group>"; };
 		7BDAC8BD244814D1005E2D36 /* acemart.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = acemart.entitlements; path = acemart/acemart.entitlements; sourceTree = "<group>"; };
 		85986F88DD9B478882E6871F /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/native-base/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
@@ -180,6 +182,7 @@
 		13B07FAE1A68108700A75B9A /* acemart */ = {
 			isa = PBXGroup;
 			children = (
+				7BD1A63F265E73280011B660 /* GoogleService-Info.plist */,
 				7B4FF2FA2628528A00262C97 /* assets */,
 				7BDAC8BD244814D1005E2D36 /* acemart.entitlements */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
@@ -467,6 +470,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7BD1A640265E73280011B660 /* GoogleService-Info.plist in Resources */,
 				7B4FF300262852E300262C97 /* Poppins-Black.ttf in Resources */,
 				7B4FF301262852E300262C97 /* Poppins-Bold.ttf in Resources */,
 				7B4FF302262852E300262C97 /* Poppins-Italic.ttf in Resources */,
@@ -870,7 +874,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.edgeworks.acemart-app";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.edgeworks.acemart-demo";
 				PRODUCT_NAME = "Ace Mart";
 				SWIFT_OBJC_BRIDGING_HEADER = "acemart-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -901,7 +905,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.edgeworks.acemart-app";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.edgeworks.acemart-demo";
 				PRODUCT_NAME = "Ace Mart";
 				SWIFT_OBJC_BRIDGING_HEADER = "acemart-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
