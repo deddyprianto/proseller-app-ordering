@@ -858,7 +858,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = acemart/acemart.entitlements;
-				CURRENT_PROJECT_VERSION = 44;
+				CURRENT_PROJECT_VERSION = 45;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = YSZ34Z59CY;
 				HEADER_SEARCH_PATHS = (
@@ -868,13 +868,13 @@
 				INFOPLIST_FILE = acemart/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.1.5;
+				MARKETING_VERSION = 1.1.6;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.edgeworks.acemart-demo";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.edgeworks.acemart-app";
 				PRODUCT_NAME = "Ace Mart";
 				SWIFT_OBJC_BRIDGING_HEADER = "acemart-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -890,7 +890,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = acemart/acemart.entitlements;
-				CURRENT_PROJECT_VERSION = 44;
+				CURRENT_PROJECT_VERSION = 45;
 				DEVELOPMENT_TEAM = YSZ34Z59CY;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -899,13 +899,13 @@
 				INFOPLIST_FILE = acemart/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.1.5;
+				MARKETING_VERSION = 1.1.6;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.edgeworks.acemart-demo";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.edgeworks.acemart-app";
 				PRODUCT_NAME = "Ace Mart";
 				SWIFT_OBJC_BRIDGING_HEADER = "acemart-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
