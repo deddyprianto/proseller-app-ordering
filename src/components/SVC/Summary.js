@@ -228,7 +228,7 @@ class Summary extends Component {
     try {
       if (
         item.includes('DEDUCT') ||
-        item.includes('TRANSFER') ||
+        item === 'TRANSFER_SVC' ||
         item.includes('REDEEM')
       ) {
         return false;
