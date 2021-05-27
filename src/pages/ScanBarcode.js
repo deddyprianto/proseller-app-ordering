@@ -317,7 +317,9 @@ class ScanBarcode extends Component {
                   onGoogleVisionBarcodesDetected={({barcodes}) => {
                     console.log(barcodes);
                     if (barcodes.length > 0) {
-                      this.onBarCodeRead(barcodes[0])
+                      if (barcodes[0].type !== 'UNKNOWN_FORMAT') {
+                        this.onBarCodeRead(barcodes[0]);
+                      }
                     }
                   }}
                 />
