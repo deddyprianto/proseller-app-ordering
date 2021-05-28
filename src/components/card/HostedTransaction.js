@@ -15,8 +15,11 @@ import {connect} from 'react-redux';
 import {getBasket, getCart, getPendingCart} from '../../actions/order.action';
 import {myVoucers} from '../../actions/account.action';
 import LoaderDarker from '../LoaderDarker';
+import {getSVCBalance} from '../../actions/SVC.action';
 
 const CYBERSOURCE_URL = '/receipt';
+const SUCCESS_URL = `/success`;
+const FAILED_URL = `/failed`;
 
 class HostedTransaction extends Component {
   constructor(props) {
@@ -27,13 +30,18 @@ class HostedTransaction extends Component {
     };
   }
 
-  componentDidMount = async () => {
-    this.checkStatus();
-  };
+  componentDidMount = async () => {};
 
   componentWillUnmount() {
     try {
       this.props.dispatch(getBasket());
+      if (this.props.isSubmitSales) {
+        this.props.dispatch(checkStatusPayment(this.props.referenceNo));
+      }
+      this.props.dispatch(getSVCBalance());
+      try {
+        this.props.getCustomerActivity();
+      } catch (e) {}
       clearInterval(this.interval);
     } catch (e) {}
   }
@@ -79,9 +87,51 @@ class HostedTransaction extends Component {
     }, 1000);
   };
 
+  checkStatusSales = async () => {
+    const {url, page, referenceNo, intlData} = this.props;
+
+    clearInterval(this.interval);
+    this.interval = setInterval(async () => {
+      const response = await this.props.dispatch(
+        checkStatusPayment(referenceNo),
+      );
+
+      console.log(response.Data.status, 'aksjbaskj');
+      if (response.Data.status === 'COMPLETED') {
+        clearInterval(this.interval);
+        this.props.dispatch(myVoucers());
+        if (this.props.page === 'settleOrder') {
+          // this.props.dispatch(getCart(this.props.cartID));
+          Actions.replace('paymentSuccess', {
+            outlet: this.props.outlet,
+            intlData,
+            url: this.props.urlSettle,
+            dataRespons: response.Data,
+            fromPage: this.props.fromPage,
+            payVoucher: this.props.payVoucher,
+            paySVC: this.props.paySVC,
+          });
+          return;
+        } else {
+          Actions.replace('paymentSuccess', {
+            outlet: this.props.outlet,
+            intlData,
+            dataRespons: response.Data,
+            fromPage: this.props.fromPage,
+            payVoucher: this.props.payVoucher,
+          });
+          return;
+        }
+      }
+    }, 1000);
+  };
+
   getCartStatus = () => {
     try {
       this.props.dispatch(getBasket());
+      if (this.props.isSubmitSales) {
+        this.props.dispatch(checkStatusPayment(this.props.referenceNo));
+      }
       Actions.pop();
     } catch (e) {}
   };
@@ -133,8 +183,19 @@ class HostedTransaction extends Component {
         <WebView
           onNavigationStateChange={async navState => {
             let url = navState.url;
-            if (url.includes(CYBERSOURCE_URL)) {
+            if (
+              url.includes(CYBERSOURCE_URL) ||
+              url.includes(SUCCESS_URL) ||
+              url.includes(FAILED_URL)
+            ) {
               this.setState({openLoader: true});
+              setTimeout(() => {
+                if (this.props.isSubmitSales) {
+                  this.checkStatusSales();
+                } else {
+                  this.checkStatus();
+                }
+              }, 4000);
             }
           }}
           source={{uri: url}}

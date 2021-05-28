@@ -1553,6 +1553,7 @@ class SettleOrder extends Component {
               urlSettle: 'url',
               referenceNo: response.responseBody.Data.referenceNo,
               cartID: this.props.pembayaran.cartID,
+              isSubmitSales: true,
               page: 'settleOrder',
             });
             this.setState({loading: false});
@@ -1777,6 +1778,8 @@ class SettleOrder extends Component {
               cartID: this.props.pembayaran.cartID,
               page: 'settleOrder',
               paySVC: true,
+              isSubmitSales: true,
+              getCustomerActivity: this.props.getCustomerActivity,
             });
             this.setState({loading: false});
           }
@@ -1982,9 +1985,9 @@ class SettleOrder extends Component {
       if (response.success) {
         await this.props.dispatch(myVoucers());
 
-        try {
-          this.props.refreshMyVouchers();
-        } catch (e) {}
+        // try {
+        //   this.props.refreshMyVouchers();
+        // } catch (e) {}
 
         try {
           this.props.getCustomerActivity();
@@ -1992,7 +1995,7 @@ class SettleOrder extends Component {
 
         if (response.responseBody.Data.action != undefined) {
           if (response.responseBody.Data.action.type === 'url') {
-            Actions.hostedTrx({
+            Actions.push('hostedTrx', {
               outlet: this.state.outlet,
               url: response.responseBody.Data.action.url,
               urlSettle: 'url',
@@ -2000,6 +2003,7 @@ class SettleOrder extends Component {
               cartID: this.props.pembayaran.cartID,
               page: 'settleOrder',
               payVoucher: true,
+              isSubmitSales: true,
               fromPage: this.props.fromPage,
             });
             this.setState({loading: false});

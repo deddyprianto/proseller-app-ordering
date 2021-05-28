@@ -280,9 +280,9 @@ export const checkStatusPayment = referenceNo => {
         200,
         token,
       );
-      console.log('response status sales', response);
+      // console.log('response status sales', response);
 
-      return response;
+      return response.responseBody;
     } catch (error) {
       return error;
     }
