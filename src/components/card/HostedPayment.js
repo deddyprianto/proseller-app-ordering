@@ -184,6 +184,7 @@ class HostedPayment extends Component {
             let url = navState.url;
             if (url.includes(CYBERSOURCE_URL)) {
               this.setState({openLoader: true});
+              await this.setCard();
               setTimeout(() => {
                 Actions.popTo(page);
                 try {
