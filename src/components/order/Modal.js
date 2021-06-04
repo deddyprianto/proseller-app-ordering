@@ -1730,11 +1730,13 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Bold',
     fontSize: 14,
     color: colorConfig.store.title,
+    maxWidth: '85%',
   },
   textPromotionDesc: {
     textTransform: 'capitalize',
     fontFamily: 'Poppins-Italic',
     fontSize: 13,
     color: colorConfig.store.titleSelected,
+    maxWidth: '85%',
   },
 });

@@ -1851,7 +1851,7 @@ class Products2 extends Component {
           name={Platform.OS === 'ios' ? 'ios-pricetags' : 'md-pricetags'}
           style={{color: colorConfig.store.defaultColor, marginRight: 7}}
         />
-        <Text style={styles.textPromotion}>{item.name}</Text>
+        <Text style={styles.textPromotion}>{item.name.substr(0, 25)}</Text>
       </View>
     ));
   };

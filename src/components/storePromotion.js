@@ -29,7 +29,10 @@ class StorePromotion extends Component {
   };
 
   storeDetailPromotion = item => {
-    Actions.storeDetailPromotion({dataPromotion: item});
+    Actions.storeDetailPromotion({
+      dataPromotion: item,
+      item: this.props.outlet,
+    });
   };
 
   render() {
@@ -131,6 +134,7 @@ const styles = StyleSheet.create({
 
 mapStateToProps = state => ({
   dataPromotion: state.promotionReducer.dataPromotion.promotion,
+  outlet: state.storesReducer.defaultOutlet.defaultOutlet,
 });
 
 mapDispatchToProps = dispatch => ({

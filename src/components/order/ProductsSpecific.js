@@ -1142,7 +1142,7 @@ class ProductsSpecific extends Component {
           name={Platform.OS === 'ios' ? 'ios-pricetags' : 'md-pricetags'}
           style={{color: colorConfig.store.defaultColor, marginRight: 7}}
         />
-        <Text style={styles.textPromotion}>{item.name}</Text>
+        <Text style={styles.textPromotion}>{item.name.substr(0, 25)}</Text>
       </View>
     ));
   };
@@ -1161,7 +1161,6 @@ class ProductsSpecific extends Component {
 
   templateItemGrid = (type, item) => {
     const {categoryDetail} = this.props;
-    console.log(categoryDetail, 'categoryDetail');
     if (
       item.itemType === 'PRODUCT' ||
       item.itemType === undefined ||

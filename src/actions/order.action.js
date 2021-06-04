@@ -447,7 +447,7 @@ export const updateProductToBasket = (payload, previousData) => {
 
       let updatedProduct = [];
       let data = {
-        id: previousData.id,
+        id: previousData.oldID || previousData.id,
         unitPrice: payload.details[0].unitPrice,
         quantity: payload.details[0].quantity,
         modifiers: payload.details[0].modifiers,
@@ -1558,6 +1558,27 @@ export const getProductByBarcode = barcode => {
       console.log('RESPONSE GET PRODUCT BY BARCODE ', response);
 
       if (response.success === true) {
+        return response.response;
+      }
+      return false;
+    } catch (e) {}
+  };
+};
+
+export const productByPromotion = promotionID => {
+  return async (dispatch, getState) => {
+    try {
+      const response = await fetchApiProduct(
+        '/promotion/items/' + promotionID,
+        'GET',
+        null,
+        200,
+        null,
+      );
+
+      console.log('RESPONSE GET PRODUCTS BY PROMOTION ', response);
+
+      if (response.success == true) {
         return response.response;
       }
       return false;
