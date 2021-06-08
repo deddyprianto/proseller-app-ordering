@@ -1565,13 +1565,17 @@ export const getProductByBarcode = barcode => {
   };
 };
 
-export const productByPromotion = promotionID => {
+export const productByPromotion = (promotionID, outletId) => {
   return async (dispatch, getState) => {
     try {
+      const payload = {
+        outletId,
+      };
+
       const response = await fetchApiProduct(
         '/promotion/items/' + promotionID,
-        'GET',
-        null,
+        'POST',
+        payload,
         200,
         null,
       );

@@ -158,7 +158,10 @@ class StoreDetailPromotion extends Component {
     try {
       // const {promotionID} = this.state;
       const promotionID = this.props.dataPromotion.promotionId || null;
-      let response = await this.props.dispatch(productByPromotion(promotionID));
+      const outletId = this.props.item.sortKey;
+      let response = await this.props.dispatch(
+        productByPromotion(promotionID, outletId),
+      );
 
       if (response && !isEmptyArray(response.data)) {
         await this.setState({
