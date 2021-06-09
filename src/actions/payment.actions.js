@@ -125,6 +125,12 @@ export const getAccountPayment = payload => {
         },
       } = state;
 
+      const {
+        userReducer: {
+          defaultPaymentAccount: {defaultAccount},
+        },
+      } = state;
+
       const response = await fetchApiPayment(
         '/account',
         'GET',
@@ -150,12 +156,32 @@ export const getAccountPayment = payload => {
               defaultAccount: find,
             });
           } else {
+            if (
+              defaultAccount &&
+              defaultAccount.paymentID === 'MANUAL_TRANSFER'
+            ) {
+              dispatch({
+                type: 'GET_USER_DEFAULT_ACCOUNT',
+                defaultAccount: defaultAccount,
+              });
+              return;
+            }
             dispatch({
               type: 'GET_USER_DEFAULT_ACCOUNT',
               defaultAccount: undefined,
             });
           }
         } else {
+          if (
+            defaultAccount &&
+            defaultAccount.paymentID === 'MANUAL_TRANSFER'
+          ) {
+            dispatch({
+              type: 'GET_USER_DEFAULT_ACCOUNT',
+              defaultAccount: defaultAccount,
+            });
+            return;
+          }
           dispatch({
             type: 'GET_USER_DEFAULT_ACCOUNT',
             defaultAccount: undefined,

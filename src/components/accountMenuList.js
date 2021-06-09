@@ -127,7 +127,7 @@ class AccountMenuList extends Component {
         Actions.listCard({intlData, item});
       } else {
         await this.setState({selectedAccount: item});
-        // this.RBSheet.open();
+        this.RBSheet.open();
       }
     } catch (e) {}
   };
@@ -408,44 +408,44 @@ class AccountMenuList extends Component {
         {/*    <Text style={styles.textCard}>Store Value Card</Text>*/}
         {/*  </TouchableOpacity>*/}
         {/*</View>*/}
-        {/*{!isEmptyObject(defaultAccount) ? (*/}
-        {/*  <View style={styles.singleCard}>*/}
-        {/*    <Text style={{fontFamily: 'Poppins-Medium', marginBottom: 10}}>*/}
-        {/*      Default Payment Account*/}
-        {/*    </Text>*/}
-        {/*    <View*/}
-        {/*      style={{*/}
-        {/*        flexDirection: 'row',*/}
-        {/*        paddingVertical: 10,*/}
-        {/*        alignItems: 'center',*/}
-        {/*      }}>*/}
-        {/*      <Fontisto*/}
-        {/*        size={23}*/}
-        {/*        name={'check-circle'}*/}
-        {/*        style={{*/}
-        {/*          color: colorConfig.store.secondaryColor,*/}
-        {/*          marginRight: 20,*/}
-        {/*        }}*/}
-        {/*      />*/}
-        {/*      <Text style={{fontFamily: 'Poppins-Regular', letterSpacing: 1.4}}>*/}
-        {/*        {!isEmptyObject(defaultAccount) ? (*/}
-        {/*          defaultAccount.isAccountRequired !== false ? (*/}
-        {/*            <>*/}
-        {/*              <Text>*/}
-        {/*                {defaultAccount.details.cardIssuer != undefined*/}
-        {/*                  ? defaultAccount.details.cardIssuer.toUpperCase()*/}
-        {/*                  : null}*/}
-        {/*              </Text>{' '}*/}
-        {/*              <Text>{defaultAccount.details.maskedAccountNumber}</Text>*/}
-        {/*            </>*/}
-        {/*          ) : (*/}
-        {/*            <Text>{defaultAccount.paymentName}</Text>*/}
-        {/*          )*/}
-        {/*        ) : null}*/}
-        {/*      </Text>*/}
-        {/*    </View>*/}
-        {/*  </View>*/}
-        {/*) : null}*/}
+        {!isEmptyObject(defaultAccount) ? (
+          <View style={styles.singleCard}>
+            <Text style={{fontFamily: 'Poppins-Medium', marginBottom: 10}}>
+              Default Payment Account
+            </Text>
+            <View
+              style={{
+                flexDirection: 'row',
+                paddingVertical: 10,
+                alignItems: 'center',
+              }}>
+              <Fontisto
+                size={23}
+                name={'check-circle'}
+                style={{
+                  color: colorConfig.store.secondaryColor,
+                  marginRight: 20,
+                }}
+              />
+              <Text style={{fontFamily: 'Poppins-Regular', letterSpacing: 1.4}}>
+                {!isEmptyObject(defaultAccount) ? (
+                  defaultAccount.isAccountRequired !== false ? (
+                    <>
+                      <Text>
+                        {defaultAccount.details.cardIssuer != undefined
+                          ? defaultAccount.details.cardIssuer.toUpperCase()
+                          : null}
+                      </Text>{' '}
+                      <Text>{defaultAccount.details.maskedAccountNumber}</Text>
+                    </>
+                  ) : (
+                    <Text>{defaultAccount.paymentName}</Text>
+                  )
+                ) : null}
+              </Text>
+            </View>
+          </View>
+        ) : null}
 
         <View style={styles.singleCard}>
           <Text style={{fontFamily: 'Poppins-Medium', marginBottom: 10}}>
