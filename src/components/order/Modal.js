@@ -27,6 +27,7 @@ import {Dialog} from 'react-native-paper';
 import RadioButton from '../atom/RadioButton';
 import CheckBox from '../atom/CheckBox';
 import {isEmptyArray, isEmptyObject} from '../../helper/CheckEmpty';
+import Swiper from 'react-native-swiper';
 
 export default class ModalOrder extends Component {
   constructor(props) {
@@ -1105,6 +1106,46 @@ export default class ModalOrder extends Component {
     ));
   };
 
+  renderImage = () => {
+    try {
+      const {product} = this.props;
+      if (product) {
+        if (
+          product.product &&
+          product.product.imageFiles &&
+          !isEmptyArray(product.product.imageFiles)
+        ) {
+          return (
+            <Swiper
+              style={styles.swiper}
+              autoplay={false}
+              dot={<View style={styles.swiperDot} />}
+              activeDot={<View style={styles.swiperActiveDot} />}
+              loop>
+              {product.product.imageFiles.map((item, key) => (
+                <ProgressiveImage
+                  style={styles.imageModal}
+                  source={{uri: item}}
+                />
+              ))}
+            </Swiper>
+          );
+        } else if (product.product && product.product.defaultImageURL) {
+          return (
+            <ProgressiveImage
+              style={styles.imageModal}
+              source={this.getImageUrl(this.props.product)}
+            />
+          );
+        }
+        return <View style={{height: 50}} />;
+      }
+      return <View style={{height: 50}} />;
+    } catch (e) {
+      return <View style={{height: 50}} />;
+    }
+  };
+
   render() {
     // loading indicator
     let {loadModifierTime} = this.props;
@@ -1158,14 +1199,7 @@ export default class ModalOrder extends Component {
                   <Icon size={28} name={'close'} style={{color: 'white'}} />
                 </TouchableOpacity>
 
-                {this.getImageUrl(this.props.product) != false ? (
-                  <ProgressiveImage
-                    style={styles.imageModal}
-                    source={this.getImageUrl(this.props.product)}
-                  />
-                ) : (
-                  <View style={{height: 50}} />
-                )}
+                {this.renderImage()}
 
                 <View style={styles.detailItemModal}>
                   <View style={{flexDirection: 'row'}}>
@@ -1728,15 +1762,32 @@ const styles = StyleSheet.create({
   textPromotion: {
     textTransform: 'capitalize',
     fontFamily: 'Poppins-Bold',
-    fontSize: 14,
+    fontSize: 15,
     color: colorConfig.store.title,
-    maxWidth: '85%',
+    maxWidth: '100%',
   },
   textPromotionDesc: {
     textTransform: 'capitalize',
     fontFamily: 'Poppins-Italic',
-    fontSize: 13,
+    fontSize: 14,
     color: colorConfig.store.titleSelected,
-    maxWidth: '85%',
+    maxWidth: '100%',
+  },
+  swiper: {
+    height: Dimensions.get('window').height / 2.5,
+  },
+  swiperDot: {
+    backgroundColor: 'white',
+    width: 6,
+    height: 6,
+    borderRadius: 50,
+    margin: 3,
+  },
+  swiperActiveDot: {
+    backgroundColor: colorConfig.store.defaultColor,
+    width: 9,
+    height: 9,
+    borderRadius: 50,
+    margin: 3,
   },
 });
