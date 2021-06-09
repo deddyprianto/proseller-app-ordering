@@ -66,6 +66,7 @@ import {
 } from '../../actions/membership.action';
 import {getSVCBalance} from '../../actions/SVC.action';
 import {campaign, dataPoint} from '../../actions/rewards.action';
+import ModalTransfer from './ModalTransfer';
 
 class SettleOrder extends Component {
   constructor(props) {
@@ -94,6 +95,7 @@ class SettleOrder extends Component {
       amountSVC: 0,
       percentageUseSVC: 0,
       totalNonDiscountable: 0,
+      showModal: false,
     };
 
     // check if users payment methods is empty
@@ -2050,6 +2052,20 @@ class SettleOrder extends Component {
       payVoucher,
     } = this.props;
 
+    this.hideModal();
+
+    try {
+      if (selectedAccount && (payMembership || paySVC || payVoucher)) {
+        if (selectedAccount.paymentID === 'MANUAL_TRANSFER') {
+          Alert.alert(
+            'Sorry',
+            `Cannot use ${selectedAccount.paymentName} on this purchase`,
+          );
+          return;
+        }
+      }
+    } catch (e) {}
+
     if (payMembership === true) {
       this.payMembership();
       return;
@@ -2189,6 +2205,18 @@ class SettleOrder extends Component {
           }
         }
 
+        let manual_transfer_image = undefined;
+        let description = undefined;
+
+        try {
+          description = selectedAccount.configurations.find(
+            x => x.name === 'payment_description',
+          ).value;
+          manual_transfer_image = selectedAccount.configurations.find(
+            x => x.name === 'manual_transfer_image',
+          ).value;
+        } catch (e) {}
+
         payments.push({
           accountId: paymentPayload.accountId,
           paymentType: paymentPayload.paymentID,
@@ -2196,6 +2224,8 @@ class SettleOrder extends Component {
           paymentID: paymentPayload.paymentID,
           paymentName: this.selectedPaymentMethod(selectedAccount),
           paymentAmount: this.state.totalBayar,
+          manual_transfer_image,
+          description,
         });
       }
 
@@ -2911,6 +2941,10 @@ class SettleOrder extends Component {
     } catch (e) {}
   };
 
+  hideModal = () => {
+    this.setState({showModal: false});
+  };
+
   render() {
     const {
       intlData,
@@ -2922,14 +2956,17 @@ class SettleOrder extends Component {
     } = this.props;
     const {outlet} = this.state;
 
-    console.log(campign, 'campign');
-    console.log(detailPoint, 'detailPoint');
-    console.log(this.props.campaignActive, '{this.props.campaignActive');
-
     return (
       <SafeAreaView style={styles.container}>
         {this.state.loading && <LoaderDarker />}
         {this.askUserToEnterCVV()}
+        <ModalTransfer
+          doPayment={this.doPayment}
+          selectedAccount={selectedAccount}
+          showModal={this.state.showModal}
+          hideModal={this.hideModal}
+          totalNettAmount={this.state.totalBayar}
+        />
         <View style={{backgroundColor: colorConfig.pageIndex.backgroundColor}}>
           <View
             style={{
@@ -3549,7 +3586,21 @@ class SettleOrder extends Component {
 
             <View style={{marginTop: 50}} />
             <TouchableOpacity
-              onPress={this.doPayment}
+              onPress={() => {
+                try {
+                  if (
+                    selectedAccount &&
+                    selectedAccount.paymentID === 'MANUAL_TRANSFER' &&
+                    !this.props.paySVC &&
+                    !this.props.payMembership &&
+                    !this.props.payVoucher
+                  ) {
+                    this.setState({showModal: true});
+                  } else {
+                    this.doPayment();
+                  }
+                } catch (e) {}
+              }}
               disabled={
                 selectedAccount != undefined || this.state.totalBayar == 0
                   ? false

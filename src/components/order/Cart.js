@@ -39,6 +39,7 @@ import awsConfig from '../../config/awsConfig';
 import * as geolib from 'geolib';
 import IconAwesome from 'react-native-vector-icons/FontAwesome';
 import {format} from 'date-fns';
+import ModalTransfer from './ModalTransfer';
 
 class Cart extends Component {
   constructor(props) {
@@ -63,6 +64,7 @@ class Cart extends Component {
       refreshing: false,
       loadModifierTime: false,
       selectedCategoryModifier: 0,
+      showModal: false,
     };
   }
 
@@ -1407,9 +1409,30 @@ class Cart extends Component {
     }
   };
 
+  hideModal = () => {
+    this.setState({showModal: false});
+  };
+
+  showManualTransfer = () => {
+    try {
+      const {dataBasket} = this.props;
+      if (dataBasket) {
+        if (dataBasket.payments) {
+          const find = dataBasket.payments.find(
+            item => item.paymentID === 'MANUAL_TRANSFER',
+          );
+          if (find && dataBasket.status === 'SUBMITTED') return true;
+        }
+      }
+      return false;
+    } catch (e) {
+      return false;
+    }
+  };
+
   render() {
     const {intlData, dataBasket, orderType, tableType} = this.props;
-
+    let selectedAccount = {};
     let {outletSingle} = this.props;
     if (outletSingle == undefined || outletSingle == null) {
       outletSingle = {};
@@ -1419,6 +1442,16 @@ class Cart extends Component {
     try {
       if (dataBasket != undefined) {
         //  for outlet type quick service
+
+        if (dataBasket.payments) {
+          const findItem = dataBasket.payments.find(
+            i => i.paymentID === 'MANUAL_TRANSFER',
+          );
+          if (findItem) {
+            selectedAccount = findItem;
+          }
+        }
+
         if (
           (dataBasket.status === 'PROCESSING' ||
             dataBasket.status === 'READY_FOR_DELIVERY' ||
@@ -1456,19 +1489,27 @@ class Cart extends Component {
 
       if (this.props.dataBasket && this.props.dataBasket.inclusiveTax > 0) {
         taxAmount = this.props.dataBasket.inclusiveTax;
-        taxAmountText = 'Inclusive Tax ' + this.props.dataBasket.outlet.taxPercentage + '%';
+        taxAmountText =
+          'Inclusive Tax ' + this.props.dataBasket.outlet.taxPercentage + '%';
       }
 
       if (this.props.dataBasket && this.props.dataBasket.exclusiveTax > 0) {
         taxAmount = this.props.dataBasket.exclusiveTax;
-        taxAmountText = 'Tax ' + this.props.dataBasket.outlet.taxPercentage + '%';
+        taxAmountText =
+          'Tax ' + this.props.dataBasket.outlet.taxPercentage + '%';
       }
     } catch (e) {}
-
     return (
       <SafeAreaView style={styles.container}>
         {this.askUserToSelectOrderType()}
-
+        <ModalTransfer
+          isPendingPayment={true}
+          doPayment={this.doPayment}
+          selectedAccount={selectedAccount}
+          showModal={this.state.showModal}
+          hideModal={this.hideModal}
+          totalNettAmount={0}
+        />
         <View
           style={{
             backgroundColor: colorConfig.pageIndex.backgroundColor,
@@ -1514,6 +1555,17 @@ class Cart extends Component {
                 <Text style={styles.title}>
                   {this.props.dataBasket.outlet.name}
                 </Text>
+
+                {this.showManualTransfer() ? (
+                  <TouchableOpacity
+                    onPress={() => {
+                      this.setState({showModal: true});
+                    }}
+                    style={{marginVertical: 10}}>
+                    <Text style={styles.howtotransfer}>How to transfer ?</Text>
+                  </TouchableOpacity>
+                ) : null}
+
                 {!this.isOpen() ? (
                   <Text style={styles.titleClosed}>Outlet is Closed</Text>
                 ) : null}
@@ -1794,9 +1846,7 @@ class Cart extends Component {
 
                 {taxAmount !== undefined && taxAmount !== 0 && (
                   <View style={styles.itemSummary}>
-                    <Text style={styles.total}>
-                      {taxAmountText}
-                    </Text>
+                    <Text style={styles.total}>{taxAmountText}</Text>
                     <Text style={styles.total}>
                       {this.format(CurrencyFormatter(taxAmount))}
                     </Text>
@@ -1947,10 +1997,16 @@ const styles = StyleSheet.create({
   title: {
     color: colorConfig.store.title,
     fontSize: 18,
-    fontFamily: 'Poppins-Medium',
-    padding: 5,
+    fontFamily: 'Poppins-Bold',
+    paddingVertical: 5,
     textAlign: 'center',
-    fontWeight: 'bold',
+  },
+  howtotransfer: {
+    color: colorConfig.store.defaultColor,
+    fontSize: 14,
+    fontFamily: 'Poppins-Italic',
+    paddingVertical: 5,
+    textAlign: 'center',
   },
   titleClosed: {
     color: 'white',

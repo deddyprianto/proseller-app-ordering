@@ -127,7 +127,7 @@ class AccountMenuList extends Component {
         Actions.listCard({intlData, item});
       } else {
         await this.setState({selectedAccount: item});
-        this.RBSheet.open();
+        // this.RBSheet.open();
       }
     } catch (e) {}
   };

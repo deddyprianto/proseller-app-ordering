@@ -189,6 +189,12 @@ class PaymentSuccess extends Component {
         if (find !== undefined) {
           return this.format(CurrencyFormatter(find.paymentAmount));
         } else if (find === undefined && dataRespons.payAtPOS != true) {
+          const findAmount = dataRespons.payments.find(
+            item => item.paymentID === 'MANUAL_TRANSFER',
+          );
+          if (findAmount) {
+            return this.format(CurrencyFormatter(findAmount.paymentAmount));
+          }
           return this.format(CurrencyFormatter(0));
         } else {
           return this.format(CurrencyFormatter(dataRespons.totalNettAmount));
