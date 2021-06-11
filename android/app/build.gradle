@@ -141,7 +141,7 @@ android {
         applicationId "com.acemart"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 49
+        versionCode 50
         versionName "1.1.8"
         missingDimensionStrategy 'react-native-camera', 'general'
         resValue "string", "build_config_package", "com.acemart"

@@ -2054,17 +2054,17 @@ class SettleOrder extends Component {
 
     this.hideModal();
 
-    try {
-      if (selectedAccount && (payMembership || paySVC || payVoucher)) {
-        if (selectedAccount.paymentID === 'MANUAL_TRANSFER') {
-          Alert.alert(
-            'Sorry',
-            `Cannot use ${selectedAccount.paymentName} on this purchase`,
-          );
-          return;
-        }
-      }
-    } catch (e) {}
+    // try {
+    //   if (selectedAccount && (payMembership || paySVC || payVoucher)) {
+    //     if (selectedAccount.paymentID === 'MANUAL_TRANSFER') {
+    //       Alert.alert(
+    //         'Sorry',
+    //         `Cannot use ${selectedAccount.paymentName} on this purchase`,
+    //       );
+    //       return;
+    //     }
+    //   }
+    // } catch (e) {}
 
     if (payMembership === true) {
       this.payMembership();
@@ -3590,10 +3590,7 @@ class SettleOrder extends Component {
                 try {
                   if (
                     selectedAccount &&
-                    selectedAccount.paymentID === 'MANUAL_TRANSFER' &&
-                    !this.props.paySVC &&
-                    !this.props.payMembership &&
-                    !this.props.payVoucher
+                    selectedAccount.paymentID === 'MANUAL_TRANSFER'
                   ) {
                     this.setState({showModal: true});
                   } else {
