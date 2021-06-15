@@ -529,6 +529,7 @@ class PickUpTime extends Component {
             ref={ref => {
               this.TimeRef = ref;
             }}
+            initialNumToRender={100}
             data={this.state.selectedTimeSlot.timeSlot}
             horizontal={true}
             renderItem={this.renderItemTimeslot}
