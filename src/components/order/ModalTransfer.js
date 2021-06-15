@@ -145,7 +145,7 @@ export default class ModalTransfer extends Component {
                   style={{
                     alignItems: 'center',
                     flex: 1,
-                    paddingBottom: 60,
+                    paddingBottom: 100,
                   }}>
                   <Text style={styles.textDesc}>
                     {this.getData('payment_description')}
