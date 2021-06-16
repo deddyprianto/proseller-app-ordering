@@ -3154,6 +3154,38 @@ class Basket extends Component {
     }
   };
 
+  renderPromotionName = itemPromo => {
+    try {
+      if (itemPromo && itemPromo.items && itemPromo.items.length === 1) {
+        if (
+          itemPromo.promoDisplayName &&
+          itemPromo.promoDisplayName !== null &&
+          itemPromo.promoDisplayName !== ''
+        ) {
+          let promoName = itemPromo.promoDisplayName;
+          promoName = promoName.replace(
+            '{ItemName}',
+            itemPromo.items[0].itemName,
+          );
+          promoName = promoName.replace(
+            '{itemName}',
+            itemPromo.items[0].itemName,
+          );
+          promoName = promoName.replace('{qty}', itemPromo.items[0].quantity);
+          let price = this.format2(
+            CurrencyFormatter(Number(itemPromo.discValue)),
+          );
+          promoName = promoName.replace('{promoPrice}', `$${price.trim()}`);
+
+          return promoName;
+        }
+      }
+      return itemPromo.name;
+    } catch (e) {
+      return itemPromo.name;
+    }
+  };
+
   render() {
     const {intlData, dataBasket, orderType, tableType} = this.props;
     console.log(dataBasket, 'dataBasket');
@@ -3380,7 +3412,7 @@ class Basket extends Component {
                                               : 'md-pricetags'
                                           }
                                         />{' '}
-                                        {promo.name}
+                                        {this.renderPromotionName(promo)}
                                       </Text>
                                     ) : (
                                       <Text style={styles.promotionInactive}>
@@ -3392,7 +3424,7 @@ class Basket extends Component {
                                               : 'md-pricetags'
                                           }
                                         />{' '}
-                                        {promo.name}
+                                        {this.renderPromotionName(promo)}
                                       </Text>
                                     ),
                                   )

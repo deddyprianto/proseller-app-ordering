@@ -1134,6 +1134,46 @@ class ProductsSpecific extends Component {
     }
   };
 
+  renderPromotionName = (itemPromo, type) => {
+    try {
+      if (itemPromo && itemPromo.items && itemPromo.items.length === 1) {
+        if (
+          itemPromo.promoDisplayName &&
+          itemPromo.promoDisplayName !== null &&
+          itemPromo.promoDisplayName !== ''
+        ) {
+          let promoName = itemPromo.promoDisplayName;
+          promoName = promoName.replace(
+            '{ItemName}',
+            itemPromo.items[0].itemName,
+          );
+          promoName = promoName.replace(
+            '{itemName}',
+            itemPromo.items[0].itemName,
+          );
+          promoName = promoName.replace('{qty}', itemPromo.items[0].quantity);
+          let price = this.formatNumber(
+            CurrencyFormatter(Number(itemPromo.discValue)),
+          );
+          promoName = promoName.replace('{promoPrice}', `$${price.trim()}`);
+
+          return promoName.substr(0, 25);
+        }
+      }
+      if (type === 'name') {
+        return itemPromo.name.substr(0, 25);
+      } else {
+        return itemPromo.remark;
+      }
+    } catch (e) {
+      if (type === 'name') {
+        return itemPromo.name.substr(0, 25);
+      } else {
+        return itemPromo.remark;
+      }
+    }
+  };
+
   renderPromotions = promotions => {
     return promotions.map(item => (
       <View style={{flexDirection: 'row', marginHorizontal: 8}}>
@@ -1142,7 +1182,9 @@ class ProductsSpecific extends Component {
           name={Platform.OS === 'ios' ? 'ios-pricetags' : 'md-pricetags'}
           style={{color: colorConfig.store.defaultColor, marginRight: 7}}
         />
-        <Text style={styles.textPromotion}>{item.name.substr(0, 25)}</Text>
+        <Text style={styles.textPromotion}>
+          {this.renderPromotionName(item)}
+        </Text>
       </View>
     ));
   };

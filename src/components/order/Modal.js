@@ -112,7 +112,9 @@ export default class ModalOrder extends Component {
             group.modifier.details.map(detail => {
               if (detail.quantity != undefined && detail.quantity > 0) {
                 let price = detail.price;
-                if (price == undefined) price = 0;
+                if (price == undefined) {
+                  price = 0;
+                }
                 totalModifier += parseFloat(detail.quantity * price);
               }
             });
@@ -278,7 +280,9 @@ export default class ModalOrder extends Component {
 
   addQty = () => {
     let selectedModifier = this.state.selectedModifier;
-    if (selectedModifier.quantity == undefined) selectedModifier.quantity = 1;
+    if (selectedModifier.quantity == undefined) {
+      selectedModifier.quantity = 1;
+    }
     selectedModifier.quantity += 1;
     this.setState({selectedModifier});
   };
@@ -660,8 +664,11 @@ export default class ModalOrder extends Component {
 
   findToggleModifier = item => {
     try {
-      if (item.yesNoValue == 'yes') return true;
-      else return false;
+      if (item.yesNoValue == 'yes') {
+        return true;
+      } else {
+        return false;
+      }
     } catch (e) {
       return false;
     }
@@ -979,14 +986,14 @@ export default class ModalOrder extends Component {
           item.modifier.min == '-') &&
         item.modifier.max <= 0
       ) {
-        return `Optional`;
+        return 'Optional';
       } else if (
         item.modifier.min == 1 &&
         (item.modifier.max == 1 ||
           item.modifier.max <= 0 ||
           item.modifier.max == undefined)
       ) {
-        return `Pick 1`;
+        return 'Pick 1';
       } else if (item.modifier.min > 0 && item.modifier.max > 0) {
         return `Pick ${item.modifier.min} to ${item.modifier.max}`;
       }
@@ -1076,6 +1083,45 @@ export default class ModalOrder extends Component {
     }
   };
 
+  renderPromotionName = (itemPromo, type) => {
+    try {
+      if (itemPromo && itemPromo.items && itemPromo.items.length === 1) {
+        if (
+          itemPromo.promoDisplayName &&
+          itemPromo.promoDisplayName !== null &&
+          itemPromo.promoDisplayName !== ''
+        ) {
+          let promoName = itemPromo.promoDisplayName;
+          promoName = promoName.replace(
+            '{ItemName}',
+            itemPromo.items[0].itemName,
+          );
+          promoName = promoName.replace(
+            '{itemName}',
+            itemPromo.items[0].itemName,
+          );
+          promoName = promoName.replace('{qty}', itemPromo.items[0].quantity);
+          let price = this.formatNumber(
+            CurrencyFormatter(Number(itemPromo.discValue)),
+          );
+          promoName = promoName.replace('{promoPrice}', `$${price.trim()}`);
+
+          if (type === 'remark' && itemPromo.remark) {
+            return promoName;
+          } else if (type === 'remark' && !itemPromo.remark) {
+            return null;
+          }
+          return promoName;
+        }
+      }
+      if (type === 'name') return itemPromo.name;
+      else return itemPromo.remark;
+    } catch (e) {
+      if (type === 'name') return itemPromo.name;
+      else return itemPromo.remark;
+    }
+  };
+
   renderPromotions = promotions => {
     return promotions.map(item => (
       <View
@@ -1097,9 +1143,11 @@ export default class ModalOrder extends Component {
           style={{color: colorConfig.store.defaultColor, marginRight: 7}}
         />
         <View>
-          <Text style={styles.textPromotion}>{item.name}</Text>
+          <Text style={styles.textPromotion}>
+            {this.renderPromotionName(item, 'name')}
+          </Text>
           {item.remark ? (
-            <Text style={styles.textPromotionDesc}>{item.remark}</Text>
+            <Text style={styles.textPromotionDesc}>{this.renderPromotionName(item, 'remark')}</Text>
           ) : null}
         </View>
       </View>
@@ -1760,14 +1808,12 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   textPromotion: {
-    textTransform: 'capitalize',
     fontFamily: 'Poppins-Bold',
     fontSize: 15,
     color: colorConfig.store.title,
-    maxWidth: '100%',
+    maxWidth: '90%',
   },
   textPromotionDesc: {
-    textTransform: 'capitalize',
     fontFamily: 'Poppins-Italic',
     fontSize: 14,
     color: colorConfig.store.titleSelected,
