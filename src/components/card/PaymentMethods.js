@@ -110,6 +110,13 @@ class PaymentMethods extends Component {
     let paymentTypes = [];
     if (companyInfo.paymentTypes != undefined)
       paymentTypes = companyInfo.paymentTypes;
+
+    if (this.props.paySVC) {
+      paymentTypes = paymentTypes.filter(i => i.allowTopUpSVC === true);
+    } else {
+      paymentTypes = paymentTypes.filter(i => i.allowSalesTransaction === true);
+    }
+
     if (!isEmptyArray(paymentTypes))
       return (
         <FlatList

@@ -2072,6 +2072,22 @@ class SettleOrder extends Component {
     }
 
     if (paySVC === true) {
+      // check if this payment method is allowed to top up SVC
+      try {
+        const find = companyInfo.paymentTypes.find(
+          i => i.paymentID === selectedAccount.paymentID,
+        );
+        if (find) {
+          if (find.allowTopUpSVC === false) {
+            Alert.alert(
+              'Sorry',
+              'This payment method is not allowed for top up SVC',
+            );
+            return;
+          }
+        }
+      } catch (e) {}
+
       this.paySVC();
       return;
     }
@@ -2080,6 +2096,22 @@ class SettleOrder extends Component {
       this.payVoucher();
       return;
     }
+
+    // check if this payment method is allowed to create sales
+    try {
+      const find = companyInfo.paymentTypes.find(
+        i => i.paymentID === selectedAccount.paymentID,
+      );
+      if (find) {
+        if (find.allowSalesTransaction === false) {
+          Alert.alert(
+            'Sorry',
+            'This payment method is not allowed for online ordering.',
+          );
+          return;
+        }
+      }
+    } catch (e) {}
 
     let {totalBayar, dataVoucer} = this.state;
     let realTotal = 0;
@@ -3555,7 +3587,12 @@ class SettleOrder extends Component {
               }}>
               <TouchableOpacity
                 style={styles.btnPaymentMethod}
-                onPress={() => Actions.paymentMethods({page: 'settleOrder'})}>
+                onPress={() =>
+                  Actions.paymentMethods({
+                    page: 'settleOrder',
+                    paySVC: this.props.paySVC,
+                  })
+                }>
                 <Text
                   style={[
                     styles.descMethodUnselected,
@@ -3592,6 +3629,34 @@ class SettleOrder extends Component {
                     selectedAccount &&
                     selectedAccount.paymentID === 'MANUAL_TRANSFER'
                   ) {
+                    // check if this payment method is allowed to top up SVC
+                    try {
+                      const find = this.props.companyInfo.paymentTypes.find(
+                        i => i.paymentID === selectedAccount.paymentID,
+                      );
+                      if (find) {
+                        if (find.allowTopUpSVC === false && this.props.paySVC) {
+                          Alert.alert(
+                            'Sorry',
+                            'This payment method is not allowed for top up SVC',
+                          );
+                          return;
+                        }
+
+                        if (
+                          find.allowSalesTransaction === false &&
+                          !this.props.paySVC &&
+                          !this.props.payVoucher &&
+                          !this.props.payMembership
+                        ) {
+                          Alert.alert(
+                            'Sorry',
+                            'This payment method is not allowed for online ordering.',
+                          );
+                          return;
+                        }
+                      }
+                    } catch (e) {}
                     this.setState({showModal: true});
                   } else {
                     this.doPayment();
