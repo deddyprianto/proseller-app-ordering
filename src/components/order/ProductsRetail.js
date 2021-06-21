@@ -1840,6 +1840,7 @@ class Products2 extends Component {
 
   renderPromotionName = (itemPromo, type) => {
     try {
+      console.log(itemPromo, 'itemPromo')
       if (itemPromo && itemPromo.items && itemPromo.items.length === 1) {
         if (
           itemPromo.promoDisplayName &&
@@ -1885,7 +1886,9 @@ class Products2 extends Component {
           name={Platform.OS === 'ios' ? 'ios-pricetags' : 'md-pricetags'}
           style={{color: colorConfig.store.defaultColor, marginRight: 7}}
         />
-        <Text style={styles.textPromotion}>{this.renderPromotionName(item, 'name')}</Text>
+        <Text style={styles.textPromotion}>
+          {this.renderPromotionName(item, 'name')}
+        </Text>
       </View>
     ));
   };

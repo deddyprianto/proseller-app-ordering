@@ -1147,7 +1147,7 @@ export default class ModalOrder extends Component {
             {this.renderPromotionName(item, 'name')}
           </Text>
           {item.remark ? (
-            <Text style={styles.textPromotionDesc}>{this.renderPromotionName(item, 'remark')}</Text>
+            <Text style={styles.textPromotionDesc}>{item.remark}</Text>
           ) : null}
         </View>
       </View>

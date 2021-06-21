@@ -3172,8 +3172,9 @@ class Basket extends Component {
             itemPromo.items[0].itemName,
           );
           promoName = promoName.replace('{qty}', itemPromo.items[0].quantity);
+          console.log(itemPromo, 'itemPromo.discValue')
           let price = this.format2(
-            CurrencyFormatter(Number(itemPromo.discValue)),
+            CurrencyFormatter(Number(itemPromo.items[0].discValue)),
           );
           promoName = promoName.replace('{promoPrice}', `$${price.trim()}`);
 

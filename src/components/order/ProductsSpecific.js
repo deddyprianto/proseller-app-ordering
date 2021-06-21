@@ -1183,7 +1183,7 @@ class ProductsSpecific extends Component {
           style={{color: colorConfig.store.defaultColor, marginRight: 7}}
         />
         <Text style={styles.textPromotion}>
-          {this.renderPromotionName(item)}
+          {this.renderPromotionName(item, 'name')}
         </Text>
       </View>
     ));
