@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-duplicate-props */
 import React, {Component} from 'react';
 import {WebView} from 'react-native-webview';
 import {
@@ -6,6 +7,7 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
+  View,
 } from 'react-native';
 import {Actions} from 'react-native-router-flux';
 import colorConfig from '../../config/colorConfig';
@@ -14,7 +16,7 @@ import {compose} from 'redux';
 import {connect} from 'react-redux';
 import {getBasket, getCart, getPendingCart} from '../../actions/order.action';
 import {myVoucers} from '../../actions/account.action';
-import LoaderDarker from '../LoaderDarker';
+import LoaderWithoutIcon from '../LoaderWithoutIcon';
 import {getSVCBalance} from '../../actions/SVC.action';
 
 const CYBERSOURCE_URL = '/receipt';
@@ -27,6 +29,7 @@ class HostedTransaction extends Component {
     this.state = {
       showButton: false,
       openLoader: false,
+      isFetching: false,
     };
   }
 
@@ -48,82 +51,74 @@ class HostedTransaction extends Component {
 
   checkStatus = async () => {
     const {url, page, referenceNo, intlData} = this.props;
-
-    clearInterval(this.interval);
-    this.interval = setInterval(async () => {
-      const response = await this.props.dispatch(getBasket());
-      // console.log(response.response.data, 'aksjbaskj');
-      if (
-        response.response.data.confirmationInfo != undefined &&
-        response.response.data.isPaymentComplete == true
-      ) {
-        clearInterval(this.interval);
-        this.props.dispatch(getBasket());
-        if (this.props.page === 'settleOrder') {
-          // this.props.dispatch(getCart(this.props.cartID));
-          Actions.replace('paymentSuccess', {
-            outlet: this.props.outlet,
-            intlData,
-            url: this.props.urlSettle,
-            dataRespons: response.response.data.confirmationInfo,
-          });
-          return;
-        } else {
-          Actions.replace('paymentSuccess', {
-            outlet: this.props.outlet,
-            intlData,
-            dataRespons: response.responseBody.Data,
-          });
-          return;
-        }
-      } else if (response.response.data.status === 'PENDING') {
-        clearInterval(this.interval);
-        this.props.dispatch(getBasket());
-        this.props.dispatch(myVoucers());
-        Actions.popTo(page);
-        // Alert.alert('Sorry', 'Payment Failed.');
-        return false;
+    await this.setState({isFetching: true});
+    const response = await this.props.dispatch(getBasket());
+    console.log('fetching data sales');
+    if (
+      response.response.data.confirmationInfo != undefined &&
+      response.response.data.isPaymentComplete == true
+    ) {
+      clearInterval(this.interval);
+      this.props.dispatch(getBasket());
+      if (this.props.page === 'settleOrder') {
+        // this.props.dispatch(getCart(this.props.cartID));
+        Actions.replace('paymentSuccess', {
+          outlet: this.props.outlet,
+          intlData,
+          url: this.props.urlSettle,
+          dataRespons: response.response.data.confirmationInfo,
+        });
+        return;
+      } else {
+        Actions.replace('paymentSuccess', {
+          outlet: this.props.outlet,
+          intlData,
+          dataRespons: response.responseBody.Data,
+        });
+        return;
       }
-    }, 1000);
+    } else if (response.response.data.status === 'PENDING') {
+      clearInterval(this.interval);
+      this.props.dispatch(getBasket());
+      this.props.dispatch(myVoucers());
+      Actions.popTo(page);
+      // Alert.alert('Sorry', 'Payment Failed.');
+      return false;
+    }
+    await this.setState({isFetching: false});
   };
 
   checkStatusSales = async () => {
     const {url, page, referenceNo, intlData} = this.props;
-
-    clearInterval(this.interval);
-    this.interval = setInterval(async () => {
-      const response = await this.props.dispatch(
-        checkStatusPayment(referenceNo),
-      );
-
-      console.log(response.Data.status, 'aksjbaskj');
-      if (response.Data.status === 'COMPLETED') {
-        clearInterval(this.interval);
-        this.props.dispatch(myVoucers());
-        if (this.props.page === 'settleOrder') {
-          // this.props.dispatch(getCart(this.props.cartID));
-          Actions.replace('paymentSuccess', {
-            outlet: this.props.outlet,
-            intlData,
-            url: this.props.urlSettle,
-            dataRespons: response.Data,
-            fromPage: this.props.fromPage,
-            payVoucher: this.props.payVoucher,
-            paySVC: this.props.paySVC,
-          });
-          return;
-        } else {
-          Actions.replace('paymentSuccess', {
-            outlet: this.props.outlet,
-            intlData,
-            dataRespons: response.Data,
-            fromPage: this.props.fromPage,
-            payVoucher: this.props.payVoucher,
-          });
-          return;
-        }
+    await this.setState({isFetching: true});
+    const response = await this.props.dispatch(checkStatusPayment(referenceNo));
+    console.log('fetching data sales');
+    if (response.Data.status === 'COMPLETED') {
+      this.props.dispatch(myVoucers());
+      if (this.props.page === 'settleOrder') {
+        // this.props.dispatch(getCart(this.props.cartID));
+        Actions.replace('paymentSuccess', {
+          outlet: this.props.outlet,
+          intlData,
+          url: this.props.urlSettle,
+          dataRespons: response.Data,
+          fromPage: this.props.fromPage,
+          payVoucher: this.props.payVoucher,
+          paySVC: this.props.paySVC,
+        });
+        return;
+      } else {
+        Actions.replace('paymentSuccess', {
+          outlet: this.props.outlet,
+          intlData,
+          dataRespons: response.Data,
+          fromPage: this.props.fromPage,
+          payVoucher: this.props.payVoucher,
+        });
+        return;
       }
-    }, 1000);
+    }
+    await this.setState({isFetching: false});
   };
 
   getCartStatus = () => {
@@ -154,32 +149,35 @@ class HostedTransaction extends Component {
 
   render() {
     const {url, page, referenceNo} = this.props;
-    const {openLoader} = this.state;
+    const {openLoader, isFetching} = this.state;
     return (
       <SafeAreaView style={{flex: 1}}>
-        {openLoader && <LoaderDarker />}
-        <TouchableOpacity
-          onPress={this.alertClose}
-          style={{
-            position: 'absolute',
-            top: 30,
-            right: 20,
-            zIndex: 100,
-            backgroundColor: colorConfig.store.disableButtonError,
-            width: 40,
-            height: 40,
-            borderRadius: 50,
-            alignItems: 'center',
-          }}>
-          <Text
+        {openLoader && <LoaderWithoutIcon />}
+        {!openLoader ? (
+          <TouchableOpacity
+            onPress={this.alertClose}
             style={{
-              fontSize: 25,
-              color: 'white',
-              fontFamily: 'Poppins-Medium',
+              position: 'absolute',
+              top: 30,
+              right: 20,
+              zIndex: 100,
+              backgroundColor: colorConfig.store.disableButtonError,
+              width: 40,
+              height: 40,
+              borderRadius: 50,
+              alignItems: 'center',
             }}>
-            x
-          </Text>
-        </TouchableOpacity>
+            <Text
+              style={{
+                fontSize: 25,
+                color: 'white',
+                fontFamily: 'Poppins-Medium',
+              }}>
+              x
+            </Text>
+          </TouchableOpacity>
+        ) : null}
+
         <WebView
           onNavigationStateChange={async navState => {
             let url = navState.url;
@@ -189,17 +187,31 @@ class HostedTransaction extends Component {
               url.includes(FAILED_URL)
             ) {
               this.setState({openLoader: true});
-              setTimeout(() => {
-                if (this.props.isSubmitSales) {
-                  this.checkStatusSales();
-                } else {
-                  this.checkStatus();
-                }
-              }, 4000);
             }
           }}
           source={{uri: url}}
         />
+        {openLoader ? (
+          <View style={{height: 150, backgroundColor: 'white'}} />
+        ) : null}
+        {this.state.openLoader ? (
+          <TouchableOpacity
+            disabled={isFetching}
+            onPress={() => {
+              if (this.props.isSubmitSales) {
+                this.checkStatusSales();
+              } else {
+                this.checkStatus();
+              }
+            }}
+            style={
+              isFetching ? styles.btnBottomFixedDisabled : styles.btnBottomFixed
+            }>
+            <Text style={styles.textAddCard}>
+              {isFetching ? 'Loading...' : 'Continue'}
+            </Text>
+          </TouchableOpacity>
+        ) : null}
       </SafeAreaView>
     );
   }
@@ -217,6 +229,20 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
     fontFamily: 'Poppins-Medium',
+  },
+  btnBottomFixed: {
+    backgroundColor: colorConfig.store.defaultColor,
+    padding: 15,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    zIndex: 100,
+  },
+  btnBottomFixedDisabled: {
+    backgroundColor: colorConfig.store.disableButton,
+    padding: 15,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    zIndex: 100,
   },
 });
 
