@@ -51,7 +51,9 @@ class ScanBarcode extends Component {
 
   componentDidMount = async () => {
     const {status} = await BarCodeScanner.requestPermissionsAsync();
-    if (status === 'granted') await this.setState({hasPermission: true});
+    if (status === 'granted') {
+      await this.setState({hasPermission: true});
+    }
   };
 
   componentWillUnmount() {
@@ -212,8 +214,8 @@ class ScanBarcode extends Component {
     );
   };
 
-  onBarCodeRead = async ({type, data}) => {
-    console.log(type, 'type');
+  onBarCodeRead = async data => {
+    // console.log(type, 'type');
     if (data) {
       let scanResult = {
         data: data,
@@ -314,12 +316,10 @@ class ScanBarcode extends Component {
                     buttonPositive: 'Ok',
                     buttonNegative: 'Cancel',
                   }}
-                  onGoogleVisionBarcodesDetected={({barcodes}) => {
-                    console.log(barcodes);
-                    if (barcodes.length > 0) {
-                      if (barcodes[0].type !== 'UNKNOWN_FORMAT') {
-                        this.onBarCodeRead(barcodes[0]);
-                      }
+                  onBarCodeRead={barcodes => {
+                    // console.log(barcodes);
+                    if (barcodes && barcodes.data) {
+                      this.onBarCodeRead(barcodes.data);
                     }
                   }}
                 />
