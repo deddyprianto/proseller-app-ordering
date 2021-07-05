@@ -1276,10 +1276,20 @@ export const getTermsConditions = () => {
       console.log(response, 'RESPONSE ORDERING SETTING');
 
       if (response.success) {
+        let enableRegisterWithPassword = false;
+
+        try {
+          enableRegisterWithPassword = response.response.data.settings.find(
+            item => item.settingKey === 'EnableRegisterWithPassword',
+          ).settingValue;
+        } catch (e) {}
+
         dispatch({
           type: 'DATA_ORDERING_SETTING',
           orderingSetting: response.response.data,
+          enableRegisterWithPassword: enableRegisterWithPassword,
         });
+
         return response.response.data;
       } else {
         return false;

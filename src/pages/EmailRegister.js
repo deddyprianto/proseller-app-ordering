@@ -37,6 +37,7 @@ import {isEmptyArray} from '../helper/CheckEmpty';
 import DropDownPicker from 'react-native-dropdown-picker';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import {format} from 'date-fns';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 const imageWidth = Dimensions.get('window').width / 2;
 
@@ -131,6 +132,10 @@ class EmailRegister extends Component {
       name: '',
       email: '',
       openModalCountry: false,
+      password: '',
+      retypePassword: '',
+      showPass: false,
+      passwordInvalid: false,
     };
     this.imageWidth = new Animated.Value(styles.$largeImageSize);
   }
@@ -144,7 +149,26 @@ class EmailRegister extends Component {
   };
 
   submitRegister = async () => {
-    const {fields} = this.props;
+    const {fields, enableRegisterWithPassword} = this.props;
+
+    const {password, retypePassword, passwordInvalid} = this.state;
+    if (passwordInvalid) {
+      Alert.alert('Sorry', 'Please use a valid password');
+      this.setState({loading: false});
+      return;
+    }
+
+    if (password !== retypePassword) {
+      Alert.alert('Sorry', 'Retype password is different from password');
+      this.setState({loading: false});
+      return;
+    }
+    if (password !== '' && password.length < 8) {
+      Alert.alert('Sorry', 'Password consists of 8 characters or more');
+      this.setState({loading: false});
+      return;
+    }
+
     this.setState({loading: true});
     try {
       let dataRequest = {
@@ -155,6 +179,16 @@ class EmailRegister extends Component {
         type: 'userPool',
         password: this.generatePassword(),
       };
+
+      // fill in password
+      if (
+        !passwordInvalid &&
+        password !== '' &&
+        retypePassword !== '' &&
+        enableRegisterWithPassword
+      ) {
+        dataRequest.password = password;
+      }
 
       for (let i = 0; i < fields.length; i++) {
         if (fields[i].signUpField) {
@@ -315,8 +349,8 @@ class EmailRegister extends Component {
   };
 
   render() {
-    const {intlData, fields} = this.props;
-    const {name, phone} = this.state;
+    const {intlData, fields, enableRegisterWithPassword} = this.props;
+    const {name, phone, passwordInvalid} = this.state;
     return (
       <SafeAreaView style={styles.backgroundImage}>
         {this.state.loading && <Loader />}
@@ -731,6 +765,136 @@ class EmailRegister extends Component {
                 })}
             {/* Custom Fields */}
 
+            {/* If Register with password enabled */}
+            {enableRegisterWithPassword ? (
+              <>
+                <View>
+                  <Text
+                    style={{
+                      color: colorConfig.pageIndex.grayColor,
+                      paddingVertical: 10,
+                      fontSize: 17,
+                    }}>
+                    Password
+                  </Text>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                    }}>
+                    <TextInput
+                      placeholder={'Password'}
+                      secureTextEntry={this.state.showPass ? false : true}
+                      value={this.state.password}
+                      onChangeText={value => {
+                        this.setState({password: value.trim()});
+                        try {
+                          if (
+                            !/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])/.test(value)
+                          ) {
+                            this.setState({passwordInvalid: true});
+                          } else {
+                            this.setState({passwordInvalid: false});
+                          }
+                        } catch (e) {}
+                      }}
+                      style={{
+                        fontSize: 14,
+                        fontFamily: 'Poppins-Regular',
+                        padding: 10,
+                        color: colorConfig.store.title,
+                        borderColor: colorConfig.pageIndex.inactiveTintColor,
+                        borderWidth: 1.3,
+                        borderRadius: 5,
+                        width: '100%',
+                      }}
+                    />
+                    <TouchableOpacity
+                      style={{
+                        position: 'absolute',
+                        top: 14,
+                        right: 20,
+                      }}
+                      onPress={() =>
+                        this.setState({
+                          showPass: !this.state.showPass,
+                        })
+                      }>
+                      <Icon
+                        name={
+                          this.state.showPass == true ? 'md-eye-off' : 'md-eye'
+                        }
+                        size={26}
+                        color={colorConfig.pageIndex.grayColor}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                  {passwordInvalid && (
+                    <Text
+                      style={{
+                        color: colorConfig.store.colorError,
+                        fontSize: 12,
+                      }}>
+                      Password must contain at least 1 uppercase, 1 lowercase
+                      character
+                    </Text>
+                  )}
+                </View>
+                <View>
+                  <Text
+                    style={{
+                      color: colorConfig.pageIndex.grayColor,
+                      paddingVertical: 10,
+                      fontSize: 17,
+                    }}>
+                    Retype Password
+                  </Text>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                    }}>
+                    <TextInput
+                      placeholder={'Retype your password'}
+                      secureTextEntry={this.state.showPass ? false : true}
+                      value={this.state.retypePassword}
+                      onChangeText={value =>
+                        this.setState({retypePassword: value.trim()})
+                      }
+                      style={{
+                        fontSize: 14,
+                        fontFamily: 'Poppins-Regular',
+                        padding: 10,
+                        width: '100%',
+                        color: colorConfig.store.title,
+                        borderColor: colorConfig.pageIndex.inactiveTintColor,
+                        borderWidth: 1.3,
+                        borderRadius: 5,
+                      }}
+                    />
+                    <TouchableOpacity
+                      style={{
+                        position: 'absolute',
+                        top: 14,
+                        right: 20,
+                      }}
+                      onPress={() =>
+                        this.setState({
+                          showPass: !this.state.showPass,
+                        })
+                      }>
+                      <Icon
+                        name={
+                          this.state.showPass == true ? 'md-eye-off' : 'md-eye'
+                        }
+                        size={26}
+                        color={colorConfig.pageIndex.grayColor}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </>
+            ) : null}
+            {/* If Register with password enabled */}
+
             <View style={{marginVertical: 30}}>
               <TouchableHighlight
                 disabled={name && phone ? false : true}
@@ -805,6 +969,8 @@ mapStateToProps = state => ({
   status: state.accountsReducer.accountExist.status,
   intlData: state.intlData,
   fields: state.userReducer.customFields.fields,
+  enableRegisterWithPassword:
+    state.orderReducer.orderingSetting.enableRegisterWithPassword,
 });
 
 mapDispatchToProps = dispatch => ({

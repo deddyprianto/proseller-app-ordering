@@ -188,7 +188,7 @@ class ScanBarcode extends Component {
                   width: '40%',
                   marginRight: '10%',
                 }}
-                onPress={() => this.onBarCodeRead({data: this.state.barcode})}>
+                onPress={() => this.onBarCodeRead(this.state.barcode)}>
                 <Text style={{color: 'white', fontFamily: 'Poppins-Medium'}}>
                   Submit
                 </Text>

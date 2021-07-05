@@ -329,7 +329,7 @@ class SignInEmail extends Component {
                     this.setState({password: value.trim()})
                   }
                   style={{
-                    fontSize: 20,
+                    fontSize: 15,
                     width: '100%',
                     fontFamily: 'Poppins-Regular',
                     padding: 12,

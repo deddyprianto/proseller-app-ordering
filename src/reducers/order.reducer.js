@@ -101,6 +101,7 @@ const orderingSetting = (state = {}, action) => {
     case 'DATA_ORDERING_SETTING':
       return {
         orderingSetting: action.orderingSetting,
+        enableRegisterWithPassword: action.enableRegisterWithPassword,
       };
 
     default:

@@ -136,8 +136,7 @@ class InputEmail extends Component {
     }
 
     this.setState({loading: true});
-    const {companyInfo} = this.props;
-
+    const {companyInfo, enableRegisterWithPassword} = this.props;
     try {
       var dataRequest = {
         email: this.state.email.toLowerCase(),
@@ -154,10 +153,7 @@ class InputEmail extends Component {
           email.confirmed = false;
           email.phoneNumber = response.data.phoneNumber;
           // check mode sign in ( by password or by OTP )
-          if (
-            companyInfo.enableRegisterWithPassword != undefined &&
-            companyInfo.enableRegisterWithPassword == true
-          ) {
+          if (enableRegisterWithPassword) {
             Actions.signInEmailWithPassword(email);
           } else {
             Actions.signInEmail(email);
@@ -171,10 +167,7 @@ class InputEmail extends Component {
           );
         } else {
           // check mode sign in ( by password or by OTP )
-          if (
-            companyInfo.enableRegisterWithPassword != undefined &&
-            companyInfo.enableRegisterWithPassword == true
-          ) {
+          if (enableRegisterWithPassword) {
             Actions.signInEmailWithPassword(email);
           } else {
             Actions.signInEmail(email);
@@ -187,16 +180,7 @@ class InputEmail extends Component {
         this.setState({
           loading: false,
         });
-
-        // check mode sign up ( by password or by OTP )
-        if (
-          companyInfo.enableRegisterWithPassword != undefined &&
-          companyInfo.enableRegisterWithPassword == true
-        ) {
-          Actions.emailRegisterWithPassword(email);
-        } else {
-          Actions.emailRegister(email);
-        }
+        Actions.emailRegister(email);
       }
     } catch (error) {
       Alert.alert('Opss..', 'Something went wrong, please try again.');
@@ -290,6 +274,8 @@ mapStateToProps = state => ({
   companyInfo: state.userReducer.getCompanyInfo.companyInfo,
   status: state.accountsReducer.accountExist.status,
   intlData: state.intlData,
+  enableRegisterWithPassword:
+    state.orderReducer.orderingSetting.enableRegisterWithPassword,
 });
 
 mapDispatchToProps = dispatch => ({

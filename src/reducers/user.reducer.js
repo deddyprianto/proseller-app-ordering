@@ -183,7 +183,6 @@ const getCompanyInfo = (state = {}, action) => {
 };
 
 const customFields = (state = {}, action) => {
-  console.log(action, 'actionnnn');
   switch (action.type) {
     case 'DATA_MANDATORY_FIELDS':
       return {

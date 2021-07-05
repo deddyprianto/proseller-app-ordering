@@ -209,7 +209,7 @@ class InputPhoneNumber extends Component {
   }
 
   checkAccountExist = async () => {
-    const {companyInfo} = this.props;
+    const {companyInfo, enableRegisterWithPassword} = this.props;
     this.setState({loading: true});
     try {
       var dataRequest = {
@@ -228,10 +228,7 @@ class InputPhoneNumber extends Component {
           phoneNumber.confirmed = false;
 
           // check mode sign in ( by password or by OTP )
-          if (
-            companyInfo.enableRegisterWithPassword != undefined &&
-            companyInfo.enableRegisterWithPassword == true
-          ) {
+          if (enableRegisterWithPassword) {
             Actions.signInPhoneNumberWithPassword(phoneNumber);
           } else {
             Actions.signInPhoneNumber(phoneNumber);
@@ -246,10 +243,7 @@ class InputPhoneNumber extends Component {
         } else {
           phoneNumber.email = response.data.email;
           // check mode sign in ( by password or by OTP )
-          if (
-            companyInfo.enableRegisterWithPassword != undefined &&
-            companyInfo.enableRegisterWithPassword == true
-          ) {
+          if (enableRegisterWithPassword) {
             Actions.signInPhoneNumberWithPassword(phoneNumber);
           } else {
             Actions.signInPhoneNumber(phoneNumber);
@@ -262,15 +256,7 @@ class InputPhoneNumber extends Component {
         this.setState({
           loading: false,
         });
-        // check mode sign in ( by password or by OTP )
-        if (
-          companyInfo.enableRegisterWithPassword != undefined &&
-          companyInfo.enableRegisterWithPassword == true
-        ) {
-          Actions.mobileRegisterWithPassword(phoneNumber);
-        } else {
-          Actions.mobileRegister(phoneNumber);
-        }
+        Actions.mobileRegister(phoneNumber);
       }
     } catch (error) {
       Alert.alert('Opss..', this.intlData.messages.somethingWentWrong);
@@ -472,6 +458,8 @@ mapStateToProps = state => ({
   status: state.accountsReducer.accountExist.status,
   deviceID: state.userReducer.deviceUserInfo,
   intlData: state.intlData,
+  enableRegisterWithPassword:
+    state.orderReducer.orderingSetting.enableRegisterWithPassword,
 });
 
 mapDispatchToProps = dispatch => ({
