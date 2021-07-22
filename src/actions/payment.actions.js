@@ -20,7 +20,7 @@ export const setNetsclickStatus = status => {
   };
 };
 
-export const netsclickRegister = item => {
+export const netslickDebit = (item, cartID, amount) => {
   return async (dispatch, getState) => {
     const state = getState();
     try {
@@ -31,49 +31,172 @@ export const netsclickRegister = item => {
         },
       } = state;
 
-      // Decrypt data user
-      // let bytes = CryptoJS.AES.decrypt(userDetails, awsConfig.PRIVATE_KEY_RSA);
-      // userDetails = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+      let {
+        userReducer: {
+          getCompanyInfo: {companyInfo},
+        },
+      } = state;
 
-      const userId = '1111111';
-      await NetsClick.Register({userId})
+      // Decrypt data
+      let bytes = CryptoJS.AES.decrypt(userDetails, awsConfig.PRIVATE_KEY_RSA);
+      userDetails = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+
+      const paymentProvider = companyInfo.paymentTypes.find(
+        data => data.paymentID === item.paymentID,
+      );
+
+      const appId =
+        awsConfig.APP_ID + '::' + item.accountID + '-' + userDetails.companyId;
+      const retailerInfo = awsConfig.RETAILER_INFO;
+      const merchant_host = awsConfig.NETSCLICK_MERCHANT_HOST;
+      let netsclick_terminal_id = awsConfig.NETSCLICK_TID;
+      let netsclick_retailer_id = awsConfig.NETSCLICK_MID;
+
+      netsclick_retailer_id = netsclick_retailer_id.toString();
+      netsclick_terminal_id = netsclick_terminal_id.toString();
+
+      const ewHost = awsConfig.base_url_payment.split('/api/')[0];
+      // const ewHost = 'https://payment.proseller-dev.com';
+      let debitStatus = false;
+      let dataResponse = {};
+
+      const userId = userDetails.id;
+
+      await NetsClick.Debit({
+        amount: Number(amount),
+        userId,
+        ewHost: ewHost,
+        appId: appId,
+        retailerInfo: retailerInfo,
+        trxnRef: cartID,
+        cartGUID: cartID,
+        merchantHost: merchant_host,
+        terminalId: netsclick_terminal_id,
+        retailerId: netsclick_retailer_id,
+        netsclickApiKey: awsConfig.NETSCLICK_API_KEY,
+        netsclickSecretKey: awsConfig.NETSCLICK_SECRET_KEY,
+      })
         .then(async r => {
-          try {
-            await AsyncStorage.setItem('@netsclick_register_status', userId);
-          } catch (e) {}
-
-          dispatch({
-            type: 'NETSCLICK_STATUS',
-            netsclickStatus: true,
-          });
-
-          if (item != undefined) {
-            dispatch({
-              type: 'SELECTED_ACCOUNT',
-              selectedAccount: item,
-            });
-          }
-
-          if (item == undefined) {
+          console.log('response debit netslick ', r);
+          if (r.status === 'Approved') {
+            debitStatus = true;
+            dataResponse = r;
+          } else {
             setTimeout(() => {
-              Alert.alert('NETS Click', 'NETS Click registration success!');
+              Alert.alert('Sorry', `Payment failed, ${r.status}`);
             }, 200);
+            debitStatus = false;
           }
         })
         .catch(async e => {
           setTimeout(() => {
-            Alert.alert(
-              'Sorry',
-              'NETS Click registration failed ' + e.toString(),
-            );
+            Alert.alert('Sorry', 'Payment Failed ' + e.toString());
           }, 200);
+          debitStatus = false;
+        });
+      return {debitStatus, dataResponse};
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
+  };
+};
+
+export const netsclickRegister = item => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    let status = true;
+    try {
+      // get user details
+      let {
+        userReducer: {
+          getUser: {userDetails},
+        },
+      } = state;
+
+      let {
+        userReducer: {
+          getCompanyInfo: {companyInfo},
+        },
+      } = state;
+
+      // Decrypt data
+      let bytes = CryptoJS.AES.decrypt(userDetails, awsConfig.PRIVATE_KEY_RSA);
+      userDetails = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+
+      const paymentProvider = companyInfo.paymentTypes.find(
+        data => data.paymentID === item.paymentID,
+      );
+
+      const appId = awsConfig.APP_ID;
+      const retailerInfo = awsConfig.RETAILER_INFO;
+      const merchant_host = awsConfig.NETSCLICK_MERCHANT_HOST;
+      let netsclick_terminal_id = awsConfig.NETSCLICK_TID;
+      let netsclick_retailer_id = awsConfig.NETSCLICK_MID;
+
+      netsclick_retailer_id = netsclick_retailer_id.toString();
+      netsclick_terminal_id = netsclick_terminal_id.toString();
+
+      const ewHost = awsConfig.base_url_payment.split('/api/')[0];
+      // const ewHost = 'https://payment.proseller-dev.com';
+
+      const userId = userDetails.id;
+
+      await NetsClick.Register({
+        userId,
+        appId: appId,
+        retailerInfo: retailerInfo,
+        ewHost: ewHost,
+        merchantHost: merchant_host,
+        terminalId: netsclick_terminal_id,
+        retailerId: netsclick_retailer_id,
+        companyId: userDetails.companyId,
+        netsclickApiKey: awsConfig.NETSCLICK_API_KEY,
+        netsclickSecretKey: awsConfig.NETSCLICK_SECRET_KEY,
+      })
+        .then(async r => {
+          if (r.status === 'success') {
+            try {
+              await AsyncStorage.setItem(
+                '@netsclick_register_status',
+                userDetails.id,
+              );
+            } catch (e) {}
+
+            setTimeout(() => {
+              Alert.alert('NETS Click', 'NETS Click registration success!');
+            }, 100);
+          } else {
+            setTimeout(() => {
+              Alert.alert('Sorry', 'NETS Click registration failed.');
+            }, 100);
+            try {
+              await AsyncStorage.removeItem('@netsclick_register_status');
+            } catch (e) {}
+          }
+        })
+        .catch(async e => {
+          if (e && e.toString() !== 'Error: 9992') {
+            setTimeout(() => {
+              Alert.alert(
+                'Opsss...',
+                'There is a slight technical problem, please restart your app to register.',
+                [{text: 'Ok', onPress: () => null}],
+                {cancelable: false},
+              );
+            }, 100);
+            status = false;
+          }
+
           try {
             await AsyncStorage.removeItem('@netsclick_register_status');
           } catch (e) {}
         });
     } catch (error) {
-      return error;
+      console.log(error);
+      status = false;
     }
+    return status;
   };
 };
 
@@ -83,6 +206,7 @@ export const netsclickDeregister = () => {
     try {
       await NetsClick.Deregister()
         .then(async r => {
+          console.log(r);
           try {
             await AsyncStorage.removeItem('@netsclick_register_status');
           } catch (e) {}
@@ -92,14 +216,22 @@ export const netsclickDeregister = () => {
             netsclickStatus: false,
           });
 
+          dispatch({
+            type: 'GET_USER_DEFAULT_ACCOUNT',
+            defaultAccount: undefined,
+          });
+
+          dispatch({
+            type: 'SELECTED_ACCOUNT',
+            selectedAccount: undefined,
+          });
+
           setTimeout(() => {
             Alert.alert('NETS Click', 'NETS Click account has been removed!');
-          }, 200);
+          }, 100);
         })
         .catch(async e => {
-          setTimeout(() => {
-            Alert.alert('Sorry', 'NETS Click deregistration failed');
-          }, 200);
+          console.log(e);
           try {
             await AsyncStorage.removeItem('@netsclick_register_status');
           } catch (e) {}
@@ -107,6 +239,16 @@ export const netsclickDeregister = () => {
           dispatch({
             type: 'NETSCLICK_STATUS',
             netsclickStatus: false,
+          });
+
+          dispatch({
+            type: 'GET_USER_DEFAULT_ACCOUNT',
+            defaultAccount: undefined,
+          });
+
+          dispatch({
+            type: 'SELECTED_ACCOUNT',
+            selectedAccount: undefined,
           });
         });
     } catch (error) {

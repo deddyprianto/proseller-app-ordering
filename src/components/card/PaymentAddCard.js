@@ -34,10 +34,11 @@ import ProgressiveImage from '../helper/ProgressiveImage';
 import CurrencyFormatter from '../../helper/CurrencyFormatter';
 import {
   getAccountPayment,
+  netsclickRegister,
   registerCard,
   selectedAccount,
 } from '../../actions/payment.actions';
-import {movePageIndex} from '../../actions/user.action';
+import {defaultPaymentAccount, movePageIndex} from '../../actions/user.action';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import UUIDGenerator from 'react-native-uuid-generator';
 import {isEmptyArray} from '../../helper/CheckEmpty';
@@ -210,9 +211,11 @@ class PaymentAddCard extends Component {
       if (
         selectedAccount != undefined &&
         selectedAccount.accountID == item.accountID
-      )
+      ) {
         return true;
-      else return false;
+      } else {
+        return false;
+      }
     } catch (e) {
       return false;
     }
@@ -309,6 +312,19 @@ class PaymentAddCard extends Component {
     }
   };
 
+  handleNetsClick = async item => {
+    try {
+      await this.props.dispatch(netsclickRegister(item));
+      await this.setState({loading: true});
+      await this.props.dispatch(getAccountPayment());
+      const {myCardAccount} = this.props;
+      const selectedAccount = myCardAccount[myCardAccount.length - 1];
+      await this.selectAccount(selectedAccount);
+      await this.props.dispatch(defaultPaymentAccount(selectedAccount));
+    } catch (e) {}
+    await this.setState({loading: false});
+  };
+
   getDataCard = async () => {
     await this.props.dispatch(getAccountPayment());
     await this.setState({refreshing: false});
@@ -351,8 +367,11 @@ class PaymentAddCard extends Component {
         const find = myCardAccount.find(
           data => data.paymentID == item.paymentID,
         );
-        if (find == undefined) return true;
-        else return false;
+        if (find == undefined) {
+          return true;
+        } else {
+          return false;
+        }
       }
     } catch (e) {
       return false;
@@ -412,7 +431,13 @@ class PaymentAddCard extends Component {
         </ScrollView>
         {item.allowMultipleAccount != false ? (
           <TouchableOpacity
-            onPress={this.registerCard}
+            onPress={() => {
+              if (item.paymentID === 'Netsclick') {
+                this.handleNetsClick(item);
+              } else {
+                this.registerCard();
+              }
+            }}
             style={styles.buttonBottomFixed}>
             <Icon
               size={25}
@@ -423,7 +448,13 @@ class PaymentAddCard extends Component {
           </TouchableOpacity>
         ) : myCardAccount != undefined && this.getCountCard() ? (
           <TouchableOpacity
-            onPress={this.registerCard}
+            onPress={() => {
+              if (item.paymentID === 'Netsclick') {
+                this.handleNetsClick(item);
+              } else {
+                this.registerCard();
+              }
+            }}
             style={styles.buttonBottomFixed}>
             <Icon
               size={25}
@@ -592,6 +623,7 @@ const styles = StyleSheet.create({
     padding: 15,
     flexDirection: 'row',
     justifyContent: 'center',
+    alignItems: 'center',
     shadowColor: '#00000021',
     shadowOffset: {
       width: 0,

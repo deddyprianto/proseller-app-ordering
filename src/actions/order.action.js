@@ -1,5 +1,6 @@
 import {fetchApiProduct} from '../service/apiProduct';
 import {fetchApiOrder} from '../service/apiOrder';
+import {fetchApiPayment} from '../service/apiPayment';
 import {fetchApi} from '../service/api';
 import {isEmptyArray, isEmptyObject} from '../helper/CheckEmpty';
 import * as _ from 'lodash';
@@ -677,6 +678,30 @@ export const addProductToBasket = payload => {
         product: response.response.data,
       });
       return response;
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const clearNetsclickData = token => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      let listCard = await fetchApiPayment('/account', 'GET', null, 200, token);
+      listCard = listCard.response.data;
+
+      listCard = listCard.filter(item => item.paymentID === 'Netsclick');
+
+      for (let i = 0; i < listCard.length; i++) {
+        await fetchApiPayment(
+          `/account/delete/${listCard[i].accountID}`,
+          'DELETE',
+          null,
+          200,
+          token,
+        );
+      }
     } catch (error) {
       return error;
     }
@@ -1449,8 +1474,8 @@ export const getTimeslot = (
       console.log('PAYLOAD GET TIMESLOT ', payload);
       console.log('RESPONSE GET TIMESLOT ', response);
 
-      if (response.success == true) {
-        if (!isEmptyArray(response.response.data) && dontSave == undefined) {
+      if (response.success === true) {
+        if (!isEmptyArray(response.response.data) && dontSave !== true) {
           dispatch({
             type: 'DATA_TIMESLOT',
             timeslots: response.response.data,
@@ -1467,6 +1492,76 @@ export const getTimeslot = (
           type: 'DATA_TIMESLOT',
           timeslots: [],
         });
+      }
+      return false;
+    } catch (e) {}
+  };
+};
+
+export const getTimeslotRaw = (
+  outletID,
+  date,
+  clientTimezone,
+  orderingMode,
+) => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      const {
+        storesReducer: {
+          defaultOutlet: {defaultOutlet},
+        },
+      } = state;
+
+      let dataOutlet = {};
+      if (!isEmptyObject(defaultOutlet.orderValidation)) {
+        if (orderingMode === 'DELIVERY') {
+          dataOutlet = defaultOutlet.orderValidation.delivery;
+        } else if (orderingMode === 'STOREPICKUP') {
+          dataOutlet = defaultOutlet.orderValidation.storePickUp;
+        } else if (orderingMode === 'TAKEAWAY') {
+          dataOutlet = defaultOutlet.orderValidation.takeAway;
+        } else if (orderingMode === 'DINEIN') {
+          dataOutlet = defaultOutlet.orderValidation.dineIn;
+        }
+      }
+
+      let payload = {
+        date,
+        outletID: `outlet::${outletID}`,
+        clientTimezone,
+        orderingMode,
+      };
+
+      if (
+        !isEmptyObject(dataOutlet) &&
+        dataOutlet.maxDays != undefined &&
+        dataOutlet.maxDays > 0
+      ) {
+        payload.maxDays = dataOutlet.maxDays;
+      } else {
+        payload.maxDays = 90;
+      }
+
+      let response = await fetchApiOrder(
+        '/timeslot',
+        'POST',
+        payload,
+        200,
+        token,
+      );
+
+      console.log('PAYLOAD GET TIMESLOT ', payload);
+      console.log('RESPONSE GET TIMESLOT ', response);
+
+      if (response.success === true) {
+        return response.response.data;
       }
       return false;
     } catch (e) {}

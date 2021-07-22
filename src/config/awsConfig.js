@@ -43,18 +43,19 @@
 // export default awsConfig;
 
 import Config from 'react-native-config';
-import ENV from '../../env-ios';
-// import ENV from '../../env-ios-demo';
+// import ENV from '../../env-ios';
+import ENV from '../../env-ios-demo';
 import Base64 from 'Base64';
 import {Platform} from 'react-native';
 
 let Data = {};
 // if we build to android, then read .env file
-if (Platform.OS === 'android') {
-  Data = Config;
-} else {
-  Data = ENV;
-}
+// if (Platform.OS === 'android') {
+//   Data = Config;
+// } else {
+//   Data = ENV;
+// }
+Data = ENV;
 
 const awsConfig = {
   // AWS CONFIG
@@ -89,6 +90,20 @@ const awsConfig = {
   PRIVATE_KEY_RSA: Base64.atob(Data.PRIVATE_KEY_RSA),
 
   APP_DEEP_LINK: Data.appUrl,
+
+  APP_ID: Data.appID,
+
+  RETAILER_INFO: Data.retailerInfo,
+
+  NETSCLICK_MERCHANT_HOST: Data.netsclick_merchantHost,
+
+  NETSCLICK_TID: Data.netsclick_terminal_id,
+
+  NETSCLICK_MID: Data.netsclick_retailer_id,
+
+  NETSCLICK_API_KEY: Data.netsclick_api_key,
+
+  NETSCLICK_SECRET_KEY: Data.netsclick_secret_key,
 };
 
 export default awsConfig;

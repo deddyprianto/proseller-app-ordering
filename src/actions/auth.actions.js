@@ -11,7 +11,7 @@ import CryptoJS from 'react-native-crypto-js';
 import appConfig from '../config/appConfig';
 import AsyncStorage from '@react-native-community/async-storage';
 import {isEmptyArray} from '../helper/CheckEmpty';
-import {submitOfflineCart} from './order.action';
+import {submitOfflineCart, clearNetsclickData} from './order.action';
 
 export const notifikasi = (type, status, action) => {
   Alert.alert(type, status, [
@@ -152,6 +152,9 @@ export const loginUser = payload => {
 
         // SUBMIT OFFLINE CART
         await dispatch(submitOfflineCart(jwtToken));
+
+        // Remove Netsclick account on login
+        await dispatch(clearNetsclickData(jwtToken));
 
         // save data to reducer
         dispatch({

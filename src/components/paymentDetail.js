@@ -42,6 +42,7 @@ import {
   getAccountPayment,
   registerCard,
   selectedAccount,
+  netslickDebit,
 } from '../actions/payment.actions';
 import {isEmptyArray, isEmptyObject} from '../helper/CheckEmpty';
 import RBSheet from 'react-native-raw-bottom-sheet';
@@ -1249,14 +1250,40 @@ class PaymentDetail extends Component {
           }
         }
 
-        payments.push({
-          accountId: paymentPayload.accountId,
-          paymentType: paymentPayload.paymentID,
-          paymentRefNo: paymentPayload.paymentName,
-          paymentID: paymentPayload.paymentID,
-          paymentName: this.selectedPaymentMethod(selectedAccount),
-          paymentAmount: this.state.totalBayar,
-        });
+        if (selectedAccount.isAccountRequired === false) {
+          payments.push({
+            accountId: paymentPayload.accountId,
+            paymentType: paymentPayload.paymentID,
+            paymentRefNo: paymentPayload.paymentName,
+            paymentID: paymentPayload.paymentID,
+            paymentName: this.selectedPaymentMethod(selectedAccount),
+            paymentAmount: this.state.totalBayar,
+          });
+        } else {
+          if (
+            selectedAccount &&
+            selectedAccount.details &&
+            selectedAccount.details.mobilePayment === true
+          ) {
+            payments.push({
+              paymentType: paymentPayload.paymentID,
+              paymentRefNo: paymentPayload.paymentName,
+              paymentID: paymentPayload.paymentID,
+              paymentName: this.selectedPaymentMethod(selectedAccount),
+              paymentAmount: this.state.totalBayar,
+            });
+          } else {
+            payments.push({
+              accountId: paymentPayload.accountId,
+              paymentType: paymentPayload.paymentID,
+              paymentRefNo: paymentPayload.paymentName,
+              paymentID: paymentPayload.paymentID,
+              paymentName: this.selectedPaymentMethod(selectedAccount),
+              paymentAmount: this.state.totalBayar,
+            });
+          }
+        }
+        payload.payments = payments;
       }
 
       try {
@@ -1269,6 +1296,35 @@ class PaymentDetail extends Component {
       payload.status = 'COMPLETED';
 
       let {url} = this.props;
+
+      // Do In App Payment
+      let debit = {};
+      if (
+        selectedAccount &&
+        selectedAccount.details &&
+        selectedAccount.details.mobilePayment === true
+      ) {
+        debit = await this.props.dispatch(
+          netslickDebit(
+            selectedAccount,
+            selectedAccount.id,
+            this.state.totalBayar,
+          ),
+        );
+        if (debit.debitStatus !== true) {
+          await this.setState({loading: false});
+          return;
+        }
+
+        for (let i = 0; i < payments.length; i++) {
+          if (payments[i].paymentID === selectedAccount.paymentID) {
+            payments[i].paymentResponse = debit.dataResponse;
+            payments[i].ableToRefund = false;
+          }
+        }
+        payload.payments = payments;
+      }
+
       console.log('Payload send payment', payload);
 
       const response = await this.props.dispatch(sendPayment(payload));

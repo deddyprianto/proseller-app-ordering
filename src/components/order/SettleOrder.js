@@ -36,7 +36,7 @@ import {
   getPendingCart,
   getPendingCartSingle,
   getSetting,
-  getTimeslot,
+  getTimeslotRaw,
   setOrderType,
   settleOrder,
 } from '../../actions/order.action';
@@ -47,6 +47,7 @@ import {
   getAccountPayment,
   registerCard,
   selectedAccount,
+  netslickDebit,
 } from '../../actions/payment.actions';
 import {isEmptyArray, isEmptyObject} from '../../helper/CheckEmpty';
 import RBSheet from 'react-native-raw-bottom-sheet';
@@ -57,7 +58,6 @@ import {getOutletById} from '../../actions/stores.action';
 import {refreshToken} from '../../actions/auth.actions';
 import {afterPayment, myVoucers} from '../../actions/account.action';
 import {Dialog} from 'react-native-paper';
-import NetsClick from '../../helper/NetsClick';
 import CryptoJS from 'react-native-crypto-js';
 import awsConfig from '../../config/awsConfig';
 import {
@@ -216,12 +216,11 @@ class SettleOrder extends Component {
       if (this.props.pembayaran.orderActionDate != undefined) {
         const clientTimeZone = Math.abs(new Date().getTimezoneOffset());
         const response = await this.props.dispatch(
-          getTimeslot(
+          getTimeslotRaw(
             outletID,
             this.props.pembayaran.orderActionDate,
             clientTimeZone,
             this.props.pembayaran.orderingMode,
-            true,
           ),
         );
 
@@ -236,23 +235,50 @@ class SettleOrder extends Component {
         }
 
         const timeSelected = this.props.pembayaran.orderActionTimeSlot;
+        const dateSelected = this.props.pembayaran.orderActionDate;
+
         if (response != false && !isEmptyArray(response)) {
-          const find = response.find(
-            item => item.isAvailable == true && item.time == timeSelected,
-          );
-          if (find == undefined) {
+          const findDate = response.find(item => item.date === dateSelected);
+
+          if (!findDate) {
             Alert.alert(
               'Sorry',
               message,
               [{text: 'Got it', onPress: () => Actions.pop()}],
               {cancelable: false},
             );
-            return;
+            return false;
+          }
+
+          if (!findDate.timeSlot) {
+            Alert.alert(
+              'Sorry',
+              message,
+              [{text: 'Got it', onPress: () => Actions.pop()}],
+              {cancelable: false},
+            );
+            return false;
+          }
+
+          const findTime = findDate.timeSlot.find(
+            item => item.isAvailable === true && item.time === timeSelected,
+          );
+
+          if (findTime == undefined) {
+            Alert.alert(
+              'Sorry',
+              message,
+              [{text: 'Got it', onPress: () => Actions.pop()}],
+              {cancelable: false},
+            );
+            return false;
           }
         }
-        return;
+        return true;
       }
-    } catch (e) {}
+    } catch (e) {
+      return true;
+    }
   };
 
   checkDefaultPaymentAccount = async () => {
@@ -1490,14 +1516,40 @@ class SettleOrder extends Component {
           }
         }
 
-        payments.push({
-          accountId: paymentPayload.accountId,
-          paymentType: paymentPayload.paymentID,
-          paymentRefNo: paymentPayload.paymentName,
-          paymentID: paymentPayload.paymentID,
-          paymentName: this.selectedPaymentMethod(selectedAccount),
-          paymentAmount: this.state.totalBayar,
-        });
+        if (selectedAccount.isAccountRequired === false) {
+          payments.push({
+            accountId: paymentPayload.accountId,
+            paymentType: paymentPayload.paymentID,
+            paymentRefNo: paymentPayload.paymentName,
+            paymentID: paymentPayload.paymentID,
+            paymentName: this.selectedPaymentMethod(selectedAccount),
+            paymentAmount: this.state.totalBayar,
+          });
+        } else {
+          if (
+            selectedAccount &&
+            selectedAccount.details &&
+            selectedAccount.details.mobilePayment === true
+          ) {
+            payments.push({
+              paymentType: paymentPayload.paymentID,
+              paymentRefNo: paymentPayload.paymentName,
+              paymentID: paymentPayload.paymentID,
+              paymentName: this.selectedPaymentMethod(selectedAccount),
+              paymentAmount: this.state.totalBayar,
+            });
+          } else {
+            payments.push({
+              accountId: paymentPayload.accountId,
+              paymentType: paymentPayload.paymentID,
+              paymentRefNo: paymentPayload.paymentName,
+              paymentID: paymentPayload.paymentID,
+              paymentName: this.selectedPaymentMethod(selectedAccount),
+              paymentAmount: this.state.totalBayar,
+            });
+          }
+        }
+        payload.payments = payments;
       }
 
       try {
@@ -1540,6 +1592,34 @@ class SettleOrder extends Component {
         payload.dataPay.paidMembershipPlan.totalNettAmount =
           pembayaran.totalNettAmount;
       } catch (e) {}
+
+      // Do In App Payment
+      let debit = {};
+      if (
+        selectedAccount &&
+        selectedAccount.details &&
+        selectedAccount.details.mobilePayment === true
+      ) {
+        debit = await this.props.dispatch(
+          netslickDebit(
+            selectedAccount,
+            payload.referenceNo,
+            this.state.totalBayar,
+          ),
+        );
+        if (debit.debitStatus !== true) {
+          await this.setState({loading: false});
+          return;
+        }
+
+        for (let i = 0; i < payments.length; i++) {
+          if (payments[i].paymentID === selectedAccount.paymentID) {
+            payments[i].paymentResponse = debit.dataResponse;
+            payments[i].ableToRefund = false;
+          }
+        }
+        payload.payments = payments;
+      }
 
       console.log('Payload settle order ', payload);
       const response = await this.props.dispatch(submitMembership(payload));
@@ -1703,14 +1783,40 @@ class SettleOrder extends Component {
           }
         }
 
-        payments.push({
-          accountId: paymentPayload.accountId,
-          paymentType: paymentPayload.paymentID,
-          paymentRefNo: paymentPayload.paymentName,
-          paymentID: paymentPayload.paymentID,
-          paymentName: this.selectedPaymentMethod(selectedAccount),
-          paymentAmount: this.state.totalBayar,
-        });
+        if (selectedAccount.isAccountRequired === false) {
+          payments.push({
+            accountId: paymentPayload.accountId,
+            paymentType: paymentPayload.paymentID,
+            paymentRefNo: paymentPayload.paymentName,
+            paymentID: paymentPayload.paymentID,
+            paymentName: this.selectedPaymentMethod(selectedAccount),
+            paymentAmount: this.state.totalBayar,
+          });
+        } else {
+          if (
+            selectedAccount &&
+            selectedAccount.details &&
+            selectedAccount.details.mobilePayment === true
+          ) {
+            payments.push({
+              paymentType: paymentPayload.paymentID,
+              paymentRefNo: paymentPayload.paymentName,
+              paymentID: paymentPayload.paymentID,
+              paymentName: this.selectedPaymentMethod(selectedAccount),
+              paymentAmount: this.state.totalBayar,
+            });
+          } else {
+            payments.push({
+              accountId: paymentPayload.accountId,
+              paymentType: paymentPayload.paymentID,
+              paymentRefNo: paymentPayload.paymentName,
+              paymentID: paymentPayload.paymentID,
+              paymentName: this.selectedPaymentMethod(selectedAccount),
+              paymentAmount: this.state.totalBayar,
+            });
+          }
+        }
+        payload.payments = payments;
       }
 
       try {
@@ -1759,6 +1865,34 @@ class SettleOrder extends Component {
         payload.dataPay.storeValueCard.totalNettAmount =
           pembayaran.totalNettAmount;
       } catch (e) {}
+
+      // Do In App Payment
+      let debit = {};
+      if (
+        selectedAccount &&
+        selectedAccount.details &&
+        selectedAccount.details.mobilePayment === true
+      ) {
+        debit = await this.props.dispatch(
+          netslickDebit(
+            selectedAccount,
+            payload.referenceNo,
+            this.state.totalBayar,
+          ),
+        );
+        if (debit.debitStatus !== true) {
+          await this.setState({loading: false});
+          return;
+        }
+
+        for (let i = 0; i < payments.length; i++) {
+          if (payments[i].paymentID === selectedAccount.paymentID) {
+            payments[i].paymentResponse = debit.dataResponse;
+            payments[i].ableToRefund = false;
+          }
+        }
+        payload.payments = payments;
+      }
 
       console.log('Payload settle order ', payload);
       const response = await this.props.dispatch(submitMembership(payload));
@@ -1928,14 +2062,40 @@ class SettleOrder extends Component {
           }
         }
 
-        payments.push({
-          accountId: paymentPayload.accountId,
-          paymentType: paymentPayload.paymentID,
-          paymentRefNo: paymentPayload.paymentName,
-          paymentID: paymentPayload.paymentID,
-          paymentName: this.selectedPaymentMethod(selectedAccount),
-          paymentAmount: this.state.totalBayar,
-        });
+        if (selectedAccount.isAccountRequired === false) {
+          payments.push({
+            accountId: paymentPayload.accountId,
+            paymentType: paymentPayload.paymentID,
+            paymentRefNo: paymentPayload.paymentName,
+            paymentID: paymentPayload.paymentID,
+            paymentName: this.selectedPaymentMethod(selectedAccount),
+            paymentAmount: this.state.totalBayar,
+          });
+        } else {
+          if (
+            selectedAccount &&
+            selectedAccount.details &&
+            selectedAccount.details.mobilePayment === true
+          ) {
+            payments.push({
+              paymentType: paymentPayload.paymentID,
+              paymentRefNo: paymentPayload.paymentName,
+              paymentID: paymentPayload.paymentID,
+              paymentName: this.selectedPaymentMethod(selectedAccount),
+              paymentAmount: this.state.totalBayar,
+            });
+          } else {
+            payments.push({
+              accountId: paymentPayload.accountId,
+              paymentType: paymentPayload.paymentID,
+              paymentRefNo: paymentPayload.paymentName,
+              paymentID: paymentPayload.paymentID,
+              paymentName: this.selectedPaymentMethod(selectedAccount),
+              paymentAmount: this.state.totalBayar,
+            });
+          }
+        }
+        payload.payments = payments;
       }
 
       try {
@@ -1980,6 +2140,34 @@ class SettleOrder extends Component {
           pembayaran.cartDetails.details[0].totalDiscAmount;
         payload.dataPay.voucher.totalNettAmount = pembayaran.totalNettAmount;
       } catch (e) {}
+
+      // Do In App Payment
+      let debit = {};
+      if (
+        selectedAccount &&
+        selectedAccount.details &&
+        selectedAccount.details.mobilePayment === true
+      ) {
+        debit = await this.props.dispatch(
+          netslickDebit(
+            selectedAccount,
+            payload.referenceNo,
+            this.state.totalBayar,
+          ),
+        );
+        if (debit.debitStatus !== true) {
+          await this.setState({loading: false});
+          return;
+        }
+
+        for (let i = 0; i < payments.length; i++) {
+          if (payments[i].paymentID === selectedAccount.paymentID) {
+            payments[i].paymentResponse = debit.dataResponse;
+            payments[i].ableToRefund = false;
+          }
+        }
+        payload.payments = payments;
+      }
 
       console.log('Payload settle order ', payload);
       const response = await this.props.dispatch(submitMembership(payload));
@@ -2237,8 +2425,8 @@ class SettleOrder extends Component {
           }
         }
 
-        let manual_transfer_image = undefined;
-        let description = undefined;
+        let manual_transfer_image;
+        let description;
 
         try {
           description = selectedAccount.configurations.find(
@@ -2249,16 +2437,44 @@ class SettleOrder extends Component {
           ).value;
         } catch (e) {}
 
-        payments.push({
-          accountId: paymentPayload.accountId,
-          paymentType: paymentPayload.paymentID,
-          paymentRefNo: paymentPayload.paymentName,
-          paymentID: paymentPayload.paymentID,
-          paymentName: this.selectedPaymentMethod(selectedAccount),
-          paymentAmount: this.state.totalBayar,
-          manual_transfer_image,
-          description,
-        });
+        if (selectedAccount.isAccountRequired === false) {
+          payments.push({
+            accountId: paymentPayload.accountId,
+            paymentType: paymentPayload.paymentID,
+            paymentRefNo: paymentPayload.paymentName,
+            paymentID: paymentPayload.paymentID,
+            paymentName: this.selectedPaymentMethod(selectedAccount),
+            paymentAmount: this.state.totalBayar,
+            manual_transfer_image,
+            description,
+          });
+        } else {
+          if (
+            selectedAccount &&
+            selectedAccount.details &&
+            selectedAccount.details.mobilePayment === true
+          ) {
+            payments.push({
+              paymentType: paymentPayload.paymentID,
+              paymentRefNo: paymentPayload.paymentName,
+              paymentID: paymentPayload.paymentID,
+              paymentName: this.selectedPaymentMethod(selectedAccount),
+              paymentAmount: this.state.totalBayar,
+            });
+          } else {
+            payments.push({
+              accountId: paymentPayload.accountId,
+              paymentType: paymentPayload.paymentID,
+              paymentRefNo: paymentPayload.paymentName,
+              paymentID: paymentPayload.paymentID,
+              paymentName: this.selectedPaymentMethod(selectedAccount),
+              paymentAmount: this.state.totalBayar,
+              manual_transfer_image,
+              description,
+            });
+          }
+        }
+        payload.payments = payments;
       }
 
       try {
@@ -2353,6 +2569,13 @@ class SettleOrder extends Component {
         payload.orderActionDate = this.props.pembayaran.orderActionDate;
         payload.orderActionTime = this.props.pembayaran.orderActionTime;
         payload.orderActionTimeSlot = this.props.pembayaran.orderActionTimeSlot;
+
+        const outletID = this.props.pembayaran.storeId;
+        const verifyTimeslot = await this.validatePickupTime(outletID);
+        if (!verifyTimeslot) {
+          this.setState({loading: false});
+          return;
+        }
       }
 
       try {
@@ -2364,6 +2587,34 @@ class SettleOrder extends Component {
 
       // get url
       let {url} = this.props;
+
+      // Do In App Payment
+      let debit = {};
+      if (
+        selectedAccount &&
+        selectedAccount.details &&
+        selectedAccount.details.mobilePayment === true
+      ) {
+        debit = await this.props.dispatch(
+          netslickDebit(
+            selectedAccount,
+            payload.cartDetails.sortKey,
+            this.state.totalBayar,
+          ),
+        );
+        if (debit.debitStatus !== true) {
+          await this.setState({loading: false});
+          return;
+        }
+
+        for (let i = 0; i < payments.length; i++) {
+          if (payments[i].paymentID === selectedAccount.paymentID) {
+            payments[i].paymentResponse = debit.dataResponse;
+            payments[i].ableToRefund = false;
+          }
+        }
+        payload.payments = payments;
+      }
 
       /* Add client Timezone */
       try {

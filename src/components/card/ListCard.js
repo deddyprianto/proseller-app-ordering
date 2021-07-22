@@ -32,6 +32,8 @@ import {reduxForm} from 'redux-form';
 import Loader from './../loader';
 import {
   getAccountPayment,
+  netsclickDeregister,
+  netsclickRegister,
   registerCard,
   removeCard,
 } from '../../actions/payment.actions';
@@ -39,6 +41,7 @@ import {defaultPaymentAccount, movePageIndex} from '../../actions/user.action';
 import {isEmptyArray} from '../../helper/CheckEmpty';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import UUIDGenerator from 'react-native-uuid-generator';
+import AsyncStorage from '@react-native-community/async-storage';
 
 class ListCard extends Component {
   constructor(props) {
@@ -88,9 +91,17 @@ class ListCard extends Component {
     try {
       this.RBSheet.close();
       const {selectedAccount} = this.state;
-      const {defaultAccount} = this.props;
+      const {defaultAccount, myCardAccount} = this.props;
       await this.setState({loading: true});
       const response = await this.props.dispatch(removeCard(selectedAccount));
+      if (selectedAccount.details.mobilePayment === true) {
+        const netsCard = myCardAccount.filter(
+          item => item.paymentID === selectedAccount.paymentID,
+        );
+        if (isEmptyArray(netsCard) || netsCard.length === 1) {
+          await this.props.dispatch(netsclickDeregister());
+        }
+      }
       if (response.response.resultCode != 200) {
         Alert.alert('Sorry', 'Cant delete account, please try again');
       }
@@ -209,8 +220,11 @@ class ListCard extends Component {
   checkDefaultAccount = item => {
     const {defaultAccount} = this.props;
     try {
-      if (defaultAccount.accountID == item.accountID) return true;
-      else return false;
+      if (defaultAccount.accountID == item.accountID) {
+        return true;
+      } else {
+        return false;
+      }
     } catch (e) {
       return false;
     }
@@ -336,7 +350,7 @@ class ListCard extends Component {
   getCardIssuer = item => {
     try {
       if (item.details.cardIssuer != undefined) {
-        if (item.details.cardIssuer.toUpperCase() == 'VISA') {
+        if (item.details.cardIssuer.toUpperCase() === 'VISA') {
           return colorConfig.card.otherCardColor;
         } else {
           return colorConfig.card.cardColor;
@@ -506,18 +520,63 @@ class ListCard extends Component {
     try {
       const {myCardAccount, item} = this.props;
 
+      try {
+        const netscard = myCardAccount.filter(
+          data => data.paymentID === 'Netsclick',
+        );
+        if (item.paymentID === 'Netsclick' && netscard.length > 0) {
+          return false;
+        }
+      } catch (e) {}
+
       if (isEmptyArray(myCardAccount)) {
         return true;
       } else {
         const find = myCardAccount.find(
-          data => data.paymentID == item.paymentID,
+          data => data.paymentID === item.paymentID,
         );
-        if (find == undefined) return true;
-        else return false;
+        if (find === undefined) {
+          return true;
+        } else {
+          return false;
+        }
       }
     } catch (e) {
       return false;
     }
+  };
+
+  isAbleToAddMore = () => {
+    try {
+      const {myCardAccount, item} = this.props;
+      try {
+        const netscard = myCardAccount.filter(
+          data => data.paymentID === 'Netsclick',
+        );
+        if (item.paymentID === 'Netsclick' && netscard.length > 0) {
+          return false;
+        }
+      } catch (e) {}
+    } catch (e) {
+      return false;
+    }
+  };
+
+  handleNetsClick = async item => {
+    try {
+      await this.props.dispatch(netsclickRegister(item));
+      await this.setState({loading: true});
+      await this.props.dispatch(getAccountPayment());
+      const {myCardAccount} = this.props;
+      if (myCardAccount.length === 1) {
+        const selectedAccount = myCardAccount[0];
+        await this.setState({selectedAccount}, () => this.setDefaultAccount());
+      } else {
+        const selectedAccount = myCardAccount[myCardAccount.length - 1];
+        await this.setState({selectedAccount}, () => this.setDefaultAccount());
+      }
+    } catch (e) {}
+    await this.setState({loading: false});
   };
 
   render() {
@@ -552,13 +611,19 @@ class ListCard extends Component {
               onRefresh={this._onRefresh}
             />
           }>
-          {myCardAccount != undefined && myCardAccount.length > 0
+          {myCardAccount !== undefined && myCardAccount.length > 0
             ? this.renderCard()
             : this.renderEmptyCard()}
         </ScrollView>
-        {item.allowMultipleAccount != false ? (
+        {item.allowMultipleAccount !== false && this.isAbleToAddMore() ? (
           <TouchableOpacity
-            onPress={this.registerCard}
+            onPress={() => {
+              if (item.paymentID === 'Netsclick') {
+                this.handleNetsClick(item);
+              } else {
+                this.registerCard();
+              }
+            }}
             style={styles.buttonBottomFixed}>
             <Icon
               size={25}
@@ -567,9 +632,15 @@ class ListCard extends Component {
             />
             <Text style={styles.textAddCard}>ADD {item.paymentName}</Text>
           </TouchableOpacity>
-        ) : myCardAccount != undefined && this.getCountCard() ? (
+        ) : myCardAccount !== undefined && this.getCountCard() ? (
           <TouchableOpacity
-            onPress={this.registerCard}
+            onPress={() => {
+              if (item.paymentID === 'Netsclick') {
+                this.handleNetsClick(item);
+              } else {
+                this.registerCard();
+              }
+            }}
             style={styles.buttonBottomFixed}>
             <Icon
               size={25}
@@ -702,15 +773,14 @@ const styles = StyleSheet.create({
     fontSize: 17,
     letterSpacing: 2,
     color: 'white',
-    fontWeight: 'bold',
-    fontFamily: 'Poppins-Medium',
+    fontFamily: 'Poppins-Black',
   },
   cardNumberText: {
-    fontSize: 24,
+    fontSize: 25,
     opacity: 0.6,
     color: 'white',
     // fontWeight: 'bold',
-    // fontFamily: 'monospace',
+    fontFamily: 'Poppins-Regular',
     textAlign: 'center',
     letterSpacing: 2,
   },
@@ -738,6 +808,7 @@ const styles = StyleSheet.create({
     padding: 15,
     flexDirection: 'row',
     justifyContent: 'center',
+    alignItems: 'center',
     shadowColor: '#00000021',
     shadowOffset: {
       width: 0,

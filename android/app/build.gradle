@@ -141,8 +141,8 @@ android {
         applicationId "com.acemart"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 54
-        versionName "1.1.20"
+        versionCode 43
+        versionName "1.1.4"
         missingDimensionStrategy 'react-native-camera', 'general'
         resValue "string", "build_config_package", "com.acemart"
         multiDexEnabled true
@@ -193,21 +193,21 @@ android {
             dev {
                 minSdkVersion rootProject.ext.minSdkVersion
                 applicationId 'com.acemart.dev'
-                versionName "1.1.20"
+                versionName "1.1.4"
                 targetSdkVersion rootProject.ext.targetSdkVersion
                 resValue "string", "build_config_package", "com.acemart"
             }
             demo {
                 minSdkVersion rootProject.ext.minSdkVersion
                 applicationId 'com.acemart.demo'
-                versionName "1.1.20"
+                versionName "1.1.4"
                 targetSdkVersion rootProject.ext.targetSdkVersion
                 resValue "string", "build_config_package", "com.acemart"
             }
             app {
                 minSdkVersion rootProject.ext.minSdkVersion
                 applicationId 'com.acemart.app'
-                versionName "1.1.20"
+                versionName "1.1.4"
                 targetSdkVersion rootProject.ext.targetSdkVersion
                 resValue "string", "build_config_package", "com.acemart"
             }
@@ -263,6 +263,25 @@ dependencies {
     androidTestImplementation('com.wix:detox:+') { transitive = true }
     androidTestImplementation 'junit:junit:4.12'
     implementation "androidx.annotation:annotation:1.1.0"
+
+    // NetsClick
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    implementation project(path: ':nofsdk')
+    implementation project(path: ':vos-app-protection-android-4.8.2.9')
+    implementation project(path: ':vos-processor-android-4.8.2.34')
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+
+    implementation "com.google.code.gson:gson:2.8.5"
+    implementation 'com.j256.ormlite:ormlite-core:5.0'
+    implementation 'com.j256.ormlite:ormlite-android:5.0'
+    implementation 'com.squareup.okhttp3:okhttp:3.12.1'
+    implementation 'com.jakewharton.retrofit:retrofit1-okhttp3-client:1.0.2'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.12.3'
+    implementation 'com.google.guava:guava:27.0.1-android'
+    implementation 'com.nimbusds:nimbus-jose-jwt:4.11.2'
+    implementation 'com.madgag.spongycastle:core:1.58.0.0'
+    implementation 'com.madgag.spongycastle:prov:1.58.0.0'
+    implementation 'com.madgag.spongycastle:pkix:1.54.0.0'
 
     if (enableHermes) {
         def hermesPath = "../../node_modules/hermes-engine/android/";
