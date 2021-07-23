@@ -41,7 +41,7 @@ const ENV = {
   netsclick_retailer_id: '11170235100',
 
   netsclick_merchantHost:
-    'https://im6ka3ygs4.execute-api.ap-southeast-1.amazonaws.com/uat',
+    'https://0pwnewl084.execute-api.ap-southeast-1.amazonaws.com/prod',
 
   netsclick_api_key: 'f2e7b0fe-4c2e-4f82-9988-e8f3dffe49db',
 

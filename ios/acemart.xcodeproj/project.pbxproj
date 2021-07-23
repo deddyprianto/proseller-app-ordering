@@ -9,14 +9,10 @@
 /* Begin PBXBuildFile section */
 		00E356F31AD99517003FC87E /* acemartTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* acemartTests.m */; };
 		0476245040064097B9D1D051 /* Lato-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F2539776D32B4B29B0B8C8A7 /* Lato-Bold.ttf */; };
-		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB11A68108700A75B9A /* LaunchScreen.xib */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
-		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		27CFB91208C84B89AAE58C56 /* Lato-Heavy.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 35A970A69DA7440188817DD0 /* Lato-Heavy.ttf */; };
-		2D02E4BC1E0B4A80006451C7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		2D02E4BD1E0B4A84006451C7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
-		2D02E4BF1E0B4AB3006451C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		2DCD954D1E0B4F2C00145EB5 /* acemartTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* acemartTests.m */; };
 		4364869283FE453CB8F3B773 /* Lato-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5004E2CBAFBB4547A8CCA619 /* Lato-Italic.ttf */; };
 		43681597396048A0961F05E9 /* Lato-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 61448CC0B03644E5AE6729E7 /* Lato-Regular.ttf */; };
@@ -26,6 +22,17 @@
 		7B4FF302262852E300262C97 /* Poppins-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7B4FF2FB262852DB00262C97 /* Poppins-Italic.ttf */; };
 		7B4FF303262852E300262C97 /* Poppins-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7B4FF2FF262852DC00262C97 /* Poppins-Medium.ttf */; };
 		7B4FF304262852E300262C97 /* Poppins-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7B4FF2FD262852DC00262C97 /* Poppins-Regular.ttf */; };
+		7B8BA49826AA61AC00486032 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B8BA49726AA61AC00486032 /* AppDelegate.swift */; };
+		7B8BA49E26AA630A00486032 /* NetsClickReact.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B8BA49D26AA630A00486032 /* NetsClickReact.swift */; };
+		7B8BA4A426AA633300486032 /* NetsClickReact.m in Sources */ = {isa = PBXBuildFile; fileRef = 7B8BA4A326AA633300486032 /* NetsClickReact.m */; };
+		7B8BA4AE26AA638900486032 /* netspayserver.der in Resources */ = {isa = PBXBuildFile; fileRef = 7B8BA4AC26AA638900486032 /* netspayserver.der */; };
+		7B8BA4AF26AA638900486032 /* netspay_nets_com_sg.der in Resources */ = {isa = PBXBuildFile; fileRef = 7B8BA4AD26AA638900486032 /* netspay_nets_com_sg.der */; };
+		7B8BA53026AA64A200486032 /* firmware in Resources */ = {isa = PBXBuildFile; fileRef = 7B8BA52C26AA64A200486032 /* firmware */; };
+		7B8BA53126AA64A200486032 /* profile in Resources */ = {isa = PBXBuildFile; fileRef = 7B8BA52D26AA64A200486032 /* profile */; };
+		7B8BA53226AA64A200486032 /* signature in Resources */ = {isa = PBXBuildFile; fileRef = 7B8BA52E26AA64A200486032 /* signature */; };
+		7B8BA53326AA64A200486032 /* vkeylicensepack in Resources */ = {isa = PBXBuildFile; fileRef = 7B8BA52F26AA64A200486032 /* vkeylicensepack */; };
+		7B8BABA826AA6FF400486032 /* nofsdk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B8BABA726AA6FF400486032 /* nofsdk.framework */; };
+		7B8BABA926AA6FF400486032 /* nofsdk.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 7B8BABA726AA6FF400486032 /* nofsdk.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		7BD1A640265E73280011B660 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 7BD1A63F265E73280011B660 /* GoogleService-Info.plist */; };
 		942F222339174ACAB6A6FDA4 /* Lato-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 40AD4A3553664601BD423484 /* Lato-Medium.ttf */; };
 		B6FA351076D44777B6129C53 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B8783AC08D84065AC0B2230 /* libz.tbd */; };
@@ -50,6 +57,20 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		7B8BABAA26AA6FF400486032 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				7B8BABA926AA6FF400486032 /* nofsdk.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		008F07F21AC5B25A0029DE68 /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
 		00E356EE1AD99517003FC87E /* acemartTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = acemartTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -60,12 +81,9 @@
 		07D29F7341A34399B8E33E01 /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/native-base/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
 		0FC8840274CD468D92E245A8 /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = SimpleLineIcons.ttf; path = "../node_modules/native-base/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* Ace Mart.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Ace Mart.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = acemart/AppDelegate.h; sourceTree = "<group>"; };
-		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = acemart/AppDelegate.m; sourceTree = "<group>"; };
 		13B07FB21A68108700A75B9A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = acemart/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = acemart/Info.plist; sourceTree = "<group>"; };
-		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = acemart/main.m; sourceTree = "<group>"; };
 		1B72DACACE284B79B036A8DA /* Feather.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Feather.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Feather.ttf"; sourceTree = "<group>"; };
 		2C3DC72BAF59423B9B8EF4ED /* Roboto_medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Roboto_medium.ttf; path = "../node_modules/native-base/Fonts/Roboto_medium.ttf"; sourceTree = "<group>"; };
 		2D02E47B1E0B4A5D006451C7 /* acemart-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "acemart-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -97,6 +115,16 @@
 		7B4FF2FD262852DC00262C97 /* Poppins-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-Regular.ttf"; sourceTree = "<group>"; };
 		7B4FF2FE262852DC00262C97 /* Poppins-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-Black.ttf"; sourceTree = "<group>"; };
 		7B4FF2FF262852DC00262C97 /* Poppins-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-Medium.ttf"; sourceTree = "<group>"; };
+		7B8BA49726AA61AC00486032 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		7B8BA49D26AA630A00486032 /* NetsClickReact.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetsClickReact.swift; sourceTree = "<group>"; };
+		7B8BA4A326AA633300486032 /* NetsClickReact.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NetsClickReact.m; sourceTree = "<group>"; };
+		7B8BA4AC26AA638900486032 /* netspayserver.der */ = {isa = PBXFileReference; lastKnownFileType = file; path = netspayserver.der; sourceTree = SOURCE_ROOT; };
+		7B8BA4AD26AA638900486032 /* netspay_nets_com_sg.der */ = {isa = PBXFileReference; lastKnownFileType = file; path = netspay_nets_com_sg.der; sourceTree = SOURCE_ROOT; };
+		7B8BA52C26AA64A200486032 /* firmware */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = firmware; sourceTree = "<group>"; };
+		7B8BA52D26AA64A200486032 /* profile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = profile; sourceTree = "<group>"; };
+		7B8BA52E26AA64A200486032 /* signature */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = signature; sourceTree = "<group>"; };
+		7B8BA52F26AA64A200486032 /* vkeylicensepack */ = {isa = PBXFileReference; lastKnownFileType = file; path = vkeylicensepack; sourceTree = "<group>"; };
+		7B8BABA726AA6FF400486032 /* nofsdk.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = nofsdk.framework; sourceTree = "<group>"; };
 		7BD1A63F265E73280011B660 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "acemart/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		7BD8572F2467DD4300AD88B9 /* acemart-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "acemart-Bridging-Header.h"; sourceTree = "<group>"; };
 		7BDAC8BD244814D1005E2D36 /* acemart.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = acemart.entitlements; path = acemart/acemart.entitlements; sourceTree = "<group>"; };
@@ -141,6 +169,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B6FA351076D44777B6129C53 /* libz.tbd in Frameworks */,
+				7B8BABA826AA6FF400486032 /* nofsdk.framework in Frameworks */,
 				C059695DF9A863BFBAED6300 /* libPods-acemart.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -182,18 +211,20 @@
 		13B07FAE1A68108700A75B9A /* acemart */ = {
 			isa = PBXGroup;
 			children = (
+				7B8BA4AB26AA637800486032 /* Nets_Cert */,
+				7B8BA4AA26AA636700486032 /* VGuard */,
 				7BD1A63F265E73280011B660 /* GoogleService-Info.plist */,
 				7B4FF2FA2628528A00262C97 /* assets */,
 				7BDAC8BD244814D1005E2D36 /* acemart.entitlements */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
-				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
-				13B07FB01A68108700A75B9A /* AppDelegate.m */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB11A68108700A75B9A /* LaunchScreen.xib */,
-				13B07FB71A68108700A75B9A /* main.m */,
 				7BD8572F2467DD4300AD88B9 /* acemart-Bridging-Header.h */,
 				7B4FF2F826284ECC00262C97 /* acemart.swift */,
+				7B8BA49726AA61AC00486032 /* AppDelegate.swift */,
+				7B8BA49D26AA630A00486032 /* NetsClickReact.swift */,
+				7B8BA4A326AA633300486032 /* NetsClickReact.m */,
 			);
 			name = acemart;
 			sourceTree = "<group>";
@@ -201,6 +232,7 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				7B8BABA726AA6FF400486032 /* nofsdk.framework */,
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				ED2971642150620600B7C4FE /* JavaScriptCore.framework */,
 				4B8783AC08D84065AC0B2230 /* libz.tbd */,
@@ -227,6 +259,26 @@
 			children = (
 			);
 			name = "Recovered References";
+			sourceTree = "<group>";
+		};
+		7B8BA4AA26AA636700486032 /* VGuard */ = {
+			isa = PBXGroup;
+			children = (
+				7B8BA52C26AA64A200486032 /* firmware */,
+				7B8BA52D26AA64A200486032 /* profile */,
+				7B8BA52E26AA64A200486032 /* signature */,
+				7B8BA52F26AA64A200486032 /* vkeylicensepack */,
+			);
+			path = VGuard;
+			sourceTree = "<group>";
+		};
+		7B8BA4AB26AA637800486032 /* Nets_Cert */ = {
+			isa = PBXGroup;
+			children = (
+				7B8BA4AD26AA638900486032 /* netspay_nets_com_sg.der */,
+				7B8BA4AC26AA638900486032 /* netspayserver.der */,
+			);
+			path = Nets_Cert;
 			sourceTree = "<group>";
 		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
@@ -360,6 +412,7 @@
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				2E0C48609C9045FA90B8C67E /* Upload Debug Symbols to Sentry */,
 				4CA557EB3FBA4CEEA0E56861 /* [CP] Copy Pods Resources */,
+				7B8BABAA26AA6FF400486032 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -471,18 +524,24 @@
 			buildActionMask = 2147483647;
 			files = (
 				7BD1A640265E73280011B660 /* GoogleService-Info.plist in Resources */,
+				7B8BA53226AA64A200486032 /* signature in Resources */,
+				7B8BA4AE26AA638900486032 /* netspayserver.der in Resources */,
 				7B4FF300262852E300262C97 /* Poppins-Black.ttf in Resources */,
 				7B4FF301262852E300262C97 /* Poppins-Bold.ttf in Resources */,
 				7B4FF302262852E300262C97 /* Poppins-Italic.ttf in Resources */,
+				7B8BA53026AA64A200486032 /* firmware in Resources */,
+				7B8BA53326AA64A200486032 /* vkeylicensepack in Resources */,
 				7B4FF303262852E300262C97 /* Poppins-Medium.ttf in Resources */,
 				7B4FF304262852E300262C97 /* Poppins-Regular.ttf in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
 				0476245040064097B9D1D051 /* Lato-Bold.ttf in Resources */,
 				27CFB91208C84B89AAE58C56 /* Lato-Heavy.ttf in Resources */,
+				7B8BA53126AA64A200486032 /* profile in Resources */,
 				4364869283FE453CB8F3B773 /* Lato-Italic.ttf in Resources */,
 				942F222339174ACAB6A6FDA4 /* Lato-Medium.ttf in Resources */,
 				43681597396048A0961F05E9 /* Lato-Regular.ttf in Resources */,
+				7B8BA4AF26AA638900486032 /* netspay_nets_com_sg.der in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -743,9 +802,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
+				7B8BA49826AA61AC00486032 /* AppDelegate.swift in Sources */,
+				7B8BA49E26AA630A00486032 /* NetsClickReact.swift in Sources */,
+				7B8BA4A426AA633300486032 /* NetsClickReact.m in Sources */,
 				7B4FF2F926284ECC00262C97 /* acemart.swift in Sources */,
-				13B07FC11A68108700A75B9A /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -753,8 +813,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2D02E4BF1E0B4AB3006451C7 /* main.m in Sources */,
-				2D02E4BC1E0B4A80006451C7 /* AppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -858,9 +916,14 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = acemart/acemart.entitlements;
-				CURRENT_PROJECT_VERSION = 49;
+				CURRENT_PROJECT_VERSION = 50;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = YSZ34Z59CY;
+				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/..\node_modules\neact-native-device-brightnessRNDeviceBrightness",
@@ -868,7 +931,7 @@
 				INFOPLIST_FILE = acemart/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.1.9;
+				MARKETING_VERSION = 1.1.20;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -890,8 +953,13 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = acemart/acemart.entitlements;
-				CURRENT_PROJECT_VERSION = 49;
+				CURRENT_PROJECT_VERSION = 50;
 				DEVELOPMENT_TEAM = YSZ34Z59CY;
+				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/..\node_modules\neact-native-device-brightnessRNDeviceBrightness",
@@ -899,7 +967,7 @@
 				INFOPLIST_FILE = acemart/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.1.9;
+				MARKETING_VERSION = 1.1.20;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",

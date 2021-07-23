@@ -1,4 +1,26 @@
-//
-//  Use this file to import your target's public headers that you would like to expose to Swift.
-//
+#import <React/RCTBridgeModule.h>
+#import <React/RCTBridge.h>
+#import <React/RCTEventDispatcher.h>
+#import <React/RCTRootView.h>
+#import <React/RCTUtils.h>
+#import <React/RCTConvert.h>
+#import <React/RCTBundleURLProvider.h>
 
+#ifndef nofsdk_bridging_header_h
+#define nofsdk_bridging_header_h
+
+#import "nofsdk/nofsdk.h"
+
+
+#endif /* nofsdk_bridging_header_h */
+
+#ifndef YourModule_Bridging_Header_h
+#define YourModule_Bridging_Header_h
+
+#if __has_include("RCTBridgeModule.h")
+#import "RCTBridgeModule.h"
+#else
+#import <React/RCTBridgeModule.h>
+#endif
+
+#endif /* YourModule_Bridging_Header_h */
