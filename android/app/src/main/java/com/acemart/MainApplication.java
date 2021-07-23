@@ -1,6 +1,6 @@
 package com.acemart;
 
-import com.acemart.generated.BasePackageList;
+// import com.acemart.generated.BasePackageList;
 
 import android.app.Application;
 import android.content.Context;
@@ -26,9 +26,9 @@ import java.util.List;
 // react native unimodules
 import java.util.Arrays;
 
-import org.unimodules.adapters.react.ModuleRegistryAdapter;
-import org.unimodules.adapters.react.ReactModuleRegistryProvider;
-import org.unimodules.core.interfaces.SingletonModule;
+// import org.unimodules.adapters.react.ModuleRegistryAdapter;
+// import org.unimodules.adapters.react.ReactModuleRegistryProvider;
+// import org.unimodules.core.interfaces.SingletonModule;
 
 // Facebook login
 // import com.facebook.CallbackManager;
@@ -49,7 +49,7 @@ public class MainApplication extends MultiDexApplication implements ReactApplica
   //   return mCallbackManager;
   // }
 
-  private final ReactModuleRegistryProvider mModuleRegistryProvider = new ReactModuleRegistryProvider(new BasePackageList().getPackageList(), null);
+  // private final ReactModuleRegistryProvider mModuleRegistryProvider = new ReactModuleRegistryProvider(new BasePackageList().getPackageList(), null);
 
   private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
     @Override
@@ -71,11 +71,11 @@ public class MainApplication extends MultiDexApplication implements ReactApplica
       // packages.add(new MyReactNativePackage());
 
       // Add unimodules
-        List<ReactPackage> unimodules = Arrays.<ReactPackage>asList(
-          new ModuleRegistryAdapter(mModuleRegistryProvider)
-        );
+        // List<ReactPackage> unimodules = Arrays.<ReactPackage>asList(
+        //   new ModuleRegistryAdapter(mModuleRegistryProvider)
+        // );
         packages.add(new NetsClickPackage());
-        packages.addAll(unimodules);
+        // packages.addAll(unimodules);
 
       return packages;
     }
