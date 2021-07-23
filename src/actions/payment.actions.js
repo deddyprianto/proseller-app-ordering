@@ -177,14 +177,14 @@ export const netsclickRegister = item => {
         })
         .catch(async e => {
           if (e && e.toString() !== 'Error: 9992') {
-            setTimeout(() => {
-              Alert.alert(
-                'Opsss...',
-                'There is a slight technical problem, please restart your app to register.',
-                [{text: 'Ok', onPress: () => null}],
-                {cancelable: false},
-              );
-            }, 100);
+            // setTimeout(() => {
+            //   Alert.alert(
+            //     'Opsss...',
+            //     'There is a slight technical problem, please restart your app to register.',
+            //     [{text: 'Ok', onPress: () => null}],
+            //     {cancelable: false},
+            //   );
+            // }, 100);
             status = false;
           }
 

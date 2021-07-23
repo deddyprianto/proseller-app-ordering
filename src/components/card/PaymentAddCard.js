@@ -42,7 +42,7 @@ import {defaultPaymentAccount, movePageIndex} from '../../actions/user.action';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import UUIDGenerator from 'react-native-uuid-generator';
 import {isEmptyArray} from '../../helper/CheckEmpty';
-
+import {check, PERMISSIONS} from 'react-native-permissions';
 class PaymentAddCard extends Component {
   constructor(props) {
     super(props);
@@ -314,6 +314,19 @@ class PaymentAddCard extends Component {
 
   handleNetsClick = async item => {
     try {
+      if (Platform.OS === 'android') {
+        await check(PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE)
+          .then(result => {
+            if (result === 'denied') {
+              Alert.alert(
+                'Sorry',
+                `We can't open NETS Click because you don't give permission to access storage and phone calls on your device.`,
+              );
+              return;
+            }
+          })
+          .catch(error => {});
+      }
       await this.props.dispatch(netsclickRegister(item));
       await this.setState({loading: true});
       await this.props.dispatch(getAccountPayment());

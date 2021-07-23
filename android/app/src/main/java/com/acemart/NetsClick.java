@@ -15,6 +15,7 @@ public class NetsClick {
     private static NetsClick singleton = null;
     private AppConfig appConfig;
     private Context appContext;
+    private int numberOfRetry = 0;
 
     static {
         singleton = new NetsClick();
@@ -72,8 +73,11 @@ public class NetsClick {
                     }
                     @Override public void failure(String result) {
                       Log.e("netsclick 2", result);
-//                      in case of initialization error, then try again
-                      self.init(context);
+                      //  in case of initialization error, then try again
+                      if (numberOfRetry < 4) {
+                        self.init(context);
+                      }
+                      numberOfRetry += 1;
                     }
                 });
           } catch (ServiceAlreadyInitializedException e) {

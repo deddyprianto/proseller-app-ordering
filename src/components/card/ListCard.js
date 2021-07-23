@@ -42,7 +42,7 @@ import {isEmptyArray} from '../../helper/CheckEmpty';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import UUIDGenerator from 'react-native-uuid-generator';
 import AsyncStorage from '@react-native-community/async-storage';
-
+import {check, PERMISSIONS} from 'react-native-permissions';
 class ListCard extends Component {
   constructor(props) {
     super(props);
@@ -564,6 +564,19 @@ class ListCard extends Component {
 
   handleNetsClick = async item => {
     try {
+      if (Platform.OS === 'android') {
+        await check(PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE)
+          .then(result => {
+            if (result === 'denied') {
+              Alert.alert(
+                'Sorry',
+                `We can't open NETS Click because you don't give permission to access storage and phone calls on your device.`,
+              );
+              return;
+            }
+          })
+          .catch(error => {});
+      }
       await this.props.dispatch(netsclickRegister(item));
       await this.setState({loading: true});
       await this.props.dispatch(getAccountPayment());
@@ -575,7 +588,9 @@ class ListCard extends Component {
         const selectedAccount = myCardAccount[myCardAccount.length - 1];
         await this.setState({selectedAccount}, () => this.setDefaultAccount());
       }
-    } catch (e) {}
+    } catch (e) {
+      console.log(e);
+    }
     await this.setState({loading: false});
   };
 
