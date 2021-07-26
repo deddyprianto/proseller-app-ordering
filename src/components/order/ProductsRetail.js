@@ -1907,6 +1907,7 @@ class Products2 extends Component {
 
   templateItemGrid = (type, item) => {
     if (item.itemType === 'PRODUCT') {
+      if (!item.product) return null;
       return (
         <TouchableOpacity
           disabled={this.availableToOrder(item) ? false : true}
@@ -2057,6 +2058,7 @@ class Products2 extends Component {
 
   templateItem = (type, item) => {
     if (item.itemType === 'PRODUCT') {
+      if (!item.product) return null;
       return (
         <TouchableOpacity
           disabled={this.availableToOrder(item) ? false : true}
