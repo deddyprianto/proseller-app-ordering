@@ -312,9 +312,18 @@ class ScanBarcode extends Component {
                     buttonNegative: 'Cancel',
                   }}
                   onBarCodeRead={barcodes => {
-                    // console.log(barcodes);
-                    if (barcodes && barcodes.data) {
+                    if (barcodes && barcodes.data && Platform.OS === 'ios') {
                       this.onBarCodeRead(barcodes.data);
+                    }
+                  }}
+                  onGoogleVisionBarcodesDetected={({barcodes}) => {
+                    if (Platform.OS === 'android' && barcodes) {
+                      try {
+                        const barcode = barcodes.find(
+                          it => it.type !== 'UNKNOWN_FORMAT',
+                        );
+                        this.onBarCodeRead(barcode.data);
+                      } catch (e) {}
                     }
                   }}
                 />
