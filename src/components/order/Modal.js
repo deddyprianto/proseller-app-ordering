@@ -1811,7 +1811,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Bold',
     fontSize: 15,
     color: colorConfig.store.title,
-    maxWidth: '90%',
+    maxWidth: '100%',
   },
   textPromotionDesc: {
     fontFamily: 'Poppins-Italic',
