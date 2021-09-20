@@ -184,11 +184,11 @@ class PaymentSuccess extends Component {
     try {
       if (!isEmptyArray(dataRespons.payments)) {
         const find = dataRespons.payments.find(
-          item => item.isAppPayment === true,
+          item => item.isAppPayment === true || item.isSVC === true,
         );
         if (find !== undefined) {
           return this.format(CurrencyFormatter(find.paymentAmount));
-        } else if (find === undefined && dataRespons.payAtPOS != true) {
+        } else if (find === undefined && dataRespons.payAtPOS !== true) {
           const findAmount = dataRespons.payments.find(
             item => item.paymentID === 'MANUAL_TRANSFER',
           );

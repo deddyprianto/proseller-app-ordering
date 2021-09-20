@@ -74,7 +74,6 @@ public class MainApplication extends MultiDexApplication implements ReactApplica
         // List<ReactPackage> unimodules = Arrays.<ReactPackage>asList(
         //   new ModuleRegistryAdapter(mModuleRegistryProvider)
         // );
-        packages.add(new NetsClickPackage());
         // packages.addAll(unimodules);
 
       return packages;
@@ -98,7 +97,6 @@ public class MainApplication extends MultiDexApplication implements ReactApplica
     // FacebookSdk.sdkInitialize(getApplicationContext());
     // AppEventsLogger.activateApp(this);
     initializeFlipper(this); // Remove this line if you don't want Flipper enabled
-    NetsClick.getInstance().init(this);
   }
 
   /**

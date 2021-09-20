@@ -141,8 +141,8 @@ android {
         applicationId "com.acemart"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 59
-        versionName "1.1.22"
+        versionCode 61
+        versionName "1.1.23"
         missingDimensionStrategy 'react-native-camera', 'general'
         resValue "string", "build_config_package", "com.acemart"
         multiDexEnabled true
@@ -193,21 +193,21 @@ android {
             dev {
                 minSdkVersion rootProject.ext.minSdkVersion
                 applicationId 'com.acemart.dev'
-                versionName "1.1.22"
+                versionName "1.1.23"
                 targetSdkVersion rootProject.ext.targetSdkVersion
                 resValue "string", "build_config_package", "com.acemart"
             }
             demo {
                 minSdkVersion rootProject.ext.minSdkVersion
                 applicationId 'com.acemart.demo'
-                versionName "1.1.22"
+                versionName "1.1.23"
                 targetSdkVersion rootProject.ext.targetSdkVersion
                 resValue "string", "build_config_package", "com.acemart"
             }
             app {
                 minSdkVersion rootProject.ext.minSdkVersion
                 applicationId 'com.acemart.app'
-                versionName "1.1.22"
+                versionName "1.1.23"
                 targetSdkVersion rootProject.ext.targetSdkVersion
                 resValue "string", "build_config_package", "com.acemart"
             }
@@ -266,9 +266,6 @@ dependencies {
 
     // NetsClick
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
-    implementation project(path: ':nofsdk')
-    implementation project(path: ':vos-app-protection-android-4.8.2.9')
-    implementation project(path: ':vos-processor-android-4.8.2.34')
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
 
     implementation "com.google.code.gson:gson:2.8.5"

@@ -178,6 +178,27 @@ export const productByCategory = (OutletId, category, skip, take, search) => {
         },
       } = state;
 
+      const {
+        authReducer: {
+          authData: {isLoggedIn},
+        },
+      } = state;
+
+      let {
+        userReducer: {
+          getUser: {userDetails},
+        },
+      } = state;
+
+      // Decrypt data user
+      if (userDetails !== undefined && userDetails !== null && isLoggedIn) {
+        let bytes = CryptoJS.AES.decrypt(
+          userDetails,
+          awsConfig.PRIVATE_KEY_RSA,
+        );
+        userDetails = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+      }
+
       let payload = {};
 
       if (search != undefined) {
@@ -204,6 +225,10 @@ export const productByCategory = (OutletId, category, skip, take, search) => {
           sortDirection: 'asc',
           categoryID: `category::${category.id}`,
         };
+      }
+
+      if (isLoggedIn) {
+        payload.customerGroupId = userDetails.customerGroupId;
       }
 
       const response = await fetchApiProduct(

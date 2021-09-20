@@ -3795,6 +3795,7 @@ class SettleOrder extends Component {
                         totalPurchase: this.state.totalBayar,
                         originalPurchase: this.props.pembayaran.totalNettAmount,
                         setSVCAmount: this.setSVCAmount,
+                        doPayment: this.doPayment,
                       })
                     }>
                     <View style={{flexDirection: 'row', alignItems: 'center'}}>

@@ -151,23 +151,38 @@ class VirtualKeyboardCom extends Component {
     }
   };
 
-  setAmountSVC = async () => {
+  setAmountSVC = async dontGoBack => {
     const {amount} = this.state;
     try {
-      await this.props.setSVCAmount(amount);
-      Actions.pop();
+      await this.props.setSVCAmount(amount, dontGoBack);
+      if (dontGoBack !== true) {
+        Actions.pop();
+      }
     } catch (e) {}
   };
 
   submitAmount = async () => {
-    const {payload, balance, transferSVC, useSVC} = this.props;
+    const {
+      payload,
+      balance,
+      transferSVC,
+      useSVC,
+      originalPurchase,
+    } = this.props;
     const {amount} = this.state;
     await this.setState({isLoading: true});
     try {
+      let doPaymentImmediately = Number(originalPurchase) === Number(amount);
       if (transferSVC === true) {
         await this.transferSVC();
       } else if (useSVC === true) {
-        await this.setAmountSVC();
+        await this.setAmountSVC(doPaymentImmediately);
+        // Do payment immediately if using full SVC
+        if (doPaymentImmediately) {
+          try {
+            await this.props.doPayment();
+          } catch (e) {}
+        }
       }
     } catch (e) {}
     await this.setState({isLoading: false});

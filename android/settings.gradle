@@ -1,6 +1,3 @@
-include ':vos-app-protection-android-4.8.2.9'
-include ':vos-processor-android-4.8.2.34'
-include ':nofsdk'
 rootProject.name = 'acemart'
 apply from: '../node_modules/react-native-unimodules/gradle.groovy'; includeUnimodulesProjects()
 include ':react-native-linear-gradient'
