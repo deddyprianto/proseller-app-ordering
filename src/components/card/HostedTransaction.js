@@ -92,7 +92,7 @@ class HostedTransaction extends Component {
     const {url, page, referenceNo, intlData} = this.props;
     await this.setState({isFetching: true});
     const response = await this.props.dispatch(checkStatusPayment(referenceNo));
-    console.log('fetching data sales');
+    console.log('fetching data sales', response);
     if (response.Data.status === 'COMPLETED') {
       this.props.dispatch(myVoucers());
       if (this.props.page === 'settleOrder') {

@@ -1351,7 +1351,9 @@ class SettleOrder extends Component {
               outlet: this.state.outlet,
               url: response.responseBody.data.action.url,
               urlSettle: url,
-              referenceNo: response.responseBody.data.referenceNo,
+              referenceNo:
+                response.responseBody.data.referenceNo ||
+                response.responseBody.data.transactionRefNo,
               cartID: this.props.pembayaran.cartID,
               page: 'settleOrder',
             });
@@ -1633,7 +1635,9 @@ class SettleOrder extends Component {
               outlet: this.state.outlet,
               url: response.responseBody.Data.action.url,
               urlSettle: 'url',
-              referenceNo: response.responseBody.Data.referenceNo,
+              referenceNo:
+                response.responseBody.data.referenceNo ||
+                response.responseBody.data.transactionRefNo,
               cartID: this.props.pembayaran.cartID,
               isSubmitSales: true,
               page: 'settleOrder',
@@ -1910,7 +1914,9 @@ class SettleOrder extends Component {
               outlet: this.state.outlet,
               url: response.responseBody.Data.action.url,
               urlSettle: 'url',
-              referenceNo: response.responseBody.Data.referenceNo,
+              referenceNo:
+                response.responseBody.data.referenceNo ||
+                response.responseBody.data.transactionRefNo,
               cartID: this.props.pembayaran.cartID,
               page: 'settleOrder',
               paySVC: true,
@@ -2189,7 +2195,9 @@ class SettleOrder extends Component {
               outlet: this.state.outlet,
               url: response.responseBody.Data.action.url,
               urlSettle: 'url',
-              referenceNo: response.responseBody.Data.referenceNo,
+              referenceNo:
+                response.responseBody.data.referenceNo ||
+                response.responseBody.data.transactionRefNo,
               cartID: this.props.pembayaran.cartID,
               page: 'settleOrder',
               payVoucher: true,
@@ -2642,7 +2650,9 @@ class SettleOrder extends Component {
               outlet: this.state.outlet,
               url: response.responseBody.data.action.url,
               urlSettle: url,
-              referenceNo: response.responseBody.data.referenceNo,
+              referenceNo:
+                response.responseBody.data.referenceNo ||
+                response.responseBody.data.transactionRefNo,
               cartID: this.props.pembayaran.cartID,
               page: 'settleOrder',
             });
@@ -3766,6 +3776,7 @@ class SettleOrder extends Component {
                           originalPurchase: this.props.pembayaran
                             .totalNettAmount,
                           setSVCAmount: this.setSVCAmount,
+                          doPayment: this.doPayment,
                         })
                       }>
                       <Text style={styles.descMethodSelected}>

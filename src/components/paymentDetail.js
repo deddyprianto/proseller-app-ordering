@@ -1106,7 +1106,9 @@ class PaymentDetail extends Component {
               outlet: this.state.outlet,
               url: response.responseBody.data.action.url,
               urlSettle: url,
-              referenceNo: response.responseBody.data.referenceNo,
+              referenceNo:
+                response.responseBody.Data.referenceNo ||
+                response.responseBody.Data.transactionRefNo,
               cartID: this.props.pembayaran.cartID,
               page: 'paymentDetail',
             });
@@ -1334,15 +1336,18 @@ class PaymentDetail extends Component {
           this.props.dispatch(afterPayment(false));
         } catch (e) {}
 
-        if (response.responseBody.Data.action != undefined) {
+        if (response.responseBody.Data.action !== undefined) {
           if (response.responseBody.Data.action.type === 'url') {
             Actions.hostedTrx({
               outlet: this.state.outlet,
               url: response.responseBody.Data.action.url,
               urlSettle: url,
-              referenceNo: response.responseBody.Data.referenceNo,
+              referenceNo:
+                response.responseBody.Data.referenceNo ||
+                response.responseBody.Data.transactionRefNo,
               cartID: this.props.pembayaran.cartID,
               page: 'paymentDetail',
+              isSubmitSales: true,
             });
             this.setState({loading: false});
           }
@@ -2284,6 +2289,7 @@ class PaymentDetail extends Component {
                           amountSVC: this.state.amountSVC,
                           totalPurchase: this.state.totalBayar,
                           setSVCAmount: this.setSVCAmount,
+                          doPayment: this.doPayment,
                         })
                       }>
                       <Text style={styles.descMethodSelected}>
@@ -2312,6 +2318,7 @@ class PaymentDetail extends Component {
                         amountSVC: this.state.amountSVC,
                         totalPurchase: this.state.totalBayar,
                         setSVCAmount: this.setSVCAmount,
+                        doPayment: this.doPayment,
                       })
                     }>
                     <View style={{flexDirection: 'row', alignItems: 'center'}}>
