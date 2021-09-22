@@ -52,39 +52,8 @@ class HostedTransaction extends Component {
   checkStatus = async () => {
     const {url, page, referenceNo, intlData} = this.props;
     await this.setState({isFetching: true});
-    const response = await this.props.dispatch(getBasket());
-    console.log('fetching data sales');
-    if (
-      response.response.data.confirmationInfo != undefined &&
-      response.response.data.isPaymentComplete == true
-    ) {
-      clearInterval(this.interval);
-      this.props.dispatch(getBasket());
-      if (this.props.page === 'settleOrder') {
-        // this.props.dispatch(getCart(this.props.cartID));
-        Actions.replace('paymentSuccess', {
-          outlet: this.props.outlet,
-          intlData,
-          url: this.props.urlSettle,
-          dataRespons: response.response.data.confirmationInfo,
-        });
-        return;
-      } else {
-        Actions.replace('paymentSuccess', {
-          outlet: this.props.outlet,
-          intlData,
-          dataRespons: response.responseBody.Data,
-        });
-        return;
-      }
-    } else if (response.response.data.status === 'PENDING') {
-      clearInterval(this.interval);
-      this.props.dispatch(getBasket());
-      this.props.dispatch(myVoucers());
-      Actions.popTo(page);
-      // Alert.alert('Sorry', 'Payment Failed.');
-      return false;
-    }
+    await this.props.dispatch(getBasket());
+    await this.checkStatusSales();
     await this.setState({isFetching: false});
   };
 
@@ -181,11 +150,7 @@ class HostedTransaction extends Component {
         <WebView
           onNavigationStateChange={async navState => {
             let url = navState.url;
-            if (
-              url.includes(CYBERSOURCE_URL) ||
-              url.includes(SUCCESS_URL) ||
-              url.includes(FAILED_URL)
-            ) {
+            if (url.includes(CYBERSOURCE_URL) || url.includes(SUCCESS_URL)) {
               this.setState({openLoader: true});
             }
           }}
@@ -208,7 +173,7 @@ class HostedTransaction extends Component {
               isFetching ? styles.btnBottomFixedDisabled : styles.btnBottomFixed
             }>
             <Text style={styles.textAddCard}>
-              {isFetching ? 'Loading...' : 'Continue'}
+              {isFetching ? 'Please Wait...' : 'Continue'}
             </Text>
           </TouchableOpacity>
         ) : null}
