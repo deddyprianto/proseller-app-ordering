@@ -187,7 +187,16 @@ class PaymentSuccess extends Component {
           item => item.isAppPayment === true || item.isSVC === true,
         );
         if (find !== undefined) {
-          return this.format(CurrencyFormatter(find.paymentAmount));
+          let grandTotal = 0;
+          for (let i = 0; i < dataRespons.payments.length; i++) {
+            if (
+              dataRespons.payments[i].isAppPayment ||
+              dataRespons.payments[i].isSVC
+            ) {
+              grandTotal += Number(dataRespons.payments[i].paymentAmount);
+            }
+          }
+          return this.format(CurrencyFormatter(grandTotal));
         } else if (find === undefined && dataRespons.payAtPOS !== true) {
           const findAmount = dataRespons.payments.find(
             item => item.paymentID === 'MANUAL_TRANSFER',
