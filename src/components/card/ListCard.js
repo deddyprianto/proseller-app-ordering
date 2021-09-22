@@ -557,6 +557,7 @@ class ListCard extends Component {
           return false;
         }
       } catch (e) {}
+      return true;
     } catch (e) {
       return false;
     }
