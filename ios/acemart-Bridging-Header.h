@@ -6,14 +6,6 @@
 #import <React/RCTConvert.h>
 #import <React/RCTBundleURLProvider.h>
 
-#ifndef nofsdk_bridging_header_h
-#define nofsdk_bridging_header_h
-
-#import "nofsdk/nofsdk.h"
-
-
-#endif /* nofsdk_bridging_header_h */
-
 #ifndef YourModule_Bridging_Header_h
 #define YourModule_Bridging_Header_h
 

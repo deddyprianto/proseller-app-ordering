@@ -9193,7 +9193,7 @@ react-native-modal@^11.0.2, react-native-modal@^11.5.3:
     prop-types "^15.6.2"
     react-native-animatable "1.3.3"
 
-react-native-onesignal@^3.6.4:
+react-native-onesignal@3.6.4:
   version "3.6.4"
   resolved "https://registry.yarnpkg.com/react-native-onesignal/-/react-native-onesignal-3.6.4.tgz#81d16e495efa76d1fb9e8941001bac9ffb87dfff"
   integrity sha512-zd1NH80sW0gn2DDpFvS5EViiU30sCS5w/FALcDJB5fVDX0DMgqRamQkD2rslZwoFQkA2SwbOytko6xJlE4cfGg==
