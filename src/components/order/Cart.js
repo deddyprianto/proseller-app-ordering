@@ -1501,7 +1501,7 @@ class Cart extends Component {
     } catch (e) {}
     return (
       <SafeAreaView style={styles.container}>
-        {this.askUserToSelectOrderType()}
+        {/* {this.askUserToSelectOrderType()} */}
         <ModalTransfer
           isPendingPayment={true}
           doPayment={this.doPayment}
