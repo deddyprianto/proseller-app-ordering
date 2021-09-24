@@ -84,7 +84,7 @@ class RewardsSVC extends Component {
                 marginLeft: 30,
                 color: colorConfig.pageIndex.backgroundColor,
                 textAlign: 'center',
-                fontSize: 30,
+                fontSize: 25,
                 fontFamily: 'Poppins-Medium',
               }}>
               {this.format2(CurrencyFormatter(balance))}
@@ -92,7 +92,7 @@ class RewardsSVC extends Component {
             <Icon
               size={40}
               name={'chevron-right'}
-              style={{color: 'white'}}
+              style={{color: 'white', marginBottom: 5}}
             />
           </TouchableOpacity>
         </View>
