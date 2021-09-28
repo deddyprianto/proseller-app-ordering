@@ -1677,10 +1677,37 @@ export const getProductByBarcode = barcode => {
         },
       } = state;
 
+      const {
+        authReducer: {
+          authData: {isLoggedIn},
+        },
+      } = state;
+
+      let {
+        userReducer: {
+          getUser: {userDetails},
+        },
+      } = state;
+
+      // Decrypt data user
+      if (userDetails !== undefined && userDetails !== null && isLoggedIn) {
+        let bytes = CryptoJS.AES.decrypt(
+          userDetails,
+          awsConfig.PRIVATE_KEY_RSA,
+        );
+        userDetails = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+      }
+
+      let payload = {};
+
+      if (isLoggedIn) {
+        payload.customerGroupId = userDetails.customerGroupId;
+      }
+
       let response = await fetchApiProduct(
         `/product/getbybarcode/${defaultOutlet.id}/${barcode}`,
-        'GET',
-        null,
+        'POST',
+        payload,
         200,
         null,
       );
