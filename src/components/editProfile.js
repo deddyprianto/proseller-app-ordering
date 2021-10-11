@@ -656,8 +656,7 @@ class AccountEditProfil extends Component {
   render() {
     const {intlData} = this.props;
     const {fields, isPostalCodeValid, customFields} = this.state;
-    console.log(fields, 'fieldsfields');
-    console.log(this.state, 'this.state');
+    const {disableChangePhoneNumber, disableChangeEmail} = this.props;
     return (
       <SafeAreaView style={styles.container}>
         {this.state.loading && <LoaderDarker />}
@@ -702,13 +701,15 @@ class AccountEditProfil extends Component {
                         flexDirection: 'row',
                       }}>
                       <Text style={styles.desc}>Email</Text>
-                      <TouchableOpacity
-                        style={[styles.btnChange]}
-                        onPress={() => this.toChangeCredentials('Email')}>
-                        <Text style={[styles.textChange]}>
-                          {this.state.editEmail ? 'Cancel' : 'Change'}
-                        </Text>
-                      </TouchableOpacity>
+                      {!disableChangeEmail ? (
+                        <TouchableOpacity
+                          style={[styles.btnChange]}
+                          onPress={() => this.toChangeCredentials('Email')}>
+                          <Text style={[styles.textChange]}>
+                            {this.state.editEmail ? 'Cancel' : 'Change'}
+                          </Text>
+                        </TouchableOpacity>
+                      ) : null}
                     </View>
                     {!this.state.editEmail ? (
                       <Text style={{paddingTop: 12}}>
@@ -734,15 +735,17 @@ class AccountEditProfil extends Component {
                       <Text style={styles.desc}>
                         {intlData.messages.phoneNumber}
                       </Text>
-                      <TouchableOpacity
-                        onPress={() =>
-                          this.toChangeCredentials('Mobile Number')
-                        }
-                        style={[styles.btnChange]}>
-                        <Text style={[styles.textChange]}>
-                          {this.state.editPhoneNumber ? 'Cancel' : 'Change'}
-                        </Text>
-                      </TouchableOpacity>
+                      {!disableChangePhoneNumber ? (
+                        <TouchableOpacity
+                          onPress={() =>
+                            this.toChangeCredentials('Mobile Number')
+                          }
+                          style={[styles.btnChange]}>
+                          <Text style={[styles.textChange]}>
+                            {this.state.editPhoneNumber ? 'Cancel' : 'Change'}
+                          </Text>
+                        </TouchableOpacity>
+                      ) : null}
                     </View>
                     <View style={{width: 0, height: 0}}>
                       <CountryPicker
@@ -1195,6 +1198,9 @@ class AccountEditProfil extends Component {
 mapStateToProps = state => ({
   userDetail: state.userReducer.getUser.userDetails,
   updateUser: state.userReducer.updateUser,
+  disableChangeEmail: state.orderReducer.orderingSetting.disableChangeEmail,
+  disableChangePhoneNumber:
+    state.orderReducer.orderingSetting.disableChangePhoneNumber,
   intlData: state.intlData,
 });
 
