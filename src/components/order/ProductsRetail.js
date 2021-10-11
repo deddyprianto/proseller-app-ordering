@@ -2222,7 +2222,7 @@ class Products2 extends Component {
       } else {
         return (
           <View style={[styles.card, {height: 100 * length + 110}]}>
-            <Text style={styles.titleCategory}>{item.name.substr(0, 35)}</Text>
+            <Text style={styles.titleCategory}>{item.name.substr(0, 26)}</Text>
             <RecyclerListView
               layoutProvider={this._layoutProvider}
               dataProvider={dataProvider.cloneWithRows(dataProducts)}
