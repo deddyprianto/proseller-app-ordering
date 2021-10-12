@@ -22,19 +22,18 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
-import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import DatePicker from 'react-native-date-picker';
 import {Form} from 'react-native-validator-form';
 import colorConfig from '../config/colorConfig';
 import {getUserProfile, updateUser} from '../actions/user.action';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
-import {reduxForm} from 'redux-form';
 import AwesomeAlert from 'react-native-awesome-alerts';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview';
 import LoaderDarker from './LoaderDarker';
 import {getMandatoryFields} from '../actions/account.action';
-import {isEmptyArray, isEmptyData, isEmptyObject} from '../helper/CheckEmpty';
+import {isEmptyArray, isEmptyData} from '../helper/CheckEmpty';
 import {formatISO, format} from 'date-fns';
 import {dataPoint, getStamps} from '../actions/rewards.action';
 import CryptoJS from 'react-native-crypto-js';
@@ -508,6 +507,7 @@ class AccountEditProfil extends Component {
   };
 
   handleConfirm = date => {
+    this.hideDatePicker();
     let newDate = new Date(date);
     let dateBirth = newDate.getDate();
     let monthBirth = newDate.getMonth() + 1;
@@ -517,7 +517,6 @@ class AccountEditProfil extends Component {
     monthBirth = this.pad(monthBirth);
 
     this.setState({birthDate: `${birthYear}-${monthBirth}-${dateBirth}`});
-    this.hideDatePicker();
   };
 
   formatDate = current_datetime => {
@@ -889,7 +888,13 @@ class AccountEditProfil extends Component {
                                   ? 'Enter Birthday'
                                   : this.formatBirthDate(this.state.birthDate)}
                               </Text>
-                              <DateTimePickerModal
+
+                              <DatePicker
+                                modal
+                                mode={'date'}
+                                androidVariant={'iosClone'}
+                                maximumDate={this.getMaxDate()}
+                                open={this.state.isDatePickerVisible}
                                 date={
                                   this.state.birthDate !== undefined &&
                                   this.state.birthDate !== null &&
@@ -897,9 +902,6 @@ class AccountEditProfil extends Component {
                                     ? new Date(this.state.birthDate)
                                     : this.getMaxDate()
                                 }
-                                maximumDate={this.getMaxDate()}
-                                isVisible={this.state.isDatePickerVisible}
-                                mode="date"
                                 onConfirm={this.handleConfirm}
                                 onCancel={this.hideDatePicker}
                               />

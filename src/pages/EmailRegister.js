@@ -35,7 +35,7 @@ import CountryPicker from '../components/react-native-country-picker-modal';
 import PhoneInput from 'react-native-phone-input';
 import {isEmptyArray} from '../helper/CheckEmpty';
 import DropDownPicker from 'react-native-dropdown-picker';
-import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import DatePicker from 'react-native-date-picker';
 import {format} from 'date-fns';
 import Icon from 'react-native-vector-icons/Ionicons';
 
@@ -298,6 +298,7 @@ class EmailRegister extends Component {
   };
 
   handleConfirm = date => {
+    this.hideDatePicker();
     let newDate = new Date(date);
     let dateBirth = newDate.getDate();
     let monthBirth = newDate.getMonth() + 1;
@@ -307,7 +308,6 @@ class EmailRegister extends Component {
     monthBirth = this.pad(monthBirth);
 
     this.setState({birthDate: `${birthYear}-${monthBirth}-${dateBirth}`});
-    this.hideDatePicker();
   };
 
   formatDate = current_datetime => {
@@ -599,7 +599,12 @@ class EmailRegister extends Component {
                             ? 'Enter Birthday'
                             : this.formatBirthDate(this.state.birthDate)}
                         </Text>
-                        <DateTimePickerModal
+                        <DatePicker
+                          modal
+                          mode={'date'}
+                          androidVariant={'iosClone'}
+                          maximumDate={this.getMaxDate()}
+                          open={this.state.isDatePickerVisible}
                           date={
                             this.state.birthDate !== undefined &&
                             this.state.birthDate !== null &&
@@ -607,9 +612,6 @@ class EmailRegister extends Component {
                               ? new Date(this.state.birthDate)
                               : this.getMaxDate()
                           }
-                          maximumDate={this.getMaxDate()}
-                          isVisible={this.state.isDatePickerVisible}
-                          mode="date"
                           onConfirm={this.handleConfirm}
                           onCancel={this.hideDatePicker}
                         />
