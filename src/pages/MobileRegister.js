@@ -161,7 +161,11 @@ class MobileRegister extends Component {
 
   submitRegister = async () => {
     this.setState({loading: true});
-    const {fields, enableRegisterWithPassword} = this.props;
+    const {
+      fields,
+      enableRegisterWithPassword,
+      hideEmailOnRegistration,
+    } = this.props;
 
     const {password, retypePassword, passwordInvalid} = this.state;
     if (passwordInvalid) {
@@ -191,6 +195,12 @@ class MobileRegister extends Component {
         password: this.generatePassword(),
       };
 
+      if (hideEmailOnRegistration === true) {
+        let templateEmail = dataRequest.phoneNumber.replace('+', '');
+        templateEmail = `${templateEmail}@proseller.io`;
+        dataRequest.email = templateEmail;
+      }
+
       // fill in password
       if (
         !passwordInvalid &&
@@ -217,6 +227,7 @@ class MobileRegister extends Component {
       }
 
       console.log(dataRequest, 'payload register');
+
       const response = await this.props.dispatch(createNewUser(dataRequest));
       if (response == true) {
         await this.sendOTP(dataRequest.phoneNumber);
@@ -359,7 +370,12 @@ class MobileRegister extends Component {
   };
 
   render() {
-    const {intlData, fields, enableRegisterWithPassword} = this.props;
+    const {
+      intlData,
+      fields,
+      enableRegisterWithPassword,
+      hideEmailOnRegistration,
+    } = this.props;
     const {passwordInvalid} = this.state;
     return (
       <SafeAreaView style={styles.backgroundImage}>
@@ -404,32 +420,34 @@ class MobileRegister extends Component {
                 }}
               />
             </View>
-            <View>
-              <Text
-                style={{
-                  color: colorConfig.pageIndex.grayColor,
-                  paddingVertical: 10,
-                  fontSize: 17,
-                }}>
-                Email
-              </Text>
-              <TextInput
-                placeholder={'Email'}
-                keyboardType={'email-address'}
-                autoCompleteType={'email'}
-                value={this.state.email}
-                onChangeText={value => this.setState({email: value.trim()})}
-                style={{
-                  fontSize: 14,
-                  fontFamily: 'Poppins-Regular',
-                  padding: 10,
-                  color: colorConfig.store.title,
-                  borderColor: colorConfig.pageIndex.inactiveTintColor,
-                  borderWidth: 1.3,
-                  borderRadius: 5,
-                }}
-              />
-            </View>
+            {hideEmailOnRegistration === false ? (
+              <View>
+                <Text
+                  style={{
+                    color: colorConfig.pageIndex.grayColor,
+                    paddingVertical: 10,
+                    fontSize: 17,
+                  }}>
+                  Email
+                </Text>
+                <TextInput
+                  placeholder={'Email'}
+                  keyboardType={'email-address'}
+                  autoCompleteType={'email'}
+                  value={this.state.email}
+                  onChangeText={value => this.setState({email: value.trim()})}
+                  style={{
+                    fontSize: 14,
+                    fontFamily: 'Poppins-Regular',
+                    padding: 10,
+                    color: colorConfig.store.title,
+                    borderColor: colorConfig.pageIndex.inactiveTintColor,
+                    borderWidth: 1.3,
+                    borderRadius: 5,
+                  }}
+                />
+              </View>
+            ) : null}
 
             {/* Custom Fields */}
             {!isEmptyArray(fields) &&
@@ -895,6 +913,8 @@ mapStateToProps = state => ({
   fields: state.userReducer.customFields.fields,
   enableRegisterWithPassword:
     state.orderReducer.orderingSetting.enableRegisterWithPassword,
+  hideEmailOnRegistration:
+    state.orderReducer.orderingSetting.hideEmailOnRegistration,
 });
 
 mapDispatchToProps = dispatch => ({

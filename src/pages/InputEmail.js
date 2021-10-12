@@ -191,7 +191,7 @@ class InputEmail extends Component {
   };
 
   render() {
-    const {intlData} = this.props;
+    const {intlData, loginByMobile} = this.props;
     return (
       <SafeAreaView style={styles.backgroundImage}>
         {this.state.loading && <Loader />}
@@ -250,20 +250,22 @@ class InputEmail extends Component {
                 </Text>
               </TouchableHighlight>
             </View>
-            <View style={{marginTop: 30}}>
-              <TouchableOpacity onPress={() => Actions.pop()}>
-                <Text
-                  style={{
-                    textDecorationLine: 'underline',
-                    fontFamily: 'Poppins-Regular',
-                    textAlign: 'center',
-                    color: colorConfig.store.secondaryColor,
-                    fontSize: 17,
-                  }}>
-                  {intlData.messages.useMobile}
-                </Text>
-              </TouchableOpacity>
-            </View>
+            {loginByMobile === true ? (
+              <View style={{marginTop: 30}}>
+                <TouchableOpacity onPress={() => Actions.pop()}>
+                  <Text
+                    style={{
+                      textDecorationLine: 'underline',
+                      fontFamily: 'Poppins-Regular',
+                      textAlign: 'center',
+                      color: colorConfig.store.secondaryColor,
+                      fontSize: 17,
+                    }}>
+                    {intlData.messages.useMobile}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            ) : null}
           </View>
         </ScrollView>
       </SafeAreaView>
@@ -276,6 +278,8 @@ mapStateToProps = state => ({
   intlData: state.intlData,
   enableRegisterWithPassword:
     state.orderReducer.orderingSetting.enableRegisterWithPassword,
+  loginByEmail: state.orderReducer.orderingSetting.loginByEmail,
+  loginByMobile: state.orderReducer.orderingSetting.loginByMobile,
 });
 
 mapDispatchToProps = dispatch => ({

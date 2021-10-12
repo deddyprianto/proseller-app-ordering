@@ -102,6 +102,11 @@ const orderingSetting = (state = {}, action) => {
       return {
         orderingSetting: action.orderingSetting,
         enableRegisterWithPassword: action.enableRegisterWithPassword,
+        disableChangePhoneNumber: action.disableChangePhoneNumber,
+        disableChangeEmail: action.disableChangeEmail,
+        loginByMobile: action.loginByMobile,
+        loginByEmail: action.loginByEmail,
+        hideEmailOnRegistration: action.hideEmailOnRegistration,
       };
 
     default:

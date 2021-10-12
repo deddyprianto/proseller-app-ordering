@@ -656,7 +656,11 @@ class AccountEditProfil extends Component {
   render() {
     const {intlData} = this.props;
     const {fields, isPostalCodeValid, customFields} = this.state;
-    const {disableChangePhoneNumber, disableChangeEmail} = this.props;
+    const {
+      disableChangePhoneNumber,
+      disableChangeEmail,
+      hideEmailOnRegistration,
+    } = this.props;
     return (
       <SafeAreaView style={styles.container}>
         {this.state.loading && <LoaderDarker />}
@@ -695,38 +699,45 @@ class AccountEditProfil extends Component {
                     />
                     <View style={{borderWidth: 0.5, borderColor: 'gray'}} />
                   </View>
-                  <View style={styles.detailItem}>
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                      }}>
-                      <Text style={styles.desc}>Email</Text>
-                      {!disableChangeEmail ? (
-                        <TouchableOpacity
-                          style={[styles.btnChange]}
-                          onPress={() => this.toChangeCredentials('Email')}>
-                          <Text style={[styles.textChange]}>
-                            {this.state.editEmail ? 'Cancel' : 'Change'}
-                          </Text>
-                        </TouchableOpacity>
-                      ) : null}
+                  {hideEmailOnRegistration === false ? (
+                    <View style={styles.detailItem}>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                        }}>
+                        <Text style={styles.desc}>Email</Text>
+                        {!disableChangeEmail ? (
+                          <TouchableOpacity
+                            style={[styles.btnChange]}
+                            onPress={() => this.toChangeCredentials('Email')}>
+                            <Text style={[styles.textChange]}>
+                              {this.state.editEmail ? 'Cancel' : 'Change'}
+                            </Text>
+                          </TouchableOpacity>
+                        ) : null}
+                      </View>
+                      {!this.state.editEmail ? (
+                        <Text style={{paddingTop: 12}}>
+                          {this.props.dataDiri.email}
+                        </Text>
+                      ) : (
+                        <>
+                          <TextInput
+                            placeholder="Email"
+                            style={{paddingVertical: 10}}
+                            value={this.state.email}
+                            onChangeText={value =>
+                              this.setState({email: value})
+                            }
+                          />
+                          <View
+                            style={{borderWidth: 0.5, borderColor: 'gray'}}
+                          />
+                        </>
+                      )}
                     </View>
-                    {!this.state.editEmail ? (
-                      <Text style={{paddingTop: 12}}>
-                        {this.props.dataDiri.email}
-                      </Text>
-                    ) : (
-                      <>
-                        <TextInput
-                          placeholder="Email"
-                          style={{paddingVertical: 10}}
-                          value={this.state.email}
-                          onChangeText={value => this.setState({email: value})}
-                        />
-                        <View style={{borderWidth: 0.5, borderColor: 'gray'}} />
-                      </>
-                    )}
-                  </View>
+                  ) : null}
+
                   <View style={styles.detailItem}>
                     <View
                       style={{
@@ -1201,6 +1212,8 @@ mapStateToProps = state => ({
   disableChangeEmail: state.orderReducer.orderingSetting.disableChangeEmail,
   disableChangePhoneNumber:
     state.orderReducer.orderingSetting.disableChangePhoneNumber,
+  hideEmailOnRegistration:
+    state.orderReducer.orderingSetting.hideEmailOnRegistration,
   intlData: state.intlData,
 });
 

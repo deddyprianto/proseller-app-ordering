@@ -118,15 +118,19 @@ class Header extends Component {
     };
   }
 
-  gotoBack() {
-    Actions.pop();
-  }
+  gotoBack = () => {
+    const {loginByMobile} = this.props;
+    if (loginByMobile === false) {
+      Actions.push('pageIndex');
+    } else {
+      Actions.pop();
+    }
+  };
 
   componentDidMount = async () => {
     try {
       const logo = await this.props.dispatch(getSetting('Logo'));
       if (!isEmptyData(logo)) await this.setState({logo});
-      console.log(logo, 'logologologo')
     } catch (e) {}
   };
 
@@ -189,6 +193,7 @@ class Header extends Component {
 
 mapStateToProps = state => ({
   companyInfo: state.userReducer.getCompanyInfo.companyInfo,
+  loginByMobile: state.orderReducer.orderingSetting.loginByMobile,
 });
 
 mapDispatchToProps = dispatch => ({

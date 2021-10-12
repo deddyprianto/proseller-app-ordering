@@ -137,6 +137,12 @@ class InputPhoneNumber extends Component {
   }
 
   componentDidMount = async () => {
+    const {loginByMobile} = this.props;
+    console.log(loginByMobile, 'loginByMobile')
+    if (loginByMobile === false) {
+      Actions.replace('inputEmail');
+    }
+
     // detect keyboard up / down
     this.props.dispatch(getMandatoryFields());
     this.keyboardDidShowListener = Keyboard.addListener(
@@ -284,7 +290,7 @@ class InputPhoneNumber extends Component {
   };
 
   render() {
-    const {intlData} = this.props;
+    const {intlData, loginByEmail} = this.props;
     this.getUserPosition();
     let backButton = false;
     if (Actions.currentScene !== 'pageIndex') {
@@ -432,20 +438,22 @@ class InputPhoneNumber extends Component {
                   </Text>
                 </TouchableHighlight>
               </View>
-              <View style={{marginTop: 30}}>
-                <TouchableOpacity onPress={() => Actions.inputEmail()}>
-                  <Text
-                    style={{
-                      textDecorationLine: 'underline',
-                      fontFamily: 'Poppins-Regular',
-                      textAlign: 'center',
-                      color: colorConfig.store.secondaryColor,
-                      fontSize: 17,
-                    }}>
-                    {intlData.messages.useEmail}
-                  </Text>
-                </TouchableOpacity>
-              </View>
+              {loginByEmail === true ? (
+                <View style={{marginTop: 30}}>
+                  <TouchableOpacity onPress={() => Actions.inputEmail()}>
+                    <Text
+                      style={{
+                        textDecorationLine: 'underline',
+                        fontFamily: 'Poppins-Regular',
+                        textAlign: 'center',
+                        color: colorConfig.store.secondaryColor,
+                        fontSize: 17,
+                      }}>
+                      {intlData.messages.useEmail}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              ) : null}
             </View>
           </SafeAreaView>
         </ScrollView>
@@ -460,6 +468,8 @@ mapStateToProps = state => ({
   intlData: state.intlData,
   enableRegisterWithPassword:
     state.orderReducer.orderingSetting.enableRegisterWithPassword,
+  loginByEmail: state.orderReducer.orderingSetting.loginByEmail,
+  loginByMobile: state.orderReducer.orderingSetting.loginByMobile,
 });
 
 mapDispatchToProps = dispatch => ({

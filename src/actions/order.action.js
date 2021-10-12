@@ -1334,10 +1334,55 @@ export const getTermsConditions = () => {
           ).settingValue;
         } catch (e) {}
 
+        let disableChangeEmail = false;
+
+        try {
+          disableChangeEmail = response.response.data.settings.find(
+            item => item.settingKey === 'DisableChangeEmail',
+          ).settingValue;
+        } catch (e) {}
+
+        let disableChangePhoneNumber = false;
+
+        try {
+          disableChangePhoneNumber = response.response.data.settings.find(
+            item => item.settingKey === 'DisableChangePhoneNumber',
+          ).settingValue;
+        } catch (e) {}
+
+        let loginByEmail = true;
+
+        try {
+          loginByEmail = response.response.data.settings.find(
+            item => item.settingKey === 'LoginByEmail',
+          ).settingValue;
+        } catch (e) {}
+
+        let loginByMobile = true;
+
+        try {
+          loginByMobile = response.response.data.settings.find(
+            item => item.settingKey === 'LoginByMobile',
+          ).settingValue;
+        } catch (e) {}
+
+        let hideEmailOnRegistration = false;
+
+        try {
+          hideEmailOnRegistration = response.response.data.settings.find(
+            item => item.settingKey === 'HideEmailOnRegistration',
+          ).settingValue;
+        } catch (e) {}
+
         dispatch({
           type: 'DATA_ORDERING_SETTING',
           orderingSetting: response.response.data,
           enableRegisterWithPassword: enableRegisterWithPassword,
+          disableChangeEmail,
+          disableChangePhoneNumber,
+          loginByEmail,
+          loginByMobile,
+          hideEmailOnRegistration,
         });
 
         return response.response.data;
