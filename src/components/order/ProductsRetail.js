@@ -1840,7 +1840,7 @@ class Products2 extends Component {
 
   renderPromotionName = (itemPromo, type) => {
     try {
-      console.log(itemPromo, 'itemPromo')
+      console.log(itemPromo, 'itemPromo');
       if (itemPromo && itemPromo.items && itemPromo.items.length === 1) {
         if (
           itemPromo.promoDisplayName &&
@@ -2222,7 +2222,9 @@ class Products2 extends Component {
       } else {
         return (
           <View style={[styles.card, {height: 100 * length + 110}]}>
-            <Text style={styles.titleCategory}>{item.name.substr(0, 26)}</Text>
+            <Text style={styles.titleCategory}>
+              {item && item.name && item.name.substr(0, 26)}
+            </Text>
             <RecyclerListView
               layoutProvider={this._layoutProvider}
               dataProvider={dataProvider.cloneWithRows(dataProducts)}
