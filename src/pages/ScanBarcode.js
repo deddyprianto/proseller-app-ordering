@@ -18,7 +18,7 @@ import {
 
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
-import {RNCamera} from 'react-native-camera';
+import QRCodeScanner from 'react-native-qrcode-scanner';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
 import colorConfig from '../config/colorConfig';
@@ -297,33 +297,15 @@ class ScanBarcode extends Component {
                 </Text>
               </View>
               <View style={styles.cameraWindow}>
-                <RNCamera
-                  ref={ref => {
-                    this.camera = ref;
+                <QRCodeScanner
+                  reactivate={true}
+                  showMarker={true}
+                  ref={node => {
+                    this.scanner = node;
                   }}
-                  captureAudio={false}
-                  style={styles.preview}
-                  type={RNCamera.Constants.Type.back}
-                  flashMode={RNCamera.Constants.FlashMode.on}
-                  androidCameraPermissionOptions={{
-                    title: 'Permission to use camera',
-                    message: 'We need your permission to use your camera',
-                    buttonPositive: 'Ok',
-                    buttonNegative: 'Cancel',
-                  }}
-                  onBarCodeRead={barcodes => {
-                    if (barcodes && barcodes.data && Platform.OS === 'ios') {
+                  onRead={barcodes => {
+                    if (barcodes && barcodes.type !== 'QR_CODE') {
                       this.onBarCodeRead(barcodes.data);
-                    }
-                  }}
-                  onGoogleVisionBarcodesDetected={({barcodes}) => {
-                    if (Platform.OS === 'android' && barcodes) {
-                      try {
-                        const barcode = barcodes.find(
-                          it => it.type !== 'UNKNOWN_FORMAT',
-                        );
-                        this.onBarCodeRead(barcode.data);
-                      } catch (e) {}
                     }
                   }}
                 />
