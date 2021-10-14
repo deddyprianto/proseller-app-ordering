@@ -185,6 +185,18 @@ class MobileRegister extends Component {
       return;
     }
 
+    if (!this.state.name) {
+      Alert.alert('Opps', 'Name cannot be empty');
+      this.setState({loading: false});
+      return;
+    }
+
+    if (!this.state.email && hideEmailOnRegistration === false) {
+      Alert.alert('Opps', 'Email cannot be empty');
+      this.setState({loading: false});
+      return;
+    }
+
     try {
       let dataRequest = {
         username: this.props.phoneNumber,
@@ -195,7 +207,7 @@ class MobileRegister extends Component {
         password: this.generatePassword(),
       };
 
-      if (hideEmailOnRegistration === true) {
+      if (dataRequest.email === '' || !dataRequest.email) {
         let templateEmail = dataRequest.phoneNumber.replace('+', '');
         templateEmail = `${templateEmail}@proseller.io`;
         dataRequest.email = templateEmail;
@@ -403,7 +415,7 @@ class MobileRegister extends Component {
                   paddingVertical: 10,
                   fontSize: 17,
                 }}>
-                {intlData.messages.name}
+                {intlData.messages.name} <Text style={{color: 'red'}}>*</Text>
               </Text>
               <TextInput
                 placeholder={intlData.messages.fullName}
@@ -420,34 +432,35 @@ class MobileRegister extends Component {
                 }}
               />
             </View>
-            {hideEmailOnRegistration === false ? (
-              <View>
-                <Text
-                  style={{
-                    color: colorConfig.pageIndex.grayColor,
-                    paddingVertical: 10,
-                    fontSize: 17,
-                  }}>
-                  Email
-                </Text>
-                <TextInput
-                  placeholder={'Email'}
-                  keyboardType={'email-address'}
-                  autoCompleteType={'email'}
-                  value={this.state.email}
-                  onChangeText={value => this.setState({email: value.trim()})}
-                  style={{
-                    fontSize: 14,
-                    fontFamily: 'Poppins-Regular',
-                    padding: 10,
-                    color: colorConfig.store.title,
-                    borderColor: colorConfig.pageIndex.inactiveTintColor,
-                    borderWidth: 1.3,
-                    borderRadius: 5,
-                  }}
-                />
-              </View>
-            ) : null}
+            <View>
+              <Text
+                style={{
+                  color: colorConfig.pageIndex.grayColor,
+                  paddingVertical: 10,
+                  fontSize: 17,
+                }}>
+                Email
+                {hideEmailOnRegistration === false ? (
+                  <Text style={{color: 'red'}}>*</Text>
+                ) : null}
+              </Text>
+              <TextInput
+                placeholder={'Email'}
+                keyboardType={'email-address'}
+                autoCompleteType={'email'}
+                value={this.state.email}
+                onChangeText={value => this.setState({email: value.trim()})}
+                style={{
+                  fontSize: 14,
+                  fontFamily: 'Poppins-Regular',
+                  padding: 10,
+                  color: colorConfig.store.title,
+                  borderColor: colorConfig.pageIndex.inactiveTintColor,
+                  borderWidth: 1.3,
+                  borderRadius: 5,
+                }}
+              />
+            </View>
 
             {/* Custom Fields */}
             {!isEmptyArray(fields) &&

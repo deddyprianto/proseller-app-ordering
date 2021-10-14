@@ -698,44 +698,38 @@ class AccountEditProfil extends Component {
                     />
                     <View style={{borderWidth: 0.5, borderColor: 'gray'}} />
                   </View>
-                  {hideEmailOnRegistration === false ? (
-                    <View style={styles.detailItem}>
-                      <View
-                        style={{
-                          flexDirection: 'row',
-                        }}>
-                        <Text style={styles.desc}>Email</Text>
-                        {!disableChangeEmail ? (
-                          <TouchableOpacity
-                            style={[styles.btnChange]}
-                            onPress={() => this.toChangeCredentials('Email')}>
-                            <Text style={[styles.textChange]}>
-                              {this.state.editEmail ? 'Cancel' : 'Change'}
-                            </Text>
-                          </TouchableOpacity>
-                        ) : null}
-                      </View>
-                      {!this.state.editEmail ? (
-                        <Text style={{paddingTop: 12}}>
-                          {this.props.dataDiri.email}
-                        </Text>
-                      ) : (
-                        <>
-                          <TextInput
-                            placeholder="Email"
-                            style={{paddingVertical: 10}}
-                            value={this.state.email}
-                            onChangeText={value =>
-                              this.setState({email: value})
-                            }
-                          />
-                          <View
-                            style={{borderWidth: 0.5, borderColor: 'gray'}}
-                          />
-                        </>
-                      )}
+                  <View style={styles.detailItem}>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                      }}>
+                      <Text style={styles.desc}>Email</Text>
+                      {!disableChangeEmail ? (
+                        <TouchableOpacity
+                          style={[styles.btnChange]}
+                          onPress={() => this.toChangeCredentials('Email')}>
+                          <Text style={[styles.textChange]}>
+                            {this.state.editEmail ? 'Cancel' : 'Change'}
+                          </Text>
+                        </TouchableOpacity>
+                      ) : null}
                     </View>
-                  ) : null}
+                    {!this.state.editEmail ? (
+                      <Text style={{paddingTop: 12}}>
+                        {this.props.dataDiri.email}
+                      </Text>
+                    ) : (
+                      <>
+                        <TextInput
+                          placeholder="Email"
+                          style={{paddingVertical: 10}}
+                          value={this.state.email}
+                          onChangeText={value => this.setState({email: value})}
+                        />
+                        <View style={{borderWidth: 0.5, borderColor: 'gray'}} />
+                      </>
+                    )}
+                  </View>
 
                   <View style={styles.detailItem}>
                     <View

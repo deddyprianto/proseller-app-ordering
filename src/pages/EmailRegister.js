@@ -394,7 +394,7 @@ class EmailRegister extends Component {
                   paddingVertical: 10,
                   fontSize: 17,
                 }}>
-                {intlData.messages.name}
+                {intlData.messages.name} <Text style={{color: 'red'}}>*</Text>
               </Text>
               <TextInput
                 placeholder={intlData.messages.fullName}
@@ -418,7 +418,7 @@ class EmailRegister extends Component {
                   paddingVertical: 5,
                   fontSize: 17,
                 }}>
-                {intlData.messages.phoneNumber}
+                {intlData.messages.phoneNumber} <Text style={{color: 'red'}}>*</Text>
               </Text>
             </View>
             <View
