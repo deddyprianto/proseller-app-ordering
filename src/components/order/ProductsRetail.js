@@ -2108,7 +2108,7 @@ class Products2 extends Component {
                       {this.getQuantityInBasket(item)}x{' '}
                     </Text>
                   ) : null}
-                  {item.product.name.substr(0, 25)}
+                  {item.product.name}
                 </Text>
                 {/* Display Promotion */}
                 {item.product &&
@@ -2200,7 +2200,7 @@ class Products2 extends Component {
           <View
             style={[styles.card, {height: 310 * Math.ceil(length / 2) + 120}]}>
             <Text style={[styles.titleCategory]}>
-              {item.name.substr(0, 35)}
+              {item.name}
             </Text>
             <RecyclerListView
               style={{marginLeft: 5}}
@@ -2223,7 +2223,7 @@ class Products2 extends Component {
         return (
           <View style={[styles.card, {height: 100 * length + 110}]}>
             <Text style={styles.titleCategory}>
-              {item && item.name && item.name.substr(0, 26)}
+              {item && item.name}
             </Text>
             <RecyclerListView
               layoutProvider={this._layoutProvider}
@@ -3507,7 +3507,7 @@ const styles = StyleSheet.create({
   },
   titleCategory: {
     color: colorConfig.store.title,
-    fontSize: 20,
+    fontSize: 17,
     textAlign: 'left',
     fontFamily: 'Poppins-Medium',
     padding: 14,
@@ -3580,7 +3580,7 @@ const styles = StyleSheet.create({
     color: colorConfig.store.title,
     marginLeft: 6,
     fontSize: 14,
-    maxWidth: Dimensions.get('window').width / 2 - 50,
+    maxWidth: Dimensions.get('window').width / 2 - 10,
   },
   productTitleInModal: {
     color: colorConfig.store.title,
