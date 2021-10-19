@@ -2199,9 +2199,7 @@ class Products2 extends Component {
         return (
           <View
             style={[styles.card, {height: 310 * Math.ceil(length / 2) + 120}]}>
-            <Text style={[styles.titleCategory]}>
-              {item.name}
-            </Text>
+            <Text style={[styles.titleCategory]}>{item.name}</Text>
             <RecyclerListView
               style={{marginLeft: 5}}
               layoutProvider={this._gridLayoutProvider}
@@ -2221,10 +2219,8 @@ class Products2 extends Component {
         );
       } else {
         return (
-          <View style={[styles.card, {height: 100 * length + 110}]}>
-            <Text style={styles.titleCategory}>
-              {item && item.name}
-            </Text>
+          <View style={[styles.card, {height: 102 * length + 110}]}>
+            <Text style={styles.titleCategory}>{item && item.name}</Text>
             <RecyclerListView
               layoutProvider={this._layoutProvider}
               dataProvider={dataProvider.cloneWithRows(dataProducts)}
@@ -3507,7 +3503,7 @@ const styles = StyleSheet.create({
   },
   titleCategory: {
     color: colorConfig.store.title,
-    fontSize: 17,
+    fontSize: 16,
     textAlign: 'left',
     fontFamily: 'Poppins-Medium',
     padding: 14,
