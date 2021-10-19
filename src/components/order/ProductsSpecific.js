@@ -1262,9 +1262,7 @@ class ProductsSpecific extends Component {
                   {this.getQuantityInBasket(item)} x{' '}
                 </Text>
               ) : null}
-              {item.product != undefined
-                ? item.product.name.substr(0, 40)
-                : '-'}
+              {item.product != undefined ? item.product.name : '-'}
             </Text>
             {item.product &&
               !isEmptyArray(item.product.promotions) &&
@@ -2168,7 +2166,7 @@ class ProductsSpecific extends Component {
             }}>
             <Text style={styles.titleCategory}>
               {this.state.search != undefined && 'Result for : '}
-              {this.state.categoryDetail.name.substr(0, 35)}
+              {this.state.categoryDetail.name}
             </Text>
           </View>
           {this.state.products != undefined ? (
@@ -2371,7 +2369,7 @@ const styles = StyleSheet.create({
   },
   titleCategory: {
     color: colorConfig.store.defaultColor,
-    fontSize: 16,
+    fontSize: 15,
     textAlign: 'left',
     fontFamily: 'Poppins-Regular',
     padding: 12,
