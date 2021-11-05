@@ -80,7 +80,7 @@ class paymentAddPoint extends Component {
 
       // create default point to set based on the ratio of point to rebate
       let setDefault = parseFloat(
-        (this.props.pembayaran.payment * ratio).toFixed(2),
+        (this.props.paymentData.payment * ratio).toFixed(2),
       );
 
       this.setState({
@@ -92,11 +92,11 @@ class paymentAddPoint extends Component {
       // if settings from admin is not set to decimal, then round
       let pointToSet = this.state.myPoint;
 
-      if (pendingPoints !== undefined && pendingPoints > 0) {
+      if (pendingPoints && pendingPoints > 0) {
         pointToSet -= pendingPoints;
       }
 
-      if (detailPoint !== undefined && detailPoint.lockPoints > 0) {
+      if (detailPoint && detailPoint.lockPoints > 0) {
         if (percentageUseSVC > 0) {
           let minusPoint = 0;
           minusPoint =
@@ -152,7 +152,7 @@ class paymentAddPoint extends Component {
 
   pageDetailPoint = () => {
     // Actions.paymentDetail({
-    //   pembayaran: this.props.pembayaran,
+    //   paymentData: this.props.paymentData,
     //   addPoint: this.state.jumPoint == 0 ? undefined : this.state.jumPoint,
     //   moneyPoint:
     //     (this.state.jumPoint / this.state.jumPointRatio) *
@@ -229,11 +229,11 @@ class paymentAddPoint extends Component {
     } = this.props;
     let {ratio, myPoint} = this.state;
     try {
-      if (pendingPoints != undefined && pendingPoints > 0) {
+      if (pendingPoints && pendingPoints > 0) {
         myPoint -= pendingPoints;
       }
 
-      if (detailPoint !== undefined && detailPoint.lockPoints > 0) {
+      if (detailPoint && detailPoint.lockPoints > 0) {
         if (percentageUseSVC > 0) {
           let minusPoint = 0;
           minusPoint =
@@ -250,7 +250,7 @@ class paymentAddPoint extends Component {
         myPoint = 0;
       }
 
-      const maxPayment = this.props.pembayaran.payment * ratio;
+      const maxPayment = this.props.paymentData.payment * ratio;
 
       let maxPoint;
       if (myPoint <= maxPayment) {
@@ -259,12 +259,16 @@ class paymentAddPoint extends Component {
         maxPoint = maxPayment;
       }
       if (
-        campign.points.roundingOptions != undefined &&
-        campign.points.roundingOptions == 'DECIMAL'
+        campign.points.roundingOptions &&
+        campign.points.roundingOptions === 'DECIMAL'
       ) {
         return parseFloat(maxPoint.toFixed(2));
       } else {
-        return Math.floor(maxPoint);
+        let returnPoint = Math.ceil(maxPoint);
+        if (myPoint < returnPoint) {
+          return Math.floor(maxPoint);
+        }
+        return returnPoint;
       }
     } catch (e) {
       return 0;

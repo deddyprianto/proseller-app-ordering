@@ -974,29 +974,30 @@ class SettleOrder extends Component {
     let {intlData} = this.props;
     let {totalBayar, dataVoucer, totalNonDiscountable} = this.state;
 
-    let pembayaran = JSON.stringify(this.props.pembayaran);
-    pembayaran = JSON.parse(pembayaran);
-    pembayaran.payment -= totalNonDiscountable;
+    let paymentData = JSON.stringify(this.props.pembayaran);
+    paymentData = JSON.parse(paymentData);
+    paymentData.payment -= totalNonDiscountable;
 
     // Adjust total
     try {
-      let total = pembayaran.payment;
+      let total = paymentData.payment;
       if (!isEmptyArray(dataVoucer)) {
         for (let i = 0; i < dataVoucer.length; i++) {
+          /* Deduct voucher & voucher serial number */
           if (dataVoucer[i].isVoucher === true) {
             total -= dataVoucer[i].paymentAmount;
+          } else if (dataVoucer[i].voucherValue) {
+            total -= dataVoucer[i].voucherValue;
           }
+          /* deduct SVC */
           if (dataVoucer[i].isSVC === true) {
             total -= dataVoucer[i].paymentAmount;
-          }
-          if (dataVoucer[i].voucherValue) {
-            total -= dataVoucer[i].voucherValue;
           }
         }
         if (total < 0) {
           total = 0;
         }
-        pembayaran.payment = total;
+        paymentData.payment = total;
       }
     } catch (e) {}
 
@@ -1005,8 +1006,8 @@ class SettleOrder extends Component {
       data: this.props.totalPoint,
       amountSVC: this.state.amountSVC,
       percentageUseSVC: this.state.percentageUseSVC,
-      pembayaran: pembayaran,
-      valueSet: this.state.addPoint == undefined ? 0 : this.state.addPoint,
+      paymentData,
+      valueSet: this.state.addPoint === undefined ? 0 : this.state.addPoint,
       setDataPoint: this.setDataPoint,
     });
   };
