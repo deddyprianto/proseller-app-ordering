@@ -412,10 +412,8 @@ class AccountEditProfil extends Component {
   };
 
   showDatePicker = () => {
-    if (
-      this.props.dataDiri.birthDate === '' ||
-      this.props.dataDiri.birthDate === undefined
-    ) {
+    const {disableChangeBirthday} = this.props;
+    if (!disableChangeBirthday) {
       this.setState({isDatePickerVisible: true});
     } else {
       Alert.alert('Sorry', 'You have filled out the birthday form.');
@@ -659,6 +657,7 @@ class AccountEditProfil extends Component {
       disableChangePhoneNumber,
       disableChangeEmail,
       hideEmailOnRegistration,
+      disableChangeBirthday,
     } = this.props;
     return (
       <SafeAreaView style={styles.container}>
@@ -1208,6 +1207,8 @@ mapStateToProps = state => ({
   disableChangeEmail: state.orderReducer.orderingSetting.disableChangeEmail,
   disableChangePhoneNumber:
     state.orderReducer.orderingSetting.disableChangePhoneNumber,
+  disableChangeBirthday:
+    state.orderReducer.orderingSetting.disableChangeBirthday,
   hideEmailOnRegistration:
     state.orderReducer.orderingSetting.hideEmailOnRegistration,
   intlData: state.intlData,

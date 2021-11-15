@@ -271,7 +271,7 @@ class Summary extends Component {
             <LinearGradient
               colors={[color1, color2, color3]}
               style={styles.card}>
-              <View style={{marginBottom: -50}}>
+              <View style={{marginBottom: -50, paddingBottom: 10}}>
                 <TouchableOpacity onPress={this.goBack} style={{zIndex: 99}}>
                   <Icon
                     size={Platform.OS === 'ios' ? 40 : 30}

@@ -56,6 +56,7 @@ class SVCDetail extends Component {
     await this.findTax(this.props.svc);
   };
 
+  /* Default Outlet */
   getBackupOutlet = async () => {
     const response = await this.props.dispatch(getBackupOutlet());
     if (response !== false) {
@@ -67,7 +68,7 @@ class SVCDetail extends Component {
     const {backupOutlet} = this.state;
     let {defaultOutlet} = this.props;
 
-    if (isEmptyObject(defaultOutlet)) {
+    if (!isEmptyObject(backupOutlet)) {
       defaultOutlet = backupOutlet;
     }
 
@@ -95,7 +96,7 @@ class SVCDetail extends Component {
     const {backupOutlet} = this.state;
     let {defaultOutlet} = this.props;
 
-    if (isEmptyObject(defaultOutlet)) {
+    if (!isEmptyObject(backupOutlet)) {
       defaultOutlet = backupOutlet;
     }
 

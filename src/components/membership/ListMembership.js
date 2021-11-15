@@ -58,9 +58,9 @@ class ListMembership extends Component {
   getPaidMembership = async () => {
     await this.setState({loading: true});
     try {
-      const data = await this.props.dispatch(getPaidMembership());
-      if (data !== false && data.listUpgrade)
-        await this.setState({memberships: data.listUpgrade});
+      const result = await this.props.dispatch(getPaidMembership());
+      if (result !== false && result.data && result.data.listUpgrade)
+        await this.setState({memberships: result.data.listUpgrade});
     } catch (e) {}
     await this.setState({loading: false});
   };

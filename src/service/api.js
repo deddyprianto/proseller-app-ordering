@@ -55,6 +55,7 @@ export const fetchApi = async (
   token = null,
   loader = false,
 ) => {
+  console.log('URL => ', url)
   try {
     const headers = {};
     const result = {

@@ -441,7 +441,7 @@ class MobileRegister extends Component {
                 }}>
                 Email
                 {hideEmailOnRegistration === false ? (
-                  <Text style={{color: 'red'}}>*</Text>
+                  <Text style={{color: 'red'}}> *</Text>
                 ) : null}
               </Text>
               <TextInput

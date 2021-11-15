@@ -442,7 +442,7 @@ export const checkStatusPayment = referenceNo => {
       } = state;
 
       const response = await fetchApi(
-        `/sales/status?referenceNo=${referenceNo}`,
+        `/sales/status?referenceNo=${referenceNo}&ignorePendingRewards=${true}`,
         'GET',
         null,
         200,

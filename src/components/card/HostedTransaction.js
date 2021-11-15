@@ -29,11 +29,15 @@ class HostedTransaction extends Component {
     this.state = {
       showButton: false,
       openLoader: false,
-      isFetching: false,
+      isFetching: true,
     };
   }
 
-  componentDidMount = async () => {};
+  componentDidMount = async () => {
+    setTimeout(() => {
+      this.setState({isFetching: false});
+    }, 15000);
+  };
 
   componentWillUnmount() {
     try {

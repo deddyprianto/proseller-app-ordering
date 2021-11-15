@@ -78,7 +78,7 @@ export default class AccountUserDetail extends Component {
       // check renewal
 
       let dateRenewal = 366; // default renewal info is 1 year
-      const findMembership = memberships.data.find(
+      const findMembership = memberships.listData.find(
         item => item.sortKey === userDetail.customerGroupId,
       );
 
@@ -93,21 +93,33 @@ export default class AccountUserDetail extends Component {
         item => item.periodUnit === 'MONTH',
       );
 
-      let maxDay = dayRenewal.reduce(function(prev, current) {
-        return prev.period > current.period ? prev : current;
-      });
+      let maxDay;
+
+      if (dayRenewal && dayRenewal.length > 0) {
+        maxDay = dayRenewal.reduce(function(prev, current) {
+          return prev.period > current.period ? prev : current;
+        });
+      }
+
       if (maxDay !== undefined) {
         dateRenewal = maxDay.period;
       }
 
-      let maxMonth = monthRenewal.reduce(function(prev, current) {
-        return prev.period > current.period ? prev : current;
-      });
+      let maxMonth;
+
+      if (monthRenewal && monthRenewal.length > 0) {
+        maxMonth = monthRenewal.reduce(function(prev, current) {
+          return prev.period > current.period ? prev : current;
+        });
+      }
+
+      console.log('maxMonth', maxMonth)
+
       if (maxMonth !== undefined) {
         dateRenewal = maxMonth.period * 30;
       }
       // Check if customer groupp exipry less then 8 months
-      // console.log(result, 'dateRenewal');
+      console.log('dateRenewal', dateRenewal);
       if (result <= dateRenewal) {
         return true;
       }
@@ -224,13 +236,14 @@ export default class AccountUserDetail extends Component {
                 )}
               </View>
               <View style={{flexDirection: 'row'}}>
-                {!isEmptyArray(this.props.memberships.data) && this.isRenew() && (
-                  <TouchableOpacity
-                    onPress={this.goToRenewal}
-                    style={styles.btnUpgrade}>
-                    <Text style={styles.textUpgrade}>RENEW</Text>
-                  </TouchableOpacity>
-                )}
+                {!isEmptyArray(this.props.memberships.listData) &&
+                  this.isRenew() && (
+                    <TouchableOpacity
+                      onPress={this.goToRenewal}
+                      style={styles.btnUpgrade}>
+                      <Text style={styles.textUpgrade}>RENEW</Text>
+                    </TouchableOpacity>
+                  )}
                 {!isEmptyArray(this.props.memberships.listUpgrade) && (
                   <TouchableOpacity
                     onPress={() => Actions.listMembership({userDetail})}

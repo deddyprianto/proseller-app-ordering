@@ -5,7 +5,7 @@
  */
 
 import React, {Component} from 'react';
-import {StyleSheet, View, ActivityIndicator} from 'react-native';
+import {StyleSheet, View, ActivityIndicator, Dimensions} from 'react-native';
 
 export default class LoaderWithoutIcon extends Component {
   render() {
@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.2)',
     position: 'absolute',
     width: '100%',
-    height: '100%',
+    height: Dimensions.get('window').height,
     zIndex: 95,
     justifyContent: 'center',
   },

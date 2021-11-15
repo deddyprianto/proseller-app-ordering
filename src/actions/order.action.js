@@ -1337,17 +1337,37 @@ export const getTermsConditions = () => {
         let disableChangeEmail = false;
 
         try {
-          disableChangeEmail = response.response.data.settings.find(
-            item => item.settingKey === 'DisableChangeEmail',
+          const val = response.response.data.settings.find(
+            item => item.settingKey === 'MaxChangeEmailPerDay',
           ).settingValue;
+
+          if (val && Number(val) === 0) {
+            disableChangeEmail = true;
+          }
         } catch (e) {}
 
         let disableChangePhoneNumber = false;
 
         try {
-          disableChangePhoneNumber = response.response.data.settings.find(
-            item => item.settingKey === 'DisableChangePhoneNumber',
+          const val = response.response.data.settings.find(
+            item => item.settingKey === 'MaxChangePhonePerDay',
           ).settingValue;
+
+          if (val && Number(val) === 0) {
+            disableChangePhoneNumber = true;
+          }
+        } catch (e) {}
+
+        let disableChangeBirthday = false;
+
+        try {
+          const val = response.response.data.settings.find(
+            item => item.settingKey === 'DisableChangeBirthday',
+          ).settingValue;
+
+          if (val) {
+            disableChangeBirthday = true;
+          }
         } catch (e) {}
 
         let loginByEmail = true;
@@ -1380,6 +1400,7 @@ export const getTermsConditions = () => {
           enableRegisterWithPassword: enableRegisterWithPassword,
           disableChangeEmail,
           disableChangePhoneNumber,
+          disableChangeBirthday,
           loginByEmail,
           loginByMobile,
           hideEmailOnRegistration,

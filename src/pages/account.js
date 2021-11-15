@@ -225,7 +225,9 @@ class Account extends Component {
               setQrCodeVisibility={this.setQrCodeVisibility}
               screen={this.props}
               userDetail={userDetail}
-              memberships={this.props.memberships}
+              memberships={
+                (this.props.memberships && this.props.memberships.data) || {}
+              }
             />
           </View>
           <View style={styles.card}>
