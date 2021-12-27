@@ -26,10 +26,10 @@
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>acemart-crm</string>
+			<string>automaxima-crm</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>acemart-crm</string>
+				<string>automaxima-crm</string>
 			</array>
 		</dict>
 	</array>
