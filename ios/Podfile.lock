@@ -208,7 +208,7 @@ PODS:
   - Permission-Camera (2.0.9):
     - RNPermissions
   - PromisesObjC (1.2.12)
-  - Protobuf (3.18.0)
+  - Protobuf (3.19.0)
   - RCTRequired (0.63.2)
   - RCTTypeSafety (0.63.2):
     - FBLazyVector (= 0.63.2)
@@ -855,7 +855,7 @@ SPEC CHECKSUMS:
   OpenSSL-Universal: ff34003318d5e1163e9529b08470708e389ffcdd
   Permission-Camera: 8fe4753b02396489b11c5089e4f57bab7fe1ef42
   PromisesObjC: 3113f7f76903778cf4a0586bd1ab89329a0b7b97
-  Protobuf: 1a37ebea1338949e9ac35a3f06e80b3f536eec8d
+  Protobuf: e9b99dd5da72f665ec503b19191f245a22188b4d
   RCTRequired: f13f25e7b12f925f1f6a6a8c69d929a03c0129fe
   RCTTypeSafety: 44982c5c8e43ff4141eb519a8ddc88059acd1f3a
   React: e1c65dd41cb9db13b99f24608e47dd595f28ca9a
@@ -919,6 +919,6 @@ SPEC CHECKSUMS:
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
   ZXingObjC: fdbb269f25dd2032da343e06f10224d62f537bdb
 
-PODFILE CHECKSUM: 3bc3b4d1411cc2eb0379a06f7c8fa4878d76b14c
+PODFILE CHECKSUM: 0921dddd2a4b613d8bbbf6e74ff16ca3c70a56c1
 
 COCOAPODS: 1.11.0
