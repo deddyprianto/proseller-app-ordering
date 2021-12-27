@@ -1,4 +1,4 @@
-package com.acemart;
+package com.automaxima;
 
 import android.content.Intent;
 

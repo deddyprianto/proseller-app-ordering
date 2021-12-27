@@ -1,5 +1,5 @@
-const PRIMARY_COLOR_RGB = '0, 174, 198';
-const SECONDARY_COLOR_RGB = '46, 134, 222';
+const PRIMARY_COLOR_RGB = '229, 142, 38';
+const SECONDARY_COLOR_RGB = '53, 59, 72';
 const THIRD_COLOR_RGB = '223, 195, 152';
 
 const theme = {

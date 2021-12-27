@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 const ENV = {
-  APP: 'AceMart',
+  APP: 'Auto Maxima',
   IS_DEVELOP: true,
 
   API_HOST: 'https://acemart-demo.proseller.io/',
@@ -32,7 +32,7 @@ const ENV = {
 
   appUrl: 'acemart-demo-crm://app',
 
-  appID: 'com.acemart.demo',
+  appID: 'com.automaxima.demo',
 
   retailerInfo: 'Ace Dynamic UAT',
 

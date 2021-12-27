@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
 
   container: {
     alignItems: 'center',
-    backgroundColor: colorConfig.store.defaultColor,
+    backgroundColor: colorConfig.pageIndex.backgroundColor,
   },
   containerImage: {
     alignItems: 'center',
@@ -46,9 +46,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   logo: {
-    marginTop: -100,
-    width: '130%',
-    height: '100%',
+    width: '$largeImageSize',
   },
 });
 
@@ -117,13 +115,13 @@ export default class Splash extends Component {
     ];
     const imageStyle = [
       styles.logo,
-      // {width: this.imageWidth, marginBottom: 100},
+      {width: this.imageWidth, marginBottom: 100},
     ];
     return (
       <View style={styles.container}>
         <Animated.View style={containerImageStyle}>
           <Animated.Image
-            source={appConfig.splashLogo}
+            source={appConfig.appLogo}
             style={imageStyle}
             resizeMode="contain"
           />
