@@ -2,7 +2,7 @@ const ENV = {
   APP: 'Auto Maxima',
   IS_DEVELOP: true,
 
-  API_HOST: 'https://api-automaxima.proseller.io/',
+  API_HOST: 'https://supertpets-demo.proseller.io/',
 
   base_url_payment: 'https://payment.proseller.io/api/',
 
