@@ -29,6 +29,7 @@ const appConfig = {
   emptyBox: require('../../assets/component/empty-box.png'),
   newSearch: require('../../assets/component/find-food.png'),
   productPlaceholder: require('../../assets/component/product-placeholder.png'),
+  test: require('../assets/img/test.png'),
 };
 
 export default appConfig;
