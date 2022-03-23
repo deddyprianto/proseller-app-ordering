@@ -12,7 +12,6 @@ import {isEmptyArray, isEmptyObject} from '../helper/CheckEmpty';
 import ProductsRetail from '../components/order/ProductsRetail';
 import Banner from '../components/banner/Banner';
 import Menu from '../components/menu/Menu';
-import Carousel from '../components/carousel/Carousel';
 import {campaign, dataPoint} from '../actions/rewards.action';
 import {getAccountPayment} from '../actions/payment.actions';
 import {
@@ -265,11 +264,13 @@ class Home extends Component {
         {outletSelectionMode === 'MANUAL' && isEmptyObject(defaultOutlet) ? (
           <Store />
         ) : (
-          <ScrollView style={{backgroundColor: '#FFFFFF'}}>
+          // <ScrollView style={{backgroundColor: '#FFFFFF'}}>
+          <>
             <Banner />
             <Menu />
-            {/* <ProductsRetail /> */}
-          </ScrollView>
+          </>
+          // {/* <ProductsRetail /> */}
+          // </ScrollView>
         )}
       </>
     );
