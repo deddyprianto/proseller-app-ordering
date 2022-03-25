@@ -101,6 +101,8 @@ import TransferSVC from '../components/SVC/TransferSVC';
 import VirtualKeyboardCom from '../components/SVC/VirtualKeyboard';
 import ApplyPromoCode from '../pages/ApplyPromoCode';
 import PickCoordinate from '../pages/PickCoordinate';
+import EGift from '../pages/EGift';
+import SendEGift from '../pages/SendEGift';
 
 const MyTransitionSpec = {
   duration: 200,
@@ -330,6 +332,8 @@ export default class Routes extends Component {
             <Scene key="virtualKeyboard" component={VirtualKeyboardCom} />
             <Scene key="transferSVC" component={TransferSVC} />
             <Scene key="applyPromoCode" component={ApplyPromoCode} />
+            <Scene key="eGift" component={EGift} />
+            <Scene key="sendEGift" component={SendEGift} />
           </Scene>
         </Scene>
       </Router>

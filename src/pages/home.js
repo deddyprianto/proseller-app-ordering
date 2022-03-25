@@ -9,7 +9,9 @@ import {connect} from 'react-redux';
 import Store from './store';
 
 import {isEmptyArray, isEmptyObject} from '../helper/CheckEmpty';
-import ProductsRetail from '../components/order/ProductsRetail';
+// import ProductsRetail from '../components/order/ProductsRetail';
+import Banner from '../components/banner/Banner';
+import Menu from '../components/menu/Menu';
 import {campaign, dataPoint} from '../actions/rewards.action';
 import {getAccountPayment} from '../actions/payment.actions';
 import {
@@ -28,6 +30,7 @@ import {getCartHomePage, getPendingCart} from '../actions/order.action';
 import OneSignal from 'react-native-onesignal';
 import {dataPromotion} from '../actions/promotion.action';
 import {getSVCCard} from '../actions/SVC.action';
+import {ScrollView} from 'react-navigation';
 
 class Home extends Component {
   constructor(props) {
@@ -261,21 +264,25 @@ class Home extends Component {
         {outletSelectionMode === 'MANUAL' && isEmptyObject(defaultOutlet) ? (
           <Store />
         ) : (
-          <ProductsRetail />
+          <ScrollView style={{backgroundColor: '#FFFFFF'}}>
+            <Banner />
+            <Menu />
+            {/* <ProductsRetail /> */}
+          </ScrollView>
         )}
       </>
     );
   }
 }
 
-mapStateToProps = state => ({
+const mapStateToProps = state => ({
   outletSelectionMode:
     state.orderReducer.outletSelectionMode.outletSelectionMode,
   defaultOutlet: state.storesReducer.defaultOutlet.defaultOutlet,
   paymentRefNo: state.accountsReducer.paymentRefNo.paymentRefNo,
 });
 
-mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = dispatch => ({
   dispatch,
 });
 
