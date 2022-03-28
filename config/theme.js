@@ -1,11 +1,15 @@
-const PRIMARY_COLOR_RGB = '187,21,21';
+const PRIMARY_COLOR_RGB = '187, 21, 21';
 const SECONDARY_COLOR_RGB = '53, 59, 72';
 const THIRD_COLOR_RGB = '223, 195, 152';
+const FORTH_COLOR_RGB = '223, 195, 152';
+const FIFTH_COLOR_RGB = '247, 223, 213';
 
 const theme = {
   PRIMARY_COLOR_RGB,
   SECONDARY_COLOR_RGB,
   THIRD_COLOR_RGB,
+  FORTH_COLOR_RGB,
+  FIFTH_COLOR_RGB,
   statusBar: `rgb(${PRIMARY_COLOR_RGB})`,
   home: {
     container: `rgb(${PRIMARY_COLOR_RGB})`,

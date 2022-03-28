@@ -1,13 +1,19 @@
 import theme from '../../config/theme';
-
 const PRIMARY_COLOR_RGB = theme.PRIMARY_COLOR_RGB;
 const SECONDARY_COLOR_RGB = theme.SECONDARY_COLOR_RGB;
 const THIRD_COLOR_RGB = theme.THIRD_COLOR_RGB;
+const FORTH_COLOR_RGB = theme.FORTH_COLOR_RGB;
+const FIFTH_COLOR_RGB = theme.FIFTH_COLOR_RGB;
 
 const colorConfig = {
   PRIMARY_COLOR_RGB,
   SECONDARY_COLOR_RGB,
   THIRD_COLOR_RGB,
+  primaryColor: `rgb(${PRIMARY_COLOR_RGB})`,
+  secondaryColor: `rgb(${SECONDARY_COLOR_RGB})`,
+  thirdColor: `rgb(${THIRD_COLOR_RGB})`,
+  forthColor: `rgb(${FORTH_COLOR_RGB})`,
+  fifthColor: `rgb(${FIFTH_COLOR_RGB})`,
   statusBar: `rgb(${PRIMARY_COLOR_RGB})`,
   home: {
     container: `rgb(${PRIMARY_COLOR_RGB})`,

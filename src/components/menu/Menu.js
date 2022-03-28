@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import {Actions} from 'react-native-router-flux';
 
 import {
   SafeAreaView,
@@ -134,14 +135,17 @@ const Menu = () => {
 
   const renderOrderHere = () => {
     return (
-      <TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => {
+          Actions.push('productsMode2');
+        }}>
         <View
           style={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             borderRadius: 10,
-            backgroundColor: colorConfig.store.defaultColor,
+            backgroundColor: colorConfig.primaryColor,
             height: HEIGHT * 0.17,
             width: WIDTH * 0.45,
           }}>
@@ -267,7 +271,10 @@ const Menu = () => {
 
   const renderSendGift = () => {
     return (
-      <TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => {
+          Actions.push('eGift');
+        }}>
         <View
           style={{
             display: 'flex',
@@ -276,7 +283,7 @@ const Menu = () => {
             borderRadius: 10,
             width: WIDTH * 0.28,
             height: HEIGHT * 0.14,
-            backgroundColor: '#F7DFD5',
+            backgroundColor: colorConfig.fifthColor,
           }}>
           <Text
             style={{
