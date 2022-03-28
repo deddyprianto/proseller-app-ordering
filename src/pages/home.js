@@ -264,13 +264,11 @@ class Home extends Component {
         {outletSelectionMode === 'MANUAL' && isEmptyObject(defaultOutlet) ? (
           <Store />
         ) : (
-          // <ScrollView style={{backgroundColor: '#FFFFFF'}}>
-          <>
-            <Banner />
-            <Menu />
-          </>
-          // {/* <ProductsRetail /> */}
-          // </ScrollView>
+          // <>
+          //   <Banner />
+          //   <Menu />
+          // </>
+          <ProductsRetail />
         )}
       </>
     );
