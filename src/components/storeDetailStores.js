@@ -93,12 +93,12 @@ export default class StoreDetailStores extends Component {
         </View>
         <ScrollView>
           <View style={styles.cardImage}>
-            {this.props.item.defaultImageURL != undefined ? (
+            {this.props?.item?.defaultImageURL != undefined ? (
               <Image
                 resizeMode="cover"
                 style={styles.imageNotNull}
                 source={{
-                  uri: this.props.item.defaultImageURL,
+                  uri: this.props?.item?.defaultImageURL,
                 }}
               />
             ) : (
@@ -111,7 +111,7 @@ export default class StoreDetailStores extends Component {
           </View>
           <View style={styles.card}>
             <View style={styles.item}>
-              <Text style={styles.title}>{this.props.item.storeName}</Text>
+              <Text style={styles.title}>{this.props?.item?.storeName}</Text>
             </View>
             <View style={styles.detail}>
               <View style={styles.detailItem}>
@@ -119,8 +119,8 @@ export default class StoreDetailStores extends Component {
                   {intlData.messages.city}
                 </Text>
                 <Text style={styles.desc}>
-                  {this.props.item.city != undefined
-                    ? this.props.item.city
+                  {this.props?.item?.city != undefined
+                    ? this.props?.item?.city
                     : '-'}
                 </Text>
               </View>
@@ -129,8 +129,8 @@ export default class StoreDetailStores extends Component {
                   {intlData.messages.region}
                 </Text>
                 <Text style={styles.desc}>
-                  {this.props.item.region != undefined
-                    ? this.props.item.region
+                  {this.props?.item?.region != undefined
+                    ? this.props?.item?.region
                     : '-'}
                 </Text>
               </View>
@@ -139,23 +139,23 @@ export default class StoreDetailStores extends Component {
                   {intlData.messages.address}
                 </Text>
                 <Text style={styles.descAddress}>
-                  {this.props.item.address}
+                  {this.props?.item?.address}
                 </Text>
               </View>
-              {this.props.item.storeJarak == '-' ? null : (
+              {this.props?.item?.storeJarak == '-' ? null : (
                 <View style={styles.detailItem}>
                   <Text style={[styles.desc, {fontWeight: 'bold'}]}>
                     {intlData.messages.distance}
                   </Text>
                   <Text style={styles.desc}>
-                    {this.props.item.storeJarak.toFixed(1) + ' KM'}
+                    {this.props?.item?.storeJarak.toFixed(1) + ' KM'}
                   </Text>
                 </View>
               )}
               <View style={styles.detailItem}>
                 <Text style={[styles.desc, {fontWeight: 'bold'}]}>Status</Text>
                 <Text style={styles.desc}>
-                  {this.props.item.storeStatus ? (
+                  {this.props?.item?.storeStatus ? (
                     <Text
                       style={{
                         color: colorConfig.store.colorSuccess,
@@ -190,8 +190,8 @@ export default class StoreDetailStores extends Component {
                 {/*  }}*/}
                 {/*  onPress={() =>*/}
                 {/*    this.storeMap(*/}
-                {/*      this.props.item.coordinate,*/}
-                {/*      this.props.item.storeName,*/}
+                {/*      this.props?.item?.coordinate,*/}
+                {/*      this.props?.item?.storeName,*/}
                 {/*    )*/}
                 {/*  }>*/}
                 {/*  <Text*/}
@@ -211,8 +211,8 @@ export default class StoreDetailStores extends Component {
                 {intlData.messages.operationalHours}
               </Text>
             </View>
-            {this.props.item.operationalHours != undefined ? (
-              this.props.item.operationalHours
+            {this.props?.item?.operationalHours != undefined ? (
+              this.props?.item?.operationalHours
                 .filter(item => item.active == true)
                 .map((data, key) => (
                   <View key={key} style={styles.detail}>
@@ -227,7 +227,7 @@ export default class StoreDetailStores extends Component {
                     </View>
                   </View>
                 ))
-            ) : this.props.item.openAllDays ? (
+            ) : this.props?.item?.openAllDays ? (
               <View style={styles.detail}>
                 <Text
                   style={[
@@ -261,7 +261,10 @@ export default class StoreDetailStores extends Component {
         <TouchableHighlight
           style={styles.btnBottom}
           onPress={() =>
-            this.storeMap(this.props.item.coordinate, this.props.item.storeName)
+            this.storeMap(
+              this.props?.item?.coordinate,
+              this.props?.item?.storeName,
+            )
           }>
           <Text style={styles.textBtnBottom}>
             <Icon

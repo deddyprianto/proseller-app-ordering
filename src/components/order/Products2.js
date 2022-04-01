@@ -2049,7 +2049,8 @@ class Products2 extends Component {
               ? styles.categoryActive
               : styles.categoryNonActive,
           ]}>
-          <Text style={{padding: 8, fontFamily: 'Poppins-Regular', color: 'white'}}>
+          <Text
+            style={{padding: 8, fontFamily: 'Poppins-Regular', color: 'white'}}>
             {item.name}
           </Text>
         </View>
@@ -2122,7 +2123,7 @@ class Products2 extends Component {
                       textAlign: 'center',
                       marginRight: 10,
                     }}>
-                    {this.state.item.storeName}
+                    {this.state.item.name}
                   </Text>
                   <Icon
                     size={26}
@@ -2220,9 +2221,9 @@ class Products2 extends Component {
                 />
                 <Text style={{fontSize: 13}}>
                   {' '}
-                  {this.state.item.storeJarak != '-'
+                  {/* {this.state.item.storeJarak != '-'
                     ? this.state.item.storeJarak.toFixed(1) + ' KM'
-                    : '-'}
+                    : '-'} */}
                 </Text>
               </Text>
             </View>
@@ -2314,7 +2315,7 @@ class Products2 extends Component {
                     textAlign: 'center',
                     marginRight: 10,
                   }}>
-                  {this.state.item.storeName}
+                  {this.state.item.name}
                 </Text>
                 <Icon
                   size={26}
@@ -2394,9 +2395,9 @@ class Products2 extends Component {
               />
               <Text style={{fontSize: 13}}>
                 {' '}
-                {this.state.item.storeJarak != '-'
+                {/* {this.state.item.storeJarak != '-'
                   ? this.state.item.storeJarak.toFixed(1) + ' KM'
-                  : '-'}
+                  : '-'} */}
               </Text>
             </Text>
           </View>
@@ -2562,7 +2563,7 @@ class Products2 extends Component {
       item.enableDineIn = outlet.enableDineIn == true ? true : false;
       item.enableTableScan = outlet.enableTableScan == true ? true : false;
       item.enableDelivery = outlet.enableDelivery == true ? true : false;
-      item.storeName = outlet.name;
+      item.name = outlet.name;
       item.outletType = outlet.outletType;
       item.orderingStatus = outlet.orderingStatus;
       item.enableItemSpecialInstructions = outlet.enableItemSpecialInstructions;
@@ -2739,7 +2740,7 @@ class Products2 extends Component {
                         style={{color: colorConfig.pageIndex.grayColor}}
                       />
                       <Text style={styles.outletHeaderFixedTitle}>
-                        {item.storeName.substr(0, 20)}
+                        {item.name.substr(0, 20)}
                       </Text>
                     </TouchableOpacity>
                     <TouchableOpacity

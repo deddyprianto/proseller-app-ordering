@@ -264,25 +264,25 @@ class Home extends Component {
         {outletSelectionMode === 'MANUAL' && isEmptyObject(defaultOutlet) ? (
           <Store />
         ) : (
-          // <>
-          //   <Banner />
-          //   <Menu />
-          // </>
-          <ProductsRetail />
+          <>
+            <Banner />
+            <Menu />
+          </>
+          // <ProductsRetail />
         )}
       </>
     );
   }
 }
 
-mapStateToProps = state => ({
+const mapStateToProps = state => ({
   outletSelectionMode:
     state.orderReducer.outletSelectionMode.outletSelectionMode,
   defaultOutlet: state.storesReducer.defaultOutlet.defaultOutlet,
   paymentRefNo: state.accountsReducer.paymentRefNo.paymentRefNo,
 });
 
-mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = dispatch => ({
   dispatch,
 });
 

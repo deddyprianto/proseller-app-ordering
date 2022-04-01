@@ -1,5 +1,12 @@
+/**
+ * Martin
+ * martin@edgeworks.co.id
+ * PT Edgeworks
+ */
+
 import React, {useState} from 'react';
 import {Actions} from 'react-native-router-flux';
+import {connect} from 'react-redux';
 
 import {
   SafeAreaView,
@@ -37,7 +44,15 @@ const styles = StyleSheet.create({
   },
 });
 
-const Menu = () => {
+const mapStateToProps = state => ({
+  defaultOutlet: state.storesReducer.defaultOutlet.defaultOutlet,
+});
+
+const mapDispatchToProps = dispatch => ({
+  dispatch,
+});
+
+const Menu = ({...props}) => {
   const renderWelcome = () => {
     return (
       <TouchableOpacity>
@@ -101,7 +116,7 @@ const Menu = () => {
 
   const renderMyFavoriteOutlet = () => {
     return (
-      <TouchableOpacity>
+      <TouchableOpacity onPress={() => {}}>
         <View
           style={{
             display: 'flex',
@@ -137,7 +152,7 @@ const Menu = () => {
     return (
       <TouchableOpacity
         onPress={() => {
-          Actions.push('productsMode2');
+          Actions.push('orderHere');
         }}>
         <View
           style={{
@@ -236,7 +251,10 @@ const Menu = () => {
 
   const renderMyECard = () => {
     return (
-      <TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => {
+          Actions.product2({item: props.defaultOutlet});
+        }}>
         <View
           style={{
             display: 'flex',
@@ -351,4 +369,7 @@ const Menu = () => {
   );
 };
 
-export default Menu;
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(Menu);
