@@ -56,7 +56,7 @@ import CategoryProducts from '../components/order/CategoryProducts';
 import Products2 from '../components/order/Products2';
 import Products from '../components/order/Products';
 import Basket from '../components/order/Basket';
-import Cart from '../components/order/Cart';
+// import Cart from '../components/order/Cart';
 import ScanQRTable from '../components/order/ScanQRTable';
 import ConfirmTable from '../components/order/ConfirmTable';
 import SettleOrder from '../components/order/SettleOrder';
@@ -105,6 +105,7 @@ import PickCoordinate from '../pages/PickCoordinate';
 
 import OrderHere from '../pages/orderHere';
 import ProductDetail from '../pages/productDetail';
+import Cart from '../pages/cart';
 
 const MyTransitionSpec = {
   duration: 200,
@@ -289,7 +290,7 @@ export default class Routes extends Component {
             <Scene key="productsMode2" component={ProductsRetail} />
             <Scene key="specificCategory" component={ProductsSpecific} />
             <Scene key="basket" component={Basket} />
-            <Scene key="cart" component={Cart} />
+            {/* <Scene key="cart" component={Cart} /> */}
             <Scene key="scanQRTable" component={ScanQRTable} />
             <Scene key="confirmTable" component={ConfirmTable} />
             <Scene key="settleOrder" component={SettleOrder} />
@@ -329,9 +330,10 @@ export default class Routes extends Component {
             <Scene key="transferSVC" component={TransferSVC} />
             <Scene key="applyPromoCode" component={ApplyPromoCode} />
             <Scene key="orderHere" component={OrderHere} />
-            <Scene key="product" component={Products} />
+            {/* <Scene key="product" component={Products} /> */}
             <Scene key="product2" component={Products2} />
             <Scene key="productDetail" component={ProductDetail} />
+            <Scene key="cart" component={Cart} />
           </Scene>
         </Scene>
       </Router>
