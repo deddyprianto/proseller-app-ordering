@@ -277,10 +277,7 @@ const Menu = () => {
 
   const renderSendGift = () => {
     return (
-      <TouchableOpacity
-        onPress={() => {
-          Actions.push('eGift');
-        }}>
+      <TouchableOpacity>
         <View
           style={{
             display: 'flex',

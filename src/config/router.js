@@ -104,6 +104,7 @@ import PickCoordinate from '../pages/PickCoordinate';
 
 import EStore from '../pages/EStore';
 import ECard from '../pages/ECard';
+import OnBoarding from '../pages/OnBoarding';
 
 const MyTransitionSpec = {
   duration: 200,
@@ -335,6 +336,7 @@ export default class Routes extends Component {
             <Scene key="applyPromoCode" component={ApplyPromoCode} />
             <Scene key="eStore" component={EStore} />
             <Scene key="eCard" component={ECard} />
+            <Scene key="onBoarding" component={OnBoarding} />
           </Scene>
         </Scene>
       </Router>

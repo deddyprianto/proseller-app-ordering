@@ -1,4 +1,6 @@
 import React, {useState} from 'react';
+import {Actions} from 'react-native-router-flux';
+import {TouchableOpacityComponent} from 'react-native';
 
 import {
   SafeAreaView,
@@ -8,6 +10,7 @@ import {
   Text,
   Image,
   Dimensions,
+  TouchableOpacity,
 } from 'react-native';
 
 const WIDTH = Dimensions.get('window').width;
@@ -66,12 +69,17 @@ const Banner = () => {
   const renderImages = () => {
     const result = images.map((image, index) => {
       return (
-        <Image
-          key={index}
-          style={styles.wrapImage}
-          resizeMode="stretch"
-          source={{uri: image}}
-        />
+        <TouchableOpacity
+          onPress={() => {
+            Actions.push('onBoarding');
+          }}>
+          <Image
+            key={index}
+            style={styles.wrapImage}
+            resizeMode="stretch"
+            source={{uri: image}}
+          />
+        </TouchableOpacity>
       );
     });
     return result;
