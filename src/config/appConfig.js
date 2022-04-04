@@ -30,6 +30,7 @@ const appConfig = {
   newSearch: require('../../assets/component/find-food.png'),
   productPlaceholder: require('../../assets/component/product-placeholder.png'),
   test: require('../assets/img/test.png'),
+  funtoastQRCode: require('../assets/img/FuntoastQRCode.png'),
 };
 
 export default appConfig;

@@ -239,7 +239,10 @@ const Menu = () => {
 
   const renderMyECard = () => {
     return (
-      <TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => {
+          Actions.push('eCard');
+        }}>
         <View
           style={{
             display: 'flex',
@@ -248,7 +251,7 @@ const Menu = () => {
             borderRadius: 10,
             width: WIDTH * 0.28,
             height: HEIGHT * 0.14,
-            backgroundColor: '#E7A1A1',
+            backgroundColor: colorConfig.forthColor,
           }}>
           <Text
             style={{
