@@ -201,7 +201,10 @@ const Menu = () => {
 
   const renderEStore = () => {
     return (
-      <TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => {
+          Actions.push('eStore');
+        }}>
         <View
           style={{
             display: 'flex',
@@ -210,7 +213,7 @@ const Menu = () => {
             borderRadius: 10,
             width: WIDTH * 0.28,
             height: HEIGHT * 0.14,
-            backgroundColor: '#9CCEC2',
+            backgroundColor: colorConfig.thirdColor,
           }}>
           <Text
             style={{

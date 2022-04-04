@@ -102,6 +102,8 @@ import VirtualKeyboardCom from '../components/SVC/VirtualKeyboard';
 import ApplyPromoCode from '../pages/ApplyPromoCode';
 import PickCoordinate from '../pages/PickCoordinate';
 
+import EStore from '../pages/EStore';
+
 const MyTransitionSpec = {
   duration: 200,
   // easing: Easing.bezier(0.2833, 0.99, 0.31833, 0.99),
@@ -330,6 +332,7 @@ export default class Routes extends Component {
             <Scene key="virtualKeyboard" component={VirtualKeyboardCom} />
             <Scene key="transferSVC" component={TransferSVC} />
             <Scene key="applyPromoCode" component={ApplyPromoCode} />
+            <Scene key="eStore" component={EStore} />
           </Scene>
         </Scene>
       </Router>
