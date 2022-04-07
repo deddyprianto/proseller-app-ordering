@@ -474,7 +474,7 @@ class Store extends Component {
             }}>
             <TouchableOpacity
               style={styles.btnBack}
-              onPress={() => Actions.pop()}>
+              onPress={() => Actions.pageIndex}>
               <Icon
                 size={28}
                 name={

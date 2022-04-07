@@ -13,7 +13,7 @@ import {
 import {CheckBox} from 'react-native-elements';
 
 import colorConfig from '../config/colorConfig';
-import EGiftCard from '../components/eGIftCard/EGiftCard';
+import EGiftCard from '../components/eGiftCard/EGiftCard';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
