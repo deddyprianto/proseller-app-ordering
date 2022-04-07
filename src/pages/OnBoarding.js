@@ -1,5 +1,4 @@
 import React, {useState} from 'react';
-import {TouchableOpacityComponent} from 'react-native';
 
 import {
   SafeAreaView,
@@ -11,10 +10,10 @@ import {
   Dimensions,
   TouchableOpacity,
 } from 'react-native';
-import {FlatList} from 'react-native-gesture-handler';
+import {Actions} from 'react-native-router-flux';
+
 import colorConfig from '../config/colorConfig';
 
-const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
@@ -27,16 +26,13 @@ const styles = StyleSheet.create({
   wrap: {
     width: 400,
   },
-  image: {width: 360, height: 400, marginHorizontal: 20},
-
-  wrapImage: {
+  viewImage: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
   },
+  image: {width: 360, height: 400, marginHorizontal: 20},
   WrapDot: {
-    // position: 'absolute',
-    // bottom: 0,
     flexDirection: 'row',
     alignSelf: 'center',
   },
@@ -52,12 +48,50 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
     color: 'grey',
   },
+  marginTop20: {marginTop: 20},
+  colorWhite: {color: 'white'},
+  touchableLogin: {
+    height: 40,
+    width: 150,
+    backgroundColor: colorConfig.primaryColor,
+    borderRadius: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  touchableRegister: {
+    height: 40,
+    width: 150,
+    backgroundColor: 'grey',
+    borderRadius: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 20,
+  },
+  viewRegisterAndLogin: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 30,
+  },
+  textTitle: {
+    fontSize: 20,
+    color: colorConfig.primaryColor,
+    fontWeight: 'bold',
+    marginTop: 10,
+  },
+  textDescription: {
+    fontSize: 16,
+    color: colorConfig.primaryColor,
+    textAlign: 'center',
+    width: 250,
+    marginTop: 10,
+  },
 });
 
 const OnBoarding = () => {
   const [selectedImage, setSelectedImage] = useState(0);
 
-  const onChange = nativeEvent => {
+  const handleOnScroll = nativeEvent => {
     const image = Math.ceil(
       nativeEvent.contentOffset.x / nativeEvent.layoutMeasurement.width,
     );
@@ -76,30 +110,15 @@ const OnBoarding = () => {
   const renderImages = () => {
     const result = images.map((image, index) => {
       return (
-        <View style={styles.wrapImage}>
+        <View style={styles.viewImage}>
           <Image
             key={index}
             style={styles.image}
             resizeMode="stretch"
             source={{uri: image}}
           />
-          <Text
-            style={{
-              fontSize: 20,
-              color: colorConfig.primaryColor,
-              fontWeight: 'bold',
-              marginTop: 10,
-            }}>
-            Skip the Queue
-          </Text>
-          <Text
-            style={{
-              fontSize: 16,
-              color: colorConfig.primaryColor,
-              textAlign: 'center',
-              width: 250,
-              marginTop: 10,
-            }}>
+          <Text style={styles.textTitle}>Skip the Queue</Text>
+          <Text style={styles.textDescription}>
             Place an order through the Fun Toast app and skip the queue.
             Available for dine-in or takeaway.
           </Text>
@@ -112,7 +131,7 @@ const OnBoarding = () => {
   const renderDot = () => {
     const dots = images.map((image, index) => {
       return (
-        <View style={{marginTop: 20}}>
+        <View style={styles.marginTop20}>
           <Text
             key={index}
             style={
@@ -131,35 +150,20 @@ const OnBoarding = () => {
 
   const renderRegisterAndLoginButton = () => {
     return (
-      <View
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'center',
-          marginTop: 30,
-        }}>
+      <View style={styles.viewRegisterAndLogin}>
         <TouchableOpacity
-          style={{
-            height: 40,
-            width: 150,
-            backgroundColor: 'grey',
-            borderRadius: 5,
-            justifyContent: 'center',
-            alignItems: 'center',
-            marginRight: 20,
+          style={styles.touchableRegister}
+          onPress={() => {
+            Actions.register();
           }}>
           <Text>Create New Account</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={{
-            height: 40,
-            width: 150,
-            backgroundColor: colorConfig.primaryColor,
-            borderRadius: 5,
-            justifyContent: 'center',
-            alignItems: 'center',
+          style={styles.touchableLogin}
+          onPress={() => {
+            Actions.login();
           }}>
-          <Text style={{color: 'white'}}>Login</Text>
+          <Text style={styles.colorWhite}>Login</Text>
         </TouchableOpacity>
       </View>
     );
@@ -170,7 +174,7 @@ const OnBoarding = () => {
       <ScrollView
         style={styles.wrap}
         onScroll={({nativeEvent}) => {
-          onChange(nativeEvent);
+          handleOnScroll(nativeEvent);
         }}
         showsHorizontalScrollIndicator={false}
         pagingEnabled

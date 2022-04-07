@@ -105,6 +105,9 @@ import PickCoordinate from '../pages/PickCoordinate';
 import EStore from '../pages/EStore';
 import ECard from '../pages/ECard';
 import OnBoarding from '../pages/OnBoarding';
+import Register from '../pages/Register';
+import Login from '../pages/Login';
+import OTP from '../pages/OTP';
 
 const MyTransitionSpec = {
   duration: 200,
@@ -211,7 +214,7 @@ export default class Routes extends Component {
             transitionConfig={transitionConfig}
             key="app"
             hideNavBar={true}>
-            <Scene key="pageIndex" component={PageIndex} initial={true} />
+            <Scene key="pageIndex" component={PageIndex} />
             <Scene key="inputPhoneNumber" component={InputPhoneNumber} />
             <Scene key="signInPhoneNumber" component={SignInPhoneNumber} />
             <Scene
@@ -237,7 +240,6 @@ export default class Routes extends Component {
               key="mobileRegisterWithPassword"
               component={MobileRegisterWithPassword}
             />
-            <Scene key="verifyRegister" component={VerifyRegister} />
             <Scene key="emailRegister" component={EmailRegister} />
             <Scene
               key="emailRegisterWithPassword"
@@ -269,7 +271,6 @@ export default class Routes extends Component {
             <Scene key="myVouchers" component={MyVouchers} />
             <Scene key="redeemVoucher" component={RedeemVoucher} />
             <Scene key="accountEditProfil" component={AccountEditProfil} />
-            <Scene key="editProfile" component={EditProfile} />
             <Scene key="paymentDetail" component={PaymentDetail} />
             <Scene
               key="paymentSuccess"
@@ -303,7 +304,6 @@ export default class Routes extends Component {
             <Scene key="paymentMethods" component={PaymentMethods} />
             <Scene key="paymentAddCard" component={PaymentAddCard} />
 
-            <Scene key="notifications" component={Notifications} />
             <Scene key="listMembership" component={ListMembership} />
             <Scene key="detailMembership" component={DetailMembership} />
 
@@ -336,7 +336,13 @@ export default class Routes extends Component {
             <Scene key="applyPromoCode" component={ApplyPromoCode} />
             <Scene key="eStore" component={EStore} />
             <Scene key="eCard" component={ECard} />
-            <Scene key="onBoarding" component={OnBoarding} />
+            <Scene key="onBoarding" component={OnBoarding} initial={true} />
+            <Scene key="register" component={Register} />
+            <Scene key="otp" component={OTP} />
+            <Scene key="login" component={Login} />
+            <Scene key="editProfile" component={EditProfile} />
+            <Scene key="verifyRegister" component={VerifyRegister} />
+            <Scene key="notifications" component={Notifications} />
           </Scene>
         </Scene>
       </Router>

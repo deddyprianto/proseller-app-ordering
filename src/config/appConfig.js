@@ -31,6 +31,7 @@ const appConfig = {
   productPlaceholder: require('../../assets/component/product-placeholder.png'),
   test: require('../assets/img/test.png'),
   funtoastQRCode: require('../assets/img/FuntoastQRCode.png'),
+  funtoastIcon: require('../assets/img/funtoastIcon.png'),
 };
 
 export default appConfig;
