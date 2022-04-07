@@ -53,7 +53,8 @@ import Notifications from '../components/notifications/Notifications';
 // order
 import Order from '../pages/order';
 import CategoryProducts from '../components/order/CategoryProducts';
-// import Products2 from '../components/order/Products2';
+import Products2 from '../components/order/Products2';
+import Products from '../components/order/Products';
 import Basket from '../components/order/Basket';
 import Cart from '../components/order/Cart';
 import ScanQRTable from '../components/order/ScanQRTable';
@@ -110,6 +111,9 @@ import OnBoarding from '../pages/OnBoarding';
 import Register from '../pages/Register';
 import Login from '../pages/Login';
 import OTP from '../pages/OTP';
+
+import OrderHere from '../pages/orderHere';
+import ProductDetail from '../pages/productDetail';
 
 const MyTransitionSpec = {
   duration: 200,
@@ -298,25 +302,20 @@ export default class Routes extends Component {
             <Scene key="settleOrder" component={SettleOrder} />
             <Scene key="waitingFood" component={WaitingFood} />
             <Scene key="QRCodeCart" component={QRCodeCart} />
-
             <Scene key="listCard" component={ListCard} />
             <Scene key="hostedPayment" component={HostedPayment} />
             <Scene key="hostedTrx" component={HostedTransaction} />
             <Scene key="detailCard" component={DetailCard} />
             <Scene key="paymentMethods" component={PaymentMethods} />
             <Scene key="paymentAddCard" component={PaymentAddCard} />
-
             <Scene key="listMembership" component={ListMembership} />
             <Scene key="detailMembership" component={DetailMembership} />
-
             <Scene key="listAddress" component={ListAddress} />
             <Scene key="addAddress" component={AddAddress} />
             <Scene key="pickCoordinate" component={PickCoordinate} />
             <Scene key="editAddress" component={EditAddress} />
             <Scene key="selectAddress" component={SelectAddress} />
-
             <Scene key="listLanguages" component={ListLanguages} />
-
             <Scene key="listReferral" component={ListReferral} />
             <Scene key="addReferral" component={AddReferral} />
             <Scene key="contacts" component={Contacts} />
@@ -329,13 +328,14 @@ export default class Routes extends Component {
               key="changeCredentialsOTP"
               component={ChangeCredentialsOTP}
             />
-
             <Scene key="summary" component={Summary} />
             <Scene key="buySVC" component={BuySVC} />
             <Scene key="SVCDetail" component={SVCDetail} />
             <Scene key="virtualKeyboard" component={VirtualKeyboardCom} />
             <Scene key="transferSVC" component={TransferSVC} />
             <Scene key="applyPromoCode" component={ApplyPromoCode} />
+
+            {/* NEEDED */}
             <Scene key="eStore" component={EStore} />
             <Scene key="eCard" component={ECard} />
             <Scene key="onBoarding" component={OnBoarding} initial={true} />
@@ -347,6 +347,9 @@ export default class Routes extends Component {
             <Scene key="notifications" component={Notifications} />
             <Scene key="eGift" component={EGift} />
             <Scene key="sendEGift" component={SendEGift} />
+            <Scene key="orderHere" component={OrderHere} />
+            <Scene key="product" component={Products} />
+            <Scene key="productDetail" component={ProductDetail} />
           </Scene>
         </Scene>
       </Router>

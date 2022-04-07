@@ -67,7 +67,7 @@ class ButtonViewBasket extends Component {
           }}>
           View Basket - {appConfig.appMataUang}
           {this.format(
-            CurrencyFormatter(this.props.dataBasket.totalNettAmount),
+            CurrencyFormatter(this.props.dataBasket?.totalNettAmount),
           )}{' '}
         </Text>
         {/*<ActivityIndicator size={'small'} color={'white'} />*/}

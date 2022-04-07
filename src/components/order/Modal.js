@@ -1413,7 +1413,7 @@ export default class ModalOrder extends Component {
                 </View>
               </View>
 
-              {this.props.outlet.enableItemSpecialInstructions == true ? (
+              {this.props?.outlet?.enableItemSpecialInstructions == true ? (
                 <KeyboardAvoidingView
                   style={[styles.cardModal, {paddingBottom: 20}]}
                   enabled

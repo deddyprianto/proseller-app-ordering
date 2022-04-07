@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
-import {Text, TouchableOpacity, Platform, View} from 'react-native';
+import {Text, TouchableOpacity, View} from 'react-native';
 import {Actions} from 'react-native-router-flux';
 import colorConfig from '../../config/colorConfig';
-import Icon from 'react-native-vector-icons/Ionicons';
+import IconAntDesign from 'react-native-vector-icons/AntDesign';
 
 export default class CartIcon extends Component {
   constructor(props) {
@@ -42,13 +42,18 @@ export default class CartIcon extends Component {
             refreshQuantityProducts: this.props.refreshQuantityProducts,
           })
         }>
-        <Icon
+        <IconAntDesign
+          name="shoppingcart"
+          style={{fontSize: 30, color: colorConfig.store.defaultColor}}
+        />
+        {/* <Icon
           size={20}
           name={Platform.OS === 'ios' ? 'ios-cart' : 'md-cart'}
           style={{color: colorConfig.store.defaultColor}}
-        />
+        /> */}
         <Text
           style={{
+            paddingLeft: 5,
             color: colorConfig.store.defaultColor,
             fontSize: 10,
             fontFamily: 'Poppins-Regular',
