@@ -9,7 +9,7 @@ import {connect} from 'react-redux';
 import Store from './store';
 
 import {isEmptyArray, isEmptyObject} from '../helper/CheckEmpty';
-import ProductsRetail from '../components/order/ProductsRetail';
+// import ProductsRetail from '../components/order/ProductsRetail';
 import Banner from '../components/banner/Banner';
 import Menu from '../components/menu/Menu';
 import {campaign, dataPoint} from '../actions/rewards.action';
@@ -277,14 +277,14 @@ class Home extends Component {
   }
 }
 
-mapStateToProps = state => ({
+const mapStateToProps = state => ({
   outletSelectionMode:
     state.orderReducer.outletSelectionMode.outletSelectionMode,
   defaultOutlet: state.storesReducer.defaultOutlet.defaultOutlet,
   paymentRefNo: state.accountsReducer.paymentRefNo.paymentRefNo,
 });
 
-mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = dispatch => ({
   dispatch,
 });
 

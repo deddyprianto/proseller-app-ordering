@@ -101,6 +101,8 @@ import TransferSVC from '../components/SVC/TransferSVC';
 import VirtualKeyboardCom from '../components/SVC/VirtualKeyboard';
 import ApplyPromoCode from '../pages/ApplyPromoCode';
 import PickCoordinate from '../pages/PickCoordinate';
+import EGift from '../pages/EGift';
+import SendEGift from '../pages/SendEGift';
 
 import EStore from '../pages/EStore';
 import ECard from '../pages/ECard';
@@ -343,6 +345,8 @@ export default class Routes extends Component {
             <Scene key="editProfile" component={EditProfile} />
             <Scene key="verifyRegister" component={VerifyRegister} />
             <Scene key="notifications" component={Notifications} />
+            <Scene key="eGift" component={EGift} />
+            <Scene key="sendEGift" component={SendEGift} />
           </Scene>
         </Scene>
       </Router>

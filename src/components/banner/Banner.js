@@ -10,8 +10,9 @@ import {
   Text,
   Image,
   Dimensions,
-  TouchableOpacity,
 } from 'react-native';
+
+import colorConfig from '../../config/colorConfig';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -39,7 +40,7 @@ const styles = StyleSheet.create({
   },
   activeDot: {
     margin: 3,
-    color: '#BB1515',
+    color: colorConfig.primaryColor,
   },
   inactiveDot: {
     margin: 3,
@@ -51,9 +52,7 @@ const Banner = () => {
   const [selectedImage, setSelectedImage] = useState(0);
 
   const onChange = nativeEvent => {
-    const image = Math.ceil(
-      nativeEvent.contentOffset.x / nativeEvent.layoutMeasurement.width,
-    );
+    const image = Math.ceil(nativeEvent.contentOffset.x / 420);
 
     if (image !== selectedImage) {
       setSelectedImage(image);
@@ -69,17 +68,12 @@ const Banner = () => {
   const renderImages = () => {
     const result = images.map((image, index) => {
       return (
-        <TouchableOpacity
-          onPress={() => {
-            Actions.push('onBoarding');
-          }}>
-          <Image
-            key={index}
-            style={styles.wrapImage}
-            resizeMode="stretch"
-            source={{uri: image}}
-          />
-        </TouchableOpacity>
+        <Image
+          key={index}
+          style={styles.wrapImage}
+          resizeMode="stretch"
+          source={{uri: image}}
+        />
       );
     });
     return result;
