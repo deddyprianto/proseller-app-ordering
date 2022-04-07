@@ -48,7 +48,7 @@ class StoreStores extends Component {
     try {
       this.props.refreshProducts();
     } catch (e) {}
-    Actions.pop();
+    // Actions.pageIndex();
   };
 
   processChangeOutlet = item => {
