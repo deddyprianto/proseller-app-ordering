@@ -40,7 +40,10 @@ const styles = StyleSheet.create({
 const Menu = () => {
   const renderWelcome = () => {
     return (
-      <TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => {
+          Actions.redeem();
+        }}>
         <View
           style={{
             display: 'flex',
@@ -48,7 +51,7 @@ const Menu = () => {
             backgroundColor: '#F3F6FB',
             height: HEIGHT * 0.08,
             width: WIDTH * 0.45,
-            elevation: 2,
+            elevation: 1,
           }}>
           <Text
             style={{

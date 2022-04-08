@@ -108,6 +108,7 @@ import OnBoarding from '../pages/OnBoarding';
 import Register from '../pages/Register';
 import Login from '../pages/Login';
 import OTP from '../pages/OTP';
+import Redeem from '../pages/Redeem';
 
 const MyTransitionSpec = {
   duration: 200,
@@ -214,7 +215,7 @@ export default class Routes extends Component {
             transitionConfig={transitionConfig}
             key="app"
             hideNavBar={true}>
-            <Scene key="pageIndex" component={PageIndex} />
+            <Scene key="pageIndex" component={PageIndex} initial={true} />
             <Scene key="inputPhoneNumber" component={InputPhoneNumber} />
             <Scene key="signInPhoneNumber" component={SignInPhoneNumber} />
             <Scene
@@ -336,13 +337,14 @@ export default class Routes extends Component {
             <Scene key="applyPromoCode" component={ApplyPromoCode} />
             <Scene key="eStore" component={EStore} />
             <Scene key="eCard" component={ECard} />
-            <Scene key="onBoarding" component={OnBoarding} initial={true} />
+            <Scene key="onBoarding" component={OnBoarding} />
             <Scene key="register" component={Register} />
             <Scene key="otp" component={OTP} />
             <Scene key="login" component={Login} />
             <Scene key="editProfile" component={EditProfile} />
             <Scene key="verifyRegister" component={VerifyRegister} />
             <Scene key="notifications" component={Notifications} />
+            <Scene key="redeem" component={Redeem} />
           </Scene>
         </Scene>
       </Router>

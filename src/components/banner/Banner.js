@@ -69,17 +69,12 @@ const Banner = () => {
   const renderImages = () => {
     const result = images.map((image, index) => {
       return (
-        <TouchableOpacity
-          onPress={() => {
-            Actions.push('onBoarding');
-          }}>
-          <Image
-            key={index}
-            style={styles.wrapImage}
-            resizeMode="stretch"
-            source={{uri: image}}
-          />
-        </TouchableOpacity>
+        <Image
+          key={index}
+          style={styles.wrapImage}
+          resizeMode="stretch"
+          source={{uri: image}}
+        />
       );
     });
     return result;
