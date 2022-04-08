@@ -11,6 +11,7 @@ import {Platform} from 'react-native';
 import History from './history';
 import Rewards from './rewards';
 import Account from './account';
+import Profile from './Profile';
 import colorConfig from '../config/colorConfig';
 import {paymentRefNo} from '../actions/account.action';
 import Home from './home';
@@ -114,7 +115,7 @@ const AppTabNavigator = createMaterialBottomTabNavigator(
     },
     Profile: {
       // path: 'first',
-      screen: Account,
+      screen: Profile,
       navigationOptions: {
         title: 'Profile',
         tabBarIcon: ({tintColor, focused}) => (
