@@ -18,6 +18,8 @@ import ProductList from '../components/productList/ProductList';
 import {SafeAreaView} from 'react-navigation';
 import CartIcon from '../components/order/CartIcon';
 
+import ButtonCartIcon from '../components/button/ButtonIconCart';
+
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
 
@@ -122,11 +124,7 @@ const OrderHere = ({...props}) => {
     <SafeAreaView style={styles.container}>
       <View style={styles.viewHeader}>
         <Text style={styles.textTitle}>What would you like to eat</Text>
-        <CartIcon
-          // outletID={item.id}
-          dataBasket={props.dataBasket}
-          // refreshQuantityProducts={refreshQuantityProducts}
-        />
+        <ButtonCartIcon />
       </View>
       <SearchBar />
 

@@ -177,7 +177,7 @@ const ProductList = ({...props}) => {
           setSelectedCategory(items);
           productRef.current.scrollToIndex({animated: true, index: index});
         }}>
-        <View style={{paddingRight: 30}}>
+        <View style={{paddingRight: 10}}>
           <Text style={{width: 100, textAlign: 'center'}}>
             {items?.category}
           </Text>
@@ -193,6 +193,7 @@ const ProductList = ({...props}) => {
         ref={categoryRef}
         data={groupEGift}
         horizontal
+        showsHorizontalScrollIndicator={false}
         renderItem={({item, index}) => renderCategoryTabsItem(item, index)}
       />
     );
