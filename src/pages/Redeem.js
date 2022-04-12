@@ -85,13 +85,17 @@ const Redeem = () => {
         <Text style={{fontSize: 20, marginTop: 20}}>55 PTS</Text>
         <View style={{width: '90%', justifyContent: 'center', marginTop: 15}}>
           <ProgressBar
-            progress={1}
-            color={Colors.red800}
-            style={{backgroundColor: 'grey', height: 25, borderRadius: 10}}
+            progress={0.5}
+            color={colorConfig.primaryColor}
+            style={{
+              backgroundColor: 'grey',
+              height: 25,
+              borderRadius: 10,
+            }}
           />
           <Image
-            style={{height: 30, width: 30, position: 'absolute', left: '90%'}}
-            source={appConfig.funtoastQRCode}
+            style={{height: 50, width: 50, position: 'absolute', left: '45%'}}
+            source={appConfig.funtoastCoffee}
           />
         </View>
 
