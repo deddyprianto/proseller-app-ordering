@@ -37,6 +37,8 @@ const appConfig = {
   logout: require('../assets/img/logout.png'),
   notifications: require('../assets/img/notifications.png'),
   editProfile: require('../assets/img/editProfile.png'),
+  star: require('../assets/img/star.png'),
+  warning: require('../assets/img/warning.png'),
 };
 
 export default appConfig;

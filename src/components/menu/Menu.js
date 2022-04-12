@@ -104,7 +104,10 @@ const Menu = () => {
 
   const renderMyFavoriteOutlet = () => {
     return (
-      <TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => {
+          Actions.myFavoriteOutlet();
+        }}>
         <View
           style={{
             display: 'flex',

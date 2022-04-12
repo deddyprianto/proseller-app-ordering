@@ -109,6 +109,7 @@ import Register from '../pages/Register';
 import Login from '../pages/Login';
 import OTP from '../pages/OTP';
 import Redeem from '../pages/Redeem';
+import MyFavoriteOutlet from '../pages/MyFavoriteOutlet';
 
 const MyTransitionSpec = {
   duration: 200,
@@ -345,6 +346,7 @@ export default class Routes extends Component {
             <Scene key="verifyRegister" component={VerifyRegister} />
             <Scene key="notifications" component={Notifications} />
             <Scene key="redeem" component={Redeem} />
+            <Scene key="myFavoriteOutlet" component={MyFavoriteOutlet} />
           </Scene>
         </Scene>
       </Router>
