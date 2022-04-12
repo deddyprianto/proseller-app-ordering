@@ -6,7 +6,14 @@
 
 import React, {useState, useRef} from 'react';
 
-import {StyleSheet, View, Text, FlatList, TouchableOpacity} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  Dimensions,
+} from 'react-native';
 import {Actions} from 'react-native-router-flux';
 
 import {isEmptyArray} from '../../helper/CheckEmpty';
@@ -23,6 +30,8 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
 });
+
+const HEIGHT = Dimensions.get('window').height;
 
 const ProductList = ({...props}) => {
   const categoryRef = useRef();
@@ -242,7 +251,7 @@ const ProductList = ({...props}) => {
     return (
       <FlatList
         ref={productRef}
-        style={{height: 475}}
+        style={{height: HEIGHT * 0.7}}
         data={groupEGift}
         viewabilityConfigCallbackPairs={viewabilityConfigCallbackPairs.current}
         renderItem={({item, index}) => renderProductItem(item, index)}

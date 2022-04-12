@@ -111,6 +111,7 @@ import OnBoarding from '../pages/OnBoarding';
 import Register from '../pages/Register';
 import Login from '../pages/Login';
 import OTP from '../pages/OTP';
+import Redeem from '../pages/Redeem';
 
 import OrderHere from '../pages/orderHere';
 import ProductDetail from '../pages/productDetail';
@@ -221,7 +222,7 @@ export default class Routes extends Component {
             transitionConfig={transitionConfig}
             key="app"
             hideNavBar={true}>
-            <Scene key="pageIndex" component={PageIndex} />
+            <Scene key="pageIndex" component={PageIndex} initial={true} />
             <Scene key="inputPhoneNumber" component={InputPhoneNumber} />
             <Scene key="signInPhoneNumber" component={SignInPhoneNumber} />
             <Scene
@@ -339,7 +340,7 @@ export default class Routes extends Component {
             {/* NEEDED */}
             <Scene key="eStore" component={EStore} />
             <Scene key="eCard" component={ECard} />
-            <Scene key="onBoarding" component={OnBoarding} initial={true} />
+            <Scene key="onBoarding" component={OnBoarding} />
             <Scene key="register" component={Register} />
             <Scene key="otp" component={OTP} />
             <Scene key="login" component={Login} />
@@ -353,6 +354,7 @@ export default class Routes extends Component {
             {/* <Scene key="product2" component={Products2} /> */}
             <Scene key="productDetail" component={ProductDetail} />
             <Scene key="cart" component={Cart} />
+            <Scene key="redeem" component={Redeem} />
           </Scene>
         </Scene>
       </Router>

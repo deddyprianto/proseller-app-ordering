@@ -14,8 +14,8 @@ import Account from './account';
 import colorConfig from '../config/colorConfig';
 import {paymentRefNo} from '../actions/account.action';
 import Home from './home';
-import InputPhoneNumber from './InputPhoneNumber';
 import Inbox from './inbox';
+import Login from './Login';
 
 const AppTabNavigatorNonLogin = createMaterialBottomTabNavigator(
   {
@@ -33,7 +33,7 @@ const AppTabNavigatorNonLogin = createMaterialBottomTabNavigator(
       },
     },
     Auth: {
-      screen: InputPhoneNumber,
+      screen: Login,
       navigationOptions: {
         title: 'Login',
         tabBarIcon: ({tintColor, focused}) => (
@@ -266,12 +266,12 @@ class PageIndex extends Component {
   }
 }
 
-mapStateToProps = state => ({
+const mapStateToProps = state => ({
   intlData: state.intlData,
   isLoggedIn: state.authReducer.authData.isLoggedIn,
 });
 
-mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = dispatch => ({
   dispatch,
 });
 
