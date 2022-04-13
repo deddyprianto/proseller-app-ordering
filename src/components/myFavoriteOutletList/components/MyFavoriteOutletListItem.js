@@ -102,10 +102,6 @@ const MyFavoriteOutlet = () => {
           resizeMode="stretch"
           source={appConfig.warning}
         />
-
-        {/* <View>
-          <StarIcon width={30} height={30} />
-        </View> */}
       </View>
       {renderSeeAllButton()}
     </SafeAreaView>
