@@ -25,6 +25,8 @@ const HEIGHT = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
   container: {
+    height: HEIGHT,
+    width: WIDTH,
     paddingHorizontal: 20,
   },
   viewHeader: {
@@ -120,25 +122,26 @@ const styles = StyleSheet.create({
 
 const OrderHere = ({...props}) => {
   return (
-    // <ScrollView style={styles.container}>
     <SafeAreaView style={styles.container}>
-      <View style={styles.viewHeader}>
-        <Text style={styles.textTitle}>What would you like to eat</Text>
-        <ButtonCartIcon />
+      <View style={{height: HEIGHT * 0.2}}>
+        <View style={styles.viewHeader}>
+          <Text style={styles.textTitle}>What would you like to eat</Text>
+          <ButtonCartIcon />
+        </View>
+        <SearchBar />
+        <View style={styles.viewLocation}>
+          <IconMaterialIcons
+            name="location-on"
+            style={{fontSize: 20, color: colorConfig.primaryColor}}
+          />
+          <Text style={styles.text2}>Jewel Fun Toast </Text>
+        </View>
       </View>
-      <SearchBar />
 
-      <View style={styles.viewLocation}>
-        <IconMaterialIcons
-          name="location-on"
-          style={{fontSize: 20, color: colorConfig.primaryColor}}
-        />
-        <Text style={styles.text2}>Jewel Fun Toast </Text>
+      <View style={{height: HEIGHT * 0.8}}>
+        <ProductList />
       </View>
-
-      <ProductList />
     </SafeAreaView>
-    // </ScrollView>
   );
 };
 

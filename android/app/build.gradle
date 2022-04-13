@@ -141,7 +141,7 @@ android {
         applicationId "com.automaxima"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 66
+        versionCode 67
         versionName "1.1.27"
         missingDimensionStrategy 'react-native-camera', 'general'
         resValue "string", "build_config_package", "com.automaxima"
