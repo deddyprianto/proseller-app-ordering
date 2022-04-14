@@ -106,7 +106,7 @@ const Menu = () => {
     return (
       <TouchableOpacity
         onPress={() => {
-          Actions.myFavoriteOutlet();
+          Actions.myFavoriteOutlets();
         }}>
         <View
           style={{

@@ -10,12 +10,6 @@ import {
   Dimensions,
   TouchableOpacity,
 } from 'react-native';
-import {Actions} from 'react-native-router-flux';
-import appConfig from '../config/appConfig';
-
-import colorConfig from '../config/colorConfig';
-
-// import StarIcon from '../assets/img/star.svg';
 
 import MyFavoriteOutletListItem from './components/MyFavoriteOutletListItem';
 
@@ -24,14 +18,36 @@ const WIDTH = Dimensions.get('window').width;
 
 const styles = StyleSheet.create({});
 
-const MyFavoriteOutlet = () => {
-  const images = [
-    'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-    'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-    'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-  ];
+const MyFavoriteOutletList = () => {
+  const [selectedOutlet, setSelectedOutlet] = useState({});
+  const items = [{id: 1}, {id: 2}, {id: 3}, {id: 4}];
 
-  return <MyFavoriteOutletListItem />;
+  const handleSelectOutled = item => {
+    if (selectedOutlet.id === item.id) {
+      setSelectedOutlet({});
+    } else {
+      setSelectedOutlet(item);
+    }
+  };
+
+  const renderOutletList = () => {
+    const result = items.map(item => {
+      return (
+        <TouchableOpacity
+          onPress={() => {
+            handleSelectOutled(item);
+          }}>
+          <MyFavoriteOutletListItem
+            item={item}
+            selectedOutlet={selectedOutlet.id === item.id}
+          />
+        </TouchableOpacity>
+      );
+    });
+    return result;
+  };
+
+  return renderOutletList();
 };
 
-export default MyFavoriteOutlet;
+export default MyFavoriteOutletList;

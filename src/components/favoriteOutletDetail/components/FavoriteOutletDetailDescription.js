@@ -10,8 +10,7 @@ import {
   Dimensions,
   TouchableOpacity,
 } from 'react-native';
-import {Actions} from 'react-native-router-flux';
-import appConfig from '../../../config/appConfig';
+import IconFontAwesome from 'react-native-vector-icons/FontAwesome';
 
 import colorConfig from '../../../config/colorConfig';
 
@@ -44,6 +43,52 @@ const styles = StyleSheet.create({
 });
 
 const MyFavoriteOutletItemList = ({item, selectedOutlet}) => {
+  const [active, setActive] = useState(false);
+
+  const handleStarClicked = value => {
+    if (active) {
+      setActive(false);
+    } else {
+      setActive(true);
+    }
+  };
+
+  const activeStar = () => {
+    return (
+      <IconFontAwesome
+        name="star"
+        style={{
+          fontSize: 24,
+          color: 'red',
+        }}
+      />
+    );
+  };
+
+  const inactiveStar = () => {
+    return (
+      <IconFontAwesome
+        name="star-o"
+        style={{
+          fontSize: 24,
+          color: 'red',
+        }}
+      />
+    );
+  };
+
+  const renderStar = () => {
+    const star = active ? activeStar() : inactiveStar();
+
+    return (
+      <TouchableOpacity
+        onPress={() => {
+          handleStarClicked();
+        }}>
+        {star}
+      </TouchableOpacity>
+    );
+  };
   const outletItem = () => {
     return (
       <View
@@ -57,24 +102,8 @@ const MyFavoriteOutletItemList = ({item, selectedOutlet}) => {
           paddingVertical: 12,
           backgroundColor: selectedOutlet ? '#F9F9F9' : 'white',
         }}>
-        <View
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center',
-          }}>
-          <Image
-            style={{width: 24, height: 24, tintColor: colorConfig.primaryColor}}
-            resizeMode="stretch"
-            source={appConfig.star}
-          />
-          <Text style={{marginLeft: 16}}>One Raffles Place</Text>
-        </View>
-        <Image
-          style={{width: 24, height: 24}}
-          resizeMode="stretch"
-          source={appConfig.warning}
-        />
+        <Text>One Raffles Place</Text>
+        {renderStar()}
       </View>
     );
   };
@@ -123,15 +152,12 @@ const MyFavoriteOutletItemList = ({item, selectedOutlet}) => {
       </View>
     );
 
-    if (selectedOutlet) {
-      return (
-        <>
-          {detail}
-          <View style={{backgroundColor: '#D6D6D6', height: 1}} />
-        </>
-      );
-    }
-    return;
+    return (
+      <>
+        {detail}
+        <View style={{backgroundColor: '#D6D6D6', height: 1}} />
+      </>
+    );
   };
   return (
     <View>
