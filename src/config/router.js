@@ -112,6 +112,9 @@ import Register from '../pages/Register';
 import Login from '../pages/Login';
 import OTP from '../pages/OTP';
 import Redeem from '../pages/Redeem';
+import MyFavoriteOutlets from '../pages/MyFavoriteOutlets';
+import FavoriteOutlets from '../pages/FavoriteOutlets';
+import FavoriteOutletDetail from '../pages/FavoriteOutletDetail';
 
 import OrderHere from '../pages/orderHere';
 import ProductDetail from '../pages/productDetail';
@@ -355,6 +358,12 @@ export default class Routes extends Component {
             <Scene key="productDetail" component={ProductDetail} />
             <Scene key="cart" component={Cart} />
             <Scene key="redeem" component={Redeem} />
+            <Scene key="myFavoriteOutlets" component={MyFavoriteOutlets} />
+            <Scene key="favoriteOutlets" component={FavoriteOutlets} />
+            <Scene
+              key="favoriteOutletDetail"
+              component={FavoriteOutletDetail}
+            />
           </Scene>
         </Scene>
       </Router>
