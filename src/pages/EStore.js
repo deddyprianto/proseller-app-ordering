@@ -14,6 +14,7 @@ import {
 import colorConfig from '../config/colorConfig';
 
 import EStoreList from '../components/eStoreList/EStoreList';
+import {SafeAreaView} from 'react-navigation';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -21,7 +22,6 @@ const HEIGHT = Dimensions.get('window').height;
 const styles = StyleSheet.create({
   container: {
     marginTop: HEIGHT * 0.01,
-    marginBottom: HEIGHT * 0.01,
   },
   image: {
     height: HEIGHT * 0.22,
@@ -104,7 +104,7 @@ const EStore = () => {
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.viewHeader}>
         <View style={styles.viewTitle}>
           <Text style={styles.textTitle}>E - Store</Text>
@@ -116,7 +116,7 @@ const EStore = () => {
       <View style={styles.viewBody}>
         <EStoreList />
       </View>
-    </ScrollView>
+    </SafeAreaView>
   );
 };
 

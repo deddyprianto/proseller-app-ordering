@@ -6,7 +6,14 @@
 
 import React, {useState, useRef} from 'react';
 
-import {StyleSheet, View, Text, FlatList, TouchableOpacity} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  Dimensions,
+} from 'react-native';
 import {Actions} from 'react-native-router-flux';
 
 import {isEmptyArray} from '../../helper/CheckEmpty';
@@ -23,6 +30,8 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
 });
+
+const HEIGHT = Dimensions.get('window').height;
 
 const EStoreList = ({...props}) => {
   const categoryRef = useRef();
@@ -162,6 +171,131 @@ const EStoreList = ({...props}) => {
     }
   }, []);
 
+  const eGifts = [
+    {
+      id: 1,
+      category: 'Local Delight',
+      products: [
+        {
+          id: 1,
+          name: 'martin',
+          image:
+            'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
+        },
+        {
+          id: 2,
+          name: 'test',
+          image:
+            'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
+        },
+        {
+          id: 3,
+          name: 'anjay',
+          image:
+            'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
+        },
+        {
+          id: 4,
+          name: 'martin',
+          image:
+            'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
+        },
+        {
+          id: 5,
+          name: 'test',
+          image:
+            'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
+        },
+      ],
+    },
+    {
+      id: 2,
+      category: 'Fun Toast',
+      products: [
+        {
+          id: 1,
+          name: 'martin',
+          image:
+            'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
+        },
+      ],
+    },
+    {
+      id: 3,
+      category: 'Fun Meal',
+      products: [
+        {
+          id: 1,
+          name: 'martin',
+          image:
+            'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
+        },
+        {
+          id: 2,
+          name: 'test',
+          image:
+            'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
+        },
+        {
+          id: 3,
+          name: 'anjay',
+          image:
+            'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
+        },
+      ],
+    },
+
+    {
+      id: 4,
+      category: 'Drinks',
+      products: [
+        {
+          id: 1,
+          name: 'martin',
+          image:
+            'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
+        },
+        {
+          id: 2,
+          name: 'test',
+          image:
+            'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
+        },
+        {
+          id: 3,
+          name: 'anjay',
+          image:
+            'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
+        },
+      ],
+    },
+
+    {
+      id: 5,
+      category: 'coba',
+      products: [
+        {
+          id: 1,
+          name: 'martin',
+          image:
+            'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
+        },
+        {
+          id: 2,
+          name: 'test',
+          image:
+            'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
+        },
+        {
+          id: 3,
+          name: 'anjay',
+          image:
+            'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
+        },
+      ],
+    },
+  ];
+
   const renderCategorySelected = category => {
     if (category.id === selectedCategory.id) {
       return (
@@ -209,10 +343,14 @@ const EStoreList = ({...props}) => {
       let index = viewableItems.length - 1;
 
       if (viewableItems.length === 3) {
-        index = viewableItems.length - 2;
+        index = 1;
       }
 
-      handleScrollEStores(viewableItems[index]);
+      if (viewableItems.length === 2) {
+        index = 0;
+      }
+
+      return handleScrollEStores(viewableItems[index]);
     }
   };
 
@@ -232,8 +370,9 @@ const EStoreList = ({...props}) => {
     return (
       <FlatList
         ref={productRef}
-        style={{height: 475}}
+        style={{height: HEIGHT * 0.8}}
         data={groupEGift}
+        showsVerticalScrollIndicator={false}
         viewabilityConfigCallbackPairs={viewabilityConfigCallbackPairs.current}
         renderItem={({item, index}) => renderEStoreItem(item, index)}
       />

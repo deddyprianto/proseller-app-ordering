@@ -371,7 +371,7 @@ const Menu = ({...props}) => {
           height: HEIGHT * 0.3,
           width: WIDTH * 0.95,
         }}
-        source={appConfig.test}
+        source={appConfig.funtoastPromo}
         resizeMode="contain"
       />
     </SafeAreaView>

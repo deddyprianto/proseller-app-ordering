@@ -339,7 +339,6 @@ const ProductList = ({...props}) => {
   };
 
   const onViewableItemsChanged = ({viewableItems}) => {
-    console.log(viewableItems);
     if (!isEmptyArray(viewableItems)) {
       let index = viewableItems.length - 1;
 

@@ -8,6 +8,7 @@ import {
   TextInput,
   Image,
   TouchableOpacity,
+  Dimensions,
 } from 'react-native';
 
 import CountryPicker from '../components/react-native-country-picker-modal';
@@ -19,8 +20,11 @@ import colorConfig from '../config/colorConfig';
 import awsConfig from '../config/awsConfig';
 import {Actions} from 'react-native-router-flux';
 
+const HEIGHT = Dimensions.get('window').height;
+
 const styles = StyleSheet.create({
   container: {
+    height: HEIGHT,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'white',
