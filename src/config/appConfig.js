@@ -32,7 +32,6 @@ const appConfig = {
   test: require('../assets/img/test.png'),
   funtoastQRCode: require('../assets/img/FuntoastQRCode.png'),
   funtoastIcon: require('../assets/img/funtoastIcon.png'),
-  funtoastPromo: require('../assets/img/funtoastPromo.png'),
   funtoastCoffee: require('../assets/img/funtoastCoffee.png'),
   termsAndConditions: require('../assets/img/termsAndConditions.png'),
   logout: require('../assets/img/logout.png'),
