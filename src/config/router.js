@@ -102,10 +102,12 @@ import VirtualKeyboardCom from '../components/SVC/VirtualKeyboard';
 import ApplyPromoCode from '../pages/ApplyPromoCode';
 import PickCoordinate from '../pages/PickCoordinate';
 
+// created by martin
 import EStore from '../pages/EStore';
 import ECard from '../pages/ECard';
 import OnBoarding from '../pages/OnBoarding';
 import Register from '../pages/Register';
+import RegisterForm from '../pages/RegisterForm';
 import Login from '../pages/Login';
 import OTP from '../pages/OTP';
 
@@ -296,25 +298,20 @@ export default class Routes extends Component {
             <Scene key="settleOrder" component={SettleOrder} />
             <Scene key="waitingFood" component={WaitingFood} />
             <Scene key="QRCodeCart" component={QRCodeCart} />
-
             <Scene key="listCard" component={ListCard} />
             <Scene key="hostedPayment" component={HostedPayment} />
             <Scene key="hostedTrx" component={HostedTransaction} />
             <Scene key="detailCard" component={DetailCard} />
             <Scene key="paymentMethods" component={PaymentMethods} />
             <Scene key="paymentAddCard" component={PaymentAddCard} />
-
             <Scene key="listMembership" component={ListMembership} />
             <Scene key="detailMembership" component={DetailMembership} />
-
             <Scene key="listAddress" component={ListAddress} />
             <Scene key="addAddress" component={AddAddress} />
             <Scene key="pickCoordinate" component={PickCoordinate} />
             <Scene key="editAddress" component={EditAddress} />
             <Scene key="selectAddress" component={SelectAddress} />
-
             <Scene key="listLanguages" component={ListLanguages} />
-
             <Scene key="listReferral" component={ListReferral} />
             <Scene key="addReferral" component={AddReferral} />
             <Scene key="contacts" component={Contacts} />
@@ -327,22 +324,24 @@ export default class Routes extends Component {
               key="changeCredentialsOTP"
               component={ChangeCredentialsOTP}
             />
-
             <Scene key="summary" component={Summary} />
             <Scene key="buySVC" component={BuySVC} />
             <Scene key="SVCDetail" component={SVCDetail} />
             <Scene key="virtualKeyboard" component={VirtualKeyboardCom} />
             <Scene key="transferSVC" component={TransferSVC} />
             <Scene key="applyPromoCode" component={ApplyPromoCode} />
+
+            <Scene key="editProfile" component={EditProfile} />
+            <Scene key="verifyRegister" component={VerifyRegister} />
+            <Scene key="notifications" component={Notifications} />
+            {/* //martin */}
             <Scene key="eStore" component={EStore} />
             <Scene key="eCard" component={ECard} />
             <Scene key="onBoarding" component={OnBoarding} initial={true} />
             <Scene key="register" component={Register} />
+            <Scene key="registerForm" component={RegisterForm} />
             <Scene key="otp" component={OTP} />
             <Scene key="login" component={Login} />
-            <Scene key="editProfile" component={EditProfile} />
-            <Scene key="verifyRegister" component={VerifyRegister} />
-            <Scene key="notifications" component={Notifications} />
           </Scene>
         </Scene>
       </Router>

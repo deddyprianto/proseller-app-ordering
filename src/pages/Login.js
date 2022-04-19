@@ -1,80 +1,94 @@
 import React, {useEffect, useState} from 'react';
+import {Actions} from 'react-native-router-flux';
 
 import {
-  SafeAreaView,
   StyleSheet,
   View,
   Text,
-  TextInput,
   Image,
   TouchableOpacity,
+  ScrollView,
 } from 'react-native';
 
-import CountryPicker from '../components/react-native-country-picker-modal';
-import PhoneInput from 'react-native-phone-input';
-
 import appConfig from '../config/appConfig';
-
 import colorConfig from '../config/colorConfig';
 import awsConfig from '../config/awsConfig';
-import {Actions} from 'react-native-router-flux';
+
+import FieldTextInput from '../components/fieldTextInput';
 
 const styles = StyleSheet.create({
   container: {
     justifyContent: 'center',
     alignItems: 'center',
+    paddingHorizontal: 45,
   },
   image: {
     width: 150,
     height: 40,
     marginHorizontal: 20,
-    marginTop: 80,
   },
   touchableNext: {
     height: 40,
-    width: 150,
+    width: '100%',
     backgroundColor: colorConfig.primaryColor,
     borderRadius: 5,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 250,
   },
-  textCreateNewAccount: {
+  touchableNextDisabled: {
+    height: 40,
+    width: '100%',
+    backgroundColor: '#B7B7B7',
+    borderRadius: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  textHeader: {
     color: colorConfig.primaryColor,
     fontSize: 20,
-    marginTop: 30,
   },
-  textNext: {color: 'white'},
-  textInputPhone: {
-    paddingVertical: 0,
-    width: 200,
-    height: 40,
-  },
-  textEnterMobileNumber: {
-    width: '70%',
-    textAlign: 'left',
-    marginBottom: 5,
-    marginTop: 100,
-  },
-  viewCountryPicker: {width: 0, height: 0},
-  viewInputPhoneNumber: {
+  viewLoginMethodSelector: {
     display: 'flex',
     flexDirection: 'row',
-    borderWidth: 1,
-    borderRadius: 10,
-    paddingHorizontal: 10,
+    backgroundColor: '#F9F9F9',
+    width: '100%',
+    height: 46,
+    borderRadius: 8,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 6,
   },
-  width70: {width: 70},
-  viewFlag: {
-    width: 35,
-    height: 25,
+  loginMethodActive: {
+    height: 34,
+    backgroundColor: 'white',
+    width: '48%',
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 1,
   },
+  loginMethodInactive: {
+    height: 34,
+    backgroundColor: '#F9F9F9',
+    width: '48%',
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  textInformation: {
+    width: '80%',
+    textAlign: 'center',
+    color: '#B7B7B7',
+  },
+  textNext: {color: 'white'},
 });
 
 const Login = () => {
   const [openModal, setOpenModal] = useState(false);
   const [countryCode, setCountryCode] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [email, setEmail] = useState('');
+  const [loginMethod, setLoginMethod] = useState('email');
 
   useEffect(() => {
     setCountryCode(awsConfig.phoneNumberCode);
@@ -90,70 +104,116 @@ const Login = () => {
     );
   };
 
+  const handleChangeLoginMethod = value => {
+    setLoginMethod(value);
+  };
+
+  const handleStyleLoginMethod = value => {
+    if (value === loginMethod) {
+      return styles.loginMethodActive;
+    }
+    return styles.loginMethodInactive;
+  };
+
+  const renderChangeLoginMethod = () => {
+    return (
+      <View style={styles.viewLoginMethodSelector}>
+        <TouchableOpacity
+          onPress={() => {
+            handleChangeLoginMethod('email');
+          }}
+          style={handleStyleLoginMethod('email')}>
+          <Text>Email</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            handleChangeLoginMethod('phoneNumber');
+          }}
+          style={handleStyleLoginMethod('phoneNumber')}>
+          <Text>Mobile Number</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
+  const renderPhoneNumberLoginInput = () => {
+    return (
+      <FieldTextInput
+        type="phone"
+        label="Enter mobile number to begin :"
+        value={phoneNumber}
+        onChangeCountryCode={value => {
+          setCountryCode(value);
+        }}
+        onChange={value => {
+          setPhoneNumber(value);
+        }}
+      />
+    );
+  };
+
+  const renderEmailLoginInput = () => {
+    return (
+      <FieldTextInput
+        label="Enter email to begin :"
+        value={email}
+        onChange={value => {
+          setEmail(value);
+        }}
+      />
+    );
+  };
+
+  const renderLoginMethodInput = () => {
+    if (loginMethod === 'email') {
+      return renderEmailLoginInput();
+    } else {
+      return renderPhoneNumberLoginInput();
+    }
+  };
+
   const renderButtonNext = () => {
+    let active = false;
+    let value = '';
+
+    if (loginMethod === 'email') {
+      active = loginMethod === 'email' && email;
+      value = email;
+    } else {
+      active = loginMethod === 'phoneNumber' && phoneNumber;
+      value = countryCode + phoneNumber;
+    }
+
     return (
       <TouchableOpacity
-        style={styles.touchableNext}
+        style={active ? styles.touchableNext : styles.touchableNextDisabled}
         onPress={() => {
-          Actions.otp();
+          Actions.otp({isLogin: true, method: loginMethod, methodValue: value});
         }}>
-        <Text style={styles.textNext}>Next</Text>
+        <Text style={styles.textNext}>REQUEST OTP</Text>
       </TouchableOpacity>
     );
   };
 
-  const renderModalCountryPicker = () => {
-    return (
-      <View style={styles.viewCountryPicker}>
-        <CountryPicker
-          translation="eng"
-          withCallingCode
-          visible={openModal}
-          onClose={() => {
-            setOpenModal(false);
-          }}
-          withFilter
-          withFlag={true}
-          onSelect={country => {
-            setCountryCode(`+${country.callingCode[0]}`);
-          }}
-        />
-      </View>
-    );
-  };
-  const renderInputPhoneNumber = () => {
-    return (
-      <View style={styles.viewInputPhoneNumber}>
-        <PhoneInput
-          style={styles.width70}
-          flagStyle={styles.viewFlag}
-          value={countryCode}
-          onPressFlag={() => {
-            setOpenModal(true);
-          }}
-        />
-        <TextInput
-          keyboardType={'numeric'}
-          style={styles.textInputPhone}
-          value={phoneNumber}
-          onChangeText={value => {
-            setPhoneNumber(value.replace(/[^0-9]/g, ''));
-          }}
-        />
-      </View>
-    );
-  };
   return (
-    <SafeAreaView style={styles.container}>
-      {renderModalCountryPicker()}
-      {renderImages()}
-      <Text style={styles.textCreateNewAccount}>Login</Text>
-      <Text style={styles.textEnterMobileNumber}>
-        Enter mobile number to begin :
-      </Text>
-      {renderInputPhoneNumber()}
-      {renderButtonNext()}
-    </SafeAreaView>
+    <ScrollView>
+      <View style={styles.container}>
+        <View style={{marginTop: '25%'}} />
+        {renderImages()}
+        <View style={{marginTop: '10%'}} />
+        <Text style={styles.textHeader}>Login Account</Text>
+        <View style={{marginTop: '15%'}} />
+        {renderChangeLoginMethod()}
+        <View style={{marginTop: '15%'}} />
+        {renderLoginMethodInput()}
+        <View style={{marginTop: '15%'}} />
+        {renderButtonNext()}
+        <View style={{marginTop: '15%'}} />
+        <Text style={styles.textInformation}>
+          4-digits verification code will be sent to your mobile number
+        </Text>
+      </View>
+    </ScrollView>
   );
 };
 
