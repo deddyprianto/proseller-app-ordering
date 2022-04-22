@@ -28,7 +28,7 @@ import Pay from '../components/rewardsPay';
 import Rewards from '../components/rewardsRewards';
 import RewardsQRmenu from '../components/rewardsQRmenu';
 import RewardsQRscan from '../components/rewardsQRscan';
-import VoucherDetail from '../components/voucherDetail';
+// import VoucherDetail from '../components/voucherDetail';
 import DetailPoint from '../components/DetailPoint';
 import HistoryDetailPayment from '../components/history/historyDetailPayment';
 import StoreDetailStores from '../components/storeDetailStores';
@@ -109,6 +109,8 @@ import Register from '../pages/Register';
 import Login from '../pages/Login';
 import OTP from '../pages/OTP';
 import Redeem from '../pages/Redeem';
+import VoucherDetail from '../pages/VoucherDetail';
+import PointDetailAndHistory from '../pages/PointDetailAndHistory';
 
 const MyTransitionSpec = {
   duration: 200,
@@ -335,6 +337,7 @@ export default class Routes extends Component {
             <Scene key="virtualKeyboard" component={VirtualKeyboardCom} />
             <Scene key="transferSVC" component={TransferSVC} />
             <Scene key="applyPromoCode" component={ApplyPromoCode} />
+
             <Scene key="eStore" component={EStore} />
             <Scene key="eCard" component={ECard} />
             <Scene key="onBoarding" component={OnBoarding} />
@@ -345,6 +348,11 @@ export default class Routes extends Component {
             <Scene key="verifyRegister" component={VerifyRegister} />
             <Scene key="notifications" component={Notifications} />
             <Scene key="redeem" component={Redeem} />
+            <Scene key="voucherDetail" component={VoucherDetail} />
+            <Scene
+              key="pointDetailAndHistory"
+              component={PointDetailAndHistory}
+            />
           </Scene>
         </Scene>
       </Router>

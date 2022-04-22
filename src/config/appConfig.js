@@ -32,6 +32,8 @@ const appConfig = {
   test: require('../assets/img/test.png'),
   funtoastQRCode: require('../assets/img/FuntoastQRCode.png'),
   funtoastIcon: require('../assets/img/funtoastIcon.png'),
+  funtoastCoffeeIcon: require('../assets/img/funtoastCoffeeIcon.png'),
+  funtoastRedeemed: require('../assets/img/FuntoastRedeemed.png'),
 };
 
 export default appConfig;
