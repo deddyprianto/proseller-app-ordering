@@ -7,12 +7,12 @@ import {
   Text,
   TouchableOpacity,
   Image,
-  Modal,
 } from 'react-native';
 
 import colorConfig from '../config/colorConfig';
 
 import VoucherItem from '../components/voucherList/components/VoucherListItem';
+import ConfirmationDialog from '../components/confirmationDialog';
 import appConfig from '../config/appConfig';
 
 const styles = StyleSheet.create({
@@ -57,6 +57,18 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: 'white',
   },
+  textInfoPointTitle: {
+    fontWeight: 'bold',
+    fontSize: 12,
+  },
+  textInfoPointValue: {
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  textPointLocked: {
+    fontWeight: 'bold',
+    fontSize: 12,
+  },
   touchableRedeemButton: {
     width: '100%',
     paddingVertical: 10,
@@ -74,10 +86,46 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  viewInfoPoint: {
+    display: 'flex',
+    flexDirection: 'row',
+    borderWidth: 1,
+    borderRadius: 10,
+  },
+  viewInfoPointValue: {
+    padding: 10,
+    width: '50%',
+  },
+  viewPointLocked: {
+    backgroundColor: '#E5EAF8',
+    borderRadius: 12,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+  },
+  dividerVertical: {
+    height: 'auto',
+    borderWidth: 0.5,
+  },
 });
 
 const VoucherDetail = () => {
-  const [modalVisible, setModalVisible] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
+  const [openSuccessModal, setOpenSuccessModal] = useState(false);
+
+  const handleOpenModal = () => {
+    setOpenModal(true);
+  };
+  const handleCloseModal = () => {
+    setOpenModal(false);
+  };
+  const handleOpenSuccessModal = () => {
+    setOpenModal(false);
+    setOpenSuccessModal(true);
+  };
+  const handleCloseSuccessModal = () => {
+    setOpenSuccessModal(false);
+  };
+
   const categories = [
     {
       name: 'martin',
@@ -143,7 +191,7 @@ const VoucherDetail = () => {
       <TouchableOpacity
         style={styles.touchableRedeemButton}
         onPress={() => {
-          setModalVisible(true);
+          handleOpenModal();
         }}>
         <Text style={styles.textRedeemButton}>REDEEM</Text>
       </TouchableOpacity>
@@ -151,11 +199,11 @@ const VoucherDetail = () => {
   };
 
   const renderImageRedeemSuccess = () => {
-    if (modalVisible) {
+    if (openSuccessModal) {
       return (
         <TouchableOpacity
           onPress={() => {
-            setModalVisible(false);
+            handleCloseSuccessModal();
           }}
           style={styles.touchableImage}>
           <Image source={appConfig.funtoastRedeemed} />
@@ -164,22 +212,81 @@ const VoucherDetail = () => {
     }
   };
 
+  const renderCurrentPoint = () => {
+    return (
+      <View style={styles.viewInfoPointValue}>
+        <Text style={styles.textInfoPointTitle}>Your current point:</Text>
+        <Text style={styles.textInfoPointValue}>55 Points</Text>
+      </View>
+    );
+  };
+
+  const renderReducedPoint = () => {
+    return (
+      <View style={styles.viewInfoPointValue}>
+        <Text style={styles.textInfoPointTitle}>Point will be reduced: </Text>
+        <Text style={styles.textInfoPointValue}>10 Points</Text>
+      </View>
+    );
+  };
+
+  const renderInfoPoint = () => {
+    return (
+      <View style={styles.viewInfoPoint}>
+        {renderCurrentPoint()}
+        <View style={styles.dividerVertical} />
+        {renderReducedPoint()}
+      </View>
+    );
+  };
+
+  const renderBlockedPoint = () => {
+    return (
+      <View style={styles.viewPointLocked}>
+        <Text style={styles.textPointLocked}>you point is locked</Text>
+      </View>
+    );
+  };
+
+  const renderConfirmationDialog = () => {
+    return (
+      <ConfirmationDialog
+        open={openModal}
+        handleClose={() => {
+          handleCloseModal();
+        }}
+        handleSubmit={() => {
+          handleOpenSuccessModal();
+        }}
+        textTitle="Redeem Voucher"
+        textDescription="This will spend your points by 10 points"
+        textSubmit="Redeem"
+      />
+    );
+  };
+
   return (
     <View>
       <ScrollView style={styles.body}>
         <View style={styles.backgroundColorHeader} />
+
         <View style={styles.container}>
           <View style={{marginTop: '5%'}} />
-          <VoucherItem voucher={categories[0]} pointToRedeem="120" />
+          <VoucherItem voucher={categories[0]} />
           <View style={{marginTop: '2%'}} />
+          {renderInfoPoint()}
+          <View style={{marginTop: '5%'}} />
           {renderValidity()}
           <View style={{marginTop: '5%'}} />
           {renderDescription()}
+          <View style={{marginTop: '5%'}} />
+          {renderBlockedPoint()}
         </View>
       </ScrollView>
 
       <View style={styles.footer}>{renderRedeemButton()}</View>
       {renderImageRedeemSuccess()}
+      {renderConfirmationDialog()}
     </View>
   );
 };
