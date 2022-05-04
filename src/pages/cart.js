@@ -6,103 +6,410 @@
 
 import React, {useEffect, useState} from 'react';
 
-import {StyleSheet, View, Text, Dimensions} from 'react-native';
-
-import {CheckBox} from 'react-native-elements';
-import IconMaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+} from 'react-native';
 
 import colorConfig from '../config/colorConfig';
-import EGiftCard from '../components/eGiftCard/EGiftCard';
-import SearchBar from '../components/searchBar/SearchBar';
 import ProductCartList from '../components/productCartList/ProductCartList';
-import {SafeAreaView} from 'react-navigation';
-import CartIcon from '../components/order/CartIcon';
-import ButtonCheckout from '../components/button/ButtonCheckout';
-import ButtonCheckoutWithPaylah from '../components/button/ButtonCheckoutWithPaylah';
 
-const WIDTH = Dimensions.get('window').width;
-const HEIGHT = Dimensions.get('window').height;
+import OrderingTypeSelectorModal from '../components/modal/OrderingTypeSelectorModal';
+import DeliveryProviderSelectorModal from '../components/modal/DeliveryProviderSelectorModal';
+import DeliveryDateSelectorModal from '../components/modal/DeliveryDateSelectorModal';
+import {Actions} from 'react-native-router-flux';
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+    backgroundColor: '#F9F9F9',
+    justifyContent: 'space-between',
+  },
+  container: {
+    flex: 1,
+  },
+  scrollView: {
+    paddingHorizontal: 16,
+  },
+  textSubTotal: {
+    fontSize: 12,
+  },
+  textSubTotalValue: {
+    color: colorConfig.primaryColor,
+    fontWeight: 'bold',
+    fontSize: 12,
+  },
+  textDeliveryFee: {
+    fontSize: 12,
+  },
+  textDeliveryFeeValue: {
+    color: colorConfig.primaryColor,
+    fontWeight: 'bold',
+    fontSize: 12,
+  },
+  textGrandTotal: {
+    fontWeight: 'bold',
+    fontSize: 14,
+  },
+  textGrandTotalValue: {
+    color: colorConfig.primaryColor,
+    fontWeight: 'bold',
+    fontSize: 14,
+  },
+  textInclusiveTax: {
+    color: '#B7B7B7',
+    fontSize: 10,
+  },
+  textSeeDetails: {
+    color: colorConfig.primaryColor,
+    textAlign: 'center',
+    textDecorationLine: 'underline',
+  },
+  textInclusiveTaxValue: {
+    color: '#B7B7B7',
+    fontWeight: 'bold',
+    fontSize: 10,
+  },
+  textCheckoutButton: {
+    fontSize: 12,
+    fontWeight: '500',
+    color: 'white',
+  },
+  textMethod: {
+    fontSize: 12,
+    fontWeight: '500',
+  },
+  textMethodValue: {
+    fontSize: 12,
+    fontWeight: '500',
+    color: colorConfig.primaryColor,
+    textAlign: 'center',
+  },
+  textAddButton: {
+    color: colorConfig.primaryColor,
+    fontSize: 12,
+  },
+  viewCheckoutInfoValue: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  viewCheckoutButton: {
+    borderTopWidth: 0.2,
+    borderTopColor: 'grey',
+    padding: 16,
+  },
+  viewCheckout: {
+    backgroundColor: 'white',
+    borderTopLeftRadius: 8,
+    borderTopRightRadius: 8,
+    marginTop: -8,
+  },
+  viewMethod: {
+    borderRadius: 8,
+    backgroundColor: 'white',
+    padding: 16,
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    elevation: 1,
+  },
+  viewAddButton: {
+    borderColor: colorConfig.primaryColor,
+    borderWidth: 1,
+    paddingVertical: 10,
+    borderRadius: 8,
+    alignItems: 'center',
+    backgroundColor: 'white',
+  },
+  touchableMethod: {
+    width: 120,
+    borderRadius: 8,
+    paddingVertical: 10,
+    borderWidth: 1,
+    borderColor: colorConfig.primaryColor,
+  },
+  touchableCheckoutButton: {
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#B7B7B7',
+    paddingVertical: 10,
+  },
+  dividerDashed: {
+    textAlign: 'center',
+    color: colorConfig.primaryColor,
+  },
+  divider: {
+    borderColor: colorConfig.primaryColor,
+    borderTopWidth: 0.5,
+  },
+});
 
-const Cart = ({...props}) => {
-  const renderItemsTotal = () => {
+const Cart = () => {
+  const [seeDetail, setSeeDetail] = useState(true);
+  const [openOrderingTypeModal, setOpenOrderingTypeModal] = useState(false);
+  const [openDeliveryDateModal, setOpenDeliveryDateModal] = useState(false);
+  const [openDeliveryProviderModal, setOpenDeliveryProviderModal] = useState(
+    false,
+  );
+
+  const handleOpenOrderingTypeModal = () => {
+    setOpenOrderingTypeModal(true);
+  };
+  const handleCloseOrderingTypeModal = () => {
+    setOpenOrderingTypeModal(false);
+  };
+
+  const handleOpenDeliveryDateModal = () => {
+    setOpenDeliveryDateModal(true);
+  };
+  const handleCloseDeliveryDateModal = () => {
+    setOpenDeliveryDateModal(false);
+  };
+
+  const handleOpenDeliveryProviderModal = () => {
+    setOpenDeliveryProviderModal(true);
+  };
+  const handleCloseDeliveryProviderModal = () => {
+    setOpenDeliveryProviderModal(false);
+  };
+
+  const renderSubTotal = () => {
     return (
-      <View
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-        }}>
-        <Text>Items total:</Text>
-        <Text>$6.00</Text>
+      <View style={styles.viewCheckoutInfoValue}>
+        <Text style={styles.textSubTotal}>Sub Total</Text>
+        <Text style={styles.textSubTotalValue}>5.50</Text>
       </View>
     );
   };
 
-  const renderDiscount = () => {
+  const renderDeliveryFee = () => {
     return (
-      <View
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-        }}>
-        <Text>Discount</Text>
-        <Text>$6.00</Text>
+      <View style={styles.viewCheckoutInfoValue}>
+        <Text style={styles.textDeliveryFee}>Delivery Fee</Text>
+        <Text style={styles.textDeliveryFeeValue}>1.10</Text>
       </View>
     );
   };
 
-  const renderTotal = () => {
+  const renderGrandTotal = () => {
     return (
-      <View
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'space-between',
+      <View style={styles.viewCheckoutInfoValue}>
+        <Text style={styles.textGrandTotal}>Grand Total</Text>
+        <Text style={styles.textGrandTotalValue}>5.50</Text>
+      </View>
+    );
+  };
+
+  const renderInclusiveTax = () => {
+    return (
+      <View style={styles.viewCheckoutInfoValue}>
+        <Text style={styles.textInclusiveTax}>Inclusive Tax</Text>
+        <Text style={styles.textInclusiveTaxValue}>7%</Text>
+      </View>
+    );
+  };
+
+  const renderDividerDashed = () => {
+    return (
+      <Text style={styles.dividerDashed}>
+        _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+        _ _
+      </Text>
+    );
+  };
+
+  const handleClickSeeDetails = () => {
+    if (seeDetail) {
+      setSeeDetail(false);
+    } else {
+      setSeeDetail(true);
+    }
+  };
+
+  const renderSeeDetails = () => {
+    const text = seeDetail ? 'hide details' : 'see details';
+
+    return (
+      <TouchableOpacity
+        onPress={() => {
+          handleClickSeeDetails();
         }}>
-        <Text>Total:</Text>
-        <Text style={{fontWeight: 'bold'}}>$6.00</Text>
+        <Text style={styles.textSeeDetails}>{text}</Text>
+      </TouchableOpacity>
+    );
+  };
+
+  const renderCheckoutInfoDetail = () => {
+    if (!seeDetail) {
+      return <View>{renderSeeDetails()}</View>;
+    }
+
+    return (
+      <View>
+        {renderSeeDetails()}
+        <View style={{marginTop: 8}} />
+        {renderSubTotal()}
+        <View style={{marginTop: 8}} />
+        {renderDeliveryFee()}
+        <View style={{marginTop: 2}} />
+        {renderDividerDashed()}
+      </View>
+    );
+  };
+
+  const renderCheckoutInfo = () => {
+    return (
+      <View style={{marginTop: 16, paddingHorizontal: 16}}>
+        {renderCheckoutInfoDetail()}
+        <View style={{marginTop: 8}} />
+        {renderGrandTotal()}
+        <View style={{marginTop: 8}} />
+        {renderInclusiveTax()}
+        <View style={{marginTop: 8}} />
+      </View>
+    );
+  };
+
+  const renderCheckoutButton = () => {
+    return (
+      <View style={styles.viewCheckoutButton}>
+        <TouchableOpacity style={styles.touchableCheckoutButton}>
+          <Text style={styles.textCheckoutButton}>CHECK OUT</Text>
+        </TouchableOpacity>
       </View>
     );
   };
 
   const renderCheckout = () => {
     return (
-      <View
-        style={{
-          position: 'absolute',
-          bottom: 0,
-          width: WIDTH,
-          height: HEIGHT * 0.27,
-          backgroundColor: 'white',
-          borderTopWidth: 0.2,
-          borderTopColor: 'grey',
-          padding: 10,
-        }}>
-        {renderItemsTotal()}
-        {renderDiscount()}
-        {renderTotal()}
-        <View style={{marginVertical: 5}} />
-        <ButtonCheckoutWithPaylah />
-        <View style={{marginVertical: 5}} />
-        <ButtonCheckout />
+      <View style={styles.viewCheckout}>
+        {renderCheckoutInfo()}
+        {renderCheckoutButton()}
       </View>
     );
   };
 
-  return (
-    <View style={{height: HEIGHT}}>
-      <View
-        style={{
-          backgroundColor: colorConfig.primaryColor,
-          height: HEIGHT * 0.03,
-        }}>
-        <Text style={{color: 'white', textAlign: 'center'}}>Cart</Text>
+  const renderOrderingType = () => {
+    return (
+      <View style={styles.viewMethod}>
+        <Text style={styles.textMethod}>Ordering Type</Text>
+        <TouchableOpacity
+          style={styles.touchableMethod}
+          onPress={() => {
+            handleOpenOrderingTypeModal();
+          }}>
+          <Text style={styles.textMethodValue}>Delivery</Text>
+        </TouchableOpacity>
       </View>
-      <View style={{height: HEIGHT * 0.7}}>
-        <ProductCartList />
+    );
+  };
+
+  const renderDeliveryAddress = () => {
+    return (
+      <View style={styles.viewMethod}>
+        <Text style={styles.textMethod}>Delivery Address</Text>
+        <TouchableOpacity
+          style={styles.touchableMethod}
+          onPress={() => {
+            Actions.myDeliveryAddress();
+          }}>
+          <Text style={styles.textMethodValue}>Jon Doe</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
+  const renderDeliveryProvider = () => {
+    return (
+      <View style={styles.viewMethod}>
+        <Text style={styles.textMethod}>Delivery Provider</Text>
+        <TouchableOpacity
+          style={styles.touchableMethod}
+          onPress={() => {
+            handleOpenDeliveryProviderModal();
+          }}>
+          <Text style={styles.textMethodValue}>Delivery A</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
+  const renderDeliveryDate = () => {
+    return (
+      <View style={styles.viewMethod}>
+        <Text style={styles.textMethod}>Delivery Date</Text>
+        <TouchableOpacity
+          style={styles.touchableMethod}
+          onPress={() => {
+            handleOpenDeliveryDateModal();
+          }}>
+          <Text style={styles.textMethodValue}>Choose Date</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
+  const renderAddButton = () => {
+    return (
+      <View style={styles.viewAddButton}>
+        <Text style={styles.textAddButton}>+ ADD ITEM</Text>
+      </View>
+    );
+  };
+
+  const renderModal = () => {
+    return (
+      <>
+        <DeliveryProviderSelectorModal
+          open={openDeliveryProviderModal}
+          handleClose={() => {
+            handleCloseDeliveryProviderModal();
+          }}
+        />
+
+        <DeliveryDateSelectorModal
+          open={openDeliveryDateModal}
+          handleClose={() => {
+            handleCloseDeliveryDateModal();
+          }}
+        />
+
+        <OrderingTypeSelectorModal
+          open={openOrderingTypeModal}
+          handleClose={() => {
+            handleCloseOrderingTypeModal();
+          }}
+        />
+      </>
+    );
+  };
+
+  return (
+    <View style={styles.root}>
+      <View style={styles.container}>
+        <ScrollView style={styles.scrollView}>
+          <View style={{marginTop: 16}} />
+          {renderAddButton()}
+          <View style={{marginTop: 16}} />
+          <ProductCartList />
+          <View style={styles.divider} />
+          <View style={{marginTop: 16}} />
+          {renderOrderingType()}
+          <View style={{marginTop: 16}} />
+          {renderDeliveryAddress()}
+          <View style={{marginTop: 16}} />
+          {renderDeliveryProvider()}
+          <View style={{marginTop: 16}} />
+          {renderDeliveryDate()}
+          <View style={{marginTop: 16}} />
+        </ScrollView>
+        {renderModal()}
       </View>
       {renderCheckout()}
     </View>

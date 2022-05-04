@@ -4,36 +4,12 @@
  * PT Edgeworks
  */
 
-import React, {useState, useRef} from 'react';
+import React, {useState} from 'react';
 
-import {
-  StyleSheet,
-  View,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  Dimensions,
-} from 'react-native';
-import {Actions} from 'react-native-router-flux';
+import {View, FlatList} from 'react-native';
 
 import {isEmptyArray} from '../../helper/CheckEmpty';
-import colorConfig from '../../config/colorConfig';
-import ProductCart from './components/ProductCart';
-import ButtonViewBasket from '../../components/order/ButtonViewBasket';
-import {SafeAreaView} from 'react-navigation';
-import ButtonCheckout from '../button/ButtonCheckout';
-
-const styles = StyleSheet.create({
-  viewGroupProduct: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    marginBottom: 40,
-  },
-});
-
-const HEIGHT = Dimensions.get('window').height;
-const WIDTH = Dimensions.get('window').width;
+import ProductCartItem from './components/ProductCartItem';
 
 const ProductCartList = ({...props}) => {
   const [groupEGift, setGroupEGift] = useState([]);
@@ -95,18 +71,11 @@ const ProductCartList = ({...props}) => {
     }
   }, []);
 
-  const renderProductCartItem = (item, index) => {
+  const renderProductCartItem = item => {
     return (
       <View>
-        <ProductCart item={item} />
-        <View
-          style={{
-            height: 0.5,
-            backgroundColor: 'black',
-            marginBottom: 1,
-            marginHorizontal: 10,
-          }}
-        />
+        <ProductCartItem item={item} />
+        <View style={{marginBottom: 16}} />
       </View>
     );
   };
