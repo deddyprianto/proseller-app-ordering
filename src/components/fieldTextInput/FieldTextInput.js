@@ -1,119 +1,55 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 
 import {StyleSheet, View, Text, TextInput} from 'react-native';
 
-import CountryPicker from '../react-native-country-picker-modal';
-import PhoneInput from 'react-native-phone-input';
-
-import awsConfig from '../../config/awsConfig';
-
 const styles = StyleSheet.create({
-  container: {width: '100%'},
-  viewCountryPicker: {width: 0, height: 0},
-  viewPhoneNumberInput: {
-    display: 'flex',
-    flexDirection: 'row',
+  container: {
     width: '100%',
-    marginTop: 12,
-  },
-  textInputPhoneNumber: {
-    paddingVertical: 0,
-    width: '75%',
-    height: 40,
+    height: 56,
     borderWidth: 1,
-    borderRadius: 10,
-    paddingHorizontal: 5,
+    borderRadius: 8,
+    justifyContent: 'center',
+    paddingHorizontal: 16,
   },
-  wrapFlag: {
-    width: '25%',
-  },
-  viewFlag: {
-    width: 35,
-    height: 25,
-  },
-  textInputDefault: {
-    paddingVertical: 0,
-    width: '100%',
-    height: 40,
-    borderWidth: 1,
-    borderRadius: 10,
-    paddingHorizontal: 5,
-    marginTop: 12,
-  },
-  text: {
+  textLabel: {
     width: '100%',
     textAlign: 'left',
+    color: '#00000099',
+    fontSize: 12,
+  },
+  textInput: {
+    height: 17,
+    fontSize: 14,
+    paddingVertical: 0,
+    paddingHorizontal: 0,
   },
 });
 
-const TextInputField = ({
+const FieldTextInput = ({
   type,
   label,
   customLabel,
   placeholder,
   value,
   onChange,
-  onChangeCountryCode,
 }) => {
-  const [openModal, setOpenModal] = useState(false);
-  const [countryCode, setCountryCode] = useState('');
+  const renderLabel = () => {
+    if (!value) {
+      return;
+    }
 
-  useEffect(() => {
-    setCountryCode(awsConfig.phoneNumberCode);
-  }, []);
+    if (customLabel) {
+      return customLabel(value);
+    }
 
-  const renderModalCountryPicker = () => {
-    return (
-      <View style={styles.viewCountryPicker}>
-        <CountryPicker
-          translation="eng"
-          withCallingCode
-          visible={openModal}
-          onClose={() => {
-            setOpenModal(false);
-          }}
-          withFilter
-          withFlag={true}
-          onSelect={country => {
-            onChangeCountryCode(`+${country.callingCode[0]}`);
-            setCountryCode(`+${country.callingCode[0]}`);
-          }}
-        />
-      </View>
-    );
-  };
-
-  const renderPhoneNumberInput = () => {
-    const phoneNumber = value.replace(countryCode, '');
-
-    return (
-      <View style={styles.viewPhoneNumberInput}>
-        <PhoneInput
-          style={styles.wrapFlag}
-          flagStyle={styles.viewFlag}
-          value={countryCode}
-          onPressFlag={() => {
-            setOpenModal(true);
-          }}
-        />
-        <TextInput
-          keyboardType={'numeric'}
-          style={styles.textInputPhoneNumber}
-          value={phoneNumber}
-          placeholder={placeholder}
-          onChangeText={value => {
-            onChange(value.replace(/[^0-9]/g, ''));
-          }}
-        />
-      </View>
-    );
+    return <Text style={styles.textLabel}>{label}</Text>;
   };
 
   const renderNumberInput = () => {
     return (
       <TextInput
         keyboardType={'numeric'}
-        style={styles.textInputDefault}
+        style={styles.textInput}
         value={value}
         placeholder={placeholder}
         onChangeText={value => {
@@ -126,7 +62,7 @@ const TextInputField = ({
   const renderTextInput = () => {
     return (
       <TextInput
-        style={styles.textInputDefault}
+        style={styles.textInput}
         value={value}
         placeholder={placeholder}
         onChangeText={value => {
@@ -137,30 +73,21 @@ const TextInputField = ({
   };
 
   const renderInput = () => {
-    if (type === 'phone') {
-      return renderPhoneNumberInput();
-    } else if (type === 'number') {
-      return renderNumberInput();
-    } else {
-      return renderTextInput();
-    }
-  };
+    switch (type) {
+      case 'number':
+        return renderNumberInput();
 
-  const renderLabel = () => {
-    if (customLabel) {
-      return customLabel(value);
+      default:
+        return renderTextInput();
     }
-
-    return <Text style={styles.text}>{label}</Text>;
   };
 
   return (
     <View style={styles.container}>
-      {renderModalCountryPicker()}
       {renderLabel()}
       {renderInput()}
     </View>
   );
 };
 
-export default TextInputField;
+export default FieldTextInput;

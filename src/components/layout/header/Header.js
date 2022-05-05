@@ -1,44 +1,44 @@
 import React from 'react';
 
-import {
-  StyleSheet,
-  View,
-  Text,
-  Dimensions,
-  TouchableOpacity,
-} from 'react-native';
+import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
 
 import {Actions} from 'react-native-router-flux';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
 
-const HEIGHT = Dimensions.get('window').height;
-const WIDTH = Dimensions.get('window').width;
-
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  root: {
+    height: 54,
+    borderColor: '#D6D6D6',
+    borderBottomWidth: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    backgroundColor: 'white',
+  },
+  touchableIcon: {
+    position: 'absolute',
+    left: 16,
+  },
+  icon: {
+    fontSize: 21,
+  },
+});
 
 const Header = ({title}) => {
   const renderBackIcon = () => {
     return (
       <TouchableOpacity
-        style={{position: 'absolute', left: 16}}
+        style={styles.touchableIcon}
         onPress={() => {
           Actions.pop();
         }}>
-        <IconAntDesign name="left" style={{fontSize: 21}} />
+        <IconAntDesign name="left" style={styles.icon} />
       </TouchableOpacity>
     );
   };
 
   return (
-    <View
-      style={{
-        height: HEIGHT * 0.08,
-        borderColor: '#D6D6D6',
-        borderBottomWidth: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        width: WIDTH,
-      }}>
+    <View style={styles.root}>
       {renderBackIcon()}
       <Text>{title}</Text>
     </View>

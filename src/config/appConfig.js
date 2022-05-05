@@ -29,6 +29,8 @@ const appConfig = {
   emptyBox: require('../../assets/component/empty-box.png'),
   newSearch: require('../../assets/component/find-food.png'),
   productPlaceholder: require('../../assets/component/product-placeholder.png'),
+
+  funtoastEmptyDeliveryAddress: require('../assets/img/funtoast-empty-address.png'),
   test: require('../assets/img/test.png'),
   funtoastQRCode: require('../assets/img/FuntoastQRCode.png'),
   funtoastIcon: require('../assets/img/funtoastIcon.png'),

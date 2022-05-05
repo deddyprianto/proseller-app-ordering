@@ -122,6 +122,8 @@ import ProductDetail from '../pages/productDetail';
 import Cart from '../pages/cart';
 import VoucherDetail from '../pages/VoucherDetail';
 import PointDetailAndHistory from '../pages/PointDetailAndHistory';
+import MyDeliveryAddress from '../pages/MyDeliveryAddress';
+import AddNewAddress from '../pages/AddNewAddress';
 
 const MyTransitionSpec = {
   duration: 200,
@@ -228,7 +230,7 @@ export default class Routes extends Component {
             transitionConfig={transitionConfig}
             key="app"
             hideNavBar={true}>
-            <Scene key="pageIndex" component={PageIndex} initial={true} />
+            <Scene key="pageIndex" component={PageIndex} />
             <Scene key="inputPhoneNumber" component={InputPhoneNumber} />
             <Scene key="signInPhoneNumber" component={SignInPhoneNumber} />
             <Scene
@@ -374,6 +376,13 @@ export default class Routes extends Component {
               key="pointDetailAndHistory"
               component={PointDetailAndHistory}
             />
+            <Scene
+              key="myDeliveryAddress"
+              component={MyDeliveryAddress}
+              initial={true}
+            />
+            <Scene key="addNewAddress" component={AddNewAddress} />
+
             {/* //martin */}
           </Scene>
         </Scene>
