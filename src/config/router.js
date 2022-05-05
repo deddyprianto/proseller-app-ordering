@@ -376,11 +376,7 @@ export default class Routes extends Component {
               key="pointDetailAndHistory"
               component={PointDetailAndHistory}
             />
-            <Scene
-              key="myDeliveryAddress"
-              component={MyDeliveryAddress}
-              initial={true}
-            />
+            <Scene key="myDeliveryAddress" component={MyDeliveryAddress} />
             <Scene key="addNewAddress" component={AddNewAddress} />
             {/* //martin */}
           </Scene>
