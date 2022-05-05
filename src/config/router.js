@@ -382,7 +382,6 @@ export default class Routes extends Component {
               initial={true}
             />
             <Scene key="addNewAddress" component={AddNewAddress} />
-
             {/* //martin */}
           </Scene>
         </Scene>
