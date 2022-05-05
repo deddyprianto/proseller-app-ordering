@@ -2,12 +2,12 @@ import React, {useEffect, useState} from 'react';
 import {Actions} from 'react-native-router-flux';
 
 import {
-  SafeAreaView,
   StyleSheet,
   View,
   Text,
   Image,
   TouchableOpacity,
+  ScrollView,
 } from 'react-native';
 
 import appConfig from '../config/appConfig';
@@ -15,7 +15,6 @@ import colorConfig from '../config/colorConfig';
 import awsConfig from '../config/awsConfig';
 
 import FieldTextInput from '../components/fieldTextInput';
-
 const styles = StyleSheet.create({
   container: {
     justifyContent: 'center',
@@ -27,9 +26,14 @@ const styles = StyleSheet.create({
     height: 40,
     marginHorizontal: 20,
   },
-  textCreateNewAccount: {
+  textHeader: {
     color: colorConfig.primaryColor,
     fontSize: 20,
+  },
+  textRegisterFor: {
+    width: '100%',
+    textAlign: 'left',
+    fontSize: 14,
   },
   touchableNext: {
     height: 40,
@@ -56,11 +60,11 @@ const styles = StyleSheet.create({
   },
 });
 
-const Register = () => {
+const RegisterForm = ({registerMethod, inputValue}) => {
   const [countryCode, setCountryCode] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [email, setEmail] = useState('');
-  const [registerMethod, setRegisterMethod] = useState('email');
+  const [name, setName] = useState('');
 
   useEffect(() => {
     setCountryCode(awsConfig.phoneNumberCode);
@@ -76,11 +80,37 @@ const Register = () => {
     );
   };
 
+  const renderTextHeader = () => {
+    const title =
+      registerMethod === 'email' ? 'Email Register' : 'Mobile Register';
+
+    return <Text style={styles.textHeader}>{title}</Text>;
+  };
+
+  const renderTestRegisterFor = () => {
+    return (
+      <Text style={styles.textRegisterFor}>Register for {inputValue}</Text>
+    );
+  };
+
+  const renderNameInput = () => {
+    return (
+      <FieldTextInput
+        label="Name"
+        value={name}
+        placeholder="Full Name"
+        onChange={value => {
+          setName(value);
+        }}
+      />
+    );
+  };
+
   const renderPhoneNumberRegisterInput = () => {
     return (
       <FieldTextInput
         type="phone"
-        label="Enter mobile number to begin :"
+        label="Phone Number"
         value={phoneNumber}
         onChangeCountryCode={value => {
           setCountryCode(value);
@@ -95,8 +125,9 @@ const Register = () => {
   const renderEmailRegisterInput = () => {
     return (
       <FieldTextInput
-        label="Enter email to begin :"
+        label="Email"
         value={email}
+        placeholder="Email"
         onChange={value => {
           setEmail(value);
         }}
@@ -104,24 +135,21 @@ const Register = () => {
     );
   };
 
-  const renderRegisterMethodInput = () => {
+  const renderEmailOrPhoneInput = () => {
     if (registerMethod === 'email') {
-      return renderEmailRegisterInput();
-    } else {
       return renderPhoneNumberRegisterInput();
+    } else {
+      return renderEmailRegisterInput();
     }
   };
 
   const renderButtonNext = () => {
     let active = false;
-    let value = '';
 
     if (registerMethod === 'email') {
-      active = registerMethod === 'email' && email;
-      value = email;
+      active = name && phoneNumber;
     } else {
-      active = registerMethod === 'phoneNumber' && phoneNumber;
-      value = countryCode + phoneNumber;
+      active = name && email;
     }
 
     return (
@@ -129,51 +157,31 @@ const Register = () => {
         disabled={!active}
         style={active ? styles.touchableNext : styles.touchableNextDisabled}
         onPress={() => {
-          Actions.registerForm({registerMethod, inputValue: value});
+          Actions.otp({method: registerMethod, methodValue: inputValue});
         }}>
         <Text style={styles.textNext}>Next</Text>
       </TouchableOpacity>
     );
   };
 
-  const handleChangeRegisterMethod = () => {
-    if (registerMethod === 'email') {
-      setRegisterMethod('phoneNumber');
-    } else {
-      setRegisterMethod('email');
-    }
-  };
-
-  const renderTextChangeMethod = () => {
-    const text =
-      registerMethod === 'email'
-        ? 'Use Mobile Number to Create Account'
-        : 'Use Email Address to Create Account';
-
-    return (
-      <TouchableOpacity
-        onPress={() => {
-          handleChangeRegisterMethod();
-        }}>
-        <Text style={styles.textChangeMethod}>{text}</Text>
-      </TouchableOpacity>
-    );
-  };
-
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={{marginTop: '25%'}} />
-      {renderImages()}
-      <View style={{marginTop: '10%'}} />
-      <Text style={styles.textCreateNewAccount}>Create a new account</Text>
-      <View style={{marginTop: '30%'}} />
-      {renderRegisterMethodInput()}
-      <View style={{marginTop: '10%'}} />
-      {renderButtonNext()}
-      <View style={{marginTop: '15%'}} />
-      {renderTextChangeMethod()}
-    </SafeAreaView>
+    <ScrollView>
+      <View style={styles.container}>
+        <View style={{marginTop: '25%'}} />
+        {renderImages()}
+        <View style={{marginTop: '10%'}} />
+        {renderTextHeader()}
+        <View style={{marginTop: '10%'}} />
+        {renderTestRegisterFor()}
+        <View style={{marginTop: '10%'}} />
+        {renderNameInput()}
+        <View style={{marginTop: '5%'}} />
+        {renderEmailOrPhoneInput()}
+        <View style={{marginTop: '15%'}} />
+        {renderButtonNext()}
+      </View>
+    </ScrollView>
   );
 };
 
-export default Register;
+export default RegisterForm;

@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import {Actions} from 'react-native-router-flux';
 
 import {
   SafeAreaView,
@@ -10,7 +11,6 @@ import {
   Dimensions,
   TouchableOpacity,
 } from 'react-native';
-import {Actions} from 'react-native-router-flux';
 
 import colorConfig from '../config/colorConfig';
 
@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
   touchableRegister: {
     height: 40,
     width: 150,
-    backgroundColor: 'grey',
+    backgroundColor: '#B7B7B7',
     borderRadius: 5,
     justifyContent: 'center',
     alignItems: 'center',
@@ -156,7 +156,7 @@ const OnBoarding = () => {
           onPress={() => {
             Actions.register();
           }}>
-          <Text>Create New Account</Text>
+          <Text style={styles.colorWhite}>Create New Account</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.touchableLogin}

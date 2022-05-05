@@ -105,10 +105,12 @@ import PickCoordinate from '../pages/PickCoordinate';
 import EGift from '../pages/EGift';
 import SendEGift from '../pages/SendEGift';
 
+// created by martin
 import EStore from '../pages/EStore';
 import ECard from '../pages/ECard';
 import OnBoarding from '../pages/OnBoarding';
 import Register from '../pages/Register';
+import RegisterForm from '../pages/RegisterForm';
 import Login from '../pages/Login';
 import OTP from '../pages/OTP';
 import Redeem from '../pages/Redeem';
@@ -340,16 +342,18 @@ export default class Routes extends Component {
             <Scene key="transferSVC" component={TransferSVC} />
             <Scene key="applyPromoCode" component={ApplyPromoCode} />
 
-            {/* NEEDED */}
-            <Scene key="eStore" component={EStore} />
-            <Scene key="eCard" component={ECard} />
-            <Scene key="onBoarding" component={OnBoarding} />
-            <Scene key="register" component={Register} />
-            <Scene key="otp" component={OTP} />
-            <Scene key="login" component={Login} />
             <Scene key="editProfile" component={EditProfile} />
             <Scene key="verifyRegister" component={VerifyRegister} />
             <Scene key="notifications" component={Notifications} />
+
+            {/* //martin */}
+            <Scene key="eStore" component={EStore} />
+            <Scene key="eCard" component={ECard} />
+            <Scene key="onBoarding" component={OnBoarding} initial={true} />
+            <Scene key="register" component={Register} />
+            <Scene key="registerForm" component={RegisterForm} />
+            <Scene key="otp" component={OTP} />
+            <Scene key="login" component={Login} />
             <Scene key="eGift" component={EGift} />
             <Scene key="sendEGift" component={SendEGift} />
             <Scene key="orderHere" component={OrderHere} />
@@ -364,6 +368,7 @@ export default class Routes extends Component {
               key="favoriteOutletDetail"
               component={FavoriteOutletDetail}
             />
+            {/* //martin */}
           </Scene>
         </Scene>
       </Router>
