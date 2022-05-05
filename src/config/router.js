@@ -28,7 +28,7 @@ import Pay from '../components/rewardsPay';
 import Rewards from '../components/rewardsRewards';
 import RewardsQRmenu from '../components/rewardsQRmenu';
 import RewardsQRscan from '../components/rewardsQRscan';
-import VoucherDetail from '../components/voucherDetail';
+// import VoucherDetail from '../components/voucherDetail';
 import DetailPoint from '../components/DetailPoint';
 import HistoryDetailPayment from '../components/history/historyDetailPayment';
 import StoreDetailStores from '../components/storeDetailStores';
@@ -117,10 +117,11 @@ import Redeem from '../pages/Redeem';
 import MyFavoriteOutlets from '../pages/MyFavoriteOutlets';
 import FavoriteOutlets from '../pages/FavoriteOutlets';
 import FavoriteOutletDetail from '../pages/FavoriteOutletDetail';
-
 import OrderHere from '../pages/orderHere';
 import ProductDetail from '../pages/productDetail';
 import Cart from '../pages/cart';
+import VoucherDetail from '../pages/VoucherDetail';
+import PointDetailAndHistory from '../pages/PointDetailAndHistory';
 
 const MyTransitionSpec = {
   duration: 200,
@@ -367,6 +368,11 @@ export default class Routes extends Component {
             <Scene
               key="favoriteOutletDetail"
               component={FavoriteOutletDetail}
+            />
+            <Scene key="voucherDetail" component={VoucherDetail} />
+            <Scene
+              key="pointDetailAndHistory"
+              component={PointDetailAndHistory}
             />
             {/* //martin */}
           </Scene>

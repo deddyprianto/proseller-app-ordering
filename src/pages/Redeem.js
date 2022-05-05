@@ -6,164 +6,228 @@ import {
   View,
   Text,
   Image,
-  Dimensions,
+  TouchableOpacity,
 } from 'react-native';
 
-import {ProgressBar, Colors} from 'react-native-paper';
+import {ProgressBar} from 'react-native-paper';
 
 import colorConfig from '../config/colorConfig';
 import appConfig from '../config/appConfig';
+import {Actions} from 'react-native-router-flux';
 
-const WIDTH = Dimensions.get('window').width;
-const HEIGHT = Dimensions.get('window').height;
+import VoucherList from '../components/voucherList';
 
 const styles = StyleSheet.create({
-  container: {},
+  container: {
+    paddingHorizontal: 20,
+  },
+  divider: {
+    width: '100%',
+    borderTopWidth: 0.5,
+  },
+  textWelcome: {
+    fontSize: 14,
+    color: 'white',
+  },
+  textName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: 'white',
+  },
+  textYourPoint: {
+    fontSize: 10,
+    color: 'white',
+  },
+  textPointValue: {
+    fontSize: 24,
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  textCurrentTier: {
+    fontSize: 9,
+    fontWeight: '500',
+    color: 'white',
+    width: '12%',
+    textAlign: 'left',
+  },
+  textNextTier: {
+    fontSize: 9,
+    fontWeight: '500',
+    color: 'white',
+    width: '12%',
+    textAlign: 'right',
+  },
+  textInfo: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: 'white',
+  },
+  textPointAndHistory: {
+    width: '100%',
+    textAlign: 'center',
+    color: colorConfig.primaryColor,
+    textDecorationLine: 'underline',
+    fontSize: 12,
+    fontWeight: '600',
+  },
   viewHeader: {
-    width: WIDTH,
+    width: '100%',
     display: 'flex',
     alignItems: 'center',
-    paddingHorizontal: 20,
+  },
+  viewPoint: {
+    alignItems: 'flex-end',
+  },
+  viewFlexRowSpaceBetweenCenter: {
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  viewPointHeader: {
+    display: 'flex',
+    alignItems: 'center',
+    backgroundColor: colorConfig.primaryColor,
+    width: '100%',
+    borderRadius: 8,
+    paddingHorizontal: 18,
+    paddingVertical: 16,
+  },
+
+  viewProgressBar: {
+    width: '76%',
+    justifyContent: 'center',
+  },
+  progressBar: {
+    backgroundColor: 'white',
+    height: 14,
+    borderRadius: 8,
+    borderColor: 'white',
+    borderWidth: 3,
   },
 });
 
 const Redeem = () => {
-  const categories = [
-    {
-      name: 'martin',
-      image:
-        'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-    },
-    {
-      name: 'test',
-      image:
-        'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-    },
-    {
-      name: 'anjay',
-      image:
-        'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-    },
-    {
-      name: 'martin',
-      image:
-        'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-    },
-    {
-      name: 'test',
-      image:
-        'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-    },
-    {
-      name: 'anjay',
-      image:
-        'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-    },
-  ];
-
-  const renderPointBar = () => {
+  const renderWelcome = () => {
     return (
-      <View
-        style={{
-          marginTop: 20,
-          display: 'flex',
-          alignItems: 'center',
-          backgroundColor: colorConfig.sixthColor,
-          height: 230,
-          width: '100%',
-          borderRadius: 10,
-        }}>
-        <Text
-          style={{
-            fontSize: 20,
-            color: colorConfig.primaryColor,
-
-            marginTop: 30,
-          }}>
-          Welcome XXX,
-        </Text>
-        <Text style={{fontSize: 20, marginTop: 20}}>55 PTS</Text>
-        <View style={{width: '90%', justifyContent: 'center', marginTop: 15}}>
-          <ProgressBar
-            progress={0.5}
-            color={colorConfig.primaryColor}
-            style={{
-              backgroundColor: 'grey',
-              height: 25,
-              borderRadius: 10,
-            }}
-          />
-          <Image
-            style={{height: 50, width: 50, position: 'absolute', left: '45%'}}
-            source={appConfig.funtoastCoffee}
-          />
-        </View>
-
-        <View
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            width: '80%',
-            justifyContent: 'space-between',
-            marginTop: 30,
-          }}>
-          <Text style={{fontSize: 10}}>Silver</Text>
-          <Text style={{fontSize: 10}}>Gold</Text>
-        </View>
-        <Text style={{fontSize: 10, marginTop: 20}}>
-          Spend 300 Point by 31 Dec 2022 to upgrade to Gold
-        </Text>
+      <View>
+        <Text style={styles.textWelcome}>Welcome</Text>
+        <Text style={styles.textName}>Jon Doe,</Text>
       </View>
     );
   };
 
-  const renderRewardList = () => {
-    const test = categories.map(category => {
-      return (
-        <View
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            width: '100%',
-            backgroundColor: 'white',
-            height: 90,
-            marginBottom: 10,
-            borderRadius: 10,
-            elevation: 6,
-          }}>
-          <Image
-            style={{
-              height: 90,
-              width: '40%',
-              borderTopLeftRadius: 9,
-              borderBottomLeftRadius: 9,
-            }}
-            source={{uri: category.image}}
-          />
-          <View
-            style={{
-              width: '60%',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              paddingVertical: 10,
-            }}>
-            <Text>$2 OFF e-voucher</Text>
-            <Text>100 PTS</Text>
-          </View>
-        </View>
-      );
-    });
-    return test;
+  const renderPoint = () => {
+    return (
+      <View style={styles.viewPoint}>
+        <Text style={styles.textYourPoint}>Your Points</Text>
+        <Text style={styles.textPointValue}>55 PTS</Text>
+      </View>
+    );
+  };
+
+  const renderProgressBar = () => {
+    return (
+      <View style={styles.viewProgressBar}>
+        <ProgressBar
+          progress={0.5}
+          color={colorConfig.primaryColor}
+          style={styles.progressBar}
+        />
+        <Image
+          style={{height: 29, width: 33, position: 'absolute', left: '45%'}}
+          source={appConfig.funtoastCoffeeIcon}
+        />
+      </View>
+    );
+  };
+
+  const renderCurrentTier = () => {
+    return <Text style={styles.textCurrentTier}>SILVER</Text>;
+  };
+
+  const renderNextTier = () => {
+    return <Text style={styles.textNextTier}>GOLD</Text>;
+  };
+
+  const renderWelcomeAndPoint = () => {
+    return (
+      <View style={styles.viewFlexRowSpaceBetweenCenter}>
+        {renderWelcome()}
+        {renderPoint()}
+      </View>
+    );
+  };
+
+  const renderTierAndProgressBar = () => {
+    return (
+      <View style={styles.viewFlexRowSpaceBetweenCenter}>
+        {renderCurrentTier()}
+        {renderProgressBar()}
+        {renderNextTier()}
+      </View>
+    );
+  };
+
+  const renderTextInfo = () => {
+    return (
+      <Text style={styles.textInfo}>
+        spend $300 by 31 December 2022 to upgrade to gold
+      </Text>
+    );
+  };
+
+  const renderPointHeader = () => {
+    return (
+      <View style={styles.viewPointHeader}>
+        {renderWelcomeAndPoint()}
+        <View style={{marginTop: '15%'}} />
+        {renderTierAndProgressBar()}
+        <View style={{marginTop: '15%'}} />
+        {renderTextInfo()}
+      </View>
+    );
+  };
+
+  const renderTextPointAndHistory = () => {
+    return (
+      <TouchableOpacity
+        onPress={() => {
+          Actions.pointDetailAndHistory();
+        }}>
+        <Text style={styles.textPointAndHistory}>Point detail and history</Text>
+      </TouchableOpacity>
+    );
+  };
+
+  const renderTextAvailableVoucher = () => {
+    return (
+      <Text
+        style={{
+          width: '100%',
+          textAlign: 'left',
+          fontSize: 12,
+          fontWeight: '400',
+        }}>
+        Available Voucher
+      </Text>
+    );
   };
 
   return (
     <ScrollView style={styles.container}>
       <View style={styles.viewHeader}>
-        {renderPointBar()}
-        <Text style={{marginVertical: 18, width: '100%', textAlign: 'left'}}>
-          Rewards
-        </Text>
-        {renderRewardList()}
+        <View style={{marginTop: '5%'}} />
+        {renderPointHeader()}
+        <View style={{marginTop: '5%'}} />
+        {renderTextPointAndHistory()}
+        <View style={{marginTop: '5%'}} />
+        <View style={styles.divider} />
+        <View style={{marginTop: '5%'}} />
+        {renderTextAvailableVoucher()}
+        <View style={{marginTop: '5%'}} />
+        <VoucherList />
       </View>
     </ScrollView>
   );

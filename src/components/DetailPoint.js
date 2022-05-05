@@ -249,12 +249,12 @@ class DetailPoint extends Component {
               <View style={styles.line} />
               <Text style={styles.textPoint}>
                 {this.props.totalPoint}{' '}
-                <Text style={{fontSize: 23}}> {campign.name}</Text>
+                {/* <Text style={{fontSize: 23}}> {campign.name}</Text> */}
               </Text>
             </LinearGradient>
 
             <View style={styles.mainPanel}>
-              <Text style={styles.subTitle}>{campign.campaignDesc}</Text>
+              {/* <Text style={styles.subTitle}>{campign.campaignDesc}</Text> */}
               <View style={[styles.panel, {paddingTop: 5}]}>
                 <View style={styles.panelNoBorder}>
                   {!isEmptyArray(history) && (
@@ -278,7 +278,7 @@ class DetailPoint extends Component {
                     </View>
                   )}
                 </View>
-                <TouchableOpacity
+                {/* <TouchableOpacity
                   onPress={() => Actions.rewards()}
                   style={{
                     marginTop: 40,
@@ -309,7 +309,7 @@ class DetailPoint extends Component {
                     }
                     style={{color: colorConfig.store.secondaryColor}}
                   />
-                </TouchableOpacity>
+                </TouchableOpacity> */}
               </View>
             </View>
             <View
@@ -581,7 +581,8 @@ const styles = StyleSheet.create({
   },
   activeLeft: {
     width: '50%',
-    backgroundColor: colorConfig.store.secondaryColor,
+    // backgroundColor: colorConfig.store.secondaryColor,
+    backgroundColor: colorConfig.primaryColor,
     justifyContent: 'center',
     alignItems: 'center',
     padding: 7,

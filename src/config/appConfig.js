@@ -39,6 +39,8 @@ const appConfig = {
   editProfile: require('../assets/img/editProfile.png'),
   star: require('../assets/img/star.png'),
   warning: require('../assets/img/warning.png'),
+  funtoastCoffeeIcon: require('../assets/img/funtoastCoffeeIcon.png'),
+  funtoastRedeemed: require('../assets/img/FuntoastRedeemed.png'),
 };
 
 export default appConfig;
