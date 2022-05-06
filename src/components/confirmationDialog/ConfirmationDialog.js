@@ -66,7 +66,7 @@ const ConfirmationDialog = ({
             <TouchableOpacity
               style={styles.touchableClose}
               onPress={handleClose}>
-              <Text style={styles.textClose}>cancel</Text>
+              <Text style={styles.textClose}>Cancel</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.touchableSubmit}

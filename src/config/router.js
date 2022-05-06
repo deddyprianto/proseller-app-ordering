@@ -352,7 +352,7 @@ export default class Routes extends Component {
             {/* //martin */}
             <Scene key="eStore" component={EStore} />
             <Scene key="eCard" component={ECard} />
-            <Scene key="onBoarding" component={OnBoarding} initial={true} />
+            <Scene key="onBoarding" component={OnBoarding} />
             <Scene key="register" component={Register} />
             <Scene key="registerForm" component={RegisterForm} />
             <Scene key="otp" component={OTP} />
@@ -363,7 +363,7 @@ export default class Routes extends Component {
             {/* <Scene key="product" component={Products} /> */}
             {/* <Scene key="product2" component={Products2} /> */}
             <Scene key="productDetail" component={ProductDetail} />
-            <Scene key="cart" component={Cart} />
+            <Scene key="cart" component={Cart} initial={true} />
             <Scene key="redeem" component={Redeem} />
             <Scene key="myFavoriteOutlets" component={MyFavoriteOutlets} />
             <Scene key="favoriteOutlets" component={FavoriteOutlets} />

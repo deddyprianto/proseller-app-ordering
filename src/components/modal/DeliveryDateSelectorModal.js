@@ -1,8 +1,11 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Text, TouchableOpacity, View} from 'react-native';
 import {Dialog, Portal, Provider} from 'react-native-paper';
 import colorConfig from '../../config/colorConfig';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
+import CalenderModal from './CalenderModal';
+import moment from 'moment';
+import {isEmptyObject} from '../../helper/CheckEmpty';
 
 const styles = {
   root: {
@@ -54,6 +57,37 @@ const styles = {
     color: 'white',
     fontSize: 12,
   },
+  textChooseDeliveryDate: {
+    fontSize: 12,
+  },
+  textSeeMore: {
+    fontSize: 12,
+    color: colorConfig.primaryColor,
+    textDecorationLine: 'underline',
+  },
+  textDeliveryTime: {
+    fontSize: 12,
+    fontWeight: '400',
+  },
+  viewSeeMore: {
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 22,
+  },
+  viewDeliveryTime: {
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingVertical: 11,
+    paddingHorizontal: 16,
+    borderColor: '#B7B7B7',
+  },
   touchableItem: {
     width: 53,
     borderWidth: 1,
@@ -81,6 +115,11 @@ const styles = {
     alignItems: 'center',
     borderRadius: 8,
   },
+  iconCaretDown: {
+    width: 14,
+    height: 14,
+    color: colorConfig.primaryColor,
+  },
   circle: {
     width: 26,
     height: 26,
@@ -97,9 +136,42 @@ const styles = {
 };
 
 const DeliveryDateSelectorModal = ({open, handleClose}) => {
+  const [dates, setDates] = useState([]);
+  const [selectedDate, setSelectedDate] = useState('');
   const [selected, setSelected] = useState({});
+  const [seeMore, setSeeMore] = useState(false);
 
-  const tests = [{id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}];
+  useEffect(() => {
+    if (selectedDate) {
+      const item = selectedDate.split(' ');
+      const date = item[1];
+      const month = item[2];
+      const year = item[3];
+
+      const test = moment()
+        .date(date)
+        .month(month)
+        .year(year)
+        .subtract(1, 'day');
+
+      const result = Array(5)
+        .fill(0)
+        .map(() => {
+          const a = test.add(1, 'day').format('ddd DD MMMM');
+          return a;
+        });
+
+      setDates(result);
+    }
+  }, [selectedDate]);
+
+  const handleOpenCalender = () => {
+    setSeeMore(true);
+  };
+
+  const handleCloseCalender = () => {
+    setSeeMore(false);
+  };
 
   const renderHeader = () => {
     return (
@@ -110,7 +182,13 @@ const DeliveryDateSelectorModal = ({open, handleClose}) => {
   };
 
   const renderDeliveryDateItem = item => {
-    const active = selected?.id === item?.id;
+    const itemDate = item.split(' ');
+
+    const day = itemDate[0];
+    const date = itemDate[1];
+    const month = itemDate[2];
+
+    const active = selected === item;
     const styleItem = active
       ? styles.touchableItemSelected
       : styles.touchableItem;
@@ -124,20 +202,18 @@ const DeliveryDateSelectorModal = ({open, handleClose}) => {
         onPress={() => {
           setSelected(item);
         }}>
-        <Text style={styleDay}>Today</Text>
+        <Text style={styleDay}>{day}</Text>
         <View style={styles.circle}>
-          <Text style={styleDate}>10</Text>
+          <Text style={styleDate}>{date}</Text>
         </View>
-        <Text style={styleMonth}>MAR</Text>
+        <Text style={styleMonth}>{month}</Text>
       </TouchableOpacity>
     );
   };
 
   const renderDeliveryDate = () => {
-    const result = tests.map((test, index) => {
-      if (index < 5) {
-        return renderDeliveryDateItem(test);
-      }
+    const result = dates.map((test, index) => {
+      return renderDeliveryDateItem(test);
     });
 
     return <View style={styles.body}>{result}</View>;
@@ -145,23 +221,14 @@ const DeliveryDateSelectorModal = ({open, handleClose}) => {
 
   const renderSeeMore = () => {
     return (
-      <View
-        style={{
-          width: '100%',
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          paddingHorizontal: 22,
-        }}>
-        <Text style={{fontSize: 12}}>Choose Delivery Date</Text>
-        <Text
-          style={{
-            fontSize: 12,
-            color: colorConfig.primaryColor,
-            textDecorationLine: 'underline',
+      <View style={styles.viewSeeMore}>
+        <Text style={styles.textChooseDeliveryDate}>Choose Delivery Date</Text>
+        <TouchableOpacity
+          onPress={() => {
+            handleOpenCalender();
           }}>
-          See More
-        </Text>
+          <Text style={styles.textSeeMore}>See More</Text>
+        </TouchableOpacity>
       </View>
     );
   };
@@ -178,24 +245,9 @@ const DeliveryDateSelectorModal = ({open, handleClose}) => {
 
   const renderDeliveryTime = () => {
     return (
-      <View
-        style={{
-          width: '100%',
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          borderWidth: 1,
-          borderRadius: 8,
-          paddingVertical: 11,
-          paddingHorizontal: 16,
-          borderColor: '#B7B7B7',
-        }}>
-        <Text style={{fontSize: 12, fontWeight: '400'}}>Delivery Time</Text>
-        <IconAntDesign
-          style={{width: 14, height: 14, color: colorConfig.primaryColor}}
-          name="caretdown"
-        />
+      <View style={styles.viewDeliveryTime}>
+        <Text style={styles.textDeliveryTime}>Delivery Time</Text>
+        <IconAntDesign style={styles.iconCaretDown} name="caretdown" />
       </View>
     );
   };
@@ -218,6 +270,21 @@ const DeliveryDateSelectorModal = ({open, handleClose}) => {
     );
   };
 
+  const renderCalender = () => {
+    return (
+      <CalenderModal
+        open={seeMore}
+        handleClose={() => {
+          handleCloseCalender();
+        }}
+        handleOnChange={value => {
+          console.log('ROY', value);
+          setSelectedDate(value);
+        }}
+      />
+    );
+  };
+
   return (
     <Provider>
       <Portal>
@@ -230,6 +297,7 @@ const DeliveryDateSelectorModal = ({open, handleClose}) => {
           {renderFooter()}
           <View style={{marginTop: 16}} />
         </Dialog>
+        {renderCalender()}
       </Portal>
     </Provider>
   );

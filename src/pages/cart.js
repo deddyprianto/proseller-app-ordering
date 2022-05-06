@@ -153,7 +153,7 @@ const styles = StyleSheet.create({
 const Cart = () => {
   const [seeDetail, setSeeDetail] = useState(true);
   const [openOrderingTypeModal, setOpenOrderingTypeModal] = useState(false);
-  const [openDeliveryDateModal, setOpenDeliveryDateModal] = useState(false);
+  const [openDeliveryDateModal, setOpenDeliveryDateModal] = useState(true);
   const [openDeliveryProviderModal, setOpenDeliveryProviderModal] = useState(
     false,
   );
