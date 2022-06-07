@@ -1,5 +1,7 @@
-import React, {useState, useRef} from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, {useState, useRef, useEffect} from 'react';
 import {Actions} from 'react-native-router-flux';
+import {useDispatch} from 'react-redux';
 
 import {
   StyleSheet,
@@ -14,6 +16,10 @@ import {
 import appConfig from '../config/appConfig';
 
 import colorConfig from '../config/colorConfig';
+import {sendOTP, loginUser} from '../actions/auth.actions';
+import LoadingScreen from '../components/loadingScreen';
+import {showSnackbar} from '../actions/setting.action';
+import moment from 'moment';
 
 const styles = StyleSheet.create({
   container: {
@@ -65,16 +71,86 @@ const styles = StyleSheet.create({
     color: colorConfig.primaryColor,
     textDecorationLine: 'underline',
   },
-  textBold: {fontWeight: 'bold'},
+  textSendOtpDisabled: {
+    width: '100%',
+    textAlign: 'center',
+    color: '#B7B7B7',
+    textDecorationLine: 'underline',
+  },
+  textBold: {
+    fontWeight: 'bold',
+  },
 });
 
 const OTP = ({isLogin, method, methodValue}) => {
+  const dispatch = useDispatch();
+
+  const [sendCounter, setSendCounter] = useState(0);
+  const [minutes, setMinutes] = useState(0);
+  const [seconds, setSeconds] = useState(0);
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [otp, setOtp] = useState([]);
+
   const ref = {
     otp1: useRef(),
     otp2: useRef(),
     otp3: useRef(),
     otp4: useRef(),
   };
+
+  const handleLogin = async () => {
+    let value = {};
+    const otpFormatted = otp.join('');
+    if (method === 'email') {
+      value.email = methodValue;
+    } else {
+      value.phoneNumber = methodValue;
+    }
+
+    value.codeOTP = otpFormatted;
+
+    const response = await dispatch(loginUser(value));
+    if (response?.statusCustomer) {
+      Actions.pageIndex();
+    } else {
+      const message = response?.message || 'Failed';
+
+      await dispatch(showSnackbar({message}));
+    }
+  };
+
+  const countdown = () => {
+    let second = 59;
+    let minute = sendCounter >= 2 ? 4 : 0;
+    setSeconds(second);
+    setMinutes(minute);
+    const result = setInterval(() => {
+      second = second - 1;
+      setSeconds(second);
+      if (second === 0) {
+        if (!minute && !second) {
+          clearInterval(result);
+        } else {
+          second = 60;
+          minute = minute - 1;
+          setMinutes(minute);
+        }
+      }
+    }, 2000);
+  };
+
+  useEffect(() => {
+    const loadData = async () => {
+      if (otp[3]) {
+        setIsLoading(true);
+        await handleLogin();
+        setIsLoading(false);
+      }
+    };
+
+    loadData();
+  }, [otp]);
 
   const renderImages = () => {
     return (
@@ -97,16 +173,30 @@ const OTP = ({isLogin, method, methodValue}) => {
     return <Text style={styles.textHeader}>{text}</Text>;
   };
 
-  const renderButtonNext = () => {
+  const renderTextVerify = () => {
+    const text = method === 'email' ? 'email' : 'number';
+
     return (
-      <TouchableOpacity
-        style={styles.touchableNext}
-        onPress={() => {
-          Actions.pageIndex();
-        }}>
-        <Text style={styles.textNext}>Next</Text>
-      </TouchableOpacity>
+      <Text style={styles.textVerify}>
+        We sent an OTP code to verify your {text} at
+        <Text style={styles.textBold}> {methodValue}</Text>
+      </Text>
     );
+  };
+
+  const handleInputOtp = (value, index) => {
+    const arrayLength = Array.from(Array(4)).length;
+
+    let results = [...otp];
+    results[index] = value;
+    setOtp(results);
+    if (index !== 0 && !value) {
+      return ref[`otp${index - 1}`].focus();
+    }
+
+    if (arrayLength - 1 !== index && value) {
+      return ref[`otp${index + 1}`].focus();
+    }
   };
 
   const renderTextInput = ({inputRef, autoFocus, onChangeText}) => {
@@ -120,18 +210,6 @@ const OTP = ({isLogin, method, methodValue}) => {
         onChangeText={onChangeText}
       />
     );
-  };
-
-  const handleInputOtp = (value, index) => {
-    const arrayLength = Array.from(Array(4)).length;
-
-    if (index !== 0 && !value) {
-      return ref[`otp${index - 1}`].focus();
-    }
-
-    if (arrayLength - 1 !== index && value) {
-      return ref[`otp${index + 1}`].focus();
-    }
   };
 
   const renderInputOtp = () => {
@@ -150,27 +228,56 @@ const OTP = ({isLogin, method, methodValue}) => {
     return <View style={styles.viewInputOtp}>{result}</View>;
   };
 
-  const renderSendOTP = () => {
+  const handleResendOtp = async () => {
+    let value = {};
+
+    if (method === 'email') {
+      value.email = methodValue;
+    } else {
+      value.phoneNumber = methodValue;
+    }
+    setSendCounter(sendCounter + 1);
+    setIsLoading(true);
+    await countdown();
+    await dispatch(sendOTP(value));
+    setIsLoading(false);
+  };
+
+  const renderResendOTP = () => {
+    const disabled = minutes || seconds;
+    const time = moment(`${minutes}:${seconds}`, 'mm:ss').format('mm:ss');
+    const text = disabled ? `Resend OTP after ${time}` : 'Resend OTP';
+
+    const styleText = disabled
+      ? styles.textSendOtpDisabled
+      : styles.textSendOtp;
+
     return (
-      <TouchableOpacity>
-        <Text style={styles.textSendOtp}>Resend OTP</Text>
+      <TouchableOpacity
+        disabled={disabled}
+        onPress={() => {
+          handleResendOtp();
+        }}>
+        <Text style={styleText}>{text}</Text>
       </TouchableOpacity>
     );
   };
 
-  const renderTextVerify = () => {
-    const text = method === 'email' ? 'email' : 'number';
-
+  const renderButtonNext = () => {
     return (
-      <Text style={styles.textVerify}>
-        We sent an OTP code to verify your {text} at
-        <Text style={styles.textBold}> {methodValue}</Text>
-      </Text>
+      <TouchableOpacity
+        disabled={isLoading}
+        style={styles.touchableNext}
+        onPress={() => {
+          handleLogin();
+        }}>
+        <Text style={styles.textNext}>Next</Text>
+      </TouchableOpacity>
     );
   };
-
   return (
     <ScrollView>
+      <LoadingScreen loading={isLoading} />
       <View style={styles.container}>
         <View style={{marginTop: '25%'}} />
         {renderImages()}
@@ -181,7 +288,7 @@ const OTP = ({isLogin, method, methodValue}) => {
         <View style={{marginTop: '15%'}} />
         {renderInputOtp()}
         <View style={{marginTop: '15%'}} />
-        {renderSendOTP()}
+        {renderResendOTP()}
         <View style={{marginTop: '10%'}} />
         {renderButtonNext()}
       </View>

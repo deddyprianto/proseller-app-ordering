@@ -129,41 +129,43 @@ export const getUserProfile = () => {
       // console.log('response get profile', deviceID);
 
       // check if user already logged in on another device
-      try {
-        if (
-          response.responseBody.Data &&
-          !isEmptyArray(response.responseBody.Data[0].player_ids)
-        ) {
-          if (deviceID !== undefined && deviceID !== null) {
-            const find = response.responseBody.Data[0].player_ids.find(
-              item => item === deviceID,
-            );
-            if (find === undefined) {
-              Alert.alert(
-                'Your session has ended...',
-                'Looks like your account is already logged in on another device, we will end the session on this device.',
-                [
-                  {
-                    text: 'Got it!',
-                    onPress: () => {
-                      dispatch({
-                        type: 'USER_LOGGED_OUT_SUCCESS',
-                      });
+      // try {
+      //   if (
+      //     response.responseBody.Data &&
+      //     !isEmptyArray(response.responseBody.Data[0].player_ids)
+      //   ) {
+      //     if (deviceID !== undefined && deviceID !== null) {
+      //       console.log('ANJRTIT', response.responseBody.Data[0].player_ids);
+      //       console.log('ANJRIT 2', deviceID);
+      //       const find = response.responseBody.Data[0].player_ids.find(
+      //         item => item === deviceID,
+      //       );
+      //       if (find === undefined) {
+      //         Alert.alert(
+      //           'Your session has ended...',
+      //           'Looks like your account is already logged in on another device, we will end the session on this device.',
+      //           [
+      //             {
+      //               text: 'Got it!',
+      //               onPress: () => {
+      //                 dispatch({
+      //                   type: 'USER_LOGGED_OUT_SUCCESS',
+      //                 });
 
-                      // remove default account
-                      dispatch({
-                        type: 'GET_USER_DEFAULT_ACCOUNT',
-                        defaultAccount: {},
-                      });
-                    },
-                  },
-                ],
-                {cancelable: false},
-              );
-            }
-          }
-        }
-      } catch (e) {}
+      //                 // remove default account
+      //                 dispatch({
+      //                   type: 'GET_USER_DEFAULT_ACCOUNT',
+      //                   defaultAccount: {},
+      //                 });
+      //               },
+      //             },
+      //           ],
+      //           {cancelable: false},
+      //         );
+      //       }
+      //     }
+      //   }
+      // } catch (e) {}
 
       // encrypt user data before save to asyncstorage
       let dataUser = CryptoJS.AES.encrypt(

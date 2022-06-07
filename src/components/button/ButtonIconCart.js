@@ -1,10 +1,13 @@
 import React, {Component} from 'react';
+import {useSelector} from 'react-redux';
 import {Text, TouchableOpacity, View} from 'react-native';
 import {Actions} from 'react-native-router-flux';
 import colorConfig from '../../config/colorConfig';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
 
 const ButtonCartIcon = ({...props}) => {
+  const basket = useSelector(state => state.orderReducer?.dataBasket?.product);
+
   const getCountProducts = () => {
     try {
       const {dataBasket, outletID} = props;
@@ -31,7 +34,7 @@ const ButtonCartIcon = ({...props}) => {
         marginTop: 5,
         justifyContent: 'center',
       }}
-      onPress={() => Actions.cart()}>
+      onPress={() => Actions.cart({myCart: basket})}>
       <IconAntDesign
         name="shoppingcart"
         style={{fontSize: 30, color: colorConfig.store.defaultColor}}

@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import {useSelector, useDispatch} from 'react-redux';
 
 import {
   StyleSheet,
@@ -14,6 +15,11 @@ import colorConfig from '../config/colorConfig';
 import VoucherItem from '../components/voucherList/components/VoucherListItem';
 import ConfirmationDialog from '../components/confirmationDialog';
 import appConfig from '../config/appConfig';
+import Header from '../components/layout/header';
+import moment from 'moment';
+import {redeemVoucher} from '../actions/rewards.action';
+import LoadingScreen from '../components/loadingScreen';
+import {showSnackbar} from '../actions/setting.action';
 
 const styles = StyleSheet.create({
   container: {
@@ -21,9 +27,13 @@ const styles = StyleSheet.create({
     display: 'flex',
     paddingHorizontal: 20,
   },
-  body: {height: '90%'},
+  root: {
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+  },
   footer: {
-    height: '10%',
     borderTopWidth: 0.2,
     borderTopColor: 'grey',
     padding: 16,
@@ -77,6 +87,14 @@ const styles = StyleSheet.create({
     backgroundColor: colorConfig.primaryColor,
     borderRadius: 8,
   },
+  touchableRedeemButtonDisabled: {
+    width: '100%',
+    paddingVertical: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#B7B7B7',
+    borderRadius: 8,
+  },
   touchableImage: {
     position: 'absolute',
     width: '100%',
@@ -108,9 +126,43 @@ const styles = StyleSheet.create({
   },
 });
 
-const VoucherDetail = () => {
+const VoucherDetail = ({voucher}) => {
+  const dispatch = useDispatch();
   const [openModal, setOpenModal] = useState(false);
   const [openSuccessModal, setOpenSuccessModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const totalPoint = useSelector(
+    state => state.rewardsReducer?.dataPoint?.totalPoint,
+  );
+
+  const pendingPoint = useSelector(
+    state => state.rewardsReducer?.dataPoint.pendingPoints,
+  );
+
+  const handleOpenSuccessModal = () => {
+    setOpenModal(false);
+    setOpenSuccessModal(true);
+  };
+
+  const handleRedeem = async () => {
+    const payload = {
+      voucher: {
+        id: voucher.id,
+      },
+      qty: 1,
+    };
+
+    setIsLoading(true);
+    const response = await dispatch(redeemVoucher(payload));
+    if (response?.success) {
+      handleOpenSuccessModal();
+    } else {
+      const message = response?.message || 'Redeem failed';
+      await dispatch(showSnackbar({message}));
+    }
+
+    setIsLoading(false);
+  };
 
   const handleOpenModal = () => {
     setOpenModal(true);
@@ -118,55 +170,18 @@ const VoucherDetail = () => {
   const handleCloseModal = () => {
     setOpenModal(false);
   };
-  const handleOpenSuccessModal = () => {
-    setOpenModal(false);
-    setOpenSuccessModal(true);
-  };
   const handleCloseSuccessModal = () => {
     setOpenSuccessModal(false);
   };
 
-  const categories = [
-    {
-      name: 'martin',
-      image:
-        'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-    },
-    {
-      name: 'test',
-      image:
-        'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-    },
-    {
-      name: 'anjay',
-      image:
-        'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-    },
-    {
-      name: 'martin',
-      image:
-        'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-    },
-    {
-      name: 'test',
-      image:
-        'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-    },
-    {
-      name: 'anjay',
-      image:
-        'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-    },
-  ];
-
   const renderValidity = () => {
+    const text = moment(voucher.expiryDate).format('ddd MMM DD YYYY hh:mm:ss');
+
     return (
       <View>
         <Text style={styles.textValidity}>Validity</Text>
         <View style={{marginTop: 8}} />
-        <Text style={styles.textValidityValueq}>
-          Mon Mar 06 2023 08:27:50 GMT+0700
-        </Text>
+        <Text style={styles.textValidityValue}>{text} UTC</Text>
       </View>
     );
   };
@@ -176,20 +191,20 @@ const VoucherDetail = () => {
       <View>
         <Text style={styles.textDescription}>Description</Text>
         <View style={{marginTop: 8}} />
-        <Text style={styles.textDescriptionValue}>
-          Laborum rerum hic iusto amet id nihil ratione iste. In iure aut quia
-          rerum laudantium quia placeat. Eligendi vel omnis placeat cum
-          suscipit. Perspiciatis eligendi deleniti similique aut. Et consequatur
-          nostrum hic voluptatibus in. Quasi hic doloremque maiores quo.
-        </Text>
+        <Text style={styles.textDescriptionValue}>{voucher.voucherDesc}</Text>
       </View>
     );
   };
 
   const renderRedeemButton = () => {
+    const disabled = totalPoint < voucher?.redeemValue;
+    const styleButton = disabled
+      ? styles.touchableRedeemButtonDisabled
+      : styles.touchableRedeemButton;
     return (
       <TouchableOpacity
-        style={styles.touchableRedeemButton}
+        disabled={disabled}
+        style={styleButton}
         onPress={() => {
           handleOpenModal();
         }}>
@@ -216,7 +231,7 @@ const VoucherDetail = () => {
     return (
       <View style={styles.viewInfoPointValue}>
         <Text style={styles.textInfoPointTitle}>Your current point:</Text>
-        <Text style={styles.textInfoPointValue}>55 Points</Text>
+        <Text style={styles.textInfoPointValue}>{totalPoint} Points</Text>
       </View>
     );
   };
@@ -225,7 +240,9 @@ const VoucherDetail = () => {
     return (
       <View style={styles.viewInfoPointValue}>
         <Text style={styles.textInfoPointTitle}>Point will be reduced: </Text>
-        <Text style={styles.textInfoPointValue}>10 Points</Text>
+        <Text style={styles.textInfoPointValue}>
+          {voucher?.redeemValue} Points
+        </Text>
       </View>
     );
   };
@@ -241,53 +258,67 @@ const VoucherDetail = () => {
   };
 
   const renderBlockedPoint = () => {
-    return (
-      <View style={styles.viewPointLocked}>
-        <Text style={styles.textPointLocked}>you point is locked</Text>
-      </View>
-    );
+    if (pendingPoint) {
+      return (
+        <View style={styles.viewPointLocked}>
+          <Text style={styles.textPointLocked}>
+            Your {pendingPoint} points is locked because your order has not been
+            completed.
+          </Text>
+        </View>
+      );
+    }
   };
 
   const renderConfirmationDialog = () => {
-    return (
-      <ConfirmationDialog
-        open={openModal}
-        handleClose={() => {
-          handleCloseModal();
-        }}
-        handleSubmit={() => {
-          handleOpenSuccessModal();
-        }}
-        textTitle="Redeem Voucher"
-        textDescription="This will spend your points by 10 points"
-        textSubmit="Redeem"
-      />
-    );
+    if (openModal) {
+      return (
+        <ConfirmationDialog
+          open={openModal}
+          handleClose={() => {
+            handleCloseModal();
+          }}
+          handleSubmit={() => {
+            handleRedeem();
+          }}
+          isLoading={isLoading}
+          textTitle="Redeem Voucher"
+          textDescription={`This will spend your points by ${
+            voucher?.redeemValue
+          } points`}
+          textSubmit="Redeem"
+        />
+      );
+    }
   };
 
   return (
-    <View>
-      <ScrollView style={styles.body}>
-        <View style={styles.backgroundColorHeader} />
+    <>
+      <View style={styles.root}>
+        <LoadingScreen loading={isLoading} />
+        <Header title="Voucher Details" />
+        <ScrollView>
+          <View style={styles.backgroundColorHeader} />
 
-        <View style={styles.container}>
-          <View style={{marginTop: '5%'}} />
-          <VoucherItem voucher={categories[0]} />
-          <View style={{marginTop: '2%'}} />
-          {renderInfoPoint()}
-          <View style={{marginTop: '5%'}} />
-          {renderValidity()}
-          <View style={{marginTop: '5%'}} />
-          {renderDescription()}
-          <View style={{marginTop: '5%'}} />
-          {renderBlockedPoint()}
-        </View>
-      </ScrollView>
+          <View style={styles.container}>
+            <View style={{marginTop: '5%'}} />
+            <VoucherItem voucher={voucher} />
+            <View style={{marginTop: '2%'}} />
+            {renderInfoPoint()}
+            <View style={{marginTop: '5%'}} />
+            {renderValidity()}
+            <View style={{marginTop: '5%'}} />
+            {renderDescription()}
+            <View style={{marginTop: '5%'}} />
+            {renderBlockedPoint()}
+          </View>
+        </ScrollView>
 
-      <View style={styles.footer}>{renderRedeemButton()}</View>
-      {renderImageRedeemSuccess()}
+        <View style={styles.footer}>{renderRedeemButton()}</View>
+      </View>
       {renderConfirmationDialog()}
-    </View>
+      {renderImageRedeemSuccess()}
+    </>
   );
 };
 

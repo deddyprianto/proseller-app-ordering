@@ -8,6 +8,7 @@ import {
   Text,
   Image,
   TouchableOpacity,
+  Dimensions,
 } from 'react-native';
 
 import appConfig from '../config/appConfig';
@@ -15,9 +16,18 @@ import colorConfig from '../config/colorConfig';
 import awsConfig from '../config/awsConfig';
 
 import FieldTextInput from '../components/fieldTextInput';
+import FieldPhoneNumberInput from '../components/fieldPhoneNumberInput';
+import {ScrollView} from 'react-navigation';
+import {useDispatch} from 'react-redux';
+import {checkAccountExist} from '../actions/auth.actions';
+import {showSnackbar} from '../actions/setting.action';
+import LoadingScreen from '../components/loadingScreen';
+
+const HEIGHT = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
   container: {
+    height: HEIGHT,
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 48,
@@ -57,14 +67,49 @@ const styles = StyleSheet.create({
 });
 
 const Register = () => {
+  const dispatch = useDispatch();
   const [countryCode, setCountryCode] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [email, setEmail] = useState('');
   const [registerMethod, setRegisterMethod] = useState('email');
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     setCountryCode(awsConfig.phoneNumberCode);
   }, []);
+
+  const handleCheckAccount = async () => {
+    let payload = {};
+    let value = '';
+
+    if (registerMethod === 'email') {
+      payload.email = email;
+      value = email;
+    } else {
+      payload.phoneNumber = countryCode + phoneNumber;
+      value = countryCode + phoneNumber;
+    }
+
+    setIsLoading(true);
+    const response = await dispatch(checkAccountExist(payload));
+
+    if (response?.status) {
+      const message =
+        registerMethod === 'email'
+          ? 'Email already exist'
+          : 'Mobile Number already exist';
+
+      dispatch(
+        showSnackbar({
+          message,
+        }),
+      );
+    } else {
+      Actions.registerForm({registerMethod, inputValue: value});
+    }
+
+    setIsLoading(false);
+  };
 
   const renderImages = () => {
     return (
@@ -78,7 +123,7 @@ const Register = () => {
 
   const renderPhoneNumberRegisterInput = () => {
     return (
-      <FieldTextInput
+      <FieldPhoneNumberInput
         type="phone"
         label="Enter mobile number to begin :"
         value={phoneNumber}
@@ -96,6 +141,7 @@ const Register = () => {
     return (
       <FieldTextInput
         label="Enter email to begin :"
+        placeholder="Enter email to begin"
         value={email}
         onChange={value => {
           setEmail(value);
@@ -113,23 +159,14 @@ const Register = () => {
   };
 
   const renderButtonNext = () => {
-    let active = false;
-    let value = '';
-
-    if (registerMethod === 'email') {
-      active = registerMethod === 'email' && email;
-      value = email;
-    } else {
-      active = registerMethod === 'phoneNumber' && phoneNumber;
-      value = countryCode + phoneNumber;
-    }
+    const active = phoneNumber || email;
 
     return (
       <TouchableOpacity
         disabled={!active}
         style={active ? styles.touchableNext : styles.touchableNextDisabled}
         onPress={() => {
-          Actions.registerForm({registerMethod, inputValue: value});
+          handleCheckAccount();
         }}>
         <Text style={styles.textNext}>Next</Text>
       </TouchableOpacity>
@@ -137,6 +174,8 @@ const Register = () => {
   };
 
   const handleChangeRegisterMethod = () => {
+    setEmail('');
+    setPhoneNumber('');
     if (registerMethod === 'email') {
       setRegisterMethod('phoneNumber');
     } else {
@@ -161,18 +200,21 @@ const Register = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={{marginTop: '25%'}} />
-      {renderImages()}
-      <View style={{marginTop: '10%'}} />
-      <Text style={styles.textCreateNewAccount}>Create a new account</Text>
-      <View style={{marginTop: '30%'}} />
-      {renderRegisterMethodInput()}
-      <View style={{marginTop: '10%'}} />
-      {renderButtonNext()}
-      <View style={{marginTop: '15%'}} />
-      {renderTextChangeMethod()}
-    </SafeAreaView>
+    <ScrollView>
+      <LoadingScreen loading={isLoading} />
+      <View style={styles.container}>
+        <View style={{marginTop: '25%'}} />
+        {renderImages()}
+        <View style={{marginTop: '10%'}} />
+        <Text style={styles.textCreateNewAccount}>Create a new account</Text>
+        <View style={{marginTop: '30%'}} />
+        {renderRegisterMethodInput()}
+        <View style={{marginTop: '10%'}} />
+        {renderButtonNext()}
+        <View style={{marginTop: '15%'}} />
+        {renderTextChangeMethod()}
+      </View>
+    </ScrollView>
   );
 };
 

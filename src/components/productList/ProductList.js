@@ -1,320 +1,90 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /**
  * Martin
  * martin@edgeworks.co.id
  * PT Edgeworks
  */
 
-import React, {useState, useRef} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
+import {StyleSheet, View, Text, FlatList, TouchableOpacity} from 'react-native';
 
-import {
-  StyleSheet,
-  View,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  Dimensions,
-} from 'react-native';
-import {Actions} from 'react-native-router-flux';
+import Product from './components/Product';
 
 import {isEmptyArray} from '../../helper/CheckEmpty';
 import colorConfig from '../../config/colorConfig';
-import Product from './components/Product';
-import ButtonViewBasket from '../../components/order/ButtonViewBasket';
-import {SafeAreaView} from 'react-navigation';
 
 const styles = StyleSheet.create({
+  textProductName: {fontWeight: 'bold'},
+  textCategoryName: {
+    width: 70,
+    fontSize: 12,
+    textAlign: 'center',
+    color: '#B7B7B7',
+  },
+  textCategoryNameSelected: {
+    width: 70,
+    fontSize: 12,
+    textAlign: 'center',
+    color: colorConfig.primaryColor,
+  },
   viewGroupProduct: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
     marginBottom: 40,
   },
+  touchableCategoryItem: {
+    width: 100,
+    justifyContent: 'center',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    padding: 15,
+  },
+  touchableCategoryItemSelected: {
+    width: 100,
+    justifyContent: 'center',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    padding: 15,
+    borderBottomColor: colorConfig.primaryColor,
+    borderBottomWidth: 1,
+  },
 });
 
-const HEIGHT = Dimensions.get('window').height;
-
-const ProductList = ({...props}) => {
+const ProductList = ({products, basket}) => {
   const categoryRef = useRef();
   const productRef = useRef();
   const [selectedCategory, setSelectedCategory] = useState({});
-  const [groupEGift, setGroupEGift] = useState([]);
 
-  useState(async () => {
-    const eGifts = [
-      {
-        id: 1,
-        category: 'Local Delight',
-        products: [
-          {
-            id: 1,
-            name: 'martin',
-            image:
-              'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-          },
-          {
-            id: 2,
-            name: 'test',
-            image:
-              'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-          },
-          {
-            id: 3,
-            name: 'anjay',
-            image:
-              'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-          },
-          {
-            id: 4,
-            name: 'martin',
-            image:
-              'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-          },
-          {
-            id: 5,
-            name: 'test',
-            image:
-              'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-          },
-        ],
-      },
-      {
-        id: 2,
-        category: 'Fun Toast',
-        products: [
-          {
-            id: 1,
-            name: 'martin',
-            image:
-              'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-          },
-        ],
-      },
-      {
-        id: 3,
-        category: 'Fun Meal',
-        products: [
-          {
-            id: 1,
-            name: 'martin',
-            image:
-              'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-          },
-          {
-            id: 2,
-            name: 'test',
-            image:
-              'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-          },
-          {
-            id: 3,
-            name: 'anjay',
-            image:
-              'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-          },
-        ],
-      },
-
-      {
-        id: 4,
-        category: 'Drinks',
-        products: [
-          {
-            id: 1,
-            name: 'martin',
-            image:
-              'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-          },
-          {
-            id: 2,
-            name: 'test',
-            image:
-              'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-          },
-          {
-            id: 3,
-            name: 'anjay',
-            image:
-              'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-          },
-        ],
-      },
-
-      {
-        id: 5,
-        category: 'coba',
-        products: [
-          {
-            id: 1,
-            name: 'martin',
-            image:
-              'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-          },
-          {
-            id: 2,
-            name: 'test',
-            image:
-              'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-          },
-          {
-            id: 3,
-            name: 'anjay',
-            image:
-              'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-          },
-        ],
-      },
-    ];
-
-    setGroupEGift(eGifts);
-    setSelectedCategory(eGifts[0]);
-  }, []);
-
-  const eGifts = [
-    {
-      id: 1,
-      category: 'Local Delight',
-      products: [
-        {
-          id: 1,
-          name: 'martin',
-          image:
-            'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-        },
-        {
-          id: 2,
-          name: 'test',
-          image:
-            'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-        },
-        {
-          id: 3,
-          name: 'anjay',
-          image:
-            'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-        },
-        {
-          id: 4,
-          name: 'martin',
-          image:
-            'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-        },
-        {
-          id: 5,
-          name: 'test',
-          image:
-            'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-        },
-      ],
-    },
-    {
-      id: 2,
-      category: 'Fun Toast',
-      products: [
-        {
-          id: 1,
-          name: 'martin',
-          image:
-            'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-        },
-      ],
-    },
-    {
-      id: 3,
-      category: 'Fun Meal',
-      products: [
-        {
-          id: 1,
-          name: 'martin',
-          image:
-            'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-        },
-        {
-          id: 2,
-          name: 'test',
-          image:
-            'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-        },
-        {
-          id: 3,
-          name: 'anjay',
-          image:
-            'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-        },
-      ],
-    },
-
-    {
-      id: 4,
-      category: 'Drinks',
-      products: [
-        {
-          id: 1,
-          name: 'martin',
-          image:
-            'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-        },
-        {
-          id: 2,
-          name: 'test',
-          image:
-            'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-        },
-        {
-          id: 3,
-          name: 'anjay',
-          image:
-            'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-        },
-      ],
-    },
-
-    {
-      id: 5,
-      category: 'coba',
-      products: [
-        {
-          id: 1,
-          name: 'martin',
-          image:
-            'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-        },
-        {
-          id: 2,
-          name: 'test',
-          image:
-            'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-        },
-        {
-          id: 3,
-          name: 'anjay',
-          image:
-            'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-        },
-      ],
-    },
-  ];
-
-  const renderCategorySelected = category => {
-    if (category.id === selectedCategory.id) {
-      return (
-        <View style={{height: 1, backgroundColor: colorConfig.primaryColor}} />
-      );
+  useEffect(() => {
+    if (!isEmptyArray(products)) {
+      setSelectedCategory(products[0]);
     }
-  };
+  }, [products, basket]);
 
-  const renderCategoryTabsItem = (items, index) => {
+  const renderCategoryTabsItem = (item, index) => {
+    const isSelected = item.id === selectedCategory.id;
+
+    const styleText = isSelected
+      ? styles.textCategoryNameSelected
+      : styles.textCategoryName;
+
+    const styleTouchable = isSelected
+      ? styles.touchableCategoryItemSelected
+      : styles.touchableCategoryItem;
+
     return (
       <TouchableOpacity
+        style={styleTouchable}
         onPress={() => {
-          setSelectedCategory(items);
+          setSelectedCategory(item);
           productRef.current.scrollToIndex({animated: true, index: index});
         }}>
-        <View style={{paddingRight: 10}}>
-          <Text style={{width: 100, textAlign: 'center'}}>
-            {items?.category}
-          </Text>
-          {renderCategorySelected(items)}
-        </View>
+        <Text style={styleText} numberOfLines={1}>
+          {item?.name}
+        </Text>
       </TouchableOpacity>
     );
   };
@@ -323,8 +93,9 @@ const ProductList = ({...props}) => {
     return (
       <FlatList
         ref={categoryRef}
-        data={groupEGift}
+        data={products}
         horizontal
+        style={{height: 'auto'}}
         showsHorizontalScrollIndicator={false}
         renderItem={({item, index}) => renderCategoryTabsItem(item, index)}
       />
@@ -340,42 +111,25 @@ const ProductList = ({...props}) => {
 
   const onViewableItemsChanged = ({viewableItems}) => {
     if (!isEmptyArray(viewableItems)) {
-      let index = viewableItems.length - 1;
-
-      if (viewableItems.length === 3) {
-        index = 1;
+      if (viewableItems.length === 1) {
+        return handleScrollProducts(viewableItems[0]);
+      } else {
+        return handleScrollProducts(viewableItems[1]);
       }
-
-      if (viewableItems.length === 2) {
-        if (eGifts.length - 1 === viewableItems[1].index) {
-          index = 1;
-        } else {
-          index = 0;
-        }
-      }
-
-      return handleScrollProducts(viewableItems[index]);
     }
   };
 
   const viewabilityConfigCallbackPairs = useRef([{onViewableItemsChanged}]);
 
-  const renderProductItem = (items, index) => {
+  const renderProductItem = (category, index) => {
+    const categoryProducts = category?.items?.map(item => {
+      return <Product product={item.product} basket={basket} />;
+    });
+
     return (
       <View key={index}>
-        <Text style={{fontWeight: 'bold'}}>{items?.category}</Text>
-        <View style={styles.viewGroupProduct}>
-          {items?.products?.map(item => {
-            return (
-              <TouchableOpacity
-                onPress={() => {
-                  Actions.productDetail({item});
-                }}>
-                <Product item={item} />
-              </TouchableOpacity>
-            );
-          })}
-        </View>
+        <Text style={styles.textProductName}>{category?.name}</Text>
+        <View style={styles.viewGroupProduct}>{categoryProducts}</View>
       </View>
     );
   };
@@ -384,10 +138,8 @@ const ProductList = ({...props}) => {
     return (
       <FlatList
         ref={productRef}
-        data={groupEGift}
-        style={{height: HEIGHT * 0.72}}
+        data={products}
         showsVerticalScrollIndicator={false}
-        // onScroll={viewabilityConfigCallbackPairs.current}
         viewabilityConfigCallbackPairs={viewabilityConfigCallbackPairs.current}
         renderItem={({item, index}) => renderProductItem(item, index)}
       />
@@ -395,12 +147,11 @@ const ProductList = ({...props}) => {
   };
 
   return (
-    <SafeAreaView>
+    <View style={{flex: 1}}>
       {renderCategoryTabs()}
       <View style={{marginTop: 10}} />
       {renderProducts()}
-      <ButtonViewBasket />
-    </SafeAreaView>
+    </View>
   );
 };
 

@@ -1,3 +1,4 @@
+import moment from 'moment';
 import React from 'react';
 
 import {StyleSheet, View, Text} from 'react-native';
@@ -22,12 +23,19 @@ const styles = StyleSheet.create({
   },
 });
 
-const PointHistoryListItem = ({voucher, qty, pointToRedeem}) => {
+const PointHistoryListItem = ({history, type}) => {
+  const dateFormatted = moment(history?.date).format(
+    'ddd MMM DD YYYY hh:mm:ss',
+  );
+  const point = history?.amount;
+
+  const textPoint = type === 'received' ? `+ ${point}` : `- ${point}`;
+
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Receive Points</Text>
-      <Text style={styles.textDate}>Fri Oct 17 2098 13:59:26 GMT+0700</Text>
-      <Text style={styles.textPoint}>+46</Text>
+      <Text style={styles.text}>{history?.text}</Text>
+      <Text style={styles.textDate}>{dateFormatted}</Text>
+      <Text style={styles.textPoint}>{textPoint}</Text>
     </View>
   );
 };

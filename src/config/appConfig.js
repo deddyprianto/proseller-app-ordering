@@ -30,19 +30,27 @@ const appConfig = {
   newSearch: require('../../assets/component/find-food.png'),
   productPlaceholder: require('../../assets/component/product-placeholder.png'),
 
-  funtoastEmptyDeliveryAddress: require('../assets/img/funtoast-empty-address.png'),
+  notes: require('../assets/img/notes.png'),
+
   test: require('../assets/img/test.png'),
-  funtoastQRCode: require('../assets/img/FuntoastQRCode.png'),
-  funtoastIcon: require('../assets/img/funtoastIcon.png'),
-  funtoastCoffee: require('../assets/img/funtoastCoffee.png'),
   termsAndConditions: require('../assets/img/termsAndConditions.png'),
   logout: require('../assets/img/logout.png'),
   notifications: require('../assets/img/notifications.png'),
   editProfile: require('../assets/img/editProfile.png'),
   star: require('../assets/img/star.png'),
   warning: require('../assets/img/warning.png'),
+
   funtoastCoffeeIcon: require('../assets/img/funtoastCoffeeIcon.png'),
   funtoastRedeemed: require('../assets/img/FuntoastRedeemed.png'),
+  funtoastTakeAway: require('../assets/img/FuntoastTakeAway.png'),
+  funtoastDelivery: require('../assets/img/FuntoastDelivery.png'),
+  funtoastPickUp: require('../assets/img/FuntoastPickUp.png'),
+  funtoastFavoriteOutlet: require('../assets/img/FuntoastFavoriteOutlet.png'),
+  funtoastStar: require('../assets/img/FuntoastStar.png'),
+  funtoastQRCode: require('../assets/img/FuntoastQRCode.png'),
+  funtoastIcon: require('../assets/img/funtoastIcon.png'),
+  funtoastCoffee: require('../assets/img/funtoastCoffee.png'),
+  funtoastEmptyDeliveryAddress: require('../assets/img/funtoast-empty-address.png'),
 };
 
 export default appConfig;

@@ -13,6 +13,41 @@ import AsyncStorage from '@react-native-community/async-storage';
 import {isEmptyArray} from '../helper/CheckEmpty';
 import {submitOfflineCart, clearNetsclickData} from './order.action';
 
+const encryptData = value => {
+  const result = CryptoJS.AES.encrypt(
+    value,
+    awsConfig.PRIVATE_KEY_RSA,
+  ).toString();
+
+  return result;
+};
+
+//valid
+export const checkAccountExist = payload => {
+  return async dispatch => {
+    try {
+      const response = await fetchApi(
+        '/customer/login/check-account',
+        'POST',
+        payload,
+        200,
+      );
+      console.log(response, 'response check account exist');
+      if (response.success) {
+        dispatch({
+          type: 'DATA_ACCOUNT_EXIST',
+          status: response.responseBody.Data.status,
+        });
+        return response.responseBody.Data;
+      } else {
+        throw response;
+      }
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
 export const notifikasi = (type, status, action) => {
   Alert.alert(type, status, [
     {
@@ -21,38 +56,6 @@ export const notifikasi = (type, status, action) => {
       style: 'ok',
     },
   ]);
-};
-
-export const createNewUser = payload => {
-  return async dispatch => {
-    try {
-      dispatch({
-        type: 'CREATE_USER_LOADING',
-      });
-      const response = await fetchApi(
-        '/customer/register',
-        'POST',
-        payload,
-        200,
-      );
-      console.log(response, 'response register');
-      if (response.success) {
-        dispatch({
-          type: 'CREAT_USER_SUCCESS',
-          dataRegister: payload,
-        });
-        return true;
-      } else {
-        return response.responseBody;
-      }
-    } catch (error) {
-      dispatch({
-        type: 'CREAT_USER_FAIL',
-        payload: error.responseBody,
-      });
-      return error;
-    }
-  };
 };
 
 export const createNewUserByPassword = payload => {
@@ -120,6 +123,74 @@ export const confirmUser = payload => {
   };
 };
 
+export const sendOTP = payload => {
+  return async (dispatch, getState) => {
+    try {
+      const state = getState();
+      // CHECK IF SETTING FOR OTP IS SEND BY WHATSAPP OR SMS
+      const {
+        orderReducer: {
+          orderingSetting: {orderingSetting},
+        },
+      } = state;
+
+      try {
+        if (payload?.phoneNumber) {
+          if (
+            orderingSetting !== undefined &&
+            !isEmptyArray(orderingSetting.settings)
+          ) {
+            const find = orderingSetting.settings.find(
+              item => item.settingKey === 'MobileOTP',
+            );
+
+            if (find !== undefined) {
+              if (find.settingValue === 'WHATSAPP') {
+                payload.sendBy = 'WhatsappOTP';
+              } else if (find.settingValue === 'SMS') {
+                payload.sendBy = 'SMSOTP';
+              }
+            }
+          }
+        }
+      } catch (e) {}
+
+      // Give sender name if exist
+      try {
+        if (
+          orderingSetting !== undefined &&
+          !isEmptyArray(orderingSetting.settings)
+        ) {
+          const find = orderingSetting.settings.find(
+            item => item.settingKey === 'senderName',
+          );
+
+          if (find !== undefined) {
+            payload.senderName = find.settingValue;
+          }
+        }
+      } catch (e) {}
+
+      const response = await fetchApi(
+        '/customer/login/send-otp',
+        'POST',
+        payload,
+        200,
+      );
+
+      console.log('response send otp', response);
+
+      if (response.success) {
+        return response.responseBody.Data;
+      } else {
+        throw response;
+      }
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
 export const loginUser = payload => {
   return async dispatch => {
     try {
@@ -129,21 +200,13 @@ export const loginUser = payload => {
       console.log(payload, 'payload login');
       const response = await fetchApi('/customer/login', 'POST', payload, 200);
 
-      if (response.responseBody.Data.accessToken != undefined) {
+      if (response.responseBody.Data.accessToken !== undefined) {
         let data = response.responseBody.Data;
+
         // encrypt data
-        let jwtToken = CryptoJS.AES.encrypt(
-          data.accessToken.jwtToken,
-          awsConfig.PRIVATE_KEY_RSA,
-        ).toString();
-        let qrcode = CryptoJS.AES.encrypt(
-          data.accessToken.qrcode,
-          awsConfig.PRIVATE_KEY_RSA,
-        ).toString();
-        let refreshToken = CryptoJS.AES.encrypt(
-          data.refreshToken.token,
-          awsConfig.PRIVATE_KEY_RSA,
-        ).toString();
+        let jwtToken = encryptData(data.accessToken.jwtToken);
+        let qrcode = encryptData(data.accessToken.qrcode);
+        let refreshToken = encryptData(data.refreshToken.token);
 
         // Save backup data refresh token
         try {
@@ -160,11 +223,13 @@ export const loginUser = payload => {
         dispatch({
           type: 'LOGIN_USER_SUCCESS',
         });
+
         dispatch({
           type: 'AUTH_USER_SUCCESS',
           qrcode: qrcode,
           exp: data.accessToken.payload.exp * 1000 - 2700000,
         });
+
         // Save Token User
         dispatch({
           type: 'TOKEN_USER',
@@ -173,18 +238,17 @@ export const loginUser = payload => {
         });
 
         // encrypt user data before save to asyncstorage
-        let dataUser = CryptoJS.AES.encrypt(
-          JSON.stringify(data.idToken.payload),
-          awsConfig.PRIVATE_KEY_RSA,
-        ).toString();
+        let dataUser = encryptData(JSON.stringify(data.idToken.payload));
 
         dispatch({
           type: 'GET_USER_SUCCESS',
           payload: dataUser,
         });
+
         console.log(response, 'response login user pool');
         return response.responseBody.Data;
       }
+
       return response.responseBody.Data;
     } catch (error) {
       dispatch({
@@ -195,7 +259,7 @@ export const loginUser = payload => {
     }
   };
 };
-
+//valid
 export const logoutUser = () => {
   return async (dispatch, getState) => {
     const state = getState();
@@ -362,6 +426,7 @@ export const loginOther = payload => {
       payload.type = 'identityPool';
       payload.username = payload.email;
       payload.tenantId = awsConfig.tenantId;
+
       response = await fetchApi('/customer/login', 'POST', payload, 200);
       // console.log(response, 'loginOther');
       dispatch({
@@ -384,10 +449,9 @@ export const loginOther = payload => {
           type: 'GET_USER_SUCCESS',
           payload: response.responseBody.idToken.payload,
         });
-        console.log('selesai');
       }
 
-      if (response.responseBody.message == 'Internal server error') {
+      if (response.responseBody.message === 'Internal server error') {
         response = await fetchApi('/customer/login', 'POST', payload, 200);
         dispatch({
           type: 'AUTH_USER_SUCCESS',
@@ -402,38 +466,15 @@ export const loginOther = payload => {
         });
         console.log('selesai');
       }
+
       payload.statusCustomer = response.responseBody.statusCustomer;
+
       return payload;
     } catch (error) {
       dispatch({
         type: 'LOGIN_USER_FAIL',
         payload: error.responseBody,
       });
-      return error;
-    }
-  };
-};
-
-export const checkAccountExist = payload => {
-  return async dispatch => {
-    try {
-      const response = await fetchApi(
-        '/customer/login/check-account',
-        'POST',
-        payload,
-        200,
-      );
-      console.log(response, 'response check account exist');
-      if (response.success) {
-        dispatch({
-          type: 'DATA_ACCOUNT_EXIST',
-          status: response.responseBody.Data.status,
-        });
-        return response.responseBody.Data;
-      } else {
-        throw response;
-      }
-    } catch (error) {
       return error;
     }
   };
@@ -447,71 +488,6 @@ export const sendOtpAttempts = attempt => {
         type: 'ATTEMPT_SEND_OTP',
         attempt: attempt,
       });
-    } catch (error) {
-      return error;
-    }
-  };
-};
-
-export const sendOTP = payload => {
-  return async (dispatch, getState) => {
-    try {
-      const state = getState();
-      // CHECK IF SETTING FOR OTP IS SEND BY WHATSAPP OR SMS
-      const {
-        orderReducer: {
-          orderingSetting: {orderingSetting},
-        },
-      } = state;
-      try {
-        if (payload.phoneNumber != undefined) {
-          if (
-            orderingSetting !== undefined &&
-            !isEmptyArray(orderingSetting.settings)
-          ) {
-            const find = orderingSetting.settings.find(
-              item => item.settingKey === 'MobileOTP',
-            );
-
-            if (find !== undefined) {
-              if (find.settingValue === 'WHATSAPP') {
-                payload.sendBy = 'WhatsappOTP';
-              } else if (find.settingValue === 'SMS') {
-                payload.sendBy = 'SMSOTP';
-              }
-            }
-          }
-        }
-      } catch (e) {}
-
-      // Give sender name if exist
-      try {
-        if (
-          orderingSetting !== undefined &&
-          !isEmptyArray(orderingSetting.settings)
-        ) {
-          const find = orderingSetting.settings.find(
-            item => item.settingKey === 'senderName',
-          );
-
-          if (find !== undefined) {
-            payload.senderName = find.settingValue;
-          }
-        }
-      } catch (e) {}
-
-      const response = await fetchApi(
-        '/customer/login/send-otp',
-        'POST',
-        payload,
-        200,
-      );
-      console.log(response, 'response send otp');
-      if (response.success) {
-        return response.responseBody.Data.status;
-      } else {
-        throw response;
-      }
     } catch (error) {
       return error;
     }
@@ -641,6 +617,40 @@ export const confirmForgotPassword = payload => {
       console.log(error);
       dispatch({
         type: 'SEND_CODE_FAIL',
+        payload: error.responseBody,
+      });
+      return error;
+    }
+  };
+};
+
+//martin
+export const createNewUser = payload => {
+  console.log('MARTIN PAYLOAD', payload);
+  return async dispatch => {
+    try {
+      dispatch({
+        type: 'CREATE_USER_LOADING',
+      });
+      const response = await fetchApi(
+        '/customer/register',
+        'POST',
+        payload,
+        200,
+      );
+      console.log(response, 'response register');
+      if (response.success) {
+        dispatch({
+          type: 'CREAT_USER_SUCCESS',
+          dataRegister: payload,
+        });
+        return true;
+      } else {
+        return response?.responseBody?.data;
+      }
+    } catch (error) {
+      dispatch({
+        type: 'CREAT_USER_FAIL',
         payload: error.responseBody,
       });
       return error;

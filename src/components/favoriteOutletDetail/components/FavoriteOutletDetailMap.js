@@ -27,11 +27,7 @@ const FavoriteOutletDetailMap = ({lat, long, title, description, style}) => {
         latitudeDelta,
         longitudeDelta,
       }}>
-      <Marker
-        coordinate={{latitude: latitude, longitude: longitude}}
-        title={'MARTIN'}
-        description={'MARTIN'}
-      />
+      <Marker coordinate={{latitude: latitude, longitude: longitude}} />
     </MapView>
   );
 };

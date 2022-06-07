@@ -139,3 +139,83 @@ export const getMandatoryFields = () => {
     }
   };
 };
+
+// martin
+
+export const myVouchers = () => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      // await dispatch(refreshToken());
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+      const response = await fetchApi(
+        '/customer/vouchers',
+        'GET',
+        false,
+        200,
+        token,
+      );
+      console.log(response, 'response myVouchers');
+      var dataVouchers = response.responseBody.Data;
+
+      try {
+        if (!isEmptyArray(dataVouchers)) {
+          for (let i = 0; i < dataVouchers.length; i++) {
+            if (
+              dataVouchers[i].expiryDate != undefined &&
+              dataVouchers[i].expiryDate != null
+            ) {
+              dataVouchers[i].uniqueID =
+                format(new Date(dataVouchers[i].expiryDate), 'dd MMM yyyy') +
+                ' ' +
+                dataVouchers[i].id;
+            } else {
+              dataVouchers[i].uniqueID = dataVouchers[i].id;
+            }
+          }
+        }
+      } catch (e) {}
+
+      dispatch({
+        type: 'DATA_MY_VOUCHERS',
+        data: dataVouchers,
+      });
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const myProgressBarCampaign = () => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      const response = await fetchApi(
+        '/customer-summary-info',
+        'GET',
+        false,
+        200,
+        token,
+      );
+
+      dispatch({
+        type: 'DATA_MY_PROGRESS_BAR_CAMPAIGN',
+        data: response.responseBody.data,
+      });
+
+      return response;
+    } catch (error) {
+      return error;
+    }
+  };
+};

@@ -5,11 +5,12 @@ import {StyleSheet, View, Text, TextInput} from 'react-native';
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    height: 56,
+    height: 45,
     borderWidth: 1,
     borderRadius: 8,
     justifyContent: 'center',
     paddingHorizontal: 16,
+    borderColor: '#00000061',
   },
   textLabel: {
     width: '100%',

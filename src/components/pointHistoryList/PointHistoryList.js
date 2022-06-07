@@ -1,6 +1,11 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 
 import {StyleSheet, View, TouchableOpacity, Text} from 'react-native';
+import {useDispatch, useSelector} from 'react-redux';
+import {
+  getReceivedPointActivity,
+  getUsedPointActivity,
+} from '../../actions/rewards.action';
 
 import colorConfig from '../../config/colorConfig';
 import PointHistoryListItem from './components/PointHistoryListItem';
@@ -47,39 +52,24 @@ const styles = StyleSheet.create({
 });
 
 const PointHistoryList = () => {
+  const dispatch = useDispatch();
+
+  const receivedPointHistories = useSelector(
+    state => state.rewardsReducer.pointHistories.receivedPoints,
+  );
+  const usedPointHistories = useSelector(
+    state => state.rewardsReducer.pointHistories.usedPoints,
+  );
+
+  useEffect(() => {
+    const loadData = async () => {
+      await dispatch(getReceivedPointActivity());
+      await dispatch(getUsedPointActivity());
+    };
+    loadData();
+  }, [dispatch]);
+
   const [filter, setFilter] = useState('received');
-  const categories = [
-    {
-      name: 'martin',
-      image:
-        'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-    },
-    {
-      name: 'test',
-      image:
-        'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-    },
-    {
-      name: 'anjay',
-      image:
-        'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-    },
-    {
-      name: 'martin',
-      image:
-        'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-    },
-    {
-      name: 'test',
-      image:
-        'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-    },
-    {
-      name: 'anjay',
-      image:
-        'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-    },
-  ];
 
   const handleChangePointsFilter = value => {
     setFilter(value);
@@ -137,8 +127,11 @@ const PointHistoryList = () => {
   };
 
   const renderPointList = () => {
-    const result = categories.map(category => {
-      return <PointHistoryListItem voucher={category} pointToRedeem="120" />;
+    const histories =
+      filter === 'received' ? receivedPointHistories : usedPointHistories;
+
+    const result = histories?.map(history => {
+      return <PointHistoryListItem history={history} type={filter} />;
     });
     return result;
   };

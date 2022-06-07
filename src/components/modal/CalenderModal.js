@@ -159,7 +159,12 @@ const styles = {
   },
 };
 
-const DeliveryDateSelectorModal = ({open, handleClose, handleOnChange}) => {
+const DeliveryDateSelectorModal = ({
+  open,
+  value,
+  handleClose,
+  handleOnChange,
+}) => {
   const [dates, setDates] = useState([]);
   const [months, setMonths] = useState([]);
 
@@ -169,7 +174,7 @@ const DeliveryDateSelectorModal = ({open, handleClose, handleOnChange}) => {
 
   const [isMonthSelector, setIsMonthSelector] = useState(false);
 
-  const tests = ['San', 'Mon', 'Tue', 'Wed', 'Tur', 'Fri', 'Sat'];
+  const days = ['San', 'Mon', 'Tue', 'Wed', 'Tur', 'Fri', 'Sat'];
 
   const getDates = () => {
     let calender = [];
@@ -206,19 +211,22 @@ const DeliveryDateSelectorModal = ({open, handleClose, handleOnChange}) => {
   };
 
   useEffect(() => {
-    const currentYear = moment().format('YYYY');
-    const currentMonth = moment().format('MMM');
+    const currentYear = moment(value).format('YYYY');
+    const currentMonth = moment(value).format('MMM');
+    const currentDate = Number(moment(value).format('DD'));
     const monthList = moment.months();
 
     setSelectedYear(currentYear);
     setSelectedMonth(currentMonth);
+    setSelectedDate(currentDate);
+
     setMonths(monthList);
-  }, []);
+  }, [value]);
 
   useEffect(() => {
     const currentDates = getDates();
     setDates(currentDates);
-  }, [selectedYear, selectedMonth]);
+  }, [value, selectedYear, selectedMonth]);
 
   const renderHeader = () => {
     return (
@@ -239,7 +247,7 @@ const DeliveryDateSelectorModal = ({open, handleClose, handleOnChange}) => {
   };
 
   const renderDeliveryDay = () => {
-    const result = tests.map(test => {
+    const result = days.map(test => {
       return renderDeliveryDayItem(test);
     });
 
@@ -250,36 +258,29 @@ const DeliveryDateSelectorModal = ({open, handleClose, handleOnChange}) => {
 
   const handleMonthSlider = direction => {
     if (direction === 'last') {
-      const a = moment()
+      const subtractResult = moment(value)
         .month(selectedMonth)
         .year(selectedYear)
-        .subtract(1, 'months')
-        .format('MMMM');
+        .subtract(1, 'months');
 
-      const b = moment()
-        .month(selectedMonth)
-        .year(selectedYear)
-        .subtract(1, 'months')
-        .format('YYYY');
+      const month = moment(subtractResult).format('MMM');
+      const year = moment(subtractResult).format('YYYY');
 
-      setSelectedMonth(a);
-      setSelectedYear(b);
+      setSelectedMonth(month);
+      setSelectedYear(year);
     }
 
     if (direction === 'next') {
-      const a = moment()
+      const addResult = moment(value)
         .month(selectedMonth)
         .year(selectedYear)
-        .add(1, 'months')
-        .format('MMMM');
-      const b = moment()
-        .month(selectedMonth)
-        .year(selectedYear)
-        .add(1, 'months')
-        .format('YYYY');
+        .add(1, 'months');
 
-      setSelectedMonth(a);
-      setSelectedYear(b);
+      const month = moment(addResult).format('MMM');
+      const year = moment(addResult).format('YYYY');
+
+      setSelectedMonth(month);
+      setSelectedYear(year);
     }
   };
 
@@ -505,6 +506,7 @@ const DeliveryDateSelectorModal = ({open, handleClose, handleOnChange}) => {
       .month(selectedMonth)
       .year(selectedYear)
       .format('ddd DD MMMM YYYY');
+
     handleOnChange(result);
     handleClose();
   };

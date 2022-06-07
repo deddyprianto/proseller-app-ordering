@@ -1,4 +1,5 @@
-import React from 'react';
+import React, {useEffect} from 'react';
+import {useDispatch} from 'react-redux';
 
 import {
   StyleSheet,
@@ -6,24 +7,29 @@ import {
   View,
   Text,
   Image,
-  Dimensions,
   TouchableOpacity,
 } from 'react-native';
+
 import {Actions} from 'react-native-router-flux';
 import colorConfig from '../config/colorConfig';
 
 import MyFavoriteOutletList from '../components/myFavoriteOutletList';
-import {Header} from '../components/layout';
+import Header from '../components/layout/header';
 
-const HEIGHT = Dimensions.get('window').height;
-const WIDTH = Dimensions.get('window').width;
+import {getFavoriteOutlet, dataStores} from '../actions/stores.action';
+import appConfig from '../config/appConfig';
 
 const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+    alignItems: 'center',
+  },
   viewImage: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 38,
+    paddingVertical: 12,
   },
   image: {
     height: 235,
@@ -34,17 +40,28 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   touchableSeeAll: {
+    position: 'absolute',
+    bottom: 20,
     height: 34,
     width: 130,
     backgroundColor: colorConfig.primaryColor,
     borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
-    marginVertical: 20,
   },
 });
 
 const MyFavoriteOutlets = () => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const loadData = async () => {
+      await dispatch(getFavoriteOutlet());
+      await dispatch(dataStores());
+    };
+    loadData();
+  }, [dispatch]);
+
   const images = [
     'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
     'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
@@ -57,7 +74,7 @@ const MyFavoriteOutlets = () => {
         <Image
           style={styles.image}
           resizeMode="stretch"
-          source={{uri: images[0]}}
+          source={appConfig.funtoastFavoriteOutlet}
         />
       </View>
     );
@@ -65,25 +82,25 @@ const MyFavoriteOutlets = () => {
 
   const renderSeeAllButton = () => {
     return (
-      <View style={{alignItems: 'center', marginVertical: 20}}>
-        <TouchableOpacity
-          style={styles.touchableSeeAll}
-          onPress={() => {
-            Actions.favoriteOutlets();
-          }}>
-          <Text style={styles.textSeeAll}>See All Outlet</Text>
-        </TouchableOpacity>
-      </View>
+      <TouchableOpacity
+        style={styles.touchableSeeAll}
+        onPress={() => {
+          Actions.favoriteOutlets();
+        }}>
+        <Text style={styles.textSeeAll}>See All Outlet</Text>
+      </TouchableOpacity>
     );
   };
 
   return (
-    <ScrollView>
+    <View style={styles.root}>
       <Header title="My Favorite Outlets" />
-      {renderImages()}
-      <MyFavoriteOutletList />
+      <ScrollView>
+        {renderImages()}
+        <MyFavoriteOutletList />
+      </ScrollView>
       {renderSeeAllButton()}
-    </ScrollView>
+    </View>
   );
 };
 

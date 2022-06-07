@@ -177,6 +177,7 @@ class HostedPayment extends Component {
             x
           </Text>
         </TouchableOpacity>
+
         <WebView
           source={{uri: url}}
           style={{marginTop: 10}}

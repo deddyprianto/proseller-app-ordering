@@ -1,7 +1,13 @@
-import React, {useState} from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, {useEffect, useState} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
 import {Text, TouchableOpacity, View} from 'react-native';
 import {Dialog, Portal, Provider} from 'react-native-paper';
 import colorConfig from '../../config/colorConfig';
+import {getDeliveryProviderAndFee} from '../../actions/order.action';
+import CryptoJS from 'react-native-crypto-js';
+import awsConfig from '../../config/awsConfig';
+import {changeOrderingMode} from '../../actions/order.action';
 
 const styles = {
   root: {
@@ -58,7 +64,7 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 10,
-    margin: 2,
+    margin: 6,
   },
   touchableItemSelected: {
     width: 81,
@@ -69,7 +75,7 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 10,
-    margin: 2,
+    margin: 6,
   },
   touchableSave: {
     paddingVertical: 10,
@@ -96,10 +102,56 @@ const styles = {
   },
 };
 
-const DeliveryProviderSelectorModal = ({open, handleClose}) => {
-  const [selected, setSelected] = useState({});
+const DeliveryProviderSelectorModal = ({open, handleClose, value}) => {
+  const dispatch = useDispatch();
 
-  const tests = [{id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}];
+  const [selected, setSelected] = useState({});
+  const [deliveryProviders, setDeliveryProviders] = useState([]);
+
+  const basket = useSelector(state => state.orderReducer?.dataBasket?.product);
+  const userDetail = useSelector(
+    state => state.userReducer.getUser.userDetails,
+  );
+
+  useEffect(() => {
+    const loadData = async () => {
+      const userDecrypt = CryptoJS.AES.decrypt(
+        userDetail,
+        awsConfig.PRIVATE_KEY_RSA,
+      );
+      const user = JSON.parse(userDecrypt.toString(CryptoJS.enc.Utf8));
+
+      const deliveryAddress = user?.selectedAddress;
+      const cartId = basket?.cartID;
+      const outletId = basket?.outlet?.id;
+
+      const payload = {
+        deliveryAddress,
+        outletId,
+        cartID: cartId,
+      };
+
+      const result = await dispatch(getDeliveryProviderAndFee(payload));
+
+      if (result?.data) {
+        setDeliveryProviders(result?.data?.dataProvider);
+      }
+      const currentProvider = value || {};
+      setSelected(currentProvider);
+    };
+
+    loadData();
+  }, [userDetail]);
+
+  const HandleSave = async () => {
+    await dispatch(
+      changeOrderingMode({
+        orderingMode: basket?.orderingMode,
+        provider: selected,
+      }),
+    );
+    handleClose();
+  };
 
   const deliveryProviderItem = item => {
     const active = selected?.id === item?.id;
@@ -118,12 +170,12 @@ const DeliveryProviderSelectorModal = ({open, handleClose}) => {
         }}>
         <View style={styles.circle}>
           <View style={styles.viewTextNameAndPrice}>
-            <Text style={stylePrice}>10</Text>
+            <Text style={stylePrice}>{item?.deliveryFee}</Text>
             <Text style={styleCurrency}>SGD</Text>
           </View>
         </View>
         <View style={{marginTop: 8}} />
-        <Text style={styleName}>Delivery A</Text>
+        <Text style={styleName}>{item?.name}</Text>
       </TouchableOpacity>
     );
   };
@@ -135,8 +187,9 @@ const DeliveryProviderSelectorModal = ({open, handleClose}) => {
       </View>
     );
   };
+
   const renderBody = () => {
-    const result = tests.map(test => {
+    const result = deliveryProviders.map(test => {
       return deliveryProviderItem(test);
     });
 
@@ -146,7 +199,11 @@ const DeliveryProviderSelectorModal = ({open, handleClose}) => {
   const renderFooter = () => {
     return (
       <View style={styles.footer}>
-        <TouchableOpacity style={styles.touchableSave}>
+        <TouchableOpacity
+          style={styles.touchableSave}
+          onPress={() => {
+            HandleSave();
+          }}>
           <Text style={styles.textSave}>SAVE</Text>
         </TouchableOpacity>
       </View>

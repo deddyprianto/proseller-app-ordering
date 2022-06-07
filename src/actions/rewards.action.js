@@ -193,46 +193,6 @@ export const dataPoint = () => {
   };
 };
 
-export const dataPointHistory = () => {
-  return async (dispatch, getState) => {
-    const state = getState();
-    try {
-      const {
-        authReducer: {
-          tokenUser: {token},
-        },
-      } = state;
-
-      var dataResponse = [];
-      let response = await fetchApi(
-        '/customer/point?history=true',
-        'GET',
-        false,
-        200,
-        token,
-      );
-
-      let totalPoint = response.responseBody.Data.totalPoint;
-      let campaignActive = response.responseBody.Data.campaignActive;
-
-      dispatch({
-        type: 'DATA_TOTAL_POINT',
-        totalPoint: totalPoint,
-        campaignActive,
-        detailPoint: response.responseBody.Data,
-      });
-
-      if (response.success) {
-        return response.responseBody.Data;
-      } else {
-        return false;
-      }
-    } catch (error) {
-      return error;
-    }
-  };
-};
-
 export const cutomerActivity = (skip, take, isReceive) => {
   return async (dispatch, getState) => {
     const state = getState();
@@ -316,31 +276,6 @@ export const cutomerActivity = (skip, take, isReceive) => {
   };
 };
 
-export const redeemVoucher = payload => {
-  return async (dispatch, getState) => {
-    const state = getState();
-    try {
-      const {
-        authReducer: {
-          tokenUser: {token},
-        },
-      } = state;
-      console.log(payload, 'payload redeemVoucher');
-      const response = await fetchApi(
-        '/accummulation/point/redeem/voucher',
-        'POST',
-        payload,
-        200,
-        token,
-      );
-      console.log(response, 'response redeem Voucer');
-      return response;
-    } catch (error) {
-      throw error;
-    }
-  };
-};
-
 export const checkPromo = codeVoucher => {
   return async (dispatch, getState) => {
     const state = getState();
@@ -358,8 +293,6 @@ export const checkPromo = codeVoucher => {
         200,
         token,
       );
-      console.log(`/voucher/take/${codeVoucher}`);
-      console.log(response, 'response check promo');
 
       if (response.success) {
         if (isEmptyArray(response.responseBody.Data)) {
@@ -379,6 +312,131 @@ export const checkPromo = codeVoucher => {
       }
     } catch (error) {
       return error;
+    }
+  };
+};
+
+//martin
+export const redeemVoucher = payload => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      const response = await fetchApi(
+        '/accummulation/point/redeem/voucher',
+        'POST',
+        payload,
+        200,
+        token,
+      );
+
+      return response?.responseBody?.data;
+    } catch (error) {
+      throw error;
+    }
+  };
+};
+
+export const dataPointHistory = () => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      let response = await fetchApi(
+        '/customer/point?history=true',
+        'GET',
+        false,
+        200,
+        token,
+      );
+
+      let totalPoint = response.responseBody.Data.totalPoint;
+      let campaignActive = response.responseBody.Data.campaignActive;
+
+      dispatch({
+        type: 'DATA_TOTAL_POINT',
+        totalPoint: totalPoint,
+        campaignActive,
+        detailPoint: response.responseBody.Data,
+      });
+
+      if (response.success) {
+        return response.responseBody.Data;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const getReceivedPointActivity = () => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      const response = await fetchApi(
+        '/customer/point/activity?type=received&limit=10',
+        'GET',
+        null,
+        200,
+        token,
+      );
+
+      dispatch({
+        type: 'RECEIVED_POINT_HISTORY',
+        data: response.responseBody.data,
+      });
+
+      return response.responseBody.data;
+    } catch (error) {
+      throw error;
+    }
+  };
+};
+
+export const getUsedPointActivity = () => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      const response = await fetchApi(
+        '/customer/point/activity?type=used&limit=10',
+        'GET',
+        null,
+        200,
+        token,
+      );
+
+      dispatch({
+        type: 'USED_POINT_HISTORY',
+        data: response.responseBody.data,
+      });
+
+      return response.responseBody.data;
+    } catch (error) {
+      throw error;
     }
   };
 };

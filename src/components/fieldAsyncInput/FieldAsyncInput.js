@@ -66,7 +66,6 @@ const styles = StyleSheet.create({
 });
 
 const FieldAsyncInput = ({
-  type,
   label,
   customLabel,
   placeholder,
@@ -100,16 +99,15 @@ const FieldAsyncInput = ({
         style={styles.textInput}
         value={value}
         placeholder={placeholder}
+        onTouchStart={() => {
+          handleCloseList();
+        }}
         onChangeText={value => {
           onChange(value);
           handleOpenList();
         }}
       />
     );
-  };
-
-  const renderInput = () => {
-    return renderTextInput();
   };
 
   const renderListItem = value => {
@@ -126,7 +124,7 @@ const FieldAsyncInput = ({
   };
 
   const renderList = () => {
-    if (open) {
+    if (open && value) {
       const test = [
         {
           id: 1,
@@ -225,7 +223,7 @@ const FieldAsyncInput = ({
       <View style={styleBody}>
         <View style={styles.viewLabelAndInput}>
           {renderLabel()}
-          {renderInput()}
+          {renderTextInput()}
         </View>
         <IconAntDesign name="search1" style={styles.iconSearch} />
       </View>

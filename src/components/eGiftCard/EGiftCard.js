@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const EGiftCard = ({eGifts}) => {
+const EGiftCard = ({cards, onChange}) => {
   const [groupEGift, setGroupEGift] = useState([]);
   const [activeGroupEGift, setActiveGroupEGift] = useState(0);
   const [selectedEGiftCard, setSelectedEGiftCard] = useState({});
@@ -83,16 +83,16 @@ const EGiftCard = ({eGifts}) => {
         return (children = []);
       }
     });
-    console.log(parents);
     setGroupEGift(parents);
   };
 
   useState(() => {
-    if (!isEmptyArray(eGifts)) {
-      handleGroupEGift(eGifts);
-      setSelectedEGiftCard(eGifts[0]);
+    if (!isEmptyArray(cards)) {
+      handleGroupEGift(cards);
+      setSelectedEGiftCard(cards[0]);
+      onChange(cards[0]);
     }
-  }, []);
+  }, [cards]);
 
   const handleOnChange = nativeEvent => {
     const group = Math.ceil(nativeEvent.contentOffset.x / 420);
@@ -110,7 +110,7 @@ const EGiftCard = ({eGifts}) => {
   };
 
   const renderDot = () => {
-    const dots = groupEGift.map((_, index) => {
+    const dots = groupEGift?.map((_, index) => {
       return (
         <Text key={index} style={handleStyleDot(index)}>
           __
@@ -122,27 +122,32 @@ const EGiftCard = ({eGifts}) => {
   };
 
   const handleImageSelected = item => {
-    if (item?.id === selectedEGiftCard?.id) {
+    if (item === selectedEGiftCard) {
       return styles.imageSelected;
     }
     return styles.image;
   };
 
+  const handleSelectImage = item => {
+    setSelectedEGiftCard(item);
+    onChange(item);
+  };
+
   const renderGroupEGiftCard = () => {
-    const result = groupEGift.map((items, index) => {
+    const result = groupEGift?.map((items, index) => {
       return (
         <View style={styles.viewGroupEGiftCard}>
           {items.map(item => {
             return (
               <TouchableOpacity
                 onPress={() => {
-                  setSelectedEGiftCard(item);
+                  handleSelectImage(item);
                 }}>
                 <Image
                   key={index}
                   style={handleImageSelected(item)}
                   resizeMode="stretch"
-                  source={{uri: item.image}}
+                  source={{uri: item}}
                 />
               </TouchableOpacity>
             );

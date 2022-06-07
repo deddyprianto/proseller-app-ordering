@@ -5,143 +5,196 @@
  */
 
 import React, {useEffect, useState} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
+import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
 
-import {StyleSheet, View, Text, Dimensions} from 'react-native';
+import ProductList from '../components/productList';
+import ProductSearchList from '../components/productSearchList';
+import Header from '../components/layout/header';
 
-import {CheckBox} from 'react-native-elements';
-import IconMaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import IconAntDesign from 'react-native-vector-icons/AntDesign';
 
+import {
+  getProductByOutlet,
+  getProductBySearch,
+} from '../actions/product.action';
+import {getBasket} from '../actions/order.action';
+import {isEmptyArray} from '../helper/CheckEmpty';
+import LoadingScreen from '../components/loadingScreen';
+import FieldSearch from '../components/fieldSearch';
 import colorConfig from '../config/colorConfig';
-import EGiftCard from '../components/eGiftCard/EGiftCard';
-import SearchBar from '../components/searchBar/SearchBar';
-import ProductList from '../components/productList/ProductList';
-import {SafeAreaView} from 'react-navigation';
-import CartIcon from '../components/order/CartIcon';
-
-import ButtonCartIcon from '../components/button/ButtonIconCart';
-
-const WIDTH = Dimensions.get('window').width;
-const HEIGHT = Dimensions.get('window').height;
+import CurrencyFormatter from '../helper/CurrencyFormatter';
+import {Actions} from 'react-native-router-flux';
 
 const styles = StyleSheet.create({
-  container: {
-    height: HEIGHT,
-    width: WIDTH,
-    paddingHorizontal: 20,
+  root: {
+    flex: 1,
+    alignItems: 'center',
   },
-  viewHeader: {
+  body: {
+    paddingHorizontal: 16,
+    width: '100%',
+    flex: 1,
+  },
+  footer: {
+    position: 'absolute',
+    bottom: 10,
+    width: '100%',
+    paddingHorizontal: 16,
+  },
+  textBody: {
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  textButtonCart: {
+    fontWeight: 'bold',
+    fontSize: 11,
+    color: 'white',
+  },
+  viewBodyText: {
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingTop: 10,
+    marginTop: 16,
+    marginBottom: 16,
   },
-  viewBody: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
+  viewProductList: {
+    paddingHorizontal: 16,
+    flex: 1,
   },
-  textTitle: {
-    color: 'black',
-    fontSize: 14,
-    letterSpacing: 0.5,
-  },
-  textDescription: {
-    color: 'black',
-    textAlign: 'center',
-    fontSize: 12,
-    width: WIDTH * 0.6,
-    letterSpacing: 0.2,
-    marginTop: 30,
-    marginBottom: 20,
-  },
-  text1: {
-    color: 'black',
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  text2: {
-    color: 'black',
-    fontSize: 14,
-  },
-  text3: {
-    color: 'black',
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginTop: 20,
-  },
-  textRequired: {
-    marginTop: 10,
-    color: 'red',
-    fontSize: 14,
-  },
-  input: {
-    height: 35,
-    marginTop: 5,
-    borderWidth: 1,
-    fontSize: 10,
-    borderRadius: 5,
-  },
-  inputEmpty: {
-    height: 35,
-    marginTop: 5,
-    borderWidth: 1,
-    fontSize: 10,
-    borderRadius: 5,
-    borderColor: 'red',
-  },
-  viewLocation: {
+  viewButtonCart: {
+    width: '100%',
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 10,
-    marginBottom: 20,
-  },
-  viewButton: {
     backgroundColor: colorConfig.primaryColor,
-    height: 35,
-    marginTop: 20,
-    marginBottom: 20,
-    justifyContent: 'center',
+    padding: 14,
+    justifyContent: 'space-between',
+    borderRadius: 8,
     alignItems: 'center',
   },
-  textButton: {
+  viewIconAndTextCart: {
+    display: 'flex',
+    flexDirection: 'row',
+  },
+  icon: {
+    fontSize: 13,
     color: 'white',
-    fontSize: 20,
-  },
-  viewOr: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  textOr: {
-    color: 'black',
-    fontSize: 20,
+    marginRight: 7,
   },
 });
 
-const OrderHere = ({...props}) => {
-  return (
-    <SafeAreaView style={styles.container}>
-      <View style={{height: HEIGHT * 0.2}}>
-        <View style={styles.viewHeader}>
-          <Text style={styles.textTitle}>What would you like to eat</Text>
-          <ButtonCartIcon />
-        </View>
-        <SearchBar />
-        <View style={styles.viewLocation}>
-          <IconMaterialIcons
-            name="location-on"
-            style={{fontSize: 20, color: colorConfig.primaryColor}}
-          />
-          <Text style={styles.text2}>Jewel Fun Toast </Text>
-        </View>
-      </View>
+const OrderHere = () => {
+  const dispatch = useDispatch();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [productsSearch, setProductsSearch] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
-      <View style={{height: HEIGHT * 0.8}}>
-        <ProductList />
+  const defaultOutlet = useSelector(
+    state => state.storesReducer.defaultOutlet.defaultOutlet,
+  );
+  const basket = useSelector(state => state.orderReducer?.dataBasket?.product);
+  const products = useSelector(
+    state => state.productReducer?.productsOutlet?.products,
+  );
+
+  useEffect(() => {
+    const loadData = async () => {
+      await dispatch(getProductByOutlet(defaultOutlet.id));
+      await dispatch(getBasket());
+    };
+
+    loadData();
+  }, [dispatch, defaultOutlet]);
+
+  useEffect(() => {
+    const loadData = async () => {
+      setIsLoading(true);
+      const response = await dispatch(
+        getProductBySearch({
+          outletId: defaultOutlet.sortKey,
+          search: searchQuery,
+        }),
+      );
+
+      setIsLoading(false);
+      setProductsSearch(response);
+    };
+    loadData();
+  }, [dispatch, searchQuery, defaultOutlet]);
+
+  const handleLoading = () => {
+    if (isEmptyArray(products)) {
+      return true;
+    } else if (isLoading && searchQuery) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+  const renderText = () => {
+    return (
+      <View style={styles.viewBodyText}>
+        <Text style={styles.textBody}>What would you like to eat?</Text>
       </View>
-    </SafeAreaView>
+    );
+  };
+
+  const renderSearch = () => {
+    return (
+      <FieldSearch
+        label="Search"
+        value={searchQuery}
+        placeholder="Search..."
+        onChange={value => {
+          setSearchQuery(value);
+        }}
+      />
+    );
+  };
+
+  const renderProducts = () => {
+    if (searchQuery) {
+      return <ProductSearchList basket={basket} products={productsSearch} />;
+    } else {
+      return <ProductList basket={basket} products={products} />;
+    }
+  };
+
+  const renderButtonCart = () => {
+    if (!isEmptyArray(basket?.details)) {
+      return (
+        <TouchableOpacity
+          style={styles.viewButtonCart}
+          onPress={() => {
+            Actions.cart();
+          }}>
+          <View style={styles.viewIconAndTextCart}>
+            <IconAntDesign name="shoppingcart" style={styles.icon} />
+            <Text style={styles.textButtonCart}>
+              {basket?.details?.length} Items in Cart
+            </Text>
+          </View>
+          <Text style={styles.textButtonCart}>
+            {CurrencyFormatter(basket?.totalNettAmount)}
+          </Text>
+        </TouchableOpacity>
+      );
+    }
+  };
+
+  return (
+    <View style={styles.root}>
+      <LoadingScreen loading={handleLoading()} />
+      <Header title={defaultOutlet?.name} scanner />
+      <View style={styles.body}>
+        {renderText()}
+        {renderSearch()}
+        {renderProducts()}
+      </View>
+      <View style={styles.footer}>{renderButtonCart()}</View>
+    </View>
   );
 };
 

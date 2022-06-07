@@ -1,169 +1,146 @@
 import React, {useState} from 'react';
+import moment from 'moment';
 
-import {
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
-  View,
-  Text,
-  Image,
-  Dimensions,
-  TouchableOpacity,
-} from 'react-native';
+import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
 import IconFontAwesome from 'react-native-vector-icons/FontAwesome';
 
-import colorConfig from '../../../config/colorConfig';
-
-const HEIGHT = Dimensions.get('window').height;
-const WIDTH = Dimensions.get('window').width;
+import {useDispatch} from 'react-redux';
+import {
+  setFavoriteOutlet,
+  unsetFavoriteOutlet,
+} from '../../../actions/stores.action';
 
 const styles = StyleSheet.create({
-  container: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'white',
+  divider: {
+    backgroundColor: '#D6D6D6',
+    height: 1,
+    width: '100%',
   },
-  viewImage: {
+  icon: {
+    fontSize: 24,
+    color: 'red',
+  },
+  margin10: {
+    marginTop: 10,
+  },
+  textDay: {
+    fontWeight: 'bold',
+    width: '30%',
+  },
+  viewDescription: {
     display: 'flex',
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 38,
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
   },
-  image: {height: 235, width: 340},
-  marginTop20: {marginTop: 20},
-  textSeeAll: {color: 'white', fontSize: 12},
-  touchableSeeAll: {
-    height: 34,
-    width: 130,
-    backgroundColor: colorConfig.primaryColor,
-    borderRadius: 8,
-    justifyContent: 'center',
+  viewDescriptionDetail: {
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+  },
+  viewOperationalHours: {
+    display: 'flex',
+    flexDirection: 'row',
     alignItems: 'center',
   },
 });
 
-const MyFavoriteOutletItemList = ({item, selectedOutlet}) => {
-  const [active, setActive] = useState(false);
+const MyFavoriteOutletItemList = ({outlet}) => {
+  const dispatch = useDispatch();
+  const [active, setActive] = useState(outlet?.isFavorite || false);
+
+  const handleSetFavoriteOutlet = async () => {
+    await dispatch(setFavoriteOutlet({outletId: outlet?.id}));
+  };
+
+  const handleUnsetFavoriteOutlet = async () => {
+    await dispatch(unsetFavoriteOutlet({outletId: outlet?.id}));
+  };
 
   const handleStarClicked = value => {
     if (active) {
+      handleUnsetFavoriteOutlet();
       setActive(false);
     } else {
+      handleSetFavoriteOutlet();
       setActive(true);
     }
   };
 
-  const activeStar = () => {
-    return (
-      <IconFontAwesome
-        name="star"
-        style={{
-          fontSize: 24,
-          color: 'red',
-        }}
-      />
-    );
-  };
-
-  const inactiveStar = () => {
-    return (
-      <IconFontAwesome
-        name="star-o"
-        style={{
-          fontSize: 24,
-          color: 'red',
-        }}
-      />
-    );
+  const renderTextName = () => {
+    return <Text>{outlet?.name}</Text>;
   };
 
   const renderStar = () => {
-    const star = active ? activeStar() : inactiveStar();
+    const star = active ? 'star' : 'star-o';
 
     return (
       <TouchableOpacity
         onPress={() => {
           handleStarClicked();
         }}>
-        {star}
+        <IconFontAwesome name={star} style={styles.icon} />
       </TouchableOpacity>
     );
   };
+
   const outletItem = () => {
     return (
-      <View
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          width: WIDTH,
-          paddingHorizontal: 16,
-          paddingVertical: 12,
-          backgroundColor: selectedOutlet ? '#F9F9F9' : 'white',
-        }}>
-        <Text>One Raffles Place</Text>
+      <View style={styles.viewDescription}>
+        {renderTextName()}
         {renderStar()}
       </View>
     );
   };
 
-  const outletItemDetail = () => {
-    const detail = (
-      <View
-        style={{
-          paddingHorizontal: 20,
-          paddingVertical: 16,
-        }}>
-        <Text>1 Raffles Place, #B1-02</Text>
-        <Text>Singapore 048616</Text>
+  const renderTextAddress = () => {
+    return <Text>{outlet.address}</Text>;
+  };
 
-        <View
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center',
-            marginTop: 16,
-          }}>
-          <Text style={{fontWeight: 'bold'}}>Mon-Fri: </Text>
-          <Text>645am-7pm (last order 6.30pm)</Text>
-        </View>
+  const handleTimeFormatter = value => {
+    const result = moment(value, 'hh:mm').format('hh:mm a');
+    return result;
+  };
 
-        <View
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center',
-          }}>
-          <Text style={{fontWeight: 'bold'}}>Saturday: </Text>
-          <Text>815am-430pm (last order 4pm)</Text>
-        </View>
+  const renderOperationalHourItem = value => {
+    const timeActive = value?.active;
+    const timeOpen = handleTimeFormatter(value?.open);
+    const timeClose = handleTimeFormatter(value?.close);
 
-        <View
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center',
-            marginTop: 16,
-          }}>
-          <Text style={{fontWeight: 'bold'}}>PH/Sunday: </Text>
-          <Text>Close</Text>
-        </View>
-      </View>
-    );
+    const textTime = timeActive ? `: ${timeOpen} - ${timeClose}` : 'Close';
 
     return (
-      <>
-        {detail}
-        <View style={{backgroundColor: '#D6D6D6', height: 1}} />
-      </>
+      <View style={styles.viewOperationalHours}>
+        <Text style={styles.textDay}>{value?.nameOfDay}</Text>
+        <Text>{textTime}</Text>
+      </View>
     );
   };
+
+  const renderOperationalHours = () => {
+    const result = outlet?.operationalHours.map(value => {
+      return renderOperationalHourItem(value);
+    });
+    return result;
+  };
+
+  const outletItemDetail = () => {
+    return (
+      <View style={styles.viewDescriptionDetail}>
+        {renderTextAddress()}
+        <View style={styles.margin10} />
+        {renderOperationalHours()}
+      </View>
+    );
+  };
+
   return (
     <View>
       {outletItem()}
-      <View style={{backgroundColor: '#D6D6D6', height: 1}} />
+      <View style={styles.divider} />
       {outletItemDetail()}
+      <View style={styles.divider} />
     </View>
   );
 };

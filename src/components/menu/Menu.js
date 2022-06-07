@@ -4,19 +4,18 @@
  * PT Edgeworks
  */
 
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Actions} from 'react-native-router-flux';
-import {connect} from 'react-redux';
+import {useSelector} from 'react-redux';
 
+import CryptoJS from 'react-native-crypto-js';
 import {
   SafeAreaView,
   StyleSheet,
-  ScrollView,
   View,
   Text,
   Image,
   Dimensions,
-  Button,
   TouchableOpacity,
 } from 'react-native';
 
@@ -26,6 +25,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 import colorConfig from '../../config/colorConfig';
 import appConfig from '../../config/appConfig';
+import awsConfig from '../../config/awsConfig';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -44,15 +44,26 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapStateToProps = state => ({
-  defaultOutlet: state.storesReducer.defaultOutlet.defaultOutlet,
-});
+const Menu = () => {
+  const [user, setUser] = useState({});
+  const totalPoint = useSelector(
+    state => state.rewardsReducer?.dataPoint?.totalPoint,
+  );
 
-const mapDispatchToProps = dispatch => ({
-  dispatch,
-});
+  const userDetail = useSelector(
+    state => state.userReducer?.getUser?.userDetails,
+  );
 
-const Menu = ({...props}) => {
+  useEffect(() => {
+    const userDecrypt = CryptoJS.AES.decrypt(
+      userDetail,
+      awsConfig.PRIVATE_KEY_RSA,
+    );
+    const result = JSON.parse(userDecrypt.toString(CryptoJS.enc.Utf8));
+
+    setUser(result);
+  }, [userDetail]);
+
   const renderWelcome = () => {
     return (
       <TouchableOpacity
@@ -70,13 +81,14 @@ const Menu = ({...props}) => {
           }}>
           <Text
             style={{
-              color: colorConfig.store.defaultColor,
+              color: colorConfig.primaryColor,
               textAlign: 'center',
               fontSize: 14,
               fontWeight: 'bold',
               marginTop: 5,
-            }}>
-            Welcome xxx,
+            }}
+            numberOfLines={1}>
+            Welcome {user?.name}
           </Text>
 
           <Text
@@ -85,7 +97,7 @@ const Menu = ({...props}) => {
               textAlign: 'center',
               fontSize: 14,
             }}>
-            55 PTS
+            {totalPoint} PTS
           </Text>
 
           <View
@@ -334,6 +346,20 @@ const Menu = ({...props}) => {
     );
   };
 
+  const renderWelcomeAndFavoriteOutlet = () => {
+    return (
+      <View
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+        }}>
+        {renderWelcome()}
+        {renderMyFavoriteOutlet()}
+      </View>
+    );
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <View
@@ -343,15 +369,7 @@ const Menu = ({...props}) => {
           justifyContent: 'space-between',
           marginBottom: HEIGHT * 0.02,
         }}>
-        <View
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-          }}>
-          {renderWelcome()}
-          {renderMyFavoriteOutlet()}
-        </View>
+        {renderWelcomeAndFavoriteOutlet()}
         {renderOrderHere()}
       </View>
 
@@ -378,7 +396,4 @@ const Menu = ({...props}) => {
   );
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(Menu);
+export default Menu;

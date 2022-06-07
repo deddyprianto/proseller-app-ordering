@@ -89,7 +89,6 @@ class PaymentAddCard extends Component {
     } catch (e) {
       this.RBSheet.close();
       Alert.alert('Sorry', 'Can`t set CVV, please try again');
-      console.log(e);
     }
   };
 
@@ -297,7 +296,6 @@ class PaymentAddCard extends Component {
         } else {
           rootPage = 'settleOrder';
         }
-
         Actions.hostedPayment({
           url: response.response.data.url,
           data: response.response.data,

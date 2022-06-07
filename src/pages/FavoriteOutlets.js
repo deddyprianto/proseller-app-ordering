@@ -1,23 +1,24 @@
 import React from 'react';
 
-import {StyleSheet, ScrollView} from 'react-native';
+import {StyleSheet, ScrollView, View} from 'react-native';
 
 import FavoriteOutletList from '../components/favoriteOutletList';
 
 import {Header} from '../components/layout';
 
 const styles = StyleSheet.create({
-  container: {
+  root: {
+    flex: 1,
     backgroundColor: 'white',
   },
 });
 
 const FavoriteOutlets = () => {
   return (
-    <ScrollView style={styles.container}>
+    <View style={styles.root}>
       <Header title="All Outlets" />
       <FavoriteOutletList />
-    </ScrollView>
+    </View>
   );
 };
 

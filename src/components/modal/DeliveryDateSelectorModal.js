@@ -1,11 +1,15 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect, useState} from 'react';
-import {Text, TouchableOpacity, View} from 'react-native';
+import {useDispatch, useSelector} from 'react-redux';
+import {Text, TouchableOpacity, View, ScrollView} from 'react-native';
 import {Dialog, Portal, Provider} from 'react-native-paper';
 import colorConfig from '../../config/colorConfig';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
 import CalenderModal from './CalenderModal';
 import moment from 'moment';
-import {isEmptyObject} from '../../helper/CheckEmpty';
+import {isEmptyArray, isEmptyObject} from '../../helper/CheckEmpty';
+
+import {getTimeSlot, setTimeSlotSelected} from '../../actions/order.action';
 
 const styles = {
   root: {
@@ -24,34 +28,6 @@ const styles = {
   },
   footer: {
     paddingHorizontal: 35,
-  },
-  textDay: {
-    fontSize: 8,
-    color: '#B7B7B7',
-    fontWeight: 'bold',
-  },
-  textDate: {
-    fontSize: 10,
-    color: '#B7B7B7',
-  },
-  textMonth: {
-    fontSize: 8,
-    color: '#B7B7B7',
-    fontWeight: 'bold',
-  },
-  textDaySelected: {
-    fontSize: 8,
-    color: colorConfig.primaryColor,
-    fontWeight: 'bold',
-  },
-  textDateSelected: {
-    fontSize: 10,
-    color: colorConfig.primaryColor,
-  },
-  textMonthSelected: {
-    fontSize: 8,
-    color: colorConfig.primaryColor,
-    fontWeight: 'bold',
   },
   textSave: {
     color: 'white',
@@ -88,17 +64,61 @@ const styles = {
     paddingHorizontal: 16,
     borderColor: '#B7B7B7',
   },
-  touchableItem: {
+
+  textDayAvailable: {
+    fontSize: 8,
+    color: colorConfig.primaryColor,
+    fontWeight: 'bold',
+  },
+  textDateAvailable: {
+    fontSize: 10,
+    color: colorConfig.primaryColor,
+  },
+  textMonthAvailable: {
+    fontSize: 8,
+    color: colorConfig.primaryColor,
+    fontWeight: 'bold',
+  },
+  textDayUnavailable: {
+    fontSize: 8,
+    color: '#B7B7B7',
+    fontWeight: 'bold',
+  },
+  textDateUnavailable: {
+    fontSize: 10,
+    color: '#B7B7B7',
+  },
+  textMonthUnavailable: {
+    fontSize: 8,
+    color: '#B7B7B7',
+    fontWeight: 'bold',
+  },
+  textDaySelected: {
+    fontSize: 8,
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  textDateSelected: {
+    fontSize: 10,
+    color: colorConfig.primaryColor,
+  },
+  textMonthSelected: {
+    fontSize: 8,
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  touchableItemSelected: {
     width: 53,
     borderWidth: 1,
-    borderColor: '#B7B7B7',
+    borderColor: colorConfig.primaryColor,
+    backgroundColor: colorConfig.primaryColor,
     borderRadius: 8,
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 8,
     marginHorizontal: 6,
   },
-  touchableItemSelected: {
+  touchableItemAvailable: {
     width: 53,
     borderWidth: 1,
     borderColor: colorConfig.primaryColor,
@@ -108,9 +128,54 @@ const styles = {
     paddingVertical: 8,
     marginHorizontal: 6,
   },
+  touchableItemUnavailable: {
+    width: 53,
+    borderWidth: 1,
+    borderColor: '#B7B7B7',
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 8,
+    marginHorizontal: 6,
+  },
+  circleSelected: {
+    width: 26,
+    height: 26,
+    backgroundColor: 'white',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 100,
+    marginVertical: 4,
+  },
+  circleAvailable: {
+    width: 26,
+    height: 26,
+    backgroundColor: '#F9F9F9',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 100,
+    marginVertical: 4,
+  },
+  circleUnavailable: {
+    width: 26,
+    height: 26,
+    backgroundColor: '#F9F9F9',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 100,
+    marginVertical: 4,
+  },
+
   touchableSave: {
     paddingVertical: 10,
     backgroundColor: colorConfig.primaryColor,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 8,
+  },
+  touchableSaveDisabled: {
+    paddingVertical: 10,
+    backgroundColor: '#B7B7B7',
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 8,
@@ -120,50 +185,89 @@ const styles = {
     height: 14,
     color: colorConfig.primaryColor,
   },
-  circle: {
-    width: 26,
-    height: 26,
-    backgroundColor: '#F9F9F9',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 100,
-    marginVertical: 4,
-  },
   divider: {
     borderTopWidth: 1,
     borderTopColor: '#D6D6D6',
   },
 };
 
-const DeliveryDateSelectorModal = ({open, handleClose}) => {
+const DeliveryDateSelectorModal = ({open, handleClose, value}) => {
+  const dispatch = useDispatch();
   const [dates, setDates] = useState([]);
+  const [deliveryTimes, setDeliveryTimes] = useState([]);
+  const [availableDates, setAvailableDates] = useState([]);
   const [selectedDate, setSelectedDate] = useState('');
-  const [selected, setSelected] = useState({});
+  const [selectedDeliveryTime, setSelectedDeliveryTime] = useState('');
   const [seeMore, setSeeMore] = useState(false);
+  const [isOpenDeliveryTimes, setIsOpenDeliveryTimes] = useState(false);
+
+  const defaultOutlet = useSelector(
+    state => state.storesReducer.defaultOutlet.defaultOutlet,
+  );
+
+  const basket = useSelector(state => state.orderReducer?.dataBasket?.product);
 
   useEffect(() => {
-    if (selectedDate) {
-      const item = selectedDate.split(' ');
-      const date = item[1];
-      const month = item[2];
-      const year = item[3];
+    const loadData = async () => {
+      const clientTimezone = Math.abs(new Date().getTimezoneOffset());
+      const date = moment().format('YYYY-MM-DD');
+      const timeSlot = await dispatch(
+        getTimeSlot({
+          outletId: defaultOutlet.id,
+          date,
+          clientTimezone,
+          orderingMode: basket.orderingMode,
+        }),
+      );
 
-      const test = moment()
-        .date(date)
-        .month(month)
-        .year(year)
-        .subtract(1, 'day');
+      setAvailableDates(timeSlot);
 
-      const result = Array(5)
-        .fill(0)
-        .map(() => {
-          const a = test.add(1, 'day').format('ddd DD MMMM');
-          return a;
-        });
+      const currentDate = value
+        ? moment(value.date).format('ddd DD MMMM YYYY')
+        : moment().format('ddd DD MMMM YYYY');
 
-      setDates(result);
+      const currentTime = value?.time || '';
+
+      setSelectedDate(currentDate);
+      setSelectedDeliveryTime(currentTime);
+    };
+
+    loadData();
+  }, []);
+
+  useEffect(() => {
+    const selectedDateFormatter = moment(selectedDate).format('YYYY-MM-DD');
+    if (!isEmptyArray(availableDates)) {
+      const time = availableDates.find(
+        value => value.date === selectedDateFormatter,
+      );
+      setDeliveryTimes(time?.timeSlot);
     }
-  }, [selectedDate]);
+  }, [availableDates, selectedDate]);
+
+  useEffect(() => {
+    let dateTime = '';
+    if (selectedDate) {
+      dateTime = moment(selectedDate).subtract(1, 'day');
+    } else {
+      dateTime = moment().subtract(1, 'day');
+    }
+
+    const result = Array(5)
+      .fill(0)
+      .map(() => {
+        return dateTime.add(1, 'day').format('ddd DD MMMM YYYY');
+      });
+
+    setDates(result);
+  }, [seeMore]);
+
+  const handleSave = async () => {
+    await dispatch(
+      setTimeSlotSelected({date: selectedDate, time: selectedDeliveryTime}),
+    );
+    handleClose();
+  };
 
   const handleOpenCalender = () => {
     setSeeMore(true);
@@ -171,6 +275,14 @@ const DeliveryDateSelectorModal = ({open, handleClose}) => {
 
   const handleCloseCalender = () => {
     setSeeMore(false);
+  };
+
+  const handleOpenDeliveryTimes = () => {
+    setIsOpenDeliveryTimes(true);
+  };
+
+  const handleCloseDeliveryTimes = () => {
+    setIsOpenDeliveryTimes(false);
   };
 
   const renderHeader = () => {
@@ -181,34 +293,77 @@ const DeliveryDateSelectorModal = ({open, handleClose}) => {
     );
   };
 
-  const renderDeliveryDateItem = item => {
-    const itemDate = item.split(' ');
+  const handleDateItemSelected = item => {
+    setSelectedDate(item);
+    setSelectedDeliveryTime('');
+  };
 
-    const day = itemDate[0];
-    const date = itemDate[1];
-    const month = itemDate[2];
-
-    const active = selected === item;
-    const styleItem = active
-      ? styles.touchableItemSelected
-      : styles.touchableItem;
-    const styleMonth = active ? styles.textMonthSelected : styles.textMonth;
-    const styleDay = active ? styles.textDaySelected : styles.textDay;
-    const styleDate = active ? styles.textDateSelected : styles.textDate;
-
+  const renderDeliveryDateItemSelected = ({item, day, date, month}) => {
     return (
-      <TouchableOpacity
-        style={styleItem}
-        onPress={() => {
-          setSelected(item);
-        }}>
-        <Text style={styleDay}>{day}</Text>
-        <View style={styles.circle}>
-          <Text style={styleDate}>{date}</Text>
+      <TouchableOpacity style={styles.touchableItemSelected} activeOpacity={1}>
+        <Text style={styles.textDaySelected}>{day}</Text>
+        <View style={styles.circleSelected}>
+          <Text style={styles.textDateSelected}>{date}</Text>
         </View>
-        <Text style={styleMonth}>{month}</Text>
+        <Text style={styles.textMonthSelected}>{month}</Text>
       </TouchableOpacity>
     );
+  };
+
+  const renderDeliveryDateItemAvailable = ({item, day, date, month}) => {
+    return (
+      <TouchableOpacity
+        style={styles.touchableItemAvailable}
+        activeOpacity={1}
+        onPress={() => {
+          handleDateItemSelected(item);
+        }}>
+        <Text style={styles.textDayAvailable}>{day}</Text>
+        <View style={styles.circleAvailable}>
+          <Text style={styles.textDateAvailable}>{date}</Text>
+        </View>
+        <Text style={styles.textMonthAvailable}>{month}</Text>
+      </TouchableOpacity>
+    );
+  };
+
+  const renderDeliveryDateItemUnavailable = ({item, day, date, month}) => {
+    return (
+      <TouchableOpacity
+        style={styles.touchableItemUnavailable}
+        activeOpacity={1}
+        disabled>
+        <Text style={styles.textDayUnavailable}>{day}</Text>
+        <View style={styles.circleUnavailable}>
+          <Text style={styles.textDateUnavailable}>{date}</Text>
+        </View>
+        <Text style={styles.textMonthUnavailable}>{month}</Text>
+      </TouchableOpacity>
+    );
+  };
+
+  const renderDeliveryDateItem = item => {
+    if (!isEmptyArray(availableDates)) {
+      const day = moment(item).format('ddd');
+      const date = moment(item).format('DD');
+      const month = moment(item).format('MMMM');
+
+      const selected = selectedDate === item;
+
+      const dateFormatter = moment(item).format('YYYY-MM-DD');
+
+      const available = availableDates.find(
+        value => value.date === dateFormatter,
+      );
+
+      if (selected && available) {
+        return renderDeliveryDateItemSelected({item, day, date, month});
+      } else if (available) {
+        return renderDeliveryDateItemAvailable({item, day, date, month});
+      } else {
+        return renderDeliveryDateItemUnavailable({item, day, date, month});
+      }
+    }
   };
 
   const renderDeliveryDate = () => {
@@ -244,17 +399,34 @@ const DeliveryDateSelectorModal = ({open, handleClose}) => {
   };
 
   const renderDeliveryTime = () => {
+    const disabled = isEmptyArray(deliveryTimes);
+    const text = selectedDeliveryTime || 'Delivery Time';
     return (
-      <View style={styles.viewDeliveryTime}>
-        <Text style={styles.textDeliveryTime}>Delivery Time</Text>
+      <TouchableOpacity
+        disabled={disabled}
+        onPress={() => {
+          handleOpenDeliveryTimes();
+        }}
+        style={styles.viewDeliveryTime}>
+        <Text style={styles.textDeliveryTime}>{text}</Text>
         <IconAntDesign style={styles.iconCaretDown} name="caretdown" />
-      </View>
+      </TouchableOpacity>
     );
   };
 
   const renderSaveButton = () => {
+    const disabled = !selectedDeliveryTime || !selectedDate;
+    const style = disabled
+      ? styles.touchableSaveDisabled
+      : styles.touchableSave;
+
     return (
-      <TouchableOpacity style={styles.touchableSave}>
+      <TouchableOpacity
+        style={style}
+        disabled={disabled}
+        onPress={() => {
+          handleSave();
+        }}>
         <Text style={styles.textSave}>SAVE</Text>
       </TouchableOpacity>
     );
@@ -274,15 +446,53 @@ const DeliveryDateSelectorModal = ({open, handleClose}) => {
     return (
       <CalenderModal
         open={seeMore}
+        value={selectedDate}
         handleClose={() => {
           handleCloseCalender();
         }}
         handleOnChange={value => {
-          console.log('ROY', value);
           setSelectedDate(value);
         }}
       />
     );
+  };
+
+  const handleDeliveryTimeListItemSelected = item => {
+    setSelectedDeliveryTime(item?.time);
+    setIsOpenDeliveryTimes(false);
+  };
+
+  const renderDeliveryTimeListItem = item => {
+    return (
+      <TouchableOpacity
+        style={{padding: 5}}
+        onPress={() => {
+          handleDeliveryTimeListItemSelected(item);
+        }}>
+        <Text>{item?.time}</Text>
+      </TouchableOpacity>
+    );
+  };
+
+  const renderDeliveryTimeListModal = () => {
+    if (!isEmptyArray(deliveryTimes)) {
+      const result = deliveryTimes.map(item => {
+        return renderDeliveryTimeListItem(item);
+      });
+
+      return (
+        <Provider>
+          <Portal>
+            <Dialog
+              visible={isOpenDeliveryTimes}
+              onDismiss={handleCloseDeliveryTimes}
+              style={styles.root}>
+              <ScrollView>{result}</ScrollView>
+            </Dialog>
+          </Portal>
+        </Provider>
+      );
+    }
   };
 
   return (
@@ -298,6 +508,7 @@ const DeliveryDateSelectorModal = ({open, handleClose}) => {
           <View style={{marginTop: 16}} />
         </Dialog>
         {renderCalender()}
+        {renderDeliveryTimeListModal()}
       </Portal>
     </Provider>
   );

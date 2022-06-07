@@ -5,10 +5,19 @@ import {StyleSheet, ScrollView, View, Text} from 'react-native';
 import colorConfig from '../config/colorConfig';
 
 import PointHistoryList from '../components/pointHistoryList';
+import {Header} from '../components/layout';
+import {useSelector} from 'react-redux';
+import moment from 'moment-timezone';
 
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 20,
+    flex: 1,
+  },
+  divider: {
+    width: '100%',
+    height: 0.5,
+    backgroundColor: 'black',
   },
   textYourPoint: {
     fontSize: 10,
@@ -23,6 +32,16 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: colorConfig.primaryColor,
     fontWeight: '400',
+  },
+  textPointHistory: {
+    width: '100%',
+    textAlign: 'left',
+    fontSize: 12,
+    fontWeight: '400',
+  },
+  textDescription: {
+    fontSize: 12,
+    fontWeight: '500',
   },
   viewYourPoint: {
     display: 'flex',
@@ -43,62 +62,71 @@ const styles = StyleSheet.create({
 });
 
 const PointDetailAndHistory = () => {
+  const campaignDescription = useSelector(
+    state => state.rewardsReducer.campaign.campaign.campaignDesc,
+  );
+  const totalPoint = useSelector(
+    state => state.rewardsReducer.dataPoint.totalPoint,
+  );
+
+  const historyPoints = useSelector(
+    state => state.rewardsReducer.dataPoint.detailPoint.history,
+  );
+
   const renderPointHeader = () => {
     return (
       <View style={styles.viewYourPoint}>
         <Text style={styles.textYourPoint}>Your Points</Text>
-        <Text style={styles.textYourPointValue}>55 PTS</Text>
+        <Text style={styles.textYourPointValue}>{totalPoint} PTS</Text>
       </View>
+    );
+  };
+
+  const renderPointDateExpiredItem = historyPoint => {
+    const {pointBalance, expiryDate} = historyPoint;
+    const date = moment(expiryDate).format('DD MMM YYYY');
+
+    return (
+      <Text style={styles.textPointDateExpired}>
+        {pointBalance} points will expire on {date}
+      </Text>
     );
   };
 
   const renderPointDateExpired = () => {
-    return (
-      <View style={styles.viewPointDateExpire}>
-        <Text style={styles.textPointDateExpired}>
-          10 points will expire on 30 May 2022
-        </Text>
-      </View>
-    );
+    const result = historyPoints.map(historyPoint => {
+      return renderPointDateExpiredItem(historyPoint);
+    });
+
+    return <View style={styles.viewPointDateExpire}>{result}</View>;
   };
 
   const renderTextInfo = () => {
-    return (
-      <Text style={{fontSize: 12, fontWeight: '500'}}>
-        Earn 10 Points per $1 spent
-      </Text>
-    );
+    return <Text style={styles.textDescription}>{campaignDescription}</Text>;
   };
 
   const renderTextPointHistory = () => {
-    return (
-      <Text
-        style={{
-          width: '100%',
-          textAlign: 'left',
-          fontSize: 12,
-          fontWeight: '400',
-        }}>
-        Point History
-      </Text>
-    );
+    return <Text style={styles.textPointHistory}>Point History</Text>;
   };
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={{marginTop: '5%'}} />
-      {renderPointHeader()}
-      <View style={{marginTop: '5%'}} />
-      {renderTextInfo()}
-      <View style={{marginTop: '5%'}} />
-      {renderPointDateExpired()}
-      <View style={{marginTop: '5%'}} />
-      <View style={styles.divider} />
-      <View style={{marginTop: '5%'}} />
-      {renderTextPointHistory()}
-      <View style={{marginTop: '5%'}} />
-      <PointHistoryList />
-    </ScrollView>
+    <View style={{flex: 1}}>
+      <Header title="Point Detail & History" />
+      <ScrollView style={styles.container}>
+        <View style={{marginTop: '5%'}} />
+        {renderPointHeader()}
+        <View style={{marginTop: '5%'}} />
+        {renderTextInfo()}
+        <View style={{marginTop: '5%'}} />
+        {renderPointDateExpired()}
+        <View style={{marginTop: '5%'}} />
+        <View style={styles.divider} />
+        <View style={{marginTop: '5%'}} />
+        {renderTextPointHistory()}
+        <View style={{marginTop: '5%'}} />
+        <PointHistoryList />
+      </ScrollView>
+    </View>
   );
 };
 

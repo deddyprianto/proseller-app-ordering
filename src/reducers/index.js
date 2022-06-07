@@ -20,6 +20,9 @@ import referralReducer from './referral.reducer';
 import SVCReducer from './SVC.reducer';
 import membershipReducer from './membership.reducer';
 import intlData from './language.reducer';
+import productReducer from './product.reducer';
+import settingReducer from './setting.reducer';
+import giftReducer from './gift.reducer';
 
 const reducers = {
   authReducer,
@@ -35,6 +38,9 @@ const reducers = {
   SVCReducer,
   membershipReducer,
   intlData,
+  productReducer,
+  settingReducer,
+  giftReducer,
   form: formReducer,
 };
 

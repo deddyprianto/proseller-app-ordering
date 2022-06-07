@@ -121,9 +121,9 @@ class Header extends Component {
   gotoBack = () => {
     const {loginByMobile} = this.props;
     if (loginByMobile === false) {
-      Actions.push('pageIndex');
+      Actions.push('onBoarding');
     } else {
-      Actions.pop();
+      Actions.push('pageIndex');
     }
   };
 

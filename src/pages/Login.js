@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Actions} from 'react-native-router-flux';
+import {useDispatch} from 'react-redux';
 
 import {
   StyleSheet,
@@ -16,6 +17,11 @@ import colorConfig from '../config/colorConfig';
 import awsConfig from '../config/awsConfig';
 
 import FieldTextInput from '../components/fieldTextInput';
+import FieldPhoneNumberInput from '../components/fieldPhoneNumberInput';
+import {checkAccountExist, sendOTP} from '../actions/auth.actions';
+import {showSnackbar} from '../actions/setting.action';
+
+import LoadingScreen from '../components/loadingScreen';
 
 const HEIGHT = Dimensions.get('window').height;
 
@@ -89,7 +95,8 @@ const styles = StyleSheet.create({
 });
 
 const Login = () => {
-  const [openModal, setOpenModal] = useState(false);
+  const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(false);
   const [countryCode, setCountryCode] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [email, setEmail] = useState('');
@@ -98,6 +105,37 @@ const Login = () => {
   useEffect(() => {
     setCountryCode(awsConfig.phoneNumberCode);
   }, []);
+
+  const handleRequestOtp = async () => {
+    let payload = {};
+    const isEmail = loginMethod === 'email';
+    const methodValue = isEmail ? email : countryCode + phoneNumber;
+
+    if (isEmail) {
+      payload.email = email;
+    } else {
+      payload.phoneNumber = countryCode + phoneNumber;
+    }
+
+    setIsLoading(true);
+    const response = await dispatch(checkAccountExist(payload));
+
+    if (response?.status) {
+      await dispatch(sendOTP(payload));
+      Actions.otp({
+        isLogin: true,
+        method: loginMethod,
+        methodValue: methodValue,
+      });
+    } else {
+      dispatch(
+        showSnackbar({
+          message: response?.message,
+        }),
+      );
+    }
+    setIsLoading(false);
+  };
 
   const renderImages = () => {
     return (
@@ -111,6 +149,8 @@ const Login = () => {
 
   const handleChangeLoginMethod = value => {
     setLoginMethod(value);
+    setEmail('');
+    setPhoneNumber('');
   };
 
   const handleStyleLoginMethod = value => {
@@ -143,7 +183,7 @@ const Login = () => {
 
   const renderPhoneNumberLoginInput = () => {
     return (
-      <FieldTextInput
+      <FieldPhoneNumberInput
         type="phone"
         label="Enter mobile number to begin :"
         value={phoneNumber}
@@ -161,6 +201,7 @@ const Login = () => {
     return (
       <FieldTextInput
         label="Enter email to begin :"
+        placeholder="Enter email to begin "
         value={email}
         onChange={value => {
           setEmail(value);
@@ -178,30 +219,32 @@ const Login = () => {
   };
 
   const renderButtonNext = () => {
-    let active = false;
-    let value = '';
-
-    if (loginMethod === 'email') {
-      active = loginMethod === 'email' && email;
-      value = email;
-    } else {
-      active = loginMethod === 'phoneNumber' && phoneNumber;
-      value = countryCode + phoneNumber;
-    }
+    const active = email || phoneNumber;
 
     return (
       <TouchableOpacity
+        disabled={!active}
         style={active ? styles.touchableNext : styles.touchableNextDisabled}
         onPress={() => {
-          Actions.otp({isLogin: true, method: loginMethod, methodValue: value});
+          handleRequestOtp();
         }}>
         <Text style={styles.textNext}>REQUEST OTP</Text>
       </TouchableOpacity>
     );
   };
 
+  const renderTextInformation = () => {
+    const text = loginMethod === 'email' ? 'email' : 'mobile number';
+    return (
+      <Text style={styles.textInformation}>
+        4-digits verification code will be sent to your {text}
+      </Text>
+    );
+  };
+
   return (
     <ScrollView>
+      <LoadingScreen loading={isLoading} />
       <View style={styles.container}>
         <View style={{marginTop: '25%'}} />
         {renderImages()}
@@ -214,9 +257,7 @@ const Login = () => {
         <View style={{marginTop: '15%'}} />
         {renderButtonNext()}
         <View style={{marginTop: '15%'}} />
-        <Text style={styles.textInformation}>
-          4-digits verification code will be sent to your mobile number
-        </Text>
+        {renderTextInformation()}
       </View>
     </ScrollView>
   );

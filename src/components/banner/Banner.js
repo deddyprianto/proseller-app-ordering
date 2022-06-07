@@ -1,4 +1,5 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
 import {Actions} from 'react-native-router-flux';
 import {TouchableOpacityComponent} from 'react-native';
 
@@ -13,6 +14,7 @@ import {
 } from 'react-native';
 
 import colorConfig from '../../config/colorConfig';
+import {dataPromotion} from '../../actions/promotion.action';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -49,7 +51,19 @@ const styles = StyleSheet.create({
 });
 
 const Banner = () => {
+  const dispatch = useDispatch();
   const [selectedImage, setSelectedImage] = useState(0);
+
+  const banners = useSelector(
+    state => state.promotionReducer.dataPromotion.promotion,
+  );
+
+  useEffect(() => {
+    const loadData = async () => {
+      await dispatch(dataPromotion());
+    };
+    loadData();
+  }, [dispatch]);
 
   const onChange = nativeEvent => {
     const image = Math.ceil(nativeEvent.contentOffset.x / 420);
@@ -59,20 +73,14 @@ const Banner = () => {
     }
   };
 
-  const images = [
-    'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-    'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-    'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-  ];
-
   const renderImages = () => {
-    const result = images.map((image, index) => {
+    const result = banners.map((banner, index) => {
       return (
         <Image
           key={index}
           style={styles.wrapImage}
           resizeMode="stretch"
-          source={{uri: image}}
+          source={{uri: banner?.defaultImageURL}}
         />
       );
     });
@@ -80,7 +88,7 @@ const Banner = () => {
   };
 
   const renderDot = () => {
-    const dots = images.map((image, index) => {
+    const dots = banners.map((image, index) => {
       return (
         <Text
           key={index}

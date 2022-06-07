@@ -1,7 +1,10 @@
-import React, {useState} from 'react';
-import {Text, TouchableOpacity, View} from 'react-native';
+import React, {useState, useEffect} from 'react';
+import {useSelector, useDispatch} from 'react-redux';
+import {Text, TouchableOpacity, View, Image} from 'react-native';
 import {Dialog, Portal, Provider} from 'react-native-paper';
+import appConfig from '../../config/appConfig';
 import colorConfig from '../../config/colorConfig';
+import {changeOrderingMode} from '../../actions/order.action';
 
 const styles = {
   root: {
@@ -58,7 +61,7 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 10,
-    margin: 2,
+    margin: 6,
   },
   touchableItemSelected: {
     width: 81,
@@ -69,7 +72,7 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 10,
-    margin: 2,
+    margin: 6,
   },
   touchableSave: {
     paddingVertical: 10,
@@ -94,38 +97,65 @@ const styles = {
     borderTopWidth: 1,
     borderTopColor: '#D6D6D6',
   },
+  imageSelected: {
+    tintColor: colorConfig.primaryColor,
+  },
+  image: {
+    tintColor: '#B7B7B7',
+  },
 };
 
-const OrderingTypeSelectorModal = ({open, handleClose}) => {
+const OrderingTypeSelectorModal = ({open, handleClose, value}) => {
+  const dispatch = useDispatch();
   const [selected, setSelected] = useState({});
+  const [orderingTypes, setOrderingTypes] = useState([]);
 
-  const tests = [{id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}];
+  const defaultOutlet = useSelector(
+    state => state.storesReducer.defaultOutlet.defaultOutlet,
+  );
 
-  const orderingTypeItem = item => {
-    const active = selected?.id === item?.id;
-    const styleItem = active
-      ? styles.touchableItemSelected
-      : styles.touchableItem;
-    const styleName = active ? styles.textNameSelected : styles.textName;
-    const stylePrice = active ? styles.textPriceSelected : styles.textPrice;
-    const styleCurrency = active ? styles.textPriceSelected : styles.textPrice;
+  useEffect(() => {
+    const orderingModesField = [
+      {
+        key: 'PICKUP',
+        isEnabledFieldName: 'enableStorePickUp',
+        displayName: defaultOutlet.storePickUpName || 'Pick Up',
+        image: appConfig.funtoastPickUp,
+      },
+      {
+        key: 'DELIVERY',
+        isEnabledFieldName: 'enableDelivery',
+        displayName: defaultOutlet.deliveryName || 'Delivery',
+        image: appConfig.funtoastDelivery,
+      },
+      {
+        key: 'TAKEAWAY',
+        isEnabledFieldName: 'enableTakeAway',
+        displayName: defaultOutlet.takeAwayName || 'Take Away',
+        image: appConfig.funtoastTakeAway,
+      },
+      {
+        key: 'DINEIN',
+        isEnabledFieldName: 'enableDineIn',
+        displayName: defaultOutlet.dineInName || 'Dine In',
+        image: appConfig.funtoastPickUp,
+      },
+    ];
 
-    return (
-      <TouchableOpacity
-        style={styleItem}
-        onPress={() => {
-          setSelected(item);
-        }}>
-        <View style={styles.circle}>
-          <View style={styles.viewTextNameAndPrice}>
-            <Text style={stylePrice}>10</Text>
-            <Text style={styleCurrency}>SGD</Text>
-          </View>
-        </View>
-        <View style={{marginTop: 8}} />
-        <Text style={styleName}>Delivery A</Text>
-      </TouchableOpacity>
-    );
+    const orderingModesFieldFiltered = orderingModesField.filter(mode => {
+      if (defaultOutlet[mode.isEnabledFieldName]) {
+        return mode;
+      }
+    });
+    setOrderingTypes(orderingModesFieldFiltered);
+
+    const currentOrderingMode = value || {};
+    setSelected({key: currentOrderingMode});
+  }, [defaultOutlet, value]);
+
+  const handleSave = async () => {
+    await dispatch(changeOrderingMode({orderingMode: selected.key}));
+    handleClose();
   };
 
   const renderHeader = () => {
@@ -135,9 +165,33 @@ const OrderingTypeSelectorModal = ({open, handleClose}) => {
       </View>
     );
   };
+
+  const renderOrderingTypeItem = item => {
+    const active = selected?.key === item?.key;
+    const styleItem = active
+      ? styles.touchableItemSelected
+      : styles.touchableItem;
+    const styleName = active ? styles.textNameSelected : styles.textName;
+    const styleImage = active ? styles.imageSelected : styles.image;
+
+    return (
+      <TouchableOpacity
+        style={styleItem}
+        onPress={() => {
+          setSelected(item);
+        }}>
+        <View style={styles.circle}>
+          <Image source={item?.image} style={styleImage} />
+        </View>
+        <View style={{marginTop: 8}} />
+        <Text style={styleName}>{item?.displayName}</Text>
+      </TouchableOpacity>
+    );
+  };
+
   const renderBody = () => {
-    const result = tests.map(test => {
-      return orderingTypeItem(test);
+    const result = orderingTypes.map(type => {
+      return renderOrderingTypeItem(type);
     });
 
     return <View style={styles.body}>{result}</View>;
@@ -146,7 +200,12 @@ const OrderingTypeSelectorModal = ({open, handleClose}) => {
   const renderFooter = () => {
     return (
       <View style={styles.footer}>
-        <TouchableOpacity style={styles.touchableSave}>
+        <TouchableOpacity
+          style={styles.touchableSave}
+          disabled={!selected}
+          onPress={() => {
+            handleSave();
+          }}>
           <Text style={styles.textSave}>SAVE</Text>
         </TouchableOpacity>
       </View>

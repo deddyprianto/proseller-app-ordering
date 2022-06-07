@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {StyleSheet, ScrollView} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 
 import FavoriteOutletDetail from '../components/favoriteOutletDetail';
 
@@ -8,16 +8,17 @@ import {Header} from '../components/layout';
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     backgroundColor: 'white',
   },
 });
 
-const FavoriteOutlets = () => {
+const FavoriteOutlets = ({outlet}) => {
   return (
-    <ScrollView style={styles.container}>
+    <View style={styles.container}>
       <Header title="Outlets Detail" />
-      <FavoriteOutletDetail />
-    </ScrollView>
+      <FavoriteOutletDetail outlet={outlet} />
+    </View>
   );
 };
 

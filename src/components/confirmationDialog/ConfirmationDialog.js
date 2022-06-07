@@ -1,5 +1,5 @@
 import React from 'react';
-import {Text, TouchableOpacity} from 'react-native';
+import {Text, TouchableOpacity, Modal} from 'react-native';
 import {Dialog, Portal, Provider} from 'react-native-paper';
 import colorConfig from '../../config/colorConfig';
 
@@ -50,33 +50,54 @@ const ConfirmationDialog = ({
   open,
   handleSubmit,
   handleClose,
+  isLoading,
   textSubmit,
   textTitle,
   textDescription,
 }) => {
+  const renderCloseButton = () => {
+    return (
+      <TouchableOpacity
+        style={styles.touchableClose}
+        onPress={handleClose}
+        disabled={isLoading}>
+        <Text style={styles.textClose}>Cancel</Text>
+      </TouchableOpacity>
+    );
+  };
+
+  const renderSubmitButton = () => {
+    const text = isLoading ? 'Loading....' : textSubmit;
+
+    return (
+      <TouchableOpacity
+        style={styles.touchableSubmit}
+        onPress={handleSubmit}
+        disabled={isLoading}>
+        <Text style={styles.textSubmit}>{text}</Text>
+      </TouchableOpacity>
+    );
+  };
   return (
-    <Provider>
-      <Portal>
-        <Dialog visible={open} onDismiss={handleClose} style={styles.container}>
-          <Dialog.Title style={styles.title}>{textTitle}</Dialog.Title>
-          <Dialog.Content>
-            <Text style={styles.textContent}>{textDescription}</Text>
-          </Dialog.Content>
-          <Dialog.Actions style={styles.actions}>
-            <TouchableOpacity
-              style={styles.touchableClose}
-              onPress={handleClose}>
-              <Text style={styles.textClose}>Cancel</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.touchableSubmit}
-              onPress={handleSubmit}>
-              <Text style={styles.textSubmit}>{textSubmit}</Text>
-            </TouchableOpacity>
-          </Dialog.Actions>
-        </Dialog>
-      </Portal>
-    </Provider>
+    <Modal animationType="none" transparent={true}>
+      <Provider>
+        <Portal>
+          <Dialog
+            visible={open}
+            onDismiss={handleClose}
+            style={styles.container}>
+            <Dialog.Title style={styles.title}>{textTitle}</Dialog.Title>
+            <Dialog.Content>
+              <Text style={styles.textContent}>{textDescription}</Text>
+            </Dialog.Content>
+            <Dialog.Actions style={styles.actions}>
+              {renderCloseButton()}
+              {renderSubmitButton()}
+            </Dialog.Actions>
+          </Dialog>
+        </Portal>
+      </Provider>
+    </Modal>
   );
 };
 

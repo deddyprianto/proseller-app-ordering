@@ -118,7 +118,6 @@ import MyFavoriteOutlets from '../pages/MyFavoriteOutlets';
 import FavoriteOutlets from '../pages/FavoriteOutlets';
 import FavoriteOutletDetail from '../pages/FavoriteOutletDetail';
 import OrderHere from '../pages/orderHere';
-import ProductDetail from '../pages/productDetail';
 import Cart from '../pages/cart';
 import VoucherDetail from '../pages/VoucherDetail';
 import PointDetailAndHistory from '../pages/PointDetailAndHistory';
@@ -205,8 +204,8 @@ export default class Routes extends Component {
 
   handleBackButton = () => {
     if (
-      Actions.currentScene === 'inputPhoneNumber' ||
-      Actions.currentScene === 'pageIndex'
+      Actions.currentScene === 'pageIndex' ||
+      Actions.currentScene === 'onBoarding'
     ) {
       if (backPressed > 0) {
         BackHandler.exitApp();
@@ -230,7 +229,6 @@ export default class Routes extends Component {
             transitionConfig={transitionConfig}
             key="app"
             hideNavBar={true}>
-            <Scene key="pageIndex" component={PageIndex} />
             <Scene key="inputPhoneNumber" component={InputPhoneNumber} />
             <Scene key="signInPhoneNumber" component={SignInPhoneNumber} />
             <Scene
@@ -350,6 +348,7 @@ export default class Routes extends Component {
             <Scene key="notifications" component={Notifications} />
 
             {/* //martin */}
+            <Scene key="pageIndex" component={PageIndex} initial={true} />
             <Scene key="eStore" component={EStore} />
             <Scene key="eCard" component={ECard} />
             <Scene key="onBoarding" component={OnBoarding} />
@@ -360,10 +359,7 @@ export default class Routes extends Component {
             <Scene key="eGift" component={EGift} />
             <Scene key="sendEGift" component={SendEGift} />
             <Scene key="orderHere" component={OrderHere} />
-            {/* <Scene key="product" component={Products} /> */}
-            {/* <Scene key="product2" component={Products2} /> */}
-            <Scene key="productDetail" component={ProductDetail} />
-            <Scene key="cart" component={Cart} initial={true} />
+            <Scene key="cart" component={Cart} />
             <Scene key="redeem" component={Redeem} />
             <Scene key="myFavoriteOutlets" component={MyFavoriteOutlets} />
             <Scene key="favoriteOutlets" component={FavoriteOutlets} />

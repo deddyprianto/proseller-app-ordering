@@ -448,113 +448,6 @@ export const removeBasket = () => {
   };
 };
 
-export const updateProductToBasket = (payload, previousData) => {
-  return async (dispatch, getState) => {
-    try {
-      const state = getState();
-      const {
-        authReducer: {
-          tokenUser: {token},
-        },
-      } = state;
-
-      // get data basket previous
-      const {
-        orderReducer: {
-          dataBasket: {product},
-        },
-      } = state;
-
-      const {
-        authReducer: {
-          authData: {isLoggedIn},
-        },
-      } = state;
-
-      let updatedProduct = [];
-      let data = {
-        id: previousData.oldID || previousData.id,
-        unitPrice: payload.details[0].unitPrice,
-        quantity: payload.details[0].quantity,
-        modifiers: payload.details[0].modifiers,
-      };
-
-      // CHECK IF CUSTOMER IS LOGGED IN
-      if (isLoggedIn !== true) {
-        data.product = previousData.product;
-        const dataUpdate = await makePayloadUpdate(product, [data]);
-
-        let cartOffline = product;
-        for (let i = 0; i < cartOffline.details.length; i++) {
-          for (let j = 0; j < dataUpdate.length; j++) {
-            if (cartOffline.details[i].id === dataUpdate[j].id) {
-              cartOffline.details[i] = dataUpdate[j];
-            }
-          }
-        }
-        cartOffline.details = cartOffline.details.filter(item => {
-          return item.quantity !== 0;
-        });
-
-        if (cartOffline && !isEmptyArray(cartOffline.details)) {
-          const response = await fetchApiOrder(
-            '/cart/build',
-            'POST',
-            cartOffline,
-            200,
-            token,
-          );
-          console.log(response, 'response build cart');
-          dispatch({
-            type: 'DATA_BASKET',
-            product: response.response.data,
-          });
-          dispatch({
-            type: 'OFFLINE_CART',
-            product: response.response.data,
-          });
-          return response;
-        } else {
-          const response = {
-            status: true,
-          };
-          dispatch({
-            type: 'DATA_BASKET',
-            product: undefined,
-          });
-          dispatch({
-            type: 'OFFLINE_CART',
-            product: undefined,
-          });
-          return response;
-        }
-      }
-
-      // if remark is available, then add
-      if (
-        payload.details[0].remark != undefined &&
-        payload.details[0].remark != ''
-      ) {
-        data.remark = payload.details[0].remark;
-      }
-      updatedProduct.push(data);
-      console.log('payload update product ', JSON.stringify(updatedProduct));
-      let response = await fetchApiOrder(
-        '/cart/updateitem',
-        'POST',
-        updatedProduct,
-        200,
-        token,
-      );
-      console.log(response, 'response update data basket');
-      return response;
-    } catch (error) {
-      console.log(error, 'response build cart');
-      return error;
-    }
-  };
-};
-
 export const makePayloadUpdate = async (basket, products) => {
   try {
     let payload = [];
@@ -627,88 +520,6 @@ export const makePayloadUpdate = async (basket, products) => {
   }
 };
 
-export const addProductToBasket = payload => {
-  return async (dispatch, getState) => {
-    try {
-      const state = getState();
-      const {
-        authReducer: {
-          tokenUser: {token},
-        },
-      } = state;
-
-      const {
-        authReducer: {
-          authData: {isLoggedIn},
-        },
-      } = state;
-
-      // get data basket previous
-      const {
-        orderReducer: {
-          dataBasket: {product},
-        },
-      } = state;
-      // add temporary data if product is exist
-      // if (product != undefined) {
-      //   let newProduct = product;
-      //   newProduct.details.push(payload.details[0]);
-      //   dispatch({
-      //     type: 'DATA_BASKET',
-      //     product: newProduct,
-      //   });
-      // } else {
-      //   let newProduct = payload;
-      //   dispatch({
-      //     type: 'DATA_BASKET',
-      //     product: newProduct,
-      //   });
-      // }
-
-      console.log('payload add products ', JSON.stringify(payload));
-      // add real data
-      let response = {};
-
-      /* IF CUSTOMER IS LOGGED IN, THEN ADD ITEM TO SERVER, ELSE, ADD ITEM TO LOCAL DATA */
-      if (isLoggedIn === true) {
-        response = await fetchApiOrder(
-          '/cart/additem',
-          'POST',
-          payload,
-          200,
-          token,
-        );
-      } else {
-        if (product !== undefined && product !== null) {
-          let cartOffline = product;
-          cartOffline.details.push(payload.details[0]);
-          payload = cartOffline;
-        }
-        response = await fetchApiOrder(
-          '/cart/build',
-          'POST',
-          payload,
-          200,
-          token,
-        );
-      }
-
-      console.log(response, 'response post data basket');
-      dispatch({
-        type: 'DATA_BASKET',
-        product: response.response.data,
-      });
-      dispatch({
-        type: 'OFFLINE_CART',
-        product: response.response.data,
-      });
-      return response;
-    } catch (error) {
-      return error;
-    }
-  };
-};
-
 export const clearNetsclickData = token => {
   return async (dispatch, getState) => {
     const state = getState();
@@ -757,80 +568,6 @@ export const submitOfflineCart = token => {
           console.log(responseAddItem, 'responseAddItem');
         }
       }
-    } catch (error) {
-      return error;
-    }
-  };
-};
-
-export const getBasket = () => {
-  return async (dispatch, getState) => {
-    const state = getState();
-    try {
-      const {
-        authReducer: {
-          tokenUser: {token},
-        },
-      } = state;
-
-      const {
-        authReducer: {
-          authData: {isLoggedIn},
-        },
-      } = state;
-
-      let {
-        userReducer: {
-          offlineCart: {offlineCart},
-        },
-      } = state;
-
-      let response = {};
-
-      if (isLoggedIn !== true) {
-        try {
-          if (isEmptyArray(offlineCart.details)) {
-            offlineCart = undefined;
-          }
-        } catch (e) {}
-
-        response = {
-          success: true,
-          response: {
-            data: offlineCart,
-          },
-        };
-      } else {
-        response = await fetchApiOrder(
-          '/cart/getcart',
-          'GET',
-          null,
-          200,
-          token,
-        );
-      }
-      console.log(response, 'response get data basket');
-      if (response.success == false) {
-        dispatch({
-          type: 'DATA_BASKET',
-          product: undefined,
-        });
-      } else {
-        dispatch({
-          type: 'DATA_BASKET',
-          product: response.response.data,
-        });
-        // check if ordering mode is exist (cart has submitted)
-        let order = response.response.data;
-        if (order.orderingMode != undefined && order.tableNo != undefined) {
-          dispatch({
-            type: 'ORDER_TYPE',
-            orderType: order.orderingMode,
-          });
-        }
-      }
-
-      return response;
     } catch (error) {
       return error;
     }
@@ -1066,94 +803,6 @@ export const setCart = cart => {
         type: 'DATA_CART_SINGLE',
         cartSingle: cart,
       });
-    } catch (error) {
-      return error;
-    }
-  };
-};
-
-export const getDeliveryProvider = () => {
-  return async (dispatch, getState) => {
-    const state = getState();
-    try {
-      const {
-        authReducer: {
-          tokenUser: {token},
-        },
-      } = state;
-
-      let payload = {
-        take: 100,
-        skip: 0,
-        sortBy: 'name',
-        sortDirection: 'ASC',
-      };
-
-      let response = await fetchApiOrder(
-        '/delivery/providers',
-        'POST',
-        payload,
-        200,
-        token,
-      );
-      console.log(response, 'response get delivery provider');
-      if (response.success == false) {
-        dispatch({
-          type: 'DATA_PROVIDER',
-          providers: undefined,
-        });
-      } else {
-        dispatch({
-          type: 'DATA_PROVIDER',
-          providers: response.response.data,
-        });
-      }
-
-      return response;
-    } catch (error) {
-      return error;
-    }
-  };
-};
-
-export const getDeliveryFee = payload => {
-  return async (dispatch, getState) => {
-    const state = getState();
-    try {
-      const {
-        authReducer: {
-          tokenUser: {token},
-        },
-      } = state;
-      console.log(payload, 'payload calculate delivery fee');
-      let response = await fetchApiOrder(
-        '/delivery/calculateFee',
-        'POST',
-        payload,
-        200,
-        token,
-      );
-      console.log(response, 'response get delivery fee');
-      if (response.success == true) {
-        if (!isEmptyArray(response.response.data.dataProvider)) {
-          let providers = response.response.data.dataProvider;
-          try {
-            providers = _.orderBy(providers, ['deliveryFee'], ['asc']);
-          } catch (e) {}
-          dispatch({
-            type: 'DATA_PROVIDER',
-            providers: providers,
-          });
-        } else {
-          dispatch({
-            type: 'DATA_PROVIDER',
-            providers: [],
-          });
-        }
-        return response.response;
-      } else {
-        return false;
-      }
     } catch (error) {
       return error;
     }
@@ -1671,43 +1320,6 @@ export const removeTimeslot = () => {
   };
 };
 
-export const changeOrderingMode = (orderingMode, provider) => {
-  return async (dispatch, getState) => {
-    const state = getState();
-    try {
-      const {
-        authReducer: {
-          tokenUser: {token},
-        },
-      } = state;
-
-      const payload = {
-        orderingMode,
-        provider,
-      };
-
-      let response = await fetchApiOrder(
-        '/cart/changeOrderingMode',
-        'POST',
-        payload,
-        200,
-        token,
-      );
-      // console.log(payload, 'payload change ordering mode');
-      // console.log(response, 'response change ordering mode');
-      if (response.success == true) {
-        dispatch({
-          type: 'DATA_BASKET',
-          product: response.response.data,
-        });
-      }
-      return response;
-    } catch (error) {
-      return error;
-    }
-  };
-};
-
 export const getSetting = settingKey => {
   return async (dispatch, getState) => {
     const state = getState();
@@ -1810,5 +1422,574 @@ export const productByPromotion = (promotionID, outletId) => {
       }
       return false;
     } catch (e) {}
+  };
+};
+
+export const updateProductToBasket = (payload, previousData) => {
+  return async (dispatch, getState) => {
+    try {
+      const state = getState();
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      // get data basket previous
+      const {
+        orderReducer: {
+          dataBasket: {product},
+        },
+      } = state;
+
+      const {
+        authReducer: {
+          authData: {isLoggedIn},
+        },
+      } = state;
+
+      let updatedProduct = [];
+      let data = {
+        id: previousData.oldID || previousData.id,
+        unitPrice: payload.details[0].unitPrice,
+        quantity: payload.details[0].quantity,
+        modifiers: payload.details[0].modifiers,
+      };
+
+      // CHECK IF CUSTOMER IS LOGGED IN
+      if (isLoggedIn !== true) {
+        data.product = previousData.product;
+        const dataUpdate = await makePayloadUpdate(product, [data]);
+
+        let cartOffline = product;
+        for (let i = 0; i < cartOffline.details.length; i++) {
+          for (let j = 0; j < dataUpdate.length; j++) {
+            if (cartOffline.details[i].id === dataUpdate[j].id) {
+              cartOffline.details[i] = dataUpdate[j];
+            }
+          }
+        }
+        cartOffline.details = cartOffline.details.filter(item => {
+          return item.quantity !== 0;
+        });
+
+        if (cartOffline && !isEmptyArray(cartOffline.details)) {
+          const response = await fetchApiOrder(
+            '/cart/build',
+            'POST',
+            cartOffline,
+            200,
+            token,
+          );
+          console.log(response, 'response build cart');
+          dispatch({
+            type: 'DATA_BASKET',
+            product: response.response.data,
+          });
+          dispatch({
+            type: 'OFFLINE_CART',
+            product: response.response.data,
+          });
+          return response;
+        } else {
+          const response = {
+            status: true,
+          };
+          dispatch({
+            type: 'DATA_BASKET',
+            product: undefined,
+          });
+          dispatch({
+            type: 'OFFLINE_CART',
+            product: undefined,
+          });
+          return response;
+        }
+      }
+
+      // if remark is available, then add
+      if (
+        payload.details[0].remark != undefined &&
+        payload.details[0].remark != ''
+      ) {
+        data.remark = payload.details[0].remark;
+      }
+      updatedProduct.push(data);
+      console.log('payload update product ', JSON.stringify(updatedProduct));
+
+      let response = await fetchApiOrder(
+        '/cart/updateitem',
+        'POST',
+        updatedProduct,
+        200,
+        token,
+      );
+      console.log(response, 'response update data basket');
+      return response;
+    } catch (error) {
+      console.log(error, 'response build cart');
+      return error;
+    }
+  };
+};
+
+export const getDeliveryProvider = () => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      let payload = {
+        take: 100,
+        skip: 0,
+        sortBy: 'name',
+        sortDirection: 'ASC',
+      };
+
+      let response = await fetchApiOrder(
+        '/delivery/providers',
+        'POST',
+        payload,
+        200,
+        token,
+      );
+      console.log(response, 'response get delivery provider');
+      if (response.success === false) {
+        dispatch({
+          type: 'DATA_PROVIDER',
+          providers: undefined,
+        });
+      } else {
+        dispatch({
+          type: 'DATA_PROVIDER',
+          providers: response.response.data,
+        });
+      }
+
+      return response;
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const getDeliveryFee = payload => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+      console.log(payload, 'payload calculate delivery fee');
+      let response = await fetchApiOrder(
+        '/delivery/calculateFee',
+        'POST',
+        payload,
+        200,
+        token,
+      );
+      console.log(response, 'response get delivery fee');
+      if (response.success == true) {
+        if (!isEmptyArray(response.response.data.dataProvider)) {
+          let providers = response.response.data.dataProvider;
+          try {
+            providers = _.orderBy(providers, ['deliveryFee'], ['asc']);
+          } catch (e) {}
+          dispatch({
+            type: 'DATA_PROVIDER',
+            providers: providers,
+          });
+        } else {
+          dispatch({
+            type: 'DATA_PROVIDER',
+            providers: [],
+          });
+        }
+        return response.response;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+//martin
+export const addProductToBasket = ({defaultOutlet, selectedProduct}) => {
+  return async (dispatch, getState) => {
+    try {
+      const state = getState();
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      const {
+        authReducer: {
+          authData: {isLoggedIn},
+        },
+      } = state;
+
+      // get data basket previous
+      const {
+        orderReducer: {
+          dataBasket: {product},
+        },
+      } = state;
+
+      let payload = {
+        outletID: `outlet::${defaultOutlet.id}`,
+        details: [],
+      };
+
+      let newProduct = {
+        productID: selectedProduct?.productID,
+        unitPrice:
+          selectedProduct?.product?.retailPrice || selectedProduct?.retailPrice,
+        quantity: selectedProduct?.quantity,
+      };
+
+      if (selectedProduct?.remark) {
+        newProduct.remark = selectedProduct?.remark;
+      }
+
+      if (!isEmptyArray(selectedProduct?.modifiers)) {
+        newProduct.modifiers = selectedProduct?.modifiers;
+      }
+
+      payload.details.push(newProduct);
+
+      // add real data
+      let response = {};
+
+      /* IF CUSTOMER IS LOGGED IN, THEN ADD ITEM TO SERVER, ELSE, ADD ITEM TO LOCAL DATA */
+      if (isLoggedIn === true) {
+        response = await fetchApiOrder(
+          '/cart/additem',
+          'POST',
+          payload,
+          200,
+          token,
+        );
+      } else {
+        if (product !== undefined && product !== null) {
+          let cartOffline = product;
+          cartOffline.details.push(payload.details[0]);
+          payload = cartOffline;
+        }
+        response = await fetchApiOrder(
+          '/cart/build',
+          'POST',
+          payload,
+          200,
+          token,
+        );
+      }
+
+      dispatch({
+        type: 'DATA_BASKET',
+        product: response.response.data,
+      });
+      dispatch({
+        type: 'OFFLINE_CART',
+        product: response.response.data,
+      });
+      return response;
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const updateProductBasket = payload => {
+  return async (dispatch, getState) => {
+    try {
+      const state = getState();
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      // get data basket previous
+      const {
+        orderReducer: {
+          dataBasket: {product},
+        },
+      } = state;
+
+      const {
+        authReducer: {
+          authData: {isLoggedIn},
+        },
+      } = state;
+
+      console.log('TOKEN', token);
+
+      console.log('payload update product ', JSON.stringify(payload));
+
+      let response = await fetchApiOrder(
+        '/cart/updateitem',
+        'POST',
+        [payload],
+        200,
+        token,
+      );
+      console.log(response, 'response update data basket');
+      dispatch({
+        type: 'DATA_BASKET',
+        product: response.response.data,
+      });
+      dispatch({
+        type: 'OFFLINE_CART',
+        product: response.response.data,
+      });
+      return response;
+    } catch (error) {
+      console.log(error, 'response build cart');
+      return error;
+    }
+  };
+};
+
+export const getBasket = () => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      const {
+        authReducer: {
+          authData: {isLoggedIn},
+        },
+      } = state;
+
+      let {
+        userReducer: {
+          offlineCart: {offlineCart},
+        },
+      } = state;
+
+      let response = {};
+
+      if (isLoggedIn !== true) {
+        try {
+          if (isEmptyArray(offlineCart.details)) {
+            offlineCart = undefined;
+          }
+        } catch (e) {}
+
+        response = {
+          success: true,
+          response: {
+            data: offlineCart,
+          },
+        };
+      } else {
+        response = await fetchApiOrder(
+          '/cart/getcart',
+          'GET',
+          null,
+          200,
+          token,
+        );
+      }
+      console.log(response, 'response get data basket');
+      if (response.success === false) {
+        dispatch({
+          type: 'DATA_BASKET',
+          product: undefined,
+        });
+      } else {
+        dispatch({
+          type: 'DATA_BASKET',
+          product: response.response.data,
+        });
+        // check if ordering mode is exist (cart has submitted)
+        let order = response.response.data;
+        if (order.orderingMode != undefined && order.tableNo != undefined) {
+          dispatch({
+            type: 'ORDER_TYPE',
+            orderType: order.orderingMode,
+          });
+        }
+      }
+
+      return response;
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const getDeliveryProviderAndFee = payload => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+      console.log(payload, 'payload calculate delivery fee');
+      let response = await fetchApiOrder(
+        '/delivery/calculateFee',
+        'POST',
+        payload,
+        200,
+        token,
+      );
+      console.log(response, 'response get delivery fee');
+      if (response.success === true) {
+        if (!isEmptyArray(response.response.data.dataProvider)) {
+          let providers = response.response.data.dataProvider;
+          try {
+            providers = _.orderBy(providers, ['deliveryFee'], ['asc']);
+          } catch (e) {}
+          dispatch({
+            type: 'DATA_PROVIDER',
+            providers: providers,
+          });
+        } else {
+          dispatch({
+            type: 'DATA_PROVIDER',
+            providers: [],
+          });
+        }
+        return response.response;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const getTimeSlot = ({outletId, date, clientTimezone, orderingMode}) => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      const {
+        storesReducer: {
+          defaultOutlet: {defaultOutlet},
+        },
+      } = state;
+
+      let dataOutlet = {};
+      if (!isEmptyObject(defaultOutlet.orderValidation)) {
+        if (orderingMode === 'DELIVERY') {
+          dataOutlet = defaultOutlet.orderValidation.delivery;
+        } else if (orderingMode === 'STOREPICKUP') {
+          dataOutlet = defaultOutlet.orderValidation.storePickUp;
+        } else if (orderingMode === 'TAKEAWAY') {
+          dataOutlet = defaultOutlet.orderValidation.takeAway;
+        } else if (orderingMode === 'DINEIN') {
+          dataOutlet = defaultOutlet.orderValidation.dineIn;
+        }
+      }
+
+      let payload = {
+        date,
+        outletID: `outlet::${outletId}`,
+        clientTimezone,
+        orderingMode,
+      };
+
+      if (
+        !isEmptyObject(dataOutlet) &&
+        dataOutlet.maxDays != undefined &&
+        dataOutlet.maxDays > 0
+      ) {
+        payload.maxDays = dataOutlet.maxDays;
+      } else {
+        payload.maxDays = 90;
+      }
+
+      let response = await fetchApiOrder(
+        '/timeslot',
+        'POST',
+        payload,
+        200,
+        token,
+      );
+
+      console.log('PAYLOAD GET TIMESLOT ', payload);
+      console.log('RESPONSE GET TIMESLOT ', response);
+
+      if (response.success === true) {
+        return response.response.data;
+      }
+      return false;
+    } catch (e) {}
+  };
+};
+
+export const changeOrderingMode = ({orderingMode, provider}) => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      const payload = {
+        orderingMode,
+        provider,
+      };
+
+      console.log('paylaod', payload);
+
+      let response = await fetchApiOrder(
+        '/cart/changeOrderingMode',
+        'POST',
+        payload,
+        200,
+        token,
+      );
+
+      console.log('response', response);
+
+      if (response.success === true) {
+        dispatch({
+          type: 'DATA_BASKET',
+          product: response.response.data,
+        });
+      }
+      return response;
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const setTimeSlotSelected = ({date, time}) => {
+  return async dispatch => {
+    const payload = {date, time};
+
+    dispatch({
+      type: 'ORDERING_DATE_TIME',
+      orderingDateTimeSelected: payload,
+    });
   };
 };

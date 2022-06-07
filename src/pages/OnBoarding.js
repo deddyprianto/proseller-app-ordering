@@ -2,28 +2,24 @@ import React, {useState} from 'react';
 import {Actions} from 'react-native-router-flux';
 
 import {
-  SafeAreaView,
   StyleSheet,
   ScrollView,
   View,
   Text,
   Image,
-  Dimensions,
   TouchableOpacity,
 } from 'react-native';
 
 import colorConfig from '../config/colorConfig';
 
-const HEIGHT = Dimensions.get('window').height;
-
 const styles = StyleSheet.create({
   container: {
-    marginTop: HEIGHT * 0.01,
-    marginBottom: HEIGHT * 0.01,
-    justifyContent: 'center',
+    flex: 1,
+    justifyContent: 'space-between',
     alignItems: 'center',
   },
   wrap: {
+    flex: 1,
     width: 400,
   },
   viewImage: {
@@ -152,6 +148,7 @@ const OnBoarding = () => {
     return (
       <View style={styles.viewRegisterAndLogin}>
         <TouchableOpacity
+          activeOpacity={1}
           style={styles.touchableRegister}
           onPress={() => {
             Actions.register();
@@ -159,6 +156,7 @@ const OnBoarding = () => {
           <Text style={styles.colorWhite}>Create New Account</Text>
         </TouchableOpacity>
         <TouchableOpacity
+          activeOpacity={1}
           style={styles.touchableLogin}
           onPress={() => {
             Actions.login();
@@ -170,7 +168,7 @@ const OnBoarding = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <ScrollView
         style={styles.wrap}
         onScroll={({nativeEvent}) => {
@@ -183,7 +181,8 @@ const OnBoarding = () => {
       </ScrollView>
       {renderDot()}
       {renderRegisterAndLoginButton()}
-    </SafeAreaView>
+      <View style={{marginTop: 30}} />
+    </View>
   );
 };
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {Actions} from 'react-native-router-flux';
 
 import {
@@ -12,6 +12,10 @@ import {
 } from 'react-native';
 
 import colorConfig from '../config/colorConfig';
+import {useDispatch, useSelector} from 'react-redux';
+import {getGiftCardCategories} from '../actions/gift.action';
+import LoadingScreen from '../components/loadingScreen';
+import {isEmptyArray} from '../helper/CheckEmpty';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -65,30 +69,25 @@ const styles = StyleSheet.create({
 });
 
 const EGift = () => {
-  const categories = [
-    {
-      name: 'martin',
-      image:
-        'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-    },
-    {
-      name: 'test',
-      image:
-        'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-    },
-    {
-      name: 'anjay',
-      image:
-        'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-    },
-  ];
+  const dispatch = useDispatch();
+  const giftCardCategories = useSelector(
+    state => state.giftReducer.giftCardCategories.categories,
+  );
+
+  useEffect(() => {
+    const loadData = async () => {
+      await dispatch(getGiftCardCategories());
+    };
+    loadData();
+  }, [dispatch]);
 
   const renderCategories = () => {
-    const result = categories.map((category, index) => {
+    const result = giftCardCategories?.map((category, index) => {
       return (
         <TouchableOpacity
+          disabled={isEmptyArray(giftCardCategories)}
           onPress={() => {
-            Actions.push('sendEGift');
+            Actions.sendEGift({categoryId: category.id});
           }}>
           <Image
             key={index}
@@ -104,6 +103,7 @@ const EGift = () => {
 
   return (
     <ScrollView style={styles.container}>
+      <LoadingScreen loading={isEmptyArray(giftCardCategories)} />
       <View style={styles.viewHeader}>
         <View style={styles.viewTitle}>
           <Text style={styles.textTitle}>Send A Gift</Text>

@@ -15,6 +15,7 @@ import config from './src/config/awsConfig';
 
 // sentry crashlytic
 import * as Sentry from '@sentry/react-native';
+import Snackbar from './src/components/snackbar';
 
 Sentry.init({
   dsn: `${config.DSN}`,
@@ -27,6 +28,7 @@ export default class App extends Component {
     return (
       <Provider store={persistStore.store}>
         <PersistGate loading={null} persistor={persistStore.persistor}>
+          <Snackbar />
           <Main />
         </PersistGate>
       </Provider>

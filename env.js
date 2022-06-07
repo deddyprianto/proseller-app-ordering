@@ -4,7 +4,7 @@ const ENV = {
 
   API_HOST: 'https://qiji-demo.proseller.io/',
 
-  base_url_payment: 'https://payment.proseller.io/api/',
+  base_url_payment: 'https://payment-demo.proseller.io/api/',
 
   ONESIGNAL_ID: '35add1a7-b917-4e29-8f17-d58f5b945159',
 

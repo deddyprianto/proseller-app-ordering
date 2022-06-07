@@ -71,8 +71,35 @@ const accountExist = (state = {}, action) => {
   }
 };
 
+//martin
+const myVouchers = (state = {}, action) => {
+  switch (action.type) {
+    case 'DATA_MY_VOUCHERS':
+      return {
+        vouchers: action.data,
+      };
+
+    default:
+      return state;
+  }
+};
+
+const myProgressBarCampaign = (state = {}, action) => {
+  switch (action.type) {
+    case 'DATA_MY_PROGRESS_BAR_CAMPAIGN':
+      return {
+        myProgress: action.data,
+      };
+
+    default:
+      return state;
+  }
+};
+
 export default combineReducers({
+  myProgressBarCampaign,
   myVoucers,
+  myVouchers,
   accountExist,
   mandatoryFields,
   afterPayment,

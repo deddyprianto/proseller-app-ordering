@@ -1,4 +1,6 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
+import CryptoJS from 'react-native-crypto-js';
 
 import {
   StyleSheet,
@@ -13,9 +15,14 @@ import {ProgressBar} from 'react-native-paper';
 
 import colorConfig from '../config/colorConfig';
 import appConfig from '../config/appConfig';
+import awsConfig from '../config/awsConfig';
+
 import {Actions} from 'react-native-router-flux';
 
 import VoucherList from '../components/voucherList';
+import Header from '../components/layout/header';
+import {dataPointHistory} from '../actions/rewards.action';
+import {myProgressBarCampaign} from '../actions/account.action';
 
 const styles = StyleSheet.create({
   container: {
@@ -47,14 +54,14 @@ const styles = StyleSheet.create({
     fontSize: 9,
     fontWeight: '500',
     color: 'white',
-    width: '12%',
+    width: '13%',
     textAlign: 'left',
   },
   textNextTier: {
     fontSize: 9,
     fontWeight: '500',
     color: 'white',
-    width: '12%',
+    width: '13%',
     textAlign: 'right',
   },
   textInfo: {
@@ -69,6 +76,12 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
     fontSize: 12,
     fontWeight: '600',
+  },
+  textAvailableVoucher: {
+    width: '100%',
+    textAlign: 'left',
+    fontSize: 12,
+    fontWeight: '400',
   },
   viewHeader: {
     width: '100%',
@@ -109,11 +122,44 @@ const styles = StyleSheet.create({
 });
 
 const Redeem = () => {
+  const dispatch = useDispatch();
+  const [user, setUser] = useState({});
+
+  const progressBarCampaign = useSelector(
+    state => state.accountsReducer?.myProgressBarCampaign.myProgress,
+  );
+
+  const totalPoint = useSelector(
+    state => state.rewardsReducer?.dataPoint?.totalPoint,
+  );
+
+  const userDetail = useSelector(
+    state => state.userReducer?.getUser?.userDetails,
+  );
+
+  useEffect(() => {
+    const userDecrypt = CryptoJS.AES.decrypt(
+      userDetail,
+      awsConfig.PRIVATE_KEY_RSA,
+    );
+    const result = JSON.parse(userDecrypt.toString(CryptoJS.enc.Utf8));
+
+    setUser(result);
+  }, [userDetail]);
+
+  useEffect(() => {
+    const loadData = async () => {
+      await dispatch(dataPointHistory());
+      await dispatch(myProgressBarCampaign());
+    };
+    loadData();
+  }, [dispatch, totalPoint]);
+
   const renderWelcome = () => {
     return (
       <View>
         <Text style={styles.textWelcome}>Welcome</Text>
-        <Text style={styles.textName}>Jon Doe,</Text>
+        <Text style={styles.textName}>{user?.name},</Text>
       </View>
     );
   };
@@ -122,21 +168,29 @@ const Redeem = () => {
     return (
       <View style={styles.viewPoint}>
         <Text style={styles.textYourPoint}>Your Points</Text>
-        <Text style={styles.textPointValue}>55 PTS</Text>
+        <Text style={styles.textPointValue}>{totalPoint} PTS</Text>
       </View>
     );
   };
 
   const renderProgressBar = () => {
+    const percentage = progressBarCampaign?.progressInPercentage || 0;
+    const percentageIcon = percentage < 12 ? 0 : percentage - 12;
+    const decimal = percentage / 100;
     return (
       <View style={styles.viewProgressBar}>
         <ProgressBar
-          progress={0.5}
+          progress={decimal}
           color={colorConfig.primaryColor}
           style={styles.progressBar}
         />
         <Image
-          style={{height: 29, width: 33, position: 'absolute', left: '45%'}}
+          style={{
+            height: 29,
+            width: 33,
+            position: 'absolute',
+            left: `${percentageIcon}%`,
+          }}
           source={appConfig.funtoastCoffeeIcon}
         />
       </View>
@@ -144,11 +198,17 @@ const Redeem = () => {
   };
 
   const renderCurrentTier = () => {
-    return <Text style={styles.textCurrentTier}>SILVER</Text>;
+    return (
+      <Text style={styles.textCurrentTier}>
+        {progressBarCampaign?.currentGroup}
+      </Text>
+    );
   };
 
   const renderNextTier = () => {
-    return <Text style={styles.textNextTier}>GOLD</Text>;
+    return (
+      <Text style={styles.textNextTier}>{progressBarCampaign?.nextGroup}</Text>
+    );
   };
 
   const renderWelcomeAndPoint = () => {
@@ -172,9 +232,7 @@ const Redeem = () => {
 
   const renderTextInfo = () => {
     return (
-      <Text style={styles.textInfo}>
-        spend $300 by 31 December 2022 to upgrade to gold
-      </Text>
+      <Text style={styles.textInfo}>{progressBarCampaign?.description}</Text>
     );
   };
 
@@ -202,34 +260,27 @@ const Redeem = () => {
   };
 
   const renderTextAvailableVoucher = () => {
-    return (
-      <Text
-        style={{
-          width: '100%',
-          textAlign: 'left',
-          fontSize: 12,
-          fontWeight: '400',
-        }}>
-        Available Voucher
-      </Text>
-    );
+    return <Text style={styles.textAvailableVoucher}>Available Voucher</Text>;
   };
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.viewHeader}>
-        <View style={{marginTop: '5%'}} />
-        {renderPointHeader()}
-        <View style={{marginTop: '5%'}} />
-        {renderTextPointAndHistory()}
-        <View style={{marginTop: '5%'}} />
-        <View style={styles.divider} />
-        <View style={{marginTop: '5%'}} />
-        {renderTextAvailableVoucher()}
-        <View style={{marginTop: '5%'}} />
-        <VoucherList />
-      </View>
-    </ScrollView>
+    <View>
+      <Header title="Points and Voucher" />
+      <ScrollView style={styles.container}>
+        <View style={styles.viewHeader}>
+          <View style={{marginTop: '5%'}} />
+          {renderPointHeader()}
+          <View style={{marginTop: '5%'}} />
+          {renderTextPointAndHistory()}
+          <View style={{marginTop: '5%'}} />
+          <View style={styles.divider} />
+          <View style={{marginTop: '5%'}} />
+          {renderTextAvailableVoucher()}
+          <View style={{marginTop: '5%'}} />
+          <VoucherList />
+        </View>
+      </ScrollView>
+    </View>
   );
 };
 

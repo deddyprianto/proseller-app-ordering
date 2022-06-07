@@ -2,6 +2,7 @@ import {fetchApiMasterData} from '../service/apiMasterData';
 import {refreshToken} from './auth.actions';
 import {fetchApiOrder} from '../service/apiOrder';
 import {isEmptyObject} from '../helper/CheckEmpty';
+import {fetchApi} from '../service/api';
 
 export const getCompanyInfo = () => {
   return async (dispatch, getState) => {
@@ -24,35 +25,6 @@ export const getCompanyInfo = () => {
       }
 
       return response;
-    } catch (error) {
-      return error;
-    }
-  };
-};
-
-export const dataStores = () => {
-  return async (dispatch, getState) => {
-    const state = getState();
-    try {
-      // await dispatch(refreshToken());
-      const {
-        authReducer: {
-          tokenUser: {token},
-        },
-      } = state;
-      const response = await fetchApiMasterData(
-        '/outlets/load',
-        'POST',
-        false,
-        200,
-        token,
-      );
-      console.log(response.response.data, 'response outlets');
-      dispatch({
-        type: 'DATA_ALL_STORES',
-        data: response.response.data,
-      });
-      return response.response.data;
     } catch (error) {
       return error;
     }
@@ -229,6 +201,122 @@ export const setSingleOutlet = outlet => {
         type: 'ONE_OUTLET',
         data: outlet,
       });
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+//martin
+export const dataStores = () => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      // await dispatch(refreshToken());
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+      const response = await fetchApiMasterData(
+        '/outlets/load',
+        'POST',
+        false,
+        200,
+        token,
+      );
+
+      dispatch({
+        type: 'DATA_ALL_STORES',
+        data: response.response.data,
+      });
+      return response.response.data;
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const getFavoriteOutlet = () => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      const response = await fetchApi(
+        '/favorite-outlet',
+        'GET',
+        false,
+        200,
+        token,
+      );
+
+      dispatch({
+        type: 'DATA_FAVORITE_OUTLET',
+        data: response.responseBody.data,
+      });
+
+      if (response.success === true) {
+        return response.responseBody.data;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const setFavoriteOutlet = ({outletId}) => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      const payload = {
+        outlet: outletId,
+      };
+
+      await fetchApi('/favorite-outlet', 'POST', payload, 201, token);
+
+      await dispatch(getFavoriteOutlet());
+
+      return;
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const unsetFavoriteOutlet = ({outletId}) => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      await fetchApi(
+        `/favorite-outlet/${outletId}`,
+        'DELETE',
+        null,
+        204,
+        token,
+      );
+
+      await dispatch(getFavoriteOutlet());
+
+      return;
     } catch (error) {
       return error;
     }

@@ -1,53 +1,26 @@
-import React, {useState} from 'react';
+import React from 'react';
 
-import {
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
-  View,
-  Text,
-  Image,
-  Dimensions,
-  TouchableOpacity,
-} from 'react-native';
+import {View} from 'react-native';
+import {useSelector} from 'react-redux';
+import {isEmptyArray} from '../../helper/CheckEmpty';
 
 import MyFavoriteOutletListItem from './components/MyFavoriteOutletListItem';
 
-const HEIGHT = Dimensions.get('window').height;
-const WIDTH = Dimensions.get('window').width;
-
-const styles = StyleSheet.create({});
-
 const MyFavoriteOutletList = () => {
-  const [selectedOutlet, setSelectedOutlet] = useState({});
-  const items = [{id: 1}, {id: 2}, {id: 3}, {id: 4}];
+  const myFavoriteOutlets = useSelector(
+    state => state.storesReducer.favoriteOutlet.outlet,
+  );
 
-  const handleSelectOutled = item => {
-    if (selectedOutlet.id === item.id) {
-      setSelectedOutlet({});
-    } else {
-      setSelectedOutlet(item);
+  const renderOutletList = () => {
+    if (!isEmptyArray(myFavoriteOutlets)) {
+      const result = myFavoriteOutlets.map(outlet => {
+        return <MyFavoriteOutletListItem outlet={outlet} />;
+      });
+      return result;
     }
   };
 
-  const renderOutletList = () => {
-    const result = items.map(item => {
-      return (
-        <TouchableOpacity
-          onPress={() => {
-            handleSelectOutled(item);
-          }}>
-          <MyFavoriteOutletListItem
-            item={item}
-            selectedOutlet={selectedOutlet.id === item.id}
-          />
-        </TouchableOpacity>
-      );
-    });
-    return result;
-  };
-
-  return renderOutletList();
+  return <View>{renderOutletList()}</View>;
 };
 
 export default MyFavoriteOutletList;

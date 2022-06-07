@@ -75,7 +75,7 @@ const VoucherListItem = ({voucher, qty, pointToRedeem}) => {
   };
 
   const renderVoucherTitle = () => {
-    return <Text style={styles.textTitle}>10% Off Catering Order</Text>;
+    return <Text style={styles.textTitle}>{voucher?.name}</Text>;
   };
 
   return (

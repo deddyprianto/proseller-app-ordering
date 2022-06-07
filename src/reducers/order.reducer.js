@@ -127,6 +127,18 @@ const outletSelectionMode = (state = {}, action) => {
   }
 };
 
+const orderingDateTime = (state = {}, action) => {
+  switch (action.type) {
+    case 'ORDERING_DATE_TIME':
+      return {
+        orderingDateTimeSelected: action.orderingDateTimeSelected,
+      };
+
+    default:
+      return state;
+  }
+};
+
 export default combineReducers({
   productsOutlet,
   dataBasket,
@@ -137,5 +149,6 @@ export default combineReducers({
   dataProvider,
   timeslot,
   orderingSetting,
+  orderingDateTime,
   outletSelectionMode,
 });

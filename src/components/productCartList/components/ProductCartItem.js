@@ -4,12 +4,23 @@
  * PT Edgeworks
  */
 
-import React from 'react';
+import React, {useState} from 'react';
+import DashedLine from 'react-native-dashed-line';
 
-import {StyleSheet, View, Text, Image} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  ImageBackground,
+} from 'react-native';
 
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import colorConfig from '../../../config/colorConfig';
+import {isEmptyArray} from '../../../helper/CheckEmpty';
+import ProductAddModal from '../../productAddModal';
+import appConfig from '../../../config/appConfig';
 
 const styles = StyleSheet.create({
   root: {
@@ -19,10 +30,15 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   body: {
+    height: 'auto',
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'flex-start',
+  },
+  bodyRight: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
   },
   footer: {
     display: 'flex',
@@ -33,6 +49,35 @@ const styles = StyleSheet.create({
   image: {
     height: 62,
     width: 62,
+  },
+  imageNotes: {
+    width: 10,
+    height: 9,
+    marginRight: 4,
+    tintColor: '#B7B7B7',
+  },
+  iconEdit: {
+    fontSize: 10,
+    color: colorConfig.primaryColor,
+    marginRight: 2,
+  },
+  dividerDashed: {
+    textAlign: 'center',
+    color: colorConfig.primaryColor,
+  },
+  divider: {
+    width: '100%',
+    height: 0.5,
+    backgroundColor: '#D6D6D6',
+    marginVertical: 8,
+  },
+  width80: {width: '80%'},
+  imagePromo: {
+    width: 16,
+    height: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 4,
   },
   textAddOn: {
     fontSize: 10,
@@ -73,14 +118,43 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: colorConfig.primaryColor,
   },
+  textPriceBeforeDiscount: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#B7B7B7',
+    textDecorationLine: 'line-through',
+  },
   textEdit: {
+    fontSize: 10,
+    fontWeight: '500',
+    color: colorConfig.primaryColor,
+  },
+  textPromo: {
     fontSize: 10,
     fontWeight: '500',
     color: 'white',
   },
+  textNotes: {
+    color: '#B7B7B7',
+    fontSize: 8,
+    fontStyle: 'italic',
+  },
   textBullet: {
     fontSize: 6,
     color: '#D6D6D6',
+  },
+  textIconPromo: {
+    color: '#B7B7B7',
+    fontSize: 8,
+  },
+  textIconPromoActive: {
+    color: colorConfig.primaryColor,
+    fontSize: 8,
+  },
+  viewNotes: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   viewProductHeaderQty: {
     paddingVertical: 3,
@@ -111,27 +185,53 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: 10,
     paddingVertical: 4.5,
+    backgroundColor: 'white',
+    borderRadius: 50,
+    borderWidth: 1,
+    borderColor: colorConfig.primaryColor,
+  },
+  viewPromo: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 4,
+    backgroundColor: '#B7B7B7',
+    borderRadius: 50,
+  },
+  viewPromoActive: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 4,
     backgroundColor: colorConfig.primaryColor,
     borderRadius: 50,
   },
-  iconEdit: {
-    fontSize: 10,
-    color: 'white',
-    marginRight: 2,
+  viewTotalPrice: {
+    display: 'flex',
+    flexDirection: 'row',
   },
-  dividerDashed: {
-    textAlign: 'center',
-    color: colorConfig.primaryColor,
-  },
-  width80: {width: '80%'},
 });
 
 const ProductCart = ({item}) => {
+  const [isOpenAddModal, setIsOpenAddModal] = useState(false);
+
+  const handleOpenAddModal = () => {
+    setIsOpenAddModal(true);
+  };
+  const handleCloseAddModal = () => {
+    setIsOpenAddModal(false);
+  };
+
   const renderDividerDashed = () => {
     return (
-      <Text style={styles.dividerDashed}>
-        _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
-      </Text>
+      <DashedLine
+        dashLength={10}
+        dashThickness={0.5}
+        dashGap={5}
+        dashColor="#c32626"
+      />
     );
   };
 
@@ -139,12 +239,14 @@ const ProductCart = ({item}) => {
     return (
       <View style={styles.viewProductHeader}>
         <View style={styles.viewProductHeaderQty}>
-          <Text style={styles.textProductHeaderQty}>1x</Text>
+          <Text style={styles.textProductHeaderQty}>{item.quantity}x</Text>
         </View>
         <View style={{marginRight: 8}} />
-        <Text style={styles.textProductHeaderName}>Laksa (Prawns)</Text>
+        <Text style={styles.textProductHeaderName}>{item?.product?.name}</Text>
         <View style={{marginRight: 8}} />
-        <Text style={styles.textProductHeaderPrice}>+ 6.0</Text>
+        <Text style={styles.textProductHeaderPrice}>
+          + {item?.product?.retailPrice}
+        </Text>
       </View>
     );
   };
@@ -164,26 +266,70 @@ const ProductCart = ({item}) => {
       </View>
     );
   };
+
   const renderProductModifier = () => {
+    if (!isEmptyArray(item.modifiers)) {
+      const productModifiers = item.modifiers.map(modifier => {
+        return modifier?.modifier?.details.map(detail => {
+          return renderProductModifierItem({
+            qty: detail?.quantity,
+            name: detail?.name,
+            price: detail?.price,
+          });
+        });
+      });
+
+      return (
+        <View>
+          <Text style={styles.textAddOn}>Add-On</Text>
+          <View style={{marginTop: 4}} />
+          {productModifiers}
+        </View>
+      );
+    }
+  };
+
+  const renderTotalPrice = () => {
+    if (!isEmptyArray(item.promotions)) {
+      return (
+        <View style={styles.viewTotalPrice}>
+          <Text style={styles.textPriceBeforeDiscount}>
+            {item?.grossAmount}
+          </Text>
+          <View style={{marginRight: 10}} />
+          <Text style={styles.textPriceFooter}>{item?.amountAfterDisc}</Text>
+        </View>
+      );
+    }
+
+    return <Text style={styles.textPriceFooter}>{item?.grossAmount}</Text>;
+  };
+
+  const renderEditIcon = () => {
     return (
-      <View>
-        <Text style={styles.textAddOn}>Add-On for laksa</Text>
-        <View style={{marginTop: 4}} />
-        {renderProductModifierItem({
-          qty: 1,
-          name: 'Choice of Noodles: Yellow Mee & Vemicelli',
-          price: 1.8,
-        })}
+      <View style={styles.viewEdit}>
+        <MaterialIcons style={styles.iconEdit} name="edit" />
+        <Text style={styles.textEdit}>Edit</Text>
       </View>
     );
   };
 
-  const renderValue = () => {
+  const renderNotes = () => {
+    if (item.remark) {
+      return (
+        <View style={styles.viewNotes}>
+          <Image source={appConfig.notes} style={styles.imageNotes} />
+          <Text style={styles.textNotes}>{item?.remark}</Text>
+        </View>
+      );
+    }
+  };
+
+  const renderFooter = () => {
     return (
-      <View style={styles.width80}>
-        {renderProductHeader()}
-        <View style={{marginTop: 8}} />
-        {renderProductModifier()}
+      <View style={styles.footer}>
+        {renderEditIcon()}
+        {renderTotalPrice()}
       </View>
     );
   };
@@ -194,27 +340,96 @@ const ProductCart = ({item}) => {
         <Image
           style={styles.image}
           resizeMode="stretch"
-          source={{uri: item.image}}
+          source={{uri: item?.product?.defaultImageURL}}
         />
       </View>
     );
   };
-  return (
-    <View style={styles.root}>
-      <View style={styles.body}>
-        {renderValue()}
-        {renderImage()}
+
+  const renderPromoIcon = () => {
+    const active = !isEmptyArray(item.promotions);
+    const styleViewPromo = active ? styles.viewPromoActive : styles.viewPromo;
+    const styleTextIconPromo = active
+      ? styles.textIconPromoActive
+      : styles.textIconPromo;
+
+    return (
+      <View style={styleViewPromo}>
+        <ImageBackground
+          source={appConfig.funtoastStar}
+          style={styles.imagePromo}>
+          <Text style={styleTextIconPromo}>%</Text>
+        </ImageBackground>
+        <Text style={styles.textPromo}>Promo</Text>
       </View>
+    );
+  };
+
+  const renderBodyRight = () => {
+    return (
+      <View style={styles.bodyRight}>
+        {renderImage()}
+        <View style={{marginTop: 8}} />
+        {renderPromoIcon()}
+      </View>
+    );
+  };
+
+  const renderDivider = () => {
+    if (item.remark && !isEmptyArray(item.modifiers)) {
+      return <View style={styles.divider} />;
+    }
+  };
+
+  const renderBodyLeft = () => {
+    return (
+      <View>
+        {renderProductHeader()}
+        <View style={{marginTop: 8}} />
+        {renderProductModifier()}
+        {renderDivider()}
+        {renderNotes()}
+      </View>
+    );
+  };
+
+  const renderBody = () => {
+    return (
+      <View style={styles.body}>
+        {renderBodyLeft()}
+        {renderBodyRight()}
+      </View>
+    );
+  };
+
+  const renderProductAddModal = () => {
+    if (isOpenAddModal) {
+      return (
+        <ProductAddModal
+          product={item?.product}
+          open={isOpenAddModal}
+          handleClose={() => {
+            handleCloseAddModal();
+          }}
+          selectedProduct={item}
+        />
+      );
+    }
+  };
+
+  return (
+    <TouchableOpacity
+      style={styles.root}
+      onPress={() => {
+        handleOpenAddModal();
+      }}>
+      {renderBody()}
+      <View style={{marginTop: 16}} />
       {renderDividerDashed()}
       <View style={{marginTop: 16}} />
-      <View style={styles.footer}>
-        <View style={styles.viewEdit}>
-          <MaterialIcons style={styles.iconEdit} name="edit" />
-          <Text style={styles.textEdit}>Edit</Text>
-        </View>
-        <Text style={styles.textPriceFooter}>9.10</Text>
-      </View>
-    </View>
+      {renderFooter()}
+      {renderProductAddModal()}
+    </TouchableOpacity>
   );
 };
 

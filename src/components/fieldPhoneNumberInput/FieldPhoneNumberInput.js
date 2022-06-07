@@ -18,6 +18,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingVertical: 11,
     paddingHorizontal: 16,
+    borderColor: '#00000061',
   },
   viewCountryPicker: {width: 0, height: 0},
   viewInput: {
@@ -32,7 +33,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   wrapFlag: {
-    width: '15%',
+    width: '12%',
   },
   viewFlag: {
     width: 35,
@@ -67,15 +68,16 @@ const FieldPhoneNumberInput = ({
   customLabel,
   placeholder,
   value,
+  valueCountryCode,
   onChange,
   onChangeCountryCode,
 }) => {
   const [openModal, setOpenModal] = useState(false);
-  const [countryCode, setCountryCode] = useState('');
+  const [countryCode, setCountryCode] = useState('+65');
 
   useEffect(() => {
-    setCountryCode(awsConfig.phoneNumberCode);
-  }, []);
+    setCountryCode(valueCountryCode || awsConfig.phoneNumberCode);
+  }, [valueCountryCode]);
 
   const renderModalCountryPicker = () => {
     return (
@@ -99,10 +101,6 @@ const FieldPhoneNumberInput = ({
   };
 
   const renderLabel = () => {
-    if (!value) {
-      return;
-    }
-
     if (customLabel) {
       return customLabel(value);
     }
@@ -118,6 +116,7 @@ const FieldPhoneNumberInput = ({
         onPressFlag={() => {
           setOpenModal(true);
         }}
+        value={countryCode}
       />
     );
   };
@@ -138,6 +137,7 @@ const FieldPhoneNumberInput = ({
             placeholder={placeholder}
             onChangeText={value => {
               onChange(value.replace(/[^0-9]/g, ''));
+              onChangeCountryCode(countryCode);
             }}
           />
         </View>

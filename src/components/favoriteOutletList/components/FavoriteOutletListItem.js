@@ -1,78 +1,83 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 
-import {
-  StyleSheet,
-  View,
-  Text,
-  Image,
-  Dimensions,
-  TouchableOpacity,
-} from 'react-native';
+import {StyleSheet, View, Text, Image, TouchableOpacity} from 'react-native';
 
 import IconFontAwesome from 'react-native-vector-icons/FontAwesome';
 import {Actions} from 'react-native-router-flux';
+import {useDispatch} from 'react-redux';
+import {
+  setFavoriteOutlet,
+  unsetFavoriteOutlet,
+} from '../../../actions/stores.action';
 
-const HEIGHT = Dimensions.get('window').height;
-const WIDTH = Dimensions.get('window').width;
-
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  root: {
+    marginTop: 10,
+    marginBottom: 10,
+    width: '48%',
+  },
+  image: {
+    width: '100%',
+    height: 113,
+  },
+  iconStar: {
+    fontSize: 16,
+    color: 'red',
+  },
+  textName: {
+    width: '100%',
+    textAlign: 'center',
+    marginTop: 8,
+  },
+  viewStar: {
+    backgroundColor: 'white',
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'absolute',
+    top: 9,
+    right: 7,
+  },
+});
 
 const FavoriteOutletListItem = ({item}) => {
-  const [active, setActive] = useState(false);
+  const dispatch = useDispatch();
+  const [isFavorite, setIsFavorite] = useState(false);
 
-  const handleStarClicked = value => {
-    if (active) {
-      setActive(false);
+  useEffect(() => {
+    setIsFavorite(item.isFavorite);
+  }, [item]);
+
+  const handleSetFavoriteOutlet = async () => {
+    await dispatch(setFavoriteOutlet({outletId: item?.id}));
+  };
+
+  const handleUnsetFavoriteOutlet = async () => {
+    await dispatch(unsetFavoriteOutlet({outletId: item?.id}));
+  };
+
+  const handleStarClicked = () => {
+    if (isFavorite) {
+      handleUnsetFavoriteOutlet();
+      setIsFavorite(false);
     } else {
-      setActive(true);
+      handleSetFavoriteOutlet();
+      setIsFavorite(true);
     }
   };
 
-  const activeStar = () => {
-    return (
-      <IconFontAwesome
-        name="star"
-        style={{
-          fontSize: 16,
-          color: 'red',
-        }}
-      />
-    );
-  };
-
-  const inactiveStar = () => {
-    return (
-      <IconFontAwesome
-        name="star-o"
-        style={{
-          fontSize: 16,
-          color: 'red',
-        }}
-      />
-    );
-  };
-
   const renderStar = () => {
-    const star = active ? activeStar() : inactiveStar();
+    const star = isFavorite ? 'star' : 'star-o';
 
     return (
-      <View
-        style={{
-          backgroundColor: 'white',
-          width: 30,
-          height: 30,
-          borderRadius: 15,
-          justifyContent: 'center',
-          alignItems: 'center',
-          position: 'absolute',
-          top: 9,
-          right: 7,
-        }}>
+      <View style={styles.viewStar}>
         <TouchableOpacity
           onPress={() => {
             handleStarClicked();
           }}>
-          {star}
+          <IconFontAwesome name={star} style={styles.iconStar} />;
         </TouchableOpacity>
       </View>
     );
@@ -82,38 +87,19 @@ const FavoriteOutletListItem = ({item}) => {
     return (
       <TouchableOpacity
         onPress={() => {
-          Actions.favoriteOutletDetail();
+          Actions.favoriteOutletDetail({outlet: item});
         }}>
-        <Image
-          style={{
-            width: WIDTH * 0.44,
-            height: HEIGHT * 0.2,
-          }}
-          source={{uri: item.image}}
-        />
+        <Image style={styles.image} source={{uri: item?.defaultImageURL}} />
       </TouchableOpacity>
     );
   };
 
   const renderText = () => {
-    return (
-      <Text
-        style={{
-          width: WIDTH * 0.44,
-          textAlign: 'center',
-          marginTop: 8,
-        }}>
-        One Raffles Place
-      </Text>
-    );
+    return <Text style={styles.textName}>{item?.name}</Text>;
   };
 
   return (
-    <View
-      style={{
-        marginTop: 16,
-        width: WIDTH * 0.44,
-      }}>
+    <View style={styles.root}>
       {renderImage()}
       {renderStar()}
       {renderText()}

@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Actions} from 'react-native-router-flux';
+import {useDispatch} from 'react-redux';
 
 import {
   StyleSheet,
@@ -8,6 +9,7 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  Dimensions,
 } from 'react-native';
 
 import appConfig from '../config/appConfig';
@@ -15,8 +17,17 @@ import colorConfig from '../config/colorConfig';
 import awsConfig from '../config/awsConfig';
 
 import FieldTextInput from '../components/fieldTextInput';
+import FieldPhoneNumberInput from '../components/fieldPhoneNumberInput';
+
+import {createNewUser} from '../actions/auth.actions';
+import {showSnackbar} from '../actions/setting.action';
+import LoadingScreen from '../components/loadingScreen';
+
+const HEIGHT = Dimensions.get('window').height;
+
 const styles = StyleSheet.create({
   container: {
+    height: HEIGHT,
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 48,
@@ -34,6 +45,7 @@ const styles = StyleSheet.create({
     width: '100%',
     textAlign: 'left',
     fontSize: 14,
+    fontWeight: 'bold',
   },
   touchableNext: {
     height: 40,
@@ -61,14 +73,56 @@ const styles = StyleSheet.create({
 });
 
 const RegisterForm = ({registerMethod, inputValue}) => {
+  const dispatch = useDispatch();
   const [countryCode, setCountryCode] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    if (registerMethod === 'email') {
+      setEmail(inputValue);
+    } else {
+      setPhoneNumber(inputValue);
+    }
+
     setCountryCode(awsConfig.phoneNumberCode);
-  }, []);
+  }, [inputValue, registerMethod]);
+
+  const handleRegister = async () => {
+    const phone =
+      registerMethod === 'email' ? countryCode + phoneNumber : inputValue;
+    const methodValue = registerMethod === 'email' ? email : phone;
+
+    const payload = {
+      name: name,
+      password: 'P@ssw0rd123',
+      username: phone,
+      email: email,
+      phoneNumber: phone,
+    };
+    setIsLoading(true);
+    const response = await dispatch(createNewUser(payload));
+
+    if (typeof response === 'boolean' && response) {
+      setIsLoading(false);
+      Actions.otp({
+        isLogin: false,
+        method: registerMethod,
+        methodValue: methodValue,
+      });
+    } else {
+      setIsLoading(false);
+
+      const message = response?.message || 'Register Failed!';
+      dispatch(
+        showSnackbar({
+          message,
+        }),
+      );
+    }
+  };
 
   const renderImages = () => {
     return (
@@ -96,7 +150,7 @@ const RegisterForm = ({registerMethod, inputValue}) => {
   const renderNameInput = () => {
     return (
       <FieldTextInput
-        label="Name"
+        label="Full Name"
         value={name}
         placeholder="Full Name"
         onChange={value => {
@@ -108,7 +162,7 @@ const RegisterForm = ({registerMethod, inputValue}) => {
 
   const renderPhoneNumberRegisterInput = () => {
     return (
-      <FieldTextInput
+      <FieldPhoneNumberInput
         type="phone"
         label="Phone Number"
         value={phoneNumber}
@@ -157,7 +211,7 @@ const RegisterForm = ({registerMethod, inputValue}) => {
         disabled={!active}
         style={active ? styles.touchableNext : styles.touchableNextDisabled}
         onPress={() => {
-          Actions.otp({method: registerMethod, methodValue: inputValue});
+          handleRegister();
         }}>
         <Text style={styles.textNext}>Next</Text>
       </TouchableOpacity>
@@ -166,6 +220,7 @@ const RegisterForm = ({registerMethod, inputValue}) => {
 
   return (
     <ScrollView>
+      <LoadingScreen loading={isLoading} />
       <View style={styles.container}>
         <View style={{marginTop: '25%'}} />
         {renderImages()}

@@ -5,7 +5,12 @@
  */
 
 import React, {useEffect, useState} from 'react';
+import {useSelector, useDispatch} from 'react-redux';
 
+import MapView from 'react-native-maps';
+import {Marker} from 'react-native-maps';
+import CryptoJS from 'react-native-crypto-js';
+import {Actions} from 'react-native-router-flux';
 import {
   StyleSheet,
   View,
@@ -14,30 +19,30 @@ import {
   ScrollView,
   Image,
 } from 'react-native';
-import MapView from 'react-native-maps';
-import {Marker} from 'react-native-maps';
-import colorConfig from '../config/colorConfig';
-import MyDeliveryAddressList from '../components/myDeliveryAddressList';
+import IconOcticons from 'react-native-vector-icons/Octicons';
 
 import Header from '../components/layout/header';
-
-import OrderingTypeSelectorModal from '../components/modal/OrderingTypeSelectorModal';
-import DeliveryProviderSelectorModal from '../components/modal/DeliveryProviderSelectorModal';
-import DeliveryDateSelectorModal from '../components/modal/DeliveryDateSelectorModal';
-import {color} from 'react-native-reanimated';
-import appConfig from '../config/appConfig';
-import IconEvilIcons from 'react-native-vector-icons/EvilIcons';
 
 import FieldAsyncInput from '../components/fieldAsyncInput';
 import FieldTextInput from '../components/fieldTextInput';
 import FieldPhoneNumberInput from '../components/fieldPhoneNumberInput';
-import {Actions} from 'react-native-router-flux';
+
+import awsConfig from '../config/awsConfig';
+import colorConfig from '../config/colorConfig';
+
+import {updateUser} from '../actions/user.action';
+import FieldCheckBox from '../components/fieldCheckBox';
+import LoadingScreen from '../components/loadingScreen';
 
 const styles = StyleSheet.create({
   root: {
     flex: 1,
     backgroundColor: '#F9F9F9',
     justifyContent: 'space-between',
+  },
+  map: {
+    height: 200,
+    width: '100%',
   },
   scrollView: {
     paddingHorizontal: 16,
@@ -53,12 +58,39 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: 'white',
   },
+  textCoordinate: {
+    color: 'white',
+  },
+  viewMap: {
+    alignItems: 'center',
+  },
   touchableSave: {
     borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: colorConfig.primaryColor,
     paddingVertical: 10,
+  },
+  touchableSaveDisabled: {
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#B7B7B7',
+    paddingVertical: 10,
+  },
+  touchableCoordinate: {
+    backgroundColor: colorConfig.primaryColor,
+    width: '100%',
+    height: 30,
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+  },
+  iconCoordinate: {
+    fontSize: 15,
+    color: 'white',
+    marginRight: 10,
   },
   divider: {
     width: '100%',
@@ -68,16 +100,111 @@ const styles = StyleSheet.create({
   },
 });
 
-const AddNewAddress = () => {
+const AddNewAddress = ({address, coordinate}) => {
+  const dispatch = useDispatch();
+  const [user, setUser] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isDefault, setIsDefault] = useState(false);
   const [streetName, setStreetName] = useState('');
   const [unitNumber, setUnitNumber] = useState('');
   const [postalCode, setPostalCode] = useState('');
   const [recipientName, setRecipientName] = useState('');
   const [mobileNumber, setMobileNumber] = useState('');
+  const [countryCode, setCountryCode] = useState('');
+
+  const userDetail = useSelector(
+    state => state.userReducer.getUser.userDetails,
+  );
+
+  useEffect(() => {
+    const userDecrypt = CryptoJS.AES.decrypt(
+      userDetail,
+      awsConfig.PRIVATE_KEY_RSA,
+    );
+    const result = JSON.parse(userDecrypt.toString(CryptoJS.enc.Utf8));
+    setUser(result);
+  }, [userDetail]);
+
+  useEffect(() => {
+    if (address) {
+      setStreetName(address?.streetName || '');
+      setUnitNumber(address?.unitNo || '');
+      setPostalCode(address?.postalCode || '');
+      setRecipientName(address?.recipient?.name || '');
+      setMobileNumber(address?.recipient?.mobileNumber || '');
+      setCountryCode(address?.recipient?.countryCode || '');
+      setIsDefault(address?.isDefault || false);
+    }
+  }, [address]);
+
+  const handleClickSave = async () => {
+    let deliveryAddresses = user.deliveryAddress || [];
+
+    if (isDefault) {
+      deliveryAddresses.forEach(value => {
+        value.isDefault = false;
+      });
+    }
+
+    deliveryAddresses.push({
+      streetName,
+      postalCode,
+      unitNo: unitNumber,
+      coordinate: {
+        latitude,
+        longitude,
+      },
+      recipient: {
+        name: recipientName,
+        countryCode,
+        mobileNumber,
+        phoneNumber: countryCode + mobileNumber,
+      },
+      isDefault,
+    });
+
+    deliveryAddresses.forEach((value, index) => {
+      value.index = index;
+    });
+
+    const deliveryAddressDefault = deliveryAddresses.find(
+      deliveryAddress => deliveryAddress.isDefault,
+    );
+
+    const payload = {
+      username: user.username,
+      deliveryAddress: deliveryAddresses,
+      deliveryAddressDefault,
+    };
+
+    setIsLoading(true);
+    await dispatch(updateUser(payload));
+    Actions.pop();
+    setIsLoading(false);
+  };
+
+  const handleCheckboxSelected = () => {
+    if (isDefault) {
+      setIsDefault(false);
+    } else {
+      setIsDefault(true);
+    }
+  };
+  const renderCheckBox = () => {
+    return (
+      <FieldCheckBox
+        label="Set as default"
+        checked={isDefault}
+        onPress={() => {
+          handleCheckboxSelected();
+        }}
+      />
+    );
+  };
 
   const renderStreetNameField = () => {
     return (
-      <FieldAsyncInput
+      <FieldTextInput
         label="Street Name"
         placeholder="Street Name"
         value={streetName}
@@ -132,6 +259,10 @@ const AddNewAddress = () => {
         label="Mobile Number"
         placeholder="Mobile Number"
         value={mobileNumber}
+        valueCountryCode={countryCode}
+        onChangeCountryCode={value => {
+          setCountryCode(value);
+        }}
         onChange={value => {
           setMobileNumber(value);
         }}
@@ -152,6 +283,7 @@ const AddNewAddress = () => {
       </View>
     );
   };
+
   const renderRecipientDetailFields = () => {
     return (
       <View>
@@ -171,38 +303,32 @@ const AddNewAddress = () => {
 
   const renderMap = () => {
     return (
-      <View style={{alignItems: 'center'}}>
-        <View
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            paddingVertical: 16,
-          }}>
-          <Text>See Location</Text>
-          <IconEvilIcons name="location" style={{fontSize: 24}} />
-        </View>
+      <View style={styles.viewMap}>
         <MapView
           onPress={() => {
             Actions.pickCoordinate();
           }}
-          style={{height: 50, width: 100}}
+          style={styles.map}
           region={{
             latitude,
             longitude,
             latitudeDelta,
             longitudeDelta,
           }}>
-          <Marker
-            coordinate={{latitude: latitude, longitude: longitude}}
-            title={'MARTIN'}
-            description={'MARTIN'}
-          />
+          <Marker coordinate={{latitude: latitude, longitude: longitude}} />
         </MapView>
+        <TouchableOpacity
+          onPress={() => {
+            Actions.pickCoordinate();
+          }}
+          style={styles.touchableCoordinate}>
+          <IconOcticons style={styles.iconCoordinate} name="location" />
+          <Text style={styles.textCoordinate}>Pick a Coordinate</Text>
+        </TouchableOpacity>
       </View>
     );
   };
+
   const renderBody = () => {
     return (
       <ScrollView style={styles.scrollView}>
@@ -211,15 +337,42 @@ const AddNewAddress = () => {
         {renderRecipientDetailFields()}
         <View style={styles.divider} />
         {renderMap()}
+        {renderCheckBox()}
+        <View style={{marginTop: 10}} />
       </ScrollView>
     );
   };
 
+  const handleActive = () => {
+    if (
+      streetName &&
+      unitNumber &&
+      postalCode &&
+      recipientName &&
+      mobileNumber
+    ) {
+      return true;
+    }
+    return false;
+  };
+
   const renderFooter = () => {
+    const active = handleActive();
+    const styleActive =
+      active && !isLoading
+        ? styles.touchableSave
+        : styles.touchableSaveDisabled;
+    const text = isLoading ? 'Loading....' : 'Save';
+
     return (
       <View style={styles.footer}>
-        <TouchableOpacity style={styles.touchableSave}>
-          <Text style={styles.textSave}>SAVE</Text>
+        <TouchableOpacity
+          style={styleActive}
+          disabled={!active || isLoading}
+          onPress={() => {
+            handleClickSave();
+          }}>
+          <Text style={styles.textSave}>{text}</Text>
         </TouchableOpacity>
       </View>
     );
@@ -227,6 +380,7 @@ const AddNewAddress = () => {
 
   return (
     <View style={styles.root}>
+      <LoadingScreen loading={isLoading} />
       <Header title="Add New Address" />
       {renderBody()}
       {renderFooter()}

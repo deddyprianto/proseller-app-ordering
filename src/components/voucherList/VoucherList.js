@@ -1,9 +1,11 @@
-import React from 'react';
+import React, {useEffect} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
 
 import {StyleSheet, View, TouchableOpacity} from 'react-native';
 
 import {Actions} from 'react-native-router-flux';
 import VoucherListItem from './components/VoucherListItem';
+import {myVouchers} from '../../actions/account.action';
 
 const styles = StyleSheet.create({
   touchableVoucher: {
@@ -12,49 +14,31 @@ const styles = StyleSheet.create({
   },
 });
 
-const Redeem = () => {
-  const categories = [
-    {
-      name: 'martin',
-      image:
-        'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-    },
-    {
-      name: 'test',
-      image:
-        'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-    },
-    {
-      name: 'anjay',
-      image:
-        'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-    },
-    {
-      name: 'martin',
-      image:
-        'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-    },
-    {
-      name: 'test',
-      image:
-        'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-    },
-    {
-      name: 'anjay',
-      image:
-        'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-    },
-  ];
+const VoucherList = () => {
+  const dispatch = useDispatch();
+  const vouchers = useSelector(
+    state => state.accountsReducer?.myVouchers?.vouchers,
+  );
+
+  useEffect(() => {
+    const loadData = async () => {
+      await dispatch(myVouchers());
+    };
+    loadData();
+  }, [dispatch]);
 
   const renderRewardList = () => {
-    const result = categories.map(category => {
+    const result = vouchers?.map(voucher => {
       return (
         <TouchableOpacity
           style={styles.touchableVoucher}
           onPress={() => {
-            Actions.voucherDetail();
+            Actions.voucherDetail({voucher});
           }}>
-          <VoucherListItem voucher={category} pointToRedeem="120" />
+          <VoucherListItem
+            voucher={voucher}
+            pointToRedeem={voucher?.redeemValue}
+          />
         </TouchableOpacity>
       );
     });
@@ -64,4 +48,4 @@ const Redeem = () => {
   return <View>{renderRewardList()}</View>;
 };
 
-export default Redeem;
+export default VoucherList;

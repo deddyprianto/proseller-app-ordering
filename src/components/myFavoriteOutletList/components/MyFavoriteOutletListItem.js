@@ -1,142 +1,165 @@
 import React, {useState} from 'react';
+import moment from 'moment';
 
-import {
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
-  View,
-  Text,
-  Image,
-  Dimensions,
-  TouchableOpacity,
-} from 'react-native';
-import {Actions} from 'react-native-router-flux';
-import appConfig from '../../../config/appConfig';
-
-import colorConfig from '../../../config/colorConfig';
-
-const HEIGHT = Dimensions.get('window').height;
-const WIDTH = Dimensions.get('window').width;
+import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
+import IconFontAwesome from 'react-native-vector-icons/FontAwesome';
+import IconAntDesign from 'react-native-vector-icons/AntDesign';
 
 const styles = StyleSheet.create({
-  container: {
-    justifyContent: 'center',
+  divider: {
+    backgroundColor: '#D6D6D6',
+    height: 1,
+    width: '100%',
+  },
+  iconStar: {
+    fontSize: 24,
+    color: 'red',
+    marginRight: 8,
+  },
+  iconWarning: {
+    fontSize: 24,
+  },
+  margin10: {
+    marginTop: 10,
+  },
+  textDay: {
+    fontWeight: 'bold',
+    width: '30%',
+  },
+  viewDescription: {
+    display: 'flex',
+    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
     backgroundColor: 'white',
   },
-  viewImage: {
+  viewDescriptionSelected: {
     display: 'flex',
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 38,
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: '#F9F9F9',
   },
-  image: {height: 235, width: 340},
-  marginTop20: {marginTop: 20},
-  textSeeAll: {color: 'white', fontSize: 12},
-  touchableSeeAll: {
-    height: 34,
-    width: 130,
-    backgroundColor: colorConfig.primaryColor,
-    borderRadius: 8,
-    justifyContent: 'center',
+  viewStarAndName: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  viewDescriptionDetail: {
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+  },
+  viewOperationalHours: {
+    display: 'flex',
+    flexDirection: 'row',
     alignItems: 'center',
   },
 });
 
-const MyFavoriteOutletItemList = ({item, selectedOutlet}) => {
-  const outletItem = () => {
+const MyFavoriteOutletItemList = ({outlet}) => {
+  const [selected, setSelected] = useState(false);
+
+  const handleSelect = () => {
+    if (selected) {
+      setSelected(false);
+    } else {
+      setSelected(true);
+    }
+  };
+  const renderTextName = () => {
+    return <Text>{outlet?.name}</Text>;
+  };
+
+  const renderStar = () => {
+    return <IconFontAwesome name="star" style={styles.iconStar} />;
+  };
+
+  const renderStarAndName = () => {
     return (
-      <View
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          width: WIDTH,
-          paddingHorizontal: 16,
-          paddingVertical: 12,
-          backgroundColor: selectedOutlet ? '#F9F9F9' : 'white',
-        }}>
-        <View
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center',
-          }}>
-          <Image
-            style={{width: 24, height: 24, tintColor: colorConfig.primaryColor}}
-            resizeMode="stretch"
-            source={appConfig.star}
-          />
-          <Text style={{marginLeft: 16}}>One Raffles Place</Text>
-        </View>
-        <Image
-          style={{width: 24, height: 24}}
-          resizeMode="stretch"
-          source={appConfig.warning}
-        />
+      <View style={styles.viewStarAndName}>
+        {renderStar()}
+        {renderTextName()}
       </View>
     );
+  };
+
+  const renderWarning = () => {
+    return (
+      <IconAntDesign name="exclamationcircleo" style={styles.iconWarning} />
+    );
+  };
+
+  const outletItem = () => {
+    const style = selected
+      ? styles.viewDescriptionSelected
+      : styles.viewDescription;
+
+    return (
+      <TouchableOpacity
+        style={style}
+        onPress={() => {
+          handleSelect();
+        }}>
+        {renderStarAndName()}
+        {renderWarning()}
+      </TouchableOpacity>
+    );
+  };
+
+  const renderTextAddress = () => {
+    return <Text>{outlet.address}</Text>;
+  };
+
+  const handleTimeFormatter = value => {
+    const result = moment(value, 'hh:mm').format('hh:mm a');
+    return result;
+  };
+
+  const renderOperationalHourItem = value => {
+    const timeActive = value?.active;
+    const timeOpen = handleTimeFormatter(value?.open);
+    const timeClose = handleTimeFormatter(value?.close);
+
+    const textTime = timeActive ? `: ${timeOpen} - ${timeClose}` : 'Close';
+
+    return (
+      <View style={styles.viewOperationalHours}>
+        <Text style={styles.textDay}>{value?.nameOfDay}</Text>
+        <Text>{textTime}</Text>
+      </View>
+    );
+  };
+
+  const renderOperationalHours = () => {
+    const result = outlet?.operationalHours.map(value => {
+      return renderOperationalHourItem(value);
+    });
+    return result;
   };
 
   const outletItemDetail = () => {
-    const detail = (
-      <View
-        style={{
-          paddingHorizontal: 20,
-          paddingVertical: 16,
-        }}>
-        <Text>1 Raffles Place, #B1-02</Text>
-        <Text>Singapore 048616</Text>
-
-        <View
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center',
-            marginTop: 16,
-          }}>
-          <Text style={{fontWeight: 'bold'}}>Mon-Fri: </Text>
-          <Text>645am-7pm (last order 6.30pm)</Text>
-        </View>
-
-        <View
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center',
-          }}>
-          <Text style={{fontWeight: 'bold'}}>Saturday: </Text>
-          <Text>815am-430pm (last order 4pm)</Text>
-        </View>
-
-        <View
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center',
-            marginTop: 16,
-          }}>
-          <Text style={{fontWeight: 'bold'}}>PH/Sunday: </Text>
-          <Text>Close</Text>
-        </View>
-      </View>
-    );
-
-    if (selectedOutlet) {
+    if (selected) {
       return (
         <>
-          {detail}
-          <View style={{backgroundColor: '#D6D6D6', height: 1}} />
+          <View style={styles.viewDescriptionDetail}>
+            {renderTextAddress()}
+            <View style={styles.margin10} />
+            {renderOperationalHours()}
+          </View>
+          <View style={styles.divider} />
         </>
       );
     }
-    return;
   };
+
   return (
     <View>
       {outletItem()}
-      <View style={{backgroundColor: '#D6D6D6', height: 1}} />
+      <View style={styles.divider} />
       {outletItemDetail()}
     </View>
   );

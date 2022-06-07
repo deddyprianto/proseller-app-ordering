@@ -17,6 +17,7 @@ import {paymentRefNo} from '../actions/account.action';
 import Home from './home';
 import Inbox from './inbox';
 import Login from './Login';
+import OnBoarding from './OnBoarding';
 
 const AppTabNavigatorNonLogin = createMaterialBottomTabNavigator(
   {
@@ -253,9 +254,14 @@ class PageIndex extends Component {
 
   render() {
     const {fromPayment, isLoggedIn} = this.props;
+
+    if (!isLoggedIn) {
+      return <OnBoarding />;
+    }
+
     return (
       <Container>
-        {fromPayment == true ? (
+        {fromPayment === true ? (
           <AppStackContainerHistory />
         ) : isLoggedIn ? (
           <AppStackContainer />

@@ -58,7 +58,24 @@ const getStamps = (state = {}, action) => {
     case 'DATA_STAMPS':
       return {
         ...state,
-        dataStamps: action.dataStamps,
+        dataStamps: action.data,
+      };
+    default:
+      return state;
+  }
+};
+
+const pointHistories = (state = {}, action) => {
+  switch (action.type) {
+    case 'USED_POINT_HISTORY':
+      return {
+        ...state,
+        usedPoints: action.data,
+      };
+    case 'RECEIVED_POINT_HISTORY':
+      return {
+        ...state,
+        receivedPoints: action.data,
       };
     default:
       return state;
@@ -70,4 +87,5 @@ export default combineReducers({
   dataPoint,
   vouchers,
   getStamps,
+  pointHistories,
 });

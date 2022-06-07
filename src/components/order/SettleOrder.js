@@ -3954,7 +3954,7 @@ class SettleOrder extends Component {
               </Text>
             </TouchableOpacity>
 
-            {outlet.enablePayAtPOS === true &&
+            {outlet?.enablePayAtPOS === true &&
             this.props.paySVC == undefined &&
             this.props.payVoucher == undefined &&
             this.props.payMembership == undefined &&

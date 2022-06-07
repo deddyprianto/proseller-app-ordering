@@ -132,23 +132,24 @@ class PickCoordinate extends Component {
         detailAddress: this.state.detailAddress,
       };
 
-      if (this.props.from === 'address') {
-        this.props.setCoordinate({
-          latitude: this.state.latitude,
-          longitude: this.state.longitude,
-          latitudeDelta: this.state.latitudeDelta,
-          longitudeDelta: this.state.longitudeDelta,
-          userLocation: this.state.userLocation,
-          detailAddress: this.state.detailAddress,
-        });
-        Actions.pop();
-      } else {
-        Actions.push('addAddress', {
-          coordinate: coordinate,
-          from: this.props.from,
-          getDeliveryFee: this.props.getDeliveryFee,
-        });
-      }
+      Actions.pop({coordinate: coordinate});
+      // if (this.props.from === 'address') {
+      //   this.props.setCoordinate({
+      //     latitude: this.state.latitude,
+      //     longitude: this.state.longitude,
+      //     latitudeDelta: this.state.latitudeDelta,
+      //     longitudeDelta: this.state.longitudeDelta,
+      //     userLocation: this.state.userLocation,
+      //     detailAddress: this.state.detailAddress,
+      //   });
+      //   Actions.pop();
+      // } else {
+      //   Actions.push('addAddress', {
+      //     coordinate: coordinate,
+      //     from: this.props.from,
+      //     getDeliveryFee: this.props.getDeliveryFee,
+      //   });
+      // }
     } catch (e) {}
   };
 

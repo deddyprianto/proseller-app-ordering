@@ -31,15 +31,17 @@ export const api = async (url, method, body = null, headers = {}) => {
       fetchParams.body = reqBody;
     }
 
-    const fetchPromise = fetch(endPoint, fetchParams);
+    // const fetchPromise = fetch(endPoint, fetchParams);
 
-    const timeOutPromise = new Promise((resolve, reject) => {
-      setTimeout(() => {
-        reject('Request Timeout');
-      }, 40000);
-    });
+    // const timeOutPromise = new Promise((resolve, reject) => {
+    //   setTimeout(() => {
+    //     reject('Request Timeout');
+    //   }, 40000);
+    // });
 
-    const response = await Promise.race([fetchPromise, timeOutPromise]);
+    // const response = await fetch([fetchPromise, timeOutPromise]);
+
+    const response = await fetch(endPoint, fetchParams);
 
     return response;
   } catch (e) {
@@ -55,7 +57,7 @@ export const fetchApi = async (
   token = null,
   loader = false,
 ) => {
-  console.log('URL => ', url)
+  console.log('URL => ', url);
   try {
     const headers = {};
     const result = {
