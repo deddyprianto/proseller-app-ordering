@@ -17,13 +17,11 @@ import {
   Text,
   TouchableOpacity,
   ScrollView,
-  Image,
 } from 'react-native';
 import IconOcticons from 'react-native-vector-icons/Octicons';
 
 import Header from '../components/layout/header';
 
-import FieldAsyncInput from '../components/fieldAsyncInput';
 import FieldTextInput from '../components/fieldTextInput';
 import FieldPhoneNumberInput from '../components/fieldPhoneNumberInput';
 
@@ -146,7 +144,7 @@ const AddNewAddress = ({address, coordinate}) => {
       });
     }
 
-    deliveryAddresses.push({
+    const value = {
       streetName,
       postalCode,
       unitNo: unitNumber,
@@ -161,10 +159,16 @@ const AddNewAddress = ({address, coordinate}) => {
         phoneNumber: countryCode + mobileNumber,
       },
       isDefault,
-    });
+    };
 
-    deliveryAddresses.forEach((value, index) => {
-      value.index = index;
+    if (typeof address?.index === 'number') {
+      deliveryAddresses[address.index] = value;
+    } else {
+      deliveryAddresses.push(value);
+    }
+
+    deliveryAddresses.forEach((item, index) => {
+      item.index = index;
     });
 
     const deliveryAddressDefault = deliveryAddresses.find(

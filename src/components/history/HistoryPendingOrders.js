@@ -65,17 +65,17 @@ class HistoryPayment extends Component {
   }
 
   gotToBasket = async item => {
-    if (item != undefined) {
+    if (item !== undefined) {
       await this.props.dispatch(setCart(item));
       if (
-        item.status == 'PROCESSING' ||
-        item.status == 'READY_FOR_COLLECTION' ||
-        item.status == 'READY_FOR_DELIVERY' ||
-        item.status == 'ON_THE_WAY'
+        item.status === 'PROCESSING' ||
+        item.status === 'READY_FOR_COLLECTION' ||
+        item.status === 'READY_FOR_DELIVERY' ||
+        item.status === 'ON_THE_WAY'
       ) {
         Actions.waitingFood({myCart: item, isPop: true});
       } else {
-        Actions.cart({myCart: item});
+        Actions.pendingOrderDetail({order: item});
       }
     }
   };

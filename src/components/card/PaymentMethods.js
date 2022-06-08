@@ -117,7 +117,7 @@ class PaymentMethods extends Component {
       paymentTypes = paymentTypes.filter(i => i.allowSalesTransaction === true);
     }
 
-    if (!isEmptyArray(paymentTypes))
+    if (!isEmptyArray(paymentTypes)) {
       return (
         <FlatList
           data={paymentTypes}
@@ -150,6 +150,7 @@ class PaymentMethods extends Component {
           keyExtractor={(product, index) => index.toString()}
         />
       );
+    }
   };
 
   render() {

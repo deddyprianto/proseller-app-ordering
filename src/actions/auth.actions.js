@@ -219,11 +219,6 @@ export const loginUser = payload => {
         // Remove Netsclick account on login
         await dispatch(clearNetsclickData(jwtToken));
 
-        // save data to reducer
-        dispatch({
-          type: 'LOGIN_USER_SUCCESS',
-        });
-
         dispatch({
           type: 'AUTH_USER_SUCCESS',
           qrcode: qrcode,
@@ -245,6 +240,10 @@ export const loginUser = payload => {
           payload: dataUser,
         });
 
+        // save data to reducer
+        dispatch({
+          type: 'LOGIN_USER_SUCCESS',
+        });
         console.log(response, 'response login user pool');
         return response.responseBody.Data;
       }

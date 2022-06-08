@@ -35,6 +35,7 @@ import Header from '../components/layout/header';
 import {Alert} from 'react-native';
 import CurrencyFormatter from '../helper/CurrencyFormatter';
 import {showSnackbar} from '../actions/setting.action';
+import {getTimeSlot} from '../actions/order.action';
 
 const styles = StyleSheet.create({
   root: {
@@ -188,6 +189,7 @@ const styles = StyleSheet.create({
 
 const Cart = () => {
   const dispatch = useDispatch();
+  const [availableTimes, setAvailableTimes] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [seeDetail, setSeeDetail] = useState(false);
   const [openOrderingTypeModal, setOpenOrderingTypeModal] = useState(false);
@@ -211,10 +213,29 @@ const Cart = () => {
   );
 
   useEffect(() => {
+    const loadData = async () => {
+      const clientTimezone = Math.abs(new Date().getTimezoneOffset());
+      const date = moment().format('YYYY-MM-DD');
+      const timeSlot = await dispatch(
+        getTimeSlot({
+          outletId: outlet.id,
+          date,
+          clientTimezone,
+          orderingMode: basket.orderingMode,
+        }),
+      );
+
+      setAvailableTimes(timeSlot);
+    };
+    loadData();
+  }, [dispatch, basket, outlet]);
+
+  useEffect(() => {
     const userDecrypt = CryptoJS.AES.decrypt(
       userDetail,
       awsConfig.PRIVATE_KEY_RSA,
     );
+
     const result = JSON.parse(userDecrypt.toString(CryptoJS.enc.Utf8));
     setDeliveryAddress(result.selectedAddress);
   }, [userDetail]);
@@ -397,7 +418,13 @@ const Cart = () => {
   const handleDisabledPaymentButton = value => {
     switch (value) {
       case 'DELIVERY':
-        if (deliveryAddress && basket?.provider && orderingDateTimeSelected) {
+        if (isEmptyArray(availableTimes)) {
+          return false;
+        } else if (
+          deliveryAddress &&
+          basket?.provider &&
+          orderingDateTimeSelected
+        ) {
           return false;
         }
         return true;
@@ -435,7 +462,7 @@ const Cart = () => {
         let totalQty = 0;
         let totalAmount = 0;
 
-        await dataBasket.details.map(item => {
+        await dataBasket?.details?.map(item => {
           totalQty += item.quantity;
           totalAmount += item.grossAmount;
         });
@@ -516,7 +543,7 @@ const Cart = () => {
       // create dataPay item
       let data = {};
 
-      basket.details.map((item, index) => {
+      basket?.details?.map((item, index) => {
         data.quantity = item.quantity;
         data.unitPrice = item.unitPrice;
         data.nettAmount = item.nettAmount;
@@ -568,7 +595,7 @@ const Cart = () => {
       }
 
       // for delivery order
-      if (basket?.orderingMode == 'DELIVERY') {
+      if (basket?.orderingMode === 'DELIVERY') {
         pembayaran.deliveryAddress = deliveryAddress;
         pembayaran.deliveryProvider = basket?.provider;
       }
@@ -589,10 +616,20 @@ const Cart = () => {
             pembayaran.orderActionDate = orderingDateTimeSelected?.date;
           }
 
-          if (this.state.timePickup.length === 5) {
+          if (!orderingDateTimeSelected?.time) {
+            const hour = new Date().getHours() + 1;
+            pembayaran.orderActionTime = `${hour}:00`;
+          } else {
+            pembayaran.orderActionTime = orderingDateTimeSelected?.time.substr(
+              0,
+              5,
+            );
+          }
+
+          if (!orderingDateTimeSelected?.time) {
             pembayaran.orderActionTimeSlot = null;
           } else {
-            pembayaran.orderActionTimeSlot = this.state.timePickup;
+            pembayaran.orderActionTimeSlot = orderingDateTimeSelected?.time;
           }
         }
       } catch (e) {}
@@ -642,7 +679,10 @@ const Cart = () => {
   };
 
   const renderOrderingType = () => {
-    const orderingTypeValue = basket?.orderingMode || 'Choose Type';
+    const orderingType =
+      typeof basket?.orderingMode === 'string' && basket?.orderingMode;
+
+    const orderingTypeValue = orderingType || 'Choose Type';
 
     return (
       <View style={styles.viewMethod}>
@@ -713,10 +753,11 @@ const Cart = () => {
     }
   };
   const renderDeliveryDate = () => {
-    if (
-      basket?.orderingMode === 'DELIVERY' ||
-      basket?.orderingMode === 'PICKUP'
-    ) {
+    const available = !isEmptyArray(availableTimes);
+    const isDelivery = available && basket?.orderingMode === 'DELIVERY';
+    const isPickUp = available && basket?.orderingMode === 'PICKUP';
+
+    if (isDelivery || isPickUp) {
       return (
         <View style={styles.viewMethod}>
           <Text style={styles.textMethod}>Delivery Date</Text>
@@ -797,7 +838,7 @@ const Cart = () => {
     }
   };
 
-  if (isEmptyArray(basket.details)) {
+  if (isEmptyArray(basket?.details)) {
     Actions.pop();
   }
 

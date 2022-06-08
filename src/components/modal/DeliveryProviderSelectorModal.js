@@ -175,7 +175,9 @@ const DeliveryProviderSelectorModal = ({open, handleClose, value}) => {
           </View>
         </View>
         <View style={{marginTop: 8}} />
-        <Text style={styleName}>{item?.name}</Text>
+        <Text numberOfLines={1} style={styleName}>
+          {item?.name}
+        </Text>
       </TouchableOpacity>
     );
   };

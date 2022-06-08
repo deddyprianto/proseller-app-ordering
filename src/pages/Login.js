@@ -128,9 +128,10 @@ const Login = () => {
         methodValue: methodValue,
       });
     } else {
+      const message = response?.message || 'Login Failed';
       dispatch(
         showSnackbar({
-          message: response?.message,
+          message: message,
         }),
       );
     }

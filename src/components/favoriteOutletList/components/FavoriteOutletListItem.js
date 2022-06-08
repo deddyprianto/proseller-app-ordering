@@ -77,7 +77,7 @@ const FavoriteOutletListItem = ({item}) => {
           onPress={() => {
             handleStarClicked();
           }}>
-          <IconFontAwesome name={star} style={styles.iconStar} />;
+          <IconFontAwesome name={star} style={styles.iconStar} />
         </TouchableOpacity>
       </View>
     );

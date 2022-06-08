@@ -11,7 +11,7 @@ import {View, FlatList} from 'react-native';
 
 import ProductCartItem from './components/ProductCartItem';
 
-const ProductCartList = ({...props}) => {
+const ProductCartList = ({disabled}) => {
   const currentBasket = useSelector(
     state => state.orderReducer?.dataBasket?.product,
   );
@@ -19,7 +19,7 @@ const ProductCartList = ({...props}) => {
   const renderProductCartItem = item => {
     return (
       <View>
-        <ProductCartItem item={item} />
+        <ProductCartItem item={item} disabled={disabled} />
         <View style={{marginBottom: 16}} />
       </View>
     );

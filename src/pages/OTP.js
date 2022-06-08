@@ -11,6 +11,7 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  BackHandler,
 } from 'react-native';
 
 import appConfig from '../config/appConfig';
@@ -98,6 +99,40 @@ const OTP = ({isLogin, method, methodValue}) => {
     otp3: useRef(),
     otp4: useRef(),
   };
+  const countdown = () => {
+    let second = 59;
+    let minute = sendCounter >= 2 ? 4 : 0;
+    setSeconds(second);
+    setMinutes(minute);
+    const result = setInterval(() => {
+      second = second - 1;
+      setSeconds(second);
+      if (second === 0) {
+        if (!minute && !second) {
+          clearInterval(result);
+        } else {
+          second = 60;
+          minute = minute - 1;
+          setMinutes(minute);
+        }
+      }
+    }, 2000);
+  };
+
+  useEffect(() => {
+    countdown();
+    const backAction = () => {
+      Actions.popTo('pageIndex');
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+
+    return () => backHandler.remove();
+  }, []);
 
   const handleLogin = async () => {
     let value = {};
@@ -118,26 +153,6 @@ const OTP = ({isLogin, method, methodValue}) => {
 
       await dispatch(showSnackbar({message}));
     }
-  };
-
-  const countdown = () => {
-    let second = 59;
-    let minute = sendCounter >= 2 ? 4 : 0;
-    setSeconds(second);
-    setMinutes(minute);
-    const result = setInterval(() => {
-      second = second - 1;
-      setSeconds(second);
-      if (second === 0) {
-        if (!minute && !second) {
-          clearInterval(result);
-        } else {
-          second = 60;
-          minute = minute - 1;
-          setMinutes(minute);
-        }
-      }
-    }, 2000);
   };
 
   useEffect(() => {

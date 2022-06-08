@@ -4,7 +4,7 @@
  * PT Edgeworks
  */
 
-import React, {Component} from 'react';
+import React, {Component, useCallback} from 'react';
 import {connect} from 'react-redux';
 import Store from './store';
 
@@ -13,6 +13,7 @@ import {isEmptyArray, isEmptyObject} from '../helper/CheckEmpty';
 import Banner from '../components/banner/Banner';
 import Menu from '../components/menu/Menu';
 import {campaign, dataPoint} from '../actions/rewards.action';
+
 import {getAccountPayment} from '../actions/payment.actions';
 import {
   defaultPaymentAccount,
@@ -21,7 +22,13 @@ import {
   userPosition,
 } from '../actions/user.action';
 import VersionCheck from 'react-native-version-check';
-import {Alert, Linking} from 'react-native';
+import {
+  Alert,
+  Linking,
+  RefreshControl,
+  Dimensions,
+  ScrollView,
+} from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
 import CryptoJS from 'react-native-crypto-js';
 import awsConfig from '../config/awsConfig';
@@ -30,7 +37,7 @@ import {getCartHomePage, getPendingCart} from '../actions/order.action';
 import OneSignal from 'react-native-onesignal';
 import {dataPromotion} from '../actions/promotion.action';
 import {getSVCCard} from '../actions/SVC.action';
-import {ScrollView} from 'react-navigation';
+import LoadingScreen from '../components/loadingScreen';
 
 class Home extends Component {
   constructor(props) {
@@ -38,6 +45,7 @@ class Home extends Component {
 
     this.state = {
       onesignalID: null,
+      refresh: false,
     };
 
     try {
@@ -66,6 +74,7 @@ class Home extends Component {
       await this.setState({isLoading: false});
       this.props.dispatch(getAccountPayment());
       this.props.dispatch(getUserProfile());
+      this.props.dispatch(dataPromotion());
       const response = await this.props.dispatch(getAccountPayment());
       await this.checkDefaultPaymentAccount(response);
       this.getDeepLinkiOS();
@@ -259,15 +268,23 @@ class Home extends Component {
 
   render() {
     const {outletSelectionMode, defaultOutlet} = this.props;
+
     return (
       <>
+        <LoadingScreen loading={this.state.isLoading} />
         {outletSelectionMode === 'MANUAL' && isEmptyObject(defaultOutlet) ? (
           <Store />
         ) : (
-          <>
+          <ScrollView
+            refreshControl={
+              <RefreshControl
+                refreshing={this.state.refreshing}
+                onRefresh={this._onRefresh}
+              />
+            }>
             <Banner />
             <Menu />
-          </>
+          </ScrollView>
           // <ProductsRetail />
         )}
       </>

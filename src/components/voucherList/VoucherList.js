@@ -5,7 +5,7 @@ import {StyleSheet, View, TouchableOpacity} from 'react-native';
 
 import {Actions} from 'react-native-router-flux';
 import VoucherListItem from './components/VoucherListItem';
-import {myVouchers} from '../../actions/account.action';
+import {vouchers} from '../../actions/rewards.action';
 
 const styles = StyleSheet.create({
   touchableVoucher: {
@@ -16,19 +16,19 @@ const styles = StyleSheet.create({
 
 const VoucherList = () => {
   const dispatch = useDispatch();
-  const vouchers = useSelector(
-    state => state.accountsReducer?.myVouchers?.vouchers,
+  const voucherList = useSelector(
+    state => state.rewardsReducer?.vouchers?.dataVoucher,
   );
 
   useEffect(() => {
     const loadData = async () => {
-      await dispatch(myVouchers());
+      await dispatch(vouchers());
     };
     loadData();
   }, [dispatch]);
 
   const renderRewardList = () => {
-    const result = vouchers?.map(voucher => {
+    const result = voucherList?.map(voucher => {
       return (
         <TouchableOpacity
           style={styles.touchableVoucher}

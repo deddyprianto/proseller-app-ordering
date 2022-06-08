@@ -20,12 +20,10 @@ const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
-  container: {
-    marginTop: HEIGHT * 0.01,
-    marginBottom: HEIGHT * 0.01,
-  },
   wrap: {
     width: WIDTH,
+    marginTop: HEIGHT * 0.01,
+    marginBottom: HEIGHT * 0.01,
   },
   wrapImage: {
     height: HEIGHT * 0.25,
@@ -74,7 +72,7 @@ const Banner = () => {
   };
 
   const renderImages = () => {
-    const result = banners.map((banner, index) => {
+    const result = banners?.map((banner, index) => {
       return (
         <Image
           key={index}
@@ -88,7 +86,7 @@ const Banner = () => {
   };
 
   const renderDot = () => {
-    const dots = banners.map((image, index) => {
+    const dots = banners?.map((image, index) => {
       return (
         <Text
           key={index}
@@ -106,21 +104,18 @@ const Banner = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.wrap}>
-        <ScrollView
-          style={styles.wrap}
-          onScroll={({nativeEvent}) => {
-            onChange(nativeEvent);
-          }}
-          showsHorizontalScrollIndicator={false}
-          pagingEnabled
-          horizontal>
-          {renderImages()}
-        </ScrollView>
-        {renderDot()}
-      </View>
-    </SafeAreaView>
+    <View style={styles.wrap}>
+      <ScrollView
+        onScroll={({nativeEvent}) => {
+          onChange(nativeEvent);
+        }}
+        showsHorizontalScrollIndicator={false}
+        pagingEnabled
+        horizontal>
+        {renderImages()}
+      </ScrollView>
+      {renderDot()}
+    </View>
   );
 };
 

@@ -5,6 +5,7 @@ const THIRD_COLOR_RGB = theme.THIRD_COLOR_RGB;
 const FORTH_COLOR_RGB = theme.FORTH_COLOR_RGB;
 const FIFTH_COLOR_RGB = theme.FIFTH_COLOR_RGB;
 const SIXTH_COLOR_RGB = theme.SIXTH_COLOR_RGB;
+const SEVENTH_COLOR_RGB = theme.SEVENTH_COLOR_RGB;
 
 const colorConfig = {
   PRIMARY_COLOR_RGB,
@@ -93,6 +94,8 @@ const colorConfig = {
     cardColor: theme.card.cardColor,
     otherCardColor: theme.card.otherCardColor,
   },
+  //martin
+  buttonDisabled: '#B7B7B7',
 };
 
 export default colorConfig;

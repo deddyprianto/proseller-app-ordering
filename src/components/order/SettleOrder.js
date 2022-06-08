@@ -3851,12 +3851,12 @@ class SettleOrder extends Component {
               }}>
               <TouchableOpacity
                 style={styles.btnPaymentMethod}
-                onPress={() =>
+                onPress={() => {
                   Actions.paymentMethods({
                     page: 'settleOrder',
                     paySVC: this.props.paySVC,
-                  })
-                }>
+                  });
+                }}>
                 <Text
                   style={[
                     styles.descMethodUnselected,

@@ -10,7 +10,7 @@ export const getProductByOutlet = (OutletId, refresh) => {
     try {
       const PRESET_TYPE = 'app';
 
-      let response = await fetchApiProduct(
+      const response = await fetchApiProduct(
         `/productpreset/load/${PRESET_TYPE}/${OutletId}`,
         'POST',
         null,

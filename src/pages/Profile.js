@@ -145,13 +145,15 @@ const Profile = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    const userDecrypt = CryptoJS.AES.decrypt(
-      userDetail,
-      awsConfig.PRIVATE_KEY_RSA,
-    );
-    const result = JSON.parse(userDecrypt.toString(CryptoJS.enc.Utf8));
+    if (userDetail) {
+      const userDecrypt = CryptoJS.AES.decrypt(
+        userDetail,
+        awsConfig.PRIVATE_KEY_RSA,
+      );
+      const result = JSON.parse(userDecrypt.toString(CryptoJS.enc.Utf8));
 
-    setUser(result);
+      setUser(result);
+    }
   }, [userDetail]);
 
   const handleLogout = async () => {

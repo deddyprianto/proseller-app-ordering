@@ -82,7 +82,7 @@ const VoucherListItem = ({voucher, qty, pointToRedeem}) => {
     <ImageBackground
       style={styles.imageBackground}
       imageStyle={styles.image}
-      source={{uri: voucher.image}}>
+      source={{uri: voucher?.image}}>
       <View style={styles.viewVoucher}>
         {renderVoucherTitle()}
         {renderVoucherPointToRedeem()}

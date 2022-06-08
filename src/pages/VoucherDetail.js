@@ -131,6 +131,7 @@ const VoucherDetail = ({voucher}) => {
   const [openModal, setOpenModal] = useState(false);
   const [openSuccessModal, setOpenSuccessModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
   const totalPoint = useSelector(
     state => state.rewardsReducer?.dataPoint?.totalPoint,
   );
@@ -147,14 +148,14 @@ const VoucherDetail = ({voucher}) => {
   const handleRedeem = async () => {
     const payload = {
       voucher: {
-        id: voucher.id,
+        id: voucher?.id,
       },
       qty: 1,
     };
 
     setIsLoading(true);
     const response = await dispatch(redeemVoucher(payload));
-    if (response?.success) {
+    if (response?.data?.status) {
       handleOpenSuccessModal();
     } else {
       const message = response?.message || 'Redeem failed';
@@ -175,7 +176,7 @@ const VoucherDetail = ({voucher}) => {
   };
 
   const renderValidity = () => {
-    const text = moment(voucher.expiryDate).format('ddd MMM DD YYYY hh:mm:ss');
+    const text = moment(voucher?.expiryDate).format('ddd MMM DD YYYY hh:mm:ss');
 
     return (
       <View>
@@ -191,7 +192,7 @@ const VoucherDetail = ({voucher}) => {
       <View>
         <Text style={styles.textDescription}>Description</Text>
         <View style={{marginTop: 8}} />
-        <Text style={styles.textDescriptionValue}>{voucher.voucherDesc}</Text>
+        <Text style={styles.textDescriptionValue}>{voucher?.voucherDesc}</Text>
       </View>
     );
   };

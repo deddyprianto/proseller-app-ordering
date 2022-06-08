@@ -1,64 +1,94 @@
-import React, {useEffect, useState} from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, {useEffect} from 'react';
 import PropTypes from 'prop-types';
 import {useDispatch, useSelector} from 'react-redux';
-import debounce from 'lodash/debounce';
-import {
-  Modal,
-  ActivityIndicator,
-  View,
-  Text,
-  TouchableOpacity,
-} from 'react-native';
+import {Modal, View, Text, TouchableOpacity} from 'react-native';
 
 import {closeSnackbar} from '../../actions/setting.action';
-import colorConfig from '../../config/colorConfig';
 
 const styles = {
-  loading: {
+  root: {
     height: '100%',
-    // backgroundColor: 'rgba(0,0,0,0.3)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  body: {
+    position: 'absolute',
+    top: 20,
+    width: '100%',
+    paddingHorizontal: 16,
+  },
+  viewSnackbarError: {
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'row',
+    backgroundColor: 'red',
+    padding: 14,
+    justifyContent: 'space-between',
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  viewSnackbarSuccess: {
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'row',
+    backgroundColor: 'green',
+    padding: 14,
+    justifyContent: 'space-between',
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  textSnackbar: {
+    color: 'white',
   },
 };
 
 const Snackbar = () => {
   const dispatch = useDispatch();
   const message = useSelector(state => state.settingReducer.snackbar.message);
+  const type = useSelector(state => state.settingReducer.snackbar.type);
   const open = message ? true : false;
 
   const handleClose = () => {
     dispatch(closeSnackbar());
   };
 
+  const countdown = async () => {
+    let second = 3;
+    const result = setInterval(() => {
+      second = second - 1;
+      if (second === 0) {
+        clearInterval(result);
+        dispatch(closeSnackbar());
+      }
+    }, 1000);
+  };
+
+  useEffect(() => {
+    const loadData = async () => {
+      if (open) {
+        await countdown();
+      }
+    };
+    loadData();
+  }, [open]);
+
+  const renderSnackbarText = () => {
+    const style =
+      type === 'success'
+        ? styles.viewSnackbarSuccess
+        : styles.viewSnackbarError;
+    return (
+      <View style={style}>
+        <Text style={styles.textSnackbar}>{message}</Text>
+      </View>
+    );
+  };
+
   return (
     <Modal animationType="none" transparent visible={open}>
-      <TouchableOpacity
-        onPress={handleClose}
-        style={{
-          height: '100%',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}>
-        <View
-          style={{
-            position: 'absolute',
-            top: 20,
-            width: '100%',
-            paddingHorizontal: 16,
-          }}>
-          <View
-            style={{
-              width: '100%',
-              display: 'flex',
-              flexDirection: 'row',
-              backgroundColor: colorConfig.primaryColor,
-              padding: 14,
-              justifyContent: 'space-between',
-              borderRadius: 8,
-              alignItems: 'center',
-            }}>
-            <Text style={{color: 'white'}}>{message}</Text>
-          </View>
-        </View>
+      <TouchableOpacity style={styles.root} onPress={handleClose}>
+        <View style={styles.body}>{renderSnackbarText()}</View>
       </TouchableOpacity>
     </Modal>
   );

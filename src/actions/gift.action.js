@@ -54,15 +54,13 @@ export const getGiftCardByCategory = ({categoryId}) => {
         token,
       );
 
-      if (response.success) {
+      if (response?.responseBody?.data) {
         dispatch({
           type: 'DATA_GIFT_CARD_BY_CATEGORY',
           data: response.responseBody.data,
         });
 
         return response.responseBody.data;
-      } else {
-        return false;
       }
     } catch (error) {
       return error;
@@ -77,8 +75,9 @@ export const sendGift = ({
   recipientEmail,
   giftCardCategoryId,
   payments,
+  quantity,
 }) => {
-  return async (dispatch, getState) => {
+  return async (_, getState) => {
     const state = getState();
 
     try {
@@ -93,10 +92,10 @@ export const sendGift = ({
         value,
         recipientName,
         recipientEmail,
+        quantity,
         giftCardCategoryId,
         payments,
       };
-
       const response = await fetchApi(
         '/giftCard/send',
         'POST',
@@ -105,16 +104,7 @@ export const sendGift = ({
         token,
       );
 
-      if (response.success) {
-        dispatch({
-          type: 'DATA_GIFT_CARD_BY_CATEGORY',
-          data: response.responseBody.data,
-        });
-
-        return response.responseBody.data;
-      } else {
-        return false;
-      }
+      return response;
     } catch (error) {
       return error;
     }

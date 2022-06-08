@@ -26,7 +26,7 @@ const FavoriteOutletList = () => {
   );
 
   useEffect(() => {
-    const result = outlets.map(outlet => {
+    const result = outlets?.map(outlet => {
       const isFind = myFavoriteOutlets?.find(
         favoriteOutlet => favoriteOutlet.id === outlet.id,
       );

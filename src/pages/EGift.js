@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Actions} from 'react-native-router-flux';
 
 import {
@@ -70,13 +70,16 @@ const styles = StyleSheet.create({
 
 const EGift = () => {
   const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(false);
   const giftCardCategories = useSelector(
     state => state.giftReducer.giftCardCategories.categories,
   );
 
   useEffect(() => {
     const loadData = async () => {
+      setIsLoading(true);
       await dispatch(getGiftCardCategories());
+      setIsLoading(false);
     };
     loadData();
   }, [dispatch]);
@@ -103,7 +106,7 @@ const EGift = () => {
 
   return (
     <ScrollView style={styles.container}>
-      <LoadingScreen loading={isEmptyArray(giftCardCategories)} />
+      <LoadingScreen loading={isLoading} />
       <View style={styles.viewHeader}>
         <View style={styles.viewTitle}>
           <Text style={styles.textTitle}>Send A Gift</Text>

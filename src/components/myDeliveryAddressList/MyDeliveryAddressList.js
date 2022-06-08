@@ -87,20 +87,21 @@ const MyDeliveryAddressList = () => {
     );
   };
 
-  const renderSearch = () => {
-    return (
-      <View style={styles.viewSearch}>
-        <Text style={styles.textSearch}>Search</Text>
-        <IconIonicons name="md-search" />
-      </View>
-    );
-  };
+  // not ready to use
+  // const renderSearch = () => {
+  //   return (
+  //     <View style={styles.viewSearch}>
+  //       <Text style={styles.textSearch}>Search</Text>
+  //       <IconIonicons name="md-search" />
+  //     </View>
+  //   );
+  // };
 
   const renderDeliveryAddressList = () => {
     return (
       <ScrollView style={{paddingHorizontal: 16}}>
-        <View style={{marginTop: 16}} />
-        {renderSearch()}
+        {/* <View style={{marginTop: 16}} />
+        {renderSearch()} */}
         <View style={{marginTop: 16}} />
         <FlatList
           data={deliveryAddress}

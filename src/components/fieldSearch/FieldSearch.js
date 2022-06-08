@@ -42,7 +42,7 @@ const FieldSearch = ({label, customLabel, placeholder, onChange, value}) => {
     onChange(e);
   };
 
-  const debounceSearchQuery = debounce(handleUpdateSearchQuery, 500);
+  const debounceSearchQuery = debounce(handleUpdateSearchQuery, 3000);
 
   const renderLabel = () => {
     if (!value) {

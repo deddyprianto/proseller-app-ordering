@@ -124,6 +124,9 @@ import PointDetailAndHistory from '../pages/PointDetailAndHistory';
 import MyDeliveryAddress from '../pages/MyDeliveryAddress';
 import AddNewAddress from '../pages/AddNewAddress';
 
+//for temporary
+import PendingOrderDetail from '../pages/PendingOrderDetail';
+
 const MyTransitionSpec = {
   duration: 200,
   // easing: Easing.bezier(0.2833, 0.99, 0.31833, 0.99),
@@ -374,6 +377,7 @@ export default class Routes extends Component {
             />
             <Scene key="myDeliveryAddress" component={MyDeliveryAddress} />
             <Scene key="addNewAddress" component={AddNewAddress} />
+            <Scene key="pendingOrderDetail" component={PendingOrderDetail} />
             {/* //martin */}
           </Scene>
         </Scene>

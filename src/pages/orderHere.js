@@ -4,9 +4,16 @@
  * PT Edgeworks
  */
 
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  RefreshControl,
+  Dimensions,
+} from 'react-native';
 
 import ProductList from '../components/productList';
 import ProductSearchList from '../components/productSearchList';
@@ -25,6 +32,9 @@ import FieldSearch from '../components/fieldSearch';
 import colorConfig from '../config/colorConfig';
 import CurrencyFormatter from '../helper/CurrencyFormatter';
 import {Actions} from 'react-native-router-flux';
+import {ScrollView} from 'react-native-gesture-handler';
+
+const HEIGHT = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
   root: {
@@ -89,6 +99,7 @@ const OrderHere = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [productsSearch, setProductsSearch] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [refresh, setRefresh] = useState(false);
 
   const defaultOutlet = useSelector(
     state => state.storesReducer.defaultOutlet.defaultOutlet,
@@ -98,14 +109,16 @@ const OrderHere = () => {
     state => state.productReducer?.productsOutlet?.products,
   );
 
-  useEffect(() => {
-    const loadData = async () => {
-      await dispatch(getProductByOutlet(defaultOutlet.id));
-      await dispatch(getBasket());
-    };
-
-    loadData();
+  const onRefresh = useCallback(async () => {
+    setRefresh(true);
+    await dispatch(getProductByOutlet(defaultOutlet.id));
+    await dispatch(getBasket());
+    setRefresh(false);
   }, [dispatch, defaultOutlet]);
+
+  useEffect(() => {
+    onRefresh();
+  }, [onRefresh]);
 
   useEffect(() => {
     const loadData = async () => {
@@ -185,7 +198,16 @@ const OrderHere = () => {
   };
 
   return (
-    <View style={styles.root}>
+    <ScrollView
+      contentContainerStyle={styles.root}
+      refreshControl={
+        <RefreshControl
+          refreshing={refresh}
+          onRefresh={() => {
+            onRefresh();
+          }}
+        />
+      }>
       <LoadingScreen loading={handleLoading()} />
       <Header title={defaultOutlet?.name} scanner />
       <View style={styles.body}>
@@ -194,7 +216,7 @@ const OrderHere = () => {
         {renderProducts()}
       </View>
       <View style={styles.footer}>{renderButtonCart()}</View>
-    </View>
+    </ScrollView>
   );
 };
 

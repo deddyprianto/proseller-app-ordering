@@ -202,7 +202,7 @@ const DeliveryDateSelectorModal = ({
             day
               .add(1, 'day')
               .clone()
-              .format('DD MMMM'),
+              .format('DD MMM'),
           ),
       );
     }
@@ -331,7 +331,7 @@ const DeliveryDateSelectorModal = ({
     const month = itemDate[1];
 
     const isActive = selectedDate === date;
-    const isThisMonth = month === selectedMonth;
+    const isThisMonth = selectedMonth === month;
 
     const styleDate = !isThisMonth
       ? {
@@ -347,9 +347,9 @@ const DeliveryDateSelectorModal = ({
 
     return (
       <TouchableOpacity
-        disabled={!isThisMonth}
         onPress={() => {
           setSelectedDate(date);
+          setSelectedMonth(month);
         }}>
         <View style={styleCircle}>
           <Text style={styleDate}>{date}</Text>
@@ -359,10 +359,10 @@ const DeliveryDateSelectorModal = ({
   };
 
   const renderDeliveryDate = () => {
-    const result = dates.map((test, index) => {
+    const result = dates.map((date, index) => {
       return (
         <View style={{display: 'flex', flexDirection: 'row'}}>
-          {test.map(item => {
+          {date.map(item => {
             return renderDeliveryDateItem(item);
           })}
         </View>

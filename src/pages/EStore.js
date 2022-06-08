@@ -1,15 +1,6 @@
 import React from 'react';
-import {Actions} from 'react-native-router-flux';
 
-import {
-  StyleSheet,
-  ScrollView,
-  View,
-  Text,
-  Image,
-  Dimensions,
-  TouchableOpacity,
-} from 'react-native';
+import {StyleSheet, View, Text, Dimensions} from 'react-native';
 
 import colorConfig from '../config/colorConfig';
 
@@ -22,12 +13,6 @@ const HEIGHT = Dimensions.get('window').height;
 const styles = StyleSheet.create({
   container: {
     marginTop: HEIGHT * 0.01,
-  },
-  image: {
-    height: HEIGHT * 0.22,
-    width: WIDTH * 0.85,
-    borderRadius: 10,
-    marginBottom: 20,
   },
   viewHeader: {
     width: WIDTH,
@@ -66,43 +51,6 @@ const styles = StyleSheet.create({
 });
 
 const EStore = () => {
-  const categories = [
-    {
-      name: 'martin',
-      image:
-        'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-    },
-    {
-      name: 'test',
-      image:
-        'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-    },
-    {
-      name: 'anjay',
-      image:
-        'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-    },
-  ];
-
-  const renderCategories = () => {
-    const result = categories.map((category, index) => {
-      return (
-        <TouchableOpacity
-          onPress={() => {
-            Actions.push('sendEGift');
-          }}>
-          <Image
-            key={index}
-            style={styles.image}
-            resizeMode="stretch"
-            source={{uri: category.image}}
-          />
-        </TouchableOpacity>
-      );
-    });
-    return result;
-  };
-
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.viewHeader}>

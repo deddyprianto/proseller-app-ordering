@@ -119,7 +119,7 @@ const MyFavoriteOutletItemList = ({outlet}) => {
   };
 
   const renderOperationalHours = () => {
-    const result = outlet?.operationalHours.map(value => {
+    const result = outlet?.operationalHours?.map(value => {
       return renderOperationalHourItem(value);
     });
     return result;

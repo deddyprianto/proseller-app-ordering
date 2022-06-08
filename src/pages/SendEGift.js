@@ -12,12 +12,16 @@ import {
 import {CheckBox} from 'react-native-elements';
 
 import colorConfig from '../config/colorConfig';
+import IconIonicons from 'react-native-vector-icons/Ionicons';
 import EGiftCard from '../components/eGiftCard/EGiftCard';
 import {useDispatch, useSelector} from 'react-redux';
 import {getGiftCardByCategory, sendGift} from '../actions/gift.action';
 import FieldTextInput from '../components/fieldTextInput';
 import CurrencyFormatter from '../helper/CurrencyFormatter';
 import LoadingScreen from '../components/loadingScreen';
+
+import {Actions} from 'react-native-router-flux';
+import {showSnackbar} from '../actions/setting.action';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -43,6 +47,10 @@ const styles = StyleSheet.create({
     letterSpacing: 0.2,
     marginTop: 30,
     marginBottom: 20,
+  },
+  textPaymentMethodButton: {
+    color: colorConfig.store.titleSelected,
+    fontWeight: 'bold',
   },
   text1: {
     color: 'black',
@@ -96,13 +104,27 @@ const styles = StyleSheet.create({
   textCheckboxItem: {
     marginLeft: -20,
   },
-  viewButton: {
+  viewButtonPayment: {
     backgroundColor: colorConfig.primaryColor,
-    height: 35,
     marginTop: 20,
     marginBottom: 20,
     justifyContent: 'center',
     alignItems: 'center',
+    width: '100%',
+    height: 45,
+    borderRadius: 8,
+    paddingHorizontal: 16,
+  },
+  viewButtonPaymentDisabled: {
+    backgroundColor: colorConfig.buttonDisabled,
+    marginTop: 20,
+    marginBottom: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    height: 45,
+    borderRadius: 8,
+    paddingHorizontal: 16,
   },
   viewHeader: {
     paddingTop: 10,
@@ -142,6 +164,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginLeft: -20,
   },
+  touchablePaymentMethod: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '100%',
+    height: 45,
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 16,
+    borderColor: '#00000061',
+  },
+  iconArrow: {
+    color: colorConfig.store.titleSelected,
+    fontSize: 25,
+  },
 });
 
 const SendEGift = ({categoryId}) => {
@@ -149,8 +187,6 @@ const SendEGift = ({categoryId}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedValue, setSelectedValue] = useState({});
   const [quantityValue, setQuantityValue] = useState('');
-  const [emailValue, setEmailValue] = useState('');
-  const [confirmEmailValue, setConfirmEmailValue] = useState('');
   const [recipientNameValue, setRecipientNameValue] = useState('');
   const [recipientEmailValue, setRecipientEmailValue] = useState('');
   const [giftCardImage, setGiftCardImage] = useState('');
@@ -158,9 +194,16 @@ const SendEGift = ({categoryId}) => {
   const giftCard = useSelector(
     state => state.giftReducer.giftCardByCategory.giftCard,
   );
+
+  const selectedAccount = useSelector(
+    state => state.cardReducer.selectedAccount.selectedAccount,
+  );
+
   useEffect(() => {
     const loadData = async () => {
+      setIsLoading(true);
       await dispatch(getGiftCardByCategory({categoryId}));
+      setIsLoading(false);
     };
     loadData();
   }, [dispatch, categoryId]);
@@ -179,16 +222,32 @@ const SendEGift = ({categoryId}) => {
 
   const handlePayment = async () => {
     setIsLoading(true);
-    await dispatch(
+    const response = await dispatch(
       sendGift({
         image: giftCardImage,
-        value: quantityValue?.value,
+        value: selectedValue?.value,
+        quantity: quantityValue,
         recipientName: recipientNameValue,
         recipientEmail: recipientEmailValue,
         giftCardCategoryId: categoryId,
-        payments: [],
+        payments: [
+          {
+            accountId: selectedAccount?.accountID,
+            paymentID: selectedAccount?.paymentID,
+            paymentName: selectedAccount?.paymentName,
+            paymentType: selectedAccount?.paymentID,
+          },
+        ],
       }),
     );
+
+    if (response.success) {
+      const message = response?.responseBody?.message;
+      await dispatch(showSnackbar({message, type: 'success'}));
+    } else {
+      const message = response?.responseBody?.message || 'Failed';
+      await dispatch(showSnackbar({message}));
+    }
     setIsLoading(false);
   };
 
@@ -232,37 +291,12 @@ const SendEGift = ({categoryId}) => {
     return (
       <FieldTextInput
         label="Quantity :"
+        type="number"
         value={quantityValue}
         onChange={value => {
           setQuantityValue(value);
         }}
         placeholder="Quantity"
-      />
-    );
-  };
-
-  const renderTextInputEmail = () => {
-    return (
-      <FieldTextInput
-        label="Your Email Address :"
-        value={emailValue}
-        onChange={value => {
-          setEmailValue(value);
-        }}
-        placeholder="Your Email Address"
-      />
-    );
-  };
-
-  const renderTextInputConfirmEmail = () => {
-    return (
-      <FieldTextInput
-        label="Confirm your email Address :"
-        value={confirmEmailValue}
-        onChange={value => {
-          setConfirmEmailValue(value);
-        }}
-        placeholder="Confirm your email Address"
       />
     );
   };
@@ -303,17 +337,19 @@ const SendEGift = ({categoryId}) => {
   };
 
   const renderPickDesign = () => {
-    return (
-      <View>
-        {renderTextPickDesign()}
-        <EGiftCard
-          cards={giftCard?.images}
-          onChange={value => {
-            setGiftCardImage(value);
-          }}
-        />
-      </View>
-    );
+    if (giftCard) {
+      return (
+        <View>
+          {renderTextPickDesign()}
+          <EGiftCard
+            cards={giftCard?.images}
+            onChange={value => {
+              setGiftCardImage(value);
+            }}
+          />
+        </View>
+      );
+    }
   };
 
   const renderTextValueOfVoucher = () => {
@@ -334,18 +370,6 @@ const SendEGift = ({categoryId}) => {
     );
   };
 
-  const renderGiftFrom = () => {
-    return (
-      <View>
-        <Text style={styles.text3}>This gift is from : </Text>
-        <View style={styles.marginTop10} />
-        {renderTextInputEmail()}
-        <View style={styles.marginTop10} />
-        {renderTextInputConfirmEmail()}
-      </View>
-    );
-  };
-
   const renderGiftTo = () => {
     return (
       <View>
@@ -358,15 +382,38 @@ const SendEGift = ({categoryId}) => {
     );
   };
 
+  const HandleSelectedPaymentMethod = value => {
+    const maskedAccountNumber = value?.details?.maskedAccountNumber;
+
+    if (!value?.isAccountRequired) {
+      return value?.paymentName;
+    }
+
+    if (maskedAccountNumber) {
+      const number = maskedAccountNumber.substr(
+        maskedAccountNumber.length - 4,
+        4,
+      );
+
+      return `${value?.details.cardIssuer.toUpperCase()} ${number}`;
+    } else {
+      return null;
+    }
+  };
+
   const renderButtonPayment = () => {
+    const payment = HandleSelectedPaymentMethod(selectedAccount);
     const disabled =
       !selectedValue ||
       !quantityValue ||
-      !emailValue ||
-      !confirmEmailValue ||
       !recipientNameValue ||
       !recipientEmailValue ||
-      !giftCardImage;
+      !giftCardImage ||
+      !payment;
+
+    const style = disabled
+      ? styles.viewButtonPaymentDisabled
+      : styles.viewButtonPayment;
 
     return (
       <TouchableOpacity
@@ -374,7 +421,7 @@ const SendEGift = ({categoryId}) => {
           handlePayment();
         }}
         disabled={disabled}>
-        <View style={styles.viewButton}>
+        <View style={style}>
           <Text style={styles.textButton}>
             Pay {CurrencyFormatter(selectedValue?.price)}
           </Text>
@@ -383,25 +430,38 @@ const SendEGift = ({categoryId}) => {
     );
   };
 
-  const renderButtonPaymentWithPaylah = () => {
+  const renderTextInstruction = () => {
+    return <Text style={styles.text1}>Select the following options</Text>;
+  };
+
+  const renderPaymentMethodButton = () => {
+    const text = selectedAccount
+      ? HandleSelectedPaymentMethod(selectedAccount)
+      : 'Payment Method';
+
     return (
-      <TouchableOpacity onPress={() => {}}>
-        <View style={styles.viewButton}>
-          <Text style={styles.textButton}>Pay with Paylah</Text>
-        </View>
+      <TouchableOpacity
+        style={styles.touchablePaymentMethod}
+        onPress={() =>
+          Actions.paymentMethods({
+            page: 'settleOrder',
+            paySVC: null,
+          })
+        }>
+        <Text style={styles.textPaymentMethodButton}>{text}</Text>
+        <IconIonicons name={'md-arrow-dropright'} style={styles.iconArrow} />
       </TouchableOpacity>
     );
   };
 
-  const renderTextOr = () => {
+  const renderPaymentMethod = () => {
     return (
-      <View style={styles.viewOr}>
-        <Text style={styles.textOr}>OR</Text>
+      <View>
+        <Text style={styles.text3}>Payment Method :</Text>
+        <View style={styles.marginTop10} />
+        {renderPaymentMethodButton()}
       </View>
     );
-  };
-  const renderTextInstruction = () => {
-    return <Text style={styles.text1}>Select the following options</Text>;
   };
 
   return (
@@ -412,11 +472,9 @@ const SendEGift = ({categoryId}) => {
       {renderPickDesign()}
       {renderValueOfVoucher()}
       {renderTextInputQuantity()}
-      {renderGiftFrom()}
       {renderGiftTo()}
+      {renderPaymentMethod()}
       {renderButtonPayment()}
-      {/* {renderTextOr()}
-      {renderButtonPaymentWithPaylah()} */}
     </ScrollView>
   );
 };

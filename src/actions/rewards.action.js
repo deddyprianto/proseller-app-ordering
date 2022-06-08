@@ -59,21 +59,15 @@ export const vouchers = () => {
           tokenUser: {token},
         },
       } = state;
-      // const {
-      //   rewardsReducer: {
-      //     campaign: {
-      //       campaign: {data},
-      //     },
-      //   },
-      // } = state;
 
       var dataVoucher = [];
 
       let response = await fetchApi('/voucher', 'GET', false, 200, token);
       console.log(response, 'response voucher');
+
       if (response.success) {
         dataVoucher = response.responseBody.Data.filter(
-          item => item.deleted == false,
+          item => item.deleted === false,
         );
       }
 
@@ -317,30 +311,6 @@ export const checkPromo = codeVoucher => {
 };
 
 //martin
-export const redeemVoucher = payload => {
-  return async (dispatch, getState) => {
-    const state = getState();
-    try {
-      const {
-        authReducer: {
-          tokenUser: {token},
-        },
-      } = state;
-
-      const response = await fetchApi(
-        '/accummulation/point/redeem/voucher',
-        'POST',
-        payload,
-        200,
-        token,
-      );
-
-      return response?.responseBody?.data;
-    } catch (error) {
-      throw error;
-    }
-  };
-};
 
 export const dataPointHistory = () => {
   return async (dispatch, getState) => {
@@ -377,6 +347,33 @@ export const dataPointHistory = () => {
       }
     } catch (error) {
       return error;
+    }
+  };
+};
+
+export const redeemVoucher = payload => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      const response = await fetchApi(
+        '/accummulation/point/redeem/voucher',
+        'POST',
+        payload,
+        200,
+        token,
+      );
+
+      await dispatch(dataPointHistory());
+
+      return response?.responseBody?.data;
+    } catch (error) {
+      throw error;
     }
   };
 };

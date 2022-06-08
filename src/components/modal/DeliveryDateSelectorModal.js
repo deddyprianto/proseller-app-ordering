@@ -219,7 +219,6 @@ const DeliveryDateSelectorModal = ({open, handleClose, value}) => {
           orderingMode: basket.orderingMode,
         }),
       );
-
       setAvailableDates(timeSlot);
 
       const currentDate = value
@@ -258,7 +257,6 @@ const DeliveryDateSelectorModal = ({open, handleClose, value}) => {
       .map(() => {
         return dateTime.add(1, 'day').format('ddd DD MMMM YYYY');
       });
-
     setDates(result);
   }, [seeMore]);
 
@@ -343,26 +341,24 @@ const DeliveryDateSelectorModal = ({open, handleClose, value}) => {
   };
 
   const renderDeliveryDateItem = item => {
-    if (!isEmptyArray(availableDates)) {
-      const day = moment(item).format('ddd');
-      const date = moment(item).format('DD');
-      const month = moment(item).format('MMMM');
+    const day = moment(item).format('ddd');
+    const date = moment(item).format('DD');
+    const month = moment(item).format('MMMM');
 
-      const selected = selectedDate === item;
+    const selected = selectedDate === item;
 
-      const dateFormatter = moment(item).format('YYYY-MM-DD');
+    const dateFormatter = moment(item).format('YYYY-MM-DD');
 
-      const available = availableDates.find(
-        value => value.date === dateFormatter,
-      );
+    const available =
+      !isEmptyArray(availableDates) &&
+      availableDates?.find(value => value?.date === dateFormatter);
 
-      if (selected && available) {
-        return renderDeliveryDateItemSelected({item, day, date, month});
-      } else if (available) {
-        return renderDeliveryDateItemAvailable({item, day, date, month});
-      } else {
-        return renderDeliveryDateItemUnavailable({item, day, date, month});
-      }
+    if (selected && available) {
+      return renderDeliveryDateItemSelected({item, day, date, month});
+    } else if (available) {
+      return renderDeliveryDateItemAvailable({item, day, date, month});
+    } else {
+      return renderDeliveryDateItemUnavailable({item, day, date, month});
     }
   };
 
@@ -443,18 +439,20 @@ const DeliveryDateSelectorModal = ({open, handleClose, value}) => {
   };
 
   const renderCalender = () => {
-    return (
-      <CalenderModal
-        open={seeMore}
-        value={selectedDate}
-        handleClose={() => {
-          handleCloseCalender();
-        }}
-        handleOnChange={value => {
-          setSelectedDate(value);
-        }}
-      />
-    );
+    if (seeMore) {
+      return (
+        <CalenderModal
+          open={seeMore}
+          value={selectedDate}
+          handleClose={() => {
+            handleCloseCalender();
+          }}
+          handleOnChange={value => {
+            setSelectedDate(value);
+          }}
+        />
+      );
+    }
   };
 
   const handleDeliveryTimeListItemSelected = item => {

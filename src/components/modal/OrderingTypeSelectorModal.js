@@ -5,6 +5,7 @@ import {Dialog, Portal, Provider} from 'react-native-paper';
 import appConfig from '../../config/appConfig';
 import colorConfig from '../../config/colorConfig';
 import {changeOrderingMode} from '../../actions/order.action';
+import {isEmptyArray, isEmptyObject} from '../../helper/CheckEmpty';
 
 const styles = {
   root: {
@@ -149,12 +150,12 @@ const OrderingTypeSelectorModal = ({open, handleClose, value}) => {
     });
     setOrderingTypes(orderingModesFieldFiltered);
 
-    const currentOrderingMode = value || {};
+    const currentOrderingMode = value || '';
     setSelected({key: currentOrderingMode});
   }, [defaultOutlet, value]);
 
   const handleSave = async () => {
-    await dispatch(changeOrderingMode({orderingMode: selected.key}));
+    await dispatch(changeOrderingMode({orderingMode: selected?.key}));
     handleClose();
   };
 
@@ -198,11 +199,12 @@ const OrderingTypeSelectorModal = ({open, handleClose, value}) => {
   };
 
   const renderFooter = () => {
+    const disabled = isEmptyObject(selected) || isEmptyArray(orderingTypes);
     return (
       <View style={styles.footer}>
         <TouchableOpacity
           style={styles.touchableSave}
-          disabled={!selected}
+          disabled={disabled}
           onPress={() => {
             handleSave();
           }}>

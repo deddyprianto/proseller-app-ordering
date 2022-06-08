@@ -214,7 +214,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const ProductCart = ({item}) => {
+const ProductCart = ({item, disabled}) => {
   const [isOpenAddModal, setIsOpenAddModal] = useState(false);
 
   const handleOpenAddModal = () => {
@@ -306,12 +306,14 @@ const ProductCart = ({item}) => {
   };
 
   const renderEditIcon = () => {
-    return (
-      <View style={styles.viewEdit}>
-        <MaterialIcons style={styles.iconEdit} name="edit" />
-        <Text style={styles.textEdit}>Edit</Text>
-      </View>
-    );
+    if (!disabled) {
+      return (
+        <View style={styles.viewEdit}>
+          <MaterialIcons style={styles.iconEdit} name="edit" />
+          <Text style={styles.textEdit}>Edit</Text>
+        </View>
+      );
+    }
   };
 
   const renderNotes = () => {
@@ -419,6 +421,7 @@ const ProductCart = ({item}) => {
 
   return (
     <TouchableOpacity
+      disabled={disabled}
       style={styles.root}
       onPress={() => {
         handleOpenAddModal();

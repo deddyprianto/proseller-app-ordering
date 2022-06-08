@@ -101,34 +101,35 @@ const Header = ({title, cart, scanner, onChange}) => {
   };
 
   const onSuccess = e => {
-    setResult(e.data);
     setIsOpenScanner(false);
   };
 
   const renderQRScanner = () => {
     if (isOpenScanner) {
-      <Modal visible={isOpenScanner}>
-        <View style={styles.sectionContainer}>
-          <QRCodeScanner
-            reactivate={true}
-            showMarker={true}
-            ref={node => {
-              this.scanner = node;
-            }}
-            onRead={onSuccess}
-            topContent={
-              <Text style={styles.centerText}>Scan your QRCode!</Text>
-            }
-            bottomContent={
-              <TouchableOpacity
-                style={styles.buttonTouchable}
-                onPress={() => setIsOpenScanner(false)}>
-                <Text style={styles.buttonText}>Cancel Scan</Text>
-              </TouchableOpacity>
-            }
-          />
-        </View>
-      </Modal>;
+      return (
+        <Modal visible={isOpenScanner}>
+          <View style={styles.sectionContainer}>
+            <QRCodeScanner
+              reactivate={true}
+              showMarker={true}
+              ref={node => {
+                this.scanner = node;
+              }}
+              onRead={onSuccess}
+              topContent={
+                <Text style={styles.centerText}>Scan your QRCode!</Text>
+              }
+              bottomContent={
+                <TouchableOpacity
+                  style={styles.buttonTouchable}
+                  onPress={() => setIsOpenScanner(false)}>
+                  <Text style={styles.buttonText}>Cancel Scan</Text>
+                </TouchableOpacity>
+              }
+            />
+          </View>
+        </Modal>
+      );
     }
   };
 

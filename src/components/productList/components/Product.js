@@ -26,7 +26,7 @@ import ProductAddModal from '../../productAddModal';
 
 const styles = StyleSheet.create({
   root: {
-    width: 175,
+    width: '48%',
   },
   textQty: {
     color: colorConfig.primaryColor,
@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
   },
   image: {
     height: 160,
-    width: 175,
+    width: '100%',
     marginTop: 20,
   },
   icon: {
@@ -209,20 +209,18 @@ const Product = ({product, basket}) => {
   };
 
   return (
-    <View>
-      <TouchableOpacity
-        onPress={() => {
-          handleProductOnClick();
-        }}
-        style={styles.root}>
-        {renderImage()}
-        {renderQtyAndName()}
-        {renderPrice()}
-        {cartIcon()}
-      </TouchableOpacity>
+    <TouchableOpacity
+      onPress={() => {
+        handleProductOnClick();
+      }}
+      style={styles.root}>
+      {renderImage()}
+      {renderQtyAndName()}
+      {renderPrice()}
+      {cartIcon()}
       {renderProductAddModal()}
       {renderProductUpdateModal()}
-    </View>
+    </TouchableOpacity>
   );
 };
 

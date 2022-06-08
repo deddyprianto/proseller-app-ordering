@@ -159,7 +159,7 @@ export const myVouchers = () => {
         200,
         token,
       );
-      console.log(response, 'response myVouchers');
+
       var dataVouchers = response.responseBody.Data;
 
       try {

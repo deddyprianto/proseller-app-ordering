@@ -14,7 +14,9 @@ import {isEmptyArray} from '../../helper/CheckEmpty';
 import colorConfig from '../../config/colorConfig';
 
 const styles = StyleSheet.create({
-  textProductName: {fontWeight: 'bold'},
+  textProductName: {
+    fontWeight: 'bold',
+  },
   textCategoryName: {
     width: 70,
     fontSize: 12,
@@ -28,13 +30,15 @@ const styles = StyleSheet.create({
     color: colorConfig.primaryColor,
   },
   viewGroupProduct: {
+    width: '100%',
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-    marginBottom: 40,
+    marginBottom: 60,
   },
   touchableCategoryItem: {
     width: 100,
+    height: 10,
     justifyContent: 'center',
     display: 'flex',
     flexDirection: 'column',
@@ -43,6 +47,7 @@ const styles = StyleSheet.create({
   },
   touchableCategoryItemSelected: {
     width: 100,
+    height: 10,
     justifyContent: 'center',
     display: 'flex',
     flexDirection: 'column',
@@ -61,6 +66,8 @@ const ProductList = ({products, basket}) => {
   useEffect(() => {
     if (!isEmptyArray(products)) {
       setSelectedCategory(products[0]);
+      categoryRef.current.scrollToIndex({animation: true, index: 0});
+      productRef.current.scrollToIndex({animated: true, index: 0});
     }
   }, [products, basket]);
 
@@ -95,7 +102,6 @@ const ProductList = ({products, basket}) => {
         ref={categoryRef}
         data={products}
         horizontal
-        style={{height: 'auto'}}
         showsHorizontalScrollIndicator={false}
         renderItem={({item, index}) => renderCategoryTabsItem(item, index)}
       />

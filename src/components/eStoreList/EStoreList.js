@@ -20,6 +20,7 @@ import {isEmptyArray} from '../../helper/CheckEmpty';
 import colorConfig from '../../config/colorConfig';
 import EStoreItem from './components/EStoreItem';
 import {getProductByOutlet} from '../../actions/product.action';
+import LoadingScreen from '../loadingScreen';
 
 const styles = StyleSheet.create({
   textCategoryName: {
@@ -27,6 +28,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   viewGroupEStore: {
+    width: '100%',
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
@@ -151,6 +153,7 @@ const EStoreList = () => {
 
   return (
     <View style={{paddingHorizontal: 10}}>
+      <LoadingScreen loading={isEmptyArray(products)} />
       {renderCategoryTabs()}
       <View style={{marginTop: 10}} />
       {renderEStores()}
