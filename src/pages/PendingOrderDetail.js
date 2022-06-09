@@ -359,7 +359,7 @@ const PendingOrderDetail = ({order}) => {
         <View style={styles.container}>
           <ScrollView style={styles.scrollView}>
             <View style={{marginTop: 16}} />
-            <ProductCartList disabled />
+            <ProductCartList orderDetail={order} disabled />
             <View style={styles.divider} />
             {renderOrderingType()}
             {renderDeliveryAddress()}

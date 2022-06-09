@@ -201,7 +201,7 @@ const RegisterForm = ({registerMethod, inputValue}) => {
     let active = false;
 
     if (registerMethod === 'email') {
-      active = name && phoneNumber;
+      active = name && phoneNumber.length >= 6;
     } else {
       active = name && email;
     }

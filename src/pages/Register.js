@@ -159,7 +159,7 @@ const Register = () => {
   };
 
   const renderButtonNext = () => {
-    const active = phoneNumber || email;
+    const active = phoneNumber.length >= 6 || email;
 
     return (
       <TouchableOpacity

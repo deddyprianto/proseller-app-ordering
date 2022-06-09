@@ -95,7 +95,7 @@ const MyFavoriteOutlets = () => {
   return (
     <View style={styles.root}>
       <Header title="My Favorite Outlets" />
-      <ScrollView>
+      <ScrollView style={{flex: 1}}>
         {renderImages()}
         <MyFavoriteOutletList />
       </ScrollView>

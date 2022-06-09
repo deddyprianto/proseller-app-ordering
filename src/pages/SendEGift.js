@@ -442,6 +442,7 @@ const SendEGift = ({categoryId}) => {
       ? styles.viewButtonPaymentDisabled
       : styles.viewButtonPayment;
 
+    const totalPrice = selectedValue?.price * quantityValue;
     return (
       <TouchableOpacity
         onPress={() => {
@@ -450,7 +451,7 @@ const SendEGift = ({categoryId}) => {
         disabled={disabled}>
         <View style={style}>
           <Text style={styles.textButton}>
-            Pay {CurrencyFormatter(selectedValue?.price)}
+            Pay {CurrencyFormatter(totalPrice)}
           </Text>
         </View>
       </TouchableOpacity>

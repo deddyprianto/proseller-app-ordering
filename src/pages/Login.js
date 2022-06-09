@@ -220,7 +220,7 @@ const Login = () => {
   };
 
   const renderButtonNext = () => {
-    const active = email || phoneNumber;
+    const active = email || phoneNumber.length >= 6;
 
     return (
       <TouchableOpacity

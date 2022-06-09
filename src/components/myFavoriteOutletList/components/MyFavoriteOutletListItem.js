@@ -135,7 +135,7 @@ const MyFavoriteOutletItemList = ({outlet}) => {
   };
 
   const renderOperationalHours = () => {
-    const result = outlet?.operationalHours.map(value => {
+    const result = outlet?.operationalHours?.map(value => {
       return renderOperationalHourItem(value);
     });
     return result;
@@ -157,7 +157,7 @@ const MyFavoriteOutletItemList = ({outlet}) => {
   };
 
   return (
-    <View>
+    <View style={{width: '100%'}}>
       {outletItem()}
       <View style={styles.divider} />
       {outletItemDetail()}

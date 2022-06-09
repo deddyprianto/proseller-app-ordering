@@ -11,10 +11,11 @@ import {View, FlatList} from 'react-native';
 
 import ProductCartItem from './components/ProductCartItem';
 
-const ProductCartList = ({disabled}) => {
+const ProductCartList = ({orderDetail, disabled}) => {
   const currentBasket = useSelector(
     state => state.orderReducer?.dataBasket?.product,
   );
+  const items = disabled ? orderDetail?.details : currentBasket?.details;
 
   const renderProductCartItem = item => {
     return (
@@ -27,7 +28,7 @@ const ProductCartList = ({disabled}) => {
 
   return (
     <FlatList
-      data={currentBasket.details}
+      data={items}
       renderItem={({item, index}) => renderProductCartItem(item, index)}
     />
   );

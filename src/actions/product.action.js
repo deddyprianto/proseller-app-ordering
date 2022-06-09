@@ -11,7 +11,7 @@ export const getProductByOutlet = (OutletId, refresh) => {
       const PRESET_TYPE = 'app';
 
       const response = await fetchApiProduct(
-        `/productpreset/load/${PRESET_TYPE}/${OutletId}`,
+        `/productpreset/load/${PRESET_TYPE}/614975e8-4f5d-47d0-9218-a7841a36f235`,
         'POST',
         null,
         200,
@@ -24,15 +24,17 @@ export const getProductByOutlet = (OutletId, refresh) => {
         dataLength: response.response.dataLength,
       };
 
-      // outletProduct.push(product);
       dispatch({
         type: 'DATA_PRODUCTS_OUTLET',
         products: product,
       });
-      // }
 
       return response;
     } catch (error) {
+      dispatch({
+        type: 'DATA_PRODUCTS_OUTLET',
+        products: {},
+      });
       return error;
     }
   };

@@ -443,7 +443,7 @@ const Cart = () => {
   const handleIsPassValidationOrder = async value => {
     try {
       let store = value;
-      const {orderType} = this.props;
+      const orderType = basket?.orderingMode;
       if (!store.orderValidation) {
         return true;
       } else {

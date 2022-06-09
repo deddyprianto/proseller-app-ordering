@@ -209,16 +209,16 @@ const ProductUpdateModal = ({open, handleClose, product, basket}) => {
   };
 
   useEffect(() => {
-    if (!isEmptyArray(product.variants)) {
-      const items = handleProductVariants();
-      setProductInBasket(items);
-    } else {
-      const items = basket?.details?.filter(
-        item => item.product.id === product.id,
-      );
+    // if (!isEmptyArray(product.variants)) {
+    //   const items = handleProductVariants();
+    //   setProductInBasket(items);
+    // } else {
+    const items = basket?.details?.filter(
+      item => item.product.id === product.id,
+    );
 
-      setProductInBasket(items);
-    }
+    setProductInBasket(items);
+    // }
   }, [basket, product]);
 
   const renderProductModifierItems = items => {
@@ -330,13 +330,11 @@ const ProductUpdateModal = ({open, handleClose, product, basket}) => {
   };
 
   const renderProducts = () => {
-    if (!isEmptyArray(productInBasket)) {
-      const result = productInBasket.map((item, index) => {
-        return renderProductItem(item);
-      });
+    const result = productInBasket?.map((item, index) => {
+      return renderProductItem(item);
+    });
 
-      return result;
-    }
+    return result;
   };
 
   const renderHeaderText = () => {
