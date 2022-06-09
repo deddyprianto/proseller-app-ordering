@@ -196,8 +196,10 @@ class PaymentAddCard extends Component {
     try {
       const {page} = this.props;
       await this.props.dispatch(selectedAccount(item));
-      if (page == 'paymentDetail') {
+      if (page === 'paymentDetail') {
         Actions.popTo('paymentDetail');
+      } else if (page === 'sendEGift') {
+        Actions.popTo('sendEGift');
       } else {
         Actions.popTo('settleOrder');
       }
@@ -290,16 +292,16 @@ class PaymentAddCard extends Component {
       await this.setState({loading: false});
 
       if (response.success == true) {
-        let rootPage = '';
-        if (page == 'paymentDetail') {
-          rootPage = 'paymentDetail';
-        } else {
-          rootPage = 'settleOrder';
-        }
+        // let rootPage = '';
+        // if (page == 'paymentDetail') {
+        //   rootPage = 'paymentDetail';
+        // } else {
+        //   rootPage = 'settleOrder';
+        // }
         Actions.hostedPayment({
           url: response.response.data.url,
           data: response.response.data,
-          page: rootPage,
+          page,
         });
       } else {
         Alert.alert('Sorry', 'Cant add credit card, please try again');

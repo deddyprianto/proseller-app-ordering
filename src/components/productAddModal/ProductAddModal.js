@@ -7,7 +7,6 @@
 
 import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import {Actions} from 'react-native-router-flux';
 
 import {
   StyleSheet,
@@ -18,6 +17,7 @@ import {
   TouchableOpacity,
   Modal,
   TextInput,
+  BackHandler,
 } from 'react-native';
 
 import IconIonicons from 'react-native-vector-icons/Ionicons';
@@ -545,8 +545,18 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
     }
   };
 
+  if (!open) {
+    return null;
+  }
+
   return (
-    <Modal animationType="slide" transparent={true} visible={open}>
+    <Modal
+      animationType="slide"
+      transparent={true}
+      visible={open}
+      onRequestClose={() => {
+        handleClose();
+      }}>
       <LoadingScreen loading={isLoading} />
       <View style={styles.root}>
         {header()}

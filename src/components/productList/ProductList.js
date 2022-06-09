@@ -117,6 +117,10 @@ const ProductList = ({products, basket}) => {
 
   const onViewableItemsChanged = ({viewableItems}) => {
     if (!isEmptyArray(viewableItems)) {
+      if (viewableItems[0].index === 0) {
+        return handleScrollProducts(viewableItems[0]);
+      }
+
       if (viewableItems.length === 1) {
         return handleScrollProducts(viewableItems[0]);
       } else {

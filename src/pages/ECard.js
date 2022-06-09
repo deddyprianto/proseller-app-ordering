@@ -148,7 +148,14 @@ const ECard = () => {
             marginTop: 10,
           }}>
           <Text>3. Points can be redeem </Text>
-          <Text style={{textDecorationLine: 'underline'}}>here</Text>
+          <Text
+            onPress={() => {
+              Actions.pop();
+              Actions.push('redeem');
+            }}
+            style={{textDecorationLine: 'underline'}}>
+            here
+          </Text>
         </View>
       </View>
     );

@@ -93,7 +93,7 @@ class PaymentMethods extends Component {
 
   gotoAccounts = async (intlData, item, page) => {
     try {
-      if (item.isAccountRequired != false) {
+      if (item.isAccountRequired !== false) {
         Actions.paymentAddCard({intlData, item, page});
       } else {
         await this.props.dispatch(selectedAccount(item));

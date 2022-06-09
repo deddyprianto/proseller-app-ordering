@@ -8,9 +8,14 @@ import {
   Text,
   Image,
   TouchableOpacity,
+  Dimensions,
 } from 'react-native';
 
 import colorConfig from '../config/colorConfig';
+import appConfig from '../config/appConfig';
+
+const WIDTH = Dimensions.get('window').width;
+const HEIGHT = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
   container: {
@@ -18,47 +23,65 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  wrap: {
+  root: {
     flex: 1,
-    width: 400,
   },
   viewImage: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  image: {width: 360, height: 400, marginHorizontal: 20},
+  image: {
+    width: '100%',
+    height: 400,
+    marginHorizontal: 20,
+  },
   WrapDot: {
     flexDirection: 'row',
     alignSelf: 'center',
+    position: 'absolute',
+    bottom: 90,
   },
   activeDot: {
-    fontSize: 16,
-    margin: 3,
-    marginHorizontal: 10,
-    color: '#BB1515',
+    height: 10,
+    width: 10,
+    borderRadius: 10,
+    color: 'transparent',
+    borderWidth: 1,
+    borderColor: 'white',
+    margin: 5,
   },
   inactiveDot: {
-    fontSize: 16,
-    margin: 3,
-    marginHorizontal: 10,
-    color: 'grey',
+    height: 10,
+    width: 10,
+    borderRadius: 10,
+    backgroundColor: 'white',
+    margin: 5,
   },
-  marginTop20: {marginTop: 20},
-  colorWhite: {color: 'white'},
+  marginTop20: {
+    marginTop: 20,
+  },
+  colorWhite: {
+    color: 'white',
+  },
+  colorPrimary: {
+    color: colorConfig.primaryColor,
+  },
   touchableLogin: {
-    height: 40,
-    width: 150,
+    height: 34,
+    width: '47%',
     backgroundColor: colorConfig.primaryColor,
-    borderRadius: 5,
+    borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
   },
   touchableRegister: {
-    height: 40,
-    width: 150,
-    backgroundColor: '#B7B7B7',
-    borderRadius: 5,
+    height: 34,
+    width: '47%',
+    backgroundColor: 'white',
+    borderWidth: 1,
+    borderColor: colorConfig.primaryColor,
+    borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 20,
@@ -66,8 +89,14 @@ const styles = StyleSheet.create({
   viewRegisterAndLogin: {
     display: 'flex',
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 30,
+    padding: 16,
+    width: '100%',
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 12,
+    marginTop: -10,
+    backgroundColor: 'white',
   },
   textTitle: {
     fontSize: 20,
@@ -98,43 +127,37 @@ const OnBoarding = () => {
   };
 
   const images = [
-    'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-    'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-    'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
+    appConfig.funtoastOnboarding1,
+    appConfig.funtoastOnboarding2,
+    appConfig.funtoastOnboarding3,
   ];
 
   const renderImages = () => {
     const result = images.map((image, index) => {
       return (
-        <View style={styles.viewImage}>
-          <Image
-            key={index}
-            style={styles.image}
-            resizeMode="stretch"
-            source={{uri: image}}
-          />
-          <Text style={styles.textTitle}>Skip the Queue</Text>
-          <Text style={styles.textDescription}>
-            Place an order through the Fun Toast app and skip the queue.
-            Available for dine-in or takeaway.
-          </Text>
-        </View>
+        <Image
+          key={index}
+          style={{
+            height: HEIGHT,
+            width: WIDTH,
+          }}
+          resizeMode="stretch"
+          source={image}
+        />
       );
     });
+
     return result;
   };
 
   const renderDot = () => {
-    const dots = images.map((image, index) => {
+    const dots = images.map((_, index) => {
+      const styleDot =
+        selectedImage === index ? styles.activeDot : styles.inactiveDot;
+
       return (
         <View style={styles.marginTop20}>
-          <Text
-            key={index}
-            style={
-              selectedImage === index ? styles.activeDot : styles.inactiveDot
-            }>
-            {'\u2B24'}
-          </Text>
+          <View key={index} style={styleDot} />
         </View>
       );
     });
@@ -144,33 +167,44 @@ const OnBoarding = () => {
     return result;
   };
 
+  const renderButtonRegister = () => {
+    return (
+      <TouchableOpacity
+        activeOpacity={1}
+        style={styles.touchableRegister}
+        onPress={() => {
+          Actions.register();
+        }}>
+        <Text style={styles.colorPrimary}>Create New Account</Text>
+      </TouchableOpacity>
+    );
+  };
+
+  const renderButtonLogin = () => {
+    return (
+      <TouchableOpacity
+        activeOpacity={1}
+        style={styles.touchableLogin}
+        onPress={() => {
+          Actions.login();
+        }}>
+        <Text style={styles.colorWhite}>Login</Text>
+      </TouchableOpacity>
+    );
+  };
   const renderRegisterAndLoginButton = () => {
     return (
       <View style={styles.viewRegisterAndLogin}>
-        <TouchableOpacity
-          activeOpacity={1}
-          style={styles.touchableRegister}
-          onPress={() => {
-            Actions.register();
-          }}>
-          <Text style={styles.colorWhite}>Create New Account</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          activeOpacity={1}
-          style={styles.touchableLogin}
-          onPress={() => {
-            Actions.login();
-          }}>
-          <Text style={styles.colorWhite}>Login</Text>
-        </TouchableOpacity>
+        {renderButtonRegister()}
+        {renderButtonLogin()}
       </View>
     );
   };
 
   return (
-    <View style={styles.container}>
+    <View style={{flex: 1}}>
       <ScrollView
-        style={styles.wrap}
+        style={{flex: 1}}
         onScroll={({nativeEvent}) => {
           handleOnScroll(nativeEvent);
         }}
@@ -181,7 +215,6 @@ const OnBoarding = () => {
       </ScrollView>
       {renderDot()}
       {renderRegisterAndLoginButton()}
-      <View style={{marginTop: 30}} />
     </View>
   );
 };

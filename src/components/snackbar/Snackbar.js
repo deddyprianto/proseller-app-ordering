@@ -85,6 +85,10 @@ const Snackbar = () => {
     );
   };
 
+  if (!open) {
+    return null;
+  }
+
   return (
     <Modal animationType="none" transparent visible={open}>
       <TouchableOpacity style={styles.root} onPress={handleClose}>

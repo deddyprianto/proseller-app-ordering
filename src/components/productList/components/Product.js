@@ -132,13 +132,11 @@ const Product = ({product, basket}) => {
   }, [product, basket]);
 
   const renderImage = () => {
-    return (
-      <Image
-        style={styles.image}
-        resizeMode="stretch"
-        source={{uri: product?.defaultImageURL}}
-      />
-    );
+    const image = product?.defaultImageURL
+      ? {uri: product?.defaultImageURL}
+      : null;
+
+    return <Image style={styles.image} resizeMode="stretch" source={image} />;
   };
 
   const renderQty = () => {

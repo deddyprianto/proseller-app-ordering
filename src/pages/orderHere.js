@@ -137,9 +137,7 @@ const OrderHere = () => {
   }, [dispatch, searchQuery, defaultOutlet]);
 
   const handleLoading = () => {
-    if (isEmptyArray(products)) {
-      return true;
-    } else if (isLoading && searchQuery) {
+    if (isLoading && searchQuery) {
       return true;
     } else {
       return false;

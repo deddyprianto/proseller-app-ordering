@@ -42,6 +42,7 @@ const appConfig = {
 
   funtoastCoffeeIcon: require('../assets/img/funtoastCoffeeIcon.png'),
   funtoastRedeemed: require('../assets/img/FuntoastRedeemed.png'),
+  funtoastSuccessSendGift: require('../assets/img/FuntoastSuccessSendGift.png'),
   funtoastTakeAway: require('../assets/img/FuntoastTakeAway.png'),
   funtoastDelivery: require('../assets/img/FuntoastDelivery.png'),
   funtoastPickUp: require('../assets/img/FuntoastPickUp.png'),
@@ -51,6 +52,9 @@ const appConfig = {
   funtoastIcon: require('../assets/img/funtoastIcon.png'),
   funtoastCoffee: require('../assets/img/funtoastCoffee.png'),
   funtoastEmptyDeliveryAddress: require('../assets/img/funtoast-empty-address.png'),
+  funtoastOnboarding1: require('../assets/img/FuntoastOnBoarding01.png'),
+  funtoastOnboarding2: require('../assets/img/FuntoastOnBoarding02.png'),
+  funtoastOnboarding3: require('../assets/img/FuntoastOnBoarding03.png'),
 };
 
 export default appConfig;

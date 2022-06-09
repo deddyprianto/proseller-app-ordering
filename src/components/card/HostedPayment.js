@@ -136,6 +136,10 @@ class HostedPayment extends Component {
 
   goBack = async () => {
     const {page} = this.props;
+    if (page === 'sendEGift') {
+      Actions.pop();
+    }
+
     try {
       if (page === 'listCard') Actions.popTo(page);
       await this.setCard();

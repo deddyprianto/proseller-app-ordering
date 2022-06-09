@@ -429,10 +429,7 @@ const Cart = () => {
         }
         return true;
       case 'PICKUP':
-        if (orderingDateTimeSelected) {
-          return false;
-        }
-        return true;
+        return false;
       case 'DINEIN':
         return false;
       case 'TAKEAWAY':

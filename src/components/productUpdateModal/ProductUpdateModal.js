@@ -390,6 +390,10 @@ const ProductUpdateModal = ({open, handleClose, product, basket}) => {
       );
     }
   };
+
+  if (!open) {
+    return null;
+  }
   return (
     <Modal animationType="none" transparent={true}>
       <Provider>

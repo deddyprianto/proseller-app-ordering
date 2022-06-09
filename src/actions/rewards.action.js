@@ -322,7 +322,7 @@ export const dataPointHistory = () => {
         },
       } = state;
 
-      let response = await fetchApi(
+      const response = await fetchApi(
         '/customer/point?history=true',
         'GET',
         false,
@@ -330,14 +330,17 @@ export const dataPointHistory = () => {
         token,
       );
 
-      let totalPoint = response.responseBody.Data.totalPoint;
-      let campaignActive = response.responseBody.Data.campaignActive;
+      const totalPoint = response?.responseBody?.data?.totalPoint;
+      const pendingPoints = response?.responseBody?.data?.pendingPoints;
+      const campaignActive = response?.responseBody?.data?.campaignActive;
+      const detailPoint = response?.responseBody?.data;
 
       dispatch({
         type: 'DATA_TOTAL_POINT',
-        totalPoint: totalPoint,
+        totalPoint,
+        pendingPoints,
         campaignActive,
-        detailPoint: response.responseBody.Data,
+        detailPoint,
       });
 
       if (response.success) {

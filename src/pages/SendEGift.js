@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 
 import {
   StyleSheet,
@@ -22,6 +22,7 @@ import LoadingScreen from '../components/loadingScreen';
 
 import {Actions} from 'react-native-router-flux';
 import {showSnackbar} from '../actions/setting.action';
+import ConfirmationDialog from '../components/confirmationDialog';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -185,6 +186,7 @@ const styles = StyleSheet.create({
 const SendEGift = ({categoryId}) => {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
+  const [isOpenModal, setIsOpenModal] = useState(false);
   const [selectedValue, setSelectedValue] = useState({});
   const [quantityValue, setQuantityValue] = useState('');
   const [recipientNameValue, setRecipientNameValue] = useState('');
@@ -199,6 +201,10 @@ const SendEGift = ({categoryId}) => {
     state => state.cardReducer.selectedAccount.selectedAccount,
   );
 
+  const refreshGiftCard = useCallback(() => {
+    setSelectedValue(giftCard?.values[0]);
+  }, [giftCard]);
+
   useEffect(() => {
     const loadData = async () => {
       setIsLoading(true);
@@ -209,8 +215,8 @@ const SendEGift = ({categoryId}) => {
   }, [dispatch, categoryId]);
 
   useEffect(() => {
-    setSelectedValue(giftCard?.values[0]);
-  }, [giftCard]);
+    refreshGiftCard();
+  }, [refreshGiftCard]);
 
   const handleCheckboxSelected = value => {
     if (selectedValue === value) {
@@ -218,6 +224,26 @@ const SendEGift = ({categoryId}) => {
     } else {
       return false;
     }
+  };
+
+  const handleOpenModal = () => {
+    setIsOpenModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsOpenModal(false);
+  };
+
+  const handleClear = () => {
+    setQuantityValue('');
+    setRecipientEmailValue('');
+    setRecipientNameValue('');
+    handleCloseModal();
+    refreshGiftCard();
+    dispatch({
+      type: 'SELECTED_ACCOUNT',
+      selectedAccount: undefined,
+    });
   };
 
   const handlePayment = async () => {
@@ -244,6 +270,7 @@ const SendEGift = ({categoryId}) => {
     if (response.success) {
       const message = response?.responseBody?.message;
       await dispatch(showSnackbar({message, type: 'success'}));
+      handleClear();
     } else {
       const message = response?.responseBody?.message || 'Failed';
       await dispatch(showSnackbar({message}));
@@ -418,7 +445,7 @@ const SendEGift = ({categoryId}) => {
     return (
       <TouchableOpacity
         onPress={() => {
-          handlePayment();
+          handleOpenModal();
         }}
         disabled={disabled}>
         <View style={style}>
@@ -444,7 +471,7 @@ const SendEGift = ({categoryId}) => {
         style={styles.touchablePaymentMethod}
         onPress={() =>
           Actions.paymentMethods({
-            page: 'settleOrder',
+            page: 'sendEGift',
             paySVC: null,
           })
         }>
@@ -464,6 +491,26 @@ const SendEGift = ({categoryId}) => {
     );
   };
 
+  const renderConfirmationDialog = () => {
+    if (isOpenModal) {
+      return (
+        <ConfirmationDialog
+          open={isOpenModal}
+          handleClose={() => {
+            handleCloseModal();
+          }}
+          handleSubmit={() => {
+            handlePayment();
+          }}
+          isLoading={isLoading}
+          textTitle="Sending Gift Card"
+          textDescription={`Sending this gift card to ${recipientEmailValue}`}
+          textSubmit="Send & Pay"
+        />
+      );
+    }
+  };
+
   return (
     <ScrollView style={styles.container}>
       <LoadingScreen loading={isLoading} />
@@ -475,6 +522,7 @@ const SendEGift = ({categoryId}) => {
       {renderGiftTo()}
       {renderPaymentMethod()}
       {renderButtonPayment()}
+      {renderConfirmationDialog()}
     </ScrollView>
   );
 };

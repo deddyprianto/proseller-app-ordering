@@ -6,7 +6,9 @@ import {Actions} from 'react-native-router-flux';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
 import IconMaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import colorConfig from '../../../config/colorConfig';
-import QRCodeScanner from 'react-native-qrcode-scanner';
+// import QRCodeScanner from 'react-native-qrcode-scanner';
+
+import Scanner from '../../scanner';
 
 const styles = StyleSheet.create({
   root: {
@@ -57,6 +59,10 @@ const styles = StyleSheet.create({
 const Header = ({title, cart, scanner, onChange}) => {
   const [isOpenScanner, setIsOpenScanner] = useState(false);
 
+  const handleCloseScanner = () => {
+    setIsOpenScanner(false);
+  };
+
   const renderBackIcon = () => {
     return (
       <TouchableOpacity
@@ -100,46 +106,46 @@ const Header = ({title, cart, scanner, onChange}) => {
     }
   };
 
-  const onSuccess = e => {
-    setIsOpenScanner(false);
-  };
+  // const onSuccess = e => {
+  //   setIsOpenScanner(false);
+  // };
 
-  const renderQRScanner = () => {
-    if (isOpenScanner) {
-      return (
-        <Modal visible={isOpenScanner}>
-          <View style={styles.sectionContainer}>
-            <QRCodeScanner
-              reactivate={true}
-              showMarker={true}
-              ref={node => {
-                this.scanner = node;
-              }}
-              onRead={onSuccess}
-              topContent={
-                <Text style={styles.centerText}>Scan your QRCode!</Text>
-              }
-              bottomContent={
-                <TouchableOpacity
-                  style={styles.buttonTouchable}
-                  onPress={() => setIsOpenScanner(false)}>
-                  <Text style={styles.buttonText}>Cancel Scan</Text>
-                </TouchableOpacity>
-              }
-            />
-          </View>
-        </Modal>
-      );
-    }
-  };
+  // const renderQRScanner = () => {
+  //   if (isOpenScanner) {
+  //     return (
+  //       <Modal visible={isOpenScanner}>
+  //         <View style={styles.sectionContainer}>
+  //           <QRCodeScanner
+  //             reactivate={true}
+  //             showMarker={true}
+  //             ref={node => {
+  //               this.scanner = node;
+  //             }}
+  //             onRead={onSuccess}
+  //             topContent={
+  //               <Text style={styles.centerText}>Scan your QRCode!</Text>
+  //             }
+  //             bottomContent={
+  //               <TouchableOpacity
+  //                 style={styles.buttonTouchable}
+  //                 onPress={() => setIsOpenScanner(false)}>
+  //                 <Text style={styles.buttonText}>Cancel Scan</Text>
+  //               </TouchableOpacity>
+  //             }
+  //           />
+  //         </View>
+  //       </Modal>
+  //     );
+  //   }
+  // };
 
   return (
     <View style={styles.root}>
+      <Scanner open={isOpenScanner} handleClose={handleCloseScanner} />
       {renderBackIcon()}
       <Text>{title}</Text>
       {/* {renderCartIcon()} */}
       {renderScannerIcon()}
-      {renderQRScanner()}
     </View>
   );
 };
