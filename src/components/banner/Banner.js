@@ -77,7 +77,7 @@ const Banner = () => {
         <Image
           key={index}
           style={styles.wrapImage}
-          resizeMode="stretch"
+          // resizeMode="stretch"
           source={{uri: banner?.defaultImageURL}}
         />
       );

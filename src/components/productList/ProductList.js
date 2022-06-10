@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
   },
   touchableCategoryItem: {
     width: 100,
-    height: 10,
+    height: 'auto',
     justifyContent: 'center',
     display: 'flex',
     flexDirection: 'column',
@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
   },
   touchableCategoryItemSelected: {
     width: 100,
-    height: 10,
+    height: 'auto',
     justifyContent: 'center',
     display: 'flex',
     flexDirection: 'column',
@@ -159,7 +159,7 @@ const ProductList = ({products, basket}) => {
   return (
     <View style={{flex: 1}}>
       {renderCategoryTabs()}
-      <View style={{marginTop: 10}} />
+      <View style={{marginTop: 20}} />
       {renderProducts()}
     </View>
   );

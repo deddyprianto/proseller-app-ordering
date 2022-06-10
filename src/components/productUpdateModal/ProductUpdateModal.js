@@ -138,7 +138,6 @@ const styles = StyleSheet.create({
   viewNotes: {
     display: 'flex',
     flexDirection: 'row',
-    alignItems: 'center',
   },
   touchableMakeAnother: {
     padding: 10,

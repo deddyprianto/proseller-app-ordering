@@ -697,7 +697,8 @@ const Cart = () => {
 
   const renderDeliveryAddress = () => {
     if (basket?.orderingMode === 'DELIVERY') {
-      const deliveryAddressValue = deliveryAddress?.streetName || 'Choose Type';
+      const deliveryAddressValue =
+        deliveryAddress?.streetName || 'Choose Address';
       return (
         <View style={styles.viewMethod}>
           <Text style={styles.textMethod}>Delivery Address</Text>
@@ -749,6 +750,7 @@ const Cart = () => {
       return <Text style={styles.textMethodValue}>Choose Date</Text>;
     }
   };
+
   const renderDeliveryDate = () => {
     const available = !isEmptyArray(availableTimes);
     const isDelivery = available && basket?.orderingMode === 'DELIVERY';

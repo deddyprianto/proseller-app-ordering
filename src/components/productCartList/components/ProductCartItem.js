@@ -21,6 +21,7 @@ import colorConfig from '../../../config/colorConfig';
 import {isEmptyArray} from '../../../helper/CheckEmpty';
 import ProductAddModal from '../../productAddModal';
 import appConfig from '../../../config/appConfig';
+import CurrencyFormatter from '../../../helper/CurrencyFormatter';
 
 const styles = StyleSheet.create({
   root: {
@@ -154,7 +155,6 @@ const styles = StyleSheet.create({
   viewNotes: {
     display: 'flex',
     flexDirection: 'row',
-    alignItems: 'center',
   },
   viewProductHeaderQty: {
     paddingVertical: 3,
@@ -294,15 +294,21 @@ const ProductCart = ({item, disabled}) => {
       return (
         <View style={styles.viewTotalPrice}>
           <Text style={styles.textPriceBeforeDiscount}>
-            {item?.grossAmount}
+            {CurrencyFormatter(item?.grossAmount)}
           </Text>
           <View style={{marginRight: 10}} />
-          <Text style={styles.textPriceFooter}>{item?.amountAfterDisc}</Text>
+          <Text style={styles.textPriceFooter}>
+            {CurrencyFormatter(item?.amountAfterDisc)}
+          </Text>
         </View>
       );
     }
 
-    return <Text style={styles.textPriceFooter}>{item?.grossAmount}</Text>;
+    return (
+      <Text style={styles.textPriceFooter}>
+        {CurrencyFormatter(item?.grossAmount)}
+      </Text>
+    );
   };
 
   const renderEditIcon = () => {

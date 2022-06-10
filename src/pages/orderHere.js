@@ -211,6 +211,7 @@ const OrderHere = () => {
       <View style={styles.body}>
         {renderText()}
         {renderSearch()}
+        <View style={{marginTop: 10}} />
         {renderProducts()}
       </View>
       <View style={styles.footer}>{renderButtonCart()}</View>

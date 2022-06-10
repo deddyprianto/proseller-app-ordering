@@ -12,13 +12,14 @@ import Scanner from '../../scanner';
 
 const styles = StyleSheet.create({
   root: {
-    height: 54,
-    borderColor: '#D6D6D6',
-    borderBottomWidth: 1,
+    height: 56,
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
     backgroundColor: 'white',
+    // borderColor: '#D6D6D6',
+    // borderBottomWidth: 1,
+    elevation: 3,
   },
   touchableIcon: {
     position: 'absolute',
@@ -34,6 +35,7 @@ const styles = StyleSheet.create({
   },
   icon: {
     fontSize: 21,
+    color: colorConfig.primaryColor,
   },
 
   sectionContainer: {
@@ -105,39 +107,6 @@ const Header = ({title, cart, scanner, onChange}) => {
       );
     }
   };
-
-  // const onSuccess = e => {
-  //   setIsOpenScanner(false);
-  // };
-
-  // const renderQRScanner = () => {
-  //   if (isOpenScanner) {
-  //     return (
-  //       <Modal visible={isOpenScanner}>
-  //         <View style={styles.sectionContainer}>
-  //           <QRCodeScanner
-  //             reactivate={true}
-  //             showMarker={true}
-  //             ref={node => {
-  //               this.scanner = node;
-  //             }}
-  //             onRead={onSuccess}
-  //             topContent={
-  //               <Text style={styles.centerText}>Scan your QRCode!</Text>
-  //             }
-  //             bottomContent={
-  //               <TouchableOpacity
-  //                 style={styles.buttonTouchable}
-  //                 onPress={() => setIsOpenScanner(false)}>
-  //                 <Text style={styles.buttonText}>Cancel Scan</Text>
-  //               </TouchableOpacity>
-  //             }
-  //           />
-  //         </View>
-  //       </Modal>
-  //     );
-  //   }
-  // };
 
   return (
     <View style={styles.root}>

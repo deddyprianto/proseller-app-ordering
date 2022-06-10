@@ -389,11 +389,11 @@ const Menu = () => {
       <Image
         style={{
           height: HEIGHT * 0.3,
-          width: WIDTH * 0.95,
+          width: '100%',
         }}
-        source={appConfig.test}
-        resizeMode="contain"
+        source={appConfig.funtoastButtomBanner}
       />
+      <View style={{marginTop: 10}} />
     </SafeAreaView>
   );
 };
