@@ -29,42 +29,48 @@ const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
-  viewBody: {
-    width: WIDTH,
-    display: 'flex',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-  },
   divider: {
     width: WIDTH,
     height: 1,
     backgroundColor: '#E5E5E5',
   },
-  progressBar: {
-    backgroundColor: '#E5E5E5',
-    height: 25,
-    borderRadius: 10,
-  },
-  imageIcon: {
-    height: 30,
-    width: 30,
-    marginHorizontal: 5,
-    tintColor: colorConfig.primaryColor,
+  textWelcome: {
+    fontSize: 14,
+    color: 'white',
   },
   textName: {
-    fontSize: 20,
-    color: colorConfig.primaryColor,
-    marginTop: 30,
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: 'white',
   },
-  textPoint: {
-    fontSize: 20,
-    marginTop: 20,
+  textYourPoint: {
+    fontSize: 10,
+    color: 'white',
+  },
+  textPointValue: {
+    fontSize: 24,
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  textCurrentTier: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: 'white',
+    textAlign: 'left',
+  },
+  textNextTier: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: 'white',
+    textAlign: 'right',
+  },
+  textInfo: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: 'white',
   },
   textLogout: {
     color: 'grey',
-  },
-  textRank: {
-    fontSize: 10,
   },
   viewRank: {
     display: 'flex',
@@ -73,23 +79,10 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginTop: 30,
   },
-  textDescription: {
-    fontSize: 10,
-    marginVertical: 20,
-  },
   viewOption: {
     padding: 10,
     display: 'flex',
     flexDirection: 'row',
-    alignItems: 'center',
-  },
-  viewECard: {
-    marginTop: 10,
-    width: 125,
-    height: 26,
-    backgroundColor: '#E5E5E5',
-    borderRadius: 5,
-    justifyContent: 'center',
     alignItems: 'center',
   },
   viewLogout: {
@@ -99,25 +92,49 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 30,
   },
+  viewTextSetting: {
+    padding: 10,
+  },
+  viewPointHeader: {
+    display: 'flex',
+    alignItems: 'center',
+    backgroundColor: colorConfig.primaryColor,
+    width: '100%',
+    borderRadius: 8,
+    paddingHorizontal: 18,
+    paddingVertical: 16,
+  },
+  viewFlexRowSpaceBetweenCenter: {
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
   viewProgressBar: {
     width: '80%',
     justifyContent: 'center',
-    marginTop: 15,
   },
-  viewPointBar: {
-    display: 'flex',
-    alignItems: 'center',
-    backgroundColor: colorConfig.sixthColor,
-    width: '100%',
-  },
-  viewTextSetting: {
-    padding: 10,
+  progressBar: {
+    backgroundColor: 'white',
+    height: 14,
+    borderRadius: 8,
+    borderColor: 'white',
+    borderWidth: 3,
   },
   imageIconLogout: {
     height: 30,
     width: 30,
     marginHorizontal: 5,
     tintColor: 'grey',
+  },
+  imageIcon: {
+    height: 30,
+    width: 30,
+    marginHorizontal: 14,
+  },
+  textIcon: {
+    fontSize: 14,
   },
 });
 
@@ -167,20 +184,22 @@ const Profile = () => {
     return Actions.editProfile(value);
   };
 
-  const renderName = () => {
-    return <Text style={styles.textName}>Hi, {user?.name}!</Text>;
-  };
-
-  const renderECard = () => {
+  const renderWelcome = () => {
     return (
-      <View style={styles.viewECard}>
-        <Text>E-Card</Text>
+      <View>
+        <Text style={styles.textWelcome}>Welcome</Text>
+        <Text style={styles.textName}>{user?.name},</Text>
       </View>
     );
   };
 
   const renderPoint = () => {
-    return <Text style={styles.textPoint}>{totalPoint} PTS</Text>;
+    return (
+      <View style={styles.viewPoint}>
+        <Text style={styles.textYourPoint}>Your Points</Text>
+        <Text style={styles.textPointValue}>{totalPoint} PTS</Text>
+      </View>
+    );
   };
 
   const renderProgressBar = () => {
@@ -207,32 +226,71 @@ const Profile = () => {
     );
   };
 
-  const renderRank = () => {
+  const renderCurrentTier = () => {
     return (
-      <View style={styles.viewRank}>
-        <Text style={styles.textRank}>{progressBarCampaign?.currentGroup}</Text>
-        <Text style={styles.textRank}>{progressBarCampaign?.nextGroup}</Text>
-      </View>
-    );
-  };
-
-  const renderDescription = () => {
-    return (
-      <Text style={styles.textDescription}>
-        {progressBarCampaign?.description}
+      <Text style={styles.textCurrentTier}>
+        {progressBarCampaign?.currentGroup}
       </Text>
     );
   };
 
-  const renderPointBar = () => {
+  const renderNextTier = () => {
     return (
-      <View style={styles.viewPointBar}>
-        {renderName()}
-        {renderECard()}
-        {renderPoint}
+      <Text style={styles.textNextTier}>{progressBarCampaign?.nextGroup}</Text>
+    );
+  };
+
+  const renderWelcomeAndPoint = () => {
+    return (
+      <View style={styles.viewFlexRowSpaceBetweenCenter}>
+        {renderWelcome()}
+        {renderPoint()}
+      </View>
+    );
+  };
+
+  const renderProgress = () => {
+    return (
+      <View style={{width: '100%', alignItems: 'center'}}>
         {renderProgressBar()}
-        {renderRank()}
-        {renderDescription()}
+      </View>
+    );
+  };
+
+  const renderTier = () => {
+    return (
+      <View
+        style={{
+          width: '100%',
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}>
+        {renderCurrentTier()}
+        {renderNextTier()}
+      </View>
+    );
+  };
+
+  const renderTextInfo = () => {
+    return (
+      <Text style={styles.textInfo}>{progressBarCampaign?.description}</Text>
+    );
+  };
+
+  const renderPointHeader = () => {
+    return (
+      <View style={{padding: 16}}>
+        <View style={styles.viewPointHeader}>
+          {renderWelcomeAndPoint()}
+          <View style={{marginTop: '15%'}} />
+          {renderProgress()}
+          <View style={{marginTop: 10}} />
+          {renderTier()}
+          <View style={{marginTop: '15%'}} />
+          {renderTextInfo()}
+        </View>
       </View>
     );
   };
@@ -244,8 +302,8 @@ const Profile = () => {
         onPress={() => {
           handleEditProfile();
         }}>
-        <Image style={styles.imageIcon} source={appConfig.editProfile} />
-        <Text>Edit Profile</Text>
+        <Image style={styles.imageIcon} source={appConfig.iconEditProfile} />
+        <Text style={styles.textIcon}>Edit Profile</Text>
       </TouchableOpacity>
     );
   };
@@ -257,8 +315,12 @@ const Profile = () => {
         onPress={() => {
           Actions.myDeliveryAddress();
         }}>
-        <Image style={styles.imageIcon} source={appConfig.editProfile} />
-        <Text>My Delivery address</Text>
+        <Image
+          style={styles.imageIcon}
+          source={appConfig.iconLocation}
+          resizeMode="stretch"
+        />
+        <Text style={styles.textIcon}>My Delivery address</Text>
       </TouchableOpacity>
     );
   };
@@ -270,8 +332,8 @@ const Profile = () => {
         onPress={() => {
           Actions.notifications();
         }}>
-        <Image style={styles.imageIcon} source={appConfig.notifications} />
-        <Text>Notifications</Text>
+        <Image style={styles.imageIcon} source={appConfig.iconNotification} />
+        <Text style={styles.textIcon}>Notifications</Text>
       </TouchableOpacity>
     );
   };
@@ -283,8 +345,11 @@ const Profile = () => {
         onPress={() => {
           Actions.termsCondition();
         }}>
-        <Image style={styles.imageIcon} source={appConfig.termsAndConditions} />
-        <Text>Terms And Conditions</Text>
+        <Image
+          style={styles.imageIcon}
+          source={appConfig.iconTermsAndConditions}
+        />
+        <Text style={styles.textIcon}>Terms And Conditions</Text>
       </TouchableOpacity>
     );
   };
@@ -321,7 +386,7 @@ const Profile = () => {
         onPress={() => {
           handleLogout();
         }}>
-        <Image style={styles.imageIconLogout} source={appConfig.logout} />
+        <Image style={styles.imageIcon} source={appConfig.iconLogout} />
         <Text style={styles.textLogout}>Logout</Text>
       </TouchableOpacity>
     );
@@ -330,7 +395,7 @@ const Profile = () => {
   return (
     <ScrollView>
       <LoadingScreen loading={isLoading} />
-      {renderPointBar()}
+      {renderPointHeader()}
       {renderSettings()}
       {renderLogout()}
     </ScrollView>

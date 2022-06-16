@@ -39,7 +39,18 @@ const appConfig = {
   editProfile: require('../assets/img/editProfile.png'),
   star: require('../assets/img/star.png'),
   warning: require('../assets/img/warning.png'),
+  location: require('../assets/img/icon-location.png'),
 
+  //ICON MARTIN
+  iconLocation: require('../assets/img/icon-location.png'),
+  iconEditProfile: require('../assets/img/icon-edit-profile.png'),
+  iconLogout: require('../assets/img/icon-logout.png'),
+  iconNotification: require('../assets/img/icon-notification.png'),
+  iconPayment: require('../assets/img/icon-payment.png'),
+  iconReward: require('../assets/img/icon-reward.png'),
+  iconTermsAndConditions: require('../assets/img/icon-terms-and-conditions.png'),
+
+  //Funtoast
   funtoastButtomBanner: require('../assets/img/FuntoastBottomBanner.jpg'),
   funtoastCoffeeIcon: require('../assets/img/funtoastCoffeeIcon.png'),
   funtoastRedeemed: require('../assets/img/FuntoastRedeemed.png'),

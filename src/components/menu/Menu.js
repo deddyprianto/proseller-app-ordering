@@ -392,6 +392,7 @@ const Menu = () => {
           width: '100%',
         }}
         source={appConfig.funtoastButtomBanner}
+        resizeMode="contain"
       />
       <View style={{marginTop: 10}} />
     </SafeAreaView>

@@ -51,17 +51,15 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   textCurrentTier: {
-    fontSize: 9,
-    fontWeight: '500',
+    fontSize: 12,
+    fontWeight: 'bold',
     color: 'white',
-    width: '13%',
     textAlign: 'left',
   },
   textNextTier: {
-    fontSize: 9,
-    fontWeight: '500',
+    fontSize: 12,
+    fontWeight: 'bold',
     color: 'white',
-    width: '13%',
     textAlign: 'right',
   },
   textInfo: {
@@ -220,11 +218,24 @@ const Redeem = () => {
     );
   };
 
-  const renderTierAndProgressBar = () => {
+  const renderProgress = () => {
     return (
-      <View style={styles.viewFlexRowSpaceBetweenCenter}>
-        {renderCurrentTier()}
+      <View style={{width: '100%', alignItems: 'center'}}>
         {renderProgressBar()}
+      </View>
+    );
+  };
+  const renderTier = () => {
+    return (
+      <View
+        style={{
+          width: '100%',
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}>
+        {renderCurrentTier()}
         {renderNextTier()}
       </View>
     );
@@ -241,7 +252,9 @@ const Redeem = () => {
       <View style={styles.viewPointHeader}>
         {renderWelcomeAndPoint()}
         <View style={{marginTop: '15%'}} />
-        {renderTierAndProgressBar()}
+        {renderProgress()}
+        <View style={{marginTop: 10}} />
+        {renderTier()}
         <View style={{marginTop: '15%'}} />
         {renderTextInfo()}
       </View>

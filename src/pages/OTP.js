@@ -99,6 +99,7 @@ const OTP = ({isLogin, method, methodValue}) => {
     otp3: useRef(),
     otp4: useRef(),
   };
+
   const countdown = () => {
     let second = 59;
     let minute = sendCounter >= 2 ? 4 : 0;

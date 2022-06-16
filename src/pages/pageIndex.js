@@ -197,7 +197,7 @@ const AppTabNavigatorHistory = createMaterialBottomTabNavigator(
     },
     Profile: {
       // path: 'first',
-      screen: Account,
+      screen: Profile,
       navigationOptions: {
         title: 'Profile',
         tabBarIcon: ({tintColor, focused}) => (
