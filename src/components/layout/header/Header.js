@@ -12,13 +12,11 @@ import Scanner from '../../scanner';
 
 const styles = StyleSheet.create({
   root: {
-    height: 56,
+    height: 54,
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
     backgroundColor: 'white',
-    // borderColor: '#D6D6D6',
-    // borderBottomWidth: 1,
     elevation: 3,
   },
   touchableIcon: {

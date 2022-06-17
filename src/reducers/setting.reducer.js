@@ -18,6 +18,19 @@ const snackbar = (state = {}, action) => {
   }
 };
 
+const colorSettings = (state = {}, action) => {
+  switch (action.type) {
+    case 'SET_COLORS':
+      return {
+        ...action.data,
+      };
+
+    default:
+      return state;
+  }
+};
+
 export default combineReducers({
   snackbar,
+  colorSettings,
 });

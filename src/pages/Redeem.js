@@ -23,114 +23,120 @@ import VoucherList from '../components/voucherList';
 import Header from '../components/layout/header';
 import {dataPointHistory} from '../actions/rewards.action';
 import {myProgressBarCampaign} from '../actions/account.action';
+import Theme from '../theme';
 
-const styles = StyleSheet.create({
-  container: {
-    paddingHorizontal: 20,
-  },
-  divider: {
-    width: '100%',
-    borderTopWidth: 0.5,
-  },
-  textWelcome: {
-    fontSize: 14,
-    color: 'white',
-  },
-  textName: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: 'white',
-  },
-  textYourPoint: {
-    fontSize: 10,
-    color: 'white',
-  },
-  textPointValue: {
-    fontSize: 24,
-    color: 'white',
-    fontWeight: 'bold',
-  },
-  textCurrentTier: {
-    fontSize: 12,
-    fontWeight: 'bold',
-    color: 'white',
-    textAlign: 'left',
-  },
-  textNextTier: {
-    fontSize: 12,
-    fontWeight: 'bold',
-    color: 'white',
-    textAlign: 'right',
-  },
-  textInfo: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: 'white',
-  },
-  textPointAndHistory: {
-    width: '100%',
-    textAlign: 'center',
-    color: colorConfig.primaryColor,
-    textDecorationLine: 'underline',
-    fontSize: 12,
-    fontWeight: '600',
-  },
-  textAvailableVoucher: {
-    width: '100%',
-    textAlign: 'left',
-    fontSize: 12,
-    fontWeight: '400',
-  },
-  viewHeader: {
-    width: '100%',
-    display: 'flex',
-    alignItems: 'center',
-  },
-  viewPoint: {
-    alignItems: 'flex-end',
-  },
-  viewFlexRowSpaceBetweenCenter: {
-    width: '100%',
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  viewPointHeader: {
-    display: 'flex',
-    alignItems: 'center',
-    backgroundColor: colorConfig.primaryColor,
-    width: '100%',
-    borderRadius: 8,
-    paddingHorizontal: 18,
-    paddingVertical: 16,
-  },
+const useStyles = () => {
+  const theme = Theme();
+  const result = StyleSheet.create({
+    container: {
+      flex: 1,
+      paddingHorizontal: 16,
+    },
+    divider: {
+      width: '100%',
+      borderTopWidth: 0.5,
+    },
+    textWelcome: {
+      fontSize: theme.fontSize[12],
+      color: 'white',
+      fontFamily: theme.fontFamily.poppinsRegular,
+    },
+    textName: {
+      fontSize: 16,
+      color: 'white',
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textYourPoint: {
+      fontSize: theme.fontSize[12],
+      color: 'white',
+      fontFamily: theme.fontFamily.poppinsRegular,
+    },
+    textPointValue: {
+      fontSize: 16,
+      color: 'white',
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textCurrentTier: {
+      color: 'white',
+      textAlign: 'left',
+      fontSize: theme.fontSize[10],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textNextTier: {
+      color: 'white',
+      textAlign: 'right',
+      fontSize: theme.fontSize[10],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textInfo: {
+      fontSize: theme.fontSize[12],
+      color: 'white',
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textPointAndHistory: {
+      width: '100%',
+      textAlign: 'center',
+      textDecorationLine: 'underline',
+      fontSize: theme.fontSize[12],
+      color: theme.colors.primaryColor,
+      fontFamily: theme.fontFamily.poppinsSemiBold,
+    },
+    textAvailableVoucher: {
+      width: '100%',
+      textAlign: 'left',
+      fontSize: theme.fontSize[12],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    viewHeader: {
+      width: '100%',
+      display: 'flex',
+      alignItems: 'center',
+    },
+    viewPoint: {
+      alignItems: 'flex-end',
+    },
+    viewFlexRowSpaceBetweenCenter: {
+      width: '100%',
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    viewPointHeader: {
+      display: 'flex',
+      alignItems: 'center',
+      backgroundColor: theme.colors.primaryColor,
+      width: '100%',
+      borderRadius: 8,
+      padding: 16,
+    },
 
-  viewProgressBar: {
-    width: '76%',
-    justifyContent: 'center',
-  },
-  progressBar: {
-    backgroundColor: 'white',
-    height: 14,
-    borderRadius: 8,
-    borderColor: 'white',
-    borderWidth: 3,
-  },
-});
+    viewProgressBar: {
+      width: '70%',
+      justifyContent: 'center',
+    },
+
+    progressBar: {
+      backgroundColor: 'white',
+      height: 14,
+      borderRadius: 8,
+      borderColor: 'white',
+      borderWidth: 3,
+    },
+  });
+  return result;
+};
 
 const Redeem = () => {
+  const styles = useStyles();
   const dispatch = useDispatch();
   const [user, setUser] = useState({});
-
   const progressBarCampaign = useSelector(
     state => state.accountsReducer?.myProgressBarCampaign.myProgress,
   );
-
   const totalPoint = useSelector(
     state => state.rewardsReducer?.dataPoint?.totalPoint,
   );
-
   const userDetail = useSelector(
     state => state.userReducer?.getUser?.userDetails,
   );
@@ -220,22 +226,16 @@ const Redeem = () => {
 
   const renderProgress = () => {
     return (
-      <View style={{width: '100%', alignItems: 'center'}}>
-        {renderProgressBar()}
-      </View>
-    );
-  };
-  const renderTier = () => {
-    return (
       <View
         style={{
           width: '100%',
+          alignItems: 'center',
           display: 'flex',
           flexDirection: 'row',
           justifyContent: 'space-between',
-          alignItems: 'center',
         }}>
         {renderCurrentTier()}
+        {renderProgressBar()}
         {renderNextTier()}
       </View>
     );
@@ -251,11 +251,10 @@ const Redeem = () => {
     return (
       <View style={styles.viewPointHeader}>
         {renderWelcomeAndPoint()}
-        <View style={{marginTop: '15%'}} />
+        <View style={{marginTop: 32}} />
         {renderProgress()}
-        <View style={{marginTop: 10}} />
-        {renderTier()}
-        <View style={{marginTop: '15%'}} />
+
+        <View style={{marginTop: 32}} />
         {renderTextInfo()}
       </View>
     );
@@ -277,19 +276,19 @@ const Redeem = () => {
   };
 
   return (
-    <View>
+    <View style={{flex: 1}}>
       <Header title="Points and Voucher" />
       <ScrollView style={styles.container}>
         <View style={styles.viewHeader}>
-          <View style={{marginTop: '5%'}} />
+          <View style={{marginTop: 16}} />
           {renderPointHeader()}
-          <View style={{marginTop: '5%'}} />
+          <View style={{marginTop: 16}} />
           {renderTextPointAndHistory()}
-          <View style={{marginTop: '5%'}} />
+          <View style={{marginTop: 16}} />
           <View style={styles.divider} />
-          <View style={{marginTop: '5%'}} />
+          <View style={{marginTop: 16}} />
           {renderTextAvailableVoucher()}
-          <View style={{marginTop: '5%'}} />
+          <View style={{marginTop: 16}} />
           <VoucherList />
         </View>
       </ScrollView>
