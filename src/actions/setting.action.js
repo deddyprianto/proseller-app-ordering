@@ -3,8 +3,6 @@
 
 import {isEmptyArray} from '../helper/CheckEmpty';
 import {fetchApiOrder} from '../service/apiOrder';
-import {setColorSettings} from '../theme/theme';
-
 const colorFinder = ({colors, key}) => {
   const result = colors?.find(value => value?.settingKey === key)?.settingValue;
   return result;
