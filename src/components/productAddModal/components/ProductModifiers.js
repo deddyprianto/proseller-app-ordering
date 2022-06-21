@@ -32,7 +32,7 @@ const useStyle = () => {
     },
     textOptionPrice: {
       fontSize: theme.fontSize[10],
-      color: theme.colors.text3,
+      color: theme.colors.text2,
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textTermsAndConditions: {
