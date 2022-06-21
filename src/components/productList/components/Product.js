@@ -7,14 +7,7 @@
 
 import React, {useState, useEffect} from 'react';
 
-import {
-  StyleSheet,
-  View,
-  Text,
-  Image,
-  Dimensions,
-  TouchableOpacity,
-} from 'react-native';
+import {StyleSheet, View, Text, Image, TouchableOpacity} from 'react-native';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
 import colorConfig from '../../../config/colorConfig';
 import filter from 'lodash/filter';

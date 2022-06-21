@@ -23,7 +23,7 @@ import appConfig from '../../config/appConfig';
 
 const styles = StyleSheet.create({
   root: {
-    height: '50%',
+    height: 'auto',
   },
   bullet: {
     width: 6,
@@ -208,16 +208,16 @@ const ProductUpdateModal = ({open, handleClose, product, basket}) => {
   };
 
   useEffect(() => {
-    // if (!isEmptyArray(product.variants)) {
-    //   const items = handleProductVariants();
-    //   setProductInBasket(items);
-    // } else {
-    const items = basket?.details?.filter(
-      item => item.product.id === product.id,
-    );
+    if (!isEmptyArray(product.variants)) {
+      const items = handleProductVariants();
+      setProductInBasket(items);
+    } else {
+      const items = basket?.details?.filter(
+        item => item.product.id === product.id,
+      );
 
-    setProductInBasket(items);
-    // }
+      setProductInBasket(items);
+    }
   }, [basket, product]);
 
   const renderProductModifierItems = items => {
@@ -292,7 +292,7 @@ const ProductUpdateModal = ({open, handleClose, product, basket}) => {
   const renderProductItemPriceAndEditButton = item => {
     return (
       <View style={styles.viewPriceAndEditButton}>
-        {renderProductItemPrice(item?.product?.retailPrice)}
+        {renderProductItemPrice(item?.grossAmount)}
         {renderProductItemEditButton()}
       </View>
     );
@@ -391,6 +391,7 @@ const ProductUpdateModal = ({open, handleClose, product, basket}) => {
   if (!open) {
     return null;
   }
+
   return (
     <Modal animationType="none" transparent={true}>
       <Provider>

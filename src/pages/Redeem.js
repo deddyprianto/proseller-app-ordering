@@ -78,7 +78,7 @@ const useStyles = () => {
       textAlign: 'center',
       textDecorationLine: 'underline',
       fontSize: theme.fontSize[12],
-      color: theme.colors.primaryColor,
+      color: theme.colors.primary,
       fontFamily: theme.fontFamily.poppinsSemiBold,
     },
     textAvailableVoucher: {
@@ -105,7 +105,7 @@ const useStyles = () => {
     viewPointHeader: {
       display: 'flex',
       alignItems: 'center',
-      backgroundColor: theme.colors.primaryColor,
+      backgroundColor: theme.colors.primary,
       width: '100%',
       borderRadius: 8,
       padding: 16,

@@ -17,7 +17,6 @@ import {
   TouchableOpacity,
   Modal,
   TextInput,
-  BackHandler,
 } from 'react-native';
 
 import IconIonicons from 'react-native-vector-icons/Ionicons';
@@ -28,80 +27,167 @@ import {
 } from '../../actions/order.action';
 
 import {isEmptyArray, isEmptyObject} from '../../helper/CheckEmpty';
-import colorConfig from '../../config/colorConfig';
 import currencyFormatter from '../../helper/CurrencyFormatter';
-import ProductModifiers from './components/ProductModifiers';
 import LoadingScreen from '../loadingScreen';
-const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-  },
-  container: {
-    flex: 2,
-    width: '100%',
-    backgroundColor: 'white',
-  },
-  image: {
-    height: 300,
-    width: '100%',
-    marginTop: 20,
-    paddingHorizontal: 19,
-  },
-  textAddToCartButton: {
-    fontSize: 12,
-    fontWeight: '500',
-    color: 'white',
-  },
-  textTermsAndConditionsModifier: {
-    fontSize: 10,
-    color: '#B7B7B7',
-  },
-  viewAddToCartButton: {
-    padding: 16,
-    backgroundColor: 'white',
-    borderColor: '#D6D6D6',
-    borderTopWidth: 1,
-  },
-  viewProductModifier: {
-    width: 30,
-    height: 30,
-    borderWidth: 1,
-    marginRight: 20,
-  },
-  viewSelectedProductModifier: {
-    width: 30,
-    height: 30,
-    borderWidth: 1,
-    marginRight: 20,
-    backgroundColor: colorConfig.primaryColor,
-  },
-  viewGroupProductModifier: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginBottom: 40,
-  },
-  touchableAddToCartButton: {
-    borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: colorConfig.primaryColor,
-    paddingVertical: 10,
-  },
-  touchableAddToCartButtonDisabled: {
-    borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#B7B7B7',
-    paddingVertical: 10,
-  },
-  divider: {
-    height: 1,
-    width: '100%',
-    backgroundColor: '#D6D6D6',
-  },
-});
+import appConfig from '../../config/appConfig';
+
+import Theme from '../../theme';
+import ProductVariants from './components/ProductVariants';
+import ProductModifiers from './components/ProductModifiers';
+
+const useStyles = () => {
+  const theme = Theme();
+  const result = StyleSheet.create({
+    root: {
+      flex: 1,
+    },
+    container: {
+      flex: 2,
+      width: '100%',
+      backgroundColor: theme.colors.background,
+    },
+    header: {
+      paddingVertical: 16,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: 'white',
+    },
+    divider: {
+      height: 1,
+      width: '100%',
+      backgroundColor: '#D6D6D6',
+    },
+    image: {
+      height: 300,
+      width: '100%',
+    },
+    textHeader: {
+      fontSize: theme.fontSize[14],
+      color: theme.colors.text1,
+      fontFamily: theme.fontFamily.poppinsRegular,
+    },
+    textAddToCartButton: {
+      fontSize: theme.fontSize[12],
+      color: theme.colors.textButtonDisabled,
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textPrice: {
+      fontSize: theme.fontSize[14],
+      color: theme.colors.primary,
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textName: {
+      fontSize: theme.fontSize[14],
+      color: theme.colors.text1,
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textQty: {
+      width: 36,
+      textAlign: 'center',
+      fontSize: theme.fontSize[12],
+      color: theme.colors.primary,
+      fontFamily: theme.fontFamily.poppinsBold,
+    },
+    textSpecialInstruction: {
+      fontSize: theme.fontSize[14],
+      color: theme.colors.text1,
+      fontFamily: theme.fontFamily.poppinsRegular,
+    },
+
+    viewNameAndPrice: {
+      width: '70%',
+    },
+    viewNameQtyPrice: {
+      width: '100%',
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingHorizontal: 16,
+      marginBottom: 16,
+    },
+    viewTextAndButtonQty: {
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    viewAddToCartButton: {
+      padding: 16,
+      backgroundColor: 'white',
+      borderColor: '#D6D6D6',
+      borderTopWidth: 1,
+    },
+
+    viewTextSpecialInstruction: {
+      backgroundColor: '#F9F9F9',
+      paddingVertical: 12,
+      paddingHorizontal: 16,
+    },
+
+    touchableAddToCartButton: {
+      borderRadius: 8,
+      justifyContent: 'center',
+      alignItems: 'center',
+      paddingVertical: 10,
+      backgroundColor: theme.colors.primary,
+    },
+
+    touchableAddToCartButtonDisabled: {
+      borderRadius: 8,
+      justifyContent: 'center',
+      alignItems: 'center',
+      paddingVertical: 10,
+      backgroundColor: theme.colors.buttonDisabled,
+    },
+    touchableMinus: {
+      width: 24,
+      height: 24,
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderWidth: 1,
+      borderColor: theme.colors.primary,
+      backgroundColor: theme.colors.background,
+    },
+    touchablePlus: {
+      width: 24,
+      height: 24,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: theme.colors.primary,
+    },
+    textInputSpecialInstruction: {
+      height: 110,
+      borderColor: '#D6D6D6',
+      padding: 16,
+      borderWidth: 1,
+      borderRadius: 8,
+      backgroundColor: 'white',
+    },
+    iconMinus: {
+      width: 12,
+      height: 12,
+      tintColor: theme.colors.primary,
+    },
+    iconPlus: {
+      width: 12,
+      height: 12,
+      tintColor: theme.colors.background,
+    },
+    iconClose: {
+      fontSize: 30,
+      position: 'absolute',
+      right: 17,
+    },
+    padding16: {
+      padding: 16,
+    },
+  });
+  return result;
+};
 
 const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
+  const styles = useStyles();
   const dispatch = useDispatch();
   const [variantName, setVariantName] = useState('');
   const [qty, setQty] = useState(1);
@@ -121,41 +207,6 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
   const handlePrice = ({qty, totalPrice}) => {
     setTotalPrice(qty * totalPrice);
   };
-
-  const handleProductSelected = () => {
-    if (!isEmptyObject(selectedProduct)) {
-      setQty(selectedProduct?.quantity);
-      setNotes(selectedProduct?.remark);
-    }
-  };
-
-  const handleProductVariantSelected = () => {
-    if (
-      !isEmptyArray(selectedProduct?.product?.variants) &&
-      isEmptyArray(selectedVariantOptions)
-    ) {
-      let selected = {};
-
-      selectedProduct.product?.variants.forEach(item => {
-        if (item.id === selectedProduct.product?.id) {
-          selected = item;
-        }
-      });
-      setQty(selectedProduct?.quantity);
-      setNotes(selectedProduct?.remark);
-      setSelectedVariantOptions(selected?.attributes);
-    } else if (!isEmptyArray(product?.variants)) {
-      const result = isEmptyArray(selectedVariantOptions)
-        ? product?.variants[0]?.attributes || []
-        : selectedVariantOptions;
-      setSelectedVariantOptions(result);
-    }
-  };
-
-  useEffect(() => {
-    handleProductVariantSelected();
-    handleProductSelected();
-  }, []);
 
   const handleProductModifierFormatted = items => {
     let totalPrice = 0;
@@ -315,96 +366,107 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
     selectedProductModifiers,
   ]);
 
+  useEffect(() => {
+    if (!isEmptyObject(selectedProduct)) {
+      setQty(selectedProduct?.quantity);
+      setNotes(selectedProduct?.remark);
+    }
+  }, []);
+
   const renderImage = () => {
     return (
-      <View style={{paddingHorizontal: 19}}>
+      <View style={styles.padding16}>
         <Image
           style={styles.image}
           resizeMode="stretch"
-          source={{uri: product.defaultImageURL}}
+          source={{uri: variantImageURL || product?.defaultImageURL}}
         />
       </View>
     );
   };
 
-  const renderName = () => {
+  const renderNameAndPrice = () => {
     return (
-      <View style={{paddingHorizontal: 16}}>
-        <Text style={{fontSize: 14}}>{product.name}</Text>
+      <View style={styles.viewNameAndPrice}>
+        <Text style={styles.textName}>
+          {product?.name} {variantName}
+        </Text>
+        <Text style={styles.textPrice}>
+          {currencyFormatter(product?.retailPrice)}
+        </Text>
       </View>
     );
   };
 
-  const renderPrice = () => {
+  const renderButtonMinus = () => {
     return (
-      <Text style={{fontSize: 14, color: colorConfig.primaryColor}}>
-        {currencyFormatter(product.retailPrice)}
-      </Text>
+      <TouchableOpacity
+        style={styles.touchableMinus}
+        disabled={qty === 0}
+        onPress={() => {
+          setQty(qty - 1);
+        }}>
+        <Image source={appConfig.iconMinus} style={styles.iconMinus} />
+      </TouchableOpacity>
     );
   };
 
-  const renderQty = () => {
+  const renderButtonPlus = () => {
     return (
-      <View
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
+      <TouchableOpacity
+        style={styles.touchablePlus}
+        onPress={() => {
+          setQty(qty + 1);
         }}>
-        <TouchableOpacity
-          style={{
-            backgroundColor: 'white',
-            width: 24,
-            height: 24,
-            justifyContent: 'center',
-            alignItems: 'center',
-            borderColor: colorConfig.primaryColor,
-            borderWidth: 1,
-          }}
-          disabled={qty === 0}
-          onPress={() => {
-            setQty(qty - 1);
-          }}>
-          <Text style={{color: colorConfig.primaryColor, fontSize: 16}}>-</Text>
-        </TouchableOpacity>
-        <Text
-          style={{
-            fontSize: 12,
-            color: colorConfig.primaryColor,
-            marginHorizontal: 15,
-          }}>
-          {qty}
-        </Text>
-        <TouchableOpacity
-          style={{
-            backgroundColor: colorConfig.primaryColor,
-            width: 24,
-            height: 24,
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-          onPress={() => {
-            setQty(qty + 1);
-          }}>
-          <Text style={{color: 'white', fontSize: 16}}>+</Text>
-        </TouchableOpacity>
+        <Image source={appConfig.iconPlus} style={styles.iconPlus} />
+      </TouchableOpacity>
+    );
+  };
+
+  const renderTextQty = () => {
+    return <Text style={styles.textQty}>{qty}</Text>;
+  };
+
+  const renderTextAndButtonQty = () => {
+    return (
+      <View style={styles.viewTextAndButtonQty}>
+        {renderButtonMinus()}
+        {renderTextQty()}
+        {renderButtonPlus()}
       </View>
     );
   };
 
   const renderNameQtyPrice = () => {
     return (
-      <View
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          paddingHorizontal: 16,
-        }}>
-        {renderPrice()}
-        {renderQty()}
+      <View style={styles.viewNameQtyPrice}>
+        {renderNameAndPrice()}
+        {renderTextAndButtonQty()}
+      </View>
+    );
+  };
+
+  const renderTextSpecialInstruction = () => {
+    return (
+      <View style={styles.viewTextSpecialInstruction}>
+        <Text style={styles.textSpecialInstruction}>Special Instruction</Text>
+      </View>
+    );
+  };
+
+  const renderTextInputSpecialInstruction = () => {
+    return (
+      <View style={styles.padding16}>
+        <TextInput
+          style={styles.textInputSpecialInstruction}
+          placeholder="Example: please deliver on time"
+          multiline={true}
+          numberOfLines={3}
+          value={notes}
+          onChangeText={value => {
+            setNotes(value);
+          }}
+        />
       </View>
     );
   };
@@ -412,32 +474,8 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
   const renderSpecialInstruction = () => {
     return (
       <View>
-        <View
-          style={{
-            backgroundColor: '#F9F9F9',
-            paddingVertical: 12,
-            paddingHorizontal: 16,
-          }}>
-          <Text>Special Instruction</Text>
-        </View>
-        <View style={{padding: 16}}>
-          <TextInput
-            style={{
-              height: 110,
-              borderColor: '#D6D6D6',
-              padding: 16,
-              borderWidth: 1,
-              borderRadius: 8,
-            }}
-            placeholder="Example: please deliver on time"
-            multiline={true}
-            numberOfLines={3}
-            value={notes}
-            onChangeText={value => {
-              setNotes(value);
-            }}
-          />
-        </View>
+        {renderTextSpecialInstruction()}
+        {renderTextInputSpecialInstruction()}
       </View>
     );
   };
@@ -511,17 +549,11 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
 
   const header = () => {
     return (
-      <View
-        style={{
-          paddingVertical: 16,
-          alignItems: 'center',
-          justifyContent: 'center',
-          backgroundColor: 'white',
-        }}>
-        <Text>{product?.categoryName}</Text>
+      <View style={styles.header}>
+        <Text style={styles.textHeader}>{product?.categoryName}</Text>
         <IconIonicons
           name="md-close"
-          style={{fontSize: 30, position: 'absolute', right: 17}}
+          style={styles.iconClose}
           onPress={() => {
             handleClose();
           }}
@@ -539,6 +571,22 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
           isLoading={false}
           onChange={value => {
             setSelectedProductModifiers(value);
+          }}
+        />
+      );
+    }
+  };
+
+  const renderProductVariants = () => {
+    if (!isEmptyArray(product?.variantOptions)) {
+      return (
+        <ProductVariants
+          productVariants={product?.variants}
+          productVariantOptions={product?.variantOptions}
+          selectedProduct={selectedProduct?.product}
+          isLoading={false}
+          onChange={value => {
+            setSelectedVariantOptions(value);
           }}
         />
       );
@@ -563,11 +611,9 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
         <View style={styles.divider} />
         <ScrollView style={styles.container}>
           {renderImage()}
-          <View style={{marginTop: 16}} />
-          {renderName()}
           {renderNameQtyPrice()}
-          <View style={{marginTop: 16}} />
           {renderProductModifiers()}
+          {renderProductVariants()}
           {renderSpecialInstruction()}
         </ScrollView>
         {renderAddToCartButton()}

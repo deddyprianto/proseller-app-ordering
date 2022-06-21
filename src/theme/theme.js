@@ -1,4 +1,13 @@
+/**
+ * Martin
+ * martin@edgeworks.co.id
+ * PT Edgeworks
+ */
+
 import {useSelector} from 'react-redux';
+
+//noted
+//#F9F9F9
 
 const Theme = () => {
   const colorSettings = useSelector(
@@ -6,12 +15,23 @@ const Theme = () => {
   );
 
   const colors = {
-    primaryColor: colorSettings?.primaryColor || 'black',
-    secondaryColor: colorSettings?.secondaryColor || 'black',
-    fontColor: colorSettings?.fontColor || 'black',
-    disabledButtonColor: colorSettings?.fontColor || 'black',
-    OutlinedButtonColor: colorSettings?.fontColor || 'white',
-    backgroundColor: colorSettings?.backgroundColor || 'black',
+    primary: '#CF3030',
+    secondary: colorSettings?.secondaryColor || 'black',
+    background: 'white',
+    header: 'white',
+
+    text1: 'black',
+    text2: '#B7B7B7',
+    text3: '#8A8D8E',
+
+    border: '#D6D6D6',
+
+    textButtonDisabled: 'white',
+    textButtonOutlined: 'black',
+
+    buttonDisabled: '#B7B7B7',
+    buttonOutlined: 'white',
+
     navigationColor: colorSettings?.navigationColor || 'black',
     textButtonColor: colorSettings?.textButtonColor || 'black',
     textWarningColor: colorSettings?.textWarningColor || 'black',
@@ -40,4 +60,5 @@ const Theme = () => {
     fontFamily,
   };
 };
+
 export default Theme;

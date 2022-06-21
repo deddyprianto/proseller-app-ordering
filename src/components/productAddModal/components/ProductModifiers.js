@@ -6,87 +6,141 @@
  */
 
 import React, {useEffect, useState} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
-import {Actions} from 'react-native-router-flux';
 
-import {
-  StyleSheet,
-  View,
-  Text,
-  ScrollView,
-  Image,
-  TouchableOpacity,
-  Modal,
-  TextInput,
-} from 'react-native';
+import {StyleSheet, View, Text, Image, TouchableOpacity} from 'react-native';
 
 import IconIonicons from 'react-native-vector-icons/Ionicons';
 
 import {isEmptyArray} from '../../../helper/CheckEmpty';
-import colorConfig from '../../../config/colorConfig';
+import Theme from '../../../theme';
+import appConfig from '../../../config/appConfig';
+import CurrencyFormatter from '../../../helper/CurrencyFormatter';
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 2,
-    width: '100%',
-    backgroundColor: 'white',
-  },
-  image: {
-    height: 300,
-    width: '100%',
-    marginTop: 20,
-    paddingHorizontal: 19,
-  },
-  textAddToCartButton: {
-    fontSize: 12,
-    fontWeight: '500',
-    color: 'white',
-  },
-  textTermsAndConditionsModifier: {
-    fontSize: 10,
-    color: '#B7B7B7',
-  },
-  viewAddToCartButton: {
-    padding: 16,
-    backgroundColor: 'white',
-  },
-  viewProductModifier: {
-    width: 30,
-    height: 30,
-    borderWidth: 1,
-    marginRight: 20,
-  },
-  viewSelectedProductModifier: {
-    width: 30,
-    height: 30,
-    borderWidth: 1,
-    marginRight: 20,
-    backgroundColor: colorConfig.primaryColor,
-  },
-  viewGroupProductModifier: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginBottom: 40,
-  },
-  touchableAddToCartButton: {
-    borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-    // backgroundColor: '#B7B7B7',
-    backgroundColor: colorConfig.primaryColor,
-    paddingVertical: 10,
-  },
-});
+const useStyle = () => {
+  const theme = Theme();
+  const result = StyleSheet.create({
+    textName: {
+      marginRight: 8,
+      fontSize: theme.fontSize[14],
+      color: theme.colors.text1,
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textOptionName: {
+      fontSize: theme.fontSize[12],
+      color: theme.colors.text1,
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textOptionPrice: {
+      fontSize: theme.fontSize[10],
+      color: theme.colors.text3,
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textTermsAndConditions: {
+      fontSize: theme.fontSize[10],
+      color: theme.colors.text2,
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textQty: {
+      width: 36,
+      textAlign: 'center',
+      fontSize: theme.fontSize[12],
+      color: theme.colors.primary,
+      fontFamily: theme.fontFamily.poppinsBold,
+    },
+    viewNameAndTermsConditions: {
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: '#F9F9F9',
+      paddingVertical: 12,
+      paddingHorizontal: 16,
+    },
+    viewOption: {
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingHorizontal: 18,
+      paddingVertical: 12,
+      borderColor: theme.colors.border,
+      borderBottomWidth: 1,
+    },
+    viewTextAndButtonQty: {
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    viewOptionCheckboxNamePrice: {
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    touchableMinus: {
+      width: 24,
+      height: 24,
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderWidth: 1,
+      borderColor: theme.colors.primary,
+      backgroundColor: theme.colors.background,
+    },
+    touchablePlus: {
+      width: 24,
+      height: 24,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: theme.colors.primary,
+    },
+    checkbox: {
+      width: 20,
+      height: 20,
+      backgroundColor: 'white',
+      borderRadius: 3,
+      borderWidth: 1,
+      marginRight: 8,
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderColor: '#667080',
+    },
+    checkboxActive: {
+      width: 20,
+      height: 20,
+      backgroundColor: '#667080',
+      borderRadius: 3,
+      borderWidth: 1,
+      marginRight: 8,
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderColor: '#667080',
+    },
+    iconMinus: {
+      width: 12,
+      height: 12,
+      tintColor: theme.colors.primary,
+    },
+    iconPlus: {
+      width: 12,
+      height: 12,
+      tintColor: theme.colors.background,
+    },
+    iconCheck: {
+      color: 'white',
+      fontSize: 13,
+    },
+  });
+  return result;
+};
 
 const ProductModifiers = ({
   productModifiers,
   selectedProductModifiers,
   onChange,
-  isLoading,
 }) => {
+  const styles = useStyle();
   const [selected, setSelected] = useState([]);
 
-  const handleProductModifierSelected = () => {
+  const handleSelected = () => {
     if (!isEmptyArray(selectedProductModifiers)) {
       let defaultValue = [];
       selectedProductModifiers.forEach(item => {
@@ -106,7 +160,7 @@ const ProductModifiers = ({
   };
 
   useEffect(() => {
-    handleProductModifierSelected();
+    handleSelected();
   }, []);
 
   useEffect(() => {
@@ -115,7 +169,7 @@ const ProductModifiers = ({
     }
   }, [selected]);
 
-  const handleAddAndReduceQtyProductModifier = ({key, value}) => {
+  const handleAddAndReduceQty = ({key, value}) => {
     let productModifiersQtyChanged = [];
     const qty = key === 'add' ? value.qty + 1 : value.qty - 1;
 
@@ -172,7 +226,7 @@ const ProductModifiers = ({
     }
   };
 
-  const handleDisabledRemoveButtonProductModifier = ({modifier, min}) => {
+  const handleDisabledRemoveButton = ({modifier, min}) => {
     if (min > 0) {
       let qtyTotal = 0;
 
@@ -190,7 +244,7 @@ const ProductModifiers = ({
     }
   };
 
-  const handleDisabledAddButtonProductModifier = ({modifier, max}) => {
+  const handleDisabledAddButton = ({modifier, max}) => {
     if (max > 0) {
       let qtyTotal = 0;
 
@@ -208,12 +262,53 @@ const ProductModifiers = ({
     }
   };
 
-  const renderAddAndRemoveProductModifier = ({
-    modifierProductId,
-    min,
-    max,
-    isYesNo,
-  }) => {
+  const renderButtonPlus = ({selectedProductModifier, max}) => {
+    const disabled = handleDisabledAddButton({
+      modifier: selectedProductModifier,
+      max,
+    });
+
+    return (
+      <TouchableOpacity
+        style={styles.touchablePlus}
+        disabled={disabled}
+        onPress={() => {
+          handleAddAndReduceQty({
+            key: 'add',
+            value: selectedProductModifier,
+          });
+        }}>
+        <Image source={appConfig.iconPlus} style={styles.iconPlus} />
+      </TouchableOpacity>
+    );
+  };
+
+  const renderButtonMinus = ({selectedProductModifier, min}) => {
+    const disabled = handleDisabledRemoveButton({
+      modifier: selectedProductModifier,
+      min,
+    });
+
+    return (
+      <TouchableOpacity
+        style={styles.touchableMinus}
+        disabled={disabled}
+        onPress={() => {
+          handleAddAndReduceQty({
+            key: 'reduce',
+            value: selectedProductModifier,
+          });
+        }}>
+        <Image source={appConfig.iconMinus} style={styles.iconMinus} />
+      </TouchableOpacity>
+    );
+  };
+
+  const renderTextQty = qty => {
+    return <Text style={styles.textQty}>{qty}</Text>;
+  };
+
+  const renderButtonAndTextQty = ({modifierProductId, min, max, isYesNo}) => {
     const selectedProductModifier = selected.find(
       item => item.modifierProductId === modifierProductId,
     );
@@ -221,88 +316,29 @@ const ProductModifiers = ({
 
     if (selectedProductModifierQty > 0 && !isYesNo) {
       return (
-        <View
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}>
-          <TouchableOpacity
-            style={{
-              backgroundColor: 'white',
-              width: 24,
-              height: 24,
-              justifyContent: 'center',
-              alignItems: 'center',
-              borderColor: colorConfig.primaryColor,
-              borderWidth: 1,
-            }}
-            disabled={
-              handleDisabledRemoveButtonProductModifier({
-                modifier: selectedProductModifier,
-                min,
-              }) || isLoading
-            }
-            onPress={() => {
-              handleAddAndReduceQtyProductModifier({
-                key: 'reduce',
-                value: selectedProductModifier,
-              });
-            }}>
-            <Text style={{color: colorConfig.primaryColor, fontSize: 16}}>
-              -
-            </Text>
-          </TouchableOpacity>
-          <Text
-            style={{
-              fontSize: 12,
-              color: colorConfig.primaryColor,
-              marginHorizontal: 15,
-            }}>
-            {selectedProductModifierQty}
-          </Text>
-          <TouchableOpacity
-            style={{
-              backgroundColor: colorConfig.primaryColor,
-              width: 24,
-              height: 24,
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
-            disabled={
-              handleDisabledAddButtonProductModifier({
-                modifier: selectedProductModifier,
-                max,
-              }) || isLoading
-            }
-            onPress={() => {
-              handleAddAndReduceQtyProductModifier({
-                key: 'add',
-                value: selectedProductModifier,
-              });
-            }}>
-            <Text style={{color: 'white', fontSize: 16}}>+</Text>
-          </TouchableOpacity>
+        <View style={styles.viewTextAndButtonQty}>
+          {renderButtonMinus({selectedProductModifier, min})}
+          {renderTextQty(selectedProductModifierQty)}
+          {renderButtonPlus({selectedProductModifier, max})}
         </View>
       );
     }
   };
 
-  const renderProductModifierItemPrice = ({isYesNo, modifierValue}) => {
-    if (!isYesNo) {
+  const renderOptionNameAndPrice = ({isYesNo, modifierValue}) => {
+    if (isYesNo && !modifierValue?.price) {
       return (
         <View>
-          <Text style={{fontSize: 12}}>{modifierValue?.name}</Text>
-          <Text style={{color: '#8A8D8E', fontSize: 10}}>
-            SGD {modifierValue?.price}
-          </Text>
+          <Text style={styles.textOptionName}>{modifierValue?.name}</Text>
         </View>
       );
     } else {
       return (
         <View>
-          <Text style={{fontSize: 14}}>{modifierValue?.name}</Text>
+          <Text style={styles.textOptionName}>{modifierValue?.name}</Text>
+          <Text style={styles.textOptionPrice}>
+            {CurrencyFormatter(modifierValue?.price)}
+          </Text>
         </View>
       );
     }
@@ -334,24 +370,17 @@ const ProductModifiers = ({
     return isDisabled;
   };
 
-  const renderProductModifierCheckbox = ({modifier, modifierValue}) => {
+  const renderCheckbox = ({modifier, modifierValue}) => {
+    const disabled = handleDisabledCheckbox({modifier, modifierValue});
     const active = selected.find(
       value => value.modifierProductId === modifierValue.productID,
     );
+    const style = active ? styles.checkboxActive : styles.checkbox;
 
     return (
       <TouchableOpacity
-        style={{
-          width: 20,
-          height: 20,
-          backgroundColor: active ? '#667080' : 'white',
-          borderRadius: 3,
-          borderWidth: 1,
-          alignItems: 'center',
-          justifyContent: 'center',
-          borderColor: '#667080',
-        }}
-        disabled={handleDisabledCheckbox({modifier, modifierValue})}
+        style={style}
+        disabled={disabled}
         onPress={() => {
           handleModifierOptionSelected({
             modifierProductId: modifierValue.productID,
@@ -361,54 +390,35 @@ const ProductModifiers = ({
             name: modifierValue.name,
           });
         }}>
-        <IconIonicons
-          style={{color: 'white', fontSize: 13}}
-          name="md-checkmark"
-        />
+        <IconIonicons style={styles.iconCheck} name="md-checkmark" />
       </TouchableOpacity>
     );
   };
 
-  const renderProductModifierItems = ({modifier}) => {
+  const renderOptionCheckboxNamePrice = ({modifierValue, modifier}) => {
+    return (
+      <View style={styles.viewOptionCheckboxNamePrice}>
+        {renderCheckbox({modifierValue, modifier})}
+        {renderOptionNameAndPrice({
+          isYesNo: modifier?.isYesNo,
+          modifierValue,
+        })}
+      </View>
+    );
+  };
+  const renderOptions = ({modifier}) => {
     const modifierList = modifier?.details || [];
 
     const result = modifierList.map(modifierValue => {
       return (
-        <View>
-          <View
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              paddingHorizontal: 18,
-              paddingVertical: 12,
-            }}>
-            <View
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'center',
-              }}>
-              {renderProductModifierCheckbox({modifierValue, modifier})}
-              <View style={{marginRight: 10}} />
-              {renderProductModifierItemPrice({
-                isYesNo: modifier?.isYesNo,
-                modifierValue,
-              })}
-            </View>
-
-            {renderAddAndRemoveProductModifier({
-              isYesNo: modifier?.isYesNo,
-              modifierProductId: modifierValue.productID,
-              max: modifier?.max,
-              min: modifier?.min,
-            })}
-          </View>
-
-          <View
-            style={{width: '100%', height: 1, backgroundColor: '#D6D6D6'}}
-          />
+        <View style={styles.viewOption}>
+          {renderOptionCheckboxNamePrice({modifierValue, modifier})}
+          {renderButtonAndTextQty({
+            isYesNo: modifier?.isYesNo,
+            modifierProductId: modifierValue?.productID,
+            max: modifier?.max,
+            min: modifier?.min,
+          })}
         </View>
       );
     });
@@ -416,7 +426,7 @@ const ProductModifiers = ({
     return result;
   };
 
-  const renderTermsAndConditionsProductModifiers = productModifier => {
+  const renderTextTermsAndConditions = productModifier => {
     const min = productModifier?.modifier?.min || 0;
     const max = productModifier?.modifier?.max || 0;
 
@@ -439,28 +449,19 @@ const ProductModifiers = ({
       }`;
     }
 
-    return <Text style={styles.textTermsAndConditionsModifier}>{text}</Text>;
+    return <Text style={styles.textTermsAndConditions}>{text}</Text>;
   };
 
-  const renderProductModifierName = productModifier => {
+  const renderTextName = productModifier => {
+    return <Text style={styles.textName}>{productModifier?.modifierName}</Text>;
+  };
+
+  const renderNameAndTermsConditions = productModifier => {
     if (!productModifier.isYesNo) {
       return (
-        <View
-          style={{
-            backgroundColor: '#F9F9F9',
-            paddingVertical: 12,
-            paddingHorizontal: 16,
-          }}>
-          <View
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              alignItems: 'center',
-            }}>
-            <Text style={{fontSize: 14}}>{productModifier?.modifierName}</Text>
-            <View style={{marginRight: 8}} />
-            {renderTermsAndConditionsProductModifiers(productModifier)}
-          </View>
+        <View style={styles.viewNameAndTermsConditions}>
+          {renderTextName(productModifier)}
+          {renderTextTermsAndConditions(productModifier)}
         </View>
       );
     }
@@ -480,8 +481,8 @@ const ProductModifiers = ({
       const result = productModifiersFormatted.map(productModifier => {
         return (
           <View>
-            {renderProductModifierName(productModifier)}
-            {renderProductModifierItems({
+            {renderNameAndTermsConditions(productModifier)}
+            {renderOptions({
               modifier: productModifier?.modifier,
               isYesNo: productModifier?.isYesNo,
             })}
