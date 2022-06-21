@@ -106,13 +106,13 @@ const useStyle = () => {
     checkboxActive: {
       width: 20,
       height: 20,
-      backgroundColor: '#667080',
+      backgroundColor: theme.colors.primary,
       borderRadius: 3,
       borderWidth: 1,
       marginRight: 8,
       alignItems: 'center',
       justifyContent: 'center',
-      borderColor: '#667080',
+      borderColor: theme.colors.primary,
     },
     iconMinus: {
       width: 12,
