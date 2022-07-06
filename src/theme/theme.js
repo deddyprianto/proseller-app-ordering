@@ -23,8 +23,11 @@ const Theme = () => {
     text1: 'black',
     text2: '#B7B7B7',
     text3: '#8A8D8E',
+    text4: 'white',
 
     border: '#D6D6D6',
+    border1: '#B7B7B7',
+    border2: 'white',
 
     textButtonDisabled: 'white',
     textButtonOutlined: 'black',

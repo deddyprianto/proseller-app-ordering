@@ -1,49 +1,66 @@
 import React from 'react';
-import {Text, TouchableOpacity, Modal} from 'react-native';
+import {Text, TouchableOpacity, Modal, StyleSheet, View} from 'react-native';
 import {Dialog, Portal, Provider} from 'react-native-paper';
 import colorConfig from '../../config/colorConfig';
+import Theme from '../../theme';
 
-const styles = {
-  container: {padding: 24},
-  title: {textAlign: 'center', fontSize: 16, fontWeight: 'bold'},
-  textContent: {
-    textAlign: 'center',
-    fontSize: 12,
-    fontWeight: '500',
-    color: '#B7B7B7',
-  },
-  actions: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    width: '100%',
-  },
-  touchableClose: {
-    borderColor: '#D6D6D6',
-    borderRadius: 8,
-    borderWidth: 1,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    width: '49%',
-  },
-  textClose: {
-    color: '#B7B7B7',
-    fontWeight: 'bold',
-    fontSize: 12,
-    textAlign: 'center',
-  },
-  touchableSubmit: {
-    backgroundColor: colorConfig.primaryColor,
-    borderRadius: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    width: '49%',
-  },
-  textSubmit: {
-    fontWeight: 'bold',
-    fontSize: 12,
-    color: 'white',
-    textAlign: 'center',
-  },
+const useStyles = () => {
+  const theme = Theme();
+  const styles = StyleSheet.create({
+    container: {
+      padding: 24,
+    },
+    footer: {
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+    },
+    textTitle: {
+      marginBottom: 24,
+      textAlign: 'center',
+      color: theme.colors.text1,
+      fontSize: theme.fontSize[16],
+      fontFamily: theme.fontFamily.poppinsSemiBold,
+    },
+    textContent: {
+      marginBottom: 24,
+      textAlign: 'center',
+      color: theme.colors.text2,
+      fontSize: theme.fontSize[12],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textClose: {
+      textAlign: 'center',
+      color: theme.colors.text2,
+      fontSize: theme.fontSize[12],
+      fontFamily: theme.fontFamily.poppinsSemiBold,
+    },
+    textSubmit: {
+      textAlign: 'center',
+      color: theme.colors.text4,
+      fontSize: theme.fontSize[12],
+      fontFamily: theme.fontFamily.poppinsSemiBold,
+    },
+    touchableClose: {
+      flex: 1,
+      borderRadius: 8,
+      borderWidth: 1,
+      paddingHorizontal: 16,
+      paddingVertical: 12,
+      borderColor: theme.colors.border,
+    },
+    touchableSubmit: {
+      flex: 1,
+      borderRadius: 8,
+      paddingVertical: 12,
+      paddingHorizontal: 16,
+      backgroundColor: theme.colors.primary,
+    },
+    space: {
+      marginHorizontal: 4,
+    },
+  });
+  return styles;
 };
 
 const ConfirmationDialog = ({
@@ -52,32 +69,49 @@ const ConfirmationDialog = ({
   handleClose,
   isLoading,
   textSubmit,
+  textCancel,
   textTitle,
   textDescription,
 }) => {
+  const styles = useStyles();
+
   const renderCloseButton = () => {
-    return (
-      <TouchableOpacity
-        style={styles.touchableClose}
-        onPress={handleClose}
-        disabled={isLoading}>
-        <Text style={styles.textClose}>Cancel</Text>
-      </TouchableOpacity>
-    );
+    const text = textCancel || 'Cancel';
+
+    if (handleClose) {
+      return (
+        <TouchableOpacity
+          style={styles.touchableClose}
+          onPress={handleClose}
+          disabled={isLoading}>
+          <Text style={styles.textClose}>{text}</Text>
+        </TouchableOpacity>
+      );
+    }
+  };
+
+  const renderSpace = () => {
+    if (handleClose && handleSubmit) {
+      return <View style={styles.space} />;
+    }
   };
 
   const renderSubmitButton = () => {
-    const text = isLoading ? 'Loading....' : textSubmit;
+    const text = textSubmit || 'Submit';
+    const textLoading = isLoading ? 'Loading....' : text;
 
-    return (
-      <TouchableOpacity
-        style={styles.touchableSubmit}
-        onPress={handleSubmit}
-        disabled={isLoading}>
-        <Text style={styles.textSubmit}>{text}</Text>
-      </TouchableOpacity>
-    );
+    if (handleSubmit) {
+      return (
+        <TouchableOpacity
+          style={styles.touchableSubmit}
+          onPress={handleSubmit}
+          disabled={isLoading}>
+          <Text style={styles.textSubmit}>{textLoading}</Text>
+        </TouchableOpacity>
+      );
+    }
   };
+
   return (
     <Modal animationType="none" transparent={true}>
       <Provider>
@@ -86,14 +120,13 @@ const ConfirmationDialog = ({
             visible={open}
             onDismiss={handleClose}
             style={styles.container}>
-            <Dialog.Title style={styles.title}>{textTitle}</Dialog.Title>
-            <Dialog.Content>
-              <Text style={styles.textContent}>{textDescription}</Text>
-            </Dialog.Content>
-            <Dialog.Actions style={styles.actions}>
+            <Text style={styles.textTitle}>{textTitle}</Text>
+            <Text style={styles.textContent}>{textDescription}</Text>
+            <View style={styles.footer}>
               {renderCloseButton()}
+              {renderSpace()}
               {renderSubmitButton()}
-            </Dialog.Actions>
+            </View>
           </Dialog>
         </Portal>
       </Provider>

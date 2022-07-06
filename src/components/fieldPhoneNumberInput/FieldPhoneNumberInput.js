@@ -10,7 +10,7 @@ import awsConfig from '../../config/awsConfig';
 const styles = StyleSheet.create({
   root: {
     width: '100%',
-    height: 56,
+    height: 48,
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',

@@ -5,45 +5,6 @@ import {fetchApiPayment} from '../service/apiPayment';
 import {isEmptyArray} from '../helper/CheckEmpty';
 import {Alert, Linking} from 'react-native';
 
-export const updateUser = payload => {
-  return async (dispatch, getState) => {
-    const state = getState();
-    try {
-      const {
-        authReducer: {
-          tokenUser: {token},
-        },
-      } = state;
-      console.log(payload, 'PAYLOAD EDIT');
-      const response = await fetchApi(
-        '/customer/updateProfile',
-        'PUT',
-        payload,
-        200,
-        token,
-      );
-      console.log('responsenya ', response);
-
-      // encrypt user data before save to asyncstorage
-      let dataUser = CryptoJS.AES.encrypt(
-        JSON.stringify(response.responseBody.Data),
-        awsConfig.PRIVATE_KEY_RSA,
-      ).toString();
-
-      if (response.success) {
-        dispatch({
-          type: 'GET_USER_SUCCESS',
-          payload: dataUser,
-        });
-      }
-
-      return response;
-    } catch (error) {
-      return error;
-    }
-  };
-};
-
 export const requestOTP = payload => {
   return async (dispatch, getState) => {
     const state = getState();
@@ -257,6 +218,19 @@ export const defaultAddress = defaultAddress => {
   };
 };
 
+export const setAddressTags = addressTags => {
+  return async dispatch => {
+    try {
+      dispatch({
+        type: 'SET_ADDRESS_TAGS',
+        data: addressTags,
+      });
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
 export const userPosition = userPosition => {
   return async dispatch => {
     try {
@@ -277,6 +251,45 @@ export const movePageIndex = status => {
         type: 'MOVE_PAGE_INDEX',
         status: status,
       });
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+//martin
+export const updateUser = payload => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      const response = await fetchApi(
+        '/customer/updateProfile',
+        'PUT',
+        payload,
+        200,
+        token,
+      );
+
+      // encrypt user data before save to asyncstorage
+      const dataUser = CryptoJS.AES.encrypt(
+        JSON.stringify(response.responseBody.Data),
+        awsConfig.PRIVATE_KEY_RSA,
+      ).toString();
+
+      if (response.success) {
+        dispatch({
+          type: 'GET_USER_SUCCESS',
+          payload: dataUser,
+        });
+      }
+
+      return response;
     } catch (error) {
       return error;
     }

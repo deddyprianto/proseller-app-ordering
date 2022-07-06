@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
     width: '90%',
   },
   viewInput: {
-    height: 56,
+    height: 48,
     width: '100%',
     display: 'flex',
     flexDirection: 'row',

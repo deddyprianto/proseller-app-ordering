@@ -6,6 +6,10 @@
 
 import {combineReducers} from 'redux';
 
+const defaultValue = {
+  addressTags: ['Home', 'Work', 'Office', 'Store'],
+};
+
 const getUser = (state = {}, action) => {
   switch (action.type) {
     case 'GET_USER_LOADING':
@@ -134,6 +138,20 @@ const selectedAddress = (state = {}, action) => {
   }
 };
 
+const addressTags = (_, action) => {
+  switch (action?.type) {
+    case 'SET_ADDRESS_TAGS':
+      return {
+        tags: action?.data,
+      };
+
+    default:
+      return {
+        tags: defaultValue.addressTags,
+      };
+  }
+};
+
 const defaultAddress = (state = {}, action) => {
   switch (action.type) {
     case 'GET_USER_DEFAULT_ADDRESS':
@@ -207,4 +225,5 @@ export default combineReducers({
   selectedAddress,
   offlineCart,
   customFields,
+  addressTags,
 });
