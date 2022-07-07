@@ -35,6 +35,7 @@ const Theme = () => {
   };
 
   const fontSize = {
+    8: 8,
     10: 10,
     12: 12,
     14: 14,

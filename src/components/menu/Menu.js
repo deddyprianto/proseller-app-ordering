@@ -26,14 +26,14 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import colorConfig from '../../config/colorConfig';
 import appConfig from '../../config/appConfig';
 import awsConfig from '../../config/awsConfig';
+import Theme from '../../theme';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
   container: {
-    paddingLeft: WIDTH * 0.025,
-    paddingRight: WIDTH * 0.025,
+    paddingHorizontal: 16,
   },
   buttonWelcome: {
     width: WIDTH * 0.45,
@@ -42,9 +42,70 @@ const styles = StyleSheet.create({
     height: HEIGHT * 0.25,
     width: WIDTH * 0.45,
   },
+  touchableOrderHere: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 10,
+    backgroundColor: colorConfig.primaryColor,
+    height: HEIGHT * 0.17,
+    width: WIDTH * 0.45,
+  },
+  touchableSendGift: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 10,
+    width: WIDTH * 0.28,
+    height: WIDTH * 0.28,
+    backgroundColor: colorConfig.forthColor,
+  },
+  touchableMyECard: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 10,
+    width: WIDTH * 0.28,
+    height: WIDTH * 0.28,
+    backgroundColor: colorConfig.forthColor,
+  },
+  touchableEStore: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 10,
+    width: WIDTH * 0.28,
+    height: WIDTH * 0.28,
+    backgroundColor: colorConfig.forthColor,
+  },
+  touchableWelcome: {
+    flex: 1,
+    height: 60,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 16,
+    elevation: 5,
+    paddingVertical: 11,
+    borderRadius: 10,
+    backgroundColor: '#F3F6FB',
+  },
+  touchableFavoriteOutlet: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 10,
+    width: WIDTH * 0.45,
+    height: HEIGHT * 0.08,
+    backgroundColor: '#F3F6FB',
+    elevation: 2,
+  },
 });
 
 const Menu = () => {
+  const theme = Theme();
   const [user, setUser] = useState({});
   const totalPoint = useSelector(
     state => state.rewardsReducer?.dataPoint?.totalPoint,
@@ -69,63 +130,52 @@ const Menu = () => {
   const renderWelcome = () => {
     return (
       <TouchableOpacity
+        style={styles.touchableWelcome}
         onPress={() => {
           Actions.redeem();
         }}>
+        <Text
+          style={{
+            color: theme.colors.primary,
+            fontSize: theme.fontSize[14],
+            fontFamily: theme.fontFamily.poppinsMedium,
+          }}
+          numberOfLines={1}>
+          Welcome {user?.name},
+        </Text>
+        <Text
+          style={{
+            color: theme.colors.text1,
+            fontSize: theme.fontSize[12],
+            fontFamily: theme.fontFamily.poppinsRegular,
+          }}>
+          {totalPoint} PTS
+        </Text>
         <View
           style={{
+            position: 'absolute',
+            right: 6,
+            bottom: 4,
             display: 'flex',
-            borderRadius: 10,
-            backgroundColor: '#F3F6FB',
-            height: HEIGHT * 0.08,
-            width: WIDTH * 0.45,
-            elevation: 1,
+            flexDirection: 'row',
+            alignItems: 'center',
           }}>
           <Text
             style={{
-              color: colorConfig.primaryColor,
               textAlign: 'center',
-              fontSize: 14,
-              fontWeight: 'bold',
-              marginTop: 5,
+              color: theme.colors.text1,
+              fontSize: theme.fontSize[8],
+              fontFamily: theme.fontFamily.poppinsRegular,
+            }}>
+            Redeem
+          </Text>
+          <MaterialIcons
+            name="keyboard-arrow-right"
+            style={{
+              color: theme.colors.text1,
+              fontSize: theme.fontSize[10],
             }}
-            numberOfLines={1}>
-            Welcome {user?.name}
-          </Text>
-
-          <Text
-            style={{
-              color: 'black',
-              textAlign: 'center',
-              fontSize: 14,
-            }}>
-            {totalPoint} PTS
-          </Text>
-
-          <View
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              alignItems: 'flex-start',
-              justifyContent: 'flex-end',
-              paddingRight: 10,
-            }}>
-            <Text
-              style={{
-                color: '#545455',
-                fontSize: 8,
-              }}>
-              Redeem
-            </Text>
-            <MaterialIcons
-              name="keyboard-arrow-right"
-              style={{
-                color: '#545455',
-                fontSize: 10,
-                paddingTop: 1,
-              }}
-            />
-          </View>
+          />
         </View>
       </TouchableOpacity>
     );
@@ -134,36 +184,24 @@ const Menu = () => {
   const renderMyFavoriteOutlet = () => {
     return (
       <TouchableOpacity
+        style={styles.touchableFavoriteOutlet}
         onPress={() => {
           Actions.myFavoriteOutlets();
         }}>
-        <View
+        <EvilIcons
+          name="star"
           style={{
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'center',
-            borderRadius: 10,
-            width: WIDTH * 0.45,
-            height: HEIGHT * 0.08,
-            backgroundColor: '#F3F6FB',
-            elevation: 2,
+            fontSize: 18,
+          }}
+        />
+        <Text
+          style={{
+            color: theme.colors.text1,
+            fontSize: theme.fontSize[12],
+            fontFamily: theme.fontFamily.poppinsRegular,
           }}>
-          <EvilIcons
-            name="star"
-            style={{
-              fontSize: 18,
-            }}
-          />
-          <Text
-            style={{
-              color: 'black',
-              textAlign: 'center',
-              fontSize: 14,
-            }}>
-            My Favorite Outlet
-          </Text>
-        </View>
+          My Favorite Outlet
+        </Text>
       </TouchableOpacity>
     );
   };
@@ -174,16 +212,7 @@ const Menu = () => {
         onPress={() => {
           Actions.push('orderHere');
         }}>
-        <View
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            borderRadius: 10,
-            backgroundColor: colorConfig.primaryColor,
-            height: HEIGHT * 0.17,
-            width: WIDTH * 0.45,
-          }}>
+        <View style={styles.touchableOrderHere}>
           <Text
             style={{
               color: 'white',
@@ -240,16 +269,7 @@ const Menu = () => {
         onPress={() => {
           Actions.push('eStore');
         }}>
-        <View
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            borderRadius: 10,
-            width: WIDTH * 0.28,
-            height: HEIGHT * 0.14,
-            backgroundColor: colorConfig.thirdColor,
-          }}>
+        <View style={styles.touchableEStore}>
           <Text
             style={{
               color: 'black',
@@ -278,16 +298,7 @@ const Menu = () => {
         onPress={() => {
           Actions.push('eCard');
         }}>
-        <View
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            borderRadius: 10,
-            width: WIDTH * 0.28,
-            height: HEIGHT * 0.14,
-            backgroundColor: colorConfig.forthColor,
-          }}>
+        <View style={styles.touchableMyECard}>
           <Text
             style={{
               color: 'black',
@@ -316,16 +327,7 @@ const Menu = () => {
         onPress={() => {
           Actions.push('eGift');
         }}>
-        <View
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            borderRadius: 10,
-            width: WIDTH * 0.28,
-            height: HEIGHT * 0.14,
-            backgroundColor: colorConfig.fifthColor,
-          }}>
+        <View style={styles.touchableSendGift}>
           <Text
             style={{
               color: 'black',
@@ -363,7 +365,7 @@ const Menu = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <View
         style={{
           display: 'flex',
@@ -395,7 +397,7 @@ const Menu = () => {
         resizeMode="contain"
       />
       <View style={{marginTop: 10}} />
-    </SafeAreaView>
+    </View>
   );
 };
 
