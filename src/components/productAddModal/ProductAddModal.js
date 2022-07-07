@@ -197,6 +197,7 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
   const [productUpdate, setProductUpdate] = useState({});
   const [selectedVariantOptions, setSelectedVariantOptions] = useState([]);
   const [variantImageURL, setVariantImageURL] = useState('');
+  const [variantRetailPrice, setVariantRetailPrice] = useState(0);
   const [selectedProductModifiers, setSelectedProductModifiers] = useState([]);
   const [notes, setNotes] = useState('');
 
@@ -273,6 +274,7 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
 
     setVariantImageURL(productVariant?.defaultImageURL);
     setVariantName(productVariantName.join(' '));
+    setVariantRetailPrice(productVariant?.retailPrice);
 
     handlePrice({
       qty,
@@ -386,14 +388,14 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
   };
 
   const renderNameAndPrice = () => {
+    const price = variantRetailPrice || product?.retailPrice;
+
     return (
       <View style={styles.viewNameAndPrice}>
         <Text style={styles.textName}>
           {product?.name} {variantName}
         </Text>
-        <Text style={styles.textPrice}>
-          {currencyFormatter(product?.retailPrice)}
-        </Text>
+        <Text style={styles.textPrice}>{currencyFormatter(price)}</Text>
       </View>
     );
   };
