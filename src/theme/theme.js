@@ -6,9 +6,6 @@
 
 import {useSelector} from 'react-redux';
 
-//noted
-//#F9F9F9
-
 const Theme = () => {
   const colorSettings = useSelector(
     state => state.settingReducer.colorSettings,
