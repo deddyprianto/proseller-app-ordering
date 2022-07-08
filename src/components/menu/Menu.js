@@ -35,21 +35,14 @@ const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 16,
   },
-  buttonWelcome: {
-    width: WIDTH * 0.45,
-  },
-  buttonOrder: {
-    height: HEIGHT * 0.25,
-    width: WIDTH * 0.45,
-  },
   touchableOrderHere: {
+    flex: 1,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 10,
     backgroundColor: colorConfig.primaryColor,
-    height: HEIGHT * 0.17,
-    width: WIDTH * 0.45,
+    marginLeft: 8,
   },
   touchableSendGift: {
     display: 'flex',
@@ -85,22 +78,25 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 16,
-    elevation: 5,
-    paddingVertical: 11,
     borderRadius: 10,
+    marginBottom: 16,
+    marginRight: 8,
+    paddingVertical: 11,
+    elevation: 5,
     backgroundColor: '#F3F6FB',
   },
   touchableFavoriteOutlet: {
+    flex: 1,
+    height: 60,
     display: 'flex',
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'center',
+    alignItems: 'center',
     borderRadius: 10,
-    width: WIDTH * 0.45,
-    height: HEIGHT * 0.08,
+    marginRight: 8,
+    paddingVertical: 11,
+    elevation: 5,
     backgroundColor: '#F3F6FB',
-    elevation: 2,
   },
 });
 
@@ -209,55 +205,54 @@ const Menu = () => {
   const renderOrderHere = () => {
     return (
       <TouchableOpacity
+        style={styles.touchableOrderHere}
         onPress={() => {
           Actions.push('orderHere');
         }}>
-        <View style={styles.touchableOrderHere}>
-          <Text
-            style={{
-              color: 'white',
-              textAlign: 'center',
-              fontSize: 18,
-              fontWeight: 'bold',
-            }}>
-            ORDER
-          </Text>
+        <Text
+          style={{
+            color: 'white',
+            textAlign: 'center',
+            fontSize: 18,
+            fontWeight: 'bold',
+          }}>
+          ORDER
+        </Text>
 
+        <Text
+          style={{
+            color: 'white',
+            textAlign: 'center',
+            fontSize: 18,
+            fontWeight: 'bold',
+          }}>
+          HERE
+        </Text>
+        <View
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            position: 'absolute',
+            bottom: 6,
+            right: 10,
+          }}>
+          <FontAwesome
+            name="star"
+            style={{
+              color: 'white',
+              fontSize: 3,
+              paddingTop: 3,
+              paddingRight: 2,
+            }}
+          />
           <Text
             style={{
               color: 'white',
               textAlign: 'center',
-              fontSize: 18,
-              fontWeight: 'bold',
+              fontSize: 8,
             }}>
-            HERE
+            For Dine-in and Takeaway Only
           </Text>
-          <View
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              position: 'absolute',
-              bottom: 6,
-              right: 10,
-            }}>
-            <FontAwesome
-              name="star"
-              style={{
-                color: 'white',
-                fontSize: 3,
-                paddingTop: 3,
-                paddingRight: 2,
-              }}
-            />
-            <Text
-              style={{
-                color: 'white',
-                textAlign: 'center',
-                fontSize: 8,
-              }}>
-              For Dine-in and Takeaway Only
-            </Text>
-          </View>
         </View>
       </TouchableOpacity>
     );
@@ -354,6 +349,7 @@ const Menu = () => {
     return (
       <View
         style={{
+          flex: 1,
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-between',
