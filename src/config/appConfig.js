@@ -60,6 +60,9 @@ const appConfig = {
   funtoastOnboarding3: require('../assets/img/FuntoastOnBoarding03.png'),
 
   //ICON MARTIN
+  iconNotes: require('../assets/img/icon-notes.png'),
+  iconClose: require('../assets/img/icon-close.png'),
+  iconEdit: require('../assets/img/icon-edit.png'),
   iconPlus: require('../assets/img/icon-plus.png'),
   iconMinus: require('../assets/img/icon-minus.png'),
   iconLocation: require('../assets/img/icon-location.png'),
