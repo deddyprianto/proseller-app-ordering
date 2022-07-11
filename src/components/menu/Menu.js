@@ -22,7 +22,6 @@ import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
-import colorConfig from '../../config/colorConfig';
 import appConfig from '../../config/appConfig';
 import awsConfig from '../../config/awsConfig';
 import Theme from '../../theme';
@@ -89,8 +88,8 @@ const useStyles = () => {
       fontFamily: theme.fontFamily.poppinsSemiBold,
     },
     textDineIn: {
-      color: theme.colors.text1,
-      fontSize: theme.fontSize[12],
+      color: theme.colors.text4,
+      fontSize: theme.fontSize[8],
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     viewWelcomeAndFavorite: {
@@ -120,9 +119,9 @@ const useStyles = () => {
       alignItems: 'center',
       justifyContent: 'center',
       borderRadius: 10,
-      backgroundColor: colorConfig.primaryColor,
       marginLeft: 8,
       elevation: 5,
+      backgroundColor: theme.colors.primary,
     },
     touchableSendGift: {
       display: 'flex',
@@ -131,8 +130,8 @@ const useStyles = () => {
       borderRadius: 10,
       width: WIDTH * 0.28,
       height: WIDTH * 0.28,
-      backgroundColor: '#F7DFD5',
       elevation: 5,
+      backgroundColor: '#F7DFD5',
     },
     touchableMyECard: {
       display: 'flex',
@@ -141,8 +140,8 @@ const useStyles = () => {
       borderRadius: 10,
       width: WIDTH * 0.28,
       height: WIDTH * 0.28,
-      backgroundColor: '#E7A1A1',
       elevation: 5,
+      backgroundColor: '#E7A1A1',
     },
     touchableEStore: {
       display: 'flex',
@@ -151,8 +150,8 @@ const useStyles = () => {
       borderRadius: 10,
       width: WIDTH * 0.28,
       height: WIDTH * 0.28,
-      backgroundColor: '#9CCEC2',
       elevation: 5,
+      backgroundColor: '#9CCEC2',
     },
     touchableWelcome: {
       flex: 1,
@@ -189,10 +188,10 @@ const useStyles = () => {
       fontSize: 18,
     },
     iconDineIn: {
-      color: 'white',
       fontSize: 3,
       paddingTop: 3,
       paddingRight: 2,
+      color: 'white',
     },
   });
   return styles;
