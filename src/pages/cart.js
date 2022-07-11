@@ -443,7 +443,11 @@ const Cart = () => {
   const handleDisabledPaymentButton = value => {
     switch (value) {
       case 'DELIVERY':
-        if (isEmptyArray(availableTimes)) {
+        if (
+          isEmptyArray(availableTimes) &&
+          deliveryAddress &&
+          basket?.provider
+        ) {
           return false;
         } else if (
           deliveryAddress &&

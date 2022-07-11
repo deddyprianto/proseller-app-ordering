@@ -17,8 +17,8 @@ import {
   Text,
   TouchableOpacity,
   ScrollView,
+  Image,
 } from 'react-native';
-import IconOcticons from 'react-native-vector-icons/Octicons';
 
 import Header from '../components/layout/header';
 
@@ -26,7 +26,6 @@ import FieldTextInput from '../components/fieldTextInput';
 import FieldPhoneNumberInput from '../components/fieldPhoneNumberInput';
 
 import awsConfig from '../config/awsConfig';
-import colorConfig from '../config/colorConfig';
 
 import {updateUser} from '../actions/user.action';
 import FieldCheckBox from '../components/fieldCheckBox';
@@ -36,14 +35,15 @@ import FieldAddressTag from '../components/fieldAddressTag';
 import Theme from '../theme';
 import ConfirmationDialog from '../components/confirmationDialog';
 import {showSnackbar} from '../actions/setting.action';
+import appConfig from '../config/appConfig';
 
 const useStyles = () => {
   const theme = Theme();
   const styles = StyleSheet.create({
     root: {
       flex: 1,
-      backgroundColor: theme.colors.background,
       justifyContent: 'space-between',
+      backgroundColor: theme.colors.background,
     },
     footer: {
       borderTopWidth: 0.2,
@@ -64,12 +64,14 @@ const useStyles = () => {
       fontFamily: theme.fontFamily.poppinsSemiBold,
     },
     textSave: {
-      fontSize: 12,
-      fontWeight: '500',
-      color: 'white',
+      color: theme.colors.text4,
+      fontSize: theme.fontSize[12],
+      fontFamily: theme.fontFamily.poppinsMedium,
     },
     textCoordinate: {
-      color: 'white',
+      color: theme.colors.text4,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsRegular,
     },
     viewMap: {
       alignItems: 'center',
@@ -78,35 +80,36 @@ const useStyles = () => {
       borderRadius: 8,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: colorConfig.primaryColor,
       paddingVertical: 10,
+      backgroundColor: theme.colors.primary,
     },
     touchableSaveDisabled: {
       borderRadius: 8,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: '#B7B7B7',
       paddingVertical: 10,
+      backgroundColor: theme.colors.buttonDisabled,
     },
     touchableCoordinate: {
-      backgroundColor: colorConfig.primaryColor,
       width: '100%',
       height: 30,
       display: 'flex',
       flexDirection: 'row',
       alignItems: 'center',
       paddingHorizontal: 10,
+      backgroundColor: theme.colors.primary,
     },
-    iconCoordinate: {
-      fontSize: 15,
-      color: 'white',
+    iconLocation: {
+      width: 17,
+      height: 17,
       marginRight: 10,
+      tintColor: theme.colors.text4,
     },
     divider: {
       width: '100%',
       height: 1,
-      backgroundColor: '#00000080',
       marginVertical: 12,
+      backgroundColor: theme.colors.border,
     },
   });
   return styles;
@@ -447,7 +450,7 @@ const AddNewAddress = ({address, coordinate}) => {
             Actions.pickCoordinate();
           }}
           style={styles.touchableCoordinate}>
-          <IconOcticons style={styles.iconCoordinate} name="location" />
+          <Image source={appConfig.iconLocation} style={styles.iconLocation} />
           <Text style={styles.textCoordinate}>Pick a Coordinate</Text>
         </TouchableOpacity>
       </View>

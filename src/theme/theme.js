@@ -17,7 +17,10 @@ const Theme = () => {
   const colors = {
     primary: '#CF3030',
     secondary: colorSettings?.secondaryColor || 'black',
+
     background: 'white',
+    background2: '#F9F9F9',
+
     header: 'white',
 
     text1: 'black',

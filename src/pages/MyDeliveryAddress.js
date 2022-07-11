@@ -5,42 +5,68 @@
  * PT Edgeworks
  */
 
-import React from 'react';
+import React, {useEffect, useState} from 'react';
+
+import {Actions} from 'react-native-router-flux';
+import CryptoJS from 'react-native-crypto-js';
+import {useSelector} from 'react-redux';
 
 import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
-import {Actions} from 'react-native-router-flux';
+
 import Header from '../components/layout/header';
 import MyDeliveryAddressList from '../components/myDeliveryAddressList';
 
-import colorConfig from '../config/colorConfig';
+import awsConfig from '../config/awsConfig';
 
-const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    backgroundColor: '#F9F9F9',
-    justifyContent: 'space-between',
-  },
-  textAddNewAddressButton: {
-    fontSize: 12,
-    fontWeight: '500',
-    color: 'white',
-  },
-  footer: {
-    borderTopWidth: 0.2,
-    borderTopColor: 'grey',
-    padding: 16,
-    backgroundColor: 'white',
-  },
-  touchableAddNewAddressButton: {
-    borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: colorConfig.primaryColor,
-    paddingVertical: 10,
-  },
-});
+import Theme from '../theme';
+
+const useStyles = () => {
+  const theme = Theme();
+  const styles = StyleSheet.create({
+    root: {
+      flex: 1,
+      justifyContent: 'space-between',
+      backgroundColor: theme.colors.background2,
+    },
+    textAddNewAddressButton: {
+      color: theme.colors.text4,
+      fontSize: theme.fontSize[12],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    footer: {
+      borderTopWidth: 0.2,
+      padding: 16,
+      borderTopColor: theme.colors.border1,
+      backgroundColor: theme.colors.background,
+    },
+    touchableAddNewAddressButton: {
+      borderRadius: 8,
+      justifyContent: 'center',
+      alignItems: 'center',
+      paddingVertical: 10,
+      backgroundColor: theme.colors.primary,
+    },
+  });
+  return styles;
+};
 
 const MyDeliveryAddress = () => {
+  const styles = useStyles();
+  const [deliveryAddress, setDeliveryAddress] = useState([]);
+
+  const userDetail = useSelector(
+    state => state.userReducer.getUser.userDetails,
+  );
+
+  useEffect(() => {
+    const userDecrypt = CryptoJS.AES.decrypt(
+      userDetail,
+      awsConfig.PRIVATE_KEY_RSA,
+    );
+    const result = JSON.parse(userDecrypt.toString(CryptoJS.enc.Utf8));
+    setDeliveryAddress(result?.deliveryAddress || []);
+  }, [userDetail]);
+
   const renderFooter = () => {
     return (
       <View style={styles.footer}>
@@ -58,7 +84,7 @@ const MyDeliveryAddress = () => {
   return (
     <View style={styles.root}>
       <Header title="My Delivery Address" />
-      <MyDeliveryAddressList />
+      <MyDeliveryAddressList deliveryAddress={deliveryAddress} />
       {renderFooter()}
     </View>
   );
