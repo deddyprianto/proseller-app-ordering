@@ -123,10 +123,10 @@ const AddNewAddress = ({address, coordinate}) => {
   const [recipientName, setRecipientName] = useState('');
   const [mobileNumber, setMobileNumber] = useState('');
   const [countryCode, setCountryCode] = useState('');
-  const [latitude, setLatitude] = useState('');
-  const [longitude, setLongitude] = useState('');
-  const [latitudeDelta, setLatitudeDelta] = useState('');
-  const [longitudeDelta, setLongitudeDelta] = useState('');
+  const [latitude, setLatitude] = useState(0);
+  const [longitude, setLongitude] = useState(0);
+  const [latitudeDelta, setLatitudeDelta] = useState(0);
+  const [longitudeDelta, setLongitudeDelta] = useState(0);
 
   const [isSelected, setIsSelected] = useState(false);
   const [isOpenDeleteModal, setIsOpenDeleteModal] = useState(false);
@@ -165,10 +165,10 @@ const AddNewAddress = ({address, coordinate}) => {
       setRecipientName(address?.recipient?.name || '');
       setMobileNumber(address?.recipient?.mobileNumber || '');
       setCountryCode(address?.recipient?.countryCode || '');
-      setLatitude(address?.coordinate?.latitude || '1.29027');
-      setLongitude(address?.coordinate?.longitude || '103.851959');
-      setLatitudeDelta(address?.coordinate?.latitudeDelta || '0.001');
-      setLongitudeDelta(address?.coordinate?.longitudeDelta || '0.001');
+      setLatitude(address?.coordinate?.latitude || 1.29027);
+      setLongitude(address?.coordinate?.longitude || 103.851959);
+      setLatitudeDelta(address?.coordinate?.latitudeDelta || 0.001);
+      setLongitudeDelta(address?.coordinate?.longitudeDelta || 0.001);
       setIsDefault(address?.isDefault || false);
     }
   }, [address]);
