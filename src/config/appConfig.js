@@ -59,6 +59,9 @@ const appConfig = {
   funtoastOnboarding2: require('../assets/img/FuntoastOnBoarding02.png'),
   funtoastOnboarding3: require('../assets/img/FuntoastOnBoarding03.png'),
 
+  //LOGO MARTIN
+  logoMerchant: require('../assets/img/logo.png'),
+
   //ICON MARTIN
   iconNotes: require('../assets/img/icon-notes.png'),
   iconClose: require('../assets/img/icon-close.png'),

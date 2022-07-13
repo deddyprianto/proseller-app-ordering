@@ -16,6 +16,7 @@ import {isEmptyArray} from '../../../helper/CheckEmpty';
 
 import ProductUpdateModal from '../../productUpdateModal';
 import ProductAddModal from '../../productAddModal';
+import appConfig from '../../../config/appConfig';
 
 const styles = StyleSheet.create({
   root: {
@@ -127,9 +128,9 @@ const Product = ({product, basket}) => {
   const renderImage = () => {
     const image = product?.defaultImageURL
       ? {uri: product?.defaultImageURL}
-      : null;
+      : appConfig.logoMerchant;
 
-    return <Image style={styles.image} resizeMode="stretch" source={image} />;
+    return <Image style={styles.image} resizeMode="center" source={image} />;
   };
 
   const renderQty = () => {

@@ -1,70 +1,175 @@
-import React from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 
-import {StyleSheet, View, Text, Dimensions} from 'react-native';
-
-import colorConfig from '../config/colorConfig';
+import {
+  StyleSheet,
+  View,
+  Text,
+  RefreshControl,
+  ScrollView,
+  TouchableOpacity,
+} from 'react-native';
+import {Actions} from 'react-native-router-flux';
+import {useDispatch, useSelector} from 'react-redux';
+import {getBasket, getProductEStoreByOutlet} from '../actions/product.action';
+import IconAntDesign from 'react-native-vector-icons/AntDesign';
 
 import EStoreList from '../components/eStoreList/EStoreList';
-import {SafeAreaView} from 'react-navigation';
+import {isEmptyArray} from '../helper/CheckEmpty';
+import CurrencyFormatter from '../helper/CurrencyFormatter';
+import Theme from '../theme';
 
-const WIDTH = Dimensions.get('window').width;
-const HEIGHT = Dimensions.get('window').height;
+const useStyles = () => {
+  const theme = Theme();
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      width: '100%',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: theme.colors.background,
+    },
+    footer: {
+      position: 'absolute',
+      bottom: 10,
+      width: '100%',
+      paddingHorizontal: 16,
+    },
+    icon: {
+      fontSize: 13,
+      color: 'white',
+      marginRight: 7,
+    },
+    textTitle: {
+      color: theme.colors.text1,
+      fontSize: theme.fontSize[12],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textDescription: {
+      marginBottom: 16,
+      color: theme.colors.text1,
+      fontSize: theme.fontSize[12],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textButtonCart: {
+      fontWeight: 'bold',
+      fontSize: 11,
+      color: 'white',
+    },
+    viewTitle: {
+      marginVertical: 16,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: 50,
+      paddingVertical: 8,
+      paddingHorizontal: 32,
+      backgroundColor: '#C0EADE',
+    },
+    viewIconAndTextCart: {
+      display: 'flex',
+      flexDirection: 'row',
+    },
+    viewButtonCart: {
+      width: '100%',
+      display: 'flex',
+      flexDirection: 'row',
+      backgroundColor: theme.colors.primary,
+      padding: 14,
+      justifyContent: 'space-between',
+      borderRadius: 8,
+      alignItems: 'center',
+    },
+  });
 
-const styles = StyleSheet.create({
-  container: {
-    marginTop: HEIGHT * 0.01,
-  },
-  viewHeader: {
-    width: WIDTH,
-    display: 'flex',
-    alignItems: 'center',
-  },
-  viewBody: {
-    display: 'flex',
-    justifyContent: 'center',
-  },
-  viewTitle: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 9,
-
-    width: WIDTH * 0.35,
-    height: HEIGHT * 0.035,
-    backgroundColor: colorConfig.thirdColor,
-  },
-  textTitle: {
-    color: 'black',
-    textAlign: 'center',
-    fontSize: 14,
-    letterSpacing: 0.5,
-  },
-  textDescription: {
-    color: 'black',
-    textAlign: 'center',
-    fontSize: 12,
-    width: WIDTH * 0.6,
-    letterSpacing: 0.2,
-    marginTop: 30,
-    marginBottom: 20,
-  },
-});
+  return styles;
+};
 
 const EStore = () => {
+  const styles = useStyles();
+  const dispatch = useDispatch();
+  const [refresh, setRefresh] = useState(false);
+
+  const defaultOutlet = useSelector(
+    state => state.storesReducer.defaultOutlet.defaultOutlet,
+  );
+  const basket = useSelector(state => state.orderReducer?.dataBasket?.product);
+  const products = useSelector(
+    state => state.productReducer?.productsEStoreOutlet?.products,
+  );
+
+  console.log('MARTIN', products);
+
+  const loadData = useCallback(async () => {
+    await dispatch(getProductEStoreByOutlet(defaultOutlet.id));
+    await dispatch(getBasket());
+  }, [dispatch, defaultOutlet]);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
+
+  const handleRefresh = async () => {
+    setRefresh(true);
+    await loadData();
+    setRefresh(false);
+  };
+
+  const renderTextEStore = () => {
+    return (
+      <View style={styles.viewTitle}>
+        <Text style={styles.textTitle}>E - Store</Text>
+      </View>
+    );
+  };
+
+  const renderTextDescription = () => {
+    return (
+      <Text style={styles.textDescription}>
+        Get Fun Toast merchandises here
+      </Text>
+    );
+  };
+
+  const renderButtonCart = () => {
+    if (!isEmptyArray(basket?.details)) {
+      return (
+        <TouchableOpacity
+          style={styles.viewButtonCart}
+          onPress={() => {
+            Actions.cart();
+          }}>
+          <View style={styles.viewIconAndTextCart}>
+            <IconAntDesign name="shoppingcart" style={styles.icon} />
+            <Text style={styles.textButtonCart}>
+              {basket?.details?.length} Items in Cart
+            </Text>
+          </View>
+          <Text style={styles.textButtonCart}>
+            {CurrencyFormatter(basket?.totalNettAmount)}
+          </Text>
+        </TouchableOpacity>
+      );
+    }
+  };
+
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.viewHeader}>
-        <View style={styles.viewTitle}>
-          <Text style={styles.textTitle}>E - Store</Text>
-        </View>
-        <Text style={styles.textDescription}>
-          Get Fun Toast merchandises here
-        </Text>
-      </View>
-      <View style={styles.viewBody}>
-        <EStoreList />
-      </View>
-    </SafeAreaView>
+    <ScrollView
+      contentContainerStyle={styles.container}
+      refreshControl={
+        <RefreshControl
+          refreshing={refresh}
+          onRefresh={() => {
+            handleRefresh();
+          }}
+        />
+      }>
+      {renderTextEStore()}
+      {renderTextDescription()}
+      <EStoreList products={products} basket={basket} />
+      <View style={styles.footer}>{renderButtonCart()}</View>
+    </ScrollView>
   );
 };
 

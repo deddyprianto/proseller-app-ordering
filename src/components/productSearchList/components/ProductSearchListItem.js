@@ -7,14 +7,7 @@
 
 import React, {useState, useEffect} from 'react';
 
-import {
-  StyleSheet,
-  View,
-  Text,
-  Image,
-  Dimensions,
-  TouchableOpacity,
-} from 'react-native';
+import {StyleSheet, View, Text, Image, TouchableOpacity} from 'react-native';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
 import colorConfig from '../../../config/colorConfig';
 import filter from 'lodash/filter';
@@ -23,6 +16,7 @@ import {isEmptyArray} from '../../../helper/CheckEmpty';
 
 import ProductUpdateModal from '../../productUpdateModal';
 import ProductAddModal from '../../productAddModal';
+import appConfig from '../../../config/appConfig';
 
 const styles = StyleSheet.create({
   root: {
@@ -134,9 +128,9 @@ const ProductSearchListItem = ({product, basket}) => {
   const renderImage = () => {
     const image = product?.defaultImageURL
       ? {uri: product?.defaultImageURL}
-      : null;
+      : appConfig.logoMerchant;
 
-    return <Image style={styles.image} resizeMode="stretch" source={image} />;
+    return <Image style={styles.image} resizeMode="center" source={image} />;
   };
 
   const renderQty = () => {

@@ -13,9 +13,11 @@ const Theme = () => {
 
   const colors = {
     primary: '#CF3030',
-    secondary: colorSettings?.secondaryColor || 'black',
+    secondary: '#F9F9F9',
+
     background: 'white',
     backgroundTransparent: 'rgba(0, 0, 0, 0.5)',
+
     header: 'white',
 
     text1: 'black',
