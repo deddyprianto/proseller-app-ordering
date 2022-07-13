@@ -144,9 +144,9 @@ const AddNewAddress = ({address, coordinate}) => {
     state => state.userReducer.getUser.userDetails,
   );
 
-  const titleHeader = !isEmptyObject(address)
-    ? 'Edit Address'
-    : 'Add New Address';
+  const update = !isEmptyObject(address);
+
+  const titleHeader = update ? 'Edit Address' : 'Add New Address';
 
   useEffect(() => {
     const userDecrypt = CryptoJS.AES.decrypt(
@@ -270,7 +270,6 @@ const AddNewAddress = ({address, coordinate}) => {
     Actions.pop();
 
     if (result.success) {
-      const update = !isEmptyObject(address);
       const text = update
         ? 'Address has been successfully changed'
         : 'New address added';
@@ -300,6 +299,14 @@ const AddNewAddress = ({address, coordinate}) => {
 
   const handleCloseDeleteModal = () => {
     setIsOpenDeleteModal(false);
+  };
+
+  const handleButtonSave = () => {
+    if (update) {
+      handleOpenEditModal();
+    } else {
+      handleClickSave();
+    }
   };
 
   const handleCheckboxSelected = () => {
@@ -478,7 +485,7 @@ const AddNewAddress = ({address, coordinate}) => {
       unitNumber &&
       postalCode &&
       recipientName &&
-      mobileNumber
+      mobileNumber?.length > 6
     ) {
       return true;
     }
@@ -499,7 +506,7 @@ const AddNewAddress = ({address, coordinate}) => {
           style={styleActive}
           disabled={!active || isLoading}
           onPress={() => {
-            handleOpenEditModal();
+            handleButtonSave();
           }}>
           <Text style={styles.textSave}>{text}</Text>
         </TouchableOpacity>

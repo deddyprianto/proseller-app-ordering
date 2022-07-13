@@ -127,6 +127,7 @@ const Register = () => {
         type="phone"
         label="Enter mobile number to begin :"
         value={phoneNumber}
+        placeholder="Mobile Number"
         onChangeCountryCode={value => {
           setCountryCode(value);
         }}

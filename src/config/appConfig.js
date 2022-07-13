@@ -66,6 +66,7 @@ const appConfig = {
   iconArrowDown: require('../assets/img/icon-arrow-down.png'),
   iconArrowLeft: require('../assets/img/icon-arrow-left.png'),
   iconArrowRight: require('../assets/img/icon-arrow-right.png'),
+  iconCheck: require('../assets/img/icon-check.png'),
   iconClose: require('../assets/img/icon-close.png'),
   iconPlus: require('../assets/img/icon-plus.png'),
   iconMinus: require('../assets/img/icon-minus.png'),

@@ -221,7 +221,7 @@ export const defaultAddress = defaultAddress => {
 export const setAddressTags = addressTags => {
   return async dispatch => {
     try {
-      dispatch({
+      await dispatch({
         type: 'SET_ADDRESS_TAGS',
         data: addressTags,
       });

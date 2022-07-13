@@ -41,6 +41,9 @@ const Theme = () => {
     navigationColor: colorSettings?.navigationColor || 'black',
     textButtonColor: colorSettings?.textButtonColor || 'black',
     textWarningColor: colorSettings?.textWarningColor || 'black',
+
+    snackbarSuccess: '#5CD423',
+    snackbarFailed: '#CF3030',
   };
 
   const fontSize = {

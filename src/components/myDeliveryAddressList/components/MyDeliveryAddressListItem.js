@@ -177,7 +177,10 @@ const MyDeliveryAddressItem = ({item}) => {
   }, [userDetail]);
 
   const handleOpenConfirmationModal = () => {
-    setIsOpenModal(true);
+    const isAlreadySelected = user?.selectedAddress?.index === item?.index;
+    if (!isAlreadySelected) {
+      setIsOpenModal(true);
+    }
   };
 
   const handleCloseConfirmationModal = () => {
@@ -204,6 +207,7 @@ const MyDeliveryAddressItem = ({item}) => {
     setIsLoading(true);
     await dispatch(updateUser(payload));
     setIsLoading(false);
+    handleCloseConfirmationModal();
   };
 
   const renderDividerDashed = () => {

@@ -20,7 +20,6 @@ const useStyles = () => {
     container: {
       flex: 1,
       height: 48,
-      maxHeight: 48,
       borderWidth: 1,
       borderRadius: 8,
       justifyContent: 'center',
@@ -52,6 +51,14 @@ const useStyles = () => {
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textInput: {
+      marginBottom: -3,
+      padding: 0,
+      color: theme.colors.text1,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textInputLabel: {
+      marginBottom: -3,
       height: 21,
       padding: 0,
       color: theme.colors.text1,
@@ -137,36 +144,57 @@ const FieldAddressTag = ({value, onChange}) => {
   const dispatch = useDispatch();
   const styles = useStyles();
 
-  const [isOpenModal, setIsOpenModal] = useState(false);
+  const [isOpenDeleteModal, setIsOpenDeleteModal] = useState(false);
+  const [
+    isOpenNotificationMaximumModal,
+    setIsOpenNotificationMaximumModal,
+  ] = useState(false);
+  const [
+    isOpenNotificationDuplicateModal,
+    setIsOpenNotificationDuplicateModal,
+  ] = useState(false);
   const [isAddTags, setIsAddTags] = useState(false);
   const [textValue, setTextValue] = useState('');
 
-  const addressTags = useSelector(state => state.userReducer.addressTags.tags);
-  const currentValue = value || addressTags[0];
+  const addressTags =
+    useSelector(state => state.userReducer?.addressTags?.tags) || [];
 
   useEffect(() => {
-    onChange(currentValue);
-  }, [onChange, currentValue]);
+    onChange(value);
+  }, [onChange, value]);
 
   const handleAddTag = async () => {
     const payload = [...addressTags, textValue];
     onChange(textValue);
+
     setTextValue('');
     setIsAddTags(false);
     await dispatch(setAddressTags(payload));
   };
 
+  const handleCheckTag = () => {
+    const isDuplicate = addressTags?.find(value => value === textValue);
+
+    if (!isDuplicate) {
+      handleAddTag();
+    } else {
+      setIsOpenNotificationDuplicateModal(true);
+    }
+  };
+
   const handleRemoveTag = async () => {
     const payload = [...addressTags];
-    const selectedIndex = payload.indexOf(currentValue);
+    const selectedIndex = payload.indexOf(value);
+    const isIndexFounded = selectedIndex !== -1;
 
-    if (selectedIndex !== -1) {
+    if (isIndexFounded) {
       payload.splice(selectedIndex, 1);
     }
 
     const lastIndex = payload.length - 1;
     onChange(payload[lastIndex]);
     await dispatch(setAddressTags(payload));
+    setIsOpenDeleteModal(false);
   };
 
   const handleSelectTag = tag => {
@@ -174,10 +202,10 @@ const FieldAddressTag = ({value, onChange}) => {
   };
 
   const handleButtonAddNewTag = () => {
-    if (addressTags.length >= 10) {
+    if (addressTags?.length || 0 <= 10) {
       setIsAddTags(!isAddTags);
     } else {
-      setIsOpenModal(true);
+      setIsOpenNotificationMaximumModal(true);
     }
   };
 
@@ -186,7 +214,7 @@ const FieldAddressTag = ({value, onChange}) => {
       return (
         <TouchableOpacity
           onPress={() => {
-            handleRemoveTag();
+            setIsOpenDeleteModal(true);
           }}
           style={styles.viewButtonRemove}>
           <Image source={appConfig.iconClose} style={styles.iconRemove} />
@@ -196,7 +224,7 @@ const FieldAddressTag = ({value, onChange}) => {
   };
 
   const renderAddressTagListItem = tag => {
-    const selected = tag === currentValue;
+    const selected = tag === value;
     const styleView = selected
       ? styles.viewAddressTagListItemSelected
       : styles.viewAddressTagListItem;
@@ -228,7 +256,7 @@ const FieldAddressTag = ({value, onChange}) => {
   };
 
   const renderAddressTagList = () => {
-    const results = addressTags.map(tag => {
+    const results = addressTags?.map(tag => {
       return renderAddressTagListItem(tag);
     });
 
@@ -247,11 +275,12 @@ const FieldAddressTag = ({value, onChange}) => {
   };
 
   const renderInput = () => {
+    const styleInput = textValue ? styles.textInputLabel : styles.textInput;
     return (
       <View style={styles.container}>
         {renderLabel()}
         <TextInput
-          style={styles.textInput}
+          style={styleInput}
           value={textValue}
           placeholder="New Tag"
           onChangeText={value => {
@@ -267,7 +296,7 @@ const FieldAddressTag = ({value, onChange}) => {
       <TouchableOpacity
         style={styles.viewButtonAddTag}
         onPress={() => {
-          handleAddTag();
+          handleCheckTag();
         }}>
         <Text style={styles.textAddTag}>Add Tag</Text>
       </TouchableOpacity>
@@ -289,27 +318,75 @@ const FieldAddressTag = ({value, onChange}) => {
     return <Text style={styles.textLabelAddressTag}>Address Tag</Text>;
   };
 
-  const renderConfirmationDialog = () => {
-    if (isOpenModal) {
+  const renderNotificationMaximumDialog = () => {
+    if (isOpenNotificationMaximumModal) {
       return (
         <ConfirmationDialog
-          open={isOpenModal}
+          open={isOpenNotificationMaximumModal}
           handleSubmit={() => {
-            setIsOpenModal(false);
+            setIsOpenNotificationMaximumModal(false);
           }}
-          textDescription="You’ve reached maximum address tag, to add a new one please delete one of it"
+          handleClose={() => {
+            setIsOpenNotificationMaximumModal(false);
+          }}
+          isHideButtonCancel
           textTitle="Can’t add more address tag"
+          textDescription="You’ve reached maximum address tag, to add a new one please delete one of it"
           textSubmit="Got it"
         />
       );
     }
   };
+
+  const renderNotificationDuplicateDialog = () => {
+    if (isOpenNotificationDuplicateModal) {
+      return (
+        <ConfirmationDialog
+          open={isOpenNotificationDuplicateModal}
+          handleSubmit={() => {
+            setIsOpenNotificationDuplicateModal(false);
+          }}
+          handleClose={() => {
+            setIsOpenNotificationDuplicateModal(false);
+          }}
+          isHideButtonCancel
+          textTitle="Address tag already exist"
+          textDescription="You can not add similar address tag, please make a new one."
+          textSubmit="Got it"
+        />
+      );
+    }
+  };
+
+  const renderDeleteTagConfirmationDialog = () => {
+    if (isOpenDeleteModal) {
+      return (
+        <ConfirmationDialog
+          open={isOpenDeleteModal}
+          handleSubmit={() => {
+            handleRemoveTag();
+          }}
+          handleClose={() => {
+            setIsOpenDeleteModal(false);
+          }}
+          textTitle="Delete Address Tag"
+          textDescription="Are your sure you want to delete this
+          address tag?
+          This action cannot be undone and you will be unable to recover any data."
+          textSubmit="Sure"
+        />
+      );
+    }
+  };
+
   return (
     <View>
       {renderLabelAddressTag()}
       {renderAddressTagList()}
       {renderInputAndButtonAdd()}
-      {renderConfirmationDialog()}
+      {renderNotificationMaximumDialog()}
+      {renderDeleteTagConfirmationDialog()}
+      {renderNotificationDuplicateDialog()}
     </View>
   );
 };

@@ -22,6 +22,13 @@ const useStyles = () => {
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textInput: {
+      marginBottom: -3,
+      color: theme.colors.text1,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textInputLabel: {
+      marginBottom: -3,
       height: 21,
       padding: 0,
       color: theme.colors.text1,
@@ -41,6 +48,7 @@ const FieldTextInput = ({
   onChange,
 }) => {
   const styles = useStyles();
+  const styleText = value ? styles.textInputLabel : styles.textInput;
 
   const renderLabel = () => {
     if (!value) {
@@ -58,7 +66,7 @@ const FieldTextInput = ({
     return (
       <TextInput
         keyboardType={'numeric'}
-        style={styles.textInput}
+        style={styleText}
         value={value}
         placeholder={placeholder}
         onChangeText={value => {
@@ -71,7 +79,7 @@ const FieldTextInput = ({
   const renderTextInput = () => {
     return (
       <TextInput
-        style={styles.textInput}
+        style={styleText}
         value={value}
         placeholder={placeholder}
         onChangeText={value => {

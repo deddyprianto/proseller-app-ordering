@@ -72,13 +72,14 @@ const ConfirmationDialog = ({
   textCancel,
   textTitle,
   textDescription,
+  isHideButtonCancel,
 }) => {
   const styles = useStyles();
 
   const renderCloseButton = () => {
     const text = textCancel || 'Cancel';
 
-    if (handleClose) {
+    if (!isHideButtonCancel) {
       return (
         <TouchableOpacity
           style={styles.touchableClose}
@@ -91,7 +92,7 @@ const ConfirmationDialog = ({
   };
 
   const renderSpace = () => {
-    if (handleClose && handleSubmit) {
+    if (!isHideButtonCancel && handleSubmit) {
       return <View style={styles.space} />;
     }
   };

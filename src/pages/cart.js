@@ -746,21 +746,23 @@ const Cart = () => {
   };
 
   const renderDeliveryAddressBody = item => {
-    return (
-      <>
-        <View style={styles.dividerValue} />
-        <Text style={styles.textDeliveryAddressBody}>
-          {item?.recipient?.name} - {item?.recipient?.phoneNumber}
-        </Text>
-        <Text style={styles.textDeliveryAddressBody}>{item.streetName}</Text>
-      </>
-    );
+    if (!isEmptyObject(deliveryAddress)) {
+      return (
+        <>
+          <View style={styles.dividerValue} />
+          <Text style={styles.textDeliveryAddressBody}>
+            {item?.recipient?.name} - {item?.recipient?.phoneNumber}
+          </Text>
+          <Text style={styles.textDeliveryAddressBody}>{item.streetName}</Text>
+        </>
+      );
+    }
   };
 
   const renderDeliveryAddress = () => {
     if (basket?.orderingMode === 'DELIVERY') {
       const deliveryAddressValue =
-        deliveryAddress?.streetName || 'Choose Address';
+        deliveryAddress?.tagAddress || 'Choose Address';
 
       return (
         <View style={styles.viewMethodDeliveryAddress}>

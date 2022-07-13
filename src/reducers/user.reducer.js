@@ -138,17 +138,16 @@ const selectedAddress = (state = {}, action) => {
   }
 };
 
-const addressTags = (_, action) => {
+const addressTags = (state = {}, action) => {
   switch (action?.type) {
     case 'SET_ADDRESS_TAGS':
+      const data = action?.data || defaultValue?.addressTags;
       return {
-        tags: action?.data,
+        tags: data,
       };
 
     default:
-      return {
-        tags: defaultValue.addressTags,
-      };
+      return state;
   }
 };
 
