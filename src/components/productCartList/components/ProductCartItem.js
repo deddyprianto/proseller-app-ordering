@@ -348,7 +348,7 @@ const ProductCart = ({item, disabled}) => {
         <Image
           style={styles.image}
           resizeMode="stretch"
-          source={{uri: item?.product?.defaultImageURL}}
+          source={{uri: item?.product?.defaultImageURL || null}}
         />
       </View>
     );
