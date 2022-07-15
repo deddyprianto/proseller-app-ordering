@@ -153,7 +153,7 @@ class Notifications extends Component {
 
             <List.Item
               title="Email Notification"
-              description="Allow sending notification to your email."
+              description="Allow sending notifications to your email and receive Fun Toast marketing and promotions."
               left={props => <List.Icon {...props} icon="email" />}
               right={() => (
                 <Switch
