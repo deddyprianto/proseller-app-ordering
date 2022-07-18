@@ -26,10 +26,12 @@ const styles = StyleSheet.create({
     marginBottom: HEIGHT * 0.01,
   },
   wrapImage: {
+    width: WIDTH,
+    paddingHorizontal: 16,
+  },
+  image: {
     height: HEIGHT * 0.25,
-    width: WIDTH * 0.95,
-    marginLeft: WIDTH * 0.025,
-    marginRight: WIDTH * 0.025,
+    width: '100%',
     borderRadius: 10,
   },
   WrapDot: {
@@ -74,12 +76,14 @@ const Banner = () => {
   const renderImages = () => {
     const result = banners?.map((banner, index) => {
       return (
-        <Image
-          key={index}
-          style={styles.wrapImage}
-          // resizeMode="stretch"
-          source={{uri: banner?.defaultImageURL}}
-        />
+        <View style={styles.wrapImage}>
+          <Image
+            key={index}
+            style={styles.image}
+            // resizeMode="stretch"
+            source={{uri: banner?.defaultImageURL}}
+          />
+        </View>
       );
     });
     return result;
