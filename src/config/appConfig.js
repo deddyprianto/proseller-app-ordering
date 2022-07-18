@@ -41,15 +41,6 @@ const appConfig = {
   warning: require('../assets/img/warning.png'),
   location: require('../assets/img/icon-location.png'),
 
-  //ICON MARTIN
-  iconLocation: require('../assets/img/icon-location.png'),
-  iconEditProfile: require('../assets/img/icon-edit-profile.png'),
-  iconLogout: require('../assets/img/icon-logout.png'),
-  iconNotification: require('../assets/img/icon-notification.png'),
-  iconPayment: require('../assets/img/icon-payment.png'),
-  iconReward: require('../assets/img/icon-reward.png'),
-  iconTermsAndConditions: require('../assets/img/icon-terms-and-conditions.png'),
-
   //Funtoast
   funtoastButtomBanner: require('../assets/img/FuntoastBottomBanner.jpg'),
   funtoastCoffeeIcon: require('../assets/img/funtoastCoffeeIcon.png'),
@@ -67,6 +58,20 @@ const appConfig = {
   funtoastOnboarding1: require('../assets/img/FuntoastOnBoarding01.png'),
   funtoastOnboarding2: require('../assets/img/FuntoastOnBoarding02.png'),
   funtoastOnboarding3: require('../assets/img/FuntoastOnBoarding03.png'),
+
+  //ICON MARTIN
+  iconNotes: require('../assets/img/icon-notes.png'),
+  iconClose: require('../assets/img/icon-close.png'),
+  iconEdit: require('../assets/img/icon-edit.png'),
+  iconPlus: require('../assets/img/icon-plus.png'),
+  iconMinus: require('../assets/img/icon-minus.png'),
+  iconLocation: require('../assets/img/icon-location.png'),
+  iconEditProfile: require('../assets/img/icon-edit-profile.png'),
+  iconLogout: require('../assets/img/icon-logout.png'),
+  iconNotification: require('../assets/img/icon-notification.png'),
+  iconPayment: require('../assets/img/icon-payment.png'),
+  iconReward: require('../assets/img/icon-reward.png'),
+  iconTermsAndConditions: require('../assets/img/icon-terms-and-conditions.png'),
 };
 
 export default appConfig;

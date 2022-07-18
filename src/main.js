@@ -29,6 +29,7 @@ import {getCompanyInfo, getDefaultOutlet} from './actions/stores.action';
 import {paymentRefNo} from './actions/account.action';
 import {getBasket, getTermsConditions} from './actions/order.action';
 import NetInfo from '@react-native-community/netinfo';
+import {getColorSettings} from './actions/setting.action';
 
 this.isConnected = false;
 
@@ -62,6 +63,7 @@ class Main extends Component {
 
     try {
       await this.props.dispatch(getTermsConditions());
+      await this.props.dispatch(getColorSettings());
       await this.props.dispatch(getDefaultOutlet());
       await Promise.all([
         this.props.dispatch(refreshToken()),
