@@ -262,7 +262,11 @@ const Cart = () => {
     );
 
     const result = JSON.parse(userDecrypt.toString(CryptoJS.enc.Utf8));
-    setDeliveryAddress(result.selectedAddress);
+    const address = !isEmptyObject(result?.selectedAddress)
+      ? result?.selectedAddress
+      : result?.deliveryAddressDefault;
+
+    setDeliveryAddress(address);
   }, [userDetail]);
 
   const handleOpenOrderingTypeModal = () => {

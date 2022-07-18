@@ -64,7 +64,18 @@ const MyDeliveryAddress = ({fromScene}) => {
       awsConfig.PRIVATE_KEY_RSA,
     );
     const result = JSON.parse(userDecrypt.toString(CryptoJS.enc.Utf8));
-    setDeliveryAddress(result?.deliveryAddress || []);
+
+    let deliveryAddress = result?.deliveryAddress || [];
+
+    const isDefault = deliveryAddress.find(item => item.isDefault);
+    const isDefaultIndex = deliveryAddress.findIndex(
+      item => item.index === isDefault.index,
+    );
+
+    deliveryAddress.splice(isDefaultIndex, 1);
+    deliveryAddress.unshift(isDefault);
+
+    setDeliveryAddress(deliveryAddress);
   }, [userDetail]);
 
   const renderFooter = () => {

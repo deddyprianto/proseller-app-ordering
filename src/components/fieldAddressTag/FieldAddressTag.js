@@ -164,7 +164,8 @@ const FieldAddressTag = ({value, onChange}) => {
   }, [onChange, value]);
 
   const handleAddTag = async () => {
-    const payload = [...addressTags, textValue];
+    const payload = addressTags;
+    payload.push(textValue);
     onChange(textValue);
 
     setTextValue('');
@@ -183,7 +184,7 @@ const FieldAddressTag = ({value, onChange}) => {
   };
 
   const handleRemoveTag = async () => {
-    const payload = [...addressTags];
+    const payload = addressTags;
     const selectedIndex = payload.indexOf(value);
     const isIndexFounded = selectedIndex !== -1;
 
@@ -197,7 +198,7 @@ const FieldAddressTag = ({value, onChange}) => {
   };
 
   const handleSelectTag = async tag => {
-    const payload = [...addressTags];
+    const payload = addressTags;
 
     payload.push(payload.splice(payload.indexOf(tag), 1)[0]);
     onChange(tag);

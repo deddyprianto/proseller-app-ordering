@@ -213,7 +213,7 @@ const AddNewAddress = ({address, coordinate}) => {
   };
 
   const handlePayload = () => {
-    let deliveryAddresses = user.deliveryAddress || [];
+    let deliveryAddresses = user?.deliveryAddress || [];
 
     if (isDefault) {
       deliveryAddresses.forEach(value => {
@@ -251,11 +251,11 @@ const AddNewAddress = ({address, coordinate}) => {
     });
 
     const deliveryAddressDefault = deliveryAddresses.find(
-      deliveryAddress => deliveryAddress.isDefault,
+      item => item.isDefault,
     );
 
     return {
-      username: user.username,
+      username: user?.username,
       deliveryAddress: deliveryAddresses,
       deliveryAddressDefault,
     };
