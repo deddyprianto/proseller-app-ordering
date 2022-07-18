@@ -753,7 +753,7 @@ const Cart = () => {
           <Text style={styles.textDeliveryAddressBody}>
             {item?.recipient?.name} - {item?.recipient?.phoneNumber}
           </Text>
-          <Text style={styles.textDeliveryAddressBody}>{item.streetName}</Text>
+          <Text style={styles.textDeliveryAddressBody}>{item?.streetName}</Text>
         </>
       );
     }
