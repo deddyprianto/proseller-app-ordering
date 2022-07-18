@@ -155,7 +155,7 @@ const useStyles = () => {
   return styles;
 };
 
-const MyDeliveryAddressItem = ({item}) => {
+const MyDeliveryAddressItem = ({item, fromScene}) => {
   const styles = useStyles();
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
@@ -164,6 +164,8 @@ const MyDeliveryAddressItem = ({item}) => {
   const userDetail = useSelector(
     state => state.userReducer.getUser.userDetails,
   );
+
+  const isFromProfileScene = fromScene === 'profile';
 
   useEffect(() => {
     const userDecrypt = CryptoJS.AES.decrypt(
@@ -312,7 +314,7 @@ const MyDeliveryAddressItem = ({item}) => {
   };
 
   const handleStyleRoot = () => {
-    if (item.isSelected) {
+    if (item.isSelected && !isFromProfileScene) {
       return styles.rootActive;
     } else {
       return styles.root;
@@ -344,6 +346,7 @@ const MyDeliveryAddressItem = ({item}) => {
       <LoadingScreen loading={isLoading} />
       <TouchableOpacity
         style={handleStyleRoot()}
+        disabled={isFromProfileScene}
         onPress={() => {
           handleOpenConfirmationModal();
         }}>

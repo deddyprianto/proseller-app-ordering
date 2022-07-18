@@ -313,7 +313,7 @@ const Profile = () => {
       <TouchableOpacity
         style={styles.viewOption}
         onPress={() => {
-          Actions.myDeliveryAddress();
+          Actions.myDeliveryAddress({fromScene: 'profile'});
         }}>
         <Image
           style={styles.imageIcon}

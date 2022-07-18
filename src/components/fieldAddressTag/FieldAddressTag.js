@@ -143,7 +143,6 @@ const useStyles = () => {
 const FieldAddressTag = ({value, onChange}) => {
   const dispatch = useDispatch();
   const styles = useStyles();
-
   const [isOpenDeleteModal, setIsOpenDeleteModal] = useState(false);
   const [
     isOpenNotificationMaximumModal,
@@ -156,8 +155,9 @@ const FieldAddressTag = ({value, onChange}) => {
   const [isAddTags, setIsAddTags] = useState(false);
   const [textValue, setTextValue] = useState('');
 
-  const addressTags =
-    useSelector(state => state.userReducer?.addressTags?.tags) || [];
+  const addressTags = useSelector(
+    state => state.userReducer?.addressTags?.tags,
+  );
 
   useEffect(() => {
     onChange(value);
@@ -191,14 +191,17 @@ const FieldAddressTag = ({value, onChange}) => {
       payload.splice(selectedIndex, 1);
     }
 
-    const lastIndex = payload.length - 1;
-    onChange(payload[lastIndex]);
+    onChange('');
     await dispatch(setAddressTags(payload));
     setIsOpenDeleteModal(false);
   };
 
-  const handleSelectTag = tag => {
+  const handleSelectTag = async tag => {
+    const payload = [...addressTags];
+
+    payload.push(payload.splice(payload.indexOf(tag), 1)[0]);
     onChange(tag);
+    await dispatch(setAddressTags(payload));
   };
 
   const handleButtonAddNewTag = () => {
@@ -284,7 +287,9 @@ const FieldAddressTag = ({value, onChange}) => {
           value={textValue}
           placeholder="New Tag"
           onChangeText={value => {
-            setTextValue(value);
+            if (value.length <= 10) {
+              setTextValue(value);
+            }
           }}
         />
       </View>

@@ -37,13 +37,17 @@ const useStyles = () => {
   return styles;
 };
 
-const MyDeliveryAddressList = ({deliveryAddress}) => {
+const MyDeliveryAddressList = ({deliveryAddress, fromScene}) => {
   const styles = useStyles();
 
   const renderMyDeliveryAddressListItem = item => {
     return (
       <View style={styles.viewAddressListItem}>
-        <MyDeliveryAddressItem item={item} deliveryAddress={deliveryAddress} />
+        <MyDeliveryAddressItem
+          item={item}
+          deliveryAddress={deliveryAddress}
+          fromScene={fromScene}
+        />
       </View>
     );
   };

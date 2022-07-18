@@ -50,7 +50,7 @@ const useStyles = () => {
   return styles;
 };
 
-const MyDeliveryAddress = () => {
+const MyDeliveryAddress = ({fromScene}) => {
   const styles = useStyles();
   const [deliveryAddress, setDeliveryAddress] = useState([]);
 
@@ -84,7 +84,10 @@ const MyDeliveryAddress = () => {
   return (
     <View style={styles.root}>
       <Header title="My Delivery Address" />
-      <MyDeliveryAddressList deliveryAddress={deliveryAddress} />
+      <MyDeliveryAddressList
+        deliveryAddress={deliveryAddress}
+        fromScene={fromScene}
+      />
       {renderFooter()}
     </View>
   );
