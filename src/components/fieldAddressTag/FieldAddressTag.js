@@ -155,9 +155,8 @@ const FieldAddressTag = ({value, onChange}) => {
   const [isAddTags, setIsAddTags] = useState(false);
   const [textValue, setTextValue] = useState('');
 
-  const addressTags = useSelector(
-    state => state.userReducer?.addressTags?.tags,
-  );
+  const addressTags =
+    useSelector(state => state.userReducer?.addressTags?.tags) || [];
 
   useEffect(() => {
     onChange(value);
