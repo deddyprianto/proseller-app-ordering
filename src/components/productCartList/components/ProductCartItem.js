@@ -25,7 +25,7 @@ import CurrencyFormatter from '../../../helper/CurrencyFormatter';
 
 const styles = StyleSheet.create({
   root: {
-    elevation: 1,
+    elevation: 2,
     borderRadius: 8,
     backgroundColor: 'white',
     padding: 16,
@@ -91,6 +91,7 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   textProductHeaderName: {
+    marginHorizontal: 8,
     fontSize: 12,
     fontWeight: '500',
   },
@@ -241,9 +242,7 @@ const ProductCart = ({item, disabled}) => {
         <View style={styles.viewProductHeaderQty}>
           <Text style={styles.textProductHeaderQty}>{item.quantity}x</Text>
         </View>
-        <View style={{marginRight: 8}} />
         <Text style={styles.textProductHeaderName}>{item?.product?.name}</Text>
-        <View style={{marginRight: 8}} />
         <Text style={styles.textProductHeaderPrice}>
           + {item?.product?.retailPrice}
         </Text>

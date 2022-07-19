@@ -19,9 +19,8 @@ const ProductCartList = ({orderDetail, disabled}) => {
 
   const renderProductCartItem = item => {
     return (
-      <View>
+      <View style={{marginBottom: 16, marginHorizontal: 16}}>
         <ProductCartItem item={item} disabled={disabled} />
-        <View style={{marginBottom: 16}} />
       </View>
     );
   };
