@@ -10,57 +10,63 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
-import {isEmptyArray} from '../../helper/CheckEmpty';
-import colorConfig from '../../config/colorConfig';
+import Theme from '../../theme/Theme';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
 
-const styles = StyleSheet.create({
-  viewGroupEGiftCard: {
-    borderRadius: 10,
-    flexDirection: 'column',
-    flexWrap: 'wrap',
-    height: HEIGHT * 0.25,
-  },
-  image: {
-    height: HEIGHT * 0.1,
-    width: WIDTH * 0.4,
-    marginLeft: WIDTH * 0.0135,
-    marginRight: WIDTH * 0.0135,
-    marginTop: 10,
-    borderRadius: 10,
-  },
-  imageSelected: {
-    height: HEIGHT * 0.1,
-    width: WIDTH * 0.4,
-    marginLeft: WIDTH * 0.0135,
-    marginRight: WIDTH * 0.0135,
-    marginTop: 10,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: colorConfig.primaryColor,
-  },
-  WrapDot: {
-    position: 'absolute',
-    bottom: 0,
-    flexDirection: 'row',
-    alignSelf: 'center',
-  },
-  activeDot: {
-    margin: 3,
-    color: colorConfig.primaryColor,
-  },
-  inactiveDot: {
-    margin: 3,
-    color: '#808080',
-  },
-});
+const useStyles = () => {
+  const theme = Theme();
+  const styles = StyleSheet.create({
+    viewGroupEGiftCard: {
+      borderRadius: 10,
+      flexDirection: 'column',
+      flexWrap: 'wrap',
+      height: HEIGHT * 0.25,
+    },
+    image: {
+      width: '100%',
+      height: '100%',
+    },
+    viewImage: {
+      height: HEIGHT * 0.1,
+      width: WIDTH * 0.4,
+      marginLeft: WIDTH * 0.0135,
+      marginRight: WIDTH * 0.0135,
+      marginTop: 10,
+      borderRadius: 10,
+    },
+    viewImageSelected: {
+      height: HEIGHT * 0.1,
+      width: WIDTH * 0.4,
+      marginLeft: WIDTH * 0.0135,
+      marginRight: WIDTH * 0.0135,
+      marginTop: 10,
+      borderRadius: 10,
+      borderWidth: 1,
+      borderColor: theme.colors.primary,
+    },
+    WrapDot: {
+      position: 'absolute',
+      bottom: 0,
+      flexDirection: 'row',
+      alignSelf: 'center',
+    },
+    activeDot: {
+      margin: 3,
+      color: theme.colors.primary,
+    },
+    inactiveDot: {
+      margin: 3,
+      color: theme.colors.text2,
+    },
+  });
+  return styles;
+};
 
-const EGiftCard = ({cards, onChange}) => {
-  const [groupEGift, setGroupEGift] = useState([]);
+const EGiftCard = ({cards, selectedCard, onChange}) => {
+  const styles = useStyles();
   const [activeGroupEGift, setActiveGroupEGift] = useState(0);
-  const [selectedEGiftCard, setSelectedEGiftCard] = useState({});
 
   const handleGroupEGift = values => {
     let parents = [];
@@ -83,16 +89,9 @@ const EGiftCard = ({cards, onChange}) => {
         return (children = []);
       }
     });
-    setGroupEGift(parents);
-  };
 
-  useState(() => {
-    if (!isEmptyArray(cards)) {
-      handleGroupEGift(cards);
-      setSelectedEGiftCard(cards[0]);
-      onChange(cards[0]);
-    }
-  }, [cards]);
+    return parents;
+  };
 
   const handleOnChange = nativeEvent => {
     const group = Math.ceil(nativeEvent.contentOffset.x / 420);
@@ -110,6 +109,7 @@ const EGiftCard = ({cards, onChange}) => {
   };
 
   const renderDot = () => {
+    const groupEGift = handleGroupEGift(cards);
     const dots = groupEGift?.map((_, index) => {
       return (
         <Text key={index} style={handleStyleDot(index)}>
@@ -121,36 +121,34 @@ const EGiftCard = ({cards, onChange}) => {
     return <View style={styles.WrapDot}>{dots}</View>;
   };
 
-  const handleImageSelected = item => {
-    if (item === selectedEGiftCard) {
-      return styles.imageSelected;
-    }
-    return styles.image;
-  };
-
   const handleSelectImage = item => {
-    setSelectedEGiftCard(item);
     onChange(item);
   };
 
+  const renderGroupEGiftCardItem = item => {
+    const selected = item === selectedCard;
+    const styleSelected = selected
+      ? styles.viewImageSelected
+      : styles.viewImage;
+    return (
+      <TouchableOpacity
+        style={styleSelected}
+        onPress={() => {
+          handleSelectImage(item);
+        }}>
+        <Image style={styles.image} resizeMode="contain" source={{uri: item}} />
+      </TouchableOpacity>
+    );
+  };
+
   const renderGroupEGiftCard = () => {
+    const groupEGift = handleGroupEGift(cards);
+
     const result = groupEGift?.map((items, index) => {
       return (
-        <View style={styles.viewGroupEGiftCard}>
+        <View key={index} style={styles.viewGroupEGiftCard}>
           {items.map(item => {
-            return (
-              <TouchableOpacity
-                onPress={() => {
-                  handleSelectImage(item);
-                }}>
-                <Image
-                  key={index}
-                  style={handleImageSelected(item)}
-                  resizeMode="stretch"
-                  source={{uri: item}}
-                />
-              </TouchableOpacity>
-            );
+            return renderGroupEGiftCardItem(item);
           })}
         </View>
       );

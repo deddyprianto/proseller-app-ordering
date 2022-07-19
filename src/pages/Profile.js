@@ -77,13 +77,6 @@ const useStyles = () => {
       fontSize: theme.fontSize[12],
       fontFamily: theme.fontFamily.poppinsMedium,
     },
-    viewRank: {
-      display: 'flex',
-      flexDirection: 'row',
-      width: '80%',
-      justifyContent: 'space-between',
-      marginTop: 30,
-    },
     viewOption: {
       padding: 10,
       display: 'flex',
