@@ -106,6 +106,11 @@ const useStyles = () => {
       fontSize: theme.fontSize[12],
       fontFamily: theme.fontFamily.poppinsRegular,
     },
+    textOrderingTypeBody: {
+      color: theme.colors.text2,
+      fontSize: theme.fontSize[12],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
     viewDetailValueItem: {
       display: 'flex',
       flexDirection: 'row',
@@ -147,6 +152,16 @@ const useStyles = () => {
       alignItems: 'center',
       elevation: 1,
     },
+    viewMethodOrderingType: {
+      marginHorizontal: 16,
+      marginBottom: 16,
+      borderRadius: 8,
+      backgroundColor: 'white',
+      padding: 16,
+      display: 'flex',
+      flexDirection: 'column',
+      elevation: 1,
+    },
     viewAddButton: {
       margin: 16,
       borderWidth: 1,
@@ -173,6 +188,19 @@ const useStyles = () => {
       justifyContent: 'center',
       borderBottomWidth: 1,
       borderColor: '#D6D6D6',
+    },
+    viewOrderingTypeHeader: {
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+    viewOrderingTypeBody: {
+      flex: 1,
+      borderTopWidth: 1,
+      marginTop: 16,
+      paddingTop: 16,
+      borderColor: theme.colors.border,
     },
     touchableMethod: {
       width: 120,
@@ -331,20 +359,28 @@ const Cart = () => {
   };
 
   const handleDisabledPaymentButton = value => {
+    const isActiveDelivery = isEmptyArray(availableTimes)
+      ? !!deliveryAddress && !!basket?.provider
+      : !!deliveryAddress && !!basket?.provider && !!orderingDateTimeSelected;
+
+    const isActivePickUp = isEmptyArray(availableTimes)
+      ? !orderingDateTimeSelected
+      : !!orderingDateTimeSelected;
+
     switch (value) {
       case 'DELIVERY':
-        if (isEmptyArray(availableTimes)) {
+        if (isActiveDelivery) {
           return false;
-        } else if (
-          deliveryAddress &&
-          basket?.provider &&
-          orderingDateTimeSelected
-        ) {
-          return false;
+        } else {
+          return true;
         }
-        return true;
+
       case 'PICKUP':
-        return false;
+        if (isActivePickUp) {
+          return false;
+        } else {
+          return true;
+        }
       case 'DINEIN':
         return false;
       case 'TAKEAWAY':
@@ -556,14 +592,9 @@ const Cart = () => {
     }
   };
 
-  const renderOrderingType = () => {
-    const orderingType =
-      typeof basket?.orderingMode === 'string' && basket?.orderingMode;
-
-    const orderingTypeValue = orderingType || 'Choose Type';
-
+  const renderOrderingTypeHeader = orderingTypeValue => {
     return (
-      <View style={styles.viewMethod}>
+      <View style={styles.viewOrderingTypeHeader}>
         <Text style={styles.textMethod}>Ordering Type</Text>
         <TouchableOpacity
           style={styles.touchableMethod}
@@ -572,6 +603,33 @@ const Cart = () => {
           }}>
           <Text style={styles.textMethodValue}>{orderingTypeValue}</Text>
         </TouchableOpacity>
+      </View>
+    );
+  };
+
+  const renderOrderingTypeBody = orderingTypeValue => {
+    if (orderingTypeValue === 'TAKEAWAY' && outlet?.address) {
+      return (
+        <View style={styles.viewOrderingTypeBody}>
+          <Text style={styles.textOrderingTypeBody}>
+            Outlet Address for Pick Up
+          </Text>
+          <Text style={styles.textOrderingTypeBody}>{outlet?.address}</Text>
+        </View>
+      );
+    }
+  };
+
+  const renderOrderingType = () => {
+    const orderingType =
+      typeof basket?.orderingMode === 'string' && basket?.orderingMode;
+
+    const orderingTypeValue = orderingType || 'Choose Type';
+
+    return (
+      <View style={styles.viewMethodOrderingType}>
+        {renderOrderingTypeHeader(orderingTypeValue)}
+        {renderOrderingTypeBody(orderingTypeValue)}
       </View>
     );
   };
