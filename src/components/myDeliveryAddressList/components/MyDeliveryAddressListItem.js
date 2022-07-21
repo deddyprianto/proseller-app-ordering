@@ -192,14 +192,6 @@ const MyDeliveryAddressItem = ({item, fromScene}) => {
   const handleSelectAddress = async () => {
     let result = user.deliveryAddress || [];
 
-    result.forEach(value => {
-      if (value.index === item.index) {
-        value.isSelected = true;
-      } else {
-        value.isSelected = false;
-      }
-    });
-
     const payload = {
       selectedAddress: item,
       phoneNumber: user.phoneNumber,
@@ -314,7 +306,13 @@ const MyDeliveryAddressItem = ({item, fromScene}) => {
   };
 
   const handleStyleRoot = () => {
-    if (item.isSelected && !isFromProfileScene) {
+    const selectedIndex = !isEmptyObject(user?.selectedAddress)
+      ? user?.selectedAddress?.index
+      : user?.deliveryAddressDefault?.index;
+
+    const selected = selectedIndex === item?.index;
+
+    if (selected && !isFromProfileScene) {
       return styles.rootActive;
     } else {
       return styles.root;

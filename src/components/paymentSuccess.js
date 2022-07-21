@@ -74,7 +74,6 @@ class PaymentSuccess extends Component {
 
     const user = JSON.parse(userDecrypt.toString(CryptoJS.enc.Utf8));
 
-    console.log('IQBAL', user.phoneNumber);
     await this.props.dispatch(
       updateUser({selectedAddress: null, phoneNumber: user.phoneNumber}),
     );

@@ -22,7 +22,6 @@ const getUser = (state = {}, action) => {
       };
 
     case 'GET_USER_SUCCESS':
-      console.log('IQBAL', action.payload);
       return {
         isLoading: false,
         isError: false,
