@@ -27,6 +27,10 @@ import {getPendingCart, removeTimeslot} from '../actions/order.action';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
 import {isEmptyArray, isEmptyObject} from '../helper/CheckEmpty';
+import {updateUser} from '../actions/user.action';
+
+import CryptoJS from 'react-native-crypto-js';
+import awsConfig from '../config/awsConfig';
 
 class PaymentSuccess extends Component {
   constructor(props) {
@@ -62,7 +66,22 @@ class PaymentSuccess extends Component {
     } catch (e) {}
   }
 
-  handleBackPress = () => {
+  handleRemoveReducer = async () => {
+    const userDecrypt = CryptoJS.AES.decrypt(
+      this.props.user,
+      awsConfig.PRIVATE_KEY_RSA,
+    );
+
+    const user = JSON.parse(userDecrypt.toString(CryptoJS.enc.Utf8));
+
+    console.log('IQBAL', user.phoneNumber);
+    await this.props.dispatch(
+      updateUser({selectedAddress: null, phoneNumber: user.phoneNumber}),
+    );
+  };
+
+  handleBackPress = async () => {
+    this.handleRemoveReducer();
     this.goBack(); // works best when the goBack is async
     return true;
   };
@@ -522,6 +541,7 @@ const styles = StyleSheet.create({
 mapStateToProps = state => ({
   intlData: state.intlData,
   companyInfo: state.userReducer.getCompanyInfo.companyInfo,
+  user: state.userReducer.getUser.userDetails,
 });
 
 mapDispatchToProps = dispatch => ({

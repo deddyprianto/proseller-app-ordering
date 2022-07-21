@@ -203,7 +203,7 @@ const AddNewAddress = ({address, coordinate}) => {
     if (result.success) {
       await dispatch(
         showSnackbar({
-          message: 'Delivery delete success',
+          message: 'Address deleted',
           type: 'success',
         }),
       );

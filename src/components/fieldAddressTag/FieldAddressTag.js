@@ -205,7 +205,8 @@ const FieldAddressTag = ({value, onChange}) => {
   };
 
   const handleButtonAddNewTag = () => {
-    if (addressTags?.length || 0 <= 10) {
+    const length = addressTags?.length || 0;
+    if (length < 10) {
       setIsAddTags(!isAddTags);
     } else {
       setIsOpenNotificationMaximumModal(true);

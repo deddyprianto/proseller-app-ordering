@@ -37,6 +37,7 @@ import CurrencyFormatter from '../helper/CurrencyFormatter';
 import {showSnackbar} from '../actions/setting.action';
 import {getTimeSlot} from '../actions/order.action';
 import Theme from '../theme';
+
 const useStyles = () => {
   const theme = Theme();
   const styles = StyleSheet.create({
