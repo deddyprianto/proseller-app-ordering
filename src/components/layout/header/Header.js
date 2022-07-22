@@ -56,11 +56,19 @@ const styles = StyleSheet.create({
   },
 });
 
-const Header = ({title, cart, scanner, onChange}) => {
+const Header = ({title, customTitle, cart, scanner, onChange}) => {
   const [isOpenScanner, setIsOpenScanner] = useState(false);
 
   const handleCloseScanner = () => {
     setIsOpenScanner(false);
+  };
+
+  const renderTitle = () => {
+    if (customTitle) {
+      return customTitle;
+    } else {
+      return <Text>{title}</Text>;
+    }
   };
 
   const renderBackIcon = () => {
@@ -110,7 +118,7 @@ const Header = ({title, cart, scanner, onChange}) => {
     <View style={styles.root}>
       <Scanner open={isOpenScanner} handleClose={handleCloseScanner} />
       {renderBackIcon()}
-      <Text>{title}</Text>
+      {renderTitle()}
       {/* {renderCartIcon()} */}
       {renderScannerIcon()}
     </View>

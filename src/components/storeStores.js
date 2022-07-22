@@ -44,6 +44,9 @@ class StoreStores extends Component {
   storeDetailStores = async item => {
     try {
       await this.props.dispatch(getOutletById(item.storeId));
+      if (Actions.currentScene !== 'pageIndex') {
+        Actions.pop();
+      }
     } catch (e) {}
     try {
       this.props.refreshProducts();

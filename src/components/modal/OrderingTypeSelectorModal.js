@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
-import {Text, TouchableOpacity, View, Image} from 'react-native';
+import {Text, TouchableOpacity, View, Image, Modal} from 'react-native';
 import {Dialog, Portal, Provider} from 'react-native-paper';
 import appConfig from '../../config/appConfig';
 import colorConfig from '../../config/colorConfig';
@@ -214,20 +214,26 @@ const OrderingTypeSelectorModal = ({open, handleClose, value}) => {
     );
   };
 
+  if (!open) {
+    return null;
+  }
+
   return (
-    <Provider>
-      <Portal>
-        <Dialog visible={open} onDismiss={handleClose} style={styles.root}>
-          {renderHeader()}
-          <View style={styles.divider} />
-          <View style={{marginTop: 20}} />
-          {renderBody()}
-          <View style={{marginTop: 16}} />
-          {renderFooter()}
-          <View style={{marginTop: 16}} />
-        </Dialog>
-      </Portal>
-    </Provider>
+    <Modal transparent visible={open} onDismiss={handleClose}>
+      <Provider>
+        <Portal>
+          <Dialog visible={open} onDismiss={handleClose} style={styles.root}>
+            {renderHeader()}
+            <View style={styles.divider} />
+            <View style={{marginTop: 20}} />
+            {renderBody()}
+            <View style={{marginTop: 16}} />
+            {renderFooter()}
+            <View style={{marginTop: 16}} />
+          </Dialog>
+        </Portal>
+      </Provider>
+    </Modal>
   );
 };
 

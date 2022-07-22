@@ -1958,8 +1958,6 @@ export const changeOrderingMode = ({orderingMode, provider}) => {
         provider,
       };
 
-      console.log('paylaod', payload);
-
       let response = await fetchApiOrder(
         '/cart/changeOrderingMode',
         'POST',
@@ -1968,7 +1966,7 @@ export const changeOrderingMode = ({orderingMode, provider}) => {
         token,
       );
 
-      console.log('response', response);
+      console.log('response ordering mode', response);
 
       if (response.success === true) {
         dispatch({

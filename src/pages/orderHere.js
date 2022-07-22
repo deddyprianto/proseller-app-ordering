@@ -33,6 +33,7 @@ import colorConfig from '../config/colorConfig';
 import CurrencyFormatter from '../helper/CurrencyFormatter';
 import {Actions} from 'react-native-router-flux';
 import {ScrollView} from 'react-native-gesture-handler';
+import OrderingTypeSelectorModal from '../components/modal/OrderingTypeSelectorModal';
 
 const HEIGHT = Dimensions.get('window').height;
 
@@ -100,6 +101,7 @@ const OrderHere = () => {
   const [productsSearch, setProductsSearch] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [refresh, setRefresh] = useState(false);
+  const [openOrderingTypeModal, setOpenOrderingTypeModal] = useState(false);
 
   const defaultOutlet = useSelector(
     state => state.storesReducer.defaultOutlet.defaultOutlet,
@@ -113,6 +115,7 @@ const OrderHere = () => {
     setRefresh(true);
     await dispatch(getProductByOutlet(defaultOutlet.id));
     await dispatch(getBasket());
+    setOpenOrderingTypeModal(true);
     setRefresh(false);
   }, [dispatch, defaultOutlet]);
 
@@ -195,6 +198,17 @@ const OrderHere = () => {
     }
   };
 
+  const renderHeaderTitle = () => {
+    return (
+      <TouchableOpacity
+        onPress={() => {
+          Actions.store();
+        }}>
+        <Text>{defaultOutlet?.name}</Text>
+      </TouchableOpacity>
+    );
+  };
+
   return (
     <ScrollView
       contentContainerStyle={styles.root}
@@ -207,7 +221,7 @@ const OrderHere = () => {
         />
       }>
       <LoadingScreen loading={handleLoading()} />
-      <Header title={defaultOutlet?.name} scanner />
+      <Header customTitle={renderHeaderTitle()} scanner />
       <View style={styles.body}>
         {renderText()}
         {renderSearch()}
@@ -215,6 +229,13 @@ const OrderHere = () => {
         {renderProducts()}
       </View>
       <View style={styles.footer}>{renderButtonCart()}</View>
+      <OrderingTypeSelectorModal
+        value={basket?.orderingMode}
+        open={basket?.orderingMode || openOrderingTypeModal}
+        handleClose={() => {
+          setOpenOrderingTypeModal(false);
+        }}
+      />
     </ScrollView>
   );
 };
