@@ -694,8 +694,9 @@ const Cart = () => {
     const available = !isEmptyArray(availableTimes);
     const isDelivery = available && basket?.orderingMode === 'DELIVERY';
     const isPickUp = available && basket?.orderingMode === 'PICKUP';
+    const isTakeAway = available && basket?.orderingMode === 'TAKEAWAY';
 
-    if (isDelivery || isPickUp) {
+    if (isDelivery || isPickUp || isTakeAway) {
       return (
         <View style={styles.viewMethod}>
           <Text style={styles.textMethod}>Delivery Date</Text>
