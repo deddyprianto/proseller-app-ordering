@@ -231,7 +231,7 @@ const OrderHere = () => {
       <View style={styles.footer}>{renderButtonCart()}</View>
       <OrderingTypeSelectorModal
         value={basket?.orderingMode}
-        open={basket?.orderingMode || openOrderingTypeModal}
+        open={openOrderingTypeModal}
         handleClose={() => {
           setOpenOrderingTypeModal(false);
         }}

@@ -1971,7 +1971,7 @@ export const changeOrderingMode = ({orderingMode, provider}) => {
       if (response.success === true) {
         dispatch({
           type: 'DATA_BASKET',
-          product: response.response.data,
+          product: response?.response?.data,
         });
       }
       return response;
