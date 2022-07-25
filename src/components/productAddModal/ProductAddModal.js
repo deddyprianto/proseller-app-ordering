@@ -189,16 +189,22 @@ const useStyles = () => {
 const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
   const styles = useStyles();
   const dispatch = useDispatch();
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [notes, setNotes] = useState('');
   const [variantName, setVariantName] = useState('');
+  const [variantImageURL, setVariantImageURL] = useState('');
+
   const [qty, setQty] = useState(1);
   const [totalPrice, setTotalPrice] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
+  const [variantRetailPrice, setVariantRetailPrice] = useState(0);
+
   const [productAdd, setProductAdd] = useState({});
   const [productUpdate, setProductUpdate] = useState({});
+
   const [selectedVariantOptions, setSelectedVariantOptions] = useState([]);
-  const [variantImageURL, setVariantImageURL] = useState('');
   const [selectedProductModifiers, setSelectedProductModifiers] = useState([]);
-  const [notes, setNotes] = useState('');
 
   const defaultOutlet = useSelector(
     state => state.storesReducer.defaultOutlet.defaultOutlet,
@@ -261,9 +267,6 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
 
   const handleProductVariantFormatted = items => {
     let productVariant = {};
-    const productVariantName = items.map(item => {
-      return item.value;
-    });
 
     product?.variants?.forEach(variant => {
       if (JSON.stringify(variant.attributes) === JSON.stringify(items)) {
@@ -272,7 +275,8 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
     });
 
     setVariantImageURL(productVariant?.defaultImageURL);
-    setVariantName(productVariantName.join(' '));
+    setVariantName(productVariant?.name);
+    setVariantRetailPrice(productVariant?.retailPrice);
 
     handlePrice({
       qty,
@@ -386,14 +390,13 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
   };
 
   const renderNameAndPrice = () => {
+    const price = variantRetailPrice || product?.retailPrice;
+    const name = variantName || product?.name;
+
     return (
       <View style={styles.viewNameAndPrice}>
-        <Text style={styles.textName}>
-          {product?.name} {variantName}
-        </Text>
-        <Text style={styles.textPrice}>
-          {currencyFormatter(product?.retailPrice)}
-        </Text>
+        <Text style={styles.textName}>{name}</Text>
+        <Text style={styles.textPrice}>{currencyFormatter(price)}</Text>
       </View>
     );
   };

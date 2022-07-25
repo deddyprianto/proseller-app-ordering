@@ -6,9 +6,6 @@
 
 import {useSelector} from 'react-redux';
 
-//noted
-//#F9F9F9
-
 const Theme = () => {
   const colorSettings = useSelector(
     state => state.settingReducer.colorSettings,
@@ -21,6 +18,7 @@ const Theme = () => {
     background: 'white',
     background2: '#F9F9F9',
 
+    backgroundTransparent: 'rgba(0, 0, 0, 0.5)',
     header: 'white',
 
     text1: 'black',
@@ -47,6 +45,7 @@ const Theme = () => {
   };
 
   const fontSize = {
+    8: 8,
     10: 10,
     12: 12,
     14: 14,
