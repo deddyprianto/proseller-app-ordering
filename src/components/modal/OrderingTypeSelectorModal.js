@@ -149,7 +149,6 @@ const OrderingTypeSelectorModal = ({open, handleClose, value}) => {
       }
     });
     setOrderingTypes(orderingModesFieldFiltered);
-
     const currentOrderingMode = value || '';
     setSelected({key: currentOrderingMode});
   }, [defaultOutlet, value]);

@@ -107,6 +107,9 @@ const OrderHere = () => {
     state => state.storesReducer.defaultOutlet.defaultOutlet,
   );
   const basket = useSelector(state => state.orderReducer?.dataBasket?.product);
+  const orderingMode = useSelector(
+    state => state.orderReducer?.dataOrderingMode?.orderingMode,
+  );
   const products = useSelector(
     state => state.productReducer?.productsOutlet?.products,
   );
@@ -230,8 +233,8 @@ const OrderHere = () => {
       </View>
       <View style={styles.footer}>{renderButtonCart()}</View>
       <OrderingTypeSelectorModal
-        value={basket?.orderingMode}
-        open={openOrderingTypeModal}
+        value={basket?.orderingMode || orderingMode}
+        open={openOrderingTypeModal && !orderingMode}
         handleClose={() => {
           setOpenOrderingTypeModal(false);
         }}

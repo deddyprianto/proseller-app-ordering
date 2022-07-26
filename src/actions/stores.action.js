@@ -160,39 +160,6 @@ export const getBackupOutlet = () => {
   };
 };
 
-export const getOutletById = id => {
-  return async (dispatch, getState) => {
-    const state = getState();
-    try {
-      const {
-        authReducer: {
-          tokenUser: {token},
-        },
-      } = state;
-      const response = await fetchApiMasterData(
-        `/outlets/get/${id}`,
-        'GET',
-        false,
-        200,
-        token,
-      );
-      console.log(response, 'response outlets get by id');
-      dispatch({
-        type: 'DATA_DEFAULT_OUTLET',
-        data: response.response.data,
-      });
-
-      if (response.success == true) {
-        return response.response.data;
-      } else {
-        return false;
-      }
-    } catch (error) {
-      return error;
-    }
-  };
-};
-
 export const setSingleOutlet = outlet => {
   return async (dispatch, getState) => {
     const state = getState();
@@ -317,6 +284,45 @@ export const unsetFavoriteOutlet = ({outletId}) => {
       await dispatch(getFavoriteOutlet());
 
       return;
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const getOutletById = id => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+      const response = await fetchApiMasterData(
+        `/outlets/get/${id}`,
+        'GET',
+        false,
+        200,
+        token,
+      );
+      console.log(response, 'response outlets get by id');
+
+      dispatch({
+        type: 'DATA_ORDERING_MODE',
+        orderingMode: null,
+      });
+
+      dispatch({
+        type: 'DATA_DEFAULT_OUTLET',
+        data: response.response.data,
+      });
+
+      if (response.success == true) {
+        return response.response.data;
+      } else {
+        return false;
+      }
     } catch (error) {
       return error;
     }
