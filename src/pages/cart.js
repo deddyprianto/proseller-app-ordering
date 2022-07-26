@@ -572,24 +572,15 @@ const Cart = () => {
         orderingMode: basket?.orderingMode,
       };
 
-      // set url to pay
-      let url;
-
       if (!basket?.orderingMode) {
         RBSheet.open();
         return;
       }
 
-      if (
-        basket?.orderingMode === 'TAKEAWAY' ||
-        basket?.orderingMode === 'DELIVERY'
-      ) {
-        pembayaran.orderingMode = basket.orderingMode;
-        pembayaran.cartID = basket.cartID;
-        url = '/cart/submitAndPay';
-      } else {
-        url = '/cart/customer/settle';
-      }
+      pembayaran.orderingMode = basket.orderingMode;
+      pembayaran.cartID = basket.cartID;
+
+      const url = '/cart/submitAndPay';
 
       // for delivery order
       if (basket?.orderingMode === 'DELIVERY') {

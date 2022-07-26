@@ -1972,6 +1972,10 @@ export const changeOrderingMode = ({orderingMode, provider}) => {
 
       if (response.success === true) {
         dispatch({
+          type: 'ORDERING_DATE_TIME',
+          orderingDateTimeSelected: null,
+        });
+        dispatch({
           type: 'DATA_BASKET',
           product: response.response.data,
         });
