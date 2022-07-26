@@ -99,8 +99,6 @@ const EStore = () => {
     state => state.productReducer?.productsEStoreOutlet?.products,
   );
 
-  console.log('MARTIN', products);
-
   const loadData = useCallback(async () => {
     await dispatch(getProductEStoreByOutlet(defaultOutlet.id));
     await dispatch(getBasket());

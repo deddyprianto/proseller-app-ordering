@@ -625,7 +625,6 @@ export const confirmForgotPassword = payload => {
 
 //martin
 export const createNewUser = payload => {
-  console.log('MARTIN PAYLOAD', payload);
   return async dispatch => {
     try {
       dispatch({
