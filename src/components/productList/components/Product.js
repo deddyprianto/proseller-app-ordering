@@ -8,8 +8,6 @@
 import React, {useState, useEffect} from 'react';
 
 import {StyleSheet, View, Text, Image, TouchableOpacity} from 'react-native';
-import IconAntDesign from 'react-native-vector-icons/AntDesign';
-import colorConfig from '../../../config/colorConfig';
 import filter from 'lodash/filter';
 import indexOf from 'lodash/indexOf';
 import {isEmptyArray} from '../../../helper/CheckEmpty';
@@ -35,6 +33,9 @@ const useStyles = () => {
     },
     bodyLeft: {
       flex: 1,
+    },
+    bodyRight: {
+      marginLeft: 16,
     },
     textQty: {
       color: theme.colors.primary,
@@ -62,7 +63,7 @@ const useStyles = () => {
       borderRadius: 4,
       paddingHorizontal: 8,
       paddingVertical: 4,
-      backgroundColor: colorConfig.primaryColor,
+      backgroundColor: theme.colors.primary,
     },
     image: {
       width: '100%',
@@ -208,7 +209,7 @@ const Product = ({product, basket}) => {
   };
 
   const renderBodyRight = () => {
-    return <View>{cartIcon()}</View>;
+    return <View style={styles.bodyRight}>{cartIcon()}</View>;
   };
 
   const renderBody = () => {
