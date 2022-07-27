@@ -11,14 +11,19 @@ import {StyleSheet, View, Text, FlatList, TouchableOpacity} from 'react-native';
 import Product from './components/Product';
 
 import {isEmptyArray} from '../../helper/CheckEmpty';
-import colorConfig from '../../config/colorConfig';
 import Theme from '../../theme';
 
 const useStyles = () => {
   const theme = Theme();
   const styles = StyleSheet.create({
+    root: {
+      flex: 1,
+    },
     textProductName: {
       fontWeight: 'bold',
+      color: theme.colors.text1,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsBold,
     },
     textCategoryName: {
       width: 70,
@@ -33,6 +38,9 @@ const useStyles = () => {
       color: theme.colors.primary,
       fontSize: theme.fontSize[14],
       fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    viewCategoryTabs: {
+      marginBottom: 20,
     },
     viewGroupProduct: {
       width: '100%',
@@ -58,8 +66,8 @@ const useStyles = () => {
       flexDirection: 'column',
       alignItems: 'center',
       padding: 15,
-      borderBottomColor: colorConfig.primaryColor,
       borderBottomWidth: 1,
+      borderBottomColor: theme.colors.primary,
     },
   });
   return styles;
@@ -107,6 +115,7 @@ const ProductList = ({products, basket}) => {
   const renderCategoryTabs = () => {
     return (
       <FlatList
+        style={styles.viewCategoryTabs}
         ref={categoryRef}
         data={products}
         horizontal
@@ -165,9 +174,8 @@ const ProductList = ({products, basket}) => {
   };
 
   return (
-    <View style={{flex: 1}}>
+    <View style={styles.root}>
       {renderCategoryTabs()}
-      <View style={{marginTop: 20}} />
       {renderProducts()}
     </View>
   );

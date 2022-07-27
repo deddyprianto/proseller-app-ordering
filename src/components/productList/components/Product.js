@@ -18,19 +18,31 @@ import ProductUpdateModal from '../../productUpdateModal';
 import ProductAddModal from '../../productAddModal';
 import Theme from '../../../theme';
 import appConfig from '../../../config/appConfig';
+import CurrencyFormatter from '../../../helper/CurrencyFormatter';
 
 const useStyles = () => {
   const theme = Theme();
   const styles = StyleSheet.create({
     root: {
+      marginTop: 20,
       width: '48%',
     },
+    body: {
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'flex-end',
+    },
+    bodyLeft: {
+      flex: 1,
+    },
     textQty: {
-      color: colorConfig.primaryColor,
-      fontSize: 12,
+      color: theme.colors.primary,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsMedium,
     },
     textName: {
-      width: '60%',
+      flex: 1,
       color: theme.colors.text1,
       fontSize: theme.fontSize[14],
       fontFamily: theme.fontFamily.poppinsMedium,
@@ -46,23 +58,20 @@ const useStyles = () => {
       flexDirection: 'row',
       marginTop: 5,
     },
-    image: {
-      height: 160,
-      width: '100%',
-      marginTop: 20,
-    },
-    icon: {
-      width: 40,
-      height: 25,
-      fontSize: 15,
-      textAlign: 'center',
-      textAlignVertical: 'center',
-      color: 'white',
-      borderRadius: 5,
-      position: 'absolute',
-      right: 0,
-      bottom: 0,
+    viewIconCart: {
+      borderRadius: 4,
+      paddingHorizontal: 8,
+      paddingVertical: 4,
       backgroundColor: colorConfig.primaryColor,
+    },
+    image: {
+      width: '100%',
+      aspectRatio: 1.1,
+    },
+    iconCart: {
+      width: 24,
+      height: 24,
+      tintColor: 'white',
     },
   });
   return styles;
@@ -166,15 +175,48 @@ const Product = ({product, basket}) => {
   };
 
   const renderPrice = () => {
-    return <Text style={styles.textPrice}>$ {product?.retailPrice}</Text>;
+    return (
+      <Text style={styles.textPrice}>
+        {CurrencyFormatter(product?.retailPrice)}
+      </Text>
+    );
   };
 
   const cartIcon = () => {
     return (
-      <Image
-        source={appConfig.iconCart}
-        style={{width: 24, height: 24, tintColor: 'red'}}
-      />
+      <View style={styles.viewIconCart}>
+        <Image source={appConfig.iconCart} style={styles.iconCart} />
+      </View>
+    );
+  };
+
+  const handleProductOnClick = () => {
+    if (totalQty) {
+      handleOpenUpdateModal();
+    } else {
+      handleOpenAddModal();
+    }
+  };
+
+  const renderBodyLeft = () => {
+    return (
+      <View style={styles.bodyLeft}>
+        {renderQtyAndName()}
+        {renderPrice()}
+      </View>
+    );
+  };
+
+  const renderBodyRight = () => {
+    return <View>{cartIcon()}</View>;
+  };
+
+  const renderBody = () => {
+    return (
+      <View style={styles.body}>
+        {renderBodyLeft()}
+        {renderBodyRight()}
+      </View>
     );
   };
 
@@ -206,15 +248,6 @@ const Product = ({product, basket}) => {
       );
     }
   };
-
-  const handleProductOnClick = () => {
-    if (totalQty) {
-      handleOpenUpdateModal();
-    } else {
-      handleOpenAddModal();
-    }
-  };
-
   return (
     <TouchableOpacity
       onPress={() => {
@@ -222,9 +255,7 @@ const Product = ({product, basket}) => {
       }}
       style={styles.root}>
       {renderImage()}
-      {renderQtyAndName()}
-      {renderPrice()}
-      {cartIcon()}
+      {renderBody()}
       {renderProductAddModal()}
       {renderProductUpdateModal()}
     </TouchableOpacity>
