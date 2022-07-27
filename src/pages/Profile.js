@@ -247,8 +247,8 @@ const Profile = () => {
         />
         <Image
           style={{
-            height: 29,
-            width: 33,
+            height: 36,
+            width: 40,
             position: 'absolute',
             left: `${percentageIcon}%`,
           }}
