@@ -74,6 +74,7 @@ const appConfig = {
   iconLogout: require('../assets/img/icon-logout.png'),
   iconNotification: require('../assets/img/icon-notification.png'),
   iconPayment: require('../assets/img/icon-payment.png'),
+  iconCart: require('../assets/img/icon-cart.png'),
   iconReward: require('../assets/img/icon-reward.png'),
   iconTermsAndConditions: require('../assets/img/icon-terms-and-conditions.png'),
 };

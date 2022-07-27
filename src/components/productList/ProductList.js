@@ -12,53 +12,61 @@ import Product from './components/Product';
 
 import {isEmptyArray} from '../../helper/CheckEmpty';
 import colorConfig from '../../config/colorConfig';
+import Theme from '../../theme';
 
-const styles = StyleSheet.create({
-  textProductName: {
-    fontWeight: 'bold',
-  },
-  textCategoryName: {
-    width: 70,
-    fontSize: 12,
-    textAlign: 'center',
-    color: '#B7B7B7',
-  },
-  textCategoryNameSelected: {
-    width: 70,
-    fontSize: 12,
-    textAlign: 'center',
-    color: colorConfig.primaryColor,
-  },
-  viewGroupProduct: {
-    width: '100%',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    marginBottom: 60,
-  },
-  touchableCategoryItem: {
-    width: 100,
-    height: 'auto',
-    justifyContent: 'center',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    padding: 15,
-  },
-  touchableCategoryItemSelected: {
-    width: 100,
-    height: 'auto',
-    justifyContent: 'center',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    padding: 15,
-    borderBottomColor: colorConfig.primaryColor,
-    borderBottomWidth: 1,
-  },
-});
+const useStyles = () => {
+  const theme = Theme();
+  const styles = StyleSheet.create({
+    textProductName: {
+      fontWeight: 'bold',
+    },
+    textCategoryName: {
+      width: 70,
+      textAlign: 'center',
+      color: theme.colors.text2,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textCategoryNameSelected: {
+      width: 70,
+      textAlign: 'center',
+      color: theme.colors.primary,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    viewGroupProduct: {
+      width: '100%',
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      justifyContent: 'space-between',
+      marginBottom: 60,
+    },
+    touchableCategoryItem: {
+      width: 100,
+      height: 'auto',
+      justifyContent: 'center',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      padding: 15,
+    },
+    touchableCategoryItemSelected: {
+      width: 100,
+      height: 'auto',
+      justifyContent: 'center',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      padding: 15,
+      borderBottomColor: colorConfig.primaryColor,
+      borderBottomWidth: 1,
+    },
+  });
+  return styles;
+};
 
 const ProductList = ({products, basket}) => {
+  const styles = useStyles();
   const categoryRef = useRef();
   const productRef = useRef();
   const [selectedCategory, setSelectedCategory] = useState({});

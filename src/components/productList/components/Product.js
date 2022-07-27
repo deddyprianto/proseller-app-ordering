@@ -16,49 +16,60 @@ import {isEmptyArray} from '../../../helper/CheckEmpty';
 
 import ProductUpdateModal from '../../productUpdateModal';
 import ProductAddModal from '../../productAddModal';
+import Theme from '../../../theme';
+import appConfig from '../../../config/appConfig';
 
-const styles = StyleSheet.create({
-  root: {
-    width: '48%',
-  },
-  textQty: {
-    color: colorConfig.primaryColor,
-    fontSize: 12,
-  },
-  textName: {
-    fontSize: 12,
-    width: '60%',
-  },
-  textPrice: {
-    marginTop: 5,
-    fontSize: 12,
-  },
-  viewQtyAndName: {
-    display: 'flex',
-    flexDirection: 'row',
-    marginTop: 5,
-  },
-  image: {
-    height: 160,
-    width: '100%',
-    marginTop: 20,
-  },
-  icon: {
-    width: 40,
-    height: 25,
-    fontSize: 15,
-    backgroundColor: colorConfig.primaryColor,
-    textAlign: 'center',
-    textAlignVertical: 'center',
-    color: 'white',
-    borderRadius: 5,
-    position: 'absolute',
-    right: 0,
-    bottom: 0,
-  },
-});
+const useStyles = () => {
+  const theme = Theme();
+  const styles = StyleSheet.create({
+    root: {
+      width: '48%',
+    },
+    textQty: {
+      color: colorConfig.primaryColor,
+      fontSize: 12,
+    },
+    textName: {
+      width: '60%',
+      color: theme.colors.text1,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textPrice: {
+      marginTop: 5,
+      color: theme.colors.text1,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    viewQtyAndName: {
+      display: 'flex',
+      flexDirection: 'row',
+      marginTop: 5,
+    },
+    image: {
+      height: 160,
+      width: '100%',
+      marginTop: 20,
+    },
+    icon: {
+      width: 40,
+      height: 25,
+      fontSize: 15,
+      textAlign: 'center',
+      textAlignVertical: 'center',
+      color: 'white',
+      borderRadius: 5,
+      position: 'absolute',
+      right: 0,
+      bottom: 0,
+      backgroundColor: colorConfig.primaryColor,
+    },
+  });
+  return styles;
+};
 
 const Product = ({product, basket}) => {
+  const styles = useStyles();
   const [totalQty, setTotalQty] = useState(0);
   const [isOpenUpdateModal, setIsOpenUpdateModal] = useState(false);
   const [isOpenAddModal, setIsOpenAddModal] = useState(false);
@@ -159,7 +170,12 @@ const Product = ({product, basket}) => {
   };
 
   const cartIcon = () => {
-    return <IconAntDesign name="shoppingcart" style={styles.icon} />;
+    return (
+      <Image
+        source={appConfig.iconCart}
+        style={{width: 24, height: 24, tintColor: 'red'}}
+      />
+    );
   };
 
   const renderProductAddModal = () => {
