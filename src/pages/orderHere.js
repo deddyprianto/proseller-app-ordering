@@ -124,6 +124,7 @@ const OrderHere = () => {
     setRefresh(true);
     await dispatch(getProductByOutlet(defaultOutlet.id));
     await dispatch(getBasket());
+    setOpenOrderingTypeModal(true);
     setRefresh(false);
   }, [dispatch, defaultOutlet]);
 
