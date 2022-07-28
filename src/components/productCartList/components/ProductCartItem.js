@@ -104,6 +104,7 @@ const useStyles = () => {
       marginRight: 4,
     },
     textAddOn: {
+      marginBottom: 4,
       fontStyle: 'italic',
       color: theme.colors.text2,
       fontSize: theme.fontSize[10],
@@ -240,6 +241,9 @@ const useStyles = () => {
       display: 'flex',
       flexDirection: 'row',
     },
+    primaryColor: {
+      color: theme.colors.primary,
+    },
   });
   return styles;
 };
@@ -261,7 +265,7 @@ const ProductCart = ({item, disabled}) => {
         dashLength={10}
         dashThickness={0.5}
         dashGap={5}
-        dashColor="#c32626"
+        dashColor={styles.primaryColor.color}
       />
     );
   };
@@ -309,7 +313,6 @@ const ProductCart = ({item, disabled}) => {
       return (
         <View>
           <Text style={styles.textAddOn}>Add-On</Text>
-          <View style={{marginTop: 4}} />
           {productModifiers}
         </View>
       );
@@ -381,16 +384,14 @@ const ProductCart = ({item, disabled}) => {
   const renderPromoIcon = () => {
     const active = !isEmptyArray(item.promotions);
     const styleViewPromo = active ? styles.viewPromoActive : styles.viewPromo;
-    const styleTextIconPromo = active
-      ? styles.iconPromoActive
-      : styles.iconPromo;
+    const styleIconPromo = active ? styles.iconPromoActive : styles.iconPromo;
 
     return (
       <View style={styleViewPromo}>
         <ImageBackground
           source={appConfig.funtoastStar}
           style={styles.imagePromo}>
-          <Text style={styleTextIconPromo}>%</Text>
+          <Text style={styleIconPromo}>%</Text>
         </ImageBackground>
         <Text style={styles.textPromo}>Promo</Text>
       </View>

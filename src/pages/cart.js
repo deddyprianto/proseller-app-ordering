@@ -187,7 +187,7 @@ const useStyles = () => {
       flexDirection: 'row',
       justifyContent: 'center',
       borderBottomWidth: 1,
-      borderColor: '#D6D6D6',
+      borderColor: theme.colors.border,
     },
     viewOrderingTypeHeader: {
       display: 'flex',
