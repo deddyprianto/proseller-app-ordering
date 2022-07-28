@@ -58,7 +58,11 @@ const appConfig = {
   funtoastOnboarding2: require('../assets/img/FuntoastOnBoarding02.png'),
   funtoastOnboarding3: require('../assets/img/FuntoastOnBoarding03.png'),
 
+  //LOGO MARTIN
+  logoMerchant: require('../assets/img/logo.png'),
+
   //ICON MARTIN
+  iconCart: require('../assets/img/icon-cart.png'),
   iconArrowUp: require('../assets/img/icon-arrow-up.png'),
   iconArrowDown: require('../assets/img/icon-arrow-down.png'),
   iconArrowLeft: require('../assets/img/icon-arrow-left.png'),
@@ -73,7 +77,6 @@ const appConfig = {
   iconLogout: require('../assets/img/icon-logout.png'),
   iconNotification: require('../assets/img/icon-notification.png'),
   iconPayment: require('../assets/img/icon-payment.png'),
-  iconCart: require('../assets/img/icon-cart.png'),
   iconReward: require('../assets/img/icon-reward.png'),
   iconTermsAndConditions: require('../assets/img/icon-terms-and-conditions.png'),
 };

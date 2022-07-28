@@ -124,7 +124,7 @@ const ECard = () => {
           value={JSON.stringify({
             token: qr,
           })}
-          // logo={appConfig.appLogoQR}
+          // logo={appConfig.logoMerchant}
           logoSize={35}
           size={180}
         />
