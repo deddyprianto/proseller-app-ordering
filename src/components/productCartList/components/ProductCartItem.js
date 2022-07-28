@@ -125,6 +125,9 @@ const useStyles = () => {
       fontSize: theme.fontSize[10],
       fontFamily: theme.fontFamily.poppinsMedium,
     },
+    textModifier: {
+      flex: 1,
+    },
     textModifierItemQty: {
       fontStyle: 'italic',
       color: theme.colors.primary,
@@ -194,10 +197,14 @@ const useStyles = () => {
       alignItems: 'flex-start',
     },
     viewBullet: {
-      height: 15,
+      height: 6,
+      width: 6,
+      borderRadius: 8,
       justifyContent: 'center',
       alignItems: 'center',
+      marginTop: 5,
       marginRight: 5,
+      backgroundColor: theme.colors.border,
     },
     viewEdit: {
       display: 'flex',
@@ -276,13 +283,11 @@ const ProductCart = ({item, disabled}) => {
   const renderProductModifierItem = ({qty, name, price}) => {
     return (
       <View style={styles.viewProductModifierItem}>
-        <View style={styles.viewBullet}>
-          <Text style={styles.iconBullet}>{'\u2B24'}</Text>
-        </View>
+        <View style={styles.viewBullet} />
 
-        <Text>
+        <Text style={styles.textModifier}>
           <Text style={styles.textModifierItemQty}>{qty}x</Text>
-          <Text style={styles.textModifierItemName}> {name} </Text>
+          <Text style={styles.textModifierItemName}>{name}</Text>
           <Text style={styles.textModifierItemPrice}>+{price}</Text>
         </Text>
       </View>

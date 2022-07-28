@@ -7,11 +7,22 @@
 import React from 'react';
 import {useSelector} from 'react-redux';
 
-import {View, FlatList} from 'react-native';
+import {View, FlatList, StyleSheet} from 'react-native';
 
 import ProductCartItem from './components/ProductCartItem';
 
+const useStyles = () => {
+  const styles = StyleSheet.create({
+    root: {
+      marginBottom: 16,
+      marginHorizontal: 16,
+    },
+  });
+  return styles;
+};
+
 const ProductCartList = ({orderDetail, disabled}) => {
+  const styles = useStyles();
   const currentBasket = useSelector(
     state => state.orderReducer?.dataBasket?.product,
   );
@@ -19,7 +30,7 @@ const ProductCartList = ({orderDetail, disabled}) => {
 
   const renderProductCartItem = item => {
     return (
-      <View style={{marginBottom: 16, marginHorizontal: 16}}>
+      <View style={styles.root}>
         <ProductCartItem item={item} disabled={disabled} />
       </View>
     );
