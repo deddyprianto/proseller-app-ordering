@@ -440,17 +440,14 @@ const ProductUpdateModal = ({open, handleClose, product, basket}) => {
     <Modal
       animationType="none"
       transparent={true}
-      onDismiss={() => {
-        handleClose();
-      }}
       visible={open && !isEmptyArray(productInBasket)}>
-      <View style={styles.root}>
+      <TouchableOpacity style={styles.root} onPress={handleClose}>
         <View style={styles.rootBody}>
           {renderHeader()}
           {renderProducts()}
           {renderFooter()}
         </View>
-      </View>
+      </TouchableOpacity>
       {renderProductAddModal()}
     </Modal>
   );
