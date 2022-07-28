@@ -432,19 +432,22 @@ const ProductUpdateModal = ({open, handleClose, product, basket}) => {
     }
   };
 
-  if (!open) {
+  if (!open || isEmptyArray(productInBasket)) {
     return null;
   }
 
   return (
-    <Modal animationType="none" transparent={true} visible={open}>
-      <View style={styles.root}>
+    <Modal
+      animationType="none"
+      transparent={true}
+      visible={open && !isEmptyArray(productInBasket)}>
+      <TouchableOpacity style={styles.root} onPress={handleClose}>
         <View style={styles.rootBody}>
           {renderHeader()}
           {renderProducts()}
           {renderFooter()}
         </View>
-      </View>
+      </TouchableOpacity>
       {renderProductAddModal()}
     </Modal>
   );

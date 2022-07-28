@@ -6,96 +6,102 @@
 
 import React, {useCallback, useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
+import {Actions} from 'react-native-router-flux';
+import {ScrollView} from 'react-native-gesture-handler';
 import {
   StyleSheet,
   View,
   Text,
   TouchableOpacity,
   RefreshControl,
-  Dimensions,
+  Image,
 } from 'react-native';
 
-import ProductList from '../components/productList';
-import ProductSearchList from '../components/productSearchList';
 import Header from '../components/layout/header';
-
-import IconAntDesign from 'react-native-vector-icons/AntDesign';
+import FieldSearch from '../components/fieldSearch';
+import ProductList from '../components/productList';
+import LoadingScreen from '../components/loadingScreen';
+import ProductSearchList from '../components/productSearchList';
+import OrderingTypeSelectorModal from '../components/modal/OrderingTypeSelectorModal';
 
 import {
   getProductByOutlet,
   getProductBySearch,
 } from '../actions/product.action';
 import {getBasket} from '../actions/order.action';
+
 import {isEmptyArray} from '../helper/CheckEmpty';
-import LoadingScreen from '../components/loadingScreen';
-import FieldSearch from '../components/fieldSearch';
-import colorConfig from '../config/colorConfig';
 import CurrencyFormatter from '../helper/CurrencyFormatter';
-import {Actions} from 'react-native-router-flux';
-import {ScrollView} from 'react-native-gesture-handler';
-import OrderingTypeSelectorModal from '../components/modal/OrderingTypeSelectorModal';
 
-const HEIGHT = Dimensions.get('window').height;
+import appConfig from '../config/appConfig';
 
-const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  body: {
-    paddingHorizontal: 16,
-    width: '100%',
-    flex: 1,
-  },
-  footer: {
-    position: 'absolute',
-    bottom: 10,
-    width: '100%',
-    paddingHorizontal: 16,
-  },
-  textBody: {
-    fontSize: 12,
-    fontWeight: 'bold',
-  },
-  textButtonCart: {
-    fontWeight: 'bold',
-    fontSize: 11,
-    color: 'white',
-  },
-  viewBodyText: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: 16,
-    marginBottom: 16,
-  },
-  viewProductList: {
-    paddingHorizontal: 16,
-    flex: 1,
-  },
-  viewButtonCart: {
-    width: '100%',
-    display: 'flex',
-    flexDirection: 'row',
-    backgroundColor: colorConfig.primaryColor,
-    padding: 14,
-    justifyContent: 'space-between',
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  viewIconAndTextCart: {
-    display: 'flex',
-    flexDirection: 'row',
-  },
-  icon: {
-    fontSize: 13,
-    color: 'white',
-    marginRight: 7,
-  },
-});
+import Theme from '../theme';
+
+const useStyles = () => {
+  const theme = Theme();
+  const styles = StyleSheet.create({
+    root: {
+      flex: 1,
+      alignItems: 'center',
+    },
+    body: {
+      paddingHorizontal: 16,
+      width: '100%',
+      flex: 1,
+    },
+    footer: {
+      position: 'absolute',
+      bottom: 10,
+      width: '100%',
+      paddingHorizontal: 16,
+    },
+    textBody: {
+      fontSize: 12,
+      fontWeight: 'bold',
+    },
+    textButtonCart: {
+      fontWeight: 'bold',
+      fontSize: 11,
+      color: 'white',
+    },
+    viewBodyText: {
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginTop: 16,
+      marginBottom: 16,
+    },
+    viewProductList: {
+      paddingHorizontal: 16,
+      flex: 1,
+    },
+    viewButtonCart: {
+      width: '100%',
+      display: 'flex',
+      flexDirection: 'row',
+      padding: 14,
+      justifyContent: 'space-between',
+      borderRadius: 8,
+      alignItems: 'center',
+      backgroundColor: theme.colors.primary,
+    },
+    viewIconAndTextCart: {
+      display: 'flex',
+      flexDirection: 'row',
+    },
+    icon: {
+      width: 18,
+      height: 18,
+      marginRight: 7,
+      color: theme.colors.text4,
+    },
+  });
+  return styles;
+};
 
 const OrderHere = () => {
+  const styles = useStyles();
   const dispatch = useDispatch();
   const [searchQuery, setSearchQuery] = useState('');
   const [productsSearch, setProductsSearch] = useState([]);
@@ -107,6 +113,9 @@ const OrderHere = () => {
     state => state.storesReducer.defaultOutlet.defaultOutlet,
   );
   const basket = useSelector(state => state.orderReducer?.dataBasket?.product);
+  const orderingMode = useSelector(
+    state => state.orderReducer?.dataOrderingMode?.orderingMode,
+  );
   const products = useSelector(
     state => state.productReducer?.productsOutlet?.products,
   );
@@ -185,7 +194,7 @@ const OrderHere = () => {
             Actions.cart();
           }}>
           <View style={styles.viewIconAndTextCart}>
-            <IconAntDesign name="shoppingcart" style={styles.icon} />
+            <Image source={appConfig.iconCart} style={styles.icon} />
             <Text style={styles.textButtonCart}>
               {basket?.details?.length} Items in Cart
             </Text>
@@ -230,8 +239,8 @@ const OrderHere = () => {
       </View>
       <View style={styles.footer}>{renderButtonCart()}</View>
       <OrderingTypeSelectorModal
-        value={basket?.orderingMode}
-        open={basket?.orderingMode || openOrderingTypeModal}
+        value={basket?.orderingMode || orderingMode}
+        open={openOrderingTypeModal && !orderingMode}
         handleClose={() => {
           setOpenOrderingTypeModal(false);
         }}

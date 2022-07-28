@@ -55,12 +55,20 @@ const useStyles = () => {
   return styles;
 };
 
-const Header = ({title, remove, cart, scanner, removeOnClick}) => {
+const Header = ({title, remove, cart, scanner, removeOnClick, customTitle}) => {
   const styles = useStyles();
   const [isOpenScanner, setIsOpenScanner] = useState(false);
 
   const handleCloseScanner = () => {
     setIsOpenScanner(false);
+  };
+
+  const renderTitle = () => {
+    if (customTitle) {
+      return customTitle;
+    } else {
+      return <Text style={styles.textHeader}>{title}</Text>;
+    }
   };
 
   const renderBackIcon = () => {
@@ -127,7 +135,7 @@ const Header = ({title, remove, cart, scanner, removeOnClick}) => {
     <View style={styles.root}>
       <Scanner open={isOpenScanner} handleClose={handleCloseScanner} />
       {renderBackIcon()}
-      <Text style={styles.textHeader}>{title}</Text>
+      {renderTitle()}
       {renderIconWrap()}
     </View>
   );

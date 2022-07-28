@@ -24,6 +24,18 @@ const dataBasket = (state = {}, action) => {
   }
 };
 
+const dataOrderingMode = (state = {}, action) => {
+  switch (action.type) {
+    case 'DATA_ORDERING_MODE':
+      return {
+        orderingMode: action.orderingMode,
+      };
+
+    default:
+      return state;
+  }
+};
+
 const dataProvider = (state = {}, action) => {
   switch (action.type) {
     case 'DATA_PROVIDER':
@@ -148,6 +160,7 @@ export default combineReducers({
   deliveryProvider,
   dataProvider,
   timeslot,
+  dataOrderingMode,
   orderingSetting,
   orderingDateTime,
   outletSelectionMode,
