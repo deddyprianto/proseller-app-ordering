@@ -36,161 +36,251 @@ import {Alert} from 'react-native';
 import CurrencyFormatter from '../helper/CurrencyFormatter';
 import {showSnackbar} from '../actions/setting.action';
 import {getTimeSlot} from '../actions/order.action';
+import Theme from '../theme';
 
-const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    backgroundColor: '#F9F9F9',
-    justifyContent: 'space-between',
-  },
-  container: {
-    flex: 1,
-  },
-  scrollView: {
-    paddingHorizontal: 16,
-  },
-  textDetail: {
-    fontSize: 12,
-  },
-  textDetailValue: {
-    fontSize: 10,
-    fontWeight: 'bold',
-  },
-  textGrandTotal: {
-    fontSize: 12,
-  },
-  textGrandTotalValue: {
-    fontWeight: 'bold',
-    fontSize: 14,
-  },
-  textDetailGrandTotal: {
-    fontSize: 14,
-  },
-  textDetailGrandTotalValue: {
-    fontSize: 14,
-    fontWeight: 'bold',
-  },
-  textSeeDetails: {
-    color: colorConfig.primaryColor,
-    textAlign: 'center',
-    textDecorationLine: 'underline',
-  },
-  textCheckoutButton: {
-    fontSize: 12,
-    fontWeight: '500',
-    color: 'white',
-  },
-  textMethod: {
-    fontSize: 12,
-    fontWeight: '500',
-  },
-  textMethodValue: {
-    fontSize: 12,
-    fontWeight: '500',
-    color: colorConfig.primaryColor,
-    textAlign: 'center',
-  },
-  textAddButton: {
-    color: colorConfig.primaryColor,
-    fontSize: 12,
-  },
-  viewDetailValueItem: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: 16,
-    borderBottomWidth: 1,
-    borderColor: '#D6D6D6',
-  },
-  viewDetailGrandTotal: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: 16,
-  },
-  viewCheckoutButton: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    borderTopWidth: 0.2,
-    borderTopColor: 'grey',
-    padding: 16,
-  },
-  viewFooter: {
-    backgroundColor: 'white',
-    borderTopLeftRadius: 8,
-    borderTopRightRadius: 8,
-    marginTop: -8,
-  },
-  viewMethod: {
-    marginTop: 16,
-    borderRadius: 8,
-    backgroundColor: 'white',
-    padding: 16,
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    elevation: 1,
-  },
-  viewAddButton: {
-    borderColor: colorConfig.primaryColor,
-    borderWidth: 1,
-    paddingVertical: 10,
-    borderRadius: 8,
-    alignItems: 'center',
-    backgroundColor: 'white',
-  },
-  viewGrandTotal: {
-    display: 'flex',
-    flexDirection: 'row',
-  },
-  viewDetailValue: {
-    paddingHorizontal: 16,
-  },
-  touchableMethod: {
-    width: 120,
-    borderRadius: 8,
-    paddingVertical: 10,
-    borderWidth: 1,
-    borderColor: colorConfig.primaryColor,
-  },
-  touchableCheckoutButton: {
-    borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: colorConfig.primaryColor,
-    paddingVertical: 10,
-    paddingHorizontal: 26,
-  },
-  touchableCheckoutButtonDisabled: {
-    borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#B7B7B7',
-    paddingVertical: 10,
-    paddingHorizontal: 26,
-  },
-  dividerDashed: {
-    textAlign: 'center',
-    color: colorConfig.primaryColor,
-  },
-  divider: {
-    height: 1,
-    width: '100%',
-    backgroundColor: '#D6D6D6',
-  },
-  iconArrowUp: {
-    fontSize: 20,
-    color: '#B7B7B7',
-  },
-});
+const useStyles = () => {
+  const theme = Theme();
+  const styles = StyleSheet.create({
+    root: {
+      flex: 1,
+      justifyContent: 'space-between',
+      backgroundColor: theme.colors.background,
+    },
+    container: {
+      flex: 1,
+    },
+    textDetail: {
+      color: theme.colors.text1,
+      fontSize: theme.fontSize[12],
+      fontFamily: theme.fontFamily.poppinsRegular,
+    },
+    textDetailValue: {
+      color: theme.colors.text1,
+      fontSize: theme.fontSize[10],
+      fontFamily: theme.fontFamily.poppinsSemiBold,
+    },
+    textGrandTotal: {
+      color: theme.colors.text1,
+      fontSize: theme.fontSize[12],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textGrandTotalValue: {
+      color: theme.colors.primary,
+      fontSize: theme.fontSize[15],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textDetailGrandTotal: {
+      color: theme.colors.text1,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsRegular,
+    },
+    textDetailGrandTotalValue: {
+      color: theme.colors.primary,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsBold,
+    },
+    textCheckoutButton: {
+      color: theme.colors.text4,
+      fontSize: theme.fontSize[12],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textMethod: {
+      color: theme.colors.text1,
+      fontSize: theme.fontSize[12],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textMethodValue: {
+      textAlign: 'center',
+      color: theme.colors.primary,
+      fontSize: theme.fontSize[12],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textAddButton: {
+      color: theme.colors.primary,
+      fontSize: theme.fontSize[12],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textDetailHeader: {
+      color: theme.colors.text1,
+      fontSize: theme.fontSize[12],
+      fontFamily: theme.fontFamily.poppinsRegular,
+    },
+    textDeliveryAddressBody: {
+      color: theme.colors.text2,
+      fontSize: theme.fontSize[12],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textOrderingTypeBody: {
+      color: theme.colors.text2,
+      fontSize: theme.fontSize[12],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    viewDetailValueItem: {
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      paddingVertical: 16,
+      borderBottomWidth: 1,
+      borderColor: theme.colors.border,
+    },
+    viewDetailGrandTotal: {
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      paddingVertical: 16,
+    },
+    viewCheckoutButton: {
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      borderTopWidth: 0.2,
+      padding: 16,
+      borderTopColor: theme.colors.border,
+    },
+    viewFooter: {
+      backgroundColor: 'white',
+      borderTopLeftRadius: 8,
+      borderTopRightRadius: 8,
+      marginTop: -8,
+    },
+    viewMethod: {
+      marginHorizontal: 16,
+      marginBottom: 16,
+      borderRadius: 8,
+      backgroundColor: 'white',
+      padding: 16,
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      elevation: 1,
+    },
+    viewMethodOrderingType: {
+      marginHorizontal: 16,
+      marginBottom: 16,
+      borderRadius: 8,
+      backgroundColor: 'white',
+      padding: 16,
+      display: 'flex',
+      flexDirection: 'column',
+      elevation: 1,
+    },
+    viewMethodDeliveryAddress: {
+      marginHorizontal: 16,
+      marginBottom: 16,
+      borderRadius: 8,
+      backgroundColor: 'white',
+      padding: 16,
+      display: 'flex',
+      flexDirection: 'column',
+      elevation: 1,
+    },
+    viewOrderingTypeHeader: {
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+    viewOrderingTypeBody: {
+      flex: 1,
+      borderTopWidth: 1,
+      marginTop: 16,
+      paddingTop: 16,
+      borderColor: theme.colors.border,
+    },
+    viewDeliveryAddressHeader: {
+      flex: 1,
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+    viewDeliveryAddressBody: {
+      flex: 1,
+      borderTopWidth: 1,
+      marginTop: 16,
+      paddingTop: 16,
+      borderColor: theme.colors.border,
+    },
+    viewAddButton: {
+      margin: 16,
+      borderWidth: 1,
+      paddingVertical: 10,
+      borderRadius: 8,
+      alignItems: 'center',
+      backgroundColor: 'white',
+      borderColor: theme.colors.primary,
+    },
+    viewGrandTotal: {
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    viewDetailValue: {
+      paddingHorizontal: 16,
+    },
+    viewDetailHeader: {
+      paddingVertical: 16,
+      paddingHorizontal: 20,
+      alignItems: 'center',
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'center',
+      borderBottomWidth: 1,
+      borderColor: theme.colors.border,
+    },
+    touchableMethod: {
+      width: 120,
+      borderRadius: 8,
+      paddingVertical: 10,
+      borderWidth: 1,
+      borderColor: theme.colors.primary,
+    },
+    touchableCheckoutButton: {
+      borderRadius: 8,
+      justifyContent: 'center',
+      alignItems: 'center',
+      paddingVertical: 10,
+      paddingHorizontal: 26,
+      backgroundColor: theme.colors.primary,
+    },
+    touchableCheckoutButtonDisabled: {
+      borderRadius: 8,
+      justifyContent: 'center',
+      alignItems: 'center',
+      paddingVertical: 10,
+      paddingHorizontal: 26,
+      backgroundColor: theme.colors.buttonDisabled,
+    },
+    touchableIconClose: {
+      position: 'absolute',
+      right: 20,
+    },
+    divider: {
+      height: 1,
+      flex: 1,
+      marginHorizontal: 16,
+      marginBottom: 16,
+      backgroundColor: theme.colors.border,
+    },
+    iconArrowUp: {
+      width: 12,
+      height: 12,
+      tintColor: theme.colors.primary,
+    },
+    iconClose: {
+      width: 16,
+      height: 16,
+    },
+  });
+  return styles;
+};
 
 const Cart = () => {
+  const styles = useStyles();
   const dispatch = useDispatch();
   const [availableTimes, setAvailableTimes] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
   const [seeDetail, setSeeDetail] = useState(false);
   const [openOrderingTypeModal, setOpenOrderingTypeModal] = useState(false);
   const [openDeliveryDateModal, setOpenDeliveryDateModal] = useState(false);
@@ -693,6 +783,19 @@ const Cart = () => {
         </TouchableOpacity>
       </View>
     );
+  };
+
+  const renderDeliveryAddressBody = item => {
+    if (!isEmptyObject(deliveryAddress)) {
+      return (
+        <View style={styles.viewDeliveryAddressBody}>
+          <Text style={styles.textDeliveryAddressBody}>
+            {item?.recipient?.name} - {item?.recipient?.phoneNumber}
+          </Text>
+          <Text style={styles.textDeliveryAddressBody}>{item?.streetName}</Text>
+        </View>
+      );
+    }
   };
 
   const renderDeliveryAddress = () => {
