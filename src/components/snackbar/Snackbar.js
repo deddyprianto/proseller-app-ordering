@@ -2,48 +2,72 @@
 import React, {useEffect} from 'react';
 import PropTypes from 'prop-types';
 import {useDispatch, useSelector} from 'react-redux';
-import {Modal, View, Text, TouchableOpacity} from 'react-native';
+import {Modal, View, Text, TouchableOpacity, Image} from 'react-native';
 
 import {closeSnackbar} from '../../actions/setting.action';
+import Theme from '../../theme';
+import appConfig from '../../config/appConfig';
 
-const styles = {
-  root: {
-    height: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  body: {
-    position: 'absolute',
-    top: 20,
-    width: '100%',
-    paddingHorizontal: 16,
-  },
-  viewSnackbarError: {
-    width: '100%',
-    display: 'flex',
-    flexDirection: 'row',
-    backgroundColor: 'red',
-    padding: 14,
-    justifyContent: 'space-between',
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  viewSnackbarSuccess: {
-    width: '100%',
-    display: 'flex',
-    flexDirection: 'row',
-    backgroundColor: 'green',
-    padding: 14,
-    justifyContent: 'space-between',
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  textSnackbar: {
-    color: 'white',
-  },
+const useStyles = () => {
+  const theme = Theme();
+  const styles = {
+    root: {
+      height: '100%',
+    },
+    container: {
+      top: 20,
+      width: '100%',
+      position: 'absolute',
+      paddingHorizontal: 16,
+    },
+    textSnackbar: {
+      marginLeft: 12,
+      color: theme.colors.text4,
+      fontSize: theme.fontSize[12],
+      fontFamily: theme.fontFamily.poppinsSemiBold,
+    },
+    viewSnackbarFailed: {
+      width: '100%',
+      padding: 14,
+      borderRadius: 8,
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: theme.colors.snackbarFailed,
+    },
+    viewSnackbarSuccess: {
+      width: '100%',
+      padding: 14,
+      borderRadius: 8,
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: theme.colors.snackbarSuccess,
+    },
+    viewIcon: {
+      width: 20,
+      height: 20,
+      borderRadius: 100,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: theme.colors.background,
+    },
+    iconCheck: {
+      width: 18,
+      height: 18,
+      tintColor: theme.colors.snackbarSuccess,
+    },
+    iconClose: {
+      width: 18,
+      height: 18,
+      tintColor: theme.colors.snackbarFailed,
+    },
+  };
+  return styles;
 };
 
 const Snackbar = () => {
+  const styles = useStyles();
   const dispatch = useDispatch();
   const message = useSelector(state => state.settingReducer.snackbar.message);
   const type = useSelector(state => state.settingReducer.snackbar.type);
@@ -73,26 +97,40 @@ const Snackbar = () => {
     loadData();
   }, [open]);
 
-  const renderSnackbarText = () => {
-    const style =
-      type === 'success'
-        ? styles.viewSnackbarSuccess
-        : styles.viewSnackbarError;
+  const renderSnackbarSuccess = () => {
     return (
-      <View style={style}>
+      <View style={styles.viewSnackbarSuccess}>
+        <View style={styles.viewIcon}>
+          <Image source={appConfig.iconCheck} style={styles.iconCheck} />
+        </View>
         <Text style={styles.textSnackbar}>{message}</Text>
       </View>
     );
   };
 
-  if (!open) {
-    return null;
-  }
+  const renderSnackbarFailed = () => {
+    return (
+      <View style={styles.viewSnackbarFailed}>
+        <View style={styles.viewIcon}>
+          <Image source={appConfig.iconClose} style={styles.iconClose} />
+        </View>
+        <Text style={styles.textSnackbar}>{message}</Text>
+      </View>
+    );
+  };
+
+  const renderSnackbar = () => {
+    if (type === 'success') {
+      return renderSnackbarSuccess();
+    } else {
+      return renderSnackbarFailed();
+    }
+  };
 
   return (
     <Modal animationType="none" transparent visible={open}>
       <TouchableOpacity style={styles.root} onPress={handleClose}>
-        <View style={styles.body}>{renderSnackbarText()}</View>
+        <View style={styles.container}>{renderSnackbar()}</View>
       </TouchableOpacity>
     </Modal>
   );

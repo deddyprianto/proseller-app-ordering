@@ -30,7 +30,20 @@ const colorSettings = (state = {}, action) => {
   }
 };
 
+const loginSettings = (state = {}, action) => {
+  switch (action.type) {
+    case 'SET_LOGIN_METHOD':
+      return {
+        ...action.data,
+      };
+
+    default:
+      return state;
+  }
+};
+
 export default combineReducers({
   snackbar,
   colorSettings,
+  loginSettings,
 });

@@ -26,10 +26,16 @@ const styles = StyleSheet.create({
     marginBottom: HEIGHT * 0.01,
   },
   image: {
+    height: '100%',
+    width: '100%',
+  },
+  viewImage: {
     height: HEIGHT * 0.22,
     width: WIDTH * 0.85,
     borderRadius: 10,
     marginBottom: 20,
+    borderWidth: 1,
+    borderColor: 'black',
   },
   viewHeader: {
     width: WIDTH,
@@ -88,6 +94,7 @@ const EGift = () => {
     const result = giftCardCategories?.map((category, index) => {
       return (
         <TouchableOpacity
+          style={styles.viewImage}
           disabled={isEmptyArray(giftCardCategories)}
           onPress={() => {
             Actions.sendEGift({categoryId: category.id});
@@ -95,7 +102,7 @@ const EGift = () => {
           <Image
             key={index}
             style={styles.image}
-            resizeMode="stretch"
+            resizeMode="contain"
             source={{uri: category.image}}
           />
         </TouchableOpacity>

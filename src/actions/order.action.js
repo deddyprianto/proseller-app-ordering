@@ -1974,6 +1974,10 @@ export const changeOrderingMode = ({orderingMode, provider}) => {
           orderingMode,
         });
         dispatch({
+          type: 'ORDERING_DATE_TIME',
+          orderingDateTimeSelected: null,
+        });
+        dispatch({
           type: 'DATA_BASKET',
           product: response?.response?.data,
         });

@@ -121,7 +121,7 @@ export default class Splash extends Component {
       <View style={styles.container}>
         <Animated.View style={containerImageStyle}>
           <Animated.Image
-            source={appConfig.funtoastIcon}
+            source={appConfig.logoMerchant}
             style={imageStyle}
             resizeMode="contain"
           />

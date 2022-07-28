@@ -134,7 +134,7 @@ export default class Permition extends Component {
         <ScrollView>
           <View style={styles.container}>
             <Animated.Image
-              source={appConfig.appLogo}
+              source={appConfig.logoMerchant}
               style={imageStyle}
               resizeMode="contain"
             />

@@ -10,13 +10,16 @@ import React, {useState, useEffect} from 'react';
 import {StyleSheet, View, Text, Image, TouchableOpacity} from 'react-native';
 import filter from 'lodash/filter';
 import indexOf from 'lodash/indexOf';
+
 import {isEmptyArray} from '../../../helper/CheckEmpty';
+import CurrencyFormatter from '../../../helper/CurrencyFormatter';
 
 import ProductUpdateModal from '../../productUpdateModal';
 import ProductAddModal from '../../productAddModal';
-import Theme from '../../../theme';
+
 import appConfig from '../../../config/appConfig';
-import CurrencyFormatter from '../../../helper/CurrencyFormatter';
+
+import Theme from '../../../theme';
 
 const useStyles = () => {
   const theme = Theme();
@@ -148,9 +151,9 @@ const Product = ({product, basket}) => {
   const renderImage = () => {
     const image = product?.defaultImageURL
       ? {uri: product?.defaultImageURL}
-      : null;
+      : appConfig.logoMerchant;
 
-    return <Image style={styles.image} resizeMode="stretch" source={image} />;
+    return <Image style={styles.image} resizeMode="center" source={image} />;
   };
 
   const renderQty = () => {
