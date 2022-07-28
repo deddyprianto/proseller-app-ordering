@@ -16,7 +16,7 @@ import appConfig from '../config/appConfig';
 
 import {getBasket, getProductEStoreByOutlet} from '../actions/product.action';
 
-import EStoreList from '../components/eStoreList/EStoreList';
+import EStoreList from '../components/eStoreList';
 
 import {isEmptyArray} from '../helper/CheckEmpty';
 import CurrencyFormatter from '../helper/CurrencyFormatter';

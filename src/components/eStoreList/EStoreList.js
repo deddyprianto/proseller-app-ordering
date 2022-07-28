@@ -9,9 +9,8 @@ import React, {useState, useRef} from 'react';
 import {StyleSheet, View, Text, FlatList, TouchableOpacity} from 'react-native';
 
 import {isEmptyArray} from '../../helper/CheckEmpty';
-import colorConfig from '../../config/colorConfig';
-import Theme from '../../theme';
 import EStoreItem from './components/EStoreItem';
+import Theme from '../../theme';
 
 const useStyles = () => {
   const theme = Theme();
@@ -64,11 +63,6 @@ const useStyles = () => {
       justifyContent: 'center',
       borderBottomWidth: 1,
       borderColor: theme.colors.primary,
-    },
-    dividerCategorySelected: {
-      width: '100%',
-      height: 1,
-      backgroundColor: colorConfig.primaryColor,
     },
   });
   return styles;
