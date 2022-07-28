@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Actions} from 'react-native-router-flux';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 
 import {
   StyleSheet,
@@ -13,7 +13,6 @@ import {
 } from 'react-native';
 
 import appConfig from '../config/appConfig';
-import colorConfig from '../config/colorConfig';
 import awsConfig from '../config/awsConfig';
 
 import FieldTextInput from '../components/fieldTextInput';
@@ -22,79 +21,112 @@ import {checkAccountExist, sendOTP} from '../actions/auth.actions';
 import {showSnackbar} from '../actions/setting.action';
 
 import LoadingScreen from '../components/loadingScreen';
+import Theme from '../theme';
 
 const HEIGHT = Dimensions.get('window').height;
 
-const styles = StyleSheet.create({
-  container: {
-    height: HEIGHT,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'white',
-    paddingHorizontal: 45,
-  },
-  image: {
-    width: 150,
-    height: 40,
-    marginHorizontal: 20,
-  },
-  touchableNext: {
-    height: 40,
-    width: '100%',
-    backgroundColor: colorConfig.primaryColor,
-    borderRadius: 5,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  touchableNextDisabled: {
-    height: 40,
-    width: '100%',
-    backgroundColor: '#B7B7B7',
-    borderRadius: 5,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  textHeader: {
-    color: colorConfig.primaryColor,
-    fontSize: 20,
-  },
-  viewLoginMethodSelector: {
-    display: 'flex',
-    flexDirection: 'row',
-    backgroundColor: '#F9F9F9',
-    width: '100%',
-    height: 46,
-    borderRadius: 8,
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 6,
-  },
-  loginMethodActive: {
-    height: 34,
-    backgroundColor: 'white',
-    width: '48%',
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-    elevation: 1,
-  },
-  loginMethodInactive: {
-    height: 34,
-    backgroundColor: '#F9F9F9',
-    width: '48%',
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  textInformation: {
-    width: '80%',
-    textAlign: 'center',
-    color: '#B7B7B7',
-  },
-  textNext: {color: 'white'},
-});
+const useStyles = () => {
+  const theme = Theme();
+  const styles = StyleSheet.create({
+    container: {
+      height: HEIGHT,
+      justifyContent: 'center',
+      alignItems: 'center',
+      paddingHorizontal: 45,
+      backgroundColor: theme.colors.background,
+    },
+    image: {
+      width: 150,
+      height: 40,
+      marginHorizontal: 20,
+    },
+
+    textHeader: {
+      color: theme.colors.primary,
+      fontSize: theme.fontSize[20],
+      fontFamily: theme.fontFamily.poppinsRegular,
+    },
+
+    textInformation: {
+      width: '80%',
+      textAlign: 'center',
+      color: theme.colors.text2,
+      fontSize: theme.fontSize[12],
+      fontFamily: theme.fontFamily.poppinsRegular,
+    },
+
+    textNext: {
+      color: theme.colors.text4,
+      fontSize: theme.fontSize[12],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+
+    textLoginMethodActive: {
+      color: theme.colors.text1,
+      fontSize: theme.fontSize[12],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textLoginMethodInactive: {
+      color: theme.colors.text2,
+      fontSize: theme.fontSize[12],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+
+    touchableNext: {
+      height: 40,
+      width: '100%',
+      borderRadius: 5,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: theme.colors.primary,
+    },
+
+    touchableNextDisabled: {
+      height: 40,
+      width: '100%',
+      borderRadius: 5,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: theme.colors.buttonDisabled,
+    },
+
+    viewLoginMethodSelector: {
+      display: 'flex',
+      flexDirection: 'row',
+      width: '100%',
+      height: 46,
+      borderRadius: 8,
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      padding: 6,
+      marginTop: '15%',
+      backgroundColor: theme.colors.forthColor,
+    },
+
+    viewLoginMethodActive: {
+      flex: 1,
+      height: 34,
+      borderRadius: 8,
+      alignItems: 'center',
+      justifyContent: 'center',
+      elevation: 5,
+      backgroundColor: theme.colors.background,
+    },
+
+    viewLoginMethodInactive: {
+      flex: 1,
+      height: 34,
+      borderRadius: 8,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: theme.colors.forthColor,
+    },
+  });
+  return styles;
+};
 
 const Login = () => {
+  const styles = useStyles();
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const [countryCode, setCountryCode] = useState('');
@@ -102,15 +134,25 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [loginMethod, setLoginMethod] = useState('email');
 
+  const loginSettings = useSelector(
+    state => state.settingReducer.loginSettings,
+  );
+
   useEffect(() => {
+    if (loginSettings.loginByEmail) {
+      setLoginMethod('email');
+    } else {
+      setLoginMethod('phoneNumber');
+    }
+
     setCountryCode(awsConfig.phoneNumberCode);
-  }, []);
+  }, [loginSettings]);
 
   const handleRequestOtp = async () => {
-    let payload = {};
     const isEmail = loginMethod === 'email';
     const methodValue = isEmail ? email : countryCode + phoneNumber;
 
+    let payload = {};
     if (isEmail) {
       payload.email = email;
     } else {
@@ -143,7 +185,7 @@ const Login = () => {
       <Image
         style={styles.image}
         resizeMode="stretch"
-        source={appConfig.funtoastIcon}
+        source={appConfig.logoMerchant}
       />
     );
   };
@@ -154,32 +196,42 @@ const Login = () => {
     setPhoneNumber('');
   };
 
-  const handleStyleLoginMethod = value => {
-    if (value === loginMethod) {
-      return styles.loginMethodActive;
-    }
-    return styles.loginMethodInactive;
+  const renderLoginMethod = value => {
+    const isActive = value === loginMethod;
+    const isEmail = value === 'email';
+
+    const text = isEmail ? 'Email' : 'Mobile Number';
+
+    const style = isActive
+      ? styles.viewLoginMethodActive
+      : styles.viewLoginMethodInactive;
+
+    const textStyle = isActive
+      ? styles.textLoginMethodActive
+      : styles.textLoginMethodInactive;
+
+    return (
+      <TouchableOpacity
+        onPress={() => {
+          handleChangeLoginMethod(value);
+        }}
+        style={style}>
+        <Text style={textStyle}>{text}</Text>
+      </TouchableOpacity>
+    );
   };
 
   const renderChangeLoginMethod = () => {
-    return (
-      <View style={styles.viewLoginMethodSelector}>
-        <TouchableOpacity
-          onPress={() => {
-            handleChangeLoginMethod('email');
-          }}
-          style={handleStyleLoginMethod('email')}>
-          <Text>Email</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            handleChangeLoginMethod('phoneNumber');
-          }}
-          style={handleStyleLoginMethod('phoneNumber')}>
-          <Text>Mobile Number</Text>
-        </TouchableOpacity>
-      </View>
-    );
+    const {loginByMobile, loginByEmail} = loginSettings;
+
+    if (loginByEmail && loginByMobile) {
+      return (
+        <View style={styles.viewLoginMethodSelector}>
+          {renderLoginMethod('email')}
+          {renderLoginMethod('phoneNumber')}
+        </View>
+      );
+    }
   };
 
   const renderPhoneNumberLoginInput = () => {
@@ -252,7 +304,6 @@ const Login = () => {
         {renderImages()}
         <View style={{marginTop: '10%'}} />
         <Text style={styles.textHeader}>Login Account</Text>
-        <View style={{marginTop: '15%'}} />
         {renderChangeLoginMethod()}
         <View style={{marginTop: '15%'}} />
         {renderLoginMethodInput()}

@@ -16,24 +16,24 @@ import {
   Text,
   TouchableOpacity,
   ScrollView,
+  Alert,
+  Image,
 } from 'react-native';
-
-import colorConfig from '../config/colorConfig';
-import awsConfig from '../config/awsConfig';
 import RBSheet from 'react-native-raw-bottom-sheet';
 
-import IconMaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import appConfig from '../config/appConfig';
+import awsConfig from '../config/awsConfig';
 
 import ProductCartList from '../components/productCartList/ProductCartList';
-
 import OrderingTypeSelectorModal from '../components/modal/OrderingTypeSelectorModal';
 import DeliveryProviderSelectorModal from '../components/modal/DeliveryProviderSelectorModal';
 import DeliveryDateSelectorModal from '../components/modal/DeliveryDateSelectorModal';
+import Header from '../components/layout/header';
+
 import {isEmptyArray, isEmptyObject} from '../helper/CheckEmpty';
 import currencyFormatter from '../helper/CurrencyFormatter';
-import Header from '../components/layout/header';
-import {Alert} from 'react-native';
 import CurrencyFormatter from '../helper/CurrencyFormatter';
+
 import {showSnackbar} from '../actions/setting.action';
 import {getTimeSlot} from '../actions/order.action';
 import Theme from '../theme';
@@ -43,61 +43,69 @@ const useStyles = () => {
   const styles = StyleSheet.create({
     root: {
       flex: 1,
-      backgroundColor: '#F9F9F9',
       justifyContent: 'space-between',
+      backgroundColor: theme.colors.background,
     },
     container: {
       flex: 1,
     },
-    scrollView: {
-      paddingHorizontal: 16,
-    },
     textDetail: {
-      fontSize: 12,
+      color: theme.colors.text1,
+      fontSize: theme.fontSize[12],
+      fontFamily: theme.fontFamily.poppinsRegular,
     },
     textDetailValue: {
-      fontSize: 10,
-      fontWeight: 'bold',
+      color: theme.colors.text1,
+      fontSize: theme.fontSize[10],
+      fontFamily: theme.fontFamily.poppinsSemiBold,
     },
     textGrandTotal: {
-      fontSize: 12,
+      color: theme.colors.text1,
+      fontSize: theme.fontSize[12],
+      fontFamily: theme.fontFamily.poppinsMedium,
     },
     textGrandTotalValue: {
-      fontWeight: 'bold',
-      fontSize: 14,
+      color: theme.colors.primary,
+      fontSize: theme.fontSize[15],
+      fontFamily: theme.fontFamily.poppinsMedium,
     },
     textDetailGrandTotal: {
-      fontSize: 14,
+      color: theme.colors.text1,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsRegular,
     },
     textDetailGrandTotalValue: {
-      fontSize: 14,
-      fontWeight: 'bold',
-    },
-    textSeeDetails: {
-      color: colorConfig.primaryColor,
-      textAlign: 'center',
-      textDecorationLine: 'underline',
+      color: theme.colors.primary,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsBold,
     },
     textCheckoutButton: {
-      fontSize: 12,
-      fontWeight: '500',
-      color: 'white',
+      color: theme.colors.text4,
+      fontSize: theme.fontSize[12],
+      fontFamily: theme.fontFamily.poppinsMedium,
     },
     textMethod: {
-      fontSize: 12,
-      fontWeight: '500',
+      color: theme.colors.text1,
+      fontSize: theme.fontSize[12],
+      fontFamily: theme.fontFamily.poppinsMedium,
     },
     textMethodValue: {
-      fontSize: 12,
-      fontWeight: '500',
-      color: colorConfig.primaryColor,
       textAlign: 'center',
+      color: theme.colors.primary,
+      fontSize: theme.fontSize[12],
+      fontFamily: theme.fontFamily.poppinsMedium,
     },
     textAddButton: {
-      color: colorConfig.primaryColor,
-      fontSize: 12,
+      color: theme.colors.primary,
+      fontSize: theme.fontSize[12],
+      fontFamily: theme.fontFamily.poppinsMedium,
     },
-    textDeliveryAddressBody: {
+    textDetailHeader: {
+      color: theme.colors.text1,
+      fontSize: theme.fontSize[12],
+      fontFamily: theme.fontFamily.poppinsRegular,
+    },
+    textOrderingTypeBody: {
       color: theme.colors.text2,
       fontSize: theme.fontSize[12],
       fontFamily: theme.fontFamily.poppinsMedium,
@@ -108,7 +116,7 @@ const useStyles = () => {
       justifyContent: 'space-between',
       paddingVertical: 16,
       borderBottomWidth: 1,
-      borderColor: '#D6D6D6',
+      borderColor: theme.colors.border,
     },
     viewDetailGrandTotal: {
       display: 'flex',
@@ -122,8 +130,8 @@ const useStyles = () => {
       justifyContent: 'space-between',
       alignItems: 'center',
       borderTopWidth: 0.2,
-      borderTopColor: 'grey',
       padding: 16,
+      borderTopColor: theme.colors.border,
     },
     viewFooter: {
       backgroundColor: 'white',
@@ -132,7 +140,8 @@ const useStyles = () => {
       marginTop: -8,
     },
     viewMethod: {
-      marginTop: 16,
+      marginHorizontal: 16,
+      marginBottom: 16,
       borderRadius: 8,
       backgroundColor: 'white',
       padding: 16,
@@ -142,8 +151,9 @@ const useStyles = () => {
       alignItems: 'center',
       elevation: 1,
     },
-    viewMethodDeliveryAddress: {
-      marginTop: 16,
+    viewMethodOrderingType: {
+      marginHorizontal: 16,
+      marginBottom: 16,
       borderRadius: 8,
       backgroundColor: 'white',
       padding: 16,
@@ -152,61 +162,93 @@ const useStyles = () => {
       elevation: 1,
     },
     viewAddButton: {
-      borderColor: colorConfig.primaryColor,
+      margin: 16,
       borderWidth: 1,
       paddingVertical: 10,
       borderRadius: 8,
       alignItems: 'center',
       backgroundColor: 'white',
+      borderColor: theme.colors.primary,
     },
     viewGrandTotal: {
       display: 'flex',
       flexDirection: 'row',
+      alignItems: 'center',
     },
     viewDetailValue: {
       paddingHorizontal: 16,
+    },
+    viewDetailHeader: {
+      paddingVertical: 16,
+      paddingHorizontal: 20,
+      alignItems: 'center',
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'center',
+      borderBottomWidth: 1,
+      borderColor: theme.colors.border,
+    },
+    viewOrderingTypeHeader: {
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+    viewOrderingTypeBody: {
+      flex: 1,
+      borderTopWidth: 1,
+      marginTop: 16,
+      paddingTop: 16,
+      borderColor: theme.colors.border,
+    },
+    viewDeliveryAddressHeader: {
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
     },
     touchableMethod: {
       width: 120,
       borderRadius: 8,
       paddingVertical: 10,
       borderWidth: 1,
-      borderColor: colorConfig.primaryColor,
+      borderColor: theme.colors.primary,
     },
     touchableCheckoutButton: {
       borderRadius: 8,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: colorConfig.primaryColor,
       paddingVertical: 10,
       paddingHorizontal: 26,
+      backgroundColor: theme.colors.primary,
     },
     touchableCheckoutButtonDisabled: {
       borderRadius: 8,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: '#B7B7B7',
       paddingVertical: 10,
       paddingHorizontal: 26,
+      backgroundColor: theme.colors.buttonDisabled,
     },
-    dividerDashed: {
-      textAlign: 'center',
-      color: colorConfig.primaryColor,
+    touchableIconClose: {
+      position: 'absolute',
+      right: 20,
     },
     divider: {
       height: 1,
-      width: '100%',
-      backgroundColor: '#D6D6D6',
-    },
-    dividerValue: {
-      height: 1,
-      width: '100%',
-      marginVertical: 16,
+      flex: 1,
+      marginHorizontal: 16,
+      marginBottom: 16,
       backgroundColor: theme.colors.border,
     },
     iconArrowUp: {
-      fontSize: 20,
-      color: '#B7B7B7',
+      width: 12,
+      height: 12,
+      tintColor: theme.colors.primary,
+    },
+    iconClose: {
+      width: 16,
+      height: 16,
     },
   });
   return styles;
@@ -214,7 +256,6 @@ const useStyles = () => {
 
 const Cart = () => {
   const styles = useStyles();
-  const theme = Theme();
   const dispatch = useDispatch();
   const [availableTimes, setAvailableTimes] = useState([]);
   const [seeDetail, setSeeDetail] = useState(false);
@@ -305,123 +346,6 @@ const Cart = () => {
     setSeeDetail(false);
   };
 
-  const renderDetailTotal = () => {
-    const {totalGrossAmount, totalDiscountAmount} = basket;
-    const subTotalAfterDiscount = totalGrossAmount - totalDiscountAmount;
-    const subTotal = totalDiscountAmount
-      ? subTotalAfterDiscount
-      : totalGrossAmount;
-
-    return (
-      <View style={styles.viewDetailValueItem}>
-        <Text style={styles.textDetail}>Total</Text>
-        <Text style={styles.textDetailValue}>
-          {currencyFormatter(subTotal)}
-        </Text>
-      </View>
-    );
-  };
-
-  const renderDetailServiceCharge = () => {
-    const {totalSurchargeAmount} = basket;
-    if (totalSurchargeAmount) {
-      return (
-        <View style={styles.viewDetailValueItem}>
-          <Text style={styles.textDetail}>Service Charge</Text>
-          <Text style={styles.textDetailValue}>
-            {currencyFormatter(totalSurchargeAmount)}
-          </Text>
-        </View>
-      );
-    }
-  };
-
-  const renderDetailTax = () => {
-    const {exclusiveTax} = basket;
-    if (exclusiveTax) {
-      return (
-        <View style={styles.viewDetailValueItem}>
-          <Text style={styles.textDetail}>Tax</Text>
-          <Text style={styles.textDetailValue}>
-            {currencyFormatter(exclusiveTax)}
-          </Text>
-        </View>
-      );
-    }
-  };
-
-  const renderDetailDeliveryCost = () => {
-    const {provider} = basket;
-    if (provider) {
-      const cost = provider.deliveryFee || 'Free';
-      return (
-        <View style={styles.viewDetailValueItem}>
-          <Text style={styles.textDetail}>Delivery Cost</Text>
-          <Text style={styles.textDetailValue}>{currencyFormatter(cost)}</Text>
-        </View>
-      );
-    }
-  };
-
-  const renderDetailGrandTotal = () => {
-    const {totalNettAmount} = basket;
-
-    if (totalNettAmount) {
-      return (
-        <TouchableOpacity
-          style={styles.viewDetailGrandTotal}
-          onPress={() => {
-            handleCloseDetail();
-          }}>
-          <Text style={styles.textDetailGrandTotal}>Grand Total</Text>
-          <Text style={styles.textDetailGrandTotalValue}>
-            {currencyFormatter(totalNettAmount)}
-          </Text>
-        </TouchableOpacity>
-      );
-    }
-  };
-
-  const renderDetailHeader = () => {
-    return (
-      <View
-        style={{
-          paddingVertical: 16,
-          paddingHorizontal: 20,
-          alignItems: 'center',
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'center',
-          borderBottomWidth: 1,
-          borderColor: '#D6D6D6',
-        }}>
-        <Text style={{fontSize: 12}}>Total Details</Text>
-        <IconMaterialIcons
-          onPress={() => {
-            handleCloseDetail();
-          }}
-          name="close"
-          style={{position: 'absolute', right: 20, fontSize: 16}}
-        />
-      </View>
-    );
-  };
-
-  const renderDetail = () => {
-    return (
-      <View>
-        {renderDetailHeader()}
-        <View style={styles.viewDetailValue}>
-          {renderDetailTotal()}
-          {renderDetailDeliveryCost()}
-          {renderDetailServiceCharge()}
-          {renderDetailTax()}
-          {renderDetailGrandTotal()}
-        </View>
-      </View>
-    );
-  };
-
   const renderPaymentGrandTotal = () => {
     const {totalNettAmount} = basket;
     if (totalNettAmount) {
@@ -435,10 +359,8 @@ const Cart = () => {
             <Text style={styles.textGrandTotalValue}>
               {currencyFormatter(totalNettAmount)}
             </Text>
-            <IconMaterialIcons
-              name="keyboard-arrow-up"
-              style={styles.iconArrowUp}
-            />
+
+            <Image source={appConfig.iconArrowUp} style={styles.iconArrowUp} />
           </View>
         </TouchableOpacity>
       );
@@ -446,24 +368,28 @@ const Cart = () => {
   };
 
   const handleDisabledPaymentButton = value => {
+    const isActiveDelivery = isEmptyArray(availableTimes)
+      ? !!deliveryAddress && !!basket?.provider
+      : !!deliveryAddress && !!basket?.provider && !!orderingDateTimeSelected;
+
+    const isActivePickUp = isEmptyArray(availableTimes)
+      ? !orderingDateTimeSelected
+      : !!orderingDateTimeSelected;
+
     switch (value) {
       case 'DELIVERY':
-        if (
-          isEmptyArray(availableTimes) &&
-          deliveryAddress &&
-          basket?.provider
-        ) {
+        if (isActiveDelivery) {
           return false;
-        } else if (
-          deliveryAddress &&
-          basket?.provider &&
-          orderingDateTimeSelected
-        ) {
-          return false;
+        } else {
+          return true;
         }
-        return true;
+
       case 'PICKUP':
-        return false;
+        if (isActivePickUp) {
+          return false;
+        } else {
+          return true;
+        }
       case 'DINEIN':
         return false;
       case 'TAKEAWAY':
@@ -606,24 +532,15 @@ const Cart = () => {
         orderingMode: basket?.orderingMode,
       };
 
-      // set url to pay
-      let url;
-
       if (!basket?.orderingMode) {
         RBSheet.open();
         return;
       }
 
-      if (
-        basket?.orderingMode === 'TAKEAWAY' ||
-        basket?.orderingMode === 'DELIVERY'
-      ) {
-        pembayaran.orderingMode = basket.orderingMode;
-        pembayaran.cartID = basket.cartID;
-        url = '/cart/submitAndPay';
-      } else {
-        url = '/cart/customer/settle';
-      }
+      pembayaran.orderingMode = basket.orderingMode;
+      pembayaran.cartID = basket.cartID;
+
+      const url = '/cart/submitAndPay';
 
       // for delivery order
       if (basket?.orderingMode === 'DELIVERY') {
@@ -675,48 +592,9 @@ const Cart = () => {
     }
   };
 
-  const renderPaymentButton = () => {
-    const disabled = handleDisabledPaymentButton(basket?.orderingMode);
-    const styleDisabled = disabled
-      ? styles.touchableCheckoutButtonDisabled
-      : styles.touchableCheckoutButton;
-
+  const renderOrderingTypeHeader = orderingTypeValue => {
     return (
-      <TouchableOpacity
-        style={styleDisabled}
-        disabled={disabled}
-        onPress={() => {
-          handleClickButtonPayment();
-          // Actions.settleOrder({pembayaran: pembayaran, url: '/cart/settle'});
-        }}>
-        <Text style={styles.textCheckoutButton}>Continue to Payment</Text>
-      </TouchableOpacity>
-    );
-  };
-
-  const renderPayment = () => {
-    return (
-      <View style={styles.viewCheckoutButton}>
-        {renderPaymentGrandTotal()}
-        {renderPaymentButton()}
-      </View>
-    );
-  };
-
-  const renderFooter = () => {
-    const result = seeDetail ? renderDetail() : renderPayment();
-
-    return <View style={styles.viewFooter}>{result}</View>;
-  };
-
-  const renderOrderingType = () => {
-    const orderingType =
-      typeof basket?.orderingMode === 'string' && basket?.orderingMode;
-
-    const orderingTypeValue = orderingType || 'Choose Type';
-
-    return (
-      <View style={styles.viewMethod}>
+      <View style={styles.viewOrderingTypeHeader}>
         <Text style={styles.textMethod}>Ordering Type</Text>
         <TouchableOpacity
           style={styles.touchableMethod}
@@ -729,15 +607,36 @@ const Cart = () => {
     );
   };
 
+  const renderOrderingTypeBody = orderingTypeValue => {
+    if (orderingTypeValue === 'TAKEAWAY' && outlet?.address) {
+      return (
+        <View style={styles.viewOrderingTypeBody}>
+          <Text style={styles.textOrderingTypeBody}>
+            Outlet Address for Pick Up
+          </Text>
+          <Text style={styles.textOrderingTypeBody}>{outlet?.address}</Text>
+        </View>
+      );
+    }
+  };
+
+  const renderOrderingType = () => {
+    const orderingType =
+      typeof basket?.orderingMode === 'string' && basket?.orderingMode;
+
+    const orderingTypeValue = orderingType || 'Choose Type';
+
+    return (
+      <View style={styles.viewMethodOrderingType}>
+        {renderOrderingTypeHeader(orderingTypeValue)}
+        {renderOrderingTypeBody(orderingTypeValue)}
+      </View>
+    );
+  };
+
   const renderDeliveryAddressHeader = deliveryAddressValue => {
     return (
-      <View
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-        }}>
+      <View style={styles.viewDeliveryAddressHeader}>
         <Text style={styles.textMethod}>Delivery Address</Text>
         <TouchableOpacity
           style={styles.touchableMethod}
@@ -819,8 +718,9 @@ const Cart = () => {
     const available = !isEmptyArray(availableTimes);
     const isDelivery = available && basket?.orderingMode === 'DELIVERY';
     const isPickUp = available && basket?.orderingMode === 'PICKUP';
+    const isTakeAway = available && basket?.orderingMode === 'TAKEAWAY';
 
-    if (isDelivery || isPickUp) {
+    if (isDelivery || isPickUp || isTakeAway) {
       return (
         <View style={styles.viewMethod}>
           <Text style={styles.textMethod}>Delivery Date</Text>
@@ -846,6 +746,146 @@ const Cart = () => {
         <Text style={styles.textAddButton}>+ ADD ITEM</Text>
       </TouchableOpacity>
     );
+  };
+
+  const renderDetailTotal = () => {
+    const {totalGrossAmount, totalDiscountAmount} = basket;
+    const subTotalAfterDiscount = totalGrossAmount - totalDiscountAmount;
+    const subTotal = totalDiscountAmount
+      ? subTotalAfterDiscount
+      : totalGrossAmount;
+
+    return (
+      <View style={styles.viewDetailValueItem}>
+        <Text style={styles.textDetail}>Total</Text>
+        <Text style={styles.textDetailValue}>
+          {currencyFormatter(subTotal)}
+        </Text>
+      </View>
+    );
+  };
+
+  const renderDetailServiceCharge = () => {
+    const {totalSurchargeAmount} = basket;
+    if (totalSurchargeAmount) {
+      return (
+        <View style={styles.viewDetailValueItem}>
+          <Text style={styles.textDetail}>Service Charge</Text>
+          <Text style={styles.textDetailValue}>
+            {currencyFormatter(totalSurchargeAmount)}
+          </Text>
+        </View>
+      );
+    }
+  };
+
+  const renderDetailTax = () => {
+    const {exclusiveTax} = basket;
+    if (exclusiveTax) {
+      return (
+        <View style={styles.viewDetailValueItem}>
+          <Text style={styles.textDetail}>Tax</Text>
+          <Text style={styles.textDetailValue}>
+            {currencyFormatter(exclusiveTax)}
+          </Text>
+        </View>
+      );
+    }
+  };
+
+  const renderDetailDeliveryCost = () => {
+    const {provider} = basket;
+    if (provider) {
+      const cost = provider.deliveryFee || 'Free';
+      return (
+        <View style={styles.viewDetailValueItem}>
+          <Text style={styles.textDetail}>Delivery Cost</Text>
+          <Text style={styles.textDetailValue}>{currencyFormatter(cost)}</Text>
+        </View>
+      );
+    }
+  };
+
+  const renderDetailGrandTotal = () => {
+    const {totalNettAmount} = basket;
+
+    if (totalNettAmount) {
+      return (
+        <TouchableOpacity
+          style={styles.viewDetailGrandTotal}
+          onPress={() => {
+            handleCloseDetail();
+          }}>
+          <Text style={styles.textDetailGrandTotal}>Grand Total</Text>
+          <Text style={styles.textDetailGrandTotalValue}>
+            {currencyFormatter(totalNettAmount)}
+          </Text>
+        </TouchableOpacity>
+      );
+    }
+  };
+
+  const renderDetailHeader = () => {
+    return (
+      <View style={styles.viewDetailHeader}>
+        <Text style={styles.textDetailHeader}>Total Details</Text>
+        <TouchableOpacity
+          style={styles.touchableIconClose}
+          onPress={() => {
+            handleCloseDetail();
+          }}>
+          <Image source={appConfig.iconClose} style={styles.iconClose} />
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
+  const renderDetail = () => {
+    return (
+      <View>
+        {renderDetailHeader()}
+        <View style={styles.viewDetailValue}>
+          {renderDetailTotal()}
+          {renderDetailDeliveryCost()}
+          {renderDetailServiceCharge()}
+          {renderDetailTax()}
+          {renderDetailGrandTotal()}
+        </View>
+      </View>
+    );
+  };
+
+  const renderPaymentButton = () => {
+    const disabled = handleDisabledPaymentButton(basket?.orderingMode);
+    const styleDisabled = disabled
+      ? styles.touchableCheckoutButtonDisabled
+      : styles.touchableCheckoutButton;
+
+    return (
+      <TouchableOpacity
+        style={styleDisabled}
+        disabled={disabled}
+        onPress={() => {
+          handleClickButtonPayment();
+        }}>
+        <Text style={styles.textCheckoutButton}>Continue to Payment</Text>
+      </TouchableOpacity>
+    );
+  };
+
+  const renderPayment = () => {
+    return (
+      <View style={styles.viewCheckoutButton}>
+        {renderPaymentGrandTotal()}
+        {renderPaymentButton()}
+      </View>
+    );
+  };
+
+  const renderFooter = () => {
+    const result = seeDetail ? renderDetail() : renderPayment();
+
+    return <View style={styles.viewFooter}>{result}</View>;
   };
 
   const renderModal = () => {
@@ -876,31 +916,6 @@ const Cart = () => {
     );
   };
 
-  const renderBody = () => {
-    if (!isEmptyObject(basket)) {
-      return (
-        <>
-          <View style={styles.container}>
-            <ScrollView style={styles.scrollView}>
-              <View style={{marginTop: 16}} />
-              {renderAddButton()}
-              <View style={{marginTop: 16}} />
-              <ProductCartList />
-              <View style={styles.divider} />
-              {renderOrderingType()}
-              {renderDeliveryAddress()}
-              {renderDeliveryProvider()}
-              {renderDeliveryDate()}
-              <View style={{marginTop: 16}} />
-            </ScrollView>
-            {renderModal()}
-          </View>
-          {renderFooter()}
-        </>
-      );
-    }
-  };
-
   if (isEmptyArray(basket?.details)) {
     Actions.pop();
   }
@@ -908,7 +923,19 @@ const Cart = () => {
   return (
     <View style={styles.root}>
       <Header title="Cart" />
-      {renderBody()}
+      <View style={styles.container}>
+        <ScrollView>
+          {renderAddButton()}
+          <ProductCartList />
+          <View style={styles.divider} />
+          {renderOrderingType()}
+          {renderDeliveryAddress()}
+          {renderDeliveryProvider()}
+          {renderDeliveryDate()}
+        </ScrollView>
+        {renderModal()}
+      </View>
+      {renderFooter()}
     </View>
   );
 };

@@ -43,7 +43,7 @@ const appConfig = {
 
   //Funtoast
   funtoastButtomBanner: require('../assets/img/FuntoastBottomBanner.jpg'),
-  funtoastCoffeeIcon: require('../assets/img/funtoastCoffeeIcon.png'),
+  funtoastCoffeeIcon: require('../assets/img/funtoast-coffee.png'),
   funtoastRedeemed: require('../assets/img/FuntoastRedeemed.png'),
   funtoastSuccessSendGift: require('../assets/img/FuntoastSuccessSendGift.png'),
   funtoastTakeAway: require('../assets/img/FuntoastTakeAway.png'),
@@ -53,22 +53,24 @@ const appConfig = {
   funtoastStar: require('../assets/img/FuntoastStar.png'),
   funtoastQRCode: require('../assets/img/FuntoastQRCode.png'),
   funtoastIcon: require('../assets/img/funtoastIcon.png'),
-  funtoastCoffee: require('../assets/img/funtoastCoffee.png'),
   funtoastEmptyDeliveryAddress: require('../assets/img/funtoast-empty-address.png'),
   funtoastOnboarding1: require('../assets/img/FuntoastOnBoarding01.png'),
   funtoastOnboarding2: require('../assets/img/FuntoastOnBoarding02.png'),
   funtoastOnboarding3: require('../assets/img/FuntoastOnBoarding03.png'),
 
+  //LOGO MARTIN
+  logoMerchant: require('../assets/img/logo.png'),
+
   //ICON MARTIN
-  iconEdit: require('../assets/img/icon-edit.png'),
   iconCart: require('../assets/img/icon-cart.png'),
   iconArrowUp: require('../assets/img/icon-arrow-up.png'),
   iconArrowDown: require('../assets/img/icon-arrow-down.png'),
   iconArrowLeft: require('../assets/img/icon-arrow-left.png'),
   iconArrowRight: require('../assets/img/icon-arrow-right.png'),
-  iconCheck: require('../assets/img/icon-check.png'),
-  iconClose: require('../assets/img/icon-close.png'),
   iconNotes: require('../assets/img/icon-notes.png'),
+  iconClose: require('../assets/img/icon-close.png'),
+  iconEdit: require('../assets/img/icon-edit.png'),
+  iconCheck: require('../assets/img/icon-check.png'),
   iconPlus: require('../assets/img/icon-plus.png'),
   iconMinus: require('../assets/img/icon-minus.png'),
   iconLocation: require('../assets/img/icon-location.png'),

@@ -275,14 +275,13 @@ const Menu = () => {
   const renderEStore = () => {
     return (
       <TouchableOpacity
+        style={styles.touchableEStore}
         onPress={() => {
           Actions.push('eStore');
         }}>
-        <View style={styles.touchableEStore}>
-          <Text style={styles.textMenu}>E-Store</Text>
+        <Text style={styles.textMenu}>E-Store</Text>
 
-          <Text style={styles.textMenuDescription}>merchandise and more</Text>
-        </View>
+        <Text style={styles.textMenuDescription}>merchandise and more</Text>
       </TouchableOpacity>
     );
   };
@@ -290,14 +289,13 @@ const Menu = () => {
   const renderMyECard = () => {
     return (
       <TouchableOpacity
+        style={styles.touchableMyECard}
         onPress={() => {
           Actions.push('eCard');
         }}>
-        <View style={styles.touchableMyECard}>
-          <Text style={styles.textMenu}>My E-Card</Text>
+        <Text style={styles.textMenu}>My E-Card</Text>
 
-          <Text style={styles.textMenuDescription}>scan for points</Text>
-        </View>
+        <Text style={styles.textMenuDescription}>scan for points</Text>
       </TouchableOpacity>
     );
   };
@@ -305,16 +303,12 @@ const Menu = () => {
   const renderSendGift = () => {
     return (
       <TouchableOpacity
+        style={styles.touchableSendGift}
         onPress={() => {
           Actions.push('eGift');
         }}>
-        <View style={styles.touchableSendGift}>
-          <Text style={styles.textMenu}>Send A Gift</Text>
-
-          <Text style={styles.textMenuDescription}>
-            gift a friend a voucher
-          </Text>
-        </View>
+        <Text style={styles.textMenu}>Send A Gift</Text>
+        <Text style={styles.textMenuDescription}>gift a friend a voucher</Text>
       </TouchableOpacity>
     );
   };
@@ -345,7 +339,6 @@ const Menu = () => {
         source={appConfig.funtoastButtomBanner}
         resizeMode="contain"
       />
-      <View style={{marginTop: 10}} />
     </View>
   );
 };

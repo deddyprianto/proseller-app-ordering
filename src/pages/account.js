@@ -152,7 +152,7 @@ class Account extends Component {
               value={JSON.stringify({
                 token: qrcode,
               })}
-              logo={appConfig.appLogoQR}
+              logo={appConfig.logoMerchant}
               logoSize={35}
               size={270}
             />

@@ -69,8 +69,9 @@ const useStyles = () => {
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textInfo: {
+      marginTop: 32,
+      color: theme.colors.text4,
       fontSize: theme.fontSize[12],
-      color: 'white',
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textPointAndHistory: {
@@ -95,12 +96,20 @@ const useStyles = () => {
     viewPoint: {
       alignItems: 'flex-end',
     },
-    viewFlexRowSpaceBetweenCenter: {
+    viewTier: {
       width: '100%',
       display: 'flex',
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
+    },
+    viewWelcomeAndPoint: {
+      width: '100%',
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 32,
     },
     viewPointHeader: {
       display: 'flex',
@@ -112,16 +121,19 @@ const useStyles = () => {
     },
 
     viewProgressBar: {
-      width: '70%',
+      flex: 1,
       justifyContent: 'center',
     },
 
     progressBar: {
-      backgroundColor: 'white',
+      flex: 1,
+      maxWidth: '100%',
       height: 14,
       borderRadius: 8,
-      borderColor: 'white',
       borderWidth: 3,
+      marginBottom: 4,
+      borderColor: 'white',
+      backgroundColor: 'white',
     },
   });
   return result;
@@ -177,9 +189,18 @@ const Redeem = () => {
     );
   };
 
+  const renderWelcomeAndPoint = () => {
+    return (
+      <View style={styles.viewWelcomeAndPoint}>
+        {renderWelcome()}
+        {renderPoint()}
+      </View>
+    );
+  };
+
   const renderProgressBar = () => {
     const percentage = progressBarCampaign?.progressInPercentage || 0;
-    const percentageIcon = percentage < 12 ? 0 : percentage - 12;
+    const percentageIcon = percentage < 8 ? 0 : percentage - 8;
     const decimal = percentage / 100;
     return (
       <View style={styles.viewProgressBar}>
@@ -190,8 +211,8 @@ const Redeem = () => {
         />
         <Image
           style={{
-            height: 29,
-            width: 33,
+            height: 36,
+            width: 40,
             position: 'absolute',
             left: `${percentageIcon}%`,
           }}
@@ -214,28 +235,10 @@ const Redeem = () => {
       <Text style={styles.textNextTier}>{progressBarCampaign?.nextGroup}</Text>
     );
   };
-
-  const renderWelcomeAndPoint = () => {
+  const renderTier = () => {
     return (
-      <View style={styles.viewFlexRowSpaceBetweenCenter}>
-        {renderWelcome()}
-        {renderPoint()}
-      </View>
-    );
-  };
-
-  const renderProgress = () => {
-    return (
-      <View
-        style={{
-          width: '100%',
-          alignItems: 'center',
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-        }}>
+      <View style={styles.viewTier}>
         {renderCurrentTier()}
-        {renderProgressBar()}
         {renderNextTier()}
       </View>
     );
@@ -251,10 +254,8 @@ const Redeem = () => {
     return (
       <View style={styles.viewPointHeader}>
         {renderWelcomeAndPoint()}
-        <View style={{marginTop: 32}} />
-        {renderProgress()}
-
-        <View style={{marginTop: 32}} />
+        {renderProgressBar()}
+        {renderTier()}
         {renderTextInfo()}
       </View>
     );

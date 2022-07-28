@@ -13,12 +13,15 @@ const Theme = () => {
 
   const colors = {
     primary: '#CF3030',
-    secondary: colorSettings?.secondaryColor || 'black',
+    secondary: '#F9F9F9',
+    thirdColor: '#FFEBEB',
+    forthColor: '#F9F9F9',
 
     background: 'white',
     background2: '#F9F9F9',
 
     backgroundTransparent: 'rgba(0, 0, 0, 0.5)',
+
     header: 'white',
 
     text1: 'black',
@@ -50,6 +53,7 @@ const Theme = () => {
     12: 12,
     14: 14,
     16: 16,
+    20: 20,
   };
 
   const fontFamily = {
