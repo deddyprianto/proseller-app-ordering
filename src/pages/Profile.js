@@ -7,15 +7,11 @@ import {
   View,
   Text,
   Image,
-  Dimensions,
   TouchableOpacity,
 } from 'react-native';
 
 import {ProgressBar} from 'react-native-paper';
 
-import {connect} from 'react-redux';
-
-import colorConfig from '../config/colorConfig';
 import appConfig from '../config/appConfig';
 import {Actions} from 'react-native-router-flux';
 import awsConfig from '../config/awsConfig';
@@ -24,121 +20,143 @@ import CryptoJS from 'react-native-crypto-js';
 import {logoutUser} from '../actions/auth.actions';
 import LoadingScreen from '../components/loadingScreen';
 import {myProgressBarCampaign} from '../actions/account.action';
+import Theme from '../theme';
 
-const WIDTH = Dimensions.get('window').width;
-const HEIGHT = Dimensions.get('window').height;
+const useStyles = () => {
+  const theme = Theme();
+  const styles = StyleSheet.create({
+    root: {
+      backgroundColor: theme.colors.background,
+    },
+    textWelcome: {
+      color: theme.colors.text4,
+      fontSize: theme.fontSize[12],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textName: {
+      color: theme.colors.text4,
+      fontSize: theme.fontSize[16],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textYourPoint: {
+      textAlign: 'right',
+      color: theme.colors.text4,
+      fontSize: theme.fontSize[12],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textPointValue: {
+      color: theme.colors.text4,
+      fontSize: theme.fontSize[16],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textCurrentTier: {
+      textAlign: 'left',
+      color: theme.colors.text4,
+      fontSize: theme.fontSize[10],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textNextTier: {
+      textAlign: 'right',
+      color: theme.colors.text4,
+      fontSize: theme.fontSize[10],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textInfo: {
+      marginTop: 32,
+      color: theme.colors.text4,
+      fontSize: theme.fontSize[12],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textLogout: {
+      color: theme.colors.text1,
+      fontSize: theme.fontSize[12],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textIcon: {
+      color: theme.colors.text1,
+      fontSize: theme.fontSize[12],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    viewOption: {
+      padding: 10,
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      borderBottomWidth: 1,
+      borderColor: theme.colors.border,
+    },
+    viewLogout: {
+      padding: 10,
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginTop: 30,
+    },
+    viewTextSetting: {
+      padding: 10,
+      borderBottomWidth: 1,
+      borderColor: theme.colors.border,
+    },
+    viewPointHeader: {
+      display: 'flex',
+      alignItems: 'center',
+      flex: 1,
+      borderRadius: 8,
+      paddingHorizontal: 18,
+      paddingVertical: 16,
+      margin: 16,
+      backgroundColor: theme.colors.primary,
+    },
+    viewWelcomeAndPoint: {
+      width: '100%',
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 32,
+    },
+    viewProgressBar: {
+      flex: 1,
+      justifyContent: 'center',
+    },
+    viewTier: {
+      width: '100%',
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    progressBar: {
+      flex: 1,
+      maxWidth: '100%',
+      height: 14,
+      borderRadius: 8,
+      borderWidth: 3,
+      marginBottom: 4,
+      borderColor: 'white',
+      backgroundColor: 'white',
+    },
+    imageIconLogout: {
+      height: 30,
+      width: 30,
+      marginHorizontal: 5,
+      tintColor: 'grey',
+    },
+    imageIcon: {
+      height: 30,
+      width: 30,
+      marginHorizontal: 14,
+    },
+    primaryColor: {
+      color: theme.colors.primary,
+    },
+  });
 
-const styles = StyleSheet.create({
-  divider: {
-    width: WIDTH,
-    height: 1,
-    backgroundColor: '#E5E5E5',
-  },
-  textWelcome: {
-    fontSize: 14,
-    color: 'white',
-  },
-  textName: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: 'white',
-  },
-  textYourPoint: {
-    fontSize: 10,
-    color: 'white',
-  },
-  textPointValue: {
-    fontSize: 24,
-    color: 'white',
-    fontWeight: 'bold',
-  },
-  textCurrentTier: {
-    fontSize: 12,
-    fontWeight: 'bold',
-    color: 'white',
-    textAlign: 'left',
-  },
-  textNextTier: {
-    fontSize: 12,
-    fontWeight: 'bold',
-    color: 'white',
-    textAlign: 'right',
-  },
-  textInfo: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: 'white',
-  },
-  textLogout: {
-    color: 'grey',
-  },
-  viewRank: {
-    display: 'flex',
-    flexDirection: 'row',
-    width: '80%',
-    justifyContent: 'space-between',
-    marginTop: 30,
-  },
-  viewOption: {
-    padding: 10,
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  viewLogout: {
-    padding: 10,
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 30,
-  },
-  viewTextSetting: {
-    padding: 10,
-  },
-  viewPointHeader: {
-    display: 'flex',
-    alignItems: 'center',
-    backgroundColor: colorConfig.primaryColor,
-    width: '100%',
-    borderRadius: 8,
-    paddingHorizontal: 18,
-    paddingVertical: 16,
-  },
-  viewFlexRowSpaceBetweenCenter: {
-    width: '100%',
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  viewProgressBar: {
-    width: '80%',
-    justifyContent: 'center',
-  },
-  progressBar: {
-    backgroundColor: 'white',
-    height: 14,
-    borderRadius: 8,
-    borderColor: 'white',
-    borderWidth: 3,
-  },
-  imageIconLogout: {
-    height: 30,
-    width: 30,
-    marginHorizontal: 5,
-    tintColor: 'grey',
-  },
-  imageIcon: {
-    height: 30,
-    width: 30,
-    marginHorizontal: 14,
-  },
-  textIcon: {
-    fontSize: 14,
-  },
-});
+  return styles;
+};
 
 const Profile = () => {
+  const styles = useStyles();
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const [user, setUser] = useState({});
@@ -153,6 +171,11 @@ const Profile = () => {
   const totalPoint = useSelector(
     state => state.rewardsReducer.dataPoint.totalPoint,
   );
+
+  const defaultOutlet = useSelector(
+    state => state.storesReducer.defaultOutlet.defaultOutlet,
+  );
+
   useEffect(() => {
     const loadData = async () => {
       await dispatch(myProgressBarCampaign());
@@ -202,21 +225,30 @@ const Profile = () => {
     );
   };
 
+  const renderWelcomeAndPoint = () => {
+    return (
+      <View style={styles.viewWelcomeAndPoint}>
+        {renderWelcome()}
+        {renderPoint()}
+      </View>
+    );
+  };
+
   const renderProgressBar = () => {
     const percentage = progressBarCampaign?.progressInPercentage || 0;
-    const percentageIcon = percentage < 12 ? 0 : percentage - 12;
+    const percentageIcon = percentage < 8 ? 0 : percentage - 8;
     const decimal = percentage / 100;
     return (
       <View style={styles.viewProgressBar}>
         <ProgressBar
           progress={decimal}
-          color={colorConfig.primaryColor}
+          color={styles.primaryColor.color}
           style={styles.progressBar}
         />
         <Image
           style={{
-            height: 29,
-            width: 33,
+            height: 36,
+            width: 40,
             position: 'absolute',
             left: `${percentageIcon}%`,
           }}
@@ -240,33 +272,9 @@ const Profile = () => {
     );
   };
 
-  const renderWelcomeAndPoint = () => {
-    return (
-      <View style={styles.viewFlexRowSpaceBetweenCenter}>
-        {renderWelcome()}
-        {renderPoint()}
-      </View>
-    );
-  };
-
-  const renderProgress = () => {
-    return (
-      <View style={{width: '100%', alignItems: 'center'}}>
-        {renderProgressBar()}
-      </View>
-    );
-  };
-
   const renderTier = () => {
     return (
-      <View
-        style={{
-          width: '100%',
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-        }}>
+      <View style={styles.viewTier}>
         {renderCurrentTier()}
         {renderNextTier()}
       </View>
@@ -281,16 +289,11 @@ const Profile = () => {
 
   const renderPointHeader = () => {
     return (
-      <View style={{padding: 16}}>
-        <View style={styles.viewPointHeader}>
-          {renderWelcomeAndPoint()}
-          <View style={{marginTop: '15%'}} />
-          {renderProgress()}
-          <View style={{marginTop: 10}} />
-          {renderTier()}
-          <View style={{marginTop: '15%'}} />
-          {renderTextInfo()}
-        </View>
+      <View style={styles.viewPointHeader}>
+        {renderWelcomeAndPoint()}
+        {renderProgressBar()}
+        {renderTier()}
+        {renderTextInfo()}
       </View>
     );
   };
@@ -309,20 +312,22 @@ const Profile = () => {
   };
 
   const renderMyDeliveryAddress = () => {
-    return (
-      <TouchableOpacity
-        style={styles.viewOption}
-        onPress={() => {
-          Actions.myDeliveryAddress();
-        }}>
-        <Image
-          style={styles.imageIcon}
-          source={appConfig.iconLocation}
-          resizeMode="stretch"
-        />
-        <Text style={styles.textIcon}>My Delivery address</Text>
-      </TouchableOpacity>
-    );
+    if (defaultOutlet?.enableDelivery) {
+      return (
+        <TouchableOpacity
+          style={styles.viewOption}
+          onPress={() => {
+            Actions.myDeliveryAddress();
+          }}>
+          <Image
+            style={styles.imageIcon}
+            source={appConfig.iconLocation}
+            resizeMode="stretch"
+          />
+          <Text style={styles.textIcon}>My Delivery address</Text>
+        </TouchableOpacity>
+      );
+    }
   };
 
   const renderNotifications = () => {
@@ -366,15 +371,10 @@ const Profile = () => {
     return (
       <View>
         {renderTextSetting()}
-        <View style={styles.divider} />
         {renderMyDeliveryAddress()}
-        <View style={styles.divider} />
         {renderEditProfile()}
-        <View style={styles.divider} />
         {renderNotifications()}
-        <View style={styles.divider} />
         {renderTermsAndConditions()}
-        <View style={styles.divider} />
       </View>
     );
   };
@@ -393,7 +393,7 @@ const Profile = () => {
   };
 
   return (
-    <ScrollView>
+    <ScrollView style={styles.root}>
       <LoadingScreen loading={isLoading} />
       {renderPointHeader()}
       {renderSettings()}
