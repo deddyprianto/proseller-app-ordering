@@ -6,60 +6,78 @@ import CountryPicker from '../react-native-country-picker-modal';
 import PhoneInput from 'react-native-phone-input';
 
 import awsConfig from '../../config/awsConfig';
+import Theme from '../../theme';
 
 const useStyles = () => {
+  const theme = Theme();
   const styles = StyleSheet.create({
     root: {
       width: '100%',
+      height: 48,
       display: 'flex',
       flexDirection: 'row',
       alignItems: 'center',
       borderWidth: 1,
       borderRadius: 8,
-      paddingVertical: 4,
+      paddingVertical: 7,
       paddingHorizontal: 16,
-      borderColor: '#00000061',
+      borderColor: theme.colors.border1,
     },
-    viewCountryPicker: {width: 0, height: 0},
+    viewCountryPicker: {
+      width: 0,
+      height: 0,
+    },
     viewInput: {
-      width: '100%',
+      flex: 1,
+      height: 37,
+      marginTop: 0,
       justifyContent: 'center',
-      paddingHorizontal: 16,
     },
-
     viewCountryCodeAndPhoneNumber: {
+      height: 21,
       display: 'flex',
       flexDirection: 'row',
       alignItems: 'center',
     },
-    wrapFlag: {
-      width: '12%',
-    },
     viewFlag: {
       width: 35,
       height: 25,
+      borderRadius: 4,
     },
     textLabel: {
+      height: 16,
       width: '100%',
       textAlign: 'left',
-      color: '#00000099',
-      fontSize: 12,
+      color: theme.colors.text2,
+      fontSize: theme.fontSize[12],
+      fontFamily: theme.fontFamily.poppinsRegular,
+    },
+    textPlaceholder: {
+      height: 21,
+      color: theme.colors.text2,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsRegular,
     },
     textCountryCode: {
-      color: '#00000099',
-      fontSize: 14,
+      height: 21,
+      marginRight: 8,
+      color: theme.colors.text2,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsRegular,
     },
     textInputPhoneNumber: {
-      width: '80%',
-      height: 21,
-      fontSize: 14,
-      paddingVertical: 0,
-      paddingHorizontal: 0,
+      flex: 1,
+      padding: 0,
+      marginBottom: -3,
+      color: theme.colors.text1,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsRegular,
     },
     divider: {
-      backgroundColor: '#E5E5E5',
       width: 1,
-      height: '100%',
+      height: 34,
+      marginHorizontal: 12,
+      backgroundColor: theme.colors.border,
     },
   });
   return styles;
@@ -103,18 +121,10 @@ const FieldPhoneNumberInput = ({
     );
   };
 
-  const renderLabel = () => {
-    if (customLabel) {
-      return customLabel(value);
-    }
-
-    return <Text style={styles.textLabel}>{label}</Text>;
-  };
-
   const renderFlag = () => {
     return (
       <PhoneInput
-        style={styles.wrapFlag}
+        style={styles.viewFlag}
         flagStyle={styles.viewFlag}
         onPressFlag={() => {
           setOpenModal(true);
@@ -124,26 +134,43 @@ const FieldPhoneNumberInput = ({
     );
   };
 
-  const renderInput = () => {
+  const renderLabel = () => {
+    if (!value) {
+      return;
+    }
+
+    if (customLabel) {
+      return customLabel(value);
+    }
+
+    return <Text style={styles.textLabel}>{label}</Text>;
+  };
+
+  const renderValue = () => {
     const phoneNumber = value.replace(countryCode, '');
 
     return (
+      <View style={styles.viewCountryCodeAndPhoneNumber}>
+        <Text style={styles.textCountryCode}>{countryCode}</Text>
+        <TextInput
+          keyboardType={'numeric'}
+          style={styles.textInputPhoneNumber}
+          value={phoneNumber}
+          placeholder={placeholder}
+          onChangeText={value => {
+            onChange(value.replace(/[^0-9]/g, ''));
+            onChangeCountryCode(countryCode);
+          }}
+        />
+      </View>
+    );
+  };
+
+  const renderInput = () => {
+    return (
       <View style={styles.viewInput}>
         {renderLabel()}
-        <View style={styles.viewCountryCodeAndPhoneNumber}>
-          <Text style={styles.textCountryCode}>{countryCode}</Text>
-          <View style={{marginRight: 6}} />
-          <TextInput
-            keyboardType={'numeric'}
-            style={styles.textInputPhoneNumber}
-            value={phoneNumber}
-            placeholder={placeholder}
-            onChangeText={value => {
-              onChange(value.replace(/[^0-9]/g, ''));
-              onChangeCountryCode(countryCode);
-            }}
-          />
-        </View>
+        {renderValue()}
       </View>
     );
   };

@@ -121,7 +121,11 @@ const DeliveryProviderSelectorModal = ({open, handleClose, value}) => {
       );
       const user = JSON.parse(userDecrypt.toString(CryptoJS.enc.Utf8));
 
-      const deliveryAddress = user?.selectedAddress;
+      const deliveryAddressDefault = user?.deliveryAddress.find(
+        address => address.isDefault,
+      );
+
+      const deliveryAddress = user?.selectedAddress || deliveryAddressDefault;
       const cartId = basket?.cartID;
       const outletId = basket?.outlet?.id;
 

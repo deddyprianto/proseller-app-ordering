@@ -36,7 +36,6 @@ import CurrencyFormatter from '../helper/CurrencyFormatter';
 
 import {showSnackbar} from '../actions/setting.action';
 import {getTimeSlot} from '../actions/order.action';
-
 import Theme from '../theme';
 
 const useStyles = () => {
@@ -202,6 +201,12 @@ const useStyles = () => {
       paddingTop: 16,
       borderColor: theme.colors.border,
     },
+    viewDeliveryAddressHeader: {
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
     touchableMethod: {
       width: 120,
       borderRadius: 8,
@@ -299,7 +304,11 @@ const Cart = () => {
     );
 
     const result = JSON.parse(userDecrypt.toString(CryptoJS.enc.Utf8));
-    setDeliveryAddress(result.selectedAddress);
+    const address = !isEmptyObject(result?.selectedAddress)
+      ? result?.selectedAddress
+      : result?.deliveryAddressDefault;
+
+    setDeliveryAddress(address);
   }, [userDetail]);
 
   const handleOpenOrderingTypeModal = () => {
@@ -625,20 +634,44 @@ const Cart = () => {
     );
   };
 
+  const renderDeliveryAddressHeader = deliveryAddressValue => {
+    return (
+      <View style={styles.viewDeliveryAddressHeader}>
+        <Text style={styles.textMethod}>Delivery Address</Text>
+        <TouchableOpacity
+          style={styles.touchableMethod}
+          onPress={() => {
+            Actions.myDeliveryAddress();
+          }}>
+          <Text style={styles.textMethodValue}>{deliveryAddressValue}</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
+  const renderDeliveryAddressBody = item => {
+    if (!isEmptyObject(deliveryAddress)) {
+      return (
+        <>
+          <View style={styles.dividerValue} />
+          <Text style={styles.textDeliveryAddressBody}>
+            {item?.recipient?.name} - {item?.recipient?.phoneNumber}
+          </Text>
+          <Text style={styles.textDeliveryAddressBody}>{item?.streetName}</Text>
+        </>
+      );
+    }
+  };
+
   const renderDeliveryAddress = () => {
     if (basket?.orderingMode === 'DELIVERY') {
       const deliveryAddressValue =
-        deliveryAddress?.streetName || 'Choose Address';
+        deliveryAddress?.tagAddress || 'Choose Address';
+
       return (
-        <View style={styles.viewMethod}>
-          <Text style={styles.textMethod}>Delivery Address</Text>
-          <TouchableOpacity
-            style={styles.touchableMethod}
-            onPress={() => {
-              Actions.myDeliveryAddress();
-            }}>
-            <Text style={styles.textMethodValue}>{deliveryAddressValue}</Text>
-          </TouchableOpacity>
+        <View style={styles.viewMethodDeliveryAddress}>
+          {renderDeliveryAddressHeader(deliveryAddressValue)}
+          {renderDeliveryAddressBody(deliveryAddress)}
         </View>
       );
     }

@@ -70,6 +70,7 @@ const appConfig = {
   iconNotes: require('../assets/img/icon-notes.png'),
   iconClose: require('../assets/img/icon-close.png'),
   iconEdit: require('../assets/img/icon-edit.png'),
+  iconCheck: require('../assets/img/icon-check.png'),
   iconPlus: require('../assets/img/icon-plus.png'),
   iconMinus: require('../assets/img/icon-minus.png'),
   iconLocation: require('../assets/img/icon-location.png'),
@@ -79,6 +80,9 @@ const appConfig = {
   iconPayment: require('../assets/img/icon-payment.png'),
   iconReward: require('../assets/img/icon-reward.png'),
   iconTermsAndConditions: require('../assets/img/icon-terms-and-conditions.png'),
+  iconScan: require('../assets/img/icon-scan.png'),
+  iconDelete: require('../assets/img/icon-delete.png'),
+  iconVoucher: require('../assets/img/icon-voucher.png'),
 };
 
 export default appConfig;

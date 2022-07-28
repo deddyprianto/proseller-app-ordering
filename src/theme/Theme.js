@@ -18,6 +18,8 @@ const Theme = () => {
     forthColor: '#F9F9F9',
 
     background: 'white',
+    background2: '#F9F9F9',
+
     backgroundTransparent: 'rgba(0, 0, 0, 0.5)',
 
     header: 'white',
@@ -28,6 +30,8 @@ const Theme = () => {
     text4: 'white',
 
     border: '#D6D6D6',
+    border1: '#B7B7B7',
+    border2: 'white',
 
     textButtonDisabled: 'white',
     textButtonOutlined: 'black',
@@ -38,6 +42,9 @@ const Theme = () => {
     navigationColor: colorSettings?.navigationColor || 'black',
     textButtonColor: colorSettings?.textButtonColor || 'black',
     textWarningColor: colorSettings?.textWarningColor || 'black',
+
+    snackbarSuccess: '#5CD423',
+    snackbarFailed: '#CF3030',
   };
 
   const fontSize = {
