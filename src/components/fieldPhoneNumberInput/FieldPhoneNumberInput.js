@@ -7,61 +7,63 @@ import PhoneInput from 'react-native-phone-input';
 
 import awsConfig from '../../config/awsConfig';
 
-const styles = StyleSheet.create({
-  root: {
-    width: '100%',
-    height: 56,
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingVertical: 11,
-    paddingHorizontal: 16,
-    borderColor: '#00000061',
-  },
-  viewCountryPicker: {width: 0, height: 0},
-  viewInput: {
-    width: '100%',
-    justifyContent: 'center',
-    paddingHorizontal: 16,
-  },
+const useStyles = () => {
+  const styles = StyleSheet.create({
+    root: {
+      width: '100%',
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      borderWidth: 1,
+      borderRadius: 8,
+      paddingVertical: 4,
+      paddingHorizontal: 16,
+      borderColor: '#00000061',
+    },
+    viewCountryPicker: {width: 0, height: 0},
+    viewInput: {
+      width: '100%',
+      justifyContent: 'center',
+      paddingHorizontal: 16,
+    },
 
-  viewCountryCodeAndPhoneNumber: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  wrapFlag: {
-    width: '12%',
-  },
-  viewFlag: {
-    width: 35,
-    height: 25,
-  },
-  textLabel: {
-    width: '100%',
-    textAlign: 'left',
-    color: '#00000099',
-    fontSize: 12,
-  },
-  textCountryCode: {
-    color: '#00000099',
-    fontSize: 14,
-  },
-  textInputPhoneNumber: {
-    width: '80%',
-    height: 21,
-    fontSize: 14,
-    paddingVertical: 0,
-    paddingHorizontal: 0,
-  },
-  divider: {
-    backgroundColor: '#E5E5E5',
-    width: 1,
-    height: '100%',
-  },
-});
+    viewCountryCodeAndPhoneNumber: {
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    wrapFlag: {
+      width: '12%',
+    },
+    viewFlag: {
+      width: 35,
+      height: 25,
+    },
+    textLabel: {
+      width: '100%',
+      textAlign: 'left',
+      color: '#00000099',
+      fontSize: 12,
+    },
+    textCountryCode: {
+      color: '#00000099',
+      fontSize: 14,
+    },
+    textInputPhoneNumber: {
+      width: '80%',
+      height: 21,
+      fontSize: 14,
+      paddingVertical: 0,
+      paddingHorizontal: 0,
+    },
+    divider: {
+      backgroundColor: '#E5E5E5',
+      width: 1,
+      height: '100%',
+    },
+  });
+  return styles;
+};
 
 const FieldPhoneNumberInput = ({
   label,
@@ -72,6 +74,7 @@ const FieldPhoneNumberInput = ({
   onChange,
   onChangeCountryCode,
 }) => {
+  const styles = useStyles();
   const [openModal, setOpenModal] = useState(false);
   const [countryCode, setCountryCode] = useState('+65');
 

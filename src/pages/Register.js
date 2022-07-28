@@ -2,7 +2,6 @@ import React, {useEffect, useState} from 'react';
 import {Actions} from 'react-native-router-flux';
 
 import {
-  SafeAreaView,
   StyleSheet,
   View,
   Text,
@@ -12,61 +11,73 @@ import {
 } from 'react-native';
 
 import appConfig from '../config/appConfig';
-import colorConfig from '../config/colorConfig';
 import awsConfig from '../config/awsConfig';
 
 import FieldTextInput from '../components/fieldTextInput';
 import FieldPhoneNumberInput from '../components/fieldPhoneNumberInput';
 import {ScrollView} from 'react-navigation';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {checkAccountExist} from '../actions/auth.actions';
 import {showSnackbar} from '../actions/setting.action';
 import LoadingScreen from '../components/loadingScreen';
+import Theme from '../theme';
 
 const HEIGHT = Dimensions.get('window').height;
 
-const styles = StyleSheet.create({
-  container: {
-    height: HEIGHT,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 48,
-  },
-  image: {
-    width: 150,
-    height: 40,
-    marginHorizontal: 20,
-  },
-  textCreateNewAccount: {
-    color: colorConfig.primaryColor,
-    fontSize: 20,
-  },
-  touchableNext: {
-    height: 40,
-    width: '100%',
-    backgroundColor: colorConfig.primaryColor,
-    borderRadius: 5,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  touchableNextDisabled: {
-    height: 40,
-    width: '100%',
-    backgroundColor: '#B7B7B7',
-    borderRadius: 5,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  textNext: {color: 'white'},
-  textChangeMethod: {
-    width: '100%',
-    textAlign: 'center',
-    color: colorConfig.primaryColor,
-    textDecorationLine: 'underline',
-  },
-});
+const useStyles = () => {
+  const theme = Theme();
+  const styles = StyleSheet.create({
+    container: {
+      height: HEIGHT,
+      justifyContent: 'center',
+      alignItems: 'center',
+      paddingHorizontal: 48,
+    },
+    image: {
+      width: 150,
+      height: 40,
+      marginHorizontal: 20,
+    },
+    textCreateNewAccount: {
+      color: theme.colors.primary,
+      fontSize: theme.fontSize[20],
+      fontFamily: theme.fontFamily.poppinsRegular,
+    },
+    textNext: {
+      color: theme.colors.text4,
+      fontSize: theme.fontSize[12],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textChangeMethod: {
+      width: '100%',
+      textAlign: 'center',
+      textDecorationLine: 'underline',
+      color: theme.colors.primary,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsRegular,
+    },
+    touchableNext: {
+      height: 40,
+      width: '100%',
+      borderRadius: 5,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: theme.colors.primary,
+    },
+    touchableNextDisabled: {
+      height: 40,
+      width: '100%',
+      borderRadius: 5,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: theme.colors.buttonDisabled,
+    },
+  });
+  return styles;
+};
 
 const Register = () => {
+  const styles = useStyles();
   const dispatch = useDispatch();
   const [countryCode, setCountryCode] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -74,9 +85,19 @@ const Register = () => {
   const [registerMethod, setRegisterMethod] = useState('email');
   const [isLoading, setIsLoading] = useState(false);
 
+  const loginSettings = useSelector(
+    state => state.settingReducer.loginSettings,
+  );
+
   useEffect(() => {
+    if (loginSettings.loginByEmail) {
+      setRegisterMethod('email');
+    } else {
+      setRegisterMethod('phoneNumber');
+    }
+
     setCountryCode(awsConfig.phoneNumberCode);
-  }, []);
+  }, [loginSettings]);
 
   const handleCheckAccount = async () => {
     let payload = {};
@@ -184,19 +205,22 @@ const Register = () => {
   };
 
   const renderTextChangeMethod = () => {
-    const text =
-      registerMethod === 'email'
-        ? 'Use Mobile Number to Create Account'
-        : 'Use Email Address to Create Account';
+    const {loginByMobile, loginByEmail} = loginSettings;
+    if (loginByEmail && loginByMobile) {
+      const text =
+        registerMethod === 'email'
+          ? 'Use Mobile Number to Create Account'
+          : 'Use Email Address to Create Account';
 
-    return (
-      <TouchableOpacity
-        onPress={() => {
-          handleChangeRegisterMethod();
-        }}>
-        <Text style={styles.textChangeMethod}>{text}</Text>
-      </TouchableOpacity>
-    );
+      return (
+        <TouchableOpacity
+          onPress={() => {
+            handleChangeRegisterMethod();
+          }}>
+          <Text style={styles.textChangeMethod}>{text}</Text>
+        </TouchableOpacity>
+      );
+    }
   };
 
   return (

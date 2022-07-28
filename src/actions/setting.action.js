@@ -3,33 +3,88 @@
 
 import {isEmptyArray} from '../helper/CheckEmpty';
 import {fetchApiOrder} from '../service/apiOrder';
-const colorFinder = ({colors, key}) => {
-  const result = colors?.find(value => value?.settingKey === key)?.settingValue;
+
+const handleDataType = ({settings, key}) => {
+  const result = settings?.filter(item => item.dataType === key);
+  return result;
+};
+const handleSettingValue = ({values, key}) => {
+  const result = values?.find(value => value?.settingKey === key)?.settingValue;
   return result;
 };
 
-export const setData = ({data, type}) => {
+const setData = ({data, type}) => {
   return {
     type: type,
     data: data,
   };
 };
 
-export const showSnackbar = ({message, type}) => {
-  return async dispatch => {
-    await dispatch(setData({data: {message, type}, type: 'SET_SNACKBAR'}));
-  };
-};
+const setColorSettings = async ({dispatch, colors}) => {
+  if (!isEmptyArray(colors)) {
+    const primaryColor = handleSettingValue({
+      values: colors,
+      key: 'PrimaryColor',
+    });
+    const secondaryColor = handleSettingValue({
+      values: colors,
+      key: 'SecondaryColor',
+    });
+    const backgroundColor = handleSettingValue({
+      values: colors,
+      key: 'BackgroundColor',
+    });
+    const navigationColor = handleSettingValue({
+      values: colors,
+      key: 'NavigationColor',
+    });
+    const textButtonColor = handleSettingValue({
+      values: colors,
+      key: 'TextButtonColor',
+    });
+    const textWarningColor = handleSettingValue({
+      values: colors,
+      key: 'TextWarningColor',
+    });
+    const fontColor = handleSettingValue({values: colors, key: 'FontColor'});
 
-export const closeSnackbar = () => {
-  return async dispatch => {
     await dispatch(
       setData({
-        data: {},
-        type: 'SET_SNACKBAR',
+        type: 'SET_COLORS',
+        data: {
+          primaryColor,
+          secondaryColor,
+          backgroundColor,
+          fontColor,
+          navigationColor,
+          textButtonColor,
+          textWarningColor,
+        },
       }),
     );
-  };
+  }
+};
+
+const setLoginSettings = async ({dispatch, response}) => {
+  const loginByEmail = handleSettingValue({
+    values: response,
+    key: 'LoginByEmail',
+  });
+
+  const loginByMobile = handleSettingValue({
+    values: response,
+    key: 'LoginByMobile',
+  });
+
+  await dispatch(
+    setData({
+      type: 'SET_LOGIN_METHOD',
+      data: {
+        loginByEmail,
+        loginByMobile,
+      },
+    }),
+  );
 };
 
 export const getColorSettings = () => {
@@ -50,38 +105,35 @@ export const getColorSettings = () => {
         token,
       );
 
-      const colors = response?.response?.data?.settings?.filter(
-        item => item.dataType === 'colorpicker',
-      );
+      const settings = response?.response?.data?.settings;
+      const typeColorPicker = handleDataType({settings, key: 'colorpicker'});
+      const typeCheckbox = handleDataType({settings, key: 'checkbox'});
 
-      if (!isEmptyArray(colors)) {
-        const primaryColor = colorFinder({colors, key: 'PrimaryColor'});
-        const secondaryColor = colorFinder({colors, key: 'SecondaryColor'});
-        const backgroundColor = colorFinder({colors, key: 'BackgroundColor'});
-        const fontColor = colorFinder({colors, key: 'FontColor'});
-        const navigationColor = colorFinder({colors, key: 'NavigationColor'});
-        const textButtonColor = colorFinder({colors, key: 'TextButtonColor'});
-        const textWarningColor = colorFinder({colors, key: 'TextWarningColor'});
-
-        await dispatch(
-          setData({
-            type: 'SET_COLORS',
-            data: {
-              primaryColor,
-              secondaryColor,
-              backgroundColor,
-              fontColor,
-              navigationColor,
-              textButtonColor,
-              textWarningColor,
-            },
-          }),
-        );
+      if (settings) {
+        setColorSettings({dispatch, colors: typeColorPicker});
+        setLoginSettings({dispatch, response: typeCheckbox});
       }
 
       return response.response.data;
     } catch (error) {
       return error;
     }
+  };
+};
+
+export const showSnackbar = ({message, type}) => {
+  return async dispatch => {
+    await dispatch(setData({data: {message, type}, type: 'SET_SNACKBAR'}));
+  };
+};
+
+export const closeSnackbar = () => {
+  return async dispatch => {
+    await dispatch(
+      setData({
+        data: {},
+        type: 'SET_SNACKBAR',
+      }),
+    );
   };
 };

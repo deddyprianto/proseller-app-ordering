@@ -14,6 +14,8 @@ const Theme = () => {
   const colors = {
     primary: '#CF3030',
     secondary: '#F9F9F9',
+    thirdColor: '#FFEBEB',
+    forthColor: '#F9F9F9',
 
     background: 'white',
     backgroundTransparent: 'rgba(0, 0, 0, 0.5)',
@@ -44,6 +46,7 @@ const Theme = () => {
     12: 12,
     14: 14,
     16: 16,
+    20: 20,
   };
 
   const fontFamily = {
