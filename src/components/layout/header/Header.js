@@ -1,21 +1,10 @@
 import React, {useState} from 'react';
 
-import {
-  StyleSheet,
-  View,
-  Text,
-  TouchableOpacity,
-  Modal,
-  Image,
-} from 'react-native';
+import {StyleSheet, View, Text, TouchableOpacity, Image} from 'react-native';
 
 import {Actions} from 'react-native-router-flux';
-import IconAntDesign from 'react-native-vector-icons/AntDesign';
-import IconMaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import appConfig from '../../../config/appConfig';
-import colorConfig from '../../../config/colorConfig';
 import Theme from '../../../theme';
-// import QRCodeScanner from 'react-native-qrcode-scanner';
 
 import Scanner from '../../scanner';
 

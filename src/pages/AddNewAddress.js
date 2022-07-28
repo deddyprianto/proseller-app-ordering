@@ -20,22 +20,23 @@ import {
   Image,
 } from 'react-native';
 
-import Header from '../components/layout/header';
-
-import FieldTextInput from '../components/fieldTextInput';
-import FieldPhoneNumberInput from '../components/fieldPhoneNumberInput';
-
+import appConfig from '../config/appConfig';
 import awsConfig from '../config/awsConfig';
 
 import {updateUser} from '../actions/user.action';
+import {showSnackbar} from '../actions/setting.action';
+
+import Header from '../components/layout/header';
 import FieldCheckBox from '../components/fieldCheckBox';
 import LoadingScreen from '../components/loadingScreen';
-import {isEmptyObject} from '../helper/CheckEmpty';
+import FieldTextInput from '../components/fieldTextInput';
 import FieldAddressTag from '../components/fieldAddressTag';
-import Theme from '../theme';
 import ConfirmationDialog from '../components/confirmationDialog';
-import {showSnackbar} from '../actions/setting.action';
-import appConfig from '../config/appConfig';
+import FieldPhoneNumberInput from '../components/fieldPhoneNumberInput';
+
+import {isEmptyObject} from '../helper/CheckEmpty';
+
+import Theme from '../theme';
 
 const useStyles = () => {
   const theme = Theme();
@@ -110,6 +111,9 @@ const useStyles = () => {
       height: 1,
       marginVertical: 12,
       backgroundColor: theme.colors.border,
+    },
+    marginTop16: {
+      marginTop: 16,
     },
   });
   return styles;
@@ -410,15 +414,15 @@ const AddNewAddress = ({address, coordinate}) => {
   const renderDeliveryDetailFields = () => {
     return (
       <View>
-        <View style={{marginTop: 16}} />
+        <View style={styles.marginTop16} />
         <Text style={styles.textTitle}>Delivery Details</Text>
-        <View style={{marginTop: 16}} />
+        <View style={styles.marginTop16} />
         {renderAddressTagField()}
-        <View style={{marginTop: 16}} />
+        <View style={styles.marginTop16} />
         {renderStreetNameField()}
-        <View style={{marginTop: 16}} />
+        <View style={styles.marginTop16} />
         {renderUnitNumberField()}
-        <View style={{marginTop: 16}} />
+        <View style={styles.marginTop16} />
         {renderPostalCodeField()}
       </View>
     );
@@ -428,9 +432,9 @@ const AddNewAddress = ({address, coordinate}) => {
     return (
       <View>
         <Text style={styles.textTitle}>Recipient Details</Text>
-        <View style={{marginTop: 16}} />
+        <View style={styles.marginTop16} />
         {renderRecipientNameField()}
-        <View style={{marginTop: 16}} />
+        <View style={styles.marginTop16} />
         {renderMobileNumberField()}
       </View>
     );
@@ -473,7 +477,7 @@ const AddNewAddress = ({address, coordinate}) => {
         <View style={styles.divider} />
         {renderMap()}
         {renderCheckBox()}
-        <View style={{marginTop: 10}} />
+        <View style={styles.marginTop16} />
       </ScrollView>
     );
   };
