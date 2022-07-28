@@ -188,7 +188,7 @@ class WaitingFood extends Component {
             value={JSON.stringify({
               cartID: this.state.dataBasket.id,
             })}
-            logo={appConfig.appLogoQR}
+            logo={appConfig.logoMerchant}
             logoSize={this.state.screenWidth / 6 - 45}
             size={this.state.screenWidth - 230}
           />

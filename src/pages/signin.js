@@ -366,7 +366,7 @@ class Signin extends Component {
         <ScrollView>
           <View style={styles.container}>
             <Image
-              source={appConfig.appLogo}
+              source={appConfig.logoMerchant}
               style={{
                 marginTop: 10,
                 height: 100,

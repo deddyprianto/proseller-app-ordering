@@ -117,7 +117,7 @@ const OTP = ({isLogin, method, methodValue}) => {
           setMinutes(minute);
         }
       }
-    }, 2000);
+    }, 1000);
   };
 
   useEffect(() => {
@@ -173,7 +173,7 @@ const OTP = ({isLogin, method, methodValue}) => {
       <Image
         style={styles.image}
         resizeMode="stretch"
-        source={appConfig.funtoastIcon}
+        source={appConfig.logoMerchant}
       />
     );
   };

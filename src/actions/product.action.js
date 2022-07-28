@@ -11,7 +11,7 @@ export const getProductByOutlet = (OutletId, refresh) => {
       const PRESET_TYPE = 'app';
 
       const response = await fetchApiProduct(
-        `/productpreset/load/${PRESET_TYPE}/614975e8-4f5d-47d0-9218-a7841a36f235`,
+        `/productpreset/load/${PRESET_TYPE}/${OutletId}`,
         'POST',
         null,
         200,
@@ -347,25 +347,9 @@ export const getProductBySearch = ({outletId, search}) => {
 
 export const getProductEStoreByOutlet = (OutletId, refresh) => {
   return async (dispatch, getState) => {
-    const state = getState();
     try {
-      const {
-        authReducer: {
-          tokenUser: {token},
-        },
-      } = state;
-
-      // get previous data products outlet
-      const {
-        orderReducer: {
-          productsOutlet: {products},
-        },
-      } = state;
-
-      const PRESET_TYPE = 'eStore';
-
-      let response = await fetchApiProduct(
-        `/productpreset/load/${PRESET_TYPE}/${OutletId}`,
+      const response = await fetchApiProduct(
+        `/productpreset/load/eStore/${OutletId}`,
         'POST',
         null,
         200,
@@ -374,14 +358,15 @@ export const getProductEStoreByOutlet = (OutletId, refresh) => {
 
       const product = {
         id: OutletId,
-        products: response.response.data,
-        dataLength: response.response.dataLength,
+        products: response?.response?.data,
+        dataLength: response?.response?.dataLength,
       };
 
       dispatch({
         type: 'DATA_PRODUCTS_ESTORE_OUTLET',
         products: product,
       });
+
       return response;
     } catch (error) {
       return error;

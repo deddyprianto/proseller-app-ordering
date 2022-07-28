@@ -185,7 +185,7 @@ const Login = () => {
       <Image
         style={styles.image}
         resizeMode="stretch"
-        source={appConfig.funtoastIcon}
+        source={appConfig.logoMerchant}
       />
     );
   };
