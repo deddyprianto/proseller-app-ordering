@@ -8,57 +8,81 @@
 import React, {useState, useEffect} from 'react';
 
 import {StyleSheet, View, Text, Image, TouchableOpacity} from 'react-native';
-import IconAntDesign from 'react-native-vector-icons/AntDesign';
-import colorConfig from '../../../config/colorConfig';
 import filter from 'lodash/filter';
 import indexOf from 'lodash/indexOf';
+
 import {isEmptyArray} from '../../../helper/CheckEmpty';
+import CurrencyFormatter from '../../../helper/CurrencyFormatter';
 
 import ProductUpdateModal from '../../productUpdateModal';
 import ProductAddModal from '../../productAddModal';
 
-const styles = StyleSheet.create({
-  root: {
-    width: '48%',
-  },
-  textQty: {
-    color: colorConfig.primaryColor,
-    fontSize: 12,
-  },
-  textName: {
-    fontSize: 12,
-    width: '60%',
-  },
-  textPrice: {
-    marginTop: 5,
-    fontSize: 12,
-  },
-  viewQtyAndName: {
-    display: 'flex',
-    flexDirection: 'row',
-    marginTop: 5,
-  },
-  image: {
-    height: 160,
-    width: '100%',
-    marginTop: 20,
-  },
-  icon: {
-    width: 40,
-    height: 25,
-    fontSize: 15,
-    backgroundColor: colorConfig.primaryColor,
-    textAlign: 'center',
-    textAlignVertical: 'center',
-    color: 'white',
-    borderRadius: 5,
-    position: 'absolute',
-    right: 0,
-    bottom: 0,
-  },
-});
+import appConfig from '../../../config/appConfig';
+
+import Theme from '../../../theme';
+
+const useStyles = () => {
+  const theme = Theme();
+  const styles = StyleSheet.create({
+    root: {
+      marginTop: 20,
+      width: '48%',
+    },
+    body: {
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'flex-end',
+    },
+    bodyLeft: {
+      flex: 1,
+    },
+    bodyRight: {
+      marginLeft: 16,
+    },
+    textQty: {
+      color: theme.colors.primary,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textName: {
+      flex: 1,
+      color: theme.colors.text1,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textPrice: {
+      marginTop: 5,
+      color: theme.colors.text1,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    viewQtyAndName: {
+      display: 'flex',
+      flexDirection: 'row',
+      marginTop: 5,
+    },
+    viewIconCart: {
+      borderRadius: 4,
+      paddingHorizontal: 8,
+      paddingVertical: 4,
+      backgroundColor: theme.colors.primary,
+    },
+    image: {
+      width: '100%',
+      aspectRatio: 1.1,
+    },
+    iconCart: {
+      width: 24,
+      height: 24,
+      tintColor: 'white',
+    },
+  });
+  return styles;
+};
 
 const Product = ({product, basket}) => {
+  const styles = useStyles();
   const [totalQty, setTotalQty] = useState(0);
   const [isOpenUpdateModal, setIsOpenUpdateModal] = useState(false);
   const [isOpenAddModal, setIsOpenAddModal] = useState(false);
@@ -127,9 +151,9 @@ const Product = ({product, basket}) => {
   const renderImage = () => {
     const image = product?.defaultImageURL
       ? {uri: product?.defaultImageURL}
-      : null;
+      : appConfig.logoMerchant;
 
-    return <Image style={styles.image} resizeMode="stretch" source={image} />;
+    return <Image style={styles.image} resizeMode="center" source={image} />;
   };
 
   const renderQty = () => {
@@ -155,11 +179,49 @@ const Product = ({product, basket}) => {
   };
 
   const renderPrice = () => {
-    return <Text style={styles.textPrice}>$ {product?.retailPrice}</Text>;
+    return (
+      <Text style={styles.textPrice}>
+        {CurrencyFormatter(product?.retailPrice)}
+      </Text>
+    );
   };
 
   const cartIcon = () => {
-    return <IconAntDesign name="shoppingcart" style={styles.icon} />;
+    return (
+      <View style={styles.viewIconCart}>
+        <Image source={appConfig.iconCart} style={styles.iconCart} />
+      </View>
+    );
+  };
+
+  const handleProductOnClick = () => {
+    if (totalQty) {
+      handleOpenUpdateModal();
+    } else {
+      handleOpenAddModal();
+    }
+  };
+
+  const renderBodyLeft = () => {
+    return (
+      <View style={styles.bodyLeft}>
+        {renderQtyAndName()}
+        {renderPrice()}
+      </View>
+    );
+  };
+
+  const renderBodyRight = () => {
+    return <View style={styles.bodyRight}>{cartIcon()}</View>;
+  };
+
+  const renderBody = () => {
+    return (
+      <View style={styles.body}>
+        {renderBodyLeft()}
+        {renderBodyRight()}
+      </View>
+    );
   };
 
   const renderProductAddModal = () => {
@@ -190,15 +252,6 @@ const Product = ({product, basket}) => {
       );
     }
   };
-
-  const handleProductOnClick = () => {
-    if (totalQty) {
-      handleOpenUpdateModal();
-    } else {
-      handleOpenAddModal();
-    }
-  };
-
   return (
     <TouchableOpacity
       onPress={() => {
@@ -206,9 +259,7 @@ const Product = ({product, basket}) => {
       }}
       style={styles.root}>
       {renderImage()}
-      {renderQtyAndName()}
-      {renderPrice()}
-      {cartIcon()}
+      {renderBody()}
       {renderProductAddModal()}
       {renderProductUpdateModal()}
     </TouchableOpacity>

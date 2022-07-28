@@ -163,6 +163,7 @@ const useStyles = () => {
       borderWidth: 1,
       borderRadius: 8,
       backgroundColor: 'white',
+      textAlignVertical: 'top',
     },
     iconMinus: {
       width: 12,

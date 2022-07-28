@@ -129,7 +129,7 @@ const RegisterForm = ({registerMethod, inputValue}) => {
       <Image
         style={styles.image}
         resizeMode="stretch"
-        source={appConfig.funtoastIcon}
+        source={appConfig.logoMerchant}
       />
     );
   };
@@ -166,6 +166,7 @@ const RegisterForm = ({registerMethod, inputValue}) => {
         type="phone"
         label="Phone Number"
         value={phoneNumber}
+        placeholder="Phone Number"
         onChangeCountryCode={value => {
           setCountryCode(value);
         }}

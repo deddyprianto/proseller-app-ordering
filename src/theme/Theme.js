@@ -13,9 +13,15 @@ const Theme = () => {
 
   const colors = {
     primary: '#CF3030',
-    secondary: colorSettings?.secondaryColor || 'black',
+    secondary: '#F9F9F9',
+    thirdColor: '#FFEBEB',
+    forthColor: '#F9F9F9',
+
     background: 'white',
+    background2: '#F9F9F9',
+
     backgroundTransparent: 'rgba(0, 0, 0, 0.5)',
+
     header: 'white',
 
     text1: 'black',
@@ -24,6 +30,8 @@ const Theme = () => {
     text4: 'white',
 
     border: '#D6D6D6',
+    border1: '#B7B7B7',
+    border2: 'white',
 
     textButtonDisabled: 'white',
     textButtonOutlined: 'black',
@@ -34,6 +42,9 @@ const Theme = () => {
     navigationColor: colorSettings?.navigationColor || 'black',
     textButtonColor: colorSettings?.textButtonColor || 'black',
     textWarningColor: colorSettings?.textWarningColor || 'black',
+
+    snackbarSuccess: '#5CD423',
+    snackbarFailed: '#CF3030',
   };
 
   const fontSize = {
@@ -42,6 +53,7 @@ const Theme = () => {
     12: 12,
     14: 14,
     16: 16,
+    20: 20,
   };
 
   const fontFamily = {

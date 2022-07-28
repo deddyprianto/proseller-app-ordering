@@ -1,84 +1,75 @@
 import React, {useState} from 'react';
 
-import {StyleSheet, View, Text, TouchableOpacity, Modal} from 'react-native';
+import {StyleSheet, View, Text, TouchableOpacity, Image} from 'react-native';
 
 import {Actions} from 'react-native-router-flux';
-import IconAntDesign from 'react-native-vector-icons/AntDesign';
-import IconMaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import colorConfig from '../../../config/colorConfig';
-// import QRCodeScanner from 'react-native-qrcode-scanner';
+import appConfig from '../../../config/appConfig';
+import Theme from '../../../theme';
 
 import Scanner from '../../scanner';
 
-const styles = StyleSheet.create({
-  root: {
-    height: 54,
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '100%',
-    backgroundColor: 'white',
-    elevation: 3,
-  },
-  touchableIcon: {
-    position: 'absolute',
-    left: 16,
-  },
-  touchableIconCart: {
-    position: 'absolute',
-    right: 16,
-  },
-  iconCart: {
-    fontSize: 25,
-    color: colorConfig.primaryColor,
-  },
-  icon: {
-    fontSize: 21,
-    color: colorConfig.primaryColor,
-  },
+const useStyles = () => {
+  const theme = Theme();
+  const styles = StyleSheet.create({
+    root: {
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      width: '100%',
+      backgroundColor: 'white',
+      elevation: 3,
+      padding: 16,
+    },
+    flexRowCenter: {
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    icon: {
+      width: 16,
+      height: 16,
+      tintColor: theme.colors.primary,
+    },
+    iconBack: {
+      width: 11,
+      height: 18,
+      tintColor: theme.colors.primary,
+    },
+    iconRemove: {
+      width: 18,
+      height: 18,
+      tintColor: theme.colors.primary,
+    },
+    iconCart: {
+      width: 11,
+      height: 18,
+      tintColor: theme.colors.primary,
+    },
+    textHeader: {
+      color: theme.colors.text1,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsRegular,
+    },
+  });
+  return styles;
+};
 
-  sectionContainer: {
-    marginTop: 32,
-  },
-  centerText: {
-    marginRight: 80,
-    marginLeft: 80,
-    marginTop: 24,
-    fontSize: 18,
-    padding: 32,
-    color: '#777',
-  },
-  buttonText: {
-    fontSize: 21,
-    color: 'rgb(0,122,255)',
-  },
-  buttonTouchable: {
-    padding: 16,
-  },
-});
-
-const Header = ({title, customTitle, cart, scanner, onChange}) => {
+const Header = ({title, remove, cart, scanner, removeOnClick}) => {
+  const styles = useStyles();
   const [isOpenScanner, setIsOpenScanner] = useState(false);
 
   const handleCloseScanner = () => {
     setIsOpenScanner(false);
   };
 
-  const renderTitle = () => {
-    if (customTitle) {
-      return customTitle;
-    } else {
-      return <Text>{title}</Text>;
-    }
-  };
-
   const renderBackIcon = () => {
     return (
       <TouchableOpacity
-        style={styles.touchableIcon}
         onPress={() => {
           Actions.pop();
         }}>
-        <IconAntDesign name="left" style={styles.icon} />
+        <Image source={appConfig.iconArrowLeft} style={styles.iconBack} />
       </TouchableOpacity>
     );
   };
@@ -87,11 +78,10 @@ const Header = ({title, customTitle, cart, scanner, onChange}) => {
     if (cart) {
       return (
         <TouchableOpacity
-          style={styles.touchableIconCart}
           onPress={() => {
             Actions.cart();
           }}>
-          <IconAntDesign name="shoppingcart" style={styles.iconCart} />
+          <Image source={appConfig.iconCart} style={styles.icon} />
         </TouchableOpacity>
       );
     }
@@ -101,26 +91,44 @@ const Header = ({title, customTitle, cart, scanner, onChange}) => {
     if (scanner) {
       return (
         <TouchableOpacity
-          style={styles.touchableIconCart}
           onPress={() => {
             setIsOpenScanner(true);
           }}>
-          <IconMaterialCommunityIcons
-            name="barcode-scan"
-            style={styles.iconCart}
-          />
+          <Image source={appConfig.iconScan} style={styles.icon} />
         </TouchableOpacity>
       );
     }
+  };
+
+  const renderRemoveIcon = () => {
+    if (remove && removeOnClick) {
+      return (
+        <TouchableOpacity
+          onPress={() => {
+            removeOnClick();
+          }}>
+          <Image source={appConfig.iconDelete} style={styles.iconRemove} />
+        </TouchableOpacity>
+      );
+    }
+  };
+
+  const renderIconWrap = () => {
+    return (
+      <View style={styles.flexRowCenter}>
+        {renderCartIcon()}
+        {renderScannerIcon()}
+        {renderRemoveIcon()}
+      </View>
+    );
   };
 
   return (
     <View style={styles.root}>
       <Scanner open={isOpenScanner} handleClose={handleCloseScanner} />
       {renderBackIcon()}
-      {renderTitle()}
-      {/* {renderCartIcon()} */}
-      {renderScannerIcon()}
+      <Text style={styles.textHeader}>{title}</Text>
+      {renderIconWrap()}
     </View>
   );
 };

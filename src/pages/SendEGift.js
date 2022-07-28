@@ -13,7 +13,7 @@ import {CheckBox} from 'react-native-elements';
 
 import colorConfig from '../config/colorConfig';
 import IconIonicons from 'react-native-vector-icons/Ionicons';
-import EGiftCard from '../components/eGiftCard/EGiftCard';
+import EGiftCard from '../components/eGiftCard';
 import {useDispatch, useSelector} from 'react-redux';
 import {getGiftCardByCategory, sendGift} from '../actions/gift.action';
 import FieldTextInput from '../components/fieldTextInput';
@@ -202,6 +202,7 @@ const SendEGift = ({categoryId}) => {
   );
 
   const refreshGiftCard = useCallback(() => {
+    setGiftCardImage(giftCard?.images[0]);
     setSelectedValue(giftCard?.values[0]);
   }, [giftCard]);
 
@@ -370,6 +371,7 @@ const SendEGift = ({categoryId}) => {
           {renderTextPickDesign()}
           <EGiftCard
             cards={giftCard?.images}
+            selectedCard={giftCardImage}
             onChange={value => {
               setGiftCardImage(value);
             }}
