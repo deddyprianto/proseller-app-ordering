@@ -43,7 +43,7 @@ const appConfig = {
 
   //Funtoast
   funtoastButtomBanner: require('../assets/img/FuntoastBottomBanner.jpg'),
-  funtoastCoffeeIcon: require('../assets/img/funtoastCoffeeIcon.png'),
+  funtoastCoffeeIcon: require('../assets/img/funtoast-coffee.png'),
   funtoastRedeemed: require('../assets/img/FuntoastRedeemed.png'),
   funtoastSuccessSendGift: require('../assets/img/FuntoastSuccessSendGift.png'),
   funtoastTakeAway: require('../assets/img/FuntoastTakeAway.png'),
@@ -53,7 +53,6 @@ const appConfig = {
   funtoastStar: require('../assets/img/FuntoastStar.png'),
   funtoastQRCode: require('../assets/img/FuntoastQRCode.png'),
   funtoastIcon: require('../assets/img/funtoastIcon.png'),
-  funtoastCoffee: require('../assets/img/funtoastCoffee.png'),
   funtoastEmptyDeliveryAddress: require('../assets/img/funtoast-empty-address.png'),
   funtoastOnboarding1: require('../assets/img/FuntoastOnBoarding01.png'),
   funtoastOnboarding2: require('../assets/img/FuntoastOnBoarding02.png'),
