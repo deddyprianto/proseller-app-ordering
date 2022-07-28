@@ -7,15 +7,20 @@ import {
   RefreshControl,
   ScrollView,
   TouchableOpacity,
+  Image,
 } from 'react-native';
 import {Actions} from 'react-native-router-flux';
 import {useDispatch, useSelector} from 'react-redux';
+
+import appConfig from '../config/appConfig';
+
 import {getBasket, getProductEStoreByOutlet} from '../actions/product.action';
-import IconAntDesign from 'react-native-vector-icons/AntDesign';
 
 import EStoreList from '../components/eStoreList/EStoreList';
+
 import {isEmptyArray} from '../helper/CheckEmpty';
 import CurrencyFormatter from '../helper/CurrencyFormatter';
+
 import Theme from '../theme';
 
 const useStyles = () => {
@@ -37,9 +42,10 @@ const useStyles = () => {
       paddingHorizontal: 16,
     },
     icon: {
-      fontSize: 13,
-      color: 'white',
+      width: 18,
+      height: 18,
       marginRight: 7,
+      color: theme.colors.text4,
     },
     textTitle: {
       color: theme.colors.text1,
@@ -53,9 +59,9 @@ const useStyles = () => {
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textButtonCart: {
-      fontWeight: 'bold',
-      fontSize: 11,
-      color: 'white',
+      color: theme.colors.text4,
+      fontSize: theme.fontSize[12],
+      fontFamily: theme.fontFamily.poppinsBold,
     },
     viewTitle: {
       marginVertical: 16,
@@ -75,11 +81,11 @@ const useStyles = () => {
       width: '100%',
       display: 'flex',
       flexDirection: 'row',
-      backgroundColor: theme.colors.primary,
       padding: 14,
       justifyContent: 'space-between',
       borderRadius: 8,
       alignItems: 'center',
+      backgroundColor: theme.colors.primary,
     },
   });
 
@@ -139,7 +145,7 @@ const EStore = () => {
             Actions.cart();
           }}>
           <View style={styles.viewIconAndTextCart}>
-            <IconAntDesign name="shoppingcart" style={styles.icon} />
+            <Image source={appConfig.iconCart} style={styles.icon} />
             <Text style={styles.textButtonCart}>
               {basket?.details?.length} Items in Cart
             </Text>

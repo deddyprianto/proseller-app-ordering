@@ -63,6 +63,7 @@ const appConfig = {
   logoMerchant: require('../assets/img/logo.png'),
 
   //ICON MARTIN
+  iconCart: require('../assets/img/icon-cart.png'),
   iconNotes: require('../assets/img/icon-notes.png'),
   iconClose: require('../assets/img/icon-close.png'),
   iconEdit: require('../assets/img/icon-edit.png'),
