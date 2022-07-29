@@ -399,6 +399,10 @@ const Cart = () => {
       ? !orderingDateTimeSelected
       : !!orderingDateTimeSelected;
 
+    const isActiveTakeAway = isEmptyArray(availableTimes)
+      ? !orderingDateTimeSelected
+      : !!orderingDateTimeSelected;
+
     switch (value) {
       case 'DELIVERY':
         if (isActiveDelivery) {
@@ -416,7 +420,11 @@ const Cart = () => {
       case 'DINEIN':
         return false;
       case 'TAKEAWAY':
-        return false;
+        if (isActiveTakeAway) {
+          return false;
+        } else {
+          return true;
+        }
 
       default:
         return true;
