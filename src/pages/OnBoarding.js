@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Actions} from 'react-native-router-flux';
 
 import {
@@ -13,6 +13,8 @@ import {
 
 import colorConfig from '../config/colorConfig';
 import appConfig from '../config/appConfig';
+import {useDispatch} from 'react-redux';
+import {getLoginSettings} from '../actions/setting.action';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -114,7 +116,15 @@ const styles = StyleSheet.create({
 });
 
 const OnBoarding = () => {
+  const dispatch = useDispatch();
   const [selectedImage, setSelectedImage] = useState(0);
+
+  useEffect(() => {
+    const loadData = async () => {
+      await dispatch(getLoginSettings());
+    };
+    return loadData();
+  }, [dispatch]);
 
   const handleOnScroll = nativeEvent => {
     const image = Math.ceil(

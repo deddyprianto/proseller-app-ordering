@@ -8,6 +8,7 @@ import {
   Text,
   Image,
   TouchableOpacity,
+  Dimensions,
 } from 'react-native';
 
 import {ProgressBar} from 'react-native-paper';
@@ -21,6 +22,8 @@ import {logoutUser} from '../actions/auth.actions';
 import LoadingScreen from '../components/loadingScreen';
 import {myProgressBarCampaign} from '../actions/account.action';
 import Theme from '../theme';
+
+const WIDTH = Dimensions.get('window').width;
 
 const useStyles = () => {
   const theme = Theme();
@@ -129,6 +132,7 @@ const useStyles = () => {
     progressBar: {
       flex: 1,
       maxWidth: '100%',
+      width: WIDTH,
       height: 14,
       borderRadius: 8,
       borderWidth: 3,

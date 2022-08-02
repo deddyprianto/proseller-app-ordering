@@ -161,6 +161,7 @@ const MyDeliveryAddressItem = ({item, fromScene}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [user, setUser] = useState({});
+  const [selectedIndex, setSelectedIndex] = useState(0);
   const userDetail = useSelector(
     state => state.userReducer.getUser.userDetails,
   );
@@ -175,11 +176,16 @@ const MyDeliveryAddressItem = ({item, fromScene}) => {
 
     const result = JSON.parse(userDecrypt.toString(CryptoJS.enc.Utf8));
 
+    const selected = !isEmptyObject(result?.selectedAddress)
+      ? result?.selectedAddress?.index
+      : result?.deliveryAddressDefault?.index;
+
+    setSelectedIndex(selected);
     setUser(result);
   }, [userDetail]);
 
   const handleOpenConfirmationModal = () => {
-    const isAlreadySelected = user?.selectedAddress?.index === item?.index;
+    const isAlreadySelected = selectedIndex === item?.index;
     if (!isAlreadySelected) {
       setIsOpenModal(true);
     }
@@ -306,10 +312,6 @@ const MyDeliveryAddressItem = ({item, fromScene}) => {
   };
 
   const handleStyleRoot = () => {
-    const selectedIndex = !isEmptyObject(user?.selectedAddress)
-      ? user?.selectedAddress?.index
-      : user?.deliveryAddressDefault?.index;
-
     const selected = selectedIndex === item?.index;
 
     if (selected && !isFromProfileScene) {

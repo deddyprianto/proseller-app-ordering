@@ -107,10 +107,40 @@ export const getColorSettings = () => {
 
       const settings = response?.response?.data?.settings;
       const typeColorPicker = handleDataType({settings, key: 'colorpicker'});
-      const typeCheckbox = handleDataType({settings, key: 'checkbox'});
 
       if (settings) {
         setColorSettings({dispatch, colors: typeColorPicker});
+      }
+
+      return response.response.data;
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const getLoginSettings = () => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      const response = await fetchApiOrder(
+        '/orderingsetting/app',
+        'GET',
+        null,
+        200,
+        token,
+      );
+
+      const settings = response?.response?.data?.settings;
+      const typeCheckbox = handleDataType({settings, key: 'checkbox'});
+
+      if (settings) {
         setLoginSettings({dispatch, response: typeCheckbox});
       }
 
