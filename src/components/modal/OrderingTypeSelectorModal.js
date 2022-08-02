@@ -2,9 +2,11 @@ import React, {useState, useEffect} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import {Text, TouchableOpacity, View, Image, Modal} from 'react-native';
 import {Dialog, Portal, Provider} from 'react-native-paper';
+
 import appConfig from '../../config/appConfig';
 import colorConfig from '../../config/colorConfig';
 import {changeOrderingMode} from '../../actions/order.action';
+
 import {isEmptyArray, isEmptyObject} from '../../helper/CheckEmpty';
 
 const styles = {
@@ -155,7 +157,9 @@ const OrderingTypeSelectorModal = ({open, handleClose, value}) => {
 
   const handleSave = async () => {
     await dispatch(changeOrderingMode({orderingMode: selected?.key}));
-    handleClose();
+    if (handleClose) {
+      handleClose();
+    }
   };
 
   const renderHeader = () => {

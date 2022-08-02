@@ -370,8 +370,7 @@ const Cart = () => {
   };
 
   const renderPaymentGrandTotal = () => {
-    const {totalNettAmount} = basket;
-    if (totalNettAmount) {
+    if (basket?.totalNettAmount) {
       return (
         <TouchableOpacity
           onPress={() => {
@@ -380,7 +379,7 @@ const Cart = () => {
           <Text style={styles.textGrandTotal}>Grand Total</Text>
           <View style={styles.viewGrandTotal}>
             <Text style={styles.textGrandTotalValue}>
-              {currencyFormatter(totalNettAmount)}
+              {currencyFormatter(basket?.totalNettAmount)}
             </Text>
 
             <Image source={appConfig.iconArrowUp} style={styles.iconArrowUp} />
@@ -838,9 +837,7 @@ const Cart = () => {
   };
 
   const renderDetailGrandTotal = () => {
-    const {totalNettAmount} = basket;
-
-    if (totalNettAmount) {
+    if (basket?.totalNettAmount) {
       return (
         <TouchableOpacity
           style={styles.viewDetailGrandTotal}
@@ -849,7 +846,7 @@ const Cart = () => {
           }}>
           <Text style={styles.textDetailGrandTotal}>Grand Total</Text>
           <Text style={styles.textDetailGrandTotalValue}>
-            {currencyFormatter(totalNettAmount)}
+            {currencyFormatter(basket?.totalNettAmount)}
           </Text>
         </TouchableOpacity>
       );

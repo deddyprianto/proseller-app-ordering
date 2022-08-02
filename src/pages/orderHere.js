@@ -42,12 +42,15 @@ const useStyles = () => {
   const styles = StyleSheet.create({
     root: {
       flex: 1,
-      alignItems: 'center',
+    },
+    header: {
+      height: 140,
     },
     body: {
-      paddingHorizontal: 16,
-      width: '100%',
       flex: 1,
+      marginTop: 10,
+      width: '100%',
+      paddingHorizontal: 16,
     },
     footer: {
       position: 'absolute',
@@ -63,6 +66,10 @@ const useStyles = () => {
       fontWeight: 'bold',
       fontSize: 11,
       color: 'white',
+    },
+    viewTextAndSearch: {
+      paddingHorizontal: 16,
+      width: '100%',
     },
     viewBodyText: {
       display: 'flex',
@@ -124,7 +131,6 @@ const OrderHere = () => {
     setRefresh(true);
     await dispatch(getProductByOutlet(defaultOutlet.id));
     await dispatch(getBasket());
-    setOpenOrderingTypeModal(true);
     setRefresh(false);
   }, [dispatch, defaultOutlet]);
 
@@ -219,33 +225,34 @@ const OrderHere = () => {
   };
 
   return (
-    <ScrollView
-      contentContainerStyle={styles.root}
-      refreshControl={
-        <RefreshControl
-          refreshing={refresh}
-          onRefresh={() => {
-            onRefresh();
-          }}
-        />
-      }>
+    <View style={styles.root}>
       <LoadingScreen loading={handleLoading()} />
-      <Header customTitle={renderHeaderTitle()} scanner />
-      <View style={styles.body}>
-        {renderText()}
-        {renderSearch()}
-        <View style={{marginTop: 10}} />
-        {renderProducts()}
+      <View style={styles.header}>
+        <ScrollView
+          contentContainerStyle={styles.header}
+          refreshControl={
+            <RefreshControl
+              refreshing={refresh}
+              onRefresh={() => {
+                onRefresh();
+              }}
+            />
+          }>
+          <Header customTitle={renderHeaderTitle()} scanner />
+          <View style={styles.viewTextAndSearch}>
+            {renderText()}
+            {renderSearch()}
+          </View>
+        </ScrollView>
       </View>
+
+      <View style={styles.body}>{renderProducts()}</View>
       <View style={styles.footer}>{renderButtonCart()}</View>
       <OrderingTypeSelectorModal
         value={basket?.orderingMode || orderingMode}
-        open={openOrderingTypeModal && !orderingMode}
-        handleClose={() => {
-          setOpenOrderingTypeModal(false);
-        }}
+        open={!basket?.orderingMode && !orderingMode}
       />
-    </ScrollView>
+    </View>
   );
 };
 

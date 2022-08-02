@@ -9,6 +9,7 @@ import {
   Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import CryptoJS from 'react-native-crypto-js';
 
 import colorConfig from '../config/colorConfig';
 
@@ -41,8 +42,22 @@ class StoreStores extends Component {
     await this.props.dispatch(getBasket());
   };
 
+  handleRemoveSelectedAddress = async () => {
+    const userDecrypt = CryptoJS.AES.decrypt(
+      this.props.user,
+      awsConfig.PRIVATE_KEY_RSA,
+    );
+
+    const user = JSON.parse(userDecrypt.toString(CryptoJS.enc.Utf8));
+
+    await this.props.dispatch(
+      updateUser({selectedAddress: null, phoneNumber: user.phoneNumber}),
+    );
+  };
+
   storeDetailStores = async item => {
     try {
+      await this.handleRemoveSelectedAddress();
       await this.props.dispatch(getOutletById(item.storeId));
       if (Actions.currentScene !== 'pageIndex') {
         Actions.pop();
@@ -166,6 +181,8 @@ import {compose} from 'redux';
 import {connect} from 'react-redux';
 import {getOutletById} from '../actions/stores.action';
 import {getBasket, removeBasket} from '../actions/order.action';
+import {updateUser} from '../actions/user.action';
+import awsConfig from '../config/awsConfig';
 
 const styles = StyleSheet.create({
   stores: {
@@ -206,6 +223,7 @@ const styles = StyleSheet.create({
 
 mapStateToProps = state => ({
   dataBasket: state.orderReducer.dataBasket.product,
+  user: state.userReducer.getUser.userDetails,
 });
 
 mapDispatchToProps = dispatch => ({
