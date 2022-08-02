@@ -2,13 +2,9 @@ import React, {useState, useEffect} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import {Text, TouchableOpacity, View, Image, Modal} from 'react-native';
 import {Dialog, Portal, Provider} from 'react-native-paper';
-import CryptoJS from 'react-native-crypto-js';
 
 import appConfig from '../../config/appConfig';
 import colorConfig from '../../config/colorConfig';
-import awsConfig from '../../config/awsConfig';
-
-import {updateUser} from '../../actions/user.action';
 import {changeOrderingMode} from '../../actions/order.action';
 
 import {isEmptyArray, isEmptyObject} from '../../helper/CheckEmpty';
