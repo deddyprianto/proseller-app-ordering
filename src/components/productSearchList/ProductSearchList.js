@@ -8,7 +8,7 @@
 import React from 'react';
 import {StyleSheet, View, ScrollView} from 'react-native';
 
-import ProductSearchListItem from './components/ProductSearchListItem';
+import ProductSearchListItem from './components/ProductSearchItem';
 
 import {isEmptyArray} from '../../helper/CheckEmpty';
 
