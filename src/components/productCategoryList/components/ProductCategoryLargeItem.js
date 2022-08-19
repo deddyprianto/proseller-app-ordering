@@ -49,7 +49,7 @@ const useStyles = () => {
   return styles;
 };
 
-const ProductCategoryListItem = ({category, selected, onPress}) => {
+const ProductCategoryLargeItem = ({category, selected, onPress}) => {
   const styles = useStyles();
 
   const image = category?.defaultImageURL
@@ -69,4 +69,4 @@ const ProductCategoryListItem = ({category, selected, onPress}) => {
   );
 };
 
-export default ProductCategoryListItem;
+export default ProductCategoryLargeItem;

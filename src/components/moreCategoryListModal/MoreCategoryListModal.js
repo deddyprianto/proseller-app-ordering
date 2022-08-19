@@ -17,6 +17,7 @@ import Theme from '../../theme';
 import {isEmptyArray} from '../../helper/CheckEmpty';
 import appConfig from '../../config/appConfig';
 import {getProductCategories} from '../../actions/product.action';
+import {Actions} from 'react-native-router-flux';
 
 const useStyles = () => {
   const theme = Theme();
@@ -116,7 +117,15 @@ const MoreCategoryListModal = ({handleClose, open}) => {
   }, [dispatch, defaultOutlet]);
 
   const renderMoreCategoryItem = item => {
-    return <MoreCategoryItem category={item} />;
+    return (
+      <MoreCategoryItem
+        category={item}
+        onPress={() => {
+          handleClose();
+          Actions.searchProduct();
+        }}
+      />
+    );
   };
 
   const renderCategories = () => {

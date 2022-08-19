@@ -69,6 +69,12 @@ const useStyles = () => {
       margin: 16,
       backgroundColor: theme.colors.brandPrimary,
     },
+    textProductCategories: {
+      margin: 16,
+      color: theme.colors.textPrimary,
+      fontSize: theme.fontSize[16],
+      fontFamily: theme.fontFamily.poppinsSemiBold,
+    },
     textButtonCart: {
       fontSize: theme.fontSize[16],
       color: theme.colors.textSecondary,
@@ -394,15 +400,23 @@ const Home = () => {
 
   const renderProductCategoryList = () => {
     return (
-      <ProductCategoryList
-        refresh={refresh}
-        selectedCategory={selectedCategory}
-        onChange={item => {
-          setSelectedCategory(item);
-        }}
-      />
+      <View>
+        <Text style={styles.textProductCategories}>Product Categories</Text>
+        <ProductCategoryList
+          categories={productOutletCategories}
+          selectedCategory={selectedCategory}
+          onCLick={item => {
+            setSelectedCategory(item);
+          }}
+          isIndicator
+          isScroll
+          isMoreCategoryButton
+          horizontal
+        />
+      </View>
     );
   };
+
   const renderProductSubCategoryList = () => {
     return (
       <ProductSubCategoryList

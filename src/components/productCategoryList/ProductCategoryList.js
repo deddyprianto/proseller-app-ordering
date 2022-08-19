@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect, useState} from 'react';
 import {
   Text,
@@ -11,11 +12,13 @@ import {
 
 import {useSelector} from 'react-redux';
 
-import ProductCategoryItem from './components/ProductCategoryItem';
+import ProductCategorySmallItem from './components/ProductCategorySmallItem';
+import ProductCategoryLargeItem from './components/ProductCategoryLargeItem';
 
 import Theme from '../../theme';
 import {isEmptyArray} from '../../helper/CheckEmpty';
 import appConfig from '../../config/appConfig';
+
 import MoreCategoryListModal from '../moreCategoryListModal';
 
 const WIDTH = Dimensions.get('window').width;
@@ -23,12 +26,6 @@ const WIDTH = Dimensions.get('window').width;
 const useStyles = () => {
   const theme = Theme();
   const styles = StyleSheet.create({
-    textTitle: {
-      margin: 16,
-      color: theme.colors.textPrimary,
-      fontSize: theme.fontSize[16],
-      fontFamily: theme.fontFamily.poppinsSemiBold,
-    },
     textMoreCategories: {
       marginTop: 8,
       textAlign: 'center',
@@ -83,28 +80,34 @@ const useStyles = () => {
   return styles;
 };
 
-const ProductCategoryList = ({selectedCategory, onChange}) => {
+const ProductCategoryList = ({
+  categories,
+  selectedCategory,
+  onCLick,
+  horizontal,
+  itemSize,
+  isScroll,
+  isIndicator,
+  isMoreCategoryButton,
+}) => {
   const styles = useStyles();
 
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [activeGroupEGift, setActiveGroupEGift] = useState(0);
   const [groupCategories, setGroupCategories] = useState([]);
 
-  const productOutletCategories = useSelector(
-    state => state.productReducer.productsOutlet,
-  );
-
   const handleGroupCategories = values => {
     let parents = [];
     let children = [];
 
-    const formatted = [
-      ...values,
-      {
+    const formatted = [...values];
+
+    if (isMoreCategoryButton) {
+      formatted.push({
         id: 'moreCategories',
         name: 'More Categories',
-      },
-    ];
+      });
+    }
 
     formatted.forEach((value, index) => {
       if (formatted.length - 1 === index) {
@@ -128,10 +131,10 @@ const ProductCategoryList = ({selectedCategory, onChange}) => {
   };
 
   useEffect(() => {
-    if (!isEmptyArray(productOutletCategories)) {
-      handleGroupCategories(productOutletCategories);
+    if (!isEmptyArray(categories)) {
+      handleGroupCategories(categories);
     }
-  }, [productOutletCategories]);
+  }, [categories]);
 
   const handleOpenModal = () => {
     setIsOpenModal(true);
@@ -157,8 +160,8 @@ const ProductCategoryList = ({selectedCategory, onChange}) => {
   };
 
   const handleSelectCategory = item => {
-    if (onChange) {
-      onChange(item);
+    if (onCLick) {
+      onCLick(item);
     }
   };
 
@@ -167,19 +170,46 @@ const ProductCategoryList = ({selectedCategory, onChange}) => {
       return <View key={index} style={handleStyleDot(index)} />;
     });
 
-    return <View style={styles.WrapDot}>{dots}</View>;
+    if (isIndicator) {
+      return <View style={styles.WrapDot}>{dots}</View>;
+    }
   };
 
   const renderProductCategoryItem = item => {
-    return (
-      <ProductCategoryItem
-        category={item}
-        selected={selectedCategory}
-        onPress={() => {
-          handleSelectCategory(item);
-        }}
-      />
-    );
+    switch (itemSize) {
+      case 'large':
+        return (
+          <ProductCategoryLargeItem
+            category={item}
+            selected={selectedCategory}
+            onPress={() => {
+              handleSelectCategory(item);
+            }}
+          />
+        );
+
+      case 'small':
+        return (
+          <ProductCategorySmallItem
+            category={item}
+            selected={selectedCategory}
+            onPress={() => {
+              handleSelectCategory(item);
+            }}
+          />
+        );
+
+      default:
+        return (
+          <ProductCategoryLargeItem
+            category={item}
+            selected={selectedCategory}
+            onPress={() => {
+              handleSelectCategory(item);
+            }}
+          />
+        );
+    }
   };
 
   const renderMoreCategories = () => {
@@ -213,6 +243,14 @@ const ProductCategoryList = ({selectedCategory, onChange}) => {
     return result;
   };
 
+  const renderCategoriesValue = item => {
+    if (item.id === 'moreCategories') {
+      return renderMoreCategories();
+    } else {
+      return renderProductCategoryItem(item);
+    }
+  };
+
   const renderGroupCategories = () => {
     const result = groupCategories?.map((items, index) => {
       return (
@@ -229,10 +267,30 @@ const ProductCategoryList = ({selectedCategory, onChange}) => {
         }}
         showsHorizontalScrollIndicator={false}
         pagingEnabled
-        horizontal>
+        horizontal={horizontal}>
         {result}
       </ScrollView>
     );
+  };
+
+  const renderCategories = () => {
+    const result = categories?.map((item, index) => {
+      return renderCategoriesValue(item);
+      // <View key={index} style={styles.viewGroupCategories}>
+      //   {renderCategoriesValue(item)}
+      // </View>
+      // );
+    });
+
+    return result;
+  };
+
+  const renderList = () => {
+    if (horizontal) {
+      return renderGroupCategories();
+    } else {
+      return renderCategories();
+    }
   };
 
   const renderMoreCategoryListModal = () => {
@@ -248,8 +306,7 @@ const ProductCategoryList = ({selectedCategory, onChange}) => {
 
   return (
     <View>
-      <Text style={styles.textTitle}>Product Categories</Text>
-      {renderGroupCategories()}
+      {renderList()}
       {renderDot()}
       {renderMoreCategoryListModal()}
     </View>
