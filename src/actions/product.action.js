@@ -126,7 +126,7 @@ export const getProductBySubCategory = ({outletId, subCategoryId}) => {
 
       if (response?.response?.data) {
         await dispatch({
-          type: 'DATA_PRODUCT_BY_SUB_CATEGORIES',
+          type: 'DATA_PRODUCTS_BY_SUB_CATEGORY',
           products: response.response.data,
         });
         return response.response.data;

@@ -25,13 +25,13 @@ const useStyles = () => {
   return styles;
 };
 
-const ProductSubCategoryList = ({selectedSubCategory, onChange}) => {
+const ProductSubCategoryList = ({
+  subCategories,
+  selectedSubCategory,
+  onChange,
+}) => {
   const styles = useStyles();
   const subCategoryRef = useRef();
-
-  const subCategories = useSelector(
-    state => state.productReducer.productSubCategories,
-  );
 
   useEffect(() => {
     if (!isEmptyArray(subCategories)) {

@@ -69,6 +69,12 @@ const useStyles = () => {
       margin: 16,
       backgroundColor: theme.colors.brandPrimary,
     },
+    textProductCategories: {
+      margin: 16,
+      color: theme.colors.textPrimary,
+      fontSize: theme.fontSize[16],
+      fontFamily: theme.fontFamily.poppinsSemiBold,
+    },
     textButtonCart: {
       fontSize: theme.fontSize[16],
       color: theme.colors.textSecondary,
@@ -209,6 +215,10 @@ const Home = () => {
     state => state.accountsReducer?.myVouchers?.vouchers,
   );
 
+  const products = useSelector(
+    state => state.productReducer.productsBySubCategory,
+  );
+
   const svcBalance = useSelector(state => state.SVCReducer.balance.balance);
 
   const intlData = useSelector(state => state.intlData);
@@ -237,7 +247,7 @@ const Home = () => {
       )?.items;
 
       await dispatch({
-        type: 'DATA_PRODUCT_BY_SUB_CATEGORIES',
+        type: 'DATA_PRODUCTS_BY_SUB_CATEGORY',
         products: result,
       });
     };
@@ -394,18 +404,23 @@ const Home = () => {
 
   const renderProductCategoryList = () => {
     return (
-      <ProductCategoryList
-        refresh={refresh}
-        selectedCategory={selectedCategory}
-        onChange={item => {
-          setSelectedCategory(item);
-        }}
-      />
+      <View>
+        <Text style={styles.textProductCategories}>Product Categories</Text>
+        <ProductCategoryList
+          categories={productOutletCategories}
+          selectedCategory={selectedCategory}
+          onClick={item => {
+            setSelectedCategory(item);
+          }}
+        />
+      </View>
     );
   };
+
   const renderProductSubCategoryList = () => {
     return (
       <ProductSubCategoryList
+        subCategories={subCategories}
         selectedSubCategory={selectedSubCategory}
         onChange={item => {
           setSelectedSubCategory(item);
@@ -421,7 +436,7 @@ const Home = () => {
           const layout = event.nativeEvent.layout;
           setProductListPosition(layout.y);
         }}>
-        <ProductList basket={basket} />
+        <ProductList products={products} basket={basket} />
       </View>
     );
   };

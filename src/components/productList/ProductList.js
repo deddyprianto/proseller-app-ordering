@@ -31,11 +31,8 @@ const useStyles = () => {
   return styles;
 };
 
-const ProductList = ({basket}) => {
+const ProductList = ({products, basket}) => {
   const styles = useStyles();
-  const products = useSelector(
-    state => state.productReducer.productBySubCategories,
-  );
 
   const renderProducts = () => {
     if (!isEmptyArray(products)) {

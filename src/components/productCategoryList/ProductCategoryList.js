@@ -23,12 +23,6 @@ const WIDTH = Dimensions.get('window').width;
 const useStyles = () => {
   const theme = Theme();
   const styles = StyleSheet.create({
-    textTitle: {
-      margin: 16,
-      color: theme.colors.textPrimary,
-      fontSize: theme.fontSize[16],
-      fontFamily: theme.fontFamily.poppinsSemiBold,
-    },
     textMoreCategories: {
       marginTop: 8,
       textAlign: 'center',
@@ -83,16 +77,12 @@ const useStyles = () => {
   return styles;
 };
 
-const ProductCategoryList = ({selectedCategory, onChange}) => {
+const ProductCategoryList = ({categories, selectedCategory, onClick}) => {
   const styles = useStyles();
 
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [activeGroupEGift, setActiveGroupEGift] = useState(0);
   const [groupCategories, setGroupCategories] = useState([]);
-
-  const productOutletCategories = useSelector(
-    state => state.productReducer.productsOutlet,
-  );
 
   const handleGroupCategories = values => {
     let parents = [];
@@ -128,10 +118,10 @@ const ProductCategoryList = ({selectedCategory, onChange}) => {
   };
 
   useEffect(() => {
-    if (!isEmptyArray(productOutletCategories)) {
-      handleGroupCategories(productOutletCategories);
+    if (!isEmptyArray(categories)) {
+      handleGroupCategories(categories);
     }
-  }, [productOutletCategories]);
+  }, [categories]);
 
   const handleOpenModal = () => {
     setIsOpenModal(true);
@@ -157,8 +147,8 @@ const ProductCategoryList = ({selectedCategory, onChange}) => {
   };
 
   const handleSelectCategory = item => {
-    if (onChange) {
-      onChange(item);
+    if (onClick) {
+      onClick(item);
     }
   };
 
@@ -248,7 +238,6 @@ const ProductCategoryList = ({selectedCategory, onChange}) => {
 
   return (
     <View>
-      <Text style={styles.textTitle}>Product Categories</Text>
       {renderGroupCategories()}
       {renderDot()}
       {renderMoreCategoryListModal()}
