@@ -215,6 +215,10 @@ const Home = () => {
     state => state.accountsReducer?.myVouchers?.vouchers,
   );
 
+  const products = useSelector(
+    state => state.productReducer.productsBySubCategory,
+  );
+
   const svcBalance = useSelector(state => state.SVCReducer.balance.balance);
 
   const intlData = useSelector(state => state.intlData);
@@ -420,6 +424,7 @@ const Home = () => {
   const renderProductSubCategoryList = () => {
     return (
       <ProductSubCategoryList
+        subCategories={subCategories}
         selectedSubCategory={selectedSubCategory}
         onChange={item => {
           setSelectedSubCategory(item);
@@ -435,7 +440,7 @@ const Home = () => {
           const layout = event.nativeEvent.layout;
           setProductListPosition(layout.y);
         }}>
-        <ProductList basket={basket} />
+        <ProductList products={products} basket={basket} />
       </View>
     );
   };

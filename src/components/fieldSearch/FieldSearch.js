@@ -1,5 +1,4 @@
 import React from 'react';
-import debounce from 'lodash/debounce';
 
 import {StyleSheet, View, Text, TextInput, Image} from 'react-native';
 import appConfig from '../../config/appConfig';
@@ -47,14 +46,15 @@ const useStyles = () => {
   return styles;
 };
 
-const FieldSearch = ({label, customLabel, placeholder, onChange, value}) => {
+const FieldSearch = ({
+  label,
+  customLabel,
+  placeholder,
+  onSubmit,
+  onChange,
+  value,
+}) => {
   const styles = useStyles();
-
-  const handleUpdateSearchQuery = e => {
-    onChange(e);
-  };
-
-  const debounceSearchQuery = debounce(handleUpdateSearchQuery, 3000);
 
   const renderLabel = () => {
     if (!value) {
@@ -73,11 +73,14 @@ const FieldSearch = ({label, customLabel, placeholder, onChange, value}) => {
   const renderInput = () => {
     return (
       <TextInput
+        value={value}
         style={styles.textInput}
         placeholder={placeholder}
-        onChangeText={e => {
-          debounceSearchQuery(e);
+        onChangeText={onChange}
+        onSubmitEditing={event => {
+          onSubmit(event.nativeEvent.text);
         }}
+        returnKeyType="search"
       />
     );
   };

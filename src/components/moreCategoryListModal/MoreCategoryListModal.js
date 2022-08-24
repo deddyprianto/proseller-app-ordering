@@ -122,22 +122,24 @@ const MoreCategoryListModal = ({handleClose, open}) => {
         category={item}
         onPress={() => {
           handleClose();
-          Actions.searchProduct();
+          Actions.searchProduct({category: item});
         }}
       />
     );
   };
 
   const renderCategories = () => {
-    const result = categories.map(category => {
-      return renderMoreCategoryItem(category);
-    });
+    if (!isEmptyArray(categories)) {
+      const result = categories?.map(category => {
+        return renderMoreCategoryItem(category);
+      });
 
-    return (
-      <ScrollView style={styles.viewWrapCategories}>
-        <View style={styles.viewCategories}>{result}</View>
-      </ScrollView>
-    );
+      return (
+        <ScrollView style={styles.viewWrapCategories}>
+          <View style={styles.viewCategories}>{result}</View>
+        </ScrollView>
+      );
+    }
   };
 
   const renderHeaderText = () => {

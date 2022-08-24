@@ -8,37 +8,32 @@ import React, {useCallback, useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {Actions} from 'react-native-router-flux';
 import {ScrollView} from 'react-native-gesture-handler';
-import {
-  StyleSheet,
-  View,
-  Text,
-  TouchableOpacity,
-  RefreshControl,
-  Image,
-} from 'react-native';
+import {StyleSheet, View, Text, TouchableOpacity, Image} from 'react-native';
 
-import Header from '../components/layout/header';
 import FieldSearch from '../components/fieldSearch';
 import ProductList from '../components/productList';
 import LoadingScreen from '../components/loadingScreen';
 import ProductSearchList from '../components/productSearchList';
-import OrderingTypeSelectorModal from '../components/modal/OrderingTypeSelectorModal';
 
 import {
-  getProductByOutlet,
   getProductBySearch,
-  getProductCategories,
+  getProductBySubCategory,
+  getProductSubCategories,
 } from '../actions/product.action';
-import {getBasket} from '../actions/order.action';
 
-import {isEmptyArray} from '../helper/CheckEmpty';
+import {isEmptyArray, isEmptyObject} from '../helper/CheckEmpty';
 import CurrencyFormatter from '../helper/CurrencyFormatter';
 
 import appConfig from '../config/appConfig';
 
 import Theme from '../theme';
-import FieldTextInput from '../components/fieldTextInput';
 import ProductCategoryList from '../components/productCategoryList';
+import {
+  setSearchProductHistory,
+  clearSearchProductHistory,
+} from '../actions/search.action';
+import ProductSubCategoryList from '../components/productSubCategoryList';
+import SearchSuggestionList from '../components/searchSuggestionList/SearchSuggestionList';
 
 const useStyles = () => {
   const theme = Theme();
@@ -111,46 +106,84 @@ const useStyles = () => {
   return styles;
 };
 
-const OrderHere = () => {
+const SearchProduct = ({category}) => {
   const theme = Theme();
   const styles = useStyles();
   const dispatch = useDispatch();
 
   const [searchQuery, setSearchQuery] = useState('');
+  const [searchTextInput, setSearchTextInput] = useState('');
 
-  const [refresh, setRefresh] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [openOrderingTypeModal, setOpenOrderingTypeModal] = useState(false);
 
   const [selectedCategory, setSelectedCategory] = useState({});
+  const [selectedSubCategory, setSelectedSubCategory] = useState({});
   const [productsSearch, setProductsSearch] = useState([]);
 
   const categories = useSelector(
     state => state.productReducer.productCategories,
   );
 
+  const subCategories = useSelector(
+    state => state.productReducer.productSubCategories,
+  );
+
+  const productsBySubCategory = useSelector(
+    state => state.productReducer.productsBySubCategory,
+  );
+
   const defaultOutlet = useSelector(
     state => state.storesReducer.defaultOutlet.defaultOutlet,
   );
   const basket = useSelector(state => state.orderReducer?.dataBasket?.product);
-  const orderingMode = useSelector(
-    state => state.orderReducer?.dataOrderingMode?.orderingMode,
+  const searchProductHistory = useSelector(
+    state => state.searchReducer?.searchProductHistory,
   );
-  const products = useSelector(
-    state => state.productReducer?.productsOutlet?.products,
-  );
-
-  const onRefresh = useCallback(async () => {
-    setRefresh(true);
-    await dispatch(getProductByOutlet(defaultOutlet.id));
-    await dispatch(getProductCategories({outletId: defaultOutlet.id}));
-    await dispatch(getBasket());
-    setRefresh(false);
-  }, [dispatch, defaultOutlet]);
 
   useEffect(() => {
-    onRefresh();
-  }, [onRefresh]);
+    setSelectedCategory(category);
+  }, [category]);
+
+  useEffect(() => {
+    const loadData = async () => {
+      setIsLoading(true);
+      const subCategories = await dispatch(
+        getProductSubCategories({
+          outletId: defaultOutlet.id,
+          categoryId: selectedCategory.id,
+          searchQuery,
+        }),
+      );
+
+      if (!isEmptyArray(subCategories)) {
+        setSelectedSubCategory(subCategories[0]);
+      }
+
+      setIsLoading(false);
+    };
+
+    if (selectedCategory?.id) {
+      loadData();
+    }
+  }, [dispatch, defaultOutlet, selectedCategory, searchQuery]);
+
+  useEffect(() => {
+    const loadData = async () => {
+      setIsLoading(true);
+      await dispatch(
+        getProductBySubCategory({
+          outletId: defaultOutlet.id,
+          subCategoryId: selectedSubCategory.id,
+          searchQuery,
+        }),
+      );
+      setIsLoading(false);
+    };
+
+    if (selectedSubCategory?.id) {
+      loadData();
+    }
+  }, [dispatch, defaultOutlet, selectedSubCategory, searchQuery]);
 
   useEffect(() => {
     const loadData = async () => {
@@ -162,47 +195,32 @@ const OrderHere = () => {
         }),
       );
 
-      setIsLoading(false);
       setProductsSearch(response);
+
+      setIsLoading(false);
     };
-    loadData();
-  }, [dispatch, searchQuery, defaultOutlet]);
 
-  const handleLoading = () => {
-    if (isLoading && searchQuery) {
-      return true;
-    } else {
-      return false;
+    if (searchQuery && !selectedCategory?.id) {
+      loadData();
     }
+  }, [dispatch, defaultOutlet, searchQuery, selectedCategory]);
+
+  const handleSearchProduct = async value => {
+    setSelectedCategory({});
+    setSelectedSubCategory({});
+    setSearchTextInput('');
+    setSearchQuery(value);
+    await dispatch(setSearchProductHistory({searchQuery: value}));
   };
 
-  const renderText = () => {
-    return (
-      <View style={styles.viewBodyText}>
-        <Text style={styles.textBody}>What would you like to eat?</Text>
-      </View>
-    );
+  const handleSearchProductWithCategory = async value => {
+    setSearchTextInput('');
+    setSearchQuery(value);
+    await dispatch(setSearchProductHistory({searchQuery: value}));
   };
 
-  const renderSearch = () => {
-    return (
-      <FieldSearch
-        label="Search"
-        value={searchQuery}
-        placeholder="Search..."
-        onChange={value => {
-          setSearchQuery(value);
-        }}
-      />
-    );
-  };
-
-  const renderProducts = () => {
-    if (searchQuery) {
-      return <ProductSearchList basket={basket} products={productsSearch} />;
-    } else {
-      return <ProductList basket={basket} products={products} />;
-    }
+  const handleClearSearchHistory = async value => {
+    await dispatch(clearSearchProductHistory());
   };
 
   const renderButtonCart = () => {
@@ -227,15 +245,40 @@ const OrderHere = () => {
     }
   };
 
-  const renderHeaderTitle = () => {
-    return (
-      <TouchableOpacity
-        onPress={() => {
-          Actions.store();
-        }}>
-        <Text>{defaultOutlet?.name}</Text>
-      </TouchableOpacity>
-    );
+  const renderCancelOrClear = () => {
+    if (searchQuery || selectedCategory?.id) {
+      return (
+        <Text
+          onPress={() => {
+            setSelectedCategory({});
+            setSearchQuery('');
+            setSearchTextInput('');
+          }}
+          style={{
+            marginLeft: 16,
+            color: theme.colors.buttonActive,
+            fontSize: theme.fontSize[14],
+            fontFamily: theme.fontFamily.poppinsMedium,
+          }}>
+          Clear
+        </Text>
+      );
+    } else {
+      return (
+        <Text
+          onPress={() => {
+            Actions.pop();
+          }}
+          style={{
+            marginLeft: 16,
+            color: theme.colors.buttonActive,
+            fontSize: theme.fontSize[14],
+            fontFamily: theme.fontFamily.poppinsMedium,
+          }}>
+          Cancel
+        </Text>
+      );
+    }
   };
 
   const renderHeaderSearch = () => {
@@ -253,59 +296,83 @@ const OrderHere = () => {
           backgroundColor: theme.colors.background,
         }}>
         <FieldSearch
-          placeholder="Try to search “toast”"
-          value={searchQuery}
+          value={searchTextInput}
           onChange={value => {
-            setSearchQuery(value);
+            setSearchTextInput(value);
+          }}
+          placeholder="Try to search “toast”"
+          onSubmit={value => {
+            handleSearchProduct(value);
           }}
         />
-        <Text
-          onPress={() => {}}
-          style={{
-            marginLeft: 16,
-            color: theme.colors.buttonActive,
-            fontSize: theme.fontSize[14],
-            fontFamily: theme.fontFamily.poppinsMedium,
-          }}>
-          Cancel
-        </Text>
+        {renderCancelOrClear()}
       </View>
     );
   };
 
-  const renderRecentSearch = () => {
+  const renderRecentSearchHeader = () => {
+    if (!isEmptyArray(searchProductHistory)) {
+      return (
+        <View
+          style={{
+            width: '100%',
+            paddingHorizontal: 16,
+            paddingVertical: 8,
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            backgroundColor: theme.colors.greyScale4,
+          }}>
+          <Text
+            style={{
+              color: theme.colors.textPrimary,
+              fontSize: theme.fontSize[16],
+              fontFamily: theme.fontFamily.poppinsMedium,
+            }}>
+            Recent Search
+          </Text>
+          <Text
+            onPress={() => {
+              handleClearSearchHistory();
+            }}
+            style={{
+              color: theme.colors.buttonActive,
+              fontSize: theme.fontSize[14],
+              fontFamily: theme.fontFamily.poppinsMedium,
+            }}>
+            Clear Recent
+          </Text>
+        </View>
+      );
+    }
+  };
+
+  const renderRecentSearchItem = value => {
     return (
-      <View
+      <Text
         style={{
-          width: '100%',
-          paddingHorizontal: 16,
-          paddingVertical: 8,
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          backgroundColor: theme.colors.greyScale4,
+          marginVertical: 8,
+          marginHorizontal: 16,
+          color: theme.colors.textPrimary,
+          fontSize: theme.fontSize[14],
+          fontFamily: theme.fontFamily.poppinsMedium,
+        }}
+        onPress={() => {
+          handleSearchProduct(value);
         }}>
-        <Text
-          style={{
-            color: theme.colors.textPrimary,
-            fontSize: theme.fontSize[16],
-            fontFamily: theme.fontFamily.poppinsMedium,
-          }}>
-          Recent Search
-        </Text>
-        <Text
-          onPress={() => {}}
-          style={{
-            color: theme.colors.buttonActive,
-            fontSize: theme.fontSize[14],
-            fontFamily: theme.fontFamily.poppinsMedium,
-          }}>
-          Clear Recent
-        </Text>
-      </View>
+        {value}
+      </Text>
     );
   };
+
+  const renderRecentSearchList = () => {
+    const history = searchProductHistory?.map(value => {
+      return renderRecentSearchItem(value);
+    });
+    return <View>{history}</View>;
+  };
+
   const renderSearchByCategory = () => {
     return (
       <View>
@@ -332,46 +399,115 @@ const OrderHere = () => {
             setSelectedCategory(item);
           }}
           itemSize={'small'}
-          //   isIndicator
-          //   isScroll
-          //   isMoreCategoryButton
-          //   horizontal
         />
       </View>
     );
   };
 
+  const renderDefaultBody = () => {
+    return (
+      <ScrollView>
+        {renderRecentSearchHeader()}
+        {renderRecentSearchList()}
+        {renderSearchByCategory()}
+      </ScrollView>
+    );
+  };
+
+  const renderProductSearchByQuery = () => {
+    return (
+      <ProductSearchList
+        basket={basket}
+        products={productsSearch}
+        searchQuery={searchQuery}
+      />
+    );
+  };
+
+  const renderProductSearchByCategory = () => {
+    const text =
+      selectedCategory?.name && searchQuery
+        ? `Search result for “${searchQuery}” in “${
+            selectedCategory?.name
+          }” category`
+        : `Item list for “${selectedCategory?.name}” category`;
+
+    return (
+      <View
+        style={{
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          marginTop: 16,
+        }}>
+        <Text
+          style={{
+            marginHorizontal: 16,
+            marginBottom: 16,
+            color: theme.colors.textTertiary,
+            fontSize: theme.fontSize[14],
+            fontFamily: theme.fontFamily.poppinsMedium,
+          }}>
+          {text}
+        </Text>
+        <ProductSubCategoryList
+          subCategories={subCategories}
+          selectedSubCategory={selectedSubCategory}
+          onChange={item => {
+            setSelectedSubCategory(item);
+          }}
+        />
+        <ProductList products={productsBySubCategory} basket={basket} />
+      </View>
+    );
+  };
+  const renderSearchSuggestions = () => {
+    const suggestions = [
+      {
+        name: selectedCategory?.name,
+        onClick: () => {
+          handleSearchProductWithCategory(searchTextInput);
+        },
+      },
+      {
+        name: 'all category',
+        onClick: () => {
+          handleSearchProduct(searchTextInput);
+        },
+      },
+    ];
+
+    return (
+      <SearchSuggestionList
+        searchText={searchTextInput}
+        suggestions={suggestions}
+      />
+    );
+  };
+
+  const renderBody = () => {
+    const isSelectedCategory = !isEmptyObject(selectedCategory);
+
+    if (searchQuery && !isSelectedCategory) {
+      return renderProductSearchByQuery();
+    } else if (isSelectedCategory && searchTextInput) {
+      return renderSearchSuggestions();
+    } else if (isSelectedCategory) {
+      return renderProductSearchByCategory();
+    } else {
+      return renderDefaultBody();
+    }
+  };
+
   return (
     <View style={styles.root}>
-      <LoadingScreen loading={handleLoading()} />
+      <LoadingScreen loading={isLoading} />
       {renderHeaderSearch()}
-      <ScrollView>
-        {renderRecentSearch()}
-        {renderSearchByCategory()}
-        {/* <View style={styles.header}>
-        <ScrollView
-          contentContainerStyle={styles.header}
-          refreshControl={
-            <RefreshControl
-              refreshing={refresh}
-              onRefresh={() => {
-                onRefresh();
-              }}
-            />
-          }>
-          <Header customTitle={renderHeaderTitle()} scanner />
-          <View style={styles.viewTextAndSearch}>
-            {renderText()}
-            {renderSearch()}
-          </View>
-        </ScrollView>
-      </View> */}
-
-        {/* <View style={styles.body}>{renderProducts()}</View> */}
-      </ScrollView>
+      {renderBody()}
       <View style={styles.footer}>{renderButtonCart()}</View>
     </View>
   );
 };
 
-export default OrderHere;
+export default SearchProduct;

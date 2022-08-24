@@ -10,8 +10,6 @@ import {
   Image,
 } from 'react-native';
 
-import {useSelector} from 'react-redux';
-
 import ProductCategorySmallItem from './components/ProductCategorySmallItem';
 import ProductCategoryLargeItem from './components/ProductCategoryLargeItem';
 
@@ -274,15 +272,15 @@ const ProductCategoryList = ({
   };
 
   const renderCategories = () => {
-    const result = categories?.map((item, index) => {
+    const result = categories?.map(item => {
       return renderCategoriesValue(item);
-      // <View key={index} style={styles.viewGroupCategories}>
-      //   {renderCategoriesValue(item)}
-      // </View>
-      // );
     });
 
-    return result;
+    if (isScroll) {
+      return <ScrollView>{result}</ScrollView>;
+    } else {
+      return <View style={styles.viewGroupCategories}>{result}</View>;
+    }
   };
 
   const renderList = () => {

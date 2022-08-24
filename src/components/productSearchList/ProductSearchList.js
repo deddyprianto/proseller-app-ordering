@@ -6,26 +6,45 @@
  */
 
 import React from 'react';
-import {StyleSheet, View, ScrollView} from 'react-native';
+import {StyleSheet, View, Text, ScrollView} from 'react-native';
 
 import ProductSearchListItem from './components/ProductSearchItem';
 
 import {isEmptyArray} from '../../helper/CheckEmpty';
+import Theme from '../../theme';
 
-const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-  },
-  viewGroupProduct: {
-    width: '100%',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    marginBottom: 40,
-  },
-});
+const useStyles = () => {
+  const theme = Theme();
+  const styles = StyleSheet.create({
+    root: {
+      flex: 1,
+    },
+    container: {
+      flex: 1,
+      paddingHorizontal: 16,
+    },
+    viewGroupProduct: {
+      width: '100%',
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      justifyContent: 'space-between',
+      marginBottom: 60,
+    },
+    textSearch: {
+      marginTop: 16,
+      marginBottom: 8,
+      marginHorizontal: 16,
+      color: theme.colors.textPrimary,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+  });
+  return styles;
+};
 
-const ProductSearchList = ({products, basket}) => {
+const ProductSearchList = ({products, basket, searchQuery}) => {
+  const styles = useStyles();
+
   const renderProducts = () => {
     if (!isEmptyArray(products)) {
       const result = products.map((item, index) => {
@@ -41,10 +60,27 @@ const ProductSearchList = ({products, basket}) => {
     }
   };
 
+  const renderSearchText = () => {
+    if (searchQuery) {
+      return (
+        <Text style={styles.textSearch}>Search result for “{searchQuery}”</Text>
+      );
+    }
+  };
+
+  const renderBody = () => {
+    return (
+      <ScrollView style={styles.container}>
+        <View style={styles.viewGroupProduct}>{renderProducts()}</View>
+      </ScrollView>
+    );
+  };
+
   return (
-    <ScrollView style={styles.root}>
-      <View style={styles.viewGroupProduct}>{renderProducts()}</View>
-    </ScrollView>
+    <View style={styles.root}>
+      {renderSearchText()}
+      {renderBody()}
+    </View>
   );
 };
 

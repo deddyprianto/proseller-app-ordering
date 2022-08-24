@@ -14,10 +14,6 @@ import ProductSubCategoryItem from './components/ProductSubCategoryItem';
 
 const useStyles = () => {
   const styles = StyleSheet.create({
-    root: {
-      flex: 1,
-      marginHorizontal: 16,
-    },
     viewCategoryTabs: {
       marginBottom: 20,
     },
@@ -25,13 +21,13 @@ const useStyles = () => {
   return styles;
 };
 
-const ProductSubCategoryList = ({selectedSubCategory, onChange}) => {
+const ProductSubCategoryList = ({
+  subCategories,
+  selectedSubCategory,
+  onChange,
+}) => {
   const styles = useStyles();
   const subCategoryRef = useRef();
-
-  const subCategories = useSelector(
-    state => state.productReducer.productSubCategories,
-  );
 
   useEffect(() => {
     if (!isEmptyArray(subCategories)) {
@@ -39,11 +35,16 @@ const ProductSubCategoryList = ({selectedSubCategory, onChange}) => {
     }
   }, [subCategories]);
 
-  const renderSubCategory = item => {
+  const renderSubCategory = ({item, index}) => {
+    const isFirstIndex = index === 0;
+    const isLastIndex = subCategories.length - 1 === index;
+
     return (
       <ProductSubCategoryItem
         subCategory={item}
         selected={selectedSubCategory}
+        isFirstIndex={isFirstIndex}
+        isLastIndex={isLastIndex}
         onPress={() => {
           onChange(item);
         }}
@@ -59,12 +60,12 @@ const ProductSubCategoryList = ({selectedSubCategory, onChange}) => {
         data={subCategories}
         horizontal
         showsHorizontalScrollIndicator={false}
-        renderItem={({item, index}) => renderSubCategory(item, index)}
+        renderItem={({item, index}) => renderSubCategory({item, index})}
       />
     );
   };
 
-  return <View style={styles.root}>{renderSubCategories()}</View>;
+  return <View>{renderSubCategories()}</View>;
 };
 
 export default ProductSubCategoryList;

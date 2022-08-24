@@ -23,7 +23,7 @@ const productsEStoreOutlet = (state = {}, action) => {
 const productCategories = (state = {}, action) => {
   switch (action.type) {
     case 'DATA_PRODUCT_CATEGORIES':
-      return action.categories;
+      return action.categories || [];
 
     default:
       return state;
@@ -33,14 +33,14 @@ const productCategories = (state = {}, action) => {
 const productSubCategories = (state = {}, action) => {
   switch (action.type) {
     case 'DATA_PRODUCT_SUB_CATEGORIES':
-      return action.subCategories;
+      return action.subCategories || [];
 
     default:
       return state;
   }
 };
 
-const productBySubCategories = (state = {}, action) => {
+const productsBySubCategory = (state = {}, action) => {
   switch (action.type) {
     case 'DATA_PRODUCT_BY_SUB_CATEGORIES':
       return action?.products || [];
@@ -55,5 +55,5 @@ export default combineReducers({
   productsEStoreOutlet,
   productCategories,
   productSubCategories,
-  productBySubCategories,
+  productsBySubCategory,
 });
