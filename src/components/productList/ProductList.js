@@ -10,7 +10,6 @@ import {StyleSheet, View, ScrollView} from 'react-native';
 
 import Product from './components/ProductItem';
 
-import {useSelector} from 'react-redux';
 import {isEmptyArray} from '../../helper/CheckEmpty';
 
 const useStyles = () => {
@@ -25,7 +24,7 @@ const useStyles = () => {
       flexDirection: 'row',
       flexWrap: 'wrap',
       justifyContent: 'space-between',
-      marginBottom: 60,
+      marginBottom: 70,
     },
   });
   return styles;

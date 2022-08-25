@@ -123,10 +123,11 @@ import VoucherDetail from '../pages/VoucherDetail';
 import PointDetailAndHistory from '../pages/PointDetailAndHistory';
 import MyDeliveryAddress from '../pages/MyDeliveryAddress';
 import AddNewAddress from '../pages/AddNewAddress';
+import HomeRetail from '../pages/HomeRetail';
+import NewPageIndex from '../pages/NewPageIndex';
 
 //for temporary
 import PendingOrderDetail from '../pages/PendingOrderDetail';
-import HomeRetail from '../pages/HomeRetail';
 
 const MyTransitionSpec = {
   duration: 200,
@@ -352,7 +353,8 @@ export default class Routes extends Component {
             <Scene key="notifications" component={Notifications} />
 
             {/* //martin */}
-            <Scene key="pageIndex" component={PageIndex} initial={true} />
+            {/* <Scene key="pageIndex" component={PageIndex} initial={true} /> */}
+            <Scene key="pageIndex" component={NewPageIndex} initial={true} />
             <Scene key="eStore" component={EStore} />
             <Scene key="eCard" component={ECard} />
             <Scene key="onBoarding" component={OnBoarding} />

@@ -53,7 +53,7 @@ const useStyles = () => {
     },
     footer: {
       position: 'absolute',
-      bottom: 10,
+      bottom: 32,
       width: '100%',
       paddingHorizontal: 16,
     },
@@ -127,6 +127,7 @@ const useStyles = () => {
       flexDirection: 'row',
     },
     viewMenuBar: {
+      flex: 1,
       marginTop: -25,
       padding: 16,
       borderRadius: 8,
@@ -138,9 +139,11 @@ const useStyles = () => {
       backgroundColor: theme.colors.brandPrimary,
     },
     viewMenuBarChild: {
+      flex: 1,
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
+      justifyContent: 'center',
     },
     viewMenuBarChildImage: {
       padding: 5,
@@ -150,7 +153,7 @@ const useStyles = () => {
     viewFloatingButton: {
       elevation: 5,
       position: 'absolute',
-      bottom: 80,
+      bottom: 100,
       right: 18,
       width: 70,
       height: 70,
@@ -308,7 +311,9 @@ const Home = () => {
         onPress={() => {
           Actions.store();
         }}>
-        <Text style={styles.textHeaderTitle}>{defaultOutlet?.name}</Text>
+        <Text style={styles.textHeaderTitle} numberOfLines={1}>
+          {defaultOutlet?.name}
+        </Text>
         <Image style={styles.iconArrowDown} source={appConfig.iconArrowDown} />
       </TouchableOpacity>
     );
@@ -446,11 +451,12 @@ const Home = () => {
   };
 
   const renderHeader = () => {
-    return <Header customTitle={renderHeaderTitle()} search cart isLogo />;
+    return <Header customTitle={renderHeaderTitle()} search isLogo />;
   };
 
   return (
     <View style={styles.root}>
+      {renderHeader()}
       <ScrollView
         ref={ref}
         onScroll={e => handleShowFloatingButton(e.nativeEvent.contentOffset.y)}
@@ -462,7 +468,6 @@ const Home = () => {
             }}
           />
         }>
-        {renderHeader()}
         {renderBanner()}
         {renderMenuBar()}
         {renderProductCategoryList()}

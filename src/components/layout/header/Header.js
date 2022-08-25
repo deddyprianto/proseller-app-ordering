@@ -28,12 +28,12 @@ const useStyles = () => {
       alignItems: 'center',
     },
     logo: {
-      width: 60,
-      height: 20,
+      width: 80,
+      height: 400,
     },
     icon: {
-      width: 16,
-      height: 16,
+      width: 28,
+      height: 28,
       tintColor: theme.colors.textQuaternary,
     },
     iconBack: {
