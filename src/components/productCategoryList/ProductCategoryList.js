@@ -42,8 +42,10 @@ const useStyles = () => {
     viewMoreCategories: {
       elevation: 2,
       padding: 8,
-      width: 120,
-      height: 160,
+      flex: 1,
+      width: (WIDTH * 29) / 100,
+      minWidth: (WIDTH * 29) / 100,
+      maxWidth: (WIDTH * 29) / 100,
       borderRadius: 8,
       marginVertical: 8,
       display: 'flex',
@@ -52,8 +54,10 @@ const useStyles = () => {
       backgroundColor: 'white',
     },
     imageMoreCategories: {
-      width: 86,
-      height: 86,
+      width: '100%',
+      maxWidth: '100%',
+      height: undefined,
+      aspectRatio: 1 / 1,
     },
     WrapDot: {
       flexDirection: 'row',

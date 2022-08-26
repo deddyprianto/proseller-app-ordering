@@ -101,6 +101,7 @@ const useStyles = () => {
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     viewHeaderTitle: {
+      marginBottom: -4,
       display: 'flex',
       flexDirection: 'row',
       alignItems: 'center',
@@ -110,7 +111,7 @@ const useStyles = () => {
       backgroundColor: theme.colors.accent,
     },
     viewButtonCart: {
-      elevation: 5,
+      elevation: 2,
       width: '100%',
       display: 'flex',
       flexDirection: 'row',
@@ -127,6 +128,7 @@ const useStyles = () => {
       flexDirection: 'row',
     },
     viewMenuBar: {
+      elevation: 2,
       marginTop: -25,
       padding: 16,
       borderRadius: 8,
@@ -138,6 +140,7 @@ const useStyles = () => {
       backgroundColor: theme.colors.brandPrimary,
     },
     viewMenuBarChild: {
+      flex: 1,
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
@@ -446,7 +449,7 @@ const Home = () => {
   };
 
   const renderHeader = () => {
-    return <Header customTitle={renderHeaderTitle()} search cart isLogo />;
+    return <Header customTitle={renderHeaderTitle()} search isLogo />;
   };
 
   return (
