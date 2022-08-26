@@ -13,6 +13,14 @@ const useStyles = () => {
   const theme = Theme();
   const styles = StyleSheet.create({
     root: {
+      marginHorizontal: 16,
+      borderBottomWidth: 1,
+      borderColor: theme.colors.greyScale3,
+    },
+    rootLastIndex: {
+      marginHorizontal: 16,
+    },
+    textParent: {
       padding: 16,
     },
     textPrimary: {
@@ -29,11 +37,12 @@ const useStyles = () => {
   return styles;
 };
 
-const SearchSuggestionItem = ({searchText, suggestion}) => {
+const SearchSuggestionItem = ({searchText, suggestion, lastIndex}) => {
   const styles = useStyles();
+  const styleRoot = lastIndex ? styles.rootLastIndex : styles.root;
   return (
-    <TouchableOpacity style={styles.root} onPress={suggestion?.onClick}>
-      <Text>
+    <TouchableOpacity style={styleRoot} onPress={suggestion?.onClick}>
+      <Text style={styles.textParent}>
         <Text style={styles.textPrimary}>Search “{searchText}” in </Text>
         <Text style={styles.textSecondary}>“{suggestion?.name}”</Text>
       </Text>

@@ -1,9 +1,17 @@
 import React from 'react';
-import {Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
+import {
+  Text,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  Dimensions,
+} from 'react-native';
 
 import appConfig from '../../../config/appConfig';
 
 import Theme from '../../../theme';
+
+const WIDTH = Dimensions.get('window').width;
 
 const useStyles = () => {
   const theme = Theme();
@@ -11,8 +19,11 @@ const useStyles = () => {
     root: {
       elevation: 2,
       padding: 8,
-      width: 120,
-      height: 160,
+      flex: 1,
+      width: (WIDTH * 29) / 100,
+      minWidth: (WIDTH * 29) / 100,
+      maxWidth: (WIDTH * 29) / 100,
+      marginHorizontal: (WIDTH * 0.8) / 100,
       borderRadius: 8,
       marginVertical: 8,
       display: 'flex',
@@ -23,8 +34,11 @@ const useStyles = () => {
     rootSelected: {
       elevation: 2,
       padding: 8,
-      width: 120,
-      height: 160,
+      flex: 1,
+      width: (WIDTH * 29) / 100,
+      minWidth: (WIDTH * 29) / 100,
+      maxWidth: (WIDTH * 29) / 100,
+      marginHorizontal: (WIDTH * 0.8) / 100,
       borderWidth: 1,
       borderRadius: 8,
       marginVertical: 8,
@@ -42,8 +56,10 @@ const useStyles = () => {
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     image: {
-      width: 86,
-      height: 86,
+      width: '100%',
+      maxWidth: '100%',
+      height: undefined,
+      aspectRatio: 1 / 1,
     },
   });
   return styles;

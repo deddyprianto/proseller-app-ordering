@@ -24,9 +24,14 @@ const SearchSuggestionList = ({suggestions, searchText}) => {
   const styles = useStyles();
 
   const renderSuggestions = () => {
-    const results = suggestions.map(value => {
+    const results = suggestions.map((value, index) => {
+      const lastIndex = suggestions.length - 1 == index;
       return (
-        <SearchSuggestionItem searchText={searchText} suggestion={value} />
+        <SearchSuggestionItem
+          searchText={searchText}
+          suggestion={value}
+          lastIndex={lastIndex}
+        />
       );
     });
 

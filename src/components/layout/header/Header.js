@@ -12,6 +12,7 @@ const useStyles = () => {
   const theme = Theme();
   const styles = StyleSheet.create({
     root: {
+      height: 56,
       maxHeight: 56,
       display: 'flex',
       flexDirection: 'row',
@@ -28,12 +29,12 @@ const useStyles = () => {
       alignItems: 'center',
     },
     logo: {
-      width: 60,
-      height: 20,
+      width: 80,
+      height: 100,
     },
     icon: {
-      width: 16,
-      height: 16,
+      width: 24,
+      height: 24,
       tintColor: theme.colors.textQuaternary,
     },
     iconBack: {

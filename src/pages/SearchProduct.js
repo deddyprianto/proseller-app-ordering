@@ -4,11 +4,19 @@
  * PT Edgeworks
  */
 
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {Actions} from 'react-native-router-flux';
 import {ScrollView} from 'react-native-gesture-handler';
-import {StyleSheet, View, Text, TouchableOpacity, Image} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  SafeAreaView,
+  Dimensions,
+} from 'react-native';
 
 import FieldSearch from '../components/fieldSearch';
 import ProductList from '../components/productList';
@@ -26,7 +34,6 @@ import CurrencyFormatter from '../helper/CurrencyFormatter';
 
 import appConfig from '../config/appConfig';
 
-import Theme from '../theme';
 import ProductCategoryList from '../components/productCategoryList';
 import {
   setSearchProductHistory,
@@ -35,20 +42,15 @@ import {
 import ProductSubCategoryList from '../components/productSubCategoryList';
 import SearchSuggestionList from '../components/searchSuggestionList/SearchSuggestionList';
 
+import Theme from '../theme';
+
+const HEIGHT = Dimensions.get('window').height;
+
 const useStyles = () => {
   const theme = Theme();
   const styles = StyleSheet.create({
     root: {
       flex: 1,
-    },
-    header: {
-      height: 140,
-    },
-    body: {
-      flex: 1,
-      marginTop: 10,
-      width: '100%',
-      paddingHorizontal: 16,
     },
     footer: {
       elevation: 5,
@@ -57,30 +59,62 @@ const useStyles = () => {
       width: '100%',
       paddingHorizontal: 16,
     },
-    textBody: {
-      fontSize: 12,
-      fontWeight: 'bold',
-    },
     textButtonCart: {
-      fontWeight: 'bold',
-      fontSize: 11,
-      color: 'white',
+      color: theme.colors.textSecondary,
+      fontSize: theme.fontSize[12],
+      fontFamily: theme.fontFamily.poppinsMedium,
     },
-    viewTextAndSearch: {
-      paddingHorizontal: 16,
-      width: '100%',
-    },
-    viewBodyText: {
-      display: 'flex',
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      marginTop: 16,
+    textProductSearchByCategory: {
+      marginHorizontal: 16,
       marginBottom: 16,
+      color: theme.colors.textTertiary,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsMedium,
     },
-    viewProductList: {
-      paddingHorizontal: 16,
+    textCategoryListHeader: {
+      color: theme.colors.textPrimary,
+      fontSize: theme.fontSize[16],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textRecentSearchItem: {
+      marginVertical: 8,
+      marginHorizontal: 16,
+      color: theme.colors.textPrimary,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textCancel: {
+      marginLeft: 16,
+      color: theme.colors.buttonActive,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textClear: {
+      marginLeft: 16,
+      color: theme.colors.buttonActive,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textRecentSearchHeader: {
+      color: theme.colors.textPrimary,
+      fontSize: theme.fontSize[16],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textClearRecent: {
+      color: theme.colors.buttonActive,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textEmpty: {
+      marginTop: 16,
+      color: theme.colors.textTertiary,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsSemiBold,
+    },
+    viewEmpty: {
       flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
     },
     viewButtonCart: {
       width: '100%',
@@ -96,18 +130,56 @@ const useStyles = () => {
       display: 'flex',
       flexDirection: 'row',
     },
-    icon: {
+    viewHeader: {
+      width: '100%',
+      elevation: 3,
+      paddingHorizontal: 16,
+      paddingVertical: 8,
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      backgroundColor: theme.colors.background,
+    },
+    viewRecentSearchHeader: {
+      width: '100%',
+      paddingHorizontal: 16,
+      paddingVertical: 8,
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      backgroundColor: theme.colors.greyScale4,
+    },
+    viewProductSearchByCategory: {
+      flex: 1,
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      marginTop: 16,
+    },
+    viewCategoryListHeader: {
+      width: '100%',
+      paddingHorizontal: 16,
+      paddingVertical: 8,
+      backgroundColor: theme.colors.greyScale4,
+    },
+    iconCart: {
       width: 18,
       height: 18,
       marginRight: 7,
       color: theme.colors.text4,
+    },
+    iconEmpty: {
+      width: 100,
+      height: 100,
+      tintColor: theme.colors.textTertiary,
     },
   });
   return styles;
 };
 
 const SearchProduct = ({category}) => {
-  const theme = Theme();
   const styles = useStyles();
   const dispatch = useDispatch();
 
@@ -147,7 +219,7 @@ const SearchProduct = ({category}) => {
   useEffect(() => {
     const loadData = async () => {
       setIsLoading(true);
-      const subCategories = await dispatch(
+      const response = await dispatch(
         getProductSubCategories({
           outletId: defaultOutlet.id,
           categoryId: selectedCategory.id,
@@ -155,8 +227,8 @@ const SearchProduct = ({category}) => {
         }),
       );
 
-      if (!isEmptyArray(subCategories)) {
-        setSelectedSubCategory(subCategories[0]);
+      if (!isEmptyArray(response)) {
+        setSelectedSubCategory(response[0]);
       }
 
       setIsLoading(false);
@@ -192,6 +264,7 @@ const SearchProduct = ({category}) => {
         getProductBySearch({
           outletId: defaultOutlet.sortKey,
           search: searchQuery,
+          skip: 0,
         }),
       );
 
@@ -204,6 +277,24 @@ const SearchProduct = ({category}) => {
       loadData();
     }
   }, [dispatch, defaultOutlet, searchQuery, selectedCategory]);
+
+  const handleSearchMoreProducts = async () => {
+    setIsLoading(true);
+    const products = productsSearch;
+    const skip = products.length;
+
+    const response = await dispatch(
+      getProductBySearch({
+        outletId: defaultOutlet.sortKey,
+        search: searchQuery,
+        skip: skip,
+      }),
+    );
+
+    const result = products.concat(response);
+    setProductsSearch(result);
+    setIsLoading(false);
+  };
 
   const handleSearchProduct = async value => {
     setSelectedCategory({});
@@ -232,7 +323,7 @@ const SearchProduct = ({category}) => {
             Actions.cart();
           }}>
           <View style={styles.viewIconAndTextCart}>
-            <Image source={appConfig.iconCart} style={styles.icon} />
+            <Image source={appConfig.iconCart} style={styles.iconCart} />
             <Text style={styles.textButtonCart}>
               {basket?.details?.length} Items in Cart
             </Text>
@@ -254,12 +345,7 @@ const SearchProduct = ({category}) => {
             setSearchQuery('');
             setSearchTextInput('');
           }}
-          style={{
-            marginLeft: 16,
-            color: theme.colors.buttonActive,
-            fontSize: theme.fontSize[14],
-            fontFamily: theme.fontFamily.poppinsMedium,
-          }}>
+          style={styles.textClear}>
           Clear
         </Text>
       );
@@ -269,12 +355,7 @@ const SearchProduct = ({category}) => {
           onPress={() => {
             Actions.pop();
           }}
-          style={{
-            marginLeft: 16,
-            color: theme.colors.buttonActive,
-            fontSize: theme.fontSize[14],
-            fontFamily: theme.fontFamily.poppinsMedium,
-          }}>
+          style={styles.textCancel}>
           Cancel
         </Text>
       );
@@ -283,18 +364,7 @@ const SearchProduct = ({category}) => {
 
   const renderHeaderSearch = () => {
     return (
-      <View
-        style={{
-          width: '100%',
-          elevation: 3,
-          paddingHorizontal: 16,
-          paddingVertical: 8,
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          backgroundColor: theme.colors.background,
-        }}>
+      <View style={styles.viewHeader}>
         <FieldSearch
           value={searchTextInput}
           onChange={value => {
@@ -313,34 +383,13 @@ const SearchProduct = ({category}) => {
   const renderRecentSearchHeader = () => {
     if (!isEmptyArray(searchProductHistory)) {
       return (
-        <View
-          style={{
-            width: '100%',
-            paddingHorizontal: 16,
-            paddingVertical: 8,
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            backgroundColor: theme.colors.greyScale4,
-          }}>
-          <Text
-            style={{
-              color: theme.colors.textPrimary,
-              fontSize: theme.fontSize[16],
-              fontFamily: theme.fontFamily.poppinsMedium,
-            }}>
-            Recent Search
-          </Text>
+        <View style={styles.viewRecentSearchHeader}>
+          <Text style={styles.textRecentSearchHeader}>Recent Search</Text>
           <Text
             onPress={() => {
               handleClearSearchHistory();
             }}
-            style={{
-              color: theme.colors.buttonActive,
-              fontSize: theme.fontSize[14],
-              fontFamily: theme.fontFamily.poppinsMedium,
-            }}>
+            style={styles.textClearRecent}>
             Clear Recent
           </Text>
         </View>
@@ -351,13 +400,7 @@ const SearchProduct = ({category}) => {
   const renderRecentSearchItem = value => {
     return (
       <Text
-        style={{
-          marginVertical: 8,
-          marginHorizontal: 16,
-          color: theme.colors.textPrimary,
-          fontSize: theme.fontSize[14],
-          fontFamily: theme.fontFamily.poppinsMedium,
-        }}
+        style={styles.textRecentSearchItem}
         onPress={() => {
           handleSearchProduct(value);
         }}>
@@ -367,35 +410,31 @@ const SearchProduct = ({category}) => {
   };
 
   const renderRecentSearchList = () => {
-    const history = searchProductHistory?.map(value => {
-      return renderRecentSearchItem(value);
-    });
-    return <View>{history}</View>;
+    if (!isEmptyArray(searchProductHistory)) {
+      const history = searchProductHistory?.map((value, index) => {
+        if (index < 3) {
+          return renderRecentSearchItem(value);
+        }
+      });
+      return (
+        <View>
+          {renderRecentSearchHeader()}
+          {history}
+        </View>
+      );
+    }
   };
 
-  const renderSearchByCategory = () => {
+  const renderCategoryList = () => {
     return (
       <View>
-        <View
-          style={{
-            width: '100%',
-            paddingHorizontal: 16,
-            paddingVertical: 8,
-            backgroundColor: theme.colors.greyScale4,
-          }}>
-          <Text
-            style={{
-              color: theme.colors.textPrimary,
-              fontSize: theme.fontSize[16],
-              fontFamily: theme.fontFamily.poppinsMedium,
-            }}>
-            Search by Category
-          </Text>
+        <View style={styles.viewCategoryListHeader}>
+          <Text style={styles.textCategoryListHeader}>Search by Category</Text>
         </View>
         <ProductCategoryList
           categories={categories}
           selectedCategory={selectedCategory}
-          onCLick={item => {
+          onClick={item => {
             setSelectedCategory(item);
           }}
           itemSize={'small'}
@@ -407,23 +446,63 @@ const SearchProduct = ({category}) => {
   const renderDefaultBody = () => {
     return (
       <ScrollView>
-        {renderRecentSearchHeader()}
         {renderRecentSearchList()}
-        {renderSearchByCategory()}
+        {renderCategoryList()}
       </ScrollView>
+    );
+  };
+
+  const isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}) => {
+    const paddingToBottom = 20;
+    return (
+      layoutMeasurement.height + contentOffset.y >=
+      contentSize.height - paddingToBottom
     );
   };
 
   const renderProductSearchByQuery = () => {
     return (
-      <ProductSearchList
-        basket={basket}
-        products={productsSearch}
-        searchQuery={searchQuery}
-      />
+      <ScrollView
+        onScroll={({nativeEvent}) => {
+          if (isCloseToBottom(nativeEvent)) {
+            handleSearchMoreProducts();
+          }
+        }}
+        scrollEventThrottle={400}>
+        <ProductSearchList
+          basket={basket}
+          products={productsSearch}
+          searchQuery={searchQuery}
+        />
+      </ScrollView>
     );
   };
 
+  const renderProductSearchByCategoryBody = () => {
+    if (!isEmptyArray(subCategories)) {
+      return (
+        <>
+          <ProductSubCategoryList
+            subCategories={subCategories}
+            selectedSubCategory={selectedSubCategory}
+            onChange={item => {
+              setSelectedSubCategory(item);
+            }}
+          />
+          <ProductList products={productsBySubCategory} basket={basket} />
+        </>
+      );
+    } else {
+      return (
+        <View style={styles.viewEmpty}>
+          <Image source={appConfig.iconInformation} style={styles.iconEmpty} />
+          <Text style={styles.textEmpty}>
+            Item can’t be found. Please try another keyword.
+          </Text>
+        </View>
+      );
+    }
+  };
   const renderProductSearchByCategory = () => {
     const text =
       selectedCategory?.name && searchQuery
@@ -433,35 +512,15 @@ const SearchProduct = ({category}) => {
         : `Item list for “${selectedCategory?.name}” category`;
 
     return (
-      <View
-        style={{
-          flex: 1,
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          marginTop: 16,
-        }}>
-        <Text
-          style={{
-            marginHorizontal: 16,
-            marginBottom: 16,
-            color: theme.colors.textTertiary,
-            fontSize: theme.fontSize[14],
-            fontFamily: theme.fontFamily.poppinsMedium,
-          }}>
+      <View style={styles.viewProductSearchByCategory}>
+        <Text numberOfLines={1} style={styles.textProductSearchByCategory}>
           {text}
         </Text>
-        <ProductSubCategoryList
-          subCategories={subCategories}
-          selectedSubCategory={selectedSubCategory}
-          onChange={item => {
-            setSelectedSubCategory(item);
-          }}
-        />
-        <ProductList products={productsBySubCategory} basket={basket} />
+        {renderProductSearchByCategoryBody()}
       </View>
     );
   };
+
   const renderSearchSuggestions = () => {
     const suggestions = [
       {
@@ -488,7 +547,6 @@ const SearchProduct = ({category}) => {
 
   const renderBody = () => {
     const isSelectedCategory = !isEmptyObject(selectedCategory);
-
     if (searchQuery && !isSelectedCategory) {
       return renderProductSearchByQuery();
     } else if (isSelectedCategory && searchTextInput) {
@@ -501,12 +559,12 @@ const SearchProduct = ({category}) => {
   };
 
   return (
-    <View style={styles.root}>
+    <SafeAreaView style={styles.root}>
       <LoadingScreen loading={isLoading} />
       {renderHeaderSearch()}
       {renderBody()}
       <View style={styles.footer}>{renderButtonCart()}</View>
-    </View>
+    </SafeAreaView>
   );
 };
 

@@ -143,7 +143,7 @@ export const getProductBySubCategory = ({
 
       if (response?.response?.data) {
         await dispatch({
-          type: 'DATA_PRODUCT_BY_SUB_CATEGORIES',
+          type: 'DATA_PRODUCTS_BY_SUB_CATEGORY',
           products: response.response.data,
         });
         return response.response.data;
@@ -229,12 +229,12 @@ export const getBasket = () => {
   };
 };
 
-export const getProductBySearch = ({outletId, search, categoryId}) => {
+export const getProductBySearch = ({outletId, search, categoryId, skip}) => {
   return async () => {
     try {
       const payload = {
-        skip: 0,
-        take: 100,
+        skip: skip,
+        take: 20,
         outletID: outletId,
         filters: [
           {

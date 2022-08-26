@@ -1,6 +1,13 @@
 import React from 'react';
 
-import {StyleSheet, View, Text, TextInput, Image} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Text,
+  TextInput,
+  Image,
+  TouchableOpacity,
+} from 'react-native';
 import appConfig from '../../config/appConfig';
 import Theme from '../../theme';
 
@@ -91,7 +98,12 @@ const FieldSearch = ({
         {renderLabel()}
         {renderInput()}
       </View>
-      <Image source={appConfig.iconSearch} style={styles.icon} />
+      <TouchableOpacity
+        onPress={() => {
+          onSubmit(value);
+        }}>
+        <Image source={appConfig.iconSearch} style={styles.icon} />
+      </TouchableOpacity>
     </View>
   );
 };

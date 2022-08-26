@@ -6,12 +6,22 @@
  */
 
 import React from 'react';
-import {StyleSheet, View, Text, ScrollView} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Text,
+  ScrollView,
+  Dimensions,
+  Image,
+} from 'react-native';
 
 import ProductSearchListItem from './components/ProductSearchItem';
 
 import {isEmptyArray} from '../../helper/CheckEmpty';
 import Theme from '../../theme';
+import appConfig from '../../config/appConfig';
+
+const HEIGHT = Dimensions.get('window').height;
 
 const useStyles = () => {
   const theme = Theme();
@@ -38,6 +48,23 @@ const useStyles = () => {
       fontSize: theme.fontSize[14],
       fontFamily: theme.fontFamily.poppinsMedium,
     },
+    textEmpty: {
+      marginTop: 16,
+      color: theme.colors.textTertiary,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsSemiBold,
+    },
+    viewEmpty: {
+      height: HEIGHT,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    iconEmpty: {
+      marginTop: -200,
+      width: 100,
+      height: 100,
+      tintColor: theme.colors.textTertiary,
+    },
   });
   return styles;
 };
@@ -46,18 +73,16 @@ const ProductSearchList = ({products, basket, searchQuery}) => {
   const styles = useStyles();
 
   const renderProducts = () => {
-    if (!isEmptyArray(products)) {
-      const result = products.map((item, index) => {
-        return (
-          <ProductSearchListItem
-            key={index}
-            product={item.product}
-            basket={basket}
-          />
-        );
-      });
-      return result;
-    }
+    const result = products.map((item, index) => {
+      return (
+        <ProductSearchListItem
+          key={index}
+          product={item.product}
+          basket={basket}
+        />
+      );
+    });
+    return result;
   };
 
   const renderSearchText = () => {
@@ -69,11 +94,22 @@ const ProductSearchList = ({products, basket, searchQuery}) => {
   };
 
   const renderBody = () => {
-    return (
-      <ScrollView style={styles.container}>
-        <View style={styles.viewGroupProduct}>{renderProducts()}</View>
-      </ScrollView>
-    );
+    if (!isEmptyArray(products)) {
+      return (
+        <ScrollView style={styles.container}>
+          <View style={styles.viewGroupProduct}>{renderProducts()}</View>
+        </ScrollView>
+      );
+    } else {
+      return (
+        <View style={styles.viewEmpty}>
+          <Image source={appConfig.iconInformation} style={styles.iconEmpty} />
+          <Text style={styles.textEmpty}>
+            Item can’t be found. Please try another keyword.
+          </Text>
+        </View>
+      );
+    }
   };
 
   return (

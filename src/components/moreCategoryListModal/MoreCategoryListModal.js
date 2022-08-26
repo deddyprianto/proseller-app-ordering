@@ -38,13 +38,6 @@ const useStyles = () => {
       fontSize: theme.fontSize[16],
       fontFamily: theme.fontFamily.poppinsSemiBold,
     },
-    textMoreCategories: {
-      marginTop: 8,
-      textAlign: 'center',
-      fontSize: theme.fontSize[12],
-      color: theme.colors.textPrimary,
-      fontFamily: theme.fontFamily.poppinsMedium,
-    },
     viewHeader: {
       display: 'flex',
       flexDirection: 'row',
@@ -56,21 +49,9 @@ const useStyles = () => {
       flex: 1,
       flexDirection: 'row',
       flexWrap: 'wrap',
-      justifyContent: 'space-between',
+      // justifyContent: 'space-between',
       marginBottom: 60,
       marginHorizontal: 16,
-    },
-    viewMoreCategories: {
-      elevation: 2,
-      padding: 8,
-      width: 120,
-      height: 160,
-      borderRadius: 8,
-      marginVertical: 8,
-      display: 'flex',
-      alignItems: 'center',
-      flexDirection: 'column',
-      backgroundColor: theme.colors.background,
     },
     viewCloseButton: {
       width: 18,
@@ -83,10 +64,6 @@ const useStyles = () => {
     viewWrapCategories: {
       width: '100%',
       height: '100%',
-    },
-    imageMoreCategories: {
-      width: 86,
-      height: 86,
     },
     iconClose: {
       width: 24,
