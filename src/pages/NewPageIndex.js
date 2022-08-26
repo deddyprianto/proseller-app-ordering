@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {createAppContainer} from 'react-navigation';
 import {createBottomTabNavigator} from 'react-navigation-tabs';
 import {View, Text, TouchableOpacity, Image, StyleSheet} from 'react-native';
@@ -7,11 +7,12 @@ import Profile from './Profile';
 import Store from './store';
 import Home from './home';
 import Inbox from './inbox';
-import Scanner from '../components/scanner';
+import ScannerBarcode from './ScannerBarcode';
 import Theme from '../theme';
 import appConfig from '../config/appConfig';
 import OnBoarding from './OnBoarding';
 import {useSelector} from 'react-redux';
+import {Actions} from 'react-native-router-flux';
 
 const useStyles = () => {
   const theme = Theme();
@@ -105,19 +106,10 @@ const NewPageIndex = () => {
     state => state.storesReducer.defaultOutlet.defaultOutlet,
   );
 
-  const [isOpenScanner, setIsOpenScanner] = useState(false);
-
-  const handleOpenScanner = () => {
-    setIsOpenScanner(true);
-  };
-  const handleCloseScanner = () => {
-    setIsOpenScanner(false);
-  };
-
   const screens = {
     Home: Home,
     Inbox: Inbox,
-    Scan: 'open scanner',
+    Scan: ScannerBarcode,
     History: History,
     Profile: Profile,
   };
@@ -169,7 +161,7 @@ const NewPageIndex = () => {
         <TouchableOpacity
           activeOpacity={1}
           onPress={() => {
-            handleOpenScanner();
+            Actions.scannerBarcode();
           }}
           style={styles.viewNavbarItemScan}>
           <Image source={appConfig.iconScan} style={styles.iconNavbarScan} />
@@ -219,7 +211,6 @@ const NewPageIndex = () => {
   return (
     <View style={styles.root}>
       <Tabs />
-      <Scanner open={isOpenScanner} handleClose={handleCloseScanner} />
     </View>
   );
 };

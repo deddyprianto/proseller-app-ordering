@@ -66,7 +66,7 @@ const MyDeliveryAddressList = ({deliveryAddress, fromScene}) => {
   const renderDeliveryAddressList = () => {
     return (
       <FlatList
-        data={deliveryAddress}
+        data={deliveryAddress || []}
         renderItem={({item, index}) =>
           renderMyDeliveryAddressListItem(item, index)
         }
