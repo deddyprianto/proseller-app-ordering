@@ -23,6 +23,18 @@ const useStyles = () => {
       padding: 16,
       backgroundColor: theme.colors.header,
     },
+    rootLeft: {
+      flex: 1,
+      alignItems: 'flex-start',
+    },
+    rootCenter: {
+      flex: 2,
+      alignItems: 'center',
+    },
+    rootRight: {
+      flex: 1,
+      alignItems: 'flex-end',
+    },
     flexRowCenter: {
       display: 'flex',
       flexDirection: 'row',
@@ -174,9 +186,9 @@ const Header = ({
   return (
     <View style={styles.root}>
       <Scanner open={isOpenScanner} handleClose={handleCloseScanner} />
-      {renderIconLeftWrap()}
-      {renderTitle()}
-      {renderIconRightWrap()}
+      <View style={styles.rootLeft}>{renderIconLeftWrap()}</View>
+      <View style={styles.rootCenter}>{renderTitle()}</View>
+      <View style={styles.rootRight}>{renderIconRightWrap()}</View>
     </View>
   );
 };
