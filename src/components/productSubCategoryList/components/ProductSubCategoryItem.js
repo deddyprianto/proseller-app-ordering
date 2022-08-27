@@ -12,9 +12,6 @@ import Theme from '../../../theme';
 const useStyles = () => {
   const theme = Theme();
   const styles = StyleSheet.create({
-    root: {
-      flex: 1,
-    },
     textCategoryName: {
       textAlign: 'center',
       color: theme.colors.textQuaternary,
@@ -28,26 +25,80 @@ const useStyles = () => {
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     touchableCategoryItem: {
-      borderRadius: 8,
       marginHorizontal: 4,
+      borderRadius: 8,
       paddingHorizontal: 16,
-      paddingVertical: 8,
+      paddingTop: 9,
+      paddingBottom: 7,
       borderWidth: 1,
       borderColor: theme.colors.buttonActive,
       backgroundColor: theme.colors.buttonStandBy,
     },
     touchableCategoryItemSelected: {
-      borderRadius: 8,
       marginHorizontal: 4,
+      borderRadius: 8,
       paddingHorizontal: 16,
-      paddingVertical: 8,
+      paddingTop: 9,
+      paddingBottom: 7,
+      borderWidth: 1,
+      borderColor: theme.colors.buttonActive,
+      backgroundColor: theme.colors.buttonActive,
+    },
+    touchableCategoryItemFirstIndex: {
+      marginLeft: 16,
+      marginRight: 4,
+      borderRadius: 8,
+      paddingHorizontal: 16,
+      paddingTop: 9,
+      paddingBottom: 7,
+      borderWidth: 1,
+      borderColor: theme.colors.buttonActive,
+      backgroundColor: theme.colors.buttonStandBy,
+    },
+    touchableCategoryItemSelectedFirstIndex: {
+      marginLeft: 16,
+      marginRight: 4,
+      borderRadius: 8,
+      paddingHorizontal: 16,
+      paddingTop: 9,
+      paddingBottom: 7,
+      borderWidth: 1,
+      borderColor: theme.colors.buttonActive,
+      backgroundColor: theme.colors.buttonActive,
+    },
+    touchableCategoryItemLastIndex: {
+      marginRight: 16,
+      marginLeft: 4,
+      borderRadius: 8,
+      paddingHorizontal: 16,
+      paddingTop: 9,
+      paddingBottom: 7,
+      borderWidth: 1,
+      borderColor: theme.colors.buttonActive,
+      backgroundColor: theme.colors.buttonStandBy,
+    },
+    touchableCategoryItemSelectedLastIndex: {
+      marginRight: 16,
+      marginLeft: 4,
+      borderRadius: 8,
+      paddingHorizontal: 16,
+      paddingTop: 9,
+      paddingBottom: 7,
+      borderWidth: 1,
+      borderColor: theme.colors.buttonActive,
       backgroundColor: theme.colors.buttonActive,
     },
   });
   return styles;
 };
 
-const ProductSubCategoryItem = ({subCategory, selected, onPress}) => {
+const ProductSubCategoryItem = ({
+  subCategory,
+  selected,
+  onPress,
+  isFirstIndex,
+  isLastIndex,
+}) => {
   const styles = useStyles();
 
   const isSelected = subCategory?.id === selected?.id;
@@ -56,12 +107,29 @@ const ProductSubCategoryItem = ({subCategory, selected, onPress}) => {
     ? styles.textCategoryNameSelected
     : styles.textCategoryName;
 
-  const styleTouchable = isSelected
-    ? styles.touchableCategoryItemSelected
-    : styles.touchableCategoryItem;
+  const handleStyleRoot = () => {
+    if (isFirstIndex) {
+      const styleTouchableFirstIndex = isSelected
+        ? styles.touchableCategoryItemSelectedFirstIndex
+        : styles.touchableCategoryItemFirstIndex;
+      return styleTouchableFirstIndex;
+    }
+
+    if (isLastIndex) {
+      const styleTouchableLastIndex = isSelected
+        ? styles.touchableCategoryItemSelectedLastIndex
+        : styles.touchableCategoryItemLastIndex;
+      return styleTouchableLastIndex;
+    }
+
+    const styleTouchable = isSelected
+      ? styles.touchableCategoryItemSelected
+      : styles.touchableCategoryItem;
+    return styleTouchable;
+  };
 
   return (
-    <TouchableOpacity style={styleTouchable} onPress={onPress}>
+    <TouchableOpacity style={handleStyleRoot()} onPress={onPress}>
       <Text style={styleText}>{subCategory?.name}</Text>
     </TouchableOpacity>
   );

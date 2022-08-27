@@ -163,7 +163,14 @@ const Header = ({
 
   const renderSearchIcon = () => {
     if (search) {
-      return <Image source={appConfig.iconSearch} style={styles.icon} />;
+      return (
+        <TouchableOpacity
+          onPress={() => {
+            Actions.searchProduct();
+          }}>
+          <Image source={appConfig.iconSearch} style={styles.icon} />
+        </TouchableOpacity>
+      );
     }
   };
 

@@ -15,6 +15,7 @@ import {
   RefreshControl,
   Image,
   ScrollView,
+  SafeAreaView,
 } from 'react-native';
 
 import Banner from '../components/banner';
@@ -194,6 +195,7 @@ const Home = () => {
   const ref = useRef();
   const styles = useStyles();
   const dispatch = useDispatch();
+  const [productsLimitLength, setProductsLimitLength] = useState(10);
   const [refresh, setRefresh] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState({});
   const [selectedSubCategory, setSelectedSubCategory] = useState({});
@@ -276,6 +278,14 @@ const Home = () => {
   useEffect(() => {
     onRefresh();
   }, [onRefresh]);
+
+  const isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}) => {
+    const paddingToBottom = 50;
+    return (
+      layoutMeasurement.height + contentOffset.y >=
+      contentSize.height - paddingToBottom
+    );
+  };
 
   const handleShowFloatingButton = value => {
     if (value > productListPosition) {
@@ -419,7 +429,12 @@ const Home = () => {
           selectedCategory={selectedCategory}
           onClick={item => {
             setSelectedCategory(item);
+            setProductsLimitLength(0);
           }}
+          isIndicator
+          isScroll
+          isMoreCategoryButton
+          horizontal
         />
       </View>
     );
@@ -443,15 +458,18 @@ const Home = () => {
   };
 
   const renderProductList = () => {
-    return (
-      <View
-        onLayout={event => {
-          const layout = event.nativeEvent.layout;
-          setProductListPosition(layout.y);
-        }}>
-        <ProductList products={products} basket={basket} />
-      </View>
-    );
+    if (!isEmptyArray(products)) {
+      const productsLimit = products?.slice(0, productsLimitLength);
+      return (
+        <View
+          onLayout={event => {
+            const layout = event.nativeEvent.layout;
+            setProductListPosition(layout.y);
+          }}>
+          <ProductList products={productsLimit} basket={basket} />
+        </View>
+      );
+    }
   };
 
   const renderDivider = () => {
@@ -463,11 +481,17 @@ const Home = () => {
   };
 
   return (
-    <View style={styles.root}>
+    <SafeAreaView style={styles.root}>
       {renderHeader()}
       <ScrollView
         ref={ref}
-        onScroll={e => handleShowFloatingButton(e.nativeEvent.contentOffset.y)}
+        onScroll={e => {
+          handleShowFloatingButton(e.nativeEvent.contentOffset.y);
+          if (isCloseToBottom(e.nativeEvent)) {
+            setProductsLimitLength(productsLimitLength + 10);
+          }
+        }}
+        scrollEventThrottle={0}
         refreshControl={
           <RefreshControl
             refreshing={refresh}
@@ -485,7 +509,7 @@ const Home = () => {
       </ScrollView>
       <View style={styles.footer}>{renderButtonCart()}</View>
       {renderFloatingButtonToTop()}
-    </View>
+    </SafeAreaView>
   );
 };
 

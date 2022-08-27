@@ -1,71 +1,58 @@
 import React from 'react';
-import {
-  Text,
-  Image,
-  StyleSheet,
-  TouchableOpacity,
-  Dimensions,
-} from 'react-native';
+import {Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
 
 import appConfig from '../../../config/appConfig';
 
 import Theme from '../../../theme';
 
-const WIDTH = Dimensions.get('window').width;
-
 const useStyles = () => {
   const theme = Theme();
   const styles = StyleSheet.create({
     root: {
+      marginTop: 8,
+      width: '49%',
       elevation: 2,
-      padding: 8,
-      flex: 1,
-      width: (WIDTH * 29) / 100,
-      minWidth: (WIDTH * 29) / 100,
-      maxWidth: (WIDTH * 29) / 100,
-      marginHorizontal: (WIDTH * 0.8) / 100,
+      paddingHorizontal: 8,
+      paddingVertical: 10,
       borderRadius: 8,
-      marginVertical: 8,
       display: 'flex',
+      flexDirection: 'row',
       alignItems: 'center',
-      flexDirection: 'column',
-      backgroundColor: 'white',
+      justifyContent: 'center',
+      backgroundColor: theme.colors.buttonStandBy,
     },
     rootSelected: {
+      marginTop: 8,
+      width: '49%',
       elevation: 2,
-      padding: 8,
-      flex: 1,
-      width: (WIDTH * 29) / 100,
-      minWidth: (WIDTH * 29) / 100,
-      maxWidth: (WIDTH * 29) / 100,
-      marginHorizontal: (WIDTH * 0.8) / 100,
-      borderWidth: 1,
+      paddingHorizontal: 8,
+      paddingVertical: 10,
       borderRadius: 8,
-      marginVertical: 8,
       display: 'flex',
+      flexDirection: 'row',
       alignItems: 'center',
-      flexDirection: 'column',
-      backgroundColor: 'white',
+      justifyContent: 'center',
+      borderWidth: 1,
+      backgroundColor: theme.colors.buttonStandBy,
       borderColor: theme.colors.buttonActive,
     },
     textName: {
-      marginTop: 8,
+      flex: 1,
       textAlign: 'center',
-      fontSize: theme.fontSize[12],
+      fontSize: theme.fontSize[14],
       color: theme.colors.textPrimary,
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     image: {
-      width: '100%',
-      maxWidth: '100%',
-      height: undefined,
-      aspectRatio: 1 / 1,
+      marginRight: 8,
+      width: 36,
+      height: 36,
     },
   });
   return styles;
 };
 
-const ProductCategoryListItem = ({category, selected, onPress}) => {
+const ProductCategorySmallItem = ({category, selected, onPress}) => {
   const styles = useStyles();
 
   const image = category?.defaultImageURL
@@ -85,4 +72,4 @@ const ProductCategoryListItem = ({category, selected, onPress}) => {
   );
 };
 
-export default ProductCategoryListItem;
+export default ProductCategorySmallItem;

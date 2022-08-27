@@ -80,6 +80,8 @@ const appConfig = {
   iconHome: require('../assets/img/icon-home.png'),
   iconHistory: require('../assets/img/icon-history.png'),
 
+  iconInformation: require('../assets/img/icon-information.png'),
+
   iconKeyboard: require('../assets/img/icon-keyboard.png'),
 
   iconLogin: require('../assets/img/icon-login.png'),

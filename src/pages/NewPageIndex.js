@@ -1,7 +1,14 @@
 import React from 'react';
 import {createAppContainer} from 'react-navigation';
 import {createBottomTabNavigator} from 'react-navigation-tabs';
-import {View, Text, TouchableOpacity, Image, StyleSheet} from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  StyleSheet,
+  Dimensions,
+} from 'react-native';
 import History from './history';
 import Profile from './Profile';
 import Store from './store';
@@ -14,6 +21,8 @@ import OnBoarding from './OnBoarding';
 import {useSelector} from 'react-redux';
 import {Actions} from 'react-native-router-flux';
 
+const WIDTH = Dimensions.get('window').width;
+
 const useStyles = () => {
   const theme = Theme();
   const styles = StyleSheet.create({
@@ -21,18 +30,27 @@ const useStyles = () => {
       flex: 1,
     },
     iconNavbarItem: {
-      width: 36,
-      height: 36,
+      width: '100%',
+      maxWidth: 36,
+      maxHeight: 36,
+      height: undefined,
+      aspectRatio: 1 / 1,
       tintColor: theme.colors.textTertiary,
     },
     iconNavbarItemActive: {
-      width: 36,
-      height: 36,
+      width: '100%',
+      maxWidth: 36,
+      maxHeight: 36,
+      height: undefined,
+      aspectRatio: 1 / 1,
       tintColor: theme.colors.textQuaternary,
     },
     iconNavbarScan: {
-      width: 36,
-      height: 36,
+      width: '100%',
+      maxWidth: 36,
+      maxHeight: 36,
+      height: undefined,
+      aspectRatio: 1 / 1,
       tintColor: theme.colors.textSecondary,
     },
     textNavbarScan: {
@@ -65,7 +83,7 @@ const useStyles = () => {
       bottom: 0,
     },
     viewNavbarItem: {
-      flex: 1,
+      width: (WIDTH * 20) / 100,
       height: 77,
       elevation: 10,
       display: 'flex',
@@ -75,8 +93,8 @@ const useStyles = () => {
       flexDirection: 'column',
     },
     viewNavbarItemScan: {
-      height: 82,
-      width: 82,
+      width: (WIDTH * 20) / 100,
+      height: (WIDTH * 20) / 100,
       marginBottom: 20,
       borderRadius: 100,
       display: 'flex',
@@ -144,13 +162,15 @@ const NewPageIndex = () => {
 
     return (
       <TouchableOpacity
+        style={styles.viewNavbarItem}
         activeOpacity={1}
         onPress={() => {
           props.navigation.navigate(name);
-        }}
-        style={styles.viewNavbarItem}>
+        }}>
         <Image source={handleImage(name)} style={imageStyle} />
-        <Text style={textStyle}>{name}</Text>
+        <Text numberOfLines={1} style={textStyle}>
+          {name}
+        </Text>
       </TouchableOpacity>
     );
   };

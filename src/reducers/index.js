@@ -23,6 +23,7 @@ import intlData from './language.reducer';
 import productReducer from './product.reducer';
 import settingReducer from './setting.reducer';
 import giftReducer from './gift.reducer';
+import searchReducer from './search.reducer';
 
 const reducers = {
   authReducer,
@@ -41,6 +42,7 @@ const reducers = {
   productReducer,
   settingReducer,
   giftReducer,
+  searchReducer,
   form: formReducer,
 };
 
