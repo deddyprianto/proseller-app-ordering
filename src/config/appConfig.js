@@ -61,7 +61,11 @@ const appConfig = {
   //LOGO MARTIN
   logoMerchant: require('../assets/img/logo.png'),
 
-  //ICON MARTIN
+  //ICON
+  iconMoreMenu: require('../assets/img/icon-more-menu.png'),
+  iconPoint: require('../assets/img/icon-point.png'),
+  iconSVC: require('../assets/img/icon-svc.png'),
+  iconSearch: require('../assets/img/icon-search.png'),
   iconCart: require('../assets/img/icon-cart.png'),
   iconArrowUp: require('../assets/img/icon-arrow-up.png'),
   iconArrowDown: require('../assets/img/icon-arrow-down.png'),

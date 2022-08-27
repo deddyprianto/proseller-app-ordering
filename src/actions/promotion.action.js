@@ -5,12 +5,12 @@ export const dataPromotion = () => {
   return async (dispatch, getState) => {
     const state = getState();
     try {
-      // await dispatch(refreshToken());
       const {
         authReducer: {
           tokenUser: {token},
         },
       } = state;
+
       const response = await fetchApiMasterData(
         '/promobanners/load',
         'POST',
@@ -18,7 +18,7 @@ export const dataPromotion = () => {
         200,
         token,
       );
-      console.log(response, 'response promotion');
+
       if (response.success) {
         dispatch({
           type: 'DATA_ALL_PROMOTION',

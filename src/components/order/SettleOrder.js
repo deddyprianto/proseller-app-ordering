@@ -36,6 +36,7 @@ import {
   getPendingCart,
   getPendingCartSingle,
   getSetting,
+  getTimeSlot,
   getTimeslotRaw,
   setOrderType,
   settleOrder,
@@ -216,7 +217,7 @@ class SettleOrder extends Component {
       if (this.props.pembayaran.orderActionDate != undefined) {
         const clientTimeZone = Math.abs(new Date().getTimezoneOffset());
         const response = await this.props.dispatch(
-          getTimeslotRaw(
+          getTimeSlot(
             outletID,
             this.props.pembayaran.orderActionDate,
             clientTimeZone,

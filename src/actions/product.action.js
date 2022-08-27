@@ -18,223 +18,123 @@ export const getProductByOutlet = (OutletId, refresh) => {
         null,
       );
 
-      const product = {
-        id: OutletId,
-        products: response.response.data,
-        dataLength: response.response.dataLength,
-      };
-
-      dispatch({
+      await dispatch({
         type: 'DATA_PRODUCTS_OUTLET',
-        products: product,
+        products: response.response.data,
       });
 
-      return response;
+      return response.response.data;
     } catch (error) {
       dispatch({
         type: 'DATA_PRODUCTS_OUTLET',
-        products: {},
+        products: [],
       });
       return error;
     }
   };
 };
 
-export const getCategoryByOutlet = (OutletId, refresh) => {
-  return async () => {
+export const getProductCategories = ({outletId}) => {
+  return async dispatch => {
     try {
-      const PRESET_TYPE = 'app';
-
       const payload = {
         skip: 0,
         take: 100,
+        parentCategoryID: null,
+        sortBy: 'name',
+        sortDirection: 'asc',
+        outletID: `outlet::${outletId}`,
       };
-
-      let response = await fetchApiProduct(
-        `/productpreset/loadcategory/${PRESET_TYPE}/${OutletId}`,
-        'POST',
-        payload,
-        200,
-        null,
-      );
-
-      if (response.success === true) {
-        return response.response;
-      }
-      return false;
-    } catch (e) {}
-  };
-};
-
-export const getProductByCategory = (OutletId, categoryId, skip, take) => {
-  return async (dispatch, getState) => {
-    const state = getState();
-    try {
-      const {
-        authReducer: {
-          authData: {isLoggedIn},
-        },
-      } = state;
-
-      let {
-        userReducer: {
-          getUser: {userDetails},
-        },
-      } = state;
-
-      // Decrypt data user
-      if (userDetails !== undefined && userDetails !== null && isLoggedIn) {
-        let bytes = CryptoJS.AES.decrypt(
-          userDetails,
-          awsConfig.PRIVATE_KEY_RSA,
-        );
-        userDetails = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
-      }
-
-      const payload = {
-        skip,
-        take,
-      };
-
-      if (isLoggedIn) {
-        payload.customerGroupId = userDetails.customerGroupId;
-      }
-
-      const PRESET_TYPE = 'app';
-
-      let response = await fetchApiProduct(
-        `/productpreset/loaditems/${PRESET_TYPE}/${OutletId}/${categoryId}`,
-        'POST',
-        payload,
-        200,
-        null,
-      );
-
-      if (response.success === true) {
-        return response.response;
-      }
-      return false;
-    } catch (e) {}
-  };
-};
-
-export const productByCategory = (OutletId, category, skip, take, search) => {
-  return async (dispatch, getState) => {
-    const state = getState();
-    try {
-      const {
-        authReducer: {
-          tokenUser: {token},
-        },
-      } = state;
-
-      const {
-        authReducer: {
-          authData: {isLoggedIn},
-        },
-      } = state;
-
-      let {
-        userReducer: {
-          getUser: {userDetails},
-        },
-      } = state;
-
-      // Decrypt data user
-      if (userDetails !== undefined && userDetails !== null && isLoggedIn) {
-        let bytes = CryptoJS.AES.decrypt(
-          userDetails,
-          awsConfig.PRIVATE_KEY_RSA,
-        );
-        userDetails = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
-      }
-
-      let payload = {};
-
-      if (search !== undefined) {
-        payload = {
-          skip,
-          take,
-          outletID: `outlet::${OutletId}`,
-          sortBy: 'name',
-          sortDirection: 'asc',
-          filters: [
-            {
-              id: 'search',
-              value: search,
-            },
-          ],
-        };
-      } else {
-        payload = {
-          skip,
-          take,
-          outletID: `outlet::${OutletId}`,
-          sortBy: 'name',
-          sortDirection: 'asc',
-          categoryID: `category::${category.id}`,
-        };
-      }
-
-      if (isLoggedIn) {
-        payload.customerGroupId = userDetails.customerGroupId;
-      }
 
       const response = await fetchApiProduct(
-        '/product/load/',
+        '/category/load',
         'POST',
         payload,
         200,
-        token,
+        null,
       );
 
-      if (response.success === true) {
-        return response.response;
+      if (response?.response?.data) {
+        await dispatch({
+          type: 'DATA_PRODUCT_CATEGORIES',
+          categories: response.response.data,
+        });
+        return response.response.data;
       }
+
       return false;
-    } catch (e) {}
+    } catch (error) {
+      return error;
+    }
   };
 };
 
-export const searchProducts = (OutletId, categories, query) => {
-  return async () => {
+export const getProductSubCategories = ({categoryId, outletId}) => {
+  return async dispatch => {
     try {
       const payload = {
         skip: 0,
         take: 100,
         sortBy: 'name',
         sortDirection: 'asc',
-        parameters: [
-          {
-            key: 'name',
-            value: query,
-          },
-        ],
+        outletID: `outlet::${outletId}`,
+        parentCategoryID: `category::${categoryId}`,
       };
 
-      const PRESET_TYPE = 'app';
+      const response = await fetchApiProduct(
+        '/category/load',
+        'POST',
+        payload,
+        200,
+        null,
+      );
 
-      let searchResults = [];
-
-      for (let i = 0; i < categories.length; i++) {
-        let response = await fetchApiProduct(
-          `/productpreset/loaditems/${PRESET_TYPE}/${OutletId}/${
-            categories[i].id
-          }`,
-          'POST',
-          payload,
-          200,
-          null,
-        );
-
-        if (response.success && !isEmptyArray(response.response.data)) {
-          searchResults = [...searchResults, ...response.response.data];
-        }
+      if (response?.response?.data) {
+        await dispatch({
+          type: 'DATA_PRODUCT_SUB_CATEGORIES',
+          subCategories: response.response.data,
+        });
+        return response.response.data;
       }
 
-      return searchResults;
-    } catch (e) {
-      console.log(e);
+      return false;
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const getProductBySubCategory = ({outletId, subCategoryId}) => {
+  return async dispatch => {
+    try {
+      const payload = {
+        skip: 0,
+        take: 100,
+        sortBy: 'name',
+        sortDirection: 'asc',
+        outletID: `outlet::${outletId}`,
+        categoryID: `category::${subCategoryId}`,
+      };
+
+      const response = await fetchApiProduct(
+        '/product/load',
+        'POST',
+        payload,
+        200,
+        null,
+      );
+
+      if (response?.response?.data) {
+        await dispatch({
+          type: 'DATA_PRODUCTS_BY_SUB_CATEGORY',
+          products: response.response.data,
+        });
+        return response.response.data;
+      }
+
+      return false;
+    } catch (error) {
+      return error;
     }
   };
 };
@@ -312,7 +212,6 @@ export const getBasket = () => {
   };
 };
 
-//martin
 export const getProductBySearch = ({outletId, search}) => {
   return async (dispatch, getState) => {
     try {
@@ -418,8 +317,6 @@ export const getProductByBarcode = barcode => {
         200,
         null,
       );
-
-      console.log('RESPONSE GET PRODUCT BY BARCODE ', response);
 
       if (response.success === true) {
         return response.response;
