@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect, useState} from 'react';
 import {
   Text,
@@ -87,6 +86,9 @@ const useStyles = () => {
       margin: 3,
       backgroundColor: theme.colors.accent,
     },
+    marginBottom: {
+      marginBottom: 30,
+    },
   });
   return styles;
 };
@@ -107,45 +109,41 @@ const ProductCategoryList = ({
   const [activeGroupEGift, setActiveGroupEGift] = useState(0);
   const [groupCategories, setGroupCategories] = useState([]);
 
-  const handleGroupCategories = values => {
-    let parents = [];
-    let children = [];
-
-    const formatted = [...values];
-
-    if (isMoreCategoryButton) {
-      formatted.push({
-        id: 'moreCategories',
-        name: 'More Categories',
-      });
-    }
-
-    formatted.forEach((value, index) => {
-      if (formatted.length - 1 === index) {
-        children.push(value);
-        parents.push(children);
-        return (children = []);
-      }
-
-      if (children.length < 5) {
-        return children.push(value);
-      }
-
-      if (children.length === 5) {
-        children.push(value);
-        parents.push(children);
-        return (children = []);
-      }
-    });
-
-    setGroupCategories(parents);
-  };
-
   useEffect(() => {
     if (!isEmptyArray(categories)) {
-      handleGroupCategories(categories);
+      let parents = [];
+      let children = [];
+
+      const formatted = [...categories];
+
+      if (isMoreCategoryButton) {
+        formatted.push({
+          id: 'moreCategories',
+          name: 'More Categories',
+        });
+      }
+
+      formatted.forEach((value, index) => {
+        if (formatted.length - 1 === index) {
+          children.push(value);
+          parents.push(children);
+          return (children = []);
+        }
+
+        if (children.length < 5) {
+          return children.push(value);
+        }
+
+        if (children.length === 5) {
+          children.push(value);
+          parents.push(children);
+          return (children = []);
+        }
+      });
+
+      setGroupCategories(parents);
     }
-  }, [categories]);
+  }, [categories, isMoreCategoryButton]);
 
   const handleOpenModal = () => {
     setIsOpenModal(true);
@@ -303,7 +301,7 @@ const ProductCategoryList = ({
       return (
         <ScrollView>
           {result}
-          <View style={{marginBottom: 30}} />
+          <View style={styles.marginBottom} />
         </ScrollView>
       );
     } else {
