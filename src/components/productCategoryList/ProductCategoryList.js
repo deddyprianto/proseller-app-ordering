@@ -187,8 +187,6 @@ const ProductCategoryList = ({
   };
 
   const renderProductCategoryItem = item => {
-    const isItemSizeSmall = itemSize === 'small';
-    console.log('FFEBY GILA', isItemSizeSmall);
     switch (itemSize) {
       case 'large':
         return (
