@@ -24,7 +24,7 @@ const useStyles = () => {
       flexDirection: 'row',
       flexWrap: 'wrap',
       justifyContent: 'space-between',
-      marginBottom: 60,
+      marginBottom: 70,
     },
   });
   return styles;

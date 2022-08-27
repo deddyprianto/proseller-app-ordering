@@ -124,6 +124,7 @@ import PointDetailAndHistory from '../pages/PointDetailAndHistory';
 import MyDeliveryAddress from '../pages/MyDeliveryAddress';
 import AddNewAddress from '../pages/AddNewAddress';
 import HomeRetail from '../pages/HomeRetail';
+import NewPageIndex from '../pages/NewPageIndex';
 import SearchProduct from '../pages/SearchProduct';
 
 //for temporary
@@ -353,7 +354,8 @@ export default class Routes extends Component {
             <Scene key="notifications" component={Notifications} />
 
             {/* //martin */}
-            <Scene key="pageIndex" component={PageIndex} initial={true} />
+            {/* <Scene key="pageIndex" component={PageIndex} initial={true} /> */}
+            <Scene key="pageIndex" component={NewPageIndex} initial={true} />
             <Scene key="eStore" component={EStore} />
             <Scene key="eCard" component={ECard} />
             <Scene key="onBoarding" component={OnBoarding} />
