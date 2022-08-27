@@ -66,7 +66,8 @@ const useStyles = () => {
       flex: 1,
       height: 1,
       maxHeight: 1,
-      margin: 16,
+      marginTop: 16,
+      marginHorizontal: 16,
       backgroundColor: theme.colors.brandPrimary,
     },
     textProductCategories: {
@@ -101,6 +102,8 @@ const useStyles = () => {
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     viewHeaderTitle: {
+      flex: 1,
+      marginBottom: -4,
       display: 'flex',
       flexDirection: 'row',
       alignItems: 'center',
@@ -110,7 +113,7 @@ const useStyles = () => {
       backgroundColor: theme.colors.accent,
     },
     viewButtonCart: {
-      elevation: 5,
+      elevation: 2,
       width: '100%',
       display: 'flex',
       flexDirection: 'row',
@@ -127,7 +130,7 @@ const useStyles = () => {
       flexDirection: 'row',
     },
     viewMenuBar: {
-      flex: 1,
+      elevation: 2,
       marginTop: -25,
       padding: 16,
       borderRadius: 8,
@@ -178,7 +181,7 @@ const useStyles = () => {
       tintColor: theme.colors.brandPrimary,
     },
     iconArrowDown: {
-      marginLeft: 8,
+      marginLeft: 4,
       width: 16,
       height: 12,
       tintColor: theme.colors.textQuaternary,
@@ -311,7 +314,7 @@ const Home = () => {
         onPress={() => {
           Actions.store();
         }}>
-        <Text style={styles.textHeaderTitle} numberOfLines={1}>
+        <Text numberOfLines={1} style={styles.textHeaderTitle}>
           {defaultOutlet?.name}
         </Text>
         <Image style={styles.iconArrowDown} source={appConfig.iconArrowDown} />
@@ -424,13 +427,18 @@ const Home = () => {
 
   const renderProductSubCategoryList = () => {
     return (
-      <ProductSubCategoryList
-        subCategories={subCategories}
-        selectedSubCategory={selectedSubCategory}
-        onChange={item => {
-          setSelectedSubCategory(item);
-        }}
-      />
+      <View>
+        <Text style={styles.textProductCategories}>
+          {selectedCategory?.name}
+        </Text>
+        <ProductSubCategoryList
+          subCategories={subCategories}
+          selectedSubCategory={selectedSubCategory}
+          onChange={item => {
+            setSelectedSubCategory(item);
+          }}
+        />
+      </View>
     );
   };
 

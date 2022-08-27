@@ -1,6 +1,6 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import QRCodeScanner from 'react-native-qrcode-scanner';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 
 import {
   StyleSheet,
@@ -119,6 +119,8 @@ const ScannerBarcode = () => {
   );
 
   const [product, setProduct] = useState({});
+
+  const snackbar = useSelector(state => state.settingReducer.snackbar.message);
 
   const handleOpenProductAddModal = () => {
     setIsOpenAddModal(true);
@@ -241,7 +243,7 @@ const ScannerBarcode = () => {
       <LoadingScreen loading={isLoading} />
       <QRCodeScanner
         cameraStyle={styles.camera}
-        reactivate={true}
+        reactivate={!isOpenAddModal && !snackbar}
         showMarker={true}
         onRead={onSuccess}
       />

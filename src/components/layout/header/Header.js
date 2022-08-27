@@ -12,6 +12,7 @@ const useStyles = () => {
   const theme = Theme();
   const styles = StyleSheet.create({
     root: {
+      height: 56,
       maxHeight: 56,
       display: 'flex',
       flexDirection: 'row',
@@ -22,6 +23,18 @@ const useStyles = () => {
       padding: 16,
       backgroundColor: theme.colors.header,
     },
+    rootLeft: {
+      flex: 1,
+      alignItems: 'flex-start',
+    },
+    rootCenter: {
+      flex: 2,
+      alignItems: 'center',
+    },
+    rootRight: {
+      flex: 1,
+      alignItems: 'flex-end',
+    },
     flexRowCenter: {
       display: 'flex',
       flexDirection: 'row',
@@ -29,11 +42,11 @@ const useStyles = () => {
     },
     logo: {
       width: 80,
-      height: 400,
+      height: 100,
     },
     icon: {
-      width: 28,
-      height: 28,
+      width: 24,
+      height: 24,
       tintColor: theme.colors.textQuaternary,
     },
     iconBack: {
@@ -176,9 +189,9 @@ const Header = ({
   return (
     <View style={styles.root}>
       <Scanner open={isOpenScanner} handleClose={handleCloseScanner} />
-      {renderIconLeftWrap()}
-      {renderTitle()}
-      {renderIconRightWrap()}
+      <View style={styles.rootLeft}>{renderIconLeftWrap()}</View>
+      <View style={styles.rootCenter}>{renderTitle()}</View>
+      <View style={styles.rootRight}>{renderIconRightWrap()}</View>
     </View>
   );
 };
