@@ -9,13 +9,13 @@ import {
   Image,
 } from 'react-native';
 
-import {useSelector} from 'react-redux';
-
-import ProductCategoryItem from './components/ProductCategoryItem';
+import ProductCategorySmallItem from './components/ProductCategorySmallItem';
+import ProductCategoryLargeItem from './components/ProductCategoryLargeItem';
 
 import Theme from '../../theme';
 import {isEmptyArray} from '../../helper/CheckEmpty';
 import appConfig from '../../config/appConfig';
+
 import MoreCategoryListModal from '../moreCategoryListModal';
 
 const WIDTH = Dimensions.get('window').width;
@@ -35,6 +35,15 @@ const useStyles = () => {
       flexWrap: 'wrap',
       display: 'flex',
       flexDirection: 'row',
+      width: WIDTH,
+      paddingHorizontal: 16,
+    },
+    viewGroupCategoriesSmall: {
+      flex: 1,
+      flexWrap: 'wrap',
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
       width: WIDTH,
       paddingHorizontal: 16,
     },
@@ -77,55 +86,64 @@ const useStyles = () => {
       margin: 3,
       backgroundColor: theme.colors.accent,
     },
+    marginBottom: {
+      marginBottom: 30,
+    },
   });
   return styles;
 };
 
-const ProductCategoryList = ({categories, selectedCategory, onClick}) => {
+const ProductCategoryList = ({
+  categories,
+  selectedCategory,
+  onClick,
+  horizontal,
+  itemSize,
+  isScroll,
+  isIndicator,
+  isMoreCategoryButton,
+}) => {
   const styles = useStyles();
 
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [activeGroupEGift, setActiveGroupEGift] = useState(0);
   const [groupCategories, setGroupCategories] = useState([]);
 
-  const handleGroupCategories = values => {
-    let parents = [];
-    let children = [];
-
-    const formatted = [
-      ...values,
-      {
-        id: 'moreCategories',
-        name: 'More Categories',
-      },
-    ];
-
-    formatted.forEach((value, index) => {
-      if (formatted.length - 1 === index) {
-        children.push(value);
-        parents.push(children);
-        return (children = []);
-      }
-
-      if (children.length < 5) {
-        return children.push(value);
-      }
-
-      if (children.length === 5) {
-        children.push(value);
-        parents.push(children);
-        return (children = []);
-      }
-    });
-
-    setGroupCategories(parents);
-  };
-
   useEffect(() => {
     if (!isEmptyArray(categories)) {
-      handleGroupCategories(categories);
+      let parents = [];
+      let children = [];
+
+      const formatted = [...categories];
+
+      if (isMoreCategoryButton) {
+        formatted.push({
+          id: 'moreCategories',
+          name: 'More Categories',
+        });
+      }
+
+      formatted.forEach((value, index) => {
+        if (formatted.length - 1 === index) {
+          children.push(value);
+          parents.push(children);
+          return (children = []);
+        }
+
+        if (children.length < 5) {
+          return children.push(value);
+        }
+
+        if (children.length === 5) {
+          children.push(value);
+          parents.push(children);
+          return (children = []);
+        }
+      });
+
+      setGroupCategories(parents);
     }
-  }, [categories]);
+  }, [categories, isMoreCategoryButton]);
 
   const handleOpenModal = () => {
     setIsOpenModal(true);
@@ -161,19 +179,46 @@ const ProductCategoryList = ({categories, selectedCategory, onClick}) => {
       return <View key={index} style={handleStyleDot(index)} />;
     });
 
-    return <View style={styles.WrapDot}>{dots}</View>;
+    if (isIndicator) {
+      return <View style={styles.WrapDot}>{dots}</View>;
+    }
   };
 
   const renderProductCategoryItem = item => {
-    return (
-      <ProductCategoryItem
-        category={item}
-        selected={selectedCategory}
-        onPress={() => {
-          handleSelectCategory(item);
-        }}
-      />
-    );
+    switch (itemSize) {
+      case 'large':
+        return (
+          <ProductCategoryLargeItem
+            category={item}
+            selected={selectedCategory}
+            onPress={() => {
+              handleSelectCategory(item);
+            }}
+          />
+        );
+
+      case 'small':
+        return (
+          <ProductCategorySmallItem
+            category={item}
+            selected={selectedCategory}
+            onPress={() => {
+              handleSelectCategory(item);
+            }}
+          />
+        );
+
+      default:
+        return (
+          <ProductCategoryLargeItem
+            category={item}
+            selected={selectedCategory}
+            onPress={() => {
+              handleSelectCategory(item);
+            }}
+          />
+        );
+    }
   };
 
   const renderMoreCategories = () => {
@@ -207,10 +252,23 @@ const ProductCategoryList = ({categories, selectedCategory, onClick}) => {
     return result;
   };
 
+  const renderCategoriesValue = item => {
+    if (item.id === 'moreCategories') {
+      return renderMoreCategories();
+    } else {
+      return renderProductCategoryItem(item);
+    }
+  };
+
   const renderGroupCategories = () => {
     const result = groupCategories?.map((items, index) => {
+      const isItemSizeSmall = itemSize === 'small';
+      const styleView = isItemSizeSmall
+        ? styles.viewGroupCategoriesSmall
+        : styles.viewGroupCategories;
+
       return (
-        <View key={index} style={styles.viewGroupCategories}>
+        <View key={index} style={styleView}>
           {renderGroupCategoriesValue(items)}
         </View>
       );
@@ -223,10 +281,40 @@ const ProductCategoryList = ({categories, selectedCategory, onClick}) => {
         }}
         showsHorizontalScrollIndicator={false}
         pagingEnabled
-        horizontal>
+        horizontal={horizontal}>
         {result}
       </ScrollView>
     );
+  };
+
+  const renderCategories = () => {
+    const isItemSizeSmall = itemSize === 'small';
+    const styleView = isItemSizeSmall
+      ? styles.viewGroupCategoriesSmall
+      : styles.viewGroupCategories;
+
+    const result = categories?.map(item => {
+      return renderCategoriesValue(item);
+    });
+
+    if (isScroll) {
+      return (
+        <ScrollView>
+          {result}
+          <View style={styles.marginBottom} />
+        </ScrollView>
+      );
+    } else {
+      return <View style={styleView}>{result}</View>;
+    }
+  };
+
+  const renderList = () => {
+    if (horizontal) {
+      return renderGroupCategories();
+    } else {
+      return renderCategories();
+    }
   };
 
   const renderMoreCategoryListModal = () => {
@@ -242,7 +330,7 @@ const ProductCategoryList = ({categories, selectedCategory, onClick}) => {
 
   return (
     <View>
-      {renderGroupCategories()}
+      {renderList()}
       {renderDot()}
       {renderMoreCategoryListModal()}
     </View>

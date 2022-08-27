@@ -62,6 +62,7 @@ const appConfig = {
   logoMerchant: require('../assets/img/logo.png'),
 
   //ICON
+  iconInformation: require('../assets/img/icon-information.png'),
   iconMoreMenu: require('../assets/img/icon-more-menu.png'),
   iconPoint: require('../assets/img/icon-point.png'),
   iconSVC: require('../assets/img/icon-svc.png'),

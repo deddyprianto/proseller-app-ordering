@@ -10,7 +10,6 @@ import {StyleSheet, View, ScrollView} from 'react-native';
 
 import Product from './components/ProductItem';
 
-import {useSelector} from 'react-redux';
 import {isEmptyArray} from '../../helper/CheckEmpty';
 
 const useStyles = () => {

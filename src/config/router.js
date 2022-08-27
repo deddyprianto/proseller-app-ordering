@@ -123,10 +123,11 @@ import VoucherDetail from '../pages/VoucherDetail';
 import PointDetailAndHistory from '../pages/PointDetailAndHistory';
 import MyDeliveryAddress from '../pages/MyDeliveryAddress';
 import AddNewAddress from '../pages/AddNewAddress';
+import HomeRetail from '../pages/HomeRetail';
+import SearchProduct from '../pages/SearchProduct';
 
 //for temporary
 import PendingOrderDetail from '../pages/PendingOrderDetail';
-import HomeRetail from '../pages/HomeRetail';
 
 const MyTransitionSpec = {
   duration: 200,
@@ -380,6 +381,7 @@ export default class Routes extends Component {
             <Scene key="addNewAddress" component={AddNewAddress} />
             <Scene key="pendingOrderDetail" component={PendingOrderDetail} />
             <Scene key="homeRetail" component={HomeRetail} />
+            <Scene key="searchProduct" component={SearchProduct} />
             {/* //martin */}
           </Scene>
         </Scene>

@@ -31,6 +31,23 @@ const useStyles = () => {
       flexDirection: 'column',
       backgroundColor: 'white',
     },
+    rootSelected: {
+      elevation: 2,
+      padding: 8,
+      flex: 1,
+      width: (WIDTH * 29) / 100,
+      minWidth: (WIDTH * 29) / 100,
+      maxWidth: (WIDTH * 29) / 100,
+      marginHorizontal: (WIDTH * 0.8) / 100,
+      borderWidth: 1,
+      borderRadius: 8,
+      marginVertical: 8,
+      display: 'flex',
+      alignItems: 'center',
+      flexDirection: 'column',
+      backgroundColor: 'white',
+      borderColor: theme.colors.buttonActive,
+    },
     textName: {
       marginTop: 8,
       textAlign: 'center',
@@ -48,15 +65,18 @@ const useStyles = () => {
   return styles;
 };
 
-const MoreCategoryItem = ({category, onPress}) => {
+const ProductCategoryLargeItem = ({category, selected, onPress}) => {
   const styles = useStyles();
 
   const image = category?.defaultImageURL
     ? {uri: category?.defaultImageURL}
     : appConfig.logoMerchant;
 
+  const styleRoot =
+    category?.id === selected?.id ? styles.rootSelected : styles.root;
+
   return (
-    <TouchableOpacity style={styles.root} onPress={onPress}>
+    <TouchableOpacity style={styleRoot} onPress={onPress}>
       <Image source={image} resizeMode="center" style={styles.image} />
       <Text numberOfLines={2} style={styles.textName}>
         {category?.name}
@@ -65,4 +85,4 @@ const MoreCategoryItem = ({category, onPress}) => {
   );
 };
 
-export default MoreCategoryItem;
+export default ProductCategoryLargeItem;
