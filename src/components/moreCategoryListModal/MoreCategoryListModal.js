@@ -49,7 +49,6 @@ const useStyles = () => {
       flex: 1,
       flexDirection: 'row',
       flexWrap: 'wrap',
-      // justifyContent: 'space-between',
       marginBottom: 60,
       marginHorizontal: 16,
     },
