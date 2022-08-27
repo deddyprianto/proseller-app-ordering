@@ -125,6 +125,7 @@ import MyDeliveryAddress from '../pages/MyDeliveryAddress';
 import AddNewAddress from '../pages/AddNewAddress';
 import HomeRetail from '../pages/HomeRetail';
 import NewPageIndex from '../pages/NewPageIndex';
+import ScannerBarcode from '../pages/ScannerBarcode';
 import SearchProduct from '../pages/SearchProduct';
 
 //for temporary
@@ -383,6 +384,8 @@ export default class Routes extends Component {
             <Scene key="addNewAddress" component={AddNewAddress} />
             <Scene key="pendingOrderDetail" component={PendingOrderDetail} />
             <Scene key="homeRetail" component={HomeRetail} />
+            <Scene key="scannerBarcode" component={ScannerBarcode} />
+
             <Scene key="searchProduct" component={SearchProduct} />
             {/* //martin */}
           </Scene>

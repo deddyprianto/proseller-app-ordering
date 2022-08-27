@@ -19,6 +19,7 @@ import MyDeliveryAddressList from '../components/myDeliveryAddressList';
 import awsConfig from '../config/awsConfig';
 
 import Theme from '../theme';
+import {isEmptyArray} from '../helper/CheckEmpty';
 
 const useStyles = () => {
   const theme = Theme();
@@ -65,17 +66,19 @@ const MyDeliveryAddress = ({fromScene}) => {
     );
     const result = JSON.parse(userDecrypt.toString(CryptoJS.enc.Utf8));
 
-    let deliveryAddress = result?.deliveryAddress || [];
+    let deliveryAddresses = result?.deliveryAddress || [];
 
-    const isDefault = deliveryAddress.find(item => item.isDefault);
-    const isDefaultIndex = deliveryAddress.findIndex(
-      item => item.index === isDefault.index,
-    );
+    if (!isEmptyArray(deliveryAddresses)) {
+      const isDefault = deliveryAddresses?.find(item => item.isDefault);
+      const isDefaultIndex = deliveryAddresses?.findIndex(
+        item => item.index === isDefault.index,
+      );
 
-    deliveryAddress.splice(isDefaultIndex, 1);
-    deliveryAddress.unshift(isDefault);
+      deliveryAddresses.splice(isDefaultIndex, 1);
+      deliveryAddresses.unshift(isDefault);
 
-    setDeliveryAddress(deliveryAddress);
+      setDeliveryAddress(deliveryAddresses);
+    }
   }, [userDetail]);
 
   const renderFooter = () => {

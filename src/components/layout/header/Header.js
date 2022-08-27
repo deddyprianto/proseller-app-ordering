@@ -76,6 +76,7 @@ const useStyles = () => {
 const Header = ({
   title,
   isLogo,
+  isMiddleLogo,
   remove,
   cart,
   search,
@@ -90,8 +91,20 @@ const Header = ({
     setIsOpenScanner(false);
   };
 
+  const renderLogo = () => {
+    return (
+      <Image
+        source={appConfig.logoMerchant}
+        resizeMode="center"
+        style={styles.logo}
+      />
+    );
+  };
+
   const renderTitle = () => {
-    if (customTitle) {
+    if (isMiddleLogo) {
+      return renderLogo();
+    } else if (customTitle) {
       return customTitle;
     } else {
       return <Text style={styles.textHeader}>{title}</Text>;
@@ -159,16 +172,6 @@ const Header = ({
         </TouchableOpacity>
       );
     }
-  };
-
-  const renderLogo = () => {
-    return (
-      <Image
-        source={appConfig.logoMerchant}
-        resizeMode="center"
-        style={styles.logo}
-      />
-    );
   };
 
   const renderIconLeftWrap = () => {

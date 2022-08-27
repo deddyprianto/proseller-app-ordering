@@ -1665,6 +1665,10 @@ export const addProductToBasket = ({defaultOutlet, selectedProduct}) => {
         newProduct.modifiers = selectedProduct?.modifiers;
       }
 
+      if (selectedProduct?.specialBarcode) {
+        newProduct.specialBarcode = selectedProduct?.specialBarcode;
+      }
+
       payload.details.push(newProduct);
 
       // add real data

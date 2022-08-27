@@ -486,11 +486,29 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
 
   const handleAddOrUpdateProduct = async () => {
     setIsLoading(true);
+    const isSpecialBarcode = product?.isSpecialBarcode;
+
     if (!isEmptyObject(selectedProduct)) {
-      await dispatch(updateProductBasket(productUpdate));
+      const newProductUpdate = isSpecialBarcode
+        ? {
+            ...productUpdate,
+            specialBarcode: product?.specialBarcode,
+            retailPrice: product?.retailPrice,
+            unitPrice: product?.retailPrice,
+          }
+        : productUpdate;
+      await dispatch(updateProductBasket(newProductUpdate));
     } else {
+      const newProductAdd = isSpecialBarcode
+        ? {
+            ...productAdd,
+            specialBarcode: product?.specialBarcode,
+            retailPrice: product?.retailPrice,
+          }
+        : productAdd;
+
       await dispatch(
-        addProductToBasket({defaultOutlet, selectedProduct: productAdd}),
+        addProductToBasket({defaultOutlet, selectedProduct: newProductAdd}),
       );
     }
 
