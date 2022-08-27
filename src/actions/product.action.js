@@ -69,7 +69,11 @@ export const getProductCategories = ({outletId}) => {
   };
 };
 
-export const getProductSubCategories = ({categoryId, outletId}) => {
+export const getProductSubCategories = ({
+  categoryId,
+  outletId,
+  searchQuery,
+}) => {
   return async dispatch => {
     try {
       const payload = {
@@ -79,6 +83,9 @@ export const getProductSubCategories = ({categoryId, outletId}) => {
         sortDirection: 'asc',
         outletID: `outlet::${outletId}`,
         parentCategoryID: `category::${categoryId}`,
+        search: {
+          product: searchQuery,
+        },
       };
 
       const response = await fetchApiProduct(
@@ -97,14 +104,18 @@ export const getProductSubCategories = ({categoryId, outletId}) => {
         return response.response.data;
       }
 
-      return false;
+      return null;
     } catch (error) {
       return error;
     }
   };
 };
 
-export const getProductBySubCategory = ({outletId, subCategoryId}) => {
+export const getProductBySubCategory = ({
+  outletId,
+  subCategoryId,
+  searchQuery,
+}) => {
   return async dispatch => {
     try {
       const payload = {
@@ -114,6 +125,12 @@ export const getProductBySubCategory = ({outletId, subCategoryId}) => {
         sortDirection: 'asc',
         outletID: `outlet::${outletId}`,
         categoryID: `category::${subCategoryId}`,
+        filters: [
+          {
+            id: 'search',
+            value: searchQuery,
+          },
+        ],
       };
 
       const response = await fetchApiProduct(
@@ -212,12 +229,12 @@ export const getBasket = () => {
   };
 };
 
-export const getProductBySearch = ({outletId, search}) => {
-  return async (dispatch, getState) => {
+export const getProductBySearch = ({outletId, search, categoryId, skip}) => {
+  return async () => {
     try {
       const payload = {
-        skip: 0,
-        take: 100,
+        skip: skip,
+        take: 20,
         outletID: outletId,
         filters: [
           {
@@ -226,6 +243,10 @@ export const getProductBySearch = ({outletId, search}) => {
           },
         ],
       };
+
+      if (categoryId) {
+        payload.categoryID = `category::${categoryId}`;
+      }
 
       let response = await fetchApiProduct(
         '/product/load/',
