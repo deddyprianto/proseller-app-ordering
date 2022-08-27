@@ -67,7 +67,8 @@ const useStyles = () => {
       flex: 1,
       height: 1,
       maxHeight: 1,
-      margin: 16,
+      marginTop: 16,
+      marginHorizontal: 16,
       backgroundColor: theme.colors.brandPrimary,
     },
     textProductCategories: {
@@ -102,6 +103,7 @@ const useStyles = () => {
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     viewHeaderTitle: {
+      flex: 1,
       marginBottom: -4,
       display: 'flex',
       flexDirection: 'row',
@@ -179,7 +181,7 @@ const useStyles = () => {
       tintColor: theme.colors.brandPrimary,
     },
     iconArrowDown: {
-      marginLeft: 8,
+      marginLeft: 4,
       width: 16,
       height: 12,
       tintColor: theme.colors.textQuaternary,
@@ -321,7 +323,9 @@ const Home = () => {
         onPress={() => {
           Actions.store();
         }}>
-        <Text style={styles.textHeaderTitle}>{defaultOutlet?.name}</Text>
+        <Text numberOfLines={1} style={styles.textHeaderTitle}>
+          {defaultOutlet?.name}
+        </Text>
         <Image style={styles.iconArrowDown} source={appConfig.iconArrowDown} />
       </TouchableOpacity>
     );
@@ -437,14 +441,18 @@ const Home = () => {
 
   const renderProductSubCategoryList = () => {
     return (
-      <ProductSubCategoryList
-        subCategories={subCategories}
-        selectedSubCategory={selectedSubCategory}
-        onChange={item => {
-          setProductsLimitLength(10);
-          setSelectedSubCategory(item);
-        }}
-      />
+      <View>
+        <Text style={styles.textProductCategories}>
+          {selectedCategory?.name}
+        </Text>
+        <ProductSubCategoryList
+          subCategories={subCategories}
+          selectedSubCategory={selectedSubCategory}
+          onChange={item => {
+            setSelectedSubCategory(item);
+          }}
+        />
+      </View>
     );
   };
 
