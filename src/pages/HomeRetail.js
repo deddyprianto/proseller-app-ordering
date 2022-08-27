@@ -54,7 +54,7 @@ const useStyles = () => {
     },
     footer: {
       position: 'absolute',
-      bottom: 10,
+      bottom: 32,
       width: '100%',
       paddingHorizontal: 16,
     },
@@ -147,6 +147,7 @@ const useStyles = () => {
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
+      justifyContent: 'center',
     },
     viewMenuBarChildImage: {
       padding: 5,
@@ -156,7 +157,7 @@ const useStyles = () => {
     viewFloatingButton: {
       elevation: 5,
       position: 'absolute',
-      bottom: 80,
+      bottom: 100,
       right: 18,
       width: 70,
       height: 70,

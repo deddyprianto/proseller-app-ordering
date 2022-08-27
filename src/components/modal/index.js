@@ -5,3 +5,7 @@ export {
 export {
   default as OrderingTypeSelectorModal,
 } from './OrderingTypeSelectorModal';
+
+export {
+  default as SearchProductByBarcodeModal,
+} from './SearchProductByBarcodeModal';

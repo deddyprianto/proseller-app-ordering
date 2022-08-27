@@ -62,32 +62,54 @@ const appConfig = {
   logoMerchant: require('../assets/img/logo.png'),
 
   //ICON
-  iconInformation: require('../assets/img/icon-information.png'),
-  iconMoreMenu: require('../assets/img/icon-more-menu.png'),
-  iconPoint: require('../assets/img/icon-point.png'),
-  iconSVC: require('../assets/img/icon-svc.png'),
-  iconSearch: require('../assets/img/icon-search.png'),
-  iconCart: require('../assets/img/icon-cart.png'),
   iconArrowUp: require('../assets/img/icon-arrow-up.png'),
   iconArrowDown: require('../assets/img/icon-arrow-down.png'),
   iconArrowLeft: require('../assets/img/icon-arrow-left.png'),
   iconArrowRight: require('../assets/img/icon-arrow-right.png'),
-  iconNotes: require('../assets/img/icon-notes.png'),
-  iconClose: require('../assets/img/icon-close.png'),
-  iconEdit: require('../assets/img/icon-edit.png'),
+
+  iconCart: require('../assets/img/icon-cart.png'),
   iconCheck: require('../assets/img/icon-check.png'),
-  iconPlus: require('../assets/img/icon-plus.png'),
-  iconMinus: require('../assets/img/icon-minus.png'),
-  iconLocation: require('../assets/img/icon-location.png'),
-  iconEditProfile: require('../assets/img/icon-edit-profile.png'),
-  iconLogout: require('../assets/img/icon-logout.png'),
-  iconNotification: require('../assets/img/icon-notification.png'),
-  iconPayment: require('../assets/img/icon-payment.png'),
-  iconReward: require('../assets/img/icon-reward.png'),
-  iconTermsAndConditions: require('../assets/img/icon-terms-and-conditions.png'),
-  iconScan: require('../assets/img/icon-scan.png'),
+  iconClose: require('../assets/img/icon-close.png'),
+
   iconDelete: require('../assets/img/icon-delete.png'),
+
+  iconEdit: require('../assets/img/icon-edit.png'),
+  iconEditProfile: require('../assets/img/icon-edit-profile.png'),
+  iconEmail: require('../assets/img/icon-email.png'),
+
+  iconHome: require('../assets/img/icon-home.png'),
+  iconHistory: require('../assets/img/icon-history.png'),
+
+  iconInformation: require('../assets/img/icon-information.png'),
+
+  iconKeyboard: require('../assets/img/icon-keyboard.png'),
+
+  iconLogin: require('../assets/img/icon-login.png'),
+  iconLogout: require('../assets/img/icon-logout.png'),
+  iconLocation: require('../assets/img/icon-location.png'),
+
+  iconMoreMenu: require('../assets/img/icon-more-menu.png'),
+  iconMinus: require('../assets/img/icon-minus.png'),
+
+  iconNotification: require('../assets/img/icon-notification.png'),
+  iconNotes: require('../assets/img/icon-notes.png'),
+
+  iconPoint: require('../assets/img/icon-point.png'),
+  iconPlus: require('../assets/img/icon-plus.png'),
+  iconPayment: require('../assets/img/icon-payment.png'),
+  iconProfile: require('../assets/img/icon-profile.png'),
+
+  iconReward: require('../assets/img/icon-reward.png'),
+
+  iconSVC: require('../assets/img/icon-svc.png'),
+  iconSearch: require('../assets/img/icon-search.png'),
+  iconScan: require('../assets/img/icon-scan.png'),
+
+  iconTermsAndConditions: require('../assets/img/icon-terms-and-conditions.png'),
+
   iconVoucher: require('../assets/img/icon-voucher.png'),
+
+  iconWarning: require('../assets/img/icon-warning.png'),
 };
 
 export default appConfig;
