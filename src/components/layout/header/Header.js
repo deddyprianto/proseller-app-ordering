@@ -12,39 +12,57 @@ const useStyles = () => {
   const theme = Theme();
   const styles = StyleSheet.create({
     root: {
+      height: 56,
+      maxHeight: 56,
       display: 'flex',
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
       width: '100%',
-      backgroundColor: 'white',
       elevation: 3,
       padding: 16,
+      backgroundColor: theme.colors.header,
+    },
+    rootLeft: {
+      flex: 1,
+      alignItems: 'flex-start',
+    },
+    rootCenter: {
+      flex: 2,
+      alignItems: 'center',
+    },
+    rootRight: {
+      flex: 1,
+      alignItems: 'flex-end',
     },
     flexRowCenter: {
       display: 'flex',
       flexDirection: 'row',
       alignItems: 'center',
     },
+    logo: {
+      width: 80,
+      height: 100,
+    },
     icon: {
-      width: 16,
-      height: 16,
-      tintColor: theme.colors.primary,
+      width: 24,
+      height: 24,
+      tintColor: theme.colors.textQuaternary,
     },
     iconBack: {
       width: 11,
       height: 18,
-      tintColor: theme.colors.primary,
+      tintColor: theme.colors.textQuaternary,
     },
     iconRemove: {
       width: 18,
       height: 18,
-      tintColor: theme.colors.primary,
+      tintColor: theme.colors.textQuaternary,
     },
     iconCart: {
       width: 11,
       height: 18,
-      tintColor: theme.colors.primary,
+      tintColor: theme.colors.textQuaternary,
     },
     textHeader: {
       color: theme.colors.text1,
@@ -55,7 +73,16 @@ const useStyles = () => {
   return styles;
 };
 
-const Header = ({title, remove, cart, scanner, removeOnClick, customTitle}) => {
+const Header = ({
+  title,
+  isLogo,
+  remove,
+  cart,
+  search,
+  scanner,
+  removeOnClick,
+  customTitle,
+}) => {
   const styles = useStyles();
   const [isOpenScanner, setIsOpenScanner] = useState(false);
 
@@ -121,9 +148,41 @@ const Header = ({title, remove, cart, scanner, removeOnClick, customTitle}) => {
     }
   };
 
-  const renderIconWrap = () => {
+  const renderSearchIcon = () => {
+    if (search) {
+      return (
+        <TouchableOpacity
+          onPress={() => {
+            Actions.searchProduct();
+          }}>
+          <Image source={appConfig.iconSearch} style={styles.icon} />
+        </TouchableOpacity>
+      );
+    }
+  };
+
+  const renderLogo = () => {
+    return (
+      <Image
+        source={appConfig.logoMerchant}
+        resizeMode="center"
+        style={styles.logo}
+      />
+    );
+  };
+
+  const renderIconLeftWrap = () => {
+    if (isLogo) {
+      return renderLogo();
+    } else {
+      return renderBackIcon();
+    }
+  };
+
+  const renderIconRightWrap = () => {
     return (
       <View style={styles.flexRowCenter}>
+        {renderSearchIcon()}
         {renderCartIcon()}
         {renderScannerIcon()}
         {renderRemoveIcon()}
@@ -134,9 +193,9 @@ const Header = ({title, remove, cart, scanner, removeOnClick, customTitle}) => {
   return (
     <View style={styles.root}>
       <Scanner open={isOpenScanner} handleClose={handleCloseScanner} />
-      {renderBackIcon()}
-      {renderTitle()}
-      {renderIconWrap()}
+      <View style={styles.rootLeft}>{renderIconLeftWrap()}</View>
+      <View style={styles.rootCenter}>{renderTitle()}</View>
+      <View style={styles.rootRight}>{renderIconRightWrap()}</View>
     </View>
   );
 };

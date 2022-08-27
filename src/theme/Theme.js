@@ -12,17 +12,16 @@ const Theme = () => {
   );
 
   const colors = {
-    primary: '#CF3030',
+    //old version
+    primary: '#00BECC',
     secondary: '#F9F9F9',
     thirdColor: '#FFEBEB',
     forthColor: '#F9F9F9',
 
-    background: 'white',
+    // background: 'white',
     background2: '#F9F9F9',
 
-    backgroundTransparent: 'rgba(0, 0, 0, 0.5)',
-
-    header: 'white',
+    // header: 'white',
 
     text1: 'black',
     text2: '#B7B7B7',
@@ -36,7 +35,7 @@ const Theme = () => {
     textButtonDisabled: 'white',
     textButtonOutlined: 'black',
 
-    buttonDisabled: '#B7B7B7',
+    // buttonDisabled: '#B7B7B7',
     buttonOutlined: 'white',
 
     navigationColor: colorSettings?.navigationColor || 'black',
@@ -45,6 +44,41 @@ const Theme = () => {
 
     snackbarSuccess: '#5CD423',
     snackbarFailed: '#CF3030',
+
+    //new version
+
+    header: 'white',
+
+    footer: '',
+
+    badge: '#CE1111',
+
+    accent: '#CCF2F5',
+
+    background: 'white',
+
+    textPrimary: '#000000',
+    textSecondary: '#FFFFFF',
+    textTertiary: '#B7B7B7',
+    textQuaternary: '#00BECC',
+
+    semanticError: '#CE1111',
+    semanticSuccess: '#5CD523',
+
+    brandPrimary: '#00BECC',
+    brandSecondary: '#FFFFFF',
+    brandTertiary: '#0E8A94',
+
+    greyScale1: '#000000',
+    greyScale2: '#B7B7B7',
+    greyScale3: '#D6D6D6',
+    greyScale4: '#F9F9F9',
+
+    buttonActive: '#00BECC',
+    buttonStandBy: '#FFFFFF',
+    buttonDisabled: '#B7B7B7',
+
+    backgroundTransparent: 'rgba(0, 0, 0, 0.5)',
   };
 
   const fontSize = {

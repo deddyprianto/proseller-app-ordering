@@ -70,7 +70,9 @@ const useStyles = () => {
     },
     image: {
       width: '100%',
-      aspectRatio: 1.1,
+      maxWidth: '100%',
+      height: undefined,
+      aspectRatio: 1 / 1,
     },
     iconCart: {
       width: 24,
