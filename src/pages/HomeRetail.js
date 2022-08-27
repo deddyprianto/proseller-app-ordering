@@ -449,16 +449,18 @@ const Home = () => {
   };
 
   const renderProductList = () => {
-    const productsLimit = products.slice(0, productsLimitLength);
-    return (
-      <View
-        onLayout={event => {
-          const layout = event.nativeEvent.layout;
-          setProductListPosition(layout.y);
-        }}>
-        <ProductList products={productsLimit} basket={basket} />
-      </View>
-    );
+    if (!isEmptyArray(products)) {
+      const productsLimit = products?.slice(0, productsLimitLength);
+      return (
+        <View
+          onLayout={event => {
+            const layout = event.nativeEvent.layout;
+            setProductListPosition(layout.y);
+          }}>
+          <ProductList products={productsLimit} basket={basket} />
+        </View>
+      );
+    }
   };
 
   const renderDivider = () => {
