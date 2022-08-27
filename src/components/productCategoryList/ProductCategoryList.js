@@ -38,7 +38,15 @@ const useStyles = () => {
       flexDirection: 'row',
       width: WIDTH,
       paddingHorizontal: 16,
-      paddingBottom: 60,
+    },
+    viewGroupCategoriesSmall: {
+      flex: 1,
+      flexWrap: 'wrap',
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      width: WIDTH,
+      paddingHorizontal: 16,
     },
     viewMoreCategories: {
       elevation: 2,
@@ -163,9 +171,7 @@ const ProductCategoryList = ({
   };
 
   const handleSelectCategory = item => {
-    console.log('GILA');
     if (onClick) {
-      console.log('GILA');
       onClick(item);
     }
   };
@@ -181,6 +187,8 @@ const ProductCategoryList = ({
   };
 
   const renderProductCategoryItem = item => {
+    const isItemSizeSmall = itemSize === 'small';
+    console.log('FFEBY GILA', isItemSizeSmall);
     switch (itemSize) {
       case 'large':
         return (
@@ -258,8 +266,13 @@ const ProductCategoryList = ({
 
   const renderGroupCategories = () => {
     const result = groupCategories?.map((items, index) => {
+      const isItemSizeSmall = itemSize === 'small';
+      const styleView = isItemSizeSmall
+        ? styles.viewGroupCategoriesSmall
+        : styles.viewGroupCategories;
+
       return (
-        <View key={index} style={styles.viewGroupCategories}>
+        <View key={index} style={styleView}>
           {renderGroupCategoriesValue(items)}
         </View>
       );
@@ -279,6 +292,11 @@ const ProductCategoryList = ({
   };
 
   const renderCategories = () => {
+    const isItemSizeSmall = itemSize === 'small';
+    const styleView = isItemSizeSmall
+      ? styles.viewGroupCategoriesSmall
+      : styles.viewGroupCategories;
+
     const result = categories?.map(item => {
       return renderCategoriesValue(item);
     });
@@ -291,7 +309,7 @@ const ProductCategoryList = ({
         </ScrollView>
       );
     } else {
-      return <View style={styles.viewGroupCategories}>{result}</View>;
+      return <View style={styleView}>{result}</View>;
     }
   };
 

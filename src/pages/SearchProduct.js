@@ -4,7 +4,7 @@
  * PT Edgeworks
  */
 
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {Actions} from 'react-native-router-flux';
 import {ScrollView} from 'react-native-gesture-handler';
@@ -180,6 +180,7 @@ const useStyles = () => {
 };
 
 const SearchProduct = ({category}) => {
+  const ref = useRef();
   const styles = useStyles();
   const dispatch = useDispatch();
 
@@ -274,6 +275,7 @@ const SearchProduct = ({category}) => {
     };
 
     if (searchQuery && !selectedCategory?.id) {
+      ref.current.scrollTo(0);
       loadData();
     }
   }, [dispatch, defaultOutlet, searchQuery, selectedCategory]);
@@ -463,6 +465,7 @@ const SearchProduct = ({category}) => {
   const renderProductSearchByQuery = () => {
     return (
       <ScrollView
+        ref={ref}
         onScroll={({nativeEvent}) => {
           if (isCloseToBottom(nativeEvent)) {
             handleSearchMoreProducts();
@@ -473,13 +476,23 @@ const SearchProduct = ({category}) => {
           basket={basket}
           products={productsSearch}
           searchQuery={searchQuery}
+          isLoading={isLoading}
         />
       </ScrollView>
     );
   };
 
   const renderProductSearchByCategoryBody = () => {
-    if (!isEmptyArray(subCategories)) {
+    if (isEmptyArray(subCategories) && !isLoading) {
+      return (
+        <View style={styles.viewEmpty}>
+          <Image source={appConfig.iconInformation} style={styles.iconEmpty} />
+          <Text style={styles.textEmpty}>
+            Item can’t be found. Please try another keyword.
+          </Text>
+        </View>
+      );
+    } else {
       return (
         <>
           <ProductSubCategoryList
@@ -492,17 +505,9 @@ const SearchProduct = ({category}) => {
           <ProductList products={productsBySubCategory} basket={basket} />
         </>
       );
-    } else {
-      return (
-        <View style={styles.viewEmpty}>
-          <Image source={appConfig.iconInformation} style={styles.iconEmpty} />
-          <Text style={styles.textEmpty}>
-            Item can’t be found. Please try another keyword.
-          </Text>
-        </View>
-      );
     }
   };
+
   const renderProductSearchByCategory = () => {
     const text =
       selectedCategory?.name && searchQuery

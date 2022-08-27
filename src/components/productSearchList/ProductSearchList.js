@@ -69,7 +69,7 @@ const useStyles = () => {
   return styles;
 };
 
-const ProductSearchList = ({products, basket, searchQuery}) => {
+const ProductSearchList = ({products, basket, searchQuery, isLoading}) => {
   const styles = useStyles();
 
   const renderProducts = () => {
@@ -94,13 +94,7 @@ const ProductSearchList = ({products, basket, searchQuery}) => {
   };
 
   const renderBody = () => {
-    if (!isEmptyArray(products)) {
-      return (
-        <ScrollView style={styles.container}>
-          <View style={styles.viewGroupProduct}>{renderProducts()}</View>
-        </ScrollView>
-      );
-    } else {
+    if (isEmptyArray(products) && !isLoading) {
       return (
         <View style={styles.viewEmpty}>
           <Image source={appConfig.iconInformation} style={styles.iconEmpty} />
@@ -108,6 +102,12 @@ const ProductSearchList = ({products, basket, searchQuery}) => {
             Item can’t be found. Please try another keyword.
           </Text>
         </View>
+      );
+    } else {
+      return (
+        <ScrollView style={styles.container}>
+          <View style={styles.viewGroupProduct}>{renderProducts()}</View>
+        </ScrollView>
       );
     }
   };
