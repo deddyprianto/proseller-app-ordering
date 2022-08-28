@@ -114,11 +114,13 @@ const Register = () => {
     setIsLoading(true);
     const response = await dispatch(checkAccountExist(payload));
 
-    if (response?.status) {
-      const message =
+    if (response?.status || response?.message) {
+      const existMessage =
         registerMethod === 'email'
           ? 'Email already exist'
           : 'Mobile Number already exist';
+
+      const message = response?.message || existMessage;
 
       dispatch(
         showSnackbar({
@@ -136,7 +138,7 @@ const Register = () => {
     return (
       <Image
         style={styles.image}
-        resizeMode="stretch"
+        resizeMode="center"
         source={appConfig.logoMerchant}
       />
     );

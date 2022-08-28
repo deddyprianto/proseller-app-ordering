@@ -22,6 +22,7 @@ import {logoutUser} from '../actions/auth.actions';
 import LoadingScreen from '../components/loadingScreen';
 import {myProgressBarCampaign} from '../actions/account.action';
 import Theme from '../theme';
+import ConfirmationDialog from '../components/confirmationDialog';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -150,6 +151,7 @@ const useStyles = () => {
       height: 30,
       width: 30,
       marginHorizontal: 14,
+      tintColor: theme.colors.brandPrimary,
     },
     primaryColor: {
       color: theme.colors.primary,
@@ -163,6 +165,10 @@ const Profile = () => {
   const styles = useStyles();
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
+  const [isOpenLogoutModal, setIsOpenLogoutModal] = useState(false);
+  const [isOpenDeleteAccountModal, setIsOpenDeleteAccountModal] = useState(
+    false,
+  );
   const [user, setUser] = useState({});
 
   const progressBarCampaign = useSelector(
@@ -204,6 +210,21 @@ const Profile = () => {
     setIsLoading(true);
     await dispatch(logoutUser());
     setIsLoading(false);
+  };
+
+  const handleOpenDeleteAccountModal = () => {
+    setIsOpenDeleteAccountModal(true);
+  };
+
+  const handleCloseDeleteAccountModal = () => {
+    setIsOpenDeleteAccountModal(false);
+  };
+  const handleOpenLogoutModal = () => {
+    setIsOpenLogoutModal(true);
+  };
+
+  const handleCloseLogoutModal = () => {
+    setIsOpenLogoutModal(false);
   };
 
   const handleEditProfile = () => {
@@ -256,7 +277,7 @@ const Profile = () => {
             position: 'absolute',
             left: `${percentageIcon}%`,
           }}
-          source={appConfig.funtoastCoffeeIcon}
+          source={appConfig.iconPointBar}
         />
       </View>
     );
@@ -371,6 +392,32 @@ const Profile = () => {
     );
   };
 
+  const renderLogout = () => {
+    return (
+      <TouchableOpacity
+        style={styles.viewOption}
+        onPress={() => {
+          handleOpenLogoutModal();
+        }}>
+        <Image style={styles.imageIcon} source={appConfig.iconLogout} />
+        <Text style={styles.textLogout}>Logout</Text>
+      </TouchableOpacity>
+    );
+  };
+
+  const renderDeleteAccount = () => {
+    return (
+      <TouchableOpacity
+        style={styles.viewOption}
+        onPress={() => {
+          handleOpenDeleteAccountModal();
+        }}>
+        <Image style={styles.imageIcon} source={appConfig.iconDelete} />
+        <Text style={styles.textLogout}>Delete My Account</Text>
+      </TouchableOpacity>
+    );
+  };
+
   const renderSettings = () => {
     return (
       <View>
@@ -379,21 +426,50 @@ const Profile = () => {
         {renderEditProfile()}
         {renderNotifications()}
         {renderTermsAndConditions()}
+        {renderDeleteAccount()}
+        {renderLogout()}
       </View>
     );
   };
 
-  const renderLogout = () => {
-    return (
-      <TouchableOpacity
-        style={styles.viewLogout}
-        onPress={() => {
-          handleLogout();
-        }}>
-        <Image style={styles.imageIcon} source={appConfig.iconLogout} />
-        <Text style={styles.textLogout}>Logout</Text>
-      </TouchableOpacity>
-    );
+  const renderDeleteAccountConfirmationDialog = () => {
+    if (isOpenDeleteAccountModal) {
+      return (
+        <ConfirmationDialog
+          open={isOpenDeleteAccountModal}
+          handleClose={() => {
+            handleCloseDeleteAccountModal();
+          }}
+          handleSubmit={() => {
+            handleLogout();
+          }}
+          isLoading={isLoading}
+          textTitle="Delete account"
+          textDescription="This will permanently delete your account. You will not able to access your order history and personal detail."
+          textSubmit="Ok"
+        />
+      );
+    }
+  };
+
+  const renderLogoutConfirmationDialog = () => {
+    if (isOpenLogoutModal) {
+      return (
+        <ConfirmationDialog
+          open={isOpenLogoutModal}
+          handleClose={() => {
+            handleCloseLogoutModal();
+          }}
+          handleSubmit={() => {
+            handleLogout();
+          }}
+          isLoading={isLoading}
+          textTitle="Logout"
+          textDescription="Are you sure you want to logout your account?"
+          textSubmit="Ok"
+        />
+      );
+    }
   };
 
   return (
@@ -401,7 +477,8 @@ const Profile = () => {
       <LoadingScreen loading={isLoading} />
       {renderPointHeader()}
       {renderSettings()}
-      {renderLogout()}
+      {renderDeleteAccountConfirmationDialog()}
+      {renderLogoutConfirmationDialog()}
     </ScrollView>
   );
 };

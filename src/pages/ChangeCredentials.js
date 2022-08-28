@@ -155,6 +155,7 @@ class ChangeCredentials extends Component {
       loading: false,
       phone: '',
       email: '',
+      isEmailValid: false,
       country: awsConfig.COUNTRY,
       openModalCountry: false,
       dialogChangeLanguage: false,
@@ -295,6 +296,16 @@ class ChangeCredentials extends Component {
     }
   };
 
+  validate = text => {
+    let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
+    if (reg.test(text) === false) {
+      this.setState({email: text, isEmailValid: false});
+      return false;
+    } else {
+      this.setState({email: text, isEmailValid: true});
+    }
+  };
+
   render() {
     const {intlData, mode} = this.props;
     return (
@@ -353,7 +364,7 @@ class ChangeCredentials extends Component {
                 keyboardType="email-address"
                 placeholder={intlData.messages.emailAddress}
                 value={this.state.email}
-                onChangeText={value => this.setState({email: value})}
+                onChangeText={value => this.validate(value)}
                 style={{
                   fontSize: 17,
                   fontFamily: 'Poppins-Regular',
@@ -364,6 +375,11 @@ class ChangeCredentials extends Component {
                   borderRadius: 13,
                 }}
               />
+              {this.state.email.length > 3 && !this.state.isEmailValid ? (
+                <Text style={{color: 'red'}}>Invalid Email Address</Text>
+              ) : (
+                <Text />
+              )}
             </View>
           ) : (
             <View
@@ -442,14 +458,19 @@ class ChangeCredentials extends Component {
           )}
           <View style={{marginVertical: 15}}>
             <TouchableHighlight
-              disabled={this.checkMode()}
+              disabled={
+                this.checkMode() ||
+                (mode === 'Email' && !this.state.isEmailValid)
+              }
               onPress={this.submitOTP}
               style={{
                 padding: 15,
                 borderRadius: 10,
-                backgroundColor: this.checkMode()
-                  ? colorConfig.store.disableButton
-                  : colorConfig.store.defaultColor,
+                backgroundColor:
+                  this.checkMode() ||
+                  (mode === 'Email' && !this.state.isEmailValid)
+                    ? colorConfig.store.disableButton
+                    : colorConfig.store.defaultColor,
               }}>
               <Text
                 style={{

@@ -36,12 +36,10 @@ export const checkAccountExist = payload => {
       if (response.success) {
         dispatch({
           type: 'DATA_ACCOUNT_EXIST',
-          status: response.responseBody.Data.status,
+          status: response.responseBody.data.status,
         });
-        return response.responseBody.Data;
-      } else {
-        throw response;
       }
+      return response?.responseBody?.data;
     } catch (error) {
       return error;
     }

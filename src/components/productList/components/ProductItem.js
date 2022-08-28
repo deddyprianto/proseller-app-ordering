@@ -7,7 +7,14 @@
 
 import React, {useState, useEffect} from 'react';
 
-import {StyleSheet, View, Text, Image, TouchableOpacity} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  ImageBackground,
+} from 'react-native';
 import filter from 'lodash/filter';
 import indexOf from 'lodash/indexOf';
 
@@ -57,6 +64,12 @@ const useStyles = () => {
       fontSize: theme.fontSize[14],
       fontFamily: theme.fontFamily.poppinsMedium,
     },
+    textPromo: {
+      lineHeight: 18,
+      color: theme.colors.text4,
+      fontSize: theme.fontSize[12],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
     viewQtyAndName: {
       display: 'flex',
       flexDirection: 'row',
@@ -68,11 +81,35 @@ const useStyles = () => {
       paddingVertical: 4,
       backgroundColor: theme.colors.primary,
     },
+    viewPromo: {
+      elevation: 1,
+      position: 'absolute',
+      top: 8,
+      left: 8,
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: 4,
+      borderRadius: 50,
+      backgroundColor: theme.colors.semanticError,
+    },
     image: {
       width: '100%',
       maxWidth: '100%',
       height: undefined,
       aspectRatio: 1 / 1,
+    },
+    imagePromo: {
+      width: 16,
+      height: 16,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginRight: 4,
+    },
+    iconPromo: {
+      color: theme.colors.semanticError,
+      fontSize: 8,
     },
     iconCart: {
       width: 24,
@@ -153,7 +190,7 @@ const Product = ({product, basket}) => {
   const renderImage = () => {
     const image = product?.defaultImageURL
       ? {uri: product?.defaultImageURL}
-      : appConfig.logoMerchant;
+      : appConfig.logoMerchantWithBackground;
 
     return <Image style={styles.image} resizeMode="center" source={image} />;
   };
@@ -254,12 +291,29 @@ const Product = ({product, basket}) => {
       );
     }
   };
+
+  const renderPromoIcon = () => {
+    if (!isEmptyArray(product.promotions)) {
+      return (
+        <View style={styles.viewPromo}>
+          <ImageBackground
+            source={appConfig.funtoastStar}
+            style={styles.imagePromo}>
+            <Text style={styles.iconPromo}>%</Text>
+          </ImageBackground>
+          <Text style={styles.textPromo}>Promo</Text>
+        </View>
+      );
+    }
+  };
+
   return (
     <TouchableOpacity
       onPress={() => {
         handleProductOnClick();
       }}
       style={styles.root}>
+      {renderPromoIcon()}
       {renderImage()}
       {renderBody()}
       {renderProductAddModal()}

@@ -184,6 +184,8 @@ const SearchProduct = ({category}) => {
   const styles = useStyles();
   const dispatch = useDispatch();
 
+  const [basketLength, setBasketLength] = useState(0);
+
   const [searchQuery, setSearchQuery] = useState('');
   const [searchTextInput, setSearchTextInput] = useState('');
 
@@ -212,6 +214,16 @@ const SearchProduct = ({category}) => {
   const searchProductHistory = useSelector(
     state => state.searchReducer?.searchProductHistory,
   );
+
+  useEffect(() => {
+    let length = 0;
+    if (basket && basket.details) {
+      basket.details.forEach(cart => {
+        length += cart.quantity;
+      });
+    }
+    setBasketLength(length);
+  }, [basket]);
 
   useEffect(() => {
     setSelectedCategory(category);
@@ -327,7 +339,7 @@ const SearchProduct = ({category}) => {
           <View style={styles.viewIconAndTextCart}>
             <Image source={appConfig.iconCart} style={styles.iconCart} />
             <Text style={styles.textButtonCart}>
-              {basket?.details?.length} Items in Cart
+              {basketLength} Items in Cart
             </Text>
           </View>
           <Text style={styles.textButtonCart}>

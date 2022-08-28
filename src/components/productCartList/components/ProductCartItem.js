@@ -47,6 +47,7 @@ const useStyles = () => {
       flex: 1,
     },
     bodyRight: {
+      marginLeft: 8,
       display: 'flex',
       flexDirection: 'column',
       justifyContent: 'space-between',
@@ -64,6 +65,7 @@ const useStyles = () => {
       marginBottom: 8,
     },
     imageNotes: {
+      marginTop: 5,
       width: 10,
       height: 9,
       marginRight: 4,
@@ -79,8 +81,8 @@ const useStyles = () => {
       fontSize: 8,
     },
     iconPromoActive: {
-      color: theme.colors.primary,
       fontSize: 8,
+      color: theme.colors.semanticError,
     },
     iconBullet: {
       fontSize: 6,
@@ -173,7 +175,7 @@ const useStyles = () => {
       flex: 1,
       fontStyle: 'italic',
       color: theme.colors.text2,
-      fontSize: theme.fontSize[8],
+      fontSize: theme.fontSize[12],
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     viewNotes: {
@@ -235,7 +237,7 @@ const useStyles = () => {
       justifyContent: 'center',
       padding: 4,
       borderRadius: 50,
-      backgroundColor: theme.colors.primary,
+      backgroundColor: theme.colors.semanticError,
     },
     viewTotalPrice: {
       display: 'flex',
@@ -290,9 +292,9 @@ const ProductCart = ({item, disabled}) => {
         <View style={styles.viewBullet} />
 
         <Text style={styles.textModifier}>
-          <Text style={styles.textModifierItemQty}>{qty}x</Text>
-          <Text style={styles.textModifierItemName}>{name}</Text>
-          <Text style={styles.textModifierItemPrice}>+{price}</Text>
+          <Text style={styles.textModifierItemQty}>{qty}x </Text>
+          <Text style={styles.textModifierItemName}>{name} </Text>
+          <Text style={styles.textModifierItemPrice}>+{price} </Text>
         </Text>
       </View>
     );
@@ -320,7 +322,7 @@ const ProductCart = ({item, disabled}) => {
   };
 
   const renderTotalPrice = () => {
-    if (!isEmptyArray(item.promotions)) {
+    if (item?.isPromotionApplied && item.amountAfterDisc < item.grossAmount) {
       return (
         <View style={styles.viewTotalPrice}>
           <Text style={styles.textPriceBeforeDiscount}>
@@ -372,13 +374,10 @@ const ProductCart = ({item, disabled}) => {
   };
 
   const renderImage = () => {
-    return (
-      <Image
-        style={styles.image}
-        resizeMode="stretch"
-        source={{uri: item?.product?.defaultImageURL}}
-      />
-    );
+    const image = item?.product?.defaultImageURL
+      ? {uri: item?.product?.defaultImageURL}
+      : appConfig.logoMerchantWithBackground;
+    return <Image style={styles.image} resizeMode="stretch" source={image} />;
   };
 
   const renderPromoIcon = () => {

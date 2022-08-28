@@ -36,12 +36,6 @@ class StoreStores extends Component {
       {cancelable: false},
     );
   };
-
-  removeCart = async () => {
-    await this.props.dispatch(removeBasket());
-    await this.props.dispatch(getBasket());
-  };
-
   handleRemoveSelectedAddress = async () => {
     const userDecrypt = CryptoJS.AES.decrypt(
       this.props.user,
@@ -55,9 +49,15 @@ class StoreStores extends Component {
     );
   };
 
+  removeCart = async () => {
+    await this.handleRemoveSelectedAddress();
+    await this.props.dispatch(changeOrderingMode({orderingMode: ''}));
+    await this.props.dispatch(removeBasket());
+    await this.props.dispatch(getBasket());
+  };
+
   storeDetailStores = async item => {
     try {
-      await this.handleRemoveSelectedAddress();
       await this.props.dispatch(getOutletById(item.storeId));
       if (Actions.currentScene !== 'pageIndex') {
         Actions.pop();
@@ -153,7 +153,7 @@ class StoreStores extends Component {
                         <Icon
                           size={18}
                           name={Platform.OS === 'ios' ? 'ios-pin' : 'md-pin'}
-                          style={{color: 'red'}}
+                          style={{color: colorConfig.primaryColor}}
                         />
                         <Text
                           style={{
@@ -180,7 +180,11 @@ import {Actions} from 'react-native-router-flux';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
 import {getOutletById} from '../actions/stores.action';
-import {getBasket, removeBasket} from '../actions/order.action';
+import {
+  changeOrderingMode,
+  getBasket,
+  removeBasket,
+} from '../actions/order.action';
 import {updateUser} from '../actions/user.action';
 import awsConfig from '../config/awsConfig';
 

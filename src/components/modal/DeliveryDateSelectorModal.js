@@ -232,7 +232,7 @@ const DeliveryDateSelectorModal = ({open, handleClose, value}) => {
     };
 
     loadData();
-  }, []);
+  }, [open]);
 
   useEffect(() => {
     const selectedDateFormatter = moment(selectedDate).format('YYYY-MM-DD');

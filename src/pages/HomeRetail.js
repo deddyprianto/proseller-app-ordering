@@ -187,6 +187,9 @@ const useStyles = () => {
       height: 12,
       tintColor: theme.colors.textQuaternary,
     },
+    marginBottom30: {
+      marginBottom: 30,
+    },
   });
   return styles;
 };
@@ -195,6 +198,7 @@ const Home = () => {
   const ref = useRef();
   const styles = useStyles();
   const dispatch = useDispatch();
+  const [basketLength, setBasketLength] = useState(0);
   const [productsLimitLength, setProductsLimitLength] = useState(10);
   const [refresh, setRefresh] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState({});
@@ -230,6 +234,16 @@ const Home = () => {
   const svcBalance = useSelector(state => state.SVCReducer.balance.balance);
 
   const intlData = useSelector(state => state.intlData);
+
+  useEffect(() => {
+    let length = 0;
+    if (basket && basket.details) {
+      basket.details.forEach(cart => {
+        length += cart.quantity;
+      });
+    }
+    setBasketLength(length);
+  }, [basket]);
 
   useEffect(() => {
     const loadData = async () => {
@@ -299,6 +313,7 @@ const Home = () => {
     if (!isEmptyArray(basket?.details)) {
       return (
         <TouchableOpacity
+          activeOpacity={0.5}
           style={styles.viewButtonCart}
           onPress={() => {
             Actions.cart();
@@ -306,7 +321,7 @@ const Home = () => {
           <View style={styles.viewIconAndTextCart}>
             <Image source={appConfig.iconCart} style={styles.icon} />
             <Text style={styles.textButtonCart}>
-              {basket?.details?.length} Items in Cart
+              {basketLength} Items in Cart
             </Text>
           </View>
           <Text style={styles.textPriceButtonCart}>
@@ -467,6 +482,7 @@ const Home = () => {
             setProductListPosition(layout.y);
           }}>
           <ProductList products={productsLimit} basket={basket} />
+          <View style={styles.marginBottom30} />
         </View>
       );
     }

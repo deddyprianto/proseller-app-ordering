@@ -17,6 +17,7 @@ import ProductAddModal from '../productAddModal';
 import {isEmptyArray} from '../../helper/CheckEmpty';
 import appConfig from '../../config/appConfig';
 import Theme from '../../theme';
+import CurrencyFormatter from '../../helper/CurrencyFormatter';
 
 const useStyles = () => {
   const theme = Theme();
@@ -38,6 +39,8 @@ const useStyles = () => {
       backgroundColor: theme.colors.background,
     },
     bullet: {
+      marginTop: 5,
+      marginRight: 8,
       width: 6,
       height: 6,
       borderRadius: 10,
@@ -67,6 +70,9 @@ const useStyles = () => {
       tintColor: theme.colors.text4,
       marginRight: 4,
     },
+    textWrapper: {
+      flex: 1,
+    },
     textAddOn: {
       fontStyle: 'italic',
       color: theme.colors.text2,
@@ -74,6 +80,7 @@ const useStyles = () => {
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textName: {
+      marginLeft: 8,
       color: theme.colors.text1,
       fontSize: theme.fontSize[12],
       fontFamily: theme.fontFamily.poppinsMedium,
@@ -86,7 +93,14 @@ const useStyles = () => {
     textPrice: {
       color: theme.colors.primary,
       fontSize: theme.fontSize[14],
-      fontFamily: theme.fontFamily.poppinsBold,
+      fontFamily: theme.fontFamily.poppinsSemiBold,
+    },
+    textPriceBeforeDiscount: {
+      marginRight: 10,
+      textDecorationLine: 'line-through',
+      color: theme.colors.text2,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsSemiBold,
     },
     textNotes: {
       fontStyle: 'italic',
@@ -95,12 +109,14 @@ const useStyles = () => {
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textModifierItemQty: {
+      marginRight: 8,
       fontStyle: 'italic',
       color: theme.colors.primary,
       fontSize: theme.fontSize[10],
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textModifierItemName: {
+      paddingRight: 8,
       fontStyle: 'italic',
       color: theme.colors.text2,
       fontSize: theme.fontSize[10],
@@ -153,10 +169,14 @@ const useStyles = () => {
       alignItems: 'center',
       marginBottom: 16,
     },
+    viewProductModifiers: {
+      marginTop: 8,
+    },
     viewProductModifierItem: {
+      flex: 1,
       display: 'flex',
       flexDirection: 'row',
-      alignItems: 'center',
+      alignItems: 'flex-start',
     },
     viewEditButton: {
       display: 'flex',
@@ -173,6 +193,10 @@ const useStyles = () => {
       display: 'flex',
       flexDirection: 'row',
       alignItems: 'flex-start',
+    },
+    viewTotalPrice: {
+      display: 'flex',
+      flexDirection: 'row',
     },
     touchableMakeAnother: {
       marginTop: 16,
@@ -289,12 +313,14 @@ const ProductUpdateModal = ({open, handleClose, product, basket}) => {
       return (
         <View key={index} style={styles.viewProductModifierItem}>
           <View style={styles.bullet} />
-          <View style={{marginRight: 8}} />
           <Text style={styles.textModifierItemQty}>{item.quantity}x</Text>
-          <View style={{marginRight: 8}} />
-          <Text style={styles.textModifierItemName}>{item.name}</Text>
-          <View style={{marginRight: 8}} />
-          <Text style={styles.textModifierItemPrice}>+{item.price}</Text>
+          <Text style={styles.textWrapper}>
+            <Text style={styles.textModifierItemName}>
+              {item.name}
+              {'   '}
+            </Text>
+            <Text style={styles.textModifierItemPrice}>+{item.price}</Text>
+          </Text>
         </View>
       );
     });
@@ -309,7 +335,7 @@ const ProductUpdateModal = ({open, handleClose, product, basket}) => {
       });
 
       return (
-        <View style={{marginTop: 8}}>
+        <View style={styles.viewProductModifiers}>
           <Text style={styles.textAddOn}>Add-On</Text>
           {result}
         </View>
@@ -333,14 +359,30 @@ const ProductUpdateModal = ({open, handleClose, product, basket}) => {
     return (
       <View style={styles.viewQtyAndName}>
         {renderProductItemQty(item?.quantity)}
-        <View style={{marginRight: 8}} />
         {renderProductItemName(item?.product?.name)}
       </View>
     );
   };
 
-  const renderProductItemPrice = price => {
-    return <Text style={styles.textPrice}>SGD {price}</Text>;
+  const renderProductItemPrice = item => {
+    if (item?.isPromotionApplied && item.amountAfterDisc < item.grossAmount) {
+      return (
+        <View style={styles.viewTotalPrice}>
+          <Text style={styles.textPriceBeforeDiscount}>
+            {CurrencyFormatter(item?.grossAmount)}
+          </Text>
+          <Text style={styles.textPrice}>
+            {CurrencyFormatter(item?.amountAfterDisc)}
+          </Text>
+        </View>
+      );
+    }
+
+    return (
+      <Text style={styles.textPrice}>
+        {CurrencyFormatter(item?.grossAmount)}
+      </Text>
+    );
   };
 
   const renderProductItemEditButton = () => {
@@ -355,7 +397,7 @@ const ProductUpdateModal = ({open, handleClose, product, basket}) => {
   const renderProductItemPriceAndEditButton = item => {
     return (
       <View style={styles.viewPriceAndEditButton}>
-        {renderProductItemPrice(item?.grossAmount)}
+        {renderProductItemPrice(item)}
         {renderProductItemEditButton()}
       </View>
     );

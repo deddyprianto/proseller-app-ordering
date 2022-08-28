@@ -137,9 +137,10 @@ const OnBoarding = () => {
   };
 
   const images = [
-    appConfig.funtoastOnboarding1,
-    appConfig.funtoastOnboarding2,
-    appConfig.funtoastOnboarding3,
+    appConfig.imageOnBoarding1,
+    appConfig.imageOnBoarding2,
+    appConfig.imageOnBoarding3,
+    appConfig.imageOnBoarding4,
   ];
 
   const renderImages = () => {
