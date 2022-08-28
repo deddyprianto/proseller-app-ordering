@@ -306,6 +306,7 @@ const Cart = () => {
     const loadData = async () => {
       const clientTimezone = Math.abs(new Date().getTimezoneOffset());
       const date = moment().format('YYYY-MM-DD');
+
       const timeSlot = await dispatch(
         getTimeSlot({
           outletId: outlet.id,
@@ -327,9 +328,12 @@ const Cart = () => {
     );
 
     const result = JSON.parse(userDecrypt.toString(CryptoJS.enc.Utf8));
+    const deliveryAddressDefault = result?.deliveryAddress.find(
+      address => address.isDefault,
+    );
     const address = !isEmptyObject(result?.selectedAddress)
       ? result?.selectedAddress
-      : result?.deliveryAddressDefault;
+      : deliveryAddressDefault;
 
     setDeliveryAddress(address);
   }, [userDetail]);

@@ -193,6 +193,7 @@ export const dataStores = () => {
         token,
       );
 
+      //Noted need to update from product
       dispatch({
         type: 'DATA_ALL_STORES',
         data: response.response.data,

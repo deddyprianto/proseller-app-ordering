@@ -60,6 +60,14 @@ const appConfig = {
 
   //LOGO MARTIN
   logoMerchant: require('../assets/img/logo.png'),
+  logoMerchantWithBackground: require('../assets/img/logo-merchant-with-background.png'),
+
+  //IMAGE
+  imageOnBoarding1: require('../assets/img/image-on-boarding-1.png'),
+  imageOnBoarding2: require('../assets/img/image-on-boarding-2.png'),
+  imageOnBoarding3: require('../assets/img/image-on-boarding-3.png'),
+  imageOnBoarding4: require('../assets/img/image-on-boarding-4.png'),
+  imagePromotionBackground: require('../assets/img/image-promotion-background.png'),
 
   //ICON
   iconArrowUp: require('../assets/img/icon-arrow-up.png'),
@@ -95,6 +103,7 @@ const appConfig = {
   iconNotes: require('../assets/img/icon-notes.png'),
 
   iconPoint: require('../assets/img/icon-point.png'),
+  iconPointBar: require('../assets/img/icon-point-bar.png'),
   iconPlus: require('../assets/img/icon-plus.png'),
   iconPayment: require('../assets/img/icon-payment.png'),
   iconProfile: require('../assets/img/icon-profile.png'),

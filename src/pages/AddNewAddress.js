@@ -241,7 +241,7 @@ const AddNewAddress = ({address, coordinate}) => {
         mobileNumber,
         phoneNumber: countryCode + mobileNumber,
       },
-      isDefault,
+      isDefault: deliveryAddresses?.length === 0 || isDefault,
     };
 
     if (typeof address?.index === 'number') {

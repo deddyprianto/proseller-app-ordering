@@ -9,6 +9,7 @@ import moment from 'moment';
 
 const styles = {
   root: {
+    elevation: 1,
     borderRadius: 8,
     paddingHorizontal: 20,
   },

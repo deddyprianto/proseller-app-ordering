@@ -1698,10 +1698,14 @@ export const addProductToBasket = ({defaultOutlet, selectedProduct}) => {
         );
       }
 
-      dispatch({
-        type: 'DATA_BASKET',
-        product: response.response.data,
-      });
+      //NOTE: It will change it letter
+      await dispatch(getBasket());
+
+      // dispatch({
+      //   type: 'DATA_BASKET',
+      //   product: response.response.data,
+      // });
+
       dispatch({
         type: 'OFFLINE_CART',
         product: response.response.data,
@@ -1748,10 +1752,14 @@ export const updateProductBasket = payload => {
         token,
       );
       console.log(response, 'response update data basket');
-      dispatch({
-        type: 'DATA_BASKET',
-        product: response.response.data,
-      });
+
+      //NOTE: It will change it letter there's issue in api need to confirm with backend
+      await dispatch(getBasket());
+      // dispatch({
+      //   type: 'DATA_BASKET',
+      //   product: response.response.data,
+      // });
+
       dispatch({
         type: 'OFFLINE_CART',
         product: response.response.data,

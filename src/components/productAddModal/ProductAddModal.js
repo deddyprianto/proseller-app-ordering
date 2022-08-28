@@ -34,6 +34,7 @@ import appConfig from '../../config/appConfig';
 import Theme from '../../theme';
 import ProductVariants from './components/ProductVariants';
 import ProductModifiers from './components/ProductModifiers';
+import ProductPromotions from './components/ProductPromotions';
 
 const useStyles = () => {
   const theme = Theme();
@@ -58,8 +59,10 @@ const useStyles = () => {
       backgroundColor: '#D6D6D6',
     },
     image: {
-      height: 300,
       width: '100%',
+      maxWidth: '100%',
+      height: undefined,
+      aspectRatio: 1 / 1,
     },
     textHeader: {
       fontSize: theme.fontSize[14],
@@ -379,13 +382,13 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
   }, []);
 
   const renderImage = () => {
+    const image =
+      variantImageURL || product?.defaultImageURL
+        ? {uri: variantImageURL || product?.defaultImageURL}
+        : appConfig.logoMerchantWithBackground;
     return (
       <View style={styles.padding16}>
-        <Image
-          style={styles.image}
-          resizeMode="stretch"
-          source={{uri: variantImageURL || product?.defaultImageURL}}
-        />
+        <Image style={styles.image} resizeMode="stretch" source={image} />
       </View>
     );
   };
@@ -615,6 +618,12 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
     }
   };
 
+  const renderProductPromotions = () => {
+    if (!isEmptyArray(product?.promotions)) {
+      return <ProductPromotions productPromotions={product?.promotions} />;
+    }
+  };
+
   if (!open) {
     return null;
   }
@@ -634,6 +643,7 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
         <ScrollView style={styles.container}>
           {renderImage()}
           {renderNameQtyPrice()}
+          {renderProductPromotions()}
           {renderProductModifiers()}
           {renderProductVariants()}
           {renderSpecialInstruction()}

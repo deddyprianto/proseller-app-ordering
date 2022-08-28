@@ -232,7 +232,7 @@ const DeliveryDateSelectorModal = ({open, handleClose, value}) => {
     };
 
     loadData();
-  }, []);
+  }, [open]);
 
   useEffect(() => {
     const selectedDateFormatter = moment(selectedDate).format('YYYY-MM-DD');
@@ -475,7 +475,9 @@ const DeliveryDateSelectorModal = ({open, handleClose, value}) => {
   const renderDeliveryTimeListModal = () => {
     if (!isEmptyArray(deliveryTimes)) {
       const result = deliveryTimes.map(item => {
-        return renderDeliveryTimeListItem(item);
+        if (item?.isAvailable) {
+          return renderDeliveryTimeListItem(item);
+        }
       });
 
       return (

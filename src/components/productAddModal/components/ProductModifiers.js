@@ -26,6 +26,7 @@ const useStyle = () => {
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textOptionName: {
+      flex: 1,
       fontSize: theme.fontSize[12],
       color: theme.colors.text1,
       fontFamily: theme.fontFamily.poppinsMedium,
@@ -56,22 +57,25 @@ const useStyle = () => {
       paddingHorizontal: 16,
     },
     viewOption: {
+      flex: 1,
       display: 'flex',
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
       paddingHorizontal: 18,
       paddingVertical: 12,
-      borderColor: theme.colors.border,
       borderBottomWidth: 1,
+      borderColor: theme.colors.border,
     },
     viewTextAndButtonQty: {
+      marginLeft: 16,
       display: 'flex',
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
     },
     viewOptionCheckboxNamePrice: {
+      flex: 1,
       display: 'flex',
       flexDirection: 'row',
       alignItems: 'center',
@@ -176,11 +180,13 @@ const ProductModifiers = ({
     selected.forEach(selectedProductModifier => {
       if (
         selectedProductModifier.modifierProductId === value.modifierProductId &&
+        selectedProductModifier.modifierId === value.modifierId &&
         qty !== 0
       ) {
         productModifiersQtyChanged.push({...value, qty});
       } else if (
         selectedProductModifier.modifierProductId === value.modifierProductId &&
+        selectedProductModifier.modifierId === value.modifierId &&
         qty === 0
       ) {
         productModifiersQtyChanged.push();
@@ -201,12 +207,10 @@ const ProductModifiers = ({
   }) => {
     const items = selected;
 
-    const modifierProductIds = selected.map(item => {
-      return item.modifierProductId;
-    });
-
-    const modifierProductIdIndex = modifierProductIds.indexOf(
-      modifierProductId,
+    const modifierProductIdIndex = selected.findIndex(
+      x =>
+        x.modifierId === modifierId &&
+        x.modifierProductId === modifierProductId,
     );
 
     if (modifierProductIdIndex !== -1) {
@@ -308,10 +312,19 @@ const ProductModifiers = ({
     return <Text style={styles.textQty}>{qty}</Text>;
   };
 
-  const renderButtonAndTextQty = ({modifierProductId, min, max, isYesNo}) => {
+  const renderButtonAndTextQty = ({modifierValue, modifier}) => {
+    const modifierProductId = modifierValue?.productID;
+    const max = modifier?.max;
+    const min = modifier?.min;
+    const isYesNo = modifier?.isYesNo;
+    const modifierId = modifier?.id;
+
     const selectedProductModifier = selected.find(
-      item => item.modifierProductId === modifierProductId,
+      item =>
+        item.modifierProductId === modifierProductId &&
+        item.modifierId === modifierId,
     );
+
     const selectedProductModifierQty = selectedProductModifier?.qty || 0;
 
     if (selectedProductModifierQty > 0 && !isYesNo) {
@@ -328,14 +341,18 @@ const ProductModifiers = ({
   const renderOptionNameAndPrice = ({isYesNo, modifierValue}) => {
     if (isYesNo && !modifierValue?.price) {
       return (
-        <View>
-          <Text style={styles.textOptionName}>{modifierValue?.name}</Text>
+        <View style={{flex: 1}}>
+          <Text numberOfLines={2} style={styles.textOptionName}>
+            {modifierValue?.name}
+          </Text>
         </View>
       );
     } else {
       return (
-        <View>
-          <Text style={styles.textOptionName}>{modifierValue?.name}</Text>
+        <View style={{flex: 1}}>
+          <Text numberOfLines={2} style={styles.textOptionName}>
+            {modifierValue?.name}
+          </Text>
           <Text style={styles.textOptionPrice}>
             {CurrencyFormatter(modifierValue?.price)}
           </Text>
@@ -372,8 +389,11 @@ const ProductModifiers = ({
 
   const renderCheckbox = ({modifier, modifierValue}) => {
     const disabled = handleDisabledCheckbox({modifier, modifierValue});
+
     const active = selected.find(
-      value => value.modifierProductId === modifierValue.productID,
+      value =>
+        value.modifierProductId === modifierValue.productID &&
+        value.modifierId === modifier.id,
     );
     const style = active ? styles.checkboxActive : styles.checkbox;
 
@@ -414,10 +434,8 @@ const ProductModifiers = ({
         <View style={styles.viewOption}>
           {renderOptionCheckboxNamePrice({modifierValue, modifier})}
           {renderButtonAndTextQty({
-            isYesNo: modifier?.isYesNo,
-            modifierProductId: modifierValue?.productID,
-            max: modifier?.max,
-            min: modifier?.min,
+            modifierValue,
+            modifier,
           })}
         </View>
       );
@@ -480,7 +498,7 @@ const ProductModifiers = ({
 
       const result = productModifiersFormatted.map(productModifier => {
         return (
-          <View>
+          <View style={{flex: 1}}>
             {renderNameAndTermsConditions(productModifier)}
             {renderOptions({
               modifier: productModifier?.modifier,

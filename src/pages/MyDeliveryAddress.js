@@ -69,16 +69,16 @@ const MyDeliveryAddress = ({fromScene}) => {
     let deliveryAddresses = result?.deliveryAddress || [];
 
     if (!isEmptyArray(deliveryAddresses)) {
-      const isDefault = deliveryAddresses?.find(item => item.isDefault);
+      const isDefault = deliveryAddresses?.find(item => item?.isDefault);
       const isDefaultIndex = deliveryAddresses?.findIndex(
-        item => item.index === isDefault.index,
+        item => item?.index === isDefault?.index,
       );
-
-      deliveryAddresses.splice(isDefaultIndex, 1);
-      deliveryAddresses.unshift(isDefault);
-
-      setDeliveryAddress(deliveryAddresses);
+      if (isDefault) {
+        deliveryAddresses.splice(isDefaultIndex, 1);
+        deliveryAddresses.unshift(isDefault);
+      }
     }
+    setDeliveryAddress(deliveryAddresses);
   }, [userDetail]);
 
   const renderFooter = () => {
