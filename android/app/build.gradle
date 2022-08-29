@@ -138,13 +138,13 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.automaxima"
+        applicationId "com.acemart"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 68
-        versionName "1.1.27"
+        versionCode 73
+        versionName "1.1.30"
         missingDimensionStrategy 'react-native-camera', 'general'
-        resValue "string", "build_config_package", "com.automaxima"
+        resValue "string", "build_config_package", "com.acemart"
         multiDexEnabled true
         // detox
         testBuildType System.getProperty('testBuildType', 'debug')
@@ -192,24 +192,24 @@ android {
     productFlavors {
             dev {
                 minSdkVersion rootProject.ext.minSdkVersion
-                applicationId 'com.automaxima.dev'
-                versionName "1.1.27"
+                applicationId 'com.acemart.dev'
+                versionName "1.1.30"
                 targetSdkVersion rootProject.ext.targetSdkVersion
-                resValue "string", "build_config_package", "com.automaxima"
+                resValue "string", "build_config_package", "com.acemart"
             }
             demo {
                 minSdkVersion rootProject.ext.minSdkVersion
-                applicationId 'com.automaxima.demo'
-                versionName "1.1.27"
+                applicationId 'com.acemart.demo'
+                versionName "1.1.30"
                 targetSdkVersion rootProject.ext.targetSdkVersion
-                resValue "string", "build_config_package", "com.automaxima"
+                resValue "string", "build_config_package", "com.acemart"
             }
             app {
                 minSdkVersion rootProject.ext.minSdkVersion
-                applicationId 'com.automaxima.app'
-                versionName "1.1.27"
+                applicationId 'com.acemart.app'
+                versionName "1.1.30"
                 targetSdkVersion rootProject.ext.targetSdkVersion
-                resValue "string", "build_config_package", "com.automaxima"
+                resValue "string", "build_config_package", "com.acemart"
             }
         }
     // applicationVariants are e.g. debug, release

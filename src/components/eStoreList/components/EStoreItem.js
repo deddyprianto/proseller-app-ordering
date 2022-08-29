@@ -255,7 +255,7 @@ const EStoreItem = ({item, basket}) => {
       ? {uri: item?.defaultImageURL}
       : appConfig.logoMerchant;
 
-    return <Image style={styles.image} resizeMode="center" source={image} />;
+    return <Image style={styles.image} resizeMode="contain" source={image} />;
   };
 
   const renderBody = () => {

@@ -95,7 +95,7 @@ const Header = ({
     return (
       <Image
         source={appConfig.logoMerchant}
-        resizeMode="center"
+        resizeMode="contain"
         style={styles.logo}
       />
     );

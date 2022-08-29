@@ -172,7 +172,7 @@ const OTP = ({isLogin, method, methodValue}) => {
     return (
       <Image
         style={styles.image}
-        resizeMode="center"
+        resizeMode="contain"
         source={appConfig.logoMerchant}
       />
     );

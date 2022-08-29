@@ -18,6 +18,7 @@ import {
   ScrollView,
   Alert,
   Image,
+  SafeAreaView,
 } from 'react-native';
 import RBSheet from 'react-native-raw-bottom-sheet';
 
@@ -953,7 +954,7 @@ const Cart = () => {
   }
 
   return (
-    <View style={styles.root}>
+    <SafeAreaView style={styles.root}>
       <Header title="Cart" />
       <View style={styles.container}>
         <ScrollView>
@@ -968,7 +969,7 @@ const Cart = () => {
         {renderModal()}
       </View>
       {renderFooter()}
-    </View>
+    </SafeAreaView>
   );
 };
 

@@ -230,7 +230,7 @@ const ProductCategoryList = ({
         }}>
         <Image
           source={appConfig.iconMoreMenu}
-          resizeMode="center"
+          resizeMode="contain"
           style={styles.imageMoreCategories}
         />
         <Text numberOfLines={2} style={styles.textMoreCategories}>

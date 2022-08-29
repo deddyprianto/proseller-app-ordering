@@ -17,6 +17,7 @@ import {
   TouchableOpacity,
   Modal,
   TextInput,
+  SafeAreaView,
 } from 'react-native';
 
 import IconIonicons from 'react-native-vector-icons/Ionicons';
@@ -637,7 +638,7 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
         handleClose();
       }}>
       <LoadingScreen loading={isLoading} />
-      <View style={styles.root}>
+      <SafeAreaView style={styles.root}>
         {header()}
         <View style={styles.divider} />
         <ScrollView style={styles.container}>
@@ -649,7 +650,7 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
           {renderSpecialInstruction()}
         </ScrollView>
         {renderAddToCartButton()}
-      </View>
+      </SafeAreaView>
     </Modal>
   );
 };

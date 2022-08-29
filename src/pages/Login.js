@@ -184,7 +184,7 @@ const Login = () => {
     return (
       <Image
         style={styles.image}
-        resizeMode="center"
+        resizeMode="contain"
         source={appConfig.logoMerchant}
       />
     );

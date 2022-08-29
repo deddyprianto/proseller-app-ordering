@@ -57,7 +57,7 @@ const MoreCategoryItem = ({category, onPress}) => {
 
   return (
     <TouchableOpacity style={styles.root} onPress={onPress}>
-      <Image source={image} resizeMode="center" style={styles.image} />
+      <Image source={image} resizeMode="contain" style={styles.image} />
       <Text numberOfLines={2} style={styles.textName}>
         {category?.name}
       </Text>

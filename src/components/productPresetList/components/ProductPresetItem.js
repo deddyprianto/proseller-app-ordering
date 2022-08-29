@@ -155,7 +155,7 @@ const Product = ({product, basket}) => {
       ? {uri: product?.defaultImageURL}
       : appConfig.logoMerchant;
 
-    return <Image style={styles.image} resizeMode="center" source={image} />;
+    return <Image style={styles.image} resizeMode="contain" source={image} />;
   };
 
   const renderQty = () => {
