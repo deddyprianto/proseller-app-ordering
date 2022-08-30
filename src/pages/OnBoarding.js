@@ -9,6 +9,7 @@ import {
   Image,
   TouchableOpacity,
   Dimensions,
+  SafeAreaView,
 } from 'react-native';
 
 import colorConfig from '../config/colorConfig';
@@ -39,10 +40,11 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
   },
   WrapDot: {
+    elevation: 2,
     flexDirection: 'row',
     alignSelf: 'center',
     position: 'absolute',
-    bottom: 90,
+    bottom: (HEIGHT * 15) / 100,
   },
   activeDot: {
     height: 10,
@@ -213,9 +215,9 @@ const OnBoarding = () => {
   };
 
   return (
-    <View style={{flex: 1}}>
+    <SafeAreaView style={styles.root}>
       <ScrollView
-        style={{flex: 1}}
+        style={styles.root}
         onScroll={({nativeEvent}) => {
           handleOnScroll(nativeEvent);
         }}
@@ -226,7 +228,7 @@ const OnBoarding = () => {
       </ScrollView>
       {renderDot()}
       {renderRegisterAndLoginButton()}
-    </View>
+    </SafeAreaView>
   );
 };
 

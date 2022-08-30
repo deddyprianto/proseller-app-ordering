@@ -120,9 +120,9 @@ const OrderingTypeSelectorModal = ({open, handleClose, value}) => {
   useEffect(() => {
     const orderingModesField = [
       {
-        key: 'PICKUP',
+        key: 'STOREPICKUP',
         isEnabledFieldName: 'enableStorePickUp',
-        displayName: defaultOutlet.storePickUpName || 'Pick Up',
+        displayName: defaultOutlet.storePickUpName || 'Store Pick Up',
         image: appConfig.funtoastPickUp,
       },
       {

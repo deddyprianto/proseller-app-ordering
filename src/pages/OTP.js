@@ -10,7 +10,7 @@ import {
   TextInput,
   Image,
   TouchableOpacity,
-  ScrollView,
+  SafeAreaView,
   BackHandler,
 } from 'react-native';
 
@@ -292,7 +292,7 @@ const OTP = ({isLogin, method, methodValue}) => {
     );
   };
   return (
-    <ScrollView>
+    <SafeAreaView>
       <LoadingScreen loading={isLoading} />
       <View style={styles.container}>
         <View style={{marginTop: '25%'}} />
@@ -308,7 +308,7 @@ const OTP = ({isLogin, method, methodValue}) => {
         <View style={{marginTop: '10%'}} />
         {renderButtonNext()}
       </View>
-    </ScrollView>
+    </SafeAreaView>
   );
 };
 

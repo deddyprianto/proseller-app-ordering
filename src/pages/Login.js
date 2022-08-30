@@ -9,7 +9,7 @@ import {
   Image,
   TouchableOpacity,
   Dimensions,
-  ScrollView,
+  SafeAreaView,
 } from 'react-native';
 
 import appConfig from '../config/appConfig';
@@ -297,7 +297,7 @@ const Login = () => {
   };
 
   return (
-    <ScrollView>
+    <SafeAreaView>
       <LoadingScreen loading={isLoading} />
       <View style={styles.container}>
         <View style={{marginTop: '25%'}} />
@@ -312,7 +312,7 @@ const Login = () => {
         <View style={{marginTop: '15%'}} />
         {renderTextInformation()}
       </View>
-    </ScrollView>
+    </SafeAreaView>
   );
 };
 

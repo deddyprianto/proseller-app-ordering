@@ -7,40 +7,46 @@ import {dataPromotion} from '../../actions/promotion.action';
 
 const WIDTH = Dimensions.get('window').width;
 
-const styles = StyleSheet.create({
-  wrap: {
-    width: WIDTH,
-  },
-  wrapImage: {
-    width: WIDTH,
-  },
-  image: {
-    height: 200,
-    width: WIDTH,
-  },
-  WrapDot: {
-    position: 'absolute',
-    bottom: 32,
-    flexDirection: 'row',
-    alignSelf: 'center',
-  },
-  activeDot: {
-    margin: 3,
-    backgroundColor: 'white',
-    width: 30,
-    height: 10,
-    borderRadius: 50,
-  },
-  inactiveDot: {
-    margin: 3,
-    backgroundColor: 'white',
-    width: 10,
-    height: 10,
-    borderRadius: 50,
-  },
-});
+const useStyles = () => {
+  const styles = StyleSheet.create({
+    wrap: {
+      width: WIDTH,
+    },
+    wrapImage: {
+      width: WIDTH,
+    },
+    image: {
+      height: undefined,
+      width: WIDTH,
+      maxWidth: WIDTH,
+      aspectRatio: 16 / 8,
+    },
+    WrapDot: {
+      position: 'absolute',
+      bottom: 32,
+      flexDirection: 'row',
+      alignSelf: 'center',
+    },
+    activeDot: {
+      margin: 3,
+      backgroundColor: 'white',
+      width: 30,
+      height: 10,
+      borderRadius: 50,
+    },
+    inactiveDot: {
+      margin: 3,
+      backgroundColor: 'white',
+      width: 10,
+      height: 10,
+      borderRadius: 50,
+    },
+  });
+  return styles;
+};
 
 const Banner = () => {
+  const styles = useStyles();
   const dispatch = useDispatch();
   const [selectedImage, setSelectedImage] = useState(0);
 

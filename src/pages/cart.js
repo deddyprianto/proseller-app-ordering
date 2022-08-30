@@ -329,7 +329,7 @@ const Cart = () => {
     );
 
     const result = JSON.parse(userDecrypt.toString(CryptoJS.enc.Utf8));
-    const deliveryAddressDefault = result?.deliveryAddress.find(
+    const deliveryAddressDefault = result?.deliveryAddress?.find(
       address => address.isDefault,
     );
     const address = !isEmptyObject(result?.selectedAddress)

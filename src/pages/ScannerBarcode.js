@@ -9,7 +9,9 @@ import {
   Image,
   View,
   Dimensions,
+  StatusBar,
   SafeAreaView,
+  Platform,
 } from 'react-native';
 
 import appConfig from '../config/appConfig';
@@ -28,11 +30,14 @@ const HEIGHT = Dimensions.get('window').height;
 
 const useStyles = () => {
   const theme = Theme();
+  const statusBarHeight = Platform.OS === 'ios' ? 28 : 0;
   const styles = StyleSheet.create({
     root: {
       flex: 1,
     },
     header: {
+      backgroundColor: 'white',
+      paddingTop: statusBarHeight,
       top: 0,
       left: 0,
       right: 0,

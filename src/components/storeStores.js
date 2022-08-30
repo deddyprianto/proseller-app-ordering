@@ -27,9 +27,9 @@ class StoreStores extends Component {
         {text: 'Cancel'},
         {
           text: 'Continue',
-          onPress: () => {
-            this.removeCart();
-            this.storeDetailStores(item);
+          onPress: async () => {
+            await this.storeDetailStores(item);
+            await this.removeCart();
           },
         },
       ],

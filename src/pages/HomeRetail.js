@@ -104,7 +104,6 @@ const useStyles = () => {
     },
     viewHeaderTitle: {
       flex: 1,
-      marginBottom: -4,
       display: 'flex',
       flexDirection: 'row',
       alignItems: 'center',

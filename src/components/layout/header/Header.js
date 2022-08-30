@@ -28,6 +28,7 @@ const useStyles = () => {
       alignItems: 'flex-start',
     },
     rootCenter: {
+      elevation: 1,
       flex: 2,
       alignItems: 'center',
     },
@@ -41,8 +42,8 @@ const useStyles = () => {
       alignItems: 'center',
     },
     logo: {
-      width: 80,
-      height: 100,
+      width: '70%',
+      height: '100%',
     },
     icon: {
       width: 24,
