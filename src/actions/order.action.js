@@ -1179,6 +1179,8 @@ export const getTimeslot = (
           dataOutlet = defaultOutlet.orderValidation.delivery;
         } else if (orderingMode === 'STOREPICKUP') {
           dataOutlet = defaultOutlet.orderValidation.storePickUp;
+        } else if (orderingMode === 'STORECHECKOUT') {
+          dataOutlet = defaultOutlet.orderValidation.storeCheckout;
         } else if (orderingMode === 'TAKEAWAY') {
           dataOutlet = defaultOutlet.orderValidation.takeAway;
         } else if (orderingMode === 'DINEIN') {

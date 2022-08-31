@@ -415,14 +415,19 @@ const Cart = () => {
           return true;
         }
 
-      case 'PICKUP':
+      case 'STOREPICKUP':
         if (isActivePickUp) {
           return false;
         } else {
           return true;
         }
+
       case 'DINEIN':
         return false;
+
+      case 'STORECHECKOUT':
+        return false;
+
       case 'TAKEAWAY':
         if (isActiveTakeAway) {
           return false;
@@ -591,7 +596,7 @@ const Cart = () => {
         if (
           basket?.orderingMode === 'DELIVERY' ||
           basket?.orderingMode === 'TAKEAWAY' ||
-          basket?.orderingMode === 'PICKUP'
+          basket?.orderingMode === 'STOREPICKUP'
         ) {
           if (!orderingDateTimeSelected?.date) {
             pembayaran.orderActionDate = moment().format('yyyy-MM-dd');
@@ -752,7 +757,7 @@ const Cart = () => {
   const renderDeliveryDate = () => {
     const available = !isEmptyArray(availableTimes);
     const isDelivery = available && basket?.orderingMode === 'DELIVERY';
-    const isPickUp = available && basket?.orderingMode === 'PICKUP';
+    const isPickUp = available && basket?.orderingMode === 'STOREPICKUP';
     const isTakeAway = available && basket?.orderingMode === 'TAKEAWAY';
 
     if (isDelivery || isPickUp || isTakeAway) {
