@@ -9,6 +9,7 @@ import {
   Image,
   TouchableOpacity,
   Dimensions,
+  SafeAreaView,
 } from 'react-native';
 
 import {ProgressBar} from 'react-native-paper';
@@ -473,13 +474,15 @@ const Profile = () => {
   };
 
   return (
-    <ScrollView style={styles.root}>
-      <LoadingScreen loading={isLoading} />
-      {renderPointHeader()}
-      {renderSettings()}
-      {renderDeleteAccountConfirmationDialog()}
-      {renderLogoutConfirmationDialog()}
-    </ScrollView>
+    <SafeAreaView>
+      <ScrollView style={styles.root}>
+        <LoadingScreen loading={isLoading} />
+        {renderPointHeader()}
+        {renderSettings()}
+        {renderDeleteAccountConfirmationDialog()}
+        {renderLogoutConfirmationDialog()}
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 

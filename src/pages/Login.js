@@ -9,8 +9,10 @@ import {
   Image,
   TouchableOpacity,
   Dimensions,
+  ScrollView,
   SafeAreaView,
 } from 'react-native';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview';
 
 import appConfig from '../config/appConfig';
 import awsConfig from '../config/awsConfig';
@@ -162,7 +164,7 @@ const Login = () => {
     setIsLoading(true);
     const response = await dispatch(checkAccountExist(payload));
 
-    if (response?.status) {
+    if (response?.status && response?.isValid) {
       await dispatch(sendOTP(payload));
       Actions.otp({
         isLogin: true,
@@ -297,22 +299,22 @@ const Login = () => {
   };
 
   return (
-    <SafeAreaView>
+    <ScrollView>
       <LoadingScreen loading={isLoading} />
       <View style={styles.container}>
-        <View style={{marginTop: '25%'}} />
+        <View style={{marginTop: '15%'}} />
         {renderImages()}
         <View style={{marginTop: '10%'}} />
         <Text style={styles.textHeader}>Login Account</Text>
         {renderChangeLoginMethod()}
         <View style={{marginTop: '15%'}} />
         {renderLoginMethodInput()}
-        <View style={{marginTop: '15%'}} />
+        <View style={{marginTop: '10%'}} />
         {renderButtonNext()}
         <View style={{marginTop: '15%'}} />
         {renderTextInformation()}
       </View>
-    </SafeAreaView>
+    </ScrollView>
   );
 };
 
