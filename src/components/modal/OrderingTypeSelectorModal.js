@@ -143,6 +143,12 @@ const OrderingTypeSelectorModal = ({open, handleClose, value}) => {
         displayName: defaultOutlet.dineInName || 'Dine In',
         image: appConfig.funtoastPickUp,
       },
+      {
+        key: 'STORECHECKOUT',
+        isEnabledFieldName: 'enableStoreCheckOut',
+        displayName: defaultOutlet.storeCheckOutName || 'Store Checkout',
+        image: appConfig.funtoastPickUp,
+      },
     ];
 
     const orderingModesFieldFiltered = orderingModesField.filter(mode => {
