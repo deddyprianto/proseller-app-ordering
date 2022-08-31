@@ -164,7 +164,7 @@ const Login = () => {
     setIsLoading(true);
     const response = await dispatch(checkAccountExist(payload));
 
-    if (response?.status && response?.isValid) {
+    if (response?.status) {
       await dispatch(sendOTP(payload));
       Actions.otp({
         isLogin: true,
