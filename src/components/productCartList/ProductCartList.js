@@ -14,7 +14,7 @@ import ProductCartItem from './components/ProductCartItem';
 const useStyles = () => {
   const styles = StyleSheet.create({
     root: {
-      marginBottom: 16,
+      marginVertical: 8,
       marginHorizontal: 16,
     },
   });

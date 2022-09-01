@@ -125,7 +125,7 @@ class ListMembership extends Component {
                     width: 0,
                     height: 9,
                   },
-                  shadowOpacity: 0.5,
+                  shadowOpacity: 0.2,
                   shadowRadius: 1.49,
                   elevation: 4,
                 }}

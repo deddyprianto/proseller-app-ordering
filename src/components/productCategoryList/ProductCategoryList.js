@@ -48,6 +48,12 @@ const useStyles = () => {
       paddingHorizontal: 16,
     },
     viewMoreCategories: {
+      shadowOffset: {
+        width: 0.2,
+        height: 0.2,
+      },
+      shadowOpacity: 0.2,
+      shadowColor: theme.colors.greyScale2,
       elevation: 2,
       padding: 8,
       flex: 1,

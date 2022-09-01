@@ -114,7 +114,7 @@ const Register = () => {
     setIsLoading(true);
     const response = await dispatch(checkAccountExist(payload));
 
-    if (!response?.status || !response.isValid) {
+    if (!response?.status) {
       const existMessage =
         registerMethod === 'email'
           ? 'Email already exist'

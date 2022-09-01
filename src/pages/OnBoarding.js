@@ -21,23 +21,12 @@ const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
   root: {
     flex: 1,
   },
-  viewImage: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   image: {
-    width: '100%',
-    height: 400,
-    marginHorizontal: 20,
+    height: '100%',
+    width: WIDTH,
   },
   WrapDot: {
     elevation: 2,
@@ -102,19 +91,6 @@ const styles = StyleSheet.create({
     marginTop: -10,
     backgroundColor: 'white',
   },
-  textTitle: {
-    fontSize: 20,
-    color: colorConfig.primaryColor,
-    fontWeight: 'bold',
-    marginTop: 10,
-  },
-  textDescription: {
-    fontSize: 16,
-    color: colorConfig.primaryColor,
-    textAlign: 'center',
-    width: 250,
-    marginTop: 10,
-  },
 });
 
 const OnBoarding = () => {
@@ -150,10 +126,7 @@ const OnBoarding = () => {
       return (
         <Image
           key={index}
-          style={{
-            height: HEIGHT,
-            width: WIDTH,
-          }}
+          style={styles.image}
           resizeMode="stretch"
           source={image}
         />

@@ -69,6 +69,12 @@ const useStyles = () => {
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     viewNavbar: {
+      shadowOffset: {
+        width: 0.2,
+        height: 0.2,
+      },
+      shadowOpacity: 0.2,
+      shadowColor: theme.colors.greyScale2,
       elevation: 5,
       height: 77,
       backgroundColor: 'white',
@@ -83,9 +89,9 @@ const useStyles = () => {
       bottom: 0,
     },
     viewNavbarItem: {
+      elevation: 10,
       width: (WIDTH * 20) / 100,
       height: 77,
-      elevation: 10,
       display: 'flex',
       backgroundColor: 'white',
       alignItems: 'center',

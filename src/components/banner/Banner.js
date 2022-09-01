@@ -19,15 +19,17 @@ const useStyles = () => {
       height: undefined,
       width: WIDTH,
       maxWidth: WIDTH,
-      aspectRatio: 16 / 8,
+      aspectRatio: 3 / 1,
     },
     WrapDot: {
       position: 'absolute',
-      bottom: 32,
+      // bottom: 32 ,
+      bottom: 8,
       flexDirection: 'row',
       alignSelf: 'center',
     },
     activeDot: {
+      opacity: 1,
       margin: 3,
       backgroundColor: 'white',
       width: 30,
@@ -35,6 +37,7 @@ const useStyles = () => {
       borderRadius: 50,
     },
     inactiveDot: {
+      opacity: 0.5,
       margin: 3,
       backgroundColor: 'white',
       width: 10,

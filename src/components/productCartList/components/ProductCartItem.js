@@ -14,6 +14,7 @@ import {
   Image,
   TouchableOpacity,
   ImageBackground,
+  Dimensions,
 } from 'react-native';
 
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -27,10 +28,18 @@ import ProductAddModal from '../../productAddModal';
 
 import Theme from '../../../theme';
 
+const WIDTH = Dimensions.get('window').width;
+
 const useStyles = () => {
   const theme = Theme();
   const styles = StyleSheet.create({
     root: {
+      shadowOffset: {
+        width: 0.2,
+        height: 0.2,
+      },
+      shadowOpacity: 0.2,
+      shadowColor: theme.colors.greyScale2,
       elevation: 2,
       borderRadius: 8,
       padding: 16,
@@ -118,6 +127,7 @@ const useStyles = () => {
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textProductHeaderName: {
+      maxWidth: (WIDTH * 5) / 10,
       marginHorizontal: 8,
       color: theme.colors.text1,
       fontSize: theme.fontSize[12],
@@ -278,7 +288,9 @@ const ProductCart = ({item, disabled}) => {
         <View style={styles.viewProductHeaderQty}>
           <Text style={styles.textProductHeaderQty}>{item.quantity}x</Text>
         </View>
-        <Text style={styles.textProductHeaderName}>{item?.product?.name}</Text>
+        <Text style={styles.textProductHeaderName} numberOfLines={1}>
+          {item?.product?.name}
+        </Text>
         <Text style={styles.textProductHeaderPrice}>
           + {item?.product?.retailPrice}
         </Text>

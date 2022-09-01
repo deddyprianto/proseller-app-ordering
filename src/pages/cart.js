@@ -36,7 +36,7 @@ import currencyFormatter from '../helper/CurrencyFormatter';
 import CurrencyFormatter from '../helper/CurrencyFormatter';
 
 import {showSnackbar} from '../actions/setting.action';
-import {getTimeSlot} from '../actions/order.action';
+import {changeOrderingMode, getTimeSlot} from '../actions/order.action';
 import Theme from '../theme';
 
 const useStyles = () => {
@@ -135,9 +135,9 @@ const useStyles = () => {
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      borderTopWidth: 0.2,
+      borderTopWidth: 1,
       padding: 16,
-      borderTopColor: theme.colors.border,
+      borderTopColor: theme.colors.greyScale4,
     },
     viewFooter: {
       backgroundColor: 'white',
@@ -155,6 +155,12 @@ const useStyles = () => {
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
+      shadowOffset: {
+        width: 0.2,
+        height: 0.2,
+      },
+      shadowOpacity: 0.2,
+      shadowColor: theme.colors.greyScale2,
       elevation: 1,
     },
     viewMethodOrderingType: {
@@ -165,6 +171,12 @@ const useStyles = () => {
       padding: 16,
       display: 'flex',
       flexDirection: 'column',
+      shadowOffset: {
+        width: 0.2,
+        height: 0.2,
+      },
+      shadowOpacity: 0.2,
+      shadowColor: theme.colors.greyScale2,
       elevation: 1,
     },
     viewMethodDeliveryAddress: {
@@ -175,6 +187,12 @@ const useStyles = () => {
       padding: 16,
       display: 'flex',
       flexDirection: 'column',
+      shadowOffset: {
+        width: 0.2,
+        height: 0.2,
+      },
+      shadowOpacity: 0.2,
+      shadowColor: theme.colors.greyScale2,
       elevation: 1,
     },
     viewOrderingTypeHeader: {
@@ -262,6 +280,7 @@ const useStyles = () => {
       height: 1,
       flex: 1,
       marginHorizontal: 16,
+      marginTop: 8,
       marginBottom: 16,
       backgroundColor: theme.colors.border,
     },
@@ -338,6 +357,49 @@ const Cart = () => {
 
     setDeliveryAddress(address);
   }, [userDetail]);
+
+  useEffect(() => {
+    const loadData = async () => {
+      const orderingModesField = [
+        {
+          key: 'STOREPICKUP',
+          isEnabledFieldName: 'enableStorePickUp',
+        },
+        {
+          key: 'DELIVERY',
+          isEnabledFieldName: 'enableDelivery',
+        },
+        {
+          key: 'TAKEAWAY',
+          isEnabledFieldName: 'enableTakeAway',
+        },
+        {
+          key: 'DINEIN',
+          isEnabledFieldName: 'enableDineIn',
+        },
+        {
+          key: 'STORECHECKOUT',
+          isEnabledFieldName: 'enableStoreCheckOut',
+        },
+      ];
+
+      const orderingModesFieldFiltered = orderingModesField.filter(mode => {
+        if (outlet[mode.isEnabledFieldName]) {
+          return mode;
+        }
+      });
+
+      if (orderingModesFieldFiltered?.length === 1 && !basket?.orderingMode) {
+        await dispatch(
+          changeOrderingMode({
+            orderingMode: orderingModesFieldFiltered[0]?.key,
+          }),
+        );
+      }
+    };
+
+    loadData();
+  }, [outlet, basket, dispatch]);
 
   const handleOpenOrderingTypeModal = () => {
     setOpenOrderingTypeModal(true);

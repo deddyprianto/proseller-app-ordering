@@ -9,9 +9,15 @@ const useStyles = () => {
   const theme = Theme();
   const styles = StyleSheet.create({
     root: {
+      shadowOffset: {
+        width: 0.2,
+        height: 0.2,
+      },
+      shadowOpacity: 0.2,
+      shadowColor: theme.colors.greyScale2,
+      elevation: 2,
       marginTop: 8,
       width: '49%',
-      elevation: 2,
       paddingHorizontal: 8,
       paddingVertical: 10,
       borderRadius: 8,
@@ -22,9 +28,15 @@ const useStyles = () => {
       backgroundColor: theme.colors.buttonStandBy,
     },
     rootSelected: {
+      shadowOffset: {
+        width: 0.2,
+        height: 0.2,
+      },
+      shadowOpacity: 0.2,
+      shadowColor: theme.colors.greyScale2,
+      elevation: 2,
       marginTop: 8,
       width: '49%',
-      elevation: 2,
       paddingHorizontal: 8,
       paddingVertical: 10,
       borderRadius: 8,

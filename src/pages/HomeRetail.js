@@ -131,7 +131,8 @@ const useStyles = () => {
     },
     viewMenuBar: {
       elevation: 2,
-      marginTop: -25,
+      // marginTop: -25,
+      marginTop: 16,
       padding: 16,
       borderRadius: 8,
       marginHorizontal: 16,
