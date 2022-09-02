@@ -17,13 +17,19 @@ const useStyles = () => {
   const theme = Theme();
   const styles = StyleSheet.create({
     root: {
+      shadowOffset: {
+        width: 0.2,
+        height: 0.2,
+      },
+      shadowOpacity: 0.2,
+      shadowColor: theme.colors.greyScale2,
       elevation: 2,
       padding: 8,
       flex: 1,
-      width: (WIDTH * 29) / 100,
-      minWidth: (WIDTH * 29) / 100,
-      maxWidth: (WIDTH * 29) / 100,
-      marginHorizontal: (WIDTH * 0.8) / 100,
+      width: ((WIDTH - 32) * 30) / 100,
+      minWidth: ((WIDTH - 32) * 30) / 100,
+      maxWidth: ((WIDTH - 32) * 30) / 100,
+      marginHorizontal: ((WIDTH - 32) * 1.6) / 100,
       borderRadius: 8,
       marginVertical: 8,
       display: 'flex',
@@ -32,13 +38,19 @@ const useStyles = () => {
       backgroundColor: 'white',
     },
     rootSelected: {
+      shadowOffset: {
+        width: 0.2,
+        height: 0.2,
+      },
+      shadowOpacity: 0.2,
+      shadowColor: theme.colors.greyScale2,
       elevation: 2,
       padding: 8,
       flex: 1,
-      width: (WIDTH * 29) / 100,
-      minWidth: (WIDTH * 29) / 100,
-      maxWidth: (WIDTH * 29) / 100,
-      marginHorizontal: (WIDTH * 0.8) / 100,
+      width: ((WIDTH - 32) * 30) / 100,
+      minWidth: ((WIDTH - 32) * 30) / 100,
+      maxWidth: ((WIDTH - 32) * 30) / 100,
+      marginHorizontal: ((WIDTH - 32) * 1.6) / 100,
       borderWidth: 1,
       borderRadius: 8,
       marginVertical: 8,
@@ -77,7 +89,7 @@ const ProductCategoryLargeItem = ({category, selected, onPress}) => {
 
   return (
     <TouchableOpacity style={styleRoot} onPress={onPress}>
-      <Image source={image} resizeMode="center" style={styles.image} />
+      <Image source={image} resizeMode="contain" style={styles.image} />
       <Text numberOfLines={2} style={styles.textName}>
         {category?.name}
       </Text>

@@ -10,7 +10,7 @@ const appConfig = {
   appLogoQR: require('../../assets/img/logo.jpg'),
   appBackground: require('../../assets/img/bg.png'),
   appTextWelcome: require('../../assets/img/welcome.png'),
-  appImageNull: require('../../assets/img/logo.jpg'),
+  appImageNull: require('../assets/img/logo.png'),
   userQRCode: require('../../assets/img/qrcode.jpg'),
   foodPlaceholder: require('../../assets/img/food-placeholder.jpg'),
   welcomeLogo: require('../../assets/img/welcome-logo.png'),

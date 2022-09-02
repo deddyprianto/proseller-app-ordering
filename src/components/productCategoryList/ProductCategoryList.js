@@ -48,13 +48,19 @@ const useStyles = () => {
       paddingHorizontal: 16,
     },
     viewMoreCategories: {
+      shadowOffset: {
+        width: 0.2,
+        height: 0.2,
+      },
+      shadowOpacity: 0.2,
+      shadowColor: theme.colors.greyScale2,
       elevation: 2,
       padding: 8,
       flex: 1,
-      width: (WIDTH * 29) / 100,
-      minWidth: (WIDTH * 29) / 100,
-      maxWidth: (WIDTH * 29) / 100,
-      marginHorizontal: (WIDTH * 0.8) / 100,
+      width: ((WIDTH - 32) * 30) / 100,
+      minWidth: ((WIDTH - 32) * 30) / 100,
+      maxWidth: ((WIDTH - 32) * 30) / 100,
+      marginHorizontal: ((WIDTH - 32) * 1.6) / 100,
       borderRadius: 8,
       marginVertical: 8,
       display: 'flex',
@@ -230,7 +236,7 @@ const ProductCategoryList = ({
         }}>
         <Image
           source={appConfig.iconMoreMenu}
-          resizeMode="center"
+          resizeMode="contain"
           style={styles.imageMoreCategories}
         />
         <Text numberOfLines={2} style={styles.textMoreCategories}>

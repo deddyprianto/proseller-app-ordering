@@ -114,7 +114,7 @@ const Register = () => {
     setIsLoading(true);
     const response = await dispatch(checkAccountExist(payload));
 
-    if (response?.status || response?.message) {
+    if (!response?.status) {
       const existMessage =
         registerMethod === 'email'
           ? 'Email already exist'
@@ -138,7 +138,7 @@ const Register = () => {
     return (
       <Image
         style={styles.image}
-        resizeMode="center"
+        resizeMode="contain"
         source={appConfig.logoMerchant}
       />
     );
@@ -230,7 +230,7 @@ const Register = () => {
     <ScrollView>
       <LoadingScreen loading={isLoading} />
       <View style={styles.container}>
-        <View style={{marginTop: '25%'}} />
+        <View style={{marginTop: '15%'}} />
         {renderImages()}
         <View style={{marginTop: '10%'}} />
         <Text style={styles.textCreateNewAccount}>Create a new account</Text>

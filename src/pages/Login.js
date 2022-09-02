@@ -10,7 +10,9 @@ import {
   TouchableOpacity,
   Dimensions,
   ScrollView,
+  SafeAreaView,
 } from 'react-native';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview';
 
 import appConfig from '../config/appConfig';
 import awsConfig from '../config/awsConfig';
@@ -184,7 +186,7 @@ const Login = () => {
     return (
       <Image
         style={styles.image}
-        resizeMode="center"
+        resizeMode="contain"
         source={appConfig.logoMerchant}
       />
     );
@@ -300,14 +302,14 @@ const Login = () => {
     <ScrollView>
       <LoadingScreen loading={isLoading} />
       <View style={styles.container}>
-        <View style={{marginTop: '25%'}} />
+        <View style={{marginTop: '15%'}} />
         {renderImages()}
         <View style={{marginTop: '10%'}} />
         <Text style={styles.textHeader}>Login Account</Text>
         {renderChangeLoginMethod()}
         <View style={{marginTop: '15%'}} />
         {renderLoginMethodInput()}
-        <View style={{marginTop: '15%'}} />
+        <View style={{marginTop: '10%'}} />
         {renderButtonNext()}
         <View style={{marginTop: '15%'}} />
         {renderTextInformation()}

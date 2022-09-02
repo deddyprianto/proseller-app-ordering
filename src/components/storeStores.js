@@ -27,9 +27,9 @@ class StoreStores extends Component {
         {text: 'Cancel'},
         {
           text: 'Continue',
-          onPress: () => {
-            this.removeCart();
-            this.storeDetailStores(item);
+          onPress: async () => {
+            await this.storeDetailStores(item);
+            await this.removeCart();
           },
         },
       ],
@@ -104,6 +104,9 @@ class StoreStores extends Component {
                 {
                   <TouchableOpacity
                     style={styles.storesItem}
+                    disabled={
+                      !item.storeStatus || item.orderingStatus !== 'AVAILABLE'
+                    }
                     onPress={() => this.processChangeOutlet(item)}>
                     <View style={styles.storesDetail}>
                       <Text
@@ -114,7 +117,8 @@ class StoreStores extends Component {
                         }}>
                         {item.storeName}
                       </Text>
-                      {item.storeStatus ? (
+                      {item.storeStatus &&
+                      item.orderingStatus === 'AVAILABLE' ? (
                         <Text
                           style={{
                             fontSize: 12,

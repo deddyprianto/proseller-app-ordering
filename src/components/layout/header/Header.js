@@ -12,6 +12,17 @@ const useStyles = () => {
   const theme = Theme();
   const styles = StyleSheet.create({
     root: {
+      overflow: 'hidden',
+      paddingBottom: 2,
+    },
+    container: {
+      shadowOffset: {
+        width: 0.2,
+        height: 0.2,
+      },
+      shadowOpacity: 0.2,
+      shadowColor: theme.colors.greyScale2,
+      elevation: 3,
       height: 56,
       maxHeight: 56,
       display: 'flex',
@@ -19,19 +30,19 @@ const useStyles = () => {
       justifyContent: 'space-between',
       alignItems: 'center',
       width: '100%',
-      elevation: 3,
       padding: 16,
       backgroundColor: theme.colors.header,
     },
-    rootLeft: {
+    containerLeft: {
       flex: 1,
       alignItems: 'flex-start',
     },
-    rootCenter: {
+    containerCenter: {
+      elevation: 1,
       flex: 2,
       alignItems: 'center',
     },
-    rootRight: {
+    containerRight: {
       flex: 1,
       alignItems: 'flex-end',
     },
@@ -41,8 +52,8 @@ const useStyles = () => {
       alignItems: 'center',
     },
     logo: {
-      width: 80,
-      height: 100,
+      width: '70%',
+      height: '100%',
     },
     icon: {
       width: 24,
@@ -95,7 +106,7 @@ const Header = ({
     return (
       <Image
         source={appConfig.logoMerchant}
-        resizeMode="center"
+        resizeMode="contain"
         style={styles.logo}
       />
     );
@@ -195,10 +206,12 @@ const Header = ({
 
   return (
     <View style={styles.root}>
-      <Scanner open={isOpenScanner} handleClose={handleCloseScanner} />
-      <View style={styles.rootLeft}>{renderIconLeftWrap()}</View>
-      <View style={styles.rootCenter}>{renderTitle()}</View>
-      <View style={styles.rootRight}>{renderIconRightWrap()}</View>
+      <View style={styles.container}>
+        <Scanner open={isOpenScanner} handleClose={handleCloseScanner} />
+        <View style={styles.containerLeft}>{renderIconLeftWrap()}</View>
+        <View style={styles.containerCenter}>{renderTitle()}</View>
+        <View style={styles.containerRight}>{renderIconRightWrap()}</View>
+      </View>
     </View>
   );
 };

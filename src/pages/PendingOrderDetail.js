@@ -328,7 +328,7 @@ const PendingOrderDetail = ({order}) => {
   const renderDeliveryDate = () => {
     if (
       order?.orderingMode === 'DELIVERY' ||
-      order?.orderingMode === 'PICKUP'
+      order?.orderingMode === 'STOREPICKUP'
     ) {
       return (
         <View style={styles.viewMethod}>

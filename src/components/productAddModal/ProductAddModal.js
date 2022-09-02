@@ -35,6 +35,7 @@ import Theme from '../../theme';
 import ProductVariants from './components/ProductVariants';
 import ProductModifiers from './components/ProductModifiers';
 import ProductPromotions from './components/ProductPromotions';
+import {SafeAreaView} from 'react-navigation';
 
 const useStyles = () => {
   const theme = Theme();
@@ -637,7 +638,7 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
         handleClose();
       }}>
       <LoadingScreen loading={isLoading} />
-      <View style={styles.root}>
+      <SafeAreaView forceInset={{bottom: 'never'}} style={styles.root}>
         {header()}
         <View style={styles.divider} />
         <ScrollView style={styles.container}>
@@ -649,7 +650,7 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
           {renderSpecialInstruction()}
         </ScrollView>
         {renderAddToCartButton()}
-      </View>
+      </SafeAreaView>
     </Modal>
   );
 };

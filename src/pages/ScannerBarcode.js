@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import {useDispatch, useSelector} from 'react-redux';
 
@@ -10,6 +10,7 @@ import {
   View,
   Dimensions,
   SafeAreaView,
+  Platform,
 } from 'react-native';
 
 import appConfig from '../config/appConfig';
@@ -28,11 +29,14 @@ const HEIGHT = Dimensions.get('window').height;
 
 const useStyles = () => {
   const theme = Theme();
+  const statusBarHeight = Platform.OS === 'ios' ? 28 : 0;
   const styles = StyleSheet.create({
     root: {
       flex: 1,
     },
     header: {
+      backgroundColor: 'white',
+      paddingTop: statusBarHeight,
       top: 0,
       left: 0,
       right: 0,
@@ -106,6 +110,7 @@ const useStyles = () => {
   return styles;
 };
 const ScannerBarcode = () => {
+  let scanner = useRef(null);
   const styles = useStyles();
   const dispatch = useDispatch();
 
@@ -121,6 +126,12 @@ const ScannerBarcode = () => {
   const [product, setProduct] = useState({});
 
   const snackbar = useSelector(state => state.settingReducer.snackbar.message);
+
+  useEffect(() => {
+    if (!snackbar && !isOpenAddModal) {
+      scanner.reactivate();
+    }
+  }, [snackbar, isOpenAddModal]);
 
   const handleOpenProductAddModal = () => {
     setIsOpenAddModal(true);
@@ -242,8 +253,10 @@ const ScannerBarcode = () => {
     <SafeAreaView style={styles.root}>
       <LoadingScreen loading={isLoading} />
       <QRCodeScanner
+        ref={node => {
+          scanner = node;
+        }}
         cameraStyle={styles.camera}
-        reactivate={!isOpenAddModal && !snackbar}
         showMarker={true}
         onRead={onSuccess}
       />
