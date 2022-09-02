@@ -7,6 +7,10 @@ import {
   Modal,
   TextInput,
   StyleSheet,
+  KeyboardAvoidingView,
+  TouchableWithoutFeedback,
+  Platform,
+  Keyboard,
 } from 'react-native';
 
 import appConfig from '../../config/appConfig';
@@ -234,11 +238,17 @@ const SearchProductByBarcodeModal = ({
   return (
     <Modal transparent visible={open} onDismiss={handleClose}>
       <View style={styles.root}>
-        <View style={styles.container}>
-          {renderHeader()}
-          {renderBody()}
-          {renderButtonSearch()}
-        </View>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={styles.container}>
+          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <View style={styles.container}>
+              {renderHeader()}
+              {renderBody()}
+              {renderButtonSearch()}
+            </View>
+          </TouchableWithoutFeedback>
+        </KeyboardAvoidingView>
       </View>
     </Modal>
   );
