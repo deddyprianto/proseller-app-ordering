@@ -2,9 +2,9 @@ const ENV = {
   APP: 'AceMart',
   IS_DEVELOP: true,
 
-  API_HOST: 'https://api-acemart.proseller.io/',
+  API_HOST: 'https://acemart-demo.proseller.io/',
 
-  base_url_payment: 'https://payment.proseller.io/api/',
+  base_url_payment: 'https://payment-demo.proseller.io/api/',
 
   ONESIGNAL_ID: '16322779-652b-4fda-9563-abec1116aba4',
 
