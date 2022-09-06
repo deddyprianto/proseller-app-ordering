@@ -496,9 +496,8 @@ const Home = () => {
     return <Header customTitle={renderHeaderTitle()} search isLogo />;
   };
 
-  return (
-    <SafeAreaView style={styles.root}>
-      {renderHeader()}
+  const renderBody = () => {
+    return (
       <ScrollView
         ref={ref}
         onScroll={e => {
@@ -523,7 +522,18 @@ const Home = () => {
         {renderProductSubCategoryList()}
         {renderProductList()}
       </ScrollView>
-      <View style={styles.footer}>{renderButtonCart()}</View>
+    );
+  };
+
+  const renderFooter = () => {
+    return <View style={styles.footer}>{renderButtonCart()}</View>;
+  };
+
+  return (
+    <SafeAreaView style={styles.root}>
+      {renderHeader()}
+      {renderBody()}
+      {renderFooter()}
       {renderFloatingButtonToTop()}
     </SafeAreaView>
   );
