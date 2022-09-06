@@ -131,8 +131,6 @@ const Product = ({product, basket}) => {
     state => state.settingReducer.imageSettings,
   );
 
-  console.log('YOLA', imageSettings);
-
   const handleOpenAddModal = () => {
     setIsOpenAddModal(true);
   };
