@@ -98,12 +98,14 @@ const useStyles = () => {
       fontFamily: theme.fontFamily.poppinsSemiBold,
     },
     textHeaderTitle: {
+      paddingTop: 2,
       fontSize: theme.fontSize[14],
       color: theme.colors.textQuaternary,
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     viewHeaderTitle: {
       flex: 1,
+      minHeight: 36,
       display: 'flex',
       flexDirection: 'row',
       alignItems: 'center',
@@ -131,9 +133,8 @@ const useStyles = () => {
     },
     viewMenuBar: {
       elevation: 2,
-      // marginTop: -25,
       marginTop: 16,
-      padding: 16,
+      paddingVertical: 16,
       borderRadius: 8,
       marginHorizontal: 16,
       display: 'flex',
