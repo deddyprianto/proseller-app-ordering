@@ -3,6 +3,7 @@ const ENV = {
   IS_DEVELOP: true,
 
   API_HOST: 'https://acemart-demo.proseller.io/',
+  // API_HOST: 'https://api-acemart.proseller.io/',
 
   base_url_payment: 'https://payment-demo.proseller.io/api/',
 

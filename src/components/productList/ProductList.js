@@ -6,7 +6,7 @@
  */
 
 import React from 'react';
-import {StyleSheet, View} from 'react-native';
+import {StyleSheet, View, ScrollView} from 'react-native';
 
 import Product from './components/ProductItem';
 
@@ -43,7 +43,7 @@ const ProductList = ({products, basket}) => {
     }
   };
 
-  return <View style={styles.root}>{renderProducts()}</View>;
+  return <ScrollView style={styles.root}>{renderProducts()}</ScrollView>;
 };
 
 export default ProductList;
