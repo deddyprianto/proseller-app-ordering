@@ -27,6 +27,7 @@ import {isEmptyArray} from '../../../helper/CheckEmpty';
 import ProductAddModal from '../../productAddModal';
 
 import Theme from '../../../theme';
+import {useSelector} from 'react-redux';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -78,15 +79,20 @@ const useStyles = () => {
       width: 10,
       height: 9,
       marginRight: 4,
-      tintColor: theme.colors.text2,
+      tintColor: theme.colors.textTertiary,
     },
     iconEdit: {
       fontSize: 10,
       marginRight: 2,
-      color: theme.colors.primary,
+      color: theme.colors.buttonActive,
+    },
+    iconEditUnavailable: {
+      fontSize: 10,
+      marginRight: 2,
+      color: theme.colors.buttonDisabled,
     },
     iconPromo: {
-      color: theme.colors.text2,
+      color: theme.colors.textTertiary,
       fontSize: 8,
     },
     iconPromoActive: {
@@ -117,24 +123,36 @@ const useStyles = () => {
     textAddOn: {
       marginBottom: 4,
       fontStyle: 'italic',
-      color: theme.colors.text2,
+      color: theme.colors.textTertiary,
       fontSize: theme.fontSize[10],
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textProductHeaderQty: {
-      color: theme.colors.text4,
+      color: theme.colors.textSecondary,
       fontSize: theme.fontSize[10],
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textProductHeaderName: {
       maxWidth: (WIDTH * 5) / 10,
       marginHorizontal: 8,
-      color: theme.colors.text1,
+      color: theme.colors.textPrimary,
+      fontSize: theme.fontSize[12],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textProductHeaderNameUnavailable: {
+      maxWidth: (WIDTH * 5) / 10,
+      marginHorizontal: 8,
+      color: theme.colors.textTertiary,
       fontSize: theme.fontSize[12],
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textProductHeaderPrice: {
-      color: theme.colors.primary,
+      color: theme.colors.textQuaternary,
+      fontSize: theme.fontSize[10],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textProductHeaderPriceUnavailable: {
+      color: theme.colors.textTertiary,
       fontSize: theme.fontSize[10],
       fontFamily: theme.fontFamily.poppinsMedium,
     },
@@ -143,48 +161,72 @@ const useStyles = () => {
     },
     textModifierItemQty: {
       fontStyle: 'italic',
-      color: theme.colors.primary,
+      color: theme.colors.textQuaternary,
+      fontSize: theme.fontSize[10],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textModifierItemQtyUnavailable: {
+      fontStyle: 'italic',
+      color: theme.colors.textTertiary,
       fontSize: theme.fontSize[10],
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textModifierItemName: {
       fontStyle: 'italic',
-      color: theme.colors.text2,
+      color: theme.colors.textTertiary,
       fontSize: theme.fontSize[10],
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textModifierItemPrice: {
       fontStyle: 'italic',
-      color: theme.colors.primary,
+      color: theme.colors.textQuaternary,
+      fontSize: theme.fontSize[10],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textModifierItemPriceUnavailable: {
+      fontStyle: 'italic',
+      color: theme.colors.textTertiary,
       fontSize: theme.fontSize[10],
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textPriceFooter: {
-      color: theme.colors.primary,
+      color: theme.colors.textQuaternary,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsBold,
+    },
+    textPriceFooterUnavailable: {
+      color: theme.colors.textTertiary,
       fontSize: theme.fontSize[14],
       fontFamily: theme.fontFamily.poppinsBold,
     },
     textPriceBeforeDiscount: {
       marginRight: 10,
       textDecorationLine: 'line-through',
-      color: theme.colors.text2,
+      color: theme.colors.textTertiary,
       fontSize: theme.fontSize[14],
       fontFamily: theme.fontFamily.poppinsBold,
     },
     textEdit: {
-      color: theme.colors.primary,
+      paddingTop: 2,
+      color: theme.colors.textQuaternary,
+      fontSize: theme.fontSize[10],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textEditUnavailable: {
+      paddingTop: 2,
+      color: theme.colors.textTertiary,
       fontSize: theme.fontSize[10],
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textPromo: {
-      color: theme.colors.text4,
+      color: theme.colors.textSecondary,
       fontSize: theme.fontSize[10],
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textNotes: {
       flex: 1,
       fontStyle: 'italic',
-      color: theme.colors.text2,
+      color: theme.colors.textTertiary,
       fontSize: theme.fontSize[12],
       fontFamily: theme.fontFamily.poppinsMedium,
     },
@@ -192,17 +234,27 @@ const useStyles = () => {
       display: 'flex',
       flexDirection: 'row',
     },
-    viewProductHeaderQty: {
-      paddingVertical: 3,
-      paddingHorizontal: 4.5,
-      borderRadius: 5,
-      backgroundColor: theme.colors.primary,
+    viewTransparentImage: {
+      flex: 1,
+      backgroundColor: theme.colors.backgroundTransparent1,
     },
     viewProductHeader: {
       display: 'flex',
       flexDirection: 'row',
       alignItems: 'center',
       marginBottom: 8,
+    },
+    viewProductHeaderQty: {
+      paddingVertical: 3,
+      paddingHorizontal: 4.5,
+      borderRadius: 5,
+      backgroundColor: theme.colors.textQuaternary,
+    },
+    viewProductHeaderQtyUnavailable: {
+      paddingVertical: 3,
+      paddingHorizontal: 4.5,
+      borderRadius: 5,
+      backgroundColor: theme.colors.textTertiary,
     },
     viewProductModifierItem: {
       display: 'flex',
@@ -225,11 +277,23 @@ const useStyles = () => {
       alignItems: 'center',
       justifyContent: 'center',
       paddingHorizontal: 10,
-      paddingVertical: 4.5,
+      paddingVertical: 2,
       backgroundColor: 'white',
       borderRadius: 50,
       borderWidth: 1,
-      borderColor: theme.colors.primary,
+      borderColor: theme.colors.buttonActive,
+    },
+    viewEditUnavailable: {
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingHorizontal: 10,
+      paddingVertical: 2,
+      backgroundColor: 'white',
+      borderRadius: 50,
+      borderWidth: 1,
+      borderColor: theme.colors.buttonDisabled,
     },
     viewPromo: {
       display: 'flex',
@@ -238,7 +302,7 @@ const useStyles = () => {
       justifyContent: 'center',
       padding: 4,
       borderRadius: 50,
-      backgroundColor: theme.colors.text2,
+      backgroundColor: theme.colors.textTertiary,
     },
     viewPromoActive: {
       display: 'flex',
@@ -254,15 +318,21 @@ const useStyles = () => {
       flexDirection: 'row',
     },
     primaryColor: {
-      color: theme.colors.primary,
+      color: theme.colors.brandPrimary,
     },
   });
   return styles;
 };
 
-const ProductCart = ({item, disabled}) => {
+const ProductCartItem = ({item, disabled}) => {
   const styles = useStyles();
   const [isOpenAddModal, setIsOpenAddModal] = useState(false);
+
+  const orderingMode = useSelector(
+    state => state.orderReducer?.dataBasket?.product?.orderingMode,
+  );
+  const isProductUnavailable =
+    item?.orderingStatus !== 'AVAILABLE' && orderingMode !== 'STORECHECKOUT';
 
   const handleOpenAddModal = () => {
     setIsOpenAddModal(true);
@@ -283,30 +353,48 @@ const ProductCart = ({item, disabled}) => {
   };
 
   const renderProductHeader = () => {
+    const styleViewQty = isProductUnavailable
+      ? styles.viewProductHeaderQtyUnavailable
+      : styles.viewProductHeaderQty;
+
+    const styleTextName = isProductUnavailable
+      ? styles.textProductHeaderNameUnavailable
+      : styles.textProductHeaderName;
+
+    const styleTextPrice = isProductUnavailable
+      ? styles.textProductHeaderPriceUnavailable
+      : styles.textProductHeaderPrice;
+
     return (
       <View style={styles.viewProductHeader}>
-        <View style={styles.viewProductHeaderQty}>
+        <View style={styleViewQty}>
           <Text style={styles.textProductHeaderQty}>{item.quantity}x</Text>
         </View>
-        <Text style={styles.textProductHeaderName} numberOfLines={1}>
+        <Text style={styleTextName} numberOfLines={1}>
           {item?.product?.name}
         </Text>
-        <Text style={styles.textProductHeaderPrice}>
-          + {item?.product?.retailPrice}
-        </Text>
+        <Text style={styleTextPrice}>+ {item?.product?.retailPrice}</Text>
       </View>
     );
   };
 
   const renderProductModifierItem = ({qty, name, price}) => {
+    const styleTextQty = isProductUnavailable
+      ? styles.textModifierItemQtyUnavailable
+      : styles.textModifierItemQty;
+
+    const styleTextPrice = isProductUnavailable
+      ? styles.textModifierItemPriceUnavailable
+      : styles.textModifierItemPrice;
+
     return (
       <View style={styles.viewProductModifierItem}>
         <View style={styles.viewBullet} />
 
         <Text style={styles.textModifier}>
-          <Text style={styles.textModifierItemQty}>{qty}x </Text>
+          <Text style={styleTextQty}>{qty}x </Text>
           <Text style={styles.textModifierItemName}>{name} </Text>
-          <Text style={styles.textModifierItemPrice}>+{price} </Text>
+          <Text style={styleTextPrice}>+{price} </Text>
         </Text>
       </View>
     );
@@ -334,13 +422,17 @@ const ProductCart = ({item, disabled}) => {
   };
 
   const renderTotalPrice = () => {
+    const styleTextPrice = isProductUnavailable
+      ? styles.textPriceFooterUnavailable
+      : styles.textPriceFooter;
+
     if (item?.isPromotionApplied && item.amountAfterDisc < item.grossAmount) {
       return (
         <View style={styles.viewTotalPrice}>
           <Text style={styles.textPriceBeforeDiscount}>
             {CurrencyFormatter(item?.grossAmount)}
           </Text>
-          <Text style={styles.textPriceFooter}>
+          <Text style={styleTextPrice}>
             {CurrencyFormatter(item?.amountAfterDisc)}
           </Text>
         </View>
@@ -348,18 +440,26 @@ const ProductCart = ({item, disabled}) => {
     }
 
     return (
-      <Text style={styles.textPriceFooter}>
-        {CurrencyFormatter(item?.grossAmount)}
-      </Text>
+      <Text style={styleTextPrice}>{CurrencyFormatter(item?.grossAmount)}</Text>
     );
   };
 
   const renderEditIcon = () => {
     if (!disabled) {
+      const styleView = isProductUnavailable
+        ? styles.viewEditUnavailable
+        : styles.viewEdit;
+      const styleIcon = isProductUnavailable
+        ? styles.iconEditUnavailable
+        : styles.iconEdit;
+      const styleText = isProductUnavailable
+        ? styles.textEditUnavailable
+        : styles.textEdit;
+
       return (
-        <View style={styles.viewEdit}>
-          <MaterialIcons style={styles.iconEdit} name="edit" />
-          <Text style={styles.textEdit}>Edit</Text>
+        <View style={styleView}>
+          <MaterialIcons style={styleIcon} name="edit" />
+          <Text style={styleText}>Edit</Text>
         </View>
       );
     }
@@ -385,15 +485,38 @@ const ProductCart = ({item, disabled}) => {
     );
   };
 
+  const renderImageAvailable = image => {
+    return (
+      <ImageBackground
+        style={styles.image}
+        resizeMode="stretch"
+        source={image}
+      />
+    );
+  };
+
+  const renderImageUnavailable = image => {
+    return (
+      <ImageBackground style={styles.image} resizeMode="stretch" source={image}>
+        <View style={styles.viewTransparentImage} />
+      </ImageBackground>
+    );
+  };
+
   const renderImage = () => {
     const image = item?.product?.defaultImageURL
       ? {uri: item?.product?.defaultImageURL}
       : appConfig.logoMerchantWithBackground;
-    return <Image style={styles.image} resizeMode="stretch" source={image} />;
+
+    if (isProductUnavailable) {
+      return renderImageUnavailable(image);
+    } else {
+      return renderImageAvailable(image);
+    }
   };
 
   const renderPromoIcon = () => {
-    const active = !isEmptyArray(item.promotions);
+    const active = !isEmptyArray(item.promotions) && !isProductUnavailable;
     const styleViewPromo = active ? styles.viewPromoActive : styles.viewPromo;
     const styleIconPromo = active ? styles.iconPromoActive : styles.iconPromo;
 
@@ -461,7 +584,7 @@ const ProductCart = ({item, disabled}) => {
 
   return (
     <TouchableOpacity
-      disabled={disabled}
+      disabled={disabled || isProductUnavailable}
       style={styles.root}
       onPress={() => {
         handleOpenAddModal();
@@ -474,4 +597,4 @@ const ProductCart = ({item, disabled}) => {
   );
 };
 
-export default ProductCart;
+export default ProductCartItem;

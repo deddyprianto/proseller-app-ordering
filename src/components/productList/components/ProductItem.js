@@ -54,21 +54,42 @@ const useStyles = () => {
     },
     textName: {
       flex: 1,
-      color: theme.colors.text1,
+      color: theme.colors.textPrimary,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textNameUnavailable: {
+      flex: 1,
+      color: theme.colors.textTertiary,
       fontSize: theme.fontSize[14],
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textPrice: {
       marginTop: 5,
-      color: theme.colors.text1,
+      color: theme.colors.textPrimary,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textPriceUnavailable: {
+      marginTop: 5,
+      color: theme.colors.textTertiary,
       fontSize: theme.fontSize[14],
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textPromo: {
       lineHeight: 18,
-      color: theme.colors.text4,
+      color: theme.colors.textSecondary,
       fontSize: theme.fontSize[12],
       fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textNotAvailable: {
+      borderRadius: 8,
+      paddingVertical: 8,
+      paddingHorizontal: 16,
+      color: theme.colors.textSecondary,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsMedium,
+      backgroundColor: theme.colors.backgroundTransparent2,
     },
     viewQtyAndName: {
       display: 'flex',
@@ -79,7 +100,13 @@ const useStyles = () => {
       borderRadius: 4,
       paddingHorizontal: 8,
       paddingVertical: 4,
-      backgroundColor: theme.colors.primary,
+      backgroundColor: theme.colors.buttonActive,
+    },
+    viewIconCartUnavailable: {
+      borderRadius: 4,
+      paddingHorizontal: 8,
+      paddingVertical: 4,
+      backgroundColor: theme.colors.buttonDisabled,
     },
     viewPromo: {
       elevation: 1,
@@ -94,11 +121,21 @@ const useStyles = () => {
       borderRadius: 50,
       backgroundColor: theme.colors.semanticError,
     },
-    image: {
+    viewImage: {
       width: '100%',
       maxWidth: '100%',
       height: undefined,
       aspectRatio: 1 / 1,
+    },
+    viewTransparentImage: {
+      flex: 1,
+      borderRadius: 8,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: theme.colors.backgroundTransparent1,
+    },
+    image: {
+      borderRadius: 20,
     },
     imagePromo: {
       width: 16,
@@ -125,6 +162,8 @@ const Product = ({product, basket}) => {
   const [totalQty, setTotalQty] = useState(0);
   const [isOpenUpdateModal, setIsOpenUpdateModal] = useState(false);
   const [isOpenAddModal, setIsOpenAddModal] = useState(false);
+
+  const isProductAvailable = product?.orderingStatus === 'AVAILABLE';
 
   const handleOpenAddModal = () => {
     setIsOpenAddModal(true);
@@ -187,12 +226,41 @@ const Product = ({product, basket}) => {
     setTotalQty(totalQtyProductInBasket);
   }, [product, basket]);
 
+  const renderImageAvailable = image => {
+    return (
+      <ImageBackground
+        style={styles.viewImage}
+        imageStyle={styles.image}
+        resizeMode="contain"
+        source={image}
+      />
+    );
+  };
+
+  const renderImageUnavailable = image => {
+    return (
+      <ImageBackground
+        style={styles.viewImage}
+        imageStyle={styles.image}
+        resizeMode="contain"
+        source={image}>
+        <View style={styles.viewTransparentImage}>
+          <Text style={styles.textNotAvailable}>Not Available</Text>
+        </View>
+      </ImageBackground>
+    );
+  };
+
   const renderImage = () => {
     const image = product?.defaultImageURL
       ? {uri: product?.defaultImageURL}
       : appConfig.logoMerchantWithBackground;
 
-    return <Image style={styles.image} resizeMode="contain" source={image} />;
+    if (isProductAvailable) {
+      return renderImageAvailable(image);
+    } else {
+      return renderImageUnavailable(image);
+    }
   };
 
   const renderQty = () => {
@@ -202,8 +270,12 @@ const Product = ({product, basket}) => {
   };
 
   const renderName = () => {
+    const styleText = isProductAvailable
+      ? styles.textName
+      : styles.textNameUnavailable;
+
     return (
-      <Text ellipsizeMode="tail" numberOfLines={1} style={styles.textName}>
+      <Text ellipsizeMode="tail" numberOfLines={1} style={styleText}>
         {product?.name}
       </Text>
     );
@@ -218,16 +290,22 @@ const Product = ({product, basket}) => {
   };
 
   const renderPrice = () => {
+    const styleText = isProductAvailable
+      ? styles.textPrice
+      : styles.textPriceUnavailable;
+
     return (
-      <Text style={styles.textPrice}>
-        {CurrencyFormatter(product?.retailPrice)}
-      </Text>
+      <Text style={styleText}>{CurrencyFormatter(product?.retailPrice)}</Text>
     );
   };
 
   const cartIcon = () => {
+    const styleView = isProductAvailable
+      ? styles.viewIconCart
+      : styles.viewIconCartUnavailable;
+
     return (
-      <View style={styles.viewIconCart}>
+      <View style={styleView}>
         <Image source={appConfig.iconCart} style={styles.iconCart} />
       </View>
     );
@@ -293,7 +371,7 @@ const Product = ({product, basket}) => {
   };
 
   const renderPromoIcon = () => {
-    if (!isEmptyArray(product.promotions)) {
+    if (!isEmptyArray(product.promotions) && isProductAvailable) {
       return (
         <View style={styles.viewPromo}>
           <ImageBackground
@@ -309,6 +387,7 @@ const Product = ({product, basket}) => {
 
   return (
     <TouchableOpacity
+      disabled={!isProductAvailable}
       onPress={() => {
         handleProductOnClick();
       }}
