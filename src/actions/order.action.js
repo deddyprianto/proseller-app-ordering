@@ -1991,10 +1991,7 @@ export const changeOrderingMode = ({orderingMode, provider}) => {
           type: 'ORDERING_DATE_TIME',
           orderingDateTimeSelected: null,
         });
-        dispatch({
-          type: 'DATA_BASKET',
-          product: response?.response?.data,
-        });
+        dispatch(getBasket());
       }
       return response;
     } catch (error) {

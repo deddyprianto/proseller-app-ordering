@@ -15,7 +15,7 @@ import {
   Image,
 } from 'react-native';
 
-import ProductSearchListItem from './components/ProductSearchItem';
+import ProductSearchListItem from '../productList/components/ProductItem';
 
 import {isEmptyArray} from '../../helper/CheckEmpty';
 import Theme from '../../theme';
