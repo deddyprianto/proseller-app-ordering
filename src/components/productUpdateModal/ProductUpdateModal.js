@@ -29,7 +29,7 @@ const useStyles = () => {
       justifyContent: 'center',
       alignItems: 'center',
       padding: 16,
-      backgroundColor: theme.colors.backgroundTransparent,
+      backgroundColor: theme.colors.backgroundTransparent1,
     },
     rootBody: {
       padding: 16,

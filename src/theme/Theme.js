@@ -78,7 +78,8 @@ const Theme = () => {
     buttonStandBy: '#FFFFFF',
     buttonDisabled: '#B7B7B7',
 
-    backgroundTransparent: 'rgba(0, 0, 0, 0.5)',
+    backgroundTransparent1: '#00000033',
+    backgroundTransparent2: '#B7B7B7CC',
   };
 
   const fontSize = {

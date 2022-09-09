@@ -22,7 +22,7 @@ const useStyles = () => {
     root: {
       flex: 1,
       justifyContent: 'flex-end',
-      backgroundColor: theme.colors.backgroundTransparent,
+      backgroundColor: theme.colors.backgroundTransparent1,
     },
     container: {
       padding: 16,
