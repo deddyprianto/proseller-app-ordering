@@ -103,10 +103,6 @@ const useStyles = () => {
       fontSize: 6,
       color: theme.colors.border,
     },
-    dividerDashed: {
-      textAlign: 'center',
-      color: theme.colors.primary,
-    },
     divider: {
       width: '100%',
       height: 0.5,
@@ -317,8 +313,11 @@ const useStyles = () => {
       display: 'flex',
       flexDirection: 'row',
     },
-    primaryColor: {
-      color: theme.colors.brandPrimary,
+    dividerDashed: {
+      color: theme.colors.textQuaternary,
+    },
+    dividerDashedUnavailable: {
+      color: theme.colors.textTertiary,
     },
   });
   return styles;
@@ -346,12 +345,16 @@ const ProductCartItem = ({item, disabled}) => {
   };
 
   const renderDividerDashed = () => {
+    const styleColor = isProductUnavailable
+      ? styles.dividerDashedUnavailable.color
+      : styles.dividerDashed.color;
+
     return (
       <DashedLine
         dashLength={10}
         dashThickness={0.5}
         dashGap={5}
-        dashColor={styles.primaryColor.color}
+        dashColor={styleColor}
       />
     );
   };

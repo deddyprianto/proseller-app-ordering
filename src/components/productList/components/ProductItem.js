@@ -32,7 +32,7 @@ import {useSelector} from 'react-redux';
 
 const useStyles = () => {
   const theme = Theme();
-  const borderRadiusImage = Platform.OS === 'ios' ? 20 : 8;
+  const borderRadiusImage = Platform.OS === 'ios' ? 20 : 30;
   const styles = StyleSheet.create({
     root: {
       marginTop: 20,
