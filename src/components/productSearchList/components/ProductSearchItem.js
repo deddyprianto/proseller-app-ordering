@@ -20,6 +20,7 @@ import ProductAddModal from '../../productAddModal';
 import appConfig from '../../../config/appConfig';
 
 import Theme from '../../../theme';
+import {useSelector} from 'react-redux';
 
 const useStyles = () => {
   const theme = Theme();
@@ -89,6 +90,10 @@ const ProductSearchItem = ({product, basket}) => {
   const [isOpenUpdateModal, setIsOpenUpdateModal] = useState(false);
   const [isOpenAddModal, setIsOpenAddModal] = useState(false);
 
+  const imageSettings = useSelector(
+    state => state.settingReducer.imageSettings,
+  );
+
   const handleOpenAddModal = () => {
     setIsOpenAddModal(true);
   };
@@ -152,10 +157,12 @@ const ProductSearchItem = ({product, basket}) => {
 
   const renderImage = () => {
     const image = product?.defaultImageURL
-      ? {uri: product?.defaultImageURL}
-      : appConfig.logoMerchant;
+      ? product?.defaultImageURL
+      : imageSettings?.productPlaceholderImage;
 
-    return <Image style={styles.image} resizeMode="contain" source={image} />;
+    return (
+      <Image style={styles.image} resizeMode="contain" source={{uri: image}} />
+    );
   };
 
   const renderQty = () => {

@@ -65,6 +65,24 @@ const setColorSettings = async ({dispatch, colors}) => {
   }
 };
 
+const setImageSettings = async ({dispatch, images}) => {
+  if (!isEmptyArray(images)) {
+    const productPlaceholderImage = handleSettingValue({
+      values: images,
+      key: 'ProductPlaceholder',
+    });
+
+    await dispatch(
+      setData({
+        type: 'SET_IMAGES',
+        data: {
+          productPlaceholderImage,
+        },
+      }),
+    );
+  }
+};
+
 const setLoginSettings = async ({dispatch, response}) => {
   const loginByEmail = handleSettingValue({
     values: response,
@@ -107,8 +125,10 @@ export const getColorSettings = () => {
 
       const settings = response?.response?.data?.settings;
       const typeColorPicker = handleDataType({settings, key: 'colorpicker'});
+      const typeImage = handleDataType({settings, key: 'image'});
 
       if (settings) {
+        setImageSettings({dispatch, images: typeImage});
         setColorSettings({dispatch, colors: typeColorPicker});
       }
 
