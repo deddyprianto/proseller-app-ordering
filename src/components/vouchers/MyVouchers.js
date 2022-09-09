@@ -332,8 +332,9 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 10,
   },
   voucherImage2: {
+    resizeMode: 'contain',
     height: Dimensions.get('window').width / 4,
-    width: Dimensions.get('window').width / 4,
+    width: Dimensions.get('window').width,
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
   },
