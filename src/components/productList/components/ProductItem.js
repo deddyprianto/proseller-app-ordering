@@ -14,6 +14,7 @@ import {
   Image,
   TouchableOpacity,
   ImageBackground,
+  Platform,
 } from 'react-native';
 import filter from 'lodash/filter';
 import indexOf from 'lodash/indexOf';
@@ -30,6 +31,7 @@ import Theme from '../../../theme';
 
 const useStyles = () => {
   const theme = Theme();
+  const borderRadiusImage = Platform.OS === 'ios' ? 20 : 8;
   const styles = StyleSheet.create({
     root: {
       marginTop: 20,
@@ -49,6 +51,11 @@ const useStyles = () => {
     },
     textQty: {
       color: theme.colors.primary,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textQtyUnavailable: {
+      color: theme.colors.textTertiary,
       fontSize: theme.fontSize[14],
       fontFamily: theme.fontFamily.poppinsMedium,
     },
@@ -129,7 +136,7 @@ const useStyles = () => {
     },
     viewTransparentImage: {
       flex: 1,
-      borderRadius: 8,
+      borderRadius: borderRadiusImage,
       justifyContent: 'center',
       alignItems: 'center',
       backgroundColor: theme.colors.backgroundTransparent1,
@@ -264,8 +271,12 @@ const Product = ({product, basket}) => {
   };
 
   const renderQty = () => {
+    const styleText = isProductAvailable
+      ? styles.textQty
+      : styles.textQtyUnavailable;
+
     if (totalQty) {
-      return <Text style={styles.textQty}>{totalQty} x </Text>;
+      return <Text style={styleText}>{totalQty} x </Text>;
     }
   };
 
