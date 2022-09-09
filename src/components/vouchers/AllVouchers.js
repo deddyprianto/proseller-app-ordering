@@ -6,8 +6,6 @@ import {
   Dimensions,
   TouchableOpacity,
   Image,
-  Platform,
-  TouchableHighlight,
   ScrollView,
   RefreshControl,
 } from 'react-native';
@@ -16,7 +14,6 @@ import {compose} from 'redux';
 
 import colorConfig from '../../config/colorConfig';
 import appConfig from '../../config/appConfig';
-import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
 import {dataPoint, vouchers} from '../../actions/rewards.action';
 import {myVoucers} from '../../actions/account.action';
@@ -231,8 +228,9 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 10,
   },
   voucherImage2: {
+    resizeMode: 'contain',
     height: Dimensions.get('window').width / 4,
-    width: Dimensions.get('window').width / 4,
+    width: Dimensions.get('window').width,
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
   },

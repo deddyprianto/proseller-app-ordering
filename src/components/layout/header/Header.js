@@ -61,8 +61,8 @@ const useStyles = () => {
       tintColor: theme.colors.textQuaternary,
     },
     iconBack: {
-      width: 11,
-      height: 18,
+      width: 30,
+      height: 30,
       tintColor: theme.colors.textQuaternary,
     },
     iconRemove: {

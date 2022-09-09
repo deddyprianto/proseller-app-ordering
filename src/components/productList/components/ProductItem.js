@@ -28,6 +28,7 @@ import ProductAddModal from '../../productAddModal';
 import appConfig from '../../../config/appConfig';
 
 import Theme from '../../../theme';
+import {useSelector} from 'react-redux';
 
 const useStyles = () => {
   const theme = Theme();
@@ -171,6 +172,9 @@ const Product = ({product, basket}) => {
   const [isOpenAddModal, setIsOpenAddModal] = useState(false);
 
   const isProductAvailable = product?.orderingStatus === 'AVAILABLE';
+  const imageSettings = useSelector(
+    state => state.settingReducer.imageSettings,
+  );
 
   const handleOpenAddModal = () => {
     setIsOpenAddModal(true);
@@ -239,7 +243,7 @@ const Product = ({product, basket}) => {
         style={styles.viewImage}
         imageStyle={styles.image}
         resizeMode="contain"
-        source={image}
+        source={{uri: image}}
       />
     );
   };
@@ -250,7 +254,7 @@ const Product = ({product, basket}) => {
         style={styles.viewImage}
         imageStyle={styles.image}
         resizeMode="contain"
-        source={image}>
+        source={{uri: image}}>
         <View style={styles.viewTransparentImage}>
           <Text style={styles.textNotAvailable}>Not Available</Text>
         </View>
@@ -260,8 +264,8 @@ const Product = ({product, basket}) => {
 
   const renderImage = () => {
     const image = product?.defaultImageURL
-      ? {uri: product?.defaultImageURL}
-      : appConfig.logoMerchantWithBackground;
+      ? product?.defaultImageURL
+      : imageSettings?.productPlaceholderImage;
 
     if (isProductAvailable) {
       return renderImageAvailable(image);

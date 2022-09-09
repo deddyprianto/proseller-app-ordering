@@ -30,6 +30,18 @@ const colorSettings = (state = {}, action) => {
   }
 };
 
+const imageSettings = (state = {}, action) => {
+  switch (action.type) {
+    case 'SET_IMAGES':
+      return {
+        ...action.data,
+      };
+
+    default:
+      return state;
+  }
+};
+
 const loginSettings = (state = {}, action) => {
   switch (action.type) {
     case 'SET_LOGIN_METHOD':
@@ -44,6 +56,7 @@ const loginSettings = (state = {}, action) => {
 
 export default combineReducers({
   snackbar,
+  imageSettings,
   colorSettings,
   loginSettings,
 });

@@ -266,6 +266,32 @@ const ProductModifiers = ({
     }
   };
 
+  const handleDisabledCheckbox = ({modifierValue, modifier}) => {
+    const max = modifier.max;
+    let qtyTotal = 0;
+
+    const modifierProducts = selected.filter(
+      item => item.modifierId === modifier.id,
+    );
+    const modifierProductIds = modifierProducts.map(
+      item => item.modifierProductId,
+    );
+
+    modifierProducts.forEach(modifierProduct => {
+      qtyTotal = qtyTotal + modifierProduct.qty;
+    });
+
+    const isDisabled =
+      qtyTotal >= max &&
+      modifierProductIds.indexOf(modifierValue.productID) === -1;
+
+    if (max === 0) {
+      return false;
+    }
+
+    return isDisabled;
+  };
+
   const renderButtonPlus = ({selectedProductModifier, max}) => {
     const disabled = handleDisabledAddButton({
       modifier: selectedProductModifier,
@@ -338,55 +364,6 @@ const ProductModifiers = ({
     }
   };
 
-  const renderOptionNameAndPrice = ({isYesNo, modifierValue}) => {
-    if (isYesNo && !modifierValue?.price) {
-      return (
-        <View style={{flex: 1}}>
-          <Text numberOfLines={2} style={styles.textOptionName}>
-            {modifierValue?.name}
-          </Text>
-        </View>
-      );
-    } else {
-      return (
-        <View style={{flex: 1}}>
-          <Text numberOfLines={2} style={styles.textOptionName}>
-            {modifierValue?.name}
-          </Text>
-          <Text style={styles.textOptionPrice}>
-            {CurrencyFormatter(modifierValue?.price)}
-          </Text>
-        </View>
-      );
-    }
-  };
-
-  const handleDisabledCheckbox = ({modifierValue, modifier}) => {
-    const max = modifier.max;
-    let qtyTotal = 0;
-
-    const modifierProducts = selected.filter(
-      item => item.modifierId === modifier.id,
-    );
-    const modifierProductIds = modifierProducts.map(
-      item => item.modifierProductId,
-    );
-
-    modifierProducts.forEach(modifierProduct => {
-      qtyTotal = qtyTotal + modifierProduct.qty;
-    });
-
-    const isDisabled =
-      qtyTotal >= max &&
-      modifierProductIds.indexOf(modifierValue.productID) === -1;
-
-    if (max === 0) {
-      return false;
-    }
-
-    return isDisabled;
-  };
-
   const renderCheckbox = ({modifier, modifierValue}) => {
     const disabled = handleDisabledCheckbox({modifier, modifierValue});
 
@@ -413,6 +390,29 @@ const ProductModifiers = ({
         <IconIonicons style={styles.iconCheck} name="md-checkmark" />
       </TouchableOpacity>
     );
+  };
+
+  const renderOptionNameAndPrice = ({isYesNo, modifierValue}) => {
+    if (isYesNo && !modifierValue?.price) {
+      return (
+        <View style={{flex: 1}}>
+          <Text numberOfLines={2} style={styles.textOptionName}>
+            {modifierValue?.name}
+          </Text>
+        </View>
+      );
+    } else {
+      return (
+        <View style={{flex: 1}}>
+          <Text numberOfLines={2} style={styles.textOptionName}>
+            {modifierValue?.name}
+          </Text>
+          <Text style={styles.textOptionPrice}>
+            {CurrencyFormatter(modifierValue?.price)}
+          </Text>
+        </View>
+      );
+    }
   };
 
   const renderOptionCheckboxNamePrice = ({modifierValue, modifier}) => {

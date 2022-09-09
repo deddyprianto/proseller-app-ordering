@@ -66,8 +66,10 @@ const useStyles = () => {
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textGrandTotalValue: {
+      paddingTop: 4,
+      marginRight: 4,
       color: theme.colors.primary,
-      fontSize: theme.fontSize[15],
+      fontSize: theme.fontSize[16],
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textDetailGrandTotal: {
@@ -285,8 +287,10 @@ const useStyles = () => {
       backgroundColor: theme.colors.border,
     },
     iconArrowUp: {
-      width: 12,
-      height: 12,
+      alignItems: 'center',
+      justifyContent: 'center',
+      width: 24,
+      height: 24,
       tintColor: theme.colors.primary,
     },
     iconClose: {

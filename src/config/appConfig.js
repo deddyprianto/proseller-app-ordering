@@ -68,6 +68,8 @@ const appConfig = {
   imageOnBoarding3: require('../assets/img/image-on-boarding-3.png'),
   imageOnBoarding4: require('../assets/img/image-on-boarding-4.png'),
   imagePromotionBackground: require('../assets/img/image-promotion-background.png'),
+  imagePointSmallBackground: require('../assets/img/image-point-small-background.png'),
+  imagePointLargeBackground: require('../assets/img/image-point-large-background.png'),
 
   //ICON
   iconArrowUp: require('../assets/img/icon-arrow-up.png'),
@@ -107,6 +109,8 @@ const appConfig = {
   iconPlus: require('../assets/img/icon-plus.png'),
   iconPayment: require('../assets/img/icon-payment.png'),
   iconProfile: require('../assets/img/icon-profile.png'),
+
+  iconQRCode: require('../assets/img/icon-qr-code.png'),
 
   iconReward: require('../assets/img/icon-reward.png'),
 

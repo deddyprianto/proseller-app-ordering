@@ -215,6 +215,9 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
   const defaultOutlet = useSelector(
     state => state.storesReducer.defaultOutlet.defaultOutlet,
   );
+  const imageSettings = useSelector(
+    state => state.settingReducer.imageSettings,
+  );
 
   const handlePrice = ({qty, totalPrice}) => {
     setTotalPrice(qty * totalPrice);
@@ -386,11 +389,15 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
   const renderImage = () => {
     const image =
       variantImageURL || product?.defaultImageURL
-        ? {uri: variantImageURL || product?.defaultImageURL}
-        : appConfig.logoMerchantWithBackground;
+        ? variantImageURL || product?.defaultImageURL
+        : imageSettings.productPlaceholderImage;
     return (
       <View style={styles.padding16}>
-        <Image style={styles.image} resizeMode="stretch" source={image} />
+        <Image
+          style={styles.image}
+          resizeMode="stretch"
+          source={{uri: image}}
+        />
       </View>
     );
   };

@@ -1,7 +1,6 @@
 import React from 'react';
 import {Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
-
-import appConfig from '../../../config/appConfig';
+import {useSelector} from 'react-redux';
 
 import Theme from '../../../theme';
 
@@ -66,17 +65,20 @@ const useStyles = () => {
 
 const ProductCategorySmallItem = ({category, selected, onPress}) => {
   const styles = useStyles();
+  const imageSettings = useSelector(
+    state => state.settingReducer.imageSettings,
+  );
 
   const image = category?.defaultImageURL
-    ? {uri: category?.defaultImageURL}
-    : appConfig.logoMerchant;
+    ? category?.defaultImageURL
+    : imageSettings?.productPlaceholderImage;
 
   const styleRoot =
     category?.id === selected?.id ? styles.rootSelected : styles.root;
 
   return (
     <TouchableOpacity style={styleRoot} onPress={onPress}>
-      <Image source={image} resizeMode="contain" style={styles.image} />
+      <Image source={{uri: image}} resizeMode="contain" style={styles.image} />
       <Text numberOfLines={2} style={styles.textName}>
         {category?.name}
       </Text>

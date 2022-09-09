@@ -331,6 +331,10 @@ const ProductCartItem = ({item, disabled}) => {
   const orderingMode = useSelector(
     state => state.orderReducer?.dataBasket?.product?.orderingMode,
   );
+
+  const imageSettings = useSelector(
+    state => state.settingReducer.imageSettings,
+  );
   const isProductUnavailable =
     item?.orderingStatus !== 'AVAILABLE' && orderingMode !== 'STORECHECKOUT';
 
@@ -490,14 +494,17 @@ const ProductCartItem = ({item, disabled}) => {
       <ImageBackground
         style={styles.image}
         resizeMode="stretch"
-        source={image}
+        source={{uri: image}}
       />
     );
   };
 
   const renderImageUnavailable = image => {
     return (
-      <ImageBackground style={styles.image} resizeMode="stretch" source={image}>
+      <ImageBackground
+        style={styles.image}
+        resizeMode="stretch"
+        source={{uri: image}}>
         <View style={styles.viewTransparentImage} />
       </ImageBackground>
     );
@@ -505,8 +512,8 @@ const ProductCartItem = ({item, disabled}) => {
 
   const renderImage = () => {
     const image = item?.product?.defaultImageURL
-      ? {uri: item?.product?.defaultImageURL}
-      : appConfig.logoMerchantWithBackground;
+      ? item?.product?.defaultImageURL
+      : imageSettings?.productPlaceholderImage;
 
     if (isProductUnavailable) {
       return renderImageUnavailable(image);
