@@ -386,7 +386,7 @@ const Product = ({product, basket}) => {
   };
 
   const renderPromoIcon = () => {
-    if (!isEmptyArray(product.promotions) && isProductAvailable) {
+    if (!isEmptyArray(product?.promotions) && isProductAvailable) {
       return (
         <View style={styles.viewPromo}>
           <ImageBackground
