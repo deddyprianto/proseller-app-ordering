@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>SKIP-THE-QUEUE</string>
+	<string>Edgeworks</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -26,10 +26,10 @@
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>acemart-crm</string>
+			<string>edgeworks-crm</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>acemart-crm</string>
+				<string>edgeworks-crm</string>
 			</array>
 		</dict>
 	</array>

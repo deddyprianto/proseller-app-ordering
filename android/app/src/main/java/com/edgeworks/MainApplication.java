@@ -1,6 +1,6 @@
-package com.acemart;
+package com.edgeworks;
 
-// import com.acemart.generated.BasePackageList;
+// import com.edgeworks.generated.BasePackageList;
 
 import android.app.Application;
 import android.content.Context;

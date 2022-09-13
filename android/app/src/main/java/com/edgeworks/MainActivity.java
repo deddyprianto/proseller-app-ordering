@@ -1,4 +1,4 @@
-package com.acemart;
+package com.edgeworks;
 
 import android.content.Intent;
 
@@ -12,7 +12,7 @@ public class MainActivity extends ReactActivity {
    */
   @Override
   protected String getMainComponentName() {
-    return "acemart";
+    return "edgeworks";
   }
 
   @Override
