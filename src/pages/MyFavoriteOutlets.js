@@ -74,7 +74,7 @@ const MyFavoriteOutlets = () => {
         <Image
           style={styles.image}
           resizeMode="stretch"
-          source={appConfig.funtoastFavoriteOutlet}
+          source={appConfig.imageFavoriteOutlet}
         />
       </View>
     );

@@ -336,7 +336,7 @@ const Menu = () => {
       </View>
       <Image
         style={styles.footer}
-        source={appConfig.funtoastButtomBanner}
+        source={appConfig.imageAdditionalBanner}
         resizeMode="contain"
       />
     </View>

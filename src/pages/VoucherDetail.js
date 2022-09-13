@@ -222,7 +222,7 @@ const VoucherDetail = ({voucher}) => {
             handleCloseSuccessModal();
           }}
           style={styles.touchableImage}>
-          <Image source={appConfig.funtoastRedeemed} />
+          <Image source={appConfig.imageRedeemed} />
         </TouchableOpacity>
       );
     }

@@ -220,7 +220,7 @@ const Redeem = () => {
             position: 'absolute',
             left: `${percentageIcon}%`,
           }}
-          source={appConfig.funtoastCoffeeIcon}
+          source={appConfig.iconPointBar}
         />
       </View>
     );

@@ -375,7 +375,7 @@ class Signin extends Component {
               resizeMode="contain"
             />
             <Image
-              source={appConfig.appTextWelcome}
+              // source={appConfig.appTextWelcome}
               style={{
                 marginTop: -40,
                 height: 180,

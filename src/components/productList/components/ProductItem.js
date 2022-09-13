@@ -390,7 +390,7 @@ const Product = ({product, basket}) => {
       return (
         <View style={styles.viewPromo}>
           <ImageBackground
-            source={appConfig.funtoastStar}
+            source={appConfig.iconPromoStar}
             style={styles.imagePromo}>
             <Text style={styles.iconPromo}>%</Text>
           </ImageBackground>

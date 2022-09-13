@@ -55,7 +55,7 @@ const MyDeliveryAddressList = ({deliveryAddress, fromScene}) => {
   const renderEmpty = () => {
     return (
       <View style={styles.viewImage}>
-        <Image source={appConfig.funtoastEmptyDeliveryAddress} />
+        <Image source={appConfig.imageEmptyDeliveryAddress} />
         <Text style={styles.textImage}>
           Uh-oh! You don’t have any saved address. Please, make a new one.
         </Text>

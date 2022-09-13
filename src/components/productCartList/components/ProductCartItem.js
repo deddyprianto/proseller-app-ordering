@@ -533,7 +533,7 @@ const ProductCartItem = ({item, disabled}) => {
     return (
       <View style={styleViewPromo}>
         <ImageBackground
-          source={appConfig.funtoastStar}
+          source={appConfig.iconPromoStar}
           style={styles.imagePromo}>
           <Text style={styleIconPromo}>%</Text>
         </ImageBackground>

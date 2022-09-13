@@ -127,31 +127,31 @@ const OrderingTypeSelectorModal = ({open, handleClose, value}) => {
         key: 'STOREPICKUP',
         isEnabledFieldName: 'enableStorePickUp',
         displayName: defaultOutlet.storePickUpName || 'Store Pick Up',
-        image: appConfig.funtoastPickUp,
+        image: appConfig.iconOrderingModeStorePickUp,
       },
       {
         key: 'DELIVERY',
         isEnabledFieldName: 'enableDelivery',
         displayName: defaultOutlet.deliveryName || 'Delivery',
-        image: appConfig.funtoastDelivery,
+        image: appConfig.iconOrderingModeDelivery,
       },
       {
         key: 'TAKEAWAY',
         isEnabledFieldName: 'enableTakeAway',
         displayName: defaultOutlet.takeAwayName || 'Take Away',
-        image: appConfig.funtoastTakeAway,
+        image: appConfig.iconOrderingModeTakeAway,
       },
       {
         key: 'DINEIN',
         isEnabledFieldName: 'enableDineIn',
         displayName: defaultOutlet.dineInName || 'Dine In',
-        image: appConfig.funtoastPickUp,
+        image: appConfig.iconOrderingModeStorePickUp,
       },
       {
         key: 'STORECHECKOUT',
         isEnabledFieldName: 'enableStoreCheckOut',
         displayName: defaultOutlet.storeCheckOutName || 'Store Checkout',
-        image: appConfig.funtoastPickUp,
+        image: appConfig.iconOrderingModeStorePickUp,
       },
     ];
 

@@ -1,15 +1,13 @@
+//Search "ICON" for icons
+//Search "IMAGE" for images
+
 const appConfig = {
   // info company
   appName: 'U Stars Supermarket',
   appMataUang: 'SGD',
   appVersion: 'Version 1.1',
+
   // image company
-  appLogo: require('../../assets/img/logo2.png'),
-  splashLogo: require('../../assets/img/splash.jpg'),
-  appLogo3D: require('../../assets/img/logo_3D.png'),
-  appLogoQR: require('../../assets/img/logo.jpg'),
-  appBackground: require('../../assets/img/bg.png'),
-  appTextWelcome: require('../../assets/img/welcome.png'),
   appImageNull: require('../assets/img/logo.png'),
   userQRCode: require('../../assets/img/qrcode.jpg'),
   foodPlaceholder: require('../../assets/img/food-placeholder.jpg'),
@@ -41,35 +39,27 @@ const appConfig = {
   warning: require('../assets/img/warning.png'),
   location: require('../assets/img/icon-location.png'),
 
-  //Funtoast
-  funtoastButtomBanner: require('../assets/img/FuntoastBottomBanner.jpg'),
-  funtoastCoffeeIcon: require('../assets/img/funtoast-coffee.png'),
-  funtoastRedeemed: require('../assets/img/FuntoastRedeemed.png'),
-  funtoastSuccessSendGift: require('../assets/img/FuntoastSuccessSendGift.png'),
-  funtoastTakeAway: require('../assets/img/FuntoastTakeAway.png'),
-  funtoastDelivery: require('../assets/img/FuntoastDelivery.png'),
-  funtoastPickUp: require('../assets/img/FuntoastPickUp.png'),
-  funtoastFavoriteOutlet: require('../assets/img/FuntoastFavoriteOutlet.png'),
-  funtoastStar: require('../assets/img/FuntoastStar.png'),
-  funtoastQRCode: require('../assets/img/FuntoastQRCode.png'),
-  funtoastIcon: require('../assets/img/funtoastIcon.png'),
-  funtoastEmptyDeliveryAddress: require('../assets/img/funtoast-empty-address.png'),
-  funtoastOnboarding1: require('../assets/img/FuntoastOnBoarding01.png'),
-  funtoastOnboarding2: require('../assets/img/FuntoastOnBoarding02.png'),
-  funtoastOnboarding3: require('../assets/img/FuntoastOnBoarding03.png'),
-
   //LOGO MARTIN
   logoMerchant: require('../assets/img/logo.png'),
   logoMerchantWithBackground: require('../assets/img/logo-merchant-with-background.png'),
 
   //IMAGE
+  imageAdditionalBanner: require('../assets/img/image-additional-banner.png'),
+
+  imageEmptyDeliveryAddress: require('../assets/img/image-empty-address.png'),
+
+  imageFavoriteOutlet: require('../assets/img/image-favorite-outlet.png'),
+
   imageOnBoarding1: require('../assets/img/image-on-boarding-1.png'),
   imageOnBoarding2: require('../assets/img/image-on-boarding-2.png'),
   imageOnBoarding3: require('../assets/img/image-on-boarding-3.png'),
   imageOnBoarding4: require('../assets/img/image-on-boarding-4.png'),
+
   imagePromotionBackground: require('../assets/img/image-promotion-background.png'),
   imagePointSmallBackground: require('../assets/img/image-point-small-background.png'),
   imagePointLargeBackground: require('../assets/img/image-point-large-background.png'),
+
+  imageRedeemed: require('../assets/img/image-redeemed.png'),
 
   //ICON
   iconArrowUp: require('../assets/img/icon-arrow-up.png'),
@@ -104,11 +94,16 @@ const appConfig = {
   iconNotification: require('../assets/img/icon-notification.png'),
   iconNotes: require('../assets/img/icon-notes.png'),
 
+  iconOrderingModeTakeAway: require('../assets/img/icon-ordering-mode-take-away.png'),
+  iconOrderingModeDelivery: require('../assets/img/icon-ordering-mode-delivery.png'),
+  iconOrderingModeStorePickUp: require('../assets/img/icon-ordering-mode-store-pick-up.png'),
+
   iconPoint: require('../assets/img/icon-point.png'),
   iconPointBar: require('../assets/img/icon-point-bar.png'),
   iconPlus: require('../assets/img/icon-plus.png'),
   iconPayment: require('../assets/img/icon-payment.png'),
   iconProfile: require('../assets/img/icon-profile.png'),
+  iconPromoStar: require('../assets/img/icon-promo-star.png'),
 
   iconQRCode: require('../assets/img/icon-qr-code.png'),
 
