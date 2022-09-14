@@ -2,8 +2,8 @@ const ENV = {
   APP: 'Funtoast',
   IS_DEVELOP: true,
 
+  API_HOST: 'https://api-funtoast.proseller-demo.com/',
   // API_HOST: 'https://funtoast-demo.proseller.io/',
-  API_HOST: 'https://funtoast-demo.proseller.io/',
 
   base_url_payment: 'https://payment-demo.proseller.io/api/',
   // base_url_payment: 'https://payment.proseller.io/api/',

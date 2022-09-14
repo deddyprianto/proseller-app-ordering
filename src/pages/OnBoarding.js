@@ -118,7 +118,7 @@ const OnBoarding = () => {
     appConfig.imageOnBoarding1,
     appConfig.imageOnBoarding2,
     appConfig.imageOnBoarding3,
-    appConfig.imageOnBoarding4,
+    // appConfig.imageOnBoarding4,
   ];
 
   const renderImages = () => {
