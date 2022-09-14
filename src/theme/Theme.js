@@ -13,7 +13,7 @@ const Theme = () => {
 
   const colors = {
     //old version
-    primary: '#00BECC',
+    primary: '#CF3030',
     secondary: '#F9F9F9',
     thirdColor: '#FFEBEB',
     forthColor: '#F9F9F9',
@@ -60,12 +60,12 @@ const Theme = () => {
     textPrimary: '#000000',
     textSecondary: '#FFFFFF',
     textTertiary: '#B7B7B7',
-    textQuaternary: '#00BECC',
+    textQuaternary: '#CF3030',
 
     semanticError: '#CE1111',
     semanticSuccess: '#5CD523',
 
-    brandPrimary: '#00BECC',
+    brandPrimary: '#CF3030',
     brandSecondary: '#FFFFFF',
     brandTertiary: '#0E8A94',
 
@@ -74,7 +74,7 @@ const Theme = () => {
     greyScale3: '#D6D6D6',
     greyScale4: '#F9F9F9',
 
-    buttonActive: '#00BECC',
+    buttonActive: '#CF3030',
     buttonStandBy: '#FFFFFF',
     buttonDisabled: '#B7B7B7',
 
