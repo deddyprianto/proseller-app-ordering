@@ -29,7 +29,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "Edgeworks.app"
+               BuildableName = "Funtoast.app"
                BlueprintName = "funtoast"
                ReferencedContainer = "container:funtoast.xcodeproj">
             </BuildableReference>
@@ -59,7 +59,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "Edgeworks.app"
+            BuildableName = "Funtoast.app"
             BlueprintName = "funtoast"
             ReferencedContainer = "container:funtoast.xcodeproj">
          </BuildableReference>
@@ -82,7 +82,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "Edgeworks.app"
+            BuildableName = "Funtoast.app"
             BlueprintName = "funtoast"
             ReferencedContainer = "container:funtoast.xcodeproj">
          </BuildableReference>
@@ -99,7 +99,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "Edgeworks.app"
+            BuildableName = "Funtoast.app"
             BlueprintName = "funtoast"
             ReferencedContainer = "container:funtoast.xcodeproj">
          </BuildableReference>

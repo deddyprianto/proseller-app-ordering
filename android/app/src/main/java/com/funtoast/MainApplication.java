@@ -1,6 +1,6 @@
-package com.edgeworks;
+package com.funtoast;
 
-// import com.edgeworks.generated.BasePackageList;
+// import com.funtoast.generated.BasePackageList;
 
 import android.app.Application;
 import android.content.Context;

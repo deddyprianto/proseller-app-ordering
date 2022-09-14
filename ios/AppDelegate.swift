@@ -22,7 +22,7 @@ class AppDelegate: UIViewController, UIApplicationDelegate {
     let jsCodeLocation: URL
     
     jsCodeLocation = RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: "index", fallbackResource:nil)
-      let rootView = RCTRootView(bundleURL: jsCodeLocation, moduleName: "edgeworks", initialProperties: nil, launchOptions: launchOptions)
+      let rootView = RCTRootView(bundleURL: jsCodeLocation, moduleName: "funtoast", initialProperties: nil, launchOptions: launchOptions)
     
       AppDelegate.rootViewController.view = rootView
       self.window = UIWindow(frame: UIScreen.main.bounds)

@@ -1,4 +1,4 @@
-package com.edgeworks;
+package com.funtoast;
 
 import android.content.Intent;
 
