@@ -276,7 +276,17 @@ class Home extends Component {
         {outletSelectionMode === 'MANUAL' && isEmptyObject(defaultOutlet) ? (
           <Store />
         ) : (
-          <HomeRetail />
+          <ScrollView
+            refreshControl={
+              <RefreshControl
+                refreshing={this.state.refreshing}
+                onRefresh={this._onRefresh}
+              />
+            }>
+            <Banner />
+            <Menu />
+          </ScrollView>
+          // <HomeRetail />
         )}
       </>
     );

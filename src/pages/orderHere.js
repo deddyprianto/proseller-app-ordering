@@ -123,9 +123,9 @@ const OrderHere = () => {
   const orderingMode = useSelector(
     state => state.orderReducer?.dataOrderingMode?.orderingMode,
   );
-  const products = useSelector(
-    state => state.productReducer?.productsOutlet?.products,
-  );
+  const products = useSelector(state => state.productReducer.productsOutlet);
+
+  console.log(products);
 
   const onRefresh = useCallback(async () => {
     setRefresh(true);
@@ -184,6 +184,7 @@ const OrderHere = () => {
   };
 
   const renderProducts = () => {
+    console.log('THEO', products);
     if (searchQuery) {
       return <ProductSearchList basket={basket} products={productsSearch} />;
     } else {
@@ -246,7 +247,7 @@ const OrderHere = () => {
         </ScrollView>
       </View>
 
-      <View style={styles.body}>{renderProducts()}</View>
+      <ScrollView style={styles.body}>{renderProducts()}</ScrollView>
       <View style={styles.footer}>{renderButtonCart()}</View>
       <OrderingTypeSelectorModal
         value={basket?.orderingMode || orderingMode}

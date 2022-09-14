@@ -149,6 +149,7 @@ const useStyles = () => {
       alignItems: 'center',
     },
     viewTier: {
+      marginTop: 8,
       width: '100%',
       display: 'flex',
       flexDirection: 'row',
@@ -194,6 +195,7 @@ const useStyles = () => {
       width: 36,
       height: 36,
       marginRight: 16,
+      tintColor: theme.colors.brandPrimary,
     },
     iconArrowRight: {
       marginLeft: 8,

@@ -2,8 +2,11 @@ const ENV = {
   APP: 'Edgeworks',
   IS_DEVELOP: true,
 
+  API_HOST: 'https://api-funtoast.proseller-demo.com/',
+
   // API_HOST: 'https://edgeworks-demo.proseller.io/',
-  API_HOST: 'https://edgeworks-demo.proseller.io/',
+  // API_HOST_DEFAULT: 'https://edgeworks-demo.proseller.io/', just for note
+  // API_HOST_FUNTOAST_DEMO: 'https://api-funtoast.proseller-demo.com/' just for note
 
   base_url_payment: 'https://payment-demo.proseller.io/api/',
   // base_url_payment: 'https://payment.proseller.io/api/',
