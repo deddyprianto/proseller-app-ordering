@@ -10,9 +10,7 @@ import {
   TouchableOpacity,
   Dimensions,
   ScrollView,
-  SafeAreaView,
 } from 'react-native';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview';
 
 import appConfig from '../config/appConfig';
 import awsConfig from '../config/awsConfig';

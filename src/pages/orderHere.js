@@ -19,7 +19,6 @@ import {
 
 import Header from '../components/layout/header';
 import FieldSearch from '../components/fieldSearch';
-import ProductList from '../components/productList';
 import LoadingScreen from '../components/loadingScreen';
 import ProductSearchList from '../components/productSearchList';
 import OrderingTypeSelectorModal from '../components/modal/OrderingTypeSelectorModal';
@@ -36,6 +35,7 @@ import CurrencyFormatter from '../helper/CurrencyFormatter';
 import appConfig from '../config/appConfig';
 
 import Theme from '../theme';
+import ProductPresetList from '../components/productPresetList/ProductPresetList';
 
 const useStyles = () => {
   const theme = Theme();
@@ -44,11 +44,10 @@ const useStyles = () => {
       flex: 1,
     },
     header: {
-      height: 140,
+      flex: 1,
     },
     body: {
-      flex: 1,
-      marginTop: 10,
+      flex: 3,
       width: '100%',
       paddingHorizontal: 16,
     },
@@ -110,11 +109,11 @@ const useStyles = () => {
 const OrderHere = () => {
   const styles = useStyles();
   const dispatch = useDispatch();
+  const [searchTextInput, setSearchTextInput] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [productsSearch, setProductsSearch] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [refresh, setRefresh] = useState(false);
-  const [openOrderingTypeModal, setOpenOrderingTypeModal] = useState(false);
 
   const defaultOutlet = useSelector(
     state => state.storesReducer.defaultOutlet.defaultOutlet,
@@ -123,9 +122,7 @@ const OrderHere = () => {
   const orderingMode = useSelector(
     state => state.orderReducer?.dataOrderingMode?.orderingMode,
   );
-  const products = useSelector(
-    state => state.productReducer?.productsOutlet?.products,
-  );
+  const products = useSelector(state => state.productReducer.productsOutlet);
 
   const onRefresh = useCallback(async () => {
     setRefresh(true);
@@ -154,6 +151,11 @@ const OrderHere = () => {
     loadData();
   }, [dispatch, searchQuery, defaultOutlet]);
 
+  const handleSearchProduct = async value => {
+    setSearchTextInput('');
+    setSearchQuery(value);
+  };
+
   const handleLoading = () => {
     if (isLoading && searchQuery) {
       return true;
@@ -173,11 +175,13 @@ const OrderHere = () => {
   const renderSearch = () => {
     return (
       <FieldSearch
-        label="Search"
-        value={searchQuery}
-        placeholder="Search..."
+        value={searchTextInput}
         onChange={value => {
-          setSearchQuery(value);
+          setSearchTextInput(value);
+        }}
+        placeholder="Try to search “toast”"
+        onSubmit={value => {
+          handleSearchProduct(value);
         }}
       />
     );
@@ -187,7 +191,7 @@ const OrderHere = () => {
     if (searchQuery) {
       return <ProductSearchList basket={basket} products={productsSearch} />;
     } else {
-      return <ProductList basket={basket} products={products} />;
+      return <ProductPresetList basket={basket} products={products} />;
     }
   };
 
@@ -224,9 +228,8 @@ const OrderHere = () => {
     );
   };
 
-  return (
-    <View style={styles.root}>
-      <LoadingScreen loading={handleLoading()} />
+  const renderHeader = () => {
+    return (
       <View style={styles.header}>
         <ScrollView
           contentContainerStyle={styles.header}
@@ -238,20 +241,40 @@ const OrderHere = () => {
               }}
             />
           }>
-          <Header customTitle={renderHeaderTitle()} scanner />
+          <Header customTitle={renderHeaderTitle()} />
           <View style={styles.viewTextAndSearch}>
             {renderText()}
             {renderSearch()}
           </View>
         </ScrollView>
       </View>
+    );
+  };
 
-      <View style={styles.body}>{renderProducts()}</View>
-      <View style={styles.footer}>{renderButtonCart()}</View>
+  const renderBody = () => {
+    return <View style={styles.body}>{renderProducts()}</View>;
+  };
+
+  const renderFooter = () => {
+    return <View style={styles.footer}>{renderButtonCart()}</View>;
+  };
+
+  const renderModal = () => {
+    return (
       <OrderingTypeSelectorModal
         value={basket?.orderingMode || orderingMode}
-        open={!basket?.orderingMode && !orderingMode}
+        open={!basket?.orderingMode && orderingMode}
       />
+    );
+  };
+
+  return (
+    <View style={styles.root}>
+      <LoadingScreen loading={handleLoading()} />
+      {renderHeader()}
+      {renderBody()}
+      {renderFooter()}
+      {renderModal()}
     </View>
   );
 };

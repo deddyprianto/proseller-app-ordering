@@ -15,7 +15,6 @@ import {
   TouchableOpacity,
   Image,
   SafeAreaView,
-  Dimensions,
 } from 'react-native';
 
 import FieldSearch from '../components/fieldSearch';
@@ -43,8 +42,6 @@ import ProductSubCategoryList from '../components/productSubCategoryList';
 import SearchSuggestionList from '../components/searchSuggestionList/SearchSuggestionList';
 
 import Theme from '../theme';
-
-const HEIGHT = Dimensions.get('window').height;
 
 const useStyles = () => {
   const theme = Theme();
