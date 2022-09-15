@@ -8,6 +8,7 @@ import {
   Text,
   Image,
   TouchableOpacity,
+  SafeAreaView,
 } from 'react-native';
 
 import {Actions} from 'react-native-router-flux';
@@ -93,14 +94,14 @@ const MyFavoriteOutlets = () => {
   };
 
   return (
-    <View style={styles.root}>
+    <SafeAreaView style={styles.root}>
       <Header title="My Favorite Outlets" />
       <ScrollView style={{flex: 1}}>
         {renderImages()}
         <MyFavoriteOutletList />
       </ScrollView>
       {renderSeeAllButton()}
-    </View>
+    </SafeAreaView>
   );
 };
 

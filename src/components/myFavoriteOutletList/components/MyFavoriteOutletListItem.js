@@ -111,7 +111,7 @@ const MyFavoriteOutletItemList = ({outlet}) => {
   };
 
   const renderTextAddress = () => {
-    return <Text>{outlet.address}</Text>;
+    return <Text>{outlet?.address}</Text>;
   };
 
   const handleTimeFormatter = value => {

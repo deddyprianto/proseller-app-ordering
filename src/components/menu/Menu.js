@@ -116,10 +116,10 @@ const useStyles = () => {
     },
     touchableOrderHere: {
       shadowOffset: {
-        width: 0.2,
-        height: 0.2,
+        width: 0.5,
+        height: 0.5,
       },
-      shadowOpacity: 0.2,
+      shadowOpacity: 0.5,
       shadowColor: theme.colors.greyScale2,
       elevation: 5,
       flex: 1,
@@ -132,10 +132,10 @@ const useStyles = () => {
     },
     touchableSendGift: {
       shadowOffset: {
-        width: 0.2,
-        height: 0.2,
+        width: 0.5,
+        height: 0.5,
       },
-      shadowOpacity: 0.2,
+      shadowOpacity: 0.5,
       shadowColor: theme.colors.greyScale2,
       elevation: 5,
       display: 'flex',
@@ -148,10 +148,10 @@ const useStyles = () => {
     },
     touchableMyECard: {
       shadowOffset: {
-        width: 0.2,
-        height: 0.2,
+        width: 0.5,
+        height: 0.5,
       },
-      shadowOpacity: 0.2,
+      shadowOpacity: 0.5,
       shadowColor: theme.colors.greyScale2,
       elevation: 5,
       display: 'flex',
@@ -164,10 +164,10 @@ const useStyles = () => {
     },
     touchableEStore: {
       shadowOffset: {
-        width: 0.2,
-        height: 0.2,
+        width: 0.5,
+        height: 0.5,
       },
-      shadowOpacity: 0.2,
+      shadowOpacity: 0.5,
       shadowColor: theme.colors.greyScale2,
       elevation: 5,
       display: 'flex',
@@ -180,10 +180,10 @@ const useStyles = () => {
     },
     touchableWelcome: {
       shadowOffset: {
-        width: 0.2,
-        height: 0.2,
+        width: 0.5,
+        height: 0.5,
       },
-      shadowOpacity: 0.2,
+      shadowOpacity: 0.5,
       shadowColor: theme.colors.greyScale2,
       elevation: 5,
       flex: 1,
@@ -200,10 +200,10 @@ const useStyles = () => {
     },
     touchableFavoriteOutlet: {
       shadowOffset: {
-        width: 0.2,
-        height: 0.2,
+        width: 0.5,
+        height: 0.5,
       },
-      shadowOpacity: 0.2,
+      shadowOpacity: 0.5,
       shadowColor: theme.colors.greyScale2,
       elevation: 5,
       flex: 1,

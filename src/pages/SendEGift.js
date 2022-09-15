@@ -7,6 +7,7 @@ import {
   Text,
   Dimensions,
   TouchableOpacity,
+  SafeAreaView,
 } from 'react-native';
 
 import {CheckBox} from 'react-native-elements';
@@ -515,18 +516,20 @@ const SendEGift = ({categoryId}) => {
   };
 
   return (
-    <ScrollView style={styles.container}>
-      <LoadingScreen loading={isLoading} />
-      {renderHeader()}
-      {renderTextInstruction()}
-      {renderPickDesign()}
-      {renderValueOfVoucher()}
-      {renderTextInputQuantity()}
-      {renderGiftTo()}
-      {renderPaymentMethod()}
-      {renderButtonPayment()}
-      {renderConfirmationDialog()}
-    </ScrollView>
+    <SafeAreaView>
+      <ScrollView style={styles.container}>
+        <LoadingScreen loading={isLoading} />
+        {renderHeader()}
+        {renderTextInstruction()}
+        {renderPickDesign()}
+        {renderValueOfVoucher()}
+        {renderTextInputQuantity()}
+        {renderGiftTo()}
+        {renderPaymentMethod()}
+        {renderButtonPayment()}
+        {renderConfirmationDialog()}
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
