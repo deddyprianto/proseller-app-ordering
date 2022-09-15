@@ -43,12 +43,10 @@ const useStyles = () => {
     root: {
       flex: 1,
     },
-    header: {
-      flex: 1,
-    },
     body: {
       flex: 3,
       width: '100%',
+      marginTop: 16,
       paddingHorizontal: 16,
     },
     footer: {
@@ -126,9 +124,11 @@ const OrderHere = () => {
 
   const onRefresh = useCallback(async () => {
     setRefresh(true);
+    setIsLoading(true);
     await dispatch(getProductByOutlet(defaultOutlet.id));
     await dispatch(getBasket());
     setRefresh(false);
+    setIsLoading(false);
   }, [dispatch, defaultOutlet]);
 
   useEffect(() => {
@@ -230,9 +230,8 @@ const OrderHere = () => {
 
   const renderHeader = () => {
     return (
-      <View style={styles.header}>
+      <View>
         <ScrollView
-          contentContainerStyle={styles.header}
           refreshControl={
             <RefreshControl
               refreshing={refresh}
@@ -263,7 +262,7 @@ const OrderHere = () => {
     return (
       <OrderingTypeSelectorModal
         value={basket?.orderingMode || orderingMode}
-        open={!basket?.orderingMode && orderingMode}
+        open={!basket?.orderingMode && !orderingMode}
       />
     );
   };
