@@ -173,6 +173,8 @@ const OrderHere = () => {
   };
 
   const renderSearch = () => {
+    const replacePlaceholder =
+      searchQuery && `search result for "${searchQuery}"`;
     return (
       <FieldSearch
         value={searchTextInput}
@@ -180,6 +182,7 @@ const OrderHere = () => {
           setSearchTextInput(value);
         }}
         placeholder="Try to search “toast”"
+        replacePlaceholder={replacePlaceholder}
         onSubmit={value => {
           handleSearchProduct(value);
         }}
