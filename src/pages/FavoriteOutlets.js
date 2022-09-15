@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {StyleSheet, ScrollView, View} from 'react-native';
+import {StyleSheet, SafeAreaView} from 'react-native';
 
 import FavoriteOutletList from '../components/favoriteOutletList';
 
@@ -15,10 +15,10 @@ const styles = StyleSheet.create({
 
 const FavoriteOutlets = () => {
   return (
-    <View style={styles.root}>
+    <SafeAreaView style={styles.root}>
       <Header title="All Outlets" />
       <FavoriteOutletList />
-    </View>
+    </SafeAreaView>
   );
 };
 

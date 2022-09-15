@@ -8,6 +8,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Image,
+  SafeAreaView,
 } from 'react-native';
 import {Actions} from 'react-native-router-flux';
 import {useDispatch, useSelector} from 'react-redux';
@@ -159,21 +160,23 @@ const EStore = () => {
   };
 
   return (
-    <ScrollView
-      contentContainerStyle={styles.container}
-      refreshControl={
-        <RefreshControl
-          refreshing={refresh}
-          onRefresh={() => {
-            handleRefresh();
-          }}
-        />
-      }>
-      {renderTextEStore()}
-      {renderTextDescription()}
-      <EStoreList products={products} basket={basket} />
-      <View style={styles.footer}>{renderButtonCart()}</View>
-    </ScrollView>
+    <SafeAreaView style={{flex: 1}}>
+      <ScrollView
+        contentContainerStyle={styles.container}
+        refreshControl={
+          <RefreshControl
+            refreshing={refresh}
+            onRefresh={() => {
+              handleRefresh();
+            }}
+          />
+        }>
+        {renderTextEStore()}
+        {renderTextDescription()}
+        <EStoreList products={products} basket={basket} />
+        <View style={styles.footer}>{renderButtonCart()}</View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 

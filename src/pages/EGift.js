@@ -9,6 +9,7 @@ import {
   Image,
   Dimensions,
   TouchableOpacity,
+  SafeAreaView,
 } from 'react-native';
 
 import colorConfig from '../config/colorConfig';
@@ -112,18 +113,21 @@ const EGift = () => {
   };
 
   return (
-    <ScrollView style={styles.container}>
-      <LoadingScreen loading={isLoading} />
-      <View style={styles.viewHeader}>
-        <View style={styles.viewTitle}>
-          <Text style={styles.textTitle}>Send A Gift</Text>
+    <SafeAreaView>
+      <ScrollView style={styles.container}>
+        <LoadingScreen loading={isLoading} />
+        <View style={styles.viewHeader}>
+          <View style={styles.viewTitle}>
+            <Text style={styles.textTitle}>Send A Gift</Text>
+          </View>
+          <Text style={styles.textDescription}>
+            Send a gift to your love ones or friends with a custom design
+            voucher
+          </Text>
         </View>
-        <Text style={styles.textDescription}>
-          Send a gift to your love ones or friends with a custom design voucher
-        </Text>
-      </View>
-      <View style={styles.viewBody}>{renderCategories()}</View>
-    </ScrollView>
+        <View style={styles.viewBody}>{renderCategories()}</View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 

@@ -253,12 +253,12 @@ class Inbox extends Component {
           <View
             style={{
               flexDirection: 'row',
-              justifyContent: 'flex-start',
+              justifyContent: 'center',
               alignItems: 'center',
-              paddingLeft: 25,
+              // paddingLeft: 25,
               backgroundColor: colorConfig.store.defaultColor,
             }}>
-            <TouchableOpacity
+            {/* <TouchableOpacity
               onPress={() => Actions.pop()}
               style={{alignItems: 'flex-start'}}>
               <Icon
@@ -266,7 +266,7 @@ class Inbox extends Component {
                 name={Platform.OS === 'ios' ? 'ios-close' : 'md-close'}
                 style={{color: 'white'}}
               />
-            </TouchableOpacity>
+            </TouchableOpacity> */}
             <Text style={styles.navbarTitle}>Inbox</Text>
           </View>
         </View>
@@ -291,9 +291,9 @@ const styles = StyleSheet.create({
     fontSize: 18,
     padding: 13,
     color: 'white',
-    textAlign: 'center',
+    // textAlign: 'center',
     fontWeight: 'bold',
-    marginLeft: '32%',
+    // marginLeft: '32%',
   },
   emptyNotice: {
     justifyContent: 'center',

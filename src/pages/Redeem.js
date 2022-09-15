@@ -10,6 +10,7 @@ import {
   Image,
   TouchableOpacity,
   Dimensions,
+  SafeAreaView,
 } from 'react-native';
 
 import {ProgressBar} from 'react-native-paper';
@@ -281,7 +282,7 @@ const Redeem = () => {
   };
 
   return (
-    <View style={{flex: 1}}>
+    <SafeAreaView style={{flex: 1}}>
       <Header title="Points and Voucher" />
       <ScrollView style={styles.container}>
         <View style={styles.viewHeader}>
@@ -297,7 +298,7 @@ const Redeem = () => {
           <VoucherList />
         </View>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 };
 

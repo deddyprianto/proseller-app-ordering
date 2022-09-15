@@ -7,17 +7,14 @@ import {
   ScrollView,
   View,
   Text,
-  Image,
   Dimensions,
-  TouchableOpacity,
+  SafeAreaView,
 } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
 
 import colorConfig from '../config/colorConfig';
-import appConfig from '../config/appConfig';
 import awsConfig from '../config/awsConfig';
 
-import EStoreList from '../components/eStoreList/EStoreList';
 import {useSelector} from 'react-redux';
 
 const WIDTH = Dimensions.get('window').width;
@@ -162,15 +159,17 @@ const ECard = () => {
   };
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.viewHeader}>
-        <View style={styles.viewTitle}>
-          <Text style={styles.textTitle}>My E - Card</Text>
+    <SafeAreaView>
+      <ScrollView style={styles.container}>
+        <View style={styles.viewHeader}>
+          <View style={styles.viewTitle}>
+            <Text style={styles.textTitle}>My E - Card</Text>
+          </View>
+          {renderQRCode()}
+          {renderHowToUse()}
         </View>
-        {renderQRCode()}
-        {renderHowToUse()}
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {StyleSheet, ScrollView, View, Text} from 'react-native';
+import {StyleSheet, ScrollView, View, Text, SafeAreaView} from 'react-native';
 
 import colorConfig from '../config/colorConfig';
 
@@ -110,23 +110,25 @@ const PointDetailAndHistory = () => {
   };
 
   return (
-    <View style={{flex: 1}}>
-      <Header title="Point Detail & History" />
-      <ScrollView style={styles.container}>
-        <View style={{marginTop: '5%'}} />
-        {renderPointHeader()}
-        <View style={{marginTop: '5%'}} />
-        {renderTextInfo()}
-        <View style={{marginTop: '5%'}} />
-        {renderPointDateExpired()}
-        <View style={{marginTop: '5%'}} />
-        <View style={styles.divider} />
-        <View style={{marginTop: '5%'}} />
-        {renderTextPointHistory()}
-        <View style={{marginTop: '5%'}} />
-        <PointHistoryList />
-      </ScrollView>
-    </View>
+    <SafeAreaView style={{flex: 1}}>
+      <View style={{flex: 1}}>
+        <Header title="Point Detail & History" />
+        <ScrollView style={styles.container}>
+          <View style={{marginTop: '5%'}} />
+          {renderPointHeader()}
+          <View style={{marginTop: '5%'}} />
+          {renderTextInfo()}
+          <View style={{marginTop: '5%'}} />
+          {renderPointDateExpired()}
+          <View style={{marginTop: '5%'}} />
+          <View style={styles.divider} />
+          <View style={{marginTop: '5%'}} />
+          {renderTextPointHistory()}
+          <View style={{marginTop: '5%'}} />
+          <PointHistoryList />
+        </ScrollView>
+      </View>
+    </SafeAreaView>
   );
 };
 

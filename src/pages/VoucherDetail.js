@@ -8,6 +8,7 @@ import {
   Text,
   TouchableOpacity,
   Image,
+  SafeAreaView,
 } from 'react-native';
 
 import colorConfig from '../config/colorConfig';
@@ -294,7 +295,7 @@ const VoucherDetail = ({voucher}) => {
   };
 
   return (
-    <>
+    <SafeAreaView>
       <View style={styles.root}>
         <LoadingScreen loading={isLoading} />
         <Header title="Voucher Details" />
@@ -319,7 +320,7 @@ const VoucherDetail = ({voucher}) => {
       </View>
       {renderConfirmationDialog()}
       {renderImageRedeemSuccess()}
-    </>
+    </SafeAreaView>
   );
 };
 

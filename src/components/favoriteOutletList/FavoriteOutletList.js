@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useSelector} from 'react-redux';
 
 import {StyleSheet, ScrollView, View} from 'react-native';
@@ -28,7 +28,7 @@ const FavoriteOutletList = () => {
   useEffect(() => {
     const result = outlets?.map(outlet => {
       const isFind = myFavoriteOutlets?.find(
-        favoriteOutlet => favoriteOutlet.id === outlet.id,
+        favoriteOutlet => favoriteOutlet?.id === outlet?.id,
       );
       if (isFind) {
         return {...outlet, isFavorite: true};
