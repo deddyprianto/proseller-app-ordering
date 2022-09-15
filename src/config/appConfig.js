@@ -44,7 +44,7 @@ const appConfig = {
   logoMerchantWithBackground: require('../assets/img/logo-merchant-with-background.png'),
 
   //IMAGE
-  imageAdditionalBanner: require('../assets/img/image-additional-banner.png'),
+  imageAdditionalBanner: require('../assets/img/image-additional-banner.jpg'),
 
   imageEmptyDeliveryAddress: require('../assets/img/image-empty-address.png'),
 
