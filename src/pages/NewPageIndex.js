@@ -8,6 +8,7 @@ import {
   Image,
   StyleSheet,
   Dimensions,
+  SafeAreaView,
 } from 'react-native';
 import History from './history';
 import Profile from './Profile';
@@ -247,9 +248,9 @@ const NewPageIndex = () => {
   }
 
   return (
-    <View style={styles.root}>
+    <SafeAreaView style={styles.root}>
       <Tabs />
-    </View>
+    </SafeAreaView>
   );
 };
 

@@ -15,6 +15,7 @@ import {
   TouchableOpacity,
   RefreshControl,
   Image,
+  SafeAreaView,
 } from 'react-native';
 
 import Header from '../components/layout/header';
@@ -44,9 +45,8 @@ const useStyles = () => {
       flex: 1,
     },
     body: {
-      flex: 3,
-      width: '100%',
-      marginTop: 16,
+      flex: 1,
+      paddingTop: 16,
       paddingHorizontal: 16,
     },
     footer: {
@@ -235,6 +235,7 @@ const OrderHere = () => {
     return (
       <View>
         <ScrollView
+          scrollEnabled={false}
           refreshControl={
             <RefreshControl
               refreshing={refresh}
@@ -271,13 +272,13 @@ const OrderHere = () => {
   };
 
   return (
-    <View style={styles.root}>
+    <SafeAreaView style={styles.root}>
       <LoadingScreen loading={handleLoading()} />
       {renderHeader()}
       {renderBody()}
       {renderFooter()}
       {renderModal()}
-    </View>
+    </SafeAreaView>
   );
 };
 
