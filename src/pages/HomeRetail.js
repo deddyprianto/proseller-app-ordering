@@ -195,7 +195,7 @@ const useStyles = () => {
   return styles;
 };
 
-const Home = () => {
+const HomeRetail = () => {
   const ref = useRef();
   const styles = useStyles();
   const dispatch = useDispatch();
@@ -540,4 +540,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default HomeRetail;

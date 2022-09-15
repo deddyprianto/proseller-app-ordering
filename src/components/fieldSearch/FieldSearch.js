@@ -17,6 +17,7 @@ const useStyles = () => {
     root: {
       flex: 1,
       height: 48,
+      minHeight: 48,
       display: 'flex',
       flexDirection: 'row',
       justifyContent: 'space-between',

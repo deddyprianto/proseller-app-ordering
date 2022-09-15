@@ -39,6 +39,7 @@ import {dataPromotion} from '../actions/promotion.action';
 import {getSVCCard} from '../actions/SVC.action';
 import LoadingScreen from '../components/loadingScreen';
 import HomeRetail from './HomeRetail';
+import HomeFnB from './HomeFnB';
 
 class Home extends Component {
   constructor(props) {
@@ -276,16 +277,11 @@ class Home extends Component {
         {outletSelectionMode === 'MANUAL' && isEmptyObject(defaultOutlet) ? (
           <Store />
         ) : (
-          <ScrollView
-            refreshControl={
-              <RefreshControl
-                refreshing={this.state.refreshing}
-                onRefresh={this._onRefresh}
-              />
-            }>
-            <Banner />
-            <Menu />
-          </ScrollView>
+          <HomeFnB
+            isRefresh={this.state.refreshing}
+            handleOnRefresh={this._onRefresh}
+          />
+
           // <HomeRetail />
         )}
       </>

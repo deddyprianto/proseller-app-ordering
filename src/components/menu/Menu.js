@@ -33,6 +33,7 @@ const useStyles = () => {
   const theme = Theme();
   const styles = StyleSheet.create({
     container: {
+      marginTop: 16,
       paddingHorizontal: 16,
     },
     header: {
