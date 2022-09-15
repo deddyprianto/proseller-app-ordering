@@ -141,8 +141,8 @@ android {
         applicationId "com.funtoast"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 70
-        versionName "1.1.30"
+        versionCode 71
+        versionName "1.1.27"
         missingDimensionStrategy 'react-native-camera', 'general'
         resValue "string", "build_config_package", "com.funtoast"
         multiDexEnabled true
@@ -193,21 +193,21 @@ android {
             dev {
                 minSdkVersion rootProject.ext.minSdkVersion
                 applicationId 'com.funtoast.dev'
-                versionName "1.1.30"
+                versionName "1.1.27"
                 targetSdkVersion rootProject.ext.targetSdkVersion
                 resValue "string", "build_config_package", "com.funtoast"
             }
             demo {
                 minSdkVersion rootProject.ext.minSdkVersion
                 applicationId 'com.funtoast.demo'
-                versionName "1.1.30"
+                versionName "1.1.27"
                 targetSdkVersion rootProject.ext.targetSdkVersion
                 resValue "string", "build_config_package", "com.funtoast"
             }
             app {
                 minSdkVersion rootProject.ext.minSdkVersion
                 applicationId 'com.funtoast.app'
-                versionName "1.1.30"
+                versionName "1.1.27"
                 targetSdkVersion rootProject.ext.targetSdkVersion
                 resValue "string", "build_config_package", "com.funtoast"
             }
