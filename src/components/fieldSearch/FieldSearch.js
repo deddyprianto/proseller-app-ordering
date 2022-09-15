@@ -15,9 +15,9 @@ const useStyles = () => {
   const theme = Theme();
   const styles = StyleSheet.create({
     root: {
-      flex: 1,
       height: 48,
       minHeight: 48,
+      maxHeight: 48,
       display: 'flex',
       flexDirection: 'row',
       justifyContent: 'space-between',

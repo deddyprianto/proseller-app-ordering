@@ -173,6 +173,10 @@ const ProductPresetList = ({products, basket}) => {
     );
   };
 
+  if (isEmptyArray(products)) {
+    return null;
+  }
+
   return (
     <View style={styles.root}>
       {renderCategoryTabs()}

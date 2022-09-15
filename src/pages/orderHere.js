@@ -273,13 +273,11 @@ const OrderHere = () => {
 
   return (
     <SafeAreaView style={styles.root}>
-      <View style={styles.root}>
-        <LoadingScreen loading={handleLoading()} />
-        {renderHeader()}
-        {renderBody()}
-        {renderFooter()}
-        {renderModal()}
-      </View>
+      <LoadingScreen loading={handleLoading()} />
+      {renderHeader()}
+      {renderBody()}
+      {renderFooter()}
+      {renderModal()}
     </SafeAreaView>
   );
 };
