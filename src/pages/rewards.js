@@ -152,7 +152,7 @@ class Rewards extends Component {
   };
 
   componentDidMount = async () => {
-    await this.getDefaultOutlet();
+    // await this.getDefaultOutlet();
     await this.getDataRewards();
     // this.checkOneSignal();
     // this.checkUseApp();

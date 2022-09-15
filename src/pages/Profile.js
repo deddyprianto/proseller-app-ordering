@@ -213,7 +213,6 @@ const useStyles = () => {
 };
 
 const Profile = () => {
-  const theme = Theme();
   const styles = useStyles();
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);

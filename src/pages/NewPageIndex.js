@@ -14,6 +14,7 @@ import Profile from './Profile';
 import Store from './store';
 import Home from './home';
 import Inbox from './inbox';
+import Rewards from './rewards';
 import ScannerBarcode from './ScannerBarcode';
 import Theme from '../theme';
 import appConfig from '../config/appConfig';
@@ -130,13 +131,22 @@ const NewPageIndex = () => {
     state => state.storesReducer.defaultOutlet.defaultOutlet,
   );
 
-  const screens = {
+  const dataRetailScreens = {
     Home: Home,
     Inbox: Inbox,
     Scan: ScannerBarcode,
     History: History,
     Profile: Profile,
   };
+
+  const dataFnBScreens = {
+    Home: Home,
+    Inbox: Inbox,
+    Rewards: Rewards,
+    History: History,
+    Profile: Profile,
+  };
+  const screens = false ? dataRetailScreens : dataFnBScreens;
 
   const handleImage = name => {
     switch (name) {
@@ -146,6 +156,8 @@ const NewPageIndex = () => {
         return appConfig.iconEmail;
       case 'History':
         return appConfig.iconHistory;
+      case 'Rewards':
+        return appConfig.iconReward;
       case 'Profile':
         return appConfig.iconProfile;
       case 'Login':

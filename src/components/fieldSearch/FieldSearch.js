@@ -58,6 +58,7 @@ const FieldSearch = ({
   label,
   customLabel,
   placeholder,
+  replacePlaceholder,
   onSubmit,
   onChange,
   value,
@@ -83,7 +84,7 @@ const FieldSearch = ({
       <TextInput
         value={value}
         style={styles.textInput}
-        placeholder={placeholder}
+        placeholder={replacePlaceholder || placeholder}
         onChangeText={onChange}
         onSubmitEditing={event => {
           onSubmit(event.nativeEvent.text);
