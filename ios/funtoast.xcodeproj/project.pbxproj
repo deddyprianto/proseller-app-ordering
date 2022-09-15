@@ -900,7 +900,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.edgeworks.funtoast-app";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.edgeworks.funtoast-demo";
 				PRODUCT_NAME = Funtoast;
 				SWIFT_OBJC_BRIDGING_HEADER = "funtoast-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -937,7 +937,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.edgeworks.funtoast-app";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.edgeworks.funtoast-demo";
 				PRODUCT_NAME = Funtoast;
 				SWIFT_OBJC_BRIDGING_HEADER = "funtoast-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
