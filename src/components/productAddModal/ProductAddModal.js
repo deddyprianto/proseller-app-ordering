@@ -12,7 +12,6 @@ import {
   StyleSheet,
   View,
   Text,
-  ScrollView,
   Image,
   TouchableOpacity,
   Modal,
@@ -20,6 +19,8 @@ import {
 } from 'react-native';
 
 import IconIonicons from 'react-native-vector-icons/Ionicons';
+
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview';
 
 import {
   addProductToBasket,
@@ -161,13 +162,13 @@ const useStyles = () => {
       backgroundColor: theme.colors.primary,
     },
     textInputSpecialInstruction: {
-      height: 110,
+      // height: 110,
+      // textAlignVertical: 'top',
       borderColor: '#D6D6D6',
       padding: 16,
       borderWidth: 1,
       borderRadius: 8,
       backgroundColor: 'white',
-      textAlignVertical: 'top',
     },
     iconMinus: {
       width: 12,
@@ -475,8 +476,6 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
         <TextInput
           style={styles.textInputSpecialInstruction}
           placeholder="Example: please deliver on time"
-          multiline={true}
-          numberOfLines={3}
           value={notes}
           onChangeText={value => {
             setNotes(value);
@@ -648,14 +647,14 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
       <SafeAreaView forceInset={{bottom: 'never'}} style={styles.root}>
         {header()}
         <View style={styles.divider} />
-        <ScrollView style={styles.container}>
+        <KeyboardAwareScrollView style={styles.container}>
           {renderImage()}
           {renderNameQtyPrice()}
           {renderProductPromotions()}
           {renderProductModifiers()}
           {renderProductVariants()}
           {renderSpecialInstruction()}
-        </ScrollView>
+        </KeyboardAwareScrollView>
         {renderAddToCartButton()}
       </SafeAreaView>
     </Modal>

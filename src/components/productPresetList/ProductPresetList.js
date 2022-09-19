@@ -50,6 +50,7 @@ const useStyles = () => {
       marginBottom: 60,
     },
     touchableCategoryItem: {
+      flex: 1,
       width: 100,
       height: 'auto',
       justifyContent: 'center',
@@ -59,6 +60,7 @@ const useStyles = () => {
       padding: 15,
     },
     touchableCategoryItemSelected: {
+      flex: 1,
       width: 100,
       height: 'auto',
       justifyContent: 'center',

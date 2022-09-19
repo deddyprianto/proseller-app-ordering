@@ -23,7 +23,6 @@ import appConfig from '../config/appConfig';
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    alignItems: 'center',
   },
   viewImage: {
     display: 'flex',
@@ -31,6 +30,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: 38,
     paddingVertical: 12,
+  },
+  viewAllButton: {
+    position: 'absolute',
+    bottom: 20,
+    width: '100%',
+    alignItems: 'center',
   },
   image: {
     height: 235,
@@ -41,8 +46,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   touchableSeeAll: {
-    position: 'absolute',
-    bottom: 20,
     height: 34,
     width: 130,
     backgroundColor: colorConfig.primaryColor,
@@ -83,13 +86,15 @@ const MyFavoriteOutlets = () => {
 
   const renderSeeAllButton = () => {
     return (
-      <TouchableOpacity
-        style={styles.touchableSeeAll}
-        onPress={() => {
-          Actions.favoriteOutlets();
-        }}>
-        <Text style={styles.textSeeAll}>See All Outlet</Text>
-      </TouchableOpacity>
+      <View style={styles.viewAllButton}>
+        <TouchableOpacity
+          style={styles.touchableSeeAll}
+          onPress={() => {
+            Actions.favoriteOutlets();
+          }}>
+          <Text style={styles.textSeeAll}>See All Outlet</Text>
+        </TouchableOpacity>
+      </View>
     );
   };
 

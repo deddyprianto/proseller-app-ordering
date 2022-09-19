@@ -221,7 +221,9 @@ const styles = StyleSheet.create({
   },
   voucherImage1: {
     // height: Dimensions.get('window').width / 4,
-    width: '100%',
+
+    height: Dimensions.get('window').width / 4,
+    width: (Dimensions.get('window').width / 100) * 90,
     resizeMode: 'contain',
     aspectRatio: 2.5,
     borderTopLeftRadius: 10,
@@ -230,7 +232,7 @@ const styles = StyleSheet.create({
   voucherImage2: {
     resizeMode: 'contain',
     height: Dimensions.get('window').width / 4,
-    width: Dimensions.get('window').width,
+    width: (Dimensions.get('window').width / 100) * 90,
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
   },

@@ -325,8 +325,9 @@ const styles = StyleSheet.create({
     backgroundColor: colorConfig.store.storesItem,
   },
   voucherImage1: {
-    width: '100%',
     resizeMode: 'contain',
+    height: Dimensions.get('window').width / 4,
+    width: (Dimensions.get('window').width / 100) * 90,
     aspectRatio: 2.5,
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
@@ -334,7 +335,7 @@ const styles = StyleSheet.create({
   voucherImage2: {
     resizeMode: 'contain',
     height: Dimensions.get('window').width / 4,
-    width: Dimensions.get('window').width,
+    width: (Dimensions.get('window').width / 100) * 90,
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
   },

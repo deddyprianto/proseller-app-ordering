@@ -51,6 +51,10 @@ const FieldTextInput = ({
   const styleText = value ? styles.textInputLabel : styles.textInput;
 
   const renderLabel = () => {
+    if (!label) {
+      return;
+    }
+
     if (!value) {
       return;
     }

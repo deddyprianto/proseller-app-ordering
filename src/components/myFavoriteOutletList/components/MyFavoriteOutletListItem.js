@@ -27,6 +27,7 @@ const styles = StyleSheet.create({
     width: '30%',
   },
   viewDescription: {
+    flex: 1,
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
@@ -36,6 +37,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   viewDescriptionSelected: {
+    flex: 1,
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',

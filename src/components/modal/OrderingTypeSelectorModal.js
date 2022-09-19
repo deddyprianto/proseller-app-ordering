@@ -8,111 +8,122 @@ import colorConfig from '../../config/colorConfig';
 import {changeOrderingMode} from '../../actions/order.action';
 
 import {isEmptyArray, isEmptyObject} from '../../helper/CheckEmpty';
+import Theme from '../../theme';
 
-const styles = {
-  root: {
-    borderRadius: 8,
-  },
-  header: {
-    paddingVertical: 16,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  body: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    flexWrap: 'wrap',
-  },
-  footer: {
-    paddingHorizontal: 35,
-  },
-  textName: {
-    fontSize: 12,
-    color: '#B7B7B7',
-  },
-  textPrice: {
-    fontSize: 12,
-    color: '#B7B7B7',
-  },
-  textCurrency: {
-    fontSize: 8,
-    color: '#B7B7B7',
-  },
-  textNameSelected: {
-    fontSize: 12,
-    color: colorConfig.primaryColor,
-  },
-  textPriceSelected: {
-    fontSize: 12,
-    color: colorConfig.primaryColor,
-  },
-  textCurrencySelected: {
-    fontSize: 8,
-    color: colorConfig.primaryColor,
-  },
-  textSave: {
-    color: 'white',
-    fontSize: 12,
-  },
-  touchableItem: {
-    width: 81,
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingVertical: 10,
-    paddingHorizontal: 10,
-    margin: 6,
-    borderColor: '#B7B7B7',
-  },
-  touchableItemSelected: {
-    width: 81,
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingVertical: 10,
-    paddingHorizontal: 10,
-    margin: 6,
-    borderColor: colorConfig.primaryColor,
-  },
-  touchableSave: {
-    paddingVertical: 10,
-    backgroundColor: colorConfig.primaryColor,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 8,
-  },
-  viewTextNameAndPrice: {
-    display: 'flex',
-    flexDirection: 'row',
-  },
-  circle: {
-    width: 40,
-    height: 40,
-    backgroundColor: '#F9F9F9',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 100,
-  },
-  divider: {
-    borderTopWidth: 1,
-    borderTopColor: '#D6D6D6',
-  },
-  imageSelected: {
-    tintColor: colorConfig.primaryColor,
-  },
-  image: {
-    tintColor: '#B7B7B7',
-  },
+const useStyles = () => {
+  const theme = Theme();
+  const styles = {
+    root: {
+      borderRadius: 8,
+    },
+    header: {
+      paddingVertical: 16,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    body: {
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'center',
+      flexWrap: 'wrap',
+    },
+    footer: {
+      paddingHorizontal: 35,
+    },
+    textName: {
+      fontSize: 12,
+      color: '#B7B7B7',
+    },
+    textPrice: {
+      fontSize: 12,
+      color: '#B7B7B7',
+    },
+    textCurrency: {
+      fontSize: 8,
+      color: '#B7B7B7',
+    },
+    textNameSelected: {
+      fontSize: 12,
+      color: colorConfig.primaryColor,
+    },
+    textPriceSelected: {
+      fontSize: 12,
+      color: colorConfig.primaryColor,
+    },
+    textCurrencySelected: {
+      fontSize: 8,
+      color: colorConfig.primaryColor,
+    },
+    textSave: {
+      color: 'white',
+      fontSize: 12,
+    },
+    textChooseOrderingType: {
+      color: theme.colors.textPrimary,
+      fontSize: theme.fontSize[16],
+      fontFamily: theme.fontFamily.poppinsSemiBold,
+    },
+    touchableItem: {
+      width: 81,
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'flex-start',
+      borderWidth: 1,
+      borderRadius: 8,
+      paddingVertical: 10,
+      paddingHorizontal: 10,
+      margin: 6,
+      borderColor: '#B7B7B7',
+    },
+    touchableItemSelected: {
+      width: 81,
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'flex-start',
+      borderWidth: 1,
+      borderRadius: 8,
+      paddingVertical: 10,
+      paddingHorizontal: 10,
+      margin: 6,
+      borderColor: colorConfig.primaryColor,
+    },
+    touchableSave: {
+      paddingVertical: 10,
+      backgroundColor: colorConfig.primaryColor,
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderRadius: 8,
+    },
+    viewTextNameAndPrice: {
+      display: 'flex',
+      flexDirection: 'row',
+    },
+    circle: {
+      width: 40,
+      height: 40,
+      backgroundColor: '#F9F9F9',
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: 100,
+    },
+    divider: {
+      borderTopWidth: 1,
+      borderTopColor: '#D6D6D6',
+    },
+    imageSelected: {
+      tintColor: colorConfig.primaryColor,
+    },
+    image: {
+      tintColor: '#B7B7B7',
+    },
+  };
+  return styles;
 };
 
 const OrderingTypeSelectorModal = ({open, handleClose, value}) => {
+  const styles = useStyles();
   const dispatch = useDispatch();
   const [selected, setSelected] = useState({});
   const [orderingTypes, setOrderingTypes] = useState([]);
@@ -175,7 +186,7 @@ const OrderingTypeSelectorModal = ({open, handleClose, value}) => {
   const renderHeader = () => {
     return (
       <View style={styles.header}>
-        <Text>Choose Type</Text>
+        <Text style={styles.textChooseOrderingType}>Choose Ordering Type</Text>
       </View>
     );
   };

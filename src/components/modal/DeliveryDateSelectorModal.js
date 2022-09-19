@@ -7,191 +7,210 @@ import colorConfig from '../../config/colorConfig';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
 import CalenderModal from './CalenderModal';
 import moment from 'moment';
-import {isEmptyArray, isEmptyObject} from '../../helper/CheckEmpty';
+import {isEmptyArray} from '../../helper/CheckEmpty';
 
 import {getTimeSlot, setTimeSlotSelected} from '../../actions/order.action';
+import Theme from '../../theme';
 
-const styles = {
-  root: {
-    borderRadius: 8,
-  },
-  header: {
-    paddingVertical: 16,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  body: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    flexWrap: 'wrap',
-  },
-  footer: {
-    paddingHorizontal: 35,
-  },
-  textSave: {
-    color: 'white',
-    fontSize: 12,
-  },
-  textChooseDeliveryDate: {
-    fontSize: 12,
-  },
-  textSeeMore: {
-    fontSize: 12,
-    color: colorConfig.primaryColor,
-    textDecorationLine: 'underline',
-  },
-  textDeliveryTime: {
-    fontSize: 12,
-    fontWeight: '400',
-  },
-  viewSeeMore: {
-    width: '100%',
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: 22,
-  },
-  viewDeliveryTime: {
-    width: '100%',
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingVertical: 11,
-    paddingHorizontal: 16,
-    borderColor: '#B7B7B7',
-  },
+const useStyles = () => {
+  const theme = Theme();
+  const styles = {
+    root: {
+      borderRadius: 8,
+    },
+    header: {
+      paddingVertical: 16,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    body: {
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'center',
+      flexWrap: 'wrap',
+    },
+    footer: {
+      paddingHorizontal: 35,
+    },
+    textSave: {
+      color: 'white',
+      fontSize: 12,
+    },
+    textChooseDeliveryDate: {
+      color: theme.colors.textPrimary,
+      fontSize: theme.fontSize[12],
+      fontFamily: theme.fontFamily.poppinsRegular,
+    },
+    textTitleChooseDeliveryDate: {
+      color: theme.colors.textPrimary,
+      fontSize: theme.fontSize[16],
+      fontFamily: theme.fontFamily.poppinsSemiBold,
+    },
+    textSeeMore: {
+      fontSize: 12,
+      color: colorConfig.primaryColor,
+      textDecorationLine: 'underline',
+    },
+    textDeliveryTime: {
+      fontSize: 12,
+      fontWeight: '400',
+    },
+    viewSeeMore: {
+      width: '100%',
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      paddingHorizontal: 22,
+    },
+    viewDeliveryTime: {
+      width: '100%',
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      borderWidth: 1,
+      borderRadius: 8,
+      paddingVertical: 11,
+      paddingHorizontal: 16,
+      borderColor: '#B7B7B7',
+    },
 
-  textDayAvailable: {
-    fontSize: 8,
-    color: colorConfig.primaryColor,
-    fontWeight: 'bold',
-  },
-  textDateAvailable: {
-    fontSize: 10,
-    color: colorConfig.primaryColor,
-  },
-  textMonthAvailable: {
-    fontSize: 8,
-    color: colorConfig.primaryColor,
-    fontWeight: 'bold',
-  },
-  textDayUnavailable: {
-    fontSize: 8,
-    color: '#B7B7B7',
-    fontWeight: 'bold',
-  },
-  textDateUnavailable: {
-    fontSize: 10,
-    color: '#B7B7B7',
-  },
-  textMonthUnavailable: {
-    fontSize: 8,
-    color: '#B7B7B7',
-    fontWeight: 'bold',
-  },
-  textDaySelected: {
-    fontSize: 8,
-    color: 'white',
-    fontWeight: 'bold',
-  },
-  textDateSelected: {
-    fontSize: 10,
-    color: colorConfig.primaryColor,
-  },
-  textMonthSelected: {
-    fontSize: 8,
-    color: 'white',
-    fontWeight: 'bold',
-  },
-  touchableItemSelected: {
-    width: 53,
-    borderWidth: 1,
-    borderColor: colorConfig.primaryColor,
-    backgroundColor: colorConfig.primaryColor,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 8,
-    marginHorizontal: 6,
-  },
-  touchableItemAvailable: {
-    width: 53,
-    borderWidth: 1,
-    borderColor: colorConfig.primaryColor,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 8,
-    marginHorizontal: 6,
-  },
-  touchableItemUnavailable: {
-    width: 53,
-    borderWidth: 1,
-    borderColor: '#B7B7B7',
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 8,
-    marginHorizontal: 6,
-  },
-  circleSelected: {
-    width: 26,
-    height: 26,
-    backgroundColor: 'white',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 100,
-    marginVertical: 4,
-  },
-  circleAvailable: {
-    width: 26,
-    height: 26,
-    backgroundColor: '#F9F9F9',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 100,
-    marginVertical: 4,
-  },
-  circleUnavailable: {
-    width: 26,
-    height: 26,
-    backgroundColor: '#F9F9F9',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 100,
-    marginVertical: 4,
-  },
+    textDayAvailable: {
+      fontSize: 8,
+      color: colorConfig.primaryColor,
+      fontWeight: 'bold',
+    },
+    textDateAvailable: {
+      fontSize: 10,
+      color: colorConfig.primaryColor,
+    },
+    textMonthAvailable: {
+      fontSize: 8,
+      color: colorConfig.primaryColor,
+      fontWeight: 'bold',
+    },
+    textDayUnavailable: {
+      fontSize: 8,
+      color: '#B7B7B7',
+      fontWeight: 'bold',
+    },
+    textDateUnavailable: {
+      fontSize: 10,
+      color: '#B7B7B7',
+    },
+    textMonthUnavailable: {
+      fontSize: 8,
+      color: '#B7B7B7',
+      fontWeight: 'bold',
+    },
+    textDaySelected: {
+      fontSize: 8,
+      color: 'white',
+      fontWeight: 'bold',
+    },
+    textDateSelected: {
+      fontSize: 10,
+      color: colorConfig.primaryColor,
+    },
+    textMonthSelected: {
+      fontSize: 8,
+      color: 'white',
+      fontWeight: 'bold',
+    },
+    textChooseDeliveryProvider: {
+      color: theme.colors.textPrimary,
+      fontSize: theme.fontSize[16],
+      fontFamily: theme.fontFamily.poppinsSemiBold,
+    },
+    touchableItemSelected: {
+      width: 53,
+      borderWidth: 1,
+      borderColor: colorConfig.primaryColor,
+      backgroundColor: colorConfig.primaryColor,
+      borderRadius: 8,
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingVertical: 8,
+      marginHorizontal: 6,
+    },
+    touchableItemAvailable: {
+      width: 53,
+      borderWidth: 1,
+      borderColor: colorConfig.primaryColor,
+      borderRadius: 8,
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingVertical: 8,
+      marginHorizontal: 6,
+    },
+    touchableItemUnavailable: {
+      width: 53,
+      borderWidth: 1,
+      borderColor: '#B7B7B7',
+      borderRadius: 8,
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingVertical: 8,
+      marginHorizontal: 6,
+    },
+    circleSelected: {
+      width: 26,
+      height: 26,
+      backgroundColor: 'white',
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: 100,
+      marginVertical: 4,
+    },
+    circleAvailable: {
+      width: 26,
+      height: 26,
+      backgroundColor: '#F9F9F9',
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: 100,
+      marginVertical: 4,
+    },
+    circleUnavailable: {
+      width: 26,
+      height: 26,
+      backgroundColor: '#F9F9F9',
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: 100,
+      marginVertical: 4,
+    },
 
-  touchableSave: {
-    paddingVertical: 10,
-    backgroundColor: colorConfig.primaryColor,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 8,
-  },
-  touchableSaveDisabled: {
-    paddingVertical: 10,
-    backgroundColor: '#B7B7B7',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 8,
-  },
-  iconCaretDown: {
-    width: 14,
-    height: 14,
-    color: colorConfig.primaryColor,
-  },
-  divider: {
-    borderTopWidth: 1,
-    borderTopColor: '#D6D6D6',
-  },
+    touchableSave: {
+      paddingVertical: 10,
+      backgroundColor: colorConfig.primaryColor,
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderRadius: 8,
+    },
+    touchableSaveDisabled: {
+      paddingVertical: 10,
+      backgroundColor: '#B7B7B7',
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderRadius: 8,
+    },
+    iconCaretDown: {
+      width: 14,
+      height: 14,
+      color: colorConfig.primaryColor,
+    },
+    divider: {
+      borderTopWidth: 1,
+      borderTopColor: '#D6D6D6',
+    },
+  };
+
+  return styles;
 };
 
 const DeliveryDateSelectorModal = ({open, handleClose, value}) => {
+  const styles = useStyles();
   const dispatch = useDispatch();
   const [dates, setDates] = useState([]);
   const [deliveryTimes, setDeliveryTimes] = useState([]);
@@ -286,7 +305,9 @@ const DeliveryDateSelectorModal = ({open, handleClose, value}) => {
   const renderHeader = () => {
     return (
       <View style={styles.header}>
-        <Text>Choose Delivery Date</Text>
+        <Text style={styles.textTitleChooseDeliveryDate}>
+          Choose Delivery Date
+        </Text>
       </View>
     );
   };

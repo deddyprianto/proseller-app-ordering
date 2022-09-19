@@ -7,8 +7,7 @@
 
 import React, {useEffect, useState} from 'react';
 
-import {StyleSheet, View, Text} from 'react-native';
-import {RadioButton} from 'react-native-paper';
+import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
 
 import {isEmptyArray} from '../../../helper/CheckEmpty';
 import Theme from '../../../theme';
@@ -44,19 +43,31 @@ const useStyle = () => {
       borderColor: theme.colors.border,
       borderBottomWidth: 1,
     },
-    viewRadioButton: {
-      maxHeight: 20,
-      maxWidth: 20,
+    viewRadioButtonActive: {
+      width: 20,
+      height: 20,
+      borderRadius: 100,
+      borderWidth: 2,
       justifyContent: 'center',
       alignItems: 'center',
       marginRight: 8,
+      borderColor: theme.colors.buttonActive,
     },
-    radioButton: {
+    viewRadioButtonInactive: {
       width: 20,
       height: 20,
+      borderRadius: 100,
+      borderWidth: 2,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginRight: 8,
+      borderColor: theme.colors.greyScale2,
     },
-    primaryColor: {
-      color: theme.colors.primary,
+    iconRadioButton: {
+      width: 10,
+      height: 10,
+      borderRadius: 100,
+      backgroundColor: theme.colors.buttonActive,
     },
   });
   return result;
@@ -119,30 +130,35 @@ const ProductVariants = ({
     return <Text style={styles.textOptionName}>{name}</Text>;
   };
 
-  const renderRadioButton = ({name, option}) => {
+  const renderRadioButton = ({name, option, variantIndex}) => {
+    const active = selected[variantIndex]?.value === option;
+
+    const styleActive = active
+      ? styles.viewRadioButtonActive
+      : styles.viewRadioButtonInactive;
+
+    const styleValueActive = active && styles.iconRadioButton;
+
     return (
-      <View style={styles.viewRadioButton}>
-        <RadioButton
-          value={option}
-          onPress={() => {
-            handleVariantOptionSelected({
-              name,
-              option,
-            });
-          }}
-          color={styles.primaryColor.color}
-          theme={styles.radioButton}
-        />
-      </View>
+      <TouchableOpacity
+        onPress={() => {
+          handleVariantOptionSelected({
+            name,
+            option,
+          });
+        }}
+        style={styleActive}>
+        <View style={styleValueActive} />
+      </TouchableOpacity>
     );
   };
 
-  const renderOptions = ({name, options}) => {
+  const renderOptions = ({name, options, variantIndex}) => {
     if (!isEmptyArray(options)) {
-      const result = options?.map((option, index) => {
+      const result = options?.map(option => {
         return (
           <View style={styles.viewOption}>
-            {renderRadioButton({name, option})}
+            {renderRadioButton({name, option, variantIndex})}
             {renderOptionName(option)}
           </View>
         );
@@ -158,12 +174,11 @@ const ProductVariants = ({
         return (
           <View>
             {renderName(variantOption?.optionName)}
-            <RadioButton.Group value={selected[index]?.value}>
-              {renderOptions({
-                name: variantOption?.optionName,
-                options: variantOption?.options,
-              })}
-            </RadioButton.Group>
+            {renderOptions({
+              name: variantOption?.optionName,
+              options: variantOption?.options,
+              variantIndex: index,
+            })}
           </View>
         );
       });
