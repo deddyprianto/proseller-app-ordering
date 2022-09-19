@@ -18,6 +18,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Image,
+  SafeAreaView,
 } from 'react-native';
 
 import appConfig from '../config/appConfig';
@@ -560,7 +561,7 @@ const AddNewAddress = ({address, coordinate}) => {
   };
 
   return (
-    <View style={styles.root}>
+    <SafeAreaView style={styles.root}>
       <LoadingScreen loading={isLoading} />
       <Header
         title={titleHeader}
@@ -573,7 +574,7 @@ const AddNewAddress = ({address, coordinate}) => {
       {renderFooter()}
       {renderDeleteConfirmationDialog()}
       {renderEditConfirmationDialog()}
-    </View>
+    </SafeAreaView>
   );
 };
 

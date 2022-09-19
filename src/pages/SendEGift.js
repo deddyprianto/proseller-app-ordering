@@ -2,7 +2,6 @@ import React, {useCallback, useEffect, useState} from 'react';
 
 import {
   StyleSheet,
-  ScrollView,
   View,
   Text,
   Dimensions,
@@ -10,8 +9,9 @@ import {
   SafeAreaView,
 } from 'react-native';
 
-import {CheckBox} from 'react-native-elements';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview';
 
+import {CheckBox} from 'react-native-elements';
 import colorConfig from '../config/colorConfig';
 import IconIonicons from 'react-native-vector-icons/Ionicons';
 import EGiftCard from '../components/eGiftCard';
@@ -517,7 +517,7 @@ const SendEGift = ({categoryId}) => {
 
   return (
     <SafeAreaView>
-      <ScrollView style={styles.container}>
+      <KeyboardAwareScrollView style={styles.container}>
         <LoadingScreen loading={isLoading} />
         {renderHeader()}
         {renderTextInstruction()}
@@ -528,7 +528,7 @@ const SendEGift = ({categoryId}) => {
         {renderPaymentMethod()}
         {renderButtonPayment()}
         {renderConfirmationDialog()}
-      </ScrollView>
+      </KeyboardAwareScrollView>
     </SafeAreaView>
   );
 };

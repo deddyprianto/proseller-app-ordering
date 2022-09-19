@@ -222,7 +222,6 @@ export const getFavoriteOutlet = () => {
         200,
         token,
       );
-
       dispatch({
         type: 'DATA_FAVORITE_OUTLET',
         data: response.responseBody.data,

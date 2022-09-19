@@ -14,7 +14,9 @@ const MyFavoriteOutletList = () => {
   const renderOutletList = () => {
     if (!isEmptyArray(myFavoriteOutlets)) {
       const result = myFavoriteOutlets.map(outlet => {
-        return <MyFavoriteOutletListItem outlet={outlet} />;
+        if (outlet) {
+          return <MyFavoriteOutletListItem outlet={outlet} />;
+        }
       });
       return result;
     }
