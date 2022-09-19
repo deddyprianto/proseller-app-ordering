@@ -141,7 +141,7 @@ android {
         applicationId "com.funtoast"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 71
+        versionCode 72
         versionName "1.1.27"
         missingDimensionStrategy 'react-native-camera', 'general'
         resValue "string", "build_config_package", "com.funtoast"
