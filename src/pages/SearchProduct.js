@@ -240,8 +240,6 @@ const SearchProduct = ({category}) => {
       if (!isEmptyArray(response)) {
         setSelectedSubCategory(response[0]);
       }
-
-      setIsLoading(false);
     };
 
     if (selectedCategory?.id) {
@@ -250,12 +248,12 @@ const SearchProduct = ({category}) => {
   }, [dispatch, defaultOutlet, selectedCategory, searchQuery]);
 
   useEffect(() => {
-    const loadData = async () => {
+    const loadData = async id => {
       setIsLoading(true);
       await dispatch(
         getProductBySubCategory({
           outletId: defaultOutlet.id,
-          subCategoryId: selectedSubCategory.id,
+          subCategoryId: id,
           searchQuery,
         }),
       );
@@ -263,9 +261,17 @@ const SearchProduct = ({category}) => {
     };
 
     if (selectedSubCategory?.id) {
-      loadData();
+      loadData(selectedSubCategory?.id);
+    } else if (selectedCategory?.id) {
+      loadData(selectedCategory?.id);
     }
-  }, [dispatch, defaultOutlet, selectedSubCategory, searchQuery]);
+  }, [
+    dispatch,
+    searchQuery,
+    defaultOutlet,
+    selectedCategory,
+    selectedSubCategory,
+  ]);
 
   useEffect(() => {
     const loadData = async () => {
@@ -308,7 +314,6 @@ const SearchProduct = ({category}) => {
   };
 
   const handleSearchProduct = async value => {
-    setSelectedCategory({});
     setSelectedSubCategory({});
     setSearchTextInput('');
     setSearchQuery(value);
@@ -353,6 +358,7 @@ const SearchProduct = ({category}) => {
         <Text
           onPress={() => {
             setSelectedCategory({});
+            setSelectedSubCategory({});
             setSearchQuery('');
             setSearchTextInput('');
           }}
@@ -492,7 +498,11 @@ const SearchProduct = ({category}) => {
   };
 
   const renderProductSearchByCategoryBody = () => {
-    if (isEmptyArray(subCategories) && !isLoading) {
+    if (
+      isEmptyArray(subCategories) &&
+      isEmptyArray(productsBySubCategory) &&
+      !isLoading
+    ) {
       return (
         <View style={styles.viewEmpty}>
           <Image source={appConfig.iconInformation} style={styles.iconEmpty} />
