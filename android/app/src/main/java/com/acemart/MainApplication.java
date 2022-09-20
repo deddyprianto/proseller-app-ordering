@@ -1,6 +1,6 @@
-package com.funtoast;
+package com.acemart;
 
-// import com.funtoast.generated.BasePackageList;
+// import com.acemart.generated.BasePackageList;
 
 import android.app.Application;
 import android.content.Context;

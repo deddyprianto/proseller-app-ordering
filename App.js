@@ -1,7 +1,7 @@
 /**
  * Chaerus Sulton
  * chaerussulton@gmail.com
- * PT Funtoast
+ * PT Edgeworks
  */
 
 import React, {Component} from 'react';
