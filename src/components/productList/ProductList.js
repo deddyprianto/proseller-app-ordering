@@ -43,7 +43,7 @@ const ProductList = ({products, basket}) => {
     }
   };
 
-  return <View style={styles.root}>{renderProducts()}</View>;
+  return <ScrollView style={styles.root}>{renderProducts()}</ScrollView>;
 };
 
 export default ProductList;
