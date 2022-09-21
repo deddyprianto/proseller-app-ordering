@@ -13,6 +13,7 @@ import {
   TouchableOpacity,
   SafeAreaView,
   BackHandler,
+  Dimensions,
 } from 'react-native';
 
 import appConfig from '../config/appConfig';
@@ -22,69 +23,79 @@ import {sendOTP, loginUser} from '../actions/auth.actions';
 import LoadingScreen from '../components/loadingScreen';
 import {showSnackbar} from '../actions/setting.action';
 import moment from 'moment';
+import Theme from '../theme';
 
-const styles = StyleSheet.create({
-  container: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 45,
-  },
-  image: {
-    width: 150,
-    height: 40,
-    marginHorizontal: 20,
-  },
-  touchableNext: {
-    height: 40,
-    width: '100%',
-    backgroundColor: colorConfig.primaryColor,
-    borderRadius: 5,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  textHeader: {
-    color: colorConfig.primaryColor,
-    fontSize: 20,
-  },
-  textNext: {color: 'white'},
-  textVerify: {
-    width: '80%',
-    textAlign: 'center',
-  },
-  textInputOtp: {
-    width: 40,
-    height: 40,
-    borderWidth: 1,
-    borderRadius: 12,
-    paddingVertical: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-    textAlign: 'center',
-  },
-  viewInputOtp: {
-    width: '70%',
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  textSendOtp: {
-    width: '100%',
-    textAlign: 'center',
-    color: colorConfig.primaryColor,
-    textDecorationLine: 'underline',
-  },
-  textSendOtpDisabled: {
-    width: '100%',
-    textAlign: 'center',
-    color: '#B7B7B7',
-    textDecorationLine: 'underline',
-  },
-  textBold: {
-    fontWeight: 'bold',
-  },
-});
+const HEIGHT = Dimensions.get('window').height;
+
+const useStyles = () => {
+  const theme = Theme();
+  const styles = StyleSheet.create({
+    container: {
+      height: HEIGHT,
+      justifyContent: 'center',
+      alignItems: 'center',
+      paddingHorizontal: 45,
+      backgroundColor: theme.colors.background,
+    },
+    image: {
+      width: 150,
+      height: 40,
+      marginHorizontal: 20,
+    },
+    touchableNext: {
+      height: 40,
+      width: '100%',
+      backgroundColor: colorConfig.primaryColor,
+      borderRadius: 5,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    textHeader: {
+      color: colorConfig.primaryColor,
+      fontSize: 20,
+    },
+    textNext: {color: 'white'},
+    textVerify: {
+      width: '80%',
+      textAlign: 'center',
+    },
+    textInputOtp: {
+      width: 40,
+      height: 40,
+      borderWidth: 1,
+      borderRadius: 12,
+      paddingVertical: 0,
+      justifyContent: 'center',
+      alignItems: 'center',
+      textAlign: 'center',
+    },
+    viewInputOtp: {
+      width: '70%',
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+    },
+    textSendOtp: {
+      width: '100%',
+      textAlign: 'center',
+      color: colorConfig.primaryColor,
+      textDecorationLine: 'underline',
+    },
+    textSendOtpDisabled: {
+      width: '100%',
+      textAlign: 'center',
+      color: '#B7B7B7',
+      textDecorationLine: 'underline',
+    },
+    textBold: {
+      fontWeight: 'bold',
+    },
+  });
+  return styles;
+};
 
 const OTP = ({isLogin, method, methodValue}) => {
+  const styles = useStyles();
   const dispatch = useDispatch();
 
   const [sendCounter, setSendCounter] = useState(0);
@@ -297,7 +308,7 @@ const OTP = ({isLogin, method, methodValue}) => {
       <LoadingScreen loading={isLoading} />
       <KeyboardAwareScrollView>
         <View style={styles.container}>
-          <View style={{marginTop: '25%'}} />
+          <View style={{marginTop: '15%'}} />
           {renderImages()}
           <View style={{marginTop: '15%'}} />
           {renderTextHeader()}
