@@ -2,14 +2,18 @@ const ENV = {
   APP: 'Edgeworks',
   IS_DEVELOP: true,
 
-  API_HOST: 'https://api-funtoast.proseller-demo.com/',
+  //Default
+  // API_HOST: 'https://edgeworks-demo.proseller.io/', //DEMO
 
-  // API_HOST: 'https://edgeworks-demo.proseller.io/',
-  // API_HOST_DEFAULT: 'https://edgeworks-demo.proseller.io/', just for note
-  // API_HOST_FUNTOAST_DEMO: 'https://api-funtoast.proseller-demo.com/' just for note
+  //Ace Mart
+  API_HOST: 'https://api-acemart.proseller.io/', //LIVE
+  // API_HOST: 'https://api-acemart.proseller-demo.com/', //DEMO
 
-  base_url_payment: 'https://payment-demo.proseller.io/api/',
-  // base_url_payment: 'https://payment.proseller.io/api/',
+  //Fun Toast
+  // API_HOST: 'https://api-funtoast.proseller-demo.com/', //DEMO
+
+  base_url_payment: 'https://acemart-demo.proseller.io/', //LIVE
+  // base_url_payment: 'https://payment-demo.proseller.io/api/', //DEMO
 
   ONESIGNAL_ID: '16322779-652b-4fda-9563-abec1116aba4',
 
