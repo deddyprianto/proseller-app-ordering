@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {Actions} from 'react-native-router-flux';
 import {useDispatch} from 'react-redux';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview';
 
 import {
   StyleSheet,
@@ -8,7 +9,7 @@ import {
   Text,
   Image,
   TouchableOpacity,
-  ScrollView,
+  SafeAreaView,
   Dimensions,
 } from 'react-native';
 
@@ -220,23 +221,25 @@ const RegisterForm = ({registerMethod, inputValue}) => {
   };
 
   return (
-    <ScrollView>
+    <SafeAreaView>
       <LoadingScreen loading={isLoading} />
-      <View style={styles.container}>
-        <View style={{marginTop: '25%'}} />
-        {renderImages()}
-        <View style={{marginTop: '10%'}} />
-        {renderTextHeader()}
-        <View style={{marginTop: '10%'}} />
-        {renderTestRegisterFor()}
-        <View style={{marginTop: '10%'}} />
-        {renderNameInput()}
-        <View style={{marginTop: '5%'}} />
-        {renderEmailOrPhoneInput()}
-        <View style={{marginTop: '15%'}} />
-        {renderButtonNext()}
-      </View>
-    </ScrollView>
+      <KeyboardAwareScrollView>
+        <View style={styles.container}>
+          <View style={{marginTop: '25%'}} />
+          {renderImages()}
+          <View style={{marginTop: '10%'}} />
+          {renderTextHeader()}
+          <View style={{marginTop: '10%'}} />
+          {renderTestRegisterFor()}
+          <View style={{marginTop: '10%'}} />
+          {renderNameInput()}
+          <View style={{marginTop: '5%'}} />
+          {renderEmailOrPhoneInput()}
+          <View style={{marginTop: '15%'}} />
+          {renderButtonNext()}
+        </View>
+      </KeyboardAwareScrollView>
+    </SafeAreaView>
   );
 };
 

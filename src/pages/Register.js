@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Actions} from 'react-native-router-flux';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview';
 
 import {
   StyleSheet,
@@ -8,6 +9,7 @@ import {
   Image,
   TouchableOpacity,
   Dimensions,
+  SafeAreaView,
 } from 'react-native';
 
 import appConfig from '../config/appConfig';
@@ -15,7 +17,6 @@ import awsConfig from '../config/awsConfig';
 
 import FieldTextInput from '../components/fieldTextInput';
 import FieldPhoneNumberInput from '../components/fieldPhoneNumberInput';
-import {ScrollView} from 'react-navigation';
 import {useDispatch, useSelector} from 'react-redux';
 import {checkAccountExist} from '../actions/auth.actions';
 import {showSnackbar} from '../actions/setting.action';
@@ -227,21 +228,23 @@ const Register = () => {
   };
 
   return (
-    <ScrollView>
+    <SafeAreaView>
       <LoadingScreen loading={isLoading} />
-      <View style={styles.container}>
-        <View style={{marginTop: '15%'}} />
-        {renderImages()}
-        <View style={{marginTop: '10%'}} />
-        <Text style={styles.textCreateNewAccount}>Create a new account</Text>
-        <View style={{marginTop: '30%'}} />
-        {renderRegisterMethodInput()}
-        <View style={{marginTop: '10%'}} />
-        {renderButtonNext()}
-        <View style={{marginTop: '15%'}} />
-        {renderTextChangeMethod()}
-      </View>
-    </ScrollView>
+      <KeyboardAwareScrollView>
+        <View style={styles.container}>
+          <View style={{marginTop: '15%'}} />
+          {renderImages()}
+          <View style={{marginTop: '10%'}} />
+          <Text style={styles.textCreateNewAccount}>Create a new account</Text>
+          <View style={{marginTop: '30%'}} />
+          {renderRegisterMethodInput()}
+          <View style={{marginTop: '10%'}} />
+          {renderButtonNext()}
+          <View style={{marginTop: '15%'}} />
+          {renderTextChangeMethod()}
+        </View>
+      </KeyboardAwareScrollView>
+    </SafeAreaView>
   );
 };
 

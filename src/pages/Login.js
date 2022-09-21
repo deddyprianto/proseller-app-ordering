@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {Actions} from 'react-native-router-flux';
 import {useDispatch, useSelector} from 'react-redux';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview';
 
 import {
   StyleSheet,
@@ -9,7 +10,7 @@ import {
   Image,
   TouchableOpacity,
   Dimensions,
-  ScrollView,
+  SafeAreaView,
 } from 'react-native';
 
 import appConfig from '../config/appConfig';
@@ -297,22 +298,24 @@ const Login = () => {
   };
 
   return (
-    <ScrollView>
+    <SafeAreaView>
       <LoadingScreen loading={isLoading} />
-      <View style={styles.container}>
-        <View style={{marginTop: '15%'}} />
-        {renderImages()}
-        <View style={{marginTop: '10%'}} />
-        <Text style={styles.textHeader}>Login Account</Text>
-        {renderChangeLoginMethod()}
-        <View style={{marginTop: '15%'}} />
-        {renderLoginMethodInput()}
-        <View style={{marginTop: '10%'}} />
-        {renderButtonNext()}
-        <View style={{marginTop: '15%'}} />
-        {renderTextInformation()}
-      </View>
-    </ScrollView>
+      <KeyboardAwareScrollView>
+        <View style={styles.container}>
+          <View style={{marginTop: '15%'}} />
+          {renderImages()}
+          <View style={{marginTop: '10%'}} />
+          <Text style={styles.textHeader}>Login Account</Text>
+          {renderChangeLoginMethod()}
+          <View style={{marginTop: '15%'}} />
+          {renderLoginMethodInput()}
+          <View style={{marginTop: '10%'}} />
+          {renderButtonNext()}
+          <View style={{marginTop: '15%'}} />
+          {renderTextInformation()}
+        </View>
+      </KeyboardAwareScrollView>
+    </SafeAreaView>
   );
 };
 

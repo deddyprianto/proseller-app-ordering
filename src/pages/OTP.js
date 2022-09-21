@@ -2,6 +2,7 @@
 import React, {useState, useRef, useEffect} from 'react';
 import {Actions} from 'react-native-router-flux';
 import {useDispatch} from 'react-redux';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview';
 
 import {
   StyleSheet,
@@ -294,20 +295,22 @@ const OTP = ({isLogin, method, methodValue}) => {
   return (
     <SafeAreaView>
       <LoadingScreen loading={isLoading} />
-      <View style={styles.container}>
-        <View style={{marginTop: '25%'}} />
-        {renderImages()}
-        <View style={{marginTop: '15%'}} />
-        {renderTextHeader()}
-        <View style={{marginTop: '20%'}} />
-        {renderTextVerify()}
-        <View style={{marginTop: '15%'}} />
-        {renderInputOtp()}
-        <View style={{marginTop: '15%'}} />
-        {renderResendOTP()}
-        <View style={{marginTop: '10%'}} />
-        {renderButtonNext()}
-      </View>
+      <KeyboardAwareScrollView>
+        <View style={styles.container}>
+          <View style={{marginTop: '25%'}} />
+          {renderImages()}
+          <View style={{marginTop: '15%'}} />
+          {renderTextHeader()}
+          <View style={{marginTop: '20%'}} />
+          {renderTextVerify()}
+          <View style={{marginTop: '15%'}} />
+          {renderInputOtp()}
+          <View style={{marginTop: '15%'}} />
+          {renderResendOTP()}
+          <View style={{marginTop: '10%'}} />
+          {renderButtonNext()}
+        </View>
+      </KeyboardAwareScrollView>
     </SafeAreaView>
   );
 };
