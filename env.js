@@ -2,8 +2,8 @@ const ENV = {
   APP: 'Ace Mart',
   IS_DEVELOP: true,
 
-  API_HOST: 'https://api-acemart.proseller-demo.com/',
-  // API_HOST: 'https://acemart-demo.proseller.io/',
+  // API_HOST: 'https://api-acemart.proseller-demo.com/',
+  API_HOST: 'https://acemart-demo.proseller.io/',
 
   // API_HOST: 'https://edgeworks-demo.proseller.io/',
   // API_HOST_DEFAULT: 'https://edgeworks-demo.proseller.io/', just for note

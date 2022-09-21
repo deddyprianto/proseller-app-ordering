@@ -13,7 +13,7 @@ const Theme = () => {
 
   const colors = {
     //old version
-    primary: '#CF3030',
+    primary: '#00BFCA',
     secondary: '#F9F9F9',
     thirdColor: '#FFEBEB',
     forthColor: '#F9F9F9',
@@ -43,7 +43,7 @@ const Theme = () => {
     textWarningColor: colorSettings?.textWarningColor || 'black',
 
     snackbarSuccess: '#5CD423',
-    snackbarFailed: '#CF3030',
+    snackbarFailed: '#00BFCA',
 
     //new version
 
@@ -60,12 +60,12 @@ const Theme = () => {
     textPrimary: '#000000',
     textSecondary: '#FFFFFF',
     textTertiary: '#B7B7B7',
-    textQuaternary: '#CF3030',
+    textQuaternary: '#00BFCA',
 
     semanticError: '#CE1111',
     semanticSuccess: '#5CD523',
 
-    brandPrimary: '#CF3030',
+    brandPrimary: '#00BFCA',
     brandSecondary: '#FFFFFF',
     brandTertiary: '#0E8A94',
 
@@ -74,7 +74,7 @@ const Theme = () => {
     greyScale3: '#D6D6D6',
     greyScale4: '#F9F9F9',
 
-    buttonActive: '#CF3030',
+    buttonActive: '#00BFCA',
     buttonStandBy: '#FFFFFF',
     buttonDisabled: '#B7B7B7',
 
