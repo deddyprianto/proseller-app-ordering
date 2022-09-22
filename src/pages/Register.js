@@ -15,6 +15,8 @@ import {
 import appConfig from '../config/appConfig';
 import awsConfig from '../config/awsConfig';
 
+import {Header} from '../components/layout';
+
 import FieldTextInput from '../components/fieldTextInput';
 import FieldPhoneNumberInput from '../components/fieldPhoneNumberInput';
 import {useDispatch, useSelector} from 'react-redux';
@@ -230,6 +232,7 @@ const Register = () => {
   return (
     <SafeAreaView>
       <LoadingScreen loading={isLoading} />
+      <Header isMiddleLogo />
       <KeyboardAwareScrollView>
         <View style={styles.container}>
           <View style={{marginTop: '15%'}} />

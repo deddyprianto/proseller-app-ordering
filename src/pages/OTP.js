@@ -22,6 +22,8 @@ import colorConfig from '../config/colorConfig';
 import {sendOTP, loginUser} from '../actions/auth.actions';
 import LoadingScreen from '../components/loadingScreen';
 import {showSnackbar} from '../actions/setting.action';
+
+import {Header} from '../components/layout';
 import moment from 'moment';
 import Theme from '../theme';
 
@@ -306,6 +308,7 @@ const OTP = ({isLogin, method, methodValue}) => {
   return (
     <SafeAreaView>
       <LoadingScreen loading={isLoading} />
+      <Header isMiddleLogo />
       <KeyboardAwareScrollView>
         <View style={styles.container}>
           <View style={{marginTop: '15%'}} />

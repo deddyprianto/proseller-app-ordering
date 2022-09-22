@@ -16,6 +16,7 @@ import colorConfig from '../config/colorConfig';
 import {useDispatch, useSelector} from 'react-redux';
 import {getGiftCardCategories} from '../actions/gift.action';
 import LoadingScreen from '../components/loadingScreen';
+import {Header} from '../components/layout';
 import {isEmptyArray} from '../helper/CheckEmpty';
 
 const WIDTH = Dimensions.get('window').width;
@@ -23,8 +24,7 @@ const HEIGHT = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: HEIGHT * 0.01,
-    marginBottom: HEIGHT * 0.01,
+    flex: 1,
   },
   image: {
     height: '100%',
@@ -112,14 +112,20 @@ const EGift = () => {
     return result;
   };
 
+  const renderTextSentGift = () => {
+    return (
+      <View style={styles.viewTitle}>
+        <Text style={styles.textTitle}>Send A Gift</Text>
+      </View>
+    );
+  };
+
   return (
-    <SafeAreaView>
+    <SafeAreaView style={styles.container}>
+      <Header customTitle={renderTextSentGift()} />
       <ScrollView style={styles.container}>
         <LoadingScreen loading={isLoading} />
         <View style={styles.viewHeader}>
-          <View style={styles.viewTitle}>
-            <Text style={styles.textTitle}>Send A Gift</Text>
-          </View>
           <Text style={styles.textDescription}>
             Send a gift to your love ones or friends with a custom design
             voucher

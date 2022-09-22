@@ -17,6 +17,7 @@ import appConfig from '../config/appConfig';
 import colorConfig from '../config/colorConfig';
 import awsConfig from '../config/awsConfig';
 
+import {Header} from '../components/layout';
 import FieldTextInput from '../components/fieldTextInput';
 import FieldPhoneNumberInput from '../components/fieldPhoneNumberInput';
 
@@ -223,6 +224,7 @@ const RegisterForm = ({registerMethod, inputValue}) => {
   return (
     <SafeAreaView>
       <LoadingScreen loading={isLoading} />
+      <Header isMiddleLogo />
       <KeyboardAwareScrollView>
         <View style={styles.container}>
           <View style={{marginTop: '25%'}} />

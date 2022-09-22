@@ -18,10 +18,13 @@ import awsConfig from '../config/awsConfig';
 
 import FieldTextInput from '../components/fieldTextInput';
 import FieldPhoneNumberInput from '../components/fieldPhoneNumberInput';
+import LoadingScreen from '../components/loadingScreen';
+
+import {Header} from '../components/layout';
+
 import {checkAccountExist, sendOTP} from '../actions/auth.actions';
 import {showSnackbar} from '../actions/setting.action';
 
-import LoadingScreen from '../components/loadingScreen';
 import Theme from '../theme';
 
 const HEIGHT = Dimensions.get('window').height;
@@ -300,6 +303,7 @@ const Login = () => {
   return (
     <SafeAreaView>
       <LoadingScreen loading={isLoading} />
+      <Header isMiddleLogo />
       <KeyboardAwareScrollView>
         <View style={styles.container}>
           <View style={{marginTop: '15%'}} />
