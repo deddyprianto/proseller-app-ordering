@@ -277,12 +277,12 @@ class Home extends Component {
         {outletSelectionMode === 'MANUAL' && isEmptyObject(defaultOutlet) ? (
           <Store />
         ) : (
-          <HomeFnB
-            isRefresh={this.state.refreshing}
-            handleOnRefresh={this._onRefresh}
-          />
+          // <HomeFnB
+          //   isRefresh={this.state.refreshing}
+          //   handleOnRefresh={this._onRefresh}
+          // />
 
-          // <HomeRetail />
+          <HomeRetail />
         )}
       </>
     );

@@ -7,13 +7,11 @@ import {
   StyleSheet,
   View,
   Text,
-  Image,
-  TouchableOpacity,
   SafeAreaView,
+  TouchableOpacity,
   Dimensions,
 } from 'react-native';
 
-import appConfig from '../config/appConfig';
 import colorConfig from '../config/colorConfig';
 import awsConfig from '../config/awsConfig';
 
@@ -24,57 +22,77 @@ import FieldPhoneNumberInput from '../components/fieldPhoneNumberInput';
 import {createNewUser} from '../actions/auth.actions';
 import {showSnackbar} from '../actions/setting.action';
 import LoadingScreen from '../components/loadingScreen';
+import Theme from '../theme';
 
 const HEIGHT = Dimensions.get('window').height;
-
-const styles = StyleSheet.create({
-  container: {
-    height: HEIGHT,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 48,
-  },
-  image: {
-    width: 150,
-    height: 40,
-    marginHorizontal: 20,
-  },
-  textHeader: {
-    color: colorConfig.primaryColor,
-    fontSize: 20,
-  },
-  textRegisterFor: {
-    width: '100%',
-    textAlign: 'left',
-    fontSize: 14,
-    fontWeight: 'bold',
-  },
-  touchableNext: {
-    height: 40,
-    width: '100%',
-    backgroundColor: colorConfig.primaryColor,
-    borderRadius: 5,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  touchableNextDisabled: {
-    height: 40,
-    width: '100%',
-    backgroundColor: '#B7B7B7',
-    borderRadius: 5,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  textNext: {color: 'white'},
-  textChangeMethod: {
-    width: '100%',
-    textAlign: 'center',
-    color: colorConfig.primaryColor,
-    textDecorationLine: 'underline',
-  },
-});
+const useStyles = () => {
+  const theme = Theme();
+  const styles = StyleSheet.create({
+    root: {
+      flex: 1,
+    },
+    container: {
+      height: HEIGHT - 54,
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center',
+      paddingHorizontal: 16,
+      backgroundColor: theme.colors.background,
+    },
+    image: {
+      width: 150,
+      height: 40,
+      marginHorizontal: 20,
+    },
+    textHeader: {
+      color: theme.colors.primary,
+      fontSize: theme.fontSize[24],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textRegisterFor: {
+      marginVertical: 32,
+      color: theme.colors.textPrimary,
+      fontSize: theme.fontSize[16],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    touchableNext: {
+      marginTop: 32,
+      height: 40,
+      width: '100%',
+      backgroundColor: colorConfig.primaryColor,
+      borderRadius: 5,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    touchableNextDisabled: {
+      marginTop: 32,
+      height: 40,
+      width: '100%',
+      backgroundColor: '#B7B7B7',
+      borderRadius: 5,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    textNext: {
+      color: 'white',
+    },
+    textChangeMethod: {
+      width: '100%',
+      textAlign: 'center',
+      color: colorConfig.primaryColor,
+      textDecorationLine: 'underline',
+    },
+    viewMethodInput: {
+      marginTop: 32,
+      width: '100%',
+    },
+  });
+  return styles;
+};
 
 const RegisterForm = ({registerMethod, inputValue}) => {
+  const styles = useStyles();
   const dispatch = useDispatch();
   const [countryCode, setCountryCode] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -124,16 +142,6 @@ const RegisterForm = ({registerMethod, inputValue}) => {
         }),
       );
     }
-  };
-
-  const renderImages = () => {
-    return (
-      <Image
-        style={styles.image}
-        resizeMode="contain"
-        source={appConfig.logoMerchant}
-      />
-    );
   };
 
   const renderTextHeader = () => {
@@ -193,11 +201,12 @@ const RegisterForm = ({registerMethod, inputValue}) => {
   };
 
   const renderEmailOrPhoneInput = () => {
-    if (registerMethod === 'email') {
-      return renderPhoneNumberRegisterInput();
-    } else {
-      return renderEmailRegisterInput();
-    }
+    const renderInput =
+      registerMethod === 'email'
+        ? renderPhoneNumberRegisterInput()
+        : renderEmailRegisterInput();
+
+    return <View style={styles.viewMethodInput}>{renderInput}</View>;
   };
 
   const renderButtonNext = () => {
@@ -222,22 +231,15 @@ const RegisterForm = ({registerMethod, inputValue}) => {
   };
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={styles.root}>
       <LoadingScreen loading={isLoading} />
       <Header isMiddleLogo />
       <KeyboardAwareScrollView>
         <View style={styles.container}>
-          <View style={{marginTop: '25%'}} />
-          {renderImages()}
-          <View style={{marginTop: '10%'}} />
           {renderTextHeader()}
-          <View style={{marginTop: '10%'}} />
           {renderTestRegisterFor()}
-          <View style={{marginTop: '10%'}} />
           {renderNameInput()}
-          <View style={{marginTop: '5%'}} />
           {renderEmailOrPhoneInput()}
-          <View style={{marginTop: '15%'}} />
           {renderButtonNext()}
         </View>
       </KeyboardAwareScrollView>

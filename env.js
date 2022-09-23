@@ -3,6 +3,7 @@ const ENV = {
   IS_DEVELOP: true,
 
   //Default
+  API_HOST: 'https://api-edgeworksretail-sales.proseller.io/', //Live Retail
   // API_HOST: 'https://edgeworks-demo.proseller.io/', //DEMO
 
   //Ace Mart
@@ -10,10 +11,10 @@ const ENV = {
   // API_HOST: 'https://acemart-demo.proseller.io/', //DEMO
 
   //Fun Toast
-  API_HOST: 'https://api-funtoast.proseller-demo.com/', //DEMO
+  // API_HOST: 'https://api-funtoast.proseller-demo.com/', //DEMO
 
-  // base_url_payment: 'https://payment.proseller.io/api/', //LIVE
-  base_url_payment: 'https://payment-demo.proseller.io/api/', //DEMO
+  base_url_payment: 'https://payment.proseller.io/api/', //LIVE
+  // base_url_payment: 'https://payment-demo.proseller.io/api/', //DEMO
 
   ONESIGNAL_ID: '16322779-652b-4fda-9563-abec1116aba4',
 
