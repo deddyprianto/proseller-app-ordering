@@ -265,7 +265,6 @@ const HomeRetail = () => {
           filterTypeProduct?.length > filterTypeGroup?.length;
 
         if (isTypeProductPriority) {
-          setSelectedSubCategory({});
           await dispatch({
             type: 'DATA_PRODUCT_SUB_CATEGORIES',
             subCategories: [],
@@ -299,7 +298,7 @@ const HomeRetail = () => {
       });
     };
 
-    if (!isEmptyObject(selectedSubCategory)) {
+    if (!isEmptyObject(selectedSubCategory) && !isEmptyObject(subCategories)) {
       loadData();
     }
   }, [selectedSubCategory, subCategories, dispatch]);
