@@ -147,7 +147,7 @@ const NewPageIndex = () => {
     History: History,
     Profile: Profile,
   };
-  const screens = false ? dataRetailScreens : dataFnBScreens;
+  const screens = true ? dataRetailScreens : dataFnBScreens;
 
   const handleImage = name => {
     switch (name) {
