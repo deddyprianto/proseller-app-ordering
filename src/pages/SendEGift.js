@@ -19,6 +19,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {getGiftCardByCategory, sendGift} from '../actions/gift.action';
 import FieldTextInput from '../components/fieldTextInput';
 import CurrencyFormatter from '../helper/CurrencyFormatter';
+import {Header} from '../components/layout';
 import LoadingScreen from '../components/loadingScreen';
 
 import {Actions} from 'react-native-router-flux';
@@ -280,12 +281,16 @@ const SendEGift = ({categoryId}) => {
     setIsLoading(false);
   };
 
+  const renderTextSentGift = () => {
+    return (
+      <View style={styles.viewTitle}>
+        <Text style={styles.textTitle}>Send A Gift</Text>
+      </View>
+    );
+  };
   const renderHeader = () => {
     return (
       <View style={styles.viewHeader}>
-        <View style={styles.viewTitle}>
-          <Text style={styles.textTitle}>Send A Gift</Text>
-        </View>
         <Text style={styles.textDescription}>
           Send a gift to your love ones or friends with a custom design voucher
         </Text>
@@ -517,6 +522,7 @@ const SendEGift = ({categoryId}) => {
 
   return (
     <SafeAreaView>
+      <Header customTitle={renderTextSentGift()} />
       <KeyboardAwareScrollView style={styles.container}>
         <LoadingScreen loading={isLoading} />
         {renderHeader()}

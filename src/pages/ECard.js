@@ -15,6 +15,8 @@ import QRCode from 'react-native-qrcode-svg';
 import colorConfig from '../config/colorConfig';
 import awsConfig from '../config/awsConfig';
 
+import {Header} from '../components/layout';
+
 import {useSelector} from 'react-redux';
 
 const WIDTH = Dimensions.get('window').width;
@@ -46,10 +48,34 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 9,
-
     width: WIDTH * 0.35,
     height: HEIGHT * 0.04,
     backgroundColor: colorConfig.forthColor,
+  },
+  viewQRCode: {
+    marginTop: 50,
+    display: 'flex',
+    alignItems: 'center',
+    backgroundColor: colorConfig.sixthColor,
+    height: 250,
+    width: '100%',
+    borderRadius: 10,
+  },
+  viewHowToUse: {
+    marginTop: 50,
+  },
+  viewStep3: {
+    display: 'flex',
+    flexDirection: 'row',
+    marginTop: 10,
+  },
+  textHowToUse: {
+    color: colorConfig.primaryColor,
+  },
+  textName: {
+    fontSize: 20,
+    color: colorConfig.primaryColor,
+    marginTop: 10,
   },
   textTitle: {
     color: 'black',
@@ -65,6 +91,12 @@ const styles = StyleSheet.create({
     letterSpacing: 0.2,
     marginTop: 30,
     marginBottom: 20,
+  },
+  textSteps: {
+    marginTop: 10,
+  },
+  textHere: {
+    textDecorationLine: 'underline',
   },
 });
 
@@ -98,24 +130,8 @@ const ECard = () => {
 
   const renderQRCode = () => {
     return (
-      <View
-        style={{
-          marginTop: 50,
-          display: 'flex',
-          alignItems: 'center',
-          backgroundColor: colorConfig.sixthColor,
-          height: 250,
-          width: '100%',
-          borderRadius: 10,
-        }}>
-        <Text
-          style={{
-            fontSize: 20,
-            color: colorConfig.primaryColor,
-            marginTop: 10,
-          }}>
-          {user?.name}
-        </Text>
+      <View style={styles.viewQRCode}>
+        <Text style={styles.textName}>{user?.name}</Text>
         <Text>Current Tier : {user?.customerGroupName}</Text>
         <QRCode
           value={JSON.stringify({
@@ -131,26 +147,21 @@ const ECard = () => {
 
   const renderHowToUse = () => {
     return (
-      <View style={{marginTop: 50}}>
-        <Text style={{color: colorConfig.primaryColor}}>How To Use :</Text>
-        <Text style={{marginTop: 10}}>
+      <View style={styles.viewHowToUse}>
+        <Text style={styles.textHowToUse}>How To Use :</Text>
+        <Text style={styles.textSteps}>
           1. Present the e-card above to the cashier when making an order at Fun
           Toast outlets.
         </Text>
-        <Text style={{marginTop: 10}}>2. Earn points from your purchase!</Text>
-        <View
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            marginTop: 10,
-          }}>
+        <Text style={styles.textSteps}>2. Earn points from your purchase!</Text>
+        <View style={styles.viewStep3}>
           <Text>3. Points can be redeem </Text>
           <Text
             onPress={() => {
               Actions.pop();
               Actions.push('redeem');
             }}
-            style={{textDecorationLine: 'underline'}}>
+            style={styles.textHere}>
             here
           </Text>
         </View>
@@ -158,13 +169,19 @@ const ECard = () => {
     );
   };
 
+  const renderTextECard = () => {
+    return (
+      <View style={styles.viewTitle}>
+        <Text style={styles.textTitle}>My E - Card</Text>
+      </View>
+    );
+  };
+
   return (
     <SafeAreaView>
+      <Header customTitle={renderTextECard()} />
       <ScrollView style={styles.container}>
         <View style={styles.viewHeader}>
-          <View style={styles.viewTitle}>
-            <Text style={styles.textTitle}>My E - Card</Text>
-          </View>
           {renderQRCode()}
           {renderHowToUse()}
         </View>

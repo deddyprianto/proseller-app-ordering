@@ -18,6 +18,7 @@ import appConfig from '../config/appConfig';
 import {getBasket, getProductEStoreByOutlet} from '../actions/product.action';
 
 import EStoreList from '../components/eStoreList';
+import {Header} from '../components/layout';
 
 import {isEmptyArray} from '../helper/CheckEmpty';
 import CurrencyFormatter from '../helper/CurrencyFormatter';
@@ -54,7 +55,7 @@ const useStyles = () => {
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textDescription: {
-      marginBottom: 16,
+      marginVertical: 16,
       color: theme.colors.text1,
       fontSize: theme.fontSize[12],
       fontFamily: theme.fontFamily.poppinsMedium,
@@ -65,7 +66,6 @@ const useStyles = () => {
       fontFamily: theme.fontFamily.poppinsBold,
     },
     viewTitle: {
-      marginVertical: 16,
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
@@ -161,6 +161,7 @@ const EStore = () => {
 
   return (
     <SafeAreaView style={{flex: 1}}>
+      <Header customTitle={renderTextEStore()} />
       <ScrollView
         contentContainerStyle={styles.container}
         refreshControl={
@@ -171,7 +172,6 @@ const EStore = () => {
             }}
           />
         }>
-        {renderTextEStore()}
         {renderTextDescription()}
         <EStoreList products={products} basket={basket} />
         <View style={styles.footer}>{renderButtonCart()}</View>

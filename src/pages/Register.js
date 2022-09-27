@@ -6,14 +6,14 @@ import {
   StyleSheet,
   View,
   Text,
-  Image,
+  SafeAreaView,
   TouchableOpacity,
   Dimensions,
-  SafeAreaView,
 } from 'react-native';
 
-import appConfig from '../config/appConfig';
 import awsConfig from '../config/awsConfig';
+
+import {Header} from '../components/layout';
 
 import FieldTextInput from '../components/fieldTextInput';
 import FieldPhoneNumberInput from '../components/fieldPhoneNumberInput';
@@ -24,25 +24,25 @@ import LoadingScreen from '../components/loadingScreen';
 import Theme from '../theme';
 
 const HEIGHT = Dimensions.get('window').height;
-
 const useStyles = () => {
   const theme = Theme();
   const styles = StyleSheet.create({
+    root: {
+      flex: 1,
+    },
     container: {
-      height: HEIGHT,
+      height: HEIGHT - 54,
+      display: 'flex',
+      flexDirection: 'column',
       justifyContent: 'center',
       alignItems: 'center',
-      paddingHorizontal: 48,
-    },
-    image: {
-      width: 150,
-      height: 40,
-      marginHorizontal: 20,
+      paddingHorizontal: 16,
+      backgroundColor: theme.colors.background,
     },
     textCreateNewAccount: {
       color: theme.colors.primary,
-      fontSize: theme.fontSize[20],
-      fontFamily: theme.fontFamily.poppinsRegular,
+      fontSize: theme.fontSize[24],
+      fontFamily: theme.fontFamily.poppinsMedium,
     },
     textNext: {
       color: theme.colors.text4,
@@ -57,7 +57,22 @@ const useStyles = () => {
       fontSize: theme.fontSize[14],
       fontFamily: theme.fontFamily.poppinsRegular,
     },
+    textLogin: {
+      marginTop: 8,
+      textAlign: 'center',
+      color: theme.colors.textPrimary,
+      fontSize: theme.fontSize[16],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    viewChangeMethod: {
+      marginTop: 48,
+    },
+    viewMethodInput: {
+      marginTop: 48,
+      width: '100%',
+    },
     touchableNext: {
+      marginTop: 16,
       height: 40,
       width: '100%',
       borderRadius: 5,
@@ -66,6 +81,7 @@ const useStyles = () => {
       backgroundColor: theme.colors.primary,
     },
     touchableNextDisabled: {
+      marginTop: 16,
       height: 40,
       width: '100%',
       borderRadius: 5,
@@ -135,14 +151,13 @@ const Register = () => {
     setIsLoading(false);
   };
 
-  const renderImages = () => {
-    return (
-      <Image
-        style={styles.image}
-        resizeMode="contain"
-        source={appConfig.logoMerchant}
-      />
-    );
+  const renderTextLogin = () => {
+    const text =
+      registerMethod === 'email'
+        ? 'Enter your email to create new account'
+        : 'Enter your mobile number to create new account';
+
+    return <Text style={styles.textLogin}>{text}</Text>;
   };
 
   const renderPhoneNumberRegisterInput = () => {
@@ -176,11 +191,12 @@ const Register = () => {
   };
 
   const renderRegisterMethodInput = () => {
-    if (registerMethod === 'email') {
-      return renderEmailRegisterInput();
-    } else {
-      return renderPhoneNumberRegisterInput();
-    }
+    const renderInput =
+      registerMethod === 'email'
+        ? renderEmailRegisterInput()
+        : renderPhoneNumberRegisterInput();
+
+    return <View style={styles.viewMethodInput}>{renderInput}</View>;
   };
 
   const renderButtonNext = () => {
@@ -218,6 +234,7 @@ const Register = () => {
 
       return (
         <TouchableOpacity
+          style={styles.viewChangeMethod}
           onPress={() => {
             handleChangeRegisterMethod();
           }}>
@@ -228,19 +245,15 @@ const Register = () => {
   };
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={styles.root}>
       <LoadingScreen loading={isLoading} />
+      <Header isMiddleLogo />
       <KeyboardAwareScrollView>
         <View style={styles.container}>
-          <View style={{marginTop: '15%'}} />
-          {renderImages()}
-          <View style={{marginTop: '10%'}} />
           <Text style={styles.textCreateNewAccount}>Create a new account</Text>
-          <View style={{marginTop: '30%'}} />
+          {renderTextLogin()}
           {renderRegisterMethodInput()}
-          <View style={{marginTop: '10%'}} />
           {renderButtonNext()}
-          <View style={{marginTop: '15%'}} />
           {renderTextChangeMethod()}
         </View>
       </KeyboardAwareScrollView>
