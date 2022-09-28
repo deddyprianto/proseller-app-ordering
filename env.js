@@ -7,7 +7,7 @@ const ENV = {
 
   //Ace Mart
   API_HOST: 'https://api-acemart.proseller.io/', //LIVE
-  // API_HOST: 'https://api-acemart.proseller-demo.com/', //DEMO
+  // API_HOST: 'https://acemart-demo.proseller.io/', //DEMO
 
   //Fun Toast
   // API_HOST: 'https://api-funtoast.proseller-demo.com/', //DEMO
