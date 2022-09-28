@@ -7,21 +7,22 @@ import {
   StyleSheet,
   View,
   Text,
-  Image,
-  TouchableOpacity,
   Dimensions,
+  TouchableOpacity,
   SafeAreaView,
 } from 'react-native';
 
-import appConfig from '../config/appConfig';
 import awsConfig from '../config/awsConfig';
 
 import FieldTextInput from '../components/fieldTextInput';
 import FieldPhoneNumberInput from '../components/fieldPhoneNumberInput';
+import LoadingScreen from '../components/loadingScreen';
+
+import {Header} from '../components/layout';
+
 import {checkAccountExist, sendOTP} from '../actions/auth.actions';
 import {showSnackbar} from '../actions/setting.action';
 
-import LoadingScreen from '../components/loadingScreen';
 import Theme from '../theme';
 
 const HEIGHT = Dimensions.get('window').height;
@@ -29,26 +30,26 @@ const HEIGHT = Dimensions.get('window').height;
 const useStyles = () => {
   const theme = Theme();
   const styles = StyleSheet.create({
+    root: {
+      flex: 1,
+    },
     container: {
-      height: HEIGHT,
+      height: HEIGHT - 54,
+      display: 'flex',
+      flexDirection: 'column',
       justifyContent: 'center',
       alignItems: 'center',
-      paddingHorizontal: 45,
+      paddingHorizontal: 16,
       backgroundColor: theme.colors.background,
     },
-    image: {
-      width: 150,
-      height: 40,
-      marginHorizontal: 20,
-    },
-
     textHeader: {
       color: theme.colors.primary,
-      fontSize: theme.fontSize[20],
-      fontFamily: theme.fontFamily.poppinsRegular,
+      fontSize: theme.fontSize[24],
+      fontFamily: theme.fontFamily.poppinsMedium,
     },
 
     textInformation: {
+      marginTop: 16,
       width: '80%',
       textAlign: 'center',
       color: theme.colors.text2,
@@ -72,8 +73,14 @@ const useStyles = () => {
       fontSize: theme.fontSize[12],
       fontFamily: theme.fontFamily.poppinsMedium,
     },
-
+    textLogin: {
+      marginTop: 8,
+      color: theme.colors.textPrimary,
+      fontSize: theme.fontSize[16],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
     touchableNext: {
+      marginTop: 16,
       height: 40,
       width: '100%',
       borderRadius: 5,
@@ -83,6 +90,7 @@ const useStyles = () => {
     },
 
     touchableNextDisabled: {
+      marginTop: 16,
       height: 40,
       width: '100%',
       borderRadius: 5,
@@ -92,6 +100,7 @@ const useStyles = () => {
     },
 
     viewLoginMethodSelector: {
+      marginTop: 48,
       display: 'flex',
       flexDirection: 'row',
       width: '100%',
@@ -100,7 +109,6 @@ const useStyles = () => {
       justifyContent: 'space-between',
       alignItems: 'center',
       padding: 6,
-      marginTop: '15%',
       backgroundColor: theme.colors.forthColor,
     },
 
@@ -121,6 +129,10 @@ const useStyles = () => {
       alignItems: 'center',
       justifyContent: 'center',
       backgroundColor: theme.colors.forthColor,
+    },
+    viewMethodInput: {
+      marginTop: 48,
+      width: '100%',
     },
   });
   return styles;
@@ -181,16 +193,6 @@ const Login = () => {
     setIsLoading(false);
   };
 
-  const renderImages = () => {
-    return (
-      <Image
-        style={styles.image}
-        resizeMode="contain"
-        source={appConfig.logoMerchant}
-      />
-    );
-  };
-
   const handleChangeLoginMethod = value => {
     setLoginMethod(value);
     setEmail('');
@@ -235,6 +237,14 @@ const Login = () => {
     }
   };
 
+  const renderTextLogin = () => {
+    const text =
+      loginMethod === 'email'
+        ? 'Enter your email to login'
+        : 'Enter your mobile number to login';
+    return <Text style={styles.textLogin}>{text}</Text>;
+  };
+
   const renderPhoneNumberLoginInput = () => {
     return (
       <FieldPhoneNumberInput
@@ -266,11 +276,12 @@ const Login = () => {
   };
 
   const renderLoginMethodInput = () => {
-    if (loginMethod === 'email') {
-      return renderEmailLoginInput();
-    } else {
-      return renderPhoneNumberLoginInput();
-    }
+    const renderInput =
+      loginMethod === 'email'
+        ? renderEmailLoginInput()
+        : renderPhoneNumberLoginInput();
+
+    return <View style={styles.viewMethodInput}>{renderInput}</View>;
   };
 
   const renderButtonNext = () => {
@@ -298,20 +309,16 @@ const Login = () => {
   };
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={styles.root}>
       <LoadingScreen loading={isLoading} />
+      <Header isMiddleLogo />
       <KeyboardAwareScrollView>
         <View style={styles.container}>
-          <View style={{marginTop: '15%'}} />
-          {renderImages()}
-          <View style={{marginTop: '10%'}} />
           <Text style={styles.textHeader}>Login Account</Text>
+          {renderTextLogin()}
           {renderChangeLoginMethod()}
-          <View style={{marginTop: '15%'}} />
           {renderLoginMethodInput()}
-          <View style={{marginTop: '10%'}} />
           {renderButtonNext()}
-          <View style={{marginTop: '15%'}} />
           {renderTextInformation()}
         </View>
       </KeyboardAwareScrollView>

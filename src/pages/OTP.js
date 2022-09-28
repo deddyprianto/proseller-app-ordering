@@ -9,32 +9,35 @@ import {
   View,
   Text,
   TextInput,
-  Image,
-  TouchableOpacity,
-  SafeAreaView,
   BackHandler,
+  SafeAreaView,
+  TouchableOpacity,
   Dimensions,
 } from 'react-native';
-
-import appConfig from '../config/appConfig';
 
 import colorConfig from '../config/colorConfig';
 import {sendOTP, loginUser} from '../actions/auth.actions';
 import LoadingScreen from '../components/loadingScreen';
 import {showSnackbar} from '../actions/setting.action';
+
+import {Header} from '../components/layout';
 import moment from 'moment';
 import Theme from '../theme';
-
 const HEIGHT = Dimensions.get('window').height;
 
 const useStyles = () => {
   const theme = Theme();
   const styles = StyleSheet.create({
+    root: {
+      flex: 1,
+    },
     container: {
-      height: HEIGHT,
+      height: HEIGHT - 54,
+      display: 'flex',
+      flexDirection: 'column',
       justifyContent: 'center',
       alignItems: 'center',
-      paddingHorizontal: 45,
+      paddingHorizontal: 16,
       backgroundColor: theme.colors.background,
     },
     image: {
@@ -43,6 +46,7 @@ const useStyles = () => {
       marginHorizontal: 20,
     },
     touchableNext: {
+      marginTop: 32,
       height: 40,
       width: '100%',
       backgroundColor: colorConfig.primaryColor,
@@ -51,13 +55,19 @@ const useStyles = () => {
       alignItems: 'center',
     },
     textHeader: {
-      color: colorConfig.primaryColor,
-      fontSize: 20,
+      color: theme.colors.primary,
+      fontSize: theme.fontSize[24],
+      fontFamily: theme.fontFamily.poppinsMedium,
     },
-    textNext: {color: 'white'},
+    textNext: {
+      color: 'white',
+    },
     textVerify: {
-      width: '80%',
+      marginTop: 32,
       textAlign: 'center',
+      color: theme.colors.textPrimary,
+      fontSize: theme.fontSize[16],
+      fontFamily: theme.fontFamily.poppinsMedium,
     },
     textInputOtp: {
       width: 40,
@@ -70,6 +80,7 @@ const useStyles = () => {
       textAlign: 'center',
     },
     viewInputOtp: {
+      marginVertical: 32,
       width: '70%',
       display: 'flex',
       flexDirection: 'row',
@@ -88,7 +99,9 @@ const useStyles = () => {
       textDecorationLine: 'underline',
     },
     textBold: {
-      fontWeight: 'bold',
+      color: theme.colors.textPrimary,
+      fontSize: theme.fontSize[16],
+      fontFamily: theme.fontFamily.poppinsBold,
     },
   });
   return styles;
@@ -180,20 +193,10 @@ const OTP = ({isLogin, method, methodValue}) => {
     loadData();
   }, [otp]);
 
-  const renderImages = () => {
-    return (
-      <Image
-        style={styles.image}
-        resizeMode="contain"
-        source={appConfig.logoMerchant}
-      />
-    );
-  };
-
   const renderTextHeader = () => {
     let text = '';
     if (isLogin) {
-      text = method === 'email' ? 'Email Sign In' : 'Mobile Sign In';
+      text = method === 'email' ? 'Email Login' : 'Mobile Login';
     } else {
       text = method === 'email' ? 'Email Register' : 'Mobile Register';
     }
@@ -304,21 +307,15 @@ const OTP = ({isLogin, method, methodValue}) => {
     );
   };
   return (
-    <SafeAreaView>
+    <SafeAreaView style={styles.root}>
       <LoadingScreen loading={isLoading} />
+      <Header isMiddleLogo />
       <KeyboardAwareScrollView>
         <View style={styles.container}>
-          <View style={{marginTop: '15%'}} />
-          {renderImages()}
-          <View style={{marginTop: '15%'}} />
           {renderTextHeader()}
-          <View style={{marginTop: '20%'}} />
           {renderTextVerify()}
-          <View style={{marginTop: '15%'}} />
           {renderInputOtp()}
-          <View style={{marginTop: '15%'}} />
           {renderResendOTP()}
-          <View style={{marginTop: '10%'}} />
           {renderButtonNext()}
         </View>
       </KeyboardAwareScrollView>

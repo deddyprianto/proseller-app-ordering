@@ -24,7 +24,7 @@ import ProductCategoryList from '../components/productCategoryList';
 import ProductSubCategoryList from '../components/productSubCategoryList';
 import ProductList from '../components/productList';
 
-import {isEmptyArray} from '../helper/CheckEmpty';
+import {isEmptyArray, isEmptyObject} from '../helper/CheckEmpty';
 import CurrencyFormatter from '../helper/CurrencyFormatter';
 
 import appConfig from '../config/appConfig';
@@ -252,12 +252,35 @@ const HomeRetail = () => {
         category => category?.id === selectedCategory?.id,
       )?.items;
 
-      await dispatch({
-        type: 'DATA_PRODUCT_SUB_CATEGORIES',
-        subCategories: result,
-      });
+      if (!isEmptyObject(result)) {
+        const filterTypeProduct = result?.filter(
+          value => value.itemType === 'PRODUCT',
+        );
 
-      setSelectedSubCategory(result[0]);
+        const filterTypeGroup = result?.filter(
+          value => value.itemType === 'GROUP',
+        );
+
+        const isTypeProductPriority =
+          filterTypeProduct?.length > filterTypeGroup?.length;
+
+        if (isTypeProductPriority) {
+          await dispatch({
+            type: 'DATA_PRODUCT_SUB_CATEGORIES',
+            subCategories: [],
+          });
+          await dispatch({
+            type: 'DATA_PRODUCTS_BY_SUB_CATEGORY',
+            products: filterTypeProduct,
+          });
+        } else {
+          await dispatch({
+            type: 'DATA_PRODUCT_SUB_CATEGORIES',
+            subCategories: filterTypeGroup,
+          });
+          setSelectedSubCategory(filterTypeGroup[0]);
+        }
+      }
     };
 
     loadData();
@@ -275,7 +298,9 @@ const HomeRetail = () => {
       });
     };
 
-    loadData();
+    if (!isEmptyObject(selectedSubCategory) && !isEmptyObject(subCategories)) {
+      loadData();
+    }
   }, [selectedSubCategory, subCategories, dispatch]);
 
   const onRefresh = useCallback(async () => {
