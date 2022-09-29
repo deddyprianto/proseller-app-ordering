@@ -1983,15 +1983,15 @@ export const changeOrderingMode = ({orderingMode, provider}) => {
       console.log('response ordering mode', response);
 
       if (response.success === true) {
-        dispatch({
+        await dispatch({
           type: 'DATA_ORDERING_MODE',
           orderingMode,
         });
-        dispatch({
+        await dispatch({
           type: 'ORDERING_DATE_TIME',
           orderingDateTimeSelected: null,
         });
-        dispatch(getBasket());
+        await dispatch(getBasket());
       }
       return response;
     } catch (error) {

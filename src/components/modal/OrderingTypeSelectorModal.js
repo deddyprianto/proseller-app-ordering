@@ -9,6 +9,7 @@ import {changeOrderingMode} from '../../actions/order.action';
 
 import {isEmptyArray, isEmptyObject} from '../../helper/CheckEmpty';
 import Theme from '../../theme';
+import LoadingScreen from '../loadingScreen';
 
 const useStyles = () => {
   const theme = Theme();
@@ -127,6 +128,7 @@ const OrderingTypeSelectorModal = ({open, handleClose, value}) => {
   const dispatch = useDispatch();
   const [selected, setSelected] = useState({});
   const [orderingTypes, setOrderingTypes] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const defaultOutlet = useSelector(
     state => state.storesReducer.defaultOutlet.defaultOutlet,
@@ -177,7 +179,9 @@ const OrderingTypeSelectorModal = ({open, handleClose, value}) => {
   }, [defaultOutlet, value]);
 
   const handleSave = async () => {
+    setIsLoading(true);
     await dispatch(changeOrderingMode({orderingMode: selected?.key}));
+    setIsLoading(false);
     if (handleClose) {
       handleClose();
     }
@@ -247,6 +251,7 @@ const OrderingTypeSelectorModal = ({open, handleClose, value}) => {
       <Provider>
         <Portal>
           <Dialog visible={open} onDismiss={handleClose} style={styles.root}>
+            <LoadingScreen loading={isLoading} />
             {renderHeader()}
             <View style={styles.divider} />
             <View style={{marginTop: 20}} />
