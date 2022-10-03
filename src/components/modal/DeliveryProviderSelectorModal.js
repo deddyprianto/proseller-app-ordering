@@ -9,7 +9,6 @@ import CryptoJS from 'react-native-crypto-js';
 import awsConfig from '../../config/awsConfig';
 import {changeOrderingMode} from '../../actions/order.action';
 import Theme from '../../theme';
-import LoadingScreen from '../loadingScreen';
 
 const useStyles = () => {
   const theme = Theme();
@@ -119,7 +118,6 @@ const DeliveryProviderSelectorModal = ({open, handleClose, value}) => {
 
   const [selected, setSelected] = useState({});
   const [deliveryProviders, setDeliveryProviders] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
 
   const basket = useSelector(state => state.orderReducer?.dataBasket?.product);
   const userDetail = useSelector(
@@ -161,14 +159,12 @@ const DeliveryProviderSelectorModal = ({open, handleClose, value}) => {
   }, [userDetail]);
 
   const HandleSave = async () => {
-    setIsLoading(true);
     await dispatch(
       changeOrderingMode({
         orderingMode: basket?.orderingMode,
         provider: selected,
       }),
     );
-    setIsLoading(false);
     handleClose();
   };
 
@@ -237,7 +233,6 @@ const DeliveryProviderSelectorModal = ({open, handleClose, value}) => {
     <Provider>
       <Portal>
         <Dialog visible={open} onDismiss={handleClose} style={styles.root}>
-          <LoadingScreen loading={isLoading} />
           {renderHeader()}
           <View style={styles.divider} />
           <View style={{marginTop: 20}} />

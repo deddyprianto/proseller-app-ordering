@@ -430,16 +430,14 @@ export const removeBasket = () => {
         200,
         token,
       );
-
       console.log(response, 'response delete basket');
-      if (response?.success) {
-        await dispatch({
-          type: 'DATA_BASKET',
-          product: {},
-        });
-      }
+      // remove basket
+      // dispatch({
+      //   type: 'DATA_BASKET',
+      //   product: undefined,
+      // });
       // remove table type
-      await dispatch({
+      dispatch({
         type: 'TABLE_TYPE',
         tableType: undefined,
       });
@@ -1824,13 +1822,11 @@ export const getBasket = () => {
       }
       console.log(response, 'response get data basket');
       if (response.success === false) {
-        console.log('MASUK SINI');
         dispatch({
           type: 'DATA_BASKET',
           product: undefined,
         });
       } else {
-        console.log('MASUK SINI 123');
         dispatch({
           type: 'DATA_BASKET',
           product: response.response.data,
@@ -1987,15 +1983,15 @@ export const changeOrderingMode = ({orderingMode, provider}) => {
       console.log('response ordering mode', response);
 
       if (response.success === true) {
-        await dispatch({
+        dispatch({
           type: 'DATA_ORDERING_MODE',
           orderingMode,
         });
-        await dispatch({
+        dispatch({
           type: 'ORDERING_DATE_TIME',
           orderingDateTimeSelected: null,
         });
-        await dispatch(getBasket());
+        dispatch(getBasket());
       }
       return response;
     } catch (error) {
