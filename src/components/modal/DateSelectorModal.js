@@ -209,14 +209,17 @@ const useStyles = () => {
   return styles;
 };
 
-const DeliveryDateSelectorModal = ({open, handleClose, value}) => {
+const DateSelectorModal = ({open, handleClose, value, orderingMode}) => {
   const styles = useStyles();
   const dispatch = useDispatch();
+
   const [dates, setDates] = useState([]);
   const [deliveryTimes, setDeliveryTimes] = useState([]);
   const [availableDates, setAvailableDates] = useState([]);
+
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedDeliveryTime, setSelectedDeliveryTime] = useState('');
+
   const [seeMore, setSeeMore] = useState(false);
   const [isOpenDeliveryTimes, setIsOpenDeliveryTimes] = useState(false);
 
@@ -302,11 +305,23 @@ const DeliveryDateSelectorModal = ({open, handleClose, value}) => {
     setIsOpenDeliveryTimes(false);
   };
 
+  const handleHeaderName = key => {
+    switch (key) {
+      case 'DELIVERY':
+        return 'Choose Delivery Date';
+      case 'STOREPICKUP':
+        return 'Choose Pick Up Date';
+      case 'TAKEAWAY':
+        return 'Choose Takeaway Date';
+      default:
+        return 'Choose Delivery Date';
+    }
+  };
   const renderHeader = () => {
     return (
       <View style={styles.header}>
         <Text style={styles.textTitleChooseDeliveryDate}>
-          Choose Delivery Date
+          {handleHeaderName(orderingMode)}
         </Text>
       </View>
     );
@@ -394,7 +409,9 @@ const DeliveryDateSelectorModal = ({open, handleClose, value}) => {
   const renderSeeMore = () => {
     return (
       <View style={styles.viewSeeMore}>
-        <Text style={styles.textChooseDeliveryDate}>Choose Delivery Date</Text>
+        <Text style={styles.textChooseDeliveryDate}>
+          {handleHeaderName(orderingMode)}
+        </Text>
         <TouchableOpacity
           onPress={() => {
             handleOpenCalender();
@@ -535,4 +552,4 @@ const DeliveryDateSelectorModal = ({open, handleClose, value}) => {
   );
 };
 
-export default DeliveryDateSelectorModal;
+export default DateSelectorModal;
