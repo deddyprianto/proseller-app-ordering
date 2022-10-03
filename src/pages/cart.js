@@ -38,6 +38,7 @@ import CurrencyFormatter from '../helper/CurrencyFormatter';
 import {showSnackbar} from '../actions/setting.action';
 import {changeOrderingMode, getTimeSlot} from '../actions/order.action';
 import Theme from '../theme';
+import LoadingScreen from '../components/loadingScreen';
 
 const useStyles = () => {
   const theme = Theme();
@@ -306,6 +307,7 @@ const Cart = () => {
   const dispatch = useDispatch();
   const [availableTimes, setAvailableTimes] = useState([]);
   const [seeDetail, setSeeDetail] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [openOrderingTypeModal, setOpenOrderingTypeModal] = useState(false);
   const [openDeliveryDateModal, setOpenDeliveryDateModal] = useState(false);
   const [openDeliveryProviderModal, setOpenDeliveryProviderModal] = useState(
@@ -364,6 +366,7 @@ const Cart = () => {
 
   useEffect(() => {
     const loadData = async () => {
+      setIsLoading(true);
       const orderingModesField = [
         {
           key: 'STOREPICKUP',
@@ -400,6 +403,8 @@ const Cart = () => {
           }),
         );
       }
+
+      setIsLoading(false);
     };
 
     loadData();
@@ -1027,6 +1032,7 @@ const Cart = () => {
   return (
     <SafeAreaView style={styles.root}>
       <Header title="Cart" />
+      <LoadingScreen loading={isLoading} />
       <View style={styles.container}>
         <ScrollView>
           {renderAddButton()}
