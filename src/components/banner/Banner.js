@@ -1,9 +1,17 @@
 import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 
-import {StyleSheet, ScrollView, View, Image, Dimensions} from 'react-native';
+import {
+  StyleSheet,
+  ScrollView,
+  View,
+  Image,
+  Dimensions,
+  TouchableOpacity,
+} from 'react-native';
 
 import {dataPromotion} from '../../actions/promotion.action';
+import {Actions} from 'react-native-router-flux';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -53,6 +61,9 @@ const Banner = () => {
   const dispatch = useDispatch();
   const [selectedImage, setSelectedImage] = useState(0);
 
+  const defaultOutlet = useSelector(
+    state => state.storesReducer.defaultOutlet.defaultOutlet,
+  );
   const banners = useSelector(
     state => state.promotionReducer.dataPromotion.promotion,
   );
@@ -72,17 +83,28 @@ const Banner = () => {
     }
   };
 
+  const handleBannerClick = item => {
+    return Actions.storeDetailPromotion({
+      dataPromotion: item,
+      item: defaultOutlet,
+    });
+  };
+
   const renderImages = () => {
     const result = banners?.map((banner, index) => {
       return (
-        <View style={styles.wrapImage}>
+        <TouchableOpacity
+          style={styles.wrapImage}
+          onPress={() => {
+            handleBannerClick(banner);
+          }}>
           <Image
             key={index}
             style={styles.image}
             resizeMode="stretch"
             source={{uri: banner?.defaultImageURL}}
           />
-        </View>
+        </TouchableOpacity>
       );
     });
     return result;
@@ -97,7 +119,6 @@ const Banner = () => {
     });
 
     const result = <View style={styles.WrapDot}>{dots}</View>;
-
     return result;
   };
 
