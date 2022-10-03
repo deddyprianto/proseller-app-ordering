@@ -1824,13 +1824,11 @@ export const getBasket = () => {
       }
       console.log(response, 'response get data basket');
       if (response.success === false) {
-        console.log('MASUK SINI');
         dispatch({
           type: 'DATA_BASKET',
           product: undefined,
         });
       } else {
-        console.log('MASUK SINI 123');
         dispatch({
           type: 'DATA_BASKET',
           product: response.response.data,

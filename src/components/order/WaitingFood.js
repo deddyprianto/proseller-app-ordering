@@ -720,24 +720,6 @@ class WaitingFood extends Component {
     }
   };
 
-  renderOrderActionDate = () => {
-    const {dataBasket} = this.props;
-    try {
-      if (dataBasket?.orderActionDate) {
-        <View style={styles.itemSummary}>
-          <Text style={styles.total}>{this.getLabelTimeslot()}</Text>
-          <Text style={styles.total}>
-            {format(new Date(dataBasket?.orderActionDate), 'dd MMM yyyy')}{' '}
-            {dataBasket?.orderActionTimeSlot != null &&
-              ` at ${dataBasket?.orderActionTimeSlot}`}
-          </Text>
-        </View>;
-      }
-    } catch (e) {
-      return null;
-    }
-  };
-
   detailOrder = () => {
     const {intlData, dataBasket} = this.props;
     return (
@@ -920,7 +902,16 @@ class WaitingFood extends Component {
               <Text style={styles.total}>Ordering Mode : </Text>
               <Text style={styles.total}>{dataBasket.orderingMode}</Text>
             </View>
-            {this.renderOrderActionDate()}
+            {dataBasket.orderActionDate != undefined && (
+              <View style={styles.itemSummary}>
+                <Text style={styles.total}>{this.getLabelTimeslot()}</Text>
+                <Text style={styles.total}>
+                  {format(new Date(dataBasket.orderActionDate), 'dd MMM yyyy')}{' '}
+                  {dataBasket.orderActionTimeSlot != null &&
+                    ` at ${dataBasket.orderActionTimeSlot}`}
+                </Text>
+              </View>
+            )}
             {dataBasket.orderingMode == 'DELIVERY' ? (
               <View style={styles.itemSummary}>
                 <Text style={styles.total}>Delivery Address : </Text>
@@ -954,7 +945,8 @@ class WaitingFood extends Component {
               </View>
             ) : null}
 
-            {dataBasket.totalDiscountAmount > 0 && (
+            {
+              dataBasket.totalDiscountAmount > 0 &&
               <View style={styles.itemSummary}>
                 <Text style={styles.total}>Subtotal b/f Disc : </Text>
                 <Text style={styles.total}>
@@ -962,50 +954,37 @@ class WaitingFood extends Component {
                   {this.format(CurrencyFormatter(dataBasket.totalGrossAmount))}
                 </Text>
               </View>
-            )}
-            {dataBasket.totalDiscountAmount > 0 && (
+            }
+            {
+              dataBasket.totalDiscountAmount > 0 &&
               <View style={styles.itemSummary}>
-                <Text
-                  style={[styles.total, {color: colorConfig.store.colorError}]}>
-                  Discount :{' '}
-                </Text>
-                <Text
-                  style={[styles.total, {color: colorConfig.store.colorError}]}>
+                <Text style={[styles.total, {color: colorConfig.store.colorError}]}>Discount : </Text>
+                <Text style={[styles.total, {color: colorConfig.store.colorError}]}>
                   - {appConfig.appMataUang}{' '}
-                  {this.format(
-                    CurrencyFormatter(dataBasket.totalDiscountAmount),
-                  )}
+                  {this.format(CurrencyFormatter(dataBasket.totalDiscountAmount))}
                 </Text>
               </View>
-            )}
+            }
             <View style={styles.itemSummary}>
               <Text style={styles.total}>Subtotal : </Text>
               <Text style={styles.total}>
                 {appConfig.appMataUang}{' '}
-                {this.format(
-                  CurrencyFormatter(
-                    dataBasket.totalGrossAmount -
-                      dataBasket.totalDiscountAmount,
-                  ),
-                )}
+                {this.format(CurrencyFormatter(dataBasket.totalGrossAmount - dataBasket.totalDiscountAmount))}
               </Text>
             </View>
 
-            {dataBasket.totalSurchargeAmount > 0 && (
+            {
+              dataBasket.totalSurchargeAmount > 0 &&
               <View style={styles.itemSummary}>
                 <Text style={styles.total}>Surcharge : </Text>
                 <Text style={styles.total}>
                   {appConfig.appMataUang}{' '}
-                  {this.format(
-                    CurrencyFormatter(dataBasket.totalSurchargeAmount),
-                  )}
+                  {this.format(CurrencyFormatter(dataBasket.totalSurchargeAmount))}
                 </Text>
               </View>
-            )}
+            }
 
-            {dataBasket.deliveryFee !== undefined &&
-            dataBasket.provider &&
-            dataBasket.provider.taxRuleID === 'EXC-TAX' ? (
+            {dataBasket.deliveryFee !== undefined && dataBasket.provider && dataBasket.provider.taxRuleID === 'EXC-TAX' ? (
               <View style={styles.itemSummary}>
                 <Text style={styles.total}>Delivery Fee : </Text>
                 <Text style={[styles.total, {textAlign: 'right'}]}>
@@ -1015,21 +994,17 @@ class WaitingFood extends Component {
               </View>
             ) : null}
 
-            {dataBasket.exclusiveTax > 0 && (
+            {dataBasket.exclusiveTax > 0 &&
               <View style={styles.itemSummary}>
-                <Text style={styles.total}>
-                  Tax {dataBasket.outlet.taxPercentage}%
-                </Text>
+                <Text style={styles.total}>Tax {dataBasket.outlet.taxPercentage}%</Text>
                 <Text style={[styles.total, {textAlign: 'right'}]}>
                   {appConfig.appMataUang}{' '}
                   {this.format(CurrencyFormatter(dataBasket.exclusiveTax))}
                 </Text>
               </View>
-            )}
+            }
 
-            {dataBasket.deliveryFee !== undefined &&
-            dataBasket.provider &&
-            dataBasket.provider.taxRuleID !== 'EXC-TAX' ? (
+            {dataBasket.deliveryFee !== undefined && dataBasket.provider && dataBasket.provider.taxRuleID !== 'EXC-TAX' ? (
               <View style={styles.itemSummary}>
                 <Text style={styles.total}>Delivery Fee : </Text>
                 <Text style={[styles.total, {textAlign: 'right'}]}>
@@ -1044,47 +1019,24 @@ class WaitingFood extends Component {
                 GRAND TOTAL :{' '}
               </Text>
               <Text style={[styles.total, {color: colorConfig.store.title}]}>
-                {appConfig.appMataUang}{' '}
-                {this.format(CurrencyFormatter(dataBasket.totalNettAmount))}
+                {appConfig.appMataUang} {this.format(CurrencyFormatter(dataBasket.totalNettAmount))}
               </Text>
             </View>
 
-            {dataBasket.inclusiveTax > 0 && (
-              <View
-                style={[
-                  styles.itemSummary,
-                  {borderBottomWidth: 0, marginTop: -17},
-                ]}>
-                <Text
-                  style={[
-                    styles.total,
-                    {
-                      color: colorConfig.pageIndex.inactiveTintColor,
-                      fontSize: 11,
-                    },
-                  ]}>
+            {
+              dataBasket.inclusiveTax > 0 &&
+              <View style={[styles.itemSummary, {borderBottomWidth: 0, marginTop: -17}]}>
+                <Text style={[styles.total, {color: colorConfig.pageIndex.inactiveTintColor, fontSize: 11}]}>
                   Inclusive Tax
                 </Text>
-                <Text
-                  style={[
-                    styles.total,
-                    {
-                      color: colorConfig.pageIndex.inactiveTintColor,
-                      fontSize: 11,
-                    },
-                  ]}>
-                  {appConfig.appMataUang}{' '}
-                  {this.format(CurrencyFormatter(dataBasket.inclusiveTax))}
+                <Text style={[styles.total, {color: colorConfig.pageIndex.inactiveTintColor, fontSize: 11}]}>
+                  {appConfig.appMataUang} {this.format(CurrencyFormatter(dataBasket.inclusiveTax))}
                 </Text>
               </View>
-            )}
+            }
 
             <View style={[styles.itemSummary, {borderBottomWidth: 0}]}>
-              <Text
-                style={[
-                  styles.total,
-                  {color: colorConfig.store.titleSelected},
-                ]}>
+              <Text style={[styles.total, {color: colorConfig.store.titleSelected}]}>
                 Payment Method:
               </Text>
             </View>
