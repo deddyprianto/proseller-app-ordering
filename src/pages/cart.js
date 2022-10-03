@@ -28,7 +28,7 @@ import awsConfig from '../config/awsConfig';
 import ProductCartList from '../components/productCartList/ProductCartList';
 import OrderingTypeSelectorModal from '../components/modal/OrderingTypeSelectorModal';
 import DeliveryProviderSelectorModal from '../components/modal/DeliveryProviderSelectorModal';
-import DeliveryDateSelectorModal from '../components/modal/DeliveryDateSelectorModal';
+import DateSelectorModal from '../components/modal/DateSelectorModal';
 import Header from '../components/layout/header';
 
 import {isEmptyArray, isEmptyObject} from '../helper/CheckEmpty';
@@ -1007,7 +1007,8 @@ const Cart = () => {
             handleCloseDeliveryProviderModal();
           }}
         />
-        <DeliveryDateSelectorModal
+        <DateSelectorModal
+          orderingMode={basket?.orderingMode}
           value={orderingDateTimeSelected}
           open={openDeliveryDateModal}
           handleClose={() => {
