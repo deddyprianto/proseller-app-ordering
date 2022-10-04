@@ -325,6 +325,7 @@ const useStyles = () => {
 
 const ProductCartItem = ({item, disabled}) => {
   const styles = useStyles();
+
   const [isOpenAddModal, setIsOpenAddModal] = useState(false);
 
   const orderingMode = useSelector(
@@ -594,7 +595,6 @@ const ProductCartItem = ({item, disabled}) => {
 
   return (
     <TouchableOpacity
-      disabled={disabled || isProductUnavailable}
       style={styles.root}
       onPress={() => {
         handleOpenAddModal();

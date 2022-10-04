@@ -118,7 +118,11 @@ const Header = ({
     } else if (customTitle) {
       return customTitle;
     } else {
-      return <Text style={styles.textHeader}>{title}</Text>;
+      return (
+        <Text style={styles.textHeader} numberOfLines={1}>
+          {title}
+        </Text>
+      );
     }
   };
 
