@@ -259,7 +259,7 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
       totalPrice = totalPrice + product.retailPrice;
 
       handlePrice({
-        qty,
+        qty: qty || 1,
         totalPrice,
       });
 
@@ -268,7 +268,7 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
 
     totalPrice = totalPrice + product.retailPrice;
     handlePrice({
-      qty,
+      qty: qty || 1,
       totalPrice,
     });
     return productModifiers;
@@ -324,7 +324,8 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
         selectedProductModifiers,
       );
 
-      const price = totalPrice / qty;
+      const qtyFormatted = qty || 1;
+      const price = totalPrice / qtyFormatted;
 
       if (!isEmptyObject(selectedProduct)) {
         return setProductUpdate({
@@ -385,6 +386,69 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
       setNotes(selectedProduct?.remark);
     }
   }, []);
+
+  const handleAddOrUpdateProduct = async () => {
+    setIsLoading(true);
+    const isSpecialBarcode = product?.isSpecialBarcode;
+
+    if (!isEmptyObject(selectedProduct)) {
+      const newProductUpdate = isSpecialBarcode
+        ? {
+            ...productUpdate,
+            specialBarcode: product?.specialBarcode,
+            retailPrice: product?.retailPrice,
+            unitPrice: product?.retailPrice,
+          }
+        : productUpdate;
+
+      await dispatch(updateProductBasket(newProductUpdate));
+    } else {
+      const newProductAdd = isSpecialBarcode
+        ? {
+            ...productAdd,
+            specialBarcode: product?.specialBarcode,
+            retailPrice: product?.retailPrice,
+          }
+        : productAdd;
+
+      await dispatch(
+        addProductToBasket({defaultOutlet, selectedProduct: newProductAdd}),
+      );
+    }
+
+    setIsLoading(false);
+    handleClose();
+  };
+
+  const handleDisabledAddToCartButton = () => {
+    if (!isEmptyArray(product?.productModifiers) && !isLoading) {
+      let qtyModifierSelected = 0;
+      const productModifiers = product.productModifiers.map(productModifier => {
+        const min = productModifier.modifier?.min || 0;
+        selectedProductModifiers.forEach(selectedProductModifier => {
+          if (
+            productModifier.modifierID === selectedProductModifier.modifierId
+          ) {
+            qtyModifierSelected =
+              qtyModifierSelected + selectedProductModifier.qty;
+          }
+        });
+
+        const result = qtyModifierSelected >= min;
+        qtyModifierSelected = 0;
+        return result;
+      });
+
+      const productModifierAllTrue = productModifiers.every(v => v === true);
+      return !productModifierAllTrue;
+    }
+
+    if (!isLoading) {
+      return false;
+    }
+
+    return true;
+  };
 
   const renderImage = () => {
     const image =
@@ -492,68 +556,6 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
         {renderTextInputSpecialInstruction()}
       </View>
     );
-  };
-
-  const handleAddOrUpdateProduct = async () => {
-    setIsLoading(true);
-    const isSpecialBarcode = product?.isSpecialBarcode;
-
-    if (!isEmptyObject(selectedProduct)) {
-      const newProductUpdate = isSpecialBarcode
-        ? {
-            ...productUpdate,
-            specialBarcode: product?.specialBarcode,
-            retailPrice: product?.retailPrice,
-            unitPrice: product?.retailPrice,
-          }
-        : productUpdate;
-      await dispatch(updateProductBasket(newProductUpdate));
-    } else {
-      const newProductAdd = isSpecialBarcode
-        ? {
-            ...productAdd,
-            specialBarcode: product?.specialBarcode,
-            retailPrice: product?.retailPrice,
-          }
-        : productAdd;
-
-      await dispatch(
-        addProductToBasket({defaultOutlet, selectedProduct: newProductAdd}),
-      );
-    }
-
-    setIsLoading(false);
-    handleClose();
-  };
-
-  const handleDisabledAddToCartButton = () => {
-    if (!isEmptyArray(product?.productModifiers) && !isLoading) {
-      let qtyModifierSelected = 0;
-      const productModifiers = product.productModifiers.map(productModifier => {
-        const min = productModifier.modifier?.min || 0;
-        selectedProductModifiers.forEach(selectedProductModifier => {
-          if (
-            productModifier.modifierID === selectedProductModifier.modifierId
-          ) {
-            qtyModifierSelected =
-              qtyModifierSelected + selectedProductModifier.qty;
-          }
-        });
-
-        const result = qtyModifierSelected >= min;
-        qtyModifierSelected = 0;
-        return result;
-      });
-
-      const productModifierAllTrue = productModifiers.every(v => v === true);
-      return !productModifierAllTrue;
-    }
-
-    if (!isLoading) {
-      return false;
-    }
-
-    return true;
   };
 
   const renderAddToCartButton = () => {

@@ -3,11 +3,11 @@ const ENV = {
   IS_DEVELOP: true,
 
   //Default
-  API_HOST: 'https://api-edgeworksretail-sales.proseller.io/', //Live Retail
+  // API_HOST: 'https://api-edgeworksretail-sales.proseller.io/', //Live Retail
   // API_HOST: 'https://edgeworks-demo.proseller.io/', //DEMO
 
   //Ace Mart
-  // API_HOST: 'https://api-acemart.proseller.io/', //LIVE
+  API_HOST: 'https://api-acemart.proseller.io/', //LIVE
   // API_HOST: 'https://acemart-demo.proseller.io/', //DEMO
 
   //Fun Toast
