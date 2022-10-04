@@ -594,7 +594,6 @@ const ProductCartItem = ({item, disabled}) => {
 
   return (
     <TouchableOpacity
-      disabled={disabled || isProductUnavailable}
       style={styles.root}
       onPress={() => {
         handleOpenAddModal();
