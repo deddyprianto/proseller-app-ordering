@@ -1080,16 +1080,15 @@ class StoreDetailPromotion extends Component {
               }
               style={styles.btnBackIcon}
             />
-            <Text style={styles.btnBackText}>
-              {' '}
+            <Text style={styles.btnBackText} numberOfLines={1}>
               {this.props.dataPromotion.name.substr(0, 50)}{' '}
             </Text>
           </TouchableOpacity>
-          <CartIcon
-            outletID={this.state.item.id}
-            dataBasket={this.props.dataBasket}
-            refreshQuantityProducts={this.refreshQuantityProducts}
-          />
+          {/* <CartIcon
+             outletID={this.state.item.id}
+             dataBasket={this.props.dataBasket}
+             refreshQuantityProducts={this.refreshQuantityProducts}
+           /> */}
         </View>
 
         {this.renderMainList()}
@@ -1144,6 +1143,8 @@ const styles = StyleSheet.create({
     color: colorConfig.pageIndex.activeTintColor,
     fontFamily: 'Poppins-Medium',
     fontSize: 13,
+    flex: 1,
+    textAlign: 'center',
   },
   line: {
     borderBottomColor: colorConfig.store.defaultColor,
