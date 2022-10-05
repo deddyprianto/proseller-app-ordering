@@ -12,10 +12,14 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import CryptoJS from 'react-native-crypto-js';
 
 import colorConfig from '../config/colorConfig';
+import LoadingScreen from './loadingScreen';
 
 class StoreStores extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      isLoading: false,
+    };
   }
 
   showAlertBasketNotEmpty = async item => {
@@ -28,14 +32,17 @@ class StoreStores extends Component {
         {
           text: 'Continue',
           onPress: async () => {
-            await this.storeDetailStores(item);
+            this.setState({isLoading: true});
             await this.removeCart();
+            await this.storeDetailStores(item);
+            this.setState({isLoading: false});
           },
         },
       ],
       {cancelable: false},
     );
   };
+
   handleRemoveSelectedAddress = async () => {
     const userDecrypt = CryptoJS.AES.decrypt(
       this.props.user,
@@ -53,7 +60,6 @@ class StoreStores extends Component {
     await this.handleRemoveSelectedAddress();
     await this.props.dispatch(changeOrderingMode({orderingMode: ''}));
     await this.props.dispatch(removeBasket());
-    await this.props.dispatch(getBasket());
   };
 
   storeDetailStores = async item => {
@@ -93,6 +99,7 @@ class StoreStores extends Component {
     const {intlData, dataAllStore, dataStoreRegion} = this.props;
     return (
       <View>
+        <LoadingScreen loading={this.state.isLoading} />
         {dataStoreRegion.map((region, index) => (
           <View style={styles.stores} key={index}>
             <Text style={styles.stores}>

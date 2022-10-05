@@ -521,7 +521,9 @@ const SearchProduct = ({category}) => {
               setSelectedSubCategory(item);
             }}
           />
-          <ProductList products={productsBySubCategory} basket={basket} />
+          <ScrollView>
+            <ProductList products={productsBySubCategory} basket={basket} />
+          </ScrollView>
         </>
       );
     }

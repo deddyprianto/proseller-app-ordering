@@ -430,14 +430,16 @@ export const removeBasket = () => {
         200,
         token,
       );
+
       console.log(response, 'response delete basket');
-      // remove basket
-      // dispatch({
-      //   type: 'DATA_BASKET',
-      //   product: undefined,
-      // });
+      if (response?.success) {
+        await dispatch({
+          type: 'DATA_BASKET',
+          product: {},
+        });
+      }
       // remove table type
-      dispatch({
+      await dispatch({
         type: 'TABLE_TYPE',
         tableType: undefined,
       });
