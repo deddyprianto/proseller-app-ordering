@@ -28,7 +28,7 @@ import awsConfig from '../config/awsConfig';
 import ProductCartList from '../components/productCartList/ProductCartList';
 import OrderingTypeSelectorModal from '../components/modal/OrderingTypeSelectorModal';
 import DeliveryProviderSelectorModal from '../components/modal/DeliveryProviderSelectorModal';
-import DeliveryDateSelectorModal from '../components/modal/DeliveryDateSelectorModal';
+import DateSelectorModal from '../components/modal/DateSelectorModal';
 import Header from '../components/layout/header';
 
 import {isEmptyArray, isEmptyObject} from '../helper/CheckEmpty';
@@ -745,7 +745,7 @@ const Cart = () => {
     );
   };
 
-  const renderDeliveryAddressHeader = deliveryAddressValue => {
+  const renderAddressHeader = deliveryAddressValue => {
     return (
       <View style={styles.viewDeliveryAddressHeader}>
         <Text style={styles.textMethod}>Delivery Address</Text>
@@ -760,7 +760,7 @@ const Cart = () => {
     );
   };
 
-  const renderDeliveryAddressBody = item => {
+  const renderAddressBody = item => {
     if (!isEmptyObject(deliveryAddress)) {
       return (
         <>
@@ -774,21 +774,21 @@ const Cart = () => {
     }
   };
 
-  const renderDeliveryAddress = () => {
+  const renderAddress = () => {
     if (basket?.orderingMode === 'DELIVERY') {
       const deliveryAddressValue =
         deliveryAddress?.tagAddress || 'Choose Address';
 
       return (
         <View style={styles.viewMethodDeliveryAddress}>
-          {renderDeliveryAddressHeader(deliveryAddressValue)}
-          {renderDeliveryAddressBody(deliveryAddress)}
+          {renderAddressHeader(deliveryAddressValue)}
+          {renderAddressBody(deliveryAddress)}
         </View>
       );
     }
   };
 
-  const renderDeliveryProvider = () => {
+  const renderProvider = () => {
     if (basket?.orderingMode === 'DELIVERY') {
       const disabled = isEmptyObject(deliveryAddress);
       const deliveryProviderValue = basket?.provider?.name || 'Choose Provider';
@@ -809,7 +809,7 @@ const Cart = () => {
     }
   };
 
-  const renderDeliveryDateText = () => {
+  const renderDateText = () => {
     if (orderingDateTimeSelected) {
       const date = moment(orderingDateTimeSelected?.date).format('DD/MM/YY');
       return (
@@ -825,7 +825,20 @@ const Cart = () => {
     }
   };
 
-  const renderDeliveryDate = () => {
+  const handleDateText = key => {
+    switch (key) {
+      case 'DELIVERY':
+        return 'Delivery Date';
+      case 'STOREPICKUP':
+        return 'Pick Up Date';
+      case 'TAKEAWAY':
+        return 'Take Away Date';
+      default:
+        return 'Ordering Type Date';
+    }
+  };
+
+  const renderDate = () => {
     const available = !isEmptyArray(availableTimes);
     const isDelivery = available && basket?.orderingMode === 'DELIVERY';
     const isPickUp = available && basket?.orderingMode === 'STOREPICKUP';
@@ -834,13 +847,15 @@ const Cart = () => {
     if (isDelivery || isPickUp || isTakeAway) {
       return (
         <View style={styles.viewMethod}>
-          <Text style={styles.textMethod}>Delivery Date</Text>
+          <Text style={styles.textMethod}>
+            {handleDateText(basket?.orderingMode)}
+          </Text>
           <TouchableOpacity
             style={styles.touchableMethod}
             onPress={() => {
               handleOpenDeliveryDateModal();
             }}>
-            {renderDeliveryDateText()}
+            {renderDateText()}
           </TouchableOpacity>
         </View>
       );
@@ -1007,7 +1022,8 @@ const Cart = () => {
             handleCloseDeliveryProviderModal();
           }}
         />
-        <DeliveryDateSelectorModal
+        <DateSelectorModal
+          orderingMode={basket?.orderingMode}
           value={orderingDateTimeSelected}
           open={openDeliveryDateModal}
           handleClose={() => {
@@ -1039,9 +1055,9 @@ const Cart = () => {
           <ProductCartList />
           <View style={styles.divider} />
           {renderOrderingType()}
-          {renderDeliveryAddress()}
-          {renderDeliveryProvider()}
-          {renderDeliveryDate()}
+          {renderAddress()}
+          {renderProvider()}
+          {renderDate()}
         </ScrollView>
         {renderModal()}
       </View>
