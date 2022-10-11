@@ -99,6 +99,15 @@ const useStyles = () => {
       fontSize: 8,
       color: theme.colors.semanticError,
     },
+    iconInformation: {
+      width: 16,
+      height: 16,
+      marginRight: 4,
+      marginTop: 2,
+      alignItems: 'center',
+      justifyContent: 'center',
+      tintColor: theme.colors.semanticError,
+    },
     iconBullet: {
       fontSize: 6,
       color: theme.colors.border,
@@ -226,7 +235,17 @@ const useStyles = () => {
       fontSize: theme.fontSize[12],
       fontFamily: theme.fontFamily.poppinsMedium,
     },
+    textNotDiscountAble: {
+      flex: 1,
+      color: theme.colors.semanticError,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
     viewNotes: {
+      display: 'flex',
+      flexDirection: 'row',
+    },
+    viewNonDiscountAble: {
       display: 'flex',
       flexDirection: 'row',
     },
@@ -472,17 +491,6 @@ const ProductCartItem = ({item, disabled}) => {
     }
   };
 
-  const renderNotes = () => {
-    if (item.remark) {
-      return (
-        <View style={styles.viewNotes}>
-          <Image source={appConfig.notes} style={styles.imageNotes} />
-          <Text style={styles.textNotes}>{item?.remark}</Text>
-        </View>
-      );
-    }
-  };
-
   const renderFooter = () => {
     return (
       <View style={styles.footer}>
@@ -557,6 +565,33 @@ const ProductCartItem = ({item, disabled}) => {
     }
   };
 
+  const renderNotes = () => {
+    if (item.remark) {
+      return (
+        <View style={styles.viewNotes}>
+          <Image source={appConfig.notes} style={styles.imageNotes} />
+          <Text style={styles.textNotes}>{item?.remark}</Text>
+        </View>
+      );
+    }
+  };
+
+  const renderNonDiscountAbleText = () => {
+    if (item.product?.isNotRedeemable) {
+      return (
+        <View style={styles.viewNonDiscountAble}>
+          <Image
+            source={appConfig.iconInformation}
+            style={styles.iconInformation}
+          />
+          <Text style={styles.textNotDiscountAble}>
+            This product can’t be redeem with point/voucher
+          </Text>
+        </View>
+      );
+    }
+  };
+
   const renderBodyLeft = () => {
     return (
       <View style={styles.bodyLeft}>
@@ -564,6 +599,7 @@ const ProductCartItem = ({item, disabled}) => {
         {renderProductModifier()}
         {renderDivider()}
         {renderNotes()}
+        {renderNonDiscountAbleText()}
       </View>
     );
   };
