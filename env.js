@@ -3,6 +3,7 @@ const ENV = {
   IS_DEVELOP: true,
 
   //Default
+  // API_HOST: 'https://api-edgeworksretail-sales.proseller.io/', //Live Retail
   // API_HOST: 'https://edgeworks-demo.proseller.io/', //DEMO
 
   //Ace Mart

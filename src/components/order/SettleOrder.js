@@ -68,6 +68,7 @@ import {
 import {getSVCBalance} from '../../actions/SVC.action';
 import {campaign, dataPoint} from '../../actions/rewards.action';
 import ModalTransfer from './ModalTransfer';
+import LoadingScreen from '../loadingScreen';
 
 class SettleOrder extends Component {
   constructor(props) {
@@ -1009,6 +1010,8 @@ class SettleOrder extends Component {
       percentageUseSVC: this.state.percentageUseSVC,
       paymentData,
       valueSet: this.state.addPoint === undefined ? 0 : this.state.addPoint,
+      originalPurchase: this.props.pembayaran.totalNettAmount,
+      doPayment: this.doPayment,
       setDataPoint: this.setDataPoint,
     });
   };
@@ -2695,6 +2698,8 @@ class SettleOrder extends Component {
           );
         }
       }
+
+      this.setState({loading: false});
     } catch (e) {
       //  cancel voucher and pont selected
       // this.cencelPoint();
@@ -3254,6 +3259,8 @@ class SettleOrder extends Component {
     return (
       <SafeAreaView style={styles.container}>
         {this.state.loading && <LoaderDarker />}
+
+        <LoadingScreen loading={this.state.loading} />
         {this.askUserToEnterCVV()}
         <ModalTransfer
           doPayment={this.doPayment}

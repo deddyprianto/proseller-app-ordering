@@ -1085,10 +1085,10 @@ class StoreDetailPromotion extends Component {
             </Text>
           </TouchableOpacity>
           {/* <CartIcon
-             outletID={this.state.item.id}
-             dataBasket={this.props.dataBasket}
-             refreshQuantityProducts={this.refreshQuantityProducts}
-           /> */}
+            outletID={this.state.item.id}
+            dataBasket={this.props.dataBasket}
+            refreshQuantityProducts={this.refreshQuantityProducts}
+          /> */}
         </View>
 
         {this.renderMainList()}
