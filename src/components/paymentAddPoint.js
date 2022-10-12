@@ -383,7 +383,7 @@ class paymentAddPoint extends Component {
               color: colorConfig.primaryColor,
               fontFamily: 'Poppins-Bold',
             }}>
-            {`${this.state.jumPoint} points will be redeem to ${
+            {`Your ${this.state.jumPoint} points will be redeem to ${
               appConfig.appMataUang
             }${this.formatCurrency(this.calculateMoneyPoint())}`}
           </Text>
