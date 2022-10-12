@@ -99,7 +99,7 @@ const Banner = () => {
     <Swiper
       style={styles.wrap}
       autoplay={true}
-      autoplayTimeout={4}
+      autoplayTimeout={6}
       animated={true}
       dot={<View style={styles.inactiveDot} />}
       activeDot={<View style={styles.activeDot} />}
