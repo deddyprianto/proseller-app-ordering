@@ -1,9 +1,9 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
+import Swiper from 'react-native-swiper';
 
 import {
   StyleSheet,
-  ScrollView,
   View,
   Image,
   Dimensions,
@@ -18,8 +18,9 @@ const WIDTH = Dimensions.get('window').width;
 const useStyles = () => {
   const styles = StyleSheet.create({
     wrap: {
-      width: WIDTH,
+      height: WIDTH / 3,
     },
+
     wrapImage: {
       width: WIDTH,
     },
@@ -28,13 +29,6 @@ const useStyles = () => {
       width: WIDTH,
       maxWidth: WIDTH,
       aspectRatio: 3 / 1,
-    },
-    WrapDot: {
-      position: 'absolute',
-      // bottom: 32 ,
-      bottom: 8,
-      flexDirection: 'row',
-      alignSelf: 'center',
     },
     activeDot: {
       opacity: 1,
@@ -59,7 +53,6 @@ const useStyles = () => {
 const Banner = () => {
   const styles = useStyles();
   const dispatch = useDispatch();
-  const [selectedImage, setSelectedImage] = useState(0);
 
   const defaultOutlet = useSelector(
     state => state.storesReducer.defaultOutlet.defaultOutlet,
@@ -74,14 +67,6 @@ const Banner = () => {
     };
     loadData();
   }, [dispatch]);
-
-  const onChange = nativeEvent => {
-    const image = Math.ceil(nativeEvent.contentOffset.x / 420);
-
-    if (image !== selectedImage) {
-      setSelectedImage(image);
-    }
-  };
 
   const handleBannerClick = item => {
     return Actions.storeDetailPromotion({
@@ -110,31 +95,17 @@ const Banner = () => {
     return result;
   };
 
-  const renderDot = () => {
-    const dots = banners?.map((image, index) => {
-      const styleDot =
-        selectedImage === index ? styles.activeDot : styles.inactiveDot;
-
-      return <View key={index} style={styleDot} />;
-    });
-
-    const result = <View style={styles.WrapDot}>{dots}</View>;
-    return result;
-  };
-
   return (
-    <View style={styles.wrap}>
-      <ScrollView
-        onScroll={({nativeEvent}) => {
-          onChange(nativeEvent);
-        }}
-        showsHorizontalScrollIndicator={false}
-        pagingEnabled
-        horizontal>
-        {renderImages()}
-      </ScrollView>
-      {renderDot()}
-    </View>
+    <Swiper
+      style={styles.wrap}
+      autoplay={true}
+      autoplayTimeout={4}
+      animated={true}
+      dot={<View style={styles.inactiveDot} />}
+      activeDot={<View style={styles.activeDot} />}
+      loop>
+      {renderImages()}
+    </Swiper>
   );
 };
 
