@@ -12,6 +12,7 @@ import {
   Text,
   TouchableOpacity,
   ScrollView,
+  SafeAreaView,
 } from 'react-native';
 
 import colorConfig from '../config/colorConfig';
@@ -378,10 +379,10 @@ const PendingOrderDetail = ({order}) => {
   }
 
   return (
-    <View style={styles.root}>
+    <SafeAreaView style={styles.root}>
       <Header title="Pending Order Detail" />
       {renderBody()}
-    </View>
+    </SafeAreaView>
   );
 };
 
