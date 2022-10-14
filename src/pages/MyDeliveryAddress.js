@@ -33,7 +33,7 @@ const useStyles = () => {
     root: {
       flex: 1,
       justifyContent: 'space-between',
-      backgroundColor: theme.colors.background2,
+      backgroundColor: theme.colors.background,
     },
     textAddNewAddressButton: {
       color: theme.colors.text4,
