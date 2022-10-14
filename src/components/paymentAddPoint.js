@@ -22,6 +22,7 @@ import {Actions} from 'react-native-router-flux';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
 import {Slider} from 'react-native-elements';
+import CurrencyFormatter from '../helper/CurrencyFormatter';
 
 // import {campaign, dataPoint, vouchers} from '../actions/rewards.action';
 import colorConfig from '../config/colorConfig';
@@ -180,6 +181,27 @@ class paymentAddPoint extends Component {
     }
   };
 
+  format = item => {
+    try {
+      const curr = appConfig.appMataUang;
+      item = item.replace(curr, '');
+      if (curr != 'RP' && curr != 'IDR' && item.includes('.') == false) {
+        return `${item}.00`;
+      }
+      return item;
+    } catch (e) {
+      return item;
+    }
+  };
+
+  formatCurrency = value => {
+    try {
+      return this.format(CurrencyFormatter(value).match(/[a-z]+|[^a-z]+/gi)[1]);
+    } catch (e) {
+      return value;
+    }
+  };
+
   to2PointDecimal = data => {
     try {
       if (data != 0) {
@@ -333,18 +355,16 @@ class paymentAddPoint extends Component {
               style={{
                 marginTop: -30,
                 alignItems: 'center',
-                marginBottom: 30,
+                marginBottom: 10,
               }}>
               <Text style={{fontFamily: 'Poppins-Medium'}}>Point to use</Text>
               <Text
                 style={{
-                  color: colorConfig.store.secondaryColor,
+                  color: colorConfig.primaryColor,
                 }}>
-                {`${intlData.messages.redeem} ${
-                  this.state.jumPointRatio
-                } point ${intlData.messages.to} ${appConfig.appMataUang} ${
-                  this.state.jumMoneyRatio
-                }`}
+                {`${this.state.jumPointRatio} point equal to ${
+                  appConfig.appMataUang
+                }${this.formatCurrency(this.state.jumMoneyRatio)}`}
               </Text>
             </View>
           </View>
@@ -353,9 +373,19 @@ class paymentAddPoint extends Component {
               textAlign: 'center',
               fontSize: 30,
               fontFamily: 'Poppins-Medium',
-              marginBottom: '4%',
             }}>
             {this.state.jumPoint}
+          </Text>
+          <Text
+            style={{
+              textAlign: 'center',
+              fontSize: 14,
+              color: colorConfig.primaryColor,
+              fontFamily: 'Poppins-Bold',
+            }}>
+            {`Your ${this.state.jumPoint} points will be redeem to ${
+              appConfig.appMataUang
+            }${this.formatCurrency(this.calculateMoneyPoint())}`}
           </Text>
           <View>
             {pendingPoints != undefined && pendingPoints > 0 && (
