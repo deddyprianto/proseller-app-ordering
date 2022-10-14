@@ -11,7 +11,13 @@ import {Actions} from 'react-native-router-flux';
 import CryptoJS from 'react-native-crypto-js';
 import {useSelector} from 'react-redux';
 
-import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  SafeAreaView,
+} from 'react-native';
 
 import Header from '../components/layout/header';
 import MyDeliveryAddressList from '../components/myDeliveryAddressList';
@@ -96,14 +102,14 @@ const MyDeliveryAddress = ({fromScene}) => {
   };
 
   return (
-    <View style={styles.root}>
+    <SafeAreaView style={styles.root}>
       <Header title="My Delivery Address" />
       <MyDeliveryAddressList
         deliveryAddress={deliveryAddress}
         fromScene={fromScene}
       />
       {renderFooter()}
-    </View>
+    </SafeAreaView>
   );
 };
 
