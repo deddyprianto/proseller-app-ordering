@@ -259,7 +259,7 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
       totalPrice = totalPrice + product.retailPrice;
 
       handlePrice({
-        qty: qty || 1,
+        qty,
         totalPrice,
       });
 
@@ -268,7 +268,7 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
 
     totalPrice = totalPrice + product.retailPrice;
     handlePrice({
-      qty: qty || 1,
+      qty,
       totalPrice,
     });
     return productModifiers;
@@ -324,8 +324,7 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
         selectedProductModifiers,
       );
 
-      const qtyFormatted = qty || 1;
-      const price = totalPrice / qtyFormatted;
+      const price = totalPrice / qty;
 
       if (!isEmptyObject(selectedProduct)) {
         return setProductUpdate({
