@@ -268,7 +268,10 @@ const DateSelectorModal = ({open, handleClose, value, orderingMode}) => {
 
       if (!isEmptyArray(availableTimeSlot)) {
         setSelectedTime(availableTimeSlot[0]?.time);
+      } else {
+        setSelectedTime('');
       }
+
       setTimes(timeSlot);
     }
   }, [availableDates, selectedDate]);
