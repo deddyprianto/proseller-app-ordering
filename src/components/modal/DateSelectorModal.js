@@ -218,14 +218,14 @@ const DateSelectorModal = ({open, handleClose, value, orderingMode}) => {
   const dispatch = useDispatch();
 
   const [dates, setDates] = useState([]);
-  const [deliveryTimes, setDeliveryTimes] = useState([]);
+  const [times, setTimes] = useState([]);
   const [availableDates, setAvailableDates] = useState([]);
 
   const [selectedDate, setSelectedDate] = useState('');
-  const [selectedDeliveryTime, setSelectedDeliveryTime] = useState('');
+  const [selectedTime, setSelectedTime] = useState('');
 
   const [seeMore, setSeeMore] = useState(false);
-  const [isOpenDeliveryTimes, setIsOpenDeliveryTimes] = useState(false);
+  const [isOpenTimeSelector, setIsOpenTimeSelector] = useState(false);
 
   const defaultOutlet = useSelector(
     state => state.storesReducer.defaultOutlet.defaultOutlet,
@@ -251,10 +251,7 @@ const DateSelectorModal = ({open, handleClose, value, orderingMode}) => {
         ? moment(value.date).format('ddd DD MMMM YYYY')
         : moment().format('ddd DD MMMM YYYY');
 
-      const currentTime = value?.time || '';
-
       setSelectedDate(currentDate);
-      setSelectedDeliveryTime(currentTime);
     };
 
     loadData();
@@ -263,13 +260,17 @@ const DateSelectorModal = ({open, handleClose, value, orderingMode}) => {
   useEffect(() => {
     const selectedDateFormatter = moment(selectedDate).format('YYYY-MM-DD');
     if (!isEmptyArray(availableDates)) {
-      const time = availableDates.find(
+      const dateTimes = availableDates.find(
         value => value.date === selectedDateFormatter,
       );
-      setDeliveryTimes(time?.timeSlot);
-    }
+      const timeSlot = dateTimes?.timeSlot || [];
+      const availableTimeSlot = timeSlot?.filter(time => time.isAvailable);
 
-    setSelectedDeliveryTime('');
+      if (!isEmptyArray(availableTimeSlot)) {
+        setSelectedTime(availableTimeSlot[0]?.time);
+      }
+      setTimes(timeSlot);
+    }
   }, [availableDates, selectedDate]);
 
   useEffect(() => {
@@ -290,7 +291,7 @@ const DateSelectorModal = ({open, handleClose, value, orderingMode}) => {
 
   const handleSave = async () => {
     await dispatch(
-      setTimeSlotSelected({date: selectedDate, time: selectedDeliveryTime}),
+      setTimeSlotSelected({date: selectedDate, time: selectedTime}),
     );
     handleClose();
   };
@@ -304,11 +305,11 @@ const DateSelectorModal = ({open, handleClose, value, orderingMode}) => {
   };
 
   const handleOpenDeliveryTimes = () => {
-    setIsOpenDeliveryTimes(true);
+    setIsOpenTimeSelector(true);
   };
 
   const handleCloseDeliveryTimes = () => {
-    setIsOpenDeliveryTimes(false);
+    setIsOpenTimeSelector(false);
   };
 
   const handleHeaderName = key => {
@@ -335,7 +336,6 @@ const DateSelectorModal = ({open, handleClose, value, orderingMode}) => {
 
   const handleDateItemSelected = item => {
     setSelectedDate(item);
-    setSelectedDeliveryTime('');
   };
 
   const renderDeliveryDateItemSelected = ({day, date, month}) => {
@@ -438,8 +438,8 @@ const DateSelectorModal = ({open, handleClose, value, orderingMode}) => {
   };
 
   const renderDeliveryTime = () => {
-    const disabled = isEmptyArray(deliveryTimes);
-    const text = selectedDeliveryTime || 'Delivery Time';
+    const disabled = isEmptyArray(times);
+    const text = selectedTime || 'Select Time';
 
     return (
       <TouchableOpacity
@@ -455,7 +455,7 @@ const DateSelectorModal = ({open, handleClose, value, orderingMode}) => {
   };
 
   const renderSaveButton = () => {
-    const disabled = !selectedDeliveryTime || !selectedDate;
+    const disabled = !selectedTime || !selectedDate;
     const style = disabled
       ? styles.touchableSaveDisabled
       : styles.touchableSave;
@@ -500,8 +500,8 @@ const DateSelectorModal = ({open, handleClose, value, orderingMode}) => {
   };
 
   const handleDeliveryTimeListItemSelected = item => {
-    setSelectedDeliveryTime(item?.time);
-    setIsOpenDeliveryTimes(false);
+    setSelectedTime(item?.time);
+    setIsOpenTimeSelector(false);
   };
 
   const renderDeliveryTimeListItem = item => {
@@ -516,8 +516,8 @@ const DateSelectorModal = ({open, handleClose, value, orderingMode}) => {
   };
 
   const renderTimeListModal = () => {
-    if (!isEmptyArray(deliveryTimes)) {
-      const result = deliveryTimes.map(item => {
+    if (!isEmptyArray(times)) {
+      const result = times.map(item => {
         if (item?.isAvailable) {
           return renderDeliveryTimeListItem(item);
         }
@@ -527,7 +527,7 @@ const DateSelectorModal = ({open, handleClose, value, orderingMode}) => {
         <Provider>
           <Portal>
             <Dialog
-              visible={isOpenDeliveryTimes}
+              visible={isOpenTimeSelector}
               onDismiss={handleCloseDeliveryTimes}
               style={styles.viewTimeListModal}>
               <ScrollView>{result}</ScrollView>
