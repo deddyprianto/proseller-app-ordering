@@ -157,6 +157,15 @@ const DateSelectorModal = ({
 
   const days = ['San', 'Mon', 'Tue', 'Wed', 'Tur', 'Fri', 'Sat'];
 
+  const formatDate = 'ddd DD MMM YYYY';
+  const formatMonth = 'MMM';
+  const formatYear = 'YYYY';
+
+  const handleDateFormatter = date => {
+    const result = moment(date).format(formatDate);
+    return result;
+  };
+
   const getDates = () => {
     let calender = [];
 
@@ -183,7 +192,7 @@ const DateSelectorModal = ({
             day
               .add(1, 'day')
               .clone()
-              .format('DD MMM'),
+              .format(formatDate),
           ),
       );
     }
@@ -192,9 +201,9 @@ const DateSelectorModal = ({
   };
 
   useEffect(() => {
-    const currentYear = moment(value).format('YYYY');
-    const currentMonth = moment(value).format('MMM');
-    const currentDate = Number(moment(value).format('DD'));
+    const currentYear = moment(value).format(formatYear);
+    const currentMonth = moment(value).format(formatMonth);
+    const currentDate = moment(value).format(formatDate);
     const monthList = moment.monthsShort();
 
     setSelectedYear(currentYear);
@@ -214,7 +223,7 @@ const DateSelectorModal = ({
       .date(selectedDate)
       .month(selectedMonth)
       .year(selectedYear)
-      .format('ddd DD MMMM YYYY');
+      .format(formatDate);
 
     handleOnChange(result);
     handleClose();
@@ -227,8 +236,8 @@ const DateSelectorModal = ({
         .year(selectedYear)
         .subtract(1, 'months');
 
-      const month = moment(subtractResult).format('MMM');
-      const year = moment(subtractResult).format('YYYY');
+      const month = moment(subtractResult).format(formatMonth);
+      const year = moment(subtractResult).format(formatYear);
 
       setSelectedMonth(month);
       setSelectedYear(year);
@@ -240,8 +249,8 @@ const DateSelectorModal = ({
         .year(selectedYear)
         .add(1, 'months');
 
-      const month = moment(addResult).format('MMM');
-      const year = moment(addResult).format('YYYY');
+      const month = moment(addResult).format(formatMonth);
+      const year = moment(addResult).format(formatYear);
 
       setSelectedMonth(month);
       setSelectedYear(year);
@@ -257,13 +266,9 @@ const DateSelectorModal = ({
   };
 
   const handleAvailableDate = item => {
-    const dateFormatter = moment(item)
-      .year(selectedYear)
-      .format('YYYY-MM-DD');
-
     const result =
       !isEmptyArray(availableDates) &&
-      availableDates?.find(value => value?.date === dateFormatter);
+      availableDates?.find(value => handleDateFormatter(value?.date) === item);
 
     return result;
   };
@@ -331,10 +336,10 @@ const DateSelectorModal = ({
 
   const renderDateItem = item => {
     const itemDate = item.split(' ');
-    const date = Number(itemDate[0]);
-    const month = itemDate[1];
+    const date = Number(itemDate[1]);
+    const month = itemDate[2];
 
-    const isActive = selectedDate === date;
+    const isActive = selectedDate === item;
     const isThisMonth = selectedMonth === month;
     const available = handleAvailableDate(item);
 
@@ -353,7 +358,7 @@ const DateSelectorModal = ({
       <TouchableOpacity
         disabled={!available}
         onPress={() => {
-          setSelectedDate(date);
+          setSelectedDate(item);
           setSelectedMonth(month);
         }}>
         <View style={styleCircle}>
