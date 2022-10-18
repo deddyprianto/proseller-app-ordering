@@ -250,7 +250,6 @@ const DateSelectorModal = ({open, handleClose, value, orderingMode}) => {
       const currentDate = value
         ? moment(value.date).format('ddd DD MMMM YYYY')
         : moment().format('ddd DD MMMM YYYY');
-
       setSelectedDate(currentDate);
     };
 
@@ -268,6 +267,8 @@ const DateSelectorModal = ({open, handleClose, value, orderingMode}) => {
 
       if (!isEmptyArray(availableTimeSlot)) {
         setSelectedTime(availableTimeSlot[0]?.time);
+      } else {
+        setSelectedTime('');
       }
       setTimes(timeSlot);
     }
