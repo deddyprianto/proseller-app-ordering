@@ -492,7 +492,7 @@ const DateSelectorModal = ({open, handleClose, value, orderingMode}) => {
             handleCloseCalender();
           }}
           handleOnChange={value => {
-            setSelectedDate(value);
+            setSelectedDate(moment(value).format('ddd DD MMMM YYYY'));
           }}
         />
       );
