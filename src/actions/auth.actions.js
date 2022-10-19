@@ -209,41 +209,6 @@ export const loginUser = payload => {
         // Save backup data refresh token
         try {
           await AsyncStorage.setItem(`refreshToken`, data.refreshToken.token);
-
-          // SUBMIT OFFLINE CART
-          await dispatch(submitOfflineCart(jwtToken));
-
-          // Remove Netsclick account on login
-          await dispatch(clearNetsclickData(jwtToken));
-
-          await dispatch({
-            type: 'AUTH_USER_SUCCESS',
-            qrcode: qrcode,
-            exp: data.accessToken.payload.exp * 1000 - 2700000,
-          });
-          let dataUser = encryptData(JSON.stringify(data.idToken.payload));
-
-          await dispatch({
-            type: 'GET_USER_SUCCESS',
-            payload: dataUser,
-            token: jwtToken,
-          });
-
-          // save data to reducer
-          await dispatch({
-            type: 'LOGIN_USER_SUCCESS',
-          });
-
-          await dispatch({
-            type: 'TOKEN_USER',
-            token: jwtToken,
-            refreshToken: refreshToken,
-          });
-          // Save Token User
-
-          // encrypt user data before save to asyncstorage
-
-          console.log(response, 'response login user pool');
         } catch (error) {}
 
         // SUBMIT OFFLINE CART
@@ -265,6 +230,7 @@ export const loginUser = payload => {
           exp: data.accessToken.payload.exp * 1000 - 2700000,
           token: jwtToken,
         });
+
         // encrypt user data before save to asyncstorage
         let dataUser = encryptData(JSON.stringify(data.idToken.payload));
 

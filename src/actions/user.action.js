@@ -66,24 +66,17 @@ export const getUserProfile = () => {
     const state = getState();
     try {
       // await dispatch(refreshToken());
-<<<<<<< HEAD
-      const authToken = state.authReducer.authData.token;
-      const userToken = state.authReducer.tokenUser.token;
-=======
       const {
         authReducer: {
           authData: {token},
         },
       } = state;
->>>>>>> general
 
       const {
         userReducer: {
           deviceUserInfo: {deviceID},
         },
       } = state;
-
-      const token = authToken || userToken;
 
       const response = await fetchApi(
         '/customer/getProfile',
@@ -136,22 +129,18 @@ export const getUserProfile = () => {
       // } catch (e) {}
 
       // encrypt user data before save to asyncstorage
-      if (response.success) {
-        let dataUser = CryptoJS.AES.encrypt(
-          JSON.stringify(response.responseBody.data[0]),
-          awsConfig.PRIVATE_KEY_RSA,
-        ).toString();
+      let dataUser = CryptoJS.AES.encrypt(
+        JSON.stringify(response.responseBody.data[0]),
+        awsConfig.PRIVATE_KEY_RSA,
+      ).toString();
 
+      if (response.success) {
         dispatch({
           type: 'GET_USER_SUCCESS',
           payload: dataUser,
         });
-        return response.success;
-      } else {
-        dispatch({
-          type: 'AUTH_USER_FAIL',
-        });
       }
+      return response.success;
     } catch (error) {
       return error;
     }

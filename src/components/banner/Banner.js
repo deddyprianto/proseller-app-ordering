@@ -95,10 +95,7 @@ const Banner = () => {
     });
     return result;
   };
-<<<<<<< HEAD
 
-=======
->>>>>>> general
   if (!isEmptyArray(banners)) {
     return (
       <Swiper
