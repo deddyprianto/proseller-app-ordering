@@ -220,37 +220,30 @@ export const loginUser = payload => {
             qrcode: qrcode,
             exp: data.accessToken.payload.exp * 1000 - 2700000,
           });
-          console.log('MANTEP MASUK SINI 1');
           let dataUser = encryptData(JSON.stringify(data.idToken.payload));
 
-          console.log('MANTEP MASUK SINI 1');
           await dispatch({
             type: 'GET_USER_SUCCESS',
             payload: dataUser,
             token: jwtToken,
           });
-          console.log('MANTEP MASUK SINI 2');
 
           // save data to reducer
           await dispatch({
             type: 'LOGIN_USER_SUCCESS',
           });
 
-          console.log('MANTEP MASUK SINI 3');
           await dispatch({
             type: 'TOKEN_USER',
             token: jwtToken,
             refreshToken: refreshToken,
           });
           // Save Token User
-          console.log('MANTEP MASUK SINI 4');
 
           // encrypt user data before save to asyncstorage
 
           console.log(response, 'response login user pool');
-        } catch (error) {
-          console.log('DEDDY GILA');
-        }
+        } catch (error) {}
 
         return response.responseBody.data;
       }

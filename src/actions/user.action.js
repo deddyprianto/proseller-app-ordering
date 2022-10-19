@@ -128,23 +128,18 @@ export const getUserProfile = () => {
       // } catch (e) {}
 
       // encrypt user data before save to asyncstorage
-      console.log('MASUK SINI GILA MIRING 3');
-
-      console.log('MASUK SINI GILA MIRING 4');
       if (response.success) {
         let dataUser = CryptoJS.AES.encrypt(
           JSON.stringify(response.responseBody.data[0]),
           awsConfig.PRIVATE_KEY_RSA,
         ).toString();
 
-        console.log('MASUK SINI GILA MIRING 1');
         dispatch({
           type: 'GET_USER_SUCCESS',
           payload: dataUser,
         });
         return response.success;
       } else {
-        console.log('MASUK SINI GILA MIRING');
         dispatch({
           type: 'AUTH_USER_FAIL',
         });

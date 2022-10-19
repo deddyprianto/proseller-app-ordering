@@ -140,13 +140,12 @@ const NewPageIndex = () => {
     state => state.storesReducer?.defaultOutlet?.defaultOutlet,
   );
 
-  console.log(isLoggedIn);
-  // useEffect(() => {
-  //   const loadData = async () => {
-  //     await dispatch(getColorSettings());
-  //   };
-  //   loadData();
-  // }, [dispatch]);
+  useEffect(() => {
+    const loadData = async () => {
+      await dispatch(getColorSettings());
+    };
+    loadData();
+  }, [dispatch]);
 
   const dataRetailScreens = {
     Home: Home,

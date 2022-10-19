@@ -128,11 +128,7 @@ const Header = ({
     } else if (title) {
       return renderDefaultTitle();
     } else {
-<<<<<<< Updated upstream
-      return <Text style={styles.textHeader}>{title}</Text>;
-=======
       return null;
->>>>>>> Stashed changes
     }
   };
 
