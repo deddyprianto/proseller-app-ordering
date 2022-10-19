@@ -197,14 +197,9 @@ export const loginUser = payload => {
       });
       console.log(payload, 'payload login');
       const response = await fetchApi('/customer/login', 'POST', payload, 200);
-<<<<<<< HEAD
-      if (response?.responseBody?.data?.accessToken) {
-        let data = response.responseBody.Data;
-=======
 
       if (response?.responseBody?.data?.accessToken) {
         let data = response.responseBody.data;
->>>>>>> general
 
         // encrypt data
         let jwtToken = encryptData(data.accessToken.jwtToken);
@@ -251,9 +246,6 @@ export const loginUser = payload => {
           console.log(response, 'response login user pool');
         } catch (error) {}
 
-<<<<<<< HEAD
-        return response.responseBody.data;
-=======
         // SUBMIT OFFLINE CART
         await dispatch(submitOfflineCart(jwtToken));
 
@@ -287,7 +279,6 @@ export const loginUser = payload => {
         });
         console.log(response, 'response login user pool');
         return response.responseBody.Data;
->>>>>>> general
       }
 
       return response.responseBody.data;
