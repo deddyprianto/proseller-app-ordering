@@ -35,6 +35,7 @@ import {dataPointHistory} from '../actions/rewards.action';
 
 import Theme from '../theme';
 import {myVouchers} from '../actions/account.action';
+import {getUserProfile} from '../actions/user.action';
 
 const useStyles = () => {
   const theme = Theme();
@@ -160,7 +161,6 @@ const HomeRetail = () => {
   const ref = useRef();
   const styles = useStyles();
   const dispatch = useDispatch();
-  const [basketLength, setBasketLength] = useState(0);
   const [productsLimitLength, setProductsLimitLength] = useState(10);
   const [refresh, setRefresh] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState({});
@@ -196,16 +196,6 @@ const HomeRetail = () => {
   const svcBalance = useSelector(state => state.SVCReducer.balance.balance);
 
   const intlData = useSelector(state => state.intlData);
-
-  useEffect(() => {
-    let length = 0;
-    if (basket && basket.details) {
-      basket.details.forEach(cart => {
-        length += cart.quantity;
-      });
-    }
-    setBasketLength(length);
-  }, [basket]);
 
   useEffect(() => {
     const loadData = async () => {
@@ -272,7 +262,7 @@ const HomeRetail = () => {
     await dispatch(getSVCBalance());
     await dispatch(dataPointHistory());
     await dispatch(myVouchers());
-
+    await dispatch(getUserProfile());
     setSelectedCategory(response[0]);
     setRefresh(false);
   }, [dispatch, defaultOutlet]);

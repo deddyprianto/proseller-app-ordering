@@ -43,6 +43,12 @@ const authData = (state = {}, action) => {
         isLoggedIn: false,
         waiting: true,
       };
+
+    case 'AUTH_USER_LOGOUT':
+      return {
+        token: null,
+        isLoggedIn: false,
+      };
     default:
       return state;
   }

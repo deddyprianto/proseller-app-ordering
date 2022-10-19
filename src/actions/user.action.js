@@ -68,7 +68,7 @@ export const getUserProfile = () => {
       // await dispatch(refreshToken());
       const {
         authReducer: {
-          tokenUser: {token},
+          authData: {token},
         },
       } = state;
 
