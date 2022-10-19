@@ -22,12 +22,18 @@ import Inbox from './inbox';
 import Rewards from './rewards';
 import ScannerBarcode from './ScannerBarcode';
 import OnBoarding from './OnBoarding';
+<<<<<<< HEAD
 
 import appConfig from '../config/appConfig';
 
 import {getColorSettings} from '../actions/setting.action';
 
 import Theme from '../theme';
+=======
+import {useDispatch, useSelector} from 'react-redux';
+import {Actions} from 'react-native-router-flux';
+import {getColorSettings} from '../actions/setting.action';
+>>>>>>> general
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -129,22 +135,31 @@ const useStyles = () => {
 };
 
 const NewPageIndex = () => {
+  const dispatch = useDispatch();
   const styles = useStyles();
+<<<<<<< HEAD
   const dispatch = useDispatch();
 
   const isLoggedIn = useSelector(
     state => state.authReducer?.authData?.isLoggedIn,
   );
+=======
+  const isLoggedIn = useSelector(state => state.authReducer.authData.token);
+>>>>>>> general
 
   const defaultOutlet = useSelector(
     state => state.storesReducer?.defaultOutlet?.defaultOutlet,
   );
 
   useEffect(() => {
+<<<<<<< HEAD
     const loadData = async () => {
       await dispatch(getColorSettings());
     };
     loadData();
+=======
+    dispatch(getColorSettings());
+>>>>>>> general
   }, [dispatch]);
 
   const dataRetailScreens = {
@@ -256,14 +271,25 @@ const NewPageIndex = () => {
 
   if (!isLoggedIn) {
     return <OnBoarding />;
+<<<<<<< HEAD
   } else if (!defaultOutlet?.id) {
     return <Store />;
   } else {
+=======
+  } else if (!defaultOutlet.id) {
+    return <Store />;
+  } else if (isLoggedIn && defaultOutlet?.id) {
+>>>>>>> general
     return (
       <SafeAreaView style={styles.root}>
         <Tabs />
       </SafeAreaView>
     );
+<<<<<<< HEAD
+=======
+  } else {
+    return null;
+>>>>>>> general
   }
 };
 

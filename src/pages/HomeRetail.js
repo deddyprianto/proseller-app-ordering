@@ -35,6 +35,7 @@ import {dataPointHistory} from '../actions/rewards.action';
 
 import Theme from '../theme';
 import {myVouchers} from '../actions/account.action';
+import {getUserProfile} from '../actions/user.action';
 
 const useStyles = () => {
   const theme = Theme();
@@ -310,6 +311,7 @@ const HomeRetail = () => {
     await dispatch(getSVCBalance());
     await dispatch(dataPointHistory());
     await dispatch(myVouchers());
+    await dispatch(getUserProfile());
 
     setSelectedCategory(response[0]);
     setRefresh(false);

@@ -66,8 +66,16 @@ export const getUserProfile = () => {
     const state = getState();
     try {
       // await dispatch(refreshToken());
+<<<<<<< HEAD
       const authToken = state.authReducer.authData.token;
       const userToken = state.authReducer.tokenUser.token;
+=======
+      const {
+        authReducer: {
+          authData: {token},
+        },
+      } = state;
+>>>>>>> general
 
       const {
         userReducer: {

@@ -197,8 +197,14 @@ export const loginUser = payload => {
       });
       console.log(payload, 'payload login');
       const response = await fetchApi('/customer/login', 'POST', payload, 200);
+<<<<<<< HEAD
       if (response?.responseBody?.data?.accessToken) {
         let data = response.responseBody.Data;
+=======
+
+      if (response?.responseBody?.data?.accessToken) {
+        let data = response.responseBody.data;
+>>>>>>> general
 
         // encrypt data
         let jwtToken = encryptData(data.accessToken.jwtToken);
@@ -245,7 +251,43 @@ export const loginUser = payload => {
           console.log(response, 'response login user pool');
         } catch (error) {}
 
+<<<<<<< HEAD
         return response.responseBody.data;
+=======
+        // SUBMIT OFFLINE CART
+        await dispatch(submitOfflineCart(jwtToken));
+
+        // Remove Netsclick account on login
+        await dispatch(clearNetsclickData(jwtToken));
+
+        // Save Token User
+        await dispatch({
+          type: 'TOKEN_USER',
+          token: jwtToken,
+          refreshToken: refreshToken,
+        });
+
+        await dispatch({
+          type: 'AUTH_USER_SUCCESS',
+          qrcode: qrcode,
+          exp: data.accessToken.payload.exp * 1000 - 2700000,
+          token: jwtToken,
+        });
+        // encrypt user data before save to asyncstorage
+        let dataUser = encryptData(JSON.stringify(data.idToken.payload));
+
+        await dispatch({
+          type: 'GET_USER_SUCCESS',
+          payload: dataUser,
+        });
+
+        // save data to reducer
+        await dispatch({
+          type: 'LOGIN_USER_SUCCESS',
+        });
+        console.log(response, 'response login user pool');
+        return response.responseBody.Data;
+>>>>>>> general
       }
 
       return response.responseBody.data;
@@ -297,6 +339,7 @@ export const logoutUser = () => {
         token,
       );
       console.log(response, 'response logout');
+      dispatch({type: 'AUTH_USER_LOGOUT'});
       dispatch({
         type: 'AUTH_USER_FAIL',
       });
