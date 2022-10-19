@@ -172,6 +172,7 @@ const OTP = ({isLogin, method, methodValue}) => {
     value.codeOTP = otpFormatted;
 
     const response = await dispatch(loginUser(value));
+    console.log('GILA', response);
     if (response?.statusCustomer) {
       Actions.pageIndex();
     } else {

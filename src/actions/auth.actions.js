@@ -197,8 +197,7 @@ export const loginUser = payload => {
       });
       console.log(payload, 'payload login');
       const response = await fetchApi('/customer/login', 'POST', payload, 200);
-
-      if (response.responseBody.Data.accessToken !== undefined) {
+      if (response?.responseBody?.data?.accessToken) {
         let data = response.responseBody.Data;
 
         // encrypt data
@@ -209,44 +208,54 @@ export const loginUser = payload => {
         // Save backup data refresh token
         try {
           await AsyncStorage.setItem(`refreshToken`, data.refreshToken.token);
-        } catch (error) {}
 
-        // SUBMIT OFFLINE CART
-        await dispatch(submitOfflineCart(jwtToken));
+          // SUBMIT OFFLINE CART
+          await dispatch(submitOfflineCart(jwtToken));
 
-        // Remove Netsclick account on login
-        await dispatch(clearNetsclickData(jwtToken));
+          // Remove Netsclick account on login
+          await dispatch(clearNetsclickData(jwtToken));
 
-        dispatch({
-          type: 'AUTH_USER_SUCCESS',
-          qrcode: qrcode,
-          exp: data.accessToken.payload.exp * 1000 - 2700000,
-        });
+          await dispatch({
+            type: 'AUTH_USER_SUCCESS',
+            qrcode: qrcode,
+            exp: data.accessToken.payload.exp * 1000 - 2700000,
+          });
+          console.log('MANTEP MASUK SINI 1');
+          let dataUser = encryptData(JSON.stringify(data.idToken.payload));
 
-        // Save Token User
-        dispatch({
-          type: 'TOKEN_USER',
-          token: jwtToken,
-          refreshToken: refreshToken,
-        });
+          console.log('MANTEP MASUK SINI 1');
+          await dispatch({
+            type: 'GET_USER_SUCCESS',
+            payload: dataUser,
+            token: jwtToken,
+          });
+          console.log('MANTEP MASUK SINI 2');
 
-        // encrypt user data before save to asyncstorage
-        let dataUser = encryptData(JSON.stringify(data.idToken.payload));
+          // save data to reducer
+          await dispatch({
+            type: 'LOGIN_USER_SUCCESS',
+          });
 
-        dispatch({
-          type: 'GET_USER_SUCCESS',
-          payload: dataUser,
-        });
+          console.log('MANTEP MASUK SINI 3');
+          await dispatch({
+            type: 'TOKEN_USER',
+            token: jwtToken,
+            refreshToken: refreshToken,
+          });
+          // Save Token User
+          console.log('MANTEP MASUK SINI 4');
 
-        // save data to reducer
-        dispatch({
-          type: 'LOGIN_USER_SUCCESS',
-        });
-        console.log(response, 'response login user pool');
-        return response.responseBody.Data;
+          // encrypt user data before save to asyncstorage
+
+          console.log(response, 'response login user pool');
+        } catch (error) {
+          console.log('DEDDY GILA');
+        }
+
+        return response.responseBody.data;
       }
 
-      return response.responseBody.Data;
+      return response.responseBody.data;
     } catch (error) {
       dispatch({
         type: 'LOGIN_USER_FAIL',
@@ -295,6 +304,10 @@ export const logoutUser = () => {
         token,
       );
       console.log(response, 'response logout');
+      dispatch({
+        type: 'AUTH_USER_FAIL',
+      });
+
       dispatch({
         type: 'USER_LOGGED_OUT_SUCCESS',
       });

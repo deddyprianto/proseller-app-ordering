@@ -33,8 +33,10 @@ import {getBasket, getProductByOutlet} from '../actions/product.action';
 import {getSVCBalance} from '../actions/SVC.action';
 import {dataPointHistory} from '../actions/rewards.action';
 
-import Theme from '../theme';
 import {myVouchers} from '../actions/account.action';
+import {getUserProfile} from '../actions/user.action';
+
+import Theme from '../theme';
 
 const useStyles = () => {
   const theme = Theme();
@@ -199,7 +201,6 @@ const HomeRetail = () => {
   const ref = useRef();
   const styles = useStyles();
   const dispatch = useDispatch();
-  const [basketLength, setBasketLength] = useState(0);
   const [productsLimitLength, setProductsLimitLength] = useState(10);
   const [refresh, setRefresh] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState({});
@@ -213,11 +214,11 @@ const HomeRetail = () => {
   const basket = useSelector(state => state.orderReducer?.dataBasket?.product);
 
   const productOutletCategories = useSelector(
-    state => state.productReducer.productsOutlet,
+    state => state.productReducer?.productsOutlet,
   );
 
   const subCategories = useSelector(
-    state => state.productReducer.productSubCategories,
+    state => state.productReducer?.productSubCategories,
   );
 
   const totalPoint = useSelector(
@@ -235,16 +236,6 @@ const HomeRetail = () => {
   const svcBalance = useSelector(state => state.SVCReducer.balance.balance);
 
   const intlData = useSelector(state => state.intlData);
-
-  useEffect(() => {
-    let length = 0;
-    if (basket && basket.details) {
-      basket.details.forEach(cart => {
-        length += cart.quantity;
-      });
-    }
-    setBasketLength(length);
-  }, [basket]);
 
   useEffect(() => {
     const loadData = async () => {
@@ -288,6 +279,13 @@ const HomeRetail = () => {
 
   useEffect(() => {
     const loadData = async () => {
+      await dispatch(getUserProfile());
+    };
+    loadData();
+  }, [dispatch]);
+
+  useEffect(() => {
+    const loadData = async () => {
       const result = subCategories?.find(
         subCategory => subCategory?.id === selectedSubCategory?.id,
       )?.items;
@@ -310,6 +308,7 @@ const HomeRetail = () => {
     await dispatch(getSVCBalance());
     await dispatch(dataPointHistory());
     await dispatch(myVouchers());
+    await dispatch(getUserProfile());
 
     setSelectedCategory(response[0]);
     setRefresh(false);

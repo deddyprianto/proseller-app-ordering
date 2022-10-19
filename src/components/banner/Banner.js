@@ -12,6 +12,7 @@ import {
 
 import {dataPromotion} from '../../actions/promotion.action';
 import {Actions} from 'react-native-router-flux';
+import {isEmptyArray} from '../../helper/CheckEmpty';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -95,18 +96,22 @@ const Banner = () => {
     return result;
   };
 
-  return (
-    <Swiper
-      style={styles.wrap}
-      autoplay={true}
-      autoplayTimeout={6}
-      animated={true}
-      dot={<View style={styles.inactiveDot} />}
-      activeDot={<View style={styles.activeDot} />}
-      loop>
-      {renderImages()}
-    </Swiper>
-  );
+  if (!isEmptyArray(banners)) {
+    return (
+      <Swiper
+        style={styles.wrap}
+        autoplay={true}
+        autoplayTimeout={6}
+        animated={true}
+        dot={<View style={styles.inactiveDot} />}
+        activeDot={<View style={styles.activeDot} />}
+        loop>
+        {renderImages()}
+      </Swiper>
+    );
+  } else {
+    return null;
+  }
 };
 
 export default Banner;

@@ -66,17 +66,16 @@ export const getUserProfile = () => {
     const state = getState();
     try {
       // await dispatch(refreshToken());
-      const {
-        authReducer: {
-          tokenUser: {token},
-        },
-      } = state;
+      const authToken = state.authReducer.authData.token;
+      const userToken = state.authReducer.tokenUser.token;
 
       const {
         userReducer: {
           deviceUserInfo: {deviceID},
         },
       } = state;
+
+      const token = authToken || userToken;
 
       const response = await fetchApi(
         '/customer/getProfile',
@@ -129,19 +128,27 @@ export const getUserProfile = () => {
       // } catch (e) {}
 
       // encrypt user data before save to asyncstorage
-      let dataUser = CryptoJS.AES.encrypt(
-        JSON.stringify(response.responseBody.Data[0]),
-        awsConfig.PRIVATE_KEY_RSA,
-      ).toString();
+      console.log('MASUK SINI GILA MIRING 3');
 
+      console.log('MASUK SINI GILA MIRING 4');
       if (response.success) {
+        let dataUser = CryptoJS.AES.encrypt(
+          JSON.stringify(response.responseBody.data[0]),
+          awsConfig.PRIVATE_KEY_RSA,
+        ).toString();
+
+        console.log('MASUK SINI GILA MIRING 1');
         dispatch({
           type: 'GET_USER_SUCCESS',
           payload: dataUser,
         });
+        return response.success;
+      } else {
+        console.log('MASUK SINI GILA MIRING');
+        dispatch({
+          type: 'AUTH_USER_FAIL',
+        });
       }
-
-      return response.success;
     } catch (error) {
       return error;
     }
