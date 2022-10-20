@@ -112,13 +112,23 @@ const Header = ({
     );
   };
 
+  const renderDefaultTitle = () => {
+    return (
+      <Text style={styles.textHeader} numberOfLines={1}>
+        {title}
+      </Text>
+    );
+  };
+
   const renderTitle = () => {
     if (isMiddleLogo) {
       return renderLogo();
     } else if (customTitle) {
       return customTitle;
+    } else if (title) {
+      return renderDefaultTitle();
     } else {
-      return <Text style={styles.textHeader}>{title}</Text>;
+      return null;
     }
   };
 

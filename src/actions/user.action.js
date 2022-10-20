@@ -68,7 +68,7 @@ export const getUserProfile = () => {
       // await dispatch(refreshToken());
       const {
         authReducer: {
-          tokenUser: {token},
+          authData: {token},
         },
       } = state;
 
@@ -130,7 +130,7 @@ export const getUserProfile = () => {
 
       // encrypt user data before save to asyncstorage
       let dataUser = CryptoJS.AES.encrypt(
-        JSON.stringify(response.responseBody.Data[0]),
+        JSON.stringify(response.responseBody.data[0]),
         awsConfig.PRIVATE_KEY_RSA,
       ).toString();
 
@@ -140,7 +140,6 @@ export const getUserProfile = () => {
           payload: dataUser,
         });
       }
-
       return response.success;
     } catch (error) {
       return error;
