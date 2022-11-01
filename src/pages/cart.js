@@ -670,7 +670,7 @@ const Cart = () => {
           basket?.orderingMode === 'STOREPICKUP'
         ) {
           if (!orderingDateTimeSelected?.date) {
-            pembayaran.orderActionDate = moment().format('yyyy-MM-dd');
+            pembayaran.orderActionDate = moment().format('YYYY-MM-DD');
           } else {
             pembayaran.orderActionDate = orderingDateTimeSelected?.date;
           }
