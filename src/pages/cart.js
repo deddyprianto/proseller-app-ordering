@@ -328,6 +328,34 @@ const Cart = () => {
     state => state.userReducer?.getUser?.userDetails,
   );
 
+  const orderingModesField = [
+    {
+      key: 'STOREPICKUP',
+      isEnabledFieldName: 'enableStorePickUp',
+      displayName: outlet.storePickUpName || 'Store Pick Up',
+    },
+    {
+      key: 'DELIVERY',
+      isEnabledFieldName: 'enableDelivery',
+      displayName: outlet.deliveryName || 'Delivery',
+    },
+    {
+      key: 'TAKEAWAY',
+      isEnabledFieldName: 'enableTakeAway',
+      displayName: outlet.takeAwayName || 'Take Away',
+    },
+    {
+      key: 'DINEIN',
+      isEnabledFieldName: 'enableDineIn',
+      displayName: outlet.dineInName || 'Dine In',
+    },
+    {
+      key: 'STORECHECKOUT',
+      isEnabledFieldName: 'enableStoreCheckOut',
+      displayName: outlet.storeCheckOutName || 'Store Checkout',
+    },
+  ];
+
   useEffect(() => {
     const loadData = async () => {
       const clientTimezone = Math.abs(new Date().getTimezoneOffset());
@@ -367,33 +395,6 @@ const Cart = () => {
   useEffect(() => {
     const loadData = async () => {
       setIsLoading(true);
-      const orderingModesField = [
-        {
-          key: 'STOREPICKUP',
-          isEnabledFieldName: 'enableStorePickUp',
-          displayName: outlet.storePickUpName || 'Store Pick Up',
-        },
-        {
-          key: 'DELIVERY',
-          isEnabledFieldName: 'enableDelivery',
-          displayName: outlet.deliveryName || 'Delivery',
-        },
-        {
-          key: 'TAKEAWAY',
-          isEnabledFieldName: 'enableTakeAway',
-          displayName: outlet.takeAwayName || 'Take Away',
-        },
-        {
-          key: 'DINEIN',
-          isEnabledFieldName: 'enableDineIn',
-          displayName: outlet.dineInName || 'Dine In',
-        },
-        {
-          key: 'STORECHECKOUT',
-          isEnabledFieldName: 'enableStoreCheckOut',
-          displayName: outlet.storeCheckOutName || 'Store Checkout',
-        },
-      ];
 
       const orderingModesFieldFiltered = orderingModesField.filter(mode => {
         if (outlet[mode.isEnabledFieldName]) {
@@ -413,7 +414,7 @@ const Cart = () => {
     };
 
     loadData();
-  }, [outlet, basket, dispatch]);
+  }, [outlet, basket, orderingModesField, dispatch]);
 
   const handleOpenOrderingTypeModal = () => {
     setOpenOrderingTypeModal(true);
@@ -737,11 +738,14 @@ const Cart = () => {
   };
 
   const renderOrderingType = () => {
-    console.log('GILA', basket);
     const orderingType =
       typeof basket?.orderingMode === 'string' && basket?.orderingMode;
 
-    const orderingTypeValue = orderingType || 'Choose Type';
+    const orderingMode = orderingModesField.find(
+      mode => mode.key === orderingType,
+    );
+
+    const orderingTypeValue = orderingMode?.displayName || 'Choose Type';
 
     return (
       <View style={styles.viewMethodOrderingType}>

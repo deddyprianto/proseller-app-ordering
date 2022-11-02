@@ -4,7 +4,6 @@ import {Text, TouchableOpacity, View, Image, Modal} from 'react-native';
 import {Dialog, Portal, Provider} from 'react-native-paper';
 
 import appConfig from '../../config/appConfig';
-import colorConfig from '../../config/colorConfig';
 import {changeOrderingMode} from '../../actions/order.action';
 
 import {isEmptyArray, isEmptyObject} from '../../helper/CheckEmpty';
@@ -32,31 +31,33 @@ const useStyles = () => {
       paddingHorizontal: 35,
     },
     textName: {
+      marginTop: 8,
       fontSize: 12,
-      color: '#B7B7B7',
+      color: theme.colors.greyScale2,
     },
     textPrice: {
       fontSize: 12,
-      color: '#B7B7B7',
+      color: theme.colors.greyScale2,
     },
     textCurrency: {
       fontSize: 8,
-      color: '#B7B7B7',
+      color: theme.colors.greyScale2,
     },
     textNameSelected: {
+      marginTop: 8,
       fontSize: 12,
-      color: colorConfig.primaryColor,
+      color: theme.colors.textQuaternary,
     },
     textPriceSelected: {
       fontSize: 12,
-      color: colorConfig.primaryColor,
+      color: theme.colors.textQuaternary,
     },
     textCurrencySelected: {
       fontSize: 8,
-      color: colorConfig.primaryColor,
+      color: theme.colors.textQuaternary,
     },
     textSave: {
-      color: 'white',
+      color: theme.colors.textSecondary,
       fontSize: 12,
     },
     textChooseOrderingType: {
@@ -75,7 +76,7 @@ const useStyles = () => {
       paddingVertical: 10,
       paddingHorizontal: 10,
       margin: 6,
-      borderColor: '#B7B7B7',
+      borderColor: theme.colors.greyScale2,
     },
     touchableItemSelected: {
       width: 81,
@@ -88,11 +89,11 @@ const useStyles = () => {
       paddingVertical: 10,
       paddingHorizontal: 10,
       margin: 6,
-      borderColor: colorConfig.primaryColor,
+      borderColor: theme.colors.textQuaternary,
     },
     touchableSave: {
       paddingVertical: 10,
-      backgroundColor: colorConfig.primaryColor,
+      backgroundColor: theme.colors.textQuaternary,
       justifyContent: 'center',
       alignItems: 'center',
       borderRadius: 8,
@@ -104,20 +105,20 @@ const useStyles = () => {
     circle: {
       width: 40,
       height: 40,
-      backgroundColor: '#F9F9F9',
       alignItems: 'center',
       justifyContent: 'center',
       borderRadius: 100,
+      backgroundColor: theme.colors.greyScale4,
     },
     divider: {
       borderTopWidth: 1,
-      borderTopColor: '#D6D6D6',
+      borderTopColor: theme.colors.greyScale3,
     },
     imageSelected: {
-      tintColor: colorConfig.primaryColor,
+      tintColor: theme.colors.textQuaternary,
     },
     image: {
-      tintColor: '#B7B7B7',
+      tintColor: theme.colors.greyScale2,
     },
   };
   return styles;
@@ -128,6 +129,7 @@ const OrderingTypeSelectorModal = ({open, handleClose, value}) => {
   const dispatch = useDispatch();
   const [selected, setSelected] = useState({});
   const [orderingTypes, setOrderingTypes] = useState([]);
+  const [estimatedWaitingTimes, setEstimatedWaitingTimes] = useState({});
   const [isLoading, setIsLoading] = useState(false);
 
   const defaultOutlet = useSelector(
@@ -173,6 +175,8 @@ const OrderingTypeSelectorModal = ({open, handleClose, value}) => {
         return mode;
       }
     });
+
+    setEstimatedWaitingTimes(defaultOutlet?.estimatedWaitingTime || {});
     setOrderingTypes(orderingModesFieldFiltered);
     const currentOrderingMode = value || '';
     setSelected({key: currentOrderingMode});
@@ -180,12 +184,7 @@ const OrderingTypeSelectorModal = ({open, handleClose, value}) => {
 
   const handleSave = async () => {
     setIsLoading(true);
-    await dispatch(
-      changeOrderingMode({
-        orderingMode: selected?.key,
-        orderingModeName: selected?.displayName,
-      }),
-    );
+    await dispatch(changeOrderingMode({orderingMode: selected?.key}));
     setIsLoading(false);
     if (handleClose) {
       handleClose();
@@ -198,6 +197,15 @@ const OrderingTypeSelectorModal = ({open, handleClose, value}) => {
         <Text style={styles.textChooseOrderingType}>Choose Ordering Type</Text>
       </View>
     );
+  };
+
+  const renderEstimatedWaitingTime = mode => {
+    if (!isEmptyObject(estimatedWaitingTimes)) {
+      const estimatedWaitingTime = estimatedWaitingTimes[mode];
+      return estimatedWaitingTime;
+    } else {
+      return '';
+    }
   };
 
   const renderOrderingTypeItem = item => {
@@ -217,8 +225,9 @@ const OrderingTypeSelectorModal = ({open, handleClose, value}) => {
         <View style={styles.circle}>
           <Image source={item?.image} style={styleImage} />
         </View>
-        <View style={{marginTop: 8}} />
-        <Text style={styleName}>{item?.displayName}</Text>
+        <Text style={styleName}>
+          {item?.displayName} {renderEstimatedWaitingTime(item?.key)}
+        </Text>
       </TouchableOpacity>
     );
   };
