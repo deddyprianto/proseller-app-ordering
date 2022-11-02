@@ -1,6 +1,13 @@
 import React, {useState, useEffect} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
-import {Text, TouchableOpacity, View, Image, Modal} from 'react-native';
+import {
+  Text,
+  TouchableOpacity,
+  View,
+  Image,
+  Modal,
+  StyleSheet,
+} from 'react-native';
 import {Dialog, Portal, Provider} from 'react-native-paper';
 
 import appConfig from '../../config/appConfig';
@@ -12,7 +19,7 @@ import LoadingScreen from '../loadingScreen';
 
 const useStyles = () => {
   const theme = Theme();
-  const styles = {
+  const styles = StyleSheet.create({
     root: {
       borderRadius: 8,
     },
@@ -31,22 +38,24 @@ const useStyles = () => {
       paddingHorizontal: 35,
     },
     textName: {
+      textAlign: 'center',
       marginTop: 8,
       fontSize: 12,
-      color: theme.colors.greyScale2,
-    },
-    textPrice: {
-      fontSize: 12,
-      color: theme.colors.greyScale2,
-    },
-    textCurrency: {
-      fontSize: 8,
-      color: theme.colors.greyScale2,
+      color: theme.colors.textTertiary,
     },
     textNameSelected: {
+      textAlign: 'center',
       marginTop: 8,
       fontSize: 12,
       color: theme.colors.textQuaternary,
+    },
+    textPrice: {
+      fontSize: 12,
+      color: theme.colors.textTertiary,
+    },
+    textCurrency: {
+      fontSize: 8,
+      color: theme.colors.textTertiary,
     },
     textPriceSelected: {
       fontSize: 12,
@@ -120,7 +129,7 @@ const useStyles = () => {
     image: {
       tintColor: theme.colors.greyScale2,
     },
-  };
+  });
   return styles;
 };
 
