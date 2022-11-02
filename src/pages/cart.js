@@ -835,19 +835,6 @@ const Cart = () => {
     }
   };
 
-  const handleDateText = key => {
-    switch (key) {
-      case 'DELIVERY':
-        return 'Delivery Date';
-      case 'STOREPICKUP':
-        return 'Pick Up Date';
-      case 'TAKEAWAY':
-        return 'Take Away Date';
-      default:
-        return 'Ordering Type Date';
-    }
-  };
-
   const renderDate = () => {
     const available = !isEmptyArray(availableTimes);
     const isDelivery = available && basket?.orderingMode === 'DELIVERY';
@@ -857,9 +844,7 @@ const Cart = () => {
     if (isDelivery || isPickUp || isTakeAway) {
       return (
         <View style={styles.viewMethod}>
-          <Text style={styles.textMethod}>
-            {handleDateText(basket?.orderingMode)}
-          </Text>
+          <Text style={styles.textMethod}>Order Date</Text>
           <TouchableOpacity
             style={styles.touchableMethod}
             onPress={() => {
