@@ -180,7 +180,12 @@ const OrderingTypeSelectorModal = ({open, handleClose, value}) => {
 
   const handleSave = async () => {
     setIsLoading(true);
-    await dispatch(changeOrderingMode({orderingMode: selected?.key}));
+    await dispatch(
+      changeOrderingMode({
+        orderingMode: selected?.key,
+        orderingModeName: selected?.displayName,
+      }),
+    );
     setIsLoading(false);
     if (handleClose) {
       handleClose();
