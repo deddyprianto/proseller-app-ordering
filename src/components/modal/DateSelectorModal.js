@@ -313,24 +313,10 @@ const DateSelectorModal = ({open, handleClose, value, orderingMode}) => {
     setIsOpenTimeSelector(false);
   };
 
-  const handleHeaderName = key => {
-    switch (key) {
-      case 'DELIVERY':
-        return 'Choose Delivery Date';
-      case 'STOREPICKUP':
-        return 'Choose Pick Up Date';
-      case 'TAKEAWAY':
-        return 'Choose Takeaway Date';
-      default:
-        return 'Choose Delivery Date';
-    }
-  };
   const renderHeader = () => {
     return (
       <View style={styles.header}>
-        <Text style={styles.textTitleChooseDate}>
-          {handleHeaderName(orderingMode)}
-        </Text>
+        <Text style={styles.textTitleChooseDate}>Choose Date & Time</Text>
       </View>
     );
   };
@@ -416,9 +402,7 @@ const DateSelectorModal = ({open, handleClose, value, orderingMode}) => {
   const renderSeeMore = () => {
     return (
       <View style={styles.viewSeeMore}>
-        <Text style={styles.textChooseDate}>
-          {handleHeaderName(orderingMode)}
-        </Text>
+        <Text style={styles.textChooseDate}>Choose Date</Text>
         <TouchableOpacity
           onPress={() => {
             handleOpenCalender();
@@ -440,7 +424,7 @@ const DateSelectorModal = ({open, handleClose, value, orderingMode}) => {
 
   const renderDeliveryTime = () => {
     const disabled = isEmptyArray(times);
-    const text = selectedTime || 'Select Time';
+    const text = selectedTime || 'Choose Time';
 
     return (
       <TouchableOpacity
