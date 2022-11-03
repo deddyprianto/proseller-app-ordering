@@ -35,6 +35,7 @@ import {dataPointHistory} from '../actions/rewards.action';
 
 import Theme from '../theme';
 import {myVouchers} from '../actions/account.action';
+import {getUserProfile} from '../actions/user.action';
 
 const useStyles = () => {
   const theme = Theme();
@@ -265,7 +266,6 @@ const HomeRetail = () => {
           filterTypeProduct?.length > filterTypeGroup?.length;
 
         if (isTypeProductPriority) {
-          setSelectedSubCategory({});
           await dispatch({
             type: 'DATA_PRODUCT_SUB_CATEGORIES',
             subCategories: [],
@@ -299,7 +299,7 @@ const HomeRetail = () => {
       });
     };
 
-    if (!isEmptyObject(selectedSubCategory)) {
+    if (!isEmptyObject(selectedSubCategory) && !isEmptyObject(subCategories)) {
       loadData();
     }
   }, [selectedSubCategory, subCategories, dispatch]);
@@ -311,6 +311,7 @@ const HomeRetail = () => {
     await dispatch(getSVCBalance());
     await dispatch(dataPointHistory());
     await dispatch(myVouchers());
+    await dispatch(getUserProfile());
 
     setSelectedCategory(response[0]);
     setRefresh(false);
