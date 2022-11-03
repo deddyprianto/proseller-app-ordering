@@ -198,8 +198,8 @@ export const loginUser = payload => {
       console.log(payload, 'payload login');
       const response = await fetchApi('/customer/login', 'POST', payload, 200);
 
-      if (response.responseBody.Data.accessToken !== undefined) {
-        let data = response.responseBody.Data;
+      if (response?.responseBody?.data?.accessToken) {
+        let data = response.responseBody.data;
 
         // encrypt data
         let jwtToken = encryptData(data.accessToken.jwtToken);
@@ -217,36 +217,37 @@ export const loginUser = payload => {
         // Remove Netsclick account on login
         await dispatch(clearNetsclickData(jwtToken));
 
-        dispatch({
-          type: 'AUTH_USER_SUCCESS',
-          qrcode: qrcode,
-          exp: data.accessToken.payload.exp * 1000 - 2700000,
-        });
-
         // Save Token User
-        dispatch({
+        await dispatch({
           type: 'TOKEN_USER',
           token: jwtToken,
           refreshToken: refreshToken,
         });
 
+        await dispatch({
+          type: 'AUTH_USER_SUCCESS',
+          qrcode: qrcode,
+          exp: data.accessToken.payload.exp * 1000 - 2700000,
+          token: jwtToken,
+        });
+
         // encrypt user data before save to asyncstorage
         let dataUser = encryptData(JSON.stringify(data.idToken.payload));
 
-        dispatch({
+        await dispatch({
           type: 'GET_USER_SUCCESS',
           payload: dataUser,
         });
 
         // save data to reducer
-        dispatch({
+        await dispatch({
           type: 'LOGIN_USER_SUCCESS',
         });
         console.log(response, 'response login user pool');
         return response.responseBody.Data;
       }
 
-      return response.responseBody.Data;
+      return response.responseBody.data;
     } catch (error) {
       dispatch({
         type: 'LOGIN_USER_FAIL',
@@ -295,6 +296,11 @@ export const logoutUser = () => {
         token,
       );
       console.log(response, 'response logout');
+      dispatch({type: 'AUTH_USER_LOGOUT'});
+      dispatch({
+        type: 'AUTH_USER_FAIL',
+      });
+
       dispatch({
         type: 'USER_LOGGED_OUT_SUCCESS',
       });
