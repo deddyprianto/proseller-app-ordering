@@ -1,6 +1,9 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {createAppContainer} from 'react-navigation';
 import {createBottomTabNavigator} from 'react-navigation-tabs';
+import {useDispatch, useSelector} from 'react-redux';
+import {Actions} from 'react-native-router-flux';
+
 import {
   View,
   Text,
@@ -10,6 +13,7 @@ import {
   Dimensions,
   SafeAreaView,
 } from 'react-native';
+
 import History from './history';
 import Profile from './Profile';
 import Store from './store';
@@ -17,11 +21,13 @@ import Home from './home';
 import Inbox from './inbox';
 import Rewards from './rewards';
 import ScannerBarcode from './ScannerBarcode';
-import Theme from '../theme';
-import appConfig from '../config/appConfig';
 import OnBoarding from './OnBoarding';
-import {useSelector} from 'react-redux';
-import {Actions} from 'react-native-router-flux';
+
+import appConfig from '../config/appConfig';
+
+import {getColorSettings} from '../actions/setting.action';
+
+import Theme from '../theme';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -123,14 +129,20 @@ const useStyles = () => {
 };
 
 const NewPageIndex = () => {
+  const dispatch = useDispatch();
   const styles = useStyles();
-  const isLoggedIn = useSelector(
-    state => state.authReducer.authData.isLoggedIn,
-  );
+  const isLoggedIn = useSelector(state => state.authReducer.authData.token);
 
   const defaultOutlet = useSelector(
-    state => state.storesReducer.defaultOutlet.defaultOutlet,
+    state => state.storesReducer?.defaultOutlet?.defaultOutlet,
   );
+
+  useEffect(() => {
+    const loadData = async () => {
+      await dispatch(getColorSettings());
+    };
+    loadData();
+  }, [dispatch]);
 
   const dataRetailScreens = {
     Home: Home,
@@ -241,17 +253,17 @@ const NewPageIndex = () => {
 
   if (!isLoggedIn) {
     return <OnBoarding />;
-  }
-
-  if (!defaultOutlet.id) {
+  } else if (!defaultOutlet.id) {
     return <Store />;
+  } else if (isLoggedIn && defaultOutlet?.id) {
+    return (
+      <SafeAreaView style={styles.root}>
+        <Tabs />
+      </SafeAreaView>
+    );
+  } else {
+    return null;
   }
-
-  return (
-    <SafeAreaView style={styles.root}>
-      <Tabs />
-    </SafeAreaView>
-  );
 };
 
 export default NewPageIndex;
