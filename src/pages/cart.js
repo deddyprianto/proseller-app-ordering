@@ -94,6 +94,7 @@ const useStyles = () => {
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textMethodValue: {
+      textAlign: 'center',
       flex: 1,
       color: theme.colors.primary,
       fontSize: theme.fontSize[12],
@@ -253,7 +254,6 @@ const useStyles = () => {
       borderColor: theme.colors.border,
     },
     touchableMethod: {
-      alignItems: 'center',
       width: 120,
       borderRadius: 8,
       paddingVertical: 10,
@@ -719,12 +719,7 @@ const Cart = () => {
           onPress={() => {
             handleOpenOrderingTypeModal();
           }}>
-          <Text
-            numberOfLines={1}
-            style={styles.textMethodValue}
-            ellipsizeMode="tail">
-            {orderingTypeValue}
-          </Text>
+          <Text style={styles.textMethodValue}>{orderingTypeValue}</Text>
         </TouchableOpacity>
       </View>
     );
