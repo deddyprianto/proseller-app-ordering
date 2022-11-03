@@ -16,6 +16,7 @@ import {
 import {connect} from 'react-redux';
 import {compose} from 'redux';
 import Icon from 'react-native-vector-icons/Ionicons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 import colorConfig from '../../config/colorConfig';
 import {Actions} from 'react-native-router-flux';
@@ -24,6 +25,7 @@ import {notifikasi, refreshToken} from '../../actions/auth.actions';
 import {isEmptyArray} from '../../helper/CheckEmpty';
 import CurrencyFormatter from '../../helper/CurrencyFormatter';
 import appConfig from '../../config/appConfig';
+import moment from 'moment';
 
 class HistoryPayment extends Component {
   constructor(props) {
@@ -173,6 +175,30 @@ class HistoryPayment extends Component {
     }
   };
 
+  renderTimeSlot = item => {
+    if (
+      item?.orderActionDate &&
+      item?.orderActionTime &&
+      moment(item?.orderActionDate)
+    ) {
+      const dateFormatter = moment(item?.orderActionDate).format('YYYY-MM-DD');
+      return (
+        <View style={styles.sejajarSpace}>
+          <View style={{flexDirection: 'row'}}>
+            <MaterialIcons
+              size={16}
+              name={'access-time'}
+              style={styles.paymentTypeLogo}
+            />
+            <Text style={styles.paymentType}>
+              {item?.orderingMode}: {dateFormatter} at {item?.orderActionTime}
+            </Text>
+          </View>
+        </View>
+      );
+    }
+  };
+
   render() {
     const {intlData} = this.props;
     let {outletSingle} = this.props;
@@ -247,7 +273,6 @@ class HistoryPayment extends Component {
                         <Text style={styles.salesStatus}>{item.status}</Text>
                       )}
                     </View>
-
                     {item.sumGiftStamps &&
                     item.sumGiftStamps > 0 &&
                     item.status === 'COMPLETED' ? (
@@ -291,6 +316,7 @@ class HistoryPayment extends Component {
                         {this.getDate(item.createdAt)}
                       </Text>
                     </View>
+                    {this.renderTimeSlot(item)}
                   </View>
                   <View style={styles.btnDetail}>
                     <Icon
