@@ -39,6 +39,7 @@ import {showSnackbar} from '../actions/setting.action';
 import {changeOrderingMode, getTimeSlot} from '../actions/order.action';
 import Theme from '../theme';
 import LoadingScreen from '../components/loadingScreen';
+import NoteCartModal from '../components/modal/NoteCartModal';
 
 const useStyles = () => {
   const theme = Theme();
@@ -304,6 +305,7 @@ const useStyles = () => {
 };
 
 const Cart = () => {
+  const theme = Theme();
   const styles = useStyles();
   const dispatch = useDispatch();
   const [availableTimes, setAvailableTimes] = useState([]);
@@ -311,6 +313,7 @@ const Cart = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [openOrderingTypeModal, setOpenOrderingTypeModal] = useState(false);
   const [openDeliveryDateModal, setOpenDeliveryDateModal] = useState(false);
+  const [openNoteCartModal, setOpenNoteCartModal] = useState(false);
   const [openDeliveryProviderModal, setOpenDeliveryProviderModal] = useState(
     false,
   );
@@ -439,6 +442,14 @@ const Cart = () => {
   };
   const handleCloseDeliveryProviderModal = () => {
     setOpenDeliveryProviderModal(false);
+  };
+
+  const handleOpenNoteCartModal = () => {
+    setOpenNoteCartModal(true);
+    setSeeDetail(false);
+  };
+  const handleCloseNoteCartModal = () => {
+    setOpenNoteCartModal(false);
   };
 
   const handleOpenDetail = () => {
@@ -1033,6 +1044,12 @@ const Cart = () => {
             handleCloseOrderingTypeModal();
           }}
         />
+        <NoteCartModal
+          open={openNoteCartModal}
+          handleClose={() => {
+            handleCloseNoteCartModal();
+          }}
+        />
       </>
     );
   };
@@ -1049,7 +1066,79 @@ const Cart = () => {
         <ScrollView>
           {renderAddButton()}
           <ProductCartList />
-          <View style={styles.divider} />
+          <View
+            style={{width: '100%', height: 2, backgroundColor: '#D6D6D633'}}
+          />
+          <View style={{paddingVertical: 24, paddingHorizontal: 16}}>
+            <View
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}>
+              <Text
+                style={{
+                  color: theme.colors.textPrimary,
+                  fontSize: theme.fontSize[16],
+                  fontFamily: theme.fontFamily.poppinsSemiBold,
+                }}>
+                Add notes for your order
+              </Text>
+              <TouchableOpacity
+                onPress={handleOpenNoteCartModal}
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                }}>
+                <Image
+                  source={appConfig.iconEdit}
+                  style={{
+                    marginTop: -4,
+                    width: 10,
+                    height: 10,
+                    tintColor: theme.colors.textQuaternary,
+                  }}
+                />
+                <Text
+                  style={{
+                    color: theme.colors.textQuaternary,
+                    fontSize: theme.fontSize[14],
+                    fontFamily: theme.fontFamily.poppinsMedium,
+                  }}>
+                  Add Notes
+                </Text>
+              </TouchableOpacity>
+            </View>
+            <View
+              style={{
+                width: '100%',
+                marginVertical: 16,
+                height: 1,
+                backgroundColor: theme.colors.brandPrimary,
+              }}
+            />
+            <View>
+              <Text
+                style={{
+                  color: theme.colors.textTertiary,
+                  fontSize: theme.fontSize[14],
+                  fontFamily: theme.fontFamily.poppinsMedium,
+                }}>
+                Example: Please use less plastic
+              </Text>
+            </View>
+          </View>
+
+          <View
+            style={{
+              width: '100%',
+              height: 2,
+              backgroundColor: '#D6D6D633',
+              marginBottom: 16,
+            }}
+          />
           {renderOrderingType()}
           {renderAddress()}
           {renderProvider()}
