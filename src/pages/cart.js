@@ -121,6 +121,21 @@ const useStyles = () => {
       fontSize: theme.fontSize[12],
       fontFamily: theme.fontFamily.poppinsMedium,
     },
+    textNoteBody: {
+      color: theme.colors.textTertiary,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textButtonNoteHeader: {
+      color: theme.colors.textQuaternary,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textNoteHeader: {
+      color: theme.colors.textPrimary,
+      fontSize: theme.fontSize[16],
+      fontFamily: theme.fontFamily.poppinsSemiBold,
+    },
     viewDetailValueItem: {
       display: 'flex',
       flexDirection: 'row',
@@ -254,6 +269,20 @@ const useStyles = () => {
       borderBottomWidth: 1,
       borderColor: theme.colors.border,
     },
+    viewNote: {
+      paddingHorizontal: 16,
+    },
+    viewNoteHeader: {
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    viewButtonNoteHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
     touchableMethod: {
       width: 120,
       borderRadius: 8,
@@ -281,14 +310,6 @@ const useStyles = () => {
       position: 'absolute',
       right: 20,
     },
-    divider: {
-      height: 1,
-      flex: 1,
-      marginHorizontal: 16,
-      marginTop: 8,
-      marginBottom: 16,
-      backgroundColor: theme.colors.border,
-    },
     iconArrowUp: {
       alignItems: 'center',
       justifyContent: 'center',
@@ -300,14 +321,32 @@ const useStyles = () => {
       width: 16,
       height: 16,
     },
+    iconEdit: {
+      marginTop: -4,
+      width: 10,
+      height: 10,
+      tintColor: theme.colors.textQuaternary,
+    },
+    dividerNote: {
+      width: '100%',
+      marginVertical: 16,
+      height: 1,
+      backgroundColor: theme.colors.brandPrimary,
+    },
+    divider: {
+      width: '100%',
+      height: 2,
+      backgroundColor: '#D6D6D633',
+      marginVertical: 16,
+    },
   });
   return styles;
 };
 
 const Cart = () => {
-  const theme = Theme();
   const styles = useStyles();
   const dispatch = useDispatch();
+  const [notes, setNotes] = useState('');
   const [availableTimes, setAvailableTimes] = useState([]);
   const [seeDetail, setSeeDetail] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -675,6 +714,10 @@ const Cart = () => {
       if (basket?.orderingMode === 'DELIVERY') {
         pembayaran.deliveryAddress = deliveryAddress;
         pembayaran.deliveryProvider = basket?.provider;
+      }
+
+      if (notes) {
+        pembayaran.remark = notes;
       }
 
       try {
@@ -1046,11 +1089,56 @@ const Cart = () => {
         />
         <NoteCartModal
           open={openNoteCartModal}
+          value={notes}
           handleClose={() => {
             handleCloseNoteCartModal();
           }}
+          handleSubmit={value => {
+            setNotes(value);
+          }}
         />
       </>
+    );
+  };
+  const renderDivider = () => {
+    return <View style={styles.divider} />;
+  };
+
+  const renderTextNoteHeader = () => {
+    return <Text style={styles.textNoteHeader}>Add notes for your order</Text>;
+  };
+  const renderButtonNoteHeader = () => {
+    return (
+      <TouchableOpacity
+        onPress={handleOpenNoteCartModal}
+        style={styles.viewButtonNoteHeader}>
+        <Image source={appConfig.iconEdit} style={styles.iconEdit} />
+        <Text style={styles.textButtonNoteHeader}>Add Notes</Text>
+      </TouchableOpacity>
+    );
+  };
+
+  const renderNoteHeader = () => {
+    return (
+      <View style={styles.viewNoteHeader}>
+        {renderTextNoteHeader()}
+        {renderButtonNoteHeader()}
+      </View>
+    );
+  };
+
+  const renderNoteBody = () => {
+    const text = notes || 'Example: Please use less plastic';
+    return <Text style={styles.textNoteBody}>{text}</Text>;
+  };
+
+  const renderNote = () => {
+    return (
+      <View style={styles.viewNote}>
+        {renderNoteHeader()}
+        <View style={styles.dividerNote} />
+        {renderNoteBody()}
+      </View>
     );
   };
 
@@ -1066,79 +1154,9 @@ const Cart = () => {
         <ScrollView>
           {renderAddButton()}
           <ProductCartList />
-          <View
-            style={{width: '100%', height: 2, backgroundColor: '#D6D6D633'}}
-          />
-          <View style={{paddingVertical: 24, paddingHorizontal: 16}}>
-            <View
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}>
-              <Text
-                style={{
-                  color: theme.colors.textPrimary,
-                  fontSize: theme.fontSize[16],
-                  fontFamily: theme.fontFamily.poppinsSemiBold,
-                }}>
-                Add notes for your order
-              </Text>
-              <TouchableOpacity
-                onPress={handleOpenNoteCartModal}
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                }}>
-                <Image
-                  source={appConfig.iconEdit}
-                  style={{
-                    marginTop: -4,
-                    width: 10,
-                    height: 10,
-                    tintColor: theme.colors.textQuaternary,
-                  }}
-                />
-                <Text
-                  style={{
-                    color: theme.colors.textQuaternary,
-                    fontSize: theme.fontSize[14],
-                    fontFamily: theme.fontFamily.poppinsMedium,
-                  }}>
-                  Add Notes
-                </Text>
-              </TouchableOpacity>
-            </View>
-            <View
-              style={{
-                width: '100%',
-                marginVertical: 16,
-                height: 1,
-                backgroundColor: theme.colors.brandPrimary,
-              }}
-            />
-            <View>
-              <Text
-                style={{
-                  color: theme.colors.textTertiary,
-                  fontSize: theme.fontSize[14],
-                  fontFamily: theme.fontFamily.poppinsMedium,
-                }}>
-                Example: Please use less plastic
-              </Text>
-            </View>
-          </View>
-
-          <View
-            style={{
-              width: '100%',
-              height: 2,
-              backgroundColor: '#D6D6D633',
-              marginBottom: 16,
-            }}
-          />
+          {renderDivider()}
+          {renderNote()}
+          {renderDivider()}
           {renderOrderingType()}
           {renderAddress()}
           {renderProvider()}

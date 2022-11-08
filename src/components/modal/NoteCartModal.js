@@ -1,9 +1,8 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Text,
   TouchableOpacity,
   View,
-  Image,
   Modal,
   TextInput,
   StyleSheet,
@@ -13,8 +12,6 @@ import {
   Keyboard,
 } from 'react-native';
 
-import appConfig from '../../config/appConfig';
-import theme from '../../theme';
 import Theme from '../../theme';
 
 const useStyles = () => {
@@ -32,47 +29,9 @@ const useStyles = () => {
       backgroundColor: theme.colors.background,
     },
     header: {
-      marginBottom: 16,
-      display: 'flex',
-      flexDirection: 'row',
-      justifyContent: 'space-between',
       alignItems: 'center',
     },
     body: {
-      marginBottom: 16,
-    },
-    textHeader: {
-      color: theme.colors.textPrimary,
-      fontSize: theme.fontSize[16],
-      fontFamily: theme.fontFamily.poppinsSemiBold,
-    },
-    textBody: {
-      color: theme.colors.textPrimary,
-      fontSize: theme.fontSize[14],
-      fontFamily: theme.fontFamily.poppinsMedium,
-    },
-    textError: {
-      marginTop: 4,
-      color: theme.colors.semanticError,
-      fontSize: theme.fontSize[12],
-      fontFamily: theme.fontFamily.poppinsRegular,
-    },
-    textSearch: {
-      color: theme.colors.textSecondary,
-      fontSize: theme.fontSize[14],
-      fontFamily: theme.fontFamily.poppinsMedium,
-    },
-    textInput: {
-      height: 80,
-      lineHeight: 22,
-      margin: 0,
-      padding: 0,
-      flex: 1,
-      color: theme.colors.textPrimary,
-      fontSize: theme.fontSize[16],
-      fontFamily: theme.fontFamily.poppinsRegular,
-    },
-    viewFieldSearch: {
       marginHorizontal: 16,
       borderWidth: 1,
       borderRadius: 8,
@@ -82,18 +41,54 @@ const useStyles = () => {
       alignItems: 'center',
       borderColor: theme.colors.textTertiary,
     },
-    viewFieldSearchError: {
-      paddingVertical: 13,
+    footer: {
       paddingHorizontal: 16,
-      borderWidth: 2,
-      borderRadius: 8,
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    textHeader: {
+      color: theme.colors.textPrimary,
+      fontSize: theme.fontSize[16],
+      fontFamily: theme.fontFamily.poppinsSemiBold,
+    },
+    textSubmit: {
+      color: theme.colors.textSecondary,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textCancel: {
+      color: theme.colors.textQuaternary,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textInput: {
+      flex: 1,
+      height: '100%',
+      textAlignVertical: 'top',
+      margin: 0,
+      padding: 0,
+      color: theme.colors.textPrimary,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textCountInput: {
+      height: '100%',
+      textAlignVertical: 'bottom',
+      color: theme.colors.textTertiary,
+      fontSize: theme.fontSize[12],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    viewTextInput: {
+      width: '100%',
+      height: 100,
+      padding: 16,
       display: 'flex',
       flexDirection: 'row',
       justifyContent: 'space-between',
-      alignItems: 'center',
-      borderColor: theme.colors.semanticError,
     },
-    touchableSearch: {
+    touchableSubmit: {
       flex: 1,
       paddingVertical: 10,
       justifyContent: 'center',
@@ -101,132 +96,81 @@ const useStyles = () => {
       borderRadius: 8,
       backgroundColor: theme.colors.buttonActive,
     },
-    iconClose: {
-      width: 22,
-      height: 22,
+    touchableCancel: {
+      flex: 1,
+      marginRight: 16,
+      paddingVertical: 10,
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderRadius: 8,
+      borderWidth: 1,
+      borderColor: theme.colors.buttonActive,
+      backgroundColor: theme.colors.buttonOutlined,
     },
-    iconSuccess: {
-      width: 24,
-      height: 24,
-      tintColor: theme.colors.semanticSuccess,
-    },
-    iconFailed: {
-      width: 24,
-      height: 24,
-      tintColor: theme.colors.semanticError,
+    divider: {
+      width: '100%',
+      height: 1,
+      backgroundColor: theme.colors.greyScale2,
+      marginVertical: 16,
     },
   });
   return styles;
 };
 
-const NoteCartModal = ({open, handleClose, onSubmit, condition}) => {
-  const theme = Theme();
+const NoteCartModal = ({open, value, handleClose, handleSubmit}) => {
   const styles = useStyles();
-  const [searchTextInput, setSearchTextInput] = useState('');
-  const isError = condition === 'error';
+  const [notes, setNotes] = useState('');
 
-  const handleButtonSearchClick = () => {
-    onSubmit(searchTextInput);
-  };
-
-  const renderTextHeader = () => {
-    return <Text style={styles.textHeader}>Add Notes</Text>;
-  };
-  const renderIconHeader = () => {
-    return (
-      <TouchableOpacity onPress={handleClose}>
-        <Image style={styles.iconClose} source={appConfig.iconClose} />
-      </TouchableOpacity>
-    );
-  };
+  useEffect(() => {
+    setNotes(value);
+  }, [value, open]);
 
   const renderHeader = () => {
     return (
-      <View style={{alignItems: 'center'}}>
+      <View style={styles.header}>
         <Text style={styles.textHeader}>Add Notes</Text>
       </View>
     );
   };
 
   const renderTextInput = () => {
+    const textInputLength = notes.length;
     return (
-      <TextInput
-        autoFocus
-        style={styles.textInput}
-        value={searchTextInput}
-        placeholder="Example: please use less plastic"
-        multiline
-        numberOfLines={3}
-        onChangeText={value => {
-          setSearchTextInput(value);
-        }}
-        // onSubmitEditing={value => {
-        //   onSubmit(value);
-        // }}
-      />
-    );
-  };
-
-  const renderIconSearch = () => {
-    switch (condition) {
-      case 'success':
-        return (
-          <Image source={appConfig.iconCheck} style={styles.iconSuccess} />
-        );
-      case 'error':
-        return (
-          <Image source={appConfig.iconWarning} style={styles.iconFailed} />
-        );
-      default:
-        return;
-    }
-  };
-
-  const renderFieldSearch = () => {
-    const styleView = isError
-      ? styles.viewFieldSearchError
-      : styles.viewFieldSearch;
-
-    return (
-      <View style={styleView}>
-        {renderTextInput()}
-        {renderIconSearch()}
+      <View style={styles.viewTextInput}>
+        <TextInput
+          style={styles.textInput}
+          autoFocus
+          value={notes}
+          placeholder="Example: please use less plastic"
+          multiline
+          maxLength={140}
+          numberOfLines={3}
+          onChangeText={value => {
+            setNotes(value);
+          }}
+        />
+        <Text style={styles.textCountInput}>{textInputLength}/140</Text>
       </View>
     );
   };
 
   const renderBody = () => {
-    return (
-      <View style={styles.viewFieldSearch}>
-        {renderTextInput()}
-        {renderIconSearch()}
-      </View>
-    );
+    return <View style={styles.body}>{renderTextInput()}</View>;
   };
 
   const renderFooter = () => {
     return (
-      <View
-        style={{
-          paddingHorizontal: 16,
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}>
-        <TouchableOpacity
-          style={styles.touchableSearch}
-          onPress={() => {
-            handleButtonSearchClick();
-          }}>
-          <Text style={styles.textSearch}>Cancel</Text>
+      <View style={styles.footer}>
+        <TouchableOpacity style={styles.touchableCancel} onPress={handleClose}>
+          <Text style={styles.textCancel}>Cancel</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={styles.touchableSearch}
+          style={styles.touchableSubmit}
           onPress={() => {
-            handleButtonSearchClick();
+            handleSubmit(notes);
+            handleClose();
           }}>
-          <Text style={styles.textSearch}>Submit</Text>
+          <Text style={styles.textSubmit}>Submit</Text>
         </TouchableOpacity>
       </View>
     );
@@ -244,23 +188,9 @@ const NoteCartModal = ({open, handleClose, onSubmit, condition}) => {
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View style={styles.container}>
               {renderHeader()}
-              <View
-                style={{
-                  width: '100%',
-                  height: 1,
-                  backgroundColor: theme.colors.greyScale2,
-                  marginVertical: 16,
-                }}
-              />
+              <View style={styles.divider} />
               {renderBody()}
-              <View
-                style={{
-                  width: '100%',
-                  height: 1,
-                  backgroundColor: 'black',
-                  marginVertical: 16,
-                }}
-              />
+              <View style={styles.divider} />
               {renderFooter()}
             </View>
           </TouchableWithoutFeedback>
