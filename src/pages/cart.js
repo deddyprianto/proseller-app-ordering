@@ -95,6 +95,7 @@ const useStyles = () => {
     },
     textMethodValue: {
       textAlign: 'center',
+      flex: 1,
       color: theme.colors.primary,
       fontSize: theme.fontSize[12],
       fontFamily: theme.fontFamily.poppinsMedium,
@@ -328,6 +329,34 @@ const Cart = () => {
     state => state.userReducer?.getUser?.userDetails,
   );
 
+  const orderingModesField = [
+    {
+      key: 'STOREPICKUP',
+      isEnabledFieldName: 'enableStorePickUp',
+      displayName: outlet.storePickUpName || 'Store Pick Up',
+    },
+    {
+      key: 'DELIVERY',
+      isEnabledFieldName: 'enableDelivery',
+      displayName: outlet.deliveryName || 'Delivery',
+    },
+    {
+      key: 'TAKEAWAY',
+      isEnabledFieldName: 'enableTakeAway',
+      displayName: outlet.takeAwayName || 'Take Away',
+    },
+    {
+      key: 'DINEIN',
+      isEnabledFieldName: 'enableDineIn',
+      displayName: outlet.dineInName || 'Dine In',
+    },
+    {
+      key: 'STORECHECKOUT',
+      isEnabledFieldName: 'enableStoreCheckOut',
+      displayName: outlet.storeCheckOutName || 'Store Checkout',
+    },
+  ];
+
   useEffect(() => {
     const loadData = async () => {
       const clientTimezone = Math.abs(new Date().getTimezoneOffset());
@@ -367,28 +396,6 @@ const Cart = () => {
   useEffect(() => {
     const loadData = async () => {
       setIsLoading(true);
-      const orderingModesField = [
-        {
-          key: 'STOREPICKUP',
-          isEnabledFieldName: 'enableStorePickUp',
-        },
-        {
-          key: 'DELIVERY',
-          isEnabledFieldName: 'enableDelivery',
-        },
-        {
-          key: 'TAKEAWAY',
-          isEnabledFieldName: 'enableTakeAway',
-        },
-        {
-          key: 'DINEIN',
-          isEnabledFieldName: 'enableDineIn',
-        },
-        {
-          key: 'STORECHECKOUT',
-          isEnabledFieldName: 'enableStoreCheckOut',
-        },
-      ];
 
       const orderingModesFieldFiltered = orderingModesField.filter(mode => {
         if (outlet[mode.isEnabledFieldName]) {
@@ -408,7 +415,7 @@ const Cart = () => {
     };
 
     loadData();
-  }, [outlet, basket, dispatch]);
+  }, [outlet, basket, orderingModesField, dispatch]);
 
   const handleOpenOrderingTypeModal = () => {
     setOpenOrderingTypeModal(true);
@@ -670,7 +677,7 @@ const Cart = () => {
           basket?.orderingMode === 'STOREPICKUP'
         ) {
           if (!orderingDateTimeSelected?.date) {
-            pembayaran.orderActionDate = moment().format('yyyy-MM-dd');
+            pembayaran.orderActionDate = moment().format('YYYY-MM-DD');
           } else {
             pembayaran.orderActionDate = orderingDateTimeSelected?.date;
           }
@@ -735,7 +742,11 @@ const Cart = () => {
     const orderingType =
       typeof basket?.orderingMode === 'string' && basket?.orderingMode;
 
-    const orderingTypeValue = orderingType || 'Choose Type';
+    const orderingMode = orderingModesField.find(
+      mode => mode.key === orderingType,
+    );
+
+    const orderingTypeValue = orderingMode?.displayName || 'Choose Type';
 
     return (
       <View style={styles.viewMethodOrderingType}>
@@ -825,19 +836,6 @@ const Cart = () => {
     }
   };
 
-  const handleDateText = key => {
-    switch (key) {
-      case 'DELIVERY':
-        return 'Delivery Date';
-      case 'STOREPICKUP':
-        return 'Pick Up Date';
-      case 'TAKEAWAY':
-        return 'Take Away Date';
-      default:
-        return 'Ordering Type Date';
-    }
-  };
-
   const renderDate = () => {
     const available = !isEmptyArray(availableTimes);
     const isDelivery = available && basket?.orderingMode === 'DELIVERY';
@@ -847,9 +845,7 @@ const Cart = () => {
     if (isDelivery || isPickUp || isTakeAway) {
       return (
         <View style={styles.viewMethod}>
-          <Text style={styles.textMethod}>
-            {handleDateText(basket?.orderingMode)}
-          </Text>
+          <Text style={styles.textMethod}>Order Date</Text>
           <TouchableOpacity
             style={styles.touchableMethod}
             onPress={() => {

@@ -138,7 +138,7 @@ const useStyles = () => {
   return styles;
 };
 
-const DateSelectorModal = ({
+const CalenderModal = ({
   open,
   value,
   availableDates,
@@ -219,11 +219,7 @@ const DateSelectorModal = ({
   }, [value, selectedYear, selectedMonth]);
 
   const handleApplyButton = () => {
-    const result = moment()
-      .date(selectedDate)
-      .month(selectedMonth)
-      .year(selectedYear)
-      .format(formatDate);
+    const result = moment(selectedDate).format(formatDate);
 
     handleOnChange(result);
     handleClose();
@@ -503,4 +499,4 @@ const DateSelectorModal = ({
   );
 };
 
-export default DateSelectorModal;
+export default CalenderModal;
