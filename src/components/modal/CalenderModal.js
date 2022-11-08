@@ -1,171 +1,151 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect, useState} from 'react';
-import {Text, TouchableOpacity, View} from 'react-native';
+import {Text, TouchableOpacity, View, Image, StyleSheet} from 'react-native';
 import {Dialog, Portal, Provider} from 'react-native-paper';
-import colorConfig from '../../config/colorConfig';
-import IconAntDesign from 'react-native-vector-icons/AntDesign';
-import IconMaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import moment from 'moment';
 
-const styles = {
-  root: {
-    elevation: 1,
-    borderRadius: 8,
-    paddingHorizontal: 20,
-  },
-  header: {
-    paddingVertical: 16,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  body: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    flexWrap: 'wrap',
-  },
-  footer: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  textDay: {
-    fontSize: 8,
-    color: '#B7B7B7',
-    fontWeight: 'bold',
-  },
-  textDate: {
-    fontSize: 9,
-    color: 'black',
-  },
-  textMonth: {
-    fontSize: 8,
-    color: '#B7B7B7',
-    fontWeight: 'bold',
-  },
-  textDaySelected: {
-    fontSize: 8,
-    color: colorConfig.primaryColor,
-    fontWeight: 'bold',
-  },
-  textDateSelected: {
-    fontSize: 9,
-    color: 'white',
-  },
-  textMonthSelected: {
-    fontSize: 8,
-    color: colorConfig.primaryColor,
-    fontWeight: 'bold',
-  },
-  textApply: {
-    color: 'white',
-    fontSize: 12,
-  },
-  textClose: {
-    fontSize: 12,
-  },
-  textChooseDeliveryDate: {
-    fontSize: 12,
-  },
-  textSeeMore: {
-    fontSize: 12,
-    color: colorConfig.primaryColor,
-    textDecorationLine: 'underline',
-  },
-  textDeliveryTime: {
-    fontSize: 12,
-    fontWeight: '400',
-  },
-  viewSeeMore: {
-    width: '100%',
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: 22,
-  },
-  viewDeliveryTime: {
-    width: '100%',
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingVertical: 11,
-    paddingHorizontal: 16,
-    borderColor: '#B7B7B7',
-  },
-  touchableItem: {
-    width: 53,
-    borderWidth: 1,
-    borderColor: '#B7B7B7',
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 8,
-    marginHorizontal: 6,
-  },
-  touchableItemSelected: {
-    width: 53,
-    borderWidth: 1,
-    borderColor: colorConfig.primaryColor,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 8,
-    marginHorizontal: 6,
-  },
-  touchableApply: {
-    width: '49%',
-    paddingVertical: 10,
-    backgroundColor: colorConfig.primaryColor,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 8,
-  },
-  touchableCancel: {
-    width: '49%',
-    paddingVertical: 10,
-    backgroundColor: '#F1F1F1',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 8,
-  },
-  iconCaretDown: {
-    width: 14,
-    height: 14,
-    color: colorConfig.primaryColor,
-  },
-  circle: {
-    width: 26,
-    height: 26,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginVertical: 6,
-    marginHorizontal: 6,
-  },
-  circleActive: {
-    width: 26,
-    height: 26,
-    backgroundColor: colorConfig.primaryColor,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 100,
-    marginVertical: 6,
-    marginHorizontal: 6,
-  },
-  divider: {
-    borderTopWidth: 1,
-    borderTopColor: '#D6D6D6',
-  },
+import Theme from '../../theme';
+import appConfig from '../../config/appConfig';
+import {isEmptyArray} from '../../helper/CheckEmpty';
+
+const useStyles = () => {
+  const theme = Theme();
+  const styles = StyleSheet.create({
+    root: {
+      elevation: 1,
+      borderRadius: 8,
+      paddingHorizontal: 20,
+      paddingVertical: 16,
+    },
+    header: {
+      marginBottom: 16,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    body: {
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'center',
+      flexWrap: 'wrap',
+    },
+    footer: {
+      marginTop: 16,
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+    },
+    textDay: {
+      fontSize: 9,
+      color: theme.colors.textQuaternary,
+    },
+    textDate: {
+      fontSize: 9,
+      color: 'black',
+    },
+    textDateDisabled: {
+      fontSize: 9,
+      color: '#667080',
+    },
+    textDateFromAnotherMonth: {
+      fontSize: 7,
+      color: '#667080',
+    },
+    textDateSelected: {
+      fontSize: 9,
+      color: theme.colors.textSecondary,
+    },
+    textMonth: {
+      fontSize: 10,
+      color: theme.colors.textPrimary,
+    },
+    textMonthSelected: {
+      fontSize: 10,
+      color: theme.colors.textSecondary,
+    },
+    textSlider: {
+      fontSize: 9,
+    },
+    textApply: {
+      color: theme.colors.textSecondary,
+      fontSize: 12,
+    },
+    textClose: {
+      fontSize: 12,
+    },
+    viewDays: {
+      marginTop: 16,
+      width: '80%',
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+    },
+    viewSlider: {
+      width: '100%',
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+    viewMonthItem: {
+      width: 70,
+      height: 70,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    viewWrapDateItem: {
+      display: 'flex',
+      flexDirection: 'row',
+    },
+    touchableApply: {
+      width: '49%',
+      paddingVertical: 10,
+      backgroundColor: theme.colors.textQuaternary,
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderRadius: 8,
+    },
+    touchableCancel: {
+      width: '49%',
+      paddingVertical: 10,
+      backgroundColor: '#F1F1F1',
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderRadius: 8,
+    },
+    circle: {
+      width: 26,
+      height: 26,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginVertical: 6,
+      marginHorizontal: 6,
+    },
+    circleActive: {
+      width: 26,
+      height: 26,
+      backgroundColor: theme.colors.textQuaternary,
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: 100,
+      marginVertical: 6,
+      marginHorizontal: 6,
+    },
+    iconArrow: {
+      width: 10,
+      height: 10,
+    },
+  });
+  return styles;
 };
 
-const DeliveryDateSelectorModal = ({
+const CalenderModal = ({
   open,
   value,
+  availableDates,
   handleClose,
   handleOnChange,
 }) => {
+  const styles = useStyles();
   const [dates, setDates] = useState([]);
   const [months, setMonths] = useState([]);
 
@@ -176,6 +156,15 @@ const DeliveryDateSelectorModal = ({
   const [isMonthSelector, setIsMonthSelector] = useState(false);
 
   const days = ['San', 'Mon', 'Tue', 'Wed', 'Tur', 'Fri', 'Sat'];
+
+  const formatDate = 'ddd DD MMM YYYY';
+  const formatMonth = 'MMM';
+  const formatYear = 'YYYY';
+
+  const handleDateFormatter = date => {
+    const result = moment(date).format(formatDate);
+    return result;
+  };
 
   const getDates = () => {
     let calender = [];
@@ -203,7 +192,7 @@ const DeliveryDateSelectorModal = ({
             day
               .add(1, 'day')
               .clone()
-              .format('DD MMM'),
+              .format(formatDate),
           ),
       );
     }
@@ -212,10 +201,10 @@ const DeliveryDateSelectorModal = ({
   };
 
   useEffect(() => {
-    const currentYear = moment(value).format('YYYY');
-    const currentMonth = moment(value).format('MMM');
-    const currentDate = Number(moment(value).format('DD'));
-    const monthList = moment.months();
+    const currentYear = moment(value).format(formatYear);
+    const currentMonth = moment(value).format(formatMonth);
+    const currentDate = moment(value).format(formatDate);
+    const monthList = moment.monthsShort();
 
     setSelectedYear(currentYear);
     setSelectedMonth(currentMonth);
@@ -229,32 +218,11 @@ const DeliveryDateSelectorModal = ({
     setDates(currentDates);
   }, [value, selectedYear, selectedMonth]);
 
-  const renderHeader = () => {
-    return (
-      <View style={styles.header}>
-        <Text>Calender</Text>
-      </View>
-    );
-  };
+  const handleApplyButton = () => {
+    const result = moment(selectedDate).format(formatDate);
 
-  const renderDeliveryDayItem = item => {
-    return (
-      <View style={styles.circle}>
-        <Text style={{fontSize: 9, color: colorConfig.primaryColor}}>
-          {item}
-        </Text>
-      </View>
-    );
-  };
-
-  const renderDeliveryDay = () => {
-    const result = days.map(test => {
-      return renderDeliveryDayItem(test);
-    });
-
-    return (
-      <View style={{display: 'flex', flexDirection: 'row'}}>{result}</View>
-    );
+    handleOnChange(result);
+    handleClose();
   };
 
   const handleMonthSlider = direction => {
@@ -264,8 +232,8 @@ const DeliveryDateSelectorModal = ({
         .year(selectedYear)
         .subtract(1, 'months');
 
-      const month = moment(subtractResult).format('MMM');
-      const year = moment(subtractResult).format('YYYY');
+      const month = moment(subtractResult).format(formatMonth);
+      const year = moment(subtractResult).format(formatYear);
 
       setSelectedMonth(month);
       setSelectedYear(year);
@@ -277,115 +245,12 @@ const DeliveryDateSelectorModal = ({
         .year(selectedYear)
         .add(1, 'months');
 
-      const month = moment(addResult).format('MMM');
-      const year = moment(addResult).format('YYYY');
+      const month = moment(addResult).format(formatMonth);
+      const year = moment(addResult).format(formatYear);
 
       setSelectedMonth(month);
       setSelectedYear(year);
     }
-  };
-
-  const renderMonthSlider = () => {
-    return (
-      <View
-        style={{
-          width: '100%',
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-        }}>
-        <TouchableOpacity
-          onPress={() => {
-            handleMonthSlider('last');
-          }}>
-          <IconMaterialIcons
-            style={{fontSize: 16}}
-            name="keyboard-arrow-left"
-          />
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            setIsMonthSelector(true);
-          }}>
-          <Text>
-            <Text style={{fontSize: 9}}>{selectedMonth}, </Text>
-            <Text style={{fontSize: 9}}>{selectedYear}</Text>
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            handleMonthSlider('next');
-          }}>
-          <IconMaterialIcons
-            style={{fontSize: 16}}
-            name="keyboard-arrow-right"
-          />
-        </TouchableOpacity>
-      </View>
-    );
-  };
-
-  const renderDeliveryDateItem = item => {
-    const itemDate = item.split(' ');
-    const date = Number(itemDate[0]);
-    const month = itemDate[1];
-
-    const isActive = selectedDate === date;
-    const isThisMonth = selectedMonth === month;
-
-    const styleDate = !isThisMonth
-      ? {
-          fontSize: 8,
-          color: '#667080',
-        }
-      : isActive
-      ? styles.textDateSelected
-      : styles.textDate;
-
-    const styleCircle =
-      isActive && isThisMonth ? styles.circleActive : styles.circle;
-
-    return (
-      <TouchableOpacity
-        onPress={() => {
-          setSelectedDate(date);
-          setSelectedMonth(month);
-        }}>
-        <View style={styleCircle}>
-          <Text style={styleDate}>{date}</Text>
-        </View>
-      </TouchableOpacity>
-    );
-  };
-
-  const renderDeliveryDate = () => {
-    const result = dates.map((date, index) => {
-      return (
-        <View style={{display: 'flex', flexDirection: 'row'}}>
-          {date.map(item => {
-            return renderDeliveryDateItem(item);
-          })}
-        </View>
-      );
-    });
-
-    return (
-      <View style={styles.body}>
-        {renderDeliveryDay()}
-        {result}
-      </View>
-    );
-  };
-
-  const renderDate = () => {
-    return (
-      <View>
-        {renderMonthSlider()}
-        <View style={{marginTop: 20}} />
-        {renderDeliveryDate()}
-      </View>
-    );
   };
 
   const handleYearSlider = value => {
@@ -396,97 +261,196 @@ const DeliveryDateSelectorModal = ({
     }
   };
 
-  const renderYearSlider = () => {
+  const handleAvailableDate = item => {
+    const result =
+      !isEmptyArray(availableDates) &&
+      availableDates?.find(value => handleDateFormatter(value?.date) === item);
+
+    return result;
+  };
+
+  const renderHeader = () => {
     return (
-      <View
-        style={{
-          width: '100%',
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-        }}>
-        <TouchableOpacity
-          onPress={() => {
-            handleYearSlider(selectedYear - 1);
-          }}>
-          <IconMaterialIcons
-            style={{fontSize: 16}}
-            name="keyboard-arrow-left"
-          />
-        </TouchableOpacity>
-        <Text style={{fontSize: 9}}>{selectedYear}</Text>
-        <TouchableOpacity
-          onPress={() => {
-            handleYearSlider(selectedYear + 1);
-          }}>
-          <IconMaterialIcons
-            style={{fontSize: 16}}
-            name="keyboard-arrow-right"
-          />
-        </TouchableOpacity>
+      <View style={styles.header}>
+        <Text>Calender</Text>
       </View>
     );
   };
 
-  const renderDeliveryMonthItem = item => {
-    const active = selectedDate === item;
-    const styleDate = active
+  const renderIconArrowLeft = ({onClick}) => {
+    return (
+      <TouchableOpacity onPress={onClick}>
+        <Image style={styles.iconArrow} source={appConfig.iconArrowLeft} />
+      </TouchableOpacity>
+    );
+  };
+  const renderIconArrowRight = ({onClick}) => {
+    return (
+      <TouchableOpacity onPress={onClick}>
+        <Image style={styles.iconArrow} source={appConfig.iconArrowRight} />
+      </TouchableOpacity>
+    );
+  };
+
+  const renderDayItem = item => {
+    return <Text style={styles.textDay}>{item}</Text>;
+  };
+
+  const renderDays = () => {
+    const result = days.map(test => {
+      return renderDayItem(test);
+    });
+
+    return <View style={styles.viewDays}>{result}</View>;
+  };
+
+  const renderMonthSlider = () => {
+    return (
+      <View style={styles.viewSlider}>
+        {renderIconArrowLeft({
+          onClick: () => {
+            handleMonthSlider('last');
+          },
+        })}
+        <TouchableOpacity
+          onPress={() => {
+            setIsMonthSelector(true);
+          }}>
+          <Text style={styles.textSlider}>
+            <Text>{selectedMonth}, </Text>
+            <Text>{selectedYear}</Text>
+          </Text>
+        </TouchableOpacity>
+        {renderIconArrowRight({
+          onClick: () => {
+            handleMonthSlider('next');
+          },
+        })}
+      </View>
+    );
+  };
+
+  const renderDateItem = item => {
+    const itemDate = item.split(' ');
+    const date = Number(itemDate[1]);
+    const month = itemDate[2];
+
+    const isActive = selectedDate === item;
+    const isThisMonth = selectedMonth === month;
+    const available = handleAvailableDate(item);
+
+    const styleDate = !isThisMonth
+      ? styles.textDateFromAnotherMonth
+      : isActive
       ? styles.textDateSelected
-      : {fontSize: 10, color: 'black'};
-    const styleCircle = active && {
-      width: 30,
-      height: 30,
-      backgroundColor: colorConfig.primaryColor,
-      alignItems: 'center',
-      justifyContent: 'center',
-      borderRadius: 100,
-      marginVertical: 6,
-      marginHorizontal: 6,
-    };
+      : available
+      ? styles.textDate
+      : styles.textDateDisabled;
+
+    const styleCircle =
+      isActive && isThisMonth ? styles.circleActive : styles.circle;
 
     return (
       <TouchableOpacity
-        style={{
-          width: 70,
-          height: 70,
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
+        disabled={!available}
         onPress={() => {
-          setIsMonthSelector(false);
-          setSelectedMonth(item);
+          setSelectedDate(item);
+          setSelectedMonth(month);
         }}>
         <View style={styleCircle}>
-          <Text style={styleDate}>{item.substring(0, 3)}</Text>
+          <Text style={styleDate}>{date}</Text>
         </View>
       </TouchableOpacity>
     );
   };
 
-  const renderDeliveryMonth = () => {
+  const renderDates = () => {
+    const result = dates.map(date => {
+      return (
+        <View style={styles.viewWrapDateItem}>
+          {date.map(item => {
+            return renderDateItem(item);
+          })}
+        </View>
+      );
+    });
+
+    return (
+      <View style={styles.body}>
+        {renderDays()}
+        {result}
+      </View>
+    );
+  };
+
+  const renderBodyDate = () => {
+    return (
+      <View>
+        {renderMonthSlider()}
+        {renderDates()}
+      </View>
+    );
+  };
+
+  const renderYearSlider = () => {
+    return (
+      <View style={styles.viewSlider}>
+        {renderIconArrowLeft({
+          onClick: () => {
+            handleYearSlider(selectedYear - 1);
+          },
+        })}
+        <Text style={styles.textSlider}>{selectedYear}</Text>
+        {renderIconArrowRight({
+          onClick: () => {
+            handleYearSlider(selectedYear + 1);
+          },
+        })}
+      </View>
+    );
+  };
+
+  const renderMonthItem = item => {
+    const active = selectedMonth === item;
+    const styleDate = active ? styles.textMonthSelected : styles.textMonth;
+    const styleCircle = active && styles.circleActive;
+
+    return (
+      <TouchableOpacity
+        style={styles.viewMonthItem}
+        onPress={() => {
+          setIsMonthSelector(false);
+          setSelectedMonth(item);
+        }}>
+        <View style={styleCircle}>
+          <Text style={styleDate}>{item}</Text>
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
+  const renderMonth = () => {
     const result = months.map(month => {
-      return renderDeliveryMonthItem(month);
+      return renderMonthItem(month);
     });
 
     return <View style={styles.body}>{result}</View>;
   };
 
-  const renderMonth = () => {
+  const renderBodyMonth = () => {
     return (
       <View>
         {renderYearSlider()}
-        <View style={{marginTop: 20}} />
-        {renderDeliveryMonth()}
+        {renderMonth()}
       </View>
     );
   };
 
   const renderBody = () => {
     if (isMonthSelector) {
-      return <View>{renderMonth()}</View>;
+      return renderBodyMonth();
     }
-    return <View>{renderDate()}</View>;
+    return renderBodyDate();
   };
 
   const renderCancelButton = () => {
@@ -499,17 +463,6 @@ const DeliveryDateSelectorModal = ({
         <Text style={styles.textClose}>Cancel</Text>
       </TouchableOpacity>
     );
-  };
-
-  const handleApplyButton = () => {
-    const result = moment()
-      .date(selectedDate)
-      .month(selectedMonth)
-      .year(selectedYear)
-      .format('ddd DD MMMM YYYY');
-
-    handleOnChange(result);
-    handleClose();
   };
 
   const renderApplyButton = () => {
@@ -538,15 +491,12 @@ const DeliveryDateSelectorModal = ({
       <Portal>
         <Dialog visible={open} onDismiss={handleClose} style={styles.root}>
           {renderHeader()}
-          <View style={{marginTop: 20}} />
           {renderBody()}
-          <View style={{marginTop: 16}} />
           {renderFooter()}
-          <View style={{marginTop: 16}} />
         </Dialog>
       </Portal>
     </Provider>
   );
 };
 
-export default DeliveryDateSelectorModal;
+export default CalenderModal;
