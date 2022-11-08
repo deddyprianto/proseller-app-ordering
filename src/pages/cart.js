@@ -1133,13 +1133,15 @@ const Cart = () => {
   };
 
   const renderNote = () => {
-    return (
-      <View style={styles.viewNote}>
-        {renderNoteHeader()}
-        <View style={styles.dividerNote} />
-        {renderNoteBody()}
-      </View>
-    );
+    if (outlet?.enableItemSpecialInstructions) {
+      return (
+        <View style={styles.viewNote}>
+          {renderNoteHeader()}
+          <View style={styles.dividerNote} />
+          {renderNoteBody()}
+        </View>
+      );
+    }
   };
 
   if (isEmptyArray(basket?.details)) {
