@@ -1133,7 +1133,7 @@ const Cart = () => {
   };
 
   const renderNote = () => {
-    if (outlet?.enableItemSpecialInstructions) {
+    if (outlet?.enableOrderSpecialInstructions) {
       return (
         <View style={styles.viewNote}>
           {renderNoteHeader()}
