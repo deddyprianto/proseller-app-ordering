@@ -173,7 +173,6 @@ export const getLoginSettings = () => {
         token,
       );
 
-      console.log('GILA', response);
       const settings = response?.response?.data?.settings;
       const typeCheckbox = handleDataType({settings, key: 'checkbox'});
       const TermsAndConditions = handleDataType({
