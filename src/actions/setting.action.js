@@ -105,6 +105,22 @@ const setLoginSettings = async ({dispatch, response}) => {
   );
 };
 
+const setTermsAndConditionsSettings = async ({dispatch, response}) => {
+  const termsAndConditions = handleSettingValue({
+    values: response,
+    key: 'TermCondition',
+  });
+
+  await dispatch(
+    setData({
+      type: 'SET_TERMS_AND_CONDITIONS',
+      data: {
+        termsAndConditions,
+      },
+    }),
+  );
+};
+
 export const getColorSettings = () => {
   return async (dispatch, getState) => {
     const state = getState();
@@ -157,11 +173,17 @@ export const getLoginSettings = () => {
         token,
       );
 
+      console.log('GILA', response);
       const settings = response?.response?.data?.settings;
       const typeCheckbox = handleDataType({settings, key: 'checkbox'});
+      const TermsAndConditions = handleDataType({
+        settings,
+        key: 'textarea',
+      });
 
       if (settings) {
         setLoginSettings({dispatch, response: typeCheckbox});
+        setTermsAndConditionsSettings({dispatch, response: TermsAndConditions});
       }
 
       return response.response.data;

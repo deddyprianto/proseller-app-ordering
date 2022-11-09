@@ -54,9 +54,22 @@ const loginSettings = (state = {}, action) => {
   }
 };
 
+const termsAndConditionsSettings = (state = {}, action) => {
+  switch (action.type) {
+    case 'SET_TERMS_AND_CONDITIONS':
+      return {
+        ...action.data,
+      };
+
+    default:
+      return state;
+  }
+};
+
 export default combineReducers({
   snackbar,
   imageSettings,
   colorSettings,
   loginSettings,
+  termsAndConditionsSettings,
 });

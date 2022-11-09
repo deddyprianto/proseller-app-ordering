@@ -9,10 +9,10 @@ import {
   Text,
   SafeAreaView,
   TouchableOpacity,
-  Dimensions,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 
-import colorConfig from '../config/colorConfig';
 import awsConfig from '../config/awsConfig';
 
 import {Header} from '../components/layout';
@@ -21,71 +21,90 @@ import FieldPhoneNumberInput from '../components/fieldPhoneNumberInput';
 
 import {createNewUser} from '../actions/auth.actions';
 import {showSnackbar} from '../actions/setting.action';
+
 import LoadingScreen from '../components/loadingScreen';
+import ButtonCheckbox from '../components/buttonCheckbox';
+import TermsAndConditionsModal from '../components/modal/TermsAndConditionsModal';
+
 import Theme from '../theme';
 
-const HEIGHT = Dimensions.get('window').height;
 const useStyles = () => {
   const theme = Theme();
   const styles = StyleSheet.create({
     root: {
       flex: 1,
     },
-    container: {
-      height: HEIGHT - 54,
+    body: {
       display: 'flex',
       flexDirection: 'column',
-      justifyContent: 'center',
       alignItems: 'center',
       paddingHorizontal: 16,
+    },
+    footer: {
+      padding: 16,
+      shadowOffset: {
+        width: 0.2,
+        height: 0.2,
+      },
+      shadowOpacity: 0.2,
+      shadowColor: theme.colors.greyScale2,
+      elevation: 2,
       backgroundColor: theme.colors.background,
     },
-    image: {
-      width: 150,
-      height: 40,
-      marginHorizontal: 20,
-    },
     textHeader: {
-      color: theme.colors.primary,
+      marginVertical: 32,
+      color: theme.colors.textQuaternary,
       fontSize: theme.fontSize[24],
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textRegisterFor: {
-      marginVertical: 32,
+      marginBottom: 32,
       color: theme.colors.textPrimary,
       fontSize: theme.fontSize[16],
       fontFamily: theme.fontFamily.poppinsMedium,
     },
-    touchableNext: {
-      marginTop: 32,
-      height: 40,
-      width: '100%',
-      backgroundColor: colorConfig.primaryColor,
-      borderRadius: 5,
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-    touchableNextDisabled: {
-      marginTop: 32,
-      height: 40,
-      width: '100%',
-      backgroundColor: '#B7B7B7',
-      borderRadius: 5,
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
     textNext: {
-      color: 'white',
+      color: theme.colors.textSecondary,
+      fontSize: theme.fontSize[16],
+      fontFamily: theme.fontFamily.poppinsMedium,
     },
-    textChangeMethod: {
-      width: '100%',
-      textAlign: 'center',
-      color: colorConfig.primaryColor,
+    textFooter: {
+      flex: 1,
+      color: theme.colors.textPrimary,
+      fontSize: theme.fontSize[16],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textFooterBold: {
       textDecorationLine: 'underline',
+      color: theme.colors.textPrimary,
+      fontSize: theme.fontSize[16],
+      fontFamily: theme.fontFamily.poppinsBold,
+    },
+    viewNext: {
+      height: 40,
+      width: '100%',
+      borderRadius: 5,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: theme.colors.buttonActive,
+    },
+    viewNextDisabled: {
+      height: 40,
+      width: '100%',
+      borderRadius: 5,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: theme.colors.buttonDisabled,
     },
     viewMethodInput: {
-      marginTop: 32,
+      marginVertical: 32,
       width: '100%',
+    },
+    viewCheckboxAndText: {
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+      marginBottom: 16,
     },
   });
   return styles;
@@ -98,6 +117,9 @@ const RegisterForm = ({registerMethod, inputValue}) => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
+
+  const [isAgree, setIsAgree] = useState(false);
+  const [isOpenModal, setIsOpenModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -109,6 +131,13 @@ const RegisterForm = ({registerMethod, inputValue}) => {
 
     setCountryCode(awsConfig.phoneNumberCode);
   }, [inputValue, registerMethod]);
+
+  const handleOpenModal = () => {
+    setIsOpenModal(true);
+  };
+  const handleCloseModal = () => {
+    setIsOpenModal(false);
+  };
 
   const handleRegister = async () => {
     const phone =
@@ -208,20 +237,41 @@ const RegisterForm = ({registerMethod, inputValue}) => {
 
     return <View style={styles.viewMethodInput}>{renderInput}</View>;
   };
-
+  const renderCheckboxAndText = () => {
+    return (
+      <View style={styles.viewCheckboxAndText}>
+        <ButtonCheckbox
+          active={isAgree}
+          onPress={() => {
+            setIsAgree(!isAgree);
+          }}
+        />
+        <Text style={styles.textFooter}>
+          By checking this box, you agree to the{' '}
+          <Text
+            style={styles.textFooterBold}
+            onPress={() => {
+              handleOpenModal();
+            }}>
+            Terms and Conditions
+          </Text>
+        </Text>
+      </View>
+    );
+  };
   const renderButtonNext = () => {
     let active = false;
 
     if (registerMethod === 'email') {
-      active = name && phoneNumber.length >= 6;
+      active = name && phoneNumber.length >= 6 && isAgree;
     } else {
-      active = name && email;
+      active = name && email && isAgree;
     }
 
     return (
       <TouchableOpacity
         disabled={!active}
-        style={active ? styles.touchableNext : styles.touchableNextDisabled}
+        style={active ? styles.viewNext : styles.viewNextDisabled}
         onPress={() => {
           handleRegister();
         }}>
@@ -230,19 +280,53 @@ const RegisterForm = ({registerMethod, inputValue}) => {
     );
   };
 
-  return (
-    <SafeAreaView style={styles.root}>
-      <LoadingScreen loading={isLoading} />
-      <Header isMiddleLogo />
+  const renderBody = () => {
+    return (
       <KeyboardAwareScrollView>
-        <View style={styles.container}>
+        <View style={styles.body}>
           {renderTextHeader()}
           {renderTestRegisterFor()}
           {renderNameInput()}
           {renderEmailOrPhoneInput()}
-          {renderButtonNext()}
         </View>
       </KeyboardAwareScrollView>
+    );
+  };
+
+  const renderFooter = () => {
+    return (
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+        <View style={styles.footer}>
+          {renderCheckboxAndText()}
+          {renderButtonNext()}
+        </View>
+      </KeyboardAvoidingView>
+    );
+  };
+
+  const renderTermsAndConditionsModal = () => {
+    return (
+      <TermsAndConditionsModal
+        open={isOpenModal}
+        handleClose={() => {
+          handleCloseModal();
+        }}
+        onPress={() => {
+          setIsAgree(true);
+          handleCloseModal();
+        }}
+      />
+    );
+  };
+
+  return (
+    <SafeAreaView style={styles.root}>
+      <LoadingScreen loading={isLoading} />
+      <Header isMiddleLogo />
+      {renderBody()}
+      {renderFooter()}
+      {renderTermsAndConditionsModal()}
     </SafeAreaView>
   );
 };
