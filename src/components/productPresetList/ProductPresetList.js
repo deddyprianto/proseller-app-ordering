@@ -81,13 +81,13 @@ const ProductPresetList = ({products, basket}) => {
   const productRef = useRef();
   const [selectedCategory, setSelectedCategory] = useState({});
 
-  useEffect(() => {
-    if (!isEmptyArray(products)) {
-      setSelectedCategory(products[0]);
-      categoryRef.current.scrollToIndex({animation: true, index: 0});
-      productRef.current.scrollToIndex({animated: true, index: 0});
-    }
-  }, [products, basket]);
+  // useEffect(() => {
+  //   if (!isEmptyArray(products)) {
+  //     setSelectedCategory(products[0]);
+  //     categoryRef.current.scrollToIndex({animation: true, index: 0});
+  //     productRef.current.scrollToIndex({animated: true, index: 0});
+  //   }
+  // }, [products, basket]);
 
   const renderCategoryTabsItem = (item, index) => {
     const isSelected = item.id === selectedCategory.id;
