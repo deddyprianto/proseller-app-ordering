@@ -96,6 +96,14 @@ const useStyles = () => {
       borderRadius: 8,
       backgroundColor: theme.colors.buttonActive,
     },
+    touchableSubmitDisabled: {
+      flex: 1,
+      paddingVertical: 10,
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderRadius: 8,
+      backgroundColor: theme.colors.buttonDisabled,
+    },
     touchableCancel: {
       flex: 1,
       marginRight: 16,
@@ -157,21 +165,37 @@ const NoteCartModal = ({open, value, handleClose, handleSubmit}) => {
   const renderBody = () => {
     return <View style={styles.body}>{renderTextInput()}</View>;
   };
+  const renderButtonCancel = () => {
+    return (
+      <TouchableOpacity style={styles.touchableCancel} onPress={handleClose}>
+        <Text style={styles.textCancel}>Cancel</Text>
+      </TouchableOpacity>
+    );
+  };
+  const renderButtonSubmit = () => {
+    const isActive = notes?.length > 5;
+    const styleView = isActive
+      ? styles.touchableSubmit
+      : styles.touchableSubmitDisabled;
+
+    return (
+      <TouchableOpacity
+        style={styleView}
+        disabled={!isActive}
+        onPress={() => {
+          handleSubmit(notes);
+          handleClose();
+        }}>
+        <Text style={styles.textSubmit}>Submit</Text>
+      </TouchableOpacity>
+    );
+  };
 
   const renderFooter = () => {
     return (
       <View style={styles.footer}>
-        <TouchableOpacity style={styles.touchableCancel} onPress={handleClose}>
-          <Text style={styles.textCancel}>Cancel</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.touchableSubmit}
-          onPress={() => {
-            handleSubmit(notes);
-            handleClose();
-          }}>
-          <Text style={styles.textSubmit}>Submit</Text>
-        </TouchableOpacity>
+        {renderButtonCancel()}
+        {renderButtonSubmit()}
       </View>
     );
   };
