@@ -2,7 +2,14 @@
 import React, {useEffect} from 'react';
 import PropTypes from 'prop-types';
 import {useDispatch, useSelector} from 'react-redux';
-import {Modal, View, Text, TouchableOpacity, Image} from 'react-native';
+import {
+  Modal,
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  SafeAreaView,
+} from 'react-native';
 
 import {closeSnackbar} from '../../actions/setting.action';
 import Theme from '../../theme';
@@ -129,9 +136,11 @@ const Snackbar = () => {
 
   return (
     <Modal animationType="none" transparent visible={open}>
-      <TouchableOpacity style={styles.root} onPress={handleClose}>
-        <View style={styles.container}>{renderSnackbar()}</View>
-      </TouchableOpacity>
+      <SafeAreaView>
+        <TouchableOpacity style={styles.root} onPress={handleClose}>
+          <View style={styles.container}>{renderSnackbar()}</View>
+        </TouchableOpacity>
+      </SafeAreaView>
     </Modal>
   );
 };

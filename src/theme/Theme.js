@@ -90,6 +90,7 @@ const Theme = () => {
     16: 16,
     20: 20,
     24: 24,
+    36: 36,
   };
 
   const fontFamily = {

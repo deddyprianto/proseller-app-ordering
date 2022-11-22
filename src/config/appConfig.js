@@ -47,6 +47,7 @@ const appConfig = {
   imageAdditionalBanner: require('../assets/img/image-additional-banner.jpg'),
 
   imageEmptyDeliveryAddress: require('../assets/img/image-empty-address.png'),
+  imageEmptyReferral: require('../assets/img/image-empty-referral.png'),
 
   imageFavoriteOutlet: require('../assets/img/image-favorite-outlet.png'),
 
@@ -70,6 +71,7 @@ const appConfig = {
   iconCart: require('../assets/img/icon-cart.png'),
   iconCheck: require('../assets/img/icon-check.png'),
   iconClose: require('../assets/img/icon-close.png'),
+  iconCopy: require('../assets/img/icon-copy.png'),
 
   iconDelete: require('../assets/img/icon-delete.png'),
 
@@ -81,6 +83,7 @@ const appConfig = {
   iconHistory: require('../assets/img/icon-history.png'),
 
   iconInformation: require('../assets/img/icon-information.png'),
+  iconIssuedPrize: require('../assets/img/icon-issued-prize.png'),
 
   iconKeyboard: require('../assets/img/icon-keyboard.png'),
 
@@ -104,6 +107,7 @@ const appConfig = {
   iconPayment: require('../assets/img/icon-payment.png'),
   iconProfile: require('../assets/img/icon-profile.png'),
   iconPromoStar: require('../assets/img/icon-promo-star.png'),
+  iconPendingPrize: require('../assets/img/icon-pending-prize.png'),
 
   iconQRCode: require('../assets/img/icon-qr-code.png'),
 
@@ -112,6 +116,10 @@ const appConfig = {
   iconSVC: require('../assets/img/icon-svc.png'),
   iconSearch: require('../assets/img/icon-search.png'),
   iconScan: require('../assets/img/icon-scan.png'),
+  iconShare: require('../assets/img/icon-share.png'),
+  iconStepGift: require('../assets/img/icon-step-gift.png'),
+  iconStepLogin: require('../assets/img/icon-step-login.png'),
+  iconStepSend: require('../assets/img/icon-step-send.png'),
 
   iconTermsAndConditions: require('../assets/img/icon-terms-and-conditions.png'),
 

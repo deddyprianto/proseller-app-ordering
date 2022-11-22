@@ -127,6 +127,7 @@ import HomeRetail from '../pages/HomeRetail';
 import NewPageIndex from '../pages/NewPageIndex';
 import ScannerBarcode from '../pages/ScannerBarcode';
 import SearchProduct from '../pages/SearchProduct';
+import Referral from '../pages/Referral';
 
 //for temporary
 import PendingOrderDetail from '../pages/PendingOrderDetail';
@@ -387,6 +388,7 @@ export default class Routes extends Component {
             <Scene key="scannerBarcode" component={ScannerBarcode} />
 
             <Scene key="searchProduct" component={SearchProduct} />
+            <Scene key="referral" component={Referral} />
             {/* //martin */}
           </Scene>
         </Scene>

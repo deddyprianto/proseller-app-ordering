@@ -443,6 +443,23 @@ const Profile = () => {
     }
   };
 
+  const renderReferral = () => {
+    return (
+      <TouchableOpacity
+        style={styles.viewOption}
+        onPress={() => {
+          Actions.referral();
+        }}>
+        <Image
+          style={styles.iconSetting}
+          source={appConfig.iconLocation}
+          resizeMode="stretch"
+        />
+        <Text style={styles.textIcon}>Referral</Text>
+      </TouchableOpacity>
+    );
+  };
+
   const renderNotifications = () => {
     return (
       <TouchableOpacity
@@ -521,6 +538,8 @@ const Profile = () => {
         {renderMembershipQRCode()}
         {renderDivider()}
         {renderMyDeliveryAddress()}
+        {renderDivider()}
+        {renderReferral()}
         {renderDivider()}
         {renderEditProfile()}
         {renderDivider()}

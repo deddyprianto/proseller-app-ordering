@@ -140,3 +140,71 @@ export const resendReferral = id => {
     }
   };
 };
+
+export const getReferralInfo = () => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      const response = await fetchApi(
+        `/referral-info`,
+        'GET',
+        null,
+        200,
+        token,
+      );
+      console.log(response, 'response resend referral');
+
+      if (response.success) {
+        dispatch({
+          type: 'DATA_REFERRAL_INFO',
+          referral: response.responseBody.data,
+        });
+        return response.responseBody.data;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const getReferralInvitedList = () => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      const response = await fetchApi(
+        `/referral?page=1`,
+        'GET',
+        null,
+        200,
+        token,
+      );
+      console.log(response, 'response resend referral');
+
+      if (response.success) {
+        dispatch({
+          type: 'DATA_REFERRAL_INVITED_LIST',
+          referral: response.responseBody.data,
+        });
+        return response.responseBody.data;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      return error;
+    }
+  };
+};
