@@ -121,6 +121,21 @@ const setTermsAndConditionsSettings = async ({dispatch, response}) => {
   );
 };
 
+export const setReferralCode = referralCode => {
+  return async dispatch => {
+    try {
+      await dispatch(
+        setData({
+          type: 'SET_REFERRAL_CODE',
+          data: referralCode,
+        }),
+      );
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
 export const getColorSettings = () => {
   return async (dispatch, getState) => {
     const state = getState();

@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Actions} from 'react-native-router-flux';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview';
 
 import {
@@ -52,7 +52,7 @@ const useStyles = () => {
       backgroundColor: theme.colors.background,
     },
     textHeader: {
-      marginVertical: 32,
+      marginVertical: 4,
       color: theme.colors.textQuaternary,
       fontSize: theme.fontSize[24],
       fontFamily: theme.fontFamily.poppinsMedium,
@@ -79,6 +79,15 @@ const useStyles = () => {
       color: theme.colors.textPrimary,
       fontSize: theme.fontSize[16],
       fontFamily: theme.fontFamily.poppinsBold,
+    },
+    textReferralFrom: {
+      fontStyle: 'italic',
+      color: theme.colors.semanticSuccess,
+      fontSize: theme.fontSize[12],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    viewReferralInput: {
+      width: '100%',
     },
     viewNext: {
       height: 40,
@@ -113,6 +122,7 @@ const useStyles = () => {
 const RegisterForm = ({registerMethod, inputValue}) => {
   const styles = useStyles();
   const dispatch = useDispatch();
+  const [referralCode, setReferralCode] = useState('');
   const [countryCode, setCountryCode] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [email, setEmail] = useState('');
@@ -121,6 +131,10 @@ const RegisterForm = ({registerMethod, inputValue}) => {
   const [isAgree, setIsAgree] = useState(false);
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  const referralCodeReceived = useSelector(
+    state => state.settingReducer.referralCode,
+  );
 
   useEffect(() => {
     if (registerMethod === 'email') {
@@ -137,6 +151,12 @@ const RegisterForm = ({registerMethod, inputValue}) => {
   };
   const handleCloseModal = () => {
     setIsOpenModal(false);
+  };
+
+  const handleReferralCodeReceived = code => {
+    const removePrefix = code.replace(`${awsConfig.APP_DEEP_LINK}/`, '');
+    const result = removePrefix.split('/')[1];
+    return result;
   };
 
   const handleRegister = async () => {
@@ -180,7 +200,7 @@ const RegisterForm = ({registerMethod, inputValue}) => {
     return <Text style={styles.textHeader}>{title}</Text>;
   };
 
-  const renderTestRegisterFor = () => {
+  const renderRegisterFor = () => {
     return (
       <Text style={styles.textRegisterFor}>Register for {inputValue}</Text>
     );
@@ -215,6 +235,32 @@ const RegisterForm = ({registerMethod, inputValue}) => {
       />
     );
   };
+  const renderTextReferralFrom = () => {
+    if (referralCodeReceived) {
+      return (
+        <Text style={styles.textReferralFrom}>Referral Code from Jon Doe</Text>
+      );
+    }
+  };
+
+  const renderReferralInput = () => {
+    const a = handleReferralCodeReceived(referralCodeReceived);
+    const code = a || referralCode;
+
+    return (
+      <View style={styles.viewReferralInput}>
+        <FieldTextInput
+          disabled={referralCodeReceived}
+          value={code}
+          placeholder="Referral Code"
+          onChange={value => {
+            setReferralCode(value);
+          }}
+        />
+        {renderTextReferralFrom()}
+      </View>
+    );
+  };
 
   const renderEmailRegisterInput = () => {
     return (
@@ -237,6 +283,7 @@ const RegisterForm = ({registerMethod, inputValue}) => {
 
     return <View style={styles.viewMethodInput}>{renderInput}</View>;
   };
+
   const renderCheckboxAndText = () => {
     return (
       <View style={styles.viewCheckboxAndText}>
@@ -259,6 +306,7 @@ const RegisterForm = ({registerMethod, inputValue}) => {
       </View>
     );
   };
+
   const renderButtonNext = () => {
     let active = false;
 
@@ -285,9 +333,10 @@ const RegisterForm = ({registerMethod, inputValue}) => {
       <KeyboardAwareScrollView>
         <View style={styles.body}>
           {renderTextHeader()}
-          {renderTestRegisterFor()}
+          {renderRegisterFor()}
           {renderNameInput()}
           {renderEmailOrPhoneInput()}
+          {renderReferralInput()}
         </View>
       </KeyboardAwareScrollView>
     );

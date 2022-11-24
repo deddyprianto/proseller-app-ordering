@@ -7,6 +7,7 @@ import {
   View,
   Text,
   Image,
+  Linking,
   TouchableOpacity,
   Dimensions,
   SafeAreaView,
@@ -15,7 +16,7 @@ import {
 import colorConfig from '../config/colorConfig';
 import appConfig from '../config/appConfig';
 import {useDispatch} from 'react-redux';
-import {getLoginSettings} from '../actions/setting.action';
+import {getLoginSettings, setReferralCode} from '../actions/setting.action';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -98,10 +99,21 @@ const OnBoarding = () => {
   const [selectedImage, setSelectedImage] = useState(0);
 
   useEffect(() => {
+    const getUrlAsync = async () => {
+      const initialUrl = await Linking.getInitialURL();
+      if (initialUrl) {
+        await dispatch(setReferralCode(initialUrl));
+      }
+    };
+
+    getUrlAsync();
+  }, [dispatch]);
+
+  useEffect(() => {
     const loadData = async () => {
       await dispatch(getLoginSettings());
     };
-    return loadData();
+    loadData();
   }, [dispatch]);
 
   const handleOnScroll = nativeEvent => {

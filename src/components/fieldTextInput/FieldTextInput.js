@@ -46,6 +46,7 @@ const FieldTextInput = ({
   placeholder,
   value,
   onChange,
+  disabled,
 }) => {
   const styles = useStyles();
   const styleText = value ? styles.textInputLabel : styles.textInput;
@@ -69,6 +70,8 @@ const FieldTextInput = ({
   const renderNumberInput = () => {
     return (
       <TextInput
+        editable={!disabled}
+        selectTextOnFocus={!disabled}
         keyboardType={'numeric'}
         style={styleText}
         value={value}
@@ -83,6 +86,8 @@ const FieldTextInput = ({
   const renderTextInput = () => {
     return (
       <TextInput
+        editable={!disabled}
+        selectTextOnFocus={!disabled}
         style={styleText}
         value={value}
         placeholder={placeholder}
