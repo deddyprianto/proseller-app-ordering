@@ -22,6 +22,7 @@ import {Actions} from 'react-native-router-flux';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
 import {Slider} from 'react-native-elements';
+import CurrencyFormatter from '../helper/CurrencyFormatter';
 
 // import {campaign, dataPoint, vouchers} from '../actions/rewards.action';
 import colorConfig from '../config/colorConfig';
@@ -29,6 +30,7 @@ import RewardsPoint from '../components/rewardsPoint';
 import appConfig from '../config/appConfig';
 import Loader from '../components/loader';
 import {VirtualKeyboard} from '../helper/react-native-screen-keyboard';
+import LoadingScreen from './loadingScreen';
 // import {parse} from 'react-native-svg';
 
 class paymentAddPoint extends Component {
@@ -150,7 +152,10 @@ class paymentAddPoint extends Component {
     Actions.pop();
   };
 
-  pageDetailPoint = () => {
+  pageDetailPoint = async () => {
+    const {originalPurchase, paymentData} = this.props;
+    const {ratio, jumPoint} = this.state;
+    const maxPayment = paymentData.payment * ratio;
     // Actions.paymentDetail({
     //   paymentData: this.props.paymentData,
     //   addPoint: this.state.jumPoint == 0 ? undefined : this.state.jumPoint,
@@ -158,11 +163,43 @@ class paymentAddPoint extends Component {
     //     (this.state.jumPoint / this.state.jumPointRatio) *
     //     this.state.jumMoneyRatio,
     // });
-    this.props.setDataPoint(
-      this.state.jumPoint == 0 ? undefined : this.state.jumPoint,
+
+    const doPaymentImmediately =
+      jumPoint === maxPayment && originalPurchase === paymentData.payment;
+
+    this.setState({isLoading: true});
+    await this.props.setDataPoint(
+      this.state.jumPoint === 0 ? undefined : this.state.jumPoint,
       this.calculateMoneyPoint(),
     );
-    Actions.pop();
+    this.setState({isLoading: false});
+
+    if (doPaymentImmediately) {
+      this.props.doPayment();
+    } else {
+      Actions.pop();
+    }
+  };
+
+  format = item => {
+    try {
+      const curr = appConfig.appMataUang;
+      item = item.replace(curr, '');
+      if (curr != 'RP' && curr != 'IDR' && item.includes('.') == false) {
+        return `${item}.00`;
+      }
+      return item;
+    } catch (e) {
+      return item;
+    }
+  };
+
+  formatCurrency = value => {
+    try {
+      return this.format(CurrencyFormatter(value).match(/[a-z]+|[^a-z]+/gi)[1]);
+    } catch (e) {
+      return value;
+    }
   };
 
   to2PointDecimal = data => {
@@ -294,7 +331,7 @@ class paymentAddPoint extends Component {
     const {intlData, campign, pendingPoints} = this.props;
     return (
       <SafeAreaView>
-        {this.state.isLoading && <Loader />}
+        <LoadingScreen loading={this.state.isLoading} />
         <ScrollView>
           <View
             style={{
@@ -318,18 +355,16 @@ class paymentAddPoint extends Component {
               style={{
                 marginTop: -30,
                 alignItems: 'center',
-                marginBottom: 30,
+                marginBottom: 10,
               }}>
               <Text style={{fontFamily: 'Poppins-Medium'}}>Point to use</Text>
               <Text
                 style={{
-                  color: colorConfig.store.secondaryColor,
+                  color: colorConfig.primaryColor,
                 }}>
-                {`${intlData.messages.redeem} ${
-                  this.state.jumPointRatio
-                } point ${intlData.messages.to} ${appConfig.appMataUang} ${
-                  this.state.jumMoneyRatio
-                }`}
+                {`${this.state.jumPointRatio} point equal to ${
+                  appConfig.appMataUang
+                }${this.formatCurrency(this.state.jumMoneyRatio)}`}
               </Text>
             </View>
           </View>
@@ -338,9 +373,19 @@ class paymentAddPoint extends Component {
               textAlign: 'center',
               fontSize: 30,
               fontFamily: 'Poppins-Medium',
-              marginBottom: '4%',
             }}>
             {this.state.jumPoint}
+          </Text>
+          <Text
+            style={{
+              textAlign: 'center',
+              fontSize: 14,
+              color: colorConfig.primaryColor,
+              fontFamily: 'Poppins-Bold',
+            }}>
+            {`Your ${this.state.jumPoint} points will be redeem to ${
+              appConfig.appMataUang
+            }${this.formatCurrency(this.calculateMoneyPoint())}`}
           </Text>
           <View>
             {pendingPoints != undefined && pendingPoints > 0 && (

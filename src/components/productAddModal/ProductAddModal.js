@@ -549,14 +549,12 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
   };
 
   const renderSpecialInstruction = () => {
-    if (defaultOutlet?.enableItemSpecialInstructions) {
-      return (
-        <View>
-          {renderTextSpecialInstruction()}
-          {renderTextInputSpecialInstruction()}
-        </View>
-      );
-    }
+    return (
+      <View>
+        {renderTextSpecialInstruction()}
+        {renderTextInputSpecialInstruction()}
+      </View>
+    );
   };
 
   const renderAddToCartButton = () => {

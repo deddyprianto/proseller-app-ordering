@@ -24,13 +24,25 @@ const useStyles = () => {
   const theme = Theme();
   const styles = StyleSheet.create({
     root: {
-      elevation: 5,
+      shadowOffset: {
+        width: 0.2,
+        height: 0.2,
+      },
+      shadowOpacity: 0.2,
+      shadowColor: theme.colors.greyScale2,
+      elevation: 2,
       borderRadius: 8,
       padding: 16,
       backgroundColor: theme.colors.background,
     },
     rootActive: {
-      elevation: 5,
+      shadowOffset: {
+        width: 0.2,
+        height: 0.2,
+      },
+      shadowOpacity: 0.2,
+      shadowColor: theme.colors.greyScale2,
+      elevation: 2,
       borderRadius: 8,
       padding: 16,
       borderWidth: 1,

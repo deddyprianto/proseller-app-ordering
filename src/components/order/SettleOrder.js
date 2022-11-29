@@ -68,6 +68,7 @@ import {
 import {getSVCBalance} from '../../actions/SVC.action';
 import {campaign, dataPoint} from '../../actions/rewards.action';
 import ModalTransfer from './ModalTransfer';
+import LoadingScreen from '../loadingScreen';
 
 class SettleOrder extends Component {
   constructor(props) {
@@ -1009,6 +1010,8 @@ class SettleOrder extends Component {
       percentageUseSVC: this.state.percentageUseSVC,
       paymentData,
       valueSet: this.state.addPoint === undefined ? 0 : this.state.addPoint,
+      originalPurchase: this.props.pembayaran.totalNettAmount,
+      doPayment: this.doPayment,
       setDataPoint: this.setDataPoint,
     });
   };
@@ -2695,6 +2698,8 @@ class SettleOrder extends Component {
           );
         }
       }
+
+      this.setState({loading: false});
     } catch (e) {
       //  cancel voucher and pont selected
       // this.cencelPoint();
@@ -3240,6 +3245,25 @@ class SettleOrder extends Component {
     this.setState({showModal: false});
   };
 
+  renderTotalPayment = () => {
+    if (this.state.totalBayar !== this.props.pembayaran.payment) {
+      return (
+        <View style={{justifyContent: 'flex-end'}}>
+          <Text
+            style={{
+              color: colorConfig.pageIndex.grayColor,
+              fontSize: 20,
+              textDecorationLine: 'line-through',
+              position: 'absolute',
+              fontFamily: 'Poppins-Regular',
+            }}>
+            {this.formatCurrency(this.props.pembayaran.payment)}
+          </Text>
+        </View>
+      );
+    }
+  };
+
   render() {
     const {
       intlData,
@@ -3250,10 +3274,14 @@ class SettleOrder extends Component {
       pembayaran,
     } = this.props;
     const {outlet} = this.state;
+    const total =
+      Number(this.state.totalBayar) - this.state.totalNonDiscountable;
 
     return (
       <SafeAreaView style={styles.container}>
         {this.state.loading && <LoaderDarker />}
+
+        <LoadingScreen loading={this.state.loading} />
         {this.askUserToEnterCVV()}
         <ModalTransfer
           doPayment={this.doPayment}
@@ -3326,8 +3354,9 @@ class SettleOrder extends Component {
           }>
           <View
             style={{
-              flexDirection: 'row',
+              flexDirection: 'column',
               justifyContent: 'center',
+              alignItems: 'center',
               marginTop: 3,
               backgroundColor: 'white',
               paddingVertical: 30,
@@ -3337,40 +3366,54 @@ class SettleOrder extends Component {
             }}>
             <Text
               style={{
-                color: colorConfig.store.title,
-                fontSize: 15,
-                marginRight: 5,
+                textAlign: 'center',
+
+                fontSize: 16,
+                color: 'black',
+                marginBottom: 8,
+                fontWeight: 'bold',
               }}>
-              {appConfig.appMataUang}
+              Grand Total
             </Text>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'center',
+              }}>
+              <Text
+                style={{
+                  color: colorConfig.store.title,
+                  fontSize: 15,
+                  marginRight: 5,
+                }}>
+                {appConfig.appMataUang}
+              </Text>
+              <Text
+                style={{
+                  color: colorConfig.store.title,
+                  fontSize: 55,
+                  top: 13,
+                  fontFamily: 'Poppins-Medium',
+                }}>
+                {this.formatCurrency(this.state.totalBayar)}
+              </Text>
+              {this.renderTotalPayment()}
+            </View>
+
             <Text
               style={{
-                color: colorConfig.store.title,
-                fontSize: 55,
-                top: 13,
-                fontFamily: 'Poppins-Medium',
+                width: '50%',
+                textAlign: 'center',
+                color: colorConfig.primaryColor,
               }}>
-              {this.formatCurrency(this.state.totalBayar)}
+              <Text style={{fontWeight: 'bold'}}>
+                {appConfig.appMataUang}
+                {this.formatCurrency(total)}
+              </Text>
+              <Text> of this grand total can be redeem with point/voucher</Text>
             </Text>
-            {/* value discount */}
-            {this.state.totalBayar != this.props.pembayaran.payment ? (
-              <View style={{marginBottom: 30}}>
-                <Text
-                  style={{
-                    color: colorConfig.pageIndex.grayColor,
-                    fontSize: 20,
-                    textDecorationLine: 'line-through',
-                    position: 'absolute',
-                    fontFamily: 'Poppins-Regular',
-                    right: -15,
-                    top: 75,
-                  }}>
-                  {this.formatCurrency(this.props.pembayaran.payment)}
-                </Text>
-              </View>
-            ) : null}
-            {/* value discount */}
           </View>
+
           <View
             style={{
               marginTop: 13,

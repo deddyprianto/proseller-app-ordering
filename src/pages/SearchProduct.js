@@ -314,7 +314,6 @@ const SearchProduct = ({category}) => {
   };
 
   const handleSearchProduct = async value => {
-    setSelectedSubCategory({});
     setSearchTextInput('');
     setSearchQuery(value);
     await dispatch(setSearchProductHistory({searchQuery: value}));
@@ -358,7 +357,6 @@ const SearchProduct = ({category}) => {
         <Text
           onPress={() => {
             setSelectedCategory({});
-            setSelectedSubCategory({});
             setSearchQuery('');
             setSearchTextInput('');
           }}
@@ -521,7 +519,9 @@ const SearchProduct = ({category}) => {
               setSelectedSubCategory(item);
             }}
           />
-          <ProductList products={productsBySubCategory} basket={basket} />
+          <ScrollView>
+            <ProductList products={productsBySubCategory} basket={basket} />
+          </ScrollView>
         </>
       );
     }
