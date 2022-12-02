@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {Actions} from 'react-native-router-flux';
 import {useDispatch, useSelector} from 'react-redux';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview';
@@ -21,12 +21,14 @@ import FieldPhoneNumberInput from '../components/fieldPhoneNumberInput';
 
 import {createNewUser} from '../actions/auth.actions';
 import {showSnackbar} from '../actions/setting.action';
+import {checkReferralValidity} from '../actions/referral.action';
 
 import LoadingScreen from '../components/loadingScreen';
 import ButtonCheckbox from '../components/buttonCheckbox';
 import TermsAndConditionsModal from '../components/modal/TermsAndConditionsModal';
 
 import Theme from '../theme';
+import useDebounce from '../helper/UseDebounce';
 
 const useStyles = () => {
   const theme = Theme();
@@ -122,7 +124,8 @@ const useStyles = () => {
 const RegisterForm = ({registerMethod, inputValue}) => {
   const styles = useStyles();
   const dispatch = useDispatch();
-  const [referralCode, setReferralCode] = useState('');
+  const [referralSource, setReferralSource] = useState('');
+  const [referralInput, setReferralInput] = useState('');
   const [countryCode, setCountryCode] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [email, setEmail] = useState('');
@@ -135,6 +138,24 @@ const RegisterForm = ({registerMethod, inputValue}) => {
   const referralCodeReceived = useSelector(
     state => state.settingReducer.referralCode,
   );
+
+  const referralCode = referralCodeReceived || referralInput;
+  const debouncedSearchQuery = useDebounce(referralCode, 200);
+
+  useEffect(() => {
+    const loadData = async () => {
+      const referralValidity = await dispatch(
+        checkReferralValidity(debouncedSearchQuery),
+      );
+      if (referralValidity?.source) {
+        setReferralSource(referralValidity.source);
+      } else {
+        setReferralSource('');
+      }
+    };
+
+    loadData();
+  }, [dispatch, debouncedSearchQuery]);
 
   useEffect(() => {
     if (registerMethod === 'email') {
@@ -153,12 +174,6 @@ const RegisterForm = ({registerMethod, inputValue}) => {
     setIsOpenModal(false);
   };
 
-  const handleReferralCodeReceived = code => {
-    const removePrefix = code.replace(`${awsConfig.APP_DEEP_LINK}/`, '');
-    const result = removePrefix.split('/')[1];
-    return result;
-  };
-
   const handleRegister = async () => {
     const phone =
       registerMethod === 'email' ? countryCode + phoneNumber : inputValue;
@@ -171,6 +186,9 @@ const RegisterForm = ({registerMethod, inputValue}) => {
       email: email,
       phoneNumber: phone,
     };
+
+    payload.referralCode = referralCode;
+
     setIsLoading(true);
     const response = await dispatch(createNewUser(payload));
 
@@ -235,26 +253,26 @@ const RegisterForm = ({registerMethod, inputValue}) => {
       />
     );
   };
+
   const renderTextReferralFrom = () => {
-    if (referralCodeReceived) {
+    if (referralSource) {
       return (
-        <Text style={styles.textReferralFrom}>Referral Code from Jon Doe</Text>
+        <Text style={styles.textReferralFrom}>
+          Referral Code from {referralSource}
+        </Text>
       );
     }
   };
 
   const renderReferralInput = () => {
-    const a = handleReferralCodeReceived(referralCodeReceived);
-    const code = a || referralCode;
-
     return (
       <View style={styles.viewReferralInput}>
         <FieldTextInput
           disabled={referralCodeReceived}
-          value={code}
+          value={referralCode}
           placeholder="Referral Code"
           onChange={value => {
-            setReferralCode(value);
+            setReferralInput(value);
           }}
         />
         {renderTextReferralFrom()}

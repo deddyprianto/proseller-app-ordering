@@ -47,7 +47,7 @@ const useStyles = () => {
   return styles;
 };
 
-const ReferralBenefitList = ({senderBenefit, referredBenefit}) => {
+const ReferralBenefitList = ({senderBenefit, referredBenefit, criteria}) => {
   const styles = useStyles();
 
   const renderDivider = () => {
@@ -81,17 +81,20 @@ const ReferralBenefitList = ({senderBenefit, referredBenefit}) => {
   };
 
   const renderCriteria = () => {
-    return (
-      <View style={styles.viewCriteria}>
-        <Image
-          style={styles.iconInformation}
-          source={appConfig.iconInformation}
-        />
-        <Text style={styles.textCriteria}>
-          After made 1 transaction or purchase minimal SGD 30
-        </Text>
-      </View>
-    );
+    if (criteria) {
+      return (
+        <>
+          {renderDivider()}
+          <View style={styles.viewCriteria}>
+            <Image
+              style={styles.iconInformation}
+              source={appConfig.iconInformation}
+            />
+            <Text style={styles.textCriteria}>{criteria}</Text>
+          </View>
+        </>
+      );
+    }
   };
 
   return (
@@ -99,7 +102,6 @@ const ReferralBenefitList = ({senderBenefit, referredBenefit}) => {
       {renderSenderBenefit()}
       {renderDivider()}
       {renderReferredBenefit()}
-      {renderDivider()}
       {renderCriteria()}
     </View>
   );

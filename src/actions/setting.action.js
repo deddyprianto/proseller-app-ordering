@@ -122,25 +122,6 @@ const setTermsAndConditionsSettings = async ({dispatch, response}) => {
   );
 };
 
-export const setReferralCode = initialUrl => {
-  return async dispatch => {
-    try {
-      const removePrefix = initialUrl.replace(`${awsConfig.APP_DEEP_LINK}`, '');
-
-      const referralCode = removePrefix.split('/')[1];
-
-      await dispatch(
-        setData({
-          type: 'SET_REFERRAL_CODE',
-          data: referralCode,
-        }),
-      );
-    } catch (error) {
-      return error;
-    }
-  };
-};
-
 export const getColorSettings = () => {
   return async (dispatch, getState) => {
     const state = getState();

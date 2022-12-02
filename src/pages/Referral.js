@@ -156,10 +156,13 @@ const Referral = () => {
   const renderReferralBenefitList = () => {
     const senderBenefit = referralInfo?.senderBenefit;
     const referredBenefit = referralInfo?.receiverBenefits;
+    const criteria = referralInfo?.criteria;
+
     return (
       <ReferralBenefitList
         senderBenefit={senderBenefit}
         referredBenefit={referredBenefit}
+        criteria={criteria}
       />
     );
   };
@@ -170,7 +173,8 @@ const Referral = () => {
   };
 
   const renderHowItWorks = () => {
-    return <ReferralHowItWorks />;
+    const howItWorks = referralInfo?.howItWorks;
+    return <ReferralHowItWorks howItWorks={howItWorks} />;
   };
 
   return (

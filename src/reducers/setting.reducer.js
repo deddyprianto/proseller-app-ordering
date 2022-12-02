@@ -66,21 +66,10 @@ const termsAndConditionsSettings = (state = {}, action) => {
   }
 };
 
-const referralCode = (state = '', action) => {
-  switch (action.type) {
-    case 'SET_REFERRAL_CODE':
-      return action.data;
-
-    default:
-      return state;
-  }
-};
-
 export default combineReducers({
   snackbar,
   imageSettings,
   colorSettings,
   loginSettings,
   termsAndConditionsSettings,
-  referralCode,
 });

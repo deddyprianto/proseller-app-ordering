@@ -30,6 +30,9 @@ const useStyles = () => {
       alignItems: 'center',
       backgroundColor: theme.colors.accent,
     },
+    viewHowItWorks: {
+      paddingHorizontal: 16,
+    },
     icon: {
       width: 22,
       height: 22,
@@ -43,7 +46,7 @@ const useStyles = () => {
   return styles;
 };
 
-const ReferralHowItWorks = () => {
+const ReferralHowItWorks = ({howItWorks}) => {
   const styles = useStyles();
 
   const renderDashed = () => {
@@ -88,20 +91,8 @@ const ReferralHowItWorks = () => {
 
   const renderMarkdown = () => {
     return (
-      <View>
-        <Text>1. Invite your friends</Text>
-        <Text>
-          Copy your referral code or click share referral button and sent it to
-          your friend.
-        </Text>
-        <Text>2. Your friend use the code</Text>
-        <Text>
-          They can use copied code on sign up page, or our system will
-          automatically detect the referral if your friend clicked the shared
-          link.
-        </Text>
-        <Text>3. You got the prize!</Text>
-        <Text>Enjoy your bonus from inviting your friends! </Text>
+      <View style={styles.viewHowItWorks}>
+        <Text>{howItWorks}</Text>
       </View>
     );
   };
