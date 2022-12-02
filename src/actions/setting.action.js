@@ -125,13 +125,9 @@ const setTermsAndConditionsSettings = async ({dispatch, response}) => {
 export const setReferralCode = initialUrl => {
   return async dispatch => {
     try {
-      console.log('GILA MASUK', initialUrl);
       const removePrefix = initialUrl.replace(`${awsConfig.APP_DEEP_LINK}`, '');
 
-      console.log('GILA MASUKURL', awsConfig.APP_DEEP_LINK);
-      console.log('GILA MASUK', removePrefix);
       const referralCode = removePrefix.split('/')[1];
-      console.log('GILA MASUK', referralCode);
 
       await dispatch(
         setData({
