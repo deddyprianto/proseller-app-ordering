@@ -1,6 +1,7 @@
 // import axios from 'axios';
 // import config from '../../config';
 
+import awsConfig from '../config/awsConfig';
 import {isEmptyArray} from '../helper/CheckEmpty';
 import {fetchApiOrder} from '../service/apiOrder';
 
@@ -121,9 +122,17 @@ const setTermsAndConditionsSettings = async ({dispatch, response}) => {
   );
 };
 
-export const setReferralCode = referralCode => {
+export const setReferralCode = initialUrl => {
   return async dispatch => {
     try {
+      console.log('GILA MASUK', initialUrl);
+      const removePrefix = initialUrl.replace(`${awsConfig.APP_DEEP_LINK}`, '');
+
+      console.log('GILA MASUKURL', awsConfig.APP_DEEP_LINK);
+      console.log('GILA MASUK', removePrefix);
+      const referralCode = removePrefix.split('/')[1];
+      console.log('GILA MASUK', referralCode);
+
       await dispatch(
         setData({
           type: 'SET_REFERRAL_CODE',
