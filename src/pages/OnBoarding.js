@@ -16,7 +16,8 @@ import {
 import colorConfig from '../config/colorConfig';
 import appConfig from '../config/appConfig';
 import {useDispatch} from 'react-redux';
-import {getLoginSettings, setReferralCode} from '../actions/setting.action';
+import {getLoginSettings} from '../actions/setting.action';
+import {setReferralCode} from '../actions/referral.action';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;

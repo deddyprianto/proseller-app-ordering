@@ -136,7 +136,7 @@ const RegisterForm = ({registerMethod, inputValue}) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const referralCodeReceived = useSelector(
-    state => state.settingReducer.referralCode,
+    state => state.referralReducer.referralCode,
   );
 
   const referralCode = referralCodeReceived || referralInput;
