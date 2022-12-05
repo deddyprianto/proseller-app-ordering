@@ -95,8 +95,7 @@ const ReferralCodeShare = ({referralCode}) => {
     const url = link?.url;
     try {
       await Share.share({
-        message: `Hellooo! I enjoy ordering from Funtoast and I think you will too!
-        Use the referral code ${referralCode} or order now at ${url} and receive a gift!`,
+        message: `Hellooo! I enjoy ordering from Funtoast and I think you will too! Use the referral code ${referralCode} or order now at ${url} and receive a gift!`,
       });
     } catch (error) {
       dispatch(

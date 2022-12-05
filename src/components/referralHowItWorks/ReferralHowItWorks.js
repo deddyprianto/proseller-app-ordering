@@ -2,6 +2,8 @@ import React from 'react';
 import DashedLine from 'react-native-dashed-line';
 
 import {View, Text, Image, StyleSheet} from 'react-native';
+
+import HTMLView from 'react-native-htmlview';
 import appConfig from '../../config/appConfig';
 import Theme from '../../theme';
 
@@ -92,7 +94,7 @@ const ReferralHowItWorks = ({howItWorks}) => {
   const renderMarkdown = () => {
     return (
       <View style={styles.viewHowItWorks}>
-        <Text>{howItWorks}</Text>
+        <HTMLView value={howItWorks} />
       </View>
     );
   };
