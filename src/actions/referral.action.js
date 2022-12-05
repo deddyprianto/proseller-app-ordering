@@ -255,3 +255,26 @@ export const checkReferralValidity = referralCode => {
     }
   };
 };
+
+export const getReferralDynamicLink = () => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      const response = await fetchApi('/referral-url', 'GET', null, 200, token);
+
+      if (response.success) {
+        return response.responseBody.data;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      return error;
+    }
+  };
+};

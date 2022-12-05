@@ -9,6 +9,7 @@ import {
   Share,
 } from 'react-native';
 import {useDispatch} from 'react-redux';
+import {getReferralDynamicLink} from '../../actions/referral.action';
 import {showSnackbar} from '../../actions/setting.action';
 import appConfig from '../../config/appConfig';
 import Theme from '../../theme';
@@ -90,24 +91,22 @@ const ReferralCodeShare = ({referralCode}) => {
   const dispatch = useDispatch();
 
   const handleShare = async () => {
+    const link = await dispatch(getReferralDynamicLink());
+    const url = link?.url;
     try {
-      const result = await Share.share({
+      await Share.share({
         message: `Hellooo! I enjoy ordering from Funtoast and I think you will too!
-        Use the referral code ${referralCode} or order now at https://s.proseller.io/551pt9 and receive a gift!`,
+        Use the referral code ${referralCode} or order now at ${url} and receive a gift!`,
       });
-      if (result.action === Share.sharedAction) {
-        if (result.activityType) {
-          // shared with activity type of result.activityType
-        } else {
-          // shared
-        }
-      } else if (result.action === Share.dismissedAction) {
-        // dismissed
-      }
     } catch (error) {
-      alert(error.message);
+      dispatch(
+        showSnackbar({
+          message: 'Share Referral Failed!',
+        }),
+      );
     }
   };
+
   const handleCopyToClipboard = () => {
     dispatch(showSnackbar({message: 'Copied Text', type: 'success'}));
     Clipboard.setString(referralCode);
