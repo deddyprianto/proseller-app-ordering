@@ -112,6 +112,7 @@ const appConfig = {
   iconQRCode: require('../assets/img/icon-qr-code.png'),
 
   iconReward: require('../assets/img/icon-reward.png'),
+  iconReferral: require('../assets/img/icon-referral.png'),
 
   iconSVC: require('../assets/img/icon-svc.png'),
   iconSearch: require('../assets/img/icon-search.png'),
