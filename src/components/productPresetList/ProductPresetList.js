@@ -47,7 +47,7 @@ const useStyles = () => {
       flexDirection: 'row',
       flexWrap: 'wrap',
       justifyContent: 'space-between',
-      marginBottom: 60,
+      marginBottom: 100,
     },
     touchableCategoryItem: {
       flex: 1,
@@ -142,8 +142,6 @@ const ProductPresetList = ({products, basket}) => {
 
       if (viewableItems.length === 1) {
         return handleScrollProducts(viewableItems[0]);
-      } else {
-        return handleScrollProducts(viewableItems[1]);
       }
     }
   };
