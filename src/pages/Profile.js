@@ -452,7 +452,7 @@ const Profile = () => {
         }}>
         <Image
           style={styles.iconSetting}
-          source={appConfig.iconLocation}
+          source={appConfig.iconReferral}
           resizeMode="stretch"
         />
         <Text style={styles.textIcon}>Referral</Text>
@@ -530,6 +530,32 @@ const Profile = () => {
       </TouchableOpacity>
     );
   };
+  const renderSettingBatch1 = () => {
+    return (
+      <View>
+        {renderMyDeliveryAddress()}
+        {renderEditProfile()}
+        {renderNotifications()}
+      </View>
+    );
+  };
+
+  const renderSettingBatch2 = () => {
+    return <View>{renderReferral()}</View>;
+  };
+
+  const renderSettingBatch3 = () => {
+    return (
+      <View>
+        {renderTermsAndConditions()}
+        {renderDeleteAccount()}
+      </View>
+    );
+  };
+
+  const renderSettingBatch4 = () => {
+    return <View>{renderLogout()}</View>;
+  };
 
   const renderSettings = () => {
     return (
@@ -537,19 +563,13 @@ const Profile = () => {
         {renderDivider()}
         {renderMembershipQRCode()}
         {renderDivider()}
-        {renderMyDeliveryAddress()}
+        {renderSettingBatch1()}
         {renderDivider()}
-        {renderReferral()}
+        {renderSettingBatch2()}
         {renderDivider()}
-        {renderEditProfile()}
+        {renderSettingBatch3()}
         {renderDivider()}
-        {renderNotifications()}
-        {renderDivider()}
-        {renderTermsAndConditions()}
-        {renderDivider()}
-        {renderDeleteAccount()}
-        {renderDivider()}
-        {renderLogout()}
+        {renderSettingBatch4()}
       </View>
     );
   };
