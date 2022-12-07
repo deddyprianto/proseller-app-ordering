@@ -74,11 +74,11 @@ const ReferralInvitedList = ({referralInvitedList}) => {
   };
 
   const renderInvitedList = () => {
-    const test = referralInvitedList?.list?.map(value => {
+    const result = referralInvitedList?.list?.map(value => {
       return <ReferralInvitedItem item={value} />;
     });
 
-    return <View style={styles.viewInvitedList}>{test}</View>;
+    return <View style={styles.viewInvitedList}>{result}</View>;
   };
 
   const renderBody = () => {
