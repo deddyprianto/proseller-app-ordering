@@ -5,7 +5,7 @@
  * PT Edgeworks
  */
 
-import React, {useState, useRef, useEffect} from 'react';
+import React, {useState, useRef, useCallback} from 'react';
 import {StyleSheet, View, Text, FlatList, TouchableOpacity} from 'react-native';
 
 import Product from './components/ProductPresetItem';
@@ -102,6 +102,7 @@ const ProductPresetList = ({products, basket}) => {
 
     return (
       <TouchableOpacity
+        activeOpacity={1}
         style={styleTouchable}
         onPress={() => {
           setSelectedCategory(item);
@@ -134,19 +135,9 @@ const ProductPresetList = ({products, basket}) => {
     }
   };
 
-  const onViewableItemsChanged = ({viewableItems}) => {
-    if (!isEmptyArray(viewableItems)) {
-      if (viewableItems[0].index === 0) {
-        return handleScrollProducts(viewableItems[0]);
-      }
-
-      if (viewableItems.length === 1) {
-        return handleScrollProducts(viewableItems[0]);
-      }
-    }
-  };
-
-  const viewabilityConfigCallbackPairs = useRef([{onViewableItemsChanged}]);
+  const handleViewableItemsChanged = useCallback(({changed}) => {
+    return handleScrollProducts(changed[0]);
+  }, []);
 
   const renderProductItem = (category, index) => {
     const categoryProducts = category?.items?.map(item => {
@@ -162,12 +153,17 @@ const ProductPresetList = ({products, basket}) => {
   };
 
   const renderProducts = () => {
+    const viewAbilityConfig = {
+      itemVisiblePercentThreshold: 60,
+    };
+
     return (
       <FlatList
         ref={productRef}
         data={products}
         showsVerticalScrollIndicator={false}
-        viewabilityConfigCallbackPairs={viewabilityConfigCallbackPairs.current}
+        onViewableItemsChanged={handleViewableItemsChanged}
+        viewabilityConfig={viewAbilityConfig}
         renderItem={({item, index}) => renderProductItem(item, index)}
       />
     );
