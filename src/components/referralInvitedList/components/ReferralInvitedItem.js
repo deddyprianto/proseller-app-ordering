@@ -97,7 +97,7 @@ const ReferralInvitedItem = ({item}) => {
     return (
       <View style={styles.viewPrize}>
         <Image source={appConfig.iconIssuedPrize} style={styles.icon} />
-        <Text style={styles.textIssuedPrize}>Issued Prize</Text>
+        <Text style={styles.textIssuedPrize}>{item?.statusText}</Text>
       </View>
     );
   };
@@ -105,7 +105,7 @@ const ReferralInvitedItem = ({item}) => {
     return (
       <View style={styles.viewPrize}>
         <Image source={appConfig.iconPendingPrize} style={styles.icon} />
-        <Text style={styles.textPendingPrize}>Pending Prize</Text>
+        <Text style={styles.textPendingPrize}>{item?.statusText}</Text>
       </View>
     );
   };
