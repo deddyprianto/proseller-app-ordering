@@ -135,7 +135,7 @@ const ProductPresetList = ({products, basket}) => {
     }
   };
 
-  const handleViewableItemsChanged = useCallback(({viewableItems}) => {
+  const handleViewableItemsChanged = useCallback(({changed, viewableItems}) => {
     if (!isEmptyArray(viewableItems)) {
       return handleScrollProducts(viewableItems[0]);
     }
@@ -156,7 +156,7 @@ const ProductPresetList = ({products, basket}) => {
 
   const renderProducts = () => {
     const viewAbilityConfig = {
-      itemVisiblePercentThreshold: 60,
+      itemVisiblePercentThreshold: 30,
     };
 
     return (
