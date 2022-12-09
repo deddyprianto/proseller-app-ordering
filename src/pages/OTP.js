@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, {useState, useRef, useEffect} from 'react';
+import React, {useState, useEffect} from 'react';
 import {Actions} from 'react-native-router-flux';
 import {useDispatch} from 'react-redux';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview';
@@ -8,7 +8,6 @@ import {
   StyleSheet,
   View,
   Text,
-  TextInput,
   BackHandler,
   SafeAreaView,
   TouchableOpacity,
@@ -16,14 +15,17 @@ import {
 } from 'react-native';
 
 import colorConfig from '../config/colorConfig';
+
 import {sendOTP, loginUser} from '../actions/auth.actions';
-import LoadingScreen from '../components/loadingScreen';
 import {showSnackbar} from '../actions/setting.action';
 
 import {Header} from '../components/layout';
+import OTPField from '../components/fieldOTP';
+import LoadingScreen from '../components/loadingScreen';
+
 import moment from 'moment';
 import Theme from '../theme';
-import OTPField from '../components/fieldOTP';
+
 const HEIGHT = Dimensions.get('window').height;
 
 const useStyles = () => {
@@ -40,11 +42,6 @@ const useStyles = () => {
       alignItems: 'center',
       paddingHorizontal: 16,
       backgroundColor: theme.colors.background,
-    },
-    image: {
-      width: 150,
-      height: 40,
-      marginHorizontal: 20,
     },
     touchableNext: {
       marginTop: 32,
@@ -69,23 +66,6 @@ const useStyles = () => {
       color: theme.colors.textPrimary,
       fontSize: theme.fontSize[16],
       fontFamily: theme.fontFamily.poppinsMedium,
-    },
-    textInputOtp: {
-      width: 40,
-      height: 40,
-      borderWidth: 1,
-      borderRadius: 12,
-      paddingVertical: 0,
-      justifyContent: 'center',
-      alignItems: 'center',
-      textAlign: 'center',
-    },
-    viewInputOtp: {
-      marginVertical: 32,
-      width: '70%',
-      display: 'flex',
-      flexDirection: 'row',
-      justifyContent: 'space-between',
     },
     textSendOtp: {
       width: '100%',
@@ -117,14 +97,6 @@ const OTP = ({isLogin, method, methodValue}) => {
   const [seconds, setSeconds] = useState(0);
 
   const [isLoading, setIsLoading] = useState(false);
-  // const [otp, setOtp] = useState([]);
-
-  const ref = {
-    otp1: useRef(),
-    otp2: useRef(),
-    otp3: useRef(),
-    otp4: useRef(),
-  };
 
   const countdown = () => {
     let second = 59;
@@ -184,18 +156,6 @@ const OTP = ({isLogin, method, methodValue}) => {
     }
   };
 
-  // useEffect(() => {
-  //   const loadData = async () => {
-  //     if (otp[3]) {
-  //       setIsLoading(true);
-  //       await handleLogin();
-  //       setIsLoading(false);
-  //     }
-  //   };
-
-  //   loadData();
-  // }, [otp]);
-
   const renderTextHeader = () => {
     let text = '';
     if (isLogin) {
@@ -217,59 +177,6 @@ const OTP = ({isLogin, method, methodValue}) => {
       </Text>
     );
   };
-
-  // const handleInputOtp = (value, index) => {
-  //   if (value) {
-  //     const arrayLength = Array.from(Array(4)).length;
-
-  //     let results = [...otp];
-  //     results[index] = value;
-  //     setOtp(results);
-  //     if (index !== 0 && !value) {
-  //       return ref[`otp${index - 1}`].focus();
-  //     }
-
-  //     if (arrayLength - 1 !== index && value) {
-  //       return ref[`otp${index + 1}`].focus();
-  //     }
-  //   }
-  // };
-
-  const renderTextInput = ({index, inputRef, autoFocus, onChangeText}) => {
-    return (
-      <TextInput
-        ref={inputRef}
-        autoFocus={autoFocus}
-        keyboardType="numeric"
-        style={styles.textInputOtp}
-        maxLength={1}
-        onChangeText={onChangeText}
-        // onKeyPress={({nativeEvent}) => {
-        //   if (nativeEvent.key === 'Backspace') {
-        //     // handleInputOtp(value.replace(/[^0-9]/g, ''), index);
-        //   }
-        // }}
-      />
-    );
-  };
-
-  // const renderInputOtp = () => {
-  //   const result = Array.from(Array(4)).map((_, index) => {
-  //     return renderTextInput({
-  //       index,
-  //       autoFocus: index === 0,
-  //       inputRef: r => {
-  //         ref[`otp${index}`] = r;
-  //       },
-  //       onChangeText: value => {
-  //         console.log('GILA', value.replace(/[^0-9]/g, ''));
-  //         handleInputOtp(value.replace(/[^0-9]/g, ''), index);
-  //       },
-  //     });
-  //   });
-
-  //   return <View style={styles.viewInputOtp}>{result}</View>;
-  // };
 
   const handleResendOtp = async () => {
     let value = {};
@@ -318,6 +225,17 @@ const OTP = ({isLogin, method, methodValue}) => {
       </TouchableOpacity>
     );
   };
+
+  const renderOtpField = () => {
+    return (
+      <OTPField
+        onComplete={value => {
+          handleLogin(value);
+        }}
+      />
+    );
+  };
+
   return (
     <SafeAreaView style={styles.root}>
       <LoadingScreen loading={isLoading} />
@@ -326,12 +244,7 @@ const OTP = ({isLogin, method, methodValue}) => {
         <View style={styles.container}>
           {renderTextHeader()}
           {renderTextVerify()}
-          <OTPField
-            onComplete={value => {
-              handleLogin(value);
-            }}
-          />
-          {/* {renderInputOtp()} */}
+          {renderOtpField()}
           {renderResendOTP()}
           {renderButtonNext()}
         </View>
