@@ -23,6 +23,7 @@ import {showSnackbar} from '../actions/setting.action';
 import {Header} from '../components/layout';
 import moment from 'moment';
 import Theme from '../theme';
+import OTPField from '../components/fieldOTP';
 const HEIGHT = Dimensions.get('window').height;
 
 const useStyles = () => {
@@ -116,7 +117,7 @@ const OTP = ({isLogin, method, methodValue}) => {
   const [seconds, setSeconds] = useState(0);
 
   const [isLoading, setIsLoading] = useState(false);
-  const [otp, setOtp] = useState([]);
+  // const [otp, setOtp] = useState([]);
 
   const ref = {
     otp1: useRef(),
@@ -147,6 +148,7 @@ const OTP = ({isLogin, method, methodValue}) => {
 
   useEffect(() => {
     countdown();
+
     const backAction = () => {
       Actions.popTo('pageIndex');
       return true;
@@ -160,18 +162,19 @@ const OTP = ({isLogin, method, methodValue}) => {
     return () => backHandler.remove();
   }, []);
 
-  const handleLogin = async () => {
+  const handleLogin = async otp => {
     let value = {};
-    const otpFormatted = otp.join('');
     if (method === 'email') {
       value.email = methodValue;
     } else {
       value.phoneNumber = methodValue;
     }
 
-    value.codeOTP = otpFormatted;
+    value.codeOTP = otp;
 
+    setIsLoading(true);
     const response = await dispatch(loginUser(value));
+    setIsLoading(false);
     if (response?.statusCustomer) {
       Actions.pageIndex();
     } else {
@@ -181,17 +184,17 @@ const OTP = ({isLogin, method, methodValue}) => {
     }
   };
 
-  useEffect(() => {
-    const loadData = async () => {
-      if (otp[3]) {
-        setIsLoading(true);
-        await handleLogin();
-        setIsLoading(false);
-      }
-    };
+  // useEffect(() => {
+  //   const loadData = async () => {
+  //     if (otp[3]) {
+  //       setIsLoading(true);
+  //       await handleLogin();
+  //       setIsLoading(false);
+  //     }
+  //   };
 
-    loadData();
-  }, [otp]);
+  //   loadData();
+  // }, [otp]);
 
   const renderTextHeader = () => {
     let text = '';
@@ -215,22 +218,24 @@ const OTP = ({isLogin, method, methodValue}) => {
     );
   };
 
-  const handleInputOtp = (value, index) => {
-    const arrayLength = Array.from(Array(4)).length;
+  // const handleInputOtp = (value, index) => {
+  //   if (value) {
+  //     const arrayLength = Array.from(Array(4)).length;
 
-    let results = [...otp];
-    results[index] = value;
-    setOtp(results);
-    if (index !== 0 && !value) {
-      return ref[`otp${index - 1}`].focus();
-    }
+  //     let results = [...otp];
+  //     results[index] = value;
+  //     setOtp(results);
+  //     if (index !== 0 && !value) {
+  //       return ref[`otp${index - 1}`].focus();
+  //     }
 
-    if (arrayLength - 1 !== index && value) {
-      return ref[`otp${index + 1}`].focus();
-    }
-  };
+  //     if (arrayLength - 1 !== index && value) {
+  //       return ref[`otp${index + 1}`].focus();
+  //     }
+  //   }
+  // };
 
-  const renderTextInput = ({inputRef, autoFocus, onChangeText}) => {
+  const renderTextInput = ({index, inputRef, autoFocus, onChangeText}) => {
     return (
       <TextInput
         ref={inputRef}
@@ -239,25 +244,32 @@ const OTP = ({isLogin, method, methodValue}) => {
         style={styles.textInputOtp}
         maxLength={1}
         onChangeText={onChangeText}
+        // onKeyPress={({nativeEvent}) => {
+        //   if (nativeEvent.key === 'Backspace') {
+        //     // handleInputOtp(value.replace(/[^0-9]/g, ''), index);
+        //   }
+        // }}
       />
     );
   };
 
-  const renderInputOtp = () => {
-    const result = Array.from(Array(4)).map((_, index) => {
-      return renderTextInput({
-        autoFocus: index === 0,
-        inputRef: r => {
-          ref[`otp${index}`] = r;
-        },
-        onChangeText: value => {
-          handleInputOtp(value.replace(/[^0-9]/g, ''), index);
-        },
-      });
-    });
+  // const renderInputOtp = () => {
+  //   const result = Array.from(Array(4)).map((_, index) => {
+  //     return renderTextInput({
+  //       index,
+  //       autoFocus: index === 0,
+  //       inputRef: r => {
+  //         ref[`otp${index}`] = r;
+  //       },
+  //       onChangeText: value => {
+  //         console.log('GILA', value.replace(/[^0-9]/g, ''));
+  //         handleInputOtp(value.replace(/[^0-9]/g, ''), index);
+  //       },
+  //     });
+  //   });
 
-    return <View style={styles.viewInputOtp}>{result}</View>;
-  };
+  //   return <View style={styles.viewInputOtp}>{result}</View>;
+  // };
 
   const handleResendOtp = async () => {
     let value = {};
@@ -314,7 +326,12 @@ const OTP = ({isLogin, method, methodValue}) => {
         <View style={styles.container}>
           {renderTextHeader()}
           {renderTextVerify()}
-          {renderInputOtp()}
+          <OTPField
+            onComplete={value => {
+              handleLogin(value);
+            }}
+          />
+          {/* {renderInputOtp()} */}
           {renderResendOTP()}
           {renderButtonNext()}
         </View>
