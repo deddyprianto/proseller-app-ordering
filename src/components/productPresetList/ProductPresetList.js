@@ -135,8 +135,10 @@ const ProductPresetList = ({products, basket}) => {
     }
   };
 
-  const handleViewableItemsChanged = useCallback(({changed}) => {
-    return handleScrollProducts(changed[0]);
+  const handleViewableItemsChanged = useCallback(({viewableItems}) => {
+    if (!isEmptyArray(viewableItems)) {
+      return handleScrollProducts(viewableItems[0]);
+    }
   }, []);
 
   const renderProductItem = (category, index) => {
