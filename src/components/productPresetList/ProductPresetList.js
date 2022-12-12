@@ -105,7 +105,6 @@ const ProductPresetList = ({products, basket}) => {
         activeOpacity={1}
         style={styleTouchable}
         onPress={() => {
-          setSelectedCategory(item);
           productRef.current.scrollToIndex({animated: true, index: index});
         }}>
         <Text style={styleText} numberOfLines={1}>
@@ -156,7 +155,7 @@ const ProductPresetList = ({products, basket}) => {
 
   const renderProducts = () => {
     const viewAbilityConfig = {
-      itemVisiblePercentThreshold: 30,
+      itemVisiblePercentThreshold: 40,
     };
 
     return (
