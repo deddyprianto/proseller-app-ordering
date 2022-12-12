@@ -29,7 +29,7 @@ const useStyles = () => {
     root: {
       flex: 1,
       justifyContent: 'flex-end',
-      backgroundColor: theme.colors.backgroundTransparent2,
+      backgroundColor: theme.colors.backgroundTransparent3,
     },
     container: {
       height: '90%',

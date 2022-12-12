@@ -80,6 +80,7 @@ const Theme = () => {
 
     backgroundTransparent1: '#00000033',
     backgroundTransparent2: '#B7B7B7CC',
+    backgroundTransparent3: '#00000099',
   };
 
   const fontSize = {
