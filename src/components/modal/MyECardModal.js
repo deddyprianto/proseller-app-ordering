@@ -272,7 +272,11 @@ const MyECardModal = ({open, handleClose}) => {
   };
 
   return (
-    <Modal transparent visible={open} onDismiss={handleClose}>
+    <Modal
+      animationType="slide"
+      transparent
+      visible={open}
+      onDismiss={handleClose}>
       <View style={styles.root}>
         <View style={styles.container}>
           {renderHeader()}
