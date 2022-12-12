@@ -63,6 +63,23 @@ const useStyles = () => {
       fontSize: 11,
       color: 'white',
     },
+    textHeaderTitle: {
+      paddingTop: 2,
+      fontSize: theme.fontSize[14],
+      color: theme.colors.textQuaternary,
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    viewHeaderTitle: {
+      flex: 1,
+      minHeight: 36,
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: 4,
+      paddingHorizontal: 16,
+      borderRadius: 50,
+      backgroundColor: theme.colors.accent,
+    },
     viewTextAndSearch: {
       paddingHorizontal: 16,
       width: '100%',
@@ -98,6 +115,12 @@ const useStyles = () => {
       height: 18,
       marginRight: 7,
       color: theme.colors.text4,
+    },
+    iconArrowDown: {
+      marginLeft: 4,
+      width: 16,
+      height: 12,
+      tintColor: theme.colors.textQuaternary,
     },
   });
   return styles;
@@ -163,6 +186,21 @@ const OrderHere = () => {
     }
   };
 
+  const renderHeaderTitle = () => {
+    return (
+      <TouchableOpacity
+        style={styles.viewHeaderTitle}
+        onPress={() => {
+          Actions.store();
+        }}>
+        <Text numberOfLines={1} style={styles.textHeaderTitle}>
+          {defaultOutlet?.name}
+        </Text>
+        <Image style={styles.iconArrowDown} source={appConfig.iconArrowDown} />
+      </TouchableOpacity>
+    );
+  };
+
   const renderText = () => {
     return (
       <View style={styles.viewBodyText}>
@@ -217,17 +255,6 @@ const OrderHere = () => {
         </TouchableOpacity>
       );
     }
-  };
-
-  const renderHeaderTitle = () => {
-    return (
-      <TouchableOpacity
-        onPress={() => {
-          Actions.store();
-        }}>
-        <Text>{defaultOutlet?.name}</Text>
-      </TouchableOpacity>
-    );
   };
 
   const renderHeader = () => {
