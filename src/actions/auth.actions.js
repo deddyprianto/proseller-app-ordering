@@ -655,6 +655,7 @@ export const createNewUser = payload => {
       dispatch({
         type: 'CREATE_USER_LOADING',
       });
+
       const response = await fetchApi(
         '/customer/register',
         'POST',
@@ -667,6 +668,7 @@ export const createNewUser = payload => {
           type: 'CREAT_USER_SUCCESS',
           dataRegister: payload,
         });
+        dispatch(loginSendOTP(payload));
         return true;
       } else {
         return response?.responseBody?.data;
