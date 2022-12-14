@@ -656,7 +656,6 @@ export const createNewUser = payload => {
         type: 'CREATE_USER_LOADING',
       });
 
-      console.log('GILA', payload);
       const response = await fetchApi(
         '/customer/register',
         'POST',
