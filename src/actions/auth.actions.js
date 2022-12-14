@@ -628,6 +628,27 @@ export const confirmForgotPassword = payload => {
 };
 
 //martin
+
+export const loginSendOTP = payload => {
+  return async dispatch => {
+    try {
+      const response = await fetchApi(
+        '/customer/login/send-otp',
+        'POST',
+        payload,
+        200,
+      );
+      console.log(response, 'response login send otp');
+
+      if (response.success) {
+        return true;
+      }
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
 export const createNewUser = payload => {
   return async dispatch => {
     try {
