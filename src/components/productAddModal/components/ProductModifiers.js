@@ -132,6 +132,9 @@ const useStyle = () => {
       color: 'white',
       fontSize: 13,
     },
+    flex1: {
+      flex: 1,
+    },
   });
   return result;
 };
@@ -292,6 +295,18 @@ const ProductModifiers = ({
     return isDisabled;
   };
 
+  const handleProductModifierYesNo = () => {
+    let productModifiersFormatted = [];
+    productModifiers.forEach(productModifier => {
+      if (productModifier.isYesNo) {
+        productModifiersFormatted.unshift(productModifier);
+      } else {
+        productModifiersFormatted.push(productModifier);
+      }
+    });
+    return productModifiersFormatted;
+  };
+
   const renderButtonPlus = ({selectedProductModifier, max}) => {
     const disabled = handleDisabledAddButton({
       modifier: selectedProductModifier,
@@ -395,7 +410,7 @@ const ProductModifiers = ({
   const renderOptionNameAndPrice = ({isYesNo, modifierValue}) => {
     if (isYesNo && !modifierValue?.price) {
       return (
-        <View style={{flex: 1}}>
+        <View style={styles.flex1}>
           <Text numberOfLines={2} style={styles.textOptionName}>
             {modifierValue?.name}
           </Text>
@@ -403,7 +418,7 @@ const ProductModifiers = ({
       );
     } else {
       return (
-        <View style={{flex: 1}}>
+        <View style={styles.flex1}>
           <Text numberOfLines={2} style={styles.textOptionName}>
             {modifierValue?.name}
           </Text>
@@ -487,18 +502,13 @@ const ProductModifiers = ({
 
   const renderProductModifiers = () => {
     if (!isEmptyArray(productModifiers)) {
-      let productModifiersFormatted = [];
-      productModifiers.forEach(productModifier => {
-        if (productModifier.isYesNo) {
-          productModifiersFormatted.unshift(productModifier);
-        } else {
-          productModifiersFormatted.push(productModifier);
-        }
-      });
+      const productModifiersFormatted = handleProductModifierYesNo(
+        productModifiers,
+      );
 
       const result = productModifiersFormatted.map(productModifier => {
         return (
-          <View style={{flex: 1}}>
+          <View style={styles.flex1}>
             {renderNameAndTermsConditions(productModifier)}
             {renderOptions({
               modifier: productModifier?.modifier,
