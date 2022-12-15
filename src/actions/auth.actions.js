@@ -628,12 +628,34 @@ export const confirmForgotPassword = payload => {
 };
 
 //martin
+
+export const loginSendOTP = payload => {
+  return async dispatch => {
+    try {
+      const response = await fetchApi(
+        '/customer/login/send-otp',
+        'POST',
+        payload,
+        200,
+      );
+      console.log(response, 'response login send otp');
+
+      if (response.success) {
+        return true;
+      }
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
 export const createNewUser = payload => {
   return async dispatch => {
     try {
       dispatch({
         type: 'CREATE_USER_LOADING',
       });
+
       const response = await fetchApi(
         '/customer/register',
         'POST',
@@ -646,6 +668,7 @@ export const createNewUser = payload => {
           type: 'CREAT_USER_SUCCESS',
           dataRegister: payload,
         });
+        dispatch(loginSendOTP(payload));
         return true;
       } else {
         return response?.responseBody?.data;
