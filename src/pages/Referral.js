@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect, useRef, useState} from 'react';
 
 import {
@@ -23,6 +24,7 @@ import {
   getReferralInfo,
   getReferralInvitedList,
 } from '../actions/referral.action';
+import LoadingScreen from '../components/loadingScreen';
 
 const useStyles = () => {
   const theme = Theme();
@@ -47,7 +49,7 @@ const useStyles = () => {
       paddingVertical: 8,
       elevation: 5,
       position: 'absolute',
-      bottom: 60,
+      bottom: 16,
       right: 18,
       borderRadius: 100,
       display: 'flex',
@@ -80,6 +82,7 @@ const Referral = () => {
   const [invitedListLimitLength, setInvitedListLimitLength] = useState(10);
   const [isShowFloatingButton, setIsShowFloatingButton] = useState(false);
   const [isInvitedList, setIsInvitedList] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const referralInfo = useSelector(
     state => state.referralReducer.getReferralInfo.referralInfo,
@@ -91,8 +94,13 @@ const Referral = () => {
 
   useEffect(() => {
     const loadData = async () => {
+      if (!referralInfo && !referralInvitedList) {
+        setIsLoading(true);
+      }
+
       await dispatch(getReferralInfo());
       await dispatch(getReferralInvitedList());
+      setIsLoading(false);
     };
 
     loadData();
@@ -179,6 +187,7 @@ const Referral = () => {
 
   return (
     <SafeAreaView style={styles.root}>
+      <LoadingScreen loading={isLoading} />
       <Header title="Referral" />
       <ScrollView
         ref={ref}
