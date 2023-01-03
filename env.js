@@ -14,8 +14,8 @@ const ENV = {
   API_HOST: 'https://api-funtoast.proseller-demo.com/', //DEMO
 
   // base_url_payment: 'https://payment.proseller.io/api/', //LIVE
-  base_url_payment: 'https://payment-demo.proseller.io/api/', //DEMO IO
-  // base_url_payment: 'https://payment.proseller-demo.com/api/', //DEMO COM
+  // base_url_payment: 'https://payment-demo.proseller.io/api/', //DEMO IO
+  base_url_payment: 'https://payment.proseller-demo.com/api/', //DEMO COM
 
   ONESIGNAL_ID: '16322779-652b-4fda-9563-abec1116aba4',
 
