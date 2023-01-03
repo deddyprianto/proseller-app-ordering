@@ -23,9 +23,9 @@ import Header from '../components/layout/header';
 import ProductCategoryList from '../components/productCategoryList';
 import ProductSubCategoryList from '../components/productSubCategoryList';
 import ProductList from '../components/productList';
+import ButtonCartFloating from '../components/buttonCartFloating';
 
 import {isEmptyArray, isEmptyObject} from '../helper/CheckEmpty';
-import CurrencyFormatter from '../helper/CurrencyFormatter';
 
 import appConfig from '../config/appConfig';
 
@@ -53,12 +53,6 @@ const useStyles = () => {
       width: '100%',
       paddingHorizontal: 16,
     },
-    footer: {
-      position: 'absolute',
-      bottom: 32,
-      width: '100%',
-      paddingHorizontal: 16,
-    },
     dividerVertical: {
       height: '100%',
       width: 1,
@@ -76,16 +70,6 @@ const useStyles = () => {
       margin: 16,
       color: theme.colors.textPrimary,
       fontSize: theme.fontSize[16],
-      fontFamily: theme.fontFamily.poppinsSemiBold,
-    },
-    textButtonCart: {
-      fontSize: theme.fontSize[16],
-      color: theme.colors.textSecondary,
-      fontFamily: theme.fontFamily.poppinsMedium,
-    },
-    textPriceButtonCart: {
-      fontSize: theme.fontSize[16],
-      color: theme.colors.textSecondary,
       fontFamily: theme.fontFamily.poppinsSemiBold,
     },
     textMenuBarChildTitle: {
@@ -114,23 +98,6 @@ const useStyles = () => {
       paddingHorizontal: 16,
       borderRadius: 50,
       backgroundColor: theme.colors.accent,
-    },
-    viewButtonCart: {
-      elevation: 2,
-      width: '100%',
-      display: 'flex',
-      flexDirection: 'row',
-      padding: 14,
-      justifyContent: 'space-between',
-      borderRadius: 8,
-      alignItems: 'center',
-      borderWidth: 2,
-      borderColor: theme.colors.accent,
-      backgroundColor: theme.colors.buttonActive,
-    },
-    viewIconAndTextCart: {
-      display: 'flex',
-      flexDirection: 'row',
     },
     viewMenuBar: {
       elevation: 2,
@@ -167,12 +134,6 @@ const useStyles = () => {
       alignItems: 'center',
       justifyContent: 'center',
       backgroundColor: theme.colors.accent,
-    },
-    icon: {
-      width: 24,
-      height: 24,
-      marginRight: 7,
-      color: theme.colors.textSecondary,
     },
     iconMenuBarChild: {
       height: 24,
@@ -334,29 +295,6 @@ const HomeRetail = () => {
       setIsShowFloatingButton(true);
     } else {
       setIsShowFloatingButton(false);
-    }
-  };
-
-  const renderButtonCart = () => {
-    if (!isEmptyArray(basket?.details)) {
-      return (
-        <TouchableOpacity
-          activeOpacity={0.5}
-          style={styles.viewButtonCart}
-          onPress={() => {
-            Actions.cart();
-          }}>
-          <View style={styles.viewIconAndTextCart}>
-            <Image source={appConfig.iconCart} style={styles.icon} />
-            <Text style={styles.textButtonCart}>
-              {basketLength} Items in Cart
-            </Text>
-          </View>
-          <Text style={styles.textPriceButtonCart}>
-            {CurrencyFormatter(basket?.totalNettAmount)}
-          </Text>
-        </TouchableOpacity>
-      );
     }
   };
 
@@ -553,16 +491,12 @@ const HomeRetail = () => {
     );
   };
 
-  const renderFooter = () => {
-    return <View style={styles.footer}>{renderButtonCart()}</View>;
-  };
-
   return (
     <SafeAreaView style={styles.root}>
       {renderHeader()}
       {renderBody()}
-      {renderFooter()}
       {renderFloatingButtonToTop()}
+      <ButtonCartFloating />
     </SafeAreaView>
   );
 };
