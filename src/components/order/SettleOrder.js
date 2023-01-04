@@ -2671,6 +2671,7 @@ class SettleOrder extends Component {
           // get pending order
           this.props.dispatch(getPendingCart());
 
+          this.setState({loading: false});
           // go to payment success
           const {url} = this.props;
           Actions.paymentSuccess({
@@ -3280,8 +3281,6 @@ class SettleOrder extends Component {
     return (
       <SafeAreaView style={styles.container}>
         {this.state.loading && <LoaderDarker />}
-
-        <LoadingScreen loading={this.state.loading} />
         {this.askUserToEnterCVV()}
         <ModalTransfer
           doPayment={this.doPayment}
