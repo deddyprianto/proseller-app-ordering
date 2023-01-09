@@ -14,7 +14,6 @@ import {
   SafeAreaView,
 } from 'react-native';
 
-import History from './history';
 import Profile from './Profile';
 import Store from './store';
 import Home from './home';
@@ -22,6 +21,7 @@ import Inbox from './inbox';
 import Rewards from './rewards';
 import ScannerBarcode from './ScannerBarcode';
 import OnBoarding from './OnBoarding';
+import OrderHistory from './OrderHistory';
 
 import appConfig from '../config/appConfig';
 
@@ -148,7 +148,7 @@ const NewPageIndex = () => {
     Home: Home,
     Inbox: Inbox,
     Scan: ScannerBarcode,
-    History: History,
+    History: OrderHistory,
     Profile: Profile,
   };
 
@@ -156,7 +156,7 @@ const NewPageIndex = () => {
     Home: Home,
     Inbox: Inbox,
     Rewards: Rewards,
-    History: History,
+    History: OrderHistory,
     Profile: Profile,
   };
   const screens = false ? dataRetailScreens : dataFnBScreens;

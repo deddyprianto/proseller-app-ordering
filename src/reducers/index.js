@@ -24,6 +24,7 @@ import productReducer from './product.reducer';
 import settingReducer from './setting.reducer';
 import giftReducer from './gift.reducer';
 import searchReducer from './search.reducer';
+import orderHistoryReducer from './order.history.reducer';
 
 const reducers = {
   authReducer,
@@ -43,6 +44,7 @@ const reducers = {
   settingReducer,
   giftReducer,
   searchReducer,
+  orderHistoryReducer,
   form: formReducer,
 };
 
