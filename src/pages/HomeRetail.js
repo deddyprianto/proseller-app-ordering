@@ -136,6 +136,18 @@ const useStyles = () => {
       justifyContent: 'center',
       backgroundColor: theme.colors.accent,
     },
+    viewFloatingButtonWithoutCartNotify: {
+      elevation: 5,
+      position: 'absolute',
+      bottom: 32,
+      right: 18,
+      width: 70,
+      height: 70,
+      borderRadius: 100,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: theme.colors.accent,
+    },
     iconMenuBarChild: {
       height: 24,
       width: 24,
@@ -386,9 +398,13 @@ const HomeRetail = () => {
 
   const renderFloatingButtonToTop = () => {
     if (isShowFloatingButton) {
+      const styleView = !isEmptyArray(basket?.details)
+        ? styles.viewFloatingButton
+        : styles.viewFloatingButtonWithoutCartNotify;
+
       return (
         <TouchableOpacity
-          style={styles.viewFloatingButton}
+          style={styleView}
           onPress={() => {
             ref.current.scrollTo(0);
           }}>
