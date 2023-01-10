@@ -24,6 +24,7 @@ import {getProductByBarcode} from '../actions/product.action';
 import {showSnackbar} from '../actions/setting.action';
 
 import Theme from '../theme';
+import FloatingButtonCart from '../components/floatingButtonCart';
 
 const HEIGHT = Dimensions.get('window').height;
 
@@ -126,6 +127,7 @@ const ScannerBarcode = () => {
   const [product, setProduct] = useState({});
 
   const snackbar = useSelector(state => state.settingReducer.snackbar.message);
+  const basket = useSelector(state => state.orderReducer?.dataBasket?.product);
 
   useEffect(() => {
     if (!snackbar && !isOpenAddModal) {
@@ -227,7 +229,7 @@ const ScannerBarcode = () => {
   const renderHeader = () => {
     return (
       <View style={styles.header}>
-        <Header cart isMiddleLogo />
+        <Header isMiddleLogo />
       </View>
     );
   };
@@ -265,6 +267,7 @@ const ScannerBarcode = () => {
       {renderTopContent()}
       {renderBottomContent()}
       {renderProductAddModal()}
+      <FloatingButtonCart basket={basket} />
     </SafeAreaView>
   );
 };

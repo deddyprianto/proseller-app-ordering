@@ -73,7 +73,7 @@ const ProductSearchList = ({products, basket, searchQuery, isLoading}) => {
   const styles = useStyles();
 
   const renderProducts = () => {
-    const result = products.map((item, index) => {
+    const result = products?.map((item, index) => {
       return (
         <ProductSearchListItem
           key={index}
