@@ -3462,7 +3462,7 @@ class SettleOrder extends Component {
                     <View>
                       <Text
                         style={{
-                          fontSize: 14,
+                          fontSize: 18,
                           fontWeight: 'bold',
                           color: colorConfig.pageIndex.activeTintColor,
                         }}>
@@ -3993,7 +3993,8 @@ class SettleOrder extends Component {
                   color: 'white',
                   fontFamily: 'Poppins-Regular',
                 }}>
-                {'Pay' + this.format(CurrencyFormatter(this.state.totalBayar))}
+                {'Make payment' +
+                  this.format(CurrencyFormatter(this.state.totalBayar))}{' '}
               </Text>
             </TouchableOpacity>
 

@@ -241,7 +241,7 @@ const VoucherDetail = ({voucher}) => {
   const renderReducedPoint = () => {
     return (
       <View style={styles.viewInfoPointValue}>
-        <Text style={styles.textInfoPointTitle}>Point will be reduced: </Text>
+        <Text style={styles.textInfoPointTitle}>Points required : </Text>
         <Text style={styles.textInfoPointValue}>
           {voucher?.redeemValue} Points
         </Text>

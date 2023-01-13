@@ -115,6 +115,7 @@ class RewardsRewards extends Component {
                     color: colorConfig.pageIndex.backgroundColor,
                     fontWeight: 'bold',
                   }}>
+                  Balance:{' '}
                   {this.props.totalPoint == undefined
                     ? 0 + ' Point'
                     : this.props.totalPoint + ' Points'}

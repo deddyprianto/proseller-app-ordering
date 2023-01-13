@@ -42,6 +42,7 @@ class RewardsSVC extends Component {
     return (
       <View
         style={{
+          height: '100%',
           // height: this.state.screenHeight / 3 - 40,
           borderWidth: 0.4,
           borderColor: 'white',
@@ -58,7 +59,7 @@ class RewardsSVC extends Component {
               flexDirection: 'row',
               justifyContent: 'center',
               alignItems: 'center',
-              marginBottom: 10
+              marginBottom: 10,
             }}>
             <Text
               style={{
@@ -67,7 +68,7 @@ class RewardsSVC extends Component {
                 fontSize: 16,
                 fontWeight: 'bold',
               }}>
-              Store Value Card
+              Stored Value Card Balance
             </Text>
           </View>
           <TouchableOpacity
@@ -87,7 +88,7 @@ class RewardsSVC extends Component {
                 fontSize: 25,
                 fontFamily: 'Poppins-Medium',
               }}>
-              {this.format2(CurrencyFormatter(balance))}
+              ${this.format2(CurrencyFormatter(balance))}
             </Text>
             <Icon
               size={40}

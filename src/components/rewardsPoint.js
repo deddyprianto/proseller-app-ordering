@@ -49,6 +49,7 @@ class RewardsPoint extends Component {
     return (
       <View
         style={{
+          height: '100%',
           // height: this.state.screenHeight / HEIGHT - 40,
           borderWidth: 0.4,
           borderColor: 'white',
@@ -72,7 +73,7 @@ class RewardsPoint extends Component {
                 alignItems: 'center',
                 // marginLeft: 13,
                 // paddingTop: 25,
-                marginBottom: 10
+                marginBottom: 10,
               }}>
               <Text
                 style={{
@@ -81,7 +82,7 @@ class RewardsPoint extends Component {
                   fontSize: 16,
                   fontWeight: 'bold',
                 }}>
-                Rewards Points
+                My Rewards Points
               </Text>
             </View>
             <TouchableOpacity
@@ -144,7 +145,7 @@ class RewardsPoint extends Component {
                 alignItems: 'center',
                 // marginLeft: 13,
                 paddingTop: 25,
-                marginBottom: 10
+                marginBottom: 10,
               }}>
               <Text
                 style={{
@@ -153,7 +154,7 @@ class RewardsPoint extends Component {
                   fontSize: 16,
                   fontWeight: 'bold',
                 }}>
-                Rewards Points
+                My Rewards Points
               </Text>
             </View>
             <TouchableOpacity
@@ -175,11 +176,7 @@ class RewardsPoint extends Component {
                 }}>
                 {totalPoint}
               </Text>
-              <Icon
-                size={40}
-                name={'chevron-right'}
-                style={{color: 'white'}}
-              />
+              <Icon size={40} name={'chevron-right'} style={{color: 'white'}} />
             </TouchableOpacity>
           </View>
         ) : null}

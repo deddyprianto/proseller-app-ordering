@@ -42,7 +42,7 @@ const useStyles = () => {
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
-      justifyContent: 'center',
+      // justifyContent: 'center',
     },
     viewInfo: {
       flex: 1,
@@ -50,7 +50,7 @@ const useStyles = () => {
     },
     viewDashedLine: {
       width: 15,
-      height: 15,
+      flex: 1,
       tintColor: 'white',
       alignItems: 'center',
     },

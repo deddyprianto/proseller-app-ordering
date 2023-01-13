@@ -56,7 +56,7 @@ class HistoryMenuTab extends Component {
                     color: 'white',
                     fontFamily: 'Poppins-Regular',
                   }}>
-                  Orders
+                  Orders History
                 </Text>
               </View>
               {this.state.toggleAll ? <View style={styles.triangle} /> : null}

@@ -561,7 +561,7 @@ const styles = StyleSheet.create({
   },
   tabBalance: {
     flexDirection: 'row',
-    // height: Dimensions.get('window').height / 3 + 30,
+    height: Dimensions.get('window').height / 3,
     paddingBottom: 100,
     paddingTop: 30,
     width: '100%',

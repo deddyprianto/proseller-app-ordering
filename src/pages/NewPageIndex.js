@@ -22,6 +22,7 @@ import Rewards from './rewards';
 import ScannerBarcode from './ScannerBarcode';
 import OnBoarding from './OnBoarding';
 import OrderHistory from './OrderHistory';
+import History from './history';
 
 import appConfig from '../config/appConfig';
 
@@ -148,7 +149,7 @@ const NewPageIndex = () => {
     Home: Home,
     Inbox: Inbox,
     Scan: ScannerBarcode,
-    History: OrderHistory,
+    History: History,
     Profile: Profile,
   };
 
@@ -156,7 +157,7 @@ const NewPageIndex = () => {
     Home: Home,
     Inbox: Inbox,
     Rewards: Rewards,
-    History: OrderHistory,
+    History: History,
     Profile: Profile,
   };
   const screens = true ? dataRetailScreens : dataFnBScreens;
