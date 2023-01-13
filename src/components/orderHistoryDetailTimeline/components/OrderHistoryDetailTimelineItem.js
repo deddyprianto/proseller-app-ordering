@@ -42,6 +42,7 @@ const useStyles = () => {
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
+      justifyContent: 'center',
     },
     viewInfo: {
       flex: 1,
@@ -51,6 +52,7 @@ const useStyles = () => {
       width: 15,
       height: 15,
       tintColor: 'white',
+      alignItems: 'center',
     },
     viewIconCompleted: {
       width: 15,
