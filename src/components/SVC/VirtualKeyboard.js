@@ -272,8 +272,8 @@ class VirtualKeyboardCom extends Component {
             fontFamily: 'Poppins-Medium',
             marginBottom: '25%',
           }}>
-          <Text style={{fontSize: 15}}>{appConfig.appMataUang}</Text>{' '}
-          {this.state.amount}
+          {/* <Text style={{fontSize: 15}}>{appConfig.appMataUang}</Text>{' '} */}
+          {this.state.amount ? CurrencyFormatter(Number(this.state.amount)) : 0}
         </Text>
         <View>
           <View
