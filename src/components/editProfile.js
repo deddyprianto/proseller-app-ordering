@@ -325,6 +325,38 @@ class AccountEditProfil extends Component {
     }
   };
 
+  checkDisabledButtonSave = () => {
+    let {fields} = this.state;
+    fields.map((item, index) => {
+      if (item.fieldName.toLowerCase() === 'birthdate' && item.mandatory) {
+        fields[index].filled = this.state.birthDate;
+      }
+      if (item.fieldName.toLowerCase() === 'gender' && item.mandatory) {
+        fields[index].filled = this.state.gender;
+      }
+      if (item.fieldName.toLowerCase() === 'postalcode' && item.mandatory) {
+        fields[index].filled = this.state.postalcode;
+      }
+      if (item.mandatory) {
+        fields[index].filled = this.state[item.fieldName];
+      }
+    });
+
+    let passed = true;
+
+    for (let i = 0; i < fields.length; i++) {
+      if (fields[i].mandatory && fields[i].filled) {
+        passed = false;
+      }
+    }
+
+    if (passed) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
   submitEdit = async () => {
     try {
       let {fields} = this.state;
@@ -1143,11 +1175,11 @@ class AccountEditProfil extends Component {
               </Form>
             </View>
             <TouchableOpacity
-              disabled={!isPostalCodeValid}
+              disabled={this.checkDisabledButtonSave()}
               onPress={this.checkMandatory}>
               <View
                 style={
-                  isPostalCodeValid
+                  this.checkDisabledButtonSave()
                     ? styles.primaryButton
                     : styles.disabledPrimaryButton
                 }>
