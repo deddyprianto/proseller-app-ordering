@@ -87,11 +87,11 @@ class VirtualKeyboardCom extends Component {
     if (amount === '' || amount === 0) {
       if (balance >= totalPurchase) {
         await this.setState({
-          amount: totalPurchase,
+          amount: Number(totalPurchase),
           tempAmountSVC: totalPurchase,
         });
       } else if (balance < totalPurchase) {
-        await this.setState({amount: balance, tempAmountSVC: balance});
+        await this.setState({amount: Number(balance), tempAmountSVC: balance});
       }
     }
   };
@@ -118,7 +118,7 @@ class VirtualKeyboardCom extends Component {
   };
 
   changeText(newText) {
-    this.setState({amount: newText});
+    this.setState({amount: Number(newText)});
   }
 
   transferSVC = async () => {
@@ -273,7 +273,7 @@ class VirtualKeyboardCom extends Component {
             marginBottom: '25%',
           }}>
           {/* <Text style={{fontSize: 15}}>{appConfig.appMataUang}</Text>{' '} */}
-          {this.state.amount ? CurrencyFormatter(Number(this.state.amount)) : 0}
+          {CurrencyFormatter(Number(this.state.amount || 0))}
         </Text>
         <View>
           <View
@@ -297,12 +297,12 @@ class VirtualKeyboardCom extends Component {
               if (e !== null && e !== '' && !isNaN(e)) {
                 const purchase = this.props.totalPurchase - Number(e);
                 this.setState({
-                  amount: e,
+                  amount: Number(e),
                   // totalPurchase: purchase,
                 });
               } else {
                 this.setState({
-                  amount: '0',
+                  amount: Number(0),
                   // totalPurchase: this.props.totalPurchase,
                 });
               }
