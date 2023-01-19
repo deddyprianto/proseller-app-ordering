@@ -186,7 +186,51 @@ class AccountEditProfil extends Component {
       appSetting: {},
       isPostalCodeValid,
       customFields: [],
+      disabledSaveButton: false,
     };
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.pokemons !== this.state.pokemons) {
+      console.log('pokemons state has changed.');
+    }
+
+    if (prevState.fields !== this.state.fields) {
+      console.log('GILA', this.state.fields);
+      let {fields} = this.state;
+      fields.map((item, index) => {
+        if (item.fieldName.toLowerCase() === 'birthdate' && item.mandatory) {
+          fields[index].filled = this.state.birthDate;
+        }
+        if (item.fieldName.toLowerCase() === 'gender' && item.mandatory) {
+          fields[index].filled = this.state.gender;
+        }
+        if (item.fieldName.toLowerCase() === 'postalcode' && item.mandatory) {
+          fields[index].filled = this.state.postalcode;
+        }
+        if (item.mandatory) {
+          fields[index].filled = this.state[item.fieldName];
+        }
+      });
+
+      let passed = true;
+
+      for (let i = 0; i < fields.length; i++) {
+        if (fields[i].mandatory && fields[i].filled) {
+          passed = false;
+        }
+      }
+
+      if (passed) {
+        this.setState({disabledSaveButton: false});
+        // this.state.disabledSaveButton = false;
+        return false;
+      } else {
+        this.setState({disabledSaveButton: true});
+        // this.state.disabledSaveButton = true;
+        return true;
+      }
+    }
   }
 
   goBack = async () => {
@@ -327,7 +371,7 @@ class AccountEditProfil extends Component {
 
   checkDisabledButtonSave = () => {
     let {fields} = this.state;
-    fields.map((item, index) => {
+    fields.forEach((item, index) => {
       if (item.fieldName.toLowerCase() === 'birthdate' && item.mandatory) {
         fields[index].filled = this.state.birthDate;
       }
@@ -342,14 +386,16 @@ class AccountEditProfil extends Component {
       }
     });
 
-    let passed = true;
-
-    for (let i = 0; i < fields.length; i++) {
-      if (fields[i].mandatory && fields[i].filled) {
-        passed = false;
+    const passed = fields.every(row => {
+      if (row.mandatory && row.filled) {
+        return true;
       }
-    }
-
+      if (!row.mandatory) {
+        return true;
+      } else {
+        return false;
+      }
+    });
     if (passed) {
       return false;
     } else {
