@@ -351,9 +351,9 @@ class AccountEditProfil extends Component {
     }
 
     if (passed) {
-      return true;
-    } else {
       return false;
+    } else {
+      return true;
     }
   };
 
@@ -1180,8 +1180,8 @@ class AccountEditProfil extends Component {
               <View
                 style={
                   this.checkDisabledButtonSave()
-                    ? styles.primaryButton
-                    : styles.disabledPrimaryButton
+                    ? styles.disabledPrimaryButton
+                    : styles.primaryButton
                 }>
                 <Text style={styles.buttonText}>{intlData.messages.save}</Text>
               </View>
