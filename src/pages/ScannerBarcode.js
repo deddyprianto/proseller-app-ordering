@@ -24,6 +24,7 @@ import {getProductByBarcode} from '../actions/product.action';
 import {showSnackbar} from '../actions/setting.action';
 
 import Theme from '../theme';
+import ButtonCartFloating from '../components/buttonCartFloating/ButtonCartFloating';
 
 const HEIGHT = Dimensions.get('window').height;
 
@@ -227,7 +228,7 @@ const ScannerBarcode = () => {
   const renderHeader = () => {
     return (
       <View style={styles.header}>
-        <Header cart isMiddleLogo />
+        <Header isMiddleLogo />
       </View>
     );
   };
@@ -265,6 +266,7 @@ const ScannerBarcode = () => {
       {renderTopContent()}
       {renderBottomContent()}
       {renderProductAddModal()}
+      <ButtonCartFloating />
     </SafeAreaView>
   );
 };
