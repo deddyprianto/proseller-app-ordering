@@ -118,7 +118,7 @@ const OnBoarding = () => {
     appConfig.imageOnBoarding1,
     appConfig.imageOnBoarding2,
     appConfig.imageOnBoarding3,
-    // appConfig.imageOnBoarding4,
+    appConfig.imageOnBoarding4,
   ];
 
   const renderImages = () => {
@@ -127,7 +127,7 @@ const OnBoarding = () => {
         <Image
           key={index}
           style={styles.image}
-          resizeMode="stretch"
+          // resizeMode="stretch"
           source={image}
         />
       );
