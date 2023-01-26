@@ -878,7 +878,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = acemart/acemart.entitlements;
-				CURRENT_PROJECT_VERSION = 58;
+				CURRENT_PROJECT_VERSION = 91;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = YSZ34Z59CY;
 				ENABLE_BITCODE = NO;
@@ -892,16 +892,16 @@
 					"$(SRCROOT)/..\node_modules\neact-native-device-brightnessRNDeviceBrightness",
 				);
 				INFOPLIST_FILE = acemart/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "SKIP THE QUEUE (demo)";
+				INFOPLIST_KEY_CFBundleDisplayName = "SKIP THE QUEUE";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.1.2;
+				MARKETING_VERSION = 1.1.30;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.edgeworks.acemart-demo";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.edgeworks.acemart-app";
 				PRODUCT_NAME = "Ace Mart";
 				SWIFT_OBJC_BRIDGING_HEADER = "acemart-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -917,7 +917,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = acemart/acemart.entitlements;
-				CURRENT_PROJECT_VERSION = 58;
+				CURRENT_PROJECT_VERSION = 91;
 				DEVELOPMENT_TEAM = YSZ34Z59CY;
 				ENABLE_BITCODE = NO;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
@@ -930,16 +930,16 @@
 					"$(SRCROOT)/..\node_modules\neact-native-device-brightnessRNDeviceBrightness",
 				);
 				INFOPLIST_FILE = acemart/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "SKIP THE QUEUE (demo)";
+				INFOPLIST_KEY_CFBundleDisplayName = "SKIP THE QUEUE";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.1.2;
+				MARKETING_VERSION = 1.1.30;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.edgeworks.acemart-demo";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.edgeworks.acemart-app";
 				PRODUCT_NAME = "Ace Mart";
 				SWIFT_OBJC_BRIDGING_HEADER = "acemart-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
