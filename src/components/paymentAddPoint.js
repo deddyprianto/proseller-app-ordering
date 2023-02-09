@@ -136,12 +136,12 @@ class paymentAddPoint extends Component {
       if (this.props.valueSet == 0) {
         // if (setDefault >= this.props.totalPoint) {
         if (setDefault >= pointToSet) {
-          this.setState({jumPoint: pointToSet});
+          this.setState({jumPoint: parseFloat(pointToSet)});
         } else {
-          this.setState({jumPoint: setDefault});
+          this.setState({jumPoint: parseFloat(setDefault)});
         }
       } else {
-        this.setState({jumPoint: this.props.valueSet});
+        this.setState({jumPoint: parseFloat(this.props.valueSet)});
       }
     } catch (e) {
       Alert.alert('Sorry', 'Something went wrong, please try again');
@@ -425,9 +425,9 @@ class paymentAddPoint extends Component {
               onRef={ref => (this.keyboard = ref)}
               onChange={e => {
                 if (e !== null && e !== '') {
-                  this.setState({jumPoint: e});
+                  this.setState({jumPoint: parseFloat(e)});
                 } else {
-                  this.setState({jumPoint: '0'});
+                  this.setState({jumPoint: parseFloat(0)});
                 }
               }}
               keyboardStyle={{fontFamily: 'Poppins-Regular'}}
