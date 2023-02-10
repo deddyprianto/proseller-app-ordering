@@ -668,7 +668,7 @@ export const createNewUser = payload => {
           type: 'CREAT_USER_SUCCESS',
           dataRegister: payload,
         });
-        dispatch(loginSendOTP(payload));
+        dispatch(sendOTP(payload));
         return true;
       } else {
         return response?.responseBody?.data;

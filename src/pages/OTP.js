@@ -160,6 +160,22 @@ const OTP = ({isLogin, method, methodValue}) => {
     return () => backHandler.remove();
   }, []);
 
+  useEffect(() => {
+    const loadData = async () => {
+      let value = {};
+
+      if (method === 'email') {
+        value.email = methodValue;
+      } else {
+        value.phoneNumber = methodValue;
+      }
+
+      await dispatch(sendOTP(value));
+    };
+
+    loadData();
+  }, []);
+
   const handleLogin = async () => {
     let value = {};
     const otpFormatted = otp.join('');
