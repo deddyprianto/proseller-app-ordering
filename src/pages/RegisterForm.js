@@ -121,6 +121,7 @@ const RegisterForm = ({registerMethod, inputValue}) => {
       username: phone,
       email: email,
       phoneNumber: phone,
+      registerMethod,
     };
     setIsLoading(true);
     const response = await dispatch(createNewUser(payload));

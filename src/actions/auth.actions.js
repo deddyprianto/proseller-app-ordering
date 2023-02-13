@@ -257,6 +257,7 @@ export const loginUser = payload => {
     }
   };
 };
+
 //valid
 export const logoutUser = () => {
   return async (dispatch, getState) => {
@@ -628,7 +629,6 @@ export const confirmForgotPassword = payload => {
 };
 
 //martin
-
 export const loginSendOTP = payload => {
   return async dispatch => {
     try {
@@ -652,6 +652,13 @@ export const loginSendOTP = payload => {
 export const createNewUser = payload => {
   return async dispatch => {
     try {
+      const requestOtp = {};
+      if (payload?.registerMethod === 'email') {
+        requestOtp.email = payload?.email;
+      } else {
+        requestOtp.phoneNumber = payload?.phoneNumber;
+      }
+
       dispatch({
         type: 'CREATE_USER_LOADING',
       });
@@ -662,13 +669,14 @@ export const createNewUser = payload => {
         payload,
         200,
       );
+
       console.log(response, 'response register');
       if (response.success) {
         dispatch({
           type: 'CREAT_USER_SUCCESS',
           dataRegister: payload,
         });
-        dispatch(sendOTP(payload));
+        dispatch(loginSendOTP(requestOtp));
         return true;
       } else {
         return response?.responseBody?.data;
