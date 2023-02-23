@@ -719,7 +719,11 @@ const Cart = () => {
           onPress={() => {
             handleOpenOrderingTypeModal();
           }}>
-          <Text style={styles.textMethodValue}>{orderingTypeValue}</Text>
+          <Text style={styles.textMethodValue}>
+            {orderingTypeValue.length > 12
+              ? orderingTypeValue.substring(0.12) + '...'
+              : orderingTypeValue}
+          </Text>
         </TouchableOpacity>
       </View>
     );
@@ -842,20 +846,20 @@ const Cart = () => {
     const isPickUp = available && basket?.orderingMode === 'STOREPICKUP';
     const isTakeAway = available && basket?.orderingMode === 'TAKEAWAY';
 
-    if (isDelivery || isPickUp || isTakeAway) {
-      return (
-        <View style={styles.viewMethod}>
-          <Text style={styles.textMethod}>Order Date</Text>
-          <TouchableOpacity
-            style={styles.touchableMethod}
-            onPress={() => {
-              handleOpenDeliveryDateModal();
-            }}>
-            {renderDateText()}
-          </TouchableOpacity>
-        </View>
-      );
-    }
+    // if (isDelivery || isPickUp || isTakeAway) {
+    return (
+      <View style={styles.viewMethod}>
+        <Text style={styles.textMethod}>Order Date</Text>
+        <TouchableOpacity
+          style={styles.touchableMethod}
+          onPress={() => {
+            handleOpenDeliveryDateModal();
+          }}>
+          {renderDateText()}
+        </TouchableOpacity>
+      </View>
+    );
+    // }
   };
 
   const renderAddButton = () => {
