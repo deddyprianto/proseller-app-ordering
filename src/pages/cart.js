@@ -719,7 +719,11 @@ const Cart = () => {
           onPress={() => {
             handleOpenOrderingTypeModal();
           }}>
-          <Text style={styles.textMethodValue}>{orderingTypeValue}</Text>
+          <Text style={styles.textMethodValue}>
+            {orderingTypeValue.length > 12
+              ? orderingTypeValue.substring(0.12) + '...'
+              : orderingTypeValue}
+          </Text>
         </TouchableOpacity>
       </View>
     );

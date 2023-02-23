@@ -25,10 +25,11 @@ const useStyles = () => {
     },
     body: {
       marginTop: 16,
+      paddingHorizontal: 16,
     },
     footer: {
       marginVertical: 16,
-      paddingHorizontal: 35,
+      paddingHorizontal: 16,
     },
     textSave: {
       color: 'white',
@@ -58,7 +59,6 @@ const useStyles = () => {
       display: 'flex',
       flexDirection: 'row',
       justifyContent: 'space-between',
-      paddingHorizontal: 22,
     },
     viewDeliveryTime: {
       marginBottom: 16,
@@ -81,50 +81,53 @@ const useStyles = () => {
       marginTop: 16,
       display: 'flex',
       flexDirection: 'row',
-      justifyContent: 'center',
+      justifyContent: 'space-between',
       flexWrap: 'wrap',
     },
     textDayAvailable: {
-      fontSize: 8,
-      color: colorConfig.primaryColor,
-      fontWeight: 'bold',
+      fontSize: 12,
+      color: theme.colors.textQuaternary,
+      fontFamily: theme.fontFamily.poppinsMedium,
     },
     textDateAvailable: {
-      fontSize: 10,
-      color: colorConfig.primaryColor,
+      fontSize: 12,
+      color: theme.colors.textQuaternary,
+      fontFamily: theme.fontFamily.poppinsMedium,
     },
     textMonthAvailable: {
-      fontSize: 8,
-      color: colorConfig.primaryColor,
-      fontWeight: 'bold',
+      fontSize: 12,
+      color: theme.colors.textQuaternary,
+      fontFamily: theme.fontFamily.poppinsMedium,
     },
     textDayUnavailable: {
-      fontSize: 8,
-      color: '#B7B7B7',
-      fontWeight: 'bold',
+      fontSize: 12,
+      color: theme.colors.textTertiary,
+      fontFamily: theme.fontFamily.poppinsMedium,
     },
     textDateUnavailable: {
-      fontSize: 10,
-      color: '#B7B7B7',
+      fontSize: 12,
+      color: theme.colors.textTertiary,
+      fontFamily: theme.fontFamily.poppinsMedium,
     },
     textMonthUnavailable: {
-      fontSize: 8,
-      color: '#B7B7B7',
-      fontWeight: 'bold',
+      fontSize: 12,
+      color: theme.colors.textTertiary,
+      fontFamily: theme.fontFamily.poppinsMedium,
     },
     textDaySelected: {
-      fontSize: 8,
-      color: 'white',
-      fontWeight: 'bold',
+      fontSize: 12,
+      color: theme.colors.textSecondary,
+      fontFamily: theme.fontFamily.poppinsMedium,
     },
     textDateSelected: {
-      fontSize: 10,
-      color: colorConfig.primaryColor,
+      fontSize: 12,
+      color: theme.colors.textQuaternary,
+      fontFamily: theme.fontFamily.poppinsMedium,
     },
     textMonthSelected: {
-      fontSize: 8,
-      color: 'white',
-      fontWeight: 'bold',
+      fontSize: 12,
+      color: theme.colors.textSecondary,
+      fontFamily: theme.fontFamily.poppinsMedium,
     },
     touchableItemSelected: {
       width: 53,
@@ -135,7 +138,7 @@ const useStyles = () => {
       alignItems: 'center',
       justifyContent: 'center',
       paddingVertical: 8,
-      marginHorizontal: 6,
+      // marginHorizontal: 6,
     },
     touchableItemAvailable: {
       width: 53,
@@ -145,7 +148,7 @@ const useStyles = () => {
       alignItems: 'center',
       justifyContent: 'center',
       paddingVertical: 8,
-      marginHorizontal: 6,
+      // marginHorizontal: 6,
     },
     touchableItemUnavailable: {
       width: 53,
@@ -155,7 +158,7 @@ const useStyles = () => {
       alignItems: 'center',
       justifyContent: 'center',
       paddingVertical: 8,
-      marginHorizontal: 6,
+      // marginHorizontal: 6,
     },
     circleSelected: {
       width: 26,
@@ -370,9 +373,19 @@ const DateSelectorModal = ({open, handleClose, value, orderingMode}) => {
   };
 
   const renderDateItem = item => {
-    const day = moment(item).format('ddd');
+    const today =
+      moment(item).format('YYYY-MM-DD') === moment().format('YYYY-MM-DD');
+
+    const day = today
+      ? 'TODAY'
+      : moment(item)
+          .format('ddd')
+          .toUpperCase();
+
     const date = moment(item).format('DD');
-    const month = moment(item).format('MMMM');
+    const month = moment(item)
+      .format('MMM')
+      .toUpperCase();
 
     const selected = selectedDate === item;
 
