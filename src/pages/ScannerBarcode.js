@@ -1,5 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react';
 import QRCodeScanner from 'react-native-qrcode-scanner';
+import BarcodeScanner from 'react-native-scan-barcode';
 import {useDispatch, useSelector} from 'react-redux';
 
 import {
@@ -128,11 +129,11 @@ const ScannerBarcode = () => {
 
   const snackbar = useSelector(state => state.settingReducer.snackbar.message);
 
-  useEffect(() => {
-    if (!snackbar && !isOpenAddModal) {
-      scanner.reactivate();
-    }
-  }, [snackbar, isOpenAddModal]);
+  // useEffect(() => {
+  //   if (!snackbar && !isOpenAddModal) {
+  //     scanner.reactivate();
+  //   }
+  // }, [snackbar, isOpenAddModal]);
 
   const handleOpenProductAddModal = () => {
     setIsOpenAddModal(true);
@@ -249,7 +250,10 @@ const ScannerBarcode = () => {
       );
     }
   };
-
+  const handleScan = e => {
+    console.log('Barcode: ' + e.data);
+    console.log('Type: ' + e.type);
+  };
   return (
     <SafeAreaView style={styles.root}>
       <LoadingScreen loading={isLoading} />
@@ -261,6 +265,12 @@ const ScannerBarcode = () => {
         showMarker={true}
         onRead={onSuccess}
       />
+
+      <BarcodeScanner
+        onBarCodeRead={handleScan}
+        // style={styles.camera}
+        torchMode="off"
+      />
       {renderSearchModal()}
       {renderHeader()}
       {renderTopContent()}
@@ -268,6 +278,12 @@ const ScannerBarcode = () => {
       {renderProductAddModal()}
       <ButtonCartFloating />
     </SafeAreaView>
+    // <BarcodeScanner
+    //   onBarCodeRead={handleScan}
+    //   style={{flex: 1}}
+    //   torchMode="off"
+    //   cameraType="back"
+    // />
   );
 };
 
