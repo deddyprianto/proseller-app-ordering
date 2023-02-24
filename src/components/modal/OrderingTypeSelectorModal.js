@@ -16,6 +16,7 @@ import {changeOrderingMode} from '../../actions/order.action';
 import {isEmptyArray, isEmptyObject} from '../../helper/CheckEmpty';
 import Theme from '../../theme';
 import LoadingScreen from '../loadingScreen';
+import CurrencyFormatter from '../../helper/CurrencyFormatter';
 
 const useStyles = () => {
   const theme = Theme();
@@ -29,25 +30,21 @@ const useStyles = () => {
       alignItems: 'center',
     },
     body: {
+      marginVertical: 16,
       display: 'flex',
-      flexDirection: 'row',
+      flexDirection: 'column',
       justifyContent: 'center',
-      flexWrap: 'wrap',
+      // flexWrap: 'wrap',
     },
     footer: {
-      paddingHorizontal: 35,
+      padding: 10,
     },
     textName: {
       textAlign: 'center',
-      marginTop: 8,
-      fontSize: 12,
-      color: theme.colors.textTertiary,
-    },
-    textNameSelected: {
-      textAlign: 'center',
-      marginTop: 8,
-      fontSize: 12,
+      marginLeft: 16,
+      fontSize: theme.fontSize[14],
       color: theme.colors.textQuaternary,
+      fontFamily: theme.fontFamily.poppinsMedium,
     },
     textPrice: {
       fontSize: 12,
@@ -65,9 +62,50 @@ const useStyles = () => {
       fontSize: 8,
       color: theme.colors.textQuaternary,
     },
+    textNameDisabled: {
+      textAlign: 'center',
+      marginLeft: 16,
+      fontSize: theme.fontSize[14],
+      color: theme.colors.textTertiary,
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textPriceDisabled: {
+      fontSize: 12,
+      color: theme.colors.textTertiary,
+    },
+    textCurrencyDisabled: {
+      fontSize: 8,
+      color: theme.colors.textTertiary,
+    },
     textSave: {
       color: theme.colors.textSecondary,
       fontSize: 12,
+    },
+    textDeliveryTermsAndConditions: {
+      marginTop: 16,
+      textAlign: 'center',
+      fontSize: theme.fontSize[14],
+      color: theme.colors.textPrimary,
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textDeliveryTermsAndConditionsBold: {
+      textAlign: 'center',
+      fontSize: theme.fontSize[14],
+      color: theme.colors.textPrimary,
+      fontFamily: theme.fontFamily.poppinsBold,
+    },
+    textDeliveryTermsAndConditionsDisabled: {
+      marginTop: 16,
+      textAlign: 'center',
+      fontSize: theme.fontSize[14],
+      color: theme.colors.textTertiary,
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textDeliveryTermsAndConditionsBoldDisabled: {
+      textAlign: 'center',
+      fontSize: theme.fontSize[14],
+      color: theme.colors.textTertiary,
+      fontFamily: theme.fontFamily.poppinsBold,
     },
     textChooseOrderingType: {
       color: theme.colors.textPrimary,
@@ -75,30 +113,47 @@ const useStyles = () => {
       fontFamily: theme.fontFamily.poppinsSemiBold,
     },
     touchableItem: {
-      width: 81,
       display: 'flex',
       flexDirection: 'column',
-      alignItems: 'center',
       justifyContent: 'flex-start',
       borderWidth: 1,
       borderRadius: 8,
-      paddingVertical: 10,
-      paddingHorizontal: 10,
-      margin: 6,
-      borderColor: theme.colors.greyScale2,
+      padding: 16,
+      marginHorizontal: 16,
+      marginVertical: 8,
+      borderColor: theme.colors.textQuaternary,
     },
     touchableItemSelected: {
-      width: 81,
       display: 'flex',
       flexDirection: 'column',
-      alignItems: 'center',
       justifyContent: 'flex-start',
       borderWidth: 1,
       borderRadius: 8,
-      paddingVertical: 10,
-      paddingHorizontal: 10,
-      margin: 6,
+      padding: 16,
+      marginHorizontal: 16,
+      marginVertical: 8,
       borderColor: theme.colors.textQuaternary,
+      backgroundColor: theme.colors.accent,
+    },
+    touchableItemDisabled: {
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'flex-start',
+      borderWidth: 1,
+      borderRadius: 8,
+      padding: 16,
+      marginHorizontal: 16,
+      marginVertical: 8,
+      borderColor: theme.colors.textTertiary,
+    },
+    touchableItemBody: {
+      display: 'flex',
+      flexDirection: 'row',
+    },
+    touchableItemFooter: {
+      display: 'flex',
+      flexDirection: 'column',
+      marginTop: 16,
     },
     touchableSave: {
       paddingVertical: 10,
@@ -106,6 +161,11 @@ const useStyles = () => {
       justifyContent: 'center',
       alignItems: 'center',
       borderRadius: 8,
+    },
+    touchableClose: {
+      position: 'absolute',
+      top: 16,
+      right: 16,
     },
     viewTextNameAndPrice: {
       display: 'flex',
@@ -120,20 +180,24 @@ const useStyles = () => {
       backgroundColor: theme.colors.greyScale4,
     },
     divider: {
-      borderTopWidth: 1,
-      borderTopColor: theme.colors.greyScale3,
-    },
-    imageSelected: {
-      tintColor: theme.colors.textQuaternary,
+      height: 1,
+      backgroundColor: theme.colors.greyScale3,
     },
     image: {
-      tintColor: theme.colors.greyScale2,
+      tintColor: theme.colors.textQuaternary,
+    },
+    imageDisabled: {
+      tintColor: theme.colors.textTertiary,
+    },
+    imageClose: {
+      height: 22,
+      width: 22,
     },
   });
   return styles;
 };
 
-const OrderingTypeSelectorModal = ({open, handleClose, value}) => {
+const OrderingTypeSelectorModal = ({open, handleClose, value, subTotal}) => {
   const styles = useStyles();
   const dispatch = useDispatch();
   const [selected, setSelected] = useState({});
@@ -200,10 +264,23 @@ const OrderingTypeSelectorModal = ({open, handleClose, value}) => {
     }
   };
 
+  const handleDisabled = item => {
+    const isDelivery = item.key === 'DELIVERY';
+    const minAmount = defaultOutlet.orderValidation?.delivery?.minAmount;
+    if (isDelivery && minAmount && minAmount > subTotal) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
   const renderHeader = () => {
     return (
       <View style={styles.header}>
         <Text style={styles.textChooseOrderingType}>Choose Ordering Type</Text>
+        <TouchableOpacity style={styles.touchableClose} onPress={handleClose}>
+          <Image source={appConfig.iconClose} style={styles.imageClose} />
+        </TouchableOpacity>
       </View>
     );
   };
@@ -217,13 +294,37 @@ const OrderingTypeSelectorModal = ({open, handleClose, value}) => {
     }
   };
 
+  const renderOrderingTypeItemFooter = item => {
+    const minAmount = defaultOutlet.orderValidation?.delivery?.minAmount;
+    const minAmountCurrency = CurrencyFormatter(minAmount);
+    const isDisabled = handleDisabled(item);
+    const styleText1 = isDisabled
+      ? styles.textDeliveryTermsAndConditionsDisabled
+      : styles.textDeliveryTermsAndConditions;
+
+    const stylesText2 = isDisabled
+      ? styles.textDeliveryTermsAndConditionsBoldDisabled
+      : styles.textDeliveryTermsAndConditionsBold;
+
+    if (item.key === 'DELIVERY' && minAmount) {
+      return (
+        <View style={styles.touchableItemFooter}>
+          <View style={styles.divider} />
+
+          <Text style={styleText1}>
+            Minimum amount for delivery{' '}
+            <Text style={stylesText2}>{minAmountCurrency}</Text>
+          </Text>
+        </View>
+      );
+    }
+  };
+
   const renderOrderingTypeItem = item => {
     const active = selected?.key === item?.key;
     const styleItem = active
       ? styles.touchableItemSelected
       : styles.touchableItem;
-    const styleName = active ? styles.textNameSelected : styles.textName;
-    const styleImage = active ? styles.imageSelected : styles.image;
 
     return (
       <TouchableOpacity
@@ -231,19 +332,45 @@ const OrderingTypeSelectorModal = ({open, handleClose, value}) => {
         onPress={() => {
           setSelected(item);
         }}>
-        <View style={styles.circle}>
-          <Image source={item?.image} style={styleImage} />
+        <View style={styles.touchableItemBody}>
+          <Image source={item?.image} style={styles.image} />
+          <Text style={styles.textName}>
+            {item?.displayName} {renderEstimatedWaitingTime(item?.key)}
+          </Text>
         </View>
-        <Text style={styleName}>
-          {item?.displayName} {renderEstimatedWaitingTime(item?.key)}
-        </Text>
+
+        {renderOrderingTypeItemFooter(item)}
+      </TouchableOpacity>
+    );
+  };
+
+  const renderOrderingTypeItemDisabled = item => {
+    return (
+      <TouchableOpacity
+        disabled={true}
+        style={styles.touchableItemDisabled}
+        onPress={() => {
+          setSelected(item);
+        }}>
+        <View style={styles.touchableItemBody}>
+          <Image source={item?.image} style={styles.imageDisabled} />
+          <Text style={styles.textNameDisabled}>
+            {item?.displayName} {renderEstimatedWaitingTime(item?.key)}
+          </Text>
+        </View>
+
+        {renderOrderingTypeItemFooter(item)}
       </TouchableOpacity>
     );
   };
 
   const renderBody = () => {
     const result = orderingTypes.map(type => {
-      return renderOrderingTypeItem(type);
+      if (handleDisabled(type)) {
+        return renderOrderingTypeItemDisabled(type);
+      } else {
+        return renderOrderingTypeItem(type);
+      }
     });
 
     return <View style={styles.body}>{result}</View>;
@@ -277,11 +404,9 @@ const OrderingTypeSelectorModal = ({open, handleClose, value}) => {
             <LoadingScreen loading={isLoading} />
             {renderHeader()}
             <View style={styles.divider} />
-            <View style={{marginTop: 20}} />
             {renderBody()}
-            <View style={{marginTop: 16}} />
+            <View style={styles.divider} />
             {renderFooter()}
-            <View style={{marginTop: 16}} />
           </Dialog>
         </Portal>
       </Provider>
