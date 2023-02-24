@@ -29,25 +29,21 @@ const useStyles = () => {
       alignItems: 'center',
     },
     body: {
+      marginVertical: 16,
       display: 'flex',
-      flexDirection: 'row',
+      flexDirection: 'column',
       justifyContent: 'center',
-      flexWrap: 'wrap',
+      // flexWrap: 'wrap',
     },
     footer: {
-      paddingHorizontal: 35,
+      padding: 10,
     },
     textName: {
       textAlign: 'center',
-      marginTop: 8,
-      fontSize: 12,
-      color: theme.colors.textTertiary,
-    },
-    textNameSelected: {
-      textAlign: 'center',
-      marginTop: 8,
-      fontSize: 12,
+      marginLeft: 16,
+      fontSize: theme.fontSize[14],
       color: theme.colors.textQuaternary,
+      fontFamily: theme.fontFamily.poppinsMedium,
     },
     textPrice: {
       fontSize: 12,
@@ -69,36 +65,55 @@ const useStyles = () => {
       color: theme.colors.textSecondary,
       fontSize: 12,
     },
+    textDeliveryTermsAndConditions: {
+      marginTop: 16,
+      textAlign: 'center',
+      fontSize: theme.fontSize[14],
+      color: theme.colors.textPrimary,
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textDeliveryTermsAndConditionsBold: {
+      textAlign: 'center',
+      fontSize: theme.fontSize[14],
+      color: theme.colors.textPrimary,
+      fontFamily: theme.fontFamily.poppinsBold,
+    },
     textChooseOrderingType: {
       color: theme.colors.textPrimary,
       fontSize: theme.fontSize[16],
       fontFamily: theme.fontFamily.poppinsSemiBold,
     },
     touchableItem: {
-      width: 81,
       display: 'flex',
       flexDirection: 'column',
-      alignItems: 'center',
       justifyContent: 'flex-start',
       borderWidth: 1,
       borderRadius: 8,
-      paddingVertical: 10,
-      paddingHorizontal: 10,
-      margin: 6,
-      borderColor: theme.colors.greyScale2,
+      padding: 16,
+      marginHorizontal: 16,
+      marginVertical: 8,
+      borderColor: theme.colors.textQuaternary,
     },
     touchableItemSelected: {
-      width: 81,
       display: 'flex',
       flexDirection: 'column',
-      alignItems: 'center',
       justifyContent: 'flex-start',
       borderWidth: 1,
       borderRadius: 8,
-      paddingVertical: 10,
-      paddingHorizontal: 10,
-      margin: 6,
+      padding: 16,
+      marginHorizontal: 16,
+      marginVertical: 8,
       borderColor: theme.colors.textQuaternary,
+      backgroundColor: theme.colors.accent,
+    },
+    touchableItemBody: {
+      display: 'flex',
+      flexDirection: 'row',
+    },
+    touchableItemFooter: {
+      display: 'flex',
+      flexDirection: 'column',
+      marginTop: 16,
     },
     touchableSave: {
       paddingVertical: 10,
@@ -106,6 +121,11 @@ const useStyles = () => {
       justifyContent: 'center',
       alignItems: 'center',
       borderRadius: 8,
+    },
+    touchableClose: {
+      position: 'absolute',
+      top: 16,
+      right: 16,
     },
     viewTextNameAndPrice: {
       display: 'flex',
@@ -120,14 +140,15 @@ const useStyles = () => {
       backgroundColor: theme.colors.greyScale4,
     },
     divider: {
-      borderTopWidth: 1,
-      borderTopColor: theme.colors.greyScale3,
-    },
-    imageSelected: {
-      tintColor: theme.colors.textQuaternary,
+      height: 1,
+      backgroundColor: theme.colors.greyScale3,
     },
     image: {
-      tintColor: theme.colors.greyScale2,
+      tintColor: theme.colors.textQuaternary,
+    },
+    imageClose: {
+      height: 22,
+      width: 22,
     },
   });
   return styles;
@@ -204,6 +225,9 @@ const OrderingTypeSelectorModal = ({open, handleClose, value}) => {
     return (
       <View style={styles.header}>
         <Text style={styles.textChooseOrderingType}>Choose Ordering Type</Text>
+        <TouchableOpacity style={styles.touchableClose} onPress={handleClose}>
+          <Image source={appConfig.iconClose} style={styles.imageClose} />
+        </TouchableOpacity>
       </View>
     );
   };
@@ -217,26 +241,42 @@ const OrderingTypeSelectorModal = ({open, handleClose, value}) => {
     }
   };
 
+  const renderOrderingTypeItemFooter = item => {
+    if (item.key === 'DELIVERY') {
+      return (
+        <View style={styles.touchableItemFooter}>
+          <View style={styles.divider} />
+
+          <Text style={styles.textDeliveryTermsAndConditions}>
+            Minimum amount for delivery{' '}
+            <Text style={styles.textDeliveryTermsAndConditionsBold}>
+              SGD 18.00
+            </Text>
+          </Text>
+        </View>
+      );
+    }
+  };
+
   const renderOrderingTypeItem = item => {
     const active = selected?.key === item?.key;
     const styleItem = active
       ? styles.touchableItemSelected
       : styles.touchableItem;
-    const styleName = active ? styles.textNameSelected : styles.textName;
-    const styleImage = active ? styles.imageSelected : styles.image;
-
     return (
       <TouchableOpacity
         style={styleItem}
         onPress={() => {
           setSelected(item);
         }}>
-        <View style={styles.circle}>
-          <Image source={item?.image} style={styleImage} />
+        <View style={styles.touchableItemBody}>
+          <Image source={item?.image} style={styles.image} />
+          <Text style={styles.textName}>
+            {item?.displayName} {renderEstimatedWaitingTime(item?.key)}
+          </Text>
         </View>
-        <Text style={styleName}>
-          {item?.displayName} {renderEstimatedWaitingTime(item?.key)}
-        </Text>
+
+        {renderOrderingTypeItemFooter(item)}
       </TouchableOpacity>
     );
   };
@@ -277,11 +317,9 @@ const OrderingTypeSelectorModal = ({open, handleClose, value}) => {
             <LoadingScreen loading={isLoading} />
             {renderHeader()}
             <View style={styles.divider} />
-            <View style={{marginTop: 20}} />
             {renderBody()}
-            <View style={{marginTop: 16}} />
+            <View style={styles.divider} />
             {renderFooter()}
-            <View style={{marginTop: 16}} />
           </Dialog>
         </Portal>
       </Provider>

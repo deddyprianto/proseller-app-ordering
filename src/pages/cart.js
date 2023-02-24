@@ -19,7 +19,10 @@ import {
   Alert,
   Image,
   SafeAreaView,
+  Dimensions,
 } from 'react-native';
+import {ProgressBar} from 'react-native-paper';
+
 import RBSheet from 'react-native-raw-bottom-sheet';
 
 import appConfig from '../config/appConfig';
@@ -33,12 +36,15 @@ import Header from '../components/layout/header';
 
 import {isEmptyArray, isEmptyObject} from '../helper/CheckEmpty';
 import currencyFormatter from '../helper/CurrencyFormatter';
-import CurrencyFormatter from '../helper/CurrencyFormatter';
 
 import {showSnackbar} from '../actions/setting.action';
 import {changeOrderingMode, getTimeSlot} from '../actions/order.action';
+
 import Theme from '../theme';
+
 import LoadingScreen from '../components/loadingScreen';
+
+const WIDTH = Dimensions.get('window').width;
 
 const useStyles = () => {
   const theme = Theme();
@@ -51,6 +57,36 @@ const useStyles = () => {
     container: {
       flex: 1,
     },
+    progressBar: {
+      flex: 1,
+      maxWidth: '100%',
+      width: WIDTH,
+      height: 4,
+      marginTop: 4,
+      borderRadius: 8,
+      backgroundColor: theme.colors.greyScale3,
+    },
+    primaryColor: {
+      color: theme.colors.brandPrimary,
+    },
+    textLoadBarTitle: {
+      textAlign: 'center',
+      color: theme.colors.textPrimary,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textLoadBarTitleError: {
+      textAlign: 'center',
+      color: theme.colors.semanticError,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textLoadBarTermsAndConditions: {
+      marginTop: 16,
+      color: theme.colors.textPrimary,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
     textDetail: {
       color: theme.colors.text1,
       fontSize: theme.fontSize[12],
@@ -60,6 +96,17 @@ const useStyles = () => {
       color: theme.colors.text1,
       fontSize: theme.fontSize[10],
       fontFamily: theme.fontFamily.poppinsSemiBold,
+    },
+    textDetailValueDeliveryFee: {
+      color: theme.colors.textQuaternary,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textDetailValueDeliveryFeeLineTrough: {
+      textDecorationLine: 'line-through',
+      color: theme.colors.textTertiary,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsMedium,
     },
     textGrandTotal: {
       color: theme.colors.text1,
@@ -127,6 +174,10 @@ const useStyles = () => {
       paddingVertical: 16,
       borderBottomWidth: 1,
       borderColor: theme.colors.border,
+    },
+    viewDetailValueItemDeliveryFee: {
+      display: 'flex',
+      flexDirection: 'row',
     },
     viewDetailGrandTotal: {
       display: 'flex',
@@ -253,6 +304,11 @@ const useStyles = () => {
       borderBottomWidth: 1,
       borderColor: theme.colors.border,
     },
+    viewProgressBar: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
     touchableMethod: {
       width: 120,
       borderRadius: 8,
@@ -328,6 +384,12 @@ const Cart = () => {
   const userDetail = useSelector(
     state => state.userReducer?.getUser?.userDetails,
   );
+
+  const {totalGrossAmount, totalDiscountAmount} = basket;
+  const subTotalAfterDiscount = totalGrossAmount - totalDiscountAmount;
+  const subTotal = totalDiscountAmount
+    ? subTotalAfterDiscount
+    : totalGrossAmount;
 
   const orderingModesField = [
     {
@@ -556,7 +618,7 @@ const Cart = () => {
             Alert.alert(
               'Sorry',
               `Maximum order amount for ${orderType.toLowerCase()} is ` +
-                CurrencyFormatter(maxAmount),
+                currencyFormatter(maxAmount),
             );
             return false;
           }
@@ -567,7 +629,7 @@ const Cart = () => {
             Alert.alert(
               'Sorry',
               `Minimum order amount for ${orderType.toLowerCase()} is ` +
-                CurrencyFormatter(minAmount),
+                currencyFormatter(minAmount),
             );
             return false;
           }
@@ -742,6 +804,28 @@ const Cart = () => {
     }
   };
 
+  const renderLoadBar = ({error, text, termsAndConditions, value}) => {
+    const styleTitle = error
+      ? styles.textLoadBarTitleError
+      : styles.textLoadBarTitle;
+
+    return (
+      <View style={styles.viewMethodOrderingType}>
+        <Text style={styleTitle}>{text}</Text>
+        <Text style={styles.textLoadBarTermsAndConditions}>
+          {termsAndConditions}
+        </Text>
+        <View style={styles.viewProgressBar}>
+          <ProgressBar
+            progress={value}
+            color={styles.primaryColor.color}
+            style={styles.progressBar}
+          />
+        </View>
+      </View>
+    );
+  };
+
   const renderOrderingType = () => {
     const orderingType =
       typeof basket?.orderingMode === 'string' && basket?.orderingMode;
@@ -875,12 +959,6 @@ const Cart = () => {
   };
 
   const renderDetailTotal = () => {
-    const {totalGrossAmount, totalDiscountAmount} = basket;
-    const subTotalAfterDiscount = totalGrossAmount - totalDiscountAmount;
-    const subTotal = totalDiscountAmount
-      ? subTotalAfterDiscount
-      : totalGrossAmount;
-
     return (
       <View style={styles.viewDetailValueItem}>
         <Text style={styles.textDetail}>Total</Text>
@@ -919,14 +997,46 @@ const Cart = () => {
     }
   };
 
+  const handleDetailDeliveryCostDiscount = () => {
+    const maxAmount = Number(basket?.provider?.maxFreeDeliveryAmount);
+    const minAmount = Number(basket?.provider?.minPurchaseForFreeDelivery);
+    const deliveryFee = Number(basket?.provider?.deliveryFee);
+
+    if (minAmount && subTotal < minAmount && deliveryFee !== 0) {
+      return deliveryFee - maxAmount;
+    } else {
+      return deliveryFee;
+    }
+  };
+
   const renderDetailDeliveryCost = () => {
     const {provider} = basket;
+
     if (provider) {
-      const cost = provider.deliveryFee || 'Free';
+      const minAmount = Number(provider?.minPurchaseForFreeDelivery);
+      const deliveryFee = Number(basket?.provider?.deliveryFee);
+
+      const isDiscount = minAmount ? subTotal > minAmount : false;
+
+      const cost = handleDetailDeliveryCostDiscount();
+
+      const costDefaultCurrency = isDiscount
+        ? currencyFormatter(deliveryFee)
+        : null;
+
+      const costCurrency = cost ? currencyFormatter(cost) : 'Free';
+
       return (
         <View style={styles.viewDetailValueItem}>
           <Text style={styles.textDetail}>Delivery Cost</Text>
-          <Text style={styles.textDetailValue}>{currencyFormatter(cost)}</Text>
+          <View style={styles.viewDetailValueItemDeliveryFee}>
+            <Text style={styles.textDetailValueDeliveryFeeLineTrough}>
+              {costDefaultCurrency}
+            </Text>
+            <Text style={styles.textDetailValueDeliveryFee}>
+              {costCurrency}
+            </Text>
+          </View>
         </View>
       );
     }
@@ -1041,6 +1151,55 @@ const Cart = () => {
     );
   };
 
+  const renderOrderValidation = () => {
+    const minAmount = outlet.orderValidation?.delivery?.minAmount;
+    const minAmountCustomMessage =
+      outlet.orderValidation?.delivery?.minAmountCustomMessage;
+
+    if (subTotal < minAmount) {
+      const lessAmountCurrency = currencyFormatter(minAmount - subTotal);
+      const minAmountCurrency = currencyFormatter(minAmount);
+
+      const message = `${minAmountCustomMessage} (minimum amount ${minAmountCurrency})`;
+
+      const termsAndConditions = `Add ${lessAmountCurrency} more to use delivery`;
+
+      const value = subTotal < minAmount ? subTotal / minAmount : 1;
+
+      return renderLoadBar({
+        error: true,
+        text: message,
+        termsAndConditions: termsAndConditions,
+        value,
+      });
+    }
+  };
+
+  const renderDeliveryProviderTermsAndConditions = () => {
+    const minAmount = Number(basket?.provider?.minPurchaseForFreeDelivery);
+
+    if (minAmount) {
+      const lessAmountCurrency =
+        subTotal < minAmount
+          ? currencyFormatter(minAmount - subTotal)
+          : currencyFormatter(0);
+
+      const minAmountCurrency = currencyFormatter(minAmount);
+
+      const message = `Enjoy delivery fee discount when your order amount is more than ${minAmountCurrency}`;
+
+      const termsAndConditions = `Add ${lessAmountCurrency} to get delivery fee discounts`;
+
+      const value = subTotal < minAmount ? subTotal / minAmount : 1;
+
+      return renderLoadBar({
+        text: message,
+        termsAndConditions: termsAndConditions,
+        value,
+      });
+    }
+  };
+
   if (isEmptyArray(basket?.details)) {
     Actions.pop();
   }
@@ -1054,6 +1213,8 @@ const Cart = () => {
           {renderAddButton()}
           <ProductCartList />
           <View style={styles.divider} />
+          {renderOrderValidation()}
+          {renderDeliveryProviderTermsAndConditions()}
           {renderOrderingType()}
           {renderAddress()}
           {renderProvider()}

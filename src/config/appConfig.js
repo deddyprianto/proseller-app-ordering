@@ -72,6 +72,7 @@ const appConfig = {
   iconClose: require('../assets/img/icon-close.png'),
 
   iconDelete: require('../assets/img/icon-delete.png'),
+  iconDeliveryProvider: require('../assets/img/icon-delivery-provider.png'),
 
   iconEdit: require('../assets/img/icon-edit.png'),
   iconEditProfile: require('../assets/img/icon-edit-profile.png'),

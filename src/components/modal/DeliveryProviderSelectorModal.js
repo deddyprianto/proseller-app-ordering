@@ -1,7 +1,17 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import {Text, TouchableOpacity, View} from 'react-native';
+
+import {
+  Text,
+  TouchableOpacity,
+  View,
+  Image,
+  StyleSheet,
+  ScrollView,
+  Dimensions,
+} from 'react-native';
+
 import {Dialog, Portal, Provider} from 'react-native-paper';
 import colorConfig from '../../config/colorConfig';
 import {getDeliveryProviderAndFee} from '../../actions/order.action';
@@ -10,11 +20,16 @@ import awsConfig from '../../config/awsConfig';
 import {changeOrderingMode} from '../../actions/order.action';
 import Theme from '../../theme';
 import LoadingScreen from '../loadingScreen';
+import CurrencyFormatter from '../../helper/CurrencyFormatter';
+import appConfig from '../../config/appConfig';
+
+const HEIGHT = Dimensions.get('window').height;
 
 const useStyles = () => {
   const theme = Theme();
-  const styles = {
+  const styles = StyleSheet.create({
     root: {
+      maxHeight: (HEIGHT * 70) / 100,
       borderRadius: 8,
     },
     header: {
@@ -24,67 +39,113 @@ const useStyles = () => {
     },
     body: {
       display: 'flex',
-      flexDirection: 'row',
+      flexDirection: 'column',
       justifyContent: 'center',
-      flexWrap: 'wrap',
     },
     footer: {
-      paddingHorizontal: 35,
+      padding: 10,
     },
     textName: {
-      fontSize: 12,
-      color: '#B7B7B7',
+      color: theme.colors.textQuaternary,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsBold,
     },
     textPrice: {
-      fontSize: 12,
-      color: '#B7B7B7',
+      color: theme.colors.textQuaternary,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsBold,
     },
-    textCurrency: {
-      fontSize: 8,
-      color: '#B7B7B7',
+    textNameDisabled: {
+      color: theme.colors.textTertiary,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsBold,
+    },
+    textPriceDisabled: {
+      color: theme.colors.textTertiary,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsBold,
     },
     textNameSelected: {
-      fontSize: 12,
-      color: colorConfig.primaryColor,
+      flex: 1,
+      color: theme.colors.textQuaternary,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsBold,
     },
     textPriceSelected: {
-      fontSize: 12,
-      color: colorConfig.primaryColor,
-    },
-    textCurrencySelected: {
-      fontSize: 8,
-      color: colorConfig.primaryColor,
+      color: theme.colors.textQuaternary,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsBold,
     },
     textSave: {
-      color: 'white',
-      fontSize: 12,
+      color: theme.colors.textSecondary,
+      fontSize: theme.fontSize[12],
+      fontFamily: theme.fontFamily.poppinsMedium,
     },
     textChooseDeliveryProvider: {
       color: theme.colors.textPrimary,
       fontSize: theme.fontSize[16],
       fontFamily: theme.fontFamily.poppinsSemiBold,
     },
+    textDeliveryError: {
+      marginTop: 16,
+      fontSize: theme.fontSize[14],
+      color: theme.colors.textTertiary,
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textDeliveryTermsAndConditions: {
+      marginTop: 16,
+      fontSize: theme.fontSize[14],
+      color: theme.colors.textPrimary,
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textDeliveryTermsAndConditionsBold: {
+      fontSize: theme.fontSize[14],
+      color: theme.colors.textPrimary,
+      fontFamily: theme.fontFamily.poppinsBold,
+    },
+    viewTextNameAndPrice: {
+      display: 'flex',
+      flexDirection: 'row',
+    },
+    touchableItemBody: {
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+    },
+    touchableItemBodyImageAndText: {
+      flex: 1,
+      display: 'flex',
+      flexDirection: 'row',
+    },
+    touchableItemFooter: {
+      display: 'flex',
+      flexDirection: 'column',
+      marginTop: 16,
+    },
     touchableItem: {
-      width: 81,
-      height: 83,
       borderWidth: 1,
-      borderColor: '#B7B7B7',
       borderRadius: 8,
-      alignItems: 'center',
-      justifyContent: 'center',
-      paddingVertical: 10,
-      margin: 6,
+      padding: 16,
+      marginHorizontal: 16,
+      marginVertical: 8,
+      borderColor: theme.colors.brandPrimary,
     },
     touchableItemSelected: {
-      width: 81,
-      height: 83,
       borderWidth: 1,
-      borderColor: colorConfig.primaryColor,
       borderRadius: 8,
-      alignItems: 'center',
-      justifyContent: 'center',
-      paddingVertical: 10,
-      margin: 6,
+      padding: 16,
+      marginHorizontal: 16,
+      marginVertical: 8,
+      borderColor: theme.colors.brandPrimary,
+      backgroundColor: theme.colors.accent,
+    },
+    touchableItemDisabled: {
+      borderWidth: 1,
+      borderRadius: 8,
+      padding: 16,
+      marginHorizontal: 16,
+      marginVertical: 8,
+      borderColor: theme.colors.greyScale2,
     },
     touchableSave: {
       paddingVertical: 10,
@@ -93,23 +154,32 @@ const useStyles = () => {
       alignItems: 'center',
       borderRadius: 8,
     },
-    viewTextNameAndPrice: {
-      display: 'flex',
-      flexDirection: 'row',
-    },
-    circle: {
-      width: 40,
-      height: 40,
-      backgroundColor: '#F9F9F9',
-      alignItems: 'center',
-      justifyContent: 'center',
-      borderRadius: 100,
+    touchableClose: {
+      position: 'absolute',
+      top: 16,
+      right: 16,
     },
     divider: {
-      borderTopWidth: 1,
-      borderTopColor: '#D6D6D6',
+      height: 1,
+      backgroundColor: '#D6D6D6',
     },
-  };
+    image: {
+      marginRight: 8,
+      height: 18,
+      width: 18,
+      tintColor: theme.colors.brandPrimary,
+    },
+    imageDisabled: {
+      marginRight: 8,
+      height: 18,
+      width: 18,
+      tintColor: theme.colors.greyScale2,
+    },
+    imageClose: {
+      height: 22,
+      width: 22,
+    },
+  });
   return styles;
 };
 
@@ -160,7 +230,7 @@ const DeliveryProviderSelectorModal = ({open, handleClose, value}) => {
     loadData();
   }, [userDetail]);
 
-  const HandleSave = async () => {
+  const handleSave = async () => {
     setIsLoading(true);
     await dispatch(
       changeOrderingMode({
@@ -172,14 +242,70 @@ const DeliveryProviderSelectorModal = ({open, handleClose, value}) => {
     handleClose();
   };
 
-  const deliveryProviderItem = item => {
+  const renderHeader = () => {
+    return (
+      <View style={styles.header}>
+        <Text style={styles.textChooseDeliveryProvider}>
+          Choose Delivery Provider
+        </Text>
+        <TouchableOpacity style={styles.touchableClose} onPress={handleClose}>
+          <Image source={appConfig.iconClose} style={styles.imageClose} />
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
+  const renderDeliveryProviderItemFooter = item => {
+    if (item.minPurchaseForFreeDelivery) {
+      const minPurchaseForFreeDelivery = CurrencyFormatter(
+        Number(item.minPurchaseForFreeDelivery),
+      );
+
+      const maxFreeDeliveryAmount = CurrencyFormatter(
+        Number(item.maxFreeDeliveryAmount),
+      );
+
+      return (
+        <View style={styles.touchableItemFooter}>
+          <View style={styles.divider} />
+
+          <Text style={styles.textDeliveryTermsAndConditions}>
+            Spend{' '}
+            <Text style={styles.textDeliveryTermsAndConditionsBold}>
+              {minPurchaseForFreeDelivery}
+            </Text>{' '}
+            or more and receive an{' '}
+            <Text style={styles.textDeliveryTermsAndConditionsBold}>
+              {maxFreeDeliveryAmount}
+            </Text>{' '}
+            delivery fee discount!
+          </Text>
+        </View>
+      );
+    }
+  };
+
+  const renderDeliveryProviderItemBody = item => {
+    return (
+      <View style={styles.touchableItemBody}>
+        <View style={styles.touchableItemBodyImageAndText}>
+          <Image source={appConfig.iconDeliveryProvider} style={styles.image} />
+          <Text style={styles.textName} numberOfLines={1}>
+            {item?.name}
+          </Text>
+        </View>
+        <Text style={styles.textPrice}>
+          {CurrencyFormatter(item?.deliveryFee)}
+        </Text>
+      </View>
+    );
+  };
+
+  const renderDeliveryProviderItem = item => {
     const active = selected?.id === item?.id;
     const styleItem = active
       ? styles.touchableItemSelected
       : styles.touchableItem;
-    const styleName = active ? styles.textNameSelected : styles.textName;
-    const stylePrice = active ? styles.textPriceSelected : styles.textPrice;
-    const styleCurrency = active ? styles.textPriceSelected : styles.textPrice;
 
     return (
       <TouchableOpacity
@@ -187,36 +313,70 @@ const DeliveryProviderSelectorModal = ({open, handleClose, value}) => {
         onPress={() => {
           setSelected(item);
         }}>
-        <View style={styles.circle}>
-          <View style={styles.viewTextNameAndPrice}>
-            <Text style={stylePrice}>{item?.deliveryFee}</Text>
-            <Text style={styleCurrency}>SGD</Text>
-          </View>
-        </View>
-        <View style={{marginTop: 8}} />
-        <Text numberOfLines={1} style={styleName}>
-          {item?.name}
-        </Text>
+        {renderDeliveryProviderItemBody(item)}
+        {renderDeliveryProviderItemFooter(item)}
       </TouchableOpacity>
     );
   };
 
-  const renderHeader = () => {
+  const renderDeliveryProviderItemDisabledFooter = item => {
+    if (item.deliveryProviderError?.message) {
+      return (
+        <View style={styles.touchableItemFooter}>
+          <View style={styles.divider} />
+          <Text style={styles.textDeliveryError}>
+            {item.deliveryProviderError?.message}
+          </Text>
+        </View>
+      );
+    }
+  };
+
+  const renderDeliveryProviderItemDisabledBody = item => {
     return (
-      <View style={styles.header}>
-        <Text style={styles.textChooseDeliveryProvider}>
-          Choose Delivery Provider
+      <View style={styles.touchableItemBody}>
+        <View style={styles.touchableItemBodyImageAndText}>
+          <Image
+            source={appConfig.iconDeliveryProvider}
+            style={styles.imageDisabled}
+          />
+          <Text style={styles.textNameDisabled} numberOfLines={1}>
+            {item?.name}
+          </Text>
+        </View>
+        <Text style={styles.textPriceDisabled}>
+          {CurrencyFormatter(item?.deliveryFee)}
         </Text>
       </View>
     );
   };
 
+  const renderDeliveryProviderItemDisabled = item => {
+    return (
+      <TouchableOpacity
+        disabled
+        style={styles.touchableItemDisabled}
+        onPress={() => {
+          setSelected(item);
+        }}>
+        {renderDeliveryProviderItemDisabledBody(item)}
+        {renderDeliveryProviderItemDisabledFooter(item)}
+      </TouchableOpacity>
+    );
+  };
+
   const renderBody = () => {
-    const result = deliveryProviders.map(test => {
-      return deliveryProviderItem(test);
+    const result = deliveryProviders.map(item => {
+      if (item.deliveryProviderError.status) {
+        return renderDeliveryProviderItemDisabled(item);
+      } else {
+        return renderDeliveryProviderItem(item);
+      }
     });
 
-    return <View style={styles.body}>{result}</View>;
+    return (
+      <ScrollView contentContainerStyle={styles.body}>{result}</ScrollView>
+    );
   };
 
   const renderFooter = () => {
@@ -225,7 +385,7 @@ const DeliveryProviderSelectorModal = ({open, handleClose, value}) => {
         <TouchableOpacity
           style={styles.touchableSave}
           onPress={() => {
-            HandleSave();
+            handleSave();
           }}>
           <Text style={styles.textSave}>SAVE</Text>
         </TouchableOpacity>
@@ -240,11 +400,9 @@ const DeliveryProviderSelectorModal = ({open, handleClose, value}) => {
           <LoadingScreen loading={isLoading} />
           {renderHeader()}
           <View style={styles.divider} />
-          <View style={{marginTop: 20}} />
           {renderBody()}
-          <View style={{marginTop: 16}} />
+          <View style={styles.divider} />
           {renderFooter()}
-          <View style={{marginTop: 16}} />
         </Dialog>
       </Portal>
     </Provider>
