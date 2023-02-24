@@ -266,11 +266,6 @@ const ScannerBarcode = () => {
         onRead={onSuccess}
       />
 
-      <BarcodeScanner
-        onBarCodeRead={handleScan}
-        // style={styles.camera}
-        torchMode="off"
-      />
       {renderSearchModal()}
       {renderHeader()}
       {renderTopContent()}
