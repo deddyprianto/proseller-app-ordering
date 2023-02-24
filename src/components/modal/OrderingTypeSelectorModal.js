@@ -16,6 +16,7 @@ import {changeOrderingMode} from '../../actions/order.action';
 import {isEmptyArray, isEmptyObject} from '../../helper/CheckEmpty';
 import Theme from '../../theme';
 import LoadingScreen from '../loadingScreen';
+import CurrencyFormatter from '../../helper/CurrencyFormatter';
 
 const useStyles = () => {
   const theme = Theme();
@@ -61,6 +62,21 @@ const useStyles = () => {
       fontSize: 8,
       color: theme.colors.textQuaternary,
     },
+    textNameDisabled: {
+      textAlign: 'center',
+      marginLeft: 16,
+      fontSize: theme.fontSize[14],
+      color: theme.colors.textTertiary,
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textPriceDisabled: {
+      fontSize: 12,
+      color: theme.colors.textTertiary,
+    },
+    textCurrencyDisabled: {
+      fontSize: 8,
+      color: theme.colors.textTertiary,
+    },
     textSave: {
       color: theme.colors.textSecondary,
       fontSize: 12,
@@ -76,6 +92,19 @@ const useStyles = () => {
       textAlign: 'center',
       fontSize: theme.fontSize[14],
       color: theme.colors.textPrimary,
+      fontFamily: theme.fontFamily.poppinsBold,
+    },
+    textDeliveryTermsAndConditionsDisabled: {
+      marginTop: 16,
+      textAlign: 'center',
+      fontSize: theme.fontSize[14],
+      color: theme.colors.textTertiary,
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textDeliveryTermsAndConditionsBoldDisabled: {
+      textAlign: 'center',
+      fontSize: theme.fontSize[14],
+      color: theme.colors.textTertiary,
       fontFamily: theme.fontFamily.poppinsBold,
     },
     textChooseOrderingType: {
@@ -105,6 +134,17 @@ const useStyles = () => {
       marginVertical: 8,
       borderColor: theme.colors.textQuaternary,
       backgroundColor: theme.colors.accent,
+    },
+    touchableItemDisabled: {
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'flex-start',
+      borderWidth: 1,
+      borderRadius: 8,
+      padding: 16,
+      marginHorizontal: 16,
+      marginVertical: 8,
+      borderColor: theme.colors.textTertiary,
     },
     touchableItemBody: {
       display: 'flex',
@@ -146,6 +186,9 @@ const useStyles = () => {
     image: {
       tintColor: theme.colors.textQuaternary,
     },
+    imageDisabled: {
+      tintColor: theme.colors.textTertiary,
+    },
     imageClose: {
       height: 22,
       width: 22,
@@ -154,7 +197,7 @@ const useStyles = () => {
   return styles;
 };
 
-const OrderingTypeSelectorModal = ({open, handleClose, value}) => {
+const OrderingTypeSelectorModal = ({open, handleClose, value, subTotal}) => {
   const styles = useStyles();
   const dispatch = useDispatch();
   const [selected, setSelected] = useState({});
@@ -221,6 +264,16 @@ const OrderingTypeSelectorModal = ({open, handleClose, value}) => {
     }
   };
 
+  const handleDisabled = item => {
+    const isDelivery = item.key === 'DELIVERY';
+    const minAmount = defaultOutlet.orderValidation?.delivery?.minAmount;
+    if (isDelivery && minAmount && minAmount > subTotal) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
   const renderHeader = () => {
     return (
       <View style={styles.header}>
@@ -242,16 +295,25 @@ const OrderingTypeSelectorModal = ({open, handleClose, value}) => {
   };
 
   const renderOrderingTypeItemFooter = item => {
-    if (item.key === 'DELIVERY') {
+    const minAmount = defaultOutlet.orderValidation?.delivery?.minAmount;
+    const minAmountCurrency = CurrencyFormatter(minAmount);
+    const isDisabled = handleDisabled(item);
+    const styleText1 = isDisabled
+      ? styles.textDeliveryTermsAndConditionsDisabled
+      : styles.textDeliveryTermsAndConditions;
+
+    const stylesText2 = isDisabled
+      ? styles.textDeliveryTermsAndConditionsBoldDisabled
+      : styles.textDeliveryTermsAndConditionsBold;
+
+    if (item.key === 'DELIVERY' && minAmount) {
       return (
         <View style={styles.touchableItemFooter}>
           <View style={styles.divider} />
 
-          <Text style={styles.textDeliveryTermsAndConditions}>
+          <Text style={styleText1}>
             Minimum amount for delivery{' '}
-            <Text style={styles.textDeliveryTermsAndConditionsBold}>
-              SGD 18.00
-            </Text>
+            <Text style={stylesText2}>{minAmountCurrency}</Text>
           </Text>
         </View>
       );
@@ -263,6 +325,7 @@ const OrderingTypeSelectorModal = ({open, handleClose, value}) => {
     const styleItem = active
       ? styles.touchableItemSelected
       : styles.touchableItem;
+
     return (
       <TouchableOpacity
         style={styleItem}
@@ -281,9 +344,33 @@ const OrderingTypeSelectorModal = ({open, handleClose, value}) => {
     );
   };
 
+  const renderOrderingTypeItemDisabled = item => {
+    return (
+      <TouchableOpacity
+        disabled={true}
+        style={styles.touchableItemDisabled}
+        onPress={() => {
+          setSelected(item);
+        }}>
+        <View style={styles.touchableItemBody}>
+          <Image source={item?.image} style={styles.imageDisabled} />
+          <Text style={styles.textNameDisabled}>
+            {item?.displayName} {renderEstimatedWaitingTime(item?.key)}
+          </Text>
+        </View>
+
+        {renderOrderingTypeItemFooter(item)}
+      </TouchableOpacity>
+    );
+  };
+
   const renderBody = () => {
     const result = orderingTypes.map(type => {
-      return renderOrderingTypeItem(type);
+      if (handleDisabled(type)) {
+        return renderOrderingTypeItemDisabled(type);
+      } else {
+        return renderOrderingTypeItem(type);
+      }
     });
 
     return <View style={styles.body}>{result}</View>;

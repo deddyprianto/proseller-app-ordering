@@ -1141,6 +1141,7 @@ const Cart = () => {
           }}
         />
         <OrderingTypeSelectorModal
+          subTotal={subTotal}
           value={basket?.orderingMode}
           open={openOrderingTypeModal}
           handleClose={() => {
