@@ -385,7 +385,8 @@ const Cart = () => {
     state => state.userReducer?.getUser?.userDetails,
   );
 
-  const {totalGrossAmount, totalDiscountAmount} = basket;
+  const totalGrossAmount = basket?.totalGrossAmount;
+  const totalDiscountAmount = basket?.totalDiscountAmount;
   const subTotalAfterDiscount = totalGrossAmount - totalDiscountAmount;
   const subTotal = totalDiscountAmount
     ? subTotalAfterDiscount
