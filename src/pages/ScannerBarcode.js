@@ -1,5 +1,5 @@
-import React, {useEffect, useRef, useState} from 'react';
-import QRCodeScanner from 'react-native-qrcode-scanner';
+import React, {useEffect, useState} from 'react';
+// import QRCodeScanner from 'react-native-qrcode-scanner';
 import BarcodeScanner from 'react-native-scan-barcode';
 import {useDispatch, useSelector} from 'react-redux';
 
@@ -108,16 +108,20 @@ const useStyles = () => {
       height: 20,
       tintColor: theme.colors.textSecondary,
     },
+    scanner: {
+      flex: 1,
+    },
   });
   return styles;
 };
 const ScannerBarcode = () => {
-  let scanner = useRef(null);
+  // let scanner = useRef(null);
   const styles = useStyles();
   const dispatch = useDispatch();
 
   const [searchCondition, setSearchCondition] = useState('');
 
+  const [isDisabled, setIsDisabled] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isShowInstruction, setIsShowInstruction] = useState(true);
   const [isOpenAddModal, setIsOpenAddModal] = useState(false);
@@ -129,11 +133,13 @@ const ScannerBarcode = () => {
 
   const snackbar = useSelector(state => state.settingReducer.snackbar.message);
 
-  // useEffect(() => {
-  //   if (!snackbar && !isOpenAddModal) {
-  //     scanner.reactivate();
-  //   }
-  // }, [snackbar, isOpenAddModal]);
+  useEffect(() => {
+    if (!snackbar && !isOpenAddModal) {
+      setIsDisabled(false);
+    } else {
+      setIsDisabled(true);
+    }
+  }, [snackbar, isOpenAddModal]);
 
   const handleOpenProductAddModal = () => {
     setIsOpenAddModal(true);
@@ -150,7 +156,6 @@ const ScannerBarcode = () => {
   };
 
   const onSuccess = async value => {
-    console.log('GILA', value);
     setIsLoading(true);
     const response = await dispatch(getProductByBarcode(value?.data));
 
@@ -251,26 +256,13 @@ const ScannerBarcode = () => {
       );
     }
   };
-  const handleScan = e => {
-    console.log('Barcode: ' + e.data);
-    console.log('Type: ' + e.type);
-  };
+
   return (
     <SafeAreaView style={styles.root}>
       <LoadingScreen loading={isLoading} />
-      {/* <QRCodeScanner
-        ref={node => {
-          scanner = node;
-        }}
-        cameraStyle={styles.camera}
-        showMarker={true}
-        onRead={onSuccess}
-      /> */}
-
       <BarcodeScanner
-        // disabled
-        onBarCodeRead={onSuccess}
-        style={{flex: 1}}
+        onBarCodeRead={isDisabled ? false : onSuccess}
+        style={styles.scanner}
         torchMode="off"
         cameraType="back"
       />
