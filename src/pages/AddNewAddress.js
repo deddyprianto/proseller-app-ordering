@@ -120,7 +120,7 @@ const useStyles = () => {
   return styles;
 };
 
-const AddNewAddress = ({address, coordinate}) => {
+const AddNewAddress = ({address}) => {
   const dispatch = useDispatch();
   const styles = useStyles();
 
@@ -180,15 +180,6 @@ const AddNewAddress = ({address, coordinate}) => {
       setIsDefault(address?.isDefault || false);
     }
   }, [address]);
-
-  useEffect(() => {
-    if (!isEmptyObject(coordinate)) {
-      setLatitude(coordinate?.latitude);
-      setLongitude(coordinate?.longitude);
-      setLatitudeDelta(coordinate?.latitudeDelta);
-      setLongitudeDelta(coordinate?.longitudeDelta);
-    }
-  }, [coordinate]);
 
   const handleRemove = async () => {
     const deliveryAddressFormatted = deliveryAddress.filter(
@@ -441,12 +432,25 @@ const AddNewAddress = ({address, coordinate}) => {
     );
   };
 
+  const handleSetCoordinate = coordinate => {
+    if (!isEmptyObject(coordinate)) {
+      setLatitude(coordinate?.latitude);
+      setLongitude(coordinate?.longitude);
+      setLatitudeDelta(coordinate?.latitudeDelta);
+      setLongitudeDelta(coordinate?.longitudeDelta);
+    }
+  };
+
   const renderMap = () => {
     return (
       <View style={styles.viewMap}>
         <MapView
           onPress={() => {
-            Actions.pickCoordinate();
+            Actions.pickCoordinate({
+              handleChoose: value => {
+                handleSetCoordinate(value);
+              },
+            });
           }}
           style={styles.map}
           region={{
@@ -459,7 +463,11 @@ const AddNewAddress = ({address, coordinate}) => {
         </MapView>
         <TouchableOpacity
           onPress={() => {
-            Actions.pickCoordinate();
+            Actions.pickCoordinate({
+              handleChoose: value => {
+                handleSetCoordinate(value);
+              },
+            });
           }}
           style={styles.touchableCoordinate}>
           <Image source={appConfig.iconLocation} style={styles.iconLocation} />
@@ -533,7 +541,7 @@ const AddNewAddress = ({address, coordinate}) => {
           isLoading={isLoading}
           textTitle="Delete Address"
           textDescription="Are your sure you want to delete this address?
-          This action cannot be undone and you will be unable to recover any data."
+           This action cannot be undone and you will be unable to recover any data."
           textSubmit="Sure"
         />
       );
