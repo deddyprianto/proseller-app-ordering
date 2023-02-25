@@ -150,6 +150,7 @@ const ScannerBarcode = () => {
   };
 
   const onSuccess = async value => {
+    console.log('GILA', value);
     setIsLoading(true);
     const response = await dispatch(getProductByBarcode(value?.data));
 
@@ -257,13 +258,21 @@ const ScannerBarcode = () => {
   return (
     <SafeAreaView style={styles.root}>
       <LoadingScreen loading={isLoading} />
-      <QRCodeScanner
+      {/* <QRCodeScanner
         ref={node => {
           scanner = node;
         }}
         cameraStyle={styles.camera}
         showMarker={true}
         onRead={onSuccess}
+      /> */}
+
+      <BarcodeScanner
+        // disabled
+        onBarCodeRead={onSuccess}
+        style={{flex: 1}}
+        torchMode="off"
+        cameraType="back"
       />
 
       {renderSearchModal()}
@@ -273,12 +282,6 @@ const ScannerBarcode = () => {
       {renderProductAddModal()}
       <ButtonCartFloating />
     </SafeAreaView>
-    // <BarcodeScanner
-    //   onBarCodeRead={handleScan}
-    //   style={{flex: 1}}
-    //   torchMode="off"
-    //   cameraType="back"
-    // />
   );
 };
 

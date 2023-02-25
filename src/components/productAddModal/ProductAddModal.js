@@ -193,6 +193,7 @@ const useStyles = () => {
 };
 
 const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
+  console.log('GILA', product);
   const styles = useStyles();
   const dispatch = useDispatch();
 
