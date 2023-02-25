@@ -131,8 +131,8 @@ class PickCoordinate extends Component {
         userLocation: this.state.userLocation,
         detailAddress: this.state.detailAddress,
       };
-
-      Actions.pop({coordinate: coordinate});
+      this.props.handleChoose(coordinate);
+      Actions.pop();
       // if (this.props.from === 'address') {
       //   this.props.setCoordinate({
       //     latitude: this.state.latitude,
