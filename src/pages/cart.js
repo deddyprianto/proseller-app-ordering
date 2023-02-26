@@ -1040,10 +1040,8 @@ const Cart = () => {
   };
 
   const renderDetailDeliveryCost = () => {
-    const {provider} = basket;
-
-    if (provider) {
-      const minAmount = Number(provider?.minPurchaseForFreeDelivery);
+    if (!isEmptyObject(basket?.provider)) {
+      const minAmount = Number(basket?.provider?.minPurchaseForFreeDelivery);
       const deliveryFee = Number(basket?.provider?.deliveryFee);
 
       const isDiscount = minAmount ? subTotal >= minAmount : false;

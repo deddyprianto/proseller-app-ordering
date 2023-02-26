@@ -23,6 +23,7 @@ import Theme from '../../theme';
 import LoadingScreen from '../loadingScreen';
 import CurrencyFormatter from '../../helper/CurrencyFormatter';
 import appConfig from '../../config/appConfig';
+import {isEmptyObject} from '../../helper/CheckEmpty';
 
 const HEIGHT = Dimensions.get('window').height;
 
@@ -150,7 +151,14 @@ const useStyles = () => {
     },
     touchableSave: {
       paddingVertical: 10,
-      backgroundColor: colorConfig.primaryColor,
+      backgroundColor: theme.colors.buttonActive,
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderRadius: 8,
+    },
+    touchableSaveDisabled: {
+      paddingVertical: 10,
+      backgroundColor: theme.colors.buttonDisabled,
       justifyContent: 'center',
       alignItems: 'center',
       borderRadius: 8,
@@ -381,10 +389,16 @@ const DeliveryProviderSelectorModal = ({open, handleClose, value}) => {
   };
 
   const renderFooter = () => {
+    const isDisabled = isEmptyObject(selected);
+    const stylesButton = isDisabled
+      ? styles.touchableSaveDisabled
+      : styles.touchableSave;
+
     return (
       <View style={styles.footer}>
         <TouchableOpacity
-          style={styles.touchableSave}
+          disabled={isDisabled}
+          style={stylesButton}
           onPress={() => {
             handleSave();
           }}>
