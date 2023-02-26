@@ -167,7 +167,7 @@ const useStyles = () => {
   return styles;
 };
 
-const MyDeliveryAddressItem = ({item, fromScene}) => {
+const MyDeliveryAddressItem = ({item, fromScene, handleResetProvider}) => {
   const styles = useStyles();
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
@@ -218,6 +218,7 @@ const MyDeliveryAddressItem = ({item, fromScene}) => {
 
     setIsLoading(true);
     await dispatch(updateUser(payload));
+    handleResetProvider();
     setIsLoading(false);
     handleCloseConfirmationModal();
   };

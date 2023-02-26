@@ -363,7 +363,9 @@ const useStyles = () => {
 const Cart = () => {
   const styles = useStyles();
   const dispatch = useDispatch();
-  const [availableTimes, setAvailableTimes] = useState([]);
+
+  const [subTotal, setSubTotal] = useState(0);
+
   const [seeDetail, setSeeDetail] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [openOrderingTypeModal, setOpenOrderingTypeModal] = useState(false);
@@ -373,6 +375,8 @@ const Cart = () => {
   );
 
   const [deliveryAddress, setDeliveryAddress] = useState({});
+
+  const [availableTimes, setAvailableTimes] = useState([]);
 
   const outlet = useSelector(
     state => state.storesReducer.defaultOutlet.defaultOutlet,
@@ -385,13 +389,6 @@ const Cart = () => {
   const userDetail = useSelector(
     state => state.userReducer?.getUser?.userDetails,
   );
-
-  const totalGrossAmount = basket?.totalGrossAmount;
-  const totalDiscountAmount = basket?.totalDiscountAmount;
-  const subTotalAfterDiscount = totalGrossAmount - totalDiscountAmount;
-  const subTotal = totalDiscountAmount
-    ? subTotalAfterDiscount
-    : totalGrossAmount;
 
   const orderingModesField = [
     {
@@ -481,6 +478,16 @@ const Cart = () => {
     loadData();
   }, [outlet, basket, orderingModesField, dispatch]);
 
+  useEffect(() => {
+    const totalGrossAmount = basket?.totalGrossAmount;
+    const totalDiscountAmount = basket?.totalDiscountAmount;
+    const subTotalAfterDiscount = totalGrossAmount - totalDiscountAmount;
+    const result = totalDiscountAmount
+      ? subTotalAfterDiscount
+      : totalGrossAmount;
+    setSubTotal(result);
+  }, [basket]);
+
   const handleOpenOrderingTypeModal = () => {
     setOpenOrderingTypeModal(true);
     setSeeDetail(false);
@@ -503,6 +510,18 @@ const Cart = () => {
   };
   const handleCloseDeliveryProviderModal = () => {
     setOpenDeliveryProviderModal(false);
+  };
+
+  const handleResetProvider = async () => {
+    const orderingType =
+      typeof basket?.orderingMode === 'string' && basket?.orderingMode;
+
+    await dispatch(
+      changeOrderingMode({
+        orderingMode: orderingType,
+        provider: {},
+      }),
+    );
   };
 
   const handleOpenDetail = () => {
@@ -537,9 +556,15 @@ const Cart = () => {
   };
 
   const handleDisabledPaymentButton = value => {
-    const isActiveDelivery = isEmptyArray(availableTimes)
-      ? !!deliveryAddress && !!basket?.provider
-      : !!deliveryAddress && !!basket?.provider && !!orderingDateTimeSelected;
+    const minAmount = outlet.orderValidation?.delivery?.minAmount;
+
+    const isActiveDeliveryMinAmount = !minAmount ? true : subTotal >= minAmount;
+
+    const isBasketProvider = !isEmptyObject(basket?.provider);
+
+    const isActiveDeliveryTime = isEmptyArray(availableTimes)
+      ? !!deliveryAddress && isBasketProvider
+      : !!deliveryAddress && isBasketProvider && !!orderingDateTimeSelected;
 
     const isActivePickUp = isEmptyArray(availableTimes)
       ? !orderingDateTimeSelected
@@ -551,7 +576,7 @@ const Cart = () => {
 
     switch (value) {
       case 'DELIVERY':
-        if (isActiveDelivery) {
+        if (isActiveDeliveryMinAmount && isActiveDeliveryTime) {
           return false;
         } else {
           return true;
@@ -853,7 +878,11 @@ const Cart = () => {
         <TouchableOpacity
           style={styles.touchableMethod}
           onPress={() => {
-            Actions.myDeliveryAddress();
+            Actions.myDeliveryAddress({
+              handleResetProvider: () => {
+                handleResetProvider();
+              },
+            });
           }}>
           <Text style={styles.textMethodValue}>{deliveryAddressValue}</Text>
         </TouchableOpacity>
@@ -1003,7 +1032,6 @@ const Cart = () => {
     const maxAmount = Number(basket?.provider?.maxFreeDeliveryAmount);
     const minAmount = Number(basket?.provider?.minPurchaseForFreeDelivery);
     const deliveryFee = Number(basket?.provider?.deliveryFee);
-
     if (minAmount && subTotal > minAmount && deliveryFee !== 0) {
       return deliveryFee - maxAmount;
     } else {
@@ -1143,7 +1171,6 @@ const Cart = () => {
           }}
         />
         <OrderingTypeSelectorModal
-          subTotal={subTotal}
           value={basket?.orderingMode}
           open={openOrderingTypeModal}
           handleClose={() => {
@@ -1159,7 +1186,7 @@ const Cart = () => {
     const minAmountCustomMessage =
       outlet.orderValidation?.delivery?.minAmountCustomMessage;
 
-    if (subTotal < minAmount) {
+    if (subTotal < minAmount && basket?.orderingMode === 'DELIVERY') {
       const lessAmountCurrency = currencyFormatter(minAmount - subTotal);
       const minAmountCurrency = currencyFormatter(minAmount);
 

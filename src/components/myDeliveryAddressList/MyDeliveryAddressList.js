@@ -37,7 +37,11 @@ const useStyles = () => {
   return styles;
 };
 
-const MyDeliveryAddressList = ({deliveryAddress, fromScene}) => {
+const MyDeliveryAddressList = ({
+  deliveryAddress,
+  fromScene,
+  handleResetProvider,
+}) => {
   const styles = useStyles();
 
   const renderMyDeliveryAddressListItem = item => {
@@ -47,6 +51,7 @@ const MyDeliveryAddressList = ({deliveryAddress, fromScene}) => {
           item={item}
           deliveryAddress={deliveryAddress}
           fromScene={fromScene}
+          handleResetProvider={handleResetProvider}
         />
       </View>
     );

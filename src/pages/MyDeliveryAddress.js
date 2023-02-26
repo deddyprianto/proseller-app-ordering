@@ -57,7 +57,7 @@ const useStyles = () => {
   return styles;
 };
 
-const MyDeliveryAddress = ({fromScene}) => {
+const MyDeliveryAddress = ({fromScene, handleResetProvider}) => {
   const styles = useStyles();
   const [deliveryAddress, setDeliveryAddress] = useState([]);
 
@@ -107,6 +107,7 @@ const MyDeliveryAddress = ({fromScene}) => {
       <MyDeliveryAddressList
         deliveryAddress={deliveryAddress}
         fromScene={fromScene}
+        handleResetProvider={handleResetProvider}
       />
       {renderFooter()}
     </SafeAreaView>
