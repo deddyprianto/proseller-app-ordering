@@ -232,12 +232,13 @@ const DeliveryProviderSelectorModal = ({open, handleClose, value}) => {
       if (result?.data) {
         setDeliveryProviders(result?.data?.dataProvider);
       }
-      const currentProvider = value || {};
+
+      const currentProvider = !isEmptyObject(value) ? value : {};
       setSelected(currentProvider);
     };
 
     loadData();
-  }, [userDetail]);
+  }, [userDetail, value]);
 
   const handleSave = async () => {
     setIsLoading(true);

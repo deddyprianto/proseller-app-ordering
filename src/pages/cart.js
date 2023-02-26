@@ -38,7 +38,11 @@ import {isEmptyArray, isEmptyObject} from '../helper/CheckEmpty';
 import currencyFormatter from '../helper/CurrencyFormatter';
 
 import {showSnackbar} from '../actions/setting.action';
-import {changeOrderingMode, getTimeSlot} from '../actions/order.action';
+import {
+  changeOrderingMode,
+  getBasket,
+  getTimeSlot,
+} from '../actions/order.action';
 
 import Theme from '../theme';
 
@@ -516,12 +520,14 @@ const Cart = () => {
     const orderingType =
       typeof basket?.orderingMode === 'string' && basket?.orderingMode;
 
+    setIsLoading(true);
     await dispatch(
       changeOrderingMode({
         orderingMode: orderingType,
         provider: {},
       }),
     );
+    setIsLoading(false);
   };
 
   const handleOpenDetail = () => {
