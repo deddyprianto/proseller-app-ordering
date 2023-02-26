@@ -1032,7 +1032,7 @@ const Cart = () => {
     const maxAmount = Number(basket?.provider?.maxFreeDeliveryAmount);
     const minAmount = Number(basket?.provider?.minPurchaseForFreeDelivery);
     const deliveryFee = Number(basket?.provider?.deliveryFee);
-    if (minAmount && subTotal > minAmount && deliveryFee !== 0) {
+    if (minAmount && subTotal >= minAmount && deliveryFee !== 0) {
       return deliveryFee - maxAmount;
     } else {
       return deliveryFee;
@@ -1046,7 +1046,7 @@ const Cart = () => {
       const minAmount = Number(provider?.minPurchaseForFreeDelivery);
       const deliveryFee = Number(basket?.provider?.deliveryFee);
 
-      const isDiscount = minAmount ? subTotal > minAmount : false;
+      const isDiscount = minAmount ? subTotal >= minAmount : false;
 
       const cost = handleDetailDeliveryCostDiscount();
 
@@ -1220,7 +1220,7 @@ const Cart = () => {
 
       const termsAndConditions = `Add ${lessAmountCurrency} to get delivery fee discounts`;
 
-      const value = subTotal < minAmount ? subTotal / minAmount : 1;
+      const value = subTotal <= minAmount ? subTotal / minAmount : 1;
 
       return renderLoadBar({
         text: message,
