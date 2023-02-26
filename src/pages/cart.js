@@ -558,7 +558,7 @@ const Cart = () => {
   const handleDisabledPaymentButton = value => {
     const minAmount = outlet.orderValidation?.delivery?.minAmount;
 
-    const isActiveDeliveryMinAmount = !minAmount ? true : subTotal > minAmount;
+    const isActiveDeliveryMinAmount = !minAmount ? true : subTotal >= minAmount;
 
     const isActiveDeliveryTime = isEmptyArray(availableTimes)
       ? !!deliveryAddress && !!basket?.provider
