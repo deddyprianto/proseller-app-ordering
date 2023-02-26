@@ -10,6 +10,7 @@ import {
   StyleSheet,
   ScrollView,
   Dimensions,
+  Modal,
 } from 'react-native';
 
 import {Dialog, Portal, Provider} from 'react-native-paper';
@@ -394,18 +395,20 @@ const DeliveryProviderSelectorModal = ({open, handleClose, value}) => {
   };
 
   return (
-    <Provider>
-      <Portal>
-        <Dialog visible={open} onDismiss={handleClose} style={styles.root}>
-          <LoadingScreen loading={isLoading} />
-          {renderHeader()}
-          <View style={styles.divider} />
-          {renderBody()}
-          <View style={styles.divider} />
-          {renderFooter()}
-        </Dialog>
-      </Portal>
-    </Provider>
+    <Modal transparent visible={open} onDismiss={handleClose}>
+      <Provider>
+        <Portal>
+          <Dialog visible={open} onDismiss={handleClose} style={styles.root}>
+            <LoadingScreen loading={isLoading} />
+            {renderHeader()}
+            <View style={styles.divider} />
+            {renderBody()}
+            <View style={styles.divider} />
+            {renderFooter()}
+          </Dialog>
+        </Portal>
+      </Provider>
+    </Modal>
   );
 };
 
