@@ -560,9 +560,11 @@ const Cart = () => {
 
     const isActiveDeliveryMinAmount = !minAmount ? true : subTotal >= minAmount;
 
+    const isBasketProvider = !isEmptyObject(basket?.provider);
+
     const isActiveDeliveryTime = isEmptyArray(availableTimes)
-      ? !!deliveryAddress && !!basket?.provider
-      : !!deliveryAddress && !!basket?.provider && !!orderingDateTimeSelected;
+      ? !!deliveryAddress && isBasketProvider
+      : !!deliveryAddress && isBasketProvider && !!orderingDateTimeSelected;
 
     const isActivePickUp = isEmptyArray(availableTimes)
       ? !orderingDateTimeSelected
