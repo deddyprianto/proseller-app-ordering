@@ -103,6 +103,7 @@ const useStyles = () => {
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textDetailValueDeliveryFeeLineTrough: {
+      marginRight: 4,
       textDecorationLine: 'line-through',
       color: theme.colors.textTertiary,
       fontSize: theme.fontSize[14],
@@ -1003,7 +1004,7 @@ const Cart = () => {
     const minAmount = Number(basket?.provider?.minPurchaseForFreeDelivery);
     const deliveryFee = Number(basket?.provider?.deliveryFee);
 
-    if (minAmount && subTotal < minAmount && deliveryFee !== 0) {
+    if (minAmount && subTotal > minAmount && deliveryFee !== 0) {
       return deliveryFee - maxAmount;
     } else {
       return deliveryFee;
