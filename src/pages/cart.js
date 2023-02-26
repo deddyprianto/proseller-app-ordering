@@ -363,7 +363,9 @@ const useStyles = () => {
 const Cart = () => {
   const styles = useStyles();
   const dispatch = useDispatch();
-  const [availableTimes, setAvailableTimes] = useState([]);
+
+  const [subTotal, setSubTotal] = useState(0);
+
   const [seeDetail, setSeeDetail] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [openOrderingTypeModal, setOpenOrderingTypeModal] = useState(false);
@@ -373,6 +375,8 @@ const Cart = () => {
   );
 
   const [deliveryAddress, setDeliveryAddress] = useState({});
+
+  const [availableTimes, setAvailableTimes] = useState([]);
 
   const outlet = useSelector(
     state => state.storesReducer.defaultOutlet.defaultOutlet,
@@ -385,13 +389,6 @@ const Cart = () => {
   const userDetail = useSelector(
     state => state.userReducer?.getUser?.userDetails,
   );
-
-  const totalGrossAmount = basket?.totalGrossAmount;
-  const totalDiscountAmount = basket?.totalDiscountAmount;
-  const subTotalAfterDiscount = totalGrossAmount - totalDiscountAmount;
-  const subTotal = totalDiscountAmount
-    ? subTotalAfterDiscount
-    : totalGrossAmount;
 
   const orderingModesField = [
     {
@@ -481,6 +478,16 @@ const Cart = () => {
     loadData();
   }, [outlet, basket, orderingModesField, dispatch]);
 
+  useEffect(() => {
+    const totalGrossAmount = basket?.totalGrossAmount;
+    const totalDiscountAmount = basket?.totalDiscountAmount;
+    const subTotalAfterDiscount = totalGrossAmount - totalDiscountAmount;
+    const result = totalDiscountAmount
+      ? subTotalAfterDiscount
+      : totalGrossAmount;
+    setSubTotal(result);
+  }, [basket]);
+
   const handleOpenOrderingTypeModal = () => {
     setOpenOrderingTypeModal(true);
     setSeeDetail(false);
@@ -537,7 +544,11 @@ const Cart = () => {
   };
 
   const handleDisabledPaymentButton = value => {
-    const isActiveDelivery = isEmptyArray(availableTimes)
+    const minAmount = outlet.orderValidation?.delivery?.minAmount;
+
+    const isActiveDeliveryMinAmount = !minAmount ? true : subTotal > minAmount;
+
+    const isActiveDeliveryTime = isEmptyArray(availableTimes)
       ? !!deliveryAddress && !!basket?.provider
       : !!deliveryAddress && !!basket?.provider && !!orderingDateTimeSelected;
 
@@ -551,7 +562,7 @@ const Cart = () => {
 
     switch (value) {
       case 'DELIVERY':
-        if (isActiveDelivery) {
+        if (isActiveDeliveryMinAmount && isActiveDeliveryTime) {
           return false;
         } else {
           return true;
@@ -1003,7 +1014,6 @@ const Cart = () => {
     const maxAmount = Number(basket?.provider?.maxFreeDeliveryAmount);
     const minAmount = Number(basket?.provider?.minPurchaseForFreeDelivery);
     const deliveryFee = Number(basket?.provider?.deliveryFee);
-
     if (minAmount && subTotal > minAmount && deliveryFee !== 0) {
       return deliveryFee - maxAmount;
     } else {
@@ -1159,7 +1169,7 @@ const Cart = () => {
     const minAmountCustomMessage =
       outlet.orderValidation?.delivery?.minAmountCustomMessage;
 
-    if (subTotal < minAmount) {
+    if (subTotal < minAmount && basket?.orderingMode === 'DELIVERY') {
       const lessAmountCurrency = currencyFormatter(minAmount - subTotal);
       const minAmountCurrency = currencyFormatter(minAmount);
 
