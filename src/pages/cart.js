@@ -512,6 +512,18 @@ const Cart = () => {
     setOpenDeliveryProviderModal(false);
   };
 
+  const handleResetProvider = async () => {
+    const orderingType =
+      typeof basket?.orderingMode === 'string' && basket?.orderingMode;
+
+    await dispatch(
+      changeOrderingMode({
+        orderingMode: orderingType,
+        provider: {},
+      }),
+    );
+  };
+
   const handleOpenDetail = () => {
     setSeeDetail(true);
     setOpenOrderingTypeModal(false);
@@ -864,7 +876,11 @@ const Cart = () => {
         <TouchableOpacity
           style={styles.touchableMethod}
           onPress={() => {
-            Actions.myDeliveryAddress();
+            Actions.myDeliveryAddress({
+              handleResetProvider: () => {
+                handleResetProvider();
+              },
+            });
           }}>
           <Text style={styles.textMethodValue}>{deliveryAddressValue}</Text>
         </TouchableOpacity>
@@ -1153,7 +1169,6 @@ const Cart = () => {
           }}
         />
         <OrderingTypeSelectorModal
-          subTotal={subTotal}
           value={basket?.orderingMode}
           open={openOrderingTypeModal}
           handleClose={() => {

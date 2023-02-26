@@ -163,7 +163,7 @@ const useStyles = () => {
   return styles;
 };
 
-const OrderingTypeSelectorModal = ({open, handleClose, value, subTotal}) => {
+const OrderingTypeSelectorModal = ({open, handleClose, value}) => {
   const styles = useStyles();
   const dispatch = useDispatch();
   const [selected, setSelected] = useState({});
