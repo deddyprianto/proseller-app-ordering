@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import DeviceBrightness from 'react-native-device-brightness';
+// import DeviceBrightness from 'react-native-device-brightness';
 
 import {
   StyleSheet,
@@ -282,11 +282,11 @@ const Profile = () => {
   };
 
   const handleOpenMyECardModal = async () => {
-    DeviceBrightness.setBrightnessLevel(1);
+    // DeviceBrightness.setBrightnessLevel(1);
     setIsOpenMyECardModal(true);
   };
   const handleCloseMyECardModal = async () => {
-    DeviceBrightness.setBrightnessLevel(-1);
+    // DeviceBrightness.setBrightnessLevel(-1);
     setIsOpenMyECardModal(false);
   };
 
