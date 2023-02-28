@@ -266,14 +266,14 @@ const DeliveryProviderSelectorModal = ({open, handleClose, value}) => {
   };
 
   const renderDeliveryProviderItemFooter = item => {
-    if (item.minPurchaseForFreeDelivery) {
-      const minPurchaseForFreeDelivery = CurrencyFormatter(
-        Number(item.minPurchaseForFreeDelivery),
-      );
+    if (item?.minPurchaseForFreeDelivery) {
+      const minPurchaseForFreeDelivery =
+        item?.minPurchaseForFreeDelivery &&
+        CurrencyFormatter(Number(item?.minPurchaseForFreeDelivery));
 
-      const maxFreeDeliveryAmount = CurrencyFormatter(
-        Number(item.maxFreeDeliveryAmount),
-      );
+      const maxFreeDeliveryAmount =
+        item?.maxFreeDeliveryAmount &&
+        CurrencyFormatter(Number(item?.maxFreeDeliveryAmount));
 
       return (
         <View style={styles.touchableItemFooter}>
@@ -295,6 +295,31 @@ const DeliveryProviderSelectorModal = ({open, handleClose, value}) => {
     }
   };
 
+  const renderDeliveryProviderItemFooterForFree = item => {
+    if (item?.minPurchaseForFreeDelivery) {
+      const minPurchaseForFreeDelivery = CurrencyFormatter(
+        Number(item?.minPurchaseForFreeDelivery),
+      );
+
+      return (
+        <View style={styles.touchableItemFooter}>
+          <View style={styles.divider} />
+
+          <Text style={styles.textDeliveryTermsAndConditions}>
+            Spend{' '}
+            <Text style={styles.textDeliveryTermsAndConditionsBold}>
+              {minPurchaseForFreeDelivery}
+            </Text>{' '}
+            and receive{' '}
+            <Text style={styles.textDeliveryTermsAndConditionsBold}>
+              FREE DELIVERY!
+            </Text>
+          </Text>
+        </View>
+      );
+    }
+  };
+
   const renderDeliveryProviderItemBody = item => {
     return (
       <View style={styles.touchableItemBody}>
@@ -305,17 +330,24 @@ const DeliveryProviderSelectorModal = ({open, handleClose, value}) => {
           </Text>
         </View>
         <Text style={styles.textPrice}>
-          {CurrencyFormatter(item?.deliveryFee)}
+          {CurrencyFormatter(item?.grossAmount)}
         </Text>
       </View>
     );
   };
 
   const renderDeliveryProviderItem = item => {
+    const maxFreeDeliveryAmount = Number(item.maxFreeDeliveryAmount);
+
     const active = selected?.id === item?.id;
+
     const styleItem = active
       ? styles.touchableItemSelected
       : styles.touchableItem;
+
+    const footer = maxFreeDeliveryAmount
+      ? renderDeliveryProviderItemFooter(item)
+      : renderDeliveryProviderItemFooterForFree(item);
 
     return (
       <TouchableOpacity
@@ -324,7 +356,7 @@ const DeliveryProviderSelectorModal = ({open, handleClose, value}) => {
           setSelected(item);
         }}>
         {renderDeliveryProviderItemBody(item)}
-        {renderDeliveryProviderItemFooter(item)}
+        {footer}
       </TouchableOpacity>
     );
   };
