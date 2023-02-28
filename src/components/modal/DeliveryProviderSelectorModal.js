@@ -387,7 +387,7 @@ const DeliveryProviderSelectorModal = ({open, handleClose, value}) => {
           </Text>
         </View>
         <Text style={styles.textPriceDisabled}>
-          {CurrencyFormatter(item?.deliveryFee)}
+          {CurrencyFormatter(item?.grossAmount)}
         </Text>
       </View>
     );
