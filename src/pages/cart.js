@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /**
  * Martin
  * martin@edgeworks.co.id
@@ -41,6 +42,7 @@ import {showSnackbar} from '../actions/setting.action';
 import {
   changeOrderingMode,
   getBasket,
+  getDeliveryProviderAndFee,
   getTimeSlot,
 } from '../actions/order.action';
 
@@ -483,6 +485,7 @@ const Cart = () => {
   }, [outlet, basket, orderingModesField, dispatch]);
 
   useEffect(() => {
+    setIsLoading(true);
     const totalGrossAmount = basket?.totalGrossAmount;
     const totalDiscountAmount = basket?.totalDiscountAmount;
     const subTotalAfterDiscount = totalGrossAmount - totalDiscountAmount;
@@ -491,6 +494,48 @@ const Cart = () => {
       : totalGrossAmount;
     setSubTotal(result);
   }, [basket]);
+
+  useEffect(() => {
+    const loadData = async () => {
+      setIsLoading(true);
+      const userDecrypt = CryptoJS.AES.decrypt(
+        userDetail,
+        awsConfig.PRIVATE_KEY_RSA,
+      );
+      const user = JSON.parse(userDecrypt.toString(CryptoJS.enc.Utf8));
+
+      const deliveryAddressDefault = user?.deliveryAddress.find(
+        address => address.isDefault,
+      );
+
+      const address = user?.selectedAddress || deliveryAddressDefault;
+      const cartId = basket?.cartID;
+      const outletId = basket?.outlet?.id;
+
+      const payload = {
+        deliveryAddress: address,
+        outletId,
+        cartID: cartId,
+      };
+
+      const result = await dispatch(getDeliveryProviderAndFee(payload));
+
+      if (result?.data) {
+        const providerId = basket.provider.id;
+
+        const currentProvider = result?.data?.dataProvider.find(
+          row => row.id === providerId,
+        );
+        await handleResetProvider(currentProvider);
+      }
+
+      setIsLoading(false);
+    };
+
+    if (basket?.provider?.id) {
+      loadData();
+    }
+  }, [subTotal]);
 
   const handleOpenOrderingTypeModal = () => {
     setOpenOrderingTypeModal(true);
@@ -516,18 +561,18 @@ const Cart = () => {
     setOpenDeliveryProviderModal(false);
   };
 
-  const handleResetProvider = async () => {
+  const handleResetProvider = async item => {
     const orderingType =
       typeof basket?.orderingMode === 'string' && basket?.orderingMode;
 
-    setIsLoading(true);
+    const isItem = !isEmptyObject(item);
+
     await dispatch(
       changeOrderingMode({
         orderingMode: orderingType,
-        provider: {},
+        provider: isItem ? item : {},
       }),
     );
-    setIsLoading(false);
   };
 
   const handleOpenDetail = () => {
@@ -1033,32 +1078,21 @@ const Cart = () => {
       );
     }
   };
-
-  const handleDetailDeliveryCostDiscount = () => {
-    const maxAmount = Number(basket?.provider?.maxFreeDeliveryAmount);
-    const minAmount = Number(basket?.provider?.minPurchaseForFreeDelivery);
-    const deliveryFee = Number(basket?.provider?.deliveryFee);
-    if (minAmount && subTotal >= minAmount && deliveryFee !== 0) {
-      return deliveryFee - maxAmount;
-    } else {
-      return deliveryFee;
-    }
-  };
-
   const renderDetailDeliveryCost = () => {
     if (!isEmptyObject(basket?.provider)) {
       const minAmount = Number(basket?.provider?.minPurchaseForFreeDelivery);
       const deliveryFee = Number(basket?.provider?.deliveryFee);
+      const deliveryGrossAmount = Number(basket?.provider?.grossAmount);
 
       const isDiscount = minAmount ? subTotal >= minAmount : false;
 
-      const cost = handleDetailDeliveryCostDiscount();
-
       const costDefaultCurrency = isDiscount
-        ? currencyFormatter(deliveryFee)
+        ? currencyFormatter(deliveryGrossAmount)
         : null;
 
-      const costCurrency = cost ? currencyFormatter(cost) : 'Free';
+      const costCurrency = deliveryFee
+        ? currencyFormatter(deliveryFee)
+        : 'Free';
 
       return (
         <View style={styles.viewDetailValueItem}>
