@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react';
-// import QRCodeScanner from 'react-native-qrcode-scanner';
+import React, {useRef, useEffect, useState} from 'react';
+import QRCodeScanner from 'react-native-qrcode-scanner';
 import BarcodeScanner from 'react-native-scan-barcode';
 import {useDispatch, useSelector} from 'react-redux';
 
@@ -115,7 +115,7 @@ const useStyles = () => {
   return styles;
 };
 const ScannerBarcode = () => {
-  // let scanner = useRef(null);
+  let scanner = useRef(null);
   const styles = useStyles();
   const dispatch = useDispatch();
 
@@ -257,15 +257,34 @@ const ScannerBarcode = () => {
     }
   };
 
+  const renderScanner = () => {
+    if (Platform.OS === 'ios') {
+      return (
+        <QRCodeScanner
+          ref={node => {
+            scanner = node;
+          }}
+          cameraStyle={styles.camera}
+          showMarker={true}
+          onRead={onSuccess}
+        />
+      );
+    } else {
+      return (
+        <BarcodeScanner
+          onBarCodeRead={isDisabled ? false : onSuccess}
+          style={styles.scanner}
+          torchMode="off"
+          cameraType="back"
+        />
+      );
+    }
+  };
+
   return (
     <SafeAreaView style={styles.root}>
       <LoadingScreen loading={isLoading} />
-      <BarcodeScanner
-        onBarCodeRead={isDisabled ? false : onSuccess}
-        style={styles.scanner}
-        torchMode="off"
-        cameraType="back"
-      />
+      {renderScanner()}
 
       {renderSearchModal()}
       {renderHeader()}
