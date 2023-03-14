@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-// import QRCodeScanner from 'react-native-qrcode-scanner';
+import QRCodeScanner from 'react-native-qrcode-scanner';
 import BarcodeScanner from 'react-native-scan-barcode';
 import {useDispatch, useSelector} from 'react-redux';
 
