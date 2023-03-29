@@ -3410,7 +3410,10 @@ class SettleOrder extends Component {
                 {appConfig.appMataUang}
                 {this.formatCurrency(total)}
               </Text>
-              <Text> of this grand total can be redeem with point/voucher</Text>
+              <Text>
+                {' '}
+                of this grand total can be redeemed with point/voucher
+              </Text>
             </Text>
           </View>
 
