@@ -141,8 +141,8 @@ android {
         applicationId "com.acemart"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 86
-        versionName "1.1.30"
+        versionCode 87
+        versionName "1.1.31"
         missingDimensionStrategy 'react-native-camera', 'general'
         resValue "string", "build_config_package", "com.acemart"
         multiDexEnabled true
@@ -193,21 +193,21 @@ android {
             dev {
                 minSdkVersion rootProject.ext.minSdkVersion
                 applicationId 'com.acemart.dev'
-                versionName "1.1.30"
+                versionName "1.1.31"
                 targetSdkVersion rootProject.ext.targetSdkVersion
                 resValue "string", "build_config_package", "com.acemart"
             }
             demo {
                 minSdkVersion rootProject.ext.minSdkVersion
                 applicationId 'com.acemart.demo'
-                versionName "1.1.30"
+                versionName "1.1.31"
                 targetSdkVersion rootProject.ext.targetSdkVersion
                 resValue "string", "build_config_package", "com.acemart"
             }
             app {
                 minSdkVersion rootProject.ext.minSdkVersion
                 applicationId 'com.acemart.app'
-                versionName "1.1.30"
+                versionName "1.1.31"
                 targetSdkVersion rootProject.ext.targetSdkVersion
                 resValue "string", "build_config_package", "com.acemart"
             }
@@ -230,8 +230,6 @@ android {
 
 dependencies {
     implementation project(':react-native-linear-gradient')
-    // implementation project(':@react-native-firebase_crashlytics')
-    // implementation project(':@react-native-firebase_app')
     implementation project(':react-native-sms-retriever')
     // implementation project(':react-native-device-brightness')
     implementation project(':react-native-config')
@@ -246,14 +244,8 @@ dependencies {
     // implementation "com.facebook.react:react-native:+"  // From node_modules
     // implementation 'com.facebook.android:facebook-android-sdk:[4,5)'
     // implementation 'com.facebook.android:facebook-login:[5,6)'
-    // implementation 'com.google.firebase:firebase-analytics:17.2.2'
     // implementation 'com.facebook.android:facebook-android-sdk:5.15.3'
-    // Firebase dependencies
-    // implementation "com.google.android.gms:play-services-base:16.1.0"
-    // implementation "com.google.firebase:firebase-core:16.0.9"
-    // Add the Firebase SDK for Crashlytics.
-    // implementation 'com.google.firebase:firebase-crashlytics:17.0.0-beta01'
-
+    
     // def multidex_version = "2.0.1"
     // implementation 'androidx.multidex:multidex:$multidex_version'
 
@@ -301,6 +293,4 @@ apply from: file("../../node_modules/@react-native-community/cli-platform-androi
 apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
 apply plugin: 'com.android.application'
 apply plugin: 'com.onesignal.androidsdk.onesignal-gradle-plugin'
-// apply plugin: 'com.google.gms.google-services'
-// apply plugin: 'com.google.firebase.crashlytics'
 

@@ -61,25 +61,18 @@ target 'acemart' do
 
   pod 'react-native-geolocation', :path => '../node_modules/@react-native-community/geolocation'
 
-  # MLKIT for Barcode Scanning
-  # pod 'react-native-camera', path: '../node_modules/react-native-camera', subspecs: [
-  #   'BarcodeDetectorMLKit'
-  # ]
+
+  # Firebase Machine Learning KIT for Barcode Scanning
+  pod 'react-native-camera', path: '../node_modules/react-native-camera', subspecs: [
+    'TextDetector',
+    'FaceDetectorMLKit',
+    'BarcodeDetectorMLKit'
+  ]
 
   pod 'Firebase/Core'
 
   target 'acemartTests' do
     inherit! :complete
-    # Pods for testing
   end
 
-  # Enables Flipper.
-  #
-  # Note that if you have use_frameworks! enabled, Flipper will not work and
-  # you should disable the next line.
-  # use_flipper!({ 'Flipper-Folly' => '2.3.0' }) # update this part
-  # post_install do |installer|
-  #   flipper_post_install(installer)
-  # end
-  
 end
