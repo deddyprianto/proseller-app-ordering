@@ -1,6 +1,5 @@
 import React, {useRef, useEffect, useState} from 'react';
-import QRCodeScanner from 'react-native-qrcode-scanner';
-import BarcodeScanner from 'react-native-scan-barcode';
+import {RNCamera} from 'react-native-camera';
 import {useDispatch, useSelector} from 'react-redux';
 
 import {
@@ -28,6 +27,8 @@ import Theme from '../theme';
 import ButtonCartFloating from '../components/buttonCartFloating/ButtonCartFloating';
 
 const HEIGHT = Dimensions.get('window').height;
+
+const RESTRICTED_TYPES = ['QR_CODE', 'UNKNOWN', 'TEXT'];
 
 const useStyles = () => {
   const theme = Theme();
@@ -115,7 +116,6 @@ const useStyles = () => {
   return styles;
 };
 const ScannerBarcode = () => {
-  let scanner = useRef(null);
   const styles = useStyles();
   const dispatch = useDispatch();
 
@@ -135,9 +135,6 @@ const ScannerBarcode = () => {
 
   useEffect(() => {
     if (!snackbar && !isOpenAddModal) {
-      if (Platform.OS === 'ios') {
-        scanner.reactivate();
-      }
       setIsDisabled(false);
     } else {
       setIsDisabled(true);
@@ -161,7 +158,6 @@ const ScannerBarcode = () => {
   const onSuccess = async value => {
     setIsLoading(true);
     const response = await dispatch(getProductByBarcode(value?.data));
-
     if (response?.data) {
       setIsLoading(false);
       setProduct(response?.data);
@@ -261,33 +257,33 @@ const ScannerBarcode = () => {
   };
 
   const renderScanner = () => {
-    if (Platform.OS === 'ios') {
-      return (
-        <QRCodeScanner
-          ref={node => {
-            scanner = node;
-          }}
-          cameraStyle={styles.camera}
-          showMarker={true}
-          onRead={onSuccess}
-        />
-      );
-    } else {
-      return (
-        <BarcodeScanner
-          onBarCodeRead={isDisabled ? false : onSuccess}
-          style={styles.scanner}
-          torchMode="off"
-          cameraType="back"
-        />
-      );
-    }
+    return (
+      <RNCamera
+        captureAudio={false}
+        style={styles.camera}
+        type={RNCamera.Constants.Type.back}
+        flashMode={RNCamera.Constants.FlashMode.on}
+        onGoogleVisionBarcodesDetected={({barcodes}) => {
+          const barcode = barcodes[0];
+          if (barcode && !RESTRICTED_TYPES.includes(barcode.type)) {
+            setIsLoading(true);
+            !isLoading ? setTimeout(() => onSuccess(barcode), 500) : null;
+          }
+        }}
+        androidCameraPermissionOptions={{
+          title: 'Permission to use camera',
+          message: 'We need to use your camera access to scan product barcode',
+          buttonPositive: 'Ok',
+          buttonNegative: 'Cancel',
+        }}
+      />
+    );
   };
 
   return (
     <SafeAreaView style={styles.root}>
       <LoadingScreen loading={isLoading} />
-      {renderScanner()}
+      {!isOpenAddModal && !isLoading && renderScanner()}
 
       {renderSearchModal()}
       {renderHeader()}
