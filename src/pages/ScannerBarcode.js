@@ -135,7 +135,9 @@ const ScannerBarcode = () => {
 
   useEffect(() => {
     if (!snackbar && !isOpenAddModal) {
-      scanner.reactivate();
+      if (Platform.OS === 'ios') {
+        scanner.reactivate();
+      }
       setIsDisabled(false);
     } else {
       setIsDisabled(true);
