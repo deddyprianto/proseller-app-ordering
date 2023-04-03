@@ -49,6 +49,8 @@ import {
 import Theme from '../theme';
 
 import LoadingScreen from '../components/loadingScreen';
+import OrderingModeOfflineModal from '../components/modal/OrderingModeOfflineModal';
+import {getOutletById} from '../actions/stores.action';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -379,6 +381,10 @@ const Cart = () => {
   const [openDeliveryProviderModal, setOpenDeliveryProviderModal] = useState(
     false,
   );
+  const [
+    openOrderingModeOfflineModal,
+    setOpenOrderingModeOfflineModal,
+  ] = useState(false);
 
   const [deliveryAddress, setDeliveryAddress] = useState({});
 
@@ -559,6 +565,12 @@ const Cart = () => {
   };
   const handleCloseDeliveryProviderModal = () => {
     setOpenDeliveryProviderModal(false);
+  };
+  const handleOpenOrderingModeOfflineModal = async () => {
+    setOpenOrderingModeOfflineModal(true);
+  };
+  const handleCloseOrderingModeOfflineModal = () => {
+    setOpenOrderingModeOfflineModal(false);
   };
 
   const handleResetProvider = async item => {
@@ -741,6 +753,21 @@ const Cart = () => {
 
   const handleClickButtonPayment = async () => {
     try {
+      const currentOutlet = await dispatch(getOutletById(outlet.id));
+
+      const orderingModeAvailable = orderingModesField.filter(mode => {
+        if (currentOutlet[mode.isEnabledFieldName]) {
+          return mode;
+        }
+      });
+      const availableCheck = orderingModeAvailable.find(
+        row => row.key === basket?.orderingMode,
+      );
+
+      if (!availableCheck) {
+        return handleOpenOrderingModeOfflineModal();
+      }
+
       if (outlet?.orderingStatus === 'UNAVAILABLE') {
         let message = 'Ordering is not available now.';
         if (outlet?.offlineMessage) {
@@ -1191,6 +1218,15 @@ const Cart = () => {
   };
 
   const renderModal = () => {
+    const orderingType =
+      typeof basket?.orderingMode === 'string' && basket?.orderingMode;
+
+    const orderingMode = orderingModesField.find(
+      mode => mode.key === orderingType,
+    );
+
+    const orderingTypeValue = orderingMode?.displayName;
+
     return (
       <>
         <DeliveryProviderSelectorModal
@@ -1213,6 +1249,13 @@ const Cart = () => {
           open={openOrderingTypeModal}
           handleClose={() => {
             handleCloseOrderingTypeModal();
+          }}
+        />
+        <OrderingModeOfflineModal
+          value={orderingTypeValue}
+          open={openOrderingModeOfflineModal}
+          handleClose={() => {
+            handleCloseOrderingModeOfflineModal();
           }}
         />
       </>
