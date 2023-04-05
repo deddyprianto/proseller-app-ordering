@@ -1,8 +1,11 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {Text, TouchableOpacity, View, Modal, StyleSheet} from 'react-native';
 import {Dialog, Portal, Provider} from 'react-native-paper';
+import {useDispatch} from 'react-redux';
+import {changeOrderingMode} from '../../actions/order.action';
 
 import Theme from '../../theme';
+import LoadingScreen from '../loadingScreen';
 
 const useStyles = () => {
   const theme = Theme();
@@ -55,7 +58,10 @@ const useStyles = () => {
 };
 
 const OrderingModeOfflineModal = ({open, handleClose, value}) => {
+  const dispatch = useDispatch();
   const styles = useStyles();
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const renderHeader = () => {
     return (
@@ -81,7 +87,9 @@ const OrderingModeOfflineModal = ({open, handleClose, value}) => {
       <View style={styles.footer}>
         <TouchableOpacity
           style={styles.touchableClose}
-          onPress={() => {
+          onPress={async () => {
+            setIsLoading(true);
+            await dispatch(changeOrderingMode({orderingMode: ''}));
             handleClose();
           }}>
           <Text style={styles.textClose}>Ok</Text>
@@ -99,6 +107,7 @@ const OrderingModeOfflineModal = ({open, handleClose, value}) => {
       <Provider>
         <Portal>
           <Dialog visible={open} onDismiss={handleClose} style={styles.root}>
+            <LoadingScreen loading={isLoading} />
             {renderHeader()}
             {renderBody()}
             {renderFooter()}
