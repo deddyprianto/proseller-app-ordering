@@ -125,13 +125,13 @@
   "detox": {
     "configurations": {
       "android.emu.debug": {
-        "binaryPath": "android/app/build/outputs/apk/dev/debug/app-dev-debug.apk",
+        "binaryPath": "native/Acemart/android/app/build/outputs/apk/dev/debug/app-dev-debug.apk",
         "build": "cd android && gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug && cd ..",
         "type": "android.emulator",
         "name": "Nexus_5X_API_29_x86"
       },
       "android.emu.release": {
-        "binaryPath": "android/app/build/outputs/apk/release/app-release.apk",
+        "binaryPath": "native/Acemart/android/app/build/outputs/apk/release/app-release.apk",
         "build": "cd android && ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release && cd ..",
         "type": "android.emulator",
         "name": "Nexus_4_API_23"

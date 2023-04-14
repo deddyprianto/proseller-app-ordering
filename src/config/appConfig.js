@@ -54,6 +54,7 @@ const appConfig = {
   imageOnBoarding2: require('../assets/img/image-on-boarding-2.png'),
   imageOnBoarding3: require('../assets/img/image-on-boarding-3.png'),
   imageOnBoarding4: require('../assets/img/image-on-boarding-4.png'),
+  imageOnBoarding5: require('../../native/acemart/assets/image-on-boarding-1.png'),
 
   imagePromotionBackground: require('../assets/img/image-promotion-background.png'),
   imagePointSmallBackground: require('../assets/img/image-point-small-background.png'),
