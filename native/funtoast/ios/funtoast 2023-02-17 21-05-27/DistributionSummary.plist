@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Funtoast.ipa</key>
+	<array>
+		<dict>
+			<key>architectures</key>
+			<array>
+				<string>arm64</string>
+			</array>
+			<key>buildNumber</key>
+			<string>3</string>
+			<key>certificate</key>
+			<dict>
+				<key>SHA1</key>
+				<string>97CB7714028004F3C04915A5732B613517463A45</string>
+				<key>dateExpires</key>
+				<string>27/05/23</string>
+				<key>type</key>
+				<string>Cloud Managed Apple Distribution</string>
+			</dict>
+			<key>entitlements</key>
+			<dict>
+				<key>application-identifier</key>
+				<string>YSZ34Z59CY.com.edgeworks.funtoast-app</string>
+				<key>aps-environment</key>
+				<string>production</string>
+				<key>beta-reports-active</key>
+				<true/>
+				<key>com.apple.developer.associated-domains</key>
+				<array>
+					<string>applinks:funtoastdemoapp.page.link</string>
+					<string>applinks:funtoastapp.page.link</string>
+				</array>
+				<key>com.apple.developer.team-identifier</key>
+				<string>YSZ34Z59CY</string>
+				<key>get-task-allow</key>
+				<false/>
+			</dict>
+			<key>name</key>
+			<string>Funtoast.app</string>
+			<key>profile</key>
+			<dict>
+				<key>UUID</key>
+				<string>81d5c850-f015-47e7-91dd-8acc90d069cf</string>
+				<key>dateExpires</key>
+				<string>18/11/23</string>
+				<key>name</key>
+				<string>iOS Team Store Provisioning Profile: com.edgeworks.funtoast-app</string>
+			</dict>
+			<key>symbols</key>
+			<true/>
+			<key>team</key>
+			<dict>
+				<key>id</key>
+				<string>YSZ34Z59CY</string>
+				<key>name</key>
+				<string>Edgeworks Solutions Pte Ltd</string>
+			</dict>
+			<key>versionNumber</key>
+			<string>1.1.11</string>
+		</dict>
+	</array>
+</dict>
+</plist>

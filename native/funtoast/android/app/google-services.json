@@ -1,0 +1,105 @@
+{
+  "project_info": {
+    "project_number": "187027636084",
+    "project_id": "funtoast-a1dcf",
+    "storage_bucket": "funtoast-a1dcf.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:187027636084:android:0227d28272f29d018bb621",
+        "android_client_info": {
+          "package_name": "com.funtoast.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "187027636084-ugk7df6dn91abr670ue4jnk7d972gvo4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCR2dSZ-VTBKarBBd7c-8Tm_e_NBMdjA-w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "187027636084-ugk7df6dn91abr670ue4jnk7d972gvo4.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "187027636084-is92f4mcsgbetvttfhjd0r0auo3jgj2f.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.edgeworks.funtoast-app",
+                "app_store_id": "123456"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:116894206602:android:c9b62042e39d72e7ec7b73",
+        "android_client_info": {
+          "package_name": "com.funtoast.demo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "116894206602-rs7d2229mohn2rplj4al64a1fcrp5pk1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBnKZpPsnVZTulkJeruodY6kHbmIR7KyYk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "116894206602-rs7d2229mohn2rplj4al64a1fcrp5pk1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:116894206602:android:f8204d4bf4628a56ec7b73",
+        "android_client_info": {
+          "package_name": "com.qiji.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "116894206602-rs7d2229mohn2rplj4al64a1fcrp5pk1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBnKZpPsnVZTulkJeruodY6kHbmIR7KyYk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "116894206602-rs7d2229mohn2rplj4al64a1fcrp5pk1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
