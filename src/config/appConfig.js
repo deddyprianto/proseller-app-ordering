@@ -39,9 +39,18 @@ const appConfig = {
   warning: require('../assets/img/warning.png'),
   location: require('../assets/img/icon-location.png'),
 
+  //should be dynamic
+  logoMerchant: require('../../native/automaxima/assets/img/logo.png'),
+  logoMerchantWithBackground: require('../../native/automaxima/assets/img/logo-merchant-with-background.png'),
+  imageOnBoarding1: require('../../native/automaxima/assets/img/image-on-boarding-1.png'),
+  imageOnBoarding2: require('../../native/automaxima/assets/img/image-on-boarding-2.png'),
+  imageOnBoarding3: require('../../native/automaxima/assets/img/image-on-boarding-3.png'),
+  imagePointSmallBackground: require('../../native/automaxima/assets/img/image-point-small-background.png'),
+  imagePointLargeBackground: require('../../native/automaxima/assets/img/image-point-large-background.png'),
+
   //LOGO MARTIN
-  logoMerchant: require('../assets/img/logo.png'),
-  logoMerchantWithBackground: require('../assets/img/logo-merchant-with-background.png'),
+  // logoMerchant: require('../assets/img/logo.png'),
+  // logoMerchantWithBackground: require('../assets/img/logo-merchant-with-background.png'),
 
   //IMAGE
   imageAdditionalBanner: require('../assets/img/image-additional-banner.jpg'),
@@ -50,15 +59,13 @@ const appConfig = {
 
   imageFavoriteOutlet: require('../assets/img/image-favorite-outlet.png'),
 
-  imageOnBoarding1: require('../assets/img/image-on-boarding-1.png'),
-  imageOnBoarding2: require('../assets/img/image-on-boarding-2.png'),
-  imageOnBoarding3: require('../assets/img/image-on-boarding-3.png'),
-  imageOnBoarding4: require('../assets/img/image-on-boarding-4.png'),
-  imageOnBoarding5: require('../../native/acemart/assets/image-on-boarding-1.png'),
+  // imageOnBoarding1: require('../assets/img/image-on-boarding-1.png'),
+  // imageOnBoarding2: require('../assets/img/image-on-boarding-2.png'),
+  // imageOnBoarding3: require('../assets/img/image-on-boarding-3.png'),
 
   imagePromotionBackground: require('../assets/img/image-promotion-background.png'),
-  imagePointSmallBackground: require('../assets/img/image-point-small-background.png'),
-  imagePointLargeBackground: require('../assets/img/image-point-large-background.png'),
+  // imagePointSmallBackground: require('../assets/img/image-point-small-background.png'),
+  // imagePointLargeBackground: require('../assets/img/image-point-large-background.png'),
 
   imageRedeemed: require('../assets/img/image-redeemed.png'),
 

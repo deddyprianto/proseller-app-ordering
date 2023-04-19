@@ -60,10 +60,10 @@ const useStyles = () => {
       marginTop: 32,
       height: 40,
       width: '100%',
-      backgroundColor: colorConfig.primaryColor,
       borderRadius: 5,
       justifyContent: 'center',
       alignItems: 'center',
+      backgroundColor: theme.colors.buttonActive,
     },
     touchableNextDisabled: {
       marginTop: 32,
@@ -80,8 +80,8 @@ const useStyles = () => {
     textChangeMethod: {
       width: '100%',
       textAlign: 'center',
-      color: colorConfig.primaryColor,
       textDecorationLine: 'underline',
+      color: theme.colors.textQuaternary,
     },
     viewMethodInput: {
       marginTop: 32,

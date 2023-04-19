@@ -15,7 +15,6 @@ import {
   Dimensions,
 } from 'react-native';
 
-import colorConfig from '../config/colorConfig';
 import {sendOTP, loginUser} from '../actions/auth.actions';
 import LoadingScreen from '../components/loadingScreen';
 import {showSnackbar} from '../actions/setting.action';
@@ -49,10 +48,10 @@ const useStyles = () => {
       marginTop: 32,
       height: 40,
       width: '100%',
-      backgroundColor: colorConfig.primaryColor,
       borderRadius: 5,
       justifyContent: 'center',
       alignItems: 'center',
+      backgroundColor: theme.colors.buttonActive,
     },
     textHeader: {
       color: theme.colors.primary,
@@ -89,14 +88,14 @@ const useStyles = () => {
     textSendOtp: {
       width: '100%',
       textAlign: 'center',
-      color: colorConfig.primaryColor,
       textDecorationLine: 'underline',
+      color: theme.colors.textQuaternary,
     },
     textSendOtpDisabled: {
       width: '100%',
       textAlign: 'center',
-      color: '#B7B7B7',
       textDecorationLine: 'underline',
+      color: theme.colors.textTertiary,
     },
     textBold: {
       color: theme.colors.textPrimary,
