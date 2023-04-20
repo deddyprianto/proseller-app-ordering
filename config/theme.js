@@ -1,4 +1,4 @@
-const PRIMARY_COLOR_RGB = '0, 191, 202';
+const PRIMARY_COLOR_RGB = '255, 173, 78'; //NOTES: harus di ubah
 const SECONDARY_COLOR_RGB = '53, 59, 72';
 const THIRD_COLOR_RGB = '156, 206, 194';
 const FORTH_COLOR_RGB = '231, 161, 161';

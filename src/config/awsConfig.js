@@ -43,7 +43,8 @@
 // export default awsConfig;
 
 import Config from 'react-native-config';
-import ENV from '../../env';
+import ENV from '../../configurations/automaxima/demo/env';
+// import ENV from '../../env';
 // import ENV from '../../env-demo';
 import Base64 from 'Base64';
 import {Platform} from 'react-native';

@@ -12,88 +12,93 @@ import {
   SafeAreaView,
 } from 'react-native';
 
-import colorConfig from '../config/colorConfig';
 import appConfig from '../config/appConfig';
 import {useDispatch} from 'react-redux';
 import {getLoginSettings} from '../actions/setting.action';
+import Theme from '../theme';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
 
-const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-  },
-  image: {
-    height: '100%',
-    width: WIDTH,
-  },
-  WrapDot: {
-    elevation: 2,
-    flexDirection: 'row',
-    alignSelf: 'center',
-    position: 'absolute',
-    bottom: (HEIGHT * 15) / 100,
-  },
-  activeDot: {
-    height: 10,
-    width: 10,
-    borderRadius: 10,
-    color: 'transparent',
-    borderWidth: 1,
-    borderColor: 'white',
-    margin: 5,
-  },
-  inactiveDot: {
-    height: 10,
-    width: 10,
-    borderRadius: 10,
-    backgroundColor: 'white',
-    margin: 5,
-  },
-  marginTop20: {
-    marginTop: 20,
-  },
-  colorWhite: {
-    color: 'white',
-  },
-  colorPrimary: {
-    color: colorConfig.primaryColor,
-  },
-  touchableLogin: {
-    height: 34,
-    width: '47%',
-    backgroundColor: colorConfig.primaryColor,
-    borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  touchableRegister: {
-    height: 34,
-    width: '47%',
-    backgroundColor: 'white',
-    borderWidth: 1,
-    borderColor: colorConfig.primaryColor,
-    borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 20,
-  },
-  viewRegisterAndLogin: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 16,
-    width: '100%',
-    borderTopLeftRadius: 12,
-    borderTopRightRadius: 12,
-    marginTop: -10,
-    backgroundColor: 'white',
-  },
-});
+const useStyles = () => {
+  const theme = Theme();
+  const styles = StyleSheet.create({
+    root: {
+      flex: 1,
+    },
+    image: {
+      height: '100%',
+      width: WIDTH,
+    },
+    WrapDot: {
+      elevation: 2,
+      flexDirection: 'row',
+      alignSelf: 'center',
+      position: 'absolute',
+      bottom: (HEIGHT * 15) / 100,
+    },
+    activeDot: {
+      height: 10,
+      width: 10,
+      borderRadius: 10,
+      color: 'transparent',
+      borderWidth: 1,
+      borderColor: 'white',
+      margin: 5,
+    },
+    inactiveDot: {
+      height: 10,
+      width: 10,
+      borderRadius: 10,
+      backgroundColor: 'white',
+      margin: 5,
+    },
+    marginTop20: {
+      marginTop: 20,
+    },
+    textLogin: {
+      color: theme.colors.textSecondary,
+    },
+    textRegister: {
+      color: theme.colors.textQuaternary,
+    },
+    touchableLogin: {
+      height: 34,
+      width: '47%',
+      borderRadius: 8,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: theme.colors.buttonActive,
+    },
+    touchableRegister: {
+      height: 34,
+      width: '47%',
+      borderWidth: 1,
+      borderRadius: 8,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginRight: 20,
+      borderColor: theme.colors.buttonActive,
+      backgroundColor: theme.colors.buttonStandBy,
+    },
+    viewRegisterAndLogin: {
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      padding: 16,
+      width: '100%',
+      borderTopLeftRadius: 12,
+      borderTopRightRadius: 12,
+      marginTop: -10,
+      backgroundColor: theme.colors.brandSecondary,
+    },
+  });
+  return styles;
+};
 
 const OnBoarding = () => {
+  const styles = useStyles();
   const dispatch = useDispatch();
   const [selectedImage, setSelectedImage] = useState(0);
 
@@ -115,23 +120,14 @@ const OnBoarding = () => {
   };
 
   const images = [
-    appConfig.imageOnBoarding5,
     appConfig.imageOnBoarding1,
     appConfig.imageOnBoarding2,
     appConfig.imageOnBoarding3,
-    // appConfig.imageOnBoarding4,
   ];
 
   const renderImages = () => {
     const result = images.map((image, index) => {
-      return (
-        <Image
-          key={index}
-          style={styles.image}
-          // resizeMode="stretch"
-          source={image}
-        />
-      );
+      return <Image key={index} style={styles.image} source={image} />;
     });
 
     return result;
@@ -162,7 +158,7 @@ const OnBoarding = () => {
         onPress={() => {
           Actions.register();
         }}>
-        <Text style={styles.colorPrimary}>Create New Account</Text>
+        <Text style={styles.textRegister}>Create New Account</Text>
       </TouchableOpacity>
     );
   };
@@ -175,7 +171,7 @@ const OnBoarding = () => {
         onPress={() => {
           Actions.login();
         }}>
-        <Text style={styles.colorWhite}>Login</Text>
+        <Text style={styles.textLogin}>Login</Text>
       </TouchableOpacity>
     );
   };
