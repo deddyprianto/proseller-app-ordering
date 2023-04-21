@@ -1,6 +1,6 @@
-import React, {useRef, useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {RNCamera} from 'react-native-camera';
-import {useDispatch, useSelector} from 'react-redux';
+import {useDispatch} from 'react-redux';
 
 import {
   StyleSheet,
@@ -10,7 +10,6 @@ import {
   View,
   Dimensions,
   SafeAreaView,
-  Platform,
 } from 'react-native';
 
 import appConfig from '../config/appConfig';
@@ -29,23 +28,15 @@ import ButtonCartFloating from '../components/buttonCartFloating/ButtonCartFloat
 const HEIGHT = Dimensions.get('window').height;
 
 const RESTRICTED_TYPES = ['QR_CODE', 'UNKNOWN', 'TEXT'];
-
 const useStyles = () => {
   const theme = Theme();
-  const statusBarHeight = Platform.OS === 'ios' ? 28 : 0;
   const styles = StyleSheet.create({
     root: {
       flex: 1,
     },
     header: {
       backgroundColor: 'white',
-      paddingTop: statusBarHeight,
-      top: 0,
-      left: 0,
-      right: 0,
       alignItems: 'center',
-      position: 'absolute',
-      elevation: 1,
     },
     textTopContent: {
       color: theme.colors.textSecondary,
@@ -93,10 +84,8 @@ const useStyles = () => {
       justifyContent: 'center',
     },
     camera: {
-      height: HEIGHT,
+      height: HEIGHT - 56,
       flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
     },
     iconClose: {
       marginLeft: 32,
@@ -109,9 +98,6 @@ const useStyles = () => {
       height: 20,
       tintColor: theme.colors.textSecondary,
     },
-    scanner: {
-      flex: 1,
-    },
   });
   return styles;
 };
@@ -121,7 +107,6 @@ const ScannerBarcode = () => {
 
   const [searchCondition, setSearchCondition] = useState('');
 
-  const [isDisabled, setIsDisabled] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isShowInstruction, setIsShowInstruction] = useState(true);
   const [isOpenAddModal, setIsOpenAddModal] = useState(false);
@@ -130,16 +115,6 @@ const ScannerBarcode = () => {
   );
 
   const [product, setProduct] = useState({});
-
-  const snackbar = useSelector(state => state.settingReducer.snackbar.message);
-
-  useEffect(() => {
-    if (!snackbar && !isOpenAddModal) {
-      setIsDisabled(false);
-    } else {
-      setIsDisabled(true);
-    }
-  }, [snackbar, isOpenAddModal]);
 
   const handleOpenProductAddModal = () => {
     setIsOpenAddModal(true);
@@ -158,6 +133,7 @@ const ScannerBarcode = () => {
   const onSuccess = async value => {
     setIsLoading(true);
     const response = await dispatch(getProductByBarcode(value?.data));
+
     if (response?.data) {
       setIsLoading(false);
       setProduct(response?.data);
@@ -231,6 +207,7 @@ const ScannerBarcode = () => {
       </TouchableOpacity>
     );
   };
+
   const renderHeader = () => {
     return (
       <View style={styles.header}>
@@ -257,36 +234,38 @@ const ScannerBarcode = () => {
   };
 
   const renderScanner = () => {
-    return (
-      <RNCamera
-        captureAudio={false}
-        style={styles.camera}
-        type={RNCamera.Constants.Type.back}
-        flashMode={RNCamera.Constants.FlashMode.on}
-        onGoogleVisionBarcodesDetected={({barcodes}) => {
-          const barcode = barcodes[0];
-          if (barcode && !RESTRICTED_TYPES.includes(barcode.type)) {
-            setIsLoading(true);
-            !isLoading ? setTimeout(() => onSuccess(barcode), 500) : null;
-          }
-        }}
-        androidCameraPermissionOptions={{
-          title: 'Permission to use camera',
-          message: 'We need to use your camera access to scan product barcode',
-          buttonPositive: 'Ok',
-          buttonNegative: 'Cancel',
-        }}
-      />
-    );
+    if (!isOpenAddModal && !isLoading) {
+      return (
+        <RNCamera
+          captureAudio={false}
+          style={styles.camera}
+          type={RNCamera.Constants.Type.back}
+          flashMode={RNCamera.Constants.FlashMode.on}
+          onGoogleVisionBarcodesDetected={({barcodes}) => {
+            const barcode = barcodes[0];
+            if (barcode && !RESTRICTED_TYPES.includes(barcode.type)) {
+              setIsLoading(true);
+              !isLoading ? setTimeout(() => onSuccess(barcode), 500) : null;
+            }
+          }}
+          androidCameraPermissionOptions={{
+            title: 'Permission to use camera',
+            message:
+              'We need to use your camera access to scan product barcode',
+            buttonPositive: 'Ok',
+            buttonNegative: 'Cancel',
+          }}
+        />
+      );
+    }
   };
-
   return (
     <SafeAreaView style={styles.root}>
       <LoadingScreen loading={isLoading} />
-      {!isOpenAddModal && !isLoading && renderScanner()}
+      {renderHeader()}
+      {renderScanner()}
 
       {renderSearchModal()}
-      {renderHeader()}
       {renderTopContent()}
       {renderBottomContent()}
       {renderProductAddModal()}
