@@ -73,6 +73,7 @@ const useStyles = () => {
       maxWidth: '100%',
       height: undefined,
       aspectRatio: 1 / 1,
+      tintColor: theme.colors.buttonActive,
     },
     WrapDot: {
       flexDirection: 'row',
