@@ -387,7 +387,7 @@ const SearchProduct = ({category}) => {
           onChange={value => {
             setSearchTextInput(value);
           }}
-          placeholder="Try to search “toast”"
+          placeholder="Find what you need"
           onSubmit={value => {
             handleSearchProduct(value);
           }}

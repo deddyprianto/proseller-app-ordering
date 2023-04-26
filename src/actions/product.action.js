@@ -20,7 +20,7 @@ export const getProductByOutlet = (OutletId, refresh) => {
 
       await dispatch({
         type: 'DATA_PRODUCTS_OUTLET',
-        products: response.response.data,
+        products: response.response,
       });
 
       return response.response.data;

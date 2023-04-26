@@ -135,6 +135,18 @@ const useStyles = () => {
       justifyContent: 'center',
       backgroundColor: theme.colors.accent,
     },
+    viewFloatingButtonWithoutCartNotify: {
+      elevation: 5,
+      position: 'absolute',
+      bottom: 32,
+      right: 18,
+      width: 70,
+      height: 70,
+      borderRadius: 100,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: theme.colors.accent,
+    },
     iconMenuBarChild: {
       height: 24,
       width: 24,
@@ -161,7 +173,6 @@ const HomeRetail = () => {
   const ref = useRef();
   const styles = useStyles();
   const dispatch = useDispatch();
-  const [basketLength, setBasketLength] = useState(0);
   const [productsLimitLength, setProductsLimitLength] = useState(10);
   const [refresh, setRefresh] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState({});
@@ -174,8 +185,11 @@ const HomeRetail = () => {
   );
   const basket = useSelector(state => state.orderReducer?.dataBasket?.product);
 
+  const productOutletTitle = useSelector(
+    state => state.productReducer.productsOutlet.name,
+  );
   const productOutletCategories = useSelector(
-    state => state.productReducer.productsOutlet,
+    state => state.productReducer.productsOutlet.data,
   );
 
   const subCategories = useSelector(
@@ -197,16 +211,6 @@ const HomeRetail = () => {
   const svcBalance = useSelector(state => state.SVCReducer.balance.balance);
 
   const intlData = useSelector(state => state.intlData);
-
-  useEffect(() => {
-    let length = 0;
-    if (basket && basket.details) {
-      basket.details.forEach(cart => {
-        length += cart.quantity;
-      });
-    }
-    setBasketLength(length);
-  }, [basket]);
 
   useEffect(() => {
     const loadData = async () => {
@@ -242,6 +246,15 @@ const HomeRetail = () => {
           });
           setSelectedSubCategory(filterTypeGroup[0]);
         }
+      } else {
+        await dispatch({
+          type: 'DATA_PRODUCT_SUB_CATEGORIES',
+          subCategories: [],
+        });
+        await dispatch({
+          type: 'DATA_PRODUCTS_BY_SUB_CATEGORY',
+          products: [],
+        });
       }
     };
 
@@ -385,9 +398,13 @@ const HomeRetail = () => {
 
   const renderFloatingButtonToTop = () => {
     if (isShowFloatingButton) {
+      const styleView = !isEmptyArray(basket?.details)
+        ? styles.viewFloatingButton
+        : styles.viewFloatingButtonWithoutCartNotify;
+
       return (
         <TouchableOpacity
-          style={styles.viewFloatingButton}
+          style={styleView}
           onPress={() => {
             ref.current.scrollTo(0);
           }}>
@@ -404,13 +421,13 @@ const HomeRetail = () => {
   const renderProductCategoryList = () => {
     return (
       <View>
-        <Text style={styles.textProductCategories}>Product Categories</Text>
+        <Text style={styles.textProductCategories}>{productOutletTitle}</Text>
         <ProductCategoryList
           categories={productOutletCategories}
           selectedCategory={selectedCategory}
           onClick={item => {
             setSelectedCategory(item);
-            setProductsLimitLength(0);
+            setProductsLimitLength(10);
           }}
           isIndicator
           isScroll
@@ -439,19 +456,20 @@ const HomeRetail = () => {
   };
 
   const renderProductList = () => {
-    if (!isEmptyArray(products)) {
-      const productsLimit = products?.slice(0, productsLimitLength);
-      return (
-        <View
-          onLayout={event => {
-            const layout = event.nativeEvent.layout;
-            setProductListPosition(layout.y);
-          }}>
-          <ProductList products={productsLimit} basket={basket} />
-          <View style={styles.marginBottom30} />
-        </View>
-      );
-    }
+    const productsLimit = !isEmptyArray(products)
+      ? products?.slice(0, productsLimitLength)
+      : [];
+
+    return (
+      <View
+        onLayout={event => {
+          const layout = event.nativeEvent.layout;
+          setProductListPosition(layout.y);
+        }}>
+        <ProductList products={productsLimit} basket={basket} />
+        <View style={styles.marginBottom30} />
+      </View>
+    );
   };
 
   const renderDivider = () => {
