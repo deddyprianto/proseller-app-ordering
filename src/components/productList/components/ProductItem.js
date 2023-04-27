@@ -290,7 +290,11 @@ const Product = ({product, basket}) => {
       : styles.textNameUnavailable;
 
     return (
-      <Text ellipsizeMode="tail" numberOfLines={1} style={styleText}>
+      <Text
+        ellipsizeMode="tail"
+        numberOfLines={3}
+        style={styleText}
+        allowFontScaling={false}>
         {product?.name}
       </Text>
     );
