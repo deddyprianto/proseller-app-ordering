@@ -1,0 +1,1 @@
+../../../../../node_modules/react-native-shimmer/ios/RNShimmeringViewManager.h
