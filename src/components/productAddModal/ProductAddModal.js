@@ -20,7 +20,7 @@ import {
 } from 'react-native';
 
 import IconIonicons from 'react-native-vector-icons/Ionicons';
-// import DeviceInfo from 'react-native-device-info';
+import DeviceInfo from 'react-native-device-info';
 
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview';
 
@@ -217,7 +217,7 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
   const [notes, setNotes] = useState('');
   const [variantName, setVariantName] = useState('');
   const [variantImageURL, setVariantImageURL] = useState('');
-  // const [deviceInfo, setDeviceInfo] = useState('');
+  const [deviceInfo, setDeviceInfo] = useState('');
 
   const [qty, setQty] = useState(1);
   const [totalPrice, setTotalPrice] = useState(0);
@@ -236,22 +236,22 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
     state => state.settingReducer.imageSettings,
   );
 
-  // useEffect(() => {
-  //   const loadData = async () => {
-  //     const deviceName = await DeviceInfo.getDeviceName();
-  //     const deviceOS = Platform.OS;
+  useEffect(() => {
+    const loadData = async () => {
+      const deviceName = await DeviceInfo.getDeviceName();
+      const deviceOS = Platform.OS;
 
-  //     if (deviceName.includes('iPhone 14 Pro')) {
-  //       setDeviceInfo('typeIphone14Pro');
-  //     } else if (deviceOS === 'ios') {
-  //       setDeviceInfo('typeIos');
-  //     } else {
-  //       setDeviceInfo('typeAndroid');
-  //     }
-  //   };
+      if (deviceName.includes('iPhone 14 Pro')) {
+        setDeviceInfo('typeIphone14Pro');
+      } else if (deviceOS === 'ios') {
+        setDeviceInfo('typeIos');
+      } else {
+        setDeviceInfo('typeAndroid');
+      }
+    };
 
-  //   loadData();
-  // }, []);
+    loadData();
+  }, []);
 
   const handlePrice = ({qty, totalPrice}) => {
     setTotalPrice(qty * totalPrice);
@@ -679,26 +679,26 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
     }
   };
 
-  // const renderMarginTop = () => {
-  //   let style = {};
-  //   switch (deviceInfo) {
-  //     case 'typeAndroid':
-  //       style = styles.marginTopAndroid;
-  //       break;
+  const renderMarginTop = () => {
+    let style = {};
+    switch (deviceInfo) {
+      case 'typeAndroid':
+        style = styles.marginTopAndroid;
+        break;
 
-  //     case 'typeIos':
-  //       style = styles.marginTopIos;
-  //       break;
+      case 'typeIos':
+        style = styles.marginTopIos;
+        break;
 
-  //     case 'typeIphone14Pro':
-  //       style = styles.marginTopIphone14Pro;
-  //       break;
-  //     default:
-  //       style = styles.marginTopAndroid;
-  //   }
+      case 'typeIphone14Pro':
+        style = styles.marginTopIphone14Pro;
+        break;
+      default:
+        style = styles.marginTopAndroid;
+    }
 
-  //   return <View style={style} />;
-  // };
+    return <View style={style} />;
+  };
 
   if (!open) {
     return null;
@@ -714,7 +714,7 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
       }}>
       <LoadingScreen loading={isLoading} />
       <SafeAreaView forceInset={{bottom: 'never'}} style={styles.root}>
-        {/* {renderMarginTop()} */}
+        {renderMarginTop()}
         {header()}
         <View style={styles.divider} />
         <KeyboardAwareScrollView style={styles.container}>

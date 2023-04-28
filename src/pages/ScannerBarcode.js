@@ -1,6 +1,7 @@
-import React, {useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
+import QRCodeScanner from 'react-native-qrcode-scanner';
 import {RNCamera} from 'react-native-camera';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 
 import {
   StyleSheet,
@@ -28,6 +29,7 @@ import ButtonCartFloating from '../components/buttonCartFloating/ButtonCartFloat
 const HEIGHT = Dimensions.get('window').height;
 
 const RESTRICTED_TYPES = ['QR_CODE', 'UNKNOWN', 'TEXT'];
+
 const useStyles = () => {
   const theme = Theme();
   const styles = StyleSheet.create({
@@ -97,6 +99,15 @@ const useStyles = () => {
       width: 20,
       height: 20,
       tintColor: theme.colors.textSecondary,
+    },
+    marginTopIos: {
+      marginTop: 25,
+    },
+    marginTopAndroid: {
+      marginTop: 0,
+    },
+    marginTopIphone14Pro: {
+      marginTop: 35,
     },
   });
   return styles;
@@ -174,7 +185,7 @@ const ScannerBarcode = () => {
   };
 
   const renderTopContent = () => {
-    if (isShowInstruction) {
+    if (isShowInstruction && !isOpenAddModal) {
       return (
         <View style={styles.viewTopContent}>
           <View style={styles.viewTopContentValue}>
@@ -194,18 +205,23 @@ const ScannerBarcode = () => {
   };
 
   const renderBottomContent = () => {
-    return (
-      <TouchableOpacity
-        style={styles.viewBottomContent}
-        onPress={() => {
-          handleOpenSearchProductByBarcodeModal();
-        }}>
-        <View style={styles.viewBottomContentValue}>
-          <Text style={styles.textBottomContent}>Enter barcode number</Text>
-          <Image source={appConfig.iconKeyboard} style={styles.iconKeyboard} />
-        </View>
-      </TouchableOpacity>
-    );
+    if (!isOpenAddModal) {
+      return (
+        <TouchableOpacity
+          style={styles.viewBottomContent}
+          onPress={() => {
+            handleOpenSearchProductByBarcodeModal();
+          }}>
+          <View style={styles.viewBottomContentValue}>
+            <Text style={styles.textBottomContent}>Enter barcode number</Text>
+            <Image
+              source={appConfig.iconKeyboard}
+              style={styles.iconKeyboard}
+            />
+          </View>
+        </TouchableOpacity>
+      );
+    }
   };
 
   const renderHeader = () => {
@@ -217,7 +233,7 @@ const ScannerBarcode = () => {
   };
 
   const renderSearchModal = () => {
-    if (isOpenSearchBarcodeModal) {
+    if (isOpenSearchBarcodeModal && !isOpenAddModal) {
       return (
         <SearchProductByBarcodeModal
           open={isOpenSearchBarcodeModal}
@@ -259,6 +275,13 @@ const ScannerBarcode = () => {
       );
     }
   };
+
+  const renderButtonCartFloating = () => {
+    if (!isOpenAddModal) {
+      return <ButtonCartFloating />;
+    }
+  };
+
   return (
     <SafeAreaView style={styles.root}>
       <LoadingScreen loading={isLoading} />
@@ -268,8 +291,8 @@ const ScannerBarcode = () => {
       {renderSearchModal()}
       {renderTopContent()}
       {renderBottomContent()}
+      {renderButtonCartFloating()}
       {renderProductAddModal()}
-      <ButtonCartFloating />
     </SafeAreaView>
   );
 };

@@ -137,16 +137,7 @@ PODS:
     - nanopb/encode (= 2.30909.0)
   - nanopb/decode (2.30909.0)
   - nanopb/encode (2.30909.0)
-  - OneSignalXCFramework (3.12.3):
-    - OneSignalXCFramework/OneSignalCore (= 3.12.3)
-    - OneSignalXCFramework/OneSignalExtension (= 3.12.3)
-    - OneSignalXCFramework/OneSignalOutcomes (= 3.12.3)
-  - OneSignalXCFramework/OneSignalCore (3.12.3)
-  - OneSignalXCFramework/OneSignalExtension (3.12.3):
-    - OneSignalXCFramework/OneSignalCore
-    - OneSignalXCFramework/OneSignalOutcomes
-  - OneSignalXCFramework/OneSignalOutcomes (3.12.3):
-    - OneSignalXCFramework/OneSignalCore
+  - OneSignal (2.12.6)
   - Permission-Camera (2.0.9):
     - RNPermissions
   - PromisesObjC (2.2.0)
@@ -336,8 +327,8 @@ PODS:
     - React
   - react-native-netinfo (5.3.3):
     - React
-  - react-native-onesignal (4.5.0):
-    - OneSignalXCFramework (= 3.12.3)
+  - react-native-onesignal (3.6.4):
+    - OneSignal (= 2.12.6)
     - React (< 1.0.0, >= 0.13.0)
   - react-native-shimmer (0.5.0):
     - React (>= 0.45.1)
@@ -416,7 +407,7 @@ PODS:
     - React
   - RNCCheckbox (0.4.2):
     - React
-  - RNDeviceInfo (10.5.1):
+  - RNDeviceInfo (10.6.0):
     - React-Core
   - RNGestureHandler (1.5.3):
     - React
@@ -560,7 +551,7 @@ SPEC REPOS:
     - GoogleAppMeasurement
     - GoogleUtilities
     - nanopb
-    - OneSignalXCFramework
+    - OneSignal
     - PromisesObjC
     - Sentry
     - Shimmer
@@ -737,7 +728,7 @@ SPEC CHECKSUMS:
   lottie-ios: 496ac5cea1bbf1a7bd1f1f472f3232eb1b8d744b
   lottie-react-native: 2a1a82bb326ae51331a5520de0cf706733c6db69
   nanopb: b552cce312b6c8484180ef47159bc0f65a1f0431
-  OneSignalXCFramework: 75844c29607ca95e6176f6f21257b4382c7fdbfb
+  OneSignal: a6df91542d1cf133b9dd19d89f2b533d8f2d3163
   Permission-Camera: 8fe4753b02396489b11c5089e4f57bab7fe1ef42
   PromisesObjC: 09985d6d70fbe7878040aa746d78236e6946d2ef
   RCTRequired: f13f25e7b12f925f1f6a6a8c69d929a03c0129fe
@@ -757,7 +748,7 @@ SPEC CHECKSUMS:
   react-native-geolocation: c956aeb136625c23e0dce0467664af2c437888c9
   react-native-maps: f4b89da81626ad7f151a8bfcb79733295d31ce5c
   react-native-netinfo: 8884d510fe67349940b4399c01db3e3591c922aa
-  react-native-onesignal: fe498771f4a5c49fac0d8ff288b674e226bdb587
+  react-native-onesignal: 80fc3683083d23b17a2aba180f965dc83bd77efd
   react-native-shimmer: d9e6f436e8b0318da2b6f391e04725363b01c2d9
   react-native-uuid-generator: 82ffa2a1cac94242ebed52c4dedc5044d3412717
   react-native-version-check: 40245490503879ff64f020b285ebc4075abd40c7
@@ -776,7 +767,7 @@ SPEC CHECKSUMS:
   ReactNativeExceptionHandler: 8025d98049c25f186835a3af732dd7c9974d6dce
   RNCAsyncStorage: 44395cb9c7c1523104c2b499eb426ef7aff82bca
   RNCCheckbox: 357578d3b42652c78ee9a1bb9bcfc3195af6e161
-  RNDeviceInfo: fb81318c9cd5ebe30ebf12bcd046d818c87f9b53
+  RNDeviceInfo: 475a4c447168d0ad4c807e48ef5e0963a0f4eb1b
   RNGestureHandler: 02905abe54e1f6e59c081a10b4bd689721e17aa6
   RNPermissions: 2f74237e97b08beda01e914301e12524ddddf5b8
   RNReactNativeHapticFeedback: 22c5ecf474428766c6b148f96f2ff6155cd7225e
