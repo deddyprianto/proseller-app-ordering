@@ -86,8 +86,10 @@ const useStyles = () => {
       justifyContent: 'center',
     },
     camera: {
-      height: HEIGHT - 56,
+      height: HEIGHT,
       flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
     },
     iconClose: {
       marginLeft: 32,
@@ -285,8 +287,8 @@ const ScannerBarcode = () => {
   return (
     <SafeAreaView style={styles.root}>
       <LoadingScreen loading={isLoading} />
-      {renderHeader()}
       {renderScanner()}
+      {renderHeader()}
 
       {renderSearchModal()}
       {renderTopContent()}
