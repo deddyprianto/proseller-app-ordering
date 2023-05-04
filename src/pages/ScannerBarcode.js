@@ -287,8 +287,8 @@ const ScannerBarcode = () => {
   return (
     <SafeAreaView style={styles.root}>
       <LoadingScreen loading={isLoading} />
-      {renderScanner()}
       {renderHeader()}
+      {renderScanner()}
 
       {renderSearchModal()}
       {renderTopContent()}
