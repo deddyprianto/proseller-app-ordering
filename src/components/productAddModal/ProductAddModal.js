@@ -20,7 +20,7 @@ import {
 } from 'react-native';
 
 import IconIonicons from 'react-native-vector-icons/Ionicons';
-import DeviceInfo from 'react-native-device-info';
+// import DeviceInfo from 'react-native-device-info';
 
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview';
 
@@ -236,22 +236,22 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
     state => state.settingReducer.imageSettings,
   );
 
-  useEffect(() => {
-    const loadData = async () => {
-      const deviceName = await DeviceInfo.getDeviceName();
-      const deviceOS = Platform.OS;
+  // useEffect(() => {
+  //   const loadData = async () => {
+  //     const deviceName = await DeviceInfo.getDeviceName();
+  //     const deviceOS = Platform.OS;
 
-      if (deviceName.includes('iPhone 14 Pro')) {
-        setDeviceInfo('typeIphone14Pro');
-      } else if (deviceOS === 'ios') {
-        setDeviceInfo('typeIos');
-      } else {
-        setDeviceInfo('typeAndroid');
-      }
-    };
+  //     if (deviceName.includes('iPhone 14 Pro')) {
+  //       setDeviceInfo('typeIphone14Pro');
+  //     } else if (deviceOS === 'ios') {
+  //       setDeviceInfo('typeIos');
+  //     } else {
+  //       setDeviceInfo('typeAndroid');
+  //     }
+  //   };
 
-    loadData();
-  }, []);
+  //   loadData();
+  // }, []);
 
   const handlePrice = ({qty, totalPrice}) => {
     setTotalPrice(qty * totalPrice);
