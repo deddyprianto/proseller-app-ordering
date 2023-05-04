@@ -59,9 +59,13 @@ const appConfig = {
 
   imageFavoriteOutlet: require('../assets/img/image-favorite-outlet.png'),
 
+  imageEmptyProduct: require('../assets/img/image-empty-product.png'),
+
   // imageOnBoarding1: require('../assets/img/image-on-boarding-1.png'),
   // imageOnBoarding2: require('../assets/img/image-on-boarding-2.png'),
   // imageOnBoarding3: require('../assets/img/image-on-boarding-3.png'),
+
+  imageOrderNotAvailable: require('../assets/img/image-order-not-available.png'),
 
   imagePromotionBackground: require('../assets/img/image-promotion-background.png'),
   // imagePointSmallBackground: require('../assets/img/image-point-small-background.png'),

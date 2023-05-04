@@ -37,22 +37,22 @@ class Main extends Component {
   constructor(props) {
     super(props);
     // config for push notification
-    OneSignal.init(awsConfig.onesignalID, {
-      kOSSettingsKeyAutoPrompt: true,
-    }); // set kOSSettingsKeyAutoPrompt to false prompting manually on iOS
+    OneSignal.setAppId(awsConfig.onesignalID);
 
     this.state = {
       isLoading: true,
       geolocation: true,
     };
 
-    OneSignal.inFocusDisplaying(2);
+    OneSignal.promptForPushNotificationsWithUserResponse();
 
-    if (Platform.OS === 'ios') {
-      OneSignal.addEventListener('opened', this.onOpened);
+    try {
+      OneSignal.setNotificationOpenedHandler(notification => {
+        this.onOpened(notification);
+      });
+    } catch (e) {
+      console.error('Cannot set notification handler', e);
     }
-
-    OneSignal.addEventListener('ids', this.onIds);
   }
 
   componentDidMount = async () => {
@@ -78,6 +78,13 @@ class Main extends Component {
       this.turnOnLocation();
     } catch (error) {
       console.log(error);
+    }
+
+    try {
+      const deviceState = await OneSignal.getDeviceState();
+      await this.onIds(deviceState);
+    } catch (e) {
+      console.error('Failed to get Device ID', e);
     }
   };
 
@@ -255,7 +262,7 @@ const styles = StyleSheet.create({
   },
 });
 
-mapStateToProps = state => ({
+const mapStateToProps = state => ({
   authData: state.authReducer.authData,
 });
 

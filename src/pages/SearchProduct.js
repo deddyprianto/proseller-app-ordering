@@ -390,7 +390,7 @@ const SearchProduct = ({category}) => {
             value = value.replace(/[^\w\s]/gi, '');
             setSearchTextInput(value);
           }}
-          placeholder="Try to search “toast”"
+          placeholder="Find what you need"
           onSubmit={value => {
             handleSearchProduct(value);
           }}

@@ -1,4 +1,5 @@
-import React, {useRef, useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
+import QRCodeScanner from 'react-native-qrcode-scanner';
 import {RNCamera} from 'react-native-camera';
 import {useDispatch, useSelector} from 'react-redux';
 
@@ -10,7 +11,6 @@ import {
   View,
   Dimensions,
   SafeAreaView,
-  Platform,
 } from 'react-native';
 
 import appConfig from '../config/appConfig';
@@ -32,20 +32,13 @@ const RESTRICTED_TYPES = ['QR_CODE', 'UNKNOWN', 'TEXT'];
 
 const useStyles = () => {
   const theme = Theme();
-  const statusBarHeight = Platform.OS === 'ios' ? 28 : 0;
   const styles = StyleSheet.create({
     root: {
       flex: 1,
     },
     header: {
       backgroundColor: 'white',
-      paddingTop: statusBarHeight,
-      top: 0,
-      left: 0,
-      right: 0,
       alignItems: 'center',
-      position: 'absolute',
-      elevation: 1,
     },
     textTopContent: {
       color: theme.colors.textSecondary,
@@ -109,8 +102,14 @@ const useStyles = () => {
       height: 20,
       tintColor: theme.colors.textSecondary,
     },
-    scanner: {
-      flex: 1,
+    marginTopIos: {
+      marginTop: 25,
+    },
+    marginTopAndroid: {
+      marginTop: 0,
+    },
+    marginTopIphone14Pro: {
+      marginTop: 35,
     },
   });
   return styles;
@@ -121,7 +120,6 @@ const ScannerBarcode = () => {
 
   const [searchCondition, setSearchCondition] = useState('');
 
-  const [isDisabled, setIsDisabled] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isShowInstruction, setIsShowInstruction] = useState(true);
   const [isOpenAddModal, setIsOpenAddModal] = useState(false);
@@ -130,16 +128,6 @@ const ScannerBarcode = () => {
   );
 
   const [product, setProduct] = useState({});
-
-  const snackbar = useSelector(state => state.settingReducer.snackbar.message);
-
-  useEffect(() => {
-    if (!snackbar && !isOpenAddModal) {
-      setIsDisabled(false);
-    } else {
-      setIsDisabled(true);
-    }
-  }, [snackbar, isOpenAddModal]);
 
   const handleOpenProductAddModal = () => {
     setIsOpenAddModal(true);
@@ -158,6 +146,7 @@ const ScannerBarcode = () => {
   const onSuccess = async value => {
     setIsLoading(true);
     const response = await dispatch(getProductByBarcode(value?.data));
+
     if (response?.data) {
       setIsLoading(false);
       setProduct(response?.data);
@@ -198,7 +187,7 @@ const ScannerBarcode = () => {
   };
 
   const renderTopContent = () => {
-    if (isShowInstruction) {
+    if (isShowInstruction && !isOpenAddModal) {
       return (
         <View style={styles.viewTopContent}>
           <View style={styles.viewTopContentValue}>
@@ -218,19 +207,25 @@ const ScannerBarcode = () => {
   };
 
   const renderBottomContent = () => {
-    return (
-      <TouchableOpacity
-        style={styles.viewBottomContent}
-        onPress={() => {
-          handleOpenSearchProductByBarcodeModal();
-        }}>
-        <View style={styles.viewBottomContentValue}>
-          <Text style={styles.textBottomContent}>Enter barcode number</Text>
-          <Image source={appConfig.iconKeyboard} style={styles.iconKeyboard} />
-        </View>
-      </TouchableOpacity>
-    );
+    if (!isOpenAddModal) {
+      return (
+        <TouchableOpacity
+          style={styles.viewBottomContent}
+          onPress={() => {
+            handleOpenSearchProductByBarcodeModal();
+          }}>
+          <View style={styles.viewBottomContentValue}>
+            <Text style={styles.textBottomContent}>Enter barcode number</Text>
+            <Image
+              source={appConfig.iconKeyboard}
+              style={styles.iconKeyboard}
+            />
+          </View>
+        </TouchableOpacity>
+      );
+    }
   };
+
   const renderHeader = () => {
     return (
       <View style={styles.header}>
@@ -240,7 +235,7 @@ const ScannerBarcode = () => {
   };
 
   const renderSearchModal = () => {
-    if (isOpenSearchBarcodeModal) {
+    if (isOpenSearchBarcodeModal && !isOpenAddModal) {
       return (
         <SearchProductByBarcodeModal
           open={isOpenSearchBarcodeModal}
@@ -257,40 +252,49 @@ const ScannerBarcode = () => {
   };
 
   const renderScanner = () => {
-    return (
-      <RNCamera
-        captureAudio={false}
-        style={styles.camera}
-        type={RNCamera.Constants.Type.back}
-        flashMode={RNCamera.Constants.FlashMode.on}
-        onGoogleVisionBarcodesDetected={({barcodes}) => {
-          const barcode = barcodes[0];
-          if (barcode && !RESTRICTED_TYPES.includes(barcode.type)) {
-            setIsLoading(true);
-            !isLoading ? setTimeout(() => onSuccess(barcode), 500) : null;
-          }
-        }}
-        androidCameraPermissionOptions={{
-          title: 'Permission to use camera',
-          message: 'We need to use your camera access to scan product barcode',
-          buttonPositive: 'Ok',
-          buttonNegative: 'Cancel',
-        }}
-      />
-    );
+    if (!isOpenAddModal && !isLoading) {
+      return (
+        <RNCamera
+          captureAudio={false}
+          style={styles.camera}
+          type={RNCamera.Constants.Type.back}
+          flashMode={RNCamera.Constants.FlashMode.on}
+          onGoogleVisionBarcodesDetected={({barcodes}) => {
+            const barcode = barcodes[0];
+            if (barcode && !RESTRICTED_TYPES.includes(barcode.type)) {
+              setIsLoading(true);
+              !isLoading ? setTimeout(() => onSuccess(barcode), 500) : null;
+            }
+          }}
+          androidCameraPermissionOptions={{
+            title: 'Permission to use camera',
+            message:
+              'We need to use your camera access to scan product barcode',
+            buttonPositive: 'Ok',
+            buttonNegative: 'Cancel',
+          }}
+        />
+      );
+    }
+  };
+
+  const renderButtonCartFloating = () => {
+    if (!isOpenAddModal) {
+      return <ButtonCartFloating />;
+    }
   };
 
   return (
     <SafeAreaView style={styles.root}>
       <LoadingScreen loading={isLoading} />
-      {!isOpenAddModal && !isLoading && renderScanner()}
+      {renderHeader()}
+      {renderScanner()}
 
       {renderSearchModal()}
-      {renderHeader()}
       {renderTopContent()}
       {renderBottomContent()}
+      {renderButtonCartFloating()}
       {renderProductAddModal()}
-      <ButtonCartFloating />
     </SafeAreaView>
   );
 };
