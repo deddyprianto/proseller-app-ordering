@@ -291,7 +291,9 @@ const SearchProduct = ({category}) => {
 
     if (searchQuery && !selectedCategory?.id) {
       ref.current.scrollTo(0);
-      loadData();
+      if (searchQuery.length > 1) {
+        loadData();
+      }
     }
   }, [dispatch, defaultOutlet, searchQuery, selectedCategory]);
 
@@ -385,6 +387,7 @@ const SearchProduct = ({category}) => {
         <FieldSearch
           value={searchTextInput}
           onChange={value => {
+            value = value.replace(/[^\w\s]/gi, '');
             setSearchTextInput(value);
           }}
           placeholder="Find what you need"
