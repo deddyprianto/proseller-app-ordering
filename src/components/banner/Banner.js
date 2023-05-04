@@ -1,6 +1,7 @@
 import React, {useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import Swiper from 'react-native-swiper';
+import Theme from '../../theme';
 
 import {
   StyleSheet,
@@ -34,7 +35,7 @@ const useStyles = () => {
     activeDot: {
       opacity: 1,
       margin: 3,
-      backgroundColor: 'white',
+      backgroundColor: Theme().colors.primary,
       width: 30,
       height: 10,
       borderRadius: 50,
@@ -42,7 +43,7 @@ const useStyles = () => {
     inactiveDot: {
       opacity: 0.5,
       margin: 3,
-      backgroundColor: 'white',
+      backgroundColor: Theme().colors.inactiveDot,
       width: 10,
       height: 10,
       borderRadius: 50,
@@ -103,6 +104,7 @@ const Banner = () => {
         autoplay={true}
         autoplayTimeout={6}
         animated={true}
+        paginationStyle={{bottom: 5}}
         dot={<View style={styles.inactiveDot} />}
         activeDot={<View style={styles.activeDot} />}
         loop>
