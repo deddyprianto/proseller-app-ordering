@@ -1,0 +1,6 @@
+module Pods_Automaxima_AutomaximaTests {
+  umbrella header "Pods-Automaxima-AutomaximaTests-umbrella.h"
+
+  export *
+  module * { export * }
+}

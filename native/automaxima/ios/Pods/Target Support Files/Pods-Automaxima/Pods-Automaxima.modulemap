@@ -1,0 +1,6 @@
+module Pods_Automaxima {
+  umbrella header "Pods-Automaxima-umbrella.h"
+
+  export *
+  module * { export * }
+}
