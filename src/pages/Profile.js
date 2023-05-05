@@ -10,7 +10,6 @@ import {
   Image,
   TouchableOpacity,
   Dimensions,
-  ImageBackground,
   SafeAreaView,
 } from 'react-native';
 
@@ -27,6 +26,8 @@ import {myProgressBarCampaign} from '../actions/account.action';
 import Theme from '../theme';
 import ConfirmationDialog from '../components/confirmationDialog';
 import MyECardModal from '../components/modal/MyECardModal';
+import moment from 'moment';
+import {getCustomerGroupDetail} from '../actions/membership.action';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -43,55 +44,65 @@ const useStyles = () => {
       flex: 1,
       maxWidth: '100%',
       width: WIDTH,
-      height: 14,
+      height: 8,
       borderRadius: 8,
-      borderWidth: 3,
       marginBottom: 4,
-      borderColor: 'white',
-      backgroundColor: 'white',
+      backgroundColor: theme.colors.greyScale4,
     },
     divider: {
       height: 1,
       backgroundColor: theme.colors.greyScale3,
       marginHorizontal: 16,
     },
+    dividerHeader: {
+      marginVertical: 16,
+      width: '100%',
+      height: 1,
+      backgroundColor: theme.colors.greyScale3,
+    },
     textWelcome: {
-      color: theme.colors.text4,
-      fontSize: theme.fontSize[12],
+      color: theme.colors.textPrimary,
+      fontSize: theme.fontSize[14],
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textName: {
-      color: theme.colors.text4,
+      color: theme.colors.textPrimary,
       fontSize: theme.fontSize[16],
-      fontFamily: theme.fontFamily.poppinsMedium,
+      fontFamily: theme.fontFamily.poppinsBold,
     },
     textYourPoint: {
       textAlign: 'right',
-      color: theme.colors.text4,
-      fontSize: theme.fontSize[12],
+      color: theme.colors.textPrimary,
+      fontSize: theme.fontSize[14],
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textPointValue: {
-      color: theme.colors.text4,
-      fontSize: theme.fontSize[16],
-      fontFamily: theme.fontFamily.poppinsMedium,
+      color: theme.colors.textPrimary,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsBold,
+    },
+    textCurrentTierPaidMembership: {
+      textAlign: 'left',
+      color: theme.colors.textQuaternary,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsBold,
     },
     textCurrentTier: {
       textAlign: 'left',
-      color: theme.colors.text4,
-      fontSize: theme.fontSize[10],
+      color: theme.colors.textPrimary,
+      fontSize: theme.fontSize[12],
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textNextTier: {
       textAlign: 'right',
-      color: theme.colors.text4,
-      fontSize: theme.fontSize[10],
+      color: theme.colors.textPrimary,
+      fontSize: theme.fontSize[12],
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textInfo: {
-      marginTop: 32,
-      marginBottom: 8,
-      color: theme.colors.text4,
+      textAlign: 'center',
+      marginTop: 16,
+      color: theme.colors.textTertiary,
       fontSize: theme.fontSize[12],
       fontFamily: theme.fontFamily.poppinsMedium,
     },
@@ -120,6 +131,28 @@ const useStyles = () => {
       fontSize: theme.fontSize[14],
       fontFamily: theme.fontFamily.poppinsMedium,
     },
+    textExpiry: {
+      color: theme.colors.textTertiary,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textInitialName: {
+      color: theme.colors.textSecondary,
+      fontSize: theme.fontSize[24],
+    },
+    viewHeader: {
+      shadowOffset: {
+        width: 0.2,
+        height: 0.2,
+      },
+      shadowOpacity: 0.2,
+      shadowColor: theme.colors.greyScale2,
+      elevation: 2,
+      borderRadius: 16,
+      padding: 16,
+      margin: 16,
+      backgroundColor: theme.colors.background,
+    },
     viewOption: {
       marginHorizontal: 16,
       padding: 10,
@@ -128,13 +161,7 @@ const useStyles = () => {
       alignItems: 'center',
     },
     viewPointHeader: {
-      display: 'flex',
-      alignItems: 'center',
-      flex: 1,
-      borderRadius: 8,
-      paddingHorizontal: 18,
-      paddingVertical: 16,
-      margin: 16,
+      alignItems: 'flex-end',
     },
     viewWelcomeAndPoint: {
       width: '100%',
@@ -142,7 +169,6 @@ const useStyles = () => {
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      marginBottom: 32,
     },
     viewProgressBar: {
       flex: 1,
@@ -183,8 +209,44 @@ const useStyles = () => {
       alignItems: 'center',
       justifyContent: 'center',
     },
+    viewInitialName: {
+      width: 48,
+      height: 48,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginRight: 8,
+      borderRadius: 100,
+      backgroundColor: theme.colors.brandPrimary,
+    },
+    viewWelcome: {
+      display: 'flex',
+      flexDirection: 'row',
+    },
+    viewIconArrowRight: {
+      width: 18,
+      height: 18,
+      borderRadius: 100,
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginTop: -2,
+      marginLeft: 8,
+      backgroundColor: theme.colors.buttonActive,
+    },
+    viewPointValue: {
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
     imagePointHeader: {
       borderRadius: 8,
+    },
+    imageBackgroundProfile: {
+      height: 120,
+      width: '100%',
+      position: 'absolute',
+      top: -5,
+      tintColor: theme.colors.brandPrimary,
     },
     iconSetting: {
       height: 24,
@@ -199,14 +261,9 @@ const useStyles = () => {
       tintColor: theme.colors.brandPrimary,
     },
     iconArrowRight: {
-      marginLeft: 8,
-      borderRadius: 50,
-      backgroundColor: 'white',
-      alignItems: 'center',
-      justifyContent: 'center',
-      width: 18,
-      height: 18,
-      tintColor: theme.colors.brandTertiary,
+      width: 16,
+      height: 16,
+      tintColor: 'white',
     },
   });
 
@@ -250,16 +307,19 @@ const Profile = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    if (userDetail) {
-      const userDecrypt = CryptoJS.AES.decrypt(
-        userDetail,
-        awsConfig.PRIVATE_KEY_RSA,
-      );
-      const result = JSON.parse(userDecrypt.toString(CryptoJS.enc.Utf8));
+    const loadData = async () => {
+      if (userDetail) {
+        const userDecrypt = CryptoJS.AES.decrypt(
+          userDetail,
+          awsConfig.PRIVATE_KEY_RSA,
+        );
+        const result = JSON.parse(userDecrypt.toString(CryptoJS.enc.Utf8));
 
-      setUser(result);
-    }
-  }, [userDetail]);
+        setUser(result);
+      }
+    };
+    loadData();
+  }, [dispatch, userDetail]);
 
   const handleLogout = async () => {
     setIsLoading(true);
@@ -296,24 +356,50 @@ const Profile = () => {
   };
 
   const renderWelcome = () => {
-    return (
-      <View>
-        <Text style={styles.textWelcome}>Welcome</Text>
-        <Text style={styles.textName}>{user?.name},</Text>
-      </View>
-    );
+    if (user?.name) {
+      const initialName = user?.name
+        .match(/(\b\S)?/g)
+        .join('')
+        .match(/(^\S|\S$)?/g)
+        .join('')
+        .toUpperCase();
+
+      return (
+        <View style={styles.viewWelcome}>
+          <View style={styles.viewInitialName}>
+            <Text style={styles.textInitialName}>{initialName}</Text>
+          </View>
+          <View>
+            <Text style={styles.textWelcome}>Welcome</Text>
+            <Text style={styles.textName}>{user?.name}</Text>
+          </View>
+        </View>
+      );
+    }
   };
 
   const renderPoint = () => {
     return (
-      <View style={styles.viewPoint}>
+      <View style={styles.viewPointHeader}>
         <Text style={styles.textYourPoint}>Your Points</Text>
-        <Text style={styles.textPointValue}>{totalPoint} PTS</Text>
+        <TouchableOpacity
+          onPress={() => {
+            Actions.detailPoint({intlData});
+          }}
+          style={styles.viewPointValue}>
+          <Text style={styles.textPointValue}>{totalPoint} PTS</Text>
+          <View style={styles.viewIconArrowRight}>
+            <Image
+              source={appConfig.iconArrowRight}
+              style={styles.iconArrowRight}
+            />
+          </View>
+        </TouchableOpacity>
       </View>
     );
   };
 
-  const renderWelcomeAndPoint = () => {
+  const renderHeaderProfileHeaderTop = () => {
     return (
       <View style={styles.viewWelcomeAndPoint}>
         {renderWelcome()}
@@ -324,7 +410,6 @@ const Profile = () => {
 
   const renderProgressBar = () => {
     const percentage = progressBarCampaign?.progressInPercentage || 0;
-    const percentageIcon = percentage < 8 ? 0 : percentage - 8;
     const decimal = percentage / 100;
     return (
       <View style={styles.viewProgressBar}>
@@ -332,19 +417,6 @@ const Profile = () => {
           progress={decimal}
           color={styles.primaryColor.color}
           style={styles.progressBar}
-        />
-        <Image
-          style={{
-            top: -6,
-            height: 28,
-            width: 28,
-            borderRadius: 100,
-            borderWidth: 4,
-            borderColor: 'white',
-            position: 'absolute',
-            left: `${percentageIcon}%`,
-          }}
-          source={appConfig.iconPointBar}
         />
       </View>
     );
@@ -378,35 +450,56 @@ const Profile = () => {
       <Text style={styles.textInfo}>{progressBarCampaign?.description}</Text>
     );
   };
-  const renderTapPointDetailAndHistory = () => {
+
+  const renderExpiry = () => {
+    const dateExpiry = moment(user.expiryCustomerGroup).format('DD MMMM YYYY');
     return (
-      <TouchableOpacity
-        onPress={() => {
-          Actions.detailPoint({intlData});
-        }}
-        style={styles.viewTapPointDetailAndHistory}>
-        <Text style={styles.textTapToSeePoint}>
-          Tap to see point detail and history
-        </Text>
-        <Image
-          source={appConfig.iconArrowRight}
-          style={styles.iconArrowRight}
-        />
-      </TouchableOpacity>
+      <Text style={styles.textExpiry}>Membership expires on {dateExpiry}</Text>
     );
   };
-  const renderPointHeader = () => {
+
+  const renderTierPaidMembership = () => {
     return (
-      <ImageBackground
-        source={appConfig.imagePointLargeBackground}
-        style={styles.viewPointHeader}
-        imageStyle={styles.imagePointHeader}>
-        {renderWelcomeAndPoint()}
+      <Text style={styles.textCurrentTierPaidMembership}>
+        {progressBarCampaign?.currentGroup}
+      </Text>
+    );
+  };
+
+  const renderHeaderProfileHeaderPaidMembership = () => {
+    return (
+      <View>
+        {renderTierPaidMembership()}
+        {renderExpiry()}
+      </View>
+    );
+  };
+
+  const renderHeaderProfileHeaderApplyCriteria = () => {
+    return (
+      <View>
         {renderProgressBar()}
         {renderTier()}
         {renderTextInfo()}
-        {renderTapPointDetailAndHistory()}
-      </ImageBackground>
+      </View>
+    );
+  };
+
+  const renderHeaderProfileHeaderBottom = () => {
+    if (progressBarCampaign?.showProgressBar) {
+      return renderHeaderProfileHeaderApplyCriteria();
+    } else {
+      return renderHeaderProfileHeaderPaidMembership();
+    }
+  };
+
+  const renderProfileHeader = () => {
+    return (
+      <View style={styles.viewHeader}>
+        {renderHeaderProfileHeaderTop()}
+        <View style={styles.dividerHeader} />
+        {renderHeaderProfileHeaderBottom()}
+      </View>
     );
   };
 
@@ -595,7 +688,12 @@ const Profile = () => {
     <SafeAreaView>
       <ScrollView style={styles.root}>
         <LoadingScreen loading={isLoading} />
-        {renderPointHeader()}
+        <Image
+          source={appConfig.imageBackgroundProfile}
+          resizeMode="contain"
+          style={styles.imageBackgroundProfile}
+        />
+        {renderProfileHeader()}
         {renderSettings()}
         {renderDeleteAccountConfirmationDialog()}
         {renderLogoutConfirmationDialog()}
