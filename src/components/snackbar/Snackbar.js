@@ -1,8 +1,17 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 import {useDispatch, useSelector} from 'react-redux';
-import {Modal, View, Text, TouchableOpacity, Image} from 'react-native';
+import {
+  Modal,
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  Platform,
+} from 'react-native';
+
+import DeviceInfo from 'react-native-device-info';
 
 import {closeSnackbar} from '../../actions/setting.action';
 import Theme from '../../theme';
@@ -15,9 +24,9 @@ const useStyles = () => {
       height: '100%',
     },
     container: {
-      top: 20,
+      // top: 50,
       width: '100%',
-      position: 'absolute',
+      // position: 'absolute',
       paddingHorizontal: 16,
     },
     textSnackbar: {
@@ -62,6 +71,15 @@ const useStyles = () => {
       height: 18,
       tintColor: theme.colors.snackbarFailed,
     },
+    marginTopIos: {
+      marginTop: 50,
+    },
+    marginTopAndroid: {
+      marginTop: 5,
+    },
+    marginTopIphone14Pro: {
+      marginTop: 70,
+    },
   };
   return styles;
 };
@@ -69,9 +87,29 @@ const useStyles = () => {
 const Snackbar = () => {
   const styles = useStyles();
   const dispatch = useDispatch();
+
+  const [deviceInfo, setDeviceInfo] = useState('');
+
   const message = useSelector(state => state.settingReducer.snackbar.message);
   const type = useSelector(state => state.settingReducer.snackbar.type);
   const open = message ? true : false;
+
+  useEffect(() => {
+    const loadData = async () => {
+      const deviceName = await DeviceInfo.getDeviceName();
+      const deviceOS = Platform.OS;
+
+      if (deviceName.includes('iPhone 14 Pro')) {
+        setDeviceInfo('typeIphone14Pro');
+      } else if (deviceOS === 'ios') {
+        setDeviceInfo('typeIos');
+      } else {
+        setDeviceInfo('typeAndroid');
+      }
+    };
+
+    loadData();
+  }, []);
 
   const handleClose = () => {
     dispatch(closeSnackbar());
@@ -127,9 +165,31 @@ const Snackbar = () => {
     }
   };
 
+  const renderMarginTop = () => {
+    let style = {};
+    switch (deviceInfo) {
+      case 'typeAndroid':
+        style = styles.marginTopAndroid;
+        break;
+
+      case 'typeIos':
+        style = styles.marginTopIos;
+        break;
+
+      case 'typeIphone14Pro':
+        style = styles.marginTopIphone14Pro;
+        break;
+      default:
+        style = styles.marginTopAndroid;
+    }
+
+    return <View style={style} />;
+  };
+
   return (
     <Modal animationType="none" transparent visible={open}>
       <TouchableOpacity style={styles.root} onPress={handleClose}>
+        {renderMarginTop()}
         <View style={styles.container}>{renderSnackbar()}</View>
       </TouchableOpacity>
     </Modal>
