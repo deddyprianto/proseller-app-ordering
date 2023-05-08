@@ -3470,7 +3470,7 @@ class SettleOrder extends Component {
                           fontWeight: 'bold',
                           color: colorConfig.pageIndex.activeTintColor,
                         }}>
-                        {this.props.companyInfo.companyName}
+                        {this.props.companyInfo?.companyName}
                       </Text>
                       {this.props.paySVC !== true &&
                       this.props.payVoucher !== true &&
@@ -3481,13 +3481,13 @@ class SettleOrder extends Component {
                             color: colorConfig.store.titleSelected,
                             fontFamily: 'Poppins-Regular',
                           }}>
-                          {this.getOutletName(this.props.pembayaran.storeName)}
+                          {this.getOutletName(this.props.pembayaran?.storeName)}
                         </Text>
                       ) : null}
                     </View>
                   </View>
                   <TouchableOpacity
-                    onPress={() => this.detailPayment(this.props.pembayaran)}
+                    onPress={() => this.detailPayment(this.props?.pembayaran)}
                     style={{
                       flexDirection: 'row',
                       marginRight: 10,
