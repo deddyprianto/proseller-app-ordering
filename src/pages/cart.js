@@ -10,7 +10,7 @@ import {Actions} from 'react-native-router-flux';
 import {useDispatch, useSelector} from 'react-redux';
 import CryptoJS from 'react-native-crypto-js';
 import moment from 'moment';
-
+import Modal from 'react-native-modal';
 import {
   StyleSheet,
   View,
@@ -44,6 +44,7 @@ import {
   getBasket,
   getDeliveryProviderAndFee,
   getTimeSlot,
+  removeBasket,
 } from '../actions/order.action';
 
 import Theme from '../theme';
@@ -51,6 +52,7 @@ import Theme from '../theme';
 import LoadingScreen from '../components/loadingScreen';
 import OrderingModeOfflineModal from '../components/modal/OrderingModeOfflineModal';
 import {getOutletById} from '../actions/stores.action';
+import ModalError from '../components/modal/ErrorModal';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -368,12 +370,16 @@ const useStyles = () => {
   return styles;
 };
 
-const Cart = () => {
+const Cart = props => {
   const styles = useStyles();
   const dispatch = useDispatch();
-
+  const {navigation} = props;
   const [subTotal, setSubTotal] = useState(0);
-
+  const [isOffline, setIsOffline] = useState(false);
+  const [errorMessage, setErrorMessage] = useState({
+    title: '',
+    description: '',
+  });
   const [seeDetail, setSeeDetail] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [openOrderingTypeModal, setOpenOrderingTypeModal] = useState(false);
@@ -750,11 +756,19 @@ const Cart = () => {
       }
     } catch (e) {}
   };
+  const toggleErrorModal = async (title, description) => {
+    await setErrorMessage({title: title, description: description});
+    setIsOffline(prevState => !prevState);
+  };
+
+  const onPressOkError = () => {
+    navigation.navigate('store');
+    toggleErrorModal('', '');
+  };
 
   const handleClickButtonPayment = async () => {
     try {
       const currentOutlet = await dispatch(getOutletById(outlet.id));
-
       const orderingModeAvailable = orderingModesField.filter(mode => {
         if (currentOutlet[mode.isEnabledFieldName]) {
           return mode;
@@ -769,11 +783,16 @@ const Cart = () => {
       }
 
       if (outlet?.orderingStatus === 'UNAVAILABLE') {
-        let message = 'Ordering is not available now.';
+        let message = `${
+          currentOutlet.name
+        } is currently offline, please select another outlet`;
+        const title = 'The outlet is offline';
         if (outlet?.offlineMessage) {
           message = outlet?.offlineMessage;
         }
-        Alert.alert('Sorry', message);
+        // setIsOffline(true);
+        toggleErrorModal(title, message);
+        // Alert.alert('The outlet is offline', message);
         return;
       }
 
@@ -1334,6 +1353,13 @@ const Cart = () => {
         {renderModal()}
       </View>
       {renderFooter()}
+      <ModalError
+        title={errorMessage.title}
+        description={errorMessage.description}
+        onClose={() => toggleErrorModal('', '')}
+        isOpen={isOffline}
+        onOk={onPressOkError}
+      />
     </SafeAreaView>
   );
 };
