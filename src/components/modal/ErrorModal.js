@@ -33,6 +33,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  errorText: {
+    color: 'white',
+  },
 });
 
 const ModalError = ({isOpen, title, description, onClose, onOk}) => {
@@ -54,7 +57,7 @@ const ModalError = ({isOpen, title, description, onClose, onOk}) => {
           <TouchableOpacity
             onPress={onOk}
             style={[styles.button, {backgroundColor: colors.primary}]}>
-            <Text>Ok</Text>
+            <Text style={styles.errorText}>Ok</Text>
           </TouchableOpacity>
         </View>
         <View />

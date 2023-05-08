@@ -53,6 +53,7 @@ import LoadingScreen from '../components/loadingScreen';
 import OrderingModeOfflineModal from '../components/modal/OrderingModeOfflineModal';
 import {getOutletById} from '../actions/stores.action';
 import ModalError from '../components/modal/ErrorModal';
+import useErrorMessage from '../hooks/message/useErrorMessage';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -391,7 +392,7 @@ const Cart = props => {
     openOrderingModeOfflineModal,
     setOpenOrderingModeOfflineModal,
   ] = useState(false);
-
+  const {outletUnavailable} = useErrorMessage();
   const [deliveryAddress, setDeliveryAddress] = useState({});
 
   const [availableTimes, setAvailableTimes] = useState([]);
@@ -782,13 +783,10 @@ const Cart = props => {
         return handleOpenOrderingModeOfflineModal();
       }
 
-      if (outlet?.orderingStatus === 'UNAVAILABLE') {
-        let message = `${
-          currentOutlet.name
-        } is currently offline, please select another outlet`;
-        const title = 'The outlet is offline';
-        if (outlet?.offlineMessage) {
-          message = outlet?.offlineMessage;
+      if (currentOutlet?.orderingStatus === 'UNAVAILABLE') {
+        let {title, message} = outletUnavailable(currentOutlet);
+        if (currentOutlet?.offlineMessage) {
+          message = currentOutlet?.offlineMessage;
         }
         // setIsOffline(true);
         toggleErrorModal(title, message);
