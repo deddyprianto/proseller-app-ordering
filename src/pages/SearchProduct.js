@@ -387,7 +387,6 @@ const SearchProduct = ({category}) => {
         <FieldSearch
           value={searchTextInput}
           onChange={value => {
-            value = value.replace(/[^\w\s]/gi, '');
             setSearchTextInput(value);
           }}
           placeholder="Find what you need"
