@@ -30,6 +30,7 @@ import AwesomeAlert from 'react-native-awesome-alerts';
 
 import colorConfig from '../../config/colorConfig';
 import appConfig from '../../config/appConfig';
+import ErrorModal from '../../components/modal/ErrorModal';
 import {
   getBasket,
   getCart,
@@ -98,6 +99,8 @@ class SettleOrder extends Component {
       percentageUseSVC: 0,
       totalNonDiscountable: 0,
       showModal: false,
+      showErrorModal: false,
+      errorMessage: {title: '', message: ''},
     };
 
     // check if users payment methods is empty
@@ -2942,6 +2945,70 @@ class SettleOrder extends Component {
     }
   };
 
+  toggleModal = () => {
+    this.setState({showErrorModal: !this.state.showErrorModal});
+  };
+
+  onErrorApprove = () => {
+    this.props.navigation.navigate('store');
+    this.toggleModal();
+  };
+
+  popupPayment = async () => {
+    const {pembayaran} = this.props;
+    const outledId = pembayaran.storeId;
+    const getOutletData = await this.props.dispatch(getOutletById(outledId));
+    if (getOutletData.orderingStatus === 'UNAVAILABLE') {
+      let message = `${
+        getOutletData.name
+      } is currently offline, please select another outlet`;
+      const title = 'The outlet is offline';
+      if (getOutletData?.offlineMessage) {
+        message = getOutletData?.offlineMessage;
+      }
+      this.setState({errorMessage: {title, message}}, () => {
+        this.toggleModal();
+      });
+      return;
+    }
+    console.log(getOutletData, 'sumprit');
+    try {
+      if (selectedAccount && selectedAccount.paymentID === 'MANUAL_TRANSFER') {
+        // check if this payment method is allowed to top up SVC
+        try {
+          const find = this.props.companyInfo.paymentTypes.find(
+            i => i.paymentID === selectedAccount.paymentID,
+          );
+          if (find) {
+            if (find.allowTopUpSVC === false && this.props.paySVC) {
+              Alert.alert(
+                'Sorry',
+                'This payment method is not allowed for top up SVC',
+              );
+              return;
+            }
+
+            if (
+              find.allowSalesTransaction === false &&
+              !this.props.paySVC &&
+              !this.props.payVoucher &&
+              !this.props.payMembership
+            ) {
+              Alert.alert(
+                'Sorry',
+                'This payment method is not allowed for online ordering.',
+              );
+              return;
+            }
+          }
+        } catch (e) {}
+        this.setState({showModal: true});
+      } else {
+        this.doPayment();
+      }
+    } catch (e) {}
+  };
+
   payAtPOS = async () => {
     const {intlData, selectedAccount, companyInfo} = this.props;
     let {totalBayar, dataVoucer} = this.state;
@@ -3934,46 +4001,7 @@ class SettleOrder extends Component {
 
             <View style={{marginTop: 50}} />
             <TouchableOpacity
-              onPress={() => {
-                try {
-                  if (
-                    selectedAccount &&
-                    selectedAccount.paymentID === 'MANUAL_TRANSFER'
-                  ) {
-                    // check if this payment method is allowed to top up SVC
-                    try {
-                      const find = this.props.companyInfo.paymentTypes.find(
-                        i => i.paymentID === selectedAccount.paymentID,
-                      );
-                      if (find) {
-                        if (find.allowTopUpSVC === false && this.props.paySVC) {
-                          Alert.alert(
-                            'Sorry',
-                            'This payment method is not allowed for top up SVC',
-                          );
-                          return;
-                        }
-
-                        if (
-                          find.allowSalesTransaction === false &&
-                          !this.props.paySVC &&
-                          !this.props.payVoucher &&
-                          !this.props.payMembership
-                        ) {
-                          Alert.alert(
-                            'Sorry',
-                            'This payment method is not allowed for online ordering.',
-                          );
-                          return;
-                        }
-                      }
-                    } catch (e) {}
-                    this.setState({showModal: true});
-                  } else {
-                    this.doPayment();
-                  }
-                } catch (e) {}
-              }}
+              onPress={this.popupPayment}
               disabled={
                 selectedAccount != undefined || this.state.totalBayar == 0
                   ? false
@@ -4034,6 +4062,13 @@ class SettleOrder extends Component {
           </View>
           <View style={{paddingBottom: 100}} />
         </ScrollView>
+        <ErrorModal
+          title={this.state.errorMessage.title}
+          description={this.state.errorMessage.message}
+          isOpen={this.state.showErrorModal}
+          onClose={this.toggleModal}
+          onOk={this.onErrorApprove}
+        />
         <AwesomeAlert
           show={this.state.showAlert}
           showProgress={false}
