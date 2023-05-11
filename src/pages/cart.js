@@ -51,7 +51,7 @@ import Theme from '../theme';
 
 import LoadingScreen from '../components/loadingScreen';
 import OrderingModeOfflineModal from '../components/modal/OrderingModeOfflineModal';
-import {getOutletById} from '../actions/stores.action';
+import {getCompanyInfo, getOutletById} from '../actions/stores.action';
 import ModalError from '../components/modal/ErrorModal';
 import useErrorMessage from '../hooks/message/useErrorMessage';
 
@@ -436,6 +436,14 @@ const Cart = props => {
       displayName: outlet.storeCheckOutName || 'Store Checkout',
     },
   ];
+
+  useEffect(() => {
+    const loadData = async () => {
+      await dispatch(getCompanyInfo());
+    };
+
+    loadData();
+  }, [dispatch]);
 
   useEffect(() => {
     const loadData = async () => {

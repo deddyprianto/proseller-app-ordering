@@ -65,11 +65,12 @@ class Main extends Component {
       await this.props.dispatch(getTermsConditions());
       await this.props.dispatch(getColorSettings());
       await this.props.dispatch(getDefaultOutlet());
-      await Promise.all([
-        this.props.dispatch(refreshToken()),
-        this.props.dispatch(getBasket()),
-        this.props.dispatch(getCompanyInfo()),
-      ]);
+      await this.props.dispatch(getCompanyInfo()),
+        await Promise.all([
+          this.props.dispatch(refreshToken()),
+          this.props.dispatch(getBasket()),
+          this.props.dispatch(getCompanyInfo()),
+        ]);
 
       const data = await this.performTimeConsumingTask();
       if (data !== null) {

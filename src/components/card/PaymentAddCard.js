@@ -457,6 +457,7 @@ class PaymentAddCard extends Component {
               name={Platform.OS === 'ios' ? 'ios-add' : 'md-add'}
               style={{color: 'white', marginRight: 10}}
             />
+            {/* martintandain  */}
             <Text style={styles.textAddCard}>ADD {item.paymentName}</Text>
           </TouchableOpacity>
         ) : myCardAccount != undefined && this.getCountCard() ? (
