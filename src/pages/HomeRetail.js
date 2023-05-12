@@ -415,7 +415,7 @@ const HomeRetail = () => {
   };
 
   const renderBanner = () => {
-    return <Banner />;
+    return <Banner bottom={-12} />;
   };
 
   const renderProductCategoryList = () => {
