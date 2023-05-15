@@ -38,7 +38,7 @@ force: true
     <uses-permission android:name="me.everything.badger.permission.BADGE_COUNT_READ" tools:node="remove" />
 <!--    <uses-permission tools:node="remove" android:name="android.permission.WRITE_SETTINGS" />-->
     <uses-permission tools:node="remove" android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <uses-permission tools:node="remove" android:name="com.<%= name %>.app.permission.C2D_MESSAGE" />
+    <uses-permission tools:node="remove" android:name="com.<%= name %>.demo.permission.C2D_MESSAGE" />
     <uses-permission tools:node="remove" android:name="com.google.android.c2dm.permission.RECEIVE" />
 
     <application
@@ -53,6 +53,7 @@ force: true
         <meta-data
                 android:name="com.google.android.geo.API_KEY"
                 android:value="AIzaSyC-7gQIJQ4IFVaz9uhBvfaXcGf45qg4U0Y"/>
+        <uses-library android:name="org.apache.http.legacy" android:required="false"/>
       <activity
         android:name=".MainActivity"
         android:label="@string/app_name"
