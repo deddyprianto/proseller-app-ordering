@@ -42,6 +42,7 @@ import ProductSubCategoryList from '../components/productSubCategoryList';
 import SearchSuggestionList from '../components/searchSuggestionList/SearchSuggestionList';
 
 import Theme from '../theme';
+import Toast from 'react-native-simple-toast';
 
 const useStyles = () => {
   const theme = Theme();
@@ -180,7 +181,6 @@ const SearchProduct = ({category}) => {
   const ref = useRef();
   const styles = useStyles();
   const dispatch = useDispatch();
-
   const [basketLength, setBasketLength] = useState(0);
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -316,11 +316,15 @@ const SearchProduct = ({category}) => {
   };
 
   const handleSearchProduct = async value => {
-    setSelectedCategory({});
-    setSelectedSubCategory({});
-    setSearchTextInput('');
-    setSearchQuery(value);
-    await dispatch(setSearchProductHistory({searchQuery: value}));
+    if (value.length >= 2) {
+      setSelectedCategory({});
+      setSelectedSubCategory({});
+      setSearchTextInput('');
+      setSearchQuery(value);
+      await dispatch(setSearchProductHistory({searchQuery: value}));
+    } else {
+      Toast.show('Input minimal 2 characters to search.', Toast.LONG);
+    }
   };
 
   const handleSearchProductWithCategory = async value => {
