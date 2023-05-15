@@ -58,6 +58,7 @@ force: true
         android:name=".MainActivity"
         android:label="@string/app_name"
         android:screenOrientation="portrait"
+        android:exported="true"
         android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
         android:windowSoftInputMode="adjustResize">
         <intent-filter>
