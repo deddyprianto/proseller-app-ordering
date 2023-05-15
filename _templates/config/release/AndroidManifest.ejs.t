@@ -49,10 +49,10 @@ force: true
       android:allowBackup="false"
       android:largeHeap="true"
       android:theme="@style/AppTheme">
-        <uses-library android:name="org.apache.http.legacy" android:required="false"/>
         <meta-data
                 android:name="com.google.android.geo.API_KEY"
                 android:value="AIzaSyC-7gQIJQ4IFVaz9uhBvfaXcGf45qg4U0Y"/>
+        <uses-library android:name="org.apache.http.legacy" android:required="false"/>
       <activity
         android:name=".MainActivity"
         android:label="@string/app_name"
