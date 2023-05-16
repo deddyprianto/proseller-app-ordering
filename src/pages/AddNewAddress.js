@@ -447,6 +447,12 @@ const AddNewAddress = ({address}) => {
         <MapView
           onPress={() => {
             Actions.pickCoordinate({
+              coordinated: {
+                latitude,
+                longitude,
+                latitudeDelta,
+                longitudeDelta,
+              },
               handleChoose: value => {
                 handleSetCoordinate(value);
               },
@@ -464,6 +470,12 @@ const AddNewAddress = ({address}) => {
         <TouchableOpacity
           onPress={() => {
             Actions.pickCoordinate({
+              coordinated: {
+                latitude,
+                longitude,
+                latitudeDelta,
+                longitudeDelta,
+              },
               handleChoose: value => {
                 handleSetCoordinate(value);
               },
