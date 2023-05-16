@@ -4,13 +4,12 @@ import {
   TouchableOpacity,
   View,
   Image,
-  Modal,
   StyleSheet,
   ScrollView,
   ImageBackground,
   Dimensions,
 } from 'react-native';
-
+import Modal from 'react-native-modal';
 import {Actions} from 'react-native-router-flux';
 import CryptoJS from 'react-native-crypto-js';
 import QRCode from 'react-native-qrcode-svg';
@@ -138,6 +137,10 @@ const useStyles = () => {
     },
     imageBackgroundInfo: {
       borderRadius: 8,
+    },
+    modalContainer: {
+      justifyContent: 'flex-end',
+      margin: 0,
     },
   });
   return styles;
@@ -272,7 +275,13 @@ const MyECardModal = ({open, handleClose}) => {
   };
 
   return (
-    <Modal transparent visible={open} onDismiss={handleClose}>
+    <Modal
+      isVisible={open}
+      onBackButtonPress={handleClose}
+      onBackdropPress={handleClose}
+      useNativeDriver={true}
+      style={styles.modalContainer}
+      onDismiss={handleClose}>
       <View style={styles.root}>
         <View style={styles.container}>
           {renderHeader()}
