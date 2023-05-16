@@ -108,8 +108,8 @@ class PaymentMethods extends Component {
   renderPaymentMethodOptions = () => {
     const {intlData, myCardAccount, companyInfo, page} = this.props;
     let paymentTypes = [];
-    if (companyInfo.paymentTypes != undefined)
-      paymentTypes = companyInfo.paymentTypes;
+    if (companyInfo?.paymentTypes != undefined)
+      paymentTypes = companyInfo?.paymentTypes;
 
     if (this.props.paySVC) {
       paymentTypes = paymentTypes.filter(i => i.allowTopUpSVC === true);
@@ -191,7 +191,7 @@ class PaymentMethods extends Component {
 
 mapStateToProps = state => ({
   intlData: state.intlData,
-  companyInfo: state.userReducer.getCompanyInfo.companyInfo,
+  companyInfo: state.userReducer.getCompanyInfo?.companyInfo,
   myCardAccount: state.cardReducer.myCardAccount.card,
   selectedAccount: state.cardReducer.selectedAccount.selectedAccount,
   defaultAccount: state.userReducer.defaultPaymentAccount.defaultAccount,

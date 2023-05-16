@@ -308,16 +308,16 @@ class SettleOrder extends Component {
       } else {
         // check if payment provider was deleted
         try {
-          if (isEmptyArray(companyInfo.paymentTypes)) {
+          if (isEmptyArray(companyInfo?.paymentTypes)) {
             await this.props.dispatch(defaultPaymentAccount(undefined));
             return;
           }
         } catch (e) {}
 
         try {
-          if (!isEmptyArray(companyInfo.paymentTypes)) {
+          if (!isEmptyArray(companyInfo?.paymentTypes)) {
             if (!isEmptyObject(defaultAccount)) {
-              const findPaymentProvider = companyInfo.paymentTypes.find(
+              const findPaymentProvider = companyInfo?.paymentTypes.find(
                 item => item.paymentID == defaultAccount.paymentID,
               );
               if (findPaymentProvider == undefined) {
@@ -1195,8 +1195,8 @@ class SettleOrder extends Component {
         // Payment Type Detail
         let paymentPayload = {};
 
-        if (!isEmptyArray(companyInfo.paymentTypes)) {
-          const find = companyInfo.paymentTypes.find(
+        if (!isEmptyArray(companyInfo?.paymentTypes)) {
+          const find = companyInfo?.paymentTypes.find(
             item => item.paymentID == selectedAccount.paymentID,
           );
           if (find != undefined) {
@@ -1500,8 +1500,8 @@ class SettleOrder extends Component {
         // Payment Type Detail
         let paymentPayload = {};
 
-        if (!isEmptyArray(companyInfo.paymentTypes)) {
-          const find = companyInfo.paymentTypes.find(
+        if (!isEmptyArray(companyInfo?.paymentTypes)) {
+          const find = companyInfo?.paymentTypes.find(
             item => item.paymentID == selectedAccount.paymentID,
           );
           if (find != undefined) {
@@ -1769,8 +1769,8 @@ class SettleOrder extends Component {
         // Payment Type Detail
         let paymentPayload = {};
 
-        if (!isEmptyArray(companyInfo.paymentTypes)) {
-          const find = companyInfo.paymentTypes.find(
+        if (!isEmptyArray(companyInfo?.paymentTypes)) {
+          const find = companyInfo?.paymentTypes.find(
             item => item.paymentID == selectedAccount.paymentID,
           );
           if (find != undefined) {
@@ -2050,8 +2050,8 @@ class SettleOrder extends Component {
         // Payment Type Detail
         let paymentPayload = {};
 
-        if (!isEmptyArray(companyInfo.paymentTypes)) {
-          const find = companyInfo.paymentTypes.find(
+        if (!isEmptyArray(companyInfo?.paymentTypes)) {
+          const find = companyInfo?.paymentTypes.find(
             item => item.paymentID == selectedAccount.paymentID,
           );
           if (find != undefined) {
@@ -2278,7 +2278,7 @@ class SettleOrder extends Component {
     if (paySVC === true) {
       // check if this payment method is allowed to top up SVC
       try {
-        const find = companyInfo.paymentTypes.find(
+        const find = companyInfo?.paymentTypes.find(
           i => i.paymentID === selectedAccount.paymentID,
         );
         if (find) {
@@ -2303,7 +2303,7 @@ class SettleOrder extends Component {
 
     // check if this payment method is allowed to create sales
     try {
-      const find = companyInfo.paymentTypes.find(
+      const find = companyInfo?.paymentTypes.find(
         i => i.paymentID === selectedAccount.paymentID,
       );
       if (find) {
@@ -2415,8 +2415,8 @@ class SettleOrder extends Component {
         // Payment Type Detail
         let paymentPayload = {};
 
-        if (!isEmptyArray(companyInfo.paymentTypes)) {
-          const find = companyInfo.paymentTypes.find(
+        if (!isEmptyArray(companyInfo?.paymentTypes)) {
+          const find = companyInfo?.paymentTypes.find(
             item => item.paymentID == selectedAccount.paymentID,
           );
           if (find != undefined) {
@@ -2976,7 +2976,7 @@ class SettleOrder extends Component {
       if (selectedAccount && selectedAccount.paymentID === 'MANUAL_TRANSFER') {
         // check if this payment method is allowed to top up SVC
         try {
-          const find = this.props.companyInfo.paymentTypes.find(
+          const find = this.props.companyInfo?.paymentTypes.find(
             i => i.paymentID === selectedAccount.paymentID,
           );
           if (find) {
@@ -4257,7 +4257,7 @@ mapStateToProps = state => ({
   defaultAccount: state.userReducer.defaultPaymentAccount.defaultAccount,
   balance: state.SVCReducer.balance.balance,
   defaultBalance: state.SVCReducer.balance.defaultBalance,
-  companyInfo: state.userReducer.getCompanyInfo.companyInfo,
+  companyInfo: state.userReducer.getCompanyInfo?.companyInfo,
   userDetail: state.userReducer.getUser.userDetails,
   dataStamps: state.rewardsReducer.getStamps,
   intlData: state.intlData,
