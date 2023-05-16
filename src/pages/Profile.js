@@ -27,7 +27,7 @@ import Theme from '../theme';
 import ConfirmationDialog from '../components/confirmationDialog';
 import MyECardModal from '../components/modal/MyECardModal';
 import moment from 'moment';
-import {getCustomerGroupDetail} from '../actions/membership.action';
+import DeviceBrightness from '@adrianso/react-native-device-brightness';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -270,7 +270,7 @@ const useStyles = () => {
   return styles;
 };
 
-const Profile = () => {
+const Profile = props => {
   const styles = useStyles();
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
@@ -279,6 +279,7 @@ const Profile = () => {
   const [isOpenDeleteAccountModal, setIsOpenDeleteAccountModal] = useState(
     false,
   );
+  const [currentBrightness, setCurrentBrightness] = React.useState(0.5);
   const [user, setUser] = useState({});
 
   const progressBarCampaign = useSelector(
@@ -670,6 +671,27 @@ const Profile = () => {
       );
     }
   };
+
+  const initDeviceBright = async () => {
+    const currentBrightness = await DeviceBrightness.getBrightnessLevel();
+    setCurrentBrightness(currentBrightness);
+  };
+
+  const handleDeviceBright = async () => {
+    if (isOpenMyECardModal) {
+      console.log('likna2');
+      DeviceBrightness.setBrightnessLevel(1);
+    } else {
+      DeviceBrightness.setBrightnessLevel(currentBrightness);
+    }
+  };
+  React.useEffect(() => {
+    handleDeviceBright();
+  }, [isOpenMyECardModal]);
+
+  React.useEffect(() => {
+    initDeviceBright();
+  }, []);
 
   const renderMyECardModal = () => {
     if (isOpenMyECardModal) {

@@ -52,7 +52,7 @@ const useStyles = () => {
   return styles;
 };
 
-const Banner = () => {
+const Banner = ({bottom = 0}) => {
   const styles = useStyles();
   const dispatch = useDispatch();
 
@@ -104,7 +104,7 @@ const Banner = () => {
         autoplay={true}
         autoplayTimeout={6}
         animated={true}
-        paginationStyle={{bottom: 5}}
+        paginationStyle={{bottom}}
         dot={<View style={styles.inactiveDot} />}
         activeDot={<View style={styles.activeDot} />}
         loop>
