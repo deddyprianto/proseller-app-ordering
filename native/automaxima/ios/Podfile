@@ -57,6 +57,8 @@ target 'Automaxima' do
 
   pod 'react-native-config', :path => '../node_modules/react-native-config'
 
+  pod 'react-native-device-brightness', :path => '../node_modules/@adrianso/react-native-device-brightness'
+
   pod 'BVLinearGradient', :path => '../node_modules/react-native-linear-gradient'
 
   pod 'react-native-geolocation', :path => '../node_modules/@react-native-community/geolocation'

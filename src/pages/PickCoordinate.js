@@ -50,21 +50,22 @@ class PickCoordinate extends Component {
   componentDidMount = async () => {
     try {
       try {
+        if (this.props.coordinated && !isEmptyObject(this.props.coordinated)) {
+          this.setState({
+            latitude: this.props.coordinated.latitude,
+            longitude: this.props.coordinated.longitude,
+          });
+        }
+
         if (
           this.props.userPosition &&
           this.props.userPosition.coords &&
-          isEmptyObject(this.props.oldCoordinate)
+          !this.props.coordinated.latitude &&
+          !this.props.coordinated.longitude
         ) {
           this.setState({
             latitude: this.props.userPosition.coords.latitude,
             longitude: this.props.userPosition.coords.longitude,
-          });
-        }
-
-        if (!isEmptyObject(this.props.oldCoordinate)) {
-          this.setState({
-            latitude: this.props.oldCoordinate.latitude,
-            longitude: this.props.oldCoordinate.longitude,
           });
         }
       } catch (e) {}
