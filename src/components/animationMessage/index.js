@@ -1,22 +1,22 @@
 import React from 'react';
 import {Animated, Dimensions, StyleSheet} from 'react-native';
+import Theme from '../../theme/Theme';
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'red',
     position: 'absolute',
     bottom: -30,
     width: Dimensions.get('window').width * 0.9,
     left: 16,
     right: 16,
     padding: 10,
-    borderRadius: 8,
+    borderRadius: 4,
   },
 });
 
 const AnimationMessage = ({show, setShow, children, containerStyle}) => {
   const fadeAnim = React.useRef(new Animated.Value(0)).current;
-
+  const {colors} = Theme();
   React.useEffect(() => {
     if (show) {
       Animated.timing(fadeAnim, {
@@ -41,7 +41,11 @@ const AnimationMessage = ({show, setShow, children, containerStyle}) => {
 
   return (
     <Animated.View
-      style={[styles.container, {opacity: fadeAnim}, containerStyle]}>
+      style={[
+        styles.container,
+        {opacity: fadeAnim, backgroundColor: colors.errorColor},
+        containerStyle,
+      ]}>
       {children}
     </Animated.View>
   );
