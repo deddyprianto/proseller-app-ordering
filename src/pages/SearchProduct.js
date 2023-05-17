@@ -138,6 +138,7 @@ const useStyles = () => {
       alignItems: 'center',
       justifyContent: 'space-between',
       backgroundColor: theme.colors.background,
+      zIndex: 1000,
     },
     viewRecentSearchHeader: {
       width: '100%',
