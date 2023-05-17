@@ -9,3 +9,5 @@ export {
 export {
   default as SearchProductByBarcodeModal,
 } from './SearchProductByBarcodeModal';
+
+export {default as HistoryNotificationModal} from './HistoryNotificationModal';
