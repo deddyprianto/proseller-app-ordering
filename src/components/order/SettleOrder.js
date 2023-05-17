@@ -2961,8 +2961,8 @@ class SettleOrder extends Component {
     if (getOutletData.orderingStatus === 'UNAVAILABLE') {
       let message = `${
         getOutletData.name
-      } is currently offline, please select another outlet`;
-      const title = 'The outlet is offline';
+      } is currently not available, please select another outlet`;
+      const title = 'The outlet is not available';
       if (getOutletData?.offlineMessage) {
         message = getOutletData?.offlineMessage;
       }
