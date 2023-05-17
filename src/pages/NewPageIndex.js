@@ -1,8 +1,9 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {createAppContainer} from 'react-navigation';
 import {createBottomTabNavigator} from 'react-navigation-tabs';
 import {useDispatch, useSelector} from 'react-redux';
 import {Actions} from 'react-native-router-flux';
+import OneSignal from 'react-native-onesignal';
 
 import {
   View,
@@ -28,6 +29,7 @@ import appConfig from '../config/appConfig';
 import {getColorSettings} from '../actions/setting.action';
 
 import Theme from '../theme';
+import {HistoryNotificationModal} from '../components/modal';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -131,6 +133,10 @@ const useStyles = () => {
 const NewPageIndex = () => {
   const dispatch = useDispatch();
   const styles = useStyles();
+
+  const [isOpenNotification, setIsOpenNotification] = useState(false);
+  const [notification, setNotification] = useState({});
+
   const isLoggedIn = useSelector(state => state.authReducer.authData.token);
 
   const defaultOutlet = useSelector(
@@ -159,7 +165,19 @@ const NewPageIndex = () => {
     History: History,
     Profile: Profile,
   };
+
   const screens = true ? dataRetailScreens : dataFnBScreens;
+
+  const handleGetNotification = () => {
+    OneSignal.setNotificationWillShowInForegroundHandler(
+      notificationReceivedEvent => {
+        const getNotification = notificationReceivedEvent.getNotification();
+        setNotification(getNotification);
+        setIsOpenNotification(true);
+        notificationReceivedEvent.complete(getNotification);
+      },
+    );
+  };
 
   const handleImage = name => {
     switch (name) {
@@ -242,6 +260,18 @@ const NewPageIndex = () => {
     );
   };
 
+  const renderHistoryNotificationModal = () => {
+    return (
+      <HistoryNotificationModal
+        value={notification}
+        open={isOpenNotification}
+        handleClose={() => {
+          setIsOpenNotification(false);
+        }}
+      />
+    );
+  };
+
   const TabNavigator = createBottomTabNavigator(screens, {
     initialRouteName: 'Home',
     tabBarComponent: props => {
@@ -258,6 +288,10 @@ const NewPageIndex = () => {
   } else if (isLoggedIn && defaultOutlet?.id) {
     return (
       <SafeAreaView style={styles.root}>
+        {handleGetNotification()}
+        {renderHistoryNotificationModal()}
+        <HistoryNotificationModal />
+
         <Tabs />
       </SafeAreaView>
     );

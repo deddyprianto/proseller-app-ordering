@@ -6,7 +6,7 @@ const ENV = {
 
   base_url_payment: 'https://payment-demo.proseller.io/api/', //DEMO
 
-  ONESIGNAL_ID: '16322779-652b-4fda-9563-abec1116aba4',
+  ONESIGNAL_ID: '33917c22-2105-4ba6-aba5-c4a3b996302a',
 
   REGION: 'ap-southeast-1',
 
