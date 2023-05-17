@@ -2,6 +2,11 @@
 # yarn lockfile v1
 
 
+"@adrianso/react-native-device-brightness@^1.2.7":
+  version "1.2.7"
+  resolved "https://registry.yarnpkg.com/@adrianso/react-native-device-brightness/-/react-native-device-brightness-1.2.7.tgz#46905d0358c4f6dce5c88eb51882f528cc716f60"
+  integrity sha512-q3OTFGohAh04R8cBka7/eNXaeSD8bAZocMsifLIR3oDF5N9cNH2UVEjzJaFXW8DHFEsODpljpT+eyGWIhKlkow==
+
 "@ampproject/remapping@^2.2.0":
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/@ampproject/remapping/-/remapping-2.2.1.tgz#99e8e11851128b8702cd57c33684f1d0f260b630"
@@ -3490,6 +3495,11 @@ babel-plugin-syntax-trailing-function-commas@^7.0.0-beta.0:
   version "7.0.0-beta.0"
   resolved "https://registry.npmjs.org/babel-plugin-syntax-trailing-function-commas/-/babel-plugin-syntax-trailing-function-commas-7.0.0-beta.0.tgz"
   integrity sha512-Xj9XuRuz3nTSbaTXWv3itLOcxyF4oPD8douBBmj7U9BBC6nEBYfyOJYQMf/8PJAFotC62UY5dFfIGEPr7WswzQ==
+
+babel-plugin-transform-remove-console@^6.9.4:
+  version "6.9.4"
+  resolved "https://registry.yarnpkg.com/babel-plugin-transform-remove-console/-/babel-plugin-transform-remove-console-6.9.4.tgz#b980360c067384e24b357a588d807d3c83527780"
+  integrity sha512-88blrUrMX3SPiGkT1GnvVY8E/7A+k6oj3MNvUtTIxJflFzXTw1bHkuJ/y039ouhFMp2prRn5cQGzokViYi1dsg==
 
 babel-polyfill@6.23.0:
   version "6.23.0"
@@ -9517,10 +9527,18 @@ react-native-modal-datetime-picker@^7.6.0:
     prop-types "^15.7.2"
     react-native-modal "^11.0.2"
 
-react-native-modal@^11.0.2, react-native-modal@^11.5.3:
+react-native-modal@^11.0.2:
   version "11.5.3"
   resolved "https://registry.npmjs.org/react-native-modal/-/react-native-modal-11.5.3.tgz"
   integrity sha512-U6RghSkZUZ6c0LHMbwAnVscEwGoI58eXfBstVs18t50miV0GmLcJhIOu5OND+SDGVkBQFiGFRu/pTUJaA7wfGw==
+  dependencies:
+    prop-types "^15.6.2"
+    react-native-animatable "1.3.3"
+
+react-native-modal@^13.0.1:
+  version "13.0.1"
+  resolved "https://registry.yarnpkg.com/react-native-modal/-/react-native-modal-13.0.1.tgz#691f1e646abb96fa82c1788bf18a16d585da37cd"
+  integrity sha512-UB+mjmUtf+miaG/sDhOikRfBOv0gJdBU2ZE1HtFWp6UixW9jCk/bhGdHUgmZljbPpp0RaO/6YiMmQSSK3kkMaw==
   dependencies:
     prop-types "^15.6.2"
     react-native-animatable "1.3.3"
@@ -9673,11 +9691,6 @@ react-native-shimmer@^0.5.0:
   integrity sha512-Ws9L1atcAVuOl3A2//S1ervNCbCOeqSMuENYRAZ+yCA8Emgb6Li0wmNnokqhKFvM4Pf5jdnO1pjgq0bNwlbu6Q==
   dependencies:
     prop-types "^15.6.0"
-
-react-native-simple-toast@1.1.4:
-  version "1.1.4"
-  resolved "https://registry.yarnpkg.com/react-native-simple-toast/-/react-native-simple-toast-1.1.4.tgz#6a962beea87b86228a4f8c51bc93761108740b1c"
-  integrity sha512-7D8o8L445XDz7Rdh0pMgCIWuevv1FnGyuD7F8Nz/XhzMInmU4jL5VFJI25VVqQ2uGTaUSuo2ogXSgKnv6p9NJg==
 
 react-native-sms-retriever@^1.1.1:
   version "1.1.1"
