@@ -419,7 +419,10 @@ const SearchProduct = ({category}) => {
             />
             {renderCancelOrClear()}
           </View>
-          <AnimationMessage show={isErrorSearch} setShow={setIsErrorSearch}>
+          <AnimationMessage
+            containerStyle={{bottom: -45}}
+            show={isErrorSearch}
+            setShow={setIsErrorSearch}>
             <View style={[styles.rowDirection, styles.centerAlign]}>
               <Io
                 style={styles.errorIcon}
