@@ -4,7 +4,7 @@ require_relative '../node_modules/react-native-unimodules/cocoapods.rb'
 
 platform :ios, '11.0'
 
-target 'acemart' do
+target 'Automaxima' do
   use_unimodules!
   
   config = use_native_modules!
@@ -57,9 +57,13 @@ target 'acemart' do
 
   pod 'react-native-config', :path => '../node_modules/react-native-config'
 
+  pod 'react-native-device-brightness', :path => '../node_modules/@adrianso/react-native-device-brightness'
+
   pod 'BVLinearGradient', :path => '../node_modules/react-native-linear-gradient'
 
   pod 'react-native-geolocation', :path => '../node_modules/@react-native-community/geolocation'
+
+
 
 
   # Firebase Machine Learning KIT for Barcode Scanning
@@ -69,9 +73,14 @@ target 'acemart' do
     'BarcodeDetectorMLKit'
   ]
 
+
   pod 'Firebase/Core'
 
-  target 'acemartTests' do
+  target 'acemart' do
+    inherit! :complete
+  end
+
+  target 'funtoast' do
     inherit! :complete
   end
 

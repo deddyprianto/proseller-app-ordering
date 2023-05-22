@@ -2,7 +2,7 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:acemart.xcodeproj">
+      location = "group:/Volumes/ssdeksternal/Kantor/proseller-new/ios/Automaxima.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:Pods/Pods.xcodeproj">

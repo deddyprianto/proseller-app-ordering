@@ -464,7 +464,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "acemart" */;
+			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "Automaxima" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -1218,7 +1218,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = C0493FD59262D275AF5F9E55 /* Pods-Automaxima-acemart.debug.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AcemartIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Automaxima/Automaxima.entitlements;
 				CURRENT_PROJECT_VERSION = 68;
@@ -1242,7 +1242,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.edgeworks.automaxima-demo";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.edgeworks.acemart-demo";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Automaxima-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -1255,7 +1255,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5F3F637B1B2BE5AB20E4B044 /* Pods-Automaxima-acemart.release.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AcemartIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Automaxima/Automaxima.entitlements;
 				CURRENT_PROJECT_VERSION = 68;
@@ -1279,7 +1279,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.edgeworks.automaxima-demo";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.edgeworks.acemart-demo";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Automaxima-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
@@ -1291,7 +1291,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 6AA7077EB2953EFFBBED2FBE /* Pods-Automaxima-funtoast.debug.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = FuntoastIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Automaxima/Automaxima.entitlements;
 				CURRENT_PROJECT_VERSION = 68;
@@ -1315,7 +1315,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.edgeworks.automaxima-demo";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.edgeworks.funtoast-demo";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Automaxima-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -1328,7 +1328,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = FC5C95E522C32A486DEA3A5C /* Pods-Automaxima-funtoast.release.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = FuntoastIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Automaxima/Automaxima.entitlements;
 				CURRENT_PROJECT_VERSION = 68;
@@ -1352,7 +1352,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.edgeworks.automaxima-demo";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.edgeworks.funtoast-demo";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Automaxima-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
@@ -1372,7 +1372,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "acemart" */ = {
+		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "Automaxima" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				83CBBA201A601CBA00E9B192 /* Debug */,

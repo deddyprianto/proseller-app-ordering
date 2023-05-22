@@ -1,6 +1,6 @@
-package com.acemart;
+package com.automaxima;
 
-// import com.acemart.generated.BasePackageList;
+// import com.automaxima.generated.BasePackageList;
 
 import android.app.Application;
 import android.content.Context;
