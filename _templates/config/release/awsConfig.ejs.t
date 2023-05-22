@@ -48,7 +48,7 @@ force: true
 // export default awsConfig;
 
 import Config from 'react-native-config';
-import ENV from '../../configurations/<%= name %>/demo/env';
+import ENV from '../../configurations/<%= name.toLowerCase() %>/demo/env';
 // import ENV from '../../env';
 // import ENV from '../../env-demo';
 import Base64 from 'Base64';

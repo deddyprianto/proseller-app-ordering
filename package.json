@@ -30,7 +30,6 @@
     "build-acemart": "npm run move-acemart-mac && npm run android-demo-rel",
     "build-automaxima": "npm run move-automaxima-mac && npm run android-demo-rel",
     "build-funtoast": "npm run move-funtoast-mac && npm run android-demo-rel"
-
   },
   "dependencies": {
     "@adrianso/react-native-device-brightness": "^1.2.7",

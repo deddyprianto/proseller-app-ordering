@@ -16,7 +16,7 @@ import {
   Image,
   SafeAreaView,
 } from 'react-native';
-
+import Io from 'react-native-vector-icons/MaterialCommunityIcons';
 import FieldSearch from '../components/fieldSearch';
 import ProductList from '../components/productList';
 import LoadingScreen from '../components/loadingScreen';
@@ -42,6 +42,8 @@ import ProductSubCategoryList from '../components/productSubCategoryList';
 import SearchSuggestionList from '../components/searchSuggestionList/SearchSuggestionList';
 
 import Theme from '../theme';
+import {Toast} from 'native-base';
+import AnimationMessage from '../components/animationMessage';
 
 const useStyles = () => {
   const theme = Theme();
@@ -133,10 +135,10 @@ const useStyles = () => {
       paddingHorizontal: 16,
       paddingVertical: 8,
       display: 'flex',
-      flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
       backgroundColor: theme.colors.background,
+      zIndex: 1000,
     },
     viewRecentSearchHeader: {
       width: '100%',
@@ -172,6 +174,22 @@ const useStyles = () => {
       height: 100,
       tintColor: theme.colors.textTertiary,
     },
+    searchContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    errorText: {
+      color: 'white',
+    },
+    rowDirection: {
+      flexDirection: 'row',
+    },
+    centerAlign: {
+      alignItems: 'center',
+    },
+    errorIcon: {
+      marginRight: 5,
+    },
   });
   return styles;
 };
@@ -180,7 +198,6 @@ const SearchProduct = ({category}) => {
   const ref = useRef();
   const styles = useStyles();
   const dispatch = useDispatch();
-
   const [basketLength, setBasketLength] = useState(0);
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -191,7 +208,7 @@ const SearchProduct = ({category}) => {
   const [selectedCategory, setSelectedCategory] = useState({});
   const [selectedSubCategory, setSelectedSubCategory] = useState({});
   const [productsSearch, setProductsSearch] = useState([]);
-
+  const [isErrorSearch, setIsErrorSearch] = useState(false);
   const categories = useSelector(
     state => state.productReducer.productCategories,
   );
@@ -316,11 +333,15 @@ const SearchProduct = ({category}) => {
   };
 
   const handleSearchProduct = async value => {
-    setSelectedCategory({});
-    setSelectedSubCategory({});
-    setSearchTextInput('');
-    setSearchQuery(value);
-    await dispatch(setSearchProductHistory({searchQuery: value}));
+    if (value.length >= 2) {
+      setSelectedCategory({});
+      setSelectedSubCategory({});
+      setSearchTextInput('');
+      setSearchQuery(value);
+      await dispatch(setSearchProductHistory({searchQuery: value}));
+    } else {
+      setIsErrorSearch(true);
+    }
   };
 
   const handleSearchProductWithCategory = async value => {
@@ -383,19 +404,39 @@ const SearchProduct = ({category}) => {
 
   const renderHeaderSearch = () => {
     return (
-      <View style={styles.viewHeader}>
-        <FieldSearch
-          value={searchTextInput}
-          onChange={value => {
-            setSearchTextInput(value);
-          }}
-          placeholder="Find what you need"
-          onSubmit={value => {
-            handleSearchProduct(value);
-          }}
-        />
-        {renderCancelOrClear()}
-      </View>
+      <>
+        <View style={styles.viewHeader}>
+          <View style={styles.searchContainer}>
+            <FieldSearch
+              value={searchTextInput}
+              onChange={value => {
+                setSearchTextInput(value);
+              }}
+              placeholder="Find what you need"
+              onSubmit={value => {
+                handleSearchProduct(value);
+              }}
+            />
+            {renderCancelOrClear()}
+          </View>
+          <AnimationMessage
+            containerStyle={{bottom: -45}}
+            show={isErrorSearch}
+            setShow={setIsErrorSearch}>
+            <View style={[styles.rowDirection, styles.centerAlign]}>
+              <Io
+                style={styles.errorIcon}
+                name="alert-circle-outline"
+                size={26}
+                color="white"
+              />
+              <Text style={styles.errorText}>
+                Input minimal 2 characters to search.
+              </Text>
+            </View>
+          </AnimationMessage>
+        </View>
+      </>
     );
   };
 
