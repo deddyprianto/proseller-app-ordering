@@ -55,6 +55,8 @@
 		88D7E71E2A1B19D000F13E93 /* Lato-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5004E2CBAFBB4547A8CCA619 /* Lato-Italic.ttf */; };
 		88D7E71F2A1B19D000F13E93 /* Lato-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 40AD4A3553664601BD423484 /* Lato-Medium.ttf */; };
 		88D7E7202A1B19D000F13E93 /* Lato-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 61448CC0B03644E5AE6729E7 /* Lato-Regular.ttf */; };
+		88DAEC422A1C6E2100521126 /* Poppins-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 881D49842A1B3DDE009E45B9 /* Poppins-SemiBold.ttf */; };
+		88DAEC432A1C6E2600521126 /* Poppins-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 881D49842A1B3DDE009E45B9 /* Poppins-SemiBold.ttf */; };
 		942F222339174ACAB6A6FDA4 /* Lato-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 40AD4A3553664601BD423484 /* Lato-Medium.ttf */; };
 		B6FA351076D44777B6129C53 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B8783AC08D84065AC0B2230 /* libz.tbd */; };
 		C059695DF9A863BFBAED6300 /* libPods-Automaxima.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CEB3CA18B39250FAA73BB671 /* libPods-Automaxima.a */; };
@@ -493,6 +495,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				88DAEC432A1C6E2600521126 /* Poppins-SemiBold.ttf in Resources */,
 				7BD1A640265E73280011B660 /* GoogleService-Info.plist in Resources */,
 				7B4FF300262852E300262C97 /* Poppins-Black.ttf in Resources */,
 				7B4FF301262852E300262C97 /* Poppins-Bold.ttf in Resources */,
@@ -513,6 +516,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				88DAEC422A1C6E2100521126 /* Poppins-SemiBold.ttf in Resources */,
 				88D7E6F42A1B198500F13E93 /* GoogleService-Info.plist in Resources */,
 				88D7E6F52A1B198500F13E93 /* Poppins-Black.ttf in Resources */,
 				88D7E6F62A1B198500F13E93 /* Poppins-Bold.ttf in Resources */,
