@@ -166,7 +166,7 @@ const NewPageIndex = () => {
     Profile: Profile,
   };
 
-  const screens = true ? dataRetailScreens : dataFnBScreens;
+  const screens = false ? dataRetailScreens : dataFnBScreens;
 
   const handleGetNotification = () => {
     OneSignal.setNotificationWillShowInForegroundHandler(
@@ -289,10 +289,9 @@ const NewPageIndex = () => {
     return (
       <SafeAreaView style={styles.root}>
         {handleGetNotification()}
-        {renderHistoryNotificationModal()}
-        <HistoryNotificationModal />
 
         <Tabs />
+        {renderHistoryNotificationModal()}
       </SafeAreaView>
     );
   } else {
