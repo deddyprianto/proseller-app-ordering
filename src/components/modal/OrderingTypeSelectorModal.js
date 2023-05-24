@@ -193,8 +193,6 @@ const OrderingTypeSelectorModal = ({open, handleClose, value}) => {
     }
   }, [dispatch, open, outlet.id]);
 
-  console.log({outlet}, 'laka');
-
   useEffect(() => {
     const orderingModesField = [
       {
