@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, {useState, useEffect} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import {
@@ -17,6 +18,8 @@ import {isEmptyArray, isEmptyObject} from '../../helper/CheckEmpty';
 import Theme from '../../theme';
 import LoadingScreen from '../loadingScreen';
 import CurrencyFormatter from '../../helper/CurrencyFormatter';
+import {getAllowedOrder} from '../../actions/setting.action';
+import {getOutletById} from '../../actions/stores.action';
 
 const useStyles = () => {
   const theme = Theme();
@@ -175,6 +178,23 @@ const OrderingTypeSelectorModal = ({open, handleClose, value}) => {
     state => state.storesReducer.defaultOutlet.defaultOutlet,
   );
 
+  const outlet = useSelector(
+    state => state.storesReducer.defaultOutlet.defaultOutlet,
+  );
+
+  const orderSetting = useSelector(
+    state => state.settingReducer?.allowedOrder?.settingValue,
+  );
+
+  useEffect(() => {
+    if (open) {
+      dispatch(getAllowedOrder(dispatch));
+      dispatch(getOutletById(outlet.id));
+    }
+  }, [dispatch, open, outlet.id]);
+
+  console.log({outlet}, 'laka');
+
   useEffect(() => {
     const orderingModesField = [
       {
@@ -210,16 +230,18 @@ const OrderingTypeSelectorModal = ({open, handleClose, value}) => {
     ];
 
     const orderingModesFieldFiltered = orderingModesField.filter(mode => {
-      if (defaultOutlet[mode.isEnabledFieldName]) {
+      if (
+        defaultOutlet[mode.isEnabledFieldName] &&
+        orderSetting.includes(mode.key)
+      ) {
         return mode;
       }
     });
-
     setEstimatedWaitingTimes(defaultOutlet?.estimatedWaitingTime || {});
     setOrderingTypes(orderingModesFieldFiltered);
     const currentOrderingMode = value || '';
     setSelected({key: currentOrderingMode});
-  }, [defaultOutlet, value]);
+  }, [defaultOutlet, value, orderSetting]);
 
   const handleSave = async () => {
     setIsLoading(true);

@@ -2,6 +2,7 @@
 // import config from '../../config';
 
 import {isEmptyArray} from '../helper/CheckEmpty';
+import {ALLOWED_ORDER_TYPE} from '../reducers/setting.reducer';
 import {fetchApiOrder} from '../service/apiOrder';
 
 const handleDataType = ({settings, key}) => {
@@ -165,6 +166,37 @@ export const getLoginSettings = () => {
       }
 
       return response.response.data;
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const getAllowedOrder = () => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      const response = await fetchApiOrder(
+        '/orderingsetting/app',
+        'GET',
+        null,
+        200,
+        token,
+      );
+      const {data} = response.response;
+      const findAllowedOrder = data?.settings.find(
+        setting => setting.settingKey === 'AllowedOrderingMode',
+      );
+      dispatch({
+        type: ALLOWED_ORDER_TYPE,
+        payload: findAllowedOrder,
+      });
     } catch (error) {
       return error;
     }

@@ -6,6 +6,8 @@
 
 import {combineReducers} from 'redux';
 
+export const ALLOWED_ORDER_TYPE = 'ALLOWED_ORDER_TYPE';
+
 const snackbar = (state = {}, action) => {
   switch (action.type) {
     case 'SET_SNACKBAR':
@@ -54,9 +56,22 @@ const loginSettings = (state = {}, action) => {
   }
 };
 
+const allowedOrder = (state = {}, action) => {
+  switch (action.type) {
+    case ALLOWED_ORDER_TYPE:
+      return {
+        ...action.payload,
+      };
+
+    default:
+      return state;
+  }
+};
+
 export default combineReducers({
   snackbar,
   imageSettings,
   colorSettings,
   loginSettings,
+  allowedOrder,
 });
