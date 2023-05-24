@@ -40,13 +40,13 @@ const appConfig = {
   location: require('../assets/img/icon-location.png'),
 
   //should be dynamic
-  logoMerchant: require('../../native/automaxima/assets/img/logo.png'),
-  logoMerchantWithBackground: require('../../native/automaxima/assets/img/logo-merchant-with-background.png'),
-  imageOnBoarding1: require('../../native/automaxima/assets/img/image-on-boarding-1.png'),
-  imageOnBoarding2: require('../../native/automaxima/assets/img/image-on-boarding-2.png'),
-  imageOnBoarding3: require('../../native/automaxima/assets/img/image-on-boarding-3.png'),
-  imagePointSmallBackground: require('../../native/automaxima/assets/img/image-point-small-background.png'),
-  imagePointLargeBackground: require('../../native/automaxima/assets/img/image-point-large-background.png'),
+  logoMerchant: require('../../native/funtoast/assets/img/logo.png'),
+  logoMerchantWithBackground: require('../../native/funtoast/assets/img/logo-merchant-with-background.png'),
+  imageOnBoarding1: require('../../native/funtoast/assets/img/image-on-boarding-1.png'),
+  imageOnBoarding2: require('../../native/funtoast/assets/img/image-on-boarding-2.png'),
+  imageOnBoarding3: require('../../native/funtoast/assets/img/image-on-boarding-3.png'),
+  imagePointSmallBackground: require('../../native/funtoast/assets/img/image-point-small-background.png'),
+  imagePointLargeBackground: require('../../native/funtoast/assets/img/image-point-large-background.png'),
 
   //LOGO MARTIN
   // logoMerchant: require('../assets/img/logo.png'),

@@ -70,6 +70,7 @@ import {getSVCBalance} from '../../actions/SVC.action';
 import {campaign, dataPoint} from '../../actions/rewards.action';
 import ModalTransfer from './ModalTransfer';
 import LoadingScreen from '../loadingScreen';
+import OrderingModeOfflineModal from '../modal/OrderingModeOfflineModal';
 
 class SettleOrder extends Component {
   constructor(props) {
@@ -100,6 +101,7 @@ class SettleOrder extends Component {
       totalNonDiscountable: 0,
       showModal: false,
       showErrorModal: false,
+      isOpenOrderingModeOfflineModal: false,
       errorMessage: {title: '', message: ''},
     };
 
@@ -2270,6 +2272,11 @@ class SettleOrder extends Component {
     //   }
     // } catch (e) {}
 
+    const isNotAvailable = this.handleOrderingModeOffline();
+    if (isNotAvailable) {
+      return;
+    }
+
     if (payMembership === true) {
       this.payMembership();
       return;
@@ -2954,10 +2961,69 @@ class SettleOrder extends Component {
     this.toggleModal();
   };
 
+  handleOpenOrderingModeOfflineModal = () => {
+    this.setState({isOpenOrderingModeOfflineModal: true});
+  };
+  handleCloseOrderingModeOfflineModal = () => {
+    this.setState({isOpenOrderingModeOfflineModal: true});
+  };
+
+  orderingModesField = [
+    {
+      key: 'STOREPICKUP',
+      isEnabledFieldName: 'enableStorePickUp',
+      displayName: this.props.defaultOutlet?.storePickUpName || 'Store Pick Up',
+    },
+    {
+      key: 'DELIVERY',
+      isEnabledFieldName: 'enableDelivery',
+      displayName: this.props.defaultOutlet?.deliveryName || 'Delivery',
+    },
+    {
+      key: 'TAKEAWAY',
+      isEnabledFieldName: 'enableTakeAway',
+      displayName: this.props.defaultOutlet?.takeAwayName || 'Take Away',
+    },
+    {
+      key: 'DINEIN',
+      isEnabledFieldName: 'enableDineIn',
+      displayName: this.props.defaultOutlet?.dineInName || 'Dine In',
+    },
+    {
+      key: 'STORECHECKOUT',
+      isEnabledFieldName: 'enableStoreCheckOut',
+      displayName:
+        this.props.defaultOutlet?.storeCheckOutName || 'Store Checkout',
+    },
+  ];
+
+  handleOrderingModeOffline = async () => {
+    const defaultOutlet = this.props.defaultOutlet;
+    const currentOutlet = await this.props.dispatch(
+      getOutletById(defaultOutlet.id),
+    );
+    const orderingModeAvailable = this.orderingModesField.filter(mode => {
+      if (currentOutlet[mode.isEnabledFieldName]) {
+        return mode;
+      }
+    });
+    const availableCheck = orderingModeAvailable.find(
+      row => row.key === this.props.basket?.orderingMode,
+    );
+
+    if (!availableCheck) {
+      this.handleOpenOrderingModeOfflineModal();
+      return true;
+    }
+
+    return false;
+  };
+
   popupPayment = async () => {
     const {pembayaran} = this.props;
     const outledId = pembayaran.storeId;
     const getOutletData = await this.props.dispatch(getOutletById(outledId));
+
     if (getOutletData.orderingStatus === 'UNAVAILABLE') {
       let message = `${
         getOutletData.name
@@ -2971,8 +3037,13 @@ class SettleOrder extends Component {
       });
       return;
     }
-    console.log(getOutletData, 'sumprit');
+
     try {
+      const isNotAvailable = this.handleOrderingModeOffline();
+      if (isNotAvailable) {
+        return;
+      }
+
       if (selectedAccount && selectedAccount.paymentID === 'MANUAL_TRANSFER') {
         // check if this payment method is allowed to top up SVC
         try {
@@ -3347,7 +3418,6 @@ class SettleOrder extends Component {
     return (
       <SafeAreaView style={styles.container}>
         {this.state.loading && <LoaderDarker />}
-
         <LoadingScreen loading={this.state.loading} />
         {this.askUserToEnterCVV()}
         <ModalTransfer
@@ -4089,6 +4159,13 @@ class SettleOrder extends Component {
             this.hideAlert();
           }}
         />
+        <OrderingModeOfflineModal
+          value={this.props.basket?.orderingMode}
+          open={this.state.isOpenOrderingModeOfflineModal}
+          handleClose={() => {
+            this.setState({isOpenOrderingModeOfflineModal: false});
+          }}
+        />
         {this.renderPrompPayAtPOS()}
       </SafeAreaView>
     );
@@ -4260,6 +4337,8 @@ mapStateToProps = state => ({
   companyInfo: state.userReducer.getCompanyInfo?.companyInfo,
   userDetail: state.userReducer.getUser.userDetails,
   dataStamps: state.rewardsReducer.getStamps,
+  defaultOutlet: state.storesReducer.defaultOutlet.defaultOutlet,
+  basket: state.orderReducer?.dataBasket?.product,
   intlData: state.intlData,
 });
 

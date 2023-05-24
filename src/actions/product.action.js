@@ -9,7 +9,6 @@ export const getProductByOutlet = (OutletId, refresh) => {
   return async dispatch => {
     try {
       const PRESET_TYPE = 'app';
-
       const response = await fetchApiProduct(
         `/productpreset/load/${PRESET_TYPE}/${OutletId}`,
         'POST',
@@ -20,7 +19,7 @@ export const getProductByOutlet = (OutletId, refresh) => {
 
       await dispatch({
         type: 'DATA_PRODUCTS_OUTLET',
-        products: response.response,
+        products: response.response.data,
       });
 
       return response.response.data;
