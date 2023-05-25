@@ -679,7 +679,7 @@ const Profile = props => {
 
   const handleDeviceBright = async () => {
     if (isOpenMyECardModal) {
-      console.log('likna2');
+      initDeviceBright();
       DeviceBrightness.setBrightnessLevel(1);
     } else {
       DeviceBrightness.setBrightnessLevel(currentBrightness);
