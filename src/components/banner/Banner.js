@@ -62,6 +62,12 @@ const Banner = ({bottom = 0}) => {
   const banners = useSelector(
     state => state.promotionReducer.dataPromotion.promotion,
   );
+  const findBanner = (banner = []) => {
+    const findSelectedOutlet = banner?.selectedOutlets.find(
+      banner => banner.text === defaultOutlet.name,
+    );
+    return findSelectedOutlet ? true : false;
+  };
 
   useEffect(() => {
     const loadData = async () => {
@@ -79,20 +85,24 @@ const Banner = ({bottom = 0}) => {
 
   const renderImages = () => {
     const result = banners?.map((banner, index) => {
-      return (
-        <TouchableOpacity
-          style={styles.wrapImage}
-          onPress={() => {
-            handleBannerClick(banner);
-          }}>
-          <Image
-            key={index}
-            style={styles.image}
-            resizeMode="stretch"
-            source={{uri: banner?.defaultImageURL}}
-          />
-        </TouchableOpacity>
-      );
+      const showBanner = findBanner(banner);
+      if (showBanner) {
+        return (
+          <TouchableOpacity
+            style={styles.wrapImage}
+            onPress={() => {
+              handleBannerClick(banner);
+            }}>
+            <Image
+              key={index}
+              style={styles.image}
+              resizeMode="stretch"
+              source={{uri: banner?.defaultImageURL}}
+            />
+          </TouchableOpacity>
+        );
+      }
+      return null;
     });
     return result;
   };
