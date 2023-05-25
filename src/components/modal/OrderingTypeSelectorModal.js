@@ -230,7 +230,7 @@ const OrderingTypeSelectorModal = ({open, handleClose, value}) => {
     const orderingModesFieldFiltered = orderingModesField.filter(mode => {
       if (
         defaultOutlet[mode.isEnabledFieldName] &&
-        orderSetting.includes(mode.key)
+        orderSetting?.includes(mode.key)
       ) {
         return mode;
       }
