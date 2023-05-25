@@ -36,6 +36,7 @@ import {dataPointHistory} from '../actions/rewards.action';
 import Theme from '../theme';
 import {myVouchers} from '../actions/account.action';
 import {getUserProfile} from '../actions/user.action';
+import { dataPromotion } from '../actions/promotion.action';
 
 const useStyles = () => {
   const theme = Theme();
@@ -286,7 +287,7 @@ const HomeRetail = () => {
     await dispatch(dataPointHistory());
     await dispatch(myVouchers());
     await dispatch(getUserProfile());
-
+    await dispatch(dataPromotion());
     setSelectedCategory(response[0]);
     setRefresh(false);
   }, [dispatch, defaultOutlet]);

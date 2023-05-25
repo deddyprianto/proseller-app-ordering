@@ -16,13 +16,12 @@ export const getProductByOutlet = (OutletId, refresh) => {
         200,
         null,
       );
-
       await dispatch({
         type: 'DATA_PRODUCTS_OUTLET',
-        products: response.response.data,
+        products: response.response,
       });
 
-      return response.response.data;
+      return response.response;
     } catch (error) {
       dispatch({
         type: 'DATA_PRODUCTS_OUTLET',
