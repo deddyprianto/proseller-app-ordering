@@ -279,7 +279,7 @@ const Profile = props => {
   const [isOpenDeleteAccountModal, setIsOpenDeleteAccountModal] = useState(
     false,
   );
-  const [currentBrightness, setCurrentBrightness] = React.useState(0.5);
+  const [currentBrightness, setCurrentBrightness] = React.useState(null);
   const [user, setUser] = useState({});
 
   const progressBarCampaign = useSelector(
@@ -678,10 +678,11 @@ const Profile = props => {
   };
 
   const handleDeviceBright = async () => {
+    initDeviceBright();
     if (isOpenMyECardModal) {
-      initDeviceBright();
-      DeviceBrightness.setBrightnessLevel(1);
-    } else {
+      return DeviceBrightness.setBrightnessLevel(1);
+    }
+    if (currentBrightness) {
       DeviceBrightness.setBrightnessLevel(currentBrightness);
     }
   };
