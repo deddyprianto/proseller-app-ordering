@@ -131,8 +131,8 @@ const AddNewAddress = ({address}) => {
   const [recipientName, setRecipientName] = useState('');
   const [mobileNumber, setMobileNumber] = useState('');
   const [countryCode, setCountryCode] = useState('');
-  const [latitude, setLatitude] = useState(0);
-  const [longitude, setLongitude] = useState(0);
+  const [latitude, setLatitude] = useState(LATITUDE_SINGAPORE);
+  const [longitude, setLongitude] = useState(LONGITUDE_SINGAPORE);
   const [latitudeDelta, setLatitudeDelta] = useState(1);
   const [longitudeDelta, setLongitudeDelta] = useState(1);
 
@@ -440,10 +440,7 @@ const AddNewAddress = ({address}) => {
       setLongitudeDelta(coordinate?.longitudeDelta);
     }
   };
-  useEffect(() => {
-    setLatitude(LATITUDE_SINGAPORE);
-    setLongitude(LONGITUDE_SINGAPORE);
-  }, []);
+
   const renderMap = () => {
     return (
       <View style={styles.viewMap}>
