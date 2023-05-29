@@ -114,23 +114,28 @@ const OTP = ({isLogin, method, methodValue}) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const countdown = () => {
-    let second = 59;
-    let minute = sendCounter >= 2 ? 4 : 0;
-    setSeconds(second);
-    setMinutes(minute);
+    let minuteCount = sendCounter >= 2 ? 4 : 1;
+
+    const then = moment()
+      .add(minuteCount, 'minutes')
+      .format('MM/DD/YYYY HH:mm:ss');
+
     const result = setInterval(() => {
-      second = second - 1;
+      const now = moment().format('MM/DD/YYYY HH:mm:ss');
+      const ms = moment(then).diff(moment(now));
+
+      var duration = moment.duration(ms);
+      var second = duration.seconds();
+      var minute = duration.minutes();
       setSeconds(second);
-      if (second === 0) {
-        if (!minute && !second) {
-          clearInterval(result);
-        } else {
-          second = 60;
-          minute = minute - 1;
-          setMinutes(minute);
-        }
+      setMinutes(minute);
+
+      if (second <= 0 && minute <= 0) {
+        setSeconds(0);
+        setMinutes(0);
+        clearInterval(result);
       }
-    }, 1000);
+    }, 1);
   };
 
   useEffect(() => {
