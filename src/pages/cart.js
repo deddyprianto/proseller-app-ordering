@@ -394,7 +394,6 @@ const Cart = props => {
   ] = useState(false);
   const {outletUnavailable} = useErrorMessage();
   const [deliveryAddress, setDeliveryAddress] = useState({});
-
   const [availableTimes, setAvailableTimes] = useState([]);
 
   const outlet = useSelector(
@@ -934,14 +933,22 @@ const Cart = props => {
     }
   };
 
-  const renderLoadBar = ({error, text, termsAndConditions, value}) => {
+  const renderLoadBar = ({
+    error,
+    text,
+    termsAndConditions,
+    value,
+    minAmountCurrency,
+  }) => {
     const styleTitle = error
       ? styles.textLoadBarTitleError
       : styles.textLoadBarTitle;
-
     return (
       <View style={styles.viewMethodOrderingType}>
-        <Text style={styleTitle}>{text}</Text>
+        <Text style={styleTitle}>
+          {text}
+          <Text style={styles.primaryColor}> {minAmountCurrency} </Text>{' '}
+        </Text>
         <Text style={styles.textLoadBarTermsAndConditions}>
           {termsAndConditions}
         </Text>
@@ -1301,7 +1308,6 @@ const Cart = props => {
       const termsAndConditions = `Add ${lessAmountCurrency} more to use delivery`;
 
       const value = subTotal < minAmount ? subTotal / minAmount : 1;
-
       return renderLoadBar({
         error: true,
         text: message,
@@ -1313,7 +1319,6 @@ const Cart = props => {
 
   const renderDeliveryProviderTermsAndConditions = () => {
     const minAmount = Number(basket?.provider?.minPurchaseForFreeDelivery);
-
     if (minAmount) {
       const lessAmountCurrency =
         subTotal < minAmount
@@ -1321,10 +1326,14 @@ const Cart = props => {
           : currencyFormatter(0);
 
       const minAmountCurrency = currencyFormatter(minAmount);
+      const lessAmount = minAmount - subTotal;
+      const message =
+        'Enjoy delivery fee discount when your order amount is more than';
 
-      const message = `Enjoy delivery fee discount when your order amount is more than ${minAmountCurrency}`;
-
-      const termsAndConditions = `Add ${lessAmountCurrency} to get delivery fee discounts`;
+      let termsAndConditions = `Add ${lessAmountCurrency} to get delivery fee discounts`;
+      if (lessAmount < 1) {
+        termsAndConditions = 'Congratulations! You get delivery fee discounts!';
+      }
 
       const value = subTotal <= minAmount ? subTotal / minAmount : 1;
 
@@ -1332,6 +1341,7 @@ const Cart = props => {
         text: message,
         termsAndConditions: termsAndConditions,
         value,
+        minAmountCurrency,
       });
     }
   };
