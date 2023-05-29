@@ -7,8 +7,7 @@
 import React, {useEffect, useState} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 
-import MapView from 'react-native-maps';
-import {Marker} from 'react-native-maps';
+import MapView, {Marker} from 'react-native-maps';
 import CryptoJS from 'react-native-crypto-js';
 import {Actions} from 'react-native-router-flux';
 import {
@@ -38,6 +37,7 @@ import FieldPhoneNumberInput from '../components/fieldPhoneNumberInput';
 import {isEmptyObject} from '../helper/CheckEmpty';
 
 import Theme from '../theme';
+import {LATITUDE_SINGAPORE, LONGITUDE_SINGAPORE} from '../constant/location';
 
 const useStyles = () => {
   const theme = Theme();
@@ -133,8 +133,8 @@ const AddNewAddress = ({address}) => {
   const [countryCode, setCountryCode] = useState('');
   const [latitude, setLatitude] = useState(0);
   const [longitude, setLongitude] = useState(0);
-  const [latitudeDelta, setLatitudeDelta] = useState(0);
-  const [longitudeDelta, setLongitudeDelta] = useState(0);
+  const [latitudeDelta, setLatitudeDelta] = useState(1);
+  const [longitudeDelta, setLongitudeDelta] = useState(1);
 
   const [isSelected, setIsSelected] = useState(false);
   const [isOpenDeleteModal, setIsOpenDeleteModal] = useState(false);
@@ -440,7 +440,10 @@ const AddNewAddress = ({address}) => {
       setLongitudeDelta(coordinate?.longitudeDelta);
     }
   };
-
+  useEffect(() => {
+    setLatitude(LATITUDE_SINGAPORE);
+    setLongitude(LONGITUDE_SINGAPORE);
+  }, []);
   const renderMap = () => {
     return (
       <View style={styles.viewMap}>
@@ -462,8 +465,8 @@ const AddNewAddress = ({address}) => {
           region={{
             latitude,
             longitude,
-            latitudeDelta,
             longitudeDelta,
+            latitudeDelta,
           }}>
           <Marker coordinate={{latitude: latitude, longitude: longitude}} />
         </MapView>
@@ -502,7 +505,6 @@ const AddNewAddress = ({address}) => {
       </ScrollView>
     );
   };
-
   const handleActive = () => {
     if (
       tagAddress &&
