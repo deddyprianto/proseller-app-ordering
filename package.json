@@ -31,10 +31,10 @@
     "hygen-config-automaxima": "npx hygen config release automaxima && npx hygen config demo automaxima && npx hygen config dev automaxima",
     "hygen-config-funtoast": "npx hygen config release funtoast && npx hygen config demo funtoast && npx hygen config dev funtoast",
     "hygen-config-fareastflora": "npx hygen config release fareastflora && npx hygen config demo fareastflora && npx hygen config dev fareastflora",
-    "build-acemart": "npm run move-acemart-mac && npm run android-demo-rel",
-    "build-automaxima": "npm run move-automaxima-mac && npm run android-demo-rel",
-    "build-funtoast": "npm run move-funtoast-mac && npm run android-demo-rel",
-    "build-fareastflora": "npm run move-fareastflora-mac && npm run android-demo-rel"
+    "build-acemart": "npm run move-acemart-mac && npm run replace-res-acemart && npm run hygen-config-acemart && npm run android-demo-rel",
+    "build-automaxima": "npm run move-automaxima-mac && npm run replace-res-automaxima && npm run hygen-config-automaxima && npm run android-demo-rel",
+    "build-funtoast": "npm run move-funtoast-mac && npm run replace-res-funtoast && npm run hygen-config-funtoast && npm run android-demo-rel",
+    "build-fareastflora": "npm run move-fareastflora-mac && npm run replace-res-fareastflora && npm run hygen-config-fareastflora && npm run android-demo-rel"
   },
   "dependencies": {
     "@adrianso/react-native-device-brightness": "^1.2.7",
