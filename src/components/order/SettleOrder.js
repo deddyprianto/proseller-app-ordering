@@ -3011,8 +3011,6 @@ class SettleOrder extends Component {
       row => row.key === this.props.basket?.orderingMode,
     );
 
-    console.log('MARTIN', availableCheck);
-
     if (!availableCheck) {
       this.handleOpenOrderingModeOfflineModal();
       return true;
