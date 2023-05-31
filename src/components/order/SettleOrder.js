@@ -2272,7 +2272,7 @@ class SettleOrder extends Component {
     //   }
     // } catch (e) {}
 
-    const isNotAvailable = this.handleOrderingModeOffline();
+    const isNotAvailable = await this.handleOrderingModeOffline();
     if (isNotAvailable) {
       return;
     }
@@ -3011,6 +3011,8 @@ class SettleOrder extends Component {
       row => row.key === this.props.basket?.orderingMode,
     );
 
+    console.log('MARTIN', availableCheck);
+
     if (!availableCheck) {
       this.handleOpenOrderingModeOfflineModal();
       return true;
@@ -3039,7 +3041,8 @@ class SettleOrder extends Component {
     }
 
     try {
-      const isNotAvailable = this.handleOrderingModeOffline();
+      const isNotAvailable = await this.handleOrderingModeOffline();
+
       if (isNotAvailable) {
         return;
       }
