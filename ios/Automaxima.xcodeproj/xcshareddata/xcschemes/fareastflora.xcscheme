@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "5B58BEE82A245044000B2A0E"
+               BlueprintIdentifier = "5B8D69B92A26032300BE8BB7"
                BuildableName = "fareastflora.app"
                BlueprintName = "fareastflora"
                ReferencedContainer = "container:Automaxima.xcodeproj">
@@ -44,7 +44,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "5B58BEE82A245044000B2A0E"
+            BlueprintIdentifier = "5B8D69B92A26032300BE8BB7"
             BuildableName = "fareastflora.app"
             BlueprintName = "fareastflora"
             ReferencedContainer = "container:Automaxima.xcodeproj">
@@ -61,7 +61,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "5B58BEE82A245044000B2A0E"
+            BlueprintIdentifier = "5B8D69B92A26032300BE8BB7"
             BuildableName = "fareastflora.app"
             BlueprintName = "fareastflora"
             ReferencedContainer = "container:Automaxima.xcodeproj">

@@ -13,24 +13,25 @@
 		27CFB91208C84B89AAE58C56 /* Lato-Heavy.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 35A970A69DA7440188817DD0 /* Lato-Heavy.ttf */; };
 		4364869283FE453CB8F3B773 /* Lato-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5004E2CBAFBB4547A8CCA619 /* Lato-Italic.ttf */; };
 		43681597396048A0961F05E9 /* Lato-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 61448CC0B03644E5AE6729E7 /* Lato-Regular.ttf */; };
-		5B58BEEC2A245044000B2A0E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B8BA49726AA61AC00486032 /* AppDelegate.swift */; };
-		5B58BEED2A245044000B2A0E /* Automaxima.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B4FF2F826284ECC00262C97 /* Automaxima.swift */; };
-		5B58BEEF2A245044000B2A0E /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B8783AC08D84065AC0B2230 /* libz.tbd */; };
-		5B58BEF02A245044000B2A0E /* libPods-Automaxima-funtoast.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 38BC866C066A0605360EEAC1 /* libPods-Automaxima-funtoast.a */; };
-		5B58BEF22A245044000B2A0E /* Poppins-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 881D49842A1B3DDE009E45B9 /* Poppins-SemiBold.ttf */; };
-		5B58BEF32A245044000B2A0E /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 7BD1A63F265E73280011B660 /* GoogleService-Info.plist */; };
-		5B58BEF42A245044000B2A0E /* Poppins-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7B4FF2FE262852DC00262C97 /* Poppins-Black.ttf */; };
-		5B58BEF52A245044000B2A0E /* Poppins-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7B4FF2FC262852DC00262C97 /* Poppins-Bold.ttf */; };
-		5B58BEF62A245044000B2A0E /* Poppins-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7B4FF2FB262852DB00262C97 /* Poppins-Italic.ttf */; };
-		5B58BEF72A245044000B2A0E /* Poppins-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7B4FF2FF262852DC00262C97 /* Poppins-Medium.ttf */; };
-		5B58BEF82A245044000B2A0E /* Poppins-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7B4FF2FD262852DC00262C97 /* Poppins-Regular.ttf */; };
-		5B58BEF92A245044000B2A0E /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
-		5B58BEFA2A245044000B2A0E /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB11A68108700A75B9A /* LaunchScreen.xib */; };
-		5B58BEFB2A245044000B2A0E /* Lato-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F2539776D32B4B29B0B8C8A7 /* Lato-Bold.ttf */; };
-		5B58BEFC2A245044000B2A0E /* Lato-Heavy.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 35A970A69DA7440188817DD0 /* Lato-Heavy.ttf */; };
-		5B58BEFD2A245044000B2A0E /* Lato-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5004E2CBAFBB4547A8CCA619 /* Lato-Italic.ttf */; };
-		5B58BEFE2A245044000B2A0E /* Lato-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 40AD4A3553664601BD423484 /* Lato-Medium.ttf */; };
-		5B58BEFF2A245044000B2A0E /* Lato-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 61448CC0B03644E5AE6729E7 /* Lato-Regular.ttf */; };
+		5B8D69BD2A26032300BE8BB7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B8BA49726AA61AC00486032 /* AppDelegate.swift */; };
+		5B8D69BE2A26032300BE8BB7 /* Automaxima.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B4FF2F826284ECC00262C97 /* Automaxima.swift */; };
+		5B8D69C02A26032300BE8BB7 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B8783AC08D84065AC0B2230 /* libz.tbd */; };
+		5B8D69C12A26032300BE8BB7 /* libPods-Automaxima-funtoast.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 38BC866C066A0605360EEAC1 /* libPods-Automaxima-funtoast.a */; };
+		5B8D69C22A26032300BE8BB7 /* libPods-Automaxima-funtoast.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 38BC866C066A0605360EEAC1 /* libPods-Automaxima-funtoast.a */; };
+		5B8D69C42A26032300BE8BB7 /* Poppins-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 881D49842A1B3DDE009E45B9 /* Poppins-SemiBold.ttf */; };
+		5B8D69C52A26032300BE8BB7 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 7BD1A63F265E73280011B660 /* GoogleService-Info.plist */; };
+		5B8D69C62A26032300BE8BB7 /* Poppins-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7B4FF2FE262852DC00262C97 /* Poppins-Black.ttf */; };
+		5B8D69C72A26032300BE8BB7 /* Poppins-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7B4FF2FC262852DC00262C97 /* Poppins-Bold.ttf */; };
+		5B8D69C82A26032300BE8BB7 /* Poppins-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7B4FF2FB262852DB00262C97 /* Poppins-Italic.ttf */; };
+		5B8D69C92A26032300BE8BB7 /* Poppins-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7B4FF2FF262852DC00262C97 /* Poppins-Medium.ttf */; };
+		5B8D69CA2A26032300BE8BB7 /* Poppins-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7B4FF2FD262852DC00262C97 /* Poppins-Regular.ttf */; };
+		5B8D69CB2A26032300BE8BB7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
+		5B8D69CC2A26032300BE8BB7 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB11A68108700A75B9A /* LaunchScreen.xib */; };
+		5B8D69CD2A26032300BE8BB7 /* Lato-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F2539776D32B4B29B0B8C8A7 /* Lato-Bold.ttf */; };
+		5B8D69CE2A26032300BE8BB7 /* Lato-Heavy.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 35A970A69DA7440188817DD0 /* Lato-Heavy.ttf */; };
+		5B8D69CF2A26032300BE8BB7 /* Lato-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5004E2CBAFBB4547A8CCA619 /* Lato-Italic.ttf */; };
+		5B8D69D02A26032300BE8BB7 /* Lato-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 40AD4A3553664601BD423484 /* Lato-Medium.ttf */; };
+		5B8D69D12A26032300BE8BB7 /* Lato-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 61448CC0B03644E5AE6729E7 /* Lato-Regular.ttf */; };
 		6F983F8ED0ABC9A8B0392172 /* libPods-Automaxima-funtoast.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 38BC866C066A0605360EEAC1 /* libPods-Automaxima-funtoast.a */; };
 		7B4FF2F926284ECC00262C97 /* Automaxima.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B4FF2F826284ECC00262C97 /* Automaxima.swift */; };
 		7B4FF300262852E300262C97 /* Poppins-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7B4FF2FE262852DC00262C97 /* Poppins-Black.ttf */; };
@@ -76,6 +77,7 @@
 		88DAEC422A1C6E2100521126 /* Poppins-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 881D49842A1B3DDE009E45B9 /* Poppins-SemiBold.ttf */; };
 		88DAEC432A1C6E2600521126 /* Poppins-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 881D49842A1B3DDE009E45B9 /* Poppins-SemiBold.ttf */; };
 		942F222339174ACAB6A6FDA4 /* Lato-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 40AD4A3553664601BD423484 /* Lato-Medium.ttf */; };
+		A06195447CE66214B5DBF2A4 /* libPods-Automaxima-funtoast.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 38BC866C066A0605360EEAC1 /* libPods-Automaxima-funtoast.a */; };
 		B6FA351076D44777B6129C53 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B8783AC08D84065AC0B2230 /* libz.tbd */; };
 		C059695DF9A863BFBAED6300 /* libPods-Automaxima.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CEB3CA18B39250FAA73BB671 /* libPods-Automaxima.a */; };
 		E0D99CE8E56FC748DB21480C /* libPods-Automaxima-acemart.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A22CF5A6B799FECB1E329625 /* libPods-Automaxima-acemart.a */; };
@@ -109,18 +111,18 @@
 		52E58A0B0D484176A9F2931D /* FontAwesome5_Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Regular.ttf; path = "../node_modules/native-base/Fonts/FontAwesome5_Regular.ttf"; sourceTree = "<group>"; };
 		5A62AE3B5033F6C99E800DF2 /* Pods-Automaxima-AutomaximaTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Automaxima-AutomaximaTests.release.xcconfig"; path = "Target Support Files/Pods-Automaxima-AutomaximaTests/Pods-Automaxima-AutomaximaTests.release.xcconfig"; sourceTree = "<group>"; };
 		5ABE9A0CA62D4BF195981449 /* MaterialIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
-		5B58BF072A245044000B2A0E /* fareastflora.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = fareastflora.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		5B58BF082A245045000B2A0E /* fareastflora-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "fareastflora-Info.plist"; path = "/Users/martin/Edgeworks/proseller-app-ordering/ios/fareastflora-Info.plist"; sourceTree = "<absolute>"; };
+		5B8D69D92A26032300BE8BB7 /* fareastflora.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = fareastflora.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		5B8D69DA2A26032300BE8BB7 /* fareastflora-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "fareastflora-Info.plist"; path = "/Users/martin/Edgeworks/proseller-app-ordering/ios/fareastflora-Info.plist"; sourceTree = "<absolute>"; };
 		5DB4A18FC5544A02A24B0EF3 /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
 		5E54C8B705E547D6B696A56C /* rubicon-icon-font.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "rubicon-icon-font.ttf"; path = "../node_modules/native-base/Fonts/rubicon-icon-font.ttf"; sourceTree = "<group>"; };
 		5F3F637B1B2BE5AB20E4B044 /* Pods-Automaxima-acemart.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Automaxima-acemart.release.xcconfig"; path = "Target Support Files/Pods-Automaxima-acemart/Pods-Automaxima-acemart.release.xcconfig"; sourceTree = "<group>"; };
 		61448CC0B03644E5AE6729E7 /* Lato-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Lato-Regular.ttf"; path = "../src/assets/fonts/Lato-Regular.ttf"; sourceTree = "<group>"; };
 		62064FDBDE0F4C309F61F0C0 /* Avenir Roman.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Avenir Roman.otf"; path = "../src/assets/fonts/Avenir Roman.otf"; sourceTree = "<group>"; };
 		69ED6665E3F6450BB9AE6B27 /* Ionicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Ionicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf"; sourceTree = "<group>"; };
-		6AA7077EB2953EFFBBED2FBE /* Pods-Automaxima-funtoast.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Automaxima-funtoast.debug.xcconfig"; path = "Target Support Files/Pods-Automaxima-funtoast/Pods-Automaxima-funtoast.debug.xcconfig"; sourceTree = "<group>"; };
 		70C100F033444774AB94D71C /* AntDesign.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = AntDesign.ttf; path = "../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf"; sourceTree = "<group>"; };
 		730C959629B449DB968FA651 /* FontAwesome5_Solid.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Solid.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Solid.ttf"; sourceTree = "<group>"; };
 		74A5200E323F44E8AC0721D8 /* Foundation.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Foundation.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
+		7582A686305B996DB65E7E02 /* Pods-Automaxima-funtoast.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Automaxima-funtoast.release.xcconfig"; path = "Target Support Files/Pods-Automaxima-funtoast/Pods-Automaxima-funtoast.release.xcconfig"; sourceTree = "<group>"; };
 		7774919F44DB41218B6811A4 /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = SimpleLineIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; };
 		7B4FF2F826284ECC00262C97 /* Automaxima.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Automaxima.swift; sourceTree = "<group>"; };
 		7B4FF2FB262852DB00262C97 /* Poppins-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-Italic.ttf"; sourceTree = "<group>"; };
@@ -159,6 +161,7 @@
 		CA8778DEB0FD4FD787674DC9 /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = "../node_modules/native-base/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
 		CEAC92907F8E4E6E8A8098F0 /* Foundation.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Foundation.ttf; path = "../node_modules/native-base/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
 		CEB3CA18B39250FAA73BB671 /* libPods-Automaxima.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Automaxima.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D043673EF2313150B8EEDCC2 /* Pods-Automaxima-funtoast.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Automaxima-funtoast.debug.xcconfig"; path = "Target Support Files/Pods-Automaxima-funtoast/Pods-Automaxima-funtoast.debug.xcconfig"; sourceTree = "<group>"; };
 		D7BD8C712156486598A6C52A /* FontAwesome5_Solid.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Solid.ttf; path = "../node_modules/native-base/Fonts/FontAwesome5_Solid.ttf"; sourceTree = "<group>"; };
 		DF794E79A4AFF2E4E9548AD8 /* Pods-Automaxima.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Automaxima.debug.xcconfig"; path = "Target Support Files/Pods-Automaxima/Pods-Automaxima.debug.xcconfig"; sourceTree = "<group>"; };
 		E09C9D233F064FE7A691C0C7 /* FontAwesome5_Brands.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Brands.ttf; path = "../node_modules/native-base/Fonts/FontAwesome5_Brands.ttf"; sourceTree = "<group>"; };
@@ -170,7 +173,6 @@
 		F82A72A513974AF1948867F4 /* FontAwesome.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome.ttf; path = "../node_modules/native-base/Fonts/FontAwesome.ttf"; sourceTree = "<group>"; };
 		F915A6369F710F046DE258B7 /* Pods-AutomaximaTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AutomaximaTests.debug.xcconfig"; path = "Target Support Files/Pods-AutomaximaTests/Pods-AutomaximaTests.debug.xcconfig"; sourceTree = "<group>"; };
 		FA0FDC68260DE28A79A60850 /* Pods-Automaxima-AutomaximaTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Automaxima-AutomaximaTests.debug.xcconfig"; path = "Target Support Files/Pods-Automaxima-AutomaximaTests/Pods-Automaxima-AutomaximaTests.debug.xcconfig"; sourceTree = "<group>"; };
-		FC5C95E522C32A486DEA3A5C /* Pods-Automaxima-funtoast.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Automaxima-funtoast.release.xcconfig"; path = "Target Support Files/Pods-Automaxima-funtoast/Pods-Automaxima-funtoast.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -183,12 +185,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		5B58BEEE2A245044000B2A0E /* Frameworks */ = {
+		5B8D69BF2A26032300BE8BB7 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5B58BEEF2A245044000B2A0E /* libz.tbd in Frameworks */,
-				5B58BEF02A245044000B2A0E /* libPods-Automaxima-funtoast.a in Frameworks */,
+				5B8D69C02A26032300BE8BB7 /* libz.tbd in Frameworks */,
+				5B8D69C12A26032300BE8BB7 /* libPods-Automaxima-funtoast.a in Frameworks */,
+				5B8D69C22A26032300BE8BB7 /* libPods-Automaxima-funtoast.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -207,6 +210,7 @@
 			files = (
 				88D7E7112A1B19D000F13E93 /* libz.tbd in Frameworks */,
 				6F983F8ED0ABC9A8B0392172 /* libPods-Automaxima-funtoast.a in Frameworks */,
+				A06195447CE66214B5DBF2A4 /* libPods-Automaxima-funtoast.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -324,7 +328,7 @@
 				7B83729F244346A300A67095 /* Recovered References */,
 				88D7E7092A1B198600F13E93 /* acemart-Info.plist */,
 				88D7E7292A1B19D000F13E93 /* funtoast-Info.plist */,
-				5B58BF082A245045000B2A0E /* fareastflora-Info.plist */,
+				5B8D69DA2A26032300BE8BB7 /* fareastflora-Info.plist */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -337,7 +341,7 @@
 				13B07F961A680F5B00A75B9A /* Automaxima.app */,
 				88D7E7082A1B198500F13E93 /* acemart.app */,
 				88D7E7282A1B19D000F13E93 /* funtoast.app */,
-				5B58BF072A245044000B2A0E /* fareastflora.app */,
+				5B8D69D92A26032300BE8BB7 /* fareastflora.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -401,8 +405,8 @@
 				053418F312FAC69C9F5D7A5B /* Pods-Automaxima.release.xcconfig */,
 				C0493FD59262D275AF5F9E55 /* Pods-Automaxima-acemart.debug.xcconfig */,
 				5F3F637B1B2BE5AB20E4B044 /* Pods-Automaxima-acemart.release.xcconfig */,
-				6AA7077EB2953EFFBBED2FBE /* Pods-Automaxima-funtoast.debug.xcconfig */,
-				FC5C95E522C32A486DEA3A5C /* Pods-Automaxima-funtoast.release.xcconfig */,
+				D043673EF2313150B8EEDCC2 /* Pods-Automaxima-funtoast.debug.xcconfig */,
+				7582A686305B996DB65E7E02 /* Pods-Automaxima-funtoast.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -433,19 +437,19 @@
 			productReference = 13B07F961A680F5B00A75B9A /* Automaxima.app */;
 			productType = "com.apple.product-type.application";
 		};
-		5B58BEE82A245044000B2A0E /* fareastflora */ = {
+		5B8D69B92A26032300BE8BB7 /* fareastflora */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 5B58BF042A245044000B2A0E /* Build configuration list for PBXNativeTarget "fareastflora" */;
+			buildConfigurationList = 5B8D69D62A26032300BE8BB7 /* Build configuration list for PBXNativeTarget "fareastflora" */;
 			buildPhases = (
-				5B58BEE92A245044000B2A0E /* [CP] Check Pods Manifest.lock */,
-				5B58BEEA2A245044000B2A0E /* Start Packager */,
-				5B58BEEB2A245044000B2A0E /* Sources */,
-				5B58BEEE2A245044000B2A0E /* Frameworks */,
-				5B58BEF12A245044000B2A0E /* Resources */,
-				5B58BF002A245044000B2A0E /* Bundle React Native code and images */,
-				5B58BF012A245044000B2A0E /* Upload Debug Symbols to Sentry */,
-				5B58BF022A245044000B2A0E /* [CP] Embed Pods Frameworks */,
-				5B58BF032A245044000B2A0E /* [CP] Copy Pods Resources */,
+				5B8D69BA2A26032300BE8BB7 /* [CP] Check Pods Manifest.lock */,
+				5B8D69BB2A26032300BE8BB7 /* Start Packager */,
+				5B8D69BC2A26032300BE8BB7 /* Sources */,
+				5B8D69BF2A26032300BE8BB7 /* Frameworks */,
+				5B8D69C32A26032300BE8BB7 /* Resources */,
+				5B8D69D22A26032300BE8BB7 /* Bundle React Native code and images */,
+				5B8D69D32A26032300BE8BB7 /* Upload Debug Symbols to Sentry */,
+				5B8D69D42A26032300BE8BB7 /* [CP] Embed Pods Frameworks */,
+				5B8D69D52A26032300BE8BB7 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -453,7 +457,7 @@
 			);
 			name = fareastflora;
 			productName = Automaxima;
-			productReference = 5B58BF072A245044000B2A0E /* fareastflora.app */;
+			productReference = 5B8D69D92A26032300BE8BB7 /* fareastflora.app */;
 			productType = "com.apple.product-type.application";
 		};
 		88D7E6EA2A1B198500F13E93 /* acemart */ = {
@@ -515,7 +519,7 @@
 						DevelopmentTeam = YSZ34Z59CY;
 						LastSwiftMigration = 1140;
 					};
-					5B58BEE82A245044000B2A0E = {
+					5B8D69B92A26032300BE8BB7 = {
 						DevelopmentTeam = YSZ34Z59CY;
 					};
 					88D7E6EA2A1B198500F13E93 = {
@@ -543,7 +547,7 @@
 				13B07F861A680F5B00A75B9A /* Automaxima */,
 				88D7E6EA2A1B198500F13E93 /* acemart */,
 				88D7E70A2A1B19D000F13E93 /* funtoast */,
-				5B58BEE82A245044000B2A0E /* fareastflora */,
+				5B8D69B92A26032300BE8BB7 /* fareastflora */,
 			);
 		};
 /* End PBXProject section */
@@ -570,24 +574,24 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		5B58BEF12A245044000B2A0E /* Resources */ = {
+		5B8D69C32A26032300BE8BB7 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5B58BEF22A245044000B2A0E /* Poppins-SemiBold.ttf in Resources */,
-				5B58BEF32A245044000B2A0E /* GoogleService-Info.plist in Resources */,
-				5B58BEF42A245044000B2A0E /* Poppins-Black.ttf in Resources */,
-				5B58BEF52A245044000B2A0E /* Poppins-Bold.ttf in Resources */,
-				5B58BEF62A245044000B2A0E /* Poppins-Italic.ttf in Resources */,
-				5B58BEF72A245044000B2A0E /* Poppins-Medium.ttf in Resources */,
-				5B58BEF82A245044000B2A0E /* Poppins-Regular.ttf in Resources */,
-				5B58BEF92A245044000B2A0E /* Images.xcassets in Resources */,
-				5B58BEFA2A245044000B2A0E /* LaunchScreen.xib in Resources */,
-				5B58BEFB2A245044000B2A0E /* Lato-Bold.ttf in Resources */,
-				5B58BEFC2A245044000B2A0E /* Lato-Heavy.ttf in Resources */,
-				5B58BEFD2A245044000B2A0E /* Lato-Italic.ttf in Resources */,
-				5B58BEFE2A245044000B2A0E /* Lato-Medium.ttf in Resources */,
-				5B58BEFF2A245044000B2A0E /* Lato-Regular.ttf in Resources */,
+				5B8D69C42A26032300BE8BB7 /* Poppins-SemiBold.ttf in Resources */,
+				5B8D69C52A26032300BE8BB7 /* GoogleService-Info.plist in Resources */,
+				5B8D69C62A26032300BE8BB7 /* Poppins-Black.ttf in Resources */,
+				5B8D69C72A26032300BE8BB7 /* Poppins-Bold.ttf in Resources */,
+				5B8D69C82A26032300BE8BB7 /* Poppins-Italic.ttf in Resources */,
+				5B8D69C92A26032300BE8BB7 /* Poppins-Medium.ttf in Resources */,
+				5B8D69CA2A26032300BE8BB7 /* Poppins-Regular.ttf in Resources */,
+				5B8D69CB2A26032300BE8BB7 /* Images.xcassets in Resources */,
+				5B8D69CC2A26032300BE8BB7 /* LaunchScreen.xib in Resources */,
+				5B8D69CD2A26032300BE8BB7 /* Lato-Bold.ttf in Resources */,
+				5B8D69CE2A26032300BE8BB7 /* Lato-Heavy.ttf in Resources */,
+				5B8D69CF2A26032300BE8BB7 /* Lato-Italic.ttf in Resources */,
+				5B8D69D02A26032300BE8BB7 /* Lato-Medium.ttf in Resources */,
+				5B8D69D12A26032300BE8BB7 /* Lato-Regular.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -796,7 +800,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Automaxima/Pods-Automaxima-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		5B58BEE92A245044000B2A0E /* [CP] Check Pods Manifest.lock */ = {
+		5B8D69BA2A26032300BE8BB7 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -818,7 +822,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		5B58BEEA2A245044000B2A0E /* Start Packager */ = {
+		5B8D69BB2A26032300BE8BB7 /* Start Packager */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -837,7 +841,7 @@
 			shellScript = "export RCT_METRO_PORT=\"${RCT_METRO_PORT:=8081}\"\necho \"export RCT_METRO_PORT=${RCT_METRO_PORT}\" > \"${SRCROOT}/../node_modules/react-native/scripts/.packager.env\"\nif [ -z \"${RCT_NO_LAUNCH_PACKAGER+xxx}\" ] ; then\n  if nc -w 5 -z localhost ${RCT_METRO_PORT} ; then\n    if ! curl -s \"http://localhost:${RCT_METRO_PORT}/status\" | grep -q \"packager-status:running\" ; then\n      echo \"Port ${RCT_METRO_PORT} already in use, packager is either not running or not running correctly\"\n      exit 2\n    fi\n  else\n    open \"$SRCROOT/../node_modules/react-native/scripts/launchPackager.command\" || echo \"Can't start packager automatically\"\n  fi\nfi\n";
 			showEnvVarsInLog = 0;
 		};
-		5B58BF002A245044000B2A0E /* Bundle React Native code and images */ = {
+		5B8D69D22A26032300BE8BB7 /* Bundle React Native code and images */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -851,7 +855,7 @@
 			shellPath = /bin/sh;
 			shellScript = "export SENTRY_PROPERTIES=sentry.properties\nexport NODE_BINARY=node\n../node_modules/@sentry/cli/bin/sentry-cli react-native xcode ../node_modules/react-native/scripts/react-native-xcode.sh\n";
 		};
-		5B58BF012A245044000B2A0E /* Upload Debug Symbols to Sentry */ = {
+		5B8D69D32A26032300BE8BB7 /* Upload Debug Symbols to Sentry */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -865,7 +869,7 @@
 			shellPath = /bin/sh;
 			shellScript = "export SENTRY_PROPERTIES=sentry.properties\n../node_modules/@sentry/cli/bin/sentry-cli upload-dsym\n";
 		};
-		5B58BF022A245044000B2A0E /* [CP] Embed Pods Frameworks */ = {
+		5B8D69D42A26032300BE8BB7 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -889,7 +893,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Automaxima-funtoast/Pods-Automaxima-funtoast-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		5B58BF032A245044000B2A0E /* [CP] Copy Pods Resources */ = {
+		5B8D69D52A26032300BE8BB7 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1236,12 +1240,12 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		5B58BEEB2A245044000B2A0E /* Sources */ = {
+		5B8D69BC2A26032300BE8BB7 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5B58BEEC2A245044000B2A0E /* AppDelegate.swift in Sources */,
-				5B58BEED2A245044000B2A0E /* Automaxima.swift in Sources */,
+				5B8D69BD2A26032300BE8BB7 /* AppDelegate.swift in Sources */,
+				5B8D69BE2A26032300BE8BB7 /* Automaxima.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1351,9 +1355,9 @@
 			};
 			name = Release;
 		};
-		5B58BF052A245044000B2A0E /* Debug */ = {
+		5B8D69D72A26032300BE8BB7 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6AA7077EB2953EFFBBED2FBE /* Pods-Automaxima-funtoast.debug.xcconfig */;
+			baseConfigurationReference = D043673EF2313150B8EEDCC2 /* Pods-Automaxima-funtoast.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = FareastfloraIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -1388,9 +1392,9 @@
 			};
 			name = Debug;
 		};
-		5B58BF062A245044000B2A0E /* Release */ = {
+		5B8D69D82A26032300BE8BB7 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = FC5C95E522C32A486DEA3A5C /* Pods-Automaxima-funtoast.release.xcconfig */;
+			baseConfigurationReference = 7582A686305B996DB65E7E02 /* Pods-Automaxima-funtoast.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = FareastfloraIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -1605,7 +1609,7 @@
 		};
 		88D7E7262A1B19D000F13E93 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6AA7077EB2953EFFBBED2FBE /* Pods-Automaxima-funtoast.debug.xcconfig */;
+			baseConfigurationReference = D043673EF2313150B8EEDCC2 /* Pods-Automaxima-funtoast.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = FuntoastIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -1642,7 +1646,7 @@
 		};
 		88D7E7272A1B19D000F13E93 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = FC5C95E522C32A486DEA3A5C /* Pods-Automaxima-funtoast.release.xcconfig */;
+			baseConfigurationReference = 7582A686305B996DB65E7E02 /* Pods-Automaxima-funtoast.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = FuntoastIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -1688,11 +1692,11 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		5B58BF042A245044000B2A0E /* Build configuration list for PBXNativeTarget "fareastflora" */ = {
+		5B8D69D62A26032300BE8BB7 /* Build configuration list for PBXNativeTarget "fareastflora" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				5B58BF052A245044000B2A0E /* Debug */,
-				5B58BF062A245044000B2A0E /* Release */,
+				5B8D69D72A26032300BE8BB7 /* Debug */,
+				5B8D69D82A26032300BE8BB7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
