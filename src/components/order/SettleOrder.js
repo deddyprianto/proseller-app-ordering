@@ -2272,7 +2272,7 @@ class SettleOrder extends Component {
     //   }
     // } catch (e) {}
 
-    const isNotAvailable = this.handleOrderingModeOffline();
+    const isNotAvailable = await this.handleOrderingModeOffline();
     if (isNotAvailable) {
       return;
     }
@@ -3039,7 +3039,8 @@ class SettleOrder extends Component {
     }
 
     try {
-      const isNotAvailable = this.handleOrderingModeOffline();
+      const isNotAvailable = await this.handleOrderingModeOffline();
+
       if (isNotAvailable) {
         return;
       }
