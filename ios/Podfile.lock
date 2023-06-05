@@ -176,7 +176,7 @@ PODS:
   - Permission-Camera (2.0.9):
     - RNPermissions
   - PromisesObjC (1.2.12)
-  - Protobuf (3.22.1)
+  - Protobuf (3.23.2)
   - RCTRequired (0.63.2)
   - RCTTypeSafety (0.63.2):
     - FBLazyVector (= 0.63.2)
@@ -809,7 +809,7 @@ SPEC CHECKSUMS:
   OneSignalXCFramework: 75844c29607ca95e6176f6f21257b4382c7fdbfb
   Permission-Camera: 8fe4753b02396489b11c5089e4f57bab7fe1ef42
   PromisesObjC: 3113f7f76903778cf4a0586bd1ab89329a0b7b97
-  Protobuf: d7f7c8329edf5eb8af65547a8ba3e9c1cee927d5
+  Protobuf: 5df4e9d2abd535fb675c68d171f6bc87983d27a6
   RCTRequired: f13f25e7b12f925f1f6a6a8c69d929a03c0129fe
   RCTTypeSafety: 44982c5c8e43ff4141eb519a8ddc88059acd1f3a
   React: e1c65dd41cb9db13b99f24608e47dd595f28ca9a
