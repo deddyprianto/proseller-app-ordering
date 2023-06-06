@@ -226,7 +226,9 @@ const MyECardModal = ({open, handleClose}) => {
 
   const renderHowToUse = () => {
     const termsAndConditions = [
-      'Present the e-card above to the cashier when making an order at ACE Mart outlets.',
+      `Present the e-card above to the cashier when making an order at ${
+        awsConfig.COMPANY_NAME
+      } outlets.`,
       'Earn point from your purchase.',
       'You can use the earned point to redeem voucher by click redeem button below.',
     ];

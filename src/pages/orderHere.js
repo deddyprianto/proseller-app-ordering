@@ -119,7 +119,9 @@ const OrderHere = () => {
   const orderingMode = useSelector(
     state => state.orderReducer?.dataOrderingMode?.orderingMode,
   );
-  const products = useSelector(state => state.productReducer.productsOutlet);
+  const products = useSelector(
+    state => state.productReducer.productsOutlet.data,
+  );
 
   const onRefresh = useCallback(async () => {
     setRefresh(true);
