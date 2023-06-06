@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "425204600597",
+    "project_id": "fareastflora-4cea2",
+    "storage_bucket": "fareastflora-4cea2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:425204600597:android:82f7fe81333657e857631c",
+        "android_client_info": {
+          "package_name": "com.fareastfora.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "425204600597-oo99m35d548i9q31scl7ov9cqssc28i5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBUrKnE2Pnr_JQDq7gmt4l7qhVWdc5A5ts"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "425204600597-oo99m35d548i9q31scl7ov9cqssc28i5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

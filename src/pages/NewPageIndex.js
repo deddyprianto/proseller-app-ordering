@@ -166,7 +166,7 @@ const NewPageIndex = () => {
     Profile: Profile,
   };
 
-  const screens = false ? dataRetailScreens : dataFnBScreens;
+  const screens = true ? dataRetailScreens : dataFnBScreens;
 
   const handleGetNotification = () => {
     OneSignal.setNotificationWillShowInForegroundHandler(
