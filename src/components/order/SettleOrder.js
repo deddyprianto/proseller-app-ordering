@@ -4165,6 +4165,7 @@ class SettleOrder extends Component {
           open={this.state.isOpenOrderingModeOfflineModal}
           handleClose={() => {
             this.setState({isOpenOrderingModeOfflineModal: false});
+            Actions.popTo('cart');
           }}
         />
         {this.renderPrompPayAtPOS()}
