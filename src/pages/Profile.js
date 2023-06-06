@@ -686,11 +686,12 @@ const Profile = props => {
       DeviceBrightness.setBrightnessLevel(currentBrightness);
     }
   };
-  React.useEffect(() => {
+
+  useEffect(() => {
     handleDeviceBright();
   }, [isOpenMyECardModal]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     initDeviceBright();
   }, []);
 
