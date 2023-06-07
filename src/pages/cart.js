@@ -945,7 +945,7 @@ const Cart = props => {
       : styles.textLoadBarTitle;
     return (
       <View style={styles.viewMethodOrderingType}>
-        <Text style={styleTitle}>
+        <Text style={[styleTitle, styles.primaryColor]}>
           {text}
           <Text style={styles.primaryColor}> {minAmountCurrency} </Text>{' '}
         </Text>
