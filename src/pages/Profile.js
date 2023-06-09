@@ -568,6 +568,18 @@ const Profile = props => {
       </TouchableOpacity>
     );
   };
+  const renderFAQ = () => {
+    return (
+      <TouchableOpacity
+        style={styles.viewOption}
+        onPress={() => {
+          Actions.faq();
+        }}>
+        <Image style={styles.iconSetting} source={appConfig.iconFAQ} />
+        <Text style={styles.textIcon}>FAQ</Text>
+      </TouchableOpacity>
+    );
+  };
 
   const renderMembershipQRCode = () => {
     return (
@@ -624,6 +636,8 @@ const Profile = props => {
         {renderNotifications()}
         {renderDivider()}
         {renderTermsAndConditions()}
+        {renderDivider()}
+        {renderFAQ()}
         {renderDivider()}
         {renderDeleteAccount()}
         {renderDivider()}

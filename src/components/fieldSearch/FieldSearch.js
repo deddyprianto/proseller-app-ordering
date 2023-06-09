@@ -15,7 +15,6 @@ const useStyles = () => {
   const theme = Theme();
   const styles = StyleSheet.create({
     root: {
-      flex: 1,
       height: 48,
       minHeight: 48,
       maxHeight: 48,
@@ -88,7 +87,9 @@ const FieldSearch = ({
         placeholder={replacePlaceholder || placeholder}
         onChangeText={onChange}
         onSubmitEditing={event => {
-          onSubmit(event.nativeEvent.text);
+          if (onSubmit) {
+            onSubmit(event.nativeEvent.text);
+          }
         }}
         returnKeyType="search"
       />
