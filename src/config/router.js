@@ -127,6 +127,7 @@ import HomeRetail from '../pages/HomeRetail';
 import NewPageIndex from '../pages/NewPageIndex';
 import ScannerBarcode from '../pages/ScannerBarcode';
 import SearchProduct from '../pages/SearchProduct';
+import FAQ from '../pages/FAQ';
 
 //for temporary
 import PendingOrderDetail from '../pages/PendingOrderDetail';
@@ -349,11 +350,9 @@ export default class Routes extends Component {
             <Scene key="virtualKeyboard" component={VirtualKeyboardCom} />
             <Scene key="transferSVC" component={TransferSVC} />
             <Scene key="applyPromoCode" component={ApplyPromoCode} />
-
             <Scene key="editProfile" component={EditProfile} />
             <Scene key="verifyRegister" component={VerifyRegister} />
             <Scene key="notifications" component={Notifications} />
-
             {/* //martin */}
             {/* <Scene key="pageIndex" component={PageIndex} initial={true} /> */}
             <Scene key="pageIndex" component={NewPageIndex} initial={true} />
@@ -385,8 +384,8 @@ export default class Routes extends Component {
             <Scene key="pendingOrderDetail" component={PendingOrderDetail} />
             <Scene key="homeRetail" component={HomeRetail} />
             <Scene key="scannerBarcode" component={ScannerBarcode} />
-
             <Scene key="searchProduct" component={SearchProduct} />
+            <Scene key="faq" component={FAQ} />
             {/* //martin */}
           </Scene>
         </Scene>

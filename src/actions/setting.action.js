@@ -3,6 +3,8 @@
 
 import {isEmptyArray} from '../helper/CheckEmpty';
 import {ALLOWED_ORDER_TYPE} from '../reducers/setting.reducer';
+import {fetchApi} from '../service/api';
+import {fetchApiMasterData} from '../service/apiMasterData';
 import {fetchApiOrder} from '../service/apiOrder';
 
 const handleDataType = ({settings, key}) => {
@@ -164,6 +166,36 @@ export const getLoginSettings = () => {
       if (settings) {
         setLoginSettings({dispatch, response: typeCheckbox});
       }
+
+      return response.response.data;
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const getFaqs = () => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      const response = await fetchApiMasterData(
+        '/faq',
+        'POST',
+        null,
+        200,
+        token,
+      );
+
+      dispatch({
+        data: response.response.data,
+        type: 'SET_FAQS',
+      });
 
       return response.response.data;
     } catch (error) {

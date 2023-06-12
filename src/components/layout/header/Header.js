@@ -1,10 +1,12 @@
-import React, {useState} from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, {useEffect, useState} from 'react';
 
 import {StyleSheet, View, Text, TouchableOpacity, Image} from 'react-native';
 
 import {Actions} from 'react-native-router-flux';
 import appConfig from '../../../config/appConfig';
 import Theme from '../../../theme';
+import FieldSearch from '../../fieldSearch';
 
 import Scanner from '../../scanner';
 
@@ -51,6 +53,19 @@ const useStyles = () => {
       flexDirection: 'row',
       alignItems: 'center',
     },
+    viewCancelButton: {
+      marginLeft: 16,
+    },
+    textHeader: {
+      color: theme.colors.textQuaternary,
+      fontSize: theme.fontSize[16],
+      fontFamily: theme.fontFamily.poppinsSemiBold,
+    },
+    textCancel: {
+      color: theme.colors.textQuaternary,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
     logo: {
       width: '70%',
       height: '100%',
@@ -75,11 +90,6 @@ const useStyles = () => {
       height: 18,
       tintColor: theme.colors.textQuaternary,
     },
-    textHeader: {
-      color: theme.colors.text1,
-      fontSize: theme.fontSize[14],
-      fontFamily: theme.fontFamily.poppinsRegular,
-    },
   });
   return styles;
 };
@@ -91,15 +101,36 @@ const Header = ({
   remove,
   cart,
   search,
+  searchHeader,
   scanner,
   removeOnClick,
   customTitle,
+  handleSearchInput,
 }) => {
   const styles = useStyles();
+
   const [isOpenScanner, setIsOpenScanner] = useState(false);
+  const [isSearch, setIsSearch] = useState(false);
+
+  const [searchTextInput, setSearchTextInput] = useState('');
+
+  useEffect(() => {
+    if (handleSearchInput) {
+      handleSearchInput(searchTextInput);
+    }
+  }, [searchTextInput]);
 
   const handleCloseScanner = () => {
     setIsOpenScanner(false);
+  };
+
+  const handleSearchClick = () => {
+    if (searchHeader) {
+      setSearchTextInput('');
+      setIsSearch(!isSearch);
+    } else {
+      Actions.searchProduct();
+    }
   };
 
   const renderLogo = () => {
@@ -183,16 +214,36 @@ const Header = ({
   };
 
   const renderSearchIcon = () => {
-    if (search) {
+    if (search || searchHeader) {
       return (
         <TouchableOpacity
           onPress={() => {
-            Actions.searchProduct();
+            handleSearchClick();
           }}>
           <Image source={appConfig.iconSearch} style={styles.icon} />
         </TouchableOpacity>
       );
     }
+  };
+
+  const renderSearchBar = () => {
+    return (
+      <FieldSearch
+        value={searchTextInput}
+        onChange={value => {
+          setSearchTextInput(value);
+        }}
+        placeholder="Try to search “toast”"
+        onClear={() => {
+          setSearchTextInput('');
+        }}
+        autoFocus
+      />
+    );
+  };
+
+  const renderIconCenterWrap = () => {
+    return renderTitle();
   };
 
   const renderIconLeftWrap = () => {
@@ -214,16 +265,47 @@ const Header = ({
     );
   };
 
-  return (
-    <View style={styles.root}>
+  const renderDefaultHeader = () => {
+    return (
       <View style={styles.container}>
         <Scanner open={isOpenScanner} handleClose={handleCloseScanner} />
         <View style={styles.containerLeft}>{renderIconLeftWrap()}</View>
-        <View style={styles.containerCenter}>{renderTitle()}</View>
+        <View style={styles.containerCenter}>{renderIconCenterWrap()}</View>
         <View style={styles.containerRight}>{renderIconRightWrap()}</View>
       </View>
-    </View>
-  );
+    );
+  };
+
+  const renderCancelButton = () => {
+    return (
+      <TouchableOpacity
+        style={styles.viewCancelButton}
+        onPress={() => {
+          handleSearchClick();
+        }}>
+        <Text style={styles.textCancel}>Cancel</Text>
+      </TouchableOpacity>
+    );
+  };
+
+  const renderSearchHeader = () => {
+    return (
+      <View style={styles.container}>
+        {renderSearchBar()}
+        {renderCancelButton()}
+      </View>
+    );
+  };
+
+  const renderHeader = () => {
+    if (isSearch) {
+      return renderSearchHeader();
+    } else {
+      return renderDefaultHeader();
+    }
+  };
+
+  return <View style={styles.root}>{renderHeader()}</View>;
 };
 
 export default Header;
