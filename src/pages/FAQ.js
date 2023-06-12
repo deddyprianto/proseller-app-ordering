@@ -2,9 +2,12 @@ import React, {useEffect, useState} from 'react';
 
 import {StyleSheet, SafeAreaView, View} from 'react-native';
 import {useDispatch} from 'react-redux';
+import {getFaqs} from '../actions/setting.action';
 import {dataStores} from '../actions/stores.action';
 import FAQList from '../components/faqList';
 import FieldSearch from '../components/fieldSearch';
+
+import {groupBy} from 'lodash';
 
 import {Header} from '../components/layout';
 
@@ -23,55 +26,23 @@ const FAQ = () => {
   const dispatch = useDispatch();
 
   const [searchQuery, setSearchQuery] = useState('');
+  const [items, setItems] = useState([]);
 
-  const items = [
-    {
-      type: 'Online Orders',
-      faqs: [
-        {
-          title: 'Can I cancel my order after placing it?',
-          description:
-            'You will not able to change your order details upon placing your order. ',
-        },
-        {
-          title:
-            'Can I chage my order details (items/delivery or pick-up date/timing etc) after placing an order?',
-          description:
-            'You will not able to change your order details upon placing your order. ',
-        },
-        {
-          title: 'How do I choose which outlet to place my order at?',
-          description:
-            'You will not able to change your order details upon placing your order. ',
-        },
-        {
-          title: 'How do I know if my order is confirmed?',
-          description:
-            'You will not able to change your order details upon placing your order. ',
-        },
-      ],
-    },
-    {
-      type: 'Offline Orders',
-      faqs: [
-        {
-          title: 'How do I place an online order?',
-          description:
-            'You will not able to change your order details upon placing your order. ',
-        },
-        {
-          title: 'How far ahead may I place my order?',
-          description:
-            'You will not able to change your order details upon placing your order. ',
-        },
-        {
-          title: 'How much is the delivery fee?',
-          description:
-            'You will not able to change your order details upon placing your order. ',
-        },
-      ],
-    },
-  ];
+  useEffect(() => {
+    const loadData = async () => {
+      const faqs = await dispatch(getFaqs());
+      const groupByCategory = groupBy(faqs, 'category');
+
+      const result = Object.entries(groupByCategory).map(data => ({
+        ['type']: data[0],
+        ['faqs']: data[1],
+      }));
+
+      setItems(result);
+    };
+
+    loadData();
+  }, [dispatch]);
 
   const handleOutletSearch = () => {
     if (searchQuery) {
@@ -79,7 +50,7 @@ const FAQ = () => {
 
       items.map(item => {
         const result = item.faqs.filter(faq =>
-          faq.title.toUpperCase().includes(searchQuery.toUpperCase()),
+          faq.question.toUpperCase().includes(searchQuery.toUpperCase()),
         );
         itemSearch.push(...result);
       });
@@ -119,7 +90,7 @@ const FAQ = () => {
         <Header title="FAQs" />
       </View>
       {renderSearch()}
-      <FAQList questions={handleOutletSearch()} searchQuery={searchQuery} />
+      <FAQList faqs={handleOutletSearch()} searchQuery={searchQuery} />
     </SafeAreaView>
   );
 };

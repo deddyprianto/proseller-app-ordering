@@ -56,6 +56,18 @@ const loginSettings = (state = {}, action) => {
   }
 };
 
+const faqsSettings = (state = {}, action) => {
+  switch (action.type) {
+    case 'SET_FAQS':
+      return {
+        ...action.data,
+      };
+
+    default:
+      return state;
+  }
+};
+
 const allowedOrder = (state = {}, action) => {
   switch (action.type) {
     case ALLOWED_ORDER_TYPE:
@@ -73,5 +85,6 @@ export default combineReducers({
   imageSettings,
   colorSettings,
   loginSettings,
+  faqsSettings,
   allowedOrder,
 });

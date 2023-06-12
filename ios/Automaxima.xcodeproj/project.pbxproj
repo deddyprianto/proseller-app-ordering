@@ -16,9 +16,6 @@
 		5B499A872A2D9712000EE632 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B8BA49726AA61AC00486032 /* AppDelegate.swift */; };
 		5B499A882A2D9712000EE632 /* Automaxima.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B4FF2F826284ECC00262C97 /* Automaxima.swift */; };
 		5B499A8A2A2D9712000EE632 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B8783AC08D84065AC0B2230 /* libz.tbd */; };
-		5B499A8B2A2D9712000EE632 /* libPods-Automaxima-funtoast.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 38BC866C066A0605360EEAC1 /* libPods-Automaxima-funtoast.a */; };
-		5B499A8C2A2D9712000EE632 /* libPods-Automaxima-funtoast.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 38BC866C066A0605360EEAC1 /* libPods-Automaxima-funtoast.a */; };
-		5B499A8D2A2D9712000EE632 /* libPods-Automaxima-funtoast.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 38BC866C066A0605360EEAC1 /* libPods-Automaxima-funtoast.a */; };
 		5B499A8F2A2D9712000EE632 /* Poppins-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 881D49842A1B3DDE009E45B9 /* Poppins-SemiBold.ttf */; };
 		5B499A902A2D9712000EE632 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 7BD1A63F265E73280011B660 /* GoogleService-Info.plist */; };
 		5B499A912A2D9712000EE632 /* Poppins-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7B4FF2FE262852DC00262C97 /* Poppins-Black.ttf */; };
@@ -83,12 +80,14 @@
 		B6FA351076D44777B6129C53 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B8783AC08D84065AC0B2230 /* libz.tbd */; };
 		C059695DF9A863BFBAED6300 /* libPods-Automaxima.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CEB3CA18B39250FAA73BB671 /* libPods-Automaxima.a */; };
 		E0D99CE8E56FC748DB21480C /* libPods-Automaxima-acemart.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A22CF5A6B799FECB1E329625 /* libPods-Automaxima-acemart.a */; };
+		F346368D4E6EABE89E099638 /* libPods-Automaxima-funtoast.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 38BC866C066A0605360EEAC1 /* libPods-Automaxima-funtoast.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		008F07F21AC5B25A0029DE68 /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* AutomaximaTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AutomaximaTests.m; sourceTree = "<group>"; };
+		014D805D0048DA9DB2BE8356 /* Pods-Automaxima-funtoast.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Automaxima-funtoast.release.xcconfig"; path = "Target Support Files/Pods-Automaxima-funtoast/Pods-Automaxima-funtoast.release.xcconfig"; sourceTree = "<group>"; };
 		03D612D6E6AE46A49C9EF182 /* Octicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Octicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Octicons.ttf"; sourceTree = "<group>"; };
 		04D0C37507FF435B83A7D5D4 /* Roboto.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Roboto.ttf; path = "../node_modules/native-base/Fonts/Roboto.ttf"; sourceTree = "<group>"; };
 		053418F312FAC69C9F5D7A5B /* Pods-Automaxima.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Automaxima.release.xcconfig"; path = "Target Support Files/Pods-Automaxima/Pods-Automaxima.release.xcconfig"; sourceTree = "<group>"; };
@@ -99,6 +98,7 @@
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = Automaxima/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Automaxima/Info.plist; sourceTree = "<group>"; };
 		1B72DACACE284B79B036A8DA /* Feather.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Feather.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Feather.ttf"; sourceTree = "<group>"; };
+		22C55A59ECE4DF8143719048 /* Pods-Automaxima-funtoast.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Automaxima-funtoast.debug.xcconfig"; path = "Target Support Files/Pods-Automaxima-funtoast/Pods-Automaxima-funtoast.debug.xcconfig"; sourceTree = "<group>"; };
 		2C3DC72BAF59423B9B8EF4ED /* Roboto_medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Roboto_medium.ttf; path = "../node_modules/native-base/Fonts/Roboto_medium.ttf"; sourceTree = "<group>"; };
 		33426DB5F23B4F3886B2230F /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
 		35A970A69DA7440188817DD0 /* Lato-Heavy.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Lato-Heavy.ttf"; path = "../src/assets/fonts/Lato-Heavy.ttf"; sourceTree = "<group>"; };
@@ -106,7 +106,6 @@
 		38BC866C066A0605360EEAC1 /* libPods-Automaxima-funtoast.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Automaxima-funtoast.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		395103EBAEB6470FBDD78183 /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
 		40AD4A3553664601BD423484 /* Lato-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Lato-Medium.ttf"; path = "../src/assets/fonts/Lato-Medium.ttf"; sourceTree = "<group>"; };
-		40FF1E65CBCA381DC38CA667 /* Pods-Automaxima-funtoast.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Automaxima-funtoast.debug.xcconfig"; path = "Target Support Files/Pods-Automaxima-funtoast/Pods-Automaxima-funtoast.debug.xcconfig"; sourceTree = "<group>"; };
 		41DEE0F16AFA467AA69E6EEA /* MaterialIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialIcons.ttf; path = "../node_modules/native-base/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
 		4AEA497D73254579AA4140E4 /* AntDesign.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = AntDesign.ttf; path = "../node_modules/native-base/Fonts/AntDesign.ttf"; sourceTree = "<group>"; };
 		4B8783AC08D84065AC0B2230 /* libz.tbd */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
@@ -168,7 +167,6 @@
 		E09C9D233F064FE7A691C0C7 /* FontAwesome5_Brands.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Brands.ttf; path = "../node_modules/native-base/Fonts/FontAwesome5_Brands.ttf"; sourceTree = "<group>"; };
 		E6CEDEEE8B4E4ABE9AFF98B7 /* Entypo.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Entypo.ttf; path = "../node_modules/native-base/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
 		EA6D1BB2E6C14AF895653436 /* FontAwesome.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome.ttf"; sourceTree = "<group>"; };
-		EAFC4C83B31B6754179CC383 /* Pods-Automaxima-funtoast.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Automaxima-funtoast.release.xcconfig"; path = "Target Support Files/Pods-Automaxima-funtoast/Pods-Automaxima-funtoast.release.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
 		F2539776D32B4B29B0B8C8A7 /* Lato-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Lato-Bold.ttf"; path = "../src/assets/fonts/Lato-Bold.ttf"; sourceTree = "<group>"; };
@@ -192,9 +190,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				5B499A8A2A2D9712000EE632 /* libz.tbd in Frameworks */,
-				5B499A8B2A2D9712000EE632 /* libPods-Automaxima-funtoast.a in Frameworks */,
-				5B499A8C2A2D9712000EE632 /* libPods-Automaxima-funtoast.a in Frameworks */,
-				5B499A8D2A2D9712000EE632 /* libPods-Automaxima-funtoast.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -215,6 +210,7 @@
 				6F983F8ED0ABC9A8B0392172 /* libPods-Automaxima-funtoast.a in Frameworks */,
 				A06195447CE66214B5DBF2A4 /* libPods-Automaxima-funtoast.a in Frameworks */,
 				6D77A383D9A8E21D1CB62C10 /* libPods-Automaxima-funtoast.a in Frameworks */,
+				F346368D4E6EABE89E099638 /* libPods-Automaxima-funtoast.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -409,8 +405,8 @@
 				053418F312FAC69C9F5D7A5B /* Pods-Automaxima.release.xcconfig */,
 				C0493FD59262D275AF5F9E55 /* Pods-Automaxima-acemart.debug.xcconfig */,
 				5F3F637B1B2BE5AB20E4B044 /* Pods-Automaxima-acemart.release.xcconfig */,
-				40FF1E65CBCA381DC38CA667 /* Pods-Automaxima-funtoast.debug.xcconfig */,
-				EAFC4C83B31B6754179CC383 /* Pods-Automaxima-funtoast.release.xcconfig */,
+				22C55A59ECE4DF8143719048 /* Pods-Automaxima-funtoast.debug.xcconfig */,
+				014D805D0048DA9DB2BE8356 /* Pods-Automaxima-funtoast.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -445,15 +441,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5B499AA12A2D9712000EE632 /* Build configuration list for PBXNativeTarget "fareastflora" */;
 			buildPhases = (
-				5B499A842A2D9712000EE632 /* [CP] Check Pods Manifest.lock */,
 				5B499A852A2D9712000EE632 /* Start Packager */,
 				5B499A862A2D9712000EE632 /* Sources */,
 				5B499A892A2D9712000EE632 /* Frameworks */,
 				5B499A8E2A2D9712000EE632 /* Resources */,
 				5B499A9D2A2D9712000EE632 /* Bundle React Native code and images */,
 				5B499A9E2A2D9712000EE632 /* Upload Debug Symbols to Sentry */,
-				5B499A9F2A2D9712000EE632 /* [CP] Embed Pods Frameworks */,
-				5B499AA02A2D9712000EE632 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -804,28 +797,6 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Automaxima/Pods-Automaxima-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		5B499A842A2D9712000EE632 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-Automaxima-funtoast-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
 		5B499A852A2D9712000EE632 /* Start Packager */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -872,84 +843,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "export SENTRY_PROPERTIES=sentry.properties\n../node_modules/@sentry/cli/bin/sentry-cli upload-dsym\n";
-		};
-		5B499A9F2A2D9712000EE632 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Automaxima-funtoast/Pods-Automaxima-funtoast-frameworks.sh",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/OneSignalXCFramework/OneSignal.framework/OneSignal",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/OneSignalXCFramework/OneSignalCore/OneSignalCore.framework/OneSignalCore",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/OneSignalXCFramework/OneSignalExtension/OneSignalExtension.framework/OneSignalExtension",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/OneSignalXCFramework/OneSignalOutcomes/OneSignalOutcomes.framework/OneSignalOutcomes",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OneSignal.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OneSignalCore.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OneSignalExtension.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OneSignalOutcomes.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Automaxima-funtoast/Pods-Automaxima-funtoast-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		5B499AA02A2D9712000EE632 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Automaxima-funtoast/Pods-Automaxima-funtoast-resources.sh",
-				"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseMLVisionFaceModel/GoogleMVFaceDetectorResources.bundle",
-				"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseMLVisionTextModel/GoogleMVTextDetectorResources.bundle",
-				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf",
-				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Entypo.ttf",
-				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf",
-				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Feather.ttf",
-				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/FontAwesome.ttf",
-				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Brands.ttf",
-				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Regular.ttf",
-				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Solid.ttf",
-				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Fontisto.ttf",
-				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Foundation.ttf",
-				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf",
-				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf",
-				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf",
-				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Octicons.ttf",
-				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf",
-				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Zocial.ttf",
-				"${PODS_CONFIGURATION_BUILD_DIR}/React-Core/AccessibilityResources.bundle",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleMVFaceDetectorResources.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleMVTextDetectorResources.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AntDesign.ttf",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Entypo.ttf",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/EvilIcons.ttf",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Feather.ttf",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FontAwesome.ttf",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FontAwesome5_Brands.ttf",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FontAwesome5_Regular.ttf",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FontAwesome5_Solid.ttf",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Fontisto.ttf",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Foundation.ttf",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Ionicons.ttf",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MaterialCommunityIcons.ttf",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MaterialIcons.ttf",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Octicons.ttf",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/SimpleLineIcons.ttf",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Zocial.ttf",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AccessibilityResources.bundle",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Automaxima-funtoast/Pods-Automaxima-funtoast-resources.sh\"\n";
-			showEnvVarsInLog = 0;
 		};
 		88507A9D7788BBE4BC7380AE /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1361,7 +1254,6 @@
 		};
 		5B499AA22A2D9712000EE632 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 40FF1E65CBCA381DC38CA667 /* Pods-Automaxima-funtoast.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = FareastfloraIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -1398,7 +1290,6 @@
 		};
 		5B499AA32A2D9712000EE632 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = EAFC4C83B31B6754179CC383 /* Pods-Automaxima-funtoast.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = FareastfloraIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -1613,12 +1504,12 @@
 		};
 		88D7E7262A1B19D000F13E93 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 40FF1E65CBCA381DC38CA667 /* Pods-Automaxima-funtoast.debug.xcconfig */;
+			baseConfigurationReference = 22C55A59ECE4DF8143719048 /* Pods-Automaxima-funtoast.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = FuntoastIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Automaxima/Automaxima.entitlements;
-				CURRENT_PROJECT_VERSION = 68;
+				CURRENT_PROJECT_VERSION = 105;
 				DEVELOPMENT_TEAM = YSZ34Z59CY;
 				ENABLE_BITCODE = NO;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
@@ -1633,7 +1524,7 @@
 				INFOPLIST_FILE = "funtoast-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.1.31;
+				MARKETING_VERSION = 1.1.27;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -1650,12 +1541,12 @@
 		};
 		88D7E7272A1B19D000F13E93 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = EAFC4C83B31B6754179CC383 /* Pods-Automaxima-funtoast.release.xcconfig */;
+			baseConfigurationReference = 014D805D0048DA9DB2BE8356 /* Pods-Automaxima-funtoast.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = FuntoastIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Automaxima/Automaxima.entitlements;
-				CURRENT_PROJECT_VERSION = 68;
+				CURRENT_PROJECT_VERSION = 105;
 				DEVELOPMENT_TEAM = YSZ34Z59CY;
 				ENABLE_BITCODE = NO;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
@@ -1670,7 +1561,7 @@
 				INFOPLIST_FILE = "funtoast-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.1.31;
+				MARKETING_VERSION = 1.1.27;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",

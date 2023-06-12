@@ -31,7 +31,7 @@ const useStyles = () => {
       color: theme.colors.textQuaternary,
       fontFamily: theme.fontFamily.poppinsSemiBold,
     },
-    textDescription: {
+    textAnswer: {
       fontSize: theme.fontSize[14],
       color: theme.colors.textPrimary,
       fontFamily: theme.fontFamily.poppinsMedium,
@@ -66,7 +66,7 @@ const FAQListItem = ({data, searchQuery}) => {
       <HighlightText
         style={styles.textName}
         highlightStyle={styles.textNameHighlight}
-        text={data.title}
+        text={data.question}
         highlightText={searchQuery}
       />
     );
@@ -97,13 +97,13 @@ const FAQListItem = ({data, searchQuery}) => {
     );
   };
 
-  const renderDescription = () => {
-    return <Text style={styles.textDescription}>{data?.description}</Text>;
+  const renderAnswer = () => {
+    return <Text style={styles.textAnswer}>{data?.answer}</Text>;
   };
 
   const renderBody = () => {
     if (isSelected) {
-      return <View style={styles.body}>{renderDescription()}</View>;
+      return <View style={styles.body}>{renderAnswer()}</View>;
     }
   };
 

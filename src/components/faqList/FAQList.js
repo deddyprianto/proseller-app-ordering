@@ -21,15 +21,15 @@ const useStyles = () => {
   return styles;
 };
 
-const FAQList = ({questions, searchQuery}) => {
+const FAQList = ({faqs, searchQuery}) => {
   const styles = useStyles();
 
   const renderFAQList = () => {
-    if (!isEmptyArray(questions)) {
-      const result = questions.map(data => {
+    if (!isEmptyArray(faqs)) {
+      const result = faqs.map(faq => {
         return (
           <View>
-            <FAQListItem data={data} searchQuery={searchQuery} />
+            <FAQListItem data={faq} searchQuery={searchQuery} />
             <View style={styles.divider} />
           </View>
         );
@@ -40,9 +40,9 @@ const FAQList = ({questions, searchQuery}) => {
   };
 
   const renderFAQGroupList = () => {
-    if (!isEmptyArray(questions)) {
-      const result = questions.map(question => {
-        return <FAQGroupListItem data={question} />;
+    if (!isEmptyArray(faqs)) {
+      const result = faqs.map(faq => {
+        return <FAQGroupListItem data={faq} />;
       });
       return result;
     }
