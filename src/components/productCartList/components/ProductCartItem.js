@@ -534,20 +534,22 @@ const ProductCartItem = ({item, disabled}) => {
   };
 
   const renderPromoIcon = () => {
-    const active = !isEmptyArray(item.promotions) && !isProductUnavailable;
-    const styleViewPromo = active ? styles.viewPromoActive : styles.viewPromo;
-    const styleIconPromo = active ? styles.iconPromoActive : styles.iconPromo;
+    if (!isEmptyArray(item.promotions)) {
+      const active = item?.isPromotionApplied && !isProductUnavailable;
+      const styleViewPromo = active ? styles.viewPromoActive : styles.viewPromo;
+      const styleIconPromo = active ? styles.iconPromoActive : styles.iconPromo;
 
-    return (
-      <View style={styleViewPromo}>
-        <ImageBackground
-          source={appConfig.iconPromoStar}
-          style={styles.imagePromo}>
-          <Text style={styleIconPromo}>%</Text>
-        </ImageBackground>
-        <Text style={styles.textPromo}>Promo</Text>
-      </View>
-    );
+      return (
+        <View style={styleViewPromo}>
+          <ImageBackground
+            source={appConfig.iconPromoStar}
+            style={styles.imagePromo}>
+            <Text style={styleIconPromo}>%</Text>
+          </ImageBackground>
+          <Text style={styles.textPromo}>Promo</Text>
+        </View>
+      );
+    }
   };
 
   const renderBodyRight = () => {
