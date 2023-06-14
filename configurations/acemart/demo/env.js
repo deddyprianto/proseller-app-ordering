@@ -18,6 +18,8 @@ const ENV = {
 
   COMPANY_NAME: 'Ace Mart',
 
+  COMPANY_TYPE: 'Retail',
+
   COMPANY_POLICY_URL: 'https://acemart.proseller.io',
 
   CURRENCY: 'SGD',

@@ -18,6 +18,8 @@ const ENV = {
 
   COMPANY_NAME: 'Automaxima',
 
+  COMPANY_TYPE: 'Retail',
+
   COMPANY_POLICY_URL: 'https://automaxima.proseller.io',
 
   CURRENCY: 'SGD',

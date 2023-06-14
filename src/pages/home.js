@@ -276,12 +276,12 @@ class Home extends Component {
         <LoadingScreen loading={this.state.isLoading} />
         {outletSelectionMode === 'MANUAL' && isEmptyObject(defaultOutlet) ? (
           <Store />
+        ) : awsConfig.COMPANY_TYPE === 'Retail' ? (
+          <HomeFnB
+            isRefresh={this.state.refreshing}
+            handleOnRefresh={this._onRefresh}
+          />
         ) : (
-          // <HomeFnB
-          //   isRefresh={this.state.refreshing}
-          //   handleOnRefresh={this._onRefresh}
-          // />
-
           <HomeRetail />
         )}
       </>

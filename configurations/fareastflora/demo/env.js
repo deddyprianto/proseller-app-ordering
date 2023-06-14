@@ -18,6 +18,8 @@ const ENV = {
 
   COMPANY_NAME: 'Far East Flora',
 
+  COMPANY_TYPE: 'Retail',
+
   COMPANY_POLICY_URL: 'https://fareastflora.proseller.io',
 
   CURRENCY: 'SGD',

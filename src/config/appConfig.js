@@ -93,6 +93,10 @@ const appConfig = {
   iconFAQ: require('../assets/img/icon-faq.png'),
 
   iconHome: require('../assets/img/icon-home.png'),
+  iconHomeECard: require('../assets/img/icon-home-e-card.png'),
+  iconHomeEStore: require('../assets/img/icon-home-e-store.png'),
+  iconHomeOutlet: require('../assets/img/icon-home-outlet.png'),
+  iconHomeSendAGift: require('../assets/img/icon-home-send-a-gift.png'),
   iconHistory: require('../assets/img/icon-history.png'),
 
   iconInformation: require('../assets/img/icon-information.png'),
@@ -123,6 +127,7 @@ const appConfig = {
   iconQRCode: require('../assets/img/icon-qr-code.png'),
 
   iconReward: require('../assets/img/icon-reward.png'),
+  iconReferral: require('../assets/img/icon-referral.png'),
 
   iconSVC: require('../assets/img/icon-svc.png'),
   iconSearch: require('../assets/img/icon-search.png'),
