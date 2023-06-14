@@ -5,20 +5,25 @@
  */
 
 import React from 'react';
-import {RefreshControl, ScrollView} from 'react-native';
+import {RefreshControl, ScrollView, SafeAreaView} from 'react-native';
 
-import Banner from '../components/banner';
+import BannerFnB from '../components/bannerFnB';
+
+import {Header} from '../components/layout';
 import Menu from '../components/menu/Menu';
 
 const HomeFnB = ({handleOnRefresh, isRefresh}) => {
   return (
-    <ScrollView
-      refreshControl={
-        <RefreshControl refreshing={isRefresh} onRefresh={handleOnRefresh} />
-      }>
-      <Banner />
-      <Menu />
-    </ScrollView>
+    <SafeAreaView>
+      <Header isMiddleLogo isRemoveBackIcon />
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={isRefresh} onRefresh={handleOnRefresh} />
+        }>
+        <BannerFnB bottom={-20} />
+        <Menu />
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 

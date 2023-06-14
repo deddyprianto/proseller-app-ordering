@@ -98,6 +98,7 @@ const Header = ({
   title,
   isLogo,
   isMiddleLogo,
+  isRemoveBackIcon,
   remove,
   cart,
   search,
@@ -249,6 +250,8 @@ const Header = ({
   const renderIconLeftWrap = () => {
     if (isLogo) {
       return renderLogo();
+    } else if (isRemoveBackIcon) {
+      return;
     } else {
       return renderBackIcon();
     }
