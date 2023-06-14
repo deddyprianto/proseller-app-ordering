@@ -18,54 +18,58 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
-import EvilIcons from 'react-native-vector-icons/EvilIcons';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
-
 import appConfig from '../../config/appConfig';
 import awsConfig from '../../config/awsConfig';
 import Theme from '../../theme';
 
-const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
 
 const useStyles = () => {
   const theme = Theme();
   const styles = StyleSheet.create({
-    container: {
+    root: {
       marginTop: 16,
       paddingHorizontal: 16,
     },
-    header: {
+    top: {
+      marginVertical: 16,
       display: 'flex',
       flexDirection: 'row',
       justifyContent: 'space-between',
-      marginBottom: HEIGHT * 0.02,
     },
-    body: {
+    middle: {
+      marginTop: 8,
+      marginBottom: 24,
       display: 'flex',
       flexDirection: 'row',
       justifyContent: 'space-between',
-      marginBottom: HEIGHT * 0.02,
     },
-    footer: {
+    bottom: {
       height: HEIGHT * 0.3,
       width: '100%',
+      marginBottom: 100,
     },
     textWelcome: {
-      color: theme.colors.primary,
-      fontSize: theme.fontSize[14],
+      width: '100%',
+      color: theme.colors.textQuaternary,
+      fontSize: theme.fontSize[24],
+      fontFamily: theme.fontFamily.poppinsSemiBold,
+    },
+    textPoint1: {
+      color: theme.colors.textTertiary,
+      fontSize: theme.fontSize[12],
       fontFamily: theme.fontFamily.poppinsMedium,
     },
-    textPoint: {
-      color: theme.colors.text1,
-      fontSize: theme.fontSize[12],
-      fontFamily: theme.fontFamily.poppinsRegular,
+    textPoint2: {
+      color: theme.colors.textPrimary,
+      fontSize: theme.fontSize[16],
+      fontFamily: theme.fontFamily.poppinsSemiBold,
     },
     textMenu: {
-      color: theme.colors.text1,
+      marginTop: 10,
+      color: theme.colors.textQuaternary,
       fontSize: theme.fontSize[14],
-      fontFamily: theme.fontFamily.poppinsRegular,
+      fontFamily: theme.fontFamily.poppinsSemiBold,
     },
     textMenuDescription: {
       color: theme.colors.text1,
@@ -74,45 +78,24 @@ const useStyles = () => {
     },
     textRedeem: {
       textAlign: 'center',
-      color: theme.colors.text1,
-      fontSize: theme.fontSize[8],
-      fontFamily: theme.fontFamily.poppinsRegular,
+      color: theme.colors.textPrimary,
+      fontSize: theme.fontSize[10],
+      fontFamily: theme.fontFamily.poppinsMedium,
     },
-    textFavoriteOutlet: {
-      color: theme.colors.text1,
+    textOrderHere1: {
+      color: theme.colors.textSecondary,
       fontSize: theme.fontSize[12],
-      fontFamily: theme.fontFamily.poppinsRegular,
+      fontFamily: theme.fontFamily.poppinsMedium,
     },
-    textOrderHere: {
-      color: theme.colors.text4,
+    textOrderHere2: {
+      color: theme.colors.textSecondary,
       fontSize: theme.fontSize[16],
       fontFamily: theme.fontFamily.poppinsSemiBold,
     },
-    textDineIn: {
-      color: theme.colors.text4,
-      fontSize: theme.fontSize[8],
-      fontFamily: theme.fontFamily.poppinsMedium,
-    },
-    viewWelcomeAndFavorite: {
-      flex: 1,
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'space-between',
-    },
     viewRedeem: {
-      position: 'absolute',
-      right: 6,
-      bottom: 4,
       display: 'flex',
       flexDirection: 'row',
       alignItems: 'center',
-    },
-    viewDineIn: {
-      display: 'flex',
-      flexDirection: 'row',
-      position: 'absolute',
-      bottom: 6,
-      right: 10,
     },
     touchableOrderHere: {
       shadowOffset: {
@@ -126,59 +109,13 @@ const useStyles = () => {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      borderRadius: 10,
+      borderRadius: 36,
       marginLeft: 8,
+      paddingVertical: 8,
+      paddingHorizontal: 16,
       backgroundColor: theme.colors.primary,
     },
-    touchableSendGift: {
-      shadowOffset: {
-        width: 0.5,
-        height: 0.5,
-      },
-      shadowOpacity: 0.5,
-      shadowColor: theme.colors.greyScale2,
-      elevation: 5,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      borderRadius: 10,
-      width: WIDTH * 0.28,
-      height: WIDTH * 0.28,
-      backgroundColor: '#F7DFD5',
-    },
-    touchableMyECard: {
-      shadowOffset: {
-        width: 0.5,
-        height: 0.5,
-      },
-      shadowOpacity: 0.5,
-      shadowColor: theme.colors.greyScale2,
-      elevation: 5,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      borderRadius: 10,
-      width: WIDTH * 0.28,
-      height: WIDTH * 0.28,
-      backgroundColor: '#E7A1A1',
-    },
-    touchableEStore: {
-      shadowOffset: {
-        width: 0.5,
-        height: 0.5,
-      },
-      shadowOpacity: 0.5,
-      shadowColor: theme.colors.greyScale2,
-      elevation: 5,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      borderRadius: 10,
-      width: WIDTH * 0.28,
-      height: WIDTH * 0.28,
-      backgroundColor: '#9CCEC2',
-    },
-    touchableWelcome: {
+    touchablePoint: {
       shadowOffset: {
         width: 0.5,
         height: 0.5,
@@ -187,48 +124,39 @@ const useStyles = () => {
       shadowColor: theme.colors.greyScale2,
       elevation: 5,
       flex: 1,
-      height: 60,
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'center',
-      alignItems: 'center',
-      borderRadius: 10,
-      marginBottom: 16,
-      marginRight: 8,
-      paddingVertical: 11,
-      backgroundColor: '#F3F6FB',
-    },
-    touchableFavoriteOutlet: {
-      shadowOffset: {
-        width: 0.5,
-        height: 0.5,
-      },
-      shadowOpacity: 0.5,
-      shadowColor: theme.colors.greyScale2,
-      elevation: 5,
-      flex: 1,
-      height: 60,
       display: 'flex',
       flexDirection: 'row',
-      justifyContent: 'center',
+      justifyContent: 'space-between',
       alignItems: 'center',
-      borderRadius: 10,
+      borderRadius: 36,
       marginRight: 8,
-      paddingVertical: 11,
+      paddingVertical: 8,
+      paddingHorizontal: 16,
       backgroundColor: '#F3F6FB',
     },
-    iconRedeem: {
-      color: theme.colors.text1,
-      fontSize: theme.fontSize[10],
+    viewMenu: {
+      marginHorizontal: 4,
+      flex: 1,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
     },
-    iconStar: {
-      fontSize: 18,
+    iconArrow: {
+      width: 4,
+      height: 8,
+      marginLeft: 6,
     },
-    iconDineIn: {
-      fontSize: 3,
-      paddingTop: 3,
-      paddingRight: 2,
-      color: 'white',
+    iconMenu: {
+      tintColor: theme.colors.buttonActive,
+      width: 22,
+      height: 22,
+    },
+    image: {},
+    divider: {
+      height: 1,
+      width: '100%',
+      backgroundColor: theme.colors.greyScale3,
+      marginBottom: 16,
     },
   });
   return styles;
@@ -257,37 +185,21 @@ const Menu = () => {
     }
   }, [userDetail]);
 
-  const renderWelcome = () => {
+  const renderPoint = () => {
     return (
       <TouchableOpacity
-        style={styles.touchableWelcome}
+        style={styles.touchablePoint}
         onPress={() => {
           Actions.redeem();
         }}>
-        <Text style={styles.textWelcome} numberOfLines={1}>
-          Welcome {user?.name},
-        </Text>
-        <Text style={styles.textPoint}>{totalPoint} PTS</Text>
+        <View>
+          <Text style={styles.textPoint1}>Current Point</Text>
+          <Text style={styles.textPoint2}>{totalPoint} PTS</Text>
+        </View>
         <View style={styles.viewRedeem}>
           <Text style={styles.textRedeem}>Redeem</Text>
-          <MaterialIcons
-            name="keyboard-arrow-right"
-            style={styles.iconRedeem}
-          />
+          <Image source={appConfig.iconArrowRight} style={styles.iconArrow} />
         </View>
-      </TouchableOpacity>
-    );
-  };
-
-  const renderMyFavoriteOutlet = () => {
-    return (
-      <TouchableOpacity
-        style={styles.touchableFavoriteOutlet}
-        onPress={() => {
-          Actions.myFavoriteOutlets();
-        }}>
-        <EvilIcons name="star" style={styles.iconStar} />
-        <Text style={styles.textFavoriteOutlet}>My Favorite Outlet</Text>
       </TouchableOpacity>
     );
   };
@@ -299,12 +211,21 @@ const Menu = () => {
         onPress={() => {
           Actions.push('orderHere');
         }}>
-        <Text style={styles.textOrderHere}>ORDER</Text>
-        <Text style={styles.textOrderHere}>HERE</Text>
-        <View style={styles.viewDineIn}>
-          <FontAwesome name="star" style={styles.iconDineIn} />
-          <Text style={styles.textDineIn}>For Dine-in and Takeaway Only</Text>
-        </View>
+        <Text style={styles.textOrderHere1}>Want to place an order?</Text>
+        <Text style={styles.textOrderHere2}>CLICK HERE</Text>
+      </TouchableOpacity>
+    );
+  };
+
+  const renderOutlet = () => {
+    return (
+      <TouchableOpacity
+        style={styles.viewMenu}
+        onPress={() => {
+          Actions.myFavoriteOutlets();
+        }}>
+        <Image source={appConfig.iconHomeOutlet} style={styles.iconMenu} />
+        <Text style={styles.textMenu}>Outlet</Text>
       </TouchableOpacity>
     );
   };
@@ -312,13 +233,12 @@ const Menu = () => {
   const renderEStore = () => {
     return (
       <TouchableOpacity
-        style={styles.touchableEStore}
+        style={styles.viewMenu}
         onPress={() => {
           Actions.push('eStore');
         }}>
+        <Image source={appConfig.iconHomeEStore} style={styles.iconMenu} />
         <Text style={styles.textMenu}>E-Store</Text>
-
-        <Text style={styles.textMenuDescription}>merchandise and more</Text>
       </TouchableOpacity>
     );
   };
@@ -326,13 +246,12 @@ const Menu = () => {
   const renderMyECard = () => {
     return (
       <TouchableOpacity
-        style={styles.touchableMyECard}
+        style={styles.viewMenu}
         onPress={() => {
           Actions.push('eCard');
         }}>
+        <Image source={appConfig.iconHomeECard} style={styles.iconMenu} />
         <Text style={styles.textMenu}>My E-Card</Text>
-
-        <Text style={styles.textMenuDescription}>scan for points</Text>
       </TouchableOpacity>
     );
   };
@@ -340,39 +259,34 @@ const Menu = () => {
   const renderSendGift = () => {
     return (
       <TouchableOpacity
-        style={styles.touchableSendGift}
+        style={styles.viewMenu}
         onPress={() => {
           Actions.push('eGift');
         }}>
+        <Image source={appConfig.iconHomeSendAGift} style={styles.iconMenu} />
         <Text style={styles.textMenu}>Send A Gift</Text>
-        <Text style={styles.textMenuDescription}>gift a friend a voucher</Text>
       </TouchableOpacity>
     );
   };
 
-  const renderWelcomeAndFavoriteOutlet = () => {
-    return (
-      <View style={styles.viewWelcomeAndFavorite}>
-        {renderWelcome()}
-        {renderMyFavoriteOutlet()}
-      </View>
-    );
-  };
-
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        {renderWelcomeAndFavoriteOutlet()}
+    <View style={styles.root}>
+      <Text style={styles.textWelcome} numberOfLines={1}>
+        Welcome {user?.name},
+      </Text>
+      <View style={styles.top}>
+        {renderPoint()}
         {renderOrderHere()}
       </View>
-
-      <View style={styles.body}>
+      <View style={styles.middle}>
+        {renderOutlet()}
         {renderEStore()}
         {renderMyECard()}
         {renderSendGift()}
       </View>
+      <View style={styles.divider} />
       <Image
-        style={styles.footer}
+        style={styles.bottom}
         source={appConfig.imageAdditionalBanner}
         resizeMode="contain"
       />

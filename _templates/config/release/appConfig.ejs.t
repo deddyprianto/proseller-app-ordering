@@ -94,6 +94,8 @@ const appConfig = {
   iconEditProfile: require('../assets/img/icon-edit-profile.png'),
   iconEmail: require('../assets/img/icon-email.png'),
 
+  iconFAQ: require('../assets/img/icon-faq.png'),
+
   iconHome: require('../assets/img/icon-home.png'),
   iconHistory: require('../assets/img/icon-history.png'),
 
