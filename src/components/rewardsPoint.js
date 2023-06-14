@@ -49,14 +49,15 @@ class RewardsPoint extends Component {
     return (
       <View
         style={{
+          // height: '100%',
           // height: this.state.screenHeight / HEIGHT - 40,
-          borderWidth: 0.4,
+          borderWidth: 1,
           borderColor: 'white',
           justifyContent: 'center',
           alignItems: 'center',
-          paddingTop: 14,
-          borderRadius: 5,
-          width: '40%',
+          borderRadius: 8,
+          width: '100%',
+          padding: 8,
           // marginBottom: 10,
         }}>
         {totalPoint != undefined &&
@@ -64,7 +65,13 @@ class RewardsPoint extends Component {
         detailPoint != undefined &&
         !isEmptyObject(detailPoint.trigger) &&
         detailPoint.trigger.campaignTrigger === 'USER_SIGNUP' ? (
-          <View>
+          <View
+            style={{
+              width: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+            }}>
             <View
               style={{
                 flexDirection: 'row',
@@ -72,7 +79,6 @@ class RewardsPoint extends Component {
                 alignItems: 'center',
                 // marginLeft: 13,
                 // paddingTop: 25,
-                marginBottom: 10
               }}>
               <Text
                 style={{
@@ -81,7 +87,7 @@ class RewardsPoint extends Component {
                   fontSize: 16,
                   fontWeight: 'bold',
                 }}>
-                Rewards Points
+                My Rewards Points
               </Text>
             </View>
             <TouchableOpacity
@@ -101,7 +107,7 @@ class RewardsPoint extends Component {
                   fontSize: 25,
                   fontFamily: 'Poppins-Medium',
                 }}>
-                {totalPoint}
+                {totalPoint} PTS
               </Text>
               <Icon
                 size={40}
@@ -136,15 +142,21 @@ class RewardsPoint extends Component {
           !isEmptyObject(detailPoint.trigger) &&
           detailPoint.trigger.campaignTrigger === 'COMPLETE_PROFILE' &&
           detailPoint.trigger.status === true ? (
-          <View>
+          <View
+            style={{
+              width: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+            }}>
             <View
               style={{
                 flexDirection: 'row',
                 justifyContent: 'center',
                 alignItems: 'center',
                 // marginLeft: 13,
-                paddingTop: 25,
-                marginBottom: 10
+                // paddingTop: 25,
+                // marginBottom: 10,
               }}>
               <Text
                 style={{
@@ -153,7 +165,7 @@ class RewardsPoint extends Component {
                   fontSize: 16,
                   fontWeight: 'bold',
                 }}>
-                Rewards Points
+                My Rewards Points
               </Text>
             </View>
             <TouchableOpacity
@@ -175,11 +187,7 @@ class RewardsPoint extends Component {
                 }}>
                 {totalPoint}
               </Text>
-              <Icon
-                size={40}
-                name={'chevron-right'}
-                style={{color: 'white'}}
-              />
+              <Icon size={40} name={'chevron-right'} style={{color: 'white'}} />
             </TouchableOpacity>
           </View>
         ) : null}

@@ -86,6 +86,7 @@ const appConfig = {
   iconCart: require('../assets/img/icon-cart.png'),
   iconCheck: require('../assets/img/icon-check.png'),
   iconClose: require('../assets/img/icon-close.png'),
+  iconCopy: require('../assets/img/icon-copy.png'),
 
   iconDelete: require('../assets/img/icon-delete.png'),
   iconDeliveryProvider: require('../assets/img/icon-delivery-provider.png'),
@@ -97,6 +98,10 @@ const appConfig = {
   iconFAQ: require('../assets/img/icon-faq.png'),
 
   iconHome: require('../assets/img/icon-home.png'),
+  iconHomeEStore: require('../assets/img/icon-home-e-store.png'),
+  iconHomeECard: require('../assets/img/icon-home-e-card.png'),
+  iconHomeOutlet: require('../assets/img/icon-home-outlet.png'),
+  iconHomeSendAGift: require('../assets/img/icon-home-send-a-gift.png'),
   iconHistory: require('../assets/img/icon-history.png'),
 
   iconInformation: require('../assets/img/icon-information.png'),
@@ -132,6 +137,11 @@ const appConfig = {
   iconSVC: require('../assets/img/icon-svc.png'),
   iconSearch: require('../assets/img/icon-search.png'),
   iconScan: require('../assets/img/icon-scan.png'),
+  iconShare: require('../assets/img/icon-share.png'),
+  iconStepGift: require('../assets/img/icon-step-gift.png'),
+  iconStepLogin: require('../assets/img/icon-step-login.png'),
+  iconStepSend: require('../assets/img/icon-step-send.png'),
+
 
   iconTermsAndConditions: require('../assets/img/icon-terms-and-conditions.png'),
 
