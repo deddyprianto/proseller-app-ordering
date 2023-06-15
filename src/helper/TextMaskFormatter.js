@@ -9,7 +9,7 @@ const formatter = value => {
   return result;
 };
 
-const TextBlurFormatter = text => {
+const TextMaskFormatter = text => {
   let result = '';
   const textSplitted = text.split(' ');
   textSplitted.forEach(value => {
@@ -19,4 +19,4 @@ const TextBlurFormatter = text => {
   return result;
 };
 
-export default TextBlurFormatter;
+export default TextMaskFormatter;

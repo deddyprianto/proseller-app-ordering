@@ -3,7 +3,7 @@ import React from 'react';
 
 import {StyleSheet, View, Text, Image} from 'react-native';
 import appConfig from '../../../config/appConfig';
-import TextBlurFormatter from '../../../helper/TextBlurFormatter';
+import TextMaskFormatter from '../../../helper/TextMaskFormatter';
 import Theme from '../../../theme';
 
 const useStyles = () => {
@@ -73,7 +73,7 @@ const ReferralInvitedItem = ({item}) => {
   const styles = useStyles();
 
   const renderName = () => {
-    const text = TextBlurFormatter(item?.name);
+    const text = TextMaskFormatter(item?.name);
 
     return <Text style={styles.textName}>{text}</Text>;
   };

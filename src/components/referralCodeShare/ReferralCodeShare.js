@@ -12,6 +12,7 @@ import {useDispatch} from 'react-redux';
 import {getReferralDynamicLink} from '../../actions/referral.action';
 import {showSnackbar} from '../../actions/setting.action';
 import appConfig from '../../config/appConfig';
+import awsConfig from '../../config/awsConfig';
 import Theme from '../../theme';
 
 const useStyles = () => {
@@ -95,7 +96,9 @@ const ReferralCodeShare = ({referralCode}) => {
     const url = link?.url;
     try {
       await Share.share({
-        message: `Hellooo! I enjoy ordering from Funtoast and I think you will too! Use the referral code ${referralCode} or order now at ${url} and receive a gift!`,
+        message: `Hellooo! I enjoy ordering from ${
+          awsConfig.COMPANY_NAME
+        } and I think you will too! Use the referral code ${referralCode} or order now at ${url} and receive a gift!`,
       });
     } catch (error) {
       dispatch(
