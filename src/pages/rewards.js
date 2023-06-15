@@ -470,9 +470,9 @@ class Rewards extends Component {
               )}
 
               <View style={styles.tabBalance}>
-                {balance !== undefined && (
+                {/* {balance !== undefined && (
                   <RewardsSVC isLoading={this.state.isLoading} />
-                )}
+                )} */}
                 {this.props.totalPoint !== undefined && campaignActive && (
                   <RewardsPoint
                     campaignActive={campaignActive}
@@ -560,10 +560,11 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Regular',
   },
   tabBalance: {
-    flexDirection: 'row',
-    // height: Dimensions.get('window').height / 3 + 30,
+    flexDirection: 'column',
+    // height: Dimensions.get('window').height / 3,
     paddingBottom: 100,
-    paddingTop: 30,
+    paddingVertical: 16,
+    paddingHorizontal: 32,
     width: '100%',
     backgroundColor: colorConfig.store.defaultColor,
     justifyContent: 'center',

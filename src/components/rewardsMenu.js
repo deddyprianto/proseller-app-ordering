@@ -6,11 +6,13 @@ import {
   Dimensions,
   Platform,
   TouchableOpacity,
+  Image,
 } from 'react-native';
 import colorConfig from '../config/colorConfig';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Icon2 from 'react-native-vector-icons/FontAwesome';
 import {Actions} from 'react-native-router-flux';
+import appConfig from '../config/appConfig';
 // import {movePageIndex} from '../actions/user.action';
 
 export default class RewardsMenu extends Component {
@@ -57,15 +59,21 @@ export default class RewardsMenu extends Component {
     return (
       <View style={styles.container}>
         <View style={styles.item}>
-          <TouchableOpacity onPress={this.pagePay}>
+          <TouchableOpacity
+            onPress={() => {
+              Actions.push('referral');
+            }}>
             <View style={{alignItems: 'center'}}>
-              <Icon
-                size={this.state.screenHeight / 5 / 2 - 10}
-                name={Platform.OS === 'ios' ? 'ios-wallet' : 'md-wallet'}
-                style={{color: colorConfig.store.secondaryColor, height: 70}}
+              <Image
+                source={appConfig.iconReferral}
+                style={{
+                  tintColor: colorConfig.store.secondaryColor,
+                  width: 70,
+                  height: 70,
+                }}
               />
             </View>
-            <Text style={styles.menuText}>{intlData.messages.pay}</Text>
+            <Text style={styles.menuText}>Referral</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => this.pageQRCode(this.props)}>
             <View style={{alignItems: 'center'}}>
