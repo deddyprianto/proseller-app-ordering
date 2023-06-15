@@ -1,6 +1,12 @@
 import {fetchApi} from '../service/api';
 import CryptoJS from 'react-native-crypto-js';
 import awsConfig from '../config/awsConfig';
+const setData = ({data, type}) => {
+  return {
+    type: type,
+    data: data,
+  };
+};
 
 export const referral = () => {
   return async (dispatch, getState) => {
@@ -132,6 +138,138 @@ export const resendReferral = id => {
 
       if (response.success) {
         return response.responseBody.Data;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+//martin
+export const getReferralInfo = () => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      const response = await fetchApi(
+        `/referral-info`,
+        'GET',
+        null,
+        200,
+        token,
+      );
+      console.log(response, 'response resend referral');
+
+      if (response.success) {
+        dispatch({
+          type: 'DATA_REFERRAL_INFO',
+          referral: response.responseBody.data,
+        });
+        return response.responseBody.data;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const getReferralInvitedList = () => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      const response = await fetchApi(
+        `/referral?page=1`,
+        'GET',
+        null,
+        200,
+        token,
+      );
+      console.log(response, 'response resend referral');
+
+      if (response.success) {
+        dispatch({
+          type: 'DATA_REFERRAL_INVITED_LIST',
+          referral: response.responseBody.data,
+        });
+        return response.responseBody.data;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const setReferralCode = initialUrl => {
+  return async dispatch => {
+    try {
+      const removePrefix = initialUrl.replace(`${awsConfig.APP_DEEP_LINK}`, '');
+
+      const referralCode = removePrefix.split('/')[1];
+
+      await dispatch(
+        setData({
+          type: 'SET_REFERRAL_CODE',
+          data: referralCode,
+        }),
+      );
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const checkReferralValidity = referralCode => {
+  return async () => {
+    try {
+      const response = await fetchApi(
+        `/referral/${referralCode}`,
+        'GET',
+        null,
+        200,
+      );
+
+      if (response.success) {
+        return response.responseBody.data;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const getReferralDynamicLink = () => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      const response = await fetchApi('/referral-url', 'GET', null, 200, token);
+
+      if (response.success) {
+        return response.responseBody.data;
       } else {
         return false;
       }
