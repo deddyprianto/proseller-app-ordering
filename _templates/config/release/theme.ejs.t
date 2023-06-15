@@ -1,4 +1,9 @@
-const PRIMARY_COLOR_RGB = '0, 191, 202';
+---
+to: config/theme.js
+force: true
+---
+
+const PRIMARY_COLOR_RGB = '<%= color %>';
 const SECONDARY_COLOR_RGB = '53, 59, 72';
 const THIRD_COLOR_RGB = '156, 206, 194';
 const FORTH_COLOR_RGB = '231, 161, 161';

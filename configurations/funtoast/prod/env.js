@@ -19,6 +19,8 @@ const ENV = {
 
   COMPANY_NAME: 'Funtoast',
 
+  COMPANY_TYPE: 'FnB',
+
   COMPANY_POLICY_URL: 'https://funtoast.proseller.io',
 
   CURRENCY: 'SGD',

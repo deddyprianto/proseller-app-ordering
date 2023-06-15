@@ -30,6 +30,7 @@ import {getColorSettings} from '../actions/setting.action';
 
 import Theme from '../theme';
 import {HistoryNotificationModal} from '../components/modal';
+import awsConfig from '../config/awsConfig';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -166,7 +167,8 @@ const NewPageIndex = () => {
     Profile: Profile,
   };
 
-  const screens = true ? dataRetailScreens : dataFnBScreens;
+  const screens =
+    awsConfig.COMPANY_TYPE === 'Retail' ? dataRetailScreens : dataFnBScreens;
 
   const handleGetNotification = () => {
     OneSignal.setNotificationWillShowInForegroundHandler(

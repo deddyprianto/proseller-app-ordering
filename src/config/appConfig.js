@@ -138,7 +138,6 @@ const appConfig = {
   iconStepLogin: require('../assets/img/icon-step-login.png'),
   iconStepSend: require('../assets/img/icon-step-send.png'),
 
-
   iconTermsAndConditions: require('../assets/img/icon-terms-and-conditions.png'),
 
   iconVoucher: require('../assets/img/icon-voucher.png'),
