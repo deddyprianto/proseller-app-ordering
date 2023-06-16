@@ -73,7 +73,7 @@ class RewordsVouchers extends Component {
                       ? styles.selectedText
                       : styles.unselectedText
                   }>
-                  {intlData.messages.redeemVoucher}
+                  Redeemable Voucher
                 </Text>
               </View>
               {/*{this.state.toggleAllVoucher ? (*/}
