@@ -89,10 +89,7 @@ class RewardsRewards extends Component {
                 }
                 style={styles.btnBackIcon}
               />
-              <Text style={styles.btnBackText}>
-                {' '}
-                {intlData.messages.rewards}{' '}
-              </Text>
+              <Text style={styles.btnBackText}>Voucher</Text>
             </TouchableOpacity>
             {this.props.totalPoint != undefined &&
             detailPoint != undefined &&

@@ -87,13 +87,16 @@ export default class RewardsMenu extends Component {
           </TouchableOpacity>
           <TouchableOpacity onPress={this.pageRewards}>
             <View style={{alignItems: 'center'}}>
-              <Icon
-                size={this.state.screenHeight / 5 / 2 - 10}
-                name={Platform.OS === 'ios' ? 'ios-ribbon' : 'md-ribbon'}
-                style={{color: colorConfig.store.secondaryColor, height: 70}}
+              <Image
+                source={appConfig.iconMyVoucher}
+                style={{
+                  tintColor: colorConfig.store.secondaryColor,
+                  width: 70,
+                  height: 70,
+                }}
               />
             </View>
-            <Text style={styles.menuText}>{intlData.messages.rewards}</Text>
+            <Text style={styles.menuText}>Voucher</Text>
           </TouchableOpacity>
         </View>
       </View>
