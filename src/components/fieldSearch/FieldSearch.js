@@ -15,6 +15,7 @@ const useStyles = () => {
   const theme = Theme();
   const styles = StyleSheet.create({
     root: {
+      flex: 1,
       height: 48,
       minHeight: 48,
       maxHeight: 48,

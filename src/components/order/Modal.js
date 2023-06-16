@@ -354,7 +354,7 @@ export default class ModalOrder extends Component {
                 : null,
             ]}>
             <Text style={styles.textBtnAddModifier}>
-              {this.state.selectedModifier.quantity != 0 ? 'Ok' : 'Remove'}
+              {this.state.selectedModifier.quantity != 0 ? 'OK' : 'Remove'}
             </Text>
           </TouchableOpacity>
         </Dialog.Content>

@@ -92,7 +92,7 @@ const OrderingModeOfflineModal = ({open, handleClose, value}) => {
             await dispatch(changeOrderingMode({orderingMode: ''}));
             handleClose();
           }}>
-          <Text style={styles.textClose}>Ok</Text>
+          <Text style={styles.textClose}>OK</Text>
         </TouchableOpacity>
       </View>
     );

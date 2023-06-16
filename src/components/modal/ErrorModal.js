@@ -57,7 +57,7 @@ const ModalError = ({isOpen, title, description, onClose, onOk}) => {
           <TouchableOpacity
             onPress={onOk}
             style={[styles.button, {backgroundColor: colors.primary}]}>
-            <Text style={styles.errorText}>Ok</Text>
+            <Text style={styles.errorText}>OK</Text>
           </TouchableOpacity>
         </View>
         <View />

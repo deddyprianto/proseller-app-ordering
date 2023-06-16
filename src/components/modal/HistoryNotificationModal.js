@@ -81,7 +81,7 @@ const HistoryNotificationModal = ({open, handleClose, value}) => {
           onPress={async () => {
             handleClose();
           }}>
-          <Text style={styles.textClose}>Ok</Text>
+          <Text style={styles.textClose}>OK</Text>
         </TouchableOpacity>
       </View>
     );

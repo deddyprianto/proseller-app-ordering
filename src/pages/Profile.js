@@ -660,7 +660,7 @@ const Profile = props => {
           isLoading={isLoading}
           textTitle="Delete account"
           textDescription="This will permanently delete your account. You will not able to access your order history and personal detail."
-          textSubmit="Ok"
+          textSubmit="OK"
         />
       );
     }
@@ -680,7 +680,7 @@ const Profile = props => {
           isLoading={isLoading}
           textTitle="Logout"
           textDescription="Are you sure you want to logout your account?"
-          textSubmit="Ok"
+          textSubmit="OK"
         />
       );
     }
