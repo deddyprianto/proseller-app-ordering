@@ -564,7 +564,7 @@ class Cart extends Component {
       Alert.alert(
         'Incomplete Delivery Address',
         'Looks like your address is incomplete, please check it again',
-        [{text: 'Ok', onPress: () => this.goToAddress()}],
+        [{text: 'OK', onPress: () => this.goToAddress()}],
         {cancelable: false},
       );
     } else {

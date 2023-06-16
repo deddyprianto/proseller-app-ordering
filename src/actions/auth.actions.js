@@ -49,7 +49,7 @@ export const checkAccountExist = payload => {
 export const notifikasi = (type, status, action) => {
   Alert.alert(type, status, [
     {
-      text: 'Ok',
+      text: 'OK',
       onPress: () => action,
       style: 'ok',
     },

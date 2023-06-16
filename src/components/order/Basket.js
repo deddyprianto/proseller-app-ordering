@@ -1285,7 +1285,7 @@ class Basket extends Component {
       Alert.alert(
         'Incomplete Delivery Address',
         'Looks like your address is incomplete, please check it again',
-        [{text: 'Ok', onPress: () => this.goToEditAddress()}],
+        [{text: 'OK', onPress: () => this.goToEditAddress()}],
         {cancelable: false},
       );
     } else {
@@ -3172,7 +3172,7 @@ class Basket extends Component {
             itemPromo.items[0].itemName,
           );
           promoName = promoName.replace('{qty}', itemPromo.items[0].quantity);
-          console.log(itemPromo, 'itemPromo.discValue')
+          console.log(itemPromo, 'itemPromo.discValue');
           let price = this.format2(
             CurrencyFormatter(Number(itemPromo.items[0].discValue)),
           );

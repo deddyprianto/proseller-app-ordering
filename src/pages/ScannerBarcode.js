@@ -1,7 +1,6 @@
-import React, {useEffect, useRef, useState} from 'react';
-import QRCodeScanner from 'react-native-qrcode-scanner';
+import React, {useState} from 'react';
 import {RNCamera} from 'react-native-camera';
-import {useDispatch, useSelector} from 'react-redux';
+import {useDispatch} from 'react-redux';
 
 import {
   StyleSheet,
@@ -252,7 +251,7 @@ const ScannerBarcode = () => {
   };
 
   const renderScanner = () => {
-    if (!isOpenAddModal && !isLoading) {
+    if (!isOpenAddModal) {
       return (
         <RNCamera
           captureAudio={false}
@@ -289,7 +288,6 @@ const ScannerBarcode = () => {
       <LoadingScreen loading={isLoading} />
       {renderHeader()}
       {renderScanner()}
-
       {renderSearchModal()}
       {renderTopContent()}
       {renderBottomContent()}
