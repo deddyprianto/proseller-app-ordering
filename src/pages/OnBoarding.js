@@ -119,13 +119,16 @@ const OnBoarding = () => {
     }
   };
 
-  const images = [
+  let images = [
     appConfig.imageOnBoarding1,
     appConfig.imageOnBoarding2,
     appConfig.imageOnBoarding3,
   ];
 
   const renderImages = () => {
+    if (appConfig.appName === 'fareastflora') {
+      images.push(appConfig.imageOnBoarding4);
+    }
     const result = images.map((image, index) => {
       return <Image key={index} style={styles.image} source={image} />;
     });
