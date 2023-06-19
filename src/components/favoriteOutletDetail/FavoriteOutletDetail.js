@@ -56,27 +56,10 @@ const FavoriteOutletDetail = ({outlet}) => {
     );
   };
 
-  const renderMap = () => {
-    return (
-      <View style={styles.viewMap}>
-        <View style={styles.viewSeeLocation}>
-          <Text>See Location</Text>
-          <IconEvilIcons name="location" style={styles.icon} />
-        </View>
-        <FavoriteOutletDetailMap
-          style={styles.map}
-          lat={outlet?.latitude}
-          lng={outlet.longitude}
-        />
-      </View>
-    );
-  };
-
   return (
     <ScrollView style={styles.root}>
       {renderImages()}
       <FavoriteOutletDetailDescription outlet={outlet} />
-      {renderMap()}
     </ScrollView>
   );
 };

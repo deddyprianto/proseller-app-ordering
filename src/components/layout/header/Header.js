@@ -107,6 +107,7 @@ const Header = ({
   removeOnClick,
   customTitle,
   handleSearchInput,
+  searchPlaceholder,
 }) => {
   const styles = useStyles();
 
@@ -228,13 +229,14 @@ const Header = ({
   };
 
   const renderSearchBar = () => {
+    const placeholder = searchPlaceholder || 'Try to search “toast”';
     return (
       <FieldSearch
         value={searchTextInput}
         onChange={value => {
           setSearchTextInput(value);
         }}
-        placeholder="Try to search “toast”"
+        placeholder={placeholder}
         onClear={() => {
           setSearchTextInput('');
         }}

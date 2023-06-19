@@ -1,9 +1,15 @@
 import React, {useEffect, useState} from 'react';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 
 import {StyleSheet, ScrollView, View} from 'react-native';
 
 import FavoriteOutletListItem from './components/FavoriteOutletListItem';
+
+import LoadingScreen from '../loadingScreen';
+import {
+  setFavoriteOutlet,
+  unsetFavoriteOutlet,
+} from '../../actions/stores.action';
 
 const styles = StyleSheet.create({
   root: {
@@ -18,9 +24,12 @@ const styles = StyleSheet.create({
   },
 });
 
-const FavoriteOutletList = () => {
+const FavoriteOutletList = ({outlets}) => {
+  const dispatch = useDispatch();
+
   const [list, setList] = useState([]);
-  const outlets = useSelector(state => state.storesReducer.dataStores.stores);
+  const [isLoading, setIsLoading] = useState(false);
+
   const myFavoriteOutlets = useSelector(
     state => state.storesReducer.favoriteOutlet.outlet,
   );
@@ -40,15 +49,43 @@ const FavoriteOutletList = () => {
     setList(result);
   }, [myFavoriteOutlets, outlets]);
 
+  const handleSetFavoriteOutlet = async item => {
+    await dispatch(setFavoriteOutlet({outletId: item?.id}));
+  };
+
+  const handleUnsetFavoriteOutlet = async item => {
+    await dispatch(unsetFavoriteOutlet({outletId: item?.id}));
+  };
+
+  const handleStarClicked = async item => {
+    if (item.isFavorite) {
+      setIsLoading(true);
+      await handleUnsetFavoriteOutlet(item);
+      setIsLoading(false);
+    } else {
+      setIsLoading(true);
+      await handleSetFavoriteOutlet(item);
+      setIsLoading(false);
+    }
+  };
+
   const renderOutletList = () => {
     const result = list?.map(item => {
-      return <FavoriteOutletListItem item={item} />;
+      return (
+        <FavoriteOutletListItem
+          item={item}
+          onClick={() => {
+            handleStarClicked(item);
+          }}
+        />
+      );
     });
     return result;
   };
 
   return (
     <ScrollView style={styles.root}>
+      <LoadingScreen loading={isLoading} />
       <View style={styles.container}>{renderOutletList()}</View>
     </ScrollView>
   );
