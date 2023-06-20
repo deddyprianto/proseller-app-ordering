@@ -13,23 +13,6 @@
 		27CFB91208C84B89AAE58C56 /* Lato-Heavy.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 35A970A69DA7440188817DD0 /* Lato-Heavy.ttf */; };
 		4364869283FE453CB8F3B773 /* Lato-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5004E2CBAFBB4547A8CCA619 /* Lato-Italic.ttf */; };
 		43681597396048A0961F05E9 /* Lato-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 61448CC0B03644E5AE6729E7 /* Lato-Regular.ttf */; };
-		5B499A872A2D9712000EE632 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B8BA49726AA61AC00486032 /* AppDelegate.swift */; };
-		5B499A882A2D9712000EE632 /* Automaxima.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B4FF2F826284ECC00262C97 /* Automaxima.swift */; };
-		5B499A8A2A2D9712000EE632 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B8783AC08D84065AC0B2230 /* libz.tbd */; };
-		5B499A8F2A2D9712000EE632 /* Poppins-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 881D49842A1B3DDE009E45B9 /* Poppins-SemiBold.ttf */; };
-		5B499A902A2D9712000EE632 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 7BD1A63F265E73280011B660 /* GoogleService-Info.plist */; };
-		5B499A912A2D9712000EE632 /* Poppins-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7B4FF2FE262852DC00262C97 /* Poppins-Black.ttf */; };
-		5B499A922A2D9712000EE632 /* Poppins-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7B4FF2FC262852DC00262C97 /* Poppins-Bold.ttf */; };
-		5B499A932A2D9712000EE632 /* Poppins-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7B4FF2FB262852DB00262C97 /* Poppins-Italic.ttf */; };
-		5B499A942A2D9712000EE632 /* Poppins-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7B4FF2FF262852DC00262C97 /* Poppins-Medium.ttf */; };
-		5B499A952A2D9712000EE632 /* Poppins-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7B4FF2FD262852DC00262C97 /* Poppins-Regular.ttf */; };
-		5B499A962A2D9712000EE632 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
-		5B499A972A2D9712000EE632 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB11A68108700A75B9A /* LaunchScreen.xib */; };
-		5B499A982A2D9712000EE632 /* Lato-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F2539776D32B4B29B0B8C8A7 /* Lato-Bold.ttf */; };
-		5B499A992A2D9712000EE632 /* Lato-Heavy.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 35A970A69DA7440188817DD0 /* Lato-Heavy.ttf */; };
-		5B499A9A2A2D9712000EE632 /* Lato-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5004E2CBAFBB4547A8CCA619 /* Lato-Italic.ttf */; };
-		5B499A9B2A2D9712000EE632 /* Lato-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 40AD4A3553664601BD423484 /* Lato-Medium.ttf */; };
-		5B499A9C2A2D9712000EE632 /* Lato-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 61448CC0B03644E5AE6729E7 /* Lato-Regular.ttf */; };
 		6D77A383D9A8E21D1CB62C10 /* libPods-Automaxima-funtoast.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 38BC866C066A0605360EEAC1 /* libPods-Automaxima-funtoast.a */; };
 		6F983F8ED0ABC9A8B0392172 /* libPods-Automaxima-funtoast.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 38BC866C066A0605360EEAC1 /* libPods-Automaxima-funtoast.a */; };
 		7B4FF2F926284ECC00262C97 /* Automaxima.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B4FF2F826284ECC00262C97 /* Automaxima.swift */; };
@@ -41,6 +24,24 @@
 		7B8BA49826AA61AC00486032 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B8BA49726AA61AC00486032 /* AppDelegate.swift */; };
 		7BD1A640265E73280011B660 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 7BD1A63F265E73280011B660 /* GoogleService-Info.plist */; };
 		881D49852A1B3DDE009E45B9 /* Poppins-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 881D49842A1B3DDE009E45B9 /* Poppins-SemiBold.ttf */; };
+		88D1A6FD2A40301B00C00653 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B8BA49726AA61AC00486032 /* AppDelegate.swift */; };
+		88D1A6FE2A40301B00C00653 /* Automaxima.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B4FF2F826284ECC00262C97 /* Automaxima.swift */; };
+		88D1A7002A40301B00C00653 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B8783AC08D84065AC0B2230 /* libz.tbd */; };
+		88D1A7012A40301B00C00653 /* libPods-Automaxima.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CEB3CA18B39250FAA73BB671 /* libPods-Automaxima.a */; };
+		88D1A7032A40301B00C00653 /* Poppins-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 881D49842A1B3DDE009E45B9 /* Poppins-SemiBold.ttf */; };
+		88D1A7042A40301B00C00653 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 7BD1A63F265E73280011B660 /* GoogleService-Info.plist */; };
+		88D1A7052A40301B00C00653 /* Poppins-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7B4FF2FE262852DC00262C97 /* Poppins-Black.ttf */; };
+		88D1A7062A40301B00C00653 /* Poppins-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7B4FF2FC262852DC00262C97 /* Poppins-Bold.ttf */; };
+		88D1A7072A40301B00C00653 /* Poppins-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7B4FF2FB262852DB00262C97 /* Poppins-Italic.ttf */; };
+		88D1A7082A40301B00C00653 /* Poppins-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7B4FF2FF262852DC00262C97 /* Poppins-Medium.ttf */; };
+		88D1A7092A40301B00C00653 /* Poppins-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7B4FF2FD262852DC00262C97 /* Poppins-Regular.ttf */; };
+		88D1A70A2A40301B00C00653 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
+		88D1A70B2A40301B00C00653 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB11A68108700A75B9A /* LaunchScreen.xib */; };
+		88D1A70C2A40301B00C00653 /* Lato-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F2539776D32B4B29B0B8C8A7 /* Lato-Bold.ttf */; };
+		88D1A70D2A40301B00C00653 /* Lato-Heavy.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 35A970A69DA7440188817DD0 /* Lato-Heavy.ttf */; };
+		88D1A70E2A40301B00C00653 /* Lato-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5004E2CBAFBB4547A8CCA619 /* Lato-Italic.ttf */; };
+		88D1A70F2A40301B00C00653 /* Lato-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 40AD4A3553664601BD423484 /* Lato-Medium.ttf */; };
+		88D1A7102A40301B00C00653 /* Lato-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 61448CC0B03644E5AE6729E7 /* Lato-Regular.ttf */; };
 		88D7E6EE2A1B198500F13E93 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B8BA49726AA61AC00486032 /* AppDelegate.swift */; };
 		88D7E6EF2A1B198500F13E93 /* Automaxima.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B4FF2F826284ECC00262C97 /* Automaxima.swift */; };
 		88D7E6F12A1B198500F13E93 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B8783AC08D84065AC0B2230 /* libz.tbd */; };
@@ -113,8 +114,6 @@
 		52E58A0B0D484176A9F2931D /* FontAwesome5_Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Regular.ttf; path = "../node_modules/native-base/Fonts/FontAwesome5_Regular.ttf"; sourceTree = "<group>"; };
 		5A62AE3B5033F6C99E800DF2 /* Pods-Automaxima-AutomaximaTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Automaxima-AutomaximaTests.release.xcconfig"; path = "Target Support Files/Pods-Automaxima-AutomaximaTests/Pods-Automaxima-AutomaximaTests.release.xcconfig"; sourceTree = "<group>"; };
 		5ABE9A0CA62D4BF195981449 /* MaterialIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
-		5B499AA42A2D9712000EE632 /* fareastflora.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = fareastflora.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		5B499AA52A2D9712000EE632 /* funtoast -Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "funtoast -Info.plist"; path = "/Users/martin/Edgeworks/proseller-app-ordering/ios/funtoast -Info.plist"; sourceTree = "<absolute>"; };
 		5DB4A18FC5544A02A24B0EF3 /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
 		5E54C8B705E547D6B696A56C /* rubicon-icon-font.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "rubicon-icon-font.ttf"; path = "../node_modules/native-base/Fonts/rubicon-icon-font.ttf"; sourceTree = "<group>"; };
 		5F3F637B1B2BE5AB20E4B044 /* Pods-Automaxima-acemart.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Automaxima-acemart.release.xcconfig"; path = "Target Support Files/Pods-Automaxima-acemart/Pods-Automaxima-acemart.release.xcconfig"; sourceTree = "<group>"; };
@@ -144,6 +143,8 @@
 		7BDAC8BD244814D1005E2D36 /* Automaxima.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Automaxima.entitlements; path = Automaxima/Automaxima.entitlements; sourceTree = "<group>"; };
 		85986F88DD9B478882E6871F /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/native-base/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
 		881D49842A1B3DDE009E45B9 /* Poppins-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Poppins-SemiBold.ttf"; path = "assets/Poppins-SemiBold.ttf"; sourceTree = "<group>"; };
+		88D1A7182A40301B00C00653 /* fareastfloranew.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = fareastfloranew.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		88D1A7192A40301C00C00653 /* fareastflora-info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "fareastflora-info.plist"; path = "/Volumes/ssdeksternal/Kantor/proseller-new/ios/fareastflora-info.plist"; sourceTree = "<absolute>"; };
 		88D7E7082A1B198500F13E93 /* acemart.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = acemart.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		88D7E7092A1B198600F13E93 /* acemart-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "acemart-Info.plist"; path = "/Volumes/ssdeksternal/Kantor/proseller-new/ios/acemart-Info.plist"; sourceTree = "<absolute>"; };
 		88D7E7282A1B19D000F13E93 /* funtoast.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = funtoast.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -185,11 +186,12 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		5B499A892A2D9712000EE632 /* Frameworks */ = {
+		88D1A6FF2A40301B00C00653 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5B499A8A2A2D9712000EE632 /* libz.tbd in Frameworks */,
+				88D1A7002A40301B00C00653 /* libz.tbd in Frameworks */,
+				88D1A7012A40301B00C00653 /* libPods-Automaxima.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -328,7 +330,7 @@
 				7B83729F244346A300A67095 /* Recovered References */,
 				88D7E7092A1B198600F13E93 /* acemart-Info.plist */,
 				88D7E7292A1B19D000F13E93 /* funtoast-Info.plist */,
-				5B499AA52A2D9712000EE632 /* funtoast -Info.plist */,
+				88D1A7192A40301C00C00653 /* fareastflora-info.plist */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -341,7 +343,7 @@
 				13B07F961A680F5B00A75B9A /* Automaxima.app */,
 				88D7E7082A1B198500F13E93 /* acemart.app */,
 				88D7E7282A1B19D000F13E93 /* funtoast.app */,
-				5B499AA42A2D9712000EE632 /* fareastflora.app */,
+				88D1A7182A40301B00C00653 /* fareastfloranew.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -437,24 +439,27 @@
 			productReference = 13B07F961A680F5B00A75B9A /* Automaxima.app */;
 			productType = "com.apple.product-type.application";
 		};
-		5B499A832A2D9712000EE632 /* fareastflora */ = {
+		88D1A6F92A40301B00C00653 /* fareastfloranew */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 5B499AA12A2D9712000EE632 /* Build configuration list for PBXNativeTarget "fareastflora" */;
+			buildConfigurationList = 88D1A7152A40301B00C00653 /* Build configuration list for PBXNativeTarget "fareastfloranew" */;
 			buildPhases = (
-				5B499A852A2D9712000EE632 /* Start Packager */,
-				5B499A862A2D9712000EE632 /* Sources */,
-				5B499A892A2D9712000EE632 /* Frameworks */,
-				5B499A8E2A2D9712000EE632 /* Resources */,
-				5B499A9D2A2D9712000EE632 /* Bundle React Native code and images */,
-				5B499A9E2A2D9712000EE632 /* Upload Debug Symbols to Sentry */,
+				88D1A6FA2A40301B00C00653 /* [CP] Check Pods Manifest.lock */,
+				88D1A6FB2A40301B00C00653 /* Start Packager */,
+				88D1A6FC2A40301B00C00653 /* Sources */,
+				88D1A6FF2A40301B00C00653 /* Frameworks */,
+				88D1A7022A40301B00C00653 /* Resources */,
+				88D1A7112A40301B00C00653 /* Bundle React Native code and images */,
+				88D1A7122A40301B00C00653 /* Upload Debug Symbols to Sentry */,
+				88D1A7132A40301B00C00653 /* [CP] Copy Pods Resources */,
+				88D1A7142A40301B00C00653 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			name = fareastflora;
+			name = fareastfloranew;
 			productName = Automaxima;
-			productReference = 5B499AA42A2D9712000EE632 /* fareastflora.app */;
+			productReference = 88D1A7182A40301B00C00653 /* fareastfloranew.app */;
 			productType = "com.apple.product-type.application";
 		};
 		88D7E6EA2A1B198500F13E93 /* acemart */ = {
@@ -516,7 +521,7 @@
 						DevelopmentTeam = YSZ34Z59CY;
 						LastSwiftMigration = 1140;
 					};
-					5B499A832A2D9712000EE632 = {
+					88D1A6F92A40301B00C00653 = {
 						DevelopmentTeam = YSZ34Z59CY;
 					};
 					88D7E6EA2A1B198500F13E93 = {
@@ -544,7 +549,7 @@
 				13B07F861A680F5B00A75B9A /* Automaxima */,
 				88D7E6EA2A1B198500F13E93 /* acemart */,
 				88D7E70A2A1B19D000F13E93 /* funtoast */,
-				5B499A832A2D9712000EE632 /* fareastflora */,
+				88D1A6F92A40301B00C00653 /* fareastfloranew */,
 			);
 		};
 /* End PBXProject section */
@@ -571,24 +576,24 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		5B499A8E2A2D9712000EE632 /* Resources */ = {
+		88D1A7022A40301B00C00653 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5B499A8F2A2D9712000EE632 /* Poppins-SemiBold.ttf in Resources */,
-				5B499A902A2D9712000EE632 /* GoogleService-Info.plist in Resources */,
-				5B499A912A2D9712000EE632 /* Poppins-Black.ttf in Resources */,
-				5B499A922A2D9712000EE632 /* Poppins-Bold.ttf in Resources */,
-				5B499A932A2D9712000EE632 /* Poppins-Italic.ttf in Resources */,
-				5B499A942A2D9712000EE632 /* Poppins-Medium.ttf in Resources */,
-				5B499A952A2D9712000EE632 /* Poppins-Regular.ttf in Resources */,
-				5B499A962A2D9712000EE632 /* Images.xcassets in Resources */,
-				5B499A972A2D9712000EE632 /* LaunchScreen.xib in Resources */,
-				5B499A982A2D9712000EE632 /* Lato-Bold.ttf in Resources */,
-				5B499A992A2D9712000EE632 /* Lato-Heavy.ttf in Resources */,
-				5B499A9A2A2D9712000EE632 /* Lato-Italic.ttf in Resources */,
-				5B499A9B2A2D9712000EE632 /* Lato-Medium.ttf in Resources */,
-				5B499A9C2A2D9712000EE632 /* Lato-Regular.ttf in Resources */,
+				88D1A7032A40301B00C00653 /* Poppins-SemiBold.ttf in Resources */,
+				88D1A7042A40301B00C00653 /* GoogleService-Info.plist in Resources */,
+				88D1A7052A40301B00C00653 /* Poppins-Black.ttf in Resources */,
+				88D1A7062A40301B00C00653 /* Poppins-Bold.ttf in Resources */,
+				88D1A7072A40301B00C00653 /* Poppins-Italic.ttf in Resources */,
+				88D1A7082A40301B00C00653 /* Poppins-Medium.ttf in Resources */,
+				88D1A7092A40301B00C00653 /* Poppins-Regular.ttf in Resources */,
+				88D1A70A2A40301B00C00653 /* Images.xcassets in Resources */,
+				88D1A70B2A40301B00C00653 /* LaunchScreen.xib in Resources */,
+				88D1A70C2A40301B00C00653 /* Lato-Bold.ttf in Resources */,
+				88D1A70D2A40301B00C00653 /* Lato-Heavy.ttf in Resources */,
+				88D1A70E2A40301B00C00653 /* Lato-Italic.ttf in Resources */,
+				88D1A70F2A40301B00C00653 /* Lato-Medium.ttf in Resources */,
+				88D1A7102A40301B00C00653 /* Lato-Regular.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -797,53 +802,6 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Automaxima/Pods-Automaxima-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		5B499A852A2D9712000EE632 /* Start Packager */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Start Packager";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "export RCT_METRO_PORT=\"${RCT_METRO_PORT:=8081}\"\necho \"export RCT_METRO_PORT=${RCT_METRO_PORT}\" > \"${SRCROOT}/../node_modules/react-native/scripts/.packager.env\"\nif [ -z \"${RCT_NO_LAUNCH_PACKAGER+xxx}\" ] ; then\n  if nc -w 5 -z localhost ${RCT_METRO_PORT} ; then\n    if ! curl -s \"http://localhost:${RCT_METRO_PORT}/status\" | grep -q \"packager-status:running\" ; then\n      echo \"Port ${RCT_METRO_PORT} already in use, packager is either not running or not running correctly\"\n      exit 2\n    fi\n  else\n    open \"$SRCROOT/../node_modules/react-native/scripts/launchPackager.command\" || echo \"Can't start packager automatically\"\n  fi\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-		5B499A9D2A2D9712000EE632 /* Bundle React Native code and images */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Bundle React Native code and images";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "export SENTRY_PROPERTIES=sentry.properties\nexport NODE_BINARY=node\n../node_modules/@sentry/cli/bin/sentry-cli react-native xcode ../node_modules/react-native/scripts/react-native-xcode.sh\n";
-		};
-		5B499A9E2A2D9712000EE632 /* Upload Debug Symbols to Sentry */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Upload Debug Symbols to Sentry";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "export SENTRY_PROPERTIES=sentry.properties\n../node_modules/@sentry/cli/bin/sentry-cli upload-dsym\n";
-		};
 		88507A9D7788BBE4BC7380AE /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -864,6 +822,153 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		88D1A6FA2A40301B00C00653 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Automaxima-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		88D1A6FB2A40301B00C00653 /* Start Packager */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Start Packager";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "export RCT_METRO_PORT=\"${RCT_METRO_PORT:=8081}\"\necho \"export RCT_METRO_PORT=${RCT_METRO_PORT}\" > \"${SRCROOT}/../node_modules/react-native/scripts/.packager.env\"\nif [ -z \"${RCT_NO_LAUNCH_PACKAGER+xxx}\" ] ; then\n  if nc -w 5 -z localhost ${RCT_METRO_PORT} ; then\n    if ! curl -s \"http://localhost:${RCT_METRO_PORT}/status\" | grep -q \"packager-status:running\" ; then\n      echo \"Port ${RCT_METRO_PORT} already in use, packager is either not running or not running correctly\"\n      exit 2\n    fi\n  else\n    open \"$SRCROOT/../node_modules/react-native/scripts/launchPackager.command\" || echo \"Can't start packager automatically\"\n  fi\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		88D1A7112A40301B00C00653 /* Bundle React Native code and images */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Bundle React Native code and images";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "export SENTRY_PROPERTIES=sentry.properties\nexport NODE_BINARY=node\n../node_modules/@sentry/cli/bin/sentry-cli react-native xcode ../node_modules/react-native/scripts/react-native-xcode.sh\n";
+		};
+		88D1A7122A40301B00C00653 /* Upload Debug Symbols to Sentry */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Upload Debug Symbols to Sentry";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "export SENTRY_PROPERTIES=sentry.properties\n../node_modules/@sentry/cli/bin/sentry-cli upload-dsym\n";
+		};
+		88D1A7132A40301B00C00653 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Automaxima/Pods-Automaxima-resources.sh",
+				"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseMLVisionFaceModel/GoogleMVFaceDetectorResources.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseMLVisionTextModel/GoogleMVTextDetectorResources.bundle",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Entypo.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Feather.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/FontAwesome.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Brands.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Regular.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Solid.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Fontisto.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Foundation.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Octicons.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Zocial.ttf",
+				"${PODS_CONFIGURATION_BUILD_DIR}/React-Core/AccessibilityResources.bundle",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleMVFaceDetectorResources.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleMVTextDetectorResources.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AntDesign.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Entypo.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/EvilIcons.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Feather.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FontAwesome.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FontAwesome5_Brands.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FontAwesome5_Regular.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FontAwesome5_Solid.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Fontisto.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Foundation.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Ionicons.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MaterialCommunityIcons.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MaterialIcons.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Octicons.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/SimpleLineIcons.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Zocial.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AccessibilityResources.bundle",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Automaxima/Pods-Automaxima-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		88D1A7142A40301B00C00653 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Automaxima/Pods-Automaxima-frameworks.sh",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/OneSignalXCFramework/OneSignal.framework/OneSignal",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/OneSignalXCFramework/OneSignalCore/OneSignalCore.framework/OneSignalCore",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/OneSignalXCFramework/OneSignalExtension/OneSignalExtension.framework/OneSignalExtension",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/OneSignalXCFramework/OneSignalOutcomes/OneSignalOutcomes.framework/OneSignalOutcomes",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OneSignal.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OneSignalCore.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OneSignalExtension.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OneSignalOutcomes.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Automaxima/Pods-Automaxima-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		88D7E6EC2A1B198500F13E93 /* Start Packager */ = {
@@ -1137,12 +1242,12 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		5B499A862A2D9712000EE632 /* Sources */ = {
+		88D1A6FC2A40301B00C00653 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5B499A872A2D9712000EE632 /* AppDelegate.swift in Sources */,
-				5B499A882A2D9712000EE632 /* Automaxima.swift in Sources */,
+				88D1A6FD2A40301B00C00653 /* AppDelegate.swift in Sources */,
+				88D1A6FE2A40301B00C00653 /* Automaxima.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1246,77 +1351,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.edgeworks.automaxima-demo";
 				PRODUCT_NAME = Automaxima;
-				SWIFT_OBJC_BRIDGING_HEADER = "Automaxima-Bridging-Header.h";
-				SWIFT_VERSION = 5.0;
-				VERSIONING_SYSTEM = "apple-generic";
-			};
-			name = Release;
-		};
-		5B499AA22A2D9712000EE632 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = FareastfloraIcon;
-				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = Automaxima/Automaxima.entitlements;
-				CURRENT_PROJECT_VERSION = 3;
-				DEVELOPMENT_TEAM = YSZ34Z59CY;
-				ENABLE_BITCODE = NO;
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)",
-				);
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(SRCROOT)/..\node_modules\neact-native-device-brightnessRNDeviceBrightness",
-				);
-				INFOPLIST_FILE = "fareastflora-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.1.1;
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"-ObjC",
-					"-lc++",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.edgeworks.fareastflora-demo";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "Automaxima-Bridging-Header.h";
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 5.0;
-				VERSIONING_SYSTEM = "apple-generic";
-			};
-			name = Debug;
-		};
-		5B499AA32A2D9712000EE632 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = FareastfloraIcon;
-				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = Automaxima/Automaxima.entitlements;
-				CURRENT_PROJECT_VERSION = 3;
-				DEVELOPMENT_TEAM = YSZ34Z59CY;
-				ENABLE_BITCODE = NO;
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)",
-				);
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(SRCROOT)/..\node_modules\neact-native-device-brightnessRNDeviceBrightness",
-				);
-				INFOPLIST_FILE = "fareastflora-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.1.1;
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"-ObjC",
-					"-lc++",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.edgeworks.fareastflora-demo";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_COMPILATION_MODE = singlefile;
 				SWIFT_OBJC_BRIDGING_HEADER = "Automaxima-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -1426,6 +1461,80 @@
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		88D1A7162A40301B00C00653 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = DF794E79A4AFF2E4E9548AD8 /* Pods-Automaxima.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = FareastfloraIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Automaxima/Automaxima.entitlements;
+				CURRENT_PROJECT_VERSION = 68;
+				DEVELOPMENT_TEAM = YSZ34Z59CY;
+				ENABLE_BITCODE = NO;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/..\node_modules\neact-native-device-brightnessRNDeviceBrightness",
+				);
+				INFOPLIST_FILE = "fareastflora-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 1.1.31;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-lc++",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.edgeworks.fareastflora-demo";
+				PRODUCT_NAME = fareastfloranew;
+				SWIFT_OBJC_BRIDGING_HEADER = "Automaxima-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Debug;
+		};
+		88D1A7172A40301B00C00653 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 053418F312FAC69C9F5D7A5B /* Pods-Automaxima.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = FareastfloraIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Automaxima/Automaxima.entitlements;
+				CURRENT_PROJECT_VERSION = 68;
+				DEVELOPMENT_TEAM = YSZ34Z59CY;
+				ENABLE_BITCODE = NO;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/..\node_modules\neact-native-device-brightnessRNDeviceBrightness",
+				);
+				INFOPLIST_FILE = "fareastflora-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 1.1.31;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-lc++",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.edgeworks.fareastflora-demo";
+				PRODUCT_NAME = fareastfloranew;
+				SWIFT_COMPILATION_MODE = singlefile;
+				SWIFT_OBJC_BRIDGING_HEADER = "Automaxima-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
 		};
@@ -1587,20 +1696,20 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		5B499AA12A2D9712000EE632 /* Build configuration list for PBXNativeTarget "fareastflora" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				5B499AA22A2D9712000EE632 /* Debug */,
-				5B499AA32A2D9712000EE632 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "Automaxima" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				83CBBA201A601CBA00E9B192 /* Debug */,
 				83CBBA211A601CBA00E9B192 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		88D1A7152A40301B00C00653 /* Build configuration list for PBXNativeTarget "fareastfloranew" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				88D1A7162A40301B00C00653 /* Debug */,
+				88D1A7172A40301B00C00653 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

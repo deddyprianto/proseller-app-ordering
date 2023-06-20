@@ -7,7 +7,7 @@ force: true
 
 const appConfig = {
   // info company
-  appName: 'U Stars Supermarket',
+  appName: '<%= name.toLowerCase() %>',
   appMataUang: 'SGD',
   appVersion: 'Version 1.1',
 
@@ -49,9 +49,11 @@ const appConfig = {
   imageOnBoarding1: require('../../native/<%= name.toLowerCase() %>/assets/img/image-on-boarding-1.png'),
   imageOnBoarding2: require('../../native/<%= name.toLowerCase() %>/assets/img/image-on-boarding-2.png'),
   imageOnBoarding3: require('../../native/<%= name.toLowerCase() %>/assets/img/image-on-boarding-3.png'),
+  <% if (name.toLowerCase() === "fareastflora") { %>
+  imageOnBoarding4: require('../../native/<%= name.toLowerCase() %>/assets/img/image-on-boarding-4.png'),
+  <% } %>
   imagePointSmallBackground: require('../../native/<%= name.toLowerCase() %>/assets/img/image-point-small-background.png'),
   imagePointLargeBackground: require('../../native/<%= name.toLowerCase() %>/assets/img/image-point-large-background.png'),
-
   //LOGO MARTIN
   // logoMerchant: require('../assets/img/logo.png'),
   // logoMerchantWithBackground: require('../assets/img/logo-merchant-with-background.png'),
