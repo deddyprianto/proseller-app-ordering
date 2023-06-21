@@ -24,6 +24,11 @@ import {dataInbox, readMessage} from '../actions/inbox.action';
 import DetailInbox from '../components/inbox/DetailInbox';
 import {isEmptyArray} from '../helper/CheckEmpty';
 import {Actions} from 'react-native-router-flux';
+import {calculateDateTime} from '../helper/TimeUtils';
+import moment from 'moment';
+import Theme from '../theme/Theme';
+import withHooksComponent from '../components/HOC';
+import ListInbox from '../components/inbox/ListInbox';
 
 class Inbox extends Component {
   constructor(props) {
@@ -96,44 +101,12 @@ class Inbox extends Component {
 
   templateInbox = (item, index) => {
     return (
-      <TouchableOpacity
-        style={styles.item}
-        onPress={() => this.openDetailMessage(item, index)}>
-        <View style={styles.sejajarSpace}>
-          <View style={styles.imageDetail}>{this.isRead(item)}</View>
-          <View style={styles.detail}>
-            <Text style={styles.storeName}>
-              {item.title}{' '}
-              {item.isRead != true ? (
-                <View
-                  style={{
-                    width: 8,
-                    height: 8,
-                    borderRadius: 50,
-                    backgroundColor: 'red',
-                  }}
-                />
-              ) : null}
-            </Text>
-            <View
-              style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-              <Text style={styles.paymentType}>
-                {item.message.substr(0, 10)}...
-              </Text>
-              {item.sendOn != undefined ? (
-                <Text
-                  style={[
-                    styles.paymentType,
-                    {marginRight: -35, fontSize: 10},
-                  ]}>
-                  {format(new Date(item.sendOn), 'dd/MM/yyyy HH:mm')}
-                </Text>
-              ) : null}
-            </View>
-          </View>
-          <View style={styles.btnDetail} />
-        </View>
-      </TouchableOpacity>
+      <ListInbox
+        item={item}
+        index={index}
+        openDetailMessage={() => this.openDetailMessage(item, index)}
+        isRead={this.isRead(item)}
+      />
     );
   };
 
@@ -250,24 +223,11 @@ class Inbox extends Component {
           style={{
             backgroundColor: colorConfig.pageIndex.backgroundColor,
           }}>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'center',
-              alignItems: 'center',
-              // paddingLeft: 25,
-              backgroundColor: colorConfig.store.defaultColor,
-            }}>
-            {/* <TouchableOpacity
-              onPress={() => Actions.pop()}
-              style={{alignItems: 'flex-start'}}>
-              <Icon
-                size={Platform.OS === 'ios' ? 35 : 26}
-                name={Platform.OS === 'ios' ? 'ios-close' : 'md-close'}
-                style={{color: 'white'}}
-              />
-            </TouchableOpacity> */}
-            <Text style={styles.navbarTitle}>Inbox</Text>
+          <View style={[styles.containerNavbar, styles.shadowBox]}>
+            <Text
+              style={[styles.navbarTitle, {color: this.props.colors.primary}]}>
+              Inbox
+            </Text>
           </View>
         </View>
 
@@ -284,102 +244,40 @@ class Inbox extends Component {
 }
 
 const styles = StyleSheet.create({
-  component: {
-    marginTop: 10,
+  containerNavbar: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'white',
+  },
+  shadowBox: {
+    shadowColor: 'black',
+    shadowOffset: {width: -2, height: 4},
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 1,
   },
   navbarTitle: {
     fontSize: 18,
     padding: 13,
     color: 'white',
-    // textAlign: 'center',
     fontWeight: 'bold',
-    // marginLeft: '32%',
-  },
-  emptyNotice: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  empty: {
-    marginTop: 100,
-    fontSize: 22,
-    color: colorConfig.pageIndex.grayColor,
-    fontStyle: 'italic',
-    fontFamily: 'Poppins-Regular',
-    textAlign: 'center',
-  },
-  item: {
-    marginLeft: 5,
-    marginRight: 5,
-    marginBottom: 2,
-    marginVertical: 8,
-    padding: 10,
-    borderRadius: 5,
-    backgroundColor: colorConfig.pageIndex.backgroundColor,
-    shadowColor: '#00000021',
-    shadowOffset: {
-      width: 0,
-      height: 9,
-    },
-    shadowOpacity: 0.7,
-    shadowRadius: 7.49,
-    elevation: 12,
-  },
-  sejajarSpace: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  detail: {
-    paddingTop: 5,
-    paddingRight: 5,
-    paddingBottom: 5,
-    width: Dimensions.get('window').width - 120,
-  },
-  storeName: {
-    color: colorConfig.store.title,
-    fontSize: 15,
-    fontFamily: 'Poppins-Medium',
-  },
-  paymentTgl: {
-    color: colorConfig.pageIndex.inactiveTintColor,
-  },
-  paymentTypeLogo: {
-    width: 20,
-    height: 15,
-    marginTop: 2,
-  },
-  paymentType: {
-    color: colorConfig.pageIndex.grayColor,
-    fontSize: 12,
-  },
-  itemType: {
-    color: colorConfig.pageIndex.inactiveTintColor,
-    fontSize: 12,
-    fontStyle: 'italic',
-  },
-  btnDetail: {
-    alignItems: 'center',
-    width: 40,
-    paddingTop: 15,
-  },
-  imageDetail: {
-    alignItems: 'center',
-    width: 60,
-    paddingTop: 5,
   },
 });
 
-mapStateToProps = state => ({
+const mapStateToProps = state => ({
   dataInbox: state.inboxReducer.dataInbox.broadcast,
 });
 
-mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = dispatch => ({
   dispatch,
 });
 
-export default compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
-)(Inbox);
+export default withHooksComponent(
+  compose(
+    connect(
+      mapStateToProps,
+      mapDispatchToProps,
+    ),
+  )(Inbox),
+);
