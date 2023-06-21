@@ -1,162 +1,188 @@
-import React, {useState} from 'react';
-import moment from 'moment';
+import React, {useEffect, useState} from 'react';
 
 import {
   StyleSheet,
   View,
   Text,
-  TouchableOpacity,
   Image,
+  TouchableOpacity,
   Alert,
+  ImageBackground,
 } from 'react-native';
+
 import CryptoJS from 'react-native-crypto-js';
 
 import IconFontAwesome from 'react-native-vector-icons/FontAwesome';
-import IconAntDesign from 'react-native-vector-icons/AntDesign';
-import Theme from '../../../theme';
-import appConfig from '../../../config/appConfig';
 import {Actions} from 'react-native-router-flux';
 import {useDispatch, useSelector} from 'react-redux';
 import {
-  changeOrderingMode,
-  getBasket,
-  removeBasket,
-} from '../../../actions/order.action';
-import {updateUser} from '../../../actions/user.action';
-import {getOutletById} from '../../../actions/stores.action';
+  getOutletById,
+  setFavoriteOutlet,
+  unsetFavoriteOutlet,
+} from '../../../actions/stores.action';
+import Theme from '../../../theme';
+import appConfig from '../../../config/appConfig';
 import awsConfig from '../../../config/awsConfig';
+import {changeOrderingMode, removeBasket} from '../../../actions/order.action';
+import {getBasket} from '../../../actions/product.action';
+import {updateUser} from '../../../actions/user.action';
 import LoadingScreen from '../../loadingScreen';
+import {getDistance} from 'geolib';
 
 const useStyles = () => {
   const theme = Theme();
   const styles = StyleSheet.create({
-    divider: {
-      backgroundColor: '#D6D6D6',
-      height: 1,
-      width: '100%',
+    root: {
+      marginTop: 10,
+      marginBottom: 10,
+      width: '48%',
+      shadowOffset: {
+        width: 0.2,
+        height: 0.2,
+      },
+      height: 240,
+      shadowOpacity: 0.2,
+      shadowColor: theme.colors.greyScale2,
+      elevation: 2,
+      borderRadius: 8,
+      backgroundColor: theme.colors.background,
+    },
+    body: {
+      flex: 1,
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'space-between',
+      padding: 8,
+    },
+    bodyTop: {
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    bodyBottom: {
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
     },
     iconStar: {
-      fontSize: 24,
+      fontSize: 16,
       color: 'red',
-      marginRight: 8,
     },
-    iconWarning: {
-      fontSize: 24,
+    viewStar: {
+      backgroundColor: 'white',
+      width: 30,
+      height: 30,
+      borderRadius: 15,
+      justifyContent: 'center',
+      alignItems: 'center',
+      position: 'absolute',
+      top: 9,
+      right: 7,
     },
-    margin10: {
-      marginTop: 10,
+    viewOpen: {
+      paddingTop: 4,
+      backgroundColor: theme.colors.semanticSuccess,
+      paddingHorizontal: 14,
+      paddingVertical: 2,
+      borderRadius: 100,
+      marginRight: 4,
     },
-    textDay: {
-      fontWeight: 'bold',
-      width: '30%',
+    viewClose: {
+      paddingTop: 4,
+      backgroundColor: theme.colors.semanticError,
+      paddingHorizontal: 14,
+      paddingVertical: 2,
+      borderRadius: 100,
+      marginRight: 4,
     },
-    textButtonOrder: {
-      textAlign: 'center',
-      color: theme.colors.textQuaternary,
+    viewImage: {
+      width: '100%',
+      height: 113,
+      borderTopRightRadius: 8,
+      borderTopLeftRadius: 8,
+    },
+    viewTransparentImage: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderTopRightRadius: 8,
+      borderTopLeftRadius: 8,
+      backgroundColor: theme.colors.backgroundTransparent1,
+    },
+    textNameAvailable: {
+      color: theme.colors.textPrimary,
       fontSize: theme.fontSize[14],
-      fontFamily: theme.fontFamily.poppinsMedium,
+      fontFamily: theme.fontFamily.poppinsSemiBold,
     },
-    textButtonOrderDisabled: {
-      textAlign: 'center',
+    textNameUnavailable: {
       color: theme.colors.textTertiary,
       fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsSemiBold,
+    },
+    textStatus: {
+      color: theme.colors.textSecondary,
+      fontSize: theme.fontSize[10],
+      fontFamily: theme.fontFamily.poppinsRegular,
+    },
+    textDistance: {
+      flex: 1,
+      textAlign: 'right',
+      color: theme.colors.textTertiary,
+      fontSize: theme.fontSize[10],
+      fontFamily: theme.fontFamily.poppinsRegular,
+    },
+    textBodyBottom: {
+      color: theme.colors.textQuaternary,
+      fontSize: theme.fontSize[12],
       fontFamily: theme.fontFamily.poppinsMedium,
     },
-    viewDescription: {
-      flex: 1,
-      display: 'flex',
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      paddingHorizontal: 16,
-      paddingVertical: 12,
-      backgroundColor: 'white',
+    iconBodyBottom: {
+      height: 16,
+      width: 8,
+      marginLeft: 14,
+      tintColor: theme.colors.textQuaternary,
     },
-    viewDescriptionSelected: {
-      flex: 1,
-      display: 'flex',
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      paddingHorizontal: 16,
-      paddingVertical: 12,
-      backgroundColor: '#F9F9F9',
-    },
-    viewStarAndName: {
-      display: 'flex',
-      flexDirection: 'row',
-      alignItems: 'center',
-    },
-    viewDescriptionDetail: {
-      paddingHorizontal: 20,
-      paddingVertical: 16,
-    },
-    viewOperationalHours: {
-      display: 'flex',
-      flexDirection: 'row',
-      alignItems: 'center',
-    },
-    viewOrder: {
-      flex: 1,
-      display: 'flex',
-      flexDirection: 'row',
-      justifyContent: 'center',
-      borderRadius: 8,
-      borderWidth: 1,
-      borderColor: theme.colors.buttonActive,
-      padding: 8,
-      marginTop: 16,
-    },
-    viewOrderDisabled: {
-      flex: 1,
-      display: 'flex',
-      flexDirection: 'row',
-      justifyContent: 'center',
-      borderRadius: 8,
-      borderWidth: 1,
-      borderColor: theme.colors.buttonDisabled,
-      padding: 8,
-      marginTop: 16,
-    },
-    iconBox: {
-      height: 18,
-      width: 18,
-      marginRight: 8,
-      tintColor: theme.colors.buttonActive,
-    },
-    iconBoxDisabled: {
-      height: 18,
-      width: 18,
-      marginRight: 8,
-      tintColor: theme.colors.buttonDisabled,
+    image: {
+      borderTopRightRadius: 8,
+      borderTopLeftRadius: 8,
     },
   });
-
   return styles;
 };
 
-const MyFavoriteOutletItemList = ({outlet}) => {
-  const dispatch = useDispatch();
+const MyFavoriteOutletListItem = ({item}) => {
   const styles = useStyles();
-  const [selected, setSelected] = useState(false);
+  const dispatch = useDispatch();
+  const [distance, setDistance] = useState('');
+  const [isFavorite, setIsFavorite] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
 
-  const basket = useSelector(state => state.orderReducer?.dataBasket?.product);
   const userDetail = useSelector(
     state => state.userReducer?.getUser?.userDetails,
   );
 
-  const enableOrdering = useSelector(
-    state => state.settingReducer.enableOrderingSettings.enableOrdering,
+  const userPosition = useSelector(
+    state => state.userReducer?.userPosition.userPosition,
   );
 
-  const handleSelect = () => {
-    if (selected) {
-      setSelected(false);
-    } else {
-      setSelected(true);
-    }
-  };
+  const basket = useSelector(state => state.orderReducer?.dataBasket?.product);
+
+  let isAvailable = item.orderingStatus !== 'UNAVAILABLE';
+
+  useEffect(() => {
+    const userCoordinate = userPosition.coords;
+    const userPositionLat = userCoordinate.latitude;
+    const userPositionLngt = userCoordinate.longitude;
+    const result = getDistance(
+      {latitude: userPositionLat, longitude: userPositionLngt},
+      {latitude: item.latitude, longitude: item.longitude},
+    );
+
+    const distanceString =
+      result < 1 ? result * 1000 + ' m' : Math.round(result * 10) / 10 + ' km';
+    setDistance(distanceString);
+  }, [userPosition, item]);
 
   const handleGetStoreById = async item => {
     await dispatch(getOutletById(item.id));
@@ -203,130 +229,168 @@ const MyFavoriteOutletItemList = ({outlet}) => {
   };
 
   const handleClickOutlet = item => {
-    if (basket && basket.outlet.id !== item.storeId) {
+    if (basket && basket.outlet.id !== item?.id) {
       return showAlertBasketNotEmpty(item);
     } else {
       return handleGetStoreById(item);
     }
   };
 
-  const renderTextName = () => {
-    return <Text>{outlet?.name}</Text>;
+  useEffect(() => {
+    setIsFavorite(item.isFavorite);
+  }, [item]);
+
+  const handleSetFavoriteOutlet = async () => {
+    setIsLoading(true);
+    await dispatch(setFavoriteOutlet({outletId: item?.id}));
+    setIsLoading(false);
   };
 
-  const renderStar = () => {
-    return <IconFontAwesome name="star" style={styles.iconStar} />;
+  const handleUnsetFavoriteOutlet = async () => {
+    setIsLoading(true);
+    await dispatch(unsetFavoriteOutlet({outletId: item?.id}));
+    setIsLoading(false);
   };
 
-  const renderStarAndName = () => {
-    return (
-      <View style={styles.viewStarAndName}>
-        {renderStar()}
-        {renderTextName()}
-      </View>
-    );
-  };
-
-  const renderWarning = () => {
-    return (
-      <IconAntDesign name="exclamationcircleo" style={styles.iconWarning} />
-    );
-  };
-
-  const renderOutletItem = () => {
-    const style = selected
-      ? styles.viewDescriptionSelected
-      : styles.viewDescription;
-
-    return (
-      <TouchableOpacity
-        style={style}
-        onPress={() => {
-          handleSelect();
-        }}>
-        {renderStarAndName()}
-        {renderWarning()}
-      </TouchableOpacity>
-    );
-  };
-
-  const renderTextAddress = () => {
-    return <Text>{outlet?.address}</Text>;
-  };
-
-  const handleTimeFormatter = value => {
-    const result = moment(value, 'hh:mm').format('hh:mm a');
-    return result;
-  };
-
-  const renderOperationalHourItem = value => {
-    const timeActive = value?.active;
-    const timeOpen = handleTimeFormatter(value?.open);
-    const timeClose = handleTimeFormatter(value?.close);
-
-    const textTime = timeActive ? `: ${timeOpen} - ${timeClose}` : 'Close';
-
-    return (
-      <View style={styles.viewOperationalHours}>
-        <Text style={styles.textDay}>{value?.nameOfDay}</Text>
-        <Text>{textTime}</Text>
-      </View>
-    );
-  };
-
-  const renderOperationalHours = () => {
-    const result = outlet?.operationalHours?.map(value => {
-      return renderOperationalHourItem(value);
-    });
-    return result;
-  };
-
-  const renderButtonOrder = () => {
-    const isDisabled = !enableOrdering;
-    const styleView = isDisabled ? styles.viewOrderDisabled : styles.viewOrder;
-    const styleIcon = isDisabled ? styles.iconBoxDisabled : styles.iconBox;
-    const styleText = isDisabled
-      ? styles.textButtonOrderDisabled
-      : styles.textButtonOrder;
-    return (
-      <TouchableOpacity
-        disabled={isDisabled}
-        style={styleView}
-        onPress={() => {
-          handleClickOutlet(outlet);
-        }}>
-        <Text style={styleText} numberOfLines={1}>
-          <Image style={styleIcon} source={appConfig.iconBox} /> Order from{' '}
-          {outlet?.name}
-        </Text>
-      </TouchableOpacity>
-    );
-  };
-
-  const renderOutletItemDetail = () => {
-    if (selected) {
-      return (
-        <>
-          <View style={styles.viewDescriptionDetail}>
-            {renderTextAddress()}
-            <View style={styles.margin10} />
-            {renderOperationalHours()}
-            {renderButtonOrder()}
-          </View>
-          <View style={styles.divider} />
-        </>
-      );
+  const handleStarClicked = () => {
+    if (isFavorite) {
+      handleUnsetFavoriteOutlet();
+      setIsFavorite(false);
+    } else {
+      handleSetFavoriteOutlet();
+      setIsFavorite(true);
     }
   };
 
+  const renderStar = () => {
+    const star = isFavorite ? 'star' : 'star-o';
+
+    return (
+      <View style={styles.viewStar}>
+        <TouchableOpacity
+          onPress={() => {
+            handleStarClicked();
+          }}>
+          <IconFontAwesome name={star} style={styles.iconStar} />
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
+  const renderImageAvailable = image => {
+    return (
+      <ImageBackground
+        style={styles.viewImage}
+        imageStyle={styles.image}
+        source={{uri: image}}
+      />
+    );
+  };
+
+  const renderImageUnavailable = image => {
+    return (
+      <ImageBackground
+        style={styles.viewImage}
+        imageStyle={styles.image}
+        source={{uri: image}}>
+        <View style={styles.viewTransparentImage} />
+      </ImageBackground>
+    );
+  };
+
+  const renderImage = () => {
+    const image = item?.defaultImageURL;
+
+    if (isAvailable) {
+      return renderImageAvailable(image);
+    } else {
+      return renderImageUnavailable(image);
+    }
+  };
+
+  const renderHeader = () => {
+    return (
+      <View>
+        {renderImage()}
+        {renderStar()}
+      </View>
+    );
+  };
+  const renderStatus = () => {
+    const textAvailable = isAvailable ? 'OPEN' : 'CLOSED';
+    const styleView = isAvailable ? styles.viewOpen : styles.viewClose;
+    return (
+      <View style={styleView}>
+        <Text style={styles.textStatus}>{textAvailable}</Text>
+      </View>
+    );
+  };
+
+  const renderDistance = () => {
+    return (
+      <Text style={styles.textDistance} numberOfLines={1}>
+        {distance} away
+      </Text>
+    );
+  };
+
+  const renderBodyTop = () => {
+    return (
+      <View style={styles.bodyTop}>
+        {renderStatus()}
+        {renderDistance()}
+      </View>
+    );
+  };
+  const renderBodyMiddle = () => {
+    const styleText = isAvailable
+      ? styles.textNameAvailable
+      : styles.textNameUnavailable;
+    return (
+      <Text style={styleText} numberOfLines={3}>
+        {item?.name}
+      </Text>
+    );
+  };
+  const renderBodyBottom = () => {
+    return (
+      <TouchableOpacity
+        onPress={() => {
+          Actions.favoriteOutletDetail({outlet: item});
+        }}
+        style={styles.bodyBottom}>
+        <Text style={styles.textBodyBottom}>Outlet Detail</Text>
+        <Image
+          style={styles.iconBodyBottom}
+          source={appConfig.iconArrowRight}
+        />
+      </TouchableOpacity>
+    );
+  };
+  const renderBody = () => {
+    return (
+      <View style={styles.body}>
+        <View>
+          {renderBodyTop()}
+          {renderBodyMiddle()}
+        </View>
+        {renderBodyBottom()}
+      </View>
+    );
+  };
+
   return (
-    <View style={{width: '100%'}}>
+    <TouchableOpacity
+      onPress={() => {
+        handleClickOutlet(item);
+      }}
+      style={styles.root}
+      disabled={!isAvailable}>
       <LoadingScreen loading={isLoading} />
-      {renderOutletItem()}
-      <View style={styles.divider} />
-      {renderOutletItemDetail()}
-    </View>
+      {renderHeader()}
+      {renderBody()}
+    </TouchableOpacity>
   );
 };
 
-export default MyFavoriteOutletItemList;
+export default MyFavoriteOutletListItem;
