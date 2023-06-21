@@ -19,6 +19,7 @@ import HistoryMenuTab from '../components/history/HistoryMenuTab';
 import {getAccountPayment} from '../actions/payment.actions';
 import OneSignal from 'react-native-onesignal';
 import {getBasket, getPendingCart} from '../actions/order.action';
+import appConfig from '../config/appConfig';
 
 class History extends Component {
   constructor(props) {
@@ -73,7 +74,10 @@ class History extends Component {
         {this.state.isLoading && <Loader />}
         <View style={{backgroundColor: colorConfig.store.defaultColor}}>
           <View style={{flexDirection: 'row', justifyContent: 'center'}}>
-            <Text style={styles.btnBackText}> History</Text>
+            <Text style={styles.btnBackText}>
+              {' '}
+              {appConfig.appName === 'fareastflora' ? 'Orders' : 'History'}{' '}
+            </Text>
           </View>
           {/*<View style={styles.line} />*/}
         </View>
