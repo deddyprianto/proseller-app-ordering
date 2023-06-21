@@ -220,7 +220,9 @@ const NewPageIndex = () => {
         }}>
         <Image source={handleImage(name)} style={imageStyle} />
         <Text numberOfLines={1} style={textStyle}>
-          {name}
+          {appConfig.appName === 'fareastflora' && name === 'History'
+            ? 'Orders'
+            : name}
         </Text>
       </TouchableOpacity>
     );
