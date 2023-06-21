@@ -3,30 +3,21 @@ import {
   View,
   Text,
   StyleSheet,
-  Dimensions,
   ScrollView,
   RefreshControl,
-  TouchableOpacity,
   Image,
-  Platform,
   FlatList,
   SafeAreaView,
   ActivityIndicator,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
-import Icon from 'react-native-vector-icons/Ionicons';
-import {format} from 'date-fns';
-
+import {Actions} from 'react-native-router-flux';
 import colorConfig from '../config/colorConfig';
 import appConfig from '../config/appConfig';
 import {dataInbox, readMessage} from '../actions/inbox.action';
 import DetailInbox from '../components/inbox/DetailInbox';
 import {isEmptyArray} from '../helper/CheckEmpty';
-import {Actions} from 'react-native-router-flux';
-import {calculateDateTime} from '../helper/TimeUtils';
-import moment from 'moment';
-import Theme from '../theme/Theme';
 import withHooksComponent from '../components/HOC';
 import ListInbox from '../components/inbox/ListInbox';
 
@@ -52,7 +43,7 @@ class Inbox extends Component {
     } catch (e) {}
   };
 
-  componentWillUnmount(): void {
+  componentWillUnmount() {
     try {
       this.componentInboxFocused.remove();
     } catch (e) {}
@@ -73,30 +64,10 @@ class Inbox extends Component {
   };
 
   openDetailMessage = (inbox, index) => {
-    this.detailInbox.current.openDetail(inbox);
+    Actions.inboxDetailMessage({data: inbox});
     setTimeout(() => {
       this.readMessage(inbox, index);
     }, 50);
-  };
-
-  isRead = item => {
-    if (item.isRead == true) {
-      return (
-        <Icon
-          size={35}
-          style={{color: colorConfig.pageIndex.grayColor}}
-          name={Platform.OS === 'ios' ? 'ios-mail-open' : 'md-mail-open'}
-        />
-      );
-    } else {
-      return (
-        <Icon
-          size={35}
-          style={{color: colorConfig.store.defaultColor}}
-          name={Platform.OS === 'ios' ? 'ios-mail' : 'md-mail'}
-        />
-      );
-    }
   };
 
   templateInbox = (item, index) => {
@@ -105,7 +76,6 @@ class Inbox extends Component {
         item={item}
         index={index}
         openDetailMessage={() => this.openDetailMessage(item, index)}
-        isRead={this.isRead(item)}
       />
     );
   };

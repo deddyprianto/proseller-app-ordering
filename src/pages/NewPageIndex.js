@@ -155,7 +155,7 @@ const NewPageIndex = () => {
     Home: Home,
     Inbox: Inbox,
     Scan: ScannerBarcode,
-    History: History,
+    Orders: History,
     Profile: Profile,
   };
 
@@ -187,7 +187,7 @@ const NewPageIndex = () => {
         return appConfig.iconHome;
       case 'Inbox':
         return appConfig.iconEmail;
-      case 'History':
+      case 'Orders':
         return appConfig.iconHistory;
       case 'Rewards':
         return appConfig.iconReward;
@@ -220,9 +220,7 @@ const NewPageIndex = () => {
         }}>
         <Image source={handleImage(name)} style={imageStyle} />
         <Text numberOfLines={1} style={textStyle}>
-          {appConfig.appName === 'fareastflora' && name === 'History'
-            ? 'Orders'
-            : name}
+          {name}
         </Text>
       </TouchableOpacity>
     );
