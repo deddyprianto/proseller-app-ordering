@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
     marginRight: 16,
   },
   leftRewardContainer: {
-    width: '20%',
+    width: '18%',
     height: '100%',
     borderTopLeftRadius: 4,
     borderBottomLeftRadius: 4,
@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   rightRewardContainer: {
-    width: '80%',
+    width: '82%',
   },
   flex: {
     flex: 1,

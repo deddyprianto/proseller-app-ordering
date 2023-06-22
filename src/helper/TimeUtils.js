@@ -1,10 +1,21 @@
 import moment from 'moment';
 
 export const calculateDateTime = time => {
-  const now = moment();
-  const utc = now;
-  const date = moment.utc(time);
-  const days = utc.diff(date, 'days');
+  const utcZero = {
+    hour: 0,
+    minute: 0,
+    second: 0,
+    millisecond: 0,
+  };
+  const currentTime = moment(time)
+    .utcOffset(0)
+    .set(utcZero);
+  const nowDate = moment(new Date())
+    .utcOffset(0)
+    .set(utcZero);
+  const now = moment(nowDate).utc();
+  const date = moment(currentTime).utc();
+  const days = now.diff(date, 'day');
   const messageYear = moment(date).format('yyyy');
   const currentYear = moment().format('yyyy');
   if (days < 0) {
