@@ -31,6 +31,8 @@ import {getColorSettings} from '../actions/setting.action';
 import Theme from '../theme';
 import {HistoryNotificationModal} from '../components/modal';
 import awsConfig from '../config/awsConfig';
+import {dataInbox} from '../actions/inbox.action';
+import MessageCounter from '../components/MessageCounter';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -134,12 +136,10 @@ const useStyles = () => {
 const NewPageIndex = () => {
   const dispatch = useDispatch();
   const styles = useStyles();
-
   const [isOpenNotification, setIsOpenNotification] = useState(false);
   const [notification, setNotification] = useState({});
 
   const isLoggedIn = useSelector(state => state.authReducer.authData.token);
-
   const defaultOutlet = useSelector(
     state => state.storesReducer?.defaultOutlet?.defaultOutlet,
   );
@@ -149,6 +149,7 @@ const NewPageIndex = () => {
       await dispatch(getColorSettings());
     };
     loadData();
+    dispatch(dataInbox(0, 100));
   }, [dispatch]);
 
   const dataRetailScreens = {
@@ -222,6 +223,7 @@ const NewPageIndex = () => {
         <Text numberOfLines={1} style={textStyle}>
           {name}
         </Text>
+        {name === 'Inbox' ? <MessageCounter /> : null}
       </TouchableOpacity>
     );
   };
