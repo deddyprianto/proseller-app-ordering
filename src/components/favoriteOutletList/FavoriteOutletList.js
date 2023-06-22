@@ -5,22 +5,36 @@ import {StyleSheet, ScrollView, View} from 'react-native';
 
 import FavoriteOutletListItem from './components/FavoriteOutletListItem';
 
-const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-  },
-  container: {
-    borderRadius: 10,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-  },
-});
+import Theme from '../../theme';
 
-const FavoriteOutletList = () => {
+const useStyles = () => {
+  const theme = Theme();
+  const styles = StyleSheet.create({
+    root: {
+      flex: 1,
+    },
+    container: {
+      borderRadius: 10,
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      justifyContent: 'space-between',
+      paddingHorizontal: 16,
+    },
+    text: {
+      margin: 16,
+      color: theme.colors.textPrimary,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsSemiBold,
+    },
+  });
+  return styles;
+};
+
+const FavoriteOutletList = ({outlets}) => {
+  const styles = useStyles();
+
   const [list, setList] = useState([]);
-  const outlets = useSelector(state => state.storesReducer.dataStores.stores);
+
   const myFavoriteOutlets = useSelector(
     state => state.storesReducer.favoriteOutlet.outlet,
   );
