@@ -107,7 +107,6 @@ const useStyles = () => {
       elevation: 5,
       flex: 1,
       display: 'flex',
-      alignItems: 'center',
       justifyContent: 'center',
       borderRadius: 36,
       marginLeft: 8,
@@ -211,7 +210,7 @@ const Menu = () => {
         onPress={() => {
           Actions.push('orderHere');
         }}>
-        <Text style={styles.textOrderHere1}>Want to place an order?</Text>
+        <Text style={styles.textOrderHere1}>Order now?</Text>
         <Text style={styles.textOrderHere2}>CLICK HERE</Text>
       </TouchableOpacity>
     );

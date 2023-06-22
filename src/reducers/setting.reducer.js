@@ -80,11 +80,24 @@ const allowedOrder = (state = {}, action) => {
   }
 };
 
+const enableOrderingSettings = (state = {}, action) => {
+  switch (action.type) {
+    case 'SET_ENABLE_ORDERING':
+      return {
+        ...action.data,
+      };
+
+    default:
+      return state;
+  }
+};
+
 export default combineReducers({
   snackbar,
   imageSettings,
   colorSettings,
   loginSettings,
   faqsSettings,
+  enableOrderingSettings,
   allowedOrder,
 });

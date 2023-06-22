@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 16,
+    paddingTop: 16,
   },
   viewMap: {
     alignItems: 'center',

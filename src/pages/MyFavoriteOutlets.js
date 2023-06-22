@@ -3,59 +3,57 @@ import {useDispatch} from 'react-redux';
 
 import {
   StyleSheet,
-  ScrollView,
+  SafeAreaView,
   View,
   Text,
-  Image,
   TouchableOpacity,
-  SafeAreaView,
 } from 'react-native';
-
-import {Actions} from 'react-native-router-flux';
-import colorConfig from '../config/colorConfig';
+import {getFavoriteOutlet, dataStores} from '../actions/stores.action';
 
 import MyFavoriteOutletList from '../components/myFavoriteOutletList';
-import Header from '../components/layout/header';
 
-import {getFavoriteOutlet, dataStores} from '../actions/stores.action';
-import appConfig from '../config/appConfig';
+import {Header} from '../components/layout';
+import Theme from '../theme';
+import {Actions} from 'react-native-router-flux';
 
-const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-  },
-  viewImage: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 38,
-    paddingVertical: 12,
-  },
-  viewAllButton: {
-    position: 'absolute',
-    bottom: 20,
-    width: '100%',
-    alignItems: 'center',
-  },
-  image: {
-    height: 235,
-    width: 340,
-  },
-  textSeeAll: {
-    color: 'white',
-    fontSize: 12,
-  },
-  touchableSeeAll: {
-    height: 34,
-    width: 130,
-    backgroundColor: colorConfig.primaryColor,
-    borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});
+const useStyles = () => {
+  const theme = Theme();
+  const styles = StyleSheet.create({
+    root: {
+      flex: 1,
+      backgroundColor: 'white',
+    },
+    bottom: {
+      shadowOffset: {
+        width: 0.2,
+        height: 0.2,
+      },
+      shadowOpacity: 0.2,
+      shadowColor: theme.colors.greyScale2,
+      elevation: 2,
+      width: '100%',
+      padding: 16,
+      backgroundColor: theme.colors.background,
+    },
+    viewButton: {
+      borderRadius: 8,
+      padding: 8,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: theme.colors.buttonActive,
+    },
+    textButton: {
+      color: theme.colors.textSecondary,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+  });
+  return styles;
+};
 
 const MyFavoriteOutlets = () => {
+  const styles = useStyles();
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -66,33 +64,19 @@ const MyFavoriteOutlets = () => {
     loadData();
   }, [dispatch]);
 
-  const images = [
-    'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-    'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-    'https://cdn.pixabay.com/photo/2017/08/18/16/38/paper-2655579_1280.jpg',
-  ];
-
-  const renderImages = () => {
-    return (
-      <View style={styles.viewImage}>
-        <Image
-          style={styles.image}
-          resizeMode="stretch"
-          source={appConfig.imageFavoriteOutlet}
-        />
-      </View>
-    );
+  const renderBody = () => {
+    return <MyFavoriteOutletList />;
   };
 
-  const renderSeeAllButton = () => {
+  const renderBottom = () => {
     return (
-      <View style={styles.viewAllButton}>
+      <View style={styles.bottom}>
         <TouchableOpacity
-          style={styles.touchableSeeAll}
+          style={styles.viewButton}
           onPress={() => {
             Actions.favoriteOutlets();
           }}>
-          <Text style={styles.textSeeAll}>See All Outlet</Text>
+          <Text style={styles.textButton}>See All Outlet</Text>
         </TouchableOpacity>
       </View>
     );
@@ -101,11 +85,8 @@ const MyFavoriteOutlets = () => {
   return (
     <SafeAreaView style={styles.root}>
       <Header title="My Favorite Outlets" />
-      <ScrollView style={{flex: 1}}>
-        {renderImages()}
-        <MyFavoriteOutletList />
-      </ScrollView>
-      {renderSeeAllButton()}
+      {renderBody()}
+      {renderBottom()}
     </SafeAreaView>
   );
 };

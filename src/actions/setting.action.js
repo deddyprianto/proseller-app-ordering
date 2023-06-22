@@ -108,6 +108,22 @@ const setLoginSettings = async ({dispatch, response}) => {
   );
 };
 
+const setEnableOrderingSettings = async ({dispatch, response}) => {
+  const enableOrdering = handleSettingValue({
+    values: response,
+    key: 'EnableOrdering',
+  });
+
+  await dispatch(
+    setData({
+      type: 'SET_ENABLE_ORDERING',
+      data: {
+        enableOrdering,
+      },
+    }),
+  );
+};
+
 export const getColorSettings = () => {
   return async (dispatch, getState) => {
     const state = getState();
@@ -165,6 +181,7 @@ export const getLoginSettings = () => {
 
       if (settings) {
         setLoginSettings({dispatch, response: typeCheckbox});
+        setEnableOrderingSettings({dispatch, response: typeCheckbox});
       }
 
       return response.response.data;
