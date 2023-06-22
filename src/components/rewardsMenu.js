@@ -13,6 +13,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import Icon2 from 'react-native-vector-icons/FontAwesome';
 import {Actions} from 'react-native-router-flux';
 import appConfig from '../config/appConfig';
+import MyECardModal from './modal/MyECardModal';
 // import {movePageIndex} from '../actions/user.action';
 
 export default class RewardsMenu extends Component {
@@ -20,6 +21,7 @@ export default class RewardsMenu extends Component {
     super(props);
     this.state = {
       screenHeight: Dimensions.get('window').height,
+      isOpenMyECardModal: false,
     };
   }
 
@@ -54,10 +56,24 @@ export default class RewardsMenu extends Component {
     Actions.qrcode();
   };
 
+  renderMyECardModal = () => {
+    if (this.state.isOpenMyECardModal) {
+      return (
+        <MyECardModal
+          open={this.state.isOpenMyECardModal}
+          handleClose={() => {
+            this.setState({isOpenMyECardModal: false});
+          }}
+        />
+      );
+    }
+  };
+
   render() {
     const {intlData} = this.props;
     return (
       <View style={styles.container}>
+        {this.renderMyECardModal()}
         <View style={styles.item}>
           <TouchableOpacity
             onPress={() => {
@@ -75,15 +91,19 @@ export default class RewardsMenu extends Component {
             </View>
             <Text style={styles.menuText}>Referral</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => this.pageQRCode(this.props)}>
+          <TouchableOpacity
+            onPress={() => this.setState({isOpenMyECardModal: true})}>
             <View style={{alignItems: 'center'}}>
-              <Icon2
-                size={this.state.screenHeight / 5 / 2 - 10}
-                name={'qrcode'}
-                style={{color: colorConfig.store.secondaryColor, height: 70}}
+              <Image
+                source={appConfig.iconQRCode}
+                style={{
+                  tintColor: colorConfig.store.secondaryColor,
+                  width: 70,
+                  height: 70,
+                }}
               />
             </View>
-            <Text style={styles.menuText}>{intlData.messages.myQrCode}</Text>
+            <Text style={styles.menuText}>My E-Card</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={this.pageRewards}>
             <View style={{alignItems: 'center'}}>
