@@ -19,9 +19,9 @@ const styles = StyleSheet.create({
     marginLeft: 16,
     marginRight: 16,
     marginBottom: 2,
-    marginVertical: 8,
+    marginVertical: 16,
     padding: 16,
-    borderRadius: 5,
+    borderRadius: 12,
     backgroundColor: colorConfig.pageIndex.backgroundColor,
     shadowColor: '#00000021',
     shadowOffset: {
