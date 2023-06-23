@@ -3,7 +3,6 @@ import {
   TouchableOpacity,
   StyleSheet,
   View,
-  Text,
   Dimensions,
   Image,
 } from 'react-native';
@@ -12,6 +11,8 @@ import UnreadMessage from '../../assets/img/message-unread.png';
 import {calculateDateTime} from '../../helper/TimeUtils';
 import colorConfig from '../../config/colorConfig';
 import Theme from '../../theme/Theme';
+import GlobalText from '../globalText';
+import {normalizeLayoutSizeWidth} from '../../helper/Layout';
 
 const styles = StyleSheet.create({
   item: {
@@ -19,7 +20,7 @@ const styles = StyleSheet.create({
     marginRight: 16,
     marginBottom: 2,
     marginVertical: 8,
-    padding: 18,
+    padding: 16,
     borderRadius: 5,
     backgroundColor: colorConfig.pageIndex.backgroundColor,
     shadowColor: '#00000021',
@@ -67,54 +68,78 @@ const styles = StyleSheet.create({
   },
   dateText: {
     fontSize: 14,
+    marginLeft: 'auto',
   },
   imageMessage: {
-    width: 23,
+    width: 21,
     height: 21,
-    marginRight: 11,
+    marginRight: 8,
   },
   line: {
     height: 1,
     backgroundColor: '#D6D6D6',
-    marginVertical: 18,
+    marginVertical: 8,
   },
   markStyle: {
-    width: 5,
-    height: 5,
+    width: 8,
+    height: 8,
     backgroundColor: '#CE1111',
     marginTop: -10,
-    borderRadius: 2.5,
+    borderRadius: 4,
+    right: -15,
+    top: -12,
   },
   titleStyle: {
     fontWeight: 'bold',
-    fontSize: 14,
+    fontSize: 16,
   },
   descriptionContainer: {
     marginTop: 8,
   },
   descriptionStyle: {
     fontSize: 14,
+    fontWeight: '500',
+    color: '#888787',
+  },
+  titleContainer: {
+    width: normalizeLayoutSizeWidth(259),
+  },
+  messageContainer: {
+    marginTop: 8,
+    flexDirection: 'row',
+  },
+  imageContainer: {
+    width: '10%',
+  },
+  containerText90: {
+    width: '90%',
   },
 });
 
 const ListInbox = ({item, index, openDetailMessage}) => {
-  const {colors} = Theme();
   const handleImage = () => {
     if (item.isRead === true) {
       return (
-        <Image
-          resizeMode="contain"
-          style={styles.imageMessage}
-          source={MessageOpen}
-        />
+        <View style={styles.imageContainer}>
+          <Image
+            resizeMode="contain"
+            style={styles.imageMessage}
+            source={MessageOpen}
+          />
+        </View>
       );
     }
     return (
-      <Image
-        resizeMode="contain"
-        style={styles.imageMessage}
-        source={UnreadMessage}
-      />
+      <View style={styles.imageContainer}>
+        <View>
+          <Image
+            resizeMode="contain"
+            style={styles.imageMessage}
+            source={UnreadMessage}
+          />
+        </View>
+        {!item.isRead ? <View style={styles.markStyle} /> : null}
+      </View>
     );
   };
 
@@ -124,20 +149,22 @@ const ListInbox = ({item, index, openDetailMessage}) => {
       onPress={() => openDetailMessage(item, index)}>
       <View style={styles.imageDetail}>
         {handleImage()}
-        <Text style={[styles.dateText, {color: colors.primary}]}>
-          {calculateDateTime(item.sendOn)}
-        </Text>
-        {!item.isRead ? <View style={styles.markStyle} /> : null}
-      </View>
-      <View style={styles.line} />
-      <View>
-        <View>
-          <Text style={styles.titleStyle}>{item.title}</Text>
+
+        <View style={styles.titleContainer}>
+          <GlobalText numberOfLines={1} style={[styles.titleStyle]}>
+            {item.title}
+          </GlobalText>
         </View>
-        <View style={styles.descriptionContainer}>
-          <Text style={styles.descriptionStyle}>
-            {item.message.substr(0, 50)}
-          </Text>
+        <GlobalText style={[styles.dateText]}>
+          {calculateDateTime(item.sendOn)}
+        </GlobalText>
+      </View>
+      <View style={styles.messageContainer}>
+        <View style={styles.imageContainer} />
+        <View style={styles.containerText90}>
+          <GlobalText numberOfLines={3} style={[styles.descriptionStyle]}>
+            {item.message}
+          </GlobalText>
         </View>
       </View>
     </TouchableOpacity>

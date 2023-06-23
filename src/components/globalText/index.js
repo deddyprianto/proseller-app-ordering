@@ -1,8 +1,8 @@
 import React from 'react';
-import {Text, TextProps} from 'react-native';
+import {Text, StyleSheet} from 'react-native';
 
 /**
- * @typedef {TextProps} GlobalTextProps
+ * @typedef {import('react-native').TextProps} GlobalTextProps
  */
 
 /**
@@ -10,9 +10,15 @@ import {Text, TextProps} from 'react-native';
  * @param {GlobalTextProps} props
  */
 
+const styles = StyleSheet.create({
+  fontStyle: {
+    fontFamily: 'Poppins',
+  },
+});
+
 const GlobalText = props => {
   return (
-    <Text allowFontScaling={false} {...props}>
+    <Text style={styles.fontStyle} allowFontScaling={false} {...props}>
       {props.children}
     </Text>
   );
