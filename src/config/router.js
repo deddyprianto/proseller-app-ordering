@@ -132,6 +132,7 @@ import Referral from '../pages/Referral';
 
 //for temporary
 import PendingOrderDetail from '../pages/PendingOrderDetail';
+import InboxDetailMessage from '../pages/InboxDetailMessage';
 
 const MyTransitionSpec = {
   duration: 200,
@@ -259,6 +260,7 @@ export default class Routes extends Component {
               component={VerifyOtpAfterRegisterEmail}
             />
             <Scene key="mobileRegister" component={MobileRegister} />
+            <Scene key="inboxDetailMessage" component={InboxDetailMessage} />
             <Scene
               key="mobileRegisterWithPassword"
               component={MobileRegisterWithPassword}
