@@ -9,6 +9,10 @@ import Theme from '../../../theme';
 import FieldSearch from '../../fieldSearch';
 
 import Scanner from '../../scanner';
+import {
+  normalizeLayoutSizeHeight,
+  normalizeLayoutSizeWidth,
+} from '../../../helper/Layout';
 
 const useStyles = () => {
   const theme = Theme();
@@ -67,8 +71,8 @@ const useStyles = () => {
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     logo: {
-      width: '70%',
-      height: '100%',
+      height: normalizeLayoutSizeHeight(28),
+      width: normalizeLayoutSizeWidth(112),
     },
     icon: {
       width: 24,

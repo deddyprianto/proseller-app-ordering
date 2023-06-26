@@ -117,22 +117,23 @@ const useStyles = () => {
       backgroundColor: theme.colors.buttonDisabled,
     },
     viewPromo: {
+      flexDirection: 'row',
+      padding: 4,
+      borderRadius: 50,
+      marginTop: 10,
+    },
+    promoContainer: {
       elevation: 1,
-      position: 'absolute',
-      top: 8,
-      left: 8,
-      display: 'flex',
       flexDirection: 'row',
       alignItems: 'center',
-      justifyContent: 'center',
       padding: 4,
       borderRadius: 50,
       backgroundColor: theme.colors.semanticError,
+      marginTop: 11,
     },
     viewImage: {
       width: '100%',
       maxWidth: '100%',
-      height: undefined,
       aspectRatio: 1 / 1,
     },
     viewTransparentImage: {
@@ -393,12 +394,16 @@ const Product = ({product, basket}) => {
     if (!isEmptyArray(product?.promotions) && isProductAvailable) {
       return (
         <View style={styles.viewPromo}>
-          <ImageBackground
-            source={appConfig.iconPromoStar}
-            style={styles.imagePromo}>
-            <Text style={styles.iconPromo}>%</Text>
-          </ImageBackground>
-          <Text style={styles.textPromo}>Promo</Text>
+          <View style={styles.promoContainer}>
+            <ImageBackground
+              source={appConfig.iconPromoStar}
+              style={styles.imagePromo}>
+              <Text style={styles.iconPromo}>%</Text>
+            </ImageBackground>
+            <Text numberOfLines={1} style={styles.textPromo}>
+              Promo
+            </Text>
+          </View>
         </View>
       );
     }
@@ -411,8 +416,8 @@ const Product = ({product, basket}) => {
         handleProductOnClick();
       }}
       style={styles.root}>
-      {renderPromoIcon()}
       {renderImage()}
+      {renderPromoIcon()}
       {renderBody()}
       {renderProductAddModal()}
       {renderProductUpdateModal()}

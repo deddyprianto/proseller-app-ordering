@@ -42,7 +42,7 @@ const MessageCounter = () => {
 
   return (
     <View style={styles.circleContainer}>
-      <GlobalText style={styles.textCount}>{handleUnreadMessage()} </GlobalText>
+      <GlobalText style={styles.textCount}>{handleUnreadMessage()}</GlobalText>
     </View>
   );
 };

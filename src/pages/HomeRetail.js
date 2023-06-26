@@ -97,7 +97,7 @@ const useStyles = () => {
       alignItems: 'center',
       paddingVertical: 4,
       paddingHorizontal: 16,
-      borderRadius: 50,
+      borderRadius: 8,
       backgroundColor: theme.colors.accent,
     },
     viewMenuBar: {
@@ -181,6 +181,9 @@ const HomeRetail = () => {
   const [isShowFloatingButton, setIsShowFloatingButton] = useState(false);
   const [productListPosition, setProductListPosition] = useState(0);
 
+  const orderingSetting = useSelector(
+    state => state.orderReducer.orderingSetting?.orderingSetting?.settings,
+  );
   const defaultOutlet = useSelector(
     state => state.storesReducer.defaultOutlet.defaultOutlet,
   );
@@ -370,6 +373,12 @@ const HomeRetail = () => {
 
   const renderMenuBarSVC = () => {
     const balance = svcBalance || 0;
+    const svcValue = orderingSetting?.find(
+      setting => setting.settingKey === 'ShowSvcOnProfileSubMenu',
+    );
+    if (svcValue?.settingValue === false) {
+      return null;
+    }
     return (
       <TouchableOpacity
         style={styles.viewMenuBarChild}
@@ -460,7 +469,6 @@ const HomeRetail = () => {
     const productsLimit = !isEmptyArray(products)
       ? products?.slice(0, productsLimitLength)
       : [];
-
     return (
       <View
         onLayout={event => {
