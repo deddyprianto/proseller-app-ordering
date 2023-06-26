@@ -12,13 +12,12 @@ const styles = StyleSheet.create({
     right: 15,
     width: 19,
     height: 19,
-    borderRadius: 10,
+    borderRadius: 9.5,
     alignItems: 'center',
     justifyContent: 'center',
   },
   textCount: {
     color: 'white',
-    textAlign: 'center',
     fontSize: 8,
   },
 });
