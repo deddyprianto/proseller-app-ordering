@@ -12,6 +12,7 @@ import colorConfig from '../../config/colorConfig';
 import GlobalText from '../globalText';
 import {normalizeLayoutSizeWidth} from '../../helper/Layout';
 import InboxOpenSvg from '../../assets/svg/InboxOpenSvg';
+import Theme from '../../theme/Theme';
 
 const styles = StyleSheet.create({
   item: {
@@ -89,7 +90,7 @@ const styles = StyleSheet.create({
     top: -12,
   },
   titleStyle: {
-    fontWeight: 'bold',
+    // fontWeight: 'bold',
     fontSize: 16,
   },
   descriptionContainer: {
@@ -97,7 +98,6 @@ const styles = StyleSheet.create({
   },
   descriptionStyle: {
     fontSize: 14,
-    fontWeight: '500',
     color: '#888787',
   },
   titleContainer: {
@@ -116,6 +116,7 @@ const styles = StyleSheet.create({
 });
 
 const ListInbox = ({item, index, openDetailMessage}) => {
+  const theme = Theme()
   const handleImage = () => {
     if (item.isRead === true) {
       return (
@@ -146,7 +147,12 @@ const ListInbox = ({item, index, openDetailMessage}) => {
         {handleImage()}
 
         <View style={styles.titleContainer}>
-          <GlobalText numberOfLines={1} style={[styles.titleStyle]}>
+          <GlobalText
+            numberOfLines={1}
+            style={[
+              styles.titleStyle,
+              {fontFamily: theme.fontFamily.poppinsBold},
+            ]}>
             {item.title}
           </GlobalText>
         </View>
@@ -157,7 +163,12 @@ const ListInbox = ({item, index, openDetailMessage}) => {
       <View style={styles.messageContainer}>
         <View style={styles.imageContainer} />
         <View style={styles.containerText90}>
-          <GlobalText numberOfLines={3} style={[styles.descriptionStyle]}>
+          <GlobalText
+            numberOfLines={3}
+            style={[
+              styles.descriptionStyle,
+              {fontFamily: theme.fontFamily.poppinsMedium},
+            ]}>
             {item.message}
           </GlobalText>
         </View>

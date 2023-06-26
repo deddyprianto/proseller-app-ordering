@@ -2,6 +2,7 @@ import React from 'react';
 import {useSelector} from 'react-redux';
 import {View, StyleSheet} from 'react-native';
 import GlobalText from './globalText';
+import Theme from '../theme/Theme';
 
 const styles = StyleSheet.create({
   circleContainer: {
@@ -23,6 +24,7 @@ const styles = StyleSheet.create({
 });
 
 const MessageCounter = () => {
+  const theme = Theme();
   const messages = useSelector(
     state => state.inboxReducer.dataInbox?.broadcast?.Data,
   );
@@ -46,7 +48,13 @@ const MessageCounter = () => {
 
   return (
     <View style={styles.circleContainer}>
-      <GlobalText style={styles.textCount}>{handleUnreadMessage()}</GlobalText>
+      <GlobalText
+        style={[
+          styles.textCount,
+          {fontFamily: theme.fontFamily.poppinsMedium},
+        ]}>
+        {handleUnreadMessage()}
+      </GlobalText>
     </View>
   );
 };

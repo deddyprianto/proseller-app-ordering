@@ -1,5 +1,6 @@
 import React from 'react';
 import {Text, StyleSheet} from 'react-native';
+import Theme from '../../theme/Theme';
 
 /**
  * @typedef {import('react-native').TextProps} GlobalTextProps
@@ -10,15 +11,13 @@ import {Text, StyleSheet} from 'react-native';
  * @param {GlobalTextProps} props
  */
 
-const styles = StyleSheet.create({
-  fontStyle: {
-    fontFamily: 'Poppins',
-  },
-});
-
 const GlobalText = props => {
+  const theme = Theme();
   return (
-    <Text style={styles.fontStyle} allowFontScaling={false} {...props}>
+    <Text
+      style={{fontFamily: theme.fontFamily.poppinsRegular}}
+      allowFontScaling={false}
+      {...props}>
       {props.children}
     </Text>
   );
