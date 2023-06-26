@@ -16,6 +16,7 @@ import {
   Image,
   ScrollView,
   SafeAreaView,
+  Pressable,
 } from 'react-native';
 
 import Banner from '../components/banner';
@@ -213,6 +214,7 @@ const HomeRetail = () => {
   );
 
   const svcBalance = useSelector(state => state.SVCReducer.balance.balance);
+  const stores = useSelector(state => state.storesReducer?.dataStores?.stores);
 
   const intlData = useSelector(state => state.intlData);
 
@@ -315,18 +317,23 @@ const HomeRetail = () => {
     }
   };
 
+  const onStorePress = () => {
+    const avilableStore =
+      stores.filter(store => store.orderingStatus === 'AVAILABLE') || [];
+    if (avilableStore.length > 1) {
+      return Actions.store();
+    }
+    return null;
+  };
+
   const renderHeaderTitle = () => {
     return (
-      <TouchableOpacity
-        style={styles.viewHeaderTitle}
-        onPress={() => {
-          Actions.store();
-        }}>
+      <Pressable style={styles.viewHeaderTitle} onPress={onStorePress}>
         <Text numberOfLines={1} style={styles.textHeaderTitle}>
           {defaultOutlet?.name}
         </Text>
         <Image style={styles.iconArrowDown} source={appConfig.iconArrowDown} />
-      </TouchableOpacity>
+      </Pressable>
     );
   };
 

@@ -29,6 +29,7 @@ import appConfig from '../../../config/appConfig';
 
 import Theme from '../../../theme';
 import {useSelector} from 'react-redux';
+import GlobalText from '../../globalText';
 
 const useStyles = () => {
   const theme = Theme();
@@ -89,6 +90,7 @@ const useStyles = () => {
       color: theme.colors.textSecondary,
       fontSize: theme.fontSize[12],
       fontFamily: theme.fontFamily.poppinsMedium,
+      flex: 1,
     },
     textNotAvailable: {
       borderRadius: 8,
@@ -118,7 +120,6 @@ const useStyles = () => {
     },
     viewPromo: {
       flexDirection: 'row',
-      padding: 4,
       borderRadius: 50,
       marginTop: 10,
     },
@@ -130,6 +131,7 @@ const useStyles = () => {
       borderRadius: 50,
       backgroundColor: theme.colors.semanticError,
       marginTop: 11,
+      width: '100%',
     },
     viewImage: {
       width: '100%',
@@ -400,9 +402,9 @@ const Product = ({product, basket}) => {
               style={styles.imagePromo}>
               <Text style={styles.iconPromo}>%</Text>
             </ImageBackground>
-            <Text numberOfLines={1} style={styles.textPromo}>
-              Promo
-            </Text>
+            <GlobalText numberOfLines={1} style={styles.textPromo}>
+              {product.promotions[0]?.name || null}
+            </GlobalText>
           </View>
         </View>
       );

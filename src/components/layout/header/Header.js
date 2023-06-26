@@ -114,12 +114,10 @@ const Header = ({
   searchPlaceholder,
 }) => {
   const styles = useStyles();
-
   const [isOpenScanner, setIsOpenScanner] = useState(false);
   const [isSearch, setIsSearch] = useState(false);
 
   const [searchTextInput, setSearchTextInput] = useState('');
-
   useEffect(() => {
     if (handleSearchInput) {
       handleSearchInput(searchTextInput);
