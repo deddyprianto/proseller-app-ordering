@@ -7,12 +7,11 @@ import {
   Image,
 } from 'react-native';
 import MessageOpen from '../../assets/img/message-read.png';
-import UnreadMessage from '../../assets/img/message-unread.png';
 import {calculateDateTime} from '../../helper/TimeUtils';
 import colorConfig from '../../config/colorConfig';
-import Theme from '../../theme/Theme';
 import GlobalText from '../globalText';
 import {normalizeLayoutSizeWidth} from '../../helper/Layout';
+import InboxOpenSvg from '../../assets/svg/InboxOpenSvg';
 
 const styles = StyleSheet.create({
   item: {
@@ -132,11 +131,7 @@ const ListInbox = ({item, index, openDetailMessage}) => {
     return (
       <View style={styles.imageContainer}>
         <View>
-          <Image
-            resizeMode="contain"
-            style={styles.imageMessage}
-            source={UnreadMessage}
-          />
+          <InboxOpenSvg />
         </View>
         {!item.isRead ? <View style={styles.markStyle} /> : null}
       </View>

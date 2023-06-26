@@ -18,6 +18,7 @@ const styles = StyleSheet.create({
   textCount: {
     color: 'white',
     textAlign: 'center',
+    fontSize: 8,
   },
 });
 
@@ -31,6 +32,9 @@ const MessageCounter = () => {
       const unreadMessage = messages.filter(
         message => message.isRead === false,
       );
+      if (unreadMessage.length > 99) {
+        return '99+';
+      }
       return unreadMessage.length > 0 ? unreadMessage.length : null;
     }
     return null;
@@ -42,7 +46,7 @@ const MessageCounter = () => {
 
   return (
     <View style={styles.circleContainer}>
-      <GlobalText style={styles.textCount}>{handleUnreadMessage()} </GlobalText>
+      <GlobalText style={styles.textCount}>{handleUnreadMessage()}</GlobalText>
     </View>
   );
 };
