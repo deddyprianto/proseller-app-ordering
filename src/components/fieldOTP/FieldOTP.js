@@ -2,28 +2,35 @@
 import React, {useState, useRef, useEffect} from 'react';
 
 import {StyleSheet, View, TextInput} from 'react-native';
+import Theme from '../../theme';
 
-const styles = StyleSheet.create({
-  root: {
-    marginVertical: 32,
-    width: '70%',
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  textInputOtp: {
-    width: 40,
-    height: 40,
-    borderWidth: 1,
-    borderRadius: 12,
-    paddingVertical: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-    textAlign: 'center',
-  },
-});
+const useStyles = () => {
+  const theme = Theme();
+  const styles = StyleSheet.create({
+    root: {
+      marginVertical: 32,
+      width: '70%',
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+    },
+    textInputOtp: {
+      width: 40,
+      height: 40,
+      borderWidth: 1,
+      borderRadius: 12,
+      paddingVertical: 0,
+      justifyContent: 'center',
+      alignItems: 'center',
+      textAlign: 'center',
+      backgroundColor: theme.colors.background,
+    },
+  });
+  return styles;
+};
 
 const FieldOTP = ({onComplete}) => {
+  const styles = useStyles();
   const ref = {
     otp1: useRef(),
     otp2: useRef(),

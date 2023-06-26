@@ -171,9 +171,9 @@ const MyFavoriteOutletListItem = ({item}) => {
   let isAvailable = item.orderingStatus !== 'UNAVAILABLE';
 
   useEffect(() => {
-    const userCoordinate = userPosition.coords;
-    const userPositionLat = userCoordinate.latitude;
-    const userPositionLngt = userCoordinate.longitude;
+    const userCoordinate = userPosition?.coords;
+    const userPositionLat = userCoordinate?.latitude || 0;
+    const userPositionLngt = userCoordinate?.longitude || 0;
     const result = getDistance(
       {latitude: userPositionLat, longitude: userPositionLngt},
       {latitude: item.latitude, longitude: item.longitude},

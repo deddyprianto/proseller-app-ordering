@@ -37,6 +37,8 @@ const useStyles = () => {
     root: {
       marginTop: 20,
       width: '48%',
+      backgroundColor: 'white',
+      borderRadius: 8,
     },
     body: {
       display: 'flex',
@@ -134,6 +136,7 @@ const useStyles = () => {
       maxWidth: '100%',
       height: undefined,
       aspectRatio: 1 / 1,
+      borderRadius: 8,
     },
     viewTransparentImage: {
       flex: 1,
@@ -143,7 +146,7 @@ const useStyles = () => {
       backgroundColor: theme.colors.backgroundTransparent1,
     },
     image: {
-      borderRadius: 20,
+      borderRadius: 8,
     },
     imagePromo: {
       width: 16,

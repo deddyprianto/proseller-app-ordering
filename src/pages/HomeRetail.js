@@ -37,6 +37,7 @@ import Theme from '../theme';
 import {myVouchers} from '../actions/account.action';
 import {getUserProfile} from '../actions/user.action';
 import {dataPromotion} from '../actions/promotion.action';
+import {Body} from '../components/layout';
 
 const useStyles = () => {
   const theme = Theme();
@@ -483,30 +484,32 @@ const HomeRetail = () => {
 
   const renderBody = () => {
     return (
-      <ScrollView
-        ref={ref}
-        onScroll={e => {
-          handleShowFloatingButton(e.nativeEvent.contentOffset.y);
-          if (isCloseToBottom(e.nativeEvent)) {
-            setProductsLimitLength(productsLimitLength + 10);
-          }
-        }}
-        scrollEventThrottle={0}
-        refreshControl={
-          <RefreshControl
-            refreshing={refresh}
-            onRefresh={() => {
-              onRefresh();
-            }}
-          />
-        }>
-        {renderBanner()}
-        {renderMenuBar()}
-        {renderProductCategoryList()}
-        {renderDivider()}
-        {renderProductSubCategoryList()}
-        {renderProductList()}
-      </ScrollView>
+      <Body>
+        <ScrollView
+          ref={ref}
+          onScroll={e => {
+            handleShowFloatingButton(e.nativeEvent.contentOffset.y);
+            if (isCloseToBottom(e.nativeEvent)) {
+              setProductsLimitLength(productsLimitLength + 10);
+            }
+          }}
+          scrollEventThrottle={0}
+          refreshControl={
+            <RefreshControl
+              refreshing={refresh}
+              onRefresh={() => {
+                onRefresh();
+              }}
+            />
+          }>
+          {renderBanner()}
+          {renderMenuBar()}
+          {renderProductCategoryList()}
+          {renderDivider()}
+          {renderProductSubCategoryList()}
+          {renderProductList()}
+        </ScrollView>
+      </Body>
     );
   };
 

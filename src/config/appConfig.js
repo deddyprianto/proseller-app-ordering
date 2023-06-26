@@ -55,6 +55,8 @@ const appConfig = {
   //IMAGE
   imageAdditionalBanner: require('../assets/img/image-additional-banner.jpg'),
 
+  imageBackground: require('../assets/img/image-background.png'),
+
   imageEmptyDeliveryAddress: require('../assets/img/image-empty-address.png'),
 
   imageFavoriteOutlet: require('../assets/img/image-favorite-outlet.png'),
@@ -110,6 +112,7 @@ const appConfig = {
 
   iconMoreMenu: require('../assets/img/icon-more-menu.png'),
   iconMinus: require('../assets/img/icon-minus.png'),
+  iconMyVoucher: require('../assets/img/icon-my-voucher.png'),
 
   iconNotification: require('../assets/img/icon-notification.png'),
   iconNotes: require('../assets/img/icon-notes.png'),

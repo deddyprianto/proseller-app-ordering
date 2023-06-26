@@ -24,6 +24,7 @@ import {dataInbox, readMessage} from '../actions/inbox.action';
 import DetailInbox from '../components/inbox/DetailInbox';
 import {isEmptyArray} from '../helper/CheckEmpty';
 import {Actions} from 'react-native-router-flux';
+import {Body} from '../components/layout';
 
 class Inbox extends Component {
   constructor(props) {
@@ -246,19 +247,20 @@ class Inbox extends Component {
     let {dataInbox} = this.props;
     return (
       <SafeAreaView style={{flex: 1}}>
-        <View
-          style={{
-            backgroundColor: colorConfig.pageIndex.backgroundColor,
-          }}>
+        <Body>
           <View
             style={{
-              flexDirection: 'row',
-              justifyContent: 'center',
-              alignItems: 'center',
-              // paddingLeft: 25,
-              backgroundColor: colorConfig.store.defaultColor,
+              backgroundColor: colorConfig.pageIndex.backgroundColor,
             }}>
-            {/* <TouchableOpacity
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'center',
+                // paddingLeft: 25,
+                backgroundColor: colorConfig.store.defaultColor,
+              }}>
+              {/* <TouchableOpacity
               onPress={() => Actions.pop()}
               style={{alignItems: 'flex-start'}}>
               <Icon
@@ -267,17 +269,18 @@ class Inbox extends Component {
                 style={{color: 'white'}}
               />
             </TouchableOpacity> */}
-            <Text style={styles.navbarTitle}>Inbox</Text>
+              <Text style={styles.navbarTitle}>Inbox</Text>
+            </View>
           </View>
-        </View>
 
-        {dataInbox != undefined
-          ? dataInbox.Data.length != 0
-            ? this.renderInbox()
-            : this.renderEmptyInbox()
-          : null}
+          {dataInbox != undefined
+            ? dataInbox.Data.length != 0
+              ? this.renderInbox()
+              : this.renderEmptyInbox()
+            : null}
 
-        <DetailInbox ref={this.detailInbox} />
+          <DetailInbox ref={this.detailInbox} />
+        </Body>
       </SafeAreaView>
     );
   }

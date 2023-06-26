@@ -12,10 +12,9 @@ import {
   Dimensions,
 } from 'react-native';
 
-import colorConfig from '../config/colorConfig';
 import awsConfig from '../config/awsConfig';
 
-import {Header} from '../components/layout';
+import {Body, Header} from '../components/layout';
 import FieldTextInput from '../components/fieldTextInput';
 import FieldPhoneNumberInput from '../components/fieldPhoneNumberInput';
 
@@ -38,7 +37,6 @@ const useStyles = () => {
       justifyContent: 'center',
       alignItems: 'center',
       paddingHorizontal: 16,
-      backgroundColor: theme.colors.background,
     },
     image: {
       width: 150,
@@ -235,15 +233,17 @@ const RegisterForm = ({registerMethod, inputValue}) => {
     <SafeAreaView style={styles.root}>
       <LoadingScreen loading={isLoading} />
       <Header isMiddleLogo />
-      <KeyboardAwareScrollView>
-        <View style={styles.container}>
-          {renderTextHeader()}
-          {renderTestRegisterFor()}
-          {renderNameInput()}
-          {renderEmailOrPhoneInput()}
-          {renderButtonNext()}
-        </View>
-      </KeyboardAwareScrollView>
+      <Body style={{flex: 1}}>
+        <KeyboardAwareScrollView>
+          <View style={styles.container}>
+            {renderTextHeader()}
+            {renderTestRegisterFor()}
+            {renderNameInput()}
+            {renderEmailOrPhoneInput()}
+            {renderButtonNext()}
+          </View>
+        </KeyboardAwareScrollView>
+      </Body>
     </SafeAreaView>
   );
 };

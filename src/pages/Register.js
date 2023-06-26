@@ -13,7 +13,7 @@ import {
 
 import awsConfig from '../config/awsConfig';
 
-import {Header} from '../components/layout';
+import {Body, Header} from '../components/layout';
 
 import FieldTextInput from '../components/fieldTextInput';
 import FieldPhoneNumberInput from '../components/fieldPhoneNumberInput';
@@ -37,7 +37,6 @@ const useStyles = () => {
       justifyContent: 'center',
       alignItems: 'center',
       paddingHorizontal: 16,
-      backgroundColor: theme.colors.background,
     },
     textCreateNewAccount: {
       color: theme.colors.primary,
@@ -248,15 +247,20 @@ const Register = () => {
     <SafeAreaView style={styles.root}>
       <LoadingScreen loading={isLoading} />
       <Header isMiddleLogo />
-      <KeyboardAwareScrollView>
-        <View style={styles.container}>
-          <Text style={styles.textCreateNewAccount}>Create a new account</Text>
-          {renderTextLogin()}
-          {renderRegisterMethodInput()}
-          {renderButtonNext()}
-          {renderTextChangeMethod()}
-        </View>
-      </KeyboardAwareScrollView>
+
+      <Body style={{flex: 1}}>
+        <KeyboardAwareScrollView>
+          <View style={styles.container}>
+            <Text style={styles.textCreateNewAccount}>
+              Create a new account
+            </Text>
+            {renderTextLogin()}
+            {renderRegisterMethodInput()}
+            {renderButtonNext()}
+            {renderTextChangeMethod()}
+          </View>
+        </KeyboardAwareScrollView>
+      </Body>
     </SafeAreaView>
   );
 };

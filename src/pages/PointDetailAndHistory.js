@@ -5,7 +5,7 @@ import {StyleSheet, ScrollView, View, Text, SafeAreaView} from 'react-native';
 import colorConfig from '../config/colorConfig';
 
 import PointHistoryList from '../components/pointHistoryList';
-import {Header} from '../components/layout';
+import {Body, Header} from '../components/layout';
 import {useSelector} from 'react-redux';
 import moment from 'moment-timezone';
 
@@ -113,20 +113,22 @@ const PointDetailAndHistory = () => {
     <SafeAreaView style={{flex: 1}}>
       <View style={{flex: 1}}>
         <Header title="Point Detail & History" />
-        <ScrollView style={styles.container}>
-          <View style={{marginTop: '5%'}} />
-          {renderPointHeader()}
-          <View style={{marginTop: '5%'}} />
-          {renderTextInfo()}
-          <View style={{marginTop: '5%'}} />
-          {renderPointDateExpired()}
-          <View style={{marginTop: '5%'}} />
-          <View style={styles.divider} />
-          <View style={{marginTop: '5%'}} />
-          {renderTextPointHistory()}
-          <View style={{marginTop: '5%'}} />
-          <PointHistoryList />
-        </ScrollView>
+        <Body>
+          <ScrollView style={styles.container}>
+            <View style={{marginTop: '5%'}} />
+            {renderPointHeader()}
+            <View style={{marginTop: '5%'}} />
+            {renderTextInfo()}
+            <View style={{marginTop: '5%'}} />
+            {renderPointDateExpired()}
+            <View style={{marginTop: '5%'}} />
+            <View style={styles.divider} />
+            <View style={{marginTop: '5%'}} />
+            {renderTextPointHistory()}
+            <View style={{marginTop: '5%'}} />
+            <PointHistoryList />
+          </ScrollView>
+        </Body>
       </View>
     </SafeAreaView>
   );

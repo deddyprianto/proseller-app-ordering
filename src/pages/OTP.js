@@ -17,7 +17,7 @@ import {
 import {sendOTP, loginUser} from '../actions/auth.actions';
 import {showSnackbar} from '../actions/setting.action';
 
-import {Header} from '../components/layout';
+import {Body, Header} from '../components/layout';
 import OTPField from '../components/fieldOTP';
 import LoadingScreen from '../components/loadingScreen';
 import OneSignal from 'react-native-onesignal';
@@ -39,7 +39,6 @@ const useStyles = () => {
       justifyContent: 'center',
       alignItems: 'center',
       paddingHorizontal: 16,
-      backgroundColor: theme.colors.background,
     },
     touchableNext: {
       marginTop: 32,
@@ -271,15 +270,17 @@ const OTP = ({isLogin, method, methodValue}) => {
     <SafeAreaView style={styles.root}>
       <LoadingScreen loading={isLoading} />
       <Header isMiddleLogo />
-      <KeyboardAwareScrollView>
-        <View style={styles.container}>
-          {renderTextHeader()}
-          {renderTextVerify()}
-          {renderOtpField()}
-          {renderResendOTP()}
-          {renderButtonNext()}
-        </View>
-      </KeyboardAwareScrollView>
+      <Body>
+        <KeyboardAwareScrollView>
+          <View style={styles.container}>
+            {renderTextHeader()}
+            {renderTextVerify()}
+            {renderOtpField()}
+            {renderResendOTP()}
+            {renderButtonNext()}
+          </View>
+        </KeyboardAwareScrollView>
+      </Body>
     </SafeAreaView>
   );
 };

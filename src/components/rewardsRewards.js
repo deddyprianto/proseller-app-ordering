@@ -29,6 +29,7 @@ import {myVoucers} from '../actions/account.action';
 import {isEmptyObject} from '../helper/CheckEmpty';
 import LoaderDarker from './LoaderDarker';
 import {recentTransaction} from '../actions/sales.action';
+import {Body} from './layout';
 
 class RewardsRewards extends Component {
   constructor(props) {
@@ -121,7 +122,9 @@ class RewardsRewards extends Component {
           </View>
           {/*<View style={styles.line} />*/}
         </View>
-        <RewordsVouchers />
+        <Body>
+          <RewordsVouchers />
+        </Body>
       </SafeAreaView>
     );
   }

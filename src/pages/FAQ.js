@@ -9,7 +9,7 @@ import FieldSearch from '../components/fieldSearch';
 
 import {groupBy} from 'lodash';
 
-import {Header} from '../components/layout';
+import {Body, Header} from '../components/layout';
 
 const styles = StyleSheet.create({
   root: {
@@ -89,8 +89,10 @@ const FAQ = () => {
       <View>
         <Header title="FAQs" />
       </View>
-      {renderSearch()}
-      <FAQList faqs={handleOutletSearch()} searchQuery={searchQuery} />
+      <Body>
+        {renderSearch()}
+        <FAQList faqs={handleOutletSearch()} searchQuery={searchQuery} />
+      </Body>
     </SafeAreaView>
   );
 };

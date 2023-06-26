@@ -12,7 +12,7 @@ import {getFavoriteOutlet, dataStores} from '../actions/stores.action';
 
 import MyFavoriteOutletList from '../components/myFavoriteOutletList';
 
-import {Header} from '../components/layout';
+import {Body, Header} from '../components/layout';
 import Theme from '../theme';
 import {Actions} from 'react-native-router-flux';
 
@@ -65,7 +65,13 @@ const MyFavoriteOutlets = () => {
   }, [dispatch]);
 
   const renderBody = () => {
-    return <MyFavoriteOutletList />;
+    return (
+      <View style={{flex: 1}}>
+        <Body>
+          <MyFavoriteOutletList />
+        </Body>
+      </View>
+    );
   };
 
   const renderBottom = () => {

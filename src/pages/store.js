@@ -39,6 +39,7 @@ import {refreshToken} from '../actions/auth.actions';
 import {getUserProfile} from '../actions/user.action';
 import {referral} from '../actions/referral.action';
 import {getAccountPayment} from '../actions/payment.actions';
+import {Body} from '../components/layout';
 
 class Store extends Component {
   constructor(props) {
@@ -488,64 +489,66 @@ class Store extends Component {
             </TouchableOpacity>
           </View>
         )}
-        <ScrollView
-          style={styles.scrollView}
-          refreshControl={
-            <RefreshControl
-              refreshing={this.state.refreshing}
-              onRefresh={this._onRefresh}
-            />
-          }>
-          {this.state.isLoading === true ? (
-            <View style={styles.loading}>
-              {this.state.isLoading && <Loader />}
-            </View>
-          ) : (
-            <View style={styles.container}>
-              {this.state.dataStoresNear.length != 0 ? (
-                <View>
-                  <StoreNearYou
-                    refreshProducts={this.props.refreshProducts}
-                    intlData={intlData}
-                    dataStoresNear={this.state.dataStoresNear}
-                  />
-                </View>
-              ) : null}
-              {Object.keys(this.state.dataAllStore).length === 0 &&
-              this.state.dataAllStore != undefined ? (
-                <View
-                  style={{
-                    margin: 20,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    flexDirection: 'column',
-                    // height: '70%',
-                  }}>
-                  <Text
+        <Body>
+          <ScrollView
+            style={styles.scrollView}
+            refreshControl={
+              <RefreshControl
+                refreshing={this.state.refreshing}
+                onRefresh={this._onRefresh}
+              />
+            }>
+            {this.state.isLoading === true ? (
+              <View style={styles.loading}>
+                {this.state.isLoading && <Loader />}
+              </View>
+            ) : (
+              <View style={styles.container}>
+                {this.state.dataStoresNear.length != 0 ? (
+                  <View>
+                    <StoreNearYou
+                      refreshProducts={this.props.refreshProducts}
+                      intlData={intlData}
+                      dataStoresNear={this.state.dataStoresNear}
+                    />
+                  </View>
+                ) : null}
+                {Object.keys(this.state.dataAllStore).length === 0 &&
+                this.state.dataAllStore != undefined ? (
+                  <View
                     style={{
-                      textAlign: 'center',
-                      color: colorConfig.pageIndex.grayColor,
-                      fontFamily: 'Poppins-Regular',
-                      fontSize: 24,
-                      fontWeight: 'bold',
-                      marginTop: 100,
+                      margin: 20,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      flexDirection: 'column',
+                      // height: '70%',
                     }}>
-                    {intlData.messages.noOutlet}
-                  </Text>
-                </View>
-              ) : (
-                <View>
-                  <StoreStores
-                    intlData={intlData}
-                    refreshProducts={this.props.refreshProducts}
-                    dataStoreRegion={this.state.dataStoreRegion}
-                    dataAllStore={this.state.dataAllStore}
-                  />
-                </View>
-              )}
-            </View>
-          )}
-        </ScrollView>
+                    <Text
+                      style={{
+                        textAlign: 'center',
+                        color: colorConfig.pageIndex.grayColor,
+                        fontFamily: 'Poppins-Regular',
+                        fontSize: 24,
+                        fontWeight: 'bold',
+                        marginTop: 100,
+                      }}>
+                      {intlData.messages.noOutlet}
+                    </Text>
+                  </View>
+                ) : (
+                  <View>
+                    <StoreStores
+                      intlData={intlData}
+                      refreshProducts={this.props.refreshProducts}
+                      dataStoreRegion={this.state.dataStoreRegion}
+                      dataAllStore={this.state.dataAllStore}
+                    />
+                  </View>
+                )}
+              </View>
+            )}
+          </ScrollView>
+        </Body>
       </SafeAreaView>
     );
   }
@@ -554,7 +557,7 @@ class Store extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
+    margin: 10,
   },
   btnBack: {
     marginLeft: 10,
@@ -574,7 +577,7 @@ const styles = StyleSheet.create({
     margin: 10,
   },
   scrollView: {
-    backgroundColor: colorConfig.pageIndex.backgroundColor,
+    // backgroundColor: colorConfig.pageIndex.backgroundColor,
     height: '100%',
   },
   loading: {

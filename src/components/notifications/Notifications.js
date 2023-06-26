@@ -26,6 +26,7 @@ import {connect} from 'react-redux';
 import Loader from '../loader';
 import {List} from 'react-native-paper';
 import Snackbar from 'react-native-snackbar';
+import {Body} from '../layout';
 
 class Notifications extends Component {
   constructor(props) {
@@ -130,68 +131,72 @@ class Notifications extends Component {
     const {smsNotification, emailNotification} = this.state;
     return (
       <SafeAreaView style={styles.container}>
-        {this.state.loading && <Loader />}
-        <View
-          style={[
-            styles.header,
-            {backgroundColor: colorConfig.pageIndex.backgroundColor},
-          ]}>
-          <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
-            <Icon
-              size={28}
-              name={
-                Platform.OS === 'ios' ? 'ios-arrow-back' : 'md-arrow-round-back'
-              }
-              style={styles.btnBackIcon}
-            />
-            <Text style={styles.btnBackText}> Notification Setting </Text>
-          </TouchableOpacity>
-        </View>
-        <ScrollView>
-          <List.Section>
-            <List.Subheader>Notification Settings</List.Subheader>
+        <Body>
+          {this.state.loading && <Loader />}
+          <View
+            style={[
+              styles.header,
+              {backgroundColor: colorConfig.pageIndex.backgroundColor},
+            ]}>
+            <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
+              <Icon
+                size={28}
+                name={
+                  Platform.OS === 'ios'
+                    ? 'ios-arrow-back'
+                    : 'md-arrow-round-back'
+                }
+                style={styles.btnBackIcon}
+              />
+              <Text style={styles.btnBackText}> Notification Setting </Text>
+            </TouchableOpacity>
+          </View>
+          <ScrollView>
+            <List.Section>
+              <List.Subheader>Notification Settings</List.Subheader>
 
-            <List.Item
-              title="Email Notification"
-              description="Allow Edgeworks to send you promotion through your email."
-              left={props => <List.Icon {...props} icon="email" />}
-              right={() => (
-                <Switch
-                  trackColor={{
-                    false: '#767577',
-                    true: colorConfig.store.disableButton,
-                  }}
-                  thumbColor={true ? colorConfig.store.defaultColor : 'white'}
-                  ios_backgroundColor="white"
-                  onValueChange={() => {
-                    this.changeEmailSetting(emailNotification);
-                  }}
-                  value={emailNotification}
-                />
-              )}
-            />
+              <List.Item
+                title="Email Notification"
+                description="Allow Edgeworks to send you promotion through your email."
+                left={props => <List.Icon {...props} icon="email" />}
+                right={() => (
+                  <Switch
+                    trackColor={{
+                      false: '#767577',
+                      true: colorConfig.store.disableButton,
+                    }}
+                    thumbColor={true ? colorConfig.store.defaultColor : 'white'}
+                    ios_backgroundColor="white"
+                    onValueChange={() => {
+                      this.changeEmailSetting(emailNotification);
+                    }}
+                    value={emailNotification}
+                  />
+                )}
+              />
 
-            <List.Item
-              title="SMS Notification"
-              description="Allow sending notification to your mobile number."
-              left={props => <List.Icon {...props} icon="phone" />}
-              right={() => (
-                <Switch
-                  trackColor={{
-                    false: '#767577',
-                    true: colorConfig.store.disableButton,
-                  }}
-                  thumbColor={true ? colorConfig.store.defaultColor : 'white'}
-                  ios_backgroundColor="white"
-                  onValueChange={() => {
-                    this.changeSMSSetting(smsNotification);
-                  }}
-                  value={smsNotification}
-                />
-              )}
-            />
-          </List.Section>
-        </ScrollView>
+              <List.Item
+                title="SMS Notification"
+                description="Allow sending notification to your mobile number."
+                left={props => <List.Icon {...props} icon="phone" />}
+                right={() => (
+                  <Switch
+                    trackColor={{
+                      false: '#767577',
+                      true: colorConfig.store.disableButton,
+                    }}
+                    thumbColor={true ? colorConfig.store.defaultColor : 'white'}
+                    ios_backgroundColor="white"
+                    onValueChange={() => {
+                      this.changeSMSSetting(smsNotification);
+                    }}
+                    value={smsNotification}
+                  />
+                )}
+              />
+            </List.Section>
+          </ScrollView>
+        </Body>
       </SafeAreaView>
     );
   }

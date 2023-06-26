@@ -54,6 +54,7 @@ import OrderingModeOfflineModal from '../components/modal/OrderingModeOfflineMod
 import {getCompanyInfo, getOutletById} from '../actions/stores.action';
 import ModalError from '../components/modal/ErrorModal';
 import useErrorMessage from '../hooks/message/useErrorMessage';
+import {Body} from '../components/layout';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -1355,17 +1356,19 @@ const Cart = props => {
       <Header title="Cart" />
       <LoadingScreen loading={isLoading} />
       <View style={styles.container}>
-        <ScrollView>
-          {renderAddButton()}
-          <ProductCartList />
-          <View style={styles.divider} />
-          {renderOrderValidation()}
-          {renderDeliveryProviderTermsAndConditions()}
-          {renderOrderingType()}
-          {renderAddress()}
-          {renderProvider()}
-          {renderDate()}
-        </ScrollView>
+        <Body>
+          <ScrollView>
+            {renderAddButton()}
+            <ProductCartList />
+            <View style={styles.divider} />
+            {renderOrderValidation()}
+            {renderDeliveryProviderTermsAndConditions()}
+            {renderOrderingType()}
+            {renderAddress()}
+            {renderProvider()}
+            {renderDate()}
+          </ScrollView>
+        </Body>
         {renderModal()}
       </View>
       {renderFooter()}

@@ -21,6 +21,7 @@ import moment from 'moment';
 import {redeemVoucher} from '../actions/rewards.action';
 import LoadingScreen from '../components/loadingScreen';
 import {showSnackbar} from '../actions/setting.action';
+import {Body} from '../components/layout';
 
 const styles = StyleSheet.create({
   container: {
@@ -299,22 +300,24 @@ const VoucherDetail = ({voucher}) => {
       <View style={styles.root}>
         <LoadingScreen loading={isLoading} />
         <Header title="Voucher Details" />
-        <ScrollView>
-          <View style={styles.backgroundColorHeader} />
+        <Body>
+          <ScrollView>
+            <View style={styles.backgroundColorHeader} />
 
-          <View style={styles.container}>
-            <View style={{marginTop: '5%'}} />
-            <VoucherItem voucher={voucher} />
-            <View style={{marginTop: '2%'}} />
-            {renderInfoPoint()}
-            <View style={{marginTop: '5%'}} />
-            {renderValidity()}
-            <View style={{marginTop: '5%'}} />
-            {renderDescription()}
-            <View style={{marginTop: '5%'}} />
-            {renderBlockedPoint()}
-          </View>
-        </ScrollView>
+            <View style={styles.container}>
+              <View style={{marginTop: '5%'}} />
+              <VoucherItem voucher={voucher} />
+              <View style={{marginTop: '2%'}} />
+              {renderInfoPoint()}
+              <View style={{marginTop: '5%'}} />
+              {renderValidity()}
+              <View style={{marginTop: '5%'}} />
+              {renderDescription()}
+              <View style={{marginTop: '5%'}} />
+              {renderBlockedPoint()}
+            </View>
+          </ScrollView>
+        </Body>
 
         <View style={styles.footer}>{renderRedeemButton()}</View>
       </View>

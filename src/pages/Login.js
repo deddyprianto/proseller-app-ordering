@@ -10,6 +10,7 @@ import {
   Dimensions,
   TouchableOpacity,
   SafeAreaView,
+  ImageBackground,
 } from 'react-native';
 
 import awsConfig from '../config/awsConfig';
@@ -18,13 +19,13 @@ import FieldTextInput from '../components/fieldTextInput';
 import FieldPhoneNumberInput from '../components/fieldPhoneNumberInput';
 import LoadingScreen from '../components/loadingScreen';
 
-import {Header} from '../components/layout';
+import {Body, Header} from '../components/layout';
 
 import {checkAccountExist, sendOTP} from '../actions/auth.actions';
 import {showSnackbar} from '../actions/setting.action';
 
 import Theme from '../theme';
-
+import appConfig from '../config/appConfig';
 const HEIGHT = Dimensions.get('window').height;
 
 const useStyles = () => {
@@ -40,7 +41,6 @@ const useStyles = () => {
       justifyContent: 'center',
       alignItems: 'center',
       paddingHorizontal: 16,
-      backgroundColor: theme.colors.background,
     },
     textHeader: {
       color: theme.colors.primary,
@@ -312,16 +312,18 @@ const Login = () => {
     <SafeAreaView style={styles.root}>
       <LoadingScreen loading={isLoading} />
       <Header isMiddleLogo />
-      <KeyboardAwareScrollView>
-        <View style={styles.container}>
-          <Text style={styles.textHeader}>Login Account</Text>
-          {renderTextLogin()}
-          {renderChangeLoginMethod()}
-          {renderLoginMethodInput()}
-          {renderButtonNext()}
-          {renderTextInformation()}
-        </View>
-      </KeyboardAwareScrollView>
+      <Body>
+        <KeyboardAwareScrollView>
+          <View style={styles.container}>
+            <Text style={styles.textHeader}>Login Account</Text>
+            {renderTextLogin()}
+            {renderChangeLoginMethod()}
+            {renderLoginMethodInput()}
+            {renderButtonNext()}
+            {renderTextInformation()}
+          </View>
+        </KeyboardAwareScrollView>
+      </Body>
     </SafeAreaView>
   );
 };

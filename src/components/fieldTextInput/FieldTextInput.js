@@ -14,6 +14,7 @@ const useStyles = () => {
       justifyContent: 'center',
       paddingHorizontal: 16,
       borderColor: theme.colors.border1,
+      backgroundColor: theme.colors.background,
     },
     textLabel: {
       textAlign: 'left',
