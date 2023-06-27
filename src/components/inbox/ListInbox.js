@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
     color: '#888787',
   },
   titleContainer: {
-    width: normalizeLayoutSizeWidth(250),
+    width: normalizeLayoutSizeWidth(240),
   },
   messageContainer: {
     marginTop: 8,
