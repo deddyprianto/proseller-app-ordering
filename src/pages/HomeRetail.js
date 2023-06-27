@@ -319,7 +319,7 @@ const HomeRetail = () => {
 
   const onStorePress = () => {
     const avilableStore =
-      stores.filter(store => store.orderingStatus === 'AVAILABLE') || [];
+      stores?.filter(store => store.orderingStatus === 'AVAILABLE') || [];
     if (avilableStore.length > 1) {
       return Actions.store();
     }
