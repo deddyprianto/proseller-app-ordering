@@ -6,6 +6,7 @@ import {
   ScrollView,
   FlatList,
   Image,
+  BackHandler,
 } from 'react-native';
 import React from 'react';
 import {Header} from '../components/layout';
@@ -14,6 +15,7 @@ import GlobalText from '../components/globalText';
 import Theme from '../theme/Theme';
 import colorConfig from '../config/colorConfig';
 import Reward from '../assets/img/reward.png';
+import {Actions} from 'react-native-router-flux';
 const styles = StyleSheet.create({
   scrollContainer: {
     padding: 16,
@@ -22,11 +24,9 @@ const styles = StyleSheet.create({
   dateText: {
     fontSize: 14,
     color: '#888787',
-    fontWeight: '500',
   },
   titleText: {
     fontSize: 16,
-    fontWeight: 'bold',
   },
   titleContainer: {
     marginTop: 24,
@@ -38,7 +38,6 @@ const styles = StyleSheet.create({
   },
   messageText: {
     fontSize: 14,
-    fontWeight: '500',
   },
   lineReward: {
     marginVertical: 16,
@@ -46,7 +45,6 @@ const styles = StyleSheet.create({
   rewardDesc: {
     marginTop: 8,
     fontSize: 14,
-    fontWeight: '500',
   },
   rewardContainer: {
     marginBottom: 2,
@@ -89,7 +87,6 @@ const styles = StyleSheet.create({
   rewardText: {
     marginLeft: 10,
     fontSize: 14,
-    fontWeight: '600',
   },
   containerStyleFlatlist: {
     paddingBottom: 30,
@@ -109,13 +106,25 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   listRewardContainer: {
-    marginTop: 16
-  }
+    marginTop: 16,
+  },
 });
 
 const InboxDetailMessage = props => {
   const {data} = props;
-  const {colors} = Theme();
+  const {colors, fontFamily} = Theme();
+
+  const backHandle = () => {
+    Actions.pop();
+    return true;
+  };
+
+  React.useEffect(() => {
+    BackHandler.addEventListener('hardwareBackPress', backHandle);
+    return () => {
+      BackHandler.removeEventListener('hardwareBackPress', backHandle);
+    };
+  }, []);
 
   const renderReward = ({item, index}) => (
     <View style={styles.rewardContainer}>
@@ -132,7 +141,13 @@ const InboxDetailMessage = props => {
           />
         </View>
         <View style={styles.rightRewardContainer}>
-          <GlobalText style={styles.rewardText}>{item}</GlobalText>
+          <GlobalText
+            style={[
+              styles.rewardText,
+              {fontFamily: fontFamily.poppinsSemiBold},
+            ]}>
+            {item}
+          </GlobalText>
         </View>
       </View>
     </View>
@@ -143,15 +158,25 @@ const InboxDetailMessage = props => {
       <ScrollView>
         <View style={styles.scrollContainer}>
           <View>
-            <GlobalText style={styles.dateText}>
+            <GlobalText
+              style={[styles.dateText, {fontFamily: fontFamily.poppinsMedium}]}>
               {moment(data.sendOn).format('DD MMMM YYYY')}
             </GlobalText>
           </View>
           <View style={styles.titleContainer}>
-            <GlobalText style={styles.titleText}>{data.title}</GlobalText>
+            <GlobalText
+              style={[styles.titleText, {fontFamily: fontFamily.poppinsBold}]}>
+              {data.title}
+            </GlobalText>
           </View>
           <View style={styles.messageContainer}>
-            <GlobalText style={styles.messageText}>{data.message}</GlobalText>
+            <GlobalText
+              style={[
+                styles.messageText,
+                {fontFamily: fontFamily.poppinsMedium},
+              ]}>
+              {data.message}
+            </GlobalText>
           </View>
         </View>
         {data?.rewards?.length > 0 ? (
@@ -162,13 +187,17 @@ const InboxDetailMessage = props => {
             <View style={styles.rewardContainerParent}>
               <View>
                 <GlobalText style={styles.titleText}>Rewards</GlobalText>
-                <GlobalText style={styles.rewardDesc}>
+                <GlobalText
+                  style={[
+                    styles.rewardDesc,
+                    {fontFamily: fontFamily.poppinsMedium},
+                  ]}>
                   All these rewards can be found on “Rewards” menu page
                 </GlobalText>
               </View>
             </View>
 
-            <View style={styles.listRewardContainer} >
+            <View style={styles.listRewardContainer}>
               <FlatList
                 keyExtractor={(item, index) => index.toString()}
                 data={data.rewards || []}

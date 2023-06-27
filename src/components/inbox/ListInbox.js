@@ -12,6 +12,7 @@ import colorConfig from '../../config/colorConfig';
 import GlobalText from '../globalText';
 import {normalizeLayoutSizeWidth} from '../../helper/Layout';
 import InboxOpenSvg from '../../assets/svg/InboxOpenSvg';
+import Theme from '../../theme/Theme';
 
 const styles = StyleSheet.create({
   item: {
@@ -31,39 +32,9 @@ const styles = StyleSheet.create({
     shadowRadius: 7.49,
     elevation: 12,
   },
-  sejajarSpace: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  detail: {
-    paddingTop: 5,
-    paddingRight: 5,
-    paddingBottom: 5,
-    width: Dimensions.get('window').width - 120,
-  },
-  paymentType: {
-    color: colorConfig.pageIndex.grayColor,
-    fontSize: 12,
-  },
-  btnDetail: {
-    alignItems: 'center',
-    width: 40,
-    paddingTop: 15,
-  },
   imageDetail: {
     flexDirection: 'row',
     alignItems: 'center',
-  },
-  isUnRead: {
-    width: 8,
-    height: 8,
-    borderRadius: 50,
-    backgroundColor: 'red',
-  },
-  paymentContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
   },
   dateText: {
     fontSize: 14,
@@ -73,11 +44,6 @@ const styles = StyleSheet.create({
     width: 21,
     height: 21,
     marginRight: 8,
-  },
-  line: {
-    height: 1,
-    backgroundColor: '#D6D6D6',
-    marginVertical: 8,
   },
   markStyle: {
     width: 8,
@@ -89,15 +55,11 @@ const styles = StyleSheet.create({
     top: -12,
   },
   titleStyle: {
-    fontWeight: 'bold',
+    // fontWeight: 'bold',
     fontSize: 16,
-  },
-  descriptionContainer: {
-    marginTop: 8,
   },
   descriptionStyle: {
     fontSize: 14,
-    fontWeight: '500',
     color: '#888787',
   },
   titleContainer: {
@@ -116,6 +78,7 @@ const styles = StyleSheet.create({
 });
 
 const ListInbox = ({item, index, openDetailMessage}) => {
+  const theme = Theme();
   const handleImage = () => {
     if (item.isRead === true) {
       return (
@@ -146,7 +109,12 @@ const ListInbox = ({item, index, openDetailMessage}) => {
         {handleImage()}
 
         <View style={styles.titleContainer}>
-          <GlobalText numberOfLines={1} style={[styles.titleStyle]}>
+          <GlobalText
+            numberOfLines={1}
+            style={[
+              styles.titleStyle,
+              {fontFamily: theme.fontFamily.poppinsBold},
+            ]}>
             {item.title}
           </GlobalText>
         </View>
@@ -157,7 +125,12 @@ const ListInbox = ({item, index, openDetailMessage}) => {
       <View style={styles.messageContainer}>
         <View style={styles.imageContainer} />
         <View style={styles.containerText90}>
-          <GlobalText numberOfLines={3} style={[styles.descriptionStyle]}>
+          <GlobalText
+            numberOfLines={3}
+            style={[
+              styles.descriptionStyle,
+              {fontFamily: theme.fontFamily.poppinsMedium},
+            ]}>
             {item.message}
           </GlobalText>
         </View>
