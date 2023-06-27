@@ -164,6 +164,14 @@ const useStyles = () => {
       height: 24,
       tintColor: 'white',
     },
+    counterCartProduct: {
+      height: 26,
+      width: 30,
+      position: 'absolute',
+      top: 0,
+      right: 0,
+      zIndex: 100,
+    },
   });
   return styles;
 };
@@ -173,12 +181,14 @@ const Product = ({product, basket}) => {
   const [totalQty, setTotalQty] = useState(0);
   const [isOpenUpdateModal, setIsOpenUpdateModal] = useState(false);
   const [isOpenAddModal, setIsOpenAddModal] = useState(false);
-
+  const currentBasket = useSelector(
+    state => state.orderReducer?.dataBasket?.product?.details,
+  );
   const isProductAvailable = product?.orderingStatus === 'AVAILABLE';
   const imageSettings = useSelector(
     state => state.settingReducer.imageSettings,
   );
-
+  console.log(currentBasket, 'lusai');
   const handleOpenAddModal = () => {
     setIsOpenAddModal(true);
   };
@@ -242,12 +252,17 @@ const Product = ({product, basket}) => {
 
   const renderImageAvailable = image => {
     return (
-      <ImageBackground
-        style={styles.viewImage}
-        imageStyle={styles.image}
-        resizeMode="contain"
-        source={{uri: image}}
-      />
+      <View>
+        <View style={styles.counterCartProduct}>
+          <GlobalText>hehe</GlobalText>
+        </View>
+        <ImageBackground
+          style={styles.viewImage}
+          imageStyle={styles.image}
+          resizeMode="contain"
+          source={{uri: image}}
+        />
+      </View>
     );
   };
 
