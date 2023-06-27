@@ -70,10 +70,11 @@ const useStyles = () => {
       fontSize: theme.fontSize[14],
       fontFamily: theme.fontFamily.poppinsMedium,
     },
-    logo: {
-      height: normalizeLayoutSizeHeight(28),
-      width: normalizeLayoutSizeWidth(112),
-    },
+    logo: appName => ({
+      height:
+        appName === 'fareastflora' ? normalizeLayoutSizeHeight(28) : '100%',
+      width: appName === 'fareastflora' ? normalizeLayoutSizeWidth(112) : '70%',
+    }),
     icon: {
       width: 24,
       height: 24,
@@ -116,7 +117,7 @@ const Header = ({
   const styles = useStyles();
   const [isOpenScanner, setIsOpenScanner] = useState(false);
   const [isSearch, setIsSearch] = useState(false);
-
+  const {appName} = appConfig;
   const [searchTextInput, setSearchTextInput] = useState('');
   useEffect(() => {
     if (handleSearchInput) {
@@ -142,7 +143,7 @@ const Header = ({
       <Image
         source={appConfig.logoMerchant}
         resizeMode="contain"
-        style={styles.logo}
+        style={styles.logo(appName)}
       />
     );
   };
