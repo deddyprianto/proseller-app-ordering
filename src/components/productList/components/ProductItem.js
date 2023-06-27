@@ -30,6 +30,7 @@ import appConfig from '../../../config/appConfig';
 import Theme from '../../../theme';
 import {useSelector} from 'react-redux';
 import GlobalText from '../../globalText';
+import colorConfig from '../../../config/colorConfig';
 
 const useStyles = () => {
   const theme = Theme();
@@ -38,6 +39,17 @@ const useStyles = () => {
     root: {
       marginTop: 20,
       width: '48%',
+      backgroundColor: colorConfig.pageIndex.backgroundColor,
+      shadowColor: '#00000021',
+      shadowOffset: {
+        width: 0,
+        height: 9,
+      },
+      shadowOpacity: 0.7,
+      shadowRadius: 7.49,
+      elevation: 12,
+      padding: 8,
+      borderRadius: 8,
     },
     body: {
       display: 'flex',
@@ -171,6 +183,12 @@ const useStyles = () => {
       top: 0,
       right: 0,
       zIndex: 100,
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: 4,
+    },
+    counterStyle: {
+      color: 'white',
     },
   });
   return styles;
@@ -181,14 +199,12 @@ const Product = ({product, basket}) => {
   const [totalQty, setTotalQty] = useState(0);
   const [isOpenUpdateModal, setIsOpenUpdateModal] = useState(false);
   const [isOpenAddModal, setIsOpenAddModal] = useState(false);
-  const currentBasket = useSelector(
-    state => state.orderReducer?.dataBasket?.product?.details,
-  );
+  const {colors, fontFamily} = Theme();
+
   const isProductAvailable = product?.orderingStatus === 'AVAILABLE';
   const imageSettings = useSelector(
     state => state.settingReducer.imageSettings,
   );
-  console.log(currentBasket, 'lusai');
   const handleOpenAddModal = () => {
     setIsOpenAddModal(true);
   };
@@ -249,13 +265,25 @@ const Product = ({product, basket}) => {
     const totalQtyProductInBasket = handleQuantityProduct();
     setTotalQty(totalQtyProductInBasket);
   }, [product, basket]);
-
   const renderImageAvailable = image => {
     return (
       <View>
-        <View style={styles.counterCartProduct}>
-          <GlobalText>hehe</GlobalText>
-        </View>
+        {totalQty <= 0 ? null : (
+          <View
+            style={[
+              styles.counterCartProduct,
+              {backgroundColor: colors.primary},
+            ]}>
+            <GlobalText
+              style={[
+                styles.counterStyle,
+                {fontFamily: fontFamily.poppinsMedium},
+              ]}>
+              {totalQty}X
+            </GlobalText>
+          </View>
+        )}
+
         <ImageBackground
           style={styles.viewImage}
           imageStyle={styles.image}
