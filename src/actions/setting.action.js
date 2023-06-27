@@ -124,6 +124,22 @@ const setEnableOrderingSettings = async ({dispatch, response}) => {
   );
 };
 
+const setHideReferralSettings = async ({dispatch, response}) => {
+  const hideReferral = handleSettingValue({
+    values: response,
+    key: 'HideReferralMenu',
+  });
+
+  await dispatch(
+    setData({
+      type: 'SET_HIDE_REFERRAL',
+      data: {
+        hideReferral,
+      },
+    }),
+  );
+};
+
 export const getColorSettings = () => {
   return async (dispatch, getState) => {
     const state = getState();
@@ -179,9 +195,12 @@ export const getLoginSettings = () => {
       const settings = response?.response?.data?.settings;
       const typeCheckbox = handleDataType({settings, key: 'checkbox'});
 
+      console.log('MARTIN', response);
+
       if (settings) {
         setLoginSettings({dispatch, response: typeCheckbox});
         setEnableOrderingSettings({dispatch, response: typeCheckbox});
+        setHideReferralSettings({dispatch, response: typeCheckbox});
       }
 
       return response.response.data;

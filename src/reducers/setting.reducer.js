@@ -92,6 +92,18 @@ const enableOrderingSettings = (state = {}, action) => {
   }
 };
 
+const hideReferralSettings = (state = {}, action) => {
+  switch (action.type) {
+    case 'SET_HIDE_REFERRAL':
+      return {
+        ...action.data,
+      };
+
+    default:
+      return state;
+  }
+};
+
 export default combineReducers({
   snackbar,
   imageSettings,
@@ -99,5 +111,6 @@ export default combineReducers({
   loginSettings,
   faqsSettings,
   enableOrderingSettings,
+  hideReferralSettings,
   allowedOrder,
 });

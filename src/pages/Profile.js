@@ -297,6 +297,10 @@ const Profile = props => {
     state => state.storesReducer.defaultOutlet.defaultOutlet,
   );
 
+  const hideReferral = useSelector(
+    state => state.settingReducer.hideReferralSettings.hideReferral,
+  );
+
   const intlData = useSelector(state => state.intlData);
 
   useEffect(() => {
@@ -568,6 +572,7 @@ const Profile = props => {
       </TouchableOpacity>
     );
   };
+
   const renderFAQ = () => {
     return (
       <TouchableOpacity
@@ -595,6 +600,25 @@ const Profile = props => {
         </View>
       </TouchableOpacity>
     );
+  };
+
+  const renderReferral = () => {
+    if (!hideReferral) {
+      return (
+        <TouchableOpacity
+          style={styles.viewOption}
+          onPress={() => {
+            Actions.referral();
+          }}>
+          <Image
+            style={styles.iconSetting}
+            source={appConfig.iconReferral}
+            resizeMode="stretch"
+          />
+          <Text style={styles.textIcon}>Referral</Text>
+        </TouchableOpacity>
+      );
+    }
   };
 
   const renderLogout = () => {
@@ -632,6 +656,8 @@ const Profile = props => {
         {renderMyDeliveryAddress()}
         {renderDivider()}
         {renderEditProfile()}
+        {renderDivider()}
+        {renderReferral()}
         {renderDivider()}
         {renderNotifications()}
         {renderDivider()}
