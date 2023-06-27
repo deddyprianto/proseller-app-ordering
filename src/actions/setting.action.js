@@ -195,7 +195,6 @@ export const getLoginSettings = () => {
       const settings = response?.response?.data?.settings;
       const typeCheckbox = handleDataType({settings, key: 'checkbox'});
 
-      console.log('MARTIN', response);
 
       if (settings) {
         setLoginSettings({dispatch, response: typeCheckbox});
