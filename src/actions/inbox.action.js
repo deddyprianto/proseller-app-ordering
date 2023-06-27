@@ -1,6 +1,6 @@
 import {fetchApi} from '../service/api';
 
-export const dataInbox = (skip, take) => {
+export const dataInbox = (skip, take, isOpenTab) => {
   return async (dispatch, getState) => {
     const state = getState();
     try {
@@ -20,6 +20,12 @@ export const dataInbox = (skip, take) => {
         skip,
         take,
       };
+      if (isOpenTab) {
+        dispatch({
+          type: 'LOADING_BROADCAST',
+          payload: true,
+        });
+      }
 
       const response = await fetchApi(
         '/broadcast/customer',
@@ -28,7 +34,6 @@ export const dataInbox = (skip, take) => {
         200,
         token,
       );
-      console.log(response, 'response inbox');
 
       let data = [];
 
@@ -54,9 +59,17 @@ export const dataInbox = (skip, take) => {
           type: 'DATA_ALL_BROADCAST',
           data: data,
         });
+        dispatch({
+          type: 'LOADING_BROADCAST',
+          payload: false,
+        });
       }
       return response;
     } catch (error) {
+      dispatch({
+        type: 'LOADING_BROADCAST',
+        payload: false,
+      });
       return error;
     }
   };
