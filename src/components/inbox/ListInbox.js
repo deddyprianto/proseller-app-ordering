@@ -32,39 +32,9 @@ const styles = StyleSheet.create({
     shadowRadius: 7.49,
     elevation: 12,
   },
-  sejajarSpace: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  detail: {
-    paddingTop: 5,
-    paddingRight: 5,
-    paddingBottom: 5,
-    width: Dimensions.get('window').width - 120,
-  },
-  paymentType: {
-    color: colorConfig.pageIndex.grayColor,
-    fontSize: 12,
-  },
-  btnDetail: {
-    alignItems: 'center',
-    width: 40,
-    paddingTop: 15,
-  },
   imageDetail: {
     flexDirection: 'row',
     alignItems: 'center',
-  },
-  isUnRead: {
-    width: 8,
-    height: 8,
-    borderRadius: 50,
-    backgroundColor: 'red',
-  },
-  paymentContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
   },
   dateText: {
     fontSize: 14,
@@ -74,11 +44,6 @@ const styles = StyleSheet.create({
     width: 21,
     height: 21,
     marginRight: 8,
-  },
-  line: {
-    height: 1,
-    backgroundColor: '#D6D6D6',
-    marginVertical: 8,
   },
   markStyle: {
     width: 8,
@@ -92,9 +57,6 @@ const styles = StyleSheet.create({
   titleStyle: {
     // fontWeight: 'bold',
     fontSize: 16,
-  },
-  descriptionContainer: {
-    marginTop: 8,
   },
   descriptionStyle: {
     fontSize: 14,
@@ -116,7 +78,7 @@ const styles = StyleSheet.create({
 });
 
 const ListInbox = ({item, index, openDetailMessage}) => {
-  const theme = Theme()
+  const theme = Theme();
   const handleImage = () => {
     if (item.isRead === true) {
       return (

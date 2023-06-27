@@ -6,6 +6,7 @@ import {
   ScrollView,
   FlatList,
   Image,
+  BackHandler,
 } from 'react-native';
 import React from 'react';
 import {Header} from '../components/layout';
@@ -14,6 +15,7 @@ import GlobalText from '../components/globalText';
 import Theme from '../theme/Theme';
 import colorConfig from '../config/colorConfig';
 import Reward from '../assets/img/reward.png';
+import {Actions} from 'react-native-router-flux';
 const styles = StyleSheet.create({
   scrollContainer: {
     padding: 16,
@@ -104,13 +106,25 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   listRewardContainer: {
-    marginTop: 16
-  }
+    marginTop: 16,
+  },
 });
 
 const InboxDetailMessage = props => {
   const {data} = props;
   const {colors, fontFamily} = Theme();
+
+  const backHandle = () => {
+    Actions.pop();
+    return true;
+  };
+
+  React.useEffect(() => {
+    BackHandler.addEventListener('hardwareBackPress', backHandle);
+    return () => {
+      BackHandler.removeEventListener('hardwareBackPress', backHandle);
+    };
+  }, []);
 
   const renderReward = ({item, index}) => (
     <View style={styles.rewardContainer}>
@@ -183,7 +197,7 @@ const InboxDetailMessage = props => {
               </View>
             </View>
 
-            <View style={styles.listRewardContainer} >
+            <View style={styles.listRewardContainer}>
               <FlatList
                 keyExtractor={(item, index) => index.toString()}
                 data={data.rewards || []}
