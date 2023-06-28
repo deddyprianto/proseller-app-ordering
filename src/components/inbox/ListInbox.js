@@ -39,6 +39,7 @@ const styles = StyleSheet.create({
   dateText: {
     fontSize: 14,
     marginLeft: 'auto',
+    color: '#888787',
   },
   imageMessage: {
     width: 21,
@@ -54,16 +55,16 @@ const styles = StyleSheet.create({
     right: -15,
     top: -12,
   },
-  titleStyle: {
-    // fontWeight: 'bold',
+  titleStyle: isRead => ({
     fontSize: 16,
-  },
+    color: isRead ? '#888787' : 'black',
+  }),
   descriptionStyle: {
     fontSize: 14,
     color: '#888787',
   },
   titleContainer: {
-    width: normalizeLayoutSizeWidth(259),
+    width: normalizeLayoutSizeWidth(240),
   },
   messageContainer: {
     marginTop: 8,
@@ -112,7 +113,7 @@ const ListInbox = ({item, index, openDetailMessage}) => {
           <GlobalText
             numberOfLines={1}
             style={[
-              styles.titleStyle,
+              styles.titleStyle(item.isRead),
               {fontFamily: theme.fontFamily.poppinsBold},
             ]}>
             {item.title}
