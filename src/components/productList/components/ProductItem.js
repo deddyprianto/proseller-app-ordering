@@ -157,7 +157,6 @@ const useStyles = () => {
       borderRadius: borderRadiusImage,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: theme.colors.backgroundTransparent1,
     },
     image: {
       borderRadius: 20,
@@ -305,7 +304,7 @@ const Product = ({product, basket}) => {
         source={{uri: image}}>
         <View style={styles.viewTransparentImage}>
           <View style={styles.textNotAvailable}>
-            <Text style={styles.textNotAvailableStyle} >Not Available</Text>
+            <Text style={styles.textNotAvailableStyle}>Not Available</Text>
           </View>
         </View>
       </ImageBackground>
