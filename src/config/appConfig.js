@@ -42,20 +42,23 @@ const appConfig = {
   //should be dynamic
   logoMerchant: require('../../native/acemart/assets/img/logo.png'),
   logoMerchantWithBackground: require('../../native/acemart/assets/img/logo-merchant-with-background.png'),
+
+  imageBackground: require('../../native/acemart/assets/img/image-background.png'),
+
   imageOnBoarding1: require('../../native/acemart/assets/img/image-on-boarding-1.png'),
   imageOnBoarding2: require('../../native/acemart/assets/img/image-on-boarding-2.png'),
   imageOnBoarding3: require('../../native/acemart/assets/img/image-on-boarding-3.png'),
   
   imagePointSmallBackground: require('../../native/acemart/assets/img/image-point-small-background.png'),
   imagePointLargeBackground: require('../../native/acemart/assets/img/image-point-large-background.png'),
+
+
   //LOGO MARTIN
   // logoMerchant: require('../assets/img/logo.png'),
   // logoMerchantWithBackground: require('../assets/img/logo-merchant-with-background.png'),
 
   //IMAGE
   imageAdditionalBanner: require('../assets/img/image-additional-banner.jpg'),
-
-  imageBackground: require('../assets/img/image-background.png'),
 
   imageEmptyDeliveryAddress: require('../assets/img/image-empty-address.png'),
 

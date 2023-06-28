@@ -18,7 +18,6 @@ import appConfig from '../config/appConfig';
 import {dataInbox, readMessage} from '../actions/inbox.action';
 import DetailInbox from '../components/inbox/DetailInbox';
 import {isEmptyArray} from '../helper/CheckEmpty';
-import {Actions} from 'react-native-router-flux';
 import {Body} from '../components/layout';
 import withHooksComponent from '../components/HOC';
 import ListInbox from '../components/inbox/ListInbox';
