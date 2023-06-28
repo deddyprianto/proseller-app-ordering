@@ -7,6 +7,7 @@
     "android-dev": "SET ENVFILE=.env.dev && react-native run-android --variant=devDebug --appIdSuffix=dev",
     "android-demo": "export ENVFILE=.env.demo && npx react-native run-android --variant=demoDebug --appIdSuffix=demo",
     "android-demo-rel": "export ENVFILE=.env.demo && npx react-native run-android --variant=demoRelease --appIdSuffix=demo",
+    "android-dev-rel": "export ENVFILE=.env.demo && npx react-native run-android --variant=devRelease --appIdSuffix=dev",
     "android-prod": "export ENVFILE=.env.production && react-native run-android --variant=appDebug --appIdSuffix=app",
     "android-prod-rl": "export ENVFILE=.env.production && npx react-native run-android --variant=appRelease --appIdSuffix=app",
     "android": "react-native run-android",
