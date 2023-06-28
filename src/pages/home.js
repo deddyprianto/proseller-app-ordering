@@ -40,6 +40,7 @@ import {getSVCCard} from '../actions/SVC.action';
 import LoadingScreen from '../components/loadingScreen';
 import HomeRetail from './HomeRetail';
 import HomeFnB from './HomeFnB';
+import {getLoginSettings} from '../actions/setting.action';
 
 class Home extends Component {
   constructor(props) {
@@ -77,6 +78,7 @@ class Home extends Component {
       this.props.dispatch(getAccountPayment());
       this.props.dispatch(getUserProfile());
       this.props.dispatch(dataPromotion());
+      this.props.dispatch(getLoginSettings());
       const response = await this.props.dispatch(getAccountPayment());
       await this.checkDefaultPaymentAccount(response);
       this.getDeepLinkiOS();
