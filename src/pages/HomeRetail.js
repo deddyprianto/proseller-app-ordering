@@ -448,7 +448,6 @@ const HomeRetail = () => {
           }}
           isIndicator
           isScroll
-          isMoreCategoryButton
           horizontal
         />
       </View>

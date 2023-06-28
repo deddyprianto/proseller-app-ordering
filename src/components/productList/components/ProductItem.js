@@ -108,10 +108,12 @@ const useStyles = () => {
       borderRadius: 8,
       paddingVertical: 8,
       paddingHorizontal: 16,
-      color: theme.colors.textSecondary,
       fontSize: theme.fontSize[14],
+      backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    },
+    textNotAvailableStyle: {
+      color: theme.colors.textSecondary,
       fontFamily: theme.fontFamily.poppinsMedium,
-      backgroundColor: theme.colors.backgroundTransparent2,
     },
     viewQtyAndName: {
       display: 'flex',
@@ -279,7 +281,7 @@ const Product = ({product, basket}) => {
                 styles.counterStyle,
                 {fontFamily: fontFamily.poppinsMedium},
               ]}>
-              {totalQty}X
+              {totalQty}x
             </GlobalText>
           </View>
         )}
@@ -302,7 +304,9 @@ const Product = ({product, basket}) => {
         resizeMode="contain"
         source={{uri: image}}>
         <View style={styles.viewTransparentImage}>
-          <Text style={styles.textNotAvailable}>Not Available</Text>
+          <View style={styles.textNotAvailable}>
+            <Text style={styles.textNotAvailableStyle} >Not Available</Text>
+          </View>
         </View>
       </ImageBackground>
     );
