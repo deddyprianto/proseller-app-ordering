@@ -192,7 +192,8 @@ const InboxDetailMessage = props => {
                     styles.rewardDesc,
                     {fontFamily: fontFamily.poppinsMedium},
                   ]}>
-                  All these rewards can be found on “Rewards” menu page
+                  All the available rewards can be found on Point or Voucher
+                  page.{' '}
                 </GlobalText>
               </View>
             </View>
