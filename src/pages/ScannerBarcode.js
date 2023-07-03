@@ -80,6 +80,7 @@ const useStyles = () => {
       elevation: 1,
       position: 'absolute',
       bottom: normalizeLayoutSizeHeight(220),
+      zIndex: 1,
     },
     viewBottomContentValue: {
       display: 'flex',
