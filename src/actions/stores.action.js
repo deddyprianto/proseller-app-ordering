@@ -309,11 +309,6 @@ export const getOutletById = id => {
       console.log(response, 'response outlets get by id');
 
       dispatch({
-        type: 'DATA_ORDERING_MODE',
-        orderingMode: null,
-      });
-
-      dispatch({
         type: 'DATA_DEFAULT_OUTLET',
         data: response.response.data,
       });

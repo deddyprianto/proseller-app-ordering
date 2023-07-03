@@ -166,7 +166,12 @@ const useStyles = () => {
   return styles;
 };
 
-const OrderingTypeSelectorModal = ({open, handleClose, value}) => {
+const OrderingTypeSelectorModal = ({
+  open,
+  handleClose,
+  handleSaveCustom,
+  value,
+}) => {
   const styles = useStyles();
   const dispatch = useDispatch();
   const [selected, setSelected] = useState({});
@@ -194,59 +199,72 @@ const OrderingTypeSelectorModal = ({open, handleClose, value}) => {
   }, [dispatch, open, outlet.id]);
 
   useEffect(() => {
-    const orderingModesField = [
-      {
-        key: 'STOREPICKUP',
-        isEnabledFieldName: 'enableStorePickUp',
-        displayName: defaultOutlet.storePickUpName || 'Store Pick Up',
-        image: appConfig.iconOrderingModeStorePickUp,
-      },
-      {
-        key: 'DELIVERY',
-        isEnabledFieldName: 'enableDelivery',
-        displayName: defaultOutlet.deliveryName || 'Delivery',
-        image: appConfig.iconOrderingModeDelivery,
-      },
-      {
-        key: 'TAKEAWAY',
-        isEnabledFieldName: 'enableTakeAway',
-        displayName: defaultOutlet.takeAwayName || 'Take Away',
-        image: appConfig.iconOrderingModeTakeAway,
-      },
-      {
-        key: 'DINEIN',
-        isEnabledFieldName: 'enableDineIn',
-        displayName: defaultOutlet.dineInName || 'Dine In',
-        image: appConfig.iconOrderingModeStorePickUp,
-      },
-      {
-        key: 'STORECHECKOUT',
-        isEnabledFieldName: 'enableStoreCheckOut',
-        displayName: defaultOutlet.storeCheckOutName || 'Store Checkout',
-        image: appConfig.iconOrderingModeStorePickUp,
-      },
-    ];
+    const loadData = async () => {
+      const orderingModesField = [
+        {
+          key: 'STOREPICKUP',
+          isEnabledFieldName: 'enableStorePickUp',
+          displayName: defaultOutlet.storePickUpName || 'Store Pick Up',
+          image: appConfig.iconOrderingModeStorePickUp,
+        },
+        {
+          key: 'DELIVERY',
+          isEnabledFieldName: 'enableDelivery',
+          displayName: defaultOutlet.deliveryName || 'Delivery',
+          image: appConfig.iconOrderingModeDelivery,
+        },
+        {
+          key: 'TAKEAWAY',
+          isEnabledFieldName: 'enableTakeAway',
+          displayName: defaultOutlet.takeAwayName || 'Take Away',
+          image: appConfig.iconOrderingModeTakeAway,
+        },
+        {
+          key: 'DINEIN',
+          isEnabledFieldName: 'enableDineIn',
+          displayName: defaultOutlet.dineInName || 'Dine In',
+          image: appConfig.iconOrderingModeStorePickUp,
+        },
+        {
+          key: 'STORECHECKOUT',
+          isEnabledFieldName: 'enableStoreCheckOut',
+          displayName: defaultOutlet.storeCheckOutName || 'Store Checkout',
+          image: appConfig.iconOrderingModeStorePickUp,
+        },
+      ];
 
-    const orderingModesFieldFiltered = orderingModesField.filter(mode => {
-      if (
-        defaultOutlet[mode.isEnabledFieldName] &&
-        orderSetting?.includes(mode.key)
-      ) {
-        return mode;
+      const orderingModesFieldFiltered = orderingModesField.filter(mode => {
+        if (
+          defaultOutlet[mode.isEnabledFieldName] &&
+          orderSetting?.includes(mode.key)
+        ) {
+          return mode;
+        }
+      });
+      setEstimatedWaitingTimes(defaultOutlet?.estimatedWaitingTime || {});
+      setOrderingTypes(orderingModesFieldFiltered);
+      const currentOrderingMode = value || orderingModesFieldFiltered[0]?.key;
+      setSelected({key: currentOrderingMode});
+
+      if (orderingModesFieldFiltered.length === 1) {
+        setIsLoading(true);
+        await dispatch(
+          changeOrderingMode({
+            orderingMode: orderingModesFieldFiltered[0]?.key,
+          }),
+        );
+        setIsLoading(false);
       }
-    });
-    setEstimatedWaitingTimes(defaultOutlet?.estimatedWaitingTime || {});
-    setOrderingTypes(orderingModesFieldFiltered);
-    const currentOrderingMode = value || '';
-    setSelected({key: currentOrderingMode});
+    };
+    loadData();
   }, [defaultOutlet, value, orderSetting]);
 
-  const handleSave = async () => {
+  const handleSaveClicked = async () => {
     setIsLoading(true);
     await dispatch(changeOrderingMode({orderingMode: selected?.key}));
     setIsLoading(false);
-    if (handleClose) {
-      handleClose();
+    if (handleSaveCustom) {
+      handleSaveCustom();
     }
   };
 
@@ -330,7 +348,7 @@ const OrderingTypeSelectorModal = ({open, handleClose, value}) => {
           style={styles.touchableSave}
           disabled={disabled}
           onPress={() => {
-            handleSave();
+            handleSaveClicked();
           }}>
           <Text style={styles.textSave}>SAVE</Text>
         </TouchableOpacity>
@@ -343,10 +361,10 @@ const OrderingTypeSelectorModal = ({open, handleClose, value}) => {
   }
 
   return (
-    <Modal transparent visible={open} onDismiss={handleClose}>
+    <Modal transparent visible={open}>
       <Provider>
         <Portal>
-          <Dialog visible={open} onDismiss={handleClose} style={styles.root}>
+          <Dialog visible={open} style={styles.root} dismissable={false}>
             <LoadingScreen loading={isLoading} />
             {renderHeader()}
             <View style={styles.divider} />

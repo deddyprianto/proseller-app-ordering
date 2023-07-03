@@ -1279,6 +1279,9 @@ const Cart = props => {
         <OrderingTypeSelectorModal
           value={basket?.orderingMode}
           open={openOrderingTypeModal}
+          handleSaveCustom={() => {
+            handleCloseOrderingTypeModal();
+          }}
           handleClose={() => {
             handleCloseOrderingTypeModal();
           }}
