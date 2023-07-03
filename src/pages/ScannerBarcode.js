@@ -60,7 +60,8 @@ const useStyles = () => {
       alignItems: 'center',
       elevation: 1,
       position: 'absolute',
-      top: 53,
+      top: normalizeLayoutSizeHeight(53),
+      zIndex: 1,
     },
     viewTopContentValue: {
       display: 'flex',
