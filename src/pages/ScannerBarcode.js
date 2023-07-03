@@ -229,11 +229,7 @@ const ScannerBarcode = () => {
   };
 
   const renderHeader = () => {
-    return (
-      <View style={styles.header}>
-        <Header isMiddleLogo />
-      </View>
-    );
+    return <Header isMiddleLogo />;
   };
 
   const renderSearchModal = () => {
