@@ -14,7 +14,7 @@ const useStyles = () => {
   const styles = StyleSheet.create({
     root: {
       position: 'absolute',
-      bottom: 32,
+      bottom: 81,
       width: '100%',
       paddingHorizontal: 16,
     },
