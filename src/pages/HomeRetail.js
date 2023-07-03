@@ -16,6 +16,7 @@ import {
   Image,
   ScrollView,
   SafeAreaView,
+  Pressable,
 } from 'react-native';
 
 import Banner from '../components/banner';
@@ -37,6 +38,7 @@ import Theme from '../theme';
 import {myVouchers} from '../actions/account.action';
 import {getUserProfile} from '../actions/user.action';
 import {dataPromotion} from '../actions/promotion.action';
+import {getTermsConditions} from '../actions/order.action';
 
 const useStyles = () => {
   const theme = Theme();
@@ -97,7 +99,7 @@ const useStyles = () => {
       alignItems: 'center',
       paddingVertical: 4,
       paddingHorizontal: 16,
-      borderRadius: 50,
+      borderRadius: 8,
       backgroundColor: theme.colors.accent,
     },
     viewMenuBar: {
@@ -181,6 +183,9 @@ const HomeRetail = () => {
   const [isShowFloatingButton, setIsShowFloatingButton] = useState(false);
   const [productListPosition, setProductListPosition] = useState(0);
 
+  const orderingSetting = useSelector(
+    state => state.orderReducer.orderingSetting?.orderingSetting?.settings,
+  );
   const defaultOutlet = useSelector(
     state => state.storesReducer.defaultOutlet.defaultOutlet,
   );
@@ -210,6 +215,7 @@ const HomeRetail = () => {
   );
 
   const svcBalance = useSelector(state => state.SVCReducer.balance.balance);
+  const stores = useSelector(state => state.storesReducer?.dataStores?.stores);
 
   const intlData = useSelector(state => state.intlData);
 
@@ -282,6 +288,7 @@ const HomeRetail = () => {
   const onRefresh = useCallback(async () => {
     setRefresh(true);
     const response = await dispatch(getProductByOutlet(defaultOutlet.id));
+    await dispatch(getTermsConditions());
     await dispatch(getBasket());
     await dispatch(getSVCBalance());
     await dispatch(dataPointHistory());
@@ -312,18 +319,23 @@ const HomeRetail = () => {
     }
   };
 
+  const onStorePress = () => {
+    const avilableStore =
+      stores?.filter(store => store.orderingStatus === 'AVAILABLE') || [];
+    if (avilableStore.length > 1) {
+      return Actions.store();
+    }
+    return null;
+  };
+
   const renderHeaderTitle = () => {
     return (
-      <TouchableOpacity
-        style={styles.viewHeaderTitle}
-        onPress={() => {
-          Actions.store();
-        }}>
+      <Pressable style={styles.viewHeaderTitle} onPress={onStorePress}>
         <Text numberOfLines={1} style={styles.textHeaderTitle}>
           {defaultOutlet?.name}
         </Text>
         <Image style={styles.iconArrowDown} source={appConfig.iconArrowDown} />
-      </TouchableOpacity>
+      </Pressable>
     );
   };
 
@@ -370,6 +382,12 @@ const HomeRetail = () => {
 
   const renderMenuBarSVC = () => {
     const balance = svcBalance || 0;
+    const svcValue = orderingSetting?.find(
+      setting => setting.settingKey === 'ShowSvcOnProfileSubMenu',
+    );
+    if (svcValue?.settingValue === false) {
+      return null;
+    }
     return (
       <TouchableOpacity
         style={styles.viewMenuBarChild}
@@ -420,6 +438,10 @@ const HomeRetail = () => {
   };
 
   const renderProductCategoryList = () => {
+    const enableMoreCategories = orderingSetting.find(
+      setting => setting.settingKey === 'ShowAllCategory',
+    );
+    const isEnableMoreCategories = enableMoreCategories?.settingValue;
     return (
       <View>
         <Text style={styles.textProductCategories}>{productOutletTitle}</Text>
@@ -432,8 +454,8 @@ const HomeRetail = () => {
           }}
           isIndicator
           isScroll
-          isMoreCategoryButton
           horizontal
+          isMoreCategoryButton={isEnableMoreCategories}
         />
       </View>
     );
@@ -460,7 +482,6 @@ const HomeRetail = () => {
     const productsLimit = !isEmptyArray(products)
       ? products?.slice(0, productsLimitLength)
       : [];
-
     return (
       <View
         onLayout={event => {
