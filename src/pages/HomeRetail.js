@@ -38,6 +38,7 @@ import Theme from '../theme';
 import {myVouchers} from '../actions/account.action';
 import {getUserProfile} from '../actions/user.action';
 import {dataPromotion} from '../actions/promotion.action';
+import {getTermsConditions} from '../actions/order.action';
 
 const useStyles = () => {
   const theme = Theme();
@@ -287,6 +288,7 @@ const HomeRetail = () => {
   const onRefresh = useCallback(async () => {
     setRefresh(true);
     const response = await dispatch(getProductByOutlet(defaultOutlet.id));
+    await dispatch(getTermsConditions());
     await dispatch(getBasket());
     await dispatch(getSVCBalance());
     await dispatch(dataPointHistory());
@@ -436,6 +438,10 @@ const HomeRetail = () => {
   };
 
   const renderProductCategoryList = () => {
+    const enableMoreCategories = orderingSetting.find(
+      setting => setting.settingKey === 'ShowAllCategory',
+    );
+    const isEnableMoreCategories = enableMoreCategories?.settingValue;
     return (
       <View>
         <Text style={styles.textProductCategories}>{productOutletTitle}</Text>
@@ -449,6 +455,7 @@ const HomeRetail = () => {
           isIndicator
           isScroll
           horizontal
+          isMoreCategoryButton={isEnableMoreCategories}
         />
       </View>
     );
