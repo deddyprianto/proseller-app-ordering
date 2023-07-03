@@ -1,7 +1,7 @@
 import {Dimensions} from 'react-native';
 
 export const normalizeLayoutSizeHeight = height => {
-  const referenceHeight = 926;
+  const referenceHeight = 969;
   const currentScreenHeight = Dimensions.get('screen').height;
   const normalizedLayoutHeight =
     (currentScreenHeight / referenceHeight) * height;
