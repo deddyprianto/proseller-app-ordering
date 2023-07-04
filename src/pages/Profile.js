@@ -159,6 +159,8 @@ const useStyles = () => {
       display: 'flex',
       flexDirection: 'row',
       alignItems: 'center',
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.greyScale3,
     },
     viewPointHeader: {
       alignItems: 'flex-end',
@@ -654,19 +656,12 @@ const Profile = props => {
         {renderMembershipQRCode()}
         {renderDivider()}
         {renderMyDeliveryAddress()}
-        {renderDivider()}
         {renderEditProfile()}
-        {renderDivider()}
         {renderReferral()}
-        {renderDivider()}
         {renderNotifications()}
-        {renderDivider()}
         {renderTermsAndConditions()}
-        {renderDivider()}
         {renderFAQ()}
-        {renderDivider()}
         {renderDeleteAccount()}
-        {renderDivider()}
         {renderLogout()}
       </View>
     );
