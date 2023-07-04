@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "build:ios": "react-native bundle --entry-file='index.js' --bundle-output='./ios/main.jsbundle' --dev=false --platform='ios'",
-    "android-dev": "SET ENVFILE=.env.dev && react-native run-android --variant=devDebug --appIdSuffix=dev",
+    "android-dev": "export ENVFILE=.env.dev && npx react-native run-android --variant=devDebug --appIdSuffix=dev",
     "android-demo": "export ENVFILE=.env.demo && npx react-native run-android --variant=demoDebug --appIdSuffix=demo",
     "android-demo-rel": "export ENVFILE=.env.demo && npx react-native run-android --variant=demoRelease --appIdSuffix=demo",
     "android-dev-rel": "export ENVFILE=.env.dev && npx react-native run-android --variant=devRelease --appIdSuffix=dev",

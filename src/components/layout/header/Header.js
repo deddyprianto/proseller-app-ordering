@@ -20,6 +20,7 @@ const useStyles = () => {
     root: {
       overflow: 'hidden',
       paddingBottom: 2,
+      zIndex: 1000,
     },
     container: {
       shadowOffset: {

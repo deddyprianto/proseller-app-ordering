@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 
 import appConfig from '../config/appConfig';
+import {Svg, Defs, Rect, Mask} from 'react-native-svg';
 
 import LoadingScreen from '../components/loadingScreen';
 import ProductAddModal from '../components/productAddModal';
@@ -24,8 +25,13 @@ import {showSnackbar} from '../actions/setting.action';
 
 import Theme from '../theme';
 import ButtonCartFloating from '../components/buttonCartFloating/ButtonCartFloating';
+import {
+  normalizeLayoutSizeHeight,
+  normalizeLayoutSizeWidth,
+} from '../helper/Layout';
 
 const HEIGHT = Dimensions.get('window').height;
+const WIDTH = Dimensions.get('window').width;
 
 const RESTRICTED_TYPES = ['QR_CODE', 'UNKNOWN', 'TEXT'];
 
@@ -51,12 +57,11 @@ const useStyles = () => {
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     viewTopContent: {
-      top: (HEIGHT * 16) / 100,
-      left: 0,
-      right: 0,
       alignItems: 'center',
-      position: 'absolute',
       elevation: 1,
+      position: 'absolute',
+      top: normalizeLayoutSizeHeight(53),
+      zIndex: 1,
     },
     viewTopContentValue: {
       display: 'flex',
@@ -71,12 +76,11 @@ const useStyles = () => {
       borderColor: theme.colors.buttonStandBy,
     },
     viewBottomContent: {
-      bottom: (HEIGHT * 16) / 100,
-      left: 0,
-      right: 0,
       alignItems: 'center',
-      position: 'absolute',
       elevation: 1,
+      position: 'absolute',
+      bottom: normalizeLayoutSizeHeight(220),
+      zIndex: 1,
     },
     viewBottomContentValue: {
       display: 'flex',
@@ -111,12 +115,11 @@ const useStyles = () => {
       marginTop: 35,
     },
   });
-  return styles;
+  return {styles, theme};
 };
 const ScannerBarcode = () => {
-  const styles = useStyles();
+  const {styles, theme} = useStyles();
   const dispatch = useDispatch();
-
   const [searchCondition, setSearchCondition] = useState('');
 
   const [isLoading, setIsLoading] = useState(false);
@@ -226,11 +229,7 @@ const ScannerBarcode = () => {
   };
 
   const renderHeader = () => {
-    return (
-      <View style={styles.header}>
-        <Header isMiddleLogo />
-      </View>
-    );
+    return <Header isMiddleLogo />;
   };
 
   const renderSearchModal = () => {
@@ -271,8 +270,38 @@ const ScannerBarcode = () => {
               'We need to use your camera access to scan product barcode',
             buttonPositive: 'Ok',
             buttonNegative: 'Cancel',
-          }}
-        />
+          }}>
+          <>
+            {renderTopContent()}
+
+            <Svg height="100%" width="100%">
+              <Defs>
+                <Mask id="mask" x="0" y="0" height="100%" width="100%">
+                  <Rect height="100%" width="100%" fill="#fff" />
+                  <Rect
+                    x={normalizeLayoutSizeWidth(16)}
+                    y={normalizeLayoutSizeHeight(140)}
+                    width={normalizeLayoutSizeWidth(396)}
+                    height={normalizeLayoutSizeHeight(396)}
+                    stroke={theme.colors.primary}
+                    strokeWidth={1}
+                    fill="black"
+                    rx={16}
+                    ry={16}
+                  />
+                </Mask>
+              </Defs>
+              <Rect
+                height="100%"
+                width="100%"
+                fill="rgba(0, 0, 0, 0.5)"
+                mask="url(#mask)"
+                fill-opacity="0"
+              />
+            </Svg>
+            {renderBottomContent()}
+          </>
+        </RNCamera>
       );
     }
   };
@@ -289,8 +318,6 @@ const ScannerBarcode = () => {
       {renderHeader()}
       {renderScanner()}
       {renderSearchModal()}
-      {renderTopContent()}
-      {renderBottomContent()}
       {renderButtonCartFloating()}
       {renderProductAddModal()}
     </SafeAreaView>
