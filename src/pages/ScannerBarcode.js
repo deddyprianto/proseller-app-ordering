@@ -294,7 +294,7 @@ const ScannerBarcode = () => {
               <Rect
                 height="100%"
                 width="100%"
-                fill="rgba(0, 0, 0, 0.7)"
+                fill="rgba(0, 0, 0, 0.5)"
                 mask="url(#mask)"
                 fill-opacity="0"
               />
