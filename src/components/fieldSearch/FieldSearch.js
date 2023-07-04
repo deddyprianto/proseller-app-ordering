@@ -10,24 +10,28 @@ import {
 } from 'react-native';
 import appConfig from '../../config/appConfig';
 import Theme from '../../theme';
+import SearchSvg from '../../assets/svg/SearchSvg';
+import {
+  normalizeLayoutSizeHeight,
+  normalizeLayoutSizeWidth,
+} from '../../helper/Layout';
 
 const useStyles = () => {
   const theme = Theme();
   const styles = StyleSheet.create({
     root: {
       flex: 1,
-      height: 48,
-      minHeight: 48,
-      maxHeight: 48,
+      height: normalizeLayoutSizeHeight(48),
+      minHeight: normalizeLayoutSizeHeight(48),
+      maxHeight: normalizeLayoutSizeHeight(48),
       display: 'flex',
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
       borderWidth: 1,
-      borderRadius: 8,
-      paddingHorizontal: 16,
-      borderColor: theme.colors.greyScale2,
-      backgroundColor: theme.colors.background,
+      borderRadius: normalizeLayoutSizeHeight(8),
+      paddingHorizontal: normalizeLayoutSizeWidth(16),
+      borderColor: theme.colors.greyScale5,
     },
     container: {
       flex: 1,
@@ -43,8 +47,10 @@ const useStyles = () => {
       paddingVertical: 0,
       paddingHorizontal: 0,
       color: theme.colors.textPrimary,
-      fontSize: theme.fontSize[14],
+      fontSize: theme.fontSize[16],
       fontFamily: theme.fontFamily.poppinsMedium,
+      flex: 1,
+      justifyContent: 'center',
     },
     icon: {
       width: 20,
@@ -107,7 +113,7 @@ const FieldSearch = ({
         onPress={() => {
           onSubmit(value);
         }}>
-        <Image source={appConfig.iconSearch} style={styles.icon} />
+        <SearchSvg />
       </TouchableOpacity>
     </View>
   );

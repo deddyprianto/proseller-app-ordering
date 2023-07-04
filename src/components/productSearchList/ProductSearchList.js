@@ -31,7 +31,7 @@ const useStyles = () => {
     },
     container: {
       flex: 1,
-      paddingHorizontal: 16,
+      paddingHorizontal: 0,
     },
     viewGroupProduct: {
       width: '100%',
@@ -39,12 +39,13 @@ const useStyles = () => {
       flexWrap: 'wrap',
       justifyContent: 'space-between',
       marginBottom: 60,
+      paddingHorizontal: 16,
     },
     textSearch: {
       marginTop: 16,
       marginBottom: 8,
       marginHorizontal: 16,
-      color: theme.colors.textPrimary,
+      color: theme.colors.greyScale5,
       fontSize: theme.fontSize[14],
       fontFamily: theme.fontFamily.poppinsMedium,
     },
