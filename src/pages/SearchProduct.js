@@ -43,6 +43,7 @@ import SearchSuggestionList from '../components/searchSuggestionList/SearchSugge
 
 import Theme from '../theme';
 import AnimationMessage from '../components/animationMessage';
+import {normalizeLayoutSizeHeight} from '../helper/Layout';
 
 const useStyles = () => {
   const theme = Theme();
@@ -53,7 +54,7 @@ const useStyles = () => {
     footer: {
       elevation: 5,
       position: 'absolute',
-      bottom: 10,
+      bottom: normalizeLayoutSizeHeight(50),
       width: '100%',
       paddingHorizontal: 16,
     },
@@ -137,7 +138,6 @@ const useStyles = () => {
       alignItems: 'center',
       justifyContent: 'space-between',
       backgroundColor: theme.colors.background,
-      zIndex: 1000,
     },
     viewRecentSearchHeader: {
       width: '100%',
@@ -145,7 +145,7 @@ const useStyles = () => {
       paddingVertical: 8,
       display: 'flex',
       flexDirection: 'row',
-      alignItems: 'center',
+      // alignItems: 'center',
       justifyContent: 'space-between',
       backgroundColor: theme.colors.greyScale4,
     },
@@ -273,7 +273,7 @@ const SearchProduct = ({category}) => {
     await getSubCategories(id);
     setTimeout(() => {
       setIsLoading(false);
-    }, 50);
+    }, 350);
   };
 
   const handleSearchMoreProducts = async () => {
@@ -328,8 +328,13 @@ const SearchProduct = ({category}) => {
     await dispatch(setSearchProductHistory({searchQuery: value}));
   };
 
-  const handleClearSearchHistory = async value => {
-    await dispatch(clearSearchProductHistory());
+  const handleClearSearchHistory = async () => {
+    dispatch(clearSearchProductHistory());
+  };
+
+  const handlePressSubCategry = item => {
+    setSelectedSubCategory(item);
+    getBySubCategory(item.id);
   };
 
   const renderButtonCart = () => {
@@ -422,14 +427,12 @@ const SearchProduct = ({category}) => {
     if (!isEmptyArray(searchProductHistory)) {
       return (
         <View style={styles.viewRecentSearchHeader}>
-          <Text style={styles.textRecentSearchHeader}>Recent Search</Text>
-          <Text
-            onPress={() => {
-              handleClearSearchHistory();
-            }}
-            style={styles.textClearRecent}>
-            Clear Recent
-          </Text>
+          <View>
+            <Text style={styles.textRecentSearchHeader}>Recent Search</Text>
+          </View>
+          <TouchableOpacity onPress={handleClearSearchHistory}>
+            <Text style={styles.textClearRecent}>Clear Recent</Text>
+          </TouchableOpacity>
         </View>
       );
     }
@@ -541,9 +544,7 @@ const SearchProduct = ({category}) => {
           <ProductSubCategoryList
             subCategories={subCategories}
             selectedSubCategory={selectedSubCategory}
-            onChange={item => {
-              setSelectedSubCategory(item);
-            }}
+            onChange={handlePressSubCategry}
           />
           <ScrollView>
             <ProductList products={productsBySubCategory} basket={basket} />

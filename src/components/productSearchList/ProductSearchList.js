@@ -6,20 +6,18 @@
  */
 
 import React from 'react';
-import {
-  StyleSheet,
-  View,
-  Text,
-  ScrollView,
-  Dimensions,
-  Image,
-} from 'react-native';
+import {StyleSheet, View, Text, ScrollView, Dimensions} from 'react-native';
 
 import ProductSearchListItem from '../productList/components/ProductItem';
 
 import {isEmptyArray} from '../../helper/CheckEmpty';
 import Theme from '../../theme';
 import appConfig from '../../config/appConfig';
+import {
+  normalizeLayoutSizeHeight,
+  normalizeLayoutSizeWidth,
+} from '../../helper/Layout';
+import AlertSvg from '../../assets/svg/AlertSvg';
 
 const HEIGHT = Dimensions.get('window').height;
 
@@ -54,17 +52,20 @@ const useStyles = () => {
       color: theme.colors.textTertiary,
       fontSize: theme.fontSize[14],
       fontFamily: theme.fontFamily.poppinsSemiBold,
+      textAlign: 'center',
     },
     viewEmpty: {
-      height: HEIGHT,
       justifyContent: 'center',
       alignItems: 'center',
+      marginTop: normalizeLayoutSizeHeight(241),
     },
     iconEmpty: {
-      marginTop: -200,
       width: 100,
       height: 100,
       tintColor: theme.colors.textTertiary,
+    },
+    textEmptyContainer: {
+      width: normalizeLayoutSizeWidth(363),
     },
   });
   return styles;
@@ -98,10 +99,14 @@ const ProductSearchList = ({products, basket, searchQuery, isLoading}) => {
     if (isEmptyArray(products) && !isLoading) {
       return (
         <View style={styles.viewEmpty}>
-          <Image source={appConfig.iconInformation} style={styles.iconEmpty} />
-          <Text style={styles.textEmpty}>
-            Item can’t be found. Please try another keyword.
-          </Text>
+          <View>
+            <AlertSvg />
+          </View>
+          <View style={styles.textEmptyContainer}>
+            <Text style={styles.textEmpty}>
+              Item can’t be found. Please try another keyword.
+            </Text>
+          </View>
         </View>
       );
     } else {
