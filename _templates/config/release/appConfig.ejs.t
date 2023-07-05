@@ -11,6 +11,9 @@ const appConfig = {
   appMataUang: 'SGD',
   appVersion: 'Version 1.1',
 
+  // other setting
+  descriptionLineProduct: '<%= productLine %>',
+
   // image company
   appImageNull: require('../assets/img/logo.png'),
   userQRCode: require('../../assets/img/qrcode.jpg'),
