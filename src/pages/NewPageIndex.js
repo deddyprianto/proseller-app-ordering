@@ -287,9 +287,9 @@ const NewPageIndex = () => {
 
   if (!isLoggedIn) {
     return <OnBoarding />;
-  } else if (!defaultOutlet.id) {
+  } else if (!defaultOutlet.id && awsConfig.COMPANY_TYPE === 'Retail') {
     return <Store />;
-  } else if (isLoggedIn && defaultOutlet?.id) {
+  } else if (isLoggedIn) {
     return (
       <SafeAreaView style={styles.root}>
         {handleGetNotification()}

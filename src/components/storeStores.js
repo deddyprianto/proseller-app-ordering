@@ -65,7 +65,9 @@ class StoreStores extends Component {
       this.setState({isLoading: true});
       await this.props.dispatch(getOutletById(item.storeId));
       this.setState({isLoading: false});
-      if (Actions.currentScene !== 'pageIndex') {
+      if (awsConfig.COMPANY_TYPE !== 'Retail') {
+        Actions.push('orderHere');
+      } else if (Actions.currentScene !== 'pageIndex') {
         Actions.pop();
       }
     } catch (e) {}
