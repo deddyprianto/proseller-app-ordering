@@ -210,7 +210,7 @@ const Menu = () => {
       <TouchableOpacity
         style={styles.touchableOrderHere}
         onPress={() => {
-          Actions.push('orderHere');
+          Actions.push('store');
         }}>
         <Text style={styles.textOrderHere1}>Order now?</Text>
         <Text style={styles.textOrderHere2}>CLICK HERE</Text>

@@ -224,6 +224,7 @@ const OrderHere = () => {
   const renderHeaderTitle = () => {
     return (
       <TouchableOpacity
+        disabled
         onPress={() => {
           Actions.store();
         }}>

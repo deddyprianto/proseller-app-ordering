@@ -276,7 +276,9 @@ class Home extends Component {
     return (
       <>
         <LoadingScreen loading={this.state.isLoading} />
-        {outletSelectionMode === 'MANUAL' && isEmptyObject(defaultOutlet) ? (
+        {outletSelectionMode === 'MANUAL' &&
+        isEmptyObject(defaultOutlet) &&
+        awsConfig.COMPANY_TYPE === 'Retail' ? (
           <Store />
         ) : awsConfig.COMPANY_TYPE === 'Retail' ? (
           <HomeRetail />
