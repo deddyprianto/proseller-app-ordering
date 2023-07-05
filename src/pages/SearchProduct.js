@@ -42,8 +42,8 @@ import ProductSubCategoryList from '../components/productSubCategoryList';
 import SearchSuggestionList from '../components/searchSuggestionList/SearchSuggestionList';
 
 import Theme from '../theme';
-import {Toast} from 'native-base';
 import AnimationMessage from '../components/animationMessage';
+import {normalizeLayoutSizeHeight} from '../helper/Layout';
 
 const useStyles = () => {
   const theme = Theme();
@@ -54,7 +54,7 @@ const useStyles = () => {
     footer: {
       elevation: 5,
       position: 'absolute',
-      bottom: 10,
+      bottom: normalizeLayoutSizeHeight(50),
       width: '100%',
       paddingHorizontal: 16,
     },
@@ -138,7 +138,6 @@ const useStyles = () => {
       alignItems: 'center',
       justifyContent: 'space-between',
       backgroundColor: theme.colors.background,
-      zIndex: 1000,
     },
     viewRecentSearchHeader: {
       width: '100%',
@@ -146,7 +145,7 @@ const useStyles = () => {
       paddingVertical: 8,
       display: 'flex',
       flexDirection: 'row',
-      alignItems: 'center',
+      // alignItems: 'center',
       justifyContent: 'space-between',
       backgroundColor: theme.colors.greyScale4,
     },
@@ -209,9 +208,8 @@ const SearchProduct = ({category}) => {
   const [selectedSubCategory, setSelectedSubCategory] = useState({});
   const [productsSearch, setProductsSearch] = useState([]);
   const [isErrorSearch, setIsErrorSearch] = useState(false);
-  const categories = useSelector(
-    state => state.productReducer.productCategories,
-  );
+  const categories =
+    useSelector(state => state.productReducer?.productsOutlet?.data) || [];
 
   const subCategories = useSelector(
     state => state.productReducer.productSubCategories,
@@ -240,79 +238,43 @@ const SearchProduct = ({category}) => {
   }, [basket]);
 
   useEffect(() => {
-    setSelectedCategory(category);
+    if (category) {
+      setSelectedCategory(category);
+    }
   }, [category]);
 
-  useEffect(() => {
-    const loadData = async () => {
-      setIsLoading(true);
-      const response = await dispatch(
-        getProductSubCategories({
-          outletId: defaultOutlet.id,
-          categoryId: selectedCategory.id,
-          searchQuery,
-        }),
-      );
+  const getBySubCategory = async id => {
+    await dispatch(
+      getProductBySubCategory({
+        outletId: defaultOutlet.id,
+        subCategoryId: id,
+        searchQuery,
+      }),
+    );
+  };
 
-      if (!isEmptyArray(response)) {
-        setSelectedSubCategory(response[0]);
-      }
-    };
-
-    if (selectedCategory?.id) {
-      loadData();
+  const getSubCategories = async id => {
+    const response = await dispatch(
+      getProductSubCategories({
+        outletId: defaultOutlet.id,
+        categoryId: id,
+        searchQuery,
+      }),
+    );
+    if (!isEmptyArray(response)) {
+      setSelectedSubCategory(response[0]);
+      getBySubCategory(response[0]?.id);
     }
-  }, [dispatch, defaultOutlet, selectedCategory, searchQuery]);
+  };
 
-  useEffect(() => {
-    const loadData = async id => {
-      setIsLoading(true);
-      await dispatch(
-        getProductBySubCategory({
-          outletId: defaultOutlet.id,
-          subCategoryId: id,
-          searchQuery,
-        }),
-      );
+  const getCategoryProduct = async id => {
+    setIsLoading(true);
+    await getBySubCategory(id);
+    await getSubCategories(id);
+    setTimeout(() => {
       setIsLoading(false);
-    };
-
-    if (selectedSubCategory?.id) {
-      loadData(selectedSubCategory?.id);
-    } else if (selectedCategory?.id) {
-      loadData(selectedCategory?.id);
-    }
-  }, [
-    dispatch,
-    searchQuery,
-    defaultOutlet,
-    selectedCategory,
-    selectedSubCategory,
-  ]);
-
-  useEffect(() => {
-    const loadData = async () => {
-      setIsLoading(true);
-      const response = await dispatch(
-        getProductBySearch({
-          outletId: defaultOutlet.sortKey,
-          search: searchQuery,
-          skip: 0,
-        }),
-      );
-
-      setProductsSearch(response);
-
-      setIsLoading(false);
-    };
-
-    if (searchQuery && !selectedCategory?.id) {
-      ref.current.scrollTo(0);
-      if (searchQuery.length > 1) {
-        loadData();
-      }
-    }
-  }, [dispatch, defaultOutlet, searchQuery, selectedCategory]);
+    }, 350);
+  };
 
   const handleSearchMoreProducts = async () => {
     setIsLoading(true);
@@ -332,12 +294,28 @@ const SearchProduct = ({category}) => {
     setIsLoading(false);
   };
 
+  const getSearchProduct = async value => {
+    setIsLoading(true);
+    const response = await dispatch(
+      getProductBySearch({
+        outletId: defaultOutlet.sortKey,
+        search: value,
+        skip: 0,
+      }),
+    );
+
+    setProductsSearch(response);
+    ref.current.scrollTo(0);
+    setIsLoading(false);
+  };
+
   const handleSearchProduct = async value => {
     if (value.length >= 2) {
       setSelectedCategory({});
       setSelectedSubCategory({});
       setSearchTextInput('');
       setSearchQuery(value);
+      getSearchProduct(value);
       await dispatch(setSearchProductHistory({searchQuery: value}));
     } else {
       setIsErrorSearch(true);
@@ -350,8 +328,13 @@ const SearchProduct = ({category}) => {
     await dispatch(setSearchProductHistory({searchQuery: value}));
   };
 
-  const handleClearSearchHistory = async value => {
-    await dispatch(clearSearchProductHistory());
+  const handleClearSearchHistory = async () => {
+    dispatch(clearSearchProductHistory());
+  };
+
+  const handlePressSubCategry = item => {
+    setSelectedSubCategory(item);
+    getBySubCategory(item.id);
   };
 
   const renderButtonCart = () => {
@@ -412,7 +395,7 @@ const SearchProduct = ({category}) => {
               onChange={value => {
                 setSearchTextInput(value);
               }}
-              placeholder="Find what you need"
+              placeholder="Try to search anything"
               onSubmit={value => {
                 handleSearchProduct(value);
               }}
@@ -444,14 +427,12 @@ const SearchProduct = ({category}) => {
     if (!isEmptyArray(searchProductHistory)) {
       return (
         <View style={styles.viewRecentSearchHeader}>
-          <Text style={styles.textRecentSearchHeader}>Recent Search</Text>
-          <Text
-            onPress={() => {
-              handleClearSearchHistory();
-            }}
-            style={styles.textClearRecent}>
-            Clear Recent
-          </Text>
+          <View>
+            <Text style={styles.textRecentSearchHeader}>Recent Search</Text>
+          </View>
+          <TouchableOpacity onPress={handleClearSearchHistory}>
+            <Text style={styles.textClearRecent}>Clear Recent</Text>
+          </TouchableOpacity>
         </View>
       );
     }
@@ -485,6 +466,11 @@ const SearchProduct = ({category}) => {
     }
   };
 
+  const onSelectCategory = item => {
+    setSelectedCategory(item);
+    getCategoryProduct(item.id);
+  };
+
   const renderCategoryList = () => {
     return (
       <View>
@@ -494,9 +480,7 @@ const SearchProduct = ({category}) => {
         <ProductCategoryList
           categories={categories}
           selectedCategory={selectedCategory}
-          onClick={item => {
-            setSelectedCategory(item);
-          }}
+          onClick={onSelectCategory}
           itemSize={'small'}
         />
       </View>
@@ -541,28 +525,26 @@ const SearchProduct = ({category}) => {
   };
 
   const renderProductSearchByCategoryBody = () => {
-    if (
-      isEmptyArray(subCategories) &&
-      isEmptyArray(productsBySubCategory) &&
-      !isLoading
-    ) {
-      return (
-        <View style={styles.viewEmpty}>
-          <Image source={appConfig.iconInformation} style={styles.iconEmpty} />
-          <Text style={styles.textEmpty}>
-            Item can’t be found. Please try another keyword.
-          </Text>
-        </View>
-      );
-    } else {
+    if (!isLoading) {
+      if (isEmptyArray(subCategories) && isEmptyArray(productsBySubCategory)) {
+        return (
+          <View style={styles.viewEmpty}>
+            <Image
+              source={appConfig.iconInformation}
+              style={styles.iconEmpty}
+            />
+            <Text style={styles.textEmpty}>
+              Item can’t be found. Please try another keyword.
+            </Text>
+          </View>
+        );
+      }
       return (
         <>
           <ProductSubCategoryList
             subCategories={subCategories}
             selectedSubCategory={selectedSubCategory}
-            onChange={item => {
-              setSelectedSubCategory(item);
-            }}
+            onChange={handlePressSubCategry}
           />
           <ScrollView>
             <ProductList products={productsBySubCategory} basket={basket} />
@@ -570,6 +552,7 @@ const SearchProduct = ({category}) => {
         </>
       );
     }
+    return null;
   };
 
   const renderProductSearchByCategory = () => {
@@ -579,6 +562,7 @@ const SearchProduct = ({category}) => {
             selectedCategory?.name
           }” category`
         : `Item list for “${selectedCategory?.name}” category`;
+    if (isLoading) return null;
 
     return (
       <View style={styles.viewProductSearchByCategory}>

@@ -31,6 +31,7 @@ import Theme from '../../../theme';
 import {useSelector} from 'react-redux';
 import GlobalText from '../../globalText';
 import colorConfig from '../../../config/colorConfig';
+import {normalizeLayoutSizeHeight} from '../../../helper/Layout';
 
 const useStyles = () => {
   const theme = Theme();
@@ -86,16 +87,16 @@ const useStyles = () => {
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textPrice: {
-      marginTop: 5,
+      marginTop: normalizeLayoutSizeHeight(8),
       color: theme.colors.textPrimary,
       fontSize: theme.fontSize[14],
-      fontFamily: theme.fontFamily.poppinsMedium,
+      fontFamily: theme.fontFamily.poppinsBold,
     },
     textPriceUnavailable: {
-      marginTop: 5,
+      marginTop: normalizeLayoutSizeHeight(8),
       color: theme.colors.textTertiary,
       fontSize: theme.fontSize[14],
-      fontFamily: theme.fontFamily.poppinsMedium,
+      fontFamily: theme.fontFamily.poppinsBold,
     },
     textPromo: {
       lineHeight: 18,
@@ -119,6 +120,7 @@ const useStyles = () => {
       display: 'flex',
       flexDirection: 'row',
       marginTop: 5,
+      height: normalizeLayoutSizeHeight(42),
     },
     viewIconCart: {
       borderRadius: 4,
@@ -323,16 +325,6 @@ const Product = ({product, basket}) => {
     }
   };
 
-  const renderQty = () => {
-    const styleText = isProductAvailable
-      ? styles.textQty
-      : styles.textQtyUnavailable;
-
-    if (totalQty) {
-      return <Text style={styleText}>{totalQty} x </Text>;
-    }
-  };
-
   const renderName = () => {
     const styleText = isProductAvailable
       ? styles.textName
@@ -341,7 +333,7 @@ const Product = ({product, basket}) => {
     return (
       <Text
         ellipsizeMode="tail"
-        numberOfLines={3}
+        numberOfLines={Number(appConfig.descriptionLineProduct)}
         style={styleText}
         allowFontScaling={false}>
         {product?.name}
@@ -349,12 +341,7 @@ const Product = ({product, basket}) => {
     );
   };
   const renderQtyAndName = () => {
-    return (
-      <View style={styles.viewQtyAndName}>
-        {renderQty()}
-        {renderName()}
-      </View>
-    );
+    return <View style={styles.viewQtyAndName}>{renderName()}</View>;
   };
 
   const renderPrice = () => {
@@ -364,18 +351,6 @@ const Product = ({product, basket}) => {
 
     return (
       <Text style={styleText}>{CurrencyFormatter(product?.retailPrice)}</Text>
-    );
-  };
-
-  const cartIcon = () => {
-    const styleView = isProductAvailable
-      ? styles.viewIconCart
-      : styles.viewIconCartUnavailable;
-
-    return (
-      <View style={styleView}>
-        <Image source={appConfig.iconCart} style={styles.iconCart} />
-      </View>
     );
   };
 
@@ -396,17 +371,8 @@ const Product = ({product, basket}) => {
     );
   };
 
-  const renderBodyRight = () => {
-    return <View style={styles.bodyRight}>{cartIcon()}</View>;
-  };
-
   const renderBody = () => {
-    return (
-      <View style={styles.body}>
-        {renderBodyLeft()}
-        {renderBodyRight()}
-      </View>
-    );
+    return <View style={styles.body}>{renderBodyLeft()}</View>;
   };
 
   const renderProductAddModal = () => {
