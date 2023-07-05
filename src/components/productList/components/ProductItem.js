@@ -333,7 +333,7 @@ const Product = ({product, basket}) => {
     return (
       <Text
         ellipsizeMode="tail"
-        numberOfLines={2}
+        numberOfLines={Number(appConfig.descriptionLineProduct)}
         style={styleText}
         allowFontScaling={false}>
         {product?.name}
