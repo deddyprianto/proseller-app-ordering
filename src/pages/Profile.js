@@ -28,6 +28,9 @@ import ConfirmationDialog from '../components/confirmationDialog';
 import MyECardModal from '../components/modal/MyECardModal';
 import moment from 'moment';
 import DeviceBrightness from '@adrianso/react-native-device-brightness';
+import Navbar from '../components/navbar';
+import {normalizeLayoutSizeHeight} from '../helper/Layout';
+import BgProfileSvg from '../assets/svg/BgProfileSvg';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -159,8 +162,6 @@ const useStyles = () => {
       display: 'flex',
       flexDirection: 'row',
       alignItems: 'center',
-      borderTopWidth: 1,
-      borderTopColor: theme.colors.greyScale3,
     },
     viewPointHeader: {
       alignItems: 'flex-end',
@@ -266,6 +267,12 @@ const useStyles = () => {
       width: 16,
       height: 16,
       tintColor: 'white',
+    },
+    backgroundProfile: {
+      height: normalizeLayoutSizeHeight(118),
+      position: 'absolute',
+      top: 0,
+      width: '100%',
     },
   });
 
@@ -654,13 +661,21 @@ const Profile = props => {
       <View style={styles.viewSettings}>
         {renderDivider()}
         {renderMembershipQRCode()}
+        {renderDivider()}
         {renderMyDeliveryAddress()}
+        {renderDivider()}
         {renderEditProfile()}
+        {renderDivider()}
         {renderReferral()}
+        {renderDivider()}
         {renderNotifications()}
+        {renderDivider()}
         {renderTermsAndConditions()}
+        {renderDivider()}
         {renderFAQ()}
+        {renderDivider()}
         {renderDeleteAccount()}
+        {renderDivider()}
         {renderLogout()}
       </View>
     );
@@ -744,7 +759,11 @@ const Profile = props => {
 
   return (
     <SafeAreaView>
+      <Navbar title="Profile" />
       <ScrollView style={styles.root}>
+        <View style={styles.backgroundProfile}>
+          <BgProfileSvg />
+        </View>
         <LoadingScreen loading={isLoading} />
         <Image
           source={appConfig.imageBackgroundProfile}
