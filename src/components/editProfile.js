@@ -667,25 +667,6 @@ class AccountEditProfil extends Component {
       <SafeAreaView style={styles.container}>
         {this.state.loading && <LoaderDarker />}
         <NavbarBack title={intlData.messages.editProfile} />
-        {/* <View
-          style={[
-            styles.header,
-            {backgroundColor: colorConfig.pageIndex.backgroundColor},
-          ]}>
-          <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
-            <Icon
-              size={28}
-              name={
-                Platform.OS === 'ios' ? 'ios-arrow-back' : 'md-arrow-round-back'
-              }
-              style={styles.btnBackIcon}
-            />
-            <Text style={styles.btnBackText}>
-              {' '}
-              {intlData.messages.editProfile}{' '}
-            </Text>
-          </TouchableOpacity>
-        </View> */}
         <KeyboardAwareScrollView>
           <View>
             <View style={styles.card}>
@@ -1284,8 +1265,8 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 8,
     alignSelf: 'stretch',
-    marginLeft: 30,
-    marginRight: 30,
+    marginLeft: 16,
+    marginRight: 16,
     shadowColor: '#00000021',
     shadowOffset: {
       width: 0,
@@ -1307,8 +1288,8 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 8,
     alignSelf: 'stretch',
-    marginLeft: 30,
-    marginRight: 30,
+    marginLeft: 16,
+    marginRight: 16,
     shadowColor: '#00000021',
     shadowOffset: {
       width: 0,
