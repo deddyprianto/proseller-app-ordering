@@ -1383,5 +1383,9 @@ const styles = StyleSheet.create({
     marginTop: 4,
     borderRadius: 0,
     paddingVertical: 5,
+    borderTopLeftRadius: 8,
+    borderTopRightRadius: 8,
+    borderBottomLeftRadius: 8,
+    borderBottomRightRadius: 8,
   },
 });
