@@ -44,6 +44,7 @@ import {getTermsConditions} from '../actions/order.action';
 import GlobalInputText from './globalInputText';
 import CalendarSvg from '../assets/svg/CalendareSvg';
 import withHooksComponent from './HOC';
+import NavbarBack from './navbar/navbarBack';
 
 const backupMandatoryFields = [
   {
@@ -665,7 +666,8 @@ class AccountEditProfil extends Component {
     return (
       <SafeAreaView style={styles.container}>
         {this.state.loading && <LoaderDarker />}
-        <View
+        <NavbarBack title={intlData.messages.editProfile} />
+        {/* <View
           style={[
             styles.header,
             {backgroundColor: colorConfig.pageIndex.backgroundColor},
@@ -683,8 +685,7 @@ class AccountEditProfil extends Component {
               {intlData.messages.editProfile}{' '}
             </Text>
           </TouchableOpacity>
-          {/*<View style={styles.line} />*/}
-        </View>
+        </View> */}
         <KeyboardAwareScrollView>
           <View>
             <View style={styles.card}>
