@@ -41,6 +41,9 @@ import awsConfig from '../config/awsConfig';
 import PhoneInput from 'react-native-phone-input';
 import CountryPicker from './react-native-country-picker-modal/lib';
 import {getTermsConditions} from '../actions/order.action';
+import GlobalInputText from './globalInputText';
+import CalendarSvg from '../assets/svg/CalendareSvg';
+import withHooksComponent from './HOC';
 
 const backupMandatoryFields = [
   {
@@ -651,7 +654,7 @@ class AccountEditProfil extends Component {
   };
 
   render() {
-    const {intlData} = this.props;
+    const {intlData, colors, fontFamily} = this.props;
     const {fields, isPostalCodeValid, customFields} = this.state;
     const {
       disableChangePhoneNumber,
@@ -687,56 +690,42 @@ class AccountEditProfil extends Component {
             <View style={styles.card}>
               <Form ref="form" onSubmit={this.checkMandatory}>
                 <View style={styles.detail}>
-                  <View style={styles.detailItem}>
-                    <Text style={styles.desc}>{intlData.messages.name}</Text>
-                    <TextInput
-                      placeholder="Name"
-                      style={{paddingVertical: 10}}
-                      value={this.state.name}
-                      onChangeText={value => this.setState({name: value})}
-                    />
-                    <View style={{borderWidth: 0.5, borderColor: 'gray'}} />
-                  </View>
-                  <View style={styles.detailItem}>
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                      }}>
-                      <Text style={styles.desc}>Email</Text>
-                      {!disableChangeEmail ? (
-                        <TouchableOpacity
-                          style={[styles.btnChange]}
-                          onPress={() => this.toChangeCredentials('Email')}>
-                          <Text style={[styles.textChange]}>
-                            {this.state.editEmail ? 'Cancel' : 'Change'}
-                          </Text>
-                        </TouchableOpacity>
-                      ) : null}
-                    </View>
-                    {!this.state.editEmail ? (
-                      <Text style={{paddingTop: 12}}>
-                        {this.props.dataDiri.email}
-                      </Text>
-                    ) : (
-                      <>
-                        <TextInput
-                          placeholder="Email"
-                          style={{paddingVertical: 10}}
-                          value={this.state.email}
-                          onChangeText={value => this.setState({email: value})}
-                        />
-                        <View style={{borderWidth: 0.5, borderColor: 'gray'}} />
-                      </>
-                    )}
-                  </View>
-
+                  <GlobalInputText
+                    value={this.state.name}
+                    onChangeText={value => this.setState({name: value})}
+                    placeholder="Name"
+                    label="Name"
+                    isMandatory
+                  />
+                  <GlobalInputText
+                    placeholder="Email"
+                    value={this.state.email}
+                    onChangeText={value => this.setState({email: value})}
+                    disabled
+                    label="Email"
+                    isMandatory
+                    editable={false}
+                  />
                   <View style={styles.detailItem}>
                     <View
                       style={{
                         flexDirection: 'row',
                       }}>
-                      <Text style={styles.desc}>
-                        {intlData.messages.phoneNumber}
+                      <Text
+                        style={[
+                          styles.desc,
+                          {fontFamily: this.props.fontFamily.poppinsMedium},
+                        ]}>
+                        Mobile No{' '}
+                        <Text
+                          style={[
+                            styles.mandatoryStyle,
+                            {
+                              fontFamily: this.props.fontFamily.poppinsMedium,
+                            },
+                          ]}>
+                          *
+                        </Text>{' '}
                       </Text>
                       {!disableChangePhoneNumber ? (
                         <TouchableOpacity
@@ -858,30 +847,19 @@ class AccountEditProfil extends Component {
                           item.format.length > 4
                         )
                           return (
-                            <View style={styles.detailItem}>
-                              <Text style={[styles.desc, {marginLeft: 0}]}>
-                                Birthday{' '}
-                                {item.mandatory ? (
-                                  <Text style={{color: 'red'}}>*</Text>
-                                ) : null}
-                              </Text>
-                              <Text
-                                style={{
-                                  paddingTop: 12,
-                                  borderBottomColor:
-                                    colorConfig.store.defaultColor,
-                                  borderBottomWidth: 1,
-
-                                  paddingBottom: 5,
-                                }}
-                                onPress={this.showDatePicker}>
-                                {this.state.birthDate == '' ||
-                                this.state.birthDate == undefined ||
-                                this.state.birthDate.length == 3
-                                  ? 'Enter Birthday'
-                                  : this.formatBirthDate(this.state.birthDate)}
-                              </Text>
-
+                            <>
+                              <GlobalInputText
+                                label="Birthdate"
+                                isMandatory={item.mandatory}
+                                editable={false}
+                                onPressBtn={this.showDatePicker}
+                                type="button"
+                                value={this.formatBirthDate(
+                                  this.state.birthDate,
+                                )}
+                                defaultValue="Birthdate"
+                                rightIcon={<CalendarSvg />}
+                              />
                               <DatePicker
                                 modal
                                 mode={'date'}
@@ -898,7 +876,7 @@ class AccountEditProfil extends Component {
                                 onConfirm={this.handleConfirm}
                                 onCancel={this.hideDatePicker}
                               />
-                            </View>
+                            </>
                           );
 
                         if (
@@ -907,10 +885,22 @@ class AccountEditProfil extends Component {
                         )
                           return (
                             <View style={styles.detailItem}>
-                              <Text style={[styles.desc, {marginLeft: 0}]}>
+                              <Text
+                                style={[
+                                  styles.desc,
+                                  {
+                                    marginLeft: 0,
+                                    fontFamily: fontFamily.poppinsMedium,
+                                  },
+                                ]}>
                                 Birth Month{' '}
                                 {item.mandatory ? (
-                                  <Text style={{color: 'red'}}>*</Text>
+                                  <Text
+                                    style={{
+                                      color: 'red',
+                                    }}>
+                                    *
+                                  </Text>
                                 ) : null}
                               </Text>
                               <DropDownPicker
@@ -919,12 +909,15 @@ class AccountEditProfil extends Component {
                                 defaultValue={this.getMonth(
                                   this.state.birthDate,
                                 )}
-                                containerStyle={{height: 47}}
-                                style={{
-                                  backgroundColor: 'white',
-                                  marginTop: 5,
-                                  borderRadius: 0,
+                                containerStyle={{
+                                  height: 47,
                                 }}
+                                style={[
+                                  styles.dropdownContainerStyle,
+                                  {
+                                    borderColor: colors.greyScale2,
+                                  },
+                                ]}
                                 dropDownStyle={{
                                   backgroundColor: '#fafafa',
                                   zIndex: 3,
@@ -935,15 +928,23 @@ class AccountEditProfil extends Component {
                                   })
                                 }
                                 onOpen={() => {
-                                  this.setState({openBirthDate: true});
+                                  this.setState({
+                                    openBirthDate: true,
+                                  });
                                 }}
                                 onClose={() => {
-                                  this.setState({openBirthDate: false});
+                                  this.setState({
+                                    openBirthDate: false,
+                                  });
                                 }}
                               />
 
                               {this.state.openBirthDate ? (
-                                <View style={{height: 130}} />
+                                <View
+                                  style={{
+                                    height: 130,
+                                  }}
+                                />
                               ) : null}
                             </View>
                           );
@@ -954,10 +955,25 @@ class AccountEditProfil extends Component {
                         )
                           return (
                             <View style={styles.detailItem}>
-                              <Text style={[styles.desc, {marginLeft: 0}]}>
+                              <Text
+                                style={[
+                                  styles.desc,
+                                  {
+                                    marginLeft: 0,
+                                    fontFamily: fontFamily.poppinsMedium,
+                                  },
+                                ]}>
                                 {intlData.messages.gender}{' '}
                                 {item.mandatory ? (
-                                  <Text style={{color: 'red'}}>*</Text>
+                                  <Text
+                                    style={[
+                                      styles.mandatoryStyle,
+                                      {
+                                        fontFamily: fontFamily.poppinsMedium,
+                                      },
+                                    ]}>
+                                    *
+                                  </Text>
                                 ) : null}
                               </Text>
                               <DropDownPicker
@@ -975,21 +991,23 @@ class AccountEditProfil extends Component {
                                 defaultValue={this.validateGender(
                                   this.state.gender,
                                 )}
-                                containerStyle={{height: 47}}
-                                style={{
-                                  backgroundColor: 'white',
-                                  marginTop: 5,
-                                  borderRadius: 0,
-                                }}
+                                style={[
+                                  styles.dropdownContainerStyle,
+                                  {borderColor: colors.greyScale2},
+                                ]}
                                 dropDownStyle={{
                                   backgroundColor: '#fafafa',
                                   zIndex: 3,
                                 }}
                                 onOpen={() => {
-                                  this.setState({openGender: true});
+                                  this.setState({
+                                    openGender: true,
+                                  });
                                 }}
                                 onClose={() => {
-                                  this.setState({openGender: false});
+                                  this.setState({
+                                    openGender: false,
+                                  });
                                 }}
                                 onChangeItem={item =>
                                   this.setState({
@@ -1066,31 +1084,18 @@ class AccountEditProfil extends Component {
                             );
                           } else {
                             return (
-                              <View style={styles.detailItem}>
-                                <Text style={styles.desc}>
-                                  {item.displayName}{' '}
-                                  {item.mandatory ? (
-                                    <Text style={{color: 'red'}}>*</Text>
-                                  ) : null}
-                                </Text>
-                                <TextInput
-                                  placeholder={item.displayName}
-                                  style={{paddingVertical: 10}}
-                                  value={this.state[item.fieldName]}
-                                  onChangeText={value =>
-                                    this.setState({[item.fieldName]: value})
-                                  }
-                                  keyboardType={this.getKeyboardType(
-                                    item.dataType,
-                                  )}
-                                />
-                                <View
-                                  style={{
-                                    borderWidth: 0.5,
-                                    borderColor: 'gray',
-                                  }}
-                                />
-                              </View>
+                              <GlobalInputText
+                                placeholder={item.displayName}
+                                value={this.state[item.fieldName]}
+                                onChangeText={value =>
+                                  this.setState({[item.fieldName]: value})
+                                }
+                                label={item.displayName}
+                                isMandatory={item.mandatory}
+                                keyboardType={this.getKeyboardType(
+                                  item.dataType,
+                                )}
+                              />
                             );
                           }
                         }
@@ -1115,16 +1120,23 @@ class AccountEditProfil extends Component {
                                       /((\d{6}.*)*\s)?(\d{6})([^\d].*)?$/,
                                     ).test(Number(value));
                                     if (isValid) {
-                                      this.setState({isPostalCodeValid: true});
+                                      this.setState({
+                                        isPostalCodeValid: true,
+                                      });
                                     } else {
-                                      this.setState({isPostalCodeValid: false});
+                                      this.setState({
+                                        isPostalCodeValid: false,
+                                      });
                                     }
                                   } catch (e) {}
                                   this.setState({postalcode: value});
                                 }}
                               />
                               <View
-                                style={{borderWidth: 0.5, borderColor: 'gray'}}
+                                style={{
+                                  borderWidth: 0.5,
+                                  borderColor: 'gray',
+                                }}
                               />
                               {!isPostalCodeValid && (
                                 <Text
@@ -1201,7 +1213,7 @@ class AccountEditProfil extends Component {
   }
 }
 
-mapStateToProps = state => ({
+const mapStateToProps = state => ({
   userDetail: state.userReducer.getUser.userDetails,
   updateUser: state.userReducer.updateUser,
   disableChangeEmail: state.orderReducer.orderingSetting.disableChangeEmail,
@@ -1214,16 +1226,18 @@ mapStateToProps = state => ({
   intlData: state.intlData,
 });
 
-mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = dispatch => ({
   dispatch,
 });
 
-export default compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
-)(AccountEditProfil);
+export default withHooksComponent(
+  compose(
+    connect(
+      mapStateToProps,
+      mapDispatchToProps,
+    ),
+  )(AccountEditProfil),
+);
 
 const styles = StyleSheet.create({
   container: {
@@ -1237,7 +1251,7 @@ const styles = StyleSheet.create({
   header: {
     // height: 65,
     paddingVertical: 6,
-    marginBottom: 20,
+    marginBottom: 16,
     justifyContent: 'center',
     // backgroundColor: colorConfig.store.defaultColor,
     shadowColor: '#00000021',
@@ -1266,8 +1280,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 25,
-    borderRadius: 40,
-    padding: 12,
+    borderRadius: 8,
+    padding: 8,
     alignSelf: 'stretch',
     marginLeft: 30,
     marginRight: 30,
@@ -1289,8 +1303,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 25,
-    borderRadius: 40,
-    padding: 12,
+    borderRadius: 8,
+    padding: 8,
     alignSelf: 'stretch',
     marginLeft: 30,
     marginRight: 30,
@@ -1306,7 +1320,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: '#FFFFFF',
-    fontSize: 20,
+    fontSize: 14,
   },
   line: {
     borderBottomColor: colorConfig.store.defaultColor,
@@ -1332,20 +1346,18 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   detail: {
-    marginLeft: 30,
-    marginRight: 30,
+    paddingHorizontal: 16,
   },
   detailItem: {
-    padding: 10,
     justifyContent: 'space-between',
     // borderBottomColor: colorConfig.pageIndex.inactiveTintColor,
     // borderBottomWidth: 1,
     paddingBottom: 5,
     marginBottom: 3,
+    marginTop: 16,
   },
   desc: {
-    color: colorConfig.pageIndex.grayColor,
-    fontSize: 18,
+    fontSize: 14,
   },
   textChange: {
     color: colorConfig.store.defaultColor,
@@ -1362,5 +1374,14 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     maxWidth: Dimensions.get('window').width / 2 + 20,
     textAlign: 'right',
+  },
+  mandatoryStyle: {
+    color: '#CE1111',
+  },
+  dropdownContainerStyle: {
+    backgroundColor: 'white',
+    marginTop: 4,
+    borderRadius: 0,
+    paddingVertical: 5,
   },
 });
