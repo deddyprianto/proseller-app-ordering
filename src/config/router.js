@@ -133,6 +133,7 @@ import Referral from '../pages/Referral';
 //for temporary
 import PendingOrderDetail from '../pages/PendingOrderDetail';
 import InboxDetailMessage from '../pages/InboxDetailMessage';
+import OrderingMode from '../pages/OrderingMode';
 
 const MyTransitionSpec = {
   duration: 200,
@@ -390,6 +391,7 @@ export default class Routes extends Component {
             <Scene key="searchProduct" component={SearchProduct} />
             <Scene key="faq" component={FAQ} />
             <Scene key="referral" component={Referral} />
+            <Scene key="orderingMode" component={OrderingMode} />
             {/* //martin */}
           </Scene>
         </Scene>
