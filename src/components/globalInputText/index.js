@@ -3,23 +3,6 @@ import {TextInputProps, TextInput, View, Text, StyleSheet} from 'react-native';
 import Theme from '../../theme/Theme';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import GlobalText from '../globalText';
-/**
- * @typedef {import('react-native').TextInputProps} InputTextProps
- */
-
-/**
- * @typedef {Object} ParamProps
- * @property {string} label
- * @property {boolean} isMandatory
- * @property {string} type
- * @property {any} rightIcon
- * @property {string} selectedCountry
- * @property {Function} onPressBtn
- */
-
-/**
- * @param {InputTextProps & ParamProps} props
- */
 
 const useStyles = () => {
   const theme = Theme();
@@ -66,6 +49,24 @@ const useStyles = () => {
   });
   return styles;
 };
+
+/**
+ * @typedef {import('react-native').TextInputProps} InputTextProps
+ */
+
+/**
+ * @typedef {Object} ParamProps
+ * @property {string} label
+ * @property {boolean} isMandatory
+ * @property {string} type
+ * @property {any} rightIcon
+ * @property {string} selectedCountry
+ * @property {Function} onPressBtn
+ */
+
+/**
+ * @param {InputTextProps & ParamProps} props
+ */
 
 const GlobalInputText = props => {
   const styles = useStyles();

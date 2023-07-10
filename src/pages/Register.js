@@ -22,6 +22,9 @@ import {checkAccountExist} from '../actions/auth.actions';
 import {showSnackbar} from '../actions/setting.action';
 import LoadingScreen from '../components/loadingScreen';
 import Theme from '../theme';
+import HeaderV2 from '../components/layout/header/HeaderV2';
+import RegisterV2 from './RegisterV2';
+import appConfig from '../config/appConfig';
 
 const HEIGHT = Dimensions.get('window').height;
 const useStyles = () => {
@@ -247,15 +250,26 @@ const Register = () => {
   return (
     <SafeAreaView style={styles.root}>
       <LoadingScreen loading={isLoading} />
-      <Header isMiddleLogo />
+      {appConfig.appName === 'fareastflora' ? (
+        <HeaderV2 />
+      ) : (
+        <Header isMiddleLogo />
+      )}
+
       <KeyboardAwareScrollView>
-        <View style={styles.container}>
-          <Text style={styles.textCreateNewAccount}>Create a new account</Text>
-          {renderTextLogin()}
-          {renderRegisterMethodInput()}
-          {renderButtonNext()}
-          {renderTextChangeMethod()}
-        </View>
+        {appConfig.appName === 'fareastflora' ? (
+          <RegisterV2 onChangeEmail={value => setEmail(value)} />
+        ) : (
+          <View style={styles.container}>
+            <Text style={styles.textCreateNewAccount}>
+              Create a new account
+            </Text>
+            {renderTextLogin()}
+            {renderRegisterMethodInput()}
+            {renderButtonNext()}
+            {renderTextChangeMethod()}
+          </View>
+        )}
       </KeyboardAwareScrollView>
     </SafeAreaView>
   );
