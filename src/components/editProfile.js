@@ -654,6 +654,25 @@ class AccountEditProfil extends Component {
     }
   };
 
+  canSaveProfile = () => {
+    let mandatoryKey = ['name', 'email', 'phoneNumber'];
+    const dynamicMandatory = this.state.fields
+      .filter(field => field.mandatory)
+      .map(dataMap => dataMap.fieldName);
+    mandatoryKey = [...mandatoryKey, ...dynamicMandatory];
+    let emptyValue = [];
+    mandatoryKey.forEach(key => {
+      if (
+        this.state[key] === undefined ||
+        this.state[key] === null ||
+        this.state[key] === ''
+      ) {
+        emptyValue.push(key);
+      }
+    });
+    return emptyValue.length <= 0;
+  };
+
   render() {
     const {intlData, colors, fontFamily} = this.props;
     const {fields, isPostalCodeValid, customFields} = this.state;
@@ -1137,11 +1156,11 @@ class AccountEditProfil extends Component {
               </Form>
             </View>
             <TouchableOpacity
-              disabled={!isPostalCodeValid}
+              disabled={!isPostalCodeValid || !this.canSaveProfile()}
               onPress={this.checkMandatory}>
               <View
                 style={
-                  isPostalCodeValid
+                  isPostalCodeValid && this.canSaveProfile()
                     ? styles.primaryButton
                     : styles.disabledPrimaryButton
                 }>
