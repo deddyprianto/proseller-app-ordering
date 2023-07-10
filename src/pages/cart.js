@@ -159,6 +159,13 @@ const useStyles = () => {
       fontSize: theme.fontSize[12],
       fontFamily: theme.fontFamily.poppinsMedium,
     },
+    textMethodValue1: {
+      textAlign: 'right',
+      flex: 1,
+      color: theme.colors.textPrimary,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsSemiBold,
+    },
     textAddButton: {
       color: theme.colors.primary,
       fontSize: theme.fontSize[12],
@@ -901,38 +908,6 @@ const Cart = props => {
     }
   };
 
-  const renderOrderingTypeHeader = orderingTypeValue => {
-    return (
-      <View style={styles.viewOrderingTypeHeader}>
-        <Text style={styles.textMethod}>Ordering Type</Text>
-        <TouchableOpacity
-          style={styles.touchableMethod}
-          onPress={() => {
-            handleOpenOrderingTypeModal();
-          }}>
-          <Text style={styles.textMethodValue}>
-            {orderingTypeValue.length > 12
-              ? orderingTypeValue.substring(0.12) + '...'
-              : orderingTypeValue}
-          </Text>
-        </TouchableOpacity>
-      </View>
-    );
-  };
-
-  const renderOrderingTypeBody = orderingTypeValue => {
-    if (orderingTypeValue === 'TAKEAWAY' && outlet?.address) {
-      return (
-        <View style={styles.viewOrderingTypeBody}>
-          <Text style={styles.textOrderingTypeBody}>
-            Outlet Address for Pick Up
-          </Text>
-          <Text style={styles.textOrderingTypeBody}>{outlet?.address}</Text>
-        </View>
-      );
-    }
-  };
-
   const renderLoadBar = ({
     error,
     text,
@@ -961,6 +936,56 @@ const Cart = props => {
         </View>
       </View>
     );
+  };
+
+  const renderOutlet = () => {
+    if (outlet) {
+      return (
+        <View style={styles.viewMethod}>
+          <Text style={styles.textMethod}>Selected Outlet</Text>
+          <Text style={styles.textMethodValue1}>{outlet?.name}</Text>
+        </View>
+      );
+    }
+  };
+
+  const renderOrderingTypeHeaderText = text => {
+    if (awsConfig.COMPANY_TYPE === 'Retail') {
+      <TouchableOpacity
+        disabled
+        style={styles.touchableMethod}
+        onPress={() => {
+          handleOpenOrderingTypeModal();
+        }}>
+        <Text style={styles.textMethodValue}>
+          {text.length > 12 ? text.substring(0.12) + '...' : text}
+        </Text>
+      </TouchableOpacity>;
+    } else {
+      return <Text style={styles.textMethodValue1}>{text}</Text>;
+    }
+  };
+
+  const renderOrderingTypeHeader = orderingTypeValue => {
+    return (
+      <View style={styles.viewOrderingTypeHeader}>
+        <Text style={styles.textMethod}>Ordering Type</Text>
+        {renderOrderingTypeHeaderText(orderingTypeValue)}
+      </View>
+    );
+  };
+
+  const renderOrderingTypeBody = orderingTypeValue => {
+    if (orderingTypeValue === 'TAKEAWAY' && outlet?.address) {
+      return (
+        <View style={styles.viewOrderingTypeBody}>
+          <Text style={styles.textOrderingTypeBody}>
+            Outlet Address for Pick Up
+          </Text>
+          <Text style={styles.textOrderingTypeBody}>{outlet?.address}</Text>
+        </View>
+      );
+    }
   };
 
   const renderOrderingType = () => {
@@ -1364,6 +1389,7 @@ const Cart = props => {
           <View style={styles.divider} />
           {renderOrderValidation()}
           {renderDeliveryProviderTermsAndConditions()}
+          {renderOutlet()}
           {renderOrderingType()}
           {renderAddress()}
           {renderProvider()}
