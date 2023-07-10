@@ -93,6 +93,7 @@ class StoreStores extends Component {
         this.showAlertBasketNotEmpty(item);
         return;
       }
+      await this.storeDetailStores(item);
     } catch (e) {
       this.removeCart();
       this.storeDetailStores(item);
