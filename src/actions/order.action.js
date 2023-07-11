@@ -6,6 +6,7 @@ import {isEmptyArray, isEmptyObject} from '../helper/CheckEmpty';
 import * as _ from 'lodash';
 import CryptoJS from 'react-native-crypto-js';
 import awsConfig from '../config/awsConfig';
+import appConfig from '../config/appConfig';
 
 export const getProductByOutlet = (OutletId, refresh) => {
   return async (dispatch, getState) => {
@@ -1956,6 +1957,65 @@ export const getTimeSlot = ({outletId, date, clientTimezone, orderingMode}) => {
       }
       return false;
     } catch (e) {}
+  };
+};
+
+export const getOrderingMode = outlet => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        settingReducer: {
+          allowedOrder: {settingValue},
+        },
+      } = state;
+
+      const orderingModesField = [
+        {
+          key: 'STOREPICKUP',
+          isEnabledFieldName: 'enableStorePickUp',
+          displayName: outlet.storePickUpName || 'Store Pick Up',
+          image: appConfig.iconOrderingModeStorePickUp,
+        },
+        {
+          key: 'DELIVERY',
+          isEnabledFieldName: 'enableDelivery',
+          displayName: outlet.deliveryName || 'Delivery',
+          image: appConfig.iconOrderingModeDelivery,
+        },
+        {
+          key: 'TAKEAWAY',
+          isEnabledFieldName: 'enableTakeAway',
+          displayName: outlet.takeAwayName || 'Take Away',
+          image: appConfig.iconOrderingModeTakeAway,
+        },
+        {
+          key: 'DINEIN',
+          isEnabledFieldName: 'enableDineIn',
+          displayName: outlet.dineInName || 'Dine In',
+          image: appConfig.iconOrderingModeStorePickUp,
+        },
+        {
+          key: 'STORECHECKOUT',
+          isEnabledFieldName: 'enableStoreCheckOut',
+          displayName: outlet.storeCheckOutName || 'Store Checkout',
+          image: appConfig.iconOrderingModeStorePickUp,
+        },
+      ];
+
+      const response = orderingModesField.filter(mode => {
+        if (
+          outlet[mode.isEnabledFieldName] &&
+          settingValue?.includes(mode.key)
+        ) {
+          return mode;
+        }
+      });
+
+      return response;
+    } catch (error) {
+      return error;
+    }
   };
 };
 

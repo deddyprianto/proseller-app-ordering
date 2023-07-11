@@ -115,7 +115,7 @@ const TextWarningModal = ({
         style={styleView}
         onPress={handleClose}
         disabled={disabled}>
-        <Text style={styles.text3}>ok</Text>
+        <Text style={styles.text3}>OK</Text>
       </TouchableOpacity>
     );
   };
