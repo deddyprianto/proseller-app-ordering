@@ -4,6 +4,8 @@ import Modal, {ModalProps} from 'react-native-modal';
 import GlobalText from '../globalText';
 import CloseSvg from '../../assets/svg/CloseSvg';
 import Theme from '../../theme/Theme';
+import {normalizeLayoutSizeHeight} from '../../helper/Layout';
+import GlobalButton from '../button/GlobalButton';
 
 const useStyles = () => {
   const {colors, fontFamily} = Theme();
@@ -12,6 +14,8 @@ const useStyles = () => {
       backgroundColor: 'white',
       padding: 8,
       minHeight: 200,
+      maxHeight: normalizeLayoutSizeHeight(840),
+      borderRadius: 8,
     },
     titleCloseContainer: {
       flexDirection: 'row',
@@ -46,6 +50,8 @@ const useStyles = () => {
  * @property {Function} closeModal
  * @property {any} children
  * @property {string} title
+ * @property {any} stickyBottom
+ * @property {Function} isCloseToBottom
  */
 
 /**
@@ -53,6 +59,35 @@ const useStyles = () => {
  */
 const GlobalModal = props => {
   const {styles} = useStyles();
+  const [isReachBottom, setIsReachBottom] = React.useState(false);
+
+  const onScroll = ({nativeEvent}) => {
+    const {layoutMeasurement, contentOffset, contentSize} = nativeEvent;
+    const paddingToBottom = 30;
+    if (
+      layoutMeasurement.height + contentOffset.y >=
+      contentSize.height - paddingToBottom
+    ) {
+      if (
+        props.isCloseToBottom &&
+        typeof props.isCloseToBottom === 'function'
+      ) {
+        props.isCloseToBottom(true);
+      }
+      setIsReachBottom(true);
+    } else {
+      if (
+        props.isCloseToBottom &&
+        typeof props.isCloseToBottom === 'function'
+      ) {
+        props.isCloseToBottom(false);
+      }
+      setIsReachBottom(false);
+    }
+    console.log(nativeEvent, 'lala');
+  };
+  console.log(isReachBottom, 'nuki');
+
   return (
     <Modal useNativeDriver {...props}>
       <View style={styles.modalContainer}>
@@ -66,9 +101,12 @@ const GlobalModal = props => {
             </TouchableOpacity>
           </View>
         </View>
-        <ScrollView contentContainerStyle={styles.contentContainer}>
+        <ScrollView
+          onScroll={onScroll}
+          contentContainerStyle={styles.contentContainer}>
           <View style={styles.bodyContainer}>{props.children}</View>
         </ScrollView>
+        {props.stickyBottom}
       </View>
     </Modal>
   );

@@ -8,9 +8,9 @@ import CheckBox from '@react-native-community/checkbox';
 import GlobalButton from '../components/button/GlobalButton';
 import {TouchableOpacity} from 'react-native';
 import {Actions} from 'react-native-router-flux';
-import Modal from 'react-native-modal';
 import GlobalModal from '../components/modal/GlobalModal';
 import {useSelector} from 'react-redux';
+import {emailValidation} from '../helper/Validation';
 const useStyles = () => {
   const {colors, fontFamily} = Theme();
   const styles = StyleSheet.create({
@@ -62,6 +62,10 @@ const useStyles = () => {
  * @typedef {Object} RegisterV2Props
  * @property {Function} onChangeEmail
  * @property {string} emailValue
+ * @property {Object} approvedData
+ * @property {Function} onNext
+ * @property {Function} onTickCheckbox
+ * @property {Object} checkboxValue
  */
 
 /**
@@ -71,17 +75,26 @@ const useStyles = () => {
 const RegisterV2 = props => {
   const {styles, colors} = useStyles();
   const [openType, setOpenType] = React.useState(null);
+  const [buttonActive, setButtonActive] = React.useState(false);
   const orderSetting = useSelector(
     state => state.orderReducer?.orderingSetting?.orderingSetting?.settings,
   );
+  const [emailNotValid, setEmailNotValid] = React.useState(false);
   const openLoginPage = () => {
     Actions.login();
   };
-  console.log(orderSetting, 'nina');
   const handleOpenType = type => setOpenType(type);
 
-  const closeModal = () => setOpenType(null);
+  const closeModal = () => {
+    setButtonActive(false);
+    setOpenType(null);
+  };
 
+  React.useEffect(() => {
+    if (props.emailValue && typeof props.emailValue === 'string') {
+      setEmailNotValid(!emailValidation(props.emailValue));
+    }
+  }, [props.emailValue]);
   const filterTerms = () => {
     if (orderSetting && Array.isArray(orderSetting)) {
       const tnc = orderSetting.find(
@@ -94,6 +107,16 @@ const RegisterV2 = props => {
       return {tnc, privacy};
     }
     return {tnc: null, privacy: null};
+  };
+
+  const onButtonActive = active => {
+    setButtonActive(active);
+  };
+
+  const onChangeValue = (key, value) => {
+    if (props.onTickCheckbox) {
+      props.onTickCheckbox(key, value);
+    }
   };
 
   return (
@@ -110,6 +133,8 @@ const RegisterV2 = props => {
           label="Email"
           isMandatory
           onChangeText={props.onChangeEmail}
+          isError={emailNotValid && props.emailValue.length > 0}
+          errorMessage="Please enter a valid email address."
         />
       </View>
       <View style={styles.checkBoxParent}>
@@ -122,6 +147,8 @@ const RegisterV2 = props => {
               onFillColor={colors.primary}
               onTintColor={colors.primary}
               onCheckColor={'white'}
+              value={props.checkboxValue?.privacyTerm}
+              onValueChange={value => onChangeValue('privacyTerm', value)}
             />
           </View>
           <GlobalText>
@@ -150,6 +177,8 @@ const RegisterV2 = props => {
               onFillColor={colors.primary}
               onTintColor={colors.primary}
               onCheckColor={'white'}
+              value={props.checkboxValue?.consent}
+              onValueChange={newValue => onChangeValue('consent', newValue)}
             />
           </View>
           <GlobalText>
@@ -159,7 +188,14 @@ const RegisterV2 = props => {
           </GlobalText>
         </View>
         <View>
-          <GlobalButton title="Next" />
+          <GlobalButton
+            disabled={
+              props.emailValue === '' ||
+              props?.checkboxValue.privacyTerm === false
+            }
+            onPress={props.onNext}
+            title="Next"
+          />
         </View>
         <View style={styles.loginContainer}>
           <TouchableOpacity onPress={openLoginPage}>
@@ -173,11 +209,31 @@ const RegisterV2 = props => {
       <GlobalModal
         title="Terms and Conditions"
         closeModal={closeModal}
+        isCloseToBottom={onButtonActive}
+        stickyBottom={
+          <View>
+            <GlobalButton
+              disabled={!buttonActive}
+              onPress={closeModal}
+              title="Understood"
+            />
+          </View>
+        }
         isVisible={openType === 'terms'}>
         <GlobalText>{filterTerms().tnc?.settingValue}</GlobalText>
       </GlobalModal>
       <GlobalModal
         title="Privacy Policy"
+        stickyBottom={
+          <View>
+            <GlobalButton
+              disabled={!buttonActive}
+              onPress={closeModal}
+              title="Understood"
+            />
+          </View>
+        }
+        isCloseToBottom={onButtonActive}
         closeModal={closeModal}
         isVisible={openType === 'privacy'}>
         <GlobalText>{filterTerms().privacy?.settingValue}</GlobalText>

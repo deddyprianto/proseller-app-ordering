@@ -50,8 +50,9 @@ const GlobalButton = props => {
   const {styles} = useStyles();
   return (
     <TouchableOpacity
-      disabled={!props.active}
-      style={props.active ? styles.touchableNext : styles.touchableNextDisabled}
+      style={
+        !props.disabled ? styles.touchableNext : styles.touchableNextDisabled
+      }
       {...props}>
       <GlobalText style={styles.textNext}>{props.title} </GlobalText>
     </TouchableOpacity>

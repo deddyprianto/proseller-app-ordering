@@ -25,6 +25,7 @@ import Theme from '../theme';
 import HeaderV2 from '../components/layout/header/HeaderV2';
 import RegisterV2 from './RegisterV2';
 import appConfig from '../config/appConfig';
+import GlobalText from '../components/globalText';
 
 const HEIGHT = Dimensions.get('window').height;
 const useStyles = () => {
@@ -104,10 +105,18 @@ const Register = () => {
   const [email, setEmail] = useState('');
   const [registerMethod, setRegisterMethod] = useState('email');
   const [isLoading, setIsLoading] = useState(false);
-
+  const [approvedData, setApprovedData] = React.useState({
+    privacyTerm: false,
+    consent: false,
+  });
   const loginSettings = useSelector(
     state => state.settingReducer.loginSettings,
   );
+
+  const onTickCheckbox = (key, value) => {
+    console.log(key, value, 'lupis');
+    setApprovedData({...approvedData, [key]: value});
+  };
 
   useEffect(() => {
     if (loginSettings.loginByEmail) {
@@ -212,7 +221,7 @@ const Register = () => {
         onPress={() => {
           handleCheckAccount();
         }}>
-        <Text style={styles.textNext}>Next</Text>
+        <GlobalText style={styles.textNext}>Next</GlobalText>
       </TouchableOpacity>
     );
   };
@@ -241,7 +250,7 @@ const Register = () => {
           onPress={() => {
             handleChangeRegisterMethod();
           }}>
-          <Text style={styles.textChangeMethod}>{text}</Text>
+          <GlobalText style={styles.textChangeMethod}>{text}</GlobalText>
         </TouchableOpacity>
       );
     }
@@ -258,7 +267,13 @@ const Register = () => {
 
       <KeyboardAwareScrollView>
         {appConfig.appName === 'fareastflora' ? (
-          <RegisterV2 onChangeEmail={value => setEmail(value)} />
+          <RegisterV2
+            emailValue={email}
+            onChangeEmail={value => setEmail(value)}
+            onNext={handleCheckAccount}
+            onTickCheckbox={onTickCheckbox}
+            checkboxValue={approvedData}
+          />
         ) : (
           <View style={styles.container}>
             <Text style={styles.textCreateNewAccount}>
