@@ -32,8 +32,8 @@ class StoreStores extends Component {
         {
           text: 'Continue',
           onPress: async () => {
-            await this.storeDetailStores(item);
             await this.removeCart();
+            await this.storeDetailStores(item);
           },
         },
       ],
@@ -54,19 +54,68 @@ class StoreStores extends Component {
   };
 
   removeCart = async () => {
+    this.setState({isLoading: true});
     await this.handleRemoveSelectedAddress();
     await this.props.dispatch(changeOrderingMode({orderingMode: ''}));
     await this.props.dispatch(removeBasket());
     await this.props.dispatch(getBasket());
+    this.setState({isLoading: false});
+  };
+
+  orderingModesField = [
+    {
+      key: 'STOREPICKUP',
+      isEnabledFieldName: 'enableStorePickUp',
+    },
+    {
+      key: 'DELIVERY',
+      isEnabledFieldName: 'enableDelivery',
+    },
+    {
+      key: 'TAKEAWAY',
+      isEnabledFieldName: 'enableTakeAway',
+    },
+    {
+      key: 'DINEIN',
+      isEnabledFieldName: 'enableDineIn',
+    },
+    {
+      key: 'STORECHECKOUT',
+      isEnabledFieldName: 'enableStoreCheckOut',
+    },
+  ];
+
+  handleSelectStoreFnB = async () => {
+    const orderingModesFieldFiltered = this.orderingModesField.filter(mode => {
+      if (
+        this.props.defaultOutlet[mode.isEnabledFieldName] &&
+        this.props.orderSetting?.includes(mode.key)
+      ) {
+        return mode;
+      }
+    });
+
+    if (orderingModesFieldFiltered.length === 1) {
+      await this.props.dispatch(
+        changeOrderingMode({
+          orderingMode: orderingModesFieldFiltered[0].key,
+        }),
+      );
+      Actions.orderHere();
+    } else {
+      Actions.push('orderingMode');
+    }
   };
 
   storeDetailStores = async item => {
     try {
       this.setState({isLoading: true});
       await this.props.dispatch(getOutletById(item.storeId));
+
       this.setState({isLoading: false});
+
       if (awsConfig.COMPANY_TYPE !== 'Retail') {
-        Actions.push('orderHere');
+        this.handleSelectStoreFnB();
       } else if (Actions.currentScene !== 'pageIndex') {
         Actions.pop();
       }
@@ -81,12 +130,12 @@ class StoreStores extends Component {
     try {
       const {dataBasket, defaultOutlet} = this.props;
       if (defaultOutlet?.id === item?.storeId) {
-        this.storeDetailStores(item);
+        await this.storeDetailStores(item);
         return;
       }
       if (dataBasket === undefined || dataBasket === null) {
-        await this.storeDetailStores(item);
         await this.removeCart();
+        await this.storeDetailStores(item);
         return;
       }
       if (dataBasket && dataBasket.outlet.id !== item.storeId) {
@@ -95,8 +144,8 @@ class StoreStores extends Component {
       }
       await this.storeDetailStores(item);
     } catch (e) {
-      this.removeCart();
-      this.storeDetailStores(item);
+      await this.removeCart();
+      await this.storeDetailStores(item);
     }
   };
 
@@ -203,6 +252,7 @@ import {
 } from '../actions/order.action';
 import {updateUser} from '../actions/user.action';
 import awsConfig from '../config/awsConfig';
+import appConfig from '../config/appConfig';
 
 const styles = StyleSheet.create({
   stores: {
@@ -245,6 +295,7 @@ mapStateToProps = state => ({
   dataBasket: state.orderReducer.dataBasket.product,
   orderingMode: state.orderReducer.dataOrderingMode.orderingMode,
   defaultOutlet: state.storesReducer.defaultOutlet.defaultOutlet,
+  orderSetting: state.settingReducer?.allowedOrder?.settingValue,
   user: state.userReducer.getUser.userDetails,
 });
 
