@@ -438,7 +438,7 @@ const HomeRetail = () => {
   };
 
   const renderProductCategoryList = () => {
-    const enableMoreCategories = orderingSetting.find(
+    const enableMoreCategories = orderingSetting?.find(
       setting => setting.settingKey === 'ShowAllCategory',
     );
     const isEnableMoreCategories = enableMoreCategories?.settingValue;

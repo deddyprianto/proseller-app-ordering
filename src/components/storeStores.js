@@ -130,7 +130,7 @@ class StoreStores extends Component {
     try {
       const {dataBasket, defaultOutlet} = this.props;
       if (defaultOutlet?.id === item?.storeId) {
-        this.storeDetailStores(item);
+        await this.storeDetailStores(item);
         return;
       }
       if (dataBasket === undefined || dataBasket === null) {
@@ -142,10 +142,10 @@ class StoreStores extends Component {
         this.showAlertBasketNotEmpty(item);
         return;
       }
-      this.storeDetailStores(item);
+      await this.storeDetailStores(item);
     } catch (e) {
-      this.removeCart();
-      this.storeDetailStores(item);
+      await this.removeCart();
+      await this.storeDetailStores(item);
     }
   };
 
