@@ -52,6 +52,8 @@ const useStyles = () => {
  * @property {string} title
  * @property {any} stickyBottom
  * @property {Function} isCloseToBottom
+ * @property {boolean} hideCloseIcon
+ * @property {any} modalContainerStyle
  */
 
 /**
@@ -84,22 +86,22 @@ const GlobalModal = props => {
       }
       setIsReachBottom(false);
     }
-    console.log(nativeEvent, 'lala');
   };
-  console.log(isReachBottom, 'nuki');
 
   return (
     <Modal useNativeDriver {...props}>
-      <View style={styles.modalContainer}>
+      <View style={[styles.modalContainer, props.modalContainerStyle]}>
         <View style={styles.titleCloseContainer}>
           <View>
             <GlobalText>{props.title}</GlobalText>
           </View>
-          <View style={styles.closeContainer}>
-            <TouchableOpacity onPress={props.closeModal}>
-              <CloseSvg />
-            </TouchableOpacity>
-          </View>
+          {!props.hideCloseIcon ? (
+            <View style={styles.closeContainer}>
+              <TouchableOpacity onPress={props.closeModal}>
+                <CloseSvg />
+              </TouchableOpacity>
+            </View>
+          ) : null}
         </View>
         <ScrollView
           onScroll={onScroll}

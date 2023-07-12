@@ -26,6 +26,7 @@ import Theme from '../theme';
 import GlobalText from '../components/globalText';
 import appConfig from '../config/appConfig';
 import HeaderV2 from '../components/layout/header/HeaderV2';
+import GlobalModal from '../components/modal/GlobalModal';
 
 const HEIGHT = Dimensions.get('window').height;
 
@@ -103,6 +104,9 @@ const useStyles = () => {
       textAlign: 'center',
       fontFamily: theme.fontFamily.poppinsMedium,
     },
+    modalContainer: {
+      padding: 0
+    }
   });
   return styles;
 };
@@ -186,9 +190,7 @@ const OTP = ({isLogin, method, methodValue}) => {
     if (response?.statusCustomer) {
       Actions.pageIndex();
     } else {
-      // const message = response?.message || 'Failed';
       setIsWrongOtp(true);
-      // await dispatch(showSnackbar({message}));
     }
   };
 
@@ -292,6 +294,11 @@ const OTP = ({isLogin, method, methodValue}) => {
           {renderButtonNext()}
         </View>
       </KeyboardAwareScrollView>
+      <GlobalModal modalContainerStyle={styles.modalContainer} hideCloseIcon>
+        <View>
+          <GlobalText> Cancel Verification? </GlobalText>
+        </View>
+      </GlobalModal>
     </SafeAreaView>
   );
 };

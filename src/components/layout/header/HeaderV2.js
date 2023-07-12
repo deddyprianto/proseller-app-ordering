@@ -40,9 +40,12 @@ const useStyles = () => {
   return {styles};
 };
 
-const HeaderV2 = () => {
+const HeaderV2 = ({onBackBtn}) => {
   const {styles} = useStyles();
   const onBack = () => {
+    if (onBackBtn && typeof onBackBtn === 'function') {
+      return onBackBtn();
+    }
     Actions.pop();
   };
 
