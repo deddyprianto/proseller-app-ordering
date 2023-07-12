@@ -6,7 +6,7 @@
 
 import React, {useEffect, useState} from 'react';
 import {Actions} from 'react-native-router-flux';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 
 import CryptoJS from 'react-native-crypto-js';
 import {
@@ -22,6 +22,9 @@ import appConfig from '../../config/appConfig';
 import awsConfig from '../../config/awsConfig';
 import Theme from '../../theme';
 import TextWarningModal from '../modal/TextWarningModal';
+import {dataStores, getOutletById} from '../../actions/stores.action';
+import {changeOrderingMode, getOrderingMode} from '../../actions/order.action';
+import LoadingScreen from '../loadingScreen/LoadingScreen';
 
 const HEIGHT = Dimensions.get('window').height;
 
@@ -163,9 +166,11 @@ const useStyles = () => {
 };
 
 const Menu = () => {
+  const dispatch = useDispatch();
   const styles = useStyles();
   const [user, setUser] = useState({});
   const [isOpenModal, setIsOpenModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const totalPoint = useSelector(
     state => state.rewardsReducer?.dataPoint?.totalPoint,
   );
@@ -185,6 +190,27 @@ const Menu = () => {
       setUser(result);
     }
   }, [userDetail]);
+
+  const handleClick = async () => {
+    setIsLoading(true);
+    const allOutlet = await dispatch(dataStores());
+    const activeOutlets = allOutlet.filter(
+      row => row.orderingStatus === 'AVAILABLE',
+    );
+    const orderingMode = await dispatch(getOrderingMode(activeOutlets[0]));
+
+    if (activeOutlets.length === 1 && orderingMode.length === 1) {
+      Actions.push('orderHere');
+      await dispatch(getOutletById(activeOutlets[0].id));
+      await dispatch(changeOrderingMode({orderingMode: orderingMode[0].key}));
+    } else if (activeOutlets.length === 1) {
+      Actions.push('orderingMode');
+      await dispatch(getOutletById(activeOutlets[0].id));
+    } else {
+      Actions.push('store');
+    }
+    setIsLoading(false);
+  };
 
   const renderPoint = () => {
     return (
@@ -209,8 +235,8 @@ const Menu = () => {
     return (
       <TouchableOpacity
         style={styles.touchableOrderHere}
-        onPress={() => {
-          Actions.push('store');
+        onPress={async () => {
+          await handleClick();
         }}>
         <Text style={styles.textOrderHere1}>Order now?</Text>
         <Text style={styles.textOrderHere2}>CLICK HERE</Text>
@@ -273,6 +299,7 @@ const Menu = () => {
 
   return (
     <View style={styles.root}>
+      <LoadingScreen loading={isLoading} />
       <Text style={styles.textWelcome} numberOfLines={1}>
         Welcome {user?.name},
       </Text>
