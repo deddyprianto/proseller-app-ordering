@@ -21,6 +21,7 @@ import {isEmptyArray} from '../helper/CheckEmpty';
 import {Body} from '../components/layout';
 import withHooksComponent from '../components/HOC';
 import ListInbox from '../components/inbox/ListInbox';
+import InboxLoading from '../components/shimmerLoading/InboxLoading';
 
 class Inbox extends Component {
   constructor(props) {
@@ -38,7 +39,7 @@ class Inbox extends Component {
       this.componentInboxFocused = this.props.navigation.addListener(
         'willFocus',
         () => {
-          this.getDataInbox(0, 50);
+          this.getDataInbox(0, 50, true);
         },
       );
     } catch (e) {}
@@ -50,9 +51,9 @@ class Inbox extends Component {
     } catch (e) {}
   }
 
-  getDataInbox = async (skip, take) => {
+  getDataInbox = async (skip, take, isOpenTab) => {
     try {
-      await this.props.dispatch(dataInbox(skip, take));
+      await this.props.dispatch(dataInbox(skip, take, isOpenTab));
     } catch (error) {
       console.log(error);
     }
@@ -120,7 +121,10 @@ class Inbox extends Component {
   };
 
   renderInbox = () => {
-    const {dataInbox} = this.props;
+    const {dataInbox, isLoading} = this.props;
+    if (isLoading) {
+      return <InboxLoading numberList={4} />;
+    }
     return (
       <FlatList
         refreshControl={
@@ -134,6 +138,7 @@ class Inbox extends Component {
         onEndReachedThreshold={0.01}
         onEndReached={this.handleLoadMoreItems}
         ListFooterComponent={() => this.renderFooter()}
+        contentContainerStyle={styles.scrollContainer}
       />
     );
   };
@@ -239,10 +244,14 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
   },
+  scrollContainer: {
+    paddingBottom: 30,
+  }
 });
 
 const mapStateToProps = state => ({
   dataInbox: state.inboxReducer.dataInbox.broadcast,
+  isLoading: state.inboxReducer?.dataInbox?.isLoading,
 });
 
 const mapDispatchToProps = dispatch => ({

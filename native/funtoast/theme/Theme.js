@@ -74,6 +74,7 @@ const Theme = () => {
     greyScale2: '#B7B7B7',
     greyScale3: '#D6D6D6',
     greyScale4: '#F9F9F9',
+    greyScale5: '#888787',
 
     buttonActive: '#CF3030',
     buttonStandBy: '#FFFFFF',

@@ -29,6 +29,9 @@ import appConfig from '../../../config/appConfig';
 
 import Theme from '../../../theme';
 import {useSelector} from 'react-redux';
+import GlobalText from '../../globalText';
+import colorConfig from '../../../config/colorConfig';
+import {normalizeLayoutSizeHeight} from '../../../helper/Layout';
 
 const useStyles = () => {
   const theme = Theme();
@@ -37,7 +40,16 @@ const useStyles = () => {
     root: {
       marginTop: 20,
       width: '48%',
-      backgroundColor: 'white',
+      backgroundColor: colorConfig.pageIndex.backgroundColor,
+      shadowColor: '#00000021',
+      shadowOffset: {
+        width: 0,
+        height: 9,
+      },
+      shadowOpacity: 0.7,
+      shadowRadius: 7.49,
+      elevation: 12,
+      padding: 8,
       borderRadius: 8,
     },
     body: {
@@ -75,36 +87,40 @@ const useStyles = () => {
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textPrice: {
-      marginTop: 5,
+      marginTop: normalizeLayoutSizeHeight(8),
       color: theme.colors.textPrimary,
       fontSize: theme.fontSize[14],
-      fontFamily: theme.fontFamily.poppinsMedium,
+      fontFamily: theme.fontFamily.poppinsBold,
     },
     textPriceUnavailable: {
-      marginTop: 5,
+      marginTop: normalizeLayoutSizeHeight(8),
       color: theme.colors.textTertiary,
       fontSize: theme.fontSize[14],
-      fontFamily: theme.fontFamily.poppinsMedium,
+      fontFamily: theme.fontFamily.poppinsBold,
     },
     textPromo: {
       lineHeight: 18,
       color: theme.colors.textSecondary,
       fontSize: theme.fontSize[12],
       fontFamily: theme.fontFamily.poppinsMedium,
+      flex: 1,
     },
     textNotAvailable: {
       borderRadius: 8,
       paddingVertical: 8,
       paddingHorizontal: 16,
-      color: theme.colors.textSecondary,
       fontSize: theme.fontSize[14],
+      backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    },
+    textNotAvailableStyle: {
+      color: theme.colors.textSecondary,
       fontFamily: theme.fontFamily.poppinsMedium,
-      backgroundColor: theme.colors.backgroundTransparent2,
     },
     viewQtyAndName: {
       display: 'flex',
       flexDirection: 'row',
       marginTop: 5,
+      height: normalizeLayoutSizeHeight(42),
     },
     viewIconCart: {
       borderRadius: 4,
@@ -119,22 +135,23 @@ const useStyles = () => {
       backgroundColor: theme.colors.buttonDisabled,
     },
     viewPromo: {
+      flexDirection: 'row',
+      borderRadius: 50,
+      marginTop: 10,
+    },
+    promoContainer: {
       elevation: 1,
-      position: 'absolute',
-      top: 8,
-      left: 8,
-      display: 'flex',
       flexDirection: 'row',
       alignItems: 'center',
-      justifyContent: 'center',
       padding: 4,
       borderRadius: 50,
       backgroundColor: theme.colors.semanticError,
+      marginTop: 11,
+      width: '100%',
     },
     viewImage: {
       width: '100%',
       maxWidth: '100%',
-      height: undefined,
       aspectRatio: 1 / 1,
       borderRadius: 8,
     },
@@ -143,7 +160,6 @@ const useStyles = () => {
       borderRadius: borderRadiusImage,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: theme.colors.backgroundTransparent1,
     },
     image: {
       borderRadius: 8,
@@ -164,6 +180,24 @@ const useStyles = () => {
       height: 24,
       tintColor: 'white',
     },
+    counterCartProduct: {
+      height: 26,
+      width: 30,
+      position: 'absolute',
+      top: 0,
+      right: 0,
+      zIndex: 100,
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: 4,
+    },
+    counterStyle: {
+      color: 'white',
+    },
+    promoContainerNoBg: {
+      padding: 4,
+      marginTop: 12,
+    },
   });
   return styles;
 };
@@ -173,12 +207,12 @@ const Product = ({product, basket}) => {
   const [totalQty, setTotalQty] = useState(0);
   const [isOpenUpdateModal, setIsOpenUpdateModal] = useState(false);
   const [isOpenAddModal, setIsOpenAddModal] = useState(false);
+  const {colors, fontFamily} = Theme();
 
   const isProductAvailable = product?.orderingStatus === 'AVAILABLE';
   const imageSettings = useSelector(
     state => state.settingReducer.imageSettings,
   );
-
   const handleOpenAddModal = () => {
     setIsOpenAddModal(true);
   };
@@ -239,15 +273,32 @@ const Product = ({product, basket}) => {
     const totalQtyProductInBasket = handleQuantityProduct();
     setTotalQty(totalQtyProductInBasket);
   }, [product, basket]);
-
   const renderImageAvailable = image => {
     return (
-      <ImageBackground
-        style={styles.viewImage}
-        imageStyle={styles.image}
-        resizeMode="contain"
-        source={{uri: image}}
-      />
+      <View>
+        {totalQty <= 0 ? null : (
+          <View
+            style={[
+              styles.counterCartProduct,
+              {backgroundColor: colors.primary},
+            ]}>
+            <GlobalText
+              style={[
+                styles.counterStyle,
+                {fontFamily: fontFamily.poppinsMedium},
+              ]}>
+              {totalQty}x
+            </GlobalText>
+          </View>
+        )}
+
+        <ImageBackground
+          style={styles.viewImage}
+          imageStyle={styles.image}
+          resizeMode="contain"
+          source={{uri: image}}
+        />
+      </View>
     );
   };
 
@@ -259,7 +310,9 @@ const Product = ({product, basket}) => {
         resizeMode="contain"
         source={{uri: image}}>
         <View style={styles.viewTransparentImage}>
-          <Text style={styles.textNotAvailable}>Not Available</Text>
+          <View style={styles.textNotAvailable}>
+            <Text style={styles.textNotAvailableStyle}>Not Available</Text>
+          </View>
         </View>
       </ImageBackground>
     );
@@ -277,16 +330,6 @@ const Product = ({product, basket}) => {
     }
   };
 
-  const renderQty = () => {
-    const styleText = isProductAvailable
-      ? styles.textQty
-      : styles.textQtyUnavailable;
-
-    if (totalQty) {
-      return <Text style={styleText}>{totalQty} x </Text>;
-    }
-  };
-
   const renderName = () => {
     const styleText = isProductAvailable
       ? styles.textName
@@ -295,7 +338,7 @@ const Product = ({product, basket}) => {
     return (
       <Text
         ellipsizeMode="tail"
-        numberOfLines={3}
+        numberOfLines={Number(appConfig.descriptionLineProduct)}
         style={styleText}
         allowFontScaling={false}>
         {product?.name}
@@ -303,12 +346,7 @@ const Product = ({product, basket}) => {
     );
   };
   const renderQtyAndName = () => {
-    return (
-      <View style={styles.viewQtyAndName}>
-        {renderQty()}
-        {renderName()}
-      </View>
-    );
+    return <View style={styles.viewQtyAndName}>{renderName()}</View>;
   };
 
   const renderPrice = () => {
@@ -318,18 +356,6 @@ const Product = ({product, basket}) => {
 
     return (
       <Text style={styleText}>{CurrencyFormatter(product?.retailPrice)}</Text>
-    );
-  };
-
-  const cartIcon = () => {
-    const styleView = isProductAvailable
-      ? styles.viewIconCart
-      : styles.viewIconCartUnavailable;
-
-    return (
-      <View style={styleView}>
-        <Image source={appConfig.iconCart} style={styles.iconCart} />
-      </View>
     );
   };
 
@@ -350,17 +376,8 @@ const Product = ({product, basket}) => {
     );
   };
 
-  const renderBodyRight = () => {
-    return <View style={styles.bodyRight}>{cartIcon()}</View>;
-  };
-
   const renderBody = () => {
-    return (
-      <View style={styles.body}>
-        {renderBodyLeft()}
-        {renderBodyRight()}
-      </View>
-    );
+    return <View style={styles.body}>{renderBodyLeft()}</View>;
   };
 
   const renderProductAddModal = () => {
@@ -396,15 +413,26 @@ const Product = ({product, basket}) => {
     if (!isEmptyArray(product?.promotions) && isProductAvailable) {
       return (
         <View style={styles.viewPromo}>
-          <ImageBackground
-            source={appConfig.iconPromoStar}
-            style={styles.imagePromo}>
-            <Text style={styles.iconPromo}>%</Text>
-          </ImageBackground>
-          <Text style={styles.textPromo}>Promo</Text>
+          <View style={styles.promoContainer}>
+            <ImageBackground
+              source={appConfig.iconPromoStar}
+              style={styles.imagePromo}>
+              <Text style={styles.iconPromo}>%</Text>
+            </ImageBackground>
+            <GlobalText numberOfLines={1} style={styles.textPromo}>
+              {product.promotions[0]?.name || null}
+            </GlobalText>
+          </View>
         </View>
       );
     }
+    return (
+      <View style={styles.viewPromo}>
+        <View style={styles.promoContainerNoBg}>
+          <View style={styles.imagePromo} />
+        </View>
+      </View>
+    );
   };
 
   return (
@@ -414,8 +442,8 @@ const Product = ({product, basket}) => {
         handleProductOnClick();
       }}
       style={styles.root}>
-      {renderPromoIcon()}
       {renderImage()}
+      {renderPromoIcon()}
       {renderBody()}
       {renderProductAddModal()}
       {renderProductUpdateModal()}

@@ -157,6 +157,8 @@ const useStyles = () => {
       display: 'flex',
       flexDirection: 'row',
       alignItems: 'center',
+      borderTopWidth: 1,
+      borderTopColor: theme.colors.greyScale3,
     },
     viewPointHeader: {
       alignItems: 'flex-end',
@@ -293,6 +295,10 @@ const Profile = props => {
 
   const defaultOutlet = useSelector(
     state => state.storesReducer.defaultOutlet.defaultOutlet,
+  );
+
+  const hideReferral = useSelector(
+    state => state.settingReducer.hideReferralSettings.hideReferral,
   );
 
   const intlData = useSelector(state => state.intlData);
@@ -566,6 +572,7 @@ const Profile = props => {
       </TouchableOpacity>
     );
   };
+
   const renderFAQ = () => {
     return (
       <TouchableOpacity
@@ -593,6 +600,25 @@ const Profile = props => {
         </View>
       </TouchableOpacity>
     );
+  };
+
+  const renderReferral = () => {
+    if (!hideReferral) {
+      return (
+        <TouchableOpacity
+          style={styles.viewOption}
+          onPress={() => {
+            Actions.referral();
+          }}>
+          <Image
+            style={styles.iconSetting}
+            source={appConfig.iconReferral}
+            resizeMode="stretch"
+          />
+          <Text style={styles.textIcon}>Referral</Text>
+        </TouchableOpacity>
+      );
+    }
   };
 
   const renderLogout = () => {
@@ -626,19 +652,13 @@ const Profile = props => {
       <View style={styles.viewSettings}>
         {renderDivider()}
         {renderMembershipQRCode()}
-        {renderDivider()}
         {renderMyDeliveryAddress()}
-        {renderDivider()}
         {renderEditProfile()}
-        {renderDivider()}
+        {renderReferral()}
         {renderNotifications()}
-        {renderDivider()}
         {renderTermsAndConditions()}
-        {renderDivider()}
         {renderFAQ()}
-        {renderDivider()}
         {renderDeleteAccount()}
-        {renderDivider()}
         {renderLogout()}
       </View>
     );

@@ -75,7 +75,6 @@ const ProductList = ({products, basket}) => {
       </View>
     );
   };
-
   const renderProducts = () => {
     if (!isEmptyArray(products)) {
       const categoryProducts = products?.map(item => {

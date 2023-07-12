@@ -32,17 +32,14 @@ class StoreStores extends Component {
         {
           text: 'Continue',
           onPress: async () => {
-            this.setState({isLoading: true});
             await this.removeCart();
             await this.storeDetailStores(item);
-            this.setState({isLoading: false});
           },
         },
       ],
       {cancelable: false},
     );
   };
-
   handleRemoveSelectedAddress = async () => {
     const userDecrypt = CryptoJS.AES.decrypt(
       this.props.user,
@@ -57,15 +54,69 @@ class StoreStores extends Component {
   };
 
   removeCart = async () => {
+    this.setState({isLoading: true});
     await this.handleRemoveSelectedAddress();
     await this.props.dispatch(changeOrderingMode({orderingMode: ''}));
     await this.props.dispatch(removeBasket());
+    await this.props.dispatch(getBasket());
+    this.setState({isLoading: false});
+  };
+
+  orderingModesField = [
+    {
+      key: 'STOREPICKUP',
+      isEnabledFieldName: 'enableStorePickUp',
+    },
+    {
+      key: 'DELIVERY',
+      isEnabledFieldName: 'enableDelivery',
+    },
+    {
+      key: 'TAKEAWAY',
+      isEnabledFieldName: 'enableTakeAway',
+    },
+    {
+      key: 'DINEIN',
+      isEnabledFieldName: 'enableDineIn',
+    },
+    {
+      key: 'STORECHECKOUT',
+      isEnabledFieldName: 'enableStoreCheckOut',
+    },
+  ];
+
+  handleSelectStoreFnB = async () => {
+    const orderingModesFieldFiltered = this.orderingModesField.filter(mode => {
+      if (
+        this.props.defaultOutlet[mode.isEnabledFieldName] &&
+        this.props.orderSetting?.includes(mode.key)
+      ) {
+        return mode;
+      }
+    });
+
+    if (orderingModesFieldFiltered.length === 1) {
+      await this.props.dispatch(
+        changeOrderingMode({
+          orderingMode: orderingModesFieldFiltered[0].key,
+        }),
+      );
+      Actions.orderHere();
+    } else {
+      Actions.push('orderingMode');
+    }
   };
 
   storeDetailStores = async item => {
     try {
+      this.setState({isLoading: true});
       await this.props.dispatch(getOutletById(item.storeId));
-      if (Actions.currentScene !== 'pageIndex') {
+
+      this.setState({isLoading: false});
+
+      if (awsConfig.COMPANY_TYPE !== 'Retail') {
+        this.handleSelectStoreFnB();
+      } else if (Actions.currentScene !== 'pageIndex') {
         Actions.pop();
       }
     } catch (e) {}
@@ -75,23 +126,26 @@ class StoreStores extends Component {
     // Actions.pageIndex();
   };
 
-  processChangeOutlet = item => {
+  processChangeOutlet = async item => {
     try {
-      const {dataBasket} = this.props;
-      if (dataBasket === undefined || dataBasket === null) {
-        this.storeDetailStores(item);
+      const {dataBasket, defaultOutlet} = this.props;
+      if (defaultOutlet?.id === item?.storeId) {
+        await this.storeDetailStores(item);
         return;
       }
-      if (dataBasket && dataBasket.outlet.id === item.storeId) {
-        this.storeDetailStores(item);
+      if (dataBasket === undefined || dataBasket === null) {
+        await this.removeCart();
+        await this.storeDetailStores(item);
         return;
       }
       if (dataBasket && dataBasket.outlet.id !== item.storeId) {
         this.showAlertBasketNotEmpty(item);
         return;
       }
+      await this.storeDetailStores(item);
     } catch (e) {
-      this.storeDetailStores(item);
+      await this.removeCart();
+      await this.storeDetailStores(item);
     }
   };
 
@@ -198,6 +252,7 @@ import {
 } from '../actions/order.action';
 import {updateUser} from '../actions/user.action';
 import awsConfig from '../config/awsConfig';
+import appConfig from '../config/appConfig';
 
 const styles = StyleSheet.create({
   stores: {
@@ -238,6 +293,9 @@ const styles = StyleSheet.create({
 
 mapStateToProps = state => ({
   dataBasket: state.orderReducer.dataBasket.product,
+  orderingMode: state.orderReducer.dataOrderingMode.orderingMode,
+  defaultOutlet: state.storesReducer.defaultOutlet.defaultOutlet,
+  orderSetting: state.settingReducer?.allowedOrder?.settingValue,
   user: state.userReducer.getUser.userDetails,
 });
 

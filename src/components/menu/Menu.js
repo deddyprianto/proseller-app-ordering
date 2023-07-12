@@ -21,6 +21,7 @@ import {
 import appConfig from '../../config/appConfig';
 import awsConfig from '../../config/awsConfig';
 import Theme from '../../theme';
+import TextWarningModal from '../modal/TextWarningModal';
 
 const HEIGHT = Dimensions.get('window').height;
 
@@ -164,6 +165,7 @@ const useStyles = () => {
 const Menu = () => {
   const styles = useStyles();
   const [user, setUser] = useState({});
+  const [isOpenModal, setIsOpenModal] = useState(false);
   const totalPoint = useSelector(
     state => state.rewardsReducer?.dataPoint?.totalPoint,
   );
@@ -208,7 +210,7 @@ const Menu = () => {
       <TouchableOpacity
         style={styles.touchableOrderHere}
         onPress={() => {
-          Actions.push('orderHere');
+          Actions.push('store');
         }}>
         <Text style={styles.textOrderHere1}>Order now?</Text>
         <Text style={styles.textOrderHere2}>CLICK HERE</Text>
@@ -234,7 +236,8 @@ const Menu = () => {
       <TouchableOpacity
         style={styles.viewMenu}
         onPress={() => {
-          Actions.push('eStore');
+          // Actions.push('eStore');
+          setIsOpenModal(true);
         }}>
         <Image source={appConfig.iconHomeEStore} style={styles.iconMenu} />
         <Text style={styles.textMenu}>E-Store</Text>
@@ -288,6 +291,15 @@ const Menu = () => {
         style={styles.bottom}
         source={appConfig.imageAdditionalBanner}
         resizeMode="contain"
+      />
+      <TextWarningModal
+        open={isOpenModal}
+        handleClose={() => {
+          setIsOpenModal(false);
+        }}
+        title="E-Store currently not available"
+        description="We're making a few changes to our estore system, so mobile orders for estore are currently unavailable. But don't worry - we'll be back up and running soon! We thank you for your patience while we improve our estore process."
+        image={appConfig.imageOrderNotAvailable}
       />
     </View>
   );

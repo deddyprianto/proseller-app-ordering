@@ -37,6 +37,7 @@ const useStyles = () => {
       flexDirection: 'row',
       width: WIDTH,
       paddingHorizontal: 16,
+      paddingBottom: 5,
     },
     viewGroupCategoriesSmall: {
       flex: 1,
@@ -46,6 +47,7 @@ const useStyles = () => {
       justifyContent: 'space-between',
       width: WIDTH,
       paddingHorizontal: 16,
+      paddingBottom: 1,
     },
     viewMoreCategories: {
       shadowOffset: {

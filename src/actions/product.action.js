@@ -93,7 +93,6 @@ export const getProductSubCategories = ({
         200,
         null,
       );
-
       if (response?.response?.data) {
         await dispatch({
           type: 'DATA_PRODUCT_SUB_CATEGORIES',
@@ -116,20 +115,26 @@ export const getProductBySubCategory = ({
 }) => {
   return async dispatch => {
     try {
-      const payload = {
+      let payload = {
         skip: 0,
         take: 100,
         sortBy: 'name',
         sortDirection: 'asc',
         outletID: `outlet::${outletId}`,
         categoryID: `category::${subCategoryId}`,
-        filters: [
-          {
-            id: 'search',
-            value: searchQuery,
-          },
-        ],
       };
+
+      if (searchQuery && typeof searchQuery === 'string') {
+        payload = {
+          ...payload,
+          filters: [
+            {
+              id: 'search',
+              value: searchQuery,
+            },
+          ],
+        };
+      }
 
       const response = await fetchApiProduct(
         '/product/load',
@@ -138,7 +143,6 @@ export const getProductBySubCategory = ({
         200,
         null,
       );
-
       if (response?.response?.data) {
         await dispatch({
           type: 'DATA_PRODUCTS_BY_SUB_CATEGORY',

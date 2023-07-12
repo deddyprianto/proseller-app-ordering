@@ -41,6 +41,10 @@ import awsConfig from '../config/awsConfig';
 import PhoneInput from 'react-native-phone-input';
 import CountryPicker from './react-native-country-picker-modal/lib';
 import {getTermsConditions} from '../actions/order.action';
+import GlobalInputText from './globalInputText';
+import CalendarSvg from '../assets/svg/CalendareSvg';
+import withHooksComponent from './HOC';
+import NavbarBack from './navbar/navbarBack';
 import {Body} from './layout';
 
 const backupMandatoryFields = [
@@ -651,8 +655,27 @@ class AccountEditProfil extends Component {
     }
   };
 
+  canSaveProfile = () => {
+    let mandatoryKey = ['name', 'email', 'phoneNumber'];
+    const dynamicMandatory = this.state.fields
+      .filter(field => field.mandatory)
+      .map(dataMap => dataMap.fieldName);
+    mandatoryKey = [...mandatoryKey, ...dynamicMandatory];
+    let emptyValue = [];
+    mandatoryKey.forEach(key => {
+      if (
+        this.state[key] === undefined ||
+        this.state[key] === null ||
+        this.state[key] === ''
+      ) {
+        emptyValue.push(key);
+      }
+    });
+    return emptyValue.length <= 0;
+  };
+
   render() {
-    const {intlData} = this.props;
+    const {intlData, colors, fontFamily} = this.props;
     const {fields, isPostalCodeValid, customFields} = this.state;
     const {
       disableChangePhoneNumber,
@@ -663,529 +686,498 @@ class AccountEditProfil extends Component {
     return (
       <SafeAreaView style={styles.container}>
         {this.state.loading && <LoaderDarker />}
-        <View
-          style={[
-            styles.header,
-            {backgroundColor: colorConfig.pageIndex.backgroundColor},
-          ]}>
-          <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
-            <Icon
-              size={28}
-              name={
-                Platform.OS === 'ios' ? 'ios-arrow-back' : 'md-arrow-round-back'
-              }
-              style={styles.btnBackIcon}
-            />
-            <Text style={styles.btnBackText}>
-              {' '}
-              {intlData.messages.editProfile}{' '}
-            </Text>
-          </TouchableOpacity>
-          {/*<View style={styles.line} />*/}
-        </View>
-        <View style={{flex: 1}}>
-          <Body>
-            <KeyboardAwareScrollView>
-              <View>
-                <View style={styles.card}>
-                  <Form ref="form" onSubmit={this.checkMandatory}>
-                    <View style={styles.detail}>
-                      <View style={styles.detailItem}>
-                        <Text style={styles.desc}>
-                          {intlData.messages.name}
+        <NavbarBack title={intlData.messages.editProfile} />
+        <Body>
+          <KeyboardAwareScrollView>
+            <View>
+              <View style={styles.card}>
+                <Form ref="form" onSubmit={this.checkMandatory}>
+                  <View style={styles.detail}>
+                    <GlobalInputText
+                      value={this.state.name}
+                      onChangeText={value => this.setState({name: value})}
+                      placeholder="Name"
+                      label="Name"
+                      isMandatory
+                    />
+                    <GlobalInputText
+                      placeholder="Email"
+                      value={this.state.email}
+                      onChangeText={value => this.setState({email: value})}
+                      disabled
+                      label="Email"
+                      isMandatory
+                      editable={false}
+                    />
+                    <View style={styles.detailItem}>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                        }}>
+                        <Text
+                          style={[
+                            styles.desc,
+                            {fontFamily: this.props.fontFamily.poppinsMedium},
+                          ]}>
+                          Mobile No{' '}
+                          <Text
+                            style={[
+                              styles.mandatoryStyle,
+                              {
+                                fontFamily: this.props.fontFamily.poppinsMedium,
+                              },
+                            ]}>
+                            *
+                          </Text>{' '}
                         </Text>
-                        <TextInput
-                          placeholder="Name"
-                          style={{paddingVertical: 10}}
-                          value={this.state.name}
-                          onChangeText={value => this.setState({name: value})}
-                        />
-                        <View style={{borderWidth: 0.5, borderColor: 'gray'}} />
-                      </View>
-                      <View style={styles.detailItem}>
-                        <View
-                          style={{
-                            flexDirection: 'row',
-                          }}>
-                          <Text style={styles.desc}>Email</Text>
-                          {!disableChangeEmail ? (
-                            <TouchableOpacity
-                              style={[styles.btnChange]}
-                              onPress={() => this.toChangeCredentials('Email')}>
-                              <Text style={[styles.textChange]}>
-                                {this.state.editEmail ? 'Cancel' : 'Change'}
-                              </Text>
-                            </TouchableOpacity>
-                          ) : null}
-                        </View>
-                        {!this.state.editEmail ? (
-                          <Text style={{paddingTop: 12}}>
-                            {this.props.dataDiri.email}
-                          </Text>
-                        ) : (
-                          <>
-                            <TextInput
-                              placeholder="Email"
-                              style={{paddingVertical: 10}}
-                              value={this.state.email}
-                              onChangeText={value =>
-                                this.setState({email: value})
-                              }
-                            />
-                            <View
-                              style={{borderWidth: 0.5, borderColor: 'gray'}}
-                            />
-                          </>
-                        )}
-                      </View>
-
-                      <View style={styles.detailItem}>
-                        <View
-                          style={{
-                            flexDirection: 'row',
-                          }}>
-                          <Text style={styles.desc}>
-                            {intlData.messages.phoneNumber}
-                          </Text>
-                          {!disableChangePhoneNumber ? (
-                            <TouchableOpacity
-                              onPress={() =>
-                                this.toChangeCredentials('Mobile Number')
-                              }
-                              style={[styles.btnChange]}>
-                              <Text style={[styles.textChange]}>
-                                {this.state.editPhoneNumber
-                                  ? 'Cancel'
-                                  : 'Change'}
-                              </Text>
-                            </TouchableOpacity>
-                          ) : null}
-                        </View>
-                        <View style={{width: 0, height: 0}}>
-                          <CountryPicker
-                            translation="eng"
-                            withCallingCode
-                            visible={this.state.openModalCountry}
-                            onClose={() =>
-                              this.setState({openModalCountry: false})
+                        {!disableChangePhoneNumber ? (
+                          <TouchableOpacity
+                            onPress={() =>
+                              this.toChangeCredentials('Mobile Number')
                             }
-                            withFilter
-                            placeholder={`x`}
-                            withFlag={true}
-                            onSelect={country => {
+                            style={[styles.btnChange]}>
+                            <Text style={[styles.textChange]}>
+                              {this.state.editPhoneNumber ? 'Cancel' : 'Change'}
+                            </Text>
+                          </TouchableOpacity>
+                        ) : null}
+                      </View>
+                      <View style={{width: 0, height: 0}}>
+                        <CountryPicker
+                          translation="eng"
+                          withCallingCode
+                          visible={this.state.openModalCountry}
+                          onClose={() =>
+                            this.setState({openModalCountry: false})
+                          }
+                          withFilter
+                          placeholder={`x`}
+                          withFlag={true}
+                          onSelect={country => {
+                            this.setState({
+                              phoneNumber: `+${country.callingCode[0]}`,
+                              country: country.name,
+                            });
+                          }}
+                        />
+                      </View>
+                      {!this.state.editPhoneNumber ? (
+                        <Text style={{paddingTop: 12}}>
+                          {this.props.dataDiri.phoneNumber}
+                        </Text>
+                      ) : (
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            width: '100%',
+                            maxWidth: '100%',
+                            marginTop: 10,
+                          }}>
+                          <PhoneInput
+                            flagStyle={{
+                              width: 30,
+                              height: 20,
+                              justifyContent: 'center',
+                              marginRight: -5,
+                              marginLeft: 5,
+                            }}
+                            textStyle={{
+                              fontSize: 0,
+                              fontFamily: 'Poppins-Regular',
+                            }}
+                            style={{
+                              padding: 5,
+                              color: 'black',
+                              backgroundColor: colorConfig.store.transparentBG,
+                              borderRadius: 5,
+                            }}
+                            ref={ref => {
+                              this.phone = ref;
+                            }}
+                            onChangePhoneNumber={() => {
+                              this.setState({phone: this.phone.getValue()});
+                            }}
+                            value={this.state.phoneNumber}
+                            onPressFlag={() => {
                               this.setState({
-                                phoneNumber: `+${country.callingCode[0]}`,
-                                country: country.name,
+                                openModalCountry: true,
                               });
                             }}
                           />
-                        </View>
-                        {!this.state.editPhoneNumber ? (
-                          <Text style={{paddingTop: 12}}>
-                            {this.props.dataDiri.phoneNumber}
-                          </Text>
-                        ) : (
-                          <View
+                          <TouchableOpacity
+                            onPress={() => {
+                              this.setState({
+                                openModalCountry: true,
+                              });
+                            }}
                             style={{
-                              flexDirection: 'row',
-                              width: '100%',
-                              maxWidth: '100%',
-                              marginTop: 10,
+                              justifyContent: 'center',
+                              paddingHorizontal: 5,
                             }}>
-                            <PhoneInput
-                              flagStyle={{
-                                width: 30,
-                                height: 20,
-                                justifyContent: 'center',
-                                marginRight: -5,
-                                marginLeft: 5,
-                              }}
-                              textStyle={{
-                                fontSize: 0,
-                                fontFamily: 'Poppins-Regular',
-                              }}
-                              style={{
-                                padding: 5,
-                                color: 'black',
-                                backgroundColor:
-                                  colorConfig.store.transparentBG,
-                                borderRadius: 5,
-                              }}
-                              ref={ref => {
-                                this.phone = ref;
-                              }}
-                              onChangePhoneNumber={() => {
-                                this.setState({phone: this.phone.getValue()});
-                              }}
-                              value={this.state.phoneNumber}
-                              onPressFlag={() => {
-                                this.setState({
-                                  openModalCountry: true,
-                                });
-                              }}
-                            />
-                            <TouchableOpacity
-                              onPress={() => {
-                                this.setState({
-                                  openModalCountry: true,
-                                });
-                              }}
-                              style={{
-                                justifyContent: 'center',
-                                paddingHorizontal: 5,
-                              }}>
-                              <Text
-                                style={{
-                                  fontSize: 15,
-                                  fontFamily: 'Poppins-Regular',
-                                }}>
-                                {this.state.phoneNumber}
-                              </Text>
-                            </TouchableOpacity>
-                            <TextInput
-                              value={this.state.phone}
-                              keyboardType={'numeric'}
-                              onChangeText={value =>
-                                this.setState({phone: value})
-                              }
+                            <Text
                               style={{
                                 fontSize: 15,
                                 fontFamily: 'Poppins-Regular',
-                                paddingHorizontal: 10,
-                                paddingVertical: 10,
-                                color: colorConfig.store.title,
-                                borderColor:
-                                  colorConfig.pageIndex.inactiveTintColor,
-                                borderWidth: 1,
-                                borderRadius: 5,
-                                flex: 1,
-                              }}
-                            />
-                          </View>
-                        )}
-                      </View>
-
-                      {!isEmptyArray(fields) &&
-                        fields
-                          .filter(data => data.show)
-                          .map(item => {
-                            if (
-                              item.fieldName === 'birthDate' &&
-                              item.format.length > 4
-                            )
-                              return (
-                                <View style={styles.detailItem}>
-                                  <Text style={[styles.desc, {marginLeft: 0}]}>
-                                    Birthday{' '}
-                                    {item.mandatory ? (
-                                      <Text style={{color: 'red'}}>*</Text>
-                                    ) : null}
-                                  </Text>
-                                  <Text
-                                    style={{
-                                      paddingTop: 12,
-                                      borderBottomColor:
-                                        colorConfig.store.defaultColor,
-                                      borderBottomWidth: 1,
-
-                                      paddingBottom: 5,
-                                    }}
-                                    onPress={this.showDatePicker}>
-                                    {this.state.birthDate == '' ||
-                                    this.state.birthDate == undefined ||
-                                    this.state.birthDate.length == 3
-                                      ? 'Enter Birthday'
-                                      : this.formatBirthDate(
-                                          this.state.birthDate,
-                                        )}
-                                  </Text>
-
-                                  <DatePicker
-                                    modal
-                                    mode={'date'}
-                                    androidVariant={'iosClone'}
-                                    maximumDate={this.getMaxDate()}
-                                    open={this.state.isDatePickerVisible}
-                                    date={
-                                      this.state.birthDate !== undefined &&
-                                      this.state.birthDate !== null &&
-                                      this.state.birthDate !== ''
-                                        ? new Date(this.state.birthDate)
-                                        : this.getMaxDate()
-                                    }
-                                    onConfirm={this.handleConfirm}
-                                    onCancel={this.hideDatePicker}
-                                  />
-                                </View>
-                              );
-
-                            if (
-                              item.fieldName === 'birthDate' &&
-                              item.format.length <= 4
-                            )
-                              return (
-                                <View style={styles.detailItem}>
-                                  <Text style={[styles.desc, {marginLeft: 0}]}>
-                                    Birth Month{' '}
-                                    {item.mandatory ? (
-                                      <Text style={{color: 'red'}}>*</Text>
-                                    ) : null}
-                                  </Text>
-                                  <DropDownPicker
-                                    placeholder={'Select your birth month'}
-                                    items={this.state.MM}
-                                    defaultValue={this.getMonth(
-                                      this.state.birthDate,
-                                    )}
-                                    containerStyle={{height: 47}}
-                                    style={{
-                                      backgroundColor: 'white',
-                                      marginTop: 5,
-                                      borderRadius: 0,
-                                    }}
-                                    dropDownStyle={{
-                                      backgroundColor: '#fafafa',
-                                      zIndex: 3,
-                                    }}
-                                    onChangeItem={item =>
-                                      this.setState({
-                                        birthDate: item.value,
-                                      })
-                                    }
-                                    onOpen={() => {
-                                      this.setState({openBirthDate: true});
-                                    }}
-                                    onClose={() => {
-                                      this.setState({openBirthDate: false});
-                                    }}
-                                  />
-
-                                  {this.state.openBirthDate ? (
-                                    <View style={{height: 130}} />
-                                  ) : null}
-                                </View>
-                              );
-
-                            if (
-                              item.fieldName === 'gender' ||
-                              item.fieldName === 'Gender'
-                            )
-                              return (
-                                <View style={styles.detailItem}>
-                                  <Text style={[styles.desc, {marginLeft: 0}]}>
-                                    {intlData.messages.gender}{' '}
-                                    {item.mandatory ? (
-                                      <Text style={{color: 'red'}}>*</Text>
-                                    ) : null}
-                                  </Text>
-                                  <DropDownPicker
-                                    placeholder={'Select gender'}
-                                    items={[
-                                      {
-                                        label: intlData.messages.male,
-                                        value: 'male',
-                                      },
-                                      {
-                                        label: intlData.messages.female,
-                                        value: 'female',
-                                      },
-                                    ]}
-                                    defaultValue={this.validateGender(
-                                      this.state.gender,
-                                    )}
-                                    containerStyle={{height: 47}}
-                                    style={{
-                                      backgroundColor: 'white',
-                                      marginTop: 5,
-                                      borderRadius: 0,
-                                    }}
-                                    dropDownStyle={{
-                                      backgroundColor: '#fafafa',
-                                      zIndex: 3,
-                                    }}
-                                    onOpen={() => {
-                                      this.setState({openGender: true});
-                                    }}
-                                    onClose={() => {
-                                      this.setState({openGender: false});
-                                    }}
-                                    onChangeItem={item =>
-                                      this.setState({
-                                        gender: item.value,
-                                      })
-                                    }
-                                  />
-
-                                  {this.state.openGender ? (
-                                    <View style={{height: 50}} />
-                                  ) : null}
-                                </View>
-                              );
-
-                            if (
-                              item.fieldName !== 'postalcode' &&
-                              item.fieldName !== 'gender' &&
-                              item.fieldName !== 'birthDate'
-                            ) {
-                              if (item.dataType === 'dropdown') {
-                                return (
-                                  <View style={styles.detailItem}>
-                                    <Text
-                                      style={[styles.desc, {marginLeft: 0}]}>
-                                      {item.displayName}{' '}
-                                      {item.mandatory ? (
-                                        <Text style={{color: 'red'}}>*</Text>
-                                      ) : null}
-                                    </Text>
-                                    <DropDownPicker
-                                      placeholder={item.displayName}
-                                      items={item.items}
-                                      defaultValue={this.state[item.fieldName]}
-                                      containerStyle={{height: 47}}
-                                      style={{
-                                        backgroundColor: 'white',
-                                        marginTop: 5,
-                                        borderRadius: 0,
-                                      }}
-                                      dropDownStyle={{
-                                        backgroundColor: '#fafafa',
-                                        zIndex: 3,
-                                      }}
-                                      onChangeItem={data => {
-                                        this.setState({
-                                          [item.fieldName]: data.value,
-                                        });
-                                      }}
-                                    />
-                                  </View>
-                                );
-                              } else if (item.dataType === 'checkbox') {
-                                return (
-                                  <View
-                                    style={[
-                                      styles.detailItem,
-                                      {
-                                        flexDirection: 'row',
-                                        justifyContent: 'space-between',
-                                      },
-                                    ]}>
-                                    <Text style={styles.desc}>
-                                      {item.displayName}{' '}
-                                      {item.mandatory ? (
-                                        <Text style={{color: 'red'}}>*</Text>
-                                      ) : null}
-                                    </Text>
-                                    <CheckBox
-                                      value={this.state[item.fieldName]}
-                                      onValueChange={e => {
-                                        this.setState({[item.fieldName]: e});
-                                      }}
-                                    />
-                                  </View>
-                                );
-                              } else {
-                                return (
-                                  <View style={styles.detailItem}>
-                                    <Text style={styles.desc}>
-                                      {item.displayName}{' '}
-                                      {item.mandatory ? (
-                                        <Text style={{color: 'red'}}>*</Text>
-                                      ) : null}
-                                    </Text>
-                                    <TextInput
-                                      placeholder={item.displayName}
-                                      style={{paddingVertical: 10}}
-                                      value={this.state[item.fieldName]}
-                                      onChangeText={value =>
-                                        this.setState({[item.fieldName]: value})
-                                      }
-                                      keyboardType={this.getKeyboardType(
-                                        item.dataType,
-                                      )}
-                                    />
-                                    <View
-                                      style={{
-                                        borderWidth: 0.5,
-                                        borderColor: 'gray',
-                                      }}
-                                    />
-                                  </View>
-                                );
-                              }
+                              }}>
+                              {this.state.phoneNumber}
+                            </Text>
+                          </TouchableOpacity>
+                          <TextInput
+                            value={this.state.phone}
+                            keyboardType={'numeric'}
+                            onChangeText={value =>
+                              this.setState({phone: value})
                             }
+                            style={{
+                              fontSize: 15,
+                              fontFamily: 'Poppins-Regular',
+                              paddingHorizontal: 10,
+                              paddingVertical: 10,
+                              color: colorConfig.store.title,
+                              borderColor:
+                                colorConfig.pageIndex.inactiveTintColor,
+                              borderWidth: 1,
+                              borderRadius: 5,
+                              flex: 1,
+                            }}
+                          />
+                        </View>
+                      )}
+                    </View>
 
-                            if (item.fieldName === 'postalcode')
+                    {!isEmptyArray(fields) &&
+                      fields
+                        .filter(data => data.show)
+                        .map(item => {
+                          if (
+                            item.fieldName === 'birthDate' &&
+                            item.format.length > 4
+                          )
+                            return (
+                              <>
+                                <GlobalInputText
+                                  label="Birthdate"
+                                  isMandatory={item.mandatory}
+                                  editable={false}
+                                  onPressBtn={this.showDatePicker}
+                                  type="button"
+                                  value={this.formatBirthDate(
+                                    this.state.birthDate,
+                                  )}
+                                  defaultValue="Birthdate"
+                                  rightIcon={<CalendarSvg />}
+                                />
+                                <DatePicker
+                                  modal
+                                  mode={'date'}
+                                  androidVariant={'iosClone'}
+                                  maximumDate={this.getMaxDate()}
+                                  open={this.state.isDatePickerVisible}
+                                  date={
+                                    this.state.birthDate !== undefined &&
+                                    this.state.birthDate !== null &&
+                                    this.state.birthDate !== ''
+                                      ? new Date(this.state.birthDate)
+                                      : this.getMaxDate()
+                                  }
+                                  onConfirm={this.handleConfirm}
+                                  onCancel={this.hideDatePicker}
+                                />
+                              </>
+                            );
+
+                          if (
+                            item.fieldName === 'birthDate' &&
+                            item.format.length <= 4
+                          )
+                            return (
+                              <View style={styles.detailItem}>
+                                <Text
+                                  style={[
+                                    styles.desc,
+                                    {
+                                      marginLeft: 0,
+                                      fontFamily: fontFamily.poppinsMedium,
+                                    },
+                                  ]}>
+                                  Birth Month{' '}
+                                  {item.mandatory ? (
+                                    <Text
+                                      style={{
+                                        color: 'red',
+                                      }}>
+                                      *
+                                    </Text>
+                                  ) : null}
+                                </Text>
+                                <DropDownPicker
+                                  placeholder={'Select your birth month'}
+                                  items={this.state.MM}
+                                  defaultValue={this.getMonth(
+                                    this.state.birthDate,
+                                  )}
+                                  containerStyle={{
+                                    height: 47,
+                                  }}
+                                  style={[
+                                    styles.dropdownContainerStyle,
+                                    {
+                                      borderColor: colors.greyScale2,
+                                    },
+                                  ]}
+                                  dropDownStyle={{
+                                    backgroundColor: '#fafafa',
+                                    zIndex: 3,
+                                  }}
+                                  onChangeItem={item =>
+                                    this.setState({
+                                      birthDate: item.value,
+                                    })
+                                  }
+                                  onOpen={() => {
+                                    this.setState({
+                                      openBirthDate: true,
+                                    });
+                                  }}
+                                  onClose={() => {
+                                    this.setState({
+                                      openBirthDate: false,
+                                    });
+                                  }}
+                                />
+
+                                {this.state.openBirthDate ? (
+                                  <View
+                                    style={{
+                                      height: 130,
+                                    }}
+                                  />
+                                ) : null}
+                              </View>
+                            );
+
+                          if (
+                            item.fieldName === 'gender' ||
+                            item.fieldName === 'Gender'
+                          )
+                            return (
+                              <View style={styles.detailItem}>
+                                <Text
+                                  style={[
+                                    styles.desc,
+                                    {
+                                      marginLeft: 0,
+                                      fontFamily: fontFamily.poppinsMedium,
+                                    },
+                                  ]}>
+                                  {intlData.messages.gender}{' '}
+                                  {item.mandatory ? (
+                                    <Text
+                                      style={[
+                                        styles.mandatoryStyle,
+                                        {
+                                          fontFamily: fontFamily.poppinsMedium,
+                                        },
+                                      ]}>
+                                      *
+                                    </Text>
+                                  ) : null}
+                                </Text>
+                                <DropDownPicker
+                                  placeholder={'Select gender'}
+                                  items={[
+                                    {
+                                      label: intlData.messages.male,
+                                      value: 'male',
+                                    },
+                                    {
+                                      label: intlData.messages.female,
+                                      value: 'female',
+                                    },
+                                  ]}
+                                  defaultValue={this.validateGender(
+                                    this.state.gender,
+                                  )}
+                                  style={[
+                                    styles.dropdownContainerStyle,
+                                    {borderColor: colors.greyScale2},
+                                  ]}
+                                  dropDownStyle={{
+                                    backgroundColor: '#fafafa',
+                                    zIndex: 3,
+                                  }}
+                                  onOpen={() => {
+                                    this.setState({
+                                      openGender: true,
+                                    });
+                                  }}
+                                  onClose={() => {
+                                    this.setState({
+                                      openGender: false,
+                                    });
+                                  }}
+                                  onChangeItem={item =>
+                                    this.setState({
+                                      gender: item.value,
+                                    })
+                                  }
+                                />
+
+                                {this.state.openGender ? (
+                                  <View style={{height: 50}} />
+                                ) : null}
+                              </View>
+                            );
+
+                          if (
+                            item.fieldName !== 'postalcode' &&
+                            item.fieldName !== 'gender' &&
+                            item.fieldName !== 'birthDate'
+                          ) {
+                            if (item.dataType === 'dropdown') {
                               return (
                                 <View style={styles.detailItem}>
+                                  <Text style={[styles.desc, {marginLeft: 0}]}>
+                                    {item.displayName}{' '}
+                                    {item.mandatory ? (
+                                      <Text style={{color: 'red'}}>*</Text>
+                                    ) : null}
+                                  </Text>
+                                  <DropDownPicker
+                                    placeholder={item.displayName}
+                                    items={item.items}
+                                    defaultValue={this.state[item.fieldName]}
+                                    containerStyle={{height: 47}}
+                                    style={{
+                                      backgroundColor: 'white',
+                                      marginTop: 5,
+                                      borderRadius: 0,
+                                    }}
+                                    dropDownStyle={{
+                                      backgroundColor: '#fafafa',
+                                      zIndex: 3,
+                                    }}
+                                    onChangeItem={data => {
+                                      this.setState({
+                                        [item.fieldName]: data.value,
+                                      });
+                                    }}
+                                  />
+                                </View>
+                              );
+                            } else if (item.dataType === 'checkbox') {
+                              return (
+                                <View
+                                  style={[
+                                    styles.detailItem,
+                                    {
+                                      flexDirection: 'row',
+                                      justifyContent: 'space-between',
+                                    },
+                                  ]}>
                                   <Text style={styles.desc}>
                                     {item.displayName}{' '}
                                     {item.mandatory ? (
                                       <Text style={{color: 'red'}}>*</Text>
                                     ) : null}
                                   </Text>
-                                  <TextInput
-                                    keyboardType={'numeric'}
-                                    placeholder={item.displayName}
-                                    style={{paddingVertical: 10}}
-                                    value={this.state.postalcode}
-                                    onChangeText={value => {
-                                      try {
-                                        const isValid = new RegExp(
-                                          /((\d{6}.*)*\s)?(\d{6})([^\d].*)?$/,
-                                        ).test(Number(value));
-                                        if (isValid) {
-                                          this.setState({
-                                            isPostalCodeValid: true,
-                                          });
-                                        } else {
-                                          this.setState({
-                                            isPostalCodeValid: false,
-                                          });
-                                        }
-                                      } catch (e) {}
-                                      this.setState({postalcode: value});
+                                  <CheckBox
+                                    value={this.state[item.fieldName]}
+                                    onValueChange={e => {
+                                      this.setState({[item.fieldName]: e});
                                     }}
                                   />
-                                  <View
-                                    style={{
-                                      borderWidth: 0.5,
-                                      borderColor: 'gray',
-                                    }}
-                                  />
-                                  {!isPostalCodeValid && (
-                                    <Text
-                                      style={{
-                                        fontSize: 10,
-                                        fontStyle: 'italic',
-                                        color: colorConfig.store.colorError,
-                                      }}>
-                                      Postal code is not valid
-                                    </Text>
-                                  )}
                                 </View>
                               );
-                          })}
-                    </View>
-                  </Form>
-                </View>
-                <TouchableOpacity
-                  disabled={!isPostalCodeValid}
-                  onPress={this.checkMandatory}>
-                  <View
-                    style={
-                      isPostalCodeValid
-                        ? styles.primaryButton
-                        : styles.disabledPrimaryButton
-                    }>
-                    <Text style={styles.buttonText}>
-                      {intlData.messages.save}
-                    </Text>
+                            } else {
+                              return (
+                                <GlobalInputText
+                                  placeholder={item.displayName}
+                                  value={this.state[item.fieldName]}
+                                  onChangeText={value =>
+                                    this.setState({[item.fieldName]: value})
+                                  }
+                                  label={item.displayName}
+                                  isMandatory={item.mandatory}
+                                  keyboardType={this.getKeyboardType(
+                                    item.dataType,
+                                  )}
+                                />
+                              );
+                            }
+                          }
+
+                          if (item.fieldName === 'postalcode')
+                            return (
+                              <View style={styles.detailItem}>
+                                <Text style={styles.desc}>
+                                  {item.displayName}{' '}
+                                  {item.mandatory ? (
+                                    <Text style={{color: 'red'}}>*</Text>
+                                  ) : null}
+                                </Text>
+                                <TextInput
+                                  keyboardType={'numeric'}
+                                  placeholder={item.displayName}
+                                  style={{paddingVertical: 10}}
+                                  value={this.state.postalcode}
+                                  onChangeText={value => {
+                                    try {
+                                      const isValid = new RegExp(
+                                        /((\d{6}.*)*\s)?(\d{6})([^\d].*)?$/,
+                                      ).test(Number(value));
+                                      if (isValid) {
+                                        this.setState({
+                                          isPostalCodeValid: true,
+                                        });
+                                      } else {
+                                        this.setState({
+                                          isPostalCodeValid: false,
+                                        });
+                                      }
+                                    } catch (e) {}
+                                    this.setState({postalcode: value});
+                                  }}
+                                />
+                                <View
+                                  style={{
+                                    borderWidth: 0.5,
+                                    borderColor: 'gray',
+                                  }}
+                                />
+                                {!isPostalCodeValid && (
+                                  <Text
+                                    style={{
+                                      fontSize: 10,
+                                      fontStyle: 'italic',
+                                      color: colorConfig.store.colorError,
+                                    }}>
+                                    Postal code is not valid
+                                  </Text>
+                                )}
+                              </View>
+                            );
+                        })}
                   </View>
-                </TouchableOpacity>
+                </Form>
               </View>
-            </KeyboardAwareScrollView>
-          </Body>
-        </View>
+              <TouchableOpacity
+                disabled={!isPostalCodeValid || !this.canSaveProfile()}
+                onPress={this.checkMandatory}>
+                <View
+                  style={
+                    isPostalCodeValid && this.canSaveProfile()
+                      ? styles.primaryButton
+                      : styles.disabledPrimaryButton
+                  }>
+                  <Text style={styles.buttonText}>
+                    {intlData.messages.save}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+          </KeyboardAwareScrollView>
+        </Body>
         {/*{Platform.OS != 'ios' ? (*/}
         {/*  <>*/}
         {/*    <TouchableWithoutFeedback onPress={this.submitEdit}>*/}
@@ -1231,7 +1223,7 @@ class AccountEditProfil extends Component {
   }
 }
 
-mapStateToProps = state => ({
+const mapStateToProps = state => ({
   userDetail: state.userReducer.getUser.userDetails,
   updateUser: state.userReducer.updateUser,
   disableChangeEmail: state.orderReducer.orderingSetting.disableChangeEmail,
@@ -1244,16 +1236,18 @@ mapStateToProps = state => ({
   intlData: state.intlData,
 });
 
-mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = dispatch => ({
   dispatch,
 });
 
-export default compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
-)(AccountEditProfil);
+export default withHooksComponent(
+  compose(
+    connect(
+      mapStateToProps,
+      mapDispatchToProps,
+    ),
+  )(AccountEditProfil),
+);
 
 const styles = StyleSheet.create({
   container: {
@@ -1267,6 +1261,7 @@ const styles = StyleSheet.create({
   header: {
     // height: 65,
     paddingVertical: 6,
+    marginBottom: 16,
     justifyContent: 'center',
     // backgroundColor: colorConfig.store.defaultColor,
     shadowColor: '#00000021',
@@ -1295,11 +1290,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 25,
-    borderRadius: 40,
-    padding: 12,
+    borderRadius: 8,
+    padding: 8,
     alignSelf: 'stretch',
-    marginLeft: 30,
-    marginRight: 30,
+    marginLeft: 16,
+    marginRight: 16,
     shadowColor: '#00000021',
     shadowOffset: {
       width: 0,
@@ -1318,11 +1313,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 25,
-    borderRadius: 40,
-    padding: 12,
+    borderRadius: 8,
+    padding: 8,
     alignSelf: 'stretch',
-    marginLeft: 30,
-    marginRight: 30,
+    marginLeft: 16,
+    marginRight: 16,
     shadowColor: '#00000021',
     shadowOffset: {
       width: 0,
@@ -1335,7 +1330,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: '#FFFFFF',
-    fontSize: 20,
+    fontSize: 14,
   },
   line: {
     borderBottomColor: colorConfig.store.defaultColor,
@@ -1362,20 +1357,18 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   detail: {
-    marginLeft: 30,
-    marginRight: 30,
+    paddingHorizontal: 16,
   },
   detailItem: {
-    padding: 10,
     justifyContent: 'space-between',
     // borderBottomColor: colorConfig.pageIndex.inactiveTintColor,
     // borderBottomWidth: 1,
     paddingBottom: 5,
     marginBottom: 3,
+    marginTop: 16,
   },
   desc: {
-    color: colorConfig.pageIndex.grayColor,
-    fontSize: 18,
+    fontSize: 14,
   },
   textChange: {
     color: colorConfig.store.defaultColor,
@@ -1392,5 +1385,18 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     maxWidth: Dimensions.get('window').width / 2 + 20,
     textAlign: 'right',
+  },
+  mandatoryStyle: {
+    color: '#CE1111',
+  },
+  dropdownContainerStyle: {
+    backgroundColor: 'white',
+    marginTop: 4,
+    borderRadius: 0,
+    paddingVertical: 5,
+    borderTopLeftRadius: 8,
+    borderTopRightRadius: 8,
+    borderBottomLeftRadius: 8,
+    borderBottomRightRadius: 8,
   },
 });

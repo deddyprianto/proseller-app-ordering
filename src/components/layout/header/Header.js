@@ -9,6 +9,10 @@ import Theme from '../../../theme';
 import FieldSearch from '../../fieldSearch';
 
 import Scanner from '../../scanner';
+import {
+  normalizeLayoutSizeHeight,
+  normalizeLayoutSizeWidth,
+} from '../../../helper/Layout';
 
 const useStyles = () => {
   const theme = Theme();
@@ -16,6 +20,7 @@ const useStyles = () => {
     root: {
       overflow: 'hidden',
       paddingBottom: 2,
+      zIndex: 1000,
     },
     container: {
       shadowOffset: {
@@ -66,10 +71,11 @@ const useStyles = () => {
       fontSize: theme.fontSize[14],
       fontFamily: theme.fontFamily.poppinsMedium,
     },
-    logo: {
-      width: '70%',
-      height: '100%',
-    },
+    logo: appName => ({
+      height:
+        appName === 'fareastflora' ? normalizeLayoutSizeHeight(28) : '100%',
+      width: appName === 'fareastflora' ? normalizeLayoutSizeWidth(112) : '70%',
+    }),
     icon: {
       width: 24,
       height: 24,
@@ -110,12 +116,10 @@ const Header = ({
   searchPlaceholder,
 }) => {
   const styles = useStyles();
-
   const [isOpenScanner, setIsOpenScanner] = useState(false);
   const [isSearch, setIsSearch] = useState(false);
-
+  const {appName} = appConfig;
   const [searchTextInput, setSearchTextInput] = useState('');
-
   useEffect(() => {
     if (handleSearchInput) {
       handleSearchInput(searchTextInput);
@@ -140,7 +144,7 @@ const Header = ({
       <Image
         source={appConfig.logoMerchant}
         resizeMode="contain"
-        style={styles.logo}
+        style={styles.logo(appName)}
       />
     );
   };

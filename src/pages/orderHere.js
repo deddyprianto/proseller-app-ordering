@@ -225,6 +225,7 @@ const OrderHere = () => {
   const renderHeaderTitle = () => {
     return (
       <TouchableOpacity
+        disabled
         onPress={() => {
           Actions.store();
         }}>
@@ -268,7 +269,10 @@ const OrderHere = () => {
     return (
       <OrderingTypeSelectorModal
         value={basket?.orderingMode || orderingMode}
-        open={!basket?.orderingMode && !orderingMode}
+        open={!orderingMode}
+        handleClose={() => {
+          Actions.pop();
+        }}
       />
     );
   };
