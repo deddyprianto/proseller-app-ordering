@@ -18,7 +18,7 @@ const useStyles = () => {
       flex: 1,
       alignItems: 'center',
     },
-    textInputOtp: {
+    textInputOtp: isWrongOtp => ({
       width: normalizeLayoutSizeWidth(54),
       height: normalizeLayoutSizeHeight(72),
       borderRadius: 12,
@@ -29,7 +29,8 @@ const useStyles = () => {
       backgroundColor: colors.greyScale4,
       fontSize: 24,
       fontFamily: fontFamily.poppinsMedium,
-    },
+      color: isWrongOtp ? '#EB4B41' : 'black',
+    }),
     textInputContainer: {
       flexDirection: 'row',
       justifyContent: 'space-between',
@@ -90,7 +91,7 @@ const FieldOTP = ({onComplete, isWrongOtp}) => {
         value={otp[index]}
         autoFocus={index === 0}
         keyboardType="numeric"
-        style={styles.textInputOtp}
+        style={styles.textInputOtp(isWrongOtp)}
         maxLength={1}
         onChangeText={value => {
           handleInputOtp(value.replace(/[^0-9]/g, ''), index);
