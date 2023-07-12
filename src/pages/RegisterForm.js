@@ -105,6 +105,17 @@ const useStyles = () => {
     containerStyle: {
       paddingBottom: 30,
     },
+    divider: {
+      height: 1,
+      backgroundColor: '#D6D6D6',
+      marginVertical: 16,
+    },
+    messageStyleBtm: {
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    primaryText: {
+      color: theme.colors.primary,
+    },
   });
   return styles;
 };
@@ -225,7 +236,7 @@ const RegisterForm = ({registerMethod, inputValue}) => {
 
   const renderTextHeader = () => {
     const title =
-      registerMethod === 'email' ? 'Personal Details' : 'Mobile Register';
+      registerMethod === 'email' ? 'Personal Details' : 'Personal Details';
 
     return (
       <>
@@ -419,6 +430,17 @@ const RegisterForm = ({registerMethod, inputValue}) => {
     [isDatePickerVisible],
   );
 
+  const renderMessage = () => (
+    <View>
+      <GlobalText style={styles.messageStyleBtm}>
+        You will receive 4-digit verification code via {registerMethod} at{' '}
+        <GlobalText style={[styles.messageStyleBtm, styles.primaryText]}>
+          {email}{' '}
+        </GlobalText>
+      </GlobalText>
+    </View>
+  );
+
   return (
     <SafeAreaView style={styles.root}>
       <LoadingScreen loading={isLoading || isInitField} />
@@ -434,6 +456,8 @@ const RegisterForm = ({registerMethod, inputValue}) => {
               {renderNameInput()}
               {renderEmailOrPhoneInput()}
               {renderCustomField()}
+              <View style={styles.divider} />
+              {renderMessage()}
               {renderButtonNext()}
             </ScrollView>
             {memoDatePicker}

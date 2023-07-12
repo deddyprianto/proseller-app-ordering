@@ -7,27 +7,41 @@ import {
   normalizeLayoutSizeWidth,
 } from '../../../helper/Layout';
 import {Actions} from 'react-native-router-flux';
+import Theme from '../../../theme/Theme';
 
-const styles = StyleSheet.create({
-  haderContainer: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    justifyContent: 'center',
-    flexDirection: 'row',
-  },
-  backButtonContainer: {
-    marginRight: 'auto',
-  },
-  lofoContainer: {
-    marginLeft: 'auto',
-  },
-  logoStyle: {
-    height: normalizeLayoutSizeHeight(28),
-    width: normalizeLayoutSizeWidth(105),
-  },
-});
+const useStyles = () => {
+  const theme = Theme();
+  const styles = StyleSheet.create({
+    haderContainer: {
+      paddingVertical: 8,
+      paddingHorizontal: 16,
+      justifyContent: 'center',
+      flexDirection: 'row',
+      shadowOffset: {
+        width: 0.2,
+        height: 0.2,
+      },
+      shadowOpacity: 0.2,
+      shadowColor: theme.colors.greyScale2,
+      elevation: 3,
+      backgroundColor: 'white',
+    },
+    backButtonContainer: {
+      marginRight: 'auto',
+    },
+    lofoContainer: {
+      marginLeft: 'auto',
+    },
+    logoStyle: {
+      height: normalizeLayoutSizeHeight(28),
+      width: normalizeLayoutSizeWidth(105),
+    },
+  });
+  return {styles};
+};
 
 const HeaderV2 = () => {
+  const {styles} = useStyles();
   const onBack = () => {
     Actions.pop();
   };
