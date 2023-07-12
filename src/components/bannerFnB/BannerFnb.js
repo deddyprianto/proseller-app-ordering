@@ -30,10 +30,11 @@ const useStyles = () => {
       width: WIDTH - 32,
     },
     image: {
-      height: (WIDTH - 32) / 2,
-      width: WIDTH - 32,
-      maxWidth: WIDTH - 32,
-      borderRadius: 8,
+      // height: (WIDTH - 32) / 2,
+      // width: WIDTH - 32,
+      // maxWidth: WIDTH - 32,
+      // borderRadius: 8,
+      aspectRatio: 3 / 4,
     },
     activeDot: {
       opacity: 1,
@@ -66,6 +67,11 @@ const BannerFnB = ({bottom = 0}) => {
   const banners = useSelector(
     state => state.promotionReducer.dataPromotion.promotion,
   );
+  const bannerSize = useSelector(
+    state => state.settingReducer.bannerSizeSettings.bannerSize,
+  );
+
+  console.log('MARTIN', bannerSize);
 
   const findBanner = (banner = []) => {
     const findSelectedOutlet = banner?.selectedOutlets.find(
@@ -90,24 +96,25 @@ const BannerFnB = ({bottom = 0}) => {
 
   const renderImages = () => {
     const result = banners?.map((banner, index) => {
-      const showBanner = findBanner(banner);
-      if (showBanner) {
-        return (
-          <TouchableOpacity
-            style={styles.wrapImage}
-            onPress={() => {
-              handleBannerClick(banner);
-            }}>
-            <Image
-              key={index}
-              style={styles.image}
-              resizeMode="cover"
-              source={{uri: banner?.defaultImageURL}}
-            />
-          </TouchableOpacity>
-        );
-      }
-      return null;
+      // const showBanner = findBanner(banner);
+      // if (showBanner) {
+      console.log('TEST', banner);
+      return (
+        <TouchableOpacity
+          style={styles.wrapImage}
+          onPress={() => {
+            handleBannerClick(banner);
+          }}>
+          <Image
+            key={index}
+            style={styles.image}
+            resizeMode="stretch"
+            source={{uri: banner?.defaultImageURL}}
+          />
+        </TouchableOpacity>
+      );
+      // }
+      // return null;
     });
     return result;
   };

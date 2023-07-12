@@ -104,6 +104,18 @@ const hideReferralSettings = (state = {}, action) => {
   }
 };
 
+const bannerSizeSettings = (state = {}, action) => {
+  switch (action.type) {
+    case 'SET_BANNER_SIZE':
+      return {
+        ...action.data,
+      };
+
+    default:
+      return state;
+  }
+};
+
 export default combineReducers({
   snackbar,
   imageSettings,
@@ -112,5 +124,6 @@ export default combineReducers({
   faqsSettings,
   enableOrderingSettings,
   hideReferralSettings,
+  bannerSizeSettings,
   allowedOrder,
 });

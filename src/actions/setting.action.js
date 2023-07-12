@@ -140,6 +140,22 @@ const setHideReferralSettings = async ({dispatch, response}) => {
   );
 };
 
+const setBannerSizeSettings = async ({dispatch, response}) => {
+  const bannerSize = handleSettingValue({
+    values: response,
+    key: 'BannerSize',
+  });
+
+  await dispatch(
+    setData({
+      type: 'SET_BANNER_SIZE',
+      data: {
+        bannerSize,
+      },
+    }),
+  );
+};
+
 export const getColorSettings = () => {
   return async (dispatch, getState) => {
     const state = getState();
@@ -194,12 +210,13 @@ export const getLoginSettings = () => {
 
       const settings = response?.response?.data?.settings;
       const typeCheckbox = handleDataType({settings, key: 'checkbox'});
-
+      const typeDropdown = handleDataType({settings, key: 'dropdown'});
 
       if (settings) {
         setLoginSettings({dispatch, response: typeCheckbox});
         setEnableOrderingSettings({dispatch, response: typeCheckbox});
         setHideReferralSettings({dispatch, response: typeCheckbox});
+        setBannerSizeSettings({dispatch, response: typeDropdown});
       }
 
       return response.response.data;
