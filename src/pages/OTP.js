@@ -23,6 +23,9 @@ import LoadingScreen from '../components/loadingScreen';
 import OneSignal from 'react-native-onesignal';
 import moment from 'moment';
 import Theme from '../theme';
+import GlobalText from '../components/globalText';
+import appConfig from '../config/appConfig';
+import HeaderV2 from '../components/layout/header/HeaderV2';
 
 const HEIGHT = Dimensions.get('window').height;
 
@@ -33,11 +36,7 @@ const useStyles = () => {
       flex: 1,
     },
     container: {
-      height: HEIGHT - 54,
       display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'center',
-      alignItems: 'center',
       paddingHorizontal: 16,
       backgroundColor: theme.colors.background,
     },
@@ -45,7 +44,7 @@ const useStyles = () => {
       marginTop: 32,
       height: 40,
       width: '100%',
-      borderRadius: 5,
+      borderRadius: 8,
       justifyContent: 'center',
       alignItems: 'center',
       backgroundColor: theme.colors.buttonActive,
@@ -54,13 +53,13 @@ const useStyles = () => {
       color: theme.colors.primary,
       fontSize: theme.fontSize[24],
       fontFamily: theme.fontFamily.poppinsMedium,
+      marginTop: 32,
     },
     textNext: {
       color: 'white',
     },
     textVerify: {
-      marginTop: 32,
-      textAlign: 'center',
+      marginTop: 8,
       color: theme.colors.textPrimary,
       fontSize: theme.fontSize[16],
       fontFamily: theme.fontFamily.poppinsMedium,
@@ -92,12 +91,17 @@ const useStyles = () => {
       width: '100%',
       textAlign: 'center',
       textDecorationLine: 'underline',
-      color: theme.colors.textTertiary,
+      color: theme.colors.greyScale5,
+      fontFamily: theme.fontFamily.poppinsMedium,
     },
     textBold: {
       color: theme.colors.textPrimary,
       fontSize: theme.fontSize[16],
       fontFamily: theme.fontFamily.poppinsBold,
+    },
+    resendText: {
+      textAlign: 'center',
+      fontFamily: theme.fontFamily.poppinsMedium,
     },
   });
   return styles;
@@ -110,7 +114,7 @@ const OTP = ({isLogin, method, methodValue}) => {
   const [sendCounter, setSendCounter] = useState(0);
   const [minutes, setMinutes] = useState(0);
   const [seconds, setSeconds] = useState(0);
-
+  const [isWrongOtp, setIsWrongOtp] = React.useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const countdown = () => {
@@ -155,6 +159,7 @@ const OTP = ({isLogin, method, methodValue}) => {
   }, []);
 
   const handleLogin = async otp => {
+    setIsWrongOtp(false);
     let value = {};
     if (method === 'email') {
       value.email = methodValue;
@@ -181,18 +186,18 @@ const OTP = ({isLogin, method, methodValue}) => {
     if (response?.statusCustomer) {
       Actions.pageIndex();
     } else {
-      const message = response?.message || 'Failed';
-
-      await dispatch(showSnackbar({message}));
+      // const message = response?.message || 'Failed';
+      setIsWrongOtp(true);
+      // await dispatch(showSnackbar({message}));
     }
   };
 
   const renderTextHeader = () => {
     let text = '';
     if (isLogin) {
-      text = method === 'email' ? 'Email Login' : 'Mobile Login';
+      text = method === 'email' ? 'Verify Your Email' : 'Verify Your Mobile No';
     } else {
-      text = method === 'email' ? 'Email Register' : 'Mobile Register';
+      text = method === 'email' ? 'Verify Your Email' : 'Verify Your Mobile No';
     }
 
     return <Text style={styles.textHeader}>{text}</Text>;
@@ -203,7 +208,7 @@ const OTP = ({isLogin, method, methodValue}) => {
 
     return (
       <Text style={styles.textVerify}>
-        We sent an OTP code to verify your {text} at
+        We have sent an OTP code to verify your {text} at
         <Text style={styles.textBold}> {methodValue}</Text>
       </Text>
     );
@@ -227,7 +232,7 @@ const OTP = ({isLogin, method, methodValue}) => {
   const renderResendOTP = () => {
     const disabled = minutes || seconds;
     const time = moment(`${minutes}:${seconds}`, 'mm:ss').format('mm:ss');
-    const text = disabled ? `Resend OTP after ${time}` : 'Resend OTP';
+    const text = disabled ? `Resend OTP in ${time}` : 'Resend OTP';
 
     const styleText = disabled
       ? styles.textSendOtpDisabled
@@ -239,7 +244,9 @@ const OTP = ({isLogin, method, methodValue}) => {
         onPress={() => {
           handleResendOtp();
         }}>
-        <Text style={styleText}>{text}</Text>
+        <GlobalText style={styles.resendText}>
+          Didn’t receive code? <GlobalText style={styleText}>{text}</GlobalText>
+        </GlobalText>
       </TouchableOpacity>
     );
   };
@@ -252,7 +259,7 @@ const OTP = ({isLogin, method, methodValue}) => {
         onPress={() => {
           handleLogin();
         }}>
-        <Text style={styles.textNext}>Next</Text>
+        <Text style={styles.textNext}>Verify and Create Account</Text>
       </TouchableOpacity>
     );
   };
@@ -260,6 +267,7 @@ const OTP = ({isLogin, method, methodValue}) => {
   const renderOtpField = () => {
     return (
       <OTPField
+        isWrongOtp={isWrongOtp}
         onComplete={value => {
           handleLogin(value);
         }}
@@ -270,7 +278,11 @@ const OTP = ({isLogin, method, methodValue}) => {
   return (
     <SafeAreaView style={styles.root}>
       <LoadingScreen loading={isLoading} />
-      <Header isMiddleLogo />
+      {appConfig.appName === 'fareastflora' ? (
+        <HeaderV2 />
+      ) : (
+        <Header isMiddleLogo />
+      )}
       <KeyboardAwareScrollView>
         <View style={styles.container}>
           {renderTextHeader()}
