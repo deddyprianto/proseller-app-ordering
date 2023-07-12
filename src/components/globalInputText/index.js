@@ -98,7 +98,7 @@ const useStyles = () => {
  * @param {InputTextProps & ParamProps} props
  */
 
-const GlobalInputText = props => {
+const GlobalInputText = React.forwardRef((props, ref) => {
   const styles = useStyles();
   if (props.type === 'button') {
     return (
@@ -163,7 +163,11 @@ const GlobalInputText = props => {
         </GlobalText>
       </View>
       <View style={styles.inpurContainer(props.editable, props.isError)}>
-        <TextInput style={styles.inputStyle(props.editable)} {...props} />
+        <TextInput
+          ref={ref}
+          style={styles.inputStyle(props.editable)}
+          {...props}
+        />
       </View>
       {props.isError ? (
         <View style={styles.errorContainer}>
@@ -174,6 +178,6 @@ const GlobalInputText = props => {
       ) : null}
     </View>
   );
-};
+});
 
 export default GlobalInputText;

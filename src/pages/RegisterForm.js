@@ -29,6 +29,7 @@ import GlobalInputText from '../components/globalInputText';
 import CalendarSvg from '../assets/svg/CalendareSvg';
 import DatePicker from 'react-native-date-picker';
 import moment from 'moment';
+import {fieldValidation} from '../helper/Validation';
 
 const useStyles = () => {
   const theme = Theme();
@@ -89,7 +90,7 @@ const useStyles = () => {
       color: theme.colors.textQuaternary,
     },
     viewMethodInput: {
-      marginTop: 32,
+      marginTop: 16,
       width: '100%',
     },
     completeTextStyle: {
@@ -113,7 +114,7 @@ const RegisterForm = ({registerMethod, inputValue}) => {
   const dispatch = useDispatch();
   const [countryCode, setCountryCode] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [birthdate, setBirthdate] = React.useState(
+  const [birthDate, setBirthdate] = React.useState(
     moment().format('DD/MM/YYYY'),
   );
   const [isDatePickerVisible, setIsDatePickerVisible] = React.useState(false);
@@ -122,10 +123,8 @@ const RegisterForm = ({registerMethod, inputValue}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [activeField, setActiveField] = React.useState([]);
   const [gender, setGender] = React.useState(null);
-  const [openGender, setOpenGender] = React.useState(false);
   const [isInitField, setIsInitField] = React.useState(false);
   const [address, setAddress] = React.useState('');
-  const [birthdateMonth, setBirthdateMonth] = React.useState(null);
 
   const genderItems = [
     {
@@ -167,7 +166,19 @@ const RegisterForm = ({registerMethod, inputValue}) => {
     const phone =
       registerMethod === 'email' ? countryCode + phoneNumber : inputValue;
     const methodValue = registerMethod === 'email' ? email : phone;
-    const payload = {
+    let customField = {
+      birthDate,
+      gender,
+      address,
+    };
+    let newCustomKey = {};
+    Object.keys(customField).forEach(key => {
+      if (!customField[key] || customField[key] === '') {
+        return;
+      }
+      newCustomKey = {...newCustomKey, [key]: customField[key]};
+    });
+    let payload = {
       name: name,
       password: 'P@ssw0rd123',
       username: phone,
@@ -175,6 +186,7 @@ const RegisterForm = ({registerMethod, inputValue}) => {
       phoneNumber: phone,
       registerMethod,
     };
+    payload = {...payload, ...newCustomKey};
     setIsLoading(true);
     const response = await dispatch(createNewUser(payload));
 
@@ -252,6 +264,9 @@ const RegisterForm = ({registerMethod, inputValue}) => {
         onChange={value => {
           setPhoneNumber(value);
         }}
+        inputLabel={'Mobile Phone'}
+        isMandatory
+        withoutFlag={true}
       />
     );
   };
@@ -287,7 +302,7 @@ const RegisterForm = ({registerMethod, inputValue}) => {
               type="button"
               onPressBtn={toggleDatePicker}
               rightIcon={<CalendarSvg />}
-              value={birthdate}
+              value={birthDate}
             />
           );
         }
@@ -297,7 +312,7 @@ const RegisterForm = ({registerMethod, inputValue}) => {
             label="Birthdate"
             type="dropdown"
             items={monthItems}
-            defaultValue={birthdateMonth}
+            defaultValue={null}
             onChangeItem={date => handleConfirm(date.value, true)}
             placeholder="Birthmonth"
           />
@@ -341,9 +356,18 @@ const RegisterForm = ({registerMethod, inputValue}) => {
 
   const renderButtonNext = () => {
     let active = false;
-
+    const requiredField = activeField
+      .filter(field => field.mandatory)
+      .map(data => data.fieldName);
+    const customField = {
+      gender,
+      address,
+      birthDate: birthDate,
+    };
+    const isHaveEmptyField =
+      fieldValidation(requiredField, customField).length > 0;
     if (registerMethod === 'email') {
-      active = name && phoneNumber.length >= 6;
+      active = name && phoneNumber.length >= 6 && !isHaveEmptyField;
     } else {
       active = name && email;
     }
@@ -377,6 +401,24 @@ const RegisterForm = ({registerMethod, inputValue}) => {
     setBirthdate(newDate);
   };
 
+  const memoDatePicker = React.useMemo(
+    () => (
+      <DatePicker
+        modal
+        mode={'date'}
+        androidVariant={'iosClone'}
+        maximumDate={getMaxDate()}
+        open={isDatePickerVisible}
+        date={
+          birthDate && birthDate !== '' ? new Date(birthDate) : getMaxDate()
+        }
+        onConfirm={handleConfirm}
+        onCancel={toggleDatePicker}
+      />
+    ),
+    [isDatePickerVisible],
+  );
+
   return (
     <SafeAreaView style={styles.root}>
       <LoadingScreen loading={isLoading || isInitField} />
@@ -394,20 +436,7 @@ const RegisterForm = ({registerMethod, inputValue}) => {
               {renderCustomField()}
               {renderButtonNext()}
             </ScrollView>
-            <DatePicker
-              modal
-              mode={'date'}
-              androidVariant={'iosClone'}
-              maximumDate={getMaxDate()}
-              open={isDatePickerVisible}
-              date={
-                birthdate && birthdate !== ''
-                  ? new Date(birthdate)
-                  : getMaxDate()
-              }
-              onConfirm={handleConfirm}
-              onCancel={toggleDatePicker}
-            />
+            {memoDatePicker}
           </KeyboardAwareScrollView>
         </>
       )}

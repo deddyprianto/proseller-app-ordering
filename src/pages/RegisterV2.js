@@ -76,6 +76,7 @@ const RegisterV2 = props => {
   const {styles, colors} = useStyles();
   const [openType, setOpenType] = React.useState(null);
   const [buttonActive, setButtonActive] = React.useState(false);
+  const inputRef = React.useRef();
   const orderSetting = useSelector(
     state => state.orderReducer?.orderingSetting?.orderingSetting?.settings,
   );
@@ -89,6 +90,12 @@ const RegisterV2 = props => {
     setButtonActive(false);
     setOpenType(null);
   };
+
+  React.useEffect(() => {
+    if (inputRef && inputRef.current) {
+      inputRef.current?.focus();
+    }
+  }, []);
 
   React.useEffect(() => {
     if (props.emailValue && typeof props.emailValue === 'string') {
@@ -135,6 +142,7 @@ const RegisterV2 = props => {
           onChangeText={props.onChangeEmail}
           isError={emailNotValid && props.emailValue.length > 0}
           errorMessage="Please enter a valid email address."
+          ref={inputRef}
         />
       </View>
       <View style={styles.checkBoxParent}>
