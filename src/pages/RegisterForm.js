@@ -30,6 +30,7 @@ import CalendarSvg from '../assets/svg/CalendareSvg';
 import DatePicker from 'react-native-date-picker';
 import moment from 'moment';
 import {fieldValidation} from '../helper/Validation';
+import {Header} from '../components/layout';
 
 const useStyles = () => {
   const theme = Theme();
@@ -90,8 +91,8 @@ const useStyles = () => {
       color: theme.colors.textQuaternary,
     },
     viewMethodInput: {
-      marginTop: 16,
       width: '100%',
+      marginTop: 0,
     },
     completeTextStyle: {
       marginBottom: 48,
@@ -115,6 +116,12 @@ const useStyles = () => {
     },
     primaryText: {
       color: theme.colors.primary,
+    },
+    emailContainer: {
+      marginTop: 0,
+    },
+    phoneContainer: {
+      marginTop: 16,
     },
   });
   return styles;
@@ -264,31 +271,35 @@ const RegisterForm = ({registerMethod, inputValue}) => {
 
   const renderPhoneNumberRegisterInput = () => {
     return (
-      <FieldPhoneNumberInput
-        type="phone"
-        label="Phone Number"
-        value={phoneNumber}
-        placeholder="Phone Number"
-        onChangeCountryCode={value => {
-          setCountryCode(value);
-        }}
-        onChange={value => {
-          setPhoneNumber(value);
-        }}
-        inputLabel={'Mobile Phone'}
-        isMandatory
-        withoutFlag={true}
-      />
+      <View style={styles.phoneContainer}>
+        <FieldPhoneNumberInput
+          type="phone"
+          label="Phone Number"
+          value={phoneNumber}
+          placeholder="Phone Number"
+          onChangeCountryCode={value => {
+            setCountryCode(value);
+          }}
+          onChange={value => {
+            setPhoneNumber(value);
+          }}
+          inputLabel={'Mobile Phone'}
+          isMandatory
+          withoutFlag={true}
+        />
+      </View>
     );
   };
 
   const renderEmailRegisterInput = () => {
     return (
-      <FieldTextInput
+      <GlobalInputText
         label="Email"
-        value={email}
         placeholder="Email"
-        onChange={value => {
+        value={email}
+        isMandatory
+        // containerInputStyle={styles.emailContainer}
+        onChangeText={value => {
           setEmail(value);
         }}
       />
@@ -430,23 +441,31 @@ const RegisterForm = ({registerMethod, inputValue}) => {
     [isDatePickerVisible],
   );
 
-  const renderMessage = () => (
-    <View>
-      <GlobalText style={styles.messageStyleBtm}>
-        You will receive 4-digit verification code via {registerMethod} at{' '}
-        <GlobalText style={[styles.messageStyleBtm, styles.primaryText]}>
-          {email}{' '}
+  const renderMessage = () => {
+    let method = registerMethod === 'email' ? 'email' : 'Mobile No';
+    let value = registerMethod === 'email' ? email : phoneNumber;
+    return (
+      <View>
+        <GlobalText style={styles.messageStyleBtm}>
+          You will receive 4-digit verification code via {method} at{' '}
+          <GlobalText style={[styles.messageStyleBtm, styles.primaryText]}>
+            {value}{' '}
+          </GlobalText>
         </GlobalText>
-      </GlobalText>
-    </View>
-  );
+      </View>
+    );
+  };
 
   return (
     <SafeAreaView style={styles.root}>
       <LoadingScreen loading={isLoading || isInitField} />
       {isInitField ? null : (
         <>
-          {appConfig.appName === 'fareastflora' ? <HeaderV2 /> : null}
+          {appConfig.appName === 'fareastflora' ? (
+            <HeaderV2 />
+          ) : (
+            <Header isMiddleLogo />
+          )}
           <KeyboardAwareScrollView>
             <ScrollView
               nestedScrollEnabled={true}
