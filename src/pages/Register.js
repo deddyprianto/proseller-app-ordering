@@ -114,7 +114,6 @@ const Register = () => {
   );
 
   const onTickCheckbox = (key, value) => {
-    console.log(key, value, 'lupis');
     setApprovedData({...approvedData, [key]: value});
   };
 
@@ -157,7 +156,7 @@ const Register = () => {
         }),
       );
     } else {
-      Actions.registerForm({registerMethod, inputValue: value});
+      Actions.registerForm({registerMethod, inputValue: value, approvedData});
     }
 
     setIsLoading(false);
