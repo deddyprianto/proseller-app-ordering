@@ -773,6 +773,7 @@ const Profile = props => {
       {renderDeliveryPolicy()}
       {renderListMenu('Exchange and Refund Policy', <RefundSvg />)}
       {renderTermsAndConditions()}
+      {renderPolicy()}
       {renderFAQ()}
       {renderListMenu('Contact Us', <ContactSvg />)}
       {renderDivider()}

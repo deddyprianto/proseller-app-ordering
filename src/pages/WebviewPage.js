@@ -1,9 +1,18 @@
 import React from 'react';
-import {Dimensions, SafeAreaView, View} from 'react-native';
+import {SafeAreaView, View, StyleSheet} from 'react-native';
 import {WebView} from 'react-native-webview';
 import Header from '../components/layout/header/Header';
-const Policy = props => {
-  console.log(props, 'lusia');
+
+const styles = StyleSheet.create({
+  webContainer: {
+    paddingBottom: 100,
+  },
+  webStyle: {
+    flex: 1,
+  },
+});
+
+const WebviewPage = props => {
   const {params} = props.navigation.state;
   return (
     <SafeAreaView>
@@ -13,12 +22,12 @@ const Policy = props => {
           source={{
             uri: params.url,
           }}
-          style={{flex: 1}}
-          containerStyle={{paddingBottom: 50}}
+          style={styles.webStyle}
+          containerStyle={styles.webContainer}
         />
       </View>
     </SafeAreaView>
   );
 };
 
-export default Policy;
+export default WebviewPage;
