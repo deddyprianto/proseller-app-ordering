@@ -158,16 +158,20 @@ const FavoriteOutletListItem = ({item, disabled}) => {
 
   useEffect(() => {
     const userCoordinate = userPosition?.coords;
-    const userPositionLat = userCoordinate?.latitude || 0;
-    const userPositionLngt = userCoordinate?.longitude || 0;
-    const result = getDistance(
-      {latitude: userPositionLat, longitude: userPositionLngt},
-      {latitude: item.latitude, longitude: item.longitude},
-    );
+    if (userCoordinate) {
+      const userPositionLat = userCoordinate?.latitude;
+      const userPositionLngt = userCoordinate?.longitude;
+      const result = getDistance(
+        {latitude: userPositionLat, longitude: userPositionLngt},
+        {latitude: item.latitude, longitude: item.longitude},
+      );
 
-    const distanceString =
-      result < 1 ? result * 1000 + ' m' : Math.round(result * 10) / 10 + ' km';
-    setDistance(distanceString);
+      const distanceString =
+        result < 1
+          ? result * 1000 + ' m'
+          : Math.round(result * 10) / 10 + ' km';
+      setDistance(distanceString);
+    }
   }, [userPosition, item]);
 
   useEffect(() => {

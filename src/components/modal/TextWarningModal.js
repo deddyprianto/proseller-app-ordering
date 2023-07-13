@@ -51,8 +51,8 @@ const useStyles = () => {
     },
     text2: {
       lineHeight: 21,
-      textAlign: 'justify',
-      color: theme.colors.textPrimary,
+      textAlign: 'center',
+      color: theme.colors.textTertiary,
       fontSize: theme.fontSize[14],
       fontFamily: theme.fontFamily.poppinsMedium,
     },
@@ -115,7 +115,7 @@ const TextWarningModal = ({
         style={styleView}
         onPress={handleClose}
         disabled={disabled}>
-        <Text style={styles.text3}>ok</Text>
+        <Text style={styles.text3}>OK</Text>
       </TouchableOpacity>
     );
   };

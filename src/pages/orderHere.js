@@ -22,7 +22,6 @@ import Header from '../components/layout/header';
 import FieldSearch from '../components/fieldSearch';
 import LoadingScreen from '../components/loadingScreen';
 import ProductSearchList from '../components/productSearchList';
-import OrderingTypeSelectorModal from '../components/modal/OrderingTypeSelectorModal';
 
 import {
   getProductByOutlet,
@@ -117,9 +116,6 @@ const OrderHere = () => {
     state => state.storesReducer.defaultOutlet.defaultOutlet,
   );
   const basket = useSelector(state => state.orderReducer?.dataBasket?.product);
-  const orderingMode = useSelector(
-    state => state.orderReducer?.dataOrderingMode?.orderingMode,
-  );
   const products = useSelector(
     state => state.productReducer.productsOutlet.data,
   );
@@ -265,27 +261,12 @@ const OrderHere = () => {
     return <View style={styles.footer}>{renderButtonCart()}</View>;
   };
 
-  const renderModal = () => {
-    return (
-      <OrderingTypeSelectorModal
-        value={basket?.orderingMode || orderingMode}
-        open={!orderingMode}
-        handleClose={() => {
-          Actions.pop();
-        }}
-      />
-    );
-  };
-
   return (
     <SafeAreaView style={styles.root}>
       <LoadingScreen loading={handleLoading()} />
-      <Body>
-        {renderHeader()}
-        {renderBody()}
-        {renderFooter()}
-        {renderModal()}
-      </Body>
+      {renderHeader()}
+      {renderBody()}
+      {renderFooter()}
     </SafeAreaView>
   );
 };

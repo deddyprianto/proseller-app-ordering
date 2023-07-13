@@ -22,6 +22,10 @@ import {checkAccountExist} from '../actions/auth.actions';
 import {showSnackbar} from '../actions/setting.action';
 import LoadingScreen from '../components/loadingScreen';
 import Theme from '../theme';
+import HeaderV2 from '../components/layout/header/HeaderV2';
+import RegisterV2 from './RegisterV2';
+import appConfig from '../config/appConfig';
+import GlobalText from '../components/globalText';
 
 const HEIGHT = Dimensions.get('window').height;
 const useStyles = () => {
@@ -100,10 +104,18 @@ const Register = () => {
   const [email, setEmail] = useState('');
   const [registerMethod, setRegisterMethod] = useState('email');
   const [isLoading, setIsLoading] = useState(false);
-
+  const [approvedData, setApprovedData] = React.useState({
+    privacyTerm: false,
+    consent: false,
+  });
   const loginSettings = useSelector(
     state => state.settingReducer.loginSettings,
   );
+
+  const onTickCheckbox = (key, value) => {
+    console.log(key, value, 'lupis');
+    setApprovedData({...approvedData, [key]: value});
+  };
 
   useEffect(() => {
     if (loginSettings.loginByEmail) {
@@ -208,7 +220,7 @@ const Register = () => {
         onPress={() => {
           handleCheckAccount();
         }}>
-        <Text style={styles.textNext}>Next</Text>
+        <GlobalText style={styles.textNext}>Next</GlobalText>
       </TouchableOpacity>
     );
   };
@@ -237,7 +249,7 @@ const Register = () => {
           onPress={() => {
             handleChangeRegisterMethod();
           }}>
-          <Text style={styles.textChangeMethod}>{text}</Text>
+          <GlobalText style={styles.textChangeMethod}>{text}</GlobalText>
         </TouchableOpacity>
       );
     }
@@ -246,19 +258,33 @@ const Register = () => {
   return (
     <SafeAreaView style={styles.root}>
       <LoadingScreen loading={isLoading} />
-      <Header isMiddleLogo />
+      {appConfig.appName === 'fareastflora' ? (
+        <HeaderV2 />
+      ) : (
+        <Header isMiddleLogo />
+      )}
 
       <Body style={{flex: 1}}>
         <KeyboardAwareScrollView>
-          <View style={styles.container}>
-            <Text style={styles.textCreateNewAccount}>
-              Create a new account
-            </Text>
-            {renderTextLogin()}
-            {renderRegisterMethodInput()}
-            {renderButtonNext()}
-            {renderTextChangeMethod()}
-          </View>
+          {appConfig.appName === 'fareastflora' ? (
+            <RegisterV2
+              emailValue={email}
+              onChangeEmail={value => setEmail(value)}
+              onNext={handleCheckAccount}
+              onTickCheckbox={onTickCheckbox}
+              checkboxValue={approvedData}
+            />
+          ) : (
+            <View style={styles.container}>
+              <Text style={styles.textCreateNewAccount}>
+                Create a new account
+              </Text>
+              {renderTextLogin()}
+              {renderRegisterMethodInput()}
+              {renderButtonNext()}
+              {renderTextChangeMethod()}
+            </View>
+          )}
         </KeyboardAwareScrollView>
       </Body>
     </SafeAreaView>

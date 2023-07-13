@@ -2,42 +2,60 @@
 import React, {useState, useRef, useEffect} from 'react';
 
 import {StyleSheet, View, TextInput} from 'react-native';
-import Theme from '../../theme';
+import {
+  normalizeLayoutSizeHeight,
+  normalizeLayoutSizeWidth,
+} from '../../helper/Layout';
+import Theme from '../../theme/Theme';
+import GlobalText from '../globalText';
 
 const useStyles = () => {
-  const theme = Theme();
+  const {colors, fontFamily} = Theme();
   const styles = StyleSheet.create({
     root: {
       marginVertical: 32,
-      width: '70%',
-      display: 'flex',
-      flexDirection: 'row',
-      justifyContent: 'space-between',
+      width: '100%',
+      flex: 1,
+      alignItems: 'center',
     },
-    textInputOtp: {
-      width: 40,
-      height: 40,
-      borderWidth: 1,
+    textInputOtp: isWrongOtp => ({
+      width: normalizeLayoutSizeWidth(54),
+      height: normalizeLayoutSizeHeight(72),
       borderRadius: 12,
       paddingVertical: 0,
       justifyContent: 'center',
       alignItems: 'center',
       textAlign: 'center',
-      backgroundColor: theme.colors.background,
+      backgroundColor: colors.greyScale4,
+      fontSize: 24,
+      fontFamily: fontFamily.poppinsMedium,
+      color: isWrongOtp ? '#EB4B41' : 'black',
+    }),
+    textInputContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      width: '70%',
+    },
+    errorMessage: {
+      color: '#EB4B41',
+      fontFamily: fontFamily.poppinsMedium,
+      fontSize: 14,
+    },
+    errorContainer: {
+      marginTop: 32,
     },
   });
-  return styles;
+  return {styles, colors, fontFamily};
 };
 
-const FieldOTP = ({onComplete}) => {
-  const styles = useStyles();
+const FieldOTP = ({onComplete, isWrongOtp}) => {
   const ref = {
     otp1: useRef(),
     otp2: useRef(),
     otp3: useRef(),
     otp4: useRef(),
   };
-
+  const {styles} = useStyles();
   const [otp, setOtp] = useState('');
 
   useEffect(() => {
@@ -52,7 +70,6 @@ const FieldOTP = ({onComplete}) => {
     results[index] = event;
     setOtp(results);
 
-    console.log(results);
     const arrayLength = Array.from(Array(4)).length;
     if (event) {
       if (index !== 0 && !event) {
@@ -74,7 +91,7 @@ const FieldOTP = ({onComplete}) => {
         value={otp[index]}
         autoFocus={index === 0}
         keyboardType="numeric"
-        style={styles.textInputOtp}
+        style={styles.textInputOtp(isWrongOtp)}
         maxLength={1}
         onChangeText={value => {
           handleInputOtp(value.replace(/[^0-9]/g, ''), index);
@@ -95,7 +112,18 @@ const FieldOTP = ({onComplete}) => {
     return result;
   };
 
-  return <View style={styles.root}>{renderInputOtp()}</View>;
+  return (
+    <View style={styles.root}>
+      <View style={styles.textInputContainer}>{renderInputOtp()}</View>
+      {isWrongOtp ? (
+        <View style={styles.errorContainer}>
+          <GlobalText style={styles.errorMessage}>
+            Invalid OTP. Please check your entry and try again.
+          </GlobalText>
+        </View>
+      ) : null}
+    </View>
+  );
 };
 
 export default FieldOTP;

@@ -11,7 +11,11 @@ import {
 import CryptoJS from 'react-native-crypto-js';
 import {Actions} from 'react-native-router-flux';
 import {useDispatch, useSelector} from 'react-redux';
-import {changeOrderingMode, removeBasket} from '../actions/order.action';
+import {
+  changeOrderingMode,
+  getOrderingMode,
+  removeBasket,
+} from '../actions/order.action';
 import {getBasket} from '../actions/product.action';
 import {getOutletById} from '../actions/stores.action';
 import {updateUser} from '../actions/user.action';
@@ -80,8 +84,15 @@ const FavoriteOutlets = ({outlet}) => {
   let isAvailable = outlet.orderingStatus !== 'UNAVAILABLE';
 
   const handleGetStoreById = async item => {
+    const orderingMode = await dispatch(getOrderingMode(item));
     await dispatch(getOutletById(item.id));
-    Actions.push('orderHere');
+
+    if (orderingMode.length === 1) {
+      await dispatch(changeOrderingMode({orderingMode: orderingMode[0].key}));
+      Actions.push('orderHere');
+    } else {
+      Actions.push('orderingMode');
+    }
   };
 
   const handleRemoveSelectedAddress = async () => {
@@ -148,9 +159,10 @@ const FavoriteOutlets = ({outlet}) => {
     return (
       <View style={styles.bottom}>
         <TouchableOpacity
+          disabled={!isAvailable}
           style={styleButton}
           onPress={() => {
-            handleClickOutlet();
+            handleClickOutlet(outlet);
           }}>
           <Text style={styles.textButton}>Order from here</Text>
         </TouchableOpacity>

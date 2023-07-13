@@ -23,7 +23,11 @@ import {
 import Theme from '../../../theme';
 import appConfig from '../../../config/appConfig';
 import awsConfig from '../../../config/awsConfig';
-import {changeOrderingMode, removeBasket} from '../../../actions/order.action';
+import {
+  changeOrderingMode,
+  getOrderingMode,
+  removeBasket,
+} from '../../../actions/order.action';
 import {getBasket} from '../../../actions/product.action';
 import {updateUser} from '../../../actions/user.action';
 import LoadingScreen from '../../loadingScreen';
@@ -172,21 +176,32 @@ const MyFavoriteOutletListItem = ({item}) => {
 
   useEffect(() => {
     const userCoordinate = userPosition?.coords;
-    const userPositionLat = userCoordinate?.latitude || 0;
-    const userPositionLngt = userCoordinate?.longitude || 0;
-    const result = getDistance(
-      {latitude: userPositionLat, longitude: userPositionLngt},
-      {latitude: item.latitude, longitude: item.longitude},
-    );
+    if (userCoordinate) {
+      const userPositionLat = userCoordinate?.latitude;
+      const userPositionLngt = userCoordinate?.longitude;
+      const result = getDistance(
+        {latitude: userPositionLat, longitude: userPositionLngt},
+        {latitude: item.latitude, longitude: item.longitude},
+      );
 
-    const distanceString =
-      result < 1 ? result * 1000 + ' m' : Math.round(result * 10) / 10 + ' km';
-    setDistance(distanceString);
+      const distanceString =
+        result < 1
+          ? result * 1000 + ' m'
+          : Math.round(result * 10) / 10 + ' km';
+      setDistance(distanceString);
+    }
   }, [userPosition, item]);
 
   const handleGetStoreById = async item => {
+    const orderingMode = await dispatch(getOrderingMode(item));
     await dispatch(getOutletById(item.id));
-    Actions.push('orderHere');
+
+    if (orderingMode.length === 1) {
+      await dispatch(changeOrderingMode({orderingMode: orderingMode[0].key}));
+      Actions.push('orderHere');
+    } else {
+      Actions.push('orderingMode');
+    }
   };
 
   const handleRemoveSelectedAddress = async () => {

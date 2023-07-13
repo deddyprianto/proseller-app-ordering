@@ -3,6 +3,7 @@ import {View, TouchableOpacity, StyleSheet, Platform, Text} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import colorConfig from '../../config/colorConfig';
 import {Actions} from 'react-native-router-flux';
+import BackButton from '../../assets/svg/BackButton';
 
 const styles = StyleSheet.create({
   btnBack: {
@@ -22,7 +23,7 @@ const styles = StyleSheet.create({
     marginRight: 'auto',
   },
   header: {
-    // height: 65,
+    height: 52,
     paddingVertical: 6,
     marginBottom: 16,
     justifyContent: 'center',
@@ -35,6 +36,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.37,
     shadowRadius: 7.49,
     elevation: 12,
+  },
+  bckBtnContainer: {
+    position: 'absolute',
+    left: 16,
   },
 });
 
@@ -49,14 +54,12 @@ const NavbarBack = ({title, centerTitle}) => {
         {backgroundColor: colorConfig.pageIndex.backgroundColor},
       ]}>
       <TouchableOpacity style={styles.btnBack} onPress={onBack}>
-        <Icon
-          size={28}
-          name={
-            Platform.OS === 'ios' ? 'ios-arrow-back' : 'md-arrow-round-back'
-          }
-          style={styles.btnBackIcon}
-        />
-        <Text style={styles.btnBackText}> {title} </Text>
+        <View style={styles.bckBtnContainer}>
+          <BackButton />
+        </View>
+        <View>
+          <Text style={styles.btnBackText}> {title} </Text>
+        </View>
       </TouchableOpacity>
       {/*<View style={styles.line} />*/}
     </View>
