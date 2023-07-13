@@ -31,6 +31,8 @@ import DeviceBrightness from '@adrianso/react-native-device-brightness';
 import Navbar from '../components/navbar';
 import {normalizeLayoutSizeHeight} from '../helper/Layout';
 import BgProfileSvg from '../assets/svg/BgProfileSvg';
+import PolicySvg from '../assets/svg/PolicySvg';
+import DeliverySVG from '../assets/svg/DeliveryPolicySvg';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -369,6 +371,10 @@ const Profile = props => {
     return Actions.editProfile(value);
   };
 
+  const openWebviewPage = url => {
+    return Actions.policy({url});
+  };
+
   const renderWelcome = () => {
     if (user?.name) {
       const initialName = user?.name
@@ -534,6 +540,40 @@ const Profile = props => {
     );
   };
 
+  const renderPolicy = () => {
+    return (
+      <TouchableOpacity
+        style={styles.viewOption}
+        onPress={() =>
+          openWebviewPage(
+            'https://appsmith.equipweb.biz/app/privacy-policy/page1-64a3854677e5e62a68d1d598?embed=true',
+          )
+        }>
+        <View style={styles.iconSetting}>
+          <PolicySvg />
+        </View>
+        <Text style={styles.textIcon}>Privacy Policy</Text>
+      </TouchableOpacity>
+    );
+  };
+
+  const renderDeliveryPolicy = () => {
+    return (
+      <TouchableOpacity
+        style={styles.viewOption}
+        onPress={() =>
+          openWebviewPage(
+            'https://appsmith.equipweb.biz/app/privacy-policy/delivery-policy-64ae72ebf6a34d0fa121472a?embed=true',
+          )
+        }>
+        <View style={styles.iconSetting}>
+          <DeliverySVG />
+        </View>
+        <Text style={styles.textIcon}>Delivery Policy</Text>
+      </TouchableOpacity>
+    );
+  };
+
   const renderMyDeliveryAddress = () => {
     if (defaultOutlet?.enableDelivery) {
       return (
@@ -665,6 +705,10 @@ const Profile = props => {
         {renderMyDeliveryAddress()}
         {renderDivider()}
         {renderEditProfile()}
+        {renderDivider()}
+        {renderPolicy()}
+        {renderDivider()}
+        {renderDeliveryPolicy()}
         {renderDivider()}
         {renderReferral()}
         {renderDivider()}
