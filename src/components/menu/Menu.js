@@ -324,8 +324,8 @@ const Menu = () => {
         handleClose={() => {
           setIsOpenModal(false);
         }}
-        title="E-Store currently not available"
-        description="We're making a few changes to our estore system, so mobile orders for estore are currently unavailable. But don't worry - we'll be back up and running soon! We thank you for your patience while we improve our estore process."
+        title="E-Store Currently Not Available"
+        description="We're making a few changes to our e-store system, so mobile orders for e-store are currently unavailable. But don't worry - we'll be back up and running soon! We thank you for your patience while we improve our e-store process."
         image={appConfig.imageOrderNotAvailable}
       />
     </View>

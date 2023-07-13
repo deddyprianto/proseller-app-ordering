@@ -20,8 +20,12 @@ const WIDTH = Dimensions.get('window').width;
 const useStyles = () => {
   const theme = Theme();
   const styles = StyleSheet.create({
-    wrap: {
-      height: (WIDTH - 32) / 2,
+    wrapSmall: {
+      height: 132,
+      // height: (WIDTH - 32) / 3,
+    },
+    wrapLarge: {
+      height: 222,
     },
     wrapContainer: {
       margin: 16,
@@ -29,12 +33,16 @@ const useStyles = () => {
     wrapImage: {
       width: WIDTH - 32,
     },
-    image: {
-      // height: (WIDTH - 32) / 2,
+    imageSmall: {
+      borderRadius: 8,
+      height: 132,
+      // height: (WIDTH - 32) / 3,
       // width: WIDTH - 32,
       // maxWidth: WIDTH - 32,
-      // borderRadius: 8,
-      aspectRatio: 3 / 4,
+    },
+    imageLarge: {
+      height: 222,
+      borderRadius: 8,
     },
     activeDot: {
       opacity: 1,
@@ -68,17 +76,18 @@ const BannerFnB = ({bottom = 0}) => {
     state => state.promotionReducer.dataPromotion.promotion,
   );
   const bannerSize = useSelector(
-    state => state.settingReducer.bannerSizeSettings.bannerSize,
+    state => state.settingReducer?.bannerSizeSettings?.bannerSize,
   );
 
-  console.log('MARTIN', bannerSize);
+  const sizes = bannerSize?.split('x') || [];
+  const bannerHeight = sizes[1] || 480;
 
-  const findBanner = (banner = []) => {
-    const findSelectedOutlet = banner?.selectedOutlets.find(
-      banner => banner.text === defaultOutlet.name,
-    );
-    return findSelectedOutlet ? true : false;
-  };
+  // const findBanner = (banner = []) => {
+  //   const findSelectedOutlet = banner?.selectedOutlets.find(
+  //     banner => banner.text === defaultOutlet.name,
+  //   );
+  //   return findSelectedOutlet ? true : false;
+  // };
 
   useEffect(() => {
     const loadData = async () => {
@@ -96,9 +105,9 @@ const BannerFnB = ({bottom = 0}) => {
 
   const renderImages = () => {
     const result = banners?.map((banner, index) => {
-      // const showBanner = findBanner(banner);
-      // if (showBanner) {
-      console.log('TEST', banner);
+      const styleImage =
+        bannerHeight === 720 ? styles.imageLarge : styles.imageSmall;
+
       return (
         <TouchableOpacity
           style={styles.wrapImage}
@@ -107,33 +116,37 @@ const BannerFnB = ({bottom = 0}) => {
           }}>
           <Image
             key={index}
-            style={styles.image}
+            style={styleImage}
             resizeMode="stretch"
             source={{uri: banner?.defaultImageURL}}
           />
         </TouchableOpacity>
       );
-      // }
-      // return null;
     });
     return result;
   };
 
   if (!isEmptyArray(banners)) {
-    return (
-      <Swiper
-        style={styles.wrap}
-        autoplay={true}
-        containerStyle={styles.wrapContainer}
-        autoplayTimeout={6}
-        animated={true}
-        paginationStyle={{bottom}}
-        dot={<View style={styles.inactiveDot} />}
-        activeDot={<View style={styles.activeDot} />}
-        loop>
-        {renderImages()}
-      </Swiper>
-    );
+    if (bannerSize) {
+      const styleWrap =
+        bannerHeight === 720 ? styles.wrapLarge : styles.wrapSmall;
+
+      return (
+        <Swiper
+          style={styleWrap}
+          autoplay={true}
+          containerStyle={styles.wrapContainer}
+          autoplayTimeout={6}
+          animated={true}
+          paginationStyle={{bottom}}
+          dot={<View style={styles.inactiveDot} />}
+          activeDot={<View style={styles.activeDot} />}
+          loop>
+          {renderImages()}
+        </Swiper>
+      );
+    }
+    return null;
   } else {
     return null;
   }
