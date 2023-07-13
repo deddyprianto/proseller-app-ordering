@@ -190,6 +190,8 @@ const NewPageIndex = () => {
         return appConfig.iconEmail;
       case 'Orders':
         return appConfig.iconHistory;
+      case 'History':
+        return appConfig.iconHistory;
       case 'Rewards':
         return appConfig.iconReward;
       case 'Profile':
