@@ -46,6 +46,14 @@ const useStyles = () => {
       justifyContent: 'center',
       backgroundColor: theme.colors.buttonActive,
     },
+    viewButtonDisabled: {
+      borderRadius: 8,
+      padding: 8,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: theme.colors.buttonDisabled,
+    },
     text: {
       margin: 16,
       color: theme.colors.textPrimary,
@@ -144,11 +152,12 @@ const OrderingMode = () => {
       setEstimatedWaitingTimes(defaultOutlet?.estimatedWaitingTime || {});
       setOrderingTypes(orderingModesFieldFiltered);
 
-      await dispatch({
-        type: 'DATA_ORDERING_MODE',
-        orderingMode:
-          orderingModeSelected || orderingModesFieldFiltered[0]?.key,
-      });
+      if (orderingModeSelected) {
+        await dispatch({
+          type: 'DATA_ORDERING_MODE',
+          orderingMode: orderingModeSelected,
+        });
+      }
     };
     loadData();
   }, [defaultOutlet, orderSetting, dispatch, orderingModeSelected]);
@@ -161,10 +170,15 @@ const OrderingMode = () => {
   };
 
   const renderBottom = () => {
+    const isDisabled = !orderingModeSelected;
+    const stylesButton = isDisabled
+      ? styles.viewButtonDisabled
+      : styles.viewButton;
     return (
       <View style={styles.bottom}>
         <TouchableOpacity
-          style={styles.viewButton}
+          disabled={isDisabled}
+          style={stylesButton}
           onPress={() => {
             handleSaveClicked();
           }}>

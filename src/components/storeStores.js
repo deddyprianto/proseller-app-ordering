@@ -59,7 +59,6 @@ class StoreStores extends Component {
     await this.props.dispatch(changeOrderingMode({orderingMode: ''}));
     await this.props.dispatch(removeBasket());
     await this.props.dispatch(getBasket());
-    this.setState({isLoading: false});
   };
 
   orderingModesField = [
@@ -102,8 +101,10 @@ class StoreStores extends Component {
         }),
       );
       Actions.orderHere();
+      this.setState({isLoading: false});
     } else {
       Actions.push('orderingMode');
+      this.setState({isLoading: false});
     }
   };
 
@@ -111,8 +112,6 @@ class StoreStores extends Component {
     try {
       this.setState({isLoading: true});
       await this.props.dispatch(getOutletById(item.storeId));
-
-      this.setState({isLoading: false});
 
       if (awsConfig.COMPANY_TYPE !== 'Retail') {
         this.handleSelectStoreFnB();
