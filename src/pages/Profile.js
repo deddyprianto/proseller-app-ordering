@@ -33,6 +33,12 @@ import {normalizeLayoutSizeHeight} from '../helper/Layout';
 import BgProfileSvg from '../assets/svg/BgProfileSvg';
 import PolicySvg from '../assets/svg/PolicySvg';
 import DeliverySVG from '../assets/svg/DeliveryPolicySvg';
+import GlobalText from '../components/globalText';
+import CreditCard from '../assets/svg/CreditCardSvg';
+import Voucher from '../assets/svg/VoucherSvg';
+import StoreSvg from '../assets/svg/StoreSvg';
+import RefundSvg from '../assets/svg/RefundSvg';
+import ContactSvg from '../assets/svg/ContactSvg';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -58,6 +64,7 @@ const useStyles = () => {
       height: 1,
       backgroundColor: theme.colors.greyScale3,
       marginHorizontal: 16,
+      marginTop: 5,
     },
     dividerHeader: {
       marginVertical: 16,
@@ -275,6 +282,17 @@ const useStyles = () => {
       position: 'absolute',
       top: 0,
       width: '100%',
+    },
+    titleSettingContainer: {
+      marginHorizontal: 16,
+      marginTop: 16,
+    },
+    titleSettingText: {
+      fontFamily: theme.fontFamily.poppinsBold,
+      fontSize: 16,
+    },
+    containerStyle: {
+      paddingBottom: 30,
     },
   });
 
@@ -569,7 +587,7 @@ const Profile = props => {
         <View style={styles.iconSetting}>
           <DeliverySVG />
         </View>
-        <Text style={styles.textIcon}>Delivery Policy</Text>
+        <Text style={styles.textIcon}>Delivery and Pickup Policy</Text>
       </TouchableOpacity>
     );
   };
@@ -601,7 +619,7 @@ const Profile = props => {
           Actions.notifications();
         }}>
         <Image style={styles.iconSetting} source={appConfig.iconNotification} />
-        <Text style={styles.textIcon}>Notifications</Text>
+        <Text style={styles.textIcon}>Notification Setting</Text>
       </TouchableOpacity>
     );
   };
@@ -706,10 +724,6 @@ const Profile = props => {
         {renderDivider()}
         {renderEditProfile()}
         {renderDivider()}
-        {renderPolicy()}
-        {renderDivider()}
-        {renderDeliveryPolicy()}
-        {renderDivider()}
         {renderReferral()}
         {renderDivider()}
         {renderNotifications()}
@@ -724,6 +738,47 @@ const Profile = props => {
       </View>
     );
   };
+
+  const renderListMenu = (title, Icon, onPress) => (
+    <TouchableOpacity onPress={onPress} style={styles.viewOption}>
+      <View style={styles.iconSetting}>{Icon}</View>
+      <Text style={styles.textIcon}>{title} </Text>
+    </TouchableOpacity>
+  );
+
+  const renderTitleSettingV2 = title => (
+    <View style={styles.titleSettingContainer}>
+      <GlobalText style={styles.titleSettingText}>{title}</GlobalText>
+    </View>
+  );
+
+  const renderSettingV2 = () => (
+    <View style={styles.viewSettings}>
+      {renderMembershipQRCode()}
+      {renderDivider()}
+      {renderTitleSettingV2('General')}
+      {renderEditProfile()}
+      {renderMyDeliveryAddress()}
+      {renderNotifications()}
+      {renderDivider()}
+      {renderTitleSettingV2('Payment Method')}
+      {renderListMenu('Credit Card', <CreditCard />)}
+      {renderDivider()}
+      {renderTitleSettingV2('Rewards')}
+      {renderListMenu('My Voucher', <Voucher />)}
+      {renderReferral()}
+      {renderDivider()}
+      {renderTitleSettingV2('Others')}
+      {renderListMenu('Store Location', <StoreSvg />)}
+      {renderDeliveryPolicy()}
+      {renderListMenu('Exchange and Refund Policy', <RefundSvg />)}
+      {renderTermsAndConditions()}
+      {renderFAQ()}
+      {renderListMenu('Contact Us', <ContactSvg />)}
+      {renderDivider()}
+      {renderLogout()}
+    </View>
+  );
 
   const renderDeleteAccountConfirmationDialog = () => {
     if (isOpenDeleteAccountModal) {
@@ -804,7 +859,9 @@ const Profile = props => {
   return (
     <SafeAreaView>
       <Navbar title="Profile" />
-      <ScrollView style={styles.root}>
+      <ScrollView
+        contentContainerStyle={styles.containerStyle}
+        style={styles.root}>
         <View style={styles.backgroundProfile}>
           <BgProfileSvg />
         </View>
@@ -815,7 +872,11 @@ const Profile = props => {
           style={styles.imageBackgroundProfile}
         />
         {renderProfileHeader()}
-        {renderSettings()}
+        <>
+          {appConfig.appName === 'fareastflora'
+            ? renderSettingV2()
+            : renderSettings()}
+        </>
         {renderDeleteAccountConfirmationDialog()}
         {renderLogoutConfirmationDialog()}
         {renderMyECardModal()}
