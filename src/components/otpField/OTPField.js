@@ -1,19 +1,6 @@
-import React, {useState, useRef} from 'react';
+import React, {useRef} from 'react';
 
-import {
-  SafeAreaView,
-  StyleSheet,
-  View,
-  Text,
-  TextInput,
-  Image,
-  TouchableOpacity,
-} from 'react-native';
-
-import CountryPicker from '../components/react-native-country-picker-modal';
-import appConfig from '../config/appConfig';
-
-import colorConfig from '../config/colorConfig';
+import {StyleSheet, View, TextInput} from 'react-native';
 
 const styles = StyleSheet.create({
   viewOtpField: {
