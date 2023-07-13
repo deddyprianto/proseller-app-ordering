@@ -10,6 +10,9 @@ const styles = StyleSheet.create({
   webStyle: {
     flex: 1,
   },
+  parentWebstyle: {
+    height: '100%',
+  },
 });
 
 const WebviewPage = props => {
@@ -17,7 +20,7 @@ const WebviewPage = props => {
   return (
     <SafeAreaView>
       <Header isMiddleLogo={true} />
-      <View style={{backgroundColor: 'red', height: '100%'}}>
+      <View style={styles.parentWebstyle}>
         <WebView
           source={{
             uri: params.url,
