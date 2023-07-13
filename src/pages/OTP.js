@@ -323,7 +323,7 @@ const OTP = ({isLogin, method, methodValue}) => {
       {appConfig.appName === 'fareastflora' ? (
         <HeaderV2 onBackBtn={onBackHandle} />
       ) : (
-        <Header isMiddleLogo />
+        <Header onBackBtn={onBackHandle} isMiddleLogo />
       )}
       <KeyboardAwareScrollView>
         <View style={styles.container}>
