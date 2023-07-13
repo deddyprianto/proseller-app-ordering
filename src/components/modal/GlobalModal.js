@@ -54,6 +54,7 @@ const useStyles = () => {
  * @property {Function} isCloseToBottom
  * @property {boolean} hideCloseIcon
  * @property {any} modalContainerStyle
+ * @property {any} titleStyle
  */
 
 /**
@@ -93,7 +94,7 @@ const GlobalModal = props => {
       <View style={[styles.modalContainer, props.modalContainerStyle]}>
         <View style={styles.titleCloseContainer}>
           <View>
-            <GlobalText>{props.title}</GlobalText>
+            <GlobalText style={props.titleStyle}>{props.title}</GlobalText>
           </View>
           {!props.hideCloseIcon ? (
             <View style={styles.closeContainer}>

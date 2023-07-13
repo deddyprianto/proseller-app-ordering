@@ -114,6 +114,7 @@ const Header = ({
   customTitle,
   handleSearchInput,
   searchPlaceholder,
+  onBackBtn,
 }) => {
   const styles = useStyles();
   const [isOpenScanner, setIsOpenScanner] = useState(false);
@@ -169,12 +170,16 @@ const Header = ({
     }
   };
 
+  const onBackBtnHandle = () => {
+    if (onBackBtn && typeof onBackBtn === 'function') {
+      return onBackBtn();
+    }
+    Actions.pop();
+  };
+
   const renderBackIcon = () => {
     return (
-      <TouchableOpacity
-        onPress={() => {
-          Actions.pop();
-        }}>
+      <TouchableOpacity onPress={onBackBtnHandle}>
         <Image source={appConfig.iconArrowLeft} style={styles.iconBack} />
       </TouchableOpacity>
     );

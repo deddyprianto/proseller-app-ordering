@@ -15,7 +15,6 @@ import {
 } from 'react-native';
 
 import {sendOTP, loginUser} from '../actions/auth.actions';
-import {showSnackbar} from '../actions/setting.action';
 
 import {Header} from '../components/layout';
 import OTPField from '../components/fieldOTP';
@@ -27,6 +26,7 @@ import GlobalText from '../components/globalText';
 import appConfig from '../config/appConfig';
 import HeaderV2 from '../components/layout/header/HeaderV2';
 import GlobalModal from '../components/modal/GlobalModal';
+import GlobalButton from '../components/button/GlobalButton';
 
 const HEIGHT = Dimensions.get('window').height;
 
@@ -105,8 +105,26 @@ const useStyles = () => {
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     modalContainer: {
-      padding: 0
-    }
+      padding: 0,
+    },
+    titleCancelStyle: {
+      color: theme.colors.primary,
+      fontFamily: theme.fontFamily.poppinsMedium,
+      fontSize: 16,
+    },
+    cancelDescription: {
+      textAlign: 'center',
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    actionCancelContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginTop: 8,
+      // flex: 1,
+    },
+    btnContainer: {
+      width: '49%',
+    },
   });
   return styles;
 };
@@ -120,7 +138,9 @@ const OTP = ({isLogin, method, methodValue}) => {
   const [seconds, setSeconds] = useState(0);
   const [isWrongOtp, setIsWrongOtp] = React.useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
+  const [openCancelVerification, setOpenCancelVerification] = React.useState(
+    false,
+  );
   const countdown = () => {
     let minuteCount = sendCounter >= 2 ? 4 : 1;
 
@@ -277,11 +297,31 @@ const OTP = ({isLogin, method, methodValue}) => {
     );
   };
 
+  const onBackHandle = () => {
+    setOpenCancelVerification(true);
+    return true;
+  };
+
+  const onClosePopupCancel = () => {
+    setOpenCancelVerification(false);
+  };
+
+  const onBack = () => {
+    Actions.pop();
+  };
+
+  React.useEffect(() => {
+    BackHandler.addEventListener('hardwareBackPress', onBackHandle);
+    return () => {
+      BackHandler.removeEventListener('hardwareBackPress', onBackHandle);
+    };
+  }, []);
+
   return (
     <SafeAreaView style={styles.root}>
       <LoadingScreen loading={isLoading} />
       {appConfig.appName === 'fareastflora' ? (
-        <HeaderV2 />
+        <HeaderV2 onBackBtn={onBackHandle} />
       ) : (
         <Header isMiddleLogo />
       )}
@@ -294,9 +334,28 @@ const OTP = ({isLogin, method, methodValue}) => {
           {renderButtonNext()}
         </View>
       </KeyboardAwareScrollView>
-      <GlobalModal modalContainerStyle={styles.modalContainer} hideCloseIcon>
+      <GlobalModal
+        onBackdropPress={onClosePopupCancel}
+        isVisible={openCancelVerification}
+        title="Cancel Verification?"
+        titleStyle={styles.titleCancelStyle}
+        hideCloseIcon>
         <View>
-          <GlobalText> Cancel Verification? </GlobalText>
+          <GlobalText style={styles.cancelDescription}>
+            This action might caused the OTP you have received to be invalid.
+          </GlobalText>
+        </View>
+        <View style={styles.actionCancelContainer}>
+          <View style={styles.btnContainer}>
+            <GlobalButton
+              onPress={onClosePopupCancel}
+              isOutline
+              title="Cancel"
+            />
+          </View>
+          <View style={styles.btnContainer}>
+            <GlobalButton onPress={onBack} title="Yes" />
+          </View>
         </View>
       </GlobalModal>
     </SafeAreaView>

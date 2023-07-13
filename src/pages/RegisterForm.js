@@ -132,9 +132,7 @@ const RegisterForm = ({registerMethod, inputValue}) => {
   const dispatch = useDispatch();
   const [countryCode, setCountryCode] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [birthDate, setBirthdate] = React.useState(
-    moment().format('DD/MM/YYYY'),
-  );
+  const [birthDate, setBirthdate] = React.useState(null);
   const [isDatePickerVisible, setIsDatePickerVisible] = React.useState(false);
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
@@ -431,9 +429,7 @@ const RegisterForm = ({registerMethod, inputValue}) => {
         androidVariant={'iosClone'}
         maximumDate={getMaxDate()}
         open={isDatePickerVisible}
-        date={
-          birthDate && birthDate !== '' ? new Date(birthDate) : getMaxDate()
-        }
+        date={new Date(moment().subtract(10, 'year'))}
         onConfirm={handleConfirm}
         onCancel={toggleDatePicker}
       />

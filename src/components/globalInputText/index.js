@@ -3,6 +3,7 @@ import {TextInput, View, StyleSheet, TouchableOpacity} from 'react-native';
 import Theme from '../../theme/Theme';
 import GlobalText from '../globalText';
 import DropDownPicker from 'react-native-dropdown-picker';
+import ErrorInput from '../../assets/svg/ErorInputSvg';
 
 const useStyles = () => {
   const theme = Theme();
@@ -18,8 +19,9 @@ const useStyles = () => {
       paddingVertical: 13,
       borderRadius: 8,
       backgroundColor: editable === false ? '#F9F9F9' : 'white',
-      justifyContent: 'center',
+      justifyContent: 'space-between',
       alignItems: 'center',
+      flexDirection: 'row',
     }),
     labelStyle: {
       fontSize: 14,
@@ -30,7 +32,7 @@ const useStyles = () => {
     },
     inputStyle: editable => ({
       color: editable === false ? theme.colors.greyScale2 : 'black',
-      width: '100%',
+      width: '80%',
     }),
     buttonStyle: {
       flexDirection: 'row',
@@ -168,6 +170,11 @@ const GlobalInputText = React.forwardRef((props, ref) => {
           style={styles.inputStyle(props.editable)}
           {...props}
         />
+        {props.isError ? (
+          <View>
+            <ErrorInput />
+          </View>
+        ) : null}
       </View>
       {props.isError ? (
         <View style={styles.errorContainer}>

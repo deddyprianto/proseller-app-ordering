@@ -6,16 +6,18 @@ import Theme from '../../theme/Theme';
 const useStyles = () => {
   const {colors, fontFamily} = Theme();
   const styles = StyleSheet.create({
-    touchableNext: {
+    touchableNext: isOutline => ({
       marginTop: 16,
       height: 40,
       width: '100%',
       borderRadius: 5,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: colors.primary,
-    },
-    touchableNextDisabled: {
+      backgroundColor: isOutline ? 'white' : colors.primary,
+      borderColor: colors.primary,
+      borderWidth: 1,
+    }),
+    touchableNextDisabled: isOutline => ({
       marginTop: 16,
       height: 40,
       width: '100%',
@@ -23,11 +25,11 @@ const useStyles = () => {
       justifyContent: 'center',
       alignItems: 'center',
       backgroundColor: colors.buttonDisabled,
-    },
-    textNext: {
+    }),
+    textNext: isOutline => ({
       fontFamily: fontFamily.poppinsMedium,
-      color: 'white',
-    },
+      color: isOutline ? colors.primary : 'white',
+    }),
   });
   return {styles, colors, fontFamily};
 };
@@ -40,6 +42,7 @@ const useStyles = () => {
  * @typedef {Object} ParamProps
  * @property {string} title
  * @property {string} active
+ * @property {boolean} isOutline
  */
 
 /**
@@ -51,10 +54,14 @@ const GlobalButton = props => {
   return (
     <TouchableOpacity
       style={
-        !props.disabled ? styles.touchableNext : styles.touchableNextDisabled
+        !props.disabled
+          ? styles.touchableNext(props.isOutline)
+          : styles.touchableNextDisabled(props.isOutline)
       }
       {...props}>
-      <GlobalText style={styles.textNext}>{props.title} </GlobalText>
+      <GlobalText style={styles.textNext(props.isOutline)}>
+        {props.title}{' '}
+      </GlobalText>
     </TouchableOpacity>
   );
 };
