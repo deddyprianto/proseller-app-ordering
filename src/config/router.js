@@ -134,6 +134,7 @@ import WebviewPage from '../pages/WebviewPage';
 //for temporary
 import PendingOrderDetail from '../pages/PendingOrderDetail';
 import InboxDetailMessage from '../pages/InboxDetailMessage';
+import OrderingMode from '../pages/OrderingMode';
 
 const MyTransitionSpec = {
   duration: 200,
@@ -393,6 +394,7 @@ export default class Routes extends Component {
             <Scene key="referral" component={Referral} />
             <Scene key="policy" component={WebviewPage} />
 
+            <Scene key="orderingMode" component={OrderingMode} />
             {/* //martin */}
           </Scene>
         </Scene>

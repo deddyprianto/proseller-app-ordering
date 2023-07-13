@@ -418,7 +418,8 @@ class EmailRegister extends Component {
                   paddingVertical: 5,
                   fontSize: 17,
                 }}>
-                {intlData.messages.phoneNumber} <Text style={{color: 'red'}}>*</Text>
+                {intlData.messages.phoneNumber}{' '}
+                <Text style={{color: 'red'}}>*</Text>
               </Text>
             </View>
             <View

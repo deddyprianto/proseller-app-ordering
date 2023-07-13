@@ -43,7 +43,7 @@
     "hygen-config-funtoast": "npx hygen config release --name funtoast --color \"207, 48, 48\" --env demo --productLine 2 && npx hygen config demo --name funtoast --color \"207, 48, 48\" && npx hygen config dev --name funtoast --color \"207, 48, 48\"",
     "hygen-config-funtoast-dev": "npx hygen config release --name funtoast --color \"207, 48, 48\" --env dev --productLine 2 && npx hygen config demo --name funtoast --color \"207, 48, 48\" && npx hygen config dev --name funtoast --color \"207, 48, 48\"",
     "hygen-config-fareastflora": "npx hygen config release --name fareastflora --color \"0, 63, 36\" --env demo --productLine 2 && npx hygen config demo --name fareastflora --color \"0, 63, 36\" && npx hygen config dev --name fareastflora --color \"0, 63, 36\"",
-    "hygen-config-fareastflora-dev": "npx hygen config release --name fareastflora --color \"0, 63, 36\" --env dev --productLine 3 && npx hygen config demo --name fareastflora --color \"0, 63, 36\" && npx hygen config dev --name fareastflora --color \"0, 63, 36\"",
+    "hygen-config-fareastflora-dev": "npx hygen config release --name fareastflora --color \"0, 63, 36\" --env dev --productLine 2 && npx hygen config demo --name fareastflora --color \"0, 63, 36\" && npx hygen config dev --name fareastflora --color \"0, 63, 36\"",
     "build-acemart": "npm run move-acemart-mac && npm run android-demo-rel",
     "build-automaxima": "npm run move-automaxima-mac && npm run android-demo-rel",
     "build-funtoast": "npm run move-funtoast-mac && npm run android-demo-rel",

@@ -7,6 +7,9 @@ const appConfig = {
   appMataUang: 'SGD',
   appVersion: 'Version 1.1',
 
+  // other setting
+  descriptionLineProduct: '2',
+
   // image company
   appImageNull: require('../assets/img/logo.png'),
   userQRCode: require('../../assets/img/qrcode.jpg'),
@@ -110,6 +113,7 @@ const appConfig = {
 
   iconMoreMenu: require('../assets/img/icon-more-menu.png'),
   iconMinus: require('../assets/img/icon-minus.png'),
+  iconMyVoucher: require('../assets/img/icon-my-voucher.png'),
 
   iconNotification: require('../assets/img/icon-notification.png'),
   iconNotes: require('../assets/img/icon-notes.png'),

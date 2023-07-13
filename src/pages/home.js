@@ -40,7 +40,7 @@ import {getSVCCard} from '../actions/SVC.action';
 import LoadingScreen from '../components/loadingScreen';
 import HomeRetail from './HomeRetail';
 import HomeFnB from './HomeFnB';
-import {getLoginSettings} from '../actions/setting.action';
+import {getAllowedOrder, getLoginSettings} from '../actions/setting.action';
 
 class Home extends Component {
   constructor(props) {
@@ -75,10 +75,13 @@ class Home extends Component {
       ]);
       this.checkUpdateAndVersion();
       await this.setState({isLoading: false});
+
       this.props.dispatch(getAccountPayment());
       this.props.dispatch(getUserProfile());
       this.props.dispatch(dataPromotion());
       this.props.dispatch(getLoginSettings());
+      this.props.dispatch(getAllowedOrder());
+
       const response = await this.props.dispatch(getAccountPayment());
       await this.checkDefaultPaymentAccount(response);
       this.getDeepLinkiOS();
@@ -276,7 +279,9 @@ class Home extends Component {
     return (
       <>
         <LoadingScreen loading={this.state.isLoading} />
-        {outletSelectionMode === 'MANUAL' && isEmptyObject(defaultOutlet) ? (
+        {outletSelectionMode === 'MANUAL' &&
+        isEmptyObject(defaultOutlet) &&
+        awsConfig.COMPANY_TYPE === 'Retail' ? (
           <Store />
         ) : awsConfig.COMPANY_TYPE === 'Retail' ? (
           <HomeRetail />

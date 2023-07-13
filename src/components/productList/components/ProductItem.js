@@ -193,6 +193,10 @@ const useStyles = () => {
     counterStyle: {
       color: 'white',
     },
+    promoContainerNoBg: {
+      padding: 4,
+      marginTop: 12,
+    },
   });
   return styles;
 };
@@ -421,6 +425,13 @@ const Product = ({product, basket}) => {
         </View>
       );
     }
+    return (
+      <View style={styles.viewPromo}>
+        <View style={styles.promoContainerNoBg}>
+          <View style={styles.imagePromo} />
+        </View>
+      </View>
+    );
   };
 
   return (

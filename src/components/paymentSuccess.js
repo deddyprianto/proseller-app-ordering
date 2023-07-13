@@ -77,6 +77,10 @@ class PaymentSuccess extends Component {
     await this.props.dispatch(
       updateUser({selectedAddress: null, phoneNumber: user.phoneNumber}),
     );
+    await this.props.dispatch({
+      type: 'DATA_ORDERING_MODE',
+      orderingMode: null,
+    });
   };
 
   handleBackPress = async () => {
