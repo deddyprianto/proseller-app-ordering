@@ -80,7 +80,7 @@ const BannerFnB = ({bottom = 0}) => {
   );
 
   const sizes = bannerSize?.split('x') || [];
-  const bannerHeight = sizes[1] || 480;
+  const bannerHeight = sizes[1] || '480';
 
   // const findBanner = (banner = []) => {
   //   const findSelectedOutlet = banner?.selectedOutlets.find(
@@ -106,8 +106,7 @@ const BannerFnB = ({bottom = 0}) => {
   const renderImages = () => {
     const result = banners?.map((banner, index) => {
       const styleImage =
-        bannerHeight === 720 ? styles.imageLarge : styles.imageSmall;
-
+        bannerHeight === '720' ? styles.imageLarge : styles.imageSmall;
       return (
         <TouchableOpacity
           style={styles.wrapImage}
@@ -129,7 +128,7 @@ const BannerFnB = ({bottom = 0}) => {
   if (!isEmptyArray(banners)) {
     if (bannerSize) {
       const styleWrap =
-        bannerHeight === 720 ? styles.wrapLarge : styles.wrapSmall;
+        bannerHeight === '720' ? styles.wrapLarge : styles.wrapSmall;
 
       return (
         <Swiper
