@@ -11,7 +11,7 @@ import {
 import {useDispatch, useSelector} from 'react-redux';
 import {dataStores, getOutletById} from '../actions/stores.action';
 
-import {Header} from '../components/layout';
+import {Body, Header} from '../components/layout';
 import Theme from '../theme/Theme';
 import OrderingModeList from '../components/orderingModeList/OrderingModeList';
 import {getAllowedOrder} from '../actions/setting.action';
@@ -25,6 +25,9 @@ const useStyles = () => {
     root: {
       flex: 1,
       backgroundColor: 'white',
+    },
+    body: {
+      flex: 1,
     },
     bottom: {
       shadowOffset: {
@@ -192,12 +195,14 @@ const OrderingMode = () => {
     <SafeAreaView style={styles.root}>
       <LoadingScreen loading={isLoading} />
       <Header title="Choose Ordering Mode" />
-      <Text style={styles.text}>What is your preferred ordering mode</Text>
-      <OrderingModeList
-        orderingMode={orderingTypes}
-        estimatedWaitingTime={estimatedWaitingTimes}
-      />
-      {renderBottom()}
+      <Body style={styles.body}>
+        <Text style={styles.text}>What is your preferred ordering mode</Text>
+        <OrderingModeList
+          orderingMode={orderingTypes}
+          estimatedWaitingTime={estimatedWaitingTimes}
+        />
+        {renderBottom()}
+      </Body>
     </SafeAreaView>
   );
 };

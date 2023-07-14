@@ -15,7 +15,7 @@ import {
 
 import BannerFnB from '../components/bannerFnB';
 
-import {Header} from '../components/layout';
+import {Body, Header} from '../components/layout';
 import Menu from '../components/menu/Menu';
 
 const useStyles = () => {
@@ -34,15 +34,20 @@ const HomeFnB = ({handleOnRefresh, isRefresh}) => {
   return (
     <SafeAreaView style={styles.root}>
       <Header isMiddleLogo isRemoveBackIcon />
-      <ScrollView
-        refreshControl={
-          <RefreshControl refreshing={isRefresh} onRefresh={handleOnRefresh} />
-        }>
-        <BannerFnB bottom={-20} placement={'top'} />
-        <Menu />
-        <BannerFnB bottom={-20} placement={'bottom'} />
-        <View style={styles.marginBottom} />
-      </ScrollView>
+      <Body>
+        <ScrollView
+          refreshControl={
+            <RefreshControl
+              refreshing={isRefresh}
+              onRefresh={handleOnRefresh}
+            />
+          }>
+          <BannerFnB bottom={-20} placement={'top'} />
+          <Menu />
+          <BannerFnB bottom={-20} placement={'bottom'} />
+          <View style={styles.marginBottom} />
+        </ScrollView>
+      </Body>
     </SafeAreaView>
   );
 };
