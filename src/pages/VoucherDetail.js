@@ -21,113 +21,125 @@ import moment from 'moment';
 import {redeemVoucher} from '../actions/rewards.action';
 import LoadingScreen from '../components/loadingScreen';
 import {showSnackbar} from '../actions/setting.action';
+import {Body} from '../components/layout';
+import Theme from '../theme/Theme';
 
-const styles = StyleSheet.create({
-  container: {
-    width: '100%',
-    display: 'flex',
-    paddingHorizontal: 20,
-  },
-  root: {
-    height: '100%',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-  },
-  footer: {
-    borderTopWidth: 0.2,
-    borderTopColor: 'grey',
-    padding: 16,
-  },
-  backgroundColorHeader: {
-    flex: 1,
-    position: 'absolute',
-    top: 0,
-    width: '100%',
-    height: 70,
-    backgroundColor: '#FFEBEB',
-  },
-  textValidity: {
-    fontSize: 12,
-    fontWeight: '700',
-  },
-  textValidityValue: {
-    fontSize: 12,
-    fontWeight: '500',
-  },
-  textDescription: {
-    fontSize: 12,
-    fontWeight: '700',
-  },
-  textDescriptionValue: {
-    fontSize: 12,
-    fontWeight: '500',
-  },
-  textRedeemButton: {
-    fontSize: 12,
-    fontWeight: '500',
-    color: 'white',
-  },
-  textInfoPointTitle: {
-    fontWeight: 'bold',
-    fontSize: 12,
-  },
-  textInfoPointValue: {
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
-  textPointLocked: {
-    fontWeight: 'bold',
-    fontSize: 12,
-  },
-  touchableRedeemButton: {
-    width: '100%',
-    paddingVertical: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: colorConfig.primaryColor,
-    borderRadius: 8,
-  },
-  touchableRedeemButtonDisabled: {
-    width: '100%',
-    paddingVertical: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#B7B7B7',
-    borderRadius: 8,
-  },
-  touchableImage: {
-    position: 'absolute',
-    width: '100%',
-    height: '100%',
-    flex: 2,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  viewInfoPoint: {
-    display: 'flex',
-    flexDirection: 'row',
-    borderWidth: 1,
-    borderRadius: 10,
-  },
-  viewInfoPointValue: {
-    padding: 10,
-    width: '50%',
-  },
-  viewPointLocked: {
-    backgroundColor: '#E5EAF8',
-    borderRadius: 12,
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-  },
-  dividerVertical: {
-    height: 'auto',
-    borderWidth: 0.5,
-  },
-});
+const useStyles = () => {
+  const theme = Theme();
+  const styles = StyleSheet.create({
+    container: {
+      width: '100%',
+      display: 'flex',
+      paddingHorizontal: 20,
+    },
+    root: {
+      height: '100%',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'space-between',
+    },
+    body: {
+      flex: 1,
+    },
+    footer: {
+      borderTopWidth: 0.2,
+      borderTopColor: 'grey',
+      padding: 16,
+      backgroundColor: theme.colors.background,
+    },
+    backgroundColorHeader: {
+      flex: 1,
+      position: 'absolute',
+      top: 0,
+      width: '100%',
+      height: 70,
+      backgroundColor: '#FFEBEB',
+    },
+    textValidity: {
+      fontSize: 12,
+      fontWeight: '700',
+    },
+    textValidityValue: {
+      fontSize: 12,
+      fontWeight: '500',
+    },
+    textDescription: {
+      fontSize: 12,
+      fontWeight: '700',
+    },
+    textDescriptionValue: {
+      fontSize: 12,
+      fontWeight: '500',
+    },
+    textRedeemButton: {
+      fontSize: 12,
+      fontWeight: '500',
+      color: 'white',
+    },
+    textInfoPointTitle: {
+      fontWeight: 'bold',
+      fontSize: 12,
+    },
+    textInfoPointValue: {
+      fontWeight: 'bold',
+      fontSize: 16,
+    },
+    textPointLocked: {
+      fontWeight: 'bold',
+      fontSize: 12,
+    },
+    touchableRedeemButton: {
+      width: '100%',
+      paddingVertical: 10,
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderRadius: 8,
+      backgroundColor: colorConfig.primaryColor,
+    },
+    touchableRedeemButtonDisabled: {
+      width: '100%',
+      paddingVertical: 10,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: '#B7B7B7',
+      borderRadius: 8,
+    },
+    touchableImage: {
+      position: 'absolute',
+      width: '100%',
+      height: '100%',
+      flex: 2,
+      backgroundColor: 'rgba(0,0,0,0.5)',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    viewInfoPoint: {
+      display: 'flex',
+      flexDirection: 'row',
+      borderWidth: 1,
+      borderRadius: 10,
+      backgroundColor: theme.colors.background,
+    },
+    viewInfoPointValue: {
+      padding: 10,
+      width: '50%',
+    },
+    viewPointLocked: {
+      backgroundColor: '#E5EAF8',
+      borderRadius: 12,
+      paddingVertical: 8,
+      paddingHorizontal: 16,
+    },
+    dividerVertical: {
+      height: 'auto',
+      borderWidth: 0.5,
+    },
+  });
+  return styles;
+};
 
 const VoucherDetail = ({voucher}) => {
+  const styles = useStyles();
   const dispatch = useDispatch();
   const [openModal, setOpenModal] = useState(false);
   const [openSuccessModal, setOpenSuccessModal] = useState(false);
@@ -299,24 +311,25 @@ const VoucherDetail = ({voucher}) => {
       <View style={styles.root}>
         <LoadingScreen loading={isLoading} />
         <Header title="Voucher Details" />
-        <ScrollView>
-          <View style={styles.backgroundColorHeader} />
+        <Body style={styles.body}>
+          <ScrollView>
+            <View style={styles.backgroundColorHeader} />
 
-          <View style={styles.container}>
-            <View style={{marginTop: '5%'}} />
-            <VoucherItem voucher={voucher} />
-            <View style={{marginTop: '2%'}} />
-            {renderInfoPoint()}
-            <View style={{marginTop: '5%'}} />
-            {renderValidity()}
-            <View style={{marginTop: '5%'}} />
-            {renderDescription()}
-            <View style={{marginTop: '5%'}} />
-            {renderBlockedPoint()}
-          </View>
-        </ScrollView>
-
-        <View style={styles.footer}>{renderRedeemButton()}</View>
+            <View style={styles.container}>
+              <View style={{marginTop: '5%'}} />
+              <VoucherItem voucher={voucher} />
+              <View style={{marginTop: '2%'}} />
+              {renderInfoPoint()}
+              <View style={{marginTop: '5%'}} />
+              {renderValidity()}
+              <View style={{marginTop: '5%'}} />
+              {renderDescription()}
+              <View style={{marginTop: '5%'}} />
+              {renderBlockedPoint()}
+            </View>
+          </ScrollView>
+          <View style={styles.footer}>{renderRedeemButton()}</View>
+        </Body>
       </View>
       {renderConfirmationDialog()}
       {renderImageRedeemSuccess()}

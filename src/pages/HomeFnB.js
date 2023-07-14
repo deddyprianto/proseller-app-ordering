@@ -9,20 +9,25 @@ import {RefreshControl, ScrollView, SafeAreaView} from 'react-native';
 
 import BannerFnB from '../components/bannerFnB';
 
-import {Header} from '../components/layout';
+import {Body, Header} from '../components/layout';
 import Menu from '../components/menu/Menu';
 
 const HomeFnB = ({handleOnRefresh, isRefresh}) => {
   return (
     <SafeAreaView>
       <Header isMiddleLogo isRemoveBackIcon />
-      <ScrollView
-        refreshControl={
-          <RefreshControl refreshing={isRefresh} onRefresh={handleOnRefresh} />
-        }>
-        <BannerFnB bottom={-20} />
-        <Menu />
-      </ScrollView>
+      <Body>
+        <ScrollView
+          refreshControl={
+            <RefreshControl
+              refreshing={isRefresh}
+              onRefresh={handleOnRefresh}
+            />
+          }>
+          <BannerFnB bottom={-20} />
+          <Menu />
+        </ScrollView>
+      </Body>
     </SafeAreaView>
   );
 };

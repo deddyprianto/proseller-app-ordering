@@ -38,6 +38,7 @@ import {isEmptyObject} from '../helper/CheckEmpty';
 
 import Theme from '../theme';
 import {LATITUDE_SINGAPORE, LONGITUDE_SINGAPORE} from '../constant/location';
+import {Body} from '../components/layout';
 
 const useStyles = () => {
   const theme = Theme();
@@ -491,15 +492,19 @@ const AddNewAddress = ({address}) => {
 
   const renderBody = () => {
     return (
-      <ScrollView style={styles.scrollView}>
-        {renderDeliveryDetailFields()}
-        <View style={styles.divider} />
-        {renderRecipientDetailFields()}
-        <View style={styles.divider} />
-        {renderMap()}
-        {renderCheckBox()}
-        <View style={styles.marginTop16} />
-      </ScrollView>
+      <View style={{flex: 1}}>
+        <Body>
+          <ScrollView style={styles.scrollView}>
+            {renderDeliveryDetailFields()}
+            <View style={styles.divider} />
+            {renderRecipientDetailFields()}
+            <View style={styles.divider} />
+            {renderMap()}
+            {renderCheckBox()}
+            <View style={styles.marginTop16} />
+          </ScrollView>
+        </Body>
+      </View>
     );
   };
   const handleActive = () => {

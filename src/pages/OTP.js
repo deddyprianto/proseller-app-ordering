@@ -16,7 +16,7 @@ import {
 
 import {sendOTP, loginUser} from '../actions/auth.actions';
 
-import {Header} from '../components/layout';
+import {Body, Header} from '../components/layout';
 import OTPField from '../components/fieldOTP';
 import LoadingScreen from '../components/loadingScreen';
 import OneSignal from 'react-native-onesignal';
@@ -39,7 +39,6 @@ const useStyles = () => {
     container: {
       display: 'flex',
       paddingHorizontal: 16,
-      backgroundColor: theme.colors.background,
     },
     touchableNext: {
       marginTop: 32,
@@ -325,15 +324,17 @@ const OTP = ({isLogin, method, methodValue}) => {
       ) : (
         <Header onBackBtn={onBackHandle} isMiddleLogo />
       )}
-      <KeyboardAwareScrollView>
-        <View style={styles.container}>
-          {renderTextHeader()}
-          {renderTextVerify()}
-          {renderOtpField()}
-          {renderResendOTP()}
-          {renderButtonNext()}
-        </View>
-      </KeyboardAwareScrollView>
+      <Body>
+        <KeyboardAwareScrollView>
+          <View style={styles.container}>
+            {renderTextHeader()}
+            {renderTextVerify()}
+            {renderOtpField()}
+            {renderResendOTP()}
+            {renderButtonNext()}
+          </View>
+        </KeyboardAwareScrollView>
+      </Body>
       <GlobalModal
         onBackdropPress={onClosePopupCancel}
         isVisible={openCancelVerification}

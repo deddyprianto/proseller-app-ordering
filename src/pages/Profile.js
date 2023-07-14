@@ -28,15 +28,13 @@ import ConfirmationDialog from '../components/confirmationDialog';
 import MyECardModal from '../components/modal/MyECardModal';
 import moment from 'moment';
 import DeviceBrightness from '@adrianso/react-native-device-brightness';
+import {Body} from '../components/layout';
 
 const WIDTH = Dimensions.get('window').width;
 
 const useStyles = () => {
   const theme = Theme();
   const styles = StyleSheet.create({
-    root: {
-      backgroundColor: theme.colors.background,
-    },
     primaryColor: {
       color: theme.colors.brandPrimary,
     },
@@ -744,19 +742,21 @@ const Profile = props => {
 
   return (
     <SafeAreaView>
-      <ScrollView style={styles.root}>
-        <LoadingScreen loading={isLoading} />
-        <Image
-          source={appConfig.imageBackgroundProfile}
-          resizeMode="contain"
-          style={styles.imageBackgroundProfile}
-        />
-        {renderProfileHeader()}
-        {renderSettings()}
-        {renderDeleteAccountConfirmationDialog()}
-        {renderLogoutConfirmationDialog()}
-        {renderMyECardModal()}
-      </ScrollView>
+      <Body>
+        <ScrollView>
+          <LoadingScreen loading={isLoading} />
+          <Image
+            source={appConfig.imageBackgroundProfile}
+            resizeMode="contain"
+            style={styles.imageBackgroundProfile}
+          />
+          {renderProfileHeader()}
+          {renderSettings()}
+          {renderDeleteAccountConfirmationDialog()}
+          {renderLogoutConfirmationDialog()}
+          {renderMyECardModal()}
+        </ScrollView>
+      </Body>
     </SafeAreaView>
   );
 };

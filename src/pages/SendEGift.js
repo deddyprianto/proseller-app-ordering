@@ -19,7 +19,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {getGiftCardByCategory, sendGift} from '../actions/gift.action';
 import FieldTextInput from '../components/fieldTextInput';
 import CurrencyFormatter from '../helper/CurrencyFormatter';
-import {Header} from '../components/layout';
+import {Body, Header} from '../components/layout';
 import LoadingScreen from '../components/loadingScreen';
 
 import {Actions} from 'react-native-router-flux';
@@ -521,20 +521,22 @@ const SendEGift = ({categoryId}) => {
   };
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{flex: 1}}>
       <Header customTitle={renderTextSentGift()} />
-      <KeyboardAwareScrollView style={styles.container}>
-        <LoadingScreen loading={isLoading} />
-        {renderHeader()}
-        {renderTextInstruction()}
-        {renderPickDesign()}
-        {renderValueOfVoucher()}
-        {renderTextInputQuantity()}
-        {renderGiftTo()}
-        {renderPaymentMethod()}
-        {renderButtonPayment()}
-        {renderConfirmationDialog()}
-      </KeyboardAwareScrollView>
+      <Body style={{flex: 1}}>
+        <KeyboardAwareScrollView style={styles.container}>
+          <LoadingScreen loading={isLoading} />
+          {renderHeader()}
+          {renderTextInstruction()}
+          {renderPickDesign()}
+          {renderValueOfVoucher()}
+          {renderTextInputQuantity()}
+          {renderGiftTo()}
+          {renderPaymentMethod()}
+          {renderButtonPayment()}
+          {renderConfirmationDialog()}
+        </KeyboardAwareScrollView>
+      </Body>
     </SafeAreaView>
   );
 };
