@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import Swiper from 'react-native-swiper';
 import Theme from '../../theme';
@@ -47,26 +47,27 @@ const useStyles = () => {
     activeDot: {
       opacity: 1,
       margin: 3,
-      backgroundColor: theme.colors.buttonActive,
       width: 36,
       height: 8,
       borderRadius: 50,
+      backgroundColor: theme.colors.buttonActive,
     },
     inactiveDot: {
       opacity: 0.5,
       margin: 3,
-      backgroundColor: theme.colors.accent,
       width: 8,
       height: 8,
       borderRadius: 50,
+      backgroundColor: theme.colors.accent,
     },
   });
   return styles;
 };
 
-const BannerFnB = ({bottom = 0}) => {
+const BannerFnB = ({bottom = 0, placement}) => {
   const styles = useStyles();
   const dispatch = useDispatch();
+  const [bannerList, setBannerList] = useState([]);
 
   const defaultOutlet = useSelector(
     state => state.storesReducer.defaultOutlet.defaultOutlet,
@@ -96,6 +97,26 @@ const BannerFnB = ({bottom = 0}) => {
     loadData();
   }, [dispatch]);
 
+  useEffect(() => {
+    let result = [];
+
+    switch (placement) {
+      case 'bottom':
+        result = banners.filter(row => row?.placement === 'BOTTOM');
+        break;
+
+      case 'top':
+        result = banners.filter(row => row?.placement === 'TOP');
+        break;
+
+      default:
+        result = banners;
+        break;
+    }
+
+    setBannerList(result);
+  }, [placement, banners]);
+
   const handleBannerClick = item => {
     return Actions.storeDetailPromotion({
       dataPromotion: item,
@@ -104,7 +125,7 @@ const BannerFnB = ({bottom = 0}) => {
   };
 
   const renderImages = () => {
-    const result = banners?.map((banner, index) => {
+    const result = bannerList?.map((banner, index) => {
       const styleImage =
         bannerHeight === '720' ? styles.imageLarge : styles.imageSmall;
       return (
@@ -125,7 +146,7 @@ const BannerFnB = ({bottom = 0}) => {
     return result;
   };
 
-  if (!isEmptyArray(banners)) {
+  if (!isEmptyArray(bannerList)) {
     if (bannerSize) {
       const styleWrap =
         bannerHeight === '720' ? styles.wrapLarge : styles.wrapSmall;
