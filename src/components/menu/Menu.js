@@ -48,8 +48,13 @@ const useStyles = () => {
       flexDirection: 'row',
       justifyContent: 'space-between',
     },
-    bottom: {
-      height: HEIGHT * 0.3,
+    bottomBannerLarge: {
+      height: 222,
+      width: '100%',
+      marginBottom: 100,
+    },
+    bottomBannerSmall: {
+      height: 132,
       width: '100%',
       marginBottom: 100,
     },
@@ -179,6 +184,10 @@ const Menu = () => {
     state => state.userReducer?.getUser?.userDetails,
   );
 
+  const bannerSize = useSelector(
+    state => state.settingReducer?.bannerSizeSettings?.bannerSize,
+  );
+
   useEffect(() => {
     if (userDetail) {
       const userDecrypt = CryptoJS.AES.decrypt(
@@ -297,6 +306,23 @@ const Menu = () => {
     );
   };
 
+  const renderImageBottom = () => {
+    const sizes = bannerSize?.split('x') || [];
+    const bannerHeight = sizes[1] || '480';
+    const styleWrap =
+      bannerHeight === '720'
+        ? styles.bottomBannerLarge
+        : styles.bottomBannerSmall;
+
+    return (
+      <Image
+        style={styleWrap}
+        source={appConfig.imageAdditionalBanner}
+        resizeMode="stretch"
+      />
+    );
+  };
+
   return (
     <View style={styles.root}>
       <LoadingScreen loading={isLoading} />
@@ -314,11 +340,7 @@ const Menu = () => {
         {renderSendGift()}
       </View>
       <View style={styles.divider} />
-      <Image
-        style={styles.bottom}
-        source={appConfig.imageAdditionalBanner}
-        resizeMode="contain"
-      />
+      {renderImageBottom()}
       <TextWarningModal
         open={isOpenModal}
         handleClose={() => {
