@@ -453,12 +453,7 @@ class Store extends Component {
 
     const {intlData} = this.props;
     return (
-      <SafeAreaView
-        style={
-          Actions.currentScene !== 'pageIndex'
-            ? {marginBottom: 30}
-            : {marginBottom: 0}
-        }>
+      <SafeAreaView style={{flex: 1, marginBottom: 50}}>
         {Actions.currentScene !== 'pageIndex' && (
           <View
             style={{
@@ -536,7 +531,7 @@ class Store extends Component {
                     </Text>
                   </View>
                 ) : (
-                  <View>
+                  <View style={{flex: 1}}>
                     <StoreStores
                       intlData={intlData}
                       refreshProducts={this.props.refreshProducts}
