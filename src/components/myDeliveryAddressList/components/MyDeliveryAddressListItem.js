@@ -9,6 +9,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import CryptoJS from 'react-native-crypto-js';
 import {Actions} from 'react-native-router-flux';
 import DashedLine from 'react-native-dashed-line';
+import En from 'react-native-vector-icons/Entypo';
 
 import {StyleSheet, View, Text, TouchableOpacity, Image} from 'react-native';
 import awsConfig from '../../../config/awsConfig';
@@ -19,7 +20,12 @@ import LoadingScreen from '../../loadingScreen';
 import appConfig from '../../../config/appConfig';
 import Theme from '../../../theme';
 import ConfirmationDialog from '../../confirmationDialog';
-
+import AddressPick from '../../../assets/svg/AddressPick';
+import GlobalButton from '../../button/GlobalButton';
+import ThreeDot from '../../../assets/svg/ThreeDotSvg';
+import GlobalModal from '../../modal/GlobalModal';
+import GlobalText from '../../globalText';
+import ModalAction from '../../modal/ModalAction';
 const useStyles = () => {
   const theme = Theme();
   const styles = StyleSheet.create({
@@ -52,11 +58,10 @@ const useStyles = () => {
     header: {
       display: 'flex',
       flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'flex-start',
+      alignItems: 'center',
     },
     body: {
-      marginBottom: 16,
+      marginTop: 16,
       display: 'flex',
       flexDirection: 'column',
     },
@@ -78,19 +83,19 @@ const useStyles = () => {
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textTagAddress: {
-      color: theme.colors.text4,
-      fontSize: theme.fontSize[12],
-      fontFamily: theme.fontFamily.poppinsMedium,
+      fontSize: 16,
+      fontFamily: theme.fontFamily.poppinsSemiBold,
     },
     textNameAndPhoneNumber: {
       color: theme.colors.text1,
-      fontSize: theme.fontSize[12],
+      fontSize: 16,
       fontFamily: theme.fontFamily.poppinsBold,
     },
     textStreetName: {
       color: theme.colors.text1,
-      fontSize: theme.fontSize[12],
+      fontSize: 14,
       fontFamily: theme.fontFamily.poppinsMedium,
+      marginTop: 8,
     },
     textLocationPinned: {
       color: theme.colors.primary,
@@ -108,10 +113,7 @@ const useStyles = () => {
       justifyContent: 'center',
       alignItems: 'center',
       borderRadius: 100,
-      paddingHorizontal: 8,
       paddingVertical: 3,
-      backgroundColor: theme.colors.primary,
-      marginBottom: 16,
     },
     viewLocation: {
       display: 'flex',
@@ -163,6 +165,49 @@ const useStyles = () => {
       tintColor: theme.colors.text2,
       marginRight: 4,
     },
+    addressPickContainer: {
+      position: 'absolute',
+      left: -16,
+    },
+    editButtonContainer: {
+      flexDirection: 'row',
+      width: '100%',
+      justifyContent: 'space-between',
+    },
+    bottomButtonContainer: {
+      height: 36,
+    },
+    editBtnContainer: {
+      width: '80%',
+    },
+    threeDotBtnContainer: {
+      width: '15%',
+    },
+    defaultContainer: {
+      paddingVertical: 4,
+      paddingHorizontal: 8,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: theme.colors.primary,
+      marginLeft: 8,
+      borderRadius: 8,
+    },
+    defaultText: {
+      color: 'white',
+      fontFamily: theme.fontFamily.poppinsMedium,
+      fontSize: 12,
+    },
+    optionMenuContainer: {
+      paddingVertical: 8,
+    },
+    divideLine: {
+      height: 1,
+      backgroundColor: theme.colors.greyScale3,
+      marginVertical: 8,
+    },
+    scrollContainerStyle: {
+      paddingBottom: 16,
+    },
   });
   return styles;
 };
@@ -177,7 +222,10 @@ const MyDeliveryAddressItem = ({item, fromScene, handleResetProvider}) => {
   const userDetail = useSelector(
     state => state.userReducer.getUser.userDetails,
   );
-
+  const [openAnotherOption, setOpenAnotherOption] = React.useState(false);
+  const [changeDefaultAddress, setChangeDefaultAddress] = React.useState(false);
+  const [openDeleteModal, setOpenDeleteModal] = React.useState(false);
+  const [openSelectModal, setOpenSelectModal] = React.useState(false);
   const isFromProfileScene = fromScene === 'profile';
 
   useEffect(() => {
@@ -197,6 +245,7 @@ const MyDeliveryAddressItem = ({item, fromScene, handleResetProvider}) => {
   }, [userDetail]);
 
   const handleOpenConfirmationModal = () => {
+    console.log('tes');
     const isAlreadySelected = selectedIndex === item?.index;
     if (!isAlreadySelected) {
       setIsOpenModal(true);
@@ -218,42 +267,52 @@ const MyDeliveryAddressItem = ({item, fromScene, handleResetProvider}) => {
 
     setIsLoading(true);
     await dispatch(updateUser(payload));
-    handleResetProvider();
+    if (handleResetProvider && typeof handleResetProvider === 'function') {
+      handleResetProvider();
+    }
     setIsLoading(false);
     handleCloseConfirmationModal();
+    handleToggleSelectModal();
   };
-
-  const renderDividerDashed = () => {
-    return (
-      <DashedLine
-        dashLength={10}
-        dashThickness={0.5}
-        dashGap={5}
-        dashColor={styles.primaryColor.color}
-      />
-    );
+  const handleOpenAnotherOption = () => setOpenAnotherOption(true);
+  const handleCloseOptionModal = () => {
+    setOpenAnotherOption(false);
   };
-
+  const handleCloseDefaultModal = () => setChangeDefaultAddress(false);
+  const handleToggleDefaltAddress = async () => {
+    await handleCloseOptionModal();
+    setTimeout(() => {
+      setChangeDefaultAddress(true);
+    }, 500);
+  };
+  const handleOpenDeleteModal = async () => {
+    await handleCloseOptionModal();
+    setTimeout(() => {
+      setOpenDeleteModal(true);
+    }, 500);
+  };
+  const handleCloseDeleteModal = () => setOpenDeleteModal(false);
   const renderTagAddress = () => {
     return (
-      <View style={styles.viewTagAddress}>
+      <View style={[styles.viewTagAddress]}>
         <Text style={styles.textTagAddress}>{item?.tagAddress}</Text>
+        {item?.isDefault ? (
+          <View style={styles.defaultContainer}>
+            <GlobalText style={styles.defaultText}>Default</GlobalText>
+          </View>
+        ) : null}
       </View>
     );
-  };
-
-  const renderDefaultText = () => {
-    if (item?.isDefault) {
-      return <Text style={styles.textDefault}>Default</Text>;
-    }
   };
 
   const renderHeader = () => {
     if (item?.tagAddress) {
       return (
         <View style={styles.header}>
+          <View style={styles.addressPickContainer}>
+            <AddressPick />
+          </View>
           {renderTagAddress()}
-          {renderDefaultText()}
         </View>
       );
     }
@@ -263,65 +322,42 @@ const MyDeliveryAddressItem = ({item, fromScene, handleResetProvider}) => {
     return (
       <View style={styles.body}>
         <Text style={styles.textNameAndPhoneNumber}>
-          {item?.recipient?.name} - {item?.recipient?.phoneNumber}
+          {item?.recipient?.name}
         </Text>
-        <Text style={styles.textStreetName}>{item.streetName}</Text>
+        <Text style={styles.textStreetName}>{item?.streetName}</Text>
       </View>
     );
-  };
-
-  const renderLocationPinned = () => {
-    if (!isEmptyObject(item?.coordinate)) {
-      return (
-        <View style={styles.viewLocation}>
-          <Image
-            source={appConfig.iconLocation}
-            style={styles.iconLocationPinned}
-          />
-          <Text style={styles.textLocationPinned}>Location Already Pinned</Text>
-        </View>
-      );
-    }
-  };
-
-  const renderLocationNotPinned = () => {
-    if (!isEmptyObject(item?.coordinate)) {
-      return (
-        <View style={styles.viewLocation}>
-          <Image
-            source={appConfig.iconLocation}
-            style={styles.iconLocationNotPinned}
-          />
-          <Text style={styles.textLocationNotPinned}>Not pinned yet</Text>
-        </View>
-      );
-    }
   };
 
   const renderEditButton = () => {
     return (
-      <TouchableOpacity
-        style={styles.viewEdit}
-        onPress={() => {
-          Actions.addNewAddress({address: item});
-        }}>
-        <Image source={appConfig.iconEdit} style={styles.iconEdit} />
-        <Text style={styles.textEdit}>Edit</Text>
-      </TouchableOpacity>
+      <View style={styles.editButtonContainer}>
+        <GlobalButton
+          isOutline
+          containerStyle={[
+            styles.editBtnContainer,
+            styles.bottomButtonContainer,
+          ]}
+          title="Edit Address"
+          onPress={() => {
+            Actions.addNewAddress({address: item});
+          }}
+        />
+        <GlobalButton
+          isOutline
+          containerStyle={[
+            styles.threeDotBtnContainer,
+            styles.bottomButtonContainer,
+          ]}
+          onPress={handleOpenAnotherOption}>
+          <ThreeDot />
+        </GlobalButton>
+      </View>
     );
   };
 
   const renderFooter = () => {
-    const location = item?.coordinate?.latitude
-      ? renderLocationPinned()
-      : renderLocationNotPinned();
-
-    return (
-      <View style={styles.footer}>
-        {location}
-        {renderEditButton()}
-      </View>
-    );
+    return <View style={styles.footer}>{renderEditButton()}</View>;
   };
 
   const handleStyleRoot = () => {
@@ -354,21 +390,65 @@ const MyDeliveryAddressItem = ({item, fromScene, handleResetProvider}) => {
     }
   };
 
+  const handleToggleSelectModal = () => {
+    setOpenSelectModal(prevState => !prevState);
+  };
+
   return (
     <>
       <LoadingScreen loading={isLoading} />
       <TouchableOpacity
         style={handleStyleRoot()}
-        disabled={isFromProfileScene}
-        onPress={() => {
-          handleOpenConfirmationModal();
-        }}>
+        disabled={item?.isDefault}
+        onPress={handleToggleSelectModal}>
         {renderHeader()}
         {renderBody()}
-        {renderDividerDashed()}
         {renderFooter()}
       </TouchableOpacity>
-      {renderConfirmationDialog()}
+      {/* {renderConfirmationDialog()} */}
+      <GlobalModal
+        isBottomModal
+        isVisible={openAnotherOption}
+        onBackdropPress={handleCloseOptionModal}
+        closeModal={handleCloseOptionModal}
+        title="Another Options">
+        <TouchableOpacity
+          onPress={handleToggleDefaltAddress}
+          style={styles.optionMenuContainer}>
+          <GlobalText>Set as default address</GlobalText>
+        </TouchableOpacity>
+        <View style={styles.divideLine} />
+        <TouchableOpacity
+          onPress={handleOpenDeleteModal}
+          style={styles.optionMenuContainer}>
+          <GlobalText>Delete address</GlobalText>
+        </TouchableOpacity>
+      </GlobalModal>
+      <ModalAction
+        isVisible={changeDefaultAddress}
+        closeModal={handleCloseDefaultModal}
+        title="Change Default Address"
+        description="Are you sure to set this address as your default address?"
+        onCancel={handleCloseDefaultModal}
+        scrollContainerStyle={styles.scrollContainerStyle}
+      />
+      <ModalAction
+        isVisible={openDeleteModal}
+        closeModal={handleCloseDeleteModal}
+        title="Delete Address"
+        description="Are you sure you want to delete this address?"
+        onCancel={handleCloseDeleteModal}
+        scrollContainerStyle={styles.scrollContainerStyle}
+      />
+      <ModalAction
+        isVisible={openSelectModal}
+        closeModal={handleToggleSelectModal}
+        onCancel={handleToggleSelectModal}
+        title="Select Address"
+        description="Are you sure you want to select this address
+as the delivery address?"
+        onApprove={handleSelectAddress}
+      />
     </>
   );
 };
