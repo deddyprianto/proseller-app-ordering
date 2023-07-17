@@ -14,6 +14,7 @@ import {
 
 import awsConfig from '../config/awsConfig';
 
+import {Body, Header} from '../components/layout';
 import FieldTextInput from '../components/fieldTextInput';
 import FieldPhoneNumberInput from '../components/fieldPhoneNumberInput';
 
@@ -30,7 +31,6 @@ import CalendarSvg from '../assets/svg/CalendareSvg';
 import DatePicker from 'react-native-date-picker';
 import moment from 'moment';
 import {fieldValidation} from '../helper/Validation';
-import {Header} from '../components/layout';
 
 const useStyles = () => {
   const theme = Theme();
@@ -44,7 +44,6 @@ const useStyles = () => {
       // justifyContent: 'center',
       // alignItems: 'center',
       paddingHorizontal: 16,
-      backgroundColor: theme.colors.background,
     },
     image: {
       width: 150,
@@ -463,21 +462,24 @@ const RegisterForm = ({registerMethod, inputValue, approvedData}) => {
           ) : (
             <Header isMiddleLogo />
           )}
-          <KeyboardAwareScrollView>
-            <ScrollView
-              nestedScrollEnabled={true}
-              contentContainerStyle={styles.containerStyle}
-              style={styles.container}>
-              {renderTextHeader()}
-              {renderNameInput()}
-              {renderEmailOrPhoneInput()}
-              {renderCustomField()}
-              <View style={styles.divider} />
-              {renderMessage()}
-              {renderButtonNext()}
-            </ScrollView>
-            {memoDatePicker}
-          </KeyboardAwareScrollView>
+
+          <Body style={{flex: 1}}>
+            <KeyboardAwareScrollView>
+              <ScrollView
+                nestedScrollEnabled={true}
+                contentContainerStyle={styles.containerStyle}
+                style={styles.container}>
+                {renderTextHeader()}
+                {renderNameInput()}
+                {renderEmailOrPhoneInput()}
+                {renderCustomField()}
+                <View style={styles.divider} />
+                {renderMessage()}
+                {renderButtonNext()}
+              </ScrollView>
+              {memoDatePicker}
+            </KeyboardAwareScrollView>
+          </Body>
         </>
       )}
     </SafeAreaView>

@@ -24,6 +24,7 @@ import colorConfig from '../config/colorConfig';
 import Loader from '../components/loader';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {getTermsConditions} from '../actions/order.action';
+import {Body} from '../components/layout';
 
 class TermsCondition extends Component {
   constructor(props) {
@@ -70,37 +71,44 @@ class TermsCondition extends Component {
     const {data} = this.state;
     return (
       <SafeAreaView style={styles.container}>
-        {this.state.loading && <Loader />}
-        <View
-          style={[
-            styles.header,
-            {backgroundColor: colorConfig.pageIndex.backgroundColor},
-          ]}>
-          <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
-            <Icon
-              size={28}
-              name={
-                Platform.OS === 'ios' ? 'ios-arrow-back' : 'md-arrow-round-back'
-              }
-              style={styles.btnBackIcon}
-            />
-            <Text style={styles.btnBackText}> Terms & Conditions </Text>
-          </TouchableOpacity>
-        </View>
-        <ScrollView>
+        <Body>
+          {this.state.loading && <Loader />}
           <View
-            style={{
-              paddingHorizontal: 15,
-              paddingVertical: 10,
-              paddingBottom: 50,
-            }}>
-            <Text
-              selectable
-              style={{color: colorConfig.store.titleSelected, lineHeight: 22}}>
-              {data}
-            </Text>
+            style={[
+              styles.header,
+              {backgroundColor: colorConfig.pageIndex.backgroundColor},
+            ]}>
+            <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
+              <Icon
+                size={28}
+                name={
+                  Platform.OS === 'ios'
+                    ? 'ios-arrow-back'
+                    : 'md-arrow-round-back'
+                }
+                style={styles.btnBackIcon}
+              />
+              <Text style={styles.btnBackText}> Terms & Conditions </Text>
+            </TouchableOpacity>
           </View>
-        </ScrollView>
+          <ScrollView>
+            <View
+              style={{
+                paddingHorizontal: 15,
+                paddingVertical: 10,
+                paddingBottom: 50,
+              }}>
+              <Text
+                selectable
+                style={{
+                  color: colorConfig.store.titleSelected,
+                  lineHeight: 22,
+                }}>
+                {data}
+              </Text>
+            </View>
+          </ScrollView>
+        </Body>
       </SafeAreaView>
     );
   }

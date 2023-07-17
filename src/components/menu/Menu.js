@@ -26,8 +26,6 @@ import {dataStores, getOutletById} from '../../actions/stores.action';
 import {changeOrderingMode, getOrderingMode} from '../../actions/order.action';
 import LoadingScreen from '../loadingScreen/LoadingScreen';
 
-const HEIGHT = Dimensions.get('window').height;
-
 const useStyles = () => {
   const theme = Theme();
   const styles = StyleSheet.create({
@@ -47,11 +45,6 @@ const useStyles = () => {
       display: 'flex',
       flexDirection: 'row',
       justifyContent: 'space-between',
-    },
-    bottom: {
-      height: HEIGHT * 0.3,
-      width: '100%',
-      marginBottom: 100,
     },
     textWelcome: {
       width: '100%',
@@ -314,11 +307,6 @@ const Menu = () => {
         {renderSendGift()}
       </View>
       <View style={styles.divider} />
-      <Image
-        style={styles.bottom}
-        source={appConfig.imageAdditionalBanner}
-        resizeMode="contain"
-      />
       <TextWarningModal
         open={isOpenModal}
         handleClose={() => {

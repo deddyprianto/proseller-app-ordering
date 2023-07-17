@@ -20,6 +20,7 @@ import {getAccountPayment} from '../actions/payment.actions';
 import OneSignal from 'react-native-onesignal';
 import {getBasket, getPendingCart} from '../actions/order.action';
 import appConfig from '../config/appConfig';
+import {Body} from '../components/layout';
 
 class History extends Component {
   constructor(props) {
@@ -71,17 +72,21 @@ class History extends Component {
     const {intlData} = this.props;
     return (
       <SafeAreaView style={styles.container}>
-        {this.state.isLoading && <Loader />}
-        <View style={{backgroundColor: colorConfig.store.defaultColor}}>
-          <View style={{flexDirection: 'row', justifyContent: 'center'}}>
-            <Text style={styles.btnBackText}>
-              {' '}
-              {appConfig.appName === 'fareastflora' ? 'Orders' : 'History'}{' '}
-            </Text>
+        <Body>
+          {this.state.isLoading && <Loader />}
+          <View style={{backgroundColor: colorConfig.store.defaultColor}}>
+            <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+              <Text style={styles.btnBackText}>
+                {' '}
+                {appConfig.appName === 'fareastflora'
+                  ? 'Orders'
+                  : 'History'}{' '}
+              </Text>
+            </View>
+            {/*<View style={styles.line} />*/}
           </View>
-          {/*<View style={styles.line} />*/}
-        </View>
-        <HistoryMenuTab />
+          <HistoryMenuTab />
+        </Body>
       </SafeAreaView>
     );
   }

@@ -20,9 +20,12 @@ export const dataPromotion = () => {
       );
 
       if (response.success) {
+        const filterResponse = response.response.data.filter(
+          row => row.type === 'app',
+        );
         dispatch({
           type: 'DATA_ALL_PROMOTION',
-          data: response.response.data,
+          data: filterResponse,
         });
       }
     } catch (error) {

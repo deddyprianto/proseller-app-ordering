@@ -15,6 +15,7 @@ const useStyles = () => {
       marginHorizontal: 16,
       marginVertical: 8,
       borderColor: theme.colors.textQuaternary,
+      backgroundColor: theme.colors.background,
     },
     rootSelected: {
       display: 'flex',

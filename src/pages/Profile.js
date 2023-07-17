@@ -39,15 +39,13 @@ import Voucher from '../assets/svg/VoucherSvg';
 import StoreSvg from '../assets/svg/StoreSvg';
 import RefundSvg from '../assets/svg/RefundSvg';
 import ContactSvg from '../assets/svg/ContactSvg';
+import {Body} from '../components/layout';
 
 const WIDTH = Dimensions.get('window').width;
 
 const useStyles = () => {
   const theme = Theme();
   const styles = StyleSheet.create({
-    root: {
-      backgroundColor: theme.colors.background,
-    },
     primaryColor: {
       color: theme.colors.brandPrimary,
     },
@@ -859,29 +857,31 @@ const Profile = props => {
 
   return (
     <SafeAreaView>
-      <Navbar title="Profile" />
-      <ScrollView
-        contentContainerStyle={styles.containerStyle}
-        style={styles.root}>
-        <View style={styles.backgroundProfile}>
-          <BgProfileSvg />
-        </View>
-        <LoadingScreen loading={isLoading} />
-        <Image
-          source={appConfig.imageBackgroundProfile}
-          resizeMode="contain"
-          style={styles.imageBackgroundProfile}
-        />
-        {renderProfileHeader()}
-        <>
-          {appConfig.appName === 'fareastflora'
-            ? renderSettingV2()
-            : renderSettings()}
-        </>
-        {renderDeleteAccountConfirmationDialog()}
-        {renderLogoutConfirmationDialog()}
-        {renderMyECardModal()}
-      </ScrollView>
+      <Body>
+        <Navbar title="Profile" />
+        <ScrollView
+          contentContainerStyle={styles.containerStyle}
+          style={styles.root}>
+          <View style={styles.backgroundProfile}>
+            <BgProfileSvg />
+          </View>
+          <LoadingScreen loading={isLoading} />
+          <Image
+            source={appConfig.imageBackgroundProfile}
+            resizeMode="contain"
+            style={styles.imageBackgroundProfile}
+          />
+          {renderProfileHeader()}
+          <>
+            {appConfig.appName === 'fareastflora'
+              ? renderSettingV2()
+              : renderSettings()}
+          </>
+          {renderDeleteAccountConfirmationDialog()}
+          {renderLogoutConfirmationDialog()}
+          {renderMyECardModal()}
+        </ScrollView>
+      </Body>
     </SafeAreaView>
   );
 };

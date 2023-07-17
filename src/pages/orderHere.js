@@ -36,6 +36,7 @@ import appConfig from '../config/appConfig';
 
 import Theme from '../theme';
 import ProductPresetList from '../components/productPresetList/ProductPresetList';
+import {Body} from '../components/layout';
 
 const useStyles = () => {
   const theme = Theme();

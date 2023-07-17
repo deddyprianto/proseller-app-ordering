@@ -49,6 +49,9 @@ const appConfig = {
   //should be dynamic
   logoMerchant: require('../../native/<%= name.toLowerCase() %>/assets/img/logo.png'),
   logoMerchantWithBackground: require('../../native/<%= name.toLowerCase() %>/assets/img/logo-merchant-with-background.png'),
+
+  imageBackground: require('../../native/<%= name.toLowerCase() %>/assets/img/image-background.png'),
+
   imageOnBoarding1: require('../../native/<%= name.toLowerCase() %>/assets/img/image-on-boarding-1.png'),
   imageOnBoarding2: require('../../native/<%= name.toLowerCase() %>/assets/img/image-on-boarding-2.png'),
   imageOnBoarding3: require('../../native/<%= name.toLowerCase() %>/assets/img/image-on-boarding-3.png'),
@@ -57,6 +60,8 @@ const appConfig = {
   <% } %>
   imagePointSmallBackground: require('../../native/<%= name.toLowerCase() %>/assets/img/image-point-small-background.png'),
   imagePointLargeBackground: require('../../native/<%= name.toLowerCase() %>/assets/img/image-point-large-background.png'),
+
+
   //LOGO MARTIN
   // logoMerchant: require('../assets/img/logo.png'),
   // logoMerchantWithBackground: require('../assets/img/logo-merchant-with-background.png'),

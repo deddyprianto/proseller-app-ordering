@@ -16,8 +16,9 @@ import colorConfig from '../config/colorConfig';
 import {useDispatch, useSelector} from 'react-redux';
 import {getGiftCardCategories} from '../actions/gift.action';
 import LoadingScreen from '../components/loadingScreen';
-import {Header} from '../components/layout';
+import {Body, Header} from '../components/layout';
 import {isEmptyArray} from '../helper/CheckEmpty';
+import theme from '../theme';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -37,6 +38,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     borderWidth: 1,
     borderColor: 'black',
+    backgroundColor: 'white',
   },
   viewHeader: {
     width: WIDTH,
@@ -123,16 +125,18 @@ const EGift = () => {
   return (
     <SafeAreaView style={styles.container}>
       <Header customTitle={renderTextSentGift()} />
-      <ScrollView style={styles.container}>
-        <LoadingScreen loading={isLoading} />
-        <View style={styles.viewHeader}>
-          <Text style={styles.textDescription}>
-            Send a gift to your love ones or friends with a custom design
-            voucher
-          </Text>
-        </View>
-        <View style={styles.viewBody}>{renderCategories()}</View>
-      </ScrollView>
+      <Body>
+        <ScrollView style={styles.container}>
+          <LoadingScreen loading={isLoading} />
+          <View style={styles.viewHeader}>
+            <Text style={styles.textDescription}>
+              Send a gift to your love ones or friends with a custom design
+              voucher
+            </Text>
+          </View>
+          <View style={styles.viewBody}>{renderCategories()}</View>
+        </ScrollView>
+      </Body>
     </SafeAreaView>
   );
 };

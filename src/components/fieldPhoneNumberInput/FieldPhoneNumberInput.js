@@ -22,6 +22,7 @@ const useStyles = () => {
       paddingVertical: 10,
       paddingHorizontal: 16,
       borderColor: theme.colors.border1,
+      backgroundColor: theme.colors.background,
     },
     viewCountryPicker: {
       width: 0,
