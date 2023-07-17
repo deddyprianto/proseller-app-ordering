@@ -39,18 +39,20 @@ const useStyles = () => {
 const FAQGroupListItem = ({data}) => {
   const styles = useStyles();
 
-  const renderItem = faq => {
+  const renderItem = (faq, index) => {
     return (
       <View>
         <FAQListItem data={faq} />
-        <View style={styles.divider} />
+        {index < data?.faqs?.length - 1 ? (
+          <View style={styles.divider} />
+        ) : null}
       </View>
     );
   };
 
   const body = () => {
-    const faqList = data?.faqs?.map(faq => {
-      return renderItem(faq);
+    const faqList = data?.faqs?.map((faq, index) => {
+      return renderItem(faq, index);
     });
     return faqList;
   };
