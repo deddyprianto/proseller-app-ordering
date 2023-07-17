@@ -17,6 +17,9 @@ const useStyles = () => {
       height: 1,
       backgroundColor: theme.colors.greyScale3,
     },
+    containerCard: {
+      zIndex: 0,
+    },
   });
   return styles;
 };
@@ -44,7 +47,7 @@ const FAQList = ({faqs, searchQuery, onRefresh}) => {
       const result = faqs.map(faq => {
         return <FAQGroupListItem data={faq} />;
       });
-      return <View>{result}</View>;
+      return <View style={styles.containerCard}>{result}</View>;
     }
   };
 
