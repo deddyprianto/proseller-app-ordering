@@ -26,6 +26,7 @@ import awsConfig from '../config/awsConfig';
 
 import Theme from '../theme';
 import {isEmptyArray} from '../helper/CheckEmpty';
+import {Body} from '../components/layout';
 
 const useStyles = () => {
   const theme = Theme();
@@ -104,11 +105,15 @@ const MyDeliveryAddress = ({fromScene, handleResetProvider}) => {
   return (
     <SafeAreaView style={styles.root}>
       <Header title="My Delivery Address" />
-      <MyDeliveryAddressList
-        deliveryAddress={deliveryAddress}
-        fromScene={fromScene}
-        handleResetProvider={handleResetProvider}
-      />
+      <View style={{flex: 1}}>
+        <Body>
+          <MyDeliveryAddressList
+            deliveryAddress={deliveryAddress}
+            fromScene={fromScene}
+            handleResetProvider={handleResetProvider}
+          />
+        </Body>
+      </View>
       {renderFooter()}
     </SafeAreaView>
   );

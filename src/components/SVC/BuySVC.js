@@ -21,6 +21,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
 import Loader from '../loader';
 import {getSVCCard} from '../../actions/SVC.action';
+import {Body} from '../layout';
 
 class BuySVC extends Component {
   constructor(props) {
@@ -106,90 +107,96 @@ class BuySVC extends Component {
             </View>
           </View>
         </View>
-        <ScrollView
-          refreshControl={
-            <RefreshControl
-              refreshing={this.state.refreshing}
-              onRefresh={this._onRefresh}
-            />
-          }>
-          <View style={styles.container}>
-            <View>
-              {this.props.svc == undefined || this.props.svc.length === 0 ? (
-                <View
-                  style={{
-                    alignItems: 'center',
-                    margin: 20,
-                  }}>
-                  <Text
+        <Body>
+          <ScrollView
+            refreshControl={
+              <RefreshControl
+                refreshing={this.state.refreshing}
+                onRefresh={this._onRefresh}
+              />
+            }>
+            <View style={styles.container}>
+              <View>
+                {this.props.svc == undefined || this.props.svc.length === 0 ? (
+                  <View
                     style={{
-                      textAlign: 'center',
-                      color: colorConfig.pageIndex.grayColor,
+                      alignItems: 'center',
+                      margin: 20,
                     }}>
-                    Data is empty
-                  </Text>
-                </View>
-              ) : (
-                this.props.svc.map((item, keys) => (
-                  <View key={keys}>
-                    {
-                      <TouchableOpacity
-                        style={styles.voucherItem}
-                        onPress={() => this.pageDetail(item)}>
-                        <View style={{alignItems: 'center'}}>
-                          <Image
-                            style={
-                              item['image'] != '' && item['image'] != undefined
-                                ? styles.voucherImage1
-                                : styles.voucherImage2
-                            }
-                            source={
-                              item['image'] != '' && item['image'] != undefined
-                                ? {uri: item['image']}
-                                : appConfig.appImageNull
-                            }
-                          />
-                          <View style={styles.vourcherPoint}>
-                            <Text
-                              style={{
-                                color: colorConfig.pageIndex.backgroundColor,
-                                fontSize: 16,
-                                fontWeight: 'bold',
-                                textAlign: 'right',
-                              }}>
-                              ${item['retailPrice']}
-                            </Text>
-                          </View>
-                        </View>
-                        <View style={styles.voucherDetail}>
-                          <Text style={styles.nameVoucher}>{item['name']}</Text>
-                          <View style={{flexDirection: 'row'}}>
-                            <Icon
-                              size={15}
-                              name={
-                                Platform.OS === 'ios' ? 'ios-list' : 'md-list'
-                              }
-                              style={{
-                                color: colorConfig.store.secondaryColor,
-                                marginRight: 3,
-                              }}
-                            />
-                            <Text style={styles.descVoucher}>
-                              {item['description'] !== null &&
-                              item['description'] !== undefined
-                                ? item['description'].substr(0, 100)
-                                : 'No description for this voucher'}
-                            </Text>
-                          </View>
-                        </View>
-                      </TouchableOpacity>
-                    }
+                    <Text
+                      style={{
+                        textAlign: 'center',
+                        color: colorConfig.pageIndex.grayColor,
+                      }}>
+                      Data is empty
+                    </Text>
                   </View>
-                ))
-              )}
+                ) : (
+                  this.props.svc.map((item, keys) => (
+                    <View key={keys}>
+                      {
+                        <TouchableOpacity
+                          style={styles.voucherItem}
+                          onPress={() => this.pageDetail(item)}>
+                          <View style={{alignItems: 'center'}}>
+                            <Image
+                              style={
+                                item['image'] != '' &&
+                                item['image'] != undefined
+                                  ? styles.voucherImage1
+                                  : styles.voucherImage2
+                              }
+                              source={
+                                item['image'] != '' &&
+                                item['image'] != undefined
+                                  ? {uri: item['image']}
+                                  : appConfig.appImageNull
+                              }
+                            />
+                            <View style={styles.vourcherPoint}>
+                              <Text
+                                style={{
+                                  color: colorConfig.pageIndex.backgroundColor,
+                                  fontSize: 16,
+                                  fontWeight: 'bold',
+                                  textAlign: 'right',
+                                }}>
+                                ${item['retailPrice']}
+                              </Text>
+                            </View>
+                          </View>
+                          <View style={styles.voucherDetail}>
+                            <Text style={styles.nameVoucher}>
+                              {item['name']}
+                            </Text>
+                            <View style={{flexDirection: 'row'}}>
+                              <Icon
+                                size={15}
+                                name={
+                                  Platform.OS === 'ios' ? 'ios-list' : 'md-list'
+                                }
+                                style={{
+                                  color: colorConfig.store.secondaryColor,
+                                  marginRight: 3,
+                                }}
+                              />
+                              <Text style={styles.descVoucher}>
+                                {item['description'] !== null &&
+                                item['description'] !== undefined
+                                  ? item['description'].substr(0, 100)
+                                  : 'No description for this voucher'}
+                              </Text>
+                            </View>
+                          </View>
+                        </TouchableOpacity>
+                      }
+                    </View>
+                  ))
+                )}
+              </View>
             </View>
-          </View>
-        </ScrollView>
+          </ScrollView>
+        </Body>
       </SafeAreaView>
     );
   }

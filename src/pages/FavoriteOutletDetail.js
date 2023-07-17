@@ -22,7 +22,7 @@ import {updateUser} from '../actions/user.action';
 
 import FavoriteOutletDetail from '../components/favoriteOutletDetail';
 
-import {Header} from '../components/layout';
+import {Body, Header} from '../components/layout';
 import LoadingScreen from '../components/loadingScreen';
 import awsConfig from '../config/awsConfig';
 import Theme from '../theme';
@@ -142,6 +142,16 @@ const FavoriteOutlets = ({outlet}) => {
     }
   };
 
+  const renderBody = () => {
+    return (
+      <View style={{flex: 1}}>
+        <Body>
+          <FavoriteOutletDetail outlet={outlet} />
+        </Body>
+      </View>
+    );
+  };
+
   const renderBottom = () => {
     const styleButton = isAvailable
       ? styles.viewButtonAvailable
@@ -164,7 +174,7 @@ const FavoriteOutlets = ({outlet}) => {
     <SafeAreaView style={styles.container}>
       <LoadingScreen loading={isLoading} />
       <Header title="Outlets Detail" />
-      <FavoriteOutletDetail outlet={outlet} />
+      {renderBody()}
       {renderBottom()}
     </SafeAreaView>
   );

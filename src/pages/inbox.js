@@ -18,6 +18,7 @@ import appConfig from '../config/appConfig';
 import {dataInbox, readMessage} from '../actions/inbox.action';
 import DetailInbox from '../components/inbox/DetailInbox';
 import {isEmptyArray} from '../helper/CheckEmpty';
+import {Body} from '../components/layout';
 import withHooksComponent from '../components/HOC';
 import ListInbox from '../components/inbox/ListInbox';
 import InboxLoading from '../components/shimmerLoading/InboxLoading';
@@ -194,25 +195,30 @@ class Inbox extends Component {
     let {dataInbox} = this.props;
     return (
       <SafeAreaView style={{flex: 1}}>
-        <View
-          style={{
-            backgroundColor: colorConfig.pageIndex.backgroundColor,
-          }}>
-          <View style={[styles.containerNavbar, styles.shadowBox]}>
-            <Text
-              style={[styles.navbarTitle, {color: this.props.colors.primary}]}>
-              Inbox
-            </Text>
+        <Body>
+          <View
+            style={{
+              backgroundColor: colorConfig.pageIndex.backgroundColor,
+            }}>
+            <View style={[styles.containerNavbar, styles.shadowBox]}>
+              <Text
+                style={[
+                  styles.navbarTitle,
+                  {color: this.props.colors.primary},
+                ]}>
+                Inbox
+              </Text>
+            </View>
           </View>
-        </View>
 
-        {dataInbox != undefined
-          ? dataInbox.Data.length != 0
-            ? this.renderInbox()
-            : this.renderEmptyInbox()
-          : null}
+          {dataInbox != undefined
+            ? dataInbox.Data.length != 0
+              ? this.renderInbox()
+              : this.renderEmptyInbox()
+            : null}
 
-        <DetailInbox ref={this.detailInbox} />
+          <DetailInbox ref={this.detailInbox} />
+        </Body>
       </SafeAreaView>
     );
   }

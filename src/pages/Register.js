@@ -13,7 +13,7 @@ import {
 
 import awsConfig from '../config/awsConfig';
 
-import {Header} from '../components/layout';
+import {Body, Header} from '../components/layout';
 
 import FieldTextInput from '../components/fieldTextInput';
 import FieldPhoneNumberInput from '../components/fieldPhoneNumberInput';
@@ -41,7 +41,6 @@ const useStyles = () => {
       justifyContent: 'center',
       alignItems: 'center',
       paddingHorizontal: 16,
-      backgroundColor: theme.colors.background,
     },
     textCreateNewAccount: {
       color: theme.colors.primary,
@@ -265,27 +264,29 @@ const Register = () => {
         <Header isMiddleLogo />
       )}
 
-      <KeyboardAwareScrollView>
-        {appConfig.appName === 'fareastflora' ? (
-          <RegisterV2
-            emailValue={email}
-            onChangeEmail={value => setEmail(value)}
-            onNext={handleCheckAccount}
-            onTickCheckbox={onTickCheckbox}
-            checkboxValue={approvedData}
-          />
-        ) : (
-          <View style={styles.container}>
-            <Text style={styles.textCreateNewAccount}>
-              Create a new account
-            </Text>
-            {renderTextLogin()}
-            {renderRegisterMethodInput()}
-            {renderButtonNext()}
-            {renderTextChangeMethod()}
-          </View>
-        )}
-      </KeyboardAwareScrollView>
+      <Body style={{flex: 1}}>
+        <KeyboardAwareScrollView>
+          {appConfig.appName === 'fareastflora' ? (
+            <RegisterV2
+              emailValue={email}
+              onChangeEmail={value => setEmail(value)}
+              onNext={handleCheckAccount}
+              onTickCheckbox={onTickCheckbox}
+              checkboxValue={approvedData}
+            />
+          ) : (
+            <View style={styles.container}>
+              <Text style={styles.textCreateNewAccount}>
+                Create a new account
+              </Text>
+              {renderTextLogin()}
+              {renderRegisterMethodInput()}
+              {renderButtonNext()}
+              {renderTextChangeMethod()}
+            </View>
+          )}
+        </KeyboardAwareScrollView>
+      </Body>
     </SafeAreaView>
   );
 };

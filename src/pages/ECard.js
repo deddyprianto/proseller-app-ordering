@@ -15,7 +15,7 @@ import QRCode from 'react-native-qrcode-svg';
 import colorConfig from '../config/colorConfig';
 import awsConfig from '../config/awsConfig';
 
-import {Header} from '../components/layout';
+import {Body, Header} from '../components/layout';
 
 import {useSelector} from 'react-redux';
 
@@ -180,12 +180,14 @@ const ECard = () => {
   return (
     <SafeAreaView>
       <Header customTitle={renderTextECard()} />
-      <ScrollView style={styles.container}>
-        <View style={styles.viewHeader}>
-          {renderQRCode()}
-          {renderHowToUse()}
-        </View>
-      </ScrollView>
+      <Body>
+        <ScrollView style={styles.container}>
+          <View style={styles.viewHeader}>
+            {renderQRCode()}
+            {renderHowToUse()}
+          </View>
+        </ScrollView>
+      </Body>
     </SafeAreaView>
   );
 };
