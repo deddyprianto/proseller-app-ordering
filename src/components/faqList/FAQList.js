@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {View, StyleSheet, ScrollView} from 'react-native';
+import {View, StyleSheet, ScrollView, RefreshControl} from 'react-native';
 
 import {isEmptyArray} from '../../helper/CheckEmpty';
 
@@ -21,12 +21,12 @@ const useStyles = () => {
   return styles;
 };
 
-const FAQList = ({faqs, searchQuery}) => {
+const FAQList = ({faqs, searchQuery, onRefresh}) => {
   const styles = useStyles();
 
   const renderFAQList = () => {
     if (!isEmptyArray(faqs)) {
-      const result = faqs.map(faq => {
+      const result = faqs.map((faq, index) => {
         return (
           <View>
             <FAQListItem data={faq} searchQuery={searchQuery} />
@@ -44,7 +44,7 @@ const FAQList = ({faqs, searchQuery}) => {
       const result = faqs.map(faq => {
         return <FAQGroupListItem data={faq} />;
       });
-      return result;
+      return <View>{result}</View>;
     }
   };
 
@@ -56,7 +56,7 @@ const FAQList = ({faqs, searchQuery}) => {
     }
   };
 
-  return <ScrollView>{renderList()}</ScrollView>;
+  return <View>{renderList()}</View>;
 };
 
 export default FAQList;
