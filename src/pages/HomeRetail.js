@@ -320,9 +320,14 @@ const HomeRetail = () => {
     }
   };
 
-  const onStorePress = () => {
-    const avilableStore =
+  const activeStore = () => {
+    const availableStore =
       stores?.filter(store => store.orderingStatus === 'AVAILABLE') || [];
+    return availableStore;
+  };
+
+  const onStorePress = () => {
+    const avilableStore = activeStore();
     if (avilableStore.length > 1) {
       return Actions.store();
     }
@@ -335,7 +340,12 @@ const HomeRetail = () => {
         <Text numberOfLines={1} style={styles.textHeaderTitle}>
           {defaultOutlet?.name}
         </Text>
-        <Image style={styles.iconArrowDown} source={appConfig.iconArrowDown} />
+        {activeStore().length > 1 ? (
+          <Image
+            style={styles.iconArrowDown}
+            source={appConfig.iconArrowDown}
+          />
+        ) : null}
       </Pressable>
     );
   };
