@@ -245,7 +245,6 @@ const MyDeliveryAddressItem = ({item, fromScene, handleResetProvider}) => {
   }, [userDetail]);
 
   const handleOpenConfirmationModal = () => {
-    console.log('tes');
     const isAlreadySelected = selectedIndex === item?.index;
     if (!isAlreadySelected) {
       setIsOpenModal(true);
@@ -260,11 +259,12 @@ const MyDeliveryAddressItem = ({item, fromScene, handleResetProvider}) => {
     let result = user.deliveryAddress || [];
 
     const payload = {
-      selectedAddress: item,
+      // selectedAddress: item,
       phoneNumber: user.phoneNumber,
-      deliveryAddress: result,
+      // deliveryAddress: result,
+      address: {...item, isDefault: true},
     };
-
+    console.log(payload, 'papa');
     setIsLoading(true);
     await dispatch(updateUser(payload));
     if (handleResetProvider && typeof handleResetProvider === 'function') {

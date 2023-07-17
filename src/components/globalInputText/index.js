@@ -72,6 +72,15 @@ const useStyles = () => {
       backgroundColor: '#fafafa',
       zIndex: 3,
     },
+    maxLexthStyle: {
+      marginLeft: 'auto',
+      marginTop: 4,
+    },
+    maxLengthText: {
+      fontSize: 12,
+      fontFamily: theme.fontFamily.poppinsMedium,
+      color: theme.colors.greyScale5,
+    },
   });
   return styles;
 };
@@ -93,7 +102,7 @@ const useStyles = () => {
  * @property {Array} items
  * @property {Function} onOpen
  * @property {Function} onClose
- * @property {Function}  onChangeItem
+ * @property {Function} onChangeItem
  */
 
 /**
@@ -180,6 +189,13 @@ const GlobalInputText = React.forwardRef((props, ref) => {
         <View style={styles.errorContainer}>
           <GlobalText style={styles.textError}>
             {props.errorMessage}{' '}
+          </GlobalText>
+        </View>
+      ) : null}
+      {props.maxLength ? (
+        <View style={styles.maxLexthStyle}>
+          <GlobalText style={styles.maxLengthText}>
+            {props.value?.length}/{props.maxLength}{' '}
           </GlobalText>
         </View>
       ) : null}

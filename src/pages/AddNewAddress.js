@@ -38,6 +38,9 @@ import {isEmptyObject} from '../helper/CheckEmpty';
 
 import Theme from '../theme';
 import {LATITUDE_SINGAPORE, LONGITUDE_SINGAPORE} from '../constant/location';
+import GlobalInputText from '../components/globalInputText';
+import {Pressable} from 'react-native';
+import GlobalText from '../components/globalText';
 
 const useStyles = () => {
   const theme = Theme();
@@ -110,12 +113,30 @@ const useStyles = () => {
     divider: {
       width: '100%',
       height: 1,
-      marginVertical: 12,
+      marginVertical: 24,
       backgroundColor: theme.colors.border,
     },
     marginTop16: {
       marginTop: 16,
     },
+    labelAddress: {
+      flexDirection: 'row',
+      flex: 1,
+      marginTop: 8,
+    },
+    itemLabelAddress: isActive => ({
+      marginRight: 8,
+      paddingHorizontal: 16,
+      paddingVertical: 8,
+      borderColor: theme.colors.primary,
+      borderRadius: 8,
+      borderWidth: 1,
+      backgroundColor: isActive ? theme.colors.primary : 'white',
+    }),
+    itemLabelText: isActive => ({
+      color: isActive ? 'white' : theme.colors.primary,
+      fontFamily: theme.fontFamily.poppinsMedium,
+    }),
   });
   return styles;
 };
@@ -325,6 +346,54 @@ const AddNewAddress = ({address}) => {
     );
   };
 
+  const listLabelAddress = ['Home', 'Work', 'School', 'Office', 'Other'];
+
+  const handleLabelAddress = value => {
+    if (value.length > 50) {
+      return null;
+    }
+    setTagAddress(value);
+  };
+
+  const handlePressLabel = value => {
+    setTagAddress(value);
+  };
+
+  const renderLabelAddress = () => {
+    const component = listLabelAddress.map(label => (
+      <Pressable
+        onPress={() => handlePressLabel(label)}
+        style={styles.itemLabelAddress(
+          tagAddress.toLowerCase() === label.toLowerCase(),
+        )}>
+        <GlobalText
+          style={styles.itemLabelText(
+            tagAddress.toLowerCase() === label.toLowerCase(),
+          )}>
+          {label}
+        </GlobalText>
+      </Pressable>
+    ));
+    return (
+      <View>
+        <GlobalInputText
+          label="Address Label"
+          placeholder="Enter Address label"
+          value={tagAddress}
+          onChangeText={handleLabelAddress}
+          maxLength={50}
+          isMandatory
+        />
+        <ScrollView
+          showsHorizontalScrollIndicator={false}
+          horizontal
+          style={styles.labelAddress}>
+          {component}
+        </ScrollView>
+      </View>
+    );
+  };
+
   const renderAddressTagField = () => {
     return (
       <FieldAddressTag
@@ -349,16 +418,31 @@ const AddNewAddress = ({address}) => {
     );
   };
 
+  const handleUnitNumber = value => {
+    if (value.length > 50) {
+      return null;
+    }
+    setUnitNumber(value);
+  };
+
   const renderUnitNumberField = () => {
     return (
-      <FieldTextInput
-        label="Unit Number"
-        placeholder="Unit Number"
+      <GlobalInputText
+        label="Building Name/Unit Number"
+        placeholder="Enter building name or unit number "
         value={unitNumber}
-        onChange={value => {
-          setUnitNumber(value);
-        }}
+        maxLength={50}
+        onChangeText={handleUnitNumber}
+        isMandatory
       />
+      // <FieldTextInput
+      //   label="Unit Number"
+      //   placeholder="Unit Number"
+      //   value={unitNumber}
+      //   onChange={value => {
+      //     setUnitNumber(value);
+      //   }}
+      // />
     );
   };
   const renderPostalCodeField = () => {
@@ -373,16 +457,32 @@ const AddNewAddress = ({address}) => {
       />
     );
   };
+
+  const handleRecipientName = value => {
+    if (value.length > 50) {
+      return null;
+    }
+    setRecipientName(value);
+  };
+
   const renderRecipientNameField = () => {
     return (
-      <FieldTextInput
+      <GlobalInputText
         label="Recipient Name"
-        placeholder="Recipient Name"
+        isMandatory
         value={recipientName}
-        onChange={value => {
-          setRecipientName(value);
-        }}
+        onChangeText={handleRecipientName}
+        placeholder="Recipient Name"
+        maxLength={50}
       />
+      // <FieldTextInput
+      //   label="Recipient Name"
+      //   placeholder="Recipient Name"
+      //   value={recipientName}
+      //   onChange={value => {
+      //     setRecipientName(value);
+      //   }}
+      // />
     );
   };
 
@@ -391,7 +491,7 @@ const AddNewAddress = ({address}) => {
       <FieldPhoneNumberInput
         type="phone"
         label="Mobile Number"
-        placeholder="Mobile Number"
+        placeholder="Enter recipient mobile no"
         value={mobileNumber}
         valueCountryCode={countryCode}
         onChangeCountryCode={value => {
@@ -400,6 +500,9 @@ const AddNewAddress = ({address}) => {
         onChange={value => {
           setMobileNumber(value);
         }}
+        withoutFlag={true}
+        isMandatory={true}
+        inputLabel={'Mobile No'}
       />
     );
   };
@@ -409,13 +512,15 @@ const AddNewAddress = ({address}) => {
         <View style={styles.marginTop16} />
         <Text style={styles.textTitle}>Delivery Details</Text>
         <View style={styles.marginTop16} />
-        {renderAddressTagField()}
+        {/* {renderAddressTagField()} */}
         <View style={styles.marginTop16} />
         {renderStreetNameField()}
         <View style={styles.marginTop16} />
         {renderUnitNumberField()}
         <View style={styles.marginTop16} />
-        {renderPostalCodeField()}
+        {renderLabelAddress()}
+
+        {/* {renderPostalCodeField()} */}
       </View>
     );
   };
@@ -496,7 +601,7 @@ const AddNewAddress = ({address}) => {
         <View style={styles.divider} />
         {renderRecipientDetailFields()}
         <View style={styles.divider} />
-        {renderMap()}
+        {/* {renderMap()} */}
         {renderCheckBox()}
         <View style={styles.marginTop16} />
       </ScrollView>
