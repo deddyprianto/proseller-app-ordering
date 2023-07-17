@@ -1,9 +1,9 @@
 import React from 'react';
 
 import {StyleSheet, View, Text, Image} from 'react-native';
-import appConfig from '../../config/appConfig';
 import Theme from '../../theme';
 import ReferralInvitedItem from './components/ReferralInvitedItem';
+import EmptyReferralSvg from '../../assets/svg/EmptyReverralSvg';
 
 const useStyles = () => {
   const theme = Theme();
@@ -61,10 +61,7 @@ const ReferralInvitedList = ({referralInvitedList}) => {
   const renderEmpty = () => {
     return (
       <View style={styles.viewEmpty}>
-        <Image
-          source={appConfig.imageEmptyReferral}
-          style={styles.imageEmpty}
-        />
+        <EmptyReferralSvg />
         <Text style={styles.textEmpty1}>No Referred Friend</Text>
         <Text style={styles.textEmpty2}>
           Start share your referral link or code to your friend to get bonus
