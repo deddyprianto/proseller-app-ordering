@@ -28,6 +28,9 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     marginVertical: 20,
   },
+  scrollContainerStyle: {
+    paddingBottom: 80,
+  },
 });
 
 const FAQ = () => {
@@ -103,6 +106,7 @@ const FAQ = () => {
       <Body>
         <ScrollView
           stickyHeaderIndices={[0]}
+          contentContainerStyle={styles.scrollContainerStyle}
           refreshControl={
             <RefreshControl
               onRefresh={() => loadData(true)}
