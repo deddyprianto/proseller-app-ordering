@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {View, StyleSheet, ScrollView, RefreshControl} from 'react-native';
+import {View, StyleSheet} from 'react-native';
 
 import {isEmptyArray} from '../../helper/CheckEmpty';
 
