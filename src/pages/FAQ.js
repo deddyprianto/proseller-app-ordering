@@ -1,6 +1,13 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect, useState} from 'react';
 
-import {StyleSheet, SafeAreaView, View} from 'react-native';
+import {
+  StyleSheet,
+  SafeAreaView,
+  View,
+  ScrollView,
+  RefreshControl,
+} from 'react-native';
 import {useDispatch} from 'react-redux';
 import {getFaqs} from '../actions/setting.action';
 import {dataStores} from '../actions/stores.action';
@@ -9,7 +16,8 @@ import FieldSearch from '../components/fieldSearch';
 
 import {groupBy} from 'lodash';
 
-import {Body, Header} from '../components/layout';
+import {Header} from '../components/layout';
+import LoadingScreen from '../components/loadingScreen/LoadingScreen';
 
 const styles = StyleSheet.create({
   root: {
@@ -27,22 +35,27 @@ const FAQ = () => {
 
   const [searchQuery, setSearchQuery] = useState('');
   const [items, setItems] = useState([]);
+  const [loadingFaq, setLoadingFaq] = React.useState(false);
+  const loadData = async hideLoading => {
+    if (!hideLoading) {
+      setLoadingFaq(true);
+    }
+    const faqs = await dispatch(getFaqs());
+    const groupByCategory = groupBy(faqs, 'category');
+
+    const result = Object.entries(groupByCategory).map(data => ({
+      ['type']: data[0],
+      ['faqs']: data[1],
+    }));
+
+    setItems(result);
+    setLoadingFaq(false);
+  };
 
   useEffect(() => {
-    const loadData = async () => {
-      const faqs = await dispatch(getFaqs());
-      const groupByCategory = groupBy(faqs, 'category');
-
-      const result = Object.entries(groupByCategory).map(data => ({
-        ['type']: data[0],
-        ['faqs']: data[1],
-      }));
-
-      setItems(result);
-    };
-
     loadData();
-  }, [dispatch]);
+    loadDataStore();
+  }, []);
 
   const handleOutletSearch = () => {
     if (searchQuery) {
@@ -60,12 +73,9 @@ const FAQ = () => {
     return items;
   };
 
-  useEffect(() => {
-    const loadData = async () => {
-      await dispatch(dataStores());
-    };
-    loadData();
-  }, [dispatch]);
+  const loadDataStore = async () => {
+    await dispatch(dataStores());
+  };
 
   const renderSearch = () => {
     const replacePlaceholder =
@@ -86,13 +96,18 @@ const FAQ = () => {
 
   return (
     <SafeAreaView style={styles.root}>
+      <LoadingScreen loading={loadingFaq} />
       <View>
         <Header title="FAQs" />
       </View>
-      <Body>
+      <ScrollView
+        stickyHeaderIndices={[0]}
+        refreshControl={
+          <RefreshControl onRefresh={() => loadData(true)} refreshing={false} />
+        }>
         {renderSearch()}
         <FAQList faqs={handleOutletSearch()} searchQuery={searchQuery} />
-      </Body>
+      </ScrollView>
     </SafeAreaView>
   );
 };
