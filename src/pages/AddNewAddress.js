@@ -42,6 +42,8 @@ import GlobalInputText from '../components/globalInputText';
 import {Pressable} from 'react-native';
 import GlobalText from '../components/globalText';
 import {Body} from '../components/layout';
+import {getAutoCompleteMap} from '../actions/stores.action';
+import AutocompleteAddress from '../components/autocompleteAddress';
 
 const useStyles = () => {
   const theme = Theme();
@@ -408,15 +410,38 @@ const AddNewAddress = ({address}) => {
 
   const renderStreetNameField = () => {
     return (
-      <FieldTextInput
-        label="Street Name"
-        placeholder="Street Name"
-        value={streetName}
-        onChange={value => {
-          setStreetName(value);
-        }}
-      />
+      // <GooglePlacesAutocomplete
+      //   placeholder="Search"
+      //   onFail={e => console.log('fail', e)}
+      //   onPress={(data, details = null) => {
+      //     // 'details' is provided when fetchDetails = true
+      //     console.log(data, details);
+      //   }}
+      //   query={{
+      //     key: 'AIzaSyBdheo_pM1usFVZzPEDMFNoVNeaO96Pizc',
+      //     language: 'en',
+      //   }}
+      // />
+      // <FieldTextInput
+      //   label="Street Name"
+      //   placeholder="Street Name"
+      //   value={streetName}
+      //   onChange={value => {
+      //     setStreetName(value);
+      //   }}
+      // />
+      // <GlobalInputText
+      //   placeholder="Search postal code, building, or street name"
+      //   isMandatory
+      //   label="Postal Code/Building/Street Home"
+      //   onChangeText={handleSearchPostalCode}
+      // />
+      <AutocompleteAddress />
     );
+  };
+
+  const handleSearchPostalCode = text => {
+    dispatch(getAutoCompleteMap(text));
   };
 
   const handleUnitNumber = value => {
@@ -476,14 +501,6 @@ const AddNewAddress = ({address}) => {
         placeholder="Recipient Name"
         maxLength={50}
       />
-      // <FieldTextInput
-      //   label="Recipient Name"
-      //   placeholder="Recipient Name"
-      //   value={recipientName}
-      //   onChange={value => {
-      //     setRecipientName(value);
-      //   }}
-      // />
     );
   };
 
@@ -538,68 +555,11 @@ const AddNewAddress = ({address}) => {
     );
   };
 
-  const handleSetCoordinate = coordinate => {
-    if (!isEmptyObject(coordinate)) {
-      setLatitude(coordinate?.latitude);
-      setLongitude(coordinate?.longitude);
-      setLatitudeDelta(coordinate?.latitudeDelta);
-      setLongitudeDelta(coordinate?.longitudeDelta);
-    }
-  };
-
-  const renderMap = () => {
-    return (
-      <View style={styles.viewMap}>
-        <MapView
-          onPress={() => {
-            Actions.pickCoordinate({
-              coordinated: {
-                latitude,
-                longitude,
-                latitudeDelta,
-                longitudeDelta,
-              },
-              handleChoose: value => {
-                handleSetCoordinate(value);
-              },
-            });
-          }}
-          style={styles.map}
-          region={{
-            latitude,
-            longitude,
-            longitudeDelta,
-            latitudeDelta,
-          }}>
-          <Marker coordinate={{latitude: latitude, longitude: longitude}} />
-        </MapView>
-        <TouchableOpacity
-          onPress={() => {
-            Actions.pickCoordinate({
-              coordinated: {
-                latitude,
-                longitude,
-                latitudeDelta,
-                longitudeDelta,
-              },
-              handleChoose: value => {
-                handleSetCoordinate(value);
-              },
-            });
-          }}
-          style={styles.touchableCoordinate}>
-          <Image source={appConfig.iconLocation} style={styles.iconLocation} />
-          <Text style={styles.textCoordinate}>Pick a Coordinate</Text>
-        </TouchableOpacity>
-      </View>
-    );
-  };
-
   const renderBody = () => {
     return (
       <View style={{flex: 1}}>
         <Body>
-          <ScrollView style={styles.scrollView}>
+          <ScrollView nestedScrollEnabled={true} style={styles.scrollView}>
             {renderDeliveryDetailFields()}
             <View style={styles.divider} />
             {renderRecipientDetailFields()}

@@ -16,6 +16,16 @@ const searchProductHistory = (state = [], action) => {
   }
 };
 
+const searchAddress = (state = [], action) => {
+  switch (action.type) {
+    case 'SAVE_AUTOCOMPLETE_ADDRESS':
+      return action.payload;
+    default:
+      return state;
+  }
+};
+
 export default combineReducers({
   searchProductHistory,
+  searchAddress,
 });
