@@ -13,6 +13,7 @@ import {
   BackHandler,
   SafeAreaView,
   Switch,
+  Platform,
 } from 'react-native';
 import {Actions} from 'react-native-router-flux';
 import colorConfig from '../../config/colorConfig';
@@ -26,6 +27,7 @@ import {Body, Header} from '../layout';
 import EmailSvg from '../../assets/svg/EmailSvg';
 import withHooksComponent from '../HOC';
 import PhoneSvg from '../../assets/svg/PhoneSvg';
+import {normalizeLayoutSizeHeight} from '../../helper/Layout';
 
 class Notifications extends Component {
   constructor(props) {
@@ -355,6 +357,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
   buttonSwitch: {
-    transform: [{scaleX: 0.7}, {scaleY: 0.7}],
+    transform: [
+      {scaleX: Platform.OS === 'ios' ? 0.7 : 1},
+      {scaleY: Platform.OS === 'ios' ? 0.7 : 1},
+    ],
   },
 });
