@@ -127,6 +127,50 @@ class Notifications extends Component {
     this.changeSetting('smsNotification', !value);
   };
 
+  leftIconPhone = () => (
+    <View style={styles.centerEmail}>
+      <PhoneSvg />
+    </View>
+  );
+
+  righIconPhone = () => (
+    <Switch
+      trackColor={{
+        false: '#767577',
+        true: colorConfig.store.disableButton,
+      }}
+      thumbColor={true ? colorConfig.store.defaultColor : 'white'}
+      ios_backgroundColor="white"
+      onValueChange={() => {
+        this.changeSMSSetting(this.state.smsNotification);
+      }}
+      value={this.state.smsNotification}
+      style={styles.buttonSwitch}
+    />
+  );
+
+  leftIconMessage = () => (
+    <View style={styles.centerEmail}>
+      <EmailSvg />
+    </View>
+  );
+
+  rightIconMessage = () => (
+    <Switch
+      trackColor={{
+        false: '#767577',
+        true: colorConfig.store.disableButton,
+      }}
+      thumbColor={true ? colorConfig.store.defaultColor : 'white'}
+      ios_backgroundColor="white"
+      onValueChange={() => {
+        this.changeEmailSetting(this.state.emailNotification);
+      }}
+      value={this.state.emailNotification}
+      style={styles.buttonSwitch}
+    />
+  );
+
   render() {
     const {fontFamily} = this.props;
     const {smsNotification, emailNotification} = this.state;
@@ -148,26 +192,8 @@ class Notifications extends Component {
                   {fontFamily: fontFamily.poppinsMedium},
                 ]}
                 description="Allow sending notification to your email"
-                left={() => (
-                  <View style={styles.centerEmail}>
-                    <EmailSvg />
-                  </View>
-                )}
-                right={() => (
-                  <Switch
-                    trackColor={{
-                      false: '#767577',
-                      true: colorConfig.store.disableButton,
-                    }}
-                    thumbColor={true ? colorConfig.store.defaultColor : 'white'}
-                    ios_backgroundColor="white"
-                    onValueChange={() => {
-                      this.changeEmailSetting(emailNotification);
-                    }}
-                    value={emailNotification}
-                    style={styles.buttonSwitch}
-                  />
-                )}
+                left={this.leftIconMessage}
+                right={this.rightIconMessage}
               />
 
               <List.Item
@@ -181,26 +207,8 @@ class Notifications extends Component {
                   styles.listDescriptionStyle,
                   {fontFamily: fontFamily.poppinsMedium},
                 ]}
-                left={() => (
-                  <View style={styles.centerEmail}>
-                    <PhoneSvg />
-                  </View>
-                )}
-                right={() => (
-                  <Switch
-                    trackColor={{
-                      false: '#767577',
-                      true: colorConfig.store.disableButton,
-                    }}
-                    thumbColor={true ? colorConfig.store.defaultColor : 'white'}
-                    ios_backgroundColor="white"
-                    onValueChange={() => {
-                      this.changeSMSSetting(smsNotification);
-                    }}
-                    value={smsNotification}
-                    style={styles.buttonSwitch}
-                  />
-                )}
+                left={this.leftIconPhone}
+                right={this.righIconPhone}
               />
             </List.Section>
           </ScrollView>
