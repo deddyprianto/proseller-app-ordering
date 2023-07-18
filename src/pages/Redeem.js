@@ -26,6 +26,7 @@ import Header from '../components/layout/header';
 import {dataPointHistory} from '../actions/rewards.action';
 import {myProgressBarCampaign} from '../actions/account.action';
 import Theme from '../theme';
+import {Body} from '../components/layout';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -284,20 +285,22 @@ const Redeem = () => {
   return (
     <SafeAreaView style={{flex: 1}}>
       <Header title="Points and Voucher" />
-      <ScrollView style={styles.container}>
-        <View style={styles.viewHeader}>
-          <View style={{marginTop: 16}} />
-          {renderPointHeader()}
-          <View style={{marginTop: 16}} />
-          {renderTextPointAndHistory()}
-          <View style={{marginTop: 16}} />
-          <View style={styles.divider} />
-          <View style={{marginTop: 16}} />
-          {renderTextAvailableVoucher()}
-          <View style={{marginTop: 16}} />
-          <VoucherList />
-        </View>
-      </ScrollView>
+      <Body>
+        <ScrollView style={styles.container}>
+          <View style={styles.viewHeader}>
+            <View style={{marginTop: 16}} />
+            {renderPointHeader()}
+            <View style={{marginTop: 16}} />
+            {renderTextPointAndHistory()}
+            <View style={{marginTop: 16}} />
+            <View style={styles.divider} />
+            <View style={{marginTop: 16}} />
+            {renderTextAvailableVoucher()}
+            <View style={{marginTop: 16}} />
+            <VoucherList />
+          </View>
+        </ScrollView>
+      </Body>
     </SafeAreaView>
   );
 };

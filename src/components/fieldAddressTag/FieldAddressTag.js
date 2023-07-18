@@ -27,6 +27,7 @@ const useStyles = () => {
       paddingVertical: 6,
       borderColor: theme.colors.border1,
       marginRight: 10,
+      backgroundColor: theme.colors.background,
     },
     textLabelAddressTag: {
       marginBottom: 8,

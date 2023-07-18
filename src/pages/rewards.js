@@ -47,6 +47,7 @@ import {getCartHomePage, getPendingCart} from '../actions/order.action';
 import VersionCheck from 'react-native-version-check';
 import RewardsSVC from '../components/rewardsSVC';
 import {getSVCBalance, getSVCCard} from '../actions/SVC.action';
+import {Body} from '../components/layout';
 // import {dataPromotion} from '../actions/promotion.action';
 
 class Rewards extends Component {
@@ -389,108 +390,110 @@ class Rewards extends Component {
           overlayBackgroundColor={'transparent'}
           children={null}
         />
-        <ScrollView
-          refreshControl={
-            <RefreshControl
-              refreshing={this.state.refreshing}
-              onRefresh={this._onRefresh}
-            />
-          }>
-          <View style={styles.container}>
-            {this.state.isLoading ? (
-              <View style={styles.loading}>{/*<Loader />*/}</View>
-            ) : null}
-            <View>
+        <Body>
+          <ScrollView
+            refreshControl={
+              <RefreshControl
+                refreshing={this.state.refreshing}
+                onRefresh={this._onRefresh}
+              />
+            }>
+            <View style={styles.container}>
               {this.state.isLoading ? (
-                <RewardsStamp isLoading={this.state.isLoading} />
-              ) : this.props.dataStamps == undefined ||
-                isEmptyObject(
-                  this.props.dataStamps.dataStamps,
-                ) ? null : !isEmptyObject(
-                  // this.greetWelcomeUser()
-                  this.props.dataStamps.dataStamps.trigger,
-                ) &&
-                this.props.dataStamps.dataStamps.trigger.campaignTrigger ===
-                  'COMPLETE_PROFILE' &&
-                this.props.dataStamps.dataStamps.trigger.status === false ? (
-                <View style={styles.information}>
-                  <View style={styles.boxInfo}>
-                    <Text style={styles.textInfo}>
-                      {intlData.messages.pleaseCompleteProfileStamps}
-                    </Text>
+                <View style={styles.loading}>{/*<Loader />*/}</View>
+              ) : null}
+              <View>
+                {this.state.isLoading ? (
+                  <RewardsStamp isLoading={this.state.isLoading} />
+                ) : this.props.dataStamps == undefined ||
+                  isEmptyObject(
+                    this.props.dataStamps.dataStamps,
+                  ) ? null : !isEmptyObject(
+                    // this.greetWelcomeUser()
+                    this.props.dataStamps.dataStamps.trigger,
+                  ) &&
+                  this.props.dataStamps.dataStamps.trigger.campaignTrigger ===
+                    'COMPLETE_PROFILE' &&
+                  this.props.dataStamps.dataStamps.trigger.status === false ? (
+                  <View style={styles.information}>
+                    <View style={styles.boxInfo}>
+                      <Text style={styles.textInfo}>
+                        {intlData.messages.pleaseCompleteProfileStamps}
+                      </Text>
+                      <TouchableOpacity
+                        onPress={this.editProfile}
+                        style={styles.buttonComplete}>
+                        <Text style={{color: 'white', fontWeight: 'bold'}}>
+                          Complete Now
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                ) : (
+                  <View
+                    style={{
+                      backgroundColor: colorConfig.pageIndex.activeTintColor,
+                      alignItems: 'center',
+                      paddingBottom: 20,
+                    }}>
                     <TouchableOpacity
-                      onPress={this.editProfile}
-                      style={styles.buttonComplete}>
-                      <Text style={{color: 'white', fontWeight: 'bold'}}>
-                        Complete Now
+                      onPress={this.detailStamps}
+                      style={{
+                        width: '100%',
+                        marginTop: 15,
+                        flexDirection: 'row',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        // marginLeft: 32,
+                      }}>
+                      <Text
+                        style={{
+                          color: 'white',
+                          fontSize: 15,
+                          fontWeight: 'bold',
+                          textAlign: 'center',
+                        }}>
+                        {intlData.messages.stampsCard}
+                      </Text>
+                    </TouchableOpacity>
+                    <RewardsStamp isLoading={this.state.isLoading} />
+                    <TouchableOpacity onPress={this.detailStamps}>
+                      <Text
+                        style={{
+                          textAlign: 'center',
+                          color: colorConfig.pageIndex.inactiveTintColor,
+                          fontFamily: 'Poppins-Medium',
+                          fontSize: 15,
+                        }}>
+                        Learn More
                       </Text>
                     </TouchableOpacity>
                   </View>
-                </View>
-              ) : (
-                <View
-                  style={{
-                    backgroundColor: colorConfig.pageIndex.activeTintColor,
-                    alignItems: 'center',
-                    paddingBottom: 20,
-                  }}>
-                  <TouchableOpacity
-                    onPress={this.detailStamps}
-                    style={{
-                      width: '100%',
-                      marginTop: 15,
-                      flexDirection: 'row',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      // marginLeft: 32,
-                    }}>
-                    <Text
-                      style={{
-                        color: 'white',
-                        fontSize: 15,
-                        fontWeight: 'bold',
-                        textAlign: 'center',
-                      }}>
-                      {intlData.messages.stampsCard}
-                    </Text>
-                  </TouchableOpacity>
-                  <RewardsStamp isLoading={this.state.isLoading} />
-                  <TouchableOpacity onPress={this.detailStamps}>
-                    <Text
-                      style={{
-                        textAlign: 'center',
-                        color: colorConfig.pageIndex.inactiveTintColor,
-                        fontFamily: 'Poppins-Medium',
-                        fontSize: 15,
-                      }}>
-                      Learn More
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              )}
+                )}
 
-              <View style={styles.tabBalance}>
-                {/* {balance !== undefined && (
+                <View style={styles.tabBalance}>
+                  {/* {balance !== undefined && (
                   <RewardsSVC isLoading={this.state.isLoading} />
                 )} */}
-                {this.props.totalPoint !== undefined && campaignActive && (
-                  <RewardsPoint
-                    campaignActive={campaignActive}
-                    isLoading={this.state.isLoading}
-                  />
-                )}
+                  {this.props.totalPoint !== undefined && campaignActive && (
+                    <RewardsPoint
+                      campaignActive={campaignActive}
+                      isLoading={this.state.isLoading}
+                    />
+                  )}
+                </View>
+                <RewardsMenu
+                  intlData={intlData}
+                  myVoucers={this.props.myVoucers}
+                />
+                <RewardsTransaction
+                  isLoading={this.state.isLoading}
+                  screen={this.props}
+                />
               </View>
-              <RewardsMenu
-                intlData={intlData}
-                myVoucers={this.props.myVoucers}
-              />
-              <RewardsTransaction
-                isLoading={this.state.isLoading}
-                screen={this.props}
-              />
             </View>
-          </View>
-        </ScrollView>
+          </ScrollView>
+        </Body>
       </SafeAreaView>
     );
   }

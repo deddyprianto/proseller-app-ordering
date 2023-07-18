@@ -31,7 +31,8 @@ const useStyles = () => {
       borderWidth: 1,
       borderRadius: normalizeLayoutSizeHeight(8),
       paddingHorizontal: normalizeLayoutSizeWidth(16),
-      borderColor: theme.colors.greyScale5,
+      borderColor: theme.colors.greyScale2,
+      backgroundColor: 'white',
     },
     container: {
       flex: 1,
@@ -111,7 +112,9 @@ const FieldSearch = ({
       </View>
       <TouchableOpacity
         onPress={() => {
-          onSubmit(value);
+          if (onSubmit && typeof onSubmit === 'function') {
+            onSubmit(value);
+          }
         }}>
         <SearchSvg />
       </TouchableOpacity>

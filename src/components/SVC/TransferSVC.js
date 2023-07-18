@@ -29,6 +29,7 @@ import awsConfig from '../../config/awsConfig';
 import PhoneInput from 'react-native-phone-input';
 import CountryPicker from 'react-native-country-picker-modal';
 import DropDownPicker from 'react-native-dropdown-picker';
+import {Body} from '../layout';
 
 const theme = {
   ...DefaultTheme,
@@ -248,149 +249,154 @@ class TransferSVC extends Component {
             <Text style={styles.btnBackText}> Transfer SVC Balance </Text>
           </TouchableOpacity>
         </View>
-        <KeyboardAvoidingView
-          behavior={Platform.OS == 'ios' ? 'padding' : 'height'}>
-          <View style={{paddingHorizontal: 15}}>
-            <Text style={{marginBottom: 10, fontSize: 15}}>
-              Transfer Mode :{' '}
-            </Text>
-            <DropDownPicker
-              items={[
-                {label: 'Email', value: 'email'},
-                {label: 'Mobile No', value: 'mobileNo'},
-              ]}
-              defaultValue={this.state.modeInvitation}
-              containerStyle={{height: 50}}
-              style={{
-                backgroundColor: '#fafafa',
-                borderColor: colorConfig.pageIndex.grayColor,
-                borderRadius: 0,
-              }}
-              dropDownStyle={{backgroundColor: '#fafafa'}}
-              onChangeItem={item =>
-                this.setState({
-                  modeInvitation: item.value,
-                  email: '',
-                  mobileNo: '',
-                  phoneNumber: awsConfig.phoneNumberCode,
-                })
-              }
-            />
-
-            {modeInvitation == 'email' ? (
-              <TextInput
-                style={{height: 60, marginVertical: 10}}
-                theme={theme}
-                // mode={'outlined'}
-                label="Email Address"
-                value={this.state.email}
-                onChangeText={text => this.setState({email: text})}
+        <Body>
+          <KeyboardAvoidingView
+            behavior={Platform.OS == 'ios' ? 'padding' : 'height'}>
+            <View style={{paddingHorizontal: 15, marginTop: 15}}>
+              <Text style={{marginBottom: 10, fontSize: 15}}>
+                Transfer Mode :{' '}
+              </Text>
+              <DropDownPicker
+                items={[
+                  {label: 'Email', value: 'email'},
+                  {label: 'Mobile No', value: 'mobileNo'},
+                ]}
+                defaultValue={this.state.modeInvitation}
+                containerStyle={{height: 50}}
+                style={{
+                  backgroundColor: '#fafafa',
+                  borderColor: colorConfig.pageIndex.grayColor,
+                  borderRadius: 0,
+                }}
+                dropDownStyle={{backgroundColor: '#fafafa'}}
+                onChangeItem={item =>
+                  this.setState({
+                    modeInvitation: item.value,
+                    email: '',
+                    mobileNo: '',
+                    phoneNumber: awsConfig.phoneNumberCode,
+                  })
+                }
               />
-            ) : (
-              <>
-                <View style={{width: 0, height: 0}}>
-                  <CountryPicker
-                    translation="eng"
-                    withCallingCode
-                    visible={this.state.openModalCountry}
-                    onClose={() => this.setState({openModalCountry: false})}
-                    withFilter
-                    placeholder={`x`}
-                    withFlag={true}
-                    onSelect={country => {
-                      this.setState({
-                        phoneNumber: `+${country.callingCode[0]}`,
-                        country: country.name,
-                      });
-                    }}
-                  />
-                </View>
-                <Text
-                  style={{
-                    fontSize: 16,
-                    marginTop: 15,
-                  }}>
-                  Enter Mobile Number
-                </Text>
-                <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                  <View
-                    style={{
-                      marginVertical: 15,
-                      flexDirection: 'row',
-                      color: colorConfig.store.title,
-                      borderColor: colorConfig.pageIndex.grayColor,
-                      borderWidth: 1,
-                      width: '100%',
-                    }}>
-                    <PhoneInput
-                      flagStyle={{width: 35, height: 25}}
-                      textStyle={{fontSize: 14, fontFamily: 'Poppins-Regular'}}
-                      style={{
-                        fontSize: 15,
-                        width: '100%',
-                        padding: 10,
-                        paddingVertical: 15,
-                        color: 'black',
-                      }}
-                      ref={ref => {
-                        this.phone = ref;
-                      }}
-                      onChangePhoneNumber={() => {
+
+              {modeInvitation == 'email' ? (
+                <TextInput
+                  style={{height: 60, marginVertical: 10}}
+                  theme={theme}
+                  // mode={'outlined'}
+                  label="Email Address"
+                  value={this.state.email}
+                  onChangeText={text => this.setState({email: text})}
+                />
+              ) : (
+                <>
+                  <View style={{width: 0, height: 0}}>
+                    <CountryPicker
+                      translation="eng"
+                      withCallingCode
+                      visible={this.state.openModalCountry}
+                      onClose={() => this.setState({openModalCountry: false})}
+                      withFilter
+                      placeholder={`x`}
+                      withFlag={true}
+                      onSelect={country => {
                         this.setState({
-                          phoneNumber: this.phone.getValue(),
-                          mobileNo: this.phone.getValue(),
-                        });
-                      }}
-                      value={this.state.phoneNumber}
-                      onPressFlag={() => {
-                        this.setState({
-                          openModalCountry: true,
+                          phoneNumber: `+${country.callingCode[0]}`,
+                          country: country.name,
                         });
                       }}
                     />
                   </View>
-                  {/*<TouchableOpacity*/}
-                  {/*  style={{*/}
-                  {/*    backgroundColor: colorConfig.store.defaultColor,*/}
-                  {/*    marginLeft: 20,*/}
-                  {/*    borderRadius: 10,*/}
-                  {/*  }}*/}
-                  {/*  onPress={this.accessContact}>*/}
-                  {/*  <Icon*/}
-                  {/*    size={30}*/}
-                  {/*    name={*/}
-                  {/*      Platform.OS === 'ios' ? 'ios-contact' : 'md-contact'*/}
-                  {/*    }*/}
-                  {/*    style={[styles.btnBackIcon, {color: 'white'}]}*/}
-                  {/*  />*/}
-                  {/*</TouchableOpacity>*/}
-                </View>
-              </>
-            )}
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      marginTop: 15,
+                    }}>
+                    Enter Mobile Number
+                  </Text>
+                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                    <View
+                      style={{
+                        marginVertical: 15,
+                        flexDirection: 'row',
+                        color: colorConfig.store.title,
+                        borderColor: colorConfig.pageIndex.grayColor,
+                        borderWidth: 1,
+                        width: '100%',
+                      }}>
+                      <PhoneInput
+                        flagStyle={{width: 35, height: 25}}
+                        textStyle={{
+                          fontSize: 14,
+                          fontFamily: 'Poppins-Regular',
+                        }}
+                        style={{
+                          fontSize: 15,
+                          width: '100%',
+                          padding: 10,
+                          paddingVertical: 15,
+                          color: 'black',
+                        }}
+                        ref={ref => {
+                          this.phone = ref;
+                        }}
+                        onChangePhoneNumber={() => {
+                          this.setState({
+                            phoneNumber: this.phone.getValue(),
+                            mobileNo: this.phone.getValue(),
+                          });
+                        }}
+                        value={this.state.phoneNumber}
+                        onPressFlag={() => {
+                          this.setState({
+                            openModalCountry: true,
+                          });
+                        }}
+                      />
+                    </View>
+                    {/*<TouchableOpacity*/}
+                    {/*  style={{*/}
+                    {/*    backgroundColor: colorConfig.store.defaultColor,*/}
+                    {/*    marginLeft: 20,*/}
+                    {/*    borderRadius: 10,*/}
+                    {/*  }}*/}
+                    {/*  onPress={this.accessContact}>*/}
+                    {/*  <Icon*/}
+                    {/*    size={30}*/}
+                    {/*    name={*/}
+                    {/*      Platform.OS === 'ios' ? 'ios-contact' : 'md-contact'*/}
+                    {/*    }*/}
+                    {/*    style={[styles.btnBackIcon, {color: 'white'}]}*/}
+                    {/*  />*/}
+                    {/*</TouchableOpacity>*/}
+                  </View>
+                </>
+              )}
 
-            <TouchableOpacity
-              onPress={this.submitReferral}
-              disabled={this.notCompleted()}
-              style={{
-                marginTop: 40,
-                backgroundColor: this.notCompleted()
-                  ? colorConfig.store.disableButton
-                  : colorConfig.store.defaultColor,
-                padding: 10,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              <Text
+              <TouchableOpacity
+                onPress={this.submitReferral}
+                disabled={this.notCompleted()}
                 style={{
-                  color: 'white',
-                  fontFamily: 'Poppins-Medium',
-                  fontSize: 20,
+                  marginTop: 40,
+                  backgroundColor: this.notCompleted()
+                    ? colorConfig.store.disableButton
+                    : colorConfig.store.defaultColor,
+                  padding: 10,
+                  justifyContent: 'center',
+                  alignItems: 'center',
                 }}>
-                Save
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </KeyboardAvoidingView>
+                <Text
+                  style={{
+                    color: 'white',
+                    fontFamily: 'Poppins-Medium',
+                    fontSize: 20,
+                  }}>
+                  Save
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </KeyboardAvoidingView>
+        </Body>
       </SafeAreaView>
     );
   }
@@ -425,7 +431,7 @@ const styles = StyleSheet.create({
   },
   header: {
     height: 65,
-    marginBottom: 20,
+    // marginBottom: 20,
     justifyContent: 'center',
     // backgroundColor: colorConfig.store.defaultColor,
     shadowColor: '#00000021',

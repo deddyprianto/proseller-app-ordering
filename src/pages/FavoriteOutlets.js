@@ -1,12 +1,12 @@
 import React, {useEffect, useState} from 'react';
 
-import {StyleSheet, SafeAreaView} from 'react-native';
+import {StyleSheet, SafeAreaView, View} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {dataStores} from '../actions/stores.action';
 
 import FavoriteOutletList from '../components/favoriteOutletList';
 
-import {Header} from '../components/layout';
+import {Body, Header} from '../components/layout';
 
 const styles = StyleSheet.create({
   root: {
@@ -38,6 +38,16 @@ const FavoriteOutlets = () => {
     loadData();
   }, [dispatch]);
 
+  const renderBody = () => {
+    return (
+      <View style={{flex: 1}}>
+        <Body>
+          <FavoriteOutletList outlets={handleOutletSearch()} />
+        </Body>
+      </View>
+    );
+  };
+
   return (
     <SafeAreaView style={styles.root}>
       <Header
@@ -48,7 +58,7 @@ const FavoriteOutlets = () => {
           setSearchQuery(value);
         }}
       />
-      <FavoriteOutletList outlets={handleOutletSearch()} />
+      {renderBody()}
     </SafeAreaView>
   );
 };

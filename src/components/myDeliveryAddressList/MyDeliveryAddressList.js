@@ -89,7 +89,7 @@ const MyDeliveryAddressList = ({
     }
   };
 
-  return renderMyDeliveryAddress();
+  return <View style={{flex: 1}}>{renderMyDeliveryAddress()}</View>;
 };
 
 export default MyDeliveryAddressList;

@@ -71,6 +71,7 @@ import {campaign, dataPoint} from '../../actions/rewards.action';
 import ModalTransfer from './ModalTransfer';
 import LoadingScreen from '../loadingScreen';
 import OrderingModeOfflineModal from '../modal/OrderingModeOfflineModal';
+import {Body} from '../layout';
 
 class SettleOrder extends Component {
   constructor(props) {
@@ -3419,7 +3420,6 @@ class SettleOrder extends Component {
     return (
       <SafeAreaView style={styles.container}>
         {this.state.loading && <LoaderDarker />}
-        <LoadingScreen loading={this.state.loading} />
         {this.askUserToEnterCVV()}
         <ModalTransfer
           doPayment={this.doPayment}
@@ -3428,7 +3428,7 @@ class SettleOrder extends Component {
           hideModal={this.hideModal}
           totalNettAmount={this.state.totalBayar}
         />
-        <View style={{backgroundColor: colorConfig.pageIndex.backgroundColor}}>
+        <View>
           <View
             style={{
               flexDirection: 'row',
@@ -3482,424 +3482,205 @@ class SettleOrder extends Component {
             </View>
           </View>
         </View>
-        <ScrollView
-          style={{backgroundColor: '#f5f5f5'}}
-          refreshControl={
-            <RefreshControl
-              refreshing={this.state.refreshing}
-              onRefresh={this._onRefresh}
-            />
-          }>
-          <View
-            style={{
-              flexDirection: 'column',
-              justifyContent: 'center',
-              alignItems: 'center',
-              marginTop: 3,
-              backgroundColor: 'white',
-              paddingVertical: 30,
-              borderWidth: 0.4,
-              width: '100%',
-              borderColor: colorConfig.pageIndex.grayColor,
-            }}>
-            <Text
-              style={{
-                textAlign: 'center',
-
-                fontSize: 16,
-                color: 'black',
-                marginBottom: 8,
-                fontWeight: 'bold',
-              }}>
-              Grand Total
-            </Text>
+        <Body>
+          <ScrollView
+            refreshControl={
+              <RefreshControl
+                refreshing={this.state.refreshing}
+                onRefresh={this._onRefresh}
+              />
+            }>
             <View
               style={{
-                flexDirection: 'row',
+                flexDirection: 'column',
                 justifyContent: 'center',
+                alignItems: 'center',
+                marginTop: 3,
+                backgroundColor: 'white',
+                paddingVertical: 30,
+                borderWidth: 0.4,
+                width: '100%',
+                borderColor: colorConfig.pageIndex.grayColor,
               }}>
               <Text
                 style={{
-                  color: colorConfig.store.title,
-                  fontSize: 15,
-                  marginRight: 5,
+                  textAlign: 'center',
+
+                  fontSize: 16,
+                  color: 'black',
+                  marginBottom: 8,
+                  fontWeight: 'bold',
                 }}>
-                {appConfig.appMataUang}
+                Grand Total
               </Text>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'center',
+                }}>
+                <Text
+                  style={{
+                    color: colorConfig.store.title,
+                    fontSize: 15,
+                    marginRight: 5,
+                  }}>
+                  {appConfig.appMataUang}
+                </Text>
+                <Text
+                  style={{
+                    color: colorConfig.store.title,
+                    fontSize: 55,
+                    top: 13,
+                    fontFamily: 'Poppins-Medium',
+                  }}>
+                  {this.formatCurrency(this.state.totalBayar)}
+                </Text>
+                {this.renderTotalPayment()}
+              </View>
+
               <Text
                 style={{
-                  color: colorConfig.store.title,
-                  fontSize: 55,
-                  top: 13,
-                  fontFamily: 'Poppins-Medium',
+                  width: '50%',
+                  textAlign: 'center',
+                  color: colorConfig.primaryColor,
                 }}>
-                {this.formatCurrency(this.state.totalBayar)}
+                <Text style={{fontWeight: 'bold'}}>
+                  {appConfig.appMataUang}
+                  {this.formatCurrency(total)}
+                </Text>
+                <Text>
+                  {' '}
+                  of this grand total can be redeemed with point/voucher
+                </Text>
               </Text>
-              {this.renderTotalPayment()}
             </View>
 
-            <Text
-              style={{
-                width: '50%',
-                textAlign: 'center',
-                color: colorConfig.primaryColor,
-              }}>
-              <Text style={{fontWeight: 'bold'}}>
-                {appConfig.appMataUang}
-                {this.formatCurrency(total)}
-              </Text>
-              <Text>
-                {' '}
-                of this grand total can be redeemed with point/voucher
-              </Text>
-            </Text>
-          </View>
-
-          <View
-            style={{
-              marginTop: 13,
-            }}>
             <View
               style={{
-                alignItems: 'center',
+                marginTop: 13,
               }}>
               <View
                 style={{
-                  marginBottom: 13,
-                  paddingVertical: 5,
-                  paddingHorizontal: 5,
-                  width: '100%',
-                  backgroundColor: colorConfig.pageIndex.backgroundColor,
-                  borderWidth: 0.4,
-                  borderColor: colorConfig.pageIndex.grayColor,
+                  alignItems: 'center',
                 }}>
                 <View
                   style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
+                    marginBottom: 13,
+                    paddingVertical: 5,
+                    paddingHorizontal: 5,
+                    width: '100%',
+                    backgroundColor: colorConfig.pageIndex.backgroundColor,
+                    borderWidth: 0.4,
+                    borderColor: colorConfig.pageIndex.grayColor,
                   }}>
                   <View
                     style={{
-                      margin: 10,
                       flexDirection: 'row',
-                      alignItems: 'center',
+                      justifyContent: 'space-between',
                     }}>
                     <View
                       style={{
-                        height: 40,
-                        width: 40,
-                        borderRadius: 40,
-                        backgroundColor: colorConfig.store.defaultColor,
+                        margin: 10,
+                        flexDirection: 'row',
                         alignItems: 'center',
-                        justifyContent: 'center',
-                        marginRight: 10,
-                        paddingTop: 3,
                       }}>
-                      <Icon
-                        size={20}
-                        name={Platform.OS === 'ios' ? 'ios-cart' : 'md-cart'}
-                        style={{color: 'white'}}
-                      />
-                    </View>
-                    <View>
-                      <Text
+                      <View
                         style={{
-                          fontSize: 14,
-                          fontWeight: 'bold',
-                          color: colorConfig.pageIndex.activeTintColor,
-                        }}>
-                        {this.props.companyInfo?.companyName}
-                      </Text>
-                      {this.props.paySVC !== true &&
-                      this.props.payVoucher !== true &&
-                      this.props.payMembership !== true ? (
-                        <Text
-                          style={{
-                            fontSize: 14,
-                            color: colorConfig.store.titleSelected,
-                            fontFamily: 'Poppins-Regular',
-                          }}>
-                          {this.getOutletName(this.props.pembayaran?.storeName)}
-                        </Text>
-                      ) : null}
-                    </View>
-                  </View>
-                  <TouchableOpacity
-                    onPress={() => this.detailPayment(this.props?.pembayaran)}
-                    style={{
-                      flexDirection: 'row',
-                      marginRight: 10,
-                      alignItems: 'center',
-                    }}>
-                    <Text
-                      style={{
-                        marginRight: 10,
-                        fontFamily: 'Poppins-Medium',
-                        fontSize: 15,
-                        color: colorConfig.store.defaultColor,
-                      }}>
-                      Order Detail
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </View>
-            {this.props.paySVC ||
-            this.props.payMembership ||
-            this.props.payVoucher ? null : (
-              <View
-                style={{
-                  marginTop: 5,
-                  width: '100%',
-                  borderWidth: 0.4,
-                  padding: 13,
-                  backgroundColor: 'white',
-                  borderColor: colorConfig.pageIndex.grayColor,
-                }}>
-                <TouchableOpacity
-                  style={styles.btnMethodUnselected}
-                  onPress={() => {
-                    try {
-                      const total =
-                        Number(this.state.totalBayar) -
-                        this.state.totalNonDiscountable;
-                      if (total > 0) {
-                        Actions.applyPromoCode({
-                          setDataVoucher: this.setDataVoucher,
-                          dataVoucher: this.state.dataVoucer,
-                          originalPurchase: this.props.pembayaran
-                            .totalNettAmount,
-                        });
-                      } else {
-                        Alert.alert('Sorry', "Can't add more promo code.");
-                        return;
-                      }
-                    } catch (e) {}
-                  }}>
-                  <View style={{flexDirection: 'row'}}>
-                    <Text style={styles.descMethodUnselected}>
-                      Apply Promo Code
-                    </Text>
-                  </View>
-                  <Icon
-                    size={25}
-                    name={
-                      Platform.OS === 'ios'
-                        ? 'ios-arrow-dropright'
-                        : 'md-arrow-dropright'
-                    }
-                    style={{
-                      color: colorConfig.store.defaultColor,
-                      marginLeft: 10,
-                    }}
-                  />
-                </TouchableOpacity>
-                {!isEmptyArray(this.state.dataVoucer)
-                  ? this.state.dataVoucer.map((item, i) =>
-                      item.isVoucher === true ||
-                      item.isVoucherPromoCode === true ? (
-                        <View
-                          style={{
-                            height: !item.isVoucherPromoCode ? 0 : 'auto',
-                            margin: 5,
-                            marginTop: !item.isVoucherPromoCode ? 0 : 10,
-                            flexDirection: 'row',
-                            justifyContent: 'space-between',
-                          }}>
-                          <Text
-                            style={{
-                              fontSize: 15,
-                              fontFamily: 'Poppins-Medium',
-                              color: colorConfig.store.secondaryColor,
-                            }}>
-                            {item.name}
-                          </Text>
-                          {item.isVoucherPromoCode && (
-                            <View>
-                              <TouchableOpacity
-                                onPress={() => this.cencelOneVoucher(i)}
-                                style={{
-                                  alignItems: 'center',
-                                  justifyContent: 'center',
-                                }}>
-                                <Text
-                                  style={{
-                                    color: colorConfig.store.colorError,
-                                    fontFamily: 'Poppins-Medium',
-                                    fontSize: 14,
-                                  }}>
-                                  Cancel
-                                </Text>
-                              </TouchableOpacity>
-                            </View>
-                          )}
-                        </View>
-                      ) : null,
-                    )
-                  : null}
-              </View>
-            )}
-            {this.props.paySVC ||
-            this.props.payMembership ||
-            this.props.payVoucher ? null : (
-              <View
-                style={{
-                  marginTop: 5,
-                  width: '100%',
-                  borderWidth: 0.4,
-                  padding: 13,
-                  backgroundColor: 'white',
-                  borderColor: colorConfig.pageIndex.grayColor,
-                }}>
-                <TouchableOpacity
-                  style={styles.btnMethodUnselected}
-                  onPress={this.myVouchers}>
-                  <View style={{flexDirection: 'row'}}>
-                    <Fa
-                      size={21}
-                      name={'ticket'}
-                      style={{
-                        color: colorConfig.store.defaultColor,
-                        marginRight: 10,
-                      }}
-                    />
-                    <Text style={styles.descMethodUnselected}>
-                      Use Vouchers
-                    </Text>
-                  </View>
-                  <Icon
-                    size={25}
-                    name={
-                      Platform.OS === 'ios'
-                        ? 'ios-arrow-dropright'
-                        : 'md-arrow-dropright'
-                    }
-                    style={{
-                      color: colorConfig.store.defaultColor,
-                      marginLeft: 10,
-                    }}
-                  />
-                </TouchableOpacity>
-                {!isEmptyArray(this.state.dataVoucer)
-                  ? this.state.dataVoucer.map((item, i) =>
-                      item.isVoucher === true ||
-                      item.isVoucherPromoCode === true ? (
-                        <View
-                          style={{
-                            height: item.isVoucherPromoCode ? 0 : 'auto',
-                            margin: 5,
-                            marginTop: item.isVoucherPromoCode ? 0 : 10,
-                            flexDirection: 'row',
-                            justifyContent: 'space-between',
-                          }}>
-                          <Text
-                            style={{
-                              fontSize: 15,
-                              fontFamily: 'Poppins-Medium',
-                              color: colorConfig.store.secondaryColor,
-                            }}>
-                            {item.name}
-                          </Text>
-                          {!item.isVoucherPromoCode && (
-                            <View>
-                              <TouchableOpacity
-                                onPress={() => this.cencelOneVoucher(i)}
-                                style={{
-                                  alignItems: 'center',
-                                  justifyContent: 'center',
-                                }}>
-                                <Text
-                                  style={{
-                                    color: colorConfig.store.colorError,
-                                    fontFamily: 'Poppins-Medium',
-                                    fontSize: 14,
-                                  }}>
-                                  Cancel
-                                </Text>
-                              </TouchableOpacity>
-                            </View>
-                          )}
-                        </View>
-                      ) : null,
-                    )
-                  : null}
-              </View>
-            )}
-            {this.props.campaignActive &&
-            this.props.paySVC == undefined &&
-            this.props.payVoucher == undefined &&
-            this.props.payMembership == undefined &&
-            campign != undefined &&
-            campign.points &&
-            campign.points.pointsToRebateRatio1 != 0 &&
-            detailPoint != undefined &&
-            !isEmptyObject(detailPoint.trigger) &&
-            (detailPoint.trigger.status === true ||
-              detailPoint.trigger.campaignTrigger === 'USER_SIGNUP') ? (
-              <View
-                style={{
-                  marginTop: 5,
-                  width: '100%',
-                  borderWidth: 0.4,
-                  padding: 13,
-                  backgroundColor: 'white',
-                  borderColor: colorConfig.pageIndex.grayColor,
-                }}>
-                {this.state.cancelPoint == false &&
-                this.state.addPoint != undefined ? (
-                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                    <View style={{width: '20%', alignItems: 'center'}}>
-                      <TouchableOpacity
-                        style={{
+                          height: 40,
+                          width: 40,
+                          borderRadius: 40,
+                          backgroundColor: colorConfig.store.defaultColor,
                           alignItems: 'center',
                           justifyContent: 'center',
-                        }}
-                        onPress={this.cencelPoint}>
+                          marginRight: 10,
+                          paddingTop: 3,
+                        }}>
+                        <Icon
+                          size={20}
+                          name={Platform.OS === 'ios' ? 'ios-cart' : 'md-cart'}
+                          style={{color: 'white'}}
+                        />
+                      </View>
+                      <View>
                         <Text
                           style={{
-                            color: colorConfig.store.colorError,
-                            fontFamily: 'Poppins-Medium',
                             fontSize: 14,
+                            fontWeight: 'bold',
+                            color: colorConfig.pageIndex.activeTintColor,
                           }}>
-                          Cancel
+                          {this.props.companyInfo?.companyName}
                         </Text>
-                      </TouchableOpacity>
+                        {this.props.paySVC !== true &&
+                        this.props.payVoucher !== true &&
+                        this.props.payMembership !== true ? (
+                          <Text
+                            style={{
+                              fontSize: 14,
+                              color: colorConfig.store.titleSelected,
+                              fontFamily: 'Poppins-Regular',
+                            }}>
+                            {this.getOutletName(
+                              this.props.pembayaran?.storeName,
+                            )}
+                          </Text>
+                        ) : null}
+                      </View>
                     </View>
                     <TouchableOpacity
-                      style={styles.btnMethodSelectedPoints}
-                      onPress={this.myPoint}>
-                      <Text style={styles.descMethodSelected}>
-                        {this.state.addPoint} points
-                      </Text>
-                      <Icon
-                        size={25}
-                        name={
-                          Platform.OS === 'ios'
-                            ? 'ios-arrow-dropright'
-                            : 'md-arrow-dropright'
-                        }
+                      onPress={() => this.detailPayment(this.props?.pembayaran)}
+                      style={{
+                        flexDirection: 'row',
+                        marginRight: 10,
+                        alignItems: 'center',
+                      }}>
+                      <Text
                         style={{
+                          marginRight: 10,
+                          fontFamily: 'Poppins-Medium',
+                          fontSize: 15,
                           color: colorConfig.store.defaultColor,
-                          marginLeft: 10,
-                        }}
-                      />
+                        }}>
+                        Order Detail
+                      </Text>
                     </TouchableOpacity>
                   </View>
-                ) : (
+                </View>
+              </View>
+              {this.props.paySVC ||
+              this.props.payMembership ||
+              this.props.payVoucher ? null : (
+                <View
+                  style={{
+                    marginTop: 5,
+                    width: '100%',
+                    borderWidth: 0.4,
+                    padding: 13,
+                    backgroundColor: 'white',
+                    borderColor: colorConfig.pageIndex.grayColor,
+                  }}>
                   <TouchableOpacity
                     style={styles.btnMethodUnselected}
-                    onPress={this.myPoint}>
-                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                      <Fa
-                        size={18}
-                        name={'tags'}
-                        style={{
-                          color: colorConfig.store.defaultColor,
-                          marginRight: 10,
-                        }}
-                      />
+                    onPress={() => {
+                      try {
+                        const total =
+                          Number(this.state.totalBayar) -
+                          this.state.totalNonDiscountable;
+                        if (total > 0) {
+                          Actions.applyPromoCode({
+                            setDataVoucher: this.setDataVoucher,
+                            dataVoucher: this.state.dataVoucer,
+                            originalPurchase: this.props.pembayaran
+                              .totalNettAmount,
+                          });
+                        } else {
+                          Alert.alert('Sorry', "Can't add more promo code.");
+                          return;
+                        }
+                      } catch (e) {}
+                    }}>
+                    <View style={{flexDirection: 'row'}}>
                       <Text style={styles.descMethodUnselected}>
-                        Use Points
+                        Apply Promo Code
                       </Text>
                     </View>
                     <Icon
@@ -3915,45 +3696,298 @@ class SettleOrder extends Component {
                       }}
                     />
                   </TouchableOpacity>
-                )}
-              </View>
-            ) : null}
-
-            {this.props.paySVC == undefined &&
-            this.props.payVoucher == undefined &&
-            this.props.payMembership == undefined &&
-            balance &&
-            balance > 0 ? (
-              <View
-                style={{
-                  marginTop: 5,
-                  width: '100%',
-                  borderWidth: 0.4,
-                  padding: 13,
-                  backgroundColor: 'white',
-                  borderColor: colorConfig.pageIndex.grayColor,
-                }}>
-                {this.state.amountSVC > 0 ? (
-                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                    <View style={{width: '20%', alignItems: 'center'}}>
-                      <TouchableOpacity
+                  {!isEmptyArray(this.state.dataVoucer)
+                    ? this.state.dataVoucer.map((item, i) =>
+                        item.isVoucher === true ||
+                        item.isVoucherPromoCode === true ? (
+                          <View
+                            style={{
+                              height: !item.isVoucherPromoCode ? 0 : 'auto',
+                              margin: 5,
+                              marginTop: !item.isVoucherPromoCode ? 0 : 10,
+                              flexDirection: 'row',
+                              justifyContent: 'space-between',
+                            }}>
+                            <Text
+                              style={{
+                                fontSize: 15,
+                                fontFamily: 'Poppins-Medium',
+                                color: colorConfig.store.secondaryColor,
+                              }}>
+                              {item.name}
+                            </Text>
+                            {item.isVoucherPromoCode && (
+                              <View>
+                                <TouchableOpacity
+                                  onPress={() => this.cencelOneVoucher(i)}
+                                  style={{
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                  }}>
+                                  <Text
+                                    style={{
+                                      color: colorConfig.store.colorError,
+                                      fontFamily: 'Poppins-Medium',
+                                      fontSize: 14,
+                                    }}>
+                                    Cancel
+                                  </Text>
+                                </TouchableOpacity>
+                              </View>
+                            )}
+                          </View>
+                        ) : null,
+                      )
+                    : null}
+                </View>
+              )}
+              {this.props.paySVC ||
+              this.props.payMembership ||
+              this.props.payVoucher ? null : (
+                <View
+                  style={{
+                    marginTop: 5,
+                    width: '100%',
+                    borderWidth: 0.4,
+                    padding: 13,
+                    backgroundColor: 'white',
+                    borderColor: colorConfig.pageIndex.grayColor,
+                  }}>
+                  <TouchableOpacity
+                    style={styles.btnMethodUnselected}
+                    onPress={this.myVouchers}>
+                    <View style={{flexDirection: 'row'}}>
+                      <Fa
+                        size={21}
+                        name={'ticket'}
                         style={{
-                          alignItems: 'center',
-                          justifyContent: 'center',
+                          color: colorConfig.store.defaultColor,
+                          marginRight: 10,
                         }}
-                        onPress={this.cencelSVC}>
-                        <Text
+                      />
+                      <Text style={styles.descMethodUnselected}>
+                        Use Vouchers
+                      </Text>
+                    </View>
+                    <Icon
+                      size={25}
+                      name={
+                        Platform.OS === 'ios'
+                          ? 'ios-arrow-dropright'
+                          : 'md-arrow-dropright'
+                      }
+                      style={{
+                        color: colorConfig.store.defaultColor,
+                        marginLeft: 10,
+                      }}
+                    />
+                  </TouchableOpacity>
+                  {!isEmptyArray(this.state.dataVoucer)
+                    ? this.state.dataVoucer.map((item, i) =>
+                        item.isVoucher === true ||
+                        item.isVoucherPromoCode === true ? (
+                          <View
+                            style={{
+                              height: item.isVoucherPromoCode ? 0 : 'auto',
+                              margin: 5,
+                              marginTop: item.isVoucherPromoCode ? 0 : 10,
+                              flexDirection: 'row',
+                              justifyContent: 'space-between',
+                            }}>
+                            <Text
+                              style={{
+                                fontSize: 15,
+                                fontFamily: 'Poppins-Medium',
+                                color: colorConfig.store.secondaryColor,
+                              }}>
+                              {item.name}
+                            </Text>
+                            {!item.isVoucherPromoCode && (
+                              <View>
+                                <TouchableOpacity
+                                  onPress={() => this.cencelOneVoucher(i)}
+                                  style={{
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                  }}>
+                                  <Text
+                                    style={{
+                                      color: colorConfig.store.colorError,
+                                      fontFamily: 'Poppins-Medium',
+                                      fontSize: 14,
+                                    }}>
+                                    Cancel
+                                  </Text>
+                                </TouchableOpacity>
+                              </View>
+                            )}
+                          </View>
+                        ) : null,
+                      )
+                    : null}
+                </View>
+              )}
+              {this.props.campaignActive &&
+              this.props.paySVC == undefined &&
+              this.props.payVoucher == undefined &&
+              this.props.payMembership == undefined &&
+              campign != undefined &&
+              campign.points &&
+              campign.points.pointsToRebateRatio1 != 0 &&
+              detailPoint != undefined &&
+              !isEmptyObject(detailPoint.trigger) &&
+              (detailPoint.trigger.status === true ||
+                detailPoint.trigger.campaignTrigger === 'USER_SIGNUP') ? (
+                <View
+                  style={{
+                    marginTop: 5,
+                    width: '100%',
+                    borderWidth: 0.4,
+                    padding: 13,
+                    backgroundColor: 'white',
+                    borderColor: colorConfig.pageIndex.grayColor,
+                  }}>
+                  {this.state.cancelPoint == false &&
+                  this.state.addPoint != undefined ? (
+                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                      <View style={{width: '20%', alignItems: 'center'}}>
+                        <TouchableOpacity
                           style={{
-                            color: colorConfig.store.colorError,
-                            fontFamily: 'Poppins-Medium',
-                            fontSize: 14,
-                          }}>
-                          Cancel
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                          }}
+                          onPress={this.cencelPoint}>
+                          <Text
+                            style={{
+                              color: colorConfig.store.colorError,
+                              fontFamily: 'Poppins-Medium',
+                              fontSize: 14,
+                            }}>
+                            Cancel
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
+                      <TouchableOpacity
+                        style={styles.btnMethodSelectedPoints}
+                        onPress={this.myPoint}>
+                        <Text style={styles.descMethodSelected}>
+                          {this.state.addPoint} points
                         </Text>
+                        <Icon
+                          size={25}
+                          name={
+                            Platform.OS === 'ios'
+                              ? 'ios-arrow-dropright'
+                              : 'md-arrow-dropright'
+                          }
+                          style={{
+                            color: colorConfig.store.defaultColor,
+                            marginLeft: 10,
+                          }}
+                        />
                       </TouchableOpacity>
                     </View>
+                  ) : (
                     <TouchableOpacity
-                      style={styles.btnMethodSelectedPoints}
+                      style={styles.btnMethodUnselected}
+                      onPress={this.myPoint}>
+                      <View
+                        style={{flexDirection: 'row', alignItems: 'center'}}>
+                        <Fa
+                          size={18}
+                          name={'tags'}
+                          style={{
+                            color: colorConfig.store.defaultColor,
+                            marginRight: 10,
+                          }}
+                        />
+                        <Text style={styles.descMethodUnselected}>
+                          Use Points
+                        </Text>
+                      </View>
+                      <Icon
+                        size={25}
+                        name={
+                          Platform.OS === 'ios'
+                            ? 'ios-arrow-dropright'
+                            : 'md-arrow-dropright'
+                        }
+                        style={{
+                          color: colorConfig.store.defaultColor,
+                          marginLeft: 10,
+                        }}
+                      />
+                    </TouchableOpacity>
+                  )}
+                </View>
+              ) : null}
+
+              {this.props.paySVC == undefined &&
+              this.props.payVoucher == undefined &&
+              this.props.payMembership == undefined &&
+              balance &&
+              balance > 0 ? (
+                <View
+                  style={{
+                    marginTop: 5,
+                    width: '100%',
+                    borderWidth: 0.4,
+                    padding: 13,
+                    backgroundColor: 'white',
+                    borderColor: colorConfig.pageIndex.grayColor,
+                  }}>
+                  {this.state.amountSVC > 0 ? (
+                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                      <View style={{width: '20%', alignItems: 'center'}}>
+                        <TouchableOpacity
+                          style={{
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                          }}
+                          onPress={this.cencelSVC}>
+                          <Text
+                            style={{
+                              color: colorConfig.store.colorError,
+                              fontFamily: 'Poppins-Medium',
+                              fontSize: 14,
+                            }}>
+                            Cancel
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
+                      <TouchableOpacity
+                        style={styles.btnMethodSelectedPoints}
+                        onPress={() =>
+                          Actions.virtualKeyboard({
+                            useSVC: true,
+                            amountSVC: this.state.amountSVC,
+                            totalPurchase: this.state.totalBayar,
+                            originalPurchase: this.props.pembayaran
+                              .totalNettAmount,
+                            setSVCAmount: this.setSVCAmount,
+                            doPayment: this.doPayment,
+                          })
+                        }>
+                        <Text style={styles.descMethodSelected}>
+                          {this.state.amountSVC} SVC Balance
+                        </Text>
+                        <Icon
+                          size={25}
+                          name={
+                            Platform.OS === 'ios'
+                              ? 'ios-arrow-dropright'
+                              : 'md-arrow-dropright'
+                          }
+                          style={{
+                            color: colorConfig.store.defaultColor,
+                            marginLeft: 10,
+                          }}
+                        />
+                      </TouchableOpacity>
+                    </View>
+                  ) : (
+                    <TouchableOpacity
+                      style={styles.btnMethodUnselected}
                       onPress={() =>
                         Actions.virtualKeyboard({
                           useSVC: true,
@@ -3965,9 +3999,20 @@ class SettleOrder extends Component {
                           doPayment: this.doPayment,
                         })
                       }>
-                      <Text style={styles.descMethodSelected}>
-                        {this.state.amountSVC} SVC Balance
-                      </Text>
+                      <View
+                        style={{flexDirection: 'row', alignItems: 'center'}}>
+                        <Fa
+                          size={18}
+                          name={'money'}
+                          style={{
+                            color: colorConfig.store.defaultColor,
+                            marginRight: 10,
+                          }}
+                        />
+                        <Text style={styles.descMethodUnselected}>
+                          Use Store Value Card
+                        </Text>
+                      </View>
                       <Icon
                         size={25}
                         name={
@@ -3981,158 +4026,120 @@ class SettleOrder extends Component {
                         }}
                       />
                     </TouchableOpacity>
-                  </View>
-                ) : (
-                  <TouchableOpacity
-                    style={styles.btnMethodUnselected}
-                    onPress={() =>
-                      Actions.virtualKeyboard({
-                        useSVC: true,
-                        amountSVC: this.state.amountSVC,
-                        totalPurchase: this.state.totalBayar,
-                        originalPurchase: this.props.pembayaran.totalNettAmount,
-                        setSVCAmount: this.setSVCAmount,
-                        doPayment: this.doPayment,
-                      })
-                    }>
-                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                      <Fa
-                        size={18}
-                        name={'money'}
-                        style={{
-                          color: colorConfig.store.defaultColor,
-                          marginRight: 10,
-                        }}
-                      />
-                      <Text style={styles.descMethodUnselected}>
-                        Use Store Value Card
-                      </Text>
-                    </View>
-                    <Icon
-                      size={25}
-                      name={
-                        Platform.OS === 'ios'
-                          ? 'ios-arrow-dropright'
-                          : 'md-arrow-dropright'
-                      }
-                      style={{
-                        color: colorConfig.store.defaultColor,
-                        marginLeft: 10,
-                      }}
-                    />
-                  </TouchableOpacity>
-                )}
-              </View>
-            ) : null}
+                  )}
+                </View>
+              ) : null}
 
-            <View
-              style={{
-                marginTop: 13,
-                width: '100%',
-                borderWidth: 0.4,
-                padding: 13,
-                backgroundColor: 'white',
-                borderColor: colorConfig.pageIndex.grayColor,
-              }}>
-              <TouchableOpacity
-                style={styles.btnPaymentMethod}
-                onPress={() => {
-                  Actions.paymentMethods({
-                    page: 'settleOrder',
-                    paySVC: this.props.paySVC,
-                  });
-                }}>
-                <Text
-                  style={[
-                    styles.descMethodUnselected,
-                    {
-                      color: colorConfig.store.titleSelected,
-                      fontWeight: 'bold',
-                    },
-                  ]}>
-                  {' '}
-                  {selectedAccount != undefined
-                    ? this.selectedPaymentMethod(selectedAccount)
-                    : 'Payment Method'}
-                </Text>
-                <Icon
-                  size={25}
-                  name={
-                    Platform.OS === 'ios'
-                      ? 'ios-arrow-dropright'
-                      : 'md-arrow-dropright'
-                  }
-                  style={{
-                    color: colorConfig.store.titleSelected,
-                    marginLeft: 10,
-                  }}
-                />
-              </TouchableOpacity>
-            </View>
-
-            <View style={{marginTop: 50}} />
-            <TouchableOpacity
-              onPress={this.popupPayment}
-              disabled={
-                selectedAccount != undefined || this.state.totalBayar == 0
-                  ? false
-                  : true
-              }
-              style={{
-                backgroundColor:
-                  selectedAccount != undefined || this.state.totalBayar == 0
-                    ? colorConfig.store.defaultColor
-                    : colorConfig.store.disableButton,
-                padding: 15,
-                borderRadius: 7,
-                width: '88%',
-                alignSelf: 'center',
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              <Text
+              <View
                 style={{
-                  fontSize: 19,
-                  color: 'white',
-                  fontFamily: 'Poppins-Regular',
+                  marginTop: 13,
+                  width: '100%',
+                  borderWidth: 0.4,
+                  padding: 13,
+                  backgroundColor: 'white',
+                  borderColor: colorConfig.pageIndex.grayColor,
                 }}>
-                {'Pay' + this.format(CurrencyFormatter(this.state.totalBayar))}
-              </Text>
-            </TouchableOpacity>
-
-            {outlet?.enablePayAtPOS === true &&
-            this.props.paySVC == undefined &&
-            this.props.payVoucher == undefined &&
-            this.props.payMembership == undefined &&
-            pembayaran.orderingMode !== 'DELIVERY' &&
-            pembayaran.orderingMode !== 'STORECHECKOUT' ? (
-              <View style={{marginTop: 20}}>
-                <Text
-                  style={{
-                    color: colorConfig.store.titleSelected,
-                    fontSize: 18,
-                    textAlign: 'center',
-                    marginBottom: 20,
-                  }}>
-                  OR
-                </Text>
                 <TouchableOpacity
-                  onPress={this.payAtPOS}
-                  style={styles.payAtPOS}>
+                  style={styles.btnPaymentMethod}
+                  onPress={() => {
+                    Actions.paymentMethods({
+                      page: 'settleOrder',
+                      paySVC: this.props.paySVC,
+                    });
+                  }}>
                   <Text
-                    style={{
-                      fontSize: 19,
-                      color: colorConfig.store.defaultColor,
-                      fontFamily: 'Poppins-Medium',
-                    }}>
-                    Pay at Store
+                    style={[
+                      styles.descMethodUnselected,
+                      {
+                        color: colorConfig.store.titleSelected,
+                        fontWeight: 'bold',
+                      },
+                    ]}>
+                    {' '}
+                    {selectedAccount != undefined
+                      ? this.selectedPaymentMethod(selectedAccount)
+                      : 'Payment Method'}
                   </Text>
+                  <Icon
+                    size={25}
+                    name={
+                      Platform.OS === 'ios'
+                        ? 'ios-arrow-dropright'
+                        : 'md-arrow-dropright'
+                    }
+                    style={{
+                      color: colorConfig.store.titleSelected,
+                      marginLeft: 10,
+                    }}
+                  />
                 </TouchableOpacity>
               </View>
-            ) : null}
-          </View>
-          <View style={{paddingBottom: 100}} />
-        </ScrollView>
+
+              <View style={{marginTop: 50}} />
+              <TouchableOpacity
+                onPress={this.popupPayment}
+                disabled={
+                  selectedAccount != undefined || this.state.totalBayar == 0
+                    ? false
+                    : true
+                }
+                style={{
+                  backgroundColor:
+                    selectedAccount != undefined || this.state.totalBayar == 0
+                      ? colorConfig.store.defaultColor
+                      : colorConfig.store.disableButton,
+                  padding: 15,
+                  borderRadius: 7,
+                  width: '88%',
+                  alignSelf: 'center',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <Text
+                  style={{
+                    fontSize: 19,
+                    color: 'white',
+                    fontFamily: 'Poppins-Regular',
+                  }}>
+                  {'Pay' +
+                    this.format(CurrencyFormatter(this.state.totalBayar))}
+                </Text>
+              </TouchableOpacity>
+
+              {outlet?.enablePayAtPOS === true &&
+              this.props.paySVC == undefined &&
+              this.props.payVoucher == undefined &&
+              this.props.payMembership == undefined &&
+              pembayaran.orderingMode !== 'DELIVERY' &&
+              pembayaran.orderingMode !== 'STORECHECKOUT' ? (
+                <View style={{marginTop: 20}}>
+                  <Text
+                    style={{
+                      color: colorConfig.store.titleSelected,
+                      fontSize: 18,
+                      textAlign: 'center',
+                      marginBottom: 20,
+                    }}>
+                    OR
+                  </Text>
+                  <TouchableOpacity
+                    onPress={this.payAtPOS}
+                    style={styles.payAtPOS}>
+                    <Text
+                      style={{
+                        fontSize: 19,
+                        color: colorConfig.store.defaultColor,
+                        fontFamily: 'Poppins-Medium',
+                      }}>
+                      Pay at Store
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              ) : null}
+            </View>
+            <View style={{paddingBottom: 100}} />
+          </ScrollView>
+        </Body>
         <ErrorModal
           title={this.state.errorMessage.title}
           description={this.state.errorMessage.message}

@@ -153,6 +153,7 @@ const useStyles = () => {
       width: '100%',
       maxWidth: '100%',
       aspectRatio: 1 / 1,
+      borderRadius: 8,
     },
     viewTransparentImage: {
       flex: 1,
@@ -161,7 +162,7 @@ const useStyles = () => {
       alignItems: 'center',
     },
     image: {
-      borderRadius: 20,
+      borderRadius: 8,
     },
     imagePromo: {
       width: 16,
@@ -181,7 +182,7 @@ const useStyles = () => {
     },
     counterCartProduct: {
       height: 26,
-      width: 30,
+      width: 'auto',
       position: 'absolute',
       top: 0,
       right: 0,
@@ -189,6 +190,8 @@ const useStyles = () => {
       alignItems: 'center',
       justifyContent: 'center',
       borderRadius: 4,
+      paddingHorizontal: 4,
+      minWidth: 30,
     },
     counterStyle: {
       color: 'white',
