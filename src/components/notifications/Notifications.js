@@ -27,7 +27,6 @@ import {Body, Header} from '../layout';
 import EmailSvg from '../../assets/svg/EmailSvg';
 import withHooksComponent from '../HOC';
 import PhoneSvg from '../../assets/svg/PhoneSvg';
-import {normalizeLayoutSizeHeight} from '../../helper/Layout';
 
 class Notifications extends Component {
   constructor(props) {
