@@ -163,6 +163,7 @@ class Notifications extends Component {
                       this.changeEmailSetting(emailNotification);
                     }}
                     value={emailNotification}
+                    style={styles.buttonSwitch}
                   />
                 )}
               />
@@ -195,6 +196,7 @@ class Notifications extends Component {
                       this.changeSMSSetting(smsNotification);
                     }}
                     value={smsNotification}
+                    style={styles.buttonSwitch}
                   />
                 )}
               />
@@ -351,5 +353,8 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     paddingHorizontal: 12,
+  },
+  buttonSwitch: {
+    transform: [{scaleX: 0.7}, {scaleY: 0.7}],
   },
 });
