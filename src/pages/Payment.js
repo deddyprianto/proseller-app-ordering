@@ -1,0 +1,461 @@
+/**
+ * Martin
+ * martin@edgeworks.co.id
+ * PT Edgeworks
+ */
+
+import React from 'react';
+import {Actions} from 'react-native-router-flux';
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  SafeAreaView,
+} from 'react-native';
+
+import colorConfig from '../config/colorConfig';
+
+import ProductCartList from '../components/productCartList/ProductCartList';
+import {isEmptyArray, isEmptyObject} from '../helper/CheckEmpty';
+import currencyFormatter from '../helper/CurrencyFormatter';
+import Header from '../components/layout/header';
+import Theme from '../theme';
+import moment from 'moment';
+const useStyles = () => {
+  const theme = Theme();
+  const styles = StyleSheet.create({
+    root: {
+      flex: 1,
+      backgroundColor: 'white',
+      justifyContent: 'space-between',
+    },
+    container: {
+      flex: 1,
+    },
+    textDetail: {
+      fontSize: 12,
+    },
+    textDetailValue: {
+      fontSize: 10,
+      fontWeight: 'bold',
+    },
+    textGrandTotal: {
+      fontSize: 12,
+    },
+    textGrandTotalValue: {
+      fontWeight: 'bold',
+      fontSize: 14,
+    },
+    textDetailGrandTotal: {
+      fontSize: 14,
+    },
+    textDetailGrandTotalValue: {
+      fontSize: 14,
+      fontWeight: 'bold',
+    },
+    textSeeDetails: {
+      color: colorConfig.primaryColor,
+      textAlign: 'center',
+      textDecorationLine: 'underline',
+    },
+    textCheckoutButton: {
+      fontSize: 12,
+      fontWeight: '500',
+      color: 'white',
+    },
+    textMethod: {
+      fontSize: 12,
+      fontWeight: '500',
+    },
+    textMethodValue: {
+      fontSize: 12,
+      fontWeight: '500',
+      color: colorConfig.primaryColor,
+      textAlign: 'center',
+    },
+    textAddButton: {
+      color: colorConfig.primaryColor,
+      fontSize: 12,
+    },
+    textTotalDetails: {
+      fontSize: 12,
+    },
+    viewDetailValueItem: {
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      paddingBottom: 16,
+    },
+    viewDetailGrandTotal: {
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      paddingTop: 16,
+      borderTopWidth: 1,
+      borderTopColor: theme.colors.greyScale3,
+    },
+    viewCheckoutButton: {
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      borderTopWidth: 0.2,
+      borderTopColor: 'grey',
+      padding: 16,
+    },
+    viewFooter: {
+      backgroundColor: 'white',
+      borderTopLeftRadius: 8,
+      borderTopRightRadius: 8,
+      marginTop: -8,
+    },
+    viewMethod: {
+      shadowOffset: {
+        width: 0.2,
+        height: 0.2,
+      },
+      shadowOpacity: 0.2,
+      shadowColor: theme.colors.greyScale2,
+      elevation: 2,
+      marginTop: 16,
+      borderRadius: 8,
+      backgroundColor: 'white',
+      padding: 16,
+      marginHorizontal: 16,
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    viewAddButton: {
+      borderColor: colorConfig.primaryColor,
+      borderWidth: 1,
+      paddingVertical: 10,
+      borderRadius: 8,
+      alignItems: 'center',
+      backgroundColor: 'white',
+    },
+    viewGrandTotal: {
+      display: 'flex',
+      flexDirection: 'row',
+    },
+    viewDetailHeader: {
+      paddingVertical: 16,
+      paddingHorizontal: 20,
+      alignItems: 'center',
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'center',
+      borderBottomWidth: 1,
+      borderColor: '#D6D6D6',
+    },
+    viewDetailValue: {
+      shadowOffset: {
+        width: 0.2,
+        height: 0.2,
+      },
+      shadowOpacity: 0.2,
+      shadowColor: theme.colors.greyScale2,
+      elevation: 2,
+      padding: 12,
+      marginTop: 16,
+      marginHorizontal: 16,
+      borderRadius: 8,
+      backgroundColor: 'white',
+    },
+    touchableMethod: {
+      width: 120,
+      borderRadius: 8,
+      paddingVertical: 10,
+      borderWidth: 1,
+      borderColor: colorConfig.primaryColor,
+    },
+    touchableCheckoutButton: {
+      borderRadius: 8,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: colorConfig.primaryColor,
+      paddingVertical: 10,
+      paddingHorizontal: 26,
+    },
+    touchableCheckoutButtonDisabled: {
+      borderRadius: 8,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: '#B7B7B7',
+      paddingVertical: 10,
+      paddingHorizontal: 26,
+    },
+    dividerDashed: {
+      textAlign: 'center',
+      color: colorConfig.primaryColor,
+    },
+    divider: {
+      height: 1,
+      width: '100%',
+      backgroundColor: '#D6D6D6',
+    },
+    iconArrowUp: {
+      fontSize: 20,
+      color: '#B7B7B7',
+    },
+    iconClose: {
+      position: 'absolute',
+      right: 20,
+      fontSize: 16,
+    },
+  });
+  return styles;
+};
+
+const Payment = ({order}) => {
+  const styles = useStyles();
+
+  const renderDetailDateAndTime = () => {
+    const {modifiedOn} = order;
+
+    const date = moment(modifiedOn).format('DD MM YYYY');
+    const time = moment(modifiedOn).format('HH.mm');
+    return (
+      <View style={styles.viewDetailValueItem}>
+        <Text style={styles.textDetail}>Order Date & Time</Text>
+        <View
+          style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+          <Text style={styles.textDetailValue}>{date}</Text>
+          <View
+            style={{
+              width: 6,
+              height: 6,
+              borderRadius: 100,
+              marginHorizontal: 8,
+              backgroundColor: 'black',
+            }}
+          />
+          <Text style={styles.textDetailValue}>{time}</Text>
+        </View>
+      </View>
+    );
+  };
+
+  const renderDetailTotal = () => {
+    const {totalGrossAmount, totalDiscountAmount} = order;
+    const subTotalAfterDiscount = totalGrossAmount - totalDiscountAmount;
+    const subTotal = totalDiscountAmount
+      ? subTotalAfterDiscount
+      : totalGrossAmount;
+
+    return (
+      <View style={styles.viewDetailValueItem}>
+        <Text style={styles.textDetail}>Subtotal</Text>
+        <Text style={styles.textDetailValue}>
+          {currencyFormatter(subTotal)}
+        </Text>
+      </View>
+    );
+  };
+
+  const renderDetailServiceCharge = () => {
+    const {totalSurchargeAmount} = order;
+    if (totalSurchargeAmount) {
+      return (
+        <View style={styles.viewDetailValueItem}>
+          <Text style={styles.textDetail}>Service Charge</Text>
+          <Text style={styles.textDetailValue}>
+            {currencyFormatter(totalSurchargeAmount)}
+          </Text>
+        </View>
+      );
+    }
+  };
+
+  const renderDetailExcludeTax = () => {
+    const {exclusiveTax} = order;
+    if (exclusiveTax) {
+      return (
+        <View style={styles.viewDetailValueItem}>
+          <Text style={styles.textDetail}>Excl. Tax</Text>
+          <Text style={styles.textDetailValue}>
+            {currencyFormatter(exclusiveTax)}
+          </Text>
+        </View>
+      );
+    }
+  };
+
+  const renderDetailIncludeTax = () => {
+    const {inclusiveTax} = order;
+    if (inclusiveTax) {
+      return (
+        <View style={styles.viewDetailValueItem}>
+          <Text style={styles.textDetail}>Incl. Tax</Text>
+          <Text style={styles.textDetailValue}>
+            {currencyFormatter(inclusiveTax)}
+          </Text>
+        </View>
+      );
+    }
+  };
+
+  const renderDetailDeliveryCost = () => {
+    const {provider} = order;
+    if (provider) {
+      const cost = provider.deliveryFee || 'Free';
+      return (
+        <View style={styles.viewDetailValueItem}>
+          <Text style={styles.textDetail}>Delivery Fee</Text>
+          <Text style={styles.textDetailValue}>{currencyFormatter(cost)}</Text>
+        </View>
+      );
+    }
+  };
+
+  const renderDetailGrandTotal = () => {
+    const {totalNettAmount} = order;
+
+    if (totalNettAmount) {
+      return (
+        <View style={styles.viewDetailGrandTotal}>
+          <Text style={styles.textDetailGrandTotal}>Grand Total</Text>
+          <Text style={styles.textDetailGrandTotalValue}>
+            {currencyFormatter(totalNettAmount)}
+          </Text>
+        </View>
+      );
+    }
+  };
+
+  const renderOrderingType = () => {
+    const orderingType =
+      typeof order?.orderingMode === 'string' && order?.orderingMode;
+
+    const orderingTypeValue = orderingType || 'Choose Type';
+
+    return (
+      <View style={styles.viewMethod}>
+        <Text style={styles.textMethod}>Ordering Type</Text>
+        <TouchableOpacity disabled style={styles.touchableMethod}>
+          <Text style={styles.textMethodValue}>{orderingTypeValue}</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
+  const renderDeliveryAddress = () => {
+    if (order?.orderingMode === 'DELIVERY') {
+      const deliveryAddressValue =
+        order?.deliveryAddress?.streetName || 'Choose Type';
+
+      return (
+        <View style={styles.viewMethod}>
+          <Text style={styles.textMethod}>Delivery Address</Text>
+          <TouchableOpacity style={styles.touchableMethod} disabled>
+            <Text style={styles.textMethodValue}>{deliveryAddressValue}</Text>
+          </TouchableOpacity>
+        </View>
+      );
+    }
+  };
+
+  const renderDeliveryProvider = () => {
+    if (order?.orderingMode === 'DELIVERY') {
+      const deliveryProviderValue = order?.provider?.name || 'Choose Provider';
+
+      return (
+        <View style={styles.viewMethod}>
+          <Text style={styles.textMethod}>Delivery Provider</Text>
+          <TouchableOpacity style={styles.touchableMethod} disabled>
+            <Text style={styles.textMethodValue}>{deliveryProviderValue}</Text>
+          </TouchableOpacity>
+        </View>
+      );
+    }
+  };
+
+  const renderDeliveryDateText = () => {
+    if (order?.orderActionDate) {
+      return (
+        <View>
+          <Text style={styles.textMethodValue}>{order?.orderActionDate}</Text>
+        </View>
+      );
+    } else {
+      return <Text style={styles.textMethodValue}>Choose Date</Text>;
+    }
+  };
+  const renderDeliveryDate = () => {
+    if (
+      order?.orderingMode === 'DELIVERY' ||
+      order?.orderingMode === 'STOREPICKUP'
+    ) {
+      return (
+        <View style={styles.viewMethod}>
+          <Text style={styles.textMethod}>Delivery Date</Text>
+          <TouchableOpacity style={styles.touchableMethod} disabled>
+            {renderDeliveryDateText()}
+          </TouchableOpacity>
+        </View>
+      );
+    }
+  };
+
+  const renderOrderDetails = () => {
+    return (
+      <View style={styles.viewDetailValue}>
+        {renderDetailDateAndTime()}
+        {renderDetailTotal()}
+        {renderDetailDeliveryCost()}
+        {renderDetailServiceCharge()}
+        {renderDetailIncludeTax()}
+        {renderDetailExcludeTax()}
+        {renderDetailGrandTotal()}
+      </View>
+    );
+  };
+
+  const renderPaymentDetails = () => {
+    return (
+      <View style={styles.viewDetailValue}>
+        {renderDetailDateAndTime()}
+        {renderDetailTotal()}
+        {renderDetailDeliveryCost()}
+        {renderDetailServiceCharge()}
+        {renderDetailIncludeTax()}
+        {renderDetailExcludeTax()}
+        {renderDetailGrandTotal()}
+      </View>
+    );
+  };
+
+  const renderBody = () => {
+    if (!isEmptyObject(order)) {
+      return (
+        <View style={styles.container}>
+          <ScrollView>
+            <View style={styles.divider} />
+            {renderOrderingType()}
+            {renderDeliveryAddress()}
+            {renderDeliveryProvider()}
+            {renderDeliveryDate()}
+            {renderOrderDetails()}
+            {renderPaymentDetails()}
+          </ScrollView>
+        </View>
+      );
+    }
+  };
+
+  if (isEmptyArray(order?.details)) {
+    Actions.pop();
+  }
+
+  return (
+    <SafeAreaView style={styles.root}>
+      <Header title={order.action.name} />
+      {renderBody()}
+    </SafeAreaView>
+  );
+};
+
+export default Payment;
