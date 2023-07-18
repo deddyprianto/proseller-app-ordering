@@ -102,11 +102,11 @@ const BannerFnB = ({bottom = 0, placement}) => {
 
     switch (placement) {
       case 'bottom':
-        result = banners.filter(row => row?.placement === 'BOTTOM');
+        result = banners?.filter(row => row?.placement === 'BOTTOM');
         break;
 
       case 'top':
-        result = banners.filter(row => row?.placement === 'TOP');
+        result = banners?.filter(row => row?.placement === 'TOP');
         break;
 
       default:
