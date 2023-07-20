@@ -22,6 +22,7 @@ import {isEmptyArray, isEmptyObject} from '../helper/CheckEmpty';
 import currencyFormatter from '../helper/CurrencyFormatter';
 import Header from '../components/layout/header';
 import Theme from '../theme';
+import OrderDetail from './OrderDetail';
 const useStyles = () => {
   const theme = Theme();
   const styles = StyleSheet.create({
@@ -364,7 +365,7 @@ const PendingOrderDetail = ({order}) => {
       </View>
     );
   };
-
+  console.log(order, 'nuki');
   const renderBody = () => {
     if (!isEmptyObject(order)) {
       return (
@@ -391,8 +392,9 @@ const PendingOrderDetail = ({order}) => {
 
   return (
     <SafeAreaView style={styles.root}>
-      <Header title="Pending Order Detail" />
-      {renderBody()}
+      <Header title="Order Detail" />
+      <OrderDetail data={order} />
+      {/* {renderBody()} */}
     </SafeAreaView>
   );
 };
