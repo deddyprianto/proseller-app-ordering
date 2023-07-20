@@ -1,12 +1,26 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React from 'react';
-import {FlatList, TouchableOpacity, View, StyleSheet} from 'react-native';
+import {
+  FlatList,
+  TouchableOpacity,
+  View,
+  StyleSheet,
+  ActivityIndicator,
+} from 'react-native';
+import Geolocation from '@react-native-community/geolocation';
+
+import {debounce} from 'lodash';
 import GlobalInputText from '../globalInputText';
 import {useDispatch, useSelector} from 'react-redux';
-import {getAutoCompleteMap} from '../../actions/search.action';
+import {
+  getAddressDetail,
+  getAutoCompleteMap,
+} from '../../actions/search.action';
 import GlobalText from '../globalText';
 import SearchSvg from '../../assets/svg/SearchSvg';
 import {normalizeLayoutSizeHeight} from '../../helper/Layout';
 import Theme from '../../theme/Theme';
+import MapPointSvg from '../../assets/svg/MapPointSvg';
 
 const useStyles = () => {
   const {colors} = Theme();
@@ -18,28 +32,94 @@ const useStyles = () => {
       marginTop: 13,
       borderColor: colors.greyScale2,
       borderWidth: 1,
+      borderRadius: 8,
     },
     buttonStyle: {
       padding: 16,
+    },
+    currentLocationBtn: {
+      padding: 16,
+      flexDirection: 'row',
+      borderBottomWidth: 1,
+      borderBottomColor: colors.greyScale2,
+    },
+    icontContainer: {
+      marginRight: 8,
     },
   });
   return {styles};
 };
 
-const AutocompleteAddress = () => {
+/**
+ * @typedef {Object} AutocompleteProps
+ * @property {boolean} showLoading
+ * @property {boolean} enableCurrentLocation
+ * @property {Function} onSelectAddress
+ */
+
+/**
+ *
+ * @param {AutocompleteProps} props
+ */
+
+const AutocompleteAddress = props => {
   const {styles} = useStyles();
   const dispatch = useDispatch();
+  const inputRef = React.useRef();
   const data = useSelector(state => state.searchReducer?.searchAddress) || [];
   const handleSearchPostalCode = text => {
-    dispatch(getAutoCompleteMap(text));
+    setIsFocus(true);
+    setMyAddress(text);
+    callApiOneMap(text);
   };
   const [isFocus, setIsFocus] = React.useState(false);
+  const [myAddress, setMyAddress] = React.useState('');
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const [loading, setLoading] = React.useState(false);
+
+  const onClickAddress = address => {
+    setMyAddress(address);
+    setIsFocus(false);
+    if (props.onSelectAddress && typeof props.onSelectAddress === 'function') {
+      props.onSelectAddress(address);
+    }
+  };
+
+  const callApiOneMap = debounce(async text => {
+    setCurrentPage(1);
+    setLoading(true);
+    await dispatch(getAutoCompleteMap(text));
+    setLoading(false);
+  }, 500);
 
   const renderItem = ({item}) => (
-    <TouchableOpacity style={styles.buttonStyle}>
+    <TouchableOpacity
+      onPress={() => onClickAddress(item['ADDRESS'])}
+      style={styles.buttonStyle}>
       <GlobalText>{item['ADDRESS']}</GlobalText>
     </TouchableOpacity>
   );
+
+  const onBlur = () => {
+    setIsFocus(false);
+  };
+  const onEndReach = () => {
+    setCurrentPage(prevState => prevState + 1);
+    dispatch(getAutoCompleteMap(myAddress, currentPage + 1));
+  };
+
+  const onGetCurrentLocation = () => {
+    Geolocation.getCurrentPosition(async info => {
+      setCurrentPage(1);
+      const {coords} = info;
+      const searchValue = `${coords.latitude},${coords.longitude}`;
+      const response = await dispatch(getAddressDetail(searchValue));
+      if (response.length > 0) {
+        setMyAddress(response[0].BUILDINGNAME);
+        dispatch(getAutoCompleteMap(response[0].BUILDINGNAME));
+      }
+    });
+  };
 
   return (
     <View>
@@ -49,16 +129,33 @@ const AutocompleteAddress = () => {
         label="Postal Code/Building/Street Home"
         onChangeText={handleSearchPostalCode}
         onFocus={() => setIsFocus(true)}
-        // onBlur={() => setIsFocus(false)}
-        rightIcon={<SearchSvg />}
+        onBlur={onBlur}
+        rightIcon={
+          loading && props.showLoading ? <ActivityIndicator /> : <SearchSvg />
+        }
+        value={myAddress}
+        ref={inputRef}
       />
-      {data?.length > 0 && isFocus ? (
-        <View style={styles.containerList}>
+      {isFocus && myAddress.length > 0 ? (
+        <View style={[styles.containerList]}>
+          {props.enableCurrentLocation ? (
+            <TouchableOpacity
+              onPress={onGetCurrentLocation}
+              style={styles.currentLocationBtn}>
+              <View style={styles.icontContainer}>
+                <MapPointSvg />
+              </View>
+              <GlobalText>Use current location</GlobalText>
+            </TouchableOpacity>
+          ) : null}
           <FlatList
             nestedScrollEnabled={true}
             data={data}
             renderItem={renderItem}
             style={styles.flatlistContainer}
+            keyboardShouldPersistTaps={true}
+            onEndReached={onEndReach}
+            onEndReachedThreshold={0.9}
           />
         </View>
       ) : null}

@@ -19,7 +19,7 @@ const searchProductHistory = (state = [], action) => {
 const searchAddress = (state = [], action) => {
   switch (action.type) {
     case 'SAVE_AUTOCOMPLETE_ADDRESS':
-      return action.payload;
+      return action.page > 1 ? [...state, ...action.payload] : action.payload;
     default:
       return state;
   }

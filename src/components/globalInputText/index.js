@@ -186,6 +186,7 @@ const GlobalInputText = React.forwardRef((props, ref) => {
         ) : null}
         {props.rightIcon ? props.rightIcon : null}
       </View>
+
       {props.isError ? (
         <View style={styles.errorContainer}>
           <GlobalText style={styles.textError}>

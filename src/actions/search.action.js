@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-community/async-storage';
 import appConfig from '../config/appConfig';
 
 const setData = ({data, type}) => {
@@ -51,10 +52,33 @@ export const getAutoCompleteMap = (searchText, page = 1) => {
         dispatch({
           type: 'SAVE_AUTOCOMPLETE_ADDRESS',
           payload: [],
+          page,
         });
       }
-      dispatch({type: 'SAVE_AUTOCOMPLETE_ADDRESS', payload: data.results});
-      console.log(data, 'nakal');
+      if (data.pageNum <= data.totalNumPages) {
+        dispatch({
+          type: 'SAVE_AUTOCOMPLETE_ADDRESS',
+          payload: data.results,
+          page,
+        });
+      }
+    } catch (e) {
+      return e;
+    }
+  };
+};
+
+export const getAddressDetail = location => {
+  return async dispatch => {
+    try {
+      const token = await AsyncStorage.getItem('onemapToken');
+      const {access_token} = JSON.parse(token);
+      const url = `${
+        appConfig.oneMapBaseUrl
+      }/privateapi/commonsvc/revgeocode?location=${location}&token=${access_token}`;
+      const response = await fetch(url, {method: 'GET'});
+      const data = await response.json();
+      return data?.GeocodeInfo || [];
     } catch (e) {
       return e;
     }

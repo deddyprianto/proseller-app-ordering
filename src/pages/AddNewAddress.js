@@ -436,7 +436,7 @@ const AddNewAddress = ({address}) => {
       //   label="Postal Code/Building/Street Home"
       //   onChangeText={handleSearchPostalCode}
       // />
-      <AutocompleteAddress />
+      <AutocompleteAddress enableCurrentLocation />
     );
   };
 
@@ -559,7 +559,10 @@ const AddNewAddress = ({address}) => {
     return (
       <View style={{flex: 1}}>
         <Body>
-          <ScrollView nestedScrollEnabled={true} style={styles.scrollView}>
+          <ScrollView
+            keyboardShouldPersistTaps={true}
+            nestedScrollEnabled={true}
+            style={styles.scrollView}>
             {renderDeliveryDetailFields()}
             <View style={styles.divider} />
             {renderRecipientDetailFields()}

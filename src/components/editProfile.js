@@ -46,6 +46,7 @@ import CalendarSvg from '../assets/svg/CalendareSvg';
 import withHooksComponent from './HOC';
 import NavbarBack from './navbar/navbarBack';
 import {Body} from './layout';
+import appConfig from '../config/appConfig';
 
 const backupMandatoryFields = [
   {
@@ -858,7 +859,9 @@ class AccountEditProfil extends Component {
                                 <GlobalInputText
                                   label="Birthdate"
                                   isMandatory={item.mandatory}
-                                  editable={false}
+                                  editable={
+                                    appConfig.appName !== 'fareastflora'
+                                  }
                                   onPressBtn={this.showDatePicker}
                                   type="button"
                                   value={this.formatBirthDate(

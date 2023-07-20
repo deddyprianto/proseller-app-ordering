@@ -1,6 +1,9 @@
 import {fetchApiMasterData} from '../service/apiMasterData';
 import {isEmptyObject} from '../helper/CheckEmpty';
 import {fetchApi} from '../service/api';
+import appConfig from '../config/appConfig';
+import AsyncStorage from '@react-native-community/async-storage';
+import moment from 'moment';
 
 export const getCompanyInfo = () => {
   return async (dispatch, getState) => {
@@ -309,6 +312,36 @@ export const getOutletById = id => {
         return response.response.data;
       } else {
         return false;
+      }
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const generateOneMapToken = () => {
+  return async dispatch => {
+    try {
+      const url = `${appConfig.oneMapBaseUrl}/privateapi/auth/post/getToken`;
+      const checkToken = await AsyncStorage.getItem('onemapToken');
+      const {expiry_timestamp} = JSON.parse(checkToken);
+      const todayStamp = moment().valueOf();
+      // console.log(todayStamp, 'supil');
+      const body = {
+        email: 'gilang@edgeworks.com.sg',
+        password: 'YHR6fne!zbk*buf6gqh',
+      };
+      const response = await fetch(url, {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers: {
+          'content-type': 'application/json',
+        },
+      });
+      const data = await response.json();
+      // console.log(data, 'silatan');
+      if (data?.access_token) {
+        AsyncStorage.setItem('onemapToken', JSON.stringify(data));
       }
     } catch (error) {
       return error;
