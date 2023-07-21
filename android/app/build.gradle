@@ -138,13 +138,13 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.acemart"
+        applicationId "com.funtoast"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 87
         versionName "1.1.31"
         missingDimensionStrategy 'react-native-camera', 'general'
-        resValue "string", "build_config_package", "com.acemart"
+        resValue "string", "build_config_package", "com.funtoast"
         multiDexEnabled true
         // detox
         testBuildType System.getProperty('testBuildType', 'debug')
@@ -192,24 +192,24 @@ android {
     productFlavors {
             dev {
                 minSdkVersion rootProject.ext.minSdkVersion
-                applicationId 'com.acemart.dev'
+                applicationId 'com.funtoast.dev'
                 versionName "1.1.31"
                 targetSdkVersion rootProject.ext.targetSdkVersion
-                resValue "string", "build_config_package", "com.acemart"
+                resValue "string", "build_config_package", "com.funtoast"
             }
             demo {
                 minSdkVersion rootProject.ext.minSdkVersion
-                applicationId 'com.acemart.demo'
+                applicationId 'com.funtoast.demo'
                 versionName "1.1.31"
                 targetSdkVersion rootProject.ext.targetSdkVersion
-                resValue "string", "build_config_package", "com.acemart"
+                resValue "string", "build_config_package", "com.funtoast"
             }
             app {
                 minSdkVersion rootProject.ext.minSdkVersion
-                applicationId 'com.acemart.app'
+                applicationId 'com.funtoast.app'
                 versionName "1.1.31"
                 targetSdkVersion rootProject.ext.targetSdkVersion
-                resValue "string", "build_config_package", "com.acemart"
+                resValue "string", "build_config_package", "com.funtoast"
             }
         }
     // applicationVariants are e.g. debug, release

@@ -27,8 +27,6 @@ import moment from 'moment';
 import {Body} from '../components/layout';
 import appConfig from '../config/appConfig';
 
-import QRCode from 'react-native-qrcode-svg';
-
 import {captureRef} from 'react-native-view-shot';
 import CameraRoll from '@react-native-community/cameraroll';
 
@@ -75,12 +73,15 @@ const useStyles = () => {
     },
 
     textOrderDetail: {
-      fontSize: 12,
+      color: theme.colors.textPrimary,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsMedium,
     },
 
     textOrderDetailValue: {
-      fontSize: 10,
-      fontWeight: 'bold',
+      color: theme.colors.textPrimary,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsSemiBold,
     },
 
     textPaymentDetail: {
@@ -96,12 +97,15 @@ const useStyles = () => {
     },
 
     textOrderDetailGrandTotal: {
-      fontSize: 14,
+      color: theme.colors.textPrimary,
+      fontSize: theme.fontSize[16],
+      fontFamily: theme.fontFamily.poppinsMedium,
     },
 
     textOrderDetailGrandTotalValue: {
-      fontSize: 14,
-      fontWeight: 'bold',
+      color: theme.colors.textQuaternary,
+      fontSize: theme.fontSize[24],
+      fontFamily: theme.fontFamily.poppinsSemiBold,
     },
 
     textButton: {
@@ -270,6 +274,12 @@ const useStyles = () => {
       alignItems: 'center',
     },
 
+    viewImageAndText: {
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+
     divider: {
       height: 1,
       width: '100%',
@@ -288,6 +298,18 @@ const useStyles = () => {
       width: 20,
       height: 20,
       tintColor: theme.colors.textQuaternary,
+    },
+
+    iconPayment: {
+      width: 20,
+      height: 20,
+      marginRight: 8,
+      tintColor: theme.colors.textPrimary,
+    },
+
+    imageQR: {
+      width: 256,
+      height: 256,
     },
   });
   return styles;
@@ -331,12 +353,10 @@ const Payment = ({order}) => {
     if (qr) {
       return (
         <View style={styles.viewQR}>
-          <QRCode
-            value={JSON.stringify({
-              token: qr,
-            })}
-            size={256}
-            getRef={ref => {
+          <Image
+            source={{uri: qr}}
+            style={styles.imageQR}
+            ref={ref => {
               setQrRef(ref);
             }}
           />
@@ -409,7 +429,7 @@ const Payment = ({order}) => {
       if (image) {
         Alert.alert(
           'Image saved',
-          'Successfully saved image to your gallery. asd',
+          'Successfully saved image to your gallery.',
           [{text: 'OK', onPress: () => {}}],
           {cancelable: false},
         );
@@ -571,16 +591,37 @@ const Payment = ({order}) => {
       case 'Store Value Card':
         return 'Store Value Card';
       default:
-        return 'Paynow';
+        return '-';
+    }
+  };
+
+  const renderPaymentDetailImage = key => {
+    switch (key) {
+      case 'FOMO_PAY':
+        return appConfig.iconPayment;
+      case 'voucher':
+        return appConfig.iconVoucher;
+      case 'point':
+        return appConfig.iconPoint;
+      case 'Store Value Card':
+        return 'Store Value Card';
+      default:
+        return null;
     }
   };
 
   const renderPaymentDetailItem = row => {
     return (
       <View style={styles.viewPaymentDetailItem}>
-        <Text style={styles.textPaymentDetail}>
-          {renderPaymentDetailText(row?.paymentType)}
-        </Text>
+        <View style={styles.viewImageAndText}>
+          <Image
+            source={renderPaymentDetailImage(row?.paymentType)}
+            style={styles.iconPayment}
+          />
+          <Text style={styles.textPaymentDetail}>
+            {renderPaymentDetailText(row?.paymentType)}
+          </Text>
+        </View>
         <Text style={styles.textPaymentDetailValue}>
           {currencyFormatter(row?.paymentAmount)}
         </Text>

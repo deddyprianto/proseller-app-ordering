@@ -3,7 +3,7 @@
 
 const appConfig = {
   // info company
-  appName: 'acemart',
+  appName: 'funtoast',
   appMataUang: 'SGD',
   appVersion: 'Version 1.1',
 
@@ -43,17 +43,17 @@ const appConfig = {
   location: require('../assets/img/icon-location.png'),
 
   //should be dynamic
-  logoMerchant: require('../../native/acemart/assets/img/logo.png'),
-  logoMerchantWithBackground: require('../../native/acemart/assets/img/logo-merchant-with-background.png'),
+  logoMerchant: require('../../native/funtoast/assets/img/logo.png'),
+  logoMerchantWithBackground: require('../../native/funtoast/assets/img/logo-merchant-with-background.png'),
 
-  imageBackground: require('../../native/acemart/assets/img/image-background.png'),
+  imageBackground: require('../../native/funtoast/assets/img/image-background.png'),
 
-  imageOnBoarding1: require('../../native/acemart/assets/img/image-on-boarding-1.png'),
-  imageOnBoarding2: require('../../native/acemart/assets/img/image-on-boarding-2.png'),
-  imageOnBoarding3: require('../../native/acemart/assets/img/image-on-boarding-3.png'),
+  imageOnBoarding1: require('../../native/funtoast/assets/img/image-on-boarding-1.png'),
+  imageOnBoarding2: require('../../native/funtoast/assets/img/image-on-boarding-2.png'),
+  imageOnBoarding3: require('../../native/funtoast/assets/img/image-on-boarding-3.png'),
   
-  imagePointSmallBackground: require('../../native/acemart/assets/img/image-point-small-background.png'),
-  imagePointLargeBackground: require('../../native/acemart/assets/img/image-point-large-background.png'),
+  imagePointSmallBackground: require('../../native/funtoast/assets/img/image-point-small-background.png'),
+  imagePointLargeBackground: require('../../native/funtoast/assets/img/image-point-large-background.png'),
 
 
   //LOGO MARTIN
