@@ -40,7 +40,12 @@ force: true
     <uses-permission tools:node="remove" android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission tools:node="remove" android:name="com.<%= name %>.demo.permission.C2D_MESSAGE" />
     <uses-permission tools:node="remove" android:name="com.google.android.c2dm.permission.RECEIVE" />
-
+        <queries>
+    <intent>
+        <action android:name="android.intent.action.VIEW" />
+        <data android:mimeType="*/*" />
+    </intent>
+</queries>
     <application
       android:name=".MainApplication"
       android:label="@string/app_name"
