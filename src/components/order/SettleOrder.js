@@ -127,12 +127,12 @@ class SettleOrder extends Component {
     );
   };
 
-  handlePaymentFomoPay = response => {
+  handlePaymentFomoPay = () => {
     const {selectedAccount} = this.props;
     const find = selectedAccount.paymentID === 'FOMO_PAY';
 
     if (find) {
-      Actions.payment({order: response?.responseBody?.data});
+      Actions.payment();
     }
   };
 
@@ -1361,7 +1361,7 @@ class SettleOrder extends Component {
       const response = await this.props.dispatch(settleOrder(pembayaran, url));
       console.log('reponse pembayaran settle order ', response);
       if (response.success) {
-        this.handlePaymentFomoPay(response);
+        this.handlePaymentFomoPay();
         try {
           this.props.dispatch(afterPayment(true));
         } catch (e) {}
@@ -2661,7 +2661,7 @@ class SettleOrder extends Component {
       const response = await this.props.dispatch(settleOrder(payload, url));
       console.log('reponse pembayaran settle order ', response);
       if (response.success) {
-        this.handlePaymentFomoPay(response);
+        this.handlePaymentFomoPay();
         try {
           if (this.props.pembayaran.orderingMode == 'STORECHECKOUT') {
             this.props.dispatch(afterPayment(false));
@@ -3229,7 +3229,7 @@ class SettleOrder extends Component {
       const response = await this.props.dispatch(settleOrder(payload, url));
       console.log('reponse pembayaran settle order ', response);
       if (response.success) {
-        this.handlePaymentFomoPay(response);
+        this.handlePaymentFomoPay();
         try {
           this.props.dispatch(afterPayment(true));
         } catch (e) {}

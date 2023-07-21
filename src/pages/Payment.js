@@ -4,7 +4,7 @@
  * PT Edgeworks
  */
 
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {Actions} from 'react-native-router-flux';
 import {
   StyleSheet,
@@ -17,6 +17,7 @@ import {
   PermissionsAndroid,
   Platform,
   Alert,
+  RefreshControl,
 } from 'react-native';
 
 import {isEmptyArray, isEmptyObject} from '../helper/CheckEmpty';
@@ -29,6 +30,8 @@ import appConfig from '../config/appConfig';
 
 import {captureRef} from 'react-native-view-shot';
 import CameraRoll from '@react-native-community/cameraroll';
+import {getPendingOrderById} from '../actions/order.action';
+import {useDispatch, useSelector} from 'react-redux';
 
 const useStyles = () => {
   const theme = Theme();
@@ -217,6 +220,7 @@ const useStyles = () => {
       shadowColor: theme.colors.greyScale2,
       elevation: 2,
       padding: 12,
+      marginTop: 24,
       marginHorizontal: 16,
       borderRadius: 8,
       backgroundColor: 'white',
@@ -229,7 +233,6 @@ const useStyles = () => {
     viewSaveQR: {
       padding: 8,
       marginHorizontal: 16,
-      marginBottom: 24,
       borderRadius: 8,
       borderWidth: 1,
       alignItems: 'center',
@@ -315,12 +318,20 @@ const useStyles = () => {
   return styles;
 };
 
-const Payment = ({order}) => {
+const Payment = () => {
+  const dispatch = useDispatch();
   const styles = useStyles();
+  const [refresh, setRefresh] = useState(false);
   const [seconds, setSeconds] = useState(0);
   const [minutes, setMinutes] = useState(0);
   const [hours, setHours] = useState(0);
   const [qrRef, setQrRef] = useState();
+
+  const order = useSelector(
+    state => state.orderReducer.dataCartSingle.cartSingle,
+  );
+
+  const isPendingPayment = order?.status === 'PENDING_PAYMENT';
 
   useEffect(() => {
     const then = moment(order.action.expiry).format('MM/DD/YYYY HH:mm:ss');
@@ -329,10 +340,10 @@ const Payment = ({order}) => {
       const now = moment().format('MM/DD/YYYY HH:mm:ss');
       const ms = moment(then).diff(moment(now));
 
-      var duration = moment.duration(ms);
-      var second = duration.seconds();
-      var minute = duration.minutes();
-      var hour = duration.hours();
+      const duration = moment.duration(ms);
+      const second = duration.seconds();
+      const minute = duration.minutes();
+      const hour = duration.hours();
 
       setSeconds(second);
       setMinutes(minute);
@@ -347,10 +358,21 @@ const Payment = ({order}) => {
     }, 1);
   }, [order]);
 
+  const onRefresh = useCallback(async () => {
+    setRefresh(true);
+    await dispatch(getPendingOrderById(order?.id));
+    setRefresh(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch]);
+
+  useEffect(() => {
+    onRefresh();
+  }, [onRefresh]);
+
   const renderQR = () => {
     const qr = order?.action?.url;
 
-    if (qr) {
+    if (qr && isPendingPayment) {
       return (
         <View style={styles.viewQR}>
           <Image
@@ -366,18 +388,20 @@ const Payment = ({order}) => {
   };
 
   const renderWaitingTime = () => {
-    const secondMoment = moment(seconds, 'second').format('ss');
-    const minuteMoment = moment(minutes, 'minute').format('mm');
-    const hourMoment = moment(hours, 'hour').format('HH');
-    return (
-      <View style={styles.viewWaitingPayment}>
-        <Text style={styles.textWaitingPayment}>Waiting for payment</Text>
-        <Text style={styles.textWaitingPaymentValue}>
-          {hourMoment}:{minuteMoment}:{secondMoment}
-        </Text>
-        <Image source={appConfig.iconTime} style={styles.iconTime} />
-      </View>
-    );
+    if (isPendingPayment) {
+      const secondMoment = moment(seconds, 'second').format('ss');
+      const minuteMoment = moment(minutes, 'minute').format('mm');
+      const hourMoment = moment(hours, 'hour').format('HH');
+      return (
+        <View style={styles.viewWaitingPayment}>
+          <Text style={styles.textWaitingPayment}>Waiting for payment</Text>
+          <Text style={styles.textWaitingPaymentValue}>
+            {hourMoment}:{minuteMoment}:{secondMoment}
+          </Text>
+          <Image source={appConfig.iconTime} style={styles.iconTime} />
+        </View>
+      );
+    }
   };
 
   const getPermissionAndroid = async () => {
@@ -410,7 +434,7 @@ const Payment = ({order}) => {
     }
   };
 
-  const downloadImage = async () => {
+  const handleDownloadImage = async () => {
     try {
       const uri = await captureRef(qrRef, {
         format: 'png',
@@ -440,22 +464,53 @@ const Payment = ({order}) => {
   };
 
   const renderSaveQR = () => {
-    return (
-      <TouchableOpacity
-        style={styles.viewSaveQR}
-        onPress={() => {
-          downloadImage(3);
-        }}>
-        <Text style={styles.textSaveQR}>SAVE QR CODE TO GALLERY</Text>
-      </TouchableOpacity>
-    );
+    if (isPendingPayment) {
+      return (
+        <TouchableOpacity
+          style={styles.viewSaveQR}
+          onPress={() => {
+            handleDownloadImage();
+          }}>
+          <Text style={styles.textSaveQR}>SAVE QR CODE TO GALLERY</Text>
+        </TouchableOpacity>
+      );
+    }
+  };
+
+  const renderStatusValue = key => {
+    switch (key) {
+      case 'PENDING_PAYMENT':
+        return 'AWAITING PAYMENT ';
+      case 'SUBMITTED':
+        return 'SUBMITTED';
+      case 'CONFIRMED':
+        return 'CONFIRMED';
+      case 'PROCESSING':
+        return 'PROCESSING';
+      case 'READY_FOR_COLLECTION':
+        return 'READY';
+      case 'READY_FOR_DELIVERY':
+        return 'READY';
+      case 'ON_THE_WAY':
+        return 'ON THE WAY';
+      case 'REFUNDED':
+        return 'REFUNDED';
+      case 'CANCELED':
+        return 'CANCELED';
+      case 'COMPLETE':
+        return 'COMPLETE';
+      default:
+        return '-';
+    }
   };
 
   const renderStatus = () => {
     return (
       <View style={styles.viewStatus}>
         <Text style={styles.textStatus}>Order Status</Text>
-        <Text style={styles.textStatusValue}>AWAITING PAYMENT</Text>
+        <Text style={styles.textStatusValue}>
+          {renderStatusValue(order.status)}
+        </Text>
       </View>
     );
   };
@@ -653,7 +708,15 @@ const Payment = ({order}) => {
   const renderBody = () => {
     if (!isEmptyObject(order)) {
       return (
-        <ScrollView>
+        <ScrollView
+          refreshControl={
+            <RefreshControl
+              refreshing={refresh}
+              onRefresh={() => {
+                onRefresh();
+              }}
+            />
+          }>
           <View style={styles.divider} />
           {renderQR()}
           {renderWaitingTime()}
