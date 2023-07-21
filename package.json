@@ -141,6 +141,7 @@
     "redux-form": "^8.2.6",
     "redux-persist": "^6.0.0",
     "redux-thunk": "^2.3.0",
+    "rn-fetch-blob": "^0.12.0",
     "rn-sliding-button": "^1.1.5",
     "rn-swipe-button": "^1.2.0",
     "validate.js": "^0.13.1"
