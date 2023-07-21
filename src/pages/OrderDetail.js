@@ -272,8 +272,8 @@ const OrderDetail = ({data}) => {
             <View style={styles.columnText}>
               {item?.modifiers?.map(data => (
                 <>
-                  {data?.modifier?.details?.map(modify => (
-                    <View style={styles.listModifier}>
+                  {data?.modifier?.details?.map((modify, index) => (
+                    <View key={index} style={styles.listModifier}>
                       <View style={styles.dotModifier}>
                         <DotSvg color={colors.greyScale2} />
                       </View>
