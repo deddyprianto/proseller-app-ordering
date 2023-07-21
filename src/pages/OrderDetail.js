@@ -1,8 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React from 'react';
-import {SafeAreaView, View, StyleSheet, Image, ScrollView} from 'react-native';
+import {View, StyleSheet, Image, ScrollView, FlatList} from 'react-native';
 import GlobalText from '../components/globalText';
-import {Body, Header} from '../components/layout';
+import {Body} from '../components/layout';
 import Theme from '../theme/Theme';
 import {
   normalizeLayoutSizeHeight,
@@ -16,11 +16,13 @@ import VoucherSvg from '../assets/svg/VoucherSvg';
 import CardSvg from '../assets/svg/CardSvg';
 import MapMarkerSvg from '../assets/svg/MapMarkerSvg';
 import TruckSvg from '../assets/svg/TruckSvg';
-import CalendarSvg from '../assets/svg/CalendareSvg';
 import CalendarBold from '../assets/svg/CalendarBoldSvg';
 import NotesSvg from '../assets/svg/NotesSvg';
 import useCountdownHooks from '../hooks/time/countdown';
 import TimerSvg from '../assets/svg/TimerSvg';
+import {downloadFile, permissionDownloadFile} from '../helper/Download';
+import {handlePaymentStatus} from '../helper/PaymentStatus';
+import DotSvg from '../assets/svg/DotSvg';
 
 const useStyles = () => {
   const {colors, fontFamily} = Theme();
@@ -74,7 +76,7 @@ const useStyles = () => {
       marginTop: 24,
     },
     listOrderDetailContainer: {
-      marginTop: 12,
+      // marginTop: 12,
     },
     divider: {
       height: 1,
@@ -140,6 +142,36 @@ const useStyles = () => {
     clockIcon: {
       marginLeft: 10,
     },
+    scrollContainerMain: {
+      paddingBottom: 150,
+    },
+    quantityContainer: {
+      height: 22,
+      width: 22,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: colors.primary,
+      borderRadius: 8,
+    },
+    primaryColor: {
+      color: colors.primary,
+    },
+    mediumFont: {
+      fontFamily: fontFamily.poppinsMedium,
+    },
+    referenceNoContainer: {
+      padding: 8,
+      backgroundColor: colors.greyScale4,
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      flexDirection: 'row',
+      marginTop: 28,
+    },
+    referenceNoText: {
+      fontFamily: fontFamily.poppinsMedium,
+      fontSize: 12,
+      color: colors.greyScale2,
+    },
   });
   return {styles};
 };
@@ -147,37 +179,287 @@ const useStyles = () => {
 const OrderDetail = ({data}) => {
   const {styles} = useStyles();
   const {time, timerId, countdownStart} = useCountdownHooks();
-
+  const [showQrCode, setShowQrCode] = React.useState(true);
+  const staustPending = 'PENDING_PAYMENT';
   const onFinish = () => {
-    console.log('finish');
+    setShowQrCode(false);
   };
-  console.log({time}, 'jaka');
+
+  const downloadQrCode = async () => {
+    permissionDownloadFile(data?.action?.url, 'qrcode', 'image/png');
+  };
+
+  const calculatePaymentAmount = () => {
+    const mappingAmount =
+      data?.payments?.map(product => product.paymentAmount) || [];
+    const sumAll = mappingAmount.reduce((a, b) => a + b);
+    return CurrencyFormatter(sumAll);
+  };
+
+  const renderItemDetails = ({item, index}) => (
+    <View key={index} style={[styles.boxMain, styles.shadowBox]}>
+      <View style={styles.listOrderDetailContainer}>
+        <View style={[styles.orderStatusContainer, styles.columnCard]}>
+          <View style={styles.paymentDetailsCard}>
+            <View style={styles.quantityContainer}>
+              <GlobalText style={styles.waitingPaymentStyle}>
+                {item?.quantity}x
+              </GlobalText>
+            </View>
+            <GlobalText style={[styles.paymentDetailCardText, styles.boldFont]}>
+              {item?.product?.name}{' '}
+              <GlobalText style={styles.primaryColor}>
+                + {item?.retailPrice}{' '}
+              </GlobalText>
+            </GlobalText>
+            <GlobalText />
+            <GlobalText />
+          </View>
+          <View style={styles.columnText}>
+            <GlobalText>
+              {moment(data?.transactionDate).format('DD MMM YYYY')}
+            </GlobalText>
+          </View>
+        </View>
+      </View>
+    </View>
+  );
+
+  const renderPaymentDetail = ({item, index}) => (
+    <View style={[styles.shadowBox, styles.boxMain]}>
+      {item?.paymentType === 'point' ? (
+        <View style={styles.listOrderDetailContainer}>
+          <View style={styles.orderStatusContainer}>
+            <View style={styles.paymentDetailsCard}>
+              <PointSvg />
+              <GlobalText style={styles.paymentDetailCardText}>
+                Point
+              </GlobalText>
+            </View>
+            <View>
+              <GlobalText>{calculatePaymentAmount()}</GlobalText>
+            </View>
+          </View>
+        </View>
+      ) : null}
+      {item?.paymentType === 'voucher' ? (
+        <View style={styles.listOrderDetailContainer}>
+          <View style={styles.orderStatusContainer}>
+            <View style={styles.paymentDetailsCard}>
+              <VoucherSvg />
+              <GlobalText style={styles.paymentDetailCardText}>
+                Voucher
+              </GlobalText>
+            </View>
+            <View>
+              <GlobalText>{calculatePaymentAmount()}</GlobalText>
+            </View>
+          </View>
+        </View>
+      ) : null}
+      {item?.paymentType === 'FOMO_PAY' ? (
+        <View style={styles.listOrderDetailContainer}>
+          <View style={styles.orderStatusContainer}>
+            <View style={styles.paymentDetailsCard}>
+              <CardSvg />
+              <GlobalText style={styles.paymentDetailCardText}>
+                {item.paymentName}
+              </GlobalText>
+            </View>
+            <View>
+              <GlobalText>{calculatePaymentAmount()}</GlobalText>
+            </View>
+          </View>
+        </View>
+      ) : null}
+    </View>
+  );
+
+  const renderAddress = () => {
+    if (data?.orderingMode === 'DELIVERY') {
+      return (
+        <View style={[styles.boxMain, styles.shadowBox]}>
+          <View style={styles.orderStatusContainer}>
+            <GlobalText style={styles.deliveryText}>
+              {data?.orderingMode}{' '}
+            </GlobalText>
+          </View>
+          <View style={styles.listOrderDetailContainer}>
+            <View style={[styles.orderStatusContainer, styles.columnCard]}>
+              <View style={styles.paymentDetailsCard}>
+                <MapMarkerSvg />
+                <GlobalText
+                  style={[styles.paymentDetailCardText, styles.boldFont]}>
+                  Delivery to
+                </GlobalText>
+              </View>
+              <View style={styles.columnText}>
+                <GlobalText>
+                  {data?.deliveryAddress?.recipient?.name} |{' '}
+                  {data?.deliveryAddress?.recipient?.phoneNumber}
+                </GlobalText>
+                <GlobalText>
+                  {data?.deliveryAddress?.streetName}{' '}
+                  {data?.deliveryAddress?.unitNo}
+                  {data?.deliveryAddress?.postalCode}
+                </GlobalText>
+              </View>
+            </View>
+          </View>
+          <View style={styles.listOrderDetailContainer}>
+            <View style={[styles.orderStatusContainer, styles.columnCard]}>
+              <View style={styles.paymentDetailsCard}>
+                <MapMarkerSvg />
+                <GlobalText
+                  style={[styles.paymentDetailCardText, styles.boldFont]}>
+                  Deliver by
+                </GlobalText>
+              </View>
+              <View style={styles.columnText}>
+                <GlobalText>
+                  {data?.deliveryProviderName} -{' '}
+                  {CurrencyFormatter(data?.deliveryFee)}
+                </GlobalText>
+              </View>
+            </View>
+          </View>
+          <View style={styles.listOrderDetailContainer}>
+            <View style={[styles.orderStatusContainer, styles.columnCard]}>
+              <View style={styles.paymentDetailsCard}>
+                <CalendarBold />
+                <GlobalText
+                  style={[styles.paymentDetailCardText, styles.boldFont]}>
+                  Date
+                </GlobalText>
+              </View>
+              <View style={styles.columnText}>
+                <GlobalText>
+                  {data?.orderActionDate} {data?.orderActionTimeSlot}
+                </GlobalText>
+              </View>
+            </View>
+          </View>
+          <View style={styles.listOrderDetailContainer}>
+            <View style={[styles.orderStatusContainer, styles.columnCard]}>
+              <View style={styles.paymentDetailsCard}>
+                <NotesSvg />
+                <GlobalText
+                  style={[styles.paymentDetailCardText, styles.boldFont]}>
+                  Notes
+                </GlobalText>
+              </View>
+              <View style={styles.columnText}>
+                <GlobalText>{data?.remark}</GlobalText>
+              </View>
+            </View>
+          </View>
+        </View>
+      );
+    }
+    return (
+      <View style={[styles.boxMain, styles.shadowBox]}>
+        <View style={styles.orderStatusContainer}>
+          <GlobalText style={styles.deliveryText}>
+            {data?.orderingMode}{' '}
+          </GlobalText>
+        </View>
+        <View style={styles.listOrderDetailContainer}>
+          <View style={[styles.orderStatusContainer, styles.columnCard]}>
+            <View style={styles.paymentDetailsCard}>
+              <MapMarkerSvg />
+              <GlobalText
+                style={[styles.paymentDetailCardText, styles.boldFont]}>
+                From Outlet
+              </GlobalText>
+            </View>
+            <View style={styles.columnText}>
+              <GlobalText>{data?.outlet?.name}</GlobalText>
+              <GlobalText>
+                {data?.outlet?.location} {data?.outlet?.location?.postalCode}
+              </GlobalText>
+            </View>
+          </View>
+        </View>
+        <View style={styles.listOrderDetailContainer}>
+          <View style={[styles.orderStatusContainer, styles.columnCard]}>
+            <View style={styles.paymentDetailsCard}>
+              <CalendarBold />
+              <GlobalText
+                style={[styles.paymentDetailCardText, styles.boldFont]}>
+                Date & Time
+              </GlobalText>
+            </View>
+            <View style={styles.columnText}>
+              <GlobalText>
+                {data?.orderActionDate} {data?.orderActionTimeSlot}
+              </GlobalText>
+            </View>
+          </View>
+        </View>
+        <View style={styles.listOrderDetailContainer}>
+          <View style={[styles.orderStatusContainer, styles.columnCard]}>
+            <View style={styles.paymentDetailsCard}>
+              <NotesSvg />
+              <GlobalText
+                style={[styles.paymentDetailCardText, styles.boldFont]}>
+                Notes
+              </GlobalText>
+            </View>
+            <View style={styles.columnText}>
+              <GlobalText>{data?.remark}</GlobalText>
+            </View>
+          </View>
+        </View>
+      </View>
+    );
+  };
+
+  const handleItemText = () => {
+    if (data?.details?.length > 1) {
+      return ' Items';
+    }
+    return 'Item';
+  };
+
   React.useEffect(() => {
     countdownStart(onFinish, data?.action?.expiry);
     return () => {
       clearInterval(timerId);
     };
   }, []);
-
   return (
     <Body>
-      <View style={styles.waitingPaymentBox}>
-        <GlobalText style={styles.waitingPaymentStyle}>
-          Waiting for payment {time.hours}:{time.minutes}:{time.seconds}
-        </GlobalText>
-        <View style={styles.clockIcon}>
-          <TimerSvg />
-        </View>
-      </View>
-      <ScrollView style={styles.scrollContainer}>
-        <View style={styles.qrContainer}>
-          <Image style={styles.qrImage} source={{uri: data?.action?.url}} />
-        </View>
-        <View style={styles.btnContainer}>
-          <View style={styles.btnMainContainer}>
-            <GlobalButton isOutline title="SAVE QR CODE TO GALLERY" />
+      {data?.status === staustPending && showQrCode ? (
+        <View style={styles.waitingPaymentBox}>
+          <GlobalText style={styles.waitingPaymentStyle}>
+            Waiting for payment {time.hours}:{time.minutes}:{time.seconds}
+          </GlobalText>
+          <View style={styles.clockIcon}>
+            <TimerSvg />
           </View>
         </View>
+      ) : null}
+
+      <ScrollView
+        contentContainerStyle={styles.scrollContainerMain}
+        style={styles.scrollContainer}>
+        {data?.status === staustPending && showQrCode ? (
+          <>
+            <View style={styles.qrContainer}>
+              <Image style={styles.qrImage} source={{uri: data?.action?.url}} />
+            </View>
+            <View style={styles.btnContainer}>
+              <View style={styles.btnMainContainer}>
+                <GlobalButton
+                  onPress={downloadQrCode}
+                  isOutline
+                  title="SAVE QR CODE TO GALLERY"
+                />
+              </View>
+            </View>
+          </>
+        ) : null}
+
         <View />
         <View style={styles.mainScrollContainer}>
           <View
@@ -187,6 +469,9 @@ const OrderDetail = ({data}) => {
               styles.boxMain,
             ]}>
             <GlobalText>Order Status</GlobalText>
+            <GlobalText style={styles.boldFont}>
+              {handlePaymentStatus(data?.status)}
+            </GlobalText>
           </View>
           <View style={styles.orderDetailWrapCOntainer}>
             <GlobalText style={styles.oredrDetailText}>
@@ -201,7 +486,8 @@ const OrderDetail = ({data}) => {
                 </View>
                 <View>
                   <GlobalText style={styles.boldFont}>
-                    {moment(data?.transactionDate).format('DD MMM YYYY')}
+                    {moment(data?.transactionDate).format('DD MMM YYYY')}{' '}
+                    <DotSvg /> {moment(data?.transactionDate).format('HH:mm')}
                   </GlobalText>
                 </View>
               </View>
@@ -271,135 +557,38 @@ const OrderDetail = ({data}) => {
               Payment Details
             </GlobalText>
           </View>
-          <View style={[styles.shadowBox, styles.boxMain]}>
-            <View style={styles.listOrderDetailContainer}>
-              <View style={styles.orderStatusContainer}>
-                <View style={styles.paymentDetailsCard}>
-                  <PointSvg />
-                  <GlobalText style={styles.paymentDetailCardText}>
-                    Point
-                  </GlobalText>
-                </View>
-                <View>
-                  <GlobalText>
-                    {moment(data?.transactionDate).format('DD MMM YYYY')}
-                  </GlobalText>
-                </View>
-              </View>
-            </View>
-            <View style={styles.listOrderDetailContainer}>
-              <View style={styles.orderStatusContainer}>
-                <View style={styles.paymentDetailsCard}>
-                  <VoucherSvg />
-                  <GlobalText style={styles.paymentDetailCardText}>
-                    Voucher
-                  </GlobalText>
-                </View>
-                <View>
-                  <GlobalText>
-                    {CurrencyFormatter(data?.totalGrossAmount)}
-                  </GlobalText>
-                </View>
-              </View>
-            </View>
-            <View style={styles.listOrderDetailContainer}>
-              <View style={styles.orderStatusContainer}>
-                <View style={styles.paymentDetailsCard}>
-                  <CardSvg />
-                  <GlobalText style={styles.paymentDetailCardText}>
-                    Paynow
-                  </GlobalText>
-                </View>
-                <View>
-                  <GlobalText>
-                    {data?.inclusiveTax > 0
-                      ? CurrencyFormatter(data?.inclusiveTax)
-                      : CurrencyFormatter(data?.exclusiveTax)}
-                  </GlobalText>
-                </View>
-              </View>
-            </View>
-          </View>
+          <FlatList
+            data={data?.payments || []}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={renderPaymentDetail}
+          />
           <View style={styles.orderDetailWrapCOntainer}>
             <GlobalText style={styles.oredrDetailText}>
               Ordering Details
             </GlobalText>
           </View>
-          <View style={[styles.boxMain, styles.shadowBox]}>
-            <View style={styles.orderStatusContainer}>
-              <GlobalText style={styles.deliveryText}>Delivery</GlobalText>
-            </View>
-            <View style={styles.listOrderDetailContainer}>
-              <View style={[styles.orderStatusContainer, styles.columnCard]}>
-                <View style={styles.paymentDetailsCard}>
-                  <MapMarkerSvg />
-                  <GlobalText
-                    style={[styles.paymentDetailCardText, styles.boldFont]}>
-                    Delivery to
-                  </GlobalText>
-                </View>
-                <View style={styles.columnText}>
-                  <GlobalText>
-                    {moment(data?.transactionDate).format('DD MMM YYYY')}
-                  </GlobalText>
-                </View>
-              </View>
-            </View>
-            <View style={styles.listOrderDetailContainer}>
-              <View style={[styles.orderStatusContainer, styles.columnCard]}>
-                <View style={styles.paymentDetailsCard}>
-                  <TruckSvg />
-                  <GlobalText
-                    style={[styles.paymentDetailCardText, styles.boldFont]}>
-                    Deliver by
-                  </GlobalText>
-                </View>
-                <View style={styles.columnText}>
-                  <GlobalText>
-                    {CurrencyFormatter(data?.totalGrossAmount)}
-                  </GlobalText>
-                </View>
-              </View>
-            </View>
-            <View style={styles.listOrderDetailContainer}>
-              <View style={[styles.orderStatusContainer, styles.columnCard]}>
-                <View style={styles.paymentDetailsCard}>
-                  <CalendarBold />
-                  <GlobalText
-                    style={[styles.paymentDetailCardText, styles.boldFont]}>
-                    Date
-                  </GlobalText>
-                </View>
-                <View style={styles.columnText}>
-                  <GlobalText>
-                    {data?.inclusiveTax > 0
-                      ? CurrencyFormatter(data?.inclusiveTax)
-                      : CurrencyFormatter(data?.exclusiveTax)}
-                  </GlobalText>
-                </View>
-              </View>
-            </View>
-            <View style={styles.listOrderDetailContainer}>
-              <View style={[styles.orderStatusContainer, styles.columnCard]}>
-                <View style={styles.paymentDetailsCard}>
-                  <NotesSvg />
-                  <GlobalText
-                    style={[styles.paymentDetailCardText, styles.boldFont]}>
-                    Notes
-                  </GlobalText>
-                </View>
-                <View style={styles.columnText}>
-                  <GlobalText>
-                    {data?.inclusiveTax > 0
-                      ? CurrencyFormatter(data?.inclusiveTax)
-                      : CurrencyFormatter(data?.exclusiveTax)}
-                  </GlobalText>
-                </View>
-              </View>
-            </View>
-          </View>
+          {renderAddress()}
           <View style={styles.orderDetailWrapCOntainer}>
-            <GlobalText style={styles.oredrDetailText}>Item Details</GlobalText>
+            <GlobalText style={styles.oredrDetailText}>
+              Item Details ({data?.details?.length} {handleItemText()})
+            </GlobalText>
+          </View>
+          <FlatList
+            keyExtractor={(item, index) => index.toString()}
+            data={data?.details || []}
+            renderItem={renderItemDetails}
+          />
+          <View style={styles.referenceNoContainer}>
+            <View>
+              <GlobalText style={styles.referenceNoText}>
+                Reference No.
+              </GlobalText>
+            </View>
+            <View>
+              <GlobalText style={styles.referenceNoText}>
+                {data?.transactionRefNo}
+              </GlobalText>
+            </View>
           </View>
         </View>
       </ScrollView>
