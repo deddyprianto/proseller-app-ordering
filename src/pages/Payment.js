@@ -420,7 +420,7 @@ const Payment = () => {
       }
       Alert.alert(
         'Permission required',
-        'Permission is required to save images to your device',
+        'We require permission to save images to your device. Please grant this permission manually in your settings to proceed',
         [{text: 'OK', onPress: () => {}}],
         {cancelable: false},
       );
