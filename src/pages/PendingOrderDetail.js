@@ -394,7 +394,6 @@ const PendingOrderDetail = ({order}) => {
     <SafeAreaView style={styles.root}>
       <Header title="Order Detail" />
       <OrderDetail data={order} />
-      {/* {renderBody()} */}
     </SafeAreaView>
   );
 };

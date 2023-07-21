@@ -6,7 +6,6 @@ import {
   Image,
   ScrollView,
   FlatList,
-  Text,
   TouchableOpacity,
 } from 'react-native';
 import GlobalText from '../components/globalText';
@@ -271,10 +270,10 @@ const OrderDetail = ({data}) => {
               </GlobalText>
             </View>
             <View style={styles.columnText}>
-              {item?.modifiers?.map((data, index) => (
+              {item?.modifiers?.map(data => (
                 <>
                   {data?.modifier?.details?.map(modify => (
-                    <View style={styles.listModifier} key={index}>
+                    <View style={styles.listModifier}>
                       <View style={styles.dotModifier}>
                         <DotSvg color={colors.greyScale2} />
                       </View>
