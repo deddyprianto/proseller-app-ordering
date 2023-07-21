@@ -75,8 +75,7 @@ class HistoryPayment extends Component {
       ) {
         Actions.waitingFood({myCart: item, isPop: true});
       } else {
-        // Actions.pendingOrderDetail({order: item});
-        Actions.payment({order: item});
+        Actions.pendingOrderDetail({order: item});
       }
     }
   };
