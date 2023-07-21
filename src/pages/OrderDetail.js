@@ -1,6 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React from 'react';
-import {View, StyleSheet, Image, ScrollView, FlatList} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Image,
+  ScrollView,
+  FlatList,
+  Text,
+  TouchableOpacity,
+} from 'react-native';
 import GlobalText from '../components/globalText';
 import {Body} from '../components/layout';
 import Theme from '../theme/Theme';
@@ -15,14 +23,15 @@ import PointSvg from '../assets/svg/PointSvg';
 import VoucherSvg from '../assets/svg/VoucherSvg';
 import CardSvg from '../assets/svg/CardSvg';
 import MapMarkerSvg from '../assets/svg/MapMarkerSvg';
-import TruckSvg from '../assets/svg/TruckSvg';
 import CalendarBold from '../assets/svg/CalendarBoldSvg';
 import NotesSvg from '../assets/svg/NotesSvg';
 import useCountdownHooks from '../hooks/time/countdown';
 import TimerSvg from '../assets/svg/TimerSvg';
-import {downloadFile, permissionDownloadFile} from '../helper/Download';
+import {permissionDownloadFile} from '../helper/Download';
 import {handlePaymentStatus} from '../helper/PaymentStatus';
 import DotSvg from '../assets/svg/DotSvg';
+import NotesProduct from '../assets/svg/NotesProductSvg';
+import ArrowBottom from '../assets/svg/ArrowBottom';
 
 const useStyles = () => {
   const {colors, fontFamily} = Theme();
@@ -74,6 +83,8 @@ const useStyles = () => {
     },
     orderDetailWrapCOntainer: {
       marginTop: 24,
+      flexDirection: 'row',
+      alignItems: 'center',
     },
     listOrderDetailContainer: {
       // marginTop: 12,
@@ -93,6 +104,8 @@ const useStyles = () => {
     paymentDetailsCard: {
       flexDirection: 'row',
       alignItems: 'center',
+      flex: 1,
+      width: '100%',
     },
     paymentDetailCardText: {
       marginLeft: 8,
@@ -126,6 +139,7 @@ const useStyles = () => {
     },
     columnText: {
       marginTop: 4,
+      width: '100%',
     },
     waitingPaymentBox: {
       backgroundColor: colors.primary,
@@ -172,23 +186,59 @@ const useStyles = () => {
       fontSize: 12,
       color: colors.greyScale2,
     },
+    listModifier: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    dotModifier: {
+      marginRight: 8,
+    },
+    priceMain: {
+      marginLeft: 'auto',
+      fontSize: 16,
+      fontFamily: fontFamily.poppinsMedium,
+      color: colors.primary,
+    },
+    modifierText: {
+      color: colors.greyScale2,
+      fontFamily: fontFamily.poppinsMedium,
+    },
+    notesProductContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    notesIcon: {
+      marginRight: 8,
+    },
+    noteText: {
+      color: colors.greyScale2,
+    },
+    mlAuto: {
+      marginLeft: 'auto',
+    },
+    moreItemText: {
+      fontSize: 16,
+      fontFamily: fontFamily.poppinsMedium,
+    },
   });
-  return {styles};
+  return {styles, colors};
 };
 
 const OrderDetail = ({data}) => {
-  const {styles} = useStyles();
+  const {styles, colors} = useStyles();
   const {time, timerId, countdownStart} = useCountdownHooks();
   const [showQrCode, setShowQrCode] = React.useState(true);
+  const [showAllOrder, setShowAllOrder] = React.useState(false);
   const staustPending = 'PENDING_PAYMENT';
   const onFinish = () => {
     setShowQrCode(false);
   };
 
+  const toggleOrder = () => setShowAllOrder(prevState => !prevState);
+
   const downloadQrCode = async () => {
     permissionDownloadFile(data?.action?.url, 'qrcode', 'image/png');
   };
-
   const calculatePaymentAmount = () => {
     const mappingAmount =
       data?.payments?.map(product => product.paymentAmount) || [];
@@ -196,34 +246,78 @@ const OrderDetail = ({data}) => {
     return CurrencyFormatter(sumAll);
   };
 
-  const renderItemDetails = ({item, index}) => (
-    <View key={index} style={[styles.boxMain, styles.shadowBox]}>
-      <View style={styles.listOrderDetailContainer}>
-        <View style={[styles.orderStatusContainer, styles.columnCard]}>
-          <View style={styles.paymentDetailsCard}>
-            <View style={styles.quantityContainer}>
-              <GlobalText style={styles.waitingPaymentStyle}>
-                {item?.quantity}x
+  const renderItemDetails = ({item, index}) => {
+    if (!showAllOrder && index > 0) return null;
+    return (
+      <View key={index} style={[styles.boxMain, styles.shadowBox]}>
+        <View style={styles.listOrderDetailContainer}>
+          <View style={[styles.orderStatusContainer, styles.columnCard]}>
+            <View style={styles.paymentDetailsCard}>
+              <View style={styles.quantityContainer}>
+                <GlobalText style={styles.waitingPaymentStyle}>
+                  {item?.quantity}x
+                </GlobalText>
+              </View>
+              <GlobalText
+                style={[styles.paymentDetailCardText, styles.boldFont]}>
+                {item?.product?.name}{' '}
+                <GlobalText style={styles.primaryColor}>
+                  + {item?.retailPrice}{' '}
+                </GlobalText>
+              </GlobalText>
+              <GlobalText />
+              <GlobalText style={styles.priceMain}>
+                {CurrencyFormatter(item?.nettAmount)}
               </GlobalText>
             </View>
-            <GlobalText style={[styles.paymentDetailCardText, styles.boldFont]}>
-              {item?.product?.name}{' '}
-              <GlobalText style={styles.primaryColor}>
-                + {item?.retailPrice}{' '}
-              </GlobalText>
-            </GlobalText>
-            <GlobalText />
-            <GlobalText />
-          </View>
-          <View style={styles.columnText}>
-            <GlobalText>
-              {moment(data?.transactionDate).format('DD MMM YYYY')}
-            </GlobalText>
+            <View style={styles.columnText}>
+              {item?.modifiers?.map((data, index) => (
+                <>
+                  {data?.modifier?.details?.map(modify => (
+                    <View style={styles.listModifier} key={index}>
+                      <View style={styles.dotModifier}>
+                        <DotSvg color={colors.greyScale2} />
+                      </View>
+                      <View>
+                        <GlobalText style={styles.modifierText}>
+                          <GlobalText style={styles.primaryColor}>
+                            {modify?.quantity}x{' '}
+                          </GlobalText>
+                          {modify?.name}{' '}
+                          <GlobalText style={styles.primaryColor}>
+                            + {modify?.price}{' '}
+                          </GlobalText>{' '}
+                        </GlobalText>
+                      </View>
+                    </View>
+                  ))}
+                </>
+              ))}
+              {handleRemarkProduct(item)}
+            </View>
           </View>
         </View>
       </View>
-    </View>
-  );
+    );
+  };
+
+  const handleRemarkProduct = item => {
+    if (item.remark) {
+      return (
+        <>
+          <View style={styles.divider} />
+
+          <View style={styles.notesProductContainer}>
+            <View style={styles.notesIcon}>
+              <NotesProduct />
+            </View>
+            <GlobalText style={styles.noteText}>{item.remark} </GlobalText>
+          </View>
+        </>
+      );
+    }
+    return null;
+  };
 
   const renderPaymentDetail = ({item, index}) => (
     <View style={[styles.shadowBox, styles.boxMain]}>
@@ -237,7 +331,9 @@ const OrderDetail = ({data}) => {
               </GlobalText>
             </View>
             <View>
-              <GlobalText>{calculatePaymentAmount()}</GlobalText>
+              <GlobalText style={styles.primaryColor}>
+                {calculatePaymentAmount()}
+              </GlobalText>
             </View>
           </View>
         </View>
@@ -252,7 +348,9 @@ const OrderDetail = ({data}) => {
               </GlobalText>
             </View>
             <View>
-              <GlobalText>{calculatePaymentAmount()}</GlobalText>
+              <GlobalText style={styles.primaryColor}>
+                {calculatePaymentAmount()}
+              </GlobalText>
             </View>
           </View>
         </View>
@@ -267,7 +365,9 @@ const OrderDetail = ({data}) => {
               </GlobalText>
             </View>
             <View>
-              <GlobalText>{calculatePaymentAmount()}</GlobalText>
+              <GlobalText style={styles.primaryColor}>
+                {calculatePaymentAmount()}
+              </GlobalText>
             </View>
           </View>
         </View>
@@ -568,11 +668,21 @@ const OrderDetail = ({data}) => {
             </GlobalText>
           </View>
           {renderAddress()}
-          <View style={styles.orderDetailWrapCOntainer}>
+          <TouchableOpacity
+            onPress={toggleOrder}
+            style={styles.orderDetailWrapCOntainer}>
             <GlobalText style={styles.oredrDetailText}>
               Item Details ({data?.details?.length} {handleItemText()})
             </GlobalText>
-          </View>
+            {data?.details?.length > 1 && (
+              <View style={[styles.notesProductContainer, styles.mlAuto]}>
+                <GlobalText style={[styles.moreItemText]}>
+                  {data?.details?.length - 1} More Item
+                </GlobalText>
+                <ArrowBottom />
+              </View>
+            )}
+          </TouchableOpacity>
           <FlatList
             keyExtractor={(item, index) => index.toString()}
             data={data?.details || []}
