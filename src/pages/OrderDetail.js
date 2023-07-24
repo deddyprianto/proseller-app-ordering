@@ -241,9 +241,8 @@ const OrderDetail = ({data}) => {
   };
 
   const toggleOrder = () => setShowAllOrder(prevState => !prevState);
-
   const downloadQrCode = async () => {
-    permissionDownloadFile(data?.action?.url, 'qrcode', 'image/png', {
+    permissionDownloadFile(data?.action?.url, `qrcode${data.id}`, 'image/png', {
       title: 'Imaged Saved',
       description: 'Successfully saved image to your gallery.',
     });
