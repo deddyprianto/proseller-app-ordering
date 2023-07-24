@@ -76,7 +76,6 @@ const AutocompleteAddress = props => {
   const [myAddress, setMyAddress] = React.useState('');
   const [currentPage, setCurrentPage] = React.useState(1);
   const [loading, setLoading] = React.useState(false);
-
   const onClickAddress = address => {
     setMyAddress(address);
     setIsFocus(false);
@@ -120,6 +119,12 @@ const AutocompleteAddress = props => {
       }
     });
   };
+
+  React.useEffect(() => {
+    if (props.onSelectAddress && typeof props.onSelectAddress === 'function') {
+      props.onSelectAddress(myAddress);
+    }
+  }, [myAddress]);
 
   return (
     <View>

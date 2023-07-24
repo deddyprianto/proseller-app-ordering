@@ -6,7 +6,7 @@ import GlobalText from '../globalText';
 import GlobalButton from '../button/GlobalButton';
 
 const useStyles = () => {
-  const {colors} = Theme();
+  const {colors, fontFamily} = Theme();
   const styles = StyleSheet.create({
     titleContainer: {
       color: colors.primary,
@@ -14,6 +14,7 @@ const useStyles = () => {
     textDesc: {
       textAlign: 'center',
       marginBottom: 16,
+      fontFamily: fontFamily.poppinsMedium,
     },
     divider: {
       height: 1,

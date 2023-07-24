@@ -408,6 +408,11 @@ const AddNewAddress = ({address}) => {
     );
   };
 
+  const onSelectAddress = address => {
+    console.log({address}, 'laksa');
+    setStreetName(address);
+  };
+
   const renderStreetNameField = () => {
     return (
       // <GooglePlacesAutocomplete
@@ -436,7 +441,10 @@ const AddNewAddress = ({address}) => {
       //   label="Postal Code/Building/Street Home"
       //   onChangeText={handleSearchPostalCode}
       // />
-      <AutocompleteAddress enableCurrentLocation />
+      <AutocompleteAddress
+        onSelectAddress={onSelectAddress}
+        enableCurrentLocation
+      />
     );
   };
 
@@ -584,6 +592,17 @@ const AddNewAddress = ({address}) => {
       recipientName &&
       mobileNumber?.length > 6
     ) {
+      console.log(
+        {
+          tagAddress,
+          streetName,
+          unitNumber,
+          postalCode,
+          recipientName,
+          mobileNumber,
+        },
+        'jejak',
+      );
       return true;
     }
     return false;

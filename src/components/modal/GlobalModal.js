@@ -106,7 +106,9 @@ const GlobalModal = props => {
       <View style={[styles.modalContainer, props.modalContainerStyle]}>
         <View style={styles.titleCloseContainer}>
           <View>
-            <GlobalText style={props.titleStyle}>{props.title}</GlobalText>
+            <GlobalText style={[styles.titleText, props.titleStyle]}>
+              {props.title}
+            </GlobalText>
           </View>
           {!props.hideCloseIcon ? (
             <View style={styles.closeContainer}>
