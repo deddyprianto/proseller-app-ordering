@@ -32,7 +32,6 @@ export const downloadFile = (url, name, mimeType, isOpenDirectly, message) => {
       useDownloadManager: true,
       notification: true,
       title: name,
-      path: `${path}/${name}`,
       mime: mimeType,
     },
   })
