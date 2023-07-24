@@ -53,6 +53,7 @@ force: true
       android:roundIcon="@mipmap/ic_launcher_round"
       android:allowBackup="false"
       android:largeHeap="true"
+      android:requestLegacyExternalStorage="true"
       android:theme="@style/AppTheme">
         <meta-data
                 android:name="com.google.android.geo.API_KEY"

@@ -86,7 +86,7 @@ const useStyles = () => {
       alignItems: 'center',
     },
     listOrderDetailContainer: {
-      // marginTop: 12,
+      marginTop: 0,
     },
     divider: {
       height: 1,
@@ -243,9 +243,9 @@ const OrderDetail = ({data}) => {
   const toggleOrder = () => setShowAllOrder(prevState => !prevState);
 
   const downloadQrCode = async () => {
-    permissionDownloadFile(data?.action?.url, 'qrcode', 'image/png', false, {
+    permissionDownloadFile(data?.action?.url, 'qrcode', 'image/png', {
       title: 'Imaged Saved',
-      description: 'Successfully saved image to your gallery',
+      description: 'Successfully saved image to your gallery.',
     });
   };
   const calculatePaymentAmount = () => {

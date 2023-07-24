@@ -1,30 +1,45 @@
 import RNFetchBlob from 'rn-fetch-blob';
 import {PERMISSIONS, check, RESULTS, request} from 'react-native-permissions';
 import {Alert, Platform} from 'react-native';
+import CameraRoll from '@react-native-community/cameraroll';
 
-export const permissionDownloadFile = (
-  url,
-  name,
-  mimeType,
-  isOpenDirectly,
-  message,
-) => {
+export const permissionDownloadFile = (url, name, mimeType, message) => {
   check(PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE).then(result => {
     switch (result) {
       case RESULTS.DENIED:
         request(PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE).then(res =>
-          downloadFile(url, name, mimeType),
+          downloadFile(url, name, mimeType, message),
         );
         break;
       case RESULTS.GRANTED:
-        downloadFile(url, name, mimeType, isOpenDirectly, message);
+        downloadFile(url, name, mimeType, message);
     }
   });
 };
 
-export const downloadFile = (url, name, mimeType, isOpenDirectly, message) => {
+const onOpenFile = (url, type) => {
+  if (Platform.OS === 'ios') {
+    RNFetchBlob.ios.previewDocument(url);
+  } else {
+    RNFetchBlob.android.actionViewIntent(url, type);
+  }
+};
+
+const alertMessage = (message, url, type) => {
+  Alert.alert(message.title, message.description, [
+    {
+      text: 'Open',
+      onPress: () => onOpenFile(url, type),
+    },
+    {
+      text: 'Close',
+    },
+  ]);
+};
+
+export const downloadFile = (url, name, mimeType, message) => {
   let dirs = RNFetchBlob.fs.dirs;
-  const path = dirs.PictureDir;
+  const path = dirs.DownloadDir;
   RNFetchBlob.config({
     fileCache: true,
     path,
@@ -32,20 +47,17 @@ export const downloadFile = (url, name, mimeType, isOpenDirectly, message) => {
       useDownloadManager: true,
       notification: true,
       title: name,
+      path: `${path}/${name}${new Date().getTime()}.png`,
       mime: mimeType,
     },
   })
     .fetch('GET', url)
     .then(res => {
-      if (isOpenDirectly) {
-        if (Platform.OS === 'android') {
-          RNFetchBlob.android.actionViewIntent(res.path(), mimeType);
-        }
-        if (Platform.OS === 'ios') {
-          RNFetchBlob.ios.previewDocument(res.path());
-        }
-      } else {
-        Alert.alert(message?.title, message?.description);
+      if (Platform.OS === 'ios') {
+        CameraRoll.saveToCameraRoll(url);
       }
+      CameraRoll.saveToCameraRoll(res.path()).then(() =>
+        alertMessage(message, res.path(), mimeType),
+      );
     });
 };
