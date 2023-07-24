@@ -58,6 +58,7 @@ const useStyles = () => {
       flex: 1,
       alignItems: 'center',
       justifyContent: 'center',
+      marginBottom: 12,
     },
     btnMainContainer: {
       width: normalizeLayoutSizeWidth(256),
@@ -81,7 +82,6 @@ const useStyles = () => {
       fontSize: 16,
     },
     orderDetailWrapCOntainer: {
-      marginTop: 24,
       flexDirection: 'row',
       alignItems: 'center',
     },
@@ -110,16 +110,24 @@ const useStyles = () => {
       marginLeft: 8,
     },
     shadowBox: {
-      shadowColor: '#171717',
-      shadowOffset: {width: -2, height: 4},
+      shadowOffset: {
+        width: 0.2,
+        height: 0.2,
+      },
       shadowOpacity: 0.2,
-      shadowRadius: 3,
-      backgroundColor: 'white',
+      shadowColor: colors.greyScale2,
+      elevation: 2,
+      paddingVertical: 6,
+      marginBottom: 24,
       borderRadius: 8,
-      elevation: 1,
+      backgroundColor: 'white',
+      display: 'flex',
+      justifyContent: 'space-between',
     },
+
     boxMain: {
       marginTop: 8,
+      width: '100%',
     },
     boldFont: {
       fontFamily: fontFamily.poppinsBold,
@@ -178,7 +186,6 @@ const useStyles = () => {
       justifyContent: 'space-between',
       alignItems: 'center',
       flexDirection: 'row',
-      marginTop: 28,
     },
     referenceNoText: {
       fontFamily: fontFamily.poppinsMedium,
@@ -236,7 +243,10 @@ const OrderDetail = ({data}) => {
   const toggleOrder = () => setShowAllOrder(prevState => !prevState);
 
   const downloadQrCode = async () => {
-    permissionDownloadFile(data?.action?.url, 'qrcode', 'image/png');
+    permissionDownloadFile(data?.action?.url, 'qrcode', 'image/png', false, {
+      title: 'Imaged Saved',
+      description: 'Successfully saved image to your gallery',
+    });
   };
   const calculatePaymentAmount = () => {
     const mappingAmount =
@@ -248,7 +258,7 @@ const OrderDetail = ({data}) => {
   const renderItemDetails = ({item, index}) => {
     if (!showAllOrder && index > 0) return null;
     return (
-      <View key={index} style={[styles.boxMain, styles.shadowBox]}>
+      <View key={index} style={[styles.shadowBox, styles.boxMain]}>
         <View style={styles.listOrderDetailContainer}>
           <View style={[styles.orderStatusContainer, styles.columnCard]}>
             <View style={styles.paymentDetailsCard}>
@@ -495,20 +505,22 @@ const OrderDetail = ({data}) => {
             </View>
           </View>
         </View>
-        <View style={styles.listOrderDetailContainer}>
-          <View style={[styles.orderStatusContainer, styles.columnCard]}>
-            <View style={styles.paymentDetailsCard}>
-              <NotesSvg />
-              <GlobalText
-                style={[styles.paymentDetailCardText, styles.boldFont]}>
-                Notes
-              </GlobalText>
-            </View>
-            <View style={styles.columnText}>
-              <GlobalText>{data?.remark}</GlobalText>
+        {data.remark ? (
+          <View style={styles.listOrderDetailContainer}>
+            <View style={[styles.orderStatusContainer, styles.columnCard]}>
+              <View style={styles.paymentDetailsCard}>
+                <NotesSvg />
+                <GlobalText
+                  style={[styles.paymentDetailCardText, styles.boldFont]}>
+                  Notes
+                </GlobalText>
+              </View>
+              <View style={styles.columnText}>
+                <GlobalText>{data?.remark}</GlobalText>
+              </View>
             </View>
           </View>
-        </View>
+        ) : null}
       </View>
     );
   };

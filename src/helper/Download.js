@@ -1,8 +1,14 @@
 import RNFetchBlob from 'rn-fetch-blob';
 import {PERMISSIONS, check, RESULTS, request} from 'react-native-permissions';
-import {Platform} from 'react-native';
+import {Alert, Platform} from 'react-native';
 
-export const permissionDownloadFile = (url, name, mimeType) => {
+export const permissionDownloadFile = (
+  url,
+  name,
+  mimeType,
+  isOpenDirectly,
+  message,
+) => {
   check(PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE).then(result => {
     switch (result) {
       case RESULTS.DENIED:
@@ -11,14 +17,14 @@ export const permissionDownloadFile = (url, name, mimeType) => {
         );
         break;
       case RESULTS.GRANTED:
-        downloadFile(url, name, mimeType);
+        downloadFile(url, name, mimeType, isOpenDirectly, message);
     }
   });
 };
 
-export const downloadFile = (url, name, mimeType) => {
+export const downloadFile = (url, name, mimeType, isOpenDirectly, message) => {
   let dirs = RNFetchBlob.fs.dirs;
-  const path = dirs.DownloadDir;
+  const path = dirs.PictureDir;
   RNFetchBlob.config({
     fileCache: true,
     path,
@@ -32,11 +38,15 @@ export const downloadFile = (url, name, mimeType) => {
   })
     .fetch('GET', url)
     .then(res => {
-      if (Platform.OS === 'android') {
-        RNFetchBlob.android.actionViewIntent(res.path(), mimeType);
-      }
-      if (Platform.OS === 'ios') {
-        RNFetchBlob.ios.previewDocument(res.path());
+      if (isOpenDirectly) {
+        if (Platform.OS === 'android') {
+          RNFetchBlob.android.actionViewIntent(res.path(), mimeType);
+        }
+        if (Platform.OS === 'ios') {
+          RNFetchBlob.ios.previewDocument(res.path());
+        }
+      } else {
+        Alert.alert(message?.title, message?.description);
       }
     });
 };
