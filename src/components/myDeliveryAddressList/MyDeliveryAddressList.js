@@ -79,8 +79,6 @@ const MyDeliveryAddressList = ({
     );
   };
 
-  console.log(deliveryAddress, 'silak');
-
   const renderMyDeliveryAddress = () => {
     if (isEmptyArray(deliveryAddress)) {
       return renderEmpty();
