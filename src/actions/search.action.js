@@ -1,5 +1,7 @@
 import AsyncStorage from '@react-native-community/async-storage';
 import appConfig from '../config/appConfig';
+import {generateOneMapToken} from './stores.action';
+import {Alert} from 'react-native';
 
 const setData = ({data, type}) => {
   return {
@@ -73,14 +75,25 @@ export const getAddressDetail = location => {
     try {
       const token = await AsyncStorage.getItem('onemapToken');
       const {access_token} = JSON.parse(token);
-      const url = `${
-        appConfig.oneMapBaseUrl
-      }/privateapi/commonsvc/revgeocode?location=${location}&token=${access_token}`;
-      const response = await fetch(url, {method: 'GET'});
-      const data = await response.json();
-      return data?.GeocodeInfo || [];
+      if (!access_token) {
+        const tokenRes = await generateOneMapToken();
+        return apiCallCurrentLocation(location, tokenRes.access_token);
+      }
+      return apiCallCurrentLocation(location, access_token);
     } catch (e) {
       return e;
     }
   };
+};
+
+const apiCallCurrentLocation = async (location, access_token) => {
+  const url = `${
+    appConfig.oneMapBaseUrl
+  }/privateapi/commonsvc/revgeocode?location=${location}&token=${access_token}`;
+  const response = await fetch(url, {method: 'GET'});
+  const data = await response.json();
+  if (data?.error) {
+    Alert.alert('Error', data.error);
+  }
+  return data?.GeocodeInfo || [];
 };

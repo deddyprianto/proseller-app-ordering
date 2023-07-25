@@ -323,10 +323,6 @@ export const generateOneMapToken = () => {
   return async dispatch => {
     try {
       const url = `${appConfig.oneMapBaseUrl}/privateapi/auth/post/getToken`;
-      const checkToken = await AsyncStorage.getItem('onemapToken');
-      const {expiry_timestamp} = JSON.parse(checkToken);
-      const todayStamp = moment().valueOf();
-      // console.log(todayStamp, 'supil');
       const body = {
         email: 'gilang@edgeworks.com.sg',
         password: 'YHR6fne!zbk*buf6gqh',
@@ -339,10 +335,10 @@ export const generateOneMapToken = () => {
         },
       });
       const data = await response.json();
-      // console.log(data, 'silatan');
       if (data?.access_token) {
         AsyncStorage.setItem('onemapToken', JSON.stringify(data));
       }
+      return data;
     } catch (error) {
       return error;
     }
