@@ -8,24 +8,21 @@ import React, {useState, useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import CryptoJS from 'react-native-crypto-js';
 import {Actions} from 'react-native-router-flux';
-import DashedLine from 'react-native-dashed-line';
-import En from 'react-native-vector-icons/Entypo';
 
-import {StyleSheet, View, Text, TouchableOpacity, Image} from 'react-native';
+import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
 import awsConfig from '../../../config/awsConfig';
 
 import {isEmptyObject} from '../../../helper/CheckEmpty';
 import {updateUser} from '../../../actions/user.action';
 import LoadingScreen from '../../loadingScreen';
-import appConfig from '../../../config/appConfig';
 import Theme from '../../../theme';
-import ConfirmationDialog from '../../confirmationDialog';
 import AddressPick from '../../../assets/svg/AddressPick';
 import GlobalButton from '../../button/GlobalButton';
 import ThreeDot from '../../../assets/svg/ThreeDotSvg';
 import GlobalModal from '../../modal/GlobalModal';
 import GlobalText from '../../globalText';
 import ModalAction from '../../modal/ModalAction';
+import useGetProtectionData from '../../../hooks/protection/useGetProtectioData';
 const useStyles = () => {
   const theme = Theme();
   const styles = StyleSheet.create({
@@ -216,9 +213,9 @@ const MyDeliveryAddressItem = ({item, fromScene, handleResetProvider}) => {
   const styles = useStyles();
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
-  const [isOpenModal, setIsOpenModal] = useState(false);
   const [user, setUser] = useState({});
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const {getUserDetail} = useGetProtectionData();
   const userDetail = useSelector(
     state => state.userReducer.getUser.userDetails,
   );
@@ -244,35 +241,28 @@ const MyDeliveryAddressItem = ({item, fromScene, handleResetProvider}) => {
     setUser(result);
   }, [userDetail]);
 
-  const handleOpenConfirmationModal = () => {
-    const isAlreadySelected = selectedIndex === item?.index;
-    if (!isAlreadySelected) {
-      setIsOpenModal(true);
-    }
-  };
-
-  const handleCloseConfirmationModal = () => {
-    setIsOpenModal(false);
-  };
-
   const handleSelectAddress = async () => {
     let result = user.deliveryAddress || [];
 
     const payload = {
-      // selectedAddress: item,
+      selectedAddress: item,
       phoneNumber: user.phoneNumber,
-      // deliveryAddress: result,
-      address: {...item, isDefault: true},
+      deliveryAddress: result,
     };
-    console.log(payload, 'papa');
-    setIsLoading(true);
-    await dispatch(updateUser(payload));
-    if (handleResetProvider && typeof handleResetProvider === 'function') {
-      handleResetProvider();
+
+    try {
+      setIsLoading(true);
+      await dispatch(updateUser(payload));
+      if (handleResetProvider && typeof handleResetProvider === 'function') {
+        handleResetProvider();
+      }
+      setIsLoading(false);
+      handleToggleSelectModal();
+    } catch (e) {
+      if (__DEV__) {
+        console.log(e, 'tidakaman');
+      }
     }
-    setIsLoading(false);
-    handleCloseConfirmationModal();
-    handleToggleSelectModal();
   };
   const handleOpenAnotherOption = () => setOpenAnotherOption(true);
   const handleCloseOptionModal = () => {
@@ -303,6 +293,50 @@ const MyDeliveryAddressItem = ({item, fromScene, handleResetProvider}) => {
         ) : null}
       </View>
     );
+  };
+
+  const onRemoveAddress = async () => {
+    const result = getUserDetail();
+    const filterAddress = result.deliveryAddress?.filter(
+      address => address.index !== item.index,
+    );
+    const payload = {
+      username: result.username,
+      deliveryAddress: filterAddress,
+    };
+
+    try {
+      await dispatch(updateUser(payload));
+      handleCloseDeleteModal();
+    } catch (e) {
+      handleCloseDeleteModal();
+      if (__DEV__) {
+        console.log(e, 'error');
+      }
+    }
+  };
+
+  const onSetDefaultAddress = async () => {
+    const result = getUserDetail();
+    const mapAddress = result.deliveryAddress?.map(deliverAddress => {
+      if (deliverAddress.index === item.index) {
+        return {...deliverAddress, isDefault: true};
+      }
+      return {...deliverAddress, isDefault: false};
+    });
+    const payload = {
+      username: result.username,
+      deliveryAddress: mapAddress,
+    };
+    try {
+      await dispatch(updateUser(payload));
+      handleCloseDefaultModal();
+    } catch (e) {
+      handleCloseDeleteModal();
+      if (__DEV__) {
+        console.log(e, 'error');
+      }
+    }
   };
 
   const renderHeader = () => {
@@ -370,28 +404,15 @@ const MyDeliveryAddressItem = ({item, fromScene, handleResetProvider}) => {
     }
   };
 
-  const renderConfirmationDialog = () => {
-    if (isOpenModal) {
-      return (
-        <ConfirmationDialog
-          open={isOpenModal}
-          handleClose={() => {
-            handleCloseConfirmationModal();
-          }}
-          handleSubmit={() => {
-            handleSelectAddress();
-          }}
-          isLoading={isLoading}
-          textTitle="Change Delivery Address"
-          textDescription="Are you sure you want to use this address?"
-          textSubmit="Sure"
-        />
-      );
-    }
-  };
-
   const handleToggleSelectModal = () => {
     setOpenSelectModal(prevState => !prevState);
+  };
+
+  const disableButton = () => {
+    if (!handleResetProvider) {
+      return true;
+    }
+    return false;
   };
 
   return (
@@ -399,7 +420,7 @@ const MyDeliveryAddressItem = ({item, fromScene, handleResetProvider}) => {
       <LoadingScreen loading={isLoading} />
       <TouchableOpacity
         style={handleStyleRoot()}
-        disabled={item?.isDefault}
+        disabled={disableButton()}
         onPress={handleToggleSelectModal}>
         {renderHeader()}
         {renderBody()}
@@ -431,6 +452,7 @@ const MyDeliveryAddressItem = ({item, fromScene, handleResetProvider}) => {
         description="Are you sure to set this address as your default address?"
         onCancel={handleCloseDefaultModal}
         scrollContainerStyle={styles.scrollContainerStyle}
+        onApprove={onSetDefaultAddress}
       />
       <ModalAction
         isVisible={openDeleteModal}
@@ -439,6 +461,7 @@ const MyDeliveryAddressItem = ({item, fromScene, handleResetProvider}) => {
         description="Are you sure you want to delete this address?"
         onCancel={handleCloseDeleteModal}
         scrollContainerStyle={styles.scrollContainerStyle}
+        onApprove={onRemoveAddress}
       />
       <ModalAction
         isVisible={openSelectModal}
@@ -453,4 +476,4 @@ as the delivery address?"
   );
 };
 
-export default MyDeliveryAddressItem;
+export default React.memo(MyDeliveryAddressItem);

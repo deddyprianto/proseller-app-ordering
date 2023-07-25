@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /**
  * Martin
  * martin@edgeworks.co.id
@@ -5,10 +6,8 @@
  */
 
 import React, {useEffect, useState} from 'react';
-import {useSelector, useDispatch} from 'react-redux';
+import {useDispatch} from 'react-redux';
 
-import MapView, {Marker} from 'react-native-maps';
-import CryptoJS from 'react-native-crypto-js';
 import {Actions} from 'react-native-router-flux';
 import {
   StyleSheet,
@@ -16,12 +15,8 @@ import {
   Text,
   TouchableOpacity,
   ScrollView,
-  Image,
   SafeAreaView,
 } from 'react-native';
-
-import appConfig from '../config/appConfig';
-import awsConfig from '../config/awsConfig';
 
 import {updateUser} from '../actions/user.action';
 import {showSnackbar} from '../actions/setting.action';
@@ -29,8 +24,6 @@ import {showSnackbar} from '../actions/setting.action';
 import Header from '../components/layout/header';
 import FieldCheckBox from '../components/fieldCheckBox';
 import LoadingScreen from '../components/loadingScreen';
-import FieldTextInput from '../components/fieldTextInput';
-import FieldAddressTag from '../components/fieldAddressTag';
 import ConfirmationDialog from '../components/confirmationDialog';
 import FieldPhoneNumberInput from '../components/fieldPhoneNumberInput';
 
@@ -42,8 +35,8 @@ import GlobalInputText from '../components/globalInputText';
 import {Pressable} from 'react-native';
 import GlobalText from '../components/globalText';
 import {Body} from '../components/layout';
-import {getAutoCompleteMap} from '../actions/stores.action';
 import AutocompleteAddress from '../components/autocompleteAddress';
+import useGetProtectionData from '../hooks/protection/useGetProtectioData';
 
 const useStyles = () => {
   const theme = Theme();
@@ -157,8 +150,8 @@ const AddNewAddress = ({address}) => {
   const [countryCode, setCountryCode] = useState('');
   const [latitude, setLatitude] = useState(LATITUDE_SINGAPORE);
   const [longitude, setLongitude] = useState(LONGITUDE_SINGAPORE);
-  const [latitudeDelta, setLatitudeDelta] = useState(1);
-  const [longitudeDelta, setLongitudeDelta] = useState(1);
+  const [, setLatitudeDelta] = useState(1);
+  const [, setLongitudeDelta] = useState(1);
 
   const [isSelected, setIsSelected] = useState(false);
   const [isOpenDeleteModal, setIsOpenDeleteModal] = useState(false);
@@ -168,25 +161,17 @@ const AddNewAddress = ({address}) => {
 
   const [user, setUser] = useState([]);
   const [deliveryAddress, setDeliveryAddress] = useState([]);
-
-  const userDetail = useSelector(
-    state => state.userReducer.getUser.userDetails,
-  );
+  const {getUserDetail} = useGetProtectionData();
 
   const update = !isEmptyObject(address);
 
   const titleHeader = update ? 'Edit Address' : 'Add New Address';
 
   useEffect(() => {
-    const userDecrypt = CryptoJS.AES.decrypt(
-      userDetail,
-      awsConfig.PRIVATE_KEY_RSA,
-    );
-    const result = JSON.parse(userDecrypt.toString(CryptoJS.enc.Utf8));
+    const result = getUserDetail();
     setUser(result);
     setDeliveryAddress(result?.deliveryAddress || []);
-  }, [userDetail]);
-
+  }, []);
   useEffect(() => {
     if (address) {
       setIsSelected(address?.isSelected);
@@ -209,7 +194,6 @@ const AddNewAddress = ({address}) => {
     const deliveryAddressFormatted = deliveryAddress.filter(
       value => value.index !== address.index,
     );
-
     const payload = {
       username: user.username,
       deliveryAddress: deliveryAddressFormatted,
@@ -397,59 +381,19 @@ const AddNewAddress = ({address}) => {
     );
   };
 
-  const renderAddressTagField = () => {
-    return (
-      <FieldAddressTag
-        value={tagAddress}
-        onChange={value => {
-          setTagAddress(value);
-        }}
-      />
-    );
-  };
-
-  const onSelectAddress = address => {
-    console.log({address}, 'laksa');
-    setStreetName(address);
+  const onSelectAddress = item => {
+    setStreetName(item['ADDRESS']);
+    setPostalCode(item['POSTAL']);
   };
 
   const renderStreetNameField = () => {
     return (
-      // <GooglePlacesAutocomplete
-      //   placeholder="Search"
-      //   onFail={e => console.log('fail', e)}
-      //   onPress={(data, details = null) => {
-      //     // 'details' is provided when fetchDetails = true
-      //     console.log(data, details);
-      //   }}
-      //   query={{
-      //     key: 'AIzaSyBdheo_pM1usFVZzPEDMFNoVNeaO96Pizc',
-      //     language: 'en',
-      //   }}
-      // />
-      // <FieldTextInput
-      //   label="Street Name"
-      //   placeholder="Street Name"
-      //   value={streetName}
-      //   onChange={value => {
-      //     setStreetName(value);
-      //   }}
-      // />
-      // <GlobalInputText
-      //   placeholder="Search postal code, building, or street name"
-      //   isMandatory
-      //   label="Postal Code/Building/Street Home"
-      //   onChangeText={handleSearchPostalCode}
-      // />
       <AutocompleteAddress
         onSelectAddress={onSelectAddress}
         enableCurrentLocation
+        value={streetName}
       />
     );
-  };
-
-  const handleSearchPostalCode = text => {
-    dispatch(getAutoCompleteMap(text));
   };
 
   const handleUnitNumber = value => {
@@ -468,26 +412,6 @@ const AddNewAddress = ({address}) => {
         maxLength={50}
         onChangeText={handleUnitNumber}
         isMandatory
-      />
-      // <FieldTextInput
-      //   label="Unit Number"
-      //   placeholder="Unit Number"
-      //   value={unitNumber}
-      //   onChange={value => {
-      //     setUnitNumber(value);
-      //   }}
-      // />
-    );
-  };
-  const renderPostalCodeField = () => {
-    return (
-      <FieldTextInput
-        label="Postal Code"
-        placeholder="Postal Code"
-        value={postalCode}
-        onChange={value => {
-          setPostalCode(value);
-        }}
       />
     );
   };
@@ -538,15 +462,12 @@ const AddNewAddress = ({address}) => {
         <View style={styles.marginTop16} />
         <Text style={styles.textTitle}>Delivery Details</Text>
         <View style={styles.marginTop16} />
-        {/* {renderAddressTagField()} */}
         <View style={styles.marginTop16} />
         {renderStreetNameField()}
         <View style={styles.marginTop16} />
         {renderUnitNumberField()}
         <View style={styles.marginTop16} />
         {renderLabelAddress()}
-
-        {/* {renderPostalCodeField()} */}
       </View>
     );
   };
@@ -568,7 +489,7 @@ const AddNewAddress = ({address}) => {
       <View style={{flex: 1}}>
         <Body>
           <ScrollView
-            keyboardShouldPersistTaps={true}
+            // keyboardShouldPersistTaps={true}
             nestedScrollEnabled={true}
             style={styles.scrollView}>
             {renderDeliveryDetailFields()}
@@ -592,17 +513,6 @@ const AddNewAddress = ({address}) => {
       recipientName &&
       mobileNumber?.length > 6
     ) {
-      console.log(
-        {
-          tagAddress,
-          streetName,
-          unitNumber,
-          postalCode,
-          recipientName,
-          mobileNumber,
-        },
-        'jejak',
-      );
       return true;
     }
     return false;
@@ -620,7 +530,7 @@ const AddNewAddress = ({address}) => {
       <View style={styles.footer}>
         <TouchableOpacity
           style={styleActive}
-          disabled={!active || isLoading}
+          disabled={!active}
           onPress={() => {
             handleButtonSave();
           }}>
