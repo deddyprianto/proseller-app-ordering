@@ -14,9 +14,6 @@ import {
   TouchableOpacity,
   ScrollView,
   SafeAreaView,
-  PermissionsAndroid,
-  Platform,
-  Alert,
   RefreshControl,
 } from 'react-native';
 
@@ -28,10 +25,9 @@ import moment from 'moment';
 import {Body} from '../components/layout';
 import appConfig from '../config/appConfig';
 
-import {captureRef} from 'react-native-view-shot';
-import CameraRoll from '@react-native-community/cameraroll';
 import {getPendingOrderById} from '../actions/order.action';
 import {useDispatch, useSelector} from 'react-redux';
+import {permissionDownloadFile} from '../helper/Download';
 
 const useStyles = () => {
   const theme = Theme();
@@ -325,7 +321,6 @@ const Payment = () => {
   const [seconds, setSeconds] = useState(0);
   const [minutes, setMinutes] = useState(0);
   const [hours, setHours] = useState(0);
-  const [qrRef, setQrRef] = useState();
 
   const order = useSelector(
     state => state.orderReducer.dataCartSingle.cartSingle,
@@ -369,19 +364,20 @@ const Payment = () => {
     onRefresh();
   }, [onRefresh]);
 
+  const handleDownloadQrCode = async qr => {
+    permissionDownloadFile(qr, 'qrcode', 'image/png', {
+      title: 'Imaged Saved',
+      description: 'Successfully saved image to your gallery.',
+    });
+  };
+
   const renderQR = () => {
     const qr = order?.action?.url;
 
     if (qr && isPendingPayment) {
       return (
         <View style={styles.viewQR}>
-          <Image
-            source={{uri: qr}}
-            style={styles.imageQR}
-            ref={ref => {
-              setQrRef(ref);
-            }}
-          />
+          <Image source={{uri: qr}} style={styles.imageQR} />
         </View>
       );
     }
@@ -404,72 +400,14 @@ const Payment = () => {
     }
   };
 
-  const getPermissionAndroid = async () => {
-    try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-        {
-          title: 'Image Download Permission',
-          message: 'Your permission is required to save images to your device',
-          buttonNegative: 'Cancel',
-          buttonPositive: 'OK',
-        },
-      );
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        return true;
-      }
-      Alert.alert(
-        'Permission required',
-        'We require permission to save images to your device. Please grant this permission manually in your settings to proceed',
-        [{text: 'OK', onPress: () => {}}],
-        {cancelable: false},
-      );
-    } catch (err) {
-      Alert.alert(
-        'Save remote image',
-        'Failed to save Image: ' + err.message,
-        [{text: 'OK', onPress: () => console.log('OK Pressed')}],
-        {cancelable: false},
-      );
-    }
-  };
-
-  const handleDownloadImage = async () => {
-    try {
-      const uri = await captureRef(qrRef, {
-        format: 'png',
-        quality: 0.8,
-      });
-
-      if (Platform.OS === 'android') {
-        const granted = await getPermissionAndroid();
-        if (!granted) {
-          return;
-        }
-      }
-
-      const image = await CameraRoll.save(uri, 'photo');
-
-      if (image) {
-        Alert.alert(
-          'Image saved',
-          'Successfully saved image to your gallery.',
-          [{text: 'OK', onPress: () => {}}],
-          {cancelable: false},
-        );
-      }
-    } catch (error) {
-      console.log('error', error);
-    }
-  };
-
   const renderSaveQR = () => {
+    const qr = order?.action?.url;
     if (isPendingPayment) {
       return (
         <TouchableOpacity
           style={styles.viewSaveQR}
           onPress={() => {
-            handleDownloadImage();
+            handleDownloadQrCode(qr);
           }}>
           <Text style={styles.textSaveQR}>SAVE QR CODE TO GALLERY</Text>
         </TouchableOpacity>
