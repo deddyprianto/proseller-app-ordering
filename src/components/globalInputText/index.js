@@ -33,6 +33,7 @@ const useStyles = () => {
     inputStyle: editable => ({
       color: editable === false ? theme.colors.greyScale2 : 'black',
       width: '80%',
+      fontFamily: theme.fontFamily.poppinsRegular,
     }),
     buttonStyle: {
       flexDirection: 'row',

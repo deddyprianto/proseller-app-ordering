@@ -29,6 +29,7 @@ import MyECardModal from '../components/modal/MyECardModal';
 import moment from 'moment';
 import DeviceBrightness from '@adrianso/react-native-device-brightness';
 import {Body} from '../components/layout';
+import ContactSvg from '../assets/svg/ContactSvg';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -586,6 +587,24 @@ const Profile = props => {
     );
   };
 
+  const openContactUs = () => {
+    return Actions.contactUs();
+  };
+
+  const renderContactUs = () => {
+    if (appConfig.contactUsVersion === '') {
+      return null;
+    }
+    return (
+      <TouchableOpacity style={styles.viewOption} onPress={openContactUs}>
+        <View style={styles.iconSetting}>
+          <ContactSvg />
+        </View>
+        <Text style={styles.textIcon}>Contact Us</Text>
+      </TouchableOpacity>
+    );
+  };
+
   const renderMembershipQRCode = () => {
     return (
       <TouchableOpacity
@@ -658,6 +677,7 @@ const Profile = props => {
         {renderNotifications()}
         {renderTermsAndConditions()}
         {renderFAQ()}
+        {renderContactUs()}
         {renderDeleteAccount()}
         {renderLogout()}
       </View>
