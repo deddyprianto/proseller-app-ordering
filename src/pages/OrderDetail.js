@@ -245,6 +245,9 @@ const useStyles = () => {
     productList: {
       paddingHorizontal: 0.9,
     },
+    mv6: {
+      marginVertical: 6,
+    },
   });
   return {styles, colors};
 };
@@ -345,11 +348,11 @@ const OrderDetail = ({data}) => {
     }
     return null;
   };
-
+  console.log(data.payments, 'sulit');
   const renderPaymentDetail = ({item, index}) => (
     <View>
       {item?.paymentType === 'point' ? (
-        <View style={styles.listOrderDetailContainer}>
+        <View style={[styles.listOrderDetailContainer, styles.mv6]}>
           <View style={styles.orderStatusContainer}>
             <View style={styles.paymentDetailsCard}>
               <PointSvg />
@@ -359,14 +362,14 @@ const OrderDetail = ({data}) => {
             </View>
             <View>
               <GlobalText style={[styles.primaryColor, styles.mediumFont]}>
-                {calculatePaymentAmount()}
+                {CurrencyFormatter(item?.paymentAmount)}
               </GlobalText>
             </View>
           </View>
         </View>
       ) : null}
       {item?.paymentType === 'voucher' ? (
-        <View style={styles.listOrderDetailContainer}>
+        <View style={[styles.listOrderDetailContainer, styles.mv6]}>
           <View style={styles.orderStatusContainer}>
             <View style={styles.paymentDetailsCard}>
               <VoucherSvg />
@@ -376,14 +379,14 @@ const OrderDetail = ({data}) => {
             </View>
             <View>
               <GlobalText style={[styles.primaryColor, styles.mediumFont]}>
-                {calculatePaymentAmount()}
+                {CurrencyFormatter(item?.paymentAmount)}
               </GlobalText>
             </View>
           </View>
         </View>
       ) : null}
       {item?.paymentType === 'FOMO_PAY' ? (
-        <View style={styles.listOrderDetailContainer}>
+        <View style={[styles.listOrderDetailContainer, styles.mv6]}>
           <View style={styles.orderStatusContainer}>
             <View style={styles.paymentDetailsCard}>
               <CardSvg />
@@ -393,7 +396,7 @@ const OrderDetail = ({data}) => {
             </View>
             <View>
               <GlobalText style={[styles.primaryColor, styles.mediumFont]}>
-                {calculatePaymentAmount()}
+                {CurrencyFormatter(item?.paymentAmount)}
               </GlobalText>
             </View>
           </View>
@@ -434,6 +437,8 @@ const OrderDetail = ({data}) => {
                 </View>
               </View>
             </View>
+            <DashSvg style={styles.dashStyle} />
+
             <View style={styles.listOrderDetailContainer}>
               <View style={[styles.orderStatusContainer, styles.columnCard]}>
                 <View style={styles.paymentDetailsCard}>
@@ -451,6 +456,8 @@ const OrderDetail = ({data}) => {
                 </View>
               </View>
             </View>
+            <DashSvg style={styles.dashStyle} />
+
             <View style={styles.listOrderDetailContainer}>
               <View style={[styles.orderStatusContainer, styles.columnCard]}>
                 <View style={styles.paymentDetailsCard}>
@@ -467,6 +474,8 @@ const OrderDetail = ({data}) => {
                 </View>
               </View>
             </View>
+            <DashSvg style={styles.dashStyle} />
+
             <View style={styles.listOrderDetailContainer}>
               <View style={[styles.orderStatusContainer, styles.columnCard]}>
                 <View style={styles.paymentDetailsCard}>
