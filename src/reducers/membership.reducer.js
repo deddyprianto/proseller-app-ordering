@@ -16,6 +16,16 @@ const memberships = (state = defaultState, action) => {
   }
 };
 
+const allMembershipTier = (state = {}, action) => {
+  switch (action.type) {
+    case 'DATA_ALL_MEMBERSHIP':
+      return action.data;
+    default:
+      return state;
+  }
+};
+
 export default combineReducers({
   memberships,
+  allMembershipTier,
 });

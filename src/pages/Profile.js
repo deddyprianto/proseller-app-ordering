@@ -500,11 +500,15 @@ const Profile = props => {
 
   const renderProfileHeader = () => {
     return (
-      <View style={styles.viewHeader}>
+      <TouchableOpacity
+        style={styles.viewHeader}
+        onPress={() => {
+          Actions.membership();
+        }}>
         {renderHeaderProfileHeaderTop()}
         <View style={styles.dividerHeader} />
         {renderHeaderProfileHeaderBottom()}
-      </View>
+      </TouchableOpacity>
     );
   };
 
