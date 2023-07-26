@@ -270,13 +270,13 @@ const MyDeliveryAddressItem = ({item, fromScene, handleResetProvider}) => {
   };
   const handleCloseDefaultModal = () => setChangeDefaultAddress(false);
   const handleToggleDefaltAddress = async () => {
-    await handleCloseOptionModal();
+    handleCloseOptionModal();
     setTimeout(() => {
       setChangeDefaultAddress(true);
     }, 500);
   };
   const handleOpenDeleteModal = async () => {
-    await handleCloseOptionModal();
+    handleCloseOptionModal();
     setTimeout(() => {
       setOpenDeleteModal(true);
     }, 500);
@@ -411,8 +411,9 @@ const MyDeliveryAddressItem = ({item, fromScene, handleResetProvider}) => {
   const disableButton = () => {
     if (!handleResetProvider) {
       return true;
+    } else {
+      return false;
     }
-    return false;
   };
 
   return (
@@ -426,7 +427,6 @@ const MyDeliveryAddressItem = ({item, fromScene, handleResetProvider}) => {
         {renderBody()}
         {renderFooter()}
       </TouchableOpacity>
-      {/* {renderConfirmationDialog()} */}
       <GlobalModal
         isBottomModal
         isVisible={openAnotherOption}

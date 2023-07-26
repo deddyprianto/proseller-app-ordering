@@ -111,6 +111,10 @@ const awsConfig = {
   NETSCLICK_API_KEY: Data.netsclick_api_key,
 
   NETSCLICK_SECRET_KEY: Data.netsclick_secret_key,
+
+  EMAIL_ONE_MAP: Config.email_one_map,
+
+  PASSWORD_ONE_MAP: Config.password_map,
 };
 
 export default awsConfig;

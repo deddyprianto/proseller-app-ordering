@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Svg, {Rect, Path} from 'react-native-svg';
+import Svg, {Path} from 'react-native-svg';
 import Theme from '../../theme/Theme';
 const ThreeDot = props => {
   const {colors} = Theme();

@@ -16,6 +16,7 @@ import {
   TouchableOpacity,
   ScrollView,
   SafeAreaView,
+  Pressable,
 } from 'react-native';
 
 import {updateUser} from '../actions/user.action';
@@ -32,7 +33,6 @@ import {isEmptyObject} from '../helper/CheckEmpty';
 import Theme from '../theme';
 import {LATITUDE_SINGAPORE, LONGITUDE_SINGAPORE} from '../constant/location';
 import GlobalInputText from '../components/globalInputText';
-import {Pressable} from 'react-native';
 import GlobalText from '../components/globalText';
 import {Body} from '../components/layout';
 import AutocompleteAddress from '../components/autocompleteAddress';
@@ -347,8 +347,9 @@ const AddNewAddress = ({address}) => {
   };
 
   const renderLabelAddress = () => {
-    const component = listLabelAddress.map(label => (
+    const component = listLabelAddress.map((label, index) => (
       <Pressable
+        key={index}
         onPress={() => handlePressLabel(label)}
         style={styles.itemLabelAddress(
           tagAddress.toLowerCase() === label.toLowerCase(),

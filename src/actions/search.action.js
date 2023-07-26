@@ -76,7 +76,7 @@ export const getAddressDetail = location => {
       const token = await AsyncStorage.getItem('onemapToken');
       const {access_token} = JSON.parse(token);
       if (!access_token) {
-        const tokenRes = await generateOneMapToken();
+        const tokenRes = generateOneMapToken();
         return apiCallCurrentLocation(location, tokenRes.access_token);
       }
       return apiCallCurrentLocation(location, access_token);

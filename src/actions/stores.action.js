@@ -3,7 +3,7 @@ import {isEmptyObject} from '../helper/CheckEmpty';
 import {fetchApi} from '../service/api';
 import appConfig from '../config/appConfig';
 import AsyncStorage from '@react-native-community/async-storage';
-import moment from 'moment';
+import awsConfig from '../config/awsConfig';
 
 export const getCompanyInfo = () => {
   return async (dispatch, getState) => {
@@ -324,8 +324,8 @@ export const generateOneMapToken = () => {
     try {
       const url = `${appConfig.oneMapBaseUrl}/privateapi/auth/post/getToken`;
       const body = {
-        email: 'gilang@edgeworks.com.sg',
-        password: 'YHR6fne!zbk*buf6gqh',
+        email: awsConfig.EMAIL_ONE_MAP,
+        password: awsConfig.PASSWORD_ONE_MAP,
       };
       const response = await fetch(url, {
         method: 'POST',

@@ -43,12 +43,12 @@
 // export default awsConfig;
 
 import Config from 'react-native-config';
-import ENV from '../../configurations/acemart/demo/env';
+import ENV from '../../configurations/fareastflora/dev/env';
 // import ENV from '../../env';
 // import ENV from '../../env-demo';
 import Base64 from 'Base64';
 import {Platform} from 'react-native';
-
+console.log(Config, 'config');
 let Data = {};
 // if we build to android, then read .env file
 // if (Platform.OS === 'android') {'
@@ -106,6 +106,10 @@ const awsConfig = {
   NETSCLICK_API_KEY: Data.netsclick_api_key,
 
   NETSCLICK_SECRET_KEY: Data.netsclick_secret_key,
+
+  EMAIL_ONE_MAP: Config.email_one_map,
+
+  PASSWORD_ONE_MAP: Config.password_map,
 };
 
 export default awsConfig;
