@@ -348,7 +348,6 @@ const OrderDetail = ({data}) => {
     }
     return null;
   };
-  console.log(data.payments, 'sulit');
   const renderPaymentDetail = ({item, index}) => (
     <View>
       {item?.paymentType === 'point' ? (
