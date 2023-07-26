@@ -48,7 +48,7 @@ import ENV from '../../configurations/fareastflora/dev/env';
 // import ENV from '../../env-demo';
 import Base64 from 'Base64';
 import {Platform} from 'react-native';
-console.log(Config, 'config');
+
 let Data = {};
 // if we build to android, then read .env file
 // if (Platform.OS === 'android') {'

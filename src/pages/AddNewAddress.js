@@ -497,7 +497,6 @@ const AddNewAddress = ({address}) => {
             <View style={styles.divider} />
             {renderRecipientDetailFields()}
             <View style={styles.divider} />
-            {/* {renderMap()} */}
             {renderCheckBox()}
             <View style={styles.marginTop16} />
           </ScrollView>
