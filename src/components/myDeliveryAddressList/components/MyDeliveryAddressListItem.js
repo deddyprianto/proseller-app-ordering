@@ -268,7 +268,10 @@ const MyDeliveryAddressItem = ({item, fromScene, handleResetProvider}) => {
   const handleCloseOptionModal = () => {
     setOpenAnotherOption(false);
   };
-  const handleCloseDefaultModal = () => setChangeDefaultAddress(false);
+  const handleCloseDefaultModal = () => {
+    setChangeDefaultAddress(false);
+    setIsLoading(false);
+  };
   const handleToggleDefaltAddress = async () => {
     handleCloseOptionModal();
     setTimeout(() => {
@@ -281,7 +284,10 @@ const MyDeliveryAddressItem = ({item, fromScene, handleResetProvider}) => {
       setOpenDeleteModal(true);
     }, 500);
   };
-  const handleCloseDeleteModal = () => setOpenDeleteModal(false);
+  const handleCloseDeleteModal = () => {
+    setOpenDeleteModal(false);
+    setIsLoading(false);
+  };
   const renderTagAddress = () => {
     return (
       <View style={[styles.viewTagAddress]}>
@@ -296,6 +302,7 @@ const MyDeliveryAddressItem = ({item, fromScene, handleResetProvider}) => {
   };
 
   const onRemoveAddress = async () => {
+    setIsLoading(true);
     const result = getUserDetail();
     const filterAddress = result.deliveryAddress?.filter(
       address => address.index !== item.index,
@@ -317,6 +324,7 @@ const MyDeliveryAddressItem = ({item, fromScene, handleResetProvider}) => {
   };
 
   const onSetDefaultAddress = async () => {
+    setIsLoading(true);
     const result = getUserDetail();
     const mapAddress = result.deliveryAddress?.map(deliverAddress => {
       if (deliverAddress.index === item.index) {
