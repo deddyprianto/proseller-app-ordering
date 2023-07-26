@@ -952,16 +952,17 @@ const Cart = props => {
 
   const renderOrderingTypeHeaderText = text => {
     if (awsConfig.COMPANY_TYPE === 'Retail') {
-      <TouchableOpacity
-        disabled
-        style={styles.touchableMethod}
-        onPress={() => {
-          handleOpenOrderingTypeModal();
-        }}>
-        <Text style={styles.textMethodValue}>
-          {text.length > 12 ? text.substring(0.12) + '...' : text}
-        </Text>
-      </TouchableOpacity>;
+      return (
+        <TouchableOpacity
+          style={styles.touchableMethod}
+          onPress={() => {
+            handleOpenOrderingTypeModal();
+          }}>
+          <Text style={styles.textMethodValue}>
+            {text.length > 12 ? text.substring(0.12) + '...' : text}
+          </Text>
+        </TouchableOpacity>
+      );
     } else {
       return <Text style={styles.textMethodValue1}>{text}</Text>;
     }
