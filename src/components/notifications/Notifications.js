@@ -7,17 +7,14 @@
 import React, {Component} from 'react';
 import {
   View,
-  Text,
   StyleSheet,
   Dimensions,
-  TouchableOpacity,
   ScrollView,
   BackHandler,
-  Platform,
   SafeAreaView,
   Switch,
+  Platform,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
 import colorConfig from '../../config/colorConfig';
 import {getUserProfile, updateUser} from '../../actions/user.action';
@@ -26,7 +23,10 @@ import {connect} from 'react-redux';
 import Loader from '../loader';
 import {List} from 'react-native-paper';
 import Snackbar from 'react-native-snackbar';
-import {Body} from '../layout';
+import {Body, Header} from '../layout';
+import EmailSvg from '../../assets/svg/EmailSvg';
+import withHooksComponent from '../HOC';
+import PhoneSvg from '../../assets/svg/PhoneSvg';
 
 class Notifications extends Component {
   constructor(props) {
@@ -126,73 +126,88 @@ class Notifications extends Component {
     this.changeSetting('smsNotification', !value);
   };
 
-  render(marginRight: number) {
-    const {intlData} = this.props;
+  leftIconPhone = () => (
+    <View style={styles.centerEmail}>
+      <PhoneSvg />
+    </View>
+  );
+
+  righIconPhone = () => (
+    <Switch
+      trackColor={{
+        false: '#767577',
+        true: colorConfig.store.disableButton,
+      }}
+      thumbColor={true ? colorConfig.store.defaultColor : 'white'}
+      ios_backgroundColor="white"
+      onValueChange={() => {
+        this.changeSMSSetting(this.state.smsNotification);
+      }}
+      value={this.state.smsNotification}
+      style={styles.buttonSwitch}
+    />
+  );
+
+  leftIconMessage = () => (
+    <View style={styles.centerEmail}>
+      <EmailSvg />
+    </View>
+  );
+
+  rightIconMessage = () => (
+    <Switch
+      trackColor={{
+        false: '#767577',
+        true: colorConfig.store.disableButton,
+      }}
+      thumbColor={true ? colorConfig.store.defaultColor : 'white'}
+      ios_backgroundColor="white"
+      onValueChange={() => {
+        this.changeEmailSetting(this.state.emailNotification);
+      }}
+      value={this.state.emailNotification}
+      style={styles.buttonSwitch}
+    />
+  );
+
+  render() {
+    const {fontFamily} = this.props;
     const {smsNotification, emailNotification} = this.state;
     return (
       <SafeAreaView style={styles.container}>
         <Body>
           {this.state.loading && <Loader />}
-          <View
-            style={[
-              styles.header,
-              {backgroundColor: colorConfig.pageIndex.backgroundColor},
-            ]}>
-            <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
-              <Icon
-                size={28}
-                name={
-                  Platform.OS === 'ios'
-                    ? 'ios-arrow-back'
-                    : 'md-arrow-round-back'
-                }
-                style={styles.btnBackIcon}
-              />
-              <Text style={styles.btnBackText}> Notification Setting </Text>
-            </TouchableOpacity>
-          </View>
-          <ScrollView>
+          <Header title={'Notification Setting'} />
+          <ScrollView style={styles.scrollContainer}>
             <List.Section>
-              <List.Subheader>Notification Settings</List.Subheader>
-
               <List.Item
                 title="Email Notification"
-                description="Allow Edgeworks to send you promotion through your email."
-                left={props => <List.Icon {...props} icon="email" />}
-                right={() => (
-                  <Switch
-                    trackColor={{
-                      false: '#767577',
-                      true: colorConfig.store.disableButton,
-                    }}
-                    thumbColor={true ? colorConfig.store.defaultColor : 'white'}
-                    ios_backgroundColor="white"
-                    onValueChange={() => {
-                      this.changeEmailSetting(emailNotification);
-                    }}
-                    value={emailNotification}
-                  />
-                )}
+                titleStyle={[
+                  {fontFamily: fontFamily.poppinsMedium},
+                  styles.listTextStyle,
+                ]}
+                descriptionStyle={[
+                  styles.listDescriptionStyle,
+                  {fontFamily: fontFamily.poppinsMedium},
+                ]}
+                description="Allow sending notification to your email"
+                left={this.leftIconMessage}
+                right={this.rightIconMessage}
               />
 
               <List.Item
                 title="SMS Notification"
-                description="Allow sending notification to your mobile number."
-                left={props => <List.Icon {...props} icon="phone" />}
-                right={() => (
-                  <Switch
-                    trackColor={{
-                      false: '#767577',
-                      true: colorConfig.store.disableButton,
-                    }}
-                    thumbColor={true ? colorConfig.store.defaultColor : 'white'}
-                    ios_backgroundColor="white"
-                    onValueChange={() => {
-                      this.changeSMSSetting(smsNotification);
-                    }}
-                    value={smsNotification}
-                  />
-                )}
+                description="Allow sending notification to your mobile phone"
+                titleStyle={[
+                  {fontFamily: fontFamily.poppinsMedium},
+                  styles.listTextStyle,
+                ]}
+                descriptionStyle={[
+                  styles.listDescriptionStyle,
+                  {fontFamily: fontFamily.poppinsMedium},
+                ]}
+                left={this.leftIconPhone}
+                right={this.righIconPhone}
               />
             </List.Section>
           </ScrollView>
@@ -202,21 +217,23 @@ class Notifications extends Component {
   }
 }
 
-mapStateToProps = state => ({
+const mapStateToProps = state => ({
   updateUser: state.userReducer.updateUser,
   intlData: state.intlData,
 });
 
-mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = dispatch => ({
   dispatch,
 });
 
-export default compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
-)(Notifications);
+export default withHooksComponent(
+  compose(
+    connect(
+      mapStateToProps,
+      mapDispatchToProps,
+    ),
+  )(Notifications),
+);
 
 const styles = StyleSheet.create({
   container: {
@@ -332,5 +349,24 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     maxWidth: Dimensions.get('window').width / 2 + 20,
     textAlign: 'right',
+  },
+  centerEmail: {
+    marginRight: 16,
+    marginTop: 8,
+  },
+  listTextStyle: {
+    fontSize: 14,
+  },
+  listDescriptionStyle: {
+    fontSize: 12,
+  },
+  scrollContainer: {
+    paddingHorizontal: 12,
+  },
+  buttonSwitch: {
+    transform: [
+      {scaleX: Platform.OS === 'ios' ? 0.7 : 1},
+      {scaleY: Platform.OS === 'ios' ? 0.7 : 1},
+    ],
   },
 });

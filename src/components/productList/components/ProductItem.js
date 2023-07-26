@@ -182,7 +182,7 @@ const useStyles = () => {
     },
     counterCartProduct: {
       height: 26,
-      width: 30,
+      width: 'auto',
       position: 'absolute',
       top: 0,
       right: 0,
@@ -190,6 +190,8 @@ const useStyles = () => {
       alignItems: 'center',
       justifyContent: 'center',
       borderRadius: 4,
+      paddingHorizontal: 4,
+      minWidth: 30,
     },
     counterStyle: {
       color: 'white',

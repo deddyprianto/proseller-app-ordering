@@ -127,6 +127,15 @@ class SettleOrder extends Component {
     );
   };
 
+  handlePaymentFomoPay = () => {
+    const {selectedAccount} = this.props;
+    const find = selectedAccount.paymentID === 'FOMO_PAY';
+
+    if (find) {
+      Actions.payment();
+    }
+  };
+
   registerCard = async () => {
     await this.setState({loading: true});
     try {
@@ -193,6 +202,24 @@ class SettleOrder extends Component {
       // await this.setState({loading: false});
     } catch (e) {
       // await this.setState({loading: false});
+    }
+
+    let paymentTypes = this.props.companyInfo?.paymentTypes;
+
+    if (this.props.paySVC) {
+      paymentTypes = paymentTypes?.filter(i => i.allowTopUpSVC === true);
+    } else {
+      paymentTypes = paymentTypes?.filter(
+        i => i.allowSalesTransaction === true,
+      );
+    }
+
+    const paymentTypeFomoPay = paymentTypes.find(
+      row => row.paymentID === 'FOMO_PAY',
+    );
+
+    if (paymentTypes.length === 1 && paymentTypeFomoPay) {
+      await this.props.dispatch(selectedAccount(paymentTypeFomoPay));
     }
 
     this.backHandler = BackHandler.addEventListener(
@@ -1352,6 +1379,7 @@ class SettleOrder extends Component {
       const response = await this.props.dispatch(settleOrder(pembayaran, url));
       console.log('reponse pembayaran settle order ', response);
       if (response.success) {
+        this.handlePaymentFomoPay();
         try {
           this.props.dispatch(afterPayment(true));
         } catch (e) {}
@@ -2651,6 +2679,7 @@ class SettleOrder extends Component {
       const response = await this.props.dispatch(settleOrder(payload, url));
       console.log('reponse pembayaran settle order ', response);
       if (response.success) {
+        this.handlePaymentFomoPay();
         try {
           if (this.props.pembayaran.orderingMode == 'STORECHECKOUT') {
             this.props.dispatch(afterPayment(false));
@@ -2899,7 +2928,7 @@ class SettleOrder extends Component {
 
   selectedPaymentMethod = selectedAccount => {
     try {
-      if (selectedAccount.isAccountRequired != false) {
+      if (selectedAccount.isAccountRequired) {
         if (!isEmptyObject(selectedAccount)) {
           let number = selectedAccount.details.maskedAccountNumber;
           number = number.substr(number.length - 4, 4);
@@ -3218,6 +3247,7 @@ class SettleOrder extends Component {
       const response = await this.props.dispatch(settleOrder(payload, url));
       console.log('reponse pembayaran settle order ', response);
       if (response.success) {
+        this.handlePaymentFomoPay();
         try {
           this.props.dispatch(afterPayment(true));
         } catch (e) {}
@@ -4077,7 +4107,10 @@ class SettleOrder extends Component {
 
               <View style={{marginTop: 50}} />
               <TouchableOpacity
-                onPress={this.popupPayment}
+                onPress={() => {
+                  this.setState({loading: true});
+                  this.popupPayment();
+                }}
                 disabled={
                   selectedAccount != undefined || this.state.totalBayar == 0
                     ? false
