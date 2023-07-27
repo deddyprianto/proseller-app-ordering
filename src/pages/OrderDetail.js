@@ -250,6 +250,9 @@ const useStyles = () => {
     mv6: {
       marginVertical: 6,
     },
+    darkGrey: {
+      color: '#737373',
+    },
   });
   return {styles, colors};
 };
@@ -613,7 +616,7 @@ const OrderDetail = ({data}) => {
             </View>
             {data?.cancelationReason ? (
               <View style={styles.mlAuto}>
-                <GlobalText style={[styles.grayColor, styles.mediumFont]}>
+                <GlobalText style={[styles.darkGrey, styles.mediumFont]}>
                   {data.cancelationReason?.text}
                 </GlobalText>
               </View>
