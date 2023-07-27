@@ -682,31 +682,6 @@ const Profile = props => {
     );
   };
 
-  const renderSettings = () => {
-    return (
-      <View style={styles.viewSettings}>
-        {renderDivider()}
-        {renderMembershipQRCode()}
-        {renderDivider()}
-        {renderMyDeliveryAddress()}
-        {renderDivider()}
-        {renderEditProfile()}
-        {renderDivider()}
-        {renderReferral()}
-        {renderDivider()}
-        {renderNotifications()}
-        {renderDivider()}
-        {renderTermsAndConditions()}
-        {renderDivider()}
-        {renderFAQ()}
-        {renderDivider()}
-        {renderDeleteAccount()}
-        {renderDivider()}
-        {renderLogout()}
-      </View>
-    );
-  };
-
   const renderListMenu = (title, Icon, onPress) => (
     <TouchableOpacity onPress={onPress} style={styles.viewOption}>
       <View style={styles.iconSetting}>{Icon}</View>
