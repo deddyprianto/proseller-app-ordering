@@ -53,7 +53,7 @@ const ContactUs = () => {
   const {styles} = useStyles();
   const [mandatoryField] = React.useState([
     'name',
-    'email',
+    'from',
     'subject',
     'message',
   ]);
@@ -88,7 +88,7 @@ const ContactUs = () => {
             isMandatory
             label="Email"
             placeholder="Enter your email"
-            onChangeText={val => onChangeField('email', val)}
+            onChangeText={val => onChangeField('from', val)}
           />
           <GlobalInputText
             isMandatory
@@ -104,6 +104,9 @@ const ContactUs = () => {
             numberOfLines={10}
             textAlignVertical="top"
             onChangeText={val => onChangeField('message', val)}
+            showNumberLengthText
+            value={payload.message}
+            maxLength={2000}
           />
         </KeyboardAvoidingView>
       </ScrollView>
