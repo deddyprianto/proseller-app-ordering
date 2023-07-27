@@ -8,12 +8,12 @@ const useCountdownHooks = () => {
     minutes: '00',
     seconds: '00',
   });
+  const [start, setStart] = React.useState(false);
   let timerId = null;
 
   const secondsToTime = (onFinish, date) => {
     const today = moment().unix();
     const endDate = moment(date).unix();
-
     const differenceTime = endDate - today;
     if (differenceTime >= 0) {
       let days = Math.floor(differenceTime / (60 * 60 * 24)).toString();
@@ -32,7 +32,8 @@ const useCountdownHooks = () => {
         minutes,
         seconds,
       };
-      return setTime(obj);
+      setTime(obj);
+      return setStart(true);
     }
     if (onFinish) {
       onFinish();
@@ -48,7 +49,7 @@ const useCountdownHooks = () => {
     }
   };
 
-  return {time, timerId, countdownStart, secondsToTime};
+  return {time, timerId, countdownStart, secondsToTime, start};
 };
 
 export default useCountdownHooks;

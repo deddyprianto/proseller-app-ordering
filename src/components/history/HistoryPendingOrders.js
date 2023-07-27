@@ -452,13 +452,13 @@ const styles = StyleSheet.create({
   },
 });
 
-mapStateToProps = state => ({
+const mapStateToProps = state => ({
   pendingCart: state.orderReducer.dataCart.cart,
   pendingCartLength: state.orderReducer.dataCart.pendingCartLength,
   intlData: state.intlData,
 });
 
-mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = dispatch => ({
   dispatch,
 });
 
