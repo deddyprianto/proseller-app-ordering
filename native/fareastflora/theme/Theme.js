@@ -68,7 +68,7 @@ const Theme = () => {
 
     brandPrimary: '#003F24',
     brandSecondary: '#FFFFFF',
-    brandTertiary: '#0E8A94',
+    brandTertiary: '#438E49',
 
     greyScale1: '#000000',
     greyScale2: '#B7B7B7',

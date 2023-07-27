@@ -64,7 +64,7 @@ const useStyles = () => {
     textHeader: {
       color: theme.colors.textQuaternary,
       fontSize: theme.fontSize[16],
-      fontFamily: theme.fontFamily.poppinsSemiBold,
+      fontFamily: theme.fontFamily.poppinsMedium,
     },
     textCancel: {
       color: theme.colors.textQuaternary,
@@ -82,8 +82,8 @@ const useStyles = () => {
       tintColor: theme.colors.textQuaternary,
     },
     iconBack: {
-      width: 30,
-      height: 30,
+      width: 24,
+      height: 24,
       tintColor: theme.colors.textQuaternary,
     },
     iconRemove: {

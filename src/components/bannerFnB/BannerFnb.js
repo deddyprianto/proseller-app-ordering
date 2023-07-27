@@ -58,7 +58,7 @@ const useStyles = () => {
       width: 8,
       height: 8,
       borderRadius: 50,
-      backgroundColor: theme.colors.accent,
+      backgroundColor: theme.colors.buttonActive,
     },
   });
   return styles;
@@ -102,11 +102,11 @@ const BannerFnB = ({bottom = 0, placement}) => {
 
     switch (placement) {
       case 'bottom':
-        result = banners.filter(row => row?.placement === 'BOTTOM');
+        result = banners?.filter(row => row?.placement === 'BOTTOM');
         break;
 
       case 'top':
-        result = banners.filter(row => row?.placement === 'TOP');
+        result = banners?.filter(row => row?.placement === 'TOP');
         break;
 
       default:
@@ -125,9 +125,10 @@ const BannerFnB = ({bottom = 0, placement}) => {
   };
 
   const renderImages = () => {
+    const styleImage =
+      bannerHeight === '720' ? styles.imageLarge : styles.imageSmall;
+
     const result = bannerList?.map((banner, index) => {
-      const styleImage =
-        bannerHeight === '720' ? styles.imageLarge : styles.imageSmall;
       return (
         <TouchableOpacity
           style={styles.wrapImage}
@@ -161,7 +162,7 @@ const BannerFnB = ({bottom = 0, placement}) => {
           paginationStyle={{bottom}}
           dot={<View style={styles.inactiveDot} />}
           activeDot={<View style={styles.activeDot} />}
-          loop>
+          loop={false}>
           {renderImages()}
         </Swiper>
       );

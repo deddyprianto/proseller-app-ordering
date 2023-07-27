@@ -33,8 +33,8 @@ const HomeFnB = ({handleOnRefresh, isRefresh}) => {
   const styles = useStyles();
   return (
     <SafeAreaView style={styles.root}>
-      <Header isMiddleLogo isRemoveBackIcon />
       <Body>
+        <Header isMiddleLogo isRemoveBackIcon />
         <ScrollView
           refreshControl={
             <RefreshControl
