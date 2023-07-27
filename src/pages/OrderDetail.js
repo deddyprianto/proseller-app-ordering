@@ -31,7 +31,6 @@ import {handlePaymentStatus} from '../helper/PaymentStatus';
 import DotSvg from '../assets/svg/DotSvg';
 import NotesProduct from '../assets/svg/NotesProductSvg';
 import ArrowBottom from '../assets/svg/ArrowBottom';
-import DashSvg from '../assets/svg/DashSvg';
 
 const useStyles = () => {
   const {colors, fontFamily} = Theme();
@@ -236,8 +235,11 @@ const useStyles = () => {
       marginTop: 16,
     },
     dashStyle: {
-      marginLeft: -16,
       marginVertical: 12,
+      borderStyle: 'dashed',
+      borderWidth: 1,
+      borderRadius: 1,
+      borderColor: colors.primary,
     },
     grayColor: {
       color: '#343A4A',
@@ -254,14 +256,13 @@ const useStyles = () => {
 
 const OrderDetail = ({data}) => {
   const {styles, colors} = useStyles();
-  const {time, timerId, countdownStart} = useCountdownHooks();
+  const {time, timerId, countdownStart, start} = useCountdownHooks();
   const [showQrCode, setShowQrCode] = React.useState(true);
   const [showAllOrder, setShowAllOrder] = React.useState(false);
   const staustPending = 'PENDING_PAYMENT';
   const onFinish = () => {
     setShowQrCode(false);
   };
-
   const toggleOrder = () => setShowAllOrder(prevState => !prevState);
   const downloadQrCode = async () => {
     permissionDownloadFile(data?.action?.url, `qrcode${data.id}`, 'image/png', {
@@ -401,95 +402,91 @@ const OrderDetail = ({data}) => {
   const renderAddress = () => {
     if (data?.orderingMode === 'DELIVERY') {
       return (
-        <View style={[styles.boxMain, styles.shadowBox]}>
-          <View style={styles.p12}>
-            <View style={styles.orderStatusContainer}>
-              <GlobalText style={styles.deliveryText}>
-                {data?.orderingMode}{' '}
-              </GlobalText>
-            </View>
-            <View style={styles.listOrderDetailContainer}>
-              <View style={[styles.orderStatusContainer, styles.columnCard]}>
-                <View style={styles.paymentDetailsCard}>
-                  <MapMarkerSvg />
-                  <GlobalText
-                    style={[styles.paymentDetailCardText, styles.boldFont]}>
-                    Delivery to
-                  </GlobalText>
-                </View>
-                <View style={styles.columnText}>
-                  <GlobalText>
-                    {data?.deliveryAddress?.recipient?.name} |{' '}
-                    {data?.deliveryAddress?.recipient?.phoneNumber}
-                  </GlobalText>
-                  <GlobalText>
-                    {data?.deliveryAddress?.streetName}{' '}
-                    {data?.deliveryAddress?.unitNo}
-                    {data?.deliveryAddress?.postalCode}
-                  </GlobalText>
-                </View>
+        <View style={[styles.boxMain, styles.shadowBox, styles.p12]}>
+          <View style={styles.orderStatusContainer}>
+            <GlobalText style={styles.deliveryText}>
+              {data?.orderingMode}{' '}
+            </GlobalText>
+          </View>
+          <View style={styles.listOrderDetailContainer}>
+            <View style={[styles.orderStatusContainer, styles.columnCard]}>
+              <View style={styles.paymentDetailsCard}>
+                <MapMarkerSvg />
+                <GlobalText
+                  style={[styles.paymentDetailCardText, styles.boldFont]}>
+                  Delivery to
+                </GlobalText>
+              </View>
+              <View style={styles.columnText}>
+                <GlobalText>
+                  {data?.deliveryAddress?.recipient?.name} |{' '}
+                  {data?.deliveryAddress?.recipient?.phoneNumber}
+                </GlobalText>
+                <GlobalText>
+                  {data?.deliveryAddress?.streetName}{' '}
+                  {data?.deliveryAddress?.unitNo}
+                  {data?.deliveryAddress?.postalCode}
+                </GlobalText>
               </View>
             </View>
-            <DashSvg style={styles.dashStyle} />
-
-            <View style={styles.listOrderDetailContainer}>
-              <View style={[styles.orderStatusContainer, styles.columnCard]}>
-                <View style={styles.paymentDetailsCard}>
-                  <MapMarkerSvg />
-                  <GlobalText
-                    style={[styles.paymentDetailCardText, styles.boldFont]}>
-                    Deliver by
-                  </GlobalText>
-                </View>
-                <View style={styles.columnText}>
-                  <GlobalText>
-                    {data?.deliveryProviderName} -{' '}
-                    {CurrencyFormatter(data?.deliveryFee)}
-                  </GlobalText>
-                </View>
+          </View>
+          <View style={styles.dashStyle} />
+          <View style={styles.listOrderDetailContainer}>
+            <View style={[styles.orderStatusContainer, styles.columnCard]}>
+              <View style={styles.paymentDetailsCard}>
+                <MapMarkerSvg />
+                <GlobalText
+                  style={[styles.paymentDetailCardText, styles.boldFont]}>
+                  Deliver by
+                </GlobalText>
+              </View>
+              <View style={styles.columnText}>
+                <GlobalText>
+                  {data?.deliveryProviderName} -{' '}
+                  {CurrencyFormatter(data?.deliveryFee)}
+                </GlobalText>
               </View>
             </View>
-            <DashSvg style={styles.dashStyle} />
+          </View>
+          <View style={styles.dashStyle} />
 
-            <View style={styles.listOrderDetailContainer}>
-              <View style={[styles.orderStatusContainer, styles.columnCard]}>
-                <View style={styles.paymentDetailsCard}>
-                  <CalendarBold />
-                  <GlobalText
-                    style={[styles.paymentDetailCardText, styles.boldFont]}>
-                    Date
-                  </GlobalText>
-                </View>
-                <View style={styles.columnText}>
-                  <GlobalText>
-                    {data?.orderActionDate} {data?.orderActionTimeSlot}
-                  </GlobalText>
-                </View>
+          <View style={styles.listOrderDetailContainer}>
+            <View style={[styles.orderStatusContainer, styles.columnCard]}>
+              <View style={styles.paymentDetailsCard}>
+                <CalendarBold />
+                <GlobalText
+                  style={[styles.paymentDetailCardText, styles.boldFont]}>
+                  Date
+                </GlobalText>
+              </View>
+              <View style={styles.columnText}>
+                <GlobalText>
+                  {data?.orderActionDate} {data?.orderActionTimeSlot}
+                </GlobalText>
               </View>
             </View>
+          </View>
 
-            {data.remark ? (
-              <>
-                <DashSvg style={styles.dashStyle} />
+          {data.remark ? (
+            <>
+              <View style={styles.dashStyle} />
 
-                <View style={styles.listOrderDetailContainer}>
-                  <View
-                    style={[styles.orderStatusContainer, styles.columnCard]}>
-                    <View style={styles.paymentDetailsCard}>
-                      <NotesSvg />
-                      <GlobalText
-                        style={[styles.paymentDetailCardText, styles.boldFont]}>
-                        Notes
-                      </GlobalText>
-                    </View>
-                    <View style={styles.columnText}>
-                      <GlobalText>{data?.remark}</GlobalText>
-                    </View>
+              <View style={styles.listOrderDetailContainer}>
+                <View style={[styles.orderStatusContainer, styles.columnCard]}>
+                  <View style={styles.paymentDetailsCard}>
+                    <NotesSvg />
+                    <GlobalText
+                      style={[styles.paymentDetailCardText, styles.boldFont]}>
+                      Notes
+                    </GlobalText>
+                  </View>
+                  <View style={styles.columnText}>
+                    <GlobalText>{data?.remark}</GlobalText>
                   </View>
                 </View>
-              </>
-            ) : null}
-          </View>
+              </View>
+            </>
+          ) : null}
         </View>
       );
     }
@@ -517,7 +514,7 @@ const OrderDetail = ({data}) => {
             </View>
           </View>
         </View>
-        <DashSvg style={styles.dashStyle} />
+        <View style={styles.dashStyle} />
         <View style={styles.listOrderDetailContainer}>
           <View style={[styles.orderStatusContainer, styles.columnCard]}>
             <View style={styles.paymentDetailsCard}>
@@ -536,7 +533,7 @@ const OrderDetail = ({data}) => {
         </View>
         {data.remark ? (
           <>
-            <DashSvg style={styles.dashStyle} />
+            <View style={styles.dashStyle} />
             <View style={styles.listOrderDetailContainer}>
               <View style={[styles.orderStatusContainer, styles.columnCard]}>
                 <View style={styles.paymentDetailsCard}>
@@ -572,7 +569,7 @@ const OrderDetail = ({data}) => {
   }, []);
   return (
     <Body>
-      {data?.status === staustPending && showQrCode ? (
+      {data?.status === staustPending && showQrCode && start ? (
         <View style={styles.waitingPaymentBox}>
           <GlobalText style={styles.waitingPaymentStyle}>
             Waiting for payment {time.hours}:{time.minutes}:{time.seconds}
