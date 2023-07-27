@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 // import DeviceBrightness from 'react-native-device-brightness';
@@ -40,6 +41,7 @@ import StoreSvg from '../assets/svg/StoreSvg';
 import RefundSvg from '../assets/svg/RefundSvg';
 import ContactSvg from '../assets/svg/ContactSvg';
 import {Body} from '../components/layout';
+import additionalSetting from '../config/additionalSettings';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -388,6 +390,7 @@ const Profile = props => {
   };
 
   const openWebviewPage = url => {
+    if (!url) return;
     return Actions.policy({url});
   };
 
@@ -577,23 +580,6 @@ const Profile = props => {
     );
   };
 
-  const renderDeliveryPolicy = () => {
-    return (
-      <TouchableOpacity
-        style={styles.viewOption}
-        onPress={() =>
-          openWebviewPage(
-            'https://appsmith.equipweb.biz/app/privacy-policy/delivery-policy-64ae72ebf6a34d0fa121472a?embed=true',
-          )
-        }>
-        <View style={styles.iconSetting}>
-          <DeliverySVG />
-        </View>
-        <Text style={styles.textIcon}>Delivery and Pickup Policy</Text>
-      </TouchableOpacity>
-    );
-  };
-
   const renderMyDeliveryAddress = () => {
     if (defaultOutlet?.enableDelivery) {
       return (
@@ -754,6 +740,20 @@ const Profile = props => {
     </View>
   );
 
+  const handleAdditionalSetting = () => {
+    const component = additionalSetting().additionalPolicy.map(data => {
+      if (!data.show) return null;
+      return (
+        <>
+          {renderListMenu(data.name, data.icon(), () =>
+            openWebviewPage(data.link),
+          )}
+        </>
+      );
+    });
+    return component;
+  };
+
   const renderSettingV2 = () => (
     <View style={styles.viewSettings}>
       {renderMembershipQRCode()}
@@ -772,10 +772,7 @@ const Profile = props => {
       {renderDivider()}
       {renderTitleSettingV2('Others')}
       {renderListMenu('Store Location', <StoreSvg />)}
-      {renderDeliveryPolicy()}
-      {renderListMenu('Exchange and Refund Policy', <RefundSvg />)}
-      {renderTermsAndConditions()}
-      {renderPolicy()}
+      {handleAdditionalSetting()}
       {renderFAQ()}
       {renderListMenu('Contact Us', <ContactSvg />)}
       {renderDivider()}
