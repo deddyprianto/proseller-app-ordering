@@ -1,8 +1,6 @@
 import React from 'react';
-import {Dimensions} from 'react-native';
-import Svg, {G, Path} from 'react-native-svg';
+import Svg, {Path} from 'react-native-svg';
 import Theme from '../../theme/Theme';
-import {normalizeLayoutSizeHeight} from '../../helper/Layout';
 
 const BgProfileSvg = props => {
   const {colors} = Theme();

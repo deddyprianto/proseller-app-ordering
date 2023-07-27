@@ -33,12 +33,10 @@ import Navbar from '../components/navbar';
 import {normalizeLayoutSizeHeight} from '../helper/Layout';
 import BgProfileSvg from '../assets/svg/BgProfileSvg';
 import PolicySvg from '../assets/svg/PolicySvg';
-import DeliverySVG from '../assets/svg/DeliveryPolicySvg';
 import GlobalText from '../components/globalText';
 import CreditCard from '../assets/svg/CreditCardSvg';
 import Voucher from '../assets/svg/VoucherSvg';
 import StoreSvg from '../assets/svg/StoreSvg';
-import RefundSvg from '../assets/svg/RefundSvg';
 import ContactSvg from '../assets/svg/ContactSvg';
 import {Body} from '../components/layout';
 import additionalSetting from '../config/additionalSettings';
@@ -559,23 +557,6 @@ const Profile = props => {
         }}>
         <Image style={styles.iconSetting} source={appConfig.iconEditProfile} />
         <Text style={styles.textIcon}>Edit Profile</Text>
-      </TouchableOpacity>
-    );
-  };
-
-  const renderPolicy = () => {
-    return (
-      <TouchableOpacity
-        style={styles.viewOption}
-        onPress={() =>
-          openWebviewPage(
-            'https://appsmith.equipweb.biz/app/privacy-policy/page1-64a3854677e5e62a68d1d598?embed=true',
-          )
-        }>
-        <View style={styles.iconSetting}>
-          <PolicySvg />
-        </View>
-        <Text style={styles.textIcon}>Privacy Policy</Text>
       </TouchableOpacity>
     );
   };
