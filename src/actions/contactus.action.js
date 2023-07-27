@@ -2,7 +2,6 @@ import {fetchApi} from '../service/api';
 
 export const contactUsHandle = payload => {
   return async (dispatch, getState) => {
-    console.log(payload);
     try {
       const state = getState();
 
@@ -11,10 +10,13 @@ export const contactUsHandle = payload => {
           tokenUser: {token},
         },
       } = state;
-      console.log(token, 'token');
-      const url = `/crm/api/send-feedback`;
+      const url = `/send-feedback`;
       const response = await fetchApi(url, 'POST', payload, 200, token);
-      console.log(response, 'lili');
-    } catch (e) {}
+      return response;
+    } catch (e) {
+      if (__DEV__) {
+        console.log(e, 'error');
+      }
+    }
   };
 };

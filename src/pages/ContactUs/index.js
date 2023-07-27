@@ -8,9 +8,13 @@ import GlobalButton from '../../components/button/GlobalButton';
 import {fieldValidation} from '../../helper/Validation';
 import {useDispatch} from 'react-redux';
 import {contactUsHandle} from '../../actions/contactus.action';
+import AnimationMessage from '../../components/animationMessage';
+import GlobalText from '../../components/globalText';
+import CheckboxWhite from '../../assets/svg/CheckboxWhite';
+import ErrorIcon from '../../assets/svg/ErrorIcon';
 
 const useStyles = () => {
-  const {colors} = Theme();
+  const {colors, fontFamily} = Theme();
   const styles = StyleSheet.create({
     scrollContainer: {
       paddingHorizontal: 16,
@@ -45,6 +49,29 @@ const useStyles = () => {
       borderRadius: 8,
       marginTop: 0,
     },
+    messageContainer: {
+      flexDirection: 'row',
+    },
+    containerMessage: {
+      position: 'absolute',
+      top: 80,
+      zIndex: 1000,
+    },
+    whiteText: {
+      color: 'white',
+      fontFamily: fontFamily.poppinsMedium,
+    },
+    message: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    messageIcon: {
+      marginRight: 12,
+    },
+    parentContainer: {
+      height: 56,
+      justifyContent: 'center',
+    },
   });
   return {styles, colors};
 };
@@ -59,7 +86,8 @@ const ContactUs = () => {
   ]);
   const dispatch = useDispatch();
   const [payload, setPayload] = React.useState({});
-
+  const [showMessage, setShowMessage] = React.useState(false);
+  const [type, setType] = React.useState(null);
   const disableButton = () => {
     const emptyValue = fieldValidation(mandatoryField, payload);
     return emptyValue.length > 0;
@@ -69,13 +97,37 @@ const ContactUs = () => {
     setPayload({...payload, [key]: value});
   };
 
-  const onSubmit = () => {
-    dispatch(contactUsHandle(payload));
+  const onSubmit = async () => {
+    const response = await dispatch(contactUsHandle(payload));
+    if (response.success) {
+      setType('success');
+    } else {
+      setType('error');
+    }
+    setShowMessage(true);
   };
 
   return (
     <SafeAreaView style={styles.safeAreaView}>
       <Header title={'Contact Us'} />
+      <View style={styles.containerMessage}>
+        <AnimationMessage
+          type={type}
+          containerStyle={styles.parentContainer}
+          setShow={isShow => setShowMessage(isShow)}
+          show={showMessage}>
+          <View style={styles.message}>
+            <View style={styles.messageIcon}>
+              {type === 'success' ? <CheckboxWhite /> : <ErrorIcon />}
+            </View>
+            <GlobalText style={styles.whiteText}>
+              {type === 'success'
+                ? ' Message sent successfully!'
+                : 'Failed to sent message. Please try again.'}
+            </GlobalText>
+          </View>
+        </AnimationMessage>
+      </View>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <KeyboardAvoidingView>
           <GlobalInputText
