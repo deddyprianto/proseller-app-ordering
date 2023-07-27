@@ -1,7 +1,6 @@
 import React from 'react';
 import DeliveryPolicy from '../../src/assets/svg/DeliveryPolicySvg';
 import RefundSvg from '../../src/assets/svg/RefundSvg';
-import TncSvg from '../../src/assets/svg/TncSvg';
 import PolicySvg from '../../src/assets/svg/PolicySvg';
 
 const additionalSetting = () => {
@@ -22,14 +21,7 @@ const additionalSetting = () => {
       show: true,
     },
     {
-      id: 3,
-      name: 'Terms And Condition',
-      link: null,
-      icon: () => <TncSvg />,
-      show: true,
-    },
-    {
-      id: 3,
+      id: 4,
       name: 'Privacy Policy',
       link:
         'https://appsmith.equipweb.biz/app/privacy-policy/page1-64a3854677e5e62a68d1d598?embed=true',

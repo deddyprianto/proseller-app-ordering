@@ -32,7 +32,6 @@ import DeviceBrightness from '@adrianso/react-native-device-brightness';
 import Navbar from '../components/navbar';
 import {normalizeLayoutSizeHeight} from '../helper/Layout';
 import BgProfileSvg from '../assets/svg/BgProfileSvg';
-import PolicySvg from '../assets/svg/PolicySvg';
 import GlobalText from '../components/globalText';
 import CreditCard from '../assets/svg/CreditCardSvg';
 import Voucher from '../assets/svg/VoucherSvg';
@@ -754,6 +753,7 @@ const Profile = props => {
       {renderTitleSettingV2('Others')}
       {renderListMenu('Store Location', <StoreSvg />)}
       {handleAdditionalSetting()}
+      {renderTermsAndConditions()}
       {renderFAQ()}
       {renderListMenu('Contact Us', <ContactSvg />)}
       {renderDivider()}
@@ -854,11 +854,7 @@ const Profile = props => {
             style={styles.imageBackgroundProfile}
           />
           {renderProfileHeader()}
-          <>
-            {appConfig.appName === 'fareastflora'
-              ? renderSettingV2()
-              : renderSettings()}
-          </>
+          <>{renderSettingV2()}</>
           {renderDeleteAccountConfirmationDialog()}
           {renderLogoutConfirmationDialog()}
           {renderMyECardModal()}
