@@ -269,12 +269,6 @@ const OrderDetail = ({data}) => {
       description: 'Successfully saved image to your gallery.',
     });
   };
-  const calculatePaymentAmount = () => {
-    const mappingAmount =
-      data?.payments?.map(product => product.paymentAmount) || [];
-    const sumAll = mappingAmount.reduce((a, b) => a + b);
-    return CurrencyFormatter(sumAll);
-  };
 
   const renderItemDetails = ({item, index}) => {
     if (!showAllOrder && index > 0) return null;
@@ -473,22 +467,28 @@ const OrderDetail = ({data}) => {
                 </View>
               </View>
             </View>
-            <DashSvg style={styles.dashStyle} />
 
-            <View style={styles.listOrderDetailContainer}>
-              <View style={[styles.orderStatusContainer, styles.columnCard]}>
-                <View style={styles.paymentDetailsCard}>
-                  <NotesSvg />
-                  <GlobalText
-                    style={[styles.paymentDetailCardText, styles.boldFont]}>
-                    Notes
-                  </GlobalText>
+            {data.remark ? (
+              <>
+                <DashSvg style={styles.dashStyle} />
+
+                <View style={styles.listOrderDetailContainer}>
+                  <View
+                    style={[styles.orderStatusContainer, styles.columnCard]}>
+                    <View style={styles.paymentDetailsCard}>
+                      <NotesSvg />
+                      <GlobalText
+                        style={[styles.paymentDetailCardText, styles.boldFont]}>
+                        Notes
+                      </GlobalText>
+                    </View>
+                    <View style={styles.columnText}>
+                      <GlobalText>{data?.remark}</GlobalText>
+                    </View>
+                  </View>
                 </View>
-                <View style={styles.columnText}>
-                  <GlobalText>{data?.remark}</GlobalText>
-                </View>
-              </View>
-            </View>
+              </>
+            ) : null}
           </View>
         </View>
       );
@@ -605,19 +605,22 @@ const OrderDetail = ({data}) => {
 
         <View />
         <View style={styles.mainScrollContainer}>
-          <View
-            style={[
-              styles.orderStatusContainer,
-              styles.shadowBox,
-              styles.boxMain,
-              styles.p12,
-            ]}>
-            <GlobalText style={[styles.grayColor, styles.mediumFont]}>
-              Order Status
-            </GlobalText>
-            <GlobalText style={[styles.boldFont, styles.grayColor]}>
-              {handlePaymentStatus(data?.status)}
-            </GlobalText>
+          <View style={[styles.shadowBox, styles.boxMain, styles.p12]}>
+            <View style={styles.orderStatusContainer}>
+              <GlobalText style={[styles.grayColor, styles.mediumFont]}>
+                Order Status
+              </GlobalText>
+              <GlobalText style={[styles.boldFont, styles.grayColor]}>
+                {handlePaymentStatus(data?.status)}
+              </GlobalText>
+            </View>
+            {data?.cancelationReason ? (
+              <View style={styles.mlAuto}>
+                <GlobalText style={[styles.grayColor, styles.mediumFont]}>
+                  {data.cancelationReason?.text}
+                </GlobalText>
+              </View>
+            ) : null}
           </View>
           <View style={styles.orderDetailWrapCOntainer}>
             <GlobalText style={styles.oredrDetailText}>

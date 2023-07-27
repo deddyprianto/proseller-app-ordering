@@ -76,7 +76,7 @@ class HistoryPayment extends Component {
   }
 
   historyDetailPayment = item => {
-    Actions.historyDetailPayment({item});
+    Actions.pendingOrderDetail({order: item});
   };
 
   componentDidMount = async () => {
