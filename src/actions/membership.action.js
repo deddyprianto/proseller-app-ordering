@@ -101,3 +101,39 @@ export const redeemMembership = (membership, selectedPlan, userDetail) => {
     }
   };
 };
+
+export const getAllMembershipTier = () => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      const response = await fetchApi(
+        '/customer/membership-tier',
+        'GET',
+        null,
+        200,
+        token,
+      );
+
+      if (response.success) {
+        await dispatch({
+          type: 'DATA_ALL_MEMBERSHIP',
+          data: response.responseBody.data,
+        });
+      } else {
+        dispatch({
+          type: 'DATA_ALL_MEMBERSHIP',
+          memberships: [],
+        });
+      }
+      return response.responseBody.data;
+    } catch (error) {
+      return error;
+    }
+  };
+};

@@ -31,6 +31,7 @@ import {handlePaymentStatus} from '../helper/PaymentStatus';
 import DotSvg from '../assets/svg/DotSvg';
 import NotesProduct from '../assets/svg/NotesProductSvg';
 import ArrowBottom from '../assets/svg/ArrowBottom';
+import DashSvg from '../assets/svg/DashSvg';
 
 const useStyles = () => {
   const {colors, fontFamily} = Theme();
@@ -64,7 +65,6 @@ const useStyles = () => {
       width: normalizeLayoutSizeWidth(256),
     },
     orderStatusContainer: {
-      padding: 12,
       justifyContent: 'space-between',
       flexDirection: 'row',
       width: '100%',
@@ -108,6 +108,8 @@ const useStyles = () => {
     },
     paymentDetailCardText: {
       marginLeft: 8,
+      fontFamily: fontFamily.poppinsMedium,
+      color: '#343A4A',
     },
     shadowBox: {
       shadowOffset: {
@@ -202,7 +204,7 @@ const useStyles = () => {
     priceMain: {
       marginLeft: 'auto',
       fontSize: 16,
-      fontFamily: fontFamily.poppinsMedium,
+      fontFamily: fontFamily.poppinsSemiBold,
       color: colors.primary,
     },
     modifierText: {
@@ -218,6 +220,7 @@ const useStyles = () => {
     },
     noteText: {
       color: colors.greyScale2,
+      fontFamily: fontFamily.poppinsMedium,
     },
     mlAuto: {
       marginLeft: 'auto',
@@ -225,6 +228,25 @@ const useStyles = () => {
     moreItemText: {
       fontSize: 16,
       fontFamily: fontFamily.poppinsMedium,
+    },
+    p12: {
+      padding: 12,
+    },
+    mt16: {
+      marginTop: 16,
+    },
+    dashStyle: {
+      marginLeft: -16,
+      marginVertical: 12,
+    },
+    grayColor: {
+      color: '#343A4A',
+    },
+    productList: {
+      paddingHorizontal: 0.9,
+    },
+    mv6: {
+      marginVertical: 6,
     },
   });
   return {styles, colors};
@@ -241,9 +263,8 @@ const OrderDetail = ({data}) => {
   };
 
   const toggleOrder = () => setShowAllOrder(prevState => !prevState);
-
   const downloadQrCode = async () => {
-    permissionDownloadFile(data?.action?.url, 'qrcode', 'image/png', {
+    permissionDownloadFile(data?.action?.url, `qrcode${data.id}`, 'image/png', {
       title: 'Imaged Saved',
       description: 'Successfully saved image to your gallery.',
     });
@@ -258,8 +279,8 @@ const OrderDetail = ({data}) => {
   const renderItemDetails = ({item, index}) => {
     if (!showAllOrder && index > 0) return null;
     return (
-      <View key={index} style={[styles.shadowBox, styles.boxMain]}>
-        <View style={styles.listOrderDetailContainer}>
+      <View key={index} style={[styles.shadowBox, styles.boxMain, styles.p12]}>
+        <View style={[styles.listOrderDetailContainer]}>
           <View style={[styles.orderStatusContainer, styles.columnCard]}>
             <View style={styles.paymentDetailsCard}>
               <View style={styles.quantityContainer}>
@@ -268,9 +289,9 @@ const OrderDetail = ({data}) => {
                 </GlobalText>
               </View>
               <GlobalText
-                style={[styles.paymentDetailCardText, styles.boldFont]}>
+                style={[styles.paymentDetailCardText, styles.mediumFont]}>
                 {item?.product?.name}{' '}
-                <GlobalText style={styles.primaryColor}>
+                <GlobalText style={[styles.primaryColor, styles.boldFont]}>
                   + {item?.retailPrice}{' '}
                 </GlobalText>
               </GlobalText>
@@ -293,7 +314,7 @@ const OrderDetail = ({data}) => {
                             {modify?.quantity}x{' '}
                           </GlobalText>
                           {modify?.name}{' '}
-                          <GlobalText style={styles.primaryColor}>
+                          <GlobalText style={[styles.primaryColor]}>
                             + {modify?.price}{' '}
                           </GlobalText>{' '}
                         </GlobalText>
@@ -327,11 +348,10 @@ const OrderDetail = ({data}) => {
     }
     return null;
   };
-
   const renderPaymentDetail = ({item, index}) => (
-    <View style={[styles.shadowBox, styles.boxMain]}>
+    <View>
       {item?.paymentType === 'point' ? (
-        <View style={styles.listOrderDetailContainer}>
+        <View style={[styles.listOrderDetailContainer, styles.mv6]}>
           <View style={styles.orderStatusContainer}>
             <View style={styles.paymentDetailsCard}>
               <PointSvg />
@@ -340,15 +360,15 @@ const OrderDetail = ({data}) => {
               </GlobalText>
             </View>
             <View>
-              <GlobalText style={styles.primaryColor}>
-                {calculatePaymentAmount()}
+              <GlobalText style={[styles.primaryColor, styles.mediumFont]}>
+                {CurrencyFormatter(item?.paymentAmount)}
               </GlobalText>
             </View>
           </View>
         </View>
       ) : null}
       {item?.paymentType === 'voucher' ? (
-        <View style={styles.listOrderDetailContainer}>
+        <View style={[styles.listOrderDetailContainer, styles.mv6]}>
           <View style={styles.orderStatusContainer}>
             <View style={styles.paymentDetailsCard}>
               <VoucherSvg />
@@ -357,15 +377,15 @@ const OrderDetail = ({data}) => {
               </GlobalText>
             </View>
             <View>
-              <GlobalText style={styles.primaryColor}>
-                {calculatePaymentAmount()}
+              <GlobalText style={[styles.primaryColor, styles.mediumFont]}>
+                {CurrencyFormatter(item?.paymentAmount)}
               </GlobalText>
             </View>
           </View>
         </View>
       ) : null}
       {item?.paymentType === 'FOMO_PAY' ? (
-        <View style={styles.listOrderDetailContainer}>
+        <View style={[styles.listOrderDetailContainer, styles.mv6]}>
           <View style={styles.orderStatusContainer}>
             <View style={styles.paymentDetailsCard}>
               <CardSvg />
@@ -374,8 +394,8 @@ const OrderDetail = ({data}) => {
               </GlobalText>
             </View>
             <View>
-              <GlobalText style={styles.primaryColor}>
-                {calculatePaymentAmount()}
+              <GlobalText style={[styles.primaryColor, styles.mediumFont]}>
+                {CurrencyFormatter(item?.paymentAmount)}
               </GlobalText>
             </View>
           </View>
@@ -388,77 +408,85 @@ const OrderDetail = ({data}) => {
     if (data?.orderingMode === 'DELIVERY') {
       return (
         <View style={[styles.boxMain, styles.shadowBox]}>
-          <View style={styles.orderStatusContainer}>
-            <GlobalText style={styles.deliveryText}>
-              {data?.orderingMode}{' '}
-            </GlobalText>
-          </View>
-          <View style={styles.listOrderDetailContainer}>
-            <View style={[styles.orderStatusContainer, styles.columnCard]}>
-              <View style={styles.paymentDetailsCard}>
-                <MapMarkerSvg />
-                <GlobalText
-                  style={[styles.paymentDetailCardText, styles.boldFont]}>
-                  Delivery to
-                </GlobalText>
-              </View>
-              <View style={styles.columnText}>
-                <GlobalText>
-                  {data?.deliveryAddress?.recipient?.name} |{' '}
-                  {data?.deliveryAddress?.recipient?.phoneNumber}
-                </GlobalText>
-                <GlobalText>
-                  {data?.deliveryAddress?.streetName}{' '}
-                  {data?.deliveryAddress?.unitNo}
-                  {data?.deliveryAddress?.postalCode}
-                </GlobalText>
+          <View style={styles.p12}>
+            <View style={styles.orderStatusContainer}>
+              <GlobalText style={styles.deliveryText}>
+                {data?.orderingMode}{' '}
+              </GlobalText>
+            </View>
+            <View style={styles.listOrderDetailContainer}>
+              <View style={[styles.orderStatusContainer, styles.columnCard]}>
+                <View style={styles.paymentDetailsCard}>
+                  <MapMarkerSvg />
+                  <GlobalText
+                    style={[styles.paymentDetailCardText, styles.boldFont]}>
+                    Delivery to
+                  </GlobalText>
+                </View>
+                <View style={styles.columnText}>
+                  <GlobalText>
+                    {data?.deliveryAddress?.recipient?.name} |{' '}
+                    {data?.deliveryAddress?.recipient?.phoneNumber}
+                  </GlobalText>
+                  <GlobalText>
+                    {data?.deliveryAddress?.streetName}{' '}
+                    {data?.deliveryAddress?.unitNo}
+                    {data?.deliveryAddress?.postalCode}
+                  </GlobalText>
+                </View>
               </View>
             </View>
-          </View>
-          <View style={styles.listOrderDetailContainer}>
-            <View style={[styles.orderStatusContainer, styles.columnCard]}>
-              <View style={styles.paymentDetailsCard}>
-                <MapMarkerSvg />
-                <GlobalText
-                  style={[styles.paymentDetailCardText, styles.boldFont]}>
-                  Deliver by
-                </GlobalText>
-              </View>
-              <View style={styles.columnText}>
-                <GlobalText>
-                  {data?.deliveryProviderName} -{' '}
-                  {CurrencyFormatter(data?.deliveryFee)}
-                </GlobalText>
-              </View>
-            </View>
-          </View>
-          <View style={styles.listOrderDetailContainer}>
-            <View style={[styles.orderStatusContainer, styles.columnCard]}>
-              <View style={styles.paymentDetailsCard}>
-                <CalendarBold />
-                <GlobalText
-                  style={[styles.paymentDetailCardText, styles.boldFont]}>
-                  Date
-                </GlobalText>
-              </View>
-              <View style={styles.columnText}>
-                <GlobalText>
-                  {data?.orderActionDate} {data?.orderActionTimeSlot}
-                </GlobalText>
+            <DashSvg style={styles.dashStyle} />
+
+            <View style={styles.listOrderDetailContainer}>
+              <View style={[styles.orderStatusContainer, styles.columnCard]}>
+                <View style={styles.paymentDetailsCard}>
+                  <MapMarkerSvg />
+                  <GlobalText
+                    style={[styles.paymentDetailCardText, styles.boldFont]}>
+                    Deliver by
+                  </GlobalText>
+                </View>
+                <View style={styles.columnText}>
+                  <GlobalText>
+                    {data?.deliveryProviderName} -{' '}
+                    {CurrencyFormatter(data?.deliveryFee)}
+                  </GlobalText>
+                </View>
               </View>
             </View>
-          </View>
-          <View style={styles.listOrderDetailContainer}>
-            <View style={[styles.orderStatusContainer, styles.columnCard]}>
-              <View style={styles.paymentDetailsCard}>
-                <NotesSvg />
-                <GlobalText
-                  style={[styles.paymentDetailCardText, styles.boldFont]}>
-                  Notes
-                </GlobalText>
+            <DashSvg style={styles.dashStyle} />
+
+            <View style={styles.listOrderDetailContainer}>
+              <View style={[styles.orderStatusContainer, styles.columnCard]}>
+                <View style={styles.paymentDetailsCard}>
+                  <CalendarBold />
+                  <GlobalText
+                    style={[styles.paymentDetailCardText, styles.boldFont]}>
+                    Date
+                  </GlobalText>
+                </View>
+                <View style={styles.columnText}>
+                  <GlobalText>
+                    {data?.orderActionDate} {data?.orderActionTimeSlot}
+                  </GlobalText>
+                </View>
               </View>
-              <View style={styles.columnText}>
-                <GlobalText>{data?.remark}</GlobalText>
+            </View>
+            <DashSvg style={styles.dashStyle} />
+
+            <View style={styles.listOrderDetailContainer}>
+              <View style={[styles.orderStatusContainer, styles.columnCard]}>
+                <View style={styles.paymentDetailsCard}>
+                  <NotesSvg />
+                  <GlobalText
+                    style={[styles.paymentDetailCardText, styles.boldFont]}>
+                    Notes
+                  </GlobalText>
+                </View>
+                <View style={styles.columnText}>
+                  <GlobalText>{data?.remark}</GlobalText>
+                </View>
               </View>
             </View>
           </View>
@@ -466,13 +494,13 @@ const OrderDetail = ({data}) => {
       );
     }
     return (
-      <View style={[styles.boxMain, styles.shadowBox]}>
+      <View style={[styles.boxMain, styles.shadowBox, styles.p12]}>
         <View style={styles.orderStatusContainer}>
           <GlobalText style={styles.deliveryText}>
             {data?.orderingMode}{' '}
           </GlobalText>
         </View>
-        <View style={styles.listOrderDetailContainer}>
+        <View style={[styles.listOrderDetailContainer]}>
           <View style={[styles.orderStatusContainer, styles.columnCard]}>
             <View style={styles.paymentDetailsCard}>
               <MapMarkerSvg />
@@ -489,6 +517,7 @@ const OrderDetail = ({data}) => {
             </View>
           </View>
         </View>
+        <DashSvg style={styles.dashStyle} />
         <View style={styles.listOrderDetailContainer}>
           <View style={[styles.orderStatusContainer, styles.columnCard]}>
             <View style={styles.paymentDetailsCard}>
@@ -506,20 +535,23 @@ const OrderDetail = ({data}) => {
           </View>
         </View>
         {data.remark ? (
-          <View style={styles.listOrderDetailContainer}>
-            <View style={[styles.orderStatusContainer, styles.columnCard]}>
-              <View style={styles.paymentDetailsCard}>
-                <NotesSvg />
-                <GlobalText
-                  style={[styles.paymentDetailCardText, styles.boldFont]}>
-                  Notes
-                </GlobalText>
-              </View>
-              <View style={styles.columnText}>
-                <GlobalText>{data?.remark}</GlobalText>
+          <>
+            <DashSvg style={styles.dashStyle} />
+            <View style={styles.listOrderDetailContainer}>
+              <View style={[styles.orderStatusContainer, styles.columnCard]}>
+                <View style={styles.paymentDetailsCard}>
+                  <NotesSvg />
+                  <GlobalText
+                    style={[styles.paymentDetailCardText, styles.boldFont]}>
+                    Notes
+                  </GlobalText>
+                </View>
+                <View style={styles.columnText}>
+                  <GlobalText>{data?.remark}</GlobalText>
+                </View>
               </View>
             </View>
-          </View>
+          </>
         ) : null}
       </View>
     );
@@ -578,9 +610,12 @@ const OrderDetail = ({data}) => {
               styles.orderStatusContainer,
               styles.shadowBox,
               styles.boxMain,
+              styles.p12,
             ]}>
-            <GlobalText>Order Status</GlobalText>
-            <GlobalText style={styles.boldFont}>
+            <GlobalText style={[styles.grayColor, styles.mediumFont]}>
+              Order Status
+            </GlobalText>
+            <GlobalText style={[styles.boldFont, styles.grayColor]}>
               {handlePaymentStatus(data?.status)}
             </GlobalText>
           </View>
@@ -589,37 +624,43 @@ const OrderDetail = ({data}) => {
               Order Details
             </GlobalText>
           </View>
-          <View style={[styles.shadowBox, styles.boxMain]}>
+          <View style={[styles.shadowBox, styles.boxMain, styles.p12]}>
             <View style={styles.listOrderDetailContainer}>
               <View style={styles.orderStatusContainer}>
                 <View>
-                  <GlobalText>Order Date & Time</GlobalText>
+                  <GlobalText style={[styles.grayColor, styles.mediumFont]}>
+                    Order Date & Time
+                  </GlobalText>
                 </View>
                 <View>
-                  <GlobalText style={styles.boldFont}>
+                  <GlobalText style={[styles.boldFont, styles.grayColor]}>
                     {moment(data?.transactionDate).format('DD MMM YYYY')}{' '}
                     <DotSvg /> {moment(data?.transactionDate).format('HH:mm')}
                   </GlobalText>
                 </View>
               </View>
             </View>
-            <View style={styles.listOrderDetailContainer}>
+            <View style={[styles.listOrderDetailContainer, styles.mt16]}>
               <View style={styles.orderStatusContainer}>
                 <View>
-                  <GlobalText>Subtotal</GlobalText>
+                  <GlobalText style={[styles.grayColor, styles.mediumFont]}>
+                    Subtotal
+                  </GlobalText>
                 </View>
                 <View>
-                  <GlobalText style={styles.boldFont}>
+                  <GlobalText style={[styles.boldFont, styles.grayColor]}>
                     {CurrencyFormatter(data?.totalGrossAmount)}
                   </GlobalText>
                 </View>
               </View>
             </View>
             {data?.deliveryFee ? (
-              <View style={styles.listOrderDetailContainer}>
+              <View style={[styles.listOrderDetailContainer, styles.mt16]}>
                 <View style={styles.orderStatusContainer}>
                   <View>
-                    <GlobalText>Delivery Fee</GlobalText>
+                    <GlobalText style={[styles.grayColor, styles.mediumFont]}>
+                      Delivery Fee
+                    </GlobalText>
                   </View>
                   <View>
                     <GlobalText style={styles.boldFont}>
@@ -629,13 +670,15 @@ const OrderDetail = ({data}) => {
                 </View>
               </View>
             ) : null}
-            <View style={styles.listOrderDetailContainer}>
+            <View style={[styles.listOrderDetailContainer, styles.mt16]}>
               <View style={styles.orderStatusContainer}>
                 <View>
-                  <GlobalText>Incl. Tax</GlobalText>
+                  <GlobalText style={[styles.grayColor, styles.mediumFont]}>
+                    Incl. Tax
+                  </GlobalText>
                 </View>
                 <View>
-                  <GlobalText style={styles.boldFont}>
+                  <GlobalText style={[styles.boldFont, styles.grayColor]}>
                     {data?.inclusiveTax > 0
                       ? CurrencyFormatter(data?.inclusiveTax)
                       : CurrencyFormatter(data?.exclusiveTax)}
@@ -651,7 +694,7 @@ const OrderDetail = ({data}) => {
               ]}>
               <View style={styles.orderStatusContainer}>
                 <View>
-                  <GlobalText style={styles.grandTotalText}>
+                  <GlobalText style={[styles.grandTotalText, styles.grayColor]}>
                     Grand Total
                   </GlobalText>
                 </View>
@@ -668,11 +711,14 @@ const OrderDetail = ({data}) => {
               Payment Details
             </GlobalText>
           </View>
-          <FlatList
-            data={data?.payments || []}
-            keyExtractor={(item, index) => index.toString()}
-            renderItem={renderPaymentDetail}
-          />
+          <View style={[styles.shadowBox, styles.boxMain, styles.p12]}>
+            <FlatList
+              data={data?.payments || []}
+              keyExtractor={(item, index) => index.toString()}
+              renderItem={renderPaymentDetail}
+            />
+          </View>
+
           <View style={styles.orderDetailWrapCOntainer}>
             <GlobalText style={styles.oredrDetailText}>
               Ordering Details
@@ -694,11 +740,15 @@ const OrderDetail = ({data}) => {
               </View>
             )}
           </TouchableOpacity>
-          <FlatList
-            keyExtractor={(item, index) => index.toString()}
-            data={data?.details || []}
-            renderItem={renderItemDetails}
-          />
+          <View>
+            <FlatList
+              keyExtractor={(item, index) => index.toString()}
+              data={data?.details || []}
+              contentContainerStyle={styles.productList}
+              renderItem={renderItemDetails}
+            />
+          </View>
+
           <View style={styles.referenceNoContainer}>
             <View>
               <GlobalText style={styles.referenceNoText}>

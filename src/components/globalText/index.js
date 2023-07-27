@@ -15,7 +15,7 @@ const GlobalText = props => {
   const theme = Theme();
   return (
     <Text
-      style={{fontFamily: theme.fontFamily.poppinsRegular}}
+      style={[{fontFamily: theme.fontFamily.poppinsMedium}]}
       allowFontScaling={false}
       {...props}>
       {props.children}

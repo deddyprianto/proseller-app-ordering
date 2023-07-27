@@ -136,6 +136,8 @@ import PendingOrderDetail from '../pages/PendingOrderDetail';
 import InboxDetailMessage from '../pages/InboxDetailMessage';
 import OrderingMode from '../pages/OrderingMode';
 import Payment from '../pages/Payment';
+import Membership from '../pages/Membership';
+import MembershipAllTier from '../pages/MembershipAllTier';
 
 const MyTransitionSpec = {
   duration: 200,
@@ -397,6 +399,8 @@ export default class Routes extends Component {
 
             <Scene key="orderingMode" component={OrderingMode} />
             <Scene key="payment" component={Payment} />
+            <Scene key="membership" component={Membership} />
+            <Scene key="membershipAllTier" component={MembershipAllTier} />
             {/* //martin */}
           </Scene>
         </Scene>

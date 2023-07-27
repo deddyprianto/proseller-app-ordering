@@ -126,7 +126,7 @@ const useStyles = () => {
     },
 
     textStatusValue: {
-      color: theme.colors.textTertiary,
+      color: theme.colors.textPrimary,
       fontSize: theme.fontSize[16],
       fontFamily: theme.fontFamily.poppinsBold,
     },
