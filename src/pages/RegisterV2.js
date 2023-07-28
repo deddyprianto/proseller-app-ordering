@@ -58,6 +58,9 @@ const useStyles = () => {
       fontSize: 18,
       fontFamily: fontFamily.poppinsMedium,
     },
+    privacyText: {
+      color: '#438E49',
+    },
   });
   return {styles, colors, fontFamily};
 };
@@ -167,13 +170,13 @@ const RegisterV2 = props => {
             I agree to all{' '}
             <GlobalText
               onPress={() => handleOpenType('terms')}
-              style={styles.clickableText}>
+              style={styles.privacyText}>
               Terms and Conditions
             </GlobalText>{' '}
             and
             <GlobalText
               onPress={() => handleOpenType('privacy')}
-              style={styles.clickableText}>
+              style={styles.privacyText}>
               {' '}
               Privacy Policy
             </GlobalText>
@@ -213,7 +216,7 @@ const RegisterV2 = props => {
           <TouchableOpacity onPress={openLoginPage}>
             <GlobalText>
               Already have account?{' '}
-              <GlobalText style={styles.clickableText}> Login</GlobalText>
+              <GlobalText style={styles.privacyText}> Login</GlobalText>
             </GlobalText>
           </TouchableOpacity>
         </View>
