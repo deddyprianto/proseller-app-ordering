@@ -129,6 +129,7 @@ import ScannerBarcode from '../pages/ScannerBarcode';
 import SearchProduct from '../pages/SearchProduct';
 import FAQ from '../pages/FAQ';
 import Referral from '../pages/Referral';
+import WebviewPage from '../pages/WebviewPage';
 
 //for temporary
 import PendingOrderDetail from '../pages/PendingOrderDetail';
@@ -395,6 +396,8 @@ export default class Routes extends Component {
             <Scene key="searchProduct" component={SearchProduct} />
             <Scene key="faq" component={FAQ} />
             <Scene key="referral" component={Referral} />
+            <Scene key="policy" component={WebviewPage} />
+
             <Scene key="orderingMode" component={OrderingMode} />
             <Scene key="payment" component={Payment} />
             <Scene key="contactUs" component={ContactUs} />
