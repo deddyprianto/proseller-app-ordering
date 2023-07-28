@@ -376,10 +376,7 @@ const MyDeliveryAddressItem = ({item, fromScene, handleResetProvider}) => {
       <View style={styles.editButtonContainer}>
         <GlobalButton
           isOutline
-          containerStyle={[
-            styles.editBtnContainer,
-            styles.bottomButtonContainer,
-          ]}
+          buttonStyle={[styles.editBtnContainer, styles.bottomButtonContainer]}
           title="Edit Address"
           onPress={() => {
             Actions.addNewAddress({address: item});
@@ -387,7 +384,7 @@ const MyDeliveryAddressItem = ({item, fromScene, handleResetProvider}) => {
         />
         <GlobalButton
           isOutline
-          containerStyle={[
+          buttonStyle={[
             styles.threeDotBtnContainer,
             styles.bottomButtonContainer,
           ]}

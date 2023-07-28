@@ -59,11 +59,6 @@ const GlobalButton = props => {
     <TouchableOpacity
       style={
         !props.disabled
-          ? [styles.touchableNext(props.isOutline), props.containerStyle]
-          : [
-              styles.touchableNextDisabled(props.isOutline),
-              props.containerStyle,
-            ]
           ? [styles.touchableNext(props.isOutline), props.buttonStyle]
           : [styles.touchableNextDisabled(props.isOutline), props.buttonStyle]
       }
