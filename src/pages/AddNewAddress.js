@@ -9,6 +9,7 @@ import React, {useEffect, useState} from 'react';
 import {useDispatch} from 'react-redux';
 
 import {Actions} from 'react-native-router-flux';
+import MapView, {Marker} from 'react-native-maps';
 import {
   StyleSheet,
   View,
@@ -17,6 +18,7 @@ import {
   ScrollView,
   SafeAreaView,
   Pressable,
+  Image,
 } from 'react-native';
 
 import {updateUser} from '../actions/user.action';
@@ -37,6 +39,8 @@ import GlobalText from '../components/globalText';
 import {Body} from '../components/layout';
 import AutocompleteAddress from '../components/autocompleteAddress';
 import useGetProtectionData from '../hooks/protection/useGetProtectioData';
+import additionalSetting from '../config/additionalSettings';
+import appConfig from '../config/appConfig';
 
 const useStyles = () => {
   const theme = Theme();
@@ -150,8 +154,8 @@ const AddNewAddress = ({address}) => {
   const [countryCode, setCountryCode] = useState('');
   const [latitude, setLatitude] = useState(LATITUDE_SINGAPORE);
   const [longitude, setLongitude] = useState(LONGITUDE_SINGAPORE);
-  const [, setLatitudeDelta] = useState(1);
-  const [, setLongitudeDelta] = useState(1);
+  const [latitudeDelta, setLatitudeDelta] = useState(1);
+  const [longitudeDelta, setLongitudeDelta] = useState(1);
 
   const [isSelected, setIsSelected] = useState(false);
   const [isOpenDeleteModal, setIsOpenDeleteModal] = useState(false);
@@ -162,7 +166,7 @@ const AddNewAddress = ({address}) => {
   const [user, setUser] = useState([]);
   const [deliveryAddress, setDeliveryAddress] = useState([]);
   const {getUserDetail} = useGetProtectionData();
-
+  const {mapType} = additionalSetting();
   const update = !isEmptyObject(address);
 
   const titleHeader = update ? 'Edit Address' : 'Add New Address';
@@ -387,14 +391,30 @@ const AddNewAddress = ({address}) => {
     setPostalCode(item['POSTAL']);
   };
 
+  const onSetAddress = value => {
+    setStreetName(value);
+  };
+
+  const renderAddressText = () => (
+    <GlobalInputText
+      label="Street Name"
+      placeholder="Street Name"
+      value={streetName}
+      onChangeText={onSetAddress}
+    />
+  );
+
   const renderStreetNameField = () => {
-    return (
-      <AutocompleteAddress
-        onSelectAddress={onSelectAddress}
-        enableCurrentLocation
-        value={streetName}
-      />
-    );
+    if (mapType === 'dropdown') {
+      return (
+        <AutocompleteAddress
+          onSelectAddress={onSelectAddress}
+          enableCurrentLocation
+          value={streetName}
+        />
+      );
+    }
+    return renderAddressText();
   };
 
   const handleUnitNumber = value => {
@@ -457,6 +477,60 @@ const AddNewAddress = ({address}) => {
       />
     );
   };
+
+  const handleSetCoordinate = coordinate => {
+    if (!isEmptyObject(coordinate)) {
+      setLatitude(coordinate?.latitude);
+      setLongitude(coordinate?.longitude);
+      setLatitudeDelta(coordinate?.latitudeDelta);
+      setLongitudeDelta(coordinate?.longitudeDelta);
+    }
+  };
+
+  const renderMap = () => {
+    return (
+      <View style={styles.viewMap}>
+        <MapView
+          onPress={() => {
+            Actions.pickCoordinate({
+              coordinated: {
+                latitude,
+                longitude,
+              },
+              handleChoose: value => {
+                handleSetCoordinate(value);
+              },
+            });
+          }}
+          style={styles.map}
+          region={{
+            latitude,
+            longitude,
+            latitudeDelta,
+            longitudeDelta,
+          }}>
+          <Marker coordinate={{latitude: latitude, longitude: longitude}} />
+        </MapView>
+        <TouchableOpacity
+          onPress={() => {
+            Actions.pickCoordinate({
+              coordinated: {
+                latitude,
+                longitude,
+              },
+              handleChoose: value => {
+                handleSetCoordinate(value);
+              },
+            });
+          }}
+          style={styles.touchableCoordinate}>
+          <Image source={appConfig.iconLocation} style={styles.iconLocation} />
+          <Text style={styles.textCoordinate}>Pick a Coordinate</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
   const renderDeliveryDetailFields = () => {
     return (
       <View>
@@ -497,6 +571,7 @@ const AddNewAddress = ({address}) => {
             <View style={styles.divider} />
             {renderRecipientDetailFields()}
             <View style={styles.divider} />
+            {mapType === 'map' ? renderMap() : null}
             {renderCheckBox()}
             <View style={styles.marginTop16} />
           </ScrollView>
@@ -504,6 +579,7 @@ const AddNewAddress = ({address}) => {
       </View>
     );
   };
+  console.log({tagAddress, unitNumber, postalCode}, 'sikat');
   const handleActive = () => {
     if (
       tagAddress &&
