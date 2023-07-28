@@ -1,5 +1,5 @@
 import React from 'react';
-import {TouchableOpacity, StyleSheet} from 'react-native';
+import {TouchableOpacity, StyleSheet, StyleProp} from 'react-native';
 import GlobalText from '../globalText';
 import Theme from '../../theme/Theme';
 
@@ -43,6 +43,7 @@ const useStyles = () => {
  * @property {string} title
  * @property {string} active
  * @property {boolean} isOutline
+ * @property {import('react-native').StyleProp} buttonStyle
  */
 
 /**
@@ -55,8 +56,8 @@ const GlobalButton = props => {
     <TouchableOpacity
       style={
         !props.disabled
-          ? styles.touchableNext(props.isOutline)
-          : styles.touchableNextDisabled(props.isOutline)
+          ? [styles.touchableNext(props.isOutline), props.buttonStyle]
+          : [styles.touchableNextDisabled(props.isOutline), props.buttonStyle]
       }
       {...props}>
       <GlobalText style={styles.textNext(props.isOutline)}>

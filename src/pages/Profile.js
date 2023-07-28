@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 // import DeviceBrightness from 'react-native-device-brightness';
@@ -28,7 +29,16 @@ import ConfirmationDialog from '../components/confirmationDialog';
 import MyECardModal from '../components/modal/MyECardModal';
 import moment from 'moment';
 import DeviceBrightness from '@adrianso/react-native-device-brightness';
+import Navbar from '../components/navbar';
+import {normalizeLayoutSizeHeight} from '../helper/Layout';
+import BgProfileSvg from '../assets/svg/BgProfileSvg';
+import GlobalText from '../components/globalText';
+import CreditCard from '../assets/svg/CreditCardSvg';
+import Voucher from '../assets/svg/VoucherSvg';
+import StoreSvg from '../assets/svg/StoreSvg';
+import ContactSvg from '../assets/svg/ContactSvg';
 import {Body} from '../components/layout';
+import additionalSetting from '../config/additionalSettings';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -51,6 +61,7 @@ const useStyles = () => {
       height: 1,
       backgroundColor: theme.colors.greyScale3,
       marginHorizontal: 16,
+      marginTop: 5,
     },
     dividerHeader: {
       marginVertical: 16,
@@ -157,8 +168,6 @@ const useStyles = () => {
       display: 'flex',
       flexDirection: 'row',
       alignItems: 'center',
-      borderTopWidth: 1,
-      borderTopColor: theme.colors.greyScale3,
     },
     viewPointHeader: {
       alignItems: 'flex-end',
@@ -265,6 +274,23 @@ const useStyles = () => {
       height: 16,
       tintColor: 'white',
     },
+    backgroundProfile: {
+      height: normalizeLayoutSizeHeight(118),
+      position: 'absolute',
+      top: 0,
+      width: '100%',
+    },
+    titleSettingContainer: {
+      marginHorizontal: 16,
+      marginTop: 16,
+    },
+    titleSettingText: {
+      fontFamily: theme.fontFamily.poppinsBold,
+      fontSize: 16,
+    },
+    containerStyle: {
+      paddingBottom: 30,
+    },
   });
 
   return styles;
@@ -358,6 +384,11 @@ const Profile = props => {
   const handleEditProfile = () => {
     const value = {dataDiri: user};
     return Actions.editProfile(value);
+  };
+
+  const openWebviewPage = url => {
+    if (!url) return;
+    return Actions.policy({url});
   };
 
   const renderWelcome = () => {
@@ -556,7 +587,7 @@ const Profile = props => {
           Actions.notifications();
         }}>
         <Image style={styles.iconSetting} source={appConfig.iconNotification} />
-        <Text style={styles.textIcon}>Notifications</Text>
+        <Text style={styles.textIcon}>Notification Setting</Text>
       </TouchableOpacity>
     );
   };
@@ -586,6 +617,24 @@ const Profile = props => {
         }}>
         <Image style={styles.iconSetting} source={appConfig.iconFAQ} />
         <Text style={styles.textIcon}>FAQ</Text>
+      </TouchableOpacity>
+    );
+  };
+
+  const openContactUs = () => {
+    return Actions.contactUs();
+  };
+
+  const renderContactUs = () => {
+    if (appConfig.contactUsVersion === '') {
+      return null;
+    }
+    return (
+      <TouchableOpacity style={styles.viewOption} onPress={openContactUs}>
+        <View style={styles.iconSetting}>
+          <ContactSvg />
+        </View>
+        <Text style={styles.textIcon}>Contact Us</Text>
       </TouchableOpacity>
     );
   };
@@ -651,22 +700,59 @@ const Profile = props => {
     );
   };
 
-  const renderSettings = () => {
-    return (
-      <View style={styles.viewSettings}>
-        {renderDivider()}
-        {renderMembershipQRCode()}
-        {renderMyDeliveryAddress()}
-        {renderEditProfile()}
-        {renderReferral()}
-        {renderNotifications()}
-        {renderTermsAndConditions()}
-        {renderFAQ()}
-        {renderDeleteAccount()}
-        {renderLogout()}
-      </View>
-    );
+  const renderListMenu = (title, Icon, onPress) => (
+    <TouchableOpacity onPress={onPress} style={styles.viewOption}>
+      <View style={styles.iconSetting}>{Icon}</View>
+      <Text style={styles.textIcon}>{title} </Text>
+    </TouchableOpacity>
+  );
+
+  const renderTitleSettingV2 = title => (
+    <View style={styles.titleSettingContainer}>
+      <GlobalText style={styles.titleSettingText}>{title}</GlobalText>
+    </View>
+  );
+
+  const handleAdditionalSetting = () => {
+    const component = additionalSetting().additionalPolicy.map(data => {
+      if (!data.show) return null;
+      return (
+        <>
+          {renderListMenu(data.name, data.icon(), () =>
+            openWebviewPage(data.link),
+          )}
+        </>
+      );
+    });
+    return component;
   };
+
+  const renderSettingV2 = () => (
+    <View style={styles.viewSettings}>
+      {renderMembershipQRCode()}
+      {renderDivider()}
+      {renderTitleSettingV2('General')}
+      {renderEditProfile()}
+      {renderMyDeliveryAddress()}
+      {renderNotifications()}
+      {renderDivider()}
+      {renderTitleSettingV2('Payment Method')}
+      {renderListMenu('Credit Card', <CreditCard />)}
+      {renderDivider()}
+      {renderTitleSettingV2('Rewards')}
+      {renderListMenu('My Voucher', <Voucher />)}
+      {renderReferral()}
+      {renderDivider()}
+      {renderTitleSettingV2('Others')}
+      {renderListMenu('Store Location', <StoreSvg />)}
+      {handleAdditionalSetting()}
+      {renderTermsAndConditions()}
+      {renderFAQ()}
+      {renderListMenu('Contact Us', <ContactSvg />, openContactUs)}
+      {renderDivider()}
+      {renderLogout()}
+    </View>
+  );
 
   const renderDeleteAccountConfirmationDialog = () => {
     if (isOpenDeleteAccountModal) {
@@ -747,7 +833,13 @@ const Profile = props => {
   return (
     <SafeAreaView>
       <Body>
-        <ScrollView>
+        <Navbar title="Profile" />
+        <ScrollView
+          contentContainerStyle={styles.containerStyle}
+          style={styles.root}>
+          <View style={styles.backgroundProfile}>
+            <BgProfileSvg />
+          </View>
           <LoadingScreen loading={isLoading} />
           <Image
             source={appConfig.imageBackgroundProfile}
@@ -755,7 +847,7 @@ const Profile = props => {
             style={styles.imageBackgroundProfile}
           />
           {renderProfileHeader()}
-          {renderSettings()}
+          <>{renderSettingV2()}</>
           {renderDeleteAccountConfirmationDialog()}
           {renderLogoutConfirmationDialog()}
           {renderMyECardModal()}
