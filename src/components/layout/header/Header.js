@@ -123,6 +123,7 @@ const Header = ({
   onBackBtn,
   leftTitle,
   usingPrimaryColor,
+  rootStyle,
 }) => {
   const styles = useStyles();
   const [isOpenScanner, setIsOpenScanner] = useState(false);
@@ -351,7 +352,7 @@ const Header = ({
     }
   };
 
-  return <View style={styles.root}>{renderHeader()}</View>;
+  return <View style={[styles.root, rootStyle]}>{renderHeader()}</View>;
 };
 
 export default Header;
