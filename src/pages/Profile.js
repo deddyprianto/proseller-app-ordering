@@ -621,6 +621,24 @@ const Profile = props => {
     );
   };
 
+  const openContactUs = () => {
+    return Actions.contactUs();
+  };
+
+  const renderContactUs = () => {
+    if (appConfig.contactUsVersion === '') {
+      return null;
+    }
+    return (
+      <TouchableOpacity style={styles.viewOption} onPress={openContactUs}>
+        <View style={styles.iconSetting}>
+          <ContactSvg />
+        </View>
+        <Text style={styles.textIcon}>Contact Us</Text>
+      </TouchableOpacity>
+    );
+  };
+
   const renderMembershipQRCode = () => {
     return (
       <TouchableOpacity
@@ -730,7 +748,7 @@ const Profile = props => {
       {handleAdditionalSetting()}
       {renderTermsAndConditions()}
       {renderFAQ()}
-      {renderListMenu('Contact Us', <ContactSvg />)}
+      {renderListMenu('Contact Us', <ContactSvg />, openContactUs)}
       {renderDivider()}
       {renderLogout()}
     </View>
