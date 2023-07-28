@@ -401,6 +401,7 @@ const AddNewAddress = ({address}) => {
       placeholder="Street Name"
       value={streetName}
       onChangeText={onSetAddress}
+      isMandatory
     />
   );
 
@@ -422,6 +423,22 @@ const AddNewAddress = ({address}) => {
       return null;
     }
     setUnitNumber(value);
+  };
+
+  const onSetPostalCode = value => {
+    setPostalCode(value);
+  };
+
+  const renderPostalCodeField = () => {
+    return (
+      <GlobalInputText
+        label="Postal Code"
+        placeholder="Postal Code"
+        value={postalCode}
+        isMandatory
+        onChangeText={onSetPostalCode}
+      />
+    );
   };
 
   const renderUnitNumberField = () => {
@@ -541,6 +558,7 @@ const AddNewAddress = ({address}) => {
         {renderStreetNameField()}
         <View style={styles.marginTop16} />
         {renderUnitNumberField()}
+        {mapType === 'map' ? renderPostalCodeField() : null}
         <View style={styles.marginTop16} />
         {renderLabelAddress()}
       </View>
@@ -579,7 +597,7 @@ const AddNewAddress = ({address}) => {
       </View>
     );
   };
-  console.log({tagAddress, unitNumber, postalCode}, 'sikat');
+
   const handleActive = () => {
     if (
       tagAddress &&
