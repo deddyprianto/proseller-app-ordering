@@ -27,20 +27,6 @@ import appConfig from '../config/appConfig';
 import {format} from 'date-fns';
 import CurrencyFormatter from '../helper/CurrencyFormatter';
 import {isEmptyArray} from '../helper/CheckEmpty';
-import {Header} from './layout';
-import {TabView, SceneMap} from 'react-native-tab-view';
-
-const FirstRoute = () => (
-  <View style={[styles.scene, {backgroundColor: '#ff4081'}]}>
-    <Text>First Tab</Text>
-  </View>
-);
-
-const SecondRoute = () => (
-  <View style={[styles.scene, {backgroundColor: '#673ab7'}]}>
-    <Text>Second Tab</Text>
-  </View>
-);
 
 export default class PaymentAddVoucers extends Component {
   constructor(props) {
@@ -49,11 +35,6 @@ export default class PaymentAddVoucers extends Component {
       screenWidth: Dimensions.get('window').width,
       currentDay: new Date(),
       data: this.props.data,
-      index: 0,
-      routes: [
-        {key: 'first', title: 'First'},
-        {key: 'second', title: 'Second'},
-      ],
     };
   }
 
@@ -320,10 +301,7 @@ export default class PaymentAddVoucers extends Component {
     if (find != undefined) {
       return {status: true, message: ''};
     } else {
-      return {
-        status: false,
-        message: 'This voucher cannot be used today.',
-      };
+      return {status: false, message: 'This voucher cannot be used today.'};
     }
   };
 
@@ -343,29 +321,24 @@ export default class PaymentAddVoucers extends Component {
     return false;
   };
 
-  renderScene = SceneMap({
-    first: FirstRoute,
-    second: SecondRoute,
-  });
-
-  handleIndexChange = index => {
-    this.setState({index});
-  };
-
   render() {
     const {intlData} = this.props;
     const myVoucers = this.state.data;
     return (
       <SafeAreaView style={styles.container}>
-        <Header usingPrimaryColor leftTitle={true} title={'Select Vouchers'} />
-        <TabView
-          navigationState={this.state}
-          renderScene={this.renderScene}
-          onIndexChange={this.handleIndexChange}
-
-          // onIndexChange={setIndex}
-          // initialLayout={{width: layout.width}}
-        />
+        <View style={{backgroundColor: colorConfig.pageIndex.backgroundColor}}>
+          <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
+            <Icon
+              size={28}
+              name={
+                Platform.OS === 'ios' ? 'ios-arrow-back' : 'md-arrow-round-back'
+              }
+              style={styles.btnBackIcon}
+            />
+            <Text style={styles.btnBackText}> Select Vouchers </Text>
+          </TouchableOpacity>
+          <View style={styles.line} />
+        </View>
         <ScrollView>
           {myVoucers == undefined || myVoucers.length == 0 ? (
             <View
@@ -394,10 +367,7 @@ export default class PaymentAddVoucers extends Component {
                     <TouchableOpacity
                       style={styles.voucherItem}
                       onPress={() => this.pageDetailVoucher(item)}>
-                      <View
-                        style={{
-                          alignItems: 'center',
-                        }}>
+                      <View style={{alignItems: 'center'}}>
                         <Image
                           style={
                             item.image != '' && item.image != undefined
@@ -464,10 +434,7 @@ export default class PaymentAddVoucers extends Component {
                         {/*  <Text style={styles.statusTitle}>Awarded</Text>*/}
                         {/*</View>*/}
                         <Text style={styles.nameVoucher}>{item.name}</Text>
-                        <View
-                          style={{
-                            flexDirection: 'row',
-                          }}>
+                        <View style={{flexDirection: 'row'}}>
                           <Icon
                             size={15}
                             name={
@@ -482,10 +449,7 @@ export default class PaymentAddVoucers extends Component {
                             {item.voucherDesc}
                           </Text>
                         </View>
-                        <View
-                          style={{
-                            flexDirection: 'row',
-                          }}>
+                        <View style={{flexDirection: 'row'}}>
                           <Icon
                             size={15}
                             name={
@@ -508,10 +472,7 @@ export default class PaymentAddVoucers extends Component {
                                 .map(data => (
                                   <Text>
                                     {', '}{' '}
-                                    <Text
-                                      style={{
-                                        fontWeight: 'bold',
-                                      }}>
+                                    <Text style={{fontWeight: 'bold'}}>
                                       {data.day.toLowerCase()}
                                     </Text>{' '}
                                   </Text>
@@ -520,10 +481,7 @@ export default class PaymentAddVoucers extends Component {
                           )}
                         </View>
                         {item.expiryDate && (
-                          <View
-                            style={{
-                              flexDirection: 'row',
-                            }}>
+                          <View style={{flexDirection: 'row'}}>
                             <Icon
                               size={15}
                               name={
@@ -537,9 +495,7 @@ export default class PaymentAddVoucers extends Component {
                             <Text
                               style={[
                                 styles.descVoucher,
-                                {
-                                  color: colorConfig.store.colorError,
-                                },
+                                {color: colorConfig.store.colorError},
                               ]}>
                               This voucher will expire on{' '}
                               {format(new Date(item.expiryDate), 'dd MMM yyyy')}
@@ -564,10 +520,7 @@ export default class PaymentAddVoucers extends Component {
           <Icon
             size={25}
             name={Platform.OS === 'ios' ? 'ios-bookmark' : 'md-bookmark'}
-            style={{
-              color: 'white',
-              marginRight: 10,
-            }}
+            style={{color: 'white', marginRight: 10}}
           />
           <Text style={styles.textAddCard}>Redeem Voucher</Text>
         </TouchableOpacity>

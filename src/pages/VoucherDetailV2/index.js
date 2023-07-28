@@ -55,24 +55,24 @@ const VoucherDetailV2 = () => {
 
   const {styles} = useStyles();
   const [index, setIndex] = React.useState(0);
-  const [activeTab, setActiveTab] = React.useState(null);
+  // const [activeTab, setActiveTab] = React.useState(null);
   const [routes] = React.useState([
     {key: 'first', title: 'My Voucher'},
     {key: 'second', title: 'Redeem Voucher'},
   ]);
-  console.log(index, 'valman');
+  // console.log(index, 'valman');
 
-  const onTabPress = val => {
-    setActiveTab(val.route.key);
-  };
+  // const onTabPress = val => {
+  //   setActiveTab(val.route.key);
+  // };
 
-  const handleTabbarSTyle = activeTab => {
-    console.log(index, activeTab, 'hynuman');
-    if (index === activeTab) {
-      return [styles.whiteBg];
-    }
-    return [styles.tabbarStyle];
-  };
+  // const handleTabbarSTyle = activeTab => {
+  //   console.log(index, activeTab, 'hynuman');
+  //   if (index === activeTab) {
+  //     return [styles.whiteBg];
+  //   }
+  //   return [styles.tabbarStyle];
+  // };
 
   const renderTabBar = props => {
     console.log(props, 'papina');
@@ -81,7 +81,7 @@ const VoucherDetailV2 = () => {
         {...props}
         indicatorStyle={styles.indicatorStyle}
         style={styles.tabbarStyle}
-        renderIndicator={null}
+        // renderIndicator={null}
 
         // onTabPress={onTabPress}
       />
