@@ -1,12 +1,12 @@
 import React from 'react';
-import {View} from 'react-native';
 import GlobalText from '../../components/globalText';
+import {ScrollView} from 'react-native';
 
 const ReedemVoucher = () => {
   return (
-    <View>
+    <ScrollView>
       <GlobalText>reedem</GlobalText>
-    </View>
+    </ScrollView>
   );
 };
 

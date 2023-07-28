@@ -1,12 +1,12 @@
 import React from 'react';
-import {View} from 'react-native';
+import {ScrollView} from 'react-native';
 import GlobalText from '../../components/globalText';
 
 const MyVoucher = () => {
   return (
-    <View>
+    <ScrollView>
       <GlobalText>My voucher</GlobalText>
-    </View>
+    </ScrollView>
   );
 };
 

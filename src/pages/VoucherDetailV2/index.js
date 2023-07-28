@@ -28,6 +28,15 @@ const useStyles = () => {
     rootStyle: {
       paddingBottom: 0,
     },
+    indicatorStyle: {
+      backgroundColor: 'white',
+    },
+    whiteBg: {
+      backgroundColor: 'white',
+    },
+    primaryText: {
+      color: colors.primary,
+    },
   });
   return {styles};
 };
@@ -46,18 +55,38 @@ const VoucherDetailV2 = () => {
 
   const {styles} = useStyles();
   const [index, setIndex] = React.useState(0);
+  const [activeTab, setActiveTab] = React.useState(null);
   const [routes] = React.useState([
     {key: 'first', title: 'My Voucher'},
     {key: 'second', title: 'Redeem Voucher'},
   ]);
+  console.log(index, 'valman');
 
-  const renderTabBar = props => (
-    <TabBar
-      {...props}
-      indicatorStyle={{backgroundColor: 'white'}}
-      style={styles.tabbarStyle}
-    />
-  );
+  const onTabPress = val => {
+    setActiveTab(val.route.key);
+  };
+
+  const handleTabbarSTyle = activeTab => {
+    console.log(index, activeTab, 'hynuman');
+    if (index === activeTab) {
+      return [styles.whiteBg];
+    }
+    return [styles.tabbarStyle];
+  };
+
+  const renderTabBar = props => {
+    console.log(props, 'papina');
+    return (
+      <TabBar
+        {...props}
+        indicatorStyle={styles.indicatorStyle}
+        style={styles.tabbarStyle}
+        renderIndicator={null}
+
+        // onTabPress={onTabPress}
+      />
+    );
+  };
 
   return (
     <SafeAreaView style={styles.safeAreaCOntainer}>
@@ -67,15 +96,13 @@ const VoucherDetailV2 = () => {
         usingPrimaryColor
         title={'Vouchers'}
       />
-      <ScrollView>
-        <TabView
-          renderTabBar={renderTabBar}
-          navigationState={{index, routes}}
-          renderScene={renderScene}
-          onIndexChange={setIndex}
-          initialLayout={{width: layout.width}}
-        />
-      </ScrollView>
+      <TabView
+        renderTabBar={renderTabBar}
+        navigationState={{index, routes}}
+        renderScene={renderScene}
+        onIndexChange={setIndex}
+        initialLayout={{width: layout.width}}
+      />
     </SafeAreaView>
   );
 };
