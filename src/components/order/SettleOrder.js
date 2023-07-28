@@ -127,9 +127,9 @@ class SettleOrder extends Component {
     );
   };
 
-  handlePaymentFomoPay = () => {
-    const {selectedAccount} = this.props;
-    const find = selectedAccount.paymentID === 'FOMO_PAY';
+  handlePaymentFomoPay = response => {
+    const payments = response?.responseBody?.data?.payments || [];
+    const find = payments.find(row => row.paymentType === 'FOMO_PAY');
 
     if (find) {
       Actions.payment();
@@ -1379,7 +1379,7 @@ class SettleOrder extends Component {
       const response = await this.props.dispatch(settleOrder(pembayaran, url));
       console.log('reponse pembayaran settle order ', response);
       if (response.success) {
-        this.handlePaymentFomoPay();
+        this.handlePaymentFomoPay(response);
         try {
           this.props.dispatch(afterPayment(true));
         } catch (e) {}
@@ -2679,7 +2679,7 @@ class SettleOrder extends Component {
       const response = await this.props.dispatch(settleOrder(payload, url));
       console.log('reponse pembayaran settle order ', response);
       if (response.success) {
-        this.handlePaymentFomoPay();
+        this.handlePaymentFomoPay(response);
         try {
           if (this.props.pembayaran.orderingMode == 'STORECHECKOUT') {
             this.props.dispatch(afterPayment(false));
@@ -3247,7 +3247,7 @@ class SettleOrder extends Component {
       const response = await this.props.dispatch(settleOrder(payload, url));
       console.log('reponse pembayaran settle order ', response);
       if (response.success) {
-        this.handlePaymentFomoPay();
+        this.handlePaymentFomoPay(response);
         try {
           this.props.dispatch(afterPayment(true));
         } catch (e) {}

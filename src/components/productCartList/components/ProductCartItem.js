@@ -27,7 +27,8 @@ import {isEmptyArray} from '../../../helper/CheckEmpty';
 import ProductAddModal from '../../productAddModal';
 
 import Theme from '../../../theme';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
+import {getProductById} from '../../../actions/product.action';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -343,8 +344,10 @@ const useStyles = () => {
 };
 
 const ProductCartItem = ({item, disabled}) => {
+  const dispatch = useDispatch();
   const styles = useStyles();
   const [isOpenAddModal, setIsOpenAddModal] = useState(false);
+  const [product, setProduct] = useState({});
 
   const orderingMode = useSelector(
     state => state.orderReducer?.dataBasket?.product?.orderingMode,
@@ -356,7 +359,9 @@ const ProductCartItem = ({item, disabled}) => {
   const isProductUnavailable =
     item?.orderingStatus !== 'AVAILABLE' && orderingMode !== 'STORECHECKOUT';
 
-  const handleOpenAddModal = () => {
+  const handleOpenAddModal = async () => {
+    const response = await dispatch(getProductById(item.product.id));
+    setProduct(response);
     setIsOpenAddModal(true);
   };
   const handleCloseAddModal = () => {
@@ -619,7 +624,7 @@ const ProductCartItem = ({item, disabled}) => {
     if (isOpenAddModal) {
       return (
         <ProductAddModal
-          product={item?.product}
+          product={product}
           open={isOpenAddModal}
           handleClose={() => {
             handleCloseAddModal();
