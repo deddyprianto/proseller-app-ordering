@@ -41,7 +41,7 @@ const AnimationMessage = ({show, setShow, children, containerStyle, type}) => {
 
   const handleType = () => {
     if (type === 'success') {
-      return '#438E49';
+      return colors.successColor;
     }
     return colors.errorColor;
   };

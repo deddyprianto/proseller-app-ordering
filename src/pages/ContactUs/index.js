@@ -12,6 +12,7 @@ import AnimationMessage from '../../components/animationMessage';
 import GlobalText from '../../components/globalText';
 import CheckboxWhite from '../../assets/svg/CheckboxWhite';
 import ErrorIcon from '../../assets/svg/ErrorIcon';
+import LoadingScreen from '../../components/loadingScreen/LoadingScreen';
 
 const useStyles = () => {
   const {colors, fontFamily} = Theme();
@@ -88,6 +89,7 @@ const ContactUs = () => {
   const [payload, setPayload] = React.useState({});
   const [showMessage, setShowMessage] = React.useState(false);
   const [type, setType] = React.useState(null);
+  const [isLoading, setIsloading] = React.useState(false);
   const disableButton = () => {
     const emptyValue = fieldValidation(mandatoryField, payload);
     return emptyValue.length > 0;
@@ -98,6 +100,7 @@ const ContactUs = () => {
   };
 
   const onSubmit = async () => {
+    setIsloading(true);
     const response = await dispatch(contactUsHandle(payload));
     if (response.success) {
       setType('success');
@@ -105,10 +108,12 @@ const ContactUs = () => {
       setType('error');
     }
     setShowMessage(true);
+    setIsloading(false);
   };
 
   return (
     <SafeAreaView style={styles.safeAreaView}>
+      <LoadingScreen loading={isLoading} />
       <Header title={'Contact Us'} />
       <View style={styles.containerMessage}>
         <AnimationMessage
