@@ -137,6 +137,8 @@ import OrderingMode from '../pages/OrderingMode';
 import Payment from '../pages/Payment';
 import Membership from '../pages/Membership';
 import MembershipAllTier from '../pages/MembershipAllTier';
+import ContactUs from '../pages/ContactUs';
+import PrivacyPolicy from '../pages/PrivacyPolicy';
 
 const MyTransitionSpec = {
   duration: 200,
@@ -398,6 +400,8 @@ export default class Routes extends Component {
             <Scene key="payment" component={Payment} />
             <Scene key="membership" component={Membership} />
             <Scene key="membershipAllTier" component={MembershipAllTier} />
+            <Scene key="contactUs" component={ContactUs} />
+            <Scene key="privacyPolicy" component={PrivacyPolicy} />
             {/* //martin */}
           </Scene>
         </Scene>

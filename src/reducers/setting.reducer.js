@@ -116,6 +116,18 @@ const bannerSizeSettings = (state = {}, action) => {
   }
 };
 
+const privacyPolicySettings = (state = {}, action) => {
+  switch (action.type) {
+    case 'SET_PRIVACY_POLICY':
+      return {
+        ...action.data,
+      };
+
+    default:
+      return state;
+  }
+};
+
 export default combineReducers({
   snackbar,
   imageSettings,
@@ -125,5 +137,6 @@ export default combineReducers({
   enableOrderingSettings,
   hideReferralSettings,
   bannerSizeSettings,
+  privacyPolicySettings,
   allowedOrder,
 });

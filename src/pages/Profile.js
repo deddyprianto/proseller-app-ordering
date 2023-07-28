@@ -157,8 +157,6 @@ const useStyles = () => {
       display: 'flex',
       flexDirection: 'row',
       alignItems: 'center',
-      borderTopWidth: 1,
-      borderTopColor: theme.colors.greyScale3,
     },
     viewPointHeader: {
       alignItems: 'flex-end',
@@ -325,6 +323,29 @@ const Profile = props => {
     };
     loadData();
   }, [dispatch, userDetail]);
+
+  const initDeviceBright = async () => {
+    const currentBrightness = await DeviceBrightness.getBrightnessLevel();
+    setCurrentBrightness(currentBrightness);
+  };
+
+  const handleDeviceBright = async () => {
+    initDeviceBright();
+    if (isOpenMyECardModal) {
+      return DeviceBrightness.setBrightnessLevel(1);
+    }
+    if (currentBrightness) {
+      DeviceBrightness.setBrightnessLevel(currentBrightness);
+    }
+  };
+
+  useEffect(() => {
+    handleDeviceBright();
+  }, [isOpenMyECardModal]);
+
+  useEffect(() => {
+    initDeviceBright();
+  }, []);
 
   const handleLogout = async () => {
     setIsLoading(true);
@@ -625,6 +646,37 @@ const Profile = props => {
     }
   };
 
+  const renderPrivacyPolicy = () => {
+    return (
+      <TouchableOpacity
+        style={styles.viewOption}
+        onPress={() => {
+          Actions.privacyPolicy();
+        }}>
+        <Image
+          style={styles.iconSetting}
+          source={appConfig.iconPrivacyPolicy}
+        />
+        <Text style={styles.textIcon}>Privacy Policy</Text>
+      </TouchableOpacity>
+    );
+  };
+
+  const renderContactUs = () => {
+    if (awsConfig.COMPANY_NAME === 'Funtoast') {
+      return (
+        <TouchableOpacity
+          style={styles.viewOption}
+          onPress={() => {
+            Actions.contactUs();
+          }}>
+          <Image style={styles.iconSetting} source={appConfig.iconContactUs} />
+          <Text style={styles.textIcon}>Contact Us</Text>
+        </TouchableOpacity>
+      );
+    }
+  };
+
   const renderLogout = () => {
     return (
       <TouchableOpacity
@@ -651,19 +703,49 @@ const Profile = props => {
     );
   };
 
+  const renderSettingBatch1 = () => {
+    return (
+      <View>
+        {/* {renderMyDeliveryAddress()} */}
+        {renderEditProfile()}
+        {renderNotifications()}
+      </View>
+    );
+  };
+
+  const renderSettingBatch2 = () => {
+    return <View>{renderReferral()}</View>;
+  };
+
+  const renderSettingBatch3 = () => {
+    return (
+      <View>
+        {renderTermsAndConditions()}
+        {renderPrivacyPolicy()}
+        {renderContactUs()}
+        {renderFAQ()}
+        {renderDeleteAccount()}
+      </View>
+    );
+  };
+
+  const renderSettingBatch4 = () => {
+    return <View>{renderLogout()}</View>;
+  };
+
   const renderSettings = () => {
     return (
       <View style={styles.viewSettings}>
         {renderDivider()}
         {renderMembershipQRCode()}
-        {renderMyDeliveryAddress()}
-        {renderEditProfile()}
-        {renderReferral()}
-        {renderNotifications()}
-        {renderTermsAndConditions()}
-        {renderFAQ()}
-        {renderDeleteAccount()}
-        {renderLogout()}
+        {renderDivider()}
+        {renderSettingBatch1()}
+        {renderDivider()}
+        {renderSettingBatch2()}
+        {renderDivider()}
+        {renderSettingBatch3()}
+        {renderDivider()}
+        {renderSettingBatch4()}
       </View>
     );
   };
@@ -707,29 +789,6 @@ const Profile = props => {
       );
     }
   };
-
-  const initDeviceBright = async () => {
-    const currentBrightness = await DeviceBrightness.getBrightnessLevel();
-    setCurrentBrightness(currentBrightness);
-  };
-
-  const handleDeviceBright = async () => {
-    initDeviceBright();
-    if (isOpenMyECardModal) {
-      return DeviceBrightness.setBrightnessLevel(1);
-    }
-    if (currentBrightness) {
-      DeviceBrightness.setBrightnessLevel(currentBrightness);
-    }
-  };
-
-  useEffect(() => {
-    handleDeviceBright();
-  }, [isOpenMyECardModal]);
-
-  useEffect(() => {
-    initDeviceBright();
-  }, []);
 
   const renderMyECardModal = () => {
     if (isOpenMyECardModal) {
