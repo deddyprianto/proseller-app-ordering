@@ -54,6 +54,10 @@ const useStyles = () => {
       justifyContent: 'center',
       alignItems: 'center',
     },
+    titleModal: {
+      fontSize: 18,
+      fontFamily: fontFamily.poppinsMedium,
+    },
   });
   return {styles, colors, fontFamily};
 };
@@ -218,6 +222,7 @@ const RegisterV2 = props => {
         title="Terms and Conditions"
         closeModal={closeModal}
         isCloseToBottom={onButtonActive}
+        titleStyle={styles.titleModal}
         stickyBottom={
           <View>
             <GlobalButton
@@ -232,6 +237,7 @@ const RegisterV2 = props => {
       </GlobalModal>
       <GlobalModal
         title="Privacy Policy"
+        titleStyle={styles.titleModal}
         stickyBottom={
           <View>
             <GlobalButton

@@ -22,6 +22,7 @@ const useStyles = () => {
       justifyContent: 'space-between',
       alignItems: 'center',
       flexDirection: 'row',
+      height: 48,
     }),
     labelStyle: {
       fontSize: 14,
