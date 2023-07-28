@@ -126,7 +126,7 @@ const useStyles = () => {
   return styles;
 };
 
-const RegisterForm = ({registerMethod, inputValue}) => {
+const RegisterForm = ({registerMethod, inputValue, approvedData}) => {
   const styles = useStyles();
   const dispatch = useDispatch();
   const [countryCode, setCountryCode] = useState('');
@@ -140,7 +140,6 @@ const RegisterForm = ({registerMethod, inputValue}) => {
   const [gender, setGender] = React.useState(null);
   const [isInitField, setIsInitField] = React.useState(false);
   const [address, setAddress] = React.useState('');
-
   const genderItems = [
     {
       label: 'Male',
@@ -200,6 +199,8 @@ const RegisterForm = ({registerMethod, inputValue}) => {
       email: email,
       phoneNumber: phone,
       registerMethod,
+      optIn: approvedData.consent,
+      acceptPrivacyAndTerms: approvedData.privacyTerm,
     };
     payload = {...payload, ...newCustomKey};
     setIsLoading(true);

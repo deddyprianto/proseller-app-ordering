@@ -14,7 +14,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const AnimationMessage = ({show, setShow, children, containerStyle}) => {
+const AnimationMessage = ({show, setShow, children, containerStyle, type}) => {
   const fadeAnim = React.useRef(new Animated.Value(0)).current;
   const {colors} = Theme();
   React.useEffect(() => {
@@ -39,11 +39,21 @@ const AnimationMessage = ({show, setShow, children, containerStyle}) => {
     }
   }, [fadeAnim, setShow, show]);
 
+  const handleType = () => {
+    if (type === 'success') {
+      return colors.successColor;
+    }
+    return colors.errorColor;
+  };
+
   return (
     <Animated.View
       style={[
         styles.container,
-        {opacity: fadeAnim, backgroundColor: colors.errorColor},
+        {
+          opacity: fadeAnim,
+          backgroundColor: handleType(),
+        },
         containerStyle,
       ]}>
       {children}
