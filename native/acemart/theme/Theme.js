@@ -83,6 +83,7 @@ const Theme = () => {
     backgroundTransparent2: '#B7B7B7CC',
     inactiveDot: '#D6D6D6',
     errorColor: '#CE1111',
+    successColor: '#438E49',
   };
 
   const fontSize = {

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 // import DeviceBrightness from 'react-native-device-brightness';
@@ -28,7 +29,16 @@ import ConfirmationDialog from '../components/confirmationDialog';
 import MyECardModal from '../components/modal/MyECardModal';
 import moment from 'moment';
 import DeviceBrightness from '@adrianso/react-native-device-brightness';
-import {Body} from '../components/layout';
+import Navbar from '../components/navbar';
+import {normalizeLayoutSizeHeight} from '../helper/Layout';
+import BackgroundProfileSvg from '../assets/svg/BackgroundProfileSvg';
+import GlobalText from '../components/globalText';
+import CreditCard from '../assets/svg/CreditCardSvg';
+import Voucher from '../assets/svg/VoucherSvg';
+import StoreSvg from '../assets/svg/StoreSvg';
+import ContactSvg from '../assets/svg/ContactSvg';
+import {Body, Header} from '../components/layout';
+import additionalSetting from '../config/additionalSettings';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -51,6 +61,7 @@ const useStyles = () => {
       height: 1,
       backgroundColor: theme.colors.greyScale3,
       marginHorizontal: 16,
+      marginTop: 5,
     },
     dividerHeader: {
       marginVertical: 16,
@@ -263,6 +274,23 @@ const useStyles = () => {
       height: 16,
       tintColor: 'white',
     },
+    backgroundProfile: {
+      height: normalizeLayoutSizeHeight(118),
+      position: 'absolute',
+      top: -5,
+      width: '100%',
+    },
+    titleSettingContainer: {
+      marginHorizontal: 16,
+      marginTop: 16,
+    },
+    titleSettingText: {
+      fontFamily: theme.fontFamily.poppinsBold,
+      fontSize: 16,
+    },
+    containerStyle: {
+      paddingBottom: 30,
+    },
   });
 
   return styles;
@@ -379,6 +407,19 @@ const Profile = props => {
   const handleEditProfile = () => {
     const value = {dataDiri: user};
     return Actions.editProfile(value);
+  };
+
+  const openWebviewPage = url => {
+    if (!url) return;
+    return Actions.policy({url});
+  };
+
+  const renderBackgroundImage = () => {
+    return (
+      <View style={styles.backgroundProfile}>
+        <BackgroundProfileSvg />
+      </View>
+    );
   };
 
   const renderWelcome = () => {
@@ -577,7 +618,7 @@ const Profile = props => {
           Actions.notifications();
         }}>
         <Image style={styles.iconSetting} source={appConfig.iconNotification} />
-        <Text style={styles.textIcon}>Notifications</Text>
+        <Text style={styles.textIcon}>Notification Setting</Text>
       </TouchableOpacity>
     );
   };
@@ -607,6 +648,24 @@ const Profile = props => {
         }}>
         <Image style={styles.iconSetting} source={appConfig.iconFAQ} />
         <Text style={styles.textIcon}>FAQ</Text>
+      </TouchableOpacity>
+    );
+  };
+
+  const openContactUs = () => {
+    return Actions.contactUs();
+  };
+
+  const renderContactUs = () => {
+    if (appConfig.contactUsVersion === '') {
+      return null;
+    }
+    return (
+      <TouchableOpacity style={styles.viewOption} onPress={openContactUs}>
+        <View style={styles.iconSetting}>
+          <ContactSvg />
+        </View>
+        <Text style={styles.textIcon}>Contact Us</Text>
       </TouchableOpacity>
     );
   };
@@ -662,20 +721,20 @@ const Profile = props => {
     );
   };
 
-  const renderContactUs = () => {
-    if (awsConfig.COMPANY_NAME === 'Funtoast') {
-      return (
-        <TouchableOpacity
-          style={styles.viewOption}
-          onPress={() => {
-            Actions.contactUs();
-          }}>
-          <Image style={styles.iconSetting} source={appConfig.iconContactUs} />
-          <Text style={styles.textIcon}>Contact Us</Text>
-        </TouchableOpacity>
-      );
-    }
-  };
+  // const renderContactUs = () => {
+  //   if (awsConfig.COMPANY_NAME === 'Funtoast') {
+  //     return (
+  //       <TouchableOpacity
+  //         style={styles.viewOption}
+  //         onPress={() => {
+  //           Actions.contactUs();
+  //         }}>
+  //         <Image style={styles.iconSetting} source={appConfig.iconContactUs} />
+  //         <Text style={styles.textIcon}>Contact Us</Text>
+  //       </TouchableOpacity>
+  //     );
+  //   }
+  // };
 
   const renderLogout = () => {
     return (
@@ -703,52 +762,116 @@ const Profile = props => {
     );
   };
 
-  const renderSettingBatch1 = () => {
-    return (
-      <View>
-        {/* {renderMyDeliveryAddress()} */}
-        {renderEditProfile()}
-        {renderNotifications()}
-      </View>
-    );
+  // const renderSettingBatch1 = () => {
+  //   return (
+  //     <View>
+  //       {/* {renderMyDeliveryAddress()} */}
+  //       {renderEditProfile()}
+  //       {renderNotifications()}
+  //     </View>
+  //   );
+  // };
+
+  // const renderSettingBatch2 = () => {
+  //   return <View>{renderReferral()}</View>;
+  // };
+
+  // const renderSettingBatch3 = () => {
+  //   return (
+  //     <View>
+  //       {renderTermsAndConditions()}
+  //       {renderPrivacyPolicy()}
+  //       {renderContactUs()}
+  //       {renderFAQ()}
+  //       {renderDeleteAccount()}
+  //     </View>
+  //   );
+  // };
+
+  // const renderSettingBatch4 = () => {
+  //   return <View>{renderLogout()}</View>;
+  // };
+
+  // const renderSettings = () => {
+  //   return (
+  //     <View style={styles.viewSettings}>
+  //       {renderDivider()}
+  //       {renderMembershipQRCode()}
+  //       {renderDivider()}
+  //       {renderSettingBatch1()}
+  //       {renderDivider()}
+  //       {renderSettingBatch2()}
+  //       {renderDivider()}
+  //       {renderSettingBatch3()}
+  //       {renderDivider()}
+  //       {renderSettingBatch4()}
+  //     </View>
+  //   );
+  // };
+  const renderListMenu = (title, Icon, onPress) => (
+    <TouchableOpacity onPress={onPress} style={styles.viewOption}>
+      <View style={styles.iconSetting}>{Icon}</View>
+      <Text style={styles.textIcon}>{title} </Text>
+    </TouchableOpacity>
+  );
+
+  const renderTitleSettingV2 = title => (
+    <View style={styles.titleSettingContainer}>
+      <GlobalText style={styles.titleSettingText}>{title}</GlobalText>
+    </View>
+  );
+
+  const handleAdditionalSetting = () => {
+    const component = additionalSetting().additionalPolicy.map(data => {
+      if (!data.show) return null;
+      return (
+        <>
+          {renderListMenu(data.name, data.icon(), () =>
+            openWebviewPage(data.link),
+          )}
+        </>
+      );
+    });
+    return component;
   };
 
-  const renderSettingBatch2 = () => {
-    return <View>{renderReferral()}</View>;
+  const handleAdditionalSetting = () => {
+    const component = additionalSetting().additionalPolicy.map(data => {
+      if (data?.show) {
+        return renderListMenu(data.name, data.icon(), () =>
+          openWebviewPage(data.link),
+        );
+      }
+    });
+    return component;
   };
 
-  const renderSettingBatch3 = () => {
-    return (
-      <View>
-        {renderTermsAndConditions()}
-        {renderPrivacyPolicy()}
-        {renderContactUs()}
-        {renderFAQ()}
-        {renderDeleteAccount()}
-      </View>
-    );
-  };
-
-  const renderSettingBatch4 = () => {
-    return <View>{renderLogout()}</View>;
-  };
-
-  const renderSettings = () => {
-    return (
-      <View style={styles.viewSettings}>
-        {renderDivider()}
-        {renderMembershipQRCode()}
-        {renderDivider()}
-        {renderSettingBatch1()}
-        {renderDivider()}
-        {renderSettingBatch2()}
-        {renderDivider()}
-        {renderSettingBatch3()}
-        {renderDivider()}
-        {renderSettingBatch4()}
-      </View>
-    );
-  };
+  const renderSettingV2 = () => (
+    <View style={styles.viewSettings}>
+      {renderMembershipQRCode()}
+      {renderDivider()}
+      {renderTitleSettingV2('General')}
+      {renderEditProfile()}
+      {renderMyDeliveryAddress()}
+      {renderNotifications()}
+      {renderDivider()}
+      {renderTitleSettingV2('Payment Method')}
+      {renderListMenu('Credit Card', <CreditCard />)}
+      {renderDivider()}
+      {renderTitleSettingV2('Rewards')}
+      {renderListMenu('My Voucher', <Voucher />)}
+      {renderReferral()}
+      {renderDivider()}
+      {renderTitleSettingV2('Others')}
+      {renderListMenu('Store Location', <StoreSvg />)}
+      {handleAdditionalSetting()}
+      {renderTermsAndConditions()}
+      {renderFAQ()}
+      {renderListMenu('Contact Us', <ContactSvg />, openContactUs)}
+      {renderDivider()}
+      {renderLogout()}
+    </View>
+  );
 
   const renderDeleteAccountConfirmationDialog = () => {
     if (isOpenDeleteAccountModal) {
@@ -806,15 +929,14 @@ const Profile = props => {
   return (
     <SafeAreaView>
       <Body>
-        <ScrollView>
-          <LoadingScreen loading={isLoading} />
-          <Image
-            source={appConfig.imageBackgroundProfile}
-            resizeMode="contain"
-            style={styles.imageBackgroundProfile}
-          />
+        <LoadingScreen loading={isLoading} />
+        <Header title="Profile" isRemoveBackIcon />
+        <ScrollView
+          contentContainerStyle={styles.containerStyle}
+          style={styles.root}>
+          {renderBackgroundImage()}
           {renderProfileHeader()}
-          {renderSettings()}
+          {renderSettingV2()}
           {renderDeleteAccountConfirmationDialog()}
           {renderLogoutConfirmationDialog()}
           {renderMyECardModal()}

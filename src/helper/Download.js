@@ -47,7 +47,7 @@ export const downloadFile = (url, name, mimeType, message) => {
       useDownloadManager: true,
       notification: true,
       title: name,
-      path: `${path}/${name}${new Date().getTime()}.png`,
+      path: `${path}/${name}.png`,
       mime: mimeType,
     },
   })

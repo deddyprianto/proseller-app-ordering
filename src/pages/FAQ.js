@@ -16,7 +16,7 @@ import FieldSearch from '../components/fieldSearch';
 
 import {groupBy} from 'lodash';
 
-import {Header} from '../components/layout';
+import {Header, Body} from '../components/layout';
 import LoadingScreen from '../components/loadingScreen/LoadingScreen';
 
 const styles = StyleSheet.create({
@@ -27,6 +27,9 @@ const styles = StyleSheet.create({
   viewSearch: {
     marginHorizontal: 16,
     marginVertical: 20,
+  },
+  scrollContainerStyle: {
+    paddingBottom: 80,
   },
 });
 
@@ -100,14 +103,20 @@ const FAQ = () => {
       <View>
         <Header title="FAQs" />
       </View>
-      <ScrollView
-        stickyHeaderIndices={[0]}
-        refreshControl={
-          <RefreshControl onRefresh={() => loadData(true)} refreshing={false} />
-        }>
-        {renderSearch()}
-        <FAQList faqs={handleOutletSearch()} searchQuery={searchQuery} />
-      </ScrollView>
+      <Body>
+        <ScrollView
+          stickyHeaderIndices={[0]}
+          contentContainerStyle={styles.scrollContainerStyle}
+          refreshControl={
+            <RefreshControl
+              onRefresh={() => loadData(true)}
+              refreshing={false}
+            />
+          }>
+          {renderSearch()}
+          <FAQList faqs={handleOutletSearch()} searchQuery={searchQuery} />
+        </ScrollView>
+      </Body>
     </SafeAreaView>
   );
 };

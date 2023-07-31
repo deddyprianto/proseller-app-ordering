@@ -312,7 +312,7 @@ const Login = () => {
     <SafeAreaView style={styles.root}>
       <LoadingScreen loading={isLoading} />
       <Header isMiddleLogo />
-      <Body>
+      <Body style={styles.root}>
         <KeyboardAwareScrollView>
           <View style={styles.container}>
             <Text style={styles.textHeader}>Login Account</Text>

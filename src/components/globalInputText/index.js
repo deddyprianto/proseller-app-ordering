@@ -33,6 +33,7 @@ const useStyles = () => {
     inputStyle: editable => ({
       color: editable === false ? theme.colors.greyScale2 : 'black',
       width: '80%',
+      fontFamily: theme.fontFamily.poppinsRegular,
     }),
     buttonStyle: {
       flexDirection: 'row',
@@ -72,6 +73,16 @@ const useStyles = () => {
       backgroundColor: '#fafafa',
       zIndex: 3,
     },
+    countTextContainer: {
+      marginLeft: 'auto',
+      marginRight: 16,
+      marginTop: 5,
+    },
+    countText: {
+      fontSize: 12,
+      fontFamily: theme.fontFamily.poppinsMedium,
+      color: theme.colors.greyScale5,
+    },
   });
   return styles;
 };
@@ -94,6 +105,7 @@ const useStyles = () => {
  * @property {Function} onOpen
  * @property {Function} onClose
  * @property {Function}  onChangeItem
+ * @property {boolean}  showNumberLengthText
  */
 
 /**
@@ -176,6 +188,13 @@ const GlobalInputText = React.forwardRef((props, ref) => {
           </View>
         ) : null}
       </View>
+      {props.showNumberLengthText ? (
+        <View style={styles.countTextContainer}>
+          <GlobalText style={styles.countText}>
+            {props.value?.length || 0}/{props.maxLength}{' '}
+          </GlobalText>
+        </View>
+      ) : null}
       {props.isError ? (
         <View style={styles.errorContainer}>
           <GlobalText style={styles.textError}>

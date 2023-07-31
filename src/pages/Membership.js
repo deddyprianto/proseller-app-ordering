@@ -94,7 +94,7 @@ const Membership = () => {
   };
 
   const renderMembershipTitle = () => {
-    const dateExpiry = moment(myProgress.membershipExpiry).format(
+    const dateExpiry = moment(myProgress?.membershipExpiry).format(
       'DD MMMM YYYY',
     );
     return (
