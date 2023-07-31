@@ -4,6 +4,7 @@ import Theme from '../../theme/Theme';
 import GlobalText from '../globalText';
 import DropDownPicker from 'react-native-dropdown-picker';
 import ErrorInput from '../../assets/svg/ErorInputSvg';
+import {normalizeLayoutSizeHeight} from '../../helper/Layout';
 
 const useStyles = () => {
   const theme = Theme();
@@ -16,12 +17,13 @@ const useStyles = () => {
       borderWidth: isError ? 2 : 1,
       borderColor: isError ? '#EB4B41' : theme.colors.greyScale2,
       paddingHorizontal: 16,
-      paddingVertical: 13,
       borderRadius: 8,
       backgroundColor: editable === false ? '#F9F9F9' : 'white',
       justifyContent: 'space-between',
       alignItems: 'center',
       flexDirection: 'row',
+      height: normalizeLayoutSizeHeight(48),
+      flex: 1,
     }),
     labelStyle: {
       fontSize: 14,
@@ -34,6 +36,9 @@ const useStyles = () => {
       color: editable === false ? theme.colors.greyScale2 : 'black',
       width: '80%',
       fontFamily: theme.fontFamily.poppinsRegular,
+      paddingBottom: 0,
+      paddingTop: 0,
+      height: normalizeLayoutSizeHeight(48),
     }),
     buttonStyle: {
       flexDirection: 'row',
@@ -82,6 +87,9 @@ const useStyles = () => {
       fontSize: 12,
       fontFamily: theme.fontFamily.poppinsMedium,
       color: theme.colors.greyScale5,
+    },
+    placeholderDropdown: {
+      fontFamily: theme.fontFamily.poppinsMedium,
     },
   });
   return styles;
@@ -152,6 +160,8 @@ const GlobalInputText = React.forwardRef((props, ref) => {
         </View>
         <DropDownPicker
           placeholder={props.placeholder}
+          placeholderStyle={styles.placeholderDropdown}
+          labelStyle={styles.placeholderDropdown}
           items={props.items}
           defaultValue={props.defaultValue}
           style={[styles.dropdownContainerStyle]}
@@ -180,6 +190,7 @@ const GlobalInputText = React.forwardRef((props, ref) => {
         <TextInput
           ref={ref}
           style={styles.inputStyle(props.editable)}
+          textAlignVertical="center"
           {...props}
         />
         {props.isError ? (
