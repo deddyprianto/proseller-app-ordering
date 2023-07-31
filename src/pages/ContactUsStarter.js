@@ -14,6 +14,7 @@ import {
 import {Header} from '../components/layout';
 import appConfig from '../config/appConfig';
 import Theme from '../theme';
+import awsConfig from '../config/awsConfig';
 
 const useStyles = () => {
   const theme = Theme();
@@ -96,7 +97,7 @@ const useStyles = () => {
   return styles;
 };
 
-const ContactUsFuntoast = () => {
+const ContactUsStarter = () => {
   const styles = useStyles();
 
   const renderImage = () => {
@@ -117,7 +118,7 @@ const ContactUsFuntoast = () => {
     return (
       <TouchableOpacity
         onPress={() => {
-          Linking.openURL('https://www.funtoast.com.sg/contact/feedback/');
+          Linking.openURL(awsConfig.APP_LINK_FEEDBACK_URL);
         }}
         style={styles.viewReachOut}>
         <Text style={styles.textReachOut}>Reach Out</Text>
@@ -135,9 +136,11 @@ const ContactUsFuntoast = () => {
         <Text style={styles.textFeedback1}>For feedback, email us at</Text>
         <TouchableOpacity
           onPress={() => {
-            Linking.openURL('mailto:feedback@funtoast.com.sg');
+            Linking.openURL(`mailto:${awsConfig.APP_EMAIL_FEEDBACK}`);
           }}>
-          <Text style={styles.textFeedback2}>feedback@funtoast.com.sg</Text>
+          <Text style={styles.textFeedback2}>
+            {awsConfig.APP_EMAIL_FEEDBACK}
+          </Text>
         </TouchableOpacity>
       </View>
     );
@@ -151,9 +154,9 @@ const ContactUsFuntoast = () => {
         </Text>
         <TouchableOpacity
           onPress={() => {
-            Linking.openURL('mailto:design@funtoast.com.sg');
+            Linking.openURL(`mailto:${awsConfig.APP_EMAIL}`);
           }}>
-          <Text style={styles.textEmail2}>design@funtoast.com.sg</Text>
+          <Text style={styles.textEmail2}>{awsConfig.APP_EMAIL}</Text>
         </TouchableOpacity>
       </View>
     );
@@ -174,4 +177,4 @@ const ContactUsFuntoast = () => {
   );
 };
 
-export default ContactUsFuntoast;
+export default ContactUsStarter;

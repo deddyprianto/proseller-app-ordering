@@ -653,15 +653,15 @@ const Profile = props => {
   };
 
   const openContactUs = () => {
-    if (awsConfig.COMPANY_NAME === 'Funtoast') {
-      return Actions.contactUsFuntoast();
+    if (appConfig.contactUsVersion === 'starter') {
+      return Actions.contactUsStarter();
     } else {
       return Actions.contactUsBasic();
     }
   };
 
   const renderContactUs = () => {
-    if (appConfig.contactUsVersion === '') {
+    if (!appConfig.contactUsVersion) {
       return null;
     }
     return (
@@ -797,7 +797,7 @@ const Profile = props => {
       {renderTermsAndConditions()}
       {renderFAQ()}
       {renderPrivacyPolicy()}
-      {renderListMenu('Contact Us', <ContactSvg />, openContactUs)}
+      {renderContactUs()}
       {renderDivider()}
       {renderLogout()}
     </View>
