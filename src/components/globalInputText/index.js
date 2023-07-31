@@ -49,6 +49,7 @@ const useStyles = () => {
     },
     iconStyle: {
       marginLeft: 'auto',
+      marginTop: 6,
     },
     textInputContainer: {
       width: '100%',
@@ -56,6 +57,7 @@ const useStyles = () => {
     },
     valueBtnText: editable => ({
       color: editable === false ? theme.colors.greyScale2 : 'black',
+      marginTop: 6,
     }),
     errorContainer: {
       paddingHorizontal: 16,
@@ -93,6 +95,9 @@ const useStyles = () => {
     },
     placeholderDropdown: {
       fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    btnHeight: {
+      height: normalizeLayoutSizeHeight(48),
     },
   });
   return styles;
@@ -139,7 +144,11 @@ const GlobalInputText = React.forwardRef((props, ref) => {
         <TouchableOpacity
           onPress={props.onPressBtn}
           disabled={props.editable === false}
-          style={[styles.inpurContainer(props.editable), styles.buttonStyle]}>
+          style={[
+            styles.inpurContainer(props.editable),
+            styles.buttonStyle,
+            styles.btnHeight,
+          ]}>
           <GlobalText style={styles.valueBtnText(props.editable)}>
             {props.value || props.defaultValue}
           </GlobalText>

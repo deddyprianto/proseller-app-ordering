@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, StyleSheet, Image} from 'react-native';
+import {View, StyleSheet, Image, Pressable} from 'react-native';
 import Theme from '../../../theme/Theme';
 import Logo from '../../../assets/img/logo.png';
 import {
@@ -10,6 +10,8 @@ import GlobalText from '../../../components/globalText';
 import moment from 'moment';
 import CalendarSvg from '../../../assets/svg/CalendareSvg';
 import CalendarWhite from '../../../assets/svg/CalenderWhite';
+import appConfig from '../../../config/appConfig';
+import {Actions} from 'react-native-router-flux';
 const useStyles = () => {
   const {colors, fontFamily} = Theme();
   const styles = StyleSheet.create({
@@ -55,12 +57,27 @@ const useStyles = () => {
 };
 
 const ListVoucher = ({item}) => {
+  console.log({item}, 'buaya');
   const {styles} = useStyles();
+
+  const handleImage = () => {
+    if (item?.image) {
+      return {uri: item?.image};
+    }
+    return appConfig.appImageNull;
+  };
+
+  const onPress = () => {
+    Actions.voucher({
+      dataVoucher: item,
+    });
+  };
+
   return (
-    <View style={styles.cardContainer}>
+    <Pressable onPress={onPress} style={styles.cardContainer}>
       <View>
         <View style={styles.imageContainer}>
-          <Image style={styles.imageStyle} source={Logo} />
+          <Image style={styles.imageStyle} source={handleImage()} />
         </View>
       </View>
       <View style={styles.content}>
@@ -76,7 +93,7 @@ const ListVoucher = ({item}) => {
           </GlobalText>
         </View>
       </View>
-    </View>
+    </Pressable>
   );
 };
 

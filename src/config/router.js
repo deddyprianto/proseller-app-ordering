@@ -139,7 +139,7 @@ import Payment from '../pages/Payment';
 import ContactUs from '../pages/ContactUs';
 import Membership from '../pages/Membership';
 import MembershipAllTier from '../pages/MembershipAllTier';
-import VoucherDetailV2 from '../pages/VoucherDetailV2';
+import VoucherDetailV2 from '../pages/VoucherDetailV2/VoucherDetailV2';
 
 const MyTransitionSpec = {
   duration: 200,

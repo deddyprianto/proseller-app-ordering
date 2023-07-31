@@ -1,18 +1,11 @@
 import React from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  View,
-  StyleSheet,
-  useWindowDimensions,
-} from 'react-native';
-import GlobalText from '../../components/globalText';
+import {SafeAreaView, StyleSheet, useWindowDimensions} from 'react-native';
 import {TabView, SceneMap, TabBar} from 'react-native-tab-view';
 
 import Theme from '../../theme/Theme';
 import {Header} from '../../components/layout';
 import MyVoucher from './MyVoucher';
-import RedeemVouchers from '../../components/vouchers/RedeemVouchers';
+import RedeemVouchers from './RedeemVoucher';
 
 const useStyles = () => {
   const {colors} = Theme();

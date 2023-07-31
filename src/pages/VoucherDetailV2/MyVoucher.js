@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React from 'react';
 import {FlatList, ScrollView, StyleSheet} from 'react-native';
 import GlobalText from '../../components/globalText';
@@ -13,14 +14,21 @@ const styles = StyleSheet.create({
 
 const MyVoucher = () => {
   const dispatch = useDispatch();
+  const [loading, setLoading] = React.useState(false);
   const voucherLust = useSelector(
     state => state.accountsReducer.myVouchers?.vouchers,
   );
 
   const renderList = ({item, index}) => <ListVoucher item={item} key={index} />;
 
+  const onRefresh = async () => {
+    setLoading(true);
+    await dispatch(myVouchers());
+    setLoading(false);
+  };
+
   React.useEffect(() => {
-    dispatch(myVouchers());
+    onRefresh();
   }, []);
 
   return (
@@ -28,6 +36,8 @@ const MyVoucher = () => {
       contentContainerStyle={styles.scrollContainer}
       data={voucherLust}
       renderItem={renderList}
+      onRefresh={onRefresh}
+      refreshing={loading}
     />
   );
 };

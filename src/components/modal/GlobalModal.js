@@ -62,7 +62,7 @@ const useStyles = () => {
  */
 const GlobalModal = props => {
   const {styles} = useStyles();
-  const [isReachBottom, setIsReachBottom] = React.useState(false);
+  const [, setIsReachBottom] = React.useState(false);
 
   const onScroll = ({nativeEvent}) => {
     const {layoutMeasurement, contentOffset, contentSize} = nativeEvent;
@@ -78,14 +78,6 @@ const GlobalModal = props => {
         props.isCloseToBottom(true);
       }
       setIsReachBottom(true);
-    } else {
-      if (
-        props.isCloseToBottom &&
-        typeof props.isCloseToBottom === 'function'
-      ) {
-        props.isCloseToBottom(false);
-      }
-      setIsReachBottom(false);
     }
   };
 
