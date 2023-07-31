@@ -12,7 +12,7 @@ const useStyles = () => {
     inputParentContainer: {
       marginTop: 16,
     },
-    inpurContainer: (editable, isError) => ({
+    inpurContainer: (editable, isError, numberOfLines) => ({
       marginTop: 4,
       borderWidth: isError ? 2 : 1,
       borderColor: isError ? '#EB4B41' : theme.colors.greyScale2,
@@ -22,7 +22,10 @@ const useStyles = () => {
       justifyContent: 'space-between',
       alignItems: 'center',
       flexDirection: 'row',
-      height: normalizeLayoutSizeHeight(48),
+      height:
+        numberOfLines && numberOfLines > 0
+          ? 'auto'
+          : normalizeLayoutSizeHeight(48),
       flex: 1,
     }),
     labelStyle: {
@@ -32,13 +35,16 @@ const useStyles = () => {
     mandatoryStyle: {
       color: '#CE1111',
     },
-    inputStyle: editable => ({
+    inputStyle: (editable, numberOfLines) => ({
       color: editable === false ? theme.colors.greyScale2 : 'black',
       width: '80%',
       fontFamily: theme.fontFamily.poppinsRegular,
       paddingBottom: 0,
       paddingTop: 0,
-      height: normalizeLayoutSizeHeight(48),
+      height:
+        numberOfLines && numberOfLines > 0
+          ? 'auto'
+          : normalizeLayoutSizeHeight(48),
     }),
     buttonStyle: {
       flexDirection: 'row',
@@ -186,10 +192,15 @@ const GlobalInputText = React.forwardRef((props, ref) => {
           ) : null}
         </GlobalText>
       </View>
-      <View style={styles.inpurContainer(props.editable, props.isError)}>
+      <View
+        style={styles.inpurContainer(
+          props.editable,
+          props.isError,
+          props.numberOfLines,
+        )}>
         <TextInput
           ref={ref}
-          style={styles.inputStyle(props.editable)}
+          style={styles.inputStyle(props.editable, props.numberOfLines)}
           textAlignVertical="center"
           {...props}
         />
