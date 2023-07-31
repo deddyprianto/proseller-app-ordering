@@ -1,3 +1,3 @@
-import additionalSetting from '../../settings/fareastflora/settings';
+import additionalSetting from '../../settings/acemart/settings';
 
 export default additionalSetting;

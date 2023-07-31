@@ -96,7 +96,7 @@ const useStyles = () => {
   return styles;
 };
 
-const ContactUs = () => {
+const ContactUsFuntoast = () => {
   const styles = useStyles();
 
   const renderImage = () => {
@@ -174,4 +174,4 @@ const ContactUs = () => {
   );
 };
 
-export default ContactUs;
+export default ContactUsFuntoast;

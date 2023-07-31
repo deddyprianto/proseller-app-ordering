@@ -653,7 +653,11 @@ const Profile = props => {
   };
 
   const openContactUs = () => {
-    return Actions.contactUs();
+    if (awsConfig.COMPANY_NAME === 'Funtoast') {
+      return Actions.contactUsFuntoast();
+    } else {
+      return Actions.contactUsBasic();
+    }
   };
 
   const renderContactUs = () => {
@@ -721,21 +725,6 @@ const Profile = props => {
     );
   };
 
-  // const renderContactUs = () => {
-  //   if (awsConfig.COMPANY_NAME === 'Funtoast') {
-  //     return (
-  //       <TouchableOpacity
-  //         style={styles.viewOption}
-  //         onPress={() => {
-  //           Actions.contactUs();
-  //         }}>
-  //         <Image style={styles.iconSetting} source={appConfig.iconContactUs} />
-  //         <Text style={styles.textIcon}>Contact Us</Text>
-  //       </TouchableOpacity>
-  //     );
-  //   }
-  // };
-
   const renderLogout = () => {
     return (
       <TouchableOpacity
@@ -762,52 +751,6 @@ const Profile = props => {
     );
   };
 
-  // const renderSettingBatch1 = () => {
-  //   return (
-  //     <View>
-  //       {/* {renderMyDeliveryAddress()} */}
-  //       {renderEditProfile()}
-  //       {renderNotifications()}
-  //     </View>
-  //   );
-  // };
-
-  // const renderSettingBatch2 = () => {
-  //   return <View>{renderReferral()}</View>;
-  // };
-
-  // const renderSettingBatch3 = () => {
-  //   return (
-  //     <View>
-  //       {renderTermsAndConditions()}
-  //       {renderPrivacyPolicy()}
-  //       {renderContactUs()}
-  //       {renderFAQ()}
-  //       {renderDeleteAccount()}
-  //     </View>
-  //   );
-  // };
-
-  // const renderSettingBatch4 = () => {
-  //   return <View>{renderLogout()}</View>;
-  // };
-
-  // const renderSettings = () => {
-  //   return (
-  //     <View style={styles.viewSettings}>
-  //       {renderDivider()}
-  //       {renderMembershipQRCode()}
-  //       {renderDivider()}
-  //       {renderSettingBatch1()}
-  //       {renderDivider()}
-  //       {renderSettingBatch2()}
-  //       {renderDivider()}
-  //       {renderSettingBatch3()}
-  //       {renderDivider()}
-  //       {renderSettingBatch4()}
-  //     </View>
-  //   );
-  // };
   const renderListMenu = (title, Icon, onPress) => (
     <TouchableOpacity onPress={onPress} style={styles.viewOption}>
       <View style={styles.iconSetting}>{Icon}</View>
@@ -820,20 +763,6 @@ const Profile = props => {
       <GlobalText style={styles.titleSettingText}>{title}</GlobalText>
     </View>
   );
-
-  const handleAdditionalSetting = () => {
-    const component = additionalSetting().additionalPolicy.map(data => {
-      if (!data.show) return null;
-      return (
-        <>
-          {renderListMenu(data.name, data.icon(), () =>
-            openWebviewPage(data.link),
-          )}
-        </>
-      );
-    });
-    return component;
-  };
 
   const handleAdditionalSetting = () => {
     const component = additionalSetting().additionalPolicy.map(data => {
@@ -867,6 +796,7 @@ const Profile = props => {
       {handleAdditionalSetting()}
       {renderTermsAndConditions()}
       {renderFAQ()}
+      {renderPrivacyPolicy()}
       {renderListMenu('Contact Us', <ContactSvg />, openContactUs)}
       {renderDivider()}
       {renderLogout()}

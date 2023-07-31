@@ -9,6 +9,7 @@ const appConfig = {
 
   // other setting
   descriptionLineProduct: '2',
+  contactUsVersion: '',
 
   // image company
   appImageNull: require('../assets/img/logo.png'),

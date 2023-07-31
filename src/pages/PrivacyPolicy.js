@@ -26,7 +26,7 @@ const useStyles = () => {
 const PrivacyPolicy = () => {
   const styles = useStyles();
   const privacyPolicy = useSelector(
-    state => state.settingReducer.privacyPolicySettings.privacyPolicy,
+    state => state.settingReducer?.privacyPolicySettings?.privacyPolicy,
   );
 
   return (
