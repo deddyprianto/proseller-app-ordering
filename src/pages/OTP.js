@@ -57,6 +57,7 @@ const useStyles = () => {
     },
     textNext: {
       color: 'white',
+      fontFamily: theme.fontFamily.poppinsMedium,
     },
     textVerify: {
       marginTop: 8,
