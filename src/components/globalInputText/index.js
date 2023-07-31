@@ -22,10 +22,6 @@ const useStyles = () => {
       justifyContent: 'space-between',
       alignItems: 'center',
       flexDirection: 'row',
-      height:
-        numberOfLines && numberOfLines > 0
-          ? 'auto'
-          : normalizeLayoutSizeHeight(48),
       flex: 1,
       paddingTop: numberOfLines && numberOfLines > 0 ? 8 : 0,
     }),
