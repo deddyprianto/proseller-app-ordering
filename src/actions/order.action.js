@@ -873,6 +873,11 @@ export const settleOrder = (payload, url) => {
           type: 'TABLE_TYPE',
           tableType: undefined,
         });
+
+        dispatch({
+          type: 'DATA_CART_SINGLE',
+          cartSingle: response?.response?.data,
+        });
         // dispatch({
         //   type: 'SELECTED_ACCOUNT',
         //   selectedAccount: undefined,
@@ -2070,5 +2075,36 @@ export const setTimeSlotSelected = ({date, time}) => {
       type: 'ORDERING_DATE_TIME',
       orderingDateTimeSelected: payload,
     });
+  };
+};
+
+export const getPendingOrderById = id => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      let response = await fetchApiOrder(
+        `/cart/pending/${id}`,
+        'GET',
+        null,
+        200,
+        token,
+      );
+
+      if (response?.success) {
+        dispatch({
+          type: 'DATA_CART_SINGLE',
+          cartSingle: response?.response?.data,
+        });
+      }
+      return response?.response?.data;
+    } catch (error) {
+      return error;
+    }
   };
 };

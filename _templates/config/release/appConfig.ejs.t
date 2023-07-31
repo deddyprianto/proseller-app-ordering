@@ -13,6 +13,7 @@ const appConfig = {
 
   // other setting
   descriptionLineProduct: '<%= productLine %>',
+  contactUsVersion: '<%= contactUsVersion %>',
 
   // image company
   appImageNull: require('../assets/img/logo.png'),
@@ -154,6 +155,7 @@ const appConfig = {
   iconStepSend: require('../assets/img/icon-step-send.png'),
 
   iconTermsAndConditions: require('../assets/img/icon-terms-and-conditions.png'),
+  iconTime: require('../assets/img/icon-time.png'),
 
   iconVoucher: require('../assets/img/icon-voucher.png'),
 

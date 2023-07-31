@@ -113,12 +113,13 @@ const Register = () => {
   );
 
   const onTickCheckbox = (key, value) => {
-    console.log(key, value, 'lupis');
     setApprovedData({...approvedData, [key]: value});
   };
 
   useEffect(() => {
-    if (loginSettings.loginByEmail) {
+    if (loginSettings.loginByEmail && loginSettings.loginByMobile) {
+      setRegisterMethod('phoneNumber');
+    } else if (loginSettings.loginByEmail) {
       setRegisterMethod('email');
     } else {
       setRegisterMethod('phoneNumber');
@@ -126,7 +127,6 @@ const Register = () => {
 
     setCountryCode(awsConfig.phoneNumberCode);
   }, [loginSettings]);
-
   const handleCheckAccount = async () => {
     let payload = {};
     let value = '';
@@ -156,7 +156,7 @@ const Register = () => {
         }),
       );
     } else {
-      Actions.registerForm({registerMethod, inputValue: value});
+      Actions.registerForm({registerMethod, inputValue: value, approvedData});
     }
 
     setIsLoading(false);
@@ -269,7 +269,10 @@ const Register = () => {
           {appConfig.appName === 'fareastflora' ? (
             <RegisterV2
               emailValue={email}
+              phoneValue={phoneNumber}
               onChangeEmail={value => setEmail(value)}
+              onChangeCountryCode={value => setCountryCode(value)}
+              onChangePhoneNumber={value => setPhoneNumber(value)}
               onNext={handleCheckAccount}
               onTickCheckbox={onTickCheckbox}
               checkboxValue={approvedData}

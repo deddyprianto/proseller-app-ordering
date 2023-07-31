@@ -122,11 +122,14 @@ const useStyles = () => {
     phoneContainer: {
       marginTop: 16,
     },
+    messageText: {
+      color: '#438E49',
+    },
   });
   return styles;
 };
 
-const RegisterForm = ({registerMethod, inputValue}) => {
+const RegisterForm = ({registerMethod, inputValue, approvedData}) => {
   const styles = useStyles();
   const dispatch = useDispatch();
   const [countryCode, setCountryCode] = useState('');
@@ -140,7 +143,6 @@ const RegisterForm = ({registerMethod, inputValue}) => {
   const [gender, setGender] = React.useState(null);
   const [isInitField, setIsInitField] = React.useState(false);
   const [address, setAddress] = React.useState('');
-
   const genderItems = [
     {
       label: 'Male',
@@ -200,6 +202,8 @@ const RegisterForm = ({registerMethod, inputValue}) => {
       email: email,
       phoneNumber: phone,
       registerMethod,
+      optIn: approvedData.consent,
+      acceptPrivacyAndTerms: approvedData.privacyTerm,
     };
     payload = {...payload, ...newCustomKey};
     setIsLoading(true);
@@ -443,7 +447,7 @@ const RegisterForm = ({registerMethod, inputValue}) => {
       <View>
         <GlobalText style={styles.messageStyleBtm}>
           You will receive 4-digit verification code via {method} at{' '}
-          <GlobalText style={[styles.messageStyleBtm, styles.primaryText]}>
+          <GlobalText style={[styles.messageStyleBtm, styles.messageText]}>
             {value}{' '}
           </GlobalText>
         </GlobalText>

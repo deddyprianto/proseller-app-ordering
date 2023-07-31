@@ -40,6 +40,7 @@ import {getUserProfile} from '../actions/user.action';
 import {dataPromotion} from '../actions/promotion.action';
 import {Body} from '../components/layout';
 import {getTermsConditions} from '../actions/order.action';
+import {normalizeLayoutSizeHeight} from '../helper/Layout';
 
 const useStyles = () => {
   const theme = Theme();
@@ -105,7 +106,7 @@ const useStyles = () => {
     },
     viewMenuBar: {
       elevation: 2,
-      marginTop: 16,
+      marginTop: normalizeLayoutSizeHeight(32),
       paddingVertical: 16,
       borderRadius: 8,
       marginHorizontal: 16,
@@ -445,7 +446,7 @@ const HomeRetail = () => {
   };
 
   const renderBanner = () => {
-    return <Banner bottom={-12} />;
+    return <Banner bottom={normalizeLayoutSizeHeight(-26)} />;
   };
 
   const renderProductCategoryList = () => {
