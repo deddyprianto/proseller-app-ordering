@@ -103,6 +103,7 @@ const ContactUsBasic = () => {
     setIsloading(true);
     const response = await dispatch(contactUsHandle(payload));
     if (response.success) {
+      setPayload({});
       setType('success');
     } else {
       setType('error');
@@ -139,17 +140,20 @@ const ContactUsBasic = () => {
             isMandatory
             label="Name"
             placeholder="Enter your name"
+            value={payload.name || ''}
             onChangeText={val => onChangeField('name', val)}
           />
           <GlobalInputText
             isMandatory
             label="Email"
             placeholder="Enter your email"
+            value={payload.from || ''}
             onChangeText={val => onChangeField('from', val)}
           />
           <GlobalInputText
             isMandatory
             label="Subject"
+            value={payload.subject || ''}
             placeholder="Tell us the subject of your message."
             onChangeText={val => onChangeField('subject', val)}
           />
@@ -162,7 +166,7 @@ const ContactUsBasic = () => {
             textAlignVertical="top"
             onChangeText={val => onChangeField('message', val)}
             showNumberLengthText
-            value={payload.message}
+            value={payload.message || ''}
             maxLength={2000}
           />
         </KeyboardAvoidingView>

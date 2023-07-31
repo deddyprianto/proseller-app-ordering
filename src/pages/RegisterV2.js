@@ -11,6 +11,7 @@ import {Actions} from 'react-native-router-flux';
 import GlobalModal from '../components/modal/GlobalModal';
 import {useSelector} from 'react-redux';
 import {emailValidation} from '../helper/Validation';
+import FieldPhoneNumberInput from '../components/fieldPhoneNumberInput/FieldPhoneNumberInput';
 const useStyles = () => {
   const {colors, fontFamily} = Theme();
   const styles = StyleSheet.create({
@@ -54,6 +55,13 @@ const useStyles = () => {
       justifyContent: 'center',
       alignItems: 'center',
     },
+    titleModal: {
+      fontSize: 18,
+      fontFamily: fontFamily.poppinsMedium,
+    },
+    privacyText: {
+      color: '#438E49',
+    },
   });
   return {styles, colors, fontFamily};
 };
@@ -66,6 +74,9 @@ const useStyles = () => {
  * @property {Function} onNext
  * @property {Function} onTickCheckbox
  * @property {Object} checkboxValue
+ * @property {string} phoneValue
+ * @property {Function} onChangeCountryCode
+ * @property {Function} onChangePhoneNumber
  */
 
 /**
@@ -79,6 +90,9 @@ const RegisterV2 = props => {
   const inputRef = React.useRef();
   const orderSetting = useSelector(
     state => state.orderReducer?.orderingSetting?.orderingSetting?.settings,
+  );
+  const loginSettings = useSelector(
+    state => state.settingReducer.loginSettings,
   );
   const [emailNotValid, setEmailNotValid] = React.useState(false);
   const openLoginPage = () => {
@@ -96,7 +110,6 @@ const RegisterV2 = props => {
       inputRef.current?.focus();
     }
   }, []);
-
   React.useEffect(() => {
     if (props.emailValue && typeof props.emailValue === 'string') {
       setEmailNotValid(!emailValidation(props.emailValue));
@@ -126,6 +139,68 @@ const RegisterV2 = props => {
     }
   };
 
+  const renderPhoneInput = () => (
+    <FieldPhoneNumberInput
+      type="phone"
+      label="Phone Number"
+      value={props.phoneValue}
+      placeholder="Phone Number"
+      onChangeCountryCode={props.onChangeCountryCode}
+      onChange={props.onChangePhoneNumber}
+      inputLabel={'Mobile Phone'}
+      isMandatory
+      withoutFlag={true}
+    />
+  );
+
+  const renderEmailInput = () => (
+    <GlobalInputText
+      placeholder="Enter your email"
+      label="Email"
+      isMandatory
+      onChangeText={props.onChangeEmail}
+      isError={emailNotValid && props.emailValue.length > 0}
+      errorMessage="Please enter a valid email address."
+      ref={inputRef}
+    />
+  );
+
+  const emailSettingOn = () => {
+    return loginSettings?.loginByEmail === true;
+  };
+
+  const phoneSettingOn = () => {
+    return loginSettings?.loginByMobile === true;
+  };
+
+  const handleCheckDefaultLogin = () => {
+    if (phoneSettingOn() && emailSettingOn()) {
+      return renderPhoneInput();
+    }
+    if (emailSettingOn() && !phoneSettingOn()) {
+      return renderEmailInput();
+    }
+    if (!emailSettingOn() && phoneSettingOn()) {
+      return renderPhoneInput();
+    }
+  };
+
+  const handleDisableNextButton = () => {
+    if (props?.checkboxValue.privacyTerm === false) {
+      return true;
+    }
+    if (emailSettingOn() && phoneSettingOn() && props.phoneValue.length >= 6) {
+      return false;
+    }
+    if (emailSettingOn() && props.emailValue.length > 1) {
+      return false;
+    }
+    if (phoneSettingOn() && props.phoneValue.length >= 6) {
+      return false;
+    }
+    return true;
+  };
+
   return (
     <View style={styles.registerContainer}>
       <View>
@@ -134,17 +209,7 @@ const RegisterV2 = props => {
       <View style={styles.startedStyle}>
         <GlobalText>Let’s get started!</GlobalText>
       </View>
-      <View style={styles.inputContianer}>
-        <GlobalInputText
-          placeholder="Enter your email"
-          label="Email"
-          isMandatory
-          onChangeText={props.onChangeEmail}
-          isError={emailNotValid && props.emailValue.length > 0}
-          errorMessage="Please enter a valid email address."
-          ref={inputRef}
-        />
-      </View>
+      <View style={styles.inputContianer}>{handleCheckDefaultLogin()}</View>
       <View style={styles.checkBoxParent}>
         <View style={styles.checkBoxContainer}>
           <View style={styles.boxContainer}>
@@ -163,13 +228,13 @@ const RegisterV2 = props => {
             I agree to all{' '}
             <GlobalText
               onPress={() => handleOpenType('terms')}
-              style={styles.clickableText}>
+              style={styles.privacyText}>
               Terms and Conditions
             </GlobalText>{' '}
             and
             <GlobalText
               onPress={() => handleOpenType('privacy')}
-              style={styles.clickableText}>
+              style={styles.privacyText}>
               {' '}
               Privacy Policy
             </GlobalText>
@@ -197,10 +262,7 @@ const RegisterV2 = props => {
         </View>
         <View>
           <GlobalButton
-            disabled={
-              props.emailValue === '' ||
-              props?.checkboxValue.privacyTerm === false
-            }
+            disabled={handleDisableNextButton()}
             onPress={props.onNext}
             title="Next"
           />
@@ -209,7 +271,7 @@ const RegisterV2 = props => {
           <TouchableOpacity onPress={openLoginPage}>
             <GlobalText>
               Already have account?{' '}
-              <GlobalText style={styles.clickableText}> Login</GlobalText>
+              <GlobalText style={styles.privacyText}> Login</GlobalText>
             </GlobalText>
           </TouchableOpacity>
         </View>
@@ -218,6 +280,7 @@ const RegisterV2 = props => {
         title="Terms and Conditions"
         closeModal={closeModal}
         isCloseToBottom={onButtonActive}
+        titleStyle={styles.titleModal}
         stickyBottom={
           <View>
             <GlobalButton
@@ -232,6 +295,7 @@ const RegisterV2 = props => {
       </GlobalModal>
       <GlobalModal
         title="Privacy Policy"
+        titleStyle={styles.titleModal}
         stickyBottom={
           <View>
             <GlobalButton
