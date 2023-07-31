@@ -4,6 +4,7 @@ import Theme from '../../theme/Theme';
 import GlobalText from '../globalText';
 import DropDownPicker from 'react-native-dropdown-picker';
 import ErrorInput from '../../assets/svg/ErorInputSvg';
+import {normalizeLayoutSizeHeight} from '../../helper/Layout';
 
 const useStyles = () => {
   const theme = Theme();
@@ -11,17 +12,18 @@ const useStyles = () => {
     inputParentContainer: {
       marginTop: 16,
     },
-    inpurContainer: (editable, isError) => ({
+    inpurContainer: (editable, isError, numberOfLines) => ({
       marginTop: 4,
       borderWidth: isError ? 2 : 1,
       borderColor: isError ? '#EB4B41' : theme.colors.greyScale2,
       paddingHorizontal: 16,
-      paddingVertical: 13,
       borderRadius: 8,
       backgroundColor: editable === false ? '#F9F9F9' : 'white',
       justifyContent: 'space-between',
       alignItems: 'center',
       flexDirection: 'row',
+      flex: 1,
+      paddingTop: numberOfLines && numberOfLines > 0 ? 8 : 0,
     }),
     labelStyle: {
       fontSize: 14,
@@ -30,10 +32,16 @@ const useStyles = () => {
     mandatoryStyle: {
       color: '#CE1111',
     },
-    inputStyle: editable => ({
+    inputStyle: (editable, numberOfLines) => ({
       color: editable === false ? theme.colors.greyScale2 : 'black',
       width: '80%',
       fontFamily: theme.fontFamily.poppinsRegular,
+      paddingBottom: 0,
+      paddingTop: 0,
+      height:
+        numberOfLines && numberOfLines > 0
+          ? 'auto'
+          : normalizeLayoutSizeHeight(48),
     }),
     buttonStyle: {
       flexDirection: 'row',
@@ -82,6 +90,9 @@ const useStyles = () => {
       fontSize: 12,
       fontFamily: theme.fontFamily.poppinsMedium,
       color: theme.colors.greyScale5,
+    },
+    placeholderDropdown: {
+      fontFamily: theme.fontFamily.poppinsMedium,
     },
   });
   return styles;
@@ -152,6 +163,8 @@ const GlobalInputText = React.forwardRef((props, ref) => {
         </View>
         <DropDownPicker
           placeholder={props.placeholder}
+          placeholderStyle={styles.placeholderDropdown}
+          labelStyle={styles.placeholderDropdown}
           items={props.items}
           defaultValue={props.defaultValue}
           style={[styles.dropdownContainerStyle]}
@@ -176,10 +189,16 @@ const GlobalInputText = React.forwardRef((props, ref) => {
           ) : null}
         </GlobalText>
       </View>
-      <View style={styles.inpurContainer(props.editable, props.isError)}>
+      <View
+        style={styles.inpurContainer(
+          props.editable,
+          props.isError,
+          props.numberOfLines,
+        )}>
         <TextInput
           ref={ref}
-          style={styles.inputStyle(props.editable)}
+          style={styles.inputStyle(props.editable, props.numberOfLines)}
+          textAlignVertical="center"
           {...props}
         />
         {props.isError ? (

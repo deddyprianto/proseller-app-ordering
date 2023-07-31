@@ -122,6 +122,9 @@ const useStyles = () => {
     phoneContainer: {
       marginTop: 16,
     },
+    messageText: {
+      color: '#438E49',
+    },
   });
   return styles;
 };
@@ -444,7 +447,7 @@ const RegisterForm = ({registerMethod, inputValue, approvedData}) => {
       <View>
         <GlobalText style={styles.messageStyleBtm}>
           You will receive 4-digit verification code via {method} at{' '}
-          <GlobalText style={[styles.messageStyleBtm, styles.primaryText]}>
+          <GlobalText style={[styles.messageStyleBtm, styles.messageText]}>
             {value}{' '}
           </GlobalText>
         </GlobalText>

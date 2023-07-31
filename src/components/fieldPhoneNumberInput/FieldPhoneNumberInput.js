@@ -9,6 +9,7 @@ import awsConfig from '../../config/awsConfig';
 import Theme from '../../theme';
 import GlobalText from '../globalText';
 import ArrowBottom from '../../assets/svg/ArrowBottom';
+import {normalizeLayoutSizeHeight} from '../../helper/Layout';
 
 const useStyles = () => {
   const theme = Theme();
@@ -19,7 +20,7 @@ const useStyles = () => {
       alignItems: 'center',
       borderWidth: 1,
       borderRadius: 8,
-      paddingVertical: 10,
+      paddingVertical: normalizeLayoutSizeHeight(2),
       paddingHorizontal: 16,
       borderColor: theme.colors.border1,
       backgroundColor: theme.colors.background,
@@ -70,6 +71,7 @@ const useStyles = () => {
       color: theme.colors.text1,
       fontSize: theme.fontSize[14],
       fontFamily: theme.fontFamily.poppinsRegular,
+      height: normalizeLayoutSizeHeight(46),
     },
     divider: {
       width: 1,
