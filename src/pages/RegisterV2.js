@@ -182,27 +182,16 @@ const RegisterV2 = props => {
     if (props?.checkboxValue.privacyTerm === false) {
       return true;
     }
-    if (emailSettingOn() && phoneSettingOn()) {
-      if (props.phoneValue.length >= 6) {
-        return false;
-      } else {
-        return true;
-      }
+    if (emailSettingOn() && phoneSettingOn() && props.phoneValue.length >= 6) {
+      return false;
     }
-    if (emailSettingOn()) {
-      if (props.emailValue.length > 1) {
-        return false;
-      } else {
-        return true;
-      }
+    if (emailSettingOn() && props.emailValue.length > 1) {
+      return false;
     }
-    if (phoneSettingOn()) {
-      if (props.phoneValue.length >= 6) {
-        return false;
-      } else {
-        return true;
-      }
+    if (phoneSettingOn() && props.phoneValue.length >= 6) {
+      return false;
     }
+    return true;
   };
 
   return (

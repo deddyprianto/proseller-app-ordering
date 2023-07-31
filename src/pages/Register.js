@@ -127,7 +127,6 @@ const Register = () => {
 
     setCountryCode(awsConfig.phoneNumberCode);
   }, [loginSettings]);
-  console.log(registerMethod, 'sulit');
   const handleCheckAccount = async () => {
     let payload = {};
     let value = '';
