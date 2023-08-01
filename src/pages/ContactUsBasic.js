@@ -13,12 +13,12 @@ import GlobalInputText from '../components/globalInputText';
 import GlobalButton from '../components/button/GlobalButton';
 import {fieldValidation} from '../helper/Validation';
 import {useDispatch} from 'react-redux';
-import {contactUsHandle} from '../../actions/contactus.action';
-import AnimationMessage from '../../components/animationMessage';
-import GlobalText from '../../components/globalText';
-import CheckboxWhite from '../../assets/svg/CheckboxWhite';
-import ErrorIcon from '../../assets/svg/ErrorIcon';
-import LoadingScreen from '../../components/loadingScreen/LoadingScreen';
+import {contactUsHandle} from '../actions/contactus.action';
+import AnimationMessage from '../components/animationMessage';
+import GlobalText from '../components/globalText';
+import CheckboxWhite from '../assets/svg/CheckboxWhite';
+import ErrorIcon from '../assets/svg/ErrorIcon';
+import LoadingScreen from '../components/loadingScreen/LoadingScreen';
 import {Actions} from 'react-native-router-flux';
 
 const useStyles = () => {
