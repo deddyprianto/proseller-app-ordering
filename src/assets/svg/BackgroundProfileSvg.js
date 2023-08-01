@@ -2,7 +2,7 @@ import React from 'react';
 import Svg, {Path} from 'react-native-svg';
 import Theme from '../../theme/Theme';
 
-const BgProfileSvg = props => {
+const BackgroundProfileSvg = props => {
   const {colors} = Theme();
   return (
     <Svg
@@ -20,4 +20,4 @@ const BgProfileSvg = props => {
   );
 };
 
-export default BgProfileSvg;
+export default BackgroundProfileSvg;

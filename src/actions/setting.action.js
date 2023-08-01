@@ -140,6 +140,22 @@ const setHideReferralSettings = async ({dispatch, response}) => {
   );
 };
 
+const setPrivacyPolicySettings = async ({dispatch, response}) => {
+  const privacyPolicy = handleSettingValue({
+    values: response,
+    key: 'PrivacyPolicy',
+  });
+
+  await dispatch(
+    setData({
+      type: 'SET_PRIVACY_POLICY',
+      data: {
+        privacyPolicy,
+      },
+    }),
+  );
+};
+
 const setBannerSizeSettings = async ({dispatch, response}) => {
   const bannerSize = handleSettingValue({
     values: response,
@@ -207,7 +223,6 @@ export const getLoginSettings = () => {
         200,
         token,
       );
-
       const settings = response?.response?.data?.settings;
       const typeCheckbox = handleDataType({settings, key: 'checkbox'});
       const typeDropdown = handleDataType({settings, key: 'dropdown'});
@@ -217,6 +232,7 @@ export const getLoginSettings = () => {
         setEnableOrderingSettings({dispatch, response: typeCheckbox});
         setHideReferralSettings({dispatch, response: typeCheckbox});
         setBannerSizeSettings({dispatch, response: typeDropdown});
+        setPrivacyPolicySettings({dispatch, response: typeCheckbox});
       }
 
       return response.response.data;

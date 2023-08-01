@@ -1,18 +1,18 @@
 import React from 'react';
 import {ScrollView, StyleSheet, KeyboardAvoidingView, View} from 'react-native';
 import {SafeAreaView} from 'react-navigation';
-import {Header} from '../../components/layout';
-import Theme from '../../theme/Theme';
-import GlobalInputText from '../../components/globalInputText';
-import GlobalButton from '../../components/button/GlobalButton';
-import {fieldValidation} from '../../helper/Validation';
+import {Header} from '../components/layout';
+import Theme from '../theme/Theme';
+import GlobalInputText from '../components/globalInputText';
+import GlobalButton from '../components/button/GlobalButton';
+import {fieldValidation} from '../helper/Validation';
 import {useDispatch} from 'react-redux';
-import {contactUsHandle} from '../../actions/contactus.action';
-import AnimationMessage from '../../components/animationMessage';
-import GlobalText from '../../components/globalText';
-import CheckboxWhite from '../../assets/svg/CheckboxWhite';
-import ErrorIcon from '../../assets/svg/ErrorIcon';
-import LoadingScreen from '../../components/loadingScreen/LoadingScreen';
+import {contactUsHandle} from '../actions/contactus.action';
+import AnimationMessage from '../components/animationMessage';
+import GlobalText from '../components/globalText';
+import CheckboxWhite from '../assets/svg/CheckboxWhite';
+import ErrorIcon from '../assets/svg/ErrorIcon';
+import LoadingScreen from '../components/loadingScreen/LoadingScreen';
 
 const useStyles = () => {
   const {colors, fontFamily} = Theme();
@@ -77,7 +77,7 @@ const useStyles = () => {
   return {styles, colors};
 };
 
-const ContactUs = () => {
+const ContactUsBasic = () => {
   const {styles} = useStyles();
   const [mandatoryField] = React.useState([
     'name',
@@ -184,4 +184,4 @@ const ContactUs = () => {
   );
 };
 
-export default ContactUs;
+export default ContactUsBasic;
