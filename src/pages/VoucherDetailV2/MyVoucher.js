@@ -13,6 +13,9 @@ const styles = StyleSheet.create({
   contentContainer: {
     paddingBottom: 30,
   },
+  flatStyle: {
+    flex: 1,
+  },
 });
 
 const MyVoucher = () => {
@@ -41,6 +44,7 @@ const MyVoucher = () => {
           styles.scrollContainer,
           styles.contentContainer,
         ]}
+        style={styles.flatStyle}
         data={voucherLust}
         renderItem={renderList}
         onRefresh={onRefresh}

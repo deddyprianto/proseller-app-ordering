@@ -13,6 +13,9 @@ const styles = StyleSheet.create({
   contentContainer: {
     paddingBottom: 30,
   },
+  flatStyle: {
+    flex: 1,
+  },
 });
 
 const ReedemVoucher = () => {
@@ -37,6 +40,7 @@ const ReedemVoucher = () => {
     <FlatList
       keyExtractor={(item, index) => item.id}
       renderItem={renderItem}
+      style={styles.flatStyle}
       onRefresh={redeemVoucherList}
       refreshing={loading}
       data={vouchersList || []}
