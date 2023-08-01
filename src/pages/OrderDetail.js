@@ -24,13 +24,13 @@ import CardSvg from '../assets/svg/CardSvg';
 import MapMarkerSvg from '../assets/svg/MapMarkerSvg';
 import CalendarBold from '../assets/svg/CalendarBoldSvg';
 import NotesSvg from '../assets/svg/NotesSvg';
-import useCountdownHooks from '../hooks/time/countdown';
 import TimerSvg from '../assets/svg/TimerSvg';
 import {permissionDownloadFile} from '../helper/Download';
 import {handlePaymentStatus} from '../helper/PaymentStatus';
 import DotSvg from '../assets/svg/DotSvg';
 import NotesProduct from '../assets/svg/NotesProductSvg';
 import ArrowBottom from '../assets/svg/ArrowBottom';
+import useCountdownV2 from '../hooks/time/useCountdownV2';
 
 const useStyles = () => {
   const {colors, fontFamily} = Theme();
@@ -259,13 +259,10 @@ const useStyles = () => {
 
 const OrderDetail = ({data}) => {
   const {styles, colors} = useStyles();
-  const {time, timerId, countdownStart, start} = useCountdownHooks();
-  const [showQrCode, setShowQrCode] = React.useState(true);
+  const {minutes, seconds, isTimeEnd} = useCountdownV2(data);
   const [showAllOrder, setShowAllOrder] = React.useState(false);
   const staustPending = 'PENDING_PAYMENT';
-  const onFinish = () => {
-    setShowQrCode(false);
-  };
+
   const toggleOrder = () => setShowAllOrder(prevState => !prevState);
   const downloadQrCode = async () => {
     permissionDownloadFile(data?.action?.url, `qrcode${data.id}`, 'image/png', {
@@ -511,9 +508,11 @@ const OrderDetail = ({data}) => {
             </View>
             <View style={styles.columnText}>
               <GlobalText>{data?.outlet?.name}</GlobalText>
-              <GlobalText>
-                {data?.outlet?.location} {data?.outlet?.location?.postalCode}
-              </GlobalText>
+              {data?.outlet.location ? (
+                <GlobalText>
+                  {data?.outlet?.location} {data?.outlet?.location?.postalCode}
+                </GlobalText>
+              ) : null}
             </View>
           </View>
         </View>
@@ -564,18 +563,12 @@ const OrderDetail = ({data}) => {
     return 'Item';
   };
 
-  React.useEffect(() => {
-    countdownStart(onFinish, data?.action?.expiry);
-    return () => {
-      clearInterval(timerId);
-    };
-  }, []);
   return (
     <Body>
-      {data?.status === staustPending && showQrCode && start ? (
+      {data?.status === staustPending && !isTimeEnd ? (
         <View style={styles.waitingPaymentBox}>
           <GlobalText style={styles.waitingPaymentStyle}>
-            Waiting for payment {time.hours}:{time.minutes}:{time.seconds}
+            Waiting for payment {minutes}:{seconds}
           </GlobalText>
           <View style={styles.clockIcon}>
             <TimerSvg />
@@ -586,7 +579,7 @@ const OrderDetail = ({data}) => {
       <ScrollView
         contentContainerStyle={styles.scrollContainerMain}
         style={styles.scrollContainer}>
-        {data?.status === staustPending && showQrCode ? (
+        {data?.status === staustPending && !isTimeEnd ? (
           <>
             <View style={styles.qrContainer}>
               <Image style={styles.qrImage} source={{uri: data?.action?.url}} />
@@ -636,9 +629,18 @@ const OrderDetail = ({data}) => {
                   </GlobalText>
                 </View>
                 <View>
-                  <GlobalText style={[styles.boldFont, styles.grayColor]}>
-                    {moment(data?.transactionDate).format('DD MMM YYYY')}{' '}
-                    <DotSvg /> {moment(data?.transactionDate).format('HH:mm')}
+                  <GlobalText
+                    style={[
+                      styles.boldFont,
+                      styles.grayColor,
+                      {flexDirection: 'row'},
+                    ]}>
+                    {moment(data?.transactionDate).format('DD MMM YYYY')}
+                    {'  '}
+                    <DotSvg />
+                    {'  '}
+                    {''}
+                    {moment(data?.transactionDate).format('HH:mm')}
                   </GlobalText>
                 </View>
               </View>
