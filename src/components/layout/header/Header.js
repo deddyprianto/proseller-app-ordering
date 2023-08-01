@@ -124,6 +124,7 @@ const Header = ({
   leftTitle,
   usingPrimaryColor,
   rootStyle,
+  customRightIcon,
 }) => {
   const styles = useStyles();
   const [isOpenScanner, setIsOpenScanner] = useState(false);
@@ -284,6 +285,13 @@ const Header = ({
     }
   };
 
+  const customRightIconHandle = () => {
+    if (customRightIcon) {
+      return customRightIcon();
+    }
+    return null;
+  };
+
   const renderIconRightWrap = () => {
     return (
       <View style={styles.flexRowCenter}>
@@ -291,6 +299,7 @@ const Header = ({
         {renderCartIcon()}
         {renderScannerIcon()}
         {renderRemoveIcon()}
+        {customRightIconHandle()}
       </View>
     );
   };

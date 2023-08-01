@@ -1,14 +1,17 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React from 'react';
-import {FlatList, ScrollView, StyleSheet} from 'react-native';
-import GlobalText from '../../components/globalText';
+import {FlatList, StyleSheet} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {myVouchers} from '../../actions/account.action';
 import ListVoucher from './components/ListVoucher';
+import EmptyVoucher from './components/EmptyVoucher';
 
 const styles = StyleSheet.create({
   scrollContainer: {
     padding: 16,
+  },
+  contentContainer: {
+    paddingBottom: 30,
   },
 });
 
@@ -32,14 +35,28 @@ const MyVoucher = () => {
   }, []);
 
   return (
-    <FlatList
-      contentContainerStyle={styles.scrollContainer}
-      data={voucherLust}
-      renderItem={renderList}
-      onRefresh={onRefresh}
-      refreshing={loading}
-    />
+    <>
+      <FlatList
+        contentContainerStyle={[
+          styles.scrollContainer,
+          styles.contentContainer,
+        ]}
+        data={voucherLust}
+        renderItem={renderList}
+        onRefresh={onRefresh}
+        refreshing={loading}
+        ListEmptyComponent={
+          !loading && (
+            <EmptyVoucher
+              text={
+                'Your voucher collection is waiting to be filled! Begin placing orders and earning points to unlock redeemable vouchers.'
+              }
+            />
+          )
+        }
+      />
+    </>
   );
 };
 
-export default MyVoucher;
+export default React.memo(MyVoucher);

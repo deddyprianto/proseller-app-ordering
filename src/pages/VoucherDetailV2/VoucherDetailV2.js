@@ -1,14 +1,17 @@
 import React from 'react';
-import {SafeAreaView, StyleSheet, useWindowDimensions} from 'react-native';
-import {TabView, SceneMap, TabBar} from 'react-native-tab-view';
+import {SafeAreaView, StyleSheet, View} from 'react-native';
 
 import Theme from '../../theme/Theme';
 import {Header} from '../../components/layout';
 import MyVoucher from './MyVoucher';
 import RedeemVouchers from './RedeemVoucher';
+import TabbarComponent from '../../components/tabbarComponent';
+import GlobalText from '../../components/globalText';
+import {useSelector} from 'react-redux';
+import {normalizeLayoutSizeWidth} from '../../helper/Layout';
 
 const useStyles = () => {
-  const {colors} = Theme();
+  const {colors, fontFamily} = Theme();
 
   const styles = StyleSheet.create({
     safeAreaCOntainer: {
@@ -30,6 +33,14 @@ const useStyles = () => {
     primaryText: {
       color: colors.primary,
     },
+    tpContainer: {
+      width: normalizeLayoutSizeWidth(128),
+    },
+    tpText: {
+      marginLeft: 'auto',
+      fontFamily: fontFamily.poppinsMedium,
+      color: 'white',
+    },
   });
   return {styles};
 };
@@ -38,48 +49,22 @@ const MyVoucherRoute = () => <MyVoucher />;
 
 const RedeemRoute = () => <RedeemVouchers />;
 
-const renderScene = SceneMap({
-  first: MyVoucherRoute,
-  second: RedeemRoute,
-});
-
 const VoucherDetailV2 = () => {
-  const layout = useWindowDimensions();
-
   const {styles} = useStyles();
-  const [index, setIndex] = React.useState(0);
-  // const [activeTab, setActiveTab] = React.useState(null);
   const [routes] = React.useState([
-    {key: 'first', title: 'My Voucher'},
-    {key: 'second', title: 'Redeem Voucher'},
+    {key: 'second', title: 'Redeem Voucher', children: RedeemRoute},
+    {key: 'first', title: 'My Voucher', children: MyVoucherRoute},
   ]);
-  // console.log(index, 'valman');
 
-  // const onTabPress = val => {
-  //   setActiveTab(val.route.key);
-  // };
+  const totalPoint = useSelector(
+    state => state.rewardsReducer?.dataPoint?.totalPoint,
+  );
 
-  // const handleTabbarSTyle = activeTab => {
-  //   console.log(index, activeTab, 'hynuman');
-  //   if (index === activeTab) {
-  //     return [styles.whiteBg];
-  //   }
-  //   return [styles.tabbarStyle];
-  // };
-
-  const renderTabBar = props => {
-    console.log(props, 'papina');
-    return (
-      <TabBar
-        {...props}
-        indicatorStyle={styles.indicatorStyle}
-        style={styles.tabbarStyle}
-        // renderIndicator={null}
-
-        // onTabPress={onTabPress}
-      />
-    );
-  };
+  const renderCustomRightIcon = () => (
+    <View style={styles.tpContainer}>
+      <GlobalText style={styles.tpText}>Your Points: {totalPoint}</GlobalText>
+    </View>
+  );
 
   return (
     <SafeAreaView style={styles.safeAreaCOntainer}>
@@ -88,14 +73,9 @@ const VoucherDetailV2 = () => {
         leftTitle
         usingPrimaryColor
         title={'Vouchers'}
+        customRightIcon={renderCustomRightIcon}
       />
-      <TabView
-        renderTabBar={renderTabBar}
-        navigationState={{index, routes}}
-        renderScene={renderScene}
-        onIndexChange={setIndex}
-        initialLayout={{width: layout.width}}
-      />
+      <TabbarComponent routes={routes} />
     </SafeAreaView>
   );
 };
