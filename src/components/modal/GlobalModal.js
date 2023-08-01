@@ -5,7 +5,6 @@ import GlobalText from '../globalText';
 import CloseSvg from '../../assets/svg/CloseSvg';
 import Theme from '../../theme/Theme';
 import {normalizeLayoutSizeHeight} from '../../helper/Layout';
-import GlobalButton from '../button/GlobalButton';
 
 const useStyles = () => {
   const {colors, fontFamily} = Theme();
@@ -37,6 +36,10 @@ const useStyles = () => {
     contentContainer: {
       paddingBottom: 30,
     },
+    bottomMOdal: {
+      margin: 0,
+      justifyContent: 'flex-end',
+    },
   });
   return {styles, colors, fontFamily};
 };
@@ -54,7 +57,9 @@ const useStyles = () => {
  * @property {Function} isCloseToBottom
  * @property {boolean} hideCloseIcon
  * @property {any} modalContainerStyle
- * @property {any} titleStyle
+ * @property {import('react-native').StyleProp} titleStyle
+ * @property {boolean} isBottomModal
+ * @property {import('react-native').StyleProp} scrollContainerStyle
  */
 
 /**
@@ -89,12 +94,21 @@ const GlobalModal = props => {
     }
   };
 
+  const handleStyle = () => {
+    if (props.isBottomModal) {
+      return [styles.bottomMOdal, props.style];
+    }
+    return props.style;
+  };
+
   return (
-    <Modal useNativeDriver {...props}>
+    <Modal style={handleStyle()} useNativeDriver {...props}>
       <View style={[styles.modalContainer, props.modalContainerStyle]}>
         <View style={styles.titleCloseContainer}>
           <View>
-            <GlobalText style={props.titleStyle}>{props.title}</GlobalText>
+            <GlobalText style={[styles.titleText, props.titleStyle]}>
+              {props.title}
+            </GlobalText>
           </View>
           {!props.hideCloseIcon ? (
             <View style={styles.closeContainer}>
@@ -106,7 +120,10 @@ const GlobalModal = props => {
         </View>
         <ScrollView
           onScroll={onScroll}
-          contentContainerStyle={styles.contentContainer}>
+          contentContainerStyle={[
+            styles.contentContainer,
+            props.scrollContainerStyle,
+          ]}>
           <View style={styles.bodyContainer}>{props.children}</View>
         </ScrollView>
         {props.stickyBottom}

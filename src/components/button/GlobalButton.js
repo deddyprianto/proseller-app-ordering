@@ -1,5 +1,5 @@
 import React from 'react';
-import {TouchableOpacity, StyleSheet, StyleProp} from 'react-native';
+import {TouchableOpacity, StyleSheet} from 'react-native';
 import GlobalText from '../globalText';
 import Theme from '../../theme/Theme';
 
@@ -29,6 +29,7 @@ const useStyles = () => {
     textNext: isOutline => ({
       fontFamily: fontFamily.poppinsMedium,
       color: isOutline ? colors.primary : 'white',
+      textAlign: 'center',
     }),
   });
   return {styles, colors, fontFamily};
@@ -43,6 +44,8 @@ const useStyles = () => {
  * @property {string} title
  * @property {string} active
  * @property {boolean} isOutline
+ * @property {any} containerStyle
+ * @property {any} children
  * @property {import('react-native').StyleProp} buttonStyle
  */
 
@@ -60,9 +63,13 @@ const GlobalButton = props => {
           : [styles.touchableNextDisabled(props.isOutline), props.buttonStyle]
       }
       {...props}>
-      <GlobalText style={styles.textNext(props.isOutline)}>
-        {props.title}{' '}
-      </GlobalText>
+      {props.title ? (
+        <GlobalText style={styles.textNext(props.isOutline)}>
+          {props.title}{' '}
+        </GlobalText>
+      ) : null}
+
+      {props.children}
     </TouchableOpacity>
   );
 };
