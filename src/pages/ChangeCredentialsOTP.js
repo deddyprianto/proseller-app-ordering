@@ -27,6 +27,8 @@ import colorConfig from '../config/colorConfig';
 import BackgroundTimer from 'react-native-background-timer';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {getUserProfile, requestOTP, updateUser} from '../actions/user.action';
+import HeaderV2 from '../components/layout/header/HeaderV2';
+import appConfig from '../config/appConfig';
 
 const imageWidth = Dimensions.get('window').width / 2;
 
@@ -135,6 +137,9 @@ const styles = StyleSheet.create({
   line: {
     borderBottomColor: colorConfig.store.defaultColor,
     borderBottomWidth: 2,
+  },
+  mainContainer: {
+    marginTop: 32,
   },
 });
 
@@ -304,25 +309,10 @@ class ChangeCredentialsOTP extends Component {
     return (
       <SafeAreaView style={styles.backgroundImage}>
         {this.state.loading && <Loader />}
-        <View
-          style={[
-            styles.header,
-            {backgroundColor: colorConfig.pageIndex.backgroundColor},
-          ]}>
-          <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
-            <Icon
-              size={28}
-              name={
-                Platform.OS === 'ios' ? 'ios-arrow-back' : 'md-arrow-round-back'
-              }
-              style={styles.btnBackIcon}
-            />
-            <Text style={styles.btnBackText}> Confirm OTP</Text>
-          </TouchableOpacity>
-          {/*<View style={styles.line} />*/}
-        </View>
-        <View style={{margin: 20}}>
-          <View>
+        <HeaderV2 isCenterLogo={appConfig.appName === 'fareastflora'} />
+        <View style={styles.mainContainer}>
+          <View />
+          {/* <View>
             <Text
               style={{
                 color: colorConfig.store.title,
@@ -334,7 +324,7 @@ class ChangeCredentialsOTP extends Component {
                 {address}
               </Text>
             </Text>
-          </View>
+          </View> */}
 
           {/*Form login by OTP*/}
           {this.state.toggleSMSOTP ? (
@@ -453,12 +443,12 @@ class ChangeCredentialsOTP extends Component {
     );
   }
 }
-mapStateToProps = state => ({
+const mapStateToProps = state => ({
   attempt: state.authReducer.attemptSendOTP.attempt,
   intlData: state.intlData,
 });
 
-mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = dispatch => ({
   dispatch,
 });
 

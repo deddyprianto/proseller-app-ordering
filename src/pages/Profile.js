@@ -39,6 +39,7 @@ import StoreSvg from '../assets/svg/StoreSvg';
 import ContactSvg from '../assets/svg/ContactSvg';
 import {Body} from '../components/layout';
 import additionalSetting from '../config/additionalSettings';
+import useGetProtectionData from '../hooks/protection/useGetProtectioData';
 
 const WIDTH = Dimensions.get('window').width;
 
