@@ -45,6 +45,7 @@ const useStyles = () => {
       display: 'flex',
       flexDirection: 'row',
       marginBottom: 16,
+      borderRadius: 8,
     },
     image: {
       borderRadius: 8,
@@ -98,7 +99,7 @@ const VoucherListItem = ({voucher, qty, pointToRedeem}) => {
       <Image
         style={styles.imageBackground}
         imageStyle={styles.image}
-        resizeMode="contain"
+        resizeMode="cover"
         source={handleImage()}
       />
       {renderVoucherTitle()}

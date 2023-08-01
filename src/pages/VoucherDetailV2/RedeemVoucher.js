@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
 
 const ReedemVoucher = () => {
   const dispatch = useDispatch();
-  const [loading, setLoading] = React.useState(false);
+  const [loading, setLoading] = React.useState(true);
 
   const vouchersList = useSelector(
     state => state.rewardsReducer.vouchers?.dataVoucher,

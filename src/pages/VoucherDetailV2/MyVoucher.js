@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
 
 const MyVoucher = () => {
   const dispatch = useDispatch();
-  const [loading, setLoading] = React.useState(false);
+  const [loading, setLoading] = React.useState(true);
   const voucherLust = useSelector(
     state => state.accountsReducer.myVouchers?.vouchers,
   );

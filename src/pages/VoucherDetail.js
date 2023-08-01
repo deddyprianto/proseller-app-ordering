@@ -193,12 +193,12 @@ const VoucherDetail = props => {
   };
 
   const renderValidity = () => {
-    const text = moment(voucher?.expiryDate).format('ddd MMM DD YYYY hh:mm:ss');
+    const text = moment(voucher?.expiryDate).format('DD MMM YYYY HH:mm');
 
     return (
       <View>
         <Text style={styles.textValidity}>Validity</Text>
-        <Text style={styles.textValidityValue}>{text} UTC</Text>
+        <Text style={styles.textValidityValue}>{text}</Text>
       </View>
     );
   };
@@ -247,7 +247,7 @@ const VoucherDetail = props => {
   const renderCurrentPoint = () => {
     return (
       <View style={styles.viewInfoPointValue}>
-        <Text style={styles.textInfoPointTitle}>Your current point:</Text>
+        <Text style={styles.textInfoPointTitle}>Current points:</Text>
         <Text style={styles.textInfoPointValue}>{totalPoint} Points</Text>
       </View>
     );
@@ -256,7 +256,7 @@ const VoucherDetail = props => {
   const renderReducedPoint = () => {
     return (
       <View style={styles.viewInfoPointValue}>
-        <Text style={styles.textInfoPointTitle}>Point will be reduced: </Text>
+        <Text style={styles.textInfoPointTitle}>Points to be deducted: </Text>
         <Text style={styles.textInfoPointValue}>
           {voucher?.redeemValue ? `${voucher.redeemValue} Points` : '-'}
         </Text>
