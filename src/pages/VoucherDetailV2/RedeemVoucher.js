@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React from 'react';
-import {FlatList, StyleSheet} from 'react-native';
+import {Dimensions, FlatList, StyleSheet} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {vouchers} from '../../actions/rewards.action';
 import ListVoucher from './components/ListVoucher';
@@ -9,6 +9,7 @@ import EmptyVoucher from './components/EmptyVoucher';
 const styles = StyleSheet.create({
   scrollContainer: {
     padding: 16,
+    minHeight: Dimensions.get('window').height / 5,
   },
   contentContainer: {
     paddingBottom: 30,
@@ -33,7 +34,7 @@ const ReedemVoucher = () => {
     setLoading(false);
   };
 
-  const renderItem = ({item}) => <ListVoucher item={item} />;
+  const renderItem = ({item}) => <ListVoucher isRedeem={true} item={item} />;
 
   const onRefresh = () => {
     redeemVoucherList(true);

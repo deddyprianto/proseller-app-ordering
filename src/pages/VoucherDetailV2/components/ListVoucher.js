@@ -18,6 +18,7 @@ import CalendarSvg from '../../../assets/svg/CalendareSvg';
 import CalendarWhite from '../../../assets/svg/CalenderWhite';
 import appConfig from '../../../config/appConfig';
 import {Actions} from 'react-native-router-flux';
+import PointSmall from '../../../assets/svg/SmallPointSvg';
 const useStyles = () => {
   const {colors, fontFamily} = Theme();
   const styles = StyleSheet.create({
@@ -63,12 +64,29 @@ const useStyles = () => {
       borderTopLeftRadius: 16,
       borderTopRightRadius: 16,
     },
+    pointContainer: {
+      backgroundColor: 'white',
+      minHeight: normalizeLayoutSizeWidth(22),
+      width: normalizeLayoutSizeHeight(76),
+      borderRadius: 8,
+      marginTop: 8,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    pointText: {
+      fontSize: 12,
+      color: colors.primary,
+      fontFamily: fontFamily.poppinsSemiBold,
+    },
+    pointTextContainer: {
+      marginLeft: 5,
+    },
   });
   return {styles};
 };
 
-const ListVoucher = ({item}) => {
-  console.log({item}, 'buaya');
+const ListVoucher = ({item, isRedeem}) => {
   const {styles} = useStyles();
 
   const handleImage = () => {
@@ -83,6 +101,19 @@ const ListVoucher = ({item}) => {
       dataVoucher: item,
     });
   };
+  console.log(item, 'usaha');
+  const renderReddemVoucher = () => (
+    <View style={styles.pointContainer}>
+      <View>
+        <PointSmall />
+      </View>
+      <View style={styles.pointTextContainer}>
+        <GlobalText style={styles.pointText}>
+          {item?.redeemValue || 0} pts{' '}
+        </GlobalText>
+      </View>
+    </View>
+  );
 
   return (
     <Pressable onPress={onPress} style={styles.cardContainer}>
@@ -97,14 +128,18 @@ const ListVoucher = ({item}) => {
         <GlobalText style={[styles.boldFont, styles.whiteText]}>
           {item?.name}
         </GlobalText>
-        <View style={styles.expiredContainer}>
-          <View style={styles.iconStyle}>
-            <CalendarWhite />
+        {isRedeem ? (
+          renderReddemVoucher()
+        ) : (
+          <View style={styles.expiredContainer}>
+            <View style={styles.iconStyle}>
+              <CalendarWhite />
+            </View>
+            <GlobalText style={styles.whiteText}>
+              Expire on {moment(item?.expiryDate).format('DD MMMM YYYY')}
+            </GlobalText>
           </View>
-          <GlobalText style={styles.whiteText}>
-            Expire on {moment(item?.expiryDate).format('DD MMMM YYYY')}
-          </GlobalText>
-        </View>
+        )}
       </View>
     </Pressable>
   );

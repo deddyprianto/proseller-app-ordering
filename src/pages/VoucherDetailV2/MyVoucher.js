@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React from 'react';
-import {FlatList, StyleSheet} from 'react-native';
+import {Dimensions, FlatList, StyleSheet} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {myVouchers} from '../../actions/account.action';
 import ListVoucher from './components/ListVoucher';
@@ -9,6 +9,7 @@ import EmptyVoucher from './components/EmptyVoucher';
 const styles = StyleSheet.create({
   scrollContainer: {
     padding: 16,
+    minHeight: Dimensions.get('window').height / 5,
   },
   contentContainer: {
     paddingBottom: 30,
