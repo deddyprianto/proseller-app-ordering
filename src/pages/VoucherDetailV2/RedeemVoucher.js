@@ -25,23 +25,29 @@ const ReedemVoucher = () => {
   const vouchersList = useSelector(
     state => state.rewardsReducer.vouchers?.dataVoucher,
   );
-  const redeemVoucherList = async () => {
-    setLoading(true);
+  const redeemVoucherList = async useLoading => {
+    if (useLoading) {
+      setLoading(true);
+    }
     await dispatch(vouchers());
     setLoading(false);
   };
 
   const renderItem = ({item}) => <ListVoucher item={item} />;
 
+  const onRefresh = () => {
+    redeemVoucherList(true);
+  };
+
   React.useEffect(() => {
-    redeemVoucherList();
+    redeemVoucherList(false);
   }, []);
   return (
     <FlatList
       keyExtractor={(item, index) => item.id}
       renderItem={renderItem}
       style={styles.flatStyle}
-      onRefresh={redeemVoucherList}
+      onRefresh={onRefresh}
       refreshing={loading}
       data={vouchersList || []}
       contentContainerStyle={[styles.scrollContainer, styles.contentContainer]}

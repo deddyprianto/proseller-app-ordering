@@ -27,10 +27,16 @@ const MyVoucher = () => {
 
   const renderList = ({item, index}) => <ListVoucher item={item} key={index} />;
 
-  const onRefresh = async () => {
-    setLoading(true);
+  const onRefresh = async useLoading => {
+    if (useLoading) {
+      setLoading(true);
+    }
     await dispatch(myVouchers());
     setLoading(false);
+  };
+
+  const onRefreshLoading = () => {
+    onRefresh(true);
   };
 
   React.useEffect(() => {
@@ -47,7 +53,7 @@ const MyVoucher = () => {
         style={styles.flatStyle}
         data={voucherLust}
         renderItem={renderList}
-        onRefresh={onRefresh}
+        onRefresh={onRefreshLoading}
         refreshing={loading}
         ListEmptyComponent={
           !loading && (
