@@ -29,7 +29,8 @@ const additionalSetting = () => {
       show: true,
     },
   ];
-  return {additionalPolicy};
+  const mapType = 'dropdown';
+  return {additionalPolicy, mapType};
 };
 
 export default additionalSetting;

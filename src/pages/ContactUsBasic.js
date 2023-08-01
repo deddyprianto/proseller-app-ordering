@@ -7,11 +7,11 @@ import {
   BackHandler,
 } from 'react-native';
 import {SafeAreaView} from 'react-navigation';
-import {Header} from '../../components/layout';
-import Theme from '../../theme/Theme';
-import GlobalInputText from '../../components/globalInputText';
-import GlobalButton from '../../components/button/GlobalButton';
-import {fieldValidation} from '../../helper/Validation';
+import {Header} from '../components/layout';
+import Theme from '../theme/Theme';
+import GlobalInputText from '../components/globalInputText';
+import GlobalButton from '../components/button/GlobalButton';
+import {fieldValidation} from '../helper/Validation';
 import {useDispatch} from 'react-redux';
 import {contactUsHandle} from '../../actions/contactus.action';
 import AnimationMessage from '../../components/animationMessage';
@@ -84,7 +84,7 @@ const useStyles = () => {
   return {styles, colors};
 };
 
-const ContactUs = () => {
+const ContactUsBasic = () => {
   const {styles} = useStyles();
   const [mandatoryField] = React.useState([
     'name',
@@ -208,4 +208,4 @@ const ContactUs = () => {
   );
 };
 
-export default ContactUs;
+export default ContactUsBasic;

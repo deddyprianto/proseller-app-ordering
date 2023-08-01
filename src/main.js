@@ -25,7 +25,11 @@ import awsConfig from './config/awsConfig';
 import OneSignal from 'react-native-onesignal';
 import {deviceUserInfo} from './actions/user.action';
 import OfflineNotice from './components/OfflineNotice';
-import {getCompanyInfo, getDefaultOutlet} from './actions/stores.action';
+import {
+  generateOneMapToken,
+  getCompanyInfo,
+  getDefaultOutlet,
+} from './actions/stores.action';
 import {paymentRefNo} from './actions/account.action';
 import {getBasket, getTermsConditions} from './actions/order.action';
 import NetInfo from '@react-native-community/netinfo';
@@ -65,6 +69,7 @@ class Main extends Component {
       await this.props.dispatch(getTermsConditions());
       await this.props.dispatch(getColorSettings());
       await this.props.dispatch(getDefaultOutlet());
+      await this.props.dispatch(generateOneMapToken());
       await this.props.dispatch(getCompanyInfo()),
         await Promise.all([
           this.props.dispatch(refreshToken()),

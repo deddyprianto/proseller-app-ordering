@@ -31,13 +31,13 @@ import moment from 'moment';
 import DeviceBrightness from '@adrianso/react-native-device-brightness';
 import Navbar from '../components/navbar';
 import {normalizeLayoutSizeHeight} from '../helper/Layout';
-import BgProfileSvg from '../assets/svg/BgProfileSvg';
+import BackgroundProfileSvg from '../assets/svg/BackgroundProfileSvg';
 import GlobalText from '../components/globalText';
 import CreditCard from '../assets/svg/CreditCardSvg';
 import Voucher from '../assets/svg/VoucherSvg';
 import StoreSvg from '../assets/svg/StoreSvg';
 import ContactSvg from '../assets/svg/ContactSvg';
-import {Body} from '../components/layout';
+import {Body, Header} from '../components/layout';
 import additionalSetting from '../config/additionalSettings';
 
 const WIDTH = Dimensions.get('window').width;
@@ -277,7 +277,7 @@ const useStyles = () => {
     backgroundProfile: {
       height: normalizeLayoutSizeHeight(118),
       position: 'absolute',
-      top: 0,
+      top: -5,
       width: '100%',
     },
     titleSettingContainer: {
@@ -352,6 +352,29 @@ const Profile = props => {
     loadData();
   }, [dispatch, userDetail]);
 
+  const initDeviceBright = async () => {
+    const currentBrightness = await DeviceBrightness.getBrightnessLevel();
+    setCurrentBrightness(currentBrightness);
+  };
+
+  const handleDeviceBright = async () => {
+    initDeviceBright();
+    if (isOpenMyECardModal) {
+      return DeviceBrightness.setBrightnessLevel(1);
+    }
+    if (currentBrightness) {
+      DeviceBrightness.setBrightnessLevel(currentBrightness);
+    }
+  };
+
+  useEffect(() => {
+    handleDeviceBright();
+  }, [isOpenMyECardModal]);
+
+  useEffect(() => {
+    initDeviceBright();
+  }, []);
+
   const handleLogout = async () => {
     setIsLoading(true);
     await dispatch(logoutUser());
@@ -389,6 +412,14 @@ const Profile = props => {
   const openWebviewPage = url => {
     if (!url) return;
     return Actions.policy({url});
+  };
+
+  const renderBackgroundImage = () => {
+    return (
+      <View style={styles.backgroundProfile}>
+        <BackgroundProfileSvg />
+      </View>
+    );
   };
 
   const renderWelcome = () => {
@@ -622,11 +653,15 @@ const Profile = props => {
   };
 
   const openContactUs = () => {
-    return Actions.contactUs();
+    if (appConfig.contactUsVersion === 'starter') {
+      return Actions.contactUsStarter();
+    } else {
+      return Actions.contactUsBasic();
+    }
   };
 
   const renderContactUs = () => {
-    if (appConfig.contactUsVersion === '') {
+    if (!appConfig.contactUsVersion) {
       return null;
     }
     return (
@@ -674,6 +709,22 @@ const Profile = props => {
     }
   };
 
+  const renderPrivacyPolicy = () => {
+    return (
+      <TouchableOpacity
+        style={styles.viewOption}
+        onPress={() => {
+          Actions.privacyPolicy();
+        }}>
+        <Image
+          style={styles.iconSetting}
+          source={appConfig.iconPrivacyPolicy}
+        />
+        <Text style={styles.textIcon}>Privacy Policy</Text>
+      </TouchableOpacity>
+    );
+  };
+
   const renderLogout = () => {
     return (
       <TouchableOpacity
@@ -715,14 +766,11 @@ const Profile = props => {
 
   const handleAdditionalSetting = () => {
     const component = additionalSetting().additionalPolicy.map(data => {
-      if (!data.show) return null;
-      return (
-        <>
-          {renderListMenu(data.name, data.icon(), () =>
-            openWebviewPage(data.link),
-          )}
-        </>
-      );
+      if (data?.show) {
+        return renderListMenu(data.name, data.icon(), () =>
+          openWebviewPage(data.link),
+        );
+      }
     });
     return component;
   };
@@ -752,7 +800,8 @@ const Profile = props => {
       {handleAdditionalSetting()}
       {renderTermsAndConditions()}
       {renderFAQ()}
-      {renderListMenu('Contact Us', <ContactSvg />, openContactUs)}
+      {renderPrivacyPolicy()}
+      {renderContactUs()}
       {renderDivider()}
       {renderLogout()}
     </View>
@@ -798,29 +847,6 @@ const Profile = props => {
     }
   };
 
-  const initDeviceBright = async () => {
-    const currentBrightness = await DeviceBrightness.getBrightnessLevel();
-    setCurrentBrightness(currentBrightness);
-  };
-
-  const handleDeviceBright = async () => {
-    initDeviceBright();
-    if (isOpenMyECardModal) {
-      return DeviceBrightness.setBrightnessLevel(1);
-    }
-    if (currentBrightness) {
-      DeviceBrightness.setBrightnessLevel(currentBrightness);
-    }
-  };
-
-  useEffect(() => {
-    handleDeviceBright();
-  }, [isOpenMyECardModal]);
-
-  useEffect(() => {
-    initDeviceBright();
-  }, []);
-
   const renderMyECardModal = () => {
     if (isOpenMyECardModal) {
       return (
@@ -837,21 +863,14 @@ const Profile = props => {
   return (
     <SafeAreaView>
       <Body>
-        <Navbar title="Profile" />
+        <LoadingScreen loading={isLoading} />
+        <Header title="Profile" isRemoveBackIcon />
         <ScrollView
           contentContainerStyle={styles.containerStyle}
           style={styles.root}>
-          <View style={styles.backgroundProfile}>
-            <BgProfileSvg />
-          </View>
-          <LoadingScreen loading={isLoading} />
-          <Image
-            source={appConfig.imageBackgroundProfile}
-            resizeMode="contain"
-            style={styles.imageBackgroundProfile}
-          />
+          {renderBackgroundImage()}
           {renderProfileHeader()}
-          <>{renderSettingV2()}</>
+          {renderSettingV2()}
           {renderDeleteAccountConfirmationDialog()}
           {renderLogoutConfirmationDialog()}
           {renderMyECardModal()}

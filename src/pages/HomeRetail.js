@@ -41,6 +41,7 @@ import {dataPromotion} from '../actions/promotion.action';
 import {Body} from '../components/layout';
 import {getTermsConditions} from '../actions/order.action';
 import {normalizeLayoutSizeHeight} from '../helper/Layout';
+import {dataStores} from '../actions/stores.action';
 
 const useStyles = () => {
   const theme = Theme();
@@ -290,6 +291,7 @@ const HomeRetail = () => {
   const onRefresh = useCallback(async () => {
     setRefresh(true);
     const response = await dispatch(getProductByOutlet(defaultOutlet.id));
+    await dispatch(dataStores());
     await dispatch(getTermsConditions());
     await dispatch(getBasket());
     await dispatch(getSVCBalance());
@@ -322,9 +324,7 @@ const HomeRetail = () => {
   };
 
   const onStorePress = () => {
-    const avilableStore =
-      stores?.filter(store => store.orderingStatus === 'AVAILABLE') || [];
-    if (avilableStore.length > 1) {
+    if (stores?.length > 1) {
       return Actions.store();
     }
     return null;
@@ -336,7 +336,12 @@ const HomeRetail = () => {
         <Text numberOfLines={1} style={styles.textHeaderTitle}>
           {defaultOutlet?.name}
         </Text>
-        <Image style={styles.iconArrowDown} source={appConfig.iconArrowDown} />
+        {stores?.length > 1 ? (
+          <Image
+            style={styles.iconArrowDown}
+            source={appConfig.iconArrowDown}
+          />
+        ) : null}
       </Pressable>
     );
   };

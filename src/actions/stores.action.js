@@ -1,8 +1,9 @@
 import {fetchApiMasterData} from '../service/apiMasterData';
-import {refreshToken} from './auth.actions';
-import {fetchApiOrder} from '../service/apiOrder';
 import {isEmptyObject} from '../helper/CheckEmpty';
 import {fetchApi} from '../service/api';
+import appConfig from '../config/appConfig';
+import AsyncStorage from '@react-native-community/async-storage';
+import awsConfig from '../config/awsConfig';
 
 export const getCompanyInfo = () => {
   return async (dispatch, getState) => {
@@ -312,6 +313,32 @@ export const getOutletById = id => {
       } else {
         return false;
       }
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const generateOneMapToken = () => {
+  return async dispatch => {
+    try {
+      const url = `${appConfig.oneMapBaseUrl}/privateapi/auth/post/getToken`;
+      const body = {
+        email: awsConfig.EMAIL_ONE_MAP,
+        password: awsConfig.PASSWORD_ONE_MAP,
+      };
+      const response = await fetch(url, {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers: {
+          'content-type': 'application/json',
+        },
+      });
+      const data = await response.json();
+      if (data?.access_token) {
+        AsyncStorage.setItem('onemapToken', JSON.stringify(data));
+      }
+      return data;
     } catch (error) {
       return error;
     }

@@ -83,6 +83,10 @@ const useStyles = () => {
       backgroundColor: '#fafafa',
       zIndex: 3,
     },
+    maxLexthStyle: {
+      marginLeft: 'auto',
+      marginTop: 4,
+    },
     countTextContainer: {
       marginLeft: 'auto',
       marginRight: 16,
@@ -120,7 +124,7 @@ const useStyles = () => {
  * @property {Array} items
  * @property {Function} onOpen
  * @property {Function} onClose
- * @property {Function}  onChangeItem
+ * @property {Function} onChangeItem
  * @property {boolean}  showNumberLengthText
  */
 
@@ -215,6 +219,7 @@ const GlobalInputText = React.forwardRef((props, ref) => {
             <ErrorInput />
           </View>
         ) : null}
+        {props.rightIcon ? props.rightIcon : null}
       </View>
       {props.showNumberLengthText ? (
         <View style={styles.countTextContainer}>
@@ -227,6 +232,13 @@ const GlobalInputText = React.forwardRef((props, ref) => {
         <View style={styles.errorContainer}>
           <GlobalText style={styles.textError}>
             {props.errorMessage}{' '}
+          </GlobalText>
+        </View>
+      ) : null}
+      {props.maxLength ? (
+        <View style={styles.maxLexthStyle}>
+          <GlobalText style={styles.maxLengthText}>
+            {props.value?.length}/{props.maxLength}{' '}
           </GlobalText>
         </View>
       ) : null}
