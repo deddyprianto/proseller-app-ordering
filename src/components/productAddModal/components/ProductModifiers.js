@@ -15,6 +15,7 @@ import {isEmptyArray} from '../../../helper/CheckEmpty';
 import Theme from '../../../theme';
 import appConfig from '../../../config/appConfig';
 import CurrencyFormatter from '../../../helper/CurrencyFormatter';
+import {useSelector} from 'react-redux';
 
 const useStyle = () => {
   const theme = Theme();
@@ -56,6 +57,9 @@ const useStyle = () => {
       paddingVertical: 12,
       paddingHorizontal: 16,
     },
+    viewOptionNameAndPrice: {
+      flex: 1,
+    },
     viewOption: {
       flex: 1,
       display: 'flex',
@@ -79,6 +83,9 @@ const useStyle = () => {
       display: 'flex',
       flexDirection: 'row',
       alignItems: 'center',
+    },
+    viewProductModifierItem: {
+      flex: 1,
     },
     touchableMinus: {
       width: 24,
@@ -132,6 +139,11 @@ const useStyle = () => {
       color: 'white',
       fontSize: 13,
     },
+    imageThumbnail: {
+      width: 54,
+      height: 54,
+      marginRight: 8,
+    },
   });
   return result;
 };
@@ -143,6 +155,24 @@ const ProductModifiers = ({
 }) => {
   const styles = useStyle();
   const [selected, setSelected] = useState([]);
+
+  const imageSettings = useSelector(
+    state => state.settingReducer.imageSettings,
+  );
+
+  const handleProductModifiersData = () => {
+    let productModifiersFormatted = [];
+
+    productModifiers.forEach(productModifier => {
+      if (productModifier.isYesNo) {
+        productModifiersFormatted.unshift(productModifier);
+      } else {
+        productModifiersFormatted.push(productModifier);
+      }
+    });
+
+    return productModifiersFormatted;
+  };
 
   const handleSelected = () => {
     if (!isEmptyArray(selectedProductModifiers)) {
@@ -392,33 +422,48 @@ const ProductModifiers = ({
     );
   };
 
-  const renderOptionNameAndPrice = ({isYesNo, modifierValue}) => {
-    if (isYesNo && !modifierValue?.price) {
+  const renderThumbnailImage = ({modifierValue}) => {
+    if (appConfig?.modifierType === 'textWithThumbnail') {
+      const image = modifierValue?.defaultImageURL
+        ? modifierValue?.defaultImageURL
+        : imageSettings?.productPlaceholderImage;
+
+      return <Image source={{uri: image}} style={styles.imageThumbnail} />;
+    }
+  };
+
+  const renderOptionName = ({modifierValue}) => {
+    return (
+      <Text numberOfLines={2} style={styles.textOptionName}>
+        {modifierValue?.name}
+      </Text>
+    );
+  };
+
+  const renderOptionPrice = ({isYesNo, modifierValue}) => {
+    if (!isYesNo && modifierValue?.price) {
       return (
-        <View style={{flex: 1}}>
-          <Text numberOfLines={2} style={styles.textOptionName}>
-            {modifierValue?.name}
-          </Text>
-        </View>
-      );
-    } else {
-      return (
-        <View style={{flex: 1}}>
-          <Text numberOfLines={2} style={styles.textOptionName}>
-            {modifierValue?.name}
-          </Text>
-          <Text style={styles.textOptionPrice}>
-            {CurrencyFormatter(modifierValue?.price)}
-          </Text>
-        </View>
+        <Text style={styles.textOptionPrice}>
+          {CurrencyFormatter(modifierValue.price)}
+        </Text>
       );
     }
   };
 
-  const renderOptionCheckboxNamePrice = ({modifierValue, modifier}) => {
+  const renderOptionNameAndPrice = ({isYesNo, modifierValue}) => {
+    return (
+      <View style={styles.viewOptionNameAndPrice}>
+        {renderOptionName({modifierValue})}
+        {renderOptionPrice({isYesNo, modifierValue})}
+      </View>
+    );
+  };
+
+  const renderOptionCheckboxImageNamePrice = ({modifierValue, modifier}) => {
     return (
       <View style={styles.viewOptionCheckboxNamePrice}>
         {renderCheckbox({modifierValue, modifier})}
+        {renderThumbnailImage({modifierValue})}
         {renderOptionNameAndPrice({
           isYesNo: modifier?.isYesNo,
           modifierValue,
@@ -426,19 +471,24 @@ const ProductModifiers = ({
       </View>
     );
   };
+
+  const renderOptionItem = ({modifierValue, modifier}) => {
+    return (
+      <View style={styles.viewOption}>
+        {renderOptionCheckboxImageNamePrice({modifierValue, modifier})}
+        {renderButtonAndTextQty({
+          modifierValue,
+          modifier,
+        })}
+      </View>
+    );
+  };
+
   const renderOptions = ({modifier}) => {
     const modifierList = modifier?.details || [];
 
     const result = modifierList.map(modifierValue => {
-      return (
-        <View style={styles.viewOption}>
-          {renderOptionCheckboxNamePrice({modifierValue, modifier})}
-          {renderButtonAndTextQty({
-            modifierValue,
-            modifier,
-          })}
-        </View>
-      );
+      return renderOptionItem({modifierValue, modifier});
     });
 
     return result;
@@ -485,27 +535,24 @@ const ProductModifiers = ({
     }
   };
 
+  const renderProductModifierItem = productModifier => {
+    return (
+      <View style={styles.viewProductModifierItem}>
+        {renderNameAndTermsConditions(productModifier)}
+        {renderOptions({
+          modifier: productModifier?.modifier,
+          isYesNo: productModifier?.isYesNo,
+        })}
+      </View>
+    );
+  };
+
   const renderProductModifiers = () => {
     if (!isEmptyArray(productModifiers)) {
-      let productModifiersFormatted = [];
-      productModifiers.forEach(productModifier => {
-        if (productModifier.isYesNo) {
-          productModifiersFormatted.unshift(productModifier);
-        } else {
-          productModifiersFormatted.push(productModifier);
-        }
-      });
+      const data = handleProductModifiersData();
 
-      const result = productModifiersFormatted.map(productModifier => {
-        return (
-          <View style={{flex: 1}}>
-            {renderNameAndTermsConditions(productModifier)}
-            {renderOptions({
-              modifier: productModifier?.modifier,
-              isYesNo: productModifier?.isYesNo,
-            })}
-          </View>
-        );
+      const result = data.map(productModifier => {
+        return renderProductModifierItem(productModifier);
       });
 
       return result;

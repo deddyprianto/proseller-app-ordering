@@ -223,16 +223,18 @@ export const getLoginSettings = () => {
         200,
         token,
       );
+
       const settings = response?.response?.data?.settings;
       const typeCheckbox = handleDataType({settings, key: 'checkbox'});
       const typeDropdown = handleDataType({settings, key: 'dropdown'});
+      const typeTextArea = handleDataType({settings, key: 'textarea'});
 
       if (settings) {
         setLoginSettings({dispatch, response: typeCheckbox});
         setEnableOrderingSettings({dispatch, response: typeCheckbox});
         setHideReferralSettings({dispatch, response: typeCheckbox});
         setBannerSizeSettings({dispatch, response: typeDropdown});
-        setPrivacyPolicySettings({dispatch, response: typeCheckbox});
+        setPrivacyPolicySettings({dispatch, response: typeTextArea});
       }
 
       return response.response.data;
@@ -290,12 +292,13 @@ export const getAllowedOrder = () => {
         token,
       );
       const {data} = response.response;
+
       const findAllowedOrder = data?.settings.find(
         setting => setting.settingKey === 'AllowedOrderingMode',
       );
       dispatch({
         type: ALLOWED_ORDER_TYPE,
-        payload: findAllowedOrder,
+        data: findAllowedOrder,
       });
     } catch (error) {
       return error;

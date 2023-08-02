@@ -15,6 +15,7 @@ const appConfig = {
   // other setting
   descriptionLineProduct: '<%= productLine %>',
   contactUsVersion: '<%= contactUsVersion %>',
+  modifierType: '<%= modifierType %>',
 
   // image company
   appImageNull: require('../assets/img/logo.png'),

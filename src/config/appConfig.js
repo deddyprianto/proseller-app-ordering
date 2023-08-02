@@ -6,10 +6,12 @@ const appConfig = {
   appName: 'acemart',
   appMataUang: 'SGD',
   appVersion: 'Version 1.1',
+  oneMapBaseUrl: 'https://developers.onemap.sg',
 
   // other setting
   descriptionLineProduct: '2',
   contactUsVersion: '',
+  modifierType: 'textOnly',
 
   // image company
   appImageNull: require('../assets/img/logo.png'),
