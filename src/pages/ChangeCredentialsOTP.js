@@ -309,7 +309,7 @@ class ChangeCredentialsOTP extends Component {
     return (
       <SafeAreaView style={styles.backgroundImage}>
         {this.state.loading && <Loader />}
-        <HeaderV2 isCenterLogo={appConfig.appName === 'fareastflora'} />
+        <HeaderV2 isCenterLogo={appConfig.appName !== 'fareastflora'} />
         <View style={styles.mainContainer}>
           <View />
           {/* <View>
