@@ -454,7 +454,7 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
   };
 
   const handleDisabledAddToCartButton = () => {
-    if (!isEmptyArray(product?.productModifiers) && !isLoading) {
+    if (!isEmptyArray(product?.productModifiers) && !isLoading && qty !== 0) {
       let qtyModifierSelected = 0;
       const productModifiers = product.productModifiers.map(productModifier => {
         const min = productModifier.modifier?.min || 0;
