@@ -56,37 +56,38 @@ const useStyles = () => {
       backgroundColor: '#FFEBEB',
     },
     textValidity: {
-      fontSize: 12,
-      fontWeight: '700',
+      fontSize: 14,
+      fontFamily: theme.fontFamily.poppinsBold,
     },
     textValidityValue: {
-      fontSize: 12,
-      fontWeight: '500',
+      fontSize: 14,
+      fontFamily: theme.fontFamily.poppinsMedium,
+      marginTop: 8,
     },
     textDescription: {
-      fontSize: 12,
-      fontWeight: '700',
+      fontSize: 14,
+      fontFamily: theme.fontFamily.poppinsBold,
     },
     textDescriptionValue: {
-      fontSize: 12,
-      fontWeight: '500',
+      fontSize: 14,
+      fontFamily: theme.fontFamily.poppinsMedium,
     },
     textRedeemButton: {
-      fontSize: 12,
-      fontWeight: '500',
+      fontSize: 14,
       color: 'white',
+      fontFamily: theme.fontFamily.poppinsMedium,
     },
     textInfoPointTitle: {
-      fontWeight: 'bold',
       fontSize: 12,
+      fontFamily: theme.fontFamily.poppinsSemiBold,
     },
     textInfoPointValue: {
-      fontWeight: 'bold',
       fontSize: 16,
+      fontFamily: theme.fontFamily.poppinsSemiBold,
     },
     textPointLocked: {
-      fontWeight: 'bold',
       fontSize: 12,
+      fontFamily: theme.fontFamily.poppinsSemiBold,
     },
     touchableRedeemButton: {
       width: '100%',
@@ -138,7 +139,10 @@ const useStyles = () => {
   return styles;
 };
 
-const VoucherDetail = ({voucher}) => {
+const VoucherDetail = props => {
+  const {navigation} = props;
+  const {params} = navigation.state;
+  const voucher = params?.dataVoucher;
   const styles = useStyles();
   const dispatch = useDispatch();
   const [openModal, setOpenModal] = useState(false);
@@ -189,13 +193,12 @@ const VoucherDetail = ({voucher}) => {
   };
 
   const renderValidity = () => {
-    const text = moment(voucher?.expiryDate).format('ddd MMM DD YYYY hh:mm:ss');
+    const text = moment(voucher?.expiryDate).format('DD MMM YYYY HH:mm');
 
     return (
       <View>
         <Text style={styles.textValidity}>Validity</Text>
-        <View style={{marginTop: 8}} />
-        <Text style={styles.textValidityValue}>{text} UTC</Text>
+        <Text style={styles.textValidityValue}>{text}</Text>
       </View>
     );
   };
@@ -244,7 +247,7 @@ const VoucherDetail = ({voucher}) => {
   const renderCurrentPoint = () => {
     return (
       <View style={styles.viewInfoPointValue}>
-        <Text style={styles.textInfoPointTitle}>Your current point:</Text>
+        <Text style={styles.textInfoPointTitle}>Current points:</Text>
         <Text style={styles.textInfoPointValue}>{totalPoint} Points</Text>
       </View>
     );
@@ -253,9 +256,9 @@ const VoucherDetail = ({voucher}) => {
   const renderReducedPoint = () => {
     return (
       <View style={styles.viewInfoPointValue}>
-        <Text style={styles.textInfoPointTitle}>Point will be reduced: </Text>
+        <Text style={styles.textInfoPointTitle}>Points to be deducted: </Text>
         <Text style={styles.textInfoPointValue}>
-          {voucher?.redeemValue} Points
+          {voucher?.redeemValue ? `${voucher.redeemValue} Points` : '-'}
         </Text>
       </View>
     );

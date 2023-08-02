@@ -136,9 +136,12 @@ import PendingOrderDetail from '../pages/PendingOrderDetail';
 import InboxDetailMessage from '../pages/InboxDetailMessage';
 import OrderingMode from '../pages/OrderingMode';
 import Payment from '../pages/Payment';
-import ContactUs from '../pages/ContactUs';
 import Membership from '../pages/Membership';
 import MembershipAllTier from '../pages/MembershipAllTier';
+import VoucherDetailV2 from '../pages/VoucherDetailV2/VoucherDetailV2';
+import PrivacyPolicy from '../pages/PrivacyPolicy';
+import ContactUsBasic from '../pages/ContactUsBasic';
+import ContactUsStarter from '../pages/ContactUsStarter';
 
 const MyTransitionSpec = {
   duration: 200,
@@ -400,10 +403,14 @@ export default class Routes extends Component {
 
             <Scene key="orderingMode" component={OrderingMode} />
             <Scene key="payment" component={Payment} />
-            <Scene key="contactUs" component={ContactUs} />
+            <Scene key="contactUs" component={ContactUsBasic} />
+            <Scene key="voucherV2" component={VoucherDetailV2} />
+            <Scene key="contactUsBasic" component={ContactUsBasic} />
+            <Scene key="contactUsStarter" component={ContactUsStarter} />
 
             <Scene key="membership" component={Membership} />
             <Scene key="membershipAllTier" component={MembershipAllTier} />
+            <Scene key="privacyPolicy" component={PrivacyPolicy} />
             {/* //martin */}
           </Scene>
         </Scene>

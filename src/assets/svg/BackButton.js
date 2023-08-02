@@ -10,7 +10,7 @@ const BackButton = props => (
     {...props}>
     <Path
       d="M22.5 27L13.5 18L22.5 9"
-      stroke="black"
+      stroke={props.color || 'black'}
       strokeWidth={2}
       strokeLinecap="round"
       strokeLinejoin="round"

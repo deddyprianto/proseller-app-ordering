@@ -49,6 +49,7 @@ const useStyles = () => {
     },
     iconStyle: {
       marginLeft: 'auto',
+      marginTop: 6,
     },
     textInputContainer: {
       width: '100%',
@@ -56,6 +57,7 @@ const useStyles = () => {
     },
     valueBtnText: editable => ({
       color: editable === false ? theme.colors.greyScale2 : 'black',
+      marginTop: 6,
     }),
     errorContainer: {
       paddingHorizontal: 16,
@@ -81,6 +83,10 @@ const useStyles = () => {
       backgroundColor: '#fafafa',
       zIndex: 3,
     },
+    maxLexthStyle: {
+      marginLeft: 'auto',
+      marginTop: 4,
+    },
     countTextContainer: {
       marginLeft: 'auto',
       marginRight: 16,
@@ -93,6 +99,9 @@ const useStyles = () => {
     },
     placeholderDropdown: {
       fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    btnHeight: {
+      height: normalizeLayoutSizeHeight(48),
     },
   });
   return styles;
@@ -115,7 +124,7 @@ const useStyles = () => {
  * @property {Array} items
  * @property {Function} onOpen
  * @property {Function} onClose
- * @property {Function}  onChangeItem
+ * @property {Function} onChangeItem
  * @property {boolean}  showNumberLengthText
  */
 
@@ -139,7 +148,11 @@ const GlobalInputText = React.forwardRef((props, ref) => {
         <TouchableOpacity
           onPress={props.onPressBtn}
           disabled={props.editable === false}
-          style={[styles.inpurContainer(props.editable), styles.buttonStyle]}>
+          style={[
+            styles.inpurContainer(props.editable),
+            styles.buttonStyle,
+            styles.btnHeight,
+          ]}>
           <GlobalText style={styles.valueBtnText(props.editable)}>
             {props.value || props.defaultValue}
           </GlobalText>
@@ -206,6 +219,7 @@ const GlobalInputText = React.forwardRef((props, ref) => {
             <ErrorInput />
           </View>
         ) : null}
+        {props.rightIcon ? props.rightIcon : null}
       </View>
       {props.showNumberLengthText ? (
         <View style={styles.countTextContainer}>
@@ -218,6 +232,13 @@ const GlobalInputText = React.forwardRef((props, ref) => {
         <View style={styles.errorContainer}>
           <GlobalText style={styles.textError}>
             {props.errorMessage}{' '}
+          </GlobalText>
+        </View>
+      ) : null}
+      {props.maxLength ? (
+        <View style={styles.maxLexthStyle}>
+          <GlobalText style={styles.maxLengthText}>
+            {props.value?.length}/{props.maxLength}{' '}
           </GlobalText>
         </View>
       ) : null}

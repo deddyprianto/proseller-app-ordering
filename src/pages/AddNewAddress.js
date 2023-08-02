@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /**
  * Martin
  * martin@edgeworks.co.id
@@ -5,23 +6,20 @@
  */
 
 import React, {useEffect, useState} from 'react';
-import {useSelector, useDispatch} from 'react-redux';
+import {useDispatch} from 'react-redux';
 
-import MapView, {Marker} from 'react-native-maps';
-import CryptoJS from 'react-native-crypto-js';
 import {Actions} from 'react-native-router-flux';
+import MapView, {Marker} from 'react-native-maps';
 import {
   StyleSheet,
   View,
   Text,
   TouchableOpacity,
   ScrollView,
-  Image,
   SafeAreaView,
+  Pressable,
+  Image,
 } from 'react-native';
-
-import appConfig from '../config/appConfig';
-import awsConfig from '../config/awsConfig';
 
 import {updateUser} from '../actions/user.action';
 import {showSnackbar} from '../actions/setting.action';
@@ -29,8 +27,6 @@ import {showSnackbar} from '../actions/setting.action';
 import Header from '../components/layout/header';
 import FieldCheckBox from '../components/fieldCheckBox';
 import LoadingScreen from '../components/loadingScreen';
-import FieldTextInput from '../components/fieldTextInput';
-import FieldAddressTag from '../components/fieldAddressTag';
 import ConfirmationDialog from '../components/confirmationDialog';
 import FieldPhoneNumberInput from '../components/fieldPhoneNumberInput';
 
@@ -38,7 +34,13 @@ import {isEmptyObject} from '../helper/CheckEmpty';
 
 import Theme from '../theme';
 import {LATITUDE_SINGAPORE, LONGITUDE_SINGAPORE} from '../constant/location';
+import GlobalInputText from '../components/globalInputText';
+import GlobalText from '../components/globalText';
 import {Body} from '../components/layout';
+import AutocompleteAddress from '../components/autocompleteAddress';
+import useGetProtectionData from '../hooks/protection/useGetProtectioData';
+import additionalSetting from '../config/additionalSettings';
+import appConfig from '../config/appConfig';
 
 const useStyles = () => {
   const theme = Theme();
@@ -111,12 +113,30 @@ const useStyles = () => {
     divider: {
       width: '100%',
       height: 1,
-      marginVertical: 12,
+      marginVertical: 24,
       backgroundColor: theme.colors.border,
     },
     marginTop16: {
       marginTop: 16,
     },
+    labelAddress: {
+      flexDirection: 'row',
+      flex: 1,
+      marginTop: 8,
+    },
+    itemLabelAddress: isActive => ({
+      marginRight: 8,
+      paddingHorizontal: 16,
+      paddingVertical: 8,
+      borderColor: theme.colors.primary,
+      borderRadius: 8,
+      borderWidth: 1,
+      backgroundColor: isActive ? theme.colors.primary : 'white',
+    }),
+    itemLabelText: isActive => ({
+      color: isActive ? 'white' : theme.colors.primary,
+      fontFamily: theme.fontFamily.poppinsMedium,
+    }),
   });
   return styles;
 };
@@ -145,25 +165,17 @@ const AddNewAddress = ({address}) => {
 
   const [user, setUser] = useState([]);
   const [deliveryAddress, setDeliveryAddress] = useState([]);
-
-  const userDetail = useSelector(
-    state => state.userReducer.getUser.userDetails,
-  );
-
+  const {getUserDetail} = useGetProtectionData();
+  const {mapType} = additionalSetting();
   const update = !isEmptyObject(address);
 
   const titleHeader = update ? 'Edit Address' : 'Add New Address';
 
   useEffect(() => {
-    const userDecrypt = CryptoJS.AES.decrypt(
-      userDetail,
-      awsConfig.PRIVATE_KEY_RSA,
-    );
-    const result = JSON.parse(userDecrypt.toString(CryptoJS.enc.Utf8));
+    const result = getUserDetail();
     setUser(result);
     setDeliveryAddress(result?.deliveryAddress || []);
-  }, [userDetail]);
-
+  }, []);
   useEffect(() => {
     if (address) {
       setIsSelected(address?.isSelected);
@@ -186,7 +198,6 @@ const AddNewAddress = ({address}) => {
     const deliveryAddressFormatted = deliveryAddress.filter(
       value => value.index !== address.index,
     );
-
     const payload = {
       username: user.username,
       deliveryAddress: deliveryAddressFormatted,
@@ -326,63 +337,139 @@ const AddNewAddress = ({address}) => {
     );
   };
 
-  const renderAddressTagField = () => {
+  const listLabelAddress = ['Home', 'Work', 'School', 'Office', 'Other'];
+
+  const handleLabelAddress = value => {
+    if (value.length > 50) {
+      return null;
+    }
+    setTagAddress(value);
+  };
+
+  const handlePressLabel = value => {
+    setTagAddress(value);
+  };
+
+  const renderLabelAddress = () => {
+    const component = listLabelAddress.map((label, index) => (
+      <Pressable
+        key={index}
+        onPress={() => handlePressLabel(label)}
+        style={styles.itemLabelAddress(
+          tagAddress.toLowerCase() === label.toLowerCase(),
+        )}>
+        <GlobalText
+          style={styles.itemLabelText(
+            tagAddress.toLowerCase() === label.toLowerCase(),
+          )}>
+          {label}
+        </GlobalText>
+      </Pressable>
+    ));
     return (
-      <FieldAddressTag
-        value={tagAddress}
-        onChange={value => {
-          setTagAddress(value);
-        }}
-      />
+      <View>
+        <GlobalInputText
+          label="Address Label"
+          placeholder="Enter Address label"
+          value={tagAddress}
+          onChangeText={handleLabelAddress}
+          maxLength={50}
+          isMandatory
+        />
+        <ScrollView
+          showsHorizontalScrollIndicator={false}
+          horizontal
+          style={styles.labelAddress}>
+          {component}
+        </ScrollView>
+      </View>
     );
   };
 
+  const onSelectAddress = item => {
+    setStreetName(item['ADDRESS']);
+    setPostalCode(item['POSTAL']);
+  };
+
+  const onSetAddress = value => {
+    setStreetName(value);
+  };
+
+  const renderAddressText = () => (
+    <GlobalInputText
+      label="Street Name"
+      placeholder="Street Name"
+      value={streetName}
+      onChangeText={onSetAddress}
+      isMandatory
+    />
+  );
+
   const renderStreetNameField = () => {
+    if (mapType === 'dropdown') {
+      return (
+        <AutocompleteAddress
+          onSelectAddress={onSelectAddress}
+          enableCurrentLocation
+          value={streetName}
+        />
+      );
+    }
+    return renderAddressText();
+  };
+
+  const handleUnitNumber = value => {
+    if (value.length > 50) {
+      return null;
+    }
+    setUnitNumber(value);
+  };
+
+  const onSetPostalCode = value => {
+    setPostalCode(value);
+  };
+
+  const renderPostalCodeField = () => {
     return (
-      <FieldTextInput
-        label="Street Name"
-        placeholder="Street Name"
-        value={streetName}
-        onChange={value => {
-          setStreetName(value);
-        }}
+      <GlobalInputText
+        label="Postal Code"
+        placeholder="Postal Code"
+        value={postalCode}
+        isMandatory
+        onChangeText={onSetPostalCode}
       />
     );
   };
 
   const renderUnitNumberField = () => {
     return (
-      <FieldTextInput
-        label="Unit Number"
-        placeholder="Unit Number"
+      <GlobalInputText
+        label="Building Name/Unit Number"
+        placeholder="Enter building name or unit number "
         value={unitNumber}
-        onChange={value => {
-          setUnitNumber(value);
-        }}
+        maxLength={50}
+        onChangeText={handleUnitNumber}
+        isMandatory
       />
     );
   };
-  const renderPostalCodeField = () => {
-    return (
-      <FieldTextInput
-        label="Postal Code"
-        placeholder="Postal Code"
-        value={postalCode}
-        onChange={value => {
-          setPostalCode(value);
-        }}
-      />
-    );
+
+  const handleRecipientName = value => {
+    if (value.length > 50) {
+      return null;
+    }
+    setRecipientName(value);
   };
+
   const renderRecipientNameField = () => {
     return (
-      <FieldTextInput
+      <GlobalInputText
         label="Recipient Name"
-        placeholder="Recipient Name"
+        isMandatory
         value={recipientName}
-        onChange={value => {
-          setRecipientName(value);
-        }}
+        onChangeText={handleRecipientName}
+        placeholder="Recipient Name"
+        maxLength={50}
       />
     );
   };
@@ -392,7 +479,7 @@ const AddNewAddress = ({address}) => {
       <FieldPhoneNumberInput
         type="phone"
         label="Mobile Number"
-        placeholder="Mobile Number"
+        placeholder="Enter recipient mobile no"
         value={mobileNumber}
         valueCountryCode={countryCode}
         onChangeCountryCode={value => {
@@ -401,35 +488,10 @@ const AddNewAddress = ({address}) => {
         onChange={value => {
           setMobileNumber(value);
         }}
+        withoutFlag={true}
+        isMandatory={true}
+        inputLabel={'Mobile No'}
       />
-    );
-  };
-  const renderDeliveryDetailFields = () => {
-    return (
-      <View>
-        <View style={styles.marginTop16} />
-        <Text style={styles.textTitle}>Delivery Details</Text>
-        <View style={styles.marginTop16} />
-        {renderAddressTagField()}
-        <View style={styles.marginTop16} />
-        {renderStreetNameField()}
-        <View style={styles.marginTop16} />
-        {renderUnitNumberField()}
-        <View style={styles.marginTop16} />
-        {renderPostalCodeField()}
-      </View>
-    );
-  };
-
-  const renderRecipientDetailFields = () => {
-    return (
-      <View>
-        <Text style={styles.textTitle}>Recipient Details</Text>
-        <View style={styles.marginTop16} />
-        {renderRecipientNameField()}
-        <View style={styles.marginTop16} />
-        {renderMobileNumberField()}
-      </View>
     );
   };
 
@@ -451,8 +513,6 @@ const AddNewAddress = ({address}) => {
               coordinated: {
                 latitude,
                 longitude,
-                latitudeDelta,
-                longitudeDelta,
               },
               handleChoose: value => {
                 handleSetCoordinate(value);
@@ -463,8 +523,8 @@ const AddNewAddress = ({address}) => {
           region={{
             latitude,
             longitude,
-            longitudeDelta,
             latitudeDelta,
+            longitudeDelta,
           }}>
           <Marker coordinate={{latitude: latitude, longitude: longitude}} />
         </MapView>
@@ -474,8 +534,6 @@ const AddNewAddress = ({address}) => {
               coordinated: {
                 latitude,
                 longitude,
-                latitudeDelta,
-                longitudeDelta,
               },
               handleChoose: value => {
                 handleSetCoordinate(value);
@@ -490,16 +548,48 @@ const AddNewAddress = ({address}) => {
     );
   };
 
+  const renderDeliveryDetailFields = () => {
+    return (
+      <View>
+        <View style={styles.marginTop16} />
+        <Text style={styles.textTitle}>Delivery Details</Text>
+        <View style={styles.marginTop16} />
+        <View style={styles.marginTop16} />
+        {renderStreetNameField()}
+        <View style={styles.marginTop16} />
+        {renderUnitNumberField()}
+        {mapType === 'map' ? renderPostalCodeField() : null}
+        <View style={styles.marginTop16} />
+        {renderLabelAddress()}
+      </View>
+    );
+  };
+
+  const renderRecipientDetailFields = () => {
+    return (
+      <View>
+        <Text style={styles.textTitle}>Recipient Details</Text>
+        <View style={styles.marginTop16} />
+        {renderRecipientNameField()}
+        <View style={styles.marginTop16} />
+        {renderMobileNumberField()}
+      </View>
+    );
+  };
+
   const renderBody = () => {
     return (
       <View style={{flex: 1}}>
         <Body>
-          <ScrollView style={styles.scrollView}>
+          <ScrollView
+            // keyboardShouldPersistTaps={true}
+            nestedScrollEnabled={true}
+            style={styles.scrollView}>
             {renderDeliveryDetailFields()}
             <View style={styles.divider} />
             {renderRecipientDetailFields()}
             <View style={styles.divider} />
-            {renderMap()}
+            {mapType === 'map' ? renderMap() : null}
             {renderCheckBox()}
             <View style={styles.marginTop16} />
           </ScrollView>
@@ -507,6 +597,7 @@ const AddNewAddress = ({address}) => {
       </View>
     );
   };
+
   const handleActive = () => {
     if (
       tagAddress &&
@@ -533,7 +624,7 @@ const AddNewAddress = ({address}) => {
       <View style={styles.footer}>
         <TouchableOpacity
           style={styleActive}
-          disabled={!active || isLoading}
+          disabled={!active}
           onPress={() => {
             handleButtonSave();
           }}>

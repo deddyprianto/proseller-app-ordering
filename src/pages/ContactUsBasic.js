@@ -1,18 +1,25 @@
 import React from 'react';
-import {ScrollView, StyleSheet, KeyboardAvoidingView, View} from 'react-native';
+import {
+  ScrollView,
+  StyleSheet,
+  KeyboardAvoidingView,
+  View,
+  BackHandler,
+} from 'react-native';
 import {SafeAreaView} from 'react-navigation';
-import {Header} from '../../components/layout';
-import Theme from '../../theme/Theme';
-import GlobalInputText from '../../components/globalInputText';
-import GlobalButton from '../../components/button/GlobalButton';
-import {fieldValidation} from '../../helper/Validation';
+import {Header} from '../components/layout';
+import Theme from '../theme/Theme';
+import GlobalInputText from '../components/globalInputText';
+import GlobalButton from '../components/button/GlobalButton';
+import {fieldValidation} from '../helper/Validation';
 import {useDispatch} from 'react-redux';
-import {contactUsHandle} from '../../actions/contactus.action';
-import AnimationMessage from '../../components/animationMessage';
-import GlobalText from '../../components/globalText';
-import CheckboxWhite from '../../assets/svg/CheckboxWhite';
-import ErrorIcon from '../../assets/svg/ErrorIcon';
-import LoadingScreen from '../../components/loadingScreen/LoadingScreen';
+import {contactUsHandle} from '../actions/contactus.action';
+import AnimationMessage from '../components/animationMessage';
+import GlobalText from '../components/globalText';
+import CheckboxWhite from '../assets/svg/CheckboxWhite';
+import ErrorIcon from '../assets/svg/ErrorIcon';
+import LoadingScreen from '../components/loadingScreen/LoadingScreen';
+import {Actions} from 'react-native-router-flux';
 
 const useStyles = () => {
   const {colors, fontFamily} = Theme();
@@ -77,7 +84,7 @@ const useStyles = () => {
   return {styles, colors};
 };
 
-const ContactUs = () => {
+const ContactUsBasic = () => {
   const {styles} = useStyles();
   const [mandatoryField] = React.useState([
     'name',
@@ -86,6 +93,7 @@ const ContactUs = () => {
     'message',
   ]);
   const dispatch = useDispatch();
+  const inputRefEmail = React.useRef(null);
   const [payload, setPayload] = React.useState({});
   const [showMessage, setShowMessage] = React.useState(false);
   const [type, setType] = React.useState(null);
@@ -105,12 +113,27 @@ const ContactUs = () => {
     if (response.success) {
       setPayload({});
       setType('success');
+      if (inputRefEmail.current) {
+        inputRefEmail.current.focus();
+      }
     } else {
       setType('error');
     }
     setShowMessage(true);
     setIsloading(false);
   };
+
+  const handleBackButton = () => {
+    Actions.pop();
+    return true;
+  };
+
+  React.useEffect(() => {
+    BackHandler.addEventListener('hardwareBackPress', handleBackButton);
+    return () => {
+      BackHandler.removeEventListener('hardwareBackPress', handleBackButton);
+    };
+  }, []);
 
   return (
     <SafeAreaView style={styles.safeAreaView}>
@@ -137,6 +160,7 @@ const ContactUs = () => {
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <KeyboardAvoidingView>
           <GlobalInputText
+            ref={inputRefEmail}
             isMandatory
             label="Name"
             placeholder="Enter your name"
@@ -184,4 +208,4 @@ const ContactUs = () => {
   );
 };
 
-export default ContactUs;
+export default ContactUsBasic;
