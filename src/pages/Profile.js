@@ -775,6 +775,10 @@ const Profile = props => {
     return component;
   };
 
+  const openVoucher = () => {
+    Actions.voucherV2();
+  };
+
   const renderSettingV2 = () => (
     <View style={styles.viewSettings}>
       {renderMembershipQRCode()}
@@ -788,7 +792,7 @@ const Profile = props => {
       {renderListMenu('Credit Card', <CreditCard />)}
       {renderDivider()}
       {renderTitleSettingV2('Rewards')}
-      {renderListMenu('My Voucher', <Voucher />)}
+      {renderListMenu('My Voucher', <Voucher />, openVoucher)}
       {renderReferral()}
       {renderDivider()}
       {renderTitleSettingV2('Others')}

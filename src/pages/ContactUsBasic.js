@@ -1,5 +1,11 @@
 import React from 'react';
-import {ScrollView, StyleSheet, KeyboardAvoidingView, View} from 'react-native';
+import {
+  ScrollView,
+  StyleSheet,
+  KeyboardAvoidingView,
+  View,
+  BackHandler,
+} from 'react-native';
 import {SafeAreaView} from 'react-navigation';
 import {Header} from '../components/layout';
 import Theme from '../theme/Theme';
@@ -13,6 +19,7 @@ import GlobalText from '../components/globalText';
 import CheckboxWhite from '../assets/svg/CheckboxWhite';
 import ErrorIcon from '../assets/svg/ErrorIcon';
 import LoadingScreen from '../components/loadingScreen/LoadingScreen';
+import {Actions} from 'react-native-router-flux';
 
 const useStyles = () => {
   const {colors, fontFamily} = Theme();
@@ -86,6 +93,7 @@ const ContactUsBasic = () => {
     'message',
   ]);
   const dispatch = useDispatch();
+  const inputRefEmail = React.useRef(null);
   const [payload, setPayload] = React.useState({});
   const [showMessage, setShowMessage] = React.useState(false);
   const [type, setType] = React.useState(null);
@@ -105,12 +113,27 @@ const ContactUsBasic = () => {
     if (response.success) {
       setPayload({});
       setType('success');
+      if (inputRefEmail.current) {
+        inputRefEmail.current.focus();
+      }
     } else {
       setType('error');
     }
     setShowMessage(true);
     setIsloading(false);
   };
+
+  const handleBackButton = () => {
+    Actions.pop();
+    return true;
+  };
+
+  React.useEffect(() => {
+    BackHandler.addEventListener('hardwareBackPress', handleBackButton);
+    return () => {
+      BackHandler.removeEventListener('hardwareBackPress', handleBackButton);
+    };
+  }, []);
 
   return (
     <SafeAreaView style={styles.safeAreaView}>
@@ -137,6 +160,7 @@ const ContactUsBasic = () => {
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <KeyboardAvoidingView>
           <GlobalInputText
+            ref={inputRefEmail}
             isMandatory
             label="Name"
             placeholder="Enter your name"

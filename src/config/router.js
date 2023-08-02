@@ -138,6 +138,7 @@ import OrderingMode from '../pages/OrderingMode';
 import Payment from '../pages/Payment';
 import Membership from '../pages/Membership';
 import MembershipAllTier from '../pages/MembershipAllTier';
+import VoucherDetailV2 from '../pages/VoucherDetailV2/VoucherDetailV2';
 import PrivacyPolicy from '../pages/PrivacyPolicy';
 import ContactUsBasic from '../pages/ContactUsBasic';
 import ContactUsStarter from '../pages/ContactUsStarter';
@@ -402,6 +403,8 @@ export default class Routes extends Component {
 
             <Scene key="orderingMode" component={OrderingMode} />
             <Scene key="payment" component={Payment} />
+            <Scene key="contactUs" component={ContactUsBasic} />
+            <Scene key="voucherV2" component={VoucherDetailV2} />
             <Scene key="contactUsBasic" component={ContactUsBasic} />
             <Scene key="contactUsStarter" component={ContactUsStarter} />
 
