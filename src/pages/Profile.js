@@ -825,7 +825,6 @@ const Profile = props => {
   const openVoucher = () => {
     Actions.voucherV2();
   };
-  console.log({user}, 'timan');
   const renderSettingV2 = () => (
     <View style={styles.viewSettings}>
       {renderMembershipQRCode()}
