@@ -1,7 +1,14 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React from 'react';
-import {Text, StyleSheet} from 'react-native';
+import {Text, StyleSheet, TouchableOpacity, View} from 'react-native';
 import Theme from '../../theme/Theme';
-import OTPField from '../otpField/OTPField';
+import OTPField from '../fieldOTP/FieldOTP';
+import useCountdownV2 from '../../hooks/time/useCountdownV2';
+import moment from 'moment';
+import GlobalText from '../globalText';
+import {useDispatch} from 'react-redux';
+import {sendOTP} from '../../actions/auth.actions';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview';
 
 const useStyles = () => {
   const theme = Theme();
@@ -98,26 +105,36 @@ const useStyles = () => {
     btnContainer: {
       width: '49%',
     },
+    containerOtp: {
+      display: 'flex',
+      paddingHorizontal: 16,
+    },
   });
   return {styles};
 };
 
 /**
- * @typedef {Object} GlobalTextProps
+ * @typedef {Object} OtpProps
  * @property {boolean} isLogin
  * @property {string} method
  * @property {string} methodValue
  * @property {boolean} isWrongOtp
  * @property {Function} onSubmitOtp
+ * @property {string} buttonNextText
  */
 
 /**
- * @param {GlobalTextProps} props
+ * @param {OtpProps} props
  */
 
 const OtpComponent = props => {
   const {isLogin, method, methodValue, isWrongOtp, onSubmitOtp} = props;
   const {styles} = useStyles();
+  const [sendCounter, setSendCounter] = React.useState(0);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [otp, setOtp] = React.useState(null);
+  const dispatch = useDispatch();
+  const {countdownStart, minutes, seconds} = useCountdownV2();
 
   const renderTextHeader = () => {
     let text = '';
@@ -141,11 +158,100 @@ const OtpComponent = props => {
     );
   };
 
-  const renderOtpField = () => {
-    return <OTPField isWrongOtp={isWrongOtp} onComplete={onSubmitOtp} />;
+  const submitOtp = value => {
+    if (onSubmitOtp && typeof onSubmitOtp === 'function') {
+      onSubmitOtp(value);
+    }
   };
 
-  return <></>;
+  const onChageOtpText = val => setOtp(val);
+
+  const renderOtpField = () => {
+    return (
+      <OTPField
+        onChangeOtp={onChageOtpText}
+        isWrongOtp={isWrongOtp}
+        onComplete={submitOtp}
+      />
+    );
+  };
+
+  const startCountDown = () => {
+    const minuteCount = sendCounter >= 2 ? 4 : 1;
+    const expiredData = {
+      action: {
+        expiry: moment()
+          .add(minuteCount, 'minutes')
+          .format(),
+      },
+    };
+    countdownStart(expiredData);
+  };
+
+  React.useEffect(() => {
+    startCountDown();
+    handleResendOtp();
+  }, []);
+
+  const handleResendOtp = async () => {
+    let value = {};
+
+    if (method === 'email') {
+      value.email = methodValue;
+    } else {
+      value.phoneNumber = methodValue;
+    }
+    setSendCounter(sendCounter + 1);
+    setIsLoading(true);
+    startCountDown();
+    await dispatch(sendOTP(value));
+    setIsLoading(false);
+  };
+
+  const renderResendOTP = () => {
+    const disabled = minutes || seconds;
+    const time = moment(`${minutes}:${seconds}`, 'mm:ss').format('mm:ss');
+    const text = disabled ? `Resend OTP in ${time}` : 'Resend OTP';
+
+    const styleText = disabled
+      ? styles.textSendOtpDisabled
+      : styles.textSendOtp;
+
+    return (
+      <TouchableOpacity
+        disabled={disabled}
+        onPress={() => {
+          handleResendOtp();
+        }}>
+        <GlobalText style={styles.resendText}>
+          Didn’t receive code? <GlobalText style={styleText}>{text}</GlobalText>
+        </GlobalText>
+      </TouchableOpacity>
+    );
+  };
+
+  const renderButtonNext = () => {
+    return (
+      <TouchableOpacity
+        disabled={isLoading}
+        style={styles.touchableNext}
+        onPress={() => submitOtp(otp)}>
+        <Text style={styles.textNext}>{props.buttonNextText || 'Verify'} </Text>
+      </TouchableOpacity>
+    );
+  };
+
+  return (
+    <KeyboardAwareScrollView>
+      <View style={styles.containerOtp}>
+        {renderTextHeader()}
+        {renderTextVerify()}
+        {renderOtpField()}
+        {renderResendOTP()}
+        {renderButtonNext()}
+      </View>
+    </KeyboardAwareScrollView>
+  );
 };
 
-export default OtpComponent;
+export default React.memo(OtpComponent);
