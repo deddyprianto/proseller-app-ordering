@@ -1,20 +1,12 @@
 import React from 'react';
-import {
-  View,
-  StyleSheet,
-  Image,
-  Pressable,
-  ImageBackground,
-} from 'react-native';
+import {View, StyleSheet, Pressable, ImageBackground} from 'react-native';
 import Theme from '../../../theme/Theme';
-import Logo from '../../../assets/img/logo.png';
 import {
   normalizeLayoutSizeHeight,
   normalizeLayoutSizeWidth,
 } from '../../../helper/Layout';
 import GlobalText from '../../../components/globalText';
 import moment from 'moment';
-import CalendarSvg from '../../../assets/svg/CalendareSvg';
 import CalendarWhite from '../../../assets/svg/CalenderWhite';
 import appConfig from '../../../config/appConfig';
 import {Actions} from 'react-native-router-flux';

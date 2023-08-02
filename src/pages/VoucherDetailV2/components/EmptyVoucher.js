@@ -6,7 +6,7 @@ import Theme from '../../../theme/Theme';
 import {normalizeLayoutSizeHeight} from '../../../helper/Layout';
 
 const useStyles = () => {
-  const {colors, fontFamily} = Theme();
+  const {fontFamily} = Theme();
 
   const styles = StyleSheet.create({
     container: {

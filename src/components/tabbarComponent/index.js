@@ -35,7 +35,6 @@ const useStyles = () => {
       justifyContent: 'center',
       borderTopLeftRadius: 8,
       borderTopRightRadius: 8,
-      //   height: normalizeLayoutSizeHeight(40),
     },
     areaInActive: {
       backgroundColor: 'white',
@@ -43,8 +42,6 @@ const useStyles = () => {
       paddingVertical: 8,
       alignItems: 'center',
       justifyContent: 'center',
-      //   height: normalizeLayoutSize
-      //   height: normalizeLayoutSizeHeight(40),
     },
   });
   return {styles, colors};
@@ -53,7 +50,6 @@ const useStyles = () => {
 const TabbarComponent = ({routes}) => {
   const {styles, colors} = useStyles();
   const [activeTab, setActiveTab] = React.useState(routes[0]?.key);
-  console.log({routes, activeTab}, 'laksi');
   const onClickTab = key => {
     setActiveTab(key);
   };
@@ -68,6 +64,7 @@ const TabbarComponent = ({routes}) => {
       <ScrollView horizontal>
         {routes?.map(route => (
           <TouchableOpacity
+            key={route.key}
             activeOpacity={1}
             onPress={() => onClickTab(route?.key)}
             style={styles.tabContainer(routes.length)}>
