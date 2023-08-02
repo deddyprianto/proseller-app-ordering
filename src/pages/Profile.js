@@ -785,7 +785,7 @@ const Profile = props => {
     let address = '';
     if (user?.isEmailVerified && user?.isPhoneNumberVerified) {
       type = 'success';
-      message = 'Your email and mobile phone has  been verified!';
+      message = 'Your email and mobile phone has been verified!';
       showActionButton = false;
     } else if (!user.isEmailVerified) {
       type = 'error';
