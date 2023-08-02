@@ -292,12 +292,13 @@ export const getAllowedOrder = () => {
         token,
       );
       const {data} = response.response;
+
       const findAllowedOrder = data?.settings.find(
         setting => setting.settingKey === 'AllowedOrderingMode',
       );
       dispatch({
         type: ALLOWED_ORDER_TYPE,
-        payload: findAllowedOrder,
+        data: findAllowedOrder,
       });
     } catch (error) {
       return error;

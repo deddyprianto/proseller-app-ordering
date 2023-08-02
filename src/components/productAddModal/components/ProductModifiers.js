@@ -423,11 +423,13 @@ const ProductModifiers = ({
   };
 
   const renderThumbnailImage = ({modifierValue}) => {
-    const image = modifierValue?.defaultImageURL
-      ? modifierValue?.defaultImageURL
-      : imageSettings?.productPlaceholderImage;
+    if (appConfig?.modifierType === 'textWithThumbnail') {
+      const image = modifierValue?.defaultImageURL
+        ? modifierValue?.defaultImageURL
+        : imageSettings?.productPlaceholderImage;
 
-    return <Image source={{uri: image}} style={styles.imageThumbnail} />;
+      return <Image source={{uri: image}} style={styles.imageThumbnail} />;
+    }
   };
 
   const renderOptionName = ({modifierValue}) => {
@@ -470,19 +472,23 @@ const ProductModifiers = ({
     );
   };
 
+  const renderOptionItem = ({modifierValue, modifier}) => {
+    return (
+      <View style={styles.viewOption}>
+        {renderOptionCheckboxImageNamePrice({modifierValue, modifier})}
+        {renderButtonAndTextQty({
+          modifierValue,
+          modifier,
+        })}
+      </View>
+    );
+  };
+
   const renderOptions = ({modifier}) => {
     const modifierList = modifier?.details || [];
 
     const result = modifierList.map(modifierValue => {
-      return (
-        <View style={styles.viewOption}>
-          {renderOptionCheckboxImageNamePrice({modifierValue, modifier})}
-          {renderButtonAndTextQty({
-            modifierValue,
-            modifier,
-          })}
-        </View>
-      );
+      return renderOptionItem({modifierValue, modifier});
     });
 
     return result;

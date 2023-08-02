@@ -11,6 +11,7 @@ const appConfig = {
   // other setting
   descriptionLineProduct: '2',
   contactUsVersion: '',
+  modifierType: 'textOnly',
 
   // image company
   appImageNull: require('../assets/img/logo.png'),
