@@ -48,7 +48,7 @@ const useStyles = () => {
   return {styles, colors, fontFamily};
 };
 
-const FieldOTP = ({onComplete, isWrongOtp}) => {
+const FieldOTP = ({onComplete, isWrongOtp, onChangeOtp}) => {
   const ref = {
     otp1: useRef(),
     otp2: useRef(),
@@ -62,6 +62,9 @@ const FieldOTP = ({onComplete, isWrongOtp}) => {
     if (otp[3]) {
       const value = otp.join('');
       onComplete(value);
+    }
+    if (otp && onChangeOtp && typeof onChangeOtp === 'function') {
+      onChangeOtp(otp.join(''));
     }
   }, [otp]);
 

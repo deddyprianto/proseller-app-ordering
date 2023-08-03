@@ -294,3 +294,26 @@ export const updateUser = payload => {
     }
   };
 };
+
+export const verificationUser = payload => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    const {
+      authReducer: {
+        tokenUser: {token},
+      },
+    } = state;
+    try {
+      const url = '/customer/account-verification';
+      const response = await fetchApi(url, 'POST', payload, 200, token);
+      if (response.success) {
+        dispatch(getUserProfile());
+      }
+      return response;
+    } catch (e) {
+      if (__DEV__) {
+        console.log(e, 'error');
+      }
+    }
+  };
+};

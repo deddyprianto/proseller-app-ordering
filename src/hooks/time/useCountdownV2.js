@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import moment from 'moment';
 import React, {useState, useEffect} from 'react';
 
@@ -7,8 +8,8 @@ const useCountdownV2 = order => {
   const [hours, setHours] = useState(0);
   const [isTimeEnd, setIsTimeEnd] = useState(false);
 
-  useEffect(() => {
-    const then = moment(order.action.expiry).format('MM/DD/YYYY HH:mm:ss');
+  const countdownStart = orderData => {
+    const then = moment(orderData.action.expiry).format('MM/DD/YYYY HH:mm:ss');
 
     const result = setInterval(() => {
       const now = moment().format('MM/DD/YYYY HH:mm:ss');
@@ -37,6 +38,12 @@ const useCountdownV2 = order => {
         clearInterval(result);
       }
     }, 1);
+  };
+
+  useEffect(() => {
+    if (order) {
+      countdownStart(order);
+    }
   }, [order]);
 
   return {
@@ -44,6 +51,7 @@ const useCountdownV2 = order => {
     minutes,
     hours,
     isTimeEnd,
+    countdownStart,
   };
 };
 
