@@ -29,6 +29,7 @@ const useStyles = () => {
     textNext: isOutline => ({
       fontFamily: fontFamily.poppinsMedium,
       color: isOutline ? colors.primary : 'white',
+      textAlign: 'center',
     }),
   });
   return {styles, colors, fontFamily};
@@ -43,6 +44,9 @@ const useStyles = () => {
  * @property {string} title
  * @property {string} active
  * @property {boolean} isOutline
+ * @property {any} containerStyle
+ * @property {any} children
+ * @property {import('react-native').StyleProp} buttonStyle
  */
 
 /**
@@ -55,13 +59,17 @@ const GlobalButton = props => {
     <TouchableOpacity
       style={
         !props.disabled
-          ? styles.touchableNext(props.isOutline)
-          : styles.touchableNextDisabled(props.isOutline)
+          ? [styles.touchableNext(props.isOutline), props.buttonStyle]
+          : [styles.touchableNextDisabled(props.isOutline), props.buttonStyle]
       }
       {...props}>
-      <GlobalText style={styles.textNext(props.isOutline)}>
-        {props.title}{' '}
-      </GlobalText>
+      {props.title ? (
+        <GlobalText style={styles.textNext(props.isOutline)}>
+          {props.title}{' '}
+        </GlobalText>
+      ) : null}
+
+      {props.children}
     </TouchableOpacity>
   );
 };

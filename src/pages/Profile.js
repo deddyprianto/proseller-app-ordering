@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 // import DeviceBrightness from 'react-native-device-brightness';
@@ -28,7 +29,16 @@ import ConfirmationDialog from '../components/confirmationDialog';
 import MyECardModal from '../components/modal/MyECardModal';
 import moment from 'moment';
 import DeviceBrightness from '@adrianso/react-native-device-brightness';
-import {Body} from '../components/layout';
+import Navbar from '../components/navbar';
+import {normalizeLayoutSizeHeight} from '../helper/Layout';
+import BackgroundProfileSvg from '../assets/svg/BackgroundProfileSvg';
+import GlobalText from '../components/globalText';
+import CreditCard from '../assets/svg/CreditCardSvg';
+import Voucher from '../assets/svg/VoucherSvg';
+import StoreSvg from '../assets/svg/StoreSvg';
+import ContactSvg from '../assets/svg/ContactSvg';
+import {Body, Header} from '../components/layout';
+import additionalSetting from '../config/additionalSettings';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -51,6 +61,7 @@ const useStyles = () => {
       height: 1,
       backgroundColor: theme.colors.greyScale3,
       marginHorizontal: 16,
+      marginTop: 5,
     },
     dividerHeader: {
       marginVertical: 16,
@@ -157,8 +168,6 @@ const useStyles = () => {
       display: 'flex',
       flexDirection: 'row',
       alignItems: 'center',
-      borderTopWidth: 1,
-      borderTopColor: theme.colors.greyScale3,
     },
     viewPointHeader: {
       alignItems: 'flex-end',
@@ -265,6 +274,23 @@ const useStyles = () => {
       height: 16,
       tintColor: 'white',
     },
+    backgroundProfile: {
+      height: normalizeLayoutSizeHeight(118),
+      position: 'absolute',
+      top: -5,
+      width: '100%',
+    },
+    titleSettingContainer: {
+      marginHorizontal: 16,
+      marginTop: 16,
+    },
+    titleSettingText: {
+      fontFamily: theme.fontFamily.poppinsBold,
+      fontSize: 16,
+    },
+    containerStyle: {
+      paddingBottom: 30,
+    },
   });
 
   return styles;
@@ -326,6 +352,29 @@ const Profile = props => {
     loadData();
   }, [dispatch, userDetail]);
 
+  const initDeviceBright = async () => {
+    const currentBrightness = await DeviceBrightness.getBrightnessLevel();
+    setCurrentBrightness(currentBrightness);
+  };
+
+  const handleDeviceBright = async () => {
+    initDeviceBright();
+    if (isOpenMyECardModal) {
+      return DeviceBrightness.setBrightnessLevel(1);
+    }
+    if (currentBrightness) {
+      DeviceBrightness.setBrightnessLevel(currentBrightness);
+    }
+  };
+
+  useEffect(() => {
+    handleDeviceBright();
+  }, [isOpenMyECardModal]);
+
+  useEffect(() => {
+    initDeviceBright();
+  }, []);
+
   const handleLogout = async () => {
     setIsLoading(true);
     await dispatch(logoutUser());
@@ -358,6 +407,19 @@ const Profile = props => {
   const handleEditProfile = () => {
     const value = {dataDiri: user};
     return Actions.editProfile(value);
+  };
+
+  const openWebviewPage = url => {
+    if (!url) return;
+    return Actions.policy({url});
+  };
+
+  const renderBackgroundImage = () => {
+    return (
+      <View style={styles.backgroundProfile}>
+        <BackgroundProfileSvg />
+      </View>
+    );
   };
 
   const renderWelcome = () => {
@@ -500,11 +562,15 @@ const Profile = props => {
 
   const renderProfileHeader = () => {
     return (
-      <View style={styles.viewHeader}>
+      <TouchableOpacity
+        style={styles.viewHeader}
+        onPress={() => {
+          Actions.membership();
+        }}>
         {renderHeaderProfileHeaderTop()}
         <View style={styles.dividerHeader} />
         {renderHeaderProfileHeaderBottom()}
-      </View>
+      </TouchableOpacity>
     );
   };
 
@@ -552,7 +618,7 @@ const Profile = props => {
           Actions.notifications();
         }}>
         <Image style={styles.iconSetting} source={appConfig.iconNotification} />
-        <Text style={styles.textIcon}>Notifications</Text>
+        <Text style={styles.textIcon}>Notification Setting</Text>
       </TouchableOpacity>
     );
   };
@@ -582,6 +648,28 @@ const Profile = props => {
         }}>
         <Image style={styles.iconSetting} source={appConfig.iconFAQ} />
         <Text style={styles.textIcon}>FAQ</Text>
+      </TouchableOpacity>
+    );
+  };
+
+  const openContactUs = () => {
+    if (appConfig.contactUsVersion === 'starter') {
+      return Actions.contactUsStarter();
+    } else {
+      return Actions.contactUsBasic();
+    }
+  };
+
+  const renderContactUs = () => {
+    if (!appConfig.contactUsVersion) {
+      return null;
+    }
+    return (
+      <TouchableOpacity style={styles.viewOption} onPress={openContactUs}>
+        <View style={styles.iconSetting}>
+          <ContactSvg />
+        </View>
+        <Text style={styles.textIcon}>Contact Us</Text>
       </TouchableOpacity>
     );
   };
@@ -621,6 +709,22 @@ const Profile = props => {
     }
   };
 
+  const renderPrivacyPolicy = () => {
+    return (
+      <TouchableOpacity
+        style={styles.viewOption}
+        onPress={() => {
+          Actions.privacyPolicy();
+        }}>
+        <Image
+          style={styles.iconSetting}
+          source={appConfig.iconPrivacyPolicy}
+        />
+        <Text style={styles.textIcon}>Privacy Policy</Text>
+      </TouchableOpacity>
+    );
+  };
+
   const renderLogout = () => {
     return (
       <TouchableOpacity
@@ -647,22 +751,61 @@ const Profile = props => {
     );
   };
 
-  const renderSettings = () => {
-    return (
-      <View style={styles.viewSettings}>
-        {renderDivider()}
-        {renderMembershipQRCode()}
-        {renderMyDeliveryAddress()}
-        {renderEditProfile()}
-        {renderReferral()}
-        {renderNotifications()}
-        {renderTermsAndConditions()}
-        {renderFAQ()}
-        {renderDeleteAccount()}
-        {renderLogout()}
-      </View>
-    );
+  const renderListMenu = (title, Icon, onPress) => (
+    <TouchableOpacity onPress={onPress} style={styles.viewOption}>
+      <View style={styles.iconSetting}>{Icon}</View>
+      <Text style={styles.textIcon}>{title} </Text>
+    </TouchableOpacity>
+  );
+
+  const renderTitleSettingV2 = title => (
+    <View style={styles.titleSettingContainer}>
+      <GlobalText style={styles.titleSettingText}>{title}</GlobalText>
+    </View>
+  );
+
+  const handleAdditionalSetting = () => {
+    const component = additionalSetting().additionalPolicy.map(data => {
+      if (data?.show) {
+        return renderListMenu(data.name, data.icon(), () =>
+          openWebviewPage(data.link),
+        );
+      }
+    });
+    return component;
   };
+
+  const openVoucher = () => {
+    Actions.voucherV2();
+  };
+
+  const renderSettingV2 = () => (
+    <View style={styles.viewSettings}>
+      {renderMembershipQRCode()}
+      {renderDivider()}
+      {renderTitleSettingV2('General')}
+      {renderEditProfile()}
+      {renderMyDeliveryAddress()}
+      {renderNotifications()}
+      {renderDivider()}
+      {renderTitleSettingV2('Payment Method')}
+      {renderListMenu('Credit Card', <CreditCard />)}
+      {renderDivider()}
+      {renderTitleSettingV2('Rewards')}
+      {renderListMenu('My Voucher', <Voucher />, openVoucher)}
+      {renderReferral()}
+      {renderDivider()}
+      {renderTitleSettingV2('Others')}
+      {renderListMenu('Store Location', <StoreSvg />)}
+      {handleAdditionalSetting()}
+      {renderTermsAndConditions()}
+      {renderFAQ()}
+      {renderPrivacyPolicy()}
+      {renderContactUs()}
+      {renderDivider()}
+      {renderLogout()}
+    </View>
+  );
 
   const renderDeleteAccountConfirmationDialog = () => {
     if (isOpenDeleteAccountModal) {
@@ -704,29 +847,6 @@ const Profile = props => {
     }
   };
 
-  const initDeviceBright = async () => {
-    const currentBrightness = await DeviceBrightness.getBrightnessLevel();
-    setCurrentBrightness(currentBrightness);
-  };
-
-  const handleDeviceBright = async () => {
-    initDeviceBright();
-    if (isOpenMyECardModal) {
-      return DeviceBrightness.setBrightnessLevel(1);
-    }
-    if (currentBrightness) {
-      DeviceBrightness.setBrightnessLevel(currentBrightness);
-    }
-  };
-
-  useEffect(() => {
-    handleDeviceBright();
-  }, [isOpenMyECardModal]);
-
-  useEffect(() => {
-    initDeviceBright();
-  }, []);
-
   const renderMyECardModal = () => {
     if (isOpenMyECardModal) {
       return (
@@ -743,15 +863,14 @@ const Profile = props => {
   return (
     <SafeAreaView>
       <Body>
-        <ScrollView>
-          <LoadingScreen loading={isLoading} />
-          <Image
-            source={appConfig.imageBackgroundProfile}
-            resizeMode="contain"
-            style={styles.imageBackgroundProfile}
-          />
+        <LoadingScreen loading={isLoading} />
+        <Header title="Profile" isRemoveBackIcon />
+        <ScrollView
+          contentContainerStyle={styles.containerStyle}
+          style={styles.root}>
+          {renderBackgroundImage()}
           {renderProfileHeader()}
-          {renderSettings()}
+          {renderSettingV2()}
           {renderDeleteAccountConfirmationDialog()}
           {renderLogoutConfirmationDialog()}
           {renderMyECardModal()}

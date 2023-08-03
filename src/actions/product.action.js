@@ -348,3 +348,34 @@ export const getProductByBarcode = barcode => {
     } catch (e) {}
   };
 };
+
+export const getProductById = id => {
+  return async dispatch => {
+    try {
+      const response = await fetchApiProduct(
+        `/product/${id}`,
+        'GET',
+        null,
+        200,
+        null,
+      );
+
+      if (response.success) {
+        const data = response.response.data;
+
+        const productModifiers = data?.productModifiers.map(row => {
+          return {
+            modifier: row,
+            modifierID: row.id,
+            modifierName: row.name,
+          };
+        });
+
+        const result = {...data, productModifiers};
+        return result;
+      }
+    } catch (error) {
+      return error;
+    }
+  };
+};

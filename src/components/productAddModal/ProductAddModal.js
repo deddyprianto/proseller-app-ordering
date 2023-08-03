@@ -454,7 +454,7 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
   };
 
   const handleDisabledAddToCartButton = () => {
-    if (!isEmptyArray(product?.productModifiers) && !isLoading) {
+    if (!isEmptyArray(product?.productModifiers) && !isLoading && qty !== 0) {
       let qtyModifierSelected = 0;
       const productModifiers = product.productModifiers.map(productModifier => {
         const min = productModifier.modifier?.min || 0;
@@ -512,10 +512,12 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
   };
 
   const renderButtonMinus = () => {
+    const isEdit = !isEmptyObject(selectedProduct);
+    const isDisabled = isEdit ? qty === 0 : qty === 1;
     return (
       <TouchableOpacity
         style={styles.touchableMinus}
-        disabled={qty === 0}
+        disabled={isDisabled}
         onPress={() => {
           setQty(qty - 1);
         }}>

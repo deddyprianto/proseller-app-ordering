@@ -37,6 +37,12 @@ const ENV = {
 
   appID: 'com.funtoast.app',
 
+  appEmail: 'design@funtoast.com.sg',
+
+  appEmailFeedback: 'feedback@funtoast.com.sg',
+
+  appLinkFeedbackUrl: 'https://www.funtoast.com.sg/contact/feedback/',
+
   retailerInfo: '',
 
   netsclick_terminal_id: '',

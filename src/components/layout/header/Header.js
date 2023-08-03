@@ -13,6 +13,7 @@ import {
   normalizeLayoutSizeHeight,
   normalizeLayoutSizeWidth,
 } from '../../../helper/Layout';
+import BackButton from '../../../assets/svg/BackButton';
 
 const useStyles = () => {
   const theme = Theme();
@@ -45,9 +46,11 @@ const useStyles = () => {
       alignItems: 'flex-start',
     },
     containerCenter: {
-      elevation: 1,
       flex: 2,
       alignItems: 'center',
+    },
+    containerLeftTitle: {
+      flex: 8,
     },
     containerRight: {
       flex: 1,
@@ -64,7 +67,7 @@ const useStyles = () => {
     textHeader: {
       color: theme.colors.textQuaternary,
       fontSize: theme.fontSize[16],
-      fontFamily: theme.fontFamily.poppinsSemiBold,
+      fontFamily: theme.fontFamily.poppinsMedium,
     },
     textCancel: {
       color: theme.colors.textQuaternary,
@@ -82,8 +85,8 @@ const useStyles = () => {
       tintColor: theme.colors.textQuaternary,
     },
     iconBack: {
-      width: 30,
-      height: 30,
+      width: 24,
+      height: 24,
       tintColor: theme.colors.textQuaternary,
     },
     iconRemove: {
@@ -95,6 +98,9 @@ const useStyles = () => {
       width: 11,
       height: 18,
       tintColor: theme.colors.textQuaternary,
+    },
+    primaryColor: {
+      backgroundColor: theme.colors.primary,
     },
   });
   return styles;
@@ -115,6 +121,10 @@ const Header = ({
   handleSearchInput,
   searchPlaceholder,
   onBackBtn,
+  leftTitle,
+  usingPrimaryColor,
+  rootStyle,
+  customRightIcon,
 }) => {
   const styles = useStyles();
   const [isOpenScanner, setIsOpenScanner] = useState(false);
@@ -152,7 +162,12 @@ const Header = ({
 
   const renderDefaultTitle = () => {
     return (
-      <Text style={styles.textHeader} numberOfLines={1}>
+      <Text
+        style={[
+          styles.textHeader,
+          {color: usingPrimaryColor ? 'white' : 'black'},
+        ]}
+        numberOfLines={1}>
         {title}
       </Text>
     );
@@ -180,7 +195,8 @@ const Header = ({
   const renderBackIcon = () => {
     return (
       <TouchableOpacity onPress={onBackBtnHandle}>
-        <Image source={appConfig.iconArrowLeft} style={styles.iconBack} />
+        <BackButton color={usingPrimaryColor ? 'white' : 'black'} />
+        {/* <Image source={appConfig.iconArrowLeft} style={styles.iconBack} /> */}
       </TouchableOpacity>
     );
   };
@@ -192,7 +208,8 @@ const Header = ({
           onPress={() => {
             Actions.cart();
           }}>
-          <Image source={appConfig.iconCart} style={styles.icon} />
+          <BackButton />
+          {/* <Image source={appConfig.iconCart} style={styles.icon} /> */}
         </TouchableOpacity>
       );
     }
@@ -268,6 +285,13 @@ const Header = ({
     }
   };
 
+  const customRightIconHandle = () => {
+    if (customRightIcon) {
+      return customRightIcon();
+    }
+    return null;
+  };
+
   const renderIconRightWrap = () => {
     return (
       <View style={styles.flexRowCenter}>
@@ -275,16 +299,34 @@ const Header = ({
         {renderCartIcon()}
         {renderScannerIcon()}
         {renderRemoveIcon()}
+        {customRightIconHandle()}
       </View>
     );
   };
 
+  const handleStyleTitleContainer = () => {
+    if (leftTitle) {
+      return styles.containerLeftTitle;
+    }
+    return styles.containerCenter;
+  };
+
+  const handleBgHeader = () => {
+    if (usingPrimaryColor) {
+      return [styles.container, styles.primaryColor];
+    }
+    return [styles.container];
+  };
+
   const renderDefaultHeader = () => {
     return (
-      <View style={styles.container}>
+      <View style={handleBgHeader()}>
         <Scanner open={isOpenScanner} handleClose={handleCloseScanner} />
         <View style={styles.containerLeft}>{renderIconLeftWrap()}</View>
-        <View style={styles.containerCenter}>{renderIconCenterWrap()}</View>
+
+        <View style={[handleStyleTitleContainer()]}>
+          {renderIconCenterWrap()}
+        </View>
         <View style={styles.containerRight}>{renderIconRightWrap()}</View>
       </View>
     );
@@ -319,7 +361,7 @@ const Header = ({
     }
   };
 
-  return <View style={styles.root}>{renderHeader()}</View>;
+  return <View style={[styles.root, rootStyle]}>{renderHeader()}</View>;
 };
 
 export default Header;

@@ -2,9 +2,9 @@ const ENV = {
   APP: 'Edgeworks',
   IS_DEVELOP: true,
 
-  API_HOST: 'https://api-funtoast.proseller-dev.com/', //DEMO
+  API_HOST: 'https://api-funtoast.proseller-dev.com/',
 
-  base_url_payment: 'https://payment.proseller-dev.com/api/', //DEMO COM
+  base_url_payment: 'https://payment.proseller-dev.com/api/',
 
   ONESIGNAL_ID: 'ecc78781-3da8-4d14-9df9-f6930d402523',
 
@@ -35,6 +35,12 @@ const ENV = {
   appUrl: 'https://ordering-funtoast.proseller.io/',
 
   appID: 'com.funtoast.app',
+
+  appEmail: 'design@funtoast.com.sg',
+
+  appEmailFeedback: 'feedback@funtoast.com.sg',
+
+  appLinkFeedbackUrl: 'https://www.funtoast.com.sg/contact/feedback/',
 
   retailerInfo: 'Ace Dynamic',
 

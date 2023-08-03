@@ -37,6 +37,7 @@ import {
 } from '../../actions/payment.actions';
 import {isEmptyArray, isEmptyObject} from '../../helper/CheckEmpty';
 import {defaultPaymentAccount} from '../../actions/user.action';
+import LoadingScreen from '../loadingScreen/LoadingScreen';
 
 class PaymentMethods extends Component {
   constructor(props) {
@@ -44,6 +45,7 @@ class PaymentMethods extends Component {
     this.state = {
       screenWidth: Dimensions.get('window').width,
       refreshing: false,
+      isLoading: false,
     };
   }
 
@@ -93,7 +95,7 @@ class PaymentMethods extends Component {
 
   gotoAccounts = async (intlData, item, page) => {
     try {
-      if (item.isAccountRequired !== false) {
+      if (item.isAccountRequired) {
         Actions.paymentAddCard({intlData, item, page});
       } else {
         await this.props.dispatch(selectedAccount(item));
@@ -123,7 +125,11 @@ class PaymentMethods extends Component {
           data={paymentTypes}
           renderItem={({item}) => (
             <TouchableOpacity
-              onPress={() => this.gotoAccounts(intlData, item, page)}
+              onPress={async () => {
+                this.setState({isLoading: true});
+                await this.gotoAccounts(intlData, item, page);
+                this.setState({isLoading: false});
+              }}
               style={[styles.card]}>
               <View style={styles.headingCard}>
                 <View style={{flexDirection: 'row'}}>
@@ -157,6 +163,7 @@ class PaymentMethods extends Component {
     const {intlData, companyInfo} = this.props;
     return (
       <SafeAreaView style={styles.container}>
+        <LoadingScreen loading={this.state.isLoading} />
         {this.state.loading && <Loader />}
         <View
           style={[

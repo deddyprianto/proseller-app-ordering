@@ -95,6 +95,12 @@ const awsConfig = {
 
   APP_ID: Data.appID,
 
+  APP_EMAIL: Data.appEmail,
+
+  APP_EMAIL_FEEDBACK: Data.appEmailFeedback,
+
+  APP_LINK_FEEDBACK_URL: Data.appLinkFeedbackUrl,
+
   RETAILER_INFO: Data.retailerInfo,
 
   NETSCLICK_MERCHANT_HOST: Data.netsclick_merchantHost,
@@ -106,6 +112,10 @@ const awsConfig = {
   NETSCLICK_API_KEY: Data.netsclick_api_key,
 
   NETSCLICK_SECRET_KEY: Data.netsclick_secret_key,
+
+  EMAIL_ONE_MAP: Config.email_one_map,
+
+  PASSWORD_ONE_MAP: Config.password_map,
 };
 
 export default awsConfig;
