@@ -1,13 +1,21 @@
 import React from 'react';
-import DashedLine from 'react-native-dashed-line';
 
-import {View, Text, Image, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet} from 'react-native';
 
 import HTMLView from 'react-native-htmlview';
 import Theme from '../../theme';
 
 const webStyles = StyleSheet.create({
-  body: {
+  li: {
+    fontFamily: 'Poppins-Medium',
+  },
+  strong: {
+    fontFamily: 'Poppins-Bold',
+  },
+  ol: {
+    fontFamily: 'Poppins-Bold',
+  },
+  ul: {
     fontFamily: 'Poppins-Medium',
   },
 });
@@ -57,22 +65,9 @@ const useStyles = () => {
 const ReferralHowItWorks = ({howItWorks}) => {
   const styles = useStyles();
 
-  const renderDashed = () => {
-    return (
-      <DashedLine
-        style={styles.dividerDashed}
-        dashLength={5}
-        dashThickness={0.5}
-        dashGap={5}
-        dashColor={styles.dividerDashed.color}
-      />
-    );
-  };
-
   const renderHeader = () => {
     return <Text style={styles.textHeader}>How it works</Text>;
   };
-
   const renderMarkdown = () => {
     if (howItWorks) {
       return (

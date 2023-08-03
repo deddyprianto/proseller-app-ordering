@@ -171,6 +171,9 @@ const useStyles = () => {
     marginBottom30: {
       marginBottom: 30,
     },
+    scrollContainer: {
+      paddingBottom: 80,
+    },
   });
   return styles;
 };
@@ -520,6 +523,7 @@ const HomeRetail = () => {
               setProductsLimitLength(productsLimitLength + 10);
             }
           }}
+          contentContainerStyle={styles.scrollContainer}
           scrollEventThrottle={0}
           refreshControl={
             <RefreshControl

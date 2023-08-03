@@ -93,12 +93,16 @@ const ReferralCodeShare = ({referralCode}) => {
 
   const handleShare = async () => {
     const link = await dispatch(getReferralDynamicLink());
+    let orderLink = '';
     const url = link?.url;
+    if (link !== false) {
+      orderLink = `or order now at ${url}`;
+    }
     try {
       await Share.share({
         message: `Hellooo! I enjoy ordering from ${
           awsConfig.COMPANY_NAME
-        } and I think you will too! Use the referral code ${referralCode} or order now at ${url} and receive a gift!`,
+        } and I think you will too! Use the referral code ${referralCode} ${orderLink} and receive a gift!`,
       });
     } catch (error) {
       dispatch(
