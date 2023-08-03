@@ -13,13 +13,6 @@ import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview';
 const useStyles = () => {
   const theme = Theme();
   const styles = StyleSheet.create({
-    root: {
-      flex: 1,
-    },
-    container: {
-      display: 'flex',
-      paddingHorizontal: 16,
-    },
     touchableNext: {
       marginTop: 32,
       height: 40,
@@ -45,23 +38,7 @@ const useStyles = () => {
       fontSize: theme.fontSize[16],
       fontFamily: theme.fontFamily.poppinsMedium,
     },
-    textInputOtp: {
-      width: 40,
-      height: 40,
-      borderWidth: 1,
-      borderRadius: 12,
-      paddingVertical: 0,
-      justifyContent: 'center',
-      alignItems: 'center',
-      textAlign: 'center',
-    },
-    viewInputOtp: {
-      marginVertical: 32,
-      width: '70%',
-      display: 'flex',
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-    },
+
     textSendOtp: {
       width: '100%',
       textAlign: 'center',
@@ -83,27 +60,6 @@ const useStyles = () => {
     resendText: {
       textAlign: 'center',
       fontFamily: theme.fontFamily.poppinsMedium,
-    },
-    modalContainer: {
-      padding: 0,
-    },
-    titleCancelStyle: {
-      color: theme.colors.primary,
-      fontFamily: theme.fontFamily.poppinsMedium,
-      fontSize: 16,
-    },
-    cancelDescription: {
-      textAlign: 'center',
-      fontFamily: theme.fontFamily.poppinsMedium,
-    },
-    actionCancelContainer: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      marginTop: 8,
-      // flex: 1,
-    },
-    btnContainer: {
-      width: '49%',
     },
     containerOtp: {
       display: 'flex',
