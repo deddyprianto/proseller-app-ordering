@@ -8,14 +8,21 @@ import Theme from '../../theme';
 const webStyles = StyleSheet.create({
   li: {
     fontFamily: 'Poppins-Medium',
+    fontSize: 14,
   },
   strong: {
     fontFamily: 'Poppins-Bold',
+    fontSize: 14,
   },
   ol: {
     fontFamily: 'Poppins-Bold',
+    fontSize: 14,
   },
   ul: {
+    fontFamily: 'Poppins-Medium',
+    fontSize: 14,
+  },
+  p: {
     fontFamily: 'Poppins-Medium',
   },
 });
