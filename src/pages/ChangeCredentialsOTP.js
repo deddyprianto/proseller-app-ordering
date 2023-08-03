@@ -31,8 +31,6 @@ class ChangeCredentialsOTP extends Component {
   constructor(props) {
     super(props);
 
-    // const {initialTimer} = this.props;
-
     this.state = {
       loading: false,
       isWrongOtp: false,

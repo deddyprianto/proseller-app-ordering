@@ -128,7 +128,7 @@ const useStyles = () => {
  */
 
 const OtpComponent = props => {
-  const {isLogin, method, methodValue, isWrongOtp, onSubmitOtp} = props;
+  const {method, methodValue, isWrongOtp, onSubmitOtp} = props;
   const {styles} = useStyles();
   const [sendCounter, setSendCounter] = React.useState(0);
   const [isLoading, setIsLoading] = React.useState(false);
@@ -138,10 +138,10 @@ const OtpComponent = props => {
 
   const renderTextHeader = () => {
     let text = '';
-    if (isLogin) {
-      text = method === 'email' ? 'Verify Your Email' : 'Verify Your Mobile No';
+    if (method === 'email') {
+      text = 'Verify Your Email';
     } else {
-      text = method === 'email' ? 'Verify Your Email' : 'Verify Your Mobile No';
+      text = 'Verify Your Mobile No';
     }
 
     return <Text style={styles.textHeader}>{text}</Text>;

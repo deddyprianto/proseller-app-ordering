@@ -29,7 +29,6 @@ import ConfirmationDialog from '../components/confirmationDialog';
 import MyECardModal from '../components/modal/MyECardModal';
 import moment from 'moment';
 import DeviceBrightness from '@adrianso/react-native-device-brightness';
-import Navbar from '../components/navbar';
 import {normalizeLayoutSizeHeight} from '../helper/Layout';
 import BackgroundProfileSvg from '../assets/svg/BackgroundProfileSvg';
 import GlobalText from '../components/globalText';
@@ -39,7 +38,6 @@ import StoreSvg from '../assets/svg/StoreSvg';
 import ContactSvg from '../assets/svg/ContactSvg';
 import {Body, Header} from '../components/layout';
 import additionalSetting from '../config/additionalSettings';
-import useGetProtectionData from '../hooks/protection/useGetProtectioData';
 import InfoMessage from '../components/infoMessage/InfoMessage';
 
 const WIDTH = Dimensions.get('window').width;
@@ -786,7 +784,6 @@ const Profile = props => {
     if (user?.isEmailVerified && user?.isPhoneNumberVerified) {
       type = 'success';
       message = 'Your email and mobile phone has been verified!';
-      showActionButton = false;
     } else if (!user.isEmailVerified) {
       type = 'error';
       message = 'Your email has not been verified.';
