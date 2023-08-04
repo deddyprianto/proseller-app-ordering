@@ -124,6 +124,9 @@ const useStyles = () => {
       flex: 1,
       marginTop: 8,
     },
+    mt24: {
+      marginTop: 24,
+    },
     itemLabelAddress: isActive => ({
       marginRight: 8,
       paddingHorizontal: 16,
@@ -137,6 +140,12 @@ const useStyles = () => {
       color: isActive ? 'white' : theme.colors.primary,
       fontFamily: theme.fontFamily.poppinsMedium,
     }),
+    mb12: {
+      marginBottom: 12,
+    },
+    scrollContainer: {
+      paddingBottom: 100,
+    },
   });
   return styles;
 };
@@ -375,6 +384,7 @@ const AddNewAddress = ({address}) => {
           onChangeText={handleLabelAddress}
           maxLength={50}
           isMandatory
+          showNumberLengthText={true}
         />
         <ScrollView
           showsHorizontalScrollIndicator={false}
@@ -450,6 +460,7 @@ const AddNewAddress = ({address}) => {
         maxLength={50}
         onChangeText={handleUnitNumber}
         isMandatory
+        showNumberLengthText={true}
       />
     );
   };
@@ -551,15 +562,11 @@ const AddNewAddress = ({address}) => {
   const renderDeliveryDetailFields = () => {
     return (
       <View>
-        <View style={styles.marginTop16} />
+        <View style={styles.mt24} />
         <Text style={styles.textTitle}>Delivery Details</Text>
-        <View style={styles.marginTop16} />
-        <View style={styles.marginTop16} />
         {renderStreetNameField()}
-        <View style={styles.marginTop16} />
         {renderUnitNumberField()}
         {mapType === 'map' ? renderPostalCodeField() : null}
-        <View style={styles.marginTop16} />
         {renderLabelAddress()}
       </View>
     );
@@ -569,7 +576,6 @@ const AddNewAddress = ({address}) => {
     return (
       <View>
         <Text style={styles.textTitle}>Recipient Details</Text>
-        <View style={styles.marginTop16} />
         {renderRecipientNameField()}
         <View style={styles.marginTop16} />
         {renderMobileNumberField()}
@@ -583,15 +589,15 @@ const AddNewAddress = ({address}) => {
         <Body>
           <ScrollView
             // keyboardShouldPersistTaps={true}
+            contentContainerStyle={styles.scrollContainer}
             nestedScrollEnabled={true}
             style={styles.scrollView}>
             {renderDeliveryDetailFields()}
             <View style={styles.divider} />
             {renderRecipientDetailFields()}
-            <View style={styles.divider} />
+            <View style={[styles.divider, {marginBottom: 12}]} />
             {mapType === 'map' ? renderMap() : null}
             {renderCheckBox()}
-            <View style={styles.marginTop16} />
           </ScrollView>
         </Body>
       </View>

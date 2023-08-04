@@ -41,6 +41,9 @@ const useStyles = () => {
  * @property {string} title
  * @property {string} description
  * @property {import('react-native').StyleProp} scrollContainerStyle
+ * @property {import('react-native').StyleProp} buttonActionStyle
+ * @property {import('react-native').StyleProp} ModalContainerStyle
+ * @property {boolean} hideCloseButton
  */
 
 /**
@@ -54,6 +57,8 @@ const ModalAction = props => {
       title={props.title}
       titleStyle={styles.titleContainer}
       closeModal={props.closeModal}
+      modalContainerStyle={props.ModalContainerStyle}
+      hideCloseIcon={props.hideCloseButton}
       scrollContainerStyle={props.scrollContainerStyle}
       {...props}>
       <View>
@@ -61,7 +66,7 @@ const ModalAction = props => {
 
         <GlobalText style={styles.textDesc}>{props.description}</GlobalText>
         <View style={styles.divider} />
-        <View style={styles.actionButtonContainer}>
+        <View style={[styles.actionButtonContainer, props.buttonActionStyle]}>
           <View style={styles.buttonStyle}>
             <GlobalButton onPress={props.onCancel} isOutline title="Cancel" />
           </View>
