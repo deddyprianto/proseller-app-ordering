@@ -14,8 +14,6 @@ import {compose} from 'redux';
 import {format} from 'date-fns';
 import colorConfig from '../config/colorConfig';
 import {Actions} from 'react-native-router-flux';
-import CryptoJS from 'react-native-crypto-js';
-import awsConfig from '../config/awsConfig';
 import {
   campaign,
   cutomerActivity,
@@ -199,15 +197,8 @@ class DetailPoint extends Component {
   };
 
   render() {
-    const {colors} = this.props;
-    console.log(this.state.type, colors, 'lusush');
-    const {
-      customerActivity,
-      filterReceive,
-      dataLength,
-      actualLength,
-    } = this.state;
-    console.log(this.props.dataPoint, 'kurama');
+    const {colors, campignData} = this.props;
+    const {customerActivity, dataLength, actualLength, history} = this.state;
     return (
       <SafeAreaView>
         {this.state.loading && <Loader />}
@@ -226,95 +217,25 @@ class DetailPoint extends Component {
             </View>
             <View style={styles.earnPointContainer}>
               <GlobalText style={styles.earnPointText}>
-                Earn 10 Points per $1 spent
+                Earn {campignData?.points?.netSpendToPoint0} Points per{' '}
+                {`$${campignData?.points?.netSpendToPoint1}`} spent
               </GlobalText>
             </View>
-            <View style={styles.ph16}>
-              <View style={styles.pointExpiredContainer(colors.greyScale4)}>
-                <GlobalText style={styles.pointExpiredText(colors.primary)}>
-                  10 points will expire on 30 May 2022
-                </GlobalText>
+            {!isEmptyArray(history) && (
+              <View style={styles.ph16}>
+                <View style={styles.pointExpiredContainer(colors.greyScale4)}>
+                  <GlobalText style={styles.pointExpiredText(colors.primary)}>
+                    {history[0].pointBalance} points will expire on{' '}
+                    {format(new Date(history[0].expiryDate), 'dd MMM yyyy')}
+                  </GlobalText>
+                </View>
               </View>
-            </View>
+            )}
+
             <View style={[styles.ph16, styles.mv16]}>
               <View style={styles.divider(colors.greyScale3)} />
             </View>
-            {/* <View style={styles.header}>
-              <TouchableOpacity
-                onPress={this.goBack}
-                style={{alignItems: 'center'}}>
-                <Icon
-                  size={Platform.OS === 'ios' ? 37 : 28}
-                  name={Platform.OS === 'ios' ? 'ios-close' : 'md-close'}
-                  style={{color: colorConfig.store.defaultColor}}
-                />
-              </TouchableOpacity>
-              <Text style={styles.titleHeader}>Rewards Points</Text>
-            </View> */}
-            {/* <LinearGradient
-              colors={[color1, color2, color3]}
-              style={styles.card}>
-              <Text style={styles.textCustomerGroup}>You Have</Text>
-              <View style={styles.line} />
-              <Text style={styles.textPoint}>{this.props.totalPoint} </Text>
-            </LinearGradient> */}
 
-            <View>
-              {/* <View style={styles.panelNoBorder}>
-                  {!isEmptyArray(history) && (
-                    <View style={styles.historyPoint}>
-                      <View>
-                        <Text style={styles.simpleText}>
-                          <Text
-                            style={{
-                              color: colorConfig.store.secondaryColor,
-                              fontWeight: 'bold',
-                            }}>
-                            {this.getPointInfo(history[0])}
-                          </Text>{' '}
-                          points will expire on{' '}
-                          {format(
-                            new Date(history[0].expiryDate),
-                            'dd MMM yyyy',
-                          )}
-                        </Text>
-                      </View>
-                    </View>
-                  )}
-                </View> */}
-              {/* <TouchableOpacity
-                  onPress={() => Actions.rewards()}
-                  style={{
-                    marginTop: 40,
-                    borderColor: colorConfig.store.secondaryColor,
-                    borderWidth: 0.8,
-                    padding: 10,
-                    justifyContent: 'space-between',
-                    flexDirection: 'row',
-                    borderRadius: 6,
-                    width: '100%',
-                    alignItems: 'center',
-                    paddingHorizontal: 20,
-                  }}>
-                  <Text
-                    style={{
-                      color: colorConfig.store.secondaryColor,
-                      fontFamily: 'Poppins-Regular',
-                      fontSize: 16,
-                    }}>
-                    Redeem Voucher
-                  </Text>
-                  <Icon
-                    size={Platform.OS === 'ios' ? 28 : 27}
-                    name={
-                      Platform.OS === 'ios'
-                        ? 'ios-arrow-dropright'
-                        : 'md-arrow-dropright'
-                    }
-                    style={{color: colorConfig.store.secondaryColor}}
-                  />
-                </TouchableOpacity> */}
-            </View>
             <View style={[styles.mainPanel, styles.ph16]}>
               <Text style={styles.title}>Points History</Text>
               <View style={styles.panelTabContainer(colors.greyScale4)}>
@@ -363,9 +284,18 @@ class DetailPoint extends Component {
                       <Text style={styles.activityTitle}>
                         {this.getLabelActivity(item.activityType)}
                       </Text>
-                      <Text style={styles.activityRewardsPositive}>
-                        {Number(item.amount) > 0 && filterReceive ? '+' : null}
-                        {Number(item.amount) > 0 && !filterReceive ? '-' : null}
+                      <Text
+                        style={styles.activityRewardsPositive(
+                          this.state.type,
+                          colors.primary,
+                        )}>
+                        {Number(item.amount) > 0 &&
+                        this.state.type === 'received'
+                          ? '+'
+                          : null}
+                        {Number(item.amount) > 0 && this.state.type === 'used'
+                          ? '-'
+                          : null}
                         {Number(item.amount)}
                       </Text>
                     </View>
@@ -569,11 +499,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: 'Poppins-Medium',
   },
-  activityRewardsPositive: {
+  activityRewardsPositive: (type, primaryColor) => ({
     fontSize: 14,
     fontFamily: 'Poppins-Medium',
-    color: colorConfig.store.colorSuccess,
-  },
+    color: type === 'used' ? primaryColor : colorConfig.store.colorSuccess,
+  }),
   activityDate: color => ({
     fontSize: 12,
     color: color,
@@ -672,7 +602,7 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => ({
-  campign: state.rewardsReducer.campaign.campaign,
+  campignData: state.rewardsReducer.campaign.campaign,
   userDetail: state.userReducer.getUser.userDetails,
   totalPoint: state.rewardsReducer.dataPoint.totalPoint,
   dataPoint: state.rewardsReducer.dataPoint,
