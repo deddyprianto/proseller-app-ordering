@@ -70,6 +70,9 @@ const useStyles = () => {
       backgroundColor: theme.colors.greyScale3,
       margin: 16,
     },
+    containerTyle: {
+      paddingBottom: 30,
+    },
   });
   return styles;
 };
@@ -197,6 +200,7 @@ const Referral = () => {
             setInvitedListLimitLength(invitedListLimitLength + 10);
           }
         }}
+        contentContainerStyle={styles.containerTyle}
         scrollEventThrottle={0}>
         {renderHeader()}
         {renderReferralBenefitList()}

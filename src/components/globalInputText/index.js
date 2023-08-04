@@ -235,13 +235,6 @@ const GlobalInputText = React.forwardRef((props, ref) => {
           </GlobalText>
         </View>
       ) : null}
-      {props.maxLength ? (
-        <View style={styles.maxLexthStyle}>
-          <GlobalText style={styles.maxLengthText}>
-            {props.value?.length}/{props.maxLength}{' '}
-          </GlobalText>
-        </View>
-      ) : null}
     </View>
   );
 });

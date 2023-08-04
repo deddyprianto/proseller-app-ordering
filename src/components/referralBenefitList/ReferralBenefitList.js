@@ -1,10 +1,11 @@
 import React from 'react';
 
-import {StyleSheet, View, Text, Image} from 'react-native';
+import {StyleSheet, View, Text, Image, TouchableOpacity} from 'react-native';
 import appConfig from '../../config/appConfig';
 
 import Theme from '../../theme';
 import ReferralBenefitItem from './components/ReferralBenefitItem';
+import ArrowBottom from '../../assets/svg/ArrowBottom';
 
 const useStyles = () => {
   const theme = Theme();
@@ -43,32 +44,48 @@ const useStyles = () => {
       height: 1,
       backgroundColor: theme.colors.greyScale4,
     },
+    titleContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+    },
   });
   return styles;
 };
 
 const ReferralBenefitList = ({senderBenefit, referredBenefit, criteria}) => {
   const styles = useStyles();
-
+  const [showAllItem, setShowAllItem] = React.useState(false);
   const renderDivider = () => {
     return <View style={styles.divider} />;
   };
 
+  const showHideBtn = () => {
+    const sender = senderBenefit?.length || 0;
+    const referred = referredBenefit?.length || 0;
+    const calculation = referred + sender;
+    return calculation > 4;
+  };
+
   const renderSenderBenefit = () => {
-    const benefitList = senderBenefit?.map(benefit => {
+    const benefitList = senderBenefit?.map((benefit, index) => {
+      if (index > 1 && !showAllItem) return null;
       return <ReferralBenefitItem benefit={benefit} />;
     });
 
     return (
       <View>
-        <Text style={styles.textBenefit}>As a sender you will get</Text>
+        <View style={styles.titleContainer}>
+          <Text style={styles.textBenefit}>As a sender you will get</Text>
+          {showHideBtn() ? <ArrowBottom /> : null}
+        </View>
         {benefitList}
       </View>
     );
   };
 
   const renderReferredBenefit = () => {
-    const benefitList = referredBenefit?.map(benefit => {
+    const benefitList = referredBenefit?.map((benefit, index) => {
+      if (index > 1 && !showAllItem) return null;
       return <ReferralBenefitItem benefit={benefit} />;
     });
 
@@ -97,13 +114,20 @@ const ReferralBenefitList = ({senderBenefit, referredBenefit, criteria}) => {
     }
   };
 
+  const showAllItemHandle = () => {
+    setShowAllItem(prevState => !prevState);
+  };
+
   return (
-    <View style={styles.root}>
+    <TouchableOpacity
+      activeOpacity={1}
+      onPress={showAllItemHandle}
+      style={styles.root}>
       {renderSenderBenefit()}
       {renderDivider()}
       {renderReferredBenefit()}
       {renderCriteria()}
-    </View>
+    </TouchableOpacity>
   );
 };
 
