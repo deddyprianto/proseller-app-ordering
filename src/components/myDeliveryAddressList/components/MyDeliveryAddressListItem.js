@@ -207,9 +207,9 @@ const useStyles = () => {
     scrollContainerStyle: {
       paddingBottom: 16,
     },
-    tagTextContainer: {
-      maxWidth: '80%',
-    },
+    tagTextContainer: isDefault => ({
+      maxWidth: isDefault ? '80%' : '100%',
+    }),
     buttonActionStyle: {
       paddingHorizontal: 16,
     },
@@ -302,7 +302,7 @@ const MyDeliveryAddressItem = ({item, fromScene, handleResetProvider}) => {
   const renderTagAddress = () => {
     return (
       <View style={[styles.viewTagAddress]}>
-        <View style={styles.tagTextContainer}>
+        <View style={styles.tagTextContainer(item.isDefault)}>
           <Text numberOfLines={1} style={styles.textTagAddress}>
             {item?.tagAddress}
           </Text>
