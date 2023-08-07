@@ -342,18 +342,9 @@ class DetailPoint extends Component {
                       <Text style={styles.activityTitle}>
                         {this.getLabelActivity(item.activityType)}
                       </Text>
-                      <Text
-                        style={styles.activityRewardsPositive(
-                          this.state.type,
-                          colors.primary,
-                        )}>
-                        {Number(item.amount) > 0 &&
-                        this.state.type === 'received'
-                          ? '+'
-                          : null}
-                        {Number(item.amount) > 0 && this.state.type === 'used'
-                          ? '-'
-                          : null}
+                      <Text style={styles.activityRewardsPositive}>
+                        {Number(item.amount) > 0 && filterReceive ? '+' : null}
+                        {Number(item.amount) > 0 && !filterReceive ? '-' : null}
                         {Number(item.amount)}
                       </Text>
                     </View>
