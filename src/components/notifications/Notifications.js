@@ -132,6 +132,14 @@ class Notifications extends Component {
     </View>
   );
 
+  handleToggleSms = () => {
+    this.changeSMSSetting(this.state.smsNotification);
+  };
+
+  handleToggleEmail = () => {
+    this.changeEmailSetting(this.state.emailNotification);
+  };
+
   righIconPhone = () => (
     <Switch
       trackColor={{
@@ -140,9 +148,7 @@ class Notifications extends Component {
       }}
       thumbColor={true ? colorConfig.store.defaultColor : 'white'}
       ios_backgroundColor="white"
-      onValueChange={() => {
-        this.changeSMSSetting(this.state.smsNotification);
-      }}
+      onValueChange={this.handleToggleSms}
       value={this.state.smsNotification}
       style={styles.buttonSwitch}
     />
@@ -162,17 +168,14 @@ class Notifications extends Component {
       }}
       thumbColor={true ? colorConfig.store.defaultColor : 'white'}
       ios_backgroundColor="white"
-      onValueChange={() => {
-        this.changeEmailSetting(this.state.emailNotification);
-      }}
+      onValueChange={this.handleToggleEmail}
       value={this.state.emailNotification}
       style={styles.buttonSwitch}
     />
   );
 
   render() {
-    const {fontFamily} = this.props;
-    const {smsNotification, emailNotification} = this.state;
+    const {fontFamily, colors} = this.props;
     return (
       <SafeAreaView style={styles.container}>
         <Body>
@@ -182,13 +185,17 @@ class Notifications extends Component {
             <List.Section>
               <List.Item
                 title="Email Notification"
+                onPress={this.handleToggleEmail}
                 titleStyle={[
                   {fontFamily: fontFamily.poppinsMedium},
                   styles.listTextStyle,
                 ]}
                 descriptionStyle={[
                   styles.listDescriptionStyle,
-                  {fontFamily: fontFamily.poppinsMedium},
+                  {
+                    fontFamily: fontFamily.poppinsMedium,
+                    color: colors.greyScale2,
+                  },
                 ]}
                 description="Allow sending notification to your email"
                 left={this.leftIconMessage}
@@ -197,6 +204,7 @@ class Notifications extends Component {
 
               <List.Item
                 title="SMS Notification"
+                onPress={this.handleToggleSms}
                 description="Allow sending notification to your mobile phone"
                 titleStyle={[
                   {fontFamily: fontFamily.poppinsMedium},
@@ -204,7 +212,10 @@ class Notifications extends Component {
                 ]}
                 descriptionStyle={[
                   styles.listDescriptionStyle,
-                  {fontFamily: fontFamily.poppinsMedium},
+                  {
+                    fontFamily: fontFamily.poppinsMedium,
+                    color: colors.greyScale2,
+                  },
                 ]}
                 left={this.leftIconPhone}
                 right={this.righIconPhone}
@@ -368,5 +379,8 @@ const styles = StyleSheet.create({
       {scaleX: Platform.OS === 'ios' ? 0.7 : 1},
       {scaleY: Platform.OS === 'ios' ? 0.7 : 1},
     ],
+  },
+  mt10: {
+    marginTop: 10,
   },
 });
