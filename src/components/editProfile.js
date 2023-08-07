@@ -20,6 +20,7 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
+  StatusBar,
 } from 'react-native';
 import {Actions} from 'react-native-router-flux';
 import DatePicker from 'react-native-date-picker';
@@ -736,7 +737,7 @@ class AccountEditProfil extends Component {
         <NavbarBack title={intlData.messages.editProfile} />
 
         <KeyboardAvoidingView
-          keyboardVerticalOffset={30}
+          keyboardVerticalOffset={2}
           style={styles.keyboardStyle}
           behavior={this.handleBehaviourKeyboard()}>
           <Body>
