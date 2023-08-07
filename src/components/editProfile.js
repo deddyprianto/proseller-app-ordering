@@ -738,317 +738,316 @@ class AccountEditProfil extends Component {
         {this.state.loading && <LoaderDarker />}
         <NavbarBack title={intlData.messages.editProfile} />
 
-        <KeyboardAvoidingView behavior={this.handleBehaviourKeyboard()}>
+        <KeyboardAvoidingView
+          keyboardVerticalOffset={30}
+          style={styles.keyboardStyle}
+          behavior={this.handleBehaviourKeyboard()}>
           <Body>
             <ScrollView>
-              <View>
-                <View style={styles.card}>
-                  <Form ref="form" onSubmit={this.checkMandatory}>
-                    <View style={styles.detail}>
-                      <GlobalInputText
-                        value={this.state.name}
-                        onChangeText={value => this.setState({name: value})}
-                        placeholder="Name"
-                        label="Name"
-                        isMandatory
-                      />
-                      <GlobalInputText
-                        placeholder="Email"
-                        value={this.state.email}
-                        onChangeText={value => this.setState({email: value})}
-                        disabled
-                        label="Email"
-                        isMandatory
-                        editable={false}
-                      />
+              <Form ref="form" onSubmit={this.checkMandatory}>
+                <View style={styles.detail}>
+                  <GlobalInputText
+                    value={this.state.name}
+                    onChangeText={value => this.setState({name: value})}
+                    placeholder="Name"
+                    label="Name"
+                    isMandatory
+                  />
+                  <GlobalInputText
+                    placeholder="Email"
+                    value={this.state.email}
+                    onChangeText={value => this.setState({email: value})}
+                    disabled
+                    label="Email"
+                    isMandatory
+                    editable={false}
+                  />
 
-                      {!isEmptyArray(fields) &&
-                        fields
-                          .filter(data => data.show)
-                          .map(item => {
-                            if (
-                              item.fieldName === 'birthDate' &&
-                              item.format.length > 4
-                            )
-                              return (
-                                <>
-                                  <GlobalInputText
-                                    label="Birthdate"
-                                    isMandatory={item.mandatory}
-                                    editable={
-                                      appConfig.appName !== 'fareastflora'
-                                    }
-                                    onPressBtn={this.showDatePicker}
-                                    type="button"
-                                    value={this.formatBirthDate(
-                                      this.state.birthDate,
-                                    )}
-                                    defaultValue="Birthdate"
-                                    rightIcon={<CalendarSvg />}
-                                  />
-                                  <DatePicker
-                                    modal
-                                    mode={'date'}
-                                    androidVariant={'iosClone'}
-                                    maximumDate={this.getMaxDate()}
-                                    open={this.state.isDatePickerVisible}
-                                    date={this.handleDatePicker()}
-                                    onConfirm={this.handleConfirm}
-                                    onCancel={this.hideDatePicker}
-                                  />
-                                </>
-                              );
+                  {!isEmptyArray(fields) &&
+                    fields
+                      .filter(data => data.show)
+                      .map(item => {
+                        if (
+                          item.fieldName === 'birthDate' &&
+                          item.format.length > 4
+                        )
+                          return (
+                            <>
+                              <GlobalInputText
+                                label="Birthdate"
+                                isMandatory={item.mandatory}
+                                editable={appConfig.appName !== 'fareastflora'}
+                                onPressBtn={this.showDatePicker}
+                                type="button"
+                                value={this.formatBirthDate(
+                                  this.state.birthDate,
+                                )}
+                                defaultValue="Birthdate"
+                                rightIcon={<CalendarSvg />}
+                              />
+                              <DatePicker
+                                modal
+                                mode={'date'}
+                                androidVariant={'iosClone'}
+                                maximumDate={this.getMaxDate()}
+                                open={this.state.isDatePickerVisible}
+                                date={this.handleDatePicker()}
+                                onConfirm={this.handleConfirm}
+                                onCancel={this.hideDatePicker}
+                              />
+                            </>
+                          );
 
-                            if (
-                              item.fieldName === 'birthDate' &&
-                              item.format.length <= 4
-                            )
-                              return (
-                                <View style={styles.detailItem}>
-                                  <Text
-                                    style={[
-                                      styles.desc,
-                                      {
-                                        marginLeft: 0,
-                                        fontFamily: fontFamily.poppinsMedium,
-                                      },
-                                    ]}>
-                                    Birth Month {this.renderItemMandatory(item)}
-                                  </Text>
-                                  <DropDownPicker
-                                    placeholder={'Select your birth month'}
-                                    items={this.state.MM}
-                                    defaultValue={this.getMonth(
-                                      this.state.birthDate,
-                                    )}
-                                    containerStyle={{
-                                      height: 47,
-                                    }}
-                                    style={[
-                                      styles.dropdownContainerStyle,
-                                      {
-                                        borderColor: colors.greyScale2,
-                                      },
-                                    ]}
-                                    dropDownStyle={{
-                                      backgroundColor: '#fafafa',
-                                      zIndex: 3,
-                                    }}
-                                    onChangeItem={item =>
-                                      this.setState({
-                                        birthDate: item.value,
-                                      })
-                                    }
-                                    onOpen={() => {
-                                      this.setState({
-                                        openBirthDate: true,
-                                      });
-                                    }}
-                                    onClose={() => {
-                                      this.setState({
-                                        openBirthDate: false,
-                                      });
-                                    }}
-                                  />
+                        if (
+                          item.fieldName === 'birthDate' &&
+                          item.format.length <= 4
+                        )
+                          return (
+                            <View style={styles.detailItem}>
+                              <Text
+                                style={[
+                                  styles.desc,
+                                  {
+                                    marginLeft: 0,
+                                    fontFamily: fontFamily.poppinsMedium,
+                                  },
+                                ]}>
+                                Birth Month {this.renderItemMandatory(item)}
+                              </Text>
+                              <DropDownPicker
+                                placeholder={'Select your birth month'}
+                                items={this.state.MM}
+                                defaultValue={this.getMonth(
+                                  this.state.birthDate,
+                                )}
+                                containerStyle={{
+                                  height: 47,
+                                }}
+                                style={[
+                                  styles.dropdownContainerStyle,
+                                  {
+                                    borderColor: colors.greyScale2,
+                                  },
+                                ]}
+                                dropDownStyle={{
+                                  backgroundColor: '#fafafa',
+                                  zIndex: 3,
+                                }}
+                                onChangeItem={item =>
+                                  this.setState({
+                                    birthDate: item.value,
+                                  })
+                                }
+                                onOpen={() => {
+                                  this.setState({
+                                    openBirthDate: true,
+                                  });
+                                }}
+                                onClose={() => {
+                                  this.setState({
+                                    openBirthDate: false,
+                                  });
+                                }}
+                              />
 
-                                  {this.state.openBirthDate ? (
-                                    <View
-                                      style={{
-                                        height: 130,
-                                      }}
-                                    />
-                                  ) : null}
-                                </View>
-                              );
+                              {this.state.openBirthDate ? (
+                                <View
+                                  style={{
+                                    height: 130,
+                                  }}
+                                />
+                              ) : null}
+                            </View>
+                          );
 
-                            if (
-                              item.fieldName === 'gender' ||
-                              item.fieldName === 'Gender'
-                            )
-                              return (
-                                <View style={styles.detailItem}>
-                                  <Text
-                                    style={[
-                                      styles.desc,
-                                      {
-                                        marginLeft: 0,
-                                        fontFamily: fontFamily.poppinsMedium,
-                                      },
-                                    ]}>
-                                    {intlData.messages.gender}{' '}
-                                    {this.renderItemMandatory(item)}
-                                  </Text>
-                                  <DropDownPicker
-                                    placeholder={'Select gender'}
-                                    items={[
-                                      {
-                                        label: intlData.messages.male,
-                                        value: 'male',
-                                      },
-                                      {
-                                        label: intlData.messages.female,
-                                        value: 'female',
-                                      },
-                                    ]}
-                                    defaultValue={this.validateGender(
-                                      this.state.gender,
-                                    )}
-                                    style={[
-                                      styles.dropdownContainerStyle,
-                                      {borderColor: colors.greyScale2},
-                                    ]}
-                                    dropDownStyle={{
-                                      backgroundColor: '#fafafa',
-                                      zIndex: 3,
-                                    }}
-                                    onOpen={() => {
-                                      this.setState({
-                                        openGender: true,
-                                      });
-                                    }}
-                                    onClose={() => {
-                                      this.setState({
-                                        openGender: false,
-                                      });
-                                    }}
-                                    onChangeItem={item =>
-                                      this.setState({
-                                        gender: item.value,
-                                      })
-                                    }
-                                  />
+                        if (
+                          item.fieldName === 'gender' ||
+                          item.fieldName === 'Gender'
+                        )
+                          return (
+                            <View style={styles.detailItem}>
+                              <Text
+                                style={[
+                                  styles.desc,
+                                  {
+                                    marginLeft: 0,
+                                    fontFamily: fontFamily.poppinsMedium,
+                                  },
+                                ]}>
+                                {intlData.messages.gender}{' '}
+                                {this.renderItemMandatory(item)}
+                              </Text>
+                              <DropDownPicker
+                                placeholder={'Select gender'}
+                                items={[
+                                  {
+                                    label: intlData.messages.male,
+                                    value: 'male',
+                                  },
+                                  {
+                                    label: intlData.messages.female,
+                                    value: 'female',
+                                  },
+                                ]}
+                                defaultValue={this.validateGender(
+                                  this.state.gender,
+                                )}
+                                style={[
+                                  styles.dropdownContainerStyle,
+                                  {borderColor: colors.greyScale2},
+                                ]}
+                                dropDownStyle={{
+                                  backgroundColor: '#fafafa',
+                                  zIndex: 3,
+                                }}
+                                onOpen={() => {
+                                  this.setState({
+                                    openGender: true,
+                                  });
+                                }}
+                                onClose={() => {
+                                  this.setState({
+                                    openGender: false,
+                                  });
+                                }}
+                                onChangeItem={item =>
+                                  this.setState({
+                                    gender: item.value,
+                                  })
+                                }
+                              />
 
-                                  {this.state.openGender ? (
-                                    <View style={{height: 50}} />
-                                  ) : null}
-                                </View>
-                              );
+                              {this.state.openGender ? (
+                                <View style={{height: 50}} />
+                              ) : null}
+                            </View>
+                          );
 
-                            if (
-                              item.fieldName !== 'postalcode' &&
-                              item.fieldName !== 'gender' &&
-                              item.fieldName !== 'birthDate'
-                            ) {
-                              if (item.dataType === 'dropdown') {
-                                return (
-                                  <View style={styles.detailItem}>
-                                    <Text
-                                      style={[styles.desc, {marginLeft: 0}]}>
-                                      {item.displayName}{' '}
-                                      {this.renderItemMandatory(item)}
-                                    </Text>
-                                    <DropDownPicker
-                                      placeholder={item.displayName}
-                                      items={item.items}
-                                      defaultValue={this.state[item.fieldName]}
-                                      containerStyle={{height: 47}}
-                                      style={{
-                                        backgroundColor: 'white',
-                                        marginTop: 5,
-                                        borderRadius: 0,
-                                      }}
-                                      dropDownStyle={{
-                                        backgroundColor: '#fafafa',
-                                        zIndex: 3,
-                                      }}
-                                      onChangeItem={data => {
-                                        this.setState({
-                                          [item.fieldName]: data.value,
-                                        });
-                                      }}
-                                    />
-                                  </View>
-                                );
-                              } else if (item.dataType === 'checkbox') {
-                                return (
-                                  <View
-                                    style={[
-                                      styles.detailItem,
-                                      {
-                                        flexDirection: 'row',
-                                        justifyContent: 'space-between',
-                                      },
-                                    ]}>
-                                    <Text style={styles.desc}>
-                                      {item.displayName}{' '}
-                                      {this.renderItemMandatory(item)}
-                                    </Text>
-                                    <CheckBox
-                                      value={this.state[item.fieldName]}
-                                      onValueChange={e => {
-                                        this.setState({
-                                          [item.fieldName]: e,
-                                        });
-                                      }}
-                                    />
-                                  </View>
-                                );
-                              } else {
-                                return (
-                                  <GlobalInputText
-                                    placeholder={item.displayName}
-                                    value={this.state[item.fieldName]}
-                                    onChangeText={value =>
-                                      this.setState({
-                                        [item.fieldName]: value,
-                                      })
-                                    }
-                                    label={item.displayName}
-                                    isMandatory={item.mandatory}
-                                    keyboardType={this.getKeyboardType(
-                                      item.dataType,
-                                    )}
-                                  />
-                                );
-                              }
-                            }
+                        if (
+                          item.fieldName !== 'postalcode' &&
+                          item.fieldName !== 'gender' &&
+                          item.fieldName !== 'birthDate'
+                        ) {
+                          if (item.dataType === 'dropdown') {
+                            return (
+                              <View style={styles.detailItem}>
+                                <Text style={[styles.desc, {marginLeft: 0}]}>
+                                  {item.displayName}{' '}
+                                  {this.renderItemMandatory(item)}
+                                </Text>
+                                <DropDownPicker
+                                  placeholder={item.displayName}
+                                  items={item.items}
+                                  defaultValue={this.state[item.fieldName]}
+                                  containerStyle={{height: 47}}
+                                  style={{
+                                    backgroundColor: 'white',
+                                    marginTop: 5,
+                                    borderRadius: 0,
+                                  }}
+                                  dropDownStyle={{
+                                    backgroundColor: '#fafafa',
+                                    zIndex: 3,
+                                  }}
+                                  onChangeItem={data => {
+                                    this.setState({
+                                      [item.fieldName]: data.value,
+                                    });
+                                  }}
+                                />
+                              </View>
+                            );
+                          } else if (item.dataType === 'checkbox') {
+                            return (
+                              <View
+                                style={[
+                                  styles.detailItem,
+                                  {
+                                    flexDirection: 'row',
+                                    justifyContent: 'space-between',
+                                  },
+                                ]}>
+                                <Text style={styles.desc}>
+                                  {item.displayName}{' '}
+                                  {this.renderItemMandatory(item)}
+                                </Text>
+                                <CheckBox
+                                  value={this.state[item.fieldName]}
+                                  onValueChange={e => {
+                                    this.setState({
+                                      [item.fieldName]: e,
+                                    });
+                                  }}
+                                />
+                              </View>
+                            );
+                          } else {
+                            return (
+                              <GlobalInputText
+                                placeholder={item.displayName}
+                                value={this.state[item.fieldName]}
+                                onChangeText={value =>
+                                  this.setState({
+                                    [item.fieldName]: value,
+                                  })
+                                }
+                                label={item.displayName}
+                                isMandatory={item.mandatory}
+                                keyboardType={this.getKeyboardType(
+                                  item.dataType,
+                                )}
+                              />
+                            );
+                          }
+                        }
 
-                            if (item.fieldName === 'postalcode')
-                              return (
-                                <View style={styles.detailItem}>
-                                  <Text style={styles.desc}>
-                                    {item.displayName}{' '}
-                                    {this.renderItemMandatory(item)}
-                                  </Text>
-                                  <TextInput
-                                    keyboardType={'numeric'}
-                                    placeholder={item.displayName}
-                                    style={{paddingVertical: 10}}
-                                    value={this.state.postalcode}
-                                    onChangeText={this.handleUpdatePostalCode}
-                                  />
-                                  <View
-                                    style={{
-                                      borderWidth: 0.5,
-                                      borderColor: 'gray',
-                                    }}
-                                  />
-                                  {!isPostalCodeValid && (
-                                    <Text
-                                      style={{
-                                        fontSize: 10,
-                                        fontStyle: 'italic',
-                                        color: colorConfig.store.colorError,
-                                      }}>
-                                      Postal code is not valid
-                                    </Text>
-                                  )}
-                                </View>
-                              );
-                          })}
-                    </View>
-                  </Form>
+                        if (item.fieldName === 'postalcode') {
+                          return (
+                            <View style={styles.detailItem}>
+                              <Text style={styles.desc}>
+                                {item.displayName}{' '}
+                                {this.renderItemMandatory(item)}
+                              </Text>
+                              <TextInput
+                                keyboardType={'numeric'}
+                                placeholder={item.displayName}
+                                style={{
+                                  paddingVertical: 10,
+                                }}
+                                value={this.state.postalcode}
+                                onChangeText={this.handleUpdatePostalCode}
+                              />
+                              <View
+                                style={{
+                                  borderWidth: 0.5,
+                                  borderColor: 'gray',
+                                }}
+                              />
+                              {!isPostalCodeValid && (
+                                <Text
+                                  style={{
+                                    fontSize: 10,
+                                    fontStyle: 'italic',
+                                    color: colorConfig.store.colorError,
+                                  }}>
+                                  Postal code is not valid
+                                </Text>
+                              )}
+                            </View>
+                          );
+                        }
+                      })}
                 </View>
-                <TouchableOpacity
-                  disabled={!isPostalCodeValid || !this.canSaveProfile()}
-                  onPress={this.checkMandatory}>
-                  <View style={this.handleStyleSave()}>
-                    <Text style={styles.buttonText}>
-                      {intlData.messages.save}
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-              </View>
+              </Form>
+              <TouchableOpacity
+                disabled={!isPostalCodeValid || !this.canSaveProfile()}
+                onPress={this.checkMandatory}>
+                <View style={this.handleStyleSave()}>
+                  <Text style={styles.buttonText}>
+                    {intlData.messages.save}
+                  </Text>
+                </View>
+              </TouchableOpacity>
             </ScrollView>
           </Body>
         </KeyboardAvoidingView>
