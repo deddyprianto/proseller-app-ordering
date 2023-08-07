@@ -142,9 +142,7 @@ class AccountEditProfil extends Component {
 
     try {
       if (data.postalcode !== undefined && data.postalcode !== '') {
-        const isValid = new RegExp(/((\d{6}.*)*\s)?(\d{6})([^\d].*)?$/).test(
-          Number(data.postalcode),
-        );
+        const isValid = new RegExp(/\d{6}/).test(Number(data.postalcode));
         if (!isValid) isPostalCodeValid = false;
       }
     } catch (e) {}
@@ -694,9 +692,7 @@ class AccountEditProfil extends Component {
 
   handleUpdatePostalCode = value => {
     try {
-      const isValid = new RegExp(/((\d{6}.*)*\s)?(\d{6})([^\d].*)?$/).test(
-        Number(value),
-      );
+      const isValid = new RegExp(/\d{6}/).test(Number(value));
       if (isValid) {
         this.setState({
           isPostalCodeValid: true,
@@ -764,13 +760,13 @@ class AccountEditProfil extends Component {
                   {!isEmptyArray(fields) &&
                     fields
                       .filter(data => data.show)
-                      .map(item => {
+                      .map((item, index) => {
                         if (
                           item.fieldName === 'birthDate' &&
                           item.format.length > 4
                         )
                           return (
-                            <>
+                            <View key={index}>
                               <GlobalInputText
                                 label="Birthdate"
                                 isMandatory={item.mandatory}
@@ -793,7 +789,7 @@ class AccountEditProfil extends Component {
                                 onConfirm={this.handleConfirm}
                                 onCancel={this.hideDatePicker}
                               />
-                            </>
+                            </View>
                           );
 
                         if (
@@ -801,7 +797,7 @@ class AccountEditProfil extends Component {
                           item.format.length <= 4
                         )
                           return (
-                            <View style={styles.detailItem}>
+                            <View key={index} style={styles.detailItem}>
                               <Text
                                 style={[
                                   styles.desc,
@@ -863,7 +859,7 @@ class AccountEditProfil extends Component {
                           item.fieldName === 'Gender'
                         )
                           return (
-                            <View style={styles.detailItem}>
+                            <View key={index} style={styles.detailItem}>
                               <Text
                                 style={[
                                   styles.desc,
@@ -928,7 +924,7 @@ class AccountEditProfil extends Component {
                         ) {
                           if (item.dataType === 'dropdown') {
                             return (
-                              <View style={styles.detailItem}>
+                              <View key={index} style={styles.detailItem}>
                                 <Text style={[styles.desc, {marginLeft: 0}]}>
                                   {item.displayName}{' '}
                                   {this.renderItemMandatory(item)}
