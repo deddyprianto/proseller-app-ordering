@@ -670,7 +670,7 @@ class AccountEditProfil extends Component {
         <NavbarBack title={intlData.messages.editProfile} />
         <KeyboardAvoidingView
           style={styles.keyboardStyle}
-          behavior={Platform.OS === 'android' ? 'height' : 'position'}>
+          behavior={Platform.OS === 'android' ? 'height' : 'padding'}>
           <Body>
             <ScrollView>
               <View>
