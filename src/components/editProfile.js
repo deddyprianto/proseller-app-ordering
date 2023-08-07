@@ -660,17 +660,85 @@ class AccountEditProfil extends Component {
     return emptyValue.length <= 0;
   };
 
+  handleBehaviourKeyboard = () => {
+    return Platform.OS === 'android' ? 'height' : 'padding';
+  };
+
+  handleDatePicker = () => {
+    const date =
+      this.state.birthDate !== undefined &&
+      this.state.birthDate !== null &&
+      this.state.birthDate !== ''
+        ? new Date(this.state.birthDate)
+        : this.getMaxDate();
+    return date;
+  };
+
+  handleOnConfirmPress = () => {
+    if (this.state.titleAlert === 'Update Success!') {
+      this.hideAlert();
+      this.goBack();
+    }
+    if (this.state.titleAlert === "We're Sorry!") {
+      this.hideAlert();
+    }
+  };
+
+  handleConfirmText = () => {
+    return this.state.titleAlert != 'Update Success!' ? 'Confirm' : 'Close';
+  };
+
+  handleStyleSave = () => {
+    return this.state.isPostalCodeValid && this.canSaveProfile()
+      ? styles.primaryButton
+      : styles.disabledPrimaryButton;
+  };
+
+  handleUpdatePostalCode = value => {
+    try {
+      const isValid = new RegExp(/((\d{6}.*)*\s)?(\d{6})([^\d].*)?$/).test(
+        Number(value),
+      );
+      if (isValid) {
+        this.setState({
+          isPostalCodeValid: true,
+        });
+      } else {
+        this.setState({
+          isPostalCodeValid: false,
+        });
+      }
+    } catch (e) {}
+    this.setState({
+      postalcode: value,
+    });
+  };
+
+  renderItemMandatory = item => {
+    const {fontFamily} = this.props;
+
+    return item.mandatory ? (
+      <Text
+        style={[
+          styles.mandatoryStyle,
+          {
+            fontFamily: fontFamily.poppinsMedium,
+          },
+        ]}>
+        *
+      </Text>
+    ) : null;
+  };
+
   render() {
     const {intlData, colors, fontFamily} = this.props;
     const {fields, isPostalCodeValid} = this.state;
-    const {disableChangePhoneNumber} = this.props;
     return (
       <SafeAreaView style={styles.container}>
         {this.state.loading && <LoaderDarker />}
         <NavbarBack title={intlData.messages.editProfile} />
-        <KeyboardAvoidingView
-          style={styles.keyboardStyle}
-          behavior={Platform.OS === 'android' ? 'height' : 'padding'}>
+
+        <KeyboardAvoidingView behavior={this.handleBehaviourKeyboard()}>
           <Body>
             <ScrollView>
               <View>
@@ -693,149 +761,6 @@ class AccountEditProfil extends Component {
                         isMandatory
                         editable={false}
                       />
-                      <View style={styles.detailItem}>
-                        <View
-                          style={{
-                            flexDirection: 'row',
-                          }}>
-                          <Text
-                            style={[
-                              styles.desc,
-                              {
-                                fontFamily: this.props.fontFamily.poppinsMedium,
-                              },
-                            ]}>
-                            Mobile No{' '}
-                            <Text
-                              style={[
-                                styles.mandatoryStyle,
-                                {
-                                  fontFamily: this.props.fontFamily
-                                    .poppinsMedium,
-                                },
-                              ]}>
-                              *
-                            </Text>{' '}
-                          </Text>
-                          {!disableChangePhoneNumber ? (
-                            <TouchableOpacity
-                              onPress={() =>
-                                this.toChangeCredentials('Mobile Number')
-                              }
-                              style={[styles.btnChange]}>
-                              <Text style={[styles.textChange]}>
-                                {this.state.editPhoneNumber
-                                  ? 'Cancel'
-                                  : 'Change'}
-                              </Text>
-                            </TouchableOpacity>
-                          ) : null}
-                        </View>
-                        <View style={{width: 0, height: 0}}>
-                          <CountryPicker
-                            translation="eng"
-                            withCallingCode
-                            visible={this.state.openModalCountry}
-                            onClose={() =>
-                              this.setState({openModalCountry: false})
-                            }
-                            withFilter
-                            placeholder={`x`}
-                            withFlag={true}
-                            onSelect={country => {
-                              this.setState({
-                                phoneNumber: `+${country.callingCode[0]}`,
-                                country: country.name,
-                              });
-                            }}
-                          />
-                        </View>
-                        {!this.state.editPhoneNumber ? (
-                          <Text style={{paddingTop: 12}}>
-                            {this.props.dataDiri.phoneNumber}
-                          </Text>
-                        ) : (
-                          <View
-                            style={{
-                              flexDirection: 'row',
-                              width: '100%',
-                              maxWidth: '100%',
-                              marginTop: 10,
-                            }}>
-                            <PhoneInput
-                              flagStyle={{
-                                width: 30,
-                                height: 20,
-                                justifyContent: 'center',
-                                marginRight: -5,
-                                marginLeft: 5,
-                              }}
-                              textStyle={{
-                                fontSize: 0,
-                                fontFamily: 'Poppins-Regular',
-                              }}
-                              style={{
-                                padding: 5,
-                                color: 'black',
-                                backgroundColor:
-                                  colorConfig.store.transparentBG,
-                                borderRadius: 5,
-                              }}
-                              ref={ref => {
-                                this.phone = ref;
-                              }}
-                              onChangePhoneNumber={() => {
-                                this.setState({
-                                  phone: this.phone.getValue(),
-                                });
-                              }}
-                              value={this.state.phoneNumber}
-                              onPressFlag={() => {
-                                this.setState({
-                                  openModalCountry: true,
-                                });
-                              }}
-                            />
-                            <TouchableOpacity
-                              onPress={() => {
-                                this.setState({
-                                  openModalCountry: true,
-                                });
-                              }}
-                              style={{
-                                justifyContent: 'center',
-                                paddingHorizontal: 5,
-                              }}>
-                              <Text
-                                style={{
-                                  fontSize: 15,
-                                  fontFamily: 'Poppins-Regular',
-                                }}>
-                                {this.state.phoneNumber}
-                              </Text>
-                            </TouchableOpacity>
-                            <TextInput
-                              value={this.state.phone}
-                              keyboardType={'numeric'}
-                              onChangeText={value =>
-                                this.setState({phone: value})
-                              }
-                              style={{
-                                fontSize: 15,
-                                fontFamily: 'Poppins-Regular',
-                                paddingHorizontal: 10,
-                                paddingVertical: 10,
-                                color: colorConfig.store.title,
-                                borderColor:
-                                  colorConfig.pageIndex.inactiveTintColor,
-                                borderWidth: 1,
-                                borderRadius: 5,
-                                flex: 1,
-                              }}
-                            />
-                          </View>
-                        )}
-                      </View>
 
                       {!isEmptyArray(fields) &&
                         fields
@@ -867,13 +792,7 @@ class AccountEditProfil extends Component {
                                     androidVariant={'iosClone'}
                                     maximumDate={this.getMaxDate()}
                                     open={this.state.isDatePickerVisible}
-                                    date={
-                                      this.state.birthDate !== undefined &&
-                                      this.state.birthDate !== null &&
-                                      this.state.birthDate !== ''
-                                        ? new Date(this.state.birthDate)
-                                        : this.getMaxDate()
-                                    }
+                                    date={this.handleDatePicker()}
                                     onConfirm={this.handleConfirm}
                                     onCancel={this.hideDatePicker}
                                   />
@@ -894,15 +813,7 @@ class AccountEditProfil extends Component {
                                         fontFamily: fontFamily.poppinsMedium,
                                       },
                                     ]}>
-                                    Birth Month{' '}
-                                    {item.mandatory ? (
-                                      <Text
-                                        style={{
-                                          color: 'red',
-                                        }}>
-                                        *
-                                      </Text>
-                                    ) : null}
+                                    Birth Month {this.renderItemMandatory(item)}
                                   </Text>
                                   <DropDownPicker
                                     placeholder={'Select your birth month'}
@@ -965,18 +876,7 @@ class AccountEditProfil extends Component {
                                       },
                                     ]}>
                                     {intlData.messages.gender}{' '}
-                                    {item.mandatory ? (
-                                      <Text
-                                        style={[
-                                          styles.mandatoryStyle,
-                                          {
-                                            fontFamily:
-                                              fontFamily.poppinsMedium,
-                                          },
-                                        ]}>
-                                        *
-                                      </Text>
-                                    ) : null}
+                                    {this.renderItemMandatory(item)}
                                   </Text>
                                   <DropDownPicker
                                     placeholder={'Select gender'}
@@ -1035,9 +935,7 @@ class AccountEditProfil extends Component {
                                     <Text
                                       style={[styles.desc, {marginLeft: 0}]}>
                                       {item.displayName}{' '}
-                                      {item.mandatory ? (
-                                        <Text style={{color: 'red'}}>*</Text>
-                                      ) : null}
+                                      {this.renderItemMandatory(item)}
                                     </Text>
                                     <DropDownPicker
                                       placeholder={item.displayName}
@@ -1073,9 +971,7 @@ class AccountEditProfil extends Component {
                                     ]}>
                                     <Text style={styles.desc}>
                                       {item.displayName}{' '}
-                                      {item.mandatory ? (
-                                        <Text style={{color: 'red'}}>*</Text>
-                                      ) : null}
+                                      {this.renderItemMandatory(item)}
                                     </Text>
                                     <CheckBox
                                       value={this.state[item.fieldName]}
@@ -1112,32 +1008,14 @@ class AccountEditProfil extends Component {
                                 <View style={styles.detailItem}>
                                   <Text style={styles.desc}>
                                     {item.displayName}{' '}
-                                    {item.mandatory ? (
-                                      <Text style={{color: 'red'}}>*</Text>
-                                    ) : null}
+                                    {this.renderItemMandatory(item)}
                                   </Text>
                                   <TextInput
                                     keyboardType={'numeric'}
                                     placeholder={item.displayName}
                                     style={{paddingVertical: 10}}
                                     value={this.state.postalcode}
-                                    onChangeText={value => {
-                                      try {
-                                        const isValid = new RegExp(
-                                          /((\d{6}.*)*\s)?(\d{6})([^\d].*)?$/,
-                                        ).test(Number(value));
-                                        if (isValid) {
-                                          this.setState({
-                                            isPostalCodeValid: true,
-                                          });
-                                        } else {
-                                          this.setState({
-                                            isPostalCodeValid: false,
-                                          });
-                                        }
-                                      } catch (e) {}
-                                      this.setState({postalcode: value});
-                                    }}
+                                    onChangeText={this.handleUpdatePostalCode}
                                   />
                                   <View
                                     style={{
@@ -1164,12 +1042,7 @@ class AccountEditProfil extends Component {
                 <TouchableOpacity
                   disabled={!isPostalCodeValid || !this.canSaveProfile()}
                   onPress={this.checkMandatory}>
-                  <View
-                    style={
-                      isPostalCodeValid && this.canSaveProfile()
-                        ? styles.primaryButton
-                        : styles.disabledPrimaryButton
-                    }>
+                  <View style={this.handleStyleSave()}>
                     <Text style={styles.buttonText}>
                       {intlData.messages.save}
                     </Text>
@@ -1190,22 +1063,12 @@ class AccountEditProfil extends Component {
           showCancelButton={false}
           showConfirmButton={true}
           cancelText="Close"
-          confirmText={
-            this.state.titleAlert != 'Update Success!' ? 'Confirm' : 'Close'
-          }
+          confirmText={this.handleConfirmText()}
           confirmButtonColor={colorConfig.pageIndex.activeTintColor}
           onCancelPressed={() => {
             this.hideAlert();
           }}
-          onConfirmPressed={() => {
-            if (this.state.titleAlert == 'Update Success!') {
-              this.hideAlert();
-              this.goBack();
-            }
-            if (this.state.titleAlert == "We're Sorry!") {
-              this.hideAlert();
-            }
-          }}
+          onConfirmPressed={this.handleOnConfirmPress}
         />
       </SafeAreaView>
     );
@@ -1290,7 +1153,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.7,
     shadowRadius: 7.49,
     elevation: 12,
-    marginBottom: 30,
+    // marginBottom: 30,
   },
   disabledPrimaryButton: {
     opacity: 0.3,
@@ -1313,7 +1176,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.7,
     shadowRadius: 7.49,
     elevation: 12,
-    marginBottom: 30,
+    // marginBottom: 30,
   },
   buttonText: {
     color: '#FFFFFF',
