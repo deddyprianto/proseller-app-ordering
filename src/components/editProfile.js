@@ -20,7 +20,6 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
-  StatusBar,
 } from 'react-native';
 import {Actions} from 'react-native-router-flux';
 import DatePicker from 'react-native-date-picker';
@@ -724,6 +723,26 @@ class AccountEditProfil extends Component {
     ) : null;
   };
 
+  renderOpenBirthdate = () => {
+    if (this.state.openBirthDate) {
+      return (
+        <View
+          style={{
+            height: 130,
+          }}
+        />
+      );
+    }
+    return null;
+  };
+
+  renderOpenGender = () => {
+    if (this.state.openGender) {
+      return <View style={{height: 50}} />;
+    }
+    return null;
+  };
+
   render() {
     const {intlData, colors, fontFamily} = this.props;
     const {fields, isPostalCodeValid} = this.state;
@@ -844,13 +863,7 @@ class AccountEditProfil extends Component {
                                 }}
                               />
 
-                              {this.state.openBirthDate ? (
-                                <View
-                                  style={{
-                                    height: 130,
-                                  }}
-                                />
-                              ) : null}
+                              {this.renderOpenBirthdate()}
                             </View>
                           );
 
@@ -911,9 +924,7 @@ class AccountEditProfil extends Component {
                                 }
                               />
 
-                              {this.state.openGender ? (
-                                <View style={{height: 50}} />
-                              ) : null}
+                              {this.renderOpenGender()}
                             </View>
                           );
 
