@@ -5,10 +5,8 @@ import {
   View,
   Text,
   TextInput,
-  Image,
   TouchableOpacity,
 } from 'react-native';
-import appConfig from '../../config/appConfig';
 import Theme from '../../theme';
 import SearchSvg from '../../assets/svg/SearchSvg';
 import {
@@ -20,7 +18,6 @@ const useStyles = () => {
   const theme = Theme();
   const styles = StyleSheet.create({
     root: {
-      flex: 1,
       height: normalizeLayoutSizeHeight(48),
       minHeight: normalizeLayoutSizeHeight(48),
       maxHeight: normalizeLayoutSizeHeight(48),
@@ -48,7 +45,7 @@ const useStyles = () => {
       paddingVertical: 0,
       paddingHorizontal: 0,
       color: theme.colors.textPrimary,
-      fontSize: theme.fontSize[16],
+      fontSize: theme.fontSize[14],
       fontFamily: theme.fontFamily.poppinsMedium,
       flex: 1,
       justifyContent: 'center',
@@ -72,6 +69,12 @@ const FieldSearch = ({
   value,
 }) => {
   const styles = useStyles();
+
+  const handleSubmit = () => {
+    if (onSubmit && typeof onSubmit === 'function') {
+      onSubmit(value);
+    }
+  };
 
   const renderLabel = () => {
     if (!value) {
@@ -112,9 +115,7 @@ const FieldSearch = ({
       </View>
       <TouchableOpacity
         onPress={() => {
-          if (onSubmit && typeof onSubmit === 'function') {
-            onSubmit(value);
-          }
+          handleSubmit();
         }}>
         <SearchSvg />
       </TouchableOpacity>

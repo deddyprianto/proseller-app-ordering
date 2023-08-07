@@ -10,6 +10,8 @@ import Theme from '../../theme';
 import GlobalText from '../globalText';
 import ArrowBottom from '../../assets/svg/ArrowBottom';
 import {normalizeLayoutSizeHeight} from '../../helper/Layout';
+import CountryList from './Components/CountryList';
+import CountryCodeSelectorModal from './Components/CountryCodeSelectorModal';
 
 const useStyles = () => {
   const theme = Theme();
@@ -20,6 +22,8 @@ const useStyles = () => {
       alignItems: 'center',
       borderWidth: 1,
       borderRadius: 8,
+      marginBottom: 12,
+
       paddingVertical: normalizeLayoutSizeHeight(2),
       paddingHorizontal: 16,
       borderColor: theme.colors.border1,
@@ -45,6 +49,7 @@ const useStyles = () => {
       height: 25,
       borderRadius: 4,
     },
+    viewCountryCodeSelector: {},
     textLabel: {
       height: 16,
       width: '100%',
@@ -114,6 +119,8 @@ const FieldPhoneNumberInput = ({
   const [openModal, setOpenModal] = useState(false);
   const [countryCode, setCountryCode] = useState('+65');
 
+  const countries = CountryList();
+
   useEffect(() => {
     setCountryCode(valueCountryCode || awsConfig.phoneNumberCode);
   }, [valueCountryCode]);
@@ -139,19 +146,6 @@ const FieldPhoneNumberInput = ({
     );
   };
 
-  const renderFlag = () => {
-    return (
-      <PhoneInput
-        style={styles.viewFlag}
-        flagStyle={styles.viewFlag}
-        onPressFlag={() => {
-          setOpenModal(true);
-        }}
-        value={countryCode}
-      />
-    );
-  };
-
   const renderLabel = () => {
     if (!value) {
       return;
@@ -166,23 +160,30 @@ const FieldPhoneNumberInput = ({
 
   const handleOpenModal = () => setOpenModal(true);
 
+  const renderValueLeftSide = () => {
+    if (withoutFlag) {
+      return (
+        <TouchableOpacity
+          onPress={handleOpenModal}
+          style={styles.withoutFlagContainer}>
+          <GlobalText>{countryCode}</GlobalText>
+          <View style={styles.arrowBottomContainer}>
+            <ArrowBottom />
+          </View>
+        </TouchableOpacity>
+      );
+    } else {
+      return (
+        <GlobalText style={styles.textCountryCode}>{countryCode}</GlobalText>
+      );
+    }
+  };
   const renderValue = () => {
     const phoneNumber = value.replace(countryCode, '');
 
     return (
       <View style={styles.viewCountryCodeAndPhoneNumber}>
-        {withoutFlag ? (
-          <TouchableOpacity
-            onPress={handleOpenModal}
-            style={styles.withoutFlagContainer}>
-            <GlobalText>{countryCode}</GlobalText>
-            <View style={styles.arrowBottomContainer}>
-              <ArrowBottom />
-            </View>
-          </TouchableOpacity>
-        ) : (
-          <GlobalText style={styles.textCountryCode}>{countryCode}</GlobalText>
-        )}
+        {renderValueLeftSide()}
         <TextInput
           keyboardType={'numeric'}
           style={styles.textInputPhoneNumber}
@@ -206,25 +207,52 @@ const FieldPhoneNumberInput = ({
     );
   };
 
-  return (
-    <>
+  const renderInputLabel = () => {
+    return (
       <GlobalText style={styles.labelText}>
         {inputLabel}{' '}
         {isMandatory ? (
           <GlobalText style={styles.mandatoryStyle}>*</GlobalText>
         ) : null}{' '}
       </GlobalText>
+    );
+  };
+
+  const renderCountryCodeSelector = () => {
+    return (
+      <View style={styles.CountryCodeSelectorModal}>
+        <CountryCodeSelectorModal />
+      </View>
+    );
+  };
+
+  const renderFlag = () => {
+    if (!withoutFlag) {
+      return (
+        <>
+          <PhoneInput
+            style={styles.viewFlag}
+            flagStyle={styles.viewFlag}
+            onPressFlag={() => {
+              setOpenModal(true);
+            }}
+            value={countryCode}
+          />
+          <View style={styles.divider} />
+        </>
+      );
+    }
+  };
+
+  return (
+    <>
+      {renderInputLabel()}
       <View style={styles.root}>
         {renderModalCountryPicker()}
-        {withoutFlag ? null : (
-          <>
-            {renderFlag()}
-            <View style={styles.divider} />
-          </>
-        )}
-
+        {renderFlag()}
         {renderInput()}
       </View>
+      {renderCountryCodeSelector()}
     </>
   );
 };
