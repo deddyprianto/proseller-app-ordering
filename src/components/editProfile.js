@@ -779,13 +779,13 @@ class AccountEditProfil extends Component {
                   {!isEmptyArray(fields) &&
                     fields
                       .filter(data => data.show)
-                      .map((item, index) => {
+                      .map(item => {
                         if (
                           item.fieldName === 'birthDate' &&
                           item.format.length > 4
                         )
                           return (
-                            <View key={index}>
+                            <View key={item.sequence}>
                               <GlobalInputText
                                 label="Birthdate"
                                 isMandatory={item.mandatory}
@@ -816,7 +816,7 @@ class AccountEditProfil extends Component {
                           item.format.length <= 4
                         )
                           return (
-                            <View key={index} style={styles.detailItem}>
+                            <View key={item.sequence} style={styles.detailItem}>
                               <Text
                                 style={[
                                   styles.desc,
@@ -872,7 +872,7 @@ class AccountEditProfil extends Component {
                           item.fieldName === 'Gender'
                         )
                           return (
-                            <View key={index} style={styles.detailItem}>
+                            <View key={item.sequence} style={styles.detailItem}>
                               <Text
                                 style={[
                                   styles.desc,
@@ -935,7 +935,9 @@ class AccountEditProfil extends Component {
                         ) {
                           if (item.dataType === 'dropdown') {
                             return (
-                              <View key={index} style={styles.detailItem}>
+                              <View
+                                key={item.sequence}
+                                style={styles.detailItem}>
                                 <Text style={[styles.desc, {marginLeft: 0}]}>
                                   {item.displayName}{' '}
                                   {this.renderItemMandatory(item)}
@@ -965,6 +967,7 @@ class AccountEditProfil extends Component {
                           } else if (item.dataType === 'checkbox') {
                             return (
                               <View
+                                key={item.sequence}
                                 style={[
                                   styles.detailItem,
                                   {
@@ -989,6 +992,7 @@ class AccountEditProfil extends Component {
                           } else {
                             return (
                               <GlobalInputText
+                                key={item.sequence}
                                 placeholder={item.displayName}
                                 value={this.state[item.fieldName]}
                                 onChangeText={value =>
@@ -1008,7 +1012,7 @@ class AccountEditProfil extends Component {
 
                         if (item.fieldName === 'postalcode') {
                           return (
-                            <View style={styles.detailItem}>
+                            <View key={item.sequence} style={styles.detailItem}>
                               <Text style={styles.desc}>
                                 {item.displayName}{' '}
                                 {this.renderItemMandatory(item)}
@@ -1030,6 +1034,7 @@ class AccountEditProfil extends Component {
                               />
                               {!isPostalCodeValid && (
                                 <Text
+                                  key={item.sequence}
                                   style={{
                                     fontSize: 10,
                                     fontStyle: 'italic',
