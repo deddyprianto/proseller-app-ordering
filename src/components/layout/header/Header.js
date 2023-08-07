@@ -103,7 +103,7 @@ const useStyles = () => {
       backgroundColor: theme.colors.primary,
     },
   });
-  return styles;
+  return {styles, color: theme.colors};
 };
 
 const Header = ({
@@ -126,7 +126,7 @@ const Header = ({
   rootStyle,
   customRightIcon,
 }) => {
-  const styles = useStyles();
+  const {styles, color} = useStyles();
   const [isOpenScanner, setIsOpenScanner] = useState(false);
   const [isSearch, setIsSearch] = useState(false);
   const {appName} = appConfig;
@@ -165,7 +165,7 @@ const Header = ({
       <Text
         style={[
           styles.textHeader,
-          {color: usingPrimaryColor ? 'white' : 'black'},
+          {color: usingPrimaryColor ? 'white' : color.primary},
         ]}
         numberOfLines={1}>
         {title}
@@ -195,7 +195,7 @@ const Header = ({
   const renderBackIcon = () => {
     return (
       <TouchableOpacity onPress={onBackBtnHandle}>
-        <BackButton color={usingPrimaryColor ? 'white' : 'black'} />
+        <BackButton color={usingPrimaryColor ? 'white' : color.primary} />
         {/* <Image source={appConfig.iconArrowLeft} style={styles.iconBack} /> */}
       </TouchableOpacity>
     );
