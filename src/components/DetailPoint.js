@@ -5,6 +5,7 @@ import {
   StyleSheet,
   Dimensions,
   SafeAreaView,
+  Platform,
   TouchableOpacity,
   BackHandler,
   ScrollView,
@@ -14,17 +15,20 @@ import {compose} from 'redux';
 import {format} from 'date-fns';
 import colorConfig from '../config/colorConfig';
 import {Actions} from 'react-native-router-flux';
+import Icon from 'react-native-vector-icons/Ionicons';
+import CryptoJS from 'react-native-crypto-js';
+import awsConfig from '../config/awsConfig';
 import {
   campaign,
   cutomerActivity,
+  dataPoint,
   dataPointHistory,
 } from '../actions/rewards.action';
 import {getUserProfile} from '../actions/user.action';
 import Loader from './loader';
 import {isEmptyArray} from '../helper/CheckEmpty';
-import {Header} from './layout';
-import GlobalText from './globalText';
-import withHooksComponent from './HOC';
+import LinearGradient from 'react-native-linear-gradient';
+import TouchableRipple from 'react-native-paper/src/components/TouchableRipple/index';
 
 class DetailPoint extends Component {
   constructor(props) {
@@ -40,7 +44,6 @@ class DetailPoint extends Component {
       filterReceive: true,
       dataLength: 0,
       actualLength: 0,
-      type: 'received',
     };
   }
 
@@ -54,7 +57,13 @@ class DetailPoint extends Component {
   };
 
   getCustomerActivity = async () => {
-    const {take, filterReceive, actualLength, customerActivity} = this.state;
+    const {
+      skip,
+      take,
+      filterReceive,
+      actualLength,
+      customerActivity,
+    } = this.state;
     const response = await this.props.dispatch(
       cutomerActivity(actualLength, take, filterReceive),
     );
@@ -141,8 +150,7 @@ class DetailPoint extends Component {
   filterReceivePoint = async () => {
     try {
       const {filterReceive} = this.state;
-      console.log({filterReceive}, 'filter 1');
-      if (filterReceive !== true) {
+      if (filterReceive != true) {
         await this.setState({
           filterReceive: true,
           loading: true,
@@ -151,7 +159,6 @@ class DetailPoint extends Component {
           dataLength: 0,
           actualLength: 0,
           customerActivity: [],
-          type: 'received',
         });
         await this.getCustomerActivity();
         await this.setState({loading: false});
@@ -161,10 +168,8 @@ class DetailPoint extends Component {
 
   filterUsePoint = async () => {
     try {
-      console.log({filterReceive}, 'filter 2');
-
       const {filterReceive} = this.state;
-      if (filterReceive !== false) {
+      if (filterReceive != false) {
         await this.setState({
           filterReceive: false,
           loading: true,
@@ -173,7 +178,6 @@ class DetailPoint extends Component {
           dataLength: 0,
           actualLength: 0,
           customerActivity: [],
-          type: 'used',
         });
 
         await this.getCustomerActivity();
@@ -184,7 +188,7 @@ class DetailPoint extends Component {
 
   loadMore = async () => {
     try {
-      let {take} = this.state;
+      let {skip, take} = this.state;
       await this.setState({
         loading: true,
         skip: take,
@@ -197,82 +201,136 @@ class DetailPoint extends Component {
   };
 
   render() {
-    const {colors, campignData} = this.props;
-    const {customerActivity, dataLength, actualLength, history} = this.state;
+    const {intlData, campign} = this.props;
+    const {
+      history,
+      customerActivity,
+      filterReceive,
+      dataLength,
+      actualLength,
+    } = this.state;
+    let userDetail;
+    try {
+      // Decrypt data user
+      let bytes = CryptoJS.AES.decrypt(
+        this.props.userDetail,
+        awsConfig.PRIVATE_KEY_RSA,
+      );
+      userDetail = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+    } catch (e) {
+      userDetail = undefined;
+    }
+
+    let color1 = '#f1c40f';
+    let color2 = '#f39c12';
+    let color3 = '#e67e22';
+
     return (
-      <SafeAreaView>
+      <SafeAreaView style={{flex: 1, backgroundColor: '#f0f0f0'}}>
         {this.state.loading && <Loader />}
-        <Header title={'Point Details'} />
         <ScrollView>
           <View style={styles.container}>
-            <View style={styles.pointDetailContainer}>
-              <View style={styles.pointDetail(colors.primary)}>
-                <GlobalText style={styles.pointDetailText}>
-                  Your Points
-                </GlobalText>
-                <GlobalText style={styles.pointText}>
-                  {this.props.totalPoint} PTS
-                </GlobalText>
-              </View>
+            <View style={styles.header}>
+              <TouchableOpacity
+                onPress={this.goBack}
+                style={{alignItems: 'center'}}>
+                <Icon
+                  size={Platform.OS === 'ios' ? 37 : 28}
+                  name={Platform.OS === 'ios' ? 'ios-close' : 'md-close'}
+                  style={{color: colorConfig.store.defaultColor}}
+                />
+              </TouchableOpacity>
+              <Text style={styles.titleHeader}>Rewards Points</Text>
             </View>
-            <View style={styles.earnPointContainer}>
-              <GlobalText style={styles.earnPointText}>
-                Earn {campignData?.points?.netSpendToPoint0} Points per{' '}
-                {`$${campignData?.points?.netSpendToPoint1}`} spent
-              </GlobalText>
-            </View>
-            {!isEmptyArray(history) && (
-              <View style={styles.ph16}>
-                <View style={styles.pointExpiredContainer(colors.greyScale4)}>
-                  <GlobalText style={styles.pointExpiredText(colors.primary)}>
-                    {history[0].pointBalance} points will expire on{' '}
-                    {format(new Date(history[0].expiryDate), 'dd MMM yyyy')}
-                  </GlobalText>
+            <LinearGradient
+              colors={[color1, color2, color3]}
+              style={styles.card}>
+              <Text style={styles.textCustomerGroup}>You Have</Text>
+              <View style={styles.line} />
+              <Text style={styles.textPoint}>
+                {this.props.totalPoint}{' '}
+                {/* <Text style={{fontSize: 23}}> {campign.name}</Text> */}
+              </Text>
+            </LinearGradient>
+
+            <View style={styles.mainPanel}>
+              {/* <Text style={styles.subTitle}>{campign.campaignDesc}</Text> */}
+              <View style={[styles.panel, {paddingTop: 5}]}>
+                <View style={styles.panelNoBorder}>
+                  {!isEmptyArray(history) && (
+                    <View style={styles.historyPoint}>
+                      <View>
+                        <Text style={styles.simpleText}>
+                          <Text
+                            style={{
+                              color: colorConfig.store.secondaryColor,
+                              fontWeight: 'bold',
+                            }}>
+                            {this.getPointInfo(history[0])}
+                          </Text>{' '}
+                          points will expire on{' '}
+                          {format(
+                            new Date(history[0].expiryDate),
+                            'dd MMM yyyy',
+                          )}
+                        </Text>
+                      </View>
+                    </View>
+                  )}
                 </View>
+                {/* <TouchableOpacity
+                  onPress={() => Actions.rewards()}
+                  style={{
+                    marginTop: 40,
+                    borderColor: colorConfig.store.secondaryColor,
+                    borderWidth: 0.8,
+                    padding: 10,
+                    justifyContent: 'space-between',
+                    flexDirection: 'row',
+                    borderRadius: 6,
+                    width: '100%',
+                    alignItems: 'center',
+                    paddingHorizontal: 20,
+                  }}>
+                  <Text
+                    style={{
+                      color: colorConfig.store.secondaryColor,
+                      fontFamily: 'Poppins-Regular',
+                      fontSize: 16,
+                    }}>
+                    Redeem Voucher
+                  </Text>
+                  <Icon
+                    size={Platform.OS === 'ios' ? 28 : 27}
+                    name={
+                      Platform.OS === 'ios'
+                        ? 'ios-arrow-dropright'
+                        : 'md-arrow-dropright'
+                    }
+                    style={{color: colorConfig.store.secondaryColor}}
+                  />
+                </TouchableOpacity> */}
               </View>
-            )}
-
-            <View style={[styles.ph16, styles.mv16]}>
-              <View style={styles.divider(colors.greyScale3)} />
             </View>
-
-            <View style={[styles.mainPanel, styles.ph16]}>
+            <View
+              style={[styles.mainPanel, {marginTop: 10, paddingBottom: 10}]}>
               <Text style={styles.title}>Points History</Text>
-              <View style={styles.panelTabContainer(colors.greyScale4)}>
-                <View style={styles.panelTab}>
-                  <TouchableOpacity
-                    onPress={this.filterReceivePoint}
-                    style={
-                      this.state.type === 'received'
-                        ? styles.active(colors.primary)
-                        : styles.inactiveFilter
-                    }>
-                    <Text
-                      style={styles.tabText(
-                        this.state.type === 'received',
-                        colors.greyScale2,
-                      )}>
-                      Points Received
-                    </Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    onPress={this.filterUsePoint}
-                    style={
-                      this.state.type === 'used'
-                        ? styles.active(colors.primary)
-                        : styles.inactiveFilter
-                    }>
-                    <Text
-                      style={styles.tabText(
-                        this.state.type === 'used',
-                        colors.greyScale2,
-                      )}>
-                      Points Used
-                    </Text>
-                  </TouchableOpacity>
-                </View>
+              <View style={styles.panelTab}>
+                <TouchableOpacity
+                  onPress={this.filterReceivePoint}
+                  style={
+                    filterReceive ? styles.activeLeft : styles.inactiveFilter
+                  }>
+                  <Text>Points Received</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={this.filterUsePoint}
+                  style={
+                    filterReceive ? styles.inactiveFilter : styles.activeRight
+                  }>
+                  <Text>Points Used</Text>
+                </TouchableOpacity>
               </View>
-
               {!isEmptyArray(customerActivity) &&
                 customerActivity.map(item => (
                   <View style={styles.customerActivityList}>
@@ -299,7 +357,7 @@ class DetailPoint extends Component {
                         {Number(item.amount)}
                       </Text>
                     </View>
-                    <Text style={styles.activityDate(colors.greyScale2)}>
+                    <Text style={styles.activityDate}>
                       {format(
                         new Date(item.activityDate),
                         'iii dd MMM yyyy HH:mm',
@@ -339,8 +397,8 @@ class DetailPoint extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'white',
-    width: '100%',
+    backgroundColor: '#f5f5f5',
+    // height: '100%',
   },
   header: {
     padding: 15,
@@ -359,7 +417,21 @@ const styles = StyleSheet.create({
     borderColor: colorConfig.pageIndex.grayColor,
   },
   mainPanel: {
+    marginTop: -5,
     backgroundColor: 'white',
+    // alignItems: 'center',
+    // justifyContent: 'center',
+    flex: 1,
+    paddingHorizontal: 30,
+    zIndex: 10,
+    shadowColor: '#00000021',
+    shadowOffset: {
+      width: 0,
+      height: 9,
+    },
+    shadowOpacity: 0.8,
+    shadowRadius: 0,
+    elevation: 12,
   },
   panel: {
     marginVertical: 5,
@@ -373,8 +445,9 @@ const styles = StyleSheet.create({
   },
   title: {
     color: colorConfig.store.title,
-    fontSize: 16,
-    fontFamily: 'Poppins-Bold',
+    fontSize: 20,
+    fontFamily: 'Poppins-Medium',
+    marginVertical: 10,
   },
   titleHeader: {
     color: colorConfig.store.defaultColor,
@@ -496,33 +569,44 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   activityTitle: {
-    fontSize: 14,
-    fontFamily: 'Poppins-Medium',
+    fontSize: 17,
+    fontFamily: 'Poppins-Regular',
+    color: colorConfig.store.secondaryColor,
   },
-  activityRewardsPositive: (type, primaryColor) => ({
-    fontSize: 14,
+  activityRewardsPositive: {
+    fontSize: 18,
     fontFamily: 'Poppins-Medium',
-    color: type === 'used' ? primaryColor : colorConfig.store.colorSuccess,
-  }),
-  activityDate: color => ({
+    color: colorConfig.store.colorSuccess,
+  },
+  activityDate: {
     fontSize: 12,
-    color: color,
-    fontFamily: 'Poppins-Medium',
-  }),
+    color: colorConfig.store.titleSelected,
+  },
   customerActivityList: {
+    borderBottomWidth: 0.7,
+    borderBottomColor: colorConfig.pageIndex.grayColor,
     paddingVertical: 6,
     marginVertical: 7,
   },
-
-  active: color => ({
+  activeLeft: {
     width: '50%',
-    backgroundColor: color,
+    // backgroundColor: colorConfig.store.secondaryColor,
+    backgroundColor: colorConfig.primaryColor,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 7,
+    borderTopLeftRadius: 5,
+    borderBottomLeftRadius: 5,
+  },
+  activeRight: {
+    width: '50%',
+    backgroundColor: colorConfig.store.secondaryColor,
     justifyContent: 'center',
     alignItems: 'center',
     padding: 7,
     borderTopRightRadius: 5,
-    borderRadius: 8,
-  }),
+    borderBottomRightRadius: 5,
+  },
   inactiveFilter: {
     borderTopRightRadius: 6,
     borderBottomRightRadius: 6,
@@ -532,91 +616,28 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   panelTab: {
+    marginVertical: 8,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    borderRadius: 8,
+    borderWidth: 1,
+    borderRadius: 6,
+    borderColor: colorConfig.store.secondaryColor,
   },
-  pointDetailContainer: {
-    flex: 1,
-    marginTop: 16,
-    width: '100%',
-    paddingHorizontal: 16,
-  },
-  pointDetail: bgColor => ({
-    backgroundColor: bgColor || colorConfig.primaryColor,
-    width: '100%',
-    paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: 4,
-    borderTopLeftRadius: 8,
-    borderTopRightRadius: 8,
-    marginBottom: 20,
-  }),
-  pointDetailText: {
-    color: 'white',
-    fontFamily: 'Poppins-Medium',
-    fontSize: 14,
-  },
-  pointText: {
-    color: 'white',
-    fontSize: 24,
-    fontFamily: 'Poppins-SemiBold',
-  },
-  earnPointContainer: {
-    paddingHorizontal: 16,
-  },
-  earnPointText: {
-    fontSize: 16,
-    fontFamily: 'Poppins-SemiBold',
-  },
-  ph16: {
-    paddingHorizontal: 16,
-  },
-  pointExpiredContainer: color => ({
-    padding: 10,
-    backgroundColor: color,
-    borderRadius: 8,
-  }),
-  pointExpiredText: color => ({
-    color,
-    fontFamily: 'Poppins-Medium',
-    fontSize: 14,
-  }),
-  divider: color => ({
-    height: 1,
-    backgroundColor: color,
-  }),
-  mv16: {
-    marginVertical: 16,
-  },
-  panelTabContainer: color => ({
-    backgroundColor: color,
-    padding: 6,
-    borderRadius: 8,
-  }),
-  tabText: (active, color) => ({
-    fontSize: 14,
-    fontFamily: 'Poppins-Medium',
-    color: active ? 'white' : color,
-  }),
 });
 
-const mapStateToProps = state => ({
-  campignData: state.rewardsReducer.campaign.campaign,
+mapStateToProps = state => ({
+  campign: state.rewardsReducer.campaign.campaign,
   userDetail: state.userReducer.getUser.userDetails,
   totalPoint: state.rewardsReducer.dataPoint.totalPoint,
-  dataPoint: state.rewardsReducer.dataPoint,
 });
 
-const mapDispatchToProps = dispatch => ({
+mapDispatchToProps = dispatch => ({
   dispatch,
 });
 
-export default withHooksComponent(
-  compose(
-    connect(
-      mapStateToProps,
-      mapDispatchToProps,
-    ),
-  )(DetailPoint),
-);
+export default compose(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  ),
+)(DetailPoint);

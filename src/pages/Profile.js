@@ -590,6 +590,7 @@ const Profile = props => {
       </TouchableOpacity>
     );
   };
+
   const renderMyDeliveryAddress = () => {
     if (defaultOutlet?.enableDelivery) {
       return (
