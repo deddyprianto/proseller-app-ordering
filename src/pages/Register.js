@@ -34,6 +34,9 @@ const useStyles = () => {
     root: {
       flex: 1,
     },
+    body: {
+      flex: 1,
+    },
     container: {
       height: HEIGHT - 54,
       display: 'flex',
@@ -255,40 +258,56 @@ const Register = () => {
     }
   };
 
+  const renderHeader = () => {
+    if (appConfig.appName === 'fareastflora') {
+      return <HeaderV2 />;
+    } else {
+      return <Header isMiddleLogo />;
+    }
+  };
+
+  const renderBodyV1 = () => {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.textCreateNewAccount}>Create a new account</Text>
+        {renderTextLogin()}
+        {renderRegisterMethodInput()}
+        {renderButtonNext()}
+        {renderTextChangeMethod()}
+      </View>
+    );
+  };
+
+  const renderBodyV2 = () => {
+    return (
+      <RegisterV2
+        emailValue={email}
+        phoneValue={phoneNumber}
+        onChangeEmail={value => setEmail(value)}
+        onChangeCountryCode={value => setCountryCode(value)}
+        onChangePhoneNumber={value => setPhoneNumber(value)}
+        onNext={handleCheckAccount}
+        onTickCheckbox={onTickCheckbox}
+        checkboxValue={approvedData}
+      />
+    );
+  };
+
+  const renderBody = () => {
+    if (appConfig.appName === 'fareastflora') {
+      return renderBodyV2();
+    } else {
+      return renderBodyV1();
+    }
+  };
+
   return (
     <SafeAreaView style={styles.root}>
       <LoadingScreen loading={isLoading} />
-      {appConfig.appName === 'fareastflora' ? (
-        <HeaderV2 />
-      ) : (
-        <Header isMiddleLogo />
-      )}
+      {renderHeader()}
 
-      <Body style={{flex: 1}}>
-        <KeyboardAwareScrollView>
-          {appConfig.appName === 'fareastflora' ? (
-            <RegisterV2
-              emailValue={email}
-              phoneValue={phoneNumber}
-              onChangeEmail={value => setEmail(value)}
-              onChangeCountryCode={value => setCountryCode(value)}
-              onChangePhoneNumber={value => setPhoneNumber(value)}
-              onNext={handleCheckAccount}
-              onTickCheckbox={onTickCheckbox}
-              checkboxValue={approvedData}
-            />
-          ) : (
-            <View style={styles.container}>
-              <Text style={styles.textCreateNewAccount}>
-                Create a new account
-              </Text>
-              {renderTextLogin()}
-              {renderRegisterMethodInput()}
-              {renderButtonNext()}
-              {renderTextChangeMethod()}
-            </View>
-          )}
-        </KeyboardAwareScrollView>
+      <Body style={styles.body}>
+        <KeyboardAwareScrollView>{renderBody()}</KeyboardAwareScrollView>
       </Body>
     </SafeAreaView>
   );

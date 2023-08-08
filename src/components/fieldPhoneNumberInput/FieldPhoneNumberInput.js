@@ -10,7 +10,6 @@ import Theme from '../../theme';
 import GlobalText from '../globalText';
 import ArrowBottom from '../../assets/svg/ArrowBottom';
 import {normalizeLayoutSizeHeight} from '../../helper/Layout';
-import CountryList from './Components/CountryList';
 import CountryCodeSelectorModal from './Components/CountryCodeSelectorModal';
 
 const useStyles = () => {
@@ -118,8 +117,7 @@ const FieldPhoneNumberInput = ({
   const styles = useStyles();
   const [openModal, setOpenModal] = useState(false);
   const [countryCode, setCountryCode] = useState('+65');
-
-  const countries = CountryList();
+  const [countryCodeModal, setCountryCodeModal] = useState(false);
 
   useEffect(() => {
     setCountryCode(valueCountryCode || awsConfig.phoneNumberCode);
@@ -158,13 +156,13 @@ const FieldPhoneNumberInput = ({
     return <GlobalText style={styles.textLabel}>{label}</GlobalText>;
   };
 
-  const handleOpenModal = () => setOpenModal(true);
-
   const renderValueLeftSide = () => {
     if (withoutFlag) {
       return (
         <TouchableOpacity
-          onPress={handleOpenModal}
+          onPress={() => {
+            setCountryCodeModal(!countryCodeModal);
+          }}
           style={styles.withoutFlagContainer}>
           <GlobalText>{countryCode}</GlobalText>
           <View style={styles.arrowBottomContainer}>
@@ -178,6 +176,7 @@ const FieldPhoneNumberInput = ({
       );
     }
   };
+
   const renderValue = () => {
     const phoneNumber = value.replace(countryCode, '');
 
@@ -208,22 +207,32 @@ const FieldPhoneNumberInput = ({
   };
 
   const renderInputLabel = () => {
-    return (
-      <GlobalText style={styles.labelText}>
-        {inputLabel}{' '}
-        {isMandatory ? (
-          <GlobalText style={styles.mandatoryStyle}>*</GlobalText>
-        ) : null}{' '}
-      </GlobalText>
-    );
+    if (inputLabel) {
+      return (
+        <GlobalText style={styles.labelText}>
+          {inputLabel}{' '}
+          {isMandatory ? (
+            <GlobalText style={styles.mandatoryStyle}>*</GlobalText>
+          ) : null}{' '}
+        </GlobalText>
+      );
+    }
   };
 
   const renderCountryCodeSelector = () => {
-    return (
-      <View style={styles.CountryCodeSelectorModal}>
-        <CountryCodeSelectorModal />
-      </View>
-    );
+    if (countryCodeModal) {
+      return (
+        <View style={styles.CountryCodeSelectorModal}>
+          <CountryCodeSelectorModal
+            value={countryCode}
+            onChange={value => {
+              setCountryCode(value);
+              setCountryCodeModal(false);
+            }}
+          />
+        </View>
+      );
+    }
   };
 
   const renderFlag = () => {
@@ -243,7 +252,6 @@ const FieldPhoneNumberInput = ({
       );
     }
   };
-
   return (
     <>
       {renderInputLabel()}

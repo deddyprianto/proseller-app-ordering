@@ -1,17 +1,16 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 
-import {StyleSheet, View, Text, FlatList} from 'react-native';
+import {StyleSheet, View, Text, FlatList, TouchableOpacity} from 'react-native';
 
-import awsConfig from '../../../config/awsConfig';
 import Theme from '../../../theme';
-import CountryList from './CountryList';
 import FieldSearch from '../../fieldSearch/FieldSearch';
+import {useSelector} from 'react-redux';
 
 const useStyles = () => {
   const theme = Theme();
   const styles = StyleSheet.create({
     root: {
-      height: 262,
+      height: 250,
       width: '100%',
       flexDirection: 'column',
       alignItems: 'center',
@@ -35,10 +34,26 @@ const useStyles = () => {
       borderTopColor: theme.colors.greyScale3,
       borderTopWidth: 1,
     },
+    viewCountryCodeItemSelected: {
+      padding: 16,
+      borderTopWidth: 1,
+      borderTopColor: theme.colors.greyScale3,
+      backgroundColor: theme.colors.accent,
+    },
     viewSearch: {
       padding: 10,
       width: '100%',
       height: 'auto',
+    },
+    textCountryCodeItem: {
+      color: theme.colors.textPrimary,
+      fontSize: theme.fontSize[16],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textCountryCodeItemSelected: {
+      color: theme.colors.textQuaternary,
+      fontSize: theme.fontSize[16],
+      fontFamily: theme.fontFamily.poppinsMedium,
     },
     divider: {
       width: '100%',
@@ -49,34 +64,73 @@ const useStyles = () => {
   return styles;
 };
 
-const CountryCodeSelectorModal = ({valueCountryCode}) => {
+const CountryCodeSelectorModal = ({value, onChange}) => {
   const styles = useStyles();
-  const [countryCode, setCountryCode] = useState('+65');
+  const [searchTextInput, setSearchTextInput] = useState('');
 
-  const countries = CountryList();
+  const countryCodeList = useSelector(
+    state => state.settingReducer.dialCodeSettings,
+  );
 
-  useEffect(() => {
-    setCountryCode(valueCountryCode || awsConfig.phoneNumberCode);
-  }, [valueCountryCode]);
+  const handleCountryCodeSort = data => {
+    const result = data.sort(x => {
+      if (x.dialCode === '+65') {
+        return -1;
+      } else {
+        return 0;
+      }
+    });
+
+    return result;
+  };
+
+  const handleCountryCodeSearch = () => {
+    const data = handleCountryCodeSort(countryCodeList);
+
+    if (searchTextInput) {
+      return data.filter(x =>
+        x.name.toUpperCase().includes(searchTextInput.toUpperCase()),
+      );
+    }
+
+    return data;
+  };
+
+  const handleCountryCodeSelect = item => {
+    onChange(item?.dialCode);
+  };
 
   const renderCountryCodeItem = item => {
+    const isSelected = item.dialCode === value;
+    const styleButton = isSelected
+      ? styles.viewCountryCodeItemSelected
+      : styles.viewCountryCodeItem;
+    const styleText = isSelected
+      ? styles.textCountryCodeItemSelected
+      : styles.textCountryCodeItem;
+
     return (
-      <View style={styles.viewCountryCodeItem}>
-        <Text>
+      <TouchableOpacity
+        style={styleButton}
+        onPress={() => {
+          handleCountryCodeSelect(item);
+        }}>
+        <Text style={styleText}>
           {item?.name} ({item?.dialCode})
         </Text>
-      </View>
+      </TouchableOpacity>
     );
   };
 
   const renderCountryCodeList = () => {
+    const data = handleCountryCodeSearch();
     return (
       <FlatList
         style={styles.viewCountryCodeList}
-        data={countries}
+        data={data}
         nestedScrollEnabled
         showsVerticalScrollIndicator={false}
-        renderItem={({item, index}) => renderCountryCodeItem(item)}
+        renderItem={({item}) => renderCountryCodeItem(item)}
       />
     );
   };
@@ -84,7 +138,15 @@ const CountryCodeSelectorModal = ({valueCountryCode}) => {
   const renderFieldSearch = () => {
     return (
       <View style={styles.viewSearch}>
-        <FieldSearch placeholder="Search for Country Code" />
+        <FieldSearch
+          placeholder="Search for Country Code"
+          onChange={value => {
+            setSearchTextInput(value);
+          }}
+          onClear={() => {
+            setSearchTextInput('');
+          }}
+        />
       </View>
     );
   };

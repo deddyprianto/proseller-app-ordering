@@ -41,6 +41,7 @@ const useStyles = () => {
       paddingHorizontal: 16,
     },
     textHeader: {
+      marginTop: 100,
       color: theme.colors.primary,
       fontSize: theme.fontSize[24],
       fontFamily: theme.fontFamily.poppinsMedium,

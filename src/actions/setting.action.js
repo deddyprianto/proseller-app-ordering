@@ -306,6 +306,39 @@ export const getAllowedOrder = () => {
   };
 };
 
+export const getDialCodes = () => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      const response = await fetchApi(
+        '/countries/dial-codes',
+        'GET',
+        null,
+        200,
+        token,
+      );
+
+      const data = response?.responseBody?.data;
+
+      if (data) {
+        dispatch({
+          data,
+          type: 'SET_DIAL_CODES',
+        });
+        return data;
+      }
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
 export const showSnackbar = ({message, type}) => {
   return async dispatch => {
     await dispatch(setData({data: {message, type}, type: 'SET_SNACKBAR'}));
