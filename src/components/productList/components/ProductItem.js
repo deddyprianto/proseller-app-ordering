@@ -200,6 +200,21 @@ const useStyles = () => {
       padding: 4,
       marginTop: 12,
     },
+    preOrderLabel: {
+      paddingVertical: 4,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: theme.colors.greyScale3,
+      position: 'absolute',
+      top: 8,
+      left: 8,
+      paddingHorizontal: 8,
+      borderRadius: 4,
+    },
+    preOrderText: {
+      fontFamily: theme.fontFamily.poppinsMedium,
+      fontSize: 12,
+    },
   });
   return styles;
 };
@@ -210,7 +225,6 @@ const Product = ({product, basket}) => {
   const [isOpenUpdateModal, setIsOpenUpdateModal] = useState(false);
   const [isOpenAddModal, setIsOpenAddModal] = useState(false);
   const {colors, fontFamily} = Theme();
-
   const isProductAvailable = product?.orderingStatus === 'AVAILABLE';
   const imageSettings = useSelector(
     state => state.settingReducer.imageSettings,
@@ -437,6 +451,17 @@ const Product = ({product, basket}) => {
     );
   };
 
+  const renderPreOrderLabel = () => {
+    if (product?.isPreOrderItem) {
+      return (
+        <View style={styles.preOrderLabel}>
+          <GlobalText style={styles.preOrderText}>Preorder</GlobalText>
+        </View>
+      );
+    }
+    return null;
+  };
+
   return (
     <TouchableOpacity
       disabled={!isProductAvailable}
@@ -444,6 +469,7 @@ const Product = ({product, basket}) => {
         handleProductOnClick();
       }}
       style={styles.root}>
+      {renderPreOrderLabel()}
       {renderImage()}
       {renderPromoIcon()}
       {renderBody()}
