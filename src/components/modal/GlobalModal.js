@@ -20,14 +20,14 @@ const useStyles = () => {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'center',
-      padding: 8,
+      padding: 16,
     },
     titleText: {
       fontSize: 18,
       fontFamily: fontFamily.poppinsMedium,
     },
     bodyContainer: {
-      marginTop: 16,
+      marginTop: 0,
     },
     closeContainer: {
       position: 'absolute',

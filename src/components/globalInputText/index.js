@@ -4,7 +4,7 @@ import Theme from '../../theme/Theme';
 import GlobalText from '../globalText';
 import DropDownPicker from 'react-native-dropdown-picker';
 import ErrorInput from '../../assets/svg/ErorInputSvg';
-import {normalizeLayoutSizeHeight} from '../../helper/Layout';
+import {normalizeLayoutSizeWidth} from '../../helper/Layout';
 
 const useStyles = () => {
   const theme = Theme();
@@ -41,7 +41,7 @@ const useStyles = () => {
       height:
         numberOfLines && numberOfLines > 0
           ? 'auto'
-          : normalizeLayoutSizeHeight(48),
+          : normalizeLayoutSizeWidth(48),
     }),
     buttonStyle: {
       flexDirection: 'row',
@@ -101,7 +101,7 @@ const useStyles = () => {
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     btnHeight: {
-      height: normalizeLayoutSizeHeight(48),
+      height: normalizeLayoutSizeWidth(48),
     },
   });
   return styles;
@@ -232,13 +232,6 @@ const GlobalInputText = React.forwardRef((props, ref) => {
         <View style={styles.errorContainer}>
           <GlobalText style={styles.textError}>
             {props.errorMessage}{' '}
-          </GlobalText>
-        </View>
-      ) : null}
-      {props.maxLength ? (
-        <View style={styles.maxLexthStyle}>
-          <GlobalText style={styles.maxLengthText}>
-            {props.value?.length}/{props.maxLength}{' '}
           </GlobalText>
         </View>
       ) : null}

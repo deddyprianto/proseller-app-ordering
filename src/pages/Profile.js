@@ -29,7 +29,6 @@ import ConfirmationDialog from '../components/confirmationDialog';
 import MyECardModal from '../components/modal/MyECardModal';
 import moment from 'moment';
 import DeviceBrightness from '@adrianso/react-native-device-brightness';
-import Navbar from '../components/navbar';
 import {normalizeLayoutSizeHeight} from '../helper/Layout';
 import BackgroundProfileSvg from '../assets/svg/BackgroundProfileSvg';
 import GlobalText from '../components/globalText';
@@ -39,6 +38,7 @@ import StoreSvg from '../assets/svg/StoreSvg';
 import ContactSvg from '../assets/svg/ContactSvg';
 import {Body, Header} from '../components/layout';
 import additionalSetting from '../config/additionalSettings';
+import InfoMessage from '../components/infoMessage/InfoMessage';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -775,14 +775,58 @@ const Profile = props => {
     return component;
   };
 
+  const rennderInfoMessage = () => {
+    let type = '';
+    let message = '';
+    let showActionButton = false;
+    let mode = null;
+    let address = '';
+    if (user?.isEmailVerified && user?.isPhoneNumberVerified) {
+      type = 'success';
+      message = 'Your email and mobile phone has been verified!';
+    } else if (!user.isEmailVerified) {
+      type = 'error';
+      message = 'Your email has not been verified.';
+      showActionButton = true;
+      mode = 'Email';
+      address = user.email;
+    } else {
+      type = 'error';
+      message = 'Your mobile phone has not been verified.';
+      showActionButton = true;
+      mode = 'Mobile Number';
+      address = user.phoneNumber;
+    }
+    return (
+      <View style={styles.titleSettingContainer}>
+        <InfoMessage
+          showActionButton={showActionButton}
+          actionBtnText="Verify"
+          message={message}
+          type={type}
+          onActionBtnPress={() => verifyOtp(address, mode)}
+        />
+      </View>
+    );
+  };
+
+  const verifyOtp = (address, mode) => {
+    Actions.changeCredentialsOTP({
+      address,
+      mode,
+      dataDiri: user,
+      isVerification: true,
+    });
+  };
+
   const openVoucher = () => {
     Actions.voucherV2();
   };
-
   const renderSettingV2 = () => (
     <View style={styles.viewSettings}>
       {renderMembershipQRCode()}
       {renderDivider()}
+      {rennderInfoMessage()}
       {renderTitleSettingV2('General')}
       {renderEditProfile()}
       {renderMyDeliveryAddress()}

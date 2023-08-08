@@ -82,6 +82,7 @@ const useStyles = () => {
     textTagAddress: {
       fontSize: 16,
       fontFamily: theme.fontFamily.poppinsSemiBold,
+      width: '100%',
     },
     textNameAndPhoneNumber: {
       color: theme.colors.text1,
@@ -107,10 +108,11 @@ const useStyles = () => {
     viewTagAddress: {
       display: 'flex',
       flexDirection: 'row',
-      justifyContent: 'center',
+      justifyContent: 'space-between',
       alignItems: 'center',
       borderRadius: 100,
       paddingVertical: 3,
+      width: '100%',
     },
     viewLocation: {
       display: 'flex',
@@ -174,9 +176,9 @@ const useStyles = () => {
     bottomButtonContainer: {
       height: 36,
     },
-    editBtnContainer: {
-      width: '80%',
-    },
+    editBtnContainer: isDefault => ({
+      width: isDefault ? '100%' : '80%',
+    }),
     threeDotBtnContainer: {
       width: '15%',
     },
@@ -204,6 +206,15 @@ const useStyles = () => {
     },
     scrollContainerStyle: {
       paddingBottom: 16,
+    },
+    tagTextContainer: isDefault => ({
+      maxWidth: isDefault ? '80%' : '100%',
+    }),
+    buttonActionStyle: {
+      paddingHorizontal: 16,
+    },
+    noPadding: {
+      padding: 0,
     },
   });
   return styles;
@@ -291,7 +302,11 @@ const MyDeliveryAddressItem = ({item, fromScene, handleResetProvider}) => {
   const renderTagAddress = () => {
     return (
       <View style={[styles.viewTagAddress]}>
-        <Text style={styles.textTagAddress}>{item?.tagAddress}</Text>
+        <View style={styles.tagTextContainer(item.isDefault)}>
+          <Text numberOfLines={1} style={styles.textTagAddress}>
+            {item?.tagAddress}
+          </Text>
+        </View>
         {item?.isDefault ? (
           <View style={styles.defaultContainer}>
             <GlobalText style={styles.defaultText}>Default</GlobalText>
@@ -376,21 +391,26 @@ const MyDeliveryAddressItem = ({item, fromScene, handleResetProvider}) => {
       <View style={styles.editButtonContainer}>
         <GlobalButton
           isOutline
-          buttonStyle={[styles.editBtnContainer, styles.bottomButtonContainer]}
+          buttonStyle={[
+            styles.editBtnContainer(item.isDefault),
+            styles.bottomButtonContainer,
+          ]}
           title="Edit Address"
           onPress={() => {
             Actions.addNewAddress({address: item});
           }}
         />
-        <GlobalButton
-          isOutline
-          buttonStyle={[
-            styles.threeDotBtnContainer,
-            styles.bottomButtonContainer,
-          ]}
-          onPress={handleOpenAnotherOption}>
-          <ThreeDot />
-        </GlobalButton>
+        {item?.isDefault ? null : (
+          <GlobalButton
+            isOutline
+            buttonStyle={[
+              styles.threeDotBtnContainer,
+              styles.bottomButtonContainer,
+            ]}
+            onPress={handleOpenAnotherOption}>
+            <ThreeDot />
+          </GlobalButton>
+        )}
       </View>
     );
   };
@@ -458,6 +478,9 @@ const MyDeliveryAddressItem = ({item, fromScene, handleResetProvider}) => {
         onCancel={handleCloseDefaultModal}
         scrollContainerStyle={styles.scrollContainerStyle}
         onApprove={onSetDefaultAddress}
+        buttonActionStyle={styles.buttonActionStyle}
+        ModalContainerStyle={styles.noPadding}
+        hideCloseButton
       />
       <ModalAction
         isVisible={openDeleteModal}
@@ -467,6 +490,9 @@ const MyDeliveryAddressItem = ({item, fromScene, handleResetProvider}) => {
         onCancel={handleCloseDeleteModal}
         scrollContainerStyle={styles.scrollContainerStyle}
         onApprove={onRemoveAddress}
+        buttonActionStyle={styles.buttonActionStyle}
+        ModalContainerStyle={styles.noPadding}
+        hideCloseButton
       />
       <ModalAction
         isVisible={openSelectModal}
@@ -476,6 +502,9 @@ const MyDeliveryAddressItem = ({item, fromScene, handleResetProvider}) => {
         description="Are you sure you want to select this address
 as the delivery address?"
         onApprove={handleSelectAddress}
+        buttonActionStyle={styles.buttonActionStyle}
+        ModalContainerStyle={styles.noPadding}
+        hideCloseButton
       />
     </>
   );

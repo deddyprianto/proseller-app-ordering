@@ -28,8 +28,6 @@ import HeaderV2 from '../components/layout/header/HeaderV2';
 import GlobalModal from '../components/modal/GlobalModal';
 import GlobalButton from '../components/button/GlobalButton';
 
-const HEIGHT = Dimensions.get('window').height;
-
 const useStyles = () => {
   const theme = Theme();
   const styles = StyleSheet.create({
