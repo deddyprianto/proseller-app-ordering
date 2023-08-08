@@ -24,7 +24,7 @@ const ENV = {
 
   CURRENCY: 'SGD',
 
-  LOCALES: 'en',
+  LOCALES: 'en-US',
 
   SENTRY_DSN:
     'https://57b71e8fbd404c2bb5921afbb00b6c5c@o354451.ingest.sentry.io/2653850',

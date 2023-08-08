@@ -73,7 +73,7 @@ const useStyles = () => {
       color: theme.colors.text1,
       fontFamily: theme.fontFamily.poppinsRegular,
     },
-    textAddToCartButton: {
+    textCartButton: {
       fontSize: theme.fontSize[12],
       color: theme.colors.textButtonDisabled,
       fontFamily: theme.fontFamily.poppinsMedium,
@@ -124,7 +124,7 @@ const useStyles = () => {
       justifyContent: 'space-between',
       alignItems: 'center',
     },
-    viewAddToCartButton: {
+    viewCartButton: {
       padding: 16,
       backgroundColor: 'white',
       borderColor: '#D6D6D6',
@@ -137,7 +137,7 @@ const useStyles = () => {
       paddingHorizontal: 16,
     },
 
-    touchableAddToCartButton: {
+    touchableCartButton: {
       borderRadius: 8,
       justifyContent: 'center',
       alignItems: 'center',
@@ -145,7 +145,7 @@ const useStyles = () => {
       backgroundColor: theme.colors.primary,
     },
 
-    touchableAddToCartButtonDisabled: {
+    touchableCartButtonDisabled: {
       borderRadius: 8,
       justifyContent: 'center',
       alignItems: 'center',
@@ -420,6 +420,16 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
     }
   }, []);
 
+  const handleTextCartButton = () => {
+    if (qty === 0) {
+      return 'Remove';
+    } else if (!isEmptyObject(selectedProduct)) {
+      return `Update - ${currencyFormatter(totalPrice)}`;
+    } else {
+      return `Add to Cart - ${currencyFormatter(totalPrice)}`;
+    }
+  };
+
   const handleAddOrUpdateProduct = async () => {
     setIsLoading(true);
     const isSpecialBarcode = product?.isSpecialBarcode;
@@ -453,7 +463,7 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
     handleClose();
   };
 
-  const handleDisabledAddToCartButton = () => {
+  const handleDisabledCartButton = () => {
     if (!isEmptyArray(product?.productModifiers) && !isLoading && qty !== 0) {
       let qtyModifierSelected = 0;
       const productModifiers = product.productModifiers.map(productModifier => {
@@ -595,24 +605,23 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
     }
   };
 
-  const renderAddToCartButton = () => {
-    const disabled = handleDisabledAddToCartButton();
+  const renderCartButton = () => {
+    const disabled = handleDisabledCartButton();
     const styleDisabled = disabled
-      ? styles.touchableAddToCartButtonDisabled
-      : styles.touchableAddToCartButton;
+      ? styles.touchableCartButtonDisabled
+      : styles.touchableCartButton;
 
-    const text =
-      qty === 0 ? 'Remove' : `Add To Cart - ${currencyFormatter(totalPrice)}`;
+    const text = handleTextCartButton();
 
     return (
-      <View style={styles.viewAddToCartButton}>
+      <View style={styles.viewCartButton}>
         <TouchableOpacity
           style={styleDisabled}
           disabled={disabled}
           onPress={() => {
             handleAddOrUpdateProduct();
           }}>
-          <Text style={styles.textAddToCartButton}>{text}</Text>
+          <Text style={styles.textCartButton}>{text}</Text>
         </TouchableOpacity>
       </View>
     );
@@ -728,7 +737,7 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
           {renderProductVariants()}
           {renderSpecialInstruction()}
         </KeyboardAwareScrollView>
-        {renderAddToCartButton()}
+        {renderCartButton()}
       </SafeAreaView>
     </Modal>
   );
