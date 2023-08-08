@@ -19,7 +19,6 @@ import {
   Platform,
 } from 'react-native';
 
-import IconIonicons from 'react-native-vector-icons/Ionicons';
 import DeviceInfo from 'react-native-device-info';
 
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview';
@@ -40,7 +39,6 @@ import ProductModifiers from './components/ProductModifiers';
 import ProductPromotions from './components/ProductPromotions';
 import {SafeAreaView} from 'react-navigation';
 import PreorderLabel from '../label/Preorder';
-import {normalizeLayoutSizeWidth} from '../../helper/Layout';
 import CloseSvg from '../../assets/svg/CloseSvg';
 
 const useStyles = () => {
