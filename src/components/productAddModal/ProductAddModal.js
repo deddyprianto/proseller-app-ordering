@@ -119,6 +119,7 @@ const useStyles = () => {
       alignItems: 'center',
       paddingHorizontal: 16,
       marginBottom: 16,
+      marginTop: 4,
     },
     viewTextAndButtonQty: {
       display: 'flex',
