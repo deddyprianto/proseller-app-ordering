@@ -19,7 +19,6 @@ import {
   Platform,
 } from 'react-native';
 
-import IconIonicons from 'react-native-vector-icons/Ionicons';
 import DeviceInfo from 'react-native-device-info';
 
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview';
@@ -39,6 +38,8 @@ import ProductVariants from './components/ProductVariants';
 import ProductModifiers from './components/ProductModifiers';
 import ProductPromotions from './components/ProductPromotions';
 import {SafeAreaView} from 'react-navigation';
+import PreorderLabel from '../label/Preorder';
+import CloseSvg from '../../assets/svg/CloseSvg';
 
 const useStyles = () => {
   const theme = Theme();
@@ -47,7 +48,6 @@ const useStyles = () => {
       flex: 1,
     },
     container: {
-      flex: 2,
       width: '100%',
       backgroundColor: theme.colors.background,
     },
@@ -69,9 +69,9 @@ const useStyles = () => {
       aspectRatio: 1 / 1,
     },
     textHeader: {
-      fontSize: theme.fontSize[14],
+      fontSize: theme.fontSize[16],
       color: theme.colors.text1,
-      fontFamily: theme.fontFamily.poppinsRegular,
+      fontFamily: theme.fontFamily.poppinsMedium,
     },
     textCartButton: {
       fontSize: theme.fontSize[12],
@@ -81,7 +81,7 @@ const useStyles = () => {
     textPrice: {
       fontSize: theme.fontSize[14],
       color: theme.colors.primary,
-      fontFamily: theme.fontFamily.poppinsMedium,
+      fontFamily: theme.fontFamily.poppinsBold,
     },
     textName: {
       fontSize: theme.fontSize[14],
@@ -117,6 +117,7 @@ const useStyles = () => {
       alignItems: 'center',
       paddingHorizontal: 16,
       marginBottom: 16,
+      marginTop: 4,
     },
     viewTextAndButtonQty: {
       display: 'flex',
@@ -188,7 +189,7 @@ const useStyles = () => {
       tintColor: theme.colors.background,
     },
     iconClose: {
-      fontSize: 30,
+      fontSize: 24,
       position: 'absolute',
       right: 17,
     },
@@ -203,6 +204,13 @@ const useStyles = () => {
     },
     marginTopIphone14Pro: {
       marginTop: 35,
+    },
+    preorderStyle: {
+      display: 'flex',
+      width: '20%',
+    },
+    containerPreOrder: {
+      paddingHorizontal: 16,
     },
   });
   return result;
@@ -631,12 +639,11 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
     return (
       <View style={styles.header}>
         <Text style={styles.textHeader}>{product?.categoryName}</Text>
-        <IconIonicons
-          name="md-close"
+        <CloseSvg
+          height={23}
+          width={23}
           style={styles.iconClose}
-          onPress={() => {
-            handleClose();
-          }}
+          onPress={handleClose}
         />
       </View>
     );
@@ -715,6 +722,19 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
     return null;
   }
 
+  console.log({product}, 'kakila');
+
+  const renderPreOrderLabel = () => {
+    if (product?.isPreOrderItem) {
+      return (
+        <View style={styles.containerPreOrder}>
+          <PreorderLabel containerStyle={styles.preorderStyle} />
+        </View>
+      );
+    }
+    return null;
+  };
+
   return (
     <Modal
       animationType="slide"
@@ -727,9 +747,9 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
       <SafeAreaView forceInset={{bottom: 'never'}} style={styles.root}>
         {renderMarginTop()}
         {header()}
-        <View style={styles.divider} />
         <KeyboardAwareScrollView style={styles.container}>
           {renderImage()}
+          {renderPreOrderLabel()}
           {renderNameQtyPrice()}
           {renderProductDescription()}
           {renderProductPromotions()}
