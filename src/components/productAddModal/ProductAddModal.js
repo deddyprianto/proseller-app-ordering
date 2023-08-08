@@ -41,6 +41,7 @@ import ProductPromotions from './components/ProductPromotions';
 import {SafeAreaView} from 'react-navigation';
 import PreorderLabel from '../label/Preorder';
 import {normalizeLayoutSizeWidth} from '../../helper/Layout';
+import CloseSvg from '../../assets/svg/CloseSvg';
 
 const useStyles = () => {
   const theme = Theme();
@@ -72,7 +73,7 @@ const useStyles = () => {
     textHeader: {
       fontSize: theme.fontSize[16],
       color: theme.colors.text1,
-      fontFamily: theme.fontFamily.poppinsRegular,
+      fontFamily: theme.fontFamily.poppinsMedium,
     },
     textAddToCartButton: {
       fontSize: theme.fontSize[12],
@@ -82,7 +83,7 @@ const useStyles = () => {
     textPrice: {
       fontSize: theme.fontSize[14],
       color: theme.colors.primary,
-      fontFamily: theme.fontFamily.poppinsMedium,
+      fontFamily: theme.fontFamily.poppinsBold,
     },
     textName: {
       fontSize: theme.fontSize[14],
@@ -630,12 +631,11 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
     return (
       <View style={styles.header}>
         <Text style={styles.textHeader}>{product?.categoryName}</Text>
-        <IconIonicons
-          name="md-close"
+        <CloseSvg
+          height={23}
+          width={23}
           style={styles.iconClose}
-          onPress={() => {
-            handleClose();
-          }}
+          onPress={handleClose}
         />
       </View>
     );
