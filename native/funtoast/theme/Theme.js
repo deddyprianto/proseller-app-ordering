@@ -62,6 +62,7 @@ const Theme = () => {
     textTertiary: '#B7B7B7',
     textQuaternary: '#CF3030',
     textError: '#CE1111',
+    textBrand: '#CF3030',
 
     semanticError: '#CE1111',
     semanticSuccess: '#5CD523',
