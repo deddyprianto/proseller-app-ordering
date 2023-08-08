@@ -39,6 +39,8 @@ import ProductVariants from './components/ProductVariants';
 import ProductModifiers from './components/ProductModifiers';
 import ProductPromotions from './components/ProductPromotions';
 import {SafeAreaView} from 'react-navigation';
+import PreorderLabel from '../label/Preorder';
+import {normalizeLayoutSizeWidth} from '../../helper/Layout';
 
 const useStyles = () => {
   const theme = Theme();
@@ -47,7 +49,6 @@ const useStyles = () => {
       flex: 1,
     },
     container: {
-      flex: 2,
       width: '100%',
       backgroundColor: theme.colors.background,
     },
@@ -69,7 +70,7 @@ const useStyles = () => {
       aspectRatio: 1 / 1,
     },
     textHeader: {
-      fontSize: theme.fontSize[14],
+      fontSize: theme.fontSize[16],
       color: theme.colors.text1,
       fontFamily: theme.fontFamily.poppinsRegular,
     },
@@ -188,7 +189,7 @@ const useStyles = () => {
       tintColor: theme.colors.background,
     },
     iconClose: {
-      fontSize: 30,
+      fontSize: 24,
       position: 'absolute',
       right: 17,
     },
@@ -203,6 +204,13 @@ const useStyles = () => {
     },
     marginTopIphone14Pro: {
       marginTop: 35,
+    },
+    preorderStyle: {
+      display: 'flex',
+      width: '20%',
+    },
+    containerPreOrder: {
+      paddingHorizontal: 16,
     },
   });
   return result;
@@ -706,6 +714,19 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
     return null;
   }
 
+  console.log({product}, 'kakila');
+
+  const renderPreOrderLabel = () => {
+    if (product?.isPreOrderItem) {
+      return (
+        <View style={styles.containerPreOrder}>
+          <PreorderLabel containerStyle={styles.preorderStyle} />
+        </View>
+      );
+    }
+    return null;
+  };
+
   return (
     <Modal
       animationType="slide"
@@ -718,9 +739,9 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
       <SafeAreaView forceInset={{bottom: 'never'}} style={styles.root}>
         {renderMarginTop()}
         {header()}
-        <View style={styles.divider} />
         <KeyboardAwareScrollView style={styles.container}>
           {renderImage()}
+          {renderPreOrderLabel()}
           {renderNameQtyPrice()}
           {renderProductDescription()}
           {renderProductPromotions()}
