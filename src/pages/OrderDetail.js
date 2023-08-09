@@ -29,7 +29,7 @@ import {permissionDownloadFile} from '../helper/Download';
 import {handlePaymentStatus} from '../helper/PaymentStatus';
 import DotSvg from '../assets/svg/DotSvg';
 import NotesProduct from '../assets/svg/NotesProductSvg';
-import ArrowBottom from '../assets/svg/ArrowBottom';
+import ArrowBottom from '../assets/svg/ArrowBottomSvg';
 import useCountdownV2 from '../hooks/time/useCountdownV2';
 
 const useStyles = () => {

@@ -8,9 +8,13 @@ import PhoneInput from 'react-native-phone-input';
 import awsConfig from '../../config/awsConfig';
 import Theme from '../../theme';
 import GlobalText from '../globalText';
-import ArrowBottom from '../../assets/svg/ArrowBottom';
 import {normalizeLayoutSizeHeight} from '../../helper/Layout';
+
 import CountryCodeSelectorModal from './Components/CountryCodeSelectorModal';
+
+import ArrowUpSvg from '../../assets/svg/ArrowUpSvg';
+import ArrowBottomSvg from '../../assets/svg/ArrowBottomSvg';
+import {useSelector} from 'react-redux';
 
 const useStyles = () => {
   const theme = Theme();
@@ -119,9 +123,19 @@ const FieldPhoneNumberInput = ({
   const [countryCode, setCountryCode] = useState('+65');
   const [countryCodeModal, setCountryCodeModal] = useState(false);
 
+  const countryCodeList = useSelector(
+    state => state.settingReducer.dialCodeSettings,
+  );
+
   useEffect(() => {
     setCountryCode(valueCountryCode || awsConfig.phoneNumberCode);
   }, [valueCountryCode]);
+
+  useEffect(() => {
+    if (countryCodeList.length === 1) {
+      setCountryCode(countryCodeList[0]?.dialCode);
+    }
+  }, [countryCodeList]);
 
   const renderModalCountryPicker = () => {
     return (
@@ -156,18 +170,27 @@ const FieldPhoneNumberInput = ({
     return <GlobalText style={styles.textLabel}>{label}</GlobalText>;
   };
 
+  const renderArrow = () => {
+    if (countryCodeList.length === 1) {
+      return;
+    } else if (countryCodeModal) {
+      return <ArrowUpSvg />;
+    } else {
+      return <ArrowBottomSvg />;
+    }
+  };
+
   const renderValueLeftSide = () => {
     if (withoutFlag) {
       return (
         <TouchableOpacity
+          disabled={countryCodeList.length === 1}
           onPress={() => {
             setCountryCodeModal(!countryCodeModal);
           }}
           style={styles.withoutFlagContainer}>
           <GlobalText>{countryCode}</GlobalText>
-          <View style={styles.arrowBottomContainer}>
-            <ArrowBottom />
-          </View>
+          <View style={styles.arrowBottomContainer}>{renderArrow()}</View>
         </TouchableOpacity>
       );
     } else {

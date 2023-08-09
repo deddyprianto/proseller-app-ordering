@@ -324,15 +324,14 @@ export const getDialCodes = () => {
         token,
       );
 
-      const data = response?.responseBody?.data;
+      const data = response?.responseBody?.data || [];
 
-      if (data) {
-        dispatch({
-          data,
-          type: 'SET_DIAL_CODES',
-        });
-        return data;
-      }
+      dispatch({
+        data,
+        type: 'SET_DIAL_CODES',
+      });
+
+      return data;
     } catch (error) {
       return error;
     }
