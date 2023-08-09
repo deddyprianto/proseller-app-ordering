@@ -30,6 +30,7 @@ import Theme from '../../../theme';
 import {useDispatch, useSelector} from 'react-redux';
 import {getProductById} from '../../../actions/product.action';
 import PreorderLabel from '../../label/Preorder';
+import AllowSelfSelectionLabel from '../../label/AllowSelfSelection';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -647,13 +648,27 @@ const ProductCartItem = ({item, disabled}) => {
     return null;
   };
 
+  const renderAllowSelection = () => {
+    if (item.product?.allowSelfSelection) {
+      return <AllowSelfSelectionLabel />;
+    }
+    return null;
+  };
+
+  const renderLabel = () => (
+    <View style={{flexDirection: 'row'}}>
+      {renderAllowSelection()}
+      {renderPreOrder()}
+    </View>
+  );
+
   return (
     <TouchableOpacity
       style={styles.root}
       onPress={() => {
         handleOpenAddModal();
       }}>
-      {renderPreOrder()}
+      {renderLabel()}
       {renderBody()}
       {renderDividerDashed()}
       {renderFooter()}

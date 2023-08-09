@@ -1,5 +1,11 @@
 import React from 'react';
-import {TextInput, View, StyleSheet, TouchableOpacity} from 'react-native';
+import {
+  TextInput,
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Keyboard,
+} from 'react-native';
 import Theme from '../../theme/Theme';
 import GlobalText from '../globalText';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -133,7 +139,21 @@ const useStyles = () => {
  */
 
 const GlobalInputText = React.forwardRef((props, ref) => {
+  const [start, setStart] = React.useState(null);
   const styles = useStyles();
+
+  const onFocus = () => setStart(null);
+
+  const onBlur = () => setStart({start: 0});
+
+  React.useEffect(() => {
+    Keyboard.addListener('keyboardDidShow', onFocus);
+    Keyboard.addListener('keyboardDidHide', onBlur);
+    return () => {
+      Keyboard.removeCurrentListener();
+    };
+  }, []);
+
   if (props.type === 'button') {
     return (
       <View style={styles.inputParentContainer}>
@@ -212,6 +232,7 @@ const GlobalInputText = React.forwardRef((props, ref) => {
           ref={ref}
           style={styles.inputStyle(props.editable, props.numberOfLines)}
           textAlignVertical="center"
+          selection={start}
           {...props}
         />
         {props.isError ? (

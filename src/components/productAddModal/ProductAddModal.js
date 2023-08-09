@@ -40,6 +40,7 @@ import ProductPromotions from './components/ProductPromotions';
 import {SafeAreaView} from 'react-navigation';
 import PreorderLabel from '../label/Preorder';
 import CloseSvg from '../../assets/svg/CloseSvg';
+import AllowSelfSelectionLabel from '../label/AllowSelfSelection';
 
 const useStyles = () => {
   const theme = Theme();
@@ -212,6 +213,9 @@ const useStyles = () => {
     containerPreOrder: {
       paddingHorizontal: 16,
     },
+    row: {
+      flexDirection: 'row',
+    },
   });
   return result;
 };
@@ -219,7 +223,6 @@ const useStyles = () => {
 const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
   const styles = useStyles();
   const dispatch = useDispatch();
-
   const [isLoading, setIsLoading] = useState(false);
 
   const [notes, setNotes] = useState('');
@@ -722,18 +725,25 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
     return null;
   }
 
-  console.log({product}, 'kakila');
-
   const renderPreOrderLabel = () => {
-    if (product?.isPreOrderItem) {
-      return (
-        <View style={styles.containerPreOrder}>
-          <PreorderLabel containerStyle={styles.preorderStyle} />
-        </View>
-      );
+    if (selectedProduct?.isPreOrderItem) {
+      return <PreorderLabel />;
     }
     return null;
   };
+  const renderLabelAvailSelection = () => {
+    if (selectedProduct?.product?.allowSelfSelection) {
+      return <AllowSelfSelectionLabel />;
+    }
+    return null;
+  };
+
+  const renderLabel = () => (
+    <View style={[styles.row, styles.containerPreOrder]}>
+      {renderLabelAvailSelection()}
+      {renderPreOrderLabel()}
+    </View>
+  );
 
   return (
     <Modal
@@ -749,7 +759,7 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
         {header()}
         <KeyboardAwareScrollView style={styles.container}>
           {renderImage()}
-          {renderPreOrderLabel()}
+          {renderLabel()}
           {renderNameQtyPrice()}
           {renderProductDescription()}
           {renderProductPromotions()}
