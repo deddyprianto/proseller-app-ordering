@@ -23,8 +23,8 @@ const useStyles = () => {
       padding: 16,
     },
     titleText: {
-      fontSize: 18,
-      fontFamily: fontFamily.poppinsMedium,
+      fontSize: 16,
+      fontFamily: fontFamily.poppinsSemiBold,
     },
     bodyContainer: {
       marginTop: 0,

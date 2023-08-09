@@ -29,6 +29,7 @@ import ProductAddModal from '../../productAddModal';
 import Theme from '../../../theme';
 import {useDispatch, useSelector} from 'react-redux';
 import {getProductById} from '../../../actions/product.action';
+import PreorderLabel from '../../label/Preorder';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -339,6 +340,10 @@ const useStyles = () => {
     dividerDashedUnavailable: {
       color: theme.colors.textTertiary,
     },
+    preOrderContainer: {
+      width: '25%',
+      marginBottom: 12,
+    },
   });
   return styles;
 };
@@ -635,12 +640,20 @@ const ProductCartItem = ({item, disabled}) => {
     }
   };
 
+  const renderPreOrder = () => {
+    if (item?.isPreOrderItem) {
+      return <PreorderLabel containerStyle={styles.preOrderContainer} />;
+    }
+    return null;
+  };
+
   return (
     <TouchableOpacity
       style={styles.root}
       onPress={() => {
         handleOpenAddModal();
       }}>
+      {renderPreOrder()}
       {renderBody()}
       {renderDividerDashed()}
       {renderFooter()}

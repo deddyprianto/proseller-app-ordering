@@ -223,7 +223,7 @@ const FieldPhoneNumberInput = ({
   const renderInput = () => {
     return (
       <View style={styles.viewInput}>
-        {renderLabel()}
+        {withoutFlag ? null : renderLabel()}
         {renderValue()}
       </View>
     );
