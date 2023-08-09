@@ -1382,11 +1382,7 @@ const Cart = props => {
       <View style={styles.container}>
         <Body>
           <ScrollView>
-            <View style={styles.productCartContainer}>
-              <ProductCartList
-                setAvailablePreorderDate={setAvailablePreOrder}
-              />
-            </View>
+            <ProductCartList setAvailablePreorderDate={setAvailablePreOrder} />
             <View style={styles.divider} />
             {renderOrderValidation()}
             {renderDeliveryProviderTermsAndConditions()}
