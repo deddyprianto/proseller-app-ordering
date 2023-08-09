@@ -121,13 +121,14 @@ const ProductCartList = ({orderDetail, disabled, setAvailablePreorderDate}) => {
       ) : null}
     </View>
   );
-
+  console.log({defaultOrder, listPreorder}, 'silat');
   return (
     <View>
       {defaultOrder.length > 0 ? (
         <FlatList
           data={defaultOrder}
-          renderItem={({item, index}) => renderProductCartItem(item, index)}
+          keyExtractor={item => item.productID}
+          renderItem={({item, index}) => renderProductCartItem(item)}
           ListHeaderComponent={renderHeader('Ready Items', styles.readyTitle)}
         />
       ) : null}
@@ -136,7 +137,8 @@ const ProductCartList = ({orderDetail, disabled, setAvailablePreorderDate}) => {
           {defaultOrder.length > 0 ? <View style={styles.mt24} /> : null}
           <FlatList
             data={listPreorder}
-            renderItem={({item, index}) => renderProductCartItem(item, index)}
+            keyExtractor={item => item.productID}
+            renderItem={({item, index}) => renderProductCartItem(item)}
             ListHeaderComponent={renderHeader(
               'Preorder Items',
               styles.preOrderTitle,
