@@ -41,6 +41,7 @@ import AutocompleteAddress from '../components/autocompleteAddress';
 import useGetProtectionData from '../hooks/protection/useGetProtectioData';
 import additionalSetting from '../config/additionalSettings';
 import appConfig from '../config/appConfig';
+import ModalAction from '../components/modal/ModalAction';
 
 const useStyles = () => {
   const theme = Theme();
@@ -145,6 +146,15 @@ const useStyles = () => {
     },
     scrollContainer: {
       paddingBottom: 100,
+    },
+    mb8: {
+      marginBottom: 8,
+    },
+    buttonActionStyle: {
+      paddingHorizontal: 16,
+    },
+    noPadding: {
+      padding: 0,
     },
   });
   return styles;
@@ -418,11 +428,13 @@ const AddNewAddress = ({address}) => {
   const renderStreetNameField = () => {
     if (mapType === 'dropdown') {
       return (
-        <AutocompleteAddress
-          onSelectAddress={onSelectAddress}
-          enableCurrentLocation
-          value={streetName}
-        />
+        <View style={styles.mb8}>
+          <AutocompleteAddress
+            onSelectAddress={onSelectAddress}
+            enableCurrentLocation
+            value={streetName}
+          />
+        </View>
       );
     }
     return renderAddressText();
@@ -474,14 +486,16 @@ const AddNewAddress = ({address}) => {
 
   const renderRecipientNameField = () => {
     return (
-      <GlobalInputText
-        label="Recipient Name"
-        isMandatory
-        value={recipientName}
-        onChangeText={handleRecipientName}
-        placeholder="Recipient Name"
-        maxLength={50}
-      />
+      <View style={styles.mb8}>
+        <GlobalInputText
+          label="Recipient Name"
+          isMandatory
+          value={recipientName}
+          onChangeText={handleRecipientName}
+          placeholder="Recipient Name"
+          maxLength={50}
+        />
+      </View>
     );
   };
 
@@ -641,44 +655,35 @@ const AddNewAddress = ({address}) => {
   };
 
   const renderDeleteConfirmationDialog = () => {
-    if (isOpenDeleteModal) {
-      return (
-        <ConfirmationDialog
-          open={isOpenDeleteModal}
-          handleClose={() => {
-            handleCloseDeleteModal();
-          }}
-          handleSubmit={() => {
-            handleRemove();
-          }}
-          isLoading={isLoading}
-          textTitle="Delete Address"
-          textDescription="Are your sure you want to delete this address?
-           This action cannot be undone and you will be unable to recover any data."
-          textSubmit="Sure"
-        />
-      );
-    }
+    return (
+      <ModalAction
+        title="Delete Address"
+        description="Are you sure you want to delete this address?"
+        isVisible={isOpenDeleteModal}
+        onApprove={handleRemove}
+        closeModal={handleCloseDeleteModal}
+        onCancel={handleCloseDeleteModal}
+        buttonActionStyle={styles.buttonActionStyle}
+        ModalContainerStyle={styles.noPadding}
+        hideCloseButton
+      />
+    );
   };
 
   const renderEditConfirmationDialog = () => {
-    if (isOpenEditModal) {
-      return (
-        <ConfirmationDialog
-          open={isOpenEditModal}
-          handleClose={() => {
-            handleCloseEditModal();
-          }}
-          handleSubmit={() => {
-            handleClickSave();
-          }}
-          isLoading={isLoading}
-          textTitle="Edit Confirmation"
-          textDescription="Are your sure you want to edit this address detail?"
-          textSubmit="Sure"
-        />
-      );
-    }
+    return (
+      <ModalAction
+        title="Edit Confirmation"
+        description="Are your sure you want to edit this address detail?"
+        isVisible={isOpenEditModal}
+        onApprove={handleClickSave}
+        closeModal={handleCloseEditModal}
+        onCancel={handleCloseEditModal}
+        buttonActionStyle={styles.buttonActionStyle}
+        ModalContainerStyle={styles.noPadding}
+        hideCloseButton
+      />
+    );
   };
 
   return (
