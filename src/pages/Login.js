@@ -25,8 +25,6 @@ import {checkAccountExist, sendOTP} from '../actions/auth.actions';
 import {showSnackbar} from '../actions/setting.action';
 
 import Theme from '../theme';
-import appConfig from '../config/appConfig';
-const HEIGHT = Dimensions.get('window').height;
 
 const useStyles = () => {
   const theme = Theme();
@@ -35,7 +33,7 @@ const useStyles = () => {
       flex: 1,
     },
     container: {
-      height: HEIGHT - 54,
+      flex: 1,
       display: 'flex',
       flexDirection: 'column',
       justifyContent: 'center',
@@ -43,6 +41,7 @@ const useStyles = () => {
       paddingHorizontal: 16,
     },
     textHeader: {
+      marginTop: 100,
       color: theme.colors.primary,
       fontSize: theme.fontSize[24],
       fontFamily: theme.fontFamily.poppinsMedium,
@@ -255,6 +254,7 @@ const Login = () => {
         onChangeCountryCode={value => {
           setCountryCode(value);
         }}
+        withoutFlag
         onChange={value => {
           setPhoneNumber(value);
         }}

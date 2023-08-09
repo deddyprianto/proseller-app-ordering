@@ -5,7 +5,7 @@ import appConfig from '../../config/appConfig';
 
 import Theme from '../../theme';
 import ReferralBenefitItem from './components/ReferralBenefitItem';
-import ArrowBottom from '../../assets/svg/ArrowBottom';
+import ArrowBottom from '../../assets/svg/ArrowBottomSvg';
 
 const useStyles = () => {
   const theme = Theme();

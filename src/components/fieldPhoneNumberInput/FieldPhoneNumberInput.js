@@ -8,8 +8,13 @@ import PhoneInput from 'react-native-phone-input';
 import awsConfig from '../../config/awsConfig';
 import Theme from '../../theme';
 import GlobalText from '../globalText';
-import ArrowBottom from '../../assets/svg/ArrowBottom';
 import {normalizeLayoutSizeHeight} from '../../helper/Layout';
+
+import CountryCodeSelectorModal from './Components/CountryCodeSelectorModal';
+
+import ArrowUpSvg from '../../assets/svg/ArrowUpSvg';
+import ArrowBottomSvg from '../../assets/svg/ArrowBottomSvg';
+import {useSelector} from 'react-redux';
 
 const useStyles = () => {
   const theme = Theme();
@@ -20,6 +25,8 @@ const useStyles = () => {
       alignItems: 'center',
       borderWidth: 1,
       borderRadius: 8,
+      marginBottom: 12,
+
       paddingVertical: normalizeLayoutSizeHeight(2),
       paddingHorizontal: 16,
       borderColor: theme.colors.border1,
@@ -45,6 +52,7 @@ const useStyles = () => {
       height: 25,
       borderRadius: 4,
     },
+    viewCountryCodeSelector: {},
     textLabel: {
       height: 16,
       width: '100%',
@@ -113,10 +121,21 @@ const FieldPhoneNumberInput = ({
   const styles = useStyles();
   const [openModal, setOpenModal] = useState(false);
   const [countryCode, setCountryCode] = useState('+65');
+  const [countryCodeModal, setCountryCodeModal] = useState(false);
+
+  const countryCodeList = useSelector(
+    state => state.settingReducer.dialCodeSettings,
+  );
 
   useEffect(() => {
     setCountryCode(valueCountryCode || awsConfig.phoneNumberCode);
   }, [valueCountryCode]);
+
+  useEffect(() => {
+    if (countryCodeList.length === 1) {
+      setCountryCode(countryCodeList[0]?.dialCode);
+    }
+  }, [countryCodeList]);
 
   const renderModalCountryPicker = () => {
     return (
@@ -139,19 +158,6 @@ const FieldPhoneNumberInput = ({
     );
   };
 
-  const renderFlag = () => {
-    return (
-      <PhoneInput
-        style={styles.viewFlag}
-        flagStyle={styles.viewFlag}
-        onPressFlag={() => {
-          setOpenModal(true);
-        }}
-        value={countryCode}
-      />
-    );
-  };
-
   const renderLabel = () => {
     if (!value) {
       return;
@@ -164,25 +170,42 @@ const FieldPhoneNumberInput = ({
     return <GlobalText style={styles.textLabel}>{label}</GlobalText>;
   };
 
-  const handleOpenModal = () => setOpenModal(true);
+  const renderArrow = () => {
+    if (countryCodeList.length === 1) {
+      return;
+    } else if (countryCodeModal) {
+      return <ArrowUpSvg />;
+    } else {
+      return <ArrowBottomSvg />;
+    }
+  };
+
+  const renderValueLeftSide = () => {
+    if (withoutFlag) {
+      return (
+        <TouchableOpacity
+          disabled={countryCodeList.length === 1}
+          onPress={() => {
+            setCountryCodeModal(!countryCodeModal);
+          }}
+          style={styles.withoutFlagContainer}>
+          <GlobalText>{countryCode}</GlobalText>
+          <View style={styles.arrowBottomContainer}>{renderArrow()}</View>
+        </TouchableOpacity>
+      );
+    } else {
+      return (
+        <GlobalText style={styles.textCountryCode}>{countryCode}</GlobalText>
+      );
+    }
+  };
 
   const renderValue = () => {
     const phoneNumber = value.replace(countryCode, '');
 
     return (
       <View style={styles.viewCountryCodeAndPhoneNumber}>
-        {withoutFlag ? (
-          <TouchableOpacity
-            onPress={handleOpenModal}
-            style={styles.withoutFlagContainer}>
-            <GlobalText>{countryCode}</GlobalText>
-            <View style={styles.arrowBottomContainer}>
-              <ArrowBottom />
-            </View>
-          </TouchableOpacity>
-        ) : (
-          <GlobalText style={styles.textCountryCode}>{countryCode}</GlobalText>
-        )}
+        {renderValueLeftSide()}
         <TextInput
           keyboardType={'numeric'}
           style={styles.textInputPhoneNumber}
@@ -206,25 +229,61 @@ const FieldPhoneNumberInput = ({
     );
   };
 
+  const renderInputLabel = () => {
+    if (inputLabel) {
+      return (
+        <GlobalText style={styles.labelText}>
+          {inputLabel}{' '}
+          {isMandatory ? (
+            <GlobalText style={styles.mandatoryStyle}>*</GlobalText>
+          ) : null}{' '}
+        </GlobalText>
+      );
+    }
+  };
+
+  const renderCountryCodeSelector = () => {
+    if (countryCodeModal) {
+      return (
+        <View style={styles.CountryCodeSelectorModal}>
+          <CountryCodeSelectorModal
+            value={countryCode}
+            onChange={value => {
+              setCountryCode(value);
+              setCountryCodeModal(false);
+            }}
+          />
+        </View>
+      );
+    }
+  };
+
+  const renderFlag = () => {
+    if (!withoutFlag) {
+      return (
+        <>
+          <PhoneInput
+            style={styles.viewFlag}
+            flagStyle={styles.viewFlag}
+            onPressFlag={() => {
+              setOpenModal(true);
+            }}
+            value={countryCode}
+          />
+          <View style={styles.divider} />
+        </>
+      );
+    }
+  };
   return (
     <>
-      <GlobalText style={styles.labelText}>
-        {inputLabel}{' '}
-        {isMandatory ? (
-          <GlobalText style={styles.mandatoryStyle}>*</GlobalText>
-        ) : null}{' '}
-      </GlobalText>
+      {renderInputLabel()}
       <View style={styles.root}>
         {renderModalCountryPicker()}
-        {withoutFlag ? null : (
-          <>
-            {renderFlag()}
-            <View style={styles.divider} />
-          </>
-        )}
-
+        {renderFlag()}
         {renderInput()}
       </View>
+      {renderCountryCodeSelector()}
     </>
   );
 };

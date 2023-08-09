@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Svg, {Path} from 'react-native-svg';
-const ArrowBottom = props => (
+const ArrowBottomSvg = props => (
   <Svg
     width={24}
     height={24}
@@ -17,4 +17,4 @@ const ArrowBottom = props => (
     />
   </Svg>
 );
-export default ArrowBottom;
+export default ArrowBottomSvg;

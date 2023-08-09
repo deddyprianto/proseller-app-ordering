@@ -108,6 +108,14 @@ const privacyPolicySettings = (state = {}, action) => {
   }
 };
 
+const dialCodeSettings = (state = {}, action) => {
+  if (action.type === 'SET_DIAL_CODES') {
+    return action.data;
+  } else {
+    return state;
+  }
+};
+
 export default combineReducers({
   snackbar,
   imageSettings,
@@ -118,5 +126,6 @@ export default combineReducers({
   hideReferralSettings,
   bannerSizeSettings,
   privacyPolicySettings,
+  dialCodeSettings,
   allowedOrder,
 });
