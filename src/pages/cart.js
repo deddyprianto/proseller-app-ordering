@@ -375,6 +375,9 @@ const useStyles = () => {
       width: 16,
       height: 16,
     },
+    productCartContainer: {
+      marginTop: 16,
+    },
   });
   return styles;
 };
@@ -403,7 +406,7 @@ const Cart = props => {
   const {outletUnavailable} = useErrorMessage();
   const [deliveryAddress, setDeliveryAddress] = useState({});
   const [availableTimes, setAvailableTimes] = useState([]);
-
+  const [availablePreorderDate, setAvailablePreorderDate] = useState(null);
   const outlet = useSelector(
     state => state.storesReducer.defaultOutlet.defaultOutlet,
   );
@@ -1112,18 +1115,6 @@ const Cart = props => {
     }
   };
 
-  const renderAddButton = () => {
-    return (
-      <TouchableOpacity
-        style={styles.viewAddButton}
-        onPress={() => {
-          Actions.pop();
-        }}>
-        <Text style={styles.textAddButton}>+ ADD ITEM</Text>
-      </TouchableOpacity>
-    );
-  };
-
   const renderDetailTotal = () => {
     return (
       <View style={styles.viewDetailValueItem}>
@@ -1283,7 +1274,9 @@ const Cart = props => {
     );
 
     const orderingTypeValue = orderingMode?.displayName;
-
+    const dateValue = availablePreorderDate
+      ? {date: availablePreorderDate}
+      : orderingDateTimeSelected;
     return (
       <>
         <DeliveryProviderSelectorModal
@@ -1295,7 +1288,7 @@ const Cart = props => {
         />
         <DateSelectorModal
           orderingMode={basket?.orderingMode}
-          value={orderingDateTimeSelected}
+          value={dateValue}
           open={openDeliveryDateModal}
           handleClose={() => {
             handleCloseDeliveryDateModal();
@@ -1378,6 +1371,10 @@ const Cart = props => {
     Actions.pop();
   }
 
+  const setAvailablePreOrder = date => {
+    setAvailablePreorderDate(date);
+  };
+
   return (
     <SafeAreaView style={styles.root}>
       <Header title="Cart" />
@@ -1385,8 +1382,7 @@ const Cart = props => {
       <View style={styles.container}>
         <Body>
           <ScrollView>
-            {renderAddButton()}
-            <ProductCartList />
+            <ProductCartList setAvailablePreorderDate={setAvailablePreOrder} />
             <View style={styles.divider} />
             {renderOrderValidation()}
             {renderDeliveryProviderTermsAndConditions()}
