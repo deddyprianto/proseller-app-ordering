@@ -13,11 +13,10 @@ const useStyles = () => {
     },
     textDesc: {
       textAlign: 'center',
-      marginBottom: 16,
       fontFamily: fontFamily.poppinsMedium,
     },
     divider: {
-      height: 1,
+      height: 0.5,
       backgroundColor: colors.greyScale3,
       width: '100%',
       marginBottom: 16,
@@ -28,6 +27,13 @@ const useStyles = () => {
     },
     buttonStyle: {
       width: '48%',
+    },
+    descContainer: {
+      borderTopWidth: 1,
+      borderBottomWidth: 1,
+      paddingVertical: 16,
+      borderTopColor: colors.greyScale3,
+      borderBottomColor: colors.greyScale3,
     },
   });
   return {styles};
@@ -62,10 +68,9 @@ const ModalAction = props => {
       scrollContainerStyle={props.scrollContainerStyle}
       {...props}>
       <View>
-        <View style={styles.divider} />
-
-        <GlobalText style={styles.textDesc}>{props.description}</GlobalText>
-        <View style={styles.divider} />
+        <View style={styles.descContainer}>
+          <GlobalText style={styles.textDesc}>{props.description}</GlobalText>
+        </View>
         <View style={[styles.actionButtonContainer, props.buttonActionStyle]}>
           <View style={styles.buttonStyle}>
             <GlobalButton onPress={props.onCancel} isOutline title="Cancel" />
