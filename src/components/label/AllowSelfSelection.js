@@ -7,17 +7,18 @@ const useStyles = () => {
   const theme = Theme();
   const styles = StyleSheet.create({
     preOrderLabel: {
-      paddingVertical: 4,
       alignItems: 'center',
       justifyContent: 'center',
-      backgroundColor: theme.colors.greyScale3,
+      backgroundColor: theme.colors.brandTertiary,
       paddingHorizontal: 8,
       borderRadius: 4,
       height: 26,
+      marginRight: 4,
     },
     preOrderText: {
       fontFamily: theme.fontFamily.poppinsMedium,
       fontSize: 12,
+      color: 'white',
     },
   });
   return {styles};
@@ -33,13 +34,15 @@ const useStyles = () => {
  * @param {PreorderProps} props
  */
 
-const PreorderLabel = props => {
+const AllowSelfSelectionLabel = props => {
   const {styles} = useStyles();
   return (
     <View style={[styles.preOrderLabel, props.containerStyle]}>
-      <GlobalText style={styles.preOrderText}>Preorder</GlobalText>
+      <GlobalText style={styles.preOrderText}>
+        Available for self-selection
+      </GlobalText>
     </View>
   );
 };
 
-export default PreorderLabel;
+export default AllowSelfSelectionLabel;

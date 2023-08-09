@@ -602,7 +602,7 @@ const AddNewAddress = ({address}) => {
       <View style={{flex: 1}}>
         <Body>
           <ScrollView
-            // keyboardShouldPersistTaps={true}
+            keyboardShouldPersistTaps={'handled'}
             contentContainerStyle={styles.scrollContainer}
             nestedScrollEnabled={true}
             style={styles.scrollView}>
