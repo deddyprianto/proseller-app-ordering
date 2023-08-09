@@ -60,7 +60,7 @@ const useStyles = () => {
   return styles;
 };
 
-const ProductCartList = ({orderDetail, disabled}) => {
+const ProductCartList = ({orderDetail, disabled, setAvailablePreorderDate}) => {
   const styles = useStyles();
   const currentBasket = useSelector(
     state => state.orderReducer?.dataBasket?.product,
@@ -69,8 +69,6 @@ const ProductCartList = ({orderDetail, disabled}) => {
   const [listPreorder, setListPreorder] = React.useState([]);
   const [defaultOrder, setDefaultOrder] = React.useState([]);
   const [availDate, setAvailDate] = React.useState(null);
-
-  console.log({items}, 'nukai');
 
   const groupingeOrder = () => {
     const isNotPreorder = items.filter(item => !item.isPreOrderItem);
@@ -91,7 +89,11 @@ const ProductCartList = ({orderDetail, disabled}) => {
     }
   }, [items]);
 
-  console.log(listPreorder, 'nusuk');
+  React.useEffect(() => {
+    if (typeof setAvailablePreorderDate === 'function') {
+      setAvailablePreorderDate(availDate);
+    }
+  }, [availDate]);
 
   const renderProductCartItem = item => {
     return (
