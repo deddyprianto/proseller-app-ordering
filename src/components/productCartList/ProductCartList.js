@@ -42,9 +42,11 @@ const useStyles = () => {
       fontSize: 16,
     },
     preOrderTitle: {
-      marginTop: 40,
+      marginTop: 16,
     },
-
+    readyTitle: {
+      marginTop: 16,
+    },
     availableTextDate: {
       marginTop: 8,
       fontSize: 12,
@@ -55,6 +57,9 @@ const useStyles = () => {
       alignItems: 'center',
       justifyContent: 'center',
       marginBottom: 8,
+    },
+    mt24: {
+      marginTop: 24,
     },
   });
   return styles;
@@ -116,24 +121,33 @@ const ProductCartList = ({orderDetail, disabled, setAvailablePreorderDate}) => {
       ) : null}
     </View>
   );
-
+  console.log({defaultOrder, listPreorder}, 'silat');
   return (
-    <>
-      <FlatList
-        data={defaultOrder}
-        renderItem={({item, index}) => renderProductCartItem(item, index)}
-        ListHeaderComponent={renderHeader('Ready Items')}
-      />
-      <FlatList
-        data={listPreorder}
-        renderItem={({item, index}) => renderProductCartItem(item, index)}
-        ListHeaderComponent={renderHeader(
-          'Preorder Items',
-          styles.preOrderTitle,
-          true,
-        )}
-      />
-    </>
+    <View>
+      {defaultOrder.length > 0 ? (
+        <FlatList
+          data={defaultOrder}
+          keyExtractor={item => item.productID}
+          renderItem={({item, index}) => renderProductCartItem(item)}
+          ListHeaderComponent={renderHeader('Ready Items', styles.readyTitle)}
+        />
+      ) : null}
+      {listPreorder.length > 0 ? (
+        <>
+          {defaultOrder.length > 0 ? <View style={styles.mt24} /> : null}
+          <FlatList
+            data={listPreorder}
+            keyExtractor={item => item.productID}
+            renderItem={({item, index}) => renderProductCartItem(item)}
+            ListHeaderComponent={renderHeader(
+              'Preorder Items',
+              styles.preOrderTitle,
+              true,
+            )}
+          />
+        </>
+      ) : null}
+    </View>
   );
 };
 

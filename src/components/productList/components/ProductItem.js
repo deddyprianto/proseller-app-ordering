@@ -210,6 +210,7 @@ const useStyles = () => {
       left: 8,
       paddingHorizontal: 8,
       borderRadius: 4,
+      zIndex: 100,
     },
     preOrderText: {
       fontFamily: theme.fontFamily.poppinsMedium,
