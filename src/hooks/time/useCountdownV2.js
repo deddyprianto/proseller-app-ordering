@@ -8,8 +8,8 @@ const useCountdownV2 = order => {
   const [hours, setHours] = useState(0);
   const [isTimeEnd, setIsTimeEnd] = useState(false);
 
-  const countdownStart = orderData => {
-    const then = moment(orderData.action.expiry).format('MM/DD/YYYY HH:mm:ss');
+  const countdownStart = expiry => {
+    const then = moment(expiry).format('MM/DD/YYYY HH:mm:ss');
 
     const result = setInterval(() => {
       const now = moment().format('MM/DD/YYYY HH:mm:ss');
@@ -17,19 +17,24 @@ const useCountdownV2 = order => {
 
       const duration = moment.duration(ms);
       let second = duration.seconds();
+      let secondDisplay = second;
       let minute = duration.minutes();
+      let minuteDisplay = minute;
       let hour = duration.hours();
+      let hourDisplay = hour;
       if (second < 10) {
-        second = `0${second}`;
+        secondDisplay = `0${second}`;
       }
       if (minute < 10) {
-        minute = `0${minute}`;
+        minuteDisplay = `0${minute}`;
+      }
+      if (hour < 10) {
+        hourDisplay = `0${hour}`;
       }
 
-      setSeconds(second);
-      setMinutes(minute);
-      setHours(hour);
-
+      setSeconds(secondDisplay);
+      setMinutes(minuteDisplay);
+      setHours(hourDisplay);
       if (second <= 0 && minute <= 0 && hour <= 0) {
         setSeconds(0);
         setMinutes(0);
@@ -41,8 +46,15 @@ const useCountdownV2 = order => {
   };
 
   useEffect(() => {
-    if (order) {
-      countdownStart(order);
+    if (order?.action?.expiry) {
+      const now = moment().unix();
+      const expired = moment(order?.action?.expiry).unix();
+      if (now > expired) {
+        return setIsTimeEnd(true);
+      }
+      countdownStart(order.action.expiry);
+    } else {
+      setIsTimeEnd(true);
     }
   }, [order]);
 
