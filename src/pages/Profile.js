@@ -822,6 +822,11 @@ const Profile = props => {
   const openVoucher = () => {
     Actions.voucherV2();
   };
+
+  const openStoreLocation = () => {
+    Actions.favoriteOutlets();
+  };
+
   const renderSettingV2 = () => (
     <View style={styles.viewSettings}>
       {renderMembershipQRCode()}
@@ -846,7 +851,9 @@ const Profile = props => {
       {renderReferral()}
       {renderDivider()}
       {renderTitleSettingV2('Others')}
-      {renderListMenu('Store Location', <StoreSvg />)}
+      {additionalSetting().storeLocationProfile ? (
+        <>{renderListMenu('Store Location', <StoreSvg />, openStoreLocation)}</>
+      ) : null}
       {handleAdditionalSetting()}
       {renderTermsAndConditions()}
       {renderFAQ()}
