@@ -724,15 +724,17 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
   if (!open) {
     return null;
   }
-
   const renderPreOrderLabel = () => {
-    if (selectedProduct?.isPreOrderItem) {
+    if (selectedProduct?.isPreOrderItem || product?.isPreOrderItem) {
       return <PreorderLabel />;
     }
     return null;
   };
   const renderLabelAvailSelection = () => {
-    if (selectedProduct?.product?.allowSelfSelection) {
+    if (
+      selectedProduct?.product?.allowSelfSelection ||
+      product?.allowSelfSelection
+    ) {
       return <AllowSelfSelectionLabel />;
     }
     return null;

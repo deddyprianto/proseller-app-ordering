@@ -6,6 +6,7 @@ import appConfig from '../../config/appConfig';
 import Theme from '../../theme';
 import ReferralBenefitItem from './components/ReferralBenefitItem';
 import ArrowBottom from '../../assets/svg/ArrowBottomSvg';
+import ArrowUpSvg from '../../assets/svg/ArrowUpSvg';
 
 const useStyles = () => {
   const theme = Theme();
@@ -66,6 +67,16 @@ const ReferralBenefitList = ({senderBenefit, referredBenefit, criteria}) => {
     return calculation > 4;
   };
 
+  const handleArrowDropdown = () => {
+    if (showHideBtn()) {
+      if (showAllItem) {
+        return <ArrowUpSvg />;
+      }
+      return <ArrowBottom />;
+    }
+    return null;
+  };
+
   const renderSenderBenefit = () => {
     const benefitList = senderBenefit?.map((benefit, index) => {
       if (index > 1 && !showAllItem) return null;
@@ -76,7 +87,7 @@ const ReferralBenefitList = ({senderBenefit, referredBenefit, criteria}) => {
       <View>
         <View style={styles.titleContainer}>
           <Text style={styles.textBenefit}>As a sender you will get</Text>
-          {showHideBtn() ? <ArrowBottom /> : null}
+          {handleArrowDropdown()}
         </View>
         {benefitList}
       </View>
