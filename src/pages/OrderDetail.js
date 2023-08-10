@@ -109,6 +109,7 @@ const useStyles = () => {
       marginLeft: 8,
       fontFamily: fontFamily.poppinsMedium,
       color: '#343A4A',
+      width: '60%',
     },
     shadowBox: {
       shadowOffset: {
