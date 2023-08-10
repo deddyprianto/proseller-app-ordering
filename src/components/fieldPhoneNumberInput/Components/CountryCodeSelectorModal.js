@@ -10,7 +10,7 @@ const useStyles = () => {
   const theme = Theme();
   const styles = StyleSheet.create({
     root: {
-      height: 250,
+      maxHeight: 270,
       width: '100%',
       flexDirection: 'column',
       alignItems: 'center',
@@ -43,7 +43,7 @@ const useStyles = () => {
     viewSearch: {
       padding: 10,
       width: '100%',
-      height: 'auto',
+      height: 57,
     },
     textCountryCodeItem: {
       color: theme.colors.textPrimary,
@@ -88,8 +88,12 @@ const CountryCodeSelectorModal = ({value, onChange}) => {
     const data = handleCountryCodeSort(countryCodeList);
 
     if (searchTextInput) {
-      return data.filter(x =>
-        x.name.toUpperCase().includes(searchTextInput.toUpperCase()),
+      const searchText = searchTextInput.toUpperCase();
+
+      return data.filter(
+        x =>
+          x.name.toUpperCase().includes(searchText) ||
+          x.dialCode.toUpperCase().includes(searchText),
       );
     }
 

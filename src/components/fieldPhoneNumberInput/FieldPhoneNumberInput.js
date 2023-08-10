@@ -95,12 +95,14 @@ const useStyles = () => {
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     withoutFlagContainer: {
+      display: 'flex',
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'center',
     },
     arrowBottomContainer: {
       marginRight: 16,
+      marginBottom: 3,
     },
   });
   return styles;
