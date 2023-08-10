@@ -9,6 +9,7 @@ import {
   SafeAreaView,
   TouchableOpacity,
   ScrollView,
+  BackHandler,
 } from 'react-native';
 
 import {Header} from '../components/layout';
@@ -25,6 +26,7 @@ import {
   getReferralInvitedList,
 } from '../actions/referral.action';
 import LoadingScreen from '../components/loadingScreen';
+import {Actions} from 'react-native-router-flux';
 
 const useStyles = () => {
   const theme = Theme();
@@ -187,6 +189,18 @@ const Referral = () => {
     const howItWorks = referralInfo?.howItWorks;
     return <ReferralHowItWorks howItWorks={howItWorks} />;
   };
+
+  const backHandle = () => {
+    Actions.pop();
+    return true;
+  };
+
+  React.useEffect(() => {
+    BackHandler.addEventListener('hardwareBackPress', backHandle);
+    return () => {
+      BackHandler.removeEventListener('hardwareBackPress', backHandle);
+    };
+  }, []);
 
   return (
     <SafeAreaView style={styles.root}>

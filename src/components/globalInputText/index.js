@@ -139,7 +139,7 @@ const useStyles = () => {
  */
 
 const GlobalInputText = React.forwardRef((props, ref) => {
-  const [start, setStart] = React.useState(null);
+  const [start, setStart] = React.useState({start: 0});
   const styles = useStyles();
 
   const onFocus = () => setStart(null);
@@ -150,7 +150,8 @@ const GlobalInputText = React.forwardRef((props, ref) => {
     Keyboard.addListener('keyboardDidShow', onFocus);
     Keyboard.addListener('keyboardDidHide', onBlur);
     return () => {
-      Keyboard.removeCurrentListener();
+      Keyboard.removeListener('keyboardDidShow', onFocus);
+      Keyboard.removeListener('keyboardDidHide', onBlur);
     };
   }, []);
 
