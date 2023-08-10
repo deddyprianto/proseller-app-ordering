@@ -856,8 +856,9 @@ const Profile = props => {
       ) : null}
       {handleAdditionalSetting()}
       {renderTermsAndConditions()}
-      {renderFAQ()}
       {renderPrivacyPolicy()}
+
+      {renderFAQ()}
       {renderContactUs()}
       {renderDivider()}
       {renderLogout()}
