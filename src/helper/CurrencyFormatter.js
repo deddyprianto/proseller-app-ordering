@@ -8,10 +8,14 @@ const CurrencyFormatter = price => {
     price = 0;
   }
 
-  let result = price.toLocaleString(currencyLocale, {
+  let priceFormatted = price.toLocaleString(currencyLocale, {
     style: 'currency',
     currency: currencyCode,
   });
+
+  const priceFormattedSplit = priceFormatted.split(currencyCode);
+  const onlyPrice = priceFormattedSplit[1];
+  const result = `${currencyCode} ${onlyPrice}`;
 
   return result;
 };
