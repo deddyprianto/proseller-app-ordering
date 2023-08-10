@@ -30,7 +30,9 @@ const additionalSetting = () => {
     },
   ];
   const mapType = 'dropdown';
-  return {additionalPolicy, mapType};
+  const showPaymentMethodOnProfile = true;
+
+  return {additionalPolicy, mapType, showPaymentMethodOnProfile};
 };
 
 export default additionalSetting;
