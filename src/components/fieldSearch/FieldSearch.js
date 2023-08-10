@@ -18,6 +18,7 @@ const useStyles = () => {
   const theme = Theme();
   const styles = StyleSheet.create({
     root: {
+      flex: 1,
       height: normalizeLayoutSizeHeight(48),
       minHeight: normalizeLayoutSizeHeight(48),
       maxHeight: normalizeLayoutSizeHeight(48),
