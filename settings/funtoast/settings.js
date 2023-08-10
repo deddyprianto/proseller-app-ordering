@@ -3,7 +3,8 @@ import React from 'react';
 const additionalSetting = () => {
   const additionalPolicy = [];
   const mapType = 'map';
-  return {additionalPolicy, mapType};
+  const showPaymentMethodOnProfile = false;
+  return {additionalPolicy, mapType, showPaymentMethodOnProfile};
 };
 
 export default additionalSetting;

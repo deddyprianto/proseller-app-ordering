@@ -831,9 +831,15 @@ const Profile = props => {
       {renderEditProfile()}
       {renderMyDeliveryAddress()}
       {renderNotifications()}
-      {renderDivider()}
-      {renderTitleSettingV2('Payment Method')}
-      {renderListMenu('Credit Card', <CreditCard />)}
+
+      {additionalSetting().showPaymentMethodOnProfile ? (
+        <>
+          {renderDivider()}
+          {renderTitleSettingV2('Payment Method')}
+          {renderListMenu('Credit Card', <CreditCard />)}
+        </>
+      ) : null}
+
       {renderDivider()}
       {renderTitleSettingV2('Rewards')}
       {renderListMenu('My Voucher', <Voucher />, openVoucher)}
