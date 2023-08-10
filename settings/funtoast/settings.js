@@ -4,7 +4,14 @@ const additionalSetting = () => {
   const additionalPolicy = [];
   const mapType = 'map';
   const showPaymentMethodOnProfile = false;
-  return {additionalPolicy, mapType, showPaymentMethodOnProfile};
+  const storeLocationProfile = true;
+
+  return {
+    additionalPolicy,
+    mapType,
+    showPaymentMethodOnProfile,
+    storeLocationProfile,
+  };
 };
 
 export default additionalSetting;
