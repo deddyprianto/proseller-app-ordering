@@ -276,7 +276,7 @@ class DetailPoint extends Component {
 
               {!isEmptyArray(customerActivity) ? (
                 customerActivity.map(item => (
-                  <View style={styles.customerActivityList}>
+                  <View key={item.id} style={styles.customerActivityList}>
                     <View
                       style={{
                         flexDirection: 'row',
