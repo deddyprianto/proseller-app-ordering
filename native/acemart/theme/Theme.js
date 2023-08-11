@@ -85,6 +85,7 @@ const Theme = () => {
     inactiveDot: '#D6D6D6',
     errorColor: '#CE1111',
     successColor: '#438E49',
+    colorPointPlus: '#4EBE19',
   };
 
   const fontSize = {
