@@ -8,7 +8,7 @@ const additionalSetting = () => {
       id: 1,
       name: 'Delivery and Pickup Policy',
       link:
-        'https://appsmith.equipweb.biz/app/privacy-policy/delivery-policy-64ae72ebf6a34d0fa121472a?embed=true',
+        'https://appsmith.equipweb.biz/app/privacy-policy/exchange-and-refund-policy-64a3854677e5e62a68d1d598?embed=true',
       icon: () => <DeliveryPolicy />,
       show: true,
     },
