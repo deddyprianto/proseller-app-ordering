@@ -388,7 +388,6 @@ const DateSelectorModal = ({open, handleClose, value}) => {
     );
   };
 
-  console.log({selectedDate, date: value.date}, 'biman');
   const renderDateItem = item => {
     const today =
       moment(item).format('YYYY-MM-DD') === moment().format('YYYY-MM-DD');
