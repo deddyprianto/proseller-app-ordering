@@ -241,7 +241,6 @@ class SettleOrder extends Component {
           totalNonDiscountable += nettAmount;
         }
       }
-      console.log(totalNonDiscountable, 'totalNonDiscountable');
       await this.setState({totalNonDiscountable});
     } catch (e) {}
   };
@@ -430,7 +429,6 @@ class SettleOrder extends Component {
           totalNettItem += product.nettAmount;
         }
       }
-      console.log(totalNettItem, 'totalNettItem');
       totalNonDiscountable += totalNettItem;
       await this.setState({totalNonDiscountable});
       return {totalNonDiscountable, totalNettItem};
@@ -1061,7 +1059,6 @@ class SettleOrder extends Component {
     } catch (e) {
       this.RBSheet.close();
       Alert.alert('Sorry', 'Can`t set CVV, please try again');
-      console.log(e);
     }
   };
 
@@ -1372,7 +1369,6 @@ class SettleOrder extends Component {
 
       // get url
       let {url} = this.props;
-
       console.log('Payload settle order ', pembayaran);
       console.log('URL settle order ', url);
 
@@ -2673,11 +2669,13 @@ class SettleOrder extends Component {
         payload.clientTimezone = Math.abs(new Date().getTimezoneOffset());
       } catch (e) {}
 
-      console.log('Payload settle order ', payload);
-      console.log('URL settle order ', url);
+      payload = {
+        ...payload,
+        isSelfSelection: this.props.pembayaran.isSelfSelection,
+      };
+      console.log('Payload settle order', payload);
 
       const response = await this.props.dispatch(settleOrder(payload, url));
-      console.log('reponse pembayaran settle order ', response);
       if (response.success) {
         this.handlePaymentFomoPay(response);
         try {
@@ -2744,7 +2742,6 @@ class SettleOrder extends Component {
       //  cancel voucher and pont selected
       // this.cencelPoint();
       // this.cencelVoucher();
-      console.log(e);
       Alert.alert('Oppss', 'Something went wrong, please try again');
       this.setState({loading: false, failedPay: true});
     }
@@ -3243,7 +3240,6 @@ class SettleOrder extends Component {
 
       console.log('Payload settle order ', payload);
       console.log('URL settle order ', url);
-
       const response = await this.props.dispatch(settleOrder(payload, url));
       console.log('reponse pembayaran settle order ', response);
       if (response.success) {
@@ -3289,7 +3285,6 @@ class SettleOrder extends Component {
       //  cancel voucher and pont selected
       // this.cencelPoint();
       // this.cencelVoucher();
-      console.log(e);
       Alert.alert('Oppss', 'Something went wrong, please try again');
       this.setState({loading: false, failedPay: true});
     }

@@ -65,7 +65,12 @@ const useStyles = () => {
   return styles;
 };
 
-const ProductCartList = ({orderDetail, disabled, setAvailablePreorderDate}) => {
+const ProductCartList = ({
+  orderDetail,
+  disabled,
+  setAvailablePreorderDate,
+  setAvailaleForSelection,
+}) => {
   const styles = useStyles();
   const currentBasket = useSelector(
     state => state.orderReducer?.dataBasket?.product,
@@ -74,10 +79,14 @@ const ProductCartList = ({orderDetail, disabled, setAvailablePreorderDate}) => {
   const [listPreorder, setListPreorder] = React.useState([]);
   const [defaultOrder, setDefaultOrder] = React.useState([]);
   const [availDate, setAvailDate] = React.useState(null);
+  const [listSelfSelection, setListSelfSlection] = React.useState([]);
 
   const groupingeOrder = () => {
     const isNotPreorder = items.filter(item => !item.isPreOrderItem);
     const isPreOrder = items.filter(item => item.isPreOrderItem);
+    const isSelfSelection = items.filter(
+      item => item.product.allowSelfSelection,
+    );
     const sortPreOrder = isPreOrder.sort(
       (a, b) =>
         new Date(b?.product?.productAvailableDate).getTime() -
@@ -86,6 +95,7 @@ const ProductCartList = ({orderDetail, disabled, setAvailablePreorderDate}) => {
     setAvailDate(sortPreOrder[0]?.product?.productAvailableDate);
     setListPreorder(isPreOrder);
     setDefaultOrder(isNotPreorder);
+    setListSelfSlection(isSelfSelection);
   };
 
   React.useEffect(() => {
@@ -99,6 +109,15 @@ const ProductCartList = ({orderDetail, disabled, setAvailablePreorderDate}) => {
       setAvailablePreorderDate(availDate);
     }
   }, [availDate]);
+
+  React.useEffect(() => {
+    if (
+      setAvailaleForSelection &&
+      typeof setAvailaleForSelection === 'function'
+    ) {
+      setAvailaleForSelection(listSelfSelection);
+    }
+  }, [listSelfSelection]);
 
   const renderProductCartItem = item => {
     return (
@@ -121,7 +140,6 @@ const ProductCartList = ({orderDetail, disabled, setAvailablePreorderDate}) => {
       ) : null}
     </View>
   );
-  console.log({defaultOrder, listPreorder}, 'silat');
   return (
     <View>
       {defaultOrder.length > 0 ? (
