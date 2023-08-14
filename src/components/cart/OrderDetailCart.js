@@ -12,9 +12,9 @@ const useStyles = () => {
       padding: 12,
       shadowOffset: {
         width: 0,
-        height: 6,
+        height: 1,
       },
-      shadowOpacity: 0.37,
+      shadowOpacity: 0.1,
       shadowRadius: 7.49,
       elevation: 1,
       backgroundColor: 'white',

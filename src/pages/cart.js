@@ -458,8 +458,10 @@ const Cart = props => {
   useEffect(() => {
     const loadData = async () => {
       const clientTimezone = Math.abs(new Date().getTimezoneOffset());
-      const date = moment().format('YYYY-MM-DD');
-
+      let date = moment().format('YYYY-MM-DD');
+      if (availablePreorderDate) {
+        date = moment(availablePreorderDate).format('YYYY-MM-DD');
+      }
       const timeSlot = await dispatch(
         getTimeSlot({
           outletId: outlet.id,
@@ -468,12 +470,10 @@ const Cart = props => {
           orderingMode: basket.orderingMode,
         }),
       );
-
       setAvailableTimes(timeSlot);
     };
     loadData();
-  }, [dispatch, basket, outlet]);
-
+  }, [dispatch, basket, outlet, availablePreorderDate]);
   useEffect(() => {
     const userDecrypt = CryptoJS.AES.decrypt(
       userDetail,
