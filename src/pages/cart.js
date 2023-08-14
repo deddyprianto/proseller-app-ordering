@@ -10,7 +10,6 @@ import {Actions} from 'react-native-router-flux';
 import {useDispatch, useSelector} from 'react-redux';
 import CryptoJS from 'react-native-crypto-js';
 import moment from 'moment';
-import Modal from 'react-native-modal';
 import {
   StyleSheet,
   View,
@@ -41,10 +40,8 @@ import currencyFormatter from '../helper/CurrencyFormatter';
 import {showSnackbar} from '../actions/setting.action';
 import {
   changeOrderingMode,
-  getBasket,
   getDeliveryProviderAndFee,
   getTimeSlot,
-  removeBasket,
 } from '../actions/order.action';
 
 import Theme from '../theme';
@@ -55,6 +52,7 @@ import {getCompanyInfo, getOutletById} from '../actions/stores.action';
 import ModalError from '../components/modal/ErrorModal';
 import useErrorMessage from '../hooks/message/useErrorMessage';
 import {Body} from '../components/layout';
+import OrderDetailCart from '../components/cart/OrderDetailCart';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -150,14 +148,14 @@ const useStyles = () => {
     },
     textMethod: {
       color: theme.colors.text1,
-      fontSize: theme.fontSize[12],
+      fontSize: theme.fontSize[14],
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textMethodValue: {
       textAlign: 'center',
       flex: 1,
       color: theme.colors.primary,
-      fontSize: theme.fontSize[12],
+      fontSize: theme.fontSize[14],
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textMethodValue1: {
@@ -407,6 +405,8 @@ const Cart = props => {
   const [deliveryAddress, setDeliveryAddress] = useState({});
   const [availableTimes, setAvailableTimes] = useState([]);
   const [availablePreorderDate, setAvailablePreorderDate] = useState(null);
+  const [availableSelection, saveAvailableSelection] = React.useState([]);
+  const [itemSelection, setItemSelection] = React.useState(null);
   const outlet = useSelector(
     state => state.storesReducer.defaultOutlet.defaultOutlet,
   );
@@ -838,7 +838,7 @@ const Cart = props => {
         data = {};
       });
 
-      const pembayaran = {
+      let pembayaran = {
         payment: basket?.totalNettAmount,
         totalNettAmount: basket?.totalNettAmount,
         totalGrossAmount: basket?.totalGrossAmount,
@@ -851,7 +851,11 @@ const Cart = props => {
         storeId: basket?.outlet.id,
         orderingMode: basket?.orderingMode,
       };
-
+      if (itemSelection === 'own') {
+        pembayaran = {...pembayaran, isSelfSelection: true};
+      } else {
+        pembayaran = {...pembayaran, isSelfSelection: false};
+      }
       if (!basket?.orderingMode) {
         RBSheet.open();
         return;
@@ -901,7 +905,6 @@ const Cart = props => {
           }
         }
       } catch (e) {}
-
       Actions.settleOrder({
         pembayaran: pembayaran,
         url: url,
@@ -1375,6 +1378,14 @@ const Cart = props => {
     setAvailablePreorderDate(date);
   };
 
+  const setAvailableSelection = data => {
+    saveAvailableSelection(data);
+  };
+
+  const handleItemSelection = status => {
+    setItemSelection(status);
+  };
+
   return (
     <SafeAreaView style={styles.root}>
       <Header title="Cart" />
@@ -1382,8 +1393,13 @@ const Cart = props => {
       <View style={styles.container}>
         <Body>
           <ScrollView>
-            <ProductCartList setAvailablePreorderDate={setAvailablePreOrder} />
-            <View style={styles.divider} />
+            <ProductCartList
+              setAvailaleForSelection={setAvailableSelection}
+              setAvailablePreorderDate={setAvailablePreOrder}
+            />
+            {availableSelection.length > 0 ? (
+              <OrderDetailCart setSelectSelection={handleItemSelection} />
+            ) : null}
             {renderOrderValidation()}
             {renderDeliveryProviderTermsAndConditions()}
             {renderOutlet()}
