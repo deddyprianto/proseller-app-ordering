@@ -406,7 +406,7 @@ const Cart = props => {
   const [availableTimes, setAvailableTimes] = useState([]);
   const [availablePreorderDate, setAvailablePreorderDate] = useState(null);
   const [availableSelection, saveAvailableSelection] = React.useState([]);
-  const [itemSelection, setItemSelection] = React.useState(null);
+  const [itemSelection, setItemSelection] = React.useState('staff');
   const outlet = useSelector(
     state => state.storesReducer.defaultOutlet.defaultOutlet,
   );
@@ -863,7 +863,6 @@ const Cart = props => {
 
       pembayaran.orderingMode = basket.orderingMode;
       pembayaran.cartID = basket.cartID;
-
       const url = '/cart/submitAndPay';
 
       // for delivery order
@@ -1398,7 +1397,10 @@ const Cart = props => {
               setAvailablePreorderDate={setAvailablePreOrder}
             />
             {availableSelection.length > 0 ? (
-              <OrderDetailCart setSelectSelection={handleItemSelection} />
+              <OrderDetailCart
+                itemSelection={itemSelection}
+                setSelectSelection={handleItemSelection}
+              />
             ) : null}
             {renderOrderValidation()}
             {renderDeliveryProviderTermsAndConditions()}

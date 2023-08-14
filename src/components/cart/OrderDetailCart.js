@@ -45,9 +45,9 @@ const useStyles = () => {
   return {styles};
 };
 
-const OrderDetailCart = ({setSelectSelection}) => {
+const OrderDetailCart = ({setSelectSelection, itemSelection}) => {
   const {styles} = useStyles();
-  const [status, setStatus] = React.useState(null);
+  const [status, setStatus] = React.useState(itemSelection);
 
   const onSelectSelection = name => {
     setStatus(name);

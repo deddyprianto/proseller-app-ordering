@@ -8,7 +8,7 @@ const additionalSetting = () => {
       id: 1,
       name: 'Delivery and Pickup Policy',
       link:
-        'https://appsmith.equipweb.biz/app/privacy-policy/exchange-and-refund-policy-64a3854677e5e62a68d1d598?embed=true',
+        'https://appsmith.equipweb.biz/app/additional-policy/delivery-and-pickup-policy-64d9a3dfa3034153e03a23c7',
       icon: () => <DeliveryPolicy />,
       show: true,
     },
@@ -16,7 +16,7 @@ const additionalSetting = () => {
       id: 2,
       name: 'Exchange and Refund Policy',
       link:
-        'https://appsmith.equipweb.biz/app/privacy-policy/exchange-and-refund-policy-64a3854677e5e62a68d1d598?embed=true',
+        'https://appsmith.equipweb.biz/app/exchangerefundpolicy-64a3854677e5e62a68d1d598?embed=true',
       icon: () => <RefundSvg />,
       show: true,
     },
