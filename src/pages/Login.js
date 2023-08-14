@@ -25,6 +25,10 @@ import {checkAccountExist, sendOTP} from '../actions/auth.actions';
 import {showSnackbar} from '../actions/setting.action';
 
 import Theme from '../theme';
+import HeaderV2 from '../components/layout/header/HeaderV2';
+import appConfig from '../config/appConfig';
+import GlobalInputText from '../components/globalInputText';
+import useSettings from '../hooks/settings/useSettings';
 
 const useStyles = () => {
   const theme = Theme();
@@ -34,14 +38,11 @@ const useStyles = () => {
     },
     container: {
       flex: 1,
-      display: 'flex',
       flexDirection: 'column',
-      justifyContent: 'center',
-      alignItems: 'center',
       paddingHorizontal: 16,
     },
     textHeader: {
-      marginTop: 100,
+      marginTop: 32,
       color: theme.colors.primary,
       fontSize: theme.fontSize[24],
       fontFamily: theme.fontFamily.poppinsMedium,
@@ -49,7 +50,7 @@ const useStyles = () => {
 
     textInformation: {
       marginTop: 16,
-      width: '80%',
+      width: '100%',
       textAlign: 'center',
       color: theme.colors.text2,
       fontSize: theme.fontSize[12],
@@ -63,7 +64,7 @@ const useStyles = () => {
     },
 
     textLoginMethodActive: {
-      color: theme.colors.text1,
+      color: theme.colors.primary,
       fontSize: theme.fontSize[12],
       fontFamily: theme.fontFamily.poppinsMedium,
     },
@@ -73,16 +74,16 @@ const useStyles = () => {
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textLogin: {
-      marginTop: 8,
+      marginTop: 4,
       color: theme.colors.textPrimary,
-      fontSize: theme.fontSize[16],
+      fontSize: theme.fontSize[14],
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     touchableNext: {
       marginTop: 16,
       height: 40,
       width: '100%',
-      borderRadius: 5,
+      borderRadius: 8,
       justifyContent: 'center',
       alignItems: 'center',
       backgroundColor: theme.colors.primary,
@@ -92,14 +93,14 @@ const useStyles = () => {
       marginTop: 16,
       height: 40,
       width: '100%',
-      borderRadius: 5,
+      borderRadius: 8,
       justifyContent: 'center',
       alignItems: 'center',
       backgroundColor: theme.colors.buttonDisabled,
     },
 
     viewLoginMethodSelector: {
-      marginTop: 48,
+      marginTop: 40,
       display: 'flex',
       flexDirection: 'row',
       width: '100%',
@@ -130,8 +131,13 @@ const useStyles = () => {
       backgroundColor: theme.colors.forthColor,
     },
     viewMethodInput: {
-      marginTop: 48,
       width: '100%',
+    },
+    phoneContainer: {
+      marginTop: 16,
+    },
+    noMb: {
+      marginBottom: 0,
     },
   });
   return styles;
@@ -145,7 +151,7 @@ const Login = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [email, setEmail] = useState('');
   const [loginMethod, setLoginMethod] = useState('email');
-
+  const {checkTncPolicyData} = useSettings();
   const loginSettings = useSelector(
     state => state.settingReducer.loginSettings,
   );
@@ -202,7 +208,7 @@ const Login = () => {
     const isActive = value === loginMethod;
     const isEmail = value === 'email';
 
-    const text = isEmail ? 'Email' : 'Mobile Number';
+    const text = isEmail ? 'Use Email' : 'Use Mobile Phone';
 
     const style = isActive
       ? styles.viewLoginMethodActive
@@ -237,38 +243,41 @@ const Login = () => {
   };
 
   const renderTextLogin = () => {
-    const text =
-      loginMethod === 'email'
-        ? 'Enter your email to login'
-        : 'Enter your mobile number to login';
+    const text = 'Welcome back, you’ve been missed!';
     return <Text style={styles.textLogin}>{text}</Text>;
   };
 
   const renderPhoneNumberLoginInput = () => {
     return (
-      <FieldPhoneNumberInput
-        type="phone"
-        label="Enter mobile number to begin :"
-        value={phoneNumber}
-        placeholder="Mobile Number"
-        onChangeCountryCode={value => {
-          setCountryCode(value);
-        }}
-        withoutFlag
-        onChange={value => {
-          setPhoneNumber(value);
-        }}
-      />
+      <View style={styles.phoneContainer}>
+        <FieldPhoneNumberInput
+          inputLabel={'Mobile Phone'}
+          isMandatory={true}
+          type="phone"
+          label="Enter mobile number to begin :"
+          value={phoneNumber}
+          placeholder="Mobile Number"
+          onChangeCountryCode={value => {
+            setCountryCode(value);
+          }}
+          rootStyle={styles.noMb}
+          withoutFlag
+          onChange={value => {
+            setPhoneNumber(value);
+          }}
+        />
+      </View>
     );
   };
 
   const renderEmailLoginInput = () => {
     return (
-      <FieldTextInput
-        label="Enter email to begin :"
-        placeholder="Enter email to begin "
+      <GlobalInputText
+        label="Email"
+        isMandatory
+        placeholder="Enter your email"
         value={email}
-        onChange={value => {
+        onChangeText={value => {
           setEmail(value);
         }}
       />
@@ -294,7 +303,7 @@ const Login = () => {
         onPress={() => {
           handleRequestOtp();
         }}>
-        <Text style={styles.textNext}>REQUEST OTP</Text>
+        <Text style={styles.textNext}>Request OTP</Text>
       </TouchableOpacity>
     );
   };
@@ -303,19 +312,19 @@ const Login = () => {
     const text = loginMethod === 'email' ? 'email' : 'mobile number';
     return (
       <Text style={styles.textInformation}>
-        4-digits verification code will be sent to your {text}
+        4 digits OTP will be sent to your {text}
       </Text>
     );
   };
-
+  console.log({tnc: checkTncPolicyData().tnc}, 'laka');
   return (
     <SafeAreaView style={styles.root}>
       <LoadingScreen loading={isLoading} />
-      <Header isMiddleLogo />
+      <HeaderV2 isCenterLogo={appConfig.appName !== 'fareastflora'} />
       <Body style={styles.root}>
         <KeyboardAwareScrollView>
           <View style={styles.container}>
-            <Text style={styles.textHeader}>Login Account</Text>
+            <Text style={styles.textHeader}>Login</Text>
             {renderTextLogin()}
             {renderChangeLoginMethod()}
             {renderLoginMethodInput()}

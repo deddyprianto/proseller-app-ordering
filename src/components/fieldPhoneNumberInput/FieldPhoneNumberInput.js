@@ -119,6 +119,7 @@ const FieldPhoneNumberInput = ({
   inputLabel,
   isMandatory,
   withoutFlag,
+  rootStyle,
 }) => {
   const styles = useStyles();
   const [openModal, setOpenModal] = useState(false);
@@ -280,7 +281,7 @@ const FieldPhoneNumberInput = ({
   return (
     <>
       {renderInputLabel()}
-      <View style={styles.root}>
+      <View style={[styles.root, rootStyle]}>
         {renderModalCountryPicker()}
         {renderFlag()}
         {renderInput()}
