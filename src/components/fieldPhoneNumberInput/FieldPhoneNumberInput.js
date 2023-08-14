@@ -130,14 +130,14 @@ const FieldPhoneNumberInput = ({
   );
 
   useEffect(() => {
-    setCountryCode(valueCountryCode || awsConfig.phoneNumberCode);
-  }, [valueCountryCode]);
-
-  useEffect(() => {
-    if (countryCodeList.length === 1) {
+    if (valueCountryCode) {
+      setCountryCode(valueCountryCode);
+    } else if (countryCodeList?.length === 1) {
       setCountryCode(countryCodeList[0]?.dialCode);
+    } else {
+      setCountryCode(awsConfig.phoneNumberCode);
     }
-  }, [countryCodeList]);
+  }, [valueCountryCode, countryCodeList]);
 
   const renderModalCountryPicker = () => {
     return (
@@ -173,7 +173,7 @@ const FieldPhoneNumberInput = ({
   };
 
   const renderArrow = () => {
-    if (countryCodeList.length === 1) {
+    if (countryCodeList?.length <= 1) {
       return;
     } else if (countryCodeModal) {
       return <ArrowUpSvg />;
@@ -186,7 +186,7 @@ const FieldPhoneNumberInput = ({
     if (withoutFlag) {
       return (
         <TouchableOpacity
-          disabled={countryCodeList.length === 1}
+          disabled={countryCodeList?.length <= 1}
           onPress={() => {
             setCountryCodeModal(!countryCodeModal);
           }}
