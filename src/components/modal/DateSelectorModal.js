@@ -245,7 +245,7 @@ const DateSelectorModal = ({open, handleClose, value}) => {
 
   const [seeMore, setSeeMore] = useState(false);
   const [isOpenTimeSelector, setIsOpenTimeSelector] = useState(false);
-
+  const [initDate, setInitDate] = useState(null);
   const defaultOutlet = useSelector(
     state => state.storesReducer.defaultOutlet.defaultOutlet,
   );
@@ -265,9 +265,9 @@ const DateSelectorModal = ({open, handleClose, value}) => {
         }),
       );
       setAvailableDates(timeSlot);
-
-      const currentDate = value
-        ? moment(value.date).format('ddd DD MMMM YYYY')
+      let availDate = value.date;
+      const currentDate = availDate
+        ? moment(availDate).format('ddd DD MMMM YYYY')
         : moment().format('ddd DD MMMM YYYY');
       setSelectedDate(currentDate);
     };
@@ -295,8 +295,8 @@ const DateSelectorModal = ({open, handleClose, value}) => {
 
   useEffect(() => {
     let dateTime = '';
-    if (selectedDate) {
-      dateTime = moment(selectedDate).subtract(1, 'day');
+    if (initDate) {
+      dateTime = moment(initDate).subtract(1, 'day');
     } else {
       dateTime = moment().subtract(1, 'day');
     }
@@ -307,7 +307,13 @@ const DateSelectorModal = ({open, handleClose, value}) => {
         return dateTime.add(1, 'day').format('ddd DD MMMM YYYY');
       });
     setDates(result);
-  }, [seeMore, selectedDate]);
+  }, [seeMore, initDate]);
+
+  useEffect(() => {
+    if (value?.date) {
+      setInitDate(value.date);
+    }
+  }, [value]);
 
   const handleSave = async () => {
     await dispatch(
@@ -382,6 +388,7 @@ const DateSelectorModal = ({open, handleClose, value}) => {
     );
   };
 
+  console.log({selectedDate, date: value.date}, 'biman');
   const renderDateItem = item => {
     const today =
       moment(item).format('YYYY-MM-DD') === moment().format('YYYY-MM-DD');
