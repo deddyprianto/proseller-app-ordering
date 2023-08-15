@@ -24,12 +24,14 @@ const additionalSetting = () => {
   const mapType = 'dropdown';
   const showPaymentMethodOnProfile = true;
   const storeLocationProfile = true;
+  const enableSentry = true;
 
   return {
     additionalPolicy,
     mapType,
     showPaymentMethodOnProfile,
     storeLocationProfile,
+    enableSentry,
   };
 };
 

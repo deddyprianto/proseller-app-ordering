@@ -39,7 +39,7 @@ export const fetchApiProduct = async (
 
     throw result;
   } catch (error) {
-    Sentry.captureMessage(reportSentry(url, body, error), 'error');
+    reportSentry(url, body, error);
     return error;
   }
 };

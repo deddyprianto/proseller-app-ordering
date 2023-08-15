@@ -5,12 +5,14 @@ const additionalSetting = () => {
   const mapType = 'map';
   const showPaymentMethodOnProfile = false;
   const storeLocationProfile = true;
+  const enableSentry = false;
 
   return {
     additionalPolicy,
     mapType,
     showPaymentMethodOnProfile,
     storeLocationProfile,
+    enableSentry,
   };
 };
 
