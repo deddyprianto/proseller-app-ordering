@@ -222,7 +222,6 @@ const useStyles = () => {
 };
 
 const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
-  console.log('MARTIN', product);
   const styles = useStyles();
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
@@ -244,9 +243,6 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
 
   const defaultOutlet = useSelector(
     state => state.storesReducer.defaultOutlet.defaultOutlet,
-  );
-  const imageSettings = useSelector(
-    state => state.settingReducer.imageSettings,
   );
 
   useEffect(() => {
@@ -718,12 +714,14 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
   if (!open) {
     return null;
   }
+
   const renderPreOrderLabel = () => {
     if (selectedProduct?.isPreOrderItem || product?.isPreOrderItem) {
       return <PreorderLabel />;
     }
     return null;
   };
+
   const renderLabelAvailSelection = () => {
     if (
       selectedProduct?.product?.allowSelfSelection ||

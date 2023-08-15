@@ -84,8 +84,29 @@ const ProductImages = ({product}) => {
   const handleOpenImageZoom = () => {
     setIsOpenImageZoom(true);
   };
+
   const handleCloseImageZoom = () => {
     setIsOpenImageZoom(false);
+  };
+
+  const handleImageSelected = () => {
+    if (selected) {
+      return selected;
+    } else if (product?.defaultImageURL) {
+      return product?.defaultImageURL;
+    } else {
+      return imageSettings.productPlaceholderImage;
+    }
+  };
+
+  const handleImage = () => {
+    if (!isEmptyArray(product?.imageFiles)) {
+      return product?.imageFiles;
+    } else if (product?.defaultImageURL) {
+      return product?.defaultImageURL;
+    } else {
+      return imageSettings.productPlaceholderImage;
+    }
   };
 
   const renderImageItem = (item, index) => {
@@ -110,9 +131,7 @@ const ProductImages = ({product}) => {
     if (isImageList) {
       return (
         <FlatList
-          style={{
-            width: '100%',
-          }}
+          style={styles.viewImageList}
           data={product?.imageFiles}
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -121,6 +140,7 @@ const ProductImages = ({product}) => {
       );
     }
   };
+
   const renderTextIndex = () => {
     const isMultipleImage = !isEmptyArray(product?.imageFiles);
     if (isMultipleImage) {
@@ -134,18 +154,8 @@ const ProductImages = ({product}) => {
     }
   };
 
-  const handleImage = () => {
-    if (selected) {
-      return selected;
-    } else if (product?.defaultImageURL) {
-      return product?.defaultImageURL;
-    } else {
-      return imageSettings.productPlaceholderImage;
-    }
-  };
-
   const renderImage = () => {
-    const image = handleImage();
+    const image = handleImageSelected();
 
     return (
       <TouchableOpacity onPress={handleOpenImageZoom}>
@@ -168,9 +178,12 @@ const ProductImages = ({product}) => {
   };
 
   const renderImageZoomModal = () => {
+    const image = handleImage();
+
     if (isOpenImageZoom) {
       return (
         <ImageZoomModal
+          images={image}
           open={isOpenImageZoom}
           handleClose={() => {
             handleCloseImageZoom();
