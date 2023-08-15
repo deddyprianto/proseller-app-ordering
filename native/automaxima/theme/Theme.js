@@ -65,6 +65,7 @@ const Theme = () => {
 
     semanticError: '#CE1111',
     semanticSuccess: '#5CD523',
+    semanticColorError: '#C81720',
 
     brandPrimary: '#FFAD4E',
     brandSecondary: '#FFFFFF',

@@ -15,23 +15,26 @@ import CountryCodeSelectorModal from './Components/CountryCodeSelectorModal';
 import ArrowUpSvg from '../../assets/svg/ArrowUpSvg';
 import ArrowBottomSvg from '../../assets/svg/ArrowBottomSvg';
 import {useSelector} from 'react-redux';
+import ErrorInput from '../../assets/svg/ErorInputSvg';
 
 const useStyles = () => {
   const theme = Theme();
   const styles = StyleSheet.create({
-    root: {
+    root: isError => ({
       width: '100%',
       flexDirection: 'row',
       alignItems: 'center',
-      borderWidth: 1,
+      borderWidth: isError ? 2 : 1,
       borderRadius: 8,
       marginBottom: 12,
 
       paddingVertical: normalizeLayoutSizeHeight(2),
       paddingHorizontal: 16,
-      borderColor: theme.colors.border1,
+      borderColor: isError
+        ? theme.colors.semanticColorError
+        : theme.colors.border1,
       backgroundColor: theme.colors.background,
-    },
+    }),
     viewCountryPicker: {
       width: 0,
       height: 0,
@@ -104,6 +107,12 @@ const useStyles = () => {
       marginRight: 16,
       marginBottom: 3,
     },
+    errorText: {
+      paddingHorizontal: 16,
+      fontSize: 12,
+      fontFamily: theme.fontFamily.poppinsMedium,
+      color: theme.colors.semanticColorError,
+    },
   });
   return styles;
 };
@@ -119,6 +128,9 @@ const FieldPhoneNumberInput = ({
   inputLabel,
   isMandatory,
   withoutFlag,
+  rootStyle,
+  isError,
+  errorMessage,
 }) => {
   const styles = useStyles();
   const [openModal, setOpenModal] = useState(false);
@@ -280,11 +292,15 @@ const FieldPhoneNumberInput = ({
   return (
     <>
       {renderInputLabel()}
-      <View style={styles.root}>
+      <View style={[styles.root(isError), rootStyle]}>
         {renderModalCountryPicker()}
         {renderFlag()}
         {renderInput()}
+        {isError ? <ErrorInput /> : null}
       </View>
+      {isError ? (
+        <GlobalText style={styles.errorText}>{errorMessage} </GlobalText>
+      ) : null}
       {renderCountryCodeSelector()}
     </>
   );

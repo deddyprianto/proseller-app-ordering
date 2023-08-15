@@ -24,12 +24,14 @@ const additionalSetting = () => {
   const mapType = 'dropdown';
   const showPaymentMethodOnProfile = true;
   const storeLocationProfile = true;
+  const applicationName = 'Far East Flora';
 
   return {
     additionalPolicy,
     mapType,
     showPaymentMethodOnProfile,
     storeLocationProfile,
+    applicationName,
   };
 };
 
