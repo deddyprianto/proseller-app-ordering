@@ -47,7 +47,7 @@ export const getAutoCompleteMap = (searchText, page = 1) => {
     try {
       const url = `${
         appConfig.oneMapBaseUrl
-      }/commonapi/search?searchVal=${searchText}&returnGeom=Y&getAddrDetails=Y&pageNum=${page}`;
+      }/api/common/elastic/search?searchVal=${searchText}&returnGeom=Y&getAddrDetails=Y&pageNum=${page}`;
       const response = await fetch(url, {method: 'GET'});
       const data = await response.json();
       if (searchText === '') {

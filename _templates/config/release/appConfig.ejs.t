@@ -10,7 +10,7 @@ const appConfig = {
   appName: '<%= name.toLowerCase() %>',
   appMataUang: 'SGD',
   appVersion: 'Version 1.1',
-  oneMapBaseUrl: 'https://developers.onemap.sg',
+  oneMapBaseUrl: 'https://www.onemap.gov.sg',
 
   // other setting
   descriptionLineProduct: '<%= productLine %>',
