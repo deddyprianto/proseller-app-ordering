@@ -6,6 +6,8 @@
 import awsConfig from '../config/awsConfig';
 const BASE_URL = awsConfig.base_url;
 import CryptoJS from 'react-native-crypto-js';
+import * as Sentry from '@sentry/react-native';
+import {reportSentry} from '../helper/Sentry';
 
 export const api = async (url, method, body = null, headers = {}) => {
   try {
@@ -107,6 +109,7 @@ export const fetchApi = async (
 
     throw result;
   } catch (error) {
+    Sentry.captureMessage(reportSentry(url, body, error), 'error');
     return error;
   }
 };

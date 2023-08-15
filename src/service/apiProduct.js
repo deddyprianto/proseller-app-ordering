@@ -1,6 +1,8 @@
 import awsConfig from '../config/awsConfig';
 const BASE_URL_PRODUCT = awsConfig.base_url_product;
 import CryptoJS from 'react-native-crypto-js';
+import * as Sentry from '@sentry/react-native';
+import {reportSentry} from '../helper/Sentry';
 
 export const fetchApiProduct = async (
   url,
@@ -37,6 +39,7 @@ export const fetchApiProduct = async (
 
     throw result;
   } catch (error) {
+    Sentry.captureMessage(reportSentry(url, body, error), 'error');
     return error;
   }
 };

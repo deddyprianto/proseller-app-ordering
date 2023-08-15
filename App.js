@@ -5,7 +5,6 @@
  */
 
 import React, {Component} from 'react';
-import {Alert} from 'react-native';
 import {Provider} from 'react-redux';
 import {PersistGate} from 'redux-persist/integration/react';
 
@@ -19,8 +18,10 @@ import Snackbar from './src/components/snackbar';
 
 Sentry.init({
   dsn: `${config.DSN}`,
+  tracesSampleRate: 1.0,
+  environment: __DEV__ ? 'local' : 'production',
+  debug: __DEV__,
 });
-
 const persistStore = persist();
 
 export default class App extends Component {
