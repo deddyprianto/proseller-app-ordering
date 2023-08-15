@@ -6,6 +6,7 @@ const additionalSetting = () => {
   const showPaymentMethodOnProfile = false;
   const storeLocationProfile = true;
   const enableSentry = false;
+  const applicationName = 'Funtoast';
 
   return {
     additionalPolicy,
@@ -13,6 +14,7 @@ const additionalSetting = () => {
     showPaymentMethodOnProfile,
     storeLocationProfile,
     enableSentry,
+    applicationName,
   };
 };
 

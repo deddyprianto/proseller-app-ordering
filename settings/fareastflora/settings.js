@@ -25,6 +25,7 @@ const additionalSetting = () => {
   const showPaymentMethodOnProfile = true;
   const storeLocationProfile = true;
   const enableSentry = true;
+  const applicationName = 'Far East Flora';
 
   return {
     additionalPolicy,
@@ -32,6 +33,7 @@ const additionalSetting = () => {
     showPaymentMethodOnProfile,
     storeLocationProfile,
     enableSentry,
+    applicationName,
   };
 };
 

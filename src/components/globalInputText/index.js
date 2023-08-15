@@ -21,7 +21,9 @@ const useStyles = () => {
     inpurContainer: (editable, isError, numberOfLines) => ({
       marginTop: 4,
       borderWidth: isError ? 2 : 1,
-      borderColor: isError ? '#EB4B41' : theme.colors.greyScale2,
+      borderColor: isError
+        ? theme.colors.semanticColorError
+        : theme.colors.greyScale2,
       paddingHorizontal: 16,
       borderRadius: 8,
       backgroundColor: editable === false ? '#F9F9F9' : 'white',
@@ -70,7 +72,7 @@ const useStyles = () => {
       marginTop: 4,
     },
     textError: {
-      color: '#EB4B41',
+      color: theme.colors.semanticColorError,
       fontSize: 12,
       fontFamily: theme.fontFamily.poppinsMedium,
     },
