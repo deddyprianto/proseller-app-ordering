@@ -24,6 +24,7 @@ const additionalSetting = () => {
   const mapType = 'dropdown';
   const showPaymentMethodOnProfile = true;
   const storeLocationProfile = true;
+  const enableSentry = true;
   const applicationName = 'Far East Flora';
 
   return {
@@ -31,6 +32,7 @@ const additionalSetting = () => {
     mapType,
     showPaymentMethodOnProfile,
     storeLocationProfile,
+    enableSentry,
     applicationName,
   };
 };

@@ -5,7 +5,6 @@
  */
 
 import React, {Component} from 'react';
-import {Alert} from 'react-native';
 import {Provider} from 'react-redux';
 import {PersistGate} from 'redux-persist/integration/react';
 
@@ -16,10 +15,16 @@ import config from './src/config/awsConfig';
 // sentry crashlytic
 import * as Sentry from '@sentry/react-native';
 import Snackbar from './src/components/snackbar';
+import additionalSetting from './src/config/additionalSettings';
 
-Sentry.init({
-  dsn: `${config.DSN}`,
-});
+if (additionalSetting().enableSentry) {
+  Sentry.init({
+    dsn: `${config.DSN}`,
+    tracesSampleRate: 1.0,
+    environment: __DEV__ ? 'local' : 'production',
+    debug: __DEV__,
+  });
+}
 
 const persistStore = persist();
 

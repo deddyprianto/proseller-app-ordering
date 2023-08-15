@@ -5,6 +5,7 @@ const additionalSetting = () => {
   const mapType = 'map';
   const showPaymentMethodOnProfile = false;
   const storeLocationProfile = true;
+  const enableSentry = false;
   const applicationName = 'Funtoast';
 
   return {
@@ -12,6 +13,7 @@ const additionalSetting = () => {
     mapType,
     showPaymentMethodOnProfile,
     storeLocationProfile,
+    enableSentry,
     applicationName,
   };
 };
