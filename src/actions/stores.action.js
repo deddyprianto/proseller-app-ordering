@@ -322,7 +322,7 @@ export const getOutletById = id => {
 export const generateOneMapToken = () => {
   return async dispatch => {
     try {
-      const url = `${appConfig.oneMapBaseUrl}/privateapi/auth/post/getToken`;
+      const url = `${appConfig.oneMapBaseUrl}/api/auth/post/getToken`;
       const body = {
         email: awsConfig.EMAIL_ONE_MAP,
         password: awsConfig.PASSWORD_ONE_MAP,
