@@ -2,33 +2,27 @@ import React, {useEffect, useState} from 'react';
 import {Actions} from 'react-native-router-flux';
 import {useDispatch, useSelector} from 'react-redux';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview';
-
 import {
   StyleSheet,
   View,
   Text,
-  Dimensions,
   TouchableOpacity,
   SafeAreaView,
-  ImageBackground,
 } from 'react-native';
-
 import awsConfig from '../config/awsConfig';
-
-import FieldTextInput from '../components/fieldTextInput';
 import FieldPhoneNumberInput from '../components/fieldPhoneNumberInput';
 import LoadingScreen from '../components/loadingScreen';
-
-import {Body, Header} from '../components/layout';
-
+import {Body} from '../components/layout';
 import {checkAccountExist, sendOTP} from '../actions/auth.actions';
-import {showSnackbar} from '../actions/setting.action';
-
 import Theme from '../theme';
 import HeaderV2 from '../components/layout/header/HeaderV2';
 import appConfig from '../config/appConfig';
 import GlobalInputText from '../components/globalInputText';
 import useSettings from '../hooks/settings/useSettings';
+import GlobalModal from '../components/modal/GlobalModal';
+import GlobalButton from '../components/button/GlobalButton';
+import GlobalText from '../components/globalText';
+import additionalSetting from '../config/additionalSettings';
 
 const useStyles = () => {
   const theme = Theme();
@@ -52,9 +46,9 @@ const useStyles = () => {
       marginTop: 16,
       width: '100%',
       textAlign: 'center',
-      color: theme.colors.text2,
-      fontSize: theme.fontSize[12],
-      fontFamily: theme.fontFamily.poppinsRegular,
+      color: theme.colors.greyScale5,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsMedium,
     },
 
     textNext: {
@@ -139,6 +133,34 @@ const useStyles = () => {
     noMb: {
       marginBottom: 0,
     },
+    privacyText: {
+      fontFamily: theme.fontFamily.poppinsMedium,
+      width: '100%',
+      textAlign: 'center',
+      marginTop: 16,
+      fontSize: 14,
+    },
+    linkText: {
+      fontFamily: theme.fontFamily.poppinsMedium,
+      color: theme.colors.brandTertiary,
+    },
+    blackText: {
+      fontFamily: theme.fontFamily.poppinsMedium,
+      color: 'black',
+    },
+    divider: {
+      height: 1,
+      backgroundColor: theme.colors.greyScale5,
+    },
+    mt40: {
+      marginTop: 40,
+    },
+    registerText: {
+      marginTop: 24,
+      textAlign: 'center',
+      fontFamily: theme.fontFamily.poppinsMedium,
+      fontSize: 16,
+    },
   });
   return styles;
 };
@@ -152,6 +174,9 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [loginMethod, setLoginMethod] = useState('email');
   const {checkTncPolicyData} = useSettings();
+  const [openType, setOpenType] = React.useState(null);
+  const [buttonActive, setButtonActive] = React.useState(false);
+  const [errorLogin, setErrorLogin] = React.useState(false);
   const loginSettings = useSelector(
     state => state.settingReducer.loginSettings,
   );
@@ -181,6 +206,7 @@ const Login = () => {
     const response = await dispatch(checkAccountExist(payload));
 
     if (response?.status) {
+      setErrorLogin(false);
       await dispatch(sendOTP(payload));
       Actions.otp({
         isLogin: true,
@@ -188,17 +214,13 @@ const Login = () => {
         methodValue: methodValue,
       });
     } else {
-      const message = response?.message || 'Login Failed';
-      dispatch(
-        showSnackbar({
-          message: message,
-        }),
-      );
+      setErrorLogin(true);
     }
     setIsLoading(false);
   };
 
   const handleChangeLoginMethod = value => {
+    setErrorLogin(false);
     setLoginMethod(value);
     setEmail('');
     setPhoneNumber('');
@@ -262,6 +284,10 @@ const Login = () => {
           }}
           rootStyle={styles.noMb}
           withoutFlag
+          isError={errorLogin}
+          errorMessage={
+            'Sorry, No account found with this phone number. Try to enter another.'
+          }
           onChange={value => {
             setPhoneNumber(value);
           }}
@@ -273,10 +299,14 @@ const Login = () => {
   const renderEmailLoginInput = () => {
     return (
       <GlobalInputText
+        isError={errorLogin}
         label="Email"
         isMandatory
         placeholder="Enter your email"
         value={email}
+        errorMessage={
+          'Sorry, No account found with this email. Try to enter another.'
+        }
         onChangeText={value => {
           setEmail(value);
         }}
@@ -316,7 +346,66 @@ const Login = () => {
       </Text>
     );
   };
-  console.log({tnc: checkTncPolicyData().tnc}, 'laka');
+
+  const closeModal = () => {
+    setButtonActive(false);
+    setOpenType(null);
+  };
+
+  const onButtonActive = active => {
+    setButtonActive(active);
+  };
+
+  const handleOpenTypePolicy = type => {
+    setOpenType(type);
+  };
+
+  const renderPolicy = () => {
+    if (checkTncPolicyData().tnc || checkTncPolicyData().privacy) {
+      return (
+        <GlobalText style={styles.privacyText}>
+          By logging in, you agree to the{' '}
+          {checkTncPolicyData().tnc ? (
+            <GlobalText
+              onPress={() => handleOpenTypePolicy('terms')}
+              style={styles.linkText}>
+              Terms and Condition
+            </GlobalText>
+          ) : (
+            ''
+          )}{' '}
+          {checkTncPolicyData().privacy ? (
+            <GlobalText
+              onPress={() => handleOpenTypePolicy('privacy')}
+              style={styles.linkText}>
+              <GlobalText style={styles.blackText}>and</GlobalText> Privacy
+              Policy
+            </GlobalText>
+          ) : (
+            ''
+          )}{' '}
+          of {additionalSetting().applicationName}.
+        </GlobalText>
+      );
+    }
+    return null;
+  };
+
+  const goToRegisterPage = () => {
+    Actions.register();
+  };
+
+  const renderRegisterText = () => (
+    <View>
+      <GlobalText style={styles.registerText}>
+        Don’t have account?{' '}
+        <GlobalText onPress={goToRegisterPage} style={styles.linkText}>
+          Register
+        </GlobalText>
+      </GlobalText>
+    </View>
+  );
+
   return (
     <SafeAreaView style={styles.root}>
       <LoadingScreen loading={isLoading} />
@@ -330,9 +419,46 @@ const Login = () => {
             {renderLoginMethodInput()}
             {renderButtonNext()}
             {renderTextInformation()}
+            {renderPolicy()}
+            <View style={[styles.divider, styles.mt40]} />
+            {renderRegisterText()}
           </View>
         </KeyboardAwareScrollView>
       </Body>
+      <GlobalModal
+        title="Terms and Conditions"
+        closeModal={closeModal}
+        isCloseToBottom={onButtonActive}
+        titleStyle={styles.titleModal}
+        stickyBottom={
+          <View>
+            <GlobalButton
+              disabled={!buttonActive}
+              onPress={closeModal}
+              title="Understood"
+            />
+          </View>
+        }
+        isVisible={openType === 'terms'}>
+        <GlobalText>{checkTncPolicyData().tnc?.settingValue}</GlobalText>
+      </GlobalModal>
+      <GlobalModal
+        title="Privacy Policy"
+        titleStyle={styles.titleModal}
+        stickyBottom={
+          <View>
+            <GlobalButton
+              disabled={!buttonActive}
+              onPress={closeModal}
+              title="Understood"
+            />
+          </View>
+        }
+        isCloseToBottom={onButtonActive}
+        closeModal={closeModal}
+        isVisible={openType === 'privacy'}>
+        <GlobalText>{checkTncPolicyData().tnc?.settingValue}</GlobalText>
+      </GlobalModal>
     </SafeAreaView>
   );
 };

@@ -140,7 +140,7 @@ const OTP = ({isLogin, method, methodValue}) => {
     false,
   );
   const countdown = () => {
-    let minuteCount = sendCounter >= 2 ? 4 : 1;
+    let minuteCount = sendCounter >= 2 ? 2 : 1;
 
     const then = moment()
       .add(minuteCount, 'minutes')
@@ -279,7 +279,9 @@ const OTP = ({isLogin, method, methodValue}) => {
         onPress={() => {
           handleLogin();
         }}>
-        <Text style={styles.textNext}>Verify and Create Account</Text>
+        <Text style={styles.textNext}>
+          {isLogin ? 'Verify' : 'Verify and Create Account'}{' '}
+        </Text>
       </TouchableOpacity>
     );
   };

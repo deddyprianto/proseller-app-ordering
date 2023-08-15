@@ -5,12 +5,14 @@ const additionalSetting = () => {
   const mapType = 'map';
   const showPaymentMethodOnProfile = false;
   const storeLocationProfile = true;
+  const applicationName = 'Automaxima';
 
   return {
     additionalPolicy,
     mapType,
     showPaymentMethodOnProfile,
     storeLocationProfile,
+    applicationName,
   };
 };
 

@@ -60,7 +60,7 @@ const useStyles = () => {
       fontFamily: fontFamily.poppinsMedium,
     },
     privacyText: {
-      color: '#438E49',
+      color: colors.brandTertiary,
     },
   });
   return {styles, colors, fontFamily};
