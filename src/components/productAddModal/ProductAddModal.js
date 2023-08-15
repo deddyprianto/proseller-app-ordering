@@ -41,6 +41,7 @@ import {SafeAreaView} from 'react-navigation';
 import PreorderLabel from '../label/Preorder';
 import CloseSvg from '../../assets/svg/CloseSvg';
 import AllowSelfSelectionLabel from '../label/AllowSelfSelection';
+import ProductImages from './components/ProductImages';
 
 const useStyles = () => {
   const theme = Theme();
@@ -242,9 +243,6 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
 
   const defaultOutlet = useSelector(
     state => state.storesReducer.defaultOutlet.defaultOutlet,
-  );
-  const imageSettings = useSelector(
-    state => state.settingReducer.imageSettings,
   );
 
   useEffect(() => {
@@ -505,17 +503,9 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
   };
 
   const renderImage = () => {
-    const image =
-      variantImageURL || product?.defaultImageURL
-        ? variantImageURL || product?.defaultImageURL
-        : imageSettings.productPlaceholderImage;
     return (
       <View style={styles.padding16}>
-        <Image
-          style={styles.image}
-          resizeMode="stretch"
-          source={{uri: image}}
-        />
+        <ProductImages product={product} />
       </View>
     );
   };
@@ -724,12 +714,14 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
   if (!open) {
     return null;
   }
+
   const renderPreOrderLabel = () => {
     if (selectedProduct?.isPreOrderItem || product?.isPreOrderItem) {
       return <PreorderLabel />;
     }
     return null;
   };
+
   const renderLabelAvailSelection = () => {
     if (
       selectedProduct?.product?.allowSelfSelection ||
