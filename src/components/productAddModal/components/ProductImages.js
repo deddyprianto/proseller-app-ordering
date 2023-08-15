@@ -57,7 +57,7 @@ const useStyle = () => {
       width: '100%',
       maxWidth: '100%',
       height: undefined,
-      aspectRatio: 1 / 1,
+      aspectRatio: 1,
     },
   });
   return result;

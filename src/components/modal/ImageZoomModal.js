@@ -29,10 +29,10 @@ const useStyles = () => {
 
     header: {
       height: 54,
-      backgroundColor: 'black',
       width: '100%',
       alignItems: 'flex-end',
       padding: 16,
+      backgroundColor: 'black',
     },
 
     viewPagination: {
@@ -55,7 +55,7 @@ const useStyles = () => {
       width: '100%',
       maxWidth: '100%',
       height: undefined,
-      aspectRatio: 1 / 1,
+      aspectRatio: 1,
     },
 
     activeDot: {
