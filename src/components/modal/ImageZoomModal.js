@@ -110,10 +110,10 @@ const ImageZoomModal = ({open, handleClose, images}) => {
   };
 
   const renderImageMultipleValue = () => {
-    const result = images?.map((image, index) => {
+    const result = images?.map(image => {
       return (
         <Image
-          key={index}
+          key={image}
           style={styles.image}
           resizeMode="stretch"
           source={{uri: image}}
