@@ -1,7 +1,6 @@
 import awsConfig from '../config/awsConfig';
 const BASE_URL_PAYMENT = awsConfig.base_url_payment;
 import CryptoJS from 'react-native-crypto-js';
-import * as Sentry from '@sentry/react-native';
 import {reportSentry} from '../helper/Sentry';
 
 export const fetchApiPayment = async (
