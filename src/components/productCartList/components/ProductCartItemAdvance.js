@@ -132,7 +132,7 @@ const useStyles = () => {
     },
     textProductHeaderQty: {
       color: theme.colors.textSecondary,
-      fontSize: theme.fontSize[10],
+      fontSize: theme.fontSize[12],
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textProductHeaderName: {
@@ -149,12 +149,12 @@ const useStyles = () => {
     },
     textProductHeaderPrice: {
       color: theme.colors.textQuaternary,
-      fontSize: theme.fontSize[10],
+      fontSize: theme.fontSize[12],
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textProductHeaderPriceUnavailable: {
       color: theme.colors.textTertiary,
-      fontSize: theme.fontSize[10],
+      fontSize: theme.fontSize[12],
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textModifier: {
@@ -256,7 +256,6 @@ const useStyles = () => {
     },
     viewProductHeader: {
       flexDirection: 'row',
-      alignItems: 'center',
       marginBottom: 4,
     },
     viewProductHeaderQty: {
@@ -355,6 +354,13 @@ const useStyles = () => {
       fontSize: 12,
       marginRight: 4,
     },
+    boxQty: {
+      marginRight: 8,
+      width: 30,
+      height: 26,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
   });
   return styles;
 };
@@ -413,13 +419,16 @@ const ProductCartItemAdvance = ({item, disabled, step}) => {
 
     return (
       <View style={[styles.viewProductHeader]}>
-        <View style={[styleViewQty, {marginRight: 8}]}>
+        <View style={[styleViewQty, styles.boxQty]}>
           <Text style={styles.textProductHeaderQty}>{item.quantity}x</Text>
         </View>
-        <Text style={styleTextName} numberOfLines={1}>
-          {item?.product?.name}
-        </Text>
-        <Text style={styleTextPrice}>+ {item?.product?.retailPrice}</Text>
+        <View>
+          <Text style={styleTextName} numberOfLines={1}>
+            {item?.product?.name}{' '}
+            <Text style={styleTextPrice}>+ {item?.product?.retailPrice}</Text>
+          </Text>
+          {renderPrice()}
+        </View>
       </View>
     );
   };
@@ -578,7 +587,7 @@ const ProductCartItemAdvance = ({item, disabled, step}) => {
       const styleIconPromo = active ? styles.iconPromoActive : styles.iconPromo;
 
       return (
-        <View style={[styleViewPromo, {maxWidth: 100}]}>
+        <View style={[styleViewPromo, {maxWidth: 100, marginBottom: 10}]}>
           <ImageBackground
             source={appConfig.iconPromoStar}
             style={styles.imagePromo}>
@@ -631,8 +640,6 @@ const ProductCartItemAdvance = ({item, disabled, step}) => {
     return (
       <View style={styles.bodyLeft}>
         {renderProductHeader()}
-        {renderPrice()}
-        {renderPromoIcon()}
         {renderProductModifier()}
         {renderDivider()}
         {renderNotes()}
@@ -693,6 +700,7 @@ const ProductCartItemAdvance = ({item, disabled, step}) => {
       }}
       style={styles.root}>
       {renderLabel()}
+      {renderPromoIcon()}
       {renderBody()}
       {renderDividerDashed()}
       {renderFooter()}
