@@ -134,6 +134,7 @@ const useStyles = () => {
  * @property {Function} onClose
  * @property {Function} onChangeItem
  * @property {boolean}  showNumberLengthText
+ * @property {Boolean} autoReset
  */
 
 /**
@@ -235,7 +236,7 @@ const GlobalInputText = React.forwardRef((props, ref) => {
           ref={ref}
           style={styles.inputStyle(props.editable, props.numberOfLines)}
           textAlignVertical="center"
-          selection={start}
+          selection={props.autoReset ? start : null}
           {...props}
         />
         {props.isError ? (

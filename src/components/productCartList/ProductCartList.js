@@ -154,7 +154,6 @@ const ProductCartList = ({
       ) : null}
     </View>
   );
-  console.log(items, 'nakal');
   return (
     <View>
       {defaultOrder.length > 0 ? (

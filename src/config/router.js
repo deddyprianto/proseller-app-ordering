@@ -142,7 +142,7 @@ import VoucherDetailV2 from '../pages/VoucherDetailV2/VoucherDetailV2';
 import PrivacyPolicy from '../pages/PrivacyPolicy';
 import ContactUsBasic from '../pages/ContactUsBasic';
 import ContactUsStarter from '../pages/ContactUsStarter';
-import CartStep1 from '../pages/AdvanceCart/CartStep1';
+import CartStep1 from '../pages/CartStep1';
 
 const MyTransitionSpec = {
   duration: 200,

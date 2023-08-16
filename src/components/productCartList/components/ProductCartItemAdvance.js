@@ -32,7 +32,6 @@ import {useDispatch, useSelector} from 'react-redux';
 import {getProductById} from '../../../actions/product.action';
 import PreorderLabel from '../../label/Preorder';
 import AllowSelfSelectionLabel from '../../label/AllowSelfSelection';
-import AddItemAmount from './AddItemAmount';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -471,25 +470,21 @@ const ProductCartItemAdvance = ({item, disabled, step}) => {
     const styleTextPrice = isProductUnavailable
       ? [styles.textPriceFooterUnavailable]
       : [styles.textPriceFooter];
-    const modifierPrice = calculateModifier();
 
     if (item?.isPromotionApplied && item.amountAfterDisc < item.grossAmount) {
       return (
         <View style={styles.viewTotalPrice}>
           <Text style={[styleTextPrice]}>
-            {CurrencyFormatter(item?.amountAfterDisc + modifierPrice)}
+            {CurrencyFormatter(item?.amountAfterDisc)}
           </Text>
         </View>
       );
     }
 
     return (
-      <Text style={styleTextPrice}>
-        {CurrencyFormatter(item?.grossAmount + modifierPrice)}
-      </Text>
+      <Text style={styleTextPrice}>{CurrencyFormatter(item?.grossAmount)}</Text>
     );
   };
-  console.log({item}, 'telek');
   const renderPrice = () => {
     const styleTextPrice = isProductUnavailable
       ? [styles.textPriceUnavailable]
@@ -690,21 +685,6 @@ const ProductCartItemAdvance = ({item, disabled, step}) => {
       {renderPreOrder()}
     </View>
   );
-
-  const calculateModifier = () => {
-    if (item.modifiers.length > 0) {
-      let amount = [];
-
-      item.modifiers?.forEach((mod, index) => {
-        return mod.modifier.details.forEach(mod2 => {
-          amount.push(mod2.price * mod2.quantity);
-        });
-      });
-      const sum = amount.reduce((a, b) => a + b);
-      return sum;
-    }
-    return 0;
-  };
 
   return (
     <TouchableOpacity

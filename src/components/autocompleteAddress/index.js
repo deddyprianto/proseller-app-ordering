@@ -145,6 +145,7 @@ const AutocompleteAddress = props => {
           label="Postal Code/Building/Street Home"
           onChangeText={handleSearchPostalCode}
           onFocus={() => setIsFocus(true)}
+          autoReset
           // onBlur={onBlur}
           rightIcon={
             loading && props.showLoading ? <ActivityIndicator /> : <SearchSvg />
