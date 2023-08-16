@@ -14,6 +14,7 @@ import {
   normalizeLayoutSizeWidth,
 } from '../../../helper/Layout';
 import BackButton from '../../../assets/svg/BackButton';
+import useSettings from '../../../hooks/settings/useSettings';
 
 const useStyles = () => {
   const theme = Theme();
@@ -127,6 +128,7 @@ const Header = ({
   customRightIcon,
 }) => {
   const {styles, color} = useStyles();
+  const {useCartVersion} = useSettings();
   const [isOpenScanner, setIsOpenScanner] = useState(false);
   const [isSearch, setIsSearch] = useState(false);
   const {appName} = appConfig;
@@ -204,10 +206,7 @@ const Header = ({
   const renderCartIcon = () => {
     if (cart) {
       return (
-        <TouchableOpacity
-          onPress={() => {
-            Actions.cart();
-          }}>
+        <TouchableOpacity onPress={useCartVersion}>
           <BackButton />
           {/* <Image source={appConfig.iconCart} style={styles.icon} /> */}
         </TouchableOpacity>

@@ -7,6 +7,7 @@ const additionalSetting = () => {
   const storeLocationProfile = true;
   const enableSentry = false;
   const applicationName = 'Funtoast';
+  const cartVersion = 'basic';
 
   return {
     additionalPolicy,
@@ -15,6 +16,7 @@ const additionalSetting = () => {
     storeLocationProfile,
     enableSentry,
     applicationName,
+    cartVersion,
   };
 };
 

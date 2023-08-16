@@ -7,7 +7,6 @@ const useCountdownV2 = order => {
   const [minutes, setMinutes] = useState(0);
   const [hours, setHours] = useState(0);
   const [isTimeEnd, setIsTimeEnd] = useState(false);
-
   const countdownStart = expiry => {
     const then = moment(expiry).format('MM/DD/YYYY HH:mm:ss');
 

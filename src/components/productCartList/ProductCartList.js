@@ -14,6 +14,9 @@ import ProductCartItem from './components/ProductCartItem';
 import GlobalText from '../globalText';
 import Theme from '../../theme/Theme';
 import moment from 'moment';
+import additionalSetting from '../../config/additionalSettings';
+import ProductCartItemAdvance from './components/ProductCartItemAdvance';
+import {Actions} from 'react-native-router-flux';
 
 const useStyles = () => {
   const theme = Theme();
@@ -70,6 +73,7 @@ const ProductCartList = ({
   disabled,
   setAvailablePreorderDate,
   setAvailaleForSelection,
+  step,
 }) => {
   const styles = useStyles();
   const currentBasket = useSelector(
@@ -80,6 +84,7 @@ const ProductCartList = ({
   const [defaultOrder, setDefaultOrder] = React.useState([]);
   const [availDate, setAvailDate] = React.useState(null);
   const [listSelfSelection, setListSelfSlection] = React.useState([]);
+  const cartVersion = additionalSetting().cartVersion;
 
   const groupingeOrder = () => {
     const isNotPreorder = items.filter(item => !item.isPreOrderItem);
@@ -97,10 +102,12 @@ const ProductCartList = ({
     setDefaultOrder(isNotPreorder);
     setListSelfSlection(isSelfSelection);
   };
-
   React.useEffect(() => {
     if (items && Array.isArray(items)) {
       groupingeOrder();
+    }
+    if (!items) {
+      Actions.pop();
     }
   }, [items]);
 
@@ -120,6 +127,13 @@ const ProductCartList = ({
   }, [listSelfSelection]);
 
   const renderProductCartItem = item => {
+    if (cartVersion === 'advance') {
+      return (
+        <View style={styles.root}>
+          <ProductCartItemAdvance step={step} item={item} disabled={disabled} />
+        </View>
+      );
+    }
     return (
       <View style={styles.root}>
         <ProductCartItem item={item} disabled={disabled} />
@@ -146,7 +160,7 @@ const ProductCartList = ({
         <FlatList
           data={defaultOrder}
           keyExtractor={item => item.productID}
-          renderItem={({item, index}) => renderProductCartItem(item)}
+          renderItem={({item}) => renderProductCartItem(item)}
           ListHeaderComponent={renderHeader('Ready Items', styles.readyTitle)}
         />
       ) : null}
@@ -156,7 +170,7 @@ const ProductCartList = ({
           <FlatList
             data={listPreorder}
             keyExtractor={item => item.productID}
-            renderItem={({item, index}) => renderProductCartItem(item)}
+            renderItem={({item}) => renderProductCartItem(item)}
             ListHeaderComponent={renderHeader(
               'Preorder Items',
               styles.preOrderTitle,

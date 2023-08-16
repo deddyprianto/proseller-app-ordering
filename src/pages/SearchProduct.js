@@ -44,6 +44,7 @@ import SearchSuggestionList from '../components/searchSuggestionList/SearchSugge
 import Theme from '../theme';
 import AnimationMessage from '../components/animationMessage';
 import {normalizeLayoutSizeHeight} from '../helper/Layout';
+import useSettings from '../hooks/settings/useSettings';
 
 const useStyles = () => {
   const theme = Theme();
@@ -226,6 +227,7 @@ const SearchProduct = ({category}) => {
   const searchProductHistory = useSelector(
     state => state.searchReducer?.searchProductHistory,
   );
+  const {useCartVersion} = useSettings();
 
   useEffect(() => {
     let length = 0;
@@ -342,9 +344,7 @@ const SearchProduct = ({category}) => {
       return (
         <TouchableOpacity
           style={styles.viewButtonCart}
-          onPress={() => {
-            Actions.cart();
-          }}>
+          onPress={useCartVersion}>
           <View style={styles.viewIconAndTextCart}>
             <Image source={appConfig.iconCart} style={styles.iconCart} />
             <Text style={styles.textButtonCart}>

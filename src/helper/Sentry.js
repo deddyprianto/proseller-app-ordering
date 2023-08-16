@@ -6,8 +6,8 @@ export const reportSentry = (url, body, error) => {
     url,
     body,
     error: {
-      code: error.response.resultCode,
-      message: error.response.message,
+      code: error.response?.resultCode,
+      message: error.response?.message,
     },
   };
   if (additionalSetting().enableSentry) {

@@ -1,4 +1,6 @@
 import {useSelector} from 'react-redux';
+import additionalSetting from '../../config/additionalSettings';
+import {Actions} from 'react-native-router-flux';
 
 const useSettings = () => {
   const orderSetting = useSelector(
@@ -18,8 +20,19 @@ const useSettings = () => {
     return {tnc: null, privacy: null};
   };
 
+  const useCartVersion = params => {
+    if (additionalSetting().cartVersion === 'basic') {
+      Actions.cart({step: 1, ...params});
+    } else if (additionalSetting().cartVersion === 'advance') {
+      Actions.cartStep1({step: 1, ...params});
+    } else {
+      Actions.cart({step: 1, ...params});
+    }
+  };
+
   return {
     checkTncPolicyData,
+    useCartVersion,
   };
 };
 

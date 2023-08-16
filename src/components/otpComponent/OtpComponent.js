@@ -131,16 +131,11 @@ const OtpComponent = props => {
       />
     );
   };
-
   const startCountDown = () => {
     const minuteCount = sendCounter >= 2 ? 4 : 1;
-    const expiredData = {
-      action: {
-        expiry: moment()
-          .add(minuteCount, 'minutes')
-          .format(),
-      },
-    };
+    const expiredData = moment()
+      .add(minuteCount, 'minutes')
+      .format();
     countdownStart(expiredData);
   };
 
