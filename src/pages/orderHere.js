@@ -37,6 +37,7 @@ import appConfig from '../config/appConfig';
 import Theme from '../theme';
 import ProductPresetList from '../components/productPresetList/ProductPresetList';
 import {Body} from '../components/layout';
+import useSettings from '../hooks/settings/useSettings';
 
 const useStyles = () => {
   const theme = Theme();
@@ -111,7 +112,7 @@ const OrderHere = () => {
   const [productsSearch, setProductsSearch] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [refresh, setRefresh] = useState(false);
-
+  const {useCartVersion} = useSettings();
   const defaultOutlet = useSelector(
     state => state.storesReducer.defaultOutlet.defaultOutlet,
   );
@@ -201,9 +202,7 @@ const OrderHere = () => {
       return (
         <TouchableOpacity
           style={styles.viewButtonCart}
-          onPress={() => {
-            Actions.cart();
-          }}>
+          onPress={useCartVersion}>
           <View style={styles.viewIconAndTextCart}>
             <Image source={appConfig.iconCart} style={styles.icon} />
             <Text style={styles.textButtonCart}>

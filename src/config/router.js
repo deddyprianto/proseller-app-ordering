@@ -142,6 +142,7 @@ import VoucherDetailV2 from '../pages/VoucherDetailV2/VoucherDetailV2';
 import PrivacyPolicy from '../pages/PrivacyPolicy';
 import ContactUsBasic from '../pages/ContactUsBasic';
 import ContactUsStarter from '../pages/ContactUsStarter';
+import CartStep1 from '../pages/AdvanceCart/CartStep1';
 
 const MyTransitionSpec = {
   duration: 200,
@@ -411,6 +412,8 @@ export default class Routes extends Component {
             <Scene key="membership" component={Membership} />
             <Scene key="membershipAllTier" component={MembershipAllTier} />
             <Scene key="privacyPolicy" component={PrivacyPolicy} />
+            <Scene key="cartStep1" component={CartStep1} />
+
             {/* //martin */}
           </Scene>
         </Scene>

@@ -8,6 +8,7 @@ import appConfig from '../../config/appConfig';
 import CurrencyFormatter from '../../helper/CurrencyFormatter';
 import {isEmptyArray} from '../../helper/CheckEmpty';
 import Theme from '../../theme';
+import useSettings from '../../hooks/settings/useSettings';
 
 const useStyles = () => {
   const theme = Theme();
@@ -69,7 +70,7 @@ const ButtonCartFloating = () => {
   const [basketLength, setBasketLength] = useState(0);
 
   const basket = useSelector(state => state.orderReducer?.dataBasket?.product);
-
+  const {useCartVersion} = useSettings();
   useEffect(() => {
     let length = 0;
     if (basket && basket.details) {
@@ -112,9 +113,7 @@ const ButtonCartFloating = () => {
         <TouchableOpacity
           activeOpacity={0.5}
           style={styles.viewButtonCart}
-          onPress={() => {
-            Actions.cart();
-          }}>
+          onPress={useCartVersion}>
           {renderQty()}
           {renderPrice()}
         </TouchableOpacity>

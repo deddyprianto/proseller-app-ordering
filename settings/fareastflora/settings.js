@@ -26,6 +26,7 @@ const additionalSetting = () => {
   const storeLocationProfile = true;
   const enableSentry = true;
   const applicationName = 'Far East Flora';
+  const cartVersion = 'advance';
 
   return {
     additionalPolicy,
@@ -34,6 +35,7 @@ const additionalSetting = () => {
     storeLocationProfile,
     enableSentry,
     applicationName,
+    cartVersion,
   };
 };
 

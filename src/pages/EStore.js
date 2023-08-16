@@ -24,6 +24,7 @@ import {isEmptyArray} from '../helper/CheckEmpty';
 import CurrencyFormatter from '../helper/CurrencyFormatter';
 
 import Theme from '../theme';
+import useSettings from '../hooks/settings/useSettings';
 
 const useStyles = () => {
   const theme = Theme();
@@ -97,7 +98,7 @@ const EStore = () => {
   const styles = useStyles();
   const dispatch = useDispatch();
   const [refresh, setRefresh] = useState(false);
-
+  const {useCartVersion} = useSettings();
   const defaultOutlet = useSelector(
     state => state.storesReducer.defaultOutlet.defaultOutlet,
   );
@@ -142,9 +143,7 @@ const EStore = () => {
       return (
         <TouchableOpacity
           style={styles.viewButtonCart}
-          onPress={() => {
-            Actions.cart();
-          }}>
+          onPress={useCartVersion}>
           <View style={styles.viewIconAndTextCart}>
             <Image source={appConfig.iconCart} style={styles.icon} />
             <Text style={styles.textButtonCart}>
