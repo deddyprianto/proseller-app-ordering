@@ -17,9 +17,12 @@ import {
   Modal,
   TextInput,
   Platform,
+  useWindowDimensions,
 } from 'react-native';
 
 import DeviceInfo from 'react-native-device-info';
+
+import RenderHtml from 'react-native-render-html';
 
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview';
 
@@ -139,7 +142,9 @@ const useStyles = () => {
       paddingVertical: 12,
       paddingHorizontal: 16,
     },
-
+    viewDescription: {
+      padding: 16,
+    },
     touchableCartButton: {
       borderRadius: 8,
       justifyContent: 'center',
@@ -221,6 +226,33 @@ const useStyles = () => {
   return result;
 };
 
+const webStyles = StyleSheet.create({
+  li: {
+    fontFamily: 'Poppins-Medium',
+    fontSize: 14,
+  },
+  strong: {
+    fontFamily: 'Poppins-Bold',
+    fontSize: 14,
+  },
+  ol: {
+    fontFamily: 'Poppins-Bold',
+    fontSize: 14,
+  },
+  ul: {
+    fontFamily: 'Poppins-Medium',
+    fontSize: 14,
+  },
+  img: {
+    marginBottom: 30,
+  },
+  p: {
+    marginTop: -5,
+    marginBottom: -5,
+    fontFamily: 'Poppins-Medium',
+  },
+});
+
 const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
   const styles = useStyles();
   const dispatch = useDispatch();
@@ -244,6 +276,8 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
   const defaultOutlet = useSelector(
     state => state.storesReducer.defaultOutlet.defaultOutlet,
   );
+
+  const {width} = useWindowDimensions();
 
   useEffect(() => {
     const loadData = async () => {
@@ -684,7 +718,13 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
       return (
         <View>
           <View style={styles.divider} />
-          <Text style={styles.textDescription}>{product.description}</Text>
+          <View style={styles.viewDescription}>
+            <RenderHtml
+              source={{html: `${product.description}`}}
+              contentWidth={width}
+              tagsStyles={webStyles}
+            />
+          </View>
         </View>
       );
     }
