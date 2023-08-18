@@ -59,6 +59,8 @@ import OutletCard from '../components/productCartList/OutletCard';
 import GlobalButton from '../components/button/GlobalButton';
 import ThreeDot from '../assets/svg/ThreeDotSvg';
 import GlobalModal from '../components/modal/GlobalModal';
+import CurrencyFormatter from '../helper/CurrencyFormatter';
+import ThreeDotCircle from '../assets/svg/ThreeDotCircle';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -409,6 +411,28 @@ const useStyles = () => {
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
+    },
+    modalItem: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginBottom: 16,
+    },
+    modalItemPrice: {
+      fontFamily: theme.fontFamily.poppinsSemiBold,
+    },
+    negativeColor: {
+      color: theme.colors.semanticError,
+    },
+    modalChildren: {
+      padding: 16,
+      borderTopWidth: 1,
+      borderTopColor: theme.colors.greyScale4,
+    },
+    threedotContainer: {
+      marginLeft: 'auto',
+    },
+    detailDotContainer: {
+      marginLeft: 8,
     },
   });
   return styles;
@@ -1309,13 +1333,15 @@ const Cart = props => {
           </GlobalText>
           <TouchableOpacity
             onPress={handleOpenDetail}
-            style={{marginLeft: 'auto'}}>
-            <ThreeDot />
+            style={styles.threedotContainer}>
+            <View style={styles.detailDotContainer}>
+              <ThreeDotCircle />
+            </View>
           </TouchableOpacity>
         </View>
       </View>
       <View>
-        <GlobalButton title="Checkout" />
+        <GlobalButton onPress={handleClickButtonPayment} title="Checkout" />
       </View>
     </View>
   );
@@ -1495,9 +1521,26 @@ const Cart = props => {
         isOpen={isOffline}
         onOk={onPressOkError}
       />
-      <GlobalModal closeModal={handleCloseDetail} isVisible={seeDetail}>
-        <View>
-          <GlobalText>ola</GlobalText>
+      <GlobalModal
+        title="Details"
+        isBottomModal
+        closeModal={handleCloseDetail}
+        modalContainerStyle={{padding: 0}}
+        closeContainerStyle={{marginRight: 16}}
+        isVisible={seeDetail}>
+        <View style={styles.modalChildren}>
+          <View style={styles.modalItem}>
+            <GlobalText>Subtotal</GlobalText>
+            <GlobalText style={styles.modalItemPrice}>
+              {CurrencyFormatter(basket?.totalNettAmount)}{' '}
+            </GlobalText>
+          </View>
+          <View style={styles.modalItem}>
+            <GlobalText>Delivery Fee</GlobalText>
+            <GlobalText style={styles.modalItemPrice}>
+              {CurrencyFormatter(basket?.totalDeliverySurcharge)}{' '}
+            </GlobalText>
+          </View>
         </View>
       </GlobalModal>
     </SafeAreaView>
