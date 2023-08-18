@@ -10,9 +10,8 @@ const useStyles = () => {
   const {colors, fontFamily} = Theme();
   const styles = StyleSheet.create({
     infoContainer: {
-      padding: 16,
+      padding: 8,
       borderRadius: normalizeLayoutSizeWidth(16),
-      height: normalizeLayoutSizeWidth(72),
     },
     successBg: {
       backgroundColor: colors.primary,
@@ -40,7 +39,6 @@ const useStyles = () => {
       flex: 1,
       justifyContent: 'flex-start',
       flexDirection: 'row',
-      alignItems: 'center',
     },
     textContainer: {
       width: '65%',
