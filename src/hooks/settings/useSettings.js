@@ -22,11 +22,11 @@ const useSettings = () => {
 
   const useCartVersion = params => {
     if (additionalSetting().cartVersion === 'basic') {
-      Actions.cart({step: 1, ...params});
+      Actions.cart(params);
     } else if (additionalSetting().cartVersion === 'advance') {
       Actions.cartStep1({step: 1, ...params});
     } else {
-      Actions.cart({step: 1, ...params});
+      Actions.cart(params);
     }
   };
 

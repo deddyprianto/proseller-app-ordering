@@ -8,7 +8,7 @@
 import React from 'react';
 import {useSelector} from 'react-redux';
 
-import {View, FlatList, StyleSheet} from 'react-native';
+import {View, FlatList, StyleSheet, TouchableOpacity} from 'react-native';
 
 import ProductCartItem from './components/ProductCartItem';
 import GlobalText from '../globalText';
@@ -17,6 +17,9 @@ import moment from 'moment';
 import additionalSetting from '../../config/additionalSettings';
 import ProductCartItemAdvance from './components/ProductCartItemAdvance';
 import {Actions} from 'react-native-router-flux';
+import ProductCartItemCart2 from './components/ProductCartItemCart2';
+import ArrowUpSvg from '../../assets/svg/ArrowUpSvg';
+import ArrowBottomSvg from '../../assets/svg/ArrowBottomSvg';
 
 const useStyles = () => {
   const theme = Theme();
@@ -64,6 +67,29 @@ const useStyles = () => {
     mt24: {
       marginTop: 24,
     },
+    itemContainer: {
+      paddingHorizontal: 16,
+      flexDirection: 'row',
+    },
+    itemText: {
+      fontSize: 16,
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    itemTextAmount: {
+      color: theme.colors.greyScale5,
+    },
+    productCartItem2Container: {
+      marginVertical: 8,
+    },
+    mlAuto: {
+      marginLeft: 'auto',
+    },
+    primaryColor: {
+      color: theme.colors.primary,
+    },
+    row: {
+      flexDirection: 'row',
+    },
   });
   return styles;
 };
@@ -85,7 +111,10 @@ const ProductCartList = ({
   const [availDate, setAvailDate] = React.useState(null);
   const [listSelfSelection, setListSelfSlection] = React.useState([]);
   const cartVersion = additionalSetting().cartVersion;
-
+  const ready_items = 'Ready Items';
+  const preorder_items = 'Preorder Items';
+  const [showAllOrder, setShowAllOrder] = React.useState(false);
+  const [showAllPreorder, setShowAllPreOrder] = React.useState(false);
   const groupingeOrder = () => {
     const isNotPreorder = items.filter(item => !item.isPreOrderItem);
     const isPreOrder = items.filter(item => item.isPreOrderItem);
@@ -126,11 +155,25 @@ const ProductCartList = ({
     }
   }, [listSelfSelection]);
 
-  const renderProductCartItem = item => {
+  const renderProductCartItem = (item, index, showOrder) => {
     if (cartVersion === 'advance') {
+      if (step === 1) {
+        return (
+          <View style={styles.root}>
+            <ProductCartItemAdvance
+              step={step}
+              item={item}
+              disabled={disabled}
+            />
+          </View>
+        );
+      }
+      if (index > 0 && !showOrder) {
+        return null;
+      }
       return (
-        <View style={styles.root}>
-          <ProductCartItemAdvance step={step} item={item} disabled={disabled} />
+        <View style={styles.productCartItem2Container}>
+          <ProductCartItemCart2 item={item} />
         </View>
       );
     }
@@ -141,18 +184,76 @@ const ProductCartList = ({
     );
   };
 
-  const renderHeader = (title, containerStyle, isPreOrder) => (
-    <View style={styles.centerComponent}>
-      <View style={[styles.dividerTitle, containerStyle]}>
-        <View style={styles.divider} />
-        <GlobalText style={styles.titleText}>{title} </GlobalText>
+  const handleAmountItems = title => {
+    if (title === ready_items) {
+      return (
+        defaultOrder.length + ` ${defaultOrder.length > 1 ? 'Items' : 'Item'}`
+      );
+    }
+    return (
+      listPreorder.length + ` ${listPreorder.length > 1 ? 'Items' : 'Item'}`
+    );
+  };
+
+  const toggleItemPreorder = () => setShowAllPreOrder(prevState => !prevState);
+
+  const toggleItemOrder = () => setShowAllOrder(prevState => !prevState);
+
+  const renderMoreItemText = (isPreOrder, showOrder) => {
+    if (!isPreOrder && defaultOrder.length > 1) {
+      return (
+        <TouchableOpacity
+          onPress={toggleItemOrder}
+          style={[styles.mlAuto, styles.row]}>
+          <GlobalText style={[styles.itemText, styles.primaryColor]}>
+            {defaultOrder.length - 1} More Items{' '}
+          </GlobalText>
+          {showOrder ? <ArrowUpSvg /> : <ArrowBottomSvg />}
+        </TouchableOpacity>
+      );
+    }
+    if (isPreOrder && listPreorder.length > 1) {
+      return (
+        <TouchableOpacity
+          onPress={toggleItemPreorder}
+          style={[styles.mlAuto, styles.row]}>
+          <GlobalText style={[styles.itemText, styles.primaryColor]}>
+            {listPreorder.length - 1} More Items{' '}
+          </GlobalText>
+          {showOrder ? <ArrowUpSvg /> : <ArrowBottomSvg />}
+        </TouchableOpacity>
+      );
+    }
+    return null;
+  };
+
+  const renderHeader = (title, containerStyle, isPreOrder, showOrder) => (
+    <>
+      <View style={styles.centerComponent}>
+        <View style={[styles.dividerTitle, containerStyle]}>
+          <View style={styles.divider} />
+          <GlobalText style={styles.titleText}>{title}</GlobalText>
+        </View>
+        {isPreOrder && availDate ? (
+          <GlobalText style={styles.availableTextDate}>
+            Available on {moment(availDate).format('DD MMM YYYY')}
+          </GlobalText>
+        ) : null}
       </View>
-      {isPreOrder && availDate ? (
-        <GlobalText style={styles.availableTextDate}>
-          Available on {moment(availDate).format('DD MMM YYYY')}
-        </GlobalText>
+      {step && step > 1 ? (
+        <View style={styles.itemContainer}>
+          <View>
+            <GlobalText style={styles.itemText}>
+              Items{' '}
+              <GlobalText style={styles.itemTextAmount}>
+                {`(${handleAmountItems(title)})`}{' '}
+              </GlobalText>{' '}
+            </GlobalText>
+          </View>
+          {renderMoreItemText(isPreOrder, showOrder)}
+        </View>
       ) : null}
-    </View>
+    </>
   );
   return (
     <View>
@@ -160,8 +261,15 @@ const ProductCartList = ({
         <FlatList
           data={defaultOrder}
           keyExtractor={item => item.productID}
-          renderItem={({item}) => renderProductCartItem(item)}
-          ListHeaderComponent={renderHeader('Ready Items', styles.readyTitle)}
+          renderItem={({item, index}) =>
+            renderProductCartItem(item, index, showAllOrder)
+          }
+          ListHeaderComponent={renderHeader(
+            ready_items,
+            styles.readyTitle,
+            false,
+            showAllOrder,
+          )}
         />
       ) : null}
       {listPreorder.length > 0 ? (
@@ -170,11 +278,14 @@ const ProductCartList = ({
           <FlatList
             data={listPreorder}
             keyExtractor={item => item.productID}
-            renderItem={({item}) => renderProductCartItem(item)}
+            renderItem={({item, index}) =>
+              renderProductCartItem(item, index, showAllPreorder)
+            }
             ListHeaderComponent={renderHeader(
-              'Preorder Items',
+              preorder_items,
               styles.preOrderTitle,
               true,
+              showAllOrder,
             )}
           />
         </>

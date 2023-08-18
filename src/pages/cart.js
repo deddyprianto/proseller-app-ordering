@@ -53,6 +53,12 @@ import ModalError from '../components/modal/ErrorModal';
 import useErrorMessage from '../hooks/message/useErrorMessage';
 import {Body} from '../components/layout';
 import OrderDetailCart from '../components/cart/OrderDetailCart';
+import GlobalText from '../components/globalText';
+import additionalSetting from '../config/additionalSettings';
+import OutletCard from '../components/productCartList/OutletCard';
+import GlobalButton from '../components/button/GlobalButton';
+import ThreeDot from '../assets/svg/ThreeDotSvg';
+import GlobalModal from '../components/modal/GlobalModal';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -376,6 +382,34 @@ const useStyles = () => {
     productCartContainer: {
       marginTop: 16,
     },
+    stepText: {
+      color: theme.colors.brandTertiary,
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    granTotal: {
+      fontSize: 12,
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    priceAll: {
+      fontSize: 16,
+      fontFamily: theme.fontFamily.poppinsSemiBold,
+      color: theme.colors.primary,
+    },
+    priceContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    footer: {
+      borderTopWidth: 1,
+      borderTopColor: theme.colors.greyScale4,
+      padding: 16,
+    },
+    footerChild: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
   });
   return styles;
 };
@@ -412,6 +446,7 @@ const Cart = props => {
   );
 
   const basket = useSelector(state => state.orderReducer?.dataBasket?.product);
+  console.log({basket}, 'basket');
   const orderingDateTimeSelected = useSelector(
     state => state.orderReducer?.orderingDateTime?.orderingDateTimeSelected,
   );
@@ -946,6 +981,9 @@ const Cart = props => {
 
   const renderOutlet = () => {
     if (outlet) {
+      if (availableSelection.length > 0 && itemSelection === 'own') {
+        return <OutletCard outlet={outlet} />;
+      }
       return (
         <View style={styles.viewMethod}>
           <Text style={styles.textMethod}>Selected Outlet</Text>
@@ -1261,6 +1299,27 @@ const Cart = props => {
     );
   };
 
+  const newFooter = () => (
+    <View style={styles.footer}>
+      <View style={styles.footerChild}>
+        <GlobalText style={styles.granTotal}>Grand Total</GlobalText>
+        <View style={styles.priceContainer}>
+          <GlobalText style={styles.priceAll}>
+            {currencyFormatter(basket?.totalNettAmount)}
+          </GlobalText>
+          <TouchableOpacity
+            onPress={handleOpenDetail}
+            style={{marginLeft: 'auto'}}>
+            <ThreeDot />
+          </TouchableOpacity>
+        </View>
+      </View>
+      <View>
+        <GlobalButton title="Checkout" />
+      </View>
+    </View>
+  );
+
   const renderFooter = () => {
     const result = seeDetail ? renderDetail() : renderPayment();
 
@@ -1385,9 +1444,22 @@ const Cart = props => {
     setItemSelection(status);
   };
 
+  const renderStep = () => {
+    if (props.step) {
+      return (
+        <View>
+          <GlobalText style={styles.stepText}>
+            Step {props.step} of 4
+          </GlobalText>
+        </View>
+      );
+    }
+    return null;
+  };
+
   return (
     <SafeAreaView style={styles.root}>
-      <Header title="Cart" />
+      <Header customRightIcon={renderStep} title="Cart" />
       <LoadingScreen loading={isLoading} />
       <View style={styles.container}>
         <Body>
@@ -1395,6 +1467,7 @@ const Cart = props => {
             <ProductCartList
               setAvailaleForSelection={setAvailableSelection}
               setAvailablePreorderDate={setAvailablePreOrder}
+              step={props.step}
             />
             {availableSelection.length > 0 ? (
               <OrderDetailCart
@@ -1413,7 +1486,8 @@ const Cart = props => {
         </Body>
         {renderModal()}
       </View>
-      {renderFooter()}
+      {newFooter()}
+      {/* {renderFooter()} */}
       <ModalError
         title={errorMessage.title}
         description={errorMessage.description}
@@ -1421,6 +1495,11 @@ const Cart = props => {
         isOpen={isOffline}
         onOk={onPressOkError}
       />
+      <GlobalModal closeModal={handleCloseDetail} isVisible={seeDetail}>
+        <View>
+          <GlobalText>ola</GlobalText>
+        </View>
+      </GlobalModal>
     </SafeAreaView>
   );
 };
