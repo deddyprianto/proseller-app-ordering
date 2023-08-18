@@ -10,7 +10,7 @@ const useStyles = () => {
   const {colors, fontFamily} = Theme();
   const styles = StyleSheet.create({
     infoContainer: {
-      padding: 8,
+      padding: 16,
       borderRadius: normalizeLayoutSizeWidth(16),
     },
     successBg: {

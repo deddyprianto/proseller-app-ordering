@@ -9,6 +9,7 @@ import GlobalText from '../globalText';
 import {useDispatch} from 'react-redux';
 import {sendOTP} from '../../actions/auth.actions';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview';
+import GlobalButton from '../button/GlobalButton';
 
 const useStyles = () => {
   const theme = Theme();
@@ -88,7 +89,7 @@ const OtpComponent = props => {
   const {styles} = useStyles();
   const [sendCounter, setSendCounter] = React.useState(0);
   const [isLoading, setIsLoading] = React.useState(false);
-  const [otp, setOtp] = React.useState(null);
+  const [otp, setOtp] = React.useState('');
   const dispatch = useDispatch();
   const {countdownStart, minutes, seconds} = useCountdownV2();
 
@@ -183,12 +184,11 @@ const OtpComponent = props => {
 
   const renderButtonNext = () => {
     return (
-      <TouchableOpacity
-        disabled={isLoading}
-        style={styles.touchableNext}
-        onPress={() => submitOtp(otp)}>
-        <Text style={styles.textNext}>{props.buttonNextText || 'Verify'} </Text>
-      </TouchableOpacity>
+      <GlobalButton
+        disabled={isLoading || otp.length < 4}
+        title={props.buttonNextText || 'Verify'}
+        onPress={() => submitOtp(otp)}
+      />
     );
   };
 
