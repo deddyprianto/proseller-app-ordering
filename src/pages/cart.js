@@ -1471,7 +1471,10 @@ const Cart = props => {
 
   return (
     <SafeAreaView style={styles.root}>
-      <Header customRightIcon={renderStep} title="Cart" />
+      <Header
+        customRightIcon={renderStep}
+        title={props.step ? 'Order Details' : 'Cart'}
+      />
       <LoadingScreen loading={isLoading} />
       <View style={styles.container}>
         <Body>
