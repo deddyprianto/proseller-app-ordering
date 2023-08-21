@@ -661,7 +661,7 @@ const ProductCartItemAdvance = ({item, disabled, step}) => {
     if (isOpenAddModal) {
       return (
         <ProductAddModal
-          product={product}
+          productId={product.id}
           open={isOpenAddModal}
           handleClose={() => {
             handleCloseAddModal();

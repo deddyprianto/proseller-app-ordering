@@ -178,7 +178,7 @@ const ScannerBarcode = () => {
     if (isOpenAddModal) {
       return (
         <ProductAddModal
-          product={product}
+          productId={product.id}
           open={isOpenAddModal}
           handleClose={() => {
             handleCloseProductAddModal();
