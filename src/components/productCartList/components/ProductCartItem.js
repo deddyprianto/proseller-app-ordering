@@ -343,7 +343,6 @@ const useStyles = () => {
     },
     preOrderContainer: {
       width: '25%',
-      marginBottom: 12,
     },
   });
   return styles;
@@ -656,7 +655,7 @@ const ProductCartItem = ({item, disabled}) => {
   };
 
   const renderLabel = () => (
-    <View style={{flexDirection: 'row'}}>
+    <View style={{flexDirection: 'row', marginBottom: 12}}>
       {renderAllowSelection()}
       {renderPreOrder()}
     </View>
@@ -677,4 +676,4 @@ const ProductCartItem = ({item, disabled}) => {
   );
 };
 
-export default ProductCartItem;
+export default React.memo(ProductCartItem);

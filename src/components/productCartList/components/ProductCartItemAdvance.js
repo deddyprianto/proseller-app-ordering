@@ -313,17 +313,21 @@ const useStyles = () => {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'center',
+      paddingHorizontal: 4,
       paddingVertical: 2,
       borderRadius: 50,
       backgroundColor: theme.colors.textTertiary,
+      marginBottom: 10,
     },
     viewPromoActive: {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'center',
-      paddingVertical: 2,
+      paddingHorizontal: 4,
       borderRadius: 50,
       backgroundColor: theme.colors.semanticError,
+      marginBottom: 10,
+      paddingVertical: 2,
     },
     viewTotalPrice: {
       flexDirection: 'row',
@@ -336,7 +340,6 @@ const useStyles = () => {
     },
     preOrderContainer: {
       width: '25%',
-      marginBottom: 12,
     },
     amountSmall: {
       fontSize: 12,
@@ -360,6 +363,9 @@ const useStyles = () => {
       height: 26,
       alignItems: 'center',
       justifyContent: 'center',
+    },
+    rowContainer: {
+      flexDirection: 'row',
     },
   });
   return styles;
@@ -587,7 +593,7 @@ const ProductCartItemAdvance = ({item, disabled, step}) => {
       const styleIconPromo = active ? styles.iconPromoActive : styles.iconPromo;
 
       return (
-        <View style={[styleViewPromo, {maxWidth: 100, marginBottom: 10}]}>
+        <View style={[styleViewPromo]}>
           <ImageBackground
             source={appConfig.iconPromoStar}
             style={styles.imagePromo}>
@@ -687,7 +693,7 @@ const ProductCartItemAdvance = ({item, disabled, step}) => {
   };
 
   const renderLabel = () => (
-    <View style={{flexDirection: 'row'}}>
+    <View style={{flexDirection: 'row', marginBottom: 12}}>
       {renderAllowSelection()}
       {renderPreOrder()}
     </View>
@@ -700,7 +706,7 @@ const ProductCartItemAdvance = ({item, disabled, step}) => {
       }}
       style={styles.root}>
       {renderLabel()}
-      {renderPromoIcon()}
+      <View style={styles.rowContainer}>{renderPromoIcon()}</View>
       {renderBody()}
       {renderDividerDashed()}
       {renderFooter()}
@@ -709,4 +715,4 @@ const ProductCartItemAdvance = ({item, disabled, step}) => {
   );
 };
 
-export default ProductCartItemAdvance;
+export default React.memo(ProductCartItemAdvance);
