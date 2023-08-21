@@ -44,6 +44,7 @@ const useStyles = () => {
     productText: {
       fontSize: 12,
       fontFamily: theme.fontFamily.poppinsMedium,
+      width: '50%',
     },
     headerContainer: {
       flexDirection: 'row',
@@ -248,7 +249,7 @@ const ProductCartItemCart2 = ({item}) => {
           <GlobalText style={styles.amountText}>{item.quantity}x</GlobalText>
         </View>
         <View style={styles.productName}>
-          <GlobalText style={styles.productText}>
+          <GlobalText numberOfLines={1} style={styles.productText}>
             {item.product?.name}
           </GlobalText>
         </View>

@@ -61,6 +61,7 @@ import ThreeDot from '../assets/svg/ThreeDotSvg';
 import GlobalModal from '../components/modal/GlobalModal';
 import CurrencyFormatter from '../helper/CurrencyFormatter';
 import ThreeDotCircle from '../assets/svg/ThreeDotCircle';
+import ModalOrderDetail from '../components/modal/ModalOrderDetail';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -412,22 +413,7 @@ const useStyles = () => {
       justifyContent: 'space-between',
       alignItems: 'center',
     },
-    modalItem: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      marginBottom: 16,
-    },
-    modalItemPrice: {
-      fontFamily: theme.fontFamily.poppinsSemiBold,
-    },
-    negativeColor: {
-      color: theme.colors.semanticError,
-    },
-    modalChildren: {
-      padding: 16,
-      borderTopWidth: 1,
-      borderTopColor: theme.colors.greyScale4,
-    },
+
     threedotContainer: {
       marginLeft: 'auto',
     },
@@ -470,7 +456,6 @@ const Cart = props => {
   );
 
   const basket = useSelector(state => state.orderReducer?.dataBasket?.product);
-  console.log({basket}, 'basket');
   const orderingDateTimeSelected = useSelector(
     state => state.orderReducer?.orderingDateTime?.orderingDateTimeSelected,
   );
@@ -967,6 +952,7 @@ const Cart = props => {
         pembayaran: pembayaran,
         url: url,
         outlet: outlet,
+        step: 3,
       });
     } catch (e) {
       await dispatch(showSnackbar({message: 'Please try again'}));
@@ -1521,28 +1507,7 @@ const Cart = props => {
         isOpen={isOffline}
         onOk={onPressOkError}
       />
-      <GlobalModal
-        title="Details"
-        isBottomModal
-        closeModal={handleCloseDetail}
-        modalContainerStyle={{padding: 0}}
-        closeContainerStyle={{marginRight: 16}}
-        isVisible={seeDetail}>
-        <View style={styles.modalChildren}>
-          <View style={styles.modalItem}>
-            <GlobalText>Subtotal</GlobalText>
-            <GlobalText style={styles.modalItemPrice}>
-              {CurrencyFormatter(basket?.totalNettAmount)}{' '}
-            </GlobalText>
-          </View>
-          <View style={styles.modalItem}>
-            <GlobalText>Delivery Fee</GlobalText>
-            <GlobalText style={styles.modalItemPrice}>
-              {CurrencyFormatter(basket?.totalDeliverySurcharge)}{' '}
-            </GlobalText>
-          </View>
-        </View>
-      </GlobalModal>
+      <ModalOrderDetail open={seeDetail} closeModal={handleCloseDetail} />
     </SafeAreaView>
   );
 };
