@@ -40,11 +40,11 @@ const useStyles = () => {
     },
     productName: {
       marginLeft: 8,
+      width: '55%',
     },
     productText: {
       fontSize: 12,
       fontFamily: theme.fontFamily.poppinsMedium,
-      width: '50%',
     },
     headerContainer: {
       flexDirection: 'row',
