@@ -169,8 +169,15 @@ const ProductCartItemCart2 = ({item}) => {
     return null;
   };
 
+  const handleMarginBtm = () => {
+    if (item.product?.allowSelfSelection || item?.isPreOrderItem) {
+      return 12;
+    }
+    return 0;
+  };
+
   const renderLabel = () => (
-    <View style={{flexDirection: 'row', marginBottom: 12}}>
+    <View style={{flexDirection: 'row', marginBottom: handleMarginBtm()}}>
       {renderAllowSelection()}
       {renderPreOrder()}
     </View>

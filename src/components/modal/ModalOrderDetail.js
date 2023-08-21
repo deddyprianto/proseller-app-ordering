@@ -61,7 +61,7 @@ const useStyles = () => {
   return styles;
 };
 
-const ModalOrderDetail = ({open, closeModal}) => {
+const ModalOrderDetail = ({open, closeModal, vouchers, pointDisc}) => {
   const styles = useStyles();
   const basket = useSelector(state => state.orderReducer?.dataBasket?.product);
 
@@ -69,6 +69,16 @@ const ModalOrderDetail = ({open, closeModal}) => {
     if (closeModal && typeof closeModal === 'function') {
       closeModal();
     }
+  };
+  const calculateVoucher = () => {
+    const amountVoucherArr = vouchers
+      ?.filter(voucher => !voucher?.isPoint)
+      ?.map(voucher => voucher?.paymentAmount);
+    if (amountVoucherArr?.length > 0) {
+      const totalVoucher = amountVoucherArr?.reduce((a, b) => a + b);
+      return totalVoucher;
+    }
+    return 0;
   };
 
   return (
@@ -94,6 +104,7 @@ const ModalOrderDetail = ({open, closeModal}) => {
             </GlobalText>
           </View>
         ) : null}
+
         <View style={[styles.divider, styles.noMargin]} />
         <View style={styles.modalItem}>
           <GlobalText>Delivery Fee</GlobalText>
@@ -116,6 +127,22 @@ const ModalOrderDetail = ({open, closeModal}) => {
             {CurrencyFormatter(basket?.totalNettAmount)}{' '}
           </GlobalText>
         </View>
+        {pointDisc > 0 ? (
+          <View style={styles.modalItem}>
+            <GlobalText style={styles.minusText}>Paid with point</GlobalText>
+            <GlobalText style={[styles.modalItemPrice, styles.minusText]}>
+              ({CurrencyFormatter(pointDisc)} )
+            </GlobalText>
+          </View>
+        ) : null}
+        {vouchers?.length > 0 ? (
+          <View style={styles.modalItem}>
+            <GlobalText style={styles.minusText}>Paid voucher</GlobalText>
+            <GlobalText style={[styles.modalItemPrice, styles.minusText]}>
+              ({CurrencyFormatter(calculateVoucher())} )
+            </GlobalText>
+          </View>
+        ) : null}
       </View>
     </GlobalModal>
   );
