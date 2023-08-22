@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   TouchableOpacity,
   View,
@@ -20,10 +20,6 @@ const useStyles = () => {
   const theme = Theme();
   const styles = StyleSheet.create({
     root: {
-      margin: 0,
-    },
-
-    container: {
       flex: 1,
     },
 
@@ -84,7 +80,7 @@ const useStyles = () => {
   return styles;
 };
 
-const ImageZoomModal = ({open, handleClose, images}) => {
+const ImageZoomModal = ({open, handleClose, images, index}) => {
   const styles = useStyles();
   const [isMultiple, setIsMultiple] = useState(false);
 
@@ -94,7 +90,7 @@ const ImageZoomModal = ({open, handleClose, images}) => {
     } else {
       setIsMultiple(false);
     }
-  }, [images]);
+  }, [images, index]);
 
   const renderHeader = () => {
     return (
@@ -127,6 +123,7 @@ const ImageZoomModal = ({open, handleClose, images}) => {
   const renderImageMultiple = () => {
     return (
       <Swiper
+        index={index}
         style={styles.viewImageMultiple}
         autoplayTimeout={6}
         animated={true}
@@ -163,11 +160,13 @@ const ImageZoomModal = ({open, handleClose, images}) => {
 
   return (
     <Modal
+      animationType="none"
+      transparent={true}
       visible={open}
-      onBackButtonPress={handleClose}
-      style={styles.root}
-      onDismiss={handleClose}>
-      <View style={styles.container}>
+      onRequestClose={() => {
+        handleClose();
+      }}>
+      <View style={styles.root}>
         {renderHeader()}
         {renderBody()}
       </View>
