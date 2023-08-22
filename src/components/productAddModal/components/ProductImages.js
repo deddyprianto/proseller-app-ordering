@@ -5,7 +5,7 @@
  * PT Edgeworks
  */
 
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 
 import {
   StyleSheet,
@@ -14,12 +14,17 @@ import {
   TouchableOpacity,
   Image,
   FlatList,
+  Dimensions,
 } from 'react-native';
+
+import Swiper from 'react-native-swiper';
 
 import {isEmptyArray} from '../../../helper/CheckEmpty';
 import Theme from '../../../theme';
 import {useSelector} from 'react-redux';
 import ImageZoomModal from '../../modal/ImageZoomModal';
+
+const WIDTH = Dimensions.get('window').width;
 
 const useStyle = () => {
   const theme = Theme();
@@ -32,10 +37,10 @@ const useStyle = () => {
       fontSize: theme.fontSize[14],
       fontFamily: theme.fontFamily.poppinsMedium,
     },
-    viewImageList: {
+    viewImagePreviewList: {
       width: '100%',
     },
-    viewImageItem: {
+    viewImagePreviewItem: {
       height: 54,
       width: 54,
       marginRight: 16,
@@ -44,7 +49,7 @@ const useStyle = () => {
       borderRadius: 8,
       borderColor: theme.colors.greyScale2,
     },
-    viewImageItemSelected: {
+    viewImagePreviewItemSelected: {
       height: 54,
       width: 54,
       marginRight: 16,
@@ -52,6 +57,17 @@ const useStyle = () => {
       borderWidth: 1,
       borderRadius: 8,
       borderColor: theme.colors.brandPrimary,
+    },
+    viewImageMultipleItem: {
+      height: WIDTH - 32,
+      width: WIDTH - 32,
+    },
+    viewImageMultiple: {
+      height: WIDTH - 32,
+      width: '100%',
+    },
+    viewSwiper: {
+      height: WIDTH - 32,
     },
     image: {
       width: '100%',
@@ -65,9 +81,12 @@ const useStyle = () => {
 
 const ProductImages = ({product}) => {
   const styles = useStyle();
+  const imagePreviewRef = useRef();
+  const imageRef = useRef();
   const [selected, setSelected] = useState('');
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [selectedIndex, setSelectedIndex] = useState('');
   const [isOpenImageZoom, setIsOpenImageZoom] = useState(false);
+  const [isMultiple, setIsMultiple] = useState(false);
 
   const imageSettings = useSelector(
     state => state.settingReducer.imageSettings,
@@ -76,6 +95,7 @@ const ProductImages = ({product}) => {
   useEffect(() => {
     const isMultipleImage = !isEmptyArray(product?.imageFiles);
     if (isMultipleImage) {
+      setIsMultiple(true);
       setSelected(product?.imageFiles[0]);
       setSelectedIndex(0);
     }
@@ -109,33 +129,35 @@ const ProductImages = ({product}) => {
     }
   };
 
-  const renderImageItem = (item, index) => {
-    const isSelected = item === selected;
+  const renderImagePreviewItem = (item, index) => {
+    const isSelected = index === selectedIndex;
     const styleButton = isSelected
-      ? styles.viewImageItemSelected
-      : styles.viewImageItem;
+      ? styles.viewImagePreviewItemSelected
+      : styles.viewImagePreviewItem;
 
     return (
       <TouchableOpacity
         onPress={() => {
           setSelected(item);
           setSelectedIndex(index);
+          imageRef.current.scrollTo(index);
         }}>
         <Image source={{uri: item}} style={styleButton} />
       </TouchableOpacity>
     );
   };
 
-  const renderImageList = () => {
+  const renderImagePreviewList = () => {
     const isImageList = !isEmptyArray(product?.imageFiles);
     if (isImageList) {
       return (
         <FlatList
-          style={styles.viewImageList}
+          style={styles.viewImagePreviewList}
           data={product?.imageFiles}
+          ref={imagePreviewRef}
           horizontal
           showsHorizontalScrollIndicator={false}
-          renderItem={({item, index}) => renderImageItem(item, index)}
+          renderItem={({item, index}) => renderImagePreviewItem(item, index)}
         />
       );
     }
@@ -154,7 +176,42 @@ const ProductImages = ({product}) => {
     }
   };
 
-  const renderImage = () => {
+  const renderImageMultipleValue = () => {
+    const result = product?.imageFiles?.map(image => {
+      return (
+        <TouchableOpacity onPress={handleOpenImageZoom} key={image}>
+          <Image
+            style={styles.viewImageMultipleItem}
+            resizeMode="stretch"
+            source={{uri: image}}
+          />
+        </TouchableOpacity>
+      );
+    });
+
+    return result;
+  };
+
+  const renderImageMultiple = () => {
+    return (
+      <Swiper
+        ref={imageRef}
+        onIndexChanged={index => {
+          setSelectedIndex(index);
+          imagePreviewRef.current.scrollToIndex({
+            animation: true,
+            index: index,
+          });
+        }}
+        showsPagination={false}
+        style={styles.viewSwiper}
+        loop={false}>
+        {renderImageMultipleValue()}
+      </Swiper>
+    );
+  };
+
+  const renderImageSingle = () => {
     const image = handleImageSelected();
 
     return (
@@ -166,6 +223,14 @@ const ProductImages = ({product}) => {
         />
       </TouchableOpacity>
     );
+  };
+
+  const renderImage = () => {
+    if (isMultiple) {
+      return renderImageMultiple();
+    } else {
+      return renderImageSingle();
+    }
   };
 
   const renderImageAndIndex = () => {
@@ -183,6 +248,7 @@ const ProductImages = ({product}) => {
     if (isOpenImageZoom) {
       return (
         <ImageZoomModal
+          index={selectedIndex}
           images={image}
           open={isOpenImageZoom}
           handleClose={() => {
@@ -196,7 +262,7 @@ const ProductImages = ({product}) => {
   return (
     <View>
       {renderImageAndIndex()}
-      {renderImageList()}
+      {renderImagePreviewList()}
       {renderImageZoomModal()}
     </View>
   );
