@@ -72,6 +72,9 @@ import ModalTransfer from './ModalTransfer';
 import LoadingScreen from '../loadingScreen';
 import OrderingModeOfflineModal from '../modal/OrderingModeOfflineModal';
 import {Body} from '../layout';
+import withHooksComponent from '../HOC';
+import additionalSetting from '../../config/additionalSettings';
+import SettleOrderV2 from './SettleOrderV2';
 
 class SettleOrder extends Component {
   constructor(props) {
@@ -2282,9 +2285,7 @@ class SettleOrder extends Component {
       paySVC,
       payVoucher,
     } = this.props;
-
     this.hideModal();
-
     // try {
     //   if (selectedAccount && (payMembership || paySVC || payVoucher)) {
     //     if (selectedAccount.paymentID === 'MANUAL_TRANSFER') {
@@ -2716,6 +2717,7 @@ class SettleOrder extends Component {
             outlet: this.state.outlet,
             url,
             dataRespons: response.responseBody.data,
+            step: 4,
           });
         }
       } else {
@@ -3429,6 +3431,13 @@ class SettleOrder extends Component {
     }
   };
 
+  onSelectPaymentMethod = () => {
+    Actions.paymentMethods({
+      page: 'settleOrder',
+      paySVC: this.props.paySVC,
+    });
+  };
+
   render() {
     const {
       intlData,
@@ -3437,10 +3446,32 @@ class SettleOrder extends Component {
       campign,
       balance,
       pembayaran,
+      step,
     } = this.props;
     const {outlet} = this.state;
+    const {cartVersion} = additionalSetting();
     const total =
       Number(this.state.totalBayar) - this.state.totalNonDiscountable;
+    if (cartVersion === 'advance') {
+      return (
+        <>
+          {this.state.loading && <LoaderDarker />}
+          <SettleOrderV2
+            openVoucher={this.myVouchers}
+            openPoint={this.myPoint}
+            myMoneyPoint={this.state.moneyPoint}
+            myPoint={this.state.addPoint}
+            openPayment={this.onSelectPaymentMethod}
+            selectedAccount={selectedAccount}
+            selectedPaymentMethod={this.selectedPaymentMethod}
+            step={step}
+            data={pembayaran}
+            vouchers={this.state.dataVoucer}
+            doPayment={this.doPayment}
+          />
+        </>
+      );
+    }
 
     return (
       <SafeAreaView style={styles.container}>
@@ -4066,12 +4097,7 @@ class SettleOrder extends Component {
                 }}>
                 <TouchableOpacity
                   style={styles.btnPaymentMethod}
-                  onPress={() => {
-                    Actions.paymentMethods({
-                      page: 'settleOrder',
-                      paySVC: this.props.paySVC,
-                    });
-                  }}>
+                  onPress={this.onSelectPaymentMethod}>
                   <Text
                     style={[
                       styles.descMethodUnselected,
@@ -4359,7 +4385,7 @@ const styles = StyleSheet.create({
   },
 });
 
-mapStateToProps = state => ({
+const mapStateToProps = state => ({
   campign: state.rewardsReducer.campaign.campaign,
   myVoucers: state.accountsReducer.myVoucers.myVoucers,
   totalPoint: state.rewardsReducer.dataPoint.totalPoint,
@@ -4379,13 +4405,15 @@ mapStateToProps = state => ({
   intlData: state.intlData,
 });
 
-mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = dispatch => ({
   dispatch,
 });
 
-export default compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
-)(SettleOrder);
+export default withHooksComponent(
+  compose(
+    connect(
+      mapStateToProps,
+      mapDispatchToProps,
+    ),
+  )(SettleOrder),
+);

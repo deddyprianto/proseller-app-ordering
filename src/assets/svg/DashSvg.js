@@ -5,7 +5,7 @@ const DashSvg = props => {
   const {colors} = Theme();
   return (
     <Svg
-      width={371}
+      width={'100%'}
       height={2}
       viewBox="0 0 371 2"
       fill="none"

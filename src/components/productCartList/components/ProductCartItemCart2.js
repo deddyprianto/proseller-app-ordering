@@ -150,10 +150,8 @@ const useStyles = () => {
   return {styles};
 };
 
-const ProductCartItemCart2 = ({item}) => {
+const ProductCartItemCart2 = ({item, containerStyle}) => {
   const {styles} = useStyles();
-
-  console.log({item}, 'nana');
 
   const renderPreOrder = () => {
     if (item?.isPreOrderItem) {
@@ -169,8 +167,15 @@ const ProductCartItemCart2 = ({item}) => {
     return null;
   };
 
+  const handleMarginBtm = () => {
+    if (item.product?.allowSelfSelection || item?.isPreOrderItem) {
+      return 12;
+    }
+    return 0;
+  };
+
   const renderLabel = () => (
-    <View style={{flexDirection: 'row', marginBottom: 12}}>
+    <View style={{flexDirection: 'row', marginBottom: handleMarginBtm()}}>
       {renderAllowSelection()}
       {renderPreOrder()}
     </View>
@@ -242,7 +247,7 @@ const ProductCartItemCart2 = ({item}) => {
   };
 
   return (
-    <View style={styles.cardContainer}>
+    <View style={[styles.cardContainer, containerStyle]}>
       <View>{renderLabel()}</View>
       <View style={styles.headerContainer}>
         <View style={styles.amountContainer}>

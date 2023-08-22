@@ -12,6 +12,7 @@ import GlobalModal from '../components/modal/GlobalModal';
 import {useSelector} from 'react-redux';
 import {emailValidation} from '../helper/Validation';
 import FieldPhoneNumberInput from '../components/fieldPhoneNumberInput/FieldPhoneNumberInput';
+import useSettings from '../hooks/settings/useSettings';
 const useStyles = () => {
   const {colors, fontFamily} = Theme();
   const styles = StyleSheet.create({
@@ -88,6 +89,7 @@ const RegisterV2 = props => {
   const [openType, setOpenType] = React.useState(null);
   const [buttonActive, setButtonActive] = React.useState(false);
   const inputRef = React.useRef();
+  const {checkTncPolicyData} = useSettings();
   const orderSetting = useSelector(
     state => state.orderReducer?.orderingSetting?.orderingSetting?.settings,
   );
@@ -115,19 +117,6 @@ const RegisterV2 = props => {
       setEmailNotValid(!emailValidation(props.emailValue));
     }
   }, [props.emailValue]);
-  const filterTerms = () => {
-    if (orderSetting && Array.isArray(orderSetting)) {
-      const tnc = orderSetting.find(
-        setting => setting.settingKey === 'TermCondition',
-      );
-
-      const privacy = orderSetting.find(
-        setting => setting.settingKey === 'PrivacyPolicy',
-      );
-      return {tnc, privacy};
-    }
-    return {tnc: null, privacy: null};
-  };
 
   const onButtonActive = active => {
     setButtonActive(active);
@@ -291,7 +280,7 @@ const RegisterV2 = props => {
           </View>
         }
         isVisible={openType === 'terms'}>
-        <GlobalText>{filterTerms().tnc?.settingValue}</GlobalText>
+        <GlobalText>{checkTncPolicyData().tnc?.settingValue}</GlobalText>
       </GlobalModal>
       <GlobalModal
         title="Privacy Policy"
@@ -308,7 +297,7 @@ const RegisterV2 = props => {
         isCloseToBottom={onButtonActive}
         closeModal={closeModal}
         isVisible={openType === 'privacy'}>
-        <GlobalText>{filterTerms().privacy?.settingValue}</GlobalText>
+        <GlobalText>{checkTncPolicyData().privacy?.settingValue}</GlobalText>
       </GlobalModal>
     </View>
   );

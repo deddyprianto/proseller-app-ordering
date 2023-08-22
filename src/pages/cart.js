@@ -62,6 +62,7 @@ import GlobalModal from '../components/modal/GlobalModal';
 import CurrencyFormatter from '../helper/CurrencyFormatter';
 import ThreeDotCircle from '../assets/svg/ThreeDotCircle';
 import ModalOrderDetail from '../components/modal/ModalOrderDetail';
+import GrandTotalFloating from '../components/order/GrandTotalFloating';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -1309,28 +1310,20 @@ const Cart = props => {
     );
   };
 
-  const newFooter = () => (
-    <View style={styles.footer}>
-      <View style={styles.footerChild}>
-        <GlobalText style={styles.granTotal}>Grand Total</GlobalText>
-        <View style={styles.priceContainer}>
-          <GlobalText style={styles.priceAll}>
-            {currencyFormatter(basket?.totalNettAmount)}
-          </GlobalText>
-          <TouchableOpacity
-            onPress={handleOpenDetail}
-            style={styles.threedotContainer}>
-            <View style={styles.detailDotContainer}>
-              <ThreeDotCircle />
-            </View>
-          </TouchableOpacity>
-        </View>
-      </View>
-      <View>
-        <GlobalButton onPress={handleClickButtonPayment} title="Checkout" />
-      </View>
-    </View>
-  );
+  const newFooter = () => {
+    const disabled = handleDisabledPaymentButton(basket?.orderingMode);
+
+    if (additionalSetting().cartVersion === 'basic') {
+      return renderFooter();
+    }
+    return (
+      <GrandTotalFloating
+        onPressBtn={handleClickButtonPayment}
+        btnText={'Checkout'}
+        disabledBtn={disabled}
+      />
+    );
+  };
 
   const renderFooter = () => {
     const result = seeDetail ? renderDetail() : renderPayment();
@@ -1510,7 +1503,7 @@ const Cart = props => {
         isOpen={isOffline}
         onOk={onPressOkError}
       />
-      <ModalOrderDetail open={seeDetail} closeModal={handleCloseDetail} />
+      {/* <ModalOrderDetail open={seeDetail} closeModal={handleCloseDetail} /> */}
     </SafeAreaView>
   );
 };
