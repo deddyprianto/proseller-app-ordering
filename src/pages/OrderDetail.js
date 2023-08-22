@@ -725,7 +725,9 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
           </View>
         ) : null}
 
-        {appConfig.appName === 'fareastflora' && data?.transactionRefNo ? (
+        {appConfig.appName === 'fareastflora' &&
+        data?.transactionRefNo &&
+        !isFromPaymentPage ? (
           <View style={[styles.qrContainer, styles.mt16, styles.mb16]}>
             <GlobalText>Scan this QR Code in Delivery Counter</GlobalText>
             <View style={styles.mt12}>
