@@ -14,6 +14,7 @@ import {
   TouchableOpacity,
   Platform,
   Alert,
+  SafeAreaView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -31,6 +32,12 @@ import {updateUser} from '../actions/user.action';
 
 import CryptoJS from 'react-native-crypto-js';
 import awsConfig from '../config/awsConfig';
+import additionalSetting from '../config/additionalSettings';
+import OrderDetail from '../pages/OrderDetail';
+import {Header} from './layout';
+import GlobalText from './globalText';
+import SuccessSvg from '../assets/svg/SuccessSvg';
+import withHooksComponent from './HOC';
 
 class PaymentSuccess extends Component {
   constructor(props) {
@@ -242,9 +249,42 @@ class PaymentSuccess extends Component {
     }
   };
 
+  renderStep4Text = () => {
+    if (this.props.step) {
+      return (
+        <View>
+          <GlobalText
+            style={{
+              color: this.props.colors.brandTertiary,
+              fontFamily: 'Poppins-Medium',
+            }}>
+            Step {this.props.step} of 4
+          </GlobalText>
+        </View>
+      );
+    }
+    return null;
+  };
+
+  // stepText: {
+  //     color: theme.colors.brandTertiary,
+  //     fontFamily: theme.fontFamily.poppinsMedium,
+  //   },
   renderPaymentDetails = () => {
-    const {intlData} = this.props;
-    const {paidMembership, paySVC} = this.props;
+    const {intlData, dataRespons, paidMembership, paySVC} = this.props;
+    const {cartVersion} = additionalSetting();
+    if (cartVersion === 'advance') {
+      return (
+        <>
+          <Header
+            onBackBtn={() => Actions.reset('app', {fromPayment: true})}
+            customRightIcon={this.renderStep4Text}
+            title={'Payment'}
+          />
+          <OrderDetail isFromPaymentPage={true} data={dataRespons} />
+        </>
+      );
+    }
     return (
       <View style={styles.card}>
         <View
@@ -501,9 +541,9 @@ class PaymentSuccess extends Component {
       this.setState({showDetail: true});
     }, 2500);
     return (
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
         {showDetail ? this.renderPaymentDetails() : this.renderAnimateSuccess()}
-      </View>
+      </SafeAreaView>
     );
   }
 }
@@ -512,7 +552,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    backgroundColor: colorConfig.store.darkColor,
+    backgroundColor: 'white',
   },
   btnBackIcon: {
     color: colorConfig.pageIndex.activeTintColor,
@@ -541,19 +581,21 @@ const styles = StyleSheet.create({
   },
 });
 
-mapStateToProps = state => ({
+const mapStateToProps = state => ({
   intlData: state.intlData,
   companyInfo: state.userReducer.getCompanyInfo.companyInfo,
   user: state.userReducer.getUser.userDetails,
 });
 
-mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = dispatch => ({
   dispatch,
 });
 
-export default compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
-)(PaymentSuccess);
+export default withHooksComponent(
+  compose(
+    connect(
+      mapStateToProps,
+      mapDispatchToProps,
+    ),
+  )(PaymentSuccess),
+);

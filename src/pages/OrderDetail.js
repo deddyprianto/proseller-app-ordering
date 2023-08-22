@@ -31,6 +31,11 @@ import DotSvg from '../assets/svg/DotSvg';
 import NotesProduct from '../assets/svg/NotesProductSvg';
 import ArrowBottom from '../assets/svg/ArrowBottomSvg';
 import useCountdownV2 from '../hooks/time/useCountdownV2';
+import CreditCard from '../assets/svg/CreditCardSvg';
+import SuccessSvg from '../assets/svg/SuccessSvg';
+import ProductCartItemCart2 from '../components/productCartList/components/ProductCartItemCart2';
+import HandsSvg from '../assets/svg/HandsSvg';
+import MapSvg from '../assets/svg/MapSvg';
 
 const useStyles = () => {
   const {colors, fontFamily} = Theme();
@@ -86,6 +91,9 @@ const useStyles = () => {
     },
     listOrderDetailContainer: {
       marginTop: 0,
+    },
+    mt12: {
+      marginTop: 12,
     },
     divider: {
       height: 1,
@@ -245,26 +253,61 @@ const useStyles = () => {
     grayColor: {
       color: '#343A4A',
     },
-    productList: {
-      paddingHorizontal: 0.9,
-    },
     mv6: {
       marginVertical: 6,
     },
     darkGrey: {
       color: '#737373',
     },
+    successContainer: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    paymentSuccessText: {
+      fontSize: 24,
+      fontFamily: fontFamily.poppinsSemiBold,
+      marginBottom: 16,
+    },
+    productContainer: {
+      marginVertical: 16,
+    },
+    row: {
+      flexDirection: 'row',
+    },
+    selectionTitle: {
+      marginLeft: 10,
+      fontFamily: fontFamily.poppinsBold,
+    },
+    textColor: {
+      color: '#343A4A',
+    },
+    normalFont: {
+      fontFamily: fontFamily.poppinsMedium,
+    },
+    greyText: {
+      color: colors.greyScale5,
+    },
+    mt8: {
+      marginTop: 8,
+    },
   });
   return {styles, colors};
 };
 
-const OrderDetail = ({data}) => {
-  const {styles, colors} = useStyles();
+const OrderDetail = ({data, isFromPaymentPage}) => {
+  const {styles} = useStyles();
   const {minutes, seconds, isTimeEnd} = useCountdownV2(data);
   const [showAllOrder, setShowAllOrder] = React.useState(false);
+  const [showAllPreOrder, setShowAllPreOrder] = React.useState(false);
   const staustPending = 'PENDING_PAYMENT';
-
+  const [readyItems, setReadyItems] = React.useState([]);
+  const [preOrderItem, setPreOrderItem] = React.useState([]);
+  const [availableSelectionItem, setAvailableSelectionItem] = React.useState(
+    [],
+  );
   const toggleOrder = () => setShowAllOrder(prevState => !prevState);
+  const togglePreOrder = () => setShowAllPreOrder(prevState => !prevState);
   const downloadQrCode = async () => {
     permissionDownloadFile(data?.action?.url, `qrcode${data.id}`, 'image/png', {
       title: 'Imaged Saved',
@@ -275,76 +318,40 @@ const OrderDetail = ({data}) => {
   const renderItemDetails = ({item, index}) => {
     if (!showAllOrder && index > 0) return null;
     return (
-      <View key={index} style={[styles.shadowBox, styles.boxMain, styles.p12]}>
-        <View style={[styles.listOrderDetailContainer]}>
-          <View style={[styles.orderStatusContainer, styles.columnCard]}>
-            <View style={styles.paymentDetailsCard}>
-              <View style={styles.quantityContainer}>
-                <GlobalText style={styles.waitingPaymentStyle}>
-                  {item?.quantity}x
-                </GlobalText>
-              </View>
-              <GlobalText
-                style={[styles.paymentDetailCardText, styles.mediumFont]}>
-                {item?.product?.name}{' '}
-                <GlobalText style={[styles.primaryColor, styles.boldFont]}>
-                  + {item?.retailPrice}{' '}
-                </GlobalText>
-              </GlobalText>
-              <GlobalText />
-              <GlobalText style={styles.priceMain}>
-                {CurrencyFormatter(item?.nettAmount)}
-              </GlobalText>
-            </View>
-            <View style={styles.columnText}>
-              {item?.modifiers?.map(data => (
-                <>
-                  {data?.modifier?.details?.map((modify, index) => (
-                    <View key={index} style={styles.listModifier}>
-                      <View style={styles.dotModifier}>
-                        <DotSvg color={colors.greyScale2} />
-                      </View>
-                      <View>
-                        <GlobalText style={styles.modifierText}>
-                          <GlobalText style={styles.primaryColor}>
-                            {modify?.quantity}x{' '}
-                          </GlobalText>
-                          {modify?.name}{' '}
-                          <GlobalText style={[styles.primaryColor]}>
-                            + {modify?.price}{' '}
-                          </GlobalText>{' '}
-                        </GlobalText>
-                      </View>
-                    </View>
-                  ))}
-                </>
-              ))}
-              {handleRemarkProduct(item)}
-            </View>
-          </View>
-        </View>
-      </View>
+      <ProductCartItemCart2
+        containerStyle={{marginHorizontal: 0}}
+        item={item}
+      />
     );
   };
 
-  const handleRemarkProduct = item => {
-    if (item.remark) {
-      return (
-        <>
-          <View style={styles.divider} />
-
-          <View style={styles.notesProductContainer}>
-            <View style={styles.notesIcon}>
-              <NotesProduct />
-            </View>
-            <GlobalText style={styles.noteText}>{item.remark} </GlobalText>
-          </View>
-        </>
-      );
-    }
-    return null;
+  const renderItemPreOrder = ({item, index}) => {
+    if (!showAllPreOrder && index > 0) return null;
+    return (
+      <ProductCartItemCart2
+        containerStyle={{marginHorizontal: 0}}
+        item={item}
+      />
+    );
   };
-  const renderPaymentDetail = ({item, index}) => (
+  const splitOrder = () => {
+    const preOrderData = data?.details?.filter(order => order.isPreOrderItem);
+    const readyData = data?.details?.filter(order => !order.isPreOrderItem);
+    const selfSelectionProduct = data?.details?.filter(
+      order => order?.product?.allowSelfSelection,
+    );
+    setPreOrderItem(preOrderData);
+    setReadyItems(readyData);
+    setAvailableSelectionItem(selfSelectionProduct);
+  };
+
+  React.useEffect(() => {
+    if (data) {
+      splitOrder();
+    }
+  }, [data]);
+
+  const renderPaymentDetail = ({item}) => (
     <View>
       {item?.paymentType === 'point' ? (
         <View style={[styles.listOrderDetailContainer, styles.mv6]}>
@@ -397,6 +404,23 @@ const OrderDetail = ({data}) => {
           </View>
         </View>
       ) : null}
+      {item?.paymentType === 'Stripe' ? (
+        <View style={[styles.listOrderDetailContainer, styles.mv6]}>
+          <View style={styles.orderStatusContainer}>
+            <View style={styles.paymentDetailsCard}>
+              <CreditCard />
+              <GlobalText style={styles.paymentDetailCardText}>
+                {item.paymentName}
+              </GlobalText>
+            </View>
+            <View>
+              <GlobalText style={[styles.primaryColor, styles.mediumFont]}>
+                {CurrencyFormatter(item?.paymentAmount)}
+              </GlobalText>
+            </View>
+          </View>
+        </View>
+      ) : null}
     </View>
   );
 
@@ -409,7 +433,7 @@ const OrderDetail = ({data}) => {
               {data?.orderingMode}{' '}
             </GlobalText>
           </View>
-          <View style={styles.listOrderDetailContainer}>
+          <View style={[styles.listOrderDetailContainer, styles.mt12]}>
             <View style={[styles.orderStatusContainer, styles.columnCard]}>
               <View style={styles.paymentDetailsCard}>
                 <MapMarkerSvg />
@@ -462,7 +486,9 @@ const OrderDetail = ({data}) => {
               </View>
               <View style={styles.columnText}>
                 <GlobalText>
-                  {data?.orderActionDate} {data?.orderActionTimeSlot}
+                  Will be deliver on{' '}
+                  {moment(data?.orderActionDate).format('DD MMM YYYY')}{' '}
+                  {data?.orderActionTimeSlot}
                 </GlobalText>
               </View>
             </View>
@@ -557,11 +583,54 @@ const OrderDetail = ({data}) => {
     );
   };
 
-  const handleItemText = () => {
-    if (data?.details?.length > 1) {
+  const handleItemText = data => {
+    if (data?.length > 1) {
       return ' Items';
     }
     return 'Item';
+  };
+
+  const renderIsItemSelection = () => {
+    if (availableSelectionItem.length > 0) {
+      return (
+        <View style={[styles.shadowBox, styles.boxMain, styles.p12]}>
+          <View style={styles.row}>
+            <HandsSvg />
+            <GlobalText style={[styles.selectionTitle, styles.textColor]}>
+              Items Selections
+            </GlobalText>
+            <GlobalText style={[styles.mlAuto, styles.normalFont]}>
+              {data?.isSelfSelection ? 'Chosen by Customer' : 'Chosen by Staff'}
+            </GlobalText>
+          </View>
+          <View>
+            <GlobalText
+              style={[styles.greyText, styles.normalFont, styles.mt8]}>
+              {data?.isSelfSelection
+                ? `Please visit the selected outlet for item selection before ${moment(
+                    data?.orderActionDate,
+                  ).format('DD MMM YYYY')} ${data?.orderActionTimeSlot}`
+                : 'Staff assistance provided on choosing your items.'}
+            </GlobalText>
+          </View>
+          {data?.isSelfSelection ? (
+            <>
+              <View style={styles.dashStyle} />
+              <View style={styles.row}>
+                <MapSvg />
+                <GlobalText style={[styles.selectionTitle, styles.textColor]}>
+                  Outlet
+                </GlobalText>
+              </View>
+              <View style={styles.mt8}>
+                <GlobalText>{data?.outlet?.name} </GlobalText>
+                <GlobalText>{data?.outlet?.address} </GlobalText>
+              </View>
+            </>
+          ) : null}
+        </View>
+      );
+    }
   };
 
   return (
@@ -595,6 +664,14 @@ const OrderDetail = ({data}) => {
               </View>
             </View>
           </>
+        ) : null}
+        {isFromPaymentPage ? (
+          <View style={styles.successContainer}>
+            <SuccessSvg />
+            <GlobalText style={styles.paymentSuccessText}>
+              Payment Success
+            </GlobalText>
+          </View>
         ) : null}
 
         <View />
@@ -712,6 +789,14 @@ const OrderDetail = ({data}) => {
               </View>
             </View>
           </View>
+
+          <View style={styles.orderDetailWrapCOntainer}>
+            <GlobalText style={styles.oredrDetailText}>
+              Ordering Type Details
+            </GlobalText>
+          </View>
+          {renderIsItemSelection()}
+          {renderAddress()}
           <View style={styles.orderDetailWrapCOntainer}>
             <GlobalText style={styles.oredrDetailText}>
               Payment Details
@@ -724,36 +809,64 @@ const OrderDetail = ({data}) => {
               renderItem={renderPaymentDetail}
             />
           </View>
-
-          <View style={styles.orderDetailWrapCOntainer}>
-            <GlobalText style={styles.oredrDetailText}>
-              Ordering Details
-            </GlobalText>
-          </View>
-          {renderAddress()}
-          <TouchableOpacity
-            onPress={toggleOrder}
-            style={styles.orderDetailWrapCOntainer}>
-            <GlobalText style={styles.oredrDetailText}>
-              Item Details ({data?.details?.length} {handleItemText()})
-            </GlobalText>
-            {data?.details?.length > 1 && (
-              <View style={[styles.notesProductContainer, styles.mlAuto]}>
-                <GlobalText style={[styles.moreItemText]}>
-                  {data?.details?.length - 1} More Item
+          {readyItems.length > 0 ? (
+            <>
+              <TouchableOpacity
+                onPress={toggleOrder}
+                style={styles.orderDetailWrapCOntainer}>
+                <GlobalText style={styles.oredrDetailText}>
+                  Item Details ({readyItems.length} {handleItemText(readyItems)}
+                  )
                 </GlobalText>
-                <ArrowBottom />
-              </View>
-            )}
-          </TouchableOpacity>
-          <View>
-            <FlatList
-              keyExtractor={(item, index) => index.toString()}
-              data={data?.details || []}
-              contentContainerStyle={styles.productList}
-              renderItem={renderItemDetails}
-            />
-          </View>
+                {readyItems.length > 1 && (
+                  <View style={[styles.notesProductContainer, styles.mlAuto]}>
+                    <GlobalText style={[styles.moreItemText]}>
+                      {readyItems.length - 1} More Item
+                    </GlobalText>
+                    <ArrowBottom />
+                  </View>
+                )}
+              </TouchableOpacity>
+              {readyItems.length > 0 ? (
+                <View style={styles.productContainer}>
+                  <FlatList
+                    keyExtractor={(item, index) => index.toString()}
+                    data={readyItems || []}
+                    renderItem={renderItemDetails}
+                  />
+                </View>
+              ) : null}
+            </>
+          ) : null}
+          {preOrderItem.length > 0 ? (
+            <>
+              <TouchableOpacity
+                onPress={togglePreOrder}
+                style={styles.orderDetailWrapCOntainer}>
+                <GlobalText style={styles.oredrDetailText}>
+                  Item Details ({preOrderItem.length}{' '}
+                  {handleItemText(preOrderItem)})
+                </GlobalText>
+                {preOrderItem.length > 1 && (
+                  <View style={[styles.notesProductContainer, styles.mlAuto]}>
+                    <GlobalText style={[styles.moreItemText]}>
+                      {preOrderItem.length - 1} More Item
+                    </GlobalText>
+                    <ArrowBottom />
+                  </View>
+                )}
+              </TouchableOpacity>
+              {preOrderItem.length > 0 ? (
+                <View style={styles.productContainer}>
+                  <FlatList
+                    keyExtractor={(item, index) => index.toString()}
+                    data={preOrderItem || []}
+                    renderItem={renderItemPreOrder}
+                  />
+                </View>
+              ) : null}
+            </>
+          ) : null}
 
           <View style={styles.referenceNoContainer}>
             <View>
