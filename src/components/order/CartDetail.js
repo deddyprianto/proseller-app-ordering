@@ -319,11 +319,9 @@ const CartDetail = ({
 
   return (
     <View>
-      {haveOrderDetail ? (
-        <GlobalText style={[styles.orderText, styles.ph16]}>
-          Order Details
-        </GlobalText>
-      ) : null}
+      <GlobalText style={[styles.orderText, styles.ph16]}>
+        Order Details
+      </GlobalText>
       <View style={[styles.ph14]}>
         {availableSelection?.length > 0 ? (
           <View style={styles.card}>
@@ -380,12 +378,7 @@ const CartDetail = ({
         </View>
       </View>
 
-      <GlobalText
-        style={[
-          styles.orderText,
-          styles.ph16,
-          {marginTop: haveOrderDetail ? 36 : 0},
-        ]}>
+      <GlobalText style={[styles.orderText, styles.ph16, {marginTop: 36}]}>
         Payment Details
       </GlobalText>
       <View style={styles.ph14}>

@@ -315,7 +315,7 @@ const useStyles = () => {
     },
 
     availableTextDate: {
-      marginTop: 8,
+      marginVertical: 8,
       fontSize: 12,
       fontFamily: fontFamily.poppinsMedium,
       color: colors.textBrand,
@@ -342,11 +342,7 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
   const [showAllOrder, setShowAllOrder] = React.useState(false);
   const [showAllPreOrder, setShowAllPreOrder] = React.useState(false);
   const staustPending = 'PENDING_PAYMENT';
-  const [readyItems, setReadyItems] = React.useState([]);
-  const [preOrderItem, setPreOrderItem] = React.useState([]);
-  const [availableSelectionItem, setAvailableSelectionItem] = React.useState(
-    [],
-  );
+
   const {
     groupingeOrder,
     defaultOrder,
@@ -383,16 +379,6 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
         item={item}
       />
     );
-  };
-  const splitOrder = () => {
-    const preOrderData = data?.details?.filter(order => order.isPreOrderItem);
-    const readyData = data?.details?.filter(order => !order.isPreOrderItem);
-    const selfSelectionProduct = data?.details?.filter(
-      order => order?.product?.allowSelfSelection,
-    );
-    setPreOrderItem(preOrderData);
-    setReadyItems(readyData);
-    setAvailableSelectionItem(selfSelectionProduct);
   };
 
   React.useEffect(() => {
@@ -640,7 +626,7 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
     return 'Item';
   };
   const renderIsItemSelection = () => {
-    if (availableSelectionItem.length > 0) {
+    if (listSelfSelection.length > 0) {
       return (
         <View style={[styles.shadowBox, styles.boxMain, styles.p12]}>
           <View style={styles.row}>
