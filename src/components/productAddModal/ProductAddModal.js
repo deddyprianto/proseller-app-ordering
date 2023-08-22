@@ -45,6 +45,7 @@ import PreorderLabel from '../label/Preorder';
 import CloseSvg from '../../assets/svg/CloseSvg';
 import AllowSelfSelectionLabel from '../label/AllowSelfSelection';
 import ProductImages from './components/ProductImages';
+import {getProductById} from '../../actions/product.action';
 
 const useStyles = () => {
   const theme = Theme();
@@ -106,10 +107,10 @@ const useStyles = () => {
       fontFamily: theme.fontFamily.poppinsRegular,
     },
     textDescription: {
-      padding: 16,
-      fontSize: theme.fontSize[14],
+      marginBottom: 8,
+      fontSize: theme.fontSize[16],
       color: theme.colors.textPrimary,
-      fontFamily: theme.fontFamily.poppinsMedium,
+      fontFamily: theme.fontFamily.poppinsSemiBold,
     },
     viewNameAndPrice: {
       width: '70%',
@@ -253,7 +254,7 @@ const webStyles = StyleSheet.create({
   },
 });
 
-const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
+const ProductAddModal = ({open, handleClose, productId, selectedProduct}) => {
   const styles = useStyles();
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
@@ -273,11 +274,23 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
   const [selectedVariantOptions, setSelectedVariantOptions] = useState([]);
   const [selectedProductModifiers, setSelectedProductModifiers] = useState([]);
 
+  const [product, setProduct] = useState({});
+
   const defaultOutlet = useSelector(
     state => state.storesReducer.defaultOutlet.defaultOutlet,
   );
 
   const {width} = useWindowDimensions();
+
+  useEffect(() => {
+    const loadData = async () => {
+      setIsLoading(true);
+      const response = await dispatch(getProductById(productId));
+      setProduct(response);
+      setIsLoading(false);
+    };
+    loadData();
+  }, [productId]);
 
   useEffect(() => {
     const loadData = async () => {
@@ -719,6 +732,7 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
         <View>
           <View style={styles.divider} />
           <View style={styles.viewDescription}>
+            <Text style={styles.textDescription}>Description</Text>
             <RenderHtml
               source={{html: `${product.description}`}}
               contentWidth={width}
@@ -727,6 +741,38 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
           </View>
         </View>
       );
+    }
+  };
+
+  const renderProductCustomFieldItem = item => {
+    return (
+      <View>
+        <View style={styles.divider} />
+        <View style={styles.viewDescription}>
+          <Text style={styles.textDescription}>{item.name}</Text>
+          <RenderHtml
+            source={{html: `${item.value}`}}
+            contentWidth={width}
+            tagsStyles={webStyles}
+          />
+        </View>
+      </View>
+    );
+  };
+
+  const renderProductCustomFields = () => {
+    const customFiltered = product?.custom?.filter(
+      row => row?.showToCustomer && row?.value,
+    );
+
+    if (!isEmptyArray(customFiltered)) {
+      const result = customFiltered?.map((row, index) => {
+        if (index <= 2) {
+          return renderProductCustomFieldItem(row);
+        }
+      });
+
+      return result;
     }
   };
 
@@ -799,6 +845,7 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
           {renderProductPromotions()}
           {renderProductModifiers()}
           {renderProductVariants()}
+          {renderProductCustomFields()}
           {renderSpecialInstruction()}
         </KeyboardAwareScrollView>
         {renderCartButton()}

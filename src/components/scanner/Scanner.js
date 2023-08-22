@@ -61,7 +61,7 @@ const Scanner = ({open, handleClose}) => {
     if (isOpenAddModal) {
       return (
         <ProductAddModal
-          product={product}
+          productId={product.id}
           open={isOpenAddModal}
           handleClose={() => {
             handleCloseProductAddModal();
