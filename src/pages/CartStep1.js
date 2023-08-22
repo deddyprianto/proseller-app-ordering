@@ -72,7 +72,7 @@ const CartStep1 = props => {
   );
 
   const goToTheCartStep2 = () => {
-    Actions.cart();
+    Actions.cart({step: 2});
   };
 
   return (

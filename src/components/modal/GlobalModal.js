@@ -60,6 +60,8 @@ const useStyles = () => {
  * @property {import('react-native').StyleProp} titleStyle
  * @property {boolean} isBottomModal
  * @property {import('react-native').StyleProp} scrollContainerStyle
+ * @property {import('react-native').StyleProp} titleContainerStyle
+ * @property {import('react-native').StyleProp} closeContainerStyle
  */
 
 /**
@@ -96,14 +98,14 @@ const GlobalModal = props => {
   return (
     <Modal style={handleStyle()} useNativeDriver {...props}>
       <View style={[styles.modalContainer, props.modalContainerStyle]}>
-        <View style={styles.titleCloseContainer}>
+        <View style={[styles.titleCloseContainer, props.titleContainerStyle]}>
           <View>
             <GlobalText style={[styles.titleText, props.titleStyle]}>
               {props.title}
             </GlobalText>
           </View>
           {!props.hideCloseIcon ? (
-            <View style={styles.closeContainer}>
+            <View style={[styles.closeContainer, props.closeContainerStyle]}>
               <TouchableOpacity onPress={props.closeModal}>
                 <CloseSvg />
               </TouchableOpacity>

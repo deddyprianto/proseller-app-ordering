@@ -392,7 +392,7 @@ const RegisterForm = ({registerMethod, inputValue, approvedData}) => {
     if (registerMethod === 'email') {
       active = name && phoneNumber.length >= 6 && !isHaveEmptyField;
     } else {
-      active = name && email;
+      active = name && email && !isHaveEmptyField;
     }
 
     return (
