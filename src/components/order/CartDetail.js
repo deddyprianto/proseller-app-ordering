@@ -87,7 +87,7 @@ const useStyles = () => {
     },
     deliveryText: {
       fontSize: 16,
-      color: theme.colors.brandPrimary,
+      color: theme.colors.brandTertiary,
     },
     mr10: {
       marginRight: 10,
@@ -113,6 +113,9 @@ const useStyles = () => {
     brandColor: {
       color: theme.colors.brandTertiary,
     },
+    primaryColor: {
+      color: theme.colors.primary,
+    },
     checkBoxStyle: {
       width: 24,
       height: 24,
@@ -137,6 +140,9 @@ const useStyles = () => {
       color: theme.colors.greyScale5,
       fontFamily: theme.fontFamily.poppinsMedium,
       marginLeft: 32,
+    },
+    mt4: {
+      marginTop: 4,
     },
   });
   return {styles, colors: theme.colors};
@@ -191,25 +197,131 @@ const CartDetail = ({
     setButtonActive(active);
   };
 
+  const renderOrderDetail = () => {
+    if (data?.cartDetails?.orderingMode.toLowerCase() === 'delivery') {
+      return (
+        <>
+          <View style={[styles.row, styles.mt12]}>
+            <View style={styles.mr10}>
+              <MapSvg />
+            </View>
+            <GlobalText style={[styles.boldFont, styles.smallFont]}>
+              Delivery To
+            </GlobalText>
+          </View>
+          <View style={styles.mt8}>
+            <GlobalText
+              style={[styles.smallFont, styles.mediumFont, styles.mediumSize]}>
+              {data.deliveryAddress?.recipient?.name} |{' '}
+              {data.deliveryAddress?.recipient?.phoneNumber}
+            </GlobalText>
+          </View>
+          <View>
+            <GlobalText>{data.deliveryAddress?.streetName}</GlobalText>
+          </View>
+          <View style={styles.mv12}>
+            <DashSvg />
+          </View>
+          {data.deliveryProvider ? (
+            <>
+              <View style={styles.row}>
+                <View style={styles.mr10}>
+                  <TruckSvg />
+                </View>
+                <GlobalText>Delivery Provider</GlobalText>
+                <View style={styles.mlAuto}>
+                  <GlobalText>{data?.deliveryProvider?.name}</GlobalText>
+                </View>
+              </View>
+              <View style={styles.mv12}>
+                <DashSvg />
+              </View>
+            </>
+          ) : null}
+          {data.orderActionDate ? (
+            <>
+              <View style={styles.row}>
+                <View style={styles.mr10}>
+                  <CalendarBold />
+                </View>
+                <GlobalText>Date & Time</GlobalText>
+              </View>
+              <View>
+                <GlobalText>
+                  Will be deliver on :{' '}
+                  {moment(data?.orderActionDate).format('DD MMMM YYYY')} at{' '}
+                  {data?.orderActionTimeSlot}
+                </GlobalText>
+              </View>
+            </>
+          ) : null}
+        </>
+      );
+    }
+    return (
+      <>
+        <View style={[styles.row, styles.mt12]}>
+          <View style={styles.mr10}>
+            <MapSvg />
+          </View>
+          <GlobalText style={[styles.boldFont, styles.smallFont]}>
+            Pickup at
+          </GlobalText>
+        </View>
+        <View style={styles.mt8}>
+          <GlobalText
+            style={[
+              styles.smallFont,
+              styles.mediumFont,
+              styles.mediumSize,
+              styles.primaryColor,
+            ]}>
+            {data?.cartDetails?.outlet?.name}
+          </GlobalText>
+        </View>
+        <View>
+          <GlobalText style={[styles.primaryColor, styles.mt4]}>
+            {data?.cartDetails?.outlet?.address}
+          </GlobalText>
+        </View>
+
+        {data.orderActionDate ? (
+          <>
+            <View style={styles.mv12}>
+              <DashSvg />
+            </View>
+            <View style={styles.row}>
+              <View style={styles.mr10}>
+                <CalendarBold />
+              </View>
+              <GlobalText>Date & Time</GlobalText>
+            </View>
+            <View style={styles.mt4}>
+              <GlobalText>
+                {moment(data?.orderActionDate).format('DD MMMM YYYY')} at{' '}
+                {data?.orderActionTimeSlot}
+              </GlobalText>
+            </View>
+          </>
+        ) : null}
+      </>
+    );
+  };
+
   React.useEffect(() => {
     if (vouchers?.length > 0) {
       const amount = calculateVoucherPoint(vouchers);
       setTotalPointVoucher(amount);
     }
   }, [vouchers]);
-  console.log({data, selectedAccount}, 'lapu');
-  const amountPaidVoucherPoint =
-    myMoneyPoint || 0 + calculateVoucherPoint(vouchers);
-  console.log(amountPaidVoucherPoint, vouchers, 'lisa');
   const haveOrderDetail =
     availableSelection?.length > 0 || data?.deliveryAddress;
+
   return (
     <View>
-      {haveOrderDetail ? (
-        <GlobalText style={[styles.orderText, styles.ph16]}>
-          Order Details
-        </GlobalText>
-      ) : null}
+      <GlobalText style={[styles.orderText, styles.ph16]}>
+        Order Details
+      </GlobalText>
       <View style={[styles.ph14]}>
         {availableSelection?.length > 0 ? (
           <View style={styles.card}>
@@ -254,81 +366,19 @@ const CartDetail = ({
           </View>
         ) : null}
       </View>
-      {data?.deliveryAddress ? (
-        <View style={[{paddingHorizontal: 14}, styles.mt8]}>
-          <View style={styles.card}>
-            <View style={[styles.row, styles.mt12]}>
-              <GlobalText style={[styles.boldFont, styles.deliveryText]}>
-                Delivery
-              </GlobalText>
-            </View>
-            <View style={[styles.row, styles.mt12]}>
-              <View style={styles.mr10}>
-                <MapSvg />
-              </View>
-              <GlobalText style={[styles.boldFont, styles.smallFont]}>
-                Delivery To
-              </GlobalText>
-            </View>
-            <View style={styles.mt8}>
-              <GlobalText
-                style={[
-                  styles.smallFont,
-                  styles.mediumFont,
-                  styles.mediumSize,
-                ]}>
-                {data.deliveryAddress?.recipient?.name} |{' '}
-                {data.deliveryAddress?.recipient?.phoneNumber}
-              </GlobalText>
-            </View>
-            <View>
-              <GlobalText>{data.deliveryAddress?.streetName}</GlobalText>
-            </View>
-            <View style={styles.mv12}>
-              <DashSvg />
-            </View>
-            {data.deliveryProvider ? (
-              <>
-                <View style={styles.row}>
-                  <View style={styles.mr10}>
-                    <TruckSvg />
-                  </View>
-                  <GlobalText>Delivery Provider</GlobalText>
-                  <View style={styles.mlAuto}>
-                    <GlobalText>{data?.deliveryProvider?.name}</GlobalText>
-                  </View>
-                </View>
-                <View style={styles.mv12}>
-                  <DashSvg />
-                </View>
-              </>
-            ) : null}
-            {data.orderActionDate ? (
-              <>
-                <View style={styles.row}>
-                  <View style={styles.mr10}>
-                    <CalendarBold />
-                  </View>
-                  <GlobalText>Date & Time</GlobalText>
-                </View>
-                <View>
-                  <GlobalText>
-                    Will be deliver on :{' '}
-                    {moment(data?.orderActionDate).format('DD MMMM YYYY')} at{' '}
-                    {data?.orderActionTimeSlot}
-                  </GlobalText>
-                </View>
-              </>
-            ) : null}
+
+      <View style={[{paddingHorizontal: 14}, styles.mt8]}>
+        <View style={styles.card}>
+          <View style={[styles.row, styles.mt12]}>
+            <GlobalText style={[styles.boldFont, styles.deliveryText]}>
+              {data?.cartDetails?.orderingMode}
+            </GlobalText>
           </View>
+          {renderOrderDetail()}
         </View>
-      ) : null}
-      <GlobalText
-        style={[
-          styles.orderText,
-          styles.ph16,
-          {marginTop: haveOrderDetail ? 36 : 0},
-        ]}>
+      </View>
+
+      <GlobalText style={[styles.orderText, styles.ph16, {marginTop: 36}]}>
         Payment Details
       </GlobalText>
       <View style={styles.ph14}>

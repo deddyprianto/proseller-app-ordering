@@ -21,6 +21,7 @@ import {getCart, getPendingCart, setCart} from '../../actions/order.action';
 import {isEmptyArray} from '../../helper/CheckEmpty';
 import CurrencyFormatter from '../../helper/CurrencyFormatter';
 import appConfig from '../../config/appConfig';
+import {handlePaymentStatus} from '../../helper/PaymentStatus';
 
 class HistoryPayment extends Component {
   constructor(props) {
@@ -157,26 +158,6 @@ class HistoryPayment extends Component {
   //   }
   //   console.log('mau load more');
   // };
-
-  getStatusText = item => {
-    try {
-      if (item === 'SUBMITTED') {
-        return 'Submitted';
-      } else if (item === 'CONFIRMED') {
-        return 'Confirmed';
-      } else if (item === 'PROCESSING') {
-        return 'Processing';
-      } else if (item === 'READY_FOR_COLLECTION') {
-        return 'Ready for Collection';
-      } else if (item === 'READY_FOR_DELIVERY') {
-        return 'Ready for Delivery';
-      } else if (item === 'ON_THE_WAY') {
-        return 'On The Way';
-      } else {
-        return item;
-      }
-    } catch (e) {}
-  };
 
   formatCurrency = value => {
     try {
@@ -323,7 +304,7 @@ class HistoryPayment extends Component {
                           style={styles.paymentTypeLogo}
                         />
                         <Text style={styles.paymentType}>
-                          {this.getStatusText(item.status)}
+                          {handlePaymentStatus(item.status)}
                         </Text>
                       </View>
                       <Text style={styles.paymentTgl}>
