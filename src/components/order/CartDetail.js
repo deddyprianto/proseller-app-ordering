@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React from 'react';
 import {View, StyleSheet, TouchableOpacity} from 'react-native';
 import GlobalText from '../globalText';
@@ -16,6 +17,10 @@ import CreditCard from '../../assets/svg/CreditCard';
 import {useSelector} from 'react-redux';
 import CurrencyFormatter from '../../helper/CurrencyFormatter';
 import CheckBox from '@react-native-community/checkbox';
+import useCalculation from '../../hooks/calculation/useCalculation';
+import GlobalModal from '../modal/GlobalModal';
+import GlobalButton from '../button/GlobalButton';
+import useSettings from '../../hooks/settings/useSettings';
 
 const useStyles = () => {
   const theme = Theme();
@@ -122,6 +127,17 @@ const useStyles = () => {
       backgroundColor: '#F9F9F9',
       borderRadius: 8,
     },
+    mb36: {
+      marginBottom: 36,
+    },
+    ml32: {
+      marginLeft: 32,
+    },
+    checkboxText: {
+      color: theme.colors.greyScale5,
+      fontFamily: theme.fontFamily.poppinsMedium,
+      marginLeft: 32,
+    },
   });
   return {styles, colors: theme.colors};
 };
@@ -136,11 +152,18 @@ const CartDetail = ({
   vouchers,
   myPoint,
   myMoneyPoint,
+  isAgreeTnc,
+  onAgreeTnc,
 }) => {
   const {styles, colors} = useStyles();
   const selectedAccount = useSelector(
     state => state.cardReducer?.selectedAccount?.selectedAccount,
   );
+  const [totalPointVoucher, setTotalPointVoucher] = React.useState(0);
+  const {calculateVoucherPoint} = useCalculation();
+  const [isOpenTnc, setIsOpenTnc] = React.useState(false);
+  const {checkTncPolicyData} = useSettings();
+  const [buttonActive, setButtonActive] = React.useState(false);
   const handleTextSelection = () => {
     if (data?.isSelfSelection) {
       return {
@@ -156,12 +179,38 @@ const CartDetail = ({
     };
   };
 
+  const toggleTnc = () => setIsOpenTnc(prevState => !prevState);
+
+  const handleAgreeTnc = value => {
+    if (onAgreeTnc && typeof onAgreeTnc === 'function') {
+      onAgreeTnc(value);
+    }
+  };
+
+  const onButtonActive = active => {
+    setButtonActive(active);
+  };
+
+  React.useEffect(() => {
+    if (vouchers?.length > 0) {
+      const amount = calculateVoucherPoint(vouchers);
+      setTotalPointVoucher(amount);
+    }
+  }, [vouchers]);
+  console.log({data, selectedAccount}, 'lapu');
+  const amountPaidVoucherPoint =
+    myMoneyPoint || 0 + calculateVoucherPoint(vouchers);
+  console.log(amountPaidVoucherPoint, vouchers, 'lisa');
+  const haveOrderDetail =
+    availableSelection?.length > 0 || data?.deliveryAddress;
   return (
     <View>
-      <GlobalText style={[styles.orderText, styles.ph16]}>
-        Order Details
-      </GlobalText>
-      <View style={styles.ph14}>
+      {haveOrderDetail ? (
+        <GlobalText style={[styles.orderText, styles.ph16]}>
+          Order Details
+        </GlobalText>
+      ) : null}
+      <View style={[styles.ph14]}>
         {availableSelection?.length > 0 ? (
           <View style={styles.card}>
             <View style={styles.row}>
@@ -274,7 +323,12 @@ const CartDetail = ({
           </View>
         </View>
       ) : null}
-      <GlobalText style={[styles.orderText, styles.ph16, styles.mt36]}>
+      <GlobalText
+        style={[
+          styles.orderText,
+          styles.ph16,
+          {marginTop: haveOrderDetail ? 36 : 0},
+        ]}>
         Payment Details
       </GlobalText>
       <View style={styles.ph14}>
@@ -341,10 +395,21 @@ const CartDetail = ({
           </View>
         </TouchableOpacity>
         <View style={[styles.p12, styles.bgGrey, styles.mt8]}>
-          <GlobalText>Amount paid by points/vouchers</GlobalText>
-          <GlobalText>Subtotal</GlobalText>
+          <GlobalText>
+            Amount paid by points/vouchers{' '}
+            {CurrencyFormatter(totalPointVoucher)}{' '}
+          </GlobalText>
+          <GlobalText>
+            Amount paid by {selectedAccount?.details?.cardIssuer}{' '}
+            {CurrencyFormatter(data?.totalNettAmount)}{' '}
+          </GlobalText>
         </View>
-        <View style={[styles.row, styles.mt8, {alignItems: 'center'}]}>
+        <View
+          style={[
+            styles.row,
+            styles.mt8,
+            {alignItems: 'center', marginTop: 32},
+          ]}>
           <CheckBox
             style={styles.checkBoxStyle}
             lineWidth={1}
@@ -352,14 +417,39 @@ const CartDetail = ({
             onFillColor={colors.primary}
             onTintColor={colors.primary}
             onCheckColor={'white'}
-            //   value={props.checkboxValue?.consent}
-            //   onValueChange={newValue => onChangeValue('consent', newValue)}
+            value={isAgreeTnc}
+            onValueChange={handleAgreeTnc}
           />
-          <GlobalText style={styles.ml8}>
-            I agree to the Terms and Conditions.
+          <GlobalText style={[styles.ml8]}>
+            I agree to the{' '}
+            <GlobalText onPress={toggleTnc} style={[styles.brandColor]}>
+              Terms and Conditions.
+            </GlobalText>
+          </GlobalText>
+        </View>
+        <View>
+          <GlobalText style={[styles.mt8, styles.ml3, styles.checkboxText]}>
+            Tick the checkbox to proceed to payment.
           </GlobalText>
         </View>
       </View>
+      <GlobalModal
+        title="Terms and Conditions"
+        closeModal={toggleTnc}
+        isCloseToBottom={onButtonActive}
+        titleStyle={styles.titleModal}
+        stickyBottom={
+          <View>
+            <GlobalButton
+              disabled={!buttonActive}
+              onPress={toggleTnc}
+              title="Understood"
+            />
+          </View>
+        }
+        isVisible={isOpenTnc}>
+        <GlobalText>{checkTncPolicyData().tnc?.settingValue}</GlobalText>
+      </GlobalModal>
     </View>
   );
 };

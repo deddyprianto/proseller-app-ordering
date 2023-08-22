@@ -2286,7 +2286,6 @@ class SettleOrder extends Component {
       payVoucher,
     } = this.props;
     this.hideModal();
-
     // try {
     //   if (selectedAccount && (payMembership || paySVC || payVoucher)) {
     //     if (selectedAccount.paymentID === 'MANUAL_TRANSFER') {
@@ -2718,6 +2717,7 @@ class SettleOrder extends Component {
             outlet: this.state.outlet,
             url,
             dataRespons: response.responseBody.data,
+            step: 4,
           });
         }
       } else {

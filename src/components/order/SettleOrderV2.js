@@ -45,9 +45,9 @@ const SettleOrderV2 = ({
   myPoint,
   doPayment,
 }) => {
-  console.log({data, vouchers}, 'susun');
   const {styles} = useStyles();
   const [availabeSelection, setAvailableSelection] = React.useState([]);
+  const [isAgreeTnc, setIsAgreeTnc] = React.useState(false);
   const renderStep = () => {
     if (step) {
       return (
@@ -58,9 +58,12 @@ const SettleOrderV2 = ({
     }
     return null;
   };
-
   const handleSaveAvailableSelection = dataArray => {
     setAvailableSelection(dataArray);
+  };
+
+  const updateAgreeTnc = val => {
+    setIsAgreeTnc(val);
   };
 
   return (
@@ -87,6 +90,7 @@ const SettleOrderV2 = ({
           vouchers={vouchers}
           myMoneyPoint={myMoneyPoint}
           myPoint={myPoint}
+          onAgreeTnc={updateAgreeTnc}
         />
       </ScrollView>
       <GrandTotalFloating
@@ -94,6 +98,7 @@ const SettleOrderV2 = ({
         pointDisc={myPoint}
         btnText={'Pay'}
         onPressBtn={doPayment}
+        disabledBtn={!isAgreeTnc}
       />
     </SafeAreaView>
   );

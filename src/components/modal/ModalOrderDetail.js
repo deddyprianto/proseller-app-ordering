@@ -5,6 +5,7 @@ import GlobalText from '../globalText';
 import CurrencyFormatter from '../../helper/CurrencyFormatter';
 import Theme from '../../theme/Theme';
 import {useSelector} from 'react-redux';
+import useCalculation from '../../hooks/calculation/useCalculation';
 
 const useStyles = () => {
   const theme = Theme();
@@ -57,6 +58,16 @@ const useStyles = () => {
       fontFamily: theme.fontFamily.poppinsSemiBold,
       color: theme.colors.errorColor,
     },
+    p12: {
+      padding: 12,
+    },
+    mt16: {
+      marginTop: 16,
+    },
+    bgGrey: {
+      backgroundColor: '#F9F9F9',
+      borderRadius: 8,
+    },
   });
   return styles;
 };
@@ -64,22 +75,16 @@ const useStyles = () => {
 const ModalOrderDetail = ({open, closeModal, vouchers, pointDisc}) => {
   const styles = useStyles();
   const basket = useSelector(state => state.orderReducer?.dataBasket?.product);
-
+  const {calculateVoucherPoint} = useCalculation();
+  const {calculateVoucher} = useCalculation();
   const handleCloseDetail = () => {
     if (closeModal && typeof closeModal === 'function') {
       closeModal();
     }
   };
-  const calculateVoucher = () => {
-    const amountVoucherArr = vouchers
-      ?.filter(voucher => !voucher?.isPoint)
-      ?.map(voucher => voucher?.paymentAmount);
-    if (amountVoucherArr?.length > 0) {
-      const totalVoucher = amountVoucherArr?.reduce((a, b) => a + b);
-      return totalVoucher;
-    }
-    return 0;
-  };
+  const selectedAccount = useSelector(
+    state => state.cardReducer?.selectedAccount?.selectedAccount,
+  );
 
   return (
     <GlobalModal
@@ -139,10 +144,20 @@ const ModalOrderDetail = ({open, closeModal, vouchers, pointDisc}) => {
           <View style={styles.modalItem}>
             <GlobalText style={styles.minusText}>Paid voucher</GlobalText>
             <GlobalText style={[styles.modalItemPrice, styles.minusText]}>
-              ({CurrencyFormatter(calculateVoucher())} )
+              ({CurrencyFormatter(calculateVoucher(vouchers))} )
             </GlobalText>
           </View>
         ) : null}
+        <View style={[styles.p12, styles.mt16, styles.bgGrey]}>
+          <GlobalText>
+            Amount paid by points/vouchers{' '}
+            {CurrencyFormatter(calculateVoucherPoint(vouchers))}{' '}
+          </GlobalText>
+          <GlobalText>
+            Amount paid by {selectedAccount?.details?.cardIssuer}{' '}
+            {CurrencyFormatter(basket?.totalNettAmount)}
+          </GlobalText>
+        </View>
       </View>
     </GlobalModal>
   );
