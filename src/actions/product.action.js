@@ -378,3 +378,31 @@ export const getProductById = id => {
     }
   };
 };
+
+export const productByPromotion = ({promotionId, outletId}) => {
+  return async (dispatch, getState) => {
+    try {
+      const payload = {
+        outletId,
+      };
+
+      console.log('payload', payload);
+
+      const response = await fetchApiProduct(
+        '/promotion/items/' + promotionId,
+        'POST',
+        payload,
+        200,
+        null,
+      );
+
+      console.log('RESPONSE GET PRODUCTS BY PROMOTION ', response);
+
+      if (response.success) {
+        return response?.response?.data;
+      } else {
+        return [];
+      }
+    } catch (e) {}
+  };
+};

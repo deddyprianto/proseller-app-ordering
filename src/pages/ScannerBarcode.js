@@ -16,7 +16,6 @@ import appConfig from '../config/appConfig';
 import {Svg, Defs, Rect, Mask} from 'react-native-svg';
 
 import LoadingScreen from '../components/loadingScreen';
-import ProductAddModal from '../components/productAddModal';
 import {Header} from '../components/layout';
 import {SearchProductByBarcodeModal} from '../components/modal';
 
@@ -29,9 +28,9 @@ import {
   normalizeLayoutSizeHeight,
   normalizeLayoutSizeWidth,
 } from '../helper/Layout';
+import {Actions} from 'react-native-router-flux';
 
 const HEIGHT = Dimensions.get('window').height;
-const WIDTH = Dimensions.get('window').width;
 
 const RESTRICTED_TYPES = ['QR_CODE', 'UNKNOWN', 'TEXT'];
 
@@ -124,19 +123,9 @@ const ScannerBarcode = () => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [isShowInstruction, setIsShowInstruction] = useState(true);
-  const [isOpenAddModal, setIsOpenAddModal] = useState(false);
   const [isOpenSearchBarcodeModal, setIsOpenSearchBarcodeModal] = useState(
     false,
   );
-
-  const [product, setProduct] = useState({});
-
-  const handleOpenProductAddModal = () => {
-    setIsOpenAddModal(true);
-  };
-  const handleCloseProductAddModal = () => {
-    setIsOpenAddModal(false);
-  };
 
   const handleOpenSearchProductByBarcodeModal = () => {
     setIsOpenSearchBarcodeModal(true);
@@ -151,8 +140,10 @@ const ScannerBarcode = () => {
 
     if (response?.data) {
       setIsLoading(false);
-      setProduct(response?.data);
-      handleOpenProductAddModal();
+
+      Actions.productDetail({
+        productId: response?.data?.id,
+      });
     } else {
       setIsLoading(false);
       await dispatch(showSnackbar({message: 'Product Not Found'}));
@@ -166,30 +157,18 @@ const ScannerBarcode = () => {
     if (response?.data) {
       setSearchCondition('success');
       setIsLoading(false);
-      setProduct(response?.data);
-      handleOpenProductAddModal();
+      handleCloseSearchProductByBarcodeModal();
+      Actions.productDetail({
+        productId: response?.data?.id,
+      });
     } else {
       setIsLoading(false);
       setSearchCondition('error');
     }
   };
 
-  const renderProductAddModal = () => {
-    if (isOpenAddModal) {
-      return (
-        <ProductAddModal
-          productId={product.id}
-          open={isOpenAddModal}
-          handleClose={() => {
-            handleCloseProductAddModal();
-          }}
-        />
-      );
-    }
-  };
-
   const renderTopContent = () => {
-    if (isShowInstruction && !isOpenAddModal) {
+    if (isShowInstruction) {
       return (
         <View style={styles.viewTopContent}>
           <View style={styles.viewTopContentValue}>
@@ -209,23 +188,18 @@ const ScannerBarcode = () => {
   };
 
   const renderBottomContent = () => {
-    if (!isOpenAddModal) {
-      return (
-        <TouchableOpacity
-          style={styles.viewBottomContent}
-          onPress={() => {
-            handleOpenSearchProductByBarcodeModal();
-          }}>
-          <View style={styles.viewBottomContentValue}>
-            <Text style={styles.textBottomContent}>Enter barcode number</Text>
-            <Image
-              source={appConfig.iconKeyboard}
-              style={styles.iconKeyboard}
-            />
-          </View>
-        </TouchableOpacity>
-      );
-    }
+    return (
+      <TouchableOpacity
+        style={styles.viewBottomContent}
+        onPress={() => {
+          handleOpenSearchProductByBarcodeModal();
+        }}>
+        <View style={styles.viewBottomContentValue}>
+          <Text style={styles.textBottomContent}>Enter barcode number</Text>
+          <Image source={appConfig.iconKeyboard} style={styles.iconKeyboard} />
+        </View>
+      </TouchableOpacity>
+    );
   };
 
   const renderHeader = () => {
@@ -233,7 +207,7 @@ const ScannerBarcode = () => {
   };
 
   const renderSearchModal = () => {
-    if (isOpenSearchBarcodeModal && !isOpenAddModal) {
+    if (isOpenSearchBarcodeModal) {
       return (
         <SearchProductByBarcodeModal
           open={isOpenSearchBarcodeModal}
@@ -250,66 +224,61 @@ const ScannerBarcode = () => {
   };
 
   const renderScanner = () => {
-    if (!isOpenAddModal) {
-      return (
-        <RNCamera
-          captureAudio={false}
-          style={styles.camera}
-          type={RNCamera.Constants.Type.back}
-          flashMode={RNCamera.Constants.FlashMode.on}
-          onGoogleVisionBarcodesDetected={({barcodes}) => {
-            const barcode = barcodes[0];
-            if (barcode && !RESTRICTED_TYPES.includes(barcode.type)) {
-              setIsLoading(true);
-              !isLoading ? setTimeout(() => onSuccess(barcode), 500) : null;
-            }
-          }}
-          androidCameraPermissionOptions={{
-            title: 'Permission to use camera',
-            message:
-              'We need to use your camera access to scan product barcode',
-            buttonPositive: 'Ok',
-            buttonNegative: 'Cancel',
-          }}>
-          <>
-            {renderTopContent()}
+    return (
+      <RNCamera
+        captureAudio={false}
+        style={styles.camera}
+        type={RNCamera.Constants.Type.back}
+        flashMode={RNCamera.Constants.FlashMode.on}
+        onGoogleVisionBarcodesDetected={({barcodes}) => {
+          const barcode = barcodes[0];
+          if (barcode && !RESTRICTED_TYPES.includes(barcode.type)) {
+            setIsLoading(true);
+            !isLoading ? setTimeout(() => onSuccess(barcode), 500) : null;
+          }
+        }}
+        androidCameraPermissionOptions={{
+          title: 'Permission to use camera',
+          message: 'We need to use your camera access to scan product barcode',
+          buttonPositive: 'Ok',
+          buttonNegative: 'Cancel',
+        }}>
+        <>
+          {renderTopContent()}
 
-            <Svg height="100%" width="100%">
-              <Defs>
-                <Mask id="mask" x="0" y="0" height="100%" width="100%">
-                  <Rect height="100%" width="100%" fill="#fff" />
-                  <Rect
-                    x={normalizeLayoutSizeWidth(16)}
-                    y={normalizeLayoutSizeHeight(140)}
-                    width={normalizeLayoutSizeWidth(396)}
-                    height={normalizeLayoutSizeHeight(396)}
-                    stroke={theme.colors.primary}
-                    strokeWidth={1}
-                    fill="black"
-                    rx={16}
-                    ry={16}
-                  />
-                </Mask>
-              </Defs>
-              <Rect
-                height="100%"
-                width="100%"
-                fill="rgba(0, 0, 0, 0.5)"
-                mask="url(#mask)"
-                fill-opacity="0"
-              />
-            </Svg>
-            {renderBottomContent()}
-          </>
-        </RNCamera>
-      );
-    }
+          <Svg height="100%" width="100%">
+            <Defs>
+              <Mask id="mask" x="0" y="0" height="100%" width="100%">
+                <Rect height="100%" width="100%" fill="#fff" />
+                <Rect
+                  x={normalizeLayoutSizeWidth(16)}
+                  y={normalizeLayoutSizeHeight(140)}
+                  width={normalizeLayoutSizeWidth(396)}
+                  height={normalizeLayoutSizeHeight(396)}
+                  stroke={theme.colors.primary}
+                  strokeWidth={1}
+                  fill="black"
+                  rx={16}
+                  ry={16}
+                />
+              </Mask>
+            </Defs>
+            <Rect
+              height="100%"
+              width="100%"
+              fill="rgba(0, 0, 0, 0.5)"
+              mask="url(#mask)"
+              fill-opacity="0"
+            />
+          </Svg>
+          {renderBottomContent()}
+        </>
+      </RNCamera>
+    );
   };
 
   const renderButtonCartFloating = () => {
-    if (!isOpenAddModal) {
-      return <ButtonCartFloating />;
-    }
+    return <ButtonCartFloating />;
   };
 
   return (
@@ -319,7 +288,6 @@ const ScannerBarcode = () => {
       {renderScanner()}
       {renderSearchModal()}
       {renderButtonCartFloating()}
-      {renderProductAddModal()}
     </SafeAreaView>
   );
 };

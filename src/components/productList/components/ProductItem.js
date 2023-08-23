@@ -11,7 +11,6 @@ import {
   StyleSheet,
   View,
   Text,
-  Image,
   TouchableOpacity,
   ImageBackground,
   Platform,
@@ -23,7 +22,6 @@ import {isEmptyArray} from '../../../helper/CheckEmpty';
 import CurrencyFormatter from '../../../helper/CurrencyFormatter';
 
 import ProductUpdateModal from '../../productUpdateModal';
-import ProductAddModal from '../../productAddModal';
 
 import appConfig from '../../../config/appConfig';
 
@@ -32,6 +30,7 @@ import {useSelector} from 'react-redux';
 import GlobalText from '../../globalText';
 import colorConfig from '../../../config/colorConfig';
 import {normalizeLayoutSizeHeight} from '../../../helper/Layout';
+import {Actions} from 'react-native-router-flux';
 
 const useStyles = () => {
   const theme = Theme();
@@ -224,19 +223,11 @@ const Product = ({product, basket}) => {
   const styles = useStyles();
   const [totalQty, setTotalQty] = useState(0);
   const [isOpenUpdateModal, setIsOpenUpdateModal] = useState(false);
-  const [isOpenAddModal, setIsOpenAddModal] = useState(false);
   const {colors, fontFamily} = Theme();
   const isProductAvailable = product?.orderingStatus === 'AVAILABLE';
   const imageSettings = useSelector(
     state => state.settingReducer.imageSettings,
   );
-  const handleOpenAddModal = () => {
-    setIsOpenAddModal(true);
-  };
-
-  const handleCloseAddModal = () => {
-    setIsOpenAddModal(false);
-  };
 
   const handleOpenUpdateModal = () => {
     setIsOpenUpdateModal(true);
@@ -290,6 +281,7 @@ const Product = ({product, basket}) => {
     const totalQtyProductInBasket = handleQuantityProduct();
     setTotalQty(totalQtyProductInBasket);
   }, [product, basket]);
+
   const renderImageAvailable = image => {
     return (
       <View>
@@ -380,7 +372,10 @@ const Product = ({product, basket}) => {
     if (totalQty) {
       handleOpenUpdateModal();
     } else {
-      handleOpenAddModal();
+      Actions.productDetail({
+        productId: product.id,
+        prevPage: Actions.currentScene,
+      });
     }
   };
 
@@ -395,20 +390,6 @@ const Product = ({product, basket}) => {
 
   const renderBody = () => {
     return <View style={styles.body}>{renderBodyLeft()}</View>;
-  };
-
-  const renderProductAddModal = () => {
-    if (isOpenAddModal) {
-      return (
-        <ProductAddModal
-          productId={product.id}
-          open={isOpenAddModal}
-          handleClose={() => {
-            handleCloseAddModal();
-          }}
-        />
-      );
-    }
   };
 
   const renderProductUpdateModal = () => {
@@ -474,7 +455,6 @@ const Product = ({product, basket}) => {
       {renderImage()}
       {renderPromoIcon()}
       {renderBody()}
-      {renderProductAddModal()}
       {renderProductUpdateModal()}
     </TouchableOpacity>
   );

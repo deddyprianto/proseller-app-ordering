@@ -7,7 +7,7 @@ import {getProductByBarcode} from '../../actions/product.action';
 import {showSnackbar} from '../../actions/setting.action';
 import colorConfig from '../../config/colorConfig';
 import LoadingScreen from '../loadingScreen';
-import ProductAddModal from '../productAddModal';
+import {Actions} from 'react-native-router-flux';
 
 const styles = StyleSheet.create({
   textScan: {
@@ -32,15 +32,7 @@ const Scanner = ({open, handleClose}) => {
   const dispatch = useDispatch();
 
   const [isLoading, setIsLoading] = useState(false);
-  const [isOpenAddModal, setIsOpenAddModal] = useState(false);
   const [product, setProduct] = useState({});
-
-  const handleOpenProductAddModal = () => {
-    setIsOpenAddModal(true);
-  };
-  const handleCloseProductAddModal = () => {
-    setIsOpenAddModal(false);
-  };
 
   const onSuccess = async value => {
     setIsLoading(true);
@@ -49,25 +41,13 @@ const Scanner = ({open, handleClose}) => {
     if (response?.data) {
       setIsLoading(false);
       setProduct(response?.data);
-      handleOpenProductAddModal();
+      Actions.productDetail({
+        productId: product?.id,
+      });
     } else {
       setIsLoading(false);
       handleClose();
       await dispatch(showSnackbar({message: 'Product Not Found'}));
-    }
-  };
-
-  const renderProductAddModal = () => {
-    if (isOpenAddModal) {
-      return (
-        <ProductAddModal
-          productId={product.id}
-          open={isOpenAddModal}
-          handleClose={() => {
-            handleCloseProductAddModal();
-          }}
-        />
-      );
     }
   };
 
@@ -96,7 +76,6 @@ const Scanner = ({open, handleClose}) => {
           </TouchableOpacity>
         }
       />
-      {renderProductAddModal()}
     </Modal>
   );
 };
