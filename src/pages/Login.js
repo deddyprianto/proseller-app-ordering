@@ -23,6 +23,7 @@ import GlobalModal from '../components/modal/GlobalModal';
 import GlobalButton from '../components/button/GlobalButton';
 import GlobalText from '../components/globalText';
 import additionalSetting from '../config/additionalSettings';
+import {emailValidation} from '../helper/Validation';
 
 const useStyles = () => {
   const theme = Theme();
@@ -177,6 +178,8 @@ const Login = () => {
   const [openType, setOpenType] = React.useState(null);
   const [buttonActive, setButtonActive] = React.useState(false);
   const [errorLogin, setErrorLogin] = React.useState(false);
+  const [errorEmail, setErrorEmail] = React.useState(null);
+  const [errorPhone, setErrorPhone] = React.useState(null);
   const loginSettings = useSelector(
     state => state.settingReducer.loginSettings,
   );
@@ -194,17 +197,23 @@ const Login = () => {
   const handleRequestOtp = async () => {
     const isEmail = loginMethod === 'email';
     const methodValue = isEmail ? email : countryCode + phoneNumber;
-
     let payload = {};
     if (isEmail) {
+      const isValidEmail = emailValidation(email);
       payload.email = email;
+      if (!isValidEmail) {
+        setErrorLogin(true);
+        return setErrorEmail('Email is invalid. Please try again.');
+      }
     } else {
       payload.phoneNumber = countryCode + phoneNumber;
+      if (phoneNumber.length < 8 || phoneNumber.length > 12) {
+        setErrorLogin(true);
+        return setErrorPhone('Mobile phone is invalid. Please try again');
+      }
     }
-
     setIsLoading(true);
     const response = await dispatch(checkAccountExist(payload));
-
     if (response?.status) {
       setErrorLogin(false);
       await dispatch(sendOTP(payload));
@@ -214,6 +223,12 @@ const Login = () => {
         methodValue: methodValue,
       });
     } else {
+      setErrorEmail(
+        'Sorry, no account found with this email. Try to enter another.',
+      );
+      setErrorPhone(
+        'Sorry, no account found with this mobile phone. Try to enter another.',
+      );
       setErrorLogin(true);
     }
     setIsLoading(false);
@@ -222,6 +237,8 @@ const Login = () => {
   const handleChangeLoginMethod = value => {
     setErrorLogin(false);
     setLoginMethod(value);
+    setEmail(null);
+    setErrorPhone(null);
     setEmail('');
     setPhoneNumber('');
   };
@@ -285,15 +302,18 @@ const Login = () => {
           rootStyle={styles.noMb}
           withoutFlag
           isError={errorLogin}
-          errorMessage={
-            'Sorry, No account found with this phone number. Try to enter another.'
-          }
+          errorMessage={errorPhone}
           onChange={value => {
             setPhoneNumber(value);
           }}
         />
       </View>
     );
+  };
+
+  const handleChangeText = value => {
+    if (value.length === 0) setErrorLogin(false);
+    setEmail(value);
   };
 
   const renderEmailLoginInput = () => {
@@ -304,12 +324,8 @@ const Login = () => {
         isMandatory
         placeholder="Enter your email"
         value={email}
-        errorMessage={
-          'Sorry, No account found with this email. Try to enter another.'
-        }
-        onChangeText={value => {
-          setEmail(value);
-        }}
+        errorMessage={errorEmail}
+        onChangeText={handleChangeText}
       />
     );
   };

@@ -58,7 +58,7 @@ const HeaderV2 = ({onBackBtn, isCenterLogo}) => {
         <BackButton onPress={onBack} />
       </View>
       <View style={styles.lofoContainer(isCenterLogo)}>
-        <Image style={styles.logoStyle} source={Logo} />
+        <Image resizeMode="contain" style={styles.logoStyle} source={Logo} />
       </View>
     </View>
   );
