@@ -15,11 +15,11 @@ import {isEmptyArray} from '../../../helper/CheckEmpty';
 import CurrencyFormatter from '../../../helper/CurrencyFormatter';
 
 import ProductUpdateModal from '../../productUpdateModal';
-import ProductAddModal from '../../productAddModal';
 
 import appConfig from '../../../config/appConfig';
 
 import Theme from '../../../theme';
+import {Actions} from 'react-native-router-flux';
 
 const useStyles = () => {
   const theme = Theme();
@@ -87,15 +87,6 @@ const Product = ({product, basket}) => {
   const styles = useStyles();
   const [totalQty, setTotalQty] = useState(0);
   const [isOpenUpdateModal, setIsOpenUpdateModal] = useState(false);
-  const [isOpenAddModal, setIsOpenAddModal] = useState(false);
-
-  const handleOpenAddModal = () => {
-    setIsOpenAddModal(true);
-  };
-
-  const handleCloseAddModal = () => {
-    setIsOpenAddModal(false);
-  };
 
   const handleOpenUpdateModal = () => {
     setIsOpenUpdateModal(true);
@@ -200,7 +191,9 @@ const Product = ({product, basket}) => {
     if (totalQty) {
       handleOpenUpdateModal();
     } else {
-      handleOpenAddModal();
+      Actions.productDetail({
+        productId: product?.id,
+      });
     }
   };
 
@@ -226,20 +219,6 @@ const Product = ({product, basket}) => {
     );
   };
 
-  const renderProductAddModal = () => {
-    if (isOpenAddModal) {
-      return (
-        <ProductAddModal
-          productId={product.id}
-          open={isOpenAddModal}
-          handleClose={() => {
-            handleCloseAddModal();
-          }}
-        />
-      );
-    }
-  };
-
   const renderProductUpdateModal = () => {
     if (isOpenUpdateModal) {
       return (
@@ -254,6 +233,7 @@ const Product = ({product, basket}) => {
       );
     }
   };
+
   return (
     <TouchableOpacity
       onPress={() => {
@@ -262,7 +242,6 @@ const Product = ({product, basket}) => {
       style={styles.root}>
       {renderImage()}
       {renderBody()}
-      {renderProductAddModal()}
       {renderProductUpdateModal()}
     </TouchableOpacity>
   );

@@ -5,7 +5,7 @@
  * PT Edgeworks
  */
 
-import React, {useState} from 'react';
+import React from 'react';
 import DashedLine from 'react-native-dashed-line';
 
 import {
@@ -25,13 +25,11 @@ import appConfig from '../../../config/appConfig';
 import CurrencyFormatter from '../../../helper/CurrencyFormatter';
 import {isEmptyArray} from '../../../helper/CheckEmpty';
 
-import ProductAddModal from '../../productAddModal';
-
 import Theme from '../../../theme';
-import {useDispatch, useSelector} from 'react-redux';
-import {getProductById} from '../../../actions/product.action';
+import {useSelector} from 'react-redux';
 import PreorderLabel from '../../label/Preorder';
 import AllowSelfSelectionLabel from '../../label/AllowSelfSelection';
+import {Actions} from 'react-native-router-flux';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -242,6 +240,10 @@ const useStyles = () => {
       fontSize: theme.fontSize[14],
       fontFamily: theme.fontFamily.poppinsMedium,
     },
+    viewLabel: {
+      flexDirection: 'row',
+      marginBottom: 12,
+    },
     viewNotes: {
       display: 'flex',
       flexDirection: 'row',
@@ -372,10 +374,7 @@ const useStyles = () => {
 };
 
 const ProductCartItemAdvance = ({item, disabled, step}) => {
-  const dispatch = useDispatch();
   const styles = useStyles();
-  const [isOpenAddModal, setIsOpenAddModal] = useState(false);
-  const [product, setProduct] = useState({});
 
   const orderingMode = useSelector(
     state => state.orderReducer?.dataBasket?.product?.orderingMode,
@@ -387,14 +386,6 @@ const ProductCartItemAdvance = ({item, disabled, step}) => {
   const isProductUnavailable =
     item?.orderingStatus !== 'AVAILABLE' && orderingMode !== 'STORECHECKOUT';
 
-  const handleOpenAddModal = async () => {
-    const response = await dispatch(getProductById(item.product.id));
-    setProduct(response);
-    setIsOpenAddModal(true);
-  };
-  const handleCloseAddModal = () => {
-    setIsOpenAddModal(false);
-  };
   const renderDividerDashed = () => {
     const styleColor = isProductUnavailable
       ? styles.dividerDashedUnavailable.color
@@ -663,21 +654,6 @@ const ProductCartItemAdvance = ({item, disabled, step}) => {
     );
   };
 
-  const renderProductAddModal = () => {
-    if (isOpenAddModal) {
-      return (
-        <ProductAddModal
-          productId={product.id}
-          open={isOpenAddModal}
-          handleClose={() => {
-            handleCloseAddModal();
-          }}
-          selectedProduct={item}
-        />
-      );
-    }
-  };
-
   const renderPreOrder = () => {
     if (item?.isPreOrderItem) {
       return <PreorderLabel containerStyle={styles.preOrderContainer} />;
@@ -693,7 +669,7 @@ const ProductCartItemAdvance = ({item, disabled, step}) => {
   };
 
   const renderLabel = () => (
-    <View style={{flexDirection: 'row', marginBottom: 12}}>
+    <View style={styles.viewLabel}>
       {renderAllowSelection()}
       {renderPreOrder()}
     </View>
@@ -702,7 +678,11 @@ const ProductCartItemAdvance = ({item, disabled, step}) => {
   return (
     <TouchableOpacity
       onPress={() => {
-        handleOpenAddModal();
+        Actions.productDetail({
+          productId: item?.product?.id,
+          selectedProduct: item,
+          prevPage: Actions.currentScene,
+        });
       }}
       style={styles.root}>
       {renderLabel()}
@@ -710,7 +690,6 @@ const ProductCartItemAdvance = ({item, disabled, step}) => {
       {renderBody()}
       {renderDividerDashed()}
       {renderFooter()}
-      {renderProductAddModal()}
     </TouchableOpacity>
   );
 };

@@ -14,38 +14,35 @@ import {
   Text,
   Image,
   TouchableOpacity,
-  Modal,
+  SafeAreaView,
   TextInput,
-  Platform,
   useWindowDimensions,
 } from 'react-native';
 
-import DeviceInfo from 'react-native-device-info';
-
 import RenderHtml from 'react-native-render-html';
+import {Actions} from 'react-native-router-flux';
 
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview';
 
-import {
-  addProductToBasket,
-  updateProductBasket,
-} from '../../actions/order.action';
+import Theme from '../theme/Theme';
 
-import {isEmptyArray, isEmptyObject} from '../../helper/CheckEmpty';
-import currencyFormatter from '../../helper/CurrencyFormatter';
-import LoadingScreen from '../loadingScreen';
-import appConfig from '../../config/appConfig';
+import {isEmptyArray, isEmptyObject} from '../helper/CheckEmpty';
+import CurrencyFormatter from '../helper/CurrencyFormatter';
 
-import Theme from '../../theme';
-import ProductVariants from './components/ProductVariants';
-import ProductModifiers from './components/ProductModifiers';
-import ProductPromotions from './components/ProductPromotions';
-import {SafeAreaView} from 'react-navigation';
-import PreorderLabel from '../label/Preorder';
-import CloseSvg from '../../assets/svg/CloseSvg';
-import AllowSelfSelectionLabel from '../label/AllowSelfSelection';
-import ProductImages from './components/ProductImages';
-import {getProductById} from '../../actions/product.action';
+import {getProductById} from '../actions/product.action';
+import {addProductToBasket, updateProductBasket} from '../actions/order.action';
+
+import appConfig from '../config/appConfig';
+
+import ProductImages from '../components/productAddModal/components/ProductImages';
+import ProductModifiers from '../components/productAddModal/components/ProductModifiers';
+import ProductVariants from '../components/productAddModal/components/ProductVariants';
+import ProductPromotions from '../components/productAddModal/components/ProductPromotions';
+
+import {Header} from '../components/layout';
+import PreorderLabel from '../components/label/Preorder';
+import AllowSelfSelectionLabel from '../components/label/AllowSelfSelection';
+import LoadingScreen from '../components/loadingScreen/LoadingScreen';
 
 const useStyles = () => {
   const theme = Theme();
@@ -254,21 +251,15 @@ const webStyles = StyleSheet.create({
   },
 });
 
-const ProductAddModal = ({
-  open,
-  handleClose,
-  productId,
-  selectedProduct,
-  promotionDisabled,
-}) => {
+const ProductDetail = ({productId, selectedProduct, prevPage}) => {
   const styles = useStyles();
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
+  const [isPromotionDisabled, setIsPromotionDisabled] = useState(false);
 
   const [notes, setNotes] = useState('');
   const [variantName, setVariantName] = useState('');
   const [variantImageURL, setVariantImageURL] = useState('');
-  const [deviceInfo, setDeviceInfo] = useState('');
 
   const [qty, setQty] = useState(1);
   const [totalPrice, setTotalPrice] = useState(0);
@@ -289,6 +280,12 @@ const ProductAddModal = ({
   const {width} = useWindowDimensions();
 
   useEffect(() => {
+    if (prevPage === 'promotionDetail' || prevPage === 'cart') {
+      setIsPromotionDisabled(true);
+    }
+  }, [prevPage]);
+
+  useEffect(() => {
     const loadData = async () => {
       setIsLoading(true);
       const response = await dispatch(getProductById(productId));
@@ -297,23 +294,6 @@ const ProductAddModal = ({
     };
     loadData();
   }, [productId]);
-
-  useEffect(() => {
-    const loadData = async () => {
-      const deviceName = await DeviceInfo.getDeviceName();
-      const deviceOS = Platform.OS;
-
-      if (deviceName.includes('iPhone 14 Pro')) {
-        setDeviceInfo('typeIphone14Pro');
-      } else if (deviceOS === 'ios') {
-        setDeviceInfo('typeIos');
-      } else {
-        setDeviceInfo('typeAndroid');
-      }
-    };
-
-    loadData();
-  }, []);
 
   const handlePrice = ({qty, totalPrice}) => {
     setTotalPrice(qty * totalPrice);
@@ -486,9 +466,9 @@ const ProductAddModal = ({
     if (qty === 0) {
       return 'Remove';
     } else if (!isEmptyObject(selectedProduct)) {
-      return `Update - ${currencyFormatter(totalPrice)}`;
+      return `Update - ${CurrencyFormatter(totalPrice)}`;
     } else {
-      return `Add to Cart - ${currencyFormatter(totalPrice)}`;
+      return `Add to Cart - ${CurrencyFormatter(totalPrice)}`;
     }
   };
 
@@ -522,7 +502,7 @@ const ProductAddModal = ({
     }
 
     setIsLoading(false);
-    handleClose();
+    Actions.pop();
   };
 
   const handleDisabledCartButton = () => {
@@ -570,7 +550,7 @@ const ProductAddModal = ({
     return (
       <View style={styles.viewNameAndPrice}>
         <Text style={styles.textName}>{name}</Text>
-        <Text style={styles.textPrice}>{currencyFormatter(price)}</Text>
+        <Text style={styles.textPrice}>{CurrencyFormatter(price)}</Text>
       </View>
     );
   };
@@ -681,20 +661,6 @@ const ProductAddModal = ({
     );
   };
 
-  const header = () => {
-    return (
-      <View style={styles.header}>
-        <Text style={styles.textHeader}>{product?.categoryName}</Text>
-        <CloseSvg
-          height={23}
-          width={23}
-          style={styles.iconClose}
-          onPress={handleClose}
-        />
-      </View>
-    );
-  };
-
   const renderProductModifiers = () => {
     if (!isEmptyArray(product?.productModifiers)) {
       return (
@@ -731,7 +697,7 @@ const ProductAddModal = ({
       return (
         <ProductPromotions
           productPromotions={product?.promotions}
-          disabled={promotionDisabled}
+          disabled={isPromotionDisabled}
         />
       );
     }
@@ -747,7 +713,6 @@ const ProductAddModal = ({
             <RenderHtml
               source={{html: `${product.description}`}}
               contentWidth={width}
-              tagsStyles={webStyles}
             />
           </View>
         </View>
@@ -761,11 +726,7 @@ const ProductAddModal = ({
         <View style={styles.divider} />
         <View style={styles.viewDescription}>
           <Text style={styles.textDescription}>{item.name}</Text>
-          <RenderHtml
-            source={{html: `${item.value}`}}
-            contentWidth={width}
-            tagsStyles={webStyles}
-          />
+          <RenderHtml source={{html: `${item.value}`}} contentWidth={width} />
         </View>
       </View>
     );
@@ -786,31 +747,6 @@ const ProductAddModal = ({
       return result;
     }
   };
-
-  const renderMarginTop = () => {
-    let style = {};
-    switch (deviceInfo) {
-      case 'typeAndroid':
-        style = styles.marginTopAndroid;
-        break;
-
-      case 'typeIos':
-        style = styles.marginTopIos;
-        break;
-
-      case 'typeIphone14Pro':
-        style = styles.marginTopIphone14Pro;
-        break;
-      default:
-        style = styles.marginTopAndroid;
-    }
-
-    return <View style={style} />;
-  };
-
-  if (!open) {
-    return null;
-  }
 
   const renderPreOrderLabel = () => {
     if (selectedProduct?.isPreOrderItem || product?.isPreOrderItem) {
@@ -837,32 +773,23 @@ const ProductAddModal = ({
   );
 
   return (
-    <Modal
-      animationType="slide"
-      transparent={true}
-      visible={open}
-      onRequestClose={() => {
-        handleClose();
-      }}>
+    <SafeAreaView style={styles.root}>
       <LoadingScreen loading={isLoading} />
-      <SafeAreaView forceInset={{bottom: 'never'}} style={styles.root}>
-        {renderMarginTop()}
-        {header()}
-        <KeyboardAwareScrollView style={styles.container}>
-          {renderImage()}
-          {renderLabel()}
-          {renderNameQtyPrice()}
-          {renderProductPromotions()}
-          {renderProductDescription()}
-          {renderProductModifiers()}
-          {renderProductVariants()}
-          {renderProductCustomFields()}
-          {renderSpecialInstruction()}
-        </KeyboardAwareScrollView>
-        {renderCartButton()}
-      </SafeAreaView>
-    </Modal>
+      <Header title="Product Detail" />
+      <KeyboardAwareScrollView style={styles.container}>
+        {renderImage()}
+        {renderLabel()}
+        {renderNameQtyPrice()}
+        {renderProductPromotions()}
+        {renderProductDescription()}
+        {renderProductModifiers()}
+        {renderProductVariants()}
+        {renderProductCustomFields()}
+        {renderSpecialInstruction()}
+      </KeyboardAwareScrollView>
+      {renderCartButton()}
+    </SafeAreaView>
   );
 };
 
-export default ProductAddModal;
+export default ProductDetail;
