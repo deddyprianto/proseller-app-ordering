@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect, useState} from 'react';
 import {Actions} from 'react-native-router-flux';
 import {useDispatch, useSelector} from 'react-redux';
@@ -183,9 +184,26 @@ const Login = () => {
   const loginSettings = useSelector(
     state => state.settingReducer.loginSettings,
   );
-
+  const orderSetting = useSelector(
+    state => state.orderReducer?.orderingSetting?.orderingSetting?.settings,
+  );
+  const login_priority_key = 'LoginPriority';
+  const isEmail = 'EMAIL';
+  const checkDefaultLogin = () => {
+    const findDefaultLogin = orderSetting?.find(
+      data => data?.settingKey === login_priority_key,
+    );
+    if (findDefaultLogin) return findDefaultLogin;
+    return {};
+  };
   useEffect(() => {
-    if (loginSettings.loginByEmail) {
+    if (loginSettings.loginByEmail && loginSettings.loginByMobile) {
+      if (checkDefaultLogin()?.settingValue === isEmail) {
+        setLoginMethod('email');
+      } else {
+        setLoginMethod('phoneNumber');
+      }
+    } else if (loginSettings.loginByEmail) {
       setLoginMethod('email');
     } else {
       setLoginMethod('phoneNumber');

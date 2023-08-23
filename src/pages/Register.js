@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect, useState} from 'react';
 import {Actions} from 'react-native-router-flux';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview';
@@ -26,6 +27,7 @@ import HeaderV2 from '../components/layout/header/HeaderV2';
 import RegisterV2 from './RegisterV2';
 import appConfig from '../config/appConfig';
 import GlobalText from '../components/globalText';
+import additionalSetting from '../config/additionalSettings';
 
 const HEIGHT = Dimensions.get('window').height;
 const useStyles = () => {
@@ -111,9 +113,19 @@ const Register = () => {
     privacyTerm: false,
     consent: false,
   });
+  const priority_email = 'EMAIL';
   const loginSettings = useSelector(
     state => state.settingReducer.loginSettings,
   );
+  const orderSetting = useSelector(
+    state => state.orderReducer?.orderingSetting?.orderingSetting?.settings,
+  );
+  const checkRegisterPriority = () => {
+    const registerPriority = orderSetting.find(
+      setting => setting?.settingKey === 'RegisterPriority',
+    );
+    return registerPriority;
+  };
 
   const onTickCheckbox = (key, value) => {
     setApprovedData({...approvedData, [key]: value});
@@ -121,6 +133,9 @@ const Register = () => {
 
   useEffect(() => {
     if (loginSettings.loginByEmail && loginSettings.loginByMobile) {
+      if (checkRegisterPriority()?.settingValue === priority_email) {
+        return setRegisterMethod('email');
+      }
       setRegisterMethod('phoneNumber');
     } else if (loginSettings.loginByEmail) {
       setRegisterMethod('email');
@@ -129,7 +144,7 @@ const Register = () => {
     }
 
     setCountryCode(awsConfig.phoneNumberCode);
-  }, [loginSettings]);
+  }, []);
   const handleCheckAccount = async () => {
     let payload = {};
     let value = '';
@@ -294,7 +309,7 @@ const Register = () => {
   };
 
   const renderBody = () => {
-    if (appConfig.appName === 'fareastflora') {
+    if (additionalSetting().registerVersion === 2) {
       return renderBodyV2();
     } else {
       return renderBodyV1();

@@ -27,7 +27,7 @@ const additionalSetting = () => {
   const enableSentry = true;
   const applicationName = 'Far East Flora';
   const cartVersion = 'advance';
-
+  const registerVersion = 2;
   return {
     additionalPolicy,
     mapType,
@@ -36,6 +36,7 @@ const additionalSetting = () => {
     enableSentry,
     applicationName,
     cartVersion,
+    registerVersion,
   };
 };
 
