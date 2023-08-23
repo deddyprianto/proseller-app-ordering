@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect, useState} from 'react';
 import {Actions} from 'react-native-router-flux';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview';
 
 import {
@@ -143,6 +143,9 @@ const RegisterForm = ({registerMethod, inputValue, approvedData}) => {
   const [gender, setGender] = React.useState(null);
   const [isInitField, setIsInitField] = React.useState(false);
   const [address, setAddress] = React.useState('');
+  const orderSetting = useSelector(
+    state => state.orderReducer?.orderingSetting?.orderingSetting?.settings,
+  );
   const genderItems = [
     {
       label: 'Male',
@@ -168,7 +171,7 @@ const RegisterForm = ({registerMethod, inputValue, approvedData}) => {
     {label: 'November', value: '2000-11-01'},
     {label: 'December', value: '2000-12-01'},
   ];
-
+  const priority_key_mandatory = 'SetLowerPriorityAsMandatory';
   useEffect(() => {
     if (registerMethod === 'email') {
       setEmail(inputValue);
@@ -285,7 +288,7 @@ const RegisterForm = ({registerMethod, inputValue, approvedData}) => {
             setPhoneNumber(value);
           }}
           inputLabel={'Mobile Phone'}
-          isMandatory
+          isMandatory={checkLowerPriorityMandatory()}
           withoutFlag={true}
         />
       </View>
@@ -298,7 +301,7 @@ const RegisterForm = ({registerMethod, inputValue, approvedData}) => {
         label="Email"
         placeholder="Email"
         value={email}
-        isMandatory
+        isMandatory={checkLowerPriorityMandatory()}
         // containerInputStyle={styles.emailContainer}
         onChangeText={value => {
           setEmail(value);
@@ -377,6 +380,24 @@ const RegisterForm = ({registerMethod, inputValue, approvedData}) => {
     return <View style={styles.viewMethodInput}>{renderInput}</View>;
   };
 
+  const checkLowerPriorityMandatory = () => {
+    const findPriority = orderSetting.find(
+      data => data.settingKey === priority_key_mandatory,
+    );
+    return findPriority?.settingValue === true;
+  };
+
+  const handleMandatoryLowerPriority = isHaveEmptyField => {
+    if (checkLowerPriorityMandatory()) {
+      if (registerMethod === 'email') {
+        return name && phoneNumber.length >= 6 && !isHaveEmptyField;
+      } else {
+        return name && email && !isHaveEmptyField;
+      }
+    }
+    return true;
+  };
+
   const renderButtonNext = () => {
     let active = false;
     const requiredField = activeField
@@ -389,11 +410,7 @@ const RegisterForm = ({registerMethod, inputValue, approvedData}) => {
     };
     const isHaveEmptyField =
       fieldValidation(requiredField, customField).length > 0;
-    if (registerMethod === 'email') {
-      active = name && phoneNumber.length >= 6 && !isHaveEmptyField;
-    } else {
-      active = name && email && !isHaveEmptyField;
-    }
+    active = handleMandatoryLowerPriority(isHaveEmptyField);
 
     return (
       <TouchableOpacity

@@ -100,6 +100,9 @@ const RegisterV2 = props => {
   const openLoginPage = () => {
     Actions.login();
   };
+
+  const priority_email = 'EMAIL';
+
   const handleOpenType = type => setOpenType(type);
 
   const closeModal = () => {
@@ -162,8 +165,21 @@ const RegisterV2 = props => {
     return loginSettings?.loginByMobile === true;
   };
 
+  const checkRegisterPriority = () => {
+    const registerPriority = orderSetting.find(
+      setting => setting?.settingKey === 'RegisterPriority',
+    );
+    if (registerPriority) {
+      return registerPriority;
+    }
+    return {};
+  };
+
   const handleCheckDefaultLogin = () => {
     if (phoneSettingOn() && emailSettingOn()) {
+      if (checkRegisterPriority()?.settingValue === priority_email) {
+        return renderEmailInput();
+      }
       return renderPhoneInput();
     }
     if (emailSettingOn() && !phoneSettingOn()) {

@@ -8,6 +8,7 @@ const additionalSetting = () => {
   const enableSentry = false;
   const applicationName = 'Acemart';
   const cartVersion = 'basic';
+  const registerVersion = 1;
 
   return {
     additionalPolicy,
@@ -17,6 +18,7 @@ const additionalSetting = () => {
     enableSentry,
     applicationName,
     cartVersion,
+    registerVersion,
   };
 };
 
