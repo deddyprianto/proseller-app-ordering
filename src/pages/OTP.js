@@ -11,7 +11,6 @@ import {
   BackHandler,
   SafeAreaView,
   TouchableOpacity,
-  Dimensions,
 } from 'react-native';
 
 import {sendOTP, loginUser} from '../actions/auth.actions';
@@ -280,7 +279,7 @@ const OTP = ({isLogin, method, methodValue}) => {
           handleLogin();
         }}>
         <Text style={styles.textNext}>
-          {isLogin ? 'Verify' : 'Verify and Create Account'}{' '}
+          {isLogin ? 'Verify and Login' : 'Verify and Create Account'}{' '}
         </Text>
       </TouchableOpacity>
     );

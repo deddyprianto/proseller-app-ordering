@@ -69,7 +69,7 @@ const useStyles = () => {
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textLogin: {
-      marginTop: 4,
+      marginTop: 8,
       color: theme.colors.textPrimary,
       fontSize: theme.fontSize[14],
       fontFamily: theme.fontFamily.poppinsMedium,
@@ -295,7 +295,7 @@ const Login = () => {
           type="phone"
           label="Enter mobile number to begin :"
           value={phoneNumber}
-          placeholder="Mobile Number"
+          placeholder="Enter your mobile phone"
           onChangeCountryCode={value => {
             setCountryCode(value);
           }}

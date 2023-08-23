@@ -8,7 +8,10 @@ import PhoneInput from 'react-native-phone-input';
 import awsConfig from '../../config/awsConfig';
 import Theme from '../../theme';
 import GlobalText from '../globalText';
-import {normalizeLayoutSizeHeight} from '../../helper/Layout';
+import {
+  normalizeLayoutSizeHeight,
+  normalizeLayoutSizeWidth,
+} from '../../helper/Layout';
 
 import CountryCodeSelectorModal from './Components/CountryCodeSelectorModal';
 
@@ -28,7 +31,7 @@ const useStyles = () => {
       borderRadius: 8,
       marginBottom: 12,
 
-      paddingVertical: normalizeLayoutSizeHeight(2),
+      paddingVertical: normalizeLayoutSizeHeight(1),
       paddingHorizontal: 16,
       borderColor: isError
         ? theme.colors.semanticColorError
@@ -83,6 +86,7 @@ const useStyles = () => {
       fontSize: theme.fontSize[14],
       fontFamily: theme.fontFamily.poppinsRegular,
       height: normalizeLayoutSizeHeight(46),
+      marginTop: 1,
     },
     divider: {
       width: 1,
@@ -96,12 +100,14 @@ const useStyles = () => {
     },
     labelText: {
       fontFamily: theme.fontFamily.poppinsMedium,
+      marginBottom: 4,
     },
     withoutFlagContainer: {
       display: 'flex',
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'center',
+      height: normalizeLayoutSizeWidth(46),
     },
     arrowBottomContainer: {
       marginRight: 16,
@@ -112,6 +118,10 @@ const useStyles = () => {
       fontSize: 12,
       fontFamily: theme.fontFamily.poppinsMedium,
       color: theme.colors.semanticColorError,
+    },
+    coutryCodeText: {
+      fontSize: 14,
+      fontFamily: theme.fontFamily.poppinsRegular,
     },
   });
   return styles;
@@ -203,7 +213,7 @@ const FieldPhoneNumberInput = ({
             setCountryCodeModal(!countryCodeModal);
           }}
           style={styles.withoutFlagContainer}>
-          <GlobalText>{countryCode}</GlobalText>
+          <GlobalText style={styles.coutryCodeText}>{countryCode}</GlobalText>
           <View style={styles.arrowBottomContainer}>{renderArrow()}</View>
         </TouchableOpacity>
       );
@@ -223,6 +233,7 @@ const FieldPhoneNumberInput = ({
         <TextInput
           keyboardType={'numeric'}
           style={styles.textInputPhoneNumber}
+          textAlignVertical="center"
           value={phoneNumber}
           placeholder={placeholder}
           onChangeText={value => {

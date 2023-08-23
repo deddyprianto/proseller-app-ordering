@@ -537,11 +537,16 @@ class PaymentSuccess extends Component {
 
   render() {
     const {showDetail} = this.state;
+    const {cartVersion} = additionalSetting();
     setTimeout(() => {
       this.setState({showDetail: true});
     }, 2500);
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView
+        style={[
+          styles.container,
+          {justifyContent: cartVersion === 'basic' ? 'center' : 'flex-start'},
+        ]}>
         {showDetail ? this.renderPaymentDetails() : this.renderAnimateSuccess()}
       </SafeAreaView>
     );
@@ -551,7 +556,6 @@ class PaymentSuccess extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
     backgroundColor: 'white',
   },
   btnBackIcon: {
