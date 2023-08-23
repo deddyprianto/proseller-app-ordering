@@ -84,7 +84,6 @@ const FieldOTP = ({onComplete, isWrongOtp, onChangeOtp}) => {
       }
     }
   };
-
   const renderTextInput = index => {
     return (
       <TextInput
@@ -95,12 +94,13 @@ const FieldOTP = ({onComplete, isWrongOtp, onChangeOtp}) => {
         autoFocus={index === 0}
         keyboardType="numeric"
         style={styles.textInputOtp(isWrongOtp)}
+        selection={{start: otp[index]?.length || 0}}
         maxLength={1}
         onChangeText={value => {
           handleInputOtp(value.replace(/[^0-9]/g, ''), index);
         }}
         onKeyPress={({nativeEvent}) => {
-          if (nativeEvent.key === 'Backspace' && !otp[index] && index !== 0) {
+          if (nativeEvent.key === 'Backspace' && index !== 0) {
             return ref[`otp${index - 1}`].focus();
           }
         }}
