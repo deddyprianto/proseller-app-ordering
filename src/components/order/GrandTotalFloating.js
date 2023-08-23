@@ -1,7 +1,6 @@
 import React from 'react';
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, TouchableOpacity} from 'react-native';
 import GlobalText from '../globalText';
-import {TouchableOpacity} from 'react-native-gesture-handler';
 import GlobalButton from '../button/GlobalButton';
 import CurrencyFormatter from '../../helper/CurrencyFormatter';
 import {useSelector} from 'react-redux';

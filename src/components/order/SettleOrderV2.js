@@ -91,6 +91,7 @@ const SettleOrderV2 = ({
           myMoneyPoint={myMoneyPoint}
           myPoint={myPoint}
           onAgreeTnc={updateAgreeTnc}
+          isAgreeTnc={isAgreeTnc}
         />
       </ScrollView>
       <GrandTotalFloating
@@ -98,7 +99,7 @@ const SettleOrderV2 = ({
         pointDisc={myPoint}
         btnText={'Pay'}
         onPressBtn={doPayment}
-        disabledBtn={!isAgreeTnc}
+        disabledBtn={!isAgreeTnc || !selectedAccount}
       />
     </SafeAreaView>
   );

@@ -413,16 +413,17 @@ const CartDetail = ({
               <ArrowRight />
             </View>
           </View>
-          <View style={styles.mt12}>
-            {vouchers?.length > 0 &&
-              vouchers.map(voucher => (
+          {vouchers?.length > 0 ? (
+            <View style={styles.mt12}>
+              {vouchers.map(voucher => (
                 <View>
                   <GlobalText style={[styles.brandColor, styles.mediumFont]}>
                     {voucher?.name}
                   </GlobalText>
                 </View>
               ))}
-          </View>
+            </View>
+          ) : null}
         </TouchableOpacity>
         <TouchableOpacity
           onPress={openPayment}
@@ -436,13 +437,15 @@ const CartDetail = ({
               <ArrowRight />
             </View>
           </View>
-          <View>
-            <GlobalText
-              style={[styles.brandColor, styles.mediumFont, styles.mt12]}>
-              {selectedAccount?.details?.cardIssuer}{' '}
-              {selectedPaymentMethod(selectedAccount)}
-            </GlobalText>
-          </View>
+          {selectedAccount ? (
+            <View>
+              <GlobalText
+                style={[styles.brandColor, styles.mediumFont, styles.mt12]}>
+                {selectedAccount?.details?.cardIssuer}{' '}
+                {selectedPaymentMethod(selectedAccount)}
+              </GlobalText>
+            </View>
+          ) : null}
         </TouchableOpacity>
         <View style={[styles.p12, styles.bgGrey, styles.mt8]}>
           <GlobalText>

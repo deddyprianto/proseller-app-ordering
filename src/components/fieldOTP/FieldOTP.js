@@ -69,6 +69,9 @@ const FieldOTP = ({onComplete, isWrongOtp, onChangeOtp}) => {
   }, [otp]);
 
   const handleInputOtp = (event, index) => {
+    if (event.length > 1) {
+      event = event.charAt(event.length - 1);
+    }
     let results = [...otp];
     results[index] = event;
     setOtp(results);
@@ -95,19 +98,17 @@ const FieldOTP = ({onComplete, isWrongOtp, onChangeOtp}) => {
         keyboardType="numeric"
         style={styles.textInputOtp(isWrongOtp)}
         selection={{start: otp[index]?.length || 0}}
-        maxLength={1}
         onChangeText={value => {
           handleInputOtp(value.replace(/[^0-9]/g, ''), index);
         }}
         onKeyPress={({nativeEvent}) => {
           if (nativeEvent.key === 'Backspace' && index !== 0) {
-            return ref[`otp${index - 1}`].focus();
+            ref[`otp${index - 1}`].focus();
           }
         }}
       />
     );
   };
-
   const renderInputOtp = () => {
     const result = Array.from(Array(4)).map((_, index) => {
       return renderTextInput(index);
