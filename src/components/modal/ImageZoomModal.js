@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   TouchableOpacity,
   View,
@@ -88,12 +88,7 @@ const ImageZoomModal = ({
   index,
 }) => {
   const styles = useStyles();
-  const imageRef = useRef();
   const [isMultiple, setIsMultiple] = useState(false);
-
-  useEffect(() => {
-    imageRef?.current?.scrollTo(index);
-  }, [index, imageRef]);
 
   useEffect(() => {
     if (images instanceof Array) {
@@ -134,7 +129,6 @@ const ImageZoomModal = ({
   const renderImageMultiple = () => {
     return (
       <Swiper
-        // ref={imageRef}
         index={index}
         onIndexChanged={value => {
           console.log('VAlue', value);
