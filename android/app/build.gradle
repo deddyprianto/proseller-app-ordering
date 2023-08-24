@@ -138,13 +138,13 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.acemart"
+        applicationId "com.fareastflora"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 87
         versionName "1.1.31"
         missingDimensionStrategy 'react-native-camera', 'general'
-        resValue "string", "build_config_package", "com.acemart"
+        resValue "string", "build_config_package", "com.fareastflora"
         multiDexEnabled true
         // detox
         testBuildType System.getProperty('testBuildType', 'debug')
@@ -192,24 +192,24 @@ android {
     productFlavors {
             dev {
                 minSdkVersion rootProject.ext.minSdkVersion
-                applicationId 'com.acemart.dev'
+                applicationId 'com.fareastflora.dev'
                 versionName "1.1.31"
                 targetSdkVersion rootProject.ext.targetSdkVersion
-                resValue "string", "build_config_package", "com.acemart"
+                resValue "string", "build_config_package", "com.fareastflora"
             }
             demo {
                 minSdkVersion rootProject.ext.minSdkVersion
-                applicationId 'com.acemart.demo'
+                applicationId 'com.fareastflora.demo'
                 versionName "1.1.31"
                 targetSdkVersion rootProject.ext.targetSdkVersion
-                resValue "string", "build_config_package", "com.acemart"
+                resValue "string", "build_config_package", "com.fareastflora"
             }
             app {
                 minSdkVersion rootProject.ext.minSdkVersion
-                applicationId 'com.acemart.app'
+                applicationId 'com.fareastflora.app'
                 versionName "1.1.31"
                 targetSdkVersion rootProject.ext.targetSdkVersion
-                resValue "string", "build_config_package", "com.acemart"
+                resValue "string", "build_config_package", "com.fareastflora"
             }
         }
     // applicationVariants are e.g. debug, release

@@ -80,9 +80,20 @@ const useStyles = () => {
   return styles;
 };
 
-const ImageZoomModal = ({open, handleClose, images, index}) => {
+const ImageZoomModal = ({
+  open,
+  handleClose,
+  handleChangeImage,
+  images,
+  index,
+}) => {
   const styles = useStyles();
+  const imageRef = useRef();
   const [isMultiple, setIsMultiple] = useState(false);
+
+  useEffect(() => {
+    imageRef?.current?.scrollTo(index);
+  }, [index, imageRef]);
 
   useEffect(() => {
     if (images instanceof Array) {
@@ -123,7 +134,12 @@ const ImageZoomModal = ({open, handleClose, images, index}) => {
   const renderImageMultiple = () => {
     return (
       <Swiper
+        // ref={imageRef}
         index={index}
+        onIndexChanged={value => {
+          console.log('VAlue', value);
+          handleChangeImage(value);
+        }}
         style={styles.viewImageMultiple}
         autoplayTimeout={6}
         animated={true}
