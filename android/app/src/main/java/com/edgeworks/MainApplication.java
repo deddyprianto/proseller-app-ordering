@@ -1,6 +1,6 @@
-package com.fareastflora;
+package com.acemart;
 
-// import com.fareastflora.generated.BasePackageList;
+// import com.acemart.generated.BasePackageList;
 
 import android.app.Application;
 import android.content.Context;

@@ -13,7 +13,7 @@ const Theme = () => {
 
   const colors = {
     //old version
-    primary: '#003F24',
+    primary: '#00BFCA',
     secondary: '#F9F9F9',
     thirdColor: '#FFEBEB',
     forthColor: '#F9F9F9',
@@ -43,7 +43,7 @@ const Theme = () => {
     textWarningColor: colorSettings?.textWarningColor || 'black',
 
     snackbarSuccess: '#5CD423',
-    snackbarFailed: '#CF3030',
+    snackbarFailed: '#00BFCA',
 
     //new version
 
@@ -53,23 +53,23 @@ const Theme = () => {
 
     badge: '#CE1111',
 
-    accent: '#9CD48F',
+    accent: '#CCF2F5',
 
     background: 'white',
 
     textPrimary: '#000000',
     textSecondary: '#FFFFFF',
     textTertiary: '#B7B7B7',
-    textQuaternary: '#003F24',
-    textError: '#CE1111',
-    textBrand: '#438E49',
+    textQuaternary: '#00BFCA',
+    textBrand: '#00BFCA',
+
     semanticError: '#CE1111',
     semanticSuccess: '#5CD523',
     semanticColorError: '#C81720',
 
-    brandPrimary: '#003F24',
+    brandPrimary: '#00BFCA',
     brandSecondary: '#FFFFFF',
-    brandTertiary: '#438E49',
+    brandTertiary: '#0E8A94',
 
     greyScale1: '#000000',
     greyScale2: '#B7B7B7',
@@ -77,13 +77,12 @@ const Theme = () => {
     greyScale4: '#F9F9F9',
     greyScale5: '#888787',
 
-    buttonActive: '#003F24',
+    buttonActive: '#00BFCA',
     buttonStandBy: '#FFFFFF',
     buttonDisabled: '#B7B7B7',
 
     backgroundTransparent1: '#00000033',
     backgroundTransparent2: '#B7B7B7CC',
-    backgroundTransparent3: '#00000099',
     inactiveDot: '#D6D6D6',
     errorColor: '#CE1111',
     successColor: '#438E49',
@@ -98,7 +97,6 @@ const Theme = () => {
     16: 16,
     20: 20,
     24: 24,
-    36: 36,
   };
 
   const fontFamily = {

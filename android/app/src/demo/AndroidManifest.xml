@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools"
-  package="com.fareastflora">
+  package="com.acemart">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
@@ -33,7 +33,7 @@
     <uses-permission android:name="me.everything.badger.permission.BADGE_COUNT_READ" tools:node="remove" />
 <!--    <uses-permission tools:node="remove" android:name="android.permission.WRITE_SETTINGS" />-->
     <uses-permission tools:node="remove" android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <uses-permission tools:node="remove" android:name="com.fareastflora.demo.permission.C2D_MESSAGE" />
+    <uses-permission tools:node="remove" android:name="com.acemart.demo.permission.C2D_MESSAGE" />
     <uses-permission tools:node="remove" android:name="com.google.android.c2dm.permission.RECEIVE" />
         <queries>
     <intent>
