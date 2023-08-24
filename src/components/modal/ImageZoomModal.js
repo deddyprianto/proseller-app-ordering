@@ -131,7 +131,6 @@ const ImageZoomModal = ({
       <Swiper
         index={index}
         onIndexChanged={value => {
-          console.log('VAlue', value);
           handleChangeImage(value);
         }}
         style={styles.viewImageMultiple}
