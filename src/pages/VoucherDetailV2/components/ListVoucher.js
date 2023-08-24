@@ -1,10 +1,7 @@
 import React from 'react';
 import {View, StyleSheet, Pressable, ImageBackground} from 'react-native';
 import Theme from '../../../theme/Theme';
-import {
-  normalizeLayoutSizeHeight,
-  normalizeLayoutSizeWidth,
-} from '../../../helper/Layout';
+import {normalizeLayoutSizeWidth} from '../../../helper/Layout';
 import GlobalText from '../../../components/globalText';
 import moment from 'moment';
 import CalendarWhite from '../../../assets/svg/CalenderWhite';
@@ -15,18 +12,19 @@ const useStyles = () => {
   const {colors, fontFamily} = Theme();
   const styles = StyleSheet.create({
     cardContainer: {
-      borderWidth: 1,
-      borderColor: colors.primary,
-      borderRadius: 16,
       marginBottom: 16,
     },
     imageStyle: {
       width: normalizeLayoutSizeWidth(201),
-      height: normalizeLayoutSizeHeight(54),
+      height: normalizeLayoutSizeWidth(54),
     },
     imageContainer: {
       alignItems: 'center',
-      height: normalizeLayoutSizeHeight(78),
+      height: normalizeLayoutSizeWidth(78),
+      borderWidth: 1,
+      borderColor: colors.primary,
+      borderTopLeftRadius: 16,
+      borderTopRightRadius: 16,
     },
     content: {
       padding: 12,
@@ -34,11 +32,10 @@ const useStyles = () => {
 
       borderBottomLeftRadius: 16,
       borderBottomRightRadius: 16,
-      height: normalizeLayoutSizeHeight(96),
+      minHeight: normalizeLayoutSizeWidth(77),
     },
     whiteText: {
       color: 'white',
-      fontFamily: fontFamily.poppinsMedium,
     },
     boldFont: {
       fontFamily: fontFamily.poppinsBold,
@@ -53,13 +50,13 @@ const useStyles = () => {
       marginRight: 4,
     },
     imageStyleBg: {
-      borderTopLeftRadius: 16,
-      borderTopRightRadius: 16,
+      borderTopLeftRadius: 14,
+      borderTopRightRadius: 14,
     },
     pointContainer: {
       backgroundColor: 'white',
       minHeight: normalizeLayoutSizeWidth(22),
-      width: normalizeLayoutSizeHeight(76),
+      width: normalizeLayoutSizeWidth(76),
       borderRadius: 8,
       marginTop: 8,
       flexDirection: 'row',
@@ -73,6 +70,9 @@ const useStyles = () => {
     },
     pointTextContainer: {
       marginLeft: 5,
+    },
+    mediumFont: {
+      fontFamily: fontFamily.poppinsMedium,
     },
   });
   return {styles};
@@ -93,7 +93,6 @@ const ListVoucher = ({item, isRedeem}) => {
       dataVoucher: item,
     });
   };
-  console.log(item, 'usaha');
   const renderReddemVoucher = () => (
     <View style={styles.pointContainer}>
       <View>
@@ -127,7 +126,7 @@ const ListVoucher = ({item, isRedeem}) => {
             <View style={styles.iconStyle}>
               <CalendarWhite />
             </View>
-            <GlobalText style={styles.whiteText}>
+            <GlobalText style={[styles.whiteText, styles.mediumFont]}>
               Expire on {moment(item?.expiryDate).format('DD MMMM YYYY')}
             </GlobalText>
           </View>

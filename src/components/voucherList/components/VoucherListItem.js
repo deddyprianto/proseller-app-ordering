@@ -4,7 +4,10 @@ import {StyleSheet, View, Text, Image} from 'react-native';
 
 import colorConfig from '../../../config/colorConfig';
 import appConfig from '../../../config/appConfig';
-import {normalizeLayoutSizeHeight} from '../../../helper/Layout';
+import {
+  normalizeLayoutSizeHeight,
+  normalizeLayoutSizeWidth,
+} from '../../../helper/Layout';
 import Theme from '../../../theme/Theme';
 
 const useStyles = () => {
@@ -40,11 +43,10 @@ const useStyles = () => {
       alignItems: 'center',
     },
     imageBackground: {
-      height: normalizeLayoutSizeHeight(154),
+      height: normalizeLayoutSizeWidth(154),
       width: '100%',
       display: 'flex',
       flexDirection: 'row',
-      marginBottom: 16,
       borderRadius: 8,
     },
     image: {
@@ -55,6 +57,10 @@ const useStyles = () => {
       fontSize: 18,
       marginBottom: 16,
       fontFamily: fontFamily.poppinsBold,
+    },
+    parentImageContainer: {
+      borderRadius: 8,
+      marginBottom: 16,
     },
   });
 
@@ -96,12 +102,14 @@ const VoucherListItem = ({voucher, qty, pointToRedeem}) => {
 
   return (
     <>
-      <Image
-        style={styles.imageBackground}
-        imageStyle={styles.image}
-        resizeMode="cover"
-        source={handleImage()}
-      />
+      <View style={styles.parentImageContainer}>
+        <Image
+          style={styles.imageBackground}
+          imageStyle={styles.image}
+          resizeMode="stretch"
+          source={handleImage()}
+        />
+      </View>
       {renderVoucherTitle()}
       {renderVoucherPointToRedeem()}
       {renderVoucherQty()}
