@@ -131,6 +131,7 @@ class HostedPayment extends Component {
           );
         }
       }
+      await this.props.dispatch(getAccountPayment());
     } catch (e) {}
   };
 

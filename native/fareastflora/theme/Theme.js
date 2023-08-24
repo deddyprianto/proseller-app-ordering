@@ -42,7 +42,7 @@ const Theme = () => {
     textButtonColor: colorSettings?.textButtonColor || 'black',
     textWarningColor: colorSettings?.textWarningColor || 'black',
 
-    snackbarSuccess: '#5CD423',
+    snackbarSuccess: '#1A883C',
     snackbarFailed: '#CF3030',
 
     //new version

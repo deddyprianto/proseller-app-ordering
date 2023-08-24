@@ -827,6 +827,10 @@ const Profile = props => {
     Actions.favoriteOutlets();
   };
 
+  const openPaymentMethod = () => {
+    Actions.profilePaymentMethod();
+  };
+
   const renderSettingV2 = () => (
     <View style={styles.viewSettings}>
       {renderMembershipQRCode()}
@@ -841,7 +845,7 @@ const Profile = props => {
         <>
           {renderDivider()}
           {renderTitleSettingV2('Payment Method')}
-          {renderListMenu('Credit Card', <CreditCard />)}
+          {renderListMenu('Credit Card', <CreditCard />, openPaymentMethod)}
         </>
       ) : null}
 
