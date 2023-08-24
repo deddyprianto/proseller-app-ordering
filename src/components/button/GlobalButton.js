@@ -46,6 +46,7 @@ const useStyles = () => {
  * @property {boolean} isOutline
  * @property {any} containerStyle
  * @property {any} children
+ * @property {any} rightChildren
  * @property {import('react-native').StyleProp} buttonStyle
  */
 
@@ -63,6 +64,7 @@ const GlobalButton = props => {
           : [styles.touchableNextDisabled(props.isOutline), props.buttonStyle]
       }
       {...props}>
+      {props.rightChildren ? props.rightChildren : null}
       {props.title ? (
         <GlobalText style={styles.textNext(props.isOutline)}>
           {props.title}{' '}
