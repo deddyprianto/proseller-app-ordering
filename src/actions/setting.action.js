@@ -172,6 +172,22 @@ const setBannerSizeSettings = async ({dispatch, response}) => {
   );
 };
 
+const setTermsAndConditionsSettings = async ({dispatch, response}) => {
+  const termsAndConditions = handleSettingValue({
+    values: response,
+    key: 'TermCondition',
+  });
+
+  await dispatch(
+    setData({
+      type: 'SET_TERMS_AND_CONDITIONS',
+      data: {
+        termsAndConditions,
+      },
+    }),
+  );
+};
+
 export const getColorSettings = () => {
   return async (dispatch, getState) => {
     const state = getState();
@@ -235,6 +251,7 @@ export const getLoginSettings = () => {
         setHideReferralSettings({dispatch, response: typeCheckbox});
         setBannerSizeSettings({dispatch, response: typeDropdown});
         setPrivacyPolicySettings({dispatch, response: typeTextArea});
+        setTermsAndConditionsSettings({dispatch, response: typeTextArea});
       }
 
       return response.response.data;
