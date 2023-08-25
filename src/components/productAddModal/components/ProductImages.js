@@ -251,6 +251,14 @@ const ProductImages = ({product}) => {
           index={selectedIndex}
           images={image}
           open={isOpenImageZoom}
+          handleChangeImage={index => {
+            setSelectedIndex(index);
+            imagePreviewRef.current.scrollToIndex({
+              animation: true,
+              index: index,
+            });
+            imageRef.current.scrollTo(index);
+          }}
           handleClose={() => {
             handleCloseImageZoom();
           }}

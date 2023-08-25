@@ -272,7 +272,7 @@ const ProductModifiers = ({
         qtyTotal = qtyTotal + modifierProduct.qty;
       });
 
-      const isDisabled = qtyTotal <= min;
+      const isDisabled = qtyTotal <= 0;
 
       return isDisabled;
     }
