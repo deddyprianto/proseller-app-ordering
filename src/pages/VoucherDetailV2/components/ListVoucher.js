@@ -1,44 +1,42 @@
 import React from 'react';
 import {View, StyleSheet, Pressable, ImageBackground} from 'react-native';
 import Theme from '../../../theme/Theme';
-import {
-  normalizeLayoutSizeHeight,
-  normalizeLayoutSizeWidth,
-} from '../../../helper/Layout';
+import {normalizeLayoutSizeWidth} from '../../../helper/Layout';
 import GlobalText from '../../../components/globalText';
 import moment from 'moment';
 import CalendarWhite from '../../../assets/svg/CalenderWhite';
 import appConfig from '../../../config/appConfig';
 import {Actions} from 'react-native-router-flux';
 import PointSmall from '../../../assets/svg/SmallPointSvg';
+import {useSelector} from 'react-redux';
 const useStyles = () => {
   const {colors, fontFamily} = Theme();
   const styles = StyleSheet.create({
     cardContainer: {
-      borderWidth: 1,
-      borderColor: colors.primary,
-      borderRadius: 16,
       marginBottom: 16,
     },
     imageStyle: {
       width: normalizeLayoutSizeWidth(201),
-      height: normalizeLayoutSizeHeight(54),
+      height: normalizeLayoutSizeWidth(54),
     },
-    imageContainer: {
+    imageContainer: disable => ({
       alignItems: 'center',
-      height: normalizeLayoutSizeHeight(78),
-    },
-    content: {
+      height: normalizeLayoutSizeWidth(78),
+      borderWidth: 1,
+      borderColor: disable ? colors.greyScale5 : colors.primary,
+      borderTopLeftRadius: 16,
+      borderTopRightRadius: 16,
+    }),
+    content: disable => ({
       padding: 12,
-      backgroundColor: colors.primary,
+      backgroundColor: disable ? colors.greyScale5 : colors.primary,
 
       borderBottomLeftRadius: 16,
       borderBottomRightRadius: 16,
-      height: normalizeLayoutSizeHeight(96),
-    },
+      minHeight: normalizeLayoutSizeWidth(77),
+    }),
     whiteText: {
       color: 'white',
-      fontFamily: fontFamily.poppinsMedium,
     },
     boldFont: {
       fontFamily: fontFamily.poppinsBold,
@@ -53,13 +51,13 @@ const useStyles = () => {
       marginRight: 4,
     },
     imageStyleBg: {
-      borderTopLeftRadius: 16,
-      borderTopRightRadius: 16,
+      borderTopLeftRadius: 14,
+      borderTopRightRadius: 14,
     },
     pointContainer: {
       backgroundColor: 'white',
       minHeight: normalizeLayoutSizeWidth(22),
-      width: normalizeLayoutSizeHeight(76),
+      width: normalizeLayoutSizeWidth(76),
       borderRadius: 8,
       marginTop: 8,
       flexDirection: 'row',
@@ -74,18 +72,53 @@ const useStyles = () => {
     pointTextContainer: {
       marginLeft: 5,
     },
+    mediumFont: {
+      fontFamily: fontFamily.poppinsMedium,
+    },
+    mlAuto: {
+      marginLeft: 'auto',
+    },
+    mr8: {
+      marginRight: 8,
+    },
+    mt7: {
+      marginTop: 7,
+    },
+    counter: {
+      backgroundColor: colors.primary,
+      paddingVertical: 4,
+      borderRadius: 16,
+      minWidth: 32,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    textCounter: {
+      color: 'white',
+      fontFamily: fontFamily.poppinsMedium,
+      fontSize: 12,
+    },
   });
   return {styles};
 };
 
-const ListVoucher = ({item, isRedeem}) => {
+const ListVoucher = ({item, isRedeem, vouchers}) => {
   const {styles} = useStyles();
-
+  const totalPoint = useSelector(
+    state => state.rewardsReducer?.dataPoint?.totalPoint,
+  );
   const handleImage = () => {
     if (item?.image) {
       return {uri: item?.image};
     }
     return appConfig.appImageNull;
+  };
+  console.log(item, totalPoint, 'nusi');
+  const handleCountVoucher = () => {
+    if (vouchers && Array.isArray(vouchers)) {
+      const count = vouchers.filter(voucher => voucher.id === item.id);
+      return count.length;
+    }
+    return 0;
   };
 
   const onPress = () => {
@@ -93,7 +126,6 @@ const ListVoucher = ({item, isRedeem}) => {
       dataVoucher: item,
     });
   };
-  console.log(item, 'usaha');
   const renderReddemVoucher = () => (
     <View style={styles.pointContainer}>
       <View>
@@ -107,16 +139,36 @@ const ListVoucher = ({item, isRedeem}) => {
     </View>
   );
 
+  const handleDisableButton = () => {
+    if (isRedeem) {
+      if (totalPoint < item?.redeemValue) {
+        return true;
+      }
+      return false;
+    }
+    return false;
+  };
+
   return (
-    <Pressable onPress={onPress} style={styles.cardContainer}>
+    <Pressable
+      onPress={onPress}
+      disabled={handleDisableButton()}
+      style={styles.cardContainer}>
       <ImageBackground
         resizeMode="cover"
         source={handleImage()}
-        style={styles.imageContainer}
-        imageStyle={styles.imageStyleBg}
-      />
+        style={styles.imageContainer(handleDisableButton())}
+        imageStyle={styles.imageStyleBg}>
+        {!isRedeem ? (
+          <View style={[styles.mlAuto, styles.mr8, styles.mt7, styles.counter]}>
+            <GlobalText style={styles.textCounter}>
+              {handleCountVoucher()}x{''}
+            </GlobalText>
+          </View>
+        ) : null}
+      </ImageBackground>
 
-      <View style={styles.content}>
+      <View style={styles.content(handleDisableButton())}>
         <GlobalText style={[styles.boldFont, styles.whiteText]}>
           {item?.name}
         </GlobalText>
@@ -127,7 +179,7 @@ const ListVoucher = ({item, isRedeem}) => {
             <View style={styles.iconStyle}>
               <CalendarWhite />
             </View>
-            <GlobalText style={styles.whiteText}>
+            <GlobalText style={[styles.whiteText, styles.mediumFont]}>
               Expire on {moment(item?.expiryDate).format('DD MMMM YYYY')}
             </GlobalText>
           </View>

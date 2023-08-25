@@ -5,6 +5,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {myVouchers} from '../../actions/account.action';
 import ListVoucher from './components/ListVoucher';
 import EmptyVoucher from './components/EmptyVoucher';
+import {uniqBy} from 'lodash';
 
 const styles = StyleSheet.create({
   scrollContainer: {
@@ -22,11 +23,14 @@ const styles = StyleSheet.create({
 const MyVoucher = () => {
   const dispatch = useDispatch();
   const [loading, setLoading] = React.useState(true);
-  const voucherLust = useSelector(
+  const [uniqVoucher, setUniqVoucher] = React.useState([]);
+  const voucherList = useSelector(
     state => state.accountsReducer.myVouchers?.vouchers,
   );
 
-  const renderList = ({item, index}) => <ListVoucher item={item} key={index} />;
+  const renderList = ({item, index}) => (
+    <ListVoucher vouchers={voucherList} item={item} key={index} />
+  );
 
   const onRefresh = async useLoading => {
     if (useLoading) {
@@ -44,6 +48,13 @@ const MyVoucher = () => {
     onRefresh();
   }, []);
 
+  React.useEffect(() => {
+    if (voucherList && Array.isArray(voucherList)) {
+      const uniq = uniqBy(voucherList, 'id');
+      setUniqVoucher(uniq);
+    }
+  }, [voucherList]);
+
   return (
     <>
       <FlatList
@@ -52,7 +63,7 @@ const MyVoucher = () => {
           styles.contentContainer,
         ]}
         style={styles.flatStyle}
-        data={voucherLust}
+        data={uniqVoucher}
         renderItem={renderList}
         onRefresh={onRefreshLoading}
         refreshing={loading}

@@ -7,7 +7,6 @@ import {
   View,
   Text,
   TouchableOpacity,
-  Image,
   SafeAreaView,
 } from 'react-native';
 
@@ -15,7 +14,6 @@ import colorConfig from '../config/colorConfig';
 
 import VoucherItem from '../components/voucherList/components/VoucherListItem';
 import ConfirmationDialog from '../components/confirmationDialog';
-import appConfig from '../config/appConfig';
 import Header from '../components/layout/header';
 import moment from 'moment';
 import {redeemVoucher} from '../actions/rewards.action';
@@ -136,14 +134,14 @@ const useStyles = () => {
       borderWidth: 0.5,
     },
   });
-  return styles;
+  return {styles, colors: theme.colors};
 };
 
 const VoucherDetail = props => {
   const {navigation} = props;
   const {params} = navigation.state;
   const voucher = params?.dataVoucher;
-  const styles = useStyles();
+  const {styles, colors} = useStyles();
   const dispatch = useDispatch();
   const [openModal, setOpenModal] = useState(false);
   const [openSuccessModal, setOpenSuccessModal] = useState(false);
@@ -157,11 +155,6 @@ const VoucherDetail = props => {
     state => state.rewardsReducer?.dataPoint.pendingPoints,
   );
 
-  const handleOpenSuccessModal = () => {
-    setOpenModal(false);
-    setOpenSuccessModal(true);
-  };
-
   const handleRedeem = async () => {
     const payload = {
       voucher: {
@@ -173,10 +166,17 @@ const VoucherDetail = props => {
     setIsLoading(true);
     const response = await dispatch(redeemVoucher(payload));
     if (response?.data?.status) {
-      handleOpenSuccessModal();
+      dispatch(
+        showSnackbar({
+          message: 'Voucher successfully redeemed',
+          type: 'success',
+          background: '#1A883C',
+        }),
+      );
+      setOpenModal(false);
     } else {
       const message = response?.message || 'Redeem failed';
-      await dispatch(showSnackbar({message}));
+      await dispatch(showSnackbar({message, type: 'error'}));
     }
 
     setIsLoading(false);
@@ -187,9 +187,6 @@ const VoucherDetail = props => {
   };
   const handleCloseModal = () => {
     setOpenModal(false);
-  };
-  const handleCloseSuccessModal = () => {
-    setOpenSuccessModal(false);
   };
 
   const renderValidity = () => {
@@ -228,20 +225,6 @@ const VoucherDetail = props => {
         <Text style={styles.textRedeemButton}>REDEEM</Text>
       </TouchableOpacity>
     );
-  };
-
-  const renderImageRedeemSuccess = () => {
-    if (openSuccessModal) {
-      return (
-        <TouchableOpacity
-          onPress={() => {
-            handleCloseSuccessModal();
-          }}
-          style={styles.touchableImage}>
-          <Image source={appConfig.imageRedeemed} />
-        </TouchableOpacity>
-      );
-    }
   };
 
   const renderCurrentPoint = () => {
@@ -316,8 +299,6 @@ const VoucherDetail = props => {
         <Header title="Voucher Details" />
         <Body style={styles.body}>
           <ScrollView>
-            <View style={styles.backgroundColorHeader} />
-
             <View style={styles.container}>
               <View style={{marginTop: '5%'}} />
               <VoucherItem voucher={voucher} />
@@ -335,7 +316,7 @@ const VoucherDetail = props => {
         </Body>
       </View>
       {renderConfirmationDialog()}
-      {renderImageRedeemSuccess()}
+      {/* {renderImageRedeemSuccess()} */}
     </SafeAreaView>
   );
 };

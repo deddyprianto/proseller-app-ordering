@@ -774,7 +774,6 @@ const Profile = props => {
     });
     return component;
   };
-
   const rennderInfoMessage = () => {
     let type = '';
     let message = '';

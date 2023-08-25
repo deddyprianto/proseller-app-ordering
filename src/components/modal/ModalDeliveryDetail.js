@@ -3,6 +3,8 @@ import GlobalModal from './GlobalModal';
 import {ScrollView, View, StyleSheet} from 'react-native';
 import Theme from '../../theme/Theme';
 import GlobalText from '../globalText';
+import {useSelector} from 'react-redux';
+import CurrencyFormatter from '../../helper/CurrencyFormatter';
 
 const useStyles = () => {
   const theme = Theme();
@@ -38,14 +40,6 @@ const useStyles = () => {
       marginHorizontal: 0,
       marginTop: 0,
     },
-    divider: {
-      height: 1,
-      flex: 1,
-      marginHorizontal: 16,
-      marginTop: 8,
-      marginBottom: 16,
-      backgroundColor: theme.colors.border,
-    },
     grandTotalText: {
       fontSize: 16,
       fontFamily: theme.fontFamily.poppinsMedium,
@@ -55,25 +49,50 @@ const useStyles = () => {
       fontFamily: theme.fontFamily.poppinsSemiBold,
       color: theme.colors.errorColor,
     },
+    divider: {
+      height: 1,
+      backgroundColor: theme.colors.greyScale3,
+      width: '100%',
+    },
+    itemDelivery: {
+      flexDirection: 'row',
+      marginTop: 16,
+      justifyContent: 'space-between',
+    },
+    ph16: {
+      paddingHorizontal: 16,
+    },
+    feeText: {
+      fontFamily: theme.fontFamily.poppinsSemiBold,
+    },
   });
   return {styles};
 };
 
 const ModalDeliveryDetail = ({isVisible, closeModal}) => {
   const {styles} = useStyles();
+  const provider = useSelector(
+    state => state.orderReducer?.dataBasket?.product?.provider,
+  );
   return (
     <GlobalModal
       title="Details"
       isBottomModal
       closeModal={closeModal}
+      isVisible={isVisible}
       modalContainerStyle={{padding: 0}}
       closeContainerStyle={{marginRight: 16}}>
       <ScrollView>
-        <View style={styles.modalItem}>
-          <GlobalText>Subtotal</GlobalText>
-          <GlobalText style={styles.modalItemPrice}>
-            {/* {CurrencyFormatter(basket?.totalGrossAmount)}{' '} */}
-          </GlobalText>
+        <View style={styles.divider} />
+        <View style={styles.ph16}>
+          {provider?.feeBreakDown?.map((fee, index) => (
+            <View style={styles.itemDelivery} key={index}>
+              <GlobalText>{fee.text}</GlobalText>
+              <GlobalText style={styles.feeText}>
+                {CurrencyFormatter(fee.fee)}
+              </GlobalText>
+            </View>
+          ))}
         </View>
       </ScrollView>
     </GlobalModal>
