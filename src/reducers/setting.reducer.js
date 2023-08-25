@@ -108,6 +108,16 @@ const privacyPolicySettings = (state = {}, action) => {
   }
 };
 
+const termsAndConditionsSettings = (state = {}, action) => {
+  if (action.type === 'SET_TERMS_AND_CONDITIONS') {
+    return {
+      ...action.data,
+    };
+  } else {
+    return state;
+  }
+};
+
 const dialCodeSettings = (state = {}, action) => {
   if (action.type === 'SET_DIAL_CODES') {
     return action.data;
@@ -127,5 +137,6 @@ export default combineReducers({
   bannerSizeSettings,
   privacyPolicySettings,
   dialCodeSettings,
+  termsAndConditionsSettings,
   allowedOrder,
 });

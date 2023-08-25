@@ -628,7 +628,7 @@ const Profile = props => {
       <TouchableOpacity
         style={styles.viewOption}
         onPress={() => {
-          Actions.termsCondition();
+          Actions.termsAndConditions();
         }}>
         <Image
           style={styles.iconSetting}
