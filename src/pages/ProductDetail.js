@@ -241,12 +241,7 @@ const webStyles = StyleSheet.create({
     fontFamily: 'Poppins-Medium',
     fontSize: 14,
   },
-  img: {
-    marginBottom: 30,
-  },
   p: {
-    marginTop: -5,
-    marginBottom: -5,
     fontFamily: 'Poppins-Medium',
   },
 });
@@ -713,6 +708,7 @@ const ProductDetail = ({productId, selectedProduct, prevPage}) => {
             <RenderHtml
               source={{html: `${product.description}`}}
               contentWidth={width}
+              tagsStyles={webStyles}
             />
           </View>
         </View>
@@ -726,7 +722,11 @@ const ProductDetail = ({productId, selectedProduct, prevPage}) => {
         <View style={styles.divider} />
         <View style={styles.viewDescription}>
           <Text style={styles.textDescription}>{item.name}</Text>
-          <RenderHtml source={{html: `${item.value}`}} contentWidth={width} />
+          <RenderHtml
+            source={{html: `${item.value}`}}
+            contentWidth={width}
+            tagsStyles={webStyles}
+          />
         </View>
       </View>
     );

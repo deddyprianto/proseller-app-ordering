@@ -47,7 +47,6 @@ import ENV from '../../configurations/acemart/demo/env';
 // import ENV from '../../env';
 // import ENV from '../../env-demo';
 import Base64 from 'Base64';
-import {Platform} from 'react-native';
 
 let Data = {};
 // if we build to android, then read .env file

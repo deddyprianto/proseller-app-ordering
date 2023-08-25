@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   TouchableOpacity,
   View,
@@ -80,7 +80,13 @@ const useStyles = () => {
   return styles;
 };
 
-const ImageZoomModal = ({open, handleClose, images, index}) => {
+const ImageZoomModal = ({
+  open,
+  handleClose,
+  handleChangeImage,
+  images,
+  index,
+}) => {
   const styles = useStyles();
   const [isMultiple, setIsMultiple] = useState(false);
 
@@ -124,6 +130,9 @@ const ImageZoomModal = ({open, handleClose, images, index}) => {
     return (
       <Swiper
         index={index}
+        onIndexChanged={value => {
+          handleChangeImage(value);
+        }}
         style={styles.viewImageMultiple}
         autoplayTimeout={6}
         animated={true}
