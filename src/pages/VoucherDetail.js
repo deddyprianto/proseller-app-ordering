@@ -176,7 +176,7 @@ const VoucherDetail = props => {
       setOpenModal(false);
     } else {
       const message = response?.message || 'Redeem failed';
-      await dispatch(showSnackbar({message}));
+      await dispatch(showSnackbar({message, type: 'error'}));
     }
 
     setIsLoading(false);
@@ -299,8 +299,6 @@ const VoucherDetail = props => {
         <Header title="Voucher Details" />
         <Body style={styles.body}>
           <ScrollView>
-            <View style={styles.backgroundColorHeader} />
-
             <View style={styles.container}>
               <View style={{marginTop: '5%'}} />
               <VoucherItem voucher={voucher} />

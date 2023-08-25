@@ -60,35 +60,40 @@ const TabbarComponent = ({routes}) => {
   };
 
   return (
-    <ScrollView>
-      <ScrollView horizontal>
-        {routes?.map(route => (
-          <TouchableOpacity
-            key={route.key}
-            activeOpacity={1}
-            onPress={() => onClickTab(route?.key)}
-            style={styles.tabContainer(routes.length)}>
-            <View
-              style={[
-                styles.areaActive,
-                {
-                  backgroundColor:
-                    route.key === activeTab ? 'white' : colors.primary,
-                },
-              ]}>
-              <GlobalText
+    <View style={{flex: 1}}>
+      <View>
+        <ScrollView horizontal>
+          {routes?.map(route => (
+            <TouchableOpacity
+              key={route.key}
+              activeOpacity={1}
+              onPress={() => onClickTab(route?.key)}
+              style={styles.tabContainer(routes.length)}>
+              <View
                 style={[
-                  styles.tabText,
-                  {color: activeTab === route?.key ? colors.primary : 'white'},
+                  styles.areaActive,
+                  {
+                    backgroundColor:
+                      route.key === activeTab ? 'white' : colors.primary,
+                  },
                 ]}>
-                {route.title}
-              </GlobalText>
-            </View>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
+                <GlobalText
+                  style={[
+                    styles.tabText,
+                    {
+                      color:
+                        activeTab === route?.key ? colors.primary : 'white',
+                    },
+                  ]}>
+                  {route.title}
+                </GlobalText>
+              </View>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </View>
       {handleActiveComponent()}
-    </ScrollView>
+    </View>
   );
 };
 

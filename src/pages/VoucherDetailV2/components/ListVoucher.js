@@ -74,11 +74,33 @@ const useStyles = () => {
     mediumFont: {
       fontFamily: fontFamily.poppinsMedium,
     },
+    mlAuto: {
+      marginLeft: 'auto',
+    },
+    mr8: {
+      marginRight: 8,
+    },
+    mt7: {
+      marginTop: 7,
+    },
+    counter: {
+      backgroundColor: colors.primary,
+      paddingVertical: 4,
+      borderRadius: 16,
+      minWidth: 32,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    textCounter: {
+      color: 'white',
+      fontFamily: fontFamily.poppinsMedium,
+      fontSize: 12,
+    },
   });
   return {styles};
 };
 
-const ListVoucher = ({item, isRedeem}) => {
+const ListVoucher = ({item, isRedeem, vouchers}) => {
   const {styles} = useStyles();
 
   const handleImage = () => {
@@ -86,6 +108,14 @@ const ListVoucher = ({item, isRedeem}) => {
       return {uri: item?.image};
     }
     return appConfig.appImageNull;
+  };
+
+  const handleCountVoucher = () => {
+    if (vouchers && Array.isArray(vouchers)) {
+      const count = vouchers.filter(voucher => voucher.id === item.id);
+      return count.length;
+    }
+    return 0;
   };
 
   const onPress = () => {
@@ -112,8 +142,13 @@ const ListVoucher = ({item, isRedeem}) => {
         resizeMode="cover"
         source={handleImage()}
         style={styles.imageContainer}
-        imageStyle={styles.imageStyleBg}
-      />
+        imageStyle={styles.imageStyleBg}>
+        <View style={[styles.mlAuto, styles.mr8, styles.mt7, styles.counter]}>
+          <GlobalText style={styles.textCounter}>
+            {handleCountVoucher()}x{''}
+          </GlobalText>
+        </View>
+      </ImageBackground>
 
       <View style={styles.content}>
         <GlobalText style={[styles.boldFont, styles.whiteText]}>

@@ -21,6 +21,8 @@ import useCalculation from '../../hooks/calculation/useCalculation';
 import GlobalModal from '../modal/GlobalModal';
 import GlobalButton from '../button/GlobalButton';
 import useSettings from '../../hooks/settings/useSettings';
+import ThreeDotCircle from '../../assets/svg/ThreeDotCircle';
+import ModalDeliveryDetail from '../modal/ModalDeliveryDetail';
 
 const useStyles = () => {
   const theme = Theme();
@@ -170,6 +172,7 @@ const CartDetail = ({
   const [isOpenTnc, setIsOpenTnc] = React.useState(false);
   const {checkTncPolicyData} = useSettings();
   const [buttonActive, setButtonActive] = React.useState(false);
+  const [showDeliveryDetail, setShowDeliveryDetail] = React.useState(false);
   const handleTextSelection = () => {
     if (data?.isSelfSelection) {
       return {
@@ -196,6 +199,8 @@ const CartDetail = ({
   const onButtonActive = active => {
     setButtonActive(active);
   };
+
+  const toggleDelivery = () => setShowDeliveryDetail(prevState => !prevState);
 
   const renderOrderDetail = () => {
     if (data?.cartDetails?.orderingMode.toLowerCase() === 'delivery') {
@@ -314,8 +319,6 @@ const CartDetail = ({
       setTotalPointVoucher(amount);
     }
   }, [vouchers]);
-  const haveOrderDetail =
-    availableSelection?.length > 0 || data?.deliveryAddress;
 
   return (
     <View>
@@ -371,8 +374,13 @@ const CartDetail = ({
         <View style={styles.card}>
           <View style={[styles.row, styles.mt12]}>
             <GlobalText style={[styles.boldFont, styles.deliveryText]}>
-              {data?.cartDetails?.orderingMode}
+              {data?.cartDetails?.orderingMode}{' '}
             </GlobalText>
+            {data?.cartDetails?.orderingMode === 'DELIVERY' ? (
+              <TouchableOpacity onPress={toggleDelivery} style={styles.mlAuto}>
+                <ThreeDotCircle />
+              </TouchableOpacity>
+            ) : null}
           </View>
           {renderOrderDetail()}
         </View>
@@ -503,6 +511,10 @@ const CartDetail = ({
         isVisible={isOpenTnc}>
         <GlobalText>{checkTncPolicyData().tnc?.settingValue}</GlobalText>
       </GlobalModal>
+      <ModalDeliveryDetail
+        closeModal={toggleDelivery}
+        isVisible={showDeliveryDetail}
+      />
     </View>
   );
 };
