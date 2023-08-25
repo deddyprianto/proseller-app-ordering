@@ -8,6 +8,7 @@ import CalendarWhite from '../../../assets/svg/CalenderWhite';
 import appConfig from '../../../config/appConfig';
 import {Actions} from 'react-native-router-flux';
 import PointSmall from '../../../assets/svg/SmallPointSvg';
+import {useSelector} from 'react-redux';
 const useStyles = () => {
   const {colors, fontFamily} = Theme();
   const styles = StyleSheet.create({
@@ -18,22 +19,22 @@ const useStyles = () => {
       width: normalizeLayoutSizeWidth(201),
       height: normalizeLayoutSizeWidth(54),
     },
-    imageContainer: {
+    imageContainer: disable => ({
       alignItems: 'center',
       height: normalizeLayoutSizeWidth(78),
       borderWidth: 1,
-      borderColor: colors.primary,
+      borderColor: disable ? colors.greyScale5 : colors.primary,
       borderTopLeftRadius: 16,
       borderTopRightRadius: 16,
-    },
-    content: {
+    }),
+    content: disable => ({
       padding: 12,
-      backgroundColor: colors.primary,
+      backgroundColor: disable ? colors.greyScale5 : colors.primary,
 
       borderBottomLeftRadius: 16,
       borderBottomRightRadius: 16,
       minHeight: normalizeLayoutSizeWidth(77),
-    },
+    }),
     whiteText: {
       color: 'white',
     },
@@ -102,14 +103,16 @@ const useStyles = () => {
 
 const ListVoucher = ({item, isRedeem, vouchers}) => {
   const {styles} = useStyles();
-
+  const totalPoint = useSelector(
+    state => state.rewardsReducer?.dataPoint?.totalPoint,
+  );
   const handleImage = () => {
     if (item?.image) {
       return {uri: item?.image};
     }
     return appConfig.appImageNull;
   };
-
+  console.log(item, totalPoint, 'nusi');
   const handleCountVoucher = () => {
     if (vouchers && Array.isArray(vouchers)) {
       const count = vouchers.filter(voucher => voucher.id === item.id);
@@ -136,21 +139,36 @@ const ListVoucher = ({item, isRedeem, vouchers}) => {
     </View>
   );
 
+  const handleDisableButton = () => {
+    if (isRedeem) {
+      if (totalPoint < item?.redeemValue) {
+        return true;
+      }
+      return false;
+    }
+    return false;
+  };
+
   return (
-    <Pressable onPress={onPress} style={styles.cardContainer}>
+    <Pressable
+      onPress={onPress}
+      disabled={handleDisableButton()}
+      style={styles.cardContainer}>
       <ImageBackground
         resizeMode="cover"
         source={handleImage()}
-        style={styles.imageContainer}
+        style={styles.imageContainer(handleDisableButton())}
         imageStyle={styles.imageStyleBg}>
-        <View style={[styles.mlAuto, styles.mr8, styles.mt7, styles.counter]}>
-          <GlobalText style={styles.textCounter}>
-            {handleCountVoucher()}x{''}
-          </GlobalText>
-        </View>
+        {!isRedeem ? (
+          <View style={[styles.mlAuto, styles.mr8, styles.mt7, styles.counter]}>
+            <GlobalText style={styles.textCounter}>
+              {handleCountVoucher()}x{''}
+            </GlobalText>
+          </View>
+        ) : null}
       </ImageBackground>
 
-      <View style={styles.content}>
+      <View style={styles.content(handleDisableButton())}>
         <GlobalText style={[styles.boldFont, styles.whiteText]}>
           {item?.name}
         </GlobalText>
