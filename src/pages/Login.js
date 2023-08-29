@@ -358,7 +358,7 @@ const Login = () => {
   };
 
   const renderButtonNext = () => {
-    const active = email || phoneNumber.length >= 6;
+    const active = email || phoneNumber;
 
     return (
       <TouchableOpacity
