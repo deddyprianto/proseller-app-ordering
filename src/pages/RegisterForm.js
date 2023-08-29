@@ -15,7 +15,6 @@ import {
 import awsConfig from '../config/awsConfig';
 
 import {Body, Header} from '../components/layout';
-import FieldTextInput from '../components/fieldTextInput';
 import FieldPhoneNumberInput from '../components/fieldPhoneNumberInput';
 
 import {createNewUser} from '../actions/auth.actions';
@@ -125,6 +124,10 @@ const useStyles = () => {
     messageText: {
       color: '#438E49',
     },
+    spaceGender: {
+      height: 80,
+      zIndex: -1,
+    },
   });
   return styles;
 };
@@ -146,6 +149,7 @@ const RegisterForm = ({registerMethod, inputValue, approvedData}) => {
   const orderSetting = useSelector(
     state => state.orderReducer?.orderingSetting?.orderingSetting?.settings,
   );
+  const [openGender, setOpenGender] = React.useState(false);
   const genderItems = [
     {
       label: 'Male',
@@ -316,7 +320,8 @@ const RegisterForm = ({registerMethod, inputValue, approvedData}) => {
   const onSetgender = item => setGender(item.value);
 
   const changeAddress = addressValue => setAddress(addressValue);
-
+  const openGendet = () => setOpenGender(true);
+  const closeGender = () => setOpenGender(false);
   const renderCustomField = () => {
     const component = activeField.map(field => {
       if (field.fieldName === 'birthDate') {
@@ -346,15 +351,20 @@ const RegisterForm = ({registerMethod, inputValue, approvedData}) => {
       }
       if (field.fieldName === 'gender') {
         return (
-          <GlobalInputText
-            placeholder={'Select gender'}
-            items={genderItems}
-            defaultValue={gender}
-            onChangeItem={onSetgender}
-            type="dropdown"
-            label="Gender"
-            isMandatory={field?.mandatory}
-          />
+          <>
+            <GlobalInputText
+              placeholder={'Select gender'}
+              items={genderItems}
+              defaultValue={gender}
+              onChangeItem={onSetgender}
+              type="dropdown"
+              label="Gender"
+              isMandatory={field?.mandatory}
+              onOpen={openGendet}
+              onClose={closeGender}
+            />
+            {openGender ? <View style={styles.spaceGender} /> : null}
+          </>
         );
       }
       if (field.fieldName === 'address') {

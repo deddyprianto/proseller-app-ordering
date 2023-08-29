@@ -10,7 +10,6 @@ const usePayment = () => {
   const registerCardHook = async (page, item) => {
     if (item) {
       setIsLoading(true);
-      console.log({page, item}, 'kikilaparsekali');
       try {
         const paymentID = item.paymentID;
         const referenceNo = await UUIDGenerator.getRandomUUID();

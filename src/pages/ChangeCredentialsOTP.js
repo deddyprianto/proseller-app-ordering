@@ -44,7 +44,7 @@ class ChangeCredentialsOTP extends Component {
       otp: Number(otp),
     };
     this.setState({loading: true});
-    if (this.props.mode === 'Email') {
+    if (this.props.mode?.toLowerCase() === 'email') {
       sendData.email = this.props.address;
     } else {
       sendData.phoneNumber = this.props.address;
@@ -73,7 +73,7 @@ class ChangeCredentialsOTP extends Component {
         username: this.props.dataDiri.username,
         otp,
       };
-      if (mode === 'Email') {
+      if (mode.toLowerCase() === 'email') {
         dataProfile.newEmail = address.toLowerCase();
       } else {
         dataProfile.newPhoneNumber = address;

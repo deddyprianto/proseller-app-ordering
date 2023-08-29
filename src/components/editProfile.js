@@ -25,7 +25,7 @@ import {Actions} from 'react-native-router-flux';
 import DatePicker from 'react-native-date-picker';
 import {Form} from 'react-native-validator-form';
 import colorConfig from '../config/colorConfig';
-import {getUserProfile, updateUser} from '../actions/user.action';
+import {getUserProfile, requestOTP, updateUser} from '../actions/user.action';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
 import AwesomeAlert from 'react-native-awesome-alerts';
@@ -44,6 +44,13 @@ import withHooksComponent from './HOC';
 import NavbarBack from './navbar/navbarBack';
 import {Body} from './layout';
 import appConfig from '../config/appConfig';
+import GlobalText from './globalText';
+import FieldPhoneNumberInput from './fieldPhoneNumberInput/FieldPhoneNumberInput';
+import {emailValidation} from '../helper/Validation';
+import {showSnackbar} from '../actions/setting.action';
+import {checkAccountExist} from '../actions/auth.actions';
+import CheckListGreenSvg from '../assets/svg/ChecklistGreenSvg';
+import VerifyAlert from '../assets/svg/VerifyAlert';
 
 const backupMandatoryFields = [
   {
@@ -172,7 +179,23 @@ class AccountEditProfil extends Component {
       appSetting: {},
       isPostalCodeValid,
       customFields: [],
+      canEditEmail: false,
+      canEditPhone: false,
+      user: {},
     };
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.userDetail !== this.props.userDetail) {
+      let userDetail;
+      let bytes = CryptoJS.AES.decrypt(
+        this.props.userDetail,
+        awsConfig.PRIVATE_KEY_RSA,
+      );
+      userDetail = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+
+      this.setState({user: userDetail});
+    }
   }
 
   goBack = async () => {
@@ -200,6 +223,7 @@ class AccountEditProfil extends Component {
           birthDate: userDetail.birthDate,
           address: userDetail.address,
           postalcode: userDetail.postalcode,
+          user: userDetail,
         });
       }
     } catch (e) {}
@@ -365,7 +389,6 @@ class AccountEditProfil extends Component {
             this.state.phoneNumber + this.state.phone;
         }
       }
-      console.log(dataProfile);
       const response = await this.props.dispatch(updateUser(dataProfile));
       if (response) {
         await this.props.dispatch(getUserProfile());
@@ -743,6 +766,146 @@ class AccountEditProfil extends Component {
     return null;
   };
 
+  handleChangEditable = value => {
+    if (value === 'email') {
+      this.setState({canEditEmail: !this.state.canEditEmail});
+    }
+    if (value === 'phone') {
+      this.setState({canEditPhone: !this.state.canEditPhone});
+    }
+  };
+
+  setPhoneNumber = number => {
+    this.setState({phone: number});
+  };
+
+  setCountryCode = number => {
+    this.setState({phoneNumber: number});
+  };
+
+  handleStatus = type => {
+    if (type === 'email') {
+      if (this.state.user?.isEmailVerified) {
+        return this.renderVerified();
+      }
+      return this.renderUnVerified();
+    }
+    if (type === 'phone') {
+      if (this.state.user?.isPhoneNumberVerified) {
+        return this.renderVerified();
+      }
+      return this.renderUnVerified();
+    }
+  };
+
+  renderVerified = () => (
+    <View style={[styles.row, styles.centerVertical]}>
+      <View style={styles.ml8}>
+        <CheckListGreenSvg />
+      </View>
+      <GlobalText style={[styles.ml8, styles.mdeiumFont]}>Verified</GlobalText>
+    </View>
+  );
+
+  renderUnVerified = () => (
+    <View style={[styles.row, styles.centerVertical]}>
+      <VerifyAlert />
+      <GlobalText style={[styles.ml8, styles.mdeiumFont]}>
+        Please Verify
+      </GlobalText>
+    </View>
+  );
+
+  renderChildrenLabel = value => (
+    <>
+      {this.handleStatus(value)}
+      <View style={styles.mlAuto}>
+        <TouchableOpacity onPress={() => this.handleChangEditable(value)}>
+          <GlobalText
+            style={[{color: this.props.colors.primary}, styles.changeText]}>
+            Change
+          </GlobalText>
+        </TouchableOpacity>
+      </View>
+    </>
+  );
+
+  renderVerifyButton = type => (
+    <TouchableOpacity
+      onPress={() => this.openVerifyPage(type)}
+      style={[styles.verifyBtn, {borderColor: this.props.colors.primary}]}>
+      <GlobalText>Verify</GlobalText>
+    </TouchableOpacity>
+  );
+
+  openVerifyPage = type => {
+    if (type === 'email') {
+      const isValidEmail = emailValidation(this.state.email);
+      if (!isValidEmail) {
+        return this.props.dispatch(
+          showSnackbar({message: 'Please input a valid email'}),
+        );
+      } else {
+        this.onRequestOtp(type);
+      }
+    } else {
+      this.onRequestOtp(type);
+    }
+  };
+
+  onRequestOtp = async type => {
+    let dataProfile = {
+      username: this.props.dataDiri.username,
+      cognitoUsername: this.props.dataDiri.cognitoUsername,
+    };
+    let isVerification = false;
+    let dataAccount = {};
+    if (type === 'email') {
+      dataAccount = {...dataAccount, email: this.state.email};
+    } else {
+      dataAccount = {
+        ...dataAccount,
+        phoneNumber: this.state.phoneNumber + this.state.phone,
+      };
+    }
+    const checkExistingAccount = await this.props.dispatch(
+      checkAccountExist(dataAccount),
+    );
+    if (checkExistingAccount.status) {
+      isVerification = true;
+    }
+    // detect change email
+    if (type === 'email') {
+      dataProfile.newEmail = this.state.email.toLowerCase();
+    } else {
+      dataProfile.newPhoneNumber = this.state.phoneNumber + this.state.phone;
+    }
+
+    const response = await this.props.dispatch(requestOTP(dataProfile));
+
+    if (response.success) {
+      let address = this.state.phoneNumber + this.state.phone;
+      let initialTimer = 1;
+      if (type === 'email') {
+        address = this.state.email;
+        initialTimer = 5;
+      }
+      Actions.push('changeCredentialsOTP', {
+        mode: type,
+        address,
+        initialTimer,
+        dataDiri: this.props.dataDiri,
+        isVerification,
+      });
+    } else {
+      let message = 'Please try again';
+      try {
+        message = response.responseBody.Data.message;
+      } catch (e) {}
+      Alert.alert('Sorry', message);
+    }
+  };
+
   render() {
     const {intlData, colors, fontFamily} = this.props;
     const {fields, isPostalCodeValid} = this.state;
@@ -770,11 +933,42 @@ class AccountEditProfil extends Component {
                     placeholder="Email"
                     value={this.state.email}
                     onChangeText={value => this.setState({email: value})}
-                    disabled
+                    disabled={this.state.canEditEmail}
                     label="Email"
                     isMandatory
-                    editable={false}
+                    editable={this.state.canEditEmail}
+                    childrenLabel={this.renderChildrenLabel('email')}
+                    rightIcon={
+                      <>
+                        {this.state.canEditEmail
+                          ? this.renderVerifyButton('email')
+                          : null}
+                      </>
+                    }
                   />
+                  <View style={styles.mt16}>
+                    <FieldPhoneNumberInput
+                      type="phone"
+                      label="Phone Number"
+                      value={this.state.phone}
+                      editable={this.state.canEditPhone}
+                      placeholder="Phone Number"
+                      onChangeCountryCode={this.setCountryCode}
+                      onChange={this.setPhoneNumber}
+                      inputLabel={'Mobile Phone'}
+                      isMandatory
+                      withoutFlag={true}
+                      rootStyle={styles.noMb}
+                      rightLabel={this.renderChildrenLabel('phone')}
+                      rightChildren={
+                        <>
+                          {this.state.canEditPhone
+                            ? this.renderVerifyButton('phone')
+                            : null}
+                        </>
+                      }
+                    />
+                  </View>
 
                   {!isEmptyArray(fields) &&
                     fields
@@ -1254,5 +1448,39 @@ const styles = StyleSheet.create({
   },
   keyboardStyle: {
     flex: 1,
+  },
+  mlAuto: {
+    marginLeft: 'auto',
+  },
+  mt16: {
+    marginTop: 16,
+  },
+  noMb: {
+    marginBottom: 0,
+  },
+  changeText: {
+    fontFamily: 'Poppins-SemiBold',
+  },
+  verifyBtn: {
+    width: 73,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 4,
+    borderWidth: 1,
+    borderRadius: 8,
+  },
+  row: {
+    flexDirection: 'row',
+  },
+  centerVertical: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  ml8: {
+    marginLeft: 8,
+  },
+  mdeiumFont: {
+    fontFamily: 'Poppins-Medium',
+    fontSize: 12,
   },
 });
