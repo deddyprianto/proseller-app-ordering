@@ -111,6 +111,12 @@ const useStyles = () => {
     btnHeight: {
       height: normalizeLayoutSizeWidth(48),
     },
+    row: {
+      flexDirection: 'row',
+    },
+    heightOpenDropDown: {
+      height: 100,
+    },
   });
   return styles;
 };
@@ -135,6 +141,7 @@ const useStyles = () => {
  * @property {Function} onChangeItem
  * @property {boolean}  showNumberLengthText
  * @property {Boolean} autoReset
+ * @property {any} childrenLabel
  */
 
 /**
@@ -189,7 +196,7 @@ const GlobalInputText = React.forwardRef((props, ref) => {
   }
   if (props.type === 'dropdown') {
     return (
-      <View style={styles.inputParentContainer}>
+      <View style={[styles.inputParentContainer]}>
         <View>
           <GlobalText style={styles.labelStyle}>
             {props.label}{' '}
@@ -218,13 +225,14 @@ const GlobalInputText = React.forwardRef((props, ref) => {
   }
   return (
     <View style={styles.inputParentContainer}>
-      <View>
+      <View style={styles.row}>
         <GlobalText style={styles.labelStyle}>
           {props.label}{' '}
           {props.isMandatory ? (
             <GlobalText style={styles.mandatoryStyle}>*</GlobalText>
           ) : null}
         </GlobalText>
+        {props?.childrenLabel ? props.childrenLabel : null}
       </View>
       <View
         style={styles.inpurContainer(

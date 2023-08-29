@@ -489,14 +489,14 @@ class ChangeCredentials extends Component {
     );
   }
 }
-mapStateToProps = state => ({
+const mapStateToProps = state => ({
   companyInfo: state.userReducer.getCompanyInfo.companyInfo,
   status: state.accountsReducer.accountExist.status,
   deviceID: state.userReducer.deviceUserInfo,
   intlData: state.intlData,
 });
 
-mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = dispatch => ({
   dispatch,
 });
 

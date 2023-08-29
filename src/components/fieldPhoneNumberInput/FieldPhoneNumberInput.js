@@ -23,7 +23,7 @@ import ErrorInput from '../../assets/svg/ErorInputSvg';
 const useStyles = () => {
   const theme = Theme();
   const styles = StyleSheet.create({
-    root: isError => ({
+    root: (isError, editable) => ({
       width: '100%',
       flexDirection: 'row',
       alignItems: 'center',
@@ -36,7 +36,9 @@ const useStyles = () => {
       borderColor: isError
         ? theme.colors.semanticColorError
         : theme.colors.border1,
-      backgroundColor: theme.colors.background,
+      backgroundColor: !editable
+        ? theme.colors.greyScale4
+        : theme.colors.background,
     }),
     viewCountryPicker: {
       width: 0,
@@ -80,14 +82,14 @@ const useStyles = () => {
       fontSize: theme.fontSize[14],
       fontFamily: theme.fontFamily.poppinsRegular,
     },
-    textInputPhoneNumber: {
+    textInputPhoneNumber: editable => ({
       flex: 1,
-      color: theme.colors.text1,
+      color: !editable ? theme.colors.greyScale2 : theme.colors.text1,
       fontSize: theme.fontSize[14],
       fontFamily: theme.fontFamily.poppinsRegular,
-      height: normalizeLayoutSizeHeight(46),
-      marginTop: 1,
-    },
+      height: normalizeLayoutSizeWidth(46),
+      marginTop: 0,
+    }),
     divider: {
       width: 1,
       height: 34,
@@ -119,9 +121,13 @@ const useStyles = () => {
       fontFamily: theme.fontFamily.poppinsMedium,
       color: theme.colors.semanticColorError,
     },
-    coutryCodeText: {
-      fontSize: 14,
+    coutryCodeText: editable => ({
+      fontSize: theme.fontSize[14],
       fontFamily: theme.fontFamily.poppinsRegular,
+      color: !editable ? theme.colors.greyScale2 : 'black',
+    }),
+    row: {
+      flexDirection: 'row',
     },
   });
   return styles;
@@ -141,6 +147,9 @@ const FieldPhoneNumberInput = ({
   rootStyle,
   isError,
   errorMessage,
+  rightLabel,
+  editable,
+  rightChildren,
 }) => {
   const styles = useStyles();
   const [openModal, setOpenModal] = useState(false);
@@ -213,7 +222,9 @@ const FieldPhoneNumberInput = ({
             setCountryCodeModal(!countryCodeModal);
           }}
           style={styles.withoutFlagContainer}>
-          <GlobalText style={styles.coutryCodeText}>{countryCode}</GlobalText>
+          <GlobalText style={styles.coutryCodeText(handleEditable())}>
+            {countryCode}
+          </GlobalText>
           <View style={styles.arrowBottomContainer}>{renderArrow()}</View>
         </TouchableOpacity>
       );
@@ -222,6 +233,14 @@ const FieldPhoneNumberInput = ({
         <GlobalText style={styles.textCountryCode}>{countryCode}</GlobalText>
       );
     }
+  };
+  console.log({editable}, 'nusi');
+
+  const handleEditable = () => {
+    if (editable === undefined || editable === null) {
+      return true;
+    }
+    return editable;
   };
 
   const renderValue = () => {
@@ -232,7 +251,8 @@ const FieldPhoneNumberInput = ({
         {renderValueLeftSide()}
         <TextInput
           keyboardType={'numeric'}
-          style={styles.textInputPhoneNumber}
+          editable={handleEditable()}
+          style={styles.textInputPhoneNumber(handleEditable())}
           textAlignVertical="center"
           value={phoneNumber}
           placeholder={placeholder}
@@ -257,12 +277,15 @@ const FieldPhoneNumberInput = ({
   const renderInputLabel = () => {
     if (inputLabel) {
       return (
-        <GlobalText style={styles.labelText}>
-          {inputLabel}{' '}
-          {isMandatory ? (
-            <GlobalText style={styles.mandatoryStyle}>*</GlobalText>
-          ) : null}{' '}
-        </GlobalText>
+        <View style={styles.row}>
+          <GlobalText style={styles.labelText}>
+            {inputLabel}{' '}
+            {isMandatory ? (
+              <GlobalText style={styles.mandatoryStyle}>*</GlobalText>
+            ) : null}{' '}
+          </GlobalText>
+          {rightLabel ? rightLabel : null}
+        </View>
       );
     }
   };
@@ -303,11 +326,12 @@ const FieldPhoneNumberInput = ({
   return (
     <>
       {renderInputLabel()}
-      <View style={[styles.root(isError), rootStyle]}>
+      <View style={[styles.root(isError, handleEditable()), rootStyle]}>
         {renderModalCountryPicker()}
         {renderFlag()}
         {renderInput()}
         {isError ? <ErrorInput /> : null}
+        {rightChildren ? rightChildren : null}
       </View>
       {isError ? (
         <GlobalText style={styles.errorText}>{errorMessage} </GlobalText>

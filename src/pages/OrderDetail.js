@@ -729,7 +729,6 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
         data?.transactionRefNo &&
         !isFromPaymentPage ? (
           <View style={[styles.qrContainer, styles.mt16, styles.mb16]}>
-            <GlobalText>Scan this QR Code in Delivery Counter</GlobalText>
             <View style={styles.mt12}>
               <QRCode size={200} value={data.transactionRefNo} />
             </View>
