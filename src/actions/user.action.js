@@ -267,28 +267,30 @@ export const updateUser = payload => {
         },
       } = state;
 
-      const response = await fetchApi(
-        '/customer/updateProfile',
-        'PUT',
-        payload,
-        200,
-        token,
-      );
+      if (!token) {
+        const response = await fetchApi(
+          '/customer/updateProfile',
+          'PUT',
+          payload,
+          200,
+          token,
+        );
 
-      // encrypt user data before save to asyncstorage
-      const dataUser = CryptoJS.AES.encrypt(
-        JSON.stringify(response.responseBody.Data),
-        awsConfig.PRIVATE_KEY_RSA,
-      ).toString();
+        // encrypt user data before save to async storage
+        const dataUser = CryptoJS.AES.encrypt(
+          JSON.stringify(response.responseBody.Data),
+          awsConfig.PRIVATE_KEY_RSA,
+        ).toString();
 
-      if (response.success) {
-        dispatch({
-          type: 'GET_USER_SUCCESS',
-          payload: dataUser,
-        });
+        if (response.success) {
+          dispatch({
+            type: 'GET_USER_SUCCESS',
+            payload: dataUser,
+          });
+        }
+
+        return response;
       }
-
-      return response;
     } catch (error) {
       return error;
     }
