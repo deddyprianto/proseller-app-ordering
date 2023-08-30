@@ -909,6 +909,7 @@ class AccountEditProfil extends Component {
   render() {
     const {intlData, colors, fontFamily} = this.props;
     const {fields, isPostalCodeValid} = this.state;
+    console.log({fields}, 'kuman');
     return (
       <SafeAreaView style={styles.container}>
         {this.state.loading && <LoaderDarker />}
@@ -983,7 +984,7 @@ class AccountEditProfil extends Component {
                               <GlobalInputText
                                 label="Birthdate"
                                 isMandatory={item.mandatory}
-                                editable={appConfig.appName !== 'fareastflora'}
+                                editable={item?.editable !== false}
                                 onPressBtn={this.showDatePicker}
                                 type="button"
                                 value={this.formatBirthDate(
@@ -1024,6 +1025,7 @@ class AccountEditProfil extends Component {
                               <DropDownPicker
                                 placeholder={'Select your birth month'}
                                 items={this.state.MM}
+                                disabled={item?.editable === false}
                                 defaultValue={this.getMonth(
                                   this.state.birthDate,
                                 )}
@@ -1080,6 +1082,7 @@ class AccountEditProfil extends Component {
                               </Text>
                               <DropDownPicker
                                 placeholder={'Select gender'}
+                                disabled={item?.editable === false}
                                 items={[
                                   {
                                     label: intlData.messages.male,
@@ -1138,6 +1141,7 @@ class AccountEditProfil extends Component {
                                 </Text>
                                 <DropDownPicker
                                   placeholder={item.displayName}
+                                  disabled={item?.editable === false}
                                   items={item.items}
                                   defaultValue={this.state[item.fieldName]}
                                   containerStyle={{height: 47}}
@@ -1194,6 +1198,7 @@ class AccountEditProfil extends Component {
                                     [item.fieldName]: value,
                                   })
                                 }
+                                editable={item?.editable !== false}
                                 label={item.displayName}
                                 isMandatory={item.mandatory}
                                 keyboardType={this.getKeyboardType(
@@ -1217,6 +1222,7 @@ class AccountEditProfil extends Component {
                                 style={{
                                   paddingVertical: 10,
                                 }}
+                                editable={item?.editable !== false}
                                 value={this.state.postalcode}
                                 onChangeText={this.handleUpdatePostalCode}
                               />
