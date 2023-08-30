@@ -39,12 +39,6 @@ const useStyles = () => {
     },
     touchableNext: {
       marginTop: 32,
-      height: 40,
-      width: '100%',
-      borderRadius: 8,
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: theme.colors.buttonActive,
     },
     textHeader: {
       color: theme.colors.primary,
@@ -138,6 +132,7 @@ const OTP = ({isLogin, method, methodValue}) => {
   const [openCancelVerification, setOpenCancelVerification] = React.useState(
     false,
   );
+  const [myOtp, setMyOtp] = React.useState('');
   const countdown = () => {
     let minuteCount = sendCounter >= 2 ? 2 : 1;
 
@@ -272,17 +267,19 @@ const OTP = ({isLogin, method, methodValue}) => {
 
   const renderButtonNext = () => {
     return (
-      <TouchableOpacity
-        disabled={isLoading}
-        style={styles.touchableNext}
+      <GlobalButton
+        disabled={isLoading || myOtp.length < 4}
+        buttonStyle={styles.touchableNext}
+        title={isLogin ? 'Verify and Login' : 'Verify and Create Account'}
         onPress={() => {
           handleLogin();
-        }}>
-        <Text style={styles.textNext}>
-          {isLogin ? 'Verify and Login' : 'Verify and Create Account'}{' '}
-        </Text>
-      </TouchableOpacity>
+        }}
+      />
     );
+  };
+
+  const handleSetOtp = otp => {
+    setMyOtp(otp);
   };
 
   const renderOtpField = () => {
@@ -292,6 +289,7 @@ const OTP = ({isLogin, method, methodValue}) => {
         onComplete={value => {
           handleLogin(value);
         }}
+        onChangeOtp={handleSetOtp}
       />
     );
   };
