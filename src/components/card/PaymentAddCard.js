@@ -11,9 +11,7 @@ import {
   StyleSheet,
   Dimensions,
   TouchableOpacity,
-  TouchableWithoutFeedback,
   ScrollView,
-  Picker,
   BackHandler,
   Platform,
   TextInput,
@@ -25,24 +23,23 @@ import {
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
 import colorConfig from '../../config/colorConfig';
-import awsConfig from '../../config/awsConfig';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
-import {reduxForm} from 'redux-form';
 import Loader from './../loader';
-import ProgressiveImage from '../helper/ProgressiveImage';
-import CurrencyFormatter from '../../helper/CurrencyFormatter';
 import {
   getAccountPayment,
   netsclickRegister,
   registerCard,
   selectedAccount,
 } from '../../actions/payment.actions';
-import {defaultPaymentAccount, movePageIndex} from '../../actions/user.action';
+import {defaultPaymentAccount} from '../../actions/user.action';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import UUIDGenerator from 'react-native-uuid-generator';
 import {isEmptyArray} from '../../helper/CheckEmpty';
 import {check, PERMISSIONS} from 'react-native-permissions';
+import {Header} from '../layout';
+import CardProfilePayment from './CardProfilePayment';
+import EmptyListPayment from '../../pages/ProfilePaymentMethod/EmptyListPayment';
 class PaymentAddCard extends Component {
   constructor(props) {
     super(props);
@@ -222,54 +219,26 @@ class PaymentAddCard extends Component {
     }
   };
 
+  renderCardPaymentMethod = ({item: data}) => {
+    if (data.paymentID === this.props.item.paymentID) {
+      return (
+        <CardProfilePayment
+          isActive={this.checkSelectedAccount(data)}
+          item={data}
+          onPress={() => this.selectAccount(data)}
+        />
+      );
+    }
+    return null;
+  };
+
   renderCard = () => {
-    const {myCardAccount, item} = this.props;
-    const paymentID = item.paymentID;
+    const {myCardAccount} = this.props;
+    console.log(this.props.item);
     return (
       <FlatList
         data={myCardAccount}
-        renderItem={({item}) =>
-          item.paymentID == paymentID ? (
-            <TouchableOpacity
-              onPress={() => this.selectAccount(item)}
-              style={[
-                styles.card,
-                this.checkSelectedAccount(item) ? styles.cardSelected : null,
-                {
-                  backgroundColor: this.getCardIssuer(item),
-                },
-              ]}>
-              <View style={styles.headingCard}>
-                <Text style={styles.cardText}>
-                  {item.details.cardIssuer.toUpperCase()}
-                </Text>
-                {/*<Text style={styles.cardText}>My First Card</Text>*/}
-                <Icon
-                  size={32}
-                  name={Platform.OS === 'ios' ? 'ios-card' : 'md-card'}
-                  style={{color: 'white'}}
-                />
-              </View>
-              <View style={styles.cardNumber}>
-                <Text style={styles.cardNumberText}>
-                  {item.details.maskedAccountNumber}
-                </Text>
-              </View>
-              <View style={styles.cardName}>
-                <Text style={styles.cardNameText}>
-                  {item.details.firstName} {item.details.lastName}
-                </Text>
-                <View>
-                  <Text style={styles.cardValid}>
-                    {' '}
-                    VALID THRU {item.details.cardExpiryMonth} /{' '}
-                    {item.details.cardExpiryYear}
-                  </Text>
-                </View>
-              </View>
-            </TouchableOpacity>
-          ) : null
-        }
+        renderItem={this.renderCardPaymentMethod}
         keyExtractor={(product, index) => index.toString()}
       />
     );
@@ -349,25 +318,7 @@ class PaymentAddCard extends Component {
   };
 
   renderEmptyCard = () => {
-    const {intlData, item} = this.props;
-    return (
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'center',
-          alignItems: 'center',
-          marginTop: 30,
-        }}>
-        <Text
-          style={{
-            fontSize: 20,
-            color: colorConfig.pageIndex.grayColor,
-            textAlign: 'center',
-          }}>
-          You haven't added a {item.paymentName} yet.
-        </Text>
-      </View>
-    );
+    return <EmptyListPayment />;
   };
 
   getCountCard = () => {
@@ -407,30 +358,23 @@ class PaymentAddCard extends Component {
     }
   };
 
+  handleAddPayment = () => {
+    if (this.props.item.paymentID === 'Netsclick') {
+      this.handleNetsClick(this.props.item);
+    } else {
+      this.registerCard();
+    }
+  };
+
   render() {
-    const {intlData, myCardAccount, item} = this.props;
+    const {myCardAccount, item} = this.props;
     return (
       <SafeAreaView style={styles.container}>
         {this.state.loading && <Loader />}
 
         {this.askUserToEnterCVV()}
 
-        <View
-          style={[
-            styles.header,
-            {backgroundColor: colorConfig.pageIndex.backgroundColor},
-          ]}>
-          <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
-            <Icon
-              size={28}
-              name={
-                Platform.OS === 'ios' ? 'ios-arrow-back' : 'md-arrow-round-back'
-              }
-              style={styles.btnBackIcon}
-            />
-            <Text style={styles.btnBackText}>My {item.paymentName}</Text>
-          </TouchableOpacity>
-        </View>
+        <Header title={'My Cards'} />
         <ScrollView
           refreshControl={
             <RefreshControl
@@ -438,57 +382,37 @@ class PaymentAddCard extends Component {
               onRefresh={this._onRefresh}
             />
           }>
-          {myCardAccount != undefined && myCardAccount.length > 0
+          {myCardAccount !== undefined && myCardAccount.length > 0
             ? this.renderCard()
             : this.renderEmptyCard()}
         </ScrollView>
-        {item.allowMultipleAccount != false ? (
-          <TouchableOpacity
-            onPress={() => {
-              if (item.paymentID === 'Netsclick') {
-                this.handleNetsClick(item);
-              } else {
-                this.registerCard();
-              }
-            }}
-            style={styles.buttonBottomFixed}>
-            <Icon
-              size={25}
-              name={Platform.OS === 'ios' ? 'ios-add' : 'md-add'}
-              style={{color: 'white', marginRight: 10}}
-            />
-            <Text style={styles.textAddCard}>ADD {item.paymentName}</Text>
-          </TouchableOpacity>
-        ) : myCardAccount != undefined && this.getCountCard() ? (
-          <TouchableOpacity
-            onPress={() => {
-              if (item.paymentID === 'Netsclick') {
-                this.handleNetsClick(item);
-              } else {
-                this.registerCard();
-              }
-            }}
-            style={styles.buttonBottomFixed}>
-            <Icon
-              size={25}
-              name={Platform.OS === 'ios' ? 'ios-add' : 'md-add'}
-              style={{color: 'white', marginRight: 10}}
-            />
-            <Text style={styles.textAddCard}>ADD {item.paymentName}</Text>
-          </TouchableOpacity>
+        {item.allowMultipleAccount !== false ||
+        (myCardAccount !== undefined && this.getCountCard()) ? (
+          <View style={styles.containerBtnFix}>
+            <TouchableOpacity
+              onPress={this.handleAddPayment}
+              style={styles.buttonBottomFixed}>
+              <Icon
+                size={25}
+                name={Platform.OS === 'ios' ? 'ios-add' : 'md-add'}
+                style={{color: 'white', marginRight: 10}}
+              />
+              <Text style={styles.textAddCard}>Add Card</Text>
+            </TouchableOpacity>
+          </View>
         ) : null}
       </SafeAreaView>
     );
   }
 }
 
-mapStateToProps = state => ({
+const mapStateToProps = state => ({
   intlData: state.intlData,
   myCardAccount: state.cardReducer.myCardAccount.card,
   selectedAccount: state.cardReducer.selectedAccount.selectedAccount,
 });
 
-mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = dispatch => ({
   dispatch,
 });
 
@@ -502,7 +426,7 @@ export default compose(
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colorConfig.store.containerColor,
+    backgroundColor: 'white',
   },
   btnBackIcon: {
     marginLeft: 10,
@@ -633,7 +557,7 @@ const styles = StyleSheet.create({
   },
   buttonBottomFixed: {
     backgroundColor: colorConfig.store.defaultColor,
-    padding: 15,
+    height: 36,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
@@ -645,9 +569,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.37,
     shadowRadius: 7.49,
     elevation: 12,
+    borderRadius: 8,
   },
   textAddCard: {
-    fontSize: 15,
+    fontSize: 14,
     color: 'white',
     fontWeight: 'bold',
     fontFamily: 'Poppins-Medium',
@@ -667,5 +592,8 @@ const styles = StyleSheet.create({
   cardSelected: {
     borderWidth: 5,
     borderColor: '#f1c40f',
+  },
+  containerBtnFix: {
+    padding: 16,
   },
 });

@@ -7,7 +7,7 @@ import CreditCard from '../../assets/svg/CreditCardSvg';
 const useStyles = () => {
   const theme = Theme();
   const styles = StyleSheet.create({
-    cardContainer: {
+    cardContainer: isActive => ({
       marginHorizontal: 16,
       shadowOffset: {
         width: 0.2,
@@ -21,7 +21,9 @@ const useStyles = () => {
       paddingHorizontal: 12,
       paddingVertical: 12,
       marginVertical: 16,
-    },
+      borderWidth: isActive ? 4 : 0,
+      borderColor: theme.colors.brandTertiary,
+    }),
     titleContainer: {
       flexDirection: 'row',
     },
@@ -48,13 +50,13 @@ const useStyles = () => {
   return {styles};
 };
 
-const CardProfilePayment = ({item, onPress}) => {
+const CardProfilePayment = ({item, onPress, isActive}) => {
   const {styles} = useStyles();
   const handleFormatYearCc = year => {
     return `${year[2]}${year[3]}`;
   };
   return (
-    <TouchableOpacity onPress={onPress} style={styles.cardContainer}>
+    <TouchableOpacity onPress={onPress} style={styles.cardContainer(isActive)}>
       <View style={styles.titleContainer}>
         <GlobalText style={styles.cardName}>
           {item?.details?.cardIssuer?.toUpperCase()}{' '}
