@@ -31,7 +31,7 @@ const useStyles = () => {
     },
     closeContainer: {
       position: 'absolute',
-      right: 0,
+      right: 5,
     },
     contentContainer: {
       paddingBottom: 30,

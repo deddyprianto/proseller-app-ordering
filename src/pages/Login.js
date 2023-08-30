@@ -163,6 +163,9 @@ const useStyles = () => {
       fontFamily: theme.fontFamily.poppinsMedium,
       fontSize: 16,
     },
+    mt8: {
+      marginTop: 8,
+    },
   });
   return styles;
 };
@@ -354,7 +357,9 @@ const Login = () => {
         ? renderEmailLoginInput()
         : renderPhoneNumberLoginInput();
 
-    return <View style={styles.viewMethodInput}>{renderInput}</View>;
+    return (
+      <View style={[styles.viewMethodInput, styles.mt8]}>{renderInput}</View>
+    );
   };
 
   const renderButtonNext = () => {
