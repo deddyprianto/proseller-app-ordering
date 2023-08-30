@@ -27,6 +27,9 @@ import appConfig from '../config/appConfig';
 import {format} from 'date-fns';
 import CurrencyFormatter from '../helper/CurrencyFormatter';
 import {isEmptyArray} from '../helper/CheckEmpty';
+import {Header} from './layout';
+import GlobalText from './globalText';
+import InputVoucher from './vouchers/InputVoucher';
 
 export default class PaymentAddVoucers extends Component {
   constructor(props) {
@@ -301,7 +304,10 @@ export default class PaymentAddVoucers extends Component {
     if (find != undefined) {
       return {status: true, message: ''};
     } else {
-      return {status: false, message: 'This voucher cannot be used today.'};
+      return {
+        status: false,
+        message: 'This voucher cannot be used today.',
+      };
     }
   };
 
@@ -321,12 +327,20 @@ export default class PaymentAddVoucers extends Component {
     return false;
   };
 
+  renderTitle = title => (
+    <View style={[styles.dividerTitle]}>
+      <View style={styles.divider} />
+      <GlobalText style={styles.titleText}>{title}</GlobalText>
+    </View>
+  );
+
   render() {
     const {intlData} = this.props;
     const myVoucers = this.state.data;
     return (
       <SafeAreaView style={styles.container}>
-        <View style={{backgroundColor: colorConfig.pageIndex.backgroundColor}}>
+        <Header title={'My Vouchers'} />
+        {/* <View style={{backgroundColor: colorConfig.pageIndex.backgroundColor}}>
           <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
             <Icon
               size={28}
@@ -338,9 +352,11 @@ export default class PaymentAddVoucers extends Component {
             <Text style={styles.btnBackText}> Select Vouchers </Text>
           </TouchableOpacity>
           <View style={styles.line} />
-        </View>
+        </View> */}
         <ScrollView>
-          {myVoucers == undefined || myVoucers.length == 0 ? (
+          {this.renderTitle('Use Voucher Code')}
+          <InputVoucher />
+          {/* {myVoucers == undefined || myVoucers.length == 0 ? (
             <View
               style={{
                 alignItems: 'center',
@@ -404,35 +420,8 @@ export default class PaymentAddVoucers extends Component {
                             {item.totalRedeem + 'x'}
                           </Text>
                         </View>
-                        {/* <View
-                          style={{
-                            position: 'absolute',
-                            right: 0,
-                            top: 0,
-                            backgroundColor: 'rgba(2, 168, 80, 0.8)',
-                            height: 30,
-                            // width: this.state.screenWidth / 2 - 11,
-                            borderTopRightRadius: 9,
-                            alignItems: 'flex-end',
-                            justifyContent: 'center',
-                            paddingLeft: 10,
-                            paddingRight: 10,
-                          }}>
-                          <Text
-                            style={{
-                              color: colorConfig.pageIndex.backgroundColor,
-                              fontSize: 16,
-                              fontWeight: 'bold',
-                              textAlign: 'right',
-                            }}>
-                            {item['redeemValue'] + ' Points'}
-                          </Text>
-                        </View> */}
                       </View>
                       <View style={styles.voucherDetail}>
-                        {/*<View style={styles.status}>*/}
-                        {/*  <Text style={styles.statusTitle}>Awarded</Text>*/}
-                        {/*</View>*/}
                         <Text style={styles.nameVoucher}>{item.name}</Text>
                         <View style={{flexDirection: 'row'}}>
                           <Icon
@@ -507,7 +496,7 @@ export default class PaymentAddVoucers extends Component {
                   }
                 </View>
               ))
-          )}
+          )} */}
         </ScrollView>
         <TouchableOpacity
           onPress={() => {
@@ -520,7 +509,10 @@ export default class PaymentAddVoucers extends Component {
           <Icon
             size={25}
             name={Platform.OS === 'ios' ? 'ios-bookmark' : 'md-bookmark'}
-            style={{color: 'white', marginRight: 10}}
+            style={{
+              color: 'white',
+              marginRight: 10,
+            }}
           />
           <Text style={styles.textAddCard}>Redeem Voucher</Text>
         </TouchableOpacity>
@@ -644,5 +636,26 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.37,
     shadowRadius: 7.49,
     elevation: 12,
+  },
+  dividerTitle: {
+    flex: 1,
+    alignItems: 'flex-start',
+    justifyContent: 'center',
+    marginTop: 16,
+    paddingRight: 16,
+    // paddingHorizontal: 16,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: 'black',
+    width: '100%',
+    position: 'absolute',
+    top: '50%',
+  },
+  titleText: {
+    backgroundColor: 'white',
+    paddingHorizontal: 16,
+    fontFamily: 'Poppins-Medium',
+    fontSize: 16,
   },
 });
