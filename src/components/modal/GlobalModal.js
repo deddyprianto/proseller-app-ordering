@@ -4,7 +4,7 @@ import Modal, {ModalProps} from 'react-native-modal';
 import GlobalText from '../globalText';
 import CloseSvg from '../../assets/svg/CloseSvg';
 import Theme from '../../theme/Theme';
-import {normalizeLayoutSizeHeight} from '../../helper/Layout';
+import {normalizeLayoutSizeWidth} from '../../helper/Layout';
 
 const useStyles = () => {
   const {colors, fontFamily} = Theme();
@@ -12,8 +12,7 @@ const useStyles = () => {
     modalContainer: {
       backgroundColor: 'white',
       padding: 8,
-      minHeight: 200,
-      maxHeight: normalizeLayoutSizeHeight(840),
+      minHeight: normalizeLayoutSizeWidth(200),
       borderRadius: 8,
     },
     titleCloseContainer: {
