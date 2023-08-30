@@ -267,7 +267,7 @@ export const updateUser = payload => {
         },
       } = state;
 
-      if (!token) {
+      if (token) {
         const response = await fetchApi(
           '/customer/updateProfile',
           'PUT',
