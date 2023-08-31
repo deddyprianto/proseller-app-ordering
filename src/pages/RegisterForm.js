@@ -187,7 +187,7 @@ const RegisterForm = ({registerMethod, inputValue, approvedData}) => {
   }, [inputValue, registerMethod]);
 
   const handleRegister = async () => {
-    const phone =
+    let phone =
       registerMethod === 'email' ? countryCode + phoneNumber : inputValue;
     const methodValue = registerMethod === 'email' ? email : phone;
     let customField = {
@@ -202,6 +202,9 @@ const RegisterForm = ({registerMethod, inputValue, approvedData}) => {
       }
       newCustomKey = {...newCustomKey, [key]: customField[key]};
     });
+    if (phoneNumber.length <= 0) {
+      phone = null;
+    }
     let payload = {
       name: name,
       password: 'P@ssw0rd123',
@@ -405,7 +408,7 @@ const RegisterForm = ({registerMethod, inputValue, approvedData}) => {
         return name && email && !isHaveEmptyField;
       }
     }
-    return true;
+    return name && !isHaveEmptyField;
   };
 
   const renderButtonNext = () => {
