@@ -246,7 +246,12 @@ const webStyles = StyleSheet.create({
   },
 });
 
-const ProductDetail = ({productId, selectedProduct, prevPage}) => {
+const ProductDetail = ({
+  productId,
+  selectedProduct,
+  prevPage,
+  resetScanCode,
+}) => {
   const styles = useStyles();
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
@@ -273,6 +278,14 @@ const ProductDetail = ({productId, selectedProduct, prevPage}) => {
   );
 
   const {width} = useWindowDimensions();
+
+  useEffect(() => {
+    return () => {
+      if (resetScanCode && typeof resetScanCode === 'function') {
+        resetScanCode();
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (prevPage === 'promotionDetail' || prevPage === 'cart') {

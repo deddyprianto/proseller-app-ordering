@@ -10,6 +10,7 @@ import {
   View,
   Dimensions,
   SafeAreaView,
+  Platform,
 } from 'react-native';
 
 import appConfig from '../config/appConfig';
@@ -31,8 +32,6 @@ import {
 import {Actions} from 'react-native-router-flux';
 
 const HEIGHT = Dimensions.get('window').height;
-
-const RESTRICTED_TYPES = ['QR_CODE', 'UNKNOWN', 'TEXT'];
 
 const useStyles = () => {
   const theme = Theme();
@@ -120,7 +119,7 @@ const ScannerBarcode = () => {
   const {styles, theme} = useStyles();
   const dispatch = useDispatch();
   const [searchCondition, setSearchCondition] = useState('');
-
+  const [isOpenDetailPage, setIsOpenDetailPage] = React.useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isShowInstruction, setIsShowInstruction] = useState(true);
   const [isOpenSearchBarcodeModal, setIsOpenSearchBarcodeModal] = useState(
@@ -134,19 +133,29 @@ const ScannerBarcode = () => {
     setIsOpenSearchBarcodeModal(false);
   };
 
+  const resetScanCode = () => {
+    setIsOpenDetailPage(false);
+  };
+
   const onSuccess = async value => {
     setIsLoading(true);
     const response = await dispatch(getProductByBarcode(value?.data));
 
+    handleSuccess(response, value.oldBarcode);
+  };
+
+  const handleSuccess = async (response, oldBarcode) => {
     if (response?.data) {
       setIsLoading(false);
 
       Actions.productDetail({
         productId: response?.data?.id,
+        resetScanCode,
       });
     } else {
+      setIsOpenDetailPage(false);
       setIsLoading(false);
-      await dispatch(showSnackbar({message: 'Product Not Found'}));
+      dispatch(showSnackbar({message: 'Product Not Found'}));
     }
   };
 
@@ -164,6 +173,22 @@ const ScannerBarcode = () => {
     } else {
       setIsLoading(false);
       setSearchCondition('error');
+    }
+  };
+
+  const onBarcodeRead = barcodes => {
+    let oldBarcode = barcodes?.data;
+    let newBarCode = barcodes?.data;
+    console.log({barcodes, length: newBarCode.length}, 'lekong');
+
+    const isUPCA = newBarCode.length === 13;
+    if (Platform.OS === 'ios' && isUPCA) {
+      newBarCode = newBarCode?.substring(1, newBarCode.length - 1);
+    }
+    oldBarcode = oldBarcode?.substring(0, oldBarcode.length - 1);
+    if (!isOpenDetailPage) {
+      setIsOpenDetailPage(true);
+      onSuccess({data: newBarCode, oldBarcode});
     }
   };
 
@@ -230,13 +255,30 @@ const ScannerBarcode = () => {
         style={styles.camera}
         type={RNCamera.Constants.Type.back}
         flashMode={RNCamera.Constants.FlashMode.on}
-        onGoogleVisionBarcodesDetected={({barcodes}) => {
-          const barcode = barcodes[0];
-          if (barcode && !RESTRICTED_TYPES.includes(barcode.type)) {
-            setIsLoading(true);
-            !isLoading ? setTimeout(() => onSuccess(barcode), 500) : null;
-          }
-        }}
+        onBarCodeRead={onBarcodeRead}
+        barCodeTypes={[
+          RNCamera.Constants.BarCodeType.ean13,
+          RNCamera.Constants.BarCodeType.upc_e,
+        ]}
+        // onGoogleVisionBarcodesDetected={({barcodes}) => {
+        //   const barcode = barcodes[0]?.data;
+        //   console.log({barcodes}, 'kakaman');
+        //   onBarcodeRead({data: barcode});
+        //   // if (barcode && !RESTRICTED_TYPES.includes(barcode.type)) {
+        //   //   setIsLoading(true);
+        //   //   !isLoading ? setTimeout(() => onSuccess(barcode), 500) : null;
+        //   // }
+        // }}
+        // googleVisionBarcodeType={
+        //   RNCamera.Constants.GoogleVisionBarcodeDetection.BarcodeType.UPC_A
+        // }
+        // onGoogleVisionBarcodesDetected={({barcodes}) =>
+        //   console.log(barcodes, 'lisa')
+        // }
+        // googleVisionBarcodeMode={[
+        //   RNCamera.Constants.GoogleVisionBarcodeDetection.BarcodeType.UPC_A,
+        //   RNCamera.Constants.GoogleVisionBarcodeDetection.BarcodeType.EAN_13,
+        // ]}
         androidCameraPermissionOptions={{
           title: 'Permission to use camera',
           message: 'We need to use your camera access to scan product barcode',
