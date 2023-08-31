@@ -30,6 +30,7 @@ import {
   normalizeLayoutSizeWidth,
 } from '../helper/Layout';
 import {Actions} from 'react-native-router-flux';
+import GlobalText from '../components/globalText';
 
 const HEIGHT = Dimensions.get('window').height;
 
@@ -125,7 +126,6 @@ const ScannerBarcode = () => {
   const [isOpenSearchBarcodeModal, setIsOpenSearchBarcodeModal] = useState(
     false,
   );
-
   const handleOpenSearchProductByBarcodeModal = () => {
     setIsOpenSearchBarcodeModal(true);
   };
@@ -137,14 +137,14 @@ const ScannerBarcode = () => {
     setIsOpenDetailPage(false);
   };
 
-  const onSuccess = async value => {
+  const onSuccess = async (value, showError) => {
     setIsLoading(true);
     const response = await dispatch(getProductByBarcode(value?.data));
 
-    handleSuccess(response, value.oldBarcode);
+    handleSuccess(response, value.oldBarcode, showError);
   };
 
-  const handleSuccess = async (response, oldBarcode) => {
+  const handleSuccess = async (response, oldBarcode, showError) => {
     if (response?.data) {
       setIsLoading(false);
 
@@ -153,16 +153,18 @@ const ScannerBarcode = () => {
         resetScanCode,
       });
     } else {
-      setIsOpenDetailPage(false);
       setIsLoading(false);
-      dispatch(showSnackbar({message: 'Product Not Found'}));
+      onSuccess({data: oldBarcode}, true);
+      if (showError) {
+        setIsOpenDetailPage(false);
+        dispatch(showSnackbar({message: 'Product Not Found'}));
+      }
     }
   };
 
   const onSearch = async value => {
     setIsLoading(true);
     const response = await dispatch(getProductByBarcode(value));
-
     if (response?.data) {
       setSearchCondition('success');
       setIsLoading(false);
@@ -177,18 +179,26 @@ const ScannerBarcode = () => {
   };
 
   const onBarcodeRead = barcodes => {
-    let oldBarcode = barcodes?.data;
-    let newBarCode = barcodes?.data;
-    console.log({barcodes, length: newBarCode.length}, 'lekong');
-
-    const isUPCA = newBarCode.length === 13;
-    if (Platform.OS === 'ios' && isUPCA) {
+    if (Platform.OS === 'ios') {
+      let oldBarcode = barcodes?.data;
+      let newBarCode = barcodes?.data;
       newBarCode = newBarCode?.substring(1, newBarCode.length - 1);
+      oldBarcode = oldBarcode?.substring(0, oldBarcode.length - 1);
+      if (!isOpenDetailPage) {
+        setIsOpenDetailPage(true);
+        onSuccess({data: newBarCode, oldBarcode});
+      }
     }
-    oldBarcode = oldBarcode?.substring(0, oldBarcode.length - 1);
-    if (!isOpenDetailPage) {
-      setIsOpenDetailPage(true);
-      onSuccess({data: newBarCode, oldBarcode});
+  };
+
+  const onGoogleBarcode = barcodes => {
+    if (Platform.OS === 'android' && !isOpenDetailPage) {
+      const code = barcodes.barcodes[0]?.data;
+      if (code) {
+        setIsOpenDetailPage(true);
+        const barcodeData = code?.substring(0, code?.length - 1);
+        onSuccess({data: barcodeData}, true);
+      }
     }
   };
 
@@ -255,30 +265,12 @@ const ScannerBarcode = () => {
         style={styles.camera}
         type={RNCamera.Constants.Type.back}
         flashMode={RNCamera.Constants.FlashMode.on}
+        onGoogleVisionBarcodesDetected={onGoogleBarcode}
         onBarCodeRead={onBarcodeRead}
         barCodeTypes={[
           RNCamera.Constants.BarCodeType.ean13,
           RNCamera.Constants.BarCodeType.upc_e,
         ]}
-        // onGoogleVisionBarcodesDetected={({barcodes}) => {
-        //   const barcode = barcodes[0]?.data;
-        //   console.log({barcodes}, 'kakaman');
-        //   onBarcodeRead({data: barcode});
-        //   // if (barcode && !RESTRICTED_TYPES.includes(barcode.type)) {
-        //   //   setIsLoading(true);
-        //   //   !isLoading ? setTimeout(() => onSuccess(barcode), 500) : null;
-        //   // }
-        // }}
-        // googleVisionBarcodeType={
-        //   RNCamera.Constants.GoogleVisionBarcodeDetection.BarcodeType.UPC_A
-        // }
-        // onGoogleVisionBarcodesDetected={({barcodes}) =>
-        //   console.log(barcodes, 'lisa')
-        // }
-        // googleVisionBarcodeMode={[
-        //   RNCamera.Constants.GoogleVisionBarcodeDetection.BarcodeType.UPC_A,
-        //   RNCamera.Constants.GoogleVisionBarcodeDetection.BarcodeType.EAN_13,
-        // ]}
         androidCameraPermissionOptions={{
           title: 'Permission to use camera',
           message: 'We need to use your camera access to scan product barcode',

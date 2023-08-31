@@ -1,6 +1,12 @@
 import React from 'react';
-import {View, StyleSheet, TouchableOpacity, ScrollView} from 'react-native';
-import Modal, {ModalProps} from 'react-native-modal';
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+  Dimensions,
+} from 'react-native';
+import Modal from 'react-native-modal';
 import GlobalText from '../globalText';
 import CloseSvg from '../../assets/svg/CloseSvg';
 import Theme from '../../theme/Theme';
@@ -14,6 +20,7 @@ const useStyles = () => {
       padding: 8,
       minHeight: normalizeLayoutSizeWidth(200),
       borderRadius: 8,
+      maxHeight: Dimensions.get('screen').height - 100,
     },
     titleCloseContainer: {
       flexDirection: 'row',
