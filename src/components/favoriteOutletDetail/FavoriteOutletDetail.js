@@ -66,7 +66,7 @@ const FavoriteOutletDetail = ({outlet}) => {
         <FavoriteOutletDetailMap
           style={styles.map}
           lat={outlet?.latitude}
-          lng={outlet.longitude}
+          long={outlet?.longitude}
         />
       </View>
     );
