@@ -245,22 +245,30 @@ const SearchProduct = ({category}) => {
     }
   }, [category]);
 
-  const getBySubCategory = async id => {
-    await dispatch(
+  const getBySubCategory = async (id, query) => {
+    let newSearchQuery = searchQuery;
+    if (query) {
+      newSearchQuery = query;
+    }
+    const response = await dispatch(
       getProductBySubCategory({
         outletId: defaultOutlet.id,
         subCategoryId: id,
-        searchQuery,
+        searchQuery: newSearchQuery,
       }),
     );
   };
 
-  const getSubCategories = async id => {
+  const getCategories = async (id, query) => {
+    let newSearchQuery = searchQuery;
+    if (query) {
+      newSearchQuery = query;
+    }
     const response = await dispatch(
       getProductSubCategories({
         outletId: defaultOutlet.id,
         categoryId: id,
-        searchQuery,
+        searchQuery: newSearchQuery,
       }),
     );
     if (!isEmptyArray(response)) {
@@ -269,10 +277,10 @@ const SearchProduct = ({category}) => {
     }
   };
 
-  const getCategoryProduct = async id => {
+  const getCategoryProduct = async (id, query) => {
     setIsLoading(true);
-    await getBySubCategory(id);
-    await getSubCategories(id);
+    await getBySubCategory(id, query);
+    await getCategories(id, query);
     setTimeout(() => {
       setIsLoading(false);
     }, 350);
@@ -327,6 +335,7 @@ const SearchProduct = ({category}) => {
   const handleSearchProductWithCategory = async value => {
     setSearchTextInput('');
     setSearchQuery(value);
+    getCategoryProduct(selectedCategory?.id, value);
     await dispatch(setSearchProductHistory({searchQuery: value}));
   };
 
@@ -603,7 +612,7 @@ const SearchProduct = ({category}) => {
     const isSelectedCategory = !isEmptyObject(selectedCategory);
     if (searchQuery && !isSelectedCategory) {
       return renderProductSearchByQuery();
-    } else if (isSelectedCategory && searchTextInput) {
+    } else if (isSelectedCategory && searchTextInput.length > 0) {
       return renderSearchSuggestions();
     } else if (isSelectedCategory) {
       return renderProductSearchByCategory();
@@ -611,7 +620,6 @@ const SearchProduct = ({category}) => {
       return renderDefaultBody();
     }
   };
-
   return (
     <SafeAreaView style={styles.root}>
       <LoadingScreen loading={isLoading} />
