@@ -9,6 +9,7 @@ const additionalSetting = () => {
   const applicationName = 'Funtoast';
   const cartVersion = 'basic';
   const registerVersion = 1;
+  const enableScanAndGo = false;
 
   return {
     additionalPolicy,
@@ -19,6 +20,7 @@ const additionalSetting = () => {
     applicationName,
     cartVersion,
     registerVersion,
+    enableScanAndGo,
   };
 };
 

@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {RNCamera} from 'react-native-camera';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 
 import {
   StyleSheet,
@@ -30,7 +30,8 @@ import {
   normalizeLayoutSizeWidth,
 } from '../helper/Layout';
 import {Actions} from 'react-native-router-flux';
-
+import additionalSetting from '../config/additionalSettings';
+import ModalAction from '../components/modal/ModalAction';
 const HEIGHT = Dimensions.get('window').height;
 
 const useStyles = () => {
@@ -125,6 +126,8 @@ const ScannerBarcode = () => {
   const [isOpenSearchBarcodeModal, setIsOpenSearchBarcodeModal] = useState(
     false,
   );
+  const [showAlertMessage, setShowAlertMessage] = React.useState(false);
+  const cartItem = useSelector(state => state.orderReducer.dataBasket?.product);
   const handleOpenSearchProductByBarcodeModal = () => {
     setIsOpenSearchBarcodeModal(true);
   };
@@ -135,6 +138,16 @@ const ScannerBarcode = () => {
   const resetScanCode = () => {
     setIsOpenDetailPage(false);
   };
+
+  const checkProduct = response => {
+    console.log({response, cartItem}, 'nakal');
+    const isScanGoProduct = response?.data?.isScannedProduct;
+    if (!isScanGoProduct) {
+      return setShowAlertMessage(true);
+    }
+  };
+
+  const onClearCart = () => {};
 
   const onSuccess = async (value, showError) => {
     setIsLoading(true);
@@ -148,7 +161,9 @@ const ScannerBarcode = () => {
   const handleSuccess = async (response, oldBarcode, showError) => {
     if (response?.data) {
       setIsLoading(false);
-
+      if (additionalSetting().enableScanAndGo) {
+        return checkProduct(response);
+      }
       Actions.productDetail({
         productId: response?.data?.id,
         resetScanCode,
@@ -172,6 +187,9 @@ const ScannerBarcode = () => {
       setSearchCondition('success');
       setIsLoading(false);
       handleCloseSearchProductByBarcodeModal();
+      if (additionalSetting().enableScanAndGo) {
+        return checkProduct(response);
+      }
       Actions.productDetail({
         productId: response?.data?.id,
       });
@@ -325,6 +343,14 @@ const ScannerBarcode = () => {
       {renderScanner()}
       {renderSearchModal()}
       {renderButtonCartFloating()}
+      <ModalAction
+        isVisible={showAlertMessage}
+        title="Proceed to {store_checkout_display_name}?"
+        description="Your current cart will be emptied.
+Do you still want to proceed?"
+        approveTitle="Proceed"
+        onApprove={onClearCart}
+      />
     </SafeAreaView>
   );
 };

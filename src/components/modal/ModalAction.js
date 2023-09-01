@@ -60,6 +60,7 @@ const useStyles = () => {
  * @property {import('react-native').StyleProp} buttonActionStyle
  * @property {import('react-native').StyleProp} ModalContainerStyle
  * @property {boolean} hideCloseButton
+ * @property {string} approveTitle
  */
 
 /**
@@ -91,7 +92,10 @@ const ModalAction = props => {
             <GlobalButton onPress={props.onCancel} isOutline title="Cancel" />
           </View>
           <View style={styles.buttonStyle}>
-            <GlobalButton onPress={props.onApprove} title="Yes" />
+            <GlobalButton
+              onPress={props.onApprove}
+              title={props.approveTitle || 'Yes'}
+            />
           </View>
         </View>
       </View>

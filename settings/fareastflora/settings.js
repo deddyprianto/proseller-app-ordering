@@ -28,6 +28,8 @@ const additionalSetting = () => {
   const applicationName = 'Far East Flora';
   const cartVersion = 'advance';
   const registerVersion = 2;
+  const enableScanAndGo = true;
+
   return {
     additionalPolicy,
     mapType,
@@ -37,6 +39,7 @@ const additionalSetting = () => {
     applicationName,
     cartVersion,
     registerVersion,
+    enableScanAndGo,
   };
 };
 
