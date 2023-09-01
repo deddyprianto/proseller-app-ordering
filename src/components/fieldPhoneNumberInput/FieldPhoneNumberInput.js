@@ -234,7 +234,6 @@ const FieldPhoneNumberInput = ({
       );
     }
   };
-  console.log({editable}, 'nusi');
 
   const handleEditable = () => {
     if (editable === undefined || editable === null) {
