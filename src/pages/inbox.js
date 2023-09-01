@@ -246,7 +246,7 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     paddingBottom: 30,
-  }
+  },
 });
 
 const mapStateToProps = state => ({
