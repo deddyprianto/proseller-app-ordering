@@ -762,17 +762,14 @@ const ProductDetail = ({
   };
 
   const renderPreOrderLabel = () => {
-    if (selectedProduct?.isPreOrderItem || product?.isPreOrderItem) {
+    if (product?.allowPreorder) {
       return <PreorderLabel />;
     }
     return null;
   };
 
   const renderLabelAvailSelection = () => {
-    if (
-      selectedProduct?.product?.allowSelfSelection ||
-      product?.allowSelfSelection
-    ) {
+    if (product?.allowSelfSelection || product?.allowSelfSelection) {
       return <AllowSelfSelectionLabel />;
     }
     return null;
@@ -784,7 +781,7 @@ const ProductDetail = ({
       {renderPreOrderLabel()}
     </View>
   );
-
+  console.log({selectedProduct, product}, 'kuku');
   return (
     <SafeAreaView style={styles.root}>
       <LoadingScreen loading={isLoading} />

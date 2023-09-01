@@ -30,7 +30,6 @@ import {
   normalizeLayoutSizeWidth,
 } from '../helper/Layout';
 import {Actions} from 'react-native-router-flux';
-import GlobalText from '../components/globalText';
 
 const HEIGHT = Dimensions.get('window').height;
 
@@ -139,9 +138,11 @@ const ScannerBarcode = () => {
 
   const onSuccess = async (value, showError) => {
     setIsLoading(true);
-    const response = await dispatch(getProductByBarcode(value?.data));
+    setTimeout(async () => {
+      const response = await dispatch(getProductByBarcode(value?.data));
 
-    handleSuccess(response, value.oldBarcode, showError);
+      handleSuccess(response, value.oldBarcode, showError);
+    }, 1000);
   };
 
   const handleSuccess = async (response, oldBarcode, showError) => {
@@ -154,7 +155,9 @@ const ScannerBarcode = () => {
       });
     } else {
       setIsLoading(false);
-      onSuccess({data: oldBarcode}, true);
+      if (!showError) {
+        onSuccess({data: oldBarcode}, true);
+      }
       if (showError) {
         setIsOpenDetailPage(false);
         dispatch(showSnackbar({message: 'Product Not Found'}));
