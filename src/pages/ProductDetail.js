@@ -781,7 +781,6 @@ const ProductDetail = ({
       {renderPreOrderLabel()}
     </View>
   );
-  console.log({selectedProduct, product}, 'kuku');
   return (
     <SafeAreaView style={styles.root}>
       <LoadingScreen loading={isLoading} />
