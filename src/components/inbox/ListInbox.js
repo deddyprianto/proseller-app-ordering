@@ -3,9 +3,11 @@ import {
   TouchableOpacity,
   StyleSheet,
   View,
-  Dimensions,
   Image,
+  useWindowDimensions,
 } from 'react-native';
+
+import RenderHtml from 'react-native-render-html';
 import MessageOpen from '../../assets/img/message-read.png';
 import {calculateDateTime} from '../../helper/TimeUtils';
 import colorConfig from '../../config/colorConfig';
@@ -80,6 +82,8 @@ const styles = StyleSheet.create({
 
 const ListInbox = ({item, index, openDetailMessage}) => {
   const theme = Theme();
+  const {width} = useWindowDimensions();
+
   const handleImage = () => {
     if (item.isRead === true) {
       return (
@@ -126,14 +130,7 @@ const ListInbox = ({item, index, openDetailMessage}) => {
       <View style={styles.messageContainer}>
         <View style={styles.imageContainer} />
         <View style={styles.containerText90}>
-          <GlobalText
-            numberOfLines={3}
-            style={[
-              styles.descriptionStyle,
-              {fontFamily: theme.fontFamily.poppinsMedium},
-            ]}>
-            {item.message}
-          </GlobalText>
+          <RenderHtml contentWidth={width} source={{html: item?.message}} />
         </View>
       </View>
     </TouchableOpacity>

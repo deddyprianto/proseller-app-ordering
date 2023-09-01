@@ -122,6 +122,7 @@ class Inbox extends Component {
 
   renderInbox = () => {
     const {dataInbox, isLoading} = this.props;
+    console.log(dataInbox.Data, 'lili');
     if (isLoading) {
       return <InboxLoading numberList={4} />;
     }
@@ -246,7 +247,7 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     paddingBottom: 30,
-  }
+  },
 });
 
 const mapStateToProps = state => ({
