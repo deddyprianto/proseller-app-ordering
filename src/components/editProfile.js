@@ -803,14 +803,14 @@ class AccountEditProfil extends Component {
       <View style={styles.ml8}>
         <CheckListGreenSvg />
       </View>
-      <GlobalText style={[styles.ml8, styles.mdeiumFont]}>Verified</GlobalText>
+      <GlobalText style={[styles.ml8, styles.smallFont]}>Verified</GlobalText>
     </View>
   );
 
   renderUnVerified = () => (
     <View style={[styles.row, styles.centerVertical]}>
       <VerifyAlert />
-      <GlobalText style={[styles.ml8, styles.mdeiumFont]}>
+      <GlobalText style={[styles.ml8, styles.smallFont]}>
         Please Verify
       </GlobalText>
     </View>
@@ -906,10 +906,17 @@ class AccountEditProfil extends Component {
     }
   };
 
+  handleColorDropdown = item => {
+    return item?.editable === false ? this.props.colors.greyScale4 : 'white';
+  };
+
+  handleLabelStyleColor = item => {
+    return item?.editable === false ? this.props.colors.greyScale2 : 'black';
+  };
+
   render() {
     const {intlData, colors, fontFamily} = this.props;
     const {fields, isPostalCodeValid} = this.state;
-    console.log({fields}, 'kuman');
     return (
       <SafeAreaView style={styles.container}>
         {this.state.loading && <LoaderDarker />}
@@ -1036,7 +1043,16 @@ class AccountEditProfil extends Component {
                                   styles.dropdownContainerStyle,
                                   {
                                     borderColor: colors.greyScale2,
+                                    backgroundColor: this.handleColorDropdown(
+                                      item,
+                                    ),
                                   },
+                                ]}
+                                labelStyle={[
+                                  {
+                                    color: this.handleLabelStyleColor(item),
+                                  },
+                                  styles.mediumFont,
                                 ]}
                                 dropDownStyle={{
                                   backgroundColor: '#fafafa',
@@ -1096,9 +1112,18 @@ class AccountEditProfil extends Component {
                                 defaultValue={this.validateGender(
                                   this.state.gender,
                                 )}
+                                labelStyle={[
+                                  {color: this.handleLabelStyleColor(item)},
+                                  styles.mediumFont,
+                                ]}
                                 style={[
                                   styles.dropdownContainerStyle,
-                                  {borderColor: colors.greyScale2},
+                                  {
+                                    borderColor: colors.greyScale2,
+                                    backgroundColor: this.handleColorDropdown(
+                                      item,
+                                    ),
+                                  },
                                 ]}
                                 dropDownStyle={{
                                   backgroundColor: '#fafafa',
@@ -1144,12 +1169,24 @@ class AccountEditProfil extends Component {
                                   disabled={item?.editable === false}
                                   items={item.items}
                                   defaultValue={this.state[item.fieldName]}
-                                  containerStyle={{height: 47}}
-                                  style={{
-                                    backgroundColor: 'white',
-                                    marginTop: 5,
-                                    borderRadius: 0,
+                                  containerStyle={{
+                                    height: 47,
                                   }}
+                                  style={[
+                                    styles.dropdownContainerStyle,
+                                    {
+                                      borderColor: colors.greyScale2,
+                                      backgroundColor: this.handleColorDropdown(
+                                        item,
+                                      ),
+                                    },
+                                  ]}
+                                  labelStyle={[
+                                    {
+                                      color: this.handleLabelStyleColor(item),
+                                    },
+                                    styles.mediumFont,
+                                  ]}
                                   dropDownStyle={{
                                     backgroundColor: '#fafafa',
                                     zIndex: 3,
@@ -1485,8 +1522,12 @@ const styles = StyleSheet.create({
   ml8: {
     marginLeft: 8,
   },
-  mdeiumFont: {
+  smallFont: {
     fontFamily: 'Poppins-Medium',
     fontSize: 12,
+  },
+  mediumFont: {
+    fontFamily: 'Poppins-Medium',
+    fontSize: 14,
   },
 });
