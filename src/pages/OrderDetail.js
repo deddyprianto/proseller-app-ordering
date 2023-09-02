@@ -692,7 +692,6 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
     return '(VERIFIED)';
   };
 
-  console.log({data}, 'nakal');
   return (
     <Body>
       {data?.status === staustPending && !isTimeEnd ? (
