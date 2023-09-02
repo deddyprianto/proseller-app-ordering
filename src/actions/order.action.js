@@ -1707,7 +1707,6 @@ export const addProductToBasket = ({defaultOutlet, selectedProduct}) => {
           token,
         );
       }
-      console.log({response}, 'api add cart');
       //NOTE: It will change it letter
       await dispatch(getBasket());
 
