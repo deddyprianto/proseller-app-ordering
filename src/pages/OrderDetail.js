@@ -30,7 +30,6 @@ import TimerSvg from '../assets/svg/TimerSvg';
 import {permissionDownloadFile} from '../helper/Download';
 import {handlePaymentStatus} from '../helper/PaymentStatus';
 import DotSvg from '../assets/svg/DotSvg';
-import NotesProduct from '../assets/svg/NotesProductSvg';
 import ArrowBottom from '../assets/svg/ArrowBottomSvg';
 import useCountdownV2 from '../hooks/time/useCountdownV2';
 import CreditCard from '../assets/svg/CreditCardSvg';
@@ -38,7 +37,6 @@ import SuccessSvg from '../assets/svg/SuccessSvg';
 import ProductCartItemCart2 from '../components/productCartList/components/ProductCartItemCart2';
 import HandsSvg from '../assets/svg/HandsSvg';
 import MapSvg from '../assets/svg/MapSvg';
-import appConfig from '../config/appConfig';
 import useOrder from '../hooks/order/useOrder';
 import additionalSetting from '../config/additionalSettings';
 
@@ -343,7 +341,7 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
   const [showAllOrder, setShowAllOrder] = React.useState(false);
   const [showAllPreOrder, setShowAllPreOrder] = React.useState(false);
   const staustPending = 'PENDING_PAYMENT';
-
+  const [isSuccess, setIsSuccess] = React.useState(false);
   const {
     groupingeOrder,
     defaultOrder,
@@ -724,7 +722,7 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
             </View>
           </>
         ) : null}
-        {isFromPaymentPage ? (
+        {isFromPaymentPage && isSuccess ? (
           <View style={styles.successContainer}>
             <SuccessSvg />
             <GlobalText style={styles.paymentSuccessText}>
@@ -733,13 +731,19 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
           </View>
         ) : null}
 
-        {appConfig.appName === 'fareastflora' &&
+        {additionalSetting().enableScanAndGo &&
         data?.transactionRefNo &&
-        !isFromPaymentPage ? (
+        isFromPaymentPage ? (
           <View style={[styles.qrContainer, styles.mt16, styles.mb16]}>
             <View style={styles.mt12}>
               <QRCode size={200} value={data.transactionRefNo} />
             </View>
+            <GlobalText style={[styles.mt8, styles.mediumFont]}>
+              Scan this QR Code in Exit Verification Counter
+            </GlobalText>
+            <GlobalText style={[styles.mt8, styles.paymentSuccessText]}>
+              Payment Success
+            </GlobalText>
           </View>
         ) : null}
 

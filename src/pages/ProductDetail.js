@@ -43,6 +43,8 @@ import {Header} from '../components/layout';
 import PreorderLabel from '../components/label/Preorder';
 import AllowSelfSelectionLabel from '../components/label/AllowSelfSelection';
 import LoadingScreen from '../components/loadingScreen/LoadingScreen';
+import useScanGo from '../hooks/validation/usScanGo';
+import ModalAction from '../components/modal/ModalAction';
 
 const useStyles = () => {
   const theme = Theme();
@@ -251,16 +253,15 @@ const ProductDetail = ({
   selectedProduct,
   prevPage,
   resetScanCode,
+  isFromScanBarcode,
 }) => {
   const styles = useStyles();
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const [isPromotionDisabled, setIsPromotionDisabled] = useState(false);
-
   const [notes, setNotes] = useState('');
   const [variantName, setVariantName] = useState('');
   const [variantImageURL, setVariantImageURL] = useState('');
-
   const [qty, setQty] = useState(1);
   const [totalPrice, setTotalPrice] = useState(0);
   const [variantRetailPrice, setVariantRetailPrice] = useState(0);
@@ -272,7 +273,13 @@ const ProductDetail = ({
   const [selectedProductModifiers, setSelectedProductModifiers] = useState([]);
 
   const [product, setProduct] = useState({});
-
+  const {
+    checkProductScanGo,
+    showAlert,
+    setShowAlert,
+    closeAlert,
+    onRemoveBasket,
+  } = useScanGo();
   const defaultOutlet = useSelector(
     state => state.storesReducer.defaultOutlet.defaultOutlet,
   );
@@ -480,12 +487,11 @@ const ProductDetail = ({
     }
   };
 
-  const handleAddOrUpdateProduct = async () => {
-    setIsLoading(true);
+  const addUpdateProduct = async () => {
     const isSpecialBarcode = product?.isSpecialBarcode;
 
     if (!isEmptyObject(selectedProduct)) {
-      const newProductUpdate = isSpecialBarcode
+      let newProductUpdate = isSpecialBarcode
         ? {
             ...productUpdate,
             specialBarcode: product?.specialBarcode,
@@ -493,24 +499,50 @@ const ProductDetail = ({
             unitPrice: product?.retailPrice,
           }
         : productUpdate;
-
+      if (isFromScanBarcode) {
+        newProductUpdate = {
+          ...newProductUpdate,
+          isScannedProduct: true,
+        };
+      }
       await dispatch(updateProductBasket(newProductUpdate));
     } else {
-      const newProductAdd = isSpecialBarcode
+      let newProductAdd = isSpecialBarcode
         ? {
             ...productAdd,
             specialBarcode: product?.specialBarcode,
             retailPrice: product?.retailPrice,
           }
         : productAdd;
-
+      if (isFromScanBarcode) {
+        newProductAdd = {
+          ...newProductAdd,
+          isScannedProduct: true,
+        };
+      }
       await dispatch(
-        addProductToBasket({defaultOutlet, selectedProduct: newProductAdd}),
+        addProductToBasket({
+          defaultOutlet,
+          selectedProduct: newProductAdd,
+        }),
       );
     }
 
     setIsLoading(false);
+    setShowAlert(false);
     Actions.pop();
+  };
+
+  const handleAddOrUpdateProduct = async () => {
+    setIsLoading(true);
+    const showPopup = await checkProductScanGo(isFromScanBarcode);
+    if (!showPopup) {
+      addUpdateProduct();
+    } else {
+      setShowAlert(true);
+      setIsLoading(false);
+      // produk ada yang scan go
+    }
   };
 
   const handleDisabledCartButton = () => {
@@ -797,6 +829,16 @@ const ProductDetail = ({
         {renderSpecialInstruction()}
       </KeyboardAwareScrollView>
       {renderCartButton()}
+      <ModalAction
+        isVisible={showAlert}
+        closeModal={closeAlert}
+        onCancel={closeAlert}
+        onApprove={addUpdateProduct}
+        title="Proceed to Add Item to Cart?"
+        description={`Your current cart is only eligible for ${
+          defaultOutlet?.name
+        } therefore it will be emptied. Do you still want to proceed?`}
+      />
     </SafeAreaView>
   );
 };
