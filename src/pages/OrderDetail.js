@@ -731,7 +731,9 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
           </View>
         ) : null}
 
-        {additionalSetting().enableScanAndGo && data?.transactionRefNo ? (
+        {additionalSetting().enableScanAndGo &&
+        data?.transactionRefNo &&
+        isFromPaymentPage ? (
           <View style={[styles.qrContainer, styles.mt16, styles.mb16]}>
             <View style={styles.mt12}>
               <QRCode size={200} value={data.transactionRefNo} />
