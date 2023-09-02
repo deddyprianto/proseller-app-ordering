@@ -54,7 +54,6 @@ class PaymentSuccess extends Component {
   }
 
   componentDidMount = async () => {
-    console.log('masuk sini ');
     try {
       this.backHandler = BackHandler.addEventListener(
         'hardwareBackPress',

@@ -259,7 +259,6 @@ const ProductDetail = ({
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const [isPromotionDisabled, setIsPromotionDisabled] = useState(false);
-  console.log(selectedProduct, 'kuki');
   const [notes, setNotes] = useState('');
   const [variantName, setVariantName] = useState('');
   const [variantImageURL, setVariantImageURL] = useState('');

@@ -1684,7 +1684,6 @@ export const addProductToBasket = ({defaultOutlet, selectedProduct}) => {
 
       // add real data
       let response = {};
-      console.log({payload, defaultOutlet}, 'agita');
       /* IF CUSTOMER IS LOGGED IN, THEN ADD ITEM TO SERVER, ELSE, ADD ITEM TO LOCAL DATA */
       if (isLoggedIn === true) {
         response = await fetchApiOrder(
