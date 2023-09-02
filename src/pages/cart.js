@@ -547,7 +547,11 @@ const Cart = props => {
         }
       });
 
-      if (orderingModesFieldFiltered?.length === 1 && !basket?.orderingMode) {
+      if (
+        orderingModesFieldFiltered?.length === 1 &&
+        !basket?.orderingMode &&
+        !basket?.isStoreCheckoutCart
+      ) {
         await dispatch(
           changeOrderingMode({
             orderingMode: orderingModesFieldFiltered[0]?.key,
@@ -560,9 +564,8 @@ const Cart = props => {
 
     loadData();
   }, [outlet, basket, orderingModesField, dispatch]);
-
   useEffect(() => {
-    if (basket?.isScannedProduct) {
+    if (basket?.isStoreCheckoutCart) {
       const findStoreCheckout = orderingModesField.find(
         data => data.key === 'STORECHECKOUT',
       );
@@ -574,7 +577,7 @@ const Cart = props => {
         );
       }
     }
-  }, [basket]);
+  }, []);
 
   useEffect(() => {
     setIsLoading(true);
@@ -1019,12 +1022,11 @@ const Cart = props => {
       );
     }
   };
-  console.log({props, basket}, 'lemak');
   const renderOrderingTypeHeaderText = text => {
     if (awsConfig.COMPANY_TYPE === 'Retail') {
       return (
         <TouchableOpacity
-          disabled={props.isScanGo}
+          disabled={basket?.isStoreCheckoutCart}
           style={styles.touchableMethod}
           onPress={handleOpenOrderingTypeModal}>
           <Text style={styles.textMethodValue}>

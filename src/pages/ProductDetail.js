@@ -253,6 +253,7 @@ const ProductDetail = ({
   selectedProduct,
   prevPage,
   resetScanCode,
+  isFromScanBarcode,
 }) => {
   const styles = useStyles();
   const dispatch = useDispatch();
@@ -262,7 +263,6 @@ const ProductDetail = ({
   const [notes, setNotes] = useState('');
   const [variantName, setVariantName] = useState('');
   const [variantImageURL, setVariantImageURL] = useState('');
-  const [popupScango, setPopupScanGo] = React.useState(false);
   const [qty, setQty] = useState(1);
   const [totalPrice, setTotalPrice] = useState(0);
   const [variantRetailPrice, setVariantRetailPrice] = useState(0);
@@ -488,45 +488,57 @@ const ProductDetail = ({
     }
   };
 
+  const addUpdateProduct = async () => {
+    const isSpecialBarcode = product?.isSpecialBarcode;
+
+    if (!isEmptyObject(selectedProduct)) {
+      let newProductUpdate = isSpecialBarcode
+        ? {
+            ...productUpdate,
+            specialBarcode: product?.specialBarcode,
+            retailPrice: product?.retailPrice,
+            unitPrice: product?.retailPrice,
+          }
+        : productUpdate;
+      if (isFromScanBarcode) {
+        newProductUpdate = {
+          ...newProductUpdate,
+          isScannedProduct: true,
+        };
+      }
+      await dispatch(updateProductBasket(newProductUpdate));
+    } else {
+      let newProductAdd = isSpecialBarcode
+        ? {
+            ...productAdd,
+            specialBarcode: product?.specialBarcode,
+            retailPrice: product?.retailPrice,
+          }
+        : productAdd;
+      if (isFromScanBarcode) {
+        newProductAdd = {
+          ...newProductAdd,
+          isScannedProduct: true,
+        };
+      }
+      await dispatch(
+        addProductToBasket({
+          defaultOutlet,
+          selectedProduct: newProductAdd,
+        }),
+      );
+    }
+
+    setIsLoading(false);
+    setShowAlert(false);
+    Actions.pop();
+  };
+
   const handleAddOrUpdateProduct = async () => {
     setIsLoading(true);
-    const isSpecialBarcode = product?.isSpecialBarcode;
-    console.log({product, selectedProduct, productAdd, productUpdate}, 'kuras');
-    const showPopup = await checkProductScanGo(false);
-    console.log(showPopup, 'chek');
+    const showPopup = await checkProductScanGo(isFromScanBarcode);
     if (!showPopup) {
-      if (!isEmptyObject(selectedProduct)) {
-        const newProductUpdate = isSpecialBarcode
-          ? {
-              ...productUpdate,
-              specialBarcode: product?.specialBarcode,
-              retailPrice: product?.retailPrice,
-              unitPrice: product?.retailPrice,
-            }
-          : productUpdate;
-
-        await dispatch(updateProductBasket(newProductUpdate));
-      } else {
-        console.log('mamantap');
-        const newProductAdd = isSpecialBarcode
-          ? {
-              ...productAdd,
-              specialBarcode: product?.specialBarcode,
-              retailPrice: product?.retailPrice,
-            }
-          : productAdd;
-
-        await dispatch(
-          addProductToBasket({
-            defaultOutlet,
-            selectedProduct: newProductAdd,
-          }),
-        );
-      }
-
-      setIsLoading(false);
-      setShowAlert(false);
-      Actions.pop();
+      addUpdateProduct();
     } else {
       setShowAlert(true);
       setIsLoading(false);
@@ -822,7 +834,11 @@ const ProductDetail = ({
         isVisible={showAlert}
         closeModal={closeAlert}
         onCancel={closeAlert}
-        onApprove={onRemoveBasket}
+        onApprove={addUpdateProduct}
+        title="Proceed to Add Item to Cart?"
+        description={`Your current cart is only eligible for ${
+          defaultOutlet?.name
+        } therefore it will be emptied. Do you still want to proceed?`}
       />
     </SafeAreaView>
   );

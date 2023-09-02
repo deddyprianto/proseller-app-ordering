@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {RNCamera} from 'react-native-camera';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 
 import {
   StyleSheet,
@@ -127,13 +127,16 @@ const ScannerBarcode = () => {
   const [isOpenSearchBarcodeModal, setIsOpenSearchBarcodeModal] = useState(
     false,
   );
+  const [responseBarcode, setResponseBarcode] = React.useState(false);
+  const defaultOutlet = useSelector(
+    state => state.storesReducer.defaultOutlet.defaultOutlet,
+  );
   const {
     showAlert,
     checkProductScanGo,
     closeAlert,
     onRemoveBasket,
     setShowAlert,
-    checkDuplicateItem,
   } = useScanGo();
   const handleOpenSearchProductByBarcodeModal = () => {
     setIsOpenSearchBarcodeModal(true);
@@ -152,18 +155,23 @@ const ScannerBarcode = () => {
   };
 
   const onSuccess = async (value, showError) => {
-    setTimeout(async () => {
-      setIsLoading(true);
-      const response = await dispatch(getProductByBarcode(value?.data));
-      handleSuccess(response, value.oldBarcode, showError);
-    }, 1000);
+    if (!isOpenDetailPage) {
+      setTimeout(async () => {
+        setIsLoading(true);
+        const response = await dispatch(getProductByBarcode(value?.data));
+        setResponseBarcode(response);
+        handleSuccess(response, value.oldBarcode, showError);
+      }, 1000);
+    }
   };
 
   const goToProductDetail = response => {
     Actions.productDetail({
       productId: response?.data?.id,
       resetScanCode,
+      isFromScanBarcode: true,
     });
+    setShowAlert(false);
   };
 
   const handleSuccess = async (response, oldBarcode, showError) => {
@@ -172,13 +180,11 @@ const ScannerBarcode = () => {
         setIsLoading(false);
         const showPopup = await checkProductScanGo(true, response.data);
         if (!showPopup) {
-          setIsOpenDetailPage(false);
-
-          goToProductDetail(response);
+          return goToProductDetail(response);
         } else {
           setShowAlert(showPopup);
+          return setIsOpenDetailPage(false);
         }
-        return setIsOpenDetailPage(false);
       }
       goToProductDetail(response);
       setIsLoading(false);
@@ -356,11 +362,11 @@ const ScannerBarcode = () => {
       {renderButtonCartFloating()}
       <ModalAction
         isVisible={showAlert}
-        title="Proceed to {store_checkout_display_name}?"
+        title={`Proceed to ${defaultOutlet?.name}`}
         description="Your current cart will be emptied.
 Do you still want to proceed?"
         approveTitle="Proceed"
-        onApprove={onClearCart}
+        onApprove={() => goToProductDetail(responseBarcode)}
         closeModal={closeAlert}
         onCancel={closeAlert}
       />

@@ -1659,7 +1659,9 @@ export const addProductToBasket = ({defaultOutlet, selectedProduct}) => {
         outletID: `outlet::${defaultOutlet.id}`,
         details: [],
       };
-
+      if (selectedProduct?.isScannedProduct) {
+        payload = {...payload, isScannedProduct: true};
+      }
       let newProduct = {
         productID: selectedProduct?.productID,
         unitPrice:
@@ -1683,7 +1685,7 @@ export const addProductToBasket = ({defaultOutlet, selectedProduct}) => {
 
       // add real data
       let response = {};
-
+      console.log({payload, defaultOutlet}, 'agita');
       /* IF CUSTOMER IS LOGGED IN, THEN ADD ITEM TO SERVER, ELSE, ADD ITEM TO LOCAL DATA */
       if (isLoggedIn === true) {
         response = await fetchApiOrder(
