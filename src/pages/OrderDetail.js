@@ -40,6 +40,7 @@ import HandsSvg from '../assets/svg/HandsSvg';
 import MapSvg from '../assets/svg/MapSvg';
 import appConfig from '../config/appConfig';
 import useOrder from '../hooks/order/useOrder';
+import additionalSetting from '../config/additionalSettings';
 
 const useStyles = () => {
   const {colors, fontFamily} = Theme();
@@ -684,6 +685,14 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
     </>
   );
 
+  const handleVerified = () => {
+    if (!data?.isVerified) {
+      return '(UNVERIFIED)';
+    }
+    return '(VERIFIED)';
+  };
+
+  console.log({data}, 'nakal');
   return (
     <Body>
       {data?.status === staustPending && !isTimeEnd ? (
@@ -743,7 +752,8 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
                 Order Status
               </GlobalText>
               <GlobalText style={[styles.boldFont, styles.grayColor]}>
-                {handlePaymentStatus(data?.status)}
+                {handlePaymentStatus(data?.status)}{' '}
+                {additionalSetting().enableScanAndGo ? handleVerified() : null}
               </GlobalText>
             </View>
             {data?.cancelationReason ? (

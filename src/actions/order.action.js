@@ -1654,7 +1654,7 @@ export const addProductToBasket = ({defaultOutlet, selectedProduct}) => {
           dataBasket: {product},
         },
       } = state;
-
+      console.log(defaultOutlet, selectedProduct, 'kutil');
       let payload = {
         outletID: `outlet::${defaultOutlet.id}`,
         details: [],
@@ -1707,7 +1707,7 @@ export const addProductToBasket = ({defaultOutlet, selectedProduct}) => {
           token,
         );
       }
-
+      console.log({response}, 'api add cart');
       //NOTE: It will change it letter
       await dispatch(getBasket());
 
