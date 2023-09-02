@@ -29,7 +29,6 @@ const additionalSetting = () => {
   const cartVersion = 'advance';
   const registerVersion = 2;
   const enableScanAndGo = true;
-
   return {
     additionalPolicy,
     mapType,

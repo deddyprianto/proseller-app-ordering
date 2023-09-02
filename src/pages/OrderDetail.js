@@ -683,6 +683,13 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
     </>
   );
 
+  const handleVerified = () => {
+    if (!data?.isVerified) {
+      return '(UNVERIFIED)';
+    }
+    return '(VERIFIED)';
+  };
+
   return (
     <Body>
       {data?.status === staustPending && !isTimeEnd ? (
@@ -746,7 +753,8 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
                 Order Status
               </GlobalText>
               <GlobalText style={[styles.boldFont, styles.grayColor]}>
-                {handlePaymentStatus(data?.status)}
+                {handlePaymentStatus(data?.status)}{' '}
+                {additionalSetting().enableScanAndGo ? handleVerified() : null}
               </GlobalText>
             </View>
             {data?.cancelationReason ? (

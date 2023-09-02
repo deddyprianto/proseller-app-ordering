@@ -84,7 +84,11 @@ const OrderDetailCart = ({setSelectSelection, itemSelection}) => {
           <GlobalText style={styles.informationText}>
             Please visit the selected outlet for item selection.
           </GlobalText>
-        ) : null}
+        ) : (
+          <GlobalText style={styles.informationText}>
+            Staff assistance provided on choosing your items.
+          </GlobalText>
+        )}
       </View>
     </View>
   );

@@ -10,7 +10,6 @@ const additionalSetting = () => {
   const cartVersion = 'basic';
   const registerVersion = 1;
   const enableScanAndGo = false;
-
   return {
     additionalPolicy,
     mapType,
