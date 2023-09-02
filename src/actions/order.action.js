@@ -1654,7 +1654,6 @@ export const addProductToBasket = ({defaultOutlet, selectedProduct}) => {
           dataBasket: {product},
         },
       } = state;
-      console.log(defaultOutlet, selectedProduct, 'kutil');
       let payload = {
         outletID: `outlet::${defaultOutlet.id}`,
         details: [],
