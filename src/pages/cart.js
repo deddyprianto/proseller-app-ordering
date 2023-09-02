@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable react-hooks/exhaustive-deps */
 /**
  * Martin
@@ -428,7 +429,7 @@ const useStyles = () => {
 const Cart = props => {
   const styles = useStyles();
   const dispatch = useDispatch();
-  const {navigation} = props;
+  const {navigation, isScanGo} = props;
   const [subTotal, setSubTotal] = useState(0);
   const [isOffline, setIsOffline] = useState(false);
   const [errorMessage, setErrorMessage] = useState({
@@ -559,6 +560,21 @@ const Cart = props => {
 
     loadData();
   }, [outlet, basket, orderingModesField, dispatch]);
+
+  useEffect(() => {
+    if (basket?.isScannedProduct) {
+      const findStoreCheckout = orderingModesField.find(
+        data => data.key === 'STORECHECKOUT',
+      );
+      if (findStoreCheckout) {
+        dispatch(
+          changeOrderingMode({
+            orderingMode: findStoreCheckout.key,
+          }),
+        );
+      }
+    }
+  }, [basket]);
 
   useEffect(() => {
     setIsLoading(true);
@@ -1003,11 +1019,12 @@ const Cart = props => {
       );
     }
   };
-
+  console.log({props, basket}, 'lemak');
   const renderOrderingTypeHeaderText = text => {
     if (awsConfig.COMPANY_TYPE === 'Retail') {
       return (
         <TouchableOpacity
+          disabled={props.isScanGo}
           style={styles.touchableMethod}
           onPress={handleOpenOrderingTypeModal}>
           <Text style={styles.textMethodValue}>

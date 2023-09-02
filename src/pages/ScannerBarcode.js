@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {RNCamera} from 'react-native-camera';
-import {useDispatch, useSelector} from 'react-redux';
+import {useDispatch} from 'react-redux';
 
 import {
   StyleSheet,
@@ -30,8 +30,9 @@ import {
   normalizeLayoutSizeWidth,
 } from '../helper/Layout';
 import {Actions} from 'react-native-router-flux';
-import additionalSetting from '../config/additionalSettings';
 import ModalAction from '../components/modal/ModalAction';
+import useScanGo from '../hooks/validation/usScanGo';
+import additionalSetting from '../config/additionalSettings';
 const HEIGHT = Dimensions.get('window').height;
 
 const useStyles = () => {
@@ -126,8 +127,14 @@ const ScannerBarcode = () => {
   const [isOpenSearchBarcodeModal, setIsOpenSearchBarcodeModal] = useState(
     false,
   );
-  const [showAlertMessage, setShowAlertMessage] = React.useState(false);
-  const cartItem = useSelector(state => state.orderReducer.dataBasket?.product);
+  const {
+    showAlert,
+    checkProductScanGo,
+    closeAlert,
+    onRemoveBasket,
+    setShowAlert,
+    checkDuplicateItem,
+  } = useScanGo();
   const handleOpenSearchProductByBarcodeModal = () => {
     setIsOpenSearchBarcodeModal(true);
   };
@@ -139,35 +146,42 @@ const ScannerBarcode = () => {
     setIsOpenDetailPage(false);
   };
 
-  const checkProduct = response => {
-    console.log({response, cartItem}, 'nakal');
-    const isScanGoProduct = response?.data?.isScannedProduct;
-    if (!isScanGoProduct) {
-      return setShowAlertMessage(true);
-    }
+  const onClearCart = () => {
+    onRemoveBasket();
+    closeAlert();
   };
 
-  const onClearCart = () => {};
-
   const onSuccess = async (value, showError) => {
-    setIsLoading(true);
     setTimeout(async () => {
+      setIsLoading(true);
       const response = await dispatch(getProductByBarcode(value?.data));
-
       handleSuccess(response, value.oldBarcode, showError);
     }, 1000);
   };
 
+  const goToProductDetail = response => {
+    Actions.productDetail({
+      productId: response?.data?.id,
+      resetScanCode,
+    });
+  };
+
   const handleSuccess = async (response, oldBarcode, showError) => {
     if (response?.data) {
-      setIsLoading(false);
       if (additionalSetting().enableScanAndGo) {
-        return checkProduct(response);
+        setIsLoading(false);
+        const showPopup = await checkProductScanGo(true, response.data);
+        if (!showPopup) {
+          setIsOpenDetailPage(false);
+
+          goToProductDetail(response);
+        } else {
+          setShowAlert(showPopup);
+        }
+        return setIsOpenDetailPage(false);
       }
-      Actions.productDetail({
-        productId: response?.data?.id,
-        resetScanCode,
-      });
+      goToProductDetail(response);
+      setIsLoading(false);
     } else {
       setIsLoading(false);
       if (!showError) {
@@ -187,9 +201,6 @@ const ScannerBarcode = () => {
       setSearchCondition('success');
       setIsLoading(false);
       handleCloseSearchProductByBarcodeModal();
-      if (additionalSetting().enableScanAndGo) {
-        return checkProduct(response);
-      }
       Actions.productDetail({
         productId: response?.data?.id,
       });
@@ -344,12 +355,14 @@ const ScannerBarcode = () => {
       {renderSearchModal()}
       {renderButtonCartFloating()}
       <ModalAction
-        isVisible={showAlertMessage}
+        isVisible={showAlert}
         title="Proceed to {store_checkout_display_name}?"
         description="Your current cart will be emptied.
 Do you still want to proceed?"
         approveTitle="Proceed"
         onApprove={onClearCart}
+        closeModal={closeAlert}
+        onCancel={closeAlert}
       />
     </SafeAreaView>
   );

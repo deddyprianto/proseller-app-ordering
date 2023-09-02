@@ -43,6 +43,8 @@ import {Header} from '../components/layout';
 import PreorderLabel from '../components/label/Preorder';
 import AllowSelfSelectionLabel from '../components/label/AllowSelfSelection';
 import LoadingScreen from '../components/loadingScreen/LoadingScreen';
+import useScanGo from '../hooks/validation/usScanGo';
+import ModalAction from '../components/modal/ModalAction';
 
 const useStyles = () => {
   const theme = Theme();
@@ -256,11 +258,11 @@ const ProductDetail = ({
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const [isPromotionDisabled, setIsPromotionDisabled] = useState(false);
-
+  console.log(selectedProduct, 'kuki');
   const [notes, setNotes] = useState('');
   const [variantName, setVariantName] = useState('');
   const [variantImageURL, setVariantImageURL] = useState('');
-
+  const [popupScango, setPopupScanGo] = React.useState(false);
   const [qty, setQty] = useState(1);
   const [totalPrice, setTotalPrice] = useState(0);
   const [variantRetailPrice, setVariantRetailPrice] = useState(0);
@@ -272,7 +274,13 @@ const ProductDetail = ({
   const [selectedProductModifiers, setSelectedProductModifiers] = useState([]);
 
   const [product, setProduct] = useState({});
-
+  const {
+    checkProductScanGo,
+    showAlert,
+    setShowAlert,
+    closeAlert,
+    onRemoveBasket,
+  } = useScanGo();
   const defaultOutlet = useSelector(
     state => state.storesReducer.defaultOutlet.defaultOutlet,
   );
@@ -483,34 +491,47 @@ const ProductDetail = ({
   const handleAddOrUpdateProduct = async () => {
     setIsLoading(true);
     const isSpecialBarcode = product?.isSpecialBarcode;
+    console.log({product, selectedProduct, productAdd, productUpdate}, 'kuras');
+    const showPopup = await checkProductScanGo(false);
+    console.log(showPopup, 'chek');
+    if (!showPopup) {
+      if (!isEmptyObject(selectedProduct)) {
+        const newProductUpdate = isSpecialBarcode
+          ? {
+              ...productUpdate,
+              specialBarcode: product?.specialBarcode,
+              retailPrice: product?.retailPrice,
+              unitPrice: product?.retailPrice,
+            }
+          : productUpdate;
 
-    if (!isEmptyObject(selectedProduct)) {
-      const newProductUpdate = isSpecialBarcode
-        ? {
-            ...productUpdate,
-            specialBarcode: product?.specialBarcode,
-            retailPrice: product?.retailPrice,
-            unitPrice: product?.retailPrice,
-          }
-        : productUpdate;
+        await dispatch(updateProductBasket(newProductUpdate));
+      } else {
+        console.log('mamantap');
+        const newProductAdd = isSpecialBarcode
+          ? {
+              ...productAdd,
+              specialBarcode: product?.specialBarcode,
+              retailPrice: product?.retailPrice,
+            }
+          : productAdd;
 
-      await dispatch(updateProductBasket(newProductUpdate));
+        await dispatch(
+          addProductToBasket({
+            defaultOutlet,
+            selectedProduct: newProductAdd,
+          }),
+        );
+      }
+
+      setIsLoading(false);
+      setShowAlert(false);
+      Actions.pop();
     } else {
-      const newProductAdd = isSpecialBarcode
-        ? {
-            ...productAdd,
-            specialBarcode: product?.specialBarcode,
-            retailPrice: product?.retailPrice,
-          }
-        : productAdd;
-
-      await dispatch(
-        addProductToBasket({defaultOutlet, selectedProduct: newProductAdd}),
-      );
+      setShowAlert(true);
+      setIsLoading(false);
+      // produk ada yang scan go
     }
-
-    setIsLoading(false);
-    Actions.pop();
   };
 
   const handleDisabledCartButton = () => {
@@ -797,6 +818,12 @@ const ProductDetail = ({
         {renderSpecialInstruction()}
       </KeyboardAwareScrollView>
       {renderCartButton()}
+      <ModalAction
+        isVisible={showAlert}
+        closeModal={closeAlert}
+        onCancel={closeAlert}
+        onApprove={onRemoveBasket}
+      />
     </SafeAreaView>
   );
 };
