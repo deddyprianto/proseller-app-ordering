@@ -24,6 +24,7 @@ const useStyles = () => {
     actionButtonContainer: {
       flexDirection: 'row',
       justifyContent: 'space-between',
+      paddingHorizontal: 16,
     },
     buttonStyle: {
       width: '48%',
@@ -34,6 +35,15 @@ const useStyles = () => {
       paddingVertical: 16,
       borderTopColor: colors.greyScale3,
       borderBottomColor: colors.greyScale3,
+    },
+    scrollContainerStyle: {
+      paddingBottom: 16,
+    },
+    pv16: {
+      paddingVertical: 16,
+    },
+    r10: {
+      right: 10,
     },
   });
   return {styles};
@@ -50,6 +60,7 @@ const useStyles = () => {
  * @property {import('react-native').StyleProp} buttonActionStyle
  * @property {import('react-native').StyleProp} ModalContainerStyle
  * @property {boolean} hideCloseButton
+ * @property {string} approveTitle
  */
 
 /**
@@ -65,7 +76,12 @@ const ModalAction = props => {
       closeModal={props.closeModal}
       modalContainerStyle={props.ModalContainerStyle}
       hideCloseIcon={props.hideCloseButton}
-      scrollContainerStyle={props.scrollContainerStyle}
+      scrollContainerStyle={[
+        styles.scrollContainerStyle,
+        props.scrollContainerStyle,
+      ]}
+      titleContainerStyle={styles.pv16}
+      closeContainerStyle={styles.r10}
       {...props}>
       <View>
         <View style={styles.descContainer}>
@@ -76,7 +92,10 @@ const ModalAction = props => {
             <GlobalButton onPress={props.onCancel} isOutline title="Cancel" />
           </View>
           <View style={styles.buttonStyle}>
-            <GlobalButton onPress={props.onApprove} title="Yes" />
+            <GlobalButton
+              onPress={props.onApprove}
+              title={props.approveTitle || 'Yes'}
+            />
           </View>
         </View>
       </View>

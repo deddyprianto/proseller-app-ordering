@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {RNCamera} from 'react-native-camera';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 
 import {
   StyleSheet,
@@ -10,6 +10,7 @@ import {
   View,
   Dimensions,
   SafeAreaView,
+  Platform,
 } from 'react-native';
 
 import appConfig from '../config/appConfig';
@@ -29,10 +30,10 @@ import {
   normalizeLayoutSizeWidth,
 } from '../helper/Layout';
 import {Actions} from 'react-native-router-flux';
-
+import ModalAction from '../components/modal/ModalAction';
+import useScanGo from '../hooks/validation/usScanGo';
+import additionalSetting from '../config/additionalSettings';
 const HEIGHT = Dimensions.get('window').height;
-
-const RESTRICTED_TYPES = ['QR_CODE', 'UNKNOWN', 'TEXT'];
 
 const useStyles = () => {
   const theme = Theme();
@@ -120,13 +121,23 @@ const ScannerBarcode = () => {
   const {styles, theme} = useStyles();
   const dispatch = useDispatch();
   const [searchCondition, setSearchCondition] = useState('');
-
+  const [isOpenDetailPage, setIsOpenDetailPage] = React.useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isShowInstruction, setIsShowInstruction] = useState(true);
   const [isOpenSearchBarcodeModal, setIsOpenSearchBarcodeModal] = useState(
     false,
   );
-
+  const [responseBarcode, setResponseBarcode] = React.useState(false);
+  const defaultOutlet = useSelector(
+    state => state.storesReducer.defaultOutlet.defaultOutlet,
+  );
+  const {
+    showAlert,
+    checkProductScanGo,
+    closeAlert,
+    onRemoveBasket,
+    setShowAlert,
+  } = useScanGo();
   const handleOpenSearchProductByBarcodeModal = () => {
     setIsOpenSearchBarcodeModal(true);
   };
@@ -134,26 +145,64 @@ const ScannerBarcode = () => {
     setIsOpenSearchBarcodeModal(false);
   };
 
-  const onSuccess = async value => {
-    setIsLoading(true);
-    const response = await dispatch(getProductByBarcode(value?.data));
+  const resetScanCode = () => {
+    setIsOpenDetailPage(false);
+  };
 
+  const onClearCart = () => {
+    onRemoveBasket();
+    closeAlert();
+  };
+
+  const onSuccess = async (value, showError) => {
+    if (!isOpenDetailPage) {
+      setTimeout(async () => {
+        setIsLoading(true);
+        const response = await dispatch(getProductByBarcode(value?.data));
+        setResponseBarcode(response);
+        handleSuccess(response, value.oldBarcode, showError);
+      }, 1000);
+    }
+  };
+
+  const goToProductDetail = response => {
+    Actions.productDetail({
+      productId: response?.data?.id,
+      resetScanCode,
+      isFromScanBarcode: true,
+    });
+    setShowAlert(false);
+  };
+
+  const handleSuccess = async (response, oldBarcode, showError) => {
     if (response?.data) {
+      if (additionalSetting().enableScanAndGo) {
+        setIsLoading(false);
+        const showPopup = await checkProductScanGo(true, response.data);
+        if (!showPopup) {
+          return goToProductDetail(response);
+        } else {
+          setShowAlert(showPopup);
+          return setIsOpenDetailPage(false);
+        }
+      }
+      goToProductDetail(response);
       setIsLoading(false);
-
-      Actions.productDetail({
-        productId: response?.data?.id,
-      });
     } else {
       setIsLoading(false);
-      await dispatch(showSnackbar({message: 'Product Not Found'}));
+      if (!showError) {
+        onSuccess({data: oldBarcode}, true);
+      }
+      if (showError) {
+        setIsOpenDetailPage(false);
+        dispatch(showSnackbar({message: 'Product Not Found'}));
+      }
     }
   };
 
   const onSearch = async value => {
     setIsLoading(true);
     const response = await dispatch(getProductByBarcode(value));
-
     if (response?.data) {
       setSearchCondition('success');
       setIsLoading(false);
@@ -164,6 +213,30 @@ const ScannerBarcode = () => {
     } else {
       setIsLoading(false);
       setSearchCondition('error');
+    }
+  };
+
+  const onBarcodeRead = barcodes => {
+    if (Platform.OS === 'ios') {
+      let oldBarcode = barcodes?.data;
+      let newBarCode = barcodes?.data;
+      newBarCode = newBarCode?.substring(1, newBarCode.length - 1);
+      oldBarcode = oldBarcode?.substring(0, oldBarcode.length - 1);
+      if (!isOpenDetailPage) {
+        setIsOpenDetailPage(true);
+        onSuccess({data: newBarCode, oldBarcode});
+      }
+    }
+  };
+
+  const onGoogleBarcode = barcodes => {
+    if (Platform.OS === 'android' && !isOpenDetailPage) {
+      const code = barcodes.barcodes[0]?.data;
+      if (code) {
+        setIsOpenDetailPage(true);
+        const barcodeData = code?.substring(0, code?.length - 1);
+        onSuccess({data: barcodeData}, true);
+      }
     }
   };
 
@@ -230,13 +303,12 @@ const ScannerBarcode = () => {
         style={styles.camera}
         type={RNCamera.Constants.Type.back}
         flashMode={RNCamera.Constants.FlashMode.on}
-        onGoogleVisionBarcodesDetected={({barcodes}) => {
-          const barcode = barcodes[0];
-          if (barcode && !RESTRICTED_TYPES.includes(barcode.type)) {
-            setIsLoading(true);
-            !isLoading ? setTimeout(() => onSuccess(barcode), 500) : null;
-          }
-        }}
+        onGoogleVisionBarcodesDetected={onGoogleBarcode}
+        onBarCodeRead={onBarcodeRead}
+        barCodeTypes={[
+          RNCamera.Constants.BarCodeType.ean13,
+          RNCamera.Constants.BarCodeType.upc_e,
+        ]}
         androidCameraPermissionOptions={{
           title: 'Permission to use camera',
           message: 'We need to use your camera access to scan product barcode',
@@ -288,6 +360,16 @@ const ScannerBarcode = () => {
       {renderScanner()}
       {renderSearchModal()}
       {renderButtonCartFloating()}
+      <ModalAction
+        isVisible={showAlert}
+        title={`Proceed to ${defaultOutlet?.name}`}
+        description="Your current cart will be emptied.
+Do you still want to proceed?"
+        approveTitle="Proceed"
+        onApprove={() => goToProductDetail(responseBarcode)}
+        closeModal={closeAlert}
+        onCancel={closeAlert}
+      />
     </SafeAreaView>
   );
 };

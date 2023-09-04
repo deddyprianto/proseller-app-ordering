@@ -135,6 +135,7 @@ const CreditCardDetail = props => {
         onApprove={onDeleteCard}
         onCancel={togglePopup}
         description="Are you sure you want to delete this card?"
+        ModalContainerStyle={{padding: 0}}
       />
     </SafeAreaView>
   );

@@ -9,7 +9,7 @@ const additionalSetting = () => {
   const applicationName = 'Acemart';
   const cartVersion = 'basic';
   const registerVersion = 1;
-
+  const enableScanAndGo = false;
   return {
     additionalPolicy,
     mapType,
@@ -19,6 +19,7 @@ const additionalSetting = () => {
     applicationName,
     cartVersion,
     registerVersion,
+    enableScanAndGo,
   };
 };
 
