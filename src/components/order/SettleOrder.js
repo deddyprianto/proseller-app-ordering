@@ -3612,7 +3612,6 @@ class SettleOrder extends Component {
     const {cartVersion} = additionalSetting();
     const total =
       Number(this.state.totalBayar) - this.state.totalNonDiscountable;
-    console.log(this.props, 'bukan');
     if (cartVersion === 'advance') {
       return (
         <>
