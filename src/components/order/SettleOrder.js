@@ -67,7 +67,7 @@ import {
   submitMembership,
 } from '../../actions/membership.action';
 import {getSVCBalance} from '../../actions/SVC.action';
-import {campaign, dataPoint} from '../../actions/rewards.action';
+import {campaign, dataPoint, vouchers} from '../../actions/rewards.action';
 import ModalTransfer from './ModalTransfer';
 import LoadingScreen from '../loadingScreen';
 import OrderingModeOfflineModal from '../modal/OrderingModeOfflineModal';
@@ -200,6 +200,7 @@ class SettleOrder extends Component {
     try {
       this.props.dispatch(myVoucers());
       await this.props.dispatch(getAccountPayment());
+      this.props.dispatch(vouchers());
       this.props.dispatch(campaign());
       this.props.dispatch(dataPoint());
       this.props.dispatch(getSVCBalance());
