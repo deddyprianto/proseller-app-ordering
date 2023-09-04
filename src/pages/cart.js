@@ -508,6 +508,7 @@ const Cart = props => {
       if (availablePreorderDate) {
         date = moment(availablePreorderDate).format('YYYY-MM-DD');
       }
+
       const timeSlot = await dispatch(
         getTimeSlot({
           outletId: outlet.id,
@@ -969,11 +970,17 @@ const Cart = props => {
           }
         }
       } catch (e) {}
+      const findMinimumDate = availableTimes.find(
+        data =>
+          data?.date ===
+          moment(pembayaran?.orderActionDate).format('YYYY-MM-DD'),
+      );
       Actions.settleOrder({
         pembayaran: pembayaran,
         url: url,
         outlet: outlet,
         step: 3,
+        latestSelfSelectionDate: findMinimumDate?.latestSelfSelectionDate,
       });
     } catch (e) {
       await dispatch(showSnackbar({message: 'Please try again'}));
@@ -1361,7 +1368,7 @@ const Cart = props => {
 
     const orderingTypeValue = orderingMode?.displayName;
     const dateValue = availablePreorderDate
-      ? {date: availablePreorderDate}
+      ? {date: availableTimes[0]?.date}
       : orderingDateTimeSelected;
     return (
       <>

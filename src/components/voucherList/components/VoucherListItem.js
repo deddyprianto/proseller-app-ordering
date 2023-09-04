@@ -4,10 +4,7 @@ import {StyleSheet, View, Text, Image} from 'react-native';
 
 import colorConfig from '../../../config/colorConfig';
 import appConfig from '../../../config/appConfig';
-import {
-  normalizeLayoutSizeHeight,
-  normalizeLayoutSizeWidth,
-} from '../../../helper/Layout';
+import {normalizeLayoutSizeWidth} from '../../../helper/Layout';
 import Theme from '../../../theme/Theme';
 
 const useStyles = () => {
@@ -64,11 +61,11 @@ const useStyles = () => {
     },
   });
 
-  return {styles};
+  return styles;
 };
 
 const VoucherListItem = ({voucher, qty, pointToRedeem}) => {
-  const {styles} = useStyles();
+  const styles = useStyles();
   const renderVoucherPointToRedeem = () => {
     if (pointToRedeem) {
       return (
@@ -93,23 +90,26 @@ const VoucherListItem = ({voucher, qty, pointToRedeem}) => {
     return <Text style={styles.textTitle}>{voucher?.name}</Text>;
   };
 
-  const handleImage = () => {
-    if (!voucher.image) {
-      return appConfig.appImageNull;
-    }
-    return {uri: voucher.image};
-  };
+  const renderVoucherImage = () => {
+    const image = voucher?.image
+      ? {uri: voucher?.image}
+      : appConfig.logoMerchant;
 
-  return (
-    <>
+    return (
       <View style={styles.parentImageContainer}>
         <Image
           style={styles.imageBackground}
           imageStyle={styles.image}
           resizeMode="stretch"
-          source={handleImage()}
+          source={image}
         />
       </View>
+    );
+  };
+
+  return (
+    <>
+      {renderVoucherImage()}
       {renderVoucherTitle()}
       {renderVoucherPointToRedeem()}
       {renderVoucherQty()}

@@ -3,8 +3,8 @@ import MapView from 'react-native-maps';
 import {Marker} from 'react-native-maps';
 
 const FavoriteOutletDetailMap = ({lat, long, style}) => {
-  const latitude = Number(lat);
-  const longitude = Number(long);
+  const latitude = Number(lat) || 1.29027;
+  const longitude = Number(long) || 103.851959;
   const latitudeDelta = 0.001;
   const longitudeDelta = 0.001;
 

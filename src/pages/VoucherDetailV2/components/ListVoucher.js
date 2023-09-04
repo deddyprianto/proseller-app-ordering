@@ -112,7 +112,7 @@ const ListVoucher = ({item, isRedeem, vouchers}) => {
     }
     return appConfig.appImageNull;
   };
-  console.log(item, totalPoint, 'nusi');
+
   const handleCountVoucher = () => {
     if (vouchers && Array.isArray(vouchers)) {
       const count = vouchers.filter(voucher => voucher.id === item.id);
@@ -126,6 +126,7 @@ const ListVoucher = ({item, isRedeem, vouchers}) => {
       dataVoucher: item,
     });
   };
+
   const renderReddemVoucher = () => (
     <View style={styles.pointContainer}>
       <View>

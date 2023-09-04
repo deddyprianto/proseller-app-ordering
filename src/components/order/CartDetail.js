@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React from 'react';
-import {View, StyleSheet, TouchableOpacity} from 'react-native';
+import React, {useState} from 'react';
+import {View, StyleSheet, TouchableOpacity, Animated} from 'react-native';
 import GlobalText from '../globalText';
 import Theme from '../../theme/Theme';
 import colorConfig from '../../config/colorConfig';
@@ -23,6 +23,8 @@ import GlobalButton from '../button/GlobalButton';
 import useSettings from '../../hooks/settings/useSettings';
 import ThreeDotCircle from '../../assets/svg/ThreeDotCircle';
 import ModalDeliveryDetail from '../modal/ModalDeliveryDetail';
+import UsePointModal from '../modal/UsePointModal';
+import awsConfig from '../../config/awsConfig';
 
 const useStyles = () => {
   const theme = Theme();
@@ -146,6 +148,28 @@ const useStyles = () => {
     mt4: {
       marginTop: 4,
     },
+    pointText: {
+      fontSize: 12,
+      color: theme.colors.textTertiary,
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    justifyCenter: {
+      justifyContent: 'center',
+    },
+    viewSwitcher: {
+      width: 32,
+      height: 16,
+      borderRadius: 100,
+      padding: 2,
+      backgroundColor: theme.colors.buttonDisabled,
+    },
+    viewSwitcherActive: {
+      width: 32,
+      height: 16,
+      borderRadius: 100,
+      padding: 2,
+      backgroundColor: theme.colors.buttonActive,
+    },
   });
   return {styles, colors: theme.colors};
 };
@@ -158,15 +182,28 @@ const CartDetail = ({
   openPayment,
   selectedPaymentMethod,
   vouchers,
+  totalAmount,
   myPoint,
+  fullPoint,
+  totalPointToPay,
   myMoneyPoint,
   isAgreeTnc,
   onAgreeTnc,
+  latestSelfSelectionDate,
 }) => {
   const {styles, colors} = useStyles();
   const selectedAccount = useSelector(
     state => state.cardReducer?.selectedAccount?.selectedAccount,
   );
+
+  const totalPoint = useSelector(
+    state => state.rewardsReducer?.dataPoint?.totalPoint,
+  );
+  const campaign = useSelector(state => state.rewardsReducer.campaign.campaign);
+
+  const [isSwitchPoint, setIsSwitchPoint] = useState(false);
+  const [isOpenModal, setIsOpenModal] = useState(false);
+
   const [totalPointVoucher, setTotalPointVoucher] = React.useState(0);
   const {calculateVoucherPoint} = useCalculation();
   const [isOpenTnc, setIsOpenTnc] = React.useState(false);
@@ -177,9 +214,9 @@ const CartDetail = ({
     if (data?.isSelfSelection) {
       return {
         title: 'Chosen by Customer',
-        description: `Please visit the selected outlet for item selection before ${
-          data?.orderActionDate
-        } .`,
+        description: `Please visit the selected outlet for item selection before ${moment(
+          latestSelfSelectionDate || data?.orderActionDate,
+        ).format('DD MMMM YYYY')} .`,
       };
     }
     return {
@@ -314,11 +351,140 @@ const CartDetail = ({
   };
 
   React.useEffect(() => {
-    if (vouchers?.length > 0) {
-      const amount = calculateVoucherPoint(vouchers);
-      setTotalPointVoucher(amount);
+    const amount = calculateVoucherPoint(vouchers);
+    setTotalPointVoucher(amount);
+  }, [vouchers, isSwitchPoint]);
+
+  const leftValue = useState(new Animated.Value(0))[0];
+
+  const handleClick = () => {
+    const isActive = leftValue._value > 10;
+    const value = isActive ? 0 : 16;
+    if (isActive) {
+      totalPointToPay(0);
+    } else {
+      totalPointToPay();
     }
-  }, [vouchers]);
+
+    Animated.timing(leftValue, {
+      toValue: value,
+      duration: 1000,
+      useNativeDriver: false,
+    }).start();
+
+    setIsSwitchPoint(!isActive);
+  };
+
+  const renderPointSwitcher = () => {
+    const stylesView = isSwitchPoint
+      ? styles.viewSwitcherActive
+      : styles.viewSwitcher;
+
+    return (
+      <TouchableOpacity
+        onPress={() => {
+          handleClick();
+        }}
+        style={stylesView}>
+        <Animated.View
+          style={[
+            {
+              width: 12,
+              height: 12,
+              borderRadius: 8,
+              backgroundColor: 'white',
+              marginLeft: leftValue,
+            },
+          ]}
+        />
+      </TouchableOpacity>
+    );
+  };
+  const renderPointText = () => {
+    const pointWorth = campaign.points.pointsToRebateRatio1;
+
+    if (fullPoint) {
+      return (
+        <View>
+          <GlobalText style={[styles.brandColor, styles.mediumFont]}>
+            {fullPoint} points used (worth {CurrencyFormatter(myMoneyPoint)})
+          </GlobalText>
+        </View>
+      );
+    } else {
+      return (
+        <View>
+          <GlobalText style={styles.pointText}>
+            Available Points {totalPoint} points
+          </GlobalText>
+          <GlobalText style={styles.pointText}>
+            worth {CurrencyFormatter(pointWorth)}
+          </GlobalText>
+        </View>
+      );
+    }
+  };
+
+  const renderPointType = () => {
+    if (awsConfig.COMPANY_NAME === 'Far East Flora') {
+      return renderPointSwitcher();
+    } else {
+      return (
+        <View style={styles.mlAuto}>
+          <ArrowRight />
+        </View>
+      );
+    }
+  };
+
+  const renderPoint = () => {
+    return (
+      <TouchableOpacity
+        disabled={awsConfig.COMPANY_NAME === 'Far East Flora'}
+        onPress={() => {
+          setIsOpenModal(true);
+        }}
+        style={[styles.card]}>
+        <View style={{display: 'flex', flexDirection: 'column'}}>
+          <View style={styles.row}>
+            <View style={styles.mr10}>
+              <PointSvg />
+            </View>
+            <View>
+              <GlobalText>Use Point </GlobalText>
+              {renderPointText()}
+            </View>
+            <View style={[styles.mlAuto, styles.justifyCenter]}>
+              {renderPointType()}
+            </View>
+          </View>
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
+  const renderModal = () => {
+    const pointWorth = campaign.points.pointsToRebateRatio1;
+
+    const total = totalAmount();
+    const payment = total?.payment;
+
+    return (
+      <UsePointModal
+        open={isOpenModal}
+        totalAmount={payment}
+        pointBalance={totalPoint}
+        pointRatio={pointWorth}
+        handleClose={() => {
+          setIsOpenModal(false);
+        }}
+        handleUsePoint={value => {
+          totalPointToPay(value);
+          setIsOpenModal(false);
+        }}
+      />
+    );
+  };
 
   return (
     <View>
@@ -390,25 +556,7 @@ const CartDetail = ({
         Payment Details
       </GlobalText>
       <View style={styles.ph14}>
-        <TouchableOpacity onPress={openPoint} style={[styles.card]}>
-          <View style={styles.row}>
-            <View style={styles.mr10}>
-              <PointSvg />
-            </View>
-            <GlobalText>Use Point</GlobalText>
-            <View style={styles.mlAuto}>
-              <ArrowRight />
-            </View>
-          </View>
-          {myPoint ? (
-            <View>
-              <GlobalText
-                style={[styles.brandColor, styles.mediumFont, styles.mt12]}>
-                {myPoint} points used (worth {CurrencyFormatter(myMoneyPoint)})
-              </GlobalText>
-            </View>
-          ) : null}
-        </TouchableOpacity>
+        {renderPoint()}
         <TouchableOpacity
           onPress={openVoucher}
           style={[styles.card, styles.mt8]}>
@@ -458,7 +606,7 @@ const CartDetail = ({
         <View style={[styles.p12, styles.bgGrey, styles.mt8]}>
           <GlobalText>
             Amount paid by points/vouchers{' '}
-            {CurrencyFormatter(totalPointVoucher)}{' '}
+            {CurrencyFormatter(totalPointVoucher)}
           </GlobalText>
           <GlobalText>
             Amount paid by {selectedAccount?.details?.cardIssuer}{' '}
@@ -515,6 +663,7 @@ const CartDetail = ({
         closeModal={toggleDelivery}
         isVisible={showDeliveryDetail}
       />
+      {renderModal()}
     </View>
   );
 };

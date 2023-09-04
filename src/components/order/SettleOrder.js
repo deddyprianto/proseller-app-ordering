@@ -103,6 +103,7 @@ class SettleOrder extends Component {
       amountSVC: 0,
       percentageUseSVC: 0,
       totalNonDiscountable: 0,
+      jumPoint: 0,
       showModal: false,
       showErrorModal: false,
       isOpenOrderingModeOfflineModal: false,
@@ -1047,6 +1048,164 @@ class SettleOrder extends Component {
       doPayment: this.doPayment,
       setDataPoint: this.setDataPoint,
     });
+  };
+
+  getPaymentData = () => {
+    let {dataVoucer, totalNonDiscountable} = this.state;
+
+    let paymentData = JSON.stringify(this.props.pembayaran);
+    paymentData = JSON.parse(paymentData);
+    paymentData.payment -= totalNonDiscountable;
+
+    // Adjust total
+    try {
+      let total = paymentData.payment;
+      if (!isEmptyArray(dataVoucer)) {
+        for (let i = 0; i < dataVoucer.length; i++) {
+          /* Deduct voucher & voucher serial number */
+          if (dataVoucer[i].isVoucher === true) {
+            total -= dataVoucer[i].paymentAmount;
+          } else if (dataVoucer[i].voucherValue) {
+            total -= dataVoucer[i].voucherValue;
+          }
+          /* deduct SVC */
+          if (dataVoucer[i].isSVC === true) {
+            total -= dataVoucer[i].paymentAmount;
+          }
+        }
+        if (total < 0) {
+          total = 0;
+        }
+        paymentData.payment = total;
+      }
+    } catch (e) {}
+
+    return paymentData;
+  };
+
+  to2PointDecimal = data => {
+    try {
+      if (data !== 0) {
+        let money = data.toString().split('.');
+        if (money[1] !== undefined) {
+          money = `${money[0]}.${money[1].substr(0, 2)}`;
+        }
+        return parseFloat(money);
+      } else {
+        return parseFloat(0);
+      }
+    } catch (e) {
+      return parseFloat(0);
+    }
+  };
+
+  calculateMoneyPointFromJumPoint = value => {
+    const {campign} = this.props;
+
+    try {
+      let jumPointRatio = campign.points.pointsToRebateRatio0;
+      let jumMoneyRatio = campign.points.pointsToRebateRatio1;
+
+      let ratio = value / jumPointRatio;
+      let money = parseFloat(ratio * jumMoneyRatio);
+
+      const result = this.to2PointDecimal(money);
+
+      this.setState({moneyPoint: result});
+
+      return result;
+    } catch (e) {
+      return 0;
+    }
+  };
+
+  totalPointToPay = point => {
+    const {campign, detailPoint} = this.props;
+
+    try {
+      const {pendingPoints, amountSVC, percentageUseSVC} = this.props;
+
+      var jumPointRatio = campign.points.pointsToRebateRatio0;
+      var jumMoneyRatio = campign.points.pointsToRebateRatio1;
+
+      let ratio = jumPointRatio / jumMoneyRatio;
+
+      // create default point to set based on the ratio of point to rebate
+      const paymentData = this.getPaymentData();
+
+      let setDefault = parseFloat((paymentData.payment * ratio).toFixed(2));
+
+      this.setState({
+        jumPointRatio: jumPointRatio,
+        jumMoneyRatio: jumMoneyRatio,
+        ratio: ratio,
+      });
+
+      // if settings from admin is not set to decimal, then round
+      let pointToSet = this.state.myPoint;
+
+      if (pendingPoints && pendingPoints > 0) {
+        pointToSet -= pendingPoints;
+      }
+
+      if (detailPoint && detailPoint.lockPoints > 0) {
+        if (percentageUseSVC > 0) {
+          let minusPoint = 0;
+          minusPoint =
+            (amountSVC / this.props.defaultBalance) * detailPoint.defaultPoints;
+          let diff = detailPoint.lockPoints - minusPoint;
+          diff = diff < 0 ? 0 : diff;
+          pointToSet = pointToSet - diff;
+        } else {
+          pointToSet -= detailPoint.lockPoints;
+        }
+      }
+
+      try {
+        pointToSet = Number(pointToSet.toFixed(2));
+      } catch (e) {}
+
+      if (pointToSet < 0) {
+        pointToSet = 0;
+      }
+
+      if (
+        campign.points.roundingOptions != undefined &&
+        campign.points.roundingOptions == 'INTEGER'
+      ) {
+        try {
+          setDefault = Number(setDefault.toFixed(0));
+        } catch (e) {
+          setDefault = Math.ceil(setDefault);
+        }
+
+        pointToSet = Math.floor(pointToSet);
+      }
+
+      if (point === undefined) {
+        if (setDefault >= pointToSet) {
+          this.setState({jumPoint: parseFloat(pointToSet)});
+          this.setDataPoint(
+            parseFloat(pointToSet),
+            this.calculateMoneyPointFromJumPoint(parseFloat(pointToSet)),
+          );
+        } else {
+          this.setState({jumPoint: parseFloat(setDefault)});
+          this.setDataPoint(
+            parseFloat(setDefault),
+            this.calculateMoneyPointFromJumPoint(parseFloat(setDefault)),
+          );
+        }
+      } else {
+        this.setState({jumPoint: parseFloat(point)});
+        this.setDataPoint(
+          parseFloat(point),
+          this.calculateMoneyPointFromJumPoint(parseFloat(point)),
+        );
+      }
+    } catch (e) {
+      Alert.alert('Sorry', 'Something went wrong, please try again');
+    }
   };
 
   saveCVV = async () => {
@@ -2809,10 +2968,11 @@ class SettleOrder extends Component {
     await this.resetAppliedVouchers();
     try {
       if (dataVoucer.length > 0) {
-        dataVoucer = dataVoucer.filter(i => i.isPoint != true);
+        dataVoucer = dataVoucer.filter(i => i.isPoint !== true);
       } else {
         dataVoucer = [];
       }
+
       await this.setState({dataVoucer, addPoint: undefined});
       this.setState({cancelPoint: true});
       await this.setDataPayment(false);
@@ -3460,6 +3620,9 @@ class SettleOrder extends Component {
             openPoint={this.myPoint}
             myMoneyPoint={this.state.moneyPoint}
             myPoint={this.state.addPoint}
+            totalPointToPay={this.totalPointToPay}
+            fullPoint={this.state.jumPoint}
+            totalAmount={this.getPaymentData}
             openPayment={this.onSelectPaymentMethod}
             selectedAccount={selectedAccount}
             selectedPaymentMethod={this.selectedPaymentMethod}
@@ -3467,6 +3630,7 @@ class SettleOrder extends Component {
             data={pembayaran}
             vouchers={this.state.dataVoucer}
             doPayment={this.doPayment}
+            latestSelfSelectionDate={this.props.latestSelfSelectionDate}
           />
         </>
       );
@@ -4402,6 +4566,7 @@ const mapStateToProps = state => ({
   defaultOutlet: state.storesReducer.defaultOutlet.defaultOutlet,
   basket: state.orderReducer?.dataBasket?.product,
   intlData: state.intlData,
+  pendingPoints: state.rewardsReducer.dataPoint.pendingPoints,
 });
 
 const mapDispatchToProps = dispatch => ({
