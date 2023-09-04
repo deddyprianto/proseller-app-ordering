@@ -88,8 +88,9 @@ class MyVouchers extends Component {
   }
 
   pageDetailVoucher = item => {
-    // console.log(item);
-    // Actions.voucher({dataVoucher: item})
+    Actions.voucher({
+      dataVoucher: item,
+    });
   };
 
   getDataVoucher = async () => {
