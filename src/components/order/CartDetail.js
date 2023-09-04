@@ -189,6 +189,7 @@ const CartDetail = ({
   myMoneyPoint,
   isAgreeTnc,
   onAgreeTnc,
+  latestSelfSelectionDate,
 }) => {
   const {styles, colors} = useStyles();
   const selectedAccount = useSelector(
@@ -213,9 +214,9 @@ const CartDetail = ({
     if (data?.isSelfSelection) {
       return {
         title: 'Chosen by Customer',
-        description: `Please visit the selected outlet for item selection before ${
-          data?.orderActionDate
-        } .`,
+        description: `Please visit the selected outlet for item selection before ${moment(
+          latestSelfSelectionDate || data?.orderActionDate,
+        ).format('DD MMMM YYYY')} .`,
       };
     }
     return {
