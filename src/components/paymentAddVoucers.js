@@ -30,14 +30,20 @@ import {isEmptyArray} from '../helper/CheckEmpty';
 import {Header} from './layout';
 import GlobalText from './globalText';
 import InputVoucher from './vouchers/InputVoucher';
+import {checkPromo} from '../actions/rewards.action';
+import {compose} from 'redux';
+import {connect} from 'react-redux';
+import LoadingScreen from './loadingScreen/LoadingScreen';
+import {showSnackbar} from '../actions/setting.action';
 
-export default class PaymentAddVoucers extends Component {
+class PaymentAddVoucers extends Component {
   constructor(props) {
     super(props);
     this.state = {
       screenWidth: Dimensions.get('window').width,
       currentDay: new Date(),
       data: this.props.data,
+      loadingCheckVoucher: false,
     };
   }
 
@@ -334,11 +340,30 @@ export default class PaymentAddVoucers extends Component {
     </View>
   );
 
+  checkVoucher = async voucherCode => {
+    this.setState({loadingCheckVoucher: true});
+    const checkPromoResponse = await this.props.dispatch(
+      checkPromo(voucherCode),
+    );
+    if (!checkPromoResponse.status) {
+      let errorMessage = 'Invalid promo code.';
+      this.props.dispatch(
+        showSnackbar({message: checkPromoResponse?.message || errorMessage}),
+      );
+    } else {
+    }
+    this.setState({loadingCheckVoucher: false});
+
+    console.log({checkPromoResponse, voucherCode}, 'lalisa');
+  };
+
   render() {
     const {intlData} = this.props;
     const myVoucers = this.state.data;
+    console.log(this.props, this.state, 'kulak');
     return (
       <SafeAreaView style={styles.container}>
+        <LoadingScreen loading={this.state.loadingCheckVoucher} />
         <Header title={'My Vouchers'} />
         {/* <View style={{backgroundColor: colorConfig.pageIndex.backgroundColor}}>
           <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
@@ -354,9 +379,12 @@ export default class PaymentAddVoucers extends Component {
           <View style={styles.line} />
         </View> */}
         <ScrollView>
-          {this.renderTitle('Use Voucher Code')}
-          <InputVoucher />
-          {/* {myVoucers == undefined || myVoucers.length == 0 ? (
+          {this.renderTitle('USE VOUCHER CODE')}
+          <InputVoucher onPressVoucher={this.checkVoucher} />
+          {this.renderTitle('VOUCHER USED')}
+          {this.renderTitle('AVAILABLE VOUCHER')}
+          {this.renderTitle('NOT AVAILABLE')}
+          {myVoucers == undefined || myVoucers.length == 0 ? (
             <View
               style={{
                 alignItems: 'center',
@@ -496,7 +524,7 @@ export default class PaymentAddVoucers extends Component {
                   }
                 </View>
               ))
-          )} */}
+          )}
         </ScrollView>
         <TouchableOpacity
           onPress={() => {
@@ -520,6 +548,17 @@ export default class PaymentAddVoucers extends Component {
     );
   }
 }
+
+const mapDispatchToProps = dispatch => ({
+  dispatch,
+});
+
+export default compose(
+  connect(
+    null,
+    mapDispatchToProps,
+  ),
+)(PaymentAddVoucers);
 
 const styles = StyleSheet.create({
   container: {
@@ -643,6 +682,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginTop: 16,
     paddingRight: 16,
+    marginBottom: 16,
     // paddingHorizontal: 16,
   },
   divider: {

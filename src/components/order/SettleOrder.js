@@ -260,7 +260,6 @@ class SettleOrder extends Component {
             this.props.pembayaran.orderingMode,
           ),
         );
-
         let message = `Pickup at ${
           this.props.pembayaran.orderActionTimeSlot
         } is no longer available, please choose another pickup time.`;
