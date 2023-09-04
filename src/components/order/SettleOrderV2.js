@@ -47,6 +47,7 @@ const SettleOrderV2 = ({
   myPoint,
   doPayment,
   totalAmount,
+  latestSelfSelectionDate,
 }) => {
   const {styles} = useStyles();
   const [availableSelection, setAvailableSelection] = React.useState([]);
@@ -101,6 +102,7 @@ const SettleOrderV2 = ({
           myPoint={myPoint}
           onAgreeTnc={updateAgreeTnc}
           isAgreeTnc={isAgreeTnc}
+          latestSelfSelectionDate={latestSelfSelectionDate}
         />
       </ScrollView>
       <GrandTotalFloating

@@ -3612,7 +3612,7 @@ class SettleOrder extends Component {
     const {cartVersion} = additionalSetting();
     const total =
       Number(this.state.totalBayar) - this.state.totalNonDiscountable;
-
+    console.log(this.props, 'bukan');
     if (cartVersion === 'advance') {
       return (
         <>
@@ -3632,6 +3632,7 @@ class SettleOrder extends Component {
             data={pembayaran}
             vouchers={this.state.dataVoucer}
             doPayment={this.doPayment}
+            latestSelfSelectionDate={this.props.latestSelfSelectionDate}
           />
         </>
       );
