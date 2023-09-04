@@ -134,17 +134,16 @@ const useStyles = () => {
       borderWidth: 0.5,
     },
   });
-  return {styles, colors: theme.colors};
+  return styles;
 };
 
 const VoucherDetail = props => {
+  const styles = useStyles();
   const {navigation} = props;
   const {params} = navigation.state;
   const voucher = params?.dataVoucher;
-  const {styles, colors} = useStyles();
   const dispatch = useDispatch();
   const [openModal, setOpenModal] = useState(false);
-  const [openSuccessModal, setOpenSuccessModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const totalPoint = useSelector(

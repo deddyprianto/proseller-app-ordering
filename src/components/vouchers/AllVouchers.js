@@ -60,7 +60,9 @@ class AllVouchers extends Component {
   pageDetailVoucher = item => {
     // const {intlData} = this.props;
     // Actions.voucher({dataVoucher: item, intlData});
-    Actions.voucherDetail({voucher: item});
+    Actions.voucher({
+      dataVoucher: item,
+    });
   };
 
   getDataVoucher = async () => {
