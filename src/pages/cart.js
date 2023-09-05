@@ -970,19 +970,24 @@ const Cart = props => {
           }
         }
       } catch (e) {}
-      const findMinimumDate = availableTimes.find(
-        data =>
-          data?.date ===
-          moment(pembayaran?.orderActionDate).format('YYYY-MM-DD'),
-      );
+      let findMinimumDate = pembayaran?.orderActionDate;
+      if (availableTimes && Array.isArray(availableTimes)) {
+        findMinimumDate = availableTimes?.find(
+          data =>
+            data?.date ===
+            moment(pembayaran?.orderActionDate).format('YYYY-MM-DD'),
+        );
+        findMinimumDate = findMinimumDate?.latestSelfSelectionDate;
+      }
       Actions.settleOrder({
         pembayaran: pembayaran,
         url: url,
         outlet: outlet,
         step: 3,
-        latestSelfSelectionDate: findMinimumDate?.latestSelfSelectionDate,
+        latestSelfSelectionDate: findMinimumDate,
       });
     } catch (e) {
+      console.log(e, 'eman');
       await dispatch(showSnackbar({message: 'Please try again'}));
     }
   };

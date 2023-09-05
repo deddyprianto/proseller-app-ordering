@@ -136,7 +136,7 @@ const Membership = () => {
     return (
       <View style={styles.viewMembershipDetail}>
         <Text style={styles.textMembershipDetail}>
-          {myProgress.currentGroup} Membership Detail
+          {myProgress?.currentGroup} Membership Detail
         </Text>
         <Text style={styles.textMembershipDetailDescription}>
           {myProgress?.description}

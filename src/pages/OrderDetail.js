@@ -341,6 +341,7 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
   const [showAllOrder, setShowAllOrder] = React.useState(false);
   const [showAllPreOrder, setShowAllPreOrder] = React.useState(false);
   const staustPending = 'PENDING_PAYMENT';
+  const store_checkout = 'STORECHECKOUT';
   const [isSuccess, setIsSuccess] = React.useState(false);
   const {
     groupingeOrder,
@@ -690,6 +691,8 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
     return '(VERIFIED)';
   };
 
+  console.log({data}, 'kyui');
+
   return (
     <Body>
       {data?.status === staustPending && !isTimeEnd ? (
@@ -722,7 +725,7 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
             </View>
           </>
         ) : null}
-        {isFromPaymentPage && isSuccess ? (
+        {isFromPaymentPage && data?.orderingMode !== store_checkout ? (
           <View style={styles.successContainer}>
             <SuccessSvg />
             <GlobalText style={styles.paymentSuccessText}>
@@ -733,14 +736,12 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
 
         {additionalSetting().enableScanAndGo &&
         data?.transactionRefNo &&
-        isFromPaymentPage ? (
+        isFromPaymentPage &&
+        data?.orderingMode === store_checkout ? (
           <View style={[styles.qrContainer, styles.mt16, styles.mb16]}>
             <View style={styles.mt12}>
               <QRCode size={200} value={data.transactionRefNo} />
             </View>
-            <GlobalText style={[styles.mt8, styles.mediumFont]}>
-              Scan this QR Code in Exit Verification Counter
-            </GlobalText>
             <GlobalText style={[styles.mt8, styles.paymentSuccessText]}>
               Payment Success
             </GlobalText>
@@ -957,6 +958,16 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
               </GlobalText>
             </View>
           </View>
+
+          {additionalSetting().enableScanAndGo &&
+          data?.transactionRefNo &&
+          !isFromPaymentPage ? (
+            <View style={[styles.qrContainer, styles.mt16, styles.mb16]}>
+              <View style={styles.mt12}>
+                <QRCode size={200} value={data.transactionRefNo} />
+              </View>
+            </View>
+          ) : null}
         </View>
       </ScrollView>
     </Body>
