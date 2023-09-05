@@ -517,7 +517,6 @@ const Cart = props => {
           orderingMode: basket.orderingMode,
         }),
       );
-      console.log(date, availablePreorderDate, timeSlot, 'nana');
       setAvailableTimes(timeSlot);
     };
     loadData();
