@@ -67,7 +67,7 @@ import {
   submitMembership,
 } from '../../actions/membership.action';
 import {getSVCBalance} from '../../actions/SVC.action';
-import {campaign, dataPoint} from '../../actions/rewards.action';
+import {campaign, dataPoint, vouchers} from '../../actions/rewards.action';
 import ModalTransfer from './ModalTransfer';
 import LoadingScreen from '../loadingScreen';
 import OrderingModeOfflineModal from '../modal/OrderingModeOfflineModal';
@@ -200,6 +200,7 @@ class SettleOrder extends Component {
     try {
       this.props.dispatch(myVoucers());
       await this.props.dispatch(getAccountPayment());
+      this.props.dispatch(vouchers());
       this.props.dispatch(campaign());
       this.props.dispatch(dataPoint());
       this.props.dispatch(getSVCBalance());
@@ -261,7 +262,6 @@ class SettleOrder extends Component {
             this.props.pembayaran.orderingMode,
           ),
         );
-
         let message = `Pickup at ${
           this.props.pembayaran.orderActionTimeSlot
         } is no longer available, please choose another pickup time.`;
@@ -457,7 +457,7 @@ class SettleOrder extends Component {
       }
       await this.resetAppliedVouchers();
       await this.setDataPayment(true);
-      if (dataVoucer == undefined) {
+      if (dataVoucer == undefined || item?.length <= 0) {
         dataVoucer = [];
       }
       if (item.isVoucherPromoCode === true) {
@@ -466,10 +466,8 @@ class SettleOrder extends Component {
         item.isVoucher = true;
       }
       item.clientID = new Date().valueOf();
-
-      dataVoucer.push(item);
       await this.setState({
-        dataVoucer,
+        dataVoucer: item,
         cancelVoucher: false,
       });
       await this.setDataPayment(false);
