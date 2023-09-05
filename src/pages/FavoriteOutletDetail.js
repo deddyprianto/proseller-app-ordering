@@ -86,8 +86,9 @@ const FavoriteOutlets = ({outlet}) => {
   const handleGetStoreById = async item => {
     const orderingMode = await dispatch(getOrderingMode(item));
     await dispatch(getOutletById(item.id));
-
-    if (orderingMode.length === 1) {
+    if (awsConfig.COMPANY_TYPE === 'Retail') {
+      Actions.popTo('pageIndex');
+    } else if (orderingMode.length === 1) {
       await dispatch(changeOrderingMode({orderingMode: orderingMode[0].key}));
       Actions.push('orderHere');
     } else {
