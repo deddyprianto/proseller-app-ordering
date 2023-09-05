@@ -1182,26 +1182,38 @@ class SettleOrder extends Component {
 
         pointToSet = Math.floor(pointToSet);
       }
-
+      const myTotalPoint = this.props.totalPoint || 0;
       if (point === undefined) {
         if (setDefault >= pointToSet) {
-          this.setState({jumPoint: parseFloat(pointToSet)});
+          const pointToUse =
+            myTotalPoint < parseFloat(pointToSet)
+              ? myTotalPoint
+              : parseFloat(pointToSet);
+
+          this.setState({jumPoint: pointToUse});
           this.setDataPoint(
-            parseFloat(pointToSet),
-            this.calculateMoneyPointFromJumPoint(parseFloat(pointToSet)),
+            pointToUse,
+            this.calculateMoneyPointFromJumPoint(pointToUse),
           );
         } else {
-          this.setState({jumPoint: parseFloat(setDefault)});
+          const pointToUse =
+            myTotalPoint < parseFloat(setDefault)
+              ? myTotalPoint
+              : parseFloat(setDefault);
+          this.setState({jumPoint: pointToUse});
           this.setDataPoint(
-            parseFloat(setDefault),
-            this.calculateMoneyPointFromJumPoint(parseFloat(setDefault)),
+            pointToUse,
+            this.calculateMoneyPointFromJumPoint(pointToUse),
           );
         }
       } else {
-        this.setState({jumPoint: parseFloat(point)});
+        const pointToUse =
+          myTotalPoint < parseFloat(point) ? myTotalPoint : parseFloat(point);
+
+        this.setState({jumPoint: pointToUse});
         this.setDataPoint(
-          parseFloat(point),
-          this.calculateMoneyPointFromJumPoint(parseFloat(point)),
+          pointToUse,
+          this.calculateMoneyPointFromJumPoint(pointToUse),
         );
       }
     } catch (e) {

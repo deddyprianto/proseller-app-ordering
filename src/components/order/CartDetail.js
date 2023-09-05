@@ -24,7 +24,7 @@ import useSettings from '../../hooks/settings/useSettings';
 import ThreeDotCircle from '../../assets/svg/ThreeDotCircle';
 import ModalDeliveryDetail from '../modal/ModalDeliveryDetail';
 import UsePointModal from '../modal/UsePointModal';
-import awsConfig from '../../config/awsConfig';
+import appConfig from '../../config/appConfig';
 
 const useStyles = () => {
   const theme = Theme();
@@ -367,7 +367,7 @@ const CartDetail = ({
 
     Animated.timing(leftValue, {
       toValue: value,
-      duration: 1000,
+      duration: 100,
       useNativeDriver: false,
     }).start();
 
@@ -381,6 +381,7 @@ const CartDetail = ({
 
     return (
       <TouchableOpacity
+        disabled={totalPoint === 0}
         onPress={() => {
           handleClick();
         }}
@@ -425,7 +426,7 @@ const CartDetail = ({
   };
 
   const renderPointType = () => {
-    if (awsConfig.COMPANY_NAME === 'Far East Flora') {
+    if (appConfig.pointType === 'maxPointAutoApply') {
       return renderPointSwitcher();
     } else {
       return (
@@ -439,7 +440,7 @@ const CartDetail = ({
   const renderPoint = () => {
     return (
       <TouchableOpacity
-        disabled={awsConfig.COMPANY_NAME === 'Far East Flora'}
+        disabled={appConfig.pointType === 'maxPointAutoApply'}
         onPress={() => {
           setIsOpenModal(true);
         }}
