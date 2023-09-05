@@ -457,7 +457,7 @@ class SettleOrder extends Component {
       }
       await this.resetAppliedVouchers();
       await this.setDataPayment(true);
-      if (dataVoucer == undefined) {
+      if (dataVoucer == undefined || item?.length <= 0) {
         dataVoucer = [];
       }
       if (item.isVoucherPromoCode === true) {
@@ -466,10 +466,8 @@ class SettleOrder extends Component {
         item.isVoucher = true;
       }
       item.clientID = new Date().valueOf();
-
-      dataVoucer.push(item);
       await this.setState({
-        dataVoucer,
+        dataVoucer: item,
         cancelVoucher: false,
       });
       await this.setDataPayment(false);

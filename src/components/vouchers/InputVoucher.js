@@ -1,8 +1,10 @@
 import React from 'react';
 import {View, StyleSheet, TextInput} from 'react-native';
 import GlobalButton from '../button/GlobalButton';
+import Theme from '../../theme/Theme';
 
 const useStyles = () => {
+  const {colors} = Theme();
   const styles = StyleSheet.create({
     container: {
       flexDirection: 'row',
@@ -15,6 +17,7 @@ const useStyles = () => {
       height: 48,
       justifyContent: 'center',
       borderRadius: 8,
+      borderColor: colors.greyScale5,
     },
     buttonContainer: {
       width: '25%',

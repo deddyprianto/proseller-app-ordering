@@ -18,7 +18,6 @@ import {
   Platform,
   SafeAreaView,
   ColorPropType,
-  FlatList,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
@@ -28,26 +27,14 @@ import appConfig from '../config/appConfig';
 import {format} from 'date-fns';
 import CurrencyFormatter from '../helper/CurrencyFormatter';
 import {isEmptyArray} from '../helper/CheckEmpty';
-import {Header} from './layout';
-import GlobalText from './globalText';
-import InputVoucher from './vouchers/InputVoucher';
-import {checkPromo} from '../actions/rewards.action';
-import {compose} from 'redux';
-import {connect} from 'react-redux';
-import LoadingScreen from './loadingScreen/LoadingScreen';
-import {showSnackbar} from '../actions/setting.action';
-import VoucherListCheckout from './voucherList/VoucherListCheckout';
 
-class PaymentAddVoucers extends Component {
+export default class PaymentAddVoucers extends Component {
   constructor(props) {
     super(props);
     this.state = {
       screenWidth: Dimensions.get('window').width,
       currentDay: new Date(),
       data: this.props.data,
-      loadingCheckVoucher: false,
-      usedVoucher: props?.dataVoucer || [],
-      availableVoucher: props?.data || [],
     };
   }
 
@@ -112,7 +99,7 @@ class PaymentAddVoucers extends Component {
     return mount[value];
   }
 
-  pageDetailVoucher = async (item, index) => {
+  pageDetailVoucher = async item => {
     const {totalPrice, dataVoucer} = this.props;
     // check if voucher is applied on specific products only
 
@@ -295,29 +282,9 @@ class PaymentAddVoucers extends Component {
       Alert.alert('Sorry', this.isValidDay(item).message);
       return;
     }
-    console.log({item}, 'lukioa');
-    this.handleAddVoucher(item);
-    this.handleAvailableVoucher(item);
-    // this.props.setDataVoucher(item);
-    // Actions.pop();
-  };
 
-  handleAddVoucher = item => {
-    if (item) {
-      let oldVoucher = this.state.usedVoucher;
-      oldVoucher = [...oldVoucher, item];
-      this.setState({usedVoucher: oldVoucher});
-    }
-  };
-
-  handleAvailableVoucher = item => {
-    if (item) {
-      let oldVoucher = this.state.availableVoucher;
-      oldVoucher = oldVoucher?.filter(
-        voucher => voucher.uniqueID !== item.uniqueID,
-      );
-      this.setState({availableVoucher: oldVoucher});
-    }
+    this.props.setDataVoucher(item);
+    Actions.pop();
   };
 
   isValidDay = item => {
@@ -334,10 +301,7 @@ class PaymentAddVoucers extends Component {
     if (find != undefined) {
       return {status: true, message: ''};
     } else {
-      return {
-        status: false,
-        message: 'This voucher cannot be used today.',
-      };
+      return {status: false, message: 'This voucher cannot be used today.'};
     }
   };
 
@@ -357,65 +321,12 @@ class PaymentAddVoucers extends Component {
     return false;
   };
 
-  renderTitle = title => (
-    <View style={[styles.dividerTitle]}>
-      <View style={styles.divider} />
-      <GlobalText style={styles.titleText}>{title}</GlobalText>
-    </View>
-  );
-
-  checkVoucher = async voucherCode => {
-    this.setState({loadingCheckVoucher: true});
-    const checkPromoResponse = await this.props.dispatch(
-      checkPromo(voucherCode),
-    );
-    if (!checkPromoResponse.status) {
-      let errorMessage = 'Invalid promo code.';
-      this.props.dispatch(
-        showSnackbar({message: checkPromoResponse?.message || errorMessage}),
-      );
-    } else {
-    }
-    this.setState({loadingCheckVoucher: false});
-
-    console.log({checkPromoResponse, voucherCode}, 'lalisa');
-  };
-
-  filterUnAvailableVouher = () => {
-    const {allVouchers, point} = this.props;
-    if (allVouchers?.length > 0) {
-      const unavailabelVouchet = allVouchers?.filter(
-        voucher => voucher?.redeemValue > point,
-      );
-      return unavailabelVouchet;
-    }
-    return [];
-  };
-
-  renderUsedVoucherList = ({item, index}) => (
-    <VoucherListCheckout type={'used'} item={item} />
-  );
-  renderAvaulableVoucherList = ({item}) => (
-    <VoucherListCheckout
-      onPress={() => this.pageDetailVoucher(item)}
-      type={'available'}
-      item={item}
-    />
-  );
-  renderNotAvailableVoucher = ({item}) => (
-    <VoucherListCheckout type={'unavailable'} item={item} />
-  );
-
   render() {
-    const {intlData, data, dataVoucer, allVouchers, point} = this.props;
+    const {intlData} = this.props;
     const myVoucers = this.state.data;
-    const {usedVoucher, availableVoucher} = this.state;
-    console.log(this.props, this.state, allVouchers, point, 'kulak');
     return (
       <SafeAreaView style={styles.container}>
-        <LoadingScreen loading={this.state.loadingCheckVoucher} />
-        <Header title={'My Vouchers'} />
-        {/* <View style={{backgroundColor: colorConfig.pageIndex.backgroundColor}}>
+        <View style={{backgroundColor: colorConfig.pageIndex.backgroundColor}}>
           <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
             <Icon
               size={28}
@@ -427,42 +338,8 @@ class PaymentAddVoucers extends Component {
             <Text style={styles.btnBackText}> Select Vouchers </Text>
           </TouchableOpacity>
           <View style={styles.line} />
-        </View> */}
+        </View>
         <ScrollView>
-          {this.renderTitle('USE VOUCHER CODE')}
-          <InputVoucher onPressVoucher={this.checkVoucher} />
-          {usedVoucher?.length > 0 ? (
-            <View>
-              {this.renderTitle('VOUCHER USED')}
-
-              <FlatList
-                data={this.state.usedVoucher}
-                renderItem={this.renderUsedVoucherList}
-                style={styles.flatlistCOntainer}
-              />
-            </View>
-          ) : null}
-          {availableVoucher?.length > 0 ? (
-            <View>
-              {this.renderTitle('AVAILABLE VOUCHER')}
-              <FlatList
-                data={availableVoucher}
-                renderItem={this.renderAvaulableVoucherList}
-                style={styles.flatlistCOntainer}
-              />
-            </View>
-          ) : null}
-          {this.filterUnAvailableVouher()?.length > 0 ? (
-            <View>
-              {this.renderTitle('NOT AVAILABLE')}
-              <FlatList
-                data={this.filterUnAvailableVouher()}
-                renderItem={this.renderNotAvailableVoucher}
-                style={styles.flatlistCOntainer}
-              />
-            </View>
-          ) : null}
-
           {myVoucers == undefined || myVoucers.length == 0 ? (
             <View
               style={{
@@ -527,8 +404,35 @@ class PaymentAddVoucers extends Component {
                             {item.totalRedeem + 'x'}
                           </Text>
                         </View>
+                        {/* <View
+                          style={{
+                            position: 'absolute',
+                            right: 0,
+                            top: 0,
+                            backgroundColor: 'rgba(2, 168, 80, 0.8)',
+                            height: 30,
+                            // width: this.state.screenWidth / 2 - 11,
+                            borderTopRightRadius: 9,
+                            alignItems: 'flex-end',
+                            justifyContent: 'center',
+                            paddingLeft: 10,
+                            paddingRight: 10,
+                          }}>
+                          <Text
+                            style={{
+                              color: colorConfig.pageIndex.backgroundColor,
+                              fontSize: 16,
+                              fontWeight: 'bold',
+                              textAlign: 'right',
+                            }}>
+                            {item['redeemValue'] + ' Points'}
+                          </Text>
+                        </View> */}
                       </View>
                       <View style={styles.voucherDetail}>
+                        {/*<View style={styles.status}>*/}
+                        {/*  <Text style={styles.statusTitle}>Awarded</Text>*/}
+                        {/*</View>*/}
                         <Text style={styles.nameVoucher}>{item.name}</Text>
                         <View style={{flexDirection: 'row'}}>
                           <Icon
@@ -616,10 +520,7 @@ class PaymentAddVoucers extends Component {
           <Icon
             size={25}
             name={Platform.OS === 'ios' ? 'ios-bookmark' : 'md-bookmark'}
-            style={{
-              color: 'white',
-              marginRight: 10,
-            }}
+            style={{color: 'white', marginRight: 10}}
           />
           <Text style={styles.textAddCard}>Redeem Voucher</Text>
         </TouchableOpacity>
@@ -627,22 +528,6 @@ class PaymentAddVoucers extends Component {
     );
   }
 }
-
-const mapDispatchToProps = dispatch => ({
-  dispatch,
-});
-
-const mapStateToProps = state => ({
-  allVouchers: state.rewardsReducer?.vouchers?.dataVoucher,
-  point: state.rewardsReducer?.dataPoint?.totalPoint,
-});
-
-export default compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
-)(PaymentAddVoucers);
 
 const styles = StyleSheet.create({
   container: {
@@ -759,30 +644,5 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.37,
     shadowRadius: 7.49,
     elevation: 12,
-  },
-  dividerTitle: {
-    flex: 1,
-    alignItems: 'flex-start',
-    justifyContent: 'center',
-    marginTop: 16,
-    paddingRight: 16,
-    marginBottom: 16,
-    // paddingHorizontal: 16,
-  },
-  divider: {
-    height: 1,
-    backgroundColor: 'black',
-    width: '100%',
-    position: 'absolute',
-    top: '50%',
-  },
-  titleText: {
-    backgroundColor: 'white',
-    paddingHorizontal: 16,
-    fontFamily: 'Poppins-Medium',
-    fontSize: 16,
-  },
-  flatlistCOntainer: {
-    paddingHorizontal: 12,
   },
 });

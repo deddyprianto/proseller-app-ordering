@@ -42,7 +42,7 @@ import AccountEditProfil from '../components/accountEditProfil';
 import EditProfile from '../components/editProfile';
 import PaymentDetail from '../components/paymentDetail';
 import PaymentSuccess from '../components/paymentSuccess';
-import PaymentAddVoucers from '../components/paymentAddVoucers';
+import PaymentAddVoucers from '../components/paymentAddVoucherv2';
 import PaymentDetailItem from '../components/paymentDetailItem';
 import InboxDetail from '../components/inboxDetail';
 import Inbox from '../pages/inbox';
