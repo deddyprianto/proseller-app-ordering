@@ -1399,7 +1399,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.7,
     shadowRadius: 7.49,
     elevation: 12,
-    marginBottom: 30,
+    marginBottom: 16,
   },
   disabledPrimaryButton: {
     opacity: 0.3,
@@ -1422,7 +1422,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.7,
     shadowRadius: 7.49,
     elevation: 12,
-    marginBottom: 30,
+    marginBottom: 16,
   },
   buttonText: {
     color: '#FFFFFF',
