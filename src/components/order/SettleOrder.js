@@ -176,7 +176,6 @@ class SettleOrder extends Component {
 
   componentDidMount = async () => {
     const {defaultAccount, pembayaran} = this.props;
-    console.log({pembayaran}, 'likus');
     await this.setState({loading: true});
     await this.props.dispatch(refreshToken());
     // await this.setDataPayment(false);
