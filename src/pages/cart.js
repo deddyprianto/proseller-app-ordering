@@ -453,6 +453,7 @@ const Cart = props => {
   const [availablePreorderDate, setAvailablePreorderDate] = useState(null);
   const [availableSelection, saveAvailableSelection] = React.useState([]);
   const [itemSelection, setItemSelection] = React.useState('staff');
+  const [loadingTimeSlot, setLoadingTimeSlot] = React.useState(false);
   const outlet = useSelector(
     state => state.storesReducer.defaultOutlet.defaultOutlet,
   );
@@ -503,6 +504,7 @@ const Cart = props => {
 
   useEffect(() => {
     const loadData = async () => {
+      setLoadingTimeSlot(true);
       const clientTimezone = Math.abs(new Date().getTimezoneOffset());
       let date = moment().format('YYYY-MM-DD');
       if (availablePreorderDate) {
@@ -518,6 +520,7 @@ const Cart = props => {
         }),
       );
       setAvailableTimes(timeSlot);
+      setLoadingTimeSlot(false);
     };
     loadData();
   }, [dispatch, basket, outlet, availablePreorderDate]);
@@ -1500,7 +1503,7 @@ const Cart = props => {
         customRightIcon={renderStep}
         title={props.step ? 'Order Details' : 'Cart'}
       />
-      <LoadingScreen loading={isLoading} />
+      <LoadingScreen loading={isLoading || loadingTimeSlot} />
       <View style={styles.container}>
         <Body>
           <ScrollView>
