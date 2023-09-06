@@ -27,6 +27,7 @@ import awsConfig from '../config/awsConfig';
 import Theme from '../theme';
 import {isEmptyArray} from '../helper/CheckEmpty';
 import {Body} from '../components/layout';
+import useBackHandler from '../hooks/backHandler/useBackHandler';
 
 const useStyles = () => {
   const theme = Theme();
@@ -61,7 +62,7 @@ const useStyles = () => {
 const MyDeliveryAddress = ({fromScene, handleResetProvider}) => {
   const styles = useStyles();
   const [deliveryAddress, setDeliveryAddress] = useState([]);
-
+  useBackHandler();
   const userDetail = useSelector(
     state => state.userReducer.getUser.userDetails,
   );
