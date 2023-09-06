@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
+import DeviceInfo from 'react-native-device-info';
 // import DeviceBrightness from 'react-native-device-brightness';
 
 import {
@@ -12,6 +13,7 @@ import {
   TouchableOpacity,
   Dimensions,
   SafeAreaView,
+  BackHandler,
 } from 'react-native';
 
 import {ProgressBar} from 'react-native-paper';
@@ -210,7 +212,7 @@ const useStyles = () => {
       backgroundColor: theme.colors.background,
     },
     viewSettings: {
-      marginBottom: 40,
+      marginBottom: 16,
     },
     viewTapPointDetailAndHistory: {
       display: 'flex',
@@ -289,7 +291,17 @@ const useStyles = () => {
       fontSize: 16,
     },
     containerStyle: {
-      paddingBottom: 30,
+      paddingBottom: 10,
+    },
+    appVersionContainer: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    appVersionText: {
+      fontFamily: theme.fontFamily.poppinsMedium,
+      fontSize: 16,
+      color: theme.colors.greyScale5,
     },
   });
 
@@ -336,6 +348,17 @@ const Profile = props => {
 
     loadData();
   }, [dispatch]);
+
+  const backPage = () => {
+    Actions.pop();
+    return true;
+  };
+
+  useEffect(() => {
+    props.navigation.addListener('willBlur', () => {
+      BackHandler.addEventListener('hardwareBackPress', backPage);
+    });
+  }, []);
 
   useEffect(() => {
     const loadData = async () => {
@@ -604,7 +627,7 @@ const Profile = props => {
             source={appConfig.iconLocation}
             resizeMode="stretch"
           />
-          <Text style={styles.textIcon}>My Delivery address</Text>
+          <Text style={styles.textIcon}>My Delivery Address</Text>
         </TouchableOpacity>
       );
     }
@@ -865,6 +888,7 @@ const Profile = props => {
       {renderContactUs()}
       {renderDivider()}
       {renderLogout()}
+      {renderAppVersion()}
     </View>
   );
 
@@ -920,15 +944,19 @@ const Profile = props => {
       );
     }
   };
-
+  const renderAppVersion = () => (
+    <View style={styles.appVersionContainer}>
+      <GlobalText style={styles.appVersionText}>
+        v{DeviceInfo.getVersion()}
+      </GlobalText>
+    </View>
+  );
   return (
     <SafeAreaView>
       <Body>
         <LoadingScreen loading={isLoading} />
         <Header title="Profile" isRemoveBackIcon />
-        <ScrollView
-          contentContainerStyle={styles.containerStyle}
-          style={styles.root}>
+        <ScrollView contentContainerStyle={styles.containerStyle}>
           {renderBackgroundImage()}
           {renderProfileHeader()}
           {renderSettingV2()}
