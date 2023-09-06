@@ -9,6 +9,7 @@ import TabbarComponent from '../../components/tabbarComponent';
 import GlobalText from '../../components/globalText';
 import {useSelector} from 'react-redux';
 import {normalizeLayoutSizeWidth} from '../../helper/Layout';
+import useBackHandler from '../../hooks/backHandler/useBackHandler';
 
 const useStyles = () => {
   const {colors, fontFamily} = Theme();
@@ -51,6 +52,7 @@ const RedeemRoute = () => <RedeemVouchers />;
 
 const VoucherDetailV2 = () => {
   const {styles} = useStyles();
+  useBackHandler();
   const [routes] = React.useState([
     {key: 'second', title: 'Redeem Voucher', children: RedeemRoute},
     {key: 'first', title: 'My Voucher', children: MyVoucherRoute},

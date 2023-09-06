@@ -15,6 +15,7 @@ import MyFavoriteOutletList from '../components/myFavoriteOutletList';
 import {Body, Header} from '../components/layout';
 import Theme from '../theme';
 import {Actions} from 'react-native-router-flux';
+import useBackHandler from '../hooks/backHandler/useBackHandler';
 
 const useStyles = () => {
   const theme = Theme();
@@ -55,7 +56,7 @@ const useStyles = () => {
 const MyFavoriteOutlets = () => {
   const styles = useStyles();
   const dispatch = useDispatch();
-
+  useBackHandler();
   useEffect(() => {
     const loadData = async () => {
       await dispatch(getFavoriteOutlet());

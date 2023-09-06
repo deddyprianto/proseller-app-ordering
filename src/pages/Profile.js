@@ -13,7 +13,6 @@ import {
   TouchableOpacity,
   Dimensions,
   SafeAreaView,
-  BackHandler,
 } from 'react-native';
 
 import {ProgressBar} from 'react-native-paper';
@@ -348,17 +347,6 @@ const Profile = props => {
 
     loadData();
   }, [dispatch]);
-
-  const backPage = () => {
-    Actions.pop();
-    return true;
-  };
-
-  useEffect(() => {
-    props.navigation.addListener('willBlur', () => {
-      BackHandler.addEventListener('hardwareBackPress', backPage);
-    });
-  }, []);
 
   useEffect(() => {
     const loadData = async () => {

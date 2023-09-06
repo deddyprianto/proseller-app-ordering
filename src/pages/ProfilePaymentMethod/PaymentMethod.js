@@ -13,6 +13,7 @@ import PlusSvg from '../../assets/svg/PlusSvg';
 import usePayment from '../../hooks/payment/usePayment';
 import {Actions} from 'react-native-router-flux';
 import {getCompanyInfo} from '../../actions/stores.action';
+import useBackHandler from '../../hooks/backHandler/useBackHandler';
 const useStyles = () => {
   const theme = Theme();
   const styles = StyleSheet.create({
@@ -52,6 +53,7 @@ const useStyles = () => {
 const ProfilePaymentMethod = () => {
   const {styles} = useStyles();
   const dispatch = useDispatch();
+  useBackHandler();
   const listCard = useSelector(state => state.cardReducer.myCardAccount.card);
   const [isLoading, setIsLoading] = React.useState(false);
   const [isRefreshing, setIsRefreshing] = React.useState(false);
