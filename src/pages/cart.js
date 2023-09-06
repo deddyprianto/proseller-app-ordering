@@ -1371,7 +1371,7 @@ const Cart = props => {
     );
 
     const orderingTypeValue = orderingMode?.displayName;
-    const dateValue = availablePreorderDate
+    const dateValue = !isEmptyArray(availableTimes)
       ? {date: availableTimes[0]?.date}
       : orderingDateTimeSelected;
     return (
@@ -1386,6 +1386,7 @@ const Cart = props => {
         <DateSelectorModal
           orderingMode={basket?.orderingMode}
           value={dateValue}
+          preOrderDate={availablePreorderDate}
           open={openDeliveryDateModal}
           handleClose={() => {
             handleCloseDeliveryDateModal();
