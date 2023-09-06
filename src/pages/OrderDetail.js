@@ -643,7 +643,7 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
               style={[styles.greyText, styles.normalFont, styles.mt8]}>
               {data?.isSelfSelection
                 ? `Please visit the selected outlet for item selection before ${moment(
-                    data?.orderActionDate,
+                    data?.selfSelectionDeadline,
                   ).format('DD MMM YYYY')} ${data?.orderActionTimeSlot}`
                 : 'Staff assistance provided on choosing your items.'}
             </GlobalText>

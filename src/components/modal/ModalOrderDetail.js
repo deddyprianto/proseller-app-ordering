@@ -86,6 +86,53 @@ const ModalOrderDetail = ({open, closeModal, vouchers, pointDisc}) => {
     state => state.cardReducer?.selectedAccount?.selectedAccount,
   );
 
+  const checkTax = () => {
+    if (basket?.inclusiveTax > 0 && basket?.exclusiveTax > 0) {
+      return (
+        <>
+          <View style={[styles.divider, styles.noMargin]} />
+
+          <View style={styles.modalItem}>
+            <GlobalText>Tax</GlobalText>
+            <GlobalText style={styles.modalItemPrice}>
+              {CurrencyFormatter(basket?.totalTaxAmount)}{' '}
+            </GlobalText>
+          </View>
+        </>
+      );
+    }
+    if (basket?.inclusiveTax > 0) {
+      return (
+        <>
+          <View style={[styles.divider, styles.noMargin]} />
+
+          <View style={styles.modalItem}>
+            <GlobalText>Incl. Tax</GlobalText>
+            <GlobalText style={styles.modalItemPrice}>
+              {CurrencyFormatter(basket?.inclusiveTax)}{' '}
+            </GlobalText>
+          </View>
+        </>
+      );
+    }
+
+    if (basket?.exclusiveTax > 0) {
+      return (
+        <>
+          <View style={[styles.divider, styles.noMargin]} />
+
+          <View style={styles.modalItem}>
+            <GlobalText>Excl. Tax</GlobalText>
+            <GlobalText style={styles.modalItemPrice}>
+              {CurrencyFormatter(basket?.exclusiveTax)}{' '}
+            </GlobalText>
+          </View>
+        </>
+      );
+    }
+    return null;
+  };
+
   return (
     <GlobalModal
       title="Details"
@@ -117,14 +164,8 @@ const ModalOrderDetail = ({open, closeModal, vouchers, pointDisc}) => {
             {CurrencyFormatter(basket?.provider?.deliveryFee)}{' '}
           </GlobalText>
         </View>
-        <View style={[styles.divider, styles.noMargin]} />
+        {checkTax()}
 
-        <View style={styles.modalItem}>
-          <GlobalText>Incl. Tax</GlobalText>
-          <GlobalText style={styles.modalItemPrice}>
-            {CurrencyFormatter(basket?.provider?.totalTaxAmount)}{' '}
-          </GlobalText>
-        </View>
         <View style={[styles.divider, styles.noMargin]} />
         <View style={styles.modalItem}>
           <GlobalText style={styles.grandTotalText}>Grand Total</GlobalText>
