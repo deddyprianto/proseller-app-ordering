@@ -21,6 +21,7 @@ import {
   Image,
   SafeAreaView,
   Dimensions,
+  ActivityIndicator,
 } from 'react-native';
 import {ProgressBar} from 'react-native-paper';
 
@@ -1193,7 +1194,7 @@ const Cart = props => {
             onPress={() => {
               handleOpenDeliveryDateModal();
             }}>
-            {renderDateText()}
+            {loadingTimeSlot ? <ActivityIndicator /> : renderDateText()}
           </TouchableOpacity>
         </View>
       );
@@ -1503,7 +1504,7 @@ const Cart = props => {
         customRightIcon={renderStep}
         title={props.step ? 'Order Details' : 'Cart'}
       />
-      <LoadingScreen loading={isLoading || loadingTimeSlot} />
+      <LoadingScreen loading={isLoading} />
       <View style={styles.container}>
         <Body>
           <ScrollView>
