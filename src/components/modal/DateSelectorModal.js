@@ -232,7 +232,7 @@ const useStyles = () => {
   return styles;
 };
 
-const DateSelectorModal = ({open, handleClose, value}) => {
+const DateSelectorModal = ({open, handleClose, value, preOrderDate}) => {
   const styles = useStyles();
   const dispatch = useDispatch();
 
@@ -255,7 +255,11 @@ const DateSelectorModal = ({open, handleClose, value}) => {
   useEffect(() => {
     const loadData = async () => {
       const clientTimezone = Math.abs(new Date().getTimezoneOffset());
-      const date = moment().format('YYYY-MM-DD');
+      let date = moment().format('YYYY-MM-DD');
+      let availDate = value.date;
+      if (preOrderDate) {
+        date = moment(preOrderDate).format('YYYY-MM-DD');
+      }
       const timeSlot = await dispatch(
         getTimeSlot({
           outletId: defaultOutlet.id,
@@ -265,11 +269,12 @@ const DateSelectorModal = ({open, handleClose, value}) => {
         }),
       );
       setAvailableDates(timeSlot);
-      let availDate = value.date;
-      const currentDate = availDate
-        ? moment(availDate).format('ddd DD MMMM YYYY')
-        : moment().format('ddd DD MMMM YYYY');
-      setSelectedDate(currentDate);
+      if (selectedDate.length <= 0) {
+        const currentDate = availDate
+          ? moment(availDate).format('ddd DD MMMM YYYY')
+          : moment().format('ddd DD MMMM YYYY');
+        setSelectedDate(currentDate);
+      }
     };
 
     loadData();
@@ -498,7 +503,6 @@ const DateSelectorModal = ({open, handleClose, value}) => {
       </View>
     );
   };
-
   const renderCalender = () => {
     if (seeMore) {
       return (

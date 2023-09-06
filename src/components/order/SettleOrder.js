@@ -69,12 +69,12 @@ import {
 import {getSVCBalance} from '../../actions/SVC.action';
 import {campaign, dataPoint, vouchers} from '../../actions/rewards.action';
 import ModalTransfer from './ModalTransfer';
-import LoadingScreen from '../loadingScreen';
 import OrderingModeOfflineModal from '../modal/OrderingModeOfflineModal';
 import {Body} from '../layout';
 import withHooksComponent from '../HOC';
 import additionalSetting from '../../config/additionalSettings';
 import SettleOrderV2 from './SettleOrderV2';
+import moment from 'moment';
 
 class SettleOrder extends Component {
   constructor(props) {
@@ -2842,6 +2842,7 @@ class SettleOrder extends Component {
       payload = {
         ...payload,
         isSelfSelection: this.props.pembayaran.isSelfSelection,
+        orderActionDate: moment(payload.orderActionDate).format('YYYY-MM-DD'),
       };
       console.log('Payload settle order', payload);
 
