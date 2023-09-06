@@ -9,10 +9,8 @@ const useBackHandler = () => {
   };
 
   React.useEffect(() => {
-    console.log('masuk');
     BackHandler.addEventListener('hardwareBackPress', backPage);
     return () => {
-      console.log('keluar');
       BackHandler.removeEventListener('hardwareBackPress', backPage);
     };
   }, []);
