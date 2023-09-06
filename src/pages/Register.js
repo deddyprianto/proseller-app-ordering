@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect, useState} from 'react';
 import {Actions} from 'react-native-router-flux';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview';
@@ -26,12 +27,16 @@ import HeaderV2 from '../components/layout/header/HeaderV2';
 import RegisterV2 from './RegisterV2';
 import appConfig from '../config/appConfig';
 import GlobalText from '../components/globalText';
+import additionalSetting from '../config/additionalSettings';
 
 const HEIGHT = Dimensions.get('window').height;
 const useStyles = () => {
   const theme = Theme();
   const styles = StyleSheet.create({
     root: {
+      flex: 1,
+    },
+    body: {
       flex: 1,
     },
     container: {
@@ -108,24 +113,38 @@ const Register = () => {
     privacyTerm: false,
     consent: false,
   });
+  const priority_email = 'EMAIL';
   const loginSettings = useSelector(
     state => state.settingReducer.loginSettings,
   );
+  const orderSetting = useSelector(
+    state => state.orderReducer?.orderingSetting?.orderingSetting?.settings,
+  );
+  const checkRegisterPriority = () => {
+    const registerPriority = orderSetting.find(
+      setting => setting?.settingKey === 'RegisterPriority',
+    );
+    return registerPriority;
+  };
 
   const onTickCheckbox = (key, value) => {
     setApprovedData({...approvedData, [key]: value});
   };
 
   useEffect(() => {
-    if (loginSettings.loginByEmail) {
+    if (loginSettings.loginByEmail && loginSettings.loginByMobile) {
+      if (checkRegisterPriority()?.settingValue === priority_email) {
+        return setRegisterMethod('email');
+      }
+      setRegisterMethod('phoneNumber');
+    } else if (loginSettings.loginByEmail) {
       setRegisterMethod('email');
     } else {
       setRegisterMethod('phoneNumber');
     }
 
     setCountryCode(awsConfig.phoneNumberCode);
-  }, [loginSettings]);
-
+  }, []);
   const handleCheckAccount = async () => {
     let payload = {};
     let value = '';
@@ -254,37 +273,56 @@ const Register = () => {
     }
   };
 
+  const renderHeader = () => {
+    if (appConfig.appName === 'fareastflora') {
+      return <HeaderV2 />;
+    } else {
+      return <Header isMiddleLogo />;
+    }
+  };
+
+  const renderBodyV1 = () => {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.textCreateNewAccount}>Create a new account</Text>
+        {renderTextLogin()}
+        {renderRegisterMethodInput()}
+        {renderButtonNext()}
+        {renderTextChangeMethod()}
+      </View>
+    );
+  };
+
+  const renderBodyV2 = () => {
+    return (
+      <RegisterV2
+        emailValue={email}
+        phoneValue={phoneNumber}
+        onChangeEmail={value => setEmail(value)}
+        onChangeCountryCode={value => setCountryCode(value)}
+        onChangePhoneNumber={value => setPhoneNumber(value)}
+        onNext={handleCheckAccount}
+        onTickCheckbox={onTickCheckbox}
+        checkboxValue={approvedData}
+      />
+    );
+  };
+
+  const renderBody = () => {
+    if (additionalSetting().registerVersion === 2) {
+      return renderBodyV2();
+    } else {
+      return renderBodyV1();
+    }
+  };
+
   return (
     <SafeAreaView style={styles.root}>
       <LoadingScreen loading={isLoading} />
-      {appConfig.appName === 'fareastflora' ? (
-        <HeaderV2 />
-      ) : (
-        <Header isMiddleLogo />
-      )}
+      {renderHeader()}
 
-      <Body style={{flex: 1}}>
-        <KeyboardAwareScrollView>
-          {appConfig.appName === 'fareastflora' ? (
-            <RegisterV2
-              emailValue={email}
-              onChangeEmail={value => setEmail(value)}
-              onNext={handleCheckAccount}
-              onTickCheckbox={onTickCheckbox}
-              checkboxValue={approvedData}
-            />
-          ) : (
-            <View style={styles.container}>
-              <Text style={styles.textCreateNewAccount}>
-                Create a new account
-              </Text>
-              {renderTextLogin()}
-              {renderRegisterMethodInput()}
-              {renderButtonNext()}
-              {renderTextChangeMethod()}
-            </View>
-          )}
-        </KeyboardAwareScrollView>
+      <Body style={styles.body}>
+        <KeyboardAwareScrollView>{renderBody()}</KeyboardAwareScrollView>
       </Body>
     </SafeAreaView>
   );

@@ -1654,12 +1654,13 @@ export const addProductToBasket = ({defaultOutlet, selectedProduct}) => {
           dataBasket: {product},
         },
       } = state;
-
       let payload = {
         outletID: `outlet::${defaultOutlet.id}`,
         details: [],
       };
-
+      if (selectedProduct?.isScannedProduct) {
+        payload = {...payload, isScannedProduct: true};
+      }
       let newProduct = {
         productID: selectedProduct?.productID,
         unitPrice:
@@ -1683,7 +1684,6 @@ export const addProductToBasket = ({defaultOutlet, selectedProduct}) => {
 
       // add real data
       let response = {};
-
       /* IF CUSTOMER IS LOGGED IN, THEN ADD ITEM TO SERVER, ELSE, ADD ITEM TO LOCAL DATA */
       if (isLoggedIn === true) {
         response = await fetchApiOrder(
@@ -1707,7 +1707,6 @@ export const addProductToBasket = ({defaultOutlet, selectedProduct}) => {
           token,
         );
       }
-
       //NOTE: It will change it letter
       await dispatch(getBasket());
 

@@ -42,7 +42,7 @@ import AccountEditProfil from '../components/accountEditProfil';
 import EditProfile from '../components/editProfile';
 import PaymentDetail from '../components/paymentDetail';
 import PaymentSuccess from '../components/paymentSuccess';
-import PaymentAddVoucers from '../components/paymentAddVoucers';
+import PaymentAddVoucers from '../components/paymentAddVoucherv2';
 import PaymentDetailItem from '../components/paymentDetailItem';
 import InboxDetail from '../components/inboxDetail';
 import Inbox from '../pages/inbox';
@@ -138,6 +138,16 @@ import OrderingMode from '../pages/OrderingMode';
 import Payment from '../pages/Payment';
 import Membership from '../pages/Membership';
 import MembershipAllTier from '../pages/MembershipAllTier';
+import VoucherDetailV2 from '../pages/VoucherDetailV2/VoucherDetailV2';
+import PrivacyPolicy from '../pages/PrivacyPolicy';
+import ContactUsBasic from '../pages/ContactUsBasic';
+import ContactUsStarter from '../pages/ContactUsStarter';
+import CartStep1 from '../pages/CartStep1';
+import PromotionDetail from '../pages/PromotionDetail';
+import ProductDetail from '../pages/ProductDetail';
+import ProfilePaymentMethod from '../pages/ProfilePaymentMethod/PaymentMethod';
+import CreditCardDetail from '../pages/CreditCardDetail';
+import TermsAndConditions from '../pages/TermsAndConditions';
 
 const MyTransitionSpec = {
   duration: 200,
@@ -399,8 +409,23 @@ export default class Routes extends Component {
 
             <Scene key="orderingMode" component={OrderingMode} />
             <Scene key="payment" component={Payment} />
+            <Scene key="contactUs" component={ContactUsBasic} />
+            <Scene key="voucherV2" component={VoucherDetailV2} />
+            <Scene key="contactUsBasic" component={ContactUsBasic} />
+            <Scene key="contactUsStarter" component={ContactUsStarter} />
+
             <Scene key="membership" component={Membership} />
             <Scene key="membershipAllTier" component={MembershipAllTier} />
+            <Scene key="privacyPolicy" component={PrivacyPolicy} />
+            <Scene key="cartStep1" component={CartStep1} />
+            <Scene key="promotionDetail" component={PromotionDetail} />
+            <Scene key="productDetail" component={ProductDetail} />
+            <Scene
+              key="profilePaymentMethod"
+              component={ProfilePaymentMethod}
+            />
+            <Scene key="creditCardDetail" component={CreditCardDetail} />
+            <Scene key="termsAndConditions" component={TermsAndConditions} />
             {/* //martin */}
           </Scene>
         </Scene>

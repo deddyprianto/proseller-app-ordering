@@ -8,6 +8,8 @@ import {
   FlatList,
   TouchableOpacity,
 } from 'react-native';
+import QRCode from 'react-native-qrcode-svg';
+
 import GlobalText from '../components/globalText';
 import {Body} from '../components/layout';
 import Theme from '../theme/Theme';
@@ -24,14 +26,19 @@ import CardSvg from '../assets/svg/CardSvg';
 import MapMarkerSvg from '../assets/svg/MapMarkerSvg';
 import CalendarBold from '../assets/svg/CalendarBoldSvg';
 import NotesSvg from '../assets/svg/NotesSvg';
-import useCountdownHooks from '../hooks/time/countdown';
 import TimerSvg from '../assets/svg/TimerSvg';
 import {permissionDownloadFile} from '../helper/Download';
 import {handlePaymentStatus} from '../helper/PaymentStatus';
 import DotSvg from '../assets/svg/DotSvg';
-import NotesProduct from '../assets/svg/NotesProductSvg';
-import ArrowBottom from '../assets/svg/ArrowBottom';
-import DashSvg from '../assets/svg/DashSvg';
+import ArrowBottom from '../assets/svg/ArrowBottomSvg';
+import useCountdownV2 from '../hooks/time/useCountdownV2';
+import CreditCard from '../assets/svg/CreditCardSvg';
+import SuccessSvg from '../assets/svg/SuccessSvg';
+import ProductCartItemCart2 from '../components/productCartList/components/ProductCartItemCart2';
+import HandsSvg from '../assets/svg/HandsSvg';
+import MapSvg from '../assets/svg/MapSvg';
+import useOrder from '../hooks/order/useOrder';
+import additionalSetting from '../config/additionalSettings';
 
 const useStyles = () => {
   const {colors, fontFamily} = Theme();
@@ -88,6 +95,9 @@ const useStyles = () => {
     listOrderDetailContainer: {
       marginTop: 0,
     },
+    mt12: {
+      marginTop: 12,
+    },
     divider: {
       height: 1,
       backgroundColor: colors.greyScale2,
@@ -110,6 +120,7 @@ const useStyles = () => {
       marginLeft: 8,
       fontFamily: fontFamily.poppinsMedium,
       color: '#343A4A',
+      width: '60%',
     },
     shadowBox: {
       shadowOffset: {
@@ -236,119 +247,147 @@ const useStyles = () => {
       marginTop: 16,
     },
     dashStyle: {
-      marginLeft: -16,
       marginVertical: 12,
+      borderStyle: 'dashed',
+      borderWidth: 1,
+      borderRadius: 1,
+      borderColor: colors.primary,
     },
     grayColor: {
       color: '#343A4A',
     },
-    productList: {
-      paddingHorizontal: 0.9,
-    },
     mv6: {
       marginVertical: 6,
+    },
+    darkGrey: {
+      color: '#737373',
+    },
+    successContainer: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    paymentSuccessText: {
+      fontSize: 24,
+      fontFamily: fontFamily.poppinsSemiBold,
+      marginBottom: 16,
+    },
+    productContainer: {
+      marginVertical: 16,
+    },
+    row: {
+      flexDirection: 'row',
+    },
+    selectionTitle: {
+      marginLeft: 10,
+      fontFamily: fontFamily.poppinsBold,
+    },
+    textColor: {
+      color: '#343A4A',
+    },
+    normalFont: {
+      fontFamily: fontFamily.poppinsMedium,
+    },
+    greyText: {
+      color: colors.greyScale5,
+    },
+    mt8: {
+      marginTop: 8,
+    },
+    mb16: {
+      marginBottom: 16,
+    },
+    root: {
+      marginVertical: 8,
+      marginHorizontal: 16,
+    },
+    dividerTitle: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    titleText: {
+      backgroundColor: 'white',
+      paddingHorizontal: 16,
+      fontFamily: fontFamily.poppinsBold,
+      fontSize: 16,
+    },
+
+    availableTextDate: {
+      marginVertical: 8,
+      fontSize: 12,
+      fontFamily: fontFamily.poppinsMedium,
+      color: colors.textBrand,
+    },
+    centerComponent: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginBottom: 8,
+    },
+    dividerItem: {
+      height: 1,
+      backgroundColor: 'black',
+      width: '100%',
+      position: 'absolute',
+      top: '50%',
     },
   });
   return {styles, colors};
 };
 
-const OrderDetail = ({data}) => {
-  const {styles, colors} = useStyles();
-  const {time, timerId, countdownStart} = useCountdownHooks();
-  const [showQrCode, setShowQrCode] = React.useState(true);
+const OrderDetail = ({data, isFromPaymentPage}) => {
+  const {styles} = useStyles();
+  const {minutes, seconds, isTimeEnd} = useCountdownV2(data);
   const [showAllOrder, setShowAllOrder] = React.useState(false);
+  const [showAllPreOrder, setShowAllPreOrder] = React.useState(false);
   const staustPending = 'PENDING_PAYMENT';
-  const onFinish = () => {
-    setShowQrCode(false);
-  };
-
+  const store_checkout = 'STORECHECKOUT';
+  const [isSuccess, setIsSuccess] = React.useState(false);
+  const {
+    groupingeOrder,
+    defaultOrder,
+    listPreorder,
+    availDate,
+    listSelfSelection,
+  } = useOrder();
   const toggleOrder = () => setShowAllOrder(prevState => !prevState);
+  const togglePreOrder = () => setShowAllPreOrder(prevState => !prevState);
+  const preorder_item = 'Preorder Items';
+  const ready_items = 'Ready Items';
   const downloadQrCode = async () => {
     permissionDownloadFile(data?.action?.url, `qrcode${data.id}`, 'image/png', {
       title: 'Imaged Saved',
       description: 'Successfully saved image to your gallery.',
     });
   };
-  const calculatePaymentAmount = () => {
-    const mappingAmount =
-      data?.payments?.map(product => product.paymentAmount) || [];
-    const sumAll = mappingAmount.reduce((a, b) => a + b);
-    return CurrencyFormatter(sumAll);
-  };
 
   const renderItemDetails = ({item, index}) => {
     if (!showAllOrder && index > 0) return null;
     return (
-      <View key={index} style={[styles.shadowBox, styles.boxMain, styles.p12]}>
-        <View style={[styles.listOrderDetailContainer]}>
-          <View style={[styles.orderStatusContainer, styles.columnCard]}>
-            <View style={styles.paymentDetailsCard}>
-              <View style={styles.quantityContainer}>
-                <GlobalText style={styles.waitingPaymentStyle}>
-                  {item?.quantity}x
-                </GlobalText>
-              </View>
-              <GlobalText
-                style={[styles.paymentDetailCardText, styles.mediumFont]}>
-                {item?.product?.name}{' '}
-                <GlobalText style={[styles.primaryColor, styles.boldFont]}>
-                  + {item?.retailPrice}{' '}
-                </GlobalText>
-              </GlobalText>
-              <GlobalText />
-              <GlobalText style={styles.priceMain}>
-                {CurrencyFormatter(item?.nettAmount)}
-              </GlobalText>
-            </View>
-            <View style={styles.columnText}>
-              {item?.modifiers?.map(data => (
-                <>
-                  {data?.modifier?.details?.map((modify, index) => (
-                    <View key={index} style={styles.listModifier}>
-                      <View style={styles.dotModifier}>
-                        <DotSvg color={colors.greyScale2} />
-                      </View>
-                      <View>
-                        <GlobalText style={styles.modifierText}>
-                          <GlobalText style={styles.primaryColor}>
-                            {modify?.quantity}x{' '}
-                          </GlobalText>
-                          {modify?.name}{' '}
-                          <GlobalText style={[styles.primaryColor]}>
-                            + {modify?.price}{' '}
-                          </GlobalText>{' '}
-                        </GlobalText>
-                      </View>
-                    </View>
-                  ))}
-                </>
-              ))}
-              {handleRemarkProduct(item)}
-            </View>
-          </View>
-        </View>
-      </View>
+      <ProductCartItemCart2
+        containerStyle={{marginHorizontal: 0}}
+        item={item}
+      />
     );
   };
 
-  const handleRemarkProduct = item => {
-    if (item.remark) {
-      return (
-        <>
-          <View style={styles.divider} />
-
-          <View style={styles.notesProductContainer}>
-            <View style={styles.notesIcon}>
-              <NotesProduct />
-            </View>
-            <GlobalText style={styles.noteText}>{item.remark} </GlobalText>
-          </View>
-        </>
-      );
-    }
-    return null;
+  const renderItemPreOrder = ({item, index}) => {
+    if (!showAllPreOrder && index > 0) return null;
+    return (
+      <ProductCartItemCart2
+        containerStyle={{marginHorizontal: 0}}
+        item={item}
+      />
+    );
   };
-  const renderPaymentDetail = ({item, index}) => (
+
+  React.useEffect(() => {
+    if (data) {
+      groupingeOrder(data?.details || []);
+    }
+  }, [data]);
+
+  const renderPaymentDetail = ({item}) => (
     <View>
       {item?.paymentType === 'point' ? (
         <View style={[styles.listOrderDetailContainer, styles.mv6]}>
@@ -401,95 +440,116 @@ const OrderDetail = ({data}) => {
           </View>
         </View>
       ) : null}
+      {item?.paymentType === 'Stripe' ? (
+        <View style={[styles.listOrderDetailContainer, styles.mv6]}>
+          <View style={styles.orderStatusContainer}>
+            <View style={styles.paymentDetailsCard}>
+              <CreditCard />
+              <GlobalText style={styles.paymentDetailCardText}>
+                {item.paymentName}
+              </GlobalText>
+            </View>
+            <View>
+              <GlobalText style={[styles.primaryColor, styles.mediumFont]}>
+                {CurrencyFormatter(item?.paymentAmount)}
+              </GlobalText>
+            </View>
+          </View>
+        </View>
+      ) : null}
     </View>
   );
 
   const renderAddress = () => {
     if (data?.orderingMode === 'DELIVERY') {
       return (
-        <View style={[styles.boxMain, styles.shadowBox]}>
-          <View style={styles.p12}>
-            <View style={styles.orderStatusContainer}>
-              <GlobalText style={styles.deliveryText}>
-                {data?.orderingMode}{' '}
-              </GlobalText>
-            </View>
-            <View style={styles.listOrderDetailContainer}>
-              <View style={[styles.orderStatusContainer, styles.columnCard]}>
-                <View style={styles.paymentDetailsCard}>
-                  <MapMarkerSvg />
-                  <GlobalText
-                    style={[styles.paymentDetailCardText, styles.boldFont]}>
-                    Delivery to
-                  </GlobalText>
-                </View>
-                <View style={styles.columnText}>
-                  <GlobalText>
-                    {data?.deliveryAddress?.recipient?.name} |{' '}
-                    {data?.deliveryAddress?.recipient?.phoneNumber}
-                  </GlobalText>
-                  <GlobalText>
-                    {data?.deliveryAddress?.streetName}{' '}
-                    {data?.deliveryAddress?.unitNo}
-                    {data?.deliveryAddress?.postalCode}
-                  </GlobalText>
-                </View>
+        <View style={[styles.boxMain, styles.shadowBox, styles.p12]}>
+          <View style={styles.orderStatusContainer}>
+            <GlobalText style={styles.deliveryText}>
+              {data?.orderingMode}{' '}
+            </GlobalText>
+          </View>
+          <View style={[styles.listOrderDetailContainer, styles.mt12]}>
+            <View style={[styles.orderStatusContainer, styles.columnCard]}>
+              <View style={styles.paymentDetailsCard}>
+                <MapMarkerSvg />
+                <GlobalText
+                  style={[styles.paymentDetailCardText, styles.boldFont]}>
+                  Delivery to
+                </GlobalText>
               </View>
-            </View>
-            <DashSvg style={styles.dashStyle} />
-
-            <View style={styles.listOrderDetailContainer}>
-              <View style={[styles.orderStatusContainer, styles.columnCard]}>
-                <View style={styles.paymentDetailsCard}>
-                  <MapMarkerSvg />
-                  <GlobalText
-                    style={[styles.paymentDetailCardText, styles.boldFont]}>
-                    Deliver by
-                  </GlobalText>
-                </View>
-                <View style={styles.columnText}>
-                  <GlobalText>
-                    {data?.deliveryProviderName} -{' '}
-                    {CurrencyFormatter(data?.deliveryFee)}
-                  </GlobalText>
-                </View>
-              </View>
-            </View>
-            <DashSvg style={styles.dashStyle} />
-
-            <View style={styles.listOrderDetailContainer}>
-              <View style={[styles.orderStatusContainer, styles.columnCard]}>
-                <View style={styles.paymentDetailsCard}>
-                  <CalendarBold />
-                  <GlobalText
-                    style={[styles.paymentDetailCardText, styles.boldFont]}>
-                    Date
-                  </GlobalText>
-                </View>
-                <View style={styles.columnText}>
-                  <GlobalText>
-                    {data?.orderActionDate} {data?.orderActionTimeSlot}
-                  </GlobalText>
-                </View>
-              </View>
-            </View>
-            <DashSvg style={styles.dashStyle} />
-
-            <View style={styles.listOrderDetailContainer}>
-              <View style={[styles.orderStatusContainer, styles.columnCard]}>
-                <View style={styles.paymentDetailsCard}>
-                  <NotesSvg />
-                  <GlobalText
-                    style={[styles.paymentDetailCardText, styles.boldFont]}>
-                    Notes
-                  </GlobalText>
-                </View>
-                <View style={styles.columnText}>
-                  <GlobalText>{data?.remark}</GlobalText>
-                </View>
+              <View style={styles.columnText}>
+                <GlobalText>
+                  {data?.deliveryAddress?.recipient?.name} |{' '}
+                  {data?.deliveryAddress?.recipient?.phoneNumber}
+                </GlobalText>
+                <GlobalText>
+                  {data?.deliveryAddress?.streetName}{' '}
+                  {data?.deliveryAddress?.unitNo}
+                  {data?.deliveryAddress?.postalCode}
+                </GlobalText>
               </View>
             </View>
           </View>
+          <View style={styles.dashStyle} />
+          <View style={styles.listOrderDetailContainer}>
+            <View style={[styles.orderStatusContainer, styles.columnCard]}>
+              <View style={styles.paymentDetailsCard}>
+                <MapMarkerSvg />
+                <GlobalText
+                  style={[styles.paymentDetailCardText, styles.boldFont]}>
+                  Deliver by
+                </GlobalText>
+              </View>
+              <View style={styles.columnText}>
+                <GlobalText>
+                  {data?.deliveryProviderName} -{' '}
+                  {CurrencyFormatter(data?.deliveryFee)}
+                </GlobalText>
+              </View>
+            </View>
+          </View>
+          <View style={styles.dashStyle} />
+
+          <View style={styles.listOrderDetailContainer}>
+            <View style={[styles.orderStatusContainer, styles.columnCard]}>
+              <View style={styles.paymentDetailsCard}>
+                <CalendarBold />
+                <GlobalText
+                  style={[styles.paymentDetailCardText, styles.boldFont]}>
+                  Date
+                </GlobalText>
+              </View>
+              <View style={styles.columnText}>
+                <GlobalText>
+                  Will be deliver on{' '}
+                  {moment(data?.orderActionDate).format('DD MMM YYYY')}{' '}
+                  {data?.orderActionTimeSlot}
+                </GlobalText>
+              </View>
+            </View>
+          </View>
+
+          {data.remark ? (
+            <>
+              <View style={styles.dashStyle} />
+
+              <View style={styles.listOrderDetailContainer}>
+                <View style={[styles.orderStatusContainer, styles.columnCard]}>
+                  <View style={styles.paymentDetailsCard}>
+                    <NotesSvg />
+                    <GlobalText
+                      style={[styles.paymentDetailCardText, styles.boldFont]}>
+                      Notes
+                    </GlobalText>
+                  </View>
+                  <View style={styles.columnText}>
+                    <GlobalText>{data?.remark}</GlobalText>
+                  </View>
+                </View>
+              </View>
+            </>
+          ) : null}
         </View>
       );
     }
@@ -511,13 +571,15 @@ const OrderDetail = ({data}) => {
             </View>
             <View style={styles.columnText}>
               <GlobalText>{data?.outlet?.name}</GlobalText>
-              <GlobalText>
-                {data?.outlet?.location} {data?.outlet?.location?.postalCode}
-              </GlobalText>
+              {data?.outlet.location ? (
+                <GlobalText>
+                  {data?.outlet?.location} {data?.outlet?.location?.postalCode}
+                </GlobalText>
+              ) : null}
             </View>
           </View>
         </View>
-        <DashSvg style={styles.dashStyle} />
+        <View style={styles.dashStyle} />
         <View style={styles.listOrderDetailContainer}>
           <View style={[styles.orderStatusContainer, styles.columnCard]}>
             <View style={styles.paymentDetailsCard}>
@@ -536,7 +598,7 @@ const OrderDetail = ({data}) => {
         </View>
         {data.remark ? (
           <>
-            <DashSvg style={styles.dashStyle} />
+            <View style={styles.dashStyle} />
             <View style={styles.listOrderDetailContainer}>
               <View style={[styles.orderStatusContainer, styles.columnCard]}>
                 <View style={styles.paymentDetailsCard}>
@@ -557,25 +619,86 @@ const OrderDetail = ({data}) => {
     );
   };
 
-  const handleItemText = () => {
-    if (data?.details?.length > 1) {
+  const handleItemText = data => {
+    if (data?.length > 1) {
       return ' Items';
     }
     return 'Item';
   };
+  const renderIsItemSelection = () => {
+    if (listSelfSelection.length > 0) {
+      return (
+        <View style={[styles.shadowBox, styles.boxMain, styles.p12]}>
+          <View style={styles.row}>
+            <HandsSvg />
+            <GlobalText style={[styles.selectionTitle, styles.textColor]}>
+              Items Selections
+            </GlobalText>
+            <GlobalText style={[styles.mlAuto, styles.normalFont]}>
+              {data?.isSelfSelection ? 'Chosen by Customer' : 'Chosen by Staff'}
+            </GlobalText>
+          </View>
+          <View>
+            <GlobalText
+              style={[styles.greyText, styles.normalFont, styles.mt8]}>
+              {data?.isSelfSelection
+                ? `Please visit the selected outlet for item selection before ${moment(
+                    data?.orderActionDate,
+                  ).format('DD MMM YYYY')} ${data?.orderActionTimeSlot}`
+                : 'Staff assistance provided on choosing your items.'}
+            </GlobalText>
+          </View>
+          {data?.isSelfSelection ? (
+            <>
+              <View style={styles.dashStyle} />
+              <View style={styles.row}>
+                <MapSvg />
+                <GlobalText style={[styles.selectionTitle, styles.textColor]}>
+                  Outlet
+                </GlobalText>
+              </View>
+              <View style={styles.mt8}>
+                <GlobalText>{data?.outlet?.name} </GlobalText>
+                <GlobalText>{data?.outlet?.address} </GlobalText>
+              </View>
+            </>
+          ) : null}
+        </View>
+      );
+    }
+  };
 
-  React.useEffect(() => {
-    countdownStart(onFinish, data?.action?.expiry);
-    return () => {
-      clearInterval(timerId);
-    };
-  }, []);
+  const renderHeader = (title, containerStyle, isPreOrder) => (
+    <>
+      <View style={styles.centerComponent}>
+        <View style={[styles.dividerTitle, containerStyle]}>
+          <View style={styles.dividerItem} />
+          <GlobalText style={styles.titleText}>{title}</GlobalText>
+        </View>
+        {isPreOrder && availDate ? (
+          <GlobalText style={styles.availableTextDate}>
+            Available on {moment(availDate).format('DD MMM YYYY')}
+          </GlobalText>
+        ) : null}
+      </View>
+    </>
+  );
+
+  const handleVerified = () => {
+    if (!data?.isVerified) {
+      return '(UNVERIFIED)';
+    }
+    return '(VERIFIED)';
+  };
+
+  console.log({data}, 'kyui');
+
   return (
     <Body>
-      {data?.status === staustPending && showQrCode ? (
+      {data?.status === staustPending && !isTimeEnd ? (
         <View style={styles.waitingPaymentBox}>
           <GlobalText style={styles.waitingPaymentStyle}>
-            Waiting for payment {time.hours}:{time.minutes}:{time.seconds}
+            Waiting for payment {minutes}:{seconds}
           </GlobalText>
           <View style={styles.clockIcon}>
             <TimerSvg />
@@ -586,7 +709,7 @@ const OrderDetail = ({data}) => {
       <ScrollView
         contentContainerStyle={styles.scrollContainerMain}
         style={styles.scrollContainer}>
-        {data?.status === staustPending && showQrCode ? (
+        {data?.status === staustPending && !isTimeEnd ? (
           <>
             <View style={styles.qrContainer}>
               <Image style={styles.qrImage} source={{uri: data?.action?.url}} />
@@ -602,22 +725,48 @@ const OrderDetail = ({data}) => {
             </View>
           </>
         ) : null}
+        {isFromPaymentPage && data?.orderingMode !== store_checkout ? (
+          <View style={styles.successContainer}>
+            <SuccessSvg />
+            <GlobalText style={styles.paymentSuccessText}>
+              Payment Success
+            </GlobalText>
+          </View>
+        ) : null}
+
+        {additionalSetting().enableScanAndGo &&
+        data?.transactionRefNo &&
+        isFromPaymentPage &&
+        data?.orderingMode === store_checkout ? (
+          <View style={[styles.qrContainer, styles.mt16, styles.mb16]}>
+            <View style={styles.mt12}>
+              <QRCode size={200} value={data.transactionRefNo} />
+            </View>
+            <GlobalText style={[styles.mt8, styles.paymentSuccessText]}>
+              Payment Success
+            </GlobalText>
+          </View>
+        ) : null}
 
         <View />
         <View style={styles.mainScrollContainer}>
-          <View
-            style={[
-              styles.orderStatusContainer,
-              styles.shadowBox,
-              styles.boxMain,
-              styles.p12,
-            ]}>
-            <GlobalText style={[styles.grayColor, styles.mediumFont]}>
-              Order Status
-            </GlobalText>
-            <GlobalText style={[styles.boldFont, styles.grayColor]}>
-              {handlePaymentStatus(data?.status)}
-            </GlobalText>
+          <View style={[styles.shadowBox, styles.boxMain, styles.p12]}>
+            <View style={styles.orderStatusContainer}>
+              <GlobalText style={[styles.grayColor, styles.mediumFont]}>
+                Order Status
+              </GlobalText>
+              <GlobalText style={[styles.boldFont, styles.grayColor]}>
+                {handlePaymentStatus(data?.status)}{' '}
+                {additionalSetting().enableScanAndGo ? handleVerified() : null}
+              </GlobalText>
+            </View>
+            {data?.cancelationReason ? (
+              <View style={styles.mlAuto}>
+                <GlobalText style={[styles.darkGrey, styles.mediumFont]}>
+                  {data.cancelationReason?.text}
+                </GlobalText>
+              </View>
+            ) : null}
           </View>
           <View style={styles.orderDetailWrapCOntainer}>
             <GlobalText style={styles.oredrDetailText}>
@@ -633,9 +782,18 @@ const OrderDetail = ({data}) => {
                   </GlobalText>
                 </View>
                 <View>
-                  <GlobalText style={[styles.boldFont, styles.grayColor]}>
-                    {moment(data?.transactionDate).format('DD MMM YYYY')}{' '}
-                    <DotSvg /> {moment(data?.transactionDate).format('HH:mm')}
+                  <GlobalText
+                    style={[
+                      styles.boldFont,
+                      styles.grayColor,
+                      {flexDirection: 'row'},
+                    ]}>
+                    {moment(data?.transactionDate).format('DD MMM YYYY')}
+                    {'  '}
+                    <DotSvg />
+                    {'  '}
+                    {''}
+                    {moment(data?.transactionDate).format('HH:mm')}
                   </GlobalText>
                 </View>
               </View>
@@ -706,6 +864,14 @@ const OrderDetail = ({data}) => {
               </View>
             </View>
           </View>
+
+          <View style={styles.orderDetailWrapCOntainer}>
+            <GlobalText style={styles.oredrDetailText}>
+              Ordering Type Details
+            </GlobalText>
+          </View>
+          {renderIsItemSelection()}
+          {renderAddress()}
           <View style={styles.orderDetailWrapCOntainer}>
             <GlobalText style={styles.oredrDetailText}>
               Payment Details
@@ -718,36 +884,67 @@ const OrderDetail = ({data}) => {
               renderItem={renderPaymentDetail}
             />
           </View>
+          {defaultOrder.length > 0 ? (
+            <>
+              {renderHeader(ready_items, {marginBottom: 16})}
 
-          <View style={styles.orderDetailWrapCOntainer}>
-            <GlobalText style={styles.oredrDetailText}>
-              Ordering Details
-            </GlobalText>
-          </View>
-          {renderAddress()}
-          <TouchableOpacity
-            onPress={toggleOrder}
-            style={styles.orderDetailWrapCOntainer}>
-            <GlobalText style={styles.oredrDetailText}>
-              Item Details ({data?.details?.length} {handleItemText()})
-            </GlobalText>
-            {data?.details?.length > 1 && (
-              <View style={[styles.notesProductContainer, styles.mlAuto]}>
-                <GlobalText style={[styles.moreItemText]}>
-                  {data?.details?.length - 1} More Item
+              <TouchableOpacity
+                onPress={toggleOrder}
+                style={styles.orderDetailWrapCOntainer}>
+                <GlobalText style={styles.oredrDetailText}>
+                  Item Details ({defaultOrder.length}{' '}
+                  {handleItemText(defaultOrder)})
                 </GlobalText>
-                <ArrowBottom />
-              </View>
-            )}
-          </TouchableOpacity>
-          <View>
-            <FlatList
-              keyExtractor={(item, index) => index.toString()}
-              data={data?.details || []}
-              contentContainerStyle={styles.productList}
-              renderItem={renderItemDetails}
-            />
-          </View>
+                {defaultOrder.length > 1 && (
+                  <View style={[styles.notesProductContainer, styles.mlAuto]}>
+                    <GlobalText style={[styles.moreItemText]}>
+                      {defaultOrder.length - 1} More Item
+                    </GlobalText>
+                    <ArrowBottom />
+                  </View>
+                )}
+              </TouchableOpacity>
+              {defaultOrder.length > 0 ? (
+                <View style={styles.productContainer}>
+                  <FlatList
+                    keyExtractor={(item, index) => index.toString()}
+                    data={defaultOrder || []}
+                    renderItem={renderItemDetails}
+                  />
+                </View>
+              ) : null}
+            </>
+          ) : null}
+          {listPreorder.length > 0 ? (
+            <>
+              {renderHeader(preorder_item, {marginBottom: 16}, true)}
+              <TouchableOpacity
+                onPress={togglePreOrder}
+                style={styles.orderDetailWrapCOntainer}>
+                <GlobalText style={styles.oredrDetailText}>
+                  Item Details ({listPreorder.length}{' '}
+                  {handleItemText(listPreorder)})
+                </GlobalText>
+                {listPreorder.length > 1 && (
+                  <View style={[styles.notesProductContainer, styles.mlAuto]}>
+                    <GlobalText style={[styles.moreItemText]}>
+                      {listPreorder.length - 1} More Item
+                    </GlobalText>
+                    <ArrowBottom />
+                  </View>
+                )}
+              </TouchableOpacity>
+              {listPreorder.length > 0 ? (
+                <View style={styles.productContainer}>
+                  <FlatList
+                    keyExtractor={(item, index) => index.toString()}
+                    data={listPreorder || []}
+                    renderItem={renderItemPreOrder}
+                  />
+                </View>
+              ) : null}
+            </>
+          ) : null}
 
           <View style={styles.referenceNoContainer}>
             <View>
@@ -761,6 +958,16 @@ const OrderDetail = ({data}) => {
               </GlobalText>
             </View>
           </View>
+
+          {additionalSetting().enableScanAndGo &&
+          data?.transactionRefNo &&
+          !isFromPaymentPage ? (
+            <View style={[styles.qrContainer, styles.mt16, styles.mb16]}>
+              <View style={styles.mt12}>
+                <QRCode size={200} value={data.transactionRefNo} />
+              </View>
+            </View>
+          ) : null}
         </View>
       </ScrollView>
     </Body>

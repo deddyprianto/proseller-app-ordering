@@ -1,11 +1,31 @@
 import React from 'react';
-import DashedLine from 'react-native-dashed-line';
 
-import {View, Text, Image, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet} from 'react-native';
 
 import HTMLView from 'react-native-htmlview';
-import appConfig from '../../config/appConfig';
 import Theme from '../../theme';
+
+const webStyles = StyleSheet.create({
+  li: {
+    fontFamily: 'Poppins-Medium',
+    fontSize: 14,
+  },
+  strong: {
+    fontFamily: 'Poppins-Bold',
+    fontSize: 14,
+  },
+  ol: {
+    fontFamily: 'Poppins-Bold',
+    fontSize: 14,
+  },
+  ul: {
+    fontFamily: 'Poppins-Medium',
+    fontSize: 14,
+  },
+  p: {
+    fontFamily: 'Poppins-Medium',
+  },
+});
 
 const useStyles = () => {
   const theme = Theme();
@@ -34,6 +54,7 @@ const useStyles = () => {
     },
     viewHowItWorks: {
       paddingHorizontal: 16,
+      marginTop: 16,
     },
     icon: {
       width: 22,
@@ -51,58 +72,23 @@ const useStyles = () => {
 const ReferralHowItWorks = ({howItWorks}) => {
   const styles = useStyles();
 
-  const renderDashed = () => {
-    return (
-      <DashedLine
-        style={styles.dividerDashed}
-        dashLength={5}
-        dashThickness={0.5}
-        dashGap={5}
-        dashColor={styles.dividerDashed.color}
-      />
-    );
-  };
-
   const renderHeader = () => {
     return <Text style={styles.textHeader}>How it works</Text>;
   };
-
-  const renderIcon = icon => {
-    return (
-      <View style={styles.viewIcon}>
-        <Image source={icon} style={styles.icon} />
-      </View>
-    );
-  };
-
-  const renderStepIcons = () => {
-    const iconStepGift = appConfig.iconStepGift;
-    const iconStepLogin = appConfig.iconStepLogin;
-    const iconStepSend = appConfig.iconStepSend;
-
-    return (
-      <View style={styles.viewStepIcons}>
-        {renderIcon(iconStepGift)}
-        {renderDashed()}
-        {renderIcon(iconStepLogin)}
-        {renderDashed()}
-        {renderIcon(iconStepSend)}
-      </View>
-    );
-  };
-
   const renderMarkdown = () => {
-    return (
-      <View style={styles.viewHowItWorks}>
-        <HTMLView value={howItWorks} />
-      </View>
-    );
+    if (howItWorks) {
+      return (
+        <View style={styles.viewHowItWorks}>
+          <HTMLView stylesheet={webStyles} value={howItWorks} />
+        </View>
+      );
+    }
+    return null;
   };
 
   return (
     <View>
       {renderHeader()}
-      {renderStepIcons()}
       {renderMarkdown()}
     </View>
   );

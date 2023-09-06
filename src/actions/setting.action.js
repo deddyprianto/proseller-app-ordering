@@ -140,6 +140,22 @@ const setHideReferralSettings = async ({dispatch, response}) => {
   );
 };
 
+const setPrivacyPolicySettings = async ({dispatch, response}) => {
+  const privacyPolicy = handleSettingValue({
+    values: response,
+    key: 'PrivacyPolicy',
+  });
+
+  await dispatch(
+    setData({
+      type: 'SET_PRIVACY_POLICY',
+      data: {
+        privacyPolicy,
+      },
+    }),
+  );
+};
+
 const setBannerSizeSettings = async ({dispatch, response}) => {
   const bannerSize = handleSettingValue({
     values: response,
@@ -151,6 +167,22 @@ const setBannerSizeSettings = async ({dispatch, response}) => {
       type: 'SET_BANNER_SIZE',
       data: {
         bannerSize,
+      },
+    }),
+  );
+};
+
+const setTermsAndConditionsSettings = async ({dispatch, response}) => {
+  const termsAndConditions = handleSettingValue({
+    values: response,
+    key: 'TermCondition',
+  });
+
+  await dispatch(
+    setData({
+      type: 'SET_TERMS_AND_CONDITIONS',
+      data: {
+        termsAndConditions,
       },
     }),
   );
@@ -211,12 +243,15 @@ export const getLoginSettings = () => {
       const settings = response?.response?.data?.settings;
       const typeCheckbox = handleDataType({settings, key: 'checkbox'});
       const typeDropdown = handleDataType({settings, key: 'dropdown'});
+      const typeTextArea = handleDataType({settings, key: 'textarea'});
 
       if (settings) {
         setLoginSettings({dispatch, response: typeCheckbox});
         setEnableOrderingSettings({dispatch, response: typeCheckbox});
         setHideReferralSettings({dispatch, response: typeCheckbox});
         setBannerSizeSettings({dispatch, response: typeDropdown});
+        setPrivacyPolicySettings({dispatch, response: typeTextArea});
+        setTermsAndConditionsSettings({dispatch, response: typeTextArea});
       }
 
       return response.response.data;
@@ -274,13 +309,46 @@ export const getAllowedOrder = () => {
         token,
       );
       const {data} = response.response;
+
       const findAllowedOrder = data?.settings.find(
         setting => setting.settingKey === 'AllowedOrderingMode',
       );
       dispatch({
         type: ALLOWED_ORDER_TYPE,
-        payload: findAllowedOrder,
+        data: findAllowedOrder,
       });
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const getDialCodes = () => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      const response = await fetchApi(
+        '/countries/dial-codes',
+        'GET',
+        null,
+        200,
+        token,
+      );
+
+      const data = response?.responseBody?.data || [];
+
+      dispatch({
+        data,
+        type: 'SET_DIAL_CODES',
+      });
+
+      return data;
     } catch (error) {
       return error;
     }

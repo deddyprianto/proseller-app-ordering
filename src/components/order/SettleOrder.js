@@ -67,11 +67,14 @@ import {
   submitMembership,
 } from '../../actions/membership.action';
 import {getSVCBalance} from '../../actions/SVC.action';
-import {campaign, dataPoint} from '../../actions/rewards.action';
+import {campaign, dataPoint, vouchers} from '../../actions/rewards.action';
 import ModalTransfer from './ModalTransfer';
 import LoadingScreen from '../loadingScreen';
 import OrderingModeOfflineModal from '../modal/OrderingModeOfflineModal';
 import {Body} from '../layout';
+import withHooksComponent from '../HOC';
+import additionalSetting from '../../config/additionalSettings';
+import SettleOrderV2 from './SettleOrderV2';
 
 class SettleOrder extends Component {
   constructor(props) {
@@ -100,6 +103,7 @@ class SettleOrder extends Component {
       amountSVC: 0,
       percentageUseSVC: 0,
       totalNonDiscountable: 0,
+      jumPoint: 0,
       showModal: false,
       showErrorModal: false,
       isOpenOrderingModeOfflineModal: false,
@@ -127,9 +131,9 @@ class SettleOrder extends Component {
     );
   };
 
-  handlePaymentFomoPay = () => {
-    const {selectedAccount} = this.props;
-    const find = selectedAccount.paymentID === 'FOMO_PAY';
+  handlePaymentFomoPay = response => {
+    const payments = response?.responseBody?.data?.payments || [];
+    const find = payments.find(row => row.paymentType === 'FOMO_PAY');
 
     if (find) {
       Actions.payment();
@@ -196,6 +200,7 @@ class SettleOrder extends Component {
     try {
       this.props.dispatch(myVoucers());
       await this.props.dispatch(getAccountPayment());
+      this.props.dispatch(vouchers());
       this.props.dispatch(campaign());
       this.props.dispatch(dataPoint());
       this.props.dispatch(getSVCBalance());
@@ -241,7 +246,6 @@ class SettleOrder extends Component {
           totalNonDiscountable += nettAmount;
         }
       }
-      console.log(totalNonDiscountable, 'totalNonDiscountable');
       await this.setState({totalNonDiscountable});
     } catch (e) {}
   };
@@ -258,7 +262,6 @@ class SettleOrder extends Component {
             this.props.pembayaran.orderingMode,
           ),
         );
-
         let message = `Pickup at ${
           this.props.pembayaran.orderActionTimeSlot
         } is no longer available, please choose another pickup time.`;
@@ -430,7 +433,6 @@ class SettleOrder extends Component {
           totalNettItem += product.nettAmount;
         }
       }
-      console.log(totalNettItem, 'totalNettItem');
       totalNonDiscountable += totalNettItem;
       await this.setState({totalNonDiscountable});
       return {totalNonDiscountable, totalNettItem};
@@ -455,7 +457,7 @@ class SettleOrder extends Component {
       }
       await this.resetAppliedVouchers();
       await this.setDataPayment(true);
-      if (dataVoucer == undefined) {
+      if (dataVoucer == undefined || item?.length <= 0) {
         dataVoucer = [];
       }
       if (item.isVoucherPromoCode === true) {
@@ -464,10 +466,8 @@ class SettleOrder extends Component {
         item.isVoucher = true;
       }
       item.clientID = new Date().valueOf();
-
-      dataVoucer.push(item);
       await this.setState({
-        dataVoucer,
+        dataVoucer: item,
         cancelVoucher: false,
       });
       await this.setDataPayment(false);
@@ -1049,6 +1049,176 @@ class SettleOrder extends Component {
     });
   };
 
+  getPaymentData = () => {
+    let {dataVoucer, totalNonDiscountable} = this.state;
+
+    let paymentData = JSON.stringify(this.props.pembayaran);
+    paymentData = JSON.parse(paymentData);
+    paymentData.payment -= totalNonDiscountable;
+
+    // Adjust total
+    try {
+      let total = paymentData.payment;
+      if (!isEmptyArray(dataVoucer)) {
+        for (let i = 0; i < dataVoucer.length; i++) {
+          /* Deduct voucher & voucher serial number */
+          if (dataVoucer[i].isVoucher === true) {
+            total -= dataVoucer[i].paymentAmount;
+          } else if (dataVoucer[i].voucherValue) {
+            total -= dataVoucer[i].voucherValue;
+          }
+          /* deduct SVC */
+          if (dataVoucer[i].isSVC === true) {
+            total -= dataVoucer[i].paymentAmount;
+          }
+        }
+        if (total < 0) {
+          total = 0;
+        }
+        paymentData.payment = total;
+      }
+    } catch (e) {}
+
+    return paymentData;
+  };
+
+  to2PointDecimal = data => {
+    try {
+      if (data !== 0) {
+        let money = data.toString().split('.');
+        if (money[1] !== undefined) {
+          money = `${money[0]}.${money[1].substr(0, 2)}`;
+        }
+        return parseFloat(money);
+      } else {
+        return parseFloat(0);
+      }
+    } catch (e) {
+      return parseFloat(0);
+    }
+  };
+
+  calculateMoneyPointFromJumPoint = value => {
+    const {campign} = this.props;
+
+    try {
+      let jumPointRatio = campign.points.pointsToRebateRatio0;
+      let jumMoneyRatio = campign.points.pointsToRebateRatio1;
+
+      let ratio = value / jumPointRatio;
+      let money = parseFloat(ratio * jumMoneyRatio);
+
+      const result = this.to2PointDecimal(money);
+
+      this.setState({moneyPoint: result});
+
+      return result;
+    } catch (e) {
+      return 0;
+    }
+  };
+
+  totalPointToPay = point => {
+    const {campign, detailPoint} = this.props;
+
+    try {
+      const {pendingPoints, amountSVC, percentageUseSVC} = this.props;
+
+      var jumPointRatio = campign.points.pointsToRebateRatio0;
+      var jumMoneyRatio = campign.points.pointsToRebateRatio1;
+
+      let ratio = jumPointRatio / jumMoneyRatio;
+
+      // create default point to set based on the ratio of point to rebate
+      const paymentData = this.getPaymentData();
+
+      let setDefault = parseFloat((paymentData.payment * ratio).toFixed(2));
+
+      this.setState({
+        jumPointRatio: jumPointRatio,
+        jumMoneyRatio: jumMoneyRatio,
+        ratio: ratio,
+      });
+
+      // if settings from admin is not set to decimal, then round
+      let pointToSet = this.state.myPoint;
+
+      if (pendingPoints && pendingPoints > 0) {
+        pointToSet -= pendingPoints;
+      }
+
+      if (detailPoint && detailPoint.lockPoints > 0) {
+        if (percentageUseSVC > 0) {
+          let minusPoint = 0;
+          minusPoint =
+            (amountSVC / this.props.defaultBalance) * detailPoint.defaultPoints;
+          let diff = detailPoint.lockPoints - minusPoint;
+          diff = diff < 0 ? 0 : diff;
+          pointToSet = pointToSet - diff;
+        } else {
+          pointToSet -= detailPoint.lockPoints;
+        }
+      }
+
+      try {
+        pointToSet = Number(pointToSet.toFixed(2));
+      } catch (e) {}
+
+      if (pointToSet < 0) {
+        pointToSet = 0;
+      }
+
+      if (
+        campign.points.roundingOptions != undefined &&
+        campign.points.roundingOptions == 'INTEGER'
+      ) {
+        try {
+          setDefault = Number(setDefault.toFixed(0));
+        } catch (e) {
+          setDefault = Math.ceil(setDefault);
+        }
+
+        pointToSet = Math.floor(pointToSet);
+      }
+      const myTotalPoint = this.props.totalPoint || 0;
+      if (point === undefined) {
+        if (setDefault >= pointToSet) {
+          const pointToUse =
+            myTotalPoint < parseFloat(pointToSet)
+              ? myTotalPoint
+              : parseFloat(pointToSet);
+
+          this.setState({jumPoint: pointToUse});
+          this.setDataPoint(
+            pointToUse,
+            this.calculateMoneyPointFromJumPoint(pointToUse),
+          );
+        } else {
+          const pointToUse =
+            myTotalPoint < parseFloat(setDefault)
+              ? myTotalPoint
+              : parseFloat(setDefault);
+          this.setState({jumPoint: pointToUse});
+          this.setDataPoint(
+            pointToUse,
+            this.calculateMoneyPointFromJumPoint(pointToUse),
+          );
+        }
+      } else {
+        const pointToUse =
+          myTotalPoint < parseFloat(point) ? myTotalPoint : parseFloat(point);
+
+        this.setState({jumPoint: pointToUse});
+        this.setDataPoint(
+          pointToUse,
+          this.calculateMoneyPointFromJumPoint(pointToUse),
+        );
+      }
+    } catch (e) {
+      Alert.alert('Sorry', 'Something went wrong, please try again');
+    }
+  };
+
   saveCVV = async () => {
     try {
       let card = JSON.stringify(this.props.selectedAccount);
@@ -1061,7 +1231,6 @@ class SettleOrder extends Component {
     } catch (e) {
       this.RBSheet.close();
       Alert.alert('Sorry', 'Can`t set CVV, please try again');
-      console.log(e);
     }
   };
 
@@ -1372,14 +1541,13 @@ class SettleOrder extends Component {
 
       // get url
       let {url} = this.props;
-
       console.log('Payload settle order ', pembayaran);
       console.log('URL settle order ', url);
 
       const response = await this.props.dispatch(settleOrder(pembayaran, url));
       console.log('reponse pembayaran settle order ', response);
       if (response.success) {
-        this.handlePaymentFomoPay();
+        this.handlePaymentFomoPay(response);
         try {
           this.props.dispatch(afterPayment(true));
         } catch (e) {}
@@ -2286,9 +2454,7 @@ class SettleOrder extends Component {
       paySVC,
       payVoucher,
     } = this.props;
-
     this.hideModal();
-
     // try {
     //   if (selectedAccount && (payMembership || paySVC || payVoucher)) {
     //     if (selectedAccount.paymentID === 'MANUAL_TRANSFER') {
@@ -2673,13 +2839,15 @@ class SettleOrder extends Component {
         payload.clientTimezone = Math.abs(new Date().getTimezoneOffset());
       } catch (e) {}
 
-      console.log('Payload settle order ', payload);
-      console.log('URL settle order ', url);
+      payload = {
+        ...payload,
+        isSelfSelection: this.props.pembayaran.isSelfSelection,
+      };
+      console.log('Payload settle order', payload);
 
       const response = await this.props.dispatch(settleOrder(payload, url));
-      console.log('reponse pembayaran settle order ', response);
       if (response.success) {
-        this.handlePaymentFomoPay();
+        this.handlePaymentFomoPay(response);
         try {
           if (this.props.pembayaran.orderingMode == 'STORECHECKOUT') {
             this.props.dispatch(afterPayment(false));
@@ -2718,6 +2886,7 @@ class SettleOrder extends Component {
             outlet: this.state.outlet,
             url,
             dataRespons: response.responseBody.data,
+            step: 4,
           });
         }
       } else {
@@ -2744,7 +2913,6 @@ class SettleOrder extends Component {
       //  cancel voucher and pont selected
       // this.cencelPoint();
       // this.cencelVoucher();
-      console.log(e);
       Alert.alert('Oppss', 'Something went wrong, please try again');
       this.setState({loading: false, failedPay: true});
     }
@@ -2811,10 +2979,11 @@ class SettleOrder extends Component {
     await this.resetAppliedVouchers();
     try {
       if (dataVoucer.length > 0) {
-        dataVoucer = dataVoucer.filter(i => i.isPoint != true);
+        dataVoucer = dataVoucer.filter(i => i.isPoint !== true);
       } else {
         dataVoucer = [];
       }
+
       await this.setState({dataVoucer, addPoint: undefined});
       this.setState({cancelPoint: true});
       await this.setDataPayment(false);
@@ -3243,11 +3412,10 @@ class SettleOrder extends Component {
 
       console.log('Payload settle order ', payload);
       console.log('URL settle order ', url);
-
       const response = await this.props.dispatch(settleOrder(payload, url));
       console.log('reponse pembayaran settle order ', response);
       if (response.success) {
-        this.handlePaymentFomoPay();
+        this.handlePaymentFomoPay(response);
         try {
           this.props.dispatch(afterPayment(true));
         } catch (e) {}
@@ -3289,7 +3457,6 @@ class SettleOrder extends Component {
       //  cancel voucher and pont selected
       // this.cencelPoint();
       // this.cencelVoucher();
-      console.log(e);
       Alert.alert('Oppss', 'Something went wrong, please try again');
       this.setState({loading: false, failedPay: true});
     }
@@ -3434,6 +3601,13 @@ class SettleOrder extends Component {
     }
   };
 
+  onSelectPaymentMethod = () => {
+    Actions.paymentMethods({
+      page: 'settleOrder',
+      paySVC: this.props.paySVC,
+    });
+  };
+
   render() {
     const {
       intlData,
@@ -3442,10 +3616,36 @@ class SettleOrder extends Component {
       campign,
       balance,
       pembayaran,
+      step,
     } = this.props;
     const {outlet} = this.state;
+    const {cartVersion} = additionalSetting();
     const total =
       Number(this.state.totalBayar) - this.state.totalNonDiscountable;
+    if (cartVersion === 'advance') {
+      return (
+        <>
+          {this.state.loading && <LoaderDarker />}
+          <SettleOrderV2
+            openVoucher={this.myVouchers}
+            openPoint={this.myPoint}
+            myMoneyPoint={this.state.moneyPoint}
+            myPoint={this.state.addPoint}
+            totalPointToPay={this.totalPointToPay}
+            fullPoint={this.state.jumPoint}
+            totalAmount={this.getPaymentData}
+            openPayment={this.onSelectPaymentMethod}
+            selectedAccount={selectedAccount}
+            selectedPaymentMethod={this.selectedPaymentMethod}
+            step={step}
+            data={pembayaran}
+            vouchers={this.state.dataVoucer}
+            doPayment={this.doPayment}
+            latestSelfSelectionDate={this.props.latestSelfSelectionDate}
+          />
+        </>
+      );
+    }
 
     return (
       <SafeAreaView style={styles.container}>
@@ -4071,12 +4271,7 @@ class SettleOrder extends Component {
                 }}>
                 <TouchableOpacity
                   style={styles.btnPaymentMethod}
-                  onPress={() => {
-                    Actions.paymentMethods({
-                      page: 'settleOrder',
-                      paySVC: this.props.paySVC,
-                    });
-                  }}>
+                  onPress={this.onSelectPaymentMethod}>
                   <Text
                     style={[
                       styles.descMethodUnselected,
@@ -4364,7 +4559,7 @@ const styles = StyleSheet.create({
   },
 });
 
-mapStateToProps = state => ({
+const mapStateToProps = state => ({
   campign: state.rewardsReducer.campaign.campaign,
   myVoucers: state.accountsReducer.myVoucers.myVoucers,
   totalPoint: state.rewardsReducer.dataPoint.totalPoint,
@@ -4382,15 +4577,18 @@ mapStateToProps = state => ({
   defaultOutlet: state.storesReducer.defaultOutlet.defaultOutlet,
   basket: state.orderReducer?.dataBasket?.product,
   intlData: state.intlData,
+  pendingPoints: state.rewardsReducer.dataPoint.pendingPoints,
 });
 
-mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = dispatch => ({
   dispatch,
 });
 
-export default compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
-)(SettleOrder);
+export default withHooksComponent(
+  compose(
+    connect(
+      mapStateToProps,
+      mapDispatchToProps,
+    ),
+  )(SettleOrder),
+);

@@ -11,6 +11,7 @@ import {isEmptyArray} from '../../helper/CheckEmpty';
 
 import {getTimeSlot, setTimeSlotSelected} from '../../actions/order.action';
 import Theme from '../../theme';
+import GlobalText from '../globalText';
 
 const useStyles = () => {
   const theme = Theme();
@@ -37,22 +38,23 @@ const useStyles = () => {
     },
     textChooseDate: {
       color: theme.colors.textPrimary,
-      fontSize: theme.fontSize[12],
-      fontFamily: theme.fontFamily.poppinsRegular,
+      fontSize: theme.fontSize[16],
+      fontFamily: theme.fontFamily.poppinsBold,
     },
     textTitleChooseDate: {
-      color: theme.colors.textPrimary,
+      color: theme.colors.primary,
       fontSize: theme.fontSize[16],
-      fontFamily: theme.fontFamily.poppinsSemiBold,
+      fontFamily: theme.fontFamily.poppinsBold,
     },
     textSeeMore: {
-      fontSize: 12,
-      color: colorConfig.primaryColor,
-      textDecorationLine: 'underline',
+      fontSize: theme.fontSize[16],
+      color: theme.colors.primary,
+      fontFamily: theme.fontFamily.poppinsMedium,
     },
     textDeliveryTime: {
       fontSize: 12,
       fontWeight: '400',
+      fontFamily: theme.fontFamily.poppinsMedium,
     },
     viewSeeMore: {
       width: '100%',
@@ -86,32 +88,32 @@ const useStyles = () => {
     },
     textDayAvailable: {
       fontSize: 12,
-      color: theme.colors.textQuaternary,
+      color: 'black',
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textDateAvailable: {
-      fontSize: 12,
-      color: theme.colors.textQuaternary,
+      fontSize: 22,
+      color: 'black',
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textMonthAvailable: {
       fontSize: 12,
-      color: theme.colors.textQuaternary,
+      color: 'black',
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textDayUnavailable: {
       fontSize: 12,
-      color: theme.colors.textTertiary,
+      color: theme.colors.greyScale5,
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textDateUnavailable: {
-      fontSize: 12,
-      color: theme.colors.textTertiary,
+      fontSize: 22,
+      color: theme.colors.greyScale5,
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textMonthUnavailable: {
       fontSize: 12,
-      color: theme.colors.textTertiary,
+      color: theme.colors.greyScale5,
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textDaySelected: {
@@ -120,8 +122,8 @@ const useStyles = () => {
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textDateSelected: {
-      fontSize: 12,
-      color: theme.colors.textQuaternary,
+      fontSize: 22,
+      color: 'white',
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textMonthSelected: {
@@ -142,7 +144,7 @@ const useStyles = () => {
     },
     touchableItemAvailable: {
       width: 53,
-      borderWidth: 1,
+      // borderWidth: 1,
       borderColor: colorConfig.primaryColor,
       borderRadius: 8,
       alignItems: 'center',
@@ -152,12 +154,13 @@ const useStyles = () => {
     },
     touchableItemUnavailable: {
       width: 53,
-      borderWidth: 1,
+      // borderWidth: 1,
       borderColor: '#B7B7B7',
       borderRadius: 8,
       alignItems: 'center',
       justifyContent: 'center',
       paddingVertical: 8,
+      backgroundColor: theme.colors.greyScale4,
       // marginHorizontal: 6,
     },
     circleSelected: {
@@ -211,12 +214,25 @@ const useStyles = () => {
       borderTopWidth: 1,
       borderTopColor: '#D6D6D6',
     },
+    ct: {
+      fontSize: 16,
+      fontFamily: theme.fontFamily.poppinsBold,
+    },
+    ts: {
+      fontSize: 14,
+      fontFamily: theme.fontFamily.poppinsMedium,
+      marginTop: 8,
+    },
+    listTime: {
+      fontSize: 14,
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
   };
 
   return styles;
 };
 
-const DateSelectorModal = ({open, handleClose, value, orderingMode}) => {
+const DateSelectorModal = ({open, handleClose, value}) => {
   const styles = useStyles();
   const dispatch = useDispatch();
 
@@ -229,7 +245,7 @@ const DateSelectorModal = ({open, handleClose, value, orderingMode}) => {
 
   const [seeMore, setSeeMore] = useState(false);
   const [isOpenTimeSelector, setIsOpenTimeSelector] = useState(false);
-
+  const [initDate, setInitDate] = useState(null);
   const defaultOutlet = useSelector(
     state => state.storesReducer.defaultOutlet.defaultOutlet,
   );
@@ -249,9 +265,9 @@ const DateSelectorModal = ({open, handleClose, value, orderingMode}) => {
         }),
       );
       setAvailableDates(timeSlot);
-
-      const currentDate = value
-        ? moment(value.date).format('ddd DD MMMM YYYY')
+      let availDate = value.date;
+      const currentDate = availDate
+        ? moment(availDate).format('ddd DD MMMM YYYY')
         : moment().format('ddd DD MMMM YYYY');
       setSelectedDate(currentDate);
     };
@@ -279,8 +295,8 @@ const DateSelectorModal = ({open, handleClose, value, orderingMode}) => {
 
   useEffect(() => {
     let dateTime = '';
-    if (selectedDate) {
-      dateTime = moment(selectedDate).subtract(1, 'day');
+    if (initDate) {
+      dateTime = moment(initDate).subtract(1, 'day');
     } else {
       dateTime = moment().subtract(1, 'day');
     }
@@ -291,7 +307,13 @@ const DateSelectorModal = ({open, handleClose, value, orderingMode}) => {
         return dateTime.add(1, 'day').format('ddd DD MMMM YYYY');
       });
     setDates(result);
-  }, [seeMore]);
+  }, [seeMore, initDate]);
+
+  useEffect(() => {
+    if (value?.date) {
+      setInitDate(value.date);
+    }
+  }, [value]);
 
   const handleSave = async () => {
     await dispatch(
@@ -332,9 +354,7 @@ const DateSelectorModal = ({open, handleClose, value, orderingMode}) => {
     return (
       <TouchableOpacity style={styles.touchableItemSelected} activeOpacity={1}>
         <Text style={styles.textDaySelected}>{day}</Text>
-        <View style={styles.circleSelected}>
-          <Text style={styles.textDateSelected}>{date}</Text>
-        </View>
+        <Text style={styles.textDateSelected}>{date}</Text>
         <Text style={styles.textMonthSelected}>{month}</Text>
       </TouchableOpacity>
     );
@@ -349,9 +369,7 @@ const DateSelectorModal = ({open, handleClose, value, orderingMode}) => {
           handleDateItemSelected(item);
         }}>
         <Text style={styles.textDayAvailable}>{day}</Text>
-        <View style={styles.circleAvailable}>
-          <Text style={styles.textDateAvailable}>{date}</Text>
-        </View>
+        <Text style={styles.textDateAvailable}>{date}</Text>
         <Text style={styles.textMonthAvailable}>{month}</Text>
       </TouchableOpacity>
     );
@@ -364,9 +382,7 @@ const DateSelectorModal = ({open, handleClose, value, orderingMode}) => {
         activeOpacity={1}
         disabled>
         <Text style={styles.textDayUnavailable}>{day}</Text>
-        <View style={styles.circleUnavailable}>
-          <Text style={styles.textDateUnavailable}>{date}</Text>
-        </View>
+        <Text style={styles.textDateUnavailable}>{date}</Text>
         <Text style={styles.textMonthUnavailable}>{month}</Text>
       </TouchableOpacity>
     );
@@ -420,7 +436,7 @@ const DateSelectorModal = ({open, handleClose, value, orderingMode}) => {
           onPress={() => {
             handleOpenCalender();
           }}>
-          <Text style={styles.textSeeMore}>See More</Text>
+          <Text style={styles.textSeeMore}>See More Date</Text>
         </TouchableOpacity>
       </View>
     );
@@ -440,15 +456,19 @@ const DateSelectorModal = ({open, handleClose, value, orderingMode}) => {
     const text = selectedTime || 'Choose Time';
 
     return (
-      <TouchableOpacity
-        disabled={disabled}
-        onPress={() => {
-          handleOpenDeliveryTimes();
-        }}
-        style={styles.viewDeliveryTime}>
-        <Text style={styles.textDeliveryTime}>{text}</Text>
-        <IconAntDesign style={styles.iconCaretDown} name="caretdown" />
-      </TouchableOpacity>
+      <View>
+        <GlobalText style={styles.ct}>Choose Time</GlobalText>
+        <GlobalText style={styles.ts}>Timeslot</GlobalText>
+        <TouchableOpacity
+          disabled={disabled}
+          onPress={() => {
+            handleOpenDeliveryTimes();
+          }}
+          style={styles.viewDeliveryTime}>
+          <Text style={styles.textDeliveryTime}>{text}</Text>
+          <IconAntDesign style={styles.iconCaretDown} name="caretdown" />
+        </TouchableOpacity>
+      </View>
     );
   };
 
@@ -508,7 +528,7 @@ const DateSelectorModal = ({open, handleClose, value, orderingMode}) => {
         onPress={() => {
           handleDeliveryTimeListItemSelected(item);
         }}>
-        <Text>{item?.time}</Text>
+        <Text style={styles.listTime}>{item?.time}</Text>
       </TouchableOpacity>
     );
   };

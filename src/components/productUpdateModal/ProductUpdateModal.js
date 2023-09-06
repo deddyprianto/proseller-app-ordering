@@ -13,11 +13,11 @@ import {
   FlatList,
 } from 'react-native';
 
-import ProductAddModal from '../productAddModal';
 import {isEmptyArray} from '../../helper/CheckEmpty';
 import appConfig from '../../config/appConfig';
 import Theme from '../../theme';
 import CurrencyFormatter from '../../helper/CurrencyFormatter';
+import {Actions} from 'react-native-router-flux';
 
 const useStyles = () => {
   const theme = Theme();
@@ -220,12 +220,7 @@ const useStyles = () => {
 
 const ProductUpdateModal = ({open, handleClose, product, basket}) => {
   const styles = useStyles();
-  const [isOpenAddModal, setIsOpenAddModal] = useState(false);
   const [productInBasket, setProductInBasket] = useState([]);
-  const [
-    selectedProductBasketUpdate,
-    setSelectedProductBasketUpdate,
-  ] = useState({});
 
   const handleProductVariantIds = product => {
     let items = [];
@@ -272,16 +267,6 @@ const ProductUpdateModal = ({open, handleClose, product, basket}) => {
       setProductInBasket(items);
     }
   }, [basket, product, open]);
-
-  const handleOpenAddModal = value => {
-    setIsOpenAddModal(true);
-    setSelectedProductBasketUpdate(value);
-  };
-
-  const handleCloseAddModal = () => {
-    setIsOpenAddModal(false);
-    setSelectedProductBasketUpdate({});
-  };
 
   const renderHeaderText = () => {
     return <Text style={styles.textHeader}>This item already in cart</Text>;
@@ -426,7 +411,12 @@ const ProductUpdateModal = ({open, handleClose, product, basket}) => {
     return (
       <TouchableOpacity
         onPress={() => {
-          handleOpenAddModal(item);
+          handleClose();
+          Actions.productDetail({
+            productId: product.id,
+            selectedProduct: item,
+            prevPage: Actions.currentScene,
+          });
         }}>
         {renderProductItemQtyAndName(item)}
         {renderProductModifiers(item?.modifiers)}
@@ -451,27 +441,16 @@ const ProductUpdateModal = ({open, handleClose, product, basket}) => {
     return (
       <TouchableOpacity
         onPress={() => {
-          handleOpenAddModal();
+          handleClose();
+          Actions.productDetail({
+            productId: product.id,
+            prevPage: Actions.currentScene,
+          });
         }}
         style={styles.touchableMakeAnother}>
         <Text style={styles.textMakeAnother}>Make Another</Text>
       </TouchableOpacity>
     );
-  };
-
-  const renderProductAddModal = () => {
-    if (isOpenAddModal) {
-      return (
-        <ProductAddModal
-          product={product}
-          open={isOpenAddModal}
-          handleClose={() => {
-            handleCloseAddModal();
-          }}
-          selectedProduct={selectedProductBasketUpdate}
-        />
-      );
-    }
   };
 
   if (!open || isEmptyArray(productInBasket)) {
@@ -490,7 +469,6 @@ const ProductUpdateModal = ({open, handleClose, product, basket}) => {
           {renderFooter()}
         </TouchableOpacity>
       </TouchableOpacity>
-      {renderProductAddModal()}
     </Modal>
   );
 };

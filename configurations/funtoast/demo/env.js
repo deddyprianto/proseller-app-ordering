@@ -24,7 +24,7 @@ const ENV = {
 
   CURRENCY: 'SGD',
 
-  LOCALES: 'en',
+  LOCALES: 'en-AU',
 
   SENTRY_DSN:
     'https://57b71e8fbd404c2bb5921afbb00b6c5c@o354451.ingest.sentry.io/2653850',
@@ -35,6 +35,12 @@ const ENV = {
   appUrl: 'https://ordering-funtoast.proseller.io/',
 
   appID: 'com.funtoast.app',
+
+  appEmail: 'design@funtoast.com.sg',
+
+  appEmailFeedback: 'feedback@funtoast.com.sg',
+
+  appLinkFeedbackUrl: 'https://www.funtoast.com.sg/contact/feedback/',
 
   retailerInfo: 'Ace Dynamic',
 

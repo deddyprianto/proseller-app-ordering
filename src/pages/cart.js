@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable react-hooks/exhaustive-deps */
 /**
  * Martin
@@ -10,7 +11,6 @@ import {Actions} from 'react-native-router-flux';
 import {useDispatch, useSelector} from 'react-redux';
 import CryptoJS from 'react-native-crypto-js';
 import moment from 'moment';
-import Modal from 'react-native-modal';
 import {
   StyleSheet,
   View,
@@ -41,10 +41,8 @@ import currencyFormatter from '../helper/CurrencyFormatter';
 import {showSnackbar} from '../actions/setting.action';
 import {
   changeOrderingMode,
-  getBasket,
   getDeliveryProviderAndFee,
   getTimeSlot,
-  removeBasket,
 } from '../actions/order.action';
 
 import Theme from '../theme';
@@ -55,6 +53,17 @@ import {getCompanyInfo, getOutletById} from '../actions/stores.action';
 import ModalError from '../components/modal/ErrorModal';
 import useErrorMessage from '../hooks/message/useErrorMessage';
 import {Body} from '../components/layout';
+import OrderDetailCart from '../components/cart/OrderDetailCart';
+import GlobalText from '../components/globalText';
+import additionalSetting from '../config/additionalSettings';
+import OutletCard from '../components/productCartList/OutletCard';
+import GlobalButton from '../components/button/GlobalButton';
+import ThreeDot from '../assets/svg/ThreeDotSvg';
+import GlobalModal from '../components/modal/GlobalModal';
+import CurrencyFormatter from '../helper/CurrencyFormatter';
+import ThreeDotCircle from '../assets/svg/ThreeDotCircle';
+import ModalOrderDetail from '../components/modal/ModalOrderDetail';
+import GrandTotalFloating from '../components/order/GrandTotalFloating';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -150,14 +159,14 @@ const useStyles = () => {
     },
     textMethod: {
       color: theme.colors.text1,
-      fontSize: theme.fontSize[12],
+      fontSize: theme.fontSize[14],
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textMethodValue: {
       textAlign: 'center',
       flex: 1,
       color: theme.colors.primary,
-      fontSize: theme.fontSize[12],
+      fontSize: theme.fontSize[14],
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textMethodValue1: {
@@ -375,6 +384,44 @@ const useStyles = () => {
       width: 16,
       height: 16,
     },
+    productCartContainer: {
+      marginTop: 16,
+    },
+    stepText: {
+      color: theme.colors.brandTertiary,
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    granTotal: {
+      fontSize: 12,
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    priceAll: {
+      fontSize: 16,
+      fontFamily: theme.fontFamily.poppinsSemiBold,
+      color: theme.colors.primary,
+    },
+    priceContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    footer: {
+      borderTopWidth: 1,
+      borderTopColor: theme.colors.greyScale4,
+      padding: 16,
+    },
+    footerChild: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+
+    threedotContainer: {
+      marginLeft: 'auto',
+    },
+    detailDotContainer: {
+      marginLeft: 8,
+    },
   });
   return styles;
 };
@@ -382,7 +429,7 @@ const useStyles = () => {
 const Cart = props => {
   const styles = useStyles();
   const dispatch = useDispatch();
-  const {navigation} = props;
+  const {navigation, isScanGo} = props;
   const [subTotal, setSubTotal] = useState(0);
   const [isOffline, setIsOffline] = useState(false);
   const [errorMessage, setErrorMessage] = useState({
@@ -403,7 +450,9 @@ const Cart = props => {
   const {outletUnavailable} = useErrorMessage();
   const [deliveryAddress, setDeliveryAddress] = useState({});
   const [availableTimes, setAvailableTimes] = useState([]);
-
+  const [availablePreorderDate, setAvailablePreorderDate] = useState(null);
+  const [availableSelection, saveAvailableSelection] = React.useState([]);
+  const [itemSelection, setItemSelection] = React.useState('staff');
   const outlet = useSelector(
     state => state.storesReducer.defaultOutlet.defaultOutlet,
   );
@@ -455,7 +504,10 @@ const Cart = props => {
   useEffect(() => {
     const loadData = async () => {
       const clientTimezone = Math.abs(new Date().getTimezoneOffset());
-      const date = moment().format('YYYY-MM-DD');
+      let date = moment().format('YYYY-MM-DD');
+      if (availablePreorderDate) {
+        date = moment(availablePreorderDate).format('YYYY-MM-DD');
+      }
 
       const timeSlot = await dispatch(
         getTimeSlot({
@@ -465,12 +517,10 @@ const Cart = props => {
           orderingMode: basket.orderingMode,
         }),
       );
-
       setAvailableTimes(timeSlot);
     };
     loadData();
-  }, [dispatch, basket, outlet]);
-
+  }, [dispatch, basket, outlet, availablePreorderDate]);
   useEffect(() => {
     const userDecrypt = CryptoJS.AES.decrypt(
       userDetail,
@@ -498,7 +548,11 @@ const Cart = props => {
         }
       });
 
-      if (orderingModesFieldFiltered?.length === 1 && !basket?.orderingMode) {
+      if (
+        orderingModesFieldFiltered?.length === 1 &&
+        !basket?.orderingMode &&
+        !basket?.isStoreCheckoutCart
+      ) {
         await dispatch(
           changeOrderingMode({
             orderingMode: orderingModesFieldFiltered[0]?.key,
@@ -511,6 +565,20 @@ const Cart = props => {
 
     loadData();
   }, [outlet, basket, orderingModesField, dispatch]);
+  useEffect(() => {
+    if (basket?.isStoreCheckoutCart) {
+      const findStoreCheckout = orderingModesField.find(
+        data => data.key === 'STORECHECKOUT',
+      );
+      if (findStoreCheckout) {
+        dispatch(
+          changeOrderingMode({
+            orderingMode: findStoreCheckout.key,
+          }),
+        );
+      }
+    }
+  }, []);
 
   useEffect(() => {
     setIsLoading(true);
@@ -835,7 +903,7 @@ const Cart = props => {
         data = {};
       });
 
-      const pembayaran = {
+      let pembayaran = {
         payment: basket?.totalNettAmount,
         totalNettAmount: basket?.totalNettAmount,
         totalGrossAmount: basket?.totalGrossAmount,
@@ -848,7 +916,11 @@ const Cart = props => {
         storeId: basket?.outlet.id,
         orderingMode: basket?.orderingMode,
       };
-
+      if (itemSelection === 'own') {
+        pembayaran = {...pembayaran, isSelfSelection: true};
+      } else {
+        pembayaran = {...pembayaran, isSelfSelection: false};
+      }
       if (!basket?.orderingMode) {
         RBSheet.open();
         return;
@@ -856,7 +928,6 @@ const Cart = props => {
 
       pembayaran.orderingMode = basket.orderingMode;
       pembayaran.cartID = basket.cartID;
-
       const url = '/cart/submitAndPay';
 
       // for delivery order
@@ -898,13 +969,24 @@ const Cart = props => {
           }
         }
       } catch (e) {}
-
+      let findMinimumDate = pembayaran?.orderActionDate;
+      if (availableTimes && Array.isArray(availableTimes)) {
+        findMinimumDate = availableTimes?.find(
+          data =>
+            data?.date ===
+            moment(pembayaran?.orderActionDate).format('YYYY-MM-DD'),
+        );
+        findMinimumDate = findMinimumDate?.latestSelfSelectionDate;
+      }
       Actions.settleOrder({
         pembayaran: pembayaran,
         url: url,
         outlet: outlet,
+        step: 3,
+        latestSelfSelectionDate: findMinimumDate,
       });
     } catch (e) {
+      console.log(e, 'eman');
       await dispatch(showSnackbar({message: 'Please try again'}));
     }
   };
@@ -941,6 +1023,9 @@ const Cart = props => {
 
   const renderOutlet = () => {
     if (outlet) {
+      if (availableSelection.length > 0 && itemSelection === 'own') {
+        return <OutletCard outlet={outlet} />;
+      }
       return (
         <View style={styles.viewMethod}>
           <Text style={styles.textMethod}>Selected Outlet</Text>
@@ -949,15 +1034,13 @@ const Cart = props => {
       );
     }
   };
-
   const renderOrderingTypeHeaderText = text => {
     if (awsConfig.COMPANY_TYPE === 'Retail') {
       return (
         <TouchableOpacity
+          disabled={basket?.isStoreCheckoutCart}
           style={styles.touchableMethod}
-          onPress={() => {
-            handleOpenOrderingTypeModal();
-          }}>
+          onPress={handleOpenOrderingTypeModal}>
           <Text style={styles.textMethodValue}>
             {text.length > 12 ? text.substring(0.12) + '...' : text}
           </Text>
@@ -1114,18 +1197,6 @@ const Cart = props => {
     }
   };
 
-  const renderAddButton = () => {
-    return (
-      <TouchableOpacity
-        style={styles.viewAddButton}
-        onPress={() => {
-          Actions.pop();
-        }}>
-        <Text style={styles.textAddButton}>+ ADD ITEM</Text>
-      </TouchableOpacity>
-    );
-  };
-
   const renderDetailTotal = () => {
     return (
       <View style={styles.viewDetailValueItem}>
@@ -1270,6 +1341,21 @@ const Cart = props => {
     );
   };
 
+  const newFooter = () => {
+    const disabled = handleDisabledPaymentButton(basket?.orderingMode);
+
+    if (additionalSetting().cartVersion === 'basic') {
+      return renderFooter();
+    }
+    return (
+      <GrandTotalFloating
+        onPressBtn={handleClickButtonPayment}
+        btnText={'Checkout'}
+        disabledBtn={disabled}
+      />
+    );
+  };
+
   const renderFooter = () => {
     const result = seeDetail ? renderDetail() : renderPayment();
 
@@ -1285,7 +1371,9 @@ const Cart = props => {
     );
 
     const orderingTypeValue = orderingMode?.displayName;
-
+    const dateValue = availablePreorderDate
+      ? {date: availableTimes[0]?.date}
+      : orderingDateTimeSelected;
     return (
       <>
         <DeliveryProviderSelectorModal
@@ -1297,7 +1385,7 @@ const Cart = props => {
         />
         <DateSelectorModal
           orderingMode={basket?.orderingMode}
-          value={orderingDateTimeSelected}
+          value={dateValue}
           open={openDeliveryDateModal}
           handleClose={() => {
             handleCloseDeliveryDateModal();
@@ -1380,16 +1468,52 @@ const Cart = props => {
     Actions.pop();
   }
 
+  const setAvailablePreOrder = date => {
+    setAvailablePreorderDate(date);
+  };
+
+  const setAvailableSelection = data => {
+    saveAvailableSelection(data);
+  };
+
+  const handleItemSelection = status => {
+    setItemSelection(status);
+  };
+
+  const renderStep = () => {
+    if (props.step) {
+      return (
+        <View>
+          <GlobalText style={styles.stepText}>
+            Step {props.step} of 4
+          </GlobalText>
+        </View>
+      );
+    }
+    return null;
+  };
+
   return (
     <SafeAreaView style={styles.root}>
-      <Header title="Cart" />
+      <Header
+        customRightIcon={renderStep}
+        title={props.step ? 'Order Details' : 'Cart'}
+      />
       <LoadingScreen loading={isLoading} />
       <View style={styles.container}>
         <Body>
           <ScrollView>
-            {renderAddButton()}
-            <ProductCartList />
-            <View style={styles.divider} />
+            <ProductCartList
+              setAvailaleForSelection={setAvailableSelection}
+              setAvailablePreorderDate={setAvailablePreOrder}
+              step={props.step}
+            />
+            {availableSelection.length > 0 ? (
+              <OrderDetailCart
+                itemSelection={itemSelection}
+                setSelectSelection={handleItemSelection}
+              />
+            ) : null}
             {renderOrderValidation()}
             {renderDeliveryProviderTermsAndConditions()}
             {renderOutlet()}
@@ -1401,7 +1525,8 @@ const Cart = props => {
         </Body>
         {renderModal()}
       </View>
-      {renderFooter()}
+      {newFooter()}
+      {/* {renderFooter()} */}
       <ModalError
         title={errorMessage.title}
         description={errorMessage.description}
@@ -1409,6 +1534,7 @@ const Cart = props => {
         isOpen={isOffline}
         onOk={onPressOkError}
       />
+      {/* <ModalOrderDetail open={seeDetail} closeModal={handleCloseDetail} /> */}
     </SafeAreaView>
   );
 };

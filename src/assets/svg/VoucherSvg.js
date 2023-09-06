@@ -3,7 +3,6 @@ import Svg, {Path} from 'react-native-svg';
 import Theme from '../../theme/Theme';
 const VoucherSvg = props => {
   const {colors} = Theme();
-
   return (
     <Svg
       width={22}

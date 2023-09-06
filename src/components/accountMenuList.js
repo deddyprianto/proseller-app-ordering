@@ -649,7 +649,7 @@ class AccountMenuList extends Component {
             </View>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => Actions.termsCondition()}
+            onPress={() => Actions.termsAndConditions()}
             style={styles.cardMenu}>
             <View style={styles.itemMenu}>
               <Fontisto

@@ -13,6 +13,8 @@ import {
   normalizeLayoutSizeHeight,
   normalizeLayoutSizeWidth,
 } from '../../../helper/Layout';
+import BackButton from '../../../assets/svg/BackButton';
+import useSettings from '../../../hooks/settings/useSettings';
 
 const useStyles = () => {
   const theme = Theme();
@@ -45,9 +47,11 @@ const useStyles = () => {
       alignItems: 'flex-start',
     },
     containerCenter: {
-      elevation: 1,
       flex: 2,
       alignItems: 'center',
+    },
+    containerLeftTitle: {
+      flex: 8,
     },
     containerRight: {
       flex: 1,
@@ -96,8 +100,11 @@ const useStyles = () => {
       height: 18,
       tintColor: theme.colors.textQuaternary,
     },
+    primaryColor: {
+      backgroundColor: theme.colors.primary,
+    },
   });
-  return styles;
+  return {styles, color: theme.colors};
 };
 
 const Header = ({
@@ -115,8 +122,13 @@ const Header = ({
   handleSearchInput,
   searchPlaceholder,
   onBackBtn,
+  leftTitle,
+  usingPrimaryColor,
+  rootStyle,
+  customRightIcon,
 }) => {
-  const styles = useStyles();
+  const {styles, color} = useStyles();
+  const {useCartVersion} = useSettings();
   const [isOpenScanner, setIsOpenScanner] = useState(false);
   const [isSearch, setIsSearch] = useState(false);
   const {appName} = appConfig;
@@ -152,7 +164,12 @@ const Header = ({
 
   const renderDefaultTitle = () => {
     return (
-      <Text style={styles.textHeader} numberOfLines={1}>
+      <Text
+        style={[
+          styles.textHeader,
+          {color: usingPrimaryColor ? 'white' : color.primary},
+        ]}
+        numberOfLines={1}>
         {title}
       </Text>
     );
@@ -180,7 +197,8 @@ const Header = ({
   const renderBackIcon = () => {
     return (
       <TouchableOpacity onPress={onBackBtnHandle}>
-        <Image source={appConfig.iconArrowLeft} style={styles.iconBack} />
+        <BackButton color={usingPrimaryColor ? 'white' : color.primary} />
+        {/* <Image source={appConfig.iconArrowLeft} style={styles.iconBack} /> */}
       </TouchableOpacity>
     );
   };
@@ -188,11 +206,9 @@ const Header = ({
   const renderCartIcon = () => {
     if (cart) {
       return (
-        <TouchableOpacity
-          onPress={() => {
-            Actions.cart();
-          }}>
-          <Image source={appConfig.iconCart} style={styles.icon} />
+        <TouchableOpacity onPress={useCartVersion}>
+          <BackButton />
+          {/* <Image source={appConfig.iconCart} style={styles.icon} /> */}
         </TouchableOpacity>
       );
     }
@@ -268,6 +284,13 @@ const Header = ({
     }
   };
 
+  const customRightIconHandle = () => {
+    if (customRightIcon) {
+      return customRightIcon();
+    }
+    return null;
+  };
+
   const renderIconRightWrap = () => {
     return (
       <View style={styles.flexRowCenter}>
@@ -275,16 +298,34 @@ const Header = ({
         {renderCartIcon()}
         {renderScannerIcon()}
         {renderRemoveIcon()}
+        {customRightIconHandle()}
       </View>
     );
   };
 
+  const handleStyleTitleContainer = () => {
+    if (leftTitle) {
+      return styles.containerLeftTitle;
+    }
+    return styles.containerCenter;
+  };
+
+  const handleBgHeader = () => {
+    if (usingPrimaryColor) {
+      return [styles.container, styles.primaryColor];
+    }
+    return [styles.container];
+  };
+
   const renderDefaultHeader = () => {
     return (
-      <View style={styles.container}>
+      <View style={handleBgHeader()}>
         <Scanner open={isOpenScanner} handleClose={handleCloseScanner} />
         <View style={styles.containerLeft}>{renderIconLeftWrap()}</View>
-        <View style={styles.containerCenter}>{renderIconCenterWrap()}</View>
+
+        <View style={[handleStyleTitleContainer()]}>
+          {renderIconCenterWrap()}
+        </View>
         <View style={styles.containerRight}>{renderIconRightWrap()}</View>
       </View>
     );
@@ -319,7 +360,7 @@ const Header = ({
     }
   };
 
-  return <View style={styles.root}>{renderHeader()}</View>;
+  return <View style={[styles.root, rootStyle]}>{renderHeader()}</View>;
 };
 
 export default Header;

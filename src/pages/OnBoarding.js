@@ -14,7 +14,7 @@ import {
 
 import appConfig from '../config/appConfig';
 import {useDispatch} from 'react-redux';
-import {getLoginSettings} from '../actions/setting.action';
+import {getDialCodes, getLoginSettings} from '../actions/setting.action';
 import Theme from '../theme';
 
 const WIDTH = Dimensions.get('window').width;
@@ -105,6 +105,7 @@ const OnBoarding = () => {
   useEffect(() => {
     const loadData = async () => {
       await dispatch(getLoginSettings());
+      await dispatch(getDialCodes());
     };
     return loadData();
   }, [dispatch]);

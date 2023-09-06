@@ -6,9 +6,13 @@ const appConfig = {
   appName: 'acemart',
   appMataUang: 'SGD',
   appVersion: 'Version 1.1',
+  oneMapBaseUrl: 'https://www.onemap.gov.sg',
 
   // other setting
   descriptionLineProduct: '2',
+  contactUsVersion: '',
+  modifierType: 'textOnly',
+  pointType: 'manualPointEntry',
 
   // image company
   appImageNull: require('../assets/img/logo.png'),
@@ -73,6 +77,8 @@ const appConfig = {
   // imageOnBoarding2: require('../assets/img/image-on-boarding-2.png'),
   // imageOnBoarding3: require('../assets/img/image-on-boarding-3.png'),
 
+  imageMail: require('../assets/img/image-mail.png'),
+
   imageOrderNotAvailable: require('../assets/img/image-order-not-available.png'),
 
   imagePromotionBackground: require('../assets/img/image-promotion-background.png'),
@@ -91,6 +97,7 @@ const appConfig = {
   iconCheck: require('../assets/img/icon-check.png'),
   iconClose: require('../assets/img/icon-close.png'),
   iconCopy: require('../assets/img/icon-copy.png'),
+  iconContactUs: require('../assets/img/icon-contact-us.png'),
 
   iconDelete: require('../assets/img/icon-delete.png'),
   iconDeliveryProvider: require('../assets/img/icon-delivery-provider.png'),
@@ -133,6 +140,7 @@ const appConfig = {
   iconPayment: require('../assets/img/icon-payment.png'),
   iconProfile: require('../assets/img/icon-profile.png'),
   iconPromoStar: require('../assets/img/icon-promo-star.png'),
+  iconPrivacyPolicy: require('../assets/img/icon-privacy-policy.png'),
 
   iconQRCode: require('../assets/img/icon-qr-code.png'),
 

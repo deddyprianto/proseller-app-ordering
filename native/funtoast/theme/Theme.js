@@ -62,9 +62,11 @@ const Theme = () => {
     textTertiary: '#B7B7B7',
     textQuaternary: '#CF3030',
     textError: '#CE1111',
+    textBrand: '#CF3030',
 
     semanticError: '#CE1111',
     semanticSuccess: '#5CD523',
+    semanticColorError: '#C81720',
 
     brandPrimary: '#CF3030',
     brandSecondary: '#FFFFFF',
@@ -85,6 +87,8 @@ const Theme = () => {
     backgroundTransparent3: '#00000099',
     inactiveDot: '#D6D6D6',
     errorColor: '#CE1111',
+    successColor: '#438E49',
+    colorPointPlus: '#4EBE19',
   };
 
   const fontSize = {

@@ -35,24 +35,24 @@ const useStyles = () => {
       fontSize: theme.fontSize[12],
       fontFamily: theme.fontFamily.poppinsSemiBold,
     },
-    viewSnackbarFailed: {
+    viewSnackbarFailed: background => ({
       width: '100%',
       padding: 14,
       borderRadius: 8,
       display: 'flex',
       flexDirection: 'row',
       alignItems: 'center',
-      backgroundColor: theme.colors.snackbarFailed,
-    },
-    viewSnackbarSuccess: {
+      backgroundColor: background ? background : theme.colors.snackbarFailed,
+    }),
+    viewSnackbarSuccess: background => ({
       width: '100%',
       padding: 14,
       borderRadius: 8,
       display: 'flex',
       flexDirection: 'row',
       alignItems: 'center',
-      backgroundColor: theme.colors.snackbarSuccess,
-    },
+      backgroundColor: background ? background : theme.colors.snackbarSuccess,
+    }),
     viewIcon: {
       width: 20,
       height: 20,
@@ -92,6 +92,10 @@ const Snackbar = () => {
 
   const message = useSelector(state => state.settingReducer.snackbar.message);
   const type = useSelector(state => state.settingReducer.snackbar.type);
+  const background = useSelector(
+    state => state.settingReducer.snackbar?.background,
+  );
+
   const open = message ? true : false;
 
   useEffect(() => {
@@ -137,7 +141,7 @@ const Snackbar = () => {
 
   const renderSnackbarSuccess = () => {
     return (
-      <View style={styles.viewSnackbarSuccess}>
+      <View style={styles.viewSnackbarSuccess(background)}>
         <View style={styles.viewIcon}>
           <Image source={appConfig.iconCheck} style={styles.iconCheck} />
         </View>
@@ -148,7 +152,7 @@ const Snackbar = () => {
 
   const renderSnackbarFailed = () => {
     return (
-      <View style={styles.viewSnackbarFailed}>
+      <View style={styles.viewSnackbarFailed(background)}>
         <View style={styles.viewIcon}>
           <Image source={appConfig.iconClose} style={styles.iconClose} />
         </View>

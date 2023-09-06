@@ -287,17 +287,9 @@ export const checkPromo = codeVoucher => {
         200,
         token,
       );
-
       if (response.success) {
-        if (isEmptyArray(response.responseBody.Data)) {
-          return {
-            status: false,
-            message: response.responseBody.message || 'Promo Code Invalid!',
-          };
-        }
-
-        response.responseBody.Data[0].status = true;
-        return response.responseBody.Data[0];
+        response.responseBody.Data.status = true;
+        return response.responseBody.Data;
       } else {
         return {
           status: false,

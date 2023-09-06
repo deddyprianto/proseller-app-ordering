@@ -4,7 +4,7 @@
  * PT Edgeworks
  */
 
-import React, {useState} from 'react';
+import React from 'react';
 import DashedLine from 'react-native-dashed-line';
 
 import {
@@ -24,10 +24,11 @@ import appConfig from '../../../config/appConfig';
 import CurrencyFormatter from '../../../helper/CurrencyFormatter';
 import {isEmptyArray} from '../../../helper/CheckEmpty';
 
-import ProductAddModal from '../../productAddModal';
-
 import Theme from '../../../theme';
 import {useSelector} from 'react-redux';
+import PreorderLabel from '../../label/Preorder';
+import AllowSelfSelectionLabel from '../../label/AllowSelfSelection';
+import {Actions} from 'react-native-router-flux';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -241,6 +242,10 @@ const useStyles = () => {
       fontSize: theme.fontSize[14],
       fontFamily: theme.fontFamily.poppinsMedium,
     },
+    viewLabel: {
+      flexDirection: 'row',
+      marginBottom: 12,
+    },
     viewNotes: {
       display: 'flex',
       flexDirection: 'row',
@@ -338,13 +343,15 @@ const useStyles = () => {
     dividerDashedUnavailable: {
       color: theme.colors.textTertiary,
     },
+    preOrderContainer: {
+      width: '25%',
+    },
   });
   return styles;
 };
 
 const ProductCartItem = ({item, disabled}) => {
   const styles = useStyles();
-  const [isOpenAddModal, setIsOpenAddModal] = useState(false);
 
   const orderingMode = useSelector(
     state => state.orderReducer?.dataBasket?.product?.orderingMode,
@@ -355,13 +362,6 @@ const ProductCartItem = ({item, disabled}) => {
   );
   const isProductUnavailable =
     item?.orderingStatus !== 'AVAILABLE' && orderingMode !== 'STORECHECKOUT';
-
-  const handleOpenAddModal = () => {
-    setIsOpenAddModal(true);
-  };
-  const handleCloseAddModal = () => {
-    setIsOpenAddModal(false);
-  };
 
   const renderDividerDashed = () => {
     const styleColor = isProductUnavailable
@@ -615,33 +615,43 @@ const ProductCartItem = ({item, disabled}) => {
     );
   };
 
-  const renderProductAddModal = () => {
-    if (isOpenAddModal) {
-      return (
-        <ProductAddModal
-          product={item?.product}
-          open={isOpenAddModal}
-          handleClose={() => {
-            handleCloseAddModal();
-          }}
-          selectedProduct={item}
-        />
-      );
+  const renderPreOrder = () => {
+    if (item?.isPreOrderItem) {
+      return <PreorderLabel containerStyle={styles.preOrderContainer} />;
     }
+    return null;
   };
+
+  const renderAllowSelection = () => {
+    if (item.product?.allowSelfSelection) {
+      return <AllowSelfSelectionLabel />;
+    }
+    return null;
+  };
+
+  const renderLabel = () => (
+    <View style={styles.viewLabel}>
+      {renderAllowSelection()}
+      {renderPreOrder()}
+    </View>
+  );
 
   return (
     <TouchableOpacity
       style={styles.root}
       onPress={() => {
-        handleOpenAddModal();
+        Actions.productDetail({
+          productId: item?.product?.id,
+          selectedProduct: item,
+          prevPage: Actions.currentScene,
+        });
       }}>
+      {renderLabel()}
       {renderBody()}
       {renderDividerDashed()}
       {renderFooter()}
-      {renderProductAddModal()}
     </TouchableOpacity>
   );
 };
 
-export default ProductCartItem;
+export default React.memo(ProductCartItem);

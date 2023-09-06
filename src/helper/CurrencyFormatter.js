@@ -1,54 +1,21 @@
 const config = require('../config/awsConfig');
 
-const currencyCode = `${config.default.CURRENCY} `; // IDR or USD
-const currencyPosition = 'left'; // left or right
-const maxFractionDigits = 2;
-const decimalSeparator = ',';
-const thousandSeparator = '.';
+const CurrencyFormatter = price => {
+  const currencyCode = `${config.default.CURRENCY}`;
+  const currencyLocale = `${config.default.LOCALES}`;
 
-function position(currencyPosition, value) {
-  return currencyPosition === 'left'
-    ? `${currencyCode}${value}`
-    : `${value}${currencyCode}`;
-}
-
-const CurrencyFormatter = value => {
-  var string = 'string';
-  var result;
-
-  if (
-    value === 0 ||
-    value === null ||
-    value === undefined ||
-    value === '0' ||
-    typeof value === string
-  ) {
-    return position(currencyPosition, 0);
+  if (!price || price === '-') {
+    price = 0;
   }
 
-  let currencyCheck = currencyCode.replace(/\s/g, '').toLowerCase();
-  // if (currencyCheck === 'idr' || currencyCheck === 'rp') {
-  //   value = Math.ceil(value);
-  // }
+  let priceFormatted = price.toLocaleString(currencyLocale, {
+    style: 'currency',
+    currency: currencyCode,
+  });
 
-  const valueSplit = String(value.toFixed(maxFractionDigits)).split(
-    `${thousandSeparator}`,
-  );
-  const firstvalue = valueSplit[0];
-  const secondvalue = valueSplit[1];
-  const valueReal = String(firstvalue).replace(
-    /\B(?=(\d{3})+(?!\d))/g,
-    `${thousandSeparator}`,
-  );
-
-  if (Number(secondvalue) > 0) {
-    result = position(
-      currencyPosition,
-      `${valueReal}${thousandSeparator}${secondvalue}`,
-    );
-  } else {
-    result = position(currencyPosition, `${valueReal}`);
-  }
+  const priceFormattedSplit = priceFormatted.split(currencyCode);
+  const onlyPrice = priceFormattedSplit[1];
+  const result = `${currencyCode} ${onlyPrice}`;
 
   return result;
 };

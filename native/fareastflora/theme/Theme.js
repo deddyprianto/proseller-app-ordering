@@ -42,7 +42,7 @@ const Theme = () => {
     textButtonColor: colorSettings?.textButtonColor || 'black',
     textWarningColor: colorSettings?.textWarningColor || 'black',
 
-    snackbarSuccess: '#5CD423',
+    snackbarSuccess: '#1A883C',
     snackbarFailed: '#CF3030',
 
     //new version
@@ -62,9 +62,10 @@ const Theme = () => {
     textTertiary: '#B7B7B7',
     textQuaternary: '#003F24',
     textError: '#CE1111',
-
+    textBrand: '#438E49',
     semanticError: '#CE1111',
     semanticSuccess: '#5CD523',
+    semanticColorError: '#C81720',
 
     brandPrimary: '#003F24',
     brandSecondary: '#FFFFFF',
@@ -85,6 +86,8 @@ const Theme = () => {
     backgroundTransparent3: '#00000099',
     inactiveDot: '#D6D6D6',
     errorColor: '#CE1111',
+    successColor: '#438E49',
+    colorPointPlus: '#4EBE19',
   };
 
   const fontSize = {

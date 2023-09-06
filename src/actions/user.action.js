@@ -267,30 +267,55 @@ export const updateUser = payload => {
         },
       } = state;
 
-      const response = await fetchApi(
-        '/customer/updateProfile',
-        'PUT',
-        payload,
-        200,
-        token,
-      );
+      if (token) {
+        const response = await fetchApi(
+          '/customer/updateProfile',
+          'PUT',
+          payload,
+          200,
+          token,
+        );
 
-      // encrypt user data before save to asyncstorage
-      const dataUser = CryptoJS.AES.encrypt(
-        JSON.stringify(response.responseBody.Data),
-        awsConfig.PRIVATE_KEY_RSA,
-      ).toString();
+        // encrypt user data before save to async storage
+        const dataUser = CryptoJS.AES.encrypt(
+          JSON.stringify(response.responseBody.Data),
+          awsConfig.PRIVATE_KEY_RSA,
+        ).toString();
 
-      if (response.success) {
-        dispatch({
-          type: 'GET_USER_SUCCESS',
-          payload: dataUser,
-        });
+        if (response.success) {
+          dispatch({
+            type: 'GET_USER_SUCCESS',
+            payload: dataUser,
+          });
+        }
+
+        return response;
       }
-
-      return response;
     } catch (error) {
       return error;
+    }
+  };
+};
+
+export const verificationUser = payload => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    const {
+      authReducer: {
+        tokenUser: {token},
+      },
+    } = state;
+    try {
+      const url = '/customer/account-verification';
+      const response = await fetchApi(url, 'POST', payload, 200, token);
+      if (response.success) {
+        dispatch(getUserProfile());
+      }
+      return response;
+    } catch (e) {
+      if (__DEV__) {
+        console.log(e, 'error');
+      }
     }
   };
 };

@@ -25,13 +25,16 @@ const useStyles = () => {
       shadowColor: theme.colors.greyScale2,
       elevation: 3,
       backgroundColor: 'white',
+      height: 52,
+      alignItems: 'center',
     },
     backButtonContainer: {
-      marginRight: 'auto',
+      position: 'absolute',
+      left: 16,
     },
-    lofoContainer: {
-      marginLeft: 'auto',
-    },
+    lofoContainer: isCenter => ({
+      marginLeft: isCenter ? 0 : 'auto',
+    }),
     logoStyle: {
       height: normalizeLayoutSizeHeight(28),
       width: normalizeLayoutSizeWidth(105),
@@ -40,7 +43,7 @@ const useStyles = () => {
   return {styles};
 };
 
-const HeaderV2 = ({onBackBtn}) => {
+const HeaderV2 = ({onBackBtn, isCenterLogo}) => {
   const {styles} = useStyles();
   const onBack = () => {
     if (onBackBtn && typeof onBackBtn === 'function') {
@@ -54,8 +57,8 @@ const HeaderV2 = ({onBackBtn}) => {
       <View style={styles.backButtonContainer}>
         <BackButton onPress={onBack} />
       </View>
-      <View style={styles.lofoContainer}>
-        <Image style={styles.logoStyle} source={Logo} />
+      <View style={styles.lofoContainer(isCenterLogo)}>
+        <Image resizeMode="contain" style={styles.logoStyle} source={Logo} />
       </View>
     </View>
   );

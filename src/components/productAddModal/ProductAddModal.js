@@ -17,10 +17,12 @@ import {
   Modal,
   TextInput,
   Platform,
+  useWindowDimensions,
 } from 'react-native';
 
-import IconIonicons from 'react-native-vector-icons/Ionicons';
 import DeviceInfo from 'react-native-device-info';
+
+import RenderHtml from 'react-native-render-html';
 
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview';
 
@@ -39,6 +41,11 @@ import ProductVariants from './components/ProductVariants';
 import ProductModifiers from './components/ProductModifiers';
 import ProductPromotions from './components/ProductPromotions';
 import {SafeAreaView} from 'react-navigation';
+import PreorderLabel from '../label/Preorder';
+import CloseSvg from '../../assets/svg/CloseSvg';
+import AllowSelfSelectionLabel from '../label/AllowSelfSelection';
+import ProductImages from './components/ProductImages';
+import {getProductById} from '../../actions/product.action';
 
 const useStyles = () => {
   const theme = Theme();
@@ -47,7 +54,6 @@ const useStyles = () => {
       flex: 1,
     },
     container: {
-      flex: 2,
       width: '100%',
       backgroundColor: theme.colors.background,
     },
@@ -69,11 +75,11 @@ const useStyles = () => {
       aspectRatio: 1 / 1,
     },
     textHeader: {
-      fontSize: theme.fontSize[14],
+      fontSize: theme.fontSize[16],
       color: theme.colors.text1,
-      fontFamily: theme.fontFamily.poppinsRegular,
+      fontFamily: theme.fontFamily.poppinsMedium,
     },
-    textAddToCartButton: {
+    textCartButton: {
       fontSize: theme.fontSize[12],
       color: theme.colors.textButtonDisabled,
       fontFamily: theme.fontFamily.poppinsMedium,
@@ -81,7 +87,7 @@ const useStyles = () => {
     textPrice: {
       fontSize: theme.fontSize[14],
       color: theme.colors.primary,
-      fontFamily: theme.fontFamily.poppinsMedium,
+      fontFamily: theme.fontFamily.poppinsBold,
     },
     textName: {
       fontSize: theme.fontSize[14],
@@ -101,10 +107,10 @@ const useStyles = () => {
       fontFamily: theme.fontFamily.poppinsRegular,
     },
     textDescription: {
-      padding: 16,
-      fontSize: theme.fontSize[14],
+      marginBottom: 8,
+      fontSize: theme.fontSize[16],
       color: theme.colors.textPrimary,
-      fontFamily: theme.fontFamily.poppinsMedium,
+      fontFamily: theme.fontFamily.poppinsSemiBold,
     },
     viewNameAndPrice: {
       width: '70%',
@@ -117,6 +123,7 @@ const useStyles = () => {
       alignItems: 'center',
       paddingHorizontal: 16,
       marginBottom: 16,
+      marginTop: 4,
     },
     viewTextAndButtonQty: {
       display: 'flex',
@@ -124,7 +131,7 @@ const useStyles = () => {
       justifyContent: 'space-between',
       alignItems: 'center',
     },
-    viewAddToCartButton: {
+    viewCartButton: {
       padding: 16,
       backgroundColor: 'white',
       borderColor: '#D6D6D6',
@@ -136,8 +143,10 @@ const useStyles = () => {
       paddingVertical: 12,
       paddingHorizontal: 16,
     },
-
-    touchableAddToCartButton: {
+    viewDescription: {
+      padding: 16,
+    },
+    touchableCartButton: {
       borderRadius: 8,
       justifyContent: 'center',
       alignItems: 'center',
@@ -145,7 +154,7 @@ const useStyles = () => {
       backgroundColor: theme.colors.primary,
     },
 
-    touchableAddToCartButtonDisabled: {
+    touchableCartButtonDisabled: {
       borderRadius: 8,
       justifyContent: 'center',
       alignItems: 'center',
@@ -188,7 +197,7 @@ const useStyles = () => {
       tintColor: theme.colors.background,
     },
     iconClose: {
-      fontSize: 30,
+      fontSize: 24,
       position: 'absolute',
       right: 17,
     },
@@ -204,14 +213,56 @@ const useStyles = () => {
     marginTopIphone14Pro: {
       marginTop: 35,
     },
+    preorderStyle: {
+      display: 'flex',
+      width: '20%',
+    },
+    containerPreOrder: {
+      paddingHorizontal: 16,
+    },
+    row: {
+      flexDirection: 'row',
+    },
   });
   return result;
 };
 
-const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
+const webStyles = StyleSheet.create({
+  li: {
+    fontFamily: 'Poppins-Medium',
+    fontSize: 14,
+  },
+  strong: {
+    fontFamily: 'Poppins-Bold',
+    fontSize: 14,
+  },
+  ol: {
+    fontFamily: 'Poppins-Bold',
+    fontSize: 14,
+  },
+  ul: {
+    fontFamily: 'Poppins-Medium',
+    fontSize: 14,
+  },
+  img: {
+    marginBottom: 30,
+  },
+  p: {
+    marginTop: -5,
+    marginBottom: -5,
+    fontFamily: 'Poppins-Medium',
+  },
+});
+
+const ProductAddModal = ({
+  open,
+  handleClose,
+  productId,
+  selectedProduct,
+  promotionDisabled,
+}) => {
   const styles = useStyles();
   const dispatch = useDispatch();
-
   const [isLoading, setIsLoading] = useState(false);
 
   const [notes, setNotes] = useState('');
@@ -229,12 +280,23 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
   const [selectedVariantOptions, setSelectedVariantOptions] = useState([]);
   const [selectedProductModifiers, setSelectedProductModifiers] = useState([]);
 
+  const [product, setProduct] = useState({});
+
   const defaultOutlet = useSelector(
     state => state.storesReducer.defaultOutlet.defaultOutlet,
   );
-  const imageSettings = useSelector(
-    state => state.settingReducer.imageSettings,
-  );
+
+  const {width} = useWindowDimensions();
+
+  useEffect(() => {
+    const loadData = async () => {
+      setIsLoading(true);
+      const response = await dispatch(getProductById(productId));
+      setProduct(response);
+      setIsLoading(false);
+    };
+    loadData();
+  }, [productId]);
 
   useEffect(() => {
     const loadData = async () => {
@@ -420,6 +482,16 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
     }
   }, []);
 
+  const handleTextCartButton = () => {
+    if (qty === 0) {
+      return 'Remove';
+    } else if (!isEmptyObject(selectedProduct)) {
+      return `Update - ${currencyFormatter(totalPrice)}`;
+    } else {
+      return `Add to Cart - ${currencyFormatter(totalPrice)}`;
+    }
+  };
+
   const handleAddOrUpdateProduct = async () => {
     setIsLoading(true);
     const isSpecialBarcode = product?.isSpecialBarcode;
@@ -453,8 +525,8 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
     handleClose();
   };
 
-  const handleDisabledAddToCartButton = () => {
-    if (!isEmptyArray(product?.productModifiers) && !isLoading) {
+  const handleDisabledCartButton = () => {
+    if (!isEmptyArray(product?.productModifiers) && !isLoading && qty !== 0) {
       let qtyModifierSelected = 0;
       const productModifiers = product.productModifiers.map(productModifier => {
         const min = productModifier.modifier?.min || 0;
@@ -484,17 +556,9 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
   };
 
   const renderImage = () => {
-    const image =
-      variantImageURL || product?.defaultImageURL
-        ? variantImageURL || product?.defaultImageURL
-        : imageSettings.productPlaceholderImage;
     return (
       <View style={styles.padding16}>
-        <Image
-          style={styles.image}
-          resizeMode="stretch"
-          source={{uri: image}}
-        />
+        <ProductImages product={product} />
       </View>
     );
   };
@@ -512,10 +576,12 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
   };
 
   const renderButtonMinus = () => {
+    const isEdit = !isEmptyObject(selectedProduct);
+    const isDisabled = isEdit ? qty === 0 : qty === 1;
     return (
       <TouchableOpacity
         style={styles.touchableMinus}
-        disabled={qty === 0}
+        disabled={isDisabled}
         onPress={() => {
           setQty(qty - 1);
         }}>
@@ -593,24 +659,23 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
     }
   };
 
-  const renderAddToCartButton = () => {
-    const disabled = handleDisabledAddToCartButton();
+  const renderCartButton = () => {
+    const disabled = handleDisabledCartButton();
     const styleDisabled = disabled
-      ? styles.touchableAddToCartButtonDisabled
-      : styles.touchableAddToCartButton;
+      ? styles.touchableCartButtonDisabled
+      : styles.touchableCartButton;
 
-    const text =
-      qty === 0 ? 'Remove' : `Add To Cart - ${currencyFormatter(totalPrice)}`;
+    const text = handleTextCartButton();
 
     return (
-      <View style={styles.viewAddToCartButton}>
+      <View style={styles.viewCartButton}>
         <TouchableOpacity
           style={styleDisabled}
           disabled={disabled}
           onPress={() => {
             handleAddOrUpdateProduct();
           }}>
-          <Text style={styles.textAddToCartButton}>{text}</Text>
+          <Text style={styles.textCartButton}>{text}</Text>
         </TouchableOpacity>
       </View>
     );
@@ -620,12 +685,11 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
     return (
       <View style={styles.header}>
         <Text style={styles.textHeader}>{product?.categoryName}</Text>
-        <IconIonicons
-          name="md-close"
+        <CloseSvg
+          height={23}
+          width={23}
           style={styles.iconClose}
-          onPress={() => {
-            handleClose();
-          }}
+          onPress={handleClose}
         />
       </View>
     );
@@ -664,7 +728,12 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
 
   const renderProductPromotions = () => {
     if (!isEmptyArray(product?.promotions)) {
-      return <ProductPromotions productPromotions={product?.promotions} />;
+      return (
+        <ProductPromotions
+          productPromotions={product?.promotions}
+          disabled={promotionDisabled}
+        />
+      );
     }
   };
 
@@ -673,9 +742,48 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
       return (
         <View>
           <View style={styles.divider} />
-          <Text style={styles.textDescription}>{product.description}</Text>
+          <View style={styles.viewDescription}>
+            <Text style={styles.textDescription}>Description</Text>
+            <RenderHtml
+              source={{html: `${product.description}`}}
+              contentWidth={width}
+              tagsStyles={webStyles}
+            />
+          </View>
         </View>
       );
+    }
+  };
+
+  const renderProductCustomFieldItem = item => {
+    return (
+      <View>
+        <View style={styles.divider} />
+        <View style={styles.viewDescription}>
+          <Text style={styles.textDescription}>{item.name}</Text>
+          <RenderHtml
+            source={{html: `${item.value}`}}
+            contentWidth={width}
+            tagsStyles={webStyles}
+          />
+        </View>
+      </View>
+    );
+  };
+
+  const renderProductCustomFields = () => {
+    const customFiltered = product?.custom?.filter(
+      row => row?.showToCustomer && row?.value,
+    );
+
+    if (!isEmptyArray(customFiltered)) {
+      const result = customFiltered?.map((row, index) => {
+        if (index <= 2) {
+          return renderProductCustomFieldItem(row);
+        }
+      });
+
+      return result;
     }
   };
 
@@ -704,6 +812,30 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
     return null;
   }
 
+  const renderPreOrderLabel = () => {
+    if (selectedProduct?.isPreOrderItem || product?.isPreOrderItem) {
+      return <PreorderLabel />;
+    }
+    return null;
+  };
+
+  const renderLabelAvailSelection = () => {
+    if (
+      selectedProduct?.product?.allowSelfSelection ||
+      product?.allowSelfSelection
+    ) {
+      return <AllowSelfSelectionLabel />;
+    }
+    return null;
+  };
+
+  const renderLabel = () => (
+    <View style={[styles.row, styles.containerPreOrder]}>
+      {renderLabelAvailSelection()}
+      {renderPreOrderLabel()}
+    </View>
+  );
+
   return (
     <Modal
       animationType="slide"
@@ -716,17 +848,18 @@ const ProductAddModal = ({open, handleClose, product, selectedProduct}) => {
       <SafeAreaView forceInset={{bottom: 'never'}} style={styles.root}>
         {renderMarginTop()}
         {header()}
-        <View style={styles.divider} />
         <KeyboardAwareScrollView style={styles.container}>
           {renderImage()}
+          {renderLabel()}
           {renderNameQtyPrice()}
-          {renderProductDescription()}
           {renderProductPromotions()}
+          {renderProductDescription()}
           {renderProductModifiers()}
           {renderProductVariants()}
+          {renderProductCustomFields()}
           {renderSpecialInstruction()}
         </KeyboardAwareScrollView>
-        {renderAddToCartButton()}
+        {renderCartButton()}
       </SafeAreaView>
     </Modal>
   );

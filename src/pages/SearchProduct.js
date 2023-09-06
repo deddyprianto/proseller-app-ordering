@@ -44,6 +44,7 @@ import SearchSuggestionList from '../components/searchSuggestionList/SearchSugge
 import Theme from '../theme';
 import AnimationMessage from '../components/animationMessage';
 import {normalizeLayoutSizeHeight} from '../helper/Layout';
+import useSettings from '../hooks/settings/useSettings';
 
 const useStyles = () => {
   const theme = Theme();
@@ -226,6 +227,7 @@ const SearchProduct = ({category}) => {
   const searchProductHistory = useSelector(
     state => state.searchReducer?.searchProductHistory,
   );
+  const {useCartVersion} = useSettings();
 
   useEffect(() => {
     let length = 0;
@@ -243,22 +245,30 @@ const SearchProduct = ({category}) => {
     }
   }, [category]);
 
-  const getBySubCategory = async id => {
-    await dispatch(
+  const getBySubCategory = async (id, query) => {
+    let newSearchQuery = searchQuery;
+    if (query) {
+      newSearchQuery = query;
+    }
+    const response = await dispatch(
       getProductBySubCategory({
         outletId: defaultOutlet.id,
         subCategoryId: id,
-        searchQuery,
+        searchQuery: newSearchQuery,
       }),
     );
   };
 
-  const getSubCategories = async id => {
+  const getCategories = async (id, query) => {
+    let newSearchQuery = searchQuery;
+    if (query) {
+      newSearchQuery = query;
+    }
     const response = await dispatch(
       getProductSubCategories({
         outletId: defaultOutlet.id,
         categoryId: id,
-        searchQuery,
+        searchQuery: newSearchQuery,
       }),
     );
     if (!isEmptyArray(response)) {
@@ -267,10 +277,10 @@ const SearchProduct = ({category}) => {
     }
   };
 
-  const getCategoryProduct = async id => {
+  const getCategoryProduct = async (id, query) => {
     setIsLoading(true);
-    await getBySubCategory(id);
-    await getSubCategories(id);
+    await getBySubCategory(id, query);
+    await getCategories(id, query);
     setTimeout(() => {
       setIsLoading(false);
     }, 350);
@@ -325,6 +335,7 @@ const SearchProduct = ({category}) => {
   const handleSearchProductWithCategory = async value => {
     setSearchTextInput('');
     setSearchQuery(value);
+    getCategoryProduct(selectedCategory?.id, value);
     await dispatch(setSearchProductHistory({searchQuery: value}));
   };
 
@@ -342,9 +353,7 @@ const SearchProduct = ({category}) => {
       return (
         <TouchableOpacity
           style={styles.viewButtonCart}
-          onPress={() => {
-            Actions.cart();
-          }}>
+          onPress={useCartVersion}>
           <View style={styles.viewIconAndTextCart}>
             <Image source={appConfig.iconCart} style={styles.iconCart} />
             <Text style={styles.textButtonCart}>
@@ -603,7 +612,7 @@ const SearchProduct = ({category}) => {
     const isSelectedCategory = !isEmptyObject(selectedCategory);
     if (searchQuery && !isSelectedCategory) {
       return renderProductSearchByQuery();
-    } else if (isSelectedCategory && searchTextInput) {
+    } else if (isSelectedCategory && searchTextInput.length > 0) {
       return renderSearchSuggestions();
     } else if (isSelectedCategory) {
       return renderProductSearchByCategory();
@@ -611,7 +620,6 @@ const SearchProduct = ({category}) => {
       return renderDefaultBody();
     }
   };
-
   return (
     <SafeAreaView style={styles.root}>
       <LoadingScreen loading={isLoading} />

@@ -20,7 +20,6 @@ export const getProductByOutlet = (OutletId, refresh) => {
         type: 'DATA_PRODUCTS_OUTLET',
         products: response.response,
       });
-
       return response.response;
     } catch (error) {
       dispatch({
@@ -345,6 +344,65 @@ export const getProductByBarcode = barcode => {
         return response.response;
       }
       return false;
+    } catch (e) {}
+  };
+};
+
+export const getProductById = id => {
+  return async dispatch => {
+    try {
+      const response = await fetchApiProduct(
+        `/product/${id}`,
+        'GET',
+        null,
+        200,
+        null,
+      );
+
+      if (response.success) {
+        const data = response.response.data;
+
+        const productModifiers = data?.productModifiers.map(row => {
+          return {
+            modifier: row,
+            modifierID: row.id,
+            modifierName: row.name,
+          };
+        });
+
+        const result = {...data, productModifiers};
+        return result;
+      }
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
+export const productByPromotion = ({promotionId, outletId}) => {
+  return async (dispatch, getState) => {
+    try {
+      const payload = {
+        outletId,
+      };
+
+      console.log('payload', payload);
+
+      const response = await fetchApiProduct(
+        '/promotion/items/' + promotionId,
+        'POST',
+        payload,
+        200,
+        null,
+      );
+
+      console.log('RESPONSE GET PRODUCTS BY PROMOTION ', response);
+
+      if (response.success) {
+        return response?.response?.data;
+      } else {
+        return [];
+      }
     } catch (e) {}
   };
 };

@@ -1,9 +1,16 @@
 import React from 'react';
-import {TextInput, View, StyleSheet, TouchableOpacity} from 'react-native';
+import {
+  TextInput,
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Keyboard,
+} from 'react-native';
 import Theme from '../../theme/Theme';
 import GlobalText from '../globalText';
 import DropDownPicker from 'react-native-dropdown-picker';
 import ErrorInput from '../../assets/svg/ErorInputSvg';
+import {normalizeLayoutSizeWidth} from '../../helper/Layout';
 
 const useStyles = () => {
   const theme = Theme();
@@ -11,17 +18,20 @@ const useStyles = () => {
     inputParentContainer: {
       marginTop: 16,
     },
-    inpurContainer: (editable, isError) => ({
+    inpurContainer: (editable, isError, numberOfLines) => ({
       marginTop: 4,
       borderWidth: isError ? 2 : 1,
-      borderColor: isError ? '#EB4B41' : theme.colors.greyScale2,
+      borderColor: isError
+        ? theme.colors.semanticColorError
+        : theme.colors.greyScale2,
       paddingHorizontal: 16,
-      paddingVertical: 13,
       borderRadius: 8,
       backgroundColor: editable === false ? '#F9F9F9' : 'white',
       justifyContent: 'space-between',
       alignItems: 'center',
       flexDirection: 'row',
+      flex: 1,
+      paddingTop: numberOfLines && numberOfLines > 0 ? 8 : 0,
     }),
     labelStyle: {
       fontSize: 14,
@@ -30,9 +40,16 @@ const useStyles = () => {
     mandatoryStyle: {
       color: '#CE1111',
     },
-    inputStyle: editable => ({
+    inputStyle: (editable, numberOfLines) => ({
       color: editable === false ? theme.colors.greyScale2 : 'black',
       width: '80%',
+      fontFamily: theme.fontFamily.poppinsRegular,
+      paddingBottom: 0,
+      paddingTop: 0,
+      height:
+        numberOfLines && numberOfLines > 0
+          ? 'auto'
+          : normalizeLayoutSizeWidth(48),
     }),
     buttonStyle: {
       flexDirection: 'row',
@@ -40,6 +57,7 @@ const useStyles = () => {
     },
     iconStyle: {
       marginLeft: 'auto',
+      marginTop: 6,
     },
     textInputContainer: {
       width: '100%',
@@ -47,13 +65,14 @@ const useStyles = () => {
     },
     valueBtnText: editable => ({
       color: editable === false ? theme.colors.greyScale2 : 'black',
+      marginTop: 6,
     }),
     errorContainer: {
       paddingHorizontal: 16,
       marginTop: 4,
     },
     textError: {
-      color: '#EB4B41',
+      color: theme.colors.semanticColorError,
       fontSize: 12,
       fontFamily: theme.fontFamily.poppinsMedium,
     },
@@ -71,6 +90,32 @@ const useStyles = () => {
     dropDownStyle: {
       backgroundColor: '#fafafa',
       zIndex: 3,
+    },
+    maxLexthStyle: {
+      marginLeft: 'auto',
+      marginTop: 4,
+    },
+    countTextContainer: {
+      marginLeft: 'auto',
+      marginRight: 16,
+      marginTop: 5,
+    },
+    countText: {
+      fontSize: 12,
+      fontFamily: theme.fontFamily.poppinsMedium,
+      color: theme.colors.greyScale5,
+    },
+    placeholderDropdown: {
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    btnHeight: {
+      height: normalizeLayoutSizeWidth(48),
+    },
+    row: {
+      flexDirection: 'row',
+    },
+    heightOpenDropDown: {
+      height: 100,
     },
   });
   return styles;
@@ -93,7 +138,10 @@ const useStyles = () => {
  * @property {Array} items
  * @property {Function} onOpen
  * @property {Function} onClose
- * @property {Function}  onChangeItem
+ * @property {Function} onChangeItem
+ * @property {boolean}  showNumberLengthText
+ * @property {Boolean} autoReset
+ * @property {any} childrenLabel
  */
 
 /**
@@ -101,7 +149,22 @@ const useStyles = () => {
  */
 
 const GlobalInputText = React.forwardRef((props, ref) => {
+  const [start, setStart] = React.useState({start: 0});
   const styles = useStyles();
+
+  const onFocus = () => setStart(null);
+
+  const onBlur = () => setStart({start: 0});
+
+  React.useEffect(() => {
+    Keyboard.addListener('keyboardDidShow', onFocus);
+    Keyboard.addListener('keyboardDidHide', onBlur);
+    return () => {
+      Keyboard.removeListener('keyboardDidShow', onFocus);
+      Keyboard.removeListener('keyboardDidHide', onBlur);
+    };
+  }, []);
+
   if (props.type === 'button') {
     return (
       <View style={styles.inputParentContainer}>
@@ -116,7 +179,11 @@ const GlobalInputText = React.forwardRef((props, ref) => {
         <TouchableOpacity
           onPress={props.onPressBtn}
           disabled={props.editable === false}
-          style={[styles.inpurContainer(props.editable), styles.buttonStyle]}>
+          style={[
+            styles.inpurContainer(props.editable),
+            styles.buttonStyle,
+            styles.btnHeight,
+          ]}>
           <GlobalText style={styles.valueBtnText(props.editable)}>
             {props.value || props.defaultValue}
           </GlobalText>
@@ -129,7 +196,7 @@ const GlobalInputText = React.forwardRef((props, ref) => {
   }
   if (props.type === 'dropdown') {
     return (
-      <View style={styles.inputParentContainer}>
+      <View style={[styles.inputParentContainer]}>
         <View>
           <GlobalText style={styles.labelStyle}>
             {props.label}{' '}
@@ -140,6 +207,8 @@ const GlobalInputText = React.forwardRef((props, ref) => {
         </View>
         <DropDownPicker
           placeholder={props.placeholder}
+          placeholderStyle={styles.placeholderDropdown}
+          labelStyle={styles.placeholderDropdown}
           items={props.items}
           defaultValue={props.defaultValue}
           style={[styles.dropdownContainerStyle]}
@@ -156,18 +225,26 @@ const GlobalInputText = React.forwardRef((props, ref) => {
   }
   return (
     <View style={styles.inputParentContainer}>
-      <View>
+      <View style={styles.row}>
         <GlobalText style={styles.labelStyle}>
           {props.label}{' '}
           {props.isMandatory ? (
             <GlobalText style={styles.mandatoryStyle}>*</GlobalText>
           ) : null}
         </GlobalText>
+        {props?.childrenLabel ? props.childrenLabel : null}
       </View>
-      <View style={styles.inpurContainer(props.editable, props.isError)}>
+      <View
+        style={styles.inpurContainer(
+          props.editable,
+          props.isError,
+          props.numberOfLines,
+        )}>
         <TextInput
           ref={ref}
-          style={styles.inputStyle(props.editable)}
+          style={styles.inputStyle(props.editable, props.numberOfLines)}
+          textAlignVertical="center"
+          selection={props.autoReset ? start : null}
           {...props}
         />
         {props.isError ? (
@@ -175,7 +252,15 @@ const GlobalInputText = React.forwardRef((props, ref) => {
             <ErrorInput />
           </View>
         ) : null}
+        {props.rightIcon ? props.rightIcon : null}
       </View>
+      {props.showNumberLengthText ? (
+        <View style={styles.countTextContainer}>
+          <GlobalText style={styles.countText}>
+            {props.value?.length || 0}/{props.maxLength}{' '}
+          </GlobalText>
+        </View>
+      ) : null}
       {props.isError ? (
         <View style={styles.errorContainer}>
           <GlobalText style={styles.textError}>

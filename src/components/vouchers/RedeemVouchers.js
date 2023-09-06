@@ -134,7 +134,6 @@ class RedeemVoucher extends Component {
     const {intlData} = this.props;
     Actions.voucher({
       dataVoucher: item,
-      dataVoucer: this.props.dataVoucer,
       intlData,
       fromPage: 'paymentAddVoucers',
       setVouchers: this.props.setVouchers,

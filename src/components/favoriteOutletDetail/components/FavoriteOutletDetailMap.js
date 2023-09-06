@@ -2,19 +2,9 @@ import React from 'react';
 import MapView from 'react-native-maps';
 import {Marker} from 'react-native-maps';
 
-import {
-  StyleSheet,
-  ScrollView,
-  View,
-  Text,
-  Image,
-  Dimensions,
-  TouchableOpacity,
-} from 'react-native';
-
-const FavoriteOutletDetailMap = ({lat, long, title, description, style}) => {
-  const latitude = 1.29027;
-  const longitude = 103.851959;
+const FavoriteOutletDetailMap = ({lat, long, style}) => {
+  const latitude = Number(lat) || 1.29027;
+  const longitude = Number(long) || 103.851959;
   const latitudeDelta = 0.001;
   const longitudeDelta = 0.001;
 

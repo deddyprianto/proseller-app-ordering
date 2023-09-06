@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /**
  * Martin
  * martin@edgeworks.co.id
@@ -5,23 +6,20 @@
  */
 
 import React, {useEffect, useState} from 'react';
-import {useSelector, useDispatch} from 'react-redux';
+import {useDispatch} from 'react-redux';
 
-import MapView, {Marker} from 'react-native-maps';
-import CryptoJS from 'react-native-crypto-js';
 import {Actions} from 'react-native-router-flux';
+import MapView, {Marker} from 'react-native-maps';
 import {
   StyleSheet,
   View,
   Text,
   TouchableOpacity,
   ScrollView,
-  Image,
   SafeAreaView,
+  Pressable,
+  Image,
 } from 'react-native';
-
-import appConfig from '../config/appConfig';
-import awsConfig from '../config/awsConfig';
 
 import {updateUser} from '../actions/user.action';
 import {showSnackbar} from '../actions/setting.action';
@@ -29,8 +27,6 @@ import {showSnackbar} from '../actions/setting.action';
 import Header from '../components/layout/header';
 import FieldCheckBox from '../components/fieldCheckBox';
 import LoadingScreen from '../components/loadingScreen';
-import FieldTextInput from '../components/fieldTextInput';
-import FieldAddressTag from '../components/fieldAddressTag';
 import ConfirmationDialog from '../components/confirmationDialog';
 import FieldPhoneNumberInput from '../components/fieldPhoneNumberInput';
 
@@ -38,7 +34,14 @@ import {isEmptyObject} from '../helper/CheckEmpty';
 
 import Theme from '../theme';
 import {LATITUDE_SINGAPORE, LONGITUDE_SINGAPORE} from '../constant/location';
+import GlobalInputText from '../components/globalInputText';
+import GlobalText from '../components/globalText';
 import {Body} from '../components/layout';
+import AutocompleteAddress from '../components/autocompleteAddress';
+import useGetProtectionData from '../hooks/protection/useGetProtectioData';
+import additionalSetting from '../config/additionalSettings';
+import appConfig from '../config/appConfig';
+import ModalAction from '../components/modal/ModalAction';
 
 const useStyles = () => {
   const theme = Theme();
@@ -111,11 +114,47 @@ const useStyles = () => {
     divider: {
       width: '100%',
       height: 1,
-      marginVertical: 12,
+      marginVertical: 24,
       backgroundColor: theme.colors.border,
     },
     marginTop16: {
       marginTop: 16,
+    },
+    labelAddress: {
+      flexDirection: 'row',
+      flex: 1,
+      marginTop: 8,
+    },
+    mt24: {
+      marginTop: 24,
+    },
+    itemLabelAddress: isActive => ({
+      marginRight: 8,
+      paddingHorizontal: 16,
+      paddingVertical: 8,
+      borderColor: theme.colors.primary,
+      borderRadius: 8,
+      borderWidth: 1,
+      backgroundColor: isActive ? theme.colors.primary : 'white',
+    }),
+    itemLabelText: isActive => ({
+      color: isActive ? 'white' : theme.colors.primary,
+      fontFamily: theme.fontFamily.poppinsMedium,
+    }),
+    mb12: {
+      marginBottom: 12,
+    },
+    scrollContainer: {
+      paddingBottom: 100,
+    },
+    mb8: {
+      marginBottom: 8,
+    },
+    buttonActionStyle: {
+      paddingHorizontal: 16,
+    },
+    noPadding: {
+      padding: 0,
     },
   });
   return styles;
@@ -145,25 +184,17 @@ const AddNewAddress = ({address}) => {
 
   const [user, setUser] = useState([]);
   const [deliveryAddress, setDeliveryAddress] = useState([]);
-
-  const userDetail = useSelector(
-    state => state.userReducer.getUser.userDetails,
-  );
-
+  const {getUserDetail} = useGetProtectionData();
+  const {mapType} = additionalSetting();
   const update = !isEmptyObject(address);
 
   const titleHeader = update ? 'Edit Address' : 'Add New Address';
 
   useEffect(() => {
-    const userDecrypt = CryptoJS.AES.decrypt(
-      userDetail,
-      awsConfig.PRIVATE_KEY_RSA,
-    );
-    const result = JSON.parse(userDecrypt.toString(CryptoJS.enc.Utf8));
+    const result = getUserDetail();
     setUser(result);
     setDeliveryAddress(result?.deliveryAddress || []);
-  }, [userDetail]);
-
+  }, []);
   useEffect(() => {
     if (address) {
       setIsSelected(address?.isSelected);
@@ -186,7 +217,6 @@ const AddNewAddress = ({address}) => {
     const deliveryAddressFormatted = deliveryAddress.filter(
       value => value.index !== address.index,
     );
-
     const payload = {
       username: user.username,
       deliveryAddress: deliveryAddressFormatted,
@@ -326,64 +356,146 @@ const AddNewAddress = ({address}) => {
     );
   };
 
-  const renderAddressTagField = () => {
+  const listLabelAddress = ['Home', 'Work', 'School', 'Office', 'Other'];
+
+  const handleLabelAddress = value => {
+    if (value.length > 50) {
+      return null;
+    }
+    setTagAddress(value);
+  };
+
+  const handlePressLabel = value => {
+    setTagAddress(value);
+  };
+
+  const renderLabelAddress = () => {
+    const component = listLabelAddress.map((label, index) => (
+      <Pressable
+        key={index}
+        onPress={() => handlePressLabel(label)}
+        style={styles.itemLabelAddress(
+          tagAddress.toLowerCase() === label.toLowerCase(),
+        )}>
+        <GlobalText
+          style={styles.itemLabelText(
+            tagAddress.toLowerCase() === label.toLowerCase(),
+          )}>
+          {label}
+        </GlobalText>
+      </Pressable>
+    ));
     return (
-      <FieldAddressTag
-        value={tagAddress}
-        onChange={value => {
-          setTagAddress(value);
-        }}
-      />
+      <View>
+        <GlobalInputText
+          label="Address Label"
+          placeholder="Enter Address label"
+          value={tagAddress}
+          onChangeText={handleLabelAddress}
+          maxLength={50}
+          isMandatory
+          showNumberLengthText={true}
+        />
+        <ScrollView
+          showsHorizontalScrollIndicator={false}
+          horizontal
+          style={styles.labelAddress}>
+          {component}
+        </ScrollView>
+      </View>
     );
   };
 
+  const onSelectAddress = item => {
+    setStreetName(item['ADDRESS']);
+    setPostalCode(item['POSTAL']);
+  };
+
+  const onSetAddress = value => {
+    setStreetName(value);
+  };
+
+  const renderAddressText = () => (
+    <GlobalInputText
+      label="Street Name"
+      placeholder="Street Name"
+      value={streetName}
+      onChangeText={onSetAddress}
+      isMandatory
+    />
+  );
+
   const renderStreetNameField = () => {
+    if (mapType === 'dropdown') {
+      return (
+        <View style={styles.mb8}>
+          <AutocompleteAddress
+            onSelectAddress={onSelectAddress}
+            enableCurrentLocation
+            value={streetName}
+          />
+        </View>
+      );
+    }
+    return renderAddressText();
+  };
+
+  const handleUnitNumber = value => {
+    if (value.length > 50) {
+      return null;
+    }
+    setUnitNumber(value);
+  };
+
+  const onSetPostalCode = value => {
+    setPostalCode(value);
+  };
+
+  const renderPostalCodeField = () => {
     return (
-      <FieldTextInput
-        label="Street Name"
-        placeholder="Street Name"
-        value={streetName}
-        onChange={value => {
-          setStreetName(value);
-        }}
+      <GlobalInputText
+        label="Postal Code"
+        placeholder="Postal Code"
+        value={postalCode}
+        isMandatory
+        onChangeText={onSetPostalCode}
       />
     );
   };
 
   const renderUnitNumberField = () => {
     return (
-      <FieldTextInput
-        label="Unit Number"
-        placeholder="Unit Number"
+      <GlobalInputText
+        label="Building Name/Unit Number"
+        placeholder="Enter building name or unit number "
         value={unitNumber}
-        onChange={value => {
-          setUnitNumber(value);
-        }}
+        maxLength={50}
+        onChangeText={handleUnitNumber}
+        isMandatory
+        showNumberLengthText={true}
       />
     );
   };
-  const renderPostalCodeField = () => {
-    return (
-      <FieldTextInput
-        label="Postal Code"
-        placeholder="Postal Code"
-        value={postalCode}
-        onChange={value => {
-          setPostalCode(value);
-        }}
-      />
-    );
+
+  const handleRecipientName = value => {
+    if (value.length > 50) {
+      return null;
+    }
+    setRecipientName(value);
   };
+
   const renderRecipientNameField = () => {
     return (
-      <FieldTextInput
-        label="Recipient Name"
-        placeholder="Recipient Name"
-        value={recipientName}
-        onChange={value => {
-          setRecipientName(value);
-        }}
-      />
+      <View style={styles.mb8}>
+        <GlobalInputText
+          label="Recipient Name"
+          isMandatory
+          value={recipientName}
+          onChangeText={handleRecipientName}
+          placeholder="Recipient Name"
+          maxLength={50}
+        />
+      </View>
     );
   };
 
@@ -392,7 +504,7 @@ const AddNewAddress = ({address}) => {
       <FieldPhoneNumberInput
         type="phone"
         label="Mobile Number"
-        placeholder="Mobile Number"
+        placeholder="Enter recipient mobile no"
         value={mobileNumber}
         valueCountryCode={countryCode}
         onChangeCountryCode={value => {
@@ -401,35 +513,10 @@ const AddNewAddress = ({address}) => {
         onChange={value => {
           setMobileNumber(value);
         }}
+        withoutFlag={true}
+        isMandatory={true}
+        inputLabel={'Mobile No'}
       />
-    );
-  };
-  const renderDeliveryDetailFields = () => {
-    return (
-      <View>
-        <View style={styles.marginTop16} />
-        <Text style={styles.textTitle}>Delivery Details</Text>
-        <View style={styles.marginTop16} />
-        {renderAddressTagField()}
-        <View style={styles.marginTop16} />
-        {renderStreetNameField()}
-        <View style={styles.marginTop16} />
-        {renderUnitNumberField()}
-        <View style={styles.marginTop16} />
-        {renderPostalCodeField()}
-      </View>
-    );
-  };
-
-  const renderRecipientDetailFields = () => {
-    return (
-      <View>
-        <Text style={styles.textTitle}>Recipient Details</Text>
-        <View style={styles.marginTop16} />
-        {renderRecipientNameField()}
-        <View style={styles.marginTop16} />
-        {renderMobileNumberField()}
-      </View>
     );
   };
 
@@ -451,8 +538,6 @@ const AddNewAddress = ({address}) => {
               coordinated: {
                 latitude,
                 longitude,
-                latitudeDelta,
-                longitudeDelta,
               },
               handleChoose: value => {
                 handleSetCoordinate(value);
@@ -463,8 +548,8 @@ const AddNewAddress = ({address}) => {
           region={{
             latitude,
             longitude,
-            longitudeDelta,
             latitudeDelta,
+            longitudeDelta,
           }}>
           <Marker coordinate={{latitude: latitude, longitude: longitude}} />
         </MapView>
@@ -474,8 +559,6 @@ const AddNewAddress = ({address}) => {
               coordinated: {
                 latitude,
                 longitude,
-                latitudeDelta,
-                longitudeDelta,
               },
               handleChoose: value => {
                 handleSetCoordinate(value);
@@ -490,23 +573,51 @@ const AddNewAddress = ({address}) => {
     );
   };
 
+  const renderDeliveryDetailFields = () => {
+    return (
+      <View>
+        <View style={styles.mt24} />
+        <Text style={styles.textTitle}>Delivery Details</Text>
+        {renderStreetNameField()}
+        {renderUnitNumberField()}
+        {mapType === 'map' ? renderPostalCodeField() : null}
+        {renderLabelAddress()}
+      </View>
+    );
+  };
+
+  const renderRecipientDetailFields = () => {
+    return (
+      <View>
+        <Text style={styles.textTitle}>Recipient Details</Text>
+        {renderRecipientNameField()}
+        <View style={styles.marginTop16} />
+        {renderMobileNumberField()}
+      </View>
+    );
+  };
+
   const renderBody = () => {
     return (
       <View style={{flex: 1}}>
         <Body>
-          <ScrollView style={styles.scrollView}>
+          <ScrollView
+            keyboardShouldPersistTaps={'handled'}
+            contentContainerStyle={styles.scrollContainer}
+            nestedScrollEnabled={true}
+            style={styles.scrollView}>
             {renderDeliveryDetailFields()}
             <View style={styles.divider} />
             {renderRecipientDetailFields()}
-            <View style={styles.divider} />
-            {renderMap()}
+            <View style={[styles.divider, {marginBottom: 12}]} />
+            {mapType === 'map' ? renderMap() : null}
             {renderCheckBox()}
-            <View style={styles.marginTop16} />
           </ScrollView>
         </Body>
       </View>
     );
   };
+
   const handleActive = () => {
     if (
       tagAddress &&
@@ -533,7 +644,7 @@ const AddNewAddress = ({address}) => {
       <View style={styles.footer}>
         <TouchableOpacity
           style={styleActive}
-          disabled={!active || isLoading}
+          disabled={!active}
           onPress={() => {
             handleButtonSave();
           }}>
@@ -544,44 +655,35 @@ const AddNewAddress = ({address}) => {
   };
 
   const renderDeleteConfirmationDialog = () => {
-    if (isOpenDeleteModal) {
-      return (
-        <ConfirmationDialog
-          open={isOpenDeleteModal}
-          handleClose={() => {
-            handleCloseDeleteModal();
-          }}
-          handleSubmit={() => {
-            handleRemove();
-          }}
-          isLoading={isLoading}
-          textTitle="Delete Address"
-          textDescription="Are your sure you want to delete this address?
-           This action cannot be undone and you will be unable to recover any data."
-          textSubmit="Sure"
-        />
-      );
-    }
+    return (
+      <ModalAction
+        title="Delete Address"
+        description="Are you sure you want to delete this address?"
+        isVisible={isOpenDeleteModal}
+        onApprove={handleRemove}
+        closeModal={handleCloseDeleteModal}
+        onCancel={handleCloseDeleteModal}
+        buttonActionStyle={styles.buttonActionStyle}
+        ModalContainerStyle={styles.noPadding}
+        hideCloseButton
+      />
+    );
   };
 
   const renderEditConfirmationDialog = () => {
-    if (isOpenEditModal) {
-      return (
-        <ConfirmationDialog
-          open={isOpenEditModal}
-          handleClose={() => {
-            handleCloseEditModal();
-          }}
-          handleSubmit={() => {
-            handleClickSave();
-          }}
-          isLoading={isLoading}
-          textTitle="Edit Confirmation"
-          textDescription="Are your sure you want to edit this address detail?"
-          textSubmit="Sure"
-        />
-      );
-    }
+    return (
+      <ModalAction
+        title="Edit Confirmation"
+        description="Are your sure you want to edit this address detail?"
+        isVisible={isOpenEditModal}
+        onApprove={handleClickSave}
+        closeModal={handleCloseEditModal}
+        onCancel={handleCloseEditModal}
+        buttonActionStyle={styles.buttonActionStyle}
+        ModalContainerStyle={styles.noPadding}
+        hideCloseButton
+      />
+    );
   };
 
   return (

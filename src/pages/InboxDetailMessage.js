@@ -1,12 +1,12 @@
 import {
   View,
-  Text,
   StyleSheet,
   SafeAreaView,
   ScrollView,
   FlatList,
   Image,
   BackHandler,
+  useWindowDimensions,
 } from 'react-native';
 import React from 'react';
 import {Header} from '../components/layout';
@@ -16,6 +16,8 @@ import Theme from '../theme/Theme';
 import colorConfig from '../config/colorConfig';
 import Reward from '../assets/img/reward.png';
 import {Actions} from 'react-native-router-flux';
+import RenderHtml from 'react-native-render-html';
+
 const styles = StyleSheet.create({
   scrollContainer: {
     padding: 16,
@@ -113,6 +115,7 @@ const styles = StyleSheet.create({
 const InboxDetailMessage = props => {
   const {data} = props;
   const {colors, fontFamily} = Theme();
+  const {width} = useWindowDimensions();
 
   const backHandle = () => {
     Actions.pop();
@@ -170,13 +173,7 @@ const InboxDetailMessage = props => {
             </GlobalText>
           </View>
           <View style={styles.messageContainer}>
-            <GlobalText
-              style={[
-                styles.messageText,
-                {fontFamily: fontFamily.poppinsMedium},
-              ]}>
-              {data.message}
-            </GlobalText>
+            <RenderHtml contentWidth={width} source={{html: data?.message}} />
           </View>
         </View>
         {data?.rewards?.length > 0 ? (

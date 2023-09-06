@@ -29,16 +29,16 @@ import ConfirmationDialog from '../components/confirmationDialog';
 import MyECardModal from '../components/modal/MyECardModal';
 import moment from 'moment';
 import DeviceBrightness from '@adrianso/react-native-device-brightness';
-import Navbar from '../components/navbar';
 import {normalizeLayoutSizeHeight} from '../helper/Layout';
-import BgProfileSvg from '../assets/svg/BgProfileSvg';
+import BackgroundProfileSvg from '../assets/svg/BackgroundProfileSvg';
 import GlobalText from '../components/globalText';
 import CreditCard from '../assets/svg/CreditCardSvg';
 import Voucher from '../assets/svg/VoucherSvg';
 import StoreSvg from '../assets/svg/StoreSvg';
 import ContactSvg from '../assets/svg/ContactSvg';
-import {Body} from '../components/layout';
+import {Body, Header} from '../components/layout';
 import additionalSetting from '../config/additionalSettings';
+import InfoMessage from '../components/infoMessage/InfoMessage';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -277,7 +277,7 @@ const useStyles = () => {
     backgroundProfile: {
       height: normalizeLayoutSizeHeight(118),
       position: 'absolute',
-      top: 0,
+      top: -5,
       width: '100%',
     },
     titleSettingContainer: {
@@ -352,6 +352,29 @@ const Profile = props => {
     loadData();
   }, [dispatch, userDetail]);
 
+  const initDeviceBright = async () => {
+    const currentBrightness = await DeviceBrightness.getBrightnessLevel();
+    setCurrentBrightness(currentBrightness);
+  };
+
+  const handleDeviceBright = async () => {
+    initDeviceBright();
+    if (isOpenMyECardModal) {
+      return DeviceBrightness.setBrightnessLevel(1);
+    }
+    if (currentBrightness) {
+      DeviceBrightness.setBrightnessLevel(currentBrightness);
+    }
+  };
+
+  useEffect(() => {
+    handleDeviceBright();
+  }, [isOpenMyECardModal]);
+
+  useEffect(() => {
+    initDeviceBright();
+  }, []);
+
   const handleLogout = async () => {
     setIsLoading(true);
     await dispatch(logoutUser());
@@ -389,6 +412,14 @@ const Profile = props => {
   const openWebviewPage = url => {
     if (!url) return;
     return Actions.policy({url});
+  };
+
+  const renderBackgroundImage = () => {
+    return (
+      <View style={styles.backgroundProfile}>
+        <BackgroundProfileSvg />
+      </View>
+    );
   };
 
   const renderWelcome = () => {
@@ -597,7 +628,7 @@ const Profile = props => {
       <TouchableOpacity
         style={styles.viewOption}
         onPress={() => {
-          Actions.termsCondition();
+          Actions.termsAndConditions();
         }}>
         <Image
           style={styles.iconSetting}
@@ -617,6 +648,28 @@ const Profile = props => {
         }}>
         <Image style={styles.iconSetting} source={appConfig.iconFAQ} />
         <Text style={styles.textIcon}>FAQ</Text>
+      </TouchableOpacity>
+    );
+  };
+
+  const openContactUs = () => {
+    if (appConfig.contactUsVersion === 'starter') {
+      return Actions.contactUsStarter();
+    } else {
+      return Actions.contactUsBasic();
+    }
+  };
+
+  const renderContactUs = () => {
+    if (!appConfig.contactUsVersion) {
+      return null;
+    }
+    return (
+      <TouchableOpacity style={styles.viewOption} onPress={openContactUs}>
+        <View style={styles.iconSetting}>
+          <ContactSvg />
+        </View>
+        <Text style={styles.textIcon}>Contact Us</Text>
       </TouchableOpacity>
     );
   };
@@ -654,6 +707,22 @@ const Profile = props => {
         </TouchableOpacity>
       );
     }
+  };
+
+  const renderPrivacyPolicy = () => {
+    return (
+      <TouchableOpacity
+        style={styles.viewOption}
+        onPress={() => {
+          Actions.privacyPolicy();
+        }}>
+        <Image
+          style={styles.iconSetting}
+          source={appConfig.iconPrivacyPolicy}
+        />
+        <Text style={styles.textIcon}>Privacy Policy</Text>
+      </TouchableOpacity>
+    );
   };
 
   const renderLogout = () => {
@@ -697,40 +766,103 @@ const Profile = props => {
 
   const handleAdditionalSetting = () => {
     const component = additionalSetting().additionalPolicy.map(data => {
-      if (!data.show) return null;
-      return (
-        <>
-          {renderListMenu(data.name, data.icon(), () =>
-            openWebviewPage(data.link),
-          )}
-        </>
-      );
+      if (data?.show) {
+        return renderListMenu(data.name, data.icon(), () =>
+          openWebviewPage(data.link),
+        );
+      }
     });
     return component;
+  };
+  const rennderInfoMessage = () => {
+    let type = '';
+    let message = '';
+    let showActionButton = false;
+    let mode = null;
+    let address = '';
+    if (user?.isEmailVerified && user?.isPhoneNumberVerified) {
+      type = 'success';
+      message = 'Your email and mobile phone has been verified!';
+    } else if (!user.isEmailVerified) {
+      type = 'error';
+      message = 'Your email has not been verified.';
+      showActionButton = true;
+      mode = 'Email';
+      address = user.email;
+    } else {
+      type = 'error';
+      message = 'Your mobile phone has not been verified.';
+      showActionButton = true;
+      mode = 'Mobile Number';
+      address = user.phoneNumber;
+    }
+    return (
+      <View style={styles.titleSettingContainer}>
+        <InfoMessage
+          showActionButton={showActionButton}
+          actionBtnText="Verify"
+          message={message}
+          type={type}
+          onActionBtnPress={() => verifyOtp(address, mode)}
+        />
+      </View>
+    );
+  };
+
+  const verifyOtp = (address, mode) => {
+    Actions.changeCredentialsOTP({
+      address,
+      mode,
+      dataDiri: user,
+      isVerification: true,
+    });
+  };
+
+  const openVoucher = () => {
+    Actions.voucherV2();
+  };
+
+  const openStoreLocation = () => {
+    Actions.favoriteOutlets();
+  };
+
+  const openPaymentMethod = () => {
+    Actions.profilePaymentMethod();
   };
 
   const renderSettingV2 = () => (
     <View style={styles.viewSettings}>
       {renderMembershipQRCode()}
       {renderDivider()}
+      {rennderInfoMessage()}
       {renderTitleSettingV2('General')}
       {renderEditProfile()}
       {renderMyDeliveryAddress()}
       {renderNotifications()}
-      {renderDivider()}
-      {renderTitleSettingV2('Payment Method')}
-      {renderListMenu('Credit Card', <CreditCard />)}
+
+      {additionalSetting().showPaymentMethodOnProfile ? (
+        <>
+          {renderDivider()}
+          {renderTitleSettingV2('Payment Method')}
+          {renderListMenu('Credit Card', <CreditCard />, openPaymentMethod)}
+        </>
+      ) : null}
+
       {renderDivider()}
       {renderTitleSettingV2('Rewards')}
-      {renderListMenu('My Voucher', <Voucher />)}
+      {renderListMenu('My Voucher', <Voucher />, openVoucher)}
       {renderReferral()}
       {renderDivider()}
       {renderTitleSettingV2('Others')}
-      {renderListMenu('Store Location', <StoreSvg />)}
+      {additionalSetting().storeLocationProfile ? (
+        <>{renderListMenu('Store Location', <StoreSvg />, openStoreLocation)}</>
+      ) : null}
       {handleAdditionalSetting()}
       {renderTermsAndConditions()}
+      {renderPrivacyPolicy()}
+
       {renderFAQ()}
-      {renderListMenu('Contact Us', <ContactSvg />)}
+      {renderContactUs()}
       {renderDivider()}
       {renderLogout()}
     </View>
@@ -776,29 +908,6 @@ const Profile = props => {
     }
   };
 
-  const initDeviceBright = async () => {
-    const currentBrightness = await DeviceBrightness.getBrightnessLevel();
-    setCurrentBrightness(currentBrightness);
-  };
-
-  const handleDeviceBright = async () => {
-    initDeviceBright();
-    if (isOpenMyECardModal) {
-      return DeviceBrightness.setBrightnessLevel(1);
-    }
-    if (currentBrightness) {
-      DeviceBrightness.setBrightnessLevel(currentBrightness);
-    }
-  };
-
-  useEffect(() => {
-    handleDeviceBright();
-  }, [isOpenMyECardModal]);
-
-  useEffect(() => {
-    initDeviceBright();
-  }, []);
-
   const renderMyECardModal = () => {
     if (isOpenMyECardModal) {
       return (
@@ -815,21 +924,14 @@ const Profile = props => {
   return (
     <SafeAreaView>
       <Body>
-        <Navbar title="Profile" />
+        <LoadingScreen loading={isLoading} />
+        <Header title="Profile" isRemoveBackIcon />
         <ScrollView
           contentContainerStyle={styles.containerStyle}
           style={styles.root}>
-          <View style={styles.backgroundProfile}>
-            <BgProfileSvg />
-          </View>
-          <LoadingScreen loading={isLoading} />
-          <Image
-            source={appConfig.imageBackgroundProfile}
-            resizeMode="contain"
-            style={styles.imageBackgroundProfile}
-          />
+          {renderBackgroundImage()}
           {renderProfileHeader()}
-          <>{renderSettingV2()}</>
+          {renderSettingV2()}
           {renderDeleteAccountConfirmationDialog()}
           {renderLogoutConfirmationDialog()}
           {renderMyECardModal()}

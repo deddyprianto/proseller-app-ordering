@@ -48,7 +48,7 @@ const useStyles = () => {
   return {styles, colors, fontFamily};
 };
 
-const FieldOTP = ({onComplete, isWrongOtp}) => {
+const FieldOTP = ({onComplete, isWrongOtp, onChangeOtp}) => {
   const ref = {
     otp1: useRef(),
     otp2: useRef(),
@@ -63,9 +63,15 @@ const FieldOTP = ({onComplete, isWrongOtp}) => {
       const value = otp.join('');
       onComplete(value);
     }
+    if (otp && onChangeOtp && typeof onChangeOtp === 'function') {
+      onChangeOtp(otp.join(''));
+    }
   }, [otp]);
 
   const handleInputOtp = (event, index) => {
+    if (event.length > 1) {
+      event = event.charAt(event.length - 1);
+    }
     let results = [...otp];
     results[index] = event;
     setOtp(results);
@@ -81,7 +87,6 @@ const FieldOTP = ({onComplete, isWrongOtp}) => {
       }
     }
   };
-
   const renderTextInput = index => {
     return (
       <TextInput
@@ -92,19 +97,18 @@ const FieldOTP = ({onComplete, isWrongOtp}) => {
         autoFocus={index === 0}
         keyboardType="numeric"
         style={styles.textInputOtp(isWrongOtp)}
-        maxLength={1}
+        selection={{start: otp[index]?.length || 0}}
         onChangeText={value => {
           handleInputOtp(value.replace(/[^0-9]/g, ''), index);
         }}
         onKeyPress={({nativeEvent}) => {
-          if (nativeEvent.key === 'Backspace' && !otp[index] && index !== 0) {
-            return ref[`otp${index - 1}`].focus();
+          if (nativeEvent.key === 'Backspace' && index !== 0) {
+            ref[`otp${index - 1}`].focus();
           }
         }}
       />
     );
   };
-
   const renderInputOtp = () => {
     const result = Array.from(Array(4)).map((_, index) => {
       return renderTextInput(index);

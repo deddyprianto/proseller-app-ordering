@@ -11,7 +11,6 @@ import {
   BackHandler,
   SafeAreaView,
   TouchableOpacity,
-  Dimensions,
 } from 'react-native';
 
 import {sendOTP, loginUser} from '../actions/auth.actions';
@@ -28,8 +27,6 @@ import HeaderV2 from '../components/layout/header/HeaderV2';
 import GlobalModal from '../components/modal/GlobalModal';
 import GlobalButton from '../components/button/GlobalButton';
 
-const HEIGHT = Dimensions.get('window').height;
-
 const useStyles = () => {
   const theme = Theme();
   const styles = StyleSheet.create({
@@ -42,12 +39,6 @@ const useStyles = () => {
     },
     touchableNext: {
       marginTop: 32,
-      height: 40,
-      width: '100%',
-      borderRadius: 8,
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: theme.colors.buttonActive,
     },
     textHeader: {
       color: theme.colors.primary,
@@ -57,6 +48,7 @@ const useStyles = () => {
     },
     textNext: {
       color: 'white',
+      fontFamily: theme.fontFamily.poppinsMedium,
     },
     textVerify: {
       marginTop: 8,
@@ -140,8 +132,9 @@ const OTP = ({isLogin, method, methodValue}) => {
   const [openCancelVerification, setOpenCancelVerification] = React.useState(
     false,
   );
+  const [myOtp, setMyOtp] = React.useState('');
   const countdown = () => {
-    let minuteCount = sendCounter >= 2 ? 4 : 1;
+    let minuteCount = sendCounter >= 2 ? 2 : 1;
 
     const then = moment()
       .add(minuteCount, 'minutes')
@@ -274,15 +267,19 @@ const OTP = ({isLogin, method, methodValue}) => {
 
   const renderButtonNext = () => {
     return (
-      <TouchableOpacity
-        disabled={isLoading}
-        style={styles.touchableNext}
+      <GlobalButton
+        disabled={isLoading || myOtp.length < 4}
+        buttonStyle={styles.touchableNext}
+        title={isLogin ? 'Verify and Login' : 'Verify and Create Account'}
         onPress={() => {
           handleLogin();
-        }}>
-        <Text style={styles.textNext}>Verify and Create Account</Text>
-      </TouchableOpacity>
+        }}
+      />
     );
+  };
+
+  const handleSetOtp = otp => {
+    setMyOtp(otp);
   };
 
   const renderOtpField = () => {
@@ -292,6 +289,7 @@ const OTP = ({isLogin, method, methodValue}) => {
         onComplete={value => {
           handleLogin(value);
         }}
+        onChangeOtp={handleSetOtp}
       />
     );
   };

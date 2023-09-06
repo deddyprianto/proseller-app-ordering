@@ -225,7 +225,7 @@ const EStoreItem = ({item, basket}) => {
     if (isOpenAddModal) {
       return (
         <ProductAddModal
-          product={item}
+          productId={item.id}
           open={isOpenAddModal}
           handleClose={() => {
             handleCloseAddModal();
