@@ -1085,6 +1085,7 @@ class SettleOrder extends Component {
   };
 
   to2PointDecimal = data => {
+    console.log('MARTIN', data);
     try {
       if (data !== 0) {
         let money = data.toString().split('.');
@@ -1170,18 +1171,11 @@ class SettleOrder extends Component {
         pointToSet = 0;
       }
 
-      if (
-        campign.points.roundingOptions != undefined &&
-        campign.points.roundingOptions == 'INTEGER'
-      ) {
-        try {
-          setDefault = Number(setDefault.toFixed(0));
-        } catch (e) {
-          setDefault = Math.ceil(setDefault);
-        }
-
+      if (campign?.points?.roundingOptions === 'INTEGER') {
+        setDefault = Math.ceil(setDefault);
         pointToSet = Math.floor(pointToSet);
       }
+
       const myTotalPoint = this.props.totalPoint || 0;
       if (point === undefined) {
         if (setDefault >= pointToSet) {
