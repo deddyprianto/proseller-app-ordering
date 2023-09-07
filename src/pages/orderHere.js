@@ -64,6 +64,12 @@ const useStyles = () => {
       fontSize: 11,
       color: 'white',
     },
+    textCancel: {
+      marginLeft: 10,
+      color: theme.colors.textQuaternary,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
     viewTextAndSearch: {
       paddingHorizontal: 16,
       width: '100%',
@@ -94,6 +100,12 @@ const useStyles = () => {
       display: 'flex',
       flexDirection: 'row',
     },
+    viewSearch: {
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
     icon: {
       width: 18,
       height: 18,
@@ -107,11 +119,13 @@ const useStyles = () => {
 const OrderHere = () => {
   const styles = useStyles();
   const dispatch = useDispatch();
+
   const [searchTextInput, setSearchTextInput] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [productsSearch, setProductsSearch] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [refresh, setRefresh] = useState(false);
+  const [isSearchOnFocus, setIsSearchOnFocus] = useState(false);
   const {useCartVersion} = useSettings();
   const defaultOutlet = useSelector(
     state => state.storesReducer.defaultOutlet.defaultOutlet,
@@ -151,7 +165,6 @@ const OrderHere = () => {
   }, [dispatch, searchQuery, defaultOutlet]);
 
   const handleSearchProduct = async value => {
-    setSearchTextInput('');
     setSearchQuery(value);
   };
 
@@ -163,6 +176,12 @@ const OrderHere = () => {
     }
   };
 
+  const handleCancel = () => {
+    setSearchTextInput('');
+    setSearchQuery('');
+    setIsSearchOnFocus(false);
+  };
+
   const renderText = () => {
     return (
       <View style={styles.viewBodyText}>
@@ -171,9 +190,24 @@ const OrderHere = () => {
     );
   };
 
-  const renderSearch = () => {
+  const renderSearchCancel = () => {
+    if (isSearchOnFocus) {
+      return (
+        <Text
+          onPress={() => {
+            handleCancel();
+          }}
+          style={styles.textCancel}>
+          Cancel
+        </Text>
+      );
+    }
+  };
+
+  const renderSearchField = () => {
     const replacePlaceholder =
       searchQuery && `search result for "${searchQuery}"`;
+
     return (
       <FieldSearch
         value={searchTextInput}
@@ -185,7 +219,27 @@ const OrderHere = () => {
         onSubmit={value => {
           handleSearchProduct(value);
         }}
+        onRemove={() => {
+          setSearchTextInput('');
+        }}
+        onFocus={() => {
+          setIsSearchOnFocus(true);
+        }}
+        onBlur={() => {
+          if (!searchTextInput) {
+            setIsSearchOnFocus(false);
+          }
+        }}
       />
+    );
+  };
+
+  const renderSearch = () => {
+    return (
+      <View style={styles.viewSearch}>
+        {renderSearchField()}
+        {renderSearchCancel()}
+      </View>
     );
   };
 
