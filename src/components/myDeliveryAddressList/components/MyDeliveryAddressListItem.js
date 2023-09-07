@@ -255,7 +255,6 @@ const MyDeliveryAddressItem = ({
     setSelectedIndex(selected);
     setUser(result);
   }, [userDetail]);
-  console.log({selectedIndex}, 'kakamna');
   const handleSelectAddress = async () => {
     let result = user.deliveryAddress || [];
 
