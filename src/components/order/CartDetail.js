@@ -488,7 +488,7 @@ const CartDetail = ({
   };
 
   const renderVoucher = () => {
-    const vouchersWithoutPoint = vouchers.filter(
+    const vouchersWithoutPoint = vouchers?.filter(
       row => row.paymentType !== 'point',
     );
 

@@ -42,6 +42,7 @@ const useStyles = () => {
     productName: {
       marginLeft: 8,
       width: '55%',
+      justifyContent: 'center',
     },
     productText: {
       fontSize: 12,

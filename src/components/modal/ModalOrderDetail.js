@@ -18,6 +18,7 @@ const useStyles = () => {
     },
     modalItemPrice: {
       fontFamily: theme.fontFamily.poppinsSemiBold,
+      color: 'black',
     },
     negativeColor: {
       color: theme.colors.semanticError,
@@ -34,8 +35,8 @@ const useStyles = () => {
       marginLeft: 8,
     },
     minusText: {
-      color: theme.colors.errorColor,
-      fontFamily: theme.fontFamily.poppinsMedium,
+      color: theme.colors.primary,
+      fontFamily: theme.fontFamily.poppinsSemiBold,
     },
     noMargin: {
       marginHorizontal: 0,
@@ -56,7 +57,7 @@ const useStyles = () => {
     priceText: {
       fontSize: 24,
       fontFamily: theme.fontFamily.poppinsSemiBold,
-      color: theme.colors.errorColor,
+      color: theme.colors.primary,
     },
     p12: {
       padding: 12,
@@ -68,11 +69,20 @@ const useStyles = () => {
       backgroundColor: '#F9F9F9',
       borderRadius: 8,
     },
+    mediumFont: {
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
   });
   return styles;
 };
 
-const ModalOrderDetail = ({open, closeModal, vouchers, pointDisc}) => {
+const ModalOrderDetail = ({
+  open,
+  closeModal,
+  vouchers,
+  pointDisc,
+  hideAmountPaid,
+}) => {
   const styles = useStyles();
   const basket = useSelector(state => state.orderReducer?.dataBasket?.product);
   const {calculateVoucherPoint} = useCalculation();
@@ -150,8 +160,10 @@ const ModalOrderDetail = ({open, closeModal, vouchers, pointDisc}) => {
         </View>
         {basket?.totalDiscountAmount > 0 ? (
           <View style={styles.modalItem}>
-            <GlobalText style={styles.minusText}>Item Discount</GlobalText>
-            <GlobalText style={styles.modalItemPrice}>
+            <GlobalText style={[styles.minusText, styles.mediumFont]}>
+              Item Discount
+            </GlobalText>
+            <GlobalText style={styles.minusText}>
               ({CurrencyFormatter(basket?.totalDiscountAmount)} )
             </GlobalText>
           </View>
@@ -189,16 +201,18 @@ const ModalOrderDetail = ({open, closeModal, vouchers, pointDisc}) => {
             </GlobalText>
           </View>
         ) : null}
-        <View style={[styles.p12, styles.mt16, styles.bgGrey]}>
-          <GlobalText>
-            Amount paid by points/vouchers{' '}
-            {CurrencyFormatter(calculateVoucherPoint(vouchers))}{' '}
-          </GlobalText>
-          <GlobalText>
-            Amount paid by {selectedAccount?.details?.cardIssuer}{' '}
-            {CurrencyFormatter(basket?.totalNettAmount)}
-          </GlobalText>
-        </View>
+        {!hideAmountPaid ? (
+          <View style={[styles.p12, styles.mt16, styles.bgGrey]}>
+            <GlobalText>
+              Amount paid by points/vouchers{' '}
+              {CurrencyFormatter(calculateVoucherPoint(vouchers))}{' '}
+            </GlobalText>
+            <GlobalText>
+              Amount paid by {selectedAccount?.details?.cardIssuer}{' '}
+              {CurrencyFormatter(basket?.totalNettAmount)}
+            </GlobalText>
+          </View>
+        ) : null}
       </View>
     </GlobalModal>
   );

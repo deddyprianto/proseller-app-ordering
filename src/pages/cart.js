@@ -424,11 +424,11 @@ const useStyles = () => {
       marginLeft: 8,
     },
   });
-  return styles;
+  return {styles, color: theme.colors};
 };
 
 const Cart = props => {
-  const styles = useStyles();
+  const {styles, color} = useStyles();
   const dispatch = useDispatch();
   const {navigation, isScanGo} = props;
   const [subTotal, setSubTotal] = useState(0);
@@ -1194,7 +1194,11 @@ const Cart = props => {
             onPress={() => {
               handleOpenDeliveryDateModal();
             }}>
-            {loadingTimeSlot ? <ActivityIndicator /> : renderDateText()}
+            {loadingTimeSlot ? (
+              <ActivityIndicator size={'small'} color={color.primary} />
+            ) : (
+              renderDateText()
+            )}
           </TouchableOpacity>
         </View>
       );
@@ -1356,6 +1360,7 @@ const Cart = props => {
         onPressBtn={handleClickButtonPayment}
         btnText={'Checkout'}
         disabledBtn={disabled}
+        hideAmountPaid={true}
       />
     );
   };
