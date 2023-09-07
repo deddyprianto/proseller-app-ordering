@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useRef, useState} from 'react';
 
 import {
   StyleSheet,
@@ -13,6 +13,9 @@ import {
   normalizeLayoutSizeHeight,
   normalizeLayoutSizeWidth,
 } from '../../helper/Layout';
+
+import RoundedCloseSvg from '../../assets/svg/RoundedCloseSvg';
+import awsConfig from '../../config/awsConfig';
 
 const useStyles = () => {
   const theme = Theme();
@@ -66,14 +69,26 @@ const FieldSearch = ({
   placeholder,
   replacePlaceholder,
   onSubmit,
+  onRemove,
   onChange,
   value,
+  onFocus,
+  onBlur,
 }) => {
   const styles = useStyles();
+  const [isFocus, setIsFocus] = useState(false);
+  const ref = useRef();
 
   const handleSubmit = () => {
     if (onSubmit && typeof onSubmit === 'function') {
       onSubmit(value);
+    }
+  };
+
+  const handleRemove = () => {
+    if (onRemove && typeof onRemove === 'function') {
+      onRemove();
+      ref.current.focus();
     }
   };
 
@@ -94,6 +109,7 @@ const FieldSearch = ({
   const renderInput = () => {
     return (
       <TextInput
+        ref={ref}
         value={value}
         style={styles.textInput}
         placeholder={replacePlaceholder || placeholder}
@@ -104,8 +120,48 @@ const FieldSearch = ({
           }
         }}
         returnKeyType="search"
+        onFocus={() => {
+          onFocus();
+          setIsFocus(true);
+        }}
+        onBlur={() => {
+          onBlur();
+          setIsFocus(false);
+        }}
       />
     );
+  };
+
+  const renderIconRemove = () => {
+    return (
+      <TouchableOpacity
+        onPress={() => {
+          handleRemove();
+        }}>
+        <RoundedCloseSvg />
+      </TouchableOpacity>
+    );
+  };
+
+  const renderIconSubmit = () => {
+    return (
+      <TouchableOpacity
+        onPress={() => {
+          handleSubmit();
+        }}>
+        <SearchSvg />
+      </TouchableOpacity>
+    );
+  };
+
+  const renderIcon = () => {
+    if (value && awsConfig.COMPANY_TYPE !== 'Retail') {
+      return renderIconRemove();
+    } else if (isFocus && awsConfig.COMPANY_TYPE !== 'Retail') {
+      return;
+    } else {
+      return renderIconSubmit();
+    }
   };
 
   return (
@@ -114,12 +170,7 @@ const FieldSearch = ({
         {renderLabel()}
         {renderInput()}
       </View>
-      <TouchableOpacity
-        onPress={() => {
-          handleSubmit();
-        }}>
-        <SearchSvg />
-      </TouchableOpacity>
+      {renderIcon()}
     </View>
   );
 };
