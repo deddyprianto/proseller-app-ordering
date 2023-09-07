@@ -208,12 +208,14 @@ const UsePointModal = ({
   };
 
   const handleOnChange = result => {
-    if (Number(result) < totalAmount) {
-      setValue(result.replace(/[^0-9]/g, ''));
+    const totalResultAmount = Number(result) * pointRatio;
+    const totalPointUse = totalAmount / pointRatio;
+    if (totalResultAmount < totalAmount) {
+      setValue(result);
     } else if (campaign?.points?.roundingOptions === 'INTEGER') {
-      setValue(`${Math.floor(totalAmount)}`);
+      setValue(`${Math.ceil(totalPointUse)}`);
     } else {
-      setValue(`${to2PointDecimal(totalAmount)}`);
+      setValue(`${to2PointDecimal(totalPointUse)}`);
     }
   };
 
@@ -227,7 +229,7 @@ const UsePointModal = ({
           placeholder="Input amount"
           value={value}
           onChangeText={result => {
-            handleOnChange(result);
+            handleOnChange(result?.replace(/[^0-9]/g, ''));
           }}
         />
       </View>
