@@ -82,6 +82,7 @@ const FieldSearch = ({
   const handleSubmit = () => {
     if (onSubmit && typeof onSubmit === 'function') {
       onSubmit(value);
+      setIsFocus(true);
     }
   };
 
@@ -89,6 +90,20 @@ const FieldSearch = ({
     if (onRemove && typeof onRemove === 'function') {
       onRemove();
       ref.current.focus();
+    }
+  };
+
+  const handleOnFocus = () => {
+    if (onFocus && typeof onFocus === 'function') {
+      onFocus();
+      setIsFocus(true);
+    }
+  };
+
+  const handleOnBlur = () => {
+    if (onBlur && typeof onBlur === 'function') {
+      onBlur();
+      setIsFocus(false);
     }
   };
 
@@ -121,12 +136,10 @@ const FieldSearch = ({
         }}
         returnKeyType="search"
         onFocus={() => {
-          onFocus();
-          setIsFocus(true);
+          handleOnFocus();
         }}
         onBlur={() => {
-          onBlur();
-          setIsFocus(false);
+          handleOnBlur();
         }}
       />
     );
