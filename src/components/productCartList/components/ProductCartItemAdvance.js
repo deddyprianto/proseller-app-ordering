@@ -383,6 +383,7 @@ const useStyles = () => {
       backgroundColor: theme.colors.primary,
       fontFamily: theme.fontFamily.poppinsMedium,
       color: 'white',
+      fontSize: 12,
     },
   });
   return styles;
