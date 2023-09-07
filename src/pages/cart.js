@@ -21,6 +21,7 @@ import {
   Image,
   SafeAreaView,
   Dimensions,
+  ActivityIndicator,
 } from 'react-native';
 import {ProgressBar} from 'react-native-paper';
 
@@ -453,6 +454,7 @@ const Cart = props => {
   const [availablePreorderDate, setAvailablePreorderDate] = useState(null);
   const [availableSelection, saveAvailableSelection] = React.useState([]);
   const [itemSelection, setItemSelection] = React.useState('staff');
+  const [loadingTimeSlot, setLoadingTimeSlot] = React.useState(false);
   const outlet = useSelector(
     state => state.storesReducer.defaultOutlet.defaultOutlet,
   );
@@ -503,6 +505,7 @@ const Cart = props => {
 
   useEffect(() => {
     const loadData = async () => {
+      setLoadingTimeSlot(true);
       const clientTimezone = Math.abs(new Date().getTimezoneOffset());
       let date = moment().format('YYYY-MM-DD');
       if (availablePreorderDate) {
@@ -518,6 +521,7 @@ const Cart = props => {
         }),
       );
       setAvailableTimes(timeSlot);
+      setLoadingTimeSlot(false);
     };
     loadData();
   }, [dispatch, basket, outlet, availablePreorderDate]);
@@ -1190,7 +1194,7 @@ const Cart = props => {
             onPress={() => {
               handleOpenDeliveryDateModal();
             }}>
-            {renderDateText()}
+            {loadingTimeSlot ? <ActivityIndicator /> : renderDateText()}
           </TouchableOpacity>
         </View>
       );
@@ -1371,7 +1375,7 @@ const Cart = props => {
     );
 
     const orderingTypeValue = orderingMode?.displayName;
-    const dateValue = availablePreorderDate
+    const dateValue = !isEmptyArray(availableTimes)
       ? {date: availableTimes[0]?.date}
       : orderingDateTimeSelected;
     return (
@@ -1386,6 +1390,7 @@ const Cart = props => {
         <DateSelectorModal
           orderingMode={basket?.orderingMode}
           value={dateValue}
+          preOrderDate={availablePreorderDate}
           open={openDeliveryDateModal}
           handleClose={() => {
             handleCloseDeliveryDateModal();

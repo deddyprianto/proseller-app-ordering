@@ -2,6 +2,7 @@ import React from 'react';
 import {SafeAreaView, View, StyleSheet} from 'react-native';
 import {WebView} from 'react-native-webview';
 import Header from '../components/layout/header/Header';
+import useBackHandler from '../hooks/backHandler/useBackHandler';
 
 const styles = StyleSheet.create({
   webContainer: {
@@ -17,6 +18,7 @@ const styles = StyleSheet.create({
 
 const WebviewPage = props => {
   const {params} = props.navigation.state;
+  useBackHandler();
   return (
     <SafeAreaView>
       <Header isMiddleLogo={true} />

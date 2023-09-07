@@ -18,6 +18,7 @@ import {groupBy} from 'lodash';
 
 import {Header, Body} from '../components/layout';
 import LoadingScreen from '../components/loadingScreen/LoadingScreen';
+import useBackHandler from '../hooks/backHandler/useBackHandler';
 
 const styles = StyleSheet.create({
   root: {
@@ -35,7 +36,7 @@ const styles = StyleSheet.create({
 
 const FAQ = () => {
   const dispatch = useDispatch();
-
+  useBackHandler();
   const [searchQuery, setSearchQuery] = useState('');
   const [items, setItems] = useState([]);
   const [loadingFaq, setLoadingFaq] = React.useState(false);

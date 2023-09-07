@@ -15,6 +15,7 @@ import {Header} from '../components/layout';
 import appConfig from '../config/appConfig';
 import Theme from '../theme';
 import awsConfig from '../config/awsConfig';
+import useBackHandler from '../hooks/backHandler/useBackHandler';
 
 const useStyles = () => {
   const theme = Theme();
@@ -99,7 +100,7 @@ const useStyles = () => {
 
 const ContactUsStarter = () => {
   const styles = useStyles();
-
+  useBackHandler();
   const renderImage = () => {
     return <Image source={appConfig.imageMail} style={styles.imageMail} />;
   };

@@ -27,6 +27,7 @@ import {
 } from '../actions/referral.action';
 import LoadingScreen from '../components/loadingScreen';
 import {Actions} from 'react-native-router-flux';
+import useBackHandler from '../hooks/backHandler/useBackHandler';
 
 const useStyles = () => {
   const theme = Theme();
@@ -83,7 +84,7 @@ const Referral = () => {
   const ref = useRef();
   const styles = useStyles();
   const dispatch = useDispatch();
-
+  useBackHandler();
   const [invitedListLimitLength, setInvitedListLimitLength] = useState(10);
   const [isShowFloatingButton, setIsShowFloatingButton] = useState(false);
   const [isInvitedList, setIsInvitedList] = useState(false);

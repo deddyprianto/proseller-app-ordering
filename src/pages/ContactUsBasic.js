@@ -20,6 +20,7 @@ import CheckboxWhite from '../assets/svg/CheckboxWhite';
 import ErrorIcon from '../assets/svg/ErrorIcon';
 import LoadingScreen from '../components/loadingScreen/LoadingScreen';
 import {Actions} from 'react-native-router-flux';
+import useBackHandler from '../hooks/backHandler/useBackHandler';
 
 const useStyles = () => {
   const {colors, fontFamily} = Theme();
@@ -86,6 +87,7 @@ const useStyles = () => {
 
 const ContactUsBasic = () => {
   const {styles} = useStyles();
+  useBackHandler();
   const [mandatoryField] = React.useState([
     'name',
     'from',
