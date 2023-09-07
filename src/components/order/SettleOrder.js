@@ -1085,7 +1085,6 @@ class SettleOrder extends Component {
   };
 
   to2PointDecimal = data => {
-    console.log('MARTIN', data);
     try {
       if (data !== 0) {
         let money = data.toString().split('.');
