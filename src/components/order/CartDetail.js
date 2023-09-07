@@ -403,6 +403,7 @@ const CartDetail = ({
   };
   const renderPointText = () => {
     const pointWorth = campaign.points.pointsToRebateRatio1;
+    const totalPointValue = totalPoint * pointWorth;
 
     if (fullPoint) {
       return (
@@ -419,7 +420,7 @@ const CartDetail = ({
             Available Points {totalPoint} points
           </GlobalText>
           <GlobalText style={styles.pointText}>
-            worth {CurrencyFormatter(pointWorth)}
+            worth {CurrencyFormatter(totalPointValue)}
           </GlobalText>
         </View>
       );
@@ -488,8 +489,8 @@ const CartDetail = ({
   };
 
   const renderVoucher = () => {
-    const vouchersWithoutPoint = vouchers.filter(
-      row => row.paymentType !== 'point',
+    const vouchersWithoutPoint = vouchers?.filter(
+      row => row?.paymentType !== 'point',
     );
 
     return (
@@ -506,7 +507,7 @@ const CartDetail = ({
 
         {vouchersWithoutPoint?.length > 0 ? (
           <View style={styles.mt12}>
-            {vouchersWithoutPoint.map(voucher => (
+            {vouchersWithoutPoint?.map(voucher => (
               <View>
                 <GlobalText style={[styles.brandColor, styles.mediumFont]}>
                   {voucher?.name}

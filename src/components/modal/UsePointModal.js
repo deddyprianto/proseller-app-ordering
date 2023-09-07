@@ -164,7 +164,7 @@ const UsePointModal = ({
   const [value, setValue] = useState(0);
 
   const renderDivider = () => {
-    return <View style={styles.divier} />;
+    return <View style={styles.divider} />;
   };
 
   const renderHeader = () => {
@@ -176,13 +176,15 @@ const UsePointModal = ({
   };
 
   const renderPointBalance = () => {
+    const totalPointValue = pointBalance * pointRatio;
+
     return (
       <View style={styles.body}>
         <View style={styles.viewPointBalance}>
           <Text style={styles.textPointBalance1}>Your Point Balance</Text>
           <Text style={styles.textPointBalance2}>{pointBalance} Points</Text>
           <Text style={styles.textPointBalance3}>
-            worth {CurrencyFormatter(pointRatio)}
+            worth {CurrencyFormatter(totalPointValue)}
           </Text>
         </View>
       </View>
