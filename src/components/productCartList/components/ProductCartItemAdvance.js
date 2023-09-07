@@ -18,8 +18,6 @@ import {
   Dimensions,
 } from 'react-native';
 
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-
 import appConfig from '../../../config/appConfig';
 
 import CurrencyFormatter from '../../../helper/CurrencyFormatter';
@@ -30,6 +28,9 @@ import {useSelector} from 'react-redux';
 import PreorderLabel from '../../label/Preorder';
 import AllowSelfSelectionLabel from '../../label/AllowSelfSelection';
 import {Actions} from 'react-native-router-flux';
+import useProductCartList from './hooks/useProductCartList';
+import PencilSvg from '../../../assets/svg/PencilSvg';
+import GlobalText from '../../globalText';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -123,7 +124,7 @@ const useStyles = () => {
       marginRight: 4,
     },
     textAddOn: {
-      marginBottom: 4,
+      marginVertical: 4,
       color: theme.colors.textTertiary,
       fontSize: theme.fontSize[12],
       fontFamily: theme.fontFamily.poppinsMedium,
@@ -213,13 +214,13 @@ const useStyles = () => {
     textEdit: {
       paddingTop: 2,
       color: theme.colors.textQuaternary,
-      fontSize: theme.fontSize[10],
+      fontSize: theme.fontSize[14],
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textEditUnavailable: {
       paddingTop: 2,
       color: theme.colors.textTertiary,
-      fontSize: theme.fontSize[10],
+      fontSize: theme.fontSize[14],
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textPromo: {
@@ -293,9 +294,9 @@ const useStyles = () => {
       alignItems: 'center',
       justifyContent: 'center',
       paddingHorizontal: 10,
-      paddingVertical: 2,
+      paddingVertical: 4,
       backgroundColor: 'white',
-      borderRadius: 50,
+      borderRadius: 8,
       borderWidth: 1,
       borderColor: theme.colors.buttonActive,
     },
@@ -305,9 +306,9 @@ const useStyles = () => {
       alignItems: 'center',
       justifyContent: 'center',
       paddingHorizontal: 10,
-      paddingVertical: 2,
+      paddingVertical: 4,
       backgroundColor: 'white',
-      borderRadius: 50,
+      borderRadius: 8,
       borderWidth: 1,
       borderColor: theme.colors.buttonDisabled,
     },
@@ -319,7 +320,7 @@ const useStyles = () => {
       paddingVertical: 2,
       borderRadius: 50,
       backgroundColor: theme.colors.textTertiary,
-      marginBottom: 10,
+      marginTop: 10,
     },
     viewPromoActive: {
       flexDirection: 'row',
@@ -328,8 +329,8 @@ const useStyles = () => {
       paddingHorizontal: 4,
       borderRadius: 50,
       backgroundColor: theme.colors.semanticError,
-      marginBottom: 10,
       paddingVertical: 2,
+      marginTop: 10,
     },
     viewTotalPrice: {
       flexDirection: 'row',
@@ -369,13 +370,26 @@ const useStyles = () => {
     rowContainer: {
       flexDirection: 'row',
     },
+    pencilIcon: {
+      marginRight: 8,
+    },
+    textPrice: {
+      position: 'absolute',
+      right: 0,
+      paddingVertical: 4,
+      paddingHorizontal: 8,
+      top: -20,
+      borderRadius: 4,
+      backgroundColor: theme.colors.primary,
+      fontFamily: theme.fontFamily.poppinsMedium,
+      color: 'white',
+    },
   });
   return styles;
 };
 
 const ProductCartItemAdvance = ({item, disabled, step}) => {
   const styles = useStyles();
-
   const orderingMode = useSelector(
     state => state.orderReducer?.dataBasket?.product?.orderingMode,
   );
@@ -385,6 +399,9 @@ const ProductCartItemAdvance = ({item, disabled, step}) => {
   );
   const isProductUnavailable =
     item?.orderingStatus !== 'AVAILABLE' && orderingMode !== 'STORECHECKOUT';
+  const {renderProductModifier, renderProductHeader} = useProductCartList({
+    isProductUnavailable,
+  });
 
   const renderDividerDashed = () => {
     const styleColor = isProductUnavailable
@@ -401,77 +418,6 @@ const ProductCartItemAdvance = ({item, disabled, step}) => {
     );
   };
 
-  const renderProductHeader = () => {
-    const styleViewQty = isProductUnavailable
-      ? styles.viewProductHeaderQtyUnavailable
-      : styles.viewProductHeaderQty;
-
-    const styleTextName = isProductUnavailable
-      ? styles.textProductHeaderNameUnavailable
-      : styles.textProductHeaderName;
-
-    const styleTextPrice = isProductUnavailable
-      ? styles.textProductHeaderPriceUnavailable
-      : styles.textProductHeaderPrice;
-
-    return (
-      <View style={[styles.viewProductHeader]}>
-        <View style={[styleViewQty, styles.boxQty]}>
-          <Text style={styles.textProductHeaderQty}>{item.quantity}x</Text>
-        </View>
-        <View>
-          <Text style={styleTextName} numberOfLines={1}>
-            {item?.product?.name}{' '}
-            <Text style={styleTextPrice}>+ {item?.product?.retailPrice}</Text>
-          </Text>
-          {renderPrice()}
-        </View>
-      </View>
-    );
-  };
-
-  const renderProductModifierItem = ({qty, name, price}) => {
-    const styleTextQty = isProductUnavailable
-      ? styles.textModifierItemQtyUnavailable
-      : styles.textModifierItemQty;
-
-    const styleTextPrice = isProductUnavailable
-      ? styles.textModifierItemPriceUnavailable
-      : styles.textModifierItemPrice;
-
-    return (
-      <View style={styles.viewProductModifierItem}>
-        <View style={styles.viewBullet} />
-
-        <Text style={styles.textModifier}>
-          <Text style={styleTextQty}>{qty}x </Text>
-          <Text style={styles.textModifierItemName}>{name}</Text>
-          <Text style={styleTextPrice}>+{price} </Text>
-        </Text>
-      </View>
-    );
-  };
-
-  const renderProductModifier = () => {
-    if (!isEmptyArray(item.modifiers)) {
-      const productModifiers = item.modifiers.map(modifier => {
-        return modifier?.modifier?.details.map(detail => {
-          return renderProductModifierItem({
-            qty: detail?.quantity,
-            name: detail?.name,
-            price: detail?.price,
-          });
-        });
-      });
-
-      return (
-        <View>
-          <Text style={styles.textAddOn}>Add-On</Text>
-          {productModifiers}
-        </View>
-      );
-    }
-  };
   const renderTotalPrice = () => {
     const styleTextPrice = isProductUnavailable
       ? [styles.textPriceFooterUnavailable]
@@ -491,44 +437,21 @@ const ProductCartItemAdvance = ({item, disabled, step}) => {
       <Text style={styleTextPrice}>{CurrencyFormatter(item?.grossAmount)}</Text>
     );
   };
-  const renderPrice = () => {
-    const styleTextPrice = isProductUnavailable
-      ? [styles.textPriceUnavailable]
-      : [styles.textPriceSmall];
-
-    if (item?.isPromotionApplied && item.amountAfterDisc < item.grossAmount) {
-      return (
-        <View style={styles.viewTotalPrice}>
-          <Text style={[styles.textNormalPrice]}>
-            + {CurrencyFormatter(item?.grossAmount)}
-          </Text>
-          <Text style={[styles.textDiscountPrice]}>
-            + {CurrencyFormatter(item?.amountAfterDisc)}
-          </Text>
-        </View>
-      );
-    }
-
-    return (
-      <Text style={styleTextPrice}>{CurrencyFormatter(item?.grossAmount)}</Text>
-    );
-  };
 
   const renderEditIcon = () => {
     if (!disabled) {
       const styleView = isProductUnavailable
         ? styles.viewEditUnavailable
         : styles.viewEdit;
-      const styleIcon = isProductUnavailable
-        ? styles.iconEditUnavailable
-        : styles.iconEdit;
       const styleText = isProductUnavailable
         ? styles.textEditUnavailable
         : styles.textEdit;
 
       return (
         <View style={styleView}>
-          <MaterialIcons style={styleIcon} name="edit" />
+          <View style={styles.pencilIcon}>
+            <PencilSvg />
+          </View>
           <Text style={styleText}>Edit</Text>
         </View>
       );
@@ -549,8 +472,9 @@ const ProductCartItemAdvance = ({item, disabled, step}) => {
       <ImageBackground
         style={styles.image}
         resizeMode="stretch"
-        source={{uri: image}}
-      />
+        source={{uri: image}}>
+        <GlobalText style={styles.textPrice}>{item?.quantity}x</GlobalText>
+      </ImageBackground>
     );
   };
 
@@ -561,6 +485,7 @@ const ProductCartItemAdvance = ({item, disabled, step}) => {
         resizeMode="stretch"
         source={{uri: image}}>
         <View style={styles.viewTransparentImage} />
+        <GlobalText style={styles.textPrice}>{item?.quantity}x</GlobalText>
       </ImageBackground>
     );
   };
@@ -635,9 +560,10 @@ const ProductCartItemAdvance = ({item, disabled, step}) => {
 
   const renderBodyLeft = () => {
     return (
-      <View style={styles.bodyLeft}>
-        {renderProductHeader()}
-        {renderProductModifier()}
+      <View style={[styles.bodyLeft]}>
+        {renderProductHeader(item)}
+        {renderProductModifier(item)}
+        <View style={styles.rowContainer}>{renderPromoIcon()}</View>
         {renderDivider()}
         {renderNotes()}
         {renderNonDiscountAbleText()}
@@ -686,7 +612,6 @@ const ProductCartItemAdvance = ({item, disabled, step}) => {
       }}
       style={styles.root}>
       {renderLabel()}
-      <View style={styles.rowContainer}>{renderPromoIcon()}</View>
       {renderBody()}
       {renderDividerDashed()}
       {renderFooter()}
