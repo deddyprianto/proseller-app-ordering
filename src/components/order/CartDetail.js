@@ -368,7 +368,7 @@ const CartDetail = ({
 
     Animated.timing(leftValue, {
       toValue: value,
-      duration: 100,
+      duration: 500,
       useNativeDriver: false,
     }).start();
 
@@ -487,6 +487,38 @@ const CartDetail = ({
     );
   };
 
+  const renderVoucher = () => {
+    const vouchersWithoutPoint = vouchers.filter(
+      row => row.paymentType !== 'point',
+    );
+
+    return (
+      <TouchableOpacity onPress={openVoucher} style={[styles.card, styles.mt8]}>
+        <View style={styles.row}>
+          <View style={styles.mr10}>
+            <VoucherSvg />
+          </View>
+          <GlobalText>Use Voucher</GlobalText>
+          <View style={styles.mlAuto}>
+            <ArrowRight />
+          </View>
+        </View>
+
+        {vouchersWithoutPoint?.length > 0 ? (
+          <View style={styles.mt12}>
+            {vouchersWithoutPoint.map(voucher => (
+              <View>
+                <GlobalText style={[styles.brandColor, styles.mediumFont]}>
+                  {voucher?.name}
+                </GlobalText>
+              </View>
+            ))}
+          </View>
+        ) : null}
+      </TouchableOpacity>
+    );
+  };
+
   return (
     <View>
       <GlobalText style={[styles.orderText, styles.ph16]}>
@@ -558,30 +590,8 @@ const CartDetail = ({
       </GlobalText>
       <View style={styles.ph14}>
         {renderPoint()}
-        <TouchableOpacity
-          onPress={openVoucher}
-          style={[styles.card, styles.mt8]}>
-          <View style={styles.row}>
-            <View style={styles.mr10}>
-              <VoucherSvg />
-            </View>
-            <GlobalText>Use Voucher</GlobalText>
-            <View style={styles.mlAuto}>
-              <ArrowRight />
-            </View>
-          </View>
-          {vouchers?.length > 0 ? (
-            <View style={styles.mt12}>
-              {vouchers.map(voucher => (
-                <View>
-                  <GlobalText style={[styles.brandColor, styles.mediumFont]}>
-                    {voucher?.name}
-                  </GlobalText>
-                </View>
-              ))}
-            </View>
-          ) : null}
-        </TouchableOpacity>
+        {renderVoucher()}
+
         <TouchableOpacity
           onPress={openPayment}
           style={[styles.card, styles.mt8]}>
