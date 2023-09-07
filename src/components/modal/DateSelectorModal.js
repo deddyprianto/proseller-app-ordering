@@ -12,6 +12,7 @@ import {isEmptyArray} from '../../helper/CheckEmpty';
 import {getTimeSlot, setTimeSlotSelected} from '../../actions/order.action';
 import Theme from '../../theme';
 import GlobalText from '../globalText';
+import GlobalButton from '../button/GlobalButton';
 
 const useStyles = () => {
   const theme = Theme();
@@ -77,7 +78,7 @@ const useStyles = () => {
     },
     viewTimeListModal: {
       borderRadius: 8,
-      padding: 8,
+      paddingVertical: 13,
     },
     viewDate: {
       marginTop: 16,
@@ -226,6 +227,27 @@ const useStyles = () => {
     listTime: {
       fontSize: 14,
       fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    required: {
+      fontFamily: theme.fontFamily.poppinsMedium,
+      color: theme.colors.errorColor,
+    },
+    noMarginVertical: {
+      marginTop: 0,
+      marginBottom: 0,
+      marginLeft: 0,
+      marginRight: 0,
+      width: '48%',
+    },
+    row: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+    },
+    pv8: {
+      paddingVertical: 8,
+    },
+    ph16: {
+      paddingHorizontal: 16,
     },
   };
 
@@ -463,7 +485,9 @@ const DateSelectorModal = ({open, handleClose, value, preOrderDate}) => {
     return (
       <View>
         <GlobalText style={styles.ct}>Choose Time</GlobalText>
-        <GlobalText style={styles.ts}>Timeslot</GlobalText>
+        <GlobalText style={styles.ts}>
+          Timeslot <GlobalText style={styles.required}>*</GlobalText>{' '}
+        </GlobalText>
         <TouchableOpacity
           disabled={disabled}
           onPress={() => {
@@ -479,19 +503,22 @@ const DateSelectorModal = ({open, handleClose, value, preOrderDate}) => {
 
   const renderSaveButton = () => {
     const disabled = !selectedTime || !selectedDate;
-    const style = disabled
-      ? styles.touchableSaveDisabled
-      : styles.touchableSave;
 
     return (
-      <TouchableOpacity
-        style={style}
-        disabled={disabled}
-        onPress={() => {
-          handleSave();
-        }}>
-        <Text style={styles.textSave}>SAVE</Text>
-      </TouchableOpacity>
+      <View style={styles.row}>
+        <GlobalButton
+          buttonStyle={styles.noMarginVertical}
+          isOutline
+          title="Cancel"
+          onPress={handleClose}
+        />
+        <GlobalButton
+          disabled={disabled}
+          buttonStyle={styles.noMarginVertical}
+          title="Save"
+          onPress={handleSave}
+        />
+      </View>
     );
   };
 
@@ -529,6 +556,7 @@ const DateSelectorModal = ({open, handleClose, value, preOrderDate}) => {
   const renderDeliveryTimeListItem = item => {
     return (
       <TouchableOpacity
+        style={[styles.pv8, styles.ph16]}
         onPress={() => {
           handleDeliveryTimeListItemSelected(item);
         }}>

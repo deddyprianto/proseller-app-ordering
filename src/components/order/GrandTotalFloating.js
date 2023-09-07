@@ -56,6 +56,7 @@ const GrandTotalFloating = ({
   vouchers,
   pointDisc,
   disabledBtn,
+  hideAmountPaid,
 }) => {
   const basket = useSelector(state => state.orderReducer?.dataBasket?.product);
   const [seeDetail, setSeeDetail] = React.useState(false);
@@ -99,6 +100,7 @@ const GrandTotalFloating = ({
         open={seeDetail}
         closeModal={handleCloseDetail}
         pointDisc={pointDisc}
+        hideAmountPaid={hideAmountPaid}
       />
     </>
   );
