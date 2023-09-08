@@ -225,7 +225,7 @@ const ProductCartItemCart2 = ({item, containerStyle}) => {
           <GlobalText style={styles.amountText}>{item.quantity}x</GlobalText>
         </View>
         <View style={styles.productName}>
-          <GlobalText numberOfLines={1} style={styles.productText}>
+          <GlobalText numberOfLines={2} style={styles.productText}>
             {item.product?.name}
           </GlobalText>
         </View>

@@ -6,6 +6,7 @@ import CurrencyFormatter from '../../helper/CurrencyFormatter';
 import Theme from '../../theme/Theme';
 import {useSelector} from 'react-redux';
 import useCalculation from '../../hooks/calculation/useCalculation';
+import {isEmptyArray} from '../../helper/CheckEmpty';
 
 const useStyles = () => {
   const theme = Theme();
@@ -82,11 +83,14 @@ const ModalOrderDetail = ({
   vouchers,
   pointDisc,
   hideAmountPaid,
+  totalPointToPay,
 }) => {
   const styles = useStyles();
+  const {calculationAmountPaidByVisa} = useCalculation();
   const basket = useSelector(state => state.orderReducer?.dataBasket?.product);
   const {calculateVoucherPoint} = useCalculation();
   const {calculateVoucher} = useCalculation();
+  const delivery_mode = 'DELIVERY';
   const handleCloseDetail = () => {
     if (closeModal && typeof closeModal === 'function') {
       closeModal();
@@ -95,6 +99,16 @@ const ModalOrderDetail = ({
   const selectedAccount = useSelector(
     state => state.cardReducer?.selectedAccount?.selectedAccount,
   );
+
+  const voucherOnly = () => {
+    if (!isEmptyArray(vouchers)) {
+      const filterVoucher = vouchers.filter(
+        voucher => voucher?.paymentType !== 'point',
+      );
+      return filterVoucher;
+    }
+    return [];
+  };
 
   const checkTax = () => {
     if (basket?.inclusiveTax > 0 && basket?.exclusiveTax > 0) {
@@ -142,7 +156,6 @@ const ModalOrderDetail = ({
     }
     return null;
   };
-
   return (
     <GlobalModal
       title="Details"
@@ -168,14 +181,20 @@ const ModalOrderDetail = ({
             </GlobalText>
           </View>
         ) : null}
+        {basket?.orderingMode === delivery_mode && basket?.provider ? (
+          <>
+            <View style={[styles.divider, styles.noMargin]} />
+            <View style={styles.modalItem}>
+              <GlobalText>Delivery Fee</GlobalText>
+              <GlobalText style={styles.modalItemPrice}>
+                {basket?.provider?.deliveryFee > 0
+                  ? CurrencyFormatter(basket?.provider?.deliveryFee)
+                  : 'FREE'}
+              </GlobalText>
+            </View>
+          </>
+        ) : null}
 
-        <View style={[styles.divider, styles.noMargin]} />
-        <View style={styles.modalItem}>
-          <GlobalText>Delivery Fee</GlobalText>
-          <GlobalText style={styles.modalItemPrice}>
-            {CurrencyFormatter(basket?.provider?.deliveryFee)}{' '}
-          </GlobalText>
-        </View>
         {checkTax()}
 
         <View style={[styles.divider, styles.noMargin]} />
@@ -185,19 +204,19 @@ const ModalOrderDetail = ({
             {CurrencyFormatter(basket?.totalNettAmount)}{' '}
           </GlobalText>
         </View>
-        {pointDisc > 0 ? (
+        {totalPointToPay && totalPointToPay > 0 ? (
           <View style={styles.modalItem}>
             <GlobalText style={styles.minusText}>Paid with point</GlobalText>
             <GlobalText style={[styles.modalItemPrice, styles.minusText]}>
-              ({CurrencyFormatter(pointDisc)} )
+              ({CurrencyFormatter(totalPointToPay)} )
             </GlobalText>
           </View>
         ) : null}
-        {vouchers?.length > 0 ? (
+        {voucherOnly()?.length > 0 ? (
           <View style={styles.modalItem}>
             <GlobalText style={styles.minusText}>Paid voucher</GlobalText>
             <GlobalText style={[styles.modalItemPrice, styles.minusText]}>
-              ({CurrencyFormatter(calculateVoucher(vouchers))} )
+              ({CurrencyFormatter(calculateVoucher(voucherOnly()))} )
             </GlobalText>
           </View>
         ) : null}
@@ -209,7 +228,11 @@ const ModalOrderDetail = ({
             </GlobalText>
             <GlobalText>
               Amount paid by {selectedAccount?.details?.cardIssuer}{' '}
-              {CurrencyFormatter(basket?.totalNettAmount)}
+              {calculationAmountPaidByVisa(
+                basket?.totalNettAmount,
+                vouchers,
+                calculateVoucherPoint(vouchers),
+              )}
             </GlobalText>
           </View>
         ) : null}

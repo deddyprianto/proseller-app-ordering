@@ -170,6 +170,12 @@ const useStyles = () => {
       padding: 2,
       backgroundColor: theme.colors.buttonActive,
     },
+    underLineText: {
+      textDecorationLine: 'underline',
+    },
+    blackFont: {
+      color: 'black',
+    },
   });
   return {styles, colors: theme.colors};
 };
@@ -205,7 +211,7 @@ const CartDetail = ({
   const [isOpenModal, setIsOpenModal] = useState(false);
 
   const [totalPointVoucher, setTotalPointVoucher] = React.useState(0);
-  const {calculateVoucherPoint} = useCalculation();
+  const {calculateVoucherPoint, calculationAmountPaidByVisa} = useCalculation();
   const [isOpenTnc, setIsOpenTnc] = React.useState(false);
   const {checkTncPolicyData} = useSettings();
   const [buttonActive, setButtonActive] = React.useState(false);
@@ -316,13 +322,13 @@ const CartDetail = ({
               styles.smallFont,
               styles.mediumFont,
               styles.mediumSize,
-              styles.primaryColor,
+              styles.blackFont,
             ]}>
             {data?.cartDetails?.outlet?.name}
           </GlobalText>
         </View>
         <View>
-          <GlobalText style={[styles.primaryColor, styles.mt4]}>
+          <GlobalText style={[styles.blackFont, styles.mt4, styles.mediumFont]}>
             {data?.cartDetails?.outlet?.address}
           </GlobalText>
         </View>
@@ -486,7 +492,6 @@ const CartDetail = ({
       />
     );
   };
-
   const renderVoucher = () => {
     const vouchersWithoutPoint = vouchers?.filter(
       row => row.paymentType !== 'point',
@@ -571,7 +576,7 @@ const CartDetail = ({
 
       <View style={[{paddingHorizontal: 14}, styles.mt8]}>
         <View style={styles.card}>
-          <View style={[styles.row, styles.mt12]}>
+          <View style={[styles.row]}>
             <GlobalText style={[styles.boldFont, styles.deliveryText]}>
               {data?.cartDetails?.orderingMode}{' '}
             </GlobalText>
@@ -621,7 +626,11 @@ const CartDetail = ({
           </GlobalText>
           <GlobalText>
             Amount paid by {selectedAccount?.details?.cardIssuer}{' '}
-            {CurrencyFormatter(data?.totalNettAmount)}{' '}
+            {calculationAmountPaidByVisa(
+              data?.totalNettAmount,
+              vouchers,
+              totalPointVoucher,
+            )}{' '}
           </GlobalText>
         </View>
         <View
@@ -640,9 +649,15 @@ const CartDetail = ({
             value={isAgreeTnc}
             onValueChange={handleAgreeTnc}
           />
-          <GlobalText style={[styles.ml8]}>
+          <GlobalText style={[styles.ml8, styles.mediumFont]}>
             I agree to the{' '}
-            <GlobalText onPress={toggleTnc} style={[styles.brandColor]}>
+            <GlobalText
+              onPress={toggleTnc}
+              style={[
+                styles.brandColor,
+                styles.boldFont,
+                styles.underLineText,
+              ]}>
               Terms and Conditions.
             </GlobalText>
           </GlobalText>
