@@ -39,6 +39,7 @@ import HandsSvg from '../assets/svg/HandsSvg';
 import MapSvg from '../assets/svg/MapSvg';
 import useOrder from '../hooks/order/useOrder';
 import additionalSetting from '../config/additionalSettings';
+import ArrowUpSvg from '../assets/svg/ArrowUpSvg';
 
 const useStyles = () => {
   const {colors, fontFamily} = Theme();
@@ -331,6 +332,10 @@ const useStyles = () => {
       position: 'absolute',
       top: '50%',
     },
+    containerItem: {
+      marginHorizontal: 0,
+      marginTop: 16,
+    },
   });
   return {styles, colors};
 };
@@ -342,7 +347,6 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
   const [showAllPreOrder, setShowAllPreOrder] = React.useState(false);
   const staustPending = 'PENDING_PAYMENT';
   const store_checkout = 'STORECHECKOUT';
-  const [isSuccess, setIsSuccess] = React.useState(false);
   const {
     groupingeOrder,
     defaultOrder,
@@ -364,20 +368,14 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
   const renderItemDetails = ({item, index}) => {
     if (!showAllOrder && index > 0) return null;
     return (
-      <ProductCartItemCart2
-        containerStyle={{marginHorizontal: 0}}
-        item={item}
-      />
+      <ProductCartItemCart2 containerStyle={styles.containerItem} item={item} />
     );
   };
 
   const renderItemPreOrder = ({item, index}) => {
     if (!showAllPreOrder && index > 0) return null;
     return (
-      <ProductCartItemCart2
-        containerStyle={{marginHorizontal: 0}}
-        item={item}
-      />
+      <ProductCartItemCart2 containerStyle={styles.containerItem} item={item} />
     );
   };
 
@@ -691,8 +689,6 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
     return '(VERIFIED)';
   };
 
-  console.log({data}, 'kyui');
-
   return (
     <Body>
       {data?.status === staustPending && !isTimeEnd ? (
@@ -898,9 +894,13 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
                 {defaultOrder.length > 1 && (
                   <View style={[styles.notesProductContainer, styles.mlAuto]}>
                     <GlobalText style={[styles.moreItemText]}>
-                      {defaultOrder.length - 1} More Item
+                      {showAllOrder ? (
+                        'Hide Items'
+                      ) : (
+                        <>{defaultOrder.length - 1} More Item</>
+                      )}
                     </GlobalText>
-                    <ArrowBottom />
+                    {showAllOrder ? <ArrowUpSvg /> : <ArrowBottom />}
                   </View>
                 )}
               </TouchableOpacity>
@@ -928,9 +928,13 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
                 {listPreorder.length > 1 && (
                   <View style={[styles.notesProductContainer, styles.mlAuto]}>
                     <GlobalText style={[styles.moreItemText]}>
-                      {listPreorder.length - 1} More Item
+                      {showAllPreOrder ? (
+                        'Hide Items'
+                      ) : (
+                        <>{listPreorder.length - 1} More Item</>
+                      )}
                     </GlobalText>
-                    <ArrowBottom />
+                    {showAllPreOrder ? <ArrowUpSvg /> : <ArrowBottom />}
                   </View>
                 )}
               </TouchableOpacity>

@@ -2869,7 +2869,6 @@ class SettleOrder extends Component {
         isSelfSelection: this.props.pembayaran.isSelfSelection,
         orderActionDate: moment(payload.orderActionDate).format('YYYY-MM-DD'),
       };
-      console.log('Payload settle order', payload);
 
       const response = await this.props.dispatch(settleOrder(payload, url));
       if (response.success) {

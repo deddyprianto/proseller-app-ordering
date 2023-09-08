@@ -17,9 +17,24 @@ const useCalculation = () => {
     }
     return 0;
   };
+
+  const calculationAmountPaidByVisa = (
+    grandTotal,
+    voucherPoint = [],
+    totalPointVoucher = 0,
+  ) => {
+    let total = grandTotal;
+    if (voucherPoint?.length > 0) {
+      total -= totalPointVoucher;
+    }
+
+    return total;
+  };
+
   return {
     calculateVoucher,
     calculateVoucherPoint,
+    calculationAmountPaidByVisa,
   };
 };
 
