@@ -1088,6 +1088,7 @@ class SettleOrder extends Component {
     try {
       if (data !== 0) {
         let money = data.toString().split('.');
+
         if (money[1] !== undefined) {
           money = `${money[0]}.${money[1].substr(0, 2)}`;
         }
@@ -1120,6 +1121,35 @@ class SettleOrder extends Component {
     }
   };
 
+  twoDigitCommaCeil = data => {
+    try {
+      if (data !== 0) {
+        let money = data.toString().split('.');
+        let text = '';
+
+        const digitAfterComma = money[1].split('');
+        digitAfterComma.forEach((row, index) => {
+          if (index === 1) {
+            text = text.concat(`${row}.`);
+          } else {
+            text = text.concat(`${row}`);
+          }
+        });
+
+        const twoDigitAfterComma = Math.ceil(text);
+
+        if (money[1] !== undefined) {
+          money = `${money[0]}.${twoDigitAfterComma}`;
+        }
+        return parseFloat(money);
+      } else {
+        return parseFloat(0);
+      }
+    } catch (e) {
+      return parseFloat(0);
+    }
+  };
+
   totalPointToPay = point => {
     const {campign, detailPoint} = this.props;
 
@@ -1134,7 +1164,7 @@ class SettleOrder extends Component {
       // create default point to set based on the ratio of point to rebate
       const paymentData = this.getPaymentData();
 
-      let setDefault = parseFloat((paymentData.payment * ratio).toFixed(2));
+      let setDefault = paymentData.payment * ratio;
 
       this.setState({
         jumPointRatio: jumPointRatio,
@@ -1173,6 +1203,8 @@ class SettleOrder extends Component {
       if (campign?.points?.roundingOptions === 'INTEGER') {
         setDefault = Math.ceil(setDefault);
         pointToSet = Math.floor(pointToSet);
+      } else {
+        setDefault = this.twoDigitCommaCeil(setDefault);
       }
 
       const myTotalPoint = this.props.totalPoint || 0;
