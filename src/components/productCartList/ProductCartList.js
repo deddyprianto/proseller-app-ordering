@@ -119,7 +119,6 @@ const ProductCartList = ({
     availDate,
     listSelfSelection,
   } = useOrder();
-
   React.useEffect(() => {
     if (items && Array.isArray(items)) {
       groupingeOrder(items);
@@ -195,7 +194,11 @@ const ProductCartList = ({
           onPress={toggleItemOrder}
           style={[styles.mlAuto, styles.row]}>
           <GlobalText style={[styles.itemText, styles.primaryColor]}>
-            {defaultOrder.length - 1} More Items{' '}
+            {showOrder ? (
+              'Hide All Item'
+            ) : (
+              <>{defaultOrder.length - 1} More Items </>
+            )}
           </GlobalText>
           {showOrder ? <ArrowUpSvg /> : <ArrowBottomSvg />}
         </TouchableOpacity>
@@ -207,7 +210,11 @@ const ProductCartList = ({
           onPress={toggleItemPreorder}
           style={[styles.mlAuto, styles.row]}>
           <GlobalText style={[styles.itemText, styles.primaryColor]}>
-            {listPreorder.length - 1} More Items{' '}
+            {showOrder ? (
+              'Hide All Item'
+            ) : (
+              <> {listPreorder.length - 1} More Items </>
+            )}
           </GlobalText>
           {showOrder ? <ArrowUpSvg /> : <ArrowBottomSvg />}
         </TouchableOpacity>
@@ -274,7 +281,7 @@ const ProductCartList = ({
               preorder_items,
               styles.preOrderTitle,
               true,
-              showAllOrder,
+              showAllPreorder,
             )}
           />
         </>
