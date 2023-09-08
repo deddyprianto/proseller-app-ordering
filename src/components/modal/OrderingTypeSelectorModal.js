@@ -37,7 +37,6 @@ const useStyles = () => {
       display: 'flex',
       flexDirection: 'column',
       justifyContent: 'center',
-      // flexWrap: 'wrap',
     },
     footer: {
       padding: 10,
@@ -200,6 +199,7 @@ const OrderingTypeSelectorModal = ({
 
   useEffect(() => {
     const loadData = async () => {
+      setIsLoading(true);
       const orderingModesField = [
         {
           key: 'STOREPICKUP',
@@ -241,20 +241,23 @@ const OrderingTypeSelectorModal = ({
           return mode;
         }
       });
+
       setEstimatedWaitingTimes(defaultOutlet?.estimatedWaitingTime || {});
       setOrderingTypes(orderingModesFieldFiltered);
-      const currentOrderingMode = value || orderingModesFieldFiltered[0]?.key;
-      setSelected({key: currentOrderingMode});
+
+      if (value) {
+        setSelected({key: value});
+      }
 
       if (orderingModesFieldFiltered.length === 1) {
-        setIsLoading(true);
         await dispatch(
           changeOrderingMode({
             orderingMode: orderingModesFieldFiltered[0]?.key,
           }),
         );
-        setIsLoading(false);
       }
+
+      setIsLoading(false);
     };
     loadData();
   }, [defaultOutlet, value, orderSetting]);
@@ -262,10 +265,10 @@ const OrderingTypeSelectorModal = ({
   const handleSaveClicked = async () => {
     setIsLoading(true);
     await dispatch(changeOrderingMode({orderingMode: selected?.key}));
-    setIsLoading(false);
     if (handleSaveCustom) {
       handleSaveCustom();
     }
+    setIsLoading(false);
   };
 
   const renderHeader = () => {

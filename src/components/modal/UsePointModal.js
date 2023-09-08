@@ -164,7 +164,7 @@ const UsePointModal = ({
   const [value, setValue] = useState(0);
 
   const renderDivider = () => {
-    return <View style={styles.divier} />;
+    return <View style={styles.divider} />;
   };
 
   const renderHeader = () => {
@@ -176,13 +176,15 @@ const UsePointModal = ({
   };
 
   const renderPointBalance = () => {
+    const totalPointValue = pointBalance * pointRatio;
+
     return (
       <View style={styles.body}>
         <View style={styles.viewPointBalance}>
           <Text style={styles.textPointBalance1}>Your Point Balance</Text>
           <Text style={styles.textPointBalance2}>{pointBalance} Points</Text>
           <Text style={styles.textPointBalance3}>
-            worth {CurrencyFormatter(pointRatio)}
+            worth {CurrencyFormatter(totalPointValue)}
           </Text>
         </View>
       </View>
@@ -206,12 +208,14 @@ const UsePointModal = ({
   };
 
   const handleOnChange = result => {
-    if (Number(result) < totalAmount) {
-      setValue(result.replace(/[^0-9]/g, ''));
+    const totalResultAmount = Number(result) * pointRatio;
+    const totalPointUse = totalAmount / pointRatio;
+    if (totalResultAmount < totalAmount) {
+      setValue(result);
     } else if (campaign?.points?.roundingOptions === 'INTEGER') {
-      setValue(`${Math.floor(totalAmount)}`);
+      setValue(`${Math.ceil(totalPointUse)}`);
     } else {
-      setValue(`${to2PointDecimal(totalAmount)}`);
+      setValue(`${to2PointDecimal(totalPointUse)}`);
     }
   };
 
@@ -225,7 +229,7 @@ const UsePointModal = ({
           placeholder="Input amount"
           value={value}
           onChangeText={result => {
-            handleOnChange(result);
+            handleOnChange(result?.replace(/[^0-9]/g, ''));
           }}
         />
       </View>
