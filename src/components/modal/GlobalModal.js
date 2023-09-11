@@ -102,7 +102,7 @@ const GlobalModal = props => {
   };
 
   return (
-    <Modal style={handleStyle()} useNativeDriver {...props}>
+    <Modal style={handleStyle()} useNativeDriver={false} {...props}>
       <View style={[styles.modalContainer, props.modalContainerStyle]}>
         <View style={[styles.titleCloseContainer, props.titleContainerStyle]}>
           <View>
