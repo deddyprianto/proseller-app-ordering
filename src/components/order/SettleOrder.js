@@ -69,12 +69,12 @@ import {
 import {getSVCBalance} from '../../actions/SVC.action';
 import {campaign, dataPoint, vouchers} from '../../actions/rewards.action';
 import ModalTransfer from './ModalTransfer';
-import LoadingScreen from '../loadingScreen';
 import OrderingModeOfflineModal from '../modal/OrderingModeOfflineModal';
 import {Body} from '../layout';
 import withHooksComponent from '../HOC';
 import additionalSetting from '../../config/additionalSettings';
 import SettleOrderV2 from './SettleOrderV2';
+import moment from 'moment';
 
 class SettleOrder extends Component {
   constructor(props) {
@@ -1086,6 +1086,7 @@ class SettleOrder extends Component {
     try {
       if (data !== 0) {
         let money = data.toString().split('.');
+
         if (money[1] !== undefined) {
           money = `${money[0]}.${money[1].substr(0, 2)}`;
         }
@@ -1118,6 +1119,35 @@ class SettleOrder extends Component {
     }
   };
 
+  twoDigitCommaCeil = data => {
+    try {
+      if (data !== 0) {
+        let money = data.toString().split('.');
+        let text = '';
+
+        const digitAfterComma = money[1].split('');
+        digitAfterComma.forEach((row, index) => {
+          if (index === 1) {
+            text = text.concat(`${row}.`);
+          } else {
+            text = text.concat(`${row}`);
+          }
+        });
+
+        const twoDigitAfterComma = Math.ceil(text);
+
+        if (money[1] !== undefined) {
+          money = `${money[0]}.${twoDigitAfterComma}`;
+        }
+        return parseFloat(money);
+      } else {
+        return parseFloat(0);
+      }
+    } catch (e) {
+      return parseFloat(0);
+    }
+  };
+
   totalPointToPay = point => {
     const {campign, detailPoint} = this.props;
 
@@ -1132,7 +1162,7 @@ class SettleOrder extends Component {
       // create default point to set based on the ratio of point to rebate
       const paymentData = this.getPaymentData();
 
-      let setDefault = parseFloat((paymentData.payment * ratio).toFixed(2));
+      let setDefault = paymentData.payment * ratio;
 
       this.setState({
         jumPointRatio: jumPointRatio,
@@ -1168,38 +1198,45 @@ class SettleOrder extends Component {
         pointToSet = 0;
       }
 
-      if (
-        campign.points.roundingOptions != undefined &&
-        campign.points.roundingOptions == 'INTEGER'
-      ) {
-        try {
-          setDefault = Number(setDefault.toFixed(0));
-        } catch (e) {
-          setDefault = Math.ceil(setDefault);
-        }
-
+      if (campign?.points?.roundingOptions === 'INTEGER') {
+        setDefault = Math.ceil(setDefault);
         pointToSet = Math.floor(pointToSet);
+      } else {
+        setDefault = this.twoDigitCommaCeil(setDefault);
       }
 
+      const myTotalPoint = this.props.totalPoint || 0;
       if (point === undefined) {
         if (setDefault >= pointToSet) {
-          this.setState({jumPoint: parseFloat(pointToSet)});
+          const pointToUse =
+            myTotalPoint < parseFloat(pointToSet)
+              ? myTotalPoint
+              : parseFloat(pointToSet);
+
+          this.setState({jumPoint: pointToUse});
           this.setDataPoint(
-            parseFloat(pointToSet),
-            this.calculateMoneyPointFromJumPoint(parseFloat(pointToSet)),
+            pointToUse,
+            this.calculateMoneyPointFromJumPoint(pointToUse),
           );
         } else {
-          this.setState({jumPoint: parseFloat(setDefault)});
+          const pointToUse =
+            myTotalPoint < parseFloat(setDefault)
+              ? myTotalPoint
+              : parseFloat(setDefault);
+          this.setState({jumPoint: pointToUse});
           this.setDataPoint(
-            parseFloat(setDefault),
-            this.calculateMoneyPointFromJumPoint(parseFloat(setDefault)),
+            pointToUse,
+            this.calculateMoneyPointFromJumPoint(pointToUse),
           );
         }
       } else {
-        this.setState({jumPoint: parseFloat(point)});
+        const pointToUse =
+          myTotalPoint < parseFloat(point) ? myTotalPoint : parseFloat(point);
+
+        this.setState({jumPoint: pointToUse});
         this.setDataPoint(
-          parseFloat(point),
-          this.calculateMoneyPointFromJumPoint(parseFloat(point)),
+          pointToUse,
+          this.calculateMoneyPointFromJumPoint(pointToUse),
         );
       }
     } catch (e) {
@@ -2830,8 +2867,8 @@ class SettleOrder extends Component {
       payload = {
         ...payload,
         isSelfSelection: this.props.pembayaran.isSelfSelection,
+        orderActionDate: moment(payload.orderActionDate).format('YYYY-MM-DD'),
       };
-      console.log('Payload settle order', payload);
 
       const response = await this.props.dispatch(settleOrder(payload, url));
       if (response.success) {

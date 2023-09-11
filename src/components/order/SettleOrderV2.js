@@ -111,6 +111,7 @@ const SettleOrderV2 = ({
         btnText={'Pay'}
         onPressBtn={doPayment}
         disabledBtn={!isAgreeTnc || !selectedAccount}
+        totalPointToPay={myMoneyPoint}
       />
     </SafeAreaView>
   );

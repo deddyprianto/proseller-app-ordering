@@ -24,7 +24,7 @@ import useSettings from '../../hooks/settings/useSettings';
 import ThreeDotCircle from '../../assets/svg/ThreeDotCircle';
 import ModalDeliveryDetail from '../modal/ModalDeliveryDetail';
 import UsePointModal from '../modal/UsePointModal';
-import awsConfig from '../../config/awsConfig';
+import appConfig from '../../config/appConfig';
 
 const useStyles = () => {
   const theme = Theme();
@@ -170,6 +170,12 @@ const useStyles = () => {
       padding: 2,
       backgroundColor: theme.colors.buttonActive,
     },
+    underLineText: {
+      textDecorationLine: 'underline',
+    },
+    blackFont: {
+      color: 'black',
+    },
   });
   return {styles, colors: theme.colors};
 };
@@ -205,7 +211,7 @@ const CartDetail = ({
   const [isOpenModal, setIsOpenModal] = useState(false);
 
   const [totalPointVoucher, setTotalPointVoucher] = React.useState(0);
-  const {calculateVoucherPoint} = useCalculation();
+  const {calculateVoucherPoint, calculationAmountPaidByVisa} = useCalculation();
   const [isOpenTnc, setIsOpenTnc] = React.useState(false);
   const {checkTncPolicyData} = useSettings();
   const [buttonActive, setButtonActive] = React.useState(false);
@@ -316,13 +322,13 @@ const CartDetail = ({
               styles.smallFont,
               styles.mediumFont,
               styles.mediumSize,
-              styles.primaryColor,
+              styles.blackFont,
             ]}>
             {data?.cartDetails?.outlet?.name}
           </GlobalText>
         </View>
         <View>
-          <GlobalText style={[styles.primaryColor, styles.mt4]}>
+          <GlobalText style={[styles.blackFont, styles.mt4, styles.mediumFont]}>
             {data?.cartDetails?.outlet?.address}
           </GlobalText>
         </View>
@@ -368,7 +374,7 @@ const CartDetail = ({
 
     Animated.timing(leftValue, {
       toValue: value,
-      duration: 1000,
+      duration: 500,
       useNativeDriver: false,
     }).start();
 
@@ -382,6 +388,7 @@ const CartDetail = ({
 
     return (
       <TouchableOpacity
+        disabled={totalPoint === 0}
         onPress={() => {
           handleClick();
         }}
@@ -402,6 +409,7 @@ const CartDetail = ({
   };
   const renderPointText = () => {
     const pointWorth = campaign.points.pointsToRebateRatio1;
+    const totalPointValue = totalPoint * pointWorth;
 
     if (fullPoint) {
       return (
@@ -418,7 +426,7 @@ const CartDetail = ({
             Available Points {totalPoint} points
           </GlobalText>
           <GlobalText style={styles.pointText}>
-            worth {CurrencyFormatter(pointWorth)}
+            worth {CurrencyFormatter(totalPointValue)}
           </GlobalText>
         </View>
       );
@@ -426,7 +434,7 @@ const CartDetail = ({
   };
 
   const renderPointType = () => {
-    if (awsConfig.COMPANY_NAME === 'Far East Flora') {
+    if (appConfig.pointType === 'maxPointAutoApply') {
       return renderPointSwitcher();
     } else {
       return (
@@ -440,7 +448,7 @@ const CartDetail = ({
   const renderPoint = () => {
     return (
       <TouchableOpacity
-        disabled={awsConfig.COMPANY_NAME === 'Far East Flora'}
+        disabled={appConfig.pointType === 'maxPointAutoApply'}
         onPress={() => {
           setIsOpenModal(true);
         }}
@@ -483,6 +491,37 @@ const CartDetail = ({
           setIsOpenModal(false);
         }}
       />
+    );
+  };
+  const renderVoucher = () => {
+    const vouchersWithoutPoint = vouchers?.filter(
+      row => row?.paymentType !== 'point',
+    );
+
+    return (
+      <TouchableOpacity onPress={openVoucher} style={[styles.card, styles.mt8]}>
+        <View style={styles.row}>
+          <View style={styles.mr10}>
+            <VoucherSvg />
+          </View>
+          <GlobalText>Use Voucher</GlobalText>
+          <View style={styles.mlAuto}>
+            <ArrowRight />
+          </View>
+        </View>
+
+        {vouchersWithoutPoint?.length > 0 ? (
+          <View style={styles.mt12}>
+            {vouchersWithoutPoint?.map(voucher => (
+              <View>
+                <GlobalText style={[styles.brandColor, styles.mediumFont]}>
+                  {voucher?.name}
+                </GlobalText>
+              </View>
+            ))}
+          </View>
+        ) : null}
+      </TouchableOpacity>
     );
   };
 
@@ -538,7 +577,7 @@ const CartDetail = ({
 
       <View style={[{paddingHorizontal: 14}, styles.mt8]}>
         <View style={styles.card}>
-          <View style={[styles.row, styles.mt12]}>
+          <View style={[styles.row]}>
             <GlobalText style={[styles.boldFont, styles.deliveryText]}>
               {data?.cartDetails?.orderingMode}{' '}
             </GlobalText>
@@ -557,30 +596,8 @@ const CartDetail = ({
       </GlobalText>
       <View style={styles.ph14}>
         {renderPoint()}
-        <TouchableOpacity
-          onPress={openVoucher}
-          style={[styles.card, styles.mt8]}>
-          <View style={styles.row}>
-            <View style={styles.mr10}>
-              <VoucherSvg />
-            </View>
-            <GlobalText>Use Voucher</GlobalText>
-            <View style={styles.mlAuto}>
-              <ArrowRight />
-            </View>
-          </View>
-          {vouchers?.length > 0 ? (
-            <View style={styles.mt12}>
-              {vouchers.map(voucher => (
-                <View>
-                  <GlobalText style={[styles.brandColor, styles.mediumFont]}>
-                    {voucher?.name}
-                  </GlobalText>
-                </View>
-              ))}
-            </View>
-          ) : null}
-        </TouchableOpacity>
+        {renderVoucher()}
+
         <TouchableOpacity
           onPress={openPayment}
           style={[styles.card, styles.mt8]}>
@@ -610,7 +627,11 @@ const CartDetail = ({
           </GlobalText>
           <GlobalText>
             Amount paid by {selectedAccount?.details?.cardIssuer}{' '}
-            {CurrencyFormatter(data?.totalNettAmount)}{' '}
+            {calculationAmountPaidByVisa(
+              data?.totalNettAmount,
+              vouchers,
+              totalPointVoucher,
+            )}{' '}
           </GlobalText>
         </View>
         <View
@@ -629,9 +650,15 @@ const CartDetail = ({
             value={isAgreeTnc}
             onValueChange={handleAgreeTnc}
           />
-          <GlobalText style={[styles.ml8]}>
+          <GlobalText style={[styles.ml8, styles.mediumFont]}>
             I agree to the{' '}
-            <GlobalText onPress={toggleTnc} style={[styles.brandColor]}>
+            <GlobalText
+              onPress={toggleTnc}
+              style={[
+                styles.brandColor,
+                styles.boldFont,
+                styles.underLineText,
+              ]}>
               Terms and Conditions.
             </GlobalText>
           </GlobalText>

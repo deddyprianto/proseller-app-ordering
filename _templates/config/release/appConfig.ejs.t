@@ -16,6 +16,7 @@ const appConfig = {
   descriptionLineProduct: '<%= productLine %>',
   contactUsVersion: '<%= contactUsVersion %>',
   modifierType: '<%= modifierType %>',
+  pointType: '<%= pointType %>',
 
   // image company
   appImageNull: require('../assets/img/logo.png'),

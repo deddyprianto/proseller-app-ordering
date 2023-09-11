@@ -5,9 +5,11 @@ import {useSelector} from 'react-redux';
 
 import {Header} from '../components/layout';
 import Theme from '../theme';
+import useBackHandler from '../hooks/backHandler/useBackHandler';
 
 const useStyles = () => {
   const theme = Theme();
+  useBackHandler();
   const styles = StyleSheet.create({
     root: {
       flex: 1,

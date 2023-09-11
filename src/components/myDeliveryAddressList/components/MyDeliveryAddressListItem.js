@@ -220,7 +220,12 @@ const useStyles = () => {
   return styles;
 };
 
-const MyDeliveryAddressItem = ({item, fromScene, handleResetProvider}) => {
+const MyDeliveryAddressItem = ({
+  item,
+  fromScene,
+  handleResetProvider,
+  index,
+}) => {
   const styles = useStyles();
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
@@ -235,7 +240,6 @@ const MyDeliveryAddressItem = ({item, fromScene, handleResetProvider}) => {
   const [openDeleteModal, setOpenDeleteModal] = React.useState(false);
   const [openSelectModal, setOpenSelectModal] = React.useState(false);
   const isFromProfileScene = fromScene === 'profile';
-
   useEffect(() => {
     const userDecrypt = CryptoJS.AES.decrypt(
       userDetail,
@@ -251,7 +255,6 @@ const MyDeliveryAddressItem = ({item, fromScene, handleResetProvider}) => {
     setSelectedIndex(selected);
     setUser(result);
   }, [userDetail]);
-
   const handleSelectAddress = async () => {
     let result = user.deliveryAddress || [];
 
@@ -392,7 +395,7 @@ const MyDeliveryAddressItem = ({item, fromScene, handleResetProvider}) => {
         <GlobalButton
           isOutline
           buttonStyle={[
-            styles.editBtnContainer(item.isDefault),
+            styles.editBtnContainer(item.isDefault || !isFromProfileScene),
             styles.bottomButtonContainer,
           ]}
           title="Edit Address"
@@ -400,7 +403,7 @@ const MyDeliveryAddressItem = ({item, fromScene, handleResetProvider}) => {
             Actions.addNewAddress({address: item});
           }}
         />
-        {item?.isDefault ? null : (
+        {item?.isDefault || !isFromProfileScene ? null : (
           <GlobalButton
             isOutline
             buttonStyle={[
@@ -434,7 +437,8 @@ const MyDeliveryAddressItem = ({item, fromScene, handleResetProvider}) => {
   };
 
   const disableButton = () => {
-    if (!handleResetProvider) {
+    const selected = selectedIndex === item?.index;
+    if (!handleResetProvider || selected) {
       return true;
     } else {
       return false;

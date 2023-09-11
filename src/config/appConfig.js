@@ -12,6 +12,7 @@ const appConfig = {
   descriptionLineProduct: '2',
   contactUsVersion: '',
   modifierType: 'textOnly',
+  pointType: 'manualPointEntry',
 
   // image company
   appImageNull: require('../assets/img/logo.png'),

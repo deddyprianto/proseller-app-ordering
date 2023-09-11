@@ -7,6 +7,7 @@ import AllowSelfSelectionLabel from '../../label/AllowSelfSelection';
 import CurrencyFormatter from '../../../helper/CurrencyFormatter';
 import {isEmptyArray} from '../../../helper/CheckEmpty';
 import appConfig from '../../../config/appConfig';
+import useProductCartList from './hooks/useProductCartList';
 
 const useStyles = () => {
   const theme = Theme();
@@ -41,6 +42,7 @@ const useStyles = () => {
     productName: {
       marginLeft: 8,
       width: '55%',
+      justifyContent: 'center',
     },
     productText: {
       fontSize: 12,
@@ -152,7 +154,9 @@ const useStyles = () => {
 
 const ProductCartItemCart2 = ({item, containerStyle}) => {
   const {styles} = useStyles();
-
+  const {renderProductModifier} = useProductCartList({
+    isProductUnavailable: false,
+  });
   const renderPreOrder = () => {
     if (item?.isPreOrderItem) {
       return <PreorderLabel containerStyle={styles.preOrderContainer} />;
@@ -198,39 +202,6 @@ const ProductCartItemCart2 = ({item, containerStyle}) => {
     return null;
   };
 
-  const renderProductModifier = () => {
-    if (!isEmptyArray(item.modifiers)) {
-      const productModifiers = item.modifiers.map(modifier => {
-        return modifier?.modifier?.details.map(detail => {
-          return (
-            <View style={styles.viewProductModifierItem}>
-              <View style={styles.viewBullet} />
-
-              <GlobalText style={styles.textModifier}>
-                <GlobalText style={styles.textModifierItemQty}>
-                  {detail?.quantity}x{' '}
-                </GlobalText>
-                <GlobalText style={styles.textModifierItemName}>
-                  {detail?.name}
-                </GlobalText>
-                <GlobalText style={styles.textModifierItemPrice}>
-                  +{detail?.price}{' '}
-                </GlobalText>
-              </GlobalText>
-            </View>
-          );
-        });
-      });
-
-      return (
-        <View style={styles.modifierContaine}>
-          <GlobalText style={styles.textAddOn}>Add-On</GlobalText>
-          {productModifiers}
-        </View>
-      );
-    }
-  };
-
   const renderPromoIcon = () => {
     if (!isEmptyArray(item.promotions)) {
       return (
@@ -254,7 +225,7 @@ const ProductCartItemCart2 = ({item, containerStyle}) => {
           <GlobalText style={styles.amountText}>{item.quantity}x</GlobalText>
         </View>
         <View style={styles.productName}>
-          <GlobalText numberOfLines={1} style={styles.productText}>
+          <GlobalText numberOfLines={2} style={styles.productText}>
             {item.product?.name}
           </GlobalText>
         </View>
@@ -266,7 +237,7 @@ const ProductCartItemCart2 = ({item, containerStyle}) => {
       </View>
       <View style={styles.row}>{renderPromoIcon()}</View>
       {renderPrice()}
-      {renderProductModifier()}
+      {renderProductModifier(item)}
     </View>
   );
 };

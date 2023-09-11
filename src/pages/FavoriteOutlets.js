@@ -7,6 +7,7 @@ import {dataStores} from '../actions/stores.action';
 import FavoriteOutletList from '../components/favoriteOutletList';
 
 import {Body, Header} from '../components/layout';
+import useBackHandler from '../hooks/backHandler/useBackHandler';
 
 const styles = StyleSheet.create({
   root: {
@@ -17,7 +18,7 @@ const styles = StyleSheet.create({
 
 const FavoriteOutlets = () => {
   const dispatch = useDispatch();
-
+  useBackHandler();
   const [searchQuery, setSearchQuery] = useState('');
 
   const outlets = useSelector(state => state.storesReducer.dataStores.stores);

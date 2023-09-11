@@ -37,7 +37,7 @@ const useStyles = () => {
     },
     closeContainer: {
       position: 'absolute',
-      right: 5,
+      right: 8,
     },
     contentContainer: {
       paddingBottom: 30,
@@ -102,7 +102,7 @@ const GlobalModal = props => {
   };
 
   return (
-    <Modal style={handleStyle()} useNativeDriver {...props}>
+    <Modal style={handleStyle()} useNativeDriver={false} {...props}>
       <View style={[styles.modalContainer, props.modalContainerStyle]}>
         <View style={[styles.titleCloseContainer, props.titleContainerStyle]}>
           <View>

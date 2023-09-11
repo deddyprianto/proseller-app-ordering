@@ -6,6 +6,7 @@ import CurrencyFormatter from '../../helper/CurrencyFormatter';
 import Theme from '../../theme/Theme';
 import {useSelector} from 'react-redux';
 import useCalculation from '../../hooks/calculation/useCalculation';
+import {isEmptyArray} from '../../helper/CheckEmpty';
 
 const useStyles = () => {
   const theme = Theme();
@@ -18,6 +19,7 @@ const useStyles = () => {
     },
     modalItemPrice: {
       fontFamily: theme.fontFamily.poppinsSemiBold,
+      color: 'black',
     },
     negativeColor: {
       color: theme.colors.semanticError,
@@ -34,8 +36,8 @@ const useStyles = () => {
       marginLeft: 8,
     },
     minusText: {
-      color: theme.colors.errorColor,
-      fontFamily: theme.fontFamily.poppinsMedium,
+      color: theme.colors.primary,
+      fontFamily: theme.fontFamily.poppinsSemiBold,
     },
     noMargin: {
       marginHorizontal: 0,
@@ -56,7 +58,7 @@ const useStyles = () => {
     priceText: {
       fontSize: 24,
       fontFamily: theme.fontFamily.poppinsSemiBold,
-      color: theme.colors.errorColor,
+      color: theme.colors.primary,
     },
     p12: {
       padding: 12,
@@ -68,15 +70,27 @@ const useStyles = () => {
       backgroundColor: '#F9F9F9',
       borderRadius: 8,
     },
+    mediumFont: {
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
   });
   return styles;
 };
 
-const ModalOrderDetail = ({open, closeModal, vouchers, pointDisc}) => {
+const ModalOrderDetail = ({
+  open,
+  closeModal,
+  vouchers,
+  pointDisc,
+  hideAmountPaid,
+  totalPointToPay,
+}) => {
   const styles = useStyles();
+  const {calculationAmountPaidByVisa} = useCalculation();
   const basket = useSelector(state => state.orderReducer?.dataBasket?.product);
   const {calculateVoucherPoint} = useCalculation();
   const {calculateVoucher} = useCalculation();
+  const delivery_mode = 'DELIVERY';
   const handleCloseDetail = () => {
     if (closeModal && typeof closeModal === 'function') {
       closeModal();
@@ -86,6 +100,62 @@ const ModalOrderDetail = ({open, closeModal, vouchers, pointDisc}) => {
     state => state.cardReducer?.selectedAccount?.selectedAccount,
   );
 
+  const voucherOnly = () => {
+    if (!isEmptyArray(vouchers)) {
+      const filterVoucher = vouchers.filter(
+        voucher => voucher?.paymentType !== 'point',
+      );
+      return filterVoucher;
+    }
+    return [];
+  };
+
+  const checkTax = () => {
+    if (basket?.inclusiveTax > 0 && basket?.exclusiveTax > 0) {
+      return (
+        <>
+          <View style={[styles.divider, styles.noMargin]} />
+
+          <View style={styles.modalItem}>
+            <GlobalText>Tax</GlobalText>
+            <GlobalText style={styles.modalItemPrice}>
+              {CurrencyFormatter(basket?.totalTaxAmount)}{' '}
+            </GlobalText>
+          </View>
+        </>
+      );
+    }
+    if (basket?.inclusiveTax > 0) {
+      return (
+        <>
+          <View style={[styles.divider, styles.noMargin]} />
+
+          <View style={styles.modalItem}>
+            <GlobalText>Incl. Tax</GlobalText>
+            <GlobalText style={styles.modalItemPrice}>
+              {CurrencyFormatter(basket?.inclusiveTax)}{' '}
+            </GlobalText>
+          </View>
+        </>
+      );
+    }
+
+    if (basket?.exclusiveTax > 0) {
+      return (
+        <>
+          <View style={[styles.divider, styles.noMargin]} />
+
+          <View style={styles.modalItem}>
+            <GlobalText>Excl. Tax</GlobalText>
+            <GlobalText style={styles.modalItemPrice}>
+              {CurrencyFormatter(basket?.exclusiveTax)}{' '}
+            </GlobalText>
+          </View>
+        </>
+      );
+    }
+    return null;
+  };
   return (
     <GlobalModal
       title="Details"
@@ -103,28 +173,30 @@ const ModalOrderDetail = ({open, closeModal, vouchers, pointDisc}) => {
         </View>
         {basket?.totalDiscountAmount > 0 ? (
           <View style={styles.modalItem}>
-            <GlobalText style={styles.minusText}>Item Discount</GlobalText>
-            <GlobalText style={styles.modalItemPrice}>
+            <GlobalText style={[styles.minusText, styles.mediumFont]}>
+              Item Discount
+            </GlobalText>
+            <GlobalText style={styles.minusText}>
               ({CurrencyFormatter(basket?.totalDiscountAmount)} )
             </GlobalText>
           </View>
         ) : null}
+        {basket?.orderingMode === delivery_mode && basket?.provider ? (
+          <>
+            <View style={[styles.divider, styles.noMargin]} />
+            <View style={styles.modalItem}>
+              <GlobalText>Delivery Fee</GlobalText>
+              <GlobalText style={styles.modalItemPrice}>
+                {basket?.provider?.deliveryFee > 0
+                  ? CurrencyFormatter(basket?.provider?.deliveryFee)
+                  : 'FREE'}
+              </GlobalText>
+            </View>
+          </>
+        ) : null}
 
-        <View style={[styles.divider, styles.noMargin]} />
-        <View style={styles.modalItem}>
-          <GlobalText>Delivery Fee</GlobalText>
-          <GlobalText style={styles.modalItemPrice}>
-            {CurrencyFormatter(basket?.provider?.deliveryFee)}{' '}
-          </GlobalText>
-        </View>
-        <View style={[styles.divider, styles.noMargin]} />
+        {checkTax()}
 
-        <View style={styles.modalItem}>
-          <GlobalText>Incl. Tax</GlobalText>
-          <GlobalText style={styles.modalItemPrice}>
-            {CurrencyFormatter(basket?.provider?.totalTaxAmount)}{' '}
-          </GlobalText>
-        </View>
         <View style={[styles.divider, styles.noMargin]} />
         <View style={styles.modalItem}>
           <GlobalText style={styles.grandTotalText}>Grand Total</GlobalText>
@@ -132,32 +204,38 @@ const ModalOrderDetail = ({open, closeModal, vouchers, pointDisc}) => {
             {CurrencyFormatter(basket?.totalNettAmount)}{' '}
           </GlobalText>
         </View>
-        {pointDisc > 0 ? (
+        {totalPointToPay && totalPointToPay > 0 ? (
           <View style={styles.modalItem}>
             <GlobalText style={styles.minusText}>Paid with point</GlobalText>
             <GlobalText style={[styles.modalItemPrice, styles.minusText]}>
-              ({CurrencyFormatter(pointDisc)} )
+              ({CurrencyFormatter(totalPointToPay)} )
             </GlobalText>
           </View>
         ) : null}
-        {vouchers?.length > 0 ? (
+        {voucherOnly()?.length > 0 ? (
           <View style={styles.modalItem}>
             <GlobalText style={styles.minusText}>Paid voucher</GlobalText>
             <GlobalText style={[styles.modalItemPrice, styles.minusText]}>
-              ({CurrencyFormatter(calculateVoucher(vouchers))} )
+              ({CurrencyFormatter(calculateVoucher(voucherOnly()))} )
             </GlobalText>
           </View>
         ) : null}
-        <View style={[styles.p12, styles.mt16, styles.bgGrey]}>
-          <GlobalText>
-            Amount paid by points/vouchers{' '}
-            {CurrencyFormatter(calculateVoucherPoint(vouchers))}{' '}
-          </GlobalText>
-          <GlobalText>
-            Amount paid by {selectedAccount?.details?.cardIssuer}{' '}
-            {CurrencyFormatter(basket?.totalNettAmount)}
-          </GlobalText>
-        </View>
+        {!hideAmountPaid ? (
+          <View style={[styles.p12, styles.mt16, styles.bgGrey]}>
+            <GlobalText>
+              Amount paid by points/vouchers{' '}
+              {CurrencyFormatter(calculateVoucherPoint(vouchers))}{' '}
+            </GlobalText>
+            <GlobalText>
+              Amount paid by {selectedAccount?.details?.cardIssuer}{' '}
+              {calculationAmountPaidByVisa(
+                basket?.totalNettAmount,
+                vouchers,
+                calculateVoucherPoint(vouchers),
+              )}
+            </GlobalText>
+          </View>
+        ) : null}
       </View>
     </GlobalModal>
   );

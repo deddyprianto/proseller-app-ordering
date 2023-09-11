@@ -5,6 +5,7 @@ import {useSelector} from 'react-redux';
 
 import {Header} from '../components/layout';
 import Theme from '../theme';
+import useBackHandler from '../hooks/backHandler/useBackHandler';
 
 const useStyles = () => {
   const theme = Theme();
@@ -25,6 +26,7 @@ const useStyles = () => {
 
 const PrivacyPolicy = () => {
   const styles = useStyles();
+  useBackHandler();
   const privacyPolicy = useSelector(
     state => state.settingReducer?.privacyPolicySettings?.privacyPolicy,
   );

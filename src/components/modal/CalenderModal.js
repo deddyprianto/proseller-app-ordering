@@ -262,9 +262,12 @@ const CalenderModal = ({
   };
 
   const handleAvailableDate = item => {
-    const result =
-      !isEmptyArray(availableDates) &&
-      availableDates?.find(value => handleDateFormatter(value?.date) === item);
+    let result = null;
+    if (!isEmptyArray(availableDates)) {
+      result = availableDates?.find(
+        value => handleDateFormatter(value?.date) === handleDateFormatter(item),
+      );
+    }
 
     return result;
   };
