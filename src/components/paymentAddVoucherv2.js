@@ -41,11 +41,22 @@ class PaymentAddVoucersV2 extends Component {
       data: this.props.data,
       loadingCheckVoucher: false,
       usedVoucher: props?.dataVoucer || [],
-      availableVoucher: props?.data || [],
+      availableVoucher: props?.myVoucher || [],
       newAvailableVoucher: [],
       unAvailableVoucher: [],
+      onlyTypeVoucher: [],
     };
   }
+
+  filterOnlyVoucher = () => {
+    if (!isEmptyArray(this.state.usedVoucher)) {
+      const onlyVoucher = this.state.usedVoucher.filter(
+        voucher => voucher?.paymentType !== 'point',
+      );
+      return onlyVoucher;
+    }
+    return [];
+  };
 
   componentDidMount() {
     this.setupAvailableVoucher();
@@ -206,6 +217,8 @@ class PaymentAddVoucersV2 extends Component {
 
   setupAvailableVoucher = async () => {
     const {totalPrice} = this.props;
+    let myNewVoucher = [];
+    let myUnavailableVoucher = [];
     this.state.availableVoucher?.forEach(async data => {
       const includeOutlet = data.selectedOutlets?.includes(
         `outlet::${this.props.pembayaran.storeId}`,
@@ -217,22 +230,22 @@ class PaymentAddVoucersV2 extends Component {
         findDuplicateVocher && data?.validity?.canOnlyUseOneTime;
       const isValidDay = this.isValidDay(data).status;
       const passMinimumPurchase = totalPrice > data.minPurchaseAmount;
-
       if (
         includeOutlet &&
         passMinimumPurchase &&
         !duplicateVoucher &&
         isValidDay
       ) {
-        this.setState({
-          newAvailableVoucher: [...this.state.newAvailableVoucher, data],
-        });
+        myNewVoucher.push(data);
       } else {
-        this.setState({
-          unAvailableVoucher: [...this.state.unAvailableVoucher, data],
-        });
+        myUnavailableVoucher.push(data);
       }
     });
+    this.setState({
+      newAvailableVoucher: myNewVoucher,
+      unAvailableVoucher: myUnavailableVoucher,
+    });
+    console.log({myNewVoucher, myUnavailableVoucher}, 'kurapika');
   };
 
   pageDetailVoucher = async (item, type, index) => {
@@ -324,15 +337,17 @@ class PaymentAddVoucersV2 extends Component {
       return;
     }
     // add new voucher
+
     if (type === 'available') {
       this.handleAddVoucher(item, index);
-      //   this.handleAvailableVoucher(item);
     }
     // remove voucher
     if (type === 'used') {
       this.handleRemoveVoucher(item, index);
     }
   };
+
+  checkAmountVoucher
 
   onSubmit = () => {
     this.props.setDataVoucher(this.state.usedVoucher);
@@ -342,36 +357,29 @@ class PaymentAddVoucersV2 extends Component {
   handleRemoveVoucher = (item, index) => {
     if (item) {
       let oldVoucher = this.state.usedVoucher;
+      let oldAvailVoucher = this.state.newAvailableVoucher;
       oldVoucher = oldVoucher?.filter(
-        (_voucher, indexVoucher) => index !== indexVoucher,
+        voucher => item.serialNumber !== voucher.serialNumber,
       );
-      this.setState({usedVoucher: oldVoucher});
+      oldAvailVoucher = [...oldAvailVoucher, item];
+      this.setState({usedVoucher: oldVoucher}, () => {
+        this.setState({newAvailableVoucher: oldAvailVoucher});
+      });
     }
   };
 
-  handleAddAvailableVoucher = item => {
-    if (item) {
-      let oldVoucher = this.state.newAvailableVoucher;
-      oldVoucher = [...oldVoucher, item];
-      this.setState({newAvailableVoucher: oldVoucher});
-    }
-  };
-
-  handleAddVoucher = item => {
+  handleAddVoucher = async (item, index) => {
     if (item) {
       let oldVoucher = this.state.usedVoucher;
       oldVoucher = [...oldVoucher, item];
-      this.setState({usedVoucher: oldVoucher});
-    }
-  };
-
-  handleAvailableVoucher = item => {
-    if (item) {
-      let oldVoucher = this.state.newAvailableVoucher;
-      oldVoucher = oldVoucher?.filter(
+      let availVoucher = this.state.newAvailableVoucher;
+      const removeVoucher = availVoucher.filter(
         voucher => voucher.serialNumber !== item.serialNumber,
       );
-      this.setState({newAvailableVoucher: oldVoucher});
+      this.setState({
+        usedVoucher: oldVoucher,
+        newAvailableVoucher: removeVoucher,
+      });
     }
   };
 
@@ -466,7 +474,7 @@ class PaymentAddVoucersV2 extends Component {
 
   render() {
     const {usedVoucher, newAvailableVoucher, unAvailableVoucher} = this.state;
-
+    console.log(this.props, this.state, 'nanak');
     return (
       <SafeAreaView style={styles.container}>
         <LoadingScreen loading={this.state.loadingCheckVoucher} />
@@ -475,42 +483,35 @@ class PaymentAddVoucersV2 extends Component {
         <ScrollView contentContainerStyle={styles.scrollContainer}>
           {this.renderTitle('USE VOUCHER CODE')}
           <InputVoucher onPressVoucher={this.checkVoucher} />
-          {usedVoucher?.length > 0 ? (
+          {this.filterOnlyVoucher()?.length > 0 ? (
             <View>
               {this.renderTitle('VOUCHER USED')}
-
-              <FlatList
-                data={this.state.usedVoucher}
-                renderItem={this.renderUsedVoucherList}
-                style={styles.flatlistCOntainer}
-              />
+              {this.filterOnlyVoucher()?.map(voucher => {
+                return this.renderUsedVoucherList({item: voucher});
+              })}
             </View>
           ) : null}
           {newAvailableVoucher?.length > 0 ? (
             <View>
               {this.renderTitle('AVAILABLE VOUCHER')}
-              <FlatList
-                data={newAvailableVoucher}
-                renderItem={this.renderAvaulableVoucherList}
-                style={styles.flatlistCOntainer}
-              />
+              {newAvailableVoucher.map(voucher => {
+                return this.renderAvaulableVoucherList({item: voucher});
+              })}
             </View>
           ) : null}
           {unAvailableVoucher.length > 0 ? (
             <View>
               {this.renderTitle('NOT AVAILABLE')}
-              <FlatList
-                data={unAvailableVoucher}
-                renderItem={this.renderNotAvailableVoucher}
-                style={styles.flatlistCOntainer}
-              />
+              {unAvailableVoucher.map(voucher => {
+                return this.renderNotAvailableVoucher({item: voucher});
+              })}
             </View>
           ) : null}
         </ScrollView>
         <View onPress={this.onSubmit} style={styles.buttonBottomFixed}>
           <View style={styles.centerAlign}>
             <GlobalText>
-              {this.state.usedVoucher?.length} Voucher Applied
+              {this.filterOnlyVoucher()?.length} Voucher Applied
             </GlobalText>
           </View>
           <View style={styles.centerAlign}>
@@ -533,6 +534,7 @@ const mapDispatchToProps = dispatch => ({
 const mapStateToProps = state => ({
   allVouchers: state.rewardsReducer?.vouchers?.dataVoucher,
   point: state.rewardsReducer?.dataPoint?.totalPoint,
+  myVoucher: state.accountsReducer.myVouchers?.vouchers,
 });
 
 export default compose(

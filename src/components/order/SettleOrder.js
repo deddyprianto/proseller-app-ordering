@@ -991,7 +991,7 @@ class SettleOrder extends Component {
         intlData,
         dataVoucer,
         data: myVoucers,
-        totalPrice: this.state.totalBayar,
+        totalPrice: this.state.totalBayar - this.state.totalNonDiscountable,
         pembayaran: this.props.pembayaran,
         setDataVoucher: this.setDataVoucher,
       });
@@ -3608,6 +3608,7 @@ class SettleOrder extends Component {
     } = this.props;
     const {outlet} = this.state;
     const {cartVersion} = additionalSetting();
+    console.log(this.state, 'paman');
     const total =
       Number(this.state.totalBayar) - this.state.totalNonDiscountable;
     if (cartVersion === 'advance') {
