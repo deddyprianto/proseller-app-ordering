@@ -35,9 +35,25 @@ const usePayment = () => {
       }
     }
   };
+
+  const mapVoucherPaymentCheck = (usedVoucher = []) => {
+    const voucherMap = usedVoucher?.map(voucher => {
+      if (voucher?.paymentType === 'point') {
+        return {...voucher};
+      }
+      return {
+        isVoucher: true,
+        serialNumber: voucher?.serialNumber,
+        voucherId: voucher?.id,
+      };
+    });
+    return voucherMap;
+  };
+
   return {
     registerCardHook,
     isLoading,
+    mapVoucherPaymentCheck,
   };
 };
 

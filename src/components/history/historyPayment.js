@@ -239,11 +239,11 @@ class HistoryPayment extends Component {
                     <View style={styles.sejajarSpace}>
                       <Text style={styles.storeName}>
                         {item.outlet !== undefined
-                          ? item.outlet.name.substr(0, 18)
-                          : outletSingle.name.substr(0, 18)}
+                          ? item.outlet.name?.substr(0, 18)
+                          : outletSingle.name?.substr(0, 18)}
                         {item.outlet !== undefined &&
-                          item.outlet.name.length >
-                            item.outlet.name.substr(0, 15).length &&
+                          item.outlet.name?.length >
+                            item.outlet.name?.substr(0, 15)?.length &&
                           '...'}
                       </Text>
                       {item.status === 'COMPLETED' ? (

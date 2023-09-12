@@ -28,7 +28,10 @@ const useCalculation = () => {
       total -= totalPointVoucher;
     }
 
-    return total;
+    if (total < 0) {
+      return 0;
+    }
+    return total?.toFixed(2);
   };
 
   return {

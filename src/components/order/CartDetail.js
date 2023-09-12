@@ -196,6 +196,7 @@ const CartDetail = ({
   isAgreeTnc,
   onAgreeTnc,
   latestSelfSelectionDate,
+  showPaymentMethod,
 }) => {
   const {styles, colors} = useStyles();
   const selectedAccount = useSelector(
@@ -211,7 +212,11 @@ const CartDetail = ({
   const [isOpenModal, setIsOpenModal] = useState(false);
 
   const [totalPointVoucher, setTotalPointVoucher] = React.useState(0);
-  const {calculateVoucherPoint, calculationAmountPaidByVisa} = useCalculation();
+  const {
+    calculateVoucherPoint,
+    calculationAmountPaidByVisa,
+    calculateVoucher,
+  } = useCalculation();
   const [isOpenTnc, setIsOpenTnc] = React.useState(false);
   const {checkTncPolicyData} = useSettings();
   const [buttonActive, setButtonActive] = React.useState(false);
@@ -385,10 +390,12 @@ const CartDetail = ({
     const stylesView = isSwitchPoint
       ? styles.viewSwitcherActive
       : styles.viewSwitcher;
-
+    const onlyVoucher = vouchers?.filter(voucher => !voucher.isPoint);
+    const isPointtMoreThanAmount =
+      calculateVoucher(onlyVoucher) > data?.totalNettAmount;
     return (
       <TouchableOpacity
-        disabled={totalPoint === 0}
+        disabled={totalPoint === 0 || isPointtMoreThanAmount}
         onPress={() => {
           handleClick();
         }}
@@ -493,10 +500,9 @@ const CartDetail = ({
       />
     );
   };
+
   const renderVoucher = () => {
-    const vouchersWithoutPoint = vouchers?.filter(
-      row => row?.paymentType !== 'point',
-    );
+    const vouchersWithoutPoint = vouchers?.filter(row => !row.isPoint);
 
     return (
       <TouchableOpacity onPress={openVoucher} style={[styles.card, styles.mt8]}>
@@ -597,42 +603,52 @@ const CartDetail = ({
       <View style={styles.ph14}>
         {renderPoint()}
         {renderVoucher()}
+        {showPaymentMethod ? (
+          <TouchableOpacity
+            onPress={openPayment}
+            style={[styles.card, styles.mt8]}>
+            <View style={styles.row}>
+              <View style={styles.mr10}>
+                <CreditCard />
+              </View>
+              <GlobalText>Payment Method</GlobalText>
+              <View style={styles.mlAuto}>
+                <ArrowRight />
+              </View>
+            </View>
+            {selectedAccount ? (
+              <View>
+                <GlobalText
+                  style={[styles.brandColor, styles.mediumFont, styles.mt12]}>
+                  {selectedAccount?.details?.cardIssuer}{' '}
+                  {selectedPaymentMethod(selectedAccount)}
+                </GlobalText>
+              </View>
+            ) : null}
+          </TouchableOpacity>
+        ) : null}
 
-        <TouchableOpacity
-          onPress={openPayment}
-          style={[styles.card, styles.mt8]}>
-          <View style={styles.row}>
-            <View style={styles.mr10}>
-              <CreditCard />
-            </View>
-            <GlobalText>Payment Method</GlobalText>
-            <View style={styles.mlAuto}>
-              <ArrowRight />
-            </View>
-          </View>
-          {selectedAccount ? (
-            <View>
-              <GlobalText
-                style={[styles.brandColor, styles.mediumFont, styles.mt12]}>
-                {selectedAccount?.details?.cardIssuer}{' '}
-                {selectedPaymentMethod(selectedAccount)}
-              </GlobalText>
-            </View>
-          ) : null}
-        </TouchableOpacity>
         <View style={[styles.p12, styles.bgGrey, styles.mt8]}>
           <GlobalText>
             Amount paid by points/vouchers{' '}
             {CurrencyFormatter(totalPointVoucher)}
           </GlobalText>
-          <GlobalText>
-            Amount paid by {selectedAccount?.details?.cardIssuer}{' '}
-            {calculationAmountPaidByVisa(
-              data?.totalNettAmount,
-              vouchers,
-              totalPointVoucher,
-            )}{' '}
-          </GlobalText>
+          {calculationAmountPaidByVisa(
+            data?.totalNettAmount,
+            vouchers,
+            totalPointVoucher,
+          ) > 0 ? (
+            <GlobalText>
+              Amount paid {selectedAccount ? 'by ' : ''}
+              {''}
+              {selectedAccount?.details?.cardIssuer}{' '}
+              {calculationAmountPaidByVisa(
+                data?.totalNettAmount,
+                vouchers,
+                totalPointVoucher,
+              )}{' '}
+            </GlobalText>
+          ) : null}
         </View>
         <View
           style={[

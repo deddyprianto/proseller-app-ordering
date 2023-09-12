@@ -6,6 +6,7 @@ import Theme from '../../theme/Theme';
 import ProductCartList from '../productCartList/ProductCartList';
 import CartDetail from './CartDetail';
 import GrandTotalFloating from './GrandTotalFloating';
+import useCalculation from '../../hooks/calculation/useCalculation';
 
 const useStyles = () => {
   const theme = Theme();
@@ -51,7 +52,7 @@ const SettleOrderV2 = ({
 }) => {
   const {styles} = useStyles();
   const [availableSelection, setAvailableSelection] = React.useState([]);
-
+  const {calculationAmountPaidByVisa, calculateVoucherPoint} = useCalculation();
   const [isAgreeTnc, setIsAgreeTnc] = React.useState(false);
 
   const renderStep = () => {
@@ -71,6 +72,26 @@ const SettleOrderV2 = ({
 
   const updateAgreeTnc = val => {
     setIsAgreeTnc(val);
+  };
+
+  const hanldeDisableButton = isHidePaymentMethod => {
+    const totalPointVoucher = calculateVoucherPoint(vouchers);
+    const amountToPaid = calculationAmountPaidByVisa(
+      data?.totalNettAmount,
+      vouchers,
+      totalPointVoucher,
+    );
+    if (amountToPaid <= 0) {
+      return false;
+    } else {
+      if (isHidePaymentMethod) {
+        return true;
+      }
+      if (!selectedAccount) {
+        return true;
+      }
+      return false;
+    }
   };
 
   return (
@@ -103,6 +124,7 @@ const SettleOrderV2 = ({
           onAgreeTnc={updateAgreeTnc}
           isAgreeTnc={isAgreeTnc}
           latestSelfSelectionDate={latestSelfSelectionDate}
+          showPaymentMethod={hanldeDisableButton(true)}
         />
       </ScrollView>
       <GrandTotalFloating
@@ -110,7 +132,7 @@ const SettleOrderV2 = ({
         pointDisc={myPoint}
         btnText={'Pay'}
         onPressBtn={doPayment}
-        disabledBtn={!isAgreeTnc || !selectedAccount}
+        disabledBtn={!isAgreeTnc || hanldeDisableButton()}
         totalPointToPay={myMoneyPoint}
       />
     </SafeAreaView>

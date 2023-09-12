@@ -2107,3 +2107,27 @@ export const getPendingOrderById = id => {
     }
   };
 };
+
+export const getCalculationStep3 = body => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      let {responseBody} = await fetchApi(
+        '/payment/calculate',
+        'POST',
+        body,
+        200,
+        token,
+      );
+      return responseBody?.data;
+    } catch (error) {
+      return error;
+    }
+  };
+};

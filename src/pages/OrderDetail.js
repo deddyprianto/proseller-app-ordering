@@ -384,7 +384,6 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
       groupingeOrder(data?.details || []);
     }
   }, [data]);
-
   const renderPaymentDetail = ({item}) => (
     <View>
       {item?.paymentType === 'point' ? (
@@ -404,7 +403,7 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
           </View>
         </View>
       ) : null}
-      {item?.paymentType === 'voucher' ? (
+      {item?.paymentType === 'voucher' || item?.paymentType === 'promocode' ? (
         <View style={[styles.listOrderDetailContainer, styles.mv6]}>
           <View style={styles.orderStatusContainer}>
             <View style={styles.paymentDetailsCard}>

@@ -33,12 +33,11 @@ import appConfig from '../../config/appConfig';
 import ErrorModal from '../../components/modal/ErrorModal';
 import {
   getBasket,
-  getCart,
+  getCalculationStep3,
   getPendingCart,
   getPendingCartSingle,
   getSetting,
   getTimeSlot,
-  getTimeslotRaw,
   setOrderType,
   settleOrder,
 } from '../../actions/order.action';
@@ -75,6 +74,7 @@ import withHooksComponent from '../HOC';
 import additionalSetting from '../../config/additionalSettings';
 import SettleOrderV2 from './SettleOrderV2';
 import moment from 'moment';
+import {showSnackbar} from '../../actions/setting.action';
 
 class SettleOrder extends Component {
   constructor(props) {
@@ -108,6 +108,8 @@ class SettleOrder extends Component {
       showErrorModal: false,
       isOpenOrderingModeOfflineModal: false,
       errorMessage: {title: '', message: ''},
+      rawVoucher: [],
+      updateCalculation: true,
     };
 
     // check if users payment methods is empty
@@ -460,12 +462,7 @@ class SettleOrder extends Component {
       if (dataVoucer == undefined || item?.length <= 0) {
         dataVoucer = [];
       }
-      if (item.isVoucherPromoCode === true) {
-        item.isVoucherPromoCode = true;
-      } else {
-        item.isVoucher = true;
-      }
-      item.clientID = new Date().valueOf();
+
       await this.setState({
         dataVoucer: item,
         cancelVoucher: false,
@@ -918,14 +915,6 @@ class SettleOrder extends Component {
   };
 
   myVouchers = () => {
-    const {totalBayar, totalNonDiscountable} = this.state;
-    let totalNett = totalBayar - totalNonDiscountable;
-
-    if (totalNett <= 0) {
-      Alert.alert('Sorry', "Can't add more vouchers.");
-      return;
-    }
-
     const {intlData} = this.props;
     let originalVouchers = this.props.myVoucers;
     originalVouchers = JSON.stringify(originalVouchers);
@@ -991,7 +980,7 @@ class SettleOrder extends Component {
         intlData,
         dataVoucer,
         data: myVoucers,
-        totalPrice: this.state.totalBayar,
+        totalPrice: this.state.totalBayar - this.state.totalNonDiscountable,
         pembayaran: this.props.pembayaran,
         setDataVoucher: this.setDataVoucher,
       });
@@ -1148,6 +1137,40 @@ class SettleOrder extends Component {
     }
   };
 
+  async componentDidUpdate(prevProps, prevState) {
+    if (prevState.dataVoucer !== this.state.dataVoucer) {
+      this.setState({updateCalculation: true});
+      const payload = {
+        details: this.props.basket?.details,
+        outletId: this.props.basket?.outletID,
+        customerId: this.props.basket?.customerId,
+        payments: this.state.dataVoucer,
+      };
+      if (this.state.updateCalculation) {
+        this.callApiCalculatedVoucherPoint(payload);
+      }
+    }
+  }
+
+  callApiCalculatedVoucherPoint = async payload => {
+    const response = await this.props.dispatch(getCalculationStep3(payload));
+    if (response.message) {
+      return this.props.dispatch(showSnackbar({message: response.message}));
+    }
+    this.setState({dataVoucer: response.payments}, () => {
+      this.setState({updateCalculation: false});
+    });
+  };
+
+  mappingPoint = (voucherPoint = []) => {
+    return voucherPoint.map(voucherPoint => {
+      if (voucherPoint.isPoint) {
+        return {...voucherPoint, paymentType: 'point'};
+      }
+      return {...voucherPoint};
+    });
+  };
+
   totalPointToPay = point => {
     const {campign, detailPoint} = this.props;
 
@@ -1162,7 +1185,7 @@ class SettleOrder extends Component {
       // create default point to set based on the ratio of point to rebate
       const paymentData = this.getPaymentData();
 
-      let setDefault = paymentData.payment * ratio;
+      let setDefault = (paymentData.payment - 1) * ratio;
 
       this.setState({
         jumPointRatio: jumPointRatio,
@@ -1189,7 +1212,6 @@ class SettleOrder extends Component {
           pointToSet -= detailPoint.lockPoints;
         }
       }
-
       try {
         pointToSet = Number(pointToSet.toFixed(2));
       } catch (e) {}
@@ -1199,12 +1221,11 @@ class SettleOrder extends Component {
       }
 
       if (campign?.points?.roundingOptions === 'INTEGER') {
-        setDefault = Math.ceil(setDefault);
+        setDefault = Math.floor(setDefault);
         pointToSet = Math.floor(pointToSet);
       } else {
         setDefault = this.twoDigitCommaCeil(setDefault);
       }
-
       const myTotalPoint = this.props.totalPoint || 0;
       if (point === undefined) {
         if (setDefault >= pointToSet) {
@@ -2869,7 +2890,6 @@ class SettleOrder extends Component {
         isSelfSelection: this.props.pembayaran.isSelfSelection,
         orderActionDate: moment(payload.orderActionDate).format('YYYY-MM-DD'),
       };
-
       const response = await this.props.dispatch(settleOrder(payload, url));
       if (response.success) {
         this.handlePaymentFomoPay(response);

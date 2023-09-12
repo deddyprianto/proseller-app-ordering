@@ -1,383 +1,115 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /**
  * Chaerus Sulton
  * chaerussulton@gmail.com
  * PT Edgeworks
  */
 
-import React, {Component} from 'react';
+import React from 'react';
 import {
   View,
   StyleSheet,
   Dimensions,
   ScrollView,
-  BackHandler,
-  Alert,
   SafeAreaView,
-  FlatList,
+  TouchableOpacity,
 } from 'react-native';
 import {Actions} from 'react-native-router-flux';
 
 import colorConfig from '../config/colorConfig';
-import CurrencyFormatter from '../helper/CurrencyFormatter';
 import {isEmptyArray} from '../helper/CheckEmpty';
 import {Header} from './layout';
 import GlobalText from './globalText';
 import InputVoucher from './vouchers/InputVoucher';
 import {checkPromo} from '../actions/rewards.action';
-import {compose} from 'redux';
-import {connect} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import LoadingScreen from './loadingScreen/LoadingScreen';
 import {showSnackbar} from '../actions/setting.action';
 import VoucherListCheckout from './voucherList/VoucherListCheckout';
 import GlobalButton from './button/GlobalButton';
 import {normalizeLayoutSizeWidth} from '../helper/Layout';
+import {getCalculationStep3} from '../actions/order.action';
+import ArrowBottomSvg from '../assets/svg/ArrowBottomSvg';
+import ArrowUpSvg from '../assets/svg/ArrowUpSvg';
+import ModalAction from './modal/ModalAction';
 
-class PaymentAddVoucersV2 extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      screenWidth: Dimensions.get('window').width,
-      currentDay: new Date(),
-      data: this.props.data,
-      loadingCheckVoucher: false,
-      usedVoucher: props?.dataVoucer || [],
-      availableVoucher: props?.data || [],
-      newAvailableVoucher: [],
-      unAvailableVoucher: [],
+const PaymentAddVouchersV2 = props => {
+  const [usedVoucher, setUsedVoucher] = React.useState(props?.dataVoucer || []);
+  const cartDetail = useSelector(
+    state => state.orderReducer.dataBasket?.product,
+  );
+  const [newAvailableVoucher, setNewAvailableVoucher] = React.useState([]);
+  const [unavailabelVoucher, setUnavailabelVocuher] = React.useState([]);
+  const [loadingCheckVoucher, setLoadingCheckVoucher] = React.useState(false);
+  const [showMoreAvailVoucher, setShowMoreAvailVoucher] = React.useState(false);
+  const [showMoreUnavailVoucher, setShowMoreUnavailVoucher] = React.useState(
+    false,
+  );
+  const [confirmPopup, setConfirmPopup] = React.useState(false);
+  const [saveSubmitVoucher, setSubmitVoucher] = React.useState([]);
+
+  const myVoucher = useSelector(
+    state => state.accountsReducer.myVouchers?.vouchers,
+  );
+  const dispatch = useDispatch();
+
+  const onSubmit = async () => {
+    setLoadingCheckVoucher(true);
+    const voucherMap = mappingPayment(usedVoucher);
+
+    const payload = {
+      details: cartDetail?.details,
+      outletId: cartDetail?.outletID,
+      total: cartDetail?.totalNettAmount,
+      customerId: cartDetail?.customerId,
+      payments: voucherMap,
     };
-  }
-
-  componentDidMount() {
-    this.setupAvailableVoucher();
-    try {
-      this.backHandler = BackHandler.addEventListener(
-        'hardwareBackPress',
-        this.handleBackPress,
-      );
-    } catch (e) {}
-  }
-
-  componentWillUnmount() {
-    try {
-      this.backHandler.remove();
-    } catch (e) {}
-  }
-
-  setVouchers = data => {
-    try {
-      this.setState({
-        data,
-      });
-    } catch (e) {}
+    const response = await dispatch(getCalculationStep3(payload));
+    if (response.message) {
+      setLoadingCheckVoucher(false);
+      return dispatch(showSnackbar({message: response.message}));
+    }
+    const mappigResponse = mappingPayment(response.payments);
+    setLoadingCheckVoucher(false);
+    if (response.total <= 0) {
+      setSubmitVoucher(mappigResponse);
+      return setConfirmPopup(true);
+    }
+    adjustVoucher(mappigResponse);
   };
 
-  handleBackPress = () => {
-    this.goBack(); // works best when the goBack is async
-    return true;
-  };
-
-  goBack = async () => {
+  const adjustVoucher = mappigResponse => {
+    props.setDataVoucher(mappigResponse);
     Actions.pop();
+    setConfirmPopup(false);
   };
 
-  getDate(date) {
-    var tanggal = new Date(date);
-    return (
-      tanggal.getDate() +
-      ' ' +
-      this.getMonth(tanggal.getMonth()) +
-      ' ' +
-      tanggal.getFullYear()
-    );
-  }
-
-  getMonth(value) {
-    var mount = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ];
-    return mount[value];
-  }
-
-  handleSearchSpecificProduct = async item => {
-    let result;
-    for (let i = 0; i < this.props.pembayaran.details.length; i++) {
-      if (item.appliedTo === 'PRODUCT') {
-        result = await item.appliedItems.find(
-          item => item.value === this.props.pembayaran.details[i].product.id,
-        );
+  const mappingPayment = (payments = []) => {
+    return payments?.map(voucher => {
+      if (voucher.isPoint || voucher?.paymentType === 'point') {
+        return {...voucher, paymentType: 'point'};
       }
-      if (item.appliedTo === 'CATEGORY') {
-        result = await item.appliedItems.find(
-          item =>
-            item.value === this.props.pembayaran.details[i].product.categoryID,
-        );
+      if (voucher.code) {
+        return {
+          ...voucher,
+          isVoucherPromoCode: true,
+        };
       }
-      if (result != undefined) {
-        if (
-          this.props.pembayaran.details[i].appliedVoucher <
-            this.props.pembayaran.details[i].quantity ||
-          this.props.pembayaran.details[i].appliedVoucher == undefined
-        ) {
-          result = this.props.pembayaran.details[i];
-          break;
-        } else {
-          result = undefined;
-        }
-      }
-    }
-    // CHECK IF MODIFIER CONTAIN SPECIFIC PRODUCT
-    if (result === undefined) {
-      //  Search specific products in modifier
-      result = undefined;
-      for (let z = 0; z < this.props.pembayaran.details.length; z++) {
-        let dataProduct = this.props.pembayaran.details[z];
-
-        if (isEmptyArray(dataProduct.modifiers)) {
-          continue;
-        } else {
-          try {
-            for (let modifier of dataProduct.modifiers) {
-              if (!isEmptyArray(modifier.modifier.details)) {
-                for (let detailModifier of modifier.modifier.details) {
-                  result = await item.appliedItems.find(
-                    item => item.value === detailModifier.product.id,
-                  );
-
-                  if (result != undefined) {
-                    let quantityModifier =
-                      dataProduct.quantity * detailModifier.quantity;
-                    if (
-                      detailModifier.appliedVoucher < quantityModifier ||
-                      detailModifier.appliedVoucher == undefined
-                    ) {
-                      result = detailModifier;
-                      break;
-                    } else {
-                      result = undefined;
-                    }
-                  }
-                }
-              }
-              if (result !== undefined) {
-                break;
-              }
-            }
-          } catch (e) {}
-        }
-        if (result !== undefined) {
-          break;
-        }
-      }
-    }
-    return result;
-  };
-
-  hanldeCheckSpecificProduct = (result, item) => {
-    if (
-      result === undefined &&
-      (item.excludeSelectedItem === false ||
-        item.excludeSelectedItem === undefined)
-    ) {
-      Alert.alert(
-        'Sorry',
-        `${item.name} is only available on specific product`,
-      );
-      return false;
-    } else if (result !== undefined && item.excludeSelectedItem === true) {
-      Alert.alert(
-        'Sorry',
-        `${item.name} cannot be applied to ${result.product.name}`,
-      );
-      return false;
-    }
-    return true;
-  };
-
-  setupAvailableVoucher = async () => {
-    const {totalPrice} = this.props;
-    this.state.availableVoucher?.forEach(async data => {
-      const includeOutlet = data.selectedOutlets?.includes(
-        `outlet::${this.props.pembayaran.storeId}`,
-      );
-      const findDuplicateVocher = this.state.usedVoucher?.find(
-        duplicate => data.id === duplicate.id,
-      );
-      const duplicateVoucher =
-        findDuplicateVocher && data?.validity?.canOnlyUseOneTime;
-      const isValidDay = this.isValidDay(data).status;
-      const passMinimumPurchase = totalPrice > data.minPurchaseAmount;
-
-      if (
-        includeOutlet &&
-        passMinimumPurchase &&
-        !duplicateVoucher &&
-        isValidDay
-      ) {
-        this.setState({
-          newAvailableVoucher: [...this.state.newAvailableVoucher, data],
-        });
-      } else {
-        this.setState({
-          unAvailableVoucher: [...this.state.unAvailableVoucher, data],
-        });
-      }
+      return {
+        ...voucher,
+        isVoucher: true,
+        serialNumber: voucher?.serialNumber,
+        voucherId: voucher?.id,
+      };
     });
   };
 
-  pageDetailVoucher = async (item, type, index) => {
-    const {totalPrice} = this.props;
-    const {usedVoucher} = this.state;
-    // check if voucher is applied on specific products only
-    /* Check if voucher can be mixed */
-    if (
-      !isEmptyArray(usedVoucher) &&
-      item.validity &&
-      item.validity.canOnlyUseOneTime === true
-    ) {
-      const findVoucher = usedVoucher.find(data => data.id === item.id);
-      if (findVoucher) {
-        Alert.alert(
-          'Sorry',
-          `Voucher ${item.name} can only be used once for an order.`,
-        );
-        return;
-      }
-    }
-
-    if (!isEmptyArray(usedVoucher)) {
-      let cannotBeMixed = false;
-      let voucherName = '';
-      let postfix = 'this voucher.';
-      for (let i = 0; i < usedVoucher.length; i++) {
-        if (
-          usedVoucher[i].validity &&
-          usedVoucher[i].validity.cannotBeMixed === true &&
-          usedVoucher[i].id !== item.id
-        ) {
-          cannotBeMixed = true;
-          voucherName = usedVoucher[i].name;
-
-          if (usedVoucher[i].isVoucherPromoCode) {
-            postfix = 'this promo code.';
-          }
-          break;
-        }
-
-        if (
-          usedVoucher[i].validity &&
-          item.validity.cannotBeMixed &&
-          usedVoucher[i].id !== item.id
-        ) {
-          cannotBeMixed = true;
-          voucherName = item.name;
-
-          if (usedVoucher[0].isVoucherPromoCode) {
-            postfix = 'this promo code.';
-          }
-          break;
-        }
-      }
-
-      if (cannotBeMixed === true) {
-        Alert.alert('Sorry', `Cannot mix ${voucherName} with ${postfix}`);
-        return;
-      }
-    }
-    if (item.appliedTo !== undefined && item.appliedTo !== 'ALL') {
-      //  search specific product
-      const result = this.handleSearchSpecificProduct(item);
-      // check if apply to specific product is found
-      this.hanldeCheckSpecificProduct(result, item);
-    }
-
-    // check minimal price for use voucher
-    if (item.minPurchaseAmount != undefined) {
-      if (totalPrice < item.minPurchaseAmount) {
-        Alert.alert(
-          'Sorry',
-          'Minimum purchase amount to use this voucher is ' +
-            this.format(CurrencyFormatter(item.minPurchaseAmount)),
-        );
-        return;
-      }
-    }
-
-    // check valid for this outlet
-    if (!(await this.checkOutletAvailable(item))) {
-      Alert.alert('Sorry', 'This voucher cannot be used to this outlet.');
-      return;
-    }
-    // check valid on this day and time
-    if (!this.isValidDay(item).status) {
-      Alert.alert('Sorry', this.isValidDay(item).message);
-      return;
-    }
-    // add new voucher
-    if (type === 'available') {
-      this.handleAddVoucher(item, index);
-      //   this.handleAvailableVoucher(item);
-    }
-    // remove voucher
-    if (type === 'used') {
-      this.handleRemoveVoucher(item, index);
-    }
-  };
-
-  onSubmit = () => {
-    this.props.setDataVoucher(this.state.usedVoucher);
-    Actions.pop();
-  };
-
-  handleRemoveVoucher = (item, index) => {
-    if (item) {
-      let oldVoucher = this.state.usedVoucher;
-      oldVoucher = oldVoucher?.filter(
-        (_voucher, indexVoucher) => index !== indexVoucher,
-      );
-      this.setState({usedVoucher: oldVoucher});
-    }
-  };
-
-  handleAddAvailableVoucher = item => {
-    if (item) {
-      let oldVoucher = this.state.newAvailableVoucher;
-      oldVoucher = [...oldVoucher, item];
-      this.setState({newAvailableVoucher: oldVoucher});
-    }
-  };
-
-  handleAddVoucher = item => {
-    if (item) {
-      let oldVoucher = this.state.usedVoucher;
-      oldVoucher = [...oldVoucher, item];
-      this.setState({usedVoucher: oldVoucher});
-    }
-  };
-
-  handleAvailableVoucher = item => {
-    if (item) {
-      let oldVoucher = this.state.newAvailableVoucher;
-      oldVoucher = oldVoucher?.filter(
-        voucher => voucher.serialNumber !== item.serialNumber,
-      );
-      this.setState({newAvailableVoucher: oldVoucher});
-    }
-  };
-
-  isValidDay = item => {
+  const isValidDayHandle = item => {
     if (item.validity.allDays == true) {
-      return {status: true, message: ''};
+      return {
+        status: true,
+        message: '',
+      };
     }
     let date = new Date();
 
@@ -387,7 +119,10 @@ class PaymentAddVoucersV2 extends Component {
 
     // TODO buat filter time
     if (find != undefined) {
-      return {status: true, message: ''};
+      return {
+        status: true,
+        message: '',
+      };
     } else {
       return {
         status: false,
@@ -396,151 +131,230 @@ class PaymentAddVoucersV2 extends Component {
     }
   };
 
-  checkOutletAvailable = async item => {
-    if (item.selectedOutlets == undefined || item.selectedOutlets.length == 0) {
-      return true;
-    } else if (item.selectedOutlets.length >= 0) {
-      let data = item.selectedOutlets.find(
-        outlet => outlet == `outlet::${this.props.pembayaran.storeId}`,
+  const getAvailableVoucher = () => {
+    const {totalPrice} = props;
+    let myNewVoucher = [];
+    let myUnavailableVoucher = [];
+
+    myVoucher?.forEach(async data => {
+      const includeOutlet = data.selectedOutlets?.includes(
+        `outlet::${props.pembayaran.storeId}`,
       );
-      if (data != undefined) {
-        return true;
+      const findDuplicateVocher = usedVoucher?.find(
+        duplicate => data.id === duplicate.id,
+      );
+      const duplicateVoucher =
+        findDuplicateVocher && data?.validity?.canOnlyUseOneTime;
+      const isValidDay = isValidDayHandle(data).status;
+      const passMinimumPurchase = totalPrice > data.minPurchaseAmount;
+      const isUsedVoucher = usedVoucher?.find(
+        voucherData => voucherData.serialNumber === data.serialNumber,
+      );
+      const isCanUse =
+        includeOutlet && passMinimumPurchase && !duplicateVoucher && isValidDay;
+      if (isCanUse) {
+        if (!isUsedVoucher) {
+          myNewVoucher.push(data);
+        }
       } else {
-        return false;
+        myUnavailableVoucher.push(data);
       }
-    }
-    return false;
+    });
+    setNewAvailableVoucher(myNewVoucher);
+    setUnavailabelVocuher(myUnavailableVoucher);
   };
 
-  renderTitle = title => (
+  const handleAddVoucher = async (item, isFromSearch) => {
+    if (item) {
+      setUsedVoucher(prevState => [...prevState, item]);
+      if (!isFromSearch) {
+        setNewAvailableVoucher(prevState =>
+          prevState.filter(
+            voucher => voucher.serialNumber !== item.serialNumber,
+          ),
+        );
+      } else {
+        setNewAvailableVoucher(prevState =>
+          prevState.filter(voucher => voucher.code !== item.code),
+        );
+      }
+    }
+  };
+  const handleRemoveVoucher = (item, index) => {
+    if (item) {
+      setUsedVoucher(prevState =>
+        prevState.filter(voucher => item.serialNumber !== voucher.serialNumber),
+      );
+      setNewAvailableVoucher(prevState => [...prevState, item]);
+    }
+  };
+
+  const checkVoucher = async voucherCode => {
+    setLoadingCheckVoucher(true);
+    const checkPromoResponse = await dispatch(checkPromo(voucherCode));
+
+    if (!checkPromoResponse.status) {
+      let errorMessage = 'Invalid promo code.';
+      dispatch(
+        showSnackbar({
+          message: checkPromoResponse?.message || errorMessage,
+        }),
+      );
+    } else {
+      handleAddVoucher(checkPromoResponse, true);
+    }
+    setLoadingCheckVoucher(false);
+  };
+  const filterOnlyVoucher = () => {
+    if (!isEmptyArray(usedVoucher)) {
+      const onlyVoucher = usedVoucher.filter(voucher => !voucher.isPoint);
+      return onlyVoucher;
+    }
+    return [];
+  };
+  const renderNotAvailableVoucher = ({item, index}) => {
+    if (index >= 3 && !showMoreUnavailVoucher) return null;
+    return <VoucherListCheckout type={'unavailable'} item={item} />;
+  };
+
+  const renderTitle = title => (
     <View style={[styles.dividerTitle]}>
       <View style={styles.divider} />
       <GlobalText style={styles.titleText}>{title}</GlobalText>
     </View>
   );
 
-  checkVoucher = async voucherCode => {
-    this.setState({loadingCheckVoucher: true});
-    const checkPromoResponse = await this.props.dispatch(
-      checkPromo(voucherCode),
-    );
-    if (!checkPromoResponse.status) {
-      let errorMessage = 'Invalid promo code.';
-      this.props.dispatch(
-        showSnackbar({message: checkPromoResponse?.message || errorMessage}),
-      );
-    } else {
-      this.pageDetailVoucher(checkPromoResponse, 'available');
-    }
-    this.setState({loadingCheckVoucher: false});
-  };
-
-  filterUnAvailableVouher = () => {
-    const {allVouchers, point} = this.props;
-    if (allVouchers?.length > 0) {
-      const unavailabelVouchet = allVouchers?.filter(
-        voucher => voucher?.redeemValue > point,
-      );
-      return unavailabelVouchet;
-    }
-    return [];
-  };
-
-  renderUsedVoucherList = ({item, index}) => (
-    <VoucherListCheckout
-      onPress={() => this.pageDetailVoucher(item, 'used', index)}
-      type={'used'}
-      item={item}
-    />
-  );
-  renderAvaulableVoucherList = ({item, index}) => (
-    <VoucherListCheckout
-      onPress={() => this.pageDetailVoucher(item, 'available', index)}
-      type={'available'}
-      item={item}
-    />
-  );
-  renderNotAvailableVoucher = ({item}) => (
-    <VoucherListCheckout type={'unavailable'} item={item} />
-  );
-
-  render() {
-    const {usedVoucher, newAvailableVoucher, unAvailableVoucher} = this.state;
-
+  const renderUsedVoucherList = ({item, index}) => {
+    if (index >= 3) return null;
     return (
-      <SafeAreaView style={styles.container}>
-        <LoadingScreen loading={this.state.loadingCheckVoucher} />
-        <Header title={'My Vouchers'} />
-
-        <ScrollView contentContainerStyle={styles.scrollContainer}>
-          {this.renderTitle('USE VOUCHER CODE')}
-          <InputVoucher onPressVoucher={this.checkVoucher} />
-          {usedVoucher?.length > 0 ? (
-            <View>
-              {this.renderTitle('VOUCHER USED')}
-
-              <FlatList
-                data={this.state.usedVoucher}
-                renderItem={this.renderUsedVoucherList}
-                style={styles.flatlistCOntainer}
-              />
-            </View>
-          ) : null}
-          {newAvailableVoucher?.length > 0 ? (
-            <View>
-              {this.renderTitle('AVAILABLE VOUCHER')}
-              <FlatList
-                data={newAvailableVoucher}
-                renderItem={this.renderAvaulableVoucherList}
-                style={styles.flatlistCOntainer}
-              />
-            </View>
-          ) : null}
-          {unAvailableVoucher.length > 0 ? (
-            <View>
-              {this.renderTitle('NOT AVAILABLE')}
-              <FlatList
-                data={unAvailableVoucher}
-                renderItem={this.renderNotAvailableVoucher}
-                style={styles.flatlistCOntainer}
-              />
-            </View>
-          ) : null}
-        </ScrollView>
-        <View onPress={this.onSubmit} style={styles.buttonBottomFixed}>
-          <View style={styles.centerAlign}>
-            <GlobalText>
-              {this.state.usedVoucher?.length} Voucher Applied
-            </GlobalText>
-          </View>
-          <View style={styles.centerAlign}>
-            <GlobalButton
-              onPress={this.onSubmit}
-              buttonStyle={styles.buttonStyle}
-              title="Apply"
-            />
-          </View>
-        </View>
-      </SafeAreaView>
+      <VoucherListCheckout
+        key={index}
+        onPress={() => handleRemoveVoucher(item)}
+        type={'used'}
+        item={item}
+      />
     );
-  }
-}
+  };
 
-const mapDispatchToProps = dispatch => ({
-  dispatch,
-});
+  const renderAvaulableVoucherList = ({item, index}) => {
+    if (index >= 3 && !showMoreAvailVoucher) return null;
+    return (
+      <VoucherListCheckout
+        key={index}
+        onPress={() => handleAddVoucher(item)}
+        type={'available'}
+        item={item}
+      />
+    );
+  };
 
-const mapStateToProps = state => ({
-  allVouchers: state.rewardsReducer?.vouchers?.dataVoucher,
-  point: state.rewardsReducer?.dataPoint?.totalPoint,
-});
+  const renderSeeMoreBtn = (text = '', showSeeMoreText, onPress, isOpen) => (
+    <>
+      {showSeeMoreText ? (
+        <View style={styles.seeMoreContainer}>
+          <TouchableOpacity onPress={onPress} style={styles.rowContain}>
+            <GlobalText>{text}</GlobalText>
+            {isOpen ? <ArrowUpSvg /> : <ArrowBottomSvg />}
+          </TouchableOpacity>
+        </View>
+      ) : null}
+    </>
+  );
 
-export default compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
-)(PaymentAddVoucersV2);
+  const toggleAvailVoucher = () =>
+    setShowMoreAvailVoucher(prevState => !prevState);
+
+  const toggleNotAvailVoucher = () =>
+    setShowMoreUnavailVoucher(prevState => !prevState);
+
+  const closeConfirmVoucher = () => {
+    setConfirmPopup(false);
+  };
+
+  React.useEffect(() => {
+    if (!isEmptyArray(myVoucher)) {
+      getAvailableVoucher();
+    }
+  }, []);
+  return (
+    <SafeAreaView style={styles.container}>
+      <LoadingScreen loading={loadingCheckVoucher} />
+      <Header title={'My Vouchers'} />
+
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        {renderTitle('USE VOUCHER CODE')}
+        <InputVoucher onPressVoucher={checkVoucher} />
+        {filterOnlyVoucher()?.length > 0 ? (
+          <View>
+            {renderTitle('VOUCHER USED')}
+            {filterOnlyVoucher()?.map((voucher, index) => {
+              return renderUsedVoucherList({
+                item: voucher,
+                index,
+              });
+            })}
+          </View>
+        ) : null}
+        {newAvailableVoucher?.length > 0 ? (
+          <View>
+            {renderTitle('AVAILABLE VOUCHER')}
+            {newAvailableVoucher.map((voucher, index) => {
+              return renderAvaulableVoucherList({
+                item: voucher,
+                index,
+              });
+            })}
+          </View>
+        ) : null}
+        {renderSeeMoreBtn(
+          'See more available voucher',
+          newAvailableVoucher.length >= 3,
+          toggleAvailVoucher,
+          showMoreAvailVoucher,
+        )}
+        {unavailabelVoucher.length > 0 ? (
+          <View>
+            {renderTitle('NOT AVAILABLE')}
+            {unavailabelVoucher.map((voucher, index) => {
+              return renderNotAvailableVoucher({
+                item: voucher,
+                index,
+              });
+            })}
+          </View>
+        ) : null}
+        {renderSeeMoreBtn(
+          'See more not available voucher',
+          unavailabelVoucher.length >= 3,
+          toggleNotAvailVoucher,
+          showMoreUnavailVoucher,
+        )}
+      </ScrollView>
+      <View onPress={onSubmit} style={styles.buttonBottomFixed}>
+        <View style={styles.centerAlign}>
+          <GlobalText>{filterOnlyVoucher()?.length} Voucher Applied</GlobalText>
+        </View>
+        <View style={styles.centerAlign}>
+          <GlobalButton
+            onPress={onSubmit}
+            buttonStyle={styles.buttonStyle}
+            title="Apply"
+          />
+        </View>
+      </View>
+      <ModalAction
+        title="Transaction Amount Exceeded"
+        description="By using this voucher, you will pay more than your transaction amount. Are you sure?"
+        isVisible={confirmPopup}
+        onCancel={closeConfirmVoucher}
+        onApprove={() => adjustVoucher(saveSubmitVoucher)}
+        approveTitle="Confirm"
+      />
+    </SafeAreaView>
+  );
+};
+
+export default PaymentAddVouchersV2;
 
 const styles = StyleSheet.create({
   container: {
@@ -692,5 +506,16 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     paddingBottom: 30,
+  },
+  seeMoreContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: 16,
+    paddingVertical: 8,
+  },
+  rowContain: {
+    flexDirection: 'row',
+    justifyContent: 'center',
   },
 });
