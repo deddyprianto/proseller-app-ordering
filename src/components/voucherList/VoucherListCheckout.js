@@ -3,6 +3,8 @@ import {TouchableOpacity, StyleSheet, View} from 'react-native';
 import GlobalText from '../globalText';
 import {normalizeLayoutSizeWidth} from '../../helper/Layout';
 import Theme from '../../theme/Theme';
+import {useSelector} from 'react-redux';
+import CurrencyFormatter from '../../helper/CurrencyFormatter';
 
 const useStyles = () => {
   const theme = Theme();
@@ -52,9 +54,9 @@ const useStyles = () => {
     voucherName: {
       justifyContent: 'center',
     },
-    nameWidth: {
-      width: '65%',
-    },
+    nameWidth: type => ({
+      width: type !== 'unavailable' ? '65%' : '100%',
+    }),
     actionWidth: {
       width: '34.5%',
     },
@@ -89,7 +91,7 @@ const useStyles = () => {
       shadowOpacity: 0.2,
       shadowRadius: 3,
       elevation: 5,
-      marginHorizontal: 6,
+      marginHorizontal: 16,
       borderRadius: 8,
     },
     descFont: () => ({
@@ -108,12 +110,23 @@ const useStyles = () => {
 
 const VoucherListCheckout = ({onPress, item, type}) => {
   const {styles} = useStyles();
-
+  const basket = useSelector(state => state.orderReducer?.dataBasket?.product);
   const handleText = () => {
     if (type === 'used') {
       return 'Use Later';
     }
     return 'Use Now';
+  };
+  const handleDescription = () => {
+    if (item?.minPurchaseAmount <= basket?.totalNettAmount) {
+      return ' No minimal order';
+    } else {
+      const calculateDifference =
+        item?.minPurchaseAmount - basket?.totalNettAmount;
+      return ` Add ${CurrencyFormatter(
+        calculateDifference,
+      )} more to your order to enjoy this voucher`;
+    }
   };
 
   return (
@@ -123,12 +136,12 @@ const VoucherListCheckout = ({onPress, item, type}) => {
         <View style={styles.voucherRoundRight(type)} />
         <View style={{width: '100%', height: '100%'}}>
           <View style={styles.voucherContainer}>
-            <View style={[styles.voucherName, styles.nameWidth]}>
+            <View style={[styles.voucherName, styles.nameWidth(type)]}>
               <GlobalText style={styles.nameFont(type)}>
                 {item?.name}{' '}
               </GlobalText>
               <GlobalText style={styles.descFont(type)} numberOfLines={2}>
-                {item?.voucherDesc}
+                {'\u2022'} {handleDescription()}
               </GlobalText>
             </View>
 

@@ -13,6 +13,7 @@ import {
   TouchableOpacity,
   Dimensions,
   SafeAreaView,
+  RefreshControl,
 } from 'react-native';
 
 import {ProgressBar} from 'react-native-paper';
@@ -40,6 +41,7 @@ import ContactSvg from '../assets/svg/ContactSvg';
 import {Body, Header} from '../components/layout';
 import additionalSetting from '../config/additionalSettings';
 import InfoMessage from '../components/infoMessage/InfoMessage';
+import {getUserProfile} from '../actions/user.action';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -362,6 +364,12 @@ const Profile = props => {
     };
     loadData();
   }, [dispatch, userDetail]);
+
+  useEffect(() => {
+    props.navigation.addListener('didFocus', () => {
+      dispatch(myProgressBarCampaign());
+    });
+  }, []);
 
   const initDeviceBright = async () => {
     const currentBrightness = await DeviceBrightness.getBrightnessLevel();
@@ -749,19 +757,6 @@ const Profile = props => {
     );
   };
 
-  const renderDeleteAccount = () => {
-    return (
-      <TouchableOpacity
-        style={styles.viewOption}
-        onPress={() => {
-          handleOpenDeleteAccountModal();
-        }}>
-        <Image style={styles.iconSetting} source={appConfig.iconDelete} />
-        <Text style={styles.textLogout}>Delete My Account</Text>
-      </TouchableOpacity>
-    );
-  };
-
   const renderListMenu = (title, Icon, onPress) => (
     <TouchableOpacity onPress={onPress} style={styles.viewOption}>
       <View style={styles.iconSetting}>{Icon}</View>
@@ -939,12 +934,24 @@ const Profile = props => {
       </GlobalText>
     </View>
   );
+
+  const onRefresh = async () => {
+    setIsLoading(true);
+    await dispatch(myProgressBarCampaign());
+    await dispatch(getUserProfile());
+    setIsLoading(false);
+  };
+
   return (
     <SafeAreaView>
       <Body>
         <LoadingScreen loading={isLoading} />
         <Header title="Profile" isRemoveBackIcon />
-        <ScrollView contentContainerStyle={styles.containerStyle}>
+        <ScrollView
+          refreshControl={
+            <RefreshControl onRefresh={onRefresh} refreshing={isLoading} />
+          }
+          contentContainerStyle={styles.containerStyle}>
           {renderBackgroundImage()}
           {renderProfileHeader()}
           {renderSettingV2()}
