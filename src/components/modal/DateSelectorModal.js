@@ -301,7 +301,6 @@ const DateSelectorModal = ({open, handleClose, value, preOrderDate}) => {
 
     loadData();
   }, [open]);
-
   useEffect(() => {
     const selectedDateFormatter = moment(selectedDate).format('YYYY-MM-DD');
     if (!isEmptyArray(availableDates)) {
@@ -319,7 +318,6 @@ const DateSelectorModal = ({open, handleClose, value, preOrderDate}) => {
       setTimes(timeSlot);
     }
   }, [availableDates, selectedDate]);
-
   useEffect(() => {
     let dateTime = '';
     if (initDate) {
@@ -564,15 +562,9 @@ const DateSelectorModal = ({open, handleClose, value, preOrderDate}) => {
       </TouchableOpacity>
     );
   };
-
   const renderTimeListModal = () => {
     if (!isEmptyArray(times)) {
-      const result = times.map(item => {
-        if (item?.isAvailable) {
-          return renderDeliveryTimeListItem(item);
-        }
-      });
-
+      const result = times.filter(item => item.isAvailable);
       return (
         <Provider>
           <Portal>
@@ -580,7 +572,9 @@ const DateSelectorModal = ({open, handleClose, value, preOrderDate}) => {
               visible={isOpenTimeSelector}
               onDismiss={handleCloseDeliveryTimes}
               style={styles.viewTimeListModal}>
-              <ScrollView>{result}</ScrollView>
+              <ScrollView>
+                {result?.map(time => renderDeliveryTimeListItem(time))}
+              </ScrollView>
             </Dialog>
           </Portal>
         </Provider>
