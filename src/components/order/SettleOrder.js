@@ -1226,10 +1226,6 @@ class SettleOrder extends Component {
       } else {
         setDefault = this.twoDigitCommaCeil(setDefault);
       }
-      console.log(
-        {setDefault, pointToSet, campign, paymentData, ratio},
-        'kusa',
-      );
       const myTotalPoint = this.props.totalPoint || 0;
       if (point === undefined) {
         if (setDefault >= pointToSet) {
