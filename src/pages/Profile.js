@@ -42,6 +42,7 @@ import {Body, Header} from '../components/layout';
 import additionalSetting from '../config/additionalSettings';
 import InfoMessage from '../components/infoMessage/InfoMessage';
 import {getUserProfile} from '../actions/user.action';
+import CurrencyFormatter from '../helper/CurrencyFormatter';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -115,7 +116,7 @@ const useStyles = () => {
       textAlign: 'center',
       marginTop: 16,
       color: theme.colors.textTertiary,
-      fontSize: theme.fontSize[12],
+      fontSize: theme.fontSize[14],
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textLogout: {
@@ -304,6 +305,9 @@ const useStyles = () => {
       fontSize: 16,
       color: theme.colors.greyScale5,
     },
+    bold: {
+      fontFamily: theme.fontFamily.poppinsBold,
+    },
   });
 
   return styles;
@@ -320,7 +324,7 @@ const Profile = props => {
   );
   const [currentBrightness, setCurrentBrightness] = React.useState(null);
   const [user, setUser] = useState({});
-
+  const [refresh, setRefresh] = React.useState(false);
   const progressBarCampaign = useSelector(
     state => state.accountsReducer?.myProgressBarCampaign.myProgress,
   );
@@ -531,9 +535,24 @@ const Profile = props => {
     );
   };
 
+  const textInfoHandle = () => {
+    if (progressBarCampaign) {
+      return `Spend ${CurrencyFormatter(
+        progressBarCampaign?.nextCustomerGroupCriteria?.totalPurchase -
+          progressBarCampaign?.totalPurchaseByAccumulation,
+      )} more to upgrade to`;
+    }
+    return '';
+  };
+
   const renderTextInfo = () => {
     return (
-      <Text style={styles.textInfo}>{progressBarCampaign?.description}</Text>
+      <Text style={styles.textInfo}>
+        {textInfoHandle()}{' '}
+        <Text style={[styles.textInfo, styles.bold]}>
+          {progressBarCampaign?.nextGroup}{' '}
+        </Text>{' '}
+      </Text>
     );
   };
 
@@ -936,10 +955,10 @@ const Profile = props => {
   );
 
   const onRefresh = async () => {
-    setIsLoading(true);
+    setRefresh(true);
     await dispatch(myProgressBarCampaign());
     await dispatch(getUserProfile());
-    setIsLoading(false);
+    setRefresh(false);
   };
 
   return (
@@ -949,7 +968,7 @@ const Profile = props => {
         <Header title="Profile" isRemoveBackIcon />
         <ScrollView
           refreshControl={
-            <RefreshControl onRefresh={onRefresh} refreshing={isLoading} />
+            <RefreshControl onRefresh={onRefresh} refreshing={refresh} />
           }
           contentContainerStyle={styles.containerStyle}>
           {renderBackgroundImage()}
