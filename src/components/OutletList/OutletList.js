@@ -27,6 +27,13 @@ const useStyles = () => {
       fontSize: theme.fontSize[14],
       fontFamily: theme.fontFamily.poppinsSemiBold,
     },
+    textHeader: {
+      textAlign: 'left',
+      marginTop: 16,
+      color: theme.colors.textPrimary,
+      fontSize: theme.fontSize[16],
+      fontFamily: theme.fontFamily.poppinsSemiBold,
+    },
   });
   return styles;
 };
@@ -42,6 +49,14 @@ const OutletList = ({outlets, nearestOutlet, handleChange}) => {
     }));
 
     return result;
+  };
+
+  const renderTextHeader = () => {
+    return (
+      <Text style={styles.textHeader}>
+        From which outlet would you like to place your order?
+      </Text>
+    );
   };
 
   const renderRegion = text => {
@@ -88,6 +103,7 @@ const OutletList = ({outlets, nearestOutlet, handleChange}) => {
   return (
     <ScrollView style={styles.root}>
       <View style={styles.container}>
+        {renderTextHeader()}
         {renderNearestOutlets()}
         {renderOutlets()}
       </View>
