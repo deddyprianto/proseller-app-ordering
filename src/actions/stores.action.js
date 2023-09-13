@@ -319,6 +319,43 @@ export const getOutletById = id => {
   };
 };
 
+export const getNearestOutlet = ({latitude, longitude}) => {
+  return async (dispatch, getState) => {
+    try {
+      const state = getState();
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      const payload = {
+        latitude,
+        longitude,
+      };
+
+      const response = await fetchApiMasterData(
+        '/outlets/nearestoutlet',
+        'POST',
+        payload,
+        200,
+        token,
+      );
+
+      const result = response?.response?.data || {};
+
+      dispatch({
+        type: 'DATA_NEAREST_OUTLET',
+        data: result,
+      });
+
+      return result;
+    } catch (error) {
+      return error;
+    }
+  };
+};
+
 export const generateOneMapToken = () => {
   return async dispatch => {
     try {

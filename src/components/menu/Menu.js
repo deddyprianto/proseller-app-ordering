@@ -200,7 +200,7 @@ const Menu = () => {
       Actions.push('orderingMode');
       await dispatch(getOutletById(activeOutlets[0].id));
     } else {
-      Actions.push('store');
+      Actions.push('outlets');
     }
     setIsLoading(false);
   };
