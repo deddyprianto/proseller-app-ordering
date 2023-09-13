@@ -40,6 +40,7 @@ import MapSvg from '../assets/svg/MapSvg';
 import useOrder from '../hooks/order/useOrder';
 import additionalSetting from '../config/additionalSettings';
 import ArrowUpSvg from '../assets/svg/ArrowUpSvg';
+import useCalculation from '../hooks/calculation/useCalculation';
 
 const useStyles = () => {
   const {colors, fontFamily} = Theme();
@@ -345,6 +346,7 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
   const {minutes, seconds, isTimeEnd} = useCountdownV2(data);
   const [showAllOrder, setShowAllOrder] = React.useState(false);
   const [showAllPreOrder, setShowAllPreOrder] = React.useState(false);
+  const {checkTaxHandle} = useCalculation();
   const staustPending = 'PENDING_PAYMENT';
   const store_checkout = 'STORECHECKOUT';
   const {
@@ -687,7 +689,7 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
     }
     return '(VERIFIED)';
   };
-
+  console.log({data}, 'nikal');
   return (
     <Body>
       {data?.status === staustPending && !isTimeEnd ? (
@@ -823,22 +825,23 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
                 </View>
               </View>
             ) : null}
-            <View style={[styles.listOrderDetailContainer, styles.mt16]}>
-              <View style={styles.orderStatusContainer}>
-                <View>
-                  <GlobalText style={[styles.grayColor, styles.mediumFont]}>
-                    Incl. Tax
-                  </GlobalText>
-                </View>
-                <View>
-                  <GlobalText style={[styles.boldFont, styles.grayColor]}>
-                    {data?.inclusiveTax > 0
-                      ? CurrencyFormatter(data?.inclusiveTax)
-                      : CurrencyFormatter(data?.exclusiveTax)}
-                  </GlobalText>
+            {checkTaxHandle(data).value ? (
+              <View style={[styles.listOrderDetailContainer, styles.mt16]}>
+                <View style={styles.orderStatusContainer}>
+                  <View>
+                    <GlobalText style={[styles.grayColor, styles.mediumFont]}>
+                      {checkTaxHandle(data).text}
+                    </GlobalText>
+                  </View>
+                  <View>
+                    <GlobalText style={[styles.boldFont, styles.grayColor]}>
+                      {checkTaxHandle(data).value}
+                    </GlobalText>
+                  </View>
                 </View>
               </View>
-            </View>
+            ) : null}
+
             <View style={styles.divider} />
             <View
               style={[
