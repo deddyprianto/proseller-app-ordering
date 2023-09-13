@@ -49,6 +49,18 @@ const defaultOutlet = (state = {}, action) => {
   }
 };
 
+const nearestOutlet = (state = {}, action) => {
+  switch (action.type) {
+    case 'DATA_NEAREST_OUTLET':
+      return {
+        outlet: action.data,
+      };
+
+    default:
+      return state;
+  }
+};
+
 const favoriteOutlet = (state = {}, action) => {
   switch (action.type) {
     case 'DATA_FAVORITE_OUTLET':
@@ -63,6 +75,7 @@ const favoriteOutlet = (state = {}, action) => {
 
 export default combineReducers({
   dataStores,
+  nearestOutlet,
   dataOutletSingle,
   oneOutlet,
   defaultOutlet,

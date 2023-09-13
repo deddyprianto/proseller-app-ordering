@@ -42,7 +42,7 @@ const Theme = () => {
     textButtonColor: colorSettings?.textButtonColor || 'black',
     textWarningColor: colorSettings?.textWarningColor || 'black',
 
-    snackbarSuccess: '#5CD423',
+    snackbarSuccess: '#1A883C',
     snackbarFailed: '#CF3030',
 
     //new version
@@ -65,7 +65,7 @@ const Theme = () => {
     textBrand: '#CF3030',
 
     semanticError: '#CE1111',
-    semanticSuccess: '#5CD523',
+    semanticSuccess: '#1A883C',
     semanticColorError: '#C81720',
 
     brandPrimary: '#CF3030',
