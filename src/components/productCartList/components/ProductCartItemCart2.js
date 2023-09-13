@@ -27,12 +27,13 @@ const useStyles = () => {
       paddingVertical: 8,
     },
     amountContainer: {
-      width: 30,
+      minWidth: 30,
       height: 30,
       alignItems: 'center',
       justifyContent: 'center',
       backgroundColor: theme.colors.primary,
       borderRadius: 4,
+      paddingHorizontal: 8,
     },
     amountText: {
       color: 'white',
