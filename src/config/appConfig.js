@@ -13,6 +13,7 @@ const appConfig = {
   contactUsVersion: '',
   modifierType: 'textOnly',
   pointType: 'manualPointEntry',
+  advanceOrderSetting: 'off',
 
   // image company
   appImageNull: require('../assets/img/logo.png'),
