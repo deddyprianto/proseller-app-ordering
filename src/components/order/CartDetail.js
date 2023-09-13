@@ -415,8 +415,12 @@ const CartDetail = ({
     );
   };
   const renderPointText = () => {
-    const pointWorth = campaign.points.pointsToRebateRatio1;
-    const totalPointValue = totalPoint * pointWorth;
+    const jumPointRatio = campaign.points.pointsToRebateRatio0;
+    const jumMoneyRatio = campaign.points.pointsToRebateRatio1;
+
+    const ratio = jumMoneyRatio / jumPointRatio;
+
+    const totalPointValue = totalPoint * ratio;
 
     if (fullPoint) {
       return (

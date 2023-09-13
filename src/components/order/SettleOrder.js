@@ -512,9 +512,7 @@ class SettleOrder extends Component {
           cancelPoint: false,
         });
         await this.setDataPayment(false);
-      } catch (e) {
-        console.log(e);
-      }
+      } catch (e) {}
       await this.setState({loading: false});
     } else {
       this.cencelPoint();
@@ -555,9 +553,7 @@ class SettleOrder extends Component {
         dataVoucer,
       });
       await this.setDataPayment(false);
-    } catch (e) {
-      console.log(e);
-    }
+    } catch (e) {}
     await this.setState({loading: false});
   };
 
@@ -747,7 +743,7 @@ class SettleOrder extends Component {
                   // FIND DISCOUNT
                   discount =
                     (result.unitPrice * dataVoucer[i].voucherValue) / 100;
-                  // console.log(discount, 'discount');
+
                   //  check cap Amount
                   if (dataVoucer[i].capAmount !== undefined) {
                     let capAmount = parseFloat(dataVoucer[i].capAmount);
@@ -1244,6 +1240,7 @@ class SettleOrder extends Component {
             myTotalPoint < parseFloat(setDefault)
               ? myTotalPoint
               : parseFloat(setDefault);
+
           this.setState({jumPoint: pointToUse});
           this.setDataPoint(
             pointToUse,
@@ -1587,11 +1584,9 @@ class SettleOrder extends Component {
 
       // get url
       let {url} = this.props;
-      console.log('Payload settle order ', pembayaran);
-      console.log('URL settle order ', url);
 
       const response = await this.props.dispatch(settleOrder(pembayaran, url));
-      console.log('reponse pembayaran settle order ', response);
+
       if (response.success) {
         this.handlePaymentFomoPay(response);
         try {
@@ -1651,7 +1646,7 @@ class SettleOrder extends Component {
       //  cancel voucher and pont selected
       this.cencelPoint();
       this.cencelVoucher();
-      console.log(e);
+
       Alert.alert('Oppss', 'Something went wrong, please try again');
       this.setState({loading: false, failedPay: true});
     }
@@ -1876,9 +1871,8 @@ class SettleOrder extends Component {
         payload.payments = payments;
       }
 
-      console.log('Payload settle order ', payload);
       const response = await this.props.dispatch(submitMembership(payload));
-      console.log('reponse pay membership ', response);
+
       if (response.success) {
         this.props.dispatch(getUserProfile());
         this.props.dispatch(getPaidMembership());
@@ -2151,9 +2145,8 @@ class SettleOrder extends Component {
         payload.payments = payments;
       }
 
-      console.log('Payload settle order ', payload);
       const response = await this.props.dispatch(submitMembership(payload));
-      console.log('reponse pay SVC ', response);
+
       if (response.success) {
         this.props.dispatch(getSVCBalance());
 
@@ -2428,9 +2421,8 @@ class SettleOrder extends Component {
         payload.payments = payments;
       }
 
-      console.log('Payload settle order ', payload);
       const response = await this.props.dispatch(submitMembership(payload));
-      console.log('reponse pay SVC ', response);
+
       if (response.success) {
         await this.props.dispatch(myVoucers());
 
@@ -3455,10 +3447,8 @@ class SettleOrder extends Component {
       // get url
       let {url} = this.props;
 
-      console.log('Payload settle order ', payload);
-      console.log('URL settle order ', url);
       const response = await this.props.dispatch(settleOrder(payload, url));
-      console.log('reponse pembayaran settle order ', response);
+
       if (response.success) {
         this.handlePaymentFomoPay(response);
         try {
