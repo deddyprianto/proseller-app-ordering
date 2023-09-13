@@ -1,3 +1,4 @@
+import CurrencyFormatter from '../../helper/CurrencyFormatter';
 const useCalculation = () => {
   const calculateVoucher = (vouchers = []) => {
     const amountVoucherArr = vouchers
@@ -34,10 +35,37 @@ const useCalculation = () => {
     return total?.toFixed(2);
   };
 
+  const checkTaxHandle = basket => {
+    if (basket?.inclusiveTax > 0 && basket?.exclusiveTax > 0) {
+      return {
+        text: 'Tax',
+        value: CurrencyFormatter(basket?.totalTaxAmount),
+      };
+    }
+    if (basket?.inclusiveTax > 0) {
+      return {
+        text: 'Incl. Tax',
+        value: CurrencyFormatter(basket?.inclusiveTax),
+      };
+    }
+
+    if (basket?.exclusiveTax > 0) {
+      return {
+        text: 'Excl. Tax',
+        value: CurrencyFormatter(basket?.exclusiveTax),
+      };
+    }
+    return {
+      text: null,
+      value: null,
+    };
+  };
+
   return {
     calculateVoucher,
     calculateVoucherPoint,
     calculationAmountPaidByVisa,
+    checkTaxHandle,
   };
 };
 
