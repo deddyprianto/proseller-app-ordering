@@ -44,14 +44,14 @@ const useCalculation = () => {
     }
     if (basket?.inclusiveTax > 0) {
       return {
-        text: 'Incl Tax',
+        text: 'Incl. Tax',
         value: CurrencyFormatter(basket?.inclusiveTax),
       };
     }
 
     if (basket?.exclusiveTax > 0) {
       return {
-        text: 'Excl Tax',
+        text: 'Excl. Tax',
         value: CurrencyFormatter(basket?.exclusiveTax),
       };
     }
