@@ -176,6 +176,9 @@ const useStyles = () => {
     blackFont: {
       color: 'black',
     },
+    ml30: {
+      marginLeft: 30,
+    },
   });
   return {styles, colors: theme.colors};
 };
@@ -369,12 +372,12 @@ const CartDetail = ({
   const leftValue = useState(new Animated.Value(0))[0];
 
   const handleClick = () => {
-    const isActive = leftValue._value > 10;
-    const value = isActive ? 0 : 16;
-    if (isActive) {
-      totalPointToPay(0);
+    const notaActive = leftValue._value > 10;
+    const value = notaActive ? 0 : 16;
+    if (notaActive) {
+      totalPointToPay(false);
     } else {
-      totalPointToPay();
+      totalPointToPay(true);
     }
 
     Animated.timing(leftValue, {
@@ -383,7 +386,7 @@ const CartDetail = ({
       useNativeDriver: false,
     }).start();
 
-    setIsSwitchPoint(!isActive);
+    setIsSwitchPoint(!notaActive);
   };
 
   const renderPointSwitcher = () => {
@@ -392,7 +395,7 @@ const CartDetail = ({
       : styles.viewSwitcher;
     const onlyVoucher = vouchers?.filter(voucher => !voucher.isPoint);
     const isPointtMoreThanAmount =
-      calculateVoucher(onlyVoucher) > data?.totalNettAmount;
+      calculateVoucher(onlyVoucher) > data?.totalNettAmount && !fullPoint;
     return (
       <TouchableOpacity
         disabled={totalPoint === 0 || isPointtMoreThanAmount}
@@ -519,17 +522,18 @@ const CartDetail = ({
             <ArrowRight />
           </View>
         </View>
-
         {vouchersWithoutPoint?.length > 0 ? (
-          <View style={styles.mt12}>
-            {vouchersWithoutPoint?.map(voucher => (
-              <View>
-                <GlobalText style={[styles.brandColor, styles.mediumFont]}>
-                  {voucher?.name}
-                </GlobalText>
-              </View>
-            ))}
-          </View>
+          <>
+            <View style={[styles.mt12]}>
+              {vouchersWithoutPoint?.map(voucher => (
+                <View>
+                  <GlobalText style={[styles.brandColor, styles.mediumFont]}>
+                    {voucher?.name}
+                  </GlobalText>
+                </View>
+              ))}
+            </View>
+          </>
         ) : null}
       </TouchableOpacity>
     );

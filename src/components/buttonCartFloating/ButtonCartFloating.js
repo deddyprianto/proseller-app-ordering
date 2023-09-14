@@ -9,6 +9,7 @@ import CurrencyFormatter from '../../helper/CurrencyFormatter';
 import {isEmptyArray} from '../../helper/CheckEmpty';
 import Theme from '../../theme';
 import useSettings from '../../hooks/settings/useSettings';
+import useCalculation from '../../hooks/calculation/useCalculation';
 
 const useStyles = () => {
   const theme = Theme();
@@ -68,7 +69,7 @@ const ButtonCartFloating = () => {
   const styles = useStyles();
 
   const [basketLength, setBasketLength] = useState(0);
-
+  const {calculatePriceAferDiscount} = useCalculation();
   const basket = useSelector(state => state.orderReducer?.dataBasket?.product);
   const {useCartVersion} = useSettings();
   useEffect(() => {
@@ -99,9 +100,10 @@ const ButtonCartFloating = () => {
     );
   };
   const renderPrice = () => {
+    const amount = calculatePriceAferDiscount();
     return (
       <Text style={styles.textPriceButtonCart}>
-        {CurrencyFormatter(basket?.totalGrossAmount)}
+        {CurrencyFormatter(amount)}
       </Text>
     );
   };
@@ -119,7 +121,6 @@ const ButtonCartFloating = () => {
       );
     }
   };
-
   return <View style={styles.root}>{renderButtonCart()}</View>;
 };
 

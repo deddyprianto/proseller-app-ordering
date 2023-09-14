@@ -8,6 +8,7 @@ import {useSelector} from 'react-redux';
 import GlobalButton from '../components/button/GlobalButton';
 import CurrencyFormatter from '../helper/CurrencyFormatter';
 import {Actions} from 'react-native-router-flux';
+import useCalculation from '../hooks/calculation/useCalculation';
 
 const useStyles = () => {
   const {colors, fontFamily} = Theme();
@@ -65,6 +66,7 @@ const CartStep1 = props => {
   const currentBasket = useSelector(
     state => state.orderReducer?.dataBasket?.product,
   );
+  const {calculatePriceAferDiscount} = useCalculation();
   const renderStep = () => (
     <View>
       <GlobalText style={styles.stepText}>Step 1 of 4</GlobalText>
@@ -87,7 +89,7 @@ const CartStep1 = props => {
             <GlobalText>Subtotal</GlobalText>
             <View style={styles.mlAuto}>
               <GlobalText style={styles.priceBotttom}>
-                {CurrencyFormatter(currentBasket?.totalGrossAmount)}
+                {CurrencyFormatter(calculatePriceAferDiscount())}
               </GlobalText>
             </View>
           </View>

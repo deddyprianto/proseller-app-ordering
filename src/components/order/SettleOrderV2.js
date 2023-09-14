@@ -54,7 +54,6 @@ const SettleOrderV2 = ({
   const [availableSelection, setAvailableSelection] = React.useState([]);
   const {calculationAmountPaidByVisa, calculateVoucherPoint} = useCalculation();
   const [isAgreeTnc, setIsAgreeTnc] = React.useState(false);
-
   const renderStep = () => {
     if (step) {
       return (
