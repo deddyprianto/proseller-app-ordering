@@ -17,7 +17,6 @@ const appConfig = {
   contactUsVersion: '<%= contactUsVersion %>',
   modifierType: '<%= modifierType %>',
   pointType: '<%= pointType %>',
-  advanceOrderSetting: '<%= advanceOrderSetting %>',
 
   // image company
   appImageNull: require('../assets/img/logo.png'),

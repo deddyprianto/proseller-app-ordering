@@ -331,12 +331,7 @@ const DateSelectorModal = ({open, handleClose, value, preOrderDate}) => {
       dateTime = moment().subtract(1, 'day');
     }
 
-    const length =
-      appConfig?.advanceOrderSetting === 'on' && availableDates.length <= 5
-        ? availableDates.length
-        : 5;
-
-    const result = Array(length)
+    const result = Array(5)
       .fill(0)
       .map(() => {
         return dateTime.add(1, 'day').format('ddd DD MMMM YYYY');
@@ -464,12 +459,7 @@ const DateSelectorModal = ({open, handleClose, value, preOrderDate}) => {
   };
 
   const renderSeeMore = () => {
-    const isAdvanceOrderSetting =
-      appConfig?.advanceOrderSetting === 'on' && availableDates.length <= 5
-        ? false
-        : true;
-
-    if (isAdvanceOrderSetting) {
+    if (availableDates.length > 5) {
       return (
         <TouchableOpacity
           onPress={() => {
