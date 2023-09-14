@@ -98,11 +98,10 @@ const ButtonCartFloating = () => {
       </View>
     );
   };
-
   const renderPrice = () => {
     return (
       <Text style={styles.textPriceButtonCart}>
-        {CurrencyFormatter(basket?.totalNettAmount)}
+        {CurrencyFormatter(basket?.totalGrossAmount)}
       </Text>
     );
   };

@@ -87,7 +87,7 @@ const CartStep1 = props => {
             <GlobalText>Subtotal</GlobalText>
             <View style={styles.mlAuto}>
               <GlobalText style={styles.priceBotttom}>
-                {CurrencyFormatter(currentBasket?.totalNettAmount)}
+                {CurrencyFormatter(currentBasket?.totalGrossAmount)}
               </GlobalText>
             </View>
           </View>
