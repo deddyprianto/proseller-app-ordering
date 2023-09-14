@@ -26,6 +26,7 @@ import {Header} from './layout';
 import GlobalText from './globalText';
 import withHooksComponent from './HOC';
 import NoPointSvg from '../assets/svg/NoPointSvg';
+import moment from 'moment';
 
 class DetailPoint extends Component {
   constructor(props) {
@@ -197,6 +198,14 @@ class DetailPoint extends Component {
     } catch (e) {}
   };
 
+  handleLocalTimeZone = date => {
+    var stillUtc = moment.utc(date).toDate();
+    var local = moment(stillUtc)
+      .local()
+      .format('ddd DD MMM YYYY HH:mm');
+    return local;
+  };
+
   render() {
     const {colors, campignData} = this.props;
     const {customerActivity, dataLength, actualLength, history} = this.state;
@@ -218,8 +227,8 @@ class DetailPoint extends Component {
             </View>
             <View style={styles.earnPointContainer}>
               <GlobalText style={styles.earnPointText}>
-                Earn {campignData?.points?.netSpendToPoint0} Points per{' '}
-                {`$${campignData?.points?.netSpendToPoint1}`} spent
+                Earn {campignData?.points?.netSpendToPoint1} Points per{' '}
+                {`$${campignData?.points?.netSpendToPoint0}`} spent
               </GlobalText>
             </View>
             {!isEmptyArray(history) && (
@@ -302,10 +311,7 @@ class DetailPoint extends Component {
                       </Text>
                     </View>
                     <Text style={styles.activityDate(colors.greyScale2)}>
-                      {format(
-                        new Date(item.activityDate),
-                        'iii dd MMM yyyy HH:mm',
-                      )}
+                      {this.handleLocalTimeZone(item.activityDate)}
                     </Text>
                   </View>
                 ))
