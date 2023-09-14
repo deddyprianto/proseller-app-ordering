@@ -116,7 +116,6 @@ const ModalOrderDetail = ({
     }
     return [];
   };
-
   const checkTax = () => {
     if (basket?.inclusiveTax > 0 && basket?.exclusiveTax > 0) {
       return (
@@ -124,8 +123,8 @@ const ModalOrderDetail = ({
           <View style={[styles.divider, styles.noMargin]} />
 
           <View style={styles.modalItem}>
-            <GlobalText style={styles.taxPriceText}>Tax</GlobalText>
-            <GlobalText style={[styles.taxPriceText, styles.semiBold]}>
+            <GlobalText style={styles.modalItemPrice}>Tax</GlobalText>
+            <GlobalText style={[styles.modalItemPrice, styles.semiBold]}>
               {CurrencyFormatter(basket?.totalTaxAmount)}{' '}
             </GlobalText>
           </View>
@@ -153,8 +152,8 @@ const ModalOrderDetail = ({
           <View style={[styles.divider, styles.noMargin]} />
 
           <View style={styles.modalItem}>
-            <GlobalText style={styles.taxPriceText}>Excl. Tax</GlobalText>
-            <GlobalText style={[styles.taxPriceText, styles.semiBold]}>
+            <GlobalText style={styles.modalItemPrice}>Excl. Tax</GlobalText>
+            <GlobalText style={[styles.modalItemPrice, styles.semiBold]}>
               {CurrencyFormatter(basket?.exclusiveTax)}{' '}
             </GlobalText>
           </View>
