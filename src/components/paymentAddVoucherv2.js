@@ -13,6 +13,7 @@ import {
   ScrollView,
   SafeAreaView,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 import {Actions} from 'react-native-router-flux';
 
@@ -47,16 +48,36 @@ const PaymentAddVouchersV2 = props => {
   );
   const [confirmPopup, setConfirmPopup] = React.useState(false);
   const [saveSubmitVoucher, setSubmitVoucher] = React.useState([]);
-
+  const companyInfo = useSelector(
+    state => state.userReducer.getCompanyInfo?.companyInfo,
+  );
+  const selectedAccount = useSelector(
+    state => state.cardReducer.selectedAccount.selectedAccount,
+  );
   const myVoucher = useSelector(
     state => state.accountsReducer.myVouchers?.vouchers,
   );
   const dispatch = useDispatch();
 
+  const voucherPointUsedCalculation = (vouchers = []) => {
+    const mapVoucherPoint = vouchers?.map(data => data?.paymentAmount);
+    console.log({mapVoucherPoint, vouchers}, 'nanak1');
+    if (mapVoucherPoint.length > 0) {
+      return mapVoucherPoint?.reduce((a, b) => a + b);
+    }
+    return 0;
+  };
+
+  const findMinTransactionHandle = () => {
+    const findMinPayment = companyInfo?.paymentTypes.find(
+      item => item.paymentID === selectedAccount.paymentID,
+    );
+    return findMinPayment;
+  };
+
   const onSubmit = async () => {
     setLoadingCheckVoucher(true);
     const voucherMap = mappingPayment(usedVoucher);
-
     const payload = {
       details: cartDetail?.details,
       outletId: cartDetail?.outletID,
@@ -64,6 +85,7 @@ const PaymentAddVouchersV2 = props => {
       customerId: cartDetail?.customerId,
       payments: voucherMap,
     };
+    const findMinTransaction = findMinTransactionHandle();
     const response = await dispatch(getCalculationStep3(payload));
     if (response.message) {
       setLoadingCheckVoucher(false);
@@ -74,6 +96,15 @@ const PaymentAddVouchersV2 = props => {
     if (response.total <= 0) {
       setSubmitVoucher(mappigResponse);
       return setConfirmPopup(true);
+    }
+    const voucherUsedAmount = voucherPointUsedCalculation(mappigResponse);
+    const totalPayment = cartDetail?.totalNettAmount - voucherUsedAmount || 0;
+    const minTransaction = findMinTransaction?.minimumPayment;
+    if (totalPayment < minTransaction) {
+      return Alert.alert(
+        "Can't Add Voucher",
+        "You haven't passed the minimum payment required if you use this voucher.",
+      );
     }
     adjustVoucher(mappigResponse);
   };
@@ -130,7 +161,6 @@ const PaymentAddVouchersV2 = props => {
       };
     }
   };
-
   const getAvailableVoucher = () => {
     const {totalPrice} = props;
     let myNewVoucher = [];

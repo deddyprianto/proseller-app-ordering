@@ -1,5 +1,7 @@
+import {useSelector} from 'react-redux';
 import CurrencyFormatter from '../../helper/CurrencyFormatter';
 const useCalculation = () => {
+  const basket = useSelector(state => state.orderReducer?.dataBasket?.product);
   const calculateVoucher = (vouchers = []) => {
     const amountVoucherArr = vouchers
       ?.filter(voucher => !voucher?.isPoint)
@@ -61,11 +63,18 @@ const useCalculation = () => {
     };
   };
 
+  const calculatePriceAferDiscount = () => {
+    const amount =
+      basket?.totalGrossAmount - (basket?.totalDiscountAmount || 0);
+    return amount;
+  };
+
   return {
     calculateVoucher,
     calculateVoucherPoint,
     calculationAmountPaidByVisa,
     checkTaxHandle,
+    calculatePriceAferDiscount,
   };
 };
 
