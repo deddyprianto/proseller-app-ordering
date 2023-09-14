@@ -13,6 +13,7 @@ import {getTimeSlot, setTimeSlotSelected} from '../../actions/order.action';
 import Theme from '../../theme';
 import GlobalText from '../globalText';
 import GlobalButton from '../button/GlobalButton';
+import appConfig from '../../config/appConfig';
 
 const useStyles = () => {
   const theme = Theme();
@@ -84,7 +85,7 @@ const useStyles = () => {
       marginTop: 16,
       display: 'flex',
       flexDirection: 'row',
-      justifyContent: 'space-between',
+      justifyContent: 'center',
       flexWrap: 'wrap',
     },
     textDayAvailable: {
@@ -141,7 +142,7 @@ const useStyles = () => {
       alignItems: 'center',
       justifyContent: 'center',
       paddingVertical: 8,
-      // marginHorizontal: 6,
+      marginHorizontal: 4,
     },
     touchableItemAvailable: {
       width: 53,
@@ -151,7 +152,7 @@ const useStyles = () => {
       alignItems: 'center',
       justifyContent: 'center',
       paddingVertical: 8,
-      // marginHorizontal: 6,
+      marginHorizontal: 4,
     },
     touchableItemUnavailable: {
       width: 53,
@@ -162,7 +163,7 @@ const useStyles = () => {
       justifyContent: 'center',
       paddingVertical: 8,
       backgroundColor: theme.colors.greyScale4,
-      // marginHorizontal: 6,
+      marginHorizontal: 4,
     },
     circleSelected: {
       width: 26,
@@ -268,6 +269,7 @@ const DateSelectorModal = ({open, handleClose, value, preOrderDate}) => {
   const [seeMore, setSeeMore] = useState(false);
   const [isOpenTimeSelector, setIsOpenTimeSelector] = useState(false);
   const [initDate, setInitDate] = useState(null);
+
   const defaultOutlet = useSelector(
     state => state.storesReducer.defaultOutlet.defaultOutlet,
   );
@@ -290,6 +292,7 @@ const DateSelectorModal = ({open, handleClose, value, preOrderDate}) => {
           orderingMode: basket.orderingMode,
         }),
       );
+
       setAvailableDates(timeSlot);
       if (selectedDate.length <= 0) {
         const currentDate = availDate
@@ -301,6 +304,7 @@ const DateSelectorModal = ({open, handleClose, value, preOrderDate}) => {
 
     loadData();
   }, [open]);
+
   useEffect(() => {
     const selectedDateFormatter = moment(selectedDate).format('YYYY-MM-DD');
     if (!isEmptyArray(availableDates)) {
@@ -318,6 +322,7 @@ const DateSelectorModal = ({open, handleClose, value, preOrderDate}) => {
       setTimes(timeSlot);
     }
   }, [availableDates, selectedDate]);
+
   useEffect(() => {
     let dateTime = '';
     if (initDate) {
@@ -332,7 +337,7 @@ const DateSelectorModal = ({open, handleClose, value, preOrderDate}) => {
         return dateTime.add(1, 'day').format('ddd DD MMMM YYYY');
       });
     setDates(result);
-  }, [seeMore, initDate]);
+  }, [seeMore, initDate, availableDates]);
 
   useEffect(() => {
     if (value?.date) {
@@ -454,15 +459,23 @@ const DateSelectorModal = ({open, handleClose, value, preOrderDate}) => {
   };
 
   const renderSeeMore = () => {
-    return (
-      <View style={styles.viewSeeMore}>
-        <Text style={styles.textChooseDate}>Choose Date</Text>
+    if (availableDates.length > 5) {
+      return (
         <TouchableOpacity
           onPress={() => {
             handleOpenCalender();
           }}>
           <Text style={styles.textSeeMore}>See More Date</Text>
         </TouchableOpacity>
+      );
+    }
+  };
+
+  const renderChooseDate = () => {
+    return (
+      <View style={styles.viewSeeMore}>
+        <Text style={styles.textChooseDate}>Choose Date</Text>
+        {renderSeeMore()}
       </View>
     );
   };
@@ -470,7 +483,7 @@ const DateSelectorModal = ({open, handleClose, value, preOrderDate}) => {
   const renderBody = () => {
     return (
       <View style={styles.body}>
-        {renderSeeMore()}
+        {renderChooseDate()}
         {renderDate()}
       </View>
     );
