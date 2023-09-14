@@ -45,6 +45,7 @@ import Theme from '../theme';
 import AnimationMessage from '../components/animationMessage';
 import {normalizeLayoutSizeHeight} from '../helper/Layout';
 import useSettings from '../hooks/settings/useSettings';
+import useCalculation from '../hooks/calculation/useCalculation';
 
 const useStyles = () => {
   const theme = Theme();
@@ -204,7 +205,7 @@ const SearchProduct = ({category}) => {
   const [searchTextInput, setSearchTextInput] = useState('');
 
   const [isLoading, setIsLoading] = useState(false);
-
+  const {calculatePriceAferDiscount} = useCalculation();
   const [selectedCategory, setSelectedCategory] = useState({});
   const [selectedSubCategory, setSelectedSubCategory] = useState({});
   const [productsSearch, setProductsSearch] = useState([]);
@@ -361,7 +362,7 @@ const SearchProduct = ({category}) => {
             </Text>
           </View>
           <Text style={styles.textButtonCart}>
-            {CurrencyFormatter(basket?.totalNettAmount)}
+            {CurrencyFormatter(calculatePriceAferDiscount())}
           </Text>
         </TouchableOpacity>
       );

@@ -190,12 +190,13 @@ const OrderingTypeSelectorModal = ({
     state => state.settingReducer?.allowedOrder?.settingValue,
   );
 
-  useEffect(() => {
-    if (open) {
-      dispatch(getAllowedOrder(dispatch));
-      dispatch(getOutletById(outlet.id));
-    }
-  }, [dispatch, open, outlet.id]);
+  //root cause of bug
+  // useEffect(() => {
+  //   if (open) {
+  //     dispatch(getAllowedOrder(dispatch));
+  //     dispatch(getOutletById(outlet.id));
+  //   }
+  // }, [dispatch, open, outlet.id]);
 
   useEffect(() => {
     const loadData = async () => {
@@ -260,7 +261,7 @@ const OrderingTypeSelectorModal = ({
       setIsLoading(false);
     };
     loadData();
-  }, [defaultOutlet, value, orderSetting]);
+  }, [defaultOutlet, value, orderSetting, open]);
 
   const handleSaveClicked = async () => {
     setIsLoading(true);

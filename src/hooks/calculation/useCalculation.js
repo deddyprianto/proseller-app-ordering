@@ -1,4 +1,7 @@
+import {useSelector} from 'react-redux';
+import CurrencyFormatter from '../../helper/CurrencyFormatter';
 const useCalculation = () => {
+  const basket = useSelector(state => state.orderReducer?.dataBasket?.product);
   const calculateVoucher = (vouchers = []) => {
     const amountVoucherArr = vouchers
       ?.filter(voucher => !voucher?.isPoint)
@@ -34,10 +37,44 @@ const useCalculation = () => {
     return total?.toFixed(2);
   };
 
+  const checkTaxHandle = basket => {
+    if (basket?.inclusiveTax > 0 && basket?.exclusiveTax > 0) {
+      return {
+        text: 'Tax',
+        value: CurrencyFormatter(basket?.totalTaxAmount),
+      };
+    }
+    if (basket?.inclusiveTax > 0) {
+      return {
+        text: 'Incl. Tax',
+        value: CurrencyFormatter(basket?.inclusiveTax),
+      };
+    }
+
+    if (basket?.exclusiveTax > 0) {
+      return {
+        text: 'Excl. Tax',
+        value: CurrencyFormatter(basket?.exclusiveTax),
+      };
+    }
+    return {
+      text: null,
+      value: null,
+    };
+  };
+
+  const calculatePriceAferDiscount = () => {
+    const amount =
+      basket?.totalGrossAmount - (basket?.totalDiscountAmount || 0);
+    return amount;
+  };
+
   return {
     calculateVoucher,
     calculateVoucherPoint,
     calculationAmountPaidByVisa,
+    checkTaxHandle,
+    calculatePriceAferDiscount,
   };
 };
 

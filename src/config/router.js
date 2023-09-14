@@ -148,6 +148,7 @@ import ProductDetail from '../pages/ProductDetail';
 import ProfilePaymentMethod from '../pages/ProfilePaymentMethod/PaymentMethod';
 import CreditCardDetail from '../pages/CreditCardDetail';
 import TermsAndConditions from '../pages/TermsAndConditions';
+import Outlets from '../pages/Outlets';
 
 const MyTransitionSpec = {
   duration: 200,
@@ -426,6 +427,7 @@ export default class Routes extends Component {
             />
             <Scene key="creditCardDetail" component={CreditCardDetail} />
             <Scene key="termsAndConditions" component={TermsAndConditions} />
+            <Scene key="outlets" component={Outlets} />
             {/* //martin */}
           </Scene>
         </Scene>

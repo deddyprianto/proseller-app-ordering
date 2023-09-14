@@ -208,8 +208,14 @@ const UsePointModal = ({
   };
 
   const handleOnChange = result => {
-    const totalResultAmount = Number(result) * pointRatio;
-    const totalPointUse = totalAmount / pointRatio;
+    const jumPointRatio = campaign.points.pointsToRebateRatio0;
+    const jumMoneyRatio = campaign.points.pointsToRebateRatio1;
+
+    const ratio = jumMoneyRatio / jumPointRatio;
+
+    const totalResultAmount = Number(result) * ratio;
+    const totalPointUse = totalAmount / ratio;
+
     if (totalResultAmount < totalAmount) {
       setValue(result);
     } else if (campaign?.points?.roundingOptions === 'INTEGER') {
