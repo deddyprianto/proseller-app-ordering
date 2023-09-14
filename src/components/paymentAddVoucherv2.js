@@ -61,7 +61,6 @@ const PaymentAddVouchersV2 = props => {
 
   const voucherPointUsedCalculation = (vouchers = []) => {
     const mapVoucherPoint = vouchers?.map(data => data?.paymentAmount);
-    console.log({mapVoucherPoint, vouchers}, 'nanak1');
     if (mapVoucherPoint.length > 0) {
       return mapVoucherPoint?.reduce((a, b) => a + b);
     }
