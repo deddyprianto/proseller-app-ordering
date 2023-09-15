@@ -17,6 +17,7 @@ import Theme from '../theme/Theme';
 import appConfig from '../config/appConfig';
 import {Actions} from 'react-native-router-flux';
 import moment from 'moment';
+import useBackHandler from '../hooks/backHandler/useBackHandler';
 
 const useStyles = () => {
   const {fontFamily, fontSize, colors} = Theme();
@@ -84,7 +85,7 @@ const useStyles = () => {
 
 const Membership = () => {
   const styles = useStyles();
-
+  useBackHandler();
   const myProgress = useSelector(
     state => state.accountsReducer?.myProgressBarCampaign.myProgress,
   );
