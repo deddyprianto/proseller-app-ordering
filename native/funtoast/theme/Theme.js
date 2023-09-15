@@ -108,6 +108,7 @@ const Theme = () => {
     poppinsLight: 'Poppins-Light', //300
     poppinsRegular: 'Poppins-Regular', //400
     poppinsMedium: 'Poppins-Medium', //500
+    poppinsMediumItalic: 'Poppins-MediumItalic', //500 italic
     poppinsSemiBold: 'Poppins-SemiBold', //600
     poppinsBold: 'Poppins-Bold', //700
   };
