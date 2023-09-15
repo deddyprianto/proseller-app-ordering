@@ -1185,7 +1185,7 @@ class SettleOrder extends Component {
     const ratio0 = campign?.points?.pointsToRebateRatio0;
     const ratioPoint = ratio1 / ratio0;
     const findMinPayment = companyInfo?.paymentTypes?.find(
-      item => item.paymentID === selectedAccount.paymentID,
+      item => item.paymentID === selectedAccount?.paymentID,
     );
     const usedVoucher = this.totalUsedVoucher();
     const roundingOption = campign?.points?.roundingOptions;
@@ -1202,7 +1202,7 @@ class SettleOrder extends Component {
       };
       // ubah point ke sgd
       const moneyPoint = (totalPoint * ratioPoint).toFixed(2);
-      let minPayment = 0;
+      let minPayment = 1;
       if (findMinPayment && moneyPoint < netAmount) {
         minPayment = findMinPayment?.minimumPayment;
       }
