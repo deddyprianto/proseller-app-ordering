@@ -1126,7 +1126,7 @@ class SettleOrder extends Component {
         return parseFloat(0);
       }
     } catch (e) {
-      return parseFloat(0);
+      return parseFloat(data);
     }
   };
 

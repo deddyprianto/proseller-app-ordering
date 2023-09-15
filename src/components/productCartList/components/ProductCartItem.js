@@ -128,28 +128,33 @@ const useStyles = () => {
     },
     textAddOn: {
       marginBottom: 4,
-      fontStyle: 'italic',
       color: theme.colors.textTertiary,
-      fontSize: theme.fontSize[10],
-      fontFamily: theme.fontFamily.poppinsMedium,
+      fontSize: theme.fontSize[12],
+      fontFamily: theme.fontFamily.poppinsMediumItalic,
+    },
+    textAddOnBlack: {
+      marginBottom: 4,
+      color: theme.colors.textPrimary,
+      fontSize: theme.fontSize[12],
+      fontFamily: theme.fontFamily.poppinsMediumItalic,
     },
     textProductHeaderQty: {
       color: theme.colors.textSecondary,
-      fontSize: theme.fontSize[10],
+      fontSize: theme.fontSize[12],
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textProductHeaderName: {
       maxWidth: (WIDTH * 5) / 10,
       marginHorizontal: 8,
       color: theme.colors.textPrimary,
-      fontSize: theme.fontSize[12],
+      fontSize: theme.fontSize[14],
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textProductHeaderNameUnavailable: {
       maxWidth: (WIDTH * 5) / 10,
       marginHorizontal: 8,
       color: theme.colors.textTertiary,
-      fontSize: theme.fontSize[12],
+      fontSize: theme.fontSize[14],
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textProductHeaderPrice: {
@@ -166,34 +171,34 @@ const useStyles = () => {
       flex: 1,
     },
     textModifierItemQty: {
-      fontStyle: 'italic',
       color: theme.colors.textQuaternary,
-      fontSize: theme.fontSize[10],
-      fontFamily: theme.fontFamily.poppinsMedium,
+      fontSize: theme.fontSize[12],
+      fontFamily: theme.fontFamily.poppinsMediumItalic,
     },
     textModifierItemQtyUnavailable: {
-      fontStyle: 'italic',
       color: theme.colors.textTertiary,
-      fontSize: theme.fontSize[10],
-      fontFamily: theme.fontFamily.poppinsMedium,
+      fontSize: theme.fontSize[12],
+      fontFamily: theme.fontFamily.poppinsMediumItalic,
     },
     textModifierItemName: {
-      fontStyle: 'italic',
       color: theme.colors.textTertiary,
-      fontSize: theme.fontSize[10],
-      fontFamily: theme.fontFamily.poppinsMedium,
+      fontSize: theme.fontSize[12],
+      fontFamily: theme.fontFamily.poppinsMediumItalic,
+    },
+    textModifierItemNameBlack: {
+      color: theme.colors.textPrimary,
+      fontSize: theme.fontSize[12],
+      fontFamily: theme.fontFamily.poppinsMediumItalic,
     },
     textModifierItemPrice: {
-      fontStyle: 'italic',
       color: theme.colors.textQuaternary,
-      fontSize: theme.fontSize[10],
-      fontFamily: theme.fontFamily.poppinsMedium,
+      fontSize: theme.fontSize[12],
+      fontFamily: theme.fontFamily.poppinsMediumItalic,
     },
     textModifierItemPriceUnavailable: {
-      fontStyle: 'italic',
       color: theme.colors.textTertiary,
-      fontSize: theme.fontSize[10],
-      fontFamily: theme.fontFamily.poppinsMedium,
+      fontSize: theme.fontSize[12],
+      fontFamily: theme.fontFamily.poppinsMediumItalic,
     },
     textPriceFooter: {
       color: theme.colors.textQuaternary,
@@ -231,10 +236,9 @@ const useStyles = () => {
     },
     textNotes: {
       flex: 1,
-      fontStyle: 'italic',
       color: theme.colors.textTertiary,
       fontSize: theme.fontSize[12],
-      fontFamily: theme.fontFamily.poppinsMedium,
+      fontFamily: theme.fontFamily.poppinsMediumItalic,
     },
     textNotDiscountAble: {
       flex: 1,
@@ -266,13 +270,13 @@ const useStyles = () => {
     },
     viewProductHeaderQty: {
       paddingVertical: 3,
-      paddingHorizontal: 4.5,
+      paddingHorizontal: 6,
       borderRadius: 5,
       backgroundColor: theme.colors.textQuaternary,
     },
     viewProductHeaderQtyUnavailable: {
       paddingVertical: 3,
-      paddingHorizontal: 4.5,
+      paddingHorizontal: 6,
       borderRadius: 5,
       backgroundColor: theme.colors.textTertiary,
     },
@@ -413,13 +417,18 @@ const ProductCartItem = ({item, disabled}) => {
       ? styles.textModifierItemPriceUnavailable
       : styles.textModifierItemPrice;
 
+    const styleTextName =
+      appConfig?.textModifier === 'black'
+        ? styles.textModifierItemNameBlack
+        : styles.textModifierItemName;
+
     return (
       <View style={styles.viewProductModifierItem}>
         <View style={styles.viewBullet} />
 
         <Text style={styles.textModifier}>
           <Text style={styleTextQty}>{qty}x </Text>
-          <Text style={styles.textModifierItemName}>{name} </Text>
+          <Text style={styleTextName}>{name} </Text>
           <Text style={styleTextPrice}>+{price} </Text>
         </Text>
       </View>
@@ -428,6 +437,11 @@ const ProductCartItem = ({item, disabled}) => {
 
   const renderProductModifier = () => {
     if (!isEmptyArray(item.modifiers)) {
+      const styleTextAddOn =
+        appConfig?.textModifier === 'black'
+          ? styles.textAddOnBlack
+          : styles.textAddOn;
+
       const productModifiers = item.modifiers.map(modifier => {
         return modifier?.modifier?.details.map(detail => {
           return renderProductModifierItem({
@@ -440,7 +454,7 @@ const ProductCartItem = ({item, disabled}) => {
 
       return (
         <View>
-          <Text style={styles.textAddOn}>Add-On</Text>
+          <Text style={styleTextAddOn}>Add-On</Text>
           {productModifiers}
         </View>
       );

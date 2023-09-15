@@ -63,6 +63,7 @@ const useStyles = () => {
       fontFamily: theme.fontFamily.poppinsSemiBold,
     },
     textMenu: {
+      textAlign: 'center',
       marginTop: 10,
       color: theme.colors.textQuaternary,
       fontSize: theme.fontSize[14],
@@ -135,7 +136,7 @@ const useStyles = () => {
       flex: 1,
       display: 'flex',
       alignItems: 'center',
-      justifyContent: 'center',
+      justifyContent: 'flex-start',
     },
     iconArrow: {
       width: 4,
@@ -245,7 +246,7 @@ const Menu = () => {
           Actions.myFavoriteOutlets();
         }}>
         <Image source={appConfig.iconHomeOutlet} style={styles.iconMenu} />
-        <Text style={styles.textMenu}>Outlet</Text>
+        <Text style={styles.textMenu}>Favorite outlet</Text>
       </TouchableOpacity>
     );
   };
