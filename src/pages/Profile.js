@@ -42,6 +42,7 @@ import {Body, Header} from '../components/layout';
 import additionalSetting from '../config/additionalSettings';
 import InfoMessage from '../components/infoMessage/InfoMessage';
 import {getUserProfile} from '../actions/user.action';
+import {dataPointHistory} from '../actions/rewards.action';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -320,7 +321,7 @@ const Profile = props => {
   );
   const [currentBrightness, setCurrentBrightness] = React.useState(null);
   const [user, setUser] = useState({});
-
+  const [refreshing, setRefreshing] = React.useState(false);
   const progressBarCampaign = useSelector(
     state => state.accountsReducer?.myProgressBarCampaign.myProgress,
   );
@@ -367,7 +368,7 @@ const Profile = props => {
 
   useEffect(() => {
     props.navigation.addListener('didFocus', () => {
-      dispatch(myProgressBarCampaign());
+      onRefresh(false);
     });
   }, []);
 
@@ -935,11 +936,14 @@ const Profile = props => {
     </View>
   );
 
-  const onRefresh = async () => {
-    setIsLoading(true);
+  const onRefresh = async showLoading => {
+    if (showLoading) {
+      setRefreshing(true);
+    }
     await dispatch(myProgressBarCampaign());
     await dispatch(getUserProfile());
-    setIsLoading(false);
+    await dispatch(dataPointHistory());
+    setRefreshing(false);
   };
 
   return (
@@ -949,7 +953,7 @@ const Profile = props => {
         <Header title="Profile" isRemoveBackIcon />
         <ScrollView
           refreshControl={
-            <RefreshControl onRefresh={onRefresh} refreshing={isLoading} />
+            <RefreshControl onRefresh={onRefresh} refreshing={refreshing} />
           }
           contentContainerStyle={styles.containerStyle}>
           {renderBackgroundImage()}
