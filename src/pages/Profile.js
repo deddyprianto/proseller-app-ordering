@@ -43,7 +43,8 @@ import additionalSetting from '../config/additionalSettings';
 import InfoMessage from '../components/infoMessage/InfoMessage';
 import {getUserProfile} from '../actions/user.action';
 import CurrencyFormatter from '../helper/CurrencyFormatter';
-import {dataPointHistory} from '../actions/rewards.action';
+import {dataPoint, dataPointHistory} from '../actions/rewards.action';
+import {dataPromotion} from '../actions/promotion.action';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -962,6 +963,7 @@ const Profile = props => {
     await dispatch(myProgressBarCampaign());
     await dispatch(getUserProfile());
     await dispatch(dataPointHistory());
+    await dispatch(dataPoint());
     setRefreshing(false);
   };
 
