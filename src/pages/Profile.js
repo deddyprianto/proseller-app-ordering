@@ -42,7 +42,9 @@ import {Body, Header} from '../components/layout';
 import additionalSetting from '../config/additionalSettings';
 import InfoMessage from '../components/infoMessage/InfoMessage';
 import {getUserProfile} from '../actions/user.action';
-import {dataPointHistory} from '../actions/rewards.action';
+import CurrencyFormatter from '../helper/CurrencyFormatter';
+import {dataPoint, dataPointHistory} from '../actions/rewards.action';
+import {dataPromotion} from '../actions/promotion.action';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -116,7 +118,7 @@ const useStyles = () => {
       textAlign: 'center',
       marginTop: 16,
       color: theme.colors.textTertiary,
-      fontSize: theme.fontSize[12],
+      fontSize: theme.fontSize[14],
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textLogout: {
@@ -304,6 +306,9 @@ const useStyles = () => {
       fontFamily: theme.fontFamily.poppinsMedium,
       fontSize: 16,
       color: theme.colors.greyScale5,
+    },
+    bold: {
+      fontFamily: theme.fontFamily.poppinsBold,
     },
   });
 
@@ -532,9 +537,24 @@ const Profile = props => {
     );
   };
 
+  const textInfoHandle = () => {
+    if (progressBarCampaign) {
+      return `Spend ${CurrencyFormatter(
+        progressBarCampaign?.nextCustomerGroupCriteria?.totalPurchase -
+          progressBarCampaign?.totalPurchaseByAccumulation,
+      )} more to upgrade to`;
+    }
+    return '';
+  };
+
   const renderTextInfo = () => {
     return (
-      <Text style={styles.textInfo}>{progressBarCampaign?.description}</Text>
+      <Text style={styles.textInfo}>
+        {textInfoHandle()}{' '}
+        <Text style={[styles.textInfo, styles.bold]}>
+          {progressBarCampaign?.nextGroup}{' '}
+        </Text>{' '}
+      </Text>
     );
   };
 
@@ -943,6 +963,7 @@ const Profile = props => {
     await dispatch(myProgressBarCampaign());
     await dispatch(getUserProfile());
     await dispatch(dataPointHistory());
+    await dispatch(dataPoint());
     setRefreshing(false);
   };
 
