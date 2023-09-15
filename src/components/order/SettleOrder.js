@@ -1132,6 +1132,7 @@ class SettleOrder extends Component {
 
   callApiCalculatedVoucherPoint = async payload => {
     const response = await this.props.dispatch(getCalculationStep3(payload));
+    console.log({response, payload}, 'test');
     if (response.message) {
       return this.props.dispatch(showSnackbar({message: response.message}));
     }
@@ -1185,7 +1186,7 @@ class SettleOrder extends Component {
     const ratio0 = campign?.points?.pointsToRebateRatio0;
     const ratioPoint = ratio1 / ratio0;
     const findMinPayment = companyInfo?.paymentTypes?.find(
-      item => item.paymentID === selectedAccount.paymentID,
+      item => item.paymentID === selectedAccount?.paymentID,
     );
     const usedVoucher = this.totalUsedVoucher();
     const roundingOption = campign?.points?.roundingOptions;
@@ -1202,11 +1203,17 @@ class SettleOrder extends Component {
       };
       // ubah point ke sgd
       const moneyPoint = (totalPoint * ratioPoint).toFixed(2);
-      let minPayment = 0;
-      if (findMinPayment && moneyPoint < netAmount) {
+      let minPayment = 1;
+      if (
+        findMinPayment &&
+        netAmount > findMinPayment?.minimumPayment &&
+        moneyPoint < netAmount
+      ) {
         minPayment = findMinPayment?.minimumPayment;
       }
-
+      if (findMinPayment && netAmount < findMinPayment?.minimumPayment) {
+        minPayment = 0;
+      }
       if (amountRebate >= totalPoint) {
         //selisih antara uang harga net sama point yang diuangkan
         const diffNetPoint = netAmount - moneyPoint - usedVoucher;
@@ -1214,9 +1221,11 @@ class SettleOrder extends Component {
 
         if (diffNetPoint < minPayment && minusTotalPoint >= 0) {
           const correctTotalPoint = totalPoint - minusTotalPoint;
-          savePoint.redeemValue = Number(correctTotalPoint.toFixed(2));
+          savePoint.redeemValue =
+            Number(correctTotalPoint.toFixed(2)) - this.totalUsedVoucher();
         } else {
-          savePoint.redeemValue = Number(totalPoint?.toFixed(2));
+          savePoint.redeemValue =
+            Number(totalPoint?.toFixed(2)) - this.totalUsedVoucher();
         }
       }
       const points = this.state.dataVoucer || [];
@@ -1233,6 +1242,7 @@ class SettleOrder extends Component {
             outletId: this.props.basket?.outletID,
             customerId: this.props.basket?.customerId,
             payments: this.state.dataVoucer,
+            total: this.props?.basket?.totalNettAmount,
           };
           this.callApiCalculatedVoucherPoint(payload);
         },
@@ -1432,7 +1442,7 @@ class SettleOrder extends Component {
               paymentPayload.accountId = selectedAccount.accountID;
             }
 
-            if (find.minimumPayment != undefined) {
+            if (find.minimumPayment !== undefined) {
               if (totalBayar < find.minimumPayment) {
                 this.setState({loading: false});
                 Alert.alert(
@@ -2466,6 +2476,16 @@ class SettleOrder extends Component {
     }
   };
 
+  calculateUsageVoucher = () => {
+    const mappingVoucher =
+      this.state.dataVoucer?.map(voucher => voucher?.paymentAmount) || [];
+    if (mappingVoucher.length > 0) {
+      const totalVoucher = mappingVoucher?.reduce((a, b) => a || 0 + b || 0);
+      return totalVoucher;
+    }
+    return 0;
+  };
+
   doPayment = async () => {
     const {
       intlData,
@@ -2502,7 +2522,7 @@ class SettleOrder extends Component {
       // check if this payment method is allowed to top up SVC
       try {
         const find = companyInfo?.paymentTypes.find(
-          i => i.paymentID === selectedAccount.paymentID,
+          i => i.paymentID === selectedAccount?.paymentID,
         );
         if (find) {
           if (find.allowTopUpSVC === false) {
@@ -2527,7 +2547,7 @@ class SettleOrder extends Component {
     // check if this payment method is allowed to create sales
     try {
       const find = companyInfo?.paymentTypes.find(
-        i => i.paymentID === selectedAccount.paymentID,
+        i => i.paymentID === selectedAccount?.paymentID,
       );
       if (find) {
         if (find.allowSalesTransaction === false) {
@@ -2608,26 +2628,30 @@ class SettleOrder extends Component {
       }
 
       payload.payments = payments;
-
+      // const totalVoucher
       // if price is 0, then dont add payment method
       if (totalBayar > 0) {
         // Payment Type Detail
         let paymentPayload = {};
-
+        const paymentAfterDeductVoucher =
+          totalBayar - this.calculateUsageVoucher();
         if (!isEmptyArray(companyInfo?.paymentTypes)) {
           const find = companyInfo?.paymentTypes.find(
-            item => item.paymentID == selectedAccount.paymentID,
+            item => item.paymentID == selectedAccount?.paymentID,
           );
           if (find != undefined) {
-            paymentPayload.paymentID = selectedAccount.paymentID;
-            paymentPayload.paymentName = selectedAccount.paymentName;
+            paymentPayload.paymentID = selectedAccount?.paymentID;
+            paymentPayload.paymentName = selectedAccount?.paymentName;
 
             if (find.isAccountRequired != false) {
-              paymentPayload.accountId = selectedAccount.accountID;
+              paymentPayload.accountId = selectedAccount?.accountID;
             }
-
+            console.log({totalBayar, paymentAfterDeductVoucher}, 'totalan');
             if (find.minimumPayment != undefined) {
-              if (totalBayar < find.minimumPayment) {
+              if (
+                totalBayar < find.minimumPayment &&
+                paymentAfterDeductVoucher > 0
+              ) {
                 this.setState({loading: false});
                 Alert.alert(
                   'Sorry',
@@ -2644,16 +2668,16 @@ class SettleOrder extends Component {
         let description;
 
         try {
-          description = selectedAccount.configurations.find(
+          description = selectedAccount?.configurations.find(
             x => x.name === 'payment_description',
           ).value;
-          manual_transfer_image = selectedAccount.configurations.find(
+          manual_transfer_image = selectedAccount?.configurations.find(
             x => x.name === 'manual_transfer_image',
           ).value;
         } catch (e) {}
         const paymentAmountByCc =
           this.state.totalBayar - (totalVoucherUsage || 0);
-        if (selectedAccount.isAccountRequired === false) {
+        if (selectedAccount?.isAccountRequired === false) {
           payments.push({
             accountId: paymentPayload.accountId,
             paymentType: paymentPayload.paymentID,
@@ -2823,7 +2847,7 @@ class SettleOrder extends Component {
         }
 
         for (let i = 0; i < payments.length; i++) {
-          if (payments[i].paymentID === selectedAccount.paymentID) {
+          if (payments[i].paymentID === selectedAccount?.paymentID) {
             payments[i].paymentResponse = debit.dataResponse;
             payments[i].ableToRefund = false;
           }

@@ -93,10 +93,13 @@ const ModalOrderDetail = ({
   totalPointToPay,
 }) => {
   const styles = useStyles();
-  const {calculationAmountPaidByVisa} = useCalculation();
+  const {
+    calculationAmountPaidByVisa,
+    calculatePoint,
+    calculateVoucherPoint,
+    calculateVoucher,
+  } = useCalculation();
   const basket = useSelector(state => state.orderReducer?.dataBasket?.product);
-  const {calculateVoucherPoint} = useCalculation();
-  const {calculateVoucher} = useCalculation();
   const delivery_mode = 'DELIVERY';
   const handleCloseDetail = () => {
     if (closeModal && typeof closeModal === 'function') {
@@ -117,6 +120,14 @@ const ModalOrderDetail = ({
     return [];
   };
 
+  const pointOnly = () => {
+    if (!isEmptyArray(vouchers)) {
+      const filterVoucher = vouchers.filter(voucher => voucher?.isPoint);
+      return filterVoucher;
+    }
+    return [];
+  };
+
   const checkTax = () => {
     if (basket?.inclusiveTax > 0 && basket?.exclusiveTax > 0) {
       return (
@@ -124,8 +135,8 @@ const ModalOrderDetail = ({
           <View style={[styles.divider, styles.noMargin]} />
 
           <View style={styles.modalItem}>
-            <GlobalText style={styles.taxPriceText}>Tax</GlobalText>
-            <GlobalText style={[styles.taxPriceText, styles.semiBold]}>
+            <GlobalText style={styles.modalItemPrice}>Tax</GlobalText>
+            <GlobalText style={[styles.modalItemPrice, styles.semiBold]}>
               {CurrencyFormatter(basket?.totalTaxAmount)}{' '}
             </GlobalText>
           </View>
@@ -153,8 +164,8 @@ const ModalOrderDetail = ({
           <View style={[styles.divider, styles.noMargin]} />
 
           <View style={styles.modalItem}>
-            <GlobalText style={styles.taxPriceText}>Excl. Tax</GlobalText>
-            <GlobalText style={[styles.taxPriceText, styles.semiBold]}>
+            <GlobalText style={styles.modalItemPrice}>Excl. Tax</GlobalText>
+            <GlobalText style={[styles.modalItemPrice, styles.semiBold]}>
               {CurrencyFormatter(basket?.exclusiveTax)}{' '}
             </GlobalText>
           </View>
@@ -163,6 +174,7 @@ const ModalOrderDetail = ({
     }
     return null;
   };
+  console.log({vouchers: voucherOnly()}, 'lilak');
   return (
     <GlobalModal
       title="Details"
@@ -215,13 +227,13 @@ const ModalOrderDetail = ({
           <View style={styles.modalItem}>
             <GlobalText style={styles.minusText}>Paid with point</GlobalText>
             <GlobalText style={[styles.modalItemPrice, styles.minusText]}>
-              ({CurrencyFormatter(totalPointToPay)} )
+              ({CurrencyFormatter(calculatePoint(vouchers))} )
             </GlobalText>
           </View>
         ) : null}
         {calculateVoucher(voucherOnly()) > 0 ? (
           <View style={styles.modalItem}>
-            <GlobalText style={styles.minusText}>Paid voucher</GlobalText>
+            <GlobalText style={styles.minusText}>Paid with voucher</GlobalText>
             <GlobalText style={[styles.modalItemPrice, styles.minusText]}>
               ({CurrencyFormatter(calculateVoucher(voucherOnly()))} )
             </GlobalText>

@@ -119,7 +119,7 @@ const VoucherListCheckout = ({onPress, item, type}) => {
   };
   const handleDescription = () => {
     if (item?.minPurchaseAmount <= basket?.totalNettAmount) {
-      return ' No minimal order';
+      return ' No minimum order';
     } else {
       const calculateDifference =
         item?.minPurchaseAmount - basket?.totalNettAmount;

@@ -224,6 +224,7 @@ const CartDetail = ({
   const {checkTncPolicyData} = useSettings();
   const [buttonActive, setButtonActive] = React.useState(false);
   const [showDeliveryDetail, setShowDeliveryDetail] = React.useState(false);
+  const {calculatePoint} = useCalculation();
   const handleTextSelection = () => {
     if (data?.isSelfSelection) {
       return {
@@ -369,6 +370,14 @@ const CartDetail = ({
     setTotalPointVoucher(amount);
   }, [vouchers, isSwitchPoint]);
 
+  const pointUsed = () => {
+    const myPoint = vouchers?.find(voucher => voucher?.isPoint);
+    if (myPoint) {
+      return myPoint?.redeemValue;
+    }
+    return 0;
+  };
+
   const leftValue = useState(new Animated.Value(0))[0];
 
   const handleClick = () => {
@@ -395,7 +404,7 @@ const CartDetail = ({
       : styles.viewSwitcher;
     const onlyVoucher = vouchers?.filter(voucher => !voucher.isPoint);
     const isPointtMoreThanAmount =
-      calculateVoucher(onlyVoucher) > data?.totalNettAmount && !fullPoint;
+      calculateVoucher(onlyVoucher) >= data?.totalNettAmount && !fullPoint;
     return (
       <TouchableOpacity
         disabled={totalPoint === 0 || isPointtMoreThanAmount}
@@ -425,11 +434,12 @@ const CartDetail = ({
 
     const totalPointValue = totalPoint * ratio;
 
-    if (fullPoint) {
+    if (pointUsed() > 0) {
       return (
         <View>
           <GlobalText style={[styles.brandColor, styles.mediumFont]}>
-            {fullPoint} points used (worth {CurrencyFormatter(myMoneyPoint)})
+            {pointUsed()} points used (worth{' '}
+            {CurrencyFormatter(calculatePoint(vouchers))})
           </GlobalText>
         </View>
       );

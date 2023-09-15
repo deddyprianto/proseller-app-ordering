@@ -69,7 +69,7 @@ const PaymentAddVouchersV2 = props => {
 
   const findMinTransactionHandle = () => {
     const findMinPayment = companyInfo?.paymentTypes.find(
-      item => item.paymentID === selectedAccount.paymentID,
+      item => item.paymentID === selectedAccount?.paymentID,
     );
     return findMinPayment;
   };
@@ -99,7 +99,8 @@ const PaymentAddVouchersV2 = props => {
     const voucherUsedAmount = voucherPointUsedCalculation(mappigResponse);
     const totalPayment = cartDetail?.totalNettAmount - voucherUsedAmount || 0;
     const minTransaction = findMinTransaction?.minimumPayment;
-    if (totalPayment < minTransaction) {
+    const voucherOnly = mappigResponse?.filter(voucher => !voucher?.isPoint);
+    if (totalPayment < minTransaction && voucherOnly.length > 0) {
       return Alert.alert(
         "Can't Add Voucher",
         "You haven't passed the minimum payment required if you use this voucher.",
