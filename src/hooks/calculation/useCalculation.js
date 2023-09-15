@@ -12,6 +12,18 @@ const useCalculation = () => {
     }
     return 0;
   };
+
+  const calculatePoint = (points = []) => {
+    const amountPointArr = points
+      ?.filter(voucher => voucher?.isPoint)
+      ?.map(voucher => voucher?.paymentAmount);
+    if (amountPointArr?.length > 0) {
+      const totalVoucher = amountPointArr?.reduce((a, b) => a + b);
+      return totalVoucher;
+    }
+    return 0;
+  };
+
   const calculateVoucherPoint = (vouchers = []) => {
     const amountVoucherArr = vouchers?.map(voucher => voucher?.paymentAmount);
     if (amountVoucherArr?.length > 0) {
@@ -75,6 +87,7 @@ const useCalculation = () => {
     calculationAmountPaidByVisa,
     checkTaxHandle,
     calculatePriceAferDiscount,
+    calculatePoint,
   };
 };
 

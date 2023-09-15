@@ -439,7 +439,7 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
           </View>
         </View>
       ) : null}
-      {item?.paymentType === 'Stripe' ? (
+      {item?.paymentType === 'Stripe' && item?.paymentAmount > 0 ? (
         <View style={[styles.listOrderDetailContainer, styles.mv6]}>
           <View style={styles.orderStatusContainer}>
             <View style={styles.paymentDetailsCard}>
