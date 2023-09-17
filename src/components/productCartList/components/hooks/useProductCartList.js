@@ -26,7 +26,7 @@ const useStyles = () => {
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textModifierItemPrice: {
-      color: theme.colors.textQuaternary,
+      color: 'black',
       fontSize: theme.fontSize[12],
       fontFamily: theme.fontFamily.poppinsMedium,
     },
@@ -40,6 +40,7 @@ const useStyles = () => {
       display: 'flex',
       flexDirection: 'row',
       alignItems: 'flex-start',
+      paddingHorizontal: 12,
     },
     viewBullet: {
       height: 6,
@@ -56,6 +57,8 @@ const useStyles = () => {
       color: theme.colors.textTertiary,
       fontSize: theme.fontSize[12],
       fontFamily: theme.fontFamily.poppinsMedium,
+      marginTop: 8,
+      paddingHorizontal: 12,
     },
     // batas
 
@@ -153,8 +156,10 @@ const useProductCartList = ({isProductUnavailable}) => {
           <Text style={styles.textModifier}>
             <Text style={styleTextQty}>{qty}x </Text>
             <Text style={styles.textModifierItemName}> {name} </Text>
-            <Text style={styleTextPrice}> + {price} </Text>
           </Text>
+          <View>
+            <Text style={[styleTextPrice]}> + {CurrencyFormatter(price)} </Text>
+          </View>
         </View>
       </>
     );

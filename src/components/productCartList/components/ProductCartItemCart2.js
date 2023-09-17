@@ -23,7 +23,7 @@ const useStyles = () => {
       elevation: 2,
       borderRadius: 8,
       backgroundColor: theme.colors.background,
-      paddingHorizontal: 12,
+      // paddingHorizontal: 12,
       paddingVertical: 8,
     },
     amountContainer: {
@@ -52,22 +52,26 @@ const useStyles = () => {
     headerContainer: {
       flexDirection: 'row',
       flex: 1,
+      paddingHorizontal: 12,
     },
     totalPrice: {
       flexDirection: 'row',
-      marginTop: 4,
+      paddingHorizontal: 12,
+      alignItems: 'center',
+      justifyContent: 'center',
     },
     textNormalPrice: {
       color: theme.colors.greyScale5,
       fontFamily: theme.fontFamily.poppinsSemiBold,
-      fontSize: 12,
+      fontSize: 18,
       marginRight: 4,
       textDecorationLine: 'line-through',
+      marginLeft: 'auto',
     },
     textDiscountPrice: {
       color: theme.colors.textError,
       fontFamily: theme.fontFamily.poppinsSemiBold,
-      fontSize: 12,
+      fontSize: 18,
       marginRight: 4,
     },
     textPrice: {
@@ -77,6 +81,8 @@ const useStyles = () => {
     },
     textPriceContainer: {
       marginLeft: 'auto',
+      alignItems: 'center',
+      justifyContent: 'center',
     },
     modifierContaine: {
       marginTop: 10,
@@ -149,6 +155,28 @@ const useStyles = () => {
       color: 'white',
       fontFamily: theme.fontFamily.poppinsMedium,
     },
+    textAmount: {
+      fontSize: 12,
+      fontFamily: theme.fontFamily.poppinsMedium,
+      color: 'black',
+    },
+    line: {
+      height: 1,
+      backgroundColor: 'red',
+    },
+    ph12: {
+      paddingHorizontal: 12,
+    },
+    divider: {
+      height: 1,
+      backgroundColor: theme.colors.greyScale5,
+      marginVertical: 12,
+    },
+    subTotalText: {
+      color: theme.colors.greyScale5,
+      fontSize: 12,
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
   });
   return {styles};
 };
@@ -180,18 +208,23 @@ const ProductCartItemCart2 = ({item, containerStyle}) => {
   };
 
   const renderLabel = () => (
-    <View style={{flexDirection: 'row', marginBottom: handleMarginBtm()}}>
+    <View
+      style={{
+        flexDirection: 'row',
+        paddingHorizontal: 12,
+        marginBottom: handleMarginBtm(),
+      }}>
       {renderAllowSelection()}
       {renderPreOrder()}
     </View>
   );
-
   const renderPrice = () => {
     if (item?.isPromotionApplied && item.amountAfterDisc < item.grossAmount) {
       return (
         <View style={styles.totalPrice}>
+          <GlobalText style={styles.subTotalText}>Subtotal</GlobalText>
           <GlobalText style={[styles.textNormalPrice]}>
-            + {CurrencyFormatter(item?.grossAmount)}
+            {CurrencyFormatter(item?.grossAmount)}
           </GlobalText>
           <GlobalText style={[styles.textDiscountPrice]}>
             + {CurrencyFormatter(item?.amountAfterDisc)}
@@ -231,14 +264,16 @@ const ProductCartItemCart2 = ({item, containerStyle}) => {
           </GlobalText>
         </View>
         <View style={styles.textPriceContainer}>
-          <GlobalText style={styles.textPrice}>
-            {CurrencyFormatter(item?.grossAmount)}
+          <GlobalText style={styles.textAmount}>
+            + {CurrencyFormatter(item?.retailPrice * item?.quantity)}
           </GlobalText>
         </View>
       </View>
-      <View style={styles.row}>{renderPromoIcon()}</View>
-      {renderPrice()}
+
       {renderProductModifier(item)}
+      <View style={[styles.row, styles.ph12]}>{renderPromoIcon()}</View>
+      <View style={styles.divider} />
+      {renderPrice()}
     </View>
   );
 };
