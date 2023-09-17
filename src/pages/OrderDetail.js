@@ -380,7 +380,6 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
       <ProductCartItemCart2 containerStyle={styles.containerItem} item={item} />
     );
   };
-
   React.useEffect(() => {
     if (data) {
       groupingeOrder(data?.details || []);
@@ -422,30 +421,16 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
           </View>
         </View>
       ) : null}
-      {item?.paymentType === 'FOMO_PAY' ? (
-        <View style={[styles.listOrderDetailContainer, styles.mv6]}>
-          <View style={styles.orderStatusContainer}>
-            <View style={styles.paymentDetailsCard}>
-              <CardSvg />
-              <GlobalText style={styles.paymentDetailCardText}>
-                {item.paymentName}
-              </GlobalText>
-            </View>
-            <View>
-              <GlobalText style={[styles.primaryColor, styles.mediumFont]}>
-                {CurrencyFormatter(item?.paymentAmount)}
-              </GlobalText>
-            </View>
-          </View>
-        </View>
-      ) : null}
-      {item?.paymentType === 'Stripe' && item?.paymentAmount > 0 ? (
+      {item?.paymentType !== 'voucher' &&
+      item?.paymentType !== 'point' &&
+      item?.item?.paymentType !== 'promocode' &&
+      item?.paymentAmount > 0 ? (
         <View style={[styles.listOrderDetailContainer, styles.mv6]}>
           <View style={styles.orderStatusContainer}>
             <View style={styles.paymentDetailsCard}>
               <CreditCard />
               <GlobalText style={styles.paymentDetailCardText}>
-                {item.paymentName}
+                {item.paymentName || item?.paymentType}
               </GlobalText>
             </View>
             <View>
