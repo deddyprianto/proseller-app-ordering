@@ -21,6 +21,7 @@ import LoadingScreen from '../components/loadingScreen';
 import {showSnackbar} from '../actions/setting.action';
 import {Body} from '../components/layout';
 import Theme from '../theme/Theme';
+import useTime from '../hooks/time/useTime';
 
 const useStyles = () => {
   const theme = Theme();
@@ -145,7 +146,7 @@ const VoucherDetail = props => {
   const dispatch = useDispatch();
   const [openModal, setOpenModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
+  const {convertTime} = useTime();
   const totalPoint = useSelector(
     state => state.rewardsReducer?.dataPoint?.totalPoint,
   );
@@ -187,14 +188,13 @@ const VoucherDetail = props => {
   const handleCloseModal = () => {
     setOpenModal(false);
   };
-
   const renderValidity = () => {
-    const text = moment(voucher?.expiryDate).format('DD MMM YYYY HH:mm');
+    const text = convertTime(voucher?.expiryDate);
 
     return (
       <View>
         <Text style={styles.textValidity}>Validity</Text>
-        <Text style={styles.textValidityValue}>{text}</Text>
+        <Text style={styles.textValidityValue}>In {text}</Text>
       </View>
     );
   };
