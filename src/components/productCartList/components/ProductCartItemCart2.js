@@ -42,7 +42,7 @@ const useStyles = () => {
     },
     productName: {
       marginLeft: 8,
-      width: '55%',
+      width: '50%',
       justifyContent: 'center',
     },
     productText: {
@@ -77,6 +77,7 @@ const useStyles = () => {
     },
     textPriceContainer: {
       marginLeft: 'auto',
+      width: '45%',
     },
     modifierContaine: {
       marginTop: 10,
@@ -148,6 +149,9 @@ const useStyles = () => {
       fontSize: 12,
       color: 'white',
       fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    mlAuto: {
+      marginLeft: 'auto',
     },
   });
   return {styles};
@@ -231,7 +235,7 @@ const ProductCartItemCart2 = ({item, containerStyle}) => {
           </GlobalText>
         </View>
         <View style={styles.textPriceContainer}>
-          <GlobalText style={styles.textPrice}>
+          <GlobalText style={[styles.textPrice, styles.mlAuto]}>
             {CurrencyFormatter(item?.grossAmount)}
           </GlobalText>
         </View>
