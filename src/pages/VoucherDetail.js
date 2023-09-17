@@ -194,7 +194,7 @@ const VoucherDetail = props => {
     return (
       <View>
         <Text style={styles.textValidity}>Validity</Text>
-        <Text style={styles.textValidityValue}>{text}</Text>
+        <Text style={styles.textValidityValue}>Validity in {text}</Text>
       </View>
     );
   };
