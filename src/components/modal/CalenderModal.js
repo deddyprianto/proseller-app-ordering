@@ -134,6 +134,9 @@ const useStyles = () => {
       width: 10,
       height: 10,
     },
+    arrowButton: {
+      padding: 10,
+    },
   });
   return styles;
 };
@@ -282,14 +285,14 @@ const CalenderModal = ({
 
   const renderIconArrowLeft = ({onClick}) => {
     return (
-      <TouchableOpacity onPress={onClick}>
+      <TouchableOpacity style={styles.arrowButton} onPress={onClick}>
         <Image style={styles.iconArrow} source={appConfig.iconArrowLeft} />
       </TouchableOpacity>
     );
   };
   const renderIconArrowRight = ({onClick}) => {
     return (
-      <TouchableOpacity onPress={onClick}>
+      <TouchableOpacity style={styles.arrowButton} onPress={onClick}>
         <Image style={styles.iconArrow} source={appConfig.iconArrowRight} />
       </TouchableOpacity>
     );

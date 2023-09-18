@@ -2066,6 +2066,15 @@ export const changeOrderingMode = ({orderingMode, provider}) => {
   };
 };
 
+export const resetOrdeingDateTime = () => {
+  return async (dispatch, getState) => {
+    dispatch({
+      type: 'ORDERING_DATE_TIME',
+      orderingDateTimeSelected: null,
+    });
+  };
+};
+
 export const setTimeSlotSelected = ({date, time}) => {
   return async dispatch => {
     const payload = {date, time};
