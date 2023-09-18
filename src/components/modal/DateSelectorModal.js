@@ -329,7 +329,7 @@ const DateSelectorModal = ({open, handleClose, value, preOrderDate}) => {
     } else {
       dateTime = moment().subtract(1, 'day');
     }
-    // console.log(selectedDate, 'nakal2');
+    
     if (selectedDate.length > 0) {
       dateTime = moment(selectedDate).subtract(1, 'day');
     }
@@ -344,7 +344,6 @@ const DateSelectorModal = ({open, handleClose, value, preOrderDate}) => {
   useEffect(() => {
     initAllDate();
   }, [seeMore, initDate, availableDates]);
-  console.log({availableDates}, 'nakal');
   useEffect(() => {
     if (value?.date) {
       setInitDate(value.date);
