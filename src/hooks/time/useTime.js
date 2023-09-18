@@ -6,7 +6,7 @@ const useTime = () => {
       return 'Follows Membership Expiry';
     }
     if (!time) {
-      return '';
+      return '30 days';
     }
 
     const now = moment();
