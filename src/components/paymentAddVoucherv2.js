@@ -77,6 +77,7 @@ const PaymentAddVouchersV2 = props => {
   const onSubmit = async () => {
     setLoadingCheckVoucher(true);
     const voucherMap = mappingPayment(usedVoucher);
+    const onlyVoucher = usedVoucher?.filter(voucher => !voucher?.isPoint);
     const payload = {
       details: cartDetail?.details,
       outletId: cartDetail?.outletID,
@@ -92,7 +93,7 @@ const PaymentAddVouchersV2 = props => {
     }
     const mappigResponse = mappingPayment(response.payments);
     setLoadingCheckVoucher(false);
-    if (response.total <= 0) {
+    if (response.total <= 0 && onlyVoucher?.length > 0) {
       setSubmitVoucher(mappigResponse);
       return setConfirmPopup(true);
     }
@@ -161,6 +162,7 @@ const PaymentAddVouchersV2 = props => {
       };
     }
   };
+
   const getAvailableVoucher = () => {
     const {totalPrice} = props;
     let myNewVoucher = [];
@@ -176,7 +178,7 @@ const PaymentAddVouchersV2 = props => {
       const duplicateVoucher =
         findDuplicateVocher && data?.validity?.canOnlyUseOneTime;
       const isValidDay = isValidDayHandle(data).status;
-      const passMinimumPurchase = totalPrice > data.minPurchaseAmount;
+      const passMinimumPurchase = totalPrice > (data.minPurchaseAmount || 0);
       const isUsedVoucher = usedVoucher?.find(
         voucherData => voucherData.serialNumber === data.serialNumber,
       );
@@ -379,6 +381,7 @@ const PaymentAddVouchersV2 = props => {
         onCancel={closeConfirmVoucher}
         onApprove={() => adjustVoucher(saveSubmitVoucher)}
         approveTitle="Confirm"
+        closeModal={closeConfirmVoucher}
       />
     </SafeAreaView>
   );
