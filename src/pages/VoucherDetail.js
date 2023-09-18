@@ -189,12 +189,15 @@ const VoucherDetail = props => {
     setOpenModal(false);
   };
   const renderValidity = () => {
-    const text = convertTime(voucher?.expiryDate);
+    const text = convertTime(
+      voucher?.expiryDate,
+      voucher?.followMembershipPeriod,
+    );
 
     return (
       <View>
         <Text style={styles.textValidity}>Validity</Text>
-        <Text style={styles.textValidityValue}>In {text}</Text>
+        <Text style={styles.textValidityValue}>{text}</Text>
       </View>
     );
   };

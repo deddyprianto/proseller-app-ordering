@@ -336,7 +336,7 @@ const RegisterForm = ({registerMethod, inputValue, approvedData}) => {
               type="button"
               onPressBtn={toggleDatePicker}
               rightIcon={<CalendarSvg />}
-              value={birthDate}
+              value={moment(handleDate()).format('DD-MMM-YYYY')}
             />
           );
         }
@@ -450,8 +450,15 @@ const RegisterForm = ({registerMethod, inputValue, approvedData}) => {
     if (!isMonth) {
       toggleDatePicker();
     }
-    const newDate = moment(date).format('DD/MM/YYYY');
+    const newDate = moment(date).format('YYYY-MM-DD');
     setBirthdate(newDate);
+  };
+
+  const handleDate = () => {
+    if (birthDate) {
+      return new Date(moment(birthDate).format());
+    }
+    return new Date(moment().subtract(10, 'year'));
   };
 
   const memoDatePicker = React.useMemo(
@@ -462,7 +469,7 @@ const RegisterForm = ({registerMethod, inputValue, approvedData}) => {
         androidVariant={'iosClone'}
         maximumDate={getMaxDate()}
         open={isDatePickerVisible}
-        date={new Date(moment().subtract(10, 'year'))}
+        date={handleDate()}
         onConfirm={handleConfirm}
         onCancel={toggleDatePicker}
       />
