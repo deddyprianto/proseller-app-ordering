@@ -373,7 +373,7 @@ const CartDetail = ({
   const pointUsed = () => {
     const myPoint = vouchers?.find(voucher => voucher?.isPoint);
     if (myPoint) {
-      return myPoint?.redeemValue;
+      return myPoint?.redeemValue?.toFixed(2);
     }
     return 0;
   };
