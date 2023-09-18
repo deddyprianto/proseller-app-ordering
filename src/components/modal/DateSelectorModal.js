@@ -304,7 +304,6 @@ const DateSelectorModal = ({open, handleClose, value, preOrderDate}) => {
 
     loadData();
   }, [open]);
-  console.log({selectedDate}, 'nikal2');
   useEffect(() => {
     const selectedDateFormatter = moment(selectedDate).format('YYYY-MM-DD');
     if (!isEmptyArray(availableDates)) {
@@ -320,12 +319,10 @@ const DateSelectorModal = ({open, handleClose, value, preOrderDate}) => {
         setSelectedTime('');
       }
       setTimes(timeSlot);
-      console.log({selectedDate, timeSlot, availableDates}, 'nikal');
     }
   }, [availableDates, selectedDate]);
 
   const initAllDate = date => {
-    console.log(date, 'lele');
     let dateTime = '';
     if (initDate) {
       dateTime = moment(initDate).subtract(1, 'day');
@@ -336,7 +333,6 @@ const DateSelectorModal = ({open, handleClose, value, preOrderDate}) => {
     if (selectedDate.length > 0) {
       dateTime = moment(selectedDate).subtract(1, 'day');
     }
-    console.log(dateTime, 'lele1');
     const result = Array(5)
       .fill(0)
       .map(() => {
