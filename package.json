@@ -10,6 +10,7 @@
     "android-dev-rel": "export ENVFILE=.env.dev && npx react-native run-android --variant=devRelease --appIdSuffix=dev",
     "android-prod": "export ENVFILE=.env.production && react-native run-android --variant=appDebug --appIdSuffix=app",
     "android-prod-rl": "export ENVFILE=.env.production && npx react-native run-android --variant=appRelease --appIdSuffix=app",
+    "bundle-release-prod": "export ENVFILE=.env.production && cd android && ./gradlew bundleapprelease",
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "start": "react-native start",
