@@ -146,6 +146,7 @@ android {
         applicationId "com.<%= name %>"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
+        compileSdkVersion rootProject.ext.compileSdkVersion
         versionCode 87
         versionName "1.1.31"
         missingDimensionStrategy 'react-native-camera', 'general'
@@ -234,6 +235,7 @@ android {
 }
 
 dependencies {
+    implementation project(':@react-native-camera-roll_camera-roll')
     implementation project(':react-native-linear-gradient')
     implementation project(':react-native-sms-retriever')
     // implementation project(':react-native-device-brightness')

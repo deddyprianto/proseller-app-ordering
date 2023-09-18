@@ -22,6 +22,7 @@ import com.facebook.react.ReactPackage;
 import com.facebook.soloader.SoLoader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import com.reactnativecommunity.cameraroll.CameraRollPackage;
 
 // react native unimodules
 import java.util.Arrays;
@@ -69,7 +70,6 @@ public class MainApplication extends MultiDexApplication implements ReactApplica
       // Packages that cannot be autolinked yet can be added manually here, for
       // example:
       // packages.add(new MyReactNativePackage());
-
       // Add unimodules
         // List<ReactPackage> unimodules = Arrays.<ReactPackage>asList(
         //   new ModuleRegistryAdapter(mModuleRegistryProvider)
