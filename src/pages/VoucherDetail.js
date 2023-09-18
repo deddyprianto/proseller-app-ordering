@@ -198,7 +198,6 @@ const VoucherDetail = props => {
       </View>
     );
   };
-
   const renderDescription = () => {
     return (
       <View>

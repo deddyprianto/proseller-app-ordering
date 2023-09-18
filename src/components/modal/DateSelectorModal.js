@@ -304,7 +304,7 @@ const DateSelectorModal = ({open, handleClose, value, preOrderDate}) => {
 
     loadData();
   }, [open]);
-
+  console.log({selectedDate}, 'nikal2');
   useEffect(() => {
     const selectedDateFormatter = moment(selectedDate).format('YYYY-MM-DD');
     if (!isEmptyArray(availableDates)) {
@@ -320,25 +320,35 @@ const DateSelectorModal = ({open, handleClose, value, preOrderDate}) => {
         setSelectedTime('');
       }
       setTimes(timeSlot);
+      console.log({selectedDate, timeSlot, availableDates}, 'nikal');
     }
   }, [availableDates, selectedDate]);
 
-  useEffect(() => {
+  const initAllDate = date => {
+    console.log(date, 'lele');
     let dateTime = '';
     if (initDate) {
       dateTime = moment(initDate).subtract(1, 'day');
     } else {
       dateTime = moment().subtract(1, 'day');
     }
-
+    // console.log(selectedDate, 'nakal2');
+    if (selectedDate.length > 0) {
+      dateTime = moment(selectedDate).subtract(1, 'day');
+    }
+    console.log(dateTime, 'lele1');
     const result = Array(5)
       .fill(0)
       .map(() => {
         return dateTime.add(1, 'day').format('ddd DD MMMM YYYY');
       });
     setDates(result);
-  }, [seeMore, initDate, availableDates]);
+  };
 
+  useEffect(() => {
+    initAllDate();
+  }, [seeMore, initDate, availableDates]);
+  console.log({availableDates}, 'nakal');
   useEffect(() => {
     if (value?.date) {
       setInitDate(value.date);
@@ -552,6 +562,7 @@ const DateSelectorModal = ({open, handleClose, value, preOrderDate}) => {
             handleCloseCalender();
           }}
           handleOnChange={value => {
+            initAllDate(value);
             setSelectedDate(moment(value).format('ddd DD MMMM YYYY'));
           }}
         />
