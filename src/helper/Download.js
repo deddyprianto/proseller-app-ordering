@@ -1,7 +1,7 @@
 import RNFetchBlob from 'rn-fetch-blob';
 import {PERMISSIONS, check, RESULTS, request} from 'react-native-permissions';
 import {Alert, Platform} from 'react-native';
-import CameraRoll from '@react-native-community/cameraroll';
+import {CameraRoll} from '@react-native-camera-roll/camera-roll';
 
 export const permissionDownloadFile = (url, name, mimeType, message) => {
   check(PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE).then(result => {

@@ -141,6 +141,7 @@ android {
         applicationId "com.acemart"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
+        compileSdkVersion rootProject.ext.compileSdkVersion
         versionCode 87
         versionName "1.1.31"
         missingDimensionStrategy 'react-native-camera', 'general'
@@ -229,6 +230,8 @@ android {
 }
 
 dependencies {
+          implementation project(':@react-native-camera-roll_camera-roll')
+
     implementation project(':react-native-linear-gradient')
     implementation project(':react-native-sms-retriever')
     // implementation project(':react-native-device-brightness')
@@ -240,6 +243,7 @@ dependencies {
     implementation project(':react-native-android-location-enabler')
     implementation project(':react-native-svg')
     implementation project(':react-native-camera')
+
     implementation fileTree(dir: "libs", include: ["*.jar"])
     // implementation "com.facebook.react:react-native:+"  // From node_modules
     // implementation 'com.facebook.android:facebook-android-sdk:[4,5)'
