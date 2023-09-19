@@ -168,7 +168,7 @@ const FieldSearch = ({
   };
 
   const renderIcon = () => {
-    if (value && awsConfig.COMPANY_TYPE !== 'Retail') {
+    if (value && awsConfig.COMPANY_TYPE !== 'Retail' && onRemove) {
       return renderIconRemove();
     } else if (isFocus && awsConfig.COMPANY_TYPE !== 'Retail') {
       return;

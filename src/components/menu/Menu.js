@@ -246,7 +246,7 @@ const Menu = () => {
           Actions.myFavoriteOutlets();
         }}>
         <Image source={appConfig.iconHomeOutlet} style={styles.iconMenu} />
-        <Text style={styles.textMenu}>Favorite outlet</Text>
+        <Text style={styles.textMenu}>Favorite Outlet</Text>
       </TouchableOpacity>
     );
   };

@@ -1,5 +1,5 @@
-import React, {useEffect} from 'react';
-import {useDispatch} from 'react-redux';
+import React, {useEffect, useState} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
 
 import {
   StyleSheet,
@@ -56,7 +56,13 @@ const useStyles = () => {
 const MyFavoriteOutlets = () => {
   const styles = useStyles();
   const dispatch = useDispatch();
+  const [searchQuery, setSearchQuery] = useState('');
+  const myFavoriteOutlets = useSelector(
+    state => state.storesReducer.favoriteOutlet.outlet,
+  );
+
   useBackHandler();
+
   useEffect(() => {
     const loadData = async () => {
       await dispatch(getFavoriteOutlet());
@@ -65,11 +71,20 @@ const MyFavoriteOutlets = () => {
     loadData();
   }, [dispatch]);
 
+  const handleOutletSearch = () => {
+    if (searchQuery) {
+      return myFavoriteOutlets.filter(x =>
+        x.name.toUpperCase().includes(searchQuery.toUpperCase()),
+      );
+    }
+    return myFavoriteOutlets;
+  };
+
   const renderBody = () => {
     return (
       <View style={{flex: 1}}>
         <Body>
-          <MyFavoriteOutletList />
+          <MyFavoriteOutletList outlets={handleOutletSearch()} />
         </Body>
       </View>
     );
@@ -91,7 +106,14 @@ const MyFavoriteOutlets = () => {
 
   return (
     <SafeAreaView style={styles.root}>
-      <Header title="My Favorite Outlets" />
+      <Header
+        title="My Favorite Outlets"
+        searchHeader
+        searchPlaceholder="Try to search “Outlet Name”"
+        handleSearchInput={value => {
+          setSearchQuery(value);
+        }}
+      />
       {renderBody()}
       {renderBottom()}
     </SafeAreaView>

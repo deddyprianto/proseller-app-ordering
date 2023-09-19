@@ -1,10 +1,8 @@
 import React from 'react';
 
 import {View, ScrollView, StyleSheet, Text} from 'react-native';
-import {useSelector} from 'react-redux';
 import {isEmptyArray} from '../../helper/CheckEmpty';
 import Theme from '../../theme';
-import FavoriteOutletListItem from '../favoriteOutletList/components/FavoriteOutletListItem';
 
 import MyFavoriteOutletListItem from './components/MyFavoriteOutletListItem';
 
@@ -32,15 +30,12 @@ const useStyles = () => {
   return styles;
 };
 
-const MyFavoriteOutletList = () => {
+const MyFavoriteOutletList = ({outlets}) => {
   const styles = useStyles();
-  const myFavoriteOutlets = useSelector(
-    state => state.storesReducer.favoriteOutlet.outlet,
-  );
 
   const renderOutletList = () => {
-    if (!isEmptyArray(myFavoriteOutlets)) {
-      const result = myFavoriteOutlets.map(outlet => {
+    if (!isEmptyArray(outlets)) {
+      const result = outlets.map(outlet => {
         if (outlet) {
           const data = {...outlet, isFavorite: true};
           return <MyFavoriteOutletListItem item={data} />;
