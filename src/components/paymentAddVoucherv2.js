@@ -1,10 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/**
- * Chaerus Sulton
- * chaerussulton@gmail.com
- * PT Edgeworks
- */
-
 import React from 'react';
 import {
   View,
@@ -14,6 +8,7 @@ import {
   SafeAreaView,
   TouchableOpacity,
   Alert,
+  RefreshControl,
 } from 'react-native';
 import {Actions} from 'react-native-router-flux';
 
@@ -33,6 +28,7 @@ import {getCalculationStep3} from '../actions/order.action';
 import ArrowBottomSvg from '../assets/svg/ArrowBottomSvg';
 import ArrowUpSvg from '../assets/svg/ArrowUpSvg';
 import ModalAction from './modal/ModalAction';
+import {getVoucherCheckout} from '../actions/user.action';
 
 const PaymentAddVouchersV2 = props => {
   const [usedVoucher, setUsedVoucher] = React.useState(props?.dataVoucer || []);
@@ -51,11 +47,9 @@ const PaymentAddVouchersV2 = props => {
   const companyInfo = useSelector(
     state => state.userReducer.getCompanyInfo?.companyInfo,
   );
+  const [loading, setLoading] = React.useState(false);
   const selectedAccount = useSelector(
     state => state.cardReducer.selectedAccount.selectedAccount,
-  );
-  const myVoucher = useSelector(
-    state => state.accountsReducer.myVouchers?.vouchers,
   );
   const dispatch = useDispatch();
 
@@ -110,6 +104,36 @@ const PaymentAddVouchersV2 = props => {
     adjustVoucher(mappigResponse);
   };
 
+  const getVoucher = async () => {
+    const payload = {
+      details: cartDetail?.details,
+      outletId: cartDetail?.outletId,
+      total: cartDetail?.totalNettAmount,
+    };
+    setLoading(true);
+    const response = await dispatch(getVoucherCheckout(payload));
+    let myAvailableVoucher = [];
+    let myUnAvailableVoucher = [];
+    response?.forEach(voucher => {
+      const isVoucherUsed = usedVoucher?.find(
+        dataVoucher => dataVoucher?.serialNumber === voucher?.serialNumber,
+      );
+      if (voucher.isAvailable && !isVoucherUsed) {
+        myAvailableVoucher.push(voucher);
+      }
+      if (!voucher.isAvailable) {
+        myUnAvailableVoucher.push(voucher);
+      }
+    });
+    setNewAvailableVoucher(myAvailableVoucher);
+    setUnavailabelVocuher(myUnAvailableVoucher);
+    setLoading(false);
+  };
+
+  React.useEffect(() => {
+    getVoucher();
+  }, []);
+
   const adjustVoucher = mappigResponse => {
     props.setDataVoucher(mappigResponse);
     Actions.pop();
@@ -134,66 +158,6 @@ const PaymentAddVouchersV2 = props => {
         voucherId: voucher?.id,
       };
     });
-  };
-
-  const isValidDayHandle = item => {
-    if (item.validity.allDays == true) {
-      return {
-        status: true,
-        message: '',
-      };
-    }
-    let date = new Date();
-
-    let find = item.validity.activeWeekDays.find(
-      (item, idx) => item.active == true && idx == date.getDay(),
-    );
-
-    // TODO buat filter time
-    if (find != undefined) {
-      return {
-        status: true,
-        message: '',
-      };
-    } else {
-      return {
-        status: false,
-        message: 'This voucher cannot be used today.',
-      };
-    }
-  };
-
-  const getAvailableVoucher = () => {
-    const {totalPrice} = props;
-    let myNewVoucher = [];
-    let myUnavailableVoucher = [];
-
-    myVoucher?.forEach(async data => {
-      const includeOutlet = data.selectedOutlets?.includes(
-        `outlet::${props.pembayaran.storeId}`,
-      );
-      const findDuplicateVocher = usedVoucher?.find(
-        duplicate => data.id === duplicate.id,
-      );
-      const duplicateVoucher =
-        findDuplicateVocher && data?.validity?.canOnlyUseOneTime;
-      const isValidDay = isValidDayHandle(data).status;
-      const passMinimumPurchase = totalPrice > (data.minPurchaseAmount || 0);
-      const isUsedVoucher = usedVoucher?.find(
-        voucherData => voucherData.serialNumber === data.serialNumber,
-      );
-      const isCanUse =
-        includeOutlet && passMinimumPurchase && !duplicateVoucher && isValidDay;
-      if (isCanUse) {
-        if (!isUsedVoucher) {
-          myNewVoucher.push(data);
-        }
-      } else {
-        myUnavailableVoucher.push(data);
-      }
-    });
-    setNewAvailableVoucher(myNewVoucher);
-    setUnavailabelVocuher(myUnavailableVoucher);
   };
 
   const handleAddVoucher = async (item, isFromSearch) => {
@@ -246,7 +210,7 @@ const PaymentAddVouchersV2 = props => {
   };
   const renderNotAvailableVoucher = ({item, index}) => {
     if (index >= 3 && !showMoreUnavailVoucher) return null;
-    return <VoucherListCheckout type={'unavailable'} item={item} />;
+    return <VoucherListCheckout key={index} type={'unavailable'} item={item} />;
   };
 
   const renderTitle = title => (
@@ -257,7 +221,6 @@ const PaymentAddVouchersV2 = props => {
   );
 
   const renderUsedVoucherList = ({item, index}) => {
-    if (index >= 3) return null;
     return (
       <VoucherListCheckout
         key={index}
@@ -303,19 +266,20 @@ const PaymentAddVouchersV2 = props => {
     setConfirmPopup(false);
   };
 
-  React.useEffect(() => {
-    if (!isEmptyArray(myVoucher)) {
-      getAvailableVoucher();
-    }
-  }, []);
   return (
     <SafeAreaView style={styles.container}>
       <LoadingScreen loading={loadingCheckVoucher} />
       <Header title={'My Vouchers'} />
 
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={loading} onRefresh={getVoucher} />
+        }
+        contentContainerStyle={styles.scrollContainer}>
         {renderTitle('USE VOUCHER CODE')}
-        <InputVoucher onPressVoucher={checkVoucher} />
+        <View style={styles.searchContainer}>
+          <InputVoucher onPressVoucher={checkVoucher} />
+        </View>
         {filterOnlyVoucher()?.length > 0 ? (
           <View>
             {renderTitle('VOUCHER USED')}
@@ -339,8 +303,8 @@ const PaymentAddVouchersV2 = props => {
           </View>
         ) : null}
         {renderSeeMoreBtn(
-          'See more available voucher',
-          newAvailableVoucher.length >= 3,
+          `See ${showMoreAvailVoucher ? 'less' : 'more'} available voucher`,
+          newAvailableVoucher.length > 3,
           toggleAvailVoucher,
           showMoreAvailVoucher,
         )}
@@ -356,8 +320,10 @@ const PaymentAddVouchersV2 = props => {
           </View>
         ) : null}
         {renderSeeMoreBtn(
-          'See more not available voucher',
-          unavailabelVoucher.length >= 3,
+          `See ${
+            showMoreUnavailVoucher ? 'less' : 'more'
+          } not available voucher`,
+          unavailabelVoucher.length > 3,
           toggleNotAvailVoucher,
           showMoreUnavailVoucher,
         )}
@@ -510,8 +476,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginTop: 16,
     paddingRight: 16,
-    marginBottom: 16,
-    // paddingHorizontal: 16,
   },
   divider: {
     height: 1,
@@ -544,11 +508,15 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    marginVertical: 16,
+    marginTop: 16,
     paddingVertical: 8,
+    marginBottom: 0,
   },
   rowContain: {
     flexDirection: 'row',
     justifyContent: 'center',
+  },
+  searchContainer: {
+    marginTop: 16,
   },
 });

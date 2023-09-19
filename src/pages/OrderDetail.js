@@ -385,6 +385,7 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
       groupingeOrder(data?.details || []);
     }
   }, [data]);
+
   const renderPaymentDetail = ({item}) => (
     <View>
       {item?.paymentType === 'point' ? (

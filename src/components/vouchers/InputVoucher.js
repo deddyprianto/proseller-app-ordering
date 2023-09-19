@@ -40,7 +40,9 @@ const InputVoucher = ({onPressVoucher}) => {
   const {styles} = useStyles();
   const [voucherNumber, setVoucherNumber] = React.useState('');
 
-  const onChangeVoucherNumber = text => setVoucherNumber(text);
+  const onChangeVoucherNumber = text => {
+    setVoucherNumber(text);
+  };
 
   return (
     <View style={styles.container}>
@@ -56,6 +58,7 @@ const InputVoucher = ({onPressVoucher}) => {
           onPress={() => onPressVoucher(voucherNumber)}
           buttonStyle={styles.buttonStyle}
           title="USE NOW"
+          disabled={voucherNumber.length <= 0}
         />
       </View>
     </View>

@@ -319,3 +319,23 @@ export const verificationUser = payload => {
     }
   };
 };
+
+export const getVoucherCheckout = payload => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    const {
+      authReducer: {
+        tokenUser: {token},
+      },
+    } = state;
+    try {
+      const url = '/customer/available-vouchers';
+      const response = await fetchApi(url, 'POST', payload, 200, token);
+      return response?.responseBody?.data;
+    } catch (e) {
+      if (__DEV__) {
+        console.log(e, 'error');
+      }
+    }
+  };
+};
