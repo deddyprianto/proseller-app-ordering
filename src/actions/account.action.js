@@ -207,7 +207,6 @@ export const myProgressBarCampaign = () => {
         200,
         token,
       );
-
       dispatch({
         type: 'DATA_MY_PROGRESS_BAR_CAMPAIGN',
         data: response.responseBody.data,

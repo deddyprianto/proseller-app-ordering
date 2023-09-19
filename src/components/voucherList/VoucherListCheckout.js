@@ -118,12 +118,15 @@ const VoucherListCheckout = ({onPress, item, type}) => {
     return 'Use Now';
   };
   const handleDescription = () => {
-    if (item?.minPurchaseAmount <= basket?.totalNettAmount) {
+    if (
+      !item?.minPurchaseAmount ||
+      item?.minPurchaseAmount <= basket?.totalNettAmount
+    ) {
       return ' No minimum order';
     } else {
       const calculateDifference =
         item?.minPurchaseAmount - basket?.totalNettAmount;
-      return ` Add ${CurrencyFormatter(
+      return `Add ${CurrencyFormatter(
         calculateDifference,
       )} more to your order to enjoy this voucher`;
     }
@@ -137,11 +140,12 @@ const VoucherListCheckout = ({onPress, item, type}) => {
         <View style={{width: '100%', height: '100%'}}>
           <View style={styles.voucherContainer}>
             <View style={[styles.voucherName, styles.nameWidth(type)]}>
-              <GlobalText style={styles.nameFont(type)}>
+              <GlobalText numberOfLines={2} style={styles.nameFont(type)}>
                 {item?.name}{' '}
               </GlobalText>
               <GlobalText style={styles.descFont(type)} numberOfLines={2}>
-                {'\u2022'} {handleDescription()}
+                {type !== 'unavailable' ? '\u2022 ' : ''}
+                {handleDescription()}
               </GlobalText>
             </View>
 

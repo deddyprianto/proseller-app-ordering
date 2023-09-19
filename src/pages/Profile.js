@@ -960,10 +960,10 @@ const Profile = props => {
     if (showLoading) {
       setRefreshing(true);
     }
-    await dispatch(myProgressBarCampaign());
-    await dispatch(getUserProfile());
     await dispatch(dataPointHistory());
+    await dispatch(getUserProfile());
     await dispatch(dataPoint());
+    await dispatch(myProgressBarCampaign());
     setRefreshing(false);
   };
 

@@ -251,11 +251,16 @@ const ModalOrderDetail = ({
               calculateVoucherPoint(vouchers),
             ) > 0 ? (
               <GlobalText>
-                Amount paid by {selectedAccount?.details?.cardIssuer}{' '}
-                {calculationAmountPaidByVisa(
-                  basket?.totalNettAmount,
-                  vouchers,
-                  calculateVoucherPoint(vouchers),
+                Amount paid{' '}
+                {selectedAccount ? 'by ' : 'by selected payment method'}{' '}
+                {CurrencyFormatter(
+                  Number(
+                    calculationAmountPaidByVisa(
+                      basket?.totalNettAmount,
+                      vouchers,
+                      calculateVoucherPoint(vouchers),
+                    ),
+                  ),
                 )}
               </GlobalText>
             ) : null}

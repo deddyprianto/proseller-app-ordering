@@ -657,13 +657,18 @@ const CartDetail = ({
             totalPointVoucher,
           ) > 0 ? (
             <GlobalText>
-              Amount paid {selectedAccount ? 'by ' : ''}
+              Amount paid{' '}
+              {selectedAccount ? 'by ' : 'by selected payment method'}
               {''}
               {selectedAccount?.details?.cardIssuer}{' '}
-              {calculationAmountPaidByVisa(
-                data?.totalNettAmount,
-                vouchers,
-                totalPointVoucher,
+              {CurrencyFormatter(
+                Number(
+                  calculationAmountPaidByVisa(
+                    data?.totalNettAmount,
+                    vouchers,
+                    totalPointVoucher,
+                  ),
+                ),
               )}{' '}
             </GlobalText>
           ) : null}
