@@ -36,7 +36,7 @@ const useStyles = () => {
       marginLeft: isCenter ? 0 : 'auto',
     }),
     logoStyle: {
-      height: normalizeLayoutSizeHeight(28),
+      height: normalizeLayoutSizeHeight(56),
       width: normalizeLayoutSizeWidth(105),
     },
   });

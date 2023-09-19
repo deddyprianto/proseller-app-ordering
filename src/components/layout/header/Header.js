@@ -77,7 +77,7 @@ const useStyles = () => {
     },
     logo: appName => ({
       height:
-        appName === 'fareastflora' ? normalizeLayoutSizeHeight(28) : '100%',
+        appName === 'fareastflora' ? normalizeLayoutSizeHeight(56) : '100%',
       width: appName === 'fareastflora' ? normalizeLayoutSizeWidth(112) : '70%',
     }),
     icon: {
