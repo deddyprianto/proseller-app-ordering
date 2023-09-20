@@ -63,7 +63,7 @@ const useStyles = () => {
     textNormalPrice: {
       color: theme.colors.greyScale5,
       fontFamily: theme.fontFamily.poppinsSemiBold,
-      fontSize: 18,
+      fontSize: 16,
       marginRight: 4,
       textDecorationLine: 'line-through',
       marginLeft: 'auto',
@@ -71,7 +71,7 @@ const useStyles = () => {
     textDiscountPrice: isDiscount => ({
       color: isDiscount ? theme.colors.textError : 'black',
       fontFamily: theme.fontFamily.poppinsSemiBold,
-      fontSize: 18,
+      fontSize: 16,
       marginRight: 4,
     }),
     textPrice: {
