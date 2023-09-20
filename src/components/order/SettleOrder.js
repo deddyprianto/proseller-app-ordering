@@ -1224,8 +1224,7 @@ class SettleOrder extends Component {
           savePoint.redeemValue =
             Number(correctTotalPoint.toFixed(2)) - this.totalUsedVoucher();
         } else {
-          savePoint.redeemValue =
-            Number(totalPoint?.toFixed(2)) - this.totalUsedVoucher();
+          savePoint.redeemValue = Number(totalPoint?.toFixed(2));
         }
       }
       const points = this.state.dataVoucer || [];

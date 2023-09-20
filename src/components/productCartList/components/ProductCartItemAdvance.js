@@ -385,6 +385,9 @@ const useStyles = () => {
       color: 'white',
       fontSize: 12,
     },
+    noPh: {
+      paddingHorizontal: 0,
+    },
   });
   return styles;
 };
@@ -563,7 +566,7 @@ const ProductCartItemAdvance = ({item, disabled, step}) => {
     return (
       <View style={[styles.bodyLeft]}>
         {renderProductHeader(item)}
-        {renderProductModifier(item)}
+        {renderProductModifier(item, styles.noPh, styles.noPh)}
         <View style={styles.rowContainer}>{renderPromoIcon()}</View>
         {renderDivider()}
         {renderNotes()}

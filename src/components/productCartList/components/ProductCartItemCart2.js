@@ -68,12 +68,12 @@ const useStyles = () => {
       textDecorationLine: 'line-through',
       marginLeft: 'auto',
     },
-    textDiscountPrice: {
-      color: theme.colors.textError,
+    textDiscountPrice: isDiscount => ({
+      color: isDiscount ? theme.colors.textError : 'black',
       fontFamily: theme.fontFamily.poppinsSemiBold,
       fontSize: 18,
       marginRight: 4,
-    },
+    }),
     textPrice: {
       fontSize: 18,
       fontFamily: theme.fontFamily.poppinsBold,
@@ -82,6 +82,8 @@ const useStyles = () => {
     textPriceContainer: {
       marginLeft: 'auto',
       width: '45%',
+      alignItems: 'center',
+      justifyContent: 'center',
     },
     modifierContaine: {
       marginTop: 10,
@@ -110,9 +112,10 @@ const useStyles = () => {
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textModifierItemPrice: {
-      color: theme.colors.textQuaternary,
+      color: 'black',
       fontSize: theme.fontSize[12],
       fontFamily: theme.fontFamily.poppinsMedium,
+      paddingRight: 3,
     },
     textModifierItemQty: {
       color: theme.colors.textQuaternary,
@@ -154,6 +157,28 @@ const useStyles = () => {
       color: 'white',
       fontFamily: theme.fontFamily.poppinsMedium,
     },
+    textAmount: {
+      fontSize: 12,
+      fontFamily: theme.fontFamily.poppinsMedium,
+      color: 'black',
+    },
+    line: {
+      height: 1,
+      backgroundColor: 'red',
+    },
+    ph12: {
+      paddingHorizontal: 12,
+    },
+    divider: {
+      height: 1,
+      backgroundColor: theme.colors.greyScale3,
+      marginVertical: 12,
+    },
+    subTotalText: {
+      color: theme.colors.greyScale5,
+      fontSize: 12,
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
     mlAuto: {
       marginLeft: 'auto',
     },
@@ -172,7 +197,7 @@ const ProductCartItemCart2 = ({item, containerStyle}) => {
     }
     return null;
   };
-
+  const isDiscount = item.amountAfterDisc < item.grossAmount;
   const renderAllowSelection = () => {
     if (item.product?.allowSelfSelection) {
       return <AllowSelfSelectionLabel />;
@@ -199,21 +224,24 @@ const ProductCartItemCart2 = ({item, containerStyle}) => {
     </View>
   );
   const renderPrice = () => {
-    if (item?.isPromotionApplied && item.amountAfterDisc < item.grossAmount) {
-      return (
-        <View style={styles.totalPrice}>
-          <GlobalText style={styles.subTotalText}>Subtotal</GlobalText>
+    return (
+      <View style={styles.totalPrice}>
+        <GlobalText style={styles.subTotalText}>Subtotal</GlobalText>
+        {isDiscount ? (
           <GlobalText style={[styles.textNormalPrice]}>
             {CurrencyFormatter(item?.grossAmount)}
           </GlobalText>
-          <GlobalText style={[styles.textDiscountPrice]}>
-            + {CurrencyFormatter(item?.amountAfterDisc)}
-          </GlobalText>
-        </View>
-      );
-    }
+        ) : null}
 
-    return null;
+        <GlobalText
+          style={[
+            styles.textDiscountPrice(isDiscount),
+            {marginLeft: !isDiscount ? 'auto' : 0},
+          ]}>
+          {CurrencyFormatter(item?.amountAfterDisc)}
+        </GlobalText>
+      </View>
+    );
   };
 
   const renderPromoIcon = () => {
@@ -244,8 +272,8 @@ const ProductCartItemCart2 = ({item, containerStyle}) => {
           </GlobalText>
         </View>
         <View style={styles.textPriceContainer}>
-          <GlobalText style={[styles.textPrice, styles.mlAuto]}>
-            {CurrencyFormatter(item?.grossAmount)}
+          <GlobalText style={[styles.textModifierItemPrice, styles.mlAuto]}>
+            + {CurrencyFormatter(item?.retailPrice * item?.quantity)}
           </GlobalText>
         </View>
       </View>

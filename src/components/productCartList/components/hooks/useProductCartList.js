@@ -139,7 +139,7 @@ const useStyles = () => {
 
 const useProductCartList = ({isProductUnavailable}) => {
   const styles = useStyles();
-  const renderProductModifierItem = ({qty, name, price}) => {
+  const renderProductModifierItem = ({qty, name, price, styleItem}) => {
     const styleTextQty = isProductUnavailable
       ? styles.textModifierItemQtyUnavailable
       : styles.textModifierItemQty;
@@ -150,7 +150,7 @@ const useProductCartList = ({isProductUnavailable}) => {
 
     return (
       <>
-        <View style={styles.viewProductModifierItem}>
+        <View style={[styles.viewProductModifierItem, styleItem]}>
           <View style={styles.viewBullet} />
 
           <Text style={styles.textModifier}>
@@ -165,7 +165,7 @@ const useProductCartList = ({isProductUnavailable}) => {
     );
   };
 
-  const renderProductModifier = item => {
+  const renderProductModifier = (item, styleText, styleItem) => {
     if (!isEmptyArray(item.modifiers)) {
       let productModifiers = {};
       const finalGrouping = [];
@@ -191,17 +191,18 @@ const useProductCartList = ({isProductUnavailable}) => {
         return (
           <>
             {findModifierName ? (
-              <Text style={styles.textAddOn}>
+              <Text style={[styles.textAddOn, styleText]}>
                 {findModifierName?.modifierName}{' '}
               </Text>
             ) : null}
             {productModifiers[value]?.map(detail => {
               return renderProductModifierItem({
-                qty: detail?.quantity,
+                qty: detail?.quantity * item?.quantity,
                 name: detail?.name,
-                price: detail?.price,
+                price: detail?.price * item?.quantity,
                 modifierId: detail?.modifierID,
                 isProductUnavailable,
+                styleItem,
               });
             })}
           </>

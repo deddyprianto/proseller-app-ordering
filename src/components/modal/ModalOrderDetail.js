@@ -120,14 +120,6 @@ const ModalOrderDetail = ({
     return [];
   };
 
-  const pointOnly = () => {
-    if (!isEmptyArray(vouchers)) {
-      const filterVoucher = vouchers.filter(voucher => voucher?.isPoint);
-      return filterVoucher;
-    }
-    return [];
-  };
-
   const checkTax = () => {
     if (basket?.inclusiveTax > 0 && basket?.exclusiveTax > 0) {
       return (
@@ -174,7 +166,8 @@ const ModalOrderDetail = ({
     }
     return null;
   };
-  console.log({vouchers: voucherOnly()}, 'lilak');
+  const itemDiscount =
+    basket?.totalDiscountAmount - (basket.totalMembershipDiscountAmount || 0);
   return (
     <GlobalModal
       title="Details"
@@ -190,13 +183,23 @@ const ModalOrderDetail = ({
             {CurrencyFormatter(basket?.totalGrossAmount)}{' '}
           </GlobalText>
         </View>
-        {basket?.totalDiscountAmount > 0 ? (
+        {itemDiscount > 0 ? (
           <View style={styles.modalItem}>
             <GlobalText style={[styles.minusText, styles.mediumFont]}>
               Item Discount
             </GlobalText>
             <GlobalText style={styles.minusText}>
-              ({CurrencyFormatter(basket?.totalDiscountAmount)} )
+              ({CurrencyFormatter(itemDiscount)} )
+            </GlobalText>
+          </View>
+        ) : null}
+        {basket?.totalMembershipDiscountAmount > 0 ? (
+          <View style={styles.modalItem}>
+            <GlobalText style={[styles.minusText, styles.mediumFont]}>
+              Membership Discount
+            </GlobalText>
+            <GlobalText style={styles.minusText}>
+              ({CurrencyFormatter(basket.totalMembershipDiscountAmount)} )
             </GlobalText>
           </View>
         ) : null}
