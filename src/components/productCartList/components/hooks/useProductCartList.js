@@ -26,7 +26,7 @@ const useStyles = () => {
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textModifierItemPrice: {
-      color: theme.colors.textQuaternary,
+      color: 'black',
       fontSize: theme.fontSize[12],
       fontFamily: theme.fontFamily.poppinsMedium,
     },
@@ -40,6 +40,7 @@ const useStyles = () => {
       display: 'flex',
       flexDirection: 'row',
       alignItems: 'flex-start',
+      paddingHorizontal: 12,
     },
     viewBullet: {
       height: 6,
@@ -56,6 +57,8 @@ const useStyles = () => {
       color: theme.colors.textTertiary,
       fontSize: theme.fontSize[12],
       fontFamily: theme.fontFamily.poppinsMedium,
+      marginTop: 8,
+      paddingHorizontal: 12,
     },
     // batas
 
@@ -136,7 +139,7 @@ const useStyles = () => {
 
 const useProductCartList = ({isProductUnavailable}) => {
   const styles = useStyles();
-  const renderProductModifierItem = ({qty, name, price}) => {
+  const renderProductModifierItem = ({qty, name, price, styleItem}) => {
     const styleTextQty = isProductUnavailable
       ? styles.textModifierItemQtyUnavailable
       : styles.textModifierItemQty;
@@ -147,20 +150,22 @@ const useProductCartList = ({isProductUnavailable}) => {
 
     return (
       <>
-        <View style={styles.viewProductModifierItem}>
+        <View style={[styles.viewProductModifierItem, styleItem]}>
           <View style={styles.viewBullet} />
 
           <Text style={styles.textModifier}>
             <Text style={styleTextQty}>{qty}x </Text>
             <Text style={styles.textModifierItemName}> {name} </Text>
-            <Text style={styleTextPrice}> + {price} </Text>
           </Text>
+          <View>
+            <Text style={[styleTextPrice]}> + {CurrencyFormatter(price)} </Text>
+          </View>
         </View>
       </>
     );
   };
 
-  const renderProductModifier = item => {
+  const renderProductModifier = (item, styleText, styleItem) => {
     if (!isEmptyArray(item.modifiers)) {
       let productModifiers = {};
       const finalGrouping = [];
@@ -186,17 +191,18 @@ const useProductCartList = ({isProductUnavailable}) => {
         return (
           <>
             {findModifierName ? (
-              <Text style={styles.textAddOn}>
+              <Text style={[styles.textAddOn, styleText]}>
                 {findModifierName?.modifierName}{' '}
               </Text>
             ) : null}
             {productModifiers[value]?.map(detail => {
               return renderProductModifierItem({
-                qty: detail?.quantity,
+                qty: detail?.quantity * item?.quantity,
                 name: detail?.name,
-                price: detail?.price,
+                price: detail?.price * item?.quantity,
                 modifierId: detail?.modifierID,
                 isProductUnavailable,
+                styleItem,
               });
             })}
           </>
