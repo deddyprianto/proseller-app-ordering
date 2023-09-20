@@ -44,6 +44,7 @@ import {
   changeOrderingMode,
   getDeliveryProviderAndFee,
   getTimeSlot,
+  resetOrdeingDateTime,
 } from '../actions/order.action';
 
 import Theme from '../theme';
@@ -466,6 +467,12 @@ const Cart = props => {
   const userDetail = useSelector(
     state => state.userReducer?.getUser?.userDetails,
   );
+
+  useEffect(() => {
+    return () => {
+      dispatch(resetOrdeingDateTime());
+    };
+  }, []);
 
   const orderingModesField = [
     {

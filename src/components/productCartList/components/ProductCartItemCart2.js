@@ -42,7 +42,7 @@ const useStyles = () => {
     },
     productName: {
       marginLeft: 8,
-      width: '55%',
+      width: '50%',
       justifyContent: 'center',
     },
     productText: {
@@ -81,8 +81,7 @@ const useStyles = () => {
     },
     textPriceContainer: {
       marginLeft: 'auto',
-      alignItems: 'center',
-      justifyContent: 'center',
+      width: '45%',
     },
     modifierContaine: {
       marginTop: 10,
@@ -155,27 +154,8 @@ const useStyles = () => {
       color: 'white',
       fontFamily: theme.fontFamily.poppinsMedium,
     },
-    textAmount: {
-      fontSize: 12,
-      fontFamily: theme.fontFamily.poppinsMedium,
-      color: 'black',
-    },
-    line: {
-      height: 1,
-      backgroundColor: 'red',
-    },
-    ph12: {
-      paddingHorizontal: 12,
-    },
-    divider: {
-      height: 1,
-      backgroundColor: theme.colors.greyScale5,
-      marginVertical: 12,
-    },
-    subTotalText: {
-      color: theme.colors.greyScale5,
-      fontSize: 12,
-      fontFamily: theme.fontFamily.poppinsMedium,
+    mlAuto: {
+      marginLeft: 'auto',
     },
   });
   return {styles};
@@ -264,8 +244,8 @@ const ProductCartItemCart2 = ({item, containerStyle}) => {
           </GlobalText>
         </View>
         <View style={styles.textPriceContainer}>
-          <GlobalText style={styles.textAmount}>
-            + {CurrencyFormatter(item?.retailPrice * item?.quantity)}
+          <GlobalText style={[styles.textPrice, styles.mlAuto]}>
+            {CurrencyFormatter(item?.grossAmount)}
           </GlobalText>
         </View>
       </View>
