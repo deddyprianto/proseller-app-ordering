@@ -130,7 +130,10 @@ const ListInbox = ({item, index, openDetailMessage}) => {
       <View style={styles.messageContainer}>
         <View style={styles.imageContainer} />
         <View style={styles.containerText90}>
-          <RenderHtml contentWidth={width} source={{html: item?.message}} />
+          <RenderHtml
+            contentWidth={width}
+            source={{html: item?.message?.replace(/<img[^>]*>/g, '')}}
+          />
         </View>
       </View>
     </TouchableOpacity>
