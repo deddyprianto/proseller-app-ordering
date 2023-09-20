@@ -4,7 +4,7 @@
  * PT Edgeworks
  */
 
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {Actions} from 'react-native-router-flux';
 import {ScrollView} from 'react-native-gesture-handler';
@@ -117,6 +117,7 @@ const useStyles = () => {
 };
 
 const OrderHere = () => {
+  const ref = useRef();
   const styles = useStyles();
   const dispatch = useDispatch();
 
@@ -177,9 +178,11 @@ const OrderHere = () => {
   };
 
   const handleCancel = () => {
+    ref.current.blur();
     setSearchTextInput('');
     setSearchQuery('');
     setIsSearchOnFocus(false);
+    handleSearchProduct('');
   };
 
   const renderText = () => {
@@ -210,6 +213,7 @@ const OrderHere = () => {
 
     return (
       <FieldSearch
+        customRef={ref}
         value={searchTextInput}
         onChange={value => {
           setSearchTextInput(value);
@@ -287,6 +291,7 @@ const OrderHere = () => {
     return (
       <View>
         <ScrollView
+          keyboardShouldPersistTaps="handled"
           scrollEnabled={false}
           refreshControl={
             <RefreshControl
