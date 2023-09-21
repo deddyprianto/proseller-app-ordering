@@ -294,6 +294,7 @@ const HomeRetail = () => {
   const onRefresh = useCallback(async () => {
     setRefresh(true);
     const response = await dispatch(getProductByOutlet(defaultOutlet.id));
+    console.log({response}, 'lalaj');
     await dispatch(dataStores());
     await dispatch(getTermsConditions());
     await dispatch(getBasket());
@@ -364,7 +365,7 @@ const HomeRetail = () => {
         <View style={styles.viewMenuBarChildImage}>
           <Image source={appConfig.iconPoint} style={styles.iconMenuBarChild} />
         </View>
-        <Text style={styles.textMenuBarChildTitle}>Your Point</Text>
+        <Text style={styles.textMenuBarChildTitle}>Your Points</Text>
         <Text style={styles.textMenuBarChildValue}>{point} PTS</Text>
       </TouchableOpacity>
     );

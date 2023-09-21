@@ -275,7 +275,7 @@ const RegisterV2 = props => {
         <View style={styles.loginContainer}>
           <TouchableOpacity onPress={openLoginPage}>
             <GlobalText>
-              Already have account?{' '}
+              Already have an account?{' '}
               <GlobalText style={styles.privacyText}> Login</GlobalText>
             </GlobalText>
           </TouchableOpacity>

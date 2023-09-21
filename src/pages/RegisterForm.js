@@ -483,7 +483,7 @@ const RegisterForm = ({registerMethod, inputValue, approvedData}) => {
     return (
       <View>
         <GlobalText style={styles.messageStyleBtm}>
-          You will receive 4-digit verification code via {method} at{' '}
+          You will receive a 4-digit verification code via {method} at{' '}
           <GlobalText style={[styles.messageStyleBtm, styles.messageText]}>
             {value}{' '}
           </GlobalText>
