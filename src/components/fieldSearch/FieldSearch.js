@@ -74,10 +74,19 @@ const FieldSearch = ({
   value,
   onFocus,
   onBlur,
+  customRef,
 }) => {
   const styles = useStyles();
   const [isFocus, setIsFocus] = useState(false);
   const ref = useRef();
+
+  const handleRefFocus = () => {
+    if (customRef) {
+      customRef.current.focus();
+    } else {
+      ref.current.focus();
+    }
+  };
 
   const handleSubmit = () => {
     if (onSubmit && typeof onSubmit === 'function') {
@@ -89,7 +98,7 @@ const FieldSearch = ({
   const handleRemove = () => {
     if (onRemove && typeof onRemove === 'function') {
       onRemove();
-      ref.current.focus();
+      handleRefFocus();
     }
   };
 
@@ -124,7 +133,7 @@ const FieldSearch = ({
   const renderInput = () => {
     return (
       <TextInput
-        ref={ref}
+        ref={customRef || ref}
         value={value}
         style={styles.textInput}
         placeholder={replacePlaceholder || placeholder}
