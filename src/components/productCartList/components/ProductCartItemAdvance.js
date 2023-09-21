@@ -184,11 +184,11 @@ const useStyles = () => {
       fontSize: theme.fontSize[12],
       fontFamily: theme.fontFamily.poppinsMedium,
     },
-    textPriceFooter: {
-      color: theme.colors.errorColor,
+    textPriceFooter: isDiscount => ({
+      color: isDiscount ? theme.colors.errorColor : 'black',
       fontSize: theme.fontSize[14],
       fontFamily: theme.fontFamily.poppinsBold,
-    },
+    }),
     textPriceSmall: {
       color: theme.colors.textQuaternary,
       fontSize: theme.fontSize[12],
@@ -433,13 +433,14 @@ const ProductCartItemAdvance = ({item, disabled, step}) => {
   };
 
   const renderTotalPrice = () => {
+    const isDiscountProduct = item.amountAfterDisc < item.grossAmount;
+
     const styleTextPrice = isProductUnavailable
       ? [styles.textPriceFooterUnavailable]
-      : [styles.textPriceFooter];
-
+      : [styles.textPriceFooter(isDiscountProduct)];
     return (
       <View style={styles.viewTotalPrice}>
-        {item.amountAfterDisc < item.grossAmount ? (
+        {isDiscountProduct ? (
           <GlobalText style={styles.textPriceBeforeDiscount}>
             {CurrencyFormatter(item?.grossAmount)}{' '}
           </GlobalText>
@@ -450,7 +451,7 @@ const ProductCartItemAdvance = ({item, disabled, step}) => {
       </View>
     );
   };
-  console.log({item}, 'sasak');
+
   const renderEditIcon = () => {
     if (!disabled) {
       const styleView = isProductUnavailable
