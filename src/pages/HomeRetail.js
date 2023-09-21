@@ -294,7 +294,6 @@ const HomeRetail = () => {
   const onRefresh = useCallback(async () => {
     setRefresh(true);
     const response = await dispatch(getProductByOutlet(defaultOutlet.id));
-    console.log({response}, 'lalaj');
     await dispatch(dataStores());
     await dispatch(getTermsConditions());
     await dispatch(getBasket());
