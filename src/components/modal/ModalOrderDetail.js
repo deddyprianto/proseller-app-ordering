@@ -120,54 +120,56 @@ const ModalOrderDetail = ({
     return [];
   };
 
+  const renderInclTax = () => {
+    return (
+      <>
+        <View style={[styles.divider, styles.noMargin]} />
+
+        <View style={styles.modalItem}>
+          <GlobalText style={styles.taxPriceText}>Incl. Tax</GlobalText>
+          <GlobalText style={[styles.taxPriceText, styles.semiBold]}>
+            {CurrencyFormatter(basket?.inclusiveTax)}{' '}
+          </GlobalText>
+        </View>
+      </>
+    );
+  };
+
+  const renderExclTax = () => {
+    return (
+      <>
+        <View style={[styles.divider, styles.noMargin]} />
+
+        <View style={styles.modalItem}>
+          <GlobalText style={styles.modalItemPrice}>Excl. Tax</GlobalText>
+          <GlobalText style={[styles.modalItemPrice, styles.semiBold]}>
+            {CurrencyFormatter(basket?.exclusiveTax)}{' '}
+          </GlobalText>
+        </View>
+      </>
+    );
+  };
+
   const checkTax = () => {
     if (basket?.inclusiveTax > 0 && basket?.exclusiveTax > 0) {
       return (
         <>
-          <View style={[styles.divider, styles.noMargin]} />
-
-          <View style={styles.modalItem}>
-            <GlobalText style={styles.modalItemPrice}>Tax</GlobalText>
-            <GlobalText style={[styles.modalItemPrice, styles.semiBold]}>
-              {CurrencyFormatter(basket?.totalTaxAmount)}{' '}
-            </GlobalText>
-          </View>
+          {renderInclTax()}
+          {renderExclTax()}
         </>
       );
     }
     if (basket?.inclusiveTax > 0) {
-      return (
-        <>
-          <View style={[styles.divider, styles.noMargin]} />
-
-          <View style={styles.modalItem}>
-            <GlobalText style={styles.taxPriceText}>Incl. Tax</GlobalText>
-            <GlobalText style={[styles.taxPriceText, styles.semiBold]}>
-              {CurrencyFormatter(basket?.inclusiveTax)}{' '}
-            </GlobalText>
-          </View>
-        </>
-      );
+      return <>{renderInclTax()}</>;
     }
 
     if (basket?.exclusiveTax > 0) {
-      return (
-        <>
-          <View style={[styles.divider, styles.noMargin]} />
-
-          <View style={styles.modalItem}>
-            <GlobalText style={styles.modalItemPrice}>Excl. Tax</GlobalText>
-            <GlobalText style={[styles.modalItemPrice, styles.semiBold]}>
-              {CurrencyFormatter(basket?.exclusiveTax)}{' '}
-            </GlobalText>
-          </View>
-        </>
-      );
+      return <>{renderExclTax()}</>;
     }
     return null;
   };
   const itemDiscount =
-    basket?.totalDiscountAmount - (basket.totalMembershipDiscountAmount || 0);
+    basket?.totalDiscountAmount - (basket?.totalMembershipDiscountAmount || 0);
   return (
     <GlobalModal
       title="Details"

@@ -29,6 +29,7 @@ import ArrowBottomSvg from '../assets/svg/ArrowBottomSvg';
 import ArrowUpSvg from '../assets/svg/ArrowUpSvg';
 import ModalAction from './modal/ModalAction';
 import {getVoucherCheckout} from '../actions/user.action';
+import useCalculation from '../hooks/calculation/useCalculation';
 
 const PaymentAddVouchersV2 = props => {
   const [usedVoucher, setUsedVoucher] = React.useState(props?.dataVoucer || []);
@@ -52,7 +53,7 @@ const PaymentAddVouchersV2 = props => {
     state => state.cardReducer.selectedAccount.selectedAccount,
   );
   const dispatch = useDispatch();
-
+  const {removePointAmount} = useCalculation();
   const voucherPointUsedCalculation = (vouchers = []) => {
     const mapVoucherPoint = vouchers?.map(data => data?.paymentAmount);
     if (mapVoucherPoint.length > 0) {
@@ -71,13 +72,14 @@ const PaymentAddVouchersV2 = props => {
   const onSubmit = async () => {
     setLoadingCheckVoucher(true);
     const voucherMap = mappingPayment(usedVoucher);
+    const payloadVoucher = removePointAmount(voucherMap);
     const onlyVoucher = usedVoucher?.filter(voucher => !voucher?.isPoint);
     const payload = {
       details: cartDetail?.details,
       outletId: cartDetail?.outletID,
       total: cartDetail?.totalNettAmount,
       customerId: cartDetail?.customerId,
-      payments: voucherMap,
+      payments: payloadVoucher,
     };
     const findMinTransaction = findMinTransactionHandle();
     const response = await dispatch(getCalculationStep3(payload));
