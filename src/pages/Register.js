@@ -28,6 +28,7 @@ import RegisterV2 from './RegisterV2';
 import appConfig from '../config/appConfig';
 import GlobalText from '../components/globalText';
 import additionalSetting from '../config/additionalSettings';
+import {getMandatoryFields} from '../actions/account.action';
 
 const HEIGHT = Dimensions.get('window').height;
 const useStyles = () => {
@@ -107,6 +108,7 @@ const Register = () => {
   const [countryCode, setCountryCode] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [email, setEmail] = useState('');
+  const [referralCode, setReferralCode] = React.useState('');
   const [registerMethod, setRegisterMethod] = useState('email');
   const [isLoading, setIsLoading] = useState(false);
   const [approvedData, setApprovedData] = React.useState({
@@ -130,6 +132,16 @@ const Register = () => {
   const onTickCheckbox = (key, value) => {
     setApprovedData({...approvedData, [key]: value});
   };
+
+  const getFields = async () => {
+    setIsLoading(true);
+    await dispatch(getMandatoryFields());
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    getFields();
+  }, []);
 
   useEffect(() => {
     if (loginSettings.loginByEmail && loginSettings.loginByMobile) {
@@ -156,7 +168,9 @@ const Register = () => {
       payload.phoneNumber = countryCode + phoneNumber;
       value = countryCode + phoneNumber;
     }
-
+    if (referralCode.length > 0) {
+      payload.referralCode = referralCode;
+    }
     setIsLoading(true);
     const response = await dispatch(checkAccountExist(payload));
 
@@ -174,7 +188,12 @@ const Register = () => {
         }),
       );
     } else {
-      Actions.registerForm({registerMethod, inputValue: value, approvedData});
+      Actions.registerForm({
+        registerMethod,
+        inputValue: value,
+        approvedData,
+        registerPayload: payload,
+      });
     }
 
     setIsLoading(false);
@@ -293,6 +312,8 @@ const Register = () => {
     );
   };
 
+  const onChangeReferralCode = text => setReferralCode(text);
+
   const renderBodyV2 = () => {
     return (
       <RegisterV2
@@ -304,6 +325,8 @@ const Register = () => {
         onNext={handleCheckAccount}
         onTickCheckbox={onTickCheckbox}
         checkboxValue={approvedData}
+        onChangeReferralCode={onChangeReferralCode}
+        referralCode={referralCode}
       />
     );
   };
