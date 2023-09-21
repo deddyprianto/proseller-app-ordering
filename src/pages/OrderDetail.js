@@ -380,6 +380,7 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
       <ProductCartItemCart2 containerStyle={styles.containerItem} item={item} />
     );
   };
+
   React.useEffect(() => {
     if (data) {
       groupingeOrder(data?.details || []);
@@ -675,6 +676,7 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
     }
     return '(VERIFIED)';
   };
+  console.log({data}, 'nani');
   return (
     <Body>
       {data?.status === staustPending && !isTimeEnd ? (
@@ -794,6 +796,23 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
                 </View>
               </View>
             </View>
+            {data?.totalMembershipDiscountAmount > 0 ? (
+              <View style={[styles.listOrderDetailContainer, styles.mt16]}>
+                <View style={styles.orderStatusContainer}>
+                  <View>
+                    <GlobalText style={[styles.grayColor, styles.mediumFont]}>
+                      Membership Discount{' '}
+                    </GlobalText>
+                  </View>
+                  <View>
+                    <GlobalText style={[styles.boldFont, styles.grayColor]}>
+                      ({CurrencyFormatter(data?.totalMembershipDiscountAmount)})
+                    </GlobalText>
+                  </View>
+                </View>
+              </View>
+            ) : null}
+
             {data?.deliveryFee ? (
               <View style={[styles.listOrderDetailContainer, styles.mt16]}>
                 <View style={styles.orderStatusContainer}>

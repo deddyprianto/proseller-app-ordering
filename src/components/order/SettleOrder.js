@@ -1132,7 +1132,6 @@ class SettleOrder extends Component {
 
   callApiCalculatedVoucherPoint = async payload => {
     const response = await this.props.dispatch(getCalculationStep3(payload));
-    console.log({response, payload}, 'test');
     if (response.message) {
       return this.props.dispatch(showSnackbar({message: response.message}));
     }
@@ -1236,11 +1235,14 @@ class SettleOrder extends Component {
           moneyPoint: savePoint.redeemValue * ratioPoint,
         },
         () => {
+          const newPayments = this.props?.removePointAmount(
+            this.state.dataVoucer,
+          );
           const payload = {
             details: this.props.basket?.details,
             outletId: this.props.basket?.outletID,
             customerId: this.props.basket?.customerId,
-            payments: this.state.dataVoucer,
+            payments: newPayments,
             total: this.props?.basket?.totalNettAmount,
           };
           this.callApiCalculatedVoucherPoint(payload);

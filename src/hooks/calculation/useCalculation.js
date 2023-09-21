@@ -81,6 +81,17 @@ const useCalculation = () => {
     return amount;
   };
 
+  const removePointAmount = (payload = []) => {
+    const mappingNewPayload = payload?.map(data => {
+      if (data?.isPoint) {
+        return {isPoint: true};
+      }
+      return {...data};
+    });
+
+    return mappingNewPayload;
+  };
+
   return {
     calculateVoucher,
     calculateVoucherPoint,
@@ -88,6 +99,7 @@ const useCalculation = () => {
     checkTaxHandle,
     calculatePriceAferDiscount,
     calculatePoint,
+    removePointAmount,
   };
 };
 
