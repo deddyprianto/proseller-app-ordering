@@ -255,7 +255,9 @@ const ModalOrderDetail = ({
             ) > 0 ? (
               <GlobalText>
                 Amount paid{' '}
-                {selectedAccount ? 'by ' : 'by selected payment method'}{' '}
+                {selectedAccount ? `by ` : 'by selected payment method'}
+                {''}
+                {selectedAccount?.details?.cardIssuer}{' '}
                 {CurrencyFormatter(
                   Number(
                     calculationAmountPaidByVisa(

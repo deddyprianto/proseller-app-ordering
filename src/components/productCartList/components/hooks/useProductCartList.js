@@ -8,7 +8,7 @@ const useStyles = () => {
   const theme = Theme();
   const styles = StyleSheet.create({
     textModifier: {
-      flex: 1,
+      // flex: 1,
     },
     textModifierItemQty: {
       color: theme.colors.textQuaternary,
@@ -133,13 +133,26 @@ const useStyles = () => {
     fullWidth: {
       width: '100%',
     },
+    mediumFont: {
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    mlAuto: {
+      marginLeft: 'auto',
+    },
   });
   return styles;
 };
 
 const useProductCartList = ({isProductUnavailable}) => {
   const styles = useStyles();
-  const renderProductModifierItem = ({qty, name, price, styleItem}) => {
+  const renderProductModifierItem = ({
+    qty,
+    name,
+    price,
+    styleItem,
+    textPriceContainer,
+    textPrice,
+  }) => {
     const styleTextQty = isProductUnavailable
       ? styles.textModifierItemQtyUnavailable
       : styles.textModifierItemQty;
@@ -153,19 +166,27 @@ const useProductCartList = ({isProductUnavailable}) => {
         <View style={[styles.viewProductModifierItem, styleItem]}>
           <View style={styles.viewBullet} />
 
-          <Text style={styles.textModifier}>
+          <Text style={[styles.textModifier]}>
             <Text style={styleTextQty}>{qty}x </Text>
             <Text style={styles.textModifierItemName}> {name} </Text>
           </Text>
-          <View>
-            <Text style={[styleTextPrice]}> + {CurrencyFormatter(price)} </Text>
+          <View style={[styles.mlAuto, textPriceContainer]}>
+            <Text style={[styleTextPrice, textPrice]}>
+              {''}+ {CurrencyFormatter(price)}{' '}
+            </Text>
           </View>
         </View>
       </>
     );
   };
 
-  const renderProductModifier = (item, styleText, styleItem) => {
+  const renderProductModifier = (
+    item,
+    styleText,
+    styleItem,
+    textPriceContainer,
+    textPrice,
+  ) => {
     if (!isEmptyArray(item.modifiers)) {
       let productModifiers = {};
       const finalGrouping = [];
@@ -203,6 +224,8 @@ const useProductCartList = ({isProductUnavailable}) => {
                 modifierId: detail?.modifierID,
                 isProductUnavailable,
                 styleItem,
+                textPriceContainer,
+                textPrice,
               });
             })}
           </>
@@ -225,11 +248,6 @@ const useProductCartList = ({isProductUnavailable}) => {
         <View style={styles.fullWidth}>
           <Text style={[styleTextName, styles.fullWidth]} numberOfLines={2}>
             {item?.product?.name}{' '}
-            {isPromotionApplied ? (
-              <Text style={[styles.textNormalPrice]}>
-                + {CurrencyFormatter(item?.grossAmount)}
-              </Text>
-            ) : null}
           </Text>
           {renderPrice(item)}
         </View>
@@ -241,12 +259,12 @@ const useProductCartList = ({isProductUnavailable}) => {
     const styleTextPrice = isProductUnavailable
       ? [styles.textPriceUnavailable]
       : [styles.textPriceSmall];
-
     if (item?.isPromotionApplied && item.amountAfterDisc < item.grossAmount) {
       return (
         <View style={[styles.viewTotalPrice]}>
-          <Text style={[styles.textDiscountPrice, {width: '100%'}]}>
-            + {CurrencyFormatter(item?.amountAfterDisc)}
+          <Text
+            style={[styles.textPriceSmall, {width: '100%'}, styles.mediumFont]}>
+            + {CurrencyFormatter(item?.retailPrice * item?.quantity)}
           </Text>
         </View>
       );

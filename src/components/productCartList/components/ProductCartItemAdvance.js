@@ -184,11 +184,11 @@ const useStyles = () => {
       fontSize: theme.fontSize[12],
       fontFamily: theme.fontFamily.poppinsMedium,
     },
-    textPriceFooter: {
-      color: theme.colors.textQuaternary,
+    textPriceFooter: isDiscount => ({
+      color: isDiscount ? theme.colors.errorColor : 'black',
       fontSize: theme.fontSize[14],
       fontFamily: theme.fontFamily.poppinsBold,
-    },
+    }),
     textPriceSmall: {
       color: theme.colors.textQuaternary,
       fontSize: theme.fontSize[12],
@@ -388,6 +388,16 @@ const useStyles = () => {
     noPh: {
       paddingHorizontal: 0,
     },
+    mediumFont: {
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textPriceModifier: {
+      color: theme.colors.primary,
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    ml8: {
+      marginLeft: 8,
+    },
   });
   return styles;
 };
@@ -423,22 +433,22 @@ const ProductCartItemAdvance = ({item, disabled, step}) => {
   };
 
   const renderTotalPrice = () => {
+    const isDiscountProduct = item.amountAfterDisc < item.grossAmount;
+
     const styleTextPrice = isProductUnavailable
       ? [styles.textPriceFooterUnavailable]
-      : [styles.textPriceFooter];
-
-    if (item?.isPromotionApplied && item.amountAfterDisc < item.grossAmount) {
-      return (
-        <View style={styles.viewTotalPrice}>
-          <Text style={[styleTextPrice]}>
-            {CurrencyFormatter(item?.amountAfterDisc)}
-          </Text>
-        </View>
-      );
-    }
-
+      : [styles.textPriceFooter(isDiscountProduct)];
     return (
-      <Text style={styleTextPrice}>{CurrencyFormatter(item?.grossAmount)}</Text>
+      <View style={styles.viewTotalPrice}>
+        {isDiscountProduct ? (
+          <GlobalText style={styles.textPriceBeforeDiscount}>
+            {CurrencyFormatter(item?.grossAmount)}{' '}
+          </GlobalText>
+        ) : null}
+        <Text style={[styleTextPrice]}>
+          {CurrencyFormatter(item?.amountAfterDisc)}
+        </Text>
+      </View>
     );
   };
 
@@ -566,7 +576,13 @@ const ProductCartItemAdvance = ({item, disabled, step}) => {
     return (
       <View style={[styles.bodyLeft]}>
         {renderProductHeader(item)}
-        {renderProductModifier(item, styles.noPh, styles.noPh)}
+        {renderProductModifier(
+          item,
+          styles.noPh,
+          styles.noPh,
+          styles.ml8,
+          styles.textPriceModifier,
+        )}
         <View style={styles.rowContainer}>{renderPromoIcon()}</View>
         {renderDivider()}
         {renderNotes()}
