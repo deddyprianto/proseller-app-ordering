@@ -15,7 +15,7 @@ import {
   Dimensions,
   TouchableHighlight,
   Alert,
-  SafeAreaView
+  SafeAreaView,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
@@ -182,7 +182,7 @@ class VerifyRegister extends Component {
                 width: '80%',
                 fontFamily: 'Poppins-Regular',
               }}>
-              You will receive 4-digit verification code via
+              You will receive a 4-digit verification code via
               {this.props.fromMethod == 'mobile' ? (
                 <Text> SMS </Text>
               ) : (

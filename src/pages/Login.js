@@ -408,7 +408,7 @@ const Login = () => {
             <GlobalText
               onPress={() => handleOpenTypePolicy('terms')}
               style={styles.linkText}>
-              Terms and Condition
+              Terms and Conditions
             </GlobalText>
           ) : (
             ''
@@ -437,7 +437,7 @@ const Login = () => {
   const renderRegisterText = () => (
     <View>
       <GlobalText style={styles.registerText}>
-        Don’t have account?{' '}
+        Don’t have an account?{' '}
         <GlobalText onPress={goToRegisterPage} style={styles.linkText}>
           Register
         </GlobalText>
@@ -496,7 +496,7 @@ const Login = () => {
         isCloseToBottom={onButtonActive}
         closeModal={closeModal}
         isVisible={openType === 'privacy'}>
-        <GlobalText>{checkTncPolicyData().tnc?.settingValue}</GlobalText>
+        <GlobalText>{checkTncPolicyData().privacy?.settingValue}</GlobalText>
       </GlobalModal>
     </SafeAreaView>
   );
