@@ -185,7 +185,7 @@ const useStyles = () => {
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textPriceFooter: {
-      color: theme.colors.textQuaternary,
+      color: theme.colors.errorColor,
       fontSize: theme.fontSize[14],
       fontFamily: theme.fontFamily.poppinsBold,
     },
@@ -388,6 +388,16 @@ const useStyles = () => {
     noPh: {
       paddingHorizontal: 0,
     },
+    mediumFont: {
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textPriceModifier: {
+      color: theme.colors.primary,
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    ml8: {
+      marginLeft: 8,
+    },
   });
   return styles;
 };
@@ -427,21 +437,20 @@ const ProductCartItemAdvance = ({item, disabled, step}) => {
       ? [styles.textPriceFooterUnavailable]
       : [styles.textPriceFooter];
 
-    if (item?.isPromotionApplied && item.amountAfterDisc < item.grossAmount) {
-      return (
-        <View style={styles.viewTotalPrice}>
-          <Text style={[styleTextPrice]}>
-            {CurrencyFormatter(item?.amountAfterDisc)}
-          </Text>
-        </View>
-      );
-    }
-
     return (
-      <Text style={styleTextPrice}>{CurrencyFormatter(item?.grossAmount)}</Text>
+      <View style={styles.viewTotalPrice}>
+        {item.amountAfterDisc < item.grossAmount ? (
+          <GlobalText style={styles.textPriceBeforeDiscount}>
+            {CurrencyFormatter(item?.grossAmount)}{' '}
+          </GlobalText>
+        ) : null}
+        <Text style={[styleTextPrice]}>
+          {CurrencyFormatter(item?.amountAfterDisc)}
+        </Text>
+      </View>
     );
   };
-
+  console.log({item}, 'sasak');
   const renderEditIcon = () => {
     if (!disabled) {
       const styleView = isProductUnavailable
@@ -566,7 +575,13 @@ const ProductCartItemAdvance = ({item, disabled, step}) => {
     return (
       <View style={[styles.bodyLeft]}>
         {renderProductHeader(item)}
-        {renderProductModifier(item, styles.noPh, styles.noPh)}
+        {renderProductModifier(
+          item,
+          styles.noPh,
+          styles.noPh,
+          styles.ml8,
+          styles.textPriceModifier,
+        )}
         <View style={styles.rowContainer}>{renderPromoIcon()}</View>
         {renderDivider()}
         {renderNotes()}
