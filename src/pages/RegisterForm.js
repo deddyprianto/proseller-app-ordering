@@ -132,7 +132,12 @@ const useStyles = () => {
   return styles;
 };
 
-const RegisterForm = ({registerMethod, inputValue, approvedData}) => {
+const RegisterForm = ({
+  registerMethod,
+  inputValue,
+  approvedData,
+  registerPayload,
+}) => {
   const styles = useStyles();
   const dispatch = useDispatch();
   const [countryCode, setCountryCode] = useState('');
@@ -216,9 +221,11 @@ const RegisterForm = ({registerMethod, inputValue, approvedData}) => {
       acceptPrivacyAndTerms: approvedData.privacyTerm,
     };
     payload = {...payload, ...newCustomKey};
+    if (registerPayload?.referralCode?.length > 0) {
+      payload.referralCode = registerPayload.referralCode;
+    }
     setIsLoading(true);
     const response = await dispatch(createNewUser(payload));
-
     if (typeof response === 'boolean' && response) {
       setIsLoading(false);
       Actions.otp({
