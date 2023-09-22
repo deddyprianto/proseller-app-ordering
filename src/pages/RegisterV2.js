@@ -13,7 +13,6 @@ import {useSelector} from 'react-redux';
 import {emailValidation} from '../helper/Validation';
 import FieldPhoneNumberInput from '../components/fieldPhoneNumberInput/FieldPhoneNumberInput';
 import useSettings from '../hooks/settings/useSettings';
-import useValidation from '../hooks/validation/useValidation';
 const useStyles = () => {
   const {colors, fontFamily} = Theme();
   const styles = StyleSheet.create({
@@ -93,7 +92,7 @@ const RegisterV2 = props => {
   const [buttonActive, setButtonActive] = React.useState(false);
   const inputRef = React.useRef();
   const {checkTncPolicyData} = useSettings();
-  const {findReferralCodeSetting} = useValidation();
+
   const orderSetting = useSelector(
     state => state.orderReducer?.orderingSetting?.orderingSetting?.settings,
   );
@@ -196,12 +195,6 @@ const RegisterV2 = props => {
   };
 
   const handleDisableNextButton = () => {
-    if (
-      findReferralCodeSetting()?.mandatory &&
-      props.referralCode.length <= 0
-    ) {
-      return true;
-    }
     if (props?.checkboxValue.privacyTerm === false) {
       return true;
     }
@@ -217,21 +210,6 @@ const RegisterV2 = props => {
     return true;
   };
 
-  const renderReferralCode = () => (
-    <>
-      {findReferralCodeSetting()?.show ? (
-        <View>
-          <GlobalInputText
-            placeholder="Enter your referral code"
-            label="Referral Code"
-            isMandatory={findReferralCodeSetting().mandatory}
-            onChangeText={props.onChangeReferralCode}
-          />
-        </View>
-      ) : null}
-    </>
-  );
-
   return (
     <View style={styles.registerContainer}>
       <View>
@@ -240,10 +218,7 @@ const RegisterV2 = props => {
       <View style={styles.startedStyle}>
         <GlobalText>Let’s get started!</GlobalText>
       </View>
-      <View style={styles.inputContianer}>
-        {handleCheckDefaultLogin()}
-        {renderReferralCode()}
-      </View>
+      <View style={styles.inputContianer}>{handleCheckDefaultLogin()}</View>
       <View style={styles.checkBoxParent}>
         <View style={styles.checkBoxContainer}>
           <View style={styles.boxContainer}>

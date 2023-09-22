@@ -76,6 +76,11 @@ const useStyles = () => {
       fontSize: 12,
       fontFamily: theme.fontFamily.poppinsMedium,
     },
+    textSuccess: {
+      color: theme.colors.semanticColorSuccess,
+      fontSize: 12,
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
     dropdownContainerStyle: {
       backgroundColor: 'white',
       marginTop: 4,
@@ -265,6 +270,13 @@ const GlobalInputText = React.forwardRef((props, ref) => {
         <View style={styles.errorContainer}>
           <GlobalText style={styles.textError}>
             {props.errorMessage}{' '}
+          </GlobalText>
+        </View>
+      ) : null}
+      {props.isSuccess ? (
+        <View style={styles.errorContainer}>
+          <GlobalText style={styles.textSuccess}>
+            {props.successMessage}{' '}
           </GlobalText>
         </View>
       ) : null}
