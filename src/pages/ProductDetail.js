@@ -89,16 +89,17 @@ const useStyles = () => {
       fontFamily: theme.fontFamily.poppinsBold,
     },
     textName: {
+      width: '100%',
+      textAlign: 'left',
       fontSize: theme.fontSize[14],
       color: theme.colors.text1,
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textQty: {
-      width: 36,
       textAlign: 'center',
-      fontSize: theme.fontSize[12],
+      fontSize: theme.fontSize[14],
       color: theme.colors.primary,
-      fontFamily: theme.fontFamily.poppinsBold,
+      fontFamily: theme.fontFamily.poppinsMedium,
     },
     textSpecialInstruction: {
       fontSize: theme.fontSize[14],
@@ -111,13 +112,10 @@ const useStyles = () => {
       color: theme.colors.textPrimary,
       fontFamily: theme.fontFamily.poppinsSemiBold,
     },
-    viewNameAndPrice: {
-      width: '70%',
-    },
     viewNameQtyPrice: {
       width: '100%',
       display: 'flex',
-      flexDirection: 'row',
+      flexDirection: 'column',
       justifyContent: 'space-between',
       alignItems: 'center',
       paddingHorizontal: 16,
@@ -145,6 +143,22 @@ const useStyles = () => {
     viewDescription: {
       padding: 16,
     },
+    viewTextQty: {
+      height: 30,
+      width: 36,
+      borderRadius: 6,
+      marginHorizontal: 10,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: theme.colors.greyScale4,
+    },
+    viewPriceAndQty: {
+      width: '100%',
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
     touchableCartButton: {
       borderRadius: 8,
       justifyContent: 'center',
@@ -152,7 +166,6 @@ const useStyles = () => {
       paddingVertical: 10,
       backgroundColor: theme.colors.primary,
     },
-
     touchableCartButtonDisabled: {
       borderRadius: 8,
       justifyContent: 'center',
@@ -161,44 +174,44 @@ const useStyles = () => {
       backgroundColor: theme.colors.buttonDisabled,
     },
     touchableMinus: {
-      width: 24,
-      height: 24,
+      width: 30,
+      height: 30,
+      borderRadius: 6,
       justifyContent: 'center',
       alignItems: 'center',
-      borderWidth: 1,
-      borderColor: theme.colors.primary,
+      borderWidth: 2,
+      borderColor: theme.colors.buttonActive,
       backgroundColor: theme.colors.background,
     },
     touchablePlus: {
-      width: 24,
-      height: 24,
+      width: 30,
+      height: 30,
+      borderRadius: 6,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: theme.colors.primary,
+      backgroundColor: theme.colors.buttonActive,
     },
     textInputSpecialInstruction: {
-      // height: 110,
-      // textAlignVertical: 'top',
       borderColor: '#D6D6D6',
       padding: 16,
       borderWidth: 1,
       borderRadius: 8,
       backgroundColor: 'white',
     },
-    iconMinus: {
-      width: 12,
-      height: 12,
-      tintColor: theme.colors.primary,
-    },
-    iconPlus: {
-      width: 12,
-      height: 12,
-      tintColor: theme.colors.background,
-    },
     iconClose: {
       fontSize: 24,
       position: 'absolute',
       right: 17,
+    },
+    iconMinus: {
+      width: 20,
+      height: 20,
+      tintColor: theme.colors.primary,
+    },
+    iconPlus: {
+      width: 20,
+      height: 20,
+      tintColor: theme.colors.background,
     },
     padding16: {
       padding: 16,
@@ -583,16 +596,10 @@ const ProductDetail = ({
     );
   };
 
-  const renderNameAndPrice = () => {
-    const price = variantRetailPrice || product?.retailPrice;
+  const renderName = () => {
     const name = variantName || product?.name;
 
-    return (
-      <View style={styles.viewNameAndPrice}>
-        <Text style={styles.textName}>{name}</Text>
-        <Text style={styles.textPrice}>{CurrencyFormatter(price)}</Text>
-      </View>
-    );
+    return <Text style={styles.textName}>{name}</Text>;
   };
 
   const renderButtonMinus = () => {
@@ -623,7 +630,11 @@ const ProductDetail = ({
   };
 
   const renderTextQty = () => {
-    return <Text style={styles.textQty}>{qty}</Text>;
+    return (
+      <View style={styles.viewTextQty}>
+        <Text style={styles.textQty}>{qty}</Text>
+      </View>
+    );
   };
 
   const renderTextAndButtonQty = () => {
@@ -636,11 +647,26 @@ const ProductDetail = ({
     );
   };
 
+  const renderPrice = () => {
+    const price = variantRetailPrice || product?.retailPrice;
+
+    return <Text style={styles.textPrice}>{CurrencyFormatter(price)}</Text>;
+  };
+
+  const renderPriceAndQty = () => {
+    return (
+      <View style={styles.viewPriceAndQty}>
+        {renderPrice()}
+        {renderTextAndButtonQty()}
+      </View>
+    );
+  };
+
   const renderNameQtyPrice = () => {
     return (
       <View style={styles.viewNameQtyPrice}>
-        {renderNameAndPrice()}
-        {renderTextAndButtonQty()}
+        {renderName()}
+        {renderPriceAndQty()}
       </View>
     );
   };

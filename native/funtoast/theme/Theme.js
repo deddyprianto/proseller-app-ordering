@@ -59,7 +59,7 @@ const Theme = () => {
 
     textPrimary: '#000000',
     textSecondary: '#FFFFFF',
-    textTertiary: '#B7B7B7',
+    textTertiary: '#737373',
     textQuaternary: '#CF3030',
     textError: '#CE1111',
     textBrand: '#CF3030',
