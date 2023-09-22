@@ -888,7 +888,9 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
           </View>
           {defaultOrder.length > 0 ? (
             <>
-              {renderHeader(ready_items, {marginBottom: 16})}
+              {listPreorder.length > 0
+                ? renderHeader(ready_items, {marginBottom: 16})
+                : null}
 
               <TouchableOpacity
                 onPress={toggleOrder}
