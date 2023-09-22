@@ -251,6 +251,16 @@ const ProductCartList = ({
       ) : null}
     </>
   );
+
+  const renderReadyItemHeader = () => {
+    if (listPreorder.length > 0) {
+      return (
+        <>{renderHeader(ready_items, styles.readyTitle, false, showAllOrder)}</>
+      );
+    }
+    return null;
+  };
+
   return (
     <View>
       {defaultOrder.length > 0 ? (
@@ -260,12 +270,7 @@ const ProductCartList = ({
           renderItem={({item, index}) =>
             renderProductCartItem(item, index, showAllOrder)
           }
-          ListHeaderComponent={renderHeader(
-            ready_items,
-            styles.readyTitle,
-            false,
-            showAllOrder,
-          )}
+          ListHeaderComponent={renderReadyItemHeader()}
         />
       ) : null}
       {listPreorder.length > 0 ? (
