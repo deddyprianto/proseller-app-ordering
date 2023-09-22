@@ -20,6 +20,7 @@ import appConfig from '../../../config/appConfig';
 
 import Theme from '../../../theme';
 import {Actions} from 'react-native-router-flux';
+import {useSelector} from 'react-redux';
 
 const useStyles = () => {
   const theme = Theme();
@@ -88,6 +89,10 @@ const Product = ({product, basket}) => {
   const [totalQty, setTotalQty] = useState(0);
   const [isOpenUpdateModal, setIsOpenUpdateModal] = useState(false);
 
+  const imageSettings = useSelector(
+    state => state.settingReducer.imageSettings,
+  );
+
   const handleOpenUpdateModal = () => {
     setIsOpenUpdateModal(true);
   };
@@ -144,7 +149,7 @@ const Product = ({product, basket}) => {
   const renderImage = () => {
     const image = product?.defaultImageURL
       ? {uri: product?.defaultImageURL}
-      : appConfig.logoMerchant;
+      : imageSettings?.productPlaceholderImage;
 
     return <Image style={styles.image} resizeMode="contain" source={image} />;
   };

@@ -28,13 +28,19 @@ const useStyle = () => {
     },
     textOptionName: {
       flex: 1,
-      fontSize: theme.fontSize[12],
-      color: theme.colors.text1,
+      fontSize: theme.fontSize[14],
+      color: theme.colors.textPrimary,
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textOptionNameDisabled: {
+      flex: 1,
+      fontSize: theme.fontSize[14],
+      color: theme.colors.textTertiary,
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textOptionPrice: {
-      fontSize: theme.fontSize[10],
-      color: theme.colors.text2,
+      fontSize: theme.fontSize[14],
+      color: theme.colors.textTertiary,
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textTermsAndConditions: {
@@ -43,11 +49,10 @@ const useStyle = () => {
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textQty: {
-      width: 36,
       textAlign: 'center',
-      fontSize: theme.fontSize[12],
-      color: theme.colors.primary,
-      fontFamily: theme.fontFamily.poppinsBold,
+      fontSize: theme.fontSize[14],
+      color: theme.colors.textPrimary,
+      fontFamily: theme.fontFamily.poppinsMedium,
     },
     viewNameAndTermsConditions: {
       display: 'flex',
@@ -66,10 +71,19 @@ const useStyle = () => {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
-      paddingHorizontal: 18,
+      paddingHorizontal: 16,
       paddingVertical: 12,
       borderBottomWidth: 1,
       borderColor: theme.colors.border,
+    },
+    viewTextQty: {
+      height: 30,
+      width: 36,
+      borderRadius: 6,
+      marginHorizontal: 10,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: theme.colors.greyScale4,
     },
     viewTextAndButtonQty: {
       marginLeft: 16,
@@ -88,51 +102,72 @@ const useStyle = () => {
       flex: 1,
     },
     touchableMinus: {
-      width: 24,
-      height: 24,
+      width: 30,
+      height: 30,
+      borderRadius: 6,
       justifyContent: 'center',
       alignItems: 'center',
-      borderWidth: 1,
-      borderColor: theme.colors.primary,
+      borderWidth: 2,
+      borderColor: theme.colors.buttonActive,
       backgroundColor: theme.colors.background,
     },
     touchablePlus: {
-      width: 24,
-      height: 24,
+      width: 30,
+      height: 30,
+      borderRadius: 6,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: theme.colors.primary,
+      backgroundColor: theme.colors.buttonActive,
+    },
+    touchablePlusDisabled: {
+      width: 30,
+      height: 30,
+      borderRadius: 6,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: theme.colors.buttonDisabled,
     },
     checkbox: {
-      width: 20,
-      height: 20,
+      width: 18,
+      height: 18,
       backgroundColor: 'white',
       borderRadius: 3,
-      borderWidth: 1,
+      borderWidth: 2,
       marginRight: 8,
       alignItems: 'center',
       justifyContent: 'center',
-      borderColor: '#667080',
+      borderColor: theme.colors.greyScale2,
+    },
+    checkboxDisabled: {
+      width: 18,
+      height: 18,
+      backgroundColor: 'white',
+      borderRadius: 3,
+      borderWidth: 2,
+      marginRight: 8,
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderColor: theme.colors.greyScale3,
     },
     checkboxActive: {
-      width: 20,
-      height: 20,
-      backgroundColor: theme.colors.primary,
+      width: 18,
+      height: 18,
       borderRadius: 3,
-      borderWidth: 1,
+      borderWidth: 2,
       marginRight: 8,
       alignItems: 'center',
       justifyContent: 'center',
-      borderColor: theme.colors.primary,
+      borderColor: theme.colors.buttonActive,
+      backgroundColor: theme.colors.buttonActive,
     },
     iconMinus: {
-      width: 12,
-      height: 12,
+      width: 20,
+      height: 20,
       tintColor: theme.colors.primary,
     },
     iconPlus: {
-      width: 12,
-      height: 12,
+      width: 20,
+      height: 20,
       tintColor: theme.colors.background,
     },
     iconCheck: {
@@ -323,15 +358,19 @@ const ProductModifiers = ({
   };
 
   const renderButtonPlus = ({selectedProductModifier, max}) => {
-    const disabled = handleDisabledAddButton({
+    const isDisabled = handleDisabledAddButton({
       modifier: selectedProductModifier,
       max,
     });
 
+    const styleButton = isDisabled
+      ? styles.touchablePlusDisabled
+      : styles.touchablePlus;
+
     return (
       <TouchableOpacity
-        style={styles.touchablePlus}
-        disabled={disabled}
+        style={styleButton}
+        disabled={isDisabled}
         onPress={() => {
           handleAddAndReduceQty({
             key: 'add',
@@ -365,7 +404,11 @@ const ProductModifiers = ({
   };
 
   const renderTextQty = qty => {
-    return <Text style={styles.textQty}>{qty}</Text>;
+    return (
+      <View style={styles.viewTextQty}>
+        <Text style={styles.textQty}>{qty}</Text>
+      </View>
+    );
   };
 
   const renderButtonAndTextQty = ({modifierValue, modifier}) => {
@@ -382,8 +425,9 @@ const ProductModifiers = ({
     );
 
     const selectedProductModifierQty = selectedProductModifier?.qty || 0;
+    const minAndMaxOnlyOne = min === 1 && max === 1;
 
-    if (selectedProductModifierQty > 0 && !isYesNo) {
+    if (selectedProductModifierQty > 0 && !isYesNo && !minAndMaxOnlyOne) {
       return (
         <View style={styles.viewTextAndButtonQty}>
           {renderButtonMinus({selectedProductModifier, min})}
@@ -402,7 +446,11 @@ const ProductModifiers = ({
         value.modifierProductId === modifierValue.productID &&
         value.modifierId === modifier.id,
     );
-    const style = active ? styles.checkboxActive : styles.checkbox;
+    const style = active
+      ? styles.checkboxActive
+      : disabled
+      ? styles.checkboxDisabled
+      : styles.checkbox;
 
     return (
       <TouchableOpacity
@@ -432,9 +480,13 @@ const ProductModifiers = ({
     }
   };
 
-  const renderOptionName = ({modifierValue}) => {
+  const renderOptionName = ({modifierValue, isDisabled}) => {
+    const styleText = isDisabled
+      ? styles.textOptionNameDisabled
+      : styles.textOptionName;
+
     return (
-      <Text numberOfLines={2} style={styles.textOptionName}>
+      <Text numberOfLines={2} style={styleText}>
         {modifierValue?.name}
       </Text>
     );
@@ -450,16 +502,18 @@ const ProductModifiers = ({
     }
   };
 
-  const renderOptionNameAndPrice = ({isYesNo, modifierValue}) => {
+  const renderOptionNameAndPrice = ({isYesNo, modifierValue, isDisabled}) => {
     return (
       <View style={styles.viewOptionNameAndPrice}>
-        {renderOptionName({modifierValue})}
+        {renderOptionName({modifierValue, isDisabled})}
         {renderOptionPrice({isYesNo, modifierValue})}
       </View>
     );
   };
 
   const renderOptionCheckboxImageNamePrice = ({modifierValue, modifier}) => {
+    const isDisabled = handleDisabledCheckbox({modifier, modifierValue});
+
     return (
       <View style={styles.viewOptionCheckboxNamePrice}>
         {renderCheckbox({modifierValue, modifier})}
@@ -467,6 +521,7 @@ const ProductModifiers = ({
         {renderOptionNameAndPrice({
           isYesNo: modifier?.isYesNo,
           modifierValue,
+          isDisabled,
         })}
       </View>
     );
@@ -504,17 +559,15 @@ const ProductModifiers = ({
     }
 
     if (min > 0 && max === 0) {
-      text = `Min ${productModifier.modifier.min}`;
+      text = `Min ${min}`;
     }
 
     if (min === 0 && max > 0) {
-      text = `Max ${productModifier.modifier.max}`;
+      text = `Max ${max}`;
     }
 
     if (min > 0 && max > 0) {
-      text = `Min ${productModifier.modifier.min}, Max ${
-        productModifier.modifier.max
-      }`;
+      text = `Min ${min}, Max ${max}`;
     }
 
     return <Text style={styles.textTermsAndConditions}>{text}</Text>;
