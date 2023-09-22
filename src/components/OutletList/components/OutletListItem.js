@@ -143,8 +143,8 @@ const OutletListItem = ({item, handleChange}) => {
   );
 
   const isAvailable = item?.orderingStatus !== 'UNAVAILABLE';
-  const isTimeSlots = !isEmptyArray(item.timeSlots);
-  const isOpen = isAvailable && isTimeSlots;
+  const isOperationalHours = !isEmptyArray(item?.operationalHours);
+  const isOpen = isAvailable && isOperationalHours;
 
   useEffect(() => {
     const userCoordinate = userPosition?.coords;
