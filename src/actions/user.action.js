@@ -339,3 +339,24 @@ export const getVoucherCheckout = payload => {
     }
   };
 };
+
+export const checkReferralCodeAction = code => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    const {
+      authReducer: {
+        tokenUser: {token},
+      },
+    } = state;
+    try {
+      const url = `/referral/${code}`;
+      const response = await fetchApi(url, 'GET', null, 200, token);
+      console.log({response, code}, 'sinar');
+      return response?.responseBody?.data;
+    } catch (e) {
+      if (__DEV__) {
+        console.log(e, 'error');
+      }
+    }
+  };
+};
