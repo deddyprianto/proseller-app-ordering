@@ -30,6 +30,7 @@ import CalendarSvg from '../assets/svg/CalendareSvg';
 import DatePicker from 'react-native-date-picker';
 import moment from 'moment';
 import {fieldValidation} from '../helper/Validation';
+import useValidation from '../hooks/validation/useValidation';
 
 const useStyles = () => {
   const theme = Theme();
@@ -140,10 +141,12 @@ const RegisterForm = ({
 }) => {
   const styles = useStyles();
   const dispatch = useDispatch();
+  const {findReferralCodeSetting} = useValidation();
   const [countryCode, setCountryCode] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [birthDate, setBirthdate] = React.useState(null);
   const [isDatePickerVisible, setIsDatePickerVisible] = React.useState(false);
+  const [referralCode, setReferraCode] = React.useState('');
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -499,6 +502,24 @@ const RegisterForm = ({
     );
   };
 
+  const changeTextReferralCode = text => setReferraCode(text);
+
+  const renderReferralCode = () => (
+    <>
+      {findReferralCodeSetting()?.show ? (
+        <View>
+          <GlobalInputText
+            placeholder="Enter your referral code"
+            label="Referral Code"
+            isMandatory={findReferralCodeSetting().mandatory}
+            value={referralCode}
+            onChangeText={changeTextReferralCode}
+          />
+        </View>
+      ) : null}
+    </>
+  );
+
   return (
     <SafeAreaView style={styles.root}>
       <LoadingScreen loading={isLoading || isInitField} />
@@ -519,6 +540,7 @@ const RegisterForm = ({
                 {renderTextHeader()}
                 {renderNameInput()}
                 {renderEmailOrPhoneInput()}
+                {renderReferralCode()}
                 {renderCustomField()}
                 <View style={styles.divider} />
                 {renderMessage()}
