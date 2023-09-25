@@ -12,9 +12,21 @@ const useErrorMessage = () => {
       title,
     };
   };
+  const outletClosed = currentOutlet => {
+    const title = 'Outside Operational Hours';
 
+    let message = `${
+      currentOutlet.name
+    } is currently outside its operational hours. Please select another outlet.`;
+
+    return {
+      title,
+      message,
+    };
+  };
   return {
     outletUnavailable,
+    outletClosed,
   };
 };
 
