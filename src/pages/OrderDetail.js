@@ -337,13 +337,6 @@ const useStyles = () => {
       marginHorizontal: 0,
       marginTop: 16,
     },
-    orderStatusTitle: {
-      width: '30%',
-    },
-    orderStatus: {
-      width: '70%',
-      alignItems: 'flex-end',
-    },
   });
   return {styles, colors};
 };
@@ -678,15 +671,12 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
   );
 
   const handleVerified = () => {
-    if (data?.orderingMode === store_checkout) {
-      if (!data?.isVerified) {
-        return '(UNVERIFIED)';
-      }
-      return '(VERIFIED)';
+    if (!data?.isVerified) {
+      return '(UNVERIFIED)';
     }
-    return '';
+    return '(VERIFIED)';
   };
-
+  console.log({data}, 'nani');
   return (
     <Body>
       {data?.status === staustPending && !isTimeEnd ? (
@@ -746,19 +736,13 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
         <View style={styles.mainScrollContainer}>
           <View style={[styles.shadowBox, styles.boxMain, styles.p12]}>
             <View style={styles.orderStatusContainer}>
-              <View style={styles.orderStatusTitle}>
-                <GlobalText style={[styles.grayColor, styles.mediumFont]}>
-                  Order Status
-                </GlobalText>
-              </View>
-              <View style={styles.orderStatus}>
-                <GlobalText style={[styles.boldFont, styles.grayColor]}>
-                  {handlePaymentStatus(data?.status)}{' '}
-                  {additionalSetting().enableScanAndGo
-                    ? handleVerified()
-                    : null}
-                </GlobalText>
-              </View>
+              <GlobalText style={[styles.grayColor, styles.mediumFont]}>
+                Order Status
+              </GlobalText>
+              <GlobalText style={[styles.boldFont, styles.grayColor]}>
+                {handlePaymentStatus(data?.status)}{' '}
+                {additionalSetting().enableScanAndGo ? handleVerified() : null}
+              </GlobalText>
             </View>
             {data?.cancelationReason ? (
               <View style={styles.mlAuto}>
