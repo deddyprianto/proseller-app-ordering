@@ -40,8 +40,12 @@ import {getUserProfile} from '../actions/user.action';
 import {dataPromotion} from '../actions/promotion.action';
 import {Body} from '../components/layout';
 import {getTermsConditions} from '../actions/order.action';
-import {normalizeLayoutSizeHeight} from '../helper/Layout';
+import {
+  normalizeLayoutSizeHeight,
+  normalizeLayoutSizeWidth,
+} from '../helper/Layout';
 import {dataStores} from '../actions/stores.action';
+import BannerFnB from '../components/bannerFnB';
 
 const useStyles = () => {
   const theme = Theme();
@@ -188,7 +192,9 @@ const HomeRetail = () => {
   const [selectedSubCategory, setSelectedSubCategory] = useState({});
   const [isShowFloatingButton, setIsShowFloatingButton] = useState(false);
   const [productListPosition, setProductListPosition] = useState(0);
-
+  const bannerSize = useSelector(
+    state => state.settingReducer?.bannerSizeSettings?.bannerSize,
+  );
   const orderingSetting = useSelector(
     state => state.orderReducer.orderingSetting?.orderingSetting?.settings,
   );
@@ -444,7 +450,15 @@ const HomeRetail = () => {
   };
 
   const renderBanner = () => {
-    return <Banner bottom={normalizeLayoutSizeHeight(-26)} />;
+    return (
+      <>
+        {bannerSize ? (
+          <BannerFnB bottom={normalizeLayoutSizeWidth(-26)} placement={'top'} />
+        ) : (
+          <Banner bottom={normalizeLayoutSizeWidth(-26)} />
+        )}
+      </>
+    );
   };
 
   const renderProductCategoryList = () => {
