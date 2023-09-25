@@ -133,16 +133,6 @@ const Register = () => {
     setApprovedData({...approvedData, [key]: value});
   };
 
-  const getFields = async () => {
-    setIsLoading(true);
-    await dispatch(getMandatoryFields());
-    setIsLoading(false);
-  };
-
-  useEffect(() => {
-    getFields();
-  }, []);
-
   useEffect(() => {
     if (loginSettings.loginByEmail && loginSettings.loginByMobile) {
       if (checkRegisterPriority()?.settingValue === priority_email) {

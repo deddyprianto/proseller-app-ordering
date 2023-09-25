@@ -30,6 +30,9 @@ import CalendarSvg from '../assets/svg/CalendareSvg';
 import DatePicker from 'react-native-date-picker';
 import moment from 'moment';
 import {fieldValidation} from '../helper/Validation';
+import useValidation from '../hooks/validation/useValidation';
+import {debounce} from 'lodash';
+import {checkReferralCodeAction} from '../actions/user.action';
 
 const useStyles = () => {
   const theme = Theme();
@@ -128,6 +131,9 @@ const useStyles = () => {
       height: 80,
       zIndex: -1,
     },
+    noMb: {
+      marginBottom: 0,
+    },
   });
   return styles;
 };
@@ -140,10 +146,12 @@ const RegisterForm = ({
 }) => {
   const styles = useStyles();
   const dispatch = useDispatch();
+  const {findReferralCodeSetting} = useValidation();
   const [countryCode, setCountryCode] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [birthDate, setBirthdate] = React.useState(null);
   const [isDatePickerVisible, setIsDatePickerVisible] = React.useState(false);
+  const [referralCode, setReferraCode] = React.useState('');
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -151,6 +159,11 @@ const RegisterForm = ({
   const [gender, setGender] = React.useState(null);
   const [isInitField, setIsInitField] = React.useState(false);
   const [address, setAddress] = React.useState('');
+  const [invalidReferral, setInvalidReferral] = React.useState(false);
+  const [referralFrom, setReferralFrom] = React.useState(null);
+  const [isLoadingCheckReferral, setIsLoadingCheckReferral] = React.useState(
+    false,
+  );
   const orderSetting = useSelector(
     state => state.orderReducer?.orderingSetting?.orderingSetting?.settings,
   );
@@ -221,8 +234,8 @@ const RegisterForm = ({
       acceptPrivacyAndTerms: approvedData.privacyTerm,
     };
     payload = {...payload, ...newCustomKey};
-    if (registerPayload?.referralCode?.length > 0) {
-      payload.referralCode = registerPayload.referralCode;
+    if (referralCode.length > 0) {
+      payload.referralCode = referralCode;
     }
     setIsLoading(true);
     const response = await dispatch(createNewUser(payload));
@@ -304,6 +317,7 @@ const RegisterForm = ({
           inputLabel={'Mobile Phone'}
           isMandatory={checkLowerPriorityMandatory()}
           withoutFlag={true}
+          rootStyle={styles.noMb}
         />
       </View>
     );
@@ -427,6 +441,7 @@ const RegisterForm = ({
       gender,
       address,
       birthDate: birthDate,
+      referralCode,
     };
     const isHaveEmptyField =
       fieldValidation(requiredField, customField).length > 0;
@@ -499,6 +514,51 @@ const RegisterForm = ({
     );
   };
 
+  const changeTextReferralCode = text => {
+    setReferraCode(text);
+    setIsLoadingCheckReferral(true);
+    checkReferralCode(text);
+  };
+
+  const checkReferralCode = debounce(async code => {
+    const response = await dispatch(checkReferralCodeAction(code));
+    if (!response.status) {
+      setIsLoadingCheckReferral(false);
+      return setInvalidReferral(true);
+    }
+    setInvalidReferral(false);
+    setReferralFrom(response?.source);
+    setIsLoadingCheckReferral(false);
+  }, 500);
+
+  const renderReferralCode = () => (
+    <>
+      {findReferralCodeSetting()?.signUpField ? (
+        <View>
+          <GlobalInputText
+            placeholder="Enter your referral code"
+            label="Referral Code"
+            isMandatory={findReferralCodeSetting().mandatory}
+            value={referralCode}
+            onChangeText={changeTextReferralCode}
+            isError={
+              invalidReferral &&
+              referralCode.length > 0 &&
+              !isLoadingCheckReferral
+            }
+            errorMessage={'Invalid referral code'}
+            isSuccess={
+              !invalidReferral &&
+              !isLoadingCheckReferral &&
+              referralCode.length > 0
+            }
+            successMessage={`Referral code from ${referralFrom}`}
+          />
+        </View>
+      ) : null}
+    </>
+  );
+
   return (
     <SafeAreaView style={styles.root}>
       <LoadingScreen loading={isLoading || isInitField} />
@@ -519,6 +579,7 @@ const RegisterForm = ({
                 {renderTextHeader()}
                 {renderNameInput()}
                 {renderEmailOrPhoneInput()}
+                {renderReferralCode()}
                 {renderCustomField()}
                 <View style={styles.divider} />
                 {renderMessage()}

@@ -41,6 +41,7 @@ import useOrder from '../hooks/order/useOrder';
 import additionalSetting from '../config/additionalSettings';
 import ArrowUpSvg from '../assets/svg/ArrowUpSvg';
 import useCalculation from '../hooks/calculation/useCalculation';
+import useOrderingTypes from '../hooks/orderingTypes/useOrderingTypes';
 
 const useStyles = () => {
   const {colors, fontFamily} = Theme();
@@ -337,6 +338,13 @@ const useStyles = () => {
       marginHorizontal: 0,
       marginTop: 16,
     },
+    orderStatusTitle: {
+      width: '30%',
+    },
+    orderStatus: {
+      width: '70%',
+      alignItems: 'flex-end',
+    },
   });
   return {styles, colors};
 };
@@ -359,6 +367,7 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
   const toggleOrder = () => setShowAllOrder(prevState => !prevState);
   const togglePreOrder = () => setShowAllPreOrder(prevState => !prevState);
   const preorder_item = 'Preorder Items';
+  const {handleOrderingType, handleDisplayName} = useOrderingTypes();
   const ready_items = 'Ready Items';
   const downloadQrCode = async () => {
     permissionDownloadFile(data?.action?.url, `qrcode${data.id}`, 'image/png', {
@@ -366,6 +375,10 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
       description: 'Successfully saved image to your gallery.',
     });
   };
+
+  React.useEffect(() => {
+    handleOrderingType();
+  }, []);
 
   const renderItemDetails = ({item, index}) => {
     if (!showAllOrder && index > 0) return null;
@@ -543,7 +556,7 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
       <View style={[styles.boxMain, styles.shadowBox, styles.p12]}>
         <View style={styles.orderStatusContainer}>
           <GlobalText style={styles.deliveryText}>
-            {data?.orderingMode}{' '}
+            {handleDisplayName(data?.orderingMode)}{' '}
           </GlobalText>
         </View>
         <View style={[styles.listOrderDetailContainer]}>
@@ -671,12 +684,15 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
   );
 
   const handleVerified = () => {
-    if (!data?.isVerified) {
-      return '(UNVERIFIED)';
+    if (data?.orderingMode === store_checkout) {
+      if (!data?.isVerified) {
+        return '(UNVERIFIED)';
+      }
+      return '(VERIFIED)';
     }
-    return '(VERIFIED)';
+    return '';
   };
-  console.log({data}, 'nani');
+
   return (
     <Body>
       {data?.status === staustPending && !isTimeEnd ? (
@@ -736,13 +752,19 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
         <View style={styles.mainScrollContainer}>
           <View style={[styles.shadowBox, styles.boxMain, styles.p12]}>
             <View style={styles.orderStatusContainer}>
-              <GlobalText style={[styles.grayColor, styles.mediumFont]}>
-                Order Status
-              </GlobalText>
-              <GlobalText style={[styles.boldFont, styles.grayColor]}>
-                {handlePaymentStatus(data?.status)}{' '}
-                {additionalSetting().enableScanAndGo ? handleVerified() : null}
-              </GlobalText>
+              <View style={styles.orderStatusTitle}>
+                <GlobalText style={[styles.grayColor, styles.mediumFont]}>
+                  Order Status
+                </GlobalText>
+              </View>
+              <View style={styles.orderStatus}>
+                <GlobalText style={[styles.boldFont, styles.grayColor]}>
+                  {handlePaymentStatus(data?.status)}{' '}
+                  {additionalSetting().enableScanAndGo
+                    ? handleVerified()
+                    : null}
+                </GlobalText>
+              </View>
             </View>
             {data?.cancelationReason ? (
               <View style={styles.mlAuto}>

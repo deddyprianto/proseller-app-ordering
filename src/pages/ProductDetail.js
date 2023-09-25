@@ -45,6 +45,7 @@ import AllowSelfSelectionLabel from '../components/label/AllowSelfSelection';
 import LoadingScreen from '../components/loadingScreen/LoadingScreen';
 import useScanGo from '../hooks/validation/usScanGo';
 import ModalAction from '../components/modal/ModalAction';
+import additionalSetting from '../config/additionalSettings';
 
 const useStyles = () => {
   const theme = Theme();
@@ -559,6 +560,9 @@ const ProductDetail = ({
   };
 
   const handleDisabledCartButton = () => {
+    if (!additionalSetting().enableAddItemToCart) {
+      return true;
+    }
     if (!isEmptyArray(product?.productModifiers) && !isLoading && qty !== 0) {
       let qtyModifierSelected = 0;
       const productModifiers = product.productModifiers.map(productModifier => {

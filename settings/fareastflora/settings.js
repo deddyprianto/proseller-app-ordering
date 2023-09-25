@@ -29,6 +29,8 @@ const additionalSetting = () => {
   const cartVersion = 'advance';
   const registerVersion = 2;
   const enableScanAndGo = true;
+  const enableAddItemToCart = false;
+
   return {
     additionalPolicy,
     mapType,
@@ -39,6 +41,7 @@ const additionalSetting = () => {
     cartVersion,
     registerVersion,
     enableScanAndGo,
+    enableAddItemToCart,
   };
 };
 
