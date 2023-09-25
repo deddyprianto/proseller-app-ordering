@@ -25,6 +25,7 @@ import ThreeDotCircle from '../../assets/svg/ThreeDotCircle';
 import ModalDeliveryDetail from '../modal/ModalDeliveryDetail';
 import UsePointModal from '../modal/UsePointModal';
 import appConfig from '../../config/appConfig';
+import useOrderingTypes from '../../hooks/orderingTypes/useOrderingTypes';
 
 const useStyles = () => {
   const theme = Theme();
@@ -224,6 +225,7 @@ const CartDetail = ({
   const {checkTncPolicyData} = useSettings();
   const [buttonActive, setButtonActive] = React.useState(false);
   const [showDeliveryDetail, setShowDeliveryDetail] = React.useState(false);
+  const {handleOrderingType, handleDisplayName} = useOrderingTypes();
   const {calculatePoint} = useCalculation();
   const handleTextSelection = () => {
     if (data?.isSelfSelection) {
@@ -253,6 +255,10 @@ const CartDetail = ({
   };
 
   const toggleDelivery = () => setShowDeliveryDetail(prevState => !prevState);
+
+  React.useEffect(() => {
+    handleOrderingType();
+  }, []);
 
   const renderOrderDetail = () => {
     if (data?.cartDetails?.orderingMode.toLowerCase() === 'delivery') {
@@ -603,7 +609,7 @@ const CartDetail = ({
         <View style={styles.card}>
           <View style={[styles.row]}>
             <GlobalText style={[styles.boldFont, styles.deliveryText]}>
-              {data?.cartDetails?.orderingMode}{' '}
+              {handleDisplayName(data?.cartDetails?.orderingMode)}
             </GlobalText>
             {data?.cartDetails?.orderingMode === 'DELIVERY' ? (
               <TouchableOpacity onPress={toggleDelivery} style={styles.mlAuto}>

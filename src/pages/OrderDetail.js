@@ -41,6 +41,7 @@ import useOrder from '../hooks/order/useOrder';
 import additionalSetting from '../config/additionalSettings';
 import ArrowUpSvg from '../assets/svg/ArrowUpSvg';
 import useCalculation from '../hooks/calculation/useCalculation';
+import useOrderingTypes from '../hooks/orderingTypes/useOrderingTypes';
 
 const useStyles = () => {
   const {colors, fontFamily} = Theme();
@@ -366,6 +367,7 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
   const toggleOrder = () => setShowAllOrder(prevState => !prevState);
   const togglePreOrder = () => setShowAllPreOrder(prevState => !prevState);
   const preorder_item = 'Preorder Items';
+  const {handleOrderingType, handleDisplayName} = useOrderingTypes();
   const ready_items = 'Ready Items';
   const downloadQrCode = async () => {
     permissionDownloadFile(data?.action?.url, `qrcode${data.id}`, 'image/png', {
@@ -373,6 +375,10 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
       description: 'Successfully saved image to your gallery.',
     });
   };
+
+  React.useEffect(() => {
+    handleOrderingType();
+  }, []);
 
   const renderItemDetails = ({item, index}) => {
     if (!showAllOrder && index > 0) return null;
@@ -550,7 +556,7 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
       <View style={[styles.boxMain, styles.shadowBox, styles.p12]}>
         <View style={styles.orderStatusContainer}>
           <GlobalText style={styles.deliveryText}>
-            {data?.orderingMode}{' '}
+            {handleDisplayName(data?.orderingMode)}{' '}
           </GlobalText>
         </View>
         <View style={[styles.listOrderDetailContainer]}>
