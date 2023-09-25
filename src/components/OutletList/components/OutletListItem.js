@@ -12,7 +12,7 @@ import {useSelector} from 'react-redux';
 import Theme from '../../../theme';
 import appConfig from '../../../config/appConfig';
 import {getDistance} from 'geolib';
-import {isEmptyArray} from '../../../helper/CheckEmpty';
+import CheckOutletStatus from '../../../helper/CheckOutletStatus';
 
 const useStyles = () => {
   const theme = Theme();
@@ -142,9 +142,8 @@ const OutletListItem = ({item, handleChange}) => {
     state => state.userReducer?.userPosition?.userPosition,
   );
 
-  const isAvailable = item?.orderingStatus !== 'UNAVAILABLE';
-  const isOperationalHours = !isEmptyArray(item?.operationalHours);
-  const isOpen = isAvailable && isOperationalHours;
+  const isOpen = CheckOutletStatus(item) === 'OPEN';
+  const isUnavailable = CheckOutletStatus(item) === 'UNAVAILABLE';
 
   useEffect(() => {
     const userCoordinate = userPosition?.coords;
@@ -240,7 +239,9 @@ const OutletListItem = ({item, handleChange}) => {
   };
 
   const renderBody = () => {
-    const styleView = isOpen ? styles.containerOpen : styles.containerClose;
+    const styleView = isUnavailable
+      ? styles.containerClose
+      : styles.containerOpen;
     return (
       <View style={styleView}>
         {renderLeft()}
@@ -251,7 +252,7 @@ const OutletListItem = ({item, handleChange}) => {
 
   return (
     <TouchableOpacity
-      disabled={!isOpen}
+      disabled={isUnavailable}
       onPress={() => handleChange(item)}
       style={styles.root}>
       {renderBody()}
