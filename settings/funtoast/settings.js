@@ -10,6 +10,8 @@ const additionalSetting = () => {
   const cartVersion = 'basic';
   const registerVersion = 1;
   const enableScanAndGo = false;
+  const enableAddItemToCart = true;
+
   return {
     additionalPolicy,
     mapType,
@@ -20,6 +22,7 @@ const additionalSetting = () => {
     cartVersion,
     registerVersion,
     enableScanAndGo,
+    enableAddItemToCart,
   };
 };
 
