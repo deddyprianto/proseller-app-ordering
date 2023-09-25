@@ -533,7 +533,7 @@ const RegisterForm = ({
 
   const renderReferralCode = () => (
     <>
-      {findReferralCodeSetting()?.show ? (
+      {findReferralCodeSetting()?.signUpField ? (
         <View>
           <GlobalInputText
             placeholder="Enter your referral code"
