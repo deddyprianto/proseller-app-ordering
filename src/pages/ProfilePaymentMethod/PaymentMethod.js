@@ -1,6 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React from 'react';
-import {FlatList, SafeAreaView, StyleSheet, View} from 'react-native';
+import {
+  ActivityIndicator,
+  FlatList,
+  SafeAreaView,
+  StyleSheet,
+  View,
+} from 'react-native';
 import {Header} from '../../components/layout';
 import {useDispatch, useSelector} from 'react-redux';
 import {getAccountPayment} from '../../actions/payment.actions';
@@ -61,7 +67,7 @@ const ProfilePaymentMethod = () => {
   const paymentTypes = useSelector(
     state => state.userReducer.getCompanyInfo?.companyInfo?.paymentTypes,
   );
-  const {registerCardHook} = usePayment();
+  const {registerCardHook, isLoading: isLoadingAddCard} = usePayment();
 
   const getListCard = async refreshing => {
     if (!refreshing) {
@@ -127,9 +133,10 @@ const ProfilePaymentMethod = () => {
       <View style={styles.footer}>
         <GlobalButton
           onPress={gotoStripePage}
+          disabled={isLoadingAddCard}
           rightChildren={
             <View style={styles.mr8}>
-              <PlusSvg />
+              {isLoadingAddCard ? <ActivityIndicator /> : <PlusSvg />}
             </View>
           }
           buttonStyle={styles.buttonStyle}

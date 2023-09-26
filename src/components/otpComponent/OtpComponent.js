@@ -1,6 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React from 'react';
-import {Text, StyleSheet, TouchableOpacity, View} from 'react-native';
+import {
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  KeyboardAvoidingView,
+} from 'react-native';
 import Theme from '../../theme/Theme';
 import OTPField from '../fieldOTP/FieldOTP';
 import useCountdownV2 from '../../hooks/time/useCountdownV2';
@@ -65,6 +71,9 @@ const useStyles = () => {
     containerOtp: {
       display: 'flex',
       paddingHorizontal: 16,
+    },
+    containerOtpParent: {
+      marginTop: 64,
     },
   });
   return {styles};
@@ -193,15 +202,15 @@ const OtpComponent = props => {
   };
 
   return (
-    <KeyboardAwareScrollView>
+    <KeyboardAvoidingView>
       <View style={styles.containerOtp}>
         {renderTextHeader()}
         {renderTextVerify()}
         {renderOtpField()}
-        {renderResendOTP()}
+        <View style={styles.containerOtpParent}>{renderResendOTP()}</View>
         {renderButtonNext()}
       </View>
-    </KeyboardAwareScrollView>
+    </KeyboardAvoidingView>
   );
 };
 

@@ -33,6 +33,7 @@ import {fieldValidation} from '../helper/Validation';
 import useValidation from '../hooks/validation/useValidation';
 import {debounce} from 'lodash';
 import {checkReferralCodeAction} from '../actions/user.action';
+import useSettings from '../hooks/settings/useSettings';
 
 const useStyles = () => {
   const theme = Theme();
@@ -164,9 +165,11 @@ const RegisterForm = ({
   const [isLoadingCheckReferral, setIsLoadingCheckReferral] = React.useState(
     false,
   );
+  const {checkMinimumAge} = useSettings();
   const orderSetting = useSelector(
     state => state.orderReducer?.orderingSetting?.orderingSetting?.settings,
   );
+
   const [openGender, setOpenGender] = React.useState(false);
   const genderItems = [
     {
@@ -357,7 +360,11 @@ const RegisterForm = ({
               type="button"
               onPressBtn={toggleDatePicker}
               rightIcon={<CalendarSvg />}
-              value={moment(handleDate()).format('DD-MMM-YYYY')}
+              value={
+                birthDate
+                  ? moment(handleDate()).format('DD-MMM-YYYY')
+                  : 'Select birthdate'
+              }
             />
           );
         }
@@ -483,13 +490,26 @@ const RegisterForm = ({
     return new Date(moment().subtract(10, 'year'));
   };
 
+  const minimumDate = () => {
+    let years = 10;
+    const {settingValue} = checkMinimumAge();
+    if (settingValue) {
+      years = Number(settingValue);
+    }
+    const minDate = moment()
+      .subtract(years, 'years')
+      .format();
+
+    return new Date(minDate);
+  };
+
   const memoDatePicker = React.useMemo(
     () => (
       <DatePicker
         modal
         mode={'date'}
         androidVariant={'iosClone'}
-        maximumDate={getMaxDate()}
+        maximumDate={minimumDate()}
         open={isDatePickerVisible}
         date={handleDate()}
         onConfirm={handleConfirm}
@@ -579,8 +599,8 @@ const RegisterForm = ({
                 {renderTextHeader()}
                 {renderNameInput()}
                 {renderEmailOrPhoneInput()}
-                {renderReferralCode()}
                 {renderCustomField()}
+                {renderReferralCode()}
                 <View style={styles.divider} />
                 {renderMessage()}
                 {renderButtonNext()}

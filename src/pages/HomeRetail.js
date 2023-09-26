@@ -382,7 +382,7 @@ const HomeRetail = () => {
       <TouchableOpacity
         style={styles.viewMenuBarChild}
         onPress={() => {
-          Actions.rewards();
+          Actions.voucherV2();
         }}>
         <View style={styles.viewMenuBarChildImage}>
           <Image

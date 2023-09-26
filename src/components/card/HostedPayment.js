@@ -164,7 +164,7 @@ class HostedPayment extends Component {
           onPress={this.goBack}
           style={{
             position: 'absolute',
-            top: 30,
+            top: 60,
             right: 20,
             zIndex: 900,
             backgroundColor: colorConfig.store.disableButtonError,

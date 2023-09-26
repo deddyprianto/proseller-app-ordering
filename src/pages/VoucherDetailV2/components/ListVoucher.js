@@ -57,7 +57,7 @@ const useStyles = () => {
     pointContainer: {
       backgroundColor: 'white',
       minHeight: normalizeLayoutSizeWidth(22),
-      width: normalizeLayoutSizeWidth(76),
+      width: normalizeLayoutSizeWidth(78),
       borderRadius: 8,
       marginTop: 8,
       flexDirection: 'row',
@@ -101,7 +101,7 @@ const useStyles = () => {
   return {styles};
 };
 
-const ListVoucher = ({item, isRedeem, vouchers}) => {
+const ListVoucher = ({item, isRedeem, vouchers, isMyVoucher}) => {
   const {styles} = useStyles();
   const totalPoint = useSelector(
     state => state.rewardsReducer?.dataPoint?.totalPoint,
@@ -124,6 +124,7 @@ const ListVoucher = ({item, isRedeem, vouchers}) => {
   const onPress = () => {
     Actions.voucher({
       dataVoucher: item,
+      isMyVoucher,
     });
   };
 

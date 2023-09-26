@@ -18,6 +18,7 @@ import appConfig from '../config/appConfig';
 import {Actions} from 'react-native-router-flux';
 import moment from 'moment';
 import useBackHandler from '../hooks/backHandler/useBackHandler';
+import additionalSetting from '../config/additionalSettings';
 
 const useStyles = () => {
   const {fontFamily, fontSize, colors} = Theme();
@@ -104,9 +105,11 @@ const Membership = () => {
         <Text style={styles.textCurrentMembershipValue}>
           {myProgress?.currentGroup}
         </Text>
-        <Text style={styles.textCurrentMembershipExpired}>
-          Expires on {dateExpiry}
-        </Text>
+        {additionalSetting().showExpiryMembership ? (
+          <Text style={styles.textCurrentMembershipExpired}>
+            Expires on {dateExpiry}
+          </Text>
+        ) : null}
       </View>
     );
   };

@@ -29,7 +29,12 @@ const MyVoucher = () => {
   );
 
   const renderList = ({item, index}) => (
-    <ListVoucher vouchers={voucherList} item={item} key={index} />
+    <ListVoucher
+      isMyVoucher={true}
+      vouchers={voucherList}
+      item={item}
+      key={index}
+    />
   );
 
   const onRefresh = async useLoading => {

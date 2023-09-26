@@ -98,6 +98,12 @@ target 'Automaxima' do
   target 'fareastflora' do
     inherit! :complete
   end
+
+
+
+  target 'fareastfloranew-dev' do
+    inherit! :complete
+  end
   
 
 end
