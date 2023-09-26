@@ -32,7 +32,8 @@ const useStyles = () => {
       marginBottom: 12,
 
       paddingVertical: normalizeLayoutSizeHeight(1),
-      paddingHorizontal: 16,
+      paddingLeft: 16,
+      paddingRight: 9,
       borderColor: isError
         ? theme.colors.semanticColorError
         : theme.colors.border1,
