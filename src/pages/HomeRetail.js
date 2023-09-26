@@ -46,6 +46,7 @@ import {
 } from '../helper/Layout';
 import {dataStores} from '../actions/stores.action';
 import BannerFnB from '../components/bannerFnB';
+import additionalSetting from '../config/additionalSettings';
 
 const useStyles = () => {
   const theme = Theme();
@@ -340,6 +341,12 @@ const HomeRetail = () => {
   };
 
   const renderHeaderTitle = () => {
+    if (refresh) {
+      return null;
+    }
+    if (stores?.length <= 1 && !additionalSetting().enableOnly1Outlet) {
+      return null;
+    }
     return (
       <Pressable style={styles.viewHeaderTitle} onPress={onStorePress}>
         <Text numberOfLines={1} style={styles.textHeaderTitle}>

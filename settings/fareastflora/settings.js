@@ -31,6 +31,7 @@ const additionalSetting = () => {
   const enableScanAndGo = true;
   const enableAddItemToCart = false;
   const showExpiryMembership = false;
+  const enableOnly1Outlet = false;
 
   return {
     additionalPolicy,
@@ -44,6 +45,7 @@ const additionalSetting = () => {
     enableScanAndGo,
     enableAddItemToCart,
     showExpiryMembership,
+    enableOnly1Outlet,
   };
 };
 
