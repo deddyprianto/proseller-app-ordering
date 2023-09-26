@@ -5,7 +5,6 @@ import {
   StyleSheet,
   TouchableOpacity,
   Keyboard,
-  Platform,
 } from 'react-native';
 import Theme from '../../theme/Theme';
 import GlobalText from '../globalText';
@@ -14,18 +13,6 @@ import ErrorInput from '../../assets/svg/ErorInputSvg';
 import {normalizeLayoutSizeWidth} from '../../helper/Layout';
 
 const useStyles = () => {
-  const isAndroid = Platform.OS === 'android';
-
-  const handleHeightTextArea = numberOfLines => {
-    if (!numberOfLines && !isAndroid) {
-      return normalizeLayoutSizeWidth(48);
-    }
-    if (numberOfLines && numberOfLines > 0) {
-      return 'auto';
-    }
-    return normalizeLayoutSizeWidth(48);
-  };
-
   const theme = Theme();
   const styles = StyleSheet.create({
     inputParentContainer: {
@@ -61,7 +48,7 @@ const useStyles = () => {
       paddingTop: 0,
       height:
         numberOfLines && numberOfLines > 0
-          ? normalizeLayoutSizeWidth(120)
+          ? 'auto'
           : normalizeLayoutSizeWidth(48),
     }),
     buttonStyle: {
@@ -78,7 +65,7 @@ const useStyles = () => {
     },
     valueBtnText: editable => ({
       color: editable === false ? theme.colors.greyScale2 : 'black',
-      marginTop: 8,
+      marginTop: 6,
       fontFamily: theme.fontFamily.poppinsMedium,
     }),
     errorContainer: {
@@ -262,7 +249,7 @@ const GlobalInputText = React.forwardRef((props, ref) => {
         <TextInput
           ref={ref}
           style={styles.inputStyle(props.editable, props.numberOfLines)}
-          textAlignVertical="top"
+          textAlignVertical="center"
           selection={props.autoReset ? start : null}
           {...props}
         />
