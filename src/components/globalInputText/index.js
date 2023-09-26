@@ -65,7 +65,7 @@ const useStyles = () => {
     },
     valueBtnText: editable => ({
       color: editable === false ? theme.colors.greyScale2 : 'black',
-      marginTop: 6,
+      marginTop: 8,
       fontFamily: theme.fontFamily.poppinsMedium,
     }),
     errorContainer: {

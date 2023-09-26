@@ -363,7 +363,7 @@ const RegisterForm = ({
               value={
                 birthDate
                   ? moment(handleDate()).format('DD-MMM-YYYY')
-                  : 'Select Birthdate'
+                  : 'Select birthdate'
               }
             />
           );
