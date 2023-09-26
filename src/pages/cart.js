@@ -66,6 +66,7 @@ import CurrencyFormatter from '../helper/CurrencyFormatter';
 import ThreeDotCircle from '../assets/svg/ThreeDotCircle';
 import ModalOrderDetail from '../components/modal/ModalOrderDetail';
 import GrandTotalFloating from '../components/order/GrandTotalFloating';
+import CheckOutletStatus from '../helper/CheckOutletStatus';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -449,7 +450,7 @@ const Cart = props => {
     openOrderingModeOfflineModal,
     setOpenOrderingModeOfflineModal,
   ] = useState(false);
-  const {outletUnavailable} = useErrorMessage();
+  const {outletUnavailable, outletClosed} = useErrorMessage();
   const [deliveryAddress, setDeliveryAddress] = useState({});
   const [availableTimes, setAvailableTimes] = useState([]);
   const [availablePreorderDate, setAvailablePreorderDate] = useState(null);
@@ -857,7 +858,7 @@ const Cart = props => {
   };
 
   const onPressOkError = () => {
-    navigation.navigate('store');
+    navigation.navigate('outlets');
     toggleErrorModal('', '');
   };
 
@@ -877,7 +878,7 @@ const Cart = props => {
         return handleOpenOrderingModeOfflineModal();
       }
 
-      if (currentOutlet?.orderingStatus === 'UNAVAILABLE') {
+      if (CheckOutletStatus(currentOutlet) === 'UNAVAILABLE') {
         let {title, message} = outletUnavailable(currentOutlet);
         if (currentOutlet?.offlineMessage) {
           message = currentOutlet?.offlineMessage;
@@ -885,6 +886,12 @@ const Cart = props => {
         // setIsOffline(true);
         toggleErrorModal(title, message);
         // Alert.alert('The outlet is offline', message);
+        return;
+      }
+
+      if (CheckOutletStatus(currentOutlet) === 'CLOSED') {
+        let {title, message} = outletClosed(currentOutlet);
+        toggleErrorModal(title, message);
         return;
       }
 
@@ -1550,6 +1557,8 @@ const Cart = props => {
         onClose={() => toggleErrorModal('', '')}
         isOpen={isOffline}
         onOk={onPressOkError}
+        titleButtonOk="Change Outlet"
+        titleButtonClose="Cancel"
       />
       {/* <ModalOrderDetail open={seeDetail} closeModal={handleCloseDetail} /> */}
     </SafeAreaView>
