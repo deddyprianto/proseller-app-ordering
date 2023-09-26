@@ -477,7 +477,7 @@ const SearchProduct = ({category}) => {
   };
 
   const onSelectCategory = item => {
-    const newId = item?.categoryID.replace('category::', '');
+    const newId = item?.categoryID?.replace('category::', '');
     setSelectedCategory(item);
     getCategoryProduct(newId);
   };
