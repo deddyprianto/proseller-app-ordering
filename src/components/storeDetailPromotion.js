@@ -42,6 +42,7 @@ import appConfig from '../config/appConfig';
 import ModalOrder from './order/Modal';
 import * as _ from 'lodash';
 import CartIcon from './order/CartIcon';
+import {Body} from './layout';
 
 const ViewTypes = {
   FULL: 0,
@@ -1049,49 +1050,53 @@ class StoreDetailPromotion extends Component {
     const {intlData, item, outletSelectionMode} = this.props;
     return (
       <SafeAreaView style={styles.container}>
-        <ModalOrder
-          outlet={item || {}}
-          intlData={intlData}
-          isModalVisible={this.state.isModalVisible}
-          qtyItem={this.state.qtyItem}
-          remark={this.state.remark}
-          closeModal={this.closeModal}
-          backButtonClicked={this.backButtonClicked}
-          toggleModal={this.toggleModal}
-          addQty={this.addQty}
-          minQty={this.minQty}
-          changeRemarkText={this.changeRemarkText}
-          modalShow={this.modalShow}
-          calculateSubTotalModal={this.calculateSubTotalModal}
-          product={this.state.selectedProduct}
-          addItemToBasket={this.addItemToBasket}
-          loadingAddItem={this.state.loadingAddItem}
-          dataBasket={this.props.dataBasket}
-          updateSelectedCategory={this.updateSelectedCategory}
-          selectedCategoryModifier={this.state.selectedCategoryModifier}
-          loadModifierTime={this.state.loadModifierTime}
-        />
-        <View style={styles.headerNav}>
-          <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
-            <Icon
-              size={26}
-              name={
-                Platform.OS === 'ios' ? 'ios-arrow-back' : 'md-arrow-round-back'
-              }
-              style={styles.btnBackIcon}
-            />
-            <Text style={styles.btnBackText} numberOfLines={1}>
-              {this.props.dataPromotion.name.substr(0, 50)}{' '}
-            </Text>
-          </TouchableOpacity>
-          {/* <CartIcon
+        <Body>
+          <ModalOrder
+            outlet={item || {}}
+            intlData={intlData}
+            isModalVisible={this.state.isModalVisible}
+            qtyItem={this.state.qtyItem}
+            remark={this.state.remark}
+            closeModal={this.closeModal}
+            backButtonClicked={this.backButtonClicked}
+            toggleModal={this.toggleModal}
+            addQty={this.addQty}
+            minQty={this.minQty}
+            changeRemarkText={this.changeRemarkText}
+            modalShow={this.modalShow}
+            calculateSubTotalModal={this.calculateSubTotalModal}
+            product={this.state.selectedProduct}
+            addItemToBasket={this.addItemToBasket}
+            loadingAddItem={this.state.loadingAddItem}
+            dataBasket={this.props.dataBasket}
+            updateSelectedCategory={this.updateSelectedCategory}
+            selectedCategoryModifier={this.state.selectedCategoryModifier}
+            loadModifierTime={this.state.loadModifierTime}
+          />
+          <View style={styles.headerNav}>
+            <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
+              <Icon
+                size={26}
+                name={
+                  Platform.OS === 'ios'
+                    ? 'ios-arrow-back'
+                    : 'md-arrow-round-back'
+                }
+                style={styles.btnBackIcon}
+              />
+              <Text style={styles.btnBackText} numberOfLines={1}>
+                {this.props.dataPromotion.name.substr(0, 50)}{' '}
+              </Text>
+            </TouchableOpacity>
+            {/* <CartIcon
             outletID={this.state.item.id}
             dataBasket={this.props.dataBasket}
             refreshQuantityProducts={this.refreshQuantityProducts}
           /> */}
-        </View>
+          </View>
 
-        {this.renderMainList()}
+          {this.renderMainList()}
+        </Body>
       </SafeAreaView>
     );
   }

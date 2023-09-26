@@ -22,7 +22,7 @@ import {
 import {getUserProfile} from '../actions/user.action';
 import Loader from './loader';
 import {isEmptyArray} from '../helper/CheckEmpty';
-import {Header} from './layout';
+import {Body, Header} from './layout';
 import GlobalText from './globalText';
 import withHooksComponent from './HOC';
 import NoPointSvg from '../assets/svg/NoPointSvg';
@@ -213,153 +213,155 @@ class DetailPoint extends Component {
       <SafeAreaView>
         {this.state.loading && <Loader />}
         <Header title={'Point Details'} />
-        <ScrollView contentContainerStyle={styles.contentContainer}>
-          <View style={styles.container}>
-            <View style={styles.pointDetailContainer}>
-              <View style={styles.pointDetail(colors.primary)}>
-                <GlobalText style={styles.pointDetailText}>
-                  Your Points
-                </GlobalText>
-                <GlobalText style={styles.pointText}>
-                  {this.props.totalPoint} PTS
-                </GlobalText>
-              </View>
-            </View>
-            <View style={styles.earnPointContainer}>
-              <GlobalText style={styles.earnPointText}>
-                Earn {campignData?.points?.netSpendToPoint1} Points per{' '}
-                {`$${campignData?.points?.netSpendToPoint0}`} spent
-              </GlobalText>
-            </View>
-            {!isEmptyArray(history) && (
-              <View style={styles.ph16}>
-                <View style={styles.pointExpiredContainer(colors.greyScale4)}>
-                  <GlobalText style={styles.pointExpiredText(colors.primary)}>
-                    {history[0].pointBalance} points will expire on{' '}
-                    {format(new Date(history[0].expiryDate), 'dd MMM yyyy')}
+        <Body>
+          <ScrollView contentContainerStyle={styles.contentContainer}>
+            <View style={styles.container}>
+              <View style={styles.pointDetailContainer}>
+                <View style={styles.pointDetail(colors.primary)}>
+                  <GlobalText style={styles.pointDetailText}>
+                    Your Points
+                  </GlobalText>
+                  <GlobalText style={styles.pointText}>
+                    {this.props.totalPoint} PTS
                   </GlobalText>
                 </View>
               </View>
-            )}
-
-            <View style={[styles.ph16, styles.mv16]}>
-              <View style={styles.divider(colors.greyScale3)} />
-            </View>
-
-            <View style={[styles.mainPanel, styles.ph16]}>
-              <Text style={styles.title}>Points History</Text>
-              <View style={styles.panelTabContainer(colors.greyScale4)}>
-                <View style={styles.panelTab}>
-                  <TouchableOpacity
-                    onPress={this.filterReceivePoint}
-                    style={
-                      this.state.type === 'received'
-                        ? styles.active(colors.primary)
-                        : styles.inactiveFilter
-                    }>
-                    <Text
-                      style={styles.tabText(
-                        this.state.type === 'received',
-                        colors.greyScale2,
-                      )}>
-                      Points Received
-                    </Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    onPress={this.filterUsePoint}
-                    style={
-                      this.state.type === 'used'
-                        ? styles.active(colors.primary)
-                        : styles.inactiveFilter
-                    }>
-                    <Text
-                      style={styles.tabText(
-                        this.state.type === 'used',
-                        colors.greyScale2,
-                      )}>
-                      Points Used
-                    </Text>
-                  </TouchableOpacity>
+              <View style={styles.earnPointContainer}>
+                <GlobalText style={styles.earnPointText}>
+                  Earn {campignData?.points?.netSpendToPoint1} Points per{' '}
+                  {`$${campignData?.points?.netSpendToPoint0}`} spent
+                </GlobalText>
+              </View>
+              {!isEmptyArray(history) && (
+                <View style={styles.ph16}>
+                  <View style={styles.pointExpiredContainer(colors.greyScale4)}>
+                    <GlobalText style={styles.pointExpiredText(colors.primary)}>
+                      {history[0].pointBalance} points will expire on{' '}
+                      {format(new Date(history[0].expiryDate), 'dd MMM yyyy')}
+                    </GlobalText>
+                  </View>
                 </View>
+              )}
+
+              <View style={[styles.ph16, styles.mv16]}>
+                <View style={styles.divider(colors.greyScale3)} />
               </View>
 
-              {!isEmptyArray(customerActivity) ? (
-                customerActivity.map(item => (
-                  <View key={item.id} style={styles.customerActivityList}>
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                      }}>
-                      <Text style={styles.activityTitle}>
-                        {this.getLabelActivity(item.activityType)}
-                      </Text>
-                      <Text
-                        style={styles.activityRewardsPositive(
-                          this.state.type,
-                          colors.primary,
-                          colors.colorPointPlus,
-                        )}>
-                        {Number(item.amount) > 0 &&
+              <View style={[styles.mainPanel, styles.ph16]}>
+                <Text style={styles.title}>Points History</Text>
+                <View style={styles.panelTabContainer(colors.greyScale4)}>
+                  <View style={styles.panelTab}>
+                    <TouchableOpacity
+                      onPress={this.filterReceivePoint}
+                      style={
                         this.state.type === 'received'
-                          ? '+'
-                          : null}
-                        {Number(item.amount) > 0 && this.state.type === 'used'
-                          ? '-'
-                          : null}
-                        {Number(item.amount)}
+                          ? styles.active(colors.primary)
+                          : styles.inactiveFilter
+                      }>
+                      <Text
+                        style={styles.tabText(
+                          this.state.type === 'received',
+                          colors.greyScale2,
+                        )}>
+                        Points Received
                       </Text>
-                    </View>
-                    <Text style={styles.activityDate(colors.greyScale2)}>
-                      {this.handleLocalTimeZone(item.activityDate)}
-                    </Text>
-                  </View>
-                ))
-              ) : (
-                <View style={styles.noPointContainer}>
-                  <NoPointSvg />
-                  <View style={styles.noPointTitle}>
-                    <GlobalText style={styles.noPointTitleText}>
-                      No Points Yet
-                    </GlobalText>
-                  </View>
-                  <View>
-                    <GlobalText
-                      style={[
-                        styles.noPointDescText,
-                        {color: colors.greyScale5},
-                      ]}>
-                      Start ordering and begin your journey towards exciting
-                      rewards.
-                    </GlobalText>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={this.filterUsePoint}
+                      style={
+                        this.state.type === 'used'
+                          ? styles.active(colors.primary)
+                          : styles.inactiveFilter
+                      }>
+                      <Text
+                        style={styles.tabText(
+                          this.state.type === 'used',
+                          colors.greyScale2,
+                        )}>
+                        Points Used
+                      </Text>
+                    </TouchableOpacity>
                   </View>
                 </View>
-              )}
 
-              {dataLength > 0 && dataLength != actualLength && (
-                <TouchableOpacity
-                  onPress={this.loadMore}
-                  style={{
-                    borderColor: colorConfig.pageIndex.grayColor,
-                    borderWidth: 0.5,
-                    borderRadius: 5,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    padding: 10,
-                    marginVertical: 20,
-                  }}>
-                  <Text
+                {!isEmptyArray(customerActivity) ? (
+                  customerActivity.map(item => (
+                    <View key={item.id} style={styles.customerActivityList}>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          justifyContent: 'space-between',
+                        }}>
+                        <Text style={styles.activityTitle}>
+                          {this.getLabelActivity(item.activityType)}
+                        </Text>
+                        <Text
+                          style={styles.activityRewardsPositive(
+                            this.state.type,
+                            colors.primary,
+                            colors.colorPointPlus,
+                          )}>
+                          {Number(item.amount) > 0 &&
+                          this.state.type === 'received'
+                            ? '+'
+                            : null}
+                          {Number(item.amount) > 0 && this.state.type === 'used'
+                            ? '-'
+                            : null}
+                          {Number(item.amount)}
+                        </Text>
+                      </View>
+                      <Text style={styles.activityDate(colors.greyScale2)}>
+                        {this.handleLocalTimeZone(item.activityDate)}
+                      </Text>
+                    </View>
+                  ))
+                ) : (
+                  <View style={styles.noPointContainer}>
+                    <NoPointSvg />
+                    <View style={styles.noPointTitle}>
+                      <GlobalText style={styles.noPointTitleText}>
+                        No Points Yet
+                      </GlobalText>
+                    </View>
+                    <View>
+                      <GlobalText
+                        style={[
+                          styles.noPointDescText,
+                          {color: colors.greyScale5},
+                        ]}>
+                        Start ordering and begin your journey towards exciting
+                        rewards.
+                      </GlobalText>
+                    </View>
+                  </View>
+                )}
+
+                {dataLength > 0 && dataLength != actualLength && (
+                  <TouchableOpacity
+                    onPress={this.loadMore}
                     style={{
-                      color: colorConfig.pageIndex.grayColor,
-                      fontWeight: 'bold',
+                      borderColor: colorConfig.pageIndex.grayColor,
+                      borderWidth: 0.5,
+                      borderRadius: 5,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      padding: 10,
+                      marginVertical: 20,
                     }}>
-                    Load More
-                  </Text>
-                </TouchableOpacity>
-              )}
+                    <Text
+                      style={{
+                        color: colorConfig.pageIndex.grayColor,
+                        fontWeight: 'bold',
+                      }}>
+                      Load More
+                    </Text>
+                  </TouchableOpacity>
+                )}
+              </View>
             </View>
-          </View>
-        </ScrollView>
+          </ScrollView>
+        </Body>
       </SafeAreaView>
     );
   }
@@ -367,7 +369,7 @@ class DetailPoint extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'white',
+    // backgroundColor: 'white',
     width: '100%',
   },
   header: {
@@ -387,7 +389,7 @@ const styles = StyleSheet.create({
     borderColor: colorConfig.pageIndex.grayColor,
   },
   mainPanel: {
-    backgroundColor: 'white',
+    // backgroundColor: 'white',
   },
   panel: {
     marginVertical: 5,

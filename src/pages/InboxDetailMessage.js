@@ -9,7 +9,7 @@ import {
   useWindowDimensions,
 } from 'react-native';
 import React from 'react';
-import {Header} from '../components/layout';
+import {Body, Header} from '../components/layout';
 import moment from 'moment';
 import GlobalText from '../components/globalText';
 import Theme from '../theme/Theme';
@@ -158,55 +158,63 @@ const InboxDetailMessage = props => {
   return (
     <SafeAreaView style={styles.flex}>
       <Header title={'Inbox'} />
-      <ScrollView>
-        <View style={styles.scrollContainer}>
-          <View>
-            <GlobalText
-              style={[styles.dateText, {fontFamily: fontFamily.poppinsMedium}]}>
-              {moment(data.sendOn).format('DD MMMM YYYY')}
-            </GlobalText>
-          </View>
-          <View style={styles.titleContainer}>
-            <GlobalText
-              style={[styles.titleText, {fontFamily: fontFamily.poppinsBold}]}>
-              {data.title}
-            </GlobalText>
-          </View>
-          <View style={styles.messageContainer}>
-            <RenderHtml contentWidth={width} source={{html: data?.message}} />
-          </View>
-        </View>
-        {data?.rewards?.length > 0 ? (
-          <>
-            <View style={styles.lineContainer}>
-              <View style={[styles.line]} />
+      <Body>
+        <ScrollView>
+          <View style={styles.scrollContainer}>
+            <View>
+              <GlobalText
+                style={[
+                  styles.dateText,
+                  {fontFamily: fontFamily.poppinsMedium},
+                ]}>
+                {moment(data.sendOn).format('DD MMMM YYYY')}
+              </GlobalText>
             </View>
-            <View style={styles.rewardContainerParent}>
-              <View>
-                <GlobalText style={styles.titleText}>Rewards</GlobalText>
-                <GlobalText
-                  style={[
-                    styles.rewardDesc,
-                    {fontFamily: fontFamily.poppinsMedium},
-                  ]}>
-                  All the available rewards can be found on Point or Voucher
-                  page.{' '}
-                </GlobalText>
+            <View style={styles.titleContainer}>
+              <GlobalText
+                style={[
+                  styles.titleText,
+                  {fontFamily: fontFamily.poppinsBold},
+                ]}>
+                {data.title}
+              </GlobalText>
+            </View>
+            <View style={styles.messageContainer}>
+              <RenderHtml contentWidth={width} source={{html: data?.message}} />
+            </View>
+          </View>
+          {data?.rewards?.length > 0 ? (
+            <>
+              <View style={styles.lineContainer}>
+                <View style={[styles.line]} />
               </View>
-            </View>
+              <View style={styles.rewardContainerParent}>
+                <View>
+                  <GlobalText style={styles.titleText}>Rewards</GlobalText>
+                  <GlobalText
+                    style={[
+                      styles.rewardDesc,
+                      {fontFamily: fontFamily.poppinsMedium},
+                    ]}>
+                    All the available rewards can be found on Point or Voucher
+                    page.{' '}
+                  </GlobalText>
+                </View>
+              </View>
 
-            <View style={styles.listRewardContainer}>
-              <FlatList
-                keyExtractor={(item, index) => index.toString()}
-                data={data.rewards || []}
-                renderItem={renderReward}
-                nestedScrollEnabled
-                contentContainerStyle={styles.containerStyleFlatlist}
-              />
-            </View>
-          </>
-        ) : null}
-      </ScrollView>
+              <View style={styles.listRewardContainer}>
+                <FlatList
+                  keyExtractor={(item, index) => index.toString()}
+                  data={data.rewards || []}
+                  renderItem={renderReward}
+                  nestedScrollEnabled
+                  contentContainerStyle={styles.containerStyleFlatlist}
+                />
+              </View>
+            </>
+          ) : null}
+        </ScrollView>
+      </Body>
     </SafeAreaView>
   );
 };
