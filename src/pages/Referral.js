@@ -12,7 +12,7 @@ import {
   BackHandler,
 } from 'react-native';
 
-import {Header} from '../components/layout';
+import {Body, Header} from '../components/layout';
 
 import Theme from '../theme';
 import ReferralInvitedList from '../components/referralInvitedList';
@@ -207,27 +207,29 @@ const Referral = () => {
     <SafeAreaView style={styles.root}>
       <LoadingScreen loading={isLoading} />
       <Header title="Referral" />
-      <ScrollView
-        ref={ref}
-        onScroll={e => {
-          handleShowFloatingButton(e.nativeEvent.contentOffset.y);
-          if (handleCloseToBottom(e.nativeEvent)) {
-            setInvitedListLimitLength(invitedListLimitLength + 10);
-          }
-        }}
-        contentContainerStyle={styles.containerTyle}
-        scrollEventThrottle={0}>
-        {renderHeader()}
-        {renderReferralBenefitList()}
-        {renderDivider()}
-        {renderHowItWorks()}
-        {renderDivider()}
-        {renderReferralCodeShare()}
-        {renderDivider()}
-        {renderInvitedList()}
-      </ScrollView>
+      <Body>
+        <ScrollView
+          ref={ref}
+          onScroll={e => {
+            handleShowFloatingButton(e.nativeEvent.contentOffset.y);
+            if (handleCloseToBottom(e.nativeEvent)) {
+              setInvitedListLimitLength(invitedListLimitLength + 10);
+            }
+          }}
+          contentContainerStyle={styles.containerTyle}
+          scrollEventThrottle={0}>
+          {renderHeader()}
+          {renderReferralBenefitList()}
+          {renderDivider()}
+          {renderHowItWorks()}
+          {renderDivider()}
+          {renderReferralCodeShare()}
+          {renderDivider()}
+          {renderInvitedList()}
+        </ScrollView>
 
-      {renderFloatingButtonToTop()}
+        {renderFloatingButtonToTop()}
+      </Body>
     </SafeAreaView>
   );
 };
