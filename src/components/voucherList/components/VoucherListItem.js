@@ -100,7 +100,7 @@ const VoucherListItem = ({voucher, qty, pointToRedeem}) => {
         <Image
           style={styles.imageBackground}
           imageStyle={styles.image}
-          resizeMode="stretch"
+          resizeMode="cover"
           source={image}
         />
       </View>

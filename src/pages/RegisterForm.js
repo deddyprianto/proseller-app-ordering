@@ -357,7 +357,11 @@ const RegisterForm = ({
               type="button"
               onPressBtn={toggleDatePicker}
               rightIcon={<CalendarSvg />}
-              value={moment(handleDate()).format('DD-MMM-YYYY')}
+              value={
+                birthDate
+                  ? moment(handleDate()).format('DD-MMM-YYYY')
+                  : 'Select Birthdate'
+              }
             />
           );
         }
@@ -579,8 +583,8 @@ const RegisterForm = ({
                 {renderTextHeader()}
                 {renderNameInput()}
                 {renderEmailOrPhoneInput()}
-                {renderReferralCode()}
                 {renderCustomField()}
+                {renderReferralCode()}
                 <View style={styles.divider} />
                 {renderMessage()}
                 {renderButtonNext()}

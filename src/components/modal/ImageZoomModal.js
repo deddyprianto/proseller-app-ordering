@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Dimensions,
   Modal,
+  SafeAreaView,
 } from 'react-native';
 
 import Swiper from 'react-native-swiper';
@@ -175,10 +176,10 @@ const ImageZoomModal = ({
       onRequestClose={() => {
         handleClose();
       }}>
-      <View style={styles.root}>
+      <SafeAreaView style={styles.root}>
         {renderHeader()}
         {renderBody()}
-      </View>
+      </SafeAreaView>
     </Modal>
   );
 };

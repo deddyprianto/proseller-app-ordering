@@ -25,7 +25,10 @@ import CryptoJS from 'react-native-crypto-js';
 
 import {logoutUser} from '../actions/auth.actions';
 import LoadingScreen from '../components/loadingScreen';
-import {myProgressBarCampaign} from '../actions/account.action';
+import {
+  getMandatoryFields,
+  myProgressBarCampaign,
+} from '../actions/account.action';
 import Theme from '../theme';
 import ConfirmationDialog from '../components/confirmationDialog';
 import MyECardModal from '../components/modal/MyECardModal';
@@ -560,11 +563,15 @@ const Profile = props => {
 
   const renderExpiry = () => {
     const dateExpiry = moment(user.expiryCustomerGroup).format('DD MMMM YYYY');
-    return (
-      <Text style={styles.textExpiry}>Membership expires on {dateExpiry}</Text>
-    );
+    if (additionalSetting().showExpiryMembership) {
+      return (
+        <Text style={styles.textExpiry}>
+          Membership expires on {dateExpiry}
+        </Text>
+      );
+    }
+    return null;
   };
-
   const renderTierPaidMembership = () => {
     return (
       <Text style={styles.textCurrentTierPaidMembership}>

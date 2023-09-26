@@ -54,8 +54,8 @@ const VoucherDetailV2 = () => {
   const {styles} = useStyles();
   useBackHandler();
   const [routes] = React.useState([
-    {key: 'second', title: 'Redeem Voucher', children: RedeemRoute},
     {key: 'first', title: 'My Voucher', children: MyVoucherRoute},
+    {key: 'second', title: 'Redeem Voucher', children: RedeemRoute},
   ]);
 
   const totalPoint = useSelector(

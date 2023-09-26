@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, View, Image} from 'react-native';
+import {StyleSheet, View, Image, TouchableOpacity} from 'react-native';
 import Logo from '../../../assets/img/logo.png';
 import BackButton from '../../../assets/svg/BackButton';
 import {
@@ -30,7 +30,8 @@ const useStyles = () => {
     },
     backButtonContainer: {
       position: 'absolute',
-      left: 16,
+      left: 0,
+      padding: 16,
     },
     lofoContainer: isCenter => ({
       marginLeft: isCenter ? 0 : 'auto',
@@ -54,9 +55,9 @@ const HeaderV2 = ({onBackBtn, isCenterLogo}) => {
 
   return (
     <View style={styles.haderContainer}>
-      <View style={styles.backButtonContainer}>
-        <BackButton onPress={onBack} />
-      </View>
+      <TouchableOpacity onPress={onBack} style={styles.backButtonContainer}>
+        <BackButton />
+      </TouchableOpacity>
       <View style={styles.lofoContainer(isCenterLogo)}>
         <Image resizeMode="contain" style={styles.logoStyle} source={Logo} />
       </View>

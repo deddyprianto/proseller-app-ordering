@@ -18,7 +18,6 @@ const usePayment = () => {
           paymentID,
         };
         const response = await dispatch(registerCard(payload));
-        setIsLoading(false);
         if (response.success === true) {
           Actions.hostedPayment({
             url: response.response.data.url,
@@ -26,8 +25,10 @@ const usePayment = () => {
             page,
             from: item?.from,
           });
+          setIsLoading(false);
         } else {
           Alert.alert('Sorry', 'Cant add credit card, please try again');
+          setIsLoading(false);
         }
       } catch (e) {
         setIsLoading(false);

@@ -140,7 +140,7 @@ const useStyles = () => {
 
 const VoucherDetail = props => {
   const styles = useStyles();
-  const {navigation} = props;
+  const {navigation, isMyVoucher} = props;
   const {params} = navigation.state;
   const voucher = params?.dataVoucher;
   const dispatch = useDispatch();
@@ -303,9 +303,14 @@ const VoucherDetail = props => {
             <View style={styles.container}>
               <View style={{marginTop: '5%'}} />
               <VoucherItem voucher={voucher} />
-              <View style={{marginTop: '2%'}} />
-              {renderInfoPoint()}
-              <View style={{marginTop: '5%'}} />
+              {isMyVoucher ? null : (
+                <>
+                  <View style={{marginTop: '2%'}} />
+                  {renderInfoPoint()}
+                  <View style={{marginTop: '5%'}} />
+                </>
+              )}
+
               {renderValidity()}
               <View style={{marginTop: '5%'}} />
               {renderDescription()}
@@ -313,7 +318,9 @@ const VoucherDetail = props => {
               {renderBlockedPoint()}
             </View>
           </ScrollView>
-          <View style={styles.footer}>{renderRedeemButton()}</View>
+          {isMyVoucher ? null : (
+            <View style={styles.footer}>{renderRedeemButton()}</View>
+          )}
         </Body>
       </View>
       {renderConfirmationDialog()}

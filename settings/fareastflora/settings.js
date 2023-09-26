@@ -30,6 +30,7 @@ const additionalSetting = () => {
   const registerVersion = 2;
   const enableScanAndGo = true;
   const enableAddItemToCart = false;
+  const showExpiryMembership = false;
 
   return {
     additionalPolicy,
@@ -42,6 +43,7 @@ const additionalSetting = () => {
     registerVersion,
     enableScanAndGo,
     enableAddItemToCart,
+    showExpiryMembership,
   };
 };
 

@@ -66,6 +66,7 @@ const useStyles = () => {
     valueBtnText: editable => ({
       color: editable === false ? theme.colors.greyScale2 : 'black',
       marginTop: 6,
+      fontFamily: theme.fontFamily.poppinsMedium,
     }),
     errorContainer: {
       paddingHorizontal: 16,
