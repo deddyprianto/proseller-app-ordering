@@ -22,7 +22,7 @@ const useStyles = () => {
     root: {
       overflow: 'hidden',
       paddingBottom: 2,
-      zIndex: 1000,
+      zIndex: 2000,
     },
     container: {
       shadowOffset: {
@@ -191,6 +191,7 @@ const Header = ({
     if (onBackBtn && typeof onBackBtn === 'function') {
       return onBackBtn();
     }
+    console.log('masuk');
     Actions.pop();
   };
 

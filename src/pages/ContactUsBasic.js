@@ -5,8 +5,9 @@ import {
   KeyboardAvoidingView,
   View,
   BackHandler,
+  SafeAreaView,
+  Platform,
 } from 'react-native';
-import {SafeAreaView} from 'react-navigation';
 import {Header} from '../components/layout';
 import Theme from '../theme/Theme';
 import GlobalInputText from '../components/globalInputText';
@@ -104,7 +105,6 @@ const ContactUsBasic = () => {
     const emptyValue = fieldValidation(mandatoryField, payload);
     return emptyValue.length > 0;
   };
-
   const onChangeField = (key, value) => {
     setPayload({...payload, [key]: value});
   };
@@ -187,7 +187,7 @@ const ContactUsBasic = () => {
             isMandatory
             label="Message"
             placeholder="Write your message here."
-            multiline
+            multiline={true}
             numberOfLines={10}
             textAlignVertical="top"
             onChangeText={val => onChangeField('message', val)}
