@@ -14,6 +14,7 @@ const additionalSetting = () => {
   const showExpiryMembership = true;
   const hideLabelForSingleOutlet = true;
   const textRedeemVoucher = 'Reedemable Vouchers';
+  const isUsingValidityDays = true;
   return {
     additionalPolicy,
     mapType,
@@ -28,6 +29,7 @@ const additionalSetting = () => {
     showExpiryMembership,
     hideLabelForSingleOutlet,
     textRedeemVoucher,
+    isUsingValidityDays,
   };
 };
 

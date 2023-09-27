@@ -33,6 +33,7 @@ const additionalSetting = () => {
   const showExpiryMembership = false;
   const hideLabelForSingleOutlet = false;
   const textRedeemVoucher = 'Available Vouchers';
+  const isUsingValidityDays = false;
 
   return {
     additionalPolicy,
@@ -48,6 +49,7 @@ const additionalSetting = () => {
     showExpiryMembership,
     hideLabelForSingleOutlet,
     textRedeemVoucher,
+    isUsingValidityDays,
   };
 };
 

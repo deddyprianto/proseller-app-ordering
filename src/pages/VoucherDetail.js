@@ -22,6 +22,7 @@ import {showSnackbar} from '../actions/setting.action';
 import {Body} from '../components/layout';
 import Theme from '../theme/Theme';
 import useTime from '../hooks/time/useTime';
+import additionalSetting from '../config/additionalSettings';
 
 const useStyles = () => {
   const theme = Theme();
@@ -196,8 +197,14 @@ const VoucherDetail = props => {
 
     return (
       <View>
-        <Text style={styles.textValidity}>Validity</Text>
-        <Text style={styles.textValidityValue}>{text}</Text>
+        <Text style={styles.textValidity}>
+          {additionalSetting().isUsingValidityDays ? 'Validity' : 'Expire on'}{' '}
+        </Text>
+        <Text style={styles.textValidityValue}>
+          {!additionalSetting().isUsingValidityDays && isMyVoucher
+            ? moment(voucher?.expiryDate).format('DD MMMM YYYY')
+            : text}
+        </Text>
       </View>
     );
   };
