@@ -189,7 +189,7 @@ const Redeem = () => {
   const renderPoint = () => {
     return (
       <View style={styles.viewPoint}>
-        <Text style={styles.textYourPoint}>Your Points</Text>
+        <Text style={styles.textYourPoint}>My Points</Text>
         <Text style={styles.textPointValue}>{totalPoint} PTS</Text>
       </View>
     );

@@ -377,7 +377,7 @@ const HomeRetail = () => {
         <View style={styles.viewMenuBarChildImage}>
           <Image source={appConfig.iconPoint} style={styles.iconMenuBarChild} />
         </View>
-        <Text style={styles.textMenuBarChildTitle}>Your Points</Text>
+        <Text style={styles.textMenuBarChildTitle}>My Points</Text>
         <Text style={styles.textMenuBarChildValue}>{point} PTS</Text>
       </TouchableOpacity>
     );
@@ -397,7 +397,7 @@ const HomeRetail = () => {
             style={styles.iconMenuBarChild}
           />
         </View>
-        <Text style={styles.textMenuBarChildTitle}>Your Voucher</Text>
+        <Text style={styles.textMenuBarChildTitle}>My Vouchers</Text>
         <Text style={styles.textMenuBarChildValue}>{vouchersLength}</Text>
       </TouchableOpacity>
     );

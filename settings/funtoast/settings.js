@@ -13,6 +13,7 @@ const additionalSetting = () => {
   const enableAddItemToCart = true;
   const showExpiryMembership = true;
   const hideLabelForSingleOutlet = true;
+  const textRedeemVoucher = 'Reedemable Vouchers';
 
   return {
     additionalPolicy,
@@ -27,6 +28,7 @@ const additionalSetting = () => {
     enableAddItemToCart,
     showExpiryMembership,
     hideLabelForSingleOutlet,
+    textRedeemVoucher,
   };
 };
 

@@ -32,6 +32,7 @@ const additionalSetting = () => {
   const enableAddItemToCart = false;
   const showExpiryMembership = false;
   const hideLabelForSingleOutlet = false;
+  const textRedeemVoucher = 'Available Vouchers';
 
   return {
     additionalPolicy,
@@ -46,6 +47,7 @@ const additionalSetting = () => {
     enableAddItemToCart,
     showExpiryMembership,
     hideLabelForSingleOutlet,
+    textRedeemVoucher,
   };
 };
 
