@@ -55,9 +55,11 @@ export const downloadFile = (url, name, mimeType, message) => {
     .then(res => {
       if (Platform.OS === 'ios') {
         CameraRoll.saveToCameraRoll(url);
+      } else {
+        alertMessage(message, res.path(), mimeType);
       }
-      CameraRoll.saveToCameraRoll(res.path()).then(() =>
-        alertMessage(message, res.path(), mimeType),
-      );
+      // CameraRoll.saveToCameraRoll(res.path()).then(() =>
+      //   alertMessage(message, res.path(), mimeType),
+      // );
     });
 };
