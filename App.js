@@ -27,7 +27,6 @@ if (additionalSetting().enableSentry) {
     debug: __DEV__,
   });
 }
-console.log({data: config.environment}, 'lusuk');
 const persistStore = persist();
 
 export default class App extends Component {
