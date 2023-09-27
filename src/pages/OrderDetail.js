@@ -393,7 +393,6 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
       <ProductCartItemCart2 containerStyle={styles.containerItem} item={item} />
     );
   };
-
   React.useEffect(() => {
     if (data) {
       groupingeOrder(data?.details || []);
@@ -578,23 +577,28 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
             </View>
           </View>
         </View>
-        <View style={styles.dashStyle} />
-        <View style={styles.listOrderDetailContainer}>
-          <View style={[styles.orderStatusContainer, styles.columnCard]}>
-            <View style={styles.paymentDetailsCard}>
-              <CalendarBold />
-              <GlobalText
-                style={[styles.paymentDetailCardText, styles.boldFont]}>
-                Date & Time
-              </GlobalText>
+        {data?.orderActionDate || data?.orderActionTimeSlot ? (
+          <>
+            <View style={styles.dashStyle} />
+            <View style={styles.listOrderDetailContainer}>
+              <View style={[styles.orderStatusContainer, styles.columnCard]}>
+                <View style={styles.paymentDetailsCard}>
+                  <CalendarBold />
+                  <GlobalText
+                    style={[styles.paymentDetailCardText, styles.boldFont]}>
+                    Date & Time
+                  </GlobalText>
+                </View>
+                <View style={styles.columnText}>
+                  <GlobalText>
+                    {data?.orderActionDate} {data?.orderActionTimeSlot}
+                  </GlobalText>
+                </View>
+              </View>
             </View>
-            <View style={styles.columnText}>
-              <GlobalText>
-                {data?.orderActionDate} {data?.orderActionTimeSlot}
-              </GlobalText>
-            </View>
-          </View>
-        </View>
+          </>
+        ) : null}
+
         {data.remark ? (
           <>
             <View style={styles.dashStyle} />
