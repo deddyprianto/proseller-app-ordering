@@ -48,6 +48,8 @@ const ENV = {
   netsclick_api_key: 'f2e7b0fe-4c2e-4f82-9988-e8f3dffe49db',
 
   netsclick_secret_key: '4bb2d25f-0f0e-4049-995e-e54a05503c65',
+
+  environment: 'demo',
 };
 
 export default ENV;

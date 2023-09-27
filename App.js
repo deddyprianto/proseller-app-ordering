@@ -21,11 +21,13 @@ if (additionalSetting().enableSentry) {
   Sentry.init({
     dsn: `${config.DSN}`,
     tracesSampleRate: 1.0,
-    environment: __DEV__ ? 'local' : 'production',
+    environment: __DEV__
+      ? `local_${config.environment}`
+      : `${config.environment}`,
     debug: __DEV__,
   });
 }
-
+console.log({data: config.environment}, 'lusuk');
 const persistStore = persist();
 
 export default class App extends Component {

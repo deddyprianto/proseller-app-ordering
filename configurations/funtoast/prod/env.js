@@ -54,6 +54,7 @@ const ENV = {
   netsclick_api_key: '',
 
   netsclick_secret_key: '',
+  environment: 'production',
 };
 
 export default ENV;
