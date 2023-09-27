@@ -288,7 +288,7 @@ export default class Routes extends Component {
             />
             <Scene key="listLanguages" component={ListLanguages} />
             <Scene key="pay" component={Pay} />
-            <Scene key="rewards" component={Rewards} />
+            <Scene key="rewards" component={VoucherDetailV2} />
             <Scene key="qrcode" component={RewardsQRmenu} />
             <Scene
               key="scan"
