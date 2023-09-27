@@ -159,7 +159,7 @@ export const getReferralInfo = () => {
       } = state;
 
       const response = await fetchApi(
-        `/referral-info`,
+        '/referral-info',
         'GET',
         null,
         200,
