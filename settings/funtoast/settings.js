@@ -12,6 +12,7 @@ const additionalSetting = () => {
   const enableScanAndGo = false;
   const enableAddItemToCart = true;
   const showExpiryMembership = true;
+  const hideLabelForSingleOutlet = true;
 
   return {
     additionalPolicy,
@@ -25,6 +26,7 @@ const additionalSetting = () => {
     enableScanAndGo,
     enableAddItemToCart,
     showExpiryMembership,
+    hideLabelForSingleOutlet,
   };
 };
 

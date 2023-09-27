@@ -57,12 +57,16 @@ const useStyles = () => {
     pointContainer: {
       backgroundColor: 'white',
       minHeight: normalizeLayoutSizeWidth(22),
-      width: normalizeLayoutSizeWidth(78),
+      minWidth: normalizeLayoutSizeWidth(78),
       borderRadius: 8,
       marginTop: 8,
       flexDirection: 'row',
+      position: 'absolute',
       alignItems: 'center',
       justifyContent: 'center',
+      paddingHorizontal: 8,
+      bottom: 12,
+      left: 12,
     },
     pointText: {
       fontSize: 12,
@@ -171,7 +175,9 @@ const ListVoucher = ({item, isRedeem, vouchers, isMyVoucher}) => {
       </ImageBackground>
 
       <View style={styles.content(handleDisableButton())}>
-        <GlobalText style={[styles.boldFont, styles.whiteText]}>
+        <GlobalText
+          numberOfLines={1}
+          style={[styles.boldFont, styles.whiteText]}>
           {item?.name}
         </GlobalText>
         {isRedeem ? (
