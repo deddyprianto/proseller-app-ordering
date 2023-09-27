@@ -29,12 +29,12 @@ const additionalSetting = () => {
   const cartVersion = 'advance';
   const registerVersion = 2;
   const enableScanAndGo = true;
-  const enableAddItemToCart = false;
+  const enableAddItemToCart = true;
   const showExpiryMembership = false;
   const hideLabelForSingleOutlet = false;
   const textRedeemVoucher = 'Available Vouchers';
   const isUsingValidityDays = false;
-
+  const enableUpcaScanner = false;
   return {
     additionalPolicy,
     mapType,
@@ -50,6 +50,7 @@ const additionalSetting = () => {
     hideLabelForSingleOutlet,
     textRedeemVoucher,
     isUsingValidityDays,
+    enableUpcaScanner,
   };
 };
 

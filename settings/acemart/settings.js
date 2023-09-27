@@ -15,6 +15,8 @@ const additionalSetting = () => {
   const hideLabelForSingleOutlet = true;
   const textRedeemVoucher = 'Reedemable Vouchers';
   const isUsingValidityDays = true;
+  const enableUpcaScanner = false;
+
   return {
     additionalPolicy,
     mapType,
@@ -30,6 +32,7 @@ const additionalSetting = () => {
     hideLabelForSingleOutlet,
     textRedeemVoucher,
     isUsingValidityDays,
+    enableUpcaScanner,
   };
 };
 

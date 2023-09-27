@@ -579,7 +579,6 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
         </View>
         {data?.orderActionDate || data?.orderActionTimeSlot ? (
           <>
-            {' '}
             <View style={styles.dashStyle} />
             <View style={styles.listOrderDetailContainer}>
               <View style={[styles.orderStatusContainer, styles.columnCard]}>
