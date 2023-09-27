@@ -23,7 +23,6 @@ class HistoryMenuTab extends Component {
 
   render() {
     const {intlData, dataBasket} = this.props;
-
     return (
       <>
         {/*Tabs*/}
