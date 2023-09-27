@@ -91,6 +91,9 @@ const useStyles = () => {
     row: {
       flexDirection: 'row',
     },
+    mt8: {
+      marginTop: 8,
+    },
   });
   return styles;
 };
@@ -223,6 +226,26 @@ const ProductCartList = ({
     return null;
   };
 
+  const renderMoreText = (title, isPreOrder, showOrder, customStyle) => {
+    return (
+      <>
+        {step && step > 1 ? (
+          <View style={[styles.itemContainer, customStyle]}>
+            <View>
+              <GlobalText style={styles.itemText}>
+                Items{' '}
+                <GlobalText style={styles.itemTextAmount}>
+                  {`(${handleAmountItems(title)})`}{' '}
+                </GlobalText>{' '}
+              </GlobalText>
+            </View>
+            {renderMoreItemText(isPreOrder, showOrder)}
+          </View>
+        ) : null}
+      </>
+    );
+  };
+
   const renderHeader = (title, containerStyle, isPreOrder, showOrder) => (
     <>
       <View style={styles.centerComponent}>
@@ -236,19 +259,7 @@ const ProductCartList = ({
           </GlobalText>
         ) : null}
       </View>
-      {step && step > 1 ? (
-        <View style={styles.itemContainer}>
-          <View>
-            <GlobalText style={styles.itemText}>
-              Items{' '}
-              <GlobalText style={styles.itemTextAmount}>
-                {`(${handleAmountItems(title)})`}{' '}
-              </GlobalText>{' '}
-            </GlobalText>
-          </View>
-          {renderMoreItemText(isPreOrder, showOrder)}
-        </View>
-      ) : null}
+      {renderMoreText(title, isPreOrder, showOrder)}
     </>
   );
 
@@ -258,7 +269,7 @@ const ProductCartList = ({
         <>{renderHeader(ready_items, styles.readyTitle, false, showAllOrder)}</>
       );
     }
-    return null;
+    return <>{renderMoreText(ready_items, false, showAllOrder, styles.mt8)}</>;
   };
 
   return (
