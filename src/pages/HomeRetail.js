@@ -344,7 +344,7 @@ const HomeRetail = () => {
     if (refresh) {
       return null;
     }
-    if (stores?.length <= 1 && !additionalSetting().enableOnly1Outlet) {
+    if (stores?.length <= 1 && !additionalSetting().hideLabelForSingleOutlet) {
       return null;
     }
     return (

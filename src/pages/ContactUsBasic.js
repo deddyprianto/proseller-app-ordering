@@ -22,6 +22,7 @@ import ErrorIcon from '../assets/svg/ErrorIcon';
 import LoadingScreen from '../components/loadingScreen/LoadingScreen';
 import {Actions} from 'react-native-router-flux';
 import useBackHandler from '../hooks/backHandler/useBackHandler';
+import {normalizeLayoutSizeWidth} from '../helper/Layout';
 
 const useStyles = () => {
   const {colors, fontFamily} = Theme();
@@ -82,6 +83,13 @@ const useStyles = () => {
       height: 56,
       justifyContent: 'center',
     },
+    iosTextArea: {
+      height: normalizeLayoutSizeWidth(180),
+      width: '100%',
+    },
+    androidTextArea: {
+      width: '100%',
+    },
   });
   return {styles, colors};
 };
@@ -101,6 +109,7 @@ const ContactUsBasic = () => {
   const [showMessage, setShowMessage] = React.useState(false);
   const [type, setType] = React.useState(null);
   const [isLoading, setIsloading] = React.useState(false);
+  const isIos = Platform.OS === 'ios';
   const disableButton = () => {
     const emptyValue = fieldValidation(mandatoryField, payload);
     return emptyValue.length > 0;
@@ -128,6 +137,41 @@ const ContactUsBasic = () => {
   const handleBackButton = () => {
     Actions.pop();
     return true;
+  };
+
+  const renderMessageField = () => {
+    if (!isIos) {
+      return (
+        <GlobalInputText
+          isMandatory
+          label="Message"
+          placeholder="Write your message here."
+          multiline={true}
+          numberOfLines={10}
+          textAlignVertical="top"
+          onChangeText={val => onChangeField('message', val)}
+          showNumberLengthText
+          value={payload.message || ''}
+          maxLength={2000}
+          customInputStyle={styles.androidTextArea}
+        />
+      );
+    }
+    return (
+      <GlobalInputText
+        isMandatory
+        label="Message"
+        placeholder="Write your message here."
+        multiline={true}
+        numberOfLines={10}
+        textAlignVertical="top"
+        onChangeText={val => onChangeField('message', val)}
+        showNumberLengthText
+        value={payload.message || ''}
+        maxLength={2000}
+        customInputStyle={styles.iosTextArea}
+      />
+    );
   };
 
   React.useEffect(() => {
@@ -183,18 +227,7 @@ const ContactUsBasic = () => {
             placeholder="Tell us the subject of your message."
             onChangeText={val => onChangeField('subject', val)}
           />
-          <GlobalInputText
-            isMandatory
-            label="Message"
-            placeholder="Write your message here."
-            multiline={true}
-            numberOfLines={10}
-            textAlignVertical="top"
-            onChangeText={val => onChangeField('message', val)}
-            showNumberLengthText
-            value={payload.message || ''}
-            maxLength={2000}
-          />
+          {renderMessageField()}
         </KeyboardAvoidingView>
       </ScrollView>
 

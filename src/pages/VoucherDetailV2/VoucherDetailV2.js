@@ -35,7 +35,7 @@ const useStyles = () => {
       color: colors.primary,
     },
     tpContainer: {
-      width: normalizeLayoutSizeWidth(128),
+      minWidth: normalizeLayoutSizeWidth(200),
     },
     tpText: {
       marginLeft: 'auto',
