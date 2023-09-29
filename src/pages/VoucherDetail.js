@@ -189,10 +189,12 @@ const VoucherDetail = props => {
   const handleCloseModal = () => {
     setOpenModal(false);
   };
+  console.log({voucher}, 'tesa');
   const renderValidity = () => {
     const text = convertTime(
       voucher?.expiryDate,
       voucher?.followMembershipPeriod,
+      voucher?.defaultExpiryDays,
     );
 
     return (
