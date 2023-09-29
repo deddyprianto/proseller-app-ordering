@@ -193,6 +193,7 @@ const VoucherDetail = props => {
     const text = convertTime(
       voucher?.expiryDate,
       voucher?.followMembershipPeriod,
+      voucher?.defaultExpiryDays,
     );
 
     return (
