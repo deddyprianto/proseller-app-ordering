@@ -44,10 +44,10 @@ const useStyles = () => {
     },
     inputStyle: (editable, numberOfLines) => ({
       color: editable === false ? theme.colors.greyScale2 : 'black',
-      width: '80%',
       fontFamily: theme.fontFamily.poppinsRegular,
       paddingBottom: 0,
       paddingTop: 0,
+      flex: 1,
       height:
         numberOfLines && numberOfLines > 0
           ? 'auto'

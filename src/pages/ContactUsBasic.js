@@ -15,14 +15,11 @@ import GlobalButton from '../components/button/GlobalButton';
 import {fieldValidation} from '../helper/Validation';
 import {useDispatch} from 'react-redux';
 import {contactUsHandle} from '../actions/contactus.action';
-import AnimationMessage from '../components/animationMessage';
-import GlobalText from '../components/globalText';
-import CheckboxWhite from '../assets/svg/CheckboxWhite';
-import ErrorIcon from '../assets/svg/ErrorIcon';
 import LoadingScreen from '../components/loadingScreen/LoadingScreen';
 import {Actions} from 'react-native-router-flux';
 import useBackHandler from '../hooks/backHandler/useBackHandler';
 import {normalizeLayoutSizeWidth} from '../helper/Layout';
+import {showSnackbar} from '../actions/setting.action';
 
 const useStyles = () => {
   const {colors, fontFamily} = Theme();
@@ -106,8 +103,6 @@ const ContactUsBasic = () => {
   const dispatch = useDispatch();
   const inputRefEmail = React.useRef(null);
   const [payload, setPayload] = React.useState({});
-  const [showMessage, setShowMessage] = React.useState(false);
-  const [type, setType] = React.useState(null);
   const [isLoading, setIsloading] = React.useState(false);
   const isIos = Platform.OS === 'ios';
   const disableButton = () => {
@@ -123,14 +118,19 @@ const ContactUsBasic = () => {
     const response = await dispatch(contactUsHandle(payload));
     if (response.success) {
       setPayload({});
-      setType('success');
+      dispatch(
+        showSnackbar({message: 'Message sent successfully!', type: 'success'}),
+      );
       if (inputRefEmail.current) {
         inputRefEmail.current.focus();
       }
     } else {
-      setType('error');
+      dispatch(
+        showSnackbar({
+          message: 'Failed to sent message. Please try again.',
+        }),
+      );
     }
-    setShowMessage(true);
     setIsloading(false);
   };
 
@@ -186,7 +186,7 @@ const ContactUsBasic = () => {
       <LoadingScreen loading={isLoading} />
       <Header title={'Contact Us'} />
       <View style={styles.containerMessage}>
-        <AnimationMessage
+        {/* <AnimationMessage
           type={type}
           containerStyle={styles.parentContainer}
           setShow={isShow => setShowMessage(isShow)}
@@ -201,7 +201,7 @@ const ContactUsBasic = () => {
                 : 'Failed to sent message. Please try again.'}
             </GlobalText>
           </View>
-        </AnimationMessage>
+        </AnimationMessage> */}
       </View>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <KeyboardAvoidingView>
