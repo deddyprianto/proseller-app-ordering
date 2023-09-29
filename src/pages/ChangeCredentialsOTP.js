@@ -19,6 +19,7 @@ import {
 import HeaderV2 from '../components/layout/header/HeaderV2';
 import appConfig from '../config/appConfig';
 import OtpComponent from '../components/otpComponent/OtpComponent';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview';
 
 const styles = StyleSheet.create({
   backgroundImage: {
@@ -102,14 +103,14 @@ class ChangeCredentialsOTP extends Component {
       <SafeAreaView style={styles.backgroundImage}>
         {this.state.loading && <Loader />}
         <HeaderV2 isCenterLogo={appConfig.appName !== 'fareastflora'} />
-        <View>
+        <KeyboardAwareScrollView>
           <OtpComponent
             method={this.props.mode?.toLowerCase()}
             onSubmitOtp={otp => this.handleSubmitLogin(otp)}
             methodValue={this.props.address}
             isWrongOtp={this.state.isWrongOtp}
           />
-        </View>
+        </KeyboardAwareScrollView>
       </SafeAreaView>
     );
   }

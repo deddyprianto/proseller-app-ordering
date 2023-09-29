@@ -72,9 +72,6 @@ const useStyles = () => {
       display: 'flex',
       paddingHorizontal: 16,
     },
-    containerOtpParent: {
-      marginTop: 64,
-    },
   });
   return {styles};
 };
