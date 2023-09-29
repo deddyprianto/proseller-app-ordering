@@ -48,12 +48,13 @@
     "build-acemart": "npm run move-acemart-mac && npm run android-demo-rel",
     "build-automaxima": "npm run move-automaxima-mac && npm run android-demo-rel",
     "build-funtoast": "npm run move-funtoast-mac && npm run android-demo-rel",
-    "build-fareastflora": "npm run move-fareastflora-mac && npm run android-demo-rel"
+    "build-fareastflora": "npm run move-fareastflora-mac && npm run android-demo-rel",
+    "postinstall": "patch-package"
   },
   "dependencies": {
     "@adrianso/react-native-device-brightness": "^1.2.7",
-    "@react-native-camera-roll/camera-roll": "5.1.0",
     "@react-native-community/async-storage": "1.6.2",
+    "@react-native-community/cameraroll": "^4.1.2",
     "@react-native-community/checkbox": "^0.4.1",
     "@react-native-community/geolocation": "^2.0.2",
     "@react-native-community/netinfo": "^5.3.3",
@@ -76,6 +77,8 @@
     "numbro": "^2.1.2",
     "numeral": "^2.0.6",
     "password-generation": "^1.1.0",
+    "patch-package": "^8.0.0",
+    "postinstall-postinstall": "^2.1.0",
     "react": "16.13.1",
     "react-native": "0.63.2",
     "react-native-android-location-enabler": "^1.2.0",
