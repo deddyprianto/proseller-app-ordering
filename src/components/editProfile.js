@@ -947,11 +947,11 @@ class AccountEditProfil extends Component {
                     editable={this.state.canEditEmail}
                     childrenLabel={this.renderChildrenLabel('email')}
                     rightIcon={
-                      <>
+                      <View>
                         {this.state.canEditEmail
                           ? this.renderVerifyButton('email')
                           : null}
-                      </>
+                      </View>
                     }
                   />
                   <View style={styles.mt16}>
@@ -969,11 +969,11 @@ class AccountEditProfil extends Component {
                       rootStyle={styles.noMb}
                       rightLabel={this.renderChildrenLabel('phone')}
                       rightChildren={
-                        <>
+                        <View>
                           {this.state.canEditPhone
                             ? this.renderVerifyButton('phone')
                             : null}
-                        </>
+                        </View>
                       }
                     />
                   </View>
@@ -1511,6 +1511,7 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     borderWidth: 1,
     borderRadius: 8,
+    marginLeft: 'auto',
   },
   row: {
     flexDirection: 'row',
