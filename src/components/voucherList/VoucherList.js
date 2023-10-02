@@ -8,6 +8,9 @@ import VoucherListItem from './components/VoucherListItem';
 import {vouchers} from '../../actions/rewards.action';
 
 const styles = StyleSheet.create({
+  root: {
+    width: '100%',
+  },
   touchableVoucher: {
     width: '100%',
     height: 'auto',
@@ -33,7 +36,7 @@ const VoucherList = () => {
         <TouchableOpacity
           style={styles.touchableVoucher}
           onPress={() => {
-            Actions.voucherDetail({voucher});
+            Actions.voucherDetail({dataVoucher: voucher});
           }}>
           <VoucherListItem
             voucher={voucher}
@@ -45,7 +48,7 @@ const VoucherList = () => {
     return result;
   };
 
-  return <View>{renderRewardList()}</View>;
+  return <View style={styles.root}>{renderRewardList()}</View>;
 };
 
 export default VoucherList;

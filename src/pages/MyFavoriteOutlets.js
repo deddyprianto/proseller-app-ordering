@@ -74,7 +74,7 @@ const MyFavoriteOutlets = () => {
   const handleOutletSearch = () => {
     if (searchQuery) {
       return myFavoriteOutlets.filter(x =>
-        x.name.toUpperCase().includes(searchQuery.toUpperCase()),
+        x?.name?.toUpperCase().includes(searchQuery.toUpperCase()),
       );
     }
     return myFavoriteOutlets;
