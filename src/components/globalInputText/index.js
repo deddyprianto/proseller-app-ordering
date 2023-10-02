@@ -5,6 +5,8 @@ import {
   StyleSheet,
   TouchableOpacity,
   Keyboard,
+  TextInputProps,
+  StyleProp,
 } from 'react-native';
 import Theme from '../../theme/Theme';
 import GlobalText from '../globalText';
@@ -42,10 +44,10 @@ const useStyles = () => {
     },
     inputStyle: (editable, numberOfLines) => ({
       color: editable === false ? theme.colors.greyScale2 : 'black',
-      width: '80%',
       fontFamily: theme.fontFamily.poppinsRegular,
       paddingBottom: 0,
       paddingTop: 0,
+      flex: 1,
       height:
         numberOfLines && numberOfLines > 0
           ? 'auto'
@@ -128,10 +130,6 @@ const useStyles = () => {
 };
 
 /**
- * @typedef {import('react-native').TextInputProps} InputTextProps
- */
-
-/**
  * @typedef {Object} ParamProps
  * @property {string} label
  * @property {boolean} isMandatory
@@ -148,10 +146,11 @@ const useStyles = () => {
  * @property {boolean}  showNumberLengthText
  * @property {Boolean} autoReset
  * @property {any} childrenLabel
+ * @property {StyleProp} customInputStyle
  */
 
 /**
- * @param {InputTextProps & ParamProps} props
+ * @param {TextInputProps & ParamProps} props
  */
 
 const GlobalInputText = React.forwardRef((props, ref) => {
@@ -248,8 +247,11 @@ const GlobalInputText = React.forwardRef((props, ref) => {
         )}>
         <TextInput
           ref={ref}
-          style={styles.inputStyle(props.editable, props.numberOfLines)}
-          textAlignVertical="center"
+          style={[
+            styles.inputStyle(props.editable, props.numberOfLines),
+            props.customInputStyle,
+          ]}
+          textAlignVertical={'center'}
           selection={props.autoReset ? start : null}
           {...props}
         />

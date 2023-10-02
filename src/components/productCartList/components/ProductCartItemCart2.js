@@ -273,7 +273,7 @@ const ProductCartItemCart2 = ({item, containerStyle}) => {
         </View>
         <View style={styles.textPriceContainer}>
           <GlobalText style={[styles.textModifierItemPrice, styles.mlAuto]}>
-            + {CurrencyFormatter(item?.retailPrice * item?.quantity)}
+            + {CurrencyFormatter(item?.product?.retailPrice * item?.quantity)}
           </GlobalText>
         </View>
       </View>

@@ -476,7 +476,7 @@ const Profile = props => {
   const renderPoint = () => {
     return (
       <View style={styles.viewPointHeader}>
-        <Text style={styles.textYourPoint}>Your Points</Text>
+        <Text style={styles.textYourPoint}>My Points</Text>
         <TouchableOpacity
           onPress={() => {
             Actions.detailPoint({intlData});
@@ -884,7 +884,7 @@ const Profile = props => {
 
       {renderDivider()}
       {renderTitleSettingV2('Rewards')}
-      {renderListMenu('My Voucher', <Voucher />, openVoucher)}
+      {renderListMenu('My Vouchers', <Voucher />, openVoucher)}
       {renderReferral()}
       {renderDivider()}
       {renderTitleSettingV2('Others')}

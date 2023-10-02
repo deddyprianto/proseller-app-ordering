@@ -219,7 +219,7 @@ class DetailPoint extends Component {
               <View style={styles.pointDetailContainer}>
                 <View style={styles.pointDetail(colors.primary)}>
                   <GlobalText style={styles.pointDetailText}>
-                    Your Points
+                    My Points
                   </GlobalText>
                   <GlobalText style={styles.pointText}>
                     {this.props.totalPoint} PTS

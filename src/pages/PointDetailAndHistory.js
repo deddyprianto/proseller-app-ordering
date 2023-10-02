@@ -76,7 +76,7 @@ const PointDetailAndHistory = () => {
   const renderPointHeader = () => {
     return (
       <View style={styles.viewYourPoint}>
-        <Text style={styles.textYourPoint}>Your Points</Text>
+        <Text style={styles.textYourPoint}>My Points</Text>
         <Text style={styles.textYourPointValue}>{totalPoint} PTS</Text>
       </View>
     );

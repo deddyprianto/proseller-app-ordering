@@ -10,6 +10,7 @@ import GlobalText from '../../components/globalText';
 import {useSelector} from 'react-redux';
 import {normalizeLayoutSizeWidth} from '../../helper/Layout';
 import useBackHandler from '../../hooks/backHandler/useBackHandler';
+import additionalSetting from '../../config/additionalSettings';
 
 const useStyles = () => {
   const {colors, fontFamily} = Theme();
@@ -35,7 +36,7 @@ const useStyles = () => {
       color: colors.primary,
     },
     tpContainer: {
-      width: normalizeLayoutSizeWidth(128),
+      minWidth: normalizeLayoutSizeWidth(200),
     },
     tpText: {
       marginLeft: 'auto',
@@ -54,8 +55,12 @@ const VoucherDetailV2 = () => {
   const {styles} = useStyles();
   useBackHandler();
   const [routes] = React.useState([
-    {key: 'first', title: 'My Voucher', children: MyVoucherRoute},
-    {key: 'second', title: 'Redeem Voucher', children: RedeemRoute},
+    {key: 'first', title: 'My Vouchers', children: MyVoucherRoute},
+    {
+      key: 'second',
+      title: additionalSetting().textRedeemVoucher || 'Reedemable Voucher',
+      children: RedeemRoute,
+    },
   ]);
 
   const totalPoint = useSelector(
@@ -64,7 +69,7 @@ const VoucherDetailV2 = () => {
 
   const renderCustomRightIcon = () => (
     <View style={styles.tpContainer}>
-      <GlobalText style={styles.tpText}>Your Points: {totalPoint}</GlobalText>
+      <GlobalText style={styles.tpText}>My Points: {totalPoint}</GlobalText>
     </View>
   );
 

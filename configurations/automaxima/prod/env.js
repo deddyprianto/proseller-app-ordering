@@ -37,6 +37,8 @@ const ENV = {
   appID: 'com.automaxima.app',
 
   retailerInfo: 'AutoMaxima',
+
+  environment: 'production',
 };
 
 export default ENV;

@@ -32,8 +32,7 @@ const useStyles = () => {
       marginBottom: 12,
 
       paddingVertical: normalizeLayoutSizeHeight(1),
-      paddingLeft: 16,
-      paddingRight: 9,
+      paddingHorizontal: 16,
       borderColor: isError
         ? theme.colors.semanticColorError
         : theme.colors.border1,
@@ -244,7 +243,7 @@ const FieldPhoneNumberInput = ({
   };
 
   const renderValue = () => {
-    const phoneNumber = value.replace(countryCode, '');
+    const phoneNumber = value?.replace(countryCode, '');
 
     return (
       <View style={styles.viewCountryCodeAndPhoneNumber}>
@@ -330,6 +329,7 @@ const FieldPhoneNumberInput = ({
         {renderModalCountryPicker()}
         {renderFlag()}
         {renderInput()}
+
         {isError ? <ErrorInput /> : null}
         {rightChildren ? rightChildren : null}
       </View>

@@ -1,14 +1,16 @@
 import moment from 'moment';
 
 const useTime = () => {
-  const convertTime = (time, isFollowMembership) => {
+  const convertTime = (time, isFollowMembership, defaultExpiryDays) => {
     if (isFollowMembership) {
       return 'Follows Membership Expiry';
     }
-    if (!time) {
+    if (!time && defaultExpiryDays) {
+      return `In ${defaultExpiryDays} days`;
+    }
+    if (!time && !defaultExpiryDays) {
       return 'In 30 days';
     }
-
     const now = moment();
     const utc = now;
     const date = moment.utc(time);

@@ -220,6 +220,13 @@ const ScannerBarcode = () => {
     if (Platform.OS === 'ios') {
       let oldBarcode = barcodes?.data;
       let newBarCode = barcodes?.data;
+      if (!additionalSetting().enableUpcaScanner) {
+        if (!isOpenDetailPage) {
+          setIsOpenDetailPage(true);
+          onSuccess({data: newBarCode});
+        }
+        return;
+      }
       newBarCode = newBarCode?.substring(1, newBarCode.length - 1);
       oldBarcode = oldBarcode?.substring(0, oldBarcode.length - 1);
       if (!isOpenDetailPage) {
@@ -232,6 +239,12 @@ const ScannerBarcode = () => {
   const onGoogleBarcode = barcodes => {
     if (Platform.OS === 'android' && !isOpenDetailPage) {
       const code = barcodes.barcodes[0]?.data;
+      if (!additionalSetting().enableUpcaScanner) {
+        const barcodeData = code;
+        setIsOpenDetailPage(true);
+        return onSuccess({data: barcodeData}, true);
+      }
+
       if (code) {
         setIsOpenDetailPage(true);
         const barcodeData = code?.substring(0, code?.length - 1);
@@ -308,6 +321,7 @@ const ScannerBarcode = () => {
         barCodeTypes={[
           RNCamera.Constants.BarCodeType.ean13,
           RNCamera.Constants.BarCodeType.upc_e,
+          RNCamera.Constants.BarCodeType.code39,
         ]}
         androidCameraPermissionOptions={{
           title: 'Permission to use camera',
