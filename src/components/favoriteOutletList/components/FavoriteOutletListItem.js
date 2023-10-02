@@ -19,6 +19,7 @@ import {
 import Theme from '../../../theme';
 import appConfig from '../../../config/appConfig';
 import {getDistance} from 'geolib';
+import useTime from '../../../hooks/time/useTime';
 
 const useStyles = () => {
   const theme = Theme();
@@ -156,6 +157,8 @@ const FavoriteOutletListItem = ({item, disabled}) => {
     state => state.userReducer?.userPosition.userPosition,
   );
 
+  const {handleOpenStore} = useTime();
+
   useEffect(() => {
     const userCoordinate = userPosition?.coords;
     if (userCoordinate) {
@@ -247,8 +250,12 @@ const FavoriteOutletListItem = ({item, disabled}) => {
     );
   };
   const renderStatus = () => {
-    const textAvailable = isAvailable ? 'OPEN' : 'CLOSED';
-    const styleView = isAvailable ? styles.viewOpen : styles.viewClose;
+    const textAvailable = handleOpenStore(item, isAvailable)
+      ? 'OPEN'
+      : 'CLOSED';
+    const styleView = handleOpenStore(item, isAvailable)
+      ? styles.viewOpen
+      : styles.viewClose;
     return (
       <View style={styleView}>
         <Text style={styles.textStatus}>{textAvailable}</Text>
