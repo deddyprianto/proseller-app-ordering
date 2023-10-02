@@ -105,22 +105,20 @@ const ContactUsBasic = () => {
   const inputRefEmail = React.useRef(null);
   const [payload, setPayload] = React.useState({});
   const [isLoading, setIsloading] = React.useState(false);
+  const [isEmailValid, setIsValidEmail] = React.useState(false);
   const isIos = Platform.OS === 'ios';
   const {isValidEmail} = useValidation();
   const disableButton = () => {
     const emptyValue = fieldValidation(mandatoryField, payload);
-    return emptyValue.length > 0;
+    return emptyValue.length > 0 || !isEmailValid;
   };
   const onChangeField = (key, value) => {
+    if (key === 'from') {
+      setIsValidEmail(isValidEmail(value));
+    }
     setPayload({...payload, [key]: value});
   };
-
   const onSubmit = async () => {
-    if (!isValidEmail(payload.from)) {
-      return dispatch(
-        showSnackbar({message: 'Email is invalid. Please try again.'}),
-      );
-    }
     setIsloading(true);
     const response = await dispatch(contactUsHandle(payload));
     if (response.success) {
@@ -209,6 +207,8 @@ const ContactUsBasic = () => {
             placeholder="Enter your email"
             value={payload.from || ''}
             onChangeText={val => onChangeField('from', val)}
+            isError={!isEmailValid && payload?.from?.length > 0}
+            errorMessage={'Please enter a valid email address.'}
           />
           <GlobalInputText
             isMandatory
