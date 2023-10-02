@@ -837,7 +837,7 @@ const Profile = props => {
           actionBtnText="Verify"
           message={message}
           type={type}
-          onActionBtnPress={() => verifyOtp(address, mode)}
+          onActionBtnPress={handleEditProfile}
         />
       </View>
     );
