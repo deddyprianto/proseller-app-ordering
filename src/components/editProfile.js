@@ -917,7 +917,6 @@ class AccountEditProfil extends Component {
   render() {
     const {intlData, colors, fontFamily} = this.props;
     const {fields, isPostalCodeValid} = this.state;
-    console.log({dataDiri: this.state}, 'test');
     return (
       <SafeAreaView style={styles.container}>
         {this.state.loading && <LoaderDarker />}
