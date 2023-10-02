@@ -79,11 +79,11 @@ const FieldOTP = ({onComplete, isWrongOtp, onChangeOtp}) => {
     const arrayLength = Array.from(Array(4)).length;
     if (event) {
       if (index !== 0 && !event) {
-        return ref[`otp${index - 1}`].focus();
+        return ref[`otp${index - 1}`]?.focus();
       }
 
       if (arrayLength - 1 !== index && event) {
-        return ref[`otp${index + 1}`].focus();
+        return ref[`otp${index + 1}`]?.focus();
       }
     }
   };
@@ -103,6 +103,7 @@ const FieldOTP = ({onComplete, isWrongOtp, onChangeOtp}) => {
         }}
         onKeyPress={({nativeEvent}) => {
           if (nativeEvent.key === 'Backspace' && index !== 0) {
+            ref[`otp${index}`] = null;
             ref[`otp${index - 1}`].focus();
           }
         }}
