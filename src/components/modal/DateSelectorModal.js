@@ -13,7 +13,6 @@ import {getTimeSlot, setTimeSlotSelected} from '../../actions/order.action';
 import Theme from '../../theme';
 import GlobalText from '../globalText';
 import GlobalButton from '../button/GlobalButton';
-import appConfig from '../../config/appConfig';
 
 const useStyles = () => {
   const theme = Theme();
@@ -85,7 +84,7 @@ const useStyles = () => {
       marginTop: 16,
       display: 'flex',
       flexDirection: 'row',
-      justifyContent: 'center',
+      justifyContent: 'space-between',
       flexWrap: 'wrap',
     },
     textDayAvailable: {
@@ -142,7 +141,6 @@ const useStyles = () => {
       alignItems: 'center',
       justifyContent: 'center',
       paddingVertical: 8,
-      marginHorizontal: 4,
     },
     touchableItemAvailable: {
       width: 53,
@@ -152,7 +150,6 @@ const useStyles = () => {
       alignItems: 'center',
       justifyContent: 'center',
       paddingVertical: 8,
-      marginHorizontal: 4,
     },
     touchableItemUnavailable: {
       width: 53,
@@ -163,7 +160,6 @@ const useStyles = () => {
       justifyContent: 'center',
       paddingVertical: 8,
       backgroundColor: theme.colors.greyScale4,
-      marginHorizontal: 4,
     },
     circleSelected: {
       width: 26,
@@ -329,7 +325,7 @@ const DateSelectorModal = ({open, handleClose, value, preOrderDate}) => {
     } else {
       dateTime = moment().subtract(1, 'day');
     }
-    
+
     if (selectedDate.length > 0) {
       dateTime = moment(selectedDate).subtract(1, 'day');
     }

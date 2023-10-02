@@ -53,7 +53,6 @@ const FavoriteOutletList = ({outlets}) => {
 
     setList(result);
   }, [myFavoriteOutlets, outlets]);
-
   const renderOutletList = () => {
     const result = list?.map(item => {
       return <FavoriteOutletListItem item={item} />;

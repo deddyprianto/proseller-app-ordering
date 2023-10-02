@@ -20,6 +20,7 @@ import {Actions} from 'react-native-router-flux';
 import useBackHandler from '../hooks/backHandler/useBackHandler';
 import {normalizeLayoutSizeWidth} from '../helper/Layout';
 import {showSnackbar} from '../actions/setting.action';
+import useValidation from '../hooks/validation/useValidation';
 
 const useStyles = () => {
   const {colors, fontFamily} = Theme();
@@ -105,6 +106,7 @@ const ContactUsBasic = () => {
   const [payload, setPayload] = React.useState({});
   const [isLoading, setIsloading] = React.useState(false);
   const isIos = Platform.OS === 'ios';
+  const {isValidEmail} = useValidation();
   const disableButton = () => {
     const emptyValue = fieldValidation(mandatoryField, payload);
     return emptyValue.length > 0;
@@ -114,6 +116,11 @@ const ContactUsBasic = () => {
   };
 
   const onSubmit = async () => {
+    if (!isValidEmail(payload.from)) {
+      return dispatch(
+        showSnackbar({message: 'Email is invalid. Please try again.'}),
+      );
+    }
     setIsloading(true);
     const response = await dispatch(contactUsHandle(payload));
     if (response.success) {
@@ -185,24 +192,7 @@ const ContactUsBasic = () => {
     <SafeAreaView style={styles.safeAreaView}>
       <LoadingScreen loading={isLoading} />
       <Header title={'Contact Us'} />
-      <View style={styles.containerMessage}>
-        {/* <AnimationMessage
-          type={type}
-          containerStyle={styles.parentContainer}
-          setShow={isShow => setShowMessage(isShow)}
-          show={showMessage}>
-          <View style={styles.message}>
-            <View style={styles.messageIcon}>
-              {type === 'success' ? <CheckboxWhite /> : <ErrorIcon />}
-            </View>
-            <GlobalText style={styles.whiteText}>
-              {type === 'success'
-                ? ' Message sent successfully!'
-                : 'Failed to sent message. Please try again.'}
-            </GlobalText>
-          </View>
-        </AnimationMessage> */}
-      </View>
+
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <KeyboardAvoidingView>
           <GlobalInputText
