@@ -917,6 +917,7 @@ class AccountEditProfil extends Component {
   render() {
     const {intlData, colors, fontFamily} = this.props;
     const {fields, isPostalCodeValid} = this.state;
+    console.log({dataDiri: this.state}, 'test');
     return (
       <SafeAreaView style={styles.container}>
         {this.state.loading && <LoaderDarker />}
@@ -939,7 +940,7 @@ class AccountEditProfil extends Component {
                   />
                   <GlobalInputText
                     placeholder="Email"
-                    value={this.state.email}
+                    value={this.state.user.email}
                     onChangeText={value => this.setState({email: value})}
                     disabled={this.state.canEditEmail}
                     label="Email"
