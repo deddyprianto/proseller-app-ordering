@@ -948,7 +948,8 @@ class AccountEditProfil extends Component {
                     childrenLabel={this.renderChildrenLabel('email')}
                     rightIcon={
                       <View>
-                        {this.state.canEditEmail
+                        {this.state.canEditEmail ||
+                        !this.state.user?.isEmailVerified
                           ? this.renderVerifyButton('email')
                           : null}
                       </View>
@@ -970,7 +971,8 @@ class AccountEditProfil extends Component {
                       rightLabel={this.renderChildrenLabel('phone')}
                       rightChildren={
                         <View>
-                          {this.state.canEditPhone
+                          {this.state.canEditPhone ||
+                          !this.state.user?.isPhoneNumberVerified
                             ? this.renderVerifyButton('phone')
                             : null}
                         </View>
