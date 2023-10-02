@@ -939,7 +939,7 @@ class AccountEditProfil extends Component {
                   />
                   <GlobalInputText
                     placeholder="Email"
-                    value={this.state.email}
+                    value={this.state.user.email}
                     onChangeText={value => this.setState({email: value})}
                     disabled={this.state.canEditEmail}
                     label="Email"
