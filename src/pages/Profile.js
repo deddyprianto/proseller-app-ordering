@@ -434,7 +434,9 @@ const Profile = props => {
 
   const handleEditProfile = () => {
     const value = {dataDiri: user};
-    return Actions.editProfile(value);
+    if (Actions.currentScene !== 'editProfile') {
+      return Actions.editProfile(value);
+    }
   };
 
   const openWebviewPage = url => {

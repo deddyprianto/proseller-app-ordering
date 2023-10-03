@@ -87,7 +87,32 @@ const FieldOTP = ({onComplete, isWrongOtp, onChangeOtp}) => {
       }
     }
   };
-  const renderTextInput = index => {
+
+  const renderTextInput = (index, length) => {
+    if (index === length - 1) {
+      return (
+        <TextInput
+          ref={r => {
+            ref[`otp${index}`] = r;
+          }}
+          maxLength={1}
+          value={otp[index]}
+          autoFocus={index === 0}
+          keyboardType="numeric"
+          style={styles.textInputOtp(isWrongOtp)}
+          selection={{start: otp[index]?.length || 0}}
+          onChangeText={value => {
+            handleInputOtp(value.replace(/[^0-9]/g, ''), index);
+          }}
+          onKeyPress={({nativeEvent}) => {
+            if (nativeEvent.key === 'Backspace' && index !== 0) {
+              ref[`otp${index}`] = null;
+              ref[`otp${index - 1}`].focus();
+            }
+          }}
+        />
+      );
+    }
     return (
       <TextInput
         ref={r => {
@@ -111,8 +136,9 @@ const FieldOTP = ({onComplete, isWrongOtp, onChangeOtp}) => {
     );
   };
   const renderInputOtp = () => {
-    const result = Array.from(Array(4)).map((_, index) => {
-      return renderTextInput(index);
+    const otpArray = Array.from(Array(4));
+    const result = otpArray.map((_, index) => {
+      return renderTextInput(index, otpArray.length);
     });
     return result;
   };
