@@ -48,6 +48,8 @@ import {getUserProfile} from '../actions/user.action';
 import CurrencyFormatter from '../helper/CurrencyFormatter';
 import {dataPoint, dataPointHistory} from '../actions/rewards.action';
 import {dataPromotion} from '../actions/promotion.action';
+import AsyncStorage from '@react-native-community/async-storage';
+import {KEY_VERIFIED_USER} from '../constant/storage';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -333,6 +335,7 @@ const Profile = props => {
   const progressBarCampaign = useSelector(
     state => state.accountsReducer?.myProgressBarCampaign.myProgress,
   );
+  const [isConfirmVerified, setIsConfirmVerified] = React.useState(false);
 
   const userDetail = useSelector(
     state => state.userReducer.getUser.userDetails,
@@ -357,6 +360,7 @@ const Profile = props => {
     };
 
     loadData();
+    checkUserVerified();
   }, [dispatch]);
 
   useEffect(() => {
@@ -375,10 +379,26 @@ const Profile = props => {
   }, [dispatch, userDetail]);
 
   useEffect(() => {
+    if (user?.isEmailVerified && user?.isPhoneNumberVerified) {
+      AsyncStorage.setItem(KEY_VERIFIED_USER, 'true');
+    }
+  }, [user]);
+
+  useEffect(() => {
     props.navigation.addListener('didFocus', () => {
       onRefresh(false);
+      checkUserVerified();
     });
   }, []);
+
+  const checkUserVerified = async () => {
+    const storage = await AsyncStorage.getItem(KEY_VERIFIED_USER);
+    if (storage) {
+      setIsConfirmVerified(true);
+    } else {
+      setIsConfirmVerified(false);
+    }
+  };
 
   const initDeviceBright = async () => {
     const currentBrightness = await DeviceBrightness.getBrightnessLevel();
@@ -830,6 +850,7 @@ const Profile = props => {
       mode = 'Mobile Number';
       address = user.phoneNumber;
     }
+    if (isConfirmVerified) return null;
     return (
       <View style={styles.titleSettingContainer}>
         <InfoMessage
