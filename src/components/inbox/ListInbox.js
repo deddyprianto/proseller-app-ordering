@@ -69,7 +69,6 @@ const styles = StyleSheet.create({
     width: normalizeLayoutSizeWidth(240),
   },
   messageContainer: {
-    marginTop: 8,
     flexDirection: 'row',
   },
   imageContainer: {
@@ -83,7 +82,12 @@ const styles = StyleSheet.create({
 const ListInbox = ({item, index, openDetailMessage}) => {
   const theme = Theme();
   const {width} = useWindowDimensions();
-
+  const tagsStyles = {
+    p: {
+      margin: 0,
+      padding: 0,
+    },
+  };
   const handleImage = () => {
     if (item.isRead === true) {
       return (
@@ -105,7 +109,6 @@ const ListInbox = ({item, index, openDetailMessage}) => {
       </View>
     );
   };
-
   return (
     <TouchableOpacity
       style={styles.item}
@@ -133,6 +136,7 @@ const ListInbox = ({item, index, openDetailMessage}) => {
           <RenderHtml
             contentWidth={width}
             source={{html: item?.message?.replace(/<img[^>]*>/g, '')}}
+            tagsStyles={tagsStyles}
           />
         </View>
       </View>
