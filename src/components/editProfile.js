@@ -182,6 +182,7 @@ class AccountEditProfil extends Component {
       canEditEmail: false,
       canEditPhone: false,
       user: {},
+      isVerifyProgress: false,
     };
   }
 
@@ -832,6 +833,7 @@ class AccountEditProfil extends Component {
 
   renderVerifyButton = type => (
     <TouchableOpacity
+      disabled={this.state.isVerifyProgress}
       onPress={() => this.openVerifyPage(type)}
       style={[styles.verifyBtn, {borderColor: this.props.colors.primary}]}>
       <GlobalText>Verify</GlobalText>
@@ -854,6 +856,7 @@ class AccountEditProfil extends Component {
   };
 
   onRequestOtp = async type => {
+    this.setState({isVerifyProgress: true});
     let dataProfile = {
       username: this.props.dataDiri.username,
       cognitoUsername: this.props.dataDiri.cognitoUsername,
@@ -897,12 +900,16 @@ class AccountEditProfil extends Component {
         dataDiri: this.props.dataDiri,
         isVerification,
       });
+      setTimeout(() => {
+        this.setState({isVerifyProgress: false});
+      }, 1000);
     } else {
       let message = 'Please try again';
       try {
         message = response.responseBody.Data.message;
       } catch (e) {}
       Alert.alert('Sorry', message);
+      this.setState({isVerifyProgress: false});
     }
   };
 
