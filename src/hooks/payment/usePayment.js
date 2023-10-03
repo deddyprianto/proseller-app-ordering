@@ -25,7 +25,9 @@ const usePayment = () => {
             page,
             from: item?.from,
           });
-          setIsLoading(false);
+          setTimeout(() => {
+            setIsLoading(false);
+          }, 1000);
         } else {
           Alert.alert('Sorry', 'Cant add credit card, please try again');
           setIsLoading(false);
