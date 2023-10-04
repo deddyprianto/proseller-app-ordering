@@ -48,6 +48,8 @@ import {getUserProfile} from '../actions/user.action';
 import CurrencyFormatter from '../helper/CurrencyFormatter';
 import {dataPoint, dataPointHistory} from '../actions/rewards.action';
 import {dataPromotion} from '../actions/promotion.action';
+import CheckListGreenSvg from '../assets/svg/ChecklistGreenSvg';
+import useSettings from '../hooks/settings/useSettings';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -87,6 +89,7 @@ const useStyles = () => {
       color: theme.colors.textPrimary,
       fontSize: theme.fontSize[16],
       fontFamily: theme.fontFamily.poppinsBold,
+      marginRight: 8,
     },
     textYourPoint: {
       textAlign: 'right',
@@ -313,6 +316,10 @@ const useStyles = () => {
     bold: {
       fontFamily: theme.fontFamily.poppinsBold,
     },
+    usernameContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
   });
 
   return styles;
@@ -333,7 +340,7 @@ const Profile = props => {
   const progressBarCampaign = useSelector(
     state => state.accountsReducer?.myProgressBarCampaign.myProgress,
   );
-
+  const {checkLowerPriorityMandatory} = useSettings();
   const userDetail = useSelector(
     state => state.userReducer.getUser.userDetails,
   );
@@ -452,6 +459,23 @@ const Profile = props => {
     );
   };
 
+  const renderVerifiedUser = () => {
+    console.log(checkLowerPriorityMandatory(), 'sintak');
+    if (!checkLowerPriorityMandatory()) {
+      if (user?.isEmailVerified || user?.isPhoneNumberVerified) {
+        return <CheckListGreenSvg width={18} height={18} />;
+      }
+      return null;
+    }
+    if (checkLowerPriorityMandatory()) {
+      if (user?.isEmailVerified && user?.isPhoneNumberVerified) {
+        return <CheckListGreenSvg width={18} height={18} />;
+      }
+      return null;
+    }
+    return null;
+  };
+
   const renderWelcome = () => {
     if (user?.name) {
       const initialName = user?.name
@@ -468,7 +492,10 @@ const Profile = props => {
           </View>
           <View>
             <Text style={styles.textWelcome}>Welcome</Text>
-            <Text style={styles.textName}>{user?.name}</Text>
+            <View style={styles.usernameContainer}>
+              <Text style={styles.textName}>{user?.name}</Text>
+              {renderVerifiedUser()}
+            </View>
           </View>
         </View>
       );
@@ -810,6 +837,9 @@ const Profile = props => {
     });
     return component;
   };
+
+  console.log({user}, 'bahan');
+
   const rennderInfoMessage = () => {
     let type = '';
     let message = '';
