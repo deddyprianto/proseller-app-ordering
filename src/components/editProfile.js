@@ -195,7 +195,7 @@ class AccountEditProfil extends Component {
       );
       userDetail = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
 
-      this.setState({user: userDetail});
+      this.setState({user: userDetail, email: userDetail.email});
     }
   }
 
@@ -946,7 +946,7 @@ class AccountEditProfil extends Component {
                   />
                   <GlobalInputText
                     placeholder="Email"
-                    value={this.state.user.email}
+                    value={this.state.email}
                     onChangeText={value => this.setState({email: value})}
                     disabled={this.state.canEditEmail}
                     label="Email"

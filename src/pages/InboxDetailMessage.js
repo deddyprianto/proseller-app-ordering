@@ -135,7 +135,6 @@ const InboxDetailMessage = props => {
       BackHandler.removeEventListener('hardwareBackPress', backHandle);
     };
   }, []);
-
   const renderReward = ({item, index}) => (
     <View style={styles.rewardContainer}>
       <View style={styles.parentReward}>
@@ -191,6 +190,8 @@ const InboxDetailMessage = props => {
                 tagsStyles={tagsStyles}
                 contentWidth={width}
                 source={{html: data?.message}}
+                enableExperimentalBRCollapsing={true}
+                enableExperimentalMarginCollapsing={true}
               />
             </View>
           </View>
