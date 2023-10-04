@@ -240,28 +240,6 @@ const useStyles = () => {
   return result;
 };
 
-const webStyles = StyleSheet.create({
-  li: {
-    fontFamily: 'Poppins-Medium',
-    fontSize: 14,
-  },
-  strong: {
-    fontFamily: 'Poppins-Bold',
-    fontSize: 14,
-  },
-  ol: {
-    fontFamily: 'Poppins-Bold',
-    fontSize: 14,
-  },
-  ul: {
-    fontFamily: 'Poppins-Medium',
-    fontSize: 14,
-  },
-  p: {
-    fontFamily: 'Poppins-Medium',
-  },
-});
-
 const ProductDetail = ({
   productId,
   selectedProduct,
@@ -287,16 +265,37 @@ const ProductDetail = ({
   const [selectedProductModifiers, setSelectedProductModifiers] = useState([]);
 
   const [product, setProduct] = useState({});
-  const {
-    checkProductScanGo,
-    showAlert,
-    setShowAlert,
-    closeAlert,
-    onRemoveBasket,
-  } = useScanGo();
+  const {checkProductScanGo, showAlert, setShowAlert, closeAlert} = useScanGo();
   const defaultOutlet = useSelector(
     state => state.storesReducer.defaultOutlet.defaultOutlet,
   );
+
+  const webStyles = {
+    li: {
+      margin: 0,
+      padding: 0,
+    },
+    strong: {
+      margin: 0,
+      padding: 0,
+    },
+    ol: {
+      margin: 0,
+      padding: 0,
+    },
+    ul: {
+      margin: 0,
+      padding: 0,
+    },
+    p: {
+      margin: 0,
+      padding: 0,
+    },
+    br: {
+      margin: 0,
+      padding: 0,
+    },
+  };
 
   const {width} = useWindowDimensions();
 
@@ -772,7 +771,7 @@ const ProductDetail = ({
       );
     }
   };
-
+  console.log({description: product?.description}, 'lihai');
   const renderProductDescription = () => {
     if (product?.description) {
       return (
@@ -781,9 +780,13 @@ const ProductDetail = ({
           <View style={styles.viewDescription}>
             <Text style={styles.textDescription}>Description</Text>
             <RenderHtml
-              source={{html: `${product.description}`}}
+              source={{
+                html: `${product.description}`,
+              }}
               contentWidth={width}
               tagsStyles={webStyles}
+              enableExperimentalBRCollapsing={true}
+              enableExperimentalMarginCollapsing={true}
             />
           </View>
         </View>
@@ -801,6 +804,8 @@ const ProductDetail = ({
             source={{html: `${item.value}`}}
             contentWidth={width}
             tagsStyles={webStyles}
+            enableExperimentalBRCollapsing={true}
+            enableExperimentalMarginCollapsing={true}
           />
         </View>
       </View>

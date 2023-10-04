@@ -137,6 +137,8 @@ const ListInbox = ({item, index, openDetailMessage}) => {
             contentWidth={width}
             source={{html: item?.message?.replace(/<img[^>]*>/g, '')}}
             tagsStyles={tagsStyles}
+            enableExperimentalBRCollapsing={true}
+            enableExperimentalMarginCollapsing={true}
           />
         </View>
       </View>

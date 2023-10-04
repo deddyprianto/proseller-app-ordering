@@ -1192,7 +1192,7 @@ class ProductsSpecific extends Component {
   openDetailCategory = cat => {
     const {item, searchQuery} = this.state;
     if (cat.itemType === 'CATEGORY') {
-      cat.id = cat.categoryID.replace('category::', '');
+      cat.id = cat?.categoryID?.replace('category::', '');
     }
     cat.isProductPreset = true;
     Actions.push('specificCategory', {
