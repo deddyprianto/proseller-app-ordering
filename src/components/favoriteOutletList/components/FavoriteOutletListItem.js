@@ -20,6 +20,7 @@ import Theme from '../../../theme';
 import appConfig from '../../../config/appConfig';
 import {getDistance} from 'geolib';
 import useTime from '../../../hooks/time/useTime';
+import CheckOutletStatus from '../../../helper/CheckOutletStatus';
 
 const useStyles = () => {
   const theme = Theme();
@@ -56,6 +57,13 @@ const useStyles = () => {
       display: 'flex',
       flexDirection: 'row',
       alignItems: 'center',
+    },
+    containerOpen: {
+      flex: 1,
+    },
+    containerClose: {
+      flex: 1,
+      opacity: 0.6,
     },
     image: {
       borderTopRightRadius: 8,
@@ -151,13 +159,14 @@ const FavoriteOutletListItem = ({item, disabled}) => {
 
   const [isFavorite, setIsFavorite] = useState(false);
 
-  let isAvailable = item.orderingStatus !== 'UNAVAILABLE';
-
   const userPosition = useSelector(
     state => state.userReducer?.userPosition.userPosition,
   );
 
   const {handleOpenStore} = useTime();
+
+  const isOpen = CheckOutletStatus(item) === 'OPEN';
+  const isUnavailable = CheckOutletStatus(item) === 'UNAVAILABLE';
 
   useEffect(() => {
     const userCoordinate = userPosition?.coords;
@@ -234,7 +243,7 @@ const FavoriteOutletListItem = ({item, disabled}) => {
   const renderImage = () => {
     const image = item?.defaultImageURL;
 
-    if (isAvailable) {
+    if (isOpen) {
       return renderImageAvailable(image);
     } else {
       return renderImageUnavailable(image);
@@ -249,11 +258,10 @@ const FavoriteOutletListItem = ({item, disabled}) => {
       </View>
     );
   };
+
   const renderStatus = () => {
-    const textAvailable = handleOpenStore(item, isAvailable)
-      ? 'OPEN'
-      : 'CLOSED';
-    const styleView = handleOpenStore(item, isAvailable)
+    const textAvailable = handleOpenStore(item, isOpen) ? 'OPEN' : 'CLOSED';
+    const styleView = handleOpenStore(item, isOpen)
       ? styles.viewOpen
       : styles.viewClose;
     return (
@@ -279,8 +287,9 @@ const FavoriteOutletListItem = ({item, disabled}) => {
       </View>
     );
   };
+
   const renderBodyMiddle = () => {
-    const styleText = isAvailable
+    const styleText = isOpen
       ? styles.textNameAvailable
       : styles.textNameUnavailable;
     return (
@@ -289,6 +298,7 @@ const FavoriteOutletListItem = ({item, disabled}) => {
       </Text>
     );
   };
+
   const renderBodyBottom = () => {
     return (
       <TouchableOpacity
@@ -304,6 +314,7 @@ const FavoriteOutletListItem = ({item, disabled}) => {
       </TouchableOpacity>
     );
   };
+
   const renderBody = () => {
     return (
       <View style={styles.body}>
@@ -316,12 +327,19 @@ const FavoriteOutletListItem = ({item, disabled}) => {
     );
   };
 
-  return (
-    <View style={styles.root}>
-      {renderHeader()}
-      {renderBody()}
-    </View>
-  );
+  const renderItem = () => {
+    const styleView = isUnavailable
+      ? styles.containerClose
+      : styles.containerOpen;
+    return (
+      <View style={styleView}>
+        {renderHeader()}
+        {renderBody()}
+      </View>
+    );
+  };
+
+  return <View style={styles.root}>{renderItem()}</View>;
 };
 
 export default FavoriteOutletListItem;

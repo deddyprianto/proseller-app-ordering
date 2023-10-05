@@ -26,6 +26,7 @@ import {Body, Header} from '../components/layout';
 import LoadingScreen from '../components/loadingScreen';
 import awsConfig from '../config/awsConfig';
 import Theme from '../theme';
+import CheckOutletStatus from '../helper/CheckOutletStatus';
 
 const useStyles = () => {
   const theme = Theme();
@@ -81,7 +82,7 @@ const FavoriteOutlets = ({outlet}) => {
     state => state.userReducer?.getUser?.userDetails,
   );
 
-  let isAvailable = outlet.orderingStatus !== 'UNAVAILABLE';
+  const isUnavailable = CheckOutletStatus(outlet) === 'UNAVAILABLE';
 
   const handleGetStoreById = async item => {
     const orderingMode = await dispatch(getOrderingMode(item));
@@ -154,13 +155,14 @@ const FavoriteOutlets = ({outlet}) => {
   };
 
   const renderBottom = () => {
-    const styleButton = isAvailable
+    const styleButton = !isUnavailable
       ? styles.viewButtonAvailable
       : styles.viewButtonUnavailable;
+
     return (
       <View style={styles.bottom}>
         <TouchableOpacity
-          disabled={!isAvailable}
+          disabled={isUnavailable}
           style={styleButton}
           onPress={() => {
             handleClickOutlet(outlet);
