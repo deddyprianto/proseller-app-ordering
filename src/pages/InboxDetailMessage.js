@@ -18,105 +18,110 @@ import Reward from '../assets/img/reward.png';
 import {Actions} from 'react-native-router-flux';
 import RenderHtml from 'react-native-render-html';
 
-const styles = StyleSheet.create({
-  scrollContainer: {
-    padding: 16,
-    paddingBottom: 0,
-  },
-  dateText: {
-    fontSize: 14,
-    color: '#888787',
-  },
-  titleText: {
-    fontSize: 16,
-  },
-  titleContainer: {
-    marginTop: 24,
-  },
-  line: {
-    height: 1,
-    backgroundColor: '#D6D6D6',
-    marginTop: 24,
-  },
-  messageText: {
-    fontSize: 14,
-  },
-  lineReward: {
-    marginVertical: 16,
-  },
-  rewardDesc: {
-    marginTop: 8,
-    fontSize: 14,
-  },
-  rewardContainer: {
-    marginBottom: 2,
-    marginVertical: 8,
-    borderRadius: 4,
-    backgroundColor: colorConfig.pageIndex.backgroundColor,
-    shadowColor: '#00000021',
-    shadowOffset: {
-      width: 0,
-      height: 9,
+const useStyles = () => {
+  const theme = Theme();
+  const styles = StyleSheet.create({
+    scrollContainer: {
+      padding: 16,
+      paddingBottom: 0,
     },
-    shadowOpacity: 0.7,
-    shadowRadius: 7.49,
-    elevation: 10,
-    flexDirection: 'row',
-    marginTop: 8,
-    minHeight: 83,
-    alignItems: 'center',
-    marginLeft: 16,
-    marginRight: 16,
-  },
-  leftRewardContainer: {
-    width: '14%',
-    borderTopLeftRadius: 4,
-    borderBottomLeftRadius: 4,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  rightRewardContainer: {
-    width: '86%',
-    justifyContent: 'center',
-  },
-  flex: {
-    flex: 1,
-  },
-  iconReward: {
-    height: 15,
-    width: 15,
-  },
-  rewardText: {
-    marginLeft: 10,
-    fontSize: 14,
-  },
-  containerStyleFlatlist: {
-    paddingBottom: 30,
-  },
-  rewardContainerParent: {
-    paddingHorizontal: 16,
-    marginTop: 24,
-  },
-  messageContainer: {
-    marginTop: 8,
-  },
-  lineContainer: {
-    paddingHorizontal: 15,
-  },
-  parentReward: {
-    flexDirection: 'row',
-    height: '100%',
-  },
-  listRewardContainer: {
-    marginTop: 16,
-  },
-});
+    dateText: {
+      fontSize: 14,
+      color: '#888787',
+    },
+    titleText: {
+      fontSize: 16,
+      fontFamily: theme.fontFamily.poppinsBold,
+    },
+    titleContainer: {
+      marginTop: 24,
+    },
+    line: {
+      height: 1,
+      backgroundColor: '#D6D6D6',
+      marginTop: 24,
+    },
+    messageText: {
+      fontSize: 14,
+    },
+    lineReward: {
+      marginVertical: 16,
+    },
+    rewardDesc: {
+      marginTop: 8,
+      fontSize: 14,
+    },
+    rewardContainer: {
+      marginBottom: 2,
+      marginVertical: 8,
+      borderRadius: 4,
+      backgroundColor: colorConfig.pageIndex.backgroundColor,
+      shadowColor: '#00000021',
+      shadowOffset: {
+        width: 0,
+        height: 9,
+      },
+      shadowOpacity: 0.7,
+      shadowRadius: 7.49,
+      elevation: 10,
+      flexDirection: 'row',
+      marginTop: 8,
+      minHeight: 83,
+      alignItems: 'center',
+      marginLeft: 16,
+      marginRight: 16,
+    },
+    leftRewardContainer: {
+      width: '14%',
+      borderTopLeftRadius: 4,
+      borderBottomLeftRadius: 4,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    rightRewardContainer: {
+      width: '86%',
+      justifyContent: 'center',
+    },
+    flex: {
+      flex: 1,
+    },
+    iconReward: {
+      height: 15,
+      width: 15,
+    },
+    rewardText: {
+      marginLeft: 10,
+      fontSize: 14,
+    },
+    containerStyleFlatlist: {
+      paddingBottom: 30,
+    },
+    rewardContainerParent: {
+      paddingHorizontal: 16,
+      marginTop: 24,
+    },
+    messageContainer: {
+      marginTop: 8,
+    },
+    lineContainer: {
+      paddingHorizontal: 15,
+    },
+    parentReward: {
+      flexDirection: 'row',
+      height: '100%',
+    },
+    listRewardContainer: {
+      marginTop: 16,
+    },
+  });
+  return {styles};
+};
 
 const InboxDetailMessage = props => {
   const {data} = props;
   const {colors, fontFamily} = Theme();
   const {width} = useWindowDimensions();
-
+  const {styles} = useStyles();
   const tagsStyles = {
     p: {
       margin: 0,
