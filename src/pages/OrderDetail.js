@@ -42,6 +42,8 @@ import additionalSetting from '../config/additionalSettings';
 import ArrowUpSvg from '../assets/svg/ArrowUpSvg';
 import useCalculation from '../hooks/calculation/useCalculation';
 import useOrderingTypes from '../hooks/orderingTypes/useOrderingTypes';
+import ModalDeliveryDetail from '../components/modal/ModalDeliveryDetail';
+import ThreeDotCircle from '../assets/svg/ThreeDotCircle';
 
 const useStyles = () => {
   const {colors, fontFamily} = Theme();
@@ -364,6 +366,7 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
     availDate,
     listSelfSelection,
   } = useOrder();
+  const [showDetailDelivery, setShowDetailDelivery] = React.useState(false);
   const toggleOrder = () => setShowAllOrder(prevState => !prevState);
   const togglePreOrder = () => setShowAllPreOrder(prevState => !prevState);
   const preorder_item = 'Preorder Items';
@@ -375,7 +378,7 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
       description: 'Successfully saved image to your gallery.',
     });
   };
-
+  console.log({data}, 'naniks');
   React.useEffect(() => {
     handleOrderingType();
   }, []);
@@ -393,6 +396,10 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
       <ProductCartItemCart2 containerStyle={styles.containerItem} item={item} />
     );
   };
+
+  const toggleDeliveryDetail = () =>
+    setShowDetailDelivery(prevState => !prevState);
+
   React.useEffect(() => {
     if (data) {
       groupingeOrder(data?.details || []);
@@ -466,6 +473,13 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
             <GlobalText style={styles.deliveryText}>
               {data?.orderingMode}{' '}
             </GlobalText>
+            {data?.provider?.feeBreakDown ? (
+              <TouchableOpacity
+                onPress={toggleDeliveryDetail}
+                style={styles.mlAuto}>
+                <ThreeDotCircle />
+              </TouchableOpacity>
+            ) : null}
           </View>
           <View style={[styles.listOrderDetailContainer, styles.mt12]}>
             <View style={[styles.orderStatusContainer, styles.columnCard]}>
@@ -1008,6 +1022,11 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
           ) : null}
         </View>
       </ScrollView>
+      <ModalDeliveryDetail
+        isVisible={showDetailDelivery}
+        closeModal={toggleDeliveryDetail}
+        feeBreakDown={data?.provider?.feeBreakDown}
+      />
     </Body>
   );
 };

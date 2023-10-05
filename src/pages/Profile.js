@@ -48,6 +48,11 @@ import {getUserProfile} from '../actions/user.action';
 import CurrencyFormatter from '../helper/CurrencyFormatter';
 import {dataPoint, dataPointHistory} from '../actions/rewards.action';
 import {dataPromotion} from '../actions/promotion.action';
+import AsyncStorage from '@react-native-community/async-storage';
+import {
+  KEY_VERIFIED_USER,
+  NUMBER_USER_VISIT_PROFILE,
+} from '../constant/storage';
 import CheckListGreenSvg from '../assets/svg/ChecklistGreenSvg';
 import useSettings from '../hooks/settings/useSettings';
 
@@ -334,12 +339,15 @@ const Profile = props => {
   const [isOpenDeleteAccountModal, setIsOpenDeleteAccountModal] = useState(
     false,
   );
+  const [visitNumber, setVisitNumber] = React.useState(null);
   const [currentBrightness, setCurrentBrightness] = React.useState(null);
   const [user, setUser] = useState({});
   const [refreshing, setRefreshing] = React.useState(false);
   const progressBarCampaign = useSelector(
     state => state.accountsReducer?.myProgressBarCampaign.myProgress,
   );
+  const [isConfirmVerified, setIsConfirmVerified] = React.useState(false);
+
   const {checkLowerPriorityMandatory} = useSettings();
   const userDetail = useSelector(
     state => state.userReducer.getUser.userDetails,
@@ -366,14 +374,19 @@ const Profile = props => {
     loadData();
   }, [dispatch]);
 
+  const decryptUserDetail = () => {
+    const userDecrypt = CryptoJS.AES.decrypt(
+      userDetail,
+      awsConfig.PRIVATE_KEY_RSA,
+    );
+    const result = JSON.parse(userDecrypt.toString(CryptoJS.enc.Utf8));
+    return result;
+  };
+
   useEffect(() => {
     const loadData = async () => {
       if (userDetail) {
-        const userDecrypt = CryptoJS.AES.decrypt(
-          userDetail,
-          awsConfig.PRIVATE_KEY_RSA,
-        );
-        const result = JSON.parse(userDecrypt.toString(CryptoJS.enc.Utf8));
+        const result = decryptUserDetail();
 
         setUser(result);
       }
@@ -381,11 +394,54 @@ const Profile = props => {
     loadData();
   }, [dispatch, userDetail]);
 
+  const checkVisitProfileBefore = async () => {
+    if (user?.isEmailVerified && user?.isPhoneNumberVerified) {
+      AsyncStorage.setItem(KEY_VERIFIED_USER, 'true');
+      checkNumberUserVistiProfilePage();
+    }
+    checkUserVerified();
+  };
+
+  const checkNumberUserVistiProfilePage = async () => {
+    const numberVisit = await AsyncStorage.getItem(NUMBER_USER_VISIT_PROFILE);
+    if (numberVisit) {
+      setVisitNumber(Number(numberVisit));
+      AsyncStorage.setItem(
+        NUMBER_USER_VISIT_PROFILE,
+        String(Number(numberVisit) + 1),
+      );
+    } else {
+      AsyncStorage.setItem(NUMBER_USER_VISIT_PROFILE, '1');
+    }
+  };
+
+  useEffect(() => {
+    checkVisitProfileBefore();
+  }, [user]);
+
   useEffect(() => {
     props.navigation.addListener('didFocus', () => {
       onRefresh(false);
     });
-  }, []);
+  }, [user]);
+
+  useEffect(() => {
+    props.navigation.addListener('didBlur', () => {
+      checkVisitProfileBefore();
+    });
+  }, [user]);
+
+  const checkUserVerified = async () => {
+    const storage = await AsyncStorage.getItem(KEY_VERIFIED_USER);
+    if (storage) {
+      if (user?.isEmailVerified && user?.isPhoneNumberVerified) {
+        return setIsConfirmVerified(true);
+      }
+      return setIsConfirmVerified(false);
+    } else {
+      setIsConfirmVerified(false);
+    }
+  };
 
   const initDeviceBright = async () => {
     const currentBrightness = await DeviceBrightness.getBrightnessLevel();
@@ -412,6 +468,8 @@ const Profile = props => {
 
   const handleLogout = async () => {
     setIsLoading(true);
+    await AsyncStorage.removeItem(KEY_VERIFIED_USER);
+    await AsyncStorage.removeItem(NUMBER_USER_VISIT_PROFILE);
     await dispatch(logoutUser());
     setIsLoading(false);
   };
@@ -460,7 +518,6 @@ const Profile = props => {
   };
 
   const renderVerifiedUser = () => {
-    console.log(checkLowerPriorityMandatory(), 'sintak');
     if (!checkLowerPriorityMandatory()) {
       if (user?.isEmailVerified || user?.isPhoneNumberVerified) {
         return <CheckListGreenSvg width={18} height={18} />;
@@ -838,8 +895,6 @@ const Profile = props => {
     return component;
   };
 
-  console.log({user}, 'bahan');
-
   const rennderInfoMessage = () => {
     let type = '';
     let message = '';
@@ -862,6 +917,7 @@ const Profile = props => {
       mode = 'Mobile Number';
       address = user.phoneNumber;
     }
+    if (isConfirmVerified && (visitNumber && visitNumber > 1)) return null;
     return (
       <View style={styles.titleSettingContainer}>
         <InfoMessage
@@ -874,7 +930,6 @@ const Profile = props => {
       </View>
     );
   };
-
   const verifyOtp = (address, mode) => {
     Actions.changeCredentialsOTP({
       address,
