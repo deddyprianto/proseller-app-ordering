@@ -74,6 +74,7 @@ const ModalDeliveryDetail = ({isVisible, closeModal}) => {
   const provider = useSelector(
     state => state.orderReducer?.dataBasket?.product?.provider,
   );
+
   return (
     <GlobalModal
       title="Details"

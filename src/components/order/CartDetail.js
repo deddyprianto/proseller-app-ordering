@@ -211,7 +211,9 @@ const CartDetail = ({
     state => state.rewardsReducer?.dataPoint?.totalPoint,
   );
   const campaign = useSelector(state => state.rewardsReducer.campaign.campaign);
-
+  const provider = useSelector(
+    state => state.orderReducer?.dataBasket?.product?.provider,
+  );
   const [isSwitchPoint, setIsSwitchPoint] = useState(false);
   const [isOpenModal, setIsOpenModal] = useState(false);
 
@@ -611,7 +613,8 @@ const CartDetail = ({
             <GlobalText style={[styles.boldFont, styles.deliveryText]}>
               {handleDisplayName(data?.cartDetails?.orderingMode)}
             </GlobalText>
-            {data?.cartDetails?.orderingMode === 'DELIVERY' ? (
+            {data?.cartDetails?.orderingMode === 'DELIVERY' &&
+            provider?.feeBreakDown ? (
               <TouchableOpacity onPress={toggleDelivery} style={styles.mlAuto}>
                 <ThreeDotCircle />
               </TouchableOpacity>

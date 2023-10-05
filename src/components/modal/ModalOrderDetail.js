@@ -1,12 +1,14 @@
 import React from 'react';
 import GlobalModal from './GlobalModal';
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, TouchableOpacity} from 'react-native';
 import GlobalText from '../globalText';
 import CurrencyFormatter from '../../helper/CurrencyFormatter';
 import Theme from '../../theme/Theme';
 import {useSelector} from 'react-redux';
 import useCalculation from '../../hooks/calculation/useCalculation';
 import {isEmptyArray} from '../../helper/CheckEmpty';
+import InformationSvg from '../../assets/svg/InformationSvg';
+import ModalDeliveryDetail from './ModalDeliveryDetail';
 
 const useStyles = () => {
   const theme = Theme();
@@ -80,6 +82,12 @@ const useStyles = () => {
     semiBold: {
       fontFamily: theme.fontFamily.poppinsSemiBold,
     },
+    deliveryFeeText: {
+      flexDirection: 'row',
+    },
+    informationDelivery: {
+      marginLeft: 4,
+    },
   });
   return styles;
 };
@@ -100,6 +108,10 @@ const ModalOrderDetail = ({
     calculateVoucher,
   } = useCalculation();
   const basket = useSelector(state => state.orderReducer?.dataBasket?.product);
+  const provider = useSelector(
+    state => state.orderReducer?.dataBasket?.product?.provider,
+  );
+  const [openDeliveryModal, setOpenDeliverModal] = React.useState(false);
   const delivery_mode = 'DELIVERY';
   const handleCloseDetail = () => {
     if (closeModal && typeof closeModal === 'function') {
@@ -170,111 +182,132 @@ const ModalOrderDetail = ({
   };
   const itemDiscount =
     basket?.totalDiscountAmount - (basket?.totalMembershipDiscountAmount || 0);
+
+  const toggleModalDelivery = () =>
+    setOpenDeliverModal(prevState => !prevState);
+
   return (
-    <GlobalModal
-      title="Details"
-      isBottomModal
-      closeModal={handleCloseDetail}
-      modalContainerStyle={{padding: 0}}
-      closeContainerStyle={{marginRight: 16}}
-      isVisible={open}>
-      <View style={styles.modalChildren}>
-        <View style={styles.modalItem}>
-          <GlobalText>Subtotal</GlobalText>
-          <GlobalText style={styles.modalItemPrice}>
-            {CurrencyFormatter(basket?.totalGrossAmount)}{' '}
-          </GlobalText>
-        </View>
-        {itemDiscount > 0 ? (
+    <>
+      <GlobalModal
+        title="Details"
+        isBottomModal
+        closeModal={handleCloseDetail}
+        modalContainerStyle={{padding: 0}}
+        closeContainerStyle={{marginRight: 16}}
+        isVisible={open}>
+        <View style={styles.modalChildren}>
           <View style={styles.modalItem}>
-            <GlobalText style={[styles.minusText, styles.mediumFont]}>
-              Item Discount
-            </GlobalText>
-            <GlobalText style={styles.minusText}>
-              ({CurrencyFormatter(itemDiscount)} )
+            <GlobalText>Subtotal</GlobalText>
+            <GlobalText style={styles.modalItemPrice}>
+              {CurrencyFormatter(basket?.totalGrossAmount)}{' '}
             </GlobalText>
           </View>
-        ) : null}
-        {basket?.totalMembershipDiscountAmount > 0 ? (
-          <View style={styles.modalItem}>
-            <GlobalText style={[styles.minusText, styles.mediumFont]}>
-              Membership Discount
-            </GlobalText>
-            <GlobalText style={styles.minusText}>
-              ({CurrencyFormatter(basket.totalMembershipDiscountAmount)} )
-            </GlobalText>
-          </View>
-        ) : null}
-        {basket?.orderingMode === delivery_mode && basket?.provider ? (
-          <>
-            <View style={[styles.divider, styles.noMargin]} />
+          {itemDiscount > 0 ? (
             <View style={styles.modalItem}>
-              <GlobalText>Delivery Fee</GlobalText>
-              <GlobalText style={styles.modalItemPrice}>
-                {basket?.provider?.deliveryFee > 0
-                  ? CurrencyFormatter(basket?.provider?.deliveryFee)
-                  : 'FREE'}
+              <GlobalText style={[styles.minusText, styles.mediumFont]}>
+                Item Discount
+              </GlobalText>
+              <GlobalText style={styles.minusText}>
+                ({CurrencyFormatter(itemDiscount)} )
               </GlobalText>
             </View>
-          </>
-        ) : null}
-
-        {checkTax()}
-
-        <View style={[styles.divider, styles.noMargin]} />
-        <View style={styles.modalItem}>
-          <GlobalText style={styles.grandTotalText}>Grand Total</GlobalText>
-          <GlobalText style={styles.priceText}>
-            {CurrencyFormatter(basket?.totalNettAmount)}{' '}
-          </GlobalText>
-        </View>
-        {totalPointToPay && totalPointToPay > 0 ? (
-          <View style={styles.modalItem}>
-            <GlobalText style={styles.minusText}>Paid with point</GlobalText>
-            <GlobalText style={[styles.modalItemPrice, styles.minusText]}>
-              ({CurrencyFormatter(calculatePoint(vouchers))} )
-            </GlobalText>
-          </View>
-        ) : null}
-        {calculateVoucher(voucherOnly()) > 0 ? (
-          <View style={styles.modalItem}>
-            <GlobalText style={styles.minusText}>Paid with voucher</GlobalText>
-            <GlobalText style={[styles.modalItemPrice, styles.minusText]}>
-              ({CurrencyFormatter(calculateVoucher(voucherOnly()))} )
-            </GlobalText>
-          </View>
-        ) : null}
-        {!hideAmountPaid ? (
-          <View style={[styles.p12, styles.mt16, styles.bgGrey]}>
-            <GlobalText>
-              Amount paid by points/vouchers{' '}
-              {CurrencyFormatter(calculateVoucherPoint(vouchers))}{' '}
-            </GlobalText>
-            {calculationAmountPaidByVisa(
-              basket?.totalNettAmount,
-              vouchers,
-              calculateVoucherPoint(vouchers),
-            ) > 0 ? (
-              <GlobalText>
-                Amount paid{' '}
-                {selectedAccount ? `by ` : 'by selected payment method'}
-                {''}
-                {selectedAccount?.details?.cardIssuer}{' '}
-                {CurrencyFormatter(
-                  Number(
-                    calculationAmountPaidByVisa(
-                      basket?.totalNettAmount,
-                      vouchers,
-                      calculateVoucherPoint(vouchers),
-                    ),
-                  ),
-                )}
+          ) : null}
+          {basket?.totalMembershipDiscountAmount > 0 ? (
+            <View style={styles.modalItem}>
+              <GlobalText style={[styles.minusText, styles.mediumFont]}>
+                Membership Discount
               </GlobalText>
-            ) : null}
+              <GlobalText style={styles.minusText}>
+                ({CurrencyFormatter(basket.totalMembershipDiscountAmount)} )
+              </GlobalText>
+            </View>
+          ) : null}
+          {basket?.orderingMode === delivery_mode && basket?.provider ? (
+            <>
+              <View style={[styles.divider, styles.noMargin]} />
+              <View style={styles.modalItem}>
+                <View style={styles.deliveryFeeText}>
+                  <GlobalText>Delivery Fee</GlobalText>
+                  {provider?.feeBreakDown ? (
+                    <TouchableOpacity
+                      onPress={toggleModalDelivery}
+                      style={styles.informationDelivery}>
+                      <InformationSvg />
+                    </TouchableOpacity>
+                  ) : null}
+                </View>
+                <GlobalText style={styles.modalItemPrice}>
+                  {basket?.provider?.deliveryFee > 0
+                    ? CurrencyFormatter(basket?.provider?.deliveryFee)
+                    : 'FREE'}
+                </GlobalText>
+              </View>
+            </>
+          ) : null}
+
+          {checkTax()}
+
+          <View style={[styles.divider, styles.noMargin]} />
+          <View style={styles.modalItem}>
+            <GlobalText style={styles.grandTotalText}>Grand Total</GlobalText>
+            <GlobalText style={styles.priceText}>
+              {CurrencyFormatter(basket?.totalNettAmount)}{' '}
+            </GlobalText>
           </View>
-        ) : null}
-      </View>
-    </GlobalModal>
+          {totalPointToPay && totalPointToPay > 0 ? (
+            <View style={styles.modalItem}>
+              <GlobalText style={styles.minusText}>Paid with point</GlobalText>
+              <GlobalText style={[styles.modalItemPrice, styles.minusText]}>
+                ({CurrencyFormatter(calculatePoint(vouchers))} )
+              </GlobalText>
+            </View>
+          ) : null}
+          {calculateVoucher(voucherOnly()) > 0 ? (
+            <View style={styles.modalItem}>
+              <GlobalText style={styles.minusText}>
+                Paid with voucher
+              </GlobalText>
+              <GlobalText style={[styles.modalItemPrice, styles.minusText]}>
+                ({CurrencyFormatter(calculateVoucher(voucherOnly()))} )
+              </GlobalText>
+            </View>
+          ) : null}
+          {!hideAmountPaid ? (
+            <View style={[styles.p12, styles.mt16, styles.bgGrey]}>
+              <GlobalText>
+                Amount paid by points/vouchers{' '}
+                {CurrencyFormatter(calculateVoucherPoint(vouchers))}{' '}
+              </GlobalText>
+              {calculationAmountPaidByVisa(
+                basket?.totalNettAmount,
+                vouchers,
+                calculateVoucherPoint(vouchers),
+              ) > 0 ? (
+                <GlobalText>
+                  Amount paid{' '}
+                  {selectedAccount ? `by ` : 'by selected payment method'}
+                  {''}
+                  {selectedAccount?.details?.cardIssuer}{' '}
+                  {CurrencyFormatter(
+                    Number(
+                      calculationAmountPaidByVisa(
+                        basket?.totalNettAmount,
+                        vouchers,
+                        calculateVoucherPoint(vouchers),
+                      ),
+                    ),
+                  )}
+                </GlobalText>
+              ) : null}
+            </View>
+          ) : null}
+        </View>
+      </GlobalModal>
+      <ModalDeliveryDetail
+        isVisible={openDeliveryModal}
+        closeModal={toggleModalDelivery}
+      />
+    </>
   );
 };
 
