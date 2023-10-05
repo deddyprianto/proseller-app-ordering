@@ -50,6 +50,8 @@ import {dataPoint, dataPointHistory} from '../actions/rewards.action';
 import {dataPromotion} from '../actions/promotion.action';
 import AsyncStorage from '@react-native-community/async-storage';
 import {KEY_VERIFIED_USER} from '../constant/storage';
+import CheckListGreenSvg from '../assets/svg/ChecklistGreenSvg';
+import useSettings from '../hooks/settings/useSettings';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -89,6 +91,7 @@ const useStyles = () => {
       color: theme.colors.textPrimary,
       fontSize: theme.fontSize[16],
       fontFamily: theme.fontFamily.poppinsBold,
+      marginRight: 8,
     },
     textYourPoint: {
       textAlign: 'right',
@@ -315,6 +318,10 @@ const useStyles = () => {
     bold: {
       fontFamily: theme.fontFamily.poppinsBold,
     },
+    usernameContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
   });
 
   return styles;
@@ -337,6 +344,7 @@ const Profile = props => {
   );
   const [isConfirmVerified, setIsConfirmVerified] = React.useState(false);
 
+  const {checkLowerPriorityMandatory} = useSettings();
   const userDetail = useSelector(
     state => state.userReducer.getUser.userDetails,
   );
@@ -393,8 +401,12 @@ const Profile = props => {
 
   const checkUserVerified = async () => {
     const storage = await AsyncStorage.getItem(KEY_VERIFIED_USER);
+    console.log({storage}, 'storage');
     if (storage) {
-      setIsConfirmVerified(true);
+      if (user?.isEmailVerified && user?.isPhoneNumberVerified) {
+        return setIsConfirmVerified(true);
+      }
+      return setIsConfirmVerified(false);
     } else {
       setIsConfirmVerified(false);
     }
@@ -425,6 +437,7 @@ const Profile = props => {
 
   const handleLogout = async () => {
     setIsLoading(true);
+    await AsyncStorage.removeItem(KEY_VERIFIED_USER);
     await dispatch(logoutUser());
     setIsLoading(false);
   };
@@ -454,7 +467,9 @@ const Profile = props => {
 
   const handleEditProfile = () => {
     const value = {dataDiri: user};
-    return Actions.editProfile(value);
+    if (Actions.currentScene !== 'editProfile') {
+      return Actions.editProfile(value);
+    }
   };
 
   const openWebviewPage = url => {
@@ -468,6 +483,23 @@ const Profile = props => {
         <BackgroundProfileSvg />
       </View>
     );
+  };
+
+  const renderVerifiedUser = () => {
+    console.log(checkLowerPriorityMandatory(), 'sintak');
+    if (!checkLowerPriorityMandatory()) {
+      if (user?.isEmailVerified || user?.isPhoneNumberVerified) {
+        return <CheckListGreenSvg width={18} height={18} />;
+      }
+      return null;
+    }
+    if (checkLowerPriorityMandatory()) {
+      if (user?.isEmailVerified && user?.isPhoneNumberVerified) {
+        return <CheckListGreenSvg width={18} height={18} />;
+      }
+      return null;
+    }
+    return null;
   };
 
   const renderWelcome = () => {
@@ -486,7 +518,10 @@ const Profile = props => {
           </View>
           <View>
             <Text style={styles.textWelcome}>Welcome</Text>
-            <Text style={styles.textName}>{user?.name}</Text>
+            <View style={styles.usernameContainer}>
+              <Text style={styles.textName}>{user?.name}</Text>
+              {renderVerifiedUser()}
+            </View>
           </View>
         </View>
       );
@@ -828,6 +863,7 @@ const Profile = props => {
     });
     return component;
   };
+
   const rennderInfoMessage = () => {
     let type = '';
     let message = '';

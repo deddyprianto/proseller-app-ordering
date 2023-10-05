@@ -117,6 +117,13 @@ const InboxDetailMessage = props => {
   const {colors, fontFamily} = Theme();
   const {width} = useWindowDimensions();
 
+  const tagsStyles = {
+    p: {
+      margin: 0,
+      padding: 0,
+    },
+  };
+
   const backHandle = () => {
     Actions.pop();
     return true;
@@ -128,7 +135,6 @@ const InboxDetailMessage = props => {
       BackHandler.removeEventListener('hardwareBackPress', backHandle);
     };
   }, []);
-
   const renderReward = ({item, index}) => (
     <View style={styles.rewardContainer}>
       <View style={styles.parentReward}>
@@ -180,7 +186,13 @@ const InboxDetailMessage = props => {
               </GlobalText>
             </View>
             <View style={styles.messageContainer}>
-              <RenderHtml contentWidth={width} source={{html: data?.message}} />
+              <RenderHtml
+                tagsStyles={tagsStyles}
+                contentWidth={width}
+                source={{html: data?.message}}
+                enableExperimentalBRCollapsing={true}
+                enableExperimentalMarginCollapsing={true}
+              />
             </View>
           </View>
           {data?.rewards?.length > 0 ? (

@@ -3,6 +3,8 @@ import additionalSetting from '../../config/additionalSettings';
 import {Actions} from 'react-native-router-flux';
 
 const useSettings = () => {
+  const priority_key_mandatory = 'SetLowerPriorityAsMandatory';
+
   const orderSetting = useSelector(
     state => state.orderReducer?.orderingSetting?.orderingSetting?.settings,
   );
@@ -41,10 +43,18 @@ const useSettings = () => {
     return {minimumAge: {}};
   };
 
+  const checkLowerPriorityMandatory = () => {
+    const findPriority = orderSetting.find(
+      data => data.settingKey === priority_key_mandatory,
+    );
+    return findPriority?.settingValue === true;
+  };
+
   return {
     checkTncPolicyData,
     useCartVersion,
     checkMinimumAge,
+    checkLowerPriorityMandatory,
   };
 };
 
