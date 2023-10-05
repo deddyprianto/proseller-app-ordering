@@ -3619,7 +3619,6 @@ class SettleOrder extends Component {
       );
     }
   };
-
   onSelectPaymentMethod = () => {
     Actions.paymentMethods({
       page: 'settleOrder',
@@ -4077,6 +4076,7 @@ class SettleOrder extends Component {
                 </View>
               )}
               {this.props.campaignActive &&
+              this.props.campign?.points?.enablePointRedemption &&
               this.props.paySVC == undefined &&
               this.props.payVoucher == undefined &&
               this.props.payMembership == undefined &&
