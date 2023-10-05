@@ -69,11 +69,39 @@ const useStyles = () => {
   return {styles};
 };
 
-const ModalDeliveryDetail = ({isVisible, closeModal}) => {
+const ModalDeliveryDetail = ({isVisible, closeModal, feeBreakDown}) => {
   const {styles} = useStyles();
   const provider = useSelector(
     state => state.orderReducer?.dataBasket?.product?.provider,
   );
+
+  const renderBreakDown = (fee, index) => (
+    <View style={styles.itemDelivery} key={index}>
+      <GlobalText>{fee.text}</GlobalText>
+      <GlobalText style={styles.feeText}>
+        {CurrencyFormatter(fee.fee)}
+      </GlobalText>
+    </View>
+  );
+
+  const renderComponentBreakdown = () => {
+    if (feeBreakDown) {
+      return (
+        <>
+          {feeBreakDown?.map((fee, index) => (
+            <>{renderBreakDown(fee, index)}</>
+          ))}
+        </>
+      );
+    }
+    return (
+      <>
+        {provider?.feeBreakDown?.map((fee, index) => (
+          <>{renderBreakDown(fee, index)}</>
+        ))}
+      </>
+    );
+  };
 
   return (
     <GlobalModal
@@ -85,16 +113,7 @@ const ModalDeliveryDetail = ({isVisible, closeModal}) => {
       closeContainerStyle={{marginRight: 16}}>
       <ScrollView>
         <View style={styles.divider} />
-        <View style={styles.ph16}>
-          {provider?.feeBreakDown?.map((fee, index) => (
-            <View style={styles.itemDelivery} key={index}>
-              <GlobalText>{fee.text}</GlobalText>
-              <GlobalText style={styles.feeText}>
-                {CurrencyFormatter(fee.fee)}
-              </GlobalText>
-            </View>
-          ))}
-        </View>
+        <View style={styles.ph16}>{renderComponentBreakdown()}</View>
       </ScrollView>
     </GlobalModal>
   );
