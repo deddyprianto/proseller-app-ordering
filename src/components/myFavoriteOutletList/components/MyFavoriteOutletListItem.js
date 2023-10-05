@@ -32,6 +32,7 @@ import {getBasket} from '../../../actions/product.action';
 import {updateUser} from '../../../actions/user.action';
 import LoadingScreen from '../../loadingScreen';
 import {getDistance} from 'geolib';
+import CheckOutletStatus from '../../../helper/CheckOutletStatus';
 
 const useStyles = () => {
   const theme = Theme();
@@ -69,9 +70,12 @@ const useStyles = () => {
       flexDirection: 'row',
       alignItems: 'center',
     },
-    iconStar: {
-      fontSize: 16,
-      color: 'red',
+    containerOpen: {
+      flex: 1,
+    },
+    containerClose: {
+      flex: 1,
+      opacity: 0.6,
     },
     viewStar: {
       backgroundColor: 'white',
@@ -147,6 +151,10 @@ const useStyles = () => {
       marginLeft: 14,
       tintColor: theme.colors.textQuaternary,
     },
+    iconStar: {
+      fontSize: 16,
+      color: 'red',
+    },
     image: {
       borderTopRightRadius: 8,
       borderTopLeftRadius: 8,
@@ -172,7 +180,8 @@ const MyFavoriteOutletListItem = ({item}) => {
 
   const basket = useSelector(state => state.orderReducer?.dataBasket?.product);
 
-  let isAvailable = item.orderingStatus !== 'UNAVAILABLE';
+  const isOpen = CheckOutletStatus(item) === 'OPEN';
+  const isUnavailable = CheckOutletStatus(item) === 'UNAVAILABLE';
 
   useEffect(() => {
     const userCoordinate = userPosition?.coords;
@@ -316,7 +325,7 @@ const MyFavoriteOutletListItem = ({item}) => {
   const renderImage = () => {
     const image = item?.defaultImageURL;
 
-    if (isAvailable) {
+    if (isOpen) {
       return renderImageAvailable(image);
     } else {
       return renderImageUnavailable(image);
@@ -332,8 +341,8 @@ const MyFavoriteOutletListItem = ({item}) => {
     );
   };
   const renderStatus = () => {
-    const textAvailable = isAvailable ? 'OPEN' : 'CLOSED';
-    const styleView = isAvailable ? styles.viewOpen : styles.viewClose;
+    const textAvailable = isOpen ? 'OPEN' : 'CLOSED';
+    const styleView = isOpen ? styles.viewOpen : styles.viewClose;
     return (
       <View style={styleView}>
         <Text style={styles.textStatus}>{textAvailable}</Text>
@@ -358,7 +367,7 @@ const MyFavoriteOutletListItem = ({item}) => {
     );
   };
   const renderBodyMiddle = () => {
-    const styleText = isAvailable
+    const styleText = isOpen
       ? styles.textNameAvailable
       : styles.textNameUnavailable;
     return (
@@ -394,16 +403,27 @@ const MyFavoriteOutletListItem = ({item}) => {
     );
   };
 
+  const renderItem = () => {
+    const styleView = isUnavailable
+      ? styles.containerClose
+      : styles.containerOpen;
+    return (
+      <View style={styleView}>
+        {renderHeader()}
+        {renderBody()}
+      </View>
+    );
+  };
+
   return (
     <TouchableOpacity
+      disabled={isUnavailable}
       onPress={() => {
         handleClickOutlet(item);
       }}
-      style={styles.root}
-      disabled={!isAvailable}>
+      style={styles.root}>
       <LoadingScreen loading={isLoading} />
-      {renderHeader()}
-      {renderBody()}
+      {renderItem()}
     </TouchableOpacity>
   );
 };
