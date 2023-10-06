@@ -56,7 +56,7 @@ const useStyles = () => {
 
 const HistoryNotificationModal = ({open, handleClose, value}) => {
   const styles = useStyles();
-
+  console.log({value}, 'bahay');
   const renderHeader = () => {
     return (
       <View style={styles.header}>
