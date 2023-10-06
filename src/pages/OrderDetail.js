@@ -22,7 +22,6 @@ import moment from 'moment';
 import CurrencyFormatter from '../helper/CurrencyFormatter';
 import PointSvg from '../assets/svg/PointSvg';
 import VoucherSvg from '../assets/svg/VoucherSvg';
-import CardSvg from '../assets/svg/CardSvg';
 import MapMarkerSvg from '../assets/svg/MapMarkerSvg';
 import CalendarBold from '../assets/svg/CalendarBoldSvg';
 import NotesSvg from '../assets/svg/NotesSvg';
@@ -372,6 +371,7 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
   const preorder_item = 'Preorder Items';
   const {handleOrderingType, handleDisplayName} = useOrderingTypes();
   const ready_items = 'Ready Items';
+  const completeOrder = 'COMPLETED';
   const downloadQrCode = async () => {
     permissionDownloadFile(data?.action?.url, `qrcode${data.id}`, 'image/png', {
       title: 'Imaged Saved',
@@ -642,6 +642,9 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
     }
     return 'Item';
   };
+
+  console.log({data}, 'nusuk');
+
   const renderIsItemSelection = () => {
     if (listSelfSelection.length > 0) {
       return (
@@ -684,7 +687,7 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
       );
     }
   };
-
+  console.log({data}, 'naniks');
   const renderHeader = (title, containerStyle, isPreOrder) => (
     <>
       <View style={styles.centerComponent}>
@@ -709,6 +712,13 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
       return '(VERIFIED)';
     }
     return '';
+  };
+
+  const handleRewardText = () => {
+    if (data.status === completeOrder) {
+      return `Points earned`;
+    }
+    return 'Points will be earned';
   };
 
   return (
@@ -926,6 +936,30 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
               renderItem={renderPaymentDetail}
             />
           </View>
+
+          {data?.earnedPoint > 0 ? (
+            <>
+              <View style={styles.orderDetailWrapCOntainer}>
+                <GlobalText style={styles.oredrDetailText}>Rewards</GlobalText>
+              </View>
+              <View style={[styles.shadowBox, styles.boxMain, styles.p12]}>
+                <View style={styles.orderStatusContainer}>
+                  <View style={styles.paymentDetailsCard}>
+                    <PointSvg />
+                    <GlobalText style={styles.paymentDetailCardText}>
+                      {handleRewardText()}{' '}
+                    </GlobalText>
+                  </View>
+                  <View>
+                    <GlobalText
+                      style={[styles.primaryColor, styles.mediumFont]}>
+                      {data?.earnedPoint}
+                    </GlobalText>
+                  </View>
+                </View>
+              </View>
+            </>
+          ) : null}
           {defaultOrder.length > 0 ? (
             <>
               {listPreorder.length > 0
