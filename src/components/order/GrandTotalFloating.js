@@ -67,7 +67,7 @@ const GrandTotalFloating = ({
   };
 
   const handleCloseDetail = () => {
-    setSeeDetail(false);
+    setSeeDetail(prevState => !prevState);
   };
 
   return (

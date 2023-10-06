@@ -183,8 +183,19 @@ const ModalOrderDetail = ({
   const itemDiscount =
     basket?.totalDiscountAmount - (basket?.totalMembershipDiscountAmount || 0);
 
-  const toggleModalDelivery = () =>
-    setOpenDeliverModal(prevState => !prevState);
+  const toggleModalDelivery = () => {
+    if (open) {
+      handleCloseDetail();
+      setTimeout(() => {
+        setOpenDeliverModal(prevState => !prevState);
+      }, 500);
+    } else {
+      setOpenDeliverModal(prevState => !prevState);
+      setTimeout(() => {
+        handleCloseDetail();
+      }, 500);
+    }
+  };
 
   return (
     <>
