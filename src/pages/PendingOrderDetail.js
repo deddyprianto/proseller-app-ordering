@@ -1,10 +1,11 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /**
  * Martin
  * martin@edgeworks.co.id
  * PT Edgeworks
  */
 
-import React from 'react';
+import React, {useEffect} from 'react';
 import {Actions} from 'react-native-router-flux';
 import {StyleSheet, SafeAreaView} from 'react-native';
 
@@ -14,6 +15,8 @@ import {isEmptyArray} from '../helper/CheckEmpty';
 import Header from '../components/layout/header';
 import Theme from '../theme';
 import OrderDetail from './OrderDetail';
+import {useDispatch} from 'react-redux';
+import {getOrderDetail} from '../actions/order.action';
 const useStyles = () => {
   const theme = Theme();
   const styles = StyleSheet.create({
@@ -198,6 +201,18 @@ const useStyles = () => {
 
 const PendingOrderDetail = ({order}) => {
   const styles = useStyles();
+  const [dataOrder, setDataOrder] = React.useState(order);
+  const dispatch = useDispatch();
+  const fetchOrderDetail = async () => {
+    if (order?.transactionRefNo) {
+      const response = await dispatch(getOrderDetail(order?.transactionRefNo));
+      setDataOrder(response);
+      console.log({response}, 'laka');
+    }
+  };
+  useEffect(() => {
+    fetchOrderDetail();
+  }, []);
 
   if (isEmptyArray(order?.details)) {
     Actions.pop();
@@ -206,7 +221,7 @@ const PendingOrderDetail = ({order}) => {
   return (
     <SafeAreaView style={styles.root}>
       <Header title="Order Detail" />
-      <OrderDetail data={order} />
+      <OrderDetail data={dataOrder} />
     </SafeAreaView>
   );
 };

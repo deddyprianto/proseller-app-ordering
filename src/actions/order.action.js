@@ -2140,3 +2140,27 @@ export const getCalculationStep3 = body => {
     }
   };
 };
+
+export const getOrderDetail = refNo => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+
+      let {responseBody} = await fetchApi(
+        `/sales/status?referenceNo=${refNo}`,
+        'GET',
+        null,
+        200,
+        token,
+      );
+      return responseBody?.data;
+    } catch (error) {
+      return error;
+    }
+  };
+};
