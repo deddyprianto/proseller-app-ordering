@@ -14,6 +14,7 @@ const appConfig = {
   modifierType: 'textOnly',
   pointType: 'manualPointEntry',
   textModifier: 'grey',
+  isApplyPromoCode: 'true',
   
 
   // image company

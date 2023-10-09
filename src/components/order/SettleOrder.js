@@ -3897,99 +3897,104 @@ class SettleOrder extends Component {
               </View>
               {this.props.paySVC ||
               this.props.payMembership ||
-              this.props.payVoucher ? null : (
-                <View
-                  style={{
-                    marginTop: 5,
-                    width: '100%',
-                    borderWidth: 0.4,
-                    padding: 13,
-                    backgroundColor: 'white',
-                    borderColor: colorConfig.pageIndex.grayColor,
-                  }}>
-                  <TouchableOpacity
-                    style={styles.btnMethodUnselected}
-                    onPress={() => {
-                      try {
-                        const total =
-                          Number(this.state.totalBayar) -
-                          this.state.totalNonDiscountable;
-                        if (total > 0) {
-                          Actions.applyPromoCode({
-                            setDataVoucher: this.setDataVoucher,
-                            dataVoucher: this.state.dataVoucer,
-                            originalPurchase: this.props.pembayaran
-                              .totalNettAmount,
-                          });
-                        } else {
-                          Alert.alert('Sorry', "Can't add more promo code.");
-                          return;
-                        }
-                      } catch (e) {}
-                    }}>
-                    <View style={{flexDirection: 'row'}}>
-                      <Text style={styles.descMethodUnselected}>
-                        Apply Promo Code
-                      </Text>
-                    </View>
-                    <Icon
-                      size={25}
-                      name={
-                        Platform.OS === 'ios'
-                          ? 'ios-arrow-dropright'
-                          : 'md-arrow-dropright'
-                      }
+              this.props.payVoucher
+                ? null
+                : appConfig.isApplyPromoCode === 'true' && (
+                    <View
                       style={{
-                        color: colorConfig.store.defaultColor,
-                        marginLeft: 10,
-                      }}
-                    />
-                  </TouchableOpacity>
-                  {!isEmptyArray(this.state.dataVoucer)
-                    ? this.state.dataVoucer.map((item, i) =>
-                        item.isVoucher === true ||
-                        item.isVoucherPromoCode === true ? (
-                          <View
-                            style={{
-                              height: !item.isVoucherPromoCode ? 0 : 'auto',
-                              margin: 5,
-                              marginTop: !item.isVoucherPromoCode ? 0 : 10,
-                              flexDirection: 'row',
-                              justifyContent: 'space-between',
-                            }}>
-                            <Text
-                              style={{
-                                fontSize: 15,
-                                fontFamily: 'Poppins-Medium',
-                                color: colorConfig.store.secondaryColor,
-                              }}>
-                              {item.name}
-                            </Text>
-                            {item.isVoucherPromoCode && (
-                              <View>
-                                <TouchableOpacity
-                                  onPress={() => this.cencelOneVoucher(i)}
+                        marginTop: 5,
+                        width: '100%',
+                        borderWidth: 0.4,
+                        padding: 13,
+                        backgroundColor: 'white',
+                        borderColor: colorConfig.pageIndex.grayColor,
+                      }}>
+                      <TouchableOpacity
+                        style={styles.btnMethodUnselected}
+                        onPress={() => {
+                          try {
+                            const total =
+                              Number(this.state.totalBayar) -
+                              this.state.totalNonDiscountable;
+                            if (total > 0) {
+                              Actions.applyPromoCode({
+                                setDataVoucher: this.setDataVoucher,
+                                dataVoucher: this.state.dataVoucer,
+                                originalPurchase: this.props.pembayaran
+                                  .totalNettAmount,
+                              });
+                            } else {
+                              Alert.alert(
+                                'Sorry',
+                                "Can't add more promo code.",
+                              );
+                              return;
+                            }
+                          } catch (e) {}
+                        }}>
+                        <View style={{flexDirection: 'row'}}>
+                          <Text style={styles.descMethodUnselected}>
+                            Apply Promo Code
+                          </Text>
+                        </View>
+                        <Icon
+                          size={25}
+                          name={
+                            Platform.OS === 'ios'
+                              ? 'ios-arrow-dropright'
+                              : 'md-arrow-dropright'
+                          }
+                          style={{
+                            color: colorConfig.store.defaultColor,
+                            marginLeft: 10,
+                          }}
+                        />
+                      </TouchableOpacity>
+                      {!isEmptyArray(this.state.dataVoucer)
+                        ? this.state.dataVoucer.map((item, i) =>
+                            item.isVoucher === true ||
+                            item.isVoucherPromoCode === true ? (
+                              <View
+                                style={{
+                                  height: !item.isVoucherPromoCode ? 0 : 'auto',
+                                  margin: 5,
+                                  marginTop: !item.isVoucherPromoCode ? 0 : 10,
+                                  flexDirection: 'row',
+                                  justifyContent: 'space-between',
+                                }}>
+                                <Text
                                   style={{
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
+                                    fontSize: 15,
+                                    fontFamily: 'Poppins-Medium',
+                                    color: colorConfig.store.secondaryColor,
                                   }}>
-                                  <Text
-                                    style={{
-                                      color: colorConfig.store.colorError,
-                                      fontFamily: 'Poppins-Medium',
-                                      fontSize: 14,
-                                    }}>
-                                    Cancel
-                                  </Text>
-                                </TouchableOpacity>
+                                  {item.name}
+                                </Text>
+                                {item.isVoucherPromoCode && (
+                                  <View>
+                                    <TouchableOpacity
+                                      onPress={() => this.cencelOneVoucher(i)}
+                                      style={{
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                      }}>
+                                      <Text
+                                        style={{
+                                          color: colorConfig.store.colorError,
+                                          fontFamily: 'Poppins-Medium',
+                                          fontSize: 14,
+                                        }}>
+                                        Cancel
+                                      </Text>
+                                    </TouchableOpacity>
+                                  </View>
+                                )}
                               </View>
-                            )}
-                          </View>
-                        ) : null,
-                      )
-                    : null}
-                </View>
-              )}
+                            ) : null,
+                          )
+                        : null}
+                    </View>
+                  )}
               {this.props.paySVC ||
               this.props.payMembership ||
               this.props.payVoucher ? null : (
