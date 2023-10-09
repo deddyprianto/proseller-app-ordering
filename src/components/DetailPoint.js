@@ -211,7 +211,6 @@ class DetailPoint extends Component {
       const removeZeroPoint = this.state.history.filter(
         history => history?.pointBalance > 0,
       );
-      console.log({removeZeroPoint}, 'nini');
 
       return removeZeroPoint;
     }
@@ -219,7 +218,7 @@ class DetailPoint extends Component {
 
   render() {
     const {colors, campignData} = this.props;
-    const {customerActivity, dataLength, actualLength, history} = this.state;
+    const {customerActivity, dataLength, actualLength} = this.state;
     return (
       <SafeAreaView>
         {this.state.loading && <Loader />}
