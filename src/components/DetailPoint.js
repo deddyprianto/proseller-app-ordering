@@ -233,14 +233,23 @@ class DetailPoint extends Component {
                 </GlobalText>
               </View>
               {!isEmptyArray(history) && (
-                <View style={styles.ph16}>
-                  <View style={styles.pointExpiredContainer(colors.greyScale4)}>
-                    <GlobalText style={styles.pointExpiredText(colors.primary)}>
-                      {history[0].pointBalance} points will expire on{' '}
-                      {format(new Date(history[0].expiryDate), 'dd MMM yyyy')}
-                    </GlobalText>
-                  </View>
-                </View>
+                <>
+                  {history[0]?.pointBalance > 0 ? (
+                    <View style={styles.ph16}>
+                      <View
+                        style={styles.pointExpiredContainer(colors.greyScale4)}>
+                        <GlobalText
+                          style={styles.pointExpiredText(colors.primary)}>
+                          {history[0].pointBalance} points will expire on{' '}
+                          {format(
+                            new Date(history[0].expiryDate),
+                            'dd MMM yyyy',
+                          )}
+                        </GlobalText>
+                      </View>
+                    </View>
+                  ) : null}
+                </>
               )}
 
               <View style={[styles.ph16, styles.mv16]}>
