@@ -206,6 +206,17 @@ class DetailPoint extends Component {
     return local;
   };
 
+  eliminateZeroPoint = () => {
+    if (!isEmptyArray(this.state.history)) {
+      const removeZeroPoint = this.state.history.filter(
+        history => history?.pointBalance > 0,
+      );
+      console.log({removeZeroPoint}, 'nini');
+
+      return removeZeroPoint;
+    }
+  };
+
   render() {
     const {colors, campignData} = this.props;
     const {customerActivity, dataLength, actualLength, history} = this.state;
@@ -232,17 +243,18 @@ class DetailPoint extends Component {
                   {`$${campignData?.points?.netSpendToPoint0}`} spent
                 </GlobalText>
               </View>
-              {!isEmptyArray(history) && (
+              {!isEmptyArray(this.eliminateZeroPoint()) && (
                 <>
-                  {history[0]?.pointBalance > 0 ? (
+                  {this.eliminateZeroPoint()[0]?.pointBalance > 0 ? (
                     <View style={styles.ph16}>
                       <View
                         style={styles.pointExpiredContainer(colors.greyScale4)}>
                         <GlobalText
                           style={styles.pointExpiredText(colors.primary)}>
-                          {history[0].pointBalance} points will expire on{' '}
+                          {this.eliminateZeroPoint()[0].pointBalance} points
+                          will expire on{' '}
                           {format(
-                            new Date(history[0].expiryDate),
+                            new Date(this.eliminateZeroPoint()[0].expiryDate),
                             'dd MMM yyyy',
                           )}
                         </GlobalText>
