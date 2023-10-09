@@ -37,7 +37,7 @@ const ENV = {
 
   appID: 'com.funtoast.app',
 
-  appEmail: 'design@funtoast.com.sg',
+  appEmail: 'app@funtoast.com.sg',
 
   appEmailFeedback: 'feedback@funtoast.com.sg',
 

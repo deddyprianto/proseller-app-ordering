@@ -120,6 +120,8 @@ const awsConfig = {
   EMAIL_ONE_MAP: Config.email_one_map,
 
   PASSWORD_ONE_MAP: Config.password_map,
+
+  environment: Data.environment,
 };
 
 export default awsConfig;
