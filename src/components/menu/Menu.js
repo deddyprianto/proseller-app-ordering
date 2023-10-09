@@ -9,14 +9,7 @@ import {Actions} from 'react-native-router-flux';
 import {useDispatch, useSelector} from 'react-redux';
 
 import CryptoJS from 'react-native-crypto-js';
-import {
-  StyleSheet,
-  View,
-  Text,
-  Image,
-  Dimensions,
-  TouchableOpacity,
-} from 'react-native';
+import {StyleSheet, View, Text, Image, TouchableOpacity} from 'react-native';
 
 import appConfig from '../../config/appConfig';
 import awsConfig from '../../config/awsConfig';
@@ -66,6 +59,13 @@ const useStyles = () => {
       textAlign: 'center',
       marginTop: 10,
       color: theme.colors.textQuaternary,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsSemiBold,
+    },
+    textMenuDisabled: {
+      textAlign: 'center',
+      marginTop: 10,
+      color: theme.colors.buttonDisabled,
       fontSize: theme.fontSize[14],
       fontFamily: theme.fontFamily.poppinsSemiBold,
     },
@@ -148,7 +148,11 @@ const useStyles = () => {
       width: 22,
       height: 22,
     },
-    image: {},
+    iconMenuDisabled: {
+      tintColor: theme.colors.buttonDisabled,
+      width: 22,
+      height: 22,
+    },
     divider: {
       height: 1,
       width: '100%',
@@ -254,13 +258,17 @@ const Menu = () => {
   const renderEStore = () => {
     return (
       <TouchableOpacity
+        disabled
         style={styles.viewMenu}
         onPress={() => {
           // Actions.push('eStore');
           setIsOpenModal(true);
         }}>
-        <Image source={appConfig.iconHomeEStore} style={styles.iconMenu} />
-        <Text style={styles.textMenu}>E-Store</Text>
+        <Image
+          source={appConfig.iconHomeEStore}
+          style={styles.iconMenuDisabled}
+        />
+        <Text style={styles.textMenuDisabled}>E-Store</Text>
       </TouchableOpacity>
     );
   };
@@ -281,12 +289,16 @@ const Menu = () => {
   const renderSendGift = () => {
     return (
       <TouchableOpacity
+        disabled
         style={styles.viewMenu}
         onPress={() => {
           Actions.push('eGift');
         }}>
-        <Image source={appConfig.iconHomeSendAGift} style={styles.iconMenu} />
-        <Text style={styles.textMenu}>Send A Gift</Text>
+        <Image
+          source={appConfig.iconHomeSendAGift}
+          style={styles.iconMenuDisabled}
+        />
+        <Text style={styles.textMenuDisabled}>Send A Gift</Text>
       </TouchableOpacity>
     );
   };
