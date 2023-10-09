@@ -829,7 +829,7 @@ const ProductDetail = ({
   };
 
   const renderPreOrderLabel = () => {
-    if (product?.allowPreorder) {
+    if (product?.isPreOrderItem) {
       return <PreorderLabel />;
     }
     return null;
