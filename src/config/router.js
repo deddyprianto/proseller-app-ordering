@@ -267,15 +267,13 @@ class Routes extends Component {
         Actions.pendingOrderDetail({
           order: notification.additionalData,
         });
+        this.setState({openNotification: false});
       }, 1000);
     }
   };
 
   handleGetNotification = () => {
     try {
-      OneSignal.setNotificationOpenedHandler(notification => {
-        console.log({notification}, 'luluk');
-      });
       OneSignal.setNotificationOpenedHandler(notification => {
         this.handleOpenNotification(notification.notification);
       });
